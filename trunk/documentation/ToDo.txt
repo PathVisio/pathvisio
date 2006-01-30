@@ -1,0 +1,9 @@
+To Do:
+
+- Finish connection (better connection, define anchor points as objects)
+- Enumeration type of geneproducts, lines, shapes, etcetera.
+- Finish and implement automatic layout generation (recognize circle, tree structure, other default forms, implent alignment / grid structure)
+- Give gene products a background //Done, white background default
+- Implent author, title, etcetera.
+- restructure reader
+- Improve interface

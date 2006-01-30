@@ -1,0 +1,30 @@
+###################
+#  Specification  #
+###################
+
+The goal of our final program is to be able to load gmml files into java, 
+from there the program has to visualize the gmml files like genmapp files, 
+but now it has to be possible to change the layout by dragging the elements. 
+At the end of the program the changes have to be written back to gmml. 
+
+A diagram below explains how the program will be constructed:
+
+*	The gmml files will be loaded into java with the help of jdom 
+	In java the same structure will be used as in gmml. 
+	This will be done by a tree of else if statements. The tree will 
+	correspond to the gmml structure. This way all the elements en attributes from gmml 
+	can be loaded into java. The most important elements are the lines and the geneproducts. 
+
+	-Hakim and Erik will work on this part.
+
+*	From the loaded elements and attributes the program will create pictures that are similar 
+	to the genmapp files but now the layout can be changed, by dragging elements with the 
+	cursor. Then the result will be written back to gmml. 
+
+	-Irene and Margriet will work on this part. 
+
+*	As an extra possibility we will write an algorithm that will calculate an optimal layout based 
+	on the lowest potential energy principle. This algorithm considers elements as point charges that 
+	repulse each other. The lines will be considered as bonds that pulls the elements near each other. 
+
+	-René will work on this part.

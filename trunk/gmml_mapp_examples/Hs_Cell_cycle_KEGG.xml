@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Pathway Author="Adapted from KEGG" Availability="" Data-Source="GenMAPP 2.0" Email="genmapp@gladstone.ucsf.edu" Last-Modified="10/02/2002" Maintained-By="GenMAPP.org" Name="Cell cycle" Version="20041203" xsi:schemaLocation="http://www.genmapp.org/Ferrante_2004/GMML.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Notes>Adapted from: http://www.genome.ad.jp/kegg/pathway/hsa/hsa04110.html</Notes>
+    <Comment>Right-click here to see notes</Comment>
+    <Graphics BoardHeight="14175" BoardWidth="16623" WindowHeight="14205" WindowWidth="16755"/>
+    <GeneProduct BackpageHead="" GeneID="ORC6L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="23594">
+        <Comment>ORC6L; origin recognition complex  subunit 6-like (yeast)</Comment>
+        <Graphics CenterX="2100" CenterY="10550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ORC3L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="23595">
+        <Comment>ORC3L; origin recognition complex  subunit 3-like (yeast)</Comment>
+        <Graphics CenterX="900" CenterY="10250" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ORC5L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5001">
+        <Comment>ORC5L; origin recognition complex  subunit 5-like (yeast)</Comment>
+        <Graphics CenterX="900" CenterY="10550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ORC4L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5000">
+        <Comment>ORC4L; origin recognition complex  subunit 4-like (yeast)</Comment>
+        <Graphics CenterX="2100" CenterY="10250" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ORC1L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4998">
+        <Comment>ORC1L; origin recognition complex  subunit 1-like (yeast)</Comment>
+        <Graphics CenterX="900" CenterY="9950" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCM7" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4176">
+        <Comment>MCM7; MCM7 minichromosome maintenance deficient 7 (S. cerevisiae)</Comment>
+        <Graphics CenterX="4550" CenterY="10550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCM6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4175">
+        <Comment>MCM6; MCM6 minichromosome maintenance deficient 6 (MIS5 homolog  S. pombe) (S. cerevisiae)</Comment>
+        <Graphics CenterX="3350" CenterY="10550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCM5" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4174">
+        <Comment>MCM5; MCM5 minichromosome maintenance deficient 5  cell division cycle 46 (S. cerevisiae)</Comment>
+        <Graphics CenterX="4550" CenterY="10250" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCM4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4173">
+        <Comment>MCM4; MCM4 minichromosome maintenance deficient 4 (S. cerevisiae</Comment>
+        <Graphics CenterX="3350" CenterY="10250" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCM3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4172">
+        <Comment>MCM3; MCM3 minichromosome maintenance deficient 3 (S. cerevisiae)</Comment>
+        <Graphics CenterX="4550" CenterY="9950" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BUB1B" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="701">
+        <Comment>BUB1B; BUB1 budding uninhibited by benzimidazoles 1 homolog beta (yeast) [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="12450" CenterY="3400" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ATM" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="472">
+        <Comment>ATM; ataxia telangiectasia mutated (includes complementation groups A  C and D) [EC:2.7.1.37]</Comment>
+        <Graphics CenterX="10150" CenterY="2450" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ABL1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="25">
+        <Comment>ABL1; v-abl Abelson murine leukemia viral oncogene homolog 1 [EC:2.7.1.112</Comment>
+        <Graphics CenterX="3950" CenterY="7550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ATR" GeneProduct-Data-Source="SwissProt" Type="unknown" Xref="" Name="A1AU_HUMAN">
+        <Comment>ATR; ataxia telangiectasia and Rad3 related</Comment>
+        <Graphics CenterX="10150" CenterY="2150" Height="300" Width="675"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MAD2L2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="10459">
+        <Comment>MAD2L2; MAD2 mitotic arrest deficient-like 2 (yeast)</Comment>
+        <Graphics CenterX="12450" CenterY="4400" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BUB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="699">
+        <Comment>BUB1; BUB1 budding uninhibited by benzimidazoles 1 homolog (yeast) [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="12450" CenterY="1950" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BUB3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="9184">
+        <Comment>BUB3; BUB3 budding uninhibited by benzimidazoles 3 homolog (yeast)</Comment>
+        <Graphics CenterX="12450" CenterY="2250" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="EP300" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="2033">
+        <Comment>EP300; E1A binding protein p300</Comment>
+        <Graphics CenterX="8200" CenterY="1750" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="WEE1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7465">
+        <Comment>WEE1; WEE1+ homolog (S. pombe) [EC:2.7.1.112]</Comment>
+        <Graphics CenterX="10550" CenterY="7650" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="PTTG1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="9232">
+        <Comment>PTTG1; pituitary tumor-transforming</Comment>
+        <Graphics CenterX="14350" CenterY="3150" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="PTTG2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="10744">
+        <Comment>PTTG2; pituitary tumor-transforming</Comment>
+        <Graphics CenterX="14350" CenterY="2850" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="PTTG3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="26255">
+        <Comment>PTTG3; pituitary tumor-transforming</Comment>
+        <Graphics CenterX="14350" CenterY="2550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="RB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5925">
+        <Comment>RB1; retinoblastoma 1 (including osteosarcoma)</Comment>
+        <Graphics CenterX="4850" CenterY="7800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="RB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5925">
+        <Comment>RB1; retinoblastoma 1 (including osteosarcoma)</Comment>
+        <Graphics CenterX="6950" CenterY="3150" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDC25B" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="994">
+        <Comment>CDC25B; cell division cycle 25B [EC:3.1.3.48]</Comment>
+        <Graphics CenterX="12900" CenterY="5750" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDC25C" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="995">
+        <Comment>CDC25C; cell division cycle 25C [EC:3.1.3.48]</Comment>
+        <Graphics CenterX="12900" CenterY="5450" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDK2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1017">
+        <Comment>CDK2; cyclin-dependent kinase 2 [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="7100" CenterY="6450" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDK2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1017">
+        <Comment>CDK2; cyclin-dependent kinase 2 [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="8400" CenterY="6550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDK4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1019">
+        <Comment>CDK4; cyclin-dependent kinase 4 [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="4200" CenterY="6450" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDK6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1021">
+        <Comment>CDK6; cyclin-dependent kinase 6 [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="4200" CenterY="6750" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CCNH" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="902">
+        <Comment>CCNH; cyclin H</Comment>
+        <Graphics CenterX="8400" CenterY="6250" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MAD1L1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8379">
+        <Comment>MAD1L1; MAD1 mitotic arrest deficient-like 1 (yeast</Comment>
+        <Graphics CenterX="12450" CenterY="3750" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="GSK3B" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="2932">
+        <Comment>GSK3B; glycogen synthase kinase 3 beta [EC:2.7.1.37]</Comment>
+        <Graphics CenterX="2950" CenterY="2450" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="ORC2L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4999">
+        <Comment>ORC2L; origin recognition complex  subunit 2-like (yeast)</Comment>
+        <Graphics CenterX="2100" CenterY="9950" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycD3" GeneID="CCND3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="896">
+        <Comment>CCND3; cyclin D3</Comment>
+        <Graphics CenterX="4200" CenterY="5800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycD2" GeneID="CCND2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="894">
+        <Comment>CCND2; cyclin D2</Comment>
+        <Graphics CenterX="4200" CenterY="6100" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Ink4a-d" GeneID="CDKN2A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1029">
+        <Comment/>
+        <Graphics CenterX="3750" CenterY="4200" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Kip1" GeneID="CDKN1A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1026">
+        <Comment/>
+        <Graphics CenterX="4950" CenterY="4200" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycE1" GeneID="CCNE1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="898">
+        <Comment>CCNE1; cyclin E</Comment>
+        <Graphics CenterX="5700" CenterY="6100" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycA1" GeneID="CCNA1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8900">
+        <Comment>CCNA1; cyclin A1</Comment>
+        <Graphics CenterX="7100" CenterY="5800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycA2" GeneID="CCNA2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="890">
+        <Comment>CCNA2; cyclin A2</Comment>
+        <Graphics CenterX="7100" CenterY="6100" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="PCNA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5111">
+        <Comment>PCNA; proliferating cell nuclear antigen</Comment>
+        <Graphics CenterX="7800" CenterY="4800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="14-3-3 gamma" GeneID="YWHAG" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7532">
+        <Comment>YWHAG; tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein  gamma polypeptid</Comment>
+        <Graphics CenterX="9200" CenterY="4200" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="GADD45A" GeneID="GADD45A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1647">
+        <Comment/>
+        <Graphics CenterX="7800" CenterY="4200" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDC25A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="993">
+        <Comment>CDC25A; cell division cycle 25A [EC:3.1.3.48]</Comment>
+        <Graphics CenterX="9200" CenterY="5450" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3065">
+        <Comment>HDAC1; histone deacetylase 1</Comment>
+        <Graphics CenterX="950" CenterY="12000" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3066">
+        <Comment>HDAC2; histone deacetylase 2</Comment>
+        <Graphics CenterX="950" CenterY="12300" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8841">
+        <Comment>HDAC3; histone deacetylase 3</Comment>
+        <Graphics CenterX="950" CenterY="12600" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC5" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="10014">
+        <Comment>HDAC5; histone deacetylase 5</Comment>
+        <Graphics CenterX="2250" CenterY="12000" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="10013">
+        <Comment>HDAC6; histone deacetylase 6</Comment>
+        <Graphics CenterX="2250" CenterY="12300" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC7A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="51564">
+        <Comment>HDAC7A; histone deacetylase 7</Comment>
+        <Graphics CenterX="2250" CenterY="12600" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC8" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="55869">
+        <Comment>HDAC8; histone deacetylase</Comment>
+        <Graphics CenterX="2250" CenterY="12900" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCM2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4171">
+        <Comment>MCM2; MCM2 minichromosome maintenance deficient 2  mitotin (S. cerevisiae</Comment>
+        <Graphics CenterX="3350" CenterY="9950" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CDK2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1017">
+        <Comment>CDK2; cyclin-dependent kinase 2 [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="5700" CenterY="6450" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="p53" GeneID="TP53" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7157">
+        <Comment/>
+        <Graphics CenterX="8250" CenterY="3150" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="DN-PK" GeneID="PRKDC" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5591">
+        <Comment>PRKDC; protein kinase  DNA-activated  catalytic polypeptide [EC:2.7.1.37]</Comment>
+        <Graphics CenterX="8950" CenterY="2200" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Chk1" GeneID="CHEK1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1111">
+        <Comment>CHEK1; CHK1 checkpoint homolog (S. pombe) [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="10750" CenterY="3650" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Chk2" GeneID="CHEK2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="11200">
+        <Comment>CHEK2; CHK2 checkpoint homolog (S. pombe) [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="10750" CenterY="3950" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Mps1" GeneID="MPEG1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="219972">
+        <Comment/>
+        <Graphics CenterX="12450" CenterY="2550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MAD2L1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4085">
+        <Comment>MAD2L1; MAD2 mitotic arrest deficient-like 1 (yeast)</Comment>
+        <Graphics CenterX="12450" CenterY="4100" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CDK1" GeneID="CDC2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="983">
+        <Comment>CDC2; cell division cycle 2  G1 to S and G2 to M [EC:2.7.1.-</Comment>
+        <Graphics CenterX="10300" CenterY="6850" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycA2" GeneID="CCNA2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="890">
+        <Comment>CCNA2; cyclin A2</Comment>
+        <Graphics CenterX="10300" CenterY="6500" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycA1" GeneID="CCNA1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8900">
+        <Comment>CCNA1; cyclin A1</Comment>
+        <Graphics CenterX="10300" CenterY="6200" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycB1" GeneID="CCNB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="891">
+        <Comment>CCNB1; cyclin B1</Comment>
+        <Graphics CenterX="11650" CenterY="5900" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycB2" GeneID="CCNB2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="9133">
+        <Comment>CCNB2; cyclin B2</Comment>
+        <Graphics CenterX="11650" CenterY="6200" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cyc" GeneID="CCNB3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="85417">
+        <Comment>CCNB3; cyclin B</Comment>
+        <Graphics CenterX="11650" CenterY="6500" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CDK1" GeneID="CDC2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="983">
+        <Comment>CDC2; cell division cycle 2  G1 to S and G2 to M [EC:2.7.1.-</Comment>
+        <Graphics CenterX="11650" CenterY="6850" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="RB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5925">
+        <Comment>RB1; retinoblastoma 1 (including osteosarcoma)</Comment>
+        <Graphics CenterX="9550" CenterY="7650" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="DP1" GeneID="TFDP1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7027">
+        <Comment>TFDP1; transcription factor Dp-1</Comment>
+        <Graphics CenterX="5450" CenterY="8800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="p107" GeneID="RBL1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5933">
+        <Comment/>
+        <Graphics CenterX="6000" CenterY="7800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cdc7" GeneID="CDC7" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8317">
+        <Comment>CDC7L1; CDC7 cell division cycle 7-like 1 (S. cerevisiae) [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="7950" CenterY="8500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="ASK" GeneID="ASK" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="10926">
+        <Comment>ASK; activator of S phase kinas</Comment>
+        <Graphics CenterX="7950" CenterY="8800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cdc45" GeneID="CDC45L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8318">
+        <Comment>CDC45L; CDC45 cell division cycle 45-like (S. cerevisiae)</Comment>
+        <Graphics CenterX="8500" CenterY="7300" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CDC61" GeneID="CDC6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="990">
+        <Comment>CDC6; CDC6 cell division cycle 6 homolog (S. cerevisiae</Comment>
+        <Graphics CenterX="7400" CenterY="7300" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cip1" GeneID="CDAN1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="146059">
+        <Comment>CDKN1A; cyclin-dependent kinase inhibitor 1A (p21  Cip1)</Comment>
+        <Graphics CenterX="6300" CenterY="4200" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Myt1" GeneID="MYT1" GeneProduct-Data-Source="SwissProt" Type="unknown" Xref="" Name="O14731">
+        <Comment>PKMYT1; membrane-associated tyrosine- and threonine-specific cdc2-inhibitory kinas</Comment>
+        <Graphics CenterX="11450" CenterY="7650" Height="300" Width="624"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="SKP2" GeneID="SKP2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="6502">
+        <Comment>SKP2; S-phase kinase-associated protein 2 (p45</Comment>
+        <Graphics CenterX="2700" CenterY="7550" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="SKP2" GeneID="SKP2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="6502">
+        <Comment>SKP2; S-phase kinase-associated protein 2 (p45</Comment>
+        <Graphics CenterX="5750" CenterY="3100" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cdc14A" GeneID="CDC14A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8556">
+        <Comment>CDC14A; CDC14 cell division cycle 14 homolog A (S. cerevisiae</Comment>
+        <Graphics CenterX="14350" CenterY="8150" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cdc14B" GeneID="CDC14B" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8555">
+        <Comment>CDC14B; CDC14 cell division cycle 14 homolog B (S. cerevisiae</Comment>
+        <Graphics CenterX="14350" CenterY="8450" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cdh1" GeneID="CDH1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="999">
+        <Comment/>
+        <Graphics CenterX="14350" CenterY="7500" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Bub2" GeneID="TBC1D8" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="11138">
+        <Comment/>
+        <Graphics CenterX="13050" CenterY="9100" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="MEN" GeneID="MEN" GeneProduct-Data-Source="SwissProt" Type="unknown" Xref="" Name="">
+        <Comment/>
+        <Graphics CenterX="14350" CenterY="9100" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Esp1" GeneID="ESPL1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="9700">
+        <Comment>ESPL1; extra spindle poles like 1 (S. cerevisiae</Comment>
+        <Graphics CenterX="14350" CenterY="2000" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Smc1" GeneID="SMC1L1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8243">
+        <Comment>SMC1L1; SMC1 structural maintenance of chromosomes 1-like 1 (yeast</Comment>
+        <Graphics CenterX="14350" CenterY="1350" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Mdm2" GeneID="MDM2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4193">
+        <Comment>MDM2; Mdm2  transformed 3T3 cell double minute 2  p53 binding protein (mouse)</Comment>
+        <Graphics CenterX="7400" CenterY="2150" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="ARF" GeneID="ARF" GeneProduct-Data-Source="SwissProt" Type="unknown" Xref="" Name="">
+        <Comment/>
+        <Graphics CenterX="7400" CenterY="1300" Height="300" Width="675"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="E2F1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1869">
+        <Comment>E2F1; E2F transcription factor 1</Comment>
+        <Graphics CenterX="3650" CenterY="11950" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="E2F2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1870">
+        <Comment>E2F2; E2F transcription factor 2</Comment>
+        <Graphics CenterX="3650" CenterY="12250" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="E2F3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1871">
+        <Comment>E2F3; E2F transcription factor 3</Comment>
+        <Graphics CenterX="3650" CenterY="12550" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="E2F5" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1875">
+        <Comment>E2F5; E2F transcription factor 5  p130-binding</Comment>
+        <Graphics CenterX="3650" CenterY="13150" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="E2F4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1874">
+        <Comment>E2F4; E2F transcription factor 4  p107/p130-binding</Comment>
+        <Graphics CenterX="3650" CenterY="12850" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="RBL1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5933">
+        <Comment>RBL1; retinoblastoma-like 1 (p107)</Comment>
+        <Graphics CenterX="5050" CenterY="11950" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="E2F6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1876">
+        <Comment>E2F6; E2F transcription factor 6</Comment>
+        <Graphics CenterX="5050" CenterY="12250" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="UBE2F" GeneProduct-Data-Source="Other" Type="unknown" Xref="" Name="LL:23665">
+        <Comment>UBE2F; ubiquitin-conjugating enzyme E2F (UBC6 homolog  C. elegans</Comment>
+        <Graphics CenterX="5050" CenterY="12550" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="14-3-3" GeneID="14-3-3" GeneProduct-Data-Source="GenBank" Type="unknown" Xref="" Name="">
+        <Comment/>
+        <Graphics CenterX="13450" CenterY="4800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="PLK1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5347">
+        <Comment>PLK; polo-like kinase (Drosophila) [EC:2.7.1.-]</Comment>
+        <Graphics CenterX="13300" CenterY="6850" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="SMAD3" GeneID="MADH3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4088">
+        <Comment>MADH3; MAD  mothers against decapentaplegic homolog 3 (Drosophila)</Comment>
+        <Graphics CenterX="4400" CenterY="2800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TGF beta" GeneID="TGFB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7040">
+        <Comment/>
+        <Graphics CenterX="4400" CenterY="2000" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="SMAD4" GeneID="MADH4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4089">
+        <Comment>MADH4; MAD  mothers against decapentaplegic homolog 4 (Drosophila)</Comment>
+        <Graphics CenterX="4400" CenterY="3100" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CycE2" GeneID="CCNE2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="9134">
+        <Comment>CCNE2; cyclin E</Comment>
+        <Graphics CenterX="5700" CenterY="5800" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cdc20" GeneID="CDC20" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="991">
+        <Comment>CDC20; CDC20 cell division cycle 20 homolog (S. cerevisiae</Comment>
+        <Graphics CenterX="14350" CenterY="4250" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="HDAC4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="9759">
+        <Comment>HDAC4; histone deacetylase 4</Comment>
+        <Graphics CenterX="950" CenterY="12900" Height="300" Width="1000"/>
+    </GeneProduct>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="2950" EndY="5800" StartX="2950" StartY="2600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="3100" EndY="5950" StartX="2950" StartY="5800"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="3650" EndY="6300" StartX="2500" StartY="6300"/>
+    </Line>
+    <Line Style="Broken" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1650" EndY="6100" StartX="1850" StartY="6300"/>
+    </Line>
+    <Line Style="Broken" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1650" EndY="4300" StartX="1650" StartY="6050"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1300" EndY="4250" StartX="1150" StartY="4100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1150" EndY="2650" StartX="1150" StartY="4100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1900" EndY="4250" StartX="1300" StartY="4250"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="2050" EndY="2650" StartX="1900" StartY="2500"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1150" EndY="2650" StartX="1300" StartY="2500"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1900" EndY="4250" StartX="2050" StartY="4100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="2050" EndY="2650" StartX="2050" StartY="4100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1900" EndY="2500" StartX="1300" StartY="2500"/>
+    </Line>
+    <Line Style="Broken" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1650" EndY="1550" StartX="1650" StartY="2450"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="2950" EndY="2250" StartX="2950" StartY="1850"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="4350" EndY="2550" StartX="4350" StartY="2200"/>
+    </Line>
+    <Line Style="Broken" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="1900" EndY="6300" StartX="2000" StartY="6300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="3900" EndY="3800" StartX="4250" StartY="3250"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="4800" EndY="3800" StartX="4450" StartY="3250"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4000" EndY="5600" StartX="3650" StartY="4400"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4250" EndY="5600" StartX="4850" StartY="4400"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5700" EndY="5600" StartX="5100" StartY="4400"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5700" EndY="5600" StartX="6300" StartY="4400"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5850" EndY="5600" StartX="5550" StartY="5600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4350" EndY="5600" StartX="4150" StartY="5600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4100" EndY="5600" StartX="3900" StartY="5600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4600" EndY="5600" StartX="4400" StartY="5600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7400" EndY="4850" StartX="4500" StartY="5600"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7800" EndY="4650" StartX="7800" StartY="4400"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4500" EndY="7900" StartX="4300" StartY="8100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4250" EndY="7500" StartX="4500" StartY="7750"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="5300" EndY="6300" StartX="5050" StartY="6300"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="3900" EndY="7200" StartX="3100" StartY="7600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4950" EndY="7200" StartX="3900" StartY="7200"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4950" EndY="7200" StartX="4950" StartY="6400"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4900" EndY="5350" StartX="8800" StartY="5350"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="6600" EndY="5450" StartX="8800" StartY="5450"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7950" EndY="5550" StartX="8850" StartY="5550"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7850" EndY="5650" StartX="7950" StartY="5550"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7850" EndY="6450" StartX="7850" StartY="5650"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7500" EndY="6450" StartX="7850" StartY="6450"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="6500" EndY="5550" StartX="6600" StartY="5450"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="6500" EndY="6450" StartX="6500" StartY="5550"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6150" EndY="6450" StartX="6500" StartY="6450"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5050" EndY="6300" StartX="4950" StartY="6400"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="4600" EndY="6600" StartX="4800" StartY="6600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4800" EndY="5450" StartX="4800" StartY="6600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4800" EndY="5450" StartX="4900" StartY="5350"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="5250" EndY="3800" StartX="5600" StartY="3250"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6150" EndY="3800" StartX="5800" StartY="3250"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7000" EndY="2900" StartX="7350" StartY="2200"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7950" EndY="2900" StartX="7600" StartY="2200"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="8050" EndY="2900" StartX="7850" StartY="2900"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7100" EndY="2900" StartX="6900" StartY="2900"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="8250" EndY="2900" StartX="8150" StartY="1950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="8400" EndY="2900" StartX="8900" StartY="2400"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="8600" EndY="2900" StartX="9800" StartY="2450"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6800" EndY="4000" StartX="8050" StartY="3300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7850" EndY="4000" StartX="8200" StartY="3300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="9050" EndY="3950" StartX="8400" StartY="3300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="8700" EndY="3250" StartX="10400" StartY="3800"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="10650" EndY="2850" StartX="8650" StartY="3050"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="10650" EndY="3450" StartX="10150" StartY="2600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="9500" EndY="5250" StartX="10400" StartY="3800"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="9600" EndY="5250" StartX="9400" StartY="5250"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="12450" EndY="3150" StartX="12450" StartY="2700"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="9850" EndY="6800" StartX="9250" StartY="5600"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="9550" EndY="7450" StartX="10000" StartY="7000"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="10350" EndY="7100" StartX="10550" StartY="7500"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11400" EndY="7100" StartX="10700" StartY="7500"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="10450" EndY="7100" StartX="10250" StartY="7100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11500" EndY="7100" StartX="11300" StartY="7100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11250" EndY="7500" StartX="10350" StartY="7100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11400" EndY="7100" StartX="11400" StartY="7500"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7000" EndY="7250" StartX="5800" StartY="6650"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4850" EndY="7600" StartX="4550" StartY="6600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="4950" EndY="7600" StartX="4750" StartY="7600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5600" EndY="6600" StartX="4850" StartY="7600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="6850" EndY="6600" StartX="4850" StartY="7600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5900" EndY="7600" StartX="4550" StartY="6600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="6000" EndY="7600" StartX="5800" StartY="7600"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5100" EndY="8250" StartX="5100" StartY="7950"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5250" EndY="8100" StartX="5000" StartY="8100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5750" EndY="8250" StartX="5750" StartY="7950"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="5900" EndY="8100" StartX="5650" StartY="8100"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6650" EndY="8650" StartX="6000" StartY="8650"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6100" EndY="5950" StartX="6850" StartY="8500"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="7400" EndY="7650" StartX="7400" StartY="7450"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="8500" EndY="7650" StartX="8500" StartY="7450"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="8150" EndY="7850" StartX="7750" StartY="7850"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7400" EndY="9350" StartX="7400" StartY="8050"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6850" EndY="10100" StartX="6850" StartY="9050"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="8250" EndY="8100" StartX="8000" StartY="8350"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="8500" EndY="9550" StartX="7600" StartY="9550"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="12800" EndY="6750" StartX="12100" StartY="6750"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="12100" EndY="6750" StartX="12850" StartY="6000"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="14350" EndY="7700" StartX="14350" StartY="8000"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="14350" EndY="8650" StartX="14350" StartY="8950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="12000" EndY="7050" StartX="13950" StartY="7500"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11800" EndY="7600" StartX="13050" StartY="7000"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11800" EndY="7700" StartX="11800" StartY="7500"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="14350" EndY="6850" StartX="14350" StartY="4500"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="14350" EndY="3350" StartX="14350" StartY="3650"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="9000" EndY="1950" StartX="9400" StartY="1250"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="10200" EndY="1900" StartX="9850" StartY="1250"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="14800" EndY="6200" StartX="14650" StartY="6050"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="14650" EndY="5050" StartX="14650" StartY="6050"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="15650" EndY="6200" StartX="14800" StartY="6200"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="15800" EndY="5050" StartX="15650" StartY="4900"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="14650" EndY="5050" StartX="14800" StartY="4900"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="15650" EndY="6200" StartX="15800" StartY="6050"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="15800" EndY="5050" StartX="15800" StartY="6050"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="15650" EndY="4900" StartX="14800" StartY="4900"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11050" EndY="5750" StartX="8050" StartY="4350"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11050" EndY="5750" StartX="9200" StartY="4350"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="11050" EndY="5900" StartX="11050" StartY="5650"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="12700" EndY="5250" StartX="10750" StartY="4100"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="12800" EndY="5250" StartX="12600" StartY="5250"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="13100" EndY="5300" StartX="13300" StartY="4950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="13000" EndY="6000" StartX="13250" StartY="6650"/>
+    </Line>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="000000" EndX="3750" EndY="5950" StartX="3100" StartY="5950"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="000000" EndX="13850" EndY="9100" StartX="13450" StartY="9100"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="000000" EndX="13850" EndY="4250" StartX="12850" StartY="4250"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="000000" EndX="14350" EndY="2200" StartX="14350" StartY="2400"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="000000" EndX="14350" EndY="1550" StartX="14350" StartY="1900"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="000000" EndX="7400" EndY="2000" StartX="7400" StartY="1450"/>
+    </LineShape>
+    <Label TextLabel="MAPK">
+        <Comment/>
+        <Graphics CenterX="1600" CenterY="3150" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="590"/>
+    </Label>
+    <Label TextLabel="signaling">
+        <Comment/>
+        <Graphics CenterX="1600" CenterY="3400" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="845"/>
+    </Label>
+    <Label TextLabel="pathway">
+        <Comment/>
+        <Graphics CenterX="1600" CenterY="3650" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="800"/>
+    </Label>
+    <Label TextLabel="Growth Factor">
+        <Comment/>
+        <Graphics CenterX="1650" CenterY="1500" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1280"/>
+    </Label>
+    <Label TextLabel="Growth Factor">
+        <Comment/>
+        <Graphics CenterX="3000" CenterY="1500" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1280"/>
+    </Label>
+    <Label TextLabel="withdrawal">
+        <Comment/>
+        <Graphics CenterX="3000" CenterY="1750" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1025"/>
+    </Label>
+    <Label TextLabel="R-point">
+        <Comment/>
+        <Graphics CenterX="2350" CenterY="6200" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="680"/>
+    </Label>
+    <Label TextLabel="(Start)">
+        <Comment/>
+        <Graphics CenterX="2350" CenterY="6400" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="620"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="3550" CenterY="5750" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="4150" CenterY="3450" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="185"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="4600" CenterY="3450" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="185"/>
+    </Label>
+    <Label TextLabel="p16,15,18,19">
+        <Comment/>
+        <Graphics CenterX="3750" CenterY="3900" Color="000000" FontName="Arial" FontSize="8" FontWeight="Bold" Height="180" Width="1025"/>
+    </Label>
+    <Label TextLabel="p27,57">
+        <Comment/>
+        <Graphics CenterX="4950" CenterY="3900" Color="000000" FontName="Arial" FontSize="8" FontWeight="Bold" Height="180" Width="575"/>
+    </Label>
+    <Label TextLabel="p21">
+        <Comment/>
+        <Graphics CenterX="6350" CenterY="3900" Color="000000" FontName="Arial" FontSize="8" FontWeight="Bold" Height="180" Width="350"/>
+    </Label>
+    <Label TextLabel="Histone Deacetylases">
+        <Comment/>
+        <Graphics CenterX="1600" CenterY="11650" Color="ff0000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="2090"/>
+    </Label>
+    <Label TextLabel="+u">
+        <Comment/>
+        <Graphics CenterX="5100" CenterY="6650" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+u">
+        <Comment/>
+        <Graphics CenterX="6350" CenterY="3700" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+u">
+        <Comment/>
+        <Graphics CenterX="5550" CenterY="3700" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="9100" CenterY="2550" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="7450" CenterY="3600" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="185"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="8050" CenterY="3600" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="185"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="8700" CenterY="3600" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="185"/>
+    </Label>
+    <Label TextLabel="Apoptosis">
+        <Comment/>
+        <Graphics CenterX="11300" CenterY="2800" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="935"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="9250" CenterY="3250" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="10800" CenterY="3250" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="9200" CenterY="5100" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="10750" CenterY="7100" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="11050" CenterY="7100" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="11600" CenterY="7300" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="9900" CenterY="7350" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="10200" CenterY="7250" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="6000" CenterY="7400" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="4600" CenterY="7450" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="HDAC">
+        <Comment/>
+        <Graphics CenterX="3950" CenterY="8150" Color="ff0000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="785"/>
+    </Label>
+    <Label TextLabel="E2F">
+        <Comment/>
+        <Graphics CenterX="5450" CenterY="8450" Color="ff0000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="530"/>
+    </Label>
+    <Label TextLabel="DNA">
+        <Comment/>
+        <Graphics CenterX="6900" CenterY="8900" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="440"/>
+    </Label>
+    <Label TextLabel="SCF">
+        <Comment/>
+        <Graphics CenterX="2700" CenterY="7200" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="470"/>
+    </Label>
+    <Label TextLabel="ORC">
+        <Comment/>
+        <Graphics CenterX="7400" CenterY="7850" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="500"/>
+    </Label>
+    <Label TextLabel="MCM">
+        <Comment/>
+        <Graphics CenterX="8500" CenterY="7850" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="545"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="7900" CenterY="8200" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="DNA">
+        <Comment/>
+        <Graphics CenterX="7450" CenterY="9800" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="440"/>
+    </Label>
+    <Label TextLabel="DNA biosynthesis">
+        <Comment/>
+        <Graphics CenterX="9450" CenterY="9550" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1565"/>
+    </Label>
+    <Label TextLabel="S-phase proteins">
+        <Comment/>
+        <Graphics CenterX="6850" CenterY="10200" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1535"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="9500" CenterY="6600" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="SCF">
+        <Comment/>
+        <Graphics CenterX="5750" CenterY="2700" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="470"/>
+    </Label>
+    <Label TextLabel="-p">
+        <Comment/>
+        <Graphics CenterX="12550" CenterY="6500" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="245"/>
+    </Label>
+    <Label TextLabel="APC/C">
+        <Comment/>
+        <Graphics CenterX="14350" CenterY="7150" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="680"/>
+    </Label>
+    <Label TextLabel="-p">
+        <Comment/>
+        <Graphics CenterX="14600" CenterY="7850" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="245"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="12200" CenterY="7550" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="12750" CenterY="6950" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="APC/C">
+        <Comment/>
+        <Graphics CenterX="14350" CenterY="3900" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="680"/>
+    </Label>
+    <Label TextLabel="+u">
+        <Comment/>
+        <Graphics CenterX="14150" CenterY="3500" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="DNA damage checkpoint">
+        <Comment/>
+        <Graphics CenterX="9650" CenterY="1050" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="2165"/>
+    </Label>
+    <Label TextLabel="Securin">
+        <Comment/>
+        <Graphics CenterX="15500" CenterY="2850" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="740"/>
+    </Label>
+    <Label TextLabel="Separin">
+        <Comment/>
+        <Graphics CenterX="15500" CenterY="2050" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="740"/>
+    </Label>
+    <Label TextLabel="Condensin">
+        <Comment/>
+        <Graphics CenterX="15600" CenterY="1350" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="980"/>
+    </Label>
+    <Label TextLabel="Transcription Factor E2F">
+        <Comment/>
+        <Graphics CenterX="4550" CenterY="11650" Color="ff0000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="2390"/>
+    </Label>
+    <Label TextLabel="Ubiquitin">
+        <Comment/>
+        <Graphics CenterX="15250" CenterY="5300" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="815"/>
+    </Label>
+    <Label TextLabel="mediated">
+        <Comment/>
+        <Graphics CenterX="15250" CenterY="5550" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="875"/>
+    </Label>
+    <Label TextLabel="proteolysis">
+        <Comment/>
+        <Graphics CenterX="15250" CenterY="5800" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1025"/>
+    </Label>
+    <Label TextLabel="ORC (Origin">
+        <Comment/>
+        <Graphics CenterX="1550" CenterY="9350" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1070"/>
+    </Label>
+    <Label TextLabel="Recognition Complex)">
+        <Comment/>
+        <Graphics CenterX="1550" CenterY="9600" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="1940"/>
+    </Label>
+    <Label TextLabel="MCM (Mini-Chromosome">
+        <Comment/>
+        <Graphics CenterX="4000" CenterY="9350" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="2165"/>
+    </Label>
+    <Label TextLabel="Maintenance) complex">
+        <Comment/>
+        <Graphics CenterX="4000" CenterY="9600" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="2015"/>
+    </Label>
+    <Label TextLabel="G1">
+        <Comment/>
+        <Graphics CenterX="4350" CenterY="11200" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="395"/>
+    </Label>
+    <Label TextLabel="M">
+        <Comment/>
+        <Graphics CenterX="14350" CenterY="11200" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="275"/>
+    </Label>
+    <Label TextLabel="G2">
+        <Comment/>
+        <Graphics CenterX="11200" CenterY="11200" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="395"/>
+    </Label>
+    <Label TextLabel="S">
+        <Comment/>
+        <Graphics CenterX="7500" CenterY="11200" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="245"/>
+    </Label>
+    <Label TextLabel="+p">
+        <Comment/>
+        <Graphics CenterX="12750" CenterY="5050" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Label TextLabel="+u">
+        <Comment/>
+        <Graphics CenterX="12950" CenterY="7450" Color="000000" FontName="Arial" FontSize="9" FontWeight="Bold" Height="225" Width="290"/>
+    </Label>
+    <Shape Type="Oval">
+        <Graphics CenterX="11300" CenterY="2800" Color="-1" Height="200" Rotation="0" Width="600"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="5450" CenterY="8450" Color="-1" Height="412" Rotation="0" Width="1000"/>
+    </Shape>
+    <Shape Type="Oval">
+        <Graphics CenterX="6850" CenterY="8650" Color="-1" Height="100" Rotation="0" Width="111"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="7400" CenterY="7850" Color="-1" Height="412" Rotation="0" Width="700"/>
+    </Shape>
+    <Shape Type="Oval">
+        <Graphics CenterX="7400" CenterY="9550" Color="-1" Height="100" Rotation="0" Width="111"/>
+    </Shape>
+    <Shape Type="Oval">
+        <Graphics CenterX="9450" CenterY="9550" Color="-1" Height="200" Rotation="0" Width="850"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="2700" CenterY="7200" Color="-1" Height="412" Rotation="0" Width="806"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="14350" CenterY="7150" Color="-1" Height="412" Rotation="0" Width="806"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="14350" CenterY="3900" Color="-1" Height="412" Rotation="0" Width="806"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="2900" CenterY="10050" Color="-1" Height="1702" Rotation="0" Width="5200"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="3200" CenterY="12450" Color="-1" Height="2000" Rotation="0" Width="5800"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="8500" CenterY="7850" Color="-1" Height="412" Rotation="0" Width="700"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="5750" CenterY="2700" Color="-1" Height="499" Rotation="0" Width="806"/>
+    </Shape>
+    <Brace>
+        <Graphics CenterX="11050" CenterY="6200" Color="8f8f8f" Orientation="left" PicPointOffset="130" Width="900"/>
+    </Brace>
+</Pathway>
+

@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Pathway Author="Alexander C. Zambon and Beth Lawlor" Availability="" Data-Source="GenMAPP 2.0" Email="azambon@gladstone.ucsf.edu" Last-Modified="" Maintained-By="Alexander C. Zambon" Name="Apoptosis Mechanisms" Version="20041216" xsi:schemaLocation="http://www.genmapp.org/Ferrante_2004/GMML.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Notes/>
+    <Comment/>
+    <Graphics BoardHeight="12267" BoardWidth="19955" WindowHeight="13230" WindowWidth="19304"/>
+    <GeneProduct BackpageHead="TRADD" GeneID="TRADD" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8717">
+        <Comment/>
+        <Graphics CenterX="1350" CenterY="3350" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TRAIL" GeneID="TNFSF10" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8743">
+        <Comment/>
+        <Graphics CenterX="2550" CenterY="1050" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TNFR1" GeneID="TNFRSF1A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7132">
+        <Comment/>
+        <Graphics CenterX="1350" CenterY="3050" Height="300" Width="1100"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TNF alpha" GeneID="TNF" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7124">
+        <Comment/>
+        <Graphics CenterX="4300" CenterY="1050" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TNFR2" GeneID="TNFRSF1B" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7133">
+        <Comment/>
+        <Graphics CenterX="4450" CenterY="2800" Height="300" Width="1100"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TRAF1" GeneID="TRAF1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7185">
+        <Comment/>
+        <Graphics CenterX="3050" CenterY="4200" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TRAF2" GeneID="TRAF2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7186">
+        <Comment/>
+        <Graphics CenterX="3050" CenterY="4500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="MEKK1" GeneID="MAP3K1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4214">
+        <Comment/>
+        <Graphics CenterX="4550" CenterY="4700" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="JNKK" GeneID="MAP2K4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="6416">
+        <Comment/>
+        <Graphics CenterX="4600" CenterY="5550" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="JNK" GeneID="MAPK10" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5602">
+        <Comment/>
+        <Graphics CenterX="4600" CenterY="6500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="FADD" GeneID="FADD" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8772">
+        <Comment/>
+        <Graphics CenterX="7600" CenterY="2800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="RIP" GeneID="RIPK1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8737">
+        <Comment/>
+        <Graphics CenterX="450" CenterY="5900" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="IAP2" GeneID="BIRC3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="330">
+        <Comment/>
+        <Graphics CenterX="1800" CenterY="4600" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="IAP1" GeneID="BIRC2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="329">
+        <Comment/>
+        <Graphics CenterX="1800" CenterY="4300" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="IAP3" GeneID="BIRC4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="331">
+        <Comment/>
+        <Graphics CenterX="12650" CenterY="6000" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Caspase-6" GeneID="CASP6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="839">
+        <Comment/>
+        <Graphics CenterX="16650" CenterY="3850" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Caspase-7" GeneID="CASP7" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="840">
+        <Comment/>
+        <Graphics CenterX="14850" CenterY="5050" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Caspase-3" GeneID="CASP3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="836">
+        <Comment/>
+        <Graphics CenterX="14850" CenterY="4700" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Caspase-2" GeneID="CASP2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="835">
+        <Comment/>
+        <Graphics CenterX="14850" CenterY="5400" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="BCL-2" GeneID="BCL2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="596">
+        <Comment/>
+        <Graphics CenterX="5950" CenterY="5750" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="IKK" GeneID="IKBKG" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8517">
+        <Comment/>
+        <Graphics CenterX="1550" CenterY="6050" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="FAS" GeneID="FAS" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="355">
+        <Comment/>
+        <Graphics CenterX="10750" CenterY="1900" Height="300" Width="1000"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="BCL-X" GeneID="BCL2L1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="598">
+        <Comment/>
+        <Graphics CenterX="5950" CenterY="5450" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Granzyme B" GeneID="GZMB" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3002">
+        <Comment/>
+        <Graphics CenterX="8100" CenterY="1050" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Perforin" GeneID="PRF1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5551">
+        <Comment/>
+        <Graphics CenterX="9350" CenterY="1900" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="FAS-L" GeneID="TNFSF6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="356">
+        <Comment/>
+        <Graphics CenterX="10800" CenterY="1000" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="BAK" GeneID="BAK1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="578">
+        <Comment/>
+        <Graphics CenterX="5950" CenterY="3950" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="bid" GeneID="BID" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="637">
+        <Comment/>
+        <Graphics CenterX="9550" CenterY="4350" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="BAX" GeneID="BAX" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="581">
+        <Comment/>
+        <Graphics CenterX="6200" CenterY="6500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="c-myc" GeneID="MYC" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4609">
+        <Comment/>
+        <Graphics CenterX="6850" CenterY="10150" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="p53" GeneID="TP53" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7157">
+        <Comment/>
+        <Graphics CenterX="6450" CenterY="9400" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="MDM-2" GeneID="MDM2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4193">
+        <Comment/>
+        <Graphics CenterX="5550" CenterY="8550" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="NF-kB p65" GeneID="RELA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5970">
+        <Comment/>
+        <Graphics CenterX="1750" CenterY="8400" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="NF-kB p105" GeneID="NFKB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4790">
+        <Comment/>
+        <Graphics CenterX="1750" CenterY="8100" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="APAF-1" GeneID="APAF1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="317">
+        <Comment/>
+        <Graphics CenterX="10450" CenterY="4750" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Caspase-9" GeneID="CASP9" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="842">
+        <Comment/>
+        <Graphics CenterX="11800" CenterY="5150" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Cyt c" GeneID="CYCS" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="54205">
+        <Comment/>
+        <Graphics CenterX="8250" CenterY="6950" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CYCT" GeneID="CYCT" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="">
+        <Comment/>
+        <Graphics CenterX="8250" CenterY="7250" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="I-kappa B" GeneID="NFKBIA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4792">
+        <Comment/>
+        <Graphics CenterX="1750" CenterY="7800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="c-jun" GeneID="JUN" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3725">
+        <Comment/>
+        <Graphics CenterX="5550" CenterY="10650" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Bim (Bcl2l11)" GeneID="BCL2L11" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="10018">
+        <Comment/>
+        <Graphics CenterX="7300" CenterY="3650" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Bid3 (Dp5)" GeneID="HRK" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8739">
+        <Comment/>
+        <Graphics CenterX="10700" CenterY="6300" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Bnip3l" GeneID="BNIP3L" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="665">
+        <Comment/>
+        <Graphics CenterX="8350" CenterY="4700" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Casp10" GeneID="CASP10" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="843">
+        <Comment/>
+        <Graphics CenterX="12400" CenterY="3850" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Dffb" GeneID="DFFB" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1677">
+        <Comment/>
+        <Graphics CenterX="8850" CenterY="10250" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Dffa" GeneID="DFFA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1676">
+        <Comment/>
+        <Graphics CenterX="7700" CenterY="10650" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Hells" GeneID="HELLS" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3070">
+        <Comment/>
+        <Graphics CenterX="4500" CenterY="9800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Bad" GeneID="BAD" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="572">
+        <Comment/>
+        <Graphics CenterX="6550" CenterY="4600" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Casp1" GeneID="CASP1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="834">
+        <Comment/>
+        <Graphics CenterX="16150" CenterY="3150" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Casp4" GeneID="CASP4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="837">
+        <Comment/>
+        <Graphics CenterX="15050" CenterY="2850" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="CASP11" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="">
+        <Comment/>
+        <Graphics CenterX="14000" CenterY="3250" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Casp8" GeneID="CASP8" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="841">
+        <Comment/>
+        <Graphics CenterX="11700" CenterY="4200" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Traf3" GeneID="TRAF3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7187">
+        <Comment/>
+        <Graphics CenterX="3050" CenterY="4800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Tnfrsf25" GeneID="TNFRSF25" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8718">
+        <Comment/>
+        <Graphics CenterX="1350" CenterY="2750" Height="300" Width="1100"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Lta" GeneID="LTA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4049">
+        <Comment/>
+        <Graphics CenterX="1650" CenterY="1550" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Tnfrsf10b" GeneID="TNFRSF10B" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8795">
+        <Comment/>
+        <Graphics CenterX="2900" CenterY="2750" Height="300" Width="1200"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="94185" GeneID="TNFRSF21" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="27242">
+        <Comment/>
+        <Graphics CenterX="2900" CenterY="3050" Height="300" Width="1100"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Ikbkb" GeneID="IKBKB" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3551">
+        <Comment/>
+        <Graphics CenterX="1550" CenterY="5750" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Q60680" GeneID="CHUK" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1147">
+        <Comment/>
+        <Graphics CenterX="1550" CenterY="5450" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="NFKBIB" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4793">
+        <Comment/>
+        <Graphics CenterX="1750" CenterY="7200" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="NFKBIE" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4794">
+        <Comment/>
+        <Graphics CenterX="1750" CenterY="7500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="I-kappa B" GeneID="NFKBIA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4792">
+        <Comment/>
+        <Graphics CenterX="3550" CenterY="8100" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="NFKBIB" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4793">
+        <Comment/>
+        <Graphics CenterX="3550" CenterY="7500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="NFKBIE" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4794">
+        <Comment/>
+        <Graphics CenterX="3550" CenterY="7800" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="NF-kB p105" GeneID="NFKB1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4790">
+        <Comment/>
+        <Graphics CenterX="2300" CenterY="9950" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="NF-kB p65" GeneID="RELA" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5970">
+        <Comment/>
+        <Graphics CenterX="2300" CenterY="10250" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BIRC5" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="332">
+        <Comment/>
+        <Graphics CenterX="12650" CenterY="6300" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Trp73" GeneID="TP73" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7161">
+        <Comment/>
+        <Graphics CenterX="12900" CenterY="8100" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="TRP63" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="">
+        <Comment/>
+        <Graphics CenterX="12900" CenterY="8400" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="IRF1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3659">
+        <Comment/>
+        <Graphics CenterX="15150" CenterY="7900" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="IRF2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3660">
+        <Comment/>
+        <Graphics CenterX="15150" CenterY="8200" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Irf3" GeneID="IRF3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3661">
+        <Comment/>
+        <Graphics CenterX="15150" CenterY="8500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Irf4" GeneID="IRF4" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3662">
+        <Comment/>
+        <Graphics CenterX="16450" CenterY="7850" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Irf5" GeneID="IRF5" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3663">
+        <Comment/>
+        <Graphics CenterX="16450" CenterY="8150" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="Irf6" GeneID="IRF6" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3664">
+        <Comment/>
+        <Graphics CenterX="16450" CenterY="8450" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="IRF7" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3665">
+        <Comment/>
+        <Graphics CenterX="17850" CenterY="8150" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TNFRSF1A" GeneID="TNFRSF1A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="7132">
+        <Comment/>
+        <Graphics CenterX="6000" CenterY="2850" Height="300" Width="1100"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CRADD" GeneID="CRADD" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8738">
+        <Comment/>
+        <Graphics CenterX="6000" CenterY="3150" Height="300" Width="1100"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="RIPK1" GeneID="RIPK1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8737">
+        <Comment/>
+        <Graphics CenterX="7600" CenterY="2500" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="TRADD" GeneID="TRADD" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8717">
+        <Comment/>
+        <Graphics CenterX="7600" CenterY="3100" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CFLAR" GeneID="CFLAR" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="8837">
+        <Comment/>
+        <Graphics CenterX="6450" CenterY="1750" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="CDKN2A" GeneID="CDKN2A" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="1029">
+        <Comment/>
+        <Graphics CenterX="5850" CenterY="9850" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="PMAIP1" GeneID="PMAIP1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5366">
+        <Comment/>
+        <Graphics CenterX="7850" CenterY="9350" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BBC3" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="27113">
+        <Comment/>
+        <Graphics CenterX="7850" CenterY="9050" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BOK" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="666">
+        <Comment/>
+        <Graphics CenterX="7850" CenterY="9650" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="DIABLO" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="56616">
+        <Comment/>
+        <Graphics CenterX="9400" CenterY="6850" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="MCL1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="4170">
+        <Comment/>
+        <Graphics CenterX="5950" CenterY="6050" Height="300" Width="900"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="IGF1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3479">
+        <Comment/>
+        <Graphics CenterX="18800" CenterY="2200" Height="300" Width="600"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="IGF2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3481">
+        <Comment/>
+        <Graphics CenterX="18800" CenterY="2500" Height="300" Width="600"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="IGF1R" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="3480">
+        <Comment/>
+        <Graphics CenterX="18800" CenterY="3250" Height="300" Width="700"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="PIK3R1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="5295">
+        <Comment/>
+        <Graphics CenterX="18800" CenterY="4150" Height="300" Width="800"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="AKT1" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="207">
+        <Comment/>
+        <Graphics CenterX="18800" CenterY="4900" Height="300" Width="600"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BAD" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="572">
+        <Comment/>
+        <Graphics CenterX="18800" CenterY="5650" Height="300" Width="600"/>
+    </GeneProduct>
+    <GeneProduct BackpageHead="" GeneID="BCL2L2" GeneProduct-Data-Source="LocusLink" Type="unknown" Xref="" Name="599">
+        <Comment/>
+        <Graphics CenterX="5950" CenterY="5150" Height="300" Width="900"/>
+    </GeneProduct>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="4100" EndY="4650" StartX="3650" StartY="4500"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="10000" EndY="5000" StartX="8400" StartY="6700"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="10250" EndY="9950" StartX="9300" StartY="10100"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="8800" EndY="6200" StartX="6600" StartY="6300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="10800" EndY="1700" StartX="10800" StartY="1300"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="3450" EndY="11700" StartX="2800" StartY="11700"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="ff8000" EndX="3450" EndY="12100" StartX="2800" StartY="12100"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="11700" EndY="3850" StartX="10800" StartY="2200"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="6150" EndY="6700" StartX="6500" StartY="9050"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="6350" EndY="6750" StartX="7050" StartY="9800"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="4600" EndY="5300" StartX="4600" StartY="4950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="4600" EndY="6200" StartX="4600" StartY="5800"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="5350" EndY="10400" StartX="4500" StartY="6750"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="6450" EndY="9650" StartX="6650" StartY="9950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="2900" EndY="2350" StartX="2650" StartY="1350"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="3000" EndY="2300" StartX="4150" StartY="1300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14650" EndY="4350" StartX="14250" StartY="3500"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14900" EndY="4300" StartX="15000" StartY="3100"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="15200" EndY="4200" StartX="15800" StartY="3350"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="16100" EndY="3850" StartX="13400" StartY="3850"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14450" EndY="4700" StartX="12150" StartY="4200"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14400" EndY="4950" StartX="12250" StartY="4200"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14450" EndY="5350" StartX="12200" StartY="4300"/>
+    </Line>
+    <Line Style="Broken" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="15750" EndY="3200" StartX="14550" StartY="3250"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="11350" EndY="5000" StartX="11050" StartY="4900"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14400" EndY="4650" StartX="12300" StartY="4950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14450" EndY="5400" StartX="12250" StartY="5250"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="2750" EndY="4250" StartX="2150" StartY="4200"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="14450" EndY="4500" StartX="8400" StartY="1300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="11950" EndY="3750" StartX="8100" StartY="2950"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="11250" EndY="4050" StartX="8000" StartY="3000"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="2750" EndY="2300" StartX="2000" StartY="1750"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="7150" EndY="2750" StartX="5250" StartY="2550"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="3550" EndY="10800" StartX="2750" StartY="10400"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="1700" EndY="6950" StartX="1550" StartY="6300"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="2950" EndY="3950" StartX="2800" StartY="3650"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="3750" EndY="7100" StartX="3500" StartY="7350"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="2200" EndY="9550" StartX="1850" StartY="8750"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="3050" EndY="7700" StartX="2650" StartY="7700"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="9900" EndY="4250" StartX="11050" StartY="4250"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="8950" EndY="5800" StartX="9400" StartY="4700"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="2900" EndY="5650" StartX="2100" StartY="4500"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="8750" EndY="5750" StartX="8500" StartY="5000"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="8500" EndY="5650" StartX="7350" StartY="4000"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="9100" EndY="6100" StartX="10400" StartY="6400"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="8650" EndY="5850" StartX="6900" StartY="4900"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="500" EndY="5700" StartX="850" StartY="3100"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="1950" EndY="9750" StartX="450" StartY="6150"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="6150" EndY="10050" StartX="6400" StartY="10250"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7400" EndY="9400" StartX="6950" StartY="9400"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="7800" EndY="7900" StartX="7800" StartY="8850"/>
+    </Line>
+    <Line Style="Solid" Type="Line">
+        <Comment/>
+        <Graphics Color="000000" EndX="19750" EndY="3100" StartX="17750" StartY="3100"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="18800" EndY="3950" StartX="18800" StartY="3450"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="18800" EndY="4700" StartX="18800" StartY="4350"/>
+    </Line>
+    <Line Style="Solid" Type="Arrow">
+        <Comment/>
+        <Graphics Color="000000" EndX="18800" EndY="5450" StartX="18800" StartY="5100"/>
+    </Line>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="8800" EndY="6000" StartX="6400" StartY="5650"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="6200" EndY="9200" StartX="5900" StartY="8800"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="8250" EndY="10350" StartX="8100" StartY="10450"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="11950" EndY="5450" StartX="12250" StartY="5750"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="4350" EndY="10450" StartX="4450" StartY="10050"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="3600" EndY="10550" StartX="2750" StartY="10100"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="14150" EndY="5050" StartX="13050" StartY="5800"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="5900" EndY="4900" StartX="5900" StartY="4200"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="ff0000" EndX="7100" EndY="2300" StartX="6850" StartY="1950"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="5550" EndY="8750" StartX="5550" StartY="9650"/>
+    </LineShape>
+    <LineShape Type="Tbar">
+        <Comment/>
+        <Graphics Color="0000ff" EndX="12150" EndY="6450" StartX="9800" StartY="6850"/>
+    </LineShape>
+    <Label TextLabel="Apoptosis">
+        <Comment/>
+        <Graphics CenterX="4250" CenterY="10750" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="1250"/>
+    </Label>
+    <Label TextLabel="Activator of Cell Death">
+        <Comment/>
+        <Graphics CenterX="1400" CenterY="11700" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="2615"/>
+    </Label>
+    <Label TextLabel="Inhibitor of Cell Death">
+        <Comment/>
+        <Graphics CenterX="1350" CenterY="12100" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="2540"/>
+    </Label>
+    <Label TextLabel="Fas Ligand">
+        <Comment/>
+        <Graphics CenterX="10850" CenterY="600" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="1355"/>
+    </Label>
+    <Label TextLabel="DNA Fragmentation">
+        <Comment/>
+        <Graphics CenterX="11500" CenterY="9950" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="2330"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="6750" CenterY="8650" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="215"/>
+    </Label>
+    <Label TextLabel="e">
+        <Comment/>
+        <Graphics CenterX="6350" CenterY="8100" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="215"/>
+    </Label>
+    <Label TextLabel="Mitochondrion">
+        <Comment/>
+        <Graphics CenterX="8350" CenterY="7550" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="1745"/>
+    </Label>
+    <Label TextLabel="p">
+        <Comment/>
+        <Graphics CenterX="1650" CenterY="6500" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="230"/>
+    </Label>
+    <Label TextLabel="p">
+        <Comment/>
+        <Graphics CenterX="3800" CenterY="6950" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="230"/>
+    </Label>
+    <Label TextLabel="degredation">
+        <Comment/>
+        <Graphics CenterX="3650" CenterY="8450" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="1460"/>
+    </Label>
+    <Label TextLabel="b">
+        <Comment/>
+        <Graphics CenterX="2450" CenterY="4200" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="230"/>
+    </Label>
+    <Label TextLabel="Casp">
+        <Comment/>
+        <Graphics CenterX="3300" CenterY="5850" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="680"/>
+    </Label>
+    <Label TextLabel="b">
+        <Comment/>
+        <Graphics CenterX="2500" CenterY="5000" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="230"/>
+    </Label>
+    <Label TextLabel="p53 Related">
+        <Comment/>
+        <Graphics CenterX="13050" CenterY="7550" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="1205"/>
+    </Label>
+    <Label TextLabel="Interferon regulatory factors">
+        <Comment/>
+        <Graphics CenterX="16450" CenterY="7500" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="3275"/>
+    </Label>
+    <Label TextLabel="b">
+        <Comment/>
+        <Graphics CenterX="5900" CenterY="4600" Color="000000" FontName="Arial" FontSize="12" FontWeight="Bold" Height="285" Width="230"/>
+    </Label>
+    <Label TextLabel="IGF1R signaling pathway">
+        <Comment/>
+        <Graphics CenterX="18700" CenterY="1650" Color="000000" FontName="Arial" FontSize="10" FontWeight="Bold" Height="240" Width="2450"/>
+    </Label>
+    <Shape Type="Oval">
+        <Graphics CenterX="8400" CenterY="7000" Color="-1" Height="950" Rotation="0" Width="1503"/>
+    </Shape>
+    <Shape Type="Oval">
+        <Graphics CenterX="3300" CenterY="5850" Color="ffffff" Height="200" Rotation="0" Width="564"/>
+    </Shape>
+    <Shape Type="Rectangle">
+        <Graphics CenterX="15300" CenterY="8100" Color="-1" Height="1699" Rotation="0" Width="7001"/>
+    </Shape>
+    <Brace>
+        <Graphics CenterX="2900" CenterY="2400" Color="000000" Orientation="top" PicPointOffset="130" Width="4253"/>
+    </Brace>
+</Pathway>
+

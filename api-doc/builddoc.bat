@@ -1,0 +1,1 @@
+javadoc ..\src\Gmml*.java

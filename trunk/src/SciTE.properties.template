@@ -1,0 +1,4 @@
+classpath="C:/Program Files/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.1.2.jar";"C:/Program Files/eclipse/plugins/org.eclipse.core.runtime_3.1.2.jar";"C:/Program Files/eclipse/plugins/org.eclipse.jface_3.1.1.jar";"c:\jdom.jar";.
+command.build.*=javac -cp $(classpath) *.java
+command.go.*=java -cp $(classpath) "-Djava.library.path=C:/Program Files/eclipse/plugins/" GmmlVision
+command.go.subsystem.*=0

@@ -21,10 +21,6 @@ public class TestInputGroup extends Composite {
 	Text gexText;
 	Text mappText;
 	
-	File gdbFile;
-	File gexFile;
-	File mappFile;
-	
 	public TestInputGroup(Composite parent) {
 		super(parent, SWT.NONE);
 		
@@ -51,14 +47,15 @@ public class TestInputGroup extends Composite {
 		gexText.setLayoutData(textLayout);
 		gexButton = new Button(group, SWT.PUSH);
 		gexButton.setText("Browse");
-		
+		gexButton.addListener(SWT.Selection, new browseListener(GEX));
 		
 		mappLabel = new Label(group, SWT.CENTER);
-		mappLabel.setText("Pathway map:");
+		mappLabel.setText("Gmml pathway:");
 		mappText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		mappText.setLayoutData(textLayout);
 		mappButton = new Button(group, SWT.PUSH);
 		mappButton.setText("Browse");
+		mappButton.addListener(SWT.Selection, new browseListener(MAPP));
 		
 		group.pack();
 	}
@@ -72,21 +69,31 @@ public class TestInputGroup extends Composite {
 		
 		public void handleEvent(Event e) {
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+			String file;
 			switch(type) {
 			case GDB:
-				fileDialog.setFilterExtensions(new String[] {"*.gdb"});
-				fileDialog.setFilterNames(new String[] {"Gene Database"});
-				gdbFile = new File(fileDialog.open());
+				fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
+				fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
+				file = fileDialog.open();
+				if(file != null) {
+					gdbText.setText(file);
+				}
 				break;
 			case GEX:
-				fileDialog.setFilterExtensions(new String[] {"*.gex"});
-				fileDialog.setFilterNames(new String[] {"Expression Dataset"});
-				gexFile = new File(fileDialog.open());
+				fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
+				fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
+				file = fileDialog.open();
+				if(file != null) {
+					gexText.setText(file);
+				}
 				break;
 			case MAPP:
-				fileDialog.setFilterExtensions(new String[] {"*.mapp"});
-				fileDialog.setFilterNames(new String[] {"GenMAPP pathway"});
-				gdbFile = new File(fileDialog.open());
+				fileDialog.setFilterExtensions(new String[] {"*.xml","*.*"});
+				fileDialog.setFilterNames(new String[] {"Gmml Pathway","All files"});
+				file = fileDialog.open();
+				if(file != null) {
+					mappText.setText(file);
+				}
 				break;
 			}
 		}

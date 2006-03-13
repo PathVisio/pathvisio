@@ -5,6 +5,8 @@ public class TestData {
 	File gexFile;
 	File mappFile;
 	
+	TestDb db;
+	
 	public TestData() {
 		
 	}

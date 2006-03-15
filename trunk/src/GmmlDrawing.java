@@ -205,8 +205,6 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	{
 		if (isSelecting)
 		{
-			Rectangle2D.Double r = s.r;
-			s.r = null;
 			Iterator it = graphics.iterator();
 
 			while (it.hasNext())
@@ -215,10 +213,12 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 				if (o instanceof GmmlGraphics)
 				{
 					GmmlGraphics g = (GmmlGraphics) o;
-					if (g.intersects(r))
-					{
-						selection.addElement(g);
-					}
+					// TODO
+					// see if there is an intersection with the GmmlSelectionBox
+					//~ if (g.intersects(r))
+					//~ {
+						//~ selection.addElement(g);
+					//~ }
 				}				
 			}			
 			isSelecting = false;

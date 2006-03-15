@@ -1,4 +1,14 @@
+# for windows
+
 classpath="C:/Program Files/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.1.2.jar";"C:/Program Files/eclipse/plugins/org.eclipse.core.runtime_3.1.2.jar";"C:/Program Files/eclipse/plugins/org.eclipse.jface_3.1.1.jar";"c:\jdom.jar";.
 command.build.*=javac -cp $(classpath) *.java
 command.go.*=java -cp $(classpath) "-Djava.library.path=C:/Program Files/eclipse/plugins/" GmmlVision
+command.go.subsystem.*=0
+
+# for linux
+
+classpath=.:/usr/share/java/swt-gtk.jar:/usr/share/eclipse/plugins/org.eclipse.jface_3.1.1.jar:/usr/share/eclipse/plugins/org.eclipse.core.runtime_3.1.1.jar
+libpath=/home/martijn/lib
+command.build.*=javac -cp $(classpath) -d ../bin *.java
+command.go.*=cd ../bin && java -cp $(classpath) -Djava.library.path=$(libpath) CAMainFrame
 command.go.subsystem.*=0

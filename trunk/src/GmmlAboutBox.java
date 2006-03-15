@@ -1,39 +1,70 @@
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.*;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JFrame;
-
-
-
-
-public class GmmlAboutBox
+public class GmmlAboutBox extends Dialog
 {
 	
 	private static final long serialVersionUID = 1L;
 
-	public GmmlAboutBox() 
+	public GmmlAboutBox(Shell parent) 
 	{
-		JFrame f = new JFrame("About GMML-Vision");
-		f.setSize(325, 180);
+		super (parent);
+	}
 
-		Container content = f.getContentPane();
-		content.setBackground(Color.black);
+	public GmmlAboutBox(Shell parent, int style) 
+	{
+		super (parent, style);
+	}
+	
+	public void open()
+	{
+		Shell parent = getParent();
+		final Shell shell = new Shell (parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 
-		//Add the label
-		String text = "<html><center><h1>GMML-Vision</h1>H.C. Achterberg<br>" +
-				"R.M.H. Besseling<br>S.P.M.Crijns<br>I.Kaashoek<br>M.M.Palm<br>" +
-				"E.D Pelgrim<br>BiGCaT<br><center>";
-		ImageIcon logo = new ImageIcon("images/logo.jpg", "GMML-Vision Logo");
-		JLabel label = new JLabel(text, logo, JLabel.CENTER);
-		label.setFont(new Font("Arial", Font.BOLD, 12));
-		label.setForeground(new Color(0x88AAFF));
+		shell.setText ("About GMML-Vision");		
+		GridLayout ly = new GridLayout();
+		ly.numColumns = 2;
+		shell.setLayout (ly);
 		
-		f.getContentPane().add(label);
-		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		Label lbl = new Label (shell, SWT.NULL);
+		lbl.setText ("GMML-Vision");
+		GridData gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
+		gd.horizontalSpan = 2;		
+		lbl.setLayoutData (gd);
+		
+		lbl = new Label (shell, SWT.NULL);
+		Image img = new Image (shell.getDisplay(), "images/logo.jpg");
+		lbl.setImage (img);
 
-		f.setVisible(true);
+		lbl = new Label (shell, SWT.NULL);
+		lbl.setText ("R.M.H. Besseling\nS.P.M.Crijns\nI.Kaashoek\nM.M.Palm\n" +
+				"E.D Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\n\nBiGCaT");
+		
+		final Button btnOk = new Button (shell, SWT.PUSH);
+		btnOk.setText ("OK");
+		gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
+		gd.horizontalSpan = 2;
+		gd.widthHint = 60;
+		btnOk.setLayoutData (gd);
+		
+		btnOk.addListener(SWT.Selection, new Listener() {
+			public void handleEvent (Event event) {
+					shell.dispose();
+			}
+		});
+			
+		shell.pack();
+		shell.open();
+		
+		Display display = parent.getDisplay();
+		while (!shell.isDisposed())
+		{
+			if (!display.readAndDispatch())
+				display.sleep();			
+		}
+		
+		img.dispose();
 	}
 }

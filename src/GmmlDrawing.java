@@ -2,10 +2,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Color;
-//~ import java.awt.event.*;
 import java.util.*;
-//~ import javax.swing.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -17,8 +14,7 @@ import org.eclipse.swt.*;
  * visualized. The class also provides methods for mouse 
  * event handling.
  */
-//~ class GmmlDrawing extends JPanel implements MouseListener, MouseMotionListener, EventListener
-class GmmlDrawing extends Canvas
+class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, PaintListener
 {	
 	private static final long serialVersionUID = 1L;
 	
@@ -34,13 +30,14 @@ class GmmlDrawing extends Canvas
 	GmmlDrawingObject pressedObject	= null;	
 	
 	GmmlGraphics selectedGraphics	= null;
+	GmmlGraphics draggedGraphics	= null;
 	
 	GmmlSelectionBox s; 
 	
 	boolean isSelecting;
 		
-	double previousX;
-	double previousY;
+	int previousX;
+	int previousY;
 	
 	Dimension dims = new Dimension(1000, 1000);
 	double zoomPercentage = 100;
@@ -56,24 +53,17 @@ class GmmlDrawing extends Canvas
 		graphics		= new Vector();
 		handles			= new Vector();
 		lineHandles		= new Vector();
-		//~ selection		= new Vector();
+		selection		= new Vector();
 		
 		s = new GmmlSelectionBox(this);
 		
-		//~ addMouseListener(this);
-		//~ addMouseMotionListener(this);
 		
-		//~ this.setBackground(Color.white);
+		addMouseListener(this);
+		addMouseMoveListener(this);
+		addPaintListener (this);
 		
-		System.out.println ("Adding paint listener");
+		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
-		addPaintListener (new PaintListener() 
-		{
-			public void paintControl (PaintEvent e) {
-				System.out.println ("Paint event called");
-				GmmlDrawing.this.paintControl (e);
-			}
-		} );
 	}
 	
 	private void calculateSize()
@@ -82,12 +72,7 @@ class GmmlDrawing extends Canvas
 			(int)(dims.width*zoomPercentage/100), 
 			(int)(dims.height*zoomPercentage/100)
 		);
-		//~ redraw();
 	}
-
-	//~ public void actionPerformed(ActionEvent e)
-	//~ {
-	//~ }
 
 	/**
  	 * Adds an element to the drawing. Checks if 
@@ -120,189 +105,137 @@ class GmmlDrawing extends Canvas
 		}
 	}
 
-	//~ /**
-	 //~ * Handles mouse click input
-	 //~ */
-	//~ public void mouseClicked(MouseEvent e)
-		//~ {
-	//~ /*		if (draggedGraphics != null)
-			//~ {	
-				//~ // dragging in progress...
-				//~ return;
-			//~ }
-	
-			//~ double x = e.getX();
-			//~ double y = e.getY();
-			
-			//~ Point2D p = new Point2D.Double(x, y);
-			
-			//~ Iterator it = graphics.iterator();
-			
-			//~ boolean graphicsFound = false;
-			//~ while (it.hasNext() && !graphicsFound)
-			//~ {
-				//~ GmmlGraphics g = (GmmlGraphics) it.next();
-				//~ g.isContain(p);
-			//~ }
-			//~ repaint();*/
-		//~ }
-
-	//~ /**
-	 //~ * handles mouse dragg input
-	 //~ */
-	//~ public void mouseDragged(MouseEvent e)
-	//~ {
-		//~ if (!selection.isEmpty())
-		//~ {
-			//~ double x = e.getX();
-			//~ double y = e.getY();
-			
-			//~ Iterator it = selection.iterator();
-			//~ while (it.hasNext())
-			//~ {
-				//~ GmmlGraphics g = (GmmlGraphics) it.next();
-				//~ g.isSelected = true;
-				//~ g.moveBy(x - previousX, y - previousY);
-			//~ }
-			//~ previousX = x;
-			//~ previousY = y;			
-		//~ }
+	/**
+	 * handles mouse movement
+	 */
+	public void mouseMove(MouseEvent e)
+	{
+		if (!selection.isEmpty())
+		{		
+			Iterator it = selection.iterator();
+			while (it.hasNext())
+			{
+				GmmlGraphics g = (GmmlGraphics) it.next();
+				g.isSelected = true;
+				g.moveBy(e.x - previousX, e.y - previousY);
+			}
+			previousX = e.x;
+			previousY = e.y;			
+		}
 		
-		//~ if (draggedObject != null)
-		//~ {
-			//~ double x = e.getX();
-			//~ double y = e.getY();
+		if (draggedObject != null)
+		{
+			draggedObject.moveBy(e.x - previousX, e.y - previousY);
 			
-			//~ draggedObject.moveBy(x - previousX, y - previousY);
-			
-			//~ previousX = x;
-			//~ previousY = y;
+			previousX = e.x;
+			previousY = e.y;
 	
-			//~ repaint();
-		//~ }
+			redraw();
+		}
 						
-		//~ if (isSelecting)
-		//~ {
-			//~ s.resize(e.getX() - s.x, e.getY() - s.y);
-			//~ repaint();
-		//~ }
-	//~ }
+		if (isSelecting)
+		{
+			s.x2 = e.x;
+			s.y2 = e.y;			
+			redraw();
+		}
+	}
 
-	//~ /**
-	 //~ * Handles mouse entered input
-	 //~ */
-	//~ public void mouseEntered(MouseEvent e)
-	//~ {
-	//~ }
+	/**
+	 * Handles mouse entered input
+	 */
+	public void mouseDoubleClick(MouseEvent e)
+	{
+	}
 
-	//~ /**
-	 //~ * Handles mouse Exited input
-	 //~ */
-	//~ public void mouseExited(MouseEvent e)
-	//~ {
-	//~ }
-
-	//~ /**
-	 //~ * Handles mouse Moved input
-	 //~ */
-	//~ public void mouseMoved(MouseEvent e)
-	//~ {
-	//~ }
-
-	//~ /**
-	 //~ * Handles mouse Pressed input
-	 //~ */
-	//~ public void mousePressed(MouseEvent e)
-	//~ {
-		//~ if (draggedObject != null)
-		//~ {	
-			//~ // dragging in progress...
-			//~ return;
-		//~ }
-
-		//~ double x = e.getX();
-		//~ double y = e.getY();
+	/**
+	 * Handles mouse Pressed input
+	 */
+	public void mouseDown(MouseEvent e)
+	{
+		if (draggedObject != null)
+		{	
+			// dragging in progress...
+			return;
+		}
 		
-		//~ Point2D p = new Point2D.Double(x, y);
+		Point2D p = new Point2D.Double(e.x, e.y);
 		
-		//~ Iterator it = drawingObjects.iterator();
-		//~ while (it.hasNext())
-		//~ {
-			//~ GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-			//~ if (o.isContain(p))
-			//~ {
-				//~ pressedObject = o;
-				//~ if (o instanceof GmmlGraphics)
-				//~ {
-					//~ GmmlGraphics g = (GmmlGraphics) o;
-					//~ selectedGraphics = g;
-				//~ }
-				//~ break;
-			//~ }
-		//~ }
-		//~ repaint();
+		Iterator it = drawingObjects.iterator();
+		while (it.hasNext())
+		{
+			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+			if (o.isContain(p))
+			{
+				pressedObject = o;
+				if (o instanceof GmmlGraphics)
+				{
+					GmmlGraphics g = (GmmlGraphics) o;
+					selectedGraphics = g;
+				}
+				break;
+			}
+		}
+		redraw();
 		
-		//~ if (pressedObject != null)
-		//~ {
-			//~ // start dragging
-			//~ isSelecting = false;
+		if (pressedObject != null)
+		{
+			// start dragging
+			isSelecting = false;
 						
-			//~ previousX = x;
-			//~ previousY = y;
+			previousX = e.x;
+			previousY = e.y;
 			
-			//~ draggedObject = pressedObject;
-			//~ pressedObject = null;
-		//~ }
+			draggedObject = pressedObject;
+			pressedObject = null;
+		}
 		
-		//~ else if (pressedObject == null)
-		//~ {
-			//~ // start selecting
-			//~ isSelecting = true;
-			//~ initSelection(p);
-		//~ }
-	//~ }
+		else if (pressedObject == null)
+		{
+			// start selecting
+			isSelecting = true;
+			initSelection(p);
+		}
+	}
 	
-	//~ /**
-	 //~ * Handles mouse Released input
-	 //~ */
-	//~ public void mouseReleased(MouseEvent e)
-	//~ {
-		//~ if (isSelecting)
-		//~ {
-			//~ Rectangle2D.Double r = s.r;
-			//~ s.r = null;
-			//~ Iterator it = graphics.iterator();
+	/**
+	 * Handles mouse Released input
+	 */
+	public void mouseUp(MouseEvent e)
+	{
+		if (isSelecting)
+		{
+			Rectangle2D.Double r = s.r;
+			s.r = null;
+			Iterator it = graphics.iterator();
 
-			//~ while (it.hasNext())
-			//~ {
-				//~ GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-				//~ if (o instanceof GmmlGraphics)
-				//~ {
-					//~ GmmlGraphics g = (GmmlGraphics) o;
-					//~ if (g.intersects(r))
-					//~ {
-						//~ selection.addElement(g);
-					//~ }
-				//~ }				
-			//~ }			
-			//~ isSelecting = false;
-			//~ repaint();
-		//~ }
+			while (it.hasNext())
+			{
+				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+				if (o instanceof GmmlGraphics)
+				{
+					GmmlGraphics g = (GmmlGraphics) o;
+					if (g.intersects(r))
+					{
+						selection.addElement(g);
+					}
+				}				
+			}			
+			isSelecting = false;
+			redraw();
+		}
 		
-		//~ else if (draggedObject == null)
-		//~ {
-			//~ return;
-		//~ }
+		else if (draggedObject == null)
+		{
+			return;
+		}
 		
-		//~ else
-		//~ {
-			//~ double x = e.getX();
-			//~ double y = e.getY();
-			
-			//~ draggedObject.moveBy(x - previousX, y - previousY);
-			//~ draggedObject = null;
-		//~ }
-	//~ }
+		else
+		{
+			draggedObject.moveBy(e.x - previousX, e.y - previousY);
+			draggedObject = null;
+		}
+	}
 	
 	/**
 	 * Paints all components in the drawing.
@@ -310,7 +243,6 @@ class GmmlDrawing extends Canvas
 	 * painting process
 	 */
 	public void paintControl (PaintEvent e)
-	//~ public void paintComponent(Graphics g)
 	{
 		GC gc = e.gc;
 				
@@ -375,12 +307,14 @@ class GmmlDrawing extends Canvas
 	 * and then setting it to the position specified
 	 * @param p - the point to start with the selection
 	 */
-	//~ private void initSelection(Point2D p)
-	//~ {
-		//~ selection.clear();
-		//~ s.resetRectangle();
-		//~ s.x = p.getX();
-		//~ s.y = p.getY();		
-	//~ }
+	private void initSelection(Point2D p)
+	{
+		selection.clear();
+		s.resetRectangle();
+		s.x1 = (int)p.getX();
+		s.x2 = s.x1;
+		s.y1 = (int)p.getY();		
+		s.y2 = s.y1;		
+	}
 	
 } // end of class

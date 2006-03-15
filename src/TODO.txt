@@ -1,0 +1,5 @@
+Note: please don't remove items that are done, but mark them!
+
+* resize gene labels when zooming
+* "Zoom to Fit"
+

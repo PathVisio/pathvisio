@@ -229,8 +229,9 @@ class GmmlVision extends ApplicationWindow
 		}
 		public void run () {
 			// TODO
-			MessageDialog.openInformation(window.getShell(), "About", "(c) 2006 by Martijn van Iersel");
-			//~ new GmmlAboutBox();
+			//~ MessageDialog.openInformation(window.getShell(), "About", "(c) 2006 by Martijn van Iersel");
+			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
+			gmmlAboutBox.open();
 		}
 	}
 	private AboutAction aboutAction = new AboutAction(this);

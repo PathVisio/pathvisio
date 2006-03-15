@@ -15,10 +15,10 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 {
 	private static final long serialVersionUID = 1L;
 
-	double x;
-	double y;
-
+	int x1, y1, x2, y2;
+	
 	Rectangle2D.Double r;
+
 	GmmlDrawing canvas;
 	
 	/**
@@ -29,6 +29,7 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	{
 		this.canvas = canvas;
 		canvas.addElement(this);
+		resetRectangle();
 	}	
 	
 	/**
@@ -37,17 +38,10 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	 */
 	public void resetRectangle()
 	{
-		r = new Rectangle2D.Double(0, 0, 0, 0);
-	}
-
-	/**
-	 * Resize the selectionbox to the specified widht and height
-	 * @param width
-	 * @param height
-	 */
-	public void resize(double width, double height)
-	{
-		r = new Rectangle2D.Double(x, y, width, height);
+		x1 = 0;
+		y1 = 0;
+		x2 = 0;
+		y2 = 0;
 	}
 	
 	/*
@@ -56,21 +50,15 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	 */
 	protected void draw(PaintEvent e)
 	{
+		
+		if(canvas.isSelecting)
+		{
+			e.gc.setForeground (e.display.getSystemColor (SWT.COLOR_BLUE));
+			e.gc.setBackground (e.display.getSystemColor (SWT.COLOR_BLUE));
+			e.gc.setLineStyle (SWT.LINE_DASH);
+			e.gc.drawRectangle (x1, y1, x2-x1, y2-y1);
 
-		//~ if(r != null && canvas.isSelecting)
-		//~ {
-			//~ Graphics2D g2D = (Graphics2D) g;			
-				
-			//~ setDrawableRectangle();
-
-			//~ g2D.setColor(new Color(0f, 0f, 0.8f, 0.5f));
-			//~ g2D.fill(r);
-			
-			//~ g2D.setStroke(new BasicStroke(2.0f));
-			//~ g2D.setColor(new Color(0f, 0f, 0.5f));
-			//~ g2D.draw(r);
-
-		//~ }
+		}
 	}
 	
 	/*
@@ -81,48 +69,5 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	{
 		return false;
 	}
-	
-	/**
-	 * Sets the selectionbox rectangle so that it can be drawn
-	 */
-	private void setDrawableRectangle()
-	{
-		double width  = r.width;
-		double height = r.height;
-		
-		double x = r.x;
-		double y = r.y;
-		
-		boolean changed = false;
-		
-      //Make sure rectangle width and height are positive.
-      if (width < 0)
-      {
-	     	changed = true;
-	      width = 0 - width;
-         x = x - width + 1;
-         if (x < 0)
-         {
-         	width += x;
-            x = 0;
-      	}
-      }
-      if (height < 0)
-      {
-      	changed = true;
-	      height = 0 - height;
-         y = y - height + 1;
-         if (y < 0)
-         {
-         	height += y;
-            y = 0;
-         }
-      }
-
-      if (changed)
-      {
-      	r = new Rectangle2D.Double(x, y, width, height);
-	   }
-	}
-    
+	    
 } // end of class

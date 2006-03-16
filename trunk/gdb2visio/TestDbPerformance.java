@@ -25,6 +25,8 @@ public class TestDbPerformance extends ApplicationWindow {
 	
 	TestThread testThread;
 	
+	int nrTests;
+	
 	public TestDbPerformance() {
 		super(null);
 		testDb = new TestDb();
@@ -68,6 +70,9 @@ public class TestDbPerformance extends ApplicationWindow {
     	tdb.setBlockOnOpen(true);
     	
     	tdb.open();
+    	if(tdb.testThread != null) {
+    		tdb.testThread.interrupt();
+    	}
     	Display.getCurrent().dispose();
     }
 	
@@ -83,45 +88,89 @@ public class TestDbPerformance extends ApplicationWindow {
     	});
     }
     
-    private long gdbTime;
-    private long gexTime;
-    private long mappTime;
+    public void errorMessage(int eNr) {
+    	final int errorNr = eNr;
+    	display.asyncExec(new Runnable() {
+    		public void run() {
+    			MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_WARNING | SWT.OK);
+    			switch(errorNr) {
+    			case 1: // File missing
+    				messageBox.setMessage("Input files missing!");
+        			break;
+    			case 2: // Number of tests not a number
+    				messageBox.setMessage("Number of tests specified is not a valid number");
+    				break;
+    			default: // General error
+    				messageBox.setMessage("Error");
+    			}
+    			messageBox.open();
+    		}
+    	});
+    }
     
     public void doTests() {
     	// Connect to the database
     	testDb.connect();
     	// Recreate the tables
     	testDb.createTables();
-		// perform all tests
-    	gdbTime = testDb.loadGdbTest();
-    	gexTime = testDb.loadGexTest();
-    	mappTime = testDb.loadMappTest();
+    	// Create arrays for the test results
+    	long[] gdbTimes = new long[nrTests];
+    	long[] gexTimes = new long[nrTests];
+    	long[] mappTimes = new long[nrTests];
+    	// perform all tests
+    	for(int i = 0; i < nrTests; i++) {
+    		gdbTimes[i] = testDb.loadGdbTest();
+    		gexTimes[i] = testDb.loadGexTest();
+    		mappTimes[i] = testDb.loadMappTest();
+    		// Check if test is aborted
+    		if(gdbTimes[i] > -1 & gexTimes[i] > -1 & mappTimes[i] > -1) {
+        		// Create output strings
+        		String thisResult = "Results from test " + (i+1) + ":" + nl;
+        		String gdbString = "> Loading Gene database took:" + gdbTimes[i] + " ms" + nl;
+        		String gexString = "> Loading Expression data took:" + gexTimes[i] + " ms" + nl;
+        		String mappString = "> Loading Pathway map took:" + mappTimes[i] + " ms" + nl;
+        		updateTestResults(thisResult + gdbString + gexString + mappString);
+    		} else {
+    			updateTestResults("Test aborted!" + nl);
+    			testDb.close();
+    			invertStartButtonLabel();
+    			return;
+    		}
+    	}
     	// Close the connection
     	testDb.close();
-    	// update user interface
-    	display.asyncExec(new Runnable() {
-    		public void run() {
-    			if(gdbTime > -1) {
-    				resultText.append("> Loading Gene database took " + gdbTime + " ms" + nl);
-    			} else {
-    				resultText.append("> Loading Gene database was aborted" + nl);
-    			}
-    			if(gexTime > -1) {
-    				resultText.append("> Loading Expression data took " + gexTime + " ms" + nl);
-    			} else {
-    				resultText.append("> Loading Expression data was aborted" + nl);
-    			}
-    			if(mappTime > -1) {
-    				resultText.append("> Loading Pathway map took " + mappTime + " ms" + nl);
-    			} else {
-    				resultText.append("> Loading Pathway map was aborted" + nl);
-    			}
-    		}
-    	});
+    	// Calculate average results
+    	long gdbAvg = calculateAverage(gdbTimes);
+    	long gexAvg = calculateAverage(gexTimes);
+    	long mappAvg = calculateAverage(mappTimes);
+		// Create output strings
+		String thisResult = "Average results over " + nrTests + " tests:" + nl;
+		String gdbString = "> Loading Gene database:" + gdbAvg + " ms" + nl;
+		String gexString = "> Loading Expression data:" + gexAvg + " ms" + nl;
+		String mappString = "> Loading Pathway map:" + mappAvg + " ms" + nl;
+		updateTestResults(thisResult + gdbString + gexString + mappString);
     	// Invert the startButton label
     	invertStartButtonLabel();
 	}
+    
+    public long calculateAverage(long[] array) {
+    	long sum = 0;
+    	for(int i = 0; i < array.length; i++) {
+    		sum += array[i];
+    	}
+    	return sum / array.length;
+    }
 	
+    public void updateTestResults(String resultString) {
+    	final String result = resultString;
+    	// update user interface
+    	display.asyncExec(new Runnable() {
+    		public void run() {
+    			resultText.append(result);
+    		}
+    	});
+    }
+    
   	class startButtonAdapter extends SelectionAdapter {
     	public startButtonAdapter() {
     		super();
@@ -140,6 +189,13 @@ public class TestDbPerformance extends ApplicationWindow {
     				if(!mapp.equals("")) {
     					testDb.mappFile = new File(mapp);
     				}
+    				// Try to set the number of tests specified
+    				nrTests = 1;
+    				try {
+    					nrTests = Integer.parseInt(testInput.nrTestText.getText());
+    				} catch(NumberFormatException ne) {
+    					errorMessage(2);
+    				}
     				// Invert the startButton label
     				invertStartButtonLabel();
     				resultText.append("Starting database tests" + nl);
@@ -147,15 +203,12 @@ public class TestDbPerformance extends ApplicationWindow {
     				testThread = new TestThread();
     				testThread.start();
     			} else {
-    				MessageBox fileMissing = new MessageBox(getShell(),SWT.ICON_WARNING | SWT.OK);
-    				fileMissing.setMessage("Input files missing!");
-    				fileMissing.open();
+    				errorMessage(1);
     			}
     		} else {
     			// Clicked abort, interrupt the thread
     			testThread.interrupt();
-    		}
-    						
+    		}				
 		}    	
     }
 	

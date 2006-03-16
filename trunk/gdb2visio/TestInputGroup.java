@@ -10,6 +10,8 @@ public class TestInputGroup extends Composite {
 	final int GEX = 1;
 	final int MAPP = 2;
 	
+	final String genMappDir = "C:\\Genmapp 2 data";
+	
 	Group group;
 	Button gdbButton;
 	Button gexButton;
@@ -17,9 +19,11 @@ public class TestInputGroup extends Composite {
 	Label gdbLabel;
 	Label gexLabel;
 	Label mappLabel;
+	Label nrTestLabel;
 	Text gdbText;
 	Text gexText;
 	Text mappText;
+	Text nrTestText;
 	
 	public TestInputGroup(Composite parent) {
 		super(parent, SWT.NONE);
@@ -57,6 +61,11 @@ public class TestInputGroup extends Composite {
 		mappButton.setText("Browse");
 		mappButton.addListener(SWT.Selection, new browseListener(MAPP));
 		
+		nrTestLabel = new Label(group, SWT.CENTER);
+		nrTestLabel.setText("Number of tests:");
+		nrTestText = new Text(group, SWT.SINGLE | SWT.BORDER);
+		nrTestText.setText("1");
+		
 		group.pack();
 	}
 	
@@ -72,6 +81,7 @@ public class TestInputGroup extends Composite {
 			String file;
 			switch(type) {
 			case GDB:
+				fileDialog.setFilterPath(genMappDir + "\\Gene databases");
 				fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
 				fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
 				file = fileDialog.open();
@@ -80,6 +90,7 @@ public class TestInputGroup extends Composite {
 				}
 				break;
 			case GEX:
+				fileDialog.setFilterPath(genMappDir + "\\Expression datasets");
 				fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
 				fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 				file = fileDialog.open();
@@ -88,6 +99,7 @@ public class TestInputGroup extends Composite {
 				}
 				break;
 			case MAPP:
+				fileDialog.setFilterPath(genMappDir + "\\MAPPs");
 				fileDialog.setFilterExtensions(new String[] {"*.xml","*.*"});
 				fileDialog.setFilterNames(new String[] {"Gmml Pathway","All files"});
 				file = fileDialog.open();

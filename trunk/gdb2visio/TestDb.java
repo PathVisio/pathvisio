@@ -11,6 +11,7 @@ public class TestDb {
 		"jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 	
 	volatile boolean isInterrupted;
+	
 	File gdbFile;
 	File gexFile;
 	File mappFile;
@@ -84,6 +85,7 @@ public class TestDb {
 	}
 	
 	public void loadGdb() {
+		progress = 0;
 		System.out.println ("Info:  Fetching data from gdb");
 		try
 		{

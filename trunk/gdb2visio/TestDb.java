@@ -1,9 +1,6 @@
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import org.jdom.*;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
 
 public class TestDb {
 	final static String database_after = ";DriverID=22;READONLY=true";
@@ -11,18 +8,18 @@ public class TestDb {
 		"jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 	
 	volatile boolean isInterrupted;
+	public double progress;
 	
 	File gdbFile;
 	File gexFile;
 	File mappFile;
+	File exprFile;
 	
 	Connection conGdb;
 	Connection conGex;
 	Connection conHdb;
 	
 	String[][] mappData;
-	
-	HashMap geneProductMappings;
 	
 	public TestDb() {
 		isInterrupted = false;	
@@ -64,7 +61,7 @@ public class TestDb {
 		// Check if a mapp file is specified
 		if(mappFile != null) {
 			// Load the mapp
-			loadGmml();
+			mappData = FileIO.loadGmml(mappFile);
 		} else {
 			// Get the standard mapp data
 			standardMapp();
@@ -89,10 +86,13 @@ public class TestDb {
 		System.out.println ("Info:  Fetching data from gdb");
 		try
 		{
-			Statement s = conGdb.createStatement();
+			Statement s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet r = s.executeQuery(
 					"SELECT * FROM relations"
 				);
+			r.last();
+			int nrRelations = r.getRow();
+			r.beforeFirst();
 			
 			PreparedStatement pstmt = conHdb.prepareStatement(
 				"INSERT INTO link				" +
@@ -102,14 +102,17 @@ public class TestDb {
 				"VALUES	(?, ?, ?, ?, ?)			");
 
 			while (r.next())
-			{
-				
+			{		
 				String codeLeft = r.getString("SystemCode");
 				String codeRight = r.getString("RelatedCode");
 				String tableName = r.getString("Relation");
-				
-				Statement sFetch = conGdb.createStatement();
+								
+				Statement sFetch = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				ResultSet rFetch = sFetch.executeQuery("SELECT * FROM `" + tableName + "`");
+				rFetch.last();
+				int nrGenes = rFetch.getRow();
+				rFetch.beforeFirst();
+				
 				System.out.println ("Debug: working on table " + tableName);
 				
 				while (rFetch.next())
@@ -118,6 +121,7 @@ public class TestDb {
 					if(isInterrupted) {
 						return;
 					}
+				
 					String idLeft = rFetch.getString ("Primary");
 					String idRight = rFetch.getString ("Related");
 					String bridge = rFetch.getString ("Bridge");
@@ -134,14 +138,30 @@ public class TestDb {
 					}
 					catch (SQLException e)
 					{
-						System.out.println ("Error: " + e.getMessage());
+						//System.out.println ("Error: " + e.getMessage());
 						//e.printStackTrace();
 					}
+					// Update progress monitor
+					progress += (100 / (double)(nrGenes * nrRelations));
 				}
+				
+				// Fill gene table
+				// Get the tables with gene information
+				Statement gts = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				ResultSet gtr = s.executeQuery(
+						"SELECT * FROM systems"
+					);
+				
+				PreparedStatement cgPstmt = conHdb.prepareStatement(
+						"INSERT INTO gene " +
+						"	(id, code," +
+						"	 backpageText)" +
+						"VALUES (?, ?, ?)");
+				
 			}
 		} catch (Exception e)
 		{
-			System.out.println ("Error: " + e.getMessage());
+			//System.out.println ("Error: " + e.getMessage());
 			//e.printStackTrace();
 		}
 	}
@@ -151,7 +171,6 @@ public class TestDb {
 		try
 		{
 			Statement s = conGex.createStatement();
-			
 			ResultSet r = s.executeQuery (
 				"SELECT * FROM Expression"
 			);
@@ -216,6 +235,13 @@ public class TestDb {
 		}
 	}
 	
+	public void loadExprData() {
+		String[][] exprData = FileIO.loadExprData(exprFile);
+		// For every row:
+		// -> Check if the geneID is in the link table
+		// -> 
+	}
+	
 	public void loadMapp() {
 		System.out.println ("Info:  Loading mapp data");
 		try {
@@ -242,42 +268,29 @@ public class TestDb {
 		}
 	}
 	
-	public void loadGmml() {
-		createGmmlMappings();
-		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
+	public void createGdbTextTable() {
 		try {
-			// build JDOM tree
-			Document doc = builder.build(mappFile);
-			// determine the number of geneproducts
-			int mappSize = 0;
-			Iterator it = doc.getRootElement().getChildren().iterator();
-			while(it.hasNext()) {
-				Element el = (Element)it.next();
-				if(el.getName().equals("GeneProduct")) {
-					mappSize++;
-				}
-			}
-			// create an array to store the mapp data
-			System.out.println(mappSize);
-			mappData = new String[mappSize][2];
-			// get the pathway element
-			it = doc.getRootElement().getChildren().iterator();
-			int i = 0;
-			while(it.hasNext()) {
-				Element el = (Element)it.next();
-				if(el.getName().equals("GeneProduct")) {
-					System.out.println(el.getAttributeValue("GeneProduct-Data-Source"));
-					mappData[i][1] = el.getAttributeValue("Name");
-					mappData[i][0] = (String)geneProductMappings.get(
-							el.getAttributeValue("GeneProduct-Data-Source"));
-					i++;
-				}
-
-			}
-		} catch(JDOMException je) {
-			System.out.println(je.getMessage());
-		} catch(IOException ioe) {
-			System.out.println(ioe.getMessage());
+			// Try to delete existing text file
+			File textTable = new File("testgdb.txt");
+			textTable.delete();
+			Statement sh = conHdb.createStatement();
+			sh.executeQuery("DROP TABLE link IF EXISTS");
+			sh.executeQuery(
+					"CREATE TEXT TABLE						" +
+					"		link							" +
+					" (   idLeft VARCHAR(50) NOT NULL,		" +
+					"     codeLeft VARCHAR(50) NOT NULL,	" +
+					"     idRight VARCHAR(50) NOT NULL,		" +
+					"     codeRight VARCHAR(50) NOT NULL,	" +
+					"     bridge VARCHAR(50),				" +
+					"     PRIMARY KEY (idLeft, codeLeft,    " +
+					"		idRight, codeRight) 			" +
+			" )										");
+			sh.executeQuery("SET TABLE link SOURCE \"testgdb.txt\"");
+		} catch (Exception e)
+		{
+			System.out.println ("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -288,7 +301,7 @@ public class TestDb {
 			Statement sh = conHdb.createStatement();
 			sh.executeQuery("DROP TABLE link IF EXISTS");
 			sh.executeQuery(
-					"CREATE CACHED TABLE							" +
+					"CREATE CACHED TABLE					" +
 					"		link							" +
 					" (   idLeft VARCHAR(50) NOT NULL,		" +
 					"     codeLeft VARCHAR(50) NOT NULL,	" +
@@ -339,22 +352,48 @@ public class TestDb {
 		}
 	}
 	
-	public void createGmmlMappings() {
-		geneProductMappings = new HashMap();
-		String[] systemCodes = 
-		{ 
-		"D", "F", "G", "I", "L", "M",
-		"Q", "R", "S", "T", "U",
-		"W", "Z", "X", "O"
-		};
-		String[] dataSources = 
+	public void connect(boolean gdb, boolean gex) {
+		try {
+			// Load Sun's jdbc-odbc driver
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			if(gdb) {
+				conGdb = DriverManager.getConnection(
+						database_before + gdbFile.toString() + database_after, "", "");
+			}
+			if(gex) {
+				conGex = DriverManager.getConnection(
+						database_before + gexFile.toString() + database_after, "", "");
+			}
+			Class.forName("org.hsqldb.jdbcDriver" );
+			conHdb = DriverManager.getConnection("jdbc:hsqldb:file:HsDb", "sa", "");
+		}
+		catch (Exception e) {
+			System.out.println ("Error: " +e.getMessage());
+			e.printStackTrace();
+		} 
+	}
+	
+	public void close()
+	{
+		System.out.println ("Info:  Closing all connections");
+		try
 		{
-		"SGD", "FlyBase", "GenBank", "InterPro" ,"LocusLink", "MGI",
-		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
-		"WormBase", "ZFIN", "Affy", "Other"
-		};
-		for(int i = 0; i < systemCodes.length; i++) {
-			geneProductMappings.put(dataSources[i],systemCodes[i]);
+			if(conGdb != null) {
+				conGdb.close();
+			}
+
+			Statement sh = conHdb.createStatement();
+			sh.executeQuery("SHUTDOWN"); // required, to write last changes
+			
+			conHdb.close();
+			
+			if(conGex != null) {
+				conGex.close();
+			}
+		} catch (Exception e)
+		{
+			System.out.println ("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -540,45 +579,6 @@ public class TestDb {
 			{"S", "A1AU_HUMAN"},
 			{"S", "O14731"}};
 			*/
-	}
-	
-	public void connect() {
-		try {
-			// Load Sun's jdbc-odbc driver
-			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-			conGdb = DriverManager.getConnection(
-					database_before + gdbFile.toString() + database_after, "", "");
-			
-			conGex = DriverManager.getConnection(
-					database_before + gexFile.toString() + database_after, "", "");
-			
-			Class.forName("org.hsqldb.jdbcDriver" );
-			
-			conHdb = DriverManager.getConnection("jdbc:hsqldb:file:HsDb", "sa", "");
-		} 
-		catch (Exception e) {
-			System.out.println ("Error: " +e.getMessage());
-			e.printStackTrace();
-		} 
-	}
-	
-	public void close()
-	{
-		System.out.println ("Info:  Closing all connections");
-		try
-		{
-			conGdb.close();
-			
-			Statement sh = conHdb.createStatement();
-			sh.executeQuery("SHUTDOWN"); // required, to write last changes
-			
-			conHdb.close();
-			conGex.close();
-		} catch (Exception e)
-		{
-			System.out.println ("Error: " + e.getMessage());
-			e.printStackTrace();
-		}
 	}
 	
 }

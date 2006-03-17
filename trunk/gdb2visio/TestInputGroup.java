@@ -20,10 +20,14 @@ public class TestInputGroup extends Composite {
 	Label gexLabel;
 	Label mappLabel;
 	Label nrTestLabel;
+	Label selectTestLabel;
 	Text gdbText;
 	Text gexText;
 	Text mappText;
 	Text nrTestText;
+	Combo selectTest;
+	
+	public int testType;
 	
 	public TestInputGroup(Composite parent) {
 		super(parent, SWT.NONE);
@@ -65,6 +69,17 @@ public class TestInputGroup extends Composite {
 		nrTestLabel.setText("Number of tests:");
 		nrTestText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		nrTestText.setText("1");
+		Label dummy = new Label(group, SWT.CENTER);
+		dummy.setText("");
+		
+		selectTestLabel = new Label(group,SWT.CENTER);
+		selectTestLabel.setText("Choose test:");
+		selectTest = new Combo (group, SWT.READ_ONLY);
+		selectTest.setItems (new String [] {"Load gdb (hsqldb)", "Load gdb (Daffodil)",
+				"Load gdb (Derby)","Load gdb (McKoi)","Load gdb using hsqldb TEXT table",
+				"Load gdb, gex and mapp with hsql"});
+		selectTest.select(0);
+		selectTest.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		group.pack();
 	}

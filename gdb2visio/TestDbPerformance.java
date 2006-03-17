@@ -152,7 +152,7 @@ public class TestDbPerformance extends ApplicationWindow {
 				String mapp = testInput.mappText.getText();
 				int testType = testInput.selectTest.getSelectionIndex();
 				// Check for required files
-				if((!gdb.equals("") | testType > 1) && (!gex.equals("") | (testType !=4))) {
+				if(!gdb.equals("") && (!gex.equals("") | (testType !=4))) {
 					testDb.gdbFile = new File(gdb);
 					testDb.gexFile = new File(gex);
 					if(!mapp.equals("")) {

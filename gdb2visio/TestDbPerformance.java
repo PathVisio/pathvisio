@@ -25,7 +25,6 @@ public class TestDbPerformance extends ApplicationWindow {
 	ProgressIndicator indicator;
 	IProgressMonitor progressMonitor;
 	
-	TestDb testDb;
 	TestDbEngines testDbEngines;
 	
 	TestThread testThread;
@@ -36,8 +35,7 @@ public class TestDbPerformance extends ApplicationWindow {
 	
 	public TestDbPerformance() {
 		super(null);
-		testDb = new TestDb();
-		testDbEngines = new TestDbEngines();
+		testDbEngines = new TestDbEngines(this);
 	}
 	
 	protected Control createContents(Composite parent) {    	
@@ -121,14 +119,19 @@ public class TestDbPerformance extends ApplicationWindow {
 		});
 	}
 	
-	public long calculateAverage(long[] array) {
+	public long[] calculateStats(long[] array) {
 		long sum = 0;
+		long dsum = 0;
 		for(int i = 0; i < array.length; i++) {
 			sum += array[i];
 		}
-		return sum / array.length;
+		long avg = sum / array.length;
+		for(int i = 0; i < array.length; i++) {
+			dsum += Math.abs(avg - array[i]);
+		}
+		return new long[] { sum / array.length, dsum / array.length };
 	}
-	
+
 	public void updateTestResults(String resultString) {
 		final String result = resultString;
 		// update user interface
@@ -153,10 +156,10 @@ public class TestDbPerformance extends ApplicationWindow {
 				int testType = testInput.selectTest.getSelectionIndex();
 				// Check for required files
 				if(!gdb.equals("") && (!gex.equals("") | (testType !=4))) {
-					testDb.gdbFile = new File(gdb);
-					testDb.gexFile = new File(gex);
+					testDbEngines.gdbFile = new File(gdb);
+					testDbEngines.gexFile = new File(gex);
 					if(!mapp.equals("")) {
-						testDb.mappFile = new File(mapp);
+						testDbEngines.mappFile = new File(mapp);
 					}
 					// Try to set the number of tests specified
 					nrTests = 1;
@@ -184,6 +187,7 @@ public class TestDbPerformance extends ApplicationWindow {
 	
 	public class ProgressThread extends Thread {
 		volatile boolean interrupted;
+		Object watch;
 		public ProgressThread() {
 			super();
 			interrupted = false;
@@ -193,19 +197,19 @@ public class TestDbPerformance extends ApplicationWindow {
 			// Update progress indicator when needed
 			workDone = 0;
 			double oldProgress = 0;
-			testDb.progress = 0;
+			testDbEngines.progress = 0;
 			while(!testThread.isInterrupted() & !interrupted) {
 				// Check for new progress
-				if((int)oldProgress != (int)testDb.progress) {
-					workDone = (testDb.progress - oldProgress) / nrTests;
-					oldProgress = testDb.progress;
+				if((int)oldProgress != (int)testDbEngines.progress) {
+					workDone = (testDbEngines.progress - oldProgress) / nrTests;
+					oldProgress = testDbEngines.progress;
 					display.asyncExec(new Runnable() {
 						public void run() {
 							indicator.worked(workDone);
 						}
 					});
 					try {
-						sleep(10);
+						sleep(50);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -266,47 +270,52 @@ public class TestDbPerformance extends ApplicationWindow {
 		}
 		public void interrupt() {
 			updateTestResults("Starting all database tests" + nl);
-			testDb.isInterrupted = true;
+			testDbEngines.isInterrupted = true;
 		}
 		public boolean isInterrupted() {
-			return testDb.isInterrupted;
+			return testDbEngines.isInterrupted;
 		}
 	}
 	
 	public void loadGdbTextTest() {
 		// Connect to the database
-		testDb.connect(true, false);
+		testDbEngines.connectGdb();
 		// Create arrays for the test results
 		long[] gdbTimes = new long[nrTests];
+		long[] connTimes = new long[nrTests];
 		// Perform tests
 		for(int i = 0; i < nrTests; i++) {
+			connTimes[i] = testDbEngines.connectHdb();
 			// Remove and recreate the tables
-			testDb.createTables();
+			testDbEngines.createTablesHdb();
 			// Modify the gdb table to TEXT
-			testDb.createGdbTextTable();
-			gdbTimes[i] = testDb.loadGdbTest();
+			testDbEngines.createGdbTextTable();
+			gdbTimes[i] = testDbEngines.loadGdbTest(TestDbEngines.HDB);
+			testDbEngines.close();
 			// Check if test is aborted
 			if(gdbTimes[i] > -1) {
 				// Create output strings
 				String thisResult = "Results from test " + (i+1) + ":" + nl;
+				String connString = "> Connecting to database: " + connTimes[i] + " ms" + nl;
 				String gdbString = "> Loading Gene database: " + gdbTimes[i] + " ms" + nl;
-				updateTestResults(thisResult + gdbString);
+				updateTestResults(thisResult + connString + gdbString);
 			} else {
 				updateTestResults("Test aborted!" + nl);
-				testDb.close();
 				invertStartButtonLabel();
 				return;
 			}
 		}
-		// Close the connection
-		testDb.close();
 		if(nrTests > 1) {
 			// Calculate average results
-			long gdbAvg = calculateAverage(gdbTimes);
+			long[] gdbStat = calculateStats(gdbTimes);
+			long[] connStat = calculateStats(connTimes);
 			// Create output strings
 			String thisResult = "Average results over " + nrTests + " tests:" + nl;
-			String gdbString = "> Loading Gene database: " + gdbAvg + " ms" + nl;
-			updateTestResults(thisResult + gdbString);
+			String connString = "> Connecting to database: " + connStat[0] + " (+/- "
+			+ connStat[1] + ") ms" + nl;
+			String gdbString = "> Connecting to database: " + gdbStat[0] + " (+/- "
+			+ gdbStat[1] + ") ms" + nl;
+			updateTestResults(thisResult + connString + gdbString);
 		}
 		// Set progress to 100 (just in case)
 		workDone = 100;
@@ -315,48 +324,91 @@ public class TestDbPerformance extends ApplicationWindow {
 		
 	}
 	public void loadGdbTest(int db) {
-		// Connect to the database
-		testDbEngines.connectGdb(testDb.gdbFile);
-		switch(db) {
-		case TestDbEngines.HDB: // hsqldb
-			testDbEngines.connectHdb();
-			break;
-		case TestDbEngines.DAF: // daf
-			testDbEngines.connectDaf();
-			break;
-		case TestDbEngines.DERBY: //derby
-			testDbEngines.connectDerby();
-			break;
-		case TestDbEngines.MCKOI: //McKoi
-			testDbEngines.connectMck();
-			break;
-		}
 		// Create arrays for the test results
 		long[] gdbTimes = new long[nrTests];
+		long[] connTimes = new long[nrTests];
 		// Perform tests
 		for(int i = 0; i < nrTests; i++) {
-			// Remove and recreate the tables
+			// Connect to the genmapp database
+			testDbEngines.connectGdb();
+			// Connect and recreate the tables
 			switch(db) {
 			case TestDbEngines.HDB: //hsqldb
+				connTimes[i] = testDbEngines.connectHdb();
 				testDbEngines.createTablesHdb();
 				break;
 			case TestDbEngines.DAF: //daf
+				connTimes[i] = testDbEngines.connectDaf();
 				testDbEngines.createTables(testDbEngines.conDaf);
 				break;
 			case TestDbEngines.DERBY: //derby
+				connTimes[i] = testDbEngines.connectDerby();
 				testDbEngines.createTables(testDbEngines.conDer);
 				break;
 			case TestDbEngines.MCKOI: //McKoi
+				connTimes[i] = testDbEngines.connectMck();
 				testDbEngines.createTables(testDbEngines.conMck);
 				break;
 			}
 			gdbTimes[i] = testDbEngines.loadGdbTest(db);
+			// Close the connection
+			testDbEngines.close();
 			// Check if test is aborted
 			if(gdbTimes[i] > -1) {
 				// Create output strings
 				String thisResult = "Results from test " + (i+1) + ":" + nl;
+				String connString = "> Connecting to database: " + connTimes[i] + " ms" + nl;
 				String gdbString = "> Loading Gene database: " + gdbTimes[i] + " ms" + nl;
-				updateTestResults(thisResult + gdbString);
+				updateTestResults(thisResult + connString + gdbString);
+			} else {
+				updateTestResults("Test aborted!" + nl);
+				invertStartButtonLabel();
+				return;
+			}
+		}
+		if(nrTests > 1) {
+			// Calculate average results
+			long[] gdbStat = calculateStats(gdbTimes);
+			long[] connStat = calculateStats(connTimes);
+			// Create output strings
+			String thisResult = "Average results over " + nrTests + " tests:" + nl;
+			String connString = "> Connecting to database: " + connStat[0] + " (+/- "
+			+ connStat[1] + ") ms" + nl;
+			String gdbString = "> Connecting to database: " + gdbStat[0] + " (+/- "
+			+ gdbStat[1] + ") ms" + nl;
+			updateTestResults(thisResult + connString + gdbString);
+		}
+		// Set progress to 100 (just in case)
+		workDone = 100;
+		// Invert the startButton label
+		invertStartButtonLabel();
+	}
+	
+	public void doAllTests() {
+		// Connect to the database
+		testDbEngines.connectGdb();
+		testDbEngines.connectGex();
+		testDbEngines.connectHdb();
+		// Create arrays for the test results
+		long[] gdbTimes = new long[nrTests];
+		long[] gexTimes = new long[nrTests];
+		long[] mappTimes = new long[nrTests];
+		
+		// perform all tests
+		for(int i = 0; i < nrTests; i++) {
+			// Remove and recreate the tables
+			testDbEngines.createTablesHdb();
+			gdbTimes[i] = testDbEngines.loadGdbTest(TestDbEngines.HDB);
+			gexTimes[i] = testDbEngines.loadGexTest();
+			mappTimes[i] = testDbEngines.loadMappTest();
+			// Check if test is aborted
+			if(gdbTimes[i] > -1 & gexTimes[i] > -1 & mappTimes[i] > -1) {
+				// Create output strings
+				String thisResult = "Results from test " + (i+1) + ":" + nl;
+				String gdbString = "> Loading Gene database: " + gdbTimes[i] + " ms" + nl;
+				String gexString = "> Loading Expression data: " + gexTimes[i] + " ms" + nl;
+				String mappString = "> Loading Pathway map: " + mappTimes[i] + " ms" + nl;
+				updateTestResults(thisResult + gdbString + gexString + mappString);
 			} else {
 				updateTestResults("Test aborted!" + nl);
 				testDbEngines.close();
@@ -368,60 +420,14 @@ public class TestDbPerformance extends ApplicationWindow {
 		testDbEngines.close();
 		if(nrTests > 1) {
 			// Calculate average results
-			long gdbAvg = calculateAverage(gdbTimes);
+			long[] gdbStat = calculateStats(gdbTimes);
+			long[] gexStat = calculateStats(gexTimes);
+			long[] mappStat = calculateStats(mappTimes);
 			// Create output strings
 			String thisResult = "Average results over " + nrTests + " tests:" + nl;
-			String gdbString = "> Loading Gene database: " + gdbAvg + " ms" + nl;
-			updateTestResults(thisResult + gdbString);
-		}
-		// Set progress to 100 (just in case)
-		workDone = 100;
-		// Invert the startButton label
-		invertStartButtonLabel();
-	}
-	
-	public void doAllTests() {
-		// Connect to the database
-		testDb.connect(true, true);
-		// Create arrays for the test results
-		long[] gdbTimes = new long[nrTests];
-		long[] gexTimes = new long[nrTests];
-		long[] mappTimes = new long[nrTests];
-		
-		// perform all tests
-		for(int i = 0; i < nrTests; i++) {
-			// Remove and recreate the tables
-			testDb.createTables();
-			gdbTimes[i] = testDb.loadGdbTest();
-			gexTimes[i] = testDb.loadGexTest();
-			mappTimes[i] = testDb.loadMappTest();
-			// Check if test is aborted
-			if(gdbTimes[i] > -1 & gexTimes[i] > -1 & mappTimes[i] > -1) {
-				// Create output strings
-				String thisResult = "Results from test " + (i+1) + ":" + nl;
-				String gdbString = "> Loading Gene database: " + gdbTimes[i] + " ms" + nl;
-				String gexString = "> Loading Expression data: " + gexTimes[i] + " ms" + nl;
-				String mappString = "> Loading Pathway map: " + mappTimes[i] + " ms" + nl;
-				updateTestResults(thisResult + gdbString + gexString + mappString);
-			} else {
-				updateTestResults("Test aborted!" + nl);
-				testDb.close();
-				invertStartButtonLabel();
-				return;
-			}
-		}
-		// Close the connection
-		testDb.close();
-		if(nrTests > 1) {
-			// Calculate average results
-			long gdbAvg = calculateAverage(gdbTimes);
-			long gexAvg = calculateAverage(gexTimes);
-			long mappAvg = calculateAverage(mappTimes);
-			// Create output strings
-			String thisResult = "Average results over " + nrTests + " tests:" + nl;
-			String gdbString = "> Loading Gene database:" + gdbAvg + " ms" + nl;
-			String gexString = "> Loading Expression data:" + gexAvg + " ms" + nl;
-			String mappString = "> Loading Pathway map:" + mappAvg + " ms" + nl;
+			String gdbString = "> Loading Gene database:" + gdbStat[0] + " ms" + nl;
+			String gexString = "> Loading Expression data:" + gexStat[0] + " ms" + nl;
+			String mappString = "> Loading Pathway map:" + mappStat[0] + " ms" + nl;
 			updateTestResults(thisResult + gdbString + gexString + mappString);
 		}
 		// Set progress to 100 (just in case)

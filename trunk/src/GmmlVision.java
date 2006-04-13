@@ -4,9 +4,14 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.dialogs.*;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 //~ import java.awt.Color;
 
@@ -217,7 +222,101 @@ class GmmlVision extends ApplicationWindow
 			}						
 		}
 	}
+	
+	private class ConvertGdbAction extends Action
+	{
+		GmmlVision window;
+		public ConvertGdbAction (GmmlVision w)
+		{
+			window = w;
+			setText("&Convert Gdb");
+			setToolTipText ("Convert GenMAPP Gene Database to Gmml-Vision");
+		}
 		
+		public void run () {
+			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+			fileDialog.setText("Open GenMAPP Gene Database");
+			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene databases");
+			fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
+			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
+			String fileName = fileDialog.open();
+			if(fileName != null) {
+				File file = new File(fileName);
+				gmmlGdb.gdbFile = file;
+				DirectoryDialog directoryDialog = new DirectoryDialog(getShell());
+				directoryDialog.setMessage("Select directory to save Gmml-Vision Gene Database");
+				directoryDialog.setFilterPath(file.getParent());
+				String dirName = directoryDialog.open();
+				if(dirName != null) {
+					gmmlGdb.hdbFile = new File(dirName + File.separatorChar + 
+							file.getName().substring(0,file.getName().lastIndexOf(".")));
+				} else {
+					gmmlGdb.hdbFile = new File(file.getParent() + File.separatorChar + 
+							file.getName().substring(0,file.getName().lastIndexOf(".")));
+				}
+				IRunnableWithProgress runnableWithProgress = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+						monitor.beginTask("Converting Gene Database",100);
+						gmmlGdb.convertGdb();
+						int prevProgress = 0;
+						while(gmmlGdb.convertThread.progress < 100) {
+							if(monitor.isCanceled()) {
+								gmmlGdb.convertThread.interrupt();
+								break;
+							}
+							if(prevProgress < gmmlGdb.convertThread.progress) {
+								monitor.worked(gmmlGdb.convertThread.progress - prevProgress);
+								prevProgress = gmmlGdb.convertThread.progress;
+							}
+						}
+						monitor.done();
+					}
+				};
+				
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				try {
+					dialog.run(true, true, runnableWithProgress);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);
+	
+	private class SelectGdbAction extends Action
+	{
+		GmmlVision window;
+		public SelectGdbAction(GmmlVision w)
+		{
+			window = w;
+			setText("&Select Gdb");
+			setToolTipText("Select Gene Database");
+		}
+		
+		public void run () {
+			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+			fileDialog.setText("Select Gene Database");
+			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene databases");
+			fileDialog.setFilterExtensions(new String[] {"*.data","*.*"});
+			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
+			String file = fileDialog.open();
+			if(file != null) {
+				if(gmmlGdb.selectGdb(new File(file.substring(0,file.lastIndexOf("."))))) {
+					setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
+				} else {
+					MessageBox messageBox = new MessageBox(getShell(),
+							SWT.ICON_ERROR| SWT.OK);
+					messageBox.setMessage("Can't read '" + file + "'");
+					messageBox.setText("Error");
+					messageBox.open();
+				}
+			}
+		}
+	}
+	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
+	
 	private class AboutAction extends Action 
 	{
 		GmmlVision window;
@@ -236,9 +335,14 @@ class GmmlVision extends ApplicationWindow
 	}
 	private AboutAction aboutAction = new AboutAction(this);
 	
+	protected StatusLineManager createStatusLineManager() {
+		return super.createStatusLineManager();
+	}
+	
 	GmmlDrawing drawing;
 	GmmlData document;
-
+	GmmlGdb gmmlGdb = new GmmlGdb();
+	
 	public GmmlVision()
 	{
 		this(null);
@@ -251,7 +355,8 @@ class GmmlVision extends ApplicationWindow
 	public GmmlVision(Shell shell)
 	{
 		super(shell);
-		addMenuBar();				
+		addMenuBar();
+		addStatusLine();
 	}
 
 	/**
@@ -288,11 +393,15 @@ class GmmlVision extends ApplicationWindow
 		viewMenu.add(new ZoomAction(this, 125));
 		viewMenu.add(new ZoomAction(this, 150));
 		viewMenu.add(new ZoomAction(this, 200));
+		MenuManager dataMenu = new MenuManager ("&Data");
+		dataMenu.add(convertGdbAction);
+		dataMenu.add(selectGdbAction);
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
 		m.add(fileMenu);
 		m.add(editMenu);
 		m.add(viewMenu);
+		m.add(dataMenu);
 		m.add(helpMenu);
 		return m;
 	}
@@ -307,7 +416,7 @@ class GmmlVision extends ApplicationWindow
 		shell.setLocation(100, 100);
 
 		shell.setText("GmmlVision");
-
+		setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
 		sc = new ScrolledComposite (parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		
 		return parent;

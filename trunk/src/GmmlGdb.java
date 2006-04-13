@@ -14,7 +14,7 @@ public class GmmlGdb {
 	public File gdbFile;
 	public ConvertThread convertThread;
 	public File hdbFile;
-	final String tempDbName = "Tutorial-Database";
+	final String tempDbName = "tempdb";
 	
 	public Properties props = new Properties();
 	
@@ -52,58 +52,18 @@ public class GmmlGdb {
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean connectGdb() {
+		
+	public String getBpInfo(String id) {
+		connectHdb(null);
 		try {
-			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-			conGdb = DriverManager.getConnection(
-					database_before + gdbFile.toString() + database_after, "", "");
-			return true;
-		} catch (Exception e) {
-			System.out.println ("Error: " +e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	public boolean connectHdb(File hdbFile) {
-		if(hdbFile == null) {
-			hdbFile = new File("gdb" + File.separatorChar + tempDbName);
-			System.out.println(hdbFile.getAbsolutePath().toString());
-		}
-		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-			Properties prop = new Properties();
-			prop.setProperty("user","sa");
-			prop.setProperty("password","");
-			prop.setProperty("hsqldb.log_size","1");
-			//prop.setProperty("hsqldb.default_table_type","cached");
-			conHdb = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-					hdbFile.getAbsolutePath().toString(), prop);
-			return true;
+			Statement s = conHdb.createStatement();
+			ResultSet r = s.executeQuery("SELECT backpageText FROM gene " +
+					"WHERE id = '" + id + "'");
+			r.next();
+			return r.getString(1);
 		} catch(Exception e) {
-			System.out.println ("Error: " +e.getMessage());
 			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	public void close() {
-		System.out.println ("Info:  Closing all connections");
-		try
-		{
-			if(conGdb != null) {
-				conGdb.close();
-			}
-			if(conHdb != null) {
-				Statement sh = conHdb.createStatement();
-				sh.executeQuery("SHUTDOWN"); // required, to write last changes
-				sh.close();
-			}
-		} catch (Exception e)
-		{
-			System.out.println ("Error: " + e.getMessage());
-			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -112,13 +72,13 @@ public class GmmlGdb {
 		convertThread = new ConvertThread();
 		convertThread.start();
 	}
+	
 	public boolean selectGdb(File hdbFile) {
 		// Check if database is valid (contains link table)
 		connectHdb(hdbFile);
 		try {
-			DatabaseMetaData dbm = conHdb.getMetaData();
-			ResultSet rs = dbm.getTables(null, null, "link", null);
-			if (rs.next()) {
+			ResultSet rs = conHdb.getMetaData().getTables(null, null, "LINK", null);
+			if (!rs.next()) {
 				return false;
 			}
 			close();
@@ -127,17 +87,17 @@ public class GmmlGdb {
 			tempDir.mkdir();
 			File dataFile = new File(tempDir.getName(),tempDbName + ".data");
 			File scriptFile = new File(tempDir.getName(),tempDbName + ".script");
+			File propertiesFile = new File(tempDir.getName(),tempDbName + ".properties");
 			copyFile(new File(hdbFile.getAbsoluteFile().toString() + ".data"), dataFile);
 			copyFile(new File(hdbFile.getAbsoluteFile().toString() + ".script"), scriptFile);
+			copyFile(new File(hdbFile.getAbsoluteFile().toString() + ".properties"), propertiesFile);
 			// Set current gdb
 			setCurrentGdb(hdbFile.getAbsolutePath().toString());
-			// TEST
+			// Check if database is copied correctly
 			connectHdb(null);
-			ResultSet r = conHdb.getMetaData().getTables(null, null, "link", null);
-			if(r.next()) {
-				System.out.println("link table found");
-			} else {
-				System.out.println("link table NOT found");
+			ResultSet r = conHdb.getMetaData().getTables(null, null, "LINK", null);
+			if(!r.next()) {
+				return false;
 			}
 			close();
 			return true;
@@ -323,6 +283,60 @@ public class GmmlGdb {
 				System.out.println(convertThread.progress);
 			}
 			convertThread.progress = 100;
+		} catch (Exception e)
+		{
+			System.out.println ("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public boolean connectGdb() {
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			conGdb = DriverManager.getConnection(
+					database_before + gdbFile.toString() + database_after, "", "");
+			return true;
+		} catch (Exception e) {
+			System.out.println ("Error: " +e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean connectHdb(File hdbFile) {
+		if(hdbFile == null) {
+			hdbFile = new File("gdb" + File.separatorChar + tempDbName);
+			System.out.println(hdbFile.getAbsolutePath().toString());
+		}
+		try {
+			Class.forName("org.hsqldb.jdbcDriver");
+			Properties prop = new Properties();
+			prop.setProperty("user","sa");
+			prop.setProperty("password","");
+//			prop.setProperty("hsqldb.log_size","1");
+			//prop.setProperty("hsqldb.default_table_type","cached");
+			conHdb = DriverManager.getConnection("jdbc:hsqldb:file:" + 
+					hdbFile.getAbsolutePath().toString(), prop);
+			return true;
+		} catch(Exception e) {
+			System.out.println ("Error: " +e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public void close() {
+		System.out.println ("Info:  Closing all connections");
+		try
+		{
+			if(conGdb != null) {
+				conGdb.close();
+			}
+			if(conHdb != null) {
+				Statement sh = conHdb.createStatement();
+				sh.executeQuery("SHUTDOWN"); // required, to write last changes
+				sh.close();
+			}
 		} catch (Exception e)
 		{
 			System.out.println ("Error: " + e.getMessage());

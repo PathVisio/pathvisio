@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.*;
@@ -17,6 +18,8 @@ import org.eclipse.swt.*;
 class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, PaintListener
 {	
 	private static final long serialVersionUID = 1L;
+	
+	GmmlBpBrowser backPageBrowser;
 	
 	Vector drawingObjects;
 	Vector graphics;
@@ -64,6 +67,10 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
+	}
+	
+	public void setBrowser(GmmlBpBrowser browser) {
+		backPageBrowser = browser;
 	}
 	
 	private void calculateSize()
@@ -146,6 +153,36 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	public void mouseDoubleClick(MouseEvent e)
 	{
+		Point2D p = new Point2D.Double(e.x, e.y);
+		
+		Iterator it = drawingObjects.iterator();
+		while (it.hasNext())
+		{
+			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+			if (o.isContain(p))
+			{
+				pressedObject = o;
+				if (o instanceof GmmlGraphics)
+				{
+					GmmlGraphics g = (GmmlGraphics) o;
+					selectedGraphics = g;
+				}
+				break;
+			}
+		}
+		// Check if selectedGraphics is GeneProduct
+		if(selectedGraphics instanceof GmmlGeneProduct) {
+			GmmlGeneProduct gp = (GmmlGeneProduct)selectedGraphics;
+			// Get the backpage text
+			GmmlGdb gmmlGdb = new GmmlGdb();
+			String bpText = gmmlGdb.getBpInfo(gp.getGeneId());
+			if(bpText != null) {
+				backPageBrowser.setBpText(bpText);
+			} else {
+				backPageBrowser.setBpText("<I>No gene information found</I>");
+			}
+		}
+		
 	}
 
 	/**

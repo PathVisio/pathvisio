@@ -60,9 +60,12 @@ public class GmmlGdb {
 			ResultSet r = s.executeQuery("SELECT backpageText FROM gene " +
 					"WHERE id = '" + id + "'");
 			r.next();
-			return r.getString(1);
+			String result = r.getString(1);
+			close();
+			return result;
 		} catch(Exception e) {
 			e.printStackTrace();
+			close();
 			return null;
 		}
 	}

@@ -1,5 +1,7 @@
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -7,6 +9,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.dialogs.*;
 
@@ -308,7 +311,7 @@ class GmmlVision extends ApplicationWindow
 				} else {
 					MessageBox messageBox = new MessageBox(getShell(),
 							SWT.ICON_ERROR| SWT.OK);
-					messageBox.setMessage("Can't read '" + file + "'");
+					messageBox.setMessage("Failed to load '" + file + "'");
 					messageBox.setText("Error");
 					messageBox.open();
 				}
@@ -408,7 +411,8 @@ class GmmlVision extends ApplicationWindow
 			
 
 	ScrolledComposite sc;
-		
+	GmmlBpBrowser bpBrowser;
+	
 	protected Control createContents(Composite parent)
 	{
 		Shell shell = parent.getShell();
@@ -416,8 +420,16 @@ class GmmlVision extends ApplicationWindow
 		shell.setLocation(100, 100);
 
 		shell.setText("GmmlVision");
+		
+		Composite viewComposite = new Composite(parent, SWT.NULL);
+		viewComposite.setLayout(new FillLayout());
+		SashForm sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
+		
+		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		bpBrowser = new GmmlBpBrowser(sashForm, SWT.NONE);
+		
+		sashForm.setWeights(new int[] {80, 20});
 		setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
-		sc = new ScrolledComposite (parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		
 		return parent;
 		
@@ -429,6 +441,7 @@ class GmmlVision extends ApplicationWindow
 	private void createNewDrawing()
 	{
 		GmmlDrawing d = new GmmlDrawing(sc, SWT.NONE);
+		d.setBrowser(bpBrowser);
 		
 		d.addElement(new GmmlShape(600, 200, 100, 40, GmmlShape.TYPE_RECTANGLE, new RGB (0, 0, 255), 10, d));
 		d.addElement(new GmmlLine(100, 100, 200, 200, new RGB (0, 255, 0), d));
@@ -456,7 +469,8 @@ class GmmlVision extends ApplicationWindow
 	private void openPathway(String fnPwy)
 	{
 		drawing = new GmmlDrawing(sc, SWT.NONE);
-
+		drawing.setBrowser(bpBrowser);
+		
 		// initialize new JDOM gmml representation and read the file
 		document = new GmmlData(fnPwy, drawing);
 		

@@ -34,7 +34,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	Element jdomElement;
 	
-	String geneID;
+	String geneLabel;
 	String xref;
 
 	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
@@ -60,17 +60,17 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 * @param y - the upper left corner y coordinate
 	 * @param width - the width
 	 * @param height - the height
-	 * @param geneID - the geneID as it will be shown as a label
+	 * @param geneLabel - the gene label as it will be shown as a label
 	 * @param xref - 
 	 * @param color - the color this geneproduct will be painted
 	 * @param canvas - the GmmlDrawing this geneproduct will be part of
 	 */
-	public GmmlGeneProduct(double x, double y, double width, double height, String geneID, String xref, RGB color, GmmlDrawing canvas){
+	public GmmlGeneProduct(double x, double y, double width, double height, String geneLabel, String xref, RGB color, GmmlDrawing canvas){
 		this.centerx = x;
 		this.centery = y;
 		this.width = width;
 		this.height = height;
-		this.geneID = geneID;
+		this.geneLabel = geneLabel;
 		this.xref = xref;
 		this.color = color;
 		this.canvas = canvas;
@@ -111,7 +111,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	}
 
 	/**
-	 * Updates the JDom representation of this arc
+	 * Updates the JDom representation of this geneproduct
 	 */
 	public void updateJdomGraphics() {
 		if(jdomElement != null) {
@@ -124,7 +124,18 @@ public class GmmlGeneProduct extends GmmlGraphics
 			}
 		}
 	}
-
+	
+	/**
+	 * Fetches the gene identifier from the Jdom representation
+	 *
+	 */
+	public String getGeneId() {
+		if(jdomElement != null) {
+			return jdomElement.getAttribute("Name").getValue();
+		} else {
+			return "";
+		}
+	}
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom()
@@ -149,7 +160,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 		e.gc.setFont (f);
 		
-		Point textSize = e.gc.textExtent (geneID);
+		Point textSize = e.gc.textExtent (geneLabel);
 		
 		Color c;
 		if (isSelected)
@@ -171,7 +182,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 			(int)height
 		);
 		
-		e.gc.drawString (geneID, 
+		e.gc.drawString (geneLabel, 
 			(int) centerx - (textSize.x / 2) , 
 			(int) centery - (textSize.y / 2));
 		
@@ -210,7 +221,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	protected JTable getPropertyTable()
 	{
 		Object[][] data = new Object[][] {{new Double(centerx), new Double(centery), 
-			new Double(width), new Double(height), geneID, xref, color}};
+			new Double(width), new Double(height), geneLabel, xref, color}};
 		
 		Object[] cols = new Object[] {"CenterX", "CenterY", "Width",
 				"Height", "GeneID", "Xref", "Color"};
@@ -273,7 +284,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		centery		= Double.parseDouble(t.getValueAt(0, 1).toString());
 		width		= Double.parseDouble(t.getValueAt(0, 2).toString());
 		height		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		geneID		= t.getValueAt(0, 4).toString();
+		geneLabel		= t.getValueAt(0, 4).toString();
 		xref		= t.getValueAt(0, 5).toString();
 		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 6).toString());
 		
@@ -301,8 +312,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 						this.width = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 3:	// Height
 						this.height = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
-					case 4: // GeneID
-						this.geneID = value; break;
+					case 4: // GeneLabel
+						this.geneLabel = value; break;
 					case 5: // Xref
 						this.xref = value; break;
 					case 6: // Color

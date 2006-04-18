@@ -30,6 +30,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	double height;
 
 	RGB color = new RGB (0,0,0);
+	RGB fillColor = new RGB (255,255,255);
+	
 	GmmlDrawing canvas;
 	
 	Element jdomElement;
@@ -109,7 +111,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 		updateJdomGraphics();
 	}
-
+	
 	/**
 	 * Updates the JDom representation of this geneproduct
 	 */
@@ -136,6 +138,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 			return "";
 		}
 	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom()
@@ -172,8 +175,18 @@ public class GmmlGeneProduct extends GmmlGraphics
 			c = new Color (e.display, this.color);
 		}
 		
+		Color cFill = new Color(e.display, this.fillColor);
+		
 		e.gc.setForeground (c);
+		e.gc.setBackground (cFill);
 		e.gc.setLineStyle (SWT.LINE_SOLID);
+		
+		e.gc.fillRectangle(
+				(int)(centerx - width / 2),
+				(int)(centery - height / 2),
+				(int)width,
+				(int)height
+			);
 		
 		e.gc.drawRectangle (
 			(int)(centerx - width / 2),

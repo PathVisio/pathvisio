@@ -2,16 +2,21 @@ import java.io.*;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.graphics.RGB;
 
 public class GmmlGdb {
 	public Connection conGdb;
 	public Connection conHdb;
+	public Connection conGex;
 	
 	public File gdbFile;
+	public File gexFile;
 	public ConvertThread convertThread;
 	public File hdbFile;
 	final String tempDbName = "tempdb";
@@ -52,7 +57,105 @@ public class GmmlGdb {
 			e.printStackTrace();
 		}
 	}
-		
+	
+	public void loadGex(File gexFile) {
+		this.gexFile = gexFile;
+		connectGex();
+		connectHdb(null);
+		try {
+			// Clear all existing expression data
+			Statement s = conGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			conHdb.createStatement().execute("DELETE FROM samples");
+			conHdb.createStatement().execute("DELETE FROM expression");
+			// Prepare a statement to add expression data
+			PreparedStatement pstmt = conHdb.prepareStatement(
+					"INSERT INTO expression			" +
+					"	(id, code,			 		" + 
+					"	 idSample, data)			" +
+					"VALUES	(?, ?, ?, ?)			");
+			
+			// Select data columns
+			ResultSet r = s.executeQuery(
+			"SELECT * FROM Expression");
+			ResultSetMetaData rsmd = r.getMetaData();
+			// Column 4 to before last contain expression data
+			for(int i = 4; i < rsmd.getColumnCount(); i++) {
+				String sampleName = rsmd.getColumnName(i);
+				int sampleNr = i - 4;
+				// Add new sample
+				conHdb.createStatement().execute("INSERT INTO SAMPLES" +
+						"	(idSample, name)" + 
+						"VALUES (" + sampleNr + ",'" + sampleName + "')");
+				// Set resultset cursor back to start
+				r.beforeFirst();
+				while(r.next()) {
+					pstmt.setString(1, r.getString(2));
+					pstmt.setString(2, r.getString(3));
+					pstmt.setInt(3, sampleNr);
+					pstmt.setFloat(4, r.getFloat(i));
+					pstmt.execute();
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		close();
+
+	}
+	
+	public ArrayList getCrossId(String id) {
+		ArrayList crossIds = new ArrayList();
+		try {
+			// Select ids in gex mapping to this gene
+			ResultSet r1 = conHdb.createStatement().executeQuery(
+					"SELECT idRight FROM link " +
+					"WHERE idLeft = '" + id +
+					"' AND idRight IN ( " +
+					" SELECT id FROM expression " +
+			")");
+			while(r1.next()) {
+				crossIds.add(r1.getString(1));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return crossIds;
+	}
+
+	public String getExprInfo(String id) {
+		connectHdb(null);
+		String exprInfo = "";
+		try {
+			Statement s = conHdb.createStatement();		
+			Iterator crossIt = getCrossId(id).iterator();
+			while(crossIt.hasNext()) {
+				String idRight = (String)crossIt.next();
+				exprInfo += "<P><B>" + idRight + "</B><TABLE border='1'>";
+			
+				// Get expression data
+				ResultSet r = s.executeQuery("SELECT data, idSample FROM expression " +
+						"WHERE id = '" + idRight + "'");
+				while(r.next()) {
+					double data = r.getDouble(1);
+					ResultSet rsn = conHdb.createStatement().executeQuery("SELECT name FROM samples" +
+							" WHERE idSample = " + r.getInt(2));
+					rsn.next();
+					String sampleName = rsn.getString(1);
+					exprInfo += "<TR><TH>" + sampleName +
+					"<TH>" + data;	
+				}
+				exprInfo += "</TABLE>";
+			}
+			
+			close();
+			return exprInfo;
+		} catch(Exception e) {
+			e.printStackTrace();
+			close();
+			return null;
+		}
+	}
+	
 	public String getBpInfo(String id) {
 		connectHdb(null);
 		try {
@@ -70,12 +173,53 @@ public class GmmlGdb {
 		}
 	}
 	
-	public void convertGdb() {
-		// Perform process in seperate thread
-		convertThread = new ConvertThread();
-		convertThread.start();
+	public void colorGenes(GmmlDrawing drawing) {
+		// Sample to color
+		int idSample = 0;
+		
+		connectHdb(null);
+		try {
+			// Find min/max expression data
+			Statement s = conHdb.createStatement();
+			ResultSet r = s.executeQuery(
+					"SELECT MAX(ABS(data)) FROM expression ");
+			r.next();
+			double max = r.getDouble(1);
+			// Iterate over geneproducts
+			Iterator it = drawing.graphics.iterator();
+			while(it.hasNext()) {
+				GmmlDrawingObject graphics = (GmmlDrawingObject)it.next();
+				if(graphics instanceof GmmlGeneProduct) {
+					GmmlGeneProduct gp = (GmmlGeneProduct)graphics;
+					String id;
+					// TODO: implement multiple reporters per gene
+					try {
+						id = (String)getCrossId(gp.getGeneId()).get(0);
+						r = s.executeQuery("SELECT data FROM expression " +
+								"WHERE id = '" + id + "' " +
+								"AND idSample = " + idSample);
+						r.next();
+						double data = r.getDouble(1);
+						// Lookup color
+						int red = 255;
+						int green = 255;
+						int blue = 255 - (int)(255 * Math.abs(data) / max);
+						if(data >= 0) {
+							green = 255 - (int)(255 * data / max);
+						} else {
+							red = 255 - (int)(255 * Math.abs(data) / max);
+						}
+						gp.fillColor = new RGB(red,green,blue);
+					} catch(Exception e) {
+					}
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		drawing.redraw();
+		
 	}
-	
 	public boolean selectGdb(File hdbFile) {
 		// Check if database is valid (contains link table)
 		connectHdb(hdbFile);
@@ -155,6 +299,12 @@ public class GmmlGdb {
 		}
 	}
 	
+	public void convertGdb() {
+		// Perform process in seperate thread
+		convertThread = new ConvertThread();
+		convertThread.start();
+	}
+
 	public void doConversion() {
 		System.out.println ("Info:  Fetching data from gdb");
 		try
@@ -293,6 +443,19 @@ public class GmmlGdb {
 		}
 	}
 
+	public boolean connectGex() {
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			conGex = DriverManager.getConnection(
+					database_before + gexFile.toString() + database_after, "", "");
+			return true;
+		} catch (Exception e) {
+			System.out.println ("Error: " +e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public boolean connectGdb() {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");

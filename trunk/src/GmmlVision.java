@@ -320,6 +320,30 @@ class GmmlVision extends ApplicationWindow
 	}
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
 	
+	private class LoadGexAction extends Action
+	{
+		GmmlVision window;
+		public LoadGexAction(GmmlVision w)
+		{
+			window = w;
+			setText("&Load gex");
+			setToolTipText("Load Expression Data");
+		}
+		
+		public void run () {
+			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+			fileDialog.setText("Select Expression Dataset");
+			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Expression Datasets");
+			fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
+			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
+			String file = fileDialog.open();
+			if(file != null) {
+				gmmlGdb.loadGex(new File(file));
+			}
+		}
+	}
+	private LoadGexAction loadGexAction = new LoadGexAction(this);
+	
 	private class AboutAction extends Action 
 	{
 		GmmlVision window;
@@ -360,6 +384,7 @@ class GmmlVision extends ApplicationWindow
 		super(shell);
 		addMenuBar();
 		addStatusLine();
+		addToolBar(SWT.FLAT);
 	}
 
 	/**
@@ -399,6 +424,7 @@ class GmmlVision extends ApplicationWindow
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(convertGdbAction);
 		dataMenu.add(selectGdbAction);
+		dataMenu.add(loadGexAction);
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
 		m.add(fileMenu);
@@ -409,9 +435,10 @@ class GmmlVision extends ApplicationWindow
 		return m;
 	}
 			
-
 	ScrolledComposite sc;
 	GmmlBpBrowser bpBrowser;
+	
+	ToolItem sampleSelector;
 	
 	protected Control createContents(Composite parent)
 	{
@@ -421,8 +448,23 @@ class GmmlVision extends ApplicationWindow
 
 		shell.setText("GmmlVision");
 		
-		Composite viewComposite = new Composite(parent, SWT.NULL);
+		Composite topComposite = new Composite(parent, SWT.NULL);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 2;
+		topComposite.setLayout(gridLayout);
+		
+		ToolBar toolBar = new ToolBar(topComposite, SWT.FLAT);
+		sampleSelector = new ToolItem(toolBar, SWT.DROP_DOWN);
+		sampleSelector.setToolTipText("Choose sample to color genes");
+		toolBar.pack();
+		
+		Composite viewComposite = new Composite(topComposite, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		viewComposite.setLayoutData(gridData);
+		
 		SashForm sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
 		
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -473,8 +515,8 @@ class GmmlVision extends ApplicationWindow
 		
 		// initialize new JDOM gmml representation and read the file
 		document = new GmmlData(fnPwy, drawing);
-		
 		sc.setContent(drawing);
+		
 	}
 
 } // end of class

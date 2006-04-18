@@ -175,11 +175,18 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			GmmlGeneProduct gp = (GmmlGeneProduct)selectedGraphics;
 			// Get the backpage text
 			GmmlGdb gmmlGdb = new GmmlGdb();
-			String bpText = gmmlGdb.getBpInfo(gp.getGeneId());
+			String geneId = gp.getGeneId();
+			String bpText = gmmlGdb.getBpInfo(geneId);
+			String gexText = gmmlGdb.getExprInfo(geneId);
 			if(bpText != null) {
 				backPageBrowser.setBpText(bpText);
 			} else {
 				backPageBrowser.setBpText("<I>No gene information found</I>");
+			}
+			if(gexText != null) {
+				backPageBrowser.setGexText(gexText);
+			} else {
+				backPageBrowser.setGexText("<I>No expression data found</I>");
 			}
 		}
 		

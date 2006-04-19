@@ -438,7 +438,7 @@ class GmmlVision extends ApplicationWindow
 	ScrolledComposite sc;
 	GmmlBpBrowser bpBrowser;
 	
-	ToolItem sampleSelector;
+//	ToolItem sampleSelector;
 	
 	protected Control createContents(Composite parent)
 	{
@@ -448,22 +448,23 @@ class GmmlVision extends ApplicationWindow
 
 		shell.setText("GmmlVision");
 		
-		Composite topComposite = new Composite(parent, SWT.NULL);
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.verticalSpacing = 2;
-		topComposite.setLayout(gridLayout);
+// TODO: toolbar with criteria selector
+//		Composite topComposite = new Composite(parent, SWT.NULL);
+//		GridLayout gridLayout = new GridLayout();
+//		gridLayout.verticalSpacing = 2;
+//		topComposite.setLayout(gridLayout);
 		
-		ToolBar toolBar = new ToolBar(topComposite, SWT.FLAT);
-		sampleSelector = new ToolItem(toolBar, SWT.DROP_DOWN);
-		sampleSelector.setToolTipText("Choose sample to color genes");
-		toolBar.pack();
+//		ToolBar toolBar = new ToolBar(topComposite, SWT.FLAT);
+//		sampleSelector = new ToolItem(toolBar, SWT.DROP_DOWN);
+//		sampleSelector.setToolTipText("Choose sample to color genes");
+//		toolBar.pack();
 		
-		Composite viewComposite = new Composite(topComposite, SWT.NULL);
+		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		viewComposite.setLayoutData(gridData);
+//		GridData gridData = new GridData(GridData.FILL_BOTH);
+//		gridData.grabExcessHorizontalSpace = true;
+//		gridData.grabExcessVerticalSpace = true;
+//		viewComposite.setLayoutData(gridData);
 		
 		SashForm sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
 		

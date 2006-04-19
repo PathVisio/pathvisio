@@ -18,7 +18,8 @@ import org.jdom.Element;
 public class GmmlGeneProduct extends GmmlGraphics
 {
 	private static final long serialVersionUID = 1L;
-
+	private static final int INITIAL_FONTSIZE = 10;
+	
 	public final List attributes = Arrays.asList(new String[] {
 			"CenterX", "CenterY", "Width", "Height",
 			"GeneID", "Xref", "Color"
@@ -28,6 +29,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	double centery;
 	double width;
 	double height;
+	double fontSizeDouble;
+	int fontSize;
 
 	RGB color = new RGB (0,0,0);
 	RGB fillColor = new RGB (255,255,255);
@@ -76,6 +79,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		this.xref = xref;
 		this.color = color;
 		this.canvas = canvas;
+		this.fontSize = INITIAL_FONTSIZE;
+		this.fontSizeDouble = this.fontSize;
 		
 		updateJdomGraphics();
 		canvas.addElement(handlecenter);
@@ -93,6 +98,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		this.jdomElement = e;
 		// List the attributes
 		mapAttributes(e);
+		this.fontSize = INITIAL_FONTSIZE;
+		this.fontSizeDouble = this.fontSize;
 		this.canvas = canvas;
 		
 		updateJdomGraphics();
@@ -149,6 +156,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		centery	*= factor;
 		width	*= factor;
 		height	*= factor;
+		fontSizeDouble *= factor;
+		fontSize = (int)fontSizeDouble;
 		
 		updateJdomGraphics();
 	}
@@ -159,7 +168,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected void draw(PaintEvent e)
 	{
-		Font f = new Font(e.display, "ARIAL", 10, SWT.NONE);
+		Font f = new Font(e.display, "ARIAL", fontSize, SWT.NONE);
 		
 		e.gc.setFont (f);
 		

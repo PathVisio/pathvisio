@@ -26,6 +26,7 @@ import java.util.*;
 class GmmlVision extends ApplicationWindow
 {
 	private static final long serialVersionUID = 1L;
+	private static int ZOOM_TO_FIT = -1;
 	
 	private class NewAction extends Action 
 	{
@@ -210,19 +211,46 @@ class GmmlVision extends ApplicationWindow
 		{
 			window = w;
 			pctZoomFactor = newPctZoomFactor;
-			setText (pctZoomFactor + " %");
-			setToolTipText ("Zoom mapp to " + pctZoomFactor + " %");
+			if(pctZoomFactor == ZOOM_TO_FIT) 
+			{
+				setText ("Zoom to fit");
+				setToolTipText("Zoom mapp to fit window");
+			}
+			else
+			{
+				setText (pctZoomFactor + " %");
+				setToolTipText ("Zoom mapp to " + pctZoomFactor + " %");
+			}
 		}
 		public void run () {
 			if (drawing != null)
 			{
-				drawing.setZoom(pctZoomFactor);
+				if(pctZoomFactor == ZOOM_TO_FIT) 
+				{
+					Point shellSize = window.sc.getSize();
+					Point drawingSize = drawing.getSize();
+					double newZoom;
+					if(shellSize.x <= shellSize.y) 
+					{
+						newZoom = drawing.zoomFactor * (double)shellSize.x / drawingSize.x;
+						drawing.setZoom(Math.round(newZoom));
+					} 
+					else 
+					{
+						newZoom = drawing.zoomFactor * (double)shellSize.y / drawingSize.y;
+						drawing.setZoom(Math.round(newZoom));
+					}
+				} 
+				else 
+				{
+					drawing.setZoom(pctZoomFactor);
+				}
 			}
 			else
 			{
 				MessageDialog.openError (window.getShell(), "Error", 
 					"No gmml file loaded! Open or create a new gmml file first");
-			}						
+			}
 		}
 	}
 	
@@ -421,6 +449,7 @@ class GmmlVision extends ApplicationWindow
 		viewMenu.add(new ZoomAction(this, 125));
 		viewMenu.add(new ZoomAction(this, 150));
 		viewMenu.add(new ZoomAction(this, 200));
+		viewMenu.add(new ZoomAction(this, ZOOM_TO_FIT)); //Zoom to fit
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(convertGdbAction);
 		dataMenu.add(selectGdbAction);
@@ -469,6 +498,8 @@ class GmmlVision extends ApplicationWindow
 		SashForm sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
 		
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		sc.setFocus(); //To enable scrolling with mouse wheel
+		
 		bpBrowser = new GmmlBpBrowser(sashForm, SWT.NONE);
 		
 		sashForm.setWeights(new int[] {80, 20});

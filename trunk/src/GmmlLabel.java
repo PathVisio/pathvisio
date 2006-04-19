@@ -50,7 +50,9 @@ public class GmmlLabel extends GmmlGraphics
 	double centery;
 	double width;
 	double height;
-	int fontSize	= 10;
+	double fontSizeDouble;
+	int fontSize;
+	
 	
 	RGB color;
 	
@@ -96,6 +98,7 @@ public class GmmlLabel extends GmmlGraphics
 		this.fontWeight = fontWeight;
 		this.fontStyle = fontStyle;
 		this.fontSize = fontSize;
+		this.fontSizeDouble = fontSize;
 		this.color = color;
 		this.canvas = canvas;
 		
@@ -160,7 +163,8 @@ public class GmmlLabel extends GmmlGraphics
 		centery		*= factor;
 		width		*= factor;
 		height		*= factor;
-		fontSize	*= factor;
+		fontSizeDouble *= factor;
+		fontSize = (int)fontSizeDouble;
 	}
 
 	/*
@@ -303,7 +307,8 @@ public class GmmlLabel extends GmmlGraphics
 					case 7: // FontStyle
 						this.fontStyle = value; break;
 					case 8: // FontSize
-						this.fontSize = Integer.parseInt(value); break;
+						this.fontSize = Integer.parseInt(value);
+						this.fontSizeDouble = this.fontSize; break;
 					case 9: // Color
 						this.color = GmmlColorConvertor.string2Color(value); break;
 					case -1:

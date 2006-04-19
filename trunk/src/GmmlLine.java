@@ -35,7 +35,7 @@ public class GmmlLine extends GmmlGraphics
 	public final List attributes = Arrays.asList(new String[] {
 			"StartX", "StartY", "EndX", "EndY", "Color", "Style", "Type"
 	});
-		
+	
 	double startx;
 	double starty;
 	double endx;

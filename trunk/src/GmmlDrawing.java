@@ -43,7 +43,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	int previousY;
 	
 	Dimension dims = new Dimension(1000, 1000);
-	double zoomPercentage = 100;
+	double zoomFactor = 100;
 	
 	/**
 	 *Constructor for this class
@@ -76,8 +76,8 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	private void calculateSize()
 	{
 		setSize (
-			(int)(dims.width*zoomPercentage/100), 
-			(int)(dims.height*zoomPercentage/100)
+			(int)(dims.width*zoomFactor/100), 
+			(int)(dims.height*zoomFactor/100)
 		);
 	}
 
@@ -327,8 +327,8 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	public void setZoom(double zoom)
 	{
-		double factor = zoom/zoomPercentage;
-		zoomPercentage = zoom;
+		double factor = zoom/zoomFactor;
+		zoomFactor = zoom;
 		calculateSize();
 		
 		// iterate over all graphics to adjust them

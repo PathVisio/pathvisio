@@ -251,18 +251,20 @@ public class GmmlShape extends GmmlGraphics
 	{
 		setLocation(centerx + dx, centery + dy);
 		
-		Polygon pol = createContainingPolygon();
-		Iterator it = canvas.lineHandles.iterator();
-
-		while (it.hasNext())
-		{
-			GmmlHandle h = (GmmlHandle) it.next();
-			Point2D p = h.getCenterPoint();
-			if (pol.contains(p))
-			{
-				h.moveBy(dx, dy);
-			}
-		}		
+		// NOTE: disabled moving of connecting linehandles
+		// TODO: make this feature optional
+//		Polygon pol = createContainingPolygon();
+//		Iterator it = canvas.lineHandles.iterator();
+//
+//		while (it.hasNext())
+//		{
+//			GmmlHandle h = (GmmlHandle) it.next();
+//			Point2D p = h.getCenterPoint();
+//			if (pol.contains(p))
+//			{
+//				h.moveBy(dx, dy);
+//			}
+//		}		
 	}
 
 	/*

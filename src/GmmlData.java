@@ -38,10 +38,10 @@ public class GmmlData
 	 * Constructor for this class
 	 * @param file - the file to read
 	 */
-	public GmmlData(String file, GmmlDrawing _drawing)
+	public GmmlData(String file, GmmlDrawing drawing)
 	{
 		// Create the drawing
-		drawing = _drawing;
+		this.drawing = drawing;
 		// Start XML processing
 		System.out.println("Start reading the XML file: " + file);
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file

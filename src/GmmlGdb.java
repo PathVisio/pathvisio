@@ -173,10 +173,7 @@ public class GmmlGdb {
 		}
 	}
 	
-	public void colorGenes(GmmlDrawing drawing) {
-		// Sample to color
-		int idSample = 0;
-		
+	public void colorGenes(GmmlDrawing drawing, int idSample) {
 		connectHdb(null);
 		try {
 			// Find min/max expression data

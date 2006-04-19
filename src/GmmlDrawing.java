@@ -217,7 +217,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 					GmmlGraphics g = (GmmlGraphics) o;
 					selectedGraphics = g;
 				}
-				break;
+				//break; don't break, isContain sets isSelected of the remaining objects to false
 			}
 		}
 		redraw();

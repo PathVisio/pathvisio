@@ -12,6 +12,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.dialogs.*;
+import org.jdom.*;
+import org.jdom.output.*;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -73,11 +75,16 @@ class GmmlVision extends ApplicationWindow
 			setText ("&Save@Ctrl+S");
 			setToolTipText ("Save mapp");
 		}
-		public void run () {			
-			// reset zoom to 100%
-			
+		
+		public void run () {
+			double usedZoom = drawing.zoomFactor;
+			// Set zoom to 100%
+			drawing.setZoom(100);
+			drawing.updateJdomElements();
 			// Overwrite the existing xml file
-			document.writeToXML(document.xmlFile);
+			gmmlData.writeToXML(gmmlData.xmlFile);
+			// Set zoom back
+			drawing.setZoom(usedZoom);
 		}
 	}
 	private SaveAction saveAction = new SaveAction(this);
@@ -229,22 +236,12 @@ class GmmlVision extends ApplicationWindow
 				{
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
-					double newZoom;
-					if(shellSize.x <= shellSize.y) 
-					{
-						newZoom = drawing.zoomFactor * (double)shellSize.x / drawingSize.x;
-						drawing.setZoom(Math.round(newZoom));
-					} 
-					else 
-					{
-						newZoom = drawing.zoomFactor * (double)shellSize.y / drawingSize.y;
-						drawing.setZoom(Math.round(newZoom));
-					}
+					pctZoomFactor = (int)Math.min(
+							drawing.zoomFactor * (double)shellSize.x / drawingSize.x,
+							drawing.zoomFactor * (double)shellSize.y / drawingSize.y
+					);
 				} 
-				else 
-				{
-					drawing.setZoom(pctZoomFactor);
-				}
+				drawing.setZoom(pctZoomFactor);
 			}
 			else
 			{
@@ -395,7 +392,7 @@ class GmmlVision extends ApplicationWindow
 	}
 	
 	GmmlDrawing drawing;
-	GmmlData document;
+	GmmlData gmmlData;
 	GmmlGdb gmmlGdb = new GmmlGdb();
 	
 	public GmmlVision()
@@ -515,25 +512,35 @@ class GmmlVision extends ApplicationWindow
 	private void createNewDrawing()
 	{
 		GmmlDrawing d = new GmmlDrawing(sc, SWT.NONE);
+		
+		gmmlData = new GmmlData(d);
+		
 		d.setBrowser(bpBrowser);
 		
-		d.addElement(new GmmlShape(600, 200, 100, 40, GmmlShape.TYPE_RECTANGLE, new RGB (0, 0, 255), 10, d));
-		d.addElement(new GmmlLine(100, 100, 200, 200, new RGB (0, 255, 0), d));
-		d.addElement(new GmmlGeneProduct(200, 200, 200, 80, "this is a very long id", "ref", new RGB (255, 0, 0), d));
-		d.addElement(new GmmlLineShape(300, 50, 200, 500, GmmlLineShape.TYPE_LIGAND_SQUARE, new RGB (0, 128, 0), d));
-		d.addElement(new GmmlLineShape(300, 150, 200, 400, GmmlLineShape.TYPE_RECEPTOR_ROUND, new RGB (0, 128, 0), d));
-		d.addElement(new GmmlLineShape(300, 250, 200, 300, GmmlLineShape.TYPE_LIGAND_ROUND, new RGB (0, 128, 0), d));
-		d.addElement(new GmmlLabel(200, 50, 100, 80, "testlabel", "Arial", "bold", "italic", 10, new RGB (0, 0, 0), d));
-		d.addElement(new GmmlArc(50, 50, 200, 200, new RGB (255, 0, 0), 0, d));
-		d.addElement(new GmmlBrace(400, 400, 200, 60, GmmlBrace.ORIENTATION_TOP, new RGB (255, 0, 255), d));
-		d.addElement(new GmmlBrace(200, 200, 200, 60, GmmlBrace.ORIENTATION_BOTTOM, new RGB (255, 0, 255), d));
-		d.addElement(new GmmlBrace(400, 200, 200, 60, GmmlBrace.ORIENTATION_LEFT, new RGB (255, 0, 255), d));
-		d.addElement(new GmmlBrace(200, 400, 200, 60, GmmlBrace.ORIENTATION_RIGHT, new RGB (255, 0, 255), d));
+		d.addElement(new GmmlShape(600, 200, 100, 40, GmmlShape.TYPE_RECTANGLE, new RGB (0, 0, 255), 10, d, gmmlData.doc));
+		d.addElement(new GmmlLine(100, 100, 200, 200, new RGB (0, 255, 0), d, gmmlData.doc));
+		d.addElement(new GmmlGeneProduct(200, 200, 200, 80, "this is a very long id", "ref", new RGB (255, 0, 0), d, gmmlData.doc));
+		d.addElement(new GmmlLineShape(300, 50, 200, 500, GmmlLineShape.TYPE_LIGAND_SQUARE, new RGB (0, 128, 0), d, gmmlData.doc));
+		d.addElement(new GmmlLineShape(300, 150, 200, 400, GmmlLineShape.TYPE_RECEPTOR_ROUND, new RGB (0, 128, 0), d, gmmlData.doc));
+		d.addElement(new GmmlLineShape(300, 250, 200, 300, GmmlLineShape.TYPE_LIGAND_ROUND, new RGB (0, 128, 0), d, gmmlData.doc));
+		d.addElement(new GmmlLabel(200, 50, 100, 80, "testlabel", "Arial", "bold", "italic", 10, new RGB (0, 0, 0), d, gmmlData.doc));
+		d.addElement(new GmmlArc(50, 50, 200, 200, new RGB (255, 0, 0), 0, d, gmmlData.doc));
+		d.addElement(new GmmlBrace(400, 400, 200, 60, GmmlBrace.ORIENTATION_TOP, new RGB (255, 0, 255), d, gmmlData.doc));
+		d.addElement(new GmmlBrace(200, 200, 200, 60, GmmlBrace.ORIENTATION_BOTTOM, new RGB (255, 0, 255), d, gmmlData.doc));
+		d.addElement(new GmmlBrace(400, 200, 200, 60, GmmlBrace.ORIENTATION_LEFT, new RGB (255, 0, 255), d, gmmlData.doc));
+		d.addElement(new GmmlBrace(200, 400, 200, 60, GmmlBrace.ORIENTATION_RIGHT, new RGB (255, 0, 255), d, gmmlData.doc));
 		
 		sc.setContent(d);
 		d.setSize(800, 600);
 		
 		drawing = d;
+		
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		try {
+			xmlcode.output(gmmlData.doc,System.out);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -546,7 +553,7 @@ class GmmlVision extends ApplicationWindow
 		drawing.setBrowser(bpBrowser);
 		
 		// initialize new JDOM gmml representation and read the file
-		document = new GmmlData(fnPwy, drawing);
+		gmmlData = new GmmlData(fnPwy, drawing);
 		sc.setContent(drawing);
 		
 	}

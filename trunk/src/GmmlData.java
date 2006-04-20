@@ -38,6 +38,25 @@ public class GmmlData
 	 * Constructor for this class
 	 * @param file - the file to read
 	 */
+	public GmmlData(GmmlDrawing drawing) 
+	{
+		this.drawing = drawing;
+		doc = new Document();
+		Element root = new Element("Pathway");
+		//TODO: add pathway name
+		root.setAttribute("Name","somename");
+		// Add required elements
+		Element graphics = new Element("Graphics");
+		graphics.setAttribute("BoardWidth", Integer.toString(drawing.getSize().x));
+		graphics.setAttribute("BoardHeight",Integer.toString(drawing.getSize().y));
+		graphics.setAttribute("WindowWidth","800");
+		graphics.setAttribute("WindowHeight","600");
+		root.addContent(graphics);
+		root.addContent(new Element("InfoBox"));
+		doc.setRootElement(root);
+		validateDocument(doc);
+	}
+	
 	public GmmlData(String file, GmmlDrawing drawing)
 	{
 		// Create the drawing

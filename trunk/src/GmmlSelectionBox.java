@@ -1,4 +1,6 @@
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
@@ -35,6 +37,10 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 		y1 = 0;
 		x2 = 0;
 		y2 = 0;
+	}
+	
+	public Rectangle2D.Double getRectangle() {
+		return new Rectangle2D.Double(x1,y1,x2-x1,y2-y1);
 	}
 	
 	/*

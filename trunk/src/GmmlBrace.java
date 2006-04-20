@@ -16,6 +16,7 @@ import java.util.List;
 import javax.swing.JTable;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
@@ -79,21 +80,22 @@ public class GmmlBrace extends GmmlGraphics
 	 * @param color - the color this brace will be painted
 	 * @param canvas - the GmmlDrawing this brace will be part of
 	 */
-	public GmmlBrace(double centerX, double centerY, double width, double ppo, int orientation, RGB color, GmmlDrawing canvas)
+	public GmmlBrace(double centerX, double centerY, double width, double ppo, int orientation, RGB color, GmmlDrawing canvas, Document doc)
 	{
+		this(canvas);
+		
 		this.centerx = centerX;
 		this.centery = centerY;
 		this.width = width;
 		this.ppo = ppo;
 		this.orientation = orientation;
 		this.color = color;
-		this.canvas = canvas;
-		
+
 		setHandleLocation();
 		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlewidth);
-	} //end constructor GmmlBrace
+		createJdomElement(doc);
+
+	}
 
 	/**
 	 * Constructor for mapping a JDOM Element.
@@ -101,14 +103,11 @@ public class GmmlBrace extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlBrace will be part of
 	 */
 	public GmmlBrace(Element e, GmmlDrawing canvas) {
+		this(canvas);
+		
 		this.jdomElement = e;
-		// List the attributes
+		
 		mapAttributes(e);
-		
-		this.canvas = canvas;
-		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlewidth);
 	}
 
 	/**
@@ -121,7 +120,7 @@ public class GmmlBrace extends GmmlGraphics
 		this.centerx = centerX;
 		this.centery = centerY;
 		
-		updateJdomGraphics();
+		
 	}
 	
 	/**
@@ -137,6 +136,15 @@ public class GmmlBrace extends GmmlGraphics
 				jdomGraphics.setAttribute("PicPointOffset", Double.toString(ppo));
 				jdomGraphics.setAttribute("Orientation", (String)orientationMappings.get(orientation));
 			}
+		}
+	}
+	
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("Brace");
+			jdomElement.addContent(new Element("Graphics"));
+			
+			doc.getRootElement().addContent(jdomElement);
 		}
 	}
 	
@@ -252,8 +260,7 @@ public class GmmlBrace extends GmmlGraphics
 		
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(l);
-		isSelected = outline.contains(p);
-		return isSelected;
+		return outline.contains(p);
 	}
 	
 	/*
@@ -282,8 +289,7 @@ public class GmmlBrace extends GmmlGraphics
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(l);
 		
-		isSelected = outline.intersects(r.x, r.y, r.width, r.height);
-		return isSelected;
+		return outline.intersects(r.x, r.y, r.width, r.height);
 	}
 
 	/*

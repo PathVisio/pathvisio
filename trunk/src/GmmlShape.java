@@ -10,6 +10,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
 import java.util.*;
@@ -80,8 +81,10 @@ public class GmmlShape extends GmmlGraphics
 	 * @param color - the color this geneproduct will be painted
 	 * @param canvas - the GmmlDrawing this geneproduct will be part of
 	 */
-	public GmmlShape(double x, double y, double width, double height, int type, RGB color, double rotation, GmmlDrawing canvas)
+	public GmmlShape(double x, double y, double width, double height, int type, RGB color, double rotation, GmmlDrawing canvas, Document doc)
 	{
+		this(canvas);
+		
 		this.centerx	= x;
 		this.centery	= y;
 		this.width 		= width;
@@ -89,13 +92,10 @@ public class GmmlShape extends GmmlGraphics
 		this.color 		= color;
 		this.type 		= type;
 		this.rotation 	= rotation;
-		this.canvas		= canvas;
 
 		setHandleLocation();
-				
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
+		
+		createJdomElement(doc);
 	}
 	
 	/**
@@ -104,17 +104,12 @@ public class GmmlShape extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlShape will be part of
 	 */
 	public GmmlShape(Element e, GmmlDrawing canvas) {
+		this(canvas);
+		
 		this.jdomElement = e;
-				
 		mapAttributes(e);
-				
-		this.canvas = canvas;
 		
 		setHandleLocation();
-		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
 	}
 
 	/**
@@ -126,9 +121,6 @@ public class GmmlShape extends GmmlGraphics
 	{
 		centerx = x;
 		centery = y;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
 	}
 	
 	/**
@@ -146,6 +138,15 @@ public class GmmlShape extends GmmlGraphics
 		}
 	}
 
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("Shape");
+			jdomElement.addContent(new Element("Graphics"));
+			
+			doc.getRootElement().addContent(jdomElement);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom(double)
@@ -212,8 +213,7 @@ public class GmmlShape extends GmmlGraphics
 	protected boolean isContain(Point2D p)
 	{
 			Polygon pol = createContainingPolygon();
-			isSelected = pol.contains(p);
-			return isSelected;			
+			return pol.contains(p);			
 	}
 
 	/*
@@ -223,8 +223,7 @@ public class GmmlShape extends GmmlGraphics
 	protected boolean intersects(Rectangle2D.Double r)
 	{
 			Polygon pol = createContainingPolygon();
-			isSelected = pol.intersects(r.x, r.y, r.width, r.height);
-			return isSelected;
+			return pol.intersects(r.x, r.y, r.width, r.height);
 	}
 
 	/*
@@ -274,9 +273,6 @@ public class GmmlShape extends GmmlGraphics
 	protected void resizeX(double dx)
 	{
 		width += dx;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
 	}
 	
 	/*
@@ -285,10 +281,7 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void resizeY(double dy)
 	{
-		height -= dy;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
+		height -= dy;		
 	}
 	
 	/*

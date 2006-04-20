@@ -32,5 +32,4 @@ abstract class GmmlDrawingObject
 	 * @param dy - the value of y-increment
 	 */
 	void moveBy(double dx, double dy){}
-	
 }

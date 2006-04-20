@@ -18,6 +18,7 @@ import org.eclipse.swt.*;
 import javax.swing.JTable;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
 /**
@@ -82,19 +83,18 @@ public class GmmlLineShape extends GmmlGraphics
 	 * @param color - the color this lineshape will be painted
 	 * @param canvas - the GmmlDrawing this geneproduct will be part of
 	 */	
-	public GmmlLineShape(double startx, double starty, double endx, double endy, int type, RGB color, GmmlDrawing canvas)
+	public GmmlLineShape(double startx, double starty, double endx, double endy, int type, RGB color, GmmlDrawing canvas, Document doc)
 	{
+		this(canvas);
+		
 		this.startx = startx;
 		this.starty = starty;
 		this.endx 	= endx;
 		this.endy 	= endy;
 		this.type 	= type;
 		this.color 	= color;
-		this.canvas = canvas;
 		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handleStart);
-		canvas.addElement(handleEnd);		
+		createJdomElement(doc);
 	}
 	
 	/**
@@ -103,15 +103,10 @@ public class GmmlLineShape extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlLineShape will be part of
 	 */
 	public GmmlLineShape(Element e, GmmlDrawing canvas) {
-		this.jdomElement = e;
-		// List the attributes
-		mapAttributes(e);
-				
-		this.canvas = canvas;
+		this(canvas);
 		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handleStart);
-		canvas.addElement(handleEnd);
+		this.jdomElement = e;
+		mapAttributes(e);
 	}
 
 	/**
@@ -129,10 +124,7 @@ public class GmmlLineShape extends GmmlGraphics
 		startx = x1;
 		starty = y1;
 		endx	 = x2;
-		endy	 = y2;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
+		endy	 = y2;		
 	}
 	
 	/**
@@ -147,6 +139,15 @@ public class GmmlLineShape extends GmmlGraphics
 				jdomGraphics.setAttribute("EndX", Integer.toString((int)endx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndY", Integer.toString((int)endy * GmmlData.GMMLZOOM));
 			}
+		}
+	}
+	
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("LineShape");
+			jdomElement.addContent(new Element("Graphics"));
+			
+			doc.getRootElement().addContent(jdomElement);
 		}
 	}
 	
@@ -295,8 +296,7 @@ public class GmmlLineShape extends GmmlGraphics
 			
 		Polygon p = new Polygon(x, y, 4);
 				
-		isSelected = p.contains(point);
-		return isSelected;
+		return p.contains(point);
 	}
 	
 	/*
@@ -356,11 +356,7 @@ public class GmmlLineShape extends GmmlGraphics
 	protected void moveLineStart(double dx, double dy)
 	{
 		startx += dx;
-		starty += dy;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
-		
+		starty += dy;	
 //		constructLine();
 	}
 	
@@ -371,11 +367,7 @@ public class GmmlLineShape extends GmmlGraphics
 	protected void moveLineEnd(double dx, double dy)
 	{
 		endx += dx;
-		endy += dy;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
-		
+		endy += dy;		
 //		constructLine();
 	}
 	

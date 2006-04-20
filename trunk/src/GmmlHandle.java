@@ -1,3 +1,5 @@
+import java.awt.BasicStroke;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 //~ import java.awt.Graphics;
 //~ import java.awt.Graphics2D;
@@ -110,6 +112,11 @@ class GmmlHandle extends GmmlDrawingObject
 		{
 			parent.moveLineEnd(dx, dy);
 		}
+	}
+	
+	protected boolean intersects(Rectangle2D.Double r)
+	{	
+		return parent.isSelected;
 	}
 	
 	private void constructRectangle()

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
 import java.awt.geom.Point2D;
@@ -25,10 +26,11 @@ public class GmmlArc extends GmmlGraphics
 {
 	private static final long serialVersionUID = 1L;
 
-	public final List attributes = Arrays.asList(new String[] {
+	public final List attributes = Arrays.asList(
+		new String[] {
 			"StartX", "StartY", "Width",
 			"Height","Color","Rotation"
-	});
+		});
 	
 	double startx;
 	double starty;
@@ -68,21 +70,19 @@ public class GmmlArc extends GmmlGraphics
 	 * @param rotation - the angle at which the arc has to be rotated when drawing it
 	 * @param canvas - the GmmlDrawing this arc will be part of
 	 */
-	public GmmlArc(double startx, double starty, double width, double height, RGB color, double rotation, GmmlDrawing canvas)
+	public GmmlArc(double startx, double starty, double width, double height, RGB color, double rotation, GmmlDrawing canvas, Document doc)
 	{
+		this(canvas);
+		
 		this.startx 	= startx;
 		this.starty 	= starty;
 		this.width 		= width;
 		this.height		= height;
 		this.color 		= color;
 		this.rotation 	= Math.toDegrees(rotation);
-		this.canvas 	= canvas;
 				
 		setHandleLocation();
-		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
+		createJdomElement(doc);
 	}
 	
 	/**
@@ -91,17 +91,11 @@ public class GmmlArc extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlArc will be part of
 	 */
 	public GmmlArc(Element e, GmmlDrawing canvas) {
-		// List the attributes
-
+		this(canvas);
+		
 		mapAttributes(e);
 				
-		this.canvas = canvas;
-		
 		setHandleLocation();
-		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
 	}
 
 	/**
@@ -124,7 +118,7 @@ public class GmmlArc extends GmmlGraphics
 		this.startx = x;
 		this.starty = y;
 		
-		updateJdomGraphics();
+		
 	}
 
 	/**
@@ -143,6 +137,15 @@ public class GmmlArc extends GmmlGraphics
 		}
 	}
 
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("Arc");
+			jdomElement.addContent(new Element("Graphics"));
+			
+			doc.getRootElement().addContent(jdomElement);
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom()
@@ -153,8 +156,6 @@ public class GmmlArc extends GmmlGraphics
 		starty	*= factor;
 		width	*= factor;
 		height	*= factor;
-		
-		updateJdomGraphics();
 	}
 	
 	/*
@@ -192,8 +193,7 @@ public class GmmlArc extends GmmlGraphics
 	{
 		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180-rotation, 180, 0);
 
-		isSelected =  arc.contains(p);
-		return isSelected;
+		return arc.contains(p);
 	}
 
 	/*
@@ -204,8 +204,7 @@ public class GmmlArc extends GmmlGraphics
 	{
 		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180-rotation, 180, 0);
 
-		isSelected = arc.intersects(r.x, r.y, r.width, r.height);
-		return isSelected;
+		return arc.intersects(r.x, r.y, r.width, r.height);
 	
 	}
 	
@@ -239,7 +238,7 @@ public class GmmlArc extends GmmlGraphics
 	protected void resizeX(double dx)
 	{
 		width += dx;
-		updateJdomGraphics();
+		
 	}
 	
 	/*
@@ -249,7 +248,7 @@ public class GmmlArc extends GmmlGraphics
 	protected void resizeY(double dy)
 	{
 		height += dy;
-		updateJdomGraphics();
+		
 	}
 	
 	/*
@@ -265,7 +264,7 @@ public class GmmlArc extends GmmlGraphics
 		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 4).toString());
 		rotation	= Double.parseDouble(t.getValueAt(0, 5).toString());
 		
-		updateJdomGraphics();
+		
 	}
 
 	/**

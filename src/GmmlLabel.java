@@ -29,6 +29,7 @@ import org.eclipse.swt.*;
 import javax.swing.JTable;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
 
@@ -87,8 +88,10 @@ public class GmmlLabel extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing the label will be part of
 	 */
 	public GmmlLabel (int x, int y, int width, int height, String text, String font, String fontWeight, 
-		String fontStyle, int fontSize, RGB color, GmmlDrawing canvas)
+		String fontStyle, int fontSize, RGB color, GmmlDrawing canvas, Document doc)
 	{
+		this(canvas);
+		
 		this.centerx  = x;
 		this.centery = y;
 		this.width = width;
@@ -100,10 +103,10 @@ public class GmmlLabel extends GmmlGraphics
 		this.fontSize = fontSize;
 		this.fontSizeDouble = fontSize;
 		this.color = color;
-		this.canvas = canvas;
 		
 		setHandleLocation();
-		canvas.addElement(handlecenter);
+		
+		createJdomElement(doc);
 	}
 	
 	/**
@@ -112,15 +115,12 @@ public class GmmlLabel extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlLabel will be part of
 	 */
 	public GmmlLabel (Element e, GmmlDrawing canvas) {
+		this(canvas);
+		
 		this.jdomElement = e;
-		// List the attributes
-
 		mapAttributes(e);
 		
-		this.canvas = canvas;
-		
 		setHandleLocation();
-		canvas.addElement(handlecenter);
 	}
 
 	/**
@@ -135,9 +135,6 @@ public class GmmlLabel extends GmmlGraphics
 	{
 		this.centerx = x;
 		this.centery = y;
-		
-		// Update JDOM Graphics element
-		updateJdomGraphics();
 	}
 	
 	/**
@@ -152,7 +149,16 @@ public class GmmlLabel extends GmmlGraphics
 			}
 		}
 	}
-		
+	
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("Label");
+			jdomElement.addContent(new Element("Graphics"));
+			
+			doc.getRootElement().addContent(jdomElement);
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom()
@@ -245,8 +251,7 @@ public class GmmlLabel extends GmmlGraphics
 	protected boolean isContain(Point2D p)
 	{
 		Rectangle2D rect = new Rectangle2D.Double(centerx - (width/2), centery - (height/2), width, height);
-		isSelected = rect.contains(p);
-		return isSelected;
+		return rect.contains(p);
 	}
 
 	/*
@@ -255,8 +260,7 @@ public class GmmlLabel extends GmmlGraphics
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
 	{
-		isSelected = r.intersects(centerx - width/2, centery - height/2, width, height);
-		return isSelected;
+		return r.intersects(centerx - width/2, centery - height/2, width, height);
 	}
 
 	/*

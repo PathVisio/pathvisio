@@ -9,6 +9,7 @@ import org.eclipse.swt.*;
 import javax.swing.JTable;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
 /**
@@ -57,6 +58,9 @@ public class GmmlGeneProduct extends GmmlGraphics
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlex);
 		canvas.addElement(handley);
+		
+		this.fontSize = INITIAL_FONTSIZE;
+		this.fontSizeDouble = this.fontSize;
 	}
 	
 	/**
@@ -70,7 +74,9 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 * @param color - the color this geneproduct will be painted
 	 * @param canvas - the GmmlDrawing this geneproduct will be part of
 	 */
-	public GmmlGeneProduct(double x, double y, double width, double height, String geneLabel, String xref, RGB color, GmmlDrawing canvas){
+	public GmmlGeneProduct(double x, double y, double width, double height, String geneLabel, String xref, RGB color, GmmlDrawing canvas, Document doc){
+		this(canvas);
+		
 		this.centerx = x;
 		this.centery = y;
 		this.width = width;
@@ -78,15 +84,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 		this.geneLabel = geneLabel;
 		this.xref = xref;
 		this.color = color;
-		this.canvas = canvas;
-		this.fontSize = INITIAL_FONTSIZE;
-		this.fontSizeDouble = this.fontSize;
-		
-		updateJdomGraphics();
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
+
 		setHandleLocation();
+		
+		createJdomElement(doc);
 	}
 	
 	/**
@@ -95,14 +96,12 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlAGmmlGeneProductrc will be part of
 	 */
 	public GmmlGeneProduct(Element e, GmmlDrawing canvas) {
-		this.jdomElement = e;
-		// List the attributes
-		mapAttributes(e);
-		this.fontSize = INITIAL_FONTSIZE;
-		this.fontSizeDouble = this.fontSize;
-		this.canvas = canvas;
+		this(canvas);
 		
-		updateJdomGraphics();
+		this.jdomElement = e;
+		mapAttributes(e);
+		
+		
 		setHandleLocation();
 	}
 
@@ -116,7 +115,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		centerx = x;
 		centery = y;
 		
-		updateJdomGraphics();
+		
 	}
 	
 	/**
@@ -146,6 +145,15 @@ public class GmmlGeneProduct extends GmmlGraphics
 		}
 	}
 	
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("GeneProduct");
+			jdomElement.addContent(new Element("Graphics"));
+			
+			doc.getRootElement().addContent(jdomElement);
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom()
@@ -158,8 +166,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 		height	*= factor;
 		fontSizeDouble *= factor;
 		fontSize = (int)fontSizeDouble;
-		
-		updateJdomGraphics();
 	}
 
 	/*
@@ -222,8 +228,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		Rectangle2D rect = new Rectangle2D.Double(
 			centerx - width/2, centery - height/2, width, height);
 		
-		isSelected = rect.contains(point);
-		return isSelected;
+		return rect.contains(point);
 	}	
 
 	/*
@@ -232,8 +237,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
 	{
-		isSelected = r.intersects(centerx - width/2, centery - height/2, width, height);
-		return isSelected;
+		return r.intersects(centerx - width/2, centery - height/2, width, height);
 	}
 
 	/*
@@ -283,7 +287,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	protected void resizeX(double dx)
 	{
 		width += dx;
-		updateJdomGraphics();
+		
 	}
 	
 	/*
@@ -293,7 +297,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	protected void resizeY(double dy)
 	{
 		height 	-= dy;
-		updateJdomGraphics();
+		
 	}
 	
 	/*
@@ -310,7 +314,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		xref		= t.getValueAt(0, 5).toString();
 		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 6).toString());
 		
-		updateJdomGraphics();
+		
 	}
 	
 	/**

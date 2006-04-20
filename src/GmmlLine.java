@@ -10,6 +10,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
 import java.awt.geom.Line2D;
@@ -79,8 +80,10 @@ public class GmmlLine extends GmmlGraphics
 	 * @param color - color this line will be painted
 	 * @param canvas - the GmmlDrawing this line will be part of
 	 */
-	public GmmlLine(double startx, double starty, double endx, double endy, RGB color, GmmlDrawing canvas)
+	public GmmlLine(double startx, double starty, double endx, double endy, RGB color, GmmlDrawing canvas, Document doc)
 	{
+		this(canvas);
+		
 		this.startx = startx;
 		this.starty = starty;
 		this.endx 	= endx;
@@ -89,13 +92,10 @@ public class GmmlLine extends GmmlGraphics
 		this.color = color;
 		
 		line = new Line2D.Double(startx, starty, endx, endy);
-		
-		this.canvas = canvas;
 
 		setHandleLocation();
-		canvas.addElement(handlecenter);
-		canvas.addElement(handleStart);
-		canvas.addElement(handleEnd);	
+		
+		createJdomElement(doc);
 	}
 
 	/**
@@ -104,18 +104,15 @@ public class GmmlLine extends GmmlGraphics
 	 * @param canvas - the GmmlDrawing this GmmlLine will be part of
 	 */
 	public GmmlLine (Element e, GmmlDrawing canvas) {
+		this(canvas);
+		
 		this.jdomElement = e;
-		// List the attributes
+
 		mapAttributes(e);
 		
 		line = new Line2D.Double(startx, starty, endx, endy);
 		
-		this.canvas = canvas;
-		
 		setHandleLocation();
-		canvas.addElement(handlecenter);
-		canvas.addElement(handleStart);
-		canvas.addElement(handleEnd);
 	}
 
 	/**
@@ -124,8 +121,6 @@ public class GmmlLine extends GmmlGraphics
 	public void constructLine()
 	{
 		line = new Line2D.Double(startx, starty, endx, endy);
-		// Update JDOM Graphics element
-		updateJdomGraphics();
 	}
 	
 	/**
@@ -144,6 +139,7 @@ public class GmmlLine extends GmmlGraphics
 		endy   = y2;
 		
 		constructLine();
+		
 	}
 
 	/**
@@ -160,7 +156,7 @@ public class GmmlLine extends GmmlGraphics
 		endx   = end.getX();
 		endy   = end.getY();
 		
-		constructLine();		
+		constructLine();
 	}
 
 	/**
@@ -177,7 +173,15 @@ public class GmmlLine extends GmmlGraphics
 			}
 		}
 	}
-
+	
+	protected void createJdomElement(Document doc) {
+		if(jdomElement == null) {
+			jdomElement = new Element("Line");
+			jdomElement.addContent(new Element("Graphics"));
+			doc.getRootElement().addContent(jdomElement);
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#adjustToZoom()
@@ -240,8 +244,7 @@ public class GmmlLine extends GmmlGraphics
 	{
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(line);
-		isSelected = outline.contains(p);
-		return isSelected;
+		return outline.contains(p);
 	}
 	
 	/*
@@ -253,8 +256,7 @@ public class GmmlLine extends GmmlGraphics
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(line);
 		
-		isSelected = outline.intersects(r.x, r.y, r.width, r.height);
-		return isSelected;
+		return outline.intersects(r.x, r.y, r.width, r.height);
 	}
 
 	/*
@@ -280,6 +282,7 @@ public class GmmlLine extends GmmlGraphics
 	protected void moveBy(double dx, double dy)
 	{
 		setLine(startx + dx, starty + dy, endx + dx, endy + dy);
+		
 	}
 	
 	/*
@@ -291,6 +294,7 @@ public class GmmlLine extends GmmlGraphics
 		startx += dx;
 		starty += dy;
 		constructLine();
+		
 	}
 	
 	/*
@@ -302,6 +306,7 @@ public class GmmlLine extends GmmlGraphics
 		endx += dx;
 		endy += dy;
 		constructLine();
+		
 	}
 	
 	/*
@@ -319,6 +324,7 @@ public class GmmlLine extends GmmlGraphics
 		type		= (int)Double.parseDouble(t.getValueAt(0, 6).toString());
 		
 		constructLine();
+		
 	}
 	
 	/**

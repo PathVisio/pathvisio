@@ -66,4 +66,6 @@ abstract class GmmlGraphics extends GmmlDrawingObject
 	 */
 	abstract JTable getPropertyTable();
 	
+	abstract void updateJdomGraphics();
+	
 }

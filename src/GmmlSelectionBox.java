@@ -40,7 +40,22 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	}
 	
 	public Rectangle2D.Double getRectangle() {
-		return new Rectangle2D.Double(x1,y1,x2-x1,y2-y1);
+		double width = x2-x1;
+		double height = y2-y1;
+		double x = x1;
+		double y = y1;
+		
+		if(width < 0)
+		{
+			width = -width;
+			x = x - width;
+		}
+		if(height < 0)
+		{
+			height = -height;
+			y = y - height;
+		}
+		return new Rectangle2D.Double(x,y,width,height);
 	}
 	
 	/*

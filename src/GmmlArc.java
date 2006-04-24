@@ -10,6 +10,7 @@ import org.jdom.Element;
 import java.awt.geom.Point2D;
 import java.awt.BasicStroke;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.swt.graphics.*;
@@ -210,20 +211,6 @@ public class GmmlArc extends GmmlGraphics
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(startx), new Double(starty),
-				new Double(width), new Double(height), color, new Double(rotation)}};
-		
-		Object[] cols = new Object[] {"Start X", "Start Y", "Width", "Height", 
-				"Color", "Rotation"};
-		
-		return new JTable(data, cols);
-	}
-	/*
-	 *  (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
 	 */
 	protected void moveBy(double dx, double dy)
@@ -251,20 +238,47 @@ public class GmmlArc extends GmmlGraphics
 		
 	}
 	
+	public void updateToPropItems()
+	{
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
+		
+		Object[] values = new Object[] {new Double(startx), new Double(starty),
+				new Double(width), new Double(height), color, new Double(rotation)};
+		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
+	}
+	
+	public void updateFromPropItems()
+	{
+		startx		= (Double)propItems.get(attributes.get(0));
+		starty		= (Double)propItems.get(attributes.get(1));
+		width		= (Double)propItems.get(attributes.get(2));
+		height		= (Double)propItems.get(attributes.get(3));
+		color 		= (RGB)propItems.get(attributes.get(4));
+		rotation	= (Double)propItems.get(attributes.get(5));
+
+		canvas.redraw();
+	}
+
 	/*
 	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
+	 * @see GmmlGraphics#getPropertyTable()
 	 */
-	protected void updateFromPropertyTable(JTable t)
+	protected JTable getPropertyTable()
 	{
-		startx		= Double.parseDouble(t.getValueAt(0, 0).toString());
-		starty		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		width		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		height		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 4).toString());
-		rotation	= Double.parseDouble(t.getValueAt(0, 5).toString());
+		Object[][] data = new Object[][] {{new Double(startx), new Double(starty),
+				new Double(width), new Double(height), color, new Double(rotation)}};
 		
+		Object[] cols = new Object[] {"Start X", "Start Y", "Width", "Height", 
+				"Color", "Rotation"};
 		
+		return new JTable(data, cols);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -291,21 +292,6 @@ public class GmmlBrace extends GmmlGraphics
 		
 		return outline.intersects(r.x, r.y, r.width, r.height);
 	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(centerx), new Double(centery),
-			new Double(width), new Double(ppo), new Integer(orientation), color}};
-		
-		Object[] cols = new Object[]{"CenterX", "CenterY", 
-				"Width", "PicPoint Offset", "Orientation", "Color"}; 
-		
-		return new JTable(data, cols);
-	}
 	
 	/*
 	 *  (non-Javadoc)
@@ -330,19 +316,33 @@ public class GmmlBrace extends GmmlGraphics
 	 * @see GmmlGraphics#resizeY(double)
 	 */
 	protected void resizeY(double dy){}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
-	 */
-	protected void updateFromPropertyTable(JTable t)
+	
+	public void updateToPropItems()
 	{
-		centerx		= Double.parseDouble(t.getValueAt(0, 0).toString());
-		centery		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		width		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		ppo			= Double.parseDouble(t.getValueAt(0, 3).toString());
-		orientation	= (int)Double.parseDouble(t.getValueAt(0, 4).toString());
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 5).toString());
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
+		
+		Object[] values = new Object[] {new Double(centerx), new Double(centery),
+				new Double(width), new Double(ppo), new Integer(orientation), color};
+		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
+	}
+	
+	public void updateFromPropItems()
+	{
+		centerx		= (Double)propItems.get(attributes.get(0));
+		centery		= (Double)propItems.get(attributes.get(1));
+		width		= (Double)propItems.get(attributes.get(2));
+		ppo			= (Double)propItems.get(attributes.get(3));
+		orientation	= (Integer)propItems.get(attributes.get(4));
+		color 		= (RGB)propItems.get(attributes.get(5));
+		
+		canvas.redraw();
 	}
 	
 	/**

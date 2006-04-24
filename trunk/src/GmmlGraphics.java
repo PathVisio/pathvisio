@@ -1,6 +1,12 @@
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.JTable;
+
+import org.eclipse.swt.widgets.Table;
 
 
 /**
@@ -9,7 +15,6 @@ import javax.swing.JTable;
  */
 abstract class GmmlGraphics extends GmmlDrawingObject
 {
-	
 	
 	/**
 	 * Resizes GmmlGraphics in x-direction
@@ -44,12 +49,9 @@ abstract class GmmlGraphics extends GmmlDrawingObject
 	 */
 	abstract void adjustToZoom(double factor);
 
-	/**
-	 * Updates GmmlGraphics object properties from the 
-	 * table specified.
-	 * @param t - the table to get the properties from
-	 */
-	abstract void updateFromPropertyTable(JTable t);	
+	abstract void updateToPropItems();
+	
+	abstract void updateFromPropItems();
 	
 	/**
 	 * Determines whether a GmmlGraphics object intersects 
@@ -59,13 +61,8 @@ abstract class GmmlGraphics extends GmmlDrawingObject
 	 */
 	abstract boolean intersects(Rectangle2D.Double r);
 	
-	/**
-	 * Gets the GmmlGraphics object properties and returns them
-	 * in a table
-	 * @return a table containing the objects properties
-	 */
-	abstract JTable getPropertyTable();
-	
 	abstract void updateJdomGraphics();
+	
+	Hashtable propItems;
 	
 }

@@ -433,7 +433,8 @@ public class GmmlGdb {
 				System.out.println(convertThread.progress);
 			}
 			convertThread.progress = 100;
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			System.out.println ("Error: " + e.getMessage());
 			e.printStackTrace();

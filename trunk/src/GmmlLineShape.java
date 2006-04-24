@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 //~ import java.awt.Color;
 import java.awt.BasicStroke;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.swt.graphics.*;
@@ -326,21 +327,6 @@ public class GmmlLineShape extends GmmlGraphics
 	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(startx), new Double(starty), 
-			 new Double(endx), new Double(endy), new Integer(type), color}};
-		
-		Object[] cols = new Object[] {"Start X", "Start Y",
-				"EndX", "EndY",	"Type", "Color"};
-		
-		return new JTable(data, cols);
-	}
-	
-	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
 	 */
@@ -371,19 +357,32 @@ public class GmmlLineShape extends GmmlGraphics
 //		constructLine();
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
-	 */
-	protected void updateFromPropertyTable(JTable t)
+	public void updateToPropItems()
 	{
-		startx		= Double.parseDouble(t.getValueAt(0, 0).toString());
-		starty		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		endx		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		endy		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		type		= (int)Double.parseDouble(t.getValueAt(0, 4).toString());
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 5).toString());
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
 		
+		Object[] values = new Object[] {new Double(startx), new Double(starty), 
+				 new Double(endx), new Double(endy), new Integer(type), color};
+		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
+	}
+	
+	public void updateFromPropItems()
+	{
+		startx		= (Double)propItems.get(attributes.get(0));
+		starty		= (Double)propItems.get(attributes.get(1));
+		endx		= (Double)propItems.get(attributes.get(2));
+		endy		= (Double)propItems.get(attributes.get(3));
+		type		= (Integer)propItems.get(attributes.get(4));
+		color 		= (RGB)propItems.get(attributes.get(5));
+		
+		canvas.redraw();
 	}
 
 	/**

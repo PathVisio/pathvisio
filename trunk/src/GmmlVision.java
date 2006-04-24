@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.dialogs.*;
 import org.jdom.*;
@@ -57,8 +58,9 @@ class GmmlVision extends ApplicationWindow
 		public void run () 
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
-	        // TODO: set proper file filter for xml files
 			fd.setText("Open");
+			fd.setFilterExtensions(new String[] {"*.xml","*.*"});
+			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 			// TODO: check if user pressed cancel
 	        String fnMapp = fd.open();			
 			openPathway(fnMapp);
@@ -101,43 +103,39 @@ class GmmlVision extends ApplicationWindow
 		public void run () {
 			if (drawing != null)
 			{
-				//~ JFileChooser chooser = new JFileChooser();
-				//~ chooser.setFileFilter(new GmmlFilter());
-				//~ int returnVal = chooser.showSaveDialog(null);
-				//~ if(returnVal == JFileChooser.APPROVE_OPTION) 
-				//~ {
-					//~ String file = chooser.getSelectedFile().getPath();
-					//~ if(!file.endsWith(".xml")) 
-					//~ {
-						//~ file = file+".xml";
-					//~ }
-					
-					//~ int confirmed = 1;
-					//~ File tempfile = new File(file);
-					
-					//~ if(tempfile.exists())
-					//~ {
-						//~ String[] options = { "OK", "CANCEL" };
-						//~ confirmed = JOptionPane.showOptionDialog(null, 
-								//~ "The selected file already exists, overwrite?", 
-								//~ "Warning", 
-								//~ JOptionPane.DEFAULT_OPTION, 
-								//~ JOptionPane.WARNING_MESSAGE, null, 
-								//~ options, options[0]);
-					//~ } 
-					//~ else
-					//~ {
-						//~ confirmed = 0;
-					//~ }
-					
-					//~ if (confirmed == 0) 
-					//~ {
-						//~ document.writeToXML(tempfile);
-						//~ System.out.println("Saved");
-					//~ } else {
-						//~ System.out.println("Canceled");
-					//~ }
-				//~ }
+				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+				fd.setText("Save");
+				fd.setFilterExtensions(new String[] {"*.xml","*.*"});
+				fd.setFilterNames(new String[] {"Gmml file", "All files"});
+				String fileName = fd.open();
+				if(fileName != null) 
+				{
+					if(!fileName.endsWith(".xml"))
+					{
+						fileName += ".xml";
+					}
+					File checkFile = new File(fileName);
+					boolean confirmed = true;
+					if(checkFile.exists())
+					{
+						if(!MessageDialog.openQuestion(window.getShell(),"",
+								"File already exists, overwrite?"))
+						{
+							confirmed = false;
+						}
+					}
+					if(confirmed)
+					{
+						double usedZoom = drawing.zoomFactor;
+						// Set zoom to 100%
+						drawing.setZoom(100);
+						drawing.updateJdomElements();
+						// Overwrite the existing xml file
+						gmmlData.writeToXML(checkFile);
+						// Set zoom back
+						drawing.setZoom(usedZoom);
+					}
+				}
 			} 
 			else
 			{
@@ -463,7 +461,7 @@ class GmmlVision extends ApplicationWindow
 			
 	ScrolledComposite sc;
 	GmmlBpBrowser bpBrowser;
-	
+	GmmlPropertyTable propertyTable;
 //	ToolItem sampleSelector;
 	
 	protected Control createContents(Composite parent)
@@ -497,9 +495,13 @@ class GmmlVision extends ApplicationWindow
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setFocus(); //To enable scrolling with mouse wheel
 		
-		bpBrowser = new GmmlBpBrowser(sashForm, SWT.NONE);
-		
+		SashForm sashFormSplit = new SashForm (sashForm, SWT.VERTICAL);
 		sashForm.setWeights(new int[] {80, 20});
+		
+		propertyTable = new GmmlPropertyTable(sashFormSplit, SWT.BORDER | SWT.SINGLE);
+		
+		bpBrowser = new GmmlBpBrowser(sashFormSplit, SWT.NONE);
+		
 		setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
 		
 		return parent;
@@ -516,15 +518,17 @@ class GmmlVision extends ApplicationWindow
 		gmmlData = new GmmlData(d);
 		
 		d.setBrowser(bpBrowser);
+		d.setPropertyTable(propertyTable);
 		
 		d.addElement(new GmmlShape(600, 200, 100, 40, GmmlShape.TYPE_RECTANGLE, new RGB (0, 0, 255), 10, d, gmmlData.doc));
-		d.addElement(new GmmlLine(100, 100, 200, 200, new RGB (0, 255, 0), d, gmmlData.doc));
+		d.addElement(new GmmlLine(0, 100, 200, 200, new RGB (0, 255, 0), d, gmmlData.doc));
+		d.addElement(new GmmlLine(0,150,150,150,new RGB (0,0,0),d,gmmlData.doc));
 		d.addElement(new GmmlGeneProduct(200, 200, 200, 80, "this is a very long id", "ref", new RGB (255, 0, 0), d, gmmlData.doc));
 		d.addElement(new GmmlLineShape(300, 50, 200, 500, GmmlLineShape.TYPE_LIGAND_SQUARE, new RGB (0, 128, 0), d, gmmlData.doc));
 		d.addElement(new GmmlLineShape(300, 150, 200, 400, GmmlLineShape.TYPE_RECEPTOR_ROUND, new RGB (0, 128, 0), d, gmmlData.doc));
 		d.addElement(new GmmlLineShape(300, 250, 200, 300, GmmlLineShape.TYPE_LIGAND_ROUND, new RGB (0, 128, 0), d, gmmlData.doc));
 		d.addElement(new GmmlLabel(200, 50, 100, 80, "testlabel", "Arial", "bold", "italic", 10, new RGB (0, 0, 0), d, gmmlData.doc));
-		d.addElement(new GmmlArc(50, 50, 200, 200, new RGB (255, 0, 0), 0, d, gmmlData.doc));
+		d.addElement(new GmmlArc(300, 300, 250, 250, new RGB (255, 0, 0), 0, d, gmmlData.doc));
 		d.addElement(new GmmlBrace(400, 400, 200, 60, GmmlBrace.ORIENTATION_TOP, new RGB (255, 0, 255), d, gmmlData.doc));
 		d.addElement(new GmmlBrace(200, 200, 200, 60, GmmlBrace.ORIENTATION_BOTTOM, new RGB (255, 0, 255), d, gmmlData.doc));
 		d.addElement(new GmmlBrace(400, 200, 200, 60, GmmlBrace.ORIENTATION_LEFT, new RGB (255, 0, 255), d, gmmlData.doc));
@@ -534,13 +538,6 @@ class GmmlVision extends ApplicationWindow
 		d.setSize(800, 600);
 		
 		drawing = d;
-		
-		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-		try {
-			xmlcode.output(gmmlData.doc,System.out);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -551,6 +548,7 @@ class GmmlVision extends ApplicationWindow
 	{
 		drawing = new GmmlDrawing(sc, SWT.NONE);
 		drawing.setBrowser(bpBrowser);
+		drawing.setPropertyTable(propertyTable);
 		
 		// initialize new JDOM gmml representation and read the file
 		gmmlData = new GmmlData(fnPwy, drawing);

@@ -5,7 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Polygon;
+
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 
@@ -15,10 +19,12 @@ import org.jdom.Element;
 
 import java.awt.geom.Line2D;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.JTable;
+import java.util.Map;
+import java.util.Vector;
  
 /**
  * This class implements and handles a line
@@ -256,23 +262,7 @@ public class GmmlLine extends GmmlGraphics
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(line);
 		
-		return outline.intersects(r.x, r.y, r.width, r.height);
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(startx), new Double(starty),
-			new Double(endx), new Double(endy), color, new Integer(style), 
-			new Integer(type)}};
-		
-		Object[] cols = new Object[] {" StartX", "StartY", "EndX",
-				"EndY", "Color", "Style", "Type"};
-		
-		return new JTable(data, cols);
+		return outline.intersects(r);
 	}
 	
 	/*
@@ -305,24 +295,6 @@ public class GmmlLine extends GmmlGraphics
 	{
 		endx += dx;
 		endy += dy;
-		constructLine();
-		
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
-	 */
-	protected void updateFromPropertyTable(JTable t)
-	{
-		startx		= Double.parseDouble(t.getValueAt(0, 0).toString());
-		starty		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		endx		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		endy		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 4).toString());
-		style		= (int)Double.parseDouble(t.getValueAt(0, 5).toString());
-		type		= (int)Double.parseDouble(t.getValueAt(0, 6).toString());
-		
 		constructLine();
 		
 	}
@@ -407,6 +379,37 @@ public class GmmlLine extends GmmlGraphics
 		while(it.hasNext()) {
 			mapAttributes((Element)it.next());
 		}
+	}
+	
+	public void updateToPropItems()
+	{
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
+		
+		Object[] values = new Object[] {new Double(startx), new Double(starty), 
+				 new Double(endx), new Double(endy), color, new Integer(style), 
+				 new Integer(type)};
+		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
+	}
+	
+	public void updateFromPropItems()
+	{
+		startx		= (Double)propItems.get(attributes.get(0));
+		starty		= (Double)propItems.get(attributes.get(1));
+		endx		= (Double)propItems.get(attributes.get(2));
+		endy		= (Double)propItems.get(attributes.get(3));
+		color 		= (RGB)propItems.get(attributes.get(4));
+		style		= (Integer)propItems.get(attributes.get(5));
+		type		= (Integer)propItems.get(attributes.get(6));
+		
+		constructLine();
+		canvas.redraw();
 	}
 
 	/**

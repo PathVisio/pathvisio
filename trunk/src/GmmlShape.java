@@ -227,22 +227,6 @@ public class GmmlShape extends GmmlGraphics
 	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(centerx), new Double(centery),
-			new Double(width), new Double(height), new Integer(type), 
-			color, new Double(rotation)}};
-
-		Object[] cols = new Object[] {"Center X", "Center Y", "Width", "Height", 
-    			"Type", "Color", "Rotation"};
-		
-		return new JTable(data, cols);
-	}
-	
-	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
 	 */
@@ -286,17 +270,37 @@ public class GmmlShape extends GmmlGraphics
 	
 	/*
 	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
+	 * @see GmmlGraphics#getPropertyTable()
 	 */
-	protected void updateFromPropertyTable(JTable t)
+	
+	public void updateToPropItems()
 	{
-		centerx		= Double.parseDouble(t.getValueAt(0, 0).toString());
-		centery		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		width		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		height		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		type		= (int)Double.parseDouble(t.getValueAt(0, 4).toString());
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 5).toString());
-		rotation	= Double.parseDouble(t.getValueAt(0, 6).toString());
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
+		
+		Object[] values = new Object[] {new Double(centerx), new Double(centery),
+				new Double(width), new Double(height), new Integer(type), 
+				color, new Double(rotation)};
+		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
+	}
+	
+	public void updateFromPropItems()
+	{
+		centerx		= (Double)propItems.get(attributes.get(0));
+		centery		= (Double)propItems.get(attributes.get(1));
+		width		= (Double)propItems.get(attributes.get(2));
+		height		= (Double)propItems.get(attributes.get(3));
+		type		= (Integer)propItems.get(attributes.get(6));
+		color 		= (RGB)propItems.get(attributes.get(4));
+		rotation	= (Double)propItems.get(attributes.get(5));
+		
+		canvas.redraw();
 	}
 	
 	/**

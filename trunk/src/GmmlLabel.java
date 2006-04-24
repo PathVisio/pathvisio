@@ -20,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.swt.graphics.*;
@@ -219,23 +220,6 @@ public class GmmlLabel extends GmmlGraphics
 
 	/*
 	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{text, new Double(centerx), 
-			new Double(centery), new Double(width), new Double(height), 
-			fontName, fontWeight, fontStyle, new Integer(fontSize), color}};
-		
-		Object[] cols = new Object[] {"TextLabel", "CenterX", "CenterY", 
-				"Width", "Height", "FontName", "FontWeight", "FontStyle", 
-				"FontSize", "Color" };
-		
-		return new JTable(data, cols);
-	}
-	
-	/*
-	 *  (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
 	 */
 	protected void moveBy(double dx, double dy)
@@ -263,22 +247,37 @@ public class GmmlLabel extends GmmlGraphics
 		return r.intersects(centerx - width/2, centery - height/2, width, height);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
-	 */
-	protected void updateFromPropertyTable(JTable t)
+	public void updateToPropItems()
 	{
-		text		= t.getValueAt(0, 0).toString();
-		centerx		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		centery		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		width		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		height		= Double.parseDouble(t.getValueAt(0, 4).toString());
-		fontName	= t.getValueAt(0, 5).toString();
-		fontWeight	= t.getValueAt(0, 6).toString();
-		fontStyle	= t.getValueAt(0, 7).toString();
-		fontSize	= (int)Double.parseDouble(t.getValueAt(0, 8).toString());
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 9).toString());;
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
+		
+		Object[] values = new Object[] {text, new Double(centerx), 
+				new Double(centery), new Double(width), new Double(height), 
+				fontName, fontWeight, fontStyle, new Integer(fontSize), color};
+		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
+	}
+	
+	public void updateFromPropItems()
+	{
+		text		= (String)propItems.get(attributes.get(0));
+		centerx		= (Double)propItems.get(attributes.get(1));
+		centery		= (Double)propItems.get(attributes.get(2));
+		width		= (Double)propItems.get(attributes.get(3));
+		height 		= (Double)propItems.get(attributes.get(4));
+		fontName	= (String)propItems.get(attributes.get(5));
+		fontWeight	= (String)propItems.get(attributes.get(6));
+		fontStyle	= (String)propItems.get(attributes.get(7));
+		fontSize	= (Integer)propItems.get(attributes.get(8));
+		color		= (RGB)propItems.get(attributes.get(9));
+		
+		canvas.redraw();
 	}
 	
 	/**

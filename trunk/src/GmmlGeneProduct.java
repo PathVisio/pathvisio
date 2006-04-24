@@ -3,6 +3,8 @@ import java.util.List;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
 
@@ -40,7 +42,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	Element jdomElement;
 	
-	String geneLabel;
+	String geneID;
 	String xref;
 
 	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
@@ -81,7 +83,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		this.centery = y;
 		this.width = width;
 		this.height = height;
-		this.geneLabel = geneLabel;
+		this.geneID = geneLabel;
 		this.xref = xref;
 		this.color = color;
 
@@ -178,7 +180,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 		e.gc.setFont (f);
 		
-		Point textSize = e.gc.textExtent (geneLabel);
+		Point textSize = e.gc.textExtent (geneID);
 		
 		Color c;
 		if (isSelected)
@@ -210,7 +212,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 			(int)height
 		);
 		
-		e.gc.drawString (geneLabel, 
+		e.gc.drawString (geneID, 
 			(int) centerx - (textSize.x / 2) , 
 			(int) centery - (textSize.y / 2));
 		
@@ -238,21 +240,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 	protected boolean intersects(Rectangle2D.Double r)
 	{
 		return r.intersects(centerx - width/2, centery - height/2, width, height);
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(centerx), new Double(centery), 
-			new Double(width), new Double(height), geneLabel, xref, color}};
-		
-		Object[] cols = new Object[] {"CenterX", "CenterY", "Width",
-				"Height", "GeneID", "Xref", "Color"};
-		
-		return new JTable(data, cols);
 	}
 	
 	/*
@@ -300,23 +287,35 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#updateFromPropertyTable(javax.swing.JTable)
-	 */
-	protected void updateFromPropertyTable(JTable t)
-	{			
-		centerx		= Double.parseDouble(t.getValueAt(0, 0).toString());
-		centery		= Double.parseDouble(t.getValueAt(0, 1).toString());
-		width		= Double.parseDouble(t.getValueAt(0, 2).toString());
-		height		= Double.parseDouble(t.getValueAt(0, 3).toString());
-		geneLabel		= t.getValueAt(0, 4).toString();
-		xref		= t.getValueAt(0, 5).toString();
-		color 		= GmmlColorConvertor.string2Color(t.getValueAt(0, 6).toString());
+	public void updateToPropItems()
+	{
+		if (propItems == null)
+		{
+			propItems = new Hashtable();
+		}
 		
+		Object[] values = new Object[] {new Double(centerx), new Double(centery), 
+				new Double(width), new Double(height), geneID, xref, color};
 		
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			propItems.put(attributes.get(i), values[i]);
+		}
 	}
 	
+	public void updateFromPropItems()
+	{
+		centerx		= (Double)propItems.get(attributes.get(0));
+		centery		= (Double)propItems.get(attributes.get(1));
+		width		= (Double)propItems.get(attributes.get(2));
+		height		= (Double)propItems.get(attributes.get(3));
+		geneID	= (String)propItems.get(attributes.get(4));
+		xref		= (String)propItems.get(attributes.get(5));
+		color		= (RGB)propItems.get(attributes.get(6));
+
+		canvas.redraw();
+	}
+
 	/**
 	 * Maps attributes to internal variables.
 	 * @param e - the element to map to a GmmlArc
@@ -339,7 +338,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 					case 3:	// Height
 						this.height = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 4: // GeneLabel
-						this.geneLabel = value; break;
+						this.geneID = value; break;
 					case 5: // Xref
 						this.xref = value; break;
 					case 6: // Color

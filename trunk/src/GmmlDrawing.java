@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.*;
 
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.*;
@@ -21,6 +22,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	private static final long serialVersionUID = 1L;
 	
 	GmmlBpBrowser backPageBrowser;
+	GmmlPropertyTable propertyTable;
 	
 	Vector drawingObjects;
 	Vector graphics;
@@ -68,6 +70,10 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	
 	public void setBrowser(GmmlBpBrowser browser) {
 		backPageBrowser = browser;
+	}
+	
+	public void setPropertyTable(GmmlPropertyTable propertyTable) {
+		this.propertyTable = propertyTable;
 	}
 	
 	private void calculateSize()
@@ -137,7 +143,6 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			s.y2 = e.y;
 			
 			Iterator it = graphics.iterator();
-
 			while (it.hasNext())
 			{
 				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
@@ -162,7 +167,6 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 					}
 				}				
 			}
-			
 			redraw();
 		}
 	}
@@ -172,6 +176,8 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	public void mouseDown(MouseEvent e)
 	{		
+		setFocus();
+		
 		Point2D p = new Point2D.Double(e.x, e.y);
 		
 		Iterator it = drawingObjects.iterator();
@@ -213,6 +219,8 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 					((GmmlHandle)pressedObject).parent.isSelected = true;
 				}
 			}
+			// show property table
+			updatePropertyTable(pressedObject);
 			
 			// start dragging
 			previousX = e.x;
@@ -220,8 +228,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			
 			isSelecting = false;
 			isDragging = true;
-			pressedObject = null;
-			it = selection.iterator();		
+			pressedObject = null;	
 		}
 		else if (pressedObject == null)
 		{
@@ -229,6 +236,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			isDragging = false;
 			isSelecting = true;
 			initSelection(p);
+			updatePropertyTable(null);
 		}
 	}
 	
@@ -237,8 +245,10 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	public void mouseUp(MouseEvent e)
 	{
-		isSelecting = false;
+		updatePropertyTable(propertyTable.g);
 		isDragging = false;
+		isSelecting = false;
+		
 		redraw();
 	}
 	
@@ -300,8 +310,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	public void paintControl (PaintEvent e)
 	{
-		GC gc = e.gc;
-				
+		GC gc = e.gc;	
 		// paint parrent
 		// not necessary in swt
 		//~ super.paintComponent(g);
@@ -350,6 +359,30 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		redraw();
 	}
 	
+	private void updatePropertyTable(GmmlDrawingObject o)
+	{
+		GmmlGraphics g;
+		if (o != null)
+		{
+			if (o instanceof GmmlHandle)
+			{
+				g = ((GmmlHandle)o).parent;
+			}
+			else
+			{
+				g = (GmmlGraphics)o;
+			}
+			g.updateToPropItems();
+			propertyTable.setGraphics(g);
+			propertyTable.tableViewer.setInput(g.propItems);
+		}
+		else
+		{
+			propertyTable.setGraphics(null);
+			propertyTable.tableViewer.setInput(null);
+		}
+
+	}
 	/**
 	 * Initializes selection, resetting the selectionbox
 	 * and then setting it to the position specified
@@ -372,23 +405,23 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	}
 	
 	//TODO: resize when moving object out of drawing boundaries
-	private void checkBoundaries() {
-		Iterator it = drawingObjects.iterator();
-		while(it.hasNext())
-		{
-			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
-			if(o instanceof GmmlHandle) {
-				GmmlHandle h = (GmmlHandle)o;
-				if(h.centerx > getSize().x)
-				{
-					this.setSize((int)h.centerx, getSize().y);
-				} 
-				else if (h.centery > getSize().y)
-				{
-					this.setSize(getSize().x, (int)h.centery);
-				}
-			}
-		}
-	}
+//	private void checkBoundaries() {
+//		Iterator it = drawingObjects.iterator();
+//		while(it.hasNext())
+//		{
+//			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
+//			if(o instanceof GmmlHandle) {
+//				GmmlHandle h = (GmmlHandle)o;
+//				if(h.centerx > getSize().x)
+//				{
+//					this.setSize((int)h.centerx, getSize().y);
+//				} 
+//				else if (h.centery > getSize().y)
+//				{
+//					this.setSize(getSize().x, (int)h.centery);
+//				}
+//			}
+//		}
+//	}
 	
 } // end of class

@@ -21,8 +21,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 {	
 	private static final long serialVersionUID = 1L;
 	
-	GmmlBpBrowser backPageBrowser;
-	GmmlPropertyTable propertyTable;
+	GmmlVision gmmlVision;
 	
 	Vector drawingObjects;
 	Vector graphics;
@@ -31,19 +30,26 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	Vector selection;
 	
 	GmmlDrawingObject pressedObject	= null;	
+	GmmlHandle pressedHandle = null;
 	
 	GmmlGraphics selectedGraphics = null;
+	
+	GmmlMappInfo mappInfo;
 	
 	GmmlSelectionBox s; 
 	
 	boolean isSelecting;
 	boolean isDragging;
+	
+	boolean editMode;
+	
+	int newGraphics = NEWNONE;
 		
 	int previousX;
 	int previousY;
 	
 	Dimension dims = new Dimension(1000, 1000);
-	double zoomFactor = 100;
+	double zoomFactor = 1;
 	
 	/**
 	 *Constructor for this class
@@ -59,7 +65,6 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		
 		s = new GmmlSelectionBox(this);
 		
-		
 		addMouseListener(this);
 		addMouseMoveListener(this);
 		addPaintListener (this);
@@ -68,19 +73,15 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		
 	}
 	
-	public void setBrowser(GmmlBpBrowser browser) {
-		backPageBrowser = browser;
-	}
-	
-	public void setPropertyTable(GmmlPropertyTable propertyTable) {
-		this.propertyTable = propertyTable;
+	public void setGmmlVision(GmmlVision gmmlVision) {
+		this.gmmlVision = gmmlVision;
 	}
 	
 	private void calculateSize()
 	{
 		setSize (
-			(int)(dims.width*zoomFactor/100), 
-			(int)(dims.height*zoomFactor/100)
+			(int)(dims.width*zoomFactor), 
+			(int)(dims.height*zoomFactor)
 		);
 	}
 
@@ -108,17 +109,43 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		}
 	}
 
-	public void updateJdomElements() {
-		// Update jdomElement for every graphics object
-		Iterator it = drawingObjects.iterator();
-		while(it.hasNext()) {
-			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
-			if(o instanceof GmmlGraphics) {
-				((GmmlGraphics)o).updateJdomGraphics();
-			}
+	public void setEditMode(boolean editMode)
+	{
+		this.editMode = editMode;
+		if(!editMode)
+		{
+			clearSelection();
+			redraw();
 		}
 	}
 	
+	/**
+	 * Sets the drawings zoom
+	 * @param zoom
+	 */
+	public void setZoom(double zoom)
+	{
+		double factor = 0.01*zoom/zoomFactor;
+		zoomFactor = zoom / 100;
+		calculateSize();
+		
+		System.out.println(zoomFactor);
+		
+		// iterate over all graphics to adjust them
+		Iterator it = graphics.iterator();	
+		while (it.hasNext())
+		{
+			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+			if (o instanceof GmmlGraphics)
+			{
+				GmmlGraphics g = (GmmlGraphics) o;
+				g.adjustToZoom(factor);		
+			}
+		}
+		
+		redraw();
+	}
+
 	/**
 	 * handles mouse movement
 	 */
@@ -177,67 +204,22 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	public void mouseDown(MouseEvent e)
 	{		
 		setFocus();
-		
-		Point2D p = new Point2D.Double(e.x, e.y);
-		
-		Iterator it = drawingObjects.iterator();
-		GmmlHandle pressedHandle = null;
-		while (it.hasNext())
+		if (editMode)
 		{
-			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-			if(selection.size() == 1)
+			if (newGraphics != NEWNONE)
 			{
-				o.isSelected = false;
+				newObject(e);
 			}
-			if (o.isContain(p))
+			else
 			{
-				if (o instanceof GmmlHandle && selection.size() == 1)
-				{
-					pressedHandle = (GmmlHandle)o;
-				}
-				else if (o instanceof GmmlGraphics)
-				{
-					pressedObject = o;
-				}
+				editObject(e);
 			}
 		}
-		if (pressedHandle != null)
+		else
 		{
-			pressedObject = (GmmlDrawingObject)pressedHandle;
+			mouseDownViewMode(e);
 		}
-		
-		if (pressedObject != null)
-		{
-			pressedObject.isSelected = true;
-			if(!selection.contains(pressedObject))
-			{
-				//TODO: if ctrl is pressed, don't clear, but just add object
-				initSelection(p);
-				selection.add(pressedObject);
-				if(pressedObject instanceof GmmlHandle)
-				{
-					((GmmlHandle)pressedObject).parent.isSelected = true;
-				}
-			}
-			// show property table
-			updatePropertyTable(pressedObject);
-			
-			// start dragging
-			previousX = e.x;
-			previousY = e.y;
-			
-			isSelecting = false;
-			isDragging = true;
-			pressedObject = null;	
-		}
-		else if (pressedObject == null)
-		{
-			// start selecting
-			isDragging = false;
-			isSelecting = true;
-			initSelection(p);
-			updatePropertyTable(null);
-		}
+
 	}
 	
 	/**
@@ -245,10 +227,12 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	public void mouseUp(MouseEvent e)
 	{
-		updatePropertyTable(propertyTable.g);
+		if(isDragging)
+		{
+		updatePropertyTable(gmmlVision.propertyTable.g);
+		}
 		isDragging = false;
 		isSelecting = false;
-		
 		redraw();
 	}
 	
@@ -285,19 +269,19 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			String gexText = gmmlGdb.getExprInfo(geneId);
 			if (bpText != null) 
 			{
-				backPageBrowser.setBpText(bpText);
+				gmmlVision.bpBrowser.setBpText(bpText);
 			} 
 			else 
 			{
-				backPageBrowser.setBpText("<I>No gene information found</I>");
+				gmmlVision.bpBrowser.setBpText("<I>No gene information found</I>");
 			}
 			if (gexText != null) 
 			{
-				backPageBrowser.setGexText(gexText);
+				gmmlVision.bpBrowser.setGexText(gexText);
 			}
 			else 
 			{
-				backPageBrowser.setGexText("<I>No expression data found</I>");
+				gmmlVision.bpBrowser.setGexText("<I>No expression data found</I>");
 			}
 		}
 		
@@ -334,32 +318,19 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		}		
 	}
 
-	/**
-	 * Sets the drawings zoom
-	 * @param zoom
-	 */
-	public void setZoom(double zoom)
-	{
-		double factor = zoom/zoomFactor;
-		zoomFactor = zoom;
-		calculateSize();
-		
-		// iterate over all graphics to adjust them
-		Iterator it = graphics.iterator();	
-		while (it.hasNext())
-		{
-			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-			if (o instanceof GmmlGraphics)
-			{
-				GmmlGraphics g = (GmmlGraphics) o;
-				g.adjustToZoom(factor);		
+	public void updateJdomElements() {
+		mappInfo.updateJdomElement();
+		// Update jdomElement for every graphics object
+		Iterator it = drawingObjects.iterator();
+		while(it.hasNext()) {
+			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
+			if(o instanceof GmmlGraphics) {
+				((GmmlGraphics)o).updateJdomElement();
 			}
 		}
-		
-		redraw();
 	}
-	
-	private void updatePropertyTable(GmmlDrawingObject o)
+
+	public void updatePropertyTable(GmmlDrawingObject o)
 	{
 		GmmlGraphics g;
 		if (o != null)
@@ -372,17 +343,35 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			{
 				g = (GmmlGraphics)o;
 			}
-			g.updateToPropItems();
-			propertyTable.setGraphics(g);
-			propertyTable.tableViewer.setInput(g.propItems);
 		}
 		else
 		{
-			propertyTable.setGraphics(null);
-			propertyTable.tableViewer.setInput(null);
+			g = mappInfo;
 		}
-
+		g.updateToPropItems();
+		gmmlVision.propertyTable.tableViewer.setInput(g);
 	}
+	
+	private void clearSelection()
+	{
+		Iterator it = selection.iterator();
+		while (it.hasNext())
+		{
+			GmmlDrawingObject g = (GmmlDrawingObject) it.next();
+			g.isSelected = false;
+			if (g instanceof GmmlHandle)
+			{
+				((GmmlHandle)g).parent.isSelected = false;
+			}
+		}
+		selection.clear();
+	}
+
+	private void mouseDownViewMode(MouseEvent e)
+	{
+		
+	}
+
 	/**
 	 * Initializes selection, resetting the selectionbox
 	 * and then setting it to the position specified
@@ -390,13 +379,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	 */
 	private void initSelection(Point2D p)
 	{
-		Iterator it = selection.iterator();
-		while (it.hasNext())
-		{
-			GmmlDrawingObject g = (GmmlDrawingObject) it.next();
-			g.isSelected = false;
-		}
-		selection.clear();
+		clearSelection();
 		s.resetRectangle();
 		s.x1 = (int)p.getX();
 		s.x2 = s.x1;
@@ -404,24 +387,219 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		s.y2 = s.y1;		
 	}
 	
-	//TODO: resize when moving object out of drawing boundaries
-//	private void checkBoundaries() {
-//		Iterator it = drawingObjects.iterator();
-//		while(it.hasNext())
-//		{
-//			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
-//			if(o instanceof GmmlHandle) {
-//				GmmlHandle h = (GmmlHandle)o;
-//				if(h.centerx > getSize().x)
-//				{
-//					this.setSize((int)h.centerx, getSize().y);
-//				} 
-//				else if (h.centery > getSize().y)
-//				{
-//					this.setSize(getSize().x, (int)h.centery);
-//				}
-//			}
-//		}
-//	}
+	private void editObject(MouseEvent e)
+	{
+		Point2D p = new Point2D.Double(e.x, e.y);
+		pressedHandle = null;
+		Iterator it = drawingObjects.iterator();
+		while (it.hasNext())
+		{
+			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+			if(selection.size() == 1)
+			{
+				o.isSelected = false;
+			}
+			if (o.isContain(p))
+			{
+				if (o instanceof GmmlHandle && selection.size() == 1)
+				{
+					pressedHandle = (GmmlHandle)o;
+				}
+				else if (o instanceof GmmlGraphics)
+				{
+					pressedObject = o;
+				}
+			}
+		}
+		
+		if (pressedHandle != null)
+		{
+			pressedObject = (GmmlDrawingObject)pressedHandle;
+		}
+		
+		if (pressedObject != null)
+		{
+			pressedObject.isSelected = true;
+			if(!selection.contains(pressedObject))
+			{
+				//TODO: if ctrl is pressed, don't clear, but just add object
+				initSelection(p);
+				selection.add(pressedObject);
+				if(pressedObject instanceof GmmlHandle)
+				{
+					((GmmlHandle)pressedObject).parent.isSelected = true;
+				}
+			}
+	
+			updatePropertyTable(pressedObject);
+			
+			// start dragging
+			previousX = e.x;
+			previousY = e.y;
+			
+			isSelecting = false;
+			isDragging = true;
+			pressedObject = null;	
+		}
+		else if (pressedObject == null)
+		{
+			// start selecting
+			isDragging = false;
+			isSelecting = true;
+			initSelection(p);
+			updatePropertyTable(null);
+		}
+	}
+
+	static final int NEWNONE = -1;
+
+	static final int NEWLINE = 0;
+
+	static final int NEWLABEL = 1;
+
+	static final int NEWARC = 2;
+
+	static final int NEWBRACE = 3;
+
+	static final int NEWGENEPRODUCT = 4;
+
+	static final int NEWLINEDASHED = 5;
+
+	static final int NEWLINEARROW = 6;
+
+	static final int NEWLINEDASHEDARROW = 7;
+
+	static final int NEWRECTANGLE = 8;
+
+	static final int NEWOVAL = 9;
+
+	static final int NEWTBAR = 10;
+
+	static final int NEWRECEPTORROUND = 11;
+
+	static final int NEWLIGANDROUND = 12;
+
+	static final int NEWRECEPTORSQUARE = 13;
+
+	static final int NEWLIGANDSQUARE = 14;
+
+	static final int NEWLINEMENU = 15;
+
+	static final int NEWLINESHAPEMENU = 16;
+
+	static final RGB stdRGB = new RGB(0, 0, 0);
+
+	private void newObject(MouseEvent e)
+	{
+		GmmlGraphics g = null;
+		GmmlHandle h = null;
+		
+		switch(newGraphics) {
+		case NEWNONE:
+			return;
+		case NEWLINE:
+			g = new GmmlLine(e.x, e.y, e.x, e.y,stdRGB, this, gmmlVision.gmmlData.doc);
+			GmmlLine l = (GmmlLine)g;
+			l.style = GmmlLine.STYLE_SOLID;
+			l.type = GmmlLine.TYPE_LINE;
+			h = l.handleEnd;
+			isDragging = true;
+			break;
+		case NEWLINEARROW:
+			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, gmmlVision.gmmlData.doc);
+			l = (GmmlLine)g;
+			l.style = GmmlLine.STYLE_SOLID;
+			l.type = GmmlLine.TYPE_ARROW;
+			h = l.handleEnd;
+			isDragging = true;
+			break;
+		case NEWLINEDASHED:
+			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, gmmlVision.gmmlData.doc);
+			l = (GmmlLine)g;
+			l.style = GmmlLine.STYLE_DASHED;
+			l.type = GmmlLine.TYPE_LINE;
+			h = l.handleEnd;
+			isDragging = true;
+			break;
+		case NEWLINEDASHEDARROW:
+			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, gmmlVision.gmmlData.doc);
+			l = (GmmlLine)g;
+			l.style = GmmlLine.STYLE_DASHED;
+			l.type = GmmlLine.TYPE_ARROW;
+			h = l.handleEnd;
+			isDragging = true;
+			break;
+		case NEWLABEL:
+			g = new GmmlLabel(e.x, e.y, (int)(GmmlLabel.INITIAL_WIDTH * zoomFactor),
+					(int)(GmmlLabel.INITIAL_HEIGHT * zoomFactor), this, gmmlVision.gmmlData.doc);
+			((GmmlLabel)g).createTextControl();
+			h = ((GmmlLabel)g).handlecenter;
+			break;
+		case NEWARC:
+			g = new GmmlArc(e.x, e.y, 0, zoomFactor *80, stdRGB, 0, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlArc)g).handlex;
+			isDragging = true;
+			break;
+		case NEWBRACE:
+			g = new GmmlBrace(e.x, e.y, 0, GmmlBrace.INITIAL_PPO * zoomFactor, GmmlBrace.ORIENTATION_BOTTOM, 
+					stdRGB, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlBrace)g).handlewidth;
+			isDragging = true;
+			break;
+		case NEWGENEPRODUCT:
+			g = new GmmlGeneProduct(e.x, e.y, GmmlGeneProduct.INITIAL_WIDTH * zoomFactor, 
+					GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor, "", "", stdRGB, this, 
+					gmmlVision.gmmlData.doc);
+			((GmmlGeneProduct)g).createTextControl();
+			h = ((GmmlGeneProduct)g).handlecenter;
+			break;
+		case NEWRECTANGLE:
+			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_RECTANGLE, stdRGB, 0, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlShape)g).handlex;
+			isDragging = true;
+			break;
+		case NEWOVAL:
+			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_OVAL, stdRGB, 0, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlShape)g).handlex;
+			isDragging = true;
+			break;
+		case NEWTBAR:
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_TBAR, stdRGB, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlLineShape)g).handleEnd;
+			isDragging = true;
+			break;
+		case NEWRECEPTORROUND:
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_ROUND, stdRGB, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlLineShape)g).handleEnd;
+			isDragging = true;
+			break;
+		case NEWRECEPTORSQUARE:
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_SQUARE, stdRGB, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlLineShape)g).handleEnd;
+			isDragging = true;
+			break;
+		case NEWLIGANDROUND:
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_ROUND, stdRGB, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlLineShape)g).handleEnd;
+			isDragging = true;
+			break;
+		case NEWLIGANDSQUARE:
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_SQUARE, stdRGB, this, gmmlVision.gmmlData.doc);
+			h = ((GmmlLineShape)g).handleEnd;
+			isDragging = true;
+			break;
+		}
+		
+		addElement(g);
+		clearSelection();
+		g.isSelected = true;
+		selection.add(h);
+		updatePropertyTable(g);
+		
+		previousX = e.x;
+		previousY = e.y;
+		
+		gmmlVision.deselectNewItemActions();
+	}
 	
 } // end of class

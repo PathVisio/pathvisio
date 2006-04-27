@@ -31,7 +31,7 @@ public class GmmlLineShape extends GmmlGraphics
 	private static final long serialVersionUID = 1L;
 
 	public final List attributes = Arrays.asList(new String[] {
-			"StartX", "StartY", "EndX", "EndY",	"Type", "Color"
+			"StartX", "StartY", "EndX", "EndY",	"Type", "Color", "Notes"
 	});
 	
 	public static final int TYPE_TBAR 				= 0;
@@ -45,7 +45,9 @@ public class GmmlLineShape extends GmmlGraphics
 	double endx;
 	double endy;
 	
-	int type; 
+	int type;
+	
+	String notes = "";
 
 	GmmlDrawing canvas;
 	RGB color;
@@ -131,14 +133,16 @@ public class GmmlLineShape extends GmmlGraphics
 	/**
 	 * Updates the JDom representation of this lineshape
 	 */
-	public void updateJdomGraphics() {
+	public void updateJdomElement() {
 		if(jdomElement != null) {
+			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
 				jdomGraphics.setAttribute("StartX", Integer.toString((int)startx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("StartY", Integer.toString((int)starty * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndX", Integer.toString((int)endx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndY", Integer.toString((int)endy * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
 			}
 		}
 	}
@@ -170,13 +174,6 @@ public class GmmlLineShape extends GmmlGraphics
 	 */
 	protected void draw(PaintEvent e)
 	{
-		//Types:
-		// 0 - Tbar
-		// 1 - Receptor round
-		// 2 - Ligand round
-		// 3 - Receptor square
-		// 4 - Ligand square
-
 		Color c;
 		if (isSelected)
 		{
@@ -205,7 +202,7 @@ public class GmmlLineShape extends GmmlGraphics
 			e.gc.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
 			e.gc.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
 		}
-		else if (type == TYPE_RECEPTOR_ROUND)
+		else if (type == TYPE_LIGAND_ROUND)
 		{
 			double dx = (endx - startx)/s;
 			double dy = (endy - starty)/s;
@@ -215,7 +212,7 @@ public class GmmlLineShape extends GmmlGraphics
 			e.gc.fillOval ((int)endx - 5, (int)endy - 5, 10, 10);
 		}
 		
-		else if (type == TYPE_LIGAND_ROUND)
+		else if (type == TYPE_RECEPTOR_ROUND)
 		{
 			// TODO: this code is not safe for division by zero!
 			double theta 	= Math.toDegrees(Math.atan((endx - startx)/(endy - starty)));
@@ -357,6 +354,10 @@ public class GmmlLineShape extends GmmlGraphics
 //		constructLine();
 	}
 	
+	public List getAttributes() {
+		return attributes;
+	}
+	
 	public void updateToPropItems()
 	{
 		if (propItems == null)
@@ -364,8 +365,8 @@ public class GmmlLineShape extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {new Double(startx), new Double(starty), 
-				 new Double(endx), new Double(endy), new Integer(type), color};
+		Object[] values = new Object[] {startx, starty, 
+				 endx, endy, type, color, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
 		{
@@ -381,6 +382,7 @@ public class GmmlLineShape extends GmmlGraphics
 		endy		= (Double)propItems.get(attributes.get(3));
 		type		= (Integer)propItems.get(attributes.get(4));
 		color 		= (RGB)propItems.get(attributes.get(5));
+		notes		= (String)propItems.get(attributes.get(6));
 		
 		canvas.redraw();
 	}
@@ -412,6 +414,8 @@ public class GmmlLineShape extends GmmlGraphics
 						break;
 					case 5: // Color
 						this.color = GmmlColorConvertor.string2Color(value); break;
+					case 6: // Notes
+						this.notes = value; break;
 					case -1:
 						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
 			}

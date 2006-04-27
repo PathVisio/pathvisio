@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.dialogs.*;
@@ -38,7 +39,8 @@ class GmmlVision extends ApplicationWindow
 		{
 			window = w;
 			setText ("&New@Ctrl+N");
-			setToolTipText ("Create new drawing");
+			setToolTipText ("Create new mapp");
+			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/new.gif"));
 		}
 		public void run () {
 			createNewDrawing();
@@ -53,7 +55,8 @@ class GmmlVision extends ApplicationWindow
 		{
 			window = w;
 			setText ("&Open@Ctrl+O");
-			setToolTipText ("Open Application");
+			setToolTipText ("Open mapp");
+			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/open.gif"));
 		}
 		public void run () 
 		{
@@ -76,6 +79,7 @@ class GmmlVision extends ApplicationWindow
 			window = w;
 			setText ("&Save@Ctrl+S");
 			setToolTipText ("Save mapp");
+			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/save.gif"));
 		}
 		
 		public void run () {
@@ -84,7 +88,14 @@ class GmmlVision extends ApplicationWindow
 			drawing.setZoom(100);
 			drawing.updateJdomElements();
 			// Overwrite the existing xml file
-			gmmlData.writeToXML(gmmlData.xmlFile);
+			if (gmmlData.xmlFile != null)
+			{
+				gmmlData.writeToXML(gmmlData.xmlFile);
+			}
+			else
+			{
+				saveAsAction.run();
+			}
 			// Set zoom back
 			drawing.setZoom(usedZoom);
 		}
@@ -385,42 +396,252 @@ class GmmlVision extends ApplicationWindow
 	}
 	private AboutAction aboutAction = new AboutAction(this);
 	
+	private class SwitchEditModeAction extends Action
+	{
+		GmmlVision window;
+		public SwitchEditModeAction (GmmlVision w)
+		{
+			super("&Edit mode", IAction.AS_CHECK_BOX);
+			window = w;
+		}
+		
+		public void run () {
+			if(drawing != null)
+			{
+				if(isChecked())
+				{
+					addNewItemActions(getToolBarManager());			
+					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
+					if(drawing != null)
+						drawing.setEditMode(true);
+				}
+				else
+				{
+					removeNewItemActions(getToolBarManager());
+					sashFormSplit.setMaximizedControl(bpBrowser);
+					if(drawing != null)
+						drawing.setEditMode(false);
+				}
+			}
+				else
+				{
+					setChecked(false);
+				}
+			}
+		}
+		private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
+	
+	private class NewElementAction extends Action
+	{
+		GmmlVision window;
+		int element;
+
+		public NewElementAction (int e)
+		{
+			element = e;
+		
+			String toolTipText;
+			String image;
+			toolTipText = image = null;
+			switch(element) {
+			case GmmlDrawing.NEWLINE: 
+				toolTipText = "Draw new line";
+				image = "icons/newline.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLINEARROW:
+				toolTipText = "Draw new arrow";
+				image = "icons/newarrow.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLINEDASHED:
+				toolTipText = "Draw new dashed line";
+				image = "icons/newdashedline.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLINEDASHEDARROW:
+				toolTipText = "Draw new dashed arrow";
+				image = "icons/newdashedarrow.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLABEL:
+				toolTipText = "Draw new label";
+				image = "icons/newlabel.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWARC:
+				toolTipText = "Draw new arc";
+				image = "icons/newarc.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWBRACE:
+				toolTipText = "Draw new brace";
+				image = "icons/newbrace.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWGENEPRODUCT:
+				toolTipText = "Draw new geneproduct";
+				image = "icons/newgeneproduct.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWRECTANGLE:
+				image = "icons/newrectangle.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWOVAL:
+				toolTipText = "Draw new oval";
+				image = "icons/newoval.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWTBAR:
+				toolTipText = "Draw new TBar";
+				image = "icons/newtbar.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWRECEPTORROUND:
+				toolTipText = "Draw new round receptor";
+				image = "icons/newreceptorround.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWRECEPTORSQUARE:
+				toolTipText = "Draw new square receptor";
+				image = "icons/newreceptorsquare.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLIGANDROUND:
+				toolTipText = "Draw new round ligand";
+				image = "icons/newligandround.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLIGANDSQUARE:
+				toolTipText = "Draw new square ligand";
+				image = "icons/newligandsquare.gif";
+				setChecked(false);
+				break;
+			case GmmlDrawing.NEWLINEMENU:
+				setMenuCreator(new NewItemMenuCreator(GmmlDrawing.NEWLINEMENU));
+				image = "icons/newlinemenu.gif";
+				toolTipText = "Draw new line or arrow";
+				break;
+			case GmmlDrawing.NEWLINESHAPEMENU:
+				setMenuCreator(new NewItemMenuCreator(GmmlDrawing.NEWLINESHAPEMENU));
+				image = "icons/newlineshapemenu.gif";
+				toolTipText = "Draw new ligand or receptor";
+				break;
+			}
+			setToolTipText(toolTipText);
+			setImageDescriptor(ImageDescriptor.createFromFile(null,image));
+		}
+				
+		public void run () {
+			if(isChecked())
+			{
+				deselectNewItemActions();
+				setChecked(true);
+				drawing.newGraphics = element;
+			}
+			else
+			{	
+				drawing.newGraphics = GmmlDrawing.NEWNONE;
+			}
+		}
+		
+	}
+	
+	private class NewItemMenuCreator implements IMenuCreator {
+		private Menu menu;
+		int element;
+		
+		public NewItemMenuCreator(int e) 
+		{
+			element = e;
+		}
+		
+		public Menu getMenu(Menu parent) {
+			return null;
+		}
+
+		public Menu getMenu(Control parent) {
+			if (menu != null)
+				menu.dispose();
+			
+			menu = new Menu(parent);
+			Vector actions = new Vector();
+			switch(element) {
+			case GmmlDrawing.NEWLINEMENU:
+				actions.add(new NewElementAction(GmmlDrawing.NEWLINE));
+				actions.add(new NewElementAction(GmmlDrawing.NEWLINEARROW));
+				actions.add(new NewElementAction(GmmlDrawing.NEWLINEDASHED));
+				actions.add(new NewElementAction(GmmlDrawing.NEWLINEDASHEDARROW));
+				break;
+			case GmmlDrawing.NEWLINESHAPEMENU:
+				actions.add(new NewElementAction(GmmlDrawing.NEWLIGANDROUND));
+				actions.add(new NewElementAction(GmmlDrawing.NEWRECEPTORROUND));
+				actions.add(new NewElementAction(GmmlDrawing.NEWLIGANDSQUARE));
+				actions.add(new NewElementAction(GmmlDrawing.NEWRECEPTORSQUARE));
+			}
+			
+			Iterator it = actions.iterator();
+			while(it.hasNext())
+			{
+				addActionToMenu(menu, (Action)it.next());
+			}
+
+			return menu;
+		}
+		
+		protected void addActionToMenu(Menu parent, Action a)
+		{
+			 ActionContributionItem item= new ActionContributionItem(a);
+			 item.fill(parent, -1);
+		}
+		
+		public void dispose() 
+		{
+			if (menu != null)  {
+				menu.dispose();
+				menu = null;
+			}
+		}
+	}
+	
 	protected StatusLineManager createStatusLineManager() {
 		return super.createStatusLineManager();
 	}
 	
-	GmmlDrawing drawing;
-	GmmlData gmmlData;
-	GmmlGdb gmmlGdb = new GmmlGdb();
-	
-	public GmmlVision()
-	{
-		this(null);
-	}
-	
-	/**
-	 *Constructor for thGmmlVision class
-	 *Initializes new GmmlVision and sets properties for frame
-	 */
-	public GmmlVision(Shell shell)
-	{
-		super(shell);
-		addMenuBar();
-		addStatusLine();
-		addToolBar(SWT.FLAT);
+	protected ToolBarManager createToolBarManager(int style) {
+		ToolBarManager toolBarManager = new ToolBarManager(style);
+		toolBarManager.add(new GroupMarker("group.commonActions"));
+		toolBarManager.appendToGroup("group.commonActions", newAction);
+		toolBarManager.appendToGroup("group.commonActions", openAction);
+		toolBarManager.appendToGroup("group.commonActions", saveAction);
+		toolBarManager.add(new Separator("group.newElements"));
+		toolBarManager.add(switchEditModeAction);
+		
+		newItemActions = new HashMap();
+		newItemOrder = new Vector();
+		newItemActions.put("newGeneProduct", new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
+		newItemOrder.add("newGeneProduct");
+		newItemActions.put("newLabel", new NewElementAction(GmmlDrawing.NEWLABEL));
+		newItemOrder.add("newLabel");
+		newItemActions.put("newLineMenu", new NewElementAction(GmmlDrawing.NEWLINEMENU));
+		newItemOrder.add("newLineMenu");
+		newItemActions.put("newRectangle", new NewElementAction(GmmlDrawing.NEWRECTANGLE));
+		newItemOrder.add("newRectangle");
+		newItemActions.put("newOval", new NewElementAction(GmmlDrawing.NEWOVAL));
+		newItemOrder.add("newOval");
+		newItemActions.put("newArc", new NewElementAction(GmmlDrawing.NEWARC));
+		newItemOrder.add("newArc");
+		newItemActions.put("newBrace", new NewElementAction(GmmlDrawing.NEWBRACE));
+		newItemOrder.add("newBrace");
+		newItemActions.put("newTbar", new NewElementAction(GmmlDrawing.NEWTBAR));
+		newItemOrder.add("newTbar");
+		newItemActions.put("newLineShapeMenu", new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
+		newItemOrder.add("newLineShapeMenu");
+		toolBarManager.update(true);
+		return toolBarManager;
 	}
 
-	/**
-	 * Main method which will be carried out when running the program
-	 */
-	public static void main(String[] args)
-	{
-	   GmmlVision window = new GmmlVision();
-	   window.setBlockOnOpen(true);
-	   window.open();
-	   Display.getCurrent().dispose();
-	}
-	
 	/**
 	 *Builds and ads a menu to the GmmlVision frame
 	 */
@@ -458,11 +679,79 @@ class GmmlVision extends ApplicationWindow
 		m.add(helpMenu);
 		return m;
 	}
-			
+
+	public HashMap newItemActions;
+	public Vector newItemOrder;
+
+	protected void addNewItemActions(ToolBarManager toolBarManager)
+	{
+		Iterator it = newItemOrder.iterator();
+		while(it.hasNext())
+		{
+			toolBarManager.appendToGroup("group.newElements",
+					(Action)newItemActions.get((String)it.next()));
+		}
+		toolBarManager.update(true);
+	}
+
+	protected void removeNewItemActions(ToolBarManager toolBarManager)
+	{
+		Iterator it = newItemActions.values().iterator();
+		while(it.hasNext())
+		{
+			toolBarManager.remove(((Action)it.next()).getId());
+		}
+		toolBarManager.update(true);
+	}
+
+	protected void deselectNewItemActions()
+	{
+		Iterator it = newItemActions.values().iterator();
+		while(it.hasNext())
+		{
+			((Action)it.next()).setChecked(false);
+		}
+		((Action)newItemActions.get("newGeneProduct")).run();
+	}
+	
+	GmmlDrawing drawing;
+	GmmlData gmmlData;
+	GmmlGdb gmmlGdb = new GmmlGdb();
+	
+	public GmmlVision()
+	{
+		this(null);
+	}
+	
+	/**
+	 *Constructor for thGmmlVision class
+	 *Initializes new GmmlVision and sets properties for frame
+	 */
+	public GmmlVision(Shell shell)
+	{
+		super(shell);
+		addMenuBar();
+		addStatusLine();
+		addToolBar(SWT.FLAT | SWT.RIGHT);
+	}
+
+	/**
+	 * Main method which will be carried out when running the program
+	 */
+	public static void main(String[] args)
+	{
+	   GmmlVision window = new GmmlVision();
+	   window.setBlockOnOpen(true);
+	   window.open();
+	   Display.getCurrent().dispose();
+	}
+	
 	ScrolledComposite sc;
 	GmmlBpBrowser bpBrowser;
 	GmmlPropertyTable propertyTable;
-//	ToolItem sampleSelector;
+	ToolItem editSwitch;
+	SashForm sashForm;
+	SashForm sashFormSplit;
 	
 	protected Control createContents(Composite parent)
 	{
@@ -472,35 +761,22 @@ class GmmlVision extends ApplicationWindow
 
 		shell.setText("GmmlVision");
 		
-// TODO: toolbar with criteria selector
-//		Composite topComposite = new Composite(parent, SWT.NULL);
-//		GridLayout gridLayout = new GridLayout();
-//		gridLayout.verticalSpacing = 2;
-//		topComposite.setLayout(gridLayout);
-		
-//		ToolBar toolBar = new ToolBar(topComposite, SWT.FLAT);
-//		sampleSelector = new ToolItem(toolBar, SWT.DROP_DOWN);
-//		sampleSelector.setToolTipText("Choose sample to color genes");
-//		toolBar.pack();
-		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
-//		GridData gridData = new GridData(GridData.FILL_BOTH);
-//		gridData.grabExcessHorizontalSpace = true;
-//		gridData.grabExcessVerticalSpace = true;
-//		viewComposite.setLayoutData(gridData);
 		
-		SashForm sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
+		sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
 		
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		sc.setFocus(); //To enable scrolling with mouse wheel
+		sc.setFocus();
 		
-		SashForm sashFormSplit = new SashForm (sashForm, SWT.VERTICAL);
+		sashFormSplit = new SashForm (sashForm, SWT.VERTICAL);
 		sashForm.setWeights(new int[] {80, 20});
 		
-		propertyTable = new GmmlPropertyTable(sashFormSplit, SWT.BORDER | SWT.SINGLE);
+		propertyTable = new GmmlPropertyTable(sashFormSplit, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		
 		bpBrowser = new GmmlBpBrowser(sashFormSplit, SWT.NONE);
+		
+		sashFormSplit.setMaximizedControl(bpBrowser);
 		
 		setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
 		
@@ -512,32 +788,17 @@ class GmmlVision extends ApplicationWindow
 	 * Creates a new empty drawing and loads it in the frame 
 	 */
 	private void createNewDrawing()
-	{
-		GmmlDrawing d = new GmmlDrawing(sc, SWT.NONE);
+	{		
+		drawing = new GmmlDrawing(sc, SWT.NONE);
+		drawing.setGmmlVision(this);
 		
-		gmmlData = new GmmlData(d);
+		gmmlData = new GmmlData(drawing);
 		
-		d.setBrowser(bpBrowser);
-		d.setPropertyTable(propertyTable);
+		sc.setContent(drawing);
+		drawing.setSize(800, 600);
 		
-		d.addElement(new GmmlShape(600, 200, 100, 40, GmmlShape.TYPE_RECTANGLE, new RGB (0, 0, 255), 10, d, gmmlData.doc));
-		d.addElement(new GmmlLine(0, 100, 200, 200, new RGB (0, 255, 0), d, gmmlData.doc));
-		d.addElement(new GmmlLine(0,150,150,150,new RGB (0,0,0),d,gmmlData.doc));
-		d.addElement(new GmmlGeneProduct(200, 200, 200, 80, "this is a very long id", "ref", new RGB (255, 0, 0), d, gmmlData.doc));
-		d.addElement(new GmmlLineShape(300, 50, 200, 500, GmmlLineShape.TYPE_LIGAND_SQUARE, new RGB (0, 128, 0), d, gmmlData.doc));
-		d.addElement(new GmmlLineShape(300, 150, 200, 400, GmmlLineShape.TYPE_RECEPTOR_ROUND, new RGB (0, 128, 0), d, gmmlData.doc));
-		d.addElement(new GmmlLineShape(300, 250, 200, 300, GmmlLineShape.TYPE_LIGAND_ROUND, new RGB (0, 128, 0), d, gmmlData.doc));
-		d.addElement(new GmmlLabel(200, 50, 100, 80, "testlabel", "Arial", "bold", "italic", 10, new RGB (0, 0, 0), d, gmmlData.doc));
-		d.addElement(new GmmlArc(300, 300, 250, 250, new RGB (255, 0, 0), 0, d, gmmlData.doc));
-		d.addElement(new GmmlBrace(400, 400, 200, 60, GmmlBrace.ORIENTATION_TOP, new RGB (255, 0, 255), d, gmmlData.doc));
-		d.addElement(new GmmlBrace(200, 200, 200, 60, GmmlBrace.ORIENTATION_BOTTOM, new RGB (255, 0, 255), d, gmmlData.doc));
-		d.addElement(new GmmlBrace(400, 200, 200, 60, GmmlBrace.ORIENTATION_LEFT, new RGB (255, 0, 255), d, gmmlData.doc));
-		d.addElement(new GmmlBrace(200, 400, 200, 60, GmmlBrace.ORIENTATION_RIGHT, new RGB (255, 0, 255), d, gmmlData.doc));
-		
-		sc.setContent(d);
-		d.setSize(800, 600);
-		
-		drawing = d;
+		switchEditModeAction.setChecked(true);
+		switchEditModeAction.run();
 	}
 	
 	/**
@@ -545,10 +806,10 @@ class GmmlVision extends ApplicationWindow
 	 * a scrollpane of the drawing, which is loaded in the frame.
 	 */
 	private void openPathway(String fnPwy)
-	{
+	{		
 		drawing = new GmmlDrawing(sc, SWT.NONE);
-		drawing.setBrowser(bpBrowser);
-		drawing.setPropertyTable(propertyTable);
+		drawing.setGmmlVision(this);
+		drawing.editMode = switchEditModeAction.isChecked();
 		
 		// initialize new JDOM gmml representation and read the file
 		gmmlData = new GmmlData(fnPwy, drawing);

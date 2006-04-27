@@ -43,18 +43,17 @@ public class GmmlData
 		this.drawing = drawing;
 		doc = new Document();
 		Element root = new Element("Pathway");
-		//TODO: add pathway name
-		root.setAttribute("Name","somename");
-		// Add required elements
 		Element graphics = new Element("Graphics");
-		graphics.setAttribute("BoardWidth", Integer.toString(drawing.getSize().x));
-		graphics.setAttribute("BoardHeight",Integer.toString(drawing.getSize().y));
-		graphics.setAttribute("WindowWidth","800");
-		graphics.setAttribute("WindowHeight","600");
 		root.addContent(graphics);
 		root.addContent(new Element("InfoBox"));
 		doc.setRootElement(root);
-		validateDocument(doc);
+		drawing.mappInfo = new GmmlMappInfo(root);
+		int width = drawing.gmmlVision.sc.getSize().x;
+		int height = drawing.gmmlVision.sc.getSize().y;
+		drawing.mappInfo.boardWidth = width;
+		drawing.mappInfo.boardHeight = height;
+		drawing.mappInfo.windowWidth = width;
+		drawing.mappInfo.windowHeight = height;		
 	}
 	
 	public GmmlData(String file, GmmlDrawing drawing)
@@ -128,11 +127,6 @@ public class GmmlData
 		{
 			ex.printStackTrace();
 		}
-//		// map all child elements
-//		Iterator it = e.getChildren().iterator();
-//		while (it.hasNext()) {
-//			mapElement((Element)it.next());
-//		}	
 	}
 
 	/**
@@ -141,15 +135,11 @@ public class GmmlData
 	public void toGmmlGraphics() {
 		// Get the pathway element
 		Element root = doc.getRootElement();
-		// Set the attributes of the pathway element to the drawing
-		// List the needed pathway attributes
-		pathwayAttributes = Arrays.asList(new String[] {
-				"BoardWidth", "BoardHeight"
-		});
-		mapPathwayAttributes(root);
-		drawing.setSize(drawingDims[0], drawingDims[1]);
-		//~ drawing.setPreferredSize(new Dimension(drawingDims[0], drawingDims[1]));
-		drawing.dims = new Dimension(drawingDims[0], drawingDims[1]);
+		drawing.mappInfo = new GmmlMappInfo(root);
+		
+		drawing.setSize(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);
+		drawing.dims = new Dimension(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);
+//		drawing.gmmlVision.getShell().setSize(drawing.mappInfo.windowWidth, drawing.mappInfo.windowHeight);
 		
 		// Iterate over direct children of the root element
 		Iterator it = root.getChildren().iterator();
@@ -211,32 +201,6 @@ public class GmmlData
 			System.err.println(e);
 		}
 	}
-
-	/**
-	 * Maps the pathway attributes to the GmmlDrawing
-	 */
-	private void mapPathwayAttributes (Element e) {
-		// Map direct attributes
-		Iterator it = e.getAttributes().iterator();
-		while(it.hasNext()) {
-			Attribute at = (Attribute)it.next();
-			int index = pathwayAttributes.indexOf(at.getName());
-			String value = at.getValue();
-			switch(index) {
-					case 0: // BoardWidth
-						drawingDims[0] = Integer.parseInt(value) / GMMLZOOM; break;
-					case 1: // BoardHeight
-						drawingDims[1] = Integer.parseInt(value) / GMMLZOOM; break;
-					case -1:
-						System.out.println("Attribute '" + at.getName() + "' is not recognized");
-			}
-		}
-		// Map the graphics attributes
-		Element graphics = e.getChild("Graphics");
-		if(graphics != null) {
-			mapPathwayAttributes(graphics);
-		}
-	} 
 }
 
 // OLD GMML READER

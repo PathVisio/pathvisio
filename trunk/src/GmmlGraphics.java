@@ -1,6 +1,7 @@
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -15,7 +16,7 @@ import org.eclipse.swt.widgets.Table;
  */
 abstract class GmmlGraphics extends GmmlDrawingObject
 {
-	
+
 	/**
 	 * Resizes GmmlGraphics in x-direction
 	 * @param dx - the value with wich to resize the object
@@ -61,8 +62,11 @@ abstract class GmmlGraphics extends GmmlDrawingObject
 	 */
 	abstract boolean intersects(Rectangle2D.Double r);
 	
-	abstract void updateJdomGraphics();
+	abstract void updateJdomElement();
 	
+	abstract List getAttributes();
+	
+	List attributes;
 	Hashtable propItems;
 	
 }

@@ -30,7 +30,7 @@ public class GmmlArc extends GmmlGraphics
 	public final List attributes = Arrays.asList(
 		new String[] {
 			"StartX", "StartY", "Width",
-			"Height","Color","Rotation"
+			"Height","Color","Rotation", "Notes"
 		});
 	
 	double startx;
@@ -38,6 +38,8 @@ public class GmmlArc extends GmmlGraphics
 	double width;
 	double height;
 	double rotation;
+	
+	String notes = "";
 	
 	RGB color;
 	GmmlDrawing canvas;
@@ -93,6 +95,7 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	public GmmlArc(Element e, GmmlDrawing canvas) {
 		this(canvas);
+		this.jdomElement = e;
 		
 		mapAttributes(e);
 				
@@ -125,15 +128,18 @@ public class GmmlArc extends GmmlGraphics
 	/**
 	 * Updates the JDom representation of this arc
 	 */
-	public void updateJdomGraphics() {
+	public void updateJdomElement() {
 		if(jdomElement != null) {
+			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
-			if(jdomGraphics !=null) {
+			System.out.println(jdomElement.getChildren());
+			if(jdomGraphics != null) {
 				jdomGraphics.setAttribute("StartX", Integer.toString((int)startx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("StartY", Integer.toString((int)starty * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Rotation", Double.toString(rotation));
+				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
 			}
 		}
 	}
@@ -224,7 +230,7 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected void resizeX(double dx)
 	{
-		width += dx;
+		width = Math.abs(width + dx);
 		
 	}
 	
@@ -234,8 +240,12 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected void resizeY(double dy)
 	{
-		height += dy;
+		height = Math.abs(height + dy);
 		
+	}
+	
+	public List getAttributes() {
+		return attributes;
 	}
 	
 	public void updateToPropItems()
@@ -245,8 +255,8 @@ public class GmmlArc extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {new Double(startx), new Double(starty),
-				new Double(width), new Double(height), color, new Double(rotation)};
+		Object[] values = new Object[] {startx, starty,
+				width, height, color, rotation, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
 		{
@@ -262,23 +272,9 @@ public class GmmlArc extends GmmlGraphics
 		height		= (Double)propItems.get(attributes.get(3));
 		color 		= (RGB)propItems.get(attributes.get(4));
 		rotation	= (Double)propItems.get(attributes.get(5));
+		notes		= (String)propItems.get(attributes.get(6));
 
 		canvas.redraw();
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
-	protected JTable getPropertyTable()
-	{
-		Object[][] data = new Object[][] {{new Double(startx), new Double(starty),
-				new Double(width), new Double(height), color, new Double(rotation)}};
-		
-		Object[] cols = new Object[] {"Start X", "Start Y", "Width", "Height", 
-				"Color", "Rotation"};
-		
-		return new JTable(data, cols);
 	}
 
 	/**
@@ -286,7 +282,6 @@ public class GmmlArc extends GmmlGraphics
 	 * @param e - the element to map to a GmmlArc
 	 */
 	private void mapAttributes (Element e) {
-		this.jdomElement = e;
 		// Map attributes
 		System.out.println("> Mapping element '" + e.getName()+ "'");
 		Iterator it = e.getAttributes().iterator();
@@ -307,6 +302,8 @@ public class GmmlArc extends GmmlGraphics
 						this.color = GmmlColorConvertor.string2Color(value); break;
 					case 5: // Rotation
 						this.rotation = Double.parseDouble(value); break;
+					case 6: // Notes
+						this.notes = value; break;
 					case -1:
 						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
 			}

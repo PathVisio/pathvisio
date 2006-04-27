@@ -1,5 +1,7 @@
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.*;
@@ -17,7 +19,7 @@ public class GmmlPropertyTable {
 	ComboBoxCellEditor comboBoxEditor;
 	
 	GmmlGraphics g;
-	
+
 	final static String[] colNames = new String[] {"Property", "Value"};
 	
 	// Types
@@ -27,17 +29,33 @@ public class GmmlPropertyTable {
 	final static int LINESTYLE = 3;
 	final static int COLOR = 4;
 	final static int STRING = 5;
+	final static int ORIENTATION = 6;
 	
 	// Type mappings
-	final static String[] attributes = new String[] {
-		"CenterX", "CenterY", "StartX", "StartY", "EndX", "EndY", "Width", "Height", 
-		"Color", "Style", "Type", "Rotation", "Orientation", "PicPointOffset",
-		"GeneID", "Xref", "TextLabel", "FontName", "FontWeight", "FontStyle", "FontSize"
-	};
+	final static List<String> attributes = Arrays.asList(new String[] {
+			"CenterX", "CenterY", "StartX", "StartY", "EndX", "EndY", "Width", "Height", 
+			"Color", "Style", "Type", "Rotation", "Orientation", "PicPointOffset",
+			"GeneID", "Xref", "TextLabel", "FontName", "FontWeight", "FontStyle", "FontSize",
+			"Name", "Organism", "Data-Source", "Version", "Author", "Maintained-By", "Email",
+			"Availability", "Last-Modified", "Notes", "BackPageHead", "GeneProduct-Data-Source",
+			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"
+	});
+	
+	final static List labelMappings = Arrays.asList(new String[] {
+			"Center X", "Center Y", "Start X", "Start Y", "End X", "End Y", "Width", "Height", 
+			"Color", "Style", "Type", "Rotation", "Orientation", "Pic point offset",
+			"Gene label", "Link (xref)", "Label text", "Font name", "Font weight", "Font style", "Font size",
+			"Name", "Organism", "Data source", "Version", "Author", "Maintained by", "E-mail",
+			"Availability", "Last modified", "Notes", "Backpage header", "System",
+			"Board Width", "Board Height", "Window Width", "Window Height"
+	});
+
 	final static int[] attributeTypes = new int[] {
 		DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, 
-		COLOR, LINESTYLE, TYPE, DOUBLE, INTEGER, DOUBLE,
-		STRING, STRING, STRING, STRING, STRING, STRING, INTEGER
+		COLOR, LINESTYLE, TYPE, DOUBLE, ORIENTATION, DOUBLE,
+		STRING, STRING, STRING, STRING, STRING, STRING, INTEGER,STRING, 
+		STRING, STRING, STRING, STRING, STRING, STRING, STRING, STRING,
+		STRING, STRING, TYPE, INTEGER, INTEGER, INTEGER, INTEGER
 	};
 	
 	Hashtable typeMappings;
@@ -50,7 +68,7 @@ public class GmmlPropertyTable {
 		tcName.setText(colNames[0]);
 		tcValue.setText(colNames[1]);
 		tcName.setWidth(80);
-		tcValue.setWidth(80);
+		tcValue.setWidth(70);
 		tableViewer = new TableViewer(t);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setHeaderVisible(true);
@@ -67,9 +85,9 @@ public class GmmlPropertyTable {
 		tableViewer.setCellModifier(cellModifier);
 		
 		typeMappings = new Hashtable();
-		for(int i = 0; i < attributes.length; i++)
+		for(int i = 0; i < attributes.size(); i++)
 		{
-			typeMappings.put(attributes[i], attributeTypes[i]);
+			typeMappings.put(attributes.get(i), attributeTypes[i]);
 		}
 	}
 	
@@ -77,10 +95,11 @@ public class GmmlPropertyTable {
 	{
 		this.g = g;
 	}
-	
+		
 	private CellEditor getCellEditor(Object element)
 	{
-		int type = (Integer)typeMappings.get((String)element);
+		String key = (String)element;
+		int type = (Integer)typeMappings.get(key);
 		switch(type)
 		{
 		case STRING:
@@ -102,10 +121,21 @@ public class GmmlPropertyTable {
 			{
 				types = new String[] {"Rectangle", "Oval"};
 			}
+			else if (key.equals("GeneProduct-Data-Source"))
+			{
+				types = (String[])GmmlGeneProduct.dataSources.toArray();
+			}
+			else
+			{
+				return textEditor;
+			}
 			comboBoxEditor.setItems(types);
 			return comboBoxEditor;
+		case ORIENTATION:
+			comboBoxEditor.setItems(new String[] {"Top", "Right", "Bottom", "Left"});
+			return comboBoxEditor;
 		case LINESTYLE:
-			comboBoxEditor.setItems(types = new String[] {"Solid", "Dashed"});
+			comboBoxEditor.setItems(new String[] {"Solid", "Dashed"});
 			return comboBoxEditor;
 		}
 		return textEditor;
@@ -134,7 +164,14 @@ public class GmmlPropertyTable {
 				case STRING: return (String)value;
 				case COLOR: return (RGB)value;
 				case LINESTYLE:
-				case TYPE: return (Integer)value;
+				case ORIENTATION:
+				case TYPE: 
+					if (key.equals("GeneProduct-Data-Source"))
+						return GmmlGeneProduct.dataSources.indexOf((String)value);
+					else if (g instanceof GmmlMappInfo || g instanceof GmmlGeneProduct)
+						return (String)value;
+					else
+						return (Integer)value;
 				}
 			}
 			return null;
@@ -147,6 +184,9 @@ public class GmmlPropertyTable {
 			{
 			case DOUBLE: 	value = Double.parseDouble((String)value); break;
 			case INTEGER: 	value = Integer.parseInt((String)value); break;
+			case TYPE:
+				if(key.equals("GeneProduct-Data-Source"))
+					value = (String)GmmlGeneProduct.dataSources.get((Integer)value);
 			}
 			
 			g.propItems.put(key, value);
@@ -158,9 +198,12 @@ public class GmmlPropertyTable {
 	private IStructuredContentProvider tableContentProvider = new IStructuredContentProvider()
 	{
 		public Object[] getElements(Object inputElement) {
-			g.propItems = (Hashtable)inputElement;
-			Hashtable m = (Hashtable)inputElement;
-			return m.keySet().toArray();
+			if(inputElement != null)
+			{
+				g = (GmmlGraphics)inputElement;
+				return g.getAttributes().toArray();
+			}
+			return null;
 		}
 		
 		public void dispose() { }
@@ -179,7 +222,17 @@ public class GmmlPropertyTable {
 			String key = (String)element;
 			switch(columnIndex) {
 				case 0:
-					return key;
+					if(attributes.contains(key))
+					{
+						if(key.equals("Name"))
+						{
+							if(g instanceof GmmlGeneProduct)
+							{
+								return "Gene ID";
+							}
+						}
+						return (String)labelMappings.get(attributes.indexOf(key));
+					}
 				case 1:
 					//TODO: prettier labels for different value types
 					if(g.propItems.containsKey(key))

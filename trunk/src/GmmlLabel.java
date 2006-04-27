@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
 
@@ -37,26 +38,29 @@ import org.jdom.Element;
 public class GmmlLabel extends GmmlGraphics
 {
 	private static final long serialVersionUID = 1L;
-
+	private static final int INITIAL_FONTSIZE = 10;
+	public static final int INITIAL_WIDTH = 80;
+	public static final int INITIAL_HEIGHT = 20;
+	
 	public final List attributes = Arrays.asList(new String[] {
 			"TextLabel", "CenterX", "CenterY", "Width","Height",
-			"FontName","FontWeight","FontStyle","FontSize","Color" 
+			"FontName","FontWeight","FontStyle","FontSize","Color",
+			"Notes"
 	});
 	
 	String text				= "";
 	String fontName			= "Times New Roman";
 	String fontWeight		= "bold";
 	String fontStyle		= "normal";
+	int fontSize;
+	double fontSizeDouble;
+	RGB color = new RGB(0,0,0);
 	
+	String notes = "";
 	double centerx;
 	double centery;
 	double width;
 	double height;
-	double fontSizeDouble;
-	int fontSize;
-	
-	
-	RGB color;
 	
 	GmmlDrawing canvas;
 	
@@ -71,7 +75,9 @@ public class GmmlLabel extends GmmlGraphics
 	public GmmlLabel(GmmlDrawing canvas)
 	{
 		this.canvas = canvas;
-		canvas.addElement(handlecenter);
+		
+		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.zoomFactor;
+		this.fontSize = (int)this.fontSizeDouble;
 	}
 	
 	/**
@@ -106,7 +112,21 @@ public class GmmlLabel extends GmmlGraphics
 		this.color = color;
 		
 		setHandleLocation();
+		canvas.addElement(handlecenter);
+		createJdomElement(doc);
+	}
+	
+	public GmmlLabel (int x, int y, int width, int height, GmmlDrawing canvas, Document doc)
+	{
+		this(canvas);
 		
+		this.centerx = x;
+		this.centery = y;
+		this.height = height;
+		this.width = width;
+		
+		setHandleLocation();
+		canvas.addElement(handlecenter);
 		createJdomElement(doc);
 	}
 	
@@ -120,7 +140,7 @@ public class GmmlLabel extends GmmlGraphics
 		
 		this.jdomElement = e;
 		mapAttributes(e);
-		
+		canvas.addElement(handlecenter);
 		setHandleLocation();
 	}
 
@@ -141,14 +161,56 @@ public class GmmlLabel extends GmmlGraphics
 	/**
 	 * Updates the JDom representation of this label
 	 */
-	public void updateJdomGraphics() {
+	public void updateJdomElement() {
 		if(jdomElement != null) {
+			jdomElement.setAttribute("TextLabel", text);
+			jdomElement.setAttribute("FontName", fontName);
+			jdomElement.setAttribute("FontWeight", fontWeight);
+			jdomElement.setAttribute("FontStyle", fontStyle);
+			jdomElement.setAttribute("FontSize", Integer.toString(fontSize));
+			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
 				jdomGraphics.setAttribute("CenterX", Integer.toString((int)centerx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("CenterY", Integer.toString((int)centery * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
 			}
 		}
+	}
+	
+	private Text t;
+	public void createTextControl()
+	{
+		t = new Text(canvas, SWT.SINGLE | SWT.BORDER);
+		t.setLocation((int)centerx, (int)centery - 10);
+		t.setSize(100,20);
+		t.addFocusListener(new FocusListener() {
+			public void focusLost(FocusEvent e) {
+				disposeTextControl();
+			}
+			public void focusGained(FocusEvent e) {}
+		});
+		t.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				if(e.keyCode == SWT.CR)
+				{
+					disposeTextControl();
+				}
+			}
+			public void keyReleased(KeyEvent e) {}
+		});
+		t.setFocus();
+		t.setVisible(true);
+	}
+	
+	protected void disposeTextControl()
+	{
+		text = t.getText();
+		t.setVisible(false);
+		t.dispose();
+		canvas.redraw();
 	}
 	
 	protected void createJdomElement(Document doc) {
@@ -247,6 +309,10 @@ public class GmmlLabel extends GmmlGraphics
 		return r.intersects(centerx - width/2, centery - height/2, width, height);
 	}
 
+	public List getAttributes() {
+		return attributes;
+	}
+	
 	public void updateToPropItems()
 	{
 		if (propItems == null)
@@ -254,9 +320,9 @@ public class GmmlLabel extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {text, new Double(centerx), 
-				new Double(centery), new Double(width), new Double(height), 
-				fontName, fontWeight, fontStyle, new Integer(fontSize), color};
+		Object[] values = new Object[] {text, centerx, 
+				centery, width, height, fontName, fontWeight, 
+				fontStyle, fontSize, color, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
 		{
@@ -276,6 +342,7 @@ public class GmmlLabel extends GmmlGraphics
 		fontStyle	= (String)propItems.get(attributes.get(7));
 		fontSize	= (Integer)propItems.get(attributes.get(8));
 		color		= (RGB)propItems.get(attributes.get(9));
+		notes		= (String)propItems.get(attributes.get(10));
 		
 		canvas.redraw();
 	}
@@ -314,6 +381,8 @@ public class GmmlLabel extends GmmlGraphics
 						this.fontSizeDouble = this.fontSize; break;
 					case 9: // Color
 						this.color = GmmlColorConvertor.string2Color(value); break;
+					case 10: // Notes
+						this.notes = value; break;
 					case -1:
 						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
 			}

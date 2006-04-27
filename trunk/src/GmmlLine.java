@@ -40,7 +40,7 @@ public class GmmlLine extends GmmlGraphics
 	public static final int TYPE_ARROW	= 1;
 	
 	public final List attributes = Arrays.asList(new String[] {
-			"StartX", "StartY", "EndX", "EndY", "Color", "Style", "Type"
+			"StartX", "StartY", "EndX", "EndY", "Color", "Style", "Type", "Notes"
 	});
 	
 	double startx;
@@ -54,6 +54,8 @@ public class GmmlLine extends GmmlGraphics
 	int type;
 	
 	RGB color;
+	
+	String notes = "";
 	
 	GmmlDrawing canvas;
 	Line2D line;
@@ -103,7 +105,7 @@ public class GmmlLine extends GmmlGraphics
 		
 		createJdomElement(doc);
 	}
-
+	
 	/**
 	 * Constructor for mapping a JDOM Element.
 	 * @param e	- the GMML element which will be loaded as a GmmlLine
@@ -168,14 +170,16 @@ public class GmmlLine extends GmmlGraphics
 	/**
 	 * Updates the JDom representation of this label
 	 */	
-	public void updateJdomGraphics() {
+	public void updateJdomElement() {
 		if(jdomElement != null) {
+			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
-			if(jdomGraphics !=null) {
+			if(jdomGraphics != null) {
 				jdomGraphics.setAttribute("StartX", Integer.toString((int)startx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("StartY", Integer.toString((int)starty * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndX", Integer.toString((int)endx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndY", Integer.toString((int)endy * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
 			}
 		}
 	}
@@ -370,6 +374,8 @@ public class GmmlLine extends GmmlGraphics
 						if(typeMappings.indexOf(value) > -1)
 							this.type = typeMappings.indexOf(value);
 						break;
+					case 7: //Notes
+						this.notes = value; break;
 					case -1:
 						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
 			}
@@ -381,6 +387,10 @@ public class GmmlLine extends GmmlGraphics
 		}
 	}
 	
+	public List getAttributes() {
+		return attributes;
+	}
+	
 	public void updateToPropItems()
 	{
 		if (propItems == null)
@@ -388,9 +398,8 @@ public class GmmlLine extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {new Double(startx), new Double(starty), 
-				 new Double(endx), new Double(endy), color, new Integer(style), 
-				 new Integer(type)};
+		Object[] values = new Object[] {startx, starty, 
+				 endx, endy, color, style, type, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
 		{
@@ -407,6 +416,7 @@ public class GmmlLine extends GmmlGraphics
 		color 		= (RGB)propItems.get(attributes.get(4));
 		style		= (Integer)propItems.get(attributes.get(5));
 		type		= (Integer)propItems.get(attributes.get(6));
+		notes		= (String)propItems.get(attributes.get(7));
 		
 		constructLine();
 		canvas.redraw();

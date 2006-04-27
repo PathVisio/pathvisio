@@ -30,7 +30,7 @@ public class GmmlShape extends GmmlGraphics
 	
 	public final List attributes = Arrays.asList(new String[] {
 			"CenterX", "CenterY", "Width", "Height", 
-			"Type","Color","Rotation"
+			"Type","Color","Rotation", "Notes"
 	});
 	
 	public static final List typeMappings = Arrays.asList(new String[] {
@@ -42,6 +42,8 @@ public class GmmlShape extends GmmlGraphics
 	double width;
 	double height;
 	double rotation;
+	
+	String notes = "";
 	
 	int type = 0;
 	// types:
@@ -126,14 +128,17 @@ public class GmmlShape extends GmmlGraphics
 	/**
 	 * Updates the JDom representation of the GMML file. 
 	 */
-	public void updateJdomGraphics() {
+	public void updateJdomElement() {
 		if(jdomElement != null) {
+			jdomElement.setAttribute("Type", (String)typeMappings.get(type));
+			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
 				jdomGraphics.setAttribute("CenterX", Integer.toString((int)centerx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("CenterY", Integer.toString((int)centery * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
 			}
 		}
 	}
@@ -141,6 +146,7 @@ public class GmmlShape extends GmmlGraphics
 	protected void createJdomElement(Document doc) {
 		if(jdomElement == null) {
 			jdomElement = new Element("Shape");
+			jdomElement.setAttribute("Type", (String)typeMappings.get(type));
 			jdomElement.addContent(new Element("Graphics"));
 			
 			doc.getRootElement().addContent(jdomElement);
@@ -256,7 +262,7 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void resizeX(double dx)
 	{
-		width += dx;
+		width = Math.abs(width + dx);
 	}
 	
 	/*
@@ -265,13 +271,12 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void resizeY(double dy)
 	{
-		height -= dy;		
+		height = Math.abs(height - dy);		
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#getPropertyTable()
-	 */
+	public List getAttributes() {
+		return attributes;
+	}
 	
 	public void updateToPropItems()
 	{
@@ -280,9 +285,8 @@ public class GmmlShape extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {new Double(centerx), new Double(centery),
-				new Double(width), new Double(height), new Integer(type), 
-				color, new Double(rotation)};
+		Object[] values = new Object[] {centerx, centery,
+				width, height, type, color, rotation, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
 		{
@@ -296,9 +300,10 @@ public class GmmlShape extends GmmlGraphics
 		centery		= (Double)propItems.get(attributes.get(1));
 		width		= (Double)propItems.get(attributes.get(2));
 		height		= (Double)propItems.get(attributes.get(3));
-		type		= (Integer)propItems.get(attributes.get(6));
-		color 		= (RGB)propItems.get(attributes.get(4));
-		rotation	= (Double)propItems.get(attributes.get(5));
+		type		= (Integer)propItems.get(attributes.get(4));
+		color 		= (RGB)propItems.get(attributes.get(5));
+		rotation	= (Double)propItems.get(attributes.get(6));
+		notes		= (String)propItems.get(attributes.get(7));
 		
 		canvas.redraw();
 	}
@@ -332,6 +337,8 @@ public class GmmlShape extends GmmlGraphics
 						this.color = GmmlColorConvertor.string2Color(value); break;
 					case 6: // Rotation
 						this.rotation = Double.parseDouble(value); break;
+					case 7: // Notes
+						this.notes = value; break;
 					case -1:
 						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
 			}

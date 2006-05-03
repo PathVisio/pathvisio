@@ -83,7 +83,7 @@ class GmmlVision extends ApplicationWindow
 		}
 		
 		public void run () {
-			double usedZoom = drawing.zoomFactor;
+			double usedZoom = drawing.zoomFactor * 100;
 			// Set zoom to 100%
 			drawing.setZoom(100);
 			drawing.updateJdomElements();
@@ -137,7 +137,7 @@ class GmmlVision extends ApplicationWindow
 					}
 					if(confirmed)
 					{
-						double usedZoom = drawing.zoomFactor;
+						double usedZoom = drawing.zoomFactor * 100;
 						// Set zoom to 100%
 						drawing.setZoom(100);
 						drawing.updateJdomElements();
@@ -246,8 +246,8 @@ class GmmlVision extends ApplicationWindow
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
 					pctZoomFactor = (int)Math.min(
-							drawing.zoomFactor * (double)shellSize.x / drawingSize.x,
-							drawing.zoomFactor * (double)shellSize.y / drawingSize.y
+							drawing.zoomFactor * 100 * (double)shellSize.x / drawingSize.x,
+							drawing.zoomFactor * 100 * (double)shellSize.y / drawingSize.y
 					);
 				} 
 				drawing.setZoom(pctZoomFactor);
@@ -259,69 +259,7 @@ class GmmlVision extends ApplicationWindow
 			}
 		}
 	}
-	
-	private class ConvertGdbAction extends Action
-	{
-		GmmlVision window;
-		public ConvertGdbAction (GmmlVision w)
-		{
-			window = w;
-			setText("&Convert Gdb");
-			setToolTipText ("Convert GenMAPP Gene Database to Gmml-Vision");
-		}
 		
-		public void run () {
-			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-			fileDialog.setText("Open GenMAPP Gene Database");
-			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene databases");
-			fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
-			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
-			String fileName = fileDialog.open();
-			if(fileName != null) {
-				File file = new File(fileName);
-				gmmlGdb.gdbFile = file;
-				DirectoryDialog directoryDialog = new DirectoryDialog(getShell());
-				directoryDialog.setMessage("Select directory to save Gmml-Vision Gene Database");
-				directoryDialog.setFilterPath(file.getParent());
-				String dirName = directoryDialog.open();
-				if(dirName != null) {
-					gmmlGdb.hdbFile = new File(dirName + File.separatorChar + 
-							file.getName().substring(0,file.getName().lastIndexOf(".")));
-				} else {
-					gmmlGdb.hdbFile = new File(file.getParent() + File.separatorChar + 
-							file.getName().substring(0,file.getName().lastIndexOf(".")));
-				}
-				IRunnableWithProgress runnableWithProgress = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-						monitor.beginTask("Converting Gene Database",100);
-						gmmlGdb.convertGdb();
-						int prevProgress = 0;
-						while(gmmlGdb.convertThread.progress < 100) {
-							if(monitor.isCanceled()) {
-								gmmlGdb.convertThread.interrupt();
-								break;
-							}
-							if(prevProgress < gmmlGdb.convertThread.progress) {
-								monitor.worked(gmmlGdb.convertThread.progress - prevProgress);
-								prevProgress = gmmlGdb.convertThread.progress;
-							}
-						}
-						monitor.done();
-					}
-				};
-				
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				try {
-					dialog.run(true, true, runnableWithProgress);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);
-	
 	private class SelectGdbAction extends Action
 	{
 		GmmlVision window;
@@ -340,8 +278,8 @@ class GmmlVision extends ApplicationWindow
 			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
 			String file = fileDialog.open();
 			if(file != null) {
-				if(gmmlGdb.selectGdb(new File(file.substring(0,file.lastIndexOf("."))))) {
-					setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
+				if(gmmlDb.connectGdb(new File(file.substring(0,file.lastIndexOf("."))))) {
+					setStatus("Using Gene Database: '" + gmmlDb.props.getProperty("currentGdb") + "'");
 				} else {
 					MessageBox messageBox = new MessageBox(getShell(),
 							SWT.ICON_ERROR| SWT.OK);
@@ -368,15 +306,76 @@ class GmmlVision extends ApplicationWindow
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Expression Dataset");
 			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Expression Datasets");
-			fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
+			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 			String file = fileDialog.open();
 			if(file != null) {
-				gmmlGdb.loadGex(new File(file));
+				gmmlDb.gexFile = new File(file.substring(0,file.lastIndexOf(".")));
+				gmmlDb.connectGex();
 			}
 		}
 	}
 	private LoadGexAction loadGexAction = new LoadGexAction(this);
+	
+	private class ConvertGexAction extends Action
+	{
+		GmmlVision window;
+		public ConvertGexAction(GmmlVision w)
+		{
+			window = w;
+			setText("&Convert gex");
+			setToolTipText("Convert GenMAPP gex to GmmlVisio expression dataset");
+		}
+		
+		public void run () {
+			File gexFile = null;
+			File gmGexFile = null;
+			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+			fileDialog.setText("Select Expression Dataset to convert");
+			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Expression Datasets");
+			fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
+			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
+			String file = fileDialog.open();
+			if(file != null) {
+				gmGexFile = new File(file);
+			} else {
+				return;
+			}
+			FileDialog saveDialog = new FileDialog(window.getShell(), SWT.SAVE);
+			saveDialog.setText("Save");
+			saveDialog.setFilterExtensions(new String[] {"*.*"});
+			saveDialog.setFilterNames(new String[] {"All files"});
+			saveDialog.setFileName(gmGexFile.getName().replace(".gex", ""));
+			String fileName = saveDialog.open();
+			if(fileName != null) 
+			{
+				System.out.println(fileName);
+				gexFile = new File(fileName);
+				boolean confirmed = true;
+				if(gexFile.exists())
+				{
+					if(!MessageDialog.openQuestion(window.getShell(),"",
+							"File already exists, overwrite?"))
+					{
+						confirmed = false;
+					}
+				}
+				if(confirmed)
+				{
+					gmmlDb.gexFile = gexFile;
+					gmmlDb.gmGexFile = gmGexFile;
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+					try {
+						dialog.run(true, true, gmmlDb.convertRunnable);
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		}
+	}
+	private ConvertGexAction convertGexAction = new ConvertGexAction(this);
 	
 	private class AboutAction extends Action 
 	{
@@ -412,15 +411,13 @@ class GmmlVision extends ApplicationWindow
 				{
 					addNewItemActions(getToolBarManager());			
 					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
-					if(drawing != null)
-						drawing.setEditMode(true);
+					drawing.setEditMode(true);
 				}
 				else
 				{
 					removeNewItemActions(getToolBarManager());
 					sashFormSplit.setMaximizedControl(bpBrowser);
-					if(drawing != null)
-						drawing.setEditMode(false);
+					drawing.setEditMode(false);
 				}
 			}
 				else
@@ -530,6 +527,7 @@ class GmmlVision extends ApplicationWindow
 				break;
 			}
 			setToolTipText(toolTipText);
+			setId("newItemAction");
 			setImageDescriptor(ImageDescriptor.createFromFile(null,image));
 		}
 				
@@ -667,9 +665,9 @@ class GmmlVision extends ApplicationWindow
 		viewMenu.add(new ZoomAction(this, 200));
 		viewMenu.add(new ZoomAction(this, ZOOM_TO_FIT)); //Zoom to fit
 		MenuManager dataMenu = new MenuManager ("&Data");
-		dataMenu.add(convertGdbAction);
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(loadGexAction);
+		dataMenu.add(convertGexAction);
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
 		m.add(fileMenu);
@@ -696,10 +694,9 @@ class GmmlVision extends ApplicationWindow
 
 	protected void removeNewItemActions(ToolBarManager toolBarManager)
 	{
-		Iterator it = newItemActions.values().iterator();
-		while(it.hasNext())
+		for(int i = 0; i < newItemOrder.size(); i++)
 		{
-			toolBarManager.remove(((Action)it.next()).getId());
+				toolBarManager.remove("newItemAction");
 		}
 		toolBarManager.update(true);
 	}
@@ -716,7 +713,7 @@ class GmmlVision extends ApplicationWindow
 	
 	GmmlDrawing drawing;
 	GmmlData gmmlData;
-	GmmlGdb gmmlGdb = new GmmlGdb();
+	GmmlDb gmmlDb = new GmmlDb();
 	
 	public GmmlVision()
 	{
@@ -743,6 +740,8 @@ class GmmlVision extends ApplicationWindow
 	   GmmlVision window = new GmmlVision();
 	   window.setBlockOnOpen(true);
 	   window.open();
+	   
+	   window.gmmlDb.closeAll();
 	   Display.getCurrent().dispose();
 	}
 	
@@ -778,7 +777,7 @@ class GmmlVision extends ApplicationWindow
 		
 		sashFormSplit.setMaximizedControl(bpBrowser);
 		
-		setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
+		setStatus("Using Gene Database: '" + gmmlDb.props.getProperty("currentGdb") + "'");
 		
 		return parent;
 		

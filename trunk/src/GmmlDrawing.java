@@ -263,10 +263,9 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		{
 			GmmlGeneProduct gp = (GmmlGeneProduct)selectedGraphics;
 			// Get the backpage text
-			GmmlGdb gmmlGdb = new GmmlGdb();
 			String geneId = gp.getGeneId();
-			String bpText = gmmlGdb.getBpInfo(geneId);
-			String gexText = gmmlGdb.getExprInfo(geneId);
+			String bpText = gmmlVision.gmmlDb.getBpInfo(geneId);
+			String gexText = gmmlVision.gmmlDb.getGexData(geneId);
 			if (bpText != null) 
 			{
 				gmmlVision.bpBrowser.setBpText(bpText);
@@ -300,6 +299,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		//~ super.paintComponent(g);
 		
 		// iterate through all graphics to paint them
+		// TODO: IF IN area e.x, e.y, e.width, e.height
 		Iterator it = graphics.iterator();	
 		while (it.hasNext())
 		{

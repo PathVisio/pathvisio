@@ -141,7 +141,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 			jdomElement.setAttribute("GeneID", geneID);
 			jdomElement.setAttribute("Xref", xref);
 			jdomElement.setAttribute("Type", type);
-			jdomElement.setName(name);
+			jdomElement.setAttribute("Name", name);
 			jdomElement.setAttribute("BackpageHead", backpageHead);
 			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
@@ -161,8 +161,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	public String getGeneId() {
 		if(jdomElement != null) {
-			return jdomElement.getAttribute("Name").getValue();
-		} else {
+			return jdomElement.getAttributeValue("Name");
+			} else {
 			return "";
 		}
 	}
@@ -377,6 +377,9 @@ public class GmmlGeneProduct extends GmmlGraphics
 		notes		= (String)propItems.get(attributes.get(attributes.indexOf("Notes")));
 		geneProductDataSource = (String)propItems.get(attributes.get(attributes.indexOf("GeneProduct-Data-Source")));
 
+		// Update jdom element to store gene id
+		jdomElement.setAttribute("Name", name);
+		
 		canvas.redraw();
 	}
 

@@ -1,4 +1,5 @@
 //~ import java.awt.Graphics;
+import java.awt.Rectangle;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
 import java.awt.geom.Point2D;
@@ -28,13 +29,14 @@ abstract class GmmlDrawingObject
 	abstract boolean isContain(Point2D point);
 	
 	/**
-	 * Determines whether a GmmlDrawingObject object intersects 
+	 * Determines whether a GmmlGraphics object intersects 
 	 * the rectangle specified
 	 * @param r - the rectangle to check
 	 * @return True if the object intersects the rectangle, false otherwise
 	 */
-//	abstract boolean intersects(Rectangle2D.Double r);
+	abstract boolean intersects(Rectangle2D.Double r);
 	
+	abstract Rectangle getBounds();
 	/**
 	 * Moves GmmlGraphics object by specified increments
 	 * @param dx - the value of x-increment

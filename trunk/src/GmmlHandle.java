@@ -1,4 +1,5 @@
 import java.awt.BasicStroke;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 //~ import java.awt.Graphics;
@@ -24,6 +25,9 @@ class GmmlHandle extends GmmlDrawingObject
 	public static final int HANDLETYPE_LINE_START	= 3;
 	public static final int HANDLETYPE_LINE_END		= 4;
 	
+	public static final int WIDTH 	= 8;
+	public static final int HEIGHT	= 8;
+	
 	GmmlGraphics parent;
 	
 	double centerx;
@@ -38,8 +42,7 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	GmmlDrawing canvas;
 	
-	int width 	= 8;
-	int height	= 8;
+
 	
 	Rectangle2D rect;
 	boolean visible;
@@ -69,19 +72,19 @@ class GmmlHandle extends GmmlDrawingObject
 		if (parent.isSelected)
 		{
 			constructRectangle();
-			
+			e.gc.setLineWidth (1);
 			e.gc.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
 			e.gc.setForeground (e.display.getSystemColor (SWT.COLOR_BLUE));
-			e.gc.drawRectangle (
-				(int)(centerx - width/2), 
-				(int)(centery - height/2), 
-				(int)width, 
-				(int)height);
 			e.gc.fillRectangle (
-				(int)(centerx - width/2), 
-				(int)(centery - height/2), 
-				(int)width, 
-				(int)height);			
+					(int)(centerx - WIDTH/2), 
+					(int)(centery - HEIGHT/2), 
+					(int)WIDTH, 
+					(int)HEIGHT);	
+			e.gc.drawRectangle (
+				(int)(centerx - WIDTH/2), 
+				(int)(centery - HEIGHT/2), 
+				(int)WIDTH, 
+				(int)HEIGHT);		
 		}
 	}
 
@@ -119,9 +122,14 @@ class GmmlHandle extends GmmlDrawingObject
 		return parent.isSelected;
 	}
 	
+	protected Rectangle getBounds()
+	{
+		return parent.getBounds();
+	}
+	
 	private void constructRectangle()
 	{
-		rect = new Rectangle2D.Double(centerx - width/2, centery - height/2, width, height);
+		rect = new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
 	}
 
 } // end of class

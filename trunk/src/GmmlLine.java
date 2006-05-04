@@ -1,3 +1,4 @@
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
@@ -269,6 +270,13 @@ public class GmmlLine extends GmmlGraphics
 		return outline.intersects(r);
 	}
 	
+	protected Rectangle getBounds()
+	{
+		BasicStroke stroke = new BasicStroke(10);
+		Shape outline = stroke.createStrokedShape(line);
+		return outline.getBounds();
+	}
+	
 	/*
  	 *  (non-Javadoc)
  	 * @see GmmlGraphics#moveBy(double, double)
@@ -409,6 +417,8 @@ public class GmmlLine extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		startx		= (Double)propItems.get(attributes.get(0));
 		starty		= (Double)propItems.get(attributes.get(1));
 		endx		= (Double)propItems.get(attributes.get(2));
@@ -419,7 +429,11 @@ public class GmmlLine extends GmmlGraphics
 		notes		= (String)propItems.get(attributes.get(7));
 		
 		constructLine();
-		canvas.redraw();
+		
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 
 	/**

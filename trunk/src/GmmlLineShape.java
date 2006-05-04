@@ -2,6 +2,7 @@ import java.awt.Polygon;
 import java.awt.geom.Point2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
@@ -193,7 +194,7 @@ public class GmmlLineShape extends GmmlGraphics
 		if (type == TYPE_TBAR)
 		{
 			s /= 8;
-			
+
 			double capx1 = ((-endy + starty)/s) + endx;
 			double capy1 = (( endx - startx)/s) + endy;
 			double capx2 = (( endy - starty)/s) + endx;
@@ -278,22 +279,7 @@ public class GmmlLineShape extends GmmlGraphics
 	 */
 	protected boolean isContain(Point2D point)
 	{
-		double s  = Math.sqrt(((endx-startx)*(endx-startx)) + ((endy-starty)*(endy-starty))) / 60;
-		
-		int[] x = new int[4];
-		int[] y = new int[4];
-			
-		x[0] = (int)(((-endy + starty)/s) + endx);
-		y[0] = (int)((( endx - startx)/s) + endy);
-		x[1] = (int)((( endy - starty)/s) + endx);
-		y[1] = (int)(((-endx + startx)/s) + endy);
-		x[2] = (int)((( endy - starty)/s) + startx);
-		y[2] = (int)(((-endx + startx)/s) + starty);
-		x[3] = (int)(((-endy + starty)/s) + startx);
-		y[3] = (int)((( endx - startx)/s) + starty);
-			
-		Polygon p = new Polygon(x, y, 4);
-				
+		Polygon p = getOutline();
 		return p.contains(point);
 	}
 	
@@ -302,8 +288,19 @@ public class GmmlLineShape extends GmmlGraphics
 	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
+	{			
+		Polygon p = getOutline();
+		return p.intersects(r.x, r.y, r.width, r.height);
+	}
+	
+	protected Rectangle getBounds()
 	{
-		double s  = Math.sqrt(((endx-startx)*(endx-startx)) + ((endy-starty)*(endy-starty))) / 60;
+		return getOutline().getBounds();
+	}
+	
+	protected Polygon getOutline()
+	{
+		double s  = Math.sqrt(((endx-startx)*(endx-startx)) + ((endy-starty)*(endy-starty)))/8;
 		
 		int[] x = new int[4];
 		int[] y = new int[4];
@@ -316,11 +313,7 @@ public class GmmlLineShape extends GmmlGraphics
 		y[2] = (int)(((-endx + startx)/s) + starty);
 		x[3] = (int)(((-endy + starty)/s) + startx);
 		y[3] = (int)((( endx - startx)/s) + starty);
-			
-		Polygon p = new Polygon(x, y, 4);
-				
-		isSelected = p.intersects(r.x, r.y, r.width, r.height);
-		return isSelected;
+		return new Polygon(x, y, 4);
 	}
 
 	/*
@@ -376,6 +369,8 @@ public class GmmlLineShape extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		startx		= (Double)propItems.get(attributes.get(0));
 		starty		= (Double)propItems.get(attributes.get(1));
 		endx		= (Double)propItems.get(attributes.get(2));
@@ -384,7 +379,10 @@ public class GmmlLineShape extends GmmlGraphics
 		color 		= (RGB)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
 		
-		canvas.redraw();
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 
 	/**

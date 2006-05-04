@@ -3,6 +3,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.BasicStroke;
 import org.eclipse.swt.graphics.*;
@@ -218,7 +220,7 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected boolean isContain(Point2D p)
 	{
-			Polygon pol = createContainingPolygon();
+			Polygon pol = getOutline();
 			return pol.contains(p);			
 	}
 
@@ -228,10 +230,15 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
 	{
-			Polygon pol = createContainingPolygon();
+			Polygon pol = getOutline();
 			return pol.intersects(r.x, r.y, r.width, r.height);
 	}
 
+	protected Rectangle getBounds()
+	{
+		return getOutline().getBounds(); 
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
@@ -296,6 +303,8 @@ public class GmmlShape extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		centerx		= (Double)propItems.get(attributes.get(0));
 		centery		= (Double)propItems.get(attributes.get(1));
 		width		= (Double)propItems.get(attributes.get(2));
@@ -305,7 +314,10 @@ public class GmmlShape extends GmmlGraphics
 		rotation	= (Double)propItems.get(attributes.get(6));
 		notes		= (String)propItems.get(attributes.get(7));
 		
-		canvas.redraw();
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 	
 	/**
@@ -372,7 +384,7 @@ public class GmmlShape extends GmmlGraphics
 	/**
 	 * Creates a polygon containing the GmmlShape
 	 */
-	private Polygon createContainingPolygon()
+	private Polygon getOutline()
 	{
 		double theta = Math.toRadians(rotation);
 		double[] rot = new double[2];

@@ -2,6 +2,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.*;
 
 import org.eclipse.jface.viewers.TableViewer;
@@ -153,19 +154,24 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	{
 		if (isDragging)
 		{		
+			Rectangle rp = getRedrawRectangle(selection);
 			Iterator it = selection.iterator();
-			while (it.hasNext())
+			while(it.hasNext())
 			{
-				GmmlDrawingObject g = (GmmlDrawingObject) it.next();
-				g.moveBy(e.x - previousX, e.y - previousY);
+				((GmmlDrawingObject)it.next()).moveBy(e.x - previousX, e.y - previousY);
 			}
+			Rectangle r = getRedrawRectangle(selection);
+			r.add(rp);
+			redraw(r.x, r.y, r.width, r.height, false);
 			previousX = e.x;
 			previousY = e.y;
-			redraw();
 		}
 						
 		if (isSelecting)
 		{
+			Vector toRedraw = new Vector();
+			ArrayList rl = s.getSideAreas();
+			
 			s.x2 = e.x;
 			s.y2 = e.y;
 			
@@ -182,6 +188,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 						if (!selection.contains(g))
 						{
 							selection.addElement(g);
+							toRedraw.addElement(g);
 						}
 					}
 					else
@@ -190,11 +197,16 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 						if (selection.contains(g))
 						{
 							selection.remove(g);
+							toRedraw.addElement(g);
 						}
 					}
 				}				
 			}
-			redraw();
+			rl.addAll(s.getSideAreas());
+			redrawRectangleList(rl);
+			
+			Rectangle r = getRedrawRectangle(toRedraw);
+			redraw(r.x, r.y, r.width, r.height, false);
 		}
 	}
 
@@ -229,11 +241,16 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	{
 		if(isDragging)
 		{
-		updatePropertyTable(gmmlVision.propertyTable.g);
+			updatePropertyTable(gmmlVision.propertyTable.g);
+		} else if (isSelecting)
+		{
+			updatePropertyTable(null);
+			redrawRectangleList(s.getSideAreas());
+//			redraw();
 		}
 		isDragging = false;
 		isSelecting = false;
-		redraw();
+//		redrawSelection(e.x,e.y,10,10);
 	}
 	
 	/**
@@ -286,6 +303,39 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		
 	}
 
+	private Rectangle getRedrawRectangle(Vector toRedraw)
+	{
+		Rectangle r = new Rectangle();
+		Iterator it = toRedraw.iterator();
+		while (it.hasNext())
+		{
+			GmmlDrawingObject g = (GmmlDrawingObject) it.next();
+			if(r.x == 0 && r.y ==0 && r.width == 0 && r.height == 0) {
+				r = new Rectangle(g.getBounds());
+			} else {
+				r.add(g.getBounds());
+			}
+			r.add(g.getBounds());
+		}
+		r.grow(5,5);
+		return r;
+	}
+	
+	private void redrawRectangleList(ArrayList rl)
+	{
+		for(int i = 0; i < rl.size(); i++)
+		{
+			Rectangle r = (Rectangle)rl.get(i);
+			redraw(r.x, r.y, r.width, r.height, false);
+		}
+	}
+	
+	public void redrawObject(GmmlDrawingObject o)
+	{
+		Rectangle r = o.getBounds();
+		r.grow(5,5);
+		redraw(r.x, r.y, r.width, r.height, false);
+	}
 	/**
 	 * Paints all components in the drawing.
 	 * This method is called automatically in the 
@@ -299,12 +349,15 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		//~ super.paintComponent(g);
 		
 		// iterate through all graphics to paint them
-		// TODO: IF IN area e.x, e.y, e.width, e.height
-		Iterator it = graphics.iterator();	
+		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
+		Iterator it = graphics.iterator();
 		while (it.hasNext())
 		{
 			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-			o.draw(e);
+			if(o.intersects(r)) 
+			{
+				o.draw(e);
+			}
 		}
 	
 		// iterate through all handles to paint them, after 
@@ -314,7 +367,10 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		while (it.hasNext())
 		{
 			GmmlHandle h = (GmmlHandle) it.next();
-			h.draw(e);
+			if(h.intersects(r)) 
+			{
+				h.draw(e);
+			}
 		}		
 	}
 
@@ -390,6 +446,7 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 	private void editObject(MouseEvent e)
 	{
 		Point2D p = new Point2D.Double(e.x, e.y);
+		Vector toDraw = new Vector();
 		pressedHandle = null;
 		Iterator it = drawingObjects.iterator();
 		while (it.hasNext())
@@ -419,18 +476,22 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 		
 		if (pressedObject != null)
 		{
-			pressedObject.isSelected = true;
 			if(!selection.contains(pressedObject))
 			{
 				//TODO: if ctrl is pressed, don't clear, but just add object
+				toDraw = (Vector)selection.clone();
 				initSelection(p);
 				selection.add(pressedObject);
-				if(pressedObject instanceof GmmlHandle)
-				{
-					((GmmlHandle)pressedObject).parent.isSelected = true;
-				}
 			}
-	
+			if(pressedObject instanceof GmmlHandle)
+			{
+				((GmmlHandle)pressedObject).parent.isSelected = true;
+			}
+			pressedObject.isSelected = true;
+			toDraw.addAll(selection);
+			Rectangle r = getRedrawRectangle(toDraw);
+			redraw(r.x, r.y, r.width, r.height, false);
+			
 			updatePropertyTable(pressedObject);
 			
 			// start dragging
@@ -446,8 +507,10 @@ class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, Pa
 			// start selecting
 			isDragging = false;
 			isSelecting = true;
+			Rectangle r = getRedrawRectangle(selection);
 			initSelection(p);
-			updatePropertyTable(null);
+			redraw(r.x, r.y, r.width, r.height, false);
+//			updatePropertyTable(null);
 		}
 	}
 

@@ -54,14 +54,6 @@ abstract class GmmlGraphics extends GmmlDrawingObject
 	
 	abstract void updateFromPropItems();
 	
-	/**
-	 * Determines whether a GmmlGraphics object intersects 
-	 * the rectangle specified
-	 * @param r - the rectangle to check
-	 * @return True if the object intersects the rectangle, false otherwise
-	 */
-	abstract boolean intersects(Rectangle2D.Double r);
-	
 	abstract void updateJdomElement();
 	
 	abstract List getAttributes();

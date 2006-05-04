@@ -2,6 +2,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -215,6 +216,12 @@ public class GmmlArc extends GmmlGraphics
 	
 	}
 	
+	protected Rectangle getBounds()
+	{
+		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180-rotation, 180, 0);
+		return arc.getBounds();
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
@@ -266,6 +273,8 @@ public class GmmlArc extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		startx		= (Double)propItems.get(attributes.get(0));
 		starty		= (Double)propItems.get(attributes.get(1));
 		width		= (Double)propItems.get(attributes.get(2));
@@ -273,8 +282,11 @@ public class GmmlArc extends GmmlGraphics
 		color 		= (RGB)propItems.get(attributes.get(4));
 		rotation	= (Double)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
-
-		canvas.redraw();
+		
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 
 	/**

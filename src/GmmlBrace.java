@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -248,26 +249,8 @@ public class GmmlBrace extends GmmlGraphics
 	 */
 	protected boolean isContain(Point2D p)
 	{
-		Line2D l = new Line2D.Double();
-		if (orientation == ORIENTATION_TOP)
-		{
-			l = new Line2D.Double(centerx - width/2, centery, centerx + width/2, centery);
-		}
-		else if (orientation == ORIENTATION_RIGHT)
-		{
-			l = new Line2D.Double(centerx, centery - width/2, centerx, centery + width/2);
-		}
-		else if (orientation == ORIENTATION_BOTTOM)
-		{
-			l = new Line2D.Double(centerx - width/2, centery, centerx + width/2, centery);
-		}
-		else if (orientation == ORIENTATION_LEFT)
-		{
-			l = new Line2D.Double(centerx, centery - width/2, centerx, centery + width/2);
-		}
+		Shape outline = getOutline();
 		
-		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(l);
 		return outline.contains(p);
 	}
 	
@@ -276,6 +259,18 @@ public class GmmlBrace extends GmmlGraphics
 	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
+	{
+		Shape outline = getOutline();
+		
+		return outline.intersects(r.x, r.y, r.width, r.height);
+	}
+	
+	protected Rectangle getBounds()
+	{
+		return getOutline().getBounds();
+	}
+	
+	protected Shape getOutline()
 	{
 		Line2D l = new Line2D.Double();
 		if (orientation == ORIENTATION_TOP)
@@ -295,9 +290,7 @@ public class GmmlBrace extends GmmlGraphics
 			l = new Line2D.Double(centerx, centery - width/2, centerx, centery + width/2);
 		}
 		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(l);
-		
-		return outline.intersects(r.x, r.y, r.width, r.height);
+		return stroke.createStrokedShape(l);
 	}
 	
 	/*
@@ -346,6 +339,8 @@ public class GmmlBrace extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		centerx		= (Double)propItems.get(attributes.get(0));
 		centery		= (Double)propItems.get(attributes.get(1));
 		width		= (Double)propItems.get(attributes.get(2));
@@ -354,7 +349,10 @@ public class GmmlBrace extends GmmlGraphics
 		color 		= (RGB)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
 		
-		canvas.redraw();
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 	
 	/**

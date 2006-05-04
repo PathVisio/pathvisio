@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.List;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.graphics.*;
@@ -194,11 +195,17 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	protected void disposeTextControl()
 	{
+		Rectangle rp = getBounds();
+		
 		geneID = t.getText();
 		canvas.updatePropertyTable(this);
 		t.setVisible(false);
 		t.dispose();
-		canvas.redraw();
+
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 	
 	protected void createJdomElement(Document doc) {
@@ -296,6 +303,13 @@ public class GmmlGeneProduct extends GmmlGraphics
 		return r.intersects(centerx - width/2, centery - height/2, width, height);
 	}
 	
+	protected Rectangle getBounds()
+	{
+		Rectangle2D rect = new Rectangle2D.Double(
+				centerx - width/2, centery - height/2, width, height);
+		return rect.getBounds();
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)
@@ -364,6 +378,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		centerx		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterX")));
 		centery		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterY")));
 		width		= (Double)propItems.get(attributes.get(attributes.indexOf("Width")));
@@ -380,7 +396,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 		// Update jdom element to store gene id
 		jdomElement.setAttribute("Name", name);
 		
-		canvas.redraw();
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 
 	/**

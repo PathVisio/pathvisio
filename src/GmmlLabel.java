@@ -18,6 +18,7 @@ limitations under the License.
 import java.awt.geom.Rectangle2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -207,10 +208,16 @@ public class GmmlLabel extends GmmlGraphics
 	
 	protected void disposeTextControl()
 	{
+		Rectangle rp = getBounds();
+		
 		text = t.getText();
 		t.setVisible(false);
 		t.dispose();
-		canvas.redraw();
+
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 	
 	protected void createJdomElement(Document doc) {
@@ -309,6 +316,13 @@ public class GmmlLabel extends GmmlGraphics
 		return r.intersects(centerx - width/2, centery - height/2, width, height);
 	}
 
+	protected Rectangle getBounds()
+	{
+		Rectangle2D rect = new Rectangle2D.Double(
+				centerx - width/2, centery - height/2, width, height);
+		return rect.getBounds();
+	}
+	
 	public List getAttributes() {
 		return attributes;
 	}
@@ -332,6 +346,8 @@ public class GmmlLabel extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
+		Rectangle rp = getBounds();
+		
 		text		= (String)propItems.get(attributes.get(0));
 		centerx		= (Double)propItems.get(attributes.get(1));
 		centery		= (Double)propItems.get(attributes.get(2));
@@ -344,7 +360,10 @@ public class GmmlLabel extends GmmlGraphics
 		color		= (RGB)propItems.get(attributes.get(9));
 		notes		= (String)propItems.get(attributes.get(10));
 		
-		canvas.redraw();
+		Rectangle r = getBounds();
+		r.add(rp);
+		r.grow(5,5);
+		canvas.redraw(r.x, r.y, r.width, r.height, false);
 	}
 	
 	/**
@@ -399,7 +418,7 @@ public class GmmlLabel extends GmmlGraphics
 	 */
 	private void setHandleLocation()
 	{
-		handlecenter.setLocation(centerx, centery - height/2 - handlecenter.height/2);
+		handlecenter.setLocation(centerx, centery - height/2 - handlecenter.HEIGHT/2);
 	}
 
 } // end of class

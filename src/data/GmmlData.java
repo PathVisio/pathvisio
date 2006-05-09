@@ -1,9 +1,13 @@
+package data;
+
 import org.jdom.JDOMException;
 import org.jdom.input.*;
 import org.jdom.output.*;
 import org.jdom.*;
-import org.jdom.Element;
 import org.xml.sax.SAXException;
+
+
+import graphics.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,12 +28,12 @@ import javax.xml.validation.ValidatorHandler;
 
 public class GmmlData
 {
-	final static int GMMLZOOM = 15;
+	final public static int GMMLZOOM = 15;
 	final static File xsdFile = new File("GMML_compat.xsd");
 	
-	File xmlFile;
+	public File xmlFile;
 	GmmlDrawing drawing;
-	Document doc;
+	public Document doc;
 	
 	private List pathwayAttributes;
 	private int[] drawingDims = {800,800};
@@ -108,7 +112,7 @@ public class GmmlData
 		// Check if a GmmlGraphics exists for this element
 		// Assumes that classname = 'Gmml' + Elementname
 		try {
-			Class cl = Class.forName("Gmml"+e.getName());
+			Class cl = Class.forName("graphics.Gmml"+e.getName());
 			Constructor con = cl.getConstructor(new Class[] { Element.class, GmmlDrawing.class });
 			System.out.println(e.getName());
 			Object obj = con.newInstance(new Object[] { e, drawing });

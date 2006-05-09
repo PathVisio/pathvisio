@@ -1,3 +1,4 @@
+package graphics;
 import java.awt.BasicStroke;
 import java.awt.Rectangle;
 import java.awt.Shape;

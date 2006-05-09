@@ -1,3 +1,4 @@
+package graphics;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -14,14 +15,14 @@ import org.eclipse.swt.widgets.Table;
  * This class is a parent class for all graphics
  * that can be added to a GmmlDrawing.
  */
-abstract class GmmlGraphics extends GmmlDrawingObject
+public abstract class GmmlGraphics extends GmmlDrawingObject
 {
 
 	/**
 	 * Resizes GmmlGraphics in x-direction
 	 * @param dx - the value with wich to resize the object
 	 */
-	void resizeX(double dx){}
+	protected void resizeX(double dx){}
 	
 	/**
 	 * Resizes GmmlGraphics in y-direction
@@ -52,13 +53,13 @@ abstract class GmmlGraphics extends GmmlDrawingObject
 
 	abstract void updateToPropItems();
 	
-	abstract void updateFromPropItems();
+	public abstract void updateFromPropItems();
 	
 	abstract void updateJdomElement();
 	
-	abstract List getAttributes();
+	public abstract List getAttributes();
 	
-	List attributes;
-	Hashtable propItems;
+	public List attributes;
+	public Hashtable propItems;
 	
 }

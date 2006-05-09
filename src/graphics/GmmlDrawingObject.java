@@ -1,3 +1,4 @@
+package graphics;
 //~ import java.awt.Graphics;
 import java.awt.Rectangle;
 import org.eclipse.swt.graphics.*;
@@ -18,7 +19,7 @@ abstract class GmmlDrawingObject
 	 * it is part of
 	 * @param g - the Graphics object to use for drawing
 	 */
-	abstract void draw(PaintEvent e);
+	protected abstract void draw(PaintEvent e);
 	
 	/**
 	 * Determines wheter a GmmlGraphics object contains
@@ -26,7 +27,7 @@ abstract class GmmlDrawingObject
 	 * @param point - the point to check
 	 * @return True if the object contains the point, false otherwise
 	 */
-	abstract boolean isContain(Point2D point);
+	protected abstract boolean isContain(Point2D point);
 	
 	/**
 	 * Determines whether a GmmlGraphics object intersects 
@@ -34,14 +35,14 @@ abstract class GmmlDrawingObject
 	 * @param r - the rectangle to check
 	 * @return True if the object intersects the rectangle, false otherwise
 	 */
-	abstract boolean intersects(Rectangle2D.Double r);
+	protected abstract boolean intersects(Rectangle2D.Double r);
 	
-	abstract Rectangle getBounds();
+	protected abstract Rectangle getBounds();
 	/**
 	 * Moves GmmlGraphics object by specified increments
 	 * @param dx - the value of x-increment
 	 * @param dy - the value of y-increment
 	 */
-	void moveBy(double dx, double dy){}
+	void moveBy(double dx, double dy) {}
 	
 }

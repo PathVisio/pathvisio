@@ -1,3 +1,6 @@
+package graphics;
+
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -8,6 +11,8 @@ import java.util.List;
 import org.eclipse.swt.events.PaintEvent;
 import org.jdom.Attribute;
 import org.jdom.Element;
+
+import data.GmmlData;
 
 public class GmmlMappInfo extends GmmlGraphics {
 	
@@ -27,10 +32,10 @@ public class GmmlMappInfo extends GmmlGraphics {
 	String availability = "";
 	String lastModified = "";
 	
-	int boardWidth;
-	int boardHeight;
-	int windowWidth;
-	int windowHeight;
+	public int boardWidth;
+	public int boardHeight;
+	public int windowWidth;
+	public int windowHeight;
 	
 	Element jdomElement;
 	
@@ -156,6 +161,11 @@ public class GmmlMappInfo extends GmmlGraphics {
 	public boolean isContain(Point2D p) 
 	{
 		return false;
+	}
+	
+	public Rectangle getBounds()
+	{
+		return new Rectangle();
 	}
 	
 	public void draw(PaintEvent e) {}

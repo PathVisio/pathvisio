@@ -1,3 +1,7 @@
+package gmmlVision;
+
+import graphics.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -11,14 +15,15 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
+
 public class GmmlPropertyTable {
-	TableViewer tableViewer;
+	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
 	TextCellEditor textEditor;
 	ColorCellEditor colorEditor;
 	ComboBoxCellEditor comboBoxEditor;
 	
-	GmmlGraphics g;
+	public GmmlGraphics g;
 
 	final static String[] colNames = new String[] {"Property", "Value"};
 	

@@ -1,3 +1,4 @@
+package data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -15,14 +17,14 @@ public class GmmlDb {
 	final static File propsFile = new File(".gdbProperties");
 	
 	Connection conGdb;
-	Connection conGex;
+	public Connection conGex;
 	Connection conGmGex;
 	
-	Properties props;
+	public Properties props;
 	
 	File gdbFile;
-	File gexFile;
-	File gmGexFile;
+	public File gexFile;
+	public File gmGexFile;
 	
 	ConvertThread convertThread;
 	
@@ -129,6 +131,25 @@ public class GmmlDb {
 		return null;
 	}
 	
+	public Vector getGexDataColumns()
+	{
+		Vector gexDataColumns = new Vector();
+		try {
+			ResultSet r = conGex.createStatement().executeQuery(
+					"SELECT * FROM samples"
+					);
+			
+			while(r.next())
+			{
+				int id = r.getInt(1);
+				gexDataColumns.add(id, r.getString(2));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return gexDataColumns;
+	}
+	
 	public ArrayList ensId2Refs(String ensId) {
 		ArrayList crossIds = new ArrayList();
 		try {
@@ -204,7 +225,7 @@ public class GmmlDb {
 		}
 	}
 	
-	IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {
+	public IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Converting Gene Expression Dataset",100);

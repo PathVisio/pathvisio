@@ -1,9 +1,10 @@
+package util;
 import org.eclipse.swt.graphics.*;
 //~ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-class GmmlColorConvertor
+public class GmmlColorConvertor
 {
 	public static final List colorMappings = Arrays.asList(new String[]{
 		"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",

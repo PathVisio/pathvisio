@@ -16,37 +16,39 @@ my $pass		= '0000';
 my $dbname	= 'homo_sapiens_core_38_36';
 
 my $db = new Bio::EnsEMBL::DBSQL::DBAdaptor(
-	-host 	=> $host,
-	-user 	=> $user,
-	-password => $pass,
-	-dbname => $dbname
-	);
-	
+-host 	=> $host,
+-user 	=> $user,
+-password => $pass,
+-dbname => $dbname
+);
+
 my $ga = $db->get_GeneAdaptor();
 
 print "gene adaptor loaded\n";
 
-my $file = "ensembl_genes_21000_to_end.txt";
+my $file = "ensembl_genes_start_to_21000.txt";
 open OUTPUT,"> $file" or die "Unable to open outputfile \"$file\"\n";
 
 my $progress;
 $|=1;
 my $genes = $ga->fetch_all;
-#my $gene = ($ga->fetch_by_stable_id("ENSG00000175182"));
-foreach my $gene (@{$genes}[21000..$#$genes]) {
+foreach my $gene (@{$genes}[0..21000]) {
 	$progress++;
 	my $ens_id = $gene->stable_id;
 	my $name = $gene->external_name;
+	my $disp_id = $gene->display_id;
 	my $descr = $gene->description;
 	{
 		no warnings;
-		print OUTPUT "$ens_id\t$ens_id\tEnsembl\t$name\t$descr\n";
-	}	
-	
+		print OUTPUT "$ens_id\t$ens_id\tEnsembl\t$disp_id\t$name\t$descr\n";
+	}
 	my $output = "";
+	my %processed_ids = ();
 	foreach my $dbe (@{$gene->get_all_DBLinks}) {
-		my $ext_id = $dbe->display_id;
-		if( index($output, $ext_id) < 0 ) {
+		my $ext_id = $dbe->primary_id;
+		my $disp_id = $dbe->display_id;
+		if( !(exists $processed_ids{$ext_id}) ) {
+			$processed_ids{$ext_id} = undef;
 			my $dbname = $dbe->db_display_name;
 			my $ext_descr = $dbe->description;
 			if(!$ext_descr) {
@@ -54,14 +56,14 @@ foreach my $gene (@{$genes}[21000..$#$genes]) {
 			}
 			{
 				no warnings;
-				$output = $output."$ens_id\t$ext_id\t$dbname\t$name\t$ext_descr\n";
+				$output = $output."$ens_id\t$ext_id\t$dbname\t$disp_id\t$name\t$ext_descr\n";
 			}
 		} else {
-			next;
+				next;
 		}
 	}
-	if(($progress % 100) == 0) {
-		print "$progress genes processed\n";
-	}
 	print OUTPUT $output;
+	if(($progress % 100) == 0) {
+				print "$progress genes processed\n";
+	}
 }

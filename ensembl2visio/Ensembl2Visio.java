@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.sql.DriverManager;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.*;
 
 import org.ensembl.compara.datamodel.GenomeDB;
@@ -13,33 +15,35 @@ import org.ensembl.variation.driver.*;
 
 public class Ensembl2Visio {
 	final static String[] sysCodes = new String[] {
-			"X", "Em", "En", "L", "F", "T",
+			"U", "X", "Em", "En", "L", "F", "T",
 			"H", "I", "M", "Om", "Pd", "Pf",
-			"Q", "R", "D", "S", "U", "W",
+			"Q", "R", "D", "S", "W",
 			"Z"
 	};
 	
 	final static String[] sysNames = new String[] {
-		"Affymetrix Probe Set ID", "EMBL", "Ensembl", "Entrez Gene", 
+		"UniProt/TrEMBL", "Affymetrix Probe Set ID", "EMBL", "Ensembl", "Entrez Gene", 
 		"FlyBase", "Gene Ontology", "HUGO", "InterPro", "MGI", 
-		"OMIM", "PDB", "Pfam", "RefSeq", "RGD", "SGD", "UniProt/TrEMBL", 
+		"OMIM", "PDB", "Pfam", "RefSeq", "RGD", "SGD", 
 		"UniGene", "WormBase", "ZFIN"
 	};
 	
 	final static String[] lookFor = new String[] {
-			"Affy", "EMBL", "Ensembl", "EntrezGene", "FlyBase", "GO",
+			"(?i)uniprot","(?i)affy", "\\bEMBL\\b", "Ensembl", "EntrezGene", "FlyBase", "GO",
 			"HUGO", "InterPro", "MGI", "OMIM", "PDB", "Pfam", 
-			"RefSeq", "RGD", "SGD", "Uniprot", "UniGene", "WormBase",
+			"RefSeq", "RGD", "SGD", "UniGene", "WormBase",
 			"ZFIN"
 	};
 	final static int ENS_CODE = 2;
 	
+	Vector patterns;
+    
     Connection con;
     
     public static void main(String[] args) {
 //    	int nrGenes = 10;
 //    	String organism = "human";
-    	String file = "ensembl_genes_total.txt";
+    	String file = "ensembl_genes.txt";
     	String dbname = "ensembl_homo_sapiens_38_36";
     	Ensembl2Visio ensj = new Ensembl2Visio();
 //    	ensj.fetchFromEnsembl(nrGenes, organism, file); // Do this with perl
@@ -48,8 +52,26 @@ public class Ensembl2Visio {
     
     public Ensembl2Visio() {}
 
+    public void compilePatterns()
+    {
+    	patterns = new Vector();
+    	for(int i = 0; i < lookFor.length; i++)
+    	{
+    		patterns.add(Pattern.compile(lookFor[i]));		
+    	}
+    }
+    
     public void createGdbFromTxt(String file, String dbname)
     {
+    	PrintWriter eout = null;
+	    try {
+	        eout = new PrintWriter(new FileWriter("error.txt"));
+	    } catch(IOException ex) {
+	        ex.printStackTrace();
+	    }
+	    
+	    compilePatterns();
+	    
     	connect(dbname);
 		createTables();
     	try
@@ -77,6 +99,7 @@ public class Ensembl2Visio {
     		String[] cols = new String[4];
         	// Columns in input:
         	// <ENSG> <XREF/ENSG> <DBNAME> <GENENAME> <DESCR>
+    		// new: <ENSG> <PRIM_ID> <DBNAME> <DISP_NAME> <GENENAME> <DESCR>
     		while((l = in.readLine()) != null)
     		{
     			progress++;
@@ -93,6 +116,7 @@ public class Ensembl2Visio {
     					pstGene.setString(3, createBackpageText(cols));
     					pstGene.executeUpdate();
     				} catch (Exception e) { 
+    					eout.println(cols[0] + "\t" + cols[1] + "\t" + code + "\t" + e.getMessage());
     					//e.printStackTrace();
     					error++;
     				}
@@ -105,8 +129,13 @@ public class Ensembl2Visio {
     					pstLink.executeUpdate();
     				} catch (Exception e) { 
     					//e.printStackTrace();
+    					eout.println(cols[0] + "\t" + cols[1] + "\t" + code + "\t" + e.getMessage());
     					error++;
     				}
+    			}
+    			else
+    			{
+    				eout.println(cols[0] + "\t" + cols[1] + "\t" + "System code not found: " + cols[2]);
     			}
     			if(progress % 10000 == 0) {
     				System.out.println("Processed " + progress + " lines");
@@ -118,6 +147,7 @@ public class Ensembl2Visio {
     		r.next();
     		System.out.println("total ids in gene table: " + r.getString(1));
     		System.out.println("total errors (duplicates): " + error);
+    		r = con.createStatement().executeQuery("SELECT DISTINCT COUNT(idLeft) FROM link");
 	    	close();
 	    	// Set readonly to true
 	    	Properties prop = new Properties();
@@ -141,16 +171,20 @@ public class Ensembl2Visio {
     	int sysIndex = getSystemCodeIndex(cols[2]);
     	String descr = "";
     	String name = "";
+    	String secId = "";
     	switch(cols.length) {
+    	case 6:
+    		descr = cols[5];
     	case 5:
-    		descr = cols[4];
+    		name = cols[4];
     	case 4:
-    		name = cols[3];
+    		secId = cols[3];
     	}
     	String bpText = "<TABLE border='1'>" +
     			"<TR><TH>Gene ID:<TH>" + cols[1] +
     			"<TR><TH>Gene Name:<TH>" + name +
     			"<TR><TH>Description:<TH>" + descr +
+    			"<TR><TH>Secondary id:<TH>" + secId +
     			"<TR><TH>Systemcode:<TH>" + sysCodes[sysIndex] +
     			"<TR><TH>System name:<TH>" + sysNames[sysIndex] + 
     			"<TR><TH>Database name (Ensembl):<TH>" + cols[2] +
@@ -158,14 +192,19 @@ public class Ensembl2Visio {
     	return bpText;
     }
     
-    public static int getSystemCodeIndex(String s)
+    public int getSystemCodeIndex(String s)
     {   	
-    	for(int i = 0; i < lookFor.length; i++)
+    	Iterator it = patterns.iterator();
+    	int i = 0;
+    	while(it.hasNext())
     	{
-    		if(s.contains(lookFor[i]))
+    		Matcher m = ((Pattern)it.next()).matcher(s);
+    		if(m.find())
+    		{
     			return i;
+    		}
+    		i++;
     	}
-//		System.out.println("System not found: " + s);
 		return -1;
     }
     

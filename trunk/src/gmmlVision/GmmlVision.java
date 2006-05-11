@@ -247,16 +247,17 @@ public class GmmlVision extends ApplicationWindow
 		public void run () {
 			if (drawing != null)
 			{
+				double newPctZoomFactor = pctZoomFactor;
 				if(pctZoomFactor == ZOOM_TO_FIT) 
 				{
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
-					pctZoomFactor = (int)Math.min(
+					newPctZoomFactor = (int)Math.min(
 							drawing.zoomFactor * 100 * (double)shellSize.x / drawingSize.x,
 							drawing.zoomFactor * 100 * (double)shellSize.y / drawingSize.y
 					);
 				} 
-				drawing.setZoom(pctZoomFactor);
+				drawing.setZoom(newPctZoomFactor);
 			}
 			else
 			{
@@ -298,14 +299,14 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
 	
-	private class LoadGexAction extends Action
+	private class selectGexAction extends Action
 	{
 		GmmlVision window;
-		public LoadGexAction(GmmlVision w)
+		public selectGexAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Load gex");
-			setToolTipText("Load Expression Data");
+			setText("&Select gex");
+			setToolTipText("Select Expression Data");
 		}
 		
 		public void run () {
@@ -318,12 +319,24 @@ public class GmmlVision extends ApplicationWindow
 			if(file != null) {
 				gmmlGex.gexFile = new File(file);
 				gmmlGex.connect();
-				gmmlGex.loadColorSets();
+				if(gmmlGex.con != null)
+				{
+					if(drawing != null)
+					{
+						ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+						try {
+							dialog.run(true, true, drawing.cacheRunnable);
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
+					}
+					gmmlGex.loadColorSets();
+				}
 				showColorSetCombo(true);
 			}
 		}
 	}
-	private LoadGexAction loadGexAction = new LoadGexAction(this);
+	private selectGexAction selectGexAction = new selectGexAction(this);
 	
 	private class ConvertGexAction extends Action
 	{
@@ -702,7 +715,7 @@ public class GmmlVision extends ApplicationWindow
 		viewMenu.add(new ZoomAction(this, ZOOM_TO_FIT)); //Zoom to fit
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
-		dataMenu.add(loadGexAction);
+		dataMenu.add(selectGexAction);
 		dataMenu.add(colorSetManagerAction);
 		dataMenu.add(convertGexAction);
 		MenuManager helpMenu = new MenuManager ("&Help");
@@ -925,6 +938,16 @@ public class GmmlVision extends ApplicationWindow
 		
 		// initialize new JDOM gmml representation and read the file
 		gmmlData = new GmmlData(fnPwy, drawing);
+		
+		if(gmmlGex.con != null)
+		{
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+			try {
+				dialog.run(true, true, drawing.cacheRunnable);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		sc.setContent(drawing);
 		
 	}

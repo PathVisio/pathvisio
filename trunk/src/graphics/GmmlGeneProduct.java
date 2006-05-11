@@ -72,6 +72,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	GmmlHandle handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this);
 	GmmlHandle handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this);
 	
+	GmmlGpColor gpColor;
+	
 	/**
 	 * Constructor for this class
 	 * @param canvas - the GmmlDrawing this geneproduct will be part of
@@ -82,6 +84,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlex);
 		canvas.addElement(handley);
+		
+		gpColor = new GmmlGpColor(this);
 		
 		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.zoomFactor;
 		this.fontSize = (int)this.fontSizeDouble;
@@ -259,26 +263,29 @@ public class GmmlGeneProduct extends GmmlGraphics
 			c = new Color (e.display, this.color);
 		}
 		
-		Color cFill = new Color(e.display, this.fillColor);
-		if(canvas.colorSetIndex > -1)
-		{
-			RGB rgb = canvas.gmmlVision.gmmlGex.getGeneColor(name, canvas.colorSetIndex);
-			if(rgb != null)
-			{
-				cFill = new Color(e.display, rgb);
-			}
-		}
-
-		e.gc.setForeground (c);
-		e.gc.setBackground (cFill);
-		e.gc.setLineStyle (SWT.LINE_SOLID);
+//		Color cFill = new Color(e.display, this.fillColor);
+//		if(canvas.colorSetIndex > -1)
+//		{
+//			RGB rgb = canvas.gmmlVision.gmmlGex.getGeneColor(name, canvas.colorSetIndex);
+//			if(rgb != null)
+//			{
+//				System.out.println("Drawing in color: " + rgb);
+//				cFill = new Color(e.display, rgb);
+//			}
+//		}
+//
+//		e.gc.setForeground (c);
+//		e.gc.setBackground (cFill);
+//		e.gc.setLineStyle (SWT.LINE_SOLID);
+//		
+//		e.gc.fillRectangle(
+//				(int)(centerx - width / 2),
+//				(int)(centery - height / 2),
+//				(int)width,
+//				(int)height
+//			);
 		
-		e.gc.fillRectangle(
-				(int)(centerx - width / 2),
-				(int)(centery - height / 2),
-				(int)width,
-				(int)height
-			);
+		gpColor.draw(e);
 		
 		e.gc.drawRectangle (
 			(int)(centerx - width / 2),
@@ -303,7 +310,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 		f.dispose();
 		c.dispose();
-		cFill.dispose();
+//		cFill.dispose();
 		
 		setHandleLocation();
 	}

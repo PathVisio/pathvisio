@@ -1,4 +1,5 @@
 package colorSet;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -41,14 +42,22 @@ public class GmmlColorSetPreview extends Canvas implements PaintListener {
 
 		size = getSize();
 		Iterator it = colorSetObjects.iterator();
-		while(it.hasNext())
-		{
-			GmmlColorSetObject cs = (GmmlColorSetObject)it.next();
+		
+		for (Enumeration en = colorSetObjects.elements(); en.hasMoreElements();) {
+			GmmlColorSetObject cs = (GmmlColorSetObject)en.nextElement();
 			if(cs instanceof GmmlColorGradient) {
 				GmmlColorGradient cg = (GmmlColorGradient)cs;
 				drawColorGradient(e, cg);
 			}
-		}	
+		}
+//		for(int i = 0; i < colorSetObjects.size(); i++)
+//		{
+//			GmmlColorSetObject cs = (GmmlColorSetObject)colorSetObjects.get(i);
+//			if(cs instanceof GmmlColorGradient) {
+//				GmmlColorGradient cg = (GmmlColorGradient)cs;
+//				drawColorGradient(e, cg);
+//			}
+//		}
 	}
 	
 	final static int LABEL_HEIGHT = 20;

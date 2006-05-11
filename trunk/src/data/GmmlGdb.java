@@ -64,7 +64,7 @@ public class GmmlGdb {
 			String result = r.getString(1);
 			return result;
 		} catch(Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 	}

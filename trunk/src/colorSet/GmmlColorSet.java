@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.eclipse.swt.graphics.RGB;
 
 public class GmmlColorSet {
-	public final static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
+	public final static RGB COLOR_NO_CRITERIA_MET = new RGB(128, 128, 128);
 	
 	public String name;
 	
@@ -27,7 +27,7 @@ public class GmmlColorSet {
 	
 	public void addObject(GmmlColorSetObject o)
 	{
-		colorSetObjects.add(0, o);
+		colorSetObjects.add(o);
 	}
 	
 	public Object getParent()
@@ -37,15 +37,16 @@ public class GmmlColorSet {
 	
 	public RGB getColor(HashMap data)
 	{
-		RGB rgb = GmmlGeneProduct.INITIAL_FILL_COLOR;
+		RGB rgb = COLOR_NO_CRITERIA_MET;
 		Iterator it = colorSetObjects.iterator();
 		while(it.hasNext())
 		{
 			GmmlColorSetObject gc = (GmmlColorSetObject)it.next();
+			System.out.println("Getting color for " + gc.name);
 			RGB gcRgb = gc.getColor(data);
 			if(gcRgb != null)
 			{
-				rgb = gcRgb;
+				return gcRgb;
 			}
 		}
 		return rgb;

@@ -1,9 +1,13 @@
 package colorSet;
 
+import gmmlVision.GmmlVision;
+
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -12,10 +16,14 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -93,6 +101,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new TreeLabelProvider());
 		treeViewer.addSelectionChangedListener(new TreeSelectionChangedListener());
+		treeViewer.getTree().addMouseListener(new TreeMouseListener());
 		treeViewer.setInput(this);
 				
 		sashForm = new SashForm(topComposite, SWT.VERTICAL);
@@ -109,6 +118,12 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 		csPreview = new GmmlColorSetPreview(csPreviewGroup, SWT.NONE);
 		
+		DragSource ds = new DragSource(treeViewer.getTree(), DND.DROP_MOVE);
+		ds.addDragListener(new TreeDragAdapter());
+		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+		DropTarget dt = new DropTarget(treeViewer.getTree(), DND.DROP_MOVE);
+		dt.addDropListener(new TreeDropAdapter());
+		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		
 		shell.setSize(400, 350);
 		return parent;
@@ -270,6 +285,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			cg.valueStart = Double.parseDouble(cgColorText1.getText());
 			cg.valueEnd = Double.parseDouble(cgColorText2.getText());
 			csPreview.redraw();
+			treeViewer.refresh();
 		}
 	}
 	
@@ -358,6 +374,137 @@ public class ColorSetWindow extends ApplicationWindow {
 				treeViewer.refresh();
 				treeViewer.setSelection(new StructuredSelection(cs), true);
 			}
+		}
+	}
+    
+	static final String TRANSFER_COLORSET = "COLORSET";
+	static final String TRANSFER_CSOBJECT = "CSOBJECT";
+	static final String TRANSFER_SEP = ":";
+	
+    private class TreeDragAdapter extends DragSourceAdapter {
+    	public void dragStart(DragSourceEvent e) {
+    		Object selected = ((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
+    		if(selected == null)
+    		{
+    			e.doit = false;
+    		}
+    	}
+    	
+    	public void dragSetData(DragSourceEvent e) {
+    		Object selected = ((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
+    		e.data = "NONE";
+    		if(selected instanceof GmmlColorSet)
+    		{
+    			e.data = TRANSFER_COLORSET + TRANSFER_SEP + gmmlGex.colorSets.indexOf(selected);
+    		}
+    		else if(selected instanceof GmmlColorSetObject)
+    		{
+    			GmmlColorSetObject cso = (GmmlColorSetObject)selected;
+    			int csIndex = gmmlGex.colorSets.indexOf(cso.parent);
+    			int csoIndex = cso.parent.colorSetObjects.indexOf(cso);
+    			e.data = TRANSFER_CSOBJECT + TRANSFER_SEP + csIndex + TRANSFER_SEP + csoIndex;
+    		}
+    		System.out.println(e.data);
+    	}
+    }
+    
+    private class TreeDropAdapter extends DropTargetAdapter {
+    	public void drop(DropTargetEvent e) {
+    		TreeItem item = (TreeItem)e.item;
+    		if(item != null)
+    		{
+    			Object selected = item.getData();
+    			String[] data = ((String)e.data).split(":");
+    			if(data[0].equals(TRANSFER_COLORSET))
+    			{
+    				int i = Integer.parseInt(data[1]);
+    				GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(i);
+    				if (selected instanceof GmmlColorSetObject)
+    				{
+    					selected = ((GmmlColorSetObject)selected).parent;
+    				}
+    					System.out.println(gmmlGex.colorSets.indexOf(cs) + "," + gmmlGex.colorSets.indexOf(selected));
+    					moveElement(gmmlGex.colorSets, cs, gmmlGex.colorSets.indexOf(selected));
+    					System.out.println(gmmlGex.colorSets.indexOf(cs));
+    			}
+    			else if(data[0].equals(TRANSFER_CSOBJECT))
+    			{
+    				int csIndex = Integer.parseInt(data[1]);
+    				int csoIndex = Integer.parseInt(data[2]);
+    				GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(csIndex);
+    				GmmlColorSetObject cso = (GmmlColorSetObject)cs.colorSetObjects.get(csoIndex);
+    				if(selected instanceof GmmlColorSet)
+    				{
+    					GmmlColorSet csNew = (GmmlColorSet)selected;
+    					csNew.addObject(cso);
+    					cs.colorSetObjects.remove(cso);
+    					cso.parent = csNew;
+    				}
+    				else if (selected instanceof GmmlColorSetObject)
+    				{
+    					System.out.println(((GmmlColorSetObject)selected).parent+ "," +cs);
+    					if(((GmmlColorSetObject)selected).parent == cs)
+    					{
+    						moveElement(cs.colorSetObjects, cso, cs.colorSetObjects.indexOf(selected));
+    					}
+    					else
+    					{
+    						GmmlColorSet csNew = ((GmmlColorSetObject)selected).parent;
+    						csNew.colorSetObjects.add(csNew.colorSetObjects.indexOf(selected), cso);
+    						cs.colorSetObjects.remove(cso);
+    						cso.parent = csNew;
+    					}
+    				}
+    			}
+    			treeViewer.refresh();
+    		}
+    	}
+    }
+    
+    public void moveElement(Vector v, Object o, int newIndex)
+    {
+    	v.remove(o);
+    	v.add(newIndex, o);
+    }
+    
+	private class TreeMouseListener extends MouseAdapter {
+		public TreeMouseListener() {
+			super();
+		}
+		public void mouseDown(MouseEvent e) {
+			if(e.button == 3)
+			{
+				System.out.println("mousedown (right)!");
+				Tree tree = treeViewer.getTree();
+				TreeItem item = tree.getItem(new Point(e.x, e.y));
+				
+				MenuManager mgr = new MenuManager();
+				mgr.add(new DeleteAction(item.getData()));
+				Menu m = mgr.createContextMenu(tree);
+				tree.setMenu(m);
+			}
+		}
+	}
+	
+	private class DeleteAction extends Action 
+	{
+		Object object;
+		public DeleteAction (Object o)
+		{
+			this.object = o;
+			setText ("&Delete");
+			setToolTipText ("Delete item");
+		}
+		public void run () {
+			if(object instanceof GmmlColorSet)
+			{
+				gmmlGex.colorSets.remove(object);
+			}
+			else if (object instanceof GmmlColorSetObject)
+			{
+				((GmmlColorSetObject)object).parent.colorSetObjects.remove(object);
+			}
+			treeViewer.refresh();
 		}
 	}
 	

@@ -18,8 +18,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
 		super(parent, name);
-		colorStart = new RGB(255, 0, 0);
-		colorEnd = new RGB(0, 255, 0);
+		colorStart = new RGB(0, 255, 0);
+		colorEnd = new RGB(255, 0, 0);
 		valueStart = -1;
 		valueEnd = 1;
 	}
@@ -31,16 +31,20 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	
 	public RGB getColor(double value)
 	{
+		if(value < valueStart || value > valueEnd)
+		{
+			return null;
+		}
 		double alpha = (value - valueStart) / (valueEnd - valueStart);
 		double red = colorStart.red + alpha*(colorEnd.red - colorStart.red);
 		double green = colorStart.green + alpha*(colorEnd.green - colorStart.green);
 		double blue = colorStart.blue + alpha*(colorEnd.blue - colorStart.blue);
-		RGB rgb = GmmlColorSet.COLOR_NO_CRITERIA_MET;
+		RGB rgb = null;
 		
-		System.out.println("Finding color for: " + value);
+//		System.out.println("Finding color for: " + value);
 		try {
 			rgb = new RGB((int)red, (int)green, (int)blue);
-			System.out.println("Found color: " + rgb);
+//			System.out.println("Found color: " + rgb);
 		} catch (Exception e) { 
 			System.out.println("GmmlColorGradient:getColor:Error: " + red + "," + green + "," +blue);
 		}
@@ -50,11 +54,14 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public RGB getColor(HashMap data)
 	{
 		try {
-			double value = (Double)data.get(dataColumn);
+			double value = Double.parseDouble((String)data.get(dataColumn));
 			return getColor(value);
 		} catch(NullPointerException ne) {
 			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
-		} catch(Exception e) {
+		} catch(ClassCastException ce) {
+			System.out.println("GmmlColorGradient:getColor:Error: Data is not of type double");
+		} catch(Exception e)
+		{
 			e.printStackTrace();
 		}
 		return null;

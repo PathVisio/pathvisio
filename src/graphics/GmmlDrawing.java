@@ -7,14 +7,19 @@ import java.awt.geom.Rectangle2D;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.*;
+
+import data.GmmlGex.ConvertThread;
 
 
 /**
@@ -118,6 +123,73 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		}
 	}
 
+	public void loadColorCache()
+	{
+		Iterator it = graphics.iterator();
+		int n = graphics.size();
+		double progress = 0;
+		long t = System.currentTimeMillis();
+		while(it.hasNext())
+		{
+			if(cacheThread.isInterrupted)
+			{
+				return;
+			}
+			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
+			if(o instanceof GmmlGeneProduct)
+			{
+				(((GmmlGeneProduct)o).gpColor).setCache();
+			}
+			progress += 100.0/n;
+			cacheThread.progress = (int)progress;
+		}
+		cacheThread.progress = 100;
+		System.out.println("caching expression data: " + (System.currentTimeMillis() - t));
+	}
+	
+	CacheThread cacheThread;
+	public class CacheThread extends Thread
+	{
+		volatile int progress;
+		volatile boolean isInterrupted;
+		public CacheThread() 
+		{
+		}
+		
+		public void run()
+		{
+			progress = 0;
+			isInterrupted = false;
+			loadColorCache();
+		}
+		
+		public void interrupt()
+		{
+			isInterrupted = true;
+		}
+	}
+	
+	public IRunnableWithProgress cacheRunnable = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor)
+		throws InvocationTargetException, InterruptedException {
+			monitor.beginTask("Caching expression data",100);
+			cacheThread = new CacheThread();
+			cacheThread.start();
+			int prevProgress = 0;
+			while(cacheThread.progress < 100) {
+				if(monitor.isCanceled()) {
+					cacheThread.interrupt();
+					break;
+				}
+				if(prevProgress < cacheThread.progress) {
+					monitor.worked(cacheThread.progress - prevProgress);
+					prevProgress = cacheThread.progress;
+				}
+			}
+			monitor.done();
+		}
+	};
+	
 	public void setEditMode(boolean editMode)
 	{
 		this.editMode = editMode;

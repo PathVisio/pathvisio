@@ -36,7 +36,6 @@ public class GmmlGex {
 	public File gmGexFile;
 	public GmmlGdb gmmlGdb;
 	public Vector colorSets;
-	public 
 	
 	ConvertThread convertThread;
 	
@@ -161,40 +160,22 @@ public class GmmlGex {
 		
 	}
 	
-	public RGB getGeneColor(String id, int colorSetIndex)
-	{
-		RGB rgb = GmmlGeneProduct.INITIAL_FILL_COLOR;
-		ArrayList ensIds = gmmlGdb.ref2EnsIds(id);
-		if(ensIds.size() == 0)
-		{
-			System.out.println("GmmlGex.getGeneColor: mapp gene not found");
-			return rgb;
-		}
-		HashMap dataHash = getDataHash(ensIds);
-		GmmlColorSet cs = (GmmlColorSet)colorSets.get(colorSetIndex);
-		rgb = cs.getColor(dataHash);
-		System.out.println("GmmlGex.getGeneColor is returning: " + rgb);
-		return rgb;
-	}
-	
-	public HashMap getDataHash(ArrayList ensIds)
+	public HashMap getDataHash(ArrayList refIds)
 	{
 		HashMap dataHash = new HashMap();
 		if(con != null && gmmlGdb.con != null) {
 			try 
 			{	
-				ArrayList refs = gmmlGdb.ensId2Refs((String)ensIds.get(0));
-				for(int i = 0; i < refs.size(); i++) {
+				for(int i = 0; i < refIds.size(); i++) {
 					ResultSet r = con.createStatement().executeQuery(
 							"SELECT data, idSample FROM expression " +
-							"WHERE id = '" + (String)refs.get(i) + "'"
+							"WHERE id = '" + (String)refIds.get(i) + "'"
 					);
 					
 					while(r.next())
 					{
 						try {
-							String data = r.getString(1);
-							dataHash.put(r.getInt(2), Double.parseDouble(data));
+							dataHash.put(r.getInt(2), r.getString(1));
 						} catch (Exception e) {
 							System.out.println("(GmmlGex:getDataHash:datatype not of type double: " + e.getMessage());
 						}
@@ -216,39 +197,42 @@ public class GmmlGex {
 //				More complicated query, slower (~150 seconds)
 //				ArrayList refs = getCrossRefs(id);
 				ArrayList ensIds = gmmlGdb.ref2EnsIds(id);
-				ArrayList refs = gmmlGdb.ensId2Refs((String)ensIds.get(0));
-				
-//				StringBuilder ensString = new StringBuilder();
-//				for(int i = 0; i < refs.size(); i++) {
-//					ensString.append("'" + refs.get(i) + "', ");
-//				}
-				
-				for(int i = 0; i < refs.size(); i++) {
-//					More complicated query, slower (~10 seconds)
-//					ResultSet r = conGex.createStatement().executeQuery(
-//					"SELECT id, data, idSample FROM expression " +
-//					"WHERE id IN " +
-//					"( " + ensString.substring(0,ensString.lastIndexOf(", ")) + " )"
-//					);
-					ResultSet r = con.createStatement().executeQuery(
-							"SELECT id, data, idSample FROM expression " +
-							"WHERE id = '" + (String)refs.get(i) + "'"
-					);
+				for(int j = 0; j < ensIds.size(); j++)
+				{
+					ArrayList refs = gmmlGdb.ensId2Refs((String)ensIds.get(j));
 					
-					while(r.next())
-					{
-						String data = r.getString(2);
-						ResultSet rsn = con.createStatement().executeQuery(
-								"SELECT name FROM samples" +
-								" WHERE idSample = " + r.getInt(3));
-						rsn.next();
-						String sampleName = rsn.getString(1);
-						exprInfo += "<TR><TH>" + sampleName +
-						"<TH>" + data;	
+//					StringBuilder ensString = new StringBuilder();
+//					for(int i = 0; i < refs.size(); i++) {
+//					ensString.append("'" + refs.get(i) + "', ");
+//					}
+					
+					for(int i = 0; i < refs.size(); i++) {
+//						More complicated query, slower (~10 seconds)
+//						ResultSet r = conGex.createStatement().executeQuery(
+//						"SELECT id, data, idSample FROM expression " +
+//						"WHERE id IN " +
+//						"( " + ensString.substring(0,ensString.lastIndexOf(", ")) + " )"
+//						);
+						ResultSet r = con.createStatement().executeQuery(
+								"SELECT id, data, idSample FROM expression " +
+								"WHERE id = '" + (String)refs.get(i) + "'"
+						);
+						
+						while(r.next())
+						{
+							String data = r.getString(2);
+							ResultSet rsn = con.createStatement().executeQuery(
+									"SELECT name FROM samples" +
+									" WHERE idSample = " + r.getInt(3));
+							rsn.next();
+							String sampleName = rsn.getString(1);
+							exprInfo += "<TR><TH>" + sampleName +
+							"<TH>" + data;	
+						}
 					}
+					exprInfo += "</TABLE>";
+					return exprInfo;
 				}
-				exprInfo += "</TABLE>";
-				return exprInfo;
 			}
 			catch(Exception e) {
 				e.printStackTrace();

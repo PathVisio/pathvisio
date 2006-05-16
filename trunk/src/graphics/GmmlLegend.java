@@ -27,19 +27,30 @@ import data.*;
 
 public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListener, PaintListener {
 	
-	GmmlDrawing parent;
+	GmmlDrawing drawing;
+	GmmlGex gmmlGex;
+	public int colorSetIndex;
 	double[] extremes;
 	
-	public GmmlLegend(GmmlDrawing parent, int style)
+	public GmmlLegend(Composite parent, int style)
 	{
 		super(parent, style);
-		this.parent = parent;
 			
 		createContents();
 		
 		addMouseMoveListener(this);
 		addMouseListener(this);
 		addPaintListener(this);
+	}
+	
+	public void setDrawing(GmmlDrawing drawing)
+	{
+		this.drawing = drawing;
+	}
+	
+	public void setGmmlGex(GmmlGex gmmlGex)
+	{
+		this.gmmlGex = gmmlGex;
 	}
 	
 	GradientCanvas gradients;
@@ -95,17 +106,17 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 	GmmlColorSet colorSet;
 	public void paintControl (PaintEvent e)
 	{	
-		GmmlGex gmmlGex = parent.gmmlVision.gmmlGex;
-		if(parent.colorSetIndex > -1)
-		{
-			System.out.println(isVisible());
-			System.out.println(getSize());
-			
+		if(drawing != null) {
+			colorSetIndex = drawing.colorSetIndex;
+			gmmlGex = drawing.gmmlVision.gmmlGex;
+		}
+		if(colorSetIndex > -1)
+		{			
 			Rectangle r = getClientArea();
 			e.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			e.gc.drawRectangle(r.x, r.y, r.width - 1, r.height -1);
 			
-			colorSet = (GmmlColorSet)gmmlGex.colorSets.get(parent.colorSetIndex);
+			colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
 			colorSetObjects = colorSet.colorSetObjects;
 			
 			setExtremeValues();

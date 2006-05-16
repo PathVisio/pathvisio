@@ -7,8 +7,10 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.GC;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
@@ -169,4 +171,9 @@ public class GmmlMappInfo extends GmmlGraphics {
 	}
 	
 	public void draw(PaintEvent e) {}
+	public void draw(PaintEvent e, GC buffer) {}
+	public Vector<GmmlHandle> getHandles()
+	{
+		return null;
+	}
 }

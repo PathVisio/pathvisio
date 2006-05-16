@@ -80,6 +80,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	public GmmlGeneProduct(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;
+		
 		this.canvas = canvas;
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlex);
@@ -142,6 +144,15 @@ public class GmmlGeneProduct extends GmmlGraphics
 	{
 		centerx = x;
 		centery = y;
+	}
+	
+	public Vector<GmmlHandle> getHandles()
+	{
+		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
+		v.add(handlecenter);
+		v.add(handlex);
+		v.add(handley);
+		return v;
 	}
 	
 	/**
@@ -245,13 +256,13 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		Font f = new Font(e.display, "ARIAL", fontSize, SWT.NONE);
 		
-		e.gc.setFont (f);
+		buffer.setFont (f);
 		
-		Point textSize = e.gc.textExtent (geneID);
+		Point textSize = buffer.textExtent (geneID);
 		
 		Color c;
 		if (isSelected)
@@ -274,40 +285,41 @@ public class GmmlGeneProduct extends GmmlGraphics
 //			}
 //		}
 //
-//		e.gc.setBackground (cFill);
+//		buffer.setBackground (cFill);
 //		
-//		e.gc.fillRectangle(
+//		buffer.fillRectangle(
 //				(int)(centerx - width / 2),
 //				(int)(centery - height / 2),
 //				(int)width,
 //				(int)height
 //			);
 		
-		e.gc.setForeground(c);
-		e.gc.setLineStyle (SWT.LINE_SOLID);
+		buffer.setForeground(c);
+		buffer.setLineStyle (SWT.LINE_SOLID);
+		buffer.setLineWidth (1);
 		
-		gpColor.draw(e);
+		gpColor.draw(e, buffer);
 
-		e.gc.drawRectangle (
+		buffer.drawRectangle (
 			(int)(centerx - width / 2),
 			(int)(centery - height / 2),
 			(int)width,
 			(int)height
 		);
 		
-		e.gc.setClipping (
+		buffer.setClipping (
 				(int)(centerx - width / 2) - 1,
 				(int)(centery - height / 2) - 1,
 				(int)width - 1,
 				(int)height - 1
 			);
-		e.gc.setForeground(c);
-		e.gc.drawString (geneID, 
+		buffer.setForeground(c);
+		buffer.drawString (geneID, 
 			(int) centerx - (textSize.x / 2) , 
-			(int) centery - (textSize.y / 2));
+			(int) centery - (textSize.y / 2), true);
 		
 		Region r = null;
-		e.gc.setClipping(r);
+		buffer.setClipping(r);
 		
 		f.dispose();
 		c.dispose();
@@ -316,6 +328,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 		setHandleLocation();
 	}
 	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
+	}
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#isContain(java.awt.geom.Point2D)

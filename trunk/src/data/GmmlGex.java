@@ -64,12 +64,20 @@ public class GmmlGex {
 	public void setGexReadOnly(boolean readonly)
 	{
 		boolean reconnect = false;
+		
+		long t = System.currentTimeMillis();
+		
 		if(con != null)
 		{
+			System.out.println("reconnecting");
 			reconnect = true;
-			close();
+			close(false);
 		}
-
+		
+		System.out.println(System.currentTimeMillis() - t);
+		
+		t = System.currentTimeMillis();
+		
 		Properties gexProp = new Properties();
 		try {
 		gexProp.load(new FileInputStream(gexFile));
@@ -78,10 +86,17 @@ public class GmmlGex {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		t = System.currentTimeMillis();
+		System.out.println(System.currentTimeMillis() - t);
+		
+		t = System.currentTimeMillis();
+		
 		if(reconnect)
 		{
 			connect();
 		}
+		System.out.println(System.currentTimeMillis() - t);
 	}
 	
 	public void saveColorSets()
@@ -119,11 +134,11 @@ public class GmmlGex {
 					sCso.execute();
 				}
 			}
-			setGexReadOnly(true);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		setGexReadOnly(true);
 		
 	}
 	
@@ -630,21 +645,23 @@ public class GmmlGex {
 			//prop.setProperty("hsqldb.default_table_type","cached");
 			String file = gexFile.getAbsolutePath().toString();
 			con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-					file.substring(0,file.lastIndexOf(".")), prop);
+					file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
 		} catch(Exception e) {
 			System.out.println ("Error: " +e.getMessage());
 			e.printStackTrace();
 		}
 	}
 	
-	public void close()
+	public void close(boolean shutdown)
 	{
 		if(con != null)
 		{
 			try
 			{
 				Statement sh = con.createStatement();
-				sh.executeQuery("SHUTDOWN"); // required, to write last changes
+				if(shutdown) {
+					sh.executeQuery("SHUTDOWN"); // required, to write last changes
+				}
 				sh.close();
 				con = null;
 			} catch (Exception e) {
@@ -652,6 +669,11 @@ public class GmmlGex {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void close()
+	{
+		close(true);
 	}
 	
 	public void connectGmGex(File gmGexFile) {

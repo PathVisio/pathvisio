@@ -26,6 +26,8 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	 */
 	public GmmlSelectionBox(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
+		
 		this.canvas = canvas;
 		canvas.addElement(this);
 		resetRectangle();
@@ -66,17 +68,23 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		
 		if(canvas.isSelecting)
 		{
-			e.gc.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
-			e.gc.setBackground (e.display.getSystemColor (SWT.COLOR_BLACK));
-			e.gc.setLineStyle (SWT.LINE_DOT);
-			e.gc.drawRectangle (x1, y1, x2-x1, y2-y1);
+			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
+			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_BLACK));
+			buffer.setLineStyle (SWT.LINE_DOT);
+			buffer.setLineWidth (1);
+			buffer.drawRectangle (x1, y1, x2-x1, y2-y1);
 
 		}
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 	
 	protected boolean intersects(Rectangle2D.Double r)

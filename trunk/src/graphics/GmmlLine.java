@@ -79,6 +79,8 @@ public class GmmlLine extends GmmlGraphics
 	 */
 	public GmmlLine(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_LINE;
+		
 		this.canvas = canvas;
 		
 		canvas.addElement(handlecenter);
@@ -217,7 +219,7 @@ public class GmmlLine extends GmmlGraphics
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		if(line!=null)
 		{
@@ -230,27 +232,33 @@ public class GmmlLine extends GmmlGraphics
 			{
 				c = new Color (e.display, this.color);
 			}
-			e.gc.setForeground (c);
-			e.gc.setBackground (c);
+			buffer.setForeground (c);
+			buffer.setBackground (c);
 			
+			buffer.setLineWidth (1);
 			if (style == STYLE_SOLID)
 			{
-				e.gc.setLineStyle (SWT.LINE_SOLID);
+				buffer.setLineStyle (SWT.LINE_SOLID);
 			}
 			else if (style == STYLE_DASHED)
 			{ 
-				e.gc.setLineStyle (SWT.LINE_DASH);
+				buffer.setLineStyle (SWT.LINE_DASH);
 			}
 			
-			e.gc.drawLine ((int)line.getX1(), (int)line.getY1(), (int)line.getX2(), (int)line.getY2());
+			buffer.drawLine ((int)line.getX1(), (int)line.getY1(), (int)line.getX2(), (int)line.getY2());
 			
 			if (type == TYPE_ARROW)
 			{
-				drawArrowhead(e);
+				drawArrowhead(buffer);
 			}
 			setHandleLocation();
 			c.dispose();
-		}
+		}	
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 	
 	/*
@@ -281,6 +289,15 @@ public class GmmlLine extends GmmlGraphics
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(line);
 		return outline.getBounds();
+	}
+	
+	public Vector<GmmlHandle> getHandles()
+	{
+		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
+		v.add(handlecenter);
+		v.add(handleStart);
+		v.add(handleEnd);
+		return v;
 	}
 	
 	/*
@@ -320,7 +337,7 @@ public class GmmlLine extends GmmlGraphics
 	/**
 	 * If the line type is arrow, this method draws the arrowhead
 	 */
-	private void drawArrowhead(PaintEvent e) //TODO! clean up this mess.....
+	private void drawArrowhead(GC buffer) //TODO! clean up this mess.....
 	{
 		double angle = 25.0;
 		double theta = Math.toRadians(180 - angle);
@@ -332,7 +349,7 @@ public class GmmlLine extends GmmlGraphics
 		rot[0] = Math.cos(theta);
 		rot[1] = Math.sin(theta);
 		
-		e.gc.setLineStyle (SWT.LINE_SOLID);
+		buffer.setLineStyle (SWT.LINE_SOLID);
 		
 		a = endx-startx;
 		b = endy-starty;
@@ -347,8 +364,8 @@ public class GmmlLine extends GmmlGraphics
 			(int)(q[0]), (int)(q[1])
 		};
 		
-		e.gc.drawPolygon (points);
-		e.gc.fillPolygon (points);
+		buffer.drawPolygon (points);
+		buffer.fillPolygon (points);
 	}
 
 	/**

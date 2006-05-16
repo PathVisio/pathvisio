@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.*;
@@ -81,6 +83,8 @@ public class GmmlLabel extends GmmlGraphics
 	 */
 	public GmmlLabel(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_LABEL;
+		
 		this.canvas = canvas;
 		
 		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.zoomFactor;
@@ -253,7 +257,7 @@ public class GmmlLabel extends GmmlGraphics
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		int style = SWT.NONE;
 		
@@ -269,9 +273,9 @@ public class GmmlLabel extends GmmlGraphics
 		
 		Font f = new Font(e.display, fontName, fontSize, style);
 		
-		e.gc.setFont (f);
+		buffer.setFont (f);
 		
-		Point textSize = e.gc.textExtent (text);
+		Point textSize = buffer.textExtent (text);
 		
 		Color c;
 		if (isSelected)
@@ -282,15 +286,20 @@ public class GmmlLabel extends GmmlGraphics
 		{
 			c = new Color (e.display, this.color);
 		}
-		e.gc.setForeground (c);
+		buffer.setForeground (c);
 		
-		e.gc.drawString (text, 
+		buffer.drawString (text, 
 			(int) centerx - (textSize.x / 2) , 
 			(int) centery - (textSize.y / 2), true);
 		
 		f.dispose();
 		
 		setHandleLocation();
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 
 	/*
@@ -327,6 +336,13 @@ public class GmmlLabel extends GmmlGraphics
 		Rectangle2D rect = new Rectangle2D.Double(
 				centerx - width/2, centery - height/2, width, height);
 		return rect.getBounds();
+	}
+	
+	public Vector<GmmlHandle> getHandles()
+	{
+		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
+		v.add(handlecenter);
+		return v;
 	}
 	
 	public List getAttributes() {

@@ -16,6 +16,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 
 import colorSet.*;
@@ -50,7 +51,7 @@ public class GmmlGpColor {
 		gmmlGex = canvas.gmmlVision.gmmlGex;
 	}
 	
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
 		RGB rgb = null;
@@ -68,25 +69,30 @@ public class GmmlGpColor {
 			{
 				c = new Color(e.display, rgb);
 			}
-			e.gc.setBackground(c);
+			buffer.setBackground(c);
 			Rectangle r = parent.getBounds();
-			e.gc.fillRectangle(r.x, r.y, r.width, r.height);
+			buffer.fillRectangle(r.x, r.y, r.width, r.height);
 			
 			if(refData.isAveraged())
 			{
-				e.gc.setForeground(new Color(e.display, new RGB(255, 0, 0)));
-				int oldLineWidth = e.gc.getLineWidth();
-				e.gc.setLineWidth(2);
-				e.gc.drawRectangle(r.x, r.y, r.width, r.height);
-				e.gc.setLineWidth(oldLineWidth);
+				buffer.setForeground(new Color(e.display, new RGB(255, 0, 0)));
+				int oldLineWidth = buffer.getLineWidth();
+				buffer.setLineWidth(2);
+				buffer.drawRectangle(r.x, r.y, r.width, r.height);
+				buffer.setLineWidth(oldLineWidth);
 			}
 		} else {
-			e.gc.setBackground(c);
+			buffer.setBackground(c);
 			Rectangle r = parent.getBounds();
-			e.gc.fillRectangle(r.x, r.y, r.width, r.height);
+			buffer.fillRectangle(r.x, r.y, r.width, r.height);
 		}
 
 		c.dispose();
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 	
 

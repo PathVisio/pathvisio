@@ -49,6 +49,9 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 	 * specified in the drawing it is part of
 	 * @param factor - the factor to scale the objects coordinates and measures with
 	 */
+	
+	abstract Vector<GmmlHandle> getHandles();
+	
 	abstract void adjustToZoom(double factor);
 
 	abstract void updateToPropItems();

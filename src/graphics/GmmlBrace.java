@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JTable;
 
@@ -76,6 +77,8 @@ public class GmmlBrace extends GmmlGraphics
 	 */
 	public GmmlBrace(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_BRACE;
+		
 		this.canvas = canvas;
 
 		
@@ -179,7 +182,7 @@ public class GmmlBrace extends GmmlGraphics
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c;
 		if (isSelected)
@@ -190,9 +193,9 @@ public class GmmlBrace extends GmmlGraphics
 		{
 			c = new Color (e.display, this.color);
 		}
-		e.gc.setForeground (c);
-		e.gc.setLineStyle (SWT.LINE_SOLID);
-		e.gc.setLineWidth (2);
+		buffer.setForeground (c);
+		buffer.setLineStyle (SWT.LINE_SOLID);
+		buffer.setLineWidth (2);
 		
 		int cx = (int)centerx;
 		int cy = (int)centery;
@@ -201,52 +204,57 @@ public class GmmlBrace extends GmmlGraphics
 
 		if (orientation == ORIENTATION_TOP)
 		{
-			e.gc.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
-			e.gc.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
+			buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
+			buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
 			
-			e.gc.drawArc (cx - w/2, cy, d, d, -180, -90); //arc on the left
-			e.gc.drawArc (cx - d, cy - d,	d, d, -90, 90); //left arc in the middle
-			e.gc.drawArc (cx, cy - d, d, d, -90, -90); //right arc in the middle
-			e.gc.drawArc (cx + w/2 - d, cy, d, d, 0, 90); //arc on the right
+			buffer.drawArc (cx - w/2, cy, d, d, -180, -90); //arc on the left
+			buffer.drawArc (cx - d, cy - d,	d, d, -90, 90); //left arc in the middle
+			buffer.drawArc (cx, cy - d, d, d, -90, -90); //right arc in the middle
+			buffer.drawArc (cx + w/2 - d, cy, d, d, 0, 90); //arc on the right
 		}
 		
 		else if (orientation == ORIENTATION_RIGHT)
 		{
-			e.gc.drawLine (cx, cy + d/2, cx, cy + w/2 - d/2); //line on the bottom
-			e.gc.drawLine (cx, cy - d/2, cx, cy - w/2 + d/2); //line on the top
+			buffer.drawLine (cx, cy + d/2, cx, cy + w/2 - d/2); //line on the bottom
+			buffer.drawLine (cx, cy - d/2, cx, cy - w/2 + d/2); //line on the top
 			
-			e.gc.drawArc (cx - d,cy - w/2, d, d, 0, 90); //arc on the top
-			e.gc.drawArc (cx, cy - d, d, d, -90, -90); //upper arc in the middle
-			e.gc.drawArc (cx, cy, d, d, 90, 90); //lower arc in the middle
-			e.gc.drawArc (cx - d, cy + w/2 - d, d, d, 0, -90); //arc on the bottom
+			buffer.drawArc (cx - d,cy - w/2, d, d, 0, 90); //arc on the top
+			buffer.drawArc (cx, cy - d, d, d, -90, -90); //upper arc in the middle
+			buffer.drawArc (cx, cy, d, d, 90, 90); //lower arc in the middle
+			buffer.drawArc (cx - d, cy + w/2 - d, d, d, 0, -90); //arc on the bottom
 
 		}
 		
 		else if (orientation == ORIENTATION_BOTTOM)
 		{ 
-			e.gc.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
-			e.gc.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
+			buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
+			buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
 			
-			e.gc.drawArc (cx - w/2, cy - d, d, d, -180, 90); //arc on the left
-			e.gc.drawArc (cx - d, cy, d, d, 90, -90); //left arc in the middle
-			e.gc.drawArc (cx, cy, d, d, 90, 90); //right arc in the middle
-			e.gc.drawArc (cx + w/2 - d, cy - d, d, d, 0, -90); //arc on the right
+			buffer.drawArc (cx - w/2, cy - d, d, d, -180, 90); //arc on the left
+			buffer.drawArc (cx - d, cy, d, d, 90, -90); //left arc in the middle
+			buffer.drawArc (cx, cy, d, d, 90, 90); //right arc in the middle
+			buffer.drawArc (cx + w/2 - d, cy - d, d, d, 0, -90); //arc on the right
 
 		}
 		
 		else if (orientation == ORIENTATION_LEFT)
 		{
-			e.gc.drawLine (cx, cy + d/2, cx, cy + w/2 - d/2); //line on the bottom
-			e.gc.drawLine (cx, cy - d/2, cx, cy - w/2 + d/2); //line on the top
+			buffer.drawLine (cx, cy + d/2, cx, cy + w/2 - d/2); //line on the bottom
+			buffer.drawLine (cx, cy - d/2, cx, cy - w/2 + d/2); //line on the top
 			
-			e.gc.drawArc (cx, cy - w/2, d, d, -180, -90); //arc on the top
-			e.gc.drawArc (cx - d, cy - d, d, d, -90, 90); //upper arc in the middle
-			e.gc.drawArc (cx - d, cy, d, d, 90, -90); //lower arc in the middle
-			e.gc.drawArc (cx, cy + w/2 - d, d, d, -90, -90); //arc on the bottom
+			buffer.drawArc (cx, cy - w/2, d, d, -180, -90); //arc on the top
+			buffer.drawArc (cx - d, cy - d, d, d, -90, 90); //upper arc in the middle
+			buffer.drawArc (cx - d, cy, d, d, 90, -90); //lower arc in the middle
+			buffer.drawArc (cx, cy + w/2 - d, d, d, -90, -90); //arc on the bottom
 
 		} 
 
 		setHandleLocation();
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 			
 	/*
@@ -297,6 +305,14 @@ public class GmmlBrace extends GmmlGraphics
 		}
 		BasicStroke stroke = new BasicStroke(10);
 		return stroke.createStrokedShape(l);
+	}
+	
+	public Vector<GmmlHandle> getHandles()
+	{
+		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
+		v.add(handlecenter);
+		v.add(handlewidth);
+		return v;
 	}
 	
 	/*

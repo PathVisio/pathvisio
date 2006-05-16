@@ -1,6 +1,7 @@
 package colorSet;
 
 import gmmlVision.GmmlVision;
+import graphics.GmmlLegend;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -67,56 +69,49 @@ public class ColorSetWindow extends ApplicationWindow {
 	{
 		setColumnNames();
 		gmmlGex.loadColorSets();
-		
+		addToolBar(SWT.FLAT);
 		open();
+		
+		csColorGnf.dispose();
+		csColorNc.dispose();
+		cgColor1.dispose();
+		cgColor2.dispose();
 		
 		gmmlGex.saveColorSets();
 	}
 	
 	TreeViewer treeViewer;
 	SashForm sashForm;
-	GmmlColorSetPreview csPreview;
+	GmmlLegend legend;
+	SashForm topSash;
 	protected Control createContents(Composite parent)
-	{
+	{		
 		Shell shell = parent.getShell();
 		shell.setLocation(parent.getLocation());
 		
 		shell.setText("Color Set Builder");
 		
-		Composite topComposite = new Composite(parent, SWT.NULL);
-		topComposite.setLayout(new GridLayout(2, false));
-
-		Button newCsButton = new Button(topComposite, SWT.PUSH);
-		newCsButton.setText("New Color Set");
-		newCsButton.addSelectionListener(new NewCsButtonAdapter());
-		GridData newCsButtonGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		newCsButtonGrid.horizontalSpan = 2;
-		newCsButton.setLayoutData(newCsButtonGrid);
-		
-		treeViewer = new TreeViewer(topComposite);
-		GridData treeGridData = new GridData(GridData.FILL_BOTH);
-		treeGridData.heightHint = 200;
-		treeGridData.widthHint = 100;
-		treeViewer.getTree().setLayoutData(treeGridData);
+		topSash = new SashForm(parent, SWT.HORIZONTAL);
+//		topSash.setLayout(new FillLayout());
+		treeViewer = new TreeViewer(topSash);
+//		GridData treeGridData = new GridData(GridData.FILL_BOTH);
+//		treeGridData.heightHint = 200;
+//		treeGridData.widthHint = 100;
+//		treeViewer.getTree().setLayoutData(treeGridData);
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new TreeLabelProvider());
 		treeViewer.addSelectionChangedListener(new TreeSelectionChangedListener());
 		treeViewer.getTree().addMouseListener(new TreeMouseListener());
 		treeViewer.setInput(this);
 				
-		sashForm = new SashForm(topComposite, SWT.VERTICAL);
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+		sashForm = new SashForm(topSash, SWT.VERTICAL);
+		sashForm.setLayout(new FillLayout());
 		initiateSashForm();
 		
-		Group csPreviewGroup = new Group(topComposite, SWT.SHADOW_IN);
-		GridData previewGridData = new GridData(GridData.FILL_HORIZONTAL);
-		previewGridData.horizontalSpan = 2;
-	    csPreviewGroup.setLayoutData(previewGridData);
-	    csPreviewGroup.setLayout(new FillLayout());
-	    csPreviewGroup.setText("Preview");
+		legend = new GmmlLegend(topSash, SWT.NONE);
+		legend.setGmmlGex(gmmlGex);
 		
-		csPreview = new GmmlColorSetPreview(csPreviewGroup, SWT.NONE);
+		topSash.setWeights(new int[] {25, 40, 35} );
 		
 		DragSource ds = new DragSource(treeViewer.getTree(), DND.DROP_MOVE);
 		ds.addDragListener(new TreeDragAdapter());
@@ -125,7 +120,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		dt.addDropListener(new TreeDropAdapter());
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		
-		shell.setSize(400, 350);
+		shell.setSize(550, 350);
 		return parent;
 	}
 	
@@ -149,37 +144,62 @@ public class ColorSetWindow extends ApplicationWindow {
 		sashForm.setMaximizedControl(cnComposite);
 	}
 	
-	Combo csCombo;
-	String[] comboText = new String[] { "Color by gradient", "Color by expression" };
-	Text csText;	
-//	GmmlColorSetPreview csPreview;
-	
+	Text csNameText;
+	CLabel csCLabelNc;
+	Button csColorButtonNc;
+	CLabel csCLabelGnf;
+	Button csColorButtonGnf;
+	Color csColorNc;
+	Color csColorGnf;
 	public void setCsGroupComponents()
-	{
-		GridData csButtonGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		csButtonGrid.horizontalSpan = 2;
+	{		
+		GridData span2ColsGrid = new GridData(GridData.FILL_HORIZONTAL);
+		span2ColsGrid.horizontalSpan = 2;
+		GridData csCLabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		csCLabelGrid.widthHint = csCLabelGrid.heightHint = 15;
+		GridData colorButtonGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		colorButtonGrid.widthHint = colorButtonGrid.heightHint = 15;
 		
 		Group csGroup = new Group(csComposite, SWT.SHADOW_IN);
 
-		csGroup.setLayout(new GridLayout(2, false));
-	    csGroup.setText("Add a color criterion");
-
-	    Label csTextLabel = new Label(csGroup, SWT.CENTER);
-	    csText = new Text(csGroup, SWT.SINGLE | SWT.BORDER);
-	    Label csComboLabel = new Label(csGroup, SWT.CENTER);
-	    csCombo = new Combo(csGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
-	    Button csButton = new Button(csGroup, SWT.PUSH);
+		csGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		csGroup.setLayout(new GridLayout(3, false));
+	    csGroup.setText("Color set options");
 	    
-	    csTextLabel.setText("Name:");
-	    csText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    
-	    csComboLabel.setText("Type:");
-	    csCombo.setItems(comboText);
-	    csCombo.setText(comboText[0]);
-	    
-	    csButton.setLayoutData(csButtonGrid);
-	    csButton.setText("Add");
+	    Button csButton = new Button(csComposite, SWT.PUSH);
+	    	    
+	    csButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+	    csButton.setText("Save");
 	    csButton.addSelectionListener(new csButtonAdapter());
+	    
+	    Label csNameLabel = new Label(csGroup, SWT.CENTER);
+	    csNameText = new Text(csGroup, SWT.SINGLE | SWT.BORDER);
+	    
+	    Label csColorLabelNc = new Label(csGroup, SWT.CENTER);
+	    csCLabelNc = new CLabel(csGroup, SWT.SHADOW_IN);
+	    csColorButtonNc = new Button(csGroup, SWT.PUSH);
+	    csColorButtonNc.addSelectionListener(new ColorButtonAdapter());
+	    Label csColorLabelGnf = new Label(csGroup, SWT.CENTER);
+	    csCLabelGnf = new CLabel(csGroup, SWT.SHADOW_IN);
+	    csColorButtonGnf = new Button(csGroup, SWT.PUSH);
+	    csColorButtonGnf.addSelectionListener(new ColorButtonAdapter());
+	    
+	    csColorLabelNc.setText("No criteria met color:");
+	    csColorLabelGnf.setText("Gene not found color:");
+	    csColorButtonNc.setText("...");
+	    csColorButtonGnf.setText("...");
+	    
+	    csColorNc = new Color(getShell().getDisplay(), GmmlColorSet.COLOR_NO_CRITERIA_MET);
+	    csColorGnf = new Color(getShell().getDisplay(), GmmlColorSet.COLOR_NO_GENE_FOUND);
+	    csCLabelNc.setLayoutData(csCLabelGrid);
+	    csCLabelGnf.setLayoutData(csCLabelGrid);
+	    csCLabelNc.setBackground(csColorNc);
+	    csCLabelNc.setBackground(csColorGnf);
+	    csColorButtonNc.setLayoutData(colorButtonGrid);
+	    csColorButtonGnf.setLayoutData(colorButtonGrid);
+	    
+	    csNameLabel.setText("Name:");
+	    csNameText.setLayoutData(span2ColsGrid);
 	}
 	
 	Text cgNameText;
@@ -199,12 +219,11 @@ public class ColorSetWindow extends ApplicationWindow {
 	{			    
 	    //TODO: add validator to colortext
 	    
-		GridData span3ColsGrid = new GridData(GridData.FILL_HORIZONTAL);
-		span3ColsGrid.horizontalSpan = 4;
+		GridData span4ColsGrid = new GridData(GridData.FILL_HORIZONTAL);
+		span4ColsGrid.horizontalSpan = 4;
 		GridData cgCLabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		cgCLabelGrid.widthHint = cgCLabelGrid.heightHint = 15;
-		GridData colorTextGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		colorTextGrid.widthHint = 25;
+		GridData colorTextGrid = new GridData(GridData.FILL_HORIZONTAL);
 		GridData colorButtonGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		colorButtonGrid.widthHint = colorButtonGrid.heightHint = 15;
 		GridData cgButtonGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -215,6 +234,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    cgColorDialog = new ColorDialog(getShell(), SWT.NONE);
 	    
 	    Group cgGroup = new Group(cgComposite, SWT.SHADOW_IN);
+	    Button cgButton = new Button(cgComposite, SWT.PUSH);
 	    
 	    Label cgNameLabel = new Label(cgGroup, SWT.CENTER);
 	    cgNameText = new Text(cgGroup, SWT.SINGLE | SWT.BORDER);
@@ -223,26 +243,28 @@ public class ColorSetWindow extends ApplicationWindow {
 	    Label cgColorLabel1 = new Label(cgGroup, SWT.CENTER);
 	    cgCLabel1 = new CLabel(cgGroup, SWT.SHADOW_IN);
 	    cgColorButton1 = new Button(cgGroup, SWT.PUSH);
-	    cgColorButton1.addSelectionListener(new CgColorButtonAdapter());
+	    cgColorButton1.addSelectionListener(new ColorButtonAdapter());
 	    Label cgValueLabel1 = new Label(cgGroup, SWT.CENTER);
 	    cgColorText1 = new Text(cgGroup, SWT.SINGLE | SWT.BORDER);
 	    Label cgColorLabel2 = new Label(cgGroup, SWT.CENTER);
 	    cgCLabel2 = new CLabel(cgGroup, SWT.SHADOW_IN);
 	    cgColorButton2 = new Button(cgGroup, SWT.PUSH);
-	    cgColorButton2.addSelectionListener(new CgColorButtonAdapter());
+	    cgColorButton2.addSelectionListener(new ColorButtonAdapter());
 	    Label cgValueLabel2 = new Label(cgGroup, SWT.CENTER);
 	    cgColorText2 = new Text(cgGroup, SWT.SINGLE | SWT.BORDER);
-	    Button cgButton = new Button(cgGroup, SWT.PUSH);
 	    
+	    cgColorText1.setLayoutData(colorTextGrid);
+	    cgColorText2.setLayoutData(colorTextGrid);
+	    cgGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		cgGroup.setLayout(new GridLayout(5, false));
 	    cgGroup.setText("Color by gradient settings");
 	    
 	    cgNameLabel.setText("Name:");
-	    cgNameText.setLayoutData(span3ColsGrid);
+	    cgNameText.setLayoutData(span4ColsGrid);
 	    
 	    cgComboLabel.setText("Data column:");
 	    cgCombo.setItems(columnNames);
-	    cgCombo.setLayoutData(span3ColsGrid);
+	    cgCombo.setLayoutData(span4ColsGrid);
 	    
 	    cgColorLabel1.setText("Start color:");
 	    cgColorLabel2.setText("End color:");
@@ -284,13 +306,14 @@ public class ColorSetWindow extends ApplicationWindow {
 			cg.colorEnd = cgColor2.getRGB();
 			cg.valueStart = Double.parseDouble(cgColorText1.getText());
 			cg.valueEnd = Double.parseDouble(cgColorText2.getText());
-			csPreview.redraw();
+			legend.setVisible(true);
+			legend.redraw();
 			treeViewer.refresh();
 		}
 	}
 	
-	class CgColorButtonAdapter extends SelectionAdapter {
-		public CgColorButtonAdapter() {
+	class ColorButtonAdapter extends SelectionAdapter {
+		public ColorButtonAdapter() {
 			super();
 		}
     	public void widgetSelected(SelectionEvent e) {
@@ -304,21 +327,34 @@ public class ColorSetWindow extends ApplicationWindow {
     				cgColor2 = new Color(getShell().getDisplay(), rgb);
     				cgCLabel2.setBackground(cgColor2);
     			}
+    			if(e.widget == csColorButtonGnf) {
+    				csColorGnf = new Color(getShell().getDisplay(), rgb);
+    				csCLabelGnf.setBackground(csColorGnf);
+    			}
+    			if(e.widget == csColorButtonNc) {
+    				csColorNc = new Color(getShell().getDisplay(), rgb);
+    				csCLabelNc.setBackground(csColorNc);
+    			}
     		}
-
     	}
     }
 	
 	public void setRightCompositeContents(Object element) {	
 		if(element == null) {
 			sashForm.setMaximizedControl(cnComposite);
+			legend.setVisible(false);
 			return;
 		}
 		if(element instanceof GmmlColorSet) {
 			GmmlColorSet cs = (GmmlColorSet)element;
-			csPreview.setColorSetObjects(cs.getColorSetObjects());
-			csPreview.redraw();
+			csNameText.setText(cs.name);
+			csColorGnf = new Color(getShell().getDisplay(), cs.color_gene_not_found);
+			csColorNc = new Color(getShell().getDisplay(), cs.color_no_criteria_met);
+			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cs);
+			legend.setVisible(true);
+			legend.redraw();
 			sashForm.setMaximizedControl(csComposite);
+			topSash.layout();
 			return;
 		}
 		if(element instanceof GmmlColorGradient) {
@@ -332,8 +368,10 @@ public class ColorSetWindow extends ApplicationWindow {
 			cgCLabel1.setBackground(cgColor1);
 			cgCLabel2.setBackground(cgColor2);
 			sashForm.setMaximizedControl(cgComposite);
-			csPreview.setColorSetObjects(cg.parent.colorSetObjects);
-			csPreview.redraw();
+			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.parent);
+			legend.setVisible(true);
+			legend.redraw();
+			topSash.layout();
 			return;
 		}
 	}
@@ -342,21 +380,20 @@ public class ColorSetWindow extends ApplicationWindow {
 		public csButtonAdapter() {
 			super();
 		}
-    	public void widgetSelected(SelectionEvent e) {
-    		GmmlColorSet cs = (GmmlColorSet)
-    		((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
-    		if(csText.getText().equals("")) {
-    			MessageDialog.openError(getShell(), "Error", "Specify a name for the Color Set");
-    			return;
-    		}
-    		if(comboText[0].equals(csCombo.getText())) {
-    			GmmlColorGradient cg = new GmmlColorGradient(cs, csText.getText());
-    			cs.addObject(cg);
-    			treeViewer.refresh();
-    			treeViewer.setSelection(new StructuredSelection(cg));
-    		}
-    	}
-    }
+		public void widgetSelected(SelectionEvent e) {
+			if(csNameText.getText().equals("")) {
+				MessageDialog.openError(getShell(), "Error", "Specify a name");
+				return;
+			}
+			GmmlColorSet cs = (GmmlColorSet)
+			((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
+			cs.name = csNameText.getText();
+			cs.color_gene_not_found = csColorGnf.getRGB();
+			cs.color_no_criteria_met = csColorNc.getRGB();
+			legend.setVisible(true);
+			legend.redraw();
+		}
+	}
 	
 	class NewCsButtonAdapter extends SelectionAdapter {
 		
@@ -506,6 +543,137 @@ public class ColorSetWindow extends ApplicationWindow {
 				((GmmlColorSetObject)object).parent.colorSetObjects.remove(object);
 			}
 			treeViewer.refresh();
+		}
+	}
+	
+	private class NewCsAction extends Action
+	{
+		public NewCsAction () 
+		{	
+			setText("&New color set");
+			setToolTipText("Add a new color set");
+		}
+		
+		public void run()
+		{
+			InputDialog d = new InputDialog(Display.getCurrent().getActiveShell(),
+					  "New Color Set", "Name of new Color Set:", "", null);
+			int rc = d.open();
+			if(rc == Window.OK) {
+				GmmlColorSet cs = new GmmlColorSet(d.getValue());
+				gmmlGex.colorSets.add(cs);
+				treeViewer.refresh();
+				treeViewer.setSelection(new StructuredSelection(cs), true);
+			}
+		}
+	}
+	
+	private class NewCoAction extends Action
+	{
+		NewCoDialog dialog;
+		public NewCoAction()
+		{
+			setText("New criterion");
+			setToolTipText("Add a new criterion to the selected colorset");
+		}
+		
+		public void run()
+		{
+			dialog = new NewCoDialog(Display.getCurrent().getActiveShell());
+			dialog.open();
+		}
+	}
+	
+	protected ToolBarManager createToolBarManager(int style) 
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(style);
+		toolBarManager.add(new NewCsAction());
+		toolBarManager.add(new NewCoAction());
+		
+		return toolBarManager;
+	}
+	
+	private class NewCoDialog extends Dialog
+	{		
+		public NewCoDialog(Shell parent)
+		{
+			super(parent);
+		}
+		
+		public void open()
+		{
+			Shell parent = getParent();
+			final Shell shell = new Shell(parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
+			
+			shell.setLayout(new GridLayout(2, false));
+			
+			Group csGroup = new Group(shell, SWT.SHADOW_IN);
+			csGroup.setText("New color criterion");
+			csGroup.setLayout(new GridLayout(2, false));
+			GridData csGroupGrid = new GridData(GridData.FILL_BOTH);
+			csGroupGrid.horizontalSpan = 2;
+			csGroup.setLayoutData(csGroupGrid);
+			
+			Label csTextLabel = new Label(csGroup, SWT.CENTER);
+		    final Text csText = new Text(csGroup, SWT.SINGLE | SWT.BORDER);
+		    Label csComboLabel = new Label(csGroup, SWT.CENTER);
+		    final Combo csCombo = new Combo(csGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		    
+		    csTextLabel.setText("Name:");
+		    csText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		    
+			final String[] comboText = new String[] { "Color by gradient", "Color by expression" };
+		    csComboLabel.setText("Type:");
+		    csCombo.setItems(comboText);
+		    csCombo.setText(comboText[0]);
+		    
+		    final Button buttonOk = new Button(shell, SWT.PUSH);
+		    buttonOk.setText("Ok");
+		    buttonOk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL));
+		    final Button buttonCancel = new Button(shell, SWT.PUSH);
+		    buttonCancel.setText("Cancel");
+		    buttonCancel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		    
+			buttonOk.addSelectionListener(new SelectionAdapter() {
+		    	public void widgetSelected(SelectionEvent e) {
+		    		Object s = ((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
+		    		GmmlColorSet cs = null;
+		    		if(s instanceof GmmlColorSet)
+		    		{
+		    			cs = (GmmlColorSet)s;
+		    		} else if (s instanceof GmmlColorSetObject)
+		    		{
+		    			cs = ((GmmlColorSetObject)s).parent;
+		    		}
+		    		if(csText.getText().equals("")) {
+		    			MessageDialog.openError(getShell(), "Error", "Specify a name for the Color Set");
+		    			return;
+		    		}
+		    		if(comboText[0].equals(csCombo.getText())) {
+		    			GmmlColorGradient cg = new GmmlColorGradient(cs, csText.getText());
+		    			cs.addObject(cg);
+		    			treeViewer.refresh();
+		    			treeViewer.setSelection(new StructuredSelection(cg));
+		   
+		    			shell.dispose();
+		    		}
+		    	}
+		    });
+			
+			buttonCancel.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					shell.dispose();
+				}
+			});
+			
+		    shell.pack();
+		    shell.open();
+		    
+		    Display display = parent.getDisplay();
+		    while (!shell.isDisposed()){
+		    	if(!display.readAndDispatch())
+		    		display.sleep();
+		    }
 		}
 	}
 	

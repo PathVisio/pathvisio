@@ -36,11 +36,11 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	
 	public int colorSetIndex;
 
-	Vector drawingObjects;
-	Vector graphics;
-	Vector handles;
+	Vector<GmmlDrawingObject> drawingObjects;
+//	Vector<GmmlGraphics> graphics;
+//	Vector handles;
 
-	Vector selection;
+	Vector<GmmlDrawingObject> selection;
 	
 	GmmlDrawingObject pressedObject	= null;	
 	GmmlHandle pressedHandle = null;
@@ -73,10 +73,10 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	{
 		super (parent, style);
 		
-		drawingObjects	= new Vector();
-		graphics		= new Vector();
-		handles			= new Vector();
-		selection		= new Vector();
+		drawingObjects	= new Vector<GmmlDrawingObject>();
+//		graphics		= new Vector<GmmlGraphics>();
+//		handles			= new Vector();
+		selection		= new Vector<GmmlDrawingObject>();
 		
 		s = new GmmlSelectionBox(this);
 		
@@ -84,11 +84,12 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		addMouseMoveListener(this);
 		addPaintListener (this);
 		
-		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+//		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
 		colorSetIndex = -1;
 
 		legend = new GmmlLegend(this, SWT.NONE);
+		legend.setDrawing(this);
 		legend.setLocation(0,0);
 	}
 	
@@ -111,30 +112,28 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	 * vector of gmmlgraphics objects.
 	 * @param o - the object to add
 	 */
-	public void addElement(Object o)
+	public void addElement(GmmlDrawingObject o)
 	{
 		drawingObjects.addElement(o);
 	
-		if(o instanceof GmmlHandle)
-		{
-			GmmlHandle h = (GmmlHandle)o;
-			handles.addElement(h);
-		}
-		else
-		{
-			GmmlDrawingObject object = (GmmlDrawingObject) o;
-			graphics.addElement(object);
+//		if(o instanceof GmmlHandle)
+//		{
+//			GmmlHandle h = (GmmlHandle)o;
+////			handles.addElement(h);
+//		}
+//		else
+//		{
+//			GmmlDrawingObject object = (GmmlDrawingObject) o;
+//			gm.addElement(object);
 			
-		}
+//		}
 	}
 
 	public ArrayList<String> getMappIds()
 	{
 		ArrayList<String> mappIds = new ArrayList<String>();
-		Iterator it = graphics.iterator();
-		while(it.hasNext())
+		for(GmmlDrawingObject o : drawingObjects)
 		{
-			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
 			if(o instanceof GmmlGeneProduct)
 			{
 				mappIds.add(((GmmlGeneProduct)o).name);
@@ -166,10 +165,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		System.out.println(zoomFactor);
 		
 		// iterate over all graphics to adjust them
-		Iterator it = graphics.iterator();	
-		while (it.hasNext())
+		for(GmmlDrawingObject o : drawingObjects)
 		{
-			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
 			if (o instanceof GmmlGraphics)
 			{
 				GmmlGraphics g = (GmmlGraphics) o;
@@ -189,10 +186,9 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		if (isDragging)
 		{		
 			Rectangle rp = getRedrawRectangle(selection);
-			Iterator it = selection.iterator();
-			while(it.hasNext())
+			for(GmmlDrawingObject o : selection)
 			{
-				((GmmlDrawingObject)it.next()).moveBy(e.x - previousX, e.y - previousY);
+				o.moveBy(e.x - previousX, e.y - previousY);
 			}
 			Rectangle r = getRedrawRectangle(selection);
 			r.add(rp);
@@ -209,10 +205,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 			s.x2 = e.x;
 			s.y2 = e.y;
 			
-			Iterator it = graphics.iterator();
-			while (it.hasNext())
+			for(GmmlDrawingObject o : drawingObjects)
 			{
-				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
 				if (o instanceof GmmlGraphics)
 				{
 					GmmlGraphics g = (GmmlGraphics) o;
@@ -339,21 +333,25 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		
 	}
 
-	private Rectangle getRedrawRectangle(Vector toRedraw)
+	private Rectangle getRedrawRectangle(Vector<GmmlDrawingObject> toRedraw)
 	{
 		Rectangle r = new Rectangle();
-		Iterator it = toRedraw.iterator();
-		while (it.hasNext())
+		for(GmmlDrawingObject g : toRedraw)
 		{
-			GmmlDrawingObject g = (GmmlDrawingObject) it.next();
 			if(r.x == 0 && r.y ==0 && r.width == 0 && r.height == 0) {
 				r = new Rectangle(g.getBounds());
-			} else {
-				r.add(g.getBounds());
 			}
 			r.add(g.getBounds());
+			if(g instanceof GmmlGraphics)
+			{
+				Vector<GmmlHandle> v = ((GmmlGraphics)g).getHandles();
+				for(GmmlHandle h : v)
+				{
+					r.add(h.getBounds());
+				}
+			}
 		}
-		r.grow(5,5);
+		r.grow(1,1);
 		return r;
 	}
 	
@@ -383,31 +381,36 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		// not necessary in swt
 		//~ super.paintComponent(g);
 		
-		// iterate through all graphics to paint them
-		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
-		Iterator it = graphics.iterator();
-		while (it.hasNext())
+		Image image = (Image)getData("double-buffer-image");
+		if(image == null
+				|| image.getBounds().width != getSize().x
+				|| image.getBounds().height != getSize().y)
 		{
-			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-			if(o.intersects(r)) 
-			{
-				o.draw(e);
-			}
+			image = new Image(getDisplay(), getSize().x, getSize().y);
+			setData("double-buffer-image", image);
 		}
-	
-		// iterate through all handles to paint them, after 
-		// painting the graphics, to ensure handles are painted
-		// on top of graphics
-		it = handles.iterator();
-		while (it.hasNext())
-		{
-			GmmlHandle h = (GmmlHandle) it.next();
-			if(h.intersects(r)) 
-			{
-				h.draw(e);
-			}
-		}
+
+		GC buffer = new GC(image);
+		buffer.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
+		buffer.fillRectangle(e.x, e.y, e.width, e.height);
+//		buffer.fillRectangle(0, 0, getSize().x, getSize().y);
 		
+		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
+		
+		PriorityQueue<GmmlDrawingObject> p = new PriorityQueue<GmmlDrawingObject>();
+		
+		for(GmmlDrawingObject o : drawingObjects)
+		{
+			if(o.intersects(r))
+				p.offer(o);
+		}
+
+		GmmlDrawingObject o = p.poll();
+		while(o != null)
+		{
+			o.draw(e, buffer);
+			o = p.poll();
+		}
 		org.eclipse.swt.graphics.Rectangle rswt = legend.getBounds();
 		if(r.intersects(rswt.x, rswt.y, rswt.width, rswt.height) && colorSetIndex > -1)
 		{
@@ -418,6 +421,9 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		{
 			legend.setVisible(false);
 		}
+		
+		e.gc.drawImage(image, 0, 0);
+		buffer.dispose();
 	}
 
 	public void updateJdomElements() {
@@ -492,7 +498,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	private void editObject(MouseEvent e)
 	{
 		Point2D p = new Point2D.Double(e.x, e.y);
-		Vector toDraw = new Vector();
+		Vector<GmmlDrawingObject> toDraw = new Vector<GmmlDrawingObject>();
 		pressedHandle = null;
 		Iterator it = drawingObjects.iterator();
 		while (it.hasNext())
@@ -692,5 +698,18 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		
 		gmmlVision.deselectNewItemActions();
 	}
+	
+	public static final int DRAW_ORDER_SELECTED = -1;
+	public static final int DRAW_ORDER_SELECTIONBOX = 0;
+	public static final int DRAW_ORDER_HANDLE = 1;
+	public static final int DRAW_ORDER_GENEPRODUCT = 2;
+	public static final int DRAW_ORDER_LABEL = 3;
+	public static final int DRAW_ORDER_LINE = 4;
+	public static final int DRAW_ORDER_ARC = 5;
+	public static final int DRAW_ORDER_BRACE = 6;
+	public static final int DRAW_ORDER_LINESHAPE = 7;
+	public static final int DRAW_ORDER_SHAPE = 8;
+	
+	
 	
 } // end of class

@@ -916,7 +916,7 @@ public class GmmlVision extends ApplicationWindow
 	 */
 	private void createNewDrawing()
 	{		
-		drawing = new GmmlDrawing(sc, SWT.NONE);
+		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND);
 		drawing.setGmmlVision(this);
 		
 		gmmlData = new GmmlData(drawing);
@@ -934,7 +934,7 @@ public class GmmlVision extends ApplicationWindow
 	 */
 	private void openPathway(String fnPwy)
 	{		
-		drawing = new GmmlDrawing(sc, SWT.NONE);
+		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND);
 		drawing.setGmmlVision(this);
 		drawing.editMode = switchEditModeAction.isChecked();
 		

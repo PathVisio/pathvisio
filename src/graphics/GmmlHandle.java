@@ -50,6 +50,8 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	public GmmlHandle(int type, GmmlGraphics parent)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_HANDLE;
+		
 		this.type = type;
 		this.parent = parent;
 
@@ -68,25 +70,30 @@ class GmmlHandle extends GmmlDrawingObject
 		centery = y;
 	}
 
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		if (parent.isSelected)
 		{
 			constructRectangle();
-			e.gc.setLineWidth (1);
-			e.gc.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
-			e.gc.setForeground (e.display.getSystemColor (SWT.COLOR_BLUE));
-			e.gc.fillRectangle (
+			buffer.setLineWidth (1);
+			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
+			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLUE));
+			buffer.fillRectangle (
 					(int)(centerx - WIDTH/2), 
 					(int)(centery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);	
-			e.gc.drawRectangle (
+			buffer.drawRectangle (
 				(int)(centerx - WIDTH/2), 
 				(int)(centery - HEIGHT/2), 
 				(int)WIDTH, 
 				(int)HEIGHT);		
 		}
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 
 	protected boolean isContain(Point2D p)
@@ -125,7 +132,9 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	protected Rectangle getBounds()
 	{
-		return parent.getBounds();
+		constructRectangle();
+		rect.add(parent.getBounds());
+		return rect.getBounds();
 	}
 	
 	private void constructRectangle()

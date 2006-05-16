@@ -9,8 +9,10 @@ import java.util.Vector;
 import org.eclipse.swt.graphics.RGB;
 
 public class GmmlColorSet {
-	public RGB color_no_criteria_met = new RGB(200, 200, 200);
-	public RGB color_gene_not_found = new RGB(255, 255, 255);
+	public static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
+	public static RGB COLOR_NO_GENE_FOUND = new RGB(255, 255, 255);
+	public RGB color_no_criteria_met = COLOR_NO_CRITERIA_MET;
+	public RGB color_gene_not_found = COLOR_NO_GENE_FOUND;
 	
 	public String name;
 	

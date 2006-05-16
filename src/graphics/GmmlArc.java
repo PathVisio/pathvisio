@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
@@ -63,6 +65,8 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	public GmmlArc(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_ARC;
+		
 		this.canvas = canvas;
 		
 		canvas.addElement(handlecenter);
@@ -108,7 +112,16 @@ public class GmmlArc extends GmmlGraphics
 				
 		setHandleLocation();
 	}
-
+	
+	public Vector<GmmlHandle> getHandles()
+	{
+		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
+		v.add(handlecenter);
+		v.add(handlex);
+		v.add(handley);
+		return v;
+	}
+	
 	/**
 	 * Sets this class's handles at the correct location
 	 */
@@ -176,7 +189,7 @@ public class GmmlArc extends GmmlGraphics
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c;
 		if (isSelected)
@@ -187,16 +200,21 @@ public class GmmlArc extends GmmlGraphics
 		{
 			c = new Color (e.display, this.color);
 		}
-		e.gc.setForeground (c);
-		e.gc.setLineStyle (SWT.LINE_SOLID);
-		e.gc.setLineWidth (2);
+		buffer.setForeground (c);
+		buffer.setLineStyle (SWT.LINE_SOLID);
+		buffer.setLineWidth (2);
 		
-		e.gc.drawArc((int)(startx-width), (int)(starty-height),
+		buffer.drawArc((int)(startx-width), (int)(starty-height),
 			(int)(2*width), (int)(2*height),
 			(int)(180-rotation), 180
 		);
 		
 		setHandleLocation();
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 	
 	/*

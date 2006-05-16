@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
@@ -75,6 +77,8 @@ public class GmmlLineShape extends GmmlGraphics
 	 */
 	public GmmlLineShape(GmmlDrawing canvas)
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_LINESHAPE;
+		
 		this.canvas = canvas;
 
 		canvas.addElement(handlecenter);
@@ -179,7 +183,7 @@ public class GmmlLineShape extends GmmlGraphics
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e)
+	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c;
 		if (isSelected)
@@ -190,10 +194,10 @@ public class GmmlLineShape extends GmmlGraphics
 		{
 			c = new Color (e.display, this.color);
 		}
-		e.gc.setForeground (c);
-		e.gc.setBackground (c);
-		e.gc.setLineStyle (SWT.LINE_SOLID);
-
+		buffer.setForeground (c);
+		buffer.setBackground (c);
+		buffer.setLineStyle (SWT.LINE_SOLID);
+		buffer.setLineWidth (1);
 			
 		double s = Math.sqrt(((endx-startx)*(endx-startx)) + ((endy - starty)*(endy - starty)));
 		
@@ -206,17 +210,17 @@ public class GmmlLineShape extends GmmlGraphics
 			double capx2 = (( endy - starty)/s) + endx;
 			double capy2 = ((-endx + startx)/s) + endy;
 
-			e.gc.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
-			e.gc.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
+			buffer.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
+			buffer.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
 		}
 		else if (type == TYPE_LIGAND_ROUND)
 		{
 			double dx = (endx - startx)/s;
 			double dy = (endy - starty)/s;
 						
-			e.gc.drawLine ((int)startx, (int)starty, (int)(endx - 6 * dx), (int)(endy - 6 * dy));
-			e.gc.drawOval ((int)endx - 5, (int)endy - 5, 10, 10);
-			e.gc.fillOval ((int)endx - 5, (int)endy - 5, 10, 10);
+			buffer.drawLine ((int)startx, (int)starty, (int)(endx - 6 * dx), (int)(endy - 6 * dy));
+			buffer.drawOval ((int)endx - 5, (int)endy - 5, 10, 10);
+			buffer.fillOval ((int)endx - 5, (int)endy - 5, 10, 10);
 		}
 		
 		else if (type == TYPE_RECEPTOR_ROUND)
@@ -226,8 +230,8 @@ public class GmmlLineShape extends GmmlGraphics
 			double dx 		= (endx - startx)/s;
 			double dy 		= (endy - starty)/s;	
 			
-			e.gc.drawLine ((int)startx, (int)starty, (int)(endx - (8*dx)), (int)(endy - (8*dy)));
-			e.gc.drawArc ((int)endx - 8, (int)endy - 8, 16, 16, (int)theta + 180, -180);			
+			buffer.drawLine ((int)startx, (int)starty, (int)(endx - (8*dx)), (int)(endy - (8*dy)));
+			buffer.drawArc ((int)endx - 8, (int)endy - 8, 16, 16, (int)theta + 180, -180);			
 		}
 		else if (type == TYPE_RECEPTOR_SQUARE)
 		{
@@ -244,10 +248,10 @@ public class GmmlLineShape extends GmmlGraphics
 			double rx2 		= capx2 + 1.5*(endx - startx)/s;
 			double ry2 		= capy2 + 1.5*(endy - starty)/s;
 		
-			e.gc.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
-			e.gc.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
-			e.gc.drawLine ((int)capx1, (int)capy1, (int)rx1, (int)ry1);
-			e.gc.drawLine ((int)capx2, (int)capy2, (int)rx2, (int)ry2);
+			buffer.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
+			buffer.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
+			buffer.drawLine ((int)capx1, (int)capy1, (int)rx1, (int)ry1);
+			buffer.drawLine ((int)capx2, (int)capy2, (int)rx2, (int)ry2);
 		}
 		else if (type == TYPE_LIGAND_SQUARE)
 		{
@@ -267,16 +271,21 @@ public class GmmlLineShape extends GmmlGraphics
 			points[6] = (int) (points[0] + 1.5*(endx - startx)/s);
 			points[7] = (int) (points[1] + 1.5*(endy - starty)/s);
 			
-			e.gc.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
-			e.gc.drawPolygon(points);
-			e.gc.fillPolygon(points);
+			buffer.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
+			buffer.drawPolygon(points);
+			buffer.fillPolygon(points);
 		}
 		else
 		{
-			e.gc.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
+			buffer.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
 		}
 
 		setHandleLocation();
+	}
+	
+	protected void draw(PaintEvent e)
+	{
+		draw(e, e.gc);
 	}
 	
 	/*
@@ -322,6 +331,15 @@ public class GmmlLineShape extends GmmlGraphics
 		return new Polygon(x, y, 4);
 	}
 
+	public Vector<GmmlHandle> getHandles()
+	{
+		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
+		v.add(handlecenter);
+		v.add(handleStart);
+		v.add(handleEnd);
+		return v;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#moveBy(double, double)

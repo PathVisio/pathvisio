@@ -151,7 +151,7 @@ public class GmmlDb {
 	}
 	
 	public ArrayList ensId2Refs(String ensId) {
-		ArrayList crossIds = new ArrayList();
+		ArrayList<String> crossIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = conGdb.createStatement().executeQuery(
 					"SELECT idRight FROM link " +
@@ -188,7 +188,7 @@ public class GmmlDb {
 	
 	public ArrayList ref2EnsIds(String ref)
 	{
-		ArrayList ensIds = new ArrayList();
+		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = conGdb.createStatement().executeQuery(
 					"SELECT idLeft FROM link " +

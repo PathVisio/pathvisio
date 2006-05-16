@@ -1,4 +1,5 @@
 package colorSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.RGB;
@@ -19,7 +20,7 @@ public abstract class GmmlColorSetObject {
 		parseCriterionString(criterion);
 	}
 	
-	abstract RGB getColor(HashMap data);
+	abstract RGB getColor(HashMap<Integer, Object> data);
 	
 	abstract GmmlColorSet getParent();
 	

@@ -1,6 +1,7 @@
 package colorSet;
 import graphics.GmmlGeneProduct;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.events.PaintEvent;
@@ -9,11 +10,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 
 public class GmmlColorGradient extends GmmlColorSetObject {
-	int dataColumn;
-	RGB colorStart;
-	RGB colorEnd;
-	double valueStart;
-	double valueEnd;
+	public int dataColumn;
+	public RGB colorStart;
+	public RGB colorEnd;
+	public double valueStart;
+	public double valueEnd;
 	
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
@@ -51,10 +52,10 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		return rgb;
 	}
 	
-	public RGB getColor(HashMap data)
+	public RGB getColor(HashMap<Integer, Object> data)
 	{
 		try {
-			double value = Double.parseDouble((String)data.get(dataColumn));
+			double value = (Double)data.get(dataColumn);
 			return getColor(value);
 		} catch(NullPointerException ne) {
 			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");

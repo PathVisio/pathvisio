@@ -274,9 +274,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 //			}
 //		}
 //
-//		e.gc.setForeground (c);
 //		e.gc.setBackground (cFill);
-//		e.gc.setLineStyle (SWT.LINE_SOLID);
 //		
 //		e.gc.fillRectangle(
 //				(int)(centerx - width / 2),
@@ -285,8 +283,11 @@ public class GmmlGeneProduct extends GmmlGraphics
 //				(int)height
 //			);
 		
-		gpColor.draw(e);
+		e.gc.setForeground(c);
+		e.gc.setLineStyle (SWT.LINE_SOLID);
 		
+		gpColor.draw(e);
+
 		e.gc.drawRectangle (
 			(int)(centerx - width / 2),
 			(int)(centery - height / 2),
@@ -300,7 +301,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 				(int)width - 1,
 				(int)height - 1
 			);
-		
+		e.gc.setForeground(c);
 		e.gc.drawString (geneID, 
 			(int) centerx - (textSize.x / 2) , 
 			(int) centery - (textSize.y / 2));

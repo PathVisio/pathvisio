@@ -1,6 +1,7 @@
 package colorSet;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import org.eclipse.swt.events.PaintEvent;
@@ -19,8 +20,7 @@ public class GmmlColorSetPreview extends Canvas implements PaintListener {
 	public GmmlColorSetPreview(Composite parent, int style)
 	{
 		super(parent, style);
-		addPaintListener(this);
-		
+		addPaintListener(this);	
 		colorSetObjects = new Vector();
 	}
 	
@@ -41,29 +41,23 @@ public class GmmlColorSetPreview extends Canvas implements PaintListener {
 		setExtremeValues();
 
 		size = getSize();
-		Iterator it = colorSetObjects.iterator();
-		
-		for (Enumeration en = colorSetObjects.elements(); en.hasMoreElements();) {
-			GmmlColorSetObject cs = (GmmlColorSetObject)en.nextElement();
+
+		ListIterator it = colorSetObjects.listIterator(colorSetObjects.size());
+		while(it.hasPrevious())
+		{
+			GmmlColorSetObject cs = (GmmlColorSetObject)it.previous();
 			if(cs instanceof GmmlColorGradient) {
 				GmmlColorGradient cg = (GmmlColorGradient)cs;
 				drawColorGradient(e, cg);
 			}
 		}
-//		for(int i = 0; i < colorSetObjects.size(); i++)
-//		{
-//			GmmlColorSetObject cs = (GmmlColorSetObject)colorSetObjects.get(i);
-//			if(cs instanceof GmmlColorGradient) {
-//				GmmlColorGradient cg = (GmmlColorGradient)cs;
-//				drawColorGradient(e, cg);
-//			}
-//		}
 	}
 	
 	final static int LABEL_HEIGHT = 20;
 	final static int SIDE_WIDTH = 30;
 	public void drawColorGradient(PaintEvent e, GmmlColorGradient cg)
 	{
+		System.out.println("drawing " + cg);
 		Color c = getBackground();
 		RGB oldBackground = c.getRGB();
 		

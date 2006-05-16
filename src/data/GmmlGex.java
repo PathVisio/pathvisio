@@ -1,6 +1,7 @@
 package data;
 
 import graphics.GmmlGeneProduct;
+import graphics.GmmlGpColor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,33 +162,128 @@ public class GmmlGex {
 		
 	}
 	
-	public HashMap getDataHash(ArrayList refIds)
+	public HashMap<Integer, Sample> samples;
+	public void setSamples()
 	{
-		HashMap dataHash = new HashMap();
-		if(con != null && gmmlGdb.con != null) {
-			try 
-			{	
-				for(int i = 0; i < refIds.size(); i++) {
-					ResultSet r = con.createStatement().executeQuery(
-							"SELECT data, idSample FROM expression " +
-							"WHERE id = '" + (String)refIds.get(i) + "'"
+		samples = new HashMap<Integer, Sample>();
+		try {
+			ResultSet r = con.createStatement().executeQuery(
+					"SELECT idSample, name, dataType FROM samples"
 					);
-					
-					while(r.next())
-					{
-						try {
-							dataHash.put(r.getInt(2), r.getString(1));
-						} catch (Exception e) {
-							System.out.println("(GmmlGex:getDataHash:datatype not of type double: " + e.getMessage());
-						}
-					}
+			
+			while(r.next())
+			{
+				int id = r.getInt(1);
+				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public class Sample
+	{
+		int idSample;
+		String name;
+		int dataType;
+		
+		public Sample(int idSample, String name, int dataType)
+		{
+			this.idSample = idSample;
+			this.name = name;
+			this.dataType = dataType;
+		}
+	}
+	
+	public HashMap<String, RefData> data;
+	public class RefData
+	{
+		String mappId;
+		public HashMap<Integer, ArrayList> sampleData;
+		HashMap<Integer, Sample> samples;
+		
+		public RefData(String mappId)
+		{
+			this.mappId = mappId;
+			sampleData = new HashMap<Integer, ArrayList>();
+		}
+		
+		public HashMap<Integer, Object> getAvgSampleData()
+		{
+			HashMap<Integer, Object> avgSampleData = new HashMap<Integer, Object>();
+			for(int i : sampleData.keySet())
+			{
+				if(samples.get(i).dataType == Types.REAL)
+				{
+					avgSampleData.put(i, getAvgDouble(sampleData.get(i)));
+				} else 
+				{
+					avgSampleData.put(i, getAvgString(sampleData.get(i)));
 				}
 			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
+			return avgSampleData;
 		}
-		return dataHash;
+		
+		public double getAvgDouble(ArrayList<String[]> data)
+		{
+			double avg = 0;
+			for(String[] d : data)
+			{
+				avg += Double.parseDouble(d[2]);
+			}
+			return avg / data.size();
+		}
+		
+		public String getAvgString(ArrayList<String[]> data)
+		{
+			StringBuilder str = new StringBuilder("Multiple values: ");
+			for(String[] d : data)
+			{
+				str.append(d[2] + ", ");
+			}
+			return str.toString();
+		}
+		
+		public double getWeightedStd()
+		{
+			double stdWg = 0;
+			int nDouble = 0;
+			for(int i : sampleData.keySet())
+			{
+				if(samples.get(i).dataType == Types.REAL)
+				{
+					nDouble++;
+					ArrayList<String[]> data = sampleData.get(i);
+					double avg = getAvgDouble(data);
+					double std = 0;
+					for(String[] d : data)
+					{
+						std += Math.abs(avg - Double.parseDouble(d[2]));
+					}
+					stdWg += std / data.size();
+				}
+			}
+			return stdWg / nDouble;
+		}
+		
+		public boolean isAveraged()
+		{
+			if(sampleData.size() > 0)
+			{
+				return sampleData.get(sampleData.keySet().toArray()[0]).size() > 1;
+			}
+			return false;
+		}
+	}	
+	
+	public HashMap getId2EnsHash(ArrayList<String> ids)
+	{
+		HashMap<String, ArrayList> ensIds = new HashMap<String, ArrayList>();
+		for(String id : ids)
+		{
+			ensIds.put(id, gmmlGdb.ref2EnsIds(id));
+		}
+		return ensIds;
 	}
 	
 	public String getDataString(String id) {
@@ -261,9 +358,111 @@ public class GmmlGex {
 		return gexDataColumns;
 	}
 	
+	public void cacheData(ArrayList<String> ids)
+	{
+		System.out.println(ids);
+		setSamples();
+		
+		data = new HashMap<String, RefData>();
+	
+		for(String id : ids)
+		{
+			RefData refData = new RefData(id);
+			refData.samples = samples;
+			data.put(id, refData);
+			
+			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id);
+			for(String ensId : ensIds)
+			{				
+				try {
+					ResultSet r = con.createStatement().executeQuery(
+							"SELECT id, data, idSample FROM expression " +
+							" WHERE ensId = '" + ensId + "'");
+					while(r.next())
+					{
+						String[] data = new String[3];
+						int idSample = r.getInt(3);
+						if(refData.sampleData.containsKey(idSample))
+						{
+							data[0] = r.getString(1);
+							data[1] = ensId;
+							data[2] = r.getString(2);
+							refData.sampleData.get(idSample).add(data);
+						}
+						else
+						{
+							ArrayList<String[]> d = new ArrayList<String[]>();
+							data[0] = r.getString(1);
+							data[1] = ensId;
+							data[2] = r.getString(2);
+							d.add(data);
+							refData.sampleData.put(idSample, d);
+						}
+					}
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			if(cacheThread.isInterrupted)
+			{
+				return;
+			}
+			cacheThread.progress += 100.0 / ids.size();
+		}
+		cacheThread.progress = 100;
+	}
+
+	CacheThread cacheThread;
+	public class CacheThread extends Thread
+	{
+		volatile double progress;
+		volatile boolean isInterrupted;
+		ArrayList<String> ids;
+		
+		public CacheThread(ArrayList<String> ids) 
+		{
+			this.ids = ids;
+		}
+		
+		public void run()
+		{
+			progress = 0;
+			isInterrupted = false;
+			cacheData(ids);
+		}
+		
+		public void interrupt()
+		{
+			isInterrupted = true;
+		}
+	}
+	
+	public ArrayList<String> mappIds;
+	public IRunnableWithProgress cacheRunnable = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor)
+		throws InvocationTargetException, InterruptedException {
+			monitor.beginTask("Caching expression data",100);
+			cacheThread = new CacheThread(mappIds);
+			cacheThread.start();
+			int prevProgress = 0;
+			while(cacheThread.progress < 100) {
+				if(monitor.isCanceled()) {
+					cacheThread.interrupt();
+					break;
+				}
+				if(prevProgress < (int)cacheThread.progress) {
+					monitor.worked((int)cacheThread.progress - prevProgress);
+					prevProgress = (int)cacheThread.progress;
+				}
+			}
+			monitor.done();
+		}
+	};
+	
 	public class ConvertThread extends Thread
 	{
-		volatile int progress;
+		volatile double progress;
 		volatile boolean isInterrupted;
 		public ConvertThread() 
 		{
@@ -294,9 +493,9 @@ public class GmmlGex {
 					convertThread.interrupt();
 					break;
 				}
-				if(prevProgress < convertThread.progress) {
-					monitor.worked(convertThread.progress - prevProgress);
-					prevProgress = convertThread.progress;
+				if(prevProgress < (int)convertThread.progress) {
+					monitor.worked((int)convertThread.progress - prevProgress);
+					prevProgress = (int)convertThread.progress;
 				}
 			}
 			monitor.done();
@@ -319,62 +518,80 @@ public class GmmlGex {
 			con.setAutoCommit(false);
 			Statement s = conGmGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			
-			PreparedStatement pstmt = con.prepareStatement(
+			PreparedStatement pstmtExpr = con.prepareStatement(
 					"INSERT INTO expression			" +
-					"	(id, code,					" + 
+					"	(id, code, ensId,			" + 
 					"	 idSample, data)			" +
-			"VALUES	(?, ?, ?, ?)			");
+			"VALUES	(?, ?, ?, ?, ?)			");
 			
 			ResultSet r = s.executeQuery("SELECT * FROM Expression");
 			r.last();
 			int nrRows = r.getRow();
 			r.beforeFirst();
 			
-			// Select data columns
 			ResultSetMetaData rsmd = r.getMetaData();
-			
 			// Column 4 to 2 before last contain expression data
 			int nCols = rsmd.getColumnCount();
+			ArrayList dataTypes = new ArrayList();
 			for(int i = 4; i < nCols - 1; i++) 
 			{
+				int dataType = rsmd.getColumnType(i);
+				dataTypes.add(dataType);
 				String sampleName = rsmd.getColumnName(i);
 				// Add new sample
 				con.createStatement().execute("INSERT INTO SAMPLES" +
-						"	(idSample, name)" + 
-						"VALUES (" + (i - 4) + ",'" + sampleName + "')");
+						"	(idSample, name, dataType)" + 
+						"VALUES ( " + (i - 4) + ",'" + sampleName + "', " + dataType + " )");
 			}
 
 			int nq = 0;
 			String id = "";
 			String code = "";
 			while(r.next()) {
-				// Interrupt
-				if(convertThread.isInterrupted) {
+				if(convertThread.isInterrupted) 
+				{
 					closeGmGex();
 					close();
 					return;
 				}
+				
 				id = r.getString(2);
-				if(gmmlGdb.ref2EnsIds(id).size() > 0) {
-					code = r.getString(3);
+				code = r.getString(3);
+				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id);
+				
+				if(ensIds.size() == 0)
+				{
+					error.println(id + "\tGene not found in gene database");
+				}
+				else
+				{				
+					ArrayList<String> data = new ArrayList<String>();
 					for(int i = 4; i < nCols - 1; i++) {
-						try {
-							pstmt.setString(1,id);
-							pstmt.setString(2,code);
-							pstmt.setInt(3,(i - 4));
-							pstmt.setString(4,r.getString(i));
-							pstmt.execute();
-						} catch (Exception e) {
-							error.println(id + ", " + code + ", " + (i-4) + "\t" + e.getMessage());
+							data.add(r.getString(i));
+					}
+					for( String ensId : ensIds)
+					{
+						int i = 0;
+						for(String str : data)
+						{
+							try {
+									pstmtExpr.setString(1,id);
+									pstmtExpr.setString(2,code);
+									pstmtExpr.setString(3, ensId);
+									pstmtExpr.setInt(4,i);
+									pstmtExpr.setString(5,str);
+									pstmtExpr.execute();
+							} catch (Exception e) {
+								error.println(id + ", " + code + ", " + i + "\t" + e.getMessage());
+							}
+							i++;
 						}
 					}
-				} else {
-					error.println(id + "\tGene not found in gene database");
 				}
 				nq++;
 				if(nq % 1000 == 0)
 					con.commit();
-					convertThread.progress += 100/nrRows;
+				convertThread.progress += 100.0/nrRows;
 			}
 			con.commit();	
 		} catch(Exception e) {
@@ -383,7 +600,7 @@ public class GmmlGex {
 		}
 		closeGmGex();
 		close();
-
+		
 		setGexReadOnly(true);
 		
 		convertThread.progress = 100;
@@ -472,6 +689,7 @@ public class GmmlGex {
 			sh.execute("DROP TABLE expression IF EXISTS");
 			sh.execute("DROP TABLE colorSets IF EXISTS");
 			sh.execute("DROP TABLE colorSetObjects IF EXISTS");
+			sh.execute("DROP TABLE textdata IF EXISTS");
 		} catch(Exception e) {
 			System.out.println("Error: "+e.getMessage());
 		}
@@ -482,7 +700,8 @@ public class GmmlGex {
 					"CREATE CACHED TABLE                    " +
 					"		samples							" +
 					" (   idSample INTEGER PRIMARY KEY,		" +
-					"     name VARCHAR(50)					" +
+					"     name VARCHAR(50),					" +
+					"	  dataType INTEGER					" +
 			" )										");
 			
 			sh.execute(
@@ -490,19 +709,43 @@ public class GmmlGex {
 					"		expression						" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
+					"	  ensId VARCHAR(50),				" +
 					"     idSample INTEGER,					" +
-					"     data VARCHAR(50)					" +
+					"     data REAL							" +
 //					"     PRIMARY KEY (id, code, idSample, data)	" +
 			" )										");
 			sh.execute(
 					"CREATE INDEX i_expression_id " +
 					"ON expression(id)			 ");
 			sh.execute(
+					"CREATE INDEX i_expression_ensId " +
+					"ON expression(ensId)			 ");
+			sh.execute(
 					"CREATE INDEX i_expression_idSample " +
 					"ON expression(idSample)	 ");
 			sh.execute(
 					"CREATE INDEX i_expression_data " +
 					"ON expression(data)	     ");
+//			sh.execute(
+//					"CREATE CACHED TABLE		" +
+//					"		textdata			" +
+//					"(	id VARCHAR(50),			" +
+//					"	code VARCHAR(50),		" +
+//					"   ensId VARCHAR(50),		" +	
+//					"	idSample INTEGER,		" +
+//					"	data VARCHAR(100)	)");
+//			sh.execute(
+//					"CREATE INDEX i_textdata_id " +
+//					"ON textdata(id)			 ");
+//			sh.execute(
+//					"CREATE INDEX i_textdata_ensId " +
+//					"ON textdata(ensId)			 ");
+//			sh.execute(
+//					"CREATE INDEX i_textdata_idSample " +
+//					"ON textdata(idSample)	 ");
+//			sh.execute(
+//					"CREATE INDEX i_textdata_data " +
+//					"ON textdata(data)	     ");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSets					" +

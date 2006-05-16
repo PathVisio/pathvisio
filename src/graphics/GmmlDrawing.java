@@ -49,6 +49,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	
 	public GmmlMappInfo mappInfo;
 	
+	public GmmlLegend legend;
+	
 	GmmlSelectionBox s; 
 	
 	boolean isSelecting;
@@ -85,6 +87,9 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
 		colorSetIndex = -1;
+
+		legend = new GmmlLegend(this, SWT.NONE);
+		legend.setLocation(0,0);
 	}
 	
 	public void setGmmlVision(GmmlVision gmmlVision) {
@@ -123,73 +128,21 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		}
 	}
 
-	public void loadColorCache()
+	public ArrayList<String> getMappIds()
 	{
+		ArrayList<String> mappIds = new ArrayList<String>();
 		Iterator it = graphics.iterator();
-		int n = graphics.size();
-		double progress = 0;
-		long t = System.currentTimeMillis();
 		while(it.hasNext())
 		{
-			if(cacheThread.isInterrupted)
-			{
-				return;
-			}
 			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
 			if(o instanceof GmmlGeneProduct)
 			{
-				(((GmmlGeneProduct)o).gpColor).setCache();
+				mappIds.add(((GmmlGeneProduct)o).name);
 			}
-			progress += 100.0/n;
-			cacheThread.progress = (int)progress;
 		}
-		cacheThread.progress = 100;
-		System.out.println("caching expression data: " + (System.currentTimeMillis() - t));
+		return mappIds;
 	}
-	
-	CacheThread cacheThread;
-	public class CacheThread extends Thread
-	{
-		volatile int progress;
-		volatile boolean isInterrupted;
-		public CacheThread() 
-		{
-		}
 		
-		public void run()
-		{
-			progress = 0;
-			isInterrupted = false;
-			loadColorCache();
-		}
-		
-		public void interrupt()
-		{
-			isInterrupted = true;
-		}
-	}
-	
-	public IRunnableWithProgress cacheRunnable = new IRunnableWithProgress() {
-		public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
-			monitor.beginTask("Caching expression data",100);
-			cacheThread = new CacheThread();
-			cacheThread.start();
-			int prevProgress = 0;
-			while(cacheThread.progress < 100) {
-				if(monitor.isCanceled()) {
-					cacheThread.interrupt();
-					break;
-				}
-				if(prevProgress < cacheThread.progress) {
-					monitor.worked(cacheThread.progress - prevProgress);
-					prevProgress = cacheThread.progress;
-				}
-			}
-			monitor.done();
-		}
-	};
-	
 	public void setEditMode(boolean editMode)
 	{
 		this.editMode = editMode;
@@ -224,6 +177,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 			}
 		}
 		
+		legend.adjustToZoom(factor);
 		redraw();
 	}
 
@@ -425,7 +379,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	 */
 	public void paintControl (PaintEvent e)
 	{
-		GC gc = e.gc;	
 		// paint parrent
 		// not necessary in swt
 		//~ super.paintComponent(g);
@@ -453,7 +406,18 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 			{
 				h.draw(e);
 			}
-		}		
+		}
+		
+		org.eclipse.swt.graphics.Rectangle rswt = legend.getBounds();
+		if(r.intersects(rswt.x, rswt.y, rswt.width, rswt.height) && colorSetIndex > -1)
+		{
+			legend.setVisible(true);
+			legend.redraw();
+		}
+		if(colorSetIndex == -1 || editMode)
+		{
+			legend.setVisible(false);
+		}
 	}
 
 	public void updateJdomElements() {

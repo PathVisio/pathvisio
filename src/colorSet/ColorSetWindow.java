@@ -474,14 +474,15 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void mouseDown(MouseEvent e) {
 			if(e.button == 3)
 			{
-				System.out.println("mousedown (right)!");
 				Tree tree = treeViewer.getTree();
 				TreeItem item = tree.getItem(new Point(e.x, e.y));
-				
-				MenuManager mgr = new MenuManager();
-				mgr.add(new DeleteAction(item.getData()));
-				Menu m = mgr.createContextMenu(tree);
-				tree.setMenu(m);
+				if(item != null)
+				{
+					MenuManager mgr = new MenuManager();
+					mgr.add(new DeleteAction(item.getData()));
+					Menu m = mgr.createContextMenu(tree);
+					tree.setMenu(m);
+				}
 			}
 		}
 	}

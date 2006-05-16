@@ -323,9 +323,10 @@ public class GmmlVision extends ApplicationWindow
 				{
 					if(drawing != null)
 					{
+						gmmlGex.mappIds = drawing.getMappIds();
 						ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 						try {
-							dialog.run(true, true, drawing.cacheRunnable);
+							dialog.run(true, true, gmmlGex.cacheRunnable);
 						} catch(Exception e) {
 							e.printStackTrace();
 						}
@@ -454,6 +455,7 @@ public class GmmlVision extends ApplicationWindow
 			{
 				if(isChecked())
 				{
+					removeNewItemActions(getToolBarManager());
 					addNewItemActions(getToolBarManager());			
 					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
 					drawing.setEditMode(true);
@@ -941,9 +943,10 @@ public class GmmlVision extends ApplicationWindow
 		
 		if(gmmlGex.con != null)
 		{
+			gmmlGex.mappIds = drawing.getMappIds();
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 			try {
-				dialog.run(true, true, drawing.cacheRunnable);
+				dialog.run(true, true, gmmlGex.cacheRunnable);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

@@ -1,6 +1,7 @@
 package colorSet;
 import graphics.GmmlGeneProduct;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -8,7 +9,8 @@ import java.util.Vector;
 import org.eclipse.swt.graphics.RGB;
 
 public class GmmlColorSet {
-	public final static RGB COLOR_NO_CRITERIA_MET = new RGB(128, 128, 128);
+	public RGB color_no_criteria_met = new RGB(200, 200, 200);
+	public RGB color_gene_not_found = new RGB(255, 255, 255);
 	
 	public String name;
 	
@@ -37,12 +39,11 @@ public class GmmlColorSet {
 	
 	public RGB getColor(HashMap data)
 	{
-		RGB rgb = COLOR_NO_CRITERIA_MET;
+		RGB rgb = color_no_criteria_met;
 		Iterator it = colorSetObjects.iterator();
 		while(it.hasNext())
 		{
 			GmmlColorSetObject gc = (GmmlColorSetObject)it.next();
-			System.out.println("Getting color for " + gc.name);
 			RGB gcRgb = gc.getColor(data);
 			if(gcRgb != null)
 			{

@@ -55,8 +55,8 @@ public class GmmlGpColor {
 	{
 		Color c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
 		RGB rgb = null;
-			
-		if(canvas.colorSetIndex > -1)
+		System.out.println(canvas.editMode);
+		if(canvas.colorSetIndex > -1 && !canvas.editMode)
 		{
 			RefData refData = gmmlGex.data.get(parent.name);
 			HashMap<Integer, Object> data = refData.getAvgSampleData();

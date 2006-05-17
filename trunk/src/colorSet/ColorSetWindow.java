@@ -4,7 +4,10 @@ import gmmlVision.GmmlVision;
 import graphics.GmmlLegend;
 
 import java.io.FileInputStream;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
@@ -32,9 +35,12 @@ import org.eclipse.swt.widgets.*;
 
 import data.GmmlDb;
 import data.GmmlGex;
+import data.GmmlGex.Sample;
 
 public class ColorSetWindow extends ApplicationWindow {
-	public String[] columnNames;
+	public String[] dColumnNames;
+	public ArrayList<Integer> dColumnIndex;
+
 	public GmmlGex gmmlGex;
 	
 	public ColorSetWindow(Shell parent)
@@ -50,9 +56,20 @@ public class ColorSetWindow extends ApplicationWindow {
 	
 	public void setColumnNames()
 	{
-		Vector gexDataColumns = gmmlGex.getDataColumns();
-		columnNames = new String[gexDataColumns.size()];
-		gexDataColumns.toArray(columnNames);
+		ArrayList<String> names = new ArrayList<String>();
+		dColumnIndex = new ArrayList<Integer>();
+		Vector<Sample> samples = new Vector<Sample>(gmmlGex.samples.values());
+		Collections.sort(samples);
+		for(Sample s : samples)
+		{
+			if(s.dataType == Types.REAL)
+			{
+				names.add(s.name);
+				dColumnIndex.add(s.idSample);
+			}
+		}
+		dColumnNames = new String[names.size()];
+		names.toArray(dColumnNames);
 	}
 	
 	public void setGmmlGex(GmmlGex gmmlGex)
@@ -92,12 +109,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		shell.setText("Color Set Builder");
 		
 		topSash = new SashForm(parent, SWT.HORIZONTAL);
-//		topSash.setLayout(new FillLayout());
 		treeViewer = new TreeViewer(topSash);
-//		GridData treeGridData = new GridData(GridData.FILL_BOTH);
-//		treeGridData.heightHint = 200;
-//		treeGridData.widthHint = 100;
-//		treeViewer.getTree().setLayoutData(treeGridData);
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new TreeLabelProvider());
 		treeViewer.addSelectionChangedListener(new TreeSelectionChangedListener());
@@ -263,7 +275,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    cgNameText.setLayoutData(span4ColsGrid);
 	    
 	    cgComboLabel.setText("Data column:");
-	    cgCombo.setItems(columnNames);
+	    cgCombo.setItems(dColumnNames);
 	    cgCombo.setLayoutData(span4ColsGrid);
 	    
 	    cgColorLabel1.setText("Start color:");
@@ -301,7 +313,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			GmmlColorGradient cg = (GmmlColorGradient)
     		((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
 			cg.name = cgNameText.getText();
-			cg.dataColumn = cgCombo.getSelectionIndex();
+			cg.dataColumn = dColumnIndex.get(cgCombo.getSelectionIndex());
 			cg.colorStart = cgColor1.getRGB();
 			cg.colorEnd = cgColor2.getRGB();
 			cg.valueStart = Double.parseDouble(cgColorText1.getText());
@@ -360,7 +372,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		if(element instanceof GmmlColorGradient) {
 			GmmlColorGradient cg = (GmmlColorGradient)element;
 			cgNameText.setText(cg.name);
-			cgCombo.select(cg.dataColumn);
+			cgCombo.select(dColumnIndex.indexOf(cg.dataColumn));
 			cgColorText1.setText(Double.toString(cg.valueStart));
 			cgColorText2.setText(Double.toString(cg.valueEnd));
 			cgColor1 = new Color(getShell().getDisplay(), cg.colorStart);

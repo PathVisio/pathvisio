@@ -145,11 +145,12 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	public void setEditMode(boolean editMode)
 	{
 		this.editMode = editMode;
+		System.out.println(editMode + ", " + this);
 		if(!editMode)
 		{
 			clearSelection();
-			redraw();
 		}
+		redraw();
 	}
 	
 	/**
@@ -393,7 +394,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		GC buffer = new GC(image);
 		buffer.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
 		buffer.fillRectangle(e.x, e.y, e.width, e.height);
-//		buffer.fillRectangle(0, 0, getSize().x, getSize().y);
 		
 		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
 		

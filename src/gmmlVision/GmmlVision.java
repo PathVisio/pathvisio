@@ -436,11 +436,9 @@ public class GmmlVision extends ApplicationWindow
 		{
 			window = w;
 			setText ("&About@F1");
-			setToolTipText ("about Cellular Automata");
+			setToolTipText ("About Gmml-Vision");
 		}
 		public void run () {
-			// TODO
-			//~ MessageDialog.openInformation(window.getShell(), "About", "(c) 2006 by Martijn van Iersel");
 			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
 			gmmlAboutBox.open();
 		}

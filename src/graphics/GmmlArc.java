@@ -206,7 +206,7 @@ public class GmmlArc extends GmmlGraphics
 		
 		buffer.drawArc((int)(startx-width), (int)(starty-height),
 			(int)(2*width), (int)(2*height),
-			(int)(180-rotation), 180
+			(int)(180 - (rotation * 180 / Math.PI)), 180
 		);
 		
 		setHandleLocation();
@@ -223,7 +223,7 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected boolean isContain(Point2D p)
 	{
-		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180-rotation, 180, 0);
+		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
 
 		return arc.contains(p);
 	}
@@ -234,7 +234,7 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
 	{
-		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180-rotation, 180, 0);
+		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
 
 		return arc.intersects(r.x, r.y, r.width, r.height);
 	
@@ -242,7 +242,7 @@ public class GmmlArc extends GmmlGraphics
 	
 	protected Rectangle getBounds()
 	{
-		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180-rotation, 180, 0);
+		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
 		return arc.getBounds();
 	}
 	
@@ -337,7 +337,8 @@ public class GmmlArc extends GmmlGraphics
 					case 4: // Color
 						this.color = GmmlColorConvertor.string2Color(value); break;
 					case 5: // Rotation
-						this.rotation = Double.parseDouble(value); break;
+						this.rotation = Double.parseDouble(value); 
+						break;
 					case 6: // Notes
 						this.notes = value; break;
 					case -1:

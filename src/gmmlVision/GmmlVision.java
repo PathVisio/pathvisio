@@ -24,6 +24,7 @@ import org.jdom.*;
 import org.jdom.output.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 //~ import java.awt.Color;
@@ -299,13 +300,13 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
 	
-	private class selectGexAction extends Action
+	private class SelectGexAction extends Action
 	{
 		GmmlVision window;
-		public selectGexAction(GmmlVision w)
+		public SelectGexAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Select gex");
+			setText("&Select Expression data");
 			setToolTipText("Select Expression Data");
 		}
 		
@@ -319,6 +320,7 @@ public class GmmlVision extends ApplicationWindow
 			if(file != null) {
 				gmmlGex.gexFile = new File(file);
 				gmmlGex.connect();
+				gmmlGex.setSamples();
 				if(gmmlGex.con != null)
 				{
 					if(drawing != null)
@@ -337,7 +339,7 @@ public class GmmlVision extends ApplicationWindow
 			}
 		}
 	}
-	private selectGexAction selectGexAction = new selectGexAction(this);
+	private SelectGexAction selectGexAction = new SelectGexAction(this);
 	
 	private class ConvertGexAction extends Action
 	{
@@ -345,7 +347,7 @@ public class GmmlVision extends ApplicationWindow
 		public ConvertGexAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Convert gex");
+			setText("&Convert GenMAPP Gex");
 			setToolTipText("Convert GenMAPP gex to GmmlVisio expression dataset");
 		}
 		
@@ -413,6 +415,10 @@ public class GmmlVision extends ApplicationWindow
 			{
 				colorSetWindow.run();
 				showColorSetCombo(true);
+				if(drawing != null)
+				{
+					drawing.redraw();
+				}
 			}
 			else
 			{
@@ -767,19 +773,29 @@ public class GmmlVision extends ApplicationWindow
 	ToolItem colorSetLabel;
 	ToolItem colorSetComboItem;
 	ToolItem colorSetSeparator;
+	ToolItem colorSetManagerButton;
 	final static String COMBO_NO_COLORSET = "No colorset";
+	Image colorSetImage;
 	private void showColorSetCombo(boolean show)
 	{
 		ToolBar toolBar = (ToolBar)getToolBarControl();
 		if(show)
 		{	
-			if(colorSetCombo != null)
+			if(colorSetCombo != null && !colorSetCombo.isDisposed())
 			{
 				colorSetLabel.dispose();
 				colorSetCombo.dispose();
 				colorSetSeparator.dispose();
 				colorSetComboItem.dispose();
+				colorSetManagerButton.dispose();
 			}
+			if(colorSetImage == null)
+			{
+				try {
+				colorSetImage = new Image(null, new FileInputStream("icons/colorset.gif"));
+				} catch(Exception e) { System.out.println("colorsetimage not found");}
+			}
+			
 			String[] colorSets = gmmlGex.getColorSetNames();
 			String[] comboItems = new String[colorSets.length + 1];
 			comboItems[0] = COMBO_NO_COLORSET;
@@ -796,13 +812,28 @@ public class GmmlVision extends ApplicationWindow
 			colorSetComboItem.setControl(colorSetCombo);
 			
 			colorSetCombo.setItems(comboItems);
-			colorSetCombo.select(0);
+			if(drawing != null)
+				colorSetCombo.select(drawing.colorSetIndex + 1);
+			else
+				colorSetCombo.select(0);
 			colorSetCombo.pack();
 			
 			colorSetComboItem.setWidth(colorSetCombo.getBounds().width);
 			colorSetComboItem.setControl(colorSetCombo);
 			
 			colorSetCombo.setVisible(true);
+			
+			colorSetManagerButton = new ToolItem(toolBar, SWT.PUSH);
+			colorSetManagerButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e)
+				{
+					colorSetManagerAction.run();
+				}
+			});
+			if(colorSetImage != null)
+			{
+				colorSetManagerButton.setImage(colorSetImage);
+			}
 		}
 		else
 		{

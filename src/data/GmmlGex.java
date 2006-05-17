@@ -18,6 +18,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
@@ -196,17 +197,27 @@ public class GmmlGex {
 		}
 	}
 	
-	public class Sample
+	public class Sample implements Comparable
 	{
-		int idSample;
-		String name;
-		int dataType;
+		public int idSample;
+		public String name;
+		public int dataType;
 		
 		public Sample(int idSample, String name, int dataType)
 		{
 			this.idSample = idSample;
 			this.name = name;
 			this.dataType = dataType;
+		}
+		
+		public int compareTo(Object o) throws ClassCastException
+		{
+			if(o instanceof Sample)
+			{
+				return idSample - ((Sample)o).idSample;
+			} else {
+				throw new ClassCastException("Object is not of type Sample");
+			}
 		}
 	}
 	
@@ -353,35 +364,18 @@ public class GmmlGex {
 		}
 		return null;
 	}
-	
-	public Vector getDataColumns()
-	{
-		Vector gexDataColumns = new Vector();
-		try {
-			ResultSet r = con.createStatement().executeQuery(
-					"SELECT * FROM samples ORDER BY idSample"
-					);
-			
-			while(r.next())
-			{
-				int id = r.getInt(1);
-				gexDataColumns.add(id, r.getString(2));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return gexDataColumns;
-	}
+
 	
 	public void cacheData(ArrayList<String> ids)
-	{
-		System.out.println(ids);
-		setSamples();
+	{	
+		if(samples == null)
+		{
+			setSamples();
+		}
 		
 		data = new HashMap<String, RefData>();
-	
 		for(String id : ids)
-		{
+		{			 
 			RefData refData = new RefData(id);
 			refData.samples = samples;
 			data.put(id, refData);
@@ -389,12 +383,13 @@ public class GmmlGex {
 			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id);
 			for(String ensId : ensIds)
 			{				
-				try {
+				try {					
 					ResultSet r = con.createStatement().executeQuery(
 							"SELECT id, data, idSample FROM expression " +
 							" WHERE ensId = '" + ensId + "'");
+
 					while(r.next())
-					{
+					{						 
 						String[] data = new String[3];
 						int idSample = r.getInt(3);
 						if(refData.sampleData.containsKey(idSample))
@@ -412,7 +407,7 @@ public class GmmlGex {
 							data[2] = r.getString(2);
 							d.add(data);
 							refData.sampleData.put(idSample, d);
-						}
+						}						
 					}
 				} catch (Exception e)
 				{

@@ -51,13 +51,12 @@ public class GmmlArc extends GmmlGraphics
 	String notes = "";
 	
 	RGB color;
-	GmmlDrawing canvas;
 	
 	Element jdomElement;
 	
-	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
-	GmmlHandle handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this);
-	GmmlHandle handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this);
+	GmmlHandle handlecenter;
+	GmmlHandle handlex;
+	GmmlHandle handley;
 		
 	/**
 	 * Constructor for this class
@@ -68,6 +67,9 @@ public class GmmlArc extends GmmlGraphics
 		drawingOrder = GmmlDrawing.DRAW_ORDER_ARC;
 		
 		this.canvas = canvas;
+		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);
+		handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this, canvas);
 		
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlex);
@@ -192,7 +194,7 @@ public class GmmlArc extends GmmlGraphics
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c;
-		if (isSelected)
+		if (isSelected())
 		{
 			c = new Color (e.display, 255, 0, 0);
 		}
@@ -252,7 +254,9 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty();
 		setLocation(startx + dx, starty + dy);
+		markDirty();
 	}
 	
 	/*

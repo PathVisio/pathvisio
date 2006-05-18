@@ -36,7 +36,6 @@ public class GmmlGpColor {
 	
 	GmmlGdb gmmlGdb;
 	GmmlGex gmmlGex;
-	GmmlDrawing canvas;
 	GmmlGeneProduct parent;
 	
 	// Cache some data on loading mapp
@@ -46,6 +45,7 @@ public class GmmlGpColor {
 	public ArrayList refIds;
 	
 	Vector sampleData;
+	private GmmlDrawing canvas;
 	
 	public GmmlGpColor(GmmlGeneProduct parent)
 	{

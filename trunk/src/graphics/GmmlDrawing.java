@@ -36,14 +36,13 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	
 	public int colorSetIndex;
 
+	/*
+	 * All objects that are visible on this mapp, including the handles
+	 * but excluding the legend, mappInfo and selectionBox objects
+	 */
 	Vector<GmmlDrawingObject> drawingObjects;
-//	Vector<GmmlGraphics> graphics;
-//	Vector handles;
-
-	Vector<GmmlDrawingObject> selection;
 	
 	GmmlDrawingObject pressedObject	= null;	
-	GmmlHandle pressedHandle = null;
 	
 	public GmmlGraphics selectedGraphics = null;
 	
@@ -66,6 +65,26 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	public Dimension dims = new Dimension(1000, 1000);
 	public double zoomFactor = 1;
 	
+	private Rectangle dirtyRect = null;
+	public void addDirtyRect(GmmlDrawingObject g)
+	{
+		if(dirtyRect == null)
+			dirtyRect = g.getBounds();
+		else
+			dirtyRect.add(g.getBounds());		
+	}
+	
+	/**
+	 * Redraw parts marked dirty
+	 * reset dirty rect afterwards
+	 */
+	public void redrawDirtyRect()
+	{
+		if (dirtyRect != null)
+			redraw (dirtyRect.x, dirtyRect.y, dirtyRect.width + 1, dirtyRect.height + 1, false);
+		dirtyRect = null;
+	}
+	
 	/**
 	 *Constructor for this class
 	 */	
@@ -76,7 +95,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		drawingObjects	= new Vector<GmmlDrawingObject>();
 //		graphics		= new Vector<GmmlGraphics>();
 //		handles			= new Vector();
-		selection		= new Vector<GmmlDrawingObject>();
 		
 		s = new GmmlSelectionBox(this);
 		
@@ -163,8 +181,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		zoomFactor = zoom / 100;
 		calculateSize();
 		
-		System.out.println(zoomFactor);
-		
 		// iterate over all graphics to adjust them
 		for(GmmlDrawingObject o : drawingObjects)
 		{
@@ -186,25 +202,32 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	{
 		if (isDragging)
 		{		
-			Rectangle rp = getRedrawRectangle(selection);
-			for(GmmlDrawingObject o : selection)
+			// if the main selection is a handle
+			if (pressedObject != null && pressedObject instanceof GmmlHandle)
 			{
-				o.moveBy(e.x - previousX, e.y - previousY);
+				// move only the handle
+				pressedObject.moveBy(e.x - previousX, e.y - previousY);
 			}
-			Rectangle r = getRedrawRectangle(selection);
-			r.add(rp);
-			redraw(r.x, r.y, r.width, r.height, false);
+			else
+			{
+				// move anything but handles
+				for(GmmlDrawingObject o : drawingObjects)
+				{
+					if (o.isSelected() && !(o instanceof GmmlHandle)) 
+						o.moveBy(e.x - previousX, e.y - previousY);
+				}
+			}
 			previousX = e.x;
 			previousY = e.y;
 		}
 						
 		if (isSelecting)
 		{
-			Vector toRedraw = new Vector();
-			ArrayList rl = s.getSideAreas();
-			
+			// adjust selection area
+			s.markDirty();
 			s.x2 = e.x;
 			s.y2 = e.y;
+			s.markDirty(); // also mark selection area
 			
 			for(GmmlDrawingObject o : drawingObjects)
 			{
@@ -213,30 +236,17 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 					GmmlGraphics g = (GmmlGraphics) o;
 					if (g.intersects(s.getRectangle()))
 					{
-						g.isSelected = true;
-						if (!selection.contains(g))
-						{
-							selection.addElement(g);
-							toRedraw.addElement(g);
-						}
+						g.select();
+						
 					}
 					else
 					{
-						g.isSelected = false;
-						if (selection.contains(g))
-						{
-							selection.remove(g);
-							toRedraw.addElement(g);
-						}
+						g.deselect();						
 					}
 				}				
 			}
-			rl.addAll(s.getSideAreas());
-			redrawRectangleList(rl);
-			
-			Rectangle r = getRedrawRectangle(toRedraw);
-			redraw(r.x, r.y, r.width, r.height, false);
 		}
+		redrawDirtyRect();
 	}
 
 	/**
@@ -274,7 +284,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		} else if (isSelecting)
 		{
 			updatePropertyTable(null);
-			redrawRectangleList(s.getSideAreas());
+//			redrawRectangleList(s.getSideAreas());
+			s.markDirty();
 //			redraw();
 		}
 		isDragging = false;
@@ -334,43 +345,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		
 	}
 
-	private Rectangle getRedrawRectangle(Vector<GmmlDrawingObject> toRedraw)
-	{
-		Rectangle r = new Rectangle();
-		for(GmmlDrawingObject g : toRedraw)
-		{
-			if(r.x == 0 && r.y ==0 && r.width == 0 && r.height == 0) {
-				r = new Rectangle(g.getBounds());
-			}
-			r.add(g.getBounds());
-			if(g instanceof GmmlGraphics)
-			{
-				Vector<GmmlHandle> v = ((GmmlGraphics)g).getHandles();
-				for(GmmlHandle h : v)
-				{
-					r.add(h.getBounds());
-				}
-			}
-		}
-		r.grow(1,1);
-		return r;
-	}
-	
-	private void redrawRectangleList(ArrayList rl)
-	{
-		for(int i = 0; i < rl.size(); i++)
-		{
-			Rectangle r = (Rectangle)rl.get(i);
-			redraw(r.x, r.y, r.width, r.height, false);
-		}
-	}
-	
-	public void redrawObject(GmmlDrawingObject o)
-	{
-		Rectangle r = o.getBounds();
-		r.grow(5,5);
-		redraw(r.x, r.y, r.width, r.height, false);
-	}
 	/**
 	 * Paints all components in the drawing.
 	 * This method is called automatically in the 
@@ -383,6 +357,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		//~ super.paintComponent(g);
 		
 		Image image = (Image)getData("double-buffer-image");
+		// create an image for double-buffering, if it doesn't exist 
+		// or the component has been resized
 		if(image == null
 				|| image.getBounds().width != getSize().x
 				|| image.getBounds().height != getSize().y)
@@ -394,6 +370,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		GC buffer = new GC(image);
 		buffer.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
 		buffer.fillRectangle(e.x, e.y, e.width, e.height);
+//		buffer.setForeground(e.display.getSystemColor(SWT.COLOR_CYAN));
+//		buffer.drawRectangle(e.x, e.y, e.width, e.height);
 		
 		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
 		
@@ -462,17 +440,10 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	
 	private void clearSelection()
 	{
-		Iterator it = selection.iterator();
-		while (it.hasNext())
-		{
-			GmmlDrawingObject g = (GmmlDrawingObject) it.next();
-			g.isSelected = false;
-			if (g instanceof GmmlHandle)
-			{
-				((GmmlHandle)g).parent.isSelected = false;
-			}
-		}
-		selection.clear();
+		for (GmmlDrawingObject g : drawingObjects)
+		{			
+			g.deselect(); 
+		}		
 	}
 
 	private void mouseDownViewMode(MouseEvent e)
@@ -495,75 +466,60 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		s.y2 = s.y1;		
 	}
 	
+	/**
+	 * Called by MouseDown, when we're in editting mode and we're not adding new objects
+	 * prepares for dragging the object
+	 */
 	private void editObject(MouseEvent e)
 	{
 		Point2D p = new Point2D.Double(e.x, e.y);
-		Vector<GmmlDrawingObject> toDraw = new Vector<GmmlDrawingObject>();
-		pressedHandle = null;
-		Iterator it = drawingObjects.iterator();
-		while (it.hasNext())
+		
+		pressedObject = null;
+		for (GmmlDrawingObject o : drawingObjects)
 		{
-			GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-			if(selection.size() == 1)
-			{
-				o.isSelected = false;
-			}
 			if (o.isContain(p))
 			{
-				if (o instanceof GmmlHandle && selection.size() == 1)
-				{
-					pressedHandle = (GmmlHandle)o;
-				}
-				else if (o instanceof GmmlGraphics)
-				{
-					pressedObject = o;
-				}
+				pressedObject = o;
 			}
 		}
-		
-		if (pressedHandle != null)
-		{
-			pressedObject = (GmmlDrawingObject)pressedHandle;
-		}
-		
+				
+		// if we clicked on an object
 		if (pressedObject != null)
 		{
-			if(!selection.contains(pressedObject))
+			// if we click on an object outside the selection
+			if(!pressedObject.isSelected())
 			{
-				//TODO: if ctrl is pressed, don't clear, but just add object
-				toDraw = (Vector)selection.clone();
+				// clear the selection
+				//TODO: if ctrl is pressed, don't clear, but just add object				
 				initSelection(p);
-				selection.add(pressedObject);
+				pressedObject.select();
 			}
+			// if our object is an handle, select also it's parent.
 			if(pressedObject instanceof GmmlHandle)
 			{
-				((GmmlHandle)pressedObject).parent.isSelected = true;
+				((GmmlHandle)pressedObject).parent.select();
+				updatePropertyTable(((GmmlHandle)pressedObject).parent);
 			}
-			pressedObject.isSelected = true;
-			toDraw.addAll(selection);
-			Rectangle r = getRedrawRectangle(toDraw);
-			redraw(r.x, r.y, r.width, r.height, false);
-			
-			updatePropertyTable(pressedObject);
+			else
+			{
+				updatePropertyTable(pressedObject);
+			}
 			
 			// start dragging
 			previousX = e.x;
 			previousY = e.y;
 			
 			isSelecting = false;
-			isDragging = true;
-			pressedObject = null;	
+			isDragging = true;			
 		}
-		else if (pressedObject == null)
+		else
 		{
 			// start selecting
 			isDragging = false;
 			isSelecting = true;
-			Rectangle r = getRedrawRectangle(selection);
 			initSelection(p);
-			redraw(r.x, r.y, r.width, r.height, false);
-//			updatePropertyTable(null);
-		}
+		}		
+		redrawDirtyRect();
 	}
 
 	public static final int NEWNONE = -1;
@@ -689,8 +645,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		
 		addElement(g);
 		clearSelection();
-		g.isSelected = true;
-		selection.add(h);
+		g.select();
+		h.select();
 		updatePropertyTable(g);
 		
 		previousX = e.x;

@@ -64,14 +64,13 @@ public class GmmlLine extends GmmlGraphics
 	
 	String notes = "";
 	
-	GmmlDrawing canvas;
 	Line2D line;
 	
 	Element jdomElement;
 	
-	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
-	GmmlHandle handleStart	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_START, this);
-	GmmlHandle handleEnd	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_END, this);
+	GmmlHandle handlecenter;
+	GmmlHandle handleStart;
+	GmmlHandle handleEnd;
 	
 	/**
 	 * Constructor for this class
@@ -83,6 +82,9 @@ public class GmmlLine extends GmmlGraphics
 		
 		this.canvas = canvas;
 		
+		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		handleStart	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_START, this, canvas);
+		handleEnd	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_END, this, canvas);
 		canvas.addElement(handlecenter);
 		canvas.addElement(handleStart);
 		canvas.addElement(handleEnd);
@@ -224,7 +226,7 @@ public class GmmlLine extends GmmlGraphics
 		if(line!=null)
 		{
 			Color c;
-			if (isSelected)
+			if (isSelected())
 			{
 				c = new Color (e.display, 255, 0, 0);
 			}
@@ -306,8 +308,9 @@ public class GmmlLine extends GmmlGraphics
  	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty();
 		setLine(startx + dx, starty + dy, endx + dx, endy + dy);
-		
+		markDirty();		
 	}
 	
 	/*
@@ -316,10 +319,11 @@ public class GmmlLine extends GmmlGraphics
 	 */
 	protected void moveLineStart(double dx, double dy)
 	{
+		markDirty();
 		startx += dx;
 		starty += dy;
 		constructLine();
-		
+		markDirty();		
 	}
 	
 	/*
@@ -328,9 +332,11 @@ public class GmmlLine extends GmmlGraphics
 	 */
 	protected void moveLineEnd(double dx, double dy)
 	{
+		markDirty();
 		endx += dx;
 		endy += dy;
 		constructLine();
+		markDirty();
 		
 	}
 	

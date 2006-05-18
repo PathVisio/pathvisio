@@ -58,7 +58,6 @@ public class GmmlLineShape extends GmmlGraphics
 	
 	String notes = "";
 
-	GmmlDrawing canvas;
 	RGB color;
 	
 	private final List typeMappings = Arrays.asList(new String[] {
@@ -67,9 +66,9 @@ public class GmmlLineShape extends GmmlGraphics
 	});	
 	Element jdomElement;
 
-	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
-	GmmlHandle handleStart	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_START, this);
-	GmmlHandle handleEnd	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_END, this);
+	GmmlHandle handlecenter;
+	GmmlHandle handleStart;
+	GmmlHandle handleEnd;
 	
 	/**
 	 * Constructor for this class
@@ -80,7 +79,9 @@ public class GmmlLineShape extends GmmlGraphics
 		drawingOrder = GmmlDrawing.DRAW_ORDER_LINESHAPE;
 		
 		this.canvas = canvas;
-
+		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		handleStart	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_START, this, canvas);
+		handleEnd	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_END, this, canvas);
 		canvas.addElement(handlecenter);
 		canvas.addElement(handleStart);
 		canvas.addElement(handleEnd);
@@ -186,7 +187,7 @@ public class GmmlLineShape extends GmmlGraphics
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c;
-		if (isSelected)
+		if (isSelected())
 		{
 			c = new Color (e.display, 255, 0, 0);
 		}

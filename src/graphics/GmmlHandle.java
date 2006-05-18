@@ -41,19 +41,16 @@ class GmmlHandle extends GmmlDrawingObject
 	// 2: height
 	// 3: line start 
 	
-	GmmlDrawing canvas;
-	
-
-	
 	Rectangle2D rect;
 	boolean visible;
 	
-	public GmmlHandle(int type, GmmlGraphics parent)
+	public GmmlHandle(int type, GmmlGraphics parent, GmmlDrawing canvas)
 	{
 		drawingOrder = GmmlDrawing.DRAW_ORDER_HANDLE;
 		
 		this.type = type;
 		this.parent = parent;
+		this.canvas = canvas;
 
 		constructRectangle();
 	}
@@ -66,13 +63,15 @@ class GmmlHandle extends GmmlDrawingObject
 
 	public void setLocation(double x, double y)
 	{
+		markDirty();
 		centerx = x;
 		centery = y;
+		markDirty();
 	}
 
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		if (parent.isSelected)
+		if (parent.isSelected())
 		{
 			constructRectangle();
 			buffer.setLineWidth (1);
@@ -127,7 +126,7 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	protected boolean intersects(Rectangle2D.Double r)
 	{	
-		return parent.isSelected;
+		return parent.isSelected();
 	}
 	
 	protected Rectangle getBounds()

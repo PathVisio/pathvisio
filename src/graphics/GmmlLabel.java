@@ -70,12 +70,10 @@ public class GmmlLabel extends GmmlGraphics
 	double centery;
 	double width;
 	double height;
-	
-	GmmlDrawing canvas;
-	
+		
 	Element jdomElement;
 	
-	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
+	GmmlHandle handlecenter;
 
 	/**
 	 * Constructor for this class
@@ -86,7 +84,7 @@ public class GmmlLabel extends GmmlGraphics
 		drawingOrder = GmmlDrawing.DRAW_ORDER_LABEL;
 		
 		this.canvas = canvas;
-		
+		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
 		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.zoomFactor;
 		this.fontSize = (int)this.fontSizeDouble;
 	}
@@ -278,7 +276,7 @@ public class GmmlLabel extends GmmlGraphics
 		Point textSize = buffer.textExtent (text);
 		
 		Color c;
-		if (isSelected)
+		if (isSelected())
 		{
 			c = new Color (e.display, 255, 0, 0);
 		}
@@ -308,7 +306,10 @@ public class GmmlLabel extends GmmlGraphics
 	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty();
 		setLocation(centerx  + dx, centery + dy);
+		markDirty();
+
 	}
 
 	/**

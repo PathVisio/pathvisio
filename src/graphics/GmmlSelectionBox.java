@@ -12,13 +12,11 @@ import org.eclipse.swt.*;
 /**
  * This class implements a selectionbox 
  */ 
-class GmmlSelectionBox extends GmmlGraphicsUtils
+class GmmlSelectionBox extends GmmlDrawingObject
 {
 	private static final long serialVersionUID = 1L;
 
 	int x1, y1, x2, y2;
-	
-	GmmlDrawing canvas;
 	
 	/**
 	 * Constructor for this class
@@ -105,16 +103,16 @@ class GmmlSelectionBox extends GmmlGraphicsUtils
 	{
 		return getRectangle().getBounds();
 	}
-	
-	protected ArrayList getSideAreas()
-	{
-		int w = 4;
-		ArrayList rl = new ArrayList();
-		Rectangle r = getRectangle().getBounds();
-		rl.add(new Rectangle(r.x - w/2, r.y - w/2, r.width + w, w));
-		rl.add(new Rectangle(r.x + r.width - w/2, r.y - w/2, w, r.height + w/2));
-		rl.add(new Rectangle(r.x - w/2, r.y + r.height - w/2, r.width + w, w));
-		rl.add(new Rectangle(r.x - w/2, r.y + w/2, w, r.height + w));
-		return rl;
-	} 
+
+//	protected ArrayList getSideAreas()
+//	{
+//		int w = 4;
+//		ArrayList rl = new ArrayList();
+//		Rectangle r = getRectangle().getBounds();
+//		rl.add(new Rectangle(r.x - w/2, r.y - w/2, r.width + w, w));
+//		rl.add(new Rectangle(r.x + r.width - w/2, r.y - w/2, w, r.height + w/2));
+//		rl.add(new Rectangle(r.x - w/2, r.y + r.height - w/2, r.width + w, w));
+//		rl.add(new Rectangle(r.x - w/2, r.y + w/2, w, r.height + w));
+//		return rl;
+//	} 
 } // end of class

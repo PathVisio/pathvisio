@@ -12,8 +12,42 @@ import javax.swing.JComponent;
 //~ abstract class GmmlDrawingObject extends JComponent 
 abstract class GmmlDrawingObject implements Comparable
 {
-	boolean isSelected;
+	private boolean isSelected;
+	
+	/** 
+	 * mark the area currently occupied by this object for redraw 
+	 */
+	public void markDirty()
+	{
+		canvas.addDirtyRect(this);
+	}
+	
+	public void select()
+	{
+		if (!isSelected)
+		{
+			isSelected = true;
+			markDirty();
+		}
+	}
+	
+	public void deselect()
+	{
+		if (isSelected)
+		{
+			isSelected = false;
+			markDirty();
+		}
+	}
+	
+	public boolean isSelected()
+	{
+		return isSelected;
+	}
+	
 	int drawingOrder = 2;
+	
+	protected GmmlDrawing canvas;
 	
 	/**
 	 * Draws the GmmlDrawingObject object on the GmmlDrawing
@@ -44,7 +78,7 @@ abstract class GmmlDrawingObject implements Comparable
 	 * @param dx - the value of x-increment
 	 * @param dy - the value of y-increment
 	 */
-	void moveBy(double dx, double dy) {}
+	protected void moveBy(double dx, double dy) {}
 	
 	public int compareTo(Object o) throws ClassCastException
 	{

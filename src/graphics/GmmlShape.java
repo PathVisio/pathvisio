@@ -58,14 +58,13 @@ public class GmmlShape extends GmmlGraphics
 	// 0 - rectangle
 	// 1 - ellipse
 	
-	GmmlDrawing canvas;
 	RGB color;
 	
 	Element jdomElement;
 	
-	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
-	GmmlHandle handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this);
-	GmmlHandle handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this);
+	GmmlHandle handlecenter;
+	GmmlHandle handlex;
+	GmmlHandle handley;
 
 	/**
 	 * Constructor for this class
@@ -77,6 +76,9 @@ public class GmmlShape extends GmmlGraphics
 		
 		this.canvas = canvas;
 		
+		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);
+		handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this, canvas);
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlex);
 		canvas.addElement(handley);
@@ -179,7 +181,7 @@ public class GmmlShape extends GmmlGraphics
 	protected void draw(PaintEvent e, GC buffer)
 	{	
 		Color c;
-		if (isSelected)
+		if (isSelected())
 		{
 			c = new Color (e.display, 255, 0, 0);
 		}
@@ -266,8 +268,10 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty();
 		setLocation(centerx + dx, centery + dy);
-		
+		markDirty();
+
 		// NOTE: disabled moving of connecting linehandles
 		// TODO: make this feature optional
 //		Polygon pol = createContainingPolygon();

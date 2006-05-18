@@ -56,8 +56,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 	RGB color = new RGB (0,0,0);
 	RGB fillColor = INITIAL_FILL_COLOR;
 	
-	GmmlDrawing canvas;
-	
 	Element jdomElement;
 	
 	String geneID;
@@ -68,9 +66,9 @@ public class GmmlGeneProduct extends GmmlGraphics
 	String notes = "";
 	String geneProductDataSource = "";
 	
-	GmmlHandle handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
-	GmmlHandle handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this);
-	GmmlHandle handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this);
+	GmmlHandle handlecenter;
+	GmmlHandle handlex;
+	GmmlHandle handley;
 	
 	GmmlGpColor gpColor;
 	
@@ -80,9 +78,13 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	public GmmlGeneProduct(GmmlDrawing canvas)
 	{
+		System.out.println ("New Gene Product!!!");
 		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;
 		
 		this.canvas = canvas;
+		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);
+		handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this, canvas);
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlex);
 		canvas.addElement(handley);
@@ -261,7 +263,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 
 		
 		Color c;
-		if (isSelected)
+		if (isSelected())
 		{
 			c = new Color (e.display, 255, 0, 0);
 		}
@@ -298,9 +300,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		buffer.setClipping(r);
 		
 		c.dispose();
-//		cFill.dispose();
-		
-		setHandleLocation();
+//		cFill.dispose();		
 	}
 	
 	protected void draw(PaintEvent e)
@@ -341,23 +341,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty(); // erase old location
 		setLocation(centerx + dx, centery + dy);
-
-		// TODO
-		//~ BasicStroke stroke = new BasicStroke(20);
-		//~ Shape s = stroke.createStrokedShape(rect);
-
-		//~ Iterator it = canvas.lineHandles.iterator();
-
-		//~ while (it.hasNext())
-		//~ {
-			//~ GmmlHandle h = (GmmlHandle) it.next();
-			//~ Point2D p = h.getCenterPoint();
-			//~ if (s.contains(p))
-			//~ {
-				//~ h.moveBy(dx, dy);
-			//~ }
-		//~ }
+		setHandleLocation();
+		markDirty(); // draw new location
 	}
 	
 	/*
@@ -366,8 +353,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected void resizeX(double dx)
 	{
-		width = Math.abs(width + dx);
-		
+		markDirty(); // erase old location
+		width = Math.abs(width + dx);		
+		setHandleLocation();
+		markDirty(); // draw new location
 	}
 	
 	/*
@@ -376,8 +365,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected void resizeY(double dy)
 	{
-		height = Math.abs(height - dy);
-		
+		markDirty(); // erase old location
+		height = Math.abs(height - dy);		
+		setHandleLocation();
+		markDirty(); // draw new location
 	}
 
 	public List getAttributes() {

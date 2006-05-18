@@ -60,11 +60,10 @@ public class GmmlBrace extends GmmlGraphics
 	
 	String notes = "";
 	
-	GmmlDrawing canvas;
 	Element jdomElement;
 	
-	GmmlHandle handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this);
-	GmmlHandle handlewidth	= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this);
+	GmmlHandle handlecenter;
+	GmmlHandle handlewidth;
 	
 	// Some mappings to Gmml
 	private final List orientationMappings = Arrays.asList(new String[] {
@@ -81,7 +80,8 @@ public class GmmlBrace extends GmmlGraphics
 		
 		this.canvas = canvas;
 
-		
+		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		handlewidth	= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);		
 		canvas.addElement(handlecenter);
 		canvas.addElement(handlewidth);
 	}
@@ -185,7 +185,7 @@ public class GmmlBrace extends GmmlGraphics
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c;
-		if (isSelected)
+		if (isSelected())
 		{
 			c = new Color (e.display, 255, 0, 0);
 		}

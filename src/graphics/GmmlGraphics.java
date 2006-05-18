@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Table;
  */
 public abstract class GmmlGraphics extends GmmlDrawingObject
 {
-
 	/**
 	 * Resizes GmmlGraphics in x-direction
 	 * @param dx - the value with wich to resize the object

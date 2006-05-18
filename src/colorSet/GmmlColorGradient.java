@@ -10,7 +10,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 
 public class GmmlColorGradient extends GmmlColorSetObject {
-	public int dataColumn;
+	private int dataColumn;
 	public RGB colorStart;
 	public RGB colorEnd;
 	public double valueStart;
@@ -28,6 +28,18 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public GmmlColorGradient(GmmlColorSet parent, String name, String criterion)
 	{
 		super(parent, name, criterion);
+	}
+	
+	public void setDataColumn(int dataColumn)
+	{
+		useSamples = new ArrayList<Integer>();
+		this.dataColumn = dataColumn;
+		useSamples.add(dataColumn);
+	}
+	
+	public int getDataColumn()
+	{
+		return dataColumn;
 	}
 	
 	public RGB getColor(double value)
@@ -93,7 +105,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 //		System.out.println(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5]);
 		try
 		{
-			dataColumn = Integer.parseInt(s[1]);
+			setDataColumn(Integer.parseInt(s[1]));
 			valueStart = Double.parseDouble(s[2]);
 			colorStart = parseColorString(s[3]);
 			valueEnd = Double.parseDouble(s[4]);

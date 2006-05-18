@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Canvas;
 public abstract class GmmlColorSetObject {
 	public GmmlColorSet parent;
 	public String name;
+	public ArrayList<Integer> useSamples;
 	
 	public GmmlColorSetObject(GmmlColorSet parent, String name) 
 	{	

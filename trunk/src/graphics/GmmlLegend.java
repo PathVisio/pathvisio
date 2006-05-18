@@ -150,7 +150,6 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 			Control[] controls = getChildren();
 			for(int i = 0; i < controls.length; i++)
 			{
-				System.out.println(controls[i]);
 				controls[i].dispose();
 			}
 			if(legend.colorSetObjects != null)

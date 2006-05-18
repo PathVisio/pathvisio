@@ -62,57 +62,43 @@ public class GmmlGex {
 		return colorSetNames;
 	}
 	
-	public void setGexReadOnly(boolean readonly)
-	{
-		boolean reconnect = false;
-		
-		long t = System.currentTimeMillis();
-		
-		if(con != null)
-		{
-			System.out.println("reconnecting");
-			reconnect = true;
-			close(false);
-		}
-		
-		System.out.println(System.currentTimeMillis() - t);
-		
-		t = System.currentTimeMillis();
-		
-		Properties gexProp = new Properties();
-		try {
-		gexProp.load(new FileInputStream(gexFile));
-		gexProp.setProperty("readonly", Boolean.toString(readonly));
-		gexProp.store(new FileOutputStream(gexFile), "HSQL Database Engine");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		t = System.currentTimeMillis();
-		System.out.println(System.currentTimeMillis() - t);
-		
-		t = System.currentTimeMillis();
-		
-		if(reconnect)
-		{
-			connect();
-		}
-		System.out.println(System.currentTimeMillis() - t);
-	}
+//	public void setGexReadOnly(boolean readonly)
+//	{
+//		boolean reconnect = false;		
+//		if(con != null)
+//		{
+//			System.out.println("reconnecting");
+//			reconnect = true;
+//			close(false);
+//		}
+//		Properties gexProp = new Properties();
+//		try {
+//		gexProp.load(new FileInputStream(gexFile));
+//		gexProp.setProperty("readonly", Boolean.toString(readonly));
+//		gexProp.store(new FileOutputStream(gexFile), "HSQL Database Engine");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		if(reconnect)
+//		{
+//			connect();
+//		}
+//	}
 	
 	public void saveColorSets()
 	{
 		try
 		{
-			setGexReadOnly(false);
+//			setGexReadOnly(false);
+			con.setReadOnly(false);
 			Statement s = con.createStatement();
 			s.execute("DELETE FROM colorSets");
 			s.execute("DELETE FROM colorSetObjects");
 			
 			PreparedStatement sCs = con.prepareStatement(
 					"INSERT INTO colorSets	" +
-					"( colorSetId, name ) VALUES	" +
-					"( ?, ? )"	);
+					"( colorSetId, name, criterion ) VALUES	" +
+					"( ?, ?, ? )"	);
 			PreparedStatement sCso = con.prepareStatement(
 					"INSERT INTO colorSetObjects 	" +
 					"( 	name, colorSetId,		" +
@@ -124,6 +110,7 @@ public class GmmlGex {
 				GmmlColorSet cs = (GmmlColorSet)colorSets.get(i);
 				sCs.setInt(1, i);
 				sCs.setString(2, cs.name);
+				sCs.setString(3, cs.getCriterionString());
 				sCs.execute();
 				Vector colorSetObjects = cs.getColorSetObjects();
 				for(int j = 0; j < colorSetObjects.size(); j++)
@@ -135,11 +122,12 @@ public class GmmlGex {
 					sCso.execute();
 				}
 			}
+			con.setReadOnly(true);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		setGexReadOnly(true);
+//		setGexReadOnly(true);
 		
 	}
 	
@@ -150,10 +138,10 @@ public class GmmlGex {
 			colorSets = new Vector();
 			Statement sCso = con.createStatement();
 			ResultSet r = con.createStatement().executeQuery(
-				"SELECT * FROM colorSets ORDER BY colorSetId" );
+				"SELECT colorSetId, name, criterion FROM colorSets ORDER BY colorSetId" );
 			while(r.next())
 			{
-				GmmlColorSet cs = new GmmlColorSet(r.getString(2));
+				GmmlColorSet cs = new GmmlColorSet(r.getString(2), r.getString(3), this);
 				colorSets.add(cs);
 				ResultSet rCso = sCso.executeQuery(
 						"SELECT * FROM colorSetObjects" +
@@ -218,6 +206,11 @@ public class GmmlGex {
 			} else {
 				throw new ClassCastException("Object is not of type Sample");
 			}
+		}
+		
+		public String toString()
+		{
+			return Integer.toString(idSample);
 		}
 	}
 	
@@ -375,43 +368,46 @@ public class GmmlGex {
 		
 		data = new HashMap<String, RefData>();
 		for(String id : ids)
-		{			 
-			RefData refData = new RefData(id);
-			refData.samples = samples;
-			data.put(id, refData);
-			
+		{			 			
 			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id);
-			for(String ensId : ensIds)
-			{				
-				try {					
-					ResultSet r = con.createStatement().executeQuery(
-							"SELECT id, data, idSample FROM expression " +
-							" WHERE ensId = '" + ensId + "'");
-
-					while(r.next())
-					{						 
-						String[] data = new String[3];
-						int idSample = r.getInt(3);
-						if(refData.sampleData.containsKey(idSample))
-						{
-							data[0] = r.getString(1);
-							data[1] = ensId;
-							data[2] = r.getString(2);
-							refData.sampleData.get(idSample).add(data);
+			if(ensIds.size() > 0)
+			{
+				RefData refData = new RefData(id);
+				refData.samples = samples;
+				data.put(id, refData);
+				
+				for(String ensId : ensIds)
+				{				
+					try {					
+						ResultSet r = con.createStatement().executeQuery(
+								"SELECT id, data, idSample FROM expression " +
+								" WHERE ensId = '" + ensId + "'");
+						
+						while(r.next())
+						{						 
+							String[] data = new String[3];
+							int idSample = r.getInt(3);
+							if(refData.sampleData.containsKey(idSample))
+							{
+								data[0] = r.getString(1);
+								data[1] = ensId;
+								data[2] = r.getString(2);
+								refData.sampleData.get(idSample).add(data);
+							}
+							else
+							{
+								ArrayList<String[]> d = new ArrayList<String[]>();
+								data[0] = r.getString(1);
+								data[1] = ensId;
+								data[2] = r.getString(2);
+								d.add(data);
+								refData.sampleData.put(idSample, d);
+							}						
 						}
-						else
-						{
-							ArrayList<String[]> d = new ArrayList<String[]>();
-							data[0] = r.getString(1);
-							data[1] = ensId;
-							data[2] = r.getString(2);
-							d.add(data);
-							refData.sampleData.put(idSample, d);
-						}						
+					} catch (Exception e)
+					{
+						e.printStackTrace();
 					}
-				} catch (Exception e)
-				{
-					e.printStackTrace();
 				}
 			}
 			if(cacheThread.isInterrupted)
@@ -611,7 +607,7 @@ public class GmmlGex {
 		closeGmGex();
 		close();
 		
-		setGexReadOnly(true);
+//		setGexReadOnly(true);
 		
 		convertThread.progress = 100;
 	}
@@ -641,6 +637,9 @@ public class GmmlGex {
 			String file = gexFile.getAbsolutePath().toString();
 			con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
 					file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
+			
+//			System.out.println(con.isReadOnly());
+			con.setReadOnly(true);
 		} catch(Exception e) {
 			System.out.println ("Error: " +e.getMessage());
 			e.printStackTrace();
@@ -767,7 +766,8 @@ public class GmmlGex {
 					"CREATE CACHED TABLE				" +
 					"		colorSets					" +
 					"(	colorSetId INTEGER PRIMARY KEY,	" +
-					"	name VARCHAR(50)	)");
+					"	name VARCHAR(50)," +
+					"	criterion VARCHAR(100)	)");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSetObjects				" +

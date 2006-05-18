@@ -258,11 +258,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		Font f = new Font(e.display, "ARIAL", fontSize, SWT.NONE);
-		
-		buffer.setFont (f);
-		
-		Point textSize = buffer.textExtent (geneID);
+
 		
 		Color c;
 		if (isSelected)
@@ -274,32 +270,11 @@ public class GmmlGeneProduct extends GmmlGraphics
 			c = new Color (e.display, this.color);
 		}
 		
-//		Color cFill = new Color(e.display, this.fillColor);
-//		if(canvas.colorSetIndex > -1)
-//		{
-//			RGB rgb = canvas.gmmlVision.gmmlGex.getGeneColor(name, canvas.colorSetIndex);
-//			if(rgb != null)
-//			{
-//				System.out.println("Drawing in color: " + rgb);
-//				cFill = new Color(e.display, rgb);
-//			}
-//		}
-//
-//		buffer.setBackground (cFill);
-//		
-//		buffer.fillRectangle(
-//				(int)(centerx - width / 2),
-//				(int)(centery - height / 2),
-//				(int)width,
-//				(int)height
-//			);
-		
 		buffer.setForeground(c);
 		buffer.setLineStyle (SWT.LINE_SOLID);
 		buffer.setLineWidth (1);
 		
-		gpColor.draw(e, buffer);
-
+		
 		buffer.drawRectangle (
 			(int)(centerx - width / 2),
 			(int)(centery - height / 2),
@@ -308,20 +283,20 @@ public class GmmlGeneProduct extends GmmlGraphics
 		);
 		
 		buffer.setClipping (
-				(int)(centerx - width / 2) - 1,
-				(int)(centery - height / 2) - 1,
+				(int)(centerx - width / 2) + 1,
+				(int)(centery - height / 2) + 1,
 				(int)width - 1,
 				(int)height - 1
 			);
-		buffer.setForeground(c);
-		buffer.drawString (geneID, 
-			(int) centerx - (textSize.x / 2) , 
-			(int) centery - (textSize.y / 2), true);
+
+//		Rectangle clip = getBounds();
+//		buffer.setClipping(clip.x + 1, clip.y + 1, clip.width - 1, clip.height - 1);
+		
+		gpColor.draw(e, buffer);
 		
 		Region r = null;
 		buffer.setClipping(r);
 		
-		f.dispose();
 		c.dispose();
 //		cFill.dispose();
 		
@@ -355,9 +330,9 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	protected Rectangle getBounds()
 	{
-		Rectangle2D rect = new Rectangle2D.Double(
-				centerx - width/2, centery - height/2, width, height);
-		return rect.getBounds();
+		Rectangle rect = new Rectangle(
+				(int)(centerx - width/2), (int)(centery - height/2), (int)width, (int)height);
+		return rect;
 	}
 	
 	/*

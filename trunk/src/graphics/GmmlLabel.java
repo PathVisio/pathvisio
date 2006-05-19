@@ -165,6 +165,7 @@ public class GmmlLabel extends GmmlGraphics
 	{
 		this.centerx = x;
 		this.centery = y;
+		setHandleLocation();
 	}
 	
 	/**
@@ -216,16 +217,12 @@ public class GmmlLabel extends GmmlGraphics
 	
 	protected void disposeTextControl()
 	{
-		Rectangle rp = getBounds();
 		
 		text = t.getText();
 		t.setVisible(false);
 		t.dispose();
-
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		
+		markDirty();
 	}
 	
 	protected void createJdomElement(Document doc) {
@@ -249,6 +246,7 @@ public class GmmlLabel extends GmmlGraphics
 		height		*= factor;
 		fontSizeDouble *= factor;
 		fontSize = (int)fontSizeDouble;
+		setHandleLocation();
 	}
 
 	/*
@@ -292,7 +290,6 @@ public class GmmlLabel extends GmmlGraphics
 		
 		f.dispose();
 		
-		setHandleLocation();
 	}
 	
 	protected void draw(PaintEvent e)
@@ -309,7 +306,7 @@ public class GmmlLabel extends GmmlGraphics
 		markDirty();
 		setLocation(centerx  + dx, centery + dy);
 		markDirty();
-
+		setHandleLocation();
 	}
 
 	/**
@@ -369,7 +366,7 @@ public class GmmlLabel extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
+		markDirty();
 		
 		text		= (String)propItems.get(attributes.get(0));
 		centerx		= (Double)propItems.get(attributes.get(1));
@@ -383,10 +380,8 @@ public class GmmlLabel extends GmmlGraphics
 		color		= (RGB)propItems.get(attributes.get(9));
 		notes		= (String)propItems.get(attributes.get(10));
 		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/**

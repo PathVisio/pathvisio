@@ -40,7 +40,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
-	Vector<GmmlDrawingObject> drawingObjects;
+	TreeSet<GmmlDrawingObject> drawingObjects;
+//	ArrayList<GmmlDrawingObject> drawingObjects;
 	
 	GmmlDrawingObject pressedObject	= null;	
 	
@@ -92,7 +93,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	{
 		super (parent, style);
 		
-		drawingObjects	= new Vector<GmmlDrawingObject>();
+		drawingObjects	= new TreeSet<GmmlDrawingObject>();
 //		graphics		= new Vector<GmmlGraphics>();
 //		handles			= new Vector();
 		
@@ -132,7 +133,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	 */
 	public void addElement(GmmlDrawingObject o)
 	{
-		drawingObjects.addElement(o);
+		drawingObjects.add(o);
 	
 //		if(o instanceof GmmlHandle)
 //		{
@@ -302,6 +303,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
 			Iterator it = drawingObjects.iterator();
+			// drawingObjects is a sortedSet, so Guaranteed ordered checking
 			while (it.hasNext())
 			{
 				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
@@ -375,20 +377,24 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		
 		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
 		
-		PriorityQueue<GmmlDrawingObject> p = new PriorityQueue<GmmlDrawingObject>();
+		//PriorityQueue<GmmlDrawingObject> p = new PriorityQueue<GmmlDrawingObject>();
 		
+		
+		// drawingObjects is a sortedSet, so Guaranteed ordered drawing
 		for(GmmlDrawingObject o : drawingObjects)
 		{
 			if(o.intersects(r))
-				p.offer(o);
+			{
+				o.draw (e, buffer);
+			}
 		}
 
-		GmmlDrawingObject o = p.poll();
-		while(o != null)
-		{
-			o.draw(e, buffer);
-			o = p.poll();
-		}
+//		GmmlDrawingObject o = p.poll();
+//		while(o != null)
+//		{
+//			o.draw(e, buffer);
+//			o = p.poll();
+//		}
 		org.eclipse.swt.graphics.Rectangle rswt = legend.getBounds();
 		if(r.intersects(rswt.x, rswt.y, rswt.width, rswt.height) && colorSetIndex > -1)
 		{
@@ -655,16 +661,16 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		gmmlVision.deselectNewItemActions();
 	}
 	
-	public static final int DRAW_ORDER_SELECTED = -1;
-	public static final int DRAW_ORDER_SELECTIONBOX = 0;
-	public static final int DRAW_ORDER_HANDLE = 1;
-	public static final int DRAW_ORDER_GENEPRODUCT = 2;
-	public static final int DRAW_ORDER_LABEL = 3;
-	public static final int DRAW_ORDER_LINE = 4;
-	public static final int DRAW_ORDER_ARC = 5;
-	public static final int DRAW_ORDER_BRACE = 6;
-	public static final int DRAW_ORDER_LINESHAPE = 7;
-	public static final int DRAW_ORDER_SHAPE = 8;
+	public static final int DRAW_ORDER_HANDLE = 0;
+	public static final int DRAW_ORDER_SELECTIONBOX = 1;
+	public static final int DRAW_ORDER_SELECTED = 2;
+	public static final int DRAW_ORDER_GENEPRODUCT = 3;
+	public static final int DRAW_ORDER_LABEL = 4;
+	public static final int DRAW_ORDER_LINE = 5;
+	public static final int DRAW_ORDER_ARC = 6;
+	public static final int DRAW_ORDER_BRACE = 7;
+	public static final int DRAW_ORDER_LINESHAPE = 8;
+	public static final int DRAW_ORDER_SHAPE = 9;
 	
 	
 	

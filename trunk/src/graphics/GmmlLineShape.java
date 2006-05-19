@@ -178,6 +178,7 @@ public class GmmlLineShape extends GmmlGraphics
 		starty	*= factor;
 		endx	*= factor;
 		endy	*= factor;
+		setHandleLocation();
 	}
 
 	/*
@@ -280,8 +281,6 @@ public class GmmlLineShape extends GmmlGraphics
 		{
 			buffer.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
 		}
-
-		setHandleLocation();
 	}
 	
 	protected void draw(PaintEvent e)
@@ -347,7 +346,10 @@ public class GmmlLineShape extends GmmlGraphics
 	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty();
 		setLocation(startx + dx, starty + dy, endx + dx, endy + dy);
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/*
@@ -356,9 +358,12 @@ public class GmmlLineShape extends GmmlGraphics
 	 */
 	protected void moveLineStart(double dx, double dy)
 	{
+		markDirty();
 		startx += dx;
 		starty += dy;	
 //		constructLine();
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/*
@@ -367,9 +372,12 @@ public class GmmlLineShape extends GmmlGraphics
 	 */
 	protected void moveLineEnd(double dx, double dy)
 	{
+		markDirty();
 		endx += dx;
-		endy += dy;		
+		endy += dy;	
+		markDirty();
 //		constructLine();
+		setHandleLocation();
 	}
 	
 	public List getAttributes() {
@@ -394,7 +402,7 @@ public class GmmlLineShape extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
+		markDirty();
 		
 		startx		= (Double)propItems.get(attributes.get(0));
 		starty		= (Double)propItems.get(attributes.get(1));
@@ -404,10 +412,8 @@ public class GmmlLineShape extends GmmlGraphics
 		color 		= (RGB)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
 		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		markDirty();
+		setHandleLocation();
 	}
 
 	/**

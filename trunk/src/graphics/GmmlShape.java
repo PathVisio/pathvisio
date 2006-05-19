@@ -133,6 +133,7 @@ public class GmmlShape extends GmmlGraphics
 	{
 		centerx = x;
 		centery = y;
+		setHandleLocation();
 	}
 	
 	/**
@@ -173,6 +174,7 @@ public class GmmlShape extends GmmlGraphics
 		centery *= factor;
 		width 	*= factor;
 		height	*= factor;
+		setHandleLocation();
 	}
 	/*
 	 * (non-Javadoc)
@@ -215,12 +217,6 @@ public class GmmlShape extends GmmlGraphics
 				(int)(2*height)
 			);
 		}
-				
-		setHandleLocation();
-		
-		// NOTE: removed as well.
-		//~ // reset rotation		
-		//~ g2D.rotate(-Math.toRadians(rotation), (centerx), (centery));
 	}
 	
 	protected void draw(PaintEvent e)
@@ -271,6 +267,7 @@ public class GmmlShape extends GmmlGraphics
 		markDirty();
 		setLocation(centerx + dx, centery + dy);
 		markDirty();
+		setHandleLocation();
 
 		// NOTE: disabled moving of connecting linehandles
 		// TODO: make this feature optional
@@ -294,7 +291,10 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void resizeX(double dx)
 	{
+		markDirty();
 		width = Math.abs(width + dx);
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/*
@@ -303,7 +303,10 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void resizeY(double dy)
 	{
+		markDirty();
 		height = Math.abs(height - dy);		
+		markDirty();
+		setHandleLocation();
 	}
 	
 	public List getAttributes() {
@@ -328,8 +331,7 @@ public class GmmlShape extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
-		
+		markDirty();
 		centerx		= (Double)propItems.get(attributes.get(0));
 		centery		= (Double)propItems.get(attributes.get(1));
 		width		= (Double)propItems.get(attributes.get(2));
@@ -337,12 +339,9 @@ public class GmmlShape extends GmmlGraphics
 		type		= (Integer)propItems.get(attributes.get(4));
 		color 		= (RGB)propItems.get(attributes.get(5));
 		rotation	= (Double)propItems.get(attributes.get(6));
-		notes		= (String)propItems.get(attributes.get(7));
-		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		notes		= (String)propItems.get(attributes.get(7));		
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/**

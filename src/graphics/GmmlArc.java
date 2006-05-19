@@ -143,8 +143,7 @@ public class GmmlArc extends GmmlGraphics
 	{
 		this.startx = x;
 		this.starty = y;
-		
-		
+		setHandleLocation();
 	}
 
 	/**
@@ -185,6 +184,7 @@ public class GmmlArc extends GmmlGraphics
 		starty	*= factor;
 		width	*= factor;
 		height	*= factor;
+		setHandleLocation();
 	}
 	
 	/*
@@ -209,9 +209,7 @@ public class GmmlArc extends GmmlGraphics
 		buffer.drawArc((int)(startx-width), (int)(starty-height),
 			(int)(2*width), (int)(2*height),
 			(int)(180 - (rotation * 180 / Math.PI)), 180
-		);
-		
-		setHandleLocation();
+		);		
 	}
 	
 	protected void draw(PaintEvent e)
@@ -265,8 +263,10 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected void resizeX(double dx)
 	{
+		markDirty();
 		width = Math.abs(width + dx);
-		
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/*
@@ -275,8 +275,10 @@ public class GmmlArc extends GmmlGraphics
 	 */
 	protected void resizeY(double dy)
 	{
+		markDirty();
 		height = Math.abs(height + dy);
-		
+		markDirty();
+		setHandleLocation();		
 	}
 	
 	public List getAttributes() {
@@ -301,7 +303,7 @@ public class GmmlArc extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
+		markDirty();
 		
 		startx		= (Double)propItems.get(attributes.get(0));
 		starty		= (Double)propItems.get(attributes.get(1));
@@ -311,10 +313,8 @@ public class GmmlArc extends GmmlGraphics
 		rotation	= (Double)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
 		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		markDirty();
+		setHandleLocation();		
 	}
 
 	/**

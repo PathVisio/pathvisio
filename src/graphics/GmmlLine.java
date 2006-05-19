@@ -215,6 +215,7 @@ public class GmmlLine extends GmmlGraphics
 		endy	*= factor;
 		
 		constructLine();
+		setHandleLocation();
 	}
 
 	/*
@@ -253,7 +254,6 @@ public class GmmlLine extends GmmlGraphics
 			{
 				drawArrowhead(buffer);
 			}
-			setHandleLocation();
 			c.dispose();
 		}	
 	}
@@ -311,6 +311,7 @@ public class GmmlLine extends GmmlGraphics
 		markDirty();
 		setLine(startx + dx, starty + dy, endx + dx, endy + dy);
 		markDirty();		
+		setHandleLocation();
 	}
 	
 	/*
@@ -323,7 +324,8 @@ public class GmmlLine extends GmmlGraphics
 		startx += dx;
 		starty += dy;
 		constructLine();
-		markDirty();		
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/*
@@ -337,7 +339,7 @@ public class GmmlLine extends GmmlGraphics
 		endy += dy;
 		constructLine();
 		markDirty();
-		
+		setHandleLocation();
 	}
 	
 	/**
@@ -446,7 +448,7 @@ public class GmmlLine extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
+		markDirty();
 		
 		startx		= (Double)propItems.get(attributes.get(0));
 		starty		= (Double)propItems.get(attributes.get(1));
@@ -459,10 +461,9 @@ public class GmmlLine extends GmmlGraphics
 		
 		constructLine();
 		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		markDirty();
+		setHandleLocation();
+		
 	}
 
 	/**

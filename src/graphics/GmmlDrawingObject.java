@@ -80,6 +80,15 @@ abstract class GmmlDrawingObject implements Comparable
 	 */
 	protected void moveBy(double dx, double dy) {}
 	
+	/**
+	 * Orders GmmlDrawingObjects by their drawingOrder.
+	 * The comparison is consistent with "equals", i.e. it doesn't return 0 if
+	 * the objects are different, even if their drawing order is the same.
+	 * 
+	 * @param o
+	 * @return
+	 * @throws ClassCastException
+	 */
 	public int compareTo(Object o) throws ClassCastException
 	{
 		if(!(o instanceof GmmlDrawingObject))
@@ -87,15 +96,39 @@ abstract class GmmlDrawingObject implements Comparable
 			throw new ClassCastException("Object is not of type GmmlDrawingObject");
 		}
 		GmmlDrawingObject d = ((GmmlDrawingObject)o);
-		if(isSelected && !d.isSelected && !(d instanceof GmmlHandle))
+		
+		// same object? easy...
+		if (d == this)
+			return 0;
+		
+		int az, bz;
+		az = drawingOrder;
+		bz = d.drawingOrder;
+		
+		if(isSelected)
 		{
-			return 1;
+			az = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}
-		if(d.isSelected && !isSelected && !(this instanceof GmmlHandle))
+		if(d.isSelected)
 		{
-			return -1;
+			bz = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}
-		return d.drawingOrder - drawingOrder; //Lowest index sorted last
+		
+		// note, if the drawing order is equal, that doesn't mean the objects are equal
+		// the construct with hashcodes give objects a defined sort order, even if their
+		// drawing orders are equal.		
+		if (az == bz)
+		{
+			az = hashCode();
+			bz = d.hashCode();		
+		}
+		// there is still a remote possibility that although the objects are not the same,
+		// the hashcode is the same. Even still, we shouldn't return 0.
+		if (az != bz) 
+			return bz - az; 
+		else
+			return -1;				
+		
 	}
 	
 }

@@ -252,6 +252,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		height	*= factor;
 		fontSizeDouble *= factor;
 		fontSize = (int)fontSizeDouble;
+		setHandleLocation();
 	}
 
 	/*
@@ -260,8 +261,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
-
-		
 		Color c;
 		if (isSelected())
 		{
@@ -274,8 +273,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 		buffer.setForeground(c);
 		buffer.setLineStyle (SWT.LINE_SOLID);
-		buffer.setLineWidth (1);
-		
+		buffer.setLineWidth (1);		
 		
 		buffer.drawRectangle (
 			(int)(centerx - width / 2),
@@ -300,7 +298,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		buffer.setClipping(r);
 		
 		c.dispose();
-//		cFill.dispose();		
+//		cFill.dispose();
 	}
 	
 	protected void draw(PaintEvent e)
@@ -325,7 +323,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	protected boolean intersects(Rectangle2D.Double r)
 	{
-		return r.intersects(centerx - width/2, centery - height/2, width, height);
+		return r.intersects(centerx - width/2, centery - height/2, width+1, height+1);
 	}
 	
 	protected Rectangle getBounds()
@@ -394,8 +392,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
-		
+		markDirty();
 		centerx		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterX")));
 		centery		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterY")));
 		width		= (Double)propItems.get(attributes.get(attributes.indexOf("Width")));
@@ -412,10 +409,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		// Update jdom element to store gene id
 		jdomElement.setAttribute("Name", name);
 		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		markDirty();
+		setHandleLocation();
 	}
 
 	/**

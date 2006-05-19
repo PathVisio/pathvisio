@@ -11,9 +11,7 @@ import javax.swing.JComponent;
 
 //~ abstract class GmmlDrawingObject extends JComponent 
 abstract class GmmlDrawingObject implements Comparable
-{
-	private boolean isSelected;
-	
+{	
 	/** 
 	 * mark the area currently occupied by this object for redraw 
 	 */
@@ -22,21 +20,31 @@ abstract class GmmlDrawingObject implements Comparable
 		canvas.addDirtyRect(this);
 	}
 	
+	private boolean isSelected;
+	
+	/**
+	 * Besides setting isSelected, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in selected state
+	 */
 	public void select()
 	{
 		if (!isSelected)
 		{
 			isSelected = true;
-			markDirty();
+			markDirty();			
 		}
 	}
 	
+	/**
+	 * Besides resetting isSelected, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in unselected state
+	 */
 	public void deselect()
 	{
 		if (isSelected)
 		{
 			isSelected = false;
-			markDirty();
+			markDirty();			
 		}
 	}
 	
@@ -45,7 +53,7 @@ abstract class GmmlDrawingObject implements Comparable
 		return isSelected;
 	}
 	
-	int drawingOrder = 2;
+	int drawingOrder = GmmlDrawing.DRAW_ORDER_DEFAULT;
 	
 	protected GmmlDrawing canvas;
 	
@@ -105,11 +113,11 @@ abstract class GmmlDrawingObject implements Comparable
 		az = drawingOrder;
 		bz = d.drawingOrder;
 		
-		if(isSelected)
+		if(isSelected())
 		{
 			az = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}
-		if(d.isSelected)
+		if(d.isSelected())
 		{
 			bz = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}

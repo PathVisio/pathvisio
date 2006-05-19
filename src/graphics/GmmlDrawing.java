@@ -21,7 +21,6 @@ import org.eclipse.swt.*;
 
 import data.GmmlGex.ConvertThread;
 
-
 /**
  * This class implements and handles a drawing.
  * GmmlGraphics objects are stored in the drawing and can be 
@@ -40,8 +39,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
-	TreeSet<GmmlDrawingObject> drawingObjects;
-//	ArrayList<GmmlDrawingObject> drawingObjects;
+	ArrayList<GmmlDrawingObject> drawingObjects;
 	
 	GmmlDrawingObject pressedObject	= null;	
 	
@@ -93,7 +91,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	{
 		super (parent, style);
 		
-		drawingObjects	= new TreeSet<GmmlDrawingObject>();
+		drawingObjects	= new ArrayList<GmmlDrawingObject>();
 //		graphics		= new Vector<GmmlGraphics>();
 //		handles			= new Vector();
 		
@@ -302,6 +300,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		if(!editMode) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
+			Collections.sort(drawingObjects);
 			Iterator it = drawingObjects.iterator();
 			// drawingObjects is a sortedSet, so Guaranteed ordered checking
 			while (it.hasNext())
@@ -376,11 +375,9 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 //		buffer.drawRectangle(e.x, e.y, e.width, e.height);
 		
 		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
-		
-		//PriorityQueue<GmmlDrawingObject> p = new PriorityQueue<GmmlDrawingObject>();
-		
-		
-		// drawingObjects is a sortedSet, so Guaranteed ordered drawing
+		    	
+		Collections.sort(drawingObjects);
+		    	    	 
 		for(GmmlDrawingObject o : drawingObjects)
 		{
 			if(o.intersects(r))
@@ -481,11 +478,16 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		Point2D p = new Point2D.Double(e.x, e.y);
 		
 		pressedObject = null;
+		Collections.sort(drawingObjects);
 		for (GmmlDrawingObject o : drawingObjects)
 		{
 			if (o.isContain(p))
 			{
-				pressedObject = o;
+				// select this object, unless it is an invisible gmmlHandle
+				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
+					;
+				else 
+					pressedObject = o;
 			}
 		}
 				
@@ -671,6 +673,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	public static final int DRAW_ORDER_BRACE = 7;
 	public static final int DRAW_ORDER_LINESHAPE = 8;
 	public static final int DRAW_ORDER_SHAPE = 9;
+	public static final int DRAW_ORDER_DEFAULT = 10;
 	
 	
 	

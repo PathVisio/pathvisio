@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -38,13 +39,13 @@ public class GmmlGex {
 	public File gexFile;
 	public File gmGexFile;
 	public GmmlGdb gmmlGdb;
-	public Vector colorSets;
+	public Vector<GmmlColorSet> colorSets;
 	
 	ConvertThread convertThread;
 	
 	public GmmlGex(GmmlGdb gmmlGdb) {
 		this.gmmlGdb = gmmlGdb;
-		colorSets = new Vector();
+		colorSets = new Vector<GmmlColorSet>();
 	}
 	
 	public void setColorSets(Vector colorSets)
@@ -218,13 +219,24 @@ public class GmmlGex {
 	public class RefData
 	{
 		String mappId;
-		public HashMap<Integer, ArrayList> sampleData;
+		public HashMap<Integer, ArrayList<String[]>> sampleData;
 		HashMap<Integer, Sample> samples;
 		
 		public RefData(String mappId)
 		{
 			this.mappId = mappId;
-			sampleData = new HashMap<Integer, ArrayList>();
+			sampleData = new HashMap<Integer, ArrayList<String[]>>();
+		}
+		
+		public ArrayList<String> getRefIds()
+		{
+			int someSample = ((Sample)samples.values().toArray()[0]).idSample;
+			ArrayList<String> refIds = new ArrayList<String>();
+			for(String[] s : sampleData.get(someSample))
+			{
+				refIds.add(s[0]);
+			}
+			return refIds;
 		}
 		
 		public HashMap<Integer, Object> getAvgSampleData()
@@ -305,59 +317,34 @@ public class GmmlGex {
 		return ensIds;
 	}
 	
-	public String getDataString(String id) {
-		String exprInfo = "<P><B>" + id + "</B><TABLE border='1'>";
-		if(con != null && gmmlGdb.con != null) {
-			try 
-			{				
-//				More complicated query, slower (~150 seconds)
-//				ArrayList refs = getCrossRefs(id);
-				ArrayList ensIds = gmmlGdb.ref2EnsIds(id);
-				for(int j = 0; j < ensIds.size(); j++)
-				{
-					ArrayList refs = gmmlGdb.ensId2Refs((String)ensIds.get(j));
-					
-//					StringBuilder ensString = new StringBuilder();
-//					for(int i = 0; i < refs.size(); i++) {
-//					ensString.append("'" + refs.get(i) + "', ");
-//					}
-					
-					for(int i = 0; i < refs.size(); i++) {
-//						More complicated query, slower (~10 seconds)
-//						ResultSet r = conGex.createStatement().executeQuery(
-//						"SELECT id, data, idSample FROM expression " +
-//						"WHERE id IN " +
-//						"( " + ensString.substring(0,ensString.lastIndexOf(", ")) + " )"
-//						);
-						ResultSet r = con.createStatement().executeQuery(
-								"SELECT id, data, idSample FROM expression " +
-								"WHERE id = '" + (String)refs.get(i) + "'"
-						);
-						
-						while(r.next())
-						{
-							String data = r.getString(2);
-							ResultSet rsn = con.createStatement().executeQuery(
-									"SELECT name FROM samples" +
-									" WHERE idSample = " + r.getInt(3));
-							rsn.next();
-							String sampleName = rsn.getString(1);
-							exprInfo += "<TR><TH>" + sampleName +
-							"<TH>" + data;	
-						}
-					}
-					exprInfo += "</TABLE>";
-					return exprInfo;
-				}
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-				return null;
+	public String getDataString(String id)
+	{
+		String exprInfo = "<P><B>Gene id on mapp: " + id + "</B><TABLE border='1'>";
+		
+		String colNames = "<TR><TH>Sample name";
+		RefData refData = null;
+		if(data.containsKey(id))
+		{
+			refData = data.get(id);
+		} else {
+			return "<P><I>No expression data found";
+		}
+		for(String refId : refData.getRefIds())
+		{
+			colNames += "<TH>" + refId;
+		}
+		String dataString = "";
+		for(Sample s : samples.values())
+		{
+			dataString += "<TR><TH>" + s.name;
+			for(String[] data : refData.sampleData.get(s.dataType))
+			{
+				dataString += "<TH>" + data[2];
 			}
 		}
-		return null;
+		
+		return exprInfo + colNames + dataString;
 	}
-
 	
 	public void cacheData(ArrayList<String> ids)
 	{	

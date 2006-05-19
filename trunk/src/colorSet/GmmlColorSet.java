@@ -69,13 +69,10 @@ public class GmmlColorSet {
 		while(it.hasNext())
 		{
 			GmmlColorSetObject gc = (GmmlColorSetObject)it.next();
-			if(gc.useSamples.contains(sampleId))
+			RGB gcRgb = gc.getColor(data, sampleId);
+			if(gcRgb != null)
 			{
-				RGB gcRgb = gc.getColor(data);
-				if(gcRgb != null)
-				{
-					return gcRgb;
-				}
+				return gcRgb;
 			}
 		}
 		return rgb;
@@ -105,8 +102,11 @@ public class GmmlColorSet {
 		{
 			color_no_criteria_met = parseColorString(s[0]);
 			color_gene_not_found= parseColorString(s[1]);
-			useSamples = parseSampleArrayList(s[2]);
-			sampleTypes = parseIntegerArrayList(s[3]);
+			if(s.length > 2)
+			{
+				useSamples = parseSampleArrayList(s[2]);
+				sampleTypes = parseIntegerArrayList(s[3]);
+			}
 //			System.out.println(color_no_criteria_met + "," + color_gene_not_found + "," + useSamples + "," +
 //					sampleTypes);
 		}
@@ -140,12 +140,16 @@ public class GmmlColorSet {
 	
 	public String getArrayListString(ArrayList a)
 	{
-		StringBuilder s = new StringBuilder();
-		for(Object o : a)
+		if(a.size() > 0)
 		{
-			s.append(o.toString() + ",");
+			StringBuilder s = new StringBuilder();
+			for(Object o : a)
+			{
+				s.append(o.toString() + ",");
+			}
+			return s.toString().substring(0, s.lastIndexOf(","));
 		}
-		return s.toString().substring(0, s.lastIndexOf(","));
+		return "";
 	}
 	
 	public ArrayList<Integer> parseIntegerArrayList(String arrayListString)

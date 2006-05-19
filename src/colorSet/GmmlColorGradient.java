@@ -9,6 +9,8 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 
+import data.GmmlGex.Sample;
+
 public class GmmlColorGradient extends GmmlColorSetObject {
 	private int dataColumn;
 	public RGB colorStart;
@@ -34,7 +36,17 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	{
 		useSamples = new ArrayList<Integer>();
 		this.dataColumn = dataColumn;
-		useSamples.add(dataColumn);
+		if(dataColumn > -1)
+		{
+			useSamples.add(dataColumn);
+		}
+		else
+		{
+			for(Sample s : parent.useSamples)
+			{
+				useSamples.add(s.idSample);
+			}
+		}
 	}
 	
 	public int getDataColumn()
@@ -64,10 +76,15 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		return rgb;
 	}
 	
-	public RGB getColor(HashMap<Integer, Object> data)
+	public RGB getColor(HashMap<Integer, Object> data, int idSample)
 	{
+		int useSample = dataColumn;
+		if(dataColumn == -1)
+		{
+			useSample = idSample;
+		}
 		try {
-			double value = (Double)data.get(dataColumn);
+			double value = (Double)data.get(useSample);
 			return getColor(value);
 		} catch(NullPointerException ne) {
 			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");

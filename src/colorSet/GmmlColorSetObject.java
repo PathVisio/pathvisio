@@ -21,7 +21,7 @@ public abstract class GmmlColorSetObject {
 		parseCriterionString(criterion);
 	}
 	
-	abstract RGB getColor(HashMap<Integer, Object> data);
+	abstract RGB getColor(HashMap<Integer, Object> data, int idSample);
 	
 	abstract GmmlColorSet getParent();
 	

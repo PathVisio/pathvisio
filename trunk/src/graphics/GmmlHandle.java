@@ -19,7 +19,15 @@ import org.eclipse.swt.*;
 class GmmlHandle extends GmmlDrawingObject
 {
 	private static final long serialVersionUID = 1L;
-
+	
+	/** because isSelected really doesn't make sense for GmmlHandles, 
+	 * I added this variable isVisible. It should be set automatically by its parent
+	 * through calls of show() and hide()
+	 */
+	private boolean isVisible = false;
+	
+	int type = 0;
+	// possible types:
 	public static final int HANDLETYPE_CENTER		= 0;
 	public static final int HANDLETYPE_WIDTH		= 1;
 	public static final int HANDLETYPE_HEIGHT		= 2;
@@ -33,14 +41,7 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	double centerx;
 	double centery;
-	
-	int type = 0;
-	// types:
-	// 0: center
-	// 1: width
-	// 2: height
-	// 3: line start 
-	
+		
 	Rectangle2D rect;
 	boolean visible;
 	
@@ -68,10 +69,50 @@ class GmmlHandle extends GmmlDrawingObject
 		centery = y;
 		markDirty();
 	}
-
+	
+	/**
+	 * returns the visibility of this handle
+	 * @see hide(), show()
+	 */
+	public boolean isVisible()
+	{
+		return isVisible;
+	}
+	
+	/*
+	 * call show() to cause this handle to show up and mark its area dirty 
+	 * A handle should show itself only if it's parent object is active / selected
+	 * @see hide(), isvisible()
+	 */
+	public void show()
+	{
+		if (!isVisible)
+		{
+			isVisible = true;
+			markDirty();
+		}
+	}
+	
+	/*
+	 * hide handle, and also mark its area dirty
+	 * @see show(), isvisible()
+	 */
+	public void hide()
+	{
+		if (isVisible)
+		{
+			isVisible = false;
+			markDirty();
+		}
+	}
+	
+	/**
+	 * draws itself, but only if isVisible() is true, there is 
+	 * no need for a check for isVisible() before calling draw().
+	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		if (parent.isSelected())
+		if (isVisible)
 		{
 			constructRectangle();
 			buffer.setLineWidth (1);
@@ -100,6 +141,11 @@ class GmmlHandle extends GmmlDrawingObject
 		return rect.contains(p);
 	}
 	
+	/**
+	 * Unlike moveBy methods of most other GmmlDrawingObjects, not the object itself
+	 * but its parent is moved, and the movement may affect position, width or height of the
+	 * parent object depending on the handle type.
+	 */
 	protected void moveBy(double dx, double dy)
 	{
 		if (type == HANDLETYPE_CENTER)
@@ -124,6 +170,7 @@ class GmmlHandle extends GmmlDrawingObject
 		}
 	}
 	
+	// TODO: Check this method, it doesn't make much sense ~ Martijn 
 	protected boolean intersects(Rectangle2D.Double r)
 	{	
 		return parent.isSelected();

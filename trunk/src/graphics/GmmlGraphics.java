@@ -49,6 +49,24 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 	 * @param factor - the factor to scale the objects coordinates and measures with
 	 */
 	
+	public void select()
+	{
+		super.select();
+		for (GmmlHandle h : getHandles())
+		{
+			h.show();
+		}
+	}
+	
+	public void deselect()
+	{
+		super.deselect();
+		for (GmmlHandle h : getHandles())
+		{
+			h.hide();
+		}
+	}
+	
 	abstract Vector<GmmlHandle> getHandles();
 	
 	abstract void adjustToZoom(double factor);

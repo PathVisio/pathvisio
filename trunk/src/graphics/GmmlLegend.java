@@ -238,16 +238,22 @@ public class GmmlLegend extends Composite implements MouseListener,
 			int nr = colorSet.useSamples.size();
 			GC imageGc = new GC(sampleImage);
 			imageGc.setFont(f);
-			imageSize.x -= 1;
-			imageSize.y -= 1;
 			String exampleId = "Gene ID";
 			Point stringSize = imageGc.textExtent(exampleId);
-			Rectangle drawArea = new Rectangle(imageSize.x / 2, 0, imageSize.x /2, imageSize.y);
-			imageGc.drawString(exampleId, drawArea.x / 2 - stringSize.x / 2, imageSize.y / 2 - stringSize.y / 2 );
-			imageGc.drawRectangle(0, 0, imageSize.x / 2, imageSize.y);
+			
+			Rectangle drawArea = sampleImage.getBounds();
+			drawArea.height -= 1;
+			drawArea.width = (int)Math.ceil(GmmlGpColor.COLOR_AREA_RATIO * drawArea.width);
+			drawArea.width -= drawArea.width % nr;
+
+			int w = sampleImage.getBounds().width - drawArea.width;
+			imageGc.drawString(exampleId, w / 2 - stringSize.x / 2, drawArea.height / 2 - stringSize.y / 2 );
+			imageGc.drawRectangle(0, 0, w - 1, drawArea.height);
+			
+			drawArea.x += w - 1;
 			for(int i = 0; i < nr; i++)
 			{
-				Rectangle r = new Rectangle(drawArea.x + drawArea.width * i / nr,
+				Rectangle r = new Rectangle(drawArea.x + i * drawArea.width / nr,
 						drawArea.y, drawArea.width / nr, drawArea.height);
 				imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				imageGc.drawRectangle(r.x, r.y, r.width, r.height);
@@ -255,6 +261,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 				imageGc.drawString(Integer.toString(i + 1), r.x + r.width / 2 - numberSize.x / 2,
 						r.height / 2 - numberSize.y / 2, true);
 			}
+			
 			imageGc.dispose();
 			f.dispose();
 		}		

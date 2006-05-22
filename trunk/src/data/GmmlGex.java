@@ -320,6 +320,7 @@ public class GmmlGex {
 	
 	public String getDataString(String id)
 	{
+		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + id + "</B><TABLE border='1'>";
 		
 		String colNames = "<TR><TH>Sample name";
@@ -328,7 +329,11 @@ public class GmmlGex {
 		{
 			refData = data.get(id);
 		} else {
-			return "<P><I>No expression data found";
+			return noDataFound;
+		}
+		if(refData.sampleData == null)
+		{
+			return noDataFound;
 		}
 		for(String refId : refData.getRefIds())
 		{
@@ -338,9 +343,12 @@ public class GmmlGex {
 		for(Sample s : samples.values())
 		{
 			dataString += "<TR><TH>" + s.name;
-			for(String[] data : refData.sampleData.get(s.dataType))
+			if(refData.sampleData.get(s.idSample) != null)
 			{
-				dataString += "<TH>" + data[2];
+				for(String[] data : refData.sampleData.get(s.idSample))
+				{
+					dataString += "<TH>" + data[2];
+				}
 			}
 		}
 		
@@ -388,6 +396,7 @@ public class GmmlGex {
 								data[0] = r.getString(1);
 								data[1] = ensId;
 								data[2] = r.getString(2);
+								System.out.println(data[2]);
 								d.add(data);
 								refData.sampleData.put(idSample, d);
 							}						

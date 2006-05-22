@@ -13,10 +13,10 @@ import data.GmmlGex.Sample;
 
 public class GmmlColorSet {
 	public static String[] SAMPLE_TYPES = {"undefined", "transcriptomics", "proteomics", "p-value"};
-	public static int SAMPLE_TYPE_UNDEF = 0;
-	public static int SAMPLE_TYPE_TRANS = 1;
-	public static int SAMPLE_TYPE_PROT	= 2;
-	public static int SAMPLE_TYPE_PVALUE= 3;
+	public static final int SAMPLE_TYPE_UNDEF = 0;
+	public static final int SAMPLE_TYPE_TRANS = 1;
+	public static final int SAMPLE_TYPE_PROT	= 2;
+	public static final int SAMPLE_TYPE_PVALUE= 3;
 	
 	public static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
 	public static RGB COLOR_NO_GENE_FOUND = new RGB(255, 255, 255);

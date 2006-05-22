@@ -13,12 +13,15 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
@@ -33,7 +36,7 @@ public class GmmlGpColor {
 	// Parent
 	//	-> GmmlGeneProduct
 	// 
-	
+		
 	GmmlGdb gmmlGdb;
 	GmmlGex gmmlGex;
 	GmmlGeneProduct parent;
@@ -55,7 +58,7 @@ public class GmmlGpColor {
 		gmmlGex = canvas.gmmlVision.gmmlGex;
 	}
 	
-	private static final double COLOR_AREA_RATIO = 0.5;
+	public static final double COLOR_AREA_RATIO = 0.5;
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
@@ -68,9 +71,12 @@ public class GmmlGpColor {
 		{
 			// Get visualization area
 			Rectangle colorArea = parent.getBounds();
-			colorArea.width = (int)(COLOR_AREA_RATIO * colorArea.width);
-//			colorArea.width = (int)(colorArea.width / 2);
-			colorArea.x = colorArea.x + colorArea.width;
+			colorArea.width = (int)Math.ceil(COLOR_AREA_RATIO * colorArea.width);
+			// Adjust width to enable to divide into nrSamples equal rectangles
+			GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
+			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
+			// Get x position
+			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			
 			if(gmmlGex.data.containsKey(parent.name))
 			{
@@ -80,7 +86,7 @@ public class GmmlGpColor {
 			{				
 				colorByGeneNotFound(e, buffer, c, colorArea);
 			}
-			drawLabel(e, buffer, c, f);
+			drawLabel(e, buffer, c, f, colorArea);
 			
 		} else {			
 			buffer.setFont (f);
@@ -97,16 +103,19 @@ public class GmmlGpColor {
 		f.dispose();
 	}
 	
-	private void drawLabel(PaintEvent e, GC buffer, Color c, Font f)
+	private void drawLabel(PaintEvent e, GC buffer, Color c, Font f, Rectangle colorArea)
 	{
 		Point textSize = null;
 		Rectangle r = parent.getBounds();
-		r.width = (int)((1 - COLOR_AREA_RATIO) * r.width);
+		r.width -= colorArea.width;
 
-		f = new Font(e.display, "ARIAL", (int)((1 - COLOR_AREA_RATIO) * parent.fontSize), SWT.NONE);
-		buffer.setFont (f);
+		int fontSize = (int)(parent.fontSize * (double)r.width / parent.getBounds().width);
+//		 TODO: find optimal fontsize
+		fontSize += 2;
+		f = new Font(e.display, "Arial narrow", fontSize, SWT.NONE);
+		buffer.setFont(f);
 		textSize = buffer.textExtent (parent.geneID);
-		
+
 		c = new Color(e.display, parent.color);
 		buffer.setForeground(c);
 		buffer.drawString (parent.geneID, 
@@ -124,6 +133,10 @@ public class GmmlGpColor {
 		buffer.fillRectangle(colorArea.x, colorArea.y, colorArea.width, colorArea.height);
 	}
 	
+	public static int SAMPLE_TYPE_UNDEF = 0;
+	public static int SAMPLE_TYPE_TRANS = 1;
+	public static int SAMPLE_TYPE_PROT	= 2;
+	public static int SAMPLE_TYPE_PVALUE= 3;
 	private void colorByData(PaintEvent e, GC buffer, Color c, Rectangle colorArea)
 	{
 		RGB rgb = null;
@@ -133,11 +146,13 @@ public class GmmlGpColor {
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
 		
 		int nr = cs.useSamples.size();
+		int width = colorArea.width / nr;
 		for(int i = 0; i < nr; i++)
 		{
 			// Get sub-rectangle
-			Rectangle r = new Rectangle(colorArea.x + colorArea.width * i / nr,
-					colorArea.y, colorArea.width / nr, colorArea.height);
+			int x = colorArea.x + width * i;
+			Rectangle r = new Rectangle(x,
+					colorArea.y, width, colorArea.height);
 			// Get the color
 			c = new Color(e.display, cs.color_gene_not_found);
 			rgb = cs.getColor(data, cs.useSamples.get(i).idSample);
@@ -148,17 +163,23 @@ public class GmmlGpColor {
 			buffer.setBackground(c);
 			
 			// Visualize according column type
-//			switch(cs.sampleTypes.get(i))
-//			{
-//			case GmmlColorSet.SAMPLE_TYPE_PROT:
-//			case GmmlColorSet.SAMPLE_TYPE_TRANS:
-//			case GmmlColorSet.SAMPLE_TYPE_PVALUE:
-//			case GmmlColorSet.SAMPLE_TYPE_UNDEF:
-//			r.grow(1,1);
-			buffer.fillRectangle(r.x, r.y, r.width, r.height);
-			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_DARK_GRAY));
-			buffer.drawRectangle(r.x, r.y, r.width, r.height);
-//			}
+			
+			switch(cs.sampleTypes.get(i))
+			{
+			case GmmlColorSet.SAMPLE_TYPE_PROT:
+				Image image = parent.canvas.gmmlVision.imageRegistry.get("data.protein");
+				drawDataTypeImage(e, buffer, image, r);
+				break;
+			case GmmlColorSet.SAMPLE_TYPE_TRANS:
+				image = parent.canvas.gmmlVision.imageRegistry.get("data.mRNA");
+				drawDataTypeImage(e, buffer, image, r);
+				break;
+			case GmmlColorSet.SAMPLE_TYPE_PVALUE:
+			case GmmlColorSet.SAMPLE_TYPE_UNDEF:
+				buffer.fillRectangle(r.x, r.y, r.width, r.height);
+				buffer.setForeground(e.display.getSystemColor(SWT.COLOR_DARK_GRAY));
+				buffer.drawRectangle(r.x, r.y, r.width, r.height);
+			}
 		}
 		
 		Rectangle r = parent.getBounds();
@@ -169,13 +190,25 @@ public class GmmlGpColor {
 			Region noClipping = null;
 			buffer.setClipping(noClipping);
 			
-			buffer.setForeground(new Color(e.display, new RGB(255, 0, 0)));
+			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 			int oldLineWidth = buffer.getLineWidth();
 			buffer.setLineWidth(2);
 			buffer.drawRectangle(r.x + 1, r.y + 1, r.width - 1, r.height - 1);
 			buffer.setLineWidth(oldLineWidth);
 			
 			buffer.setClipping(clip);
+		}
+	}
+	
+	protected void drawDataTypeImage(PaintEvent e, GC buffer, Image image, Rectangle r)
+	{
+		buffer.fillRectangle(r.x, r.y, r.width, r.height);
+		if(image != null)
+		{
+			ImageData imgData = image.getImageData();
+			
+			buffer.drawImage(image, 0, 0, imgData.width, imgData.height, 
+					r.x, r.y, r.width, r.height);
 		}
 	}
 	

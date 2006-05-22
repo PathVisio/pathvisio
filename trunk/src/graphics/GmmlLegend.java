@@ -33,7 +33,10 @@ import colorSet.*;
 import data.*;
 import data.GmmlGex.Sample;
 
-public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListener, PaintListener {
+public class GmmlLegend extends Composite implements MouseListener, 
+													 MouseMoveListener, 
+													 PaintListener 
+													 {
 	
 	GmmlDrawing drawing;
 	GmmlGex gmmlGex;
@@ -98,7 +101,6 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 		
 		GridData gGrid = new GridData(GridData.FILL_BOTH);
 		gGrid.heightHint = 200;
-//		gGrid.widthHint = 100;
 		gg.setLayoutData(gGrid);
 		cg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 		sg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -111,7 +113,7 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 		gg.setLayout(new FillLayout());
 		cg.setLayout(new FillLayout());
 		sg.setLayout(new FillLayout());
-
+		
 		title.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		gg.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		cg.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -123,40 +125,42 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 		{
 			controls[i].setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
-		
-		pack();
-		
-//		setSize(110, getSize().y);
+		layout();
 		setVisible(false);
 	}
-	
 
 	Vector<GmmlColorSetObject> colorSetObjects;
 	GmmlColorSet colorSet;
 	public void paintControl (PaintEvent e)
 	{	
-		if(drawing != null) {
-			colorSetIndex = drawing.colorSetIndex;
-			gmmlGex = drawing.gmmlVision.gmmlGex;
-		}
 		if(colorSetIndex > -1)
 		{			
 			Rectangle r = getClientArea();
 			e.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			e.gc.drawRectangle(r.x, r.y, r.width - 1, r.height -1);
-			
-			colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
-			colorSetObjects = colorSet.colorSetObjects;
-			
-			setDiffGradients();
-			setExtremeValues();
-			
-			samples.resetContents();
-			criteria.resetContents();
-			
-			layout();
-			
-			gradients.redraw();
+		}
+	}
+
+	public void resetContents()
+	{
+		if(drawing != null) {
+			colorSetIndex = drawing.colorSetIndex;
+			gmmlGex = drawing.gmmlVision.gmmlGex;
+		}
+		colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
+		colorSetObjects = colorSet.colorSetObjects;
+		
+		setDiffGradients();
+		setExtremeValues();
+		
+		samples.resetContents();
+		criteria.resetContents();
+		gradients.redraw();
+		
+		if(!isCustomSize)
+		{
+			layout(true);
+			pack(true);
 		}
 	}
 	
@@ -176,7 +180,7 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 		{
 			this.legend = legend;
 		}
-				
+		
 		public void resetContents()
 		{			
 			Control[] controls = getChildren();
@@ -186,10 +190,7 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 			}
 			if(legend.colorSetObjects != null)
 			{
-				setSampleImage();
 				Label sampleLabel = new Label(this, SWT.FLAT);
-				sampleLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				sampleLabel.setImage(sampleImage);
 				
 				int i = 0;
 				for(Sample s : colorSet.useSamples)
@@ -198,8 +199,19 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 					Label l = new Label(this, SWT.FLAT);
 					l.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 					l.setText(i + ": " + s.name);
-					l.pack();
+					System.out.println(l.isVisible());
+					System.out.println(l.getBounds());
 				}
+				
+				if(!isCustomSize)
+				{
+					layout(true);
+					pack(true);
+				}
+				setSampleImage();
+				sampleLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+				sampleLabel.setImage(sampleImage);
+				
 				layout();
 			}
 		}
@@ -473,6 +485,7 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	boolean isDragging;
+	boolean isCustomSize;
 	public void mouseDoubleClick(MouseEvent arg0) {	}
 	
 	public void mouseDown(MouseEvent e) {
@@ -521,6 +534,10 @@ public class GmmlLegend extends Canvas implements MouseListener, MouseMoveListen
 				addY = e.y - prevY;
 			}
 			
+			if(addX != 0 || addY != 0)
+			{
+				isCustomSize = true;
+			}
 			Point p = getSize();
 			setSize(p.x + addX, p.y + addY);
 			setLocation(locX, locY);

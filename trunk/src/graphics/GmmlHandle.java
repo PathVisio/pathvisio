@@ -116,6 +116,7 @@ class GmmlHandle extends GmmlDrawingObject
 		{
 			constructRectangle();
 			buffer.setLineWidth (1);
+			buffer.setLineStyle(SWT.LINE_SOLID);
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
 			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLUE));
 			buffer.fillRectangle (

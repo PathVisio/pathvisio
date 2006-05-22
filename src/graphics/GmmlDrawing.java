@@ -179,8 +179,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		} else {
 			legend.resetContents();
 			legend.setVisible(true);
-//			legend.pack();
-//			legend.redraw();
 		}
 		redraw();	
 	}
@@ -299,6 +297,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 			updatePropertyTable(null);
 //			redrawRectangleList(s.getSideAreas());
 			s.markDirty();
+			redrawDirtyRect();
 //			redraw();
 		}
 		isDragging = false;

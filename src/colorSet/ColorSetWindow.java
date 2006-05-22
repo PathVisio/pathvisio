@@ -82,6 +82,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		cgColor2.dispose();
 		
 		gmmlGex.saveColorSets();
+		
 	}
 	
 	TableViewer coTableViewer;

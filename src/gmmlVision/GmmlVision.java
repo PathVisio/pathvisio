@@ -428,6 +428,7 @@ public class GmmlVision extends ApplicationWindow
 				if(drawing != null)
 				{
 					drawing.redraw();
+					drawing.legend.resetContents();
 				}
 			}
 			else
@@ -973,7 +974,6 @@ public class GmmlVision extends ApplicationWindow
 	{		
 		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND);
 		drawing.setGmmlVision(this);
-		drawing.editMode = switchEditModeAction.isChecked();
 		
 		// initialize new JDOM gmml representation and read the file
 		gmmlData = new GmmlData(fnPwy, drawing);
@@ -990,7 +990,11 @@ public class GmmlVision extends ApplicationWindow
 					e.printStackTrace();
 				}
 			}
+			drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
 		}
+		
+		drawing.editMode = switchEditModeAction.isChecked();
+		
 		sc.setContent(drawing);
 		
 	}

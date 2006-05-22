@@ -128,6 +128,7 @@ public class GmmlGex {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 //		setGexReadOnly(true);
 		
 	}

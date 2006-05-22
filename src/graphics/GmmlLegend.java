@@ -139,6 +139,10 @@ public class GmmlLegend extends Composite implements MouseListener,
 			e.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			e.gc.drawRectangle(r.x, r.y, r.width - 1, r.height -1);
 		}
+		else if(isCustomSize)
+		{
+			samples.resetContents();
+		}
 	}
 
 	public void resetContents()
@@ -162,6 +166,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			layout(true);
 			pack(true);
 		}
+		redraw();
 	}
 	
 	private class SampleComposite extends Composite 
@@ -214,6 +219,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 				
 				layout();
 			}
+			
 		}
 		
 		final static int MARGIN = 5;
@@ -432,7 +438,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 			c.dispose();
 			f.dispose();
 		}
-		
 	}
 	
 	private void setExtremeValues()
@@ -538,6 +543,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			{
 				isCustomSize = true;
 			}
+			
 			Point p = getSize();
 			setSize(p.x + addX, p.y + addY);
 			setLocation(locX, locY);

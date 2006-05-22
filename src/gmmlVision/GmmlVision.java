@@ -17,6 +17,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.dialogs.*;
@@ -945,9 +946,29 @@ public class GmmlVision extends ApplicationWindow
 		colorSetWindow = new ColorSetWindow(shell);
 		colorSetWindow.setGmmlGex(gmmlGex);
 
+		loadImages();
+		
 		return parent;
 		
 	};
+	
+	static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
+	public ImageRegistry imageRegistry;
+	void loadImages()
+	{
+		//TODO: put all images and icons in the progam in imageRegistry
+		imageRegistry = new ImageRegistry(getShell().getDisplay());
+		
+		ImageData img = new ImageData("images/mrna.bmp");
+		img.transparentPixel = img.palette.getPixel(TRANSPARENT_COLOR);
+		imageRegistry.put("data.mRNA",
+				new Image(getShell().getDisplay(), img));
+		img = new ImageData("images/protein.bmp");
+		img.transparentPixel = img.palette.getPixel(TRANSPARENT_COLOR);
+		imageRegistry.put("data.protein",
+				new Image(getShell().getDisplay(), img));
+		
+	}
 	
 	/**
 	 * Creates a new empty drawing and loads it in the frame 

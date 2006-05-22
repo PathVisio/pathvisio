@@ -166,7 +166,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		{
 			clearSelection();
 		}
-		legend.setVisible(false);
+		legend.setVisible(!editMode);	
 		redraw();
 	}
 	

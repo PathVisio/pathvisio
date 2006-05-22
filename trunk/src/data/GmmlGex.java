@@ -396,7 +396,6 @@ public class GmmlGex {
 								data[0] = r.getString(1);
 								data[1] = ensId;
 								data[2] = r.getString(2);
-								System.out.println(data[2]);
 								d.add(data);
 								refData.sampleData.put(idSample, d);
 							}						

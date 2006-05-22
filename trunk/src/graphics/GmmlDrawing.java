@@ -107,11 +107,16 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 
 		legend = new GmmlLegend(this, SWT.NONE);
 		legend.setDrawing(this);
-		legend.setLocation(0,0);
 	}
 	
 	public void setGmmlVision(GmmlVision gmmlVision) {
 		this.gmmlVision = gmmlVision;
+	}
+	
+	public void setMappInfo(GmmlMappInfo mappInfo)
+	{
+		this.mappInfo = mappInfo;
+		legend.setLocation(mappInfo.mapInfoLeft, mappInfo.mapInfoTop);
 	}
 	
 	private void calculateSize()

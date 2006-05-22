@@ -45,6 +45,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 	HashMap extremes;
 	boolean isMovable;
 	
+	Point lastFitSize;
+	
 	public GmmlLegend(Composite parent, int style, boolean movable)
 	{
 		super(parent, style);
@@ -145,6 +147,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 		}
 	}
 
+	static final String FONT = "arial narrow";
+	static final int FONTSIZE = 8;
 	public void resetContents()
 	{
 		if(drawing != null) {
@@ -165,6 +169,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 		{
 			layout(true);
 			pack(true);
+			lastFitSize = getSize();
 		}
 		redraw();
 	}
@@ -223,13 +228,14 @@ public class GmmlLegend extends Composite implements MouseListener,
 		}
 		
 		final static int MARGIN = 5;
+		final static int SAMPLE_IMAGE_WIDTH = GmmlGeneProduct.INITIAL_WIDTH;
+		final static int SAMPLE_IMAGE_HEIGHT = GmmlGeneProduct.INITIAL_HEIGHT;
 		public void setSampleImage()
 		{
-			Font f = new Font(getDisplay(), "Arial", 6, SWT.NONE);
+			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
 			
-			int marginY = MARGIN / 5;
-			Point imageSize = new Point(getClientArea().width - 2*MARGIN, 
-					Math.max(15, (int)(getClientArea().width * 0.15)) - 2*marginY);
+			Point imageSize = new Point(Math.min(SAMPLE_IMAGE_WIDTH, getClientArea().width - MARGIN), 
+					SAMPLE_IMAGE_HEIGHT);
 			if(sampleImage != null)
 			{
 				sampleImage.dispose();
@@ -367,7 +373,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 		final static int MARGIN_VERTICAL = 10;
 		final static int MARGIN_HORIZONTAL = 15;
 		final static int MARKER_LENGTH = 4;
-		final static int LABEL_FONT_SIZE = 8;
 		public void drawColorGradient(PaintEvent e, GmmlColorGradient cg, Rectangle r)
 		{
 			Color c = getBackground();
@@ -402,13 +407,14 @@ public class GmmlLegend extends Composite implements MouseListener,
 				double colorValue = cg.valueStart + (i-start) * (cg.valueEnd - cg.valueStart) / n;
 				RGB rgb = cg.getColor(colorValue);
 				if(rgb != null) {
+					c.dispose();
 					c = new Color(getShell().getDisplay(), rgb);
 					e.gc.setBackground(c);
 					e.gc.fillRectangle(xPos, i, BAR_WIDTH, 1);
 				}
 			}
 			
-			Font f = new Font(e.display, "Arial", LABEL_FONT_SIZE, SWT.NONE);
+			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
 			e.gc.setFont(f);
 			
 			int markerCenter = BAR_WIDTH + xPos;
@@ -507,7 +513,10 @@ public class GmmlLegend extends Composite implements MouseListener,
 	}
 	
 	public void mouseUp(MouseEvent arg0) {
-		isDragging = false;	
+		isDragging = false;
+		drawing.mappInfo.mapInfoLeft = getLocation().x;
+		drawing.mappInfo.mapInfoTop = getLocation().y;
+		resetContents();
 	}
 
 	int prevX;

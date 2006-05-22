@@ -57,7 +57,8 @@ public class GmmlData
 		drawing.mappInfo.boardWidth = width;
 		drawing.mappInfo.boardHeight = height;
 		drawing.mappInfo.windowWidth = width;
-		drawing.mappInfo.windowHeight = height;		
+		drawing.mappInfo.windowHeight = height;	
+		drawing.mappInfo.mapInfoLeft = drawing.mappInfo.mapInfoTop = 0;
 	}
 	
 	public GmmlData(String file, GmmlDrawing drawing)
@@ -139,7 +140,7 @@ public class GmmlData
 	public void toGmmlGraphics() {
 		// Get the pathway element
 		Element root = doc.getRootElement();
-		drawing.mappInfo = new GmmlMappInfo(root);
+		drawing.setMappInfo(new GmmlMappInfo(root));
 		
 		drawing.setSize(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);
 		drawing.dims = new Dimension(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);

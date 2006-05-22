@@ -276,7 +276,7 @@ public class GmmlVision extends ApplicationWindow
 		public SelectGdbAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Select Gdb");
+			setText("&Select Gene Database");
 			setToolTipText("Select Gene Database");
 		}
 		
@@ -309,7 +309,7 @@ public class GmmlVision extends ApplicationWindow
 		public SelectGexAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Select Expression data");
+			setText("&Select Expression Data");
 			setToolTipText("Select Expression Data");
 		}
 		
@@ -358,8 +358,8 @@ public class GmmlVision extends ApplicationWindow
 		public ConvertGexAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Convert GenMAPP Gex");
-			setToolTipText("Convert GenMAPP gex to GmmlVisio expression dataset");
+			setText("&Gex to Gmml-Vision");
+			setToolTipText("Convert from GenMAPP 2 Gex to Gmml-Vision Expression Data");
 		}
 		
 		public void run () {
@@ -735,7 +735,10 @@ public class GmmlVision extends ApplicationWindow
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(selectGexAction);
 		dataMenu.add(colorSetManagerAction);
-		dataMenu.add(convertGexAction);
+		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
+		convertMenu.add(convertGexAction);
+		dataMenu.add(convertMenu);
+		
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
 		m.add(fileMenu);
@@ -784,6 +787,7 @@ public class GmmlVision extends ApplicationWindow
 	ToolItem colorSetComboItem;
 	ToolItem colorSetSeparator;
 	ToolItem colorSetManagerButton;
+	ToolItem showLegendSwitch;
 	final static String COMBO_NO_COLORSET = "No colorset";
 	Image colorSetImage;
 	private void showColorSetCombo(boolean show)
@@ -798,6 +802,7 @@ public class GmmlVision extends ApplicationWindow
 				colorSetSeparator.dispose();
 				colorSetComboItem.dispose();
 				colorSetManagerButton.dispose();
+				showLegendSwitch.dispose();
 			}
 			if(colorSetImage == null)
 			{
@@ -844,6 +849,15 @@ public class GmmlVision extends ApplicationWindow
 			{
 				colorSetManagerButton.setImage(colorSetImage);
 			}
+			
+			showLegendSwitch = new ToolItem(toolBar, SWT.CHECK);
+			showLegendSwitch.setText("Show legend");
+			showLegendSwitch.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e)
+				{
+					drawing.legend.setVisible(!drawing.legend.isVisible());
+				}
+			});
 		}
 		else
 		{
@@ -1011,11 +1025,13 @@ public class GmmlVision extends ApplicationWindow
 					e.printStackTrace();
 				}
 			}
-			drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+			drawing.editMode = switchEditModeAction.isChecked();
+			if(!drawing.editMode)
+			{
+				drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+			}
 		}
-		
-		drawing.editMode = switchEditModeAction.isChecked();
-		
+				
 		sc.setContent(drawing);
 		
 	}

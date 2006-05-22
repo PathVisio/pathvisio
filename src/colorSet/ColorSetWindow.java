@@ -418,7 +418,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			sampleTableViewer.setInput(cs);
 			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cs);
 			legend.setVisible(true);
-			legend.redraw();
+			legend.resetContents();
 			sashForm.setMaximizedControl(csComposite);
 			topSash.layout();
 			return;
@@ -437,7 +437,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			sashForm.setMaximizedControl(cgComposite);
 			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.parent);
 			legend.setVisible(true);
-			legend.redraw();
+			legend.resetContents();
 			topSash.layout();
 			return;
 		}
@@ -538,7 +538,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			cg.valueStart = Double.parseDouble(cgColorText1.getText());
 			cg.valueEnd = Double.parseDouble(cgColorText2.getText());
 			legend.setVisible(true);
-			legend.redraw();
+			legend.resetContents();
 			coTableViewer.refresh();
 		}
 	}
@@ -584,7 +584,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			cs.color_gene_not_found = csColorGnf.getRGB();
 			cs.color_no_criteria_met = csColorNc.getRGB();
 			legend.setVisible(true);
-			legend.redraw();
+			legend.resetContents();
 		}
 	}
 	

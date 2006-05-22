@@ -21,7 +21,8 @@ public class GmmlMappInfo extends GmmlGraphics {
 	final static List attributes =  Arrays.asList(new String[] {
 		"Name", "Organism", "Data-Source", "Version", "Author",
 		"Maintained-By", "Email", "Availability", "Last-Modified",
-		"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"
+		"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
+		"MapInfoLeft", "MapInfoTop"
 	});
 	
 	String name = "";
@@ -38,6 +39,9 @@ public class GmmlMappInfo extends GmmlGraphics {
 	public int boardHeight;
 	public int windowWidth;
 	public int windowHeight;
+	
+	public int mapInfoLeft;
+	public int mapInfoTop;
 	
 	Element jdomElement;
 	
@@ -83,6 +87,11 @@ public class GmmlMappInfo extends GmmlGraphics {
 						windowWidth = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 12: //WindowHeight
 						windowHeight = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+					case 13: //MapInfoLeft
+						mapInfoLeft = Integer.parseInt(value) / GmmlData.GMMLZOOM; 
+						break;
+					case 14: //mapInfoTop
+						mapInfoTop = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 			}
 		}
 		// Map the graphics attributes
@@ -105,7 +114,7 @@ public class GmmlMappInfo extends GmmlGraphics {
 		
 		Object[] values = new Object[] {name, organism, dataSource, version,
 				author, maintainedBy, email, availability, lastModified,
-				boardWidth, boardHeight, windowWidth, windowHeight
+				boardWidth, boardHeight, windowWidth, windowHeight, mapInfoLeft, mapInfoTop
 				};
 		
 		for (int i = 0; i < attributes.size(); i++)
@@ -129,6 +138,8 @@ public class GmmlMappInfo extends GmmlGraphics {
 		boardHeight		= (Integer)propItems.get(attributes.get(10));
 		windowWidth		= (Integer)propItems.get(attributes.get(11));
 		windowHeight	= (Integer)propItems.get(attributes.get(12));
+		mapInfoLeft	= (Integer)propItems.get(attributes.get(13));
+		mapInfoTop		= (Integer)propItems.get(attributes.get(14));
 	}
 	
 	public void updateJdomElement() {
@@ -149,6 +160,8 @@ public class GmmlMappInfo extends GmmlGraphics {
 				jdomGraphics.setAttribute("BoardHeight", Integer.toString((int)boardHeight * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("WindowWidth", Integer.toString((int)windowWidth * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("WindowHeight", Integer.toString((int)windowHeight * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("MapInfoLeft", Integer.toString(mapInfoLeft * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("MapInfoTop", Integer.toString(mapInfoTop * GmmlData.GMMLZOOM));
 			}
 		}
 	}

@@ -69,6 +69,7 @@ public class GmmlVision extends ApplicationWindow
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
+			fd.setFilterPath("C:\\GenMAPP 2 Data\\MAPPs");
 			fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 			// TODO: check if user pressed cancel
@@ -296,6 +297,7 @@ public class GmmlVision extends ApplicationWindow
 					messageBox.open();
 				}
 			}
+			cacheExpressionData();
 		}
 	}
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
@@ -320,26 +322,34 @@ public class GmmlVision extends ApplicationWindow
 			if(file != null) {
 				gmmlGex.gexFile = new File(file);
 				gmmlGex.connect();
-				gmmlGex.setSamples();
 				if(gmmlGex.con != null)
 				{
-					if(drawing != null)
-					{
-						gmmlGex.mappIds = drawing.getMappIds();
-						ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-						try {
-							dialog.run(true, true, gmmlGex.cacheRunnable);
-						} catch(Exception e) {
-							e.printStackTrace();
-						}
-					}
+					gmmlGex.setSamples();
 					gmmlGex.loadColorSets();
-				}
-				showColorSetCombo(true);
+					cacheExpressionData();
+					showColorSetCombo(true);
+				}			
 			}
 		}
 	}
 	private SelectGexAction selectGexAction = new SelectGexAction(this);
+	
+	private void cacheExpressionData()
+	{
+		if(drawing != null)
+		{
+			gmmlGex.mappIds = drawing.getMappIds();
+			if(gmmlGex.con != null && gmmlGdb.con != null)
+			{
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				try {
+					dialog.run(true, true, gmmlGex.cacheRunnable);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	
 	private class ConvertGexAction extends Action
 	{
@@ -851,13 +861,11 @@ public class GmmlVision extends ApplicationWindow
 			{
 				if(colorSetCombo.getText().equals(COMBO_NO_COLORSET))
 				{
-					drawing.colorSetIndex = -1;
-					drawing.redraw();
+					drawing.setColorSetIndex(-1);
 				}
 				else
 				{
-					drawing.colorSetIndex = colorSetCombo.getSelectionIndex() - 1;
-					drawing.redraw();
+					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
 				}
 			}
 		}
@@ -973,11 +981,14 @@ public class GmmlVision extends ApplicationWindow
 		if(gmmlGex.con != null)
 		{
 			gmmlGex.mappIds = drawing.getMappIds();
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-			try {
-				dialog.run(true, true, gmmlGex.cacheRunnable);
-			} catch(Exception e) {
-				e.printStackTrace();
+			if(gmmlGdb.con != null)
+			{
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				try {
+					dialog.run(true, true, gmmlGex.cacheRunnable);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		sc.setContent(drawing);

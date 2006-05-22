@@ -13,7 +13,7 @@ import java.util.Properties;
 
 public class GmmlGdb {
 	final static File propsFile = new File(".gdbProperties");
-	Connection con;
+	public Connection con;
 	public Properties props;
 	
 	File gdbFile;

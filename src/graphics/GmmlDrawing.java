@@ -162,14 +162,28 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	public void setEditMode(boolean editMode)
 	{
 		this.editMode = editMode;
-		System.out.println(editMode + ", " + this);
 		if(!editMode)
 		{
 			clearSelection();
 		}
+		legend.setVisible(false);
 		redraw();
 	}
 	
+	public void setColorSetIndex(int colorSetIndex)
+	{
+		this.colorSetIndex = colorSetIndex;
+		if(colorSetIndex < 0)
+		{
+			legend.setVisible(false);
+		} else {
+			legend.resetContents();
+			legend.setVisible(true);
+//			legend.pack();
+//			legend.redraw();
+		}
+		redraw();	
+	}
 	/**
 	 * Sets the drawings zoom
 	 * @param zoom
@@ -392,16 +406,6 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 //			o.draw(e, buffer);
 //			o = p.poll();
 //		}
-		org.eclipse.swt.graphics.Rectangle rswt = legend.getBounds();
-		if(r.intersects(rswt.x, rswt.y, rswt.width, rswt.height) && colorSetIndex > -1)
-		{
-			legend.setVisible(true);
-			legend.redraw();
-		}
-		if(colorSetIndex == -1 || editMode)
-		{
-			legend.setVisible(false);
-		}
 		
 		e.gc.drawImage(image, 0, 0);
 		buffer.dispose();

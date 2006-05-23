@@ -290,6 +290,7 @@ public class GmmlLabel extends GmmlGraphics
 			(int) centery - (textSize.y / 2), true);
 		
 		f.dispose();
+		c.dispose();
 		
 	}
 	

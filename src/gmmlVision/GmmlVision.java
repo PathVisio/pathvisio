@@ -328,7 +328,12 @@ public class GmmlVision extends ApplicationWindow
 					gmmlGex.setSamples();
 					gmmlGex.loadColorSets();
 					cacheExpressionData();
-					showColorSetCombo(true);
+					if(drawing != null)
+					{
+						if(!drawing.editMode) showColorSetCombo(true);
+					} else {
+						showColorSetCombo(true);
+					}
 				}			
 			}
 		}
@@ -928,6 +933,17 @@ public class GmmlVision extends ApplicationWindow
 	 */
 	public static void main(String[] args)
 	{
+//		//<DEBUG to find undisposed system resources>
+//		DeviceData data = new DeviceData();
+//		data.tracking = true;
+//		Display display = new Display(data);
+//		debug.Sleak sleak = new debug.Sleak();
+//		sleak.open();
+//		
+//		Shell shell = new Shell(display);
+//		GmmlVision window = new GmmlVision(shell);
+//		//</DEBUG>
+		
 	   GmmlVision window = new GmmlVision();
 	   window.setBlockOnOpen(true);
 	   window.open();
@@ -949,7 +965,7 @@ public class GmmlVision extends ApplicationWindow
 		Shell shell = parent.getShell();
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
-
+		
 		shell.setText("GmmlVision");
 		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
@@ -1040,9 +1056,12 @@ public class GmmlVision extends ApplicationWindow
 				}
 			}
 			drawing.editMode = switchEditModeAction.isChecked();
-			if(!drawing.editMode)
+			if(drawing != null)
 			{
-				drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+				if(!drawing.editMode)
+				{
+					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+				}
 			}
 		}
 				

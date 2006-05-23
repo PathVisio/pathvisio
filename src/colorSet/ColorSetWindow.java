@@ -762,7 +762,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		    csTextLabel.setText("Name:");
 		    csText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		    
-			final String[] comboText = new String[] { "Color by gradient", "Color by expression" };
+			final String[] comboText = new String[] { "Color by gradient" };//, "Color by expression" };
 		    csComboLabel.setText("Type:");
 		    coTypeCombo.setItems(comboText);
 		    coTypeCombo.setText(comboText[0]);

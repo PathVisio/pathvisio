@@ -61,10 +61,12 @@ public class GmmlGpColor {
 	}
 	
 	public static final double COLOR_AREA_RATIO = 0.5;
+	Color c;
+	Font f;
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		Color c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
-		Font f = new Font(e.display, "ARIAL", parent.fontSize, SWT.NONE);
+		c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
+		f = new Font(e.display, "ARIAL", parent.fontSize, SWT.NONE);
 		
 		Rectangle r = parent.getBounds();
 		buffer.setBackground(c);
@@ -82,13 +84,13 @@ public class GmmlGpColor {
 			
 			if(gmmlGex.data.containsKey(parent.name))
 			{
-				colorByData(e, buffer, c, colorArea);
+				colorByData(e, buffer, colorArea);
 			}
 			else
 			{				
-				colorByGeneNotFound(e, buffer, c, colorArea);
+				colorByGeneNotFound(e, buffer, colorArea);
 			}
-			drawLabel(e, buffer, c, f, colorArea);
+			drawLabel(e, buffer, colorArea);
 			
 		} else {			
 			buffer.setFont (f);
@@ -105,7 +107,7 @@ public class GmmlGpColor {
 		f.dispose();
 	}
 	
-	private void drawLabel(PaintEvent e, GC buffer, Color c, Font f, Rectangle colorArea)
+	private void drawLabel(PaintEvent e, GC buffer, Rectangle colorArea)
 	{
 		Point textSize = null;
 		Rectangle r = parent.getBounds();
@@ -126,7 +128,7 @@ public class GmmlGpColor {
 		
 	}
 	
-	private void colorByGeneNotFound(PaintEvent e, GC buffer, Color c, Rectangle colorArea)
+	private void colorByGeneNotFound(PaintEvent e, GC buffer, Rectangle colorArea)
 	{
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
 		
@@ -136,7 +138,7 @@ public class GmmlGpColor {
 		buffer.fillRectangle(colorArea.x, colorArea.y, colorArea.width, colorArea.height);
 	}
 	
-	private void colorByData(PaintEvent e, GC buffer, Color c, Rectangle colorArea)
+	private void colorByData(PaintEvent e, GC buffer, Rectangle colorArea)
 	{
 		RGB rgb = null;
 		RefData refData = gmmlGex.data.get(parent.name);

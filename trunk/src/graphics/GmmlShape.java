@@ -18,6 +18,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 import util.GmmlColorConvertor;
+import util.SwtUtils;
 
 import data.GmmlData;
 
@@ -182,14 +183,14 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{	
-		Color c;
+		Color c = null;
 		if (isSelected())
 		{
-			c = new Color (e.display, 255, 0, 0);
+			c = SwtUtils.changeColor(c, new RGB(255, 0, 0), e.display);
 		}
 		else 
 		{
-			c = new Color (e.display, this.color);
+			c = SwtUtils.changeColor(c, this.color, e.display);
 		}
 		buffer.setForeground (c);
 		buffer.setLineStyle (SWT.LINE_SOLID);

@@ -171,7 +171,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		{
 			clearSelection();
 		}
-		legend.setVisible(!editMode);	
+		showLegend(!editMode);	
 		redraw();
 	}
 	
@@ -180,13 +180,24 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		this.colorSetIndex = colorSetIndex;
 		if(colorSetIndex < 0)
 		{
-			legend.setVisible(false);
+			showLegend(false);
 		} else {
-			legend.resetContents();
-			legend.setVisible(true);
+			showLegend(true);
 		}
 		redraw();	
 	}
+	
+	public void showLegend(boolean show)
+	{
+		if(show && colorSetIndex > -1 && !editMode && gmmlVision.getShowLegendSelected())
+		{
+			legend.resetContents();
+			legend.setVisible(true);
+		} else {
+			legend.setVisible(false);
+		}
+	}
+	
 	/**
 	 * Sets the drawings zoom
 	 * @param zoom

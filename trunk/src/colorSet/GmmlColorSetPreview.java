@@ -13,6 +13,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 
+import util.SwtUtils;
+
 public class GmmlColorSetPreview extends Canvas implements PaintListener {
 	Vector colorSetObjects;
 	Vector dataColumns;
@@ -87,14 +89,15 @@ public class GmmlColorSetPreview extends Canvas implements PaintListener {
 			double colorValue = cg.valueStart + (i-start) * (cg.valueEnd - cg.valueStart) / n;
 			RGB rgb = cg.getColor(colorValue);
 			if(rgb != null) {
-				c = new Color(getShell().getDisplay(), rgb);
+				c = SwtUtils.changeColor(c, rgb, e.display);
 				e.gc.setBackground(c);
 				e.gc.fillRectangle(i, 0, 1, barHeight);
 			}
 		}
 		e.gc.drawLine(start, barHeight - 5, start, barHeight + 5);
 		e.gc.drawLine(end, barHeight - 5, end, barHeight + 5);
-		e.gc.setBackground(new Color(getShell().getDisplay(), oldBackground));
+		c = SwtUtils.changeColor(c, oldBackground, e.display);
+		e.gc.setBackground(c);
 		e.gc.drawString(Double.toString(cg.valueStart), start, size.y - (int)(LABEL_HEIGHT / 1.5));
 		e.gc.drawString(Double.toString(cg.valueEnd), end, size.y - (int)(LABEL_HEIGHT / 1.5));
 		

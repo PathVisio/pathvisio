@@ -855,7 +855,12 @@ public class GmmlVision extends ApplicationWindow
 			showLegendSwitch.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e)
 				{
-					drawing.legend.setVisible(!drawing.legend.isVisible());
+					if(drawing != null)
+					{
+						drawing.showLegend(showLegendSwitch.getSelection());
+					} else {
+						showLegendSwitch.setSelection(false);
+					}
 				}
 			});
 		}
@@ -863,6 +868,15 @@ public class GmmlVision extends ApplicationWindow
 		{
 			colorSetCombo.setVisible(false);
 		}
+	}
+	
+	public boolean getShowLegendSelected()
+	{
+		if(!showLegendSwitch.isDisposed() && showLegendSwitch != null)
+		{
+			return showLegendSwitch.getSelection();
+		}
+		return false;
 	}
 	
 	private class ColorSetComboListener extends SelectionAdapter

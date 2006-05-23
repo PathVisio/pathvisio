@@ -674,6 +674,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		clearSelection();
 		g.select();
 		h.select();
+		pressedObject = h;
 		updatePropertyTable(g);
 		
 		previousX = e.x;

@@ -114,7 +114,7 @@ public class GmmlGpColor {
 		int fontSize = (int)(parent.fontSize * (double)r.width / parent.getBounds().width);
 //		 TODO: find optimal fontsize
 		fontSize += 2;
-		f = new Font(e.display, "Arial narrow", fontSize, SWT.NONE);
+		f = SwtUtils.changeFont(f, new FontData("Arial narrow", fontSize, SWT.NONE), e.display);
 		buffer.setFont(f);
 		textSize = buffer.textExtent (parent.geneID);
 
@@ -123,6 +123,7 @@ public class GmmlGpColor {
 		buffer.drawString (parent.geneID, 
 			r.x + (int)(r.width / 2) - (int)(textSize.x / 2),
 			r.y + (int)(r.height / 2) - (int)(textSize.y / 2), true);
+		
 	}
 	
 	private void colorByGeneNotFound(PaintEvent e, GC buffer, Color c, Rectangle colorArea)
@@ -135,10 +136,6 @@ public class GmmlGpColor {
 		buffer.fillRectangle(colorArea.x, colorArea.y, colorArea.width, colorArea.height);
 	}
 	
-	public static int SAMPLE_TYPE_UNDEF = 0;
-	public static int SAMPLE_TYPE_TRANS = 1;
-	public static int SAMPLE_TYPE_PROT	= 2;
-	public static int SAMPLE_TYPE_PVALUE= 3;
 	private void colorByData(PaintEvent e, GC buffer, Color c, Rectangle colorArea)
 	{
 		RGB rgb = null;
@@ -156,11 +153,11 @@ public class GmmlGpColor {
 			Rectangle r = new Rectangle(x,
 					colorArea.y, width, colorArea.height);
 			// Get the color
-			c = new Color(e.display, cs.color_gene_not_found);
+			c = SwtUtils.changeColor(c, cs.color_gene_not_found, e.display);
 			rgb = cs.getColor(data, cs.useSamples.get(i).idSample);
 			if(rgb != null)
 			{
-				c = new Color(e.display, rgb);
+				c = SwtUtils.changeColor(c, rgb, e.display);
 			}
 			buffer.setBackground(c);
 			
@@ -176,7 +173,6 @@ public class GmmlGpColor {
 				image = parent.canvas.gmmlVision.imageRegistry.get("data.mRNA");
 				drawDataTypeImage(e, buffer, image, r);
 				break;
-			case GmmlColorSet.SAMPLE_TYPE_PVALUE:
 			case GmmlColorSet.SAMPLE_TYPE_UNDEF:
 				buffer.fillRectangle(r.x, r.y, r.width, r.height);
 				buffer.setForeground(e.display.getSystemColor(SWT.COLOR_DARK_GRAY));

@@ -322,7 +322,10 @@ public class GmmlBrace extends GmmlGraphics
 	 */
 	protected void moveBy(double dx, double dy)
 	{
+		markDirty();
 		setLocation(centerx + dx, centery + dy);
+		markDirty();
+		setHandleLocation();
 	}
 
 	/*
@@ -331,7 +334,10 @@ public class GmmlBrace extends GmmlGraphics
 	 */
 	protected void resizeX(double dx)
 	{
+		markDirty();
 		width = Math.abs(width + dx);
+		markDirty();
+		setHandleLocation();
 	}
 	
 	/*

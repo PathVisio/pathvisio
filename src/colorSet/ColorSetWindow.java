@@ -732,27 +732,6 @@ public class ColorSetWindow extends ApplicationWindow {
     	v.remove(o);
     	v.add(newIndex, o);
     }
-    
-//	private class TreeMouseListener extends MouseAdapter {
-//		public TreeMouseListener() {
-//			super();
-//		}
-//		public void mouseDown(MouseEvent e) {
-//			if(e.button == 3)
-//			{
-//				org.eclipse.swt.widgets.List list = listViewer.getList();
-//				ListItem item = list.getItem(new Point(e.x, e.y));
-//				if(item != null)
-//				{
-//					MenuManager mgr = new MenuManager();
-//					mgr.add(new DeleteAction(item.getData()));
-//					Menu m = mgr.createContextMenu(list);
-//					list.setMenu(m);
-//				}
-//			}
-//		}
-//	}
-	
 	
 	private class NewCoDialog extends Dialog
 	{		
@@ -992,14 +971,6 @@ public class ColorSetWindow extends ApplicationWindow {
 				switch(columnIndex) {
 				case 1: //Name
 					return s.name;
-				case 0: //Use
-//					if(cs.useSamples.contains(s))
-//					{
-//						return "X";
-//					} else {
-//						return "";
-//					}
-					return "";
 				case 2: //Type
 					if(cs.useSamples.contains(s))
 					{

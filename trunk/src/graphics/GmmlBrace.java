@@ -251,6 +251,8 @@ public class GmmlBrace extends GmmlGraphics
 		} 
 
 		setHandleLocation();
+		
+		c.dispose();
 	}
 	
 	protected void draw(PaintEvent e)

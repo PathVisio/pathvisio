@@ -218,6 +218,8 @@ public class GmmlShape extends GmmlGraphics
 				(int)(2*height)
 			);
 		}
+		
+		c.dispose();
 	}
 	
 	protected void draw(PaintEvent e)

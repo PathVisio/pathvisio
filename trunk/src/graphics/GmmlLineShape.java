@@ -282,6 +282,8 @@ public class GmmlLineShape extends GmmlGraphics
 		{
 			buffer.drawLine ((int)startx, (int)starty, (int)endx, (int)endy);
 		}
+		
+		c.dispose();
 	}
 	
 	protected void draw(PaintEvent e)

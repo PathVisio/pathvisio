@@ -210,7 +210,9 @@ public class GmmlArc extends GmmlGraphics
 		buffer.drawArc((int)(startx-width), (int)(starty-height),
 			(int)(2*width), (int)(2*height),
 			(int)(180 - (rotation * 180 / Math.PI)), 180
-		);		
+		);
+		
+		c.dispose();
 	}
 	
 	protected void draw(PaintEvent e)

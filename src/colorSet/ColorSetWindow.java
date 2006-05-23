@@ -44,6 +44,8 @@ import data.GmmlDb;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
+import util.SwtUtils;
+
 public class ColorSetWindow extends ApplicationWindow {
 	public String[] cgColumnNames;
 	public ArrayList<Integer> cgColumnIndex;
@@ -273,8 +275,8 @@ public class ColorSetWindow extends ApplicationWindow {
 	    csColorButtonNc.setText("...");
 	    csColorButtonGnf.setText("...");
 	    
-	    csColorNc = new Color(getShell().getDisplay(), GmmlColorSet.COLOR_NO_CRITERIA_MET);
-	    csColorGnf = new Color(getShell().getDisplay(), GmmlColorSet.COLOR_NO_GENE_FOUND);
+	    csColorNc = SwtUtils.changeColor(csColorNc, GmmlColorSet.COLOR_NO_CRITERIA_MET, getShell().getDisplay());
+	    csColorGnf = SwtUtils.changeColor(csColorGnf, GmmlColorSet.COLOR_NO_GENE_FOUND, getShell().getDisplay());
 	    csCLabelNc.setLayoutData(csCLabelGrid);
 	    csCLabelGnf.setLayoutData(csCLabelGrid);
 	    csCLabelNc.setBackground(csColorNc);
@@ -345,8 +347,8 @@ public class ColorSetWindow extends ApplicationWindow {
 		GridData cgButtonGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		cgButtonGrid.horizontalSpan = 5;
 		
-		cgColor1 = new Color(getShell().getDisplay(), 255, 0, 0);
-	    cgColor2 = new Color(getShell().getDisplay(), 0, 255, 0);
+		cgColor1 = SwtUtils.changeColor(cgColor1, new RGB(255, 0, 0), getShell().getDisplay());
+	    cgColor2 = SwtUtils.changeColor(cgColor2, new RGB(0, 255, 0), getShell().getDisplay()); 
 	    cgColorDialog = new ColorDialog(getShell(), SWT.NONE);
 	    
 	    Group cgGroup = new Group(cgComposite, SWT.SHADOW_IN);
@@ -411,8 +413,8 @@ public class ColorSetWindow extends ApplicationWindow {
 		if(element instanceof GmmlColorSet) {
 			GmmlColorSet cs = (GmmlColorSet)element;
 			csNameText.setText(cs.name);
-			csColorGnf = new Color(getShell().getDisplay(), cs.color_gene_not_found);
-			csColorNc = new Color(getShell().getDisplay(), cs.color_no_criteria_met);
+			csColorNc = SwtUtils.changeColor(csColorNc, cs.color_no_criteria_met, getShell().getDisplay());
+		    csColorGnf = SwtUtils.changeColor(csColorGnf, cs.color_gene_not_found, getShell().getDisplay());
 			csCLabelGnf.setBackground(csColorGnf);
 			csCLabelNc.setBackground(csColorNc);
 			sampleTableViewer.setInput(cs);
@@ -430,8 +432,8 @@ public class ColorSetWindow extends ApplicationWindow {
 			cgCombo.select(cgColumnIndex.indexOf(cg.getDataColumn()));
 			cgColorText1.setText(Double.toString(cg.valueStart));
 			cgColorText2.setText(Double.toString(cg.valueEnd));
-			cgColor1 = new Color(getShell().getDisplay(), cg.colorStart);
-			cgColor2 = new Color(getShell().getDisplay(), cg.colorEnd);
+			cgColor1 = SwtUtils.changeColor(cgColor1, cg.colorStart, getShell().getDisplay());
+			cgColor2 = SwtUtils.changeColor(cgColor2, cg.colorEnd, getShell().getDisplay());
 			cgCLabel1.setBackground(cgColor1);
 			cgCLabel2.setBackground(cgColor2);
 			sashForm.setMaximizedControl(cgComposite);
@@ -551,19 +553,19 @@ public class ColorSetWindow extends ApplicationWindow {
     		RGB rgb = cgColorDialog.open();
     		if (rgb != null) {
     			if(e.widget == cgColorButton1) {
-    				cgColor1 = new Color(getShell().getDisplay(), rgb);
+    				cgColor1 = SwtUtils.changeColor(cgColor1, rgb, getShell().getDisplay());
     				cgCLabel1.setBackground(cgColor1);
     			}
     			if(e.widget == cgColorButton2) {
-    				cgColor2 = new Color(getShell().getDisplay(), rgb);
+    				cgColor2 = SwtUtils.changeColor(cgColor2, rgb, getShell().getDisplay());
     				cgCLabel2.setBackground(cgColor2);
     			}
     			if(e.widget == csColorButtonGnf) {
-    				csColorGnf = new Color(getShell().getDisplay(), rgb);
+    				csColorGnf = SwtUtils.changeColor(csColorGnf, rgb, getShell().getDisplay());
     				csCLabelGnf.setBackground(csColorGnf);
     			}
     			if(e.widget == csColorButtonNc) {
-    				csColorNc = new Color(getShell().getDisplay(), rgb);
+    				csColorNc = SwtUtils.changeColor(csColorNc, rgb, getShell().getDisplay());
     				csCLabelNc.setBackground(csColorNc);
     			}
     		}

@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import colorSet.*;
+import util.SwtUtils;
 
 import data.*;
 import data.GmmlGex.Sample;
@@ -155,7 +156,12 @@ public class GmmlLegend extends Composite implements MouseListener,
 			colorSetIndex = drawing.colorSetIndex;
 			gmmlGex = drawing.gmmlVision.gmmlGex;
 		}
-		colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
+		if(colorSetIndex > -1)
+		{
+			colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
+		} else {
+			return;
+		}
 		colorSetObjects = colorSet.colorSetObjects;
 		
 		setDiffGradients();
@@ -209,8 +215,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 					Label l = new Label(this, SWT.FLAT);
 					l.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 					l.setText(i + ": " + s.name);
-					System.out.println(l.isVisible());
-					System.out.println(l.getBounds());
 				}
 				
 				if(!isCustomSize)
@@ -299,6 +303,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 			}
 			if(legend.colorSetObjects != null)
 			{
+				Color c = null;
+				
 				CLabel noCritMet = new CLabel(this, SWT.SHADOW_IN);
 				Label noCritMetLabel = new Label(this, SWT.LEFT);
 				noCritMetLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -309,16 +315,18 @@ public class GmmlLegend extends Composite implements MouseListener,
 				geneNotFoundLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				geneNotFoundLabel.setText("Gene not found");
 				
-				noCritMet.setBackground(new Color(getDisplay(), colorSet.color_no_criteria_met));
-				geneNotFound.setBackground(new Color(getDisplay(), colorSet.color_gene_not_found));
+				c = SwtUtils.changeColor(c,  colorSet.color_no_criteria_met, getDisplay());
+				noCritMet.setBackground(c);
+				c = SwtUtils.changeColor(c,  colorSet.color_gene_not_found, getDisplay());
 				
 				GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 				clabelGrid.widthHint = CLABEL_SIZE;
 				clabelGrid.heightHint = CLABEL_SIZE;
 				geneNotFound.setLayoutData(clabelGrid);
 				noCritMet.setLayoutData(clabelGrid);
-				
+
 				layout();
+				c.dispose();
 			}
 		}
 	}
@@ -375,8 +383,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 		final static int MARKER_LENGTH = 4;
 		public void drawColorGradient(PaintEvent e, GmmlColorGradient cg, Rectangle r)
 		{
-			Color c = getBackground();
-			RGB oldBackground = c.getRGB();
+			Color c = null;
+			RGB oldBackground = getBackground().getRGB();
 			
 			double[] minmax = (double[])extremes.get(cg.getDataColumn());
 			double min = minmax[0];
@@ -407,20 +415,20 @@ public class GmmlLegend extends Composite implements MouseListener,
 				double colorValue = cg.valueStart + (i-start) * (cg.valueEnd - cg.valueStart) / n;
 				RGB rgb = cg.getColor(colorValue);
 				if(rgb != null) {
-					c.dispose();
-					c = new Color(getShell().getDisplay(), rgb);
+					c = SwtUtils.changeColor(c, rgb, e.display);
 					e.gc.setBackground(c);
 					e.gc.fillRectangle(xPos, i, BAR_WIDTH, 1);
 				}
 			}
 			
-			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
+			Font f = new Font(e.display, FONT, FONTSIZE, SWT.NONE);
 			e.gc.setFont(f);
 			
 			int markerCenter = BAR_WIDTH + xPos;
 			e.gc.drawLine(markerCenter - MARKER_LENGTH, start, markerCenter + MARKER_LENGTH, start);
 			e.gc.drawLine(markerCenter - MARKER_LENGTH, end, markerCenter + MARKER_LENGTH, end);
-			e.gc.setBackground(new Color(getShell().getDisplay(), oldBackground));
+			c = SwtUtils.changeColor(c, oldBackground, e.display);
+			e.gc.setBackground(c);
 			e.gc.drawString(Double.toString(cg.valueStart), markerCenter + MARKER_LENGTH, start);
 			e.gc.drawString(Double.toString(cg.valueEnd), markerCenter + MARKER_LENGTH, end);
 			

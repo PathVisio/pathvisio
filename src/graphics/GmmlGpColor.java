@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
+import util.SwtUtils;
+
 import colorSet.*;
 import data.*;
 import data.GmmlGex.RefData;
@@ -92,7 +94,7 @@ public class GmmlGpColor {
 			buffer.setFont (f);
 			Point textSize = buffer.textExtent (parent.geneID);
 			
-			c = new Color(e.display, parent.color);
+			c = SwtUtils.changeColor(c, parent.color, e.display);
 			buffer.setForeground(c);
 			buffer.drawString (parent.geneID, 
 				(int) parent.centerx - (textSize.x / 2) , 
@@ -116,7 +118,7 @@ public class GmmlGpColor {
 		buffer.setFont(f);
 		textSize = buffer.textExtent (parent.geneID);
 
-		c = new Color(e.display, parent.color);
+		c = SwtUtils.changeColor(c, parent.color, e.display);
 		buffer.setForeground(c);
 		buffer.drawString (parent.geneID, 
 			r.x + (int)(r.width / 2) - (int)(textSize.x / 2),
@@ -127,7 +129,7 @@ public class GmmlGpColor {
 	{
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
 		
-		c = new Color(e.display, cs.color_gene_not_found);
+		c = SwtUtils.changeColor(c, cs.color_gene_not_found, e.display);
 		
 		buffer.setBackground(c);
 		buffer.fillRectangle(colorArea.x, colorArea.y, colorArea.width, colorArea.height);

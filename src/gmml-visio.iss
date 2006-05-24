@@ -11,8 +11,7 @@ AppUpdatesURL=http://www.genmapp.org
 DefaultDirName={pf}\GMML-Vision
 DefaultGroupName=GMML-Vision
 AllowNoIcons=yes
-OutputDir=C:\Documents and Settings\martijn.vaniersel\My Documents
-OutputBaseFilename=setup
+OutputBaseFilename=Install-GMML-Vision-beta
 Compression=lzma
 SolidCompression=yes
 
@@ -54,6 +53,8 @@ Source: "icons\newrectangle.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\newtbar.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\open.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\save.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
+Source: "icons\sample_checked.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
+Source: "icons\sample_unchecked.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "backpage\header.html"; DestDir: "{app}\backpage"; Flags: ignoreversion
 Source: "lib\swt.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "lib\hsqldb.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
@@ -63,9 +64,9 @@ Source: "lib\org.eclipse.jface_3.1.1.jar"; DestDir: "{app}\lib"; Flags: ignoreve
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\GMML-Vision"; Filename: "{app}\gmml-visio.exe"
+Name: "{group}\GMML-Vision"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram,GMML-Vision}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\GMML-Vision"; Filename: "{app}\gmml-visio.exe"; Tasks: desktopicon
+Name: "{userdesktop}\GMML-Vision"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\gmml-visio.exe"; Description: "{cm:LaunchProgram,GMML-Vision}"; Flags: nowait postinstall skipifsilent

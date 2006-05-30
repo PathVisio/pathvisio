@@ -1,6 +1,6 @@
 package graphics;
 
-import java.awt.geom.Rectangle2D;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import colorSet.*;
+import colorSet.GmmlColorGradient.ColorValuePair;
 import util.SwtUtils;
 
 import data.*;
@@ -87,6 +88,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 	Group gg;
 	Group cg;
 	Group sg;
+	GridData gGrid;
 	public void createContents()
 	{	
 		setLayout(new GridLayout(1, false));
@@ -102,8 +104,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 		samples = new SampleComposite(sg, SWT.NONE);
 		samples.setLegend(this);
 		
-		GridData gGrid = new GridData(GridData.FILL_BOTH);
-		gGrid.heightHint = 200;
+		gGrid = new GridData(GridData.FILL_BOTH);
+		gGrid.heightHint = 40;
 		gg.setLayoutData(gGrid);
 		cg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 		sg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -165,14 +167,14 @@ public class GmmlLegend extends Composite implements MouseListener,
 		colorSetObjects = colorSet.colorSetObjects;
 		
 		setDiffGradients();
-		setExtremeValues();
 		
 		samples.resetContents();
 		criteria.resetContents();
 		gradients.redraw();
 		
-		if(!isCustomSize)
+		if(!isCustomSize && !isDragging)
 		{
+			gGrid.heightHint = (MAX_BAR_HEIGHT + 20) * diffSamples.size();
 			layout(true);
 			pack(true);
 			lastFitSize = getSize();
@@ -238,7 +240,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 		{
 			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
 			
-			Point imageSize = new Point(Math.min(SAMPLE_IMAGE_WIDTH, getClientArea().width - MARGIN), 
+			Point imageSize = new Point(Math.max(SAMPLE_IMAGE_WIDTH, sg.getClientArea().width - MARGIN), 
 					SAMPLE_IMAGE_HEIGHT);
 			if(sampleImage != null)
 			{
@@ -254,7 +256,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			Rectangle drawArea = sampleImage.getBounds();
 			drawArea.height -= 1;
 			drawArea.width = (int)Math.ceil(GmmlGpColor.COLOR_AREA_RATIO * drawArea.width);
-			drawArea.width -= drawArea.width % nr;
+			if(nr > 0) drawArea.width -= drawArea.width % nr;
 
 			int w = sampleImage.getBounds().width - drawArea.width;
 			imageGc.drawString(exampleId, w / 2 - stringSize.x / 2, drawArea.height / 2 - stringSize.y / 2 );
@@ -304,6 +306,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			if(legend.colorSetObjects != null)
 			{
 				Color c = null;
+				Image image = null;
 				
 				CLabel noCritMet = new CLabel(this, SWT.SHADOW_IN);
 				Label noCritMetLabel = new Label(this, SWT.LEFT);
@@ -315,18 +318,38 @@ public class GmmlLegend extends Composite implements MouseListener,
 				geneNotFoundLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				geneNotFoundLabel.setText("Gene not found");
 				
+				CLabel multipleData = new CLabel(this, SWT.LEFT | SWT.FLAT);
+				multipleData.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+				multipleData.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+				if(image != null && !image.isDisposed())
+				{
+					image.dispose();
+				}
+				image = new Image(getDisplay(), CLABEL_SIZE, CLABEL_SIZE);
+				GC imageGc = new GC(image);
+				imageGc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLUE));
+				imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
+				imageGc.drawRectangle(1, 1, CLABEL_SIZE - 3, CLABEL_SIZE - 3);
+				imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				imageGc.drawRectangle(0, 0, CLABEL_SIZE - 1, CLABEL_SIZE - 1);
+				multipleData.setImage(image);
+				Label multipleDataLabel = new Label(this, SWT.LEFT);
+				multipleDataLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+				multipleDataLabel.setText("Gene maps to multiple ids");
+				
 				c = SwtUtils.changeColor(c,  colorSet.color_no_criteria_met, getDisplay());
 				noCritMet.setBackground(c);
 				c = SwtUtils.changeColor(c,  colorSet.color_gene_not_found, getDisplay());
+				geneNotFound.setBackground(c);
 				
 				GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 				clabelGrid.widthHint = CLABEL_SIZE;
 				clabelGrid.heightHint = CLABEL_SIZE;
 				geneNotFound.setLayoutData(clabelGrid);
 				noCritMet.setLayoutData(clabelGrid);
-
 				layout();
 				c.dispose();
+				imageGc.dispose();
 			}
 		}
 	}
@@ -351,42 +374,39 @@ public class GmmlLegend extends Composite implements MouseListener,
 		{
 			if(legend.colorSetObjects != null)
 			{
-				//Divide canvas in diffSamples.size() columns
+				//Divide canvas in diffSamples.size() rows
 				Point size = getSize();
 				HashMap<Integer, Rectangle> rectangles = new HashMap<Integer, Rectangle>();
 				int n = 0;
 				for(int i : diffSamples)
 				{
 					rectangles.put(i, new Rectangle(
-							n * size.x / diffSamples.size(),
 							0,
-							size.x / diffSamples.size(),
-							size.y));
+							n * size.y / diffSamples.size(),
+							size.x,
+							size.y / diffSamples.size()));
 					n++;
 				}
-				ListIterator it = legend.colorSetObjects.listIterator(legend.colorSetObjects.size());
-				while(it.hasPrevious())
-				{
-					GmmlColorSetObject cs = (GmmlColorSetObject)it.previous();
-					if(cs instanceof GmmlColorGradient) {
-						GmmlColorGradient cg = (GmmlColorGradient)cs;
+				for(GmmlColorSetObject co : colorSetObjects)
+					if(co instanceof GmmlColorGradient) {
+						GmmlColorGradient cg = (GmmlColorGradient)co;
 						drawColorGradient(e, cg, rectangles.get(cg.getDataColumn()));
 					}
 				}
 			}
 		}
 		
-		final static int LABEL_HEIGHT = 20;
-		final static int BAR_WIDTH = 10;
-		final static int MARGIN_VERTICAL = 10;
-		final static int MARGIN_HORIZONTAL = 15;
+		final static int LABEL_WIDTH = 20;
+		final static int MAX_BAR_HEIGHT = 35;
+		final static int MARGIN_VERTICAL = 20;
+		final static int MARGIN_HORIZONTAL = 10;
 		final static int MARKER_LENGTH = 4;
 		public void drawColorGradient(PaintEvent e, GmmlColorGradient cg, Rectangle r)
 		{
 			Color c = null;
 			RGB oldBackground = getBackground().getRGB();
 			
-			double[] minmax = (double[])extremes.get(cg.getDataColumn());
+			double[] minmax = cg.getMinMax();
 			double min = minmax[0];
 			double max = minmax[1];
 			
@@ -395,98 +415,57 @@ public class GmmlLegend extends Composite implements MouseListener,
 			}
 			
 			// Get region to draw
-			int barHeight = r.height - MARGIN_VERTICAL;
-			int start = (int)(((cg.valueStart - min) / (max - min)) * barHeight);
-			int end = (int)(((cg.valueEnd - min) / (max - min)) * barHeight);
-			
-			int xPos = MARGIN_HORIZONTAL + r.x;
-
-			if(cg.valueStart == (float)min) {
-				start = MARGIN_VERTICAL;
-			}
-			if(cg.valueEnd == (float)max) {
-				end = end - MARGIN_VERTICAL;
-			}
+			int yStart = r.y + MARGIN_VERTICAL;
+			int barHeight = Math.min(r.height - MARGIN_VERTICAL, MAX_BAR_HEIGHT - MARGIN_VERTICAL);
+			int start = r.x + MARGIN_HORIZONTAL;
+			int end = r.width - MARGIN_HORIZONTAL;
 			
 			int n = end - start;
 			
 			// Fill squares with color cg.getColor()
 			for(int i = start; i < end; i++) {
-				double colorValue = cg.valueStart + (i-start) * (cg.valueEnd - cg.valueStart) / n;
+				double colorValue = min + (i-start) * (max - min) / n;
 				RGB rgb = cg.getColor(colorValue);
 				if(rgb != null) {
 					c = SwtUtils.changeColor(c, rgb, e.display);
 					e.gc.setBackground(c);
-					e.gc.fillRectangle(xPos, i, BAR_WIDTH, 1);
+					e.gc.fillRectangle(i, yStart, 1, barHeight);
 				}
 			}
 			
 			Font f = new Font(e.display, FONT, FONTSIZE, SWT.NONE);
 			e.gc.setFont(f);
 			
-			int markerCenter = BAR_WIDTH + xPos;
-			e.gc.drawLine(markerCenter - MARKER_LENGTH, start, markerCenter + MARKER_LENGTH, start);
-			e.gc.drawLine(markerCenter - MARKER_LENGTH, end, markerCenter + MARKER_LENGTH, end);
+			int markerCenter = yStart + barHeight;
 			c = SwtUtils.changeColor(c, oldBackground, e.display);
 			e.gc.setBackground(c);
-			e.gc.drawString(Double.toString(cg.valueStart), markerCenter + MARKER_LENGTH, start);
-			e.gc.drawString(Double.toString(cg.valueEnd), markerCenter + MARKER_LENGTH, end);
+			for(ColorValuePair cvp : cg.colorValuePairs)
+			{
+				int x = (int)(start + (cvp.value - min) / (max - min) * (end - start));
+				e.gc.drawLine(x, markerCenter - MARKER_LENGTH, x, markerCenter + MARKER_LENGTH);
+				Point labelSize = e.gc.textExtent(Double.toString(cvp.value));
+				e.gc.drawString(Double.toString(cvp.value), x - labelSize.x / 2, 
+						markerCenter + labelSize.y / 2, true);
+			}
 			
-			//Draw labels
 			int dataColumn = cg.getDataColumn();
-			String label = "";
-			if(dataColumn == -1)
-			{
-				label = "All samples";
+			String label;
+			switch(dataColumn) {
+			case GmmlColorGradient.DATA_COL_NO:
+				label = ""; break;
+			case GmmlColorGradient.DATA_COL_ALL:
+				label = "All samples"; break;
+			default:
+				label = gmmlGex.samples.get(dataColumn).name; break;
 			}
-			else
-			{
-				label = gmmlGex.samples.get(dataColumn).name;
-			}
-			
-			Point labelRegion = new Point(r.height, MARGIN_HORIZONTAL);
 			Point labelSize = e.gc.textExtent(label);
+			e.gc.drawString(label, (end - start) / 2 - labelSize.x / 2, 
+					yStart - barHeight - labelSize.y / 2, true);	
 			
-			Transform t = new Transform(e.display);
-			t.rotate(-90);
-			e.gc.setTransform(t);
-			e.gc.drawString(label, -(labelRegion.x / 2) - labelSize.x / 2,
-								   r.x + (labelRegion.y / 2) - (labelSize.y / 2));
-			t.rotate(90);
-			e.gc.setTransform(t);
-			
-			t.dispose();
 			c.dispose();
 			f.dispose();
-		}
 	}
-	
-	private void setExtremeValues()
-	{		
-		double max = Double.MIN_VALUE;
-		double min = Double.MAX_VALUE;
-		
-		extremes = new HashMap<Integer, double[]>();
-		
-		Iterator it = colorSetObjects.iterator();
-		while(it.hasNext())
-		{
-			GmmlColorSetObject cs = (GmmlColorSetObject)it.next();
-			if(cs instanceof GmmlColorGradient)
-			{
-				GmmlColorGradient cg = (GmmlColorGradient)cs;
-				if(!extremes.containsKey(cg.getDataColumn()))
-				{
-					extremes.put(cg.getDataColumn(), new double[] {min, max});
-				}
-				double[] d = (double[])extremes.get(cg.getDataColumn());
-				d[1] =  Math.max(cg.valueEnd, d[1]);
-				d[0] = Math.min(cg.valueStart,d[0]);
-				extremes.put(cg.getDataColumn(), d);
-			}
-		}
-	}
-	
+
 	private void setDiffGradients()
 	{
 		diffSamples = new ArrayList<Integer>();
@@ -521,10 +500,10 @@ public class GmmlLegend extends Composite implements MouseListener,
 	}
 	
 	public void mouseUp(MouseEvent arg0) {
-		isDragging = false;
 		drawing.mappInfo.mapInfoLeft = getLocation().x;
 		drawing.mappInfo.mapInfoTop = getLocation().y;
 		resetContents();
+		isDragging = false;
 	}
 
 	int prevX;

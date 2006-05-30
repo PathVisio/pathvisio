@@ -218,6 +218,23 @@ public class GmmlGex {
 		}
 	}
 	
+	public boolean hasData(String id)
+	{
+		if(data == null)
+		{
+			return false;
+		}
+		if(data.containsKey(id))
+		{
+			RefData refData = data.get(id);
+			if(refData.sampleData.size() > 0)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public HashMap<String, RefData> data;
 	public class RefData
 	{
@@ -235,6 +252,7 @@ public class GmmlGex {
 		{
 			int someSample = ((Sample)samples.values().toArray()[0]).idSample;
 			ArrayList<String> refIds = new ArrayList<String>();
+			if(!sampleData.containsKey(someSample)) return null;
 			for(String[] s : sampleData.get(someSample))
 			{
 				refIds.add(s[0]);
@@ -327,6 +345,10 @@ public class GmmlGex {
 		
 		String colNames = "<TR><TH>Sample name";
 		RefData refData = null;
+		if(con == null || gmmlGdb.con == null)
+		{
+			return noDataFound;
+		}
 		if(data.containsKey(id))
 		{
 			refData = data.get(id);
@@ -337,7 +359,9 @@ public class GmmlGex {
 		{
 			return noDataFound;
 		}
-		for(String refId : refData.getRefIds())
+		ArrayList<String> refIds = refData.getRefIds();
+		if(refIds == null) return noDataFound;
+		for(String refId : refIds)
 		{
 			colNames += "<TH>" + refId;
 		}
@@ -602,6 +626,8 @@ public class GmmlGex {
 			error.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
+		error.println("END");
+		error.close();
 		closeGmGex();
 		close();
 		
@@ -610,21 +636,21 @@ public class GmmlGex {
 		convertThread.progress = 100;
 	}
 	
-	public void connect(boolean clean)
+	public String connect(boolean clean)
 	{
 		if(clean)
 		{
 			//remove old property file
 			File gexPropFile = gexFile;
 			gexPropFile.delete();
-			connect();
+			return connect();
 		}
 		else
 		{
-			connect();
+			return connect();
 		}
 	}
-	public void connect()
+	public String connect()
 	{
 		try {
 			Class.forName("org.hsqldb.jdbcDriver");
@@ -638,9 +664,11 @@ public class GmmlGex {
 			
 //			System.out.println(con.isReadOnly());
 			con.setReadOnly(true);
+			return null;
 		} catch(Exception e) {
 			System.out.println ("Error: " +e.getMessage());
 			e.printStackTrace();
+			return e.getMessage();
 		}
 	}
 	

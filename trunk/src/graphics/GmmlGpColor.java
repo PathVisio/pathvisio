@@ -33,19 +33,11 @@ import data.*;
 import data.GmmlGex.RefData;
 
 public class GmmlGpColor {
-	// Pre-cached data / ensIds
-	//	-> reload on loading new gex
-	// Parent
-	//	-> GmmlGeneProduct
-	// 
 		
 	GmmlGdb gmmlGdb;
 	GmmlGex gmmlGex;
 	GmmlGeneProduct parent;
 	
-	// Cache some data on loading mapp
-	Hashtable dataHash;
-		// {refId : ArrayList data}
 	public ArrayList ensIds;
 	public ArrayList refIds;
 	
@@ -61,8 +53,10 @@ public class GmmlGpColor {
 	}
 	
 	public static final double COLOR_AREA_RATIO = 0.5;
+	public static final int MAX_COLOR_SIZE = 20;
 	Color c;
 	Font f;
+	
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
@@ -75,14 +69,17 @@ public class GmmlGpColor {
 		{
 			// Get visualization area
 			Rectangle colorArea = parent.getBounds();
-			colorArea.width = (int)Math.ceil(COLOR_AREA_RATIO * colorArea.width);
+//			colorArea.width = (int)Math.ceil(COLOR_AREA_RATIO * colorArea.width);
+			
 			// Adjust width to enable to divide into nrSamples equal rectangles
 			GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
+			colorArea.width = (int)Math.min(COLOR_AREA_RATIO * colorArea.width, 
+					MAX_COLOR_SIZE * cs.useSamples.size());
 			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			
-			if(gmmlGex.data.containsKey(parent.name))
+			if(gmmlGex.hasData(parent.name))
 			{
 				colorByData(e, buffer, colorArea);
 			}
@@ -192,8 +189,8 @@ public class GmmlGpColor {
 			
 			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 			int oldLineWidth = buffer.getLineWidth();
-			buffer.setLineWidth(2);
-			buffer.drawRectangle(r.x + 1, r.y + 1, r.width - 1, r.height - 1);
+			buffer.setLineWidth(1);
+			buffer.drawRectangle(r.x + 1, r.y + 1, r.width - 2, r.height - 2);
 			buffer.setLineWidth(oldLineWidth);
 			
 			buffer.setClipping(clip);
@@ -202,13 +199,20 @@ public class GmmlGpColor {
 	
 	protected void drawDataTypeImage(PaintEvent e, GC buffer, Image image, Rectangle r)
 	{
-		buffer.fillRectangle(r.x, r.y, r.width, r.height);
+		
 		if(image != null)
 		{
 			ImageData imgData = image.getImageData();
+			int imageHeight = Math.min(r.width, MAX_COLOR_SIZE);
 			
+			buffer.fillRectangle(r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
+			
+			buffer.setAntialias(SWT.ON);
 			buffer.drawImage(image, 0, 0, imgData.width, imgData.height, 
-					r.x, r.y, r.width, r.height);
+					r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
+			buffer.setAntialias(SWT.DEFAULT);
+		} else {
+			buffer.fillRectangle(r.x, r.y, r.width, r.height);
 		}
 	}
 	

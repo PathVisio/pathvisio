@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 public class GmmlGdb {
-	final static File propsFile = new File(".gdbProperties");
+	final static File propsFile = new File("gdb.properties");
 	public Connection con;
 	public Properties props;
 	
@@ -32,7 +32,7 @@ public class GmmlGdb {
 			if(!props.get("currentGdb").equals("none"))
 			{
 				gdbFile = new File((String)props.get("currentGdb"));
-				if(!connect(null))
+				if(connect(null) != null)
 					setCurrentGdb("none");
 			}
 		} catch(Exception e) {
@@ -200,7 +200,7 @@ public class GmmlGdb {
 		return ref2EnsHash;
 	}
 	
-	public boolean connect(File gdbFile)
+	public String connect(File gdbFile)
 	{
 		if(gdbFile == null)
 			gdbFile = this.gdbFile;
@@ -215,11 +215,11 @@ public class GmmlGdb {
 					file.substring(0, file.lastIndexOf(".")), prop);
 			con.setReadOnly(true);
 			setCurrentGdb(gdbFile.getAbsoluteFile().toString());
-			return true;
+			return null;
 		} catch(Exception e) {
 			System.out.println ("Error: " +e.getMessage());
 			e.printStackTrace();
-			return false;
+			return e.getMessage();
 		}
 	}
 	

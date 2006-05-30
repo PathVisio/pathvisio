@@ -2,6 +2,7 @@ package colorSet;
 import graphics.GmmlGeneProduct;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.eclipse.swt.events.PaintEvent;
@@ -12,19 +13,16 @@ import org.eclipse.swt.widgets.Canvas;
 import data.GmmlGex.Sample;
 
 public class GmmlColorGradient extends GmmlColorSetObject {
-	private int dataColumn;
-	public RGB colorStart;
-	public RGB colorEnd;
-	public double valueStart;
-	public double valueEnd;
+	public static final int DATA_COL_ALL = -1;
+	public static final int DATA_COL_NO = -2;
+	private int dataColumn;	
+	public ArrayList<ColorValuePair> colorValuePairs;
 	
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
 		super(parent, name);
-		colorStart = new RGB(0, 255, 0);
-		colorEnd = new RGB(255, 0, 0);
-		valueStart = -1;
-		valueEnd = 1;
+		colorValuePairs = new ArrayList<ColorValuePair>();
+		dataColumn = DATA_COL_NO;
 	}
 	
 	public GmmlColorGradient(GmmlColorSet parent, String name, String criterion)
@@ -44,7 +42,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		{
 			for(Sample s : parent.useSamples)
 			{
-				useSamples.add(s.idSample);
+				useSamples.add(s.idSample);  
 			}
 		}
 	}
@@ -56,7 +54,28 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	
 	public RGB getColor(double value)
 	{
-		if(value < valueStart || value > valueEnd)
+		double valueStart = 0;
+		double valueEnd = 0;
+		RGB colorStart = null;
+		RGB colorEnd = null;
+		Collections.sort(colorValuePairs);
+		//Find what colors the value is in between
+		boolean found = false;
+		for(int i = 0; i < colorValuePairs.size() - 1; i++)
+		{
+			ColorValuePair cvp = colorValuePairs.get(i);
+			ColorValuePair cvpNext = colorValuePairs.get(i + 1);
+			if(value >= cvp.value && value <= cvpNext.value)
+			{
+				valueStart = cvp.value;
+				colorStart = cvp.color;
+				valueEnd = cvpNext.value;
+				colorEnd = cvpNext.color;
+				found = true;
+				break;
+			}
+		}
+		if(!found)
 		{
 			return null;
 		}
@@ -71,7 +90,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 			rgb = new RGB((int)red, (int)green, (int)blue);
 //			System.out.println("Found color: " + rgb);
 		} catch (Exception e) { 
-			System.out.println("GmmlColorGradient:getColor:Error: " + red + "," + green + "," +blue);
+			System.out.println("GmmlColorGradient:getColor:Error: " + 
+					red + "," + green + "," +blue + ", at value " + value);
 		}
 		return rgb;
 	}
@@ -82,6 +102,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		if(dataColumn == -1)
 		{
 			useSample = idSample;
+		} else {
+			if(useSample != idSample) return null;
 		}
 		try {
 			double value = (Double)data.get(useSample);
@@ -107,26 +129,32 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		String sep = "|";
 		StringBuilder criterion = new StringBuilder("GRADIENT" + sep);
 		criterion.append(
-				dataColumn + sep +
-				valueStart + sep +
-				getColorString(colorStart) + sep +
-				valueEnd   + sep +
-				getColorString(colorEnd));
+				dataColumn + sep);
+		for(ColorValuePair cvp : colorValuePairs)
+		{
+			criterion.append(
+					cvp.value + sep +
+					getColorString(cvp.color) + sep);
+		}
+		System.out.println(criterion.toString());
 		return criterion.toString();
 	}
 	
 	void parseCriterionString(String criterion)
 	{
+		colorValuePairs = new ArrayList<ColorValuePair>();
 		String[] s = criterion.split("\\|");
 //		System.out.println(criterion);
 //		System.out.println(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5]);
 		try
 		{
 			setDataColumn(Integer.parseInt(s[1]));
-			valueStart = Double.parseDouble(s[2]);
-			colorStart = parseColorString(s[3]);
-			valueEnd = Double.parseDouble(s[4]);
-			colorEnd = parseColorString(s[5]);
+			for(int i = 2; i < s.length - 1; i+=2)
+			{
+				colorValuePairs.add(new ColorValuePair(
+						parseColorString(s[i+1]),
+						Double.parseDouble(s[i])));
+			}
 //			System.out.println(dataColumn + "," + valueStart + "," + colorStart + "," +
 //					valueEnd + "," + colorEnd);
 		}
@@ -155,6 +183,33 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		{
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public double[] getMinMax()
+	{
+		double[] minmax = new double[] { Double.MAX_VALUE, Double.MIN_VALUE };
+		for(ColorValuePair cvp : colorValuePairs)
+		{
+			minmax[0] = Math.min(cvp.value, minmax[0]);
+			minmax[1] = Math.max(cvp.value, minmax[1]);
+		}
+		return minmax;
+	}
+	
+	public class ColorValuePair implements Comparable {
+		public RGB color;
+		public double value;
+		public ColorValuePair(RGB color, double value)
+		{
+			this.color = color;
+			this.value = value;
+		}
+		
+		public int compareTo(Object o) throws ClassCastException
+		{
+			if(!(o instanceof ColorValuePair)) throw new ClassCastException("Object not of class ColorValuePair");
+			return (int)(value - ((ColorValuePair)o).value);
 		}
 	}
 }

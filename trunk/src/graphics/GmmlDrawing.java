@@ -189,7 +189,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	
 	public void showLegend(boolean show)
 	{
-		if(show && colorSetIndex > -1 && !editMode && gmmlVision.getShowLegendSelected())
+		if(show && colorSetIndex > -1 && !editMode && gmmlVision.showLegendAction.isChecked())
 		{
 			legend.resetContents();
 			legend.setVisible(true);

@@ -46,7 +46,7 @@ public class GmmlVision extends ApplicationWindow
 		public NewAction (GmmlVision w)
 		{
 			window = w;
-			setText ("&New@Ctrl+N");
+			setText ("&New mapp@Ctrl+N");
 			setToolTipText ("Create new mapp");
 			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/new.gif"));
 		}
@@ -62,7 +62,7 @@ public class GmmlVision extends ApplicationWindow
 		public OpenAction (GmmlVision w)
 		{
 			window = w;
-			setText ("&Open@Ctrl+O");
+			setText ("&Open mapp@Ctrl+O");
 			setToolTipText ("Open mapp");
 			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/open.gif"));
 		}
@@ -86,7 +86,7 @@ public class GmmlVision extends ApplicationWindow
 		public SaveAction (GmmlVision w)
 		{
 			window = w;
-			setText ("&Save@Ctrl+S");
+			setText ("&Save mapp@Ctrl+S");
 			setToolTipText ("Save mapp");
 			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/save.gif"));
 		}
@@ -117,7 +117,7 @@ public class GmmlVision extends ApplicationWindow
 		public SaveAsAction (GmmlVision w)
 		{
 			window = w;
-			setText ("Save &As");
+			setText ("Save mapp &As");
 			setToolTipText ("Save mapp with new file name");
 		}
 		public void run () {
@@ -172,7 +172,7 @@ public class GmmlVision extends ApplicationWindow
 		public CloseAction (GmmlVision w)
 		{
 			window = w;
-			setText ("&Close@Ctrl+W");
+			setText ("&Close mapp@Ctrl+W");
 			setToolTipText ("Close this map");
 		}
 		public void run () {
@@ -287,18 +287,22 @@ public class GmmlVision extends ApplicationWindow
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
 			String file = fileDialog.open();
+			String error = null;
 			if(file != null) {
-				if(gmmlGdb.connect(new File(file))) {
-					setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
-				} else {
-					MessageBox messageBox = new MessageBox(getShell(),
-							SWT.ICON_ERROR| SWT.OK);
-					messageBox.setMessage("Failed to load '" + file + "'");
-					messageBox.setText("Error");
-					messageBox.open();
-				}
+				error = gmmlGdb.connect(new File(file));
+			} else { return; }
+
+			if(error == null)
+			{
+				setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
+				cacheExpressionData();
+			} else {
+				MessageBox messageBox = new MessageBox(getShell(),
+						SWT.ICON_ERROR| SWT.OK);
+				messageBox.setMessage("Failed to load '" + file + "'\nError: " + error);
+				messageBox.setText("Error");
+				messageBox.open();
 			}
-			cacheExpressionData();
 		}
 	}
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
@@ -320,21 +324,25 @@ public class GmmlVision extends ApplicationWindow
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 			String file = fileDialog.open();
+			String error = null;
 			if(file != null) {
 				gmmlGex.gexFile = new File(file);
-				gmmlGex.connect();
+				error = gmmlGex.connect();
 				if(gmmlGex.con != null)
 				{
 					gmmlGex.setSamples();
 					gmmlGex.loadColorSets();
 					cacheExpressionData();
-					if(drawing != null)
-					{
-						if(!drawing.editMode) showColorSetCombo(true);
-					} else {
-						showColorSetCombo(true);
-					}
+					showColorSetActionsCI(true);
 				}			
+				if(error != null)
+				{
+					MessageBox messageBox = new MessageBox(getShell(),
+							SWT.ICON_ERROR| SWT.OK);
+					messageBox.setMessage("Failed to load '" + file + "'\nError: " + error);
+					messageBox.setText("Error");
+					messageBox.open();
+				}
 			}
 		}
 	}
@@ -425,12 +433,13 @@ public class GmmlVision extends ApplicationWindow
 			window = w;
 			setText("&Color Set manager");
 			setToolTipText("Create and edit color sets");
+			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/colorset.gif"));
 		}
 		public void run () {
 			if(window.gmmlGex.con != null)
 			{
 				colorSetWindow.run();
-				showColorSetCombo(true);
+				getCoolBarManager().add(colorSetActionsCI);
 				if(drawing != null)
 				{
 					drawing.redraw();
@@ -462,12 +471,62 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private AboutAction aboutAction = new AboutAction(this);
 	
+	final static String COMBO_NO_COLORSET = "No colorset";
+	Combo colorSetCombo;
+	private class ColorSetComboContributionItem extends ControlContribution
+	{
+		public ColorSetComboContributionItem(String id)
+		{
+			super(id);
+		}
+		protected Control createControl(Composite parent) {
+			Label label = new Label(parent, SWT.LEFT);
+			label.setText("Color by:");
+			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			label.pack();
+			
+			colorSetCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+			colorSetCombo.addSelectionListener(new ColorSetComboListener());
+			colorSetCombo.pack();
+
+			return colorSetCombo;
+		}
+		
+	}
+	
+	private class ColorSetComboListener extends SelectionAdapter
+	{
+		public ColorSetComboListener()
+		{
+			super();
+		}
+		public void widgetSelected(SelectionEvent e)
+		{
+			if(drawing != null)
+			{
+				if(colorSetCombo.getText().equals(COMBO_NO_COLORSET))
+				{
+					drawing.setColorSetIndex(-1);
+				}
+				else
+				{
+					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+					if(gmmlGdb.con == null)
+					{
+						MessageDialog.openWarning(getShell(), "Warning", "No gene database selected");
+					}
+				}
+			}
+		}
+	}
+	
 	private class SwitchEditModeAction extends Action
 	{
 		GmmlVision window;
 		public SwitchEditModeAction (GmmlVision w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
+			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/edit.gif"));
 			window = w;
 		}
 		
@@ -476,26 +535,47 @@ public class GmmlVision extends ApplicationWindow
 			{
 				if(isChecked())
 				{
-					removeNewItemActions(getToolBarManager());
-					addNewItemActions(getToolBarManager());			
+					showEditActionsCI(true);
 					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
 					drawing.setEditMode(true);
 				}
 				else
 				{
-					removeNewItemActions(getToolBarManager());
-					showColorSetCombo(true);
+					showEditActionsCI(false);
 					sashFormSplit.setMaximizedControl(bpBrowser);
 					drawing.setEditMode(false);
 				}
 			}
-				else
-				{
-					setChecked(false);
-				}
+			else
+			{
+				setChecked(false);
 			}
 		}
-		private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
+	}
+	private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
+	
+	public class ShowLegendAction extends Action
+	{
+		GmmlVision window;
+		public ShowLegendAction (GmmlVision w)
+		{
+			super("&Show legend", IAction.AS_CHECK_BOX);
+			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/legend.gif"));
+			window = w;
+		}
+		
+		public void run () {
+			if(drawing == null || gmmlGex.con == null)
+			{
+				setChecked(false);
+			}
+			else
+			{
+				drawing.showLegend(isChecked());			
+			}
+		}
+	}
+	public ShowLegendAction showLegendAction = new ShowLegendAction(this);
 	
 	private class NewElementAction extends Action
 	{
@@ -672,44 +752,162 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	
-	protected StatusLineManager createStatusLineManager() {
-		return super.createStatusLineManager();
+	public void deselectNewItemActions()
+	{
+		IContributionItem[] items = editActionsCI.getToolBarManager().getItems();
+		for(int i = 0; i < items.length; i++)
+		{
+			if(items[i] instanceof ActionContributionItem)
+			{
+				((ActionContributionItem)items[i]).getAction().setChecked(false);
+			}
+		}
 	}
 	
-	protected ToolBarManager createToolBarManager(int style) {
-		ToolBarManager toolBarManager = new ToolBarManager(style);
-		toolBarManager.add(new GroupMarker("group.commonActions"));
-		toolBarManager.appendToGroup("group.commonActions", newAction);
-		toolBarManager.appendToGroup("group.commonActions", openAction);
-		toolBarManager.appendToGroup("group.commonActions", saveAction);
-		toolBarManager.add(new Separator("group.editMode"));
+	ToolBarContributionItem commonActionsCI;
+	ToolBarContributionItem editActionsCI;
+	ToolBarContributionItem colorSetActionsCI;
+	ToolBarContributionItem switchActionsCI;
+	protected CoolBarManager createCoolBarManager(int style)
+	{
+		commonActionsCI = createCommonActionsCI();
+		editActionsCI = createEditActionsCI();
+		colorSetActionsCI = createColorSetActionsCI();
+		switchActionsCI = createSwitchActionsCI();
+		
+		CoolBarManager coolBarManager = new CoolBarManager(style);
+		coolBarManager.setLockLayout(true);
+		
+		coolBarManager.add(commonActionsCI);
+		coolBarManager.add(switchActionsCI);
+		return coolBarManager;
+	}
+	
+	protected ToolBarContributionItem createSwitchActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		toolBarManager.add(switchEditModeAction);
-		toolBarManager.add(new Separator("group.newElements"));
 		
-		newItemActions = new HashMap();
-		newItemOrder = new Vector();
-		newItemActions.put("newGeneProduct", new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
-		newItemOrder.add("newGeneProduct");
-		newItemActions.put("newLabel", new NewElementAction(GmmlDrawing.NEWLABEL));
-		newItemOrder.add("newLabel");
-		newItemActions.put("newLineMenu", new NewElementAction(GmmlDrawing.NEWLINEMENU));
-		newItemOrder.add("newLineMenu");
-		newItemActions.put("newRectangle", new NewElementAction(GmmlDrawing.NEWRECTANGLE));
-		newItemOrder.add("newRectangle");
-		newItemActions.put("newOval", new NewElementAction(GmmlDrawing.NEWOVAL));
-		newItemOrder.add("newOval");
-		newItemActions.put("newArc", new NewElementAction(GmmlDrawing.NEWARC));
-		newItemOrder.add("newArc");
-		newItemActions.put("newBrace", new NewElementAction(GmmlDrawing.NEWBRACE));
-		newItemOrder.add("newBrace");
-		newItemActions.put("newTbar", new NewElementAction(GmmlDrawing.NEWTBAR));
-		newItemOrder.add("newTbar");
-		newItemActions.put("newLineShapeMenu", new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
-		newItemOrder.add("newLineShapeMenu");
+		return new ToolBarContributionItem(toolBarManager, "SwitchActions");
+	}
+	
+	protected ToolBarContributionItem createColorSetActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		toolBarManager.add(new ControlContribution("ColorSetLabel") {
+			protected Control createControl(Composite parent) {
+				Composite comp = new Composite(parent, SWT.NONE);
+				comp.setLayout(new GridLayout(1, true));
+				Label label = new Label(comp, SWT.LEFT);
+				label.setText("Color by:");
+				label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+				label.pack();
+				return comp;
+			}	});
+		toolBarManager.add(new ControlContribution("ColorSetCombo") {
+			protected Control createControl(Composite parent) {				
+				colorSetCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+				colorSetCombo.addSelectionListener(new ColorSetComboListener());
+				colorSetCombo.pack();
+				return colorSetCombo;
+			}	});
 		
-		toolBarManager.update(true);
+		toolBarManager.add(colorSetManagerAction);
+		toolBarManager.add(showLegendAction);
+		ToolBarContributionItem ci = new ToolBarContributionItem(toolBarManager, "ColorSetActions");
+		return ci;
+	}
+	public void showColorSetActionsCI(boolean show)
+	{
+		if(show && gmmlGex.con != null) { 
+			colorSetActionsCI = createColorSetActionsCI();
+			getCoolBarManager().add(colorSetActionsCI);
+			getCoolBarManager().update(true);
+			String[] colorSets = gmmlGex.getColorSetNames();
+			String[] comboItems = new String[colorSets.length + 1];
+			comboItems[0] = COMBO_NO_COLORSET;
+			System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
+			colorSetCombo.setItems(comboItems);
+		}
+		else { getCoolBarManager().remove(colorSetActionsCI); }
+		getCoolBarManager().update(true);
+	}
+	
+	protected ToolBarContributionItem createCommonActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		toolBarManager.add(newAction);
+		toolBarManager.add(openAction);
+		toolBarManager.add(saveAction);
+		return new ToolBarContributionItem(toolBarManager, "CommonActions");
+	}
+	
+	protected ToolBarContributionItem createEditActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLABEL));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINEMENU));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWRECTANGLE));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWOVAL));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWARC));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWBRACE));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWTBAR));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
 		
-		return toolBarManager;
+		return new ToolBarContributionItem(toolBarManager, "EditModeActions");
+	}
+	public void showEditActionsCI(boolean show)
+	{
+		if(show) { 
+			getCoolBarManager().add(editActionsCI);
+			showColorSetActionsCI(false);
+		}
+		else { 
+			getCoolBarManager().remove(editActionsCI);
+			showColorSetActionsCI(true);
+		}
+		getCoolBarManager().update(true);
+	}
+	
+//	protected ToolBarManager createToolBarManager(int style) {
+//		ToolBarManager toolBarManager = new ToolBarManager(style);
+//		toolBarManager.add(new GroupMarker("group.commonActions"));
+//		toolBarManager.appendToGroup("group.commonActions", newAction);
+//		toolBarManager.appendToGroup("group.commonActions", openAction);
+//		toolBarManager.appendToGroup("group.commonActions", saveAction);
+//		toolBarManager.add(new Separator("group.editMode"));
+//		toolBarManager.add(switchEditModeAction);
+//		toolBarManager.add(new Separator("group.newElements"));
+//		
+//		newItemActions = new HashMap();
+//		newItemOrder = new Vector();
+//		newItemActions.put("newGeneProduct", new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
+//		newItemOrder.add("newGeneProduct");
+//		newItemActions.put("newLabel", new NewElementAction(GmmlDrawing.NEWLABEL));
+//		newItemOrder.add("newLabel");
+//		newItemActions.put("newLineMenu", new NewElementAction(GmmlDrawing.NEWLINEMENU));
+//		newItemOrder.add("newLineMenu");
+//		newItemActions.put("newRectangle", new NewElementAction(GmmlDrawing.NEWRECTANGLE));
+//		newItemOrder.add("newRectangle");
+//		newItemActions.put("newOval", new NewElementAction(GmmlDrawing.NEWOVAL));
+//		newItemOrder.add("newOval");
+//		newItemActions.put("newArc", new NewElementAction(GmmlDrawing.NEWARC));
+//		newItemOrder.add("newArc");
+//		newItemActions.put("newBrace", new NewElementAction(GmmlDrawing.NEWBRACE));
+//		newItemOrder.add("newBrace");
+//		newItemActions.put("newTbar", new NewElementAction(GmmlDrawing.NEWTBAR));
+//		newItemOrder.add("newTbar");
+//		newItemActions.put("newLineShapeMenu", new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
+//		newItemOrder.add("newLineShapeMenu");
+//		
+//		toolBarManager.update(true);
+//		
+//		return toolBarManager;
+//	}
+
+	protected StatusLineManager createStatusLineManager() {
+		return super.createStatusLineManager();
 	}
 
 	/**
@@ -729,13 +927,14 @@ public class GmmlVision extends ApplicationWindow
 		MenuManager editMenu = new MenuManager ("&Edit");
 		editMenu.add(propertyAction);
 		MenuManager viewMenu = new MenuManager ("&View");
+		viewMenu.add(showLegendAction);
 		viewMenu.add(new ZoomAction(this, 50));
 		viewMenu.add(new ZoomAction(this, 75));
 		viewMenu.add(new ZoomAction(this, 100));
 		viewMenu.add(new ZoomAction(this, 125));
 		viewMenu.add(new ZoomAction(this, 150));
 		viewMenu.add(new ZoomAction(this, 200));
-		viewMenu.add(new ZoomAction(this, ZOOM_TO_FIT)); //Zoom to fit
+		viewMenu.add(new ZoomAction(this, ZOOM_TO_FIT));
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(selectGexAction);
@@ -754,158 +953,29 @@ public class GmmlVision extends ApplicationWindow
 		return m;
 	}
 
-	public HashMap newItemActions;
-	public Vector newItemOrder;
+//	public HashMap newItemActions;
+//	public Vector newItemOrder;
 
-	protected void addNewItemActions(ToolBarManager toolBarManager)
-	{
-		Iterator it = newItemOrder.iterator();
-		while(it.hasNext())
-		{
-			toolBarManager.appendToGroup("group.newElements",
-					(Action)newItemActions.get((String)it.next()));
-		}
-		toolBarManager.update(true);
-	}
+//	protected void addNewItemActions(ToolBarManager toolBarManager)
+//	{
+//		Iterator it = newItemOrder.iterator();
+//		while(it.hasNext())
+//		{
+//			toolBarManager.appendToGroup("group.newElements",
+//					(Action)newItemActions.get((String)it.next()));
+//		}
+//		toolBarManager.update(true);
+//	}
 
-	protected void removeNewItemActions(ToolBarManager toolBarManager)
-	{
-		for(int i = 0; i < newItemOrder.size(); i++)
-		{
-				toolBarManager.remove("newItemAction");
-		}
-		toolBarManager.update(true);
-	}
+//	protected void removeNewItemActions(ToolBarManager toolBarManager)
+//	{
+//		for(int i = 0; i < newItemOrder.size(); i++)
+//		{
+//				toolBarManager.remove("newItemAction");
+//		}
+//		toolBarManager.update(true);
+//	}
 
-	public void deselectNewItemActions()
-	{
-		Iterator it = newItemActions.values().iterator();
-		while(it.hasNext())
-		{
-			((Action)it.next()).setChecked(false);
-		}
-		((Action)newItemActions.get("newGeneProduct")).run();
-	}
-	
-	Combo colorSetCombo;
-	ToolItem colorSetLabel;
-	ToolItem colorSetComboItem;
-	ToolItem colorSetSeparator;
-	ToolItem colorSetManagerButton;
-	ToolItem showLegendSwitch;
-	final static String COMBO_NO_COLORSET = "No colorset";
-	Image colorSetImage;
-	private void showColorSetCombo(boolean show)
-	{
-		ToolBar toolBar = (ToolBar)getToolBarControl();
-		if(show)
-		{	
-			if(colorSetCombo != null && !colorSetCombo.isDisposed())
-			{
-				colorSetLabel.dispose();
-				colorSetCombo.dispose();
-				colorSetSeparator.dispose();
-				colorSetComboItem.dispose();
-				colorSetManagerButton.dispose();
-				showLegendSwitch.dispose();
-			}
-			if(colorSetImage == null)
-			{
-				try {
-				colorSetImage = new Image(null, new FileInputStream("icons/colorset.gif"));
-				} catch(Exception e) { System.out.println("colorsetimage not found");}
-			}
-			
-			String[] colorSets = gmmlGex.getColorSetNames();
-			String[] comboItems = new String[colorSets.length + 1];
-			comboItems[0] = COMBO_NO_COLORSET;
-			System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
-
-			colorSetSeparator = new ToolItem(toolBar, SWT.SEPARATOR);
-			
-			colorSetCombo = new Combo(toolBar, SWT.DROP_DOWN | SWT.READ_ONLY);
-			colorSetCombo.addSelectionListener(new ColorSetComboListener());
-			
-			colorSetLabel = new ToolItem(toolBar, SWT.NONE);
-			colorSetLabel.setText("Color by:");
-			colorSetComboItem = new ToolItem(toolBar, SWT.SEPARATOR);
-			colorSetComboItem.setControl(colorSetCombo);
-			
-			colorSetCombo.setItems(comboItems);
-			if(drawing != null)
-				colorSetCombo.select(drawing.colorSetIndex + 1);
-			else
-				colorSetCombo.select(0);
-			colorSetCombo.pack();
-			
-			colorSetComboItem.setWidth(colorSetCombo.getBounds().width);
-			colorSetComboItem.setControl(colorSetCombo);
-			
-			colorSetCombo.setVisible(true);
-			
-			colorSetManagerButton = new ToolItem(toolBar, SWT.PUSH);
-			colorSetManagerButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e)
-				{
-					colorSetManagerAction.run();
-				}
-			});
-			if(colorSetImage != null)
-			{
-				colorSetManagerButton.setImage(colorSetImage);
-			}
-			
-			showLegendSwitch = new ToolItem(toolBar, SWT.CHECK);
-			showLegendSwitch.setText("Show legend");
-			showLegendSwitch.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e)
-				{
-					if(drawing != null)
-					{
-						drawing.showLegend(showLegendSwitch.getSelection());
-					} else {
-						showLegendSwitch.setSelection(false);
-					}
-				}
-			});
-		}
-		else
-		{
-			colorSetCombo.setVisible(false);
-		}
-	}
-	
-	public boolean getShowLegendSelected()
-	{
-		if(!showLegendSwitch.isDisposed() && showLegendSwitch != null)
-		{
-			return showLegendSwitch.getSelection();
-		}
-		return false;
-	}
-	
-	private class ColorSetComboListener extends SelectionAdapter
-	{
-		public ColorSetComboListener()
-		{
-			super();
-		}
-		public void widgetSelected(SelectionEvent e)
-		{
-			if(drawing != null)
-			{
-				if(colorSetCombo.getText().equals(COMBO_NO_COLORSET))
-				{
-					drawing.setColorSetIndex(-1);
-				}
-				else
-				{
-					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
-				}
-			}
-		}
-	}
-	
 	GmmlDrawing drawing;
 	public GmmlData gmmlData;
 	public GmmlGdb gmmlGdb = new GmmlGdb();
@@ -925,7 +995,7 @@ public class GmmlVision extends ApplicationWindow
 		super(shell);
 		addMenuBar();
 		addStatusLine();
-		addToolBar(SWT.FLAT | SWT.RIGHT);
+		addCoolBar(SWT.FLAT | SWT.LEFT);
 	}
 
 	/**
@@ -1003,6 +1073,7 @@ public class GmmlVision extends ApplicationWindow
 		//TODO: put all images and icons in the progam in imageRegistry
 		imageRegistry = new ImageRegistry(getShell().getDisplay());
 		
+		// Labels for color by expressiondata (mRNA and Protein)
 		ImageData img = new ImageData("images/mrna.bmp");
 		img.transparentPixel = img.palette.getPixel(TRANSPARENT_COLOR);
 		imageRegistry.put("data.mRNA",
@@ -1010,7 +1081,7 @@ public class GmmlVision extends ApplicationWindow
 		img = new ImageData("images/protein.bmp");
 		img.transparentPixel = img.palette.getPixel(TRANSPARENT_COLOR);
 		imageRegistry.put("data.protein",
-				new Image(getShell().getDisplay(), img));
+				new Image(getShell().getDisplay(), img));	
 		
 	}
 	
@@ -1045,23 +1116,11 @@ public class GmmlVision extends ApplicationWindow
 		
 		if(gmmlGex.con != null)
 		{
-			gmmlGex.mappIds = drawing.getMappIds();
-			if(gmmlGdb.con != null)
-			{
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				try {
-					dialog.run(true, true, gmmlGex.cacheRunnable);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
+			cacheExpressionData();
 			drawing.editMode = switchEditModeAction.isChecked();
 			if(drawing != null)
 			{
-				if(!drawing.editMode)
-				{
-					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
-				}
+				drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
 			}
 		}
 				

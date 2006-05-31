@@ -337,42 +337,34 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
 				if (o.isContain(p))
 				{
-					pressedObject = o;
-					if (o instanceof GmmlGraphics)
+					if (o instanceof GmmlGeneProduct)
 					{
-						GmmlGraphics g = (GmmlGraphics) o;
-						selectedGraphics = g;
+						GmmlGeneProduct gp = (GmmlGeneProduct)o;
+						// Get the backpage text
+						String geneId = gp.getGeneId();
+						String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId);
+						String gexText = gmmlVision.gmmlGex.getDataString(geneId);
+						if (bpText != null) 
+						{
+							gmmlVision.bpBrowser.setBpText(bpText);
+						} 
+						else 
+						{
+							gmmlVision.bpBrowser.setBpText("<I>No gene information found</I>");
+						}
+						if (gexText != null) 
+						{
+							gmmlVision.bpBrowser.setGexText(gexText);
+						}
+						else 
+						{
+							gmmlVision.bpBrowser.setGexText("<I>No expression data found</I>");
+						}
+						break;
 					}
-					break;
 				}
 			}
-			// Check if selectedGraphics is GeneProduct
-			if (selectedGraphics instanceof GmmlGeneProduct) 
-			{
-				GmmlGeneProduct gp = (GmmlGeneProduct)selectedGraphics;
-				// Get the backpage text
-				String geneId = gp.getGeneId();
-				String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId);
-				String gexText = gmmlVision.gmmlGex.getDataString(geneId);
-				if (bpText != null) 
-				{
-					gmmlVision.bpBrowser.setBpText(bpText);
-				} 
-				else 
-				{
-					gmmlVision.bpBrowser.setBpText("<I>No gene information found</I>");
-				}
-				if (gexText != null) 
-				{
-					gmmlVision.bpBrowser.setGexText(gexText);
-				}
-				else 
-				{
-					gmmlVision.bpBrowser.setGexText("<I>No expression data found</I>");
-				}
-			}
-		}
-		
+		}	
 	}
 
 	/**

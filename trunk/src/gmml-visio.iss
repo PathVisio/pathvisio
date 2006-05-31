@@ -33,6 +33,7 @@ Source: "images\mRNA.bmp"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "icons\select.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\colorset.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\edit.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
+Source: "icons\legend.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\new.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\newarc.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\newarrow.gif"; DestDir: "{app}\icons"; Flags: ignoreversion

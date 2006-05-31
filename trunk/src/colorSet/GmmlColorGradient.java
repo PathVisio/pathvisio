@@ -54,6 +54,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	
 	public RGB getColor(double value)
 	{
+		double[] minmax = getMinMax();
 		double valueStart = 0;
 		double valueEnd = 0;
 		RGB colorStart = null;
@@ -77,7 +78,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		}
 		if(!found)
 		{
-			return null;
+//			return null;
+			if(value < minmax[0]) value = minmax[0]; else value = minmax[1];
 		}
 		double alpha = (value - valueStart) / (valueEnd - valueStart);
 		double red = colorStart.red + alpha*(colorEnd.red - colorStart.red);
@@ -109,9 +111,9 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 			double value = (Double)data.get(useSample);
 			return getColor(value);
 		} catch(NullPointerException ne) {
-			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
+//			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
 		} catch(ClassCastException ce) {
-			System.out.println("GmmlColorGradient:getColor:Error: Data is not of type double");
+//			System.out.println("GmmlColorGradient:getColor:Error: Data is not of type double");
 		} catch(Exception e)
 		{
 			e.printStackTrace();

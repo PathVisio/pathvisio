@@ -92,7 +92,11 @@ public class GmmlData
 		{
 			System.out.println("Could not access " + file);
 			System.out.println(e.getMessage());
-		}	
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 	
 

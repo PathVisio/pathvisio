@@ -179,6 +179,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			pack(true);
 			lastFitSize = getSize();
 		}
+		samples.resetContents();
 		redraw();
 	}
 	
@@ -234,20 +235,20 @@ public class GmmlLegend extends Composite implements MouseListener,
 		}
 		
 		final static int MARGIN = 5;
-		final static int SAMPLE_IMAGE_WIDTH = GmmlGeneProduct.INITIAL_WIDTH;
 		final static int SAMPLE_IMAGE_HEIGHT = GmmlGeneProduct.INITIAL_HEIGHT;
 		public void setSampleImage()
 		{
 			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
 			
-			Point imageSize = new Point(Math.max(SAMPLE_IMAGE_WIDTH, sg.getClientArea().width - MARGIN), 
+			int nr = colorSet.useSamples.size();
+			Point imageSize = new Point(Math.min(GmmlGeneProduct.INITIAL_WIDTH / 2 + nr * 10, sg.getClientArea().width - MARGIN), 
 					SAMPLE_IMAGE_HEIGHT);
 			if(sampleImage != null)
 			{
 				sampleImage.dispose();
 			}
 			sampleImage = new Image(getDisplay(), imageSize.x, imageSize.y);
-			int nr = colorSet.useSamples.size();
+			
 			GC imageGc = new GC(sampleImage);
 			imageGc.setFont(f);
 			String exampleId = "Gene ID";
@@ -390,7 +391,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 				for(GmmlColorSetObject co : colorSetObjects)
 					if(co instanceof GmmlColorGradient) {
 						GmmlColorGradient cg = (GmmlColorGradient)co;
-						drawColorGradient(e, cg, rectangles.get(cg.getDataColumn()));
+						Rectangle area = rectangles.get(cg.getDataColumn());
+						if(area != null) drawColorGradient(e, cg, area);
 					}
 				}
 			}

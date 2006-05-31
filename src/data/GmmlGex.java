@@ -33,8 +33,6 @@ import org.eclipse.swt.graphics.RGB;
 
 import colorSet.*;
 
-import data.GmmlDb.ConvertThread;
-
 public class GmmlGex {
 	public Connection con;
 	Connection conGmGex;
@@ -276,14 +274,17 @@ public class GmmlGex {
 			return avgSampleData;
 		}
 		
-		public double getAvgDouble(ArrayList<String[]> data)
+		public Double getAvgDouble(ArrayList<String[]> data)
 		{
 			double avg = 0;
+			boolean numberFound = false;
 			for(String[] d : data)
 			{
-				avg += Double.parseDouble(d[2]);
+				double v = 0;
+				try { v = Double.parseDouble(d[2]); numberFound = true;} catch(Exception e) { }
+				avg += v;
 			}
-			return avg / data.size();
+			if(numberFound) { return avg / data.size(); } else { return null; }
 		}
 		
 		public String getAvgString(ArrayList<String[]> data)
@@ -583,16 +584,32 @@ public class GmmlGex {
 					return;
 				}
 				
-				id = r.getString(2);
-				code = r.getString(3);
+				id = r.getString("ID");
+				code = r.getString("SystemCode");
 				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id);
 				
 				if(ensIds.size() == 0)
 				{
 					error.println(id + "\tGene not found in gene database");
+					// Try to find via name
+					try {
+						ResultSet r1 = gmmlGdb.con.createStatement().executeQuery(
+								"SELECT id FROM gene " +
+								"WHERE name = '" + id.trim() + "'"
+						);
+						r1.next();
+						id = r1.getString(1);
+						ensIds = gmmlGdb.ref2EnsIds(id);
+					} catch(Exception e) {
+//						e.printStackTrace();
+						error.println("\t\tLooking for gene by name: not found in gdb + " + e.getMessage());
+					}
 				}
-				else
-				{				
+				if(ensIds.size() == 0)
+				{
+					error.println("\t\tLooking for gene by name: found in gdb, but no linking ensembl gene exists for " + id);
+				} else {
+					error.println("\t\tAdded gene by name/symbol: " + id + "");			
 					ArrayList<String> data = new ArrayList<String>();
 					for(int i = 4; i < nCols - 1; i++) {
 							data.add(r.getString(i));

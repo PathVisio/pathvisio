@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.*;
 
 import colorSet.GmmlColorGradient.ColorValuePair;
 
-import data.GmmlDb;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
@@ -515,7 +514,9 @@ public class ColorSetWindow extends ApplicationWindow {
 			GmmlColorGradient cg = (GmmlColorGradient)element;
 			cgColorTableViewer.setInput(cg);
 			cgNameText.setText(cg.name);
-			setCgComboItems(cg.parent);
+			if(!setCgComboItems(cg.parent)) {
+				return;
+			}
 			cgCombo.select(cgColumnIndex.indexOf(cg.getDataColumn()));
 			sashForm.setMaximizedControl(cgComposite);
 			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.parent);
@@ -526,13 +527,20 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 
-	private void setCgComboItems(GmmlColorSet cs)
+	private boolean setCgComboItems(GmmlColorSet cs)
 	{
 		cgColumnNames = new String[cs.useSamples.size() + 1];
 		cgColumnIndex = new ArrayList<Integer>();
-		cgColumnNames[0] = "All samples";
-		cgColumnIndex.add(-1);
-		
+		if(cs.useSamples.size() > 0)
+		{
+			cgColumnNames[0] = "All samples";
+			cgColumnIndex.add(-1);
+		} else {
+			MessageDialog.openError(getShell(), "Error", "No samples selected for visualization\n" +
+					"Select samples from list and click '>'");
+			setRightCompositeContents(cs);
+			return false;
+		}
 		for(int i = 0; i < cs.useSamples.size(); i++)
 		{
 			Sample s = cs.useSamples.get(i);
@@ -543,6 +551,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			}
 		}
 		cgCombo.setItems(cgColumnNames);
+		return true;
 	}
 	
 	class TableGrowListener extends ControlAdapter {
@@ -809,7 +818,7 @@ public class ColorSetWindow extends ApplicationWindow {
 				Iterator it = ((IStructuredSelection)sampleListViewer.getSelection()).iterator();
 				while(it.hasNext())
 				{
-					cs.useSamples.add((Sample)it.next());
+					cs.addUseSample((Sample)it.next());
 				}
 				sampleTableViewer.refresh(true);
 				sampleListViewer.refresh(true);

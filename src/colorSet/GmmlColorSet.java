@@ -62,6 +62,12 @@ public class GmmlColorSet {
 		return null;
 	}
 	
+	public void addUseSample(Sample s)
+	{
+		useSamples.add(s);
+		sampleTypes.add(SAMPLE_TYPE_UNDEF);
+	}
+	
 	public RGB getColor(HashMap data, int sampleId)
 	{
 		RGB rgb = color_no_criteria_met;
@@ -169,7 +175,9 @@ public class GmmlColorSet {
 		ArrayList<Sample> a = new ArrayList<Sample>();
 		for(int i = 0; i < s.length; i++)
 		{
-			a.add(gmmlGex.samples.get(Integer.parseInt(s[i])));
+			try { 
+				a.add(gmmlGex.samples.get(Integer.parseInt(s[i])));
+			} catch (Exception e) { }
 		}
 		return a;
 	}

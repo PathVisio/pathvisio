@@ -358,6 +358,7 @@ public class GmmlVision extends ApplicationWindow
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				try {
 					dialog.run(true, true, gmmlGex.cacheRunnable);
+					drawing.redraw();
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
@@ -425,6 +426,66 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private ConvertGexAction convertGexAction = new ConvertGexAction(this);
 	
+	private class ConvertGdbAction extends Action
+	{
+		GmmlVision window;
+		public ConvertGdbAction(GmmlVision w)
+		{
+			window = w;
+			setText("&Gdb to Gmml-Vision");
+			setToolTipText("Convert from GenMAPP 2 Gene database to Gmml-Vision Gene database");
+		}
+		
+		public void run () {
+			File gdbFile = null;
+			File gmGdbFile = null;
+			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+			fileDialog.setText("Select Gene database to convert");
+			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene Databases");
+			fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
+			fileDialog.setFilterNames(new String[] {"Gene database","All files"});
+			String file = fileDialog.open();
+			if(file != null) {
+				gmGdbFile = new File(file);
+			} else {
+				return;
+			}
+			FileDialog saveDialog = new FileDialog(window.getShell(), SWT.SAVE);
+			saveDialog.setText("Save");
+			saveDialog.setFilterExtensions(new String[] {"*.properties", "*.*"});
+			saveDialog.setFilterNames(new String[] {"Gmml Vision Gdb", "All files"});
+			saveDialog.setFileName(gmGdbFile.getName().replace(".gdb", ".properties"));
+			String fileName = saveDialog.open();
+			if(fileName != null) 
+			{
+				System.out.println(fileName);
+				gdbFile = new File(fileName);
+				boolean confirmed = true;
+				if(gdbFile.exists())
+				{
+					if(!MessageDialog.openQuestion(window.getShell(),"",
+							"File already exists, overwrite?"))
+					{
+						confirmed = false;
+					}
+				}
+				if(confirmed)
+				{
+					gmmlGdb.convertGdbFile = gdbFile;
+					gmmlGdb.convertGmGdbFile = gmGdbFile;
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+					try {
+						dialog.run(true, true, gmmlGdb.convertRunnable);
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		}
+	}
+	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);
+	
 	private class ColorSetManagerAction extends Action
 	{
 		GmmlVision window;
@@ -445,6 +506,7 @@ public class GmmlVision extends ApplicationWindow
 					drawing.redraw();
 					drawing.legend.resetContents();
 				}
+				showColorSetActionsCI(true);
 			}
 			else
 			{
@@ -535,21 +597,22 @@ public class GmmlVision extends ApplicationWindow
 			{
 				if(isChecked())
 				{
+					drawing.setEditMode(true);
 					showEditActionsCI(true);
 					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
-					drawing.setEditMode(true);
 				}
 				else
 				{
+					drawing.setEditMode(false);
 					showEditActionsCI(false);
 					sashFormSplit.setMaximizedControl(bpBrowser);
-					drawing.setEditMode(false);
 				}
 			}
 			else
 			{
 				setChecked(false);
 			}
+			getCoolBarManager().update(true);
 		}
 	}
 	private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
@@ -817,9 +880,27 @@ public class GmmlVision extends ApplicationWindow
 		ToolBarContributionItem ci = new ToolBarContributionItem(toolBarManager, "ColorSetActions");
 		return ci;
 	}
-	public void showColorSetActionsCI(boolean show)
+	
+	private void showEditActionsCI(boolean show)
 	{
-		if(show && gmmlGex.con != null) { 
+		if(show) {
+			showColorSetActionsCI(false);
+			getCoolBarManager().add(editActionsCI);
+		}
+		else { 
+			getCoolBarManager().remove(editActionsCI);
+			showColorSetActionsCI(true);
+		}
+		getCoolBarManager().update(true);
+	}
+	
+	private void showColorSetActionsCI(boolean show)
+	{
+		if(show) {
+			if(drawing != null) { 
+				if(drawing.editMode) { return; }
+			}
+			if(gmmlGex.con == null) { return; }
 			colorSetActionsCI = createColorSetActionsCI();
 			getCoolBarManager().add(colorSetActionsCI);
 			getCoolBarManager().update(true);
@@ -828,8 +909,15 @@ public class GmmlVision extends ApplicationWindow
 			comboItems[0] = COMBO_NO_COLORSET;
 			System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
 			colorSetCombo.setItems(comboItems);
+			if(drawing != null) { 
+				colorSetCombo.select(drawing.colorSetIndex + 1); 
+			} else {
+				colorSetCombo.select(0);
+			}
 		}
-		else { getCoolBarManager().remove(colorSetActionsCI); }
+		else { 
+			getCoolBarManager().remove(colorSetActionsCI);
+		}
 		getCoolBarManager().update(true);
 	}
 	
@@ -857,18 +945,7 @@ public class GmmlVision extends ApplicationWindow
 		
 		return new ToolBarContributionItem(toolBarManager, "EditModeActions");
 	}
-	public void showEditActionsCI(boolean show)
-	{
-		if(show) { 
-			getCoolBarManager().add(editActionsCI);
-			showColorSetActionsCI(false);
-		}
-		else { 
-			getCoolBarManager().remove(editActionsCI);
-			showColorSetActionsCI(true);
-		}
-		getCoolBarManager().update(true);
-	}
+
 	
 //	protected ToolBarManager createToolBarManager(int style) {
 //		ToolBarManager toolBarManager = new ToolBarManager(style);
@@ -941,6 +1018,7 @@ public class GmmlVision extends ApplicationWindow
 		dataMenu.add(colorSetManagerAction);
 		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
 		convertMenu.add(convertGexAction);
+		convertMenu.add(convertGdbAction);
 		dataMenu.add(convertMenu);
 		
 		MenuManager helpMenu = new MenuManager ("&Help");
@@ -1095,11 +1173,11 @@ public class GmmlVision extends ApplicationWindow
 		
 		gmmlData = new GmmlData(drawing);
 		
-		sc.setContent(drawing);
 		drawing.setSize(800, 600);
-		
 		switchEditModeAction.setChecked(true);
 		switchEditModeAction.run();
+		sc.setContent(drawing);
+		
 	}
 	
 	/**
@@ -1114,18 +1192,16 @@ public class GmmlVision extends ApplicationWindow
 		// initialize new JDOM gmml representation and read the file
 		gmmlData = new GmmlData(fnPwy, drawing);
 		
-		if(gmmlGex.con != null)
+		if(drawing != null)
 		{
-			cacheExpressionData();
 			drawing.editMode = switchEditModeAction.isChecked();
-			if(drawing != null)
+			if(gmmlGex.con != null)
 			{
-				drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+				cacheExpressionData();
+				if(!drawing.editMode) drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
 			}
-		}
-				
-		sc.setContent(drawing);
-		
+			sc.setContent(drawing);
+		}	
 	}
 
 } // end of class

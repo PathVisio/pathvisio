@@ -1,5 +1,6 @@
 package data;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.JDOMException;
 import org.jdom.input.*;
 import org.jdom.output.*;
@@ -82,20 +83,28 @@ public class GmmlData
 		catch(JDOMParseException pe) 
 		{
 			 System.out.println("Parse error: " + pe.getMessage());
+			 MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
+				"Parse error: " + pe.getMessage());
 		}
 		catch(JDOMException e)
 		{
 			System.out.println(file + " is invalid.");
 			System.out.println(e.getMessage());
+			 MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
+						"JDOM exception: " + e.getMessage());
 		}
 		catch(IOException e)
 		{
 			System.out.println("Could not access " + file);
 			System.out.println(e.getMessage());
+			MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
+						"IOException: " + e.getMessage());
 		}
 		catch(Exception e)
 		{
 			System.out.println("Error: " + e.getMessage());
+			MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
+						"Exception: " + e.getMessage());
 		}
 	}
 	

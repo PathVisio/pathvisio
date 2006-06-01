@@ -31,6 +31,7 @@ import util.SwtUtils;
 import colorSet.*;
 import data.*;
 import data.GmmlGex.RefData;
+import data.GmmlGex.Sample;
 
 public class GmmlGpColor {
 		
@@ -65,7 +66,7 @@ public class GmmlGpColor {
 		Rectangle r = parent.getBounds();
 		buffer.setBackground(c);
 		buffer.fillRectangle(r.x, r.y, r.width, r.height);
-		if(canvas.colorSetIndex > -1 && !canvas.editMode)
+		if(canvas.colorSetIndex > -1 && !canvas.editMode && gmmlGex.colorSets.size() > 0)
 		{
 			// Get visualization area
 			Rectangle colorArea = parent.getBounds();

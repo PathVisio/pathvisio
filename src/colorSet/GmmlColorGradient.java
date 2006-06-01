@@ -81,6 +81,23 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 //			return null;
 			if(value < minmax[0]) value = minmax[0]; else value = minmax[1];
 		}
+		//TEMP
+		for(int i = 0; i < colorValuePairs.size() - 1; i++)
+		{
+			ColorValuePair cvp = colorValuePairs.get(i);
+			ColorValuePair cvpNext = colorValuePairs.get(i + 1);
+			if(value >= cvp.value && value <= cvpNext.value)
+			{
+				valueStart = cvp.value;
+				colorStart = cvp.color;
+				valueEnd = cvpNext.value;
+				colorEnd = cvpNext.color;
+				found = true;
+				break;
+			}
+		}
+		//TEMP
+		if(colorStart == null || colorEnd == null ) { return null; }
 		double alpha = (value - valueStart) / (valueEnd - valueStart);
 		double red = colorStart.red + alpha*(colorEnd.red - colorStart.red);
 		double green = colorStart.green + alpha*(colorEnd.green - colorStart.green);

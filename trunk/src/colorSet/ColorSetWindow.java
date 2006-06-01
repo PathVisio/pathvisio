@@ -651,6 +651,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			MessageDialog.openError(getShell(), "Error", "Specify a name for the color set");
 			return false;
 		}
+		if(csCombo.getSelectionIndex() < 0) { return true; }
 		GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 		cs.name = csNameText.getText();
 		cs.color_gene_not_found = csColorGnf.getRGB();

@@ -158,7 +158,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			colorSetIndex = drawing.colorSetIndex;
 			gmmlGex = drawing.gmmlVision.gmmlGex;
 		}
-		if(colorSetIndex > -1)
+		if(colorSetIndex > -1 && gmmlGex.colorSets.size() > 0)
 		{
 			colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
 		} else {
@@ -228,7 +228,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 				setSampleImage();
 				sampleLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				sampleLabel.setImage(sampleImage);
-				
 				layout();
 			}
 			

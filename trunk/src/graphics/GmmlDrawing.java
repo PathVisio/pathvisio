@@ -17,9 +17,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.*;
 
+import data.GmmlGex;
 import data.GmmlGex.ConvertThread;
+import data.GmmlGex.RefData;
+import data.GmmlGex.Sample;
 
 /**
  * This class implements and handles a drawing.
@@ -27,7 +32,8 @@ import data.GmmlGex.ConvertThread;
  * visualized. The class also provides methods for mouse 
  * event handling.
  */
-public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, PaintListener
+public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, 
+PaintListener, MouseTrackListener
 {	
 	private static final long serialVersionUID = 1L;
 	
@@ -100,6 +106,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 		addMouseListener(this);
 		addMouseMoveListener(this);
 		addPaintListener (this);
+		addMouseTrackListener(this);
 		
 //		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
@@ -227,6 +234,12 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	 */
 	public void mouseMove(MouseEvent e)
 	{
+		// Dispose the tooltip if shown
+		if(tip != null)
+		{
+			if(!tip.isDisposed()) tip.dispose();
+		}
+		
 		if (isDragging)
 		{		
 			// if the main selection is a handle
@@ -686,6 +699,67 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 	public static final int DRAW_ORDER_LINESHAPE = 8;
 	public static final int DRAW_ORDER_SHAPE = 9;
 	public static final int DRAW_ORDER_DEFAULT = 10;
+	public void mouseEnter(MouseEvent e) {}
+
+	public void mouseExit(MouseEvent e) {}
+
+	Shell tip;
+	public void mouseHover(MouseEvent e) {
+		if(!editMode && colorSetIndex > -1 && gmmlVision.gmmlGex.con != null) {
+			Point2D p = new Point2D.Double(e.x, e.y);
+			
+			GmmlGex gmmlGex = gmmlVision.gmmlGex;
+			Collections.sort(drawingObjects);
+			Iterator it = drawingObjects.iterator();
+			while (it.hasNext())
+			{
+				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+				if (o.isContain(p))
+				{
+					if (o instanceof GmmlGeneProduct)
+					{
+						GmmlGeneProduct gp = (GmmlGeneProduct)o;
+						if(tip != null && !tip.isDisposed())
+							tip.dispose();
+						tip = new Shell(getShell().getDisplay(), SWT.ON_TOP | SWT.TOOL);  
+						tip.setBackground(getShell().getDisplay()
+			                   .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+						tip.setLayout(new RowLayout());
+						Label labelL = new Label(tip, SWT.NONE);
+			            Label labelR = new Label(tip, SWT.NONE);
+			            labelL.setForeground(getShell().getDisplay()
+			                    .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			            labelL.setBackground(getShell().getDisplay()
+			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			            labelR.setForeground(getShell().getDisplay()
+			                    .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			            labelR.setBackground(getShell().getDisplay()
+			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			                
+			            HashMap<Integer, Object> data = 
+			            	gmmlGex.data.get(gp.name).getAvgSampleData();
+			            String textL = "";
+			            String textR = "";
+			            for(Sample s : gmmlGex.colorSets.get(colorSetIndex).useSamples)
+			            {
+			            	textL += s.name + ":  \n";
+			            	textR += data.get(new Integer(s.idSample)) + "\n";
+			            }
+			            if(textL.equals("") && textR.equals("")) return;
+			            labelL.setText(textL);
+			            labelR.setText(textR);
+			            tip.pack();
+			            Point ls = getShell().getLocation();
+			            Point sco = gmmlVision.sc.getOrigin();
+			            tip.setLocation(ls.x + e.x - sco.x, ls.y  + e.y - sco.y + 
+			            		tip.computeSize(SWT.DEFAULT, SWT.DEFAULT).y + 25);
+			            tip.setVisible(true);
+						break;
+					}
+				}
+			}
+	}
+	}
 	
 	
 	

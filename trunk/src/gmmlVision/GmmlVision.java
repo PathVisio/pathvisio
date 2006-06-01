@@ -74,8 +74,8 @@ public class GmmlVision extends ApplicationWindow
 			fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 			// TODO: check if user pressed cancel
-	        String fnMapp = fd.open();			
-			openPathway(fnMapp);
+	        String fnMapp = fd.open();
+	        if(fnMapp != null) { openPathway(fnMapp); }
 		}
 	}
 	private OpenAction openAction = new OpenAction (this);
@@ -500,13 +500,12 @@ public class GmmlVision extends ApplicationWindow
 			if(window.gmmlGex.con != null)
 			{
 				colorSetWindow.run();
-				getCoolBarManager().add(colorSetActionsCI);
+				showColorSetActionsCI(true);
 				if(drawing != null)
 				{
 					drawing.redraw();
 					drawing.legend.resetContents();
 				}
-				showColorSetActionsCI(true);
 			}
 			else
 			{
@@ -825,6 +824,7 @@ public class GmmlVision extends ApplicationWindow
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
+		drawing.newGraphics = drawing.NEWNONE;
 	}
 	
 	ToolBarContributionItem commonActionsCI;

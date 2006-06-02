@@ -1,67 +1,76 @@
 package colorSet;
-import graphics.GmmlGeneProduct;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Canvas;
 
-import data.GmmlGex.Sample;
-
+/**
+ * This class represent a color gradient used for data visualization
+ */
 public class GmmlColorGradient extends GmmlColorSetObject {
+	/**
+	 * Apply to all samples
+	 */
 	public static final int DATA_COL_ALL = -1;
+	/**
+	 * Apply to no samples (initial value)
+	 */
 	public static final int DATA_COL_NO = -2;
-	private int dataColumn;	
+	/**
+	 * Sample to use for this color gradient (index of element in 
+	 * {@GmmlColorSet.useSamples}, DATA_COL_ALL or DATA_COL_NO
+	 */
+	public int useSample;
+	/**
+	 * Contains the colors and corresponding values used in this gradient as {@link ColorValuePair}
+	 */
 	public ArrayList<ColorValuePair> colorValuePairs;
 	
+	/**
+	 * Constructor for this class
+	 * @param parent 		colorset this gradient belongs to
+	 * @param name 			name of the gradient
+	 */
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
 		super(parent, name);
 		colorValuePairs = new ArrayList<ColorValuePair>();
-		dataColumn = DATA_COL_NO;
+		useSample = DATA_COL_NO;
 	}
 	
+	/**
+	 * Constructor for this class
+	 * @param parent 		colorset this gradient belongs to
+	 * @param name			name of the gradient	
+	 * @param criterion		string containing information to generate the gradient as stored
+	 * in the expression database
+	 */
 	public GmmlColorGradient(GmmlColorSet parent, String name, String criterion)
 	{
 		super(parent, name, criterion);
 	}
 	
-	public void setDataColumn(int dataColumn)
-	{
-		useSamples = new ArrayList<Integer>();
-		this.dataColumn = dataColumn;
-		if(dataColumn > -1)
-		{
-			useSamples.add(dataColumn);
-		}
-		else
-		{
-			for(Sample s : parent.useSamples)
-			{
-				useSamples.add(s.idSample);  
-			}
-		}
-	}
-	
-	public int getDataColumn()
-	{
-		return dataColumn;
-	}
-	
+	/**
+	 * get the color of the gradient for this value
+	 * @param value
+	 * @return	{@link RGB} containing the color information for the corresponding value
+	 * or null if the value does not have a valid color for this gradient
+	 */
 	public RGB getColor(double value)
 	{
-		double[] minmax = getMinMax();
+		double[] minmax = getMinMax(); //Get the minimum and maximum values of the gradient
 		double valueStart = 0;
 		double valueEnd = 0;
 		RGB colorStart = null;
 		RGB colorEnd = null;
 		Collections.sort(colorValuePairs);
+		//If value is larger/smaller than max/min then set the value to max/min
+		//TODO: make this optional
+		if(value < minmax[0]) value = minmax[0]; else value = minmax[1];
+		
 		//Find what colors the value is in between
-		boolean found = false;
 		for(int i = 0; i < colorValuePairs.size() - 1; i++)
 		{
 			ColorValuePair cvp = colorValuePairs.get(i);
@@ -72,32 +81,11 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 				colorStart = cvp.color;
 				valueEnd = cvpNext.value;
 				colorEnd = cvpNext.color;
-				found = true;
 				break;
 			}
 		}
-		if(!found)
-		{
-//			return null;
-			if(value < minmax[0]) value = minmax[0]; else value = minmax[1];
-		}
-		//TEMP
-		for(int i = 0; i < colorValuePairs.size() - 1; i++)
-		{
-			ColorValuePair cvp = colorValuePairs.get(i);
-			ColorValuePair cvpNext = colorValuePairs.get(i + 1);
-			if(value >= cvp.value && value <= cvpNext.value)
-			{
-				valueStart = cvp.value;
-				colorStart = cvp.color;
-				valueEnd = cvpNext.value;
-				colorEnd = cvpNext.color;
-				found = true;
-				break;
-			}
-		}
-		//TEMP
-		if(colorStart == null || colorEnd == null ) { return null; }
+		if(colorStart == null || colorEnd == null) return null; //Check if the values/colors are found
+		// Interpolate to find the color belonging to the given value
 		double alpha = (value - valueStart) / (valueEnd - valueStart);
 		double red = colorStart.red + alpha*(colorEnd.red - colorStart.red);
 		double green = colorStart.green + alpha*(colorEnd.green - colorStart.green);
@@ -105,6 +93,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		RGB rgb = null;
 		
 //		System.out.println("Finding color for: " + value);
+		//Try to create an RGB, if the color values are not valid (outside 0 to 255)
+		//This method returns null
 		try {
 			rgb = new RGB((int)red, (int)green, (int)blue);
 //			System.out.println("Found color: " + rgb);
@@ -117,25 +107,24 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	
 	public RGB getColor(HashMap<Integer, Object> data, int idSample)
 	{
-		int useSample = dataColumn;
-		if(dataColumn == -1)
+		int applySample = idSample; //The sample to apply the gradient on
+		if(useSample == -1) //Check if this gradient applies to all samples
 		{
-			useSample = idSample;
-		} else {
+			applySample = idSample; //Apply the gradient on the given sample
+		} else { //Does the gradient apply to the given sample?
 			if(useSample != idSample) return null;
 		}
 		try {
-			double value = (Double)data.get(useSample);
+			double value = (Double)data.get(applySample); //Try to get the data
 			return getColor(value);
-		} catch(NullPointerException ne) {
+		} catch(NullPointerException ne) { //No data available
 //			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
-		} catch(ClassCastException ce) {
+		} catch(ClassCastException ce) { //Data is not double
 //			System.out.println("GmmlColorGradient:getColor:Error: Data is not of type double");
-		} catch(Exception e)
-		{
+		} catch(Exception e) { //Any other exception
 			e.printStackTrace();
 		}
-		return null;
+		return null; //If anything goes wrong, return null
 	}
 	
 	public GmmlColorSet getParent()
@@ -148,12 +137,12 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		String sep = "|";
 		StringBuilder criterion = new StringBuilder("GRADIENT" + sep);
 		criterion.append(
-				dataColumn + sep);
+				useSample + sep);
 		for(ColorValuePair cvp : colorValuePairs)
 		{
 			criterion.append(
 					cvp.value + sep +
-					getColorString(cvp.color) + sep);
+					GmmlColorSet.getColorString(cvp.color) + sep);
 		}
 		System.out.println(criterion.toString());
 		return criterion.toString();
@@ -167,11 +156,11 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 //		System.out.println(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5]);
 		try
 		{
-			setDataColumn(Integer.parseInt(s[1]));
+			useSample = Integer.parseInt(s[1]);
 			for(int i = 2; i < s.length - 1; i+=2)
 			{
 				colorValuePairs.add(new ColorValuePair(
-						parseColorString(s[i+1]),
+						GmmlColorSet.parseColorString(s[i+1]),
 						Double.parseDouble(s[i])));
 			}
 //			System.out.println(dataColumn + "," + valueStart + "," + colorStart + "," +
@@ -183,28 +172,10 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		}
 	}
 	
-	public String getColorString(RGB rgb)
-	{
-		return rgb.red + "," + rgb.green + "," + rgb.blue;
-	}
-	
-	public RGB parseColorString(String colorString)
-	{
-		String[] s = colorString.split(",");
-		try 
-		{
-			return new RGB(
-					Integer.parseInt(s[0]), 
-					Integer.parseInt(s[1]), 
-					Integer.parseInt(s[2]));
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
+	/**
+	 * Find the minimum and maximum values used in this gradient
+	 * @return a double[] of length 2 with respecively the minimum and maximum values
+	 */
 	public double[] getMinMax()
 	{
 		double[] minmax = new double[] { Double.MAX_VALUE, Double.MIN_VALUE };
@@ -216,6 +187,9 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		return minmax;
 	}
 	
+	/**
+	 * This class contains a color and its corresponding value used for the {@link GmmlColorGradient}
+	 */
 	public class ColorValuePair implements Comparable {
 		public RGB color;
 		public double value;

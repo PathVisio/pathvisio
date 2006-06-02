@@ -1,33 +1,55 @@
 package gmmlVision;
 
-import graphics.*;
-import data.*;
-import colorSet.*;
-
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.jface.dialogs.*;
-import org.jdom.*;
-import org.jdom.output.*;
+import graphics.GmmlDrawing;
+import graphics.GmmlGeneProduct;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+
+import colorSet.ColorSetWindow;
+import data.GmmlData;
+import data.GmmlGdb;
+import data.GmmlGex;
 //~ import java.awt.Color;
 
 /**
@@ -40,6 +62,9 @@ public class GmmlVision extends ApplicationWindow
 	private static final long serialVersionUID = 1L;
 	private static int ZOOM_TO_FIT = -1;
 	
+	/**
+	 * {@link Action} to create a new gmml pathway
+	 */
 	private class NewAction extends Action 
 	{
 		GmmlVision window;
@@ -55,7 +80,10 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	private NewAction newAction = new NewAction (this);
-
+	
+	/**
+	 * {@link Action} to open an gmml pathway
+	 */
 	private class OpenAction extends Action 
 	{
 		GmmlVision window;
@@ -73,13 +101,16 @@ public class GmmlVision extends ApplicationWindow
 			fd.setFilterPath("C:\\GenMAPP 2 Data\\MAPPs");
 			fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
-			// TODO: check if user pressed cancel
 	        String fnMapp = fd.open();
+	        // Only open pathway if user selected a file
 	        if(fnMapp != null) { openPathway(fnMapp); }
 		}
 	}
 	private OpenAction openAction = new OpenAction (this);
 	
+	/**
+	 * {@link Action} to save a gmml pathway
+	 */
 	private class SaveAction extends Action 
 	{
 		GmmlVision window;
@@ -111,6 +142,9 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private SaveAction saveAction = new SaveAction(this);
 	
+	/**
+	 * {@link Action} to save a gmml pathway to a file specified by the user
+	 */
 	private class SaveAsAction extends Action 
 	{
 		GmmlVision window;
@@ -121,6 +155,7 @@ public class GmmlVision extends ApplicationWindow
 			setToolTipText ("Save mapp with new file name");
 		}
 		public void run () {
+			// Check if a gmml pathway is loaded
 			if (drawing != null)
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
@@ -128,35 +163,31 @@ public class GmmlVision extends ApplicationWindow
 				fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 				fd.setFilterNames(new String[] {"Gmml file", "All files"});
 				String fileName = fd.open();
-				if(fileName != null) 
+				// Only proceed if user selected a file
+				if(fileName == null) return;
+				// Append .xml extension if not already present
+				if(!fileName.endsWith(".xml")) fileName += ".xml";
+				
+				File checkFile = new File(fileName);
+				boolean confirmed = true;
+				// If file exists, ask overwrite permission
+				if(checkFile.exists())
 				{
-					if(!fileName.endsWith(".xml"))
-					{
-						fileName += ".xml";
-					}
-					File checkFile = new File(fileName);
-					boolean confirmed = true;
-					if(checkFile.exists())
-					{
-						if(!MessageDialog.openQuestion(window.getShell(),"",
-								"File already exists, overwrite?"))
-						{
-							confirmed = false;
-						}
-					}
-					if(confirmed)
-					{
-						double usedZoom = drawing.zoomFactor * 100;
-						// Set zoom to 100%
-						drawing.setZoom(100);
-						drawing.updateJdomElements();
-						// Overwrite the existing xml file
-						gmmlData.writeToXML(checkFile);
-						// Set zoom back
-						drawing.setZoom(usedZoom);
-					}
+					confirmed = MessageDialog.openQuestion(window.getShell(),"",
+					"File already exists, overwrite?");
 				}
-			} 
+				if(confirmed)
+				{
+					double usedZoom = drawing.zoomFactor * 100;
+					// Set zoom to 100%
+					drawing.setZoom(100);
+					drawing.updateJdomElements();
+					// Overwrite the existing xml file
+					gmmlData.writeToXML(checkFile);
+					// Set zoom back
+					drawing.setZoom(usedZoom);
+				}
+			}
 			else
 			{
 				MessageDialog.openError (window.getShell(), "Error", 
@@ -166,6 +197,9 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private SaveAsAction saveAsAction = new SaveAsAction (this);
 		
+	/**
+	 * {@link Action} to close the gmml pathway (does nothing yet)
+	 */
 	private class CloseAction extends Action 
 	{
 		GmmlVision window;
@@ -176,11 +210,14 @@ public class GmmlVision extends ApplicationWindow
 			setToolTipText ("Close this map");
 		}
 		public void run () {
-			
+			//TODO: unload drawing, ask to save
 		}
 	}
 	private CloseAction closeAction = new CloseAction(this);
 	
+	/**
+	 * {@link Action} to exit the application
+	 */
 	private class ExitAction extends Action 
 	{
 		GmmlVision window;
@@ -192,46 +229,56 @@ public class GmmlVision extends ApplicationWindow
 		}
 		public void run () {
 			window.close();
+			//TODO: ask to save pathway if content is changed
 		}
 	}
 	private ExitAction exitAction = new ExitAction(this);
 
-	private class PropertyAction extends Action 
-	{
-		GmmlVision window;
-		public PropertyAction (GmmlVision w)
-		{
-			window = w;
-			setText ("&Properties");
-			setToolTipText ("View properties");
-		}
-		public void run () {
-			if(drawing != null)
-			{
-				if(drawing.selectedGraphics != null)
-				{
-					//~ new GmmlPropertyInspector(drawing.selectedGraphics);
-				}
-				else
-				{
-					MessageDialog.openError (window.getShell(), "Error", 
-						"No GMMLGraphics selected!");
-				}
-			}
-			else
-			{
-				MessageDialog.openError (window.getShell(), "Error", 
-					"No gmml file loaded! Open or create a new gmml file first");
-			}
-		}
-	}
-	private PropertyAction propertyAction = new PropertyAction(this);
+	
+//	private class PropertyAction extends Action 
+//	{
+//		GmmlVision window;
+//		public PropertyAction (GmmlVision w)
+//		{
+//			window = w;
+//			setText ("&Properties");
+//			setToolTipText ("View properties");
+//		}
+//		public void run () {
+//			if(drawing != null)
+//			{
+//				if(drawing.selectedGraphics != null)
+//				{
+//					//~ new GmmlPropertyInspector(drawing.selectedGraphics);
+//				}
+//				else
+//				{
+//					MessageDialog.openError (window.getShell(), "Error", 
+//						"No GMMLGraphics selected!");
+//				}
+//			}
+//			else
+//			{
+//				MessageDialog.openError (window.getShell(), "Error", 
+//					"No gmml file loaded! Open or create a new gmml file first");
+//			}
+//		}
+//	}
+//	private PropertyAction propertyAction = new PropertyAction(this);
 
+	/**
+	 * {@link Action} that zooms a mapp to the specified zoomfactor
+	 */
 	private class ZoomAction extends Action 
 	{
 		GmmlVision window;
 		int pctZoomFactor;
 		
+		/**
+		 * Constructor for this class
+		 * @param w {@link GmmlVision} window this action belongs to
+		 * @param newPctZoomFactor the zoom factor as percentage of original
+		 */
 		public ZoomAction (GmmlVision w, int newPctZoomFactor)
 		{
 			window = w;
@@ -269,7 +316,10 @@ public class GmmlVision extends ApplicationWindow
 			}
 		}
 	}
-		
+	
+	/**
+	 * {@link Action} to select a Gene Database
+	 */
 	private class SelectGdbAction extends Action
 	{
 		GmmlVision window;
@@ -287,11 +337,10 @@ public class GmmlVision extends ApplicationWindow
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
 			String file = fileDialog.open();
-			String error = null;
-			if(file != null) {
-				error = gmmlGdb.connect(new File(file));
-			} else { return; }
-
+			// Only proceed if user selected a file
+			if(file == null) return;
+			// Connect returns null when connection is established
+			String error = gmmlGdb.connect(new File(file));
 			if(error == null)
 			{
 				setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
@@ -307,6 +356,9 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
 	
+	/**
+	 * {@link Action} to select an expression dataset
+	 */
 	private class SelectGexAction extends Action
 	{
 		GmmlVision window;
@@ -324,35 +376,39 @@ public class GmmlVision extends ApplicationWindow
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 			String file = fileDialog.open();
-			String error = null;
-			if(file != null) {
-				gmmlGex.gexFile = new File(file);
-				error = gmmlGex.connect();
-				if(gmmlGex.con != null)
-				{
-					gmmlGex.setSamples();
-					gmmlGex.loadColorSets();
-					cacheExpressionData();
-					showColorSetActionsCI(true);
-				}			
-				if(error != null)
-				{
-					MessageBox messageBox = new MessageBox(getShell(),
-							SWT.ICON_ERROR| SWT.OK);
-					messageBox.setMessage("Failed to load '" + file + "'\nError: " + error);
-					messageBox.setText("Error");
-					messageBox.open();
-				}
+			// Only proceed if user selected a file
+			if(file == null) return;
+			gmmlGex.gexFile = new File(file);
+			String error = gmmlGex.connect();
+			if(gmmlGex.con != null)
+			{
+				gmmlGex.setSamples();
+				gmmlGex.loadColorSets();
+				cacheExpressionData();
+				showColorSetActionsCI(true);
+			}			
+			if(error != null)
+			{
+				MessageBox messageBox = new MessageBox(getShell(),
+						SWT.ICON_ERROR| SWT.OK);
+				messageBox.setMessage("Failed to load '" + file + "'\nError: " + error);
+				messageBox.setText("Error");
+				messageBox.open();
 			}
+			
 		}
 	}
 	private SelectGexAction selectGexAction = new SelectGexAction(this);
 	
+	/**
+	 * Loads expression data for all {@link GmmlGeneProduct}s in the loaded pathway
+	 */
 	private void cacheExpressionData()
 	{
 		if(drawing != null)
 		{
 			gmmlGex.mappIds = drawing.getMappIds();
+			//Check for neccesary connections
 			if(gmmlGex.con != null && gmmlGdb.con != null)
 			{
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
@@ -366,6 +422,10 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	
+	/**
+	 *{@link Action} to start conversion of a GenMAPP gex to an expression database in
+	 *hsqldb format
+	 */
 	private class ConvertGexAction extends Action
 	{
 		GmmlVision window;
@@ -379,53 +439,54 @@ public class GmmlVision extends ApplicationWindow
 		public void run () {
 			File gexFile = null;
 			File gmGexFile = null;
+			
+			// Initialize filedialog to open GenMAPP gex
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Expression Dataset to convert");
 			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Expression Datasets");
 			fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
 			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 			String file = fileDialog.open();
-			if(file != null) {
-				gmGexFile = new File(file);
-			} else {
-				return;
-			}
+			// Only proceed if user selected a file
+			if(file == null) return;
+			gmGexFile = new File(file);
+			
+			// Initialize filedialog to save new Expression dataset
 			FileDialog saveDialog = new FileDialog(window.getShell(), SWT.SAVE);
 			saveDialog.setText("Save");
 			saveDialog.setFilterExtensions(new String[] {"*.properties", "*.*"});
 			saveDialog.setFilterNames(new String[] {"Gmml Vision Gex", "All files"});
 			saveDialog.setFileName(gmGexFile.getName().replace(".gex", ".properties"));
 			String fileName = saveDialog.open();
-			if(fileName != null) 
+			// Only proceed if user selected a file
+			if(file == null) return; 
+			gexFile = new File(fileName);
+			boolean confirmed = true;
+			if(gexFile.exists())
 			{
-				System.out.println(fileName);
-				gexFile = new File(fileName);
-				boolean confirmed = true;
-				if(gexFile.exists())
-				{
-					if(!MessageDialog.openQuestion(window.getShell(),"",
-							"File already exists, overwrite?"))
-					{
-						confirmed = false;
-					}
+				confirmed = MessageDialog.openQuestion(window.getShell(),"",
+				"File already exists, overwrite?");
+			}
+			if(confirmed)
+			{
+				gmmlGex.gexFile = gexFile;
+				gmmlGex.gmGexFile = gmGexFile;
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				try {
+					dialog.run(true, true, gmmlGex.convertRunnable);
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
-				if(confirmed)
-				{
-					gmmlGex.gexFile = gexFile;
-					gmmlGex.gmGexFile = gmGexFile;
-					ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-					try {
-						dialog.run(true, true, gmmlGex.convertRunnable);
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-
-				}
+				
 			}
 		}
 	}
 	private ConvertGexAction convertGexAction = new ConvertGexAction(this);
 	
+	/**
+	 * {@link Action} to start conversion of a GenMAPP Gene database to a gene database 
+	 * in hsqldb format
+	 */
 	private class ConvertGdbAction extends Action
 	{
 		GmmlVision window;
@@ -439,35 +500,31 @@ public class GmmlVision extends ApplicationWindow
 		public void run () {
 			File gdbFile = null;
 			File gmGdbFile = null;
+			// Initialize filedialog to open GenMAPP gdb
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Gene database to convert");
 			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene Databases");
 			fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
 			fileDialog.setFilterNames(new String[] {"Gene database","All files"});
 			String file = fileDialog.open();
-			if(file != null) {
-				gmGdbFile = new File(file);
-			} else {
-				return;
-			}
+			// Only proceed if user selected a file
+			if(file == null) return;
+			gmGdbFile = new File(file);
+			// Initialize filedialog to save new Gene database
 			FileDialog saveDialog = new FileDialog(window.getShell(), SWT.SAVE);
 			saveDialog.setText("Save");
 			saveDialog.setFilterExtensions(new String[] {"*.properties", "*.*"});
 			saveDialog.setFilterNames(new String[] {"Gmml Vision Gdb", "All files"});
 			saveDialog.setFileName(gmGdbFile.getName().replace(".gdb", ".properties"));
 			String fileName = saveDialog.open();
-			if(fileName != null) 
-			{
-				System.out.println(fileName);
+			// Only proceed if user selected a file
+			if(fileName == null) return;
 				gdbFile = new File(fileName);
 				boolean confirmed = true;
 				if(gdbFile.exists())
 				{
-					if(!MessageDialog.openQuestion(window.getShell(),"",
-							"File already exists, overwrite?"))
-					{
-						confirmed = false;
-					}
+					confirmed = MessageDialog.openQuestion(window.getShell(),"",
+							"File already exists, overwrite?");
 				}
 				if(confirmed)
 				{
@@ -481,11 +538,13 @@ public class GmmlVision extends ApplicationWindow
 					}
 
 				}
-			}
 		}
 	}
 	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);
 	
+	/**
+	 * {@link Action} to open the {@link ColorSetWindow}
+	 */
 	private class ColorSetManagerAction extends Action
 	{
 		GmmlVision window;
@@ -516,6 +575,9 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private ColorSetManagerAction colorSetManagerAction = new ColorSetManagerAction(this);
 	
+	/**
+	 * {@link Action} to open a {@link GmmlAboutBox} window
+	 */
 	private class AboutAction extends Action 
 	{
 		GmmlVision window;
@@ -532,8 +594,15 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private AboutAction aboutAction = new AboutAction(this);
 	
+	/**
+	 * String displayed in the colorset combo when no colorset is selected
+	 */
 	final static String COMBO_NO_COLORSET = "No colorset";
 	Combo colorSetCombo;
+	/**
+	 *{@link ControlContribution} to display the {@link Combo} for selecting a 
+	 *colorset on the toolbar
+	 */
 	private class ColorSetComboContributionItem extends ControlContribution
 	{
 		public ColorSetComboContributionItem(String id)
@@ -555,6 +624,10 @@ public class GmmlVision extends ApplicationWindow
 		
 	}
 	
+	/**
+	 *{@link SelectionAdapter} to handle {@link SelectionEvent}s for the 
+	 *{@link ColorSetComboContributionItem}
+	 */
 	private class ColorSetComboListener extends SelectionAdapter
 	{
 		public ColorSetComboListener()
@@ -581,6 +654,9 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	
+	/**
+	 * {@link Action} to switch between edit and view mode
+	 */
 	private class SwitchEditModeAction extends Action
 	{
 		GmmlVision window;
@@ -596,18 +672,20 @@ public class GmmlVision extends ApplicationWindow
 			{
 				if(isChecked())
 				{
+					//Switch to edit mode: show edit toolbar, show property table in sidebar
 					drawing.setEditMode(true);
 					showEditActionsCI(true);
 					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
 				}
 				else
 				{
+					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
 					drawing.setEditMode(false);
 					showEditActionsCI(false);
 					sashFormSplit.setMaximizedControl(bpBrowser);
 				}
 			}
-			else
+			else //No gmml pathway loaded, deselect action and do nothing
 			{
 				setChecked(false);
 			}
@@ -616,6 +694,9 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
 	
+	/**
+	 * {@link Action} to show or hide a legend for the selected colorset
+	 */
 	public class ShowLegendAction extends Action
 	{
 		GmmlVision window;
@@ -639,11 +720,18 @@ public class GmmlVision extends ApplicationWindow
 	}
 	public ShowLegendAction showLegendAction = new ShowLegendAction(this);
 	
+	/**
+	 * {@link Action} to add a new element to the gmml pathway
+	 */
 	private class NewElementAction extends Action
 	{
 		GmmlVision window;
 		int element;
-
+		
+		/**
+		 * Constructor for this class
+		 * @param e	type of element this action adds; a {@link GmmlDrawing} field constant
+		 */
 		public NewElementAction (int e)
 		{
 			element = e;
@@ -757,10 +845,19 @@ public class GmmlVision extends ApplicationWindow
 		
 	}
 	
+	/**
+	 * {@link IMenuCreator} that creates the drop down menus for 
+	 * adding new line-type and -shape elements
+	 */
 	private class NewItemMenuCreator implements IMenuCreator {
 		private Menu menu;
 		int element;
 		
+		/**
+		 * Constructor for this class
+		 * @param e	type of menu to create; one of {@link GmmlDrawing}.NEWLINEMENU
+		 * , {@link GmmlDrawing}.NEWLINESHAPEMENU
+		 */
 		public NewItemMenuCreator(int e) 
 		{
 			element = e;
@@ -814,6 +911,10 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	
+	/**
+	 * Deselects all {@link NewElementAction}s on the toolbar and sets 
+	 * {@link GmmlDrawing}.newGraphics to {@link GmmlDrawing}.NEWNONE
+	 */
 	public void deselectNewItemActions()
 	{
 		IContributionItem[] items = editActionsCI.getToolBarManager().getItems();
@@ -827,16 +928,17 @@ public class GmmlVision extends ApplicationWindow
 		drawing.newGraphics = drawing.NEWNONE;
 	}
 	
+	// Elements of the coolbar
 	ToolBarContributionItem commonActionsCI;
 	ToolBarContributionItem editActionsCI;
 	ToolBarContributionItem colorSetActionsCI;
 	ToolBarContributionItem switchActionsCI;
 	protected CoolBarManager createCoolBarManager(int style)
 	{
-		commonActionsCI = createCommonActionsCI();
-		editActionsCI = createEditActionsCI();
-		colorSetActionsCI = createColorSetActionsCI();
-		switchActionsCI = createSwitchActionsCI();
+		createCommonActionsCI();
+		createEditActionsCI();
+		createColorSetActionsCI();
+		createSwitchActionsCI();
 		
 		CoolBarManager coolBarManager = new CoolBarManager(style);
 		coolBarManager.setLockLayout(true);
@@ -846,15 +948,53 @@ public class GmmlVision extends ApplicationWindow
 		return coolBarManager;
 	}
 	
-	protected ToolBarContributionItem createSwitchActionsCI()
+	/**
+	 * Creates element of the coolbar containing common actions as new, save etc.
+	 */
+	protected void createCommonActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		toolBarManager.add(newAction);
+		toolBarManager.add(openAction);
+		toolBarManager.add(saveAction);
+		commonActionsCI = new ToolBarContributionItem(toolBarManager, "CommonActions");
+	}
+	
+	/**
+	 * Creates element of the coolbar only shown in edit mode (new element actions)
+	 */
+	protected void createEditActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLABEL));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINEMENU));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWRECTANGLE));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWOVAL));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWARC));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWBRACE));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWTBAR));
+		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
+		
+		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
+	}
+	
+	/**
+	 * Creates element of the coolbar containing action to switch between view and edit mode
+	 */
+	protected void createSwitchActionsCI()
 	{
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		toolBarManager.add(switchEditModeAction);
 		
-		return new ToolBarContributionItem(toolBarManager, "SwitchActions");
+		switchActionsCI =  new ToolBarContributionItem(toolBarManager, "SwitchActions");
 	}
 	
-	protected ToolBarContributionItem createColorSetActionsCI()
+	/**
+	 * Creates element of the coolbar containing actions related to color sets;  
+	 * only shown when expression data is loaded
+	 */
+	protected void createColorSetActionsCI()
 	{
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		toolBarManager.add(new ControlContribution("ColorSetLabel") {
@@ -877,38 +1017,53 @@ public class GmmlVision extends ApplicationWindow
 		
 		toolBarManager.add(colorSetManagerAction);
 		toolBarManager.add(showLegendAction);
-		ToolBarContributionItem ci = new ToolBarContributionItem(toolBarManager, "ColorSetActions");
-		return ci;
+		colorSetActionsCI = new ToolBarContributionItem(toolBarManager, "ColorSetActions");
 	}
 	
+	/**
+	 * Shows or hides the editActionsCI
+	 * @param show	true/false for either show or hide
+	 */
 	private void showEditActionsCI(boolean show)
 	{
 		if(show) {
+			// Hide the colorSetActionsCI if displayed
 			showColorSetActionsCI(false);
 			getCoolBarManager().add(editActionsCI);
 		}
 		else { 
 			getCoolBarManager().remove(editActionsCI);
+			// Show the colorSetActionsCI if needed
 			showColorSetActionsCI(true);
 		}
 		getCoolBarManager().update(true);
 	}
 	
+	/**
+	 * Shows or hides the colorSetActionsCI
+	 * @param show	true/false for either show or hide
+	 */
 	private void showColorSetActionsCI(boolean show)
 	{
 		if(show) {
+			//Check if drawing is in edit mode if loaded
 			if(drawing != null) { 
-				if(drawing.editMode) { return; }
+				if(drawing.editMode) return;
 			}
-			if(gmmlGex.con == null) { return; }
-			colorSetActionsCI = createColorSetActionsCI();
+			//Check if expression data is loaded
+			if(gmmlGex.con == null) return;
+			//Re-create the colorSetActions (to recreate disposed items)
+			createColorSetActionsCI();
+			//Add the elements to the coolbar and update
 			getCoolBarManager().add(colorSetActionsCI);
 			getCoolBarManager().update(true);
+			//Update the combo items
 			String[] colorSets = gmmlGex.getColorSetNames();
 			String[] comboItems = new String[colorSets.length + 1];
 			comboItems[0] = COMBO_NO_COLORSET;
 			System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
 			colorSetCombo.setItems(comboItems);
+			//Select the colorset used in the drawing if loaded
 			if(drawing != null) { 
 				colorSetCombo.select(drawing.colorSetIndex + 1); 
 			} else {
@@ -920,68 +1075,6 @@ public class GmmlVision extends ApplicationWindow
 		}
 		getCoolBarManager().update(true);
 	}
-	
-	protected ToolBarContributionItem createCommonActionsCI()
-	{
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-		toolBarManager.add(newAction);
-		toolBarManager.add(openAction);
-		toolBarManager.add(saveAction);
-		return new ToolBarContributionItem(toolBarManager, "CommonActions");
-	}
-	
-	protected ToolBarContributionItem createEditActionsCI()
-	{
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLABEL));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINEMENU));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWRECTANGLE));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWOVAL));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWARC));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWBRACE));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWTBAR));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
-		
-		return new ToolBarContributionItem(toolBarManager, "EditModeActions");
-	}
-
-	
-//	protected ToolBarManager createToolBarManager(int style) {
-//		ToolBarManager toolBarManager = new ToolBarManager(style);
-//		toolBarManager.add(new GroupMarker("group.commonActions"));
-//		toolBarManager.appendToGroup("group.commonActions", newAction);
-//		toolBarManager.appendToGroup("group.commonActions", openAction);
-//		toolBarManager.appendToGroup("group.commonActions", saveAction);
-//		toolBarManager.add(new Separator("group.editMode"));
-//		toolBarManager.add(switchEditModeAction);
-//		toolBarManager.add(new Separator("group.newElements"));
-//		
-//		newItemActions = new HashMap();
-//		newItemOrder = new Vector();
-//		newItemActions.put("newGeneProduct", new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
-//		newItemOrder.add("newGeneProduct");
-//		newItemActions.put("newLabel", new NewElementAction(GmmlDrawing.NEWLABEL));
-//		newItemOrder.add("newLabel");
-//		newItemActions.put("newLineMenu", new NewElementAction(GmmlDrawing.NEWLINEMENU));
-//		newItemOrder.add("newLineMenu");
-//		newItemActions.put("newRectangle", new NewElementAction(GmmlDrawing.NEWRECTANGLE));
-//		newItemOrder.add("newRectangle");
-//		newItemActions.put("newOval", new NewElementAction(GmmlDrawing.NEWOVAL));
-//		newItemOrder.add("newOval");
-//		newItemActions.put("newArc", new NewElementAction(GmmlDrawing.NEWARC));
-//		newItemOrder.add("newArc");
-//		newItemActions.put("newBrace", new NewElementAction(GmmlDrawing.NEWBRACE));
-//		newItemOrder.add("newBrace");
-//		newItemActions.put("newTbar", new NewElementAction(GmmlDrawing.NEWTBAR));
-//		newItemOrder.add("newTbar");
-//		newItemActions.put("newLineShapeMenu", new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
-//		newItemOrder.add("newLineShapeMenu");
-//		
-//		toolBarManager.update(true);
-//		
-//		return toolBarManager;
-//	}
 
 	protected StatusLineManager createStatusLineManager() {
 		return super.createStatusLineManager();
@@ -1002,7 +1095,8 @@ public class GmmlVision extends ApplicationWindow
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
-		editMenu.add(propertyAction);
+		editMenu.add(switchEditModeAction);
+//		editMenu.add(propertyAction);
 		MenuManager viewMenu = new MenuManager ("&View");
 		viewMenu.add(showLegendAction);
 		viewMenu.add(new ZoomAction(this, 50));
@@ -1031,32 +1125,22 @@ public class GmmlVision extends ApplicationWindow
 		return m;
 	}
 
-//	public HashMap newItemActions;
-//	public Vector newItemOrder;
-
-//	protected void addNewItemActions(ToolBarManager toolBarManager)
-//	{
-//		Iterator it = newItemOrder.iterator();
-//		while(it.hasNext())
-//		{
-//			toolBarManager.appendToGroup("group.newElements",
-//					(Action)newItemActions.get((String)it.next()));
-//		}
-//		toolBarManager.update(true);
-//	}
-
-//	protected void removeNewItemActions(ToolBarManager toolBarManager)
-//	{
-//		for(int i = 0; i < newItemOrder.size(); i++)
-//		{
-//				toolBarManager.remove("newItemAction");
-//		}
-//		toolBarManager.update(true);
-//	}
-
+	/**
+	 * The visual representation of the gmml pathway
+	 */
 	GmmlDrawing drawing;
+	/**
+	 * {@link GmmlData} object containing JDOM representation of the gmml pathway 
+	 * and handle gmml related actions
+	 */
 	public GmmlData gmmlData;
+	/**
+	 * {@link GmmlGdb} object to handle gene database related actions
+	 */
 	public GmmlGdb gmmlGdb = new GmmlGdb();
+	/**
+	 * {@link GmmlGex} object to handle expression data related actions
+	 */
 	public GmmlGex gmmlGex = new GmmlGex(gmmlGdb);
 	
 	public GmmlVision()
@@ -1065,7 +1149,7 @@ public class GmmlVision extends ApplicationWindow
 	}
 	
 	/**
-	 *Constructor for thGmmlVision class
+	 *Constructor for the GmmlVision class
 	 *Initializes new GmmlVision and sets properties for frame
 	 */
 	public GmmlVision(Shell shell)
@@ -1096,18 +1180,18 @@ public class GmmlVision extends ApplicationWindow
 	   window.setBlockOnOpen(true);
 	   window.open();
 	   
+	   //Close database connections
 	   window.gmmlGdb.close();
 	   window.gmmlGex.close();
 	   Display.getCurrent().dispose();
 	}
 	
 	public ScrolledComposite sc;
-	public GmmlBpBrowser bpBrowser;
-	public GmmlPropertyTable propertyTable;
-	ToolItem editSwitch;
-	SashForm sashForm;
-	SashForm sashFormSplit;
-	ColorSetWindow colorSetWindow;
+	public GmmlBpBrowser bpBrowser; //Browser for showing backpage information
+	public GmmlPropertyTable propertyTable;	//Table showing properties of GmmlGraphics objects
+	SashForm sashForm; //SashForm containing the drawing area and sidebar
+	SashForm sashFormSplit;	//SashForm containing the two components of the sidebar (BpBrowser and PropertyTable)
+	ColorSetWindow colorSetWindow; //Window containing the colorset manager
 	protected Control createContents(Composite parent)
 	{
 		Shell shell = parent.getShell();
@@ -1144,8 +1228,14 @@ public class GmmlVision extends ApplicationWindow
 		
 	};
 	
+	/**
+	 * the transparent color used in the icons for visualization of protein/mrna data
+	 */
 	static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
 	public ImageRegistry imageRegistry;
+	/**
+	 * Loads images used throughout the applications into an {@link ImageRegistry}
+	 */
 	void loadImages()
 	{
 		//TODO: put all images and icons in the progam in imageRegistry

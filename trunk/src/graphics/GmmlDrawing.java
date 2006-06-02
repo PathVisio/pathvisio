@@ -735,7 +735,7 @@ PaintListener, MouseTrackListener
 			                    .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			            labelR.setBackground(getShell().getDisplay()
 			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			                
+			            
 			            HashMap<Integer, Object> data = 
 			            	gmmlGex.data.get(gp.name).getAvgSampleData();
 			            String textL = "";
@@ -752,7 +752,7 @@ PaintListener, MouseTrackListener
 			            Point ls = getShell().getLocation();
 			            Point sco = gmmlVision.sc.getOrigin();
 			            tip.setLocation(ls.x + e.x - sco.x, ls.y  + e.y - sco.y + 
-			            		tip.computeSize(SWT.DEFAULT, SWT.DEFAULT).y + 25);
+			            		tip.computeSize(SWT.DEFAULT, SWT.DEFAULT).y + 50);
 			            tip.setVisible(true);
 						break;
 					}

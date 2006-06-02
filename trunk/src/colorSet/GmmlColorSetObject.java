@@ -1,32 +1,67 @@
 package colorSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Canvas;
 
+/**
+ * This class represent any object that can be present in a colorset
+ * e.g. a gradient or expression
+ */
 public abstract class GmmlColorSetObject {
 	public GmmlColorSet parent;
 	public String name;
-	public ArrayList<Integer> useSamples;
 	
+	/**
+	 * Constructor for this class
+	 * @param parent 		colorset this gradient belongs to
+	 * @param name 			name of the gradient
+	 */
 	public GmmlColorSetObject(GmmlColorSet parent, String name) 
 	{	
 		this.parent = parent;
 		this.name = name;
 	}
+	
+	/**
+	 * Constructor for this class
+	 * @param parent 		colorset this gradient belongs to
+	 * @param name			name of the gradient	
+	 * @param criterion		string containing information to generate the gradient as stored
+	 * in the expression database
+	 */
 	public GmmlColorSetObject(GmmlColorSet parent, String name, String criterion)
 	{ 
 		this(parent, name);
 		parseCriterionString(criterion);
 	}
 	
+	/**
+	 * get the color defined by the colorset object for the given data
+	 * @param data {@link HashMap}<Integer, Object> containing data (String or double) for every sampleId 
+	 * @param sample id of the sample that is visualized using this color
+	 * @return {@link RGB} with the color returned by the colorset object after evaluating the input data,
+	 * null if the input data doesn't result in a valid color
+	 */
 	abstract RGB getColor(HashMap<Integer, Object> data, int idSample);
 	
+	/**
+	 * Returns the parent colorset
+	 * @return
+	 */
 	abstract GmmlColorSet getParent();
 	
+	/**
+	 * Parses a string containing the colorset object information
+	 * @param criterion string containing the colorset object information as stored in the 
+	 * expression database
+	 */
 	abstract void parseCriterionString(String criterion);
 	
+	/**
+	 * Create a string containing the information to re-create the colorset object for
+	 * storage in the expression database
+	 * @return string containing information to re-create the colorset object
+	 */
 	public abstract String getCriterionString();
 	
 }

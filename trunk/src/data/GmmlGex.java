@@ -113,10 +113,9 @@ public class GmmlGex {
 				sCs.setString(2, cs.name);
 				sCs.setString(3, cs.getCriterionString());
 				sCs.execute();
-				Vector colorSetObjects = cs.getColorSetObjects();
-				for(int j = 0; j < colorSetObjects.size(); j++)
+				for(int j = 0; j < cs.colorSetObjects.size(); j++)
 				{
-					GmmlColorSetObject cso = (GmmlColorSetObject)colorSetObjects.get(j);
+					GmmlColorSetObject cso = (GmmlColorSetObject)cs.colorSetObjects.get(j);
 					sCso.setString(1, cso.name);
 					sCso.setInt(2, i);
 					sCso.setString(3, cso.getCriterionString());

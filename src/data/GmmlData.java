@@ -1,21 +1,16 @@
 package data;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.jdom.JDOMException;
-import org.jdom.input.*;
-import org.jdom.output.*;
-import org.jdom.*;
-import org.xml.sax.SAXException;
+import graphics.GmmlDrawing;
+import graphics.GmmlGraphics;
+import graphics.GmmlMappInfo;
 
-
-import graphics.*;
-
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
-import java.awt.Dimension;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -23,30 +18,50 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
-/**
-*	This class handles GMML file-input
-*/
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.JDOMParseException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.SAXOutputter;
+import org.jdom.output.XMLOutputter;
+import org.xml.sax.SAXException;
 
+/**
+*	This class handles GMML file IO and keeps a JDOM representation of the GMML document
+*/
 public class GmmlData
 {
+	/**
+	 * factor to convert screen coördinates used in GenMAPP to pixel coördinates
+	 */
 	final public static int GMMLZOOM = 15;
+	/**
+	 * file containing the xml schema
+	 */
 	final static File xsdFile = new File("GMML_compat.xsd");
 	
 	public File xmlFile;
 	GmmlDrawing drawing;
+	/**
+	 * JDOM representation of the gmml pathway currently loaded
+	 */
 	public Document doc;
 	
 	private List pathwayAttributes;
 	private int[] drawingDims = {800,800};
 	
 	/**
-	 * Constructor for this class
-	 * @param file - the file to read
+	 * Contructor for this class, creates a new gmml document
+	 * @param drawing {@link GmmlDrawing} that shows the visual representation of the gmml pathway
 	 */
 	public GmmlData(GmmlDrawing drawing) 
 	{
 		this.drawing = drawing;
 		doc = new Document();
+		//Set the root element (pathway) and its graphics
 		Element root = new Element("Pathway");
 		Element graphics = new Element("Graphics");
 		root.addContent(graphics);

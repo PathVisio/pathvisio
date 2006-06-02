@@ -390,7 +390,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 				for(GmmlColorSetObject co : colorSetObjects)
 					if(co instanceof GmmlColorGradient) {
 						GmmlColorGradient cg = (GmmlColorGradient)co;
-						Rectangle area = rectangles.get(cg.getDataColumn());
+						Rectangle area = rectangles.get(cg.useSample);
 						if(area != null) drawColorGradient(e, cg, area);
 					}
 				}
@@ -449,7 +449,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 						markerCenter + labelSize.y / 2, true);
 			}
 			
-			int dataColumn = cg.getDataColumn();
+			int dataColumn = cg.useSample;
 			String label;
 			switch(dataColumn) {
 			case GmmlColorGradient.DATA_COL_NO:
@@ -474,7 +474,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 		{
 			if(o instanceof GmmlColorGradient)
 			{
-				int sampleId = ((GmmlColorGradient)o).getDataColumn();
+				int sampleId = ((GmmlColorGradient)o).useSample;
 				if(!diffSamples.contains(new Integer(sampleId)))
 				{
 					diffSamples.add(new Integer(sampleId));

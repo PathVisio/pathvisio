@@ -1,39 +1,52 @@
 package colorSet;
 
-import gmmlVision.GmmlVision;
 import graphics.GmmlLegend;
 
 import java.io.FileInputStream;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColorCellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -41,45 +54,72 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
+import util.SwtUtils;
 import colorSet.GmmlColorGradient.ColorValuePair;
-
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
-import util.SwtUtils;
-
+/**
+ * This class displays the colorset manager window where colorsets can be created and edited
+ */
 public class ColorSetWindow extends ApplicationWindow {
-	public String[] cgColumnNames;
-	public ArrayList<Integer> cgColumnIndex;
+	/**
+	 *names of samples that can be used for the color gradient
+	 */
+	String[] cgColumnNames;
+	/**
+	 *id of samples that can be used for the color gradient
+	 */
+	ArrayList<Integer> cgColumnIndex;
 
-	public GmmlGex gmmlGex;
+	GmmlGex gmmlGex;
 	
-	public int lastColorSetIndex;
+	/**
+	 *index of the colorset edited last time the window was open
+	 */
+	int lastColorSetIndex;
 	
+	/**
+	 * Constructor of this class
+	 * @param parent
+	 */
 	public ColorSetWindow(Shell parent)
 	{
 		super(parent);
 		setBlockOnOpen(true);
 	}
-	
-	public void setColorSets(Vector colorSets)
-	{
-		gmmlGex.colorSets = colorSets;
-	}
-	
+
+	/**
+	 * creates a reference to a {@link GmmlGex}
+	 * @param gmmlGex the {@link GmmlGex} to create a reference to
+	 */
 	public void setGmmlGex(GmmlGex gmmlGex)
 	{
 		this.gmmlGex = gmmlGex;
 	}
-	
-	public Vector getColorSets()
-	{
-		return gmmlGex.colorSets;
-	}
-	
+	/**
+	 * opens the colorset manager and disposes the system resources on close
+	 */
 	public void run()
 	{
 		gmmlGex.loadColorSets();
@@ -88,17 +128,13 @@ public class ColorSetWindow extends ApplicationWindow {
 		csColorGnf.dispose();
 		csColorNc.dispose();
 	}
-	
-	TableViewer coTableViewer;
-	SashForm sashForm;
-	GmmlLegend legend;
-	SashForm topSash;
-	Combo csCombo;
-	Composite coTableComposite;
-	
+		
+	/**
+	 * Closes the window and saves the colorsets to the expression database
+	 */
 	public boolean close()
 	{
-		if(!saveMaximizedControl())
+		if(!saveMaximizedComposite())
 		{
 			return false;
 		}
@@ -106,6 +142,11 @@ public class ColorSetWindow extends ApplicationWindow {
 		return super.close();
 	}
 	
+	/**
+	 * Closes the window with option to save the colorset data
+	 * @param save true/false, either save or discard the colorset data
+	 * @return returns true/false if the window is closed or not
+	 */
 	public boolean close(boolean save)
 	{
 		if(save)
@@ -114,13 +155,20 @@ public class ColorSetWindow extends ApplicationWindow {
 			return super.close();
 	}
 	
+	SashForm topSash; //divides the ColorSetWindow in three columns 
+	Composite coTableComposite; //holds the coTableViewer, displayed in left column
+	TableViewer coTableViewer; //shows the ColorSetObjects for the selected colorset
+	SashForm middleSash; //sash for editing properties of the selected object, displayed in middle column
+	GmmlLegend legend; //Legend displayed in right column
+	
+	Combo csCombo; //for selecting the colorset
 	protected Control createContents(Composite parent)
 	{		
 		Shell shell = parent.getShell();
 		shell.setLocation(parent.getLocation());
-		
 		shell.setText("Color Set Builder");
 		
+		//holds the topSash and 2 buttons (ok, cancel)
 		Composite topComposite = new Composite(parent, SWT.NULL);
 		topComposite.setLayout(new GridLayout(2, false));
 		
@@ -129,6 +177,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		sashGrid.horizontalSpan = 2;
 		topSash.setLayoutData(sashGrid);
 		
+		//holds the csComboGroup and CoTableGroup
 		Composite coComposite = new Composite(topSash, SWT.NULL);
 		coComposite.setLayout(new GridLayout(1, true));
 		
@@ -138,6 +187,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		comboGrid.horizontalSpan = 3;
 		comboGrid.widthHint = 100;
 		
+		//create csComboGroup elements
 		Group csComboGroup = new Group(coComposite, SWT.SHADOW_ETCHED_IN);
 		csComboGroup.setText("Color sets");
 		csComboGroup.setLayout(new GridLayout(3, false));
@@ -161,6 +211,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		deleteCsButton.addSelectionListener(new DeleteCsButtonAdapter());
 		deleteCsButton.pack();
 
+		//create coTableGroup elements
 		Group coTableGroup = new Group(coComposite, SWT.SHADOW_ETCHED_IN);
 		coTableGroup.setText("Color criteria");
 		coTableGroup.setLayout(new GridLayout(2, false));
@@ -189,8 +240,8 @@ public class ColorSetWindow extends ApplicationWindow {
 		coTableViewer.setLabelProvider(new CoTableLabelProvider());
 		coTableViewer.addSelectionChangedListener(new CoTableSelectionChangedListener());
 		
-		sashForm = new SashForm(topSash, SWT.VERTICAL);
-		sashForm.setLayout(new FillLayout());
+		middleSash = new SashForm(topSash, SWT.VERTICAL);
+		middleSash.setLayout(new FillLayout());
 		initiateSashForm();
 		
 		legend = new GmmlLegend(topSash, SWT.NONE, false);
@@ -198,6 +249,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 		topSash.setWeights(new int[] {25, 55, 20} );
 		
+		//Drag and drop support for coTableViewer
 		DragSource ds = new DragSource(coTableViewer.getTable(), DND.DROP_MOVE);
 		ds.addDragListener(new CoTableDragAdapter());
 		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
@@ -205,12 +257,13 @@ public class ColorSetWindow extends ApplicationWindow {
 		dt.addDropListener(new CoTableDropAdapter());
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		
-
+		//Ok and cancel buttons
 		Button cancelButton = new Button(topComposite, SWT.PUSH);
 		cancelButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL));
 		cancelButton.setText("Cancel");
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				//restore colorset information and exit without saving
 				restoreFromGex();
 				close(false);
 			}
@@ -221,6 +274,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		okButton.setText("Ok");
 		okButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				//save colorset information and close shell
 				saveToGex();
 				getShell().close();
 			}
@@ -231,56 +285,65 @@ public class ColorSetWindow extends ApplicationWindow {
 		coTableGroup.pack();
 		legend.pack();
 
+		//TODO: calculate correct size
 		shell.setSize(topSash.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 50, 500);
 		
+		//Select last edited colorset
 		csCombo.select(lastColorSetIndex);
+		//selectionListener is not triggered, so perform actions triggered when selecting a colorset
 		if(csCombo.getSelectionIndex() > -1)
 		{
 			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 			coTableViewer.setInput(cs);
-			setRightCompositeContents(cs);
+			setMiddleCompositeContents(cs);
 		}
 		return parent;
 	}
 
-	Composite cnComposite;
-	Composite csComposite;
-	Composite cgComposite;
-	Composite ccComposite;
-	
-	private void initiateSashForm() {
-		cnComposite = new Composite(sashForm, SWT.NONE);
-		csComposite = new Composite(sashForm, SWT.NONE);
-		cgComposite = new Composite(sashForm, SWT.NONE);
-		ccComposite = new Composite(sashForm, SWT.NONE);
+	Composite cnComposite; //empty composite when nothing is selected
+	Composite csComposite; //display when editing color set
+	Composite cgComposite; //display when editing color gradient
+	Composite ccComposite; //display when editing color criteria (by expression)
+	/**
+	 * Initiates {@link Composite}s in middleSash
+	 */
+	void initiateSashForm() {
+		cnComposite = new Composite(middleSash, SWT.NONE);
+		csComposite = new Composite(middleSash, SWT.NONE);
+		cgComposite = new Composite(middleSash, SWT.NONE);
+		ccComposite = new Composite(middleSash, SWT.NONE);
 		csComposite.setLayout(new GridLayout(1, true));
 		cgComposite.setLayout(new GridLayout(1, true));
 		ccComposite.setLayout(new GridLayout(1, true));
 		
-		setCsGroupComponents();
-	    setCgGroupComponents();
+		setCsComposite();
+	    setCgComposite();
 	    
-		sashForm.setMaximizedControl(cnComposite);
+		middleSash.setMaximizedControl(cnComposite); //Start with empty composite
 	}
 	
-	Text csNameText;
-	CLabel csCLabelNc;
-	Button csColorButtonNc;
-	CLabel csCLabelGnf;
-	Button csColorButtonGnf;
-	Color csColorNc;
-	Color csColorGnf;
-	Table sampleTable;
-	TableViewer sampleTableViewer;
-	List sampleList;
-	ListViewer sampleListViewer;
-	Group csTableGroup;
-	Composite csTableComposite;
-	ColorDialog csColorDialog;
-	List<String> colNames = Arrays.asList(
-			new String[] {"Sample name", "Type"});
-	public void setCsGroupComponents()
-	{		
+	Text csNameText; //name of colorset
+	CLabel csCLabelNc; //displays color for 'no criteria met'
+	Button csColorButtonNc; //button for selecting color for 'no criteria met'
+	CLabel csCLabelGnf; //displays color for 'gene not found'
+	Button csColorButtonGnf;//button for selecting color for 'gene not found'
+	Color csColorNc; //color for 'no criteria met'
+	Color csColorGnf; //color for 'gene not found'
+	Table sampleTable; //table that displays samples used for visualization
+	TableViewer sampleTableViewer; //TableViewer for sampleTable
+	List sampleList; //list that displays all available samples
+	ListViewer sampleListViewer; //ListViewer for sampleList
+	Group csSampleGroup; //Group containing list and table to select samples
+	Composite sampleTableComposite; //Composite to layout sampleTableViewer
+	ColorDialog csColorDialog; //Colordialog for picking 'gene not found' and 'no criteria met' colors
+	List<String> stColNames = Arrays.asList(
+			new String[] {"Sample name", "Type"}); //Column names of sampleTable
+	/**
+	 * sets the components of the csComposite used for editing colorset properties
+	 */
+	void setCsComposite()
+	{
+		//LayoutData
 		GridData csNameTextGrid = new GridData(GridData.FILL_HORIZONTAL);
 		csNameTextGrid.horizontalSpan = 2;
 		csNameTextGrid.widthHint = 100;
@@ -293,24 +356,21 @@ public class ColorSetWindow extends ApplicationWindow {
 		tableGroupGrid.widthHint = 400;
 		
 		Group csGroup = new Group(csComposite, SWT.SHADOW_IN);
-
 		csGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		csGroup.setLayout(new GridLayout(3, false));
 	    csGroup.setText("Color set options");
 	    
-	    csTableGroup = new Group(csComposite, SWT.SHADOW_IN);
-	    
-	    csTableGroup.setLayoutData(tableGroupGrid);
-	    csTableGroup.setLayout(new GridLayout(3, false));
-	    csTableGroup.setText("Color set data");
+	    csSampleGroup = new Group(csComposite, SWT.SHADOW_IN);
+	    csSampleGroup.setLayoutData(tableGroupGrid);
+	    csSampleGroup.setLayout(new GridLayout(3, false));
+	    csSampleGroup.setText("Color set data");
 	    
 	    Button csButton = new Button(csComposite, SWT.PUSH);
-	    	    
 	    csButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 	    csButton.setText("Save");
 	    csButton.addSelectionListener(new csButtonAdapter());
 	    
-	    // csGroup
+	    // create csGroup components
 	    Label csNameLabel = new Label(csGroup, SWT.CENTER);
 	    csNameText = new Text(csGroup, SWT.SINGLE | SWT.BORDER);
 	    
@@ -342,23 +402,23 @@ public class ColorSetWindow extends ApplicationWindow {
 	    
 	    csNameText.addSelectionListener(new inputSelectionAdapter());
 	    
-	    // csTableGroup    
-	    Label tableLabel = new Label(csTableGroup, SWT.LEFT);
+	    // create csSampleGroup components    
+	    Label tableLabel = new Label(csSampleGroup, SWT.LEFT);
 	    tableLabel.setText("Available samples");
 	    GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 	    labelGrid.horizontalSpan = 2;
 	    tableLabel.setLayoutData(labelGrid);
 	    tableLabel.pack();
-	    Label listLabel = new Label(csTableGroup, SWT.LEFT);
+	    Label listLabel = new Label(csSampleGroup, SWT.LEFT);
 	    listLabel.setText("Selected samples");
 	    tableLabel.pack();
 	    	    
-	    sampleListViewer = new ListViewer(csTableGroup, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-	    sampleListViewer.setContentProvider(new CsListContentProvider());
-	    sampleListViewer.setLabelProvider(new CsListLabelProvider());
+	    sampleListViewer = new ListViewer(csSampleGroup, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    sampleListViewer.setContentProvider(new SampleListContentProvider());
+	    sampleListViewer.setLabelProvider(new SampleListLabelProvider());
 	    sampleListViewer.getList().setLayoutData(new GridData(GridData.FILL_BOTH));
 	    
-	    Composite buttonComposite = new Composite(csTableGroup, SWT.NONE);
+	    Composite buttonComposite = new Composite(csSampleGroup, SWT.NONE);
 	    buttonComposite.setLayout(new RowLayout(SWT.VERTICAL));
 	    Button addSampleButton = new Button(buttonComposite, SWT.PUSH);
 	    addSampleButton.addSelectionListener(new AddSampleButtonAdapter());
@@ -367,10 +427,10 @@ public class ColorSetWindow extends ApplicationWindow {
 	    removeSampleButton.addSelectionListener(new RemoveSampleButtonAdapter());
 	    removeSampleButton.setText("<");
 	    
-	    csTableComposite = new Composite(csTableGroup, SWT.NONE);
-	    csTableComposite.setLayout(new FillLayout());
-	    csTableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	    sampleTable = new Table(csTableComposite, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+	    sampleTableComposite = new Composite(csSampleGroup, SWT.NONE);
+	    sampleTableComposite.setLayout(new FillLayout());
+	    sampleTableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	    sampleTable = new Table(sampleTableComposite, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 	    
 	    sampleTable.setHeaderVisible(true);
 	    sampleTable.setLinesVisible(false);
@@ -378,39 +438,42 @@ public class ColorSetWindow extends ApplicationWindow {
 	    
 	    TableColumn nameCol = new TableColumn(sampleTable, SWT.LEFT);
 	    TableColumn typeCol = new TableColumn(sampleTable, SWT.LEFT);
-	    nameCol.setText(colNames.get(0));
-	    typeCol.setText(colNames.get(1));
+	    nameCol.setText(stColNames.get(0));
+	    typeCol.setText(stColNames.get(1));
 
 	    typeCol.setWidth(70);
 	    
 	    sampleTableViewer = new TableViewer(sampleTable);
 	    
-	    sampleTableViewer.setLabelProvider(new CsTableLabelProvider());
-	    sampleTableViewer.setContentProvider(new CsTableContentProvider());
-	    sampleTableViewer.setColumnProperties(colNames.toArray(new String[colNames.size()]));
+	    sampleTableViewer.setLabelProvider(new SampleTableLabelProvider());
+	    sampleTableViewer.setContentProvider(new SampleTableContentProvider());
+	    sampleTableViewer.setColumnProperties(stColNames.toArray(new String[stColNames.size()]));
 	    CellEditor[] cellEditors = new CellEditor[2];
 	    cellEditors[0] = new TextCellEditor(sampleTable);
 	    cellEditors[1] = new ComboBoxCellEditor(sampleTable, GmmlColorSet.SAMPLE_TYPES);
 	    sampleTableViewer.setCellEditors(cellEditors);
-	    sampleTableViewer.setCellModifier(new CsTableCellModifier());
+	    sampleTableViewer.setCellModifier(new SampleTableCellModifier());
 
 	    csColorDialog = new ColorDialog(getShell());
 	    
-	    csTableGroup.pack();
+	    csSampleGroup.pack();
 	    csGroup.pack();
 	}
 	
-	Text cgNameText;
-	Combo cgCombo;
-	Button cgButton;
-	Table cgColorTable;
-	TableViewer cgColorTableViewer;
+	Text cgNameText; //name of color gradient
+	Combo cgCombo; //samples to apply color gradient on
+	Button cgButton; //save changes
+	Table cgColorTable; //contains the color/value pairs used for the gradient
+	TableViewer cgColorTableViewer; //TableViewer for cgColorTable
 	Group cgGroup;
-	public static final String[] cgColorTableCols = new String[] {"Color", "Value"};
-	
-	public void setCgGroupComponents()
+	static final String[] cgColorTableCols = new String[] {"Color", "Value"}; //Column names for cgColorTable
+	/**
+	 * sets the components of the cgComposite used for editing color gradient properties
+	 */
+	void setCgComposite()
 	{			    
-	    //TODO: add validator to colortext (only double)		
+	    //TODO: add validator to colortext (only double)
+		
 		cgGroup = new Group(cgComposite, SWT.SHADOW_IN);
 		cgGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		cgGroup.setLayout(new GridLayout(2, false));
@@ -454,6 +517,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    		cgColorTableViewer.refresh();
 	    	}
 	    });
+	    
 	    cgColorTable = new Table(cgGroup, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 	    GridData cGrid = new GridData(GridData.FILL_BOTH);
 	    cGrid.horizontalSpan = 2;
@@ -466,7 +530,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    valueCol.setText(cgColorTableCols[1]);
 	    colorCol.setText(cgColorTableCols[0]);
 
-	    colorCol.setWidth(40);
+	    colorCol.setWidth(40); //width of valueCol is set by TableGrowListener
 	    
 	    cgColorTableViewer = new TableViewer(cgColorTable);
 	    
@@ -488,9 +552,14 @@ public class ColorSetWindow extends ApplicationWindow {
 	    cgGroup.pack();
 	}
 	
-	public void setRightCompositeContents(Object element) {	
+	/**
+	 * Maximizes one of the composites in {@link middleSash}
+	 * @param element an element of instance {@link GmmlColorSet} or {@link GmmlColorGradient}.
+	 *  for which respectively {@link csComposite} or {@link cgComposite} is maximized
+	 */
+	public void setMiddleCompositeContents(Object element) {	
 		if(element == null) {
-			sashForm.setMaximizedControl(cnComposite);
+			middleSash.setMaximizedControl(cnComposite);
 			legend.setVisible(false);
 			return;
 		}
@@ -506,7 +575,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cs);
 			legend.setVisible(true);
 			legend.resetContents();
-			sashForm.setMaximizedControl(csComposite);
+			middleSash.setMaximizedControl(csComposite);
 			topSash.layout();
 			return;
 		}
@@ -517,8 +586,8 @@ public class ColorSetWindow extends ApplicationWindow {
 			if(!setCgComboItems(cg.parent)) {
 				return;
 			}
-			cgCombo.select(cgColumnIndex.indexOf(cg.getDataColumn()));
-			sashForm.setMaximizedControl(cgComposite);
+			cgCombo.select(cgColumnIndex.indexOf(cg.useSample));
+			middleSash.setMaximizedControl(cgComposite);
 			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.parent);
 			legend.setVisible(true);
 			legend.resetContents();
@@ -527,52 +596,70 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 
+	/**
+	 * Sets the samples used for visualization to the color gradient combo (cgCombo)
+	 * @param cs	{@link ColorSet} to get samples from
+	 * @return	returns true if the colorset contains samples used for visualisation;
+	 * displays warning message and returns false if no samples are selected for visualization in the
+	 * selected colorset
+	 */
 	private boolean setCgComboItems(GmmlColorSet cs)
 	{
-		cgColumnNames = new String[cs.useSamples.size() + 1];
+		ArrayList<String> noStringSamples = new ArrayList<String>();
 		cgColumnIndex = new ArrayList<Integer>();
-		if(cs.useSamples.size() > 0)
-		{
-			cgColumnNames[0] = "All samples";
-			cgColumnIndex.add(-1);
-		} else {
+		if(cs.useSamples.size() == 0)
+		{ //No samlpes are selected for visalization, makes no sense to create a gradient, so display warning
 			MessageDialog.openError(getShell(), "Error", "No samples selected for visualization\n" +
 					"Select samples from list and click '>'");
-			setRightCompositeContents(cs);
+			setMiddleCompositeContents(cs);
 			return false;
 		}
+		noStringSamples.add("All samples");
+		cgColumnIndex.add(GmmlColorGradient.DATA_COL_ALL);
+		//Get the selected samples and store their name and index
 		for(int i = 0; i < cs.useSamples.size(); i++)
 		{
 			Sample s = cs.useSamples.get(i);
-			if(s.dataType == Types.REAL)
+			if(s.dataType == Types.REAL) //Filter out samples containing string data
 			{
-				cgColumnNames[i + 1] = s.name;
+				noStringSamples.add(s.name);
 				cgColumnIndex.add(s.idSample);
 			}
 		}
+		cgColumnNames = noStringSamples.toArray(new String[noStringSamples.size()]);
 		cgCombo.setItems(cgColumnNames);
 		return true;
 	}
 	
+	/**
+	 * Listener to adapt the column width of a table to the size of a given composite 
+	 */
 	class TableGrowListener extends ControlAdapter {
 		Table table;
+		/**
+		 * Constructor for this class
+		 * @param table	the table for which the columns have to be adapted;
+		 * either sampleTable, cgColorTable or coTable
+		 */
 		public TableGrowListener(Table table)
 		{
 			super();
 			this.table = table;
 		}
 		public void controlResized(ControlEvent e) {
-			TableColumn[] cols = table.getColumns();
+			TableColumn[] cols = table.getColumns(); // The columns of the table
+			// Get the area that determines the size of the columns
 			Rectangle area = null;
 			if(table == sampleTable)
 			{
-				area = csTableComposite.getClientArea();
+				area = sampleTableComposite.getClientArea();
 				
 			} else if(table == cgColorTable) {
 				area = cgGroup.getClientArea();
 			} else {
 				area = coTableComposite.getClientArea();
 			}
+			//Check if a scrollbar is present, if so, subtract from new column width
 			Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int width = area.width - 2*table.getBorderWidth();
 			if (preferredSize.y > area.height + table.getHeaderHeight()) {
@@ -580,7 +667,7 @@ public class ColorSetWindow extends ApplicationWindow {
 				width -= vBarSize.x;
 			}
 			Point oldSize = table.getSize();
-			if (oldSize.x > area.width) {
+			if (oldSize.x > area.width) { //Table shrinks, first set column width, then tablesize
 				if(table == sampleTable)
 				{
 					cols[0].setWidth(width - cols[1].getWidth());
@@ -590,7 +677,7 @@ public class ColorSetWindow extends ApplicationWindow {
 					cols[0].setWidth(width);
 				}
 				table.setSize(area.width, area.height);
-			} else {
+			} else { //Table grows, other way around
 				table.setSize(area.width, area.height);
 				if(table == sampleTable)
 				{
@@ -604,25 +691,33 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 * {@link SelectionAdapter} for any control in the middle composites to
+	 * save changes when the control is selected
+	 */
 	class inputSelectionAdapter extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e)
 		{
-			saveMaximizedControl();
+			saveMaximizedComposite();
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the colorset combo (csCombo);
+	 * selects the colorset and maximizes the csComposite
+	 */
 	class CsComboSelectionAdapter extends SelectionAdapter {
-		public CsComboSelectionAdapter() {
-			super();
-		}
 		public void widgetSelected(SelectionEvent e) {
 			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 			coTableViewer.setInput(cs);
-			setRightCompositeContents(cs);
+			setMiddleCompositeContents(cs);
 			lastColorSetIndex = csCombo.getSelectionIndex();
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the save color gradient button
+	 */
 	class CgButtonAdapter extends SelectionAdapter {
 		public CgButtonAdapter() {
 			super();
@@ -632,51 +727,69 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
-	public boolean saveMaximizedControl()
+	/**
+	 * saves the information on the composite in the middle column that is currently maximized
+	 * (csComposite or cgComposite)
+	 * @return true if the information is saved, false if not
+	 */
+	public boolean saveMaximizedComposite()
 	{
 		boolean ok = false;
-		if(sashForm.getMaximizedControl() == cgComposite)
+		if(middleSash.getMaximizedControl() == cgComposite)
 		{
 			ok = saveColorGradient();
-		} else if (sashForm.getMaximizedControl() == csComposite)
+		} else if (middleSash.getMaximizedControl() == csComposite)
 		{
 			ok = saveColorSet();
 		}
 		return ok;
 	}
 	
+	/**
+	 * saves the information on the csComposite to the currently selected colorset
+	 * @return true if the information is saved, false if not
+	 */
 	public boolean saveColorSet()
 	{
-		if(csNameText.getText().equals("")) {
+		if(csNameText.getText().equals("")) { //Complain if name field is empty
 			MessageDialog.openError(getShell(), "Error", "Specify a name for the color set");
 			return false;
 		}
-		if(csCombo.getSelectionIndex() < 0) { return true; }
+		if(csCombo.getSelectionIndex() < 0) return true; //Colorset doesn't exist anymore
 		GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+		//Save the control information to the colorset
 		cs.name = csNameText.getText();
 		cs.color_gene_not_found = csColorGnf.getRGB();
 		cs.color_no_criteria_met = csColorNc.getRGB();
+		//Update the ui components
 		legend.setVisible(true);
 		legend.resetContents();
 		topSash.layout();
 		return true;
 	}
 
+	/**
+	 * saves the information on the cgComposite to the currently selected color gradient
+	 * @return true if the information is saved, false if not
+	 */
 	public boolean saveColorGradient()
 	{
-		if(cgNameText.getText().equals("")) {
+		if(cgNameText.getText().equals("")) { //Complain if name field is empty
 			MessageDialog.openError(getShell(), "Error", "Specify a name for the gradient");
 			return false;
 		}
-		if(cgCombo.getText().equals("")) {
+		if(cgCombo.getText().equals("")) { //Complain if no samples are selected
 			MessageDialog.openError(getShell(), "Error", "Choose a data column for the gradient");
 			return false;
 		}
 		GmmlColorGradient cg = (GmmlColorGradient)
 		((IStructuredSelection)coTableViewer.getSelection()).getFirstElement();
+		if(cg == null) return true; //No gradient is selected (this should't happen)
+		// save the control information to the gradient
 		cg.name = cgNameText.getText();
-		cg.setDataColumn(cgColumnIndex.get(cgCombo.getSelectionIndex()));
-		
+		cg.useSample = cgColumnIndex.get(cgCombo.getSelectionIndex());
+//		cg.setUseSample(cgColumnIndex.get(cgCombo.getSelectionIndex()));
+		//Update the ui components
 		legend.setVisible(true);
 		legend.resetContents();
 		topSash.layout();
@@ -684,19 +797,27 @@ public class ColorSetWindow extends ApplicationWindow {
 		return true;
 	}
 	
+	/**
+	 *saves all colorsets in memory to the expression database
+	 *@see GmmlGex.saveColorSets()
+	 */
 	public void saveToGex()
 	{
 		gmmlGex.saveColorSets();
 	}
+	/**
+	 * restores all colorsets from the expression database
+	 * @see GmmlGex.loadColorSets()
+	 */
 	public void restoreFromGex()
 	{
 		gmmlGex.loadColorSets();
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for csColorButtonGnf and csColorButtonNc
+	 */
 	class ColorButtonAdapter extends SelectionAdapter {
-		public ColorButtonAdapter() {
-			super();
-		}
     	public void widgetSelected(SelectionEvent e) {
     		RGB rgb = csColorDialog.open();
     		if (rgb != null) {
@@ -709,10 +830,13 @@ public class ColorSetWindow extends ApplicationWindow {
     				csCLabelNc.setBackground(csColorNc);
     			}
     		}
-    		saveMaximizedControl();
+    		saveMaximizedComposite();
     	}
     }
 	
+	/**
+	 * {@link SelectionAdapter} for the csButton (to save a colorset)
+	 */
 	class csButtonAdapter extends SelectionAdapter {
 		public csButtonAdapter() {
 			super();
@@ -722,6 +846,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 * {@link SelectionAdapter} for the newCsButton (to create a new colorset)
+	 */
 	class NewCsButtonAdapter extends SelectionAdapter {
 		
 		public NewCsButtonAdapter() {
@@ -729,6 +856,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 		
 		public void widgetSelected(SelectionEvent e) {
+			//Open dialog to specify name of colorset
 			InputDialog d = new InputDialog(Display.getCurrent().getActiveShell(),
 					  "New Color Set", "Name of new Color Set:", "", null);
 			int rc = d.open();
@@ -738,11 +866,14 @@ public class ColorSetWindow extends ApplicationWindow {
 				csCombo.setItems(gmmlGex.getColorSetNames());
 				csCombo.select(gmmlGex.colorSets.indexOf(cs));
 				coTableViewer.setInput(cs);
-				setRightCompositeContents(cs);
+				setMiddleCompositeContents(cs);
 			}
 		}
 	}
     
+	/**
+	 *{@link SelectionAdapter} for the editCsButton (to edit a colorset)
+	 */
 	class EditCsButtonAdapter extends SelectionAdapter {
 		
 		public EditCsButtonAdapter() {
@@ -752,11 +883,14 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void widgetSelected(SelectionEvent e) {
 			if(csCombo.getSelectionIndex() > -1) {
 				GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
-				setRightCompositeContents(cs);
+				setMiddleCompositeContents(cs);
 			}
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the newCoButton (to add a colorset object)
+	 */
 	class NewCoButtonAdapter extends SelectionAdapter {
 		NewCoDialog dialog;
 		
@@ -770,6 +904,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the deleteCsButton (to remove a colorset)
+	 */
 	class DeleteCsButtonAdapter extends SelectionAdapter {
 		public DeleteCsButtonAdapter() {
 			super();
@@ -781,16 +918,22 @@ public class ColorSetWindow extends ApplicationWindow {
 				gmmlGex.colorSets.remove(csCombo.getSelectionIndex());
 				csCombo.setItems(gmmlGex.getColorSetNames());
 				csCombo.select(0);
-				if(csCombo.getSelectionIndex() > -1)
+				if(csCombo.getSelectionIndex() > -1) //First colorset selected
 				{
 					GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 					coTableViewer.setInput(cs);
-					setRightCompositeContents(cs);
+					setMiddleCompositeContents(cs);
+				} else { //No colorset left
+					setMiddleCompositeContents(null);
+					coTableViewer.setInput(null);
 				}
 			}
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the deleteCsButton (to remove a colorset object)
+	 */
 	class DeleteCoButtonAdapter extends SelectionAdapter {
 		public DeleteCoButtonAdapter() {
 			super();
@@ -807,6 +950,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the addSampleButton (to add a sample to the sampleTable)
+	 */
 	class AddSampleButtonAdapter extends SelectionAdapter {
 		public AddSampleButtonAdapter() {
 			super();
@@ -829,6 +975,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 *{@link SelectionAdapter} for the removeSampleButton (to remove a sample to the sampleTable)
+	 */
 	class RemoveSampleButtonAdapter extends SelectionAdapter {
 		public RemoveSampleButtonAdapter() {
 			super();
@@ -851,16 +1000,17 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	//constants for drag and drop support of the colorsetobjects
 	static final String TRANSFER_CSOBJECT = "CSOBJECT";
 	static final String TRANSFER_SEP = ":";
-	
+	/**
+	 *{@DragSourceAdapter} for drag support in the coTableViewer (displays color set objects);
+	 *used to change order of objects
+	 */
     private class CoTableDragAdapter extends DragSourceAdapter {
     	public void dragStart(DragSourceEvent e) {
     		Object selected = ((IStructuredSelection)coTableViewer.getSelection()).getFirstElement();
-    		if(selected == null)
-    		{
-    			e.doit = false;
-    		}
+    		if(selected == null) e.doit = false; //only start transfer if an object is selected
     	}
     	
     	public void dragSetData(DragSourceEvent e) {
@@ -871,47 +1021,53 @@ public class ColorSetWindow extends ApplicationWindow {
     			GmmlColorSetObject cso = (GmmlColorSetObject)selected;
     			int csIndex = gmmlGex.colorSets.indexOf(cso.parent);
     			int csoIndex = cso.parent.colorSetObjects.indexOf(cso);
+    			//Put object type and index in a string that is transferred
     			e.data = TRANSFER_CSOBJECT + TRANSFER_SEP + csIndex + TRANSFER_SEP + csoIndex;
     		}
     	}
     }
     
+	/**
+	 *{@DragSourceAdapter} for drop support in the coTableViewer (displays color set objects);
+	 *used to change order of objects
+	 */
     private class CoTableDropAdapter extends DropTargetAdapter {
     	public void drop(DropTargetEvent e) {
     		TableItem item = (TableItem)e.item;
     		if(item != null)
     		{
     			Object selected = item.getData();
-    			String[] data = ((String)e.data).split(":");
+    			//Split the transfer string
+    			String[] data = ((String)e.data).split(TRANSFER_SEP);
     			if(data[0].equals(TRANSFER_CSOBJECT))
     			{
-    				int csIndex = Integer.parseInt(data[1]);
-    				int csoIndex = Integer.parseInt(data[2]);
+    				int csIndex = Integer.parseInt(data[1]); //The parent index
+    				int csoIndex = Integer.parseInt(data[2]); //The colorset object index
     				GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(csIndex);
     				GmmlColorSetObject cso = (GmmlColorSetObject)cs.colorSetObjects.get(csoIndex);
-    				if(((GmmlColorSetObject)selected).parent == cs)
-    				{
-    					moveElement(cs.colorSetObjects, cso, cs.colorSetObjects.indexOf(selected));
-    				}
-    				else
-    				{
-    					GmmlColorSet csNew = ((GmmlColorSetObject)selected).parent;
-    					csNew.colorSetObjects.add(csNew.colorSetObjects.indexOf(selected), cso);
-    					cs.colorSetObjects.remove(cso);
-    					cso.parent = csNew;
-    				}
+    				moveElement(cs.colorSetObjects, cso, cs.colorSetObjects.indexOf(selected));
     			}
     		}
     		coTableViewer.refresh();
     	}
     }
     
+    /**
+     * Moves an element in a {@link Vector}
+     * @param 	v the vector the object is in
+     * @param 	o the object that has to be moved
+     * @param 	newIndex the index to move the object to
+     */
     public void moveElement(Vector v, Object o, int newIndex)
     {
     	v.remove(o);
     	v.add(newIndex, o);
     }
 	
+    /**
+     * {@link Dialog} shown when creating a new colorset object;
+     *  enables the user to specify the name and type
+     */
 	private class NewCoDialog extends Dialog
 	{		
 		public NewCoDialog(Shell parent)
@@ -991,18 +1147,25 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 * {@link ISelectionChangedListener} for {@link coTableViewer}
+	 * maximizes one of the composites in {@link middleSash} depending on the object selected
+	 */
 	private class CoTableSelectionChangedListener implements ISelectionChangedListener {
 		public void selectionChanged(SelectionChangedEvent e)
 		{
 			if(e.getSelection().isEmpty()) {
-				setRightCompositeContents(null);
+				setMiddleCompositeContents(null);
 			} else {
 				Object s = ((IStructuredSelection)e.getSelection()).getFirstElement();
-				setRightCompositeContents(s);
+				setMiddleCompositeContents(s);
 			}
 		}
 	}
 	
+	/**
+	 * {@link IStructuredContentProvider} for {@link coTable}
+	 */
 	private class CoTableContentProvider implements IStructuredContentProvider {
 		
 		public void dispose() {	}
@@ -1011,12 +1174,12 @@ public class ColorSetWindow extends ApplicationWindow {
 				return ((GmmlColorSet)inputElement).colorSetObjects.toArray();
 		}
 				
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			//TODO: input changed
-		}
-		
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { }
 	}
 	
+	/**
+	 * {@link ITabbleLabelPovider for {@link coTable}
+	 */
 	private class CoTableLabelProvider implements ITableLabelProvider {
 		private java.util.List listeners;
 		private Image criterionImage;
@@ -1065,6 +1228,11 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 * creates a 16x16 image representing the given {@link GmmlColorGradient}
+	 * @param cg the gradient to create the image from
+	 * @return imagedata representing the gradient
+	 */
 	private ImageData createGradientImage(GmmlColorGradient cg)
 	{
 		PaletteData colors = new PaletteData(0xFF0000, 0x00FF00, 0x0000FF);
@@ -1077,7 +1245,7 @@ public class ColorSetWindow extends ApplicationWindow {
 				rgb = new RGB(255,255,255);
 			for(int j = 0; j < 16; j++)
 			{
-				if(j == 0 || j == 15 || i == 0 || i == 15)
+				if(j == 0 || j == 15 || i == 0 || i == 15) //Black border
 					data.setPixel(i, j, colors.getPixel(new RGB(0,0,0)));
 				else
 					data.setPixel(i, j, colors.getPixel(rgb));
@@ -1086,6 +1254,11 @@ public class ColorSetWindow extends ApplicationWindow {
 		return data;
 	}
 	
+	/**
+	 * creates an 16x16 image filled with the given color
+	 * @param rgb the color to fill the image with
+	 * @return imagedata of a 16x16 image filled with the given color
+	 */
 	private ImageData createColorImage(RGB rgb)
 	{
 		PaletteData colors = new PaletteData(new RGB[] { rgb, new RGB(0,0,0) });
@@ -1094,7 +1267,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		{
 			for(int j = 0; j < 16; j++)
 			{
-				if(j == 0 || j == 15 || i == 0 || i == 15)
+				if(j == 0 || j == 15 || i == 0 || i == 15) //Black border
 					data.setPixel(i, j, 1);
 				else
 					data.setPixel(i, j, 0);
@@ -1103,6 +1276,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		return data;
 	}
 	
+	/**
+	 * {@link IStructuredContentProvider} for {@link cgColorTable}
+	 */
 	private class CgColorTableContentProvider implements IStructuredContentProvider {
 		
 		public void dispose() {	}
@@ -1115,6 +1291,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 	}
 	
+	/**
+	 * {@link ITabbleLabelPovider} for {@link cgColorTable}
+	 */
 	private class CgColorTableLabelProvider implements ITableLabelProvider {
 		private java.util.List listeners;
 		private Image colorImage;
@@ -1160,6 +1339,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
+	/**
+	 * {@link ICellModifier} for {@link cgColorTable}
+	 */
 	private class CgColorTableCellModifier implements ICellModifier
 	{
 		public boolean canModify(Object element, String property)
@@ -1196,9 +1378,12 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
-	private class CsListContentProvider implements IStructuredContentProvider
+	/**
+	 *{@link IStructuredContentProvider} for {@link sampleList}
+	 */
+	private class SampleListContentProvider implements IStructuredContentProvider
 	{
-		public CsListContentProvider()
+		public SampleListContentProvider()
 		{
 			super();
 		}
@@ -1216,7 +1401,10 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {	}
 	}
 	
-	private class CsListLabelProvider extends LabelProvider
+	/**
+	 *{@link ILabelProvider} for {@link sampleList}
+	 */
+	private class SampleListLabelProvider extends LabelProvider
 	{
 		public String getText(Object element)
 		{
@@ -1224,9 +1412,12 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 	}
 	
-	private class CsTableContentProvider implements IStructuredContentProvider
+	/**
+	 *{@link IStructuredContentProvider} for {@link sampleTable}
+	 */
+	private class SampleTableContentProvider implements IStructuredContentProvider
 	{		
-		public CsTableContentProvider()
+		public SampleTableContentProvider()
 		{
 			super();
 		}
@@ -1240,9 +1431,12 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { }
 	}
 	
-	private class CsTableLabelProvider implements ITableLabelProvider
+	/**
+	 *{@link ITableLabelProvider} for {@link sampleTable}
+	 */
+	private class SampleTableLabelProvider implements ITableLabelProvider
 	{
-		public CsTableLabelProvider() {
+		public SampleTableLabelProvider() {
 			super();
 		}
 		public Image getColumnImage(Object element, int columnIndex) { return null; }
@@ -1270,11 +1464,14 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 	}
 	
-	private class CsTableCellModifier implements ICellModifier
+	/**
+	 *{@link ITableLabelProvider} for {@link sampleTable}
+	 */
+	private class SampleTableCellModifier implements ICellModifier
 	{
 		public boolean canModify(Object element, String property)
 		{
-			if(!colNames.get(0).equals(property))
+			if(!stColNames.get(0).equals(property))
 			{
 				return true;
 			}
@@ -1285,7 +1482,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		{
 			Sample s = (Sample)element;
 			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());	
-			switch(colNames.indexOf(property)) {
+			switch(stColNames.indexOf(property)) {
 			case 0:
 				return s.name;
 			case 1:
@@ -1306,7 +1503,7 @@ public class ColorSetWindow extends ApplicationWindow {
 
 			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 			
-			switch(colNames.indexOf(property)) {
+			switch(stColNames.indexOf(property)) {
 			case 1:
 				if(cs.useSamples.contains(s))
 				{

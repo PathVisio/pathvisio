@@ -1,6 +1,4 @@
 package colorSet;
-import graphics.GmmlGeneProduct;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,14 +9,35 @@ import org.eclipse.swt.graphics.RGB;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
+/**
+ * This class represents a colorset, a set of criteria that can be evaluated and results in a
+ * color given a collection of data
+ */
 public class GmmlColorSet {
+	/**
+	 * Types of samples that can be specified to choose custom visualization
+	 */
 	public static String[] SAMPLE_TYPES = {"undefined", "transcriptomics", "proteomics"};
+	/**
+	 * Index of sample type 'undefined', visualization is filled square
+	 */
 	public static final int SAMPLE_TYPE_UNDEF = 0;
+	/**
+	 * Index of sample type 'transcriptomics', visualization is mRNA image
+	 */
 	public static final int SAMPLE_TYPE_TRANS = 1;
+	/**
+	 * Index of sample type 'proteomics', visualization is Protein image
+	 */
 	public static final int SAMPLE_TYPE_PROT	= 2;
-//	public static final int SAMPLE_TYPE_PVALUE= 3;
 	
+	/**
+	 * Standard color for when the colorset returns no valid color (no criteria met)
+	 */
 	public static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
+	/**
+	 * Standard color for when the gene is not found in the database or expression data
+	 */
 	public static RGB COLOR_NO_GENE_FOUND = new RGB(255, 255, 255);
 	public RGB color_no_criteria_met = COLOR_NO_CRITERIA_MET;
 	public RGB color_gene_not_found = COLOR_NO_GENE_FOUND;
@@ -29,49 +48,73 @@ public class GmmlColorSet {
 	
 	public GmmlGex gmmlGex;
 	
-	public ArrayList<Sample> useSamples;	
+	/**
+	 * Samples selected for visualization
+	 */
+	public ArrayList<Sample> useSamples;
+	/**
+	 * Type of samples selected for visualization (one of the SAMPLE_TYPE field constants)
+	 */
 	public ArrayList<Integer> sampleTypes;
 	
-	public GmmlColorSet(String name, GmmlGex parent)
+	/**
+	 * Constructor of this class
+	 * @param name		name of the colorset
+	 * @param gmmlGex	reference to {@link GmmlGex} object containing the expression data
+	 */
+	public GmmlColorSet(String name, GmmlGex gmmlGex)
 	{
 		this.name = name;
-		gmmlGex = parent;
+		this.gmmlGex = gmmlGex;
 		colorSetObjects = new Vector();
 		useSamples = new ArrayList<Sample>();
 		sampleTypes = new ArrayList<Integer>();
 	}
 	
-	public GmmlColorSet(String name, String criterion, GmmlGex parent)
+	/**
+	 * Constructor of this class
+	 * @param name			name of the colorset
+	 * @param criterion		string containing information to generate the colorset as stored
+	 * in the expression database
+	 * @param gmmlGex 		reference to {@link GmmlGex} object containing the expression data
+	 */
+	public GmmlColorSet(String name, String criterion, GmmlGex gmmlGex)
 	{
-		this(name, parent);
+		this(name, gmmlGex);
 		parseCriterionString(criterion);
 	}
-	
-	public Vector getColorSetObjects()
-	{
-		return colorSetObjects;
-	}
-	
+		
+	/**
+	 * Adds a new {@link GmmlColorSetObject} to this colorset
+	 * @param o the {@link GmmlColorSetObject} to add
+	 */
 	public void addObject(GmmlColorSetObject o)
 	{
 		colorSetObjects.add(o);
 	}
 	
-	public Object getParent()
-	{
-		return null;
-	}
-	
+	/**
+	 * Adds a {@link Sample} to the samples that are used for visualization and
+	 * sets type to SAMPLE_TYPE_UNDEF
+	 * @param s	{@link Sample} to add
+	 */
 	public void addUseSample(Sample s)
 	{
 		useSamples.add(s);
 		sampleTypes.add(SAMPLE_TYPE_UNDEF);
 	}
 	
+	/**
+	 * Get the color for the given expression data by evaluating all colorset objects
+	 * @param data		the expression data to get the color for
+	 * @param sampleId	the id of the sample that will be visualized
+	 * @return	an {@link RGB} object representing the color for the given data
+	 */
 	public RGB getColor(HashMap data, int sampleId)
 	{
-		RGB rgb = color_no_criteria_met;
+		RGB rgb = color_no_criteria_met; //The color to return
 		Iterator it = colorSetObjects.iterator();
+		//Evaluate all colorset objects, return when a valid color is found
 		while(it.hasNext())
 		{
 			GmmlColorSetObject gc = (GmmlColorSetObject)it.next();
@@ -84,6 +127,11 @@ public class GmmlColorSet {
 		return rgb;
 	}
 	
+	/**
+	 * Create a string containing the information to re-create the colorset for
+	 * storage in the expression database
+	 * @return string containing information to re-create the colorset
+	 */
 	public String getCriterionString()
 	{
 		// color_no_criteria_met | color_gene_not_found | useSamples | sampleTypes
@@ -99,6 +147,11 @@ public class GmmlColorSet {
 		return criterion.toString();
 	}
 	
+	/**
+	 * Parses a string containing the colorset information
+	 * @param criterion string containing the colorset information as stored in the 
+	 * expression database
+	 */
 	void parseCriterionString(String criterion)
 	{
 		String[] s = criterion.split("\\|");
@@ -122,12 +175,22 @@ public class GmmlColorSet {
 		}
 	}
 	
-	public String getColorString(RGB rgb)
+	/**
+	 * Creates a string representing a {@link RGB} object which is parsable by {@link parseColorString}
+	 * @param rgb the {@link RGB} object to create a string from
+	 * @return the string representing the {@link RGB} object
+	 */
+	public static String getColorString(RGB rgb)
 	{
 		return rgb.red + "," + rgb.green + "," + rgb.blue;
 	}
 	
-	public RGB parseColorString(String colorString)
+	/**
+	 * Parses a string representing a {@link RGB} object created with {@link getColorString}
+	 * @param colorString the string to be parsed
+	 * @return the {@link RGB} object this string represented
+	 */
+	public static RGB parseColorString(String colorString)
 	{
 		String[] s = colorString.split(",");
 		try 
@@ -144,7 +207,13 @@ public class GmmlColorSet {
 		}
 	}
 	
-	public String getArrayListString(ArrayList a)
+	/**
+	 * Creates a string representing a {@link ArrayList} object, parsable by either
+	 * {@link parseIntegerArrayList} or {@link parseSampleArrayList}
+	 * @param a the {@link ArrayList} to be parsed
+	 * @return the string representing the {@link ArrayList}
+	 */
+	public static String getArrayListString(ArrayList a)
 	{
 		if(a.size() > 0)
 		{
@@ -158,6 +227,12 @@ public class GmmlColorSet {
 		return "";
 	}
 	
+	/**
+	 * Parses a string representing a {@link ArrayList}<Integer> object 
+	 * created with {@link getArrayListString}
+	 * @param arrayListString the string to be parsed
+	 * @return the {@link ArrayList<Integer>} object this string represented
+	 */
 	public ArrayList<Integer> parseIntegerArrayList(String arrayListString)
 	{
 		String[] s = arrayListString.split(",");
@@ -169,6 +244,12 @@ public class GmmlColorSet {
 		return a;
 	}
 	
+	/**
+	 * Parses a string representing a {@link ArrayList}<Sample> object 
+	 * created with {@link getArrayListString}
+	 * @param arrayListString the string to be parsed
+	 * @return the {@link ArrayList<Sample>} object this string represented
+	 */
 	public ArrayList<Sample> parseSampleArrayList(String arrayListString)
 	{
 		String[] s = arrayListString.split(",");

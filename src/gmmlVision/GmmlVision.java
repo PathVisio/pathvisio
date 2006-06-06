@@ -407,13 +407,12 @@ public class GmmlVision extends ApplicationWindow
 	{
 		if(drawing != null)
 		{
-			gmmlGex.mappIds = drawing.getMappIds();
 			//Check for neccesary connections
 			if(gmmlGex.con != null && gmmlGdb.getCon() != null)
 			{
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				try {
-					dialog.run(true, true, gmmlGex.cacheRunnable);
+					dialog.run(true, true, gmmlGex.createCacheRunnable(drawing.getMappIds()));
 					drawing.redraw();
 				} catch(Exception e) {
 					e.printStackTrace();

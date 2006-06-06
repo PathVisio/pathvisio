@@ -10,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -36,14 +35,20 @@ public class GmmlData
 {
 	/**
 	 * factor to convert screen coördinates used in GenMAPP to pixel coördinates
+	 * NOTE: maybe it is better to adapt gmml to store coördinates as pixels and
+	 * divide the GenMAPP coördinates by this factor on conversion
 	 */
 	final public static int GMMLZOOM = 15;
 	/**
-	 * file containing the xml schema
+	 * file containing the gmml schema definition
 	 */
 	final private static File xsdFile = new File("GMML_compat.xsd");
 	
 	private File xmlFile;
+	/**
+	 * Gets the xml file containing the Gmml pathway currently displayed
+	 * @return
+	 */
 	public File getXmlFile () { return xmlFile; }
 	
 	private GmmlDrawing drawing;
@@ -52,12 +57,9 @@ public class GmmlData
 	 */
 	public Document doc;
 	
-	private List pathwayAttributes;
-	private int[] drawingDims = {800,800};
-	
 	/**
 	 * Contructor for this class, creates a new gmml document
-	 * @param drawing {@link GmmlDrawing} that shows the visual representation of the gmml pathway
+	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
 	public GmmlData(GmmlDrawing drawing) 
 	{
@@ -79,6 +81,11 @@ public class GmmlData
 		drawing.mappInfo.mapInfoLeft = drawing.mappInfo.mapInfoTop = 0;
 	}
 	
+	/**
+	 * Constructor for this class, opens a gmml pathway and adds its elements to the drawing
+	 * @param file		String pointing to the gmml file to open
+	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gmml pathway
+	 */
 	public GmmlData(String file, GmmlDrawing drawing)
 	{
 		// Create the drawing
@@ -127,7 +134,7 @@ public class GmmlData
 	
 
 	/**
-	 * Method to question the private property drawing
+	 * Method to get the private property drawing
 	 * @return drawing
 	 */
 	public GmmlDrawing getDrawing()
@@ -136,8 +143,8 @@ public class GmmlData
 	}
 	
 	/**
-	 * Maps the element specified to a GmmlGraphcis object
-	 * @param e - the element to map
+	 * Maps the element specified to a GmmlGraphics object
+	 * @param e		the JDOM {@link Element} to map
 	 */
 	public void mapElement(Element e) {
 		// Check if a GmmlGraphics exists for this element
@@ -165,7 +172,7 @@ public class GmmlData
 	}
 
 	/**
-	 * Maps the contents of the JDom tree to a GmmlDrawing
+	 * Maps the contents of the JDOM tree to a GmmlDrawing
 	 */
 	public void toGmmlGraphics() {
 		// Get the pathway element
@@ -215,8 +222,8 @@ public class GmmlData
 	}
 	
 	/**
-	 * Writes the JDom tree to the file specified
-	 * @param file - the file as which the JDom tree should be saved
+	 * Writes the JDOM document to the file specified
+	 * @param file	the file to which the JDOM document should be saved
 	 */
 	public void writeToXML(File file) {
 		try 

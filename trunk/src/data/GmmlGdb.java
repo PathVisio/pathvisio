@@ -20,16 +20,48 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+/**
+ * This class handles everything related to the Gene Database. It contains the database connection,
+ * several methods to query data from the gene database and methods to convert a GenMAPP gene database
+ * to hsqldb format
+ */
 public class GmmlGdb {
-	final static private File propsFile = new File("gdb.properties");
+	/**
+	 * Property file containing the last used gene database
+	 * TODO: Create a general property file used in the whole program
+	 */
+	final static File propsFile = new File("gdb.properties");
 	
+	/**
+	 * The {@link Connection} to the Gene Database
+	 */
 	private Connection con;
+	
+	/**
+	 * Gets the {{@link Connection} to the Gene Database
+	 * @return
+	 */
 	public Connection getCon() { return con; }
+	
+	/**
+	 * {@link Properties} object containing the last used Gene Database
+	 */
 	private Properties props;
+	/**
+	 * Gets the {@link Properties} object containing the last used Gene Database
+	 * @return
+	 */
 	public Properties getProps() { return props; }
 	
+	/**
+	 * {@link File} pointing to the current Gene Database
+	 */
 	private File gdbFile;
 	
+	/**
+	 * Constructor for this class. Checks the properties file for a previously
+	 * used Gene Database and tries to open a connection if found.
+	 */
 	public GmmlGdb() {
 		props = new Properties();
 		try {
@@ -53,10 +85,19 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * Sets the Gene Database that is currently in use
+	 * @param gdb	The name of the gene database
+	 */
 	public void setCurrentGdb(String gdb) {
 		changeProps("currentGdb", gdb);
 	}
 	
+	/**
+	 * Changes a given property in {@link props} and saves the changes to the {@propsFile}
+	 * @param name		The name of the property
+	 * @param value		The value of the property
+	 */
 	public void changeProps(String name, String value) {
 		props.setProperty(name, value);
 		try {
@@ -67,6 +108,11 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * Gets the backpage info for the given gene id for display on {@GmmlBpBrowser}
+	 * @param id	The gene id to get the backpage info for
+	 * @return		String with the backpage info, null if the gene was not found
+	 */
 	public String getBpInfo(String id) {
 		try {
 			Statement s = con.createStatement();
@@ -81,6 +127,13 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * Get all cross references (ids from every system representing 
+	 * the same gene as the given id) for a given Ensembl id
+	 * @param ensId		The Ensembl id to get the cross references for
+	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
+	 * (empty if nothing found)
+	 */
 	public ArrayList ensId2Refs(String ensId) {
 		ArrayList crossIds = new ArrayList();
 		try {
@@ -97,6 +150,40 @@ public class GmmlGdb {
 		return crossIds;
 	}
 	
+	/**
+	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
+	 * @param ref	The gene id to get the Ensembl ids for
+	 * @return		{@ArrayList} containing all Ensembl ids found for this gene id
+	 * (empty if nothing found)
+	 */
+	public ArrayList ref2EnsIds(String ref)
+	{
+		ArrayList ensIds = new ArrayList();
+		try {
+			ResultSet r1 = con.createStatement().executeQuery(
+					"SELECT idLeft FROM link " +
+					"WHERE idRight = '" + ref + "'"
+			);
+			while(r1.next()) {
+				ensIds.add(r1.getString(1));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ensIds;
+	}
+	
+	/**
+	 * Get all cross references (ids from every system representing 
+	 * the same gene as the given id) for a given id (from any system)
+	 * NOTE: Don't use this due to performance reasons. Hsqldb seems to have
+	 * trouble with more complicated select statements like this. Using multiple 
+	 * simple select statements showed to be much faster, so subsequentially use 
+	 * {@link ref2EnsIds} and {@link ensIds2Refs} to get all cross references for
+	 * a given non-ensembl gene id
+	 * @param id
+	 * @return
+	 */
 //	Don't use this, multiple simple select queries is faster
 //	Subsequentially use ref2EnsIds ensIds2Refs
 	public ArrayList getCrossRefs(String id) {
@@ -117,101 +204,12 @@ public class GmmlGdb {
 		return crossIds;
 	}
 	
-	public ArrayList ref2EnsIds(String ref)
-	{
-		ArrayList ensIds = new ArrayList();
-		try {
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idLeft FROM link " +
-					"WHERE idRight = '" + ref + "'"
-			);
-			while(r1.next()) {
-				ensIds.add(r1.getString(1));
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return ensIds;
-	}
-	
-//	Don't use this, multiple simple select queries is faster
-	public HashMap getEns2RefHash(ResultSet r, int ensIndex)
-	{
-		HashMap ens2RefHash = new HashMap();
-		try {
-			int pr = 0;
-			StringBuilder idString = new StringBuilder();
-			while(r.next()) {
-				idString.append("'" + r.getString(ensIndex) + "', ");
-				pr++;
-				if(pr % 500 == 0) {
-					System.out.println(pr);
-				}
-			}
-			String ids = idString.substring(0,idString.lastIndexOf(", "));
-		long t = System.currentTimeMillis();
-		ResultSet r1 = con.createStatement().executeQuery(
-				"SELECT idLeft, idRight FROM link WHERE idLeft IN ( " +
-				ids + ")"
-		);
-		System.out.println("Query to find reference ids for genes took: " +
-				(System.currentTimeMillis()-t) + " ms");
-		while(r1.next()) {
-			String id = r1.getString(1);
-			if(ens2RefHash.containsKey(id)) {
-				((ArrayList)ens2RefHash.get(id)).add(r1.getString(2));
-			} else {
-				ArrayList refIds = new ArrayList();
-				refIds.add(r1.getString(2));
-				ens2RefHash.put(id, refIds);
-			}
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ens2RefHash;
-	}
-	
-//	Don't use this, multiple simple select queries is faster
-	public HashMap getRef2EnsHash(ResultSet r, int refIndex)
-	{
-		HashMap ref2EnsHash = null;
-		try {
-			int pr = 0;
-			StringBuilder idString = new StringBuilder();
-			while(r.next()) {
-				idString.append("'" + r.getString(refIndex) + "', ");
-				pr++;
-				if(pr % 500 == 0) {
-					System.out.println(pr);
-				}
-			}
-			String ids = idString.substring(0,idString.lastIndexOf(", "));
-			
-			ref2EnsHash = new HashMap();
-			long t = System.currentTimeMillis();
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idLeft, idRight FROM link WHERE idRight IN ( " +
-					ids + ")"
-			);
-			System.out.println("Query to find ensembl ids for genes took: " +
-					(System.currentTimeMillis()-t) + " ms");
-			while(r1.next()) {
-				String id = r1.getString(2);
-				if(ref2EnsHash.containsKey(id)) {
-					((ArrayList)ref2EnsHash.get(id)).add(r.getString(1));
-				} else {
-					ArrayList ensIds = new ArrayList();
-					ensIds.add(r1.getString(1));
-					ref2EnsHash.put(id, ensIds);
-				}
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return ref2EnsHash;
-	}
-	
+	/**
+	 * Opens a {@link Connection} to the Gene Database located in the given file
+	 * @param gdbFile	The file containing the Gene Database. This file needs to be the
+	 * .properties file of the Hsqldb database
+	 * @return	null if the connection was created, a String with an error message if an error occured
+	 */
 	public String connect(File gdbFile)
 	{
 		if(gdbFile == null)
@@ -235,6 +233,9 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * Closes the {@link Connection} to the Gene Database if possible
+	 */
 	public void close()
 	{
 		if(con != null)
@@ -252,7 +253,14 @@ public class GmmlGdb {
 		}
 	}
 	
-	//Convert from GenMAPP
+	
+	/**
+	 * Converts the given GenMAPP Gene Database to a Hsqldb Gene Database as used in this program
+	 * <BR>This method reports all errors occured during the conversion to a file named 'convert_gdb_log.txt'
+	 * @param gmGdbFile		The file containing the GenMAPP Gene Database to be converted
+	 * @param gdbFile		The file where the new Hsqldb Gene Database has to be stored (the .properties
+	 * file of the Hsqldb database)
+	 */
 	public void convertGdb(File gmGdbFile, File gdbFile) {
 
 		PrintWriter error = null;
@@ -470,10 +478,18 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * {@link ConvertThread} for conversion of the GenMAPP Gene Database
+	 * @see {@link convertGdb}
+	 */
 	private ConvertThread convertThread;
 	public File convertGmGdbFile;
 	public File convertGdbFile;
 	
+	/**
+	 * This class is a {@link Thread} that converts a GenMAPP Gene Database and keeps the progress
+	 * of the conversion
+	 */
 	public class ConvertThread extends Thread
 	{
 		volatile double progress;
@@ -496,6 +512,9 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * This class starts the {@link ConvertThread} and monitors the progress of the conversion
+	 */
 	public IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {		
 		public void run(IProgressMonitor monitor) {
 			monitor.beginTask("Converting Gene Database",100);
@@ -516,6 +535,11 @@ public class GmmlGdb {
 		}
 	};
 	
+	/**
+	 * Excecutes several SQL statements to create the tables and indexes in the database the given
+	 * connection is connected to
+	 * @param convertCon	The connection to the database the tables are created in
+	 */
 	public void createTables(Connection convertCon) {
 		System.out.println ("Info:  Creating tables");
 		

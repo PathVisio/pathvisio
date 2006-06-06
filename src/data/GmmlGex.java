@@ -20,8 +20,15 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import colorSet.*;
+import colorSet.GmmlColorGradient;
+import colorSet.GmmlColorSet;
+import colorSet.GmmlColorSetObject;
 
+/**
+ * This class handles everything related to the Expression Data. It contains the database connection,
+ * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
+ * to hsqldb format
+ */
 public class GmmlGex {
 	public Connection con;
 	private Connection conGmGex;
@@ -29,8 +36,6 @@ public class GmmlGex {
 	public File gmGexFile;
 	public GmmlGdb gmmlGdb;
 	public Vector<GmmlColorSet> colorSets;
-	
-	private ConvertThread convertThread;
 	
 	public GmmlGex(GmmlGdb gmmlGdb) {
 		this.gmmlGdb = gmmlGdb;
@@ -436,7 +441,6 @@ public class GmmlGex {
 		volatile double progress;
 		volatile boolean isInterrupted;
 		ArrayList<String> ids;
-		
 		public CacheThread(ArrayList<String> ids) 
 		{
 			this.ids = ids;
@@ -476,6 +480,8 @@ public class GmmlGex {
 			monitor.done();
 		}
 	};
+	
+	private ConvertThread convertThread;
 	
 	public class ConvertThread extends Thread
 	{

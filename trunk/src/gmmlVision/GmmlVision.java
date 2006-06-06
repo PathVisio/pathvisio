@@ -128,9 +128,9 @@ public class GmmlVision extends ApplicationWindow
 			drawing.setZoom(100);
 			drawing.updateJdomElements();
 			// Overwrite the existing xml file
-			if (gmmlData.xmlFile != null)
+			if (gmmlData.getXmlFile() != null)
 			{
-				gmmlData.writeToXML(gmmlData.xmlFile);
+				gmmlData.writeToXML(gmmlData.getXmlFile());
 			}
 			else
 			{
@@ -343,7 +343,7 @@ public class GmmlVision extends ApplicationWindow
 			String error = gmmlGdb.connect(new File(file));
 			if(error == null)
 			{
-				setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
+				setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 				cacheExpressionData();
 			} else {
 				MessageBox messageBox = new MessageBox(getShell(),
@@ -409,7 +409,7 @@ public class GmmlVision extends ApplicationWindow
 		{
 			gmmlGex.mappIds = drawing.getMappIds();
 			//Check for neccesary connections
-			if(gmmlGex.con != null && gmmlGdb.con != null)
+			if(gmmlGex.con != null && gmmlGdb.getCon() != null)
 			{
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				try {
@@ -645,7 +645,7 @@ public class GmmlVision extends ApplicationWindow
 				else
 				{
 					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
-					if(gmmlGdb.con == null)
+					if(gmmlGdb.getCon() == null)
 					{
 						MessageDialog.openWarning(getShell(), "Warning", "No gene database selected");
 					}
@@ -1217,7 +1217,7 @@ public class GmmlVision extends ApplicationWindow
 		
 		sashFormSplit.setMaximizedControl(bpBrowser);
 		
-		setStatus("Using Gene Database: '" + gmmlGdb.props.getProperty("currentGdb") + "'");
+		setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 		
 		colorSetWindow = new ColorSetWindow(shell);
 		colorSetWindow.setGmmlGex(gmmlGex);

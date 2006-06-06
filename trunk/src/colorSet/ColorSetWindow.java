@@ -83,21 +83,23 @@ import data.GmmlGex.Sample;
  * This class displays the colorset manager window where colorsets can be created and edited
  */
 public class ColorSetWindow extends ApplicationWindow {
+	
 	/**
 	 *names of samples that can be used for the color gradient
 	 */
-	String[] cgColumnNames;
+	private String[] cgColumnNames;
+	
 	/**
 	 *id of samples that can be used for the color gradient
 	 */
-	ArrayList<Integer> cgColumnIndex;
+	private ArrayList<Integer> cgColumnIndex;
 
-	GmmlGex gmmlGex;
+	private GmmlGex gmmlGex;
 	
 	/**
 	 *index of the colorset edited last time the window was open
 	 */
-	int lastColorSetIndex;
+	private int lastColorSetIndex;
 	
 	/**
 	 * Constructor of this class
@@ -155,13 +157,14 @@ public class ColorSetWindow extends ApplicationWindow {
 			return super.close();
 	}
 	
-	SashForm topSash; //divides the ColorSetWindow in three columns 
-	Composite coTableComposite; //holds the coTableViewer, displayed in left column
-	TableViewer coTableViewer; //shows the ColorSetObjects for the selected colorset
-	SashForm middleSash; //sash for editing properties of the selected object, displayed in middle column
-	GmmlLegend legend; //Legend displayed in right column
+	private SashForm topSash; //divides the ColorSetWindow in three columns 
+	private Composite coTableComposite; //holds the coTableViewer, displayed in left column
+	private TableViewer coTableViewer; //shows the ColorSetObjects for the selected colorset
+	private SashForm middleSash; //sash for editing properties of the selected object, displayed in middle column
+	private GmmlLegend legend; //Legend displayed in right column
 	
-	Combo csCombo; //for selecting the colorset
+	private Combo csCombo; //for selecting the colorset
+	
 	protected Control createContents(Composite parent)
 	{		
 		Shell shell = parent.getShell();
@@ -300,10 +303,10 @@ public class ColorSetWindow extends ApplicationWindow {
 		return parent;
 	}
 
-	Composite cnComposite; //empty composite when nothing is selected
-	Composite csComposite; //display when editing color set
-	Composite cgComposite; //display when editing color gradient
-	Composite ccComposite; //display when editing color criteria (by expression)
+	private Composite cnComposite; //empty composite when nothing is selected
+	private Composite csComposite; //display when editing color set
+	private Composite cgComposite; //display when editing color gradient
+	private Composite ccComposite; //display when editing color criteria (by expression)
 	/**
 	 * Initiates {@link Composite}s in middleSash
 	 */
@@ -322,21 +325,21 @@ public class ColorSetWindow extends ApplicationWindow {
 		middleSash.setMaximizedControl(cnComposite); //Start with empty composite
 	}
 	
-	Text csNameText; //name of colorset
-	CLabel csCLabelNc; //displays color for 'no criteria met'
-	Button csColorButtonNc; //button for selecting color for 'no criteria met'
-	CLabel csCLabelGnf; //displays color for 'gene not found'
-	Button csColorButtonGnf;//button for selecting color for 'gene not found'
-	Color csColorNc; //color for 'no criteria met'
-	Color csColorGnf; //color for 'gene not found'
-	Table sampleTable; //table that displays samples used for visualization
-	TableViewer sampleTableViewer; //TableViewer for sampleTable
-	List sampleList; //list that displays all available samples
-	ListViewer sampleListViewer; //ListViewer for sampleList
-	Group csSampleGroup; //Group containing list and table to select samples
-	Composite sampleTableComposite; //Composite to layout sampleTableViewer
-	ColorDialog csColorDialog; //Colordialog for picking 'gene not found' and 'no criteria met' colors
-	List<String> stColNames = Arrays.asList(
+	private Text csNameText; //name of colorset
+	private CLabel csCLabelNc; //displays color for 'no criteria met'
+	private Button csColorButtonNc; //button for selecting color for 'no criteria met'
+	private CLabel csCLabelGnf; //displays color for 'gene not found'
+	private Button csColorButtonGnf;//button for selecting color for 'gene not found'
+	private Color csColorNc; //color for 'no criteria met'
+	private Color csColorGnf; //color for 'gene not found'
+	private Table sampleTable; //table that displays samples used for visualization
+	private TableViewer sampleTableViewer; //TableViewer for sampleTable
+	private List sampleList; //list that displays all available samples
+	private ListViewer sampleListViewer; //ListViewer for sampleList
+	private Group csSampleGroup; //Group containing list and table to select samples
+	private Composite sampleTableComposite; //Composite to layout sampleTableViewer
+	private ColorDialog csColorDialog; //Colordialog for picking 'gene not found' and 'no criteria met' colors
+	private List<String> stColNames = Arrays.asList(
 			new String[] {"Sample name", "Type"}); //Column names of sampleTable
 	/**
 	 * sets the components of the csComposite used for editing colorset properties
@@ -460,13 +463,13 @@ public class ColorSetWindow extends ApplicationWindow {
 	    csGroup.pack();
 	}
 	
-	Text cgNameText; //name of color gradient
-	Combo cgCombo; //samples to apply color gradient on
-	Button cgButton; //save changes
-	Table cgColorTable; //contains the color/value pairs used for the gradient
-	TableViewer cgColorTableViewer; //TableViewer for cgColorTable
-	Group cgGroup;
-	static final String[] cgColorTableCols = new String[] {"Color", "Value"}; //Column names for cgColorTable
+	private Text cgNameText; //name of color gradient
+	private Combo cgCombo; //samples to apply color gradient on
+	private Button cgButton; //save changes
+	private Table cgColorTable; //contains the color/value pairs used for the gradient
+	private TableViewer cgColorTableViewer; //TableViewer for cgColorTable
+	private Group cgGroup;
+	private static final String[] cgColorTableCols = new String[] {"Color", "Value"}; //Column names for cgColorTable
 	/**
 	 * sets the components of the cgComposite used for editing color gradient properties
 	 */
@@ -582,13 +585,13 @@ public class ColorSetWindow extends ApplicationWindow {
 		if(element instanceof GmmlColorGradient) {
 			GmmlColorGradient cg = (GmmlColorGradient)element;
 			cgColorTableViewer.setInput(cg);
-			cgNameText.setText(cg.name);
-			if(!setCgComboItems(cg.parent)) {
+			cgNameText.setText(cg.getName());
+			if(!setCgComboItems(cg.getParent())) {
 				return;
 			}
 			cgCombo.select(cgColumnIndex.indexOf(cg.useSample));
 			middleSash.setMaximizedControl(cgComposite);
-			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.parent);
+			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.getParent());
 			legend.setVisible(true);
 			legend.resetContents();
 			topSash.layout();
@@ -786,7 +789,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		((IStructuredSelection)coTableViewer.getSelection()).getFirstElement();
 		if(cg == null) return true; //No gradient is selected (this should't happen)
 		// save the control information to the gradient
-		cg.name = cgNameText.getText();
+		cg.setName(cgNameText.getText());
 		cg.useSample = cgColumnIndex.get(cgCombo.getSelectionIndex());
 //		cg.setUseSample(cgColumnIndex.get(cgCombo.getSelectionIndex()));
 		//Update the ui components
@@ -944,7 +947,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			((IStructuredSelection)coTableViewer.getSelection()).getFirstElement();
 			if(co != null)
 			{
-				co.parent.colorSetObjects.remove(co);
+				co.getParent().colorSetObjects.remove(co);
 				coTableViewer.refresh();
 			}
 		}
@@ -1019,8 +1022,8 @@ public class ColorSetWindow extends ApplicationWindow {
     		if(selected instanceof GmmlColorSetObject)
     		{
     			GmmlColorSetObject cso = (GmmlColorSetObject)selected;
-    			int csIndex = gmmlGex.colorSets.indexOf(cso.parent);
-    			int csoIndex = cso.parent.colorSetObjects.indexOf(cso);
+    			int csIndex = gmmlGex.colorSets.indexOf(cso.getParent());
+    			int csoIndex = cso.getParent().colorSetObjects.indexOf(cso);
     			//Put object type and index in a string that is transferred
     			e.data = TRANSFER_CSOBJECT + TRANSFER_SEP + csIndex + TRANSFER_SEP + csoIndex;
     		}
@@ -1215,7 +1218,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 		public String getColumnText(Object element, int columnIndex) {
 			if(element instanceof GmmlColorSetObject)
-				return ((GmmlColorSetObject)element).name;
+				return ((GmmlColorSetObject)element).getName();
 			return "";
 		}
 		

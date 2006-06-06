@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,14 +20,15 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import data.GmmlGex.ConvertThread;
-
 public class GmmlGdb {
-	final static File propsFile = new File("gdb.properties");
-	public Connection con;
-	public Properties props;
+	final static private File propsFile = new File("gdb.properties");
 	
-	File gdbFile;
+	private Connection con;
+	public Connection getCon() { return con; }
+	private Properties props;
+	public Properties getProps() { return props; }
+	
+	private File gdbFile;
 	
 	public GmmlGdb() {
 		props = new Properties();
@@ -470,9 +470,10 @@ public class GmmlGdb {
 		}
 	}
 	
-	ConvertThread convertThread;
+	private ConvertThread convertThread;
 	public File convertGmGdbFile;
 	public File convertGdbFile;
+	
 	public class ConvertThread extends Thread
 	{
 		volatile double progress;

@@ -6,6 +6,9 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * Backpage browser - side panel that shows the backpage information for a selected gene.
+ */
 public class GmmlBpBrowser extends Composite {
 	final static String BPDIR = "backpage";
 	final static String HEADERFILE = "header.html";
@@ -16,8 +19,8 @@ public class GmmlBpBrowser extends Composite {
 	public String noGeneUrl;
 	public String header;
 	
-	public String bpText;
-	public String gexText;
+	private String bpText;
+	private String gexText;
 	
 	public Browser bpBrowser;
 	

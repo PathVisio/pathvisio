@@ -127,11 +127,6 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		return null; //If anything goes wrong, return null
 	}
 	
-	public GmmlColorSet getParent()
-	{
-		return parent;
-	}
-	
 	public String getCriterionString()
 	{
 		String sep = "|";
@@ -148,7 +143,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		return criterion.toString();
 	}
 	
-	void parseCriterionString(String criterion)
+	public void parseCriterionString(String criterion)
 	{
 		colorValuePairs = new ArrayList<ColorValuePair>();
 		String[] s = criterion.split("\\|");

@@ -5,11 +5,32 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * This class represent any object that can be present in a colorset
- * e.g. a gradient or expression
+ * e.g. a gradient or boolean expression.
  */
 public abstract class GmmlColorSetObject {
-	public GmmlColorSet parent;
-	public String name;
+	
+	/**
+	 * The parent colorset, that this colorSetObject is a part of.
+	 */
+	private GmmlColorSet parent;
+	
+	/**
+	 * The display name of this colorSetObject
+	 */
+	private String name;
+	
+	/**
+	 * getter for name, the name of this colorSetObject
+	 */
+	public void setName(String _name) 
+	{
+		this.name = _name; 
+	}
+	
+	/**
+	 * setter for name, the name of this colorSetObject
+	 */
+	public String getName() { return name; }
 	
 	/**
 	 * Constructor for this class
@@ -48,7 +69,10 @@ public abstract class GmmlColorSetObject {
 	 * Returns the parent colorset
 	 * @return
 	 */
-	abstract GmmlColorSet getParent();
+	public GmmlColorSet getParent()
+	{
+		return parent;
+	}
 	
 	/**
 	 * Parses a string containing the colorset object information

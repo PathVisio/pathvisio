@@ -5,13 +5,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.*;
-
-import javax.swing.JTable;
 
 import org.jdom.Attribute;
 import org.jdom.Document;

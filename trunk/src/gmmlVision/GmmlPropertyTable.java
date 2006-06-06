@@ -3,10 +3,8 @@ package gmmlVision;
 import graphics.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;

@@ -10,8 +10,8 @@ import data.GmmlGex;
 import data.GmmlGex.Sample;
 
 /**
- * This class represents a colorset, a set of criteria that can be evaluated and results in a
- * color given a collection of data
+ * This class represents a colorset, a set of criteria that can be evaluated and 
+ * results in a color given a collection of data
  */
 public class GmmlColorSet {
 	/**
@@ -44,7 +44,7 @@ public class GmmlColorSet {
 	
 	public String name;
 	
-	public Vector colorSetObjects;
+	public Vector<GmmlColorSetObject> colorSetObjects;
 	
 	public GmmlGex gmmlGex;
 	
@@ -66,7 +66,7 @@ public class GmmlColorSet {
 	{
 		this.name = name;
 		this.gmmlGex = gmmlGex;
-		colorSetObjects = new Vector();
+		colorSetObjects = new Vector<GmmlColorSetObject>();
 		useSamples = new ArrayList<Sample>();
 		sampleTypes = new ArrayList<Integer>();
 	}
@@ -110,7 +110,7 @@ public class GmmlColorSet {
 	 * @param sampleId	the id of the sample that will be visualized
 	 * @return	an {@link RGB} object representing the color for the given data
 	 */
-	public RGB getColor(HashMap data, int sampleId)
+	public RGB getColor(HashMap<Integer,Object> data, int sampleId)
 	{
 		RGB rgb = color_no_criteria_met; //The color to return
 		Iterator it = colorSetObjects.iterator();

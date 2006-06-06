@@ -54,7 +54,7 @@ public class GmmlGdb {
 	public Properties getProps() { return props; }
 	
 	/**
-	 * {@link File} pointing to the current Gene Database
+	 * {@link File} pointing to the current Gene Database (.properties file of the Hsql database)
 	 */
 	private File gdbFile;
 	
@@ -513,7 +513,8 @@ public class GmmlGdb {
 	}
 	
 	/**
-	 * This class starts the {@link ConvertThread} and monitors the progress of the conversion
+	 * This {@link IRunnableWithProgress} starts the {@link ConvertThread} 
+	 * and monitors the progress of the conversion
 	 */
 	public IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {		
 		public void run(IProgressMonitor monitor) {

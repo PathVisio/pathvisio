@@ -4,9 +4,12 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 
+/**
+ * 
+ * A simple dialog box that shows about information
+ */
 public class GmmlAboutBox extends Dialog
 {
-	
 	private static final long serialVersionUID = 1L;
 
 	public GmmlAboutBox(Shell parent) 

@@ -16,17 +16,17 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 public class GmmlDb {
 	final static File propsFile = new File(".gdbProperties");
 	
-	Connection conGdb;
+	private Connection conGdb;
 	public Connection conGex;
-	Connection conGmGex;
+	private Connection conGmGex;
 	
 	public Properties props;
 	
-	File gdbFile;
-	public File gexFile;
-	public File gmGexFile;
+	private File gdbFile;
+	private File gexFile;
+	private File gmGexFile;
 	
-	ConvertThread convertThread;
+	private ConvertThread convertThread;
 	
 	public GmmlDb() {
 		props = new Properties();

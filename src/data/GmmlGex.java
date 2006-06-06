@@ -1,13 +1,6 @@
 package data;
 
-import graphics.GmmlGeneProduct;
-import graphics.GmmlGpColor;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,28 +13,24 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.graphics.RGB;
 
 import colorSet.*;
 
 public class GmmlGex {
 	public Connection con;
-	Connection conGmGex;
+	private Connection conGmGex;
 	public File gexFile;
 	public File gmGexFile;
 	public GmmlGdb gmmlGdb;
 	public Vector<GmmlColorSet> colorSets;
 	
-	ConvertThread convertThread;
+	private ConvertThread convertThread;
 	
 	public GmmlGex(GmmlGdb gmmlGdb) {
 		this.gmmlGdb = gmmlGdb;
@@ -116,7 +105,7 @@ public class GmmlGex {
 				for(int j = 0; j < cs.colorSetObjects.size(); j++)
 				{
 					GmmlColorSetObject cso = (GmmlColorSetObject)cs.colorSetObjects.get(j);
-					sCso.setString(1, cso.name);
+					sCso.setString(1, cso.getName());
 					sCso.setInt(2, i);
 					sCso.setString(3, cso.getCriterionString());
 					sCso.execute();
@@ -345,7 +334,7 @@ public class GmmlGex {
 		
 		String colNames = "<TR><TH>Sample name";
 		RefData refData = null;
-		if(con == null || gmmlGdb.con == null)
+		if(con == null || gmmlGdb.getCon() == null)
 		{
 			return noDataFound;
 		}
@@ -441,7 +430,7 @@ public class GmmlGex {
 		cacheThread.progress = 100;
 	}
 
-	CacheThread cacheThread;
+	private CacheThread cacheThread;
 	public class CacheThread extends Thread
 	{
 		volatile double progress;
@@ -592,7 +581,7 @@ public class GmmlGex {
 					error.println(id + "\tGene not found in gene database");
 					// Try to find via name
 					try {
-						ResultSet r1 = gmmlGdb.con.createStatement().executeQuery(
+						ResultSet r1 = gmmlGdb.getCon().createStatement().executeQuery(
 								"SELECT id FROM gene " +
 								"WHERE name = '" + id.trim() + "'"
 						);

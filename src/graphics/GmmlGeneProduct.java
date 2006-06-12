@@ -178,14 +178,26 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	/**
 	 * Fetches the gene identifier from the Jdom representation
-	 *
 	 */
-	public String getGeneId() {
+	public String getId() {
 		if(jdomElement != null) {
 			return jdomElement.getAttributeValue("Name");
 			} else {
 			return "";
 		}
+	}
+	
+	/**
+	 * Looks up the systemcode for this gene in {@link GmmlData#sysName2Code}
+	 * @param systemName	The system name (as in gmml)
+	 * @return	The system code or an empty string if the system is not found
+	 */
+	public String getSystemCode()
+	{
+		String systemCode = "";
+		if(GmmlData.sysName2Code.containsKey(geneProductDataSource)) 
+			systemCode = GmmlData.sysName2Code.get(geneProductDataSource);
+		return systemCode;
 	}
 	
 	private Text t;
@@ -402,14 +414,14 @@ public class GmmlGeneProduct extends GmmlGraphics
 		type		= (String)propItems.get(attributes.get(attributes.indexOf("Type")));
 		notes		= (String)propItems.get(attributes.get(attributes.indexOf("Notes")));
 		geneProductDataSource = (String)propItems.get(attributes.get(attributes.indexOf("GeneProduct-Data-Source")));
-
+		
 		// Update jdom element to store gene id
 		jdomElement.setAttribute("Name", name);
 		
 		markDirty();
 		setHandleLocation();
 	}
-
+	
 	/**
 	 * Maps attributes to internal variables.
 	 * @param e - the element to map to a GmmlArc
@@ -446,7 +458,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 					case 11:// Notes
 						this.notes = value; break;
 					case 1:// GeneProduct-Data-Source
-						this.geneProductDataSource = value; break;
+						this.geneProductDataSource = value; 
+						break;
 					case -1:
 						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
 			}

@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import data.GmmlGex;
+import data.GmmlGex.RefData;
 import data.GmmlGex.Sample;
 
 /**
@@ -174,6 +175,19 @@ PaintListener, MouseTrackListener
 			}
 		}
 		return mappIds;
+	}
+	
+	public ArrayList<String> getSystemCodes()
+	{
+		ArrayList<String> systemCodes = new ArrayList<String>();
+		for(GmmlDrawingObject o : drawingObjects)
+		{
+			if(o instanceof GmmlGeneProduct)
+			{
+				systemCodes.add(((GmmlGeneProduct)o).getSystemCode());
+			}
+		}
+		return systemCodes;
 	}
 		
 	public void setEditMode(boolean editMode)
@@ -359,16 +373,17 @@ PaintListener, MouseTrackListener
 					{
 						GmmlGeneProduct gp = (GmmlGeneProduct)o;
 						// Get the backpage text
-						String geneId = gp.getGeneId();
-						String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId);
-						String gexText = gmmlVision.gmmlGex.getDataString(geneId);
+						String geneId = gp.getId();
+						String systemCode = gp.getSystemCode();
+						String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId, systemCode);
+						String gexText = gmmlVision.gmmlGex.getDataString(geneId, systemCode);
 						if (bpText != null) 
 						{
-							gmmlVision.bpBrowser.setBpText(bpText);
+							gmmlVision.bpBrowser.setGeneText(bpText);
 						} 
 						else 
 						{
-							gmmlVision.bpBrowser.setBpText("<I>No gene information found</I>");
+							gmmlVision.bpBrowser.setGeneText("<I>No gene information found</I>");
 						}
 						if (gexText != null) 
 						{
@@ -724,8 +739,9 @@ PaintListener, MouseTrackListener
 					if (o instanceof GmmlGeneProduct)
 					{
 						GmmlGeneProduct gp = (GmmlGeneProduct)o;
-						if(tip != null && !tip.isDisposed())
-							tip.dispose();
+						
+						if(tip != null && !tip.isDisposed()) tip.dispose();
+						
 						tip = new Shell(getShell().getDisplay(), SWT.ON_TOP | SWT.TOOL);  
 						tip.setBackground(getShell().getDisplay()
 			                   .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -741,8 +757,9 @@ PaintListener, MouseTrackListener
 			            labelR.setBackground(getShell().getDisplay()
 			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			            
-			            HashMap<Integer, Object> data = 
-			            	gmmlGex.data.get(gp.name).getAvgSampleData();
+			            RefData refData = gmmlGex.data.get(gp.name);
+			            if(refData == null) return; //No data in cache for this geneproduct
+			            HashMap<Integer, Object> data = refData.getAvgSampleData();
 			            String textL = "";
 			            String textR = "";
 			            for(Sample s : gmmlGex.colorSets.get(colorSetIndex).useSamples)
@@ -754,10 +771,8 @@ PaintListener, MouseTrackListener
 			            labelL.setText(textL);
 			            labelR.setText(textR);
 			            tip.pack();
-			            Point ls = getShell().getLocation();
-			            Point sco = gmmlVision.sc.getOrigin();
-			            tip.setLocation(ls.x + e.x - sco.x, ls.y  + e.y - sco.y + 
-			            		tip.computeSize(SWT.DEFAULT, SWT.DEFAULT).y + 50);
+			            Point mp = toDisplay(e.x, e.y);
+			            tip.setLocation(mp.x + 15, mp.y + 15);
 			            tip.setVisible(true);
 						break;
 					}

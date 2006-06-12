@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -47,9 +48,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import colorSet.ColorSetWindow;
-import data.GmmlData;
-import data.GmmlGdb;
-import data.GmmlGex;
+import data.*;
+
 //~ import java.awt.Color;
 
 /**
@@ -412,7 +412,7 @@ public class GmmlVision extends ApplicationWindow
 			{
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				try {
-					dialog.run(true, true, gmmlGex.createCacheRunnable(drawing.getMappIds()));
+					dialog.run(true, true, gmmlGex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
 					drawing.redraw();
 				} catch(Exception e) {
 					e.printStackTrace();
@@ -420,6 +420,34 @@ public class GmmlVision extends ApplicationWindow
 			}
 		}
 	}
+	
+	/**
+	 * {@link Action} that opens an {@link ImportExprDataWizard} that guides the user
+	 * through the steps required to create a new
+	 * expression dataset
+	 */
+	private class CreateGexAction extends Action
+	{
+		GmmlVision window;
+		public CreateGexAction(GmmlVision w)
+		{
+			window = w;
+			setText("&Create new Expression Dataset");
+			setToolTipText("Create a new Expression Dataset from a tab delimited text file");
+		}
+		
+		public void run() {
+			if(gmmlGdb.getCon() == null)
+			{
+				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
+						"select gene database before creating a new expression dataset");
+			}
+			WizardDialog dialog = new WizardDialog(getShell(), new ImportExprDataWizard(window));
+			dialog.setBlockOnOpen(true);
+			dialog.open();
+		}
+	}
+	private CreateGexAction createGexAction = new CreateGexAction(this);
 	
 	/**
 	 *{@link Action} to start conversion of a GenMAPP gex to an expression database in
@@ -1108,6 +1136,7 @@ public class GmmlVision extends ApplicationWindow
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(selectGexAction);
+		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);
 		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
 		convertMenu.add(convertGexAction);

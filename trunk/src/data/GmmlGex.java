@@ -1,6 +1,8 @@
 package data;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -19,11 +22,13 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
 
 import colorSet.GmmlColorGradient;
 import colorSet.GmmlColorSet;
 import colorSet.GmmlColorSetObject;
-import data.GmmlGdb.ConvertThread;
+import data.ImportExprDataWizard.ImportInformation;
+import data.ImportExprDataWizard.ImportPage;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -77,29 +82,6 @@ public class GmmlGex {
 		}
 		return colorSetNames;
 	}
-	
-//	public void setGexReadOnly(boolean readonly)
-//	{
-//		boolean reconnect = false;		
-//		if(con != null)
-//		{
-//			System.out.println("reconnecting");
-//			reconnect = true;
-//			close(false);
-//		}
-//		Properties gexProp = new Properties();
-//		try {
-//		gexProp.load(new FileInputStream(gexFile));
-//		gexProp.setProperty("readonly", Boolean.toString(readonly));
-//		gexProp.store(new FileOutputStream(gexFile), "HSQL Database Engine");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		if(reconnect)
-//		{
-//			connect();
-//		}
-//	}
 	
 	/**
 	 * Saves the {@link ColorSets} in the Vector {@link colorSets} to the Expression database
@@ -268,23 +250,17 @@ public class GmmlGex {
 	/**
 	 * Checks whether Expression data is cached for a given gene id
 	 * @param id	the gene id
+	 * @param code	The systemcode of the gene identifier
 	 * @return		true if Expression data is found in cache, false if not
 	 */
-	public boolean hasData(String id)
+	public boolean hasData(String id, String code)
 	{
-		if(data == null)
-		{
+		if(data == null) return false;
+		RefData refData = getCachedData(id, code);
+		if(refData != null && refData.sampleData.size() > 0)
+			return true;
+		else
 			return false;
-		}
-		if(data.containsKey(id))
-		{
-			RefData refData = data.get(id);
-			if(refData.sampleData.size() > 0)
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
@@ -293,12 +269,28 @@ public class GmmlGex {
 	 * mapp for which data is found in the Expression database
 	 */
 	public HashMap<String, RefData> data;
+	
+	/**
+	 * Gets the cached data for the given gene identifier and systemcode
+	 * @param id	The gene identifier to get the data for
+	 * @param code	The systemcode of the gene identifier
+	 * @return		A {@link RefData} object containing the cached data
+	 */
+	public RefData getCachedData(String id, String code)
+	{
+		RefData refData = null;
+		if(data.containsKey(id)) refData = data.get(id);
+		if(refData != null && !refData.code.equalsIgnoreCase(code)) refData = null; //Code doesn't match
+		return refData;
+	}
+	
 	/**
 	 * This class contains the cached data from the Expression database for a single gene id.
 	 */
 	public class RefData
 	{
 		String mappId;
+		String code;
 		/**
 		 * Contains the Expression data for all samples and all cross references for the
 		 * gene id of this object. Uses idSample as key and an {@link ArrayList<String[]>}
@@ -310,10 +302,12 @@ public class GmmlGex {
 		/**
 		 * Constructor for this class
 		 * @param mappId	the gene id for which this object contains expression data
+		 * @param code	The systemcode of the gene identifier
 		 */
-		public RefData(String mappId)
+		public RefData(String mappId, String code)
 		{
 			this.mappId = mappId;
+			this.code = code;
 			sampleData = new HashMap<Integer, ArrayList<String[]>>();
 		}
 		
@@ -419,23 +413,22 @@ public class GmmlGex {
 	 * Gets all available expression data for the given gene id and returns a string
 	 * containing this data in a HTML table
 	 * @param id	the gene id for which the data has to be returned
+	 * @param code	The systemcode of the gene identifier
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	public String getDataString(String id)
+	public String getDataString(String id, String code)
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + id + "</B><TABLE border='1'>";
 		
 		String colNames = "<TR><TH>Sample name";
-		RefData refData = null;
 		if(		con == null //Need a connection to the expression data
 				|| gmmlGdb.getCon() == null //and to the gene database
-				|| data.containsKey(id) //data in the expression dataset for this gene present
-				|| refData.sampleData == null //does the RefData object contain data
 				) return noDataFound;
 		
-		refData = data.get(id);
+		RefData refData = getCachedData(id, code);
+		if(refData == null) return noDataFound;
 		ArrayList<String> refIds = refData.getRefIds();
 		if(refIds == null) return noDataFound; //The gene doesn't have data after all
 		for(String refId : refIds)
@@ -461,19 +454,22 @@ public class GmmlGex {
 	/**
 	 * Loads expression data for all the given gene ids into memory
 	 * @param ids	Gene ids to cache the expression data for
+	 * @param code	Systemcodes of the gene identifiers
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(ArrayList<String> ids)
+	public void cacheData(ArrayList<String> ids, ArrayList<String> codes)
 	{	
-		if(samples == null)	setSamples(); //Cache the samples in the dataset
+		setSamples(); //Cache the samples in the dataset
 	
 		data = new HashMap<String, RefData>();
-		for(String id : ids)
-		{			 			
-			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id); //Get all Ensembl genes for this id
+		for(int i = 0; i < ids.size(); i++)
+		{
+			String id = ids.get(i);
+			String code = codes.get(i);
+			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
 			if(ensIds.size() > 0) //Only create a RefData object if the id maps to an Ensembl gene
 			{
-				RefData refData = new RefData(id);
+				RefData refData = new RefData(id, code);
 				data.put(id, refData);
 				
 				for(String ensId : ensIds)
@@ -484,22 +480,19 @@ public class GmmlGex {
 								" WHERE ensId = '" + ensId + "'");
 						//r contains all genes and data mapping to the Ensembl id
 						while(r.next())
-						{						 
+						{
 							String[] data = new String[3];
-							int idSample = r.getInt(3);
+							data[0] = r.getString("id");
+							data[1] = ensId;
+							data[2] = r.getString("data");
+							int idSample = r.getInt("idSample");
 							if(refData.sampleData.containsKey(idSample))
 							{//This sample is already present in the sampleData, append
-								data[0] = r.getString(1);
-								data[1] = ensId;
-								data[2] = r.getString(2);
 								refData.sampleData.get(idSample).add(data);
 							}
 							else
 							{//This sample is not present yet, create
 								ArrayList<String[]> d = new ArrayList<String[]>();
-								data[0] = r.getString(1);
-								data[1] = ensId;
-								data[2] = r.getString(2);
 								d.add(data);
 								refData.sampleData.put(idSample, d);
 							}						
@@ -533,20 +526,23 @@ public class GmmlGex {
 		volatile double progress;
 		volatile boolean isInterrupted;
 		ArrayList<String> ids;
+		ArrayList<String> codes;
 		/**
 		 * Constructor for this class
 		 * @param ids	the gene ids that need to be passed on to {@link cacheData()}
+		 * @param codes	The systemcodes of the gene identifiers
 		 */
-		public CacheThread(ArrayList<String> ids) 
+		public CacheThread(ArrayList<String> ids, ArrayList<String> codes) 
 		{
 			this.ids = ids;
+			this.codes = codes;
 		}
 		
 		public void run()
 		{
 			progress = 0;
 			isInterrupted = false;
-			cacheData(ids);
+			cacheData(ids, codes);
 		}
 		
 		public void interrupt()
@@ -559,16 +555,18 @@ public class GmmlGex {
 	 * Creates an {@link IRunnableWithProgress} responsible for starting the 
 	 * {@link CacheThread} and keeping track of the progress of this thread
 	 * @param mappIds	the gene ids to pass on to {@link cacheData()}
+	 * @param codes		the systemcodes of the gene identifiers
 	 * @return
 	 */
-	public IRunnableWithProgress createCacheRunnable(ArrayList<String> mappIds)
+	public IRunnableWithProgress createCacheRunnable(
+			final ArrayList<String> mappIds, 
+			final ArrayList<String> codes )
 	{
-		final ArrayList<String> ids = mappIds;
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
 				monitor.beginTask("Caching expression data",100);
-				cacheThread = new CacheThread(ids);
+				cacheThread = new CacheThread(mappIds, codes);
 				cacheThread.start();
 				int prevProgress = 0;
 				while(cacheThread.progress < 100) {
@@ -636,6 +634,152 @@ public class GmmlGex {
 			monitor.done();
 		}
 	};
+	
+	public class ImportRunnableWithProgress implements IRunnableWithProgress {
+		ImportInformation info;
+		ImportPage page;
+		
+		public ImportRunnableWithProgress(ImportInformation info, ImportPage page) {
+			super();
+			this.info = info;
+			this.page = page;
+		}
+		
+		public void run(IProgressMonitor monitor) 
+		throws InvocationTargetException, InterruptedException {
+			monitor.beginTask("Importing expression data", IProgressMonitor.UNKNOWN);
+			importFromTxt(info, page, monitor);
+			monitor.done();
+		}
+	}
+	
+	private void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
+	{
+		boolean errorFound = false;
+//		Open a connection to the error file
+		String errorFile = info.gexFile + ".ex.txt";
+    	PrintWriter error = null;
+	    try {
+	        error = new PrintWriter(new FileWriter(errorFile));
+	    } catch(IOException ex) {
+	        ex.printStackTrace();
+	        page.println("Error: could not open exception file: " + ex.getMessage());
+	    }
+	    
+		page.println("Creating expression dataset");
+		//Create a new expression database (or overwrite existing)
+		gexFile = info.gexFile;
+		connect(true);
+		createTables();
+		
+		page.println("Importing data");
+		try 
+		{
+			page.println("> Processing headers");
+			BufferedReader in = new BufferedReader(new FileReader(info.txtFile));
+			in.mark(10000);
+			for(int i = 0; i < info.headerRow - 1; i++) in.readLine(); //Go to headerline
+			String[] headers = info.getColNames();
+			//Parse sample names and add to Sample table
+			PreparedStatement pstmt = con.prepareStatement(
+					" INSERT INTO SAMPLES " +
+					"	(idSample, name, dataType)  " +
+					" VALUES (?, ?, ?)		  ");
+			int sampleId = 0;
+			ArrayList<Integer> dataCols = new ArrayList<Integer>();
+			for(int i = 0; i < headers.length; i++) {
+				if(monitor.isCanceled()) { close(true, true); error.close(); return; } //User pressed cancel
+				if(i != info.idColumn && i != info.codeColumn) { //skip the gene and systemcode column
+					try {
+					pstmt.setInt(1, sampleId++);
+					pstmt.setString(2, headers[i]);
+					pstmt.setInt(3, info.isStringCol(i) ? Types.CHAR : Types.REAL);
+					pstmt.execute();
+					dataCols.add(i);
+					} catch(Error e) { 
+						error.println("Error in headerline, can't add column " + i + 
+							" due to: " + e.getMessage());
+						errorFound = reportErrorFound(page, errorFile, errorFound);
+						
+					}
+				}
+			}
+			
+			page.println("> Processing lines");
+			//Check ids and add expression data
+			in.reset();
+			for(int i = 0; i < info.firstDataRow - 1; i++) in.readLine(); //Go to line where data starts
+			String line = null;
+			int n = info.firstDataRow - 1;
+			pstmt = con.prepareStatement(
+					"INSERT INTO expression			" +
+					"	(id, code, ensId,			" + 
+					"	 idSample, data)			" +
+			"VALUES	(?, ?, ?, ?, ?)			");
+			while((line = in.readLine()) != null) 
+			{
+				String[] data = line.split(ImportInformation.DELIMITER, headers.length);
+				if(n++ == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
+				monitor.setTaskName("Importing expression data - processing line " + n);
+				//Check id and add data
+				String id = data[info.idColumn];
+				String code = data[info.codeColumn];
+				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
+				
+				if(ensIds.size() == 0) //No Ensembl gene found
+				{
+					error.println("Line " + n + ": " + id + "\t" + code + 
+							"\t No Ensembl gene found for this identifier");
+					errorFound = reportErrorFound(page, errorFile, errorFound);
+				} else { //Gene maps to an Ensembl id, so add it					
+					for( String ensId : ensIds) //For every Ensembl id add the data
+					{
+						for(int col : dataCols)
+						{
+							if(monitor.isCanceled()) { close(); error.close(); return; } //User pressed cancel
+							try {
+								pstmt.setString(1,id);
+								pstmt.setString(2,code);
+								pstmt.setString(3, ensId);
+								pstmt.setString(4, Integer.toString(dataCols.indexOf(col)));
+								pstmt.setString(5, data[col]);
+								pstmt.execute();
+							} catch (Exception e) {
+								printImportError(error, n, line, e.getMessage());
+								e.printStackTrace();
+								errorFound = reportErrorFound(page, errorFile, errorFound);
+							}
+						}
+					}
+				}
+			}
+			close(true, true);
+			error.close();
+			connect(); //re-connect and use the created expression dataset
+		} catch(Exception e) { 
+			page.println("Import aborted due to error: " + e.getMessage());
+			e.printStackTrace();
+			close(true, true);
+			error.close();
+		}
+	
+		
+	}
+	
+	private boolean reportErrorFound(ImportPage page, String seeFile, boolean errorFound)
+	{
+		if(!errorFound)
+			page.println("One or more errors occured, see " + seeFile + " for details");
+		return true;
+	}
+	private void printImportError(PrintWriter out, int lineNr, String line, String error)
+	{
+		StringBuffer msg = new StringBuffer();
+		msg.append("Line " + lineNr + ":\t");
+		msg.append(line + "\n");
+		msg.append("\tError: " + error);
+		out.println(msg.toString());
+	}
 	
 	/**
 	 * {@link Connection} to the GenMAPP Expression Dataset
@@ -706,30 +850,11 @@ public class GmmlGex {
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				
-				if(ensIds.size() == 0) //Check if any Ensembl gene maps to current gene
+				if(ensIds.size() == 0) //No Ensembl gene found
 				{
-					error.println(id + "\tGene not found in gene database");
-					try { // Try to find via name (NOTE: quick fix to enable conversion of Martijn's
-						// Proteomics/transcriptomics dataset which contains gene symbols as identifier,
-						// which supposingly is allowed in GenMAPP
-						ResultSet r1 = gmmlGdb.getCon().createStatement().executeQuery(
-								"SELECT id FROM gene " +
-								"WHERE name = '" + id.trim() + "'"
-						);
-						r1.next();
-						id = r1.getString(1); //Use the symbol as id
-						ensIds = gmmlGdb.ref2EnsIds(id);
-						if(ensIds.size() > 0) error.println("\t\tAdded gene by name/symbol: " + id + "");
-					} catch(Exception e) {
-//						e.printStackTrace();
-						error.println("\t\tLooking for gene by name: not found in gdb + " + e.getMessage());
-					}
-				}
-				if(ensIds.size() == 0) //No gene found by looking at symbol neither
-				{
-					error.println("\t\tLooking for gene by name: found in gdb, but no linking ensembl gene exists for " + id);
+					error.println(id + "\t" + code + "\t No Ensembl gene found for this identifier");
 				} else { //Gene maps to an Ensembl id, so add it
 					ArrayList<String> data = new ArrayList<String>();
 					for(int i = 4; i < nCols - 1; i++) { // Column 4 to 2 before last contain expression data
@@ -826,7 +951,7 @@ public class GmmlGex {
 	 * statement before calling {@link Connection.close()}
 	 * @param shutdown	true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
-	public void close(boolean shutdown)
+	public void close(boolean shutdown, boolean compact)
 	{
 		if(con != null)
 		{
@@ -834,7 +959,8 @@ public class GmmlGex {
 			{
 				Statement sh = con.createStatement();
 				if(shutdown) {
-					sh.executeQuery("SHUTDOWN COMPACT"); // required, to write last changes
+					//Shutdown to write last changes, compact to compact the data file (can take a while)
+					sh.executeQuery((shutdown ? "SHUTDOWN" : "") + (compact ? " COMPACT" : ""));
 				}
 				sh.close();
 				con = null;
@@ -846,12 +972,12 @@ public class GmmlGex {
 	}
 	
 	/**
-	 * Close the connection excecuting the 'SHUTDOWN COMPACT' statement 
+	 * Close the connection excecuting the 'SHUTDOWN' statement 
 	 * before calling {@link Connection.close()}
 	 */
 	public void close()
 	{
-		close(true);
+		close(true, false);
 	}
 	
 	/**
@@ -922,7 +1048,7 @@ public class GmmlGex {
 					"     code VARCHAR(50),					" +
 					"	  ensId VARCHAR(50),				" +
 					"     idSample INTEGER,					" +
-					"     data REAL							" +
+					"     data VARCHAR(50)					" +
 //					"     PRIMARY KEY (id, code, idSample, data)	" +
 			" )										");
 			sh.execute(
@@ -937,26 +1063,6 @@ public class GmmlGex {
 			sh.execute(
 					"CREATE INDEX i_expression_data " +
 					"ON expression(data)	     ");
-//			sh.execute(
-//					"CREATE CACHED TABLE		" +
-//					"		textdata			" +
-//					"(	id VARCHAR(50),			" +
-//					"	code VARCHAR(50),		" +
-//					"   ensId VARCHAR(50),		" +	
-//					"	idSample INTEGER,		" +
-//					"	data VARCHAR(100)	)");
-//			sh.execute(
-//					"CREATE INDEX i_textdata_id " +
-//					"ON textdata(id)			 ");
-//			sh.execute(
-//					"CREATE INDEX i_textdata_ensId " +
-//					"ON textdata(ensId)			 ");
-//			sh.execute(
-//					"CREATE INDEX i_textdata_idSample " +
-//					"ON textdata(idSample)	 ");
-//			sh.execute(
-//					"CREATE INDEX i_textdata_data " +
-//					"ON textdata(data)	     ");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSets					" +

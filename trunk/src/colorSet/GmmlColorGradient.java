@@ -68,7 +68,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		Collections.sort(colorValuePairs);
 		//If value is larger/smaller than max/min then set the value to max/min
 		//TODO: make this optional
-		if(value < minmax[0]) value = minmax[0]; else value = minmax[1];
+		if(value < minmax[0]) value = minmax[0]; else if(value > minmax[1]) value = minmax[1];
 		
 		//Find what colors the value is in between
 		for(int i = 0; i < colorValuePairs.size() - 1; i++)
@@ -129,6 +129,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	
 	public String getCriterionString()
 	{
+		//GRADIENT | useSample | value1 | color1 | ... | valueN | colorN |
 		String sep = "|";
 		StringBuilder criterion = new StringBuilder("GRADIENT" + sep);
 		criterion.append(
@@ -139,7 +140,6 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 					cvp.value + sep +
 					GmmlColorSet.getColorString(cvp.color) + sep);
 		}
-		System.out.println(criterion.toString());
 		return criterion.toString();
 	}
 	
@@ -147,8 +147,6 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	{
 		colorValuePairs = new ArrayList<ColorValuePair>();
 		String[] s = criterion.split("\\|");
-//		System.out.println(criterion);
-//		System.out.println(s[0] + "," + s[1] + "," + s[2] + "," + s[3] + "," + s[4] + "," + s[5]);
 		try
 		{
 			useSample = Integer.parseInt(s[1]);
@@ -158,8 +156,6 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 						GmmlColorSet.parseColorString(s[i+1]),
 						Double.parseDouble(s[i])));
 			}
-//			System.out.println(dataColumn + "," + valueStart + "," + colorStart + "," +
-//					valueEnd + "," + colorEnd);
 		}
 		catch (Exception e)
 		{

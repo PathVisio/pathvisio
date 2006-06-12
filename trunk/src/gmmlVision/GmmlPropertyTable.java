@@ -1,18 +1,34 @@
 package gmmlVision;
 
-import graphics.*;
+import graphics.GmmlGeneProduct;
+import graphics.GmmlGraphics;
+import graphics.GmmlLine;
+import graphics.GmmlLineShape;
+import graphics.GmmlMappInfo;
+import graphics.GmmlShape;
 
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColorCellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 public class GmmlPropertyTable {
 	public TableViewer tableViewer;

@@ -77,7 +77,8 @@ public class TestInputGroup extends Composite {
 		selectTest = new Combo (group, SWT.READ_ONLY);
 		selectTest.setItems (new String [] {"Load gdb (hsqldb)", "Load gdb (Daffodil)",
 				"Load gdb (Derby)","Load gdb (McKoi)","Load gdb, gex and mapp with hsql",
-				"Load gdb using hsqldb TEXT table"
+				"Load gdb using hsqldb TEXT table", "Cache expression data (hsqldb)",
+				"Cache expression data (derby)"
 				});
 		selectTest.select(0);
 		selectTest.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

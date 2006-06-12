@@ -66,7 +66,8 @@ public class GmmlGpColor {
 		Rectangle r = parent.getBounds();
 		buffer.setBackground(c);
 		buffer.fillRectangle(r.x, r.y, r.width, r.height);
-		if(canvas.colorSetIndex > -1 && !canvas.editMode && gmmlGex.colorSets.size() > 0)
+		if(!(gmmlGex.con == null) && canvas.colorSetIndex > -1 && 
+				!canvas.editMode && gmmlGex.colorSets.size() > 0)
 		{
 			// Get visualization area
 			Rectangle colorArea = parent.getBounds();
@@ -80,7 +81,7 @@ public class GmmlGpColor {
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			
-			if(gmmlGex.hasData(parent.name))
+			if(gmmlGex.hasData(parent.name, parent.getSystemCode()))
 			{
 				colorByData(e, buffer, colorArea);
 			}

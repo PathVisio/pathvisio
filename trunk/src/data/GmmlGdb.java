@@ -57,6 +57,11 @@ public class GmmlGdb {
 	 * {@link File} pointing to the current Gene Database (.properties file of the Hsql database)
 	 */
 	private File gdbFile;
+	/**
+	 * Gets the private property gdbFile
+	 * @return {@File} object that points to the file containing the Gene Database
+	 */
+	public File getGdbFile() { return gdbFile; }
 	
 	/**
 	 * Constructor for this class. Checks the properties file for a previously
@@ -111,13 +116,14 @@ public class GmmlGdb {
 	/**
 	 * Gets the backpage info for the given gene id for display on {@GmmlBpBrowser}
 	 * @param id	The gene id to get the backpage info for
+	 * @param code	systemcode of the gene identifier
 	 * @return		String with the backpage info, null if the gene was not found
 	 */
-	public String getBpInfo(String id) {
+	public String getBpInfo(String id, String code) {
 		try {
 			Statement s = con.createStatement();
 			ResultSet r = s.executeQuery("SELECT backpageText FROM gene " +
-					"WHERE id = '" + id + "'");
+					"WHERE id = '" + id + "' AND code = '" + code + "'");
 			r.next();
 			String result = r.getString(1);
 			return result;
@@ -153,16 +159,17 @@ public class GmmlGdb {
 	/**
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
 	 * @param ref	The gene id to get the Ensembl ids for
+	 * @param code	systemcode of the gene identifier
 	 * @return		{@ArrayList} containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
 	 */
-	public ArrayList ref2EnsIds(String ref)
+	public ArrayList ref2EnsIds(String ref, String code)
 	{
 		ArrayList ensIds = new ArrayList();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idLeft FROM link " +
-					"WHERE idRight = '" + ref + "'"
+					"WHERE idRight = '" + ref + "' AND codeRight = '" + code + "'"
 			);
 			while(r1.next()) {
 				ensIds.add(r1.getString(1));
@@ -181,17 +188,19 @@ public class GmmlGdb {
 	 * simple select statements showed to be much faster, so subsequentially use 
 	 * {@link ref2EnsIds} and {@link ensIds2Refs} to get all cross references for
 	 * a given non-ensembl gene id
-	 * @param id
+	 * @param id	gene identifier to get the cross references for
+	 * @param code	systemcode of the gene identifier
 	 * @return
 	 */
 //	Don't use this, multiple simple select queries is faster
 //	Subsequentially use ref2EnsIds ensIds2Refs
-	public ArrayList getCrossRefs(String id) {
+	public ArrayList getCrossRefs(String id, String code) {
 		ArrayList crossIds = new ArrayList();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight FROM link " +
-					"WHERE idLeft IN ( 		  " +
+					"WHERE codeRight = '" + code + "' AND " +
+							"idLeft IN ( 		  " +
 					"SELECT idLeft FROM link " +
 					"WHERE idRight = '" + id + "')"
 					);
@@ -394,8 +403,8 @@ public class GmmlGdb {
 			pstmt = convertCon.prepareStatement(
 					"INSERT INTO gene " +
 					"	(id, code," +
-					"	 backpageText, name)" +
-			"VALUES (?, ?, ?, ?)");
+					"	 backpageText)" +
+			"VALUES (?, ?, ?)");
 			
 			// Process every system table
 			while(r.next()) {
@@ -416,10 +425,6 @@ public class GmmlGdb {
 						try {
 							// Column ID is gene id
 							String id = str.getString("ID");
-							String name = "";
-							try {	name = str.getString("Symbol"); } 
-							catch (Exception e) {  try { name = str.getString("Name"); }
-							catch (Exception e1) { } }
 							// All further columns are backpage text
 							String bpText = "<TABLE border='1'>";
 							ResultSetMetaData strm = str.getMetaData();
@@ -439,7 +444,6 @@ public class GmmlGdb {
 							pstmt.setString(1, id);
 							pstmt.setString(2, systemCode);
 							pstmt.setString(3, bpText);
-							pstmt.setString(4, name);
 							pstmt.execute();
 						} catch (SQLException e) {
 							error.println ("Error: " + e.getMessage());
@@ -585,16 +589,11 @@ public class GmmlGdb {
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
 					"     backpageText VARCHAR,				" +
-					"	  name VARCHAR(50),					" +
 					"     PRIMARY KEY (id, code)			" +
 			" )										");
 			sh.execute(
 					"CREATE INDEX i_code" +
 					" ON gene(code)"
-					);
-			sh.execute(
-					"CREATE INDEX i_name" +
-					" ON gene(name)"
 					);
 			
 		} catch (Exception e)

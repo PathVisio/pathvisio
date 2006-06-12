@@ -72,7 +72,7 @@ public class Ensembl2Visio {
 	    
 	    compilePatterns();
 	    
-    	connect(dbname);
+    	connectDerby(dbname);
 		createTables();
     	try
     	{
@@ -164,6 +164,8 @@ public class Ensembl2Visio {
 		{
 			e.printStackTrace();
 		}	
+		eout.println("END");
+		eout.close();
     }
     
     public String createBackpageText(String[] cols)
@@ -212,6 +214,7 @@ public class Ensembl2Visio {
     	Properties prop = new Properties();
     	prop.setProperty("user","sa");
     	prop.setProperty("password","");
+    	prop.setProperty("hsqldb.default_table_type","cached");
     	try
     	{
 		Class.forName("org.hsqldb.jdbcDriver");
@@ -234,6 +237,16 @@ public class Ensembl2Visio {
     	}
     }
     
+    public void connectDerby(String dbname) {
+    	try {
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+			con = DriverManager.getConnection("jdbc:derby:" + dbname + ";create=true");
+		} catch(Exception e) {
+			System.out.println ("Error: " +e.getMessage());
+			e.printStackTrace();
+		}
+    }
+    
 	public void close() {
 		System.out.println("Closing connections");
 		try
@@ -252,20 +265,13 @@ public class Ensembl2Visio {
 	
 	public void createTables() {
 		System.out.println ("Info:  Creating tables");
-		
-		try {
-			Statement sh = con.createStatement();
-			sh.execute("DROP TABLE link IF EXISTS");
-			sh.execute("DROP TABLE gene IF EXISTS");
-		} catch(Exception e) {
-			System.out.println("Error: "+e.getMessage());
-		}
+	
 		try
 		{
 			Statement sh = con.createStatement();
-			sh.execute("DROP TABLE link IF EXISTS");
+			try { sh.execute("DROP TABLE link"); } catch (Exception e) {}
 			sh.execute(
-					"CREATE CACHED TABLE					" +
+					"CREATE TABLE					" +
 					"		link							" +
 					" (   idLeft VARCHAR(50) NOT NULL,		" +
 					"     codeLeft VARCHAR(50) NOT NULL,	" +
@@ -287,13 +293,13 @@ public class Ensembl2Visio {
 					"CREATE INDEX i_codeRight" +
 					" ON link(codeRight)"
 					);
-			sh.execute("DROP TABLE gene IF EXISTS");
+			try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
 			sh.execute(
-					"CREATE CACHED TABLE							" +
+					"CREATE TABLE							" +
 					"		gene							" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
-					"     backpageText VARCHAR,				" +
+					"     backpageText VARCHAR(200),				" +
 					"     PRIMARY KEY (id, code)			" +
 			" )										");
 			sh.execute(

@@ -3,8 +3,6 @@ package graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
@@ -19,20 +17,24 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
-import colorSet.*;
-import colorSet.GmmlColorGradient.ColorValuePair;
 import util.SwtUtils;
-
-import data.*;
+import colorSet.GmmlColorGradient;
+import colorSet.GmmlColorSet;
+import colorSet.GmmlColorSetObject;
+import colorSet.GmmlColorGradient.ColorValuePair;
+import data.GmmlGex;
 import data.GmmlGex.Sample;
 
 public class GmmlLegend extends Composite implements MouseListener, 

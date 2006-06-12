@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.xml.XMLConstants;
@@ -58,6 +59,11 @@ public class GmmlData
 	public Document doc;
 	
 	/**
+	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
+	 */
+	public static final HashMap<String,String> sysName2Code = new HashMap<String,String>();
+	
+	/**
 	 * Contructor for this class, creates a new gmml document
 	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
@@ -88,6 +94,8 @@ public class GmmlData
 	 */
 	public GmmlData(String file, GmmlDrawing drawing)
 	{
+		// Initialize systemcode mappings
+		initSysName2Code();
 		// Create the drawing
 		this.drawing = drawing;
 		// Start XML processing
@@ -132,6 +140,15 @@ public class GmmlData
 		}
 	}
 	
+	/**
+	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
+	 * and system code
+	 */
+	private void initSysName2Code()
+	{
+		for(int i = 0; i < systemNames.length; i++)
+			sysName2Code.put(systemNames[i], systemCodes[i]);
+	}
 
 	/**
 	 * Method to get the private property drawing
@@ -243,4 +260,17 @@ public class GmmlData
 			System.err.println(e);
 		}
 	}
+	
+	private final static String[] systemCodes = new String[] 	{ 
+		"D", "F", "G", "I", "L", "M",
+		"Q", "R", "S", "T", "U",
+		"W", "Z", "X", "O"
+	};
+	
+	private final static String[] systemNames = new String[] {
+		"SGD", "FlyBase", "GenBank", "InterPro" ,"LocusLink", "MGI",
+		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
+		"WormBase", "ZFIN", "Affy", "Other"
+	};
+	
 }

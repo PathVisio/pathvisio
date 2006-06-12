@@ -1,7 +1,10 @@
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -9,6 +12,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
+import data.GmmlGex.ConvertThread;
 
 public class TestDbPerformance extends ApplicationWindow {
 	String nl; // new line character for resultText
@@ -26,9 +31,8 @@ public class TestDbPerformance extends ApplicationWindow {
 	IProgressMonitor progressMonitor;
 	
 	TestDbEngines testDbEngines;
-	
+	TestVisioPerformance testVisio;
 	TestThread testThread;
-	ProgressThread progressThread;
 	
 	volatile int nrTests;
 	volatile double workDone;
@@ -36,6 +40,7 @@ public class TestDbPerformance extends ApplicationWindow {
 	public TestDbPerformance() {
 		super(null);
 		testDbEngines = new TestDbEngines(this);
+		testVisio = new TestVisioPerformance(this);
 	}
 	
 	protected Control createContents(Composite parent) {    	
@@ -155,7 +160,7 @@ public class TestDbPerformance extends ApplicationWindow {
 				String mapp = testInput.mappText.getText();
 				int testType = testInput.selectTest.getSelectionIndex();
 				// Check for required files
-				if(!gdb.equals("") && (!gex.equals("") | (testType !=4))) {
+				if((!gdb.equals("") && (!gex.equals("") | (testType != 4))) || testType == 6 || testType == 7) {
 					testDbEngines.gdbFile = new File(gdb);
 					testDbEngines.gexFile = new File(gex);
 					if(!mapp.equals("")) {
@@ -172,9 +177,12 @@ public class TestDbPerformance extends ApplicationWindow {
 					invertStartButtonLabel();
 					// Do the tests in a seperate thread
 					testThread = new TestThread(testType);
-					progressThread = new ProgressThread();
-					testThread.start();
-					progressThread.start();
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+					try {
+						dialog.run(true, true, new RunTask(testThread));
+					} catch(Exception ex) {
+						ex.printStackTrace();
+					}
 				} else {
 					errorMessage(1);
 				}
@@ -185,55 +193,48 @@ public class TestDbPerformance extends ApplicationWindow {
 		}    	
 	}
 	
-	public class ProgressThread extends Thread {
-		volatile boolean interrupted;
-		Object watch;
-		public ProgressThread() {
-			super();
-			interrupted = false;
-			indicator.beginTask(100);
+	public class RunTask implements IRunnableWithProgress {
+		ThreadWithProgress task;
+		public RunTask(ThreadWithProgress task)
+		{
+			this.task = task;
 		}
-		public void run() {
-			// Update progress indicator when needed
-			workDone = 0;
-			double oldProgress = 0;
-			testDbEngines.progress = 0;
-			while(!testThread.isInterrupted() & !interrupted) {
-				// Check for new progress
-				if((int)oldProgress != (int)testDbEngines.progress) {
-					workDone = (testDbEngines.progress - oldProgress) / nrTests;
-					oldProgress = testDbEngines.progress;
-					display.asyncExec(new Runnable() {
-						public void run() {
-							indicator.worked(workDone);
-						}
-					});
-					try {
-						sleep(50);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		public void run(IProgressMonitor monitor) {
+			monitor.beginTask("Testing",100);
+			task.start();
+			int prevProgress = 0;
+			while(task.progress < 100) {
+				if(monitor.isCanceled()) {
+					task.interrupt();
+					break;
+				}
+				if(prevProgress < (int)task.progress) {
+					monitor.worked((int)task.progress - prevProgress);
+					prevProgress = (int)task.progress;
 				}
 			}
-			setIndicatorDone();
-		}  		
-		public void interrupt() {
-			interrupted = true;
-			setIndicatorDone();
-		}
-		public void setIndicatorDone() {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					indicator.done();
-				}
-			});
+			monitor.done();
+			invertStartButtonLabel();
 		}
 	}
 	
-	public class TestThread extends Thread {
+	public abstract class ThreadWithProgress extends Thread {
+		double progress;
+		boolean isInterrupted;
+		public ThreadWithProgress() {
+			super();
+		}
+		
+		public void interrupt() {
+			isInterrupted = true;
+		}
+	}
+	
+	public class TestThread extends ThreadWithProgress {
 		int testType;
 		
 		public TestThread(int testType) {
+			super();
 			this.testType = testType;
 		}
 		
@@ -263,17 +264,50 @@ public class TestDbPerformance extends ApplicationWindow {
 				updateTestResults(nl + "Starting 'Load Gene Database (TEXT table)' test"+ nl);
 				loadGdbTextTest();
 				break;
+			case 6: // cache expression data (hsqldb)
+				updateTestResults(nl + "Starting 'Cache expression data (hsqldb)' test"+ nl);
+				loadExprDataTest(TestVisioPerformance.HSQLDB);
+				break;
+			case 7: // case expression data (derby)
+				updateTestResults(nl + "Starting 'Cache expression data (derby)' test"+ nl);
+				loadExprDataTest(TestVisioPerformance.DERBY);
+				break;
 			default:
 				doAllTests();
 			}
-			progressThread.interrupt();
 		}
 		public void interrupt() {
-			updateTestResults("Starting all database tests" + nl);
-			testDbEngines.isInterrupted = true;
+			super.interrupt();
+			updateTestResults("Interrupted" + nl);
 		}
 		public boolean isInterrupted() {
-			return testDbEngines.isInterrupted;
+			return isInterrupted;
+		}
+	}
+	
+	public void loadExprDataTest(int type) {
+				
+		long[] conGexTimes = new long[nrTests];
+		long[] conGdbTimes = new long[nrTests];
+		long[] times = new long[nrTests];
+		for(int i = 0; i < nrTests; i++) {
+			switch(type) {
+			case TestVisioPerformance.HSQLDB: 
+				conGdbTimes[i] = testVisio.connectHsqlGdb(); 
+				conGexTimes[i] = testVisio.connectHsqlGex(); 
+				break;
+			case TestVisioPerformance.DERBY: 
+				conGdbTimes[i] = testVisio.connectDerbyGdb(); 
+				conGexTimes[i] = testVisio.connectDerbyGex(); 
+				break;
+			}
+			times[i] = testVisio.cacheGexDataTest();
+
+			String thisResult = "Results from test " + (i+1) + ":" + nl;
+			String connString = "> Connecting to gdb: " + conGdbTimes[i] + " ms" + nl;
+			String gdbString = "> Connecting to gex: " + conGexTimes[i] + " ms" + nl;
+			String testString = "> Caching expression data: " + times[i] + " ms" + nl;
+			updateTestResults(thisResult + connString + gdbString + testString);
 		}
 	}
 	
@@ -287,7 +321,7 @@ public class TestDbPerformance extends ApplicationWindow {
 		for(int i = 0; i < nrTests; i++) {
 			connTimes[i] = testDbEngines.connectHdb();
 			// Remove and recreate the tables
-			testDbEngines.createTablesHdb();
+			testDbEngines.createTables(testDbEngines.conHdb);
 			// Modify the gdb table to TEXT
 			testDbEngines.createGdbTextTable();
 			gdbTimes[i] = testDbEngines.loadGdbTest(TestDbEngines.HDB);
@@ -335,7 +369,7 @@ public class TestDbPerformance extends ApplicationWindow {
 			switch(db) {
 			case TestDbEngines.HDB: //hsqldb
 				connTimes[i] = testDbEngines.connectHdb();
-				testDbEngines.createTablesHdb();
+				testDbEngines.createTables(testDbEngines.conHdb);
 				break;
 			case TestDbEngines.DAF: //daf
 				connTimes[i] = testDbEngines.connectDaf();
@@ -392,23 +426,20 @@ public class TestDbPerformance extends ApplicationWindow {
 		// Create arrays for the test results
 		long[] gdbTimes = new long[nrTests];
 		long[] gexTimes = new long[nrTests];
-		long[] mappTimes = new long[nrTests];
 		
 		// perform all tests
 		for(int i = 0; i < nrTests; i++) {
 			// Remove and recreate the tables
-			testDbEngines.createTablesHdb();
+			testDbEngines.createTables(testDbEngines.conHdb);
 			gdbTimes[i] = testDbEngines.loadGdbTest(TestDbEngines.HDB);
 			gexTimes[i] = testDbEngines.loadGexTest();
-			mappTimes[i] = testDbEngines.loadMappTest();
 			// Check if test is aborted
-			if(gdbTimes[i] > -1 & gexTimes[i] > -1 & mappTimes[i] > -1) {
+			if(gdbTimes[i] > -1 & gexTimes[i] > -1) {
 				// Create output strings
 				String thisResult = "Results from test " + (i+1) + ":" + nl;
 				String gdbString = "> Loading Gene database: " + gdbTimes[i] + " ms" + nl;
 				String gexString = "> Loading Expression data: " + gexTimes[i] + " ms" + nl;
-				String mappString = "> Loading Pathway map: " + mappTimes[i] + " ms" + nl;
-				updateTestResults(thisResult + gdbString + gexString + mappString);
+				updateTestResults(thisResult + gdbString + gexString );
 			} else {
 				updateTestResults("Test aborted!" + nl);
 				testDbEngines.close();
@@ -422,13 +453,11 @@ public class TestDbPerformance extends ApplicationWindow {
 			// Calculate average results
 			long[] gdbStat = calculateStats(gdbTimes);
 			long[] gexStat = calculateStats(gexTimes);
-			long[] mappStat = calculateStats(mappTimes);
 			// Create output strings
 			String thisResult = "Average results over " + nrTests + " tests:" + nl;
 			String gdbString = "> Loading Gene database:" + gdbStat[0] + " ms" + nl;
 			String gexString = "> Loading Expression data:" + gexStat[0] + " ms" + nl;
-			String mappString = "> Loading Pathway map:" + mappStat[0] + " ms" + nl;
-			updateTestResults(thisResult + gdbString + gexString + mappString);
+			updateTestResults(thisResult + gdbString + gexString);
 		}
 		// Set progress to 100 (just in case)
 		workDone = 100;

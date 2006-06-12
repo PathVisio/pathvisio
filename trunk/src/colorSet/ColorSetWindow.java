@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -334,7 +335,6 @@ public class ColorSetWindow extends ApplicationWindow {
 	private Color csColorGnf; //color for 'gene not found'
 	private Table sampleTable; //table that displays samples used for visualization
 	private TableViewer sampleTableViewer; //TableViewer for sampleTable
-	private List sampleList; //list that displays all available samples
 	private ListViewer sampleListViewer; //ListViewer for sampleList
 	private Group csSampleGroup; //Group containing list and table to select samples
 	private Composite sampleTableComposite; //Composite to layout sampleTableViewer
@@ -1394,6 +1394,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		{
 			GmmlColorSet cs = (GmmlColorSet)inputElement;
 			ArrayList<Sample> notUseSamples = new ArrayList<Sample>(gmmlGex.samples.values());
+			Collections.sort(notUseSamples);
 			for(Sample s : cs.useSamples)
 			{
 				notUseSamples.remove(s);

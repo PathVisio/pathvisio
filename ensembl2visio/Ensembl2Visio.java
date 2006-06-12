@@ -34,7 +34,7 @@ public class Ensembl2Visio {
 			"RefSeq", "RGD", "SGD", "UniGene", "WormBase",
 			"ZFIN"
 	};
-	final static int ENS_CODE = 2;
+	final static int ENS_CODE = 3;
 	
 	Vector patterns;
     
@@ -44,7 +44,9 @@ public class Ensembl2Visio {
 //    	int nrGenes = 10;
 //    	String organism = "human";
     	String file = "ensembl_genes.txt";
+//    	String file = "test.txt";
     	String dbname = "ensembl_homo_sapiens_38_36";
+//    	String dbname = "test";
     	Ensembl2Visio ensj = new Ensembl2Visio();
 //    	ensj.fetchFromEnsembl(nrGenes, organism, file); // Do this with perl
     	ensj.createGdbFromTxt(file, dbname);
@@ -72,7 +74,7 @@ public class Ensembl2Visio {
 	    
 	    compilePatterns();
 	    
-    	connectDerby(dbname);
+    	connect(dbname);
 		createTables();
     	try
     	{

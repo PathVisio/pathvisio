@@ -9,10 +9,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.jdom.Attribute;
 import org.jdom.Element;
+
+import util.SwtUtils;
 
 import data.GmmlData;
 
@@ -45,12 +53,28 @@ public class GmmlMappInfo extends GmmlGraphics {
 	
 	Element jdomElement;
 	
-	GmmlDrawing drawing;
+	GmmlHandle handlecenter;
 	
-	public GmmlMappInfo(Element e) 
+	//Elements not stored in gmml
+	String fontName			= "Times New Roman";
+	String fontWeight		= "regular";
+	int fontSize			= 10;
+	double fontSizeDouble = fontSize;
+	
+	int sizeX = 1;
+	int sizeY = 1; //Real size is calculated on first call to draw()
+	
+	public GmmlMappInfo(GmmlDrawing canvas, Element e) 
 	{
+		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;
+		
+		this.canvas = canvas;
 		jdomElement = e;
 		mapAttributes(e);
+		
+		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+		setHandleLocation();
+		canvas.addElement(handlecenter);
 	}
 	
 	public void mapAttributes(Element e)
@@ -125,6 +149,7 @@ public class GmmlMappInfo extends GmmlGraphics {
 
 	public void updateFromPropItems()
 	{
+		markDirty();
 		name			= (String)propItems.get(attributes.get(0));
 		organism		= (String)propItems.get(attributes.get(1));
 		dataSource		= (String)propItems.get(attributes.get(2));
@@ -140,6 +165,9 @@ public class GmmlMappInfo extends GmmlGraphics {
 		windowHeight	= (Integer)propItems.get(attributes.get(12));
 		mapInfoLeft	= (Integer)propItems.get(attributes.get(13));
 		mapInfoTop		= (Integer)propItems.get(attributes.get(14));
+		markDirty();
+		setHandleLocation();
+		canvas.redrawDirtyRect();
 	}
 	
 	public void updateJdomElement() {
@@ -166,27 +194,99 @@ public class GmmlMappInfo extends GmmlGraphics {
 		}
 	}
 	
-	public void adjustToZoom(double factor) {}
+	public void adjustToZoom(double factor) 
+	{
+		mapInfoLeft		*= factor;
+		mapInfoTop		*= factor;
+		fontSizeDouble *= factor;
+		fontSize = (int)this.fontSizeDouble;
+	}
 	
 	public boolean intersects(Rectangle2D.Double r) 
 	{
-		return false;
+		Rectangle2D rect = new Rectangle2D.Double(mapInfoLeft, mapInfoTop, sizeX, sizeY);
+		return rect.intersects(r);
 	}
 	
 	public boolean isContain(Point2D p) 
 	{
-		return false;
+		Rectangle2D rect = new Rectangle2D.Double(mapInfoLeft, mapInfoTop, sizeX, sizeY);
+		return rect.contains(p);
 	}
 	
 	public Rectangle getBounds()
 	{
-		return new Rectangle();
+		return new Rectangle(mapInfoLeft, mapInfoTop, sizeX, sizeY);
 	}
 	
-	public void draw(PaintEvent e) {}
-	public void draw(PaintEvent e, GC buffer) {}
+	protected void moveBy(double dx, double dy)
+	{
+		markDirty();
+		mapInfoTop  += dy;
+		mapInfoLeft += dx;
+		setHandleLocation();
+		markDirty();
+	}
+	
+	private void setHandleLocation()
+	{
+		handlecenter.setLocation(mapInfoLeft, mapInfoTop);
+	}
+	
+	public void draw(PaintEvent e) 
+	{
+		draw(e, e.gc);
+	}
+	
+	public void draw(PaintEvent e, GC buffer) 
+	{		
+		sizeX = 1; //Reset sizeX
+		
+		Font fBold = new Font(e.display, fontName, fontSize, SWT.BOLD);
+		Font fNormal = new Font(e.display, fontName, fontSize, SWT.NONE);
+		
+		if (isSelected())
+		{
+			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
+		}
+		else 
+		{
+			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
+		}
+				
+		//Draw Name, Organism, Data-Source, Version, Author, Maintained-by, Email, Availability and last modified
+		String[][] text = new String[][] {
+				{"Name: ", name},
+				{"Maintained by: ", maintainedBy},
+				{"Email: ", email},
+				{"Availability: ", availability},
+				{"Last modified: ", lastModified},
+				{"Organism: ", organism},
+				{"Data Source: ", dataSource}};
+		int shift = 0;
+		for(String[] s : text)
+		{
+			if(s == null || s[1].equals("")) continue; //Skip empty labels
+			buffer.setFont(fBold);
+			Point labelSize = buffer.textExtent(s[0], SWT.DRAW_TRANSPARENT);
+			buffer.drawString(s[0], mapInfoLeft, mapInfoTop + shift, true);
+			buffer.setFont(fNormal);
+			Point infoSize = buffer.textExtent(s[1], SWT.DRAW_TRANSPARENT);
+			buffer.drawString(s[1], mapInfoLeft + labelSize.x, mapInfoTop + shift, true);
+			shift += Math.max(infoSize.y, labelSize.y);
+			sizeX = Math.max(sizeX, infoSize.x + labelSize.x);
+		}
+		sizeY = shift;
+		
+		fBold.dispose();
+		fNormal.dispose();
+		System.out.println(sizeX + ", " + sizeY);
+	}
+	
 	public Vector<GmmlHandle> getHandles()
 	{
-		return null;
+		Vector handles = new Vector<GmmlHandle>();
+		handles.add(handlecenter);
+		return handles;
 	}
 }

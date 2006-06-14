@@ -48,9 +48,11 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import colorSet.ColorSetWindow;
-import data.*;
+import data.GmmlData;
+import data.GmmlGdb;
+import data.GmmlGex;
+import data.ImportExprDataWizard;
 
-//~ import java.awt.Color;
 
 /**
  * This class is the main class in the GMML project. 
@@ -123,9 +125,9 @@ public class GmmlVision extends ApplicationWindow
 		}
 		
 		public void run () {
-			double usedZoom = drawing.zoomFactor * 100;
+			double usedZoom = drawing.getZoomFactor() * 100;
 			// Set zoom to 100%
-			drawing.setZoom(100);
+			drawing.setPctZoom(100);
 			drawing.updateJdomElements();
 			// Overwrite the existing xml file
 			if (gmmlData.getXmlFile() != null)
@@ -137,7 +139,7 @@ public class GmmlVision extends ApplicationWindow
 				saveAsAction.run();
 			}
 			// Set zoom back
-			drawing.setZoom(usedZoom);
+			drawing.setPctZoom(usedZoom);
 		}
 	}
 	private SaveAction saveAction = new SaveAction(this);
@@ -178,14 +180,14 @@ public class GmmlVision extends ApplicationWindow
 				}
 				if(confirmed)
 				{
-					double usedZoom = drawing.zoomFactor * 100;
+					double usedZoom = drawing.getZoomFactor() * 100;
 					// Set zoom to 100%
-					drawing.setZoom(100);
+					drawing.setPctZoom(100);
 					drawing.updateJdomElements();
 					// Overwrite the existing xml file
 					gmmlData.writeToXML(checkFile);
 					// Set zoom back
-					drawing.setZoom(usedZoom);
+					drawing.setPctZoom(usedZoom);
 				}
 			}
 			else
@@ -303,11 +305,11 @@ public class GmmlVision extends ApplicationWindow
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
 					newPctZoomFactor = (int)Math.min(
-							drawing.zoomFactor * 100 * (double)shellSize.x / drawingSize.x,
-							drawing.zoomFactor * 100 * (double)shellSize.y / drawingSize.y
+							drawing.getZoomFactor() * 100 * (double)shellSize.x / drawingSize.x,
+							drawing.getZoomFactor() * 100 * (double)shellSize.y / drawingSize.y
 					);
 				} 
-				drawing.setZoom(newPctZoomFactor);
+				drawing.setPctZoom(newPctZoomFactor);
 			}
 			else
 			{
@@ -862,11 +864,11 @@ public class GmmlVision extends ApplicationWindow
 			{
 				deselectNewItemActions();
 				setChecked(true);
-				drawing.newGraphics = element;
+				drawing.setNewGraphics(element);
 			}
 			else
 			{	
-				drawing.newGraphics = GmmlDrawing.NEWNONE;
+				drawing.setNewGraphics(GmmlDrawing.NEWNONE);
 			}
 		}
 		
@@ -899,7 +901,7 @@ public class GmmlVision extends ApplicationWindow
 				menu.dispose();
 			
 			menu = new Menu(parent);
-			Vector actions = new Vector();
+			Vector<Action> actions = new Vector<Action>();
 			switch(element) {
 			case GmmlDrawing.NEWLINEMENU:
 				actions.add(new NewElementAction(GmmlDrawing.NEWLINE));
@@ -952,26 +954,26 @@ public class GmmlVision extends ApplicationWindow
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		drawing.newGraphics = drawing.NEWNONE;
+		drawing.setNewGraphics(drawing.NEWNONE);
 	}
 	
 	// Elements of the coolbar
 	ToolBarContributionItem commonActionsCI;
 	ToolBarContributionItem editActionsCI;
 	ToolBarContributionItem colorSetActionsCI;
-	ToolBarContributionItem switchActionsCI;
+	ToolBarContributionItem viewActionsCI;
 	protected CoolBarManager createCoolBarManager(int style)
 	{
 		createCommonActionsCI();
 		createEditActionsCI();
 		createColorSetActionsCI();
-		createSwitchActionsCI();
+		createViewActionsCI();
 		
 		CoolBarManager coolBarManager = new CoolBarManager(style);
 		coolBarManager.setLockLayout(true);
 		
 		coolBarManager.add(commonActionsCI);
-		coolBarManager.add(switchActionsCI);
+		coolBarManager.add(viewActionsCI);
 		return coolBarManager;
 	}
 	
@@ -1007,14 +1009,39 @@ public class GmmlVision extends ApplicationWindow
 	}
 	
 	/**
-	 * Creates element of the coolbar containing action to switch between view and edit mode
+	 * Creates element of the coolbar containing controls related to viewing a pathway
 	 */
-	protected void createSwitchActionsCI()
+	protected void createViewActionsCI()
 	{
+		final GmmlVision window = this;
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		//Add zoomCombo
+		toolBarManager.add(new ControlContribution("ZoomCombo") {
+			protected Control createControl(Composite parent) {
+				final Combo zoomCombo = new Combo(parent, SWT.DROP_DOWN);
+				zoomCombo.setItems(new String[] { "200%", "100%", "75%", "50%", "Zoom to fit" });
+				zoomCombo.setText("100%");
+				zoomCombo.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						int pctZoom = 100;
+						String zoomText = zoomCombo.getText().replace("%", "");
+						try {
+							pctZoom = Integer.parseInt(zoomText);
+						} catch (Exception ex) { 
+							if(zoomText.equals("Zoom to fit"))
+									{ pctZoom = ZOOM_TO_FIT; } else { return; }
+						}
+						new ZoomAction(window, pctZoom).run();
+					}
+					public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
+				});
+				return zoomCombo;
+			}
+		});
+		//Add swich to editmode
 		toolBarManager.add(switchEditModeAction);
 		
-		switchActionsCI =  new ToolBarContributionItem(toolBarManager, "SwitchActions");
+		viewActionsCI =  new ToolBarContributionItem(toolBarManager, "SwitchActions");
 	}
 	
 	/**
@@ -1075,7 +1102,7 @@ public class GmmlVision extends ApplicationWindow
 		if(show) {
 			//Check if drawing is in edit mode if loaded
 			if(drawing != null) { 
-				if(drawing.editMode) return;
+				if(drawing.isEditMode()) return;
 			}
 			//Check if expression data is loaded
 			if(gmmlGex.con == null) return;
@@ -1286,8 +1313,7 @@ public class GmmlVision extends ApplicationWindow
 	 */
 	private void createNewDrawing()
 	{		
-		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND);
-		drawing.setGmmlVision(this);
+		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND, this);
 		
 		gmmlData = new GmmlData(drawing);
 		
@@ -1304,20 +1330,19 @@ public class GmmlVision extends ApplicationWindow
 	 */
 	private void openPathway(String fnPwy)
 	{		
-		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND);
-		drawing.setGmmlVision(this);
+		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND, this);
 		
 		// initialize new JDOM gmml representation and read the file
 		gmmlData = new GmmlData(fnPwy, drawing);
 		
 		if(drawing != null)
 		{
-			drawing.editMode = switchEditModeAction.isChecked();
+			drawing.setEditMode(switchEditModeAction.isChecked());
 			if(gmmlGex.con != null)
 			{
 				cacheExpressionData();
-				if(!drawing.editMode) drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
-			}
+				if(!drawing.isEditMode()) drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+			}		
 			sc.setContent(drawing);
 		}	
 	}

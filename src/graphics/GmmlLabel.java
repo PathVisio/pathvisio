@@ -86,7 +86,7 @@ public class GmmlLabel extends GmmlGraphics
 		
 		this.canvas = canvas;
 		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
-		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.zoomFactor;
+		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.getZoomFactor();
 		this.fontSize = (int)this.fontSizeDouble;
 	}
 	

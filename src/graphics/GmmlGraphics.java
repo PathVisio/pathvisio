@@ -1,14 +1,7 @@
 package graphics;
-import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
-
-import javax.swing.JTable;
-
-import org.eclipse.swt.widgets.Table;
 
 
 /**

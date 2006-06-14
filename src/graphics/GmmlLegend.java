@@ -503,8 +503,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 	}
 	
 	public void mouseUp(MouseEvent arg0) {
-		drawing.mappInfo.mapInfoLeft = getLocation().x;
-		drawing.mappInfo.mapInfoTop = getLocation().y;
 		resetContents();
 		isDragging = false;
 	}

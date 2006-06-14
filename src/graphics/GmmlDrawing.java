@@ -2,7 +2,6 @@ package graphics;
 
 import gmmlVision.GmmlVision;
 
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -12,6 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -35,54 +36,75 @@ import data.GmmlGex.Sample;
 /**
  * This class implements and handles a drawing.
  * GmmlGraphics objects are stored in the drawing and can be 
- * visualized. The class also provides methods for mouse 
+ * visualized. The class also provides methods for mouse  and key
  * event handling.
  */
 public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, 
-PaintListener, MouseTrackListener
+PaintListener, MouseTrackListener, KeyListener
 {	
 	private static final long serialVersionUID = 1L;
 	
 	public GmmlVision gmmlVision;
 	
+	/**
+	 * Index of the colorSet that is currently used
+	 */
 	public int colorSetIndex;
 
-	/*
+	/**
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
 	ArrayList<GmmlDrawingObject> drawingObjects;
 	
+	/**
+	 * The {@link GmmlDrawingObject} that is pressed last mouseDown event}
+	 */
 	GmmlDrawingObject pressedObject	= null;	
 	
+	/**
+	 * The {@link GmmlGraphics} that is directly selected since last mouseDown event
+	 */
 	public GmmlGraphics selectedGraphics = null;
 	
+	/**
+	 * {@link GmmlMappInfo} object that contains information about this pathway,
+	 * currently only used for information in {@link gmmlVision.GmmlPropertyTable}
+	 * (TODO: has to be implemented to behave the same as any GmmlGraphics object
+	 * when displayed on the drawing)
+	 */
 	public GmmlMappInfo mappInfo;
 	
 	public GmmlLegend legend;
 	
 	GmmlSelectionBox s; 
-	
-	boolean isSelecting;
-	boolean isDragging;
-	
-	public boolean editMode;
-	
-	public int newGraphics = NEWNONE;
 		
-	int previousX;
-	int previousY;
+	private boolean editMode;
+	/**
+	 * Checks if this drawing is in edit mode
+	 * @return false if in edit mode, true if not
+	 */
+	public boolean isEditMode() { return editMode; }
 	
-	public Dimension dims = new Dimension(1000, 1000);
-	public double zoomFactor = 1;
+	private int newGraphics = NEWNONE;
+	/**
+	 * Method to set the new graphics type that has to be added next time the user clicks on the
+	 * drawing. 
+	 * @param type One of the NEWXX fields of this class, where XX stands for the type of graphics to draw
+	 */
+	public void setNewGraphics(int type) { newGraphics = type; }
 	
 	private Rectangle dirtyRect = null;
+	/**
+	 * Adds object boundaries to the 'dirty rectangle', which marks the area that needs to be redrawn
+	 * @param g	drawing object of which the boundaries have to be added
+	 */
 	public void addDirtyRect(GmmlDrawingObject g)
 	{
 		if(dirtyRect == null)
 			dirtyRect = g.getBounds();
 		else
-			dirtyRect.add(g.getBounds());		
+			dirtyRect.add(g.getBounds());	
 	}
 	
 	/**
@@ -99,13 +121,12 @@ PaintListener, MouseTrackListener
 	/**
 	 *Constructor for this class
 	 */	
-	public GmmlDrawing(Composite parent, int style)
+	public GmmlDrawing(Composite parent, int style, GmmlVision gmmlVision)
 	{
 		super (parent, style);
+		this.gmmlVision = gmmlVision;
 		
 		drawingObjects	= new ArrayList<GmmlDrawingObject>();
-//		graphics		= new Vector<GmmlGraphics>();
-//		handles			= new Vector();
 		
 		s = new GmmlSelectionBox(this);
 		
@@ -113,57 +134,48 @@ PaintListener, MouseTrackListener
 		addMouseMoveListener(this);
 		addPaintListener (this);
 		addMouseTrackListener(this);
+		addKeyListener(this);
 		
 //		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
+		initLegend(this);
+		
 		colorSetIndex = -1;
-
-		legend = new GmmlLegend(this, SWT.NONE);
+	}
+	
+	/**
+	 * Initializes the legend
+	 * @param parent	parent composite to add the legend to
+	 */
+	public void initLegend(Composite parent) {
+		//Add to scrolledcomposite (so that you can place it outside the drawing boundaries
+		legend = new GmmlLegend(parent, SWT.NONE);
 		legend.setDrawing(this);
 	}
 	
-	public void setGmmlVision(GmmlVision gmmlVision) {
-		this.gmmlVision = gmmlVision;
-	}
-	
+	/**
+	 * Sets the {@link MappInfo} containing information on the pathway
+	 * @param mappInfo
+	 */
 	public void setMappInfo(GmmlMappInfo mappInfo)
 	{
 		this.mappInfo = mappInfo;
-		legend.setLocation(mappInfo.mapInfoLeft, mappInfo.mapInfoTop);
-	}
-	
-	private void calculateSize()
-	{
-		setSize (
-			(int)(dims.width*zoomFactor), 
-			(int)(dims.height*zoomFactor)
-		);
+		drawingObjects.add(mappInfo);
 	}
 
 	/**
- 	 * Adds an element to the drawing. Checks if 
-	 * the object to add is an instance of GmmlHandle
-	 * and in case it is, adds the object to the correct
-	 * vector of gmmlgraphics objects.
-	 * @param o - the object to add
+	 * Adds an element to the drawing
+	 * @param o the element to add
 	 */
 	public void addElement(GmmlDrawingObject o)
 	{
 		drawingObjects.add(o);
-	
-//		if(o instanceof GmmlHandle)
-//		{
-//			GmmlHandle h = (GmmlHandle)o;
-////			handles.addElement(h);
-//		}
-//		else
-//		{
-//			GmmlDrawingObject object = (GmmlDrawingObject) o;
-//			gm.addElement(object);
-			
-//		}
 	}
 
+	/**
+	 * Get the gene identifiers of all genes in this pathway
+	 * @return	{@link ArrayList<String>} containing an identifier for every gene on the mapp
+	 */
 	public ArrayList<String> getMappIds()
 	{
 		ArrayList<String> mappIds = new ArrayList<String>();
@@ -177,6 +189,10 @@ PaintListener, MouseTrackListener
 		return mappIds;
 	}
 	
+	/**
+	 * Get the systemcodes of all genes in this pathway
+	 * @return	{@link ArrayList<String>} containing a systemcode for every gene on the mapp
+	 */
 	public ArrayList<String> getSystemCodes()
 	{
 		ArrayList<String> systemCodes = new ArrayList<String>();
@@ -189,7 +205,11 @@ PaintListener, MouseTrackListener
 		}
 		return systemCodes;
 	}
-		
+	
+	/**
+	 * Set this drawing to editmode
+	 * @param editMode	true if editmode has to be enabled, false if disabled (view mode)
+	 */
 	public void setEditMode(boolean editMode)
 	{
 		this.editMode = editMode;
@@ -201,6 +221,10 @@ PaintListener, MouseTrackListener
 		redraw();
 	}
 	
+	/**
+	 * Set the index of the colorset to use
+	 * @param colorSetIndex
+	 */
 	public void setColorSetIndex(int colorSetIndex)
 	{
 		this.colorSetIndex = colorSetIndex;
@@ -213,6 +237,10 @@ PaintListener, MouseTrackListener
 		redraw();	
 	}
 	
+	/**
+	 * Show or hide the legend
+	 * @param show	true to show, false to hide the legend
+	 */
 	public void showLegend(boolean show)
 	{
 		if(show && colorSetIndex > -1 && !editMode && gmmlVision.showLegendAction.isChecked())
@@ -224,15 +252,22 @@ PaintListener, MouseTrackListener
 		}
 	}
 	
+	private double zoomFactor = 1;
 	/**
-	 * Sets the drawings zoom
-	 * @param zoom
+	 * Get the current zoomfactor used
+	 * @return	the current zoomfactor
 	 */
-	public void setZoom(double zoom)
+	public double getZoomFactor() { return zoomFactor; }
+	
+	/**
+	 * Sets the drawings zoom in percent
+	 * @param pctZoomFactor zoomfactor in percent
+	 */
+	public void setPctZoom(double pctZoomFactor)
 	{
-		double factor = 0.01*zoom/zoomFactor;
-		zoomFactor = zoom / 100;
-		calculateSize();
+		double factor = 0.01*pctZoomFactor/zoomFactor;
+		zoomFactor = pctZoomFactor / 100;
+		setSize((int)(getSize().x * factor), (int)(getSize().y * factor));
 		
 		// iterate over all graphics to adjust them
 		for(GmmlDrawingObject o : drawingObjects)
@@ -248,6 +283,10 @@ PaintListener, MouseTrackListener
 		redraw();
 	}
 
+	int previousX;
+	int previousY;
+	boolean isSelecting;
+	boolean isDragging;
 	/**
 	 * handles mouse movement
 	 */
@@ -318,11 +357,11 @@ PaintListener, MouseTrackListener
 		{
 			if (newGraphics != NEWNONE)
 			{
-				newObject(e);
+				newObject(new Point(e.x, e.y));
 			}
 			else
 			{
-				editObject(e);
+				editObject(new Point(e.x, e.y));
 			}
 		}
 		else
@@ -406,11 +445,7 @@ PaintListener, MouseTrackListener
 	 * painting process
 	 */
 	public void paintControl (PaintEvent e)
-	{
-		// paint parrent
-		// not necessary in swt
-		//~ super.paintComponent(g);
-		
+	{		
 		Image image = (Image)getData("double-buffer-image");
 		// create an image for double-buffering, if it doesn't exist 
 		// or the component has been resized
@@ -439,20 +474,15 @@ PaintListener, MouseTrackListener
 				o.draw (e, buffer);
 			}
 		}
-
-//		GmmlDrawingObject o = p.poll();
-//		while(o != null)
-//		{
-//			o.draw(e, buffer);
-//			o = p.poll();
-//		}
 		
 		e.gc.drawImage(image, 0, 0);
 		buffer.dispose();
 	}
 
+	/**
+	 * Updates the JDOM nodes for all elements on this drawing
+	 */
 	public void updateJdomElements() {
-		mappInfo.updateJdomElement();
 		// Update jdomElement for every graphics object
 		Iterator it = drawingObjects.iterator();
 		while(it.hasNext()) {
@@ -463,6 +493,11 @@ PaintListener, MouseTrackListener
 		}
 	}
 
+	/**
+	 * Updates the propertytable to display information about the given GmmlDrawingObject
+	 * @param o object to update the property table for, if instanceof {@link GmmlHandle}, 
+	 * then the parent object is used
+	 */
 	public void updatePropertyTable(GmmlDrawingObject o)
 	{
 		GmmlGraphics g;
@@ -485,6 +520,9 @@ PaintListener, MouseTrackListener
 		gmmlVision.propertyTable.tableViewer.setInput(g);
 	}
 	
+	/**
+	 * deselect all elements on the drawing
+	 */
 	private void clearSelection()
 	{
 		for (GmmlDrawingObject g : drawingObjects)
@@ -493,10 +531,12 @@ PaintListener, MouseTrackListener
 		}		
 	}
 
-	private void mouseDownViewMode(MouseEvent e)
-	{
-		
-	}
+	/**
+	 * Handles event when on mouseDown in case the drawing is in view mode
+	 * (does nothing yet)
+	 * @param e	the mouse event to handle
+	 */
+	private void mouseDownViewMode(MouseEvent e) { }
 
 	/**
 	 * Initializes selection, resetting the selectionbox
@@ -517,15 +557,15 @@ PaintListener, MouseTrackListener
 	 * Called by MouseDown, when we're in editting mode and we're not adding new objects
 	 * prepares for dragging the object
 	 */
-	private void editObject(MouseEvent e)
+	private void editObject(Point p)
 	{
-		Point2D p = new Point2D.Double(e.x, e.y);
+		Point2D p2d = new Point2D.Double(p.x, p.y);
 		
 		pressedObject = null;
 		Collections.sort(drawingObjects);
 		for (GmmlDrawingObject o : drawingObjects)
 		{
-			if (o.isContain(p))
+			if (o.isContain(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
 				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
@@ -543,7 +583,7 @@ PaintListener, MouseTrackListener
 			{
 				// clear the selection
 				//TODO: if ctrl is pressed, don't clear, but just add object				
-				initSelection(p);
+				initSelection(p2d);
 				pressedObject.select();
 			}
 			// if our object is an handle, select also it's parent.
@@ -558,8 +598,8 @@ PaintListener, MouseTrackListener
 			}
 			
 			// start dragging
-			previousX = e.x;
-			previousY = e.y;
+			previousX = p.x;
+			previousY = p.y;
 			
 			isSelecting = false;
 			isDragging = true;			
@@ -569,7 +609,7 @@ PaintListener, MouseTrackListener
 			// start selecting
 			isDragging = false;
 			isSelecting = true;
-			initSelection(p);
+			initSelection(p2d);
 		}		
 		redrawDirtyRect();
 	}
@@ -594,7 +634,12 @@ PaintListener, MouseTrackListener
 	public static final int NEWLINESHAPEMENU = 16;
 	public static final RGB stdRGB = new RGB(0, 0, 0);
 
-	private void newObject(MouseEvent e)
+	/**
+	 * Add a new object to the drawing
+	 * {@see GmmlDrawing#setNewGraphics(int)}
+	 * @param p	The point where the user clicked on the drawing to add a new graphics
+	 */
+	private void newObject(Point e)
 	{
 		GmmlGraphics g = null;
 		GmmlHandle h = null;
@@ -708,6 +753,7 @@ PaintListener, MouseTrackListener
 		gmmlVision.deselectNewItemActions();
 	}
 	
+
 	public static final int DRAW_ORDER_HANDLE = 0;
 	public static final int DRAW_ORDER_SELECTIONBOX = 1;
 	public static final int DRAW_ORDER_SELECTED = 2;
@@ -718,12 +764,19 @@ PaintListener, MouseTrackListener
 	public static final int DRAW_ORDER_BRACE = 7;
 	public static final int DRAW_ORDER_LINESHAPE = 8;
 	public static final int DRAW_ORDER_SHAPE = 9;
-	public static final int DRAW_ORDER_DEFAULT = 10;
+	public static final int DRAW_ORDER_MAPPINFO = 10;
+	public static final int DRAW_ORDER_DEFAULT = 11;
+	
 	public void mouseEnter(MouseEvent e) {}
 
 	public void mouseExit(MouseEvent e) {}
 
 	Shell tip;
+	
+	/**
+	 * Responsible for drawing a tooltip displaying expression data when 
+	 * hovering over a geneproduct
+	 */
 	public void mouseHover(MouseEvent e) {
 		if(!editMode && colorSetIndex > -1 && gmmlVision.gmmlGex.con != null) {
 			Point2D p = new Point2D.Double(e.x, e.y);
@@ -780,7 +833,42 @@ PaintListener, MouseTrackListener
 			}
 	}
 	}
+
+	public void keyPressed(KeyEvent e) { }
+
+	/**
+	 * This event is triggered when a key is released. Currently implements action for delete key
+	 */
+	public void keyReleased(KeyEvent e) {
+		ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
+		
+		if(e.keyCode == SWT.DEL) {
+			for(GmmlDrawingObject o : drawingObjects)
+			{
+				if(!o.isSelected()) continue; //Object not selected, skip
+				toRemove.add(o);
+				if(o instanceof GmmlGraphics) //Also add handles
+				{
+					for(GmmlHandle h : ((GmmlGraphics)o).getHandles()) toRemove.add(h);
+				}
+			}
+			removeDrawingObjects(toRemove);
+			redraw();
+		}
+	}
 	
+	/**
+	 * Removes the {@link GmmlDrawingObject}s in the {@link ArrayList} from the drawing
+	 * @param toRemove	The {@link ArrayList<GmmlDrawingObject>} containing the objects to be removed
+	 */
+	public void removeDrawingObjects(ArrayList<GmmlDrawingObject>toRemove)
+	{
+		for(GmmlDrawingObject o : toRemove)
+		{
+			drawingObjects.remove(o);
+			System.out.println("Removed " + o);
+		}	
+	}
 	
 	
 } // end of class

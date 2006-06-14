@@ -188,6 +188,8 @@ class GmmlHandle extends GmmlDrawingObject
 	{
 		rect = new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
 	}
+	
+	public String toString() { return "Handle with parent: " + parent.toString(); }
 
 } // end of class
 

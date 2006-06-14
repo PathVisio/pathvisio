@@ -57,7 +57,7 @@ public class GmmlPropertyTable {
 			"GeneID", "Xref", "TextLabel", "FontName", "FontWeight", "FontStyle", "FontSize",
 			"Name", "Organism", "Data-Source", "Version", "Author", "Maintained-By", "Email",
 			"Availability", "Last-Modified", "Notes", "BackPageHead", "GeneProduct-Data-Source",
-			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"
+			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight", "MapInfoLeft", "MapInfoTop"
 	});
 	
 	final static List labelMappings = Arrays.asList(new String[] {
@@ -66,7 +66,7 @@ public class GmmlPropertyTable {
 			"Gene label", "Link (xref)", "Label text", "Font name", "Font weight", "Font style", "Font size",
 			"Name", "Organism", "Data source", "Version", "Author", "Maintained by", "E-mail",
 			"Availability", "Last modified", "Notes", "Backpage header", "System",
-			"Board Width", "Board Height", "Window Width", "Window Height"
+			"Board Width", "Board Height", "Window Width", "Window Height", "Location X", "Location Y"
 	});
 
 	final static int[] attributeTypes = new int[] {
@@ -74,7 +74,7 @@ public class GmmlPropertyTable {
 		COLOR, LINESTYLE, TYPE, DOUBLE, ORIENTATION, DOUBLE,
 		STRING, STRING, STRING, STRING, STRING, STRING, INTEGER,STRING, 
 		STRING, STRING, STRING, STRING, STRING, STRING, STRING, STRING,
-		STRING, STRING, TYPE, INTEGER, INTEGER, INTEGER, INTEGER
+		STRING, STRING, TYPE, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER
 	};
 	
 	Hashtable typeMappings;

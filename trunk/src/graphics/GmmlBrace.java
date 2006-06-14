@@ -248,9 +248,7 @@ public class GmmlBrace extends GmmlGraphics
 			buffer.drawArc (cx - d, cy, d, d, 90, -90); //lower arc in the middle
 			buffer.drawArc (cx, cy + w/2 - d, d, d, -90, -90); //arc on the bottom
 
-		} 
-
-		setHandleLocation();
+		}
 		
 		c.dispose();
 	}
@@ -278,7 +276,6 @@ public class GmmlBrace extends GmmlGraphics
 	protected boolean intersects(Rectangle2D.Double r)
 	{
 		Shape outline = getOutline();
-		
 		return outline.intersects(r.x, r.y, r.width, r.height);
 	}
 	
@@ -370,7 +367,7 @@ public class GmmlBrace extends GmmlGraphics
 	
 	public void updateFromPropItems()
 	{
-		Rectangle rp = getBounds();
+		markDirty();	
 		
 		centerx		= (Double)propItems.get(attributes.get(0));
 		centery		= (Double)propItems.get(attributes.get(1));
@@ -380,10 +377,9 @@ public class GmmlBrace extends GmmlGraphics
 		color 		= (RGB)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
 		
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		markDirty();
+		setHandleLocation();
+		canvas.redrawDirtyRect();
 	}
 	
 	/**

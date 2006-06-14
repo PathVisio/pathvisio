@@ -77,7 +77,7 @@ public class GmmlData
 		root.addContent(graphics);
 		root.addContent(new Element("InfoBox"));
 		doc.setRootElement(root);
-		drawing.mappInfo = new GmmlMappInfo(root);
+		drawing.mappInfo = new GmmlMappInfo(drawing, root);
 		int width = drawing.gmmlVision.sc.getSize().x;
 		int height = drawing.gmmlVision.sc.getSize().y;
 		drawing.mappInfo.boardWidth = width;
@@ -194,10 +194,9 @@ public class GmmlData
 	public void toGmmlGraphics() {
 		// Get the pathway element
 		Element root = doc.getRootElement();
-		drawing.setMappInfo(new GmmlMappInfo(root));
+		drawing.setMappInfo(new GmmlMappInfo(drawing, root));
 		
 		drawing.setSize(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);
-		drawing.dims = new Dimension(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);
 //		drawing.gmmlVision.getShell().setSize(drawing.mappInfo.windowWidth, drawing.mappInfo.windowHeight);
 		
 		// Iterate over direct children of the root element

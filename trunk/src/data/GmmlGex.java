@@ -635,6 +635,11 @@ public class GmmlGex {
 		}
 	};
 	
+	/**
+	 * This {@link IRunnableWithProgress} is responsible for running the import expression data
+	 * process and monitor the progress
+	 * {@see GmmlGex#importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
+	 */
 	public class ImportRunnableWithProgress implements IRunnableWithProgress {
 		ImportInformation info;
 		ImportPage page;
@@ -653,6 +658,15 @@ public class GmmlGex {
 		}
 	}
 	
+	/**
+	 * Imports expression data from a text file and saves it to an hsqldb expression database
+	 * @param info		{@link ImportExprDataWizard.ImportInformation} object that contains the 
+	 * information needed to import the data
+	 * @param page		{@link ImportExprDataWizard.ImportPage} that reports information and errors
+	 * during the import process
+	 * @param monitor	{@link IProgressMonitor} that reports the progress of the process and enables
+	 * the user to cancel
+	 */
 	private void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
 	{
 		boolean errorFound = false;
@@ -676,7 +690,7 @@ public class GmmlGex {
 		try 
 		{
 			page.println("> Processing headers");
-			BufferedReader in = new BufferedReader(new FileReader(info.txtFile));
+			BufferedReader in = new BufferedReader(new FileReader(info.getTxtFile()));
 			in.mark(10000);
 			for(int i = 0; i < info.headerRow - 1; i++) in.readLine(); //Go to headerline
 			String[] headers = info.getColNames();
@@ -700,7 +714,6 @@ public class GmmlGex {
 						error.println("Error in headerline, can't add column " + i + 
 							" due to: " + e.getMessage());
 						errorFound = reportErrorFound(page, errorFile, errorFound);
-						
 					}
 				}
 			}
@@ -756,22 +769,41 @@ public class GmmlGex {
 			close(true, true);
 			error.close();
 			connect(); //re-connect and use the created expression dataset
+			
+			if(!errorFound) new File(errorFile).delete(); // If no errors were found, delete the error file
+			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
 			e.printStackTrace();
 			close(true, true);
 			error.close();
 		}
-	
-		
 	}
 	
-	private boolean reportErrorFound(ImportPage page, String seeFile, boolean errorFound)
+	/**
+	 * Method used by {@link #importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
+	 * that reports when an error is found
+	 * @param page		The {@link ImportPage} to report to
+	 * @param seeFile	{@link String} pointing to the file containing the errors
+	 * @param errorFoundBefor	boolean to check whether an error was reported before
+	 * @return	true (to quickly set the boolean errorFound when calling this method)
+	 * @see {@link #importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
+	 */
+	private boolean reportErrorFound(ImportPage page, String seeFile, boolean errorFoundBefore)
 	{
-		if(!errorFound)
+		if(!errorFoundBefore)
 			page.println("One or more errors occured, see " + seeFile + " for details");
 		return true;
 	}
+	
+	/**
+	 * Prints an import error to the
+	 * @param out		{@link PrintWriter} to the error file
+	 * @param lineNr	line number of the line that was beeing processed when the error occured
+	 * @param line		content of the line beeing processed
+	 * @param error		error message
+	 * @see {@link #importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
+	 */
 	private void printImportError(PrintWriter out, int lineNr, String line, String error)
 	{
 		StringBuffer msg = new StringBuffer();

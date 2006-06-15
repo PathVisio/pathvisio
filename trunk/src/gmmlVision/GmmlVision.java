@@ -1337,6 +1337,8 @@ public class GmmlVision extends ApplicationWindow
 		
 		if(drawing != null)
 		{
+			getShell().setSize((int)(1000 * drawing.mappInfo.windowWidth / sashForm.getWeights()[0]), 
+					drawing.mappInfo.windowHeight); //getWeights() returns 800,200 instead of 80,20 :?
 			drawing.setEditMode(switchEditModeAction.isChecked());
 			if(gmmlGex.con != null)
 			{

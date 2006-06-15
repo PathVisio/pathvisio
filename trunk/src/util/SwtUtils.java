@@ -15,6 +15,7 @@ public class SwtUtils {
 			cOld.dispose();
 			cOld = null;
 		}
+		if(rgbNew == null) rgbNew = new RGB(0,0,0);
 		return new Color(display, rgbNew);
 	}
 	

@@ -417,14 +417,15 @@ public class Main {
 		return result;
 	}
 	
+	
 	/*
-	eats a term
+	eats a subterm
 		forms:
-		term -> factor morefactors
+		subterm -> factor morefactors
 		morefactors -> "<=|=|>=|>|<" factor morefactors
 					| empty
 	*/
-	Token term() throws Exception
+	Token subterm() throws Exception
 	{
 		Token result;
 		result = factor();
@@ -434,6 +435,34 @@ public class Main {
 			if (t.type == Token.TOKEN_EQ || t.type == Token.TOKEN_GE ||
 				t.type == Token.TOKEN_LE || t.type == Token.TOKEN_GT ||
 				t.type == Token.TOKEN_LT)
+			{
+				getToken();
+				t.left = result;
+				t.right = subterm();
+				result = t;
+			}
+			else
+			{
+			    return result;
+			}
+		}		
+	}
+	
+	/*
+	eats a term
+		forms:
+		term -> subterm moresubterms
+		moresubterms -> "AND" subterm moresubterms
+					| empty
+	*/
+	Token term() throws Exception
+	{
+		Token result;
+		result = subterm();
+		while (true)
+		{
+			Token t = getLookAhead();
+			if (t.type == Token.TOKEN_AND)
 			{
 				getToken();
 				t.left = result;
@@ -447,13 +476,12 @@ public class Main {
 		}
 	}
 	
+	
 	/* eats an expression
 		forms:
 		expression -> term moreterms
-		moreterms -> "AND" term moreterms
-			| "OR" term moreterms
+		moreterms -> "OR" term moreterms
 			| empty
-	
 	*/
 	Token expression() throws Exception
 	{
@@ -462,7 +490,7 @@ public class Main {
 		while (true)
 		{
 			Token t = getLookAhead();
-			if (t.type == Token.TOKEN_AND || t.type == Token.TOKEN_OR)
+			if (t.type == Token.TOKEN_OR)
 			{
 				getToken();
 				t.left = result;			
@@ -514,8 +542,8 @@ public class Main {
 		test ("[x] < 0 AND [y] > 0", false);
 		test ("[x] > 0 AND [y] < 0", true);
 		test ("[x] > 0 AND [y] > 0", false);
-		test ("[x] = 0 AND [y] = 0 OR [x] = -5.0 AND [y] = -1.0", true);
-		test ("([x] = 0 AND [y] = 0) OR ([x] = -5.0 AND [y] = -1.0)", true);
+		test ("[x] = 0 AND [y] = 0 OR [x] = 5.0 AND [y] = -1.0", true);
+		test ("([x] = 0 AND [y] = 0) OR ([x] = 5.0 AND [y] = -1.0)", true);
 		test ("[x] = 0 AND ([y] = 0 OR [x] = -5.0) AND [y] = -1.0", false);
 		clearSymbols();
 		addSymbol ("jouw waarde", 5.0);

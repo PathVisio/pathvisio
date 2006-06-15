@@ -168,6 +168,9 @@ public class GmmlMappInfo extends GmmlGraphics {
 		markDirty();
 		setHandleLocation();
 		canvas.redrawDirtyRect();
+		//Also update the canvas and window size:
+		canvas.setSize(boardWidth, boardHeight);
+//		canvas.gmmlVision.getShell().setSize(windowWidth, windowHeight);
 	}
 	
 	public void updateJdomElement() {
@@ -280,7 +283,6 @@ public class GmmlMappInfo extends GmmlGraphics {
 		
 		fBold.dispose();
 		fNormal.dispose();
-		System.out.println(sizeX + ", " + sizeY);
 	}
 	
 	public Vector<GmmlHandle> getHandles()

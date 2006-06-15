@@ -12,7 +12,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -22,8 +21,8 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.SWT;
 
+import colorSet.GmmlColorCriterion;
 import colorSet.GmmlColorGradient;
 import colorSet.GmmlColorSet;
 import colorSet.GmmlColorSetObject;
@@ -159,6 +158,10 @@ public class GmmlGex {
 					{
 						GmmlColorSetObject co = new GmmlColorGradient(cs, name, criterion);
 						cs.addObject(co);
+					} else if(criterion.contains("EXPRESSION"))
+					{
+						GmmlColorSetObject co = new GmmlColorCriterion(cs, name, criterion);
+						cs.addObject(co);
 					}
 				}
 			}
@@ -174,7 +177,13 @@ public class GmmlGex {
 	 * Contains the different {@Sample} object representing records from the Sample table
 	 * in the Expression database, with as key the 'idSample' field
 	 */
-	public HashMap<Integer, Sample> samples;
+	private HashMap<Integer, Sample> samples;
+	/**
+	 * Get the {@Sample} object currently loaded in memory
+	 * @return	{@link HashMap} containing the {@link Sample} object as values with 'idSample' as field
+	 * or an empty HashMap if no samples are loaded in memory 
+	 */
+	public HashMap<Integer, Sample> getSamples() { return samples == null ? new HashMap() : samples; }
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
 	 */

@@ -119,6 +119,7 @@ public class GmmlColorSet {
 		{
 			GmmlColorSetObject gc = (GmmlColorSetObject)it.next();
 			RGB gcRgb = gc.getColor(data, sampleId);
+			System.out.println("Colorset evaluates " + gc + " which returned " + gcRgb);
 			if(gcRgb != null)
 			{
 				return gcRgb;
@@ -257,7 +258,7 @@ public class GmmlColorSet {
 		for(int i = 0; i < s.length; i++)
 		{
 			try { 
-				a.add(gmmlGex.samples.get(Integer.parseInt(s[i])));
+				a.add(gmmlGex.getSamples().get(Integer.parseInt(s[i])));
 			} catch (Exception e) { }
 		}
 		return a;

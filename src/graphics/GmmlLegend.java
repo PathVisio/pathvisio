@@ -442,7 +442,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			int markerCenter = yStart + barHeight;
 			c = SwtUtils.changeColor(c, oldBackground, e.display);
 			e.gc.setBackground(c);
-			for(ColorValuePair cvp : cg.colorValuePairs)
+			for(ColorValuePair cvp : cg.getColorValuePairs())
 			{
 				int x = (int)(start + (cvp.value - min) / (max - min) * (end - start));
 				e.gc.drawLine(x, markerCenter - MARKER_LENGTH, x, markerCenter + MARKER_LENGTH);
@@ -454,12 +454,12 @@ public class GmmlLegend extends Composite implements MouseListener,
 			int dataColumn = cg.useSample;
 			String label;
 			switch(dataColumn) {
-			case GmmlColorGradient.DATA_COL_NO:
+			case GmmlColorGradient.USE_SAMPLE_NO:
 				label = ""; break;
-			case GmmlColorGradient.DATA_COL_ALL:
+			case GmmlColorGradient.USE_SAMPLE_ALL:
 				label = "All samples"; break;
 			default:
-				label = gmmlGex.samples.get(dataColumn).name; break;
+				label = gmmlGex.getSamples().get(dataColumn).name; break;
 			}
 			Point labelSize = e.gc.textExtent(label);
 			e.gc.drawString(label, (end - start) / 2 - labelSize.x / 2, 

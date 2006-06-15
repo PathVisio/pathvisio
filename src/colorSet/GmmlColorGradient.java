@@ -11,23 +11,34 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class GmmlColorGradient extends GmmlColorSetObject {
 	/**
-	 * Apply to all samples
-	 */
-	public static final int DATA_COL_ALL = -1;
-	/**
-	 * Apply to no samples (initial value)
-	 */
-	public static final int DATA_COL_NO = -2;
-	/**
-	 * Sample to use for this color gradient (index of element in 
-	 * {@GmmlColorSet.useSamples}, DATA_COL_ALL or DATA_COL_NO
-	 */
-	public int useSample;
-	/**
 	 * Contains the colors and corresponding values used in this gradient as {@link ColorValuePair}
 	 */
-	public ArrayList<ColorValuePair> colorValuePairs;
-	
+	private ArrayList<ColorValuePair> colorValuePairs;
+	/**
+	 * Get the the colors and corresponding values used in this gradient as {@link ColorValuePair}
+	 * @return ArrayList containing the ColorValuePairs
+	 */
+	public ArrayList<ColorValuePair> getColorValuePairs() 
+	{ 
+		if(colorValuePairs == null) colorValuePairs = new ArrayList<ColorValuePair>();
+		return colorValuePairs;
+	}
+	/**
+	 * Add a {@link ColorValuePair} to this gradient
+	 */
+	public void addColorValuePair(ColorValuePair cvp)
+	{
+		if(colorValuePairs == null) colorValuePairs = new ArrayList<ColorValuePair>();
+		colorValuePairs.add(cvp);
+	}
+	/**
+	 * Remove a {@link ColorValuePair} from this gradient
+	 */
+	public void removeColorValuePair(ColorValuePair cvp)
+	{
+		if(colorValuePairs == null || !colorValuePairs.contains(cvp)) return;
+		colorValuePairs.remove(cvp);
+	}
 	/**
 	 * Constructor for this class
 	 * @param parent 		colorset this gradient belongs to
@@ -36,8 +47,6 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
 		super(parent, name);
-		colorValuePairs = new ArrayList<ColorValuePair>();
-		useSample = DATA_COL_NO;
 	}
 	
 	/**
@@ -108,7 +117,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public RGB getColor(HashMap<Integer, Object> data, int idSample)
 	{
 		int applySample = idSample; //The sample to apply the gradient on
-		if(useSample == -1) //Check if this gradient applies to all samples
+		if(useSample == USE_SAMPLE_ALL) //Check if this gradient applies to all samples
 		{
 			applySample = idSample; //Apply the gradient on the given sample
 		} else { //Does the gradient apply to the given sample?

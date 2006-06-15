@@ -33,6 +33,21 @@ public abstract class GmmlColorSetObject {
 	public String getName() { return name; }
 	
 	/**
+	 * Apply to all samples
+	 */
+	public static final int USE_SAMPLE_ALL = -1;
+	/**
+	 * Apply to no samples (initial value)
+	 */
+	public static final int USE_SAMPLE_NO = -2;
+	
+	/**
+	 * Sample to use for this color gradient (index of element in 
+	 * {@GmmlColorSet.useSamples}, DATA_COL_ALL or DATA_COL_NO
+	 */
+	public int useSample;
+	
+	/**
 	 * Constructor for this class
 	 * @param parent 		colorset this gradient belongs to
 	 * @param name 			name of the gradient
@@ -41,6 +56,7 @@ public abstract class GmmlColorSetObject {
 	{	
 		this.parent = parent;
 		this.name = name;
+		useSample = USE_SAMPLE_NO;
 	}
 	
 	/**

@@ -163,7 +163,7 @@ public class GmmlData
 	 * Maps the element specified to a GmmlGraphics object
 	 * @param e		the JDOM {@link Element} to map
 	 */
-	public void mapElement(Element e) {
+	private void mapElement(Element e) {
 		// Check if a GmmlGraphics exists for this element
 		// Assumes that classname = 'Gmml' + Elementname
 		try {

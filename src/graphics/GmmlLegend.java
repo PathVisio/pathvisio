@@ -29,7 +29,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import util.GmmlColorConvertor;
 import util.SwtUtils;
+import colorSet.GmmlColorCriterion;
 import colorSet.GmmlColorGradient;
 import colorSet.GmmlColorSet;
 import colorSet.GmmlColorSetObject;
@@ -106,10 +108,10 @@ public class GmmlLegend extends Composite implements MouseListener,
 		samples = new SampleComposite(sg, SWT.NONE);
 		samples.setLegend(this);
 		
-		gGrid = new GridData(GridData.FILL_BOTH);
+		gGrid = new GridData(GridData.FILL_HORIZONTAL);
 		gGrid.heightHint = 40;
 		gg.setLayoutData(gGrid);
-		cg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
+		cg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		sg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		title.setText("Legend");
@@ -309,27 +311,40 @@ public class GmmlLegend extends Composite implements MouseListener,
 			{
 				Color c = null;
 				Image image = null;
+								
+				//Draw CLabel for every criterion
+				for(GmmlColorSetObject co : colorSet.colorSetObjects)
+				{
+					if(!(co instanceof GmmlColorCriterion)) continue; //skip objects other than criretia
+					GmmlColorCriterion cc = (GmmlColorCriterion)co;
+					c = SwtUtils.changeColor(c, cc.getColor(), getDisplay());
+					createCriterionLabel(cc.getName(), c);
+				}
 				
-				CLabel noCritMet = new CLabel(this, SWT.SHADOW_IN);
-				Label noCritMetLabel = new Label(this, SWT.LEFT);
-				noCritMetLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				noCritMetLabel.setText("No criteria met");
+				//Draw label for special criteria ('no gene found', 'no criteria met')
+				String[] specialLabels = {"No criteria met", "Gene not found"};
+				RGB[] specialColors = {colorSet.color_no_criteria_met, colorSet.color_gene_not_found};
 				
-				CLabel geneNotFound = new CLabel(this, SWT.SHADOW_IN);
-				Label geneNotFoundLabel = new Label(this, SWT.LEFT);
-				geneNotFoundLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				geneNotFoundLabel.setText("Gene not found");
+				for(int i = 0; i < specialColors.length; i++)
+				{
+					c = SwtUtils.changeColor(c, specialColors[i], getDisplay());
+					createCriterionLabel(specialLabels[i], c);
+				}
 				
-				CLabel multipleData = new CLabel(this, SWT.LEFT | SWT.FLAT);
+				//This label requires an image
+				Label multipleData = new Label(this, SWT.LEFT | SWT.FLAT);
 				multipleData.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				multipleData.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+				GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+				clabelGrid.widthHint = CLABEL_SIZE;
+				clabelGrid.heightHint = CLABEL_SIZE;
+				multipleData.setLayoutData(clabelGrid);
+				
 				if(image != null && !image.isDisposed())
 				{
 					image.dispose();
 				}
 				image = new Image(getDisplay(), CLABEL_SIZE, CLABEL_SIZE);
 				GC imageGc = new GC(image);
-				imageGc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLUE));
 				imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
 				imageGc.drawRectangle(1, 1, CLABEL_SIZE - 3, CLABEL_SIZE - 3);
 				imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
@@ -339,20 +354,26 @@ public class GmmlLegend extends Composite implements MouseListener,
 				multipleDataLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				multipleDataLabel.setText("Gene maps to multiple ids");
 				
-				c = SwtUtils.changeColor(c,  colorSet.color_no_criteria_met, getDisplay());
-				noCritMet.setBackground(c);
-				c = SwtUtils.changeColor(c,  colorSet.color_gene_not_found, getDisplay());
-				geneNotFound.setBackground(c);
-				
-				GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-				clabelGrid.widthHint = CLABEL_SIZE;
-				clabelGrid.heightHint = CLABEL_SIZE;
-				geneNotFound.setLayoutData(clabelGrid);
-				noCritMet.setLayoutData(clabelGrid);
 				layout();
 				c.dispose();
 				imageGc.dispose();
 			}
+		}
+			
+		private void createCriterionLabel(String text, Color c)
+		{
+			GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+			clabelGrid.widthHint = CLABEL_SIZE;
+			clabelGrid.heightHint = CLABEL_SIZE;
+			
+			CLabel cLabel = new CLabel(this, SWT.SHADOW_IN);
+			Label label = new Label(this, SWT.LEFT);
+			
+			label.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			label.setText(text);
+			
+			cLabel.setBackground(c);
+			cLabel.setLayoutData(clabelGrid);
 		}
 	}
 	

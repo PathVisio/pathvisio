@@ -18,9 +18,27 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 	
 	private String expression;
 	public String getExpression() {  return expression == null ? "" : expression; }
-	public void setExpression(String expression) {
-		//TODO: check syntax and throw Exception if incorrect
-		this.expression = expression;
+	public String setExpression(String expression) {
+		//Evaluate with dummy data:
+		try {
+			testExpression(expression);
+			this.expression = expression;
+			return null;
+		} catch (Exception e) {
+			return e.getMessage() == null ? "" : e.getMessage();
+		}
+	}
+	
+	public void testExpression(String expression) throws Exception
+	{
+		getParent().gmmlGex.getSamples();
+		//Set some value for every sample
+		HashMap<Integer, Sample> samples = getParent().gmmlGex.getSamples();
+		clearSymbols();
+		for(Sample s : samples.values()) {
+			addSymbol(s.name, 1.0);
+		}
+		evaluate(expression);
 	}
 	
 	public GmmlColorCriterion(GmmlColorSet parent, String name) {
@@ -92,8 +110,10 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 	}
 	
 	String input;
+	int charNr;
 	boolean evaluate (String expr) throws Exception
 	{
+		charNr = 0;
 		input = expr;
 		
 		Token e = expression();
@@ -101,12 +121,13 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		if (t.type != Token.TOKEN_END)
 		{
 			nextToken = null;
-			throw new Exception();
+			throw new Exception("Multiple expressions found, second expression " +
+					"starts at position " + charNr);
 		}
 //		e.printMe(1);
 		return e.evaluateAsBool();
 	}
-
+	
 	char eatChar()
 	{
 		if (input.length() == 0)
@@ -115,6 +136,7 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		}
 		else
 		{
+			charNr++;
 			char result = input.charAt(0);
 			input = input.substring(1);
 			return result;
@@ -215,14 +237,16 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 						}
 						token = new Token(Token.TOKEN_ID, value);                 
 						} break;
-				case 'A':							
+				case 'A':	
+
 						if (eatChar() == 'N' && eatChar() == 'D')
 						{
 							token = new Token (Token.TOKEN_AND);
 						}
 						else
 						{
-							throw new Exception();
+							throw new Exception("Invalid character 'A' at position " + (charNr - 2) + 
+									"\n- Expected start of 'AND'");
 						}
 						break;
 				case 'O':
@@ -233,14 +257,15 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 						}
 						else
 						{
-							throw new Exception();
+							throw new Exception("Invalid character 'O' at position " + (charNr - 1) + 
+								"\n- Expected start of 'OR'");
 						}
 						break;
 				case '\0':
 						token = new Token (Token.TOKEN_END);
 						break;
 				default:
-						throw new Exception();
+						throw new Exception("Unexpected end of expression at position " + charNr);
 		}
 		//~ System.out.print (token.type + ", ");
 		return token;
@@ -275,13 +300,13 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 			if (t.type != Token.TOKEN_RPAREN)
 			{
 				nextToken = null;
-				throw new Exception();
+				throw new Exception("Number of opening and closing brackets does not match");
 			}			
 		}
 		else
 		{
 			nextToken = null;
-			throw new Exception();
+			throw new Exception("Wrong token at position " + charNr);
 		}
 		return result;
 	}
@@ -490,19 +515,26 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 					else
 						return false;
 			}
-			throw new Exception();
+			throw new Exception("Can't evaluate this expression as boolean");
 		}
 		
 		double evaluateAsDouble() throws Exception
 		{
+			String error = "";
 			switch (type)
 			{
 				case Token.TOKEN_ID:
+					if(!symTab.containsKey(symbolValue)) {//symbol has no value
+						error = "Sample '[" + symbolValue + "]' has no value";
+						break;
+					}
 					return (Double)symTab.get(symbolValue);
 				case Token.TOKEN_NUMBER:
 					return numberValue;
+				default:
+					error = "Can't evaluate this expression as numeric";
 			}
-			throw new Exception();
+			throw new Exception(error);
 		}
 		
 		Token (int _type) { type = _type; numberValue = 0; symbolValue = ""; }

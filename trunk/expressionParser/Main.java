@@ -305,7 +305,7 @@ public class Main {
 							ch = eatChar();
 						}
 						putBack (ch);									
-						token = new Token(Token.TOKEN_NUMBER, Double.parseDouble(value)); }                            
+						token = new Token(Token.TOKEN_NUMBER, Double.parseDouble(value)); }
 						break;
 				case '<':
 						ch = eatChar();
@@ -533,6 +533,7 @@ public class Main {
 		syntaxTest ("[x] < -0.5 AND", false);
 		syntaxTest ("([x] < -0.5", false);
 		syntaxTest ("([x] < -0.5)", true);
+		syntaxTest ("x = 5.0.0", false);
 		
 		test ("[x] < -0.5", false);
 		test ("5.0 > [y]", true);

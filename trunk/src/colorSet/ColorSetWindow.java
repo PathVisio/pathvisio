@@ -567,7 +567,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    ccOpsList.addMouseListener(new MouseAdapter() {
 	    	public void mouseDoubleClick(MouseEvent e) {
 	    		String[] selection = ccOpsList.getSelection();
-	    		if(selection != null && selection.length > 0) ccExpression.append(selection[0]);
+	    		if(selection != null && selection.length > 0) ccExpression.insert(selection[0] + " ");
 	    	}
 	    });
 	    
@@ -578,14 +578,16 @@ public class ColorSetWindow extends ApplicationWindow {
 	    ccSampleList.addMouseListener(new MouseAdapter() {
 	    	public void mouseDoubleClick(MouseEvent e) {
 	    		String[] selection = ccSampleList.getSelection();
-	    		if(selection != null && selection.length > 0) 
-	    			ccExpression.append("[" + selection[0] + "]");
+	    		if(selection != null && selection.length > 0)
+	    			ccExpression.insert("[" + selection[0] + "] ");
 	    	}
 	    });
 	    
 	    Button ccButton = new Button(ccGroup, SWT.PUSH);
 	    ccButton.setText("Save");
-	    ccButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+	    GridData buttonGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
+	    buttonGrid.horizontalSpan = 3;
+	    ccButton.setLayoutData(buttonGrid);
 	    ccButton.addSelectionListener(new inputSelectionAdapter());
 	    
 	    ccNameText.addSelectionListener(new inputSelectionAdapter());
@@ -967,10 +969,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		GmmlColorCriterion cc = (GmmlColorCriterion)
 		((IStructuredSelection)coTableViewer.getSelection()).getFirstElement();
 		if(cc == null) return true; //No gradient is selected (this should't happen)
-		try {
-			cc.setExpression(ccExpression.getText());
-		} catch(Exception e) {
-			MessageDialog.openError(getShell(), "Error", "Expression syntax is not valid: " + e.getMessage());
+		String error = cc.setExpression(ccExpression.getText());
+		if(error != null) {
+			MessageDialog.openError(getShell(), "Error", "Expression syntax is not valid: " + error);
 			return false;
 		}
 		cc.setName(ccNameText.getText());

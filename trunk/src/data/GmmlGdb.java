@@ -67,7 +67,8 @@ public class GmmlGdb {
 	 * Constructor for this class. Checks the properties file for a previously
 	 * used Gene Database and tries to open a connection if found.
 	 */
-	public GmmlGdb() {
+	public GmmlGdb()
+	{
 		props = new Properties();
 		try {
 			// Check if properties file exists
@@ -81,8 +82,11 @@ public class GmmlGdb {
 			if(!props.get("currentGdb").equals("none"))
 			{
 				gdbFile = new File((String)props.get("currentGdb"));
-				if(connect(null) != null)
+				try {
+					connect(null);
+				} catch(Exception e) {
 					setCurrentGdb("none");
+				}
 			}
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -95,6 +99,7 @@ public class GmmlGdb {
 	 * @param gdb	The name of the gene database
 	 */
 	public void setCurrentGdb(String gdb) {
+		this.gdbFile = new File(gdb);
 		changeProps("currentGdb", gdb);
 	}
 	
@@ -219,27 +224,20 @@ public class GmmlGdb {
 	 * .properties file of the Hsqldb database
 	 * @return	null if the connection was created, a String with an error message if an error occured
 	 */
-	public String connect(File gdbFile)
+	public void connect(File gdbFile) throws Exception
 	{
-		if(gdbFile == null)
-			gdbFile = this.gdbFile;
-		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-			Properties prop = new Properties();
-			prop.setProperty("user","sa");
-			prop.setProperty("password","");
-			//prop.setProperty("hsqldb.default_table_type","cached");
-			String file = gdbFile.getAbsolutePath().toString();
-			con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-					file.substring(0, file.lastIndexOf(".")), prop);
-			con.setReadOnly(true);
-			setCurrentGdb(gdbFile.getAbsoluteFile().toString());
-			return null;
-		} catch(Exception e) {
-			System.out.println ("Error: " +e.getMessage());
-			e.printStackTrace();
-			return e.getMessage();
-		}
+		if(gdbFile == null) gdbFile = this.gdbFile;
+		if(!gdbFile.canRead()) throw new Exception("Can't access file '" + gdbFile.toString() + "'");
+		Class.forName("org.hsqldb.jdbcDriver");
+		Properties prop = new Properties();
+		prop.setProperty("user","sa");
+		prop.setProperty("password","");
+		//prop.setProperty("hsqldb.default_table_type","cached");
+		String file = gdbFile.getAbsolutePath().toString();
+		con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
+				file.substring(0, file.lastIndexOf(".")), prop);
+		con.setReadOnly(true);
+		setCurrentGdb(gdbFile.getAbsoluteFile().toString());
 	}
 	
 	/**

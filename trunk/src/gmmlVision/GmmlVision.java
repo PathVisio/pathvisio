@@ -342,17 +342,13 @@ public class GmmlVision extends ApplicationWindow
 			// Only proceed if user selected a file
 			if(file == null) return;
 			// Connect returns null when connection is established
-			String error = gmmlGdb.connect(new File(file));
-			if(error == null)
-			{
+			try {
+				gmmlGdb.connect(new File(file));
 				setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 				cacheExpressionData();
-			} else {
-				MessageBox messageBox = new MessageBox(getShell(),
-						SWT.ICON_ERROR| SWT.OK);
-				messageBox.setMessage("Failed to load '" + file + "'\nError: " + error);
-				messageBox.setText("Error");
-				messageBox.open();
+			} catch(Exception e) {
+				e.printStackTrace();
+				MessageDialog.openError(getShell(), "Failed to open Gene Database", e.getMessage());
 			}
 		}
 	}
@@ -381,21 +377,14 @@ public class GmmlVision extends ApplicationWindow
 			// Only proceed if user selected a file
 			if(file == null) return;
 			gmmlGex.gexFile = new File(file);
-			String error = gmmlGex.connect();
-			if(gmmlGex.con != null)
-			{
+			try {
+				gmmlGex.connect();
 				gmmlGex.setSamples();
 				gmmlGex.loadColorSets();
 				cacheExpressionData();
 				showColorSetActionsCI(true);
-			}			
-			if(error != null)
-			{
-				MessageBox messageBox = new MessageBox(getShell(),
-						SWT.ICON_ERROR| SWT.OK);
-				messageBox.setMessage("Failed to load '" + file + "'\nError: " + error);
-				messageBox.setText("Error");
-				messageBox.open();
+			} catch(Exception e) {
+				MessageDialog.openError(getShell(), "Failed to open Expression Dataset", e.getMessage());
 			}
 			
 		}

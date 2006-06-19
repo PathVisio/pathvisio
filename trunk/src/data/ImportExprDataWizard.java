@@ -77,9 +77,7 @@ public class ImportExprDataWizard extends Wizard {
 			getContainer().showPage(ip);
 			try {
 				// Start import process
-				getContainer().run(
-						true,
-						true,
+				getContainer().run(true, true,
 						gmmlGex.new ImportRunnableWithProgress(
 								importInformation,
 								(ImportPage) getPage("ImportPage")));
@@ -491,7 +489,7 @@ public class ImportExprDataWizard extends Wizard {
 		public void print(String text) {
 			appendProgressText(text, false);
 		}
-
+		
 		public void appendProgressText(final String updateText,
 				final boolean newLine) {
 			if (progressText != null && !progressText.isDisposed())

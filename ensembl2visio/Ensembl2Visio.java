@@ -15,24 +15,24 @@ import org.ensembl.variation.driver.*;
 
 public class Ensembl2Visio {
 	final static String[] sysCodes = new String[] {
-			"U", "X", "Em", "En", "L", "F", "T",
+			"S", "X", "Em", "En", "L", "F", "T",
 			"H", "I", "M", "Om", "Pd", "Pf",
-			"Q", "R", "D", "S", "W",
-			"Z"
+			"Q", "R", "D", "U", "W",
+			"Z", "A"
 	};
 	
 	final static String[] sysNames = new String[] {
 		"UniProt/TrEMBL", "Affymetrix Probe Set ID", "EMBL", "Ensembl", "Entrez Gene", 
 		"FlyBase", "Gene Ontology", "HUGO", "InterPro", "MGI", 
 		"OMIM", "PDB", "Pfam", "RefSeq", "RGD", "SGD", 
-		"UniGene", "WormBase", "ZFIN"
+		"UniGene", "WormBase", "ZFIN", "Agilent Probe ID"
 	};
 	
 	final static String[] lookFor = new String[] {
 			"(?i)uniprot","(?i)affy", "\\bEMBL\\b", "Ensembl", "EntrezGene", "FlyBase", "GO",
 			"HUGO", "InterPro", "MGI", "OMIM", "PDB", "Pfam", 
 			"RefSeq", "RGD", "SGD", "UniGene", "WormBase",
-			"ZFIN"
+			"ZFIN", "Agilent"
 	};
 	final static int ENS_CODE = 3;
 	
@@ -43,9 +43,9 @@ public class Ensembl2Visio {
     public static void main(String[] args) {
 //    	int nrGenes = 10;
 //    	String organism = "human";
-    	String file = "ensembl_genes.txt";
+    	String file = "mouse/mus_musculus_core_38_35.txt";
 //    	String file = "test.txt";
-    	String dbname = "ensembl_homo_sapiens_38_36";
+    	String dbname = "mouse/mus_musculus_core_38_35";
 //    	String dbname = "test";
     	Ensembl2Visio ensj = new Ensembl2Visio();
 //    	ensj.fetchFromEnsembl(nrGenes, organism, file); // Do this with perl

@@ -678,9 +678,9 @@ public class GmmlGex {
 	 */
 	private void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
 	{
-		boolean errorFound = false;
 //		Open a connection to the error file
 		String errorFile = info.gexFile + ".ex.txt";
+		int errors = 0;
     	PrintWriter error = null;
 	    try {
 	        error = new PrintWriter(new FileWriter(errorFile));
@@ -689,19 +689,19 @@ public class GmmlGex {
 	        page.println("Error: could not open exception file: " + ex.getMessage());
 	    }
 	    
-		page.println("Creating expression dataset");
-		//Create a new expression database (or overwrite existing)
-		gexFile = info.gexFile;
-		connect(true);
-		createTables();
-		
-		page.println("Importing data");
 		try 
 		{
+			page.println("Creating expression dataset");
+			
+			//Create a new expression database (or overwrite existing)
+			gexFile = info.gexFile;
+			connect(true);
+			createTables();
+			
+			page.println("Importing data");
 			page.println("> Processing headers");
 			BufferedReader in = new BufferedReader(new FileReader(info.getTxtFile()));
 			in.mark(10000);
-			for(int i = 0; i < info.headerRow - 1; i++) in.readLine(); //Go to headerline
 			String[] headers = info.getColNames();
 			//Parse sample names and add to Sample table
 			PreparedStatement pstmt = con.prepareStatement(
@@ -720,9 +720,9 @@ public class GmmlGex {
 					pstmt.execute();
 					dataCols.add(i);
 					} catch(Error e) { 
-						error.println("Error in headerline, can't add column " + i + 
-							" due to: " + e.getMessage());
-						errorFound = reportErrorFound(page, errorFile, errorFound);
+						errors = reportError(error, "Error in headerline, can't add column " + i + 
+								" due to: " + e.getMessage(), errors);
+					
 					}
 				}
 			}
@@ -730,19 +730,27 @@ public class GmmlGex {
 			page.println("> Processing lines");
 			//Check ids and add expression data
 			in.reset();
-			for(int i = 0; i < info.firstDataRow - 1; i++) in.readLine(); //Go to line where data starts
-			String line = null;
-			int n = info.firstDataRow - 1;
+			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
 			pstmt = con.prepareStatement(
 					"INSERT INTO expression			" +
 					"	(id, code, ensId,			" + 
 					"	 idSample, data)			" +
 			"VALUES	(?, ?, ?, ?, ?)			");
+			String line = null;
+			int n = info.firstDataRow - 1;
+			int added = 0;
 			while((line = in.readLine()) != null) 
 			{
 				String[] data = line.split(ImportInformation.DELIMITER, headers.length);
-				if(n++ == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
-				monitor.setTaskName("Importing expression data - processing line " + n);
+				n++;
+				if(n == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
+				if(data.length < headers.length) {
+					errors = reportError(error, "Number of columns in line " + n + 
+							"doesn't match number of header columns",
+							errors);
+					continue;
+				}
+				monitor.setTaskName("Importing expression data - processing line " + n + "; " + errors + " errors");
 				//Check id and add data
 				String id = data[info.idColumn];
 				String code = data[info.codeColumn];
@@ -750,10 +758,10 @@ public class GmmlGex {
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
-					error.println("Line " + n + ": " + id + "\t" + code + 
-							"\t No Ensembl gene found for this identifier");
-					errorFound = reportErrorFound(page, errorFile, errorFound);
-				} else { //Gene maps to an Ensembl id, so add it					
+					errors = reportError(error, "Line " + n + ": " + id + "\t" + code + 
+							"\t No Ensembl gene found for this identifier", errors);
+				} else { //Gene maps to an Ensembl id, so add it
+					boolean success = true;
 					for( String ensId : ensIds) //For every Ensembl id add the data
 					{
 						for(int col : dataCols)
@@ -767,19 +775,24 @@ public class GmmlGex {
 								pstmt.setString(5, data[col]);
 								pstmt.execute();
 							} catch (Exception e) {
-								printImportError(error, n, line, e.getMessage());
-								e.printStackTrace();
-								errorFound = reportErrorFound(page, errorFile, errorFound);
+								errors = reportError(error, "Line " + n + ":\t" + line + "\n" + 
+										"\tError: " + error, errors);
+								success = false;
 							}
 						}
 					}
+					if(success) added++;
 				}
+			}
+			page.println(added + " genes were added succesfully to the expression dataset");
+			if(errors > 0) {
+				page.println(errors + " errors occured, see file '" + errorFile + "' for details");
+			} else {
+				 new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
 			close(true, true);
 			error.close();
 			connect(); //re-connect and use the created expression dataset
-			
-			if(!errorFound) new File(errorFile).delete(); // If no errors were found, delete the error file
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
@@ -788,38 +801,12 @@ public class GmmlGex {
 			error.close();
 		}
 	}
-	
-	/**
-	 * Method used by {@link #importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
-	 * that reports when an error is found
-	 * @param page		The {@link ImportPage} to report to
-	 * @param seeFile	{@link String} pointing to the file containing the errors
-	 * @param errorFoundBefor	boolean to check whether an error was reported before
-	 * @return	true (to quickly set the boolean errorFound when calling this method)
-	 * @see {@link #importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
-	 */
-	private boolean reportErrorFound(ImportPage page, String seeFile, boolean errorFoundBefore)
+		
+	private int reportError(PrintWriter out, String message, int nrError) 
 	{
-		if(!errorFoundBefore)
-			page.println("One or more errors occured, see " + seeFile + " for details");
-		return true;
-	}
-	
-	/**
-	 * Prints an import error to the
-	 * @param out		{@link PrintWriter} to the error file
-	 * @param lineNr	line number of the line that was beeing processed when the error occured
-	 * @param line		content of the line beeing processed
-	 * @param error		error message
-	 * @see {@link #importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
-	 */
-	private void printImportError(PrintWriter out, int lineNr, String line, String error)
-	{
-		StringBuffer msg = new StringBuffer();
-		msg.append("Line " + lineNr + ":\t");
-		msg.append(line + "\n");
-		msg.append("\tError: " + error);
-		out.println(msg.toString());
+		out.println(message);
+		nrError++;
+		return nrError;
 	}
 	
 	/**

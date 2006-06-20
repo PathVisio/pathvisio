@@ -379,8 +379,6 @@ public class GmmlVision extends ApplicationWindow
 			gmmlGex.gexFile = new File(file);
 			try {
 				gmmlGex.connect();
-				gmmlGex.setSamples();
-				gmmlGex.loadColorSets();
 				cacheExpressionData();
 				showColorSetActionsCI(true);
 			} catch(Exception e) {

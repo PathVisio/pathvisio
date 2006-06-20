@@ -26,6 +26,7 @@ import colorSet.GmmlColorCriterion;
 import colorSet.GmmlColorGradient;
 import colorSet.GmmlColorSet;
 import colorSet.GmmlColorSetObject;
+import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
 
@@ -54,7 +55,8 @@ public class GmmlGex {
 	 * Constructur for this class
 	 * @param gmmlGdb	{@link GmmlGdb} object containing a connection to the Gene Database
 	 */
-	public GmmlGex(GmmlGdb gmmlGdb) {
+	public GmmlGex(GmmlGdb gmmlGdb) 
+	{
 		this.gmmlGdb = gmmlGdb;
 		colorSets = new Vector<GmmlColorSet>();
 	}
@@ -63,7 +65,7 @@ public class GmmlGex {
 	 * Sets the {@link ColorSet}s used for the currently loaded Expression data
 	 * @param colorSets {@link Vector} containing the {@link ColorSet} objects
 	 */
-	public void setColorSets(Vector colorSets)
+	public void setColorSets(Vector<GmmlColorSet> colorSets)
 	{
 		this.colorSets = colorSets;
 	}
@@ -98,12 +100,12 @@ public class GmmlGex {
 			PreparedStatement sCs = con.prepareStatement(
 					"INSERT INTO colorSets	" +
 					"( colorSetId, name, criterion ) VALUES	" +
-					"( ?, ?, ? )"	);
+			"( ?, ?, ? )"	);
 			PreparedStatement sCso = con.prepareStatement(
 					"INSERT INTO colorSetObjects 	" +
 					"( 	name, colorSetId,		" +
 					"	criterion	) VALUES		" +
-					"(	?, ?, ?	)"	);
+			"(	?, ?, ?	)"	);
 			
 			for(int i = 0; i < colorSets.size(); i++)
 			{
@@ -138,10 +140,10 @@ public class GmmlGex {
 	{
 		try
 		{
-			colorSets = new Vector<GmmlColorSet>();
 			Statement sCso = con.createStatement();
 			ResultSet r = con.createStatement().executeQuery(
-				"SELECT colorSetId, name, criterion FROM colorSets ORDER BY colorSetId" );
+			"SELECT colorSetId, name, criterion FROM colorSets ORDER BY colorSetId" );
+			colorSets = new Vector<GmmlColorSet>();
 			while(r.next())
 			{
 				GmmlColorSet cs = new GmmlColorSet(r.getString(2), r.getString(3), this);
@@ -149,7 +151,7 @@ public class GmmlGex {
 				ResultSet rCso = sCso.executeQuery(
 						"SELECT * FROM colorSetObjects" +
 						" WHERE colorSetId = " + r.getInt(1) +
-						" ORDER BY id");
+				" ORDER BY id");
 				while(rCso.next())
 				{
 					String name = rCso.getString(2);
@@ -173,32 +175,141 @@ public class GmmlGex {
 		
 	}
 	
-	/**
-	 * Contains the different {@Sample} object representing records from the Sample table
-	 * in the Expression database, with as key the 'idSample' field
-	 */
+	public CachedData cachedData;
+	public class CachedData
+	{
+		private HashMap<String, Data> data;		
+		public CachedData()
+		{
+			if(samples == null) setSamples(); //Cache the samples in the dataset
+			data = new HashMap<String, Data>();
+		}
+		
+		public boolean hasData(String id, String code)
+		{
+			if(data.containsKey(id)) return data.get(id).id.equalsIgnoreCase(id);
+			else return false;
+		}
+		
+		public Data getData(String id, String code)
+		{
+			Data d = null;
+			if(data.containsKey(id)) { 
+				d = data.get(id);
+				if(!d.id.equalsIgnoreCase(id)) d = null;
+			}
+			return d;
+		}
+		
+		public void addData(String id, Data mappIdData)
+		{
+			data.put(id, mappIdData);
+		}
+		
+		public class Data
+		{
+			private String id;
+			private String code;
+			private HashMap<Integer, Object> sampleData;
+			private HashMap<String, Data> refData;
+			
+			public Data(String id, String code) {
+				this.id = id;
+				this.code = code;
+				refData = new HashMap<String, Data>();
+				sampleData = new HashMap<Integer, Object>();
+			}
+			
+			public boolean hasData() { return refData.size() > 0; }
+			
+			public void addRefData(String id, String code, int sampleId, String data) 
+			{ 
+				Data ref = null;
+				if(refData.containsKey(id)) ref = refData.get(id);
+				else ref = new Data(id, code);
+				
+				Object parsedData = null;
+				try { parsedData = Double.parseDouble(data); }
+				catch(Exception e) { parsedData = data; }
+				ref.addSampleData(sampleId, parsedData);
+				refData.put(id, ref);
+			}
+			
+			public void addSampleData(int sampleId, Object data)
+			{
+				if(data != null) sampleData.put(sampleId, data);
+			}
+			
+			public ArrayList<Data> getRefData()
+			{
+				return new ArrayList<Data>(refData.values());
+			}
+			
+			public Object getData(int idSample)
+			{
+				if(sampleData.containsKey(idSample)) return sampleData.get(idSample);
+				return null;
+			}
+			
+			public boolean hasMultipleData()
+			{
+				return refData.keySet().size() > 1;
+			}
+			
+			public HashMap<Integer, Object> getAverageSampleData()
+			{
+				if(refData.size() == 0) return null;
+				HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
+				for(int idSample: samples.keySet())
+				{
+					int dataType = samples.get(idSample).dataType;
+					if(dataType == Types.REAL) {
+						averageData.put(idSample, averageDouble(idSample));
+					} else {
+						averageData.put(idSample, averageString(idSample));
+					}
+				}
+				return averageData;
+			}
+			
+			private Object averageDouble(int idSample)
+			{
+				double avg = 0;
+				int n = 0;
+				for(Data d : refData.values()) {
+					try { avg += (Double)d.getData(idSample); n++; } catch(Exception e) {}
+				}
+				if(n > 0) return avg / n;
+				return averageString(idSample);
+			}
+			
+			private Object averageString(int idSample)
+			{
+				StringBuilder sb = new StringBuilder();
+				for(Data d : refData.values()) {
+					sb.append(d.getData(idSample) + ", ");
+				}
+				int end = sb.lastIndexOf(", ");
+				return end < 0 ? "" : sb.substring(0, end).toString();
+			}
+		}
+	}
+    
 	private HashMap<Integer, Sample> samples;
-	/**
-	 * Get the {@Sample} object currently loaded in memory
-	 * @return	{@link HashMap} containing the {@link Sample} object as values with 'idSample' as field
-	 * or an empty HashMap if no samples are loaded in memory 
-	 */
-	public HashMap<Integer, Sample> getSamples() { return samples == null ? new HashMap() : samples; }
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
 	 */
 	public void setSamples()
 	{
-		samples = new HashMap<Integer, Sample>();
 		try {
 			ResultSet r = con.createStatement().executeQuery(
 					"SELECT idSample, name, dataType FROM samples"
-					);
-			
+			);
+			samples = new HashMap<Integer, Sample>();
 			while(r.next())
 			{
 				int id = r.getInt(1);
-				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));
+				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -211,7 +322,7 @@ public class GmmlGex {
 	public class Sample implements Comparable
 	{
 		public int idSample;
-		public String name;
+		private String name;
 		public int dataType;
 		
 		/**
@@ -229,6 +340,8 @@ public class GmmlGex {
 			this.name = name;
 			this.dataType = dataType;
 		}
+		
+		public String getName() { return name == null ? "" : name; }
 		
 		/**
 		 * Compares this object to another {@link Sample} object based on the idSample property
@@ -264,159 +377,20 @@ public class GmmlGex {
 	 */
 	public boolean hasData(String id, String code)
 	{
-		if(data == null) return false;
-		RefData refData = getCachedData(id, code);
-		if(refData != null && refData.sampleData.size() > 0)
-			return true;
-		else
-			return false;
+		if(cachedData == null) return false;
+		return cachedData.hasData(id, code);
 	}
 	
-	/**
-	 * This {@link HashMap} contains the cached data in the form of {@link RefData} objects
-	 * for all gene ids on the currently loaded
-	 * mapp for which data is found in the Expression database
-	 */
-	public HashMap<String, RefData> data;
-	
-	/**
-	 * Gets the cached data for the given gene identifier and systemcode
-	 * @param id	The gene identifier to get the data for
-	 * @param code	The systemcode of the gene identifier
-	 * @return		A {@link RefData} object containing the cached data
-	 */
-	public RefData getCachedData(String id, String code)
+	public HashMap<Integer, Sample> getSamples()
 	{
-		RefData refData = null;
-		if(data.containsKey(id)) refData = data.get(id);
-		if(refData != null && !refData.code.equalsIgnoreCase(code)) refData = null; //Code doesn't match
-		return refData;
+		return samples;
 	}
 	
-	/**
-	 * This class contains the cached data from the Expression database for a single gene id.
-	 */
-	public class RefData
+	public Data getCachedData(String id, String code)
 	{
-		String mappId;
-		String code;
-		/**
-		 * Contains the Expression data for all samples and all cross references for the
-		 * gene id of this object. Uses idSample as key and an {@link ArrayList<String[]>}
-		 * containing a String[] for every cross reference. This String[] with a length of 2 contains
-		 * the gene id at index 0 and the corresponding data value at index 1
-		 */
-		public HashMap<Integer, ArrayList<String[]>> sampleData;
-		
-		/**
-		 * Constructor for this class
-		 * @param mappId	the gene id for which this object contains expression data
-		 * @param code	The systemcode of the gene identifier
-		 */
-		public RefData(String mappId, String code)
-		{
-			this.mappId = mappId;
-			this.code = code;
-			sampleData = new HashMap<Integer, ArrayList<String[]>>();
-		}
-		
-		/**
-		 * Gets all cross references for the gene id of this object ({@link mappId})
-		 * for which Expression data is available
-		 * @return
-		 */
-		public ArrayList<String> getRefIds()
-		{
-			int someSample = ((Sample)samples.values().toArray()[0]).idSample;
-			ArrayList<String> refIds = new ArrayList<String>();
-			if(!sampleData.containsKey(someSample)) return null;
-			for(String[] s : sampleData.get(someSample))
-			{
-				refIds.add(s[0]);
-			}
-			return refIds;
-		}
-		
-		/**
-		 * Gets the average of the data over the cross references for every sample
-		 * @return returns a {@link HashMap} with as key the sampleId and as value
-		 * either a Double or a String (depending on the sample's data type) representing
-		 * the average (over all cross references) in case the data type was Double
-		 * or a combined String seperated by comma's in case the data type was String
-		 */
-		public HashMap<Integer, Object> getAvgSampleData()
-		{
-			HashMap<Integer, Object> avgSampleData = new HashMap<Integer, Object>();
-			for(int i : sampleData.keySet())
-			{
-				if(samples.get(i).dataType == Types.REAL)
-				{
-					avgSampleData.put(i, getAvgDouble(sampleData.get(i)));
-				} else 
-				{
-					avgSampleData.put(i, getAvgString(sampleData.get(i)));
-				}
-			}
-			return avgSampleData;
-		}
-		
-		/**
-		 * Gets the average data value for an {@link ArrayList} containing a
-		 * String[] (with the gene id at index 0 and the data value at index 1) for
-		 * every cross reference. For the data value, only Strings that can be parsed as
-		 * double are taken into account, others are ignored
-		 * @param data	{@link ArrayList} containing a String[] 
-		 * (with the gene id at index 0 and the data value at index 1) for
-		 * every cross reference
-		 * @return average of all data values
-		 */
-		public Double getAvgDouble(ArrayList<String[]> data)
-		{
-			double avg = 0;
-			boolean numberFound = false;
-			for(String[] d : data)
-			{
-				double v = 0;
-				try { v = Double.parseDouble(d[2]); numberFound = true;} catch(Exception e) { }
-				avg += v;
-			}
-			if(numberFound) { return avg / data.size(); } else { return null; }
-		}
-		
-		/**
-		 * Gets a combined string for an {@link ArrayList} containing a
-		 * String[] (with the gene id at index 0 and the data value at index 1) for
-		 * every cross reference.
-		 * @param data	{@link ArrayList} containing a String[] 
-		 * (with the gene id at index 0 and the data value at index 1) for
-		 * every cross reference
-		 * @return		A combined String consisting of all data values, seperated by a comma
-		 */
-		public String getAvgString(ArrayList<String[]> data)
-		{
-			StringBuilder str = new StringBuilder("Multiple values: ");
-			for(String[] d : data)
-			{
-				str.append(d[2] + ", ");
-			}
-			return str.substring(0, str.lastIndexOf(", "));
-		}
-		
-		/**
-		 * Checks whether this object contains more than one cross reference with Expression data
-		 * and therefore the data will be averaged
-		 * @return	true if the data will be averaged, false if not
-		 */
-		public boolean isAveraged()
-		{
-			if(sampleData.size() > 0)
-			{
-				return sampleData.get(sampleData.keySet().toArray()[0]).size() > 1;
-			}
-			return false;
-		}
-	}	
-	
+		if(cachedData != null) return cachedData.getData(id, code);
+		return null;
+	}
 	
 	/**
 	 * Gets all available expression data for the given gene id and returns a string
@@ -434,26 +408,23 @@ public class GmmlGex {
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
 				|| gmmlGdb.getCon() == null //and to the gene database
-				) return noDataFound;
+		) return noDataFound;
 		
-		RefData refData = getCachedData(id, code);
-		if(refData == null) return noDataFound;
-		ArrayList<String> refIds = refData.getRefIds();
-		if(refIds == null) return noDataFound; //The gene doesn't have data after all
-		for(String refId : refIds)
+		Data mappIdData = cachedData.getData(id, code);
+		if(mappIdData == null) return noDataFound;
+		ArrayList<Data> refData = mappIdData.getRefData();
+		if(refData == null) return noDataFound; //The gene doesn't have data after all
+		for(Data d : refData)
 		{
-			colNames += "<TH>" + refId;
+			colNames += "<TH>" + d.id;
 		}
 		String dataString = "";
-		for(Sample s : samples.values())
+		for(Sample s : getSamples().values())
 		{
 			dataString += "<TR><TH>" + s.name;
-			if(refData.sampleData.get(s.idSample) != null)
+			for(Data d : refData)
 			{
-				for(String[] data : refData.sampleData.get(s.idSample))
-				{
-					dataString += "<TH>" + data[2];
-				}
+				dataString += "<TH>" + d.getData(s.idSample);
 			}
 		}
 		
@@ -468,9 +439,7 @@ public class GmmlGex {
 	 */
 	public void cacheData(ArrayList<String> ids, ArrayList<String> codes)
 	{	
-		setSamples(); //Cache the samples in the dataset
-	
-		data = new HashMap<String, RefData>();
+		cachedData = new CachedData();
 		for(int i = 0; i < ids.size(); i++)
 		{
 			String id = ids.get(i);
@@ -478,39 +447,30 @@ public class GmmlGex {
 			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
 			if(ensIds.size() > 0) //Only create a RefData object if the id maps to an Ensembl gene
 			{
-				RefData refData = new RefData(id, code);
-				data.put(id, refData);
+				Data mappGeneData = cachedData.new Data(id, code);
 				
 				for(String ensId : ensIds)
 				{				
 					try {					
 						ResultSet r = con.createStatement().executeQuery(
-								"SELECT id, data, idSample FROM expression " +
+								"SELECT id, code, data, idSample FROM expression " +
 								" WHERE ensId = '" + ensId + "'");
 						//r contains all genes and data mapping to the Ensembl id
 						while(r.next())
 						{
-							String[] data = new String[3];
-							data[0] = r.getString("id");
-							data[1] = ensId;
-							data[2] = r.getString("data");
 							int idSample = r.getInt("idSample");
-							if(refData.sampleData.containsKey(idSample))
-							{//This sample is already present in the sampleData, append
-								refData.sampleData.get(idSample).add(data);
-							}
-							else
-							{//This sample is not present yet, create
-								ArrayList<String[]> d = new ArrayList<String[]>();
-								d.add(data);
-								refData.sampleData.put(idSample, d);
-							}						
+							mappGeneData.addRefData(
+									r.getString("id"), 
+									r.getString("code"),
+									idSample,
+									r.getString("data"));	
 						}
 					} catch (Exception e)
 					{
 						e.printStackTrace();
 					}
 				}
+				if(mappGeneData.hasData()) cachedData.addData(id, mappGeneData);
 			}
 			if(cacheThread.isInterrupted) //Check if the process is interrupted
 			{
@@ -520,7 +480,7 @@ public class GmmlGex {
 		}
 		cacheThread.progress = 100;
 	}
-
+	
 	/**
 	 * {@link CacheThread} to facilitate caching of Expression data of genes in a pathway in a
 	 * seperate {@link Thread}
@@ -681,14 +641,14 @@ public class GmmlGex {
 //		Open a connection to the error file
 		String errorFile = info.gexFile + ".ex.txt";
 		int errors = 0;
-    	PrintWriter error = null;
-	    try {
-	        error = new PrintWriter(new FileWriter(errorFile));
-	    } catch(IOException ex) {
-	        ex.printStackTrace();
-	        page.println("Error: could not open exception file: " + ex.getMessage());
-	    }
-	    
+		PrintWriter error = null;
+		try {
+			error = new PrintWriter(new FileWriter(errorFile));
+		} catch(IOException ex) {
+			ex.printStackTrace();
+			page.println("Error: could not open exception file: " + ex.getMessage());
+		}
+		
 		try 
 		{
 			page.println("Creating expression dataset");
@@ -707,22 +667,22 @@ public class GmmlGex {
 			PreparedStatement pstmt = con.prepareStatement(
 					" INSERT INTO SAMPLES " +
 					"	(idSample, name, dataType)  " +
-					" VALUES (?, ?, ?)		  ");
+			" VALUES (?, ?, ?)		  ");
 			int sampleId = 0;
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++) {
 				if(monitor.isCanceled()) { close(true, true); error.close(); return; } //User pressed cancel
 				if(i != info.idColumn && i != info.codeColumn) { //skip the gene and systemcode column
 					try {
-					pstmt.setInt(1, sampleId++);
-					pstmt.setString(2, headers[i]);
-					pstmt.setInt(3, info.isStringCol(i) ? Types.CHAR : Types.REAL);
-					pstmt.execute();
-					dataCols.add(i);
+						pstmt.setInt(1, sampleId++);
+						pstmt.setString(2, headers[i]);
+						pstmt.setInt(3, info.isStringCol(i) ? Types.CHAR : Types.REAL);
+						pstmt.execute();
+						dataCols.add(i);
 					} catch(Error e) { 
 						errors = reportError(error, "Error in headerline, can't add column " + i + 
 								" due to: " + e.getMessage(), errors);
-					
+						
 					}
 				}
 			}
@@ -741,6 +701,7 @@ public class GmmlGex {
 			int added = 0;
 			while((line = in.readLine()) != null) 
 			{
+				if(monitor.isCanceled()) { close(); error.close(); return; } //User pressed cancel
 				String[] data = line.split(ImportInformation.DELIMITER, headers.length);
 				n++;
 				if(n == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
@@ -766,7 +727,6 @@ public class GmmlGex {
 					{
 						for(int col : dataCols)
 						{
-							if(monitor.isCanceled()) { close(); error.close(); return; } //User pressed cancel
 							try {
 								pstmt.setString(1,id);
 								pstmt.setString(2,code);
@@ -788,8 +748,9 @@ public class GmmlGex {
 			if(errors > 0) {
 				page.println(errors + " errors occured, see file '" + errorFile + "' for details");
 			} else {
-				 new File(errorFile).delete(); // If no errors were found, delete the error file
+				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
+			monitor.setTaskName("Closing database connection");
 			close(true, true);
 			error.close();
 			connect(); //re-connect and use the created expression dataset
@@ -801,14 +762,13 @@ public class GmmlGex {
 			error.close();
 		}
 	}
-		
+	
 	private int reportError(PrintWriter out, String message, int nrError) 
 	{
 		out.println(message);
 		nrError++;
 		return nrError;
 	}
-	
 	/**
 	 * {@link Connection} to the GenMAPP Expression Dataset
 	 */
@@ -826,17 +786,18 @@ public class GmmlGex {
 	public void convertGex()
 	{
 		//Open a connection to the error file
-    	PrintWriter error = null;
-	    try {
-	        error = new PrintWriter(new FileWriter("convert_gex_error.txt"));
-	    } catch(IOException ex) {
-	        ex.printStackTrace();
-	    }
-	    
-		connect(true); //Connect and delete the old database if exists
-		connectGmGex(gmGexFile); //Connect to the GenMAPP gex
-		createTables();
+		PrintWriter error = null;
 		try {
+			error = new PrintWriter(new FileWriter("convert_gex_error.txt"));
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		try {
+			connect(true); //Connect and delete the old database if exists
+			connectGmGex(gmGexFile); //Connect to the GenMAPP gex
+			createTables();
+			
 			con.setAutoCommit(false); //Keep control over when to commit, should increase speed
 			Statement s = conGmGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			
@@ -886,7 +847,7 @@ public class GmmlGex {
 				} else { //Gene maps to an Ensembl id, so add it
 					ArrayList<String> data = new ArrayList<String>();
 					for(int i = 4; i < nCols - 1; i++) { // Column 4 to 2 before last contain expression data
-							data.add(r.getString(i));
+						data.add(r.getString(i));
 					}
 					for( String ensId : ensIds) //For every Ensembl id add the data
 					{
@@ -894,12 +855,12 @@ public class GmmlGex {
 						for(String str : data)
 						{
 							try {
-									pstmtExpr.setString(1,id);
-									pstmtExpr.setString(2,code);
-									pstmtExpr.setString(3, ensId);
-									pstmtExpr.setInt(4,i);
-									pstmtExpr.setString(5,str);
-									pstmtExpr.execute();
+								pstmtExpr.setString(1,id);
+								pstmtExpr.setString(2,code);
+								pstmtExpr.setString(3, ensId);
+								pstmtExpr.setInt(4,i);
+								pstmtExpr.setString(5,str);
+								pstmtExpr.execute();
 							} catch (Exception e) {
 								error.println(id + ", " + code + ", " + i + "\t" + e.getMessage());
 							}
@@ -933,18 +894,18 @@ public class GmmlGex {
 	 * @param 	clean true if the old database has to be removed, false for just connecting
 	 * @return 	null if the connection was created, a String with an error message if an error occured
 	 */
-	public String connect(boolean clean)
+	public void connect(boolean clean) throws Exception
 	{
 		if(clean)
 		{
 			//remove old property file
 			File gexPropFile = gexFile;
 			gexPropFile.delete();
-			return connect();
+			connect();
 		}
 		else
 		{
-			return connect();
+			connect();
 		}
 	}
 	
@@ -952,26 +913,20 @@ public class GmmlGex {
 	 * Connects to the Expression database (location given in {@link gexFile}
 	 * @return null if the connection was created, a String with an error message if an error occured
 	 */
-	public String connect()
+	public void connect() throws Exception
 	{
-		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-			Properties prop = new Properties();
-			prop.setProperty("user","sa");
-			prop.setProperty("password","");
-			//prop.setProperty("hsqldb.default_table_type","cached");
-			String file = gexFile.getAbsolutePath().toString();
-			con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-					file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
-			
-//			System.out.println(con.isReadOnly());
-			con.setReadOnly(true);
-			return null;
-		} catch(Exception e) {
-			System.out.println ("Error: " +e.getMessage());
-			e.printStackTrace();
-			return e.getMessage();
-		}
+		Class.forName("org.hsqldb.jdbcDriver");
+		Properties prop = new Properties();
+		prop.setProperty("user","sa");
+		prop.setProperty("password","");
+		//prop.setProperty("hsqldb.default_table_type","cached");
+		String file = gexFile.getAbsolutePath().toString();
+		con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
+				file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
+		con.setReadOnly(true);
+		
+		setSamples();
+		loadColorSets();
 	}
 	
 	/**
@@ -1081,22 +1036,22 @@ public class GmmlGex {
 			" )										");
 			sh.execute(
 					"CREATE INDEX i_expression_id " +
-					"ON expression(id)			 ");
+			"ON expression(id)			 ");
 			sh.execute(
 					"CREATE INDEX i_expression_ensId " +
-					"ON expression(ensId)			 ");
+			"ON expression(ensId)			 ");
 			sh.execute(
 					"CREATE INDEX i_expression_idSample " +
-					"ON expression(idSample)	 ");
+			"ON expression(idSample)	 ");
 			sh.execute(
 					"CREATE INDEX i_expression_data " +
-					"ON expression(data)	     ");
+			"ON expression(data)	     ");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSets					" +
 					"(	colorSetId INTEGER PRIMARY KEY,	" +
 					"	name VARCHAR(50)," +
-					"	criterion VARCHAR(100)	)");
+			"	criterion VARCHAR(100)	)");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSetObjects				" +
@@ -1104,7 +1059,7 @@ public class GmmlGex {
 					"	name VARCHAR(50),				" +
 					"	colorSetId INTEGER,				" +
 					"	criterion VARCHAR(100)			" +
-					" )							");
+			" )							");
 		} catch (Exception e)
 		{
 			System.out.println ("Error: " + e.getMessage());

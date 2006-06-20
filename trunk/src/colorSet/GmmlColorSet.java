@@ -32,6 +32,20 @@ public class GmmlColorSet {
 	public static final int SAMPLE_TYPE_PROT	= 2;
 	
 	/**
+	 * Possible ways to display a gene that has multiple data
+	 */
+	public static String[] MULT_DATA_DISPLAY_METHODS = 
+	{"average (and mark gene with red border)", "divide gene in horizontal bars"};
+	/**
+	 * Field value indicating that multiple data for a gene should be averaged
+	 */
+	public static final int MULT_DATA_AVG = 0;
+	/**
+	 * Field value indicating that multiple data for a gene should be displayed in seperate
+	 * horizontal bars
+	 */
+	public static final int MULT_DATA_DIV = 1;
+	/**
 	 * Standard color for when the colorset returns no valid color (no criteria met)
 	 */
 	public static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
@@ -41,6 +55,22 @@ public class GmmlColorSet {
 	public static RGB COLOR_NO_GENE_FOUND = new RGB(255, 255, 255);
 	public RGB color_no_criteria_met = COLOR_NO_CRITERIA_MET;
 	public RGB color_gene_not_found = COLOR_NO_GENE_FOUND;
+	
+	private int multipleDataDisplay;
+	/**
+	 * Sets how this colorset has to display genes with multiple data values
+	 * @param type one of the field constants of this class starting with MULT_DATA
+	 */
+	public void setMultipleDataDisplay(int type) 
+	{ 
+		if(type < 0 || type > MULT_DATA_DISPLAY_METHODS.length) return;
+		this.multipleDataDisplay = type;
+	}
+	/**
+	 * Get the way this colorset displays genes with multiple data values
+	 * @return
+	 */
+	public int getMultipleDataDisplay() { return multipleDataDisplay; }
 	
 	public String name;
 	
@@ -110,7 +140,7 @@ public class GmmlColorSet {
 	 * @param sampleId	the id of the sample that will be visualized
 	 * @return	an {@link RGB} object representing the color for the given data
 	 */
-	public RGB getColor(HashMap<Integer,Object> data, int sampleId)
+	public RGB getColor(HashMap<Integer, Object> data, int sampleId)
 	{
 		RGB rgb = color_no_criteria_met; //The color to return
 		Iterator it = colorSetObjects.iterator();
@@ -259,7 +289,7 @@ public class GmmlColorSet {
 		{
 			try { 
 				a.add(gmmlGex.getSamples().get(Integer.parseInt(s[i])));
-			} catch (Exception e) { }
+			} catch (Exception e) { e.printStackTrace();}
 		}
 		return a;
 	}

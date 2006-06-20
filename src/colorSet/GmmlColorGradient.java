@@ -47,6 +47,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
 		super(parent, name);
+		getColorValuePairs();
 	}
 	
 	/**
@@ -59,6 +60,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public GmmlColorGradient(GmmlColorSet parent, String name, String criterion)
 	{
 		super(parent, name, criterion);
+		getColorValuePairs();
 	}
 	
 	/**
@@ -127,9 +129,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 			double value = (Double)data.get(applySample); //Try to get the data
 			return getColor(value);
 		} catch(NullPointerException ne) { //No data available
-//			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
-		} catch(ClassCastException ce) { //Data is not double
-//			System.out.println("GmmlColorGradient:getColor:Error: Data is not of type double");
+			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
+		} catch(ClassCastException ce) { //Data not of type double
 		} catch(Exception e) { //Any other exception
 			e.printStackTrace();
 		}

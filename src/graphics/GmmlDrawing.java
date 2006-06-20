@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import data.GmmlGex;
-import data.GmmlGex.RefData;
 import data.GmmlGex.Sample;
+import data.GmmlGex.CachedData.Data;
 
 /**
  * This class implements and handles a drawing.
@@ -810,14 +810,14 @@ PaintListener, MouseTrackListener, KeyListener
 			            labelR.setBackground(getShell().getDisplay()
 			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			            
-			            RefData refData = gmmlGex.data.get(gp.name);
-			            if(refData == null) return; //No data in cache for this geneproduct
-			            HashMap<Integer, Object> data = refData.getAvgSampleData();
+			            Data mappIdData = gmmlGex.getCachedData(gp.name, gp.getSystemCode());
+			            if(mappIdData == null) return; //No data in cache for this geneproduct
+			            HashMap<Integer, Object> data = mappIdData.getAverageSampleData();
 			            String textL = "";
 			            String textR = "";
 			            for(Sample s : gmmlGex.colorSets.get(colorSetIndex).useSamples)
 			            {
-			            	textL += s.name + ":  \n";
+			            	textL += s.getName() + ":  \n";
 			            	textR += data.get(new Integer(s.idSample)) + "\n";
 			            }
 			            if(textL.equals("") && textR.equals("")) return;

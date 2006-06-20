@@ -31,12 +31,11 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 	
 	public void testExpression(String expression) throws Exception
 	{
-		getParent().gmmlGex.getSamples();
 		//Set some value for every sample
 		HashMap<Integer, Sample> samples = getParent().gmmlGex.getSamples();
 		clearSymbols();
 		for(Sample s : samples.values()) {
-			addSymbol(s.name, 1.0);
+			addSymbol(s.getName(), 1.0);
 		}
 		evaluate(expression);
 	}
@@ -59,7 +58,7 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		clearSymbols();
 		for(Sample s : samples.values()) {
 			Object value = data.get(s.idSample);
-			if(value instanceof Double) addSymbol(s.name, (Double)value);
+			if(value instanceof Double) addSymbol(s.getName(), (Double)value);
 		}
 
 		try {

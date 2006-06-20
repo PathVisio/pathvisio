@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import util.GmmlColorConvertor;
 import util.SwtUtils;
 import colorSet.GmmlColorCriterion;
 import colorSet.GmmlColorGradient;
@@ -221,7 +220,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 					i++;
 					Label l = new Label(this, SWT.FLAT);
 					l.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-					l.setText(i + ": " + s.name);
+					l.setText(i + ": " + s.getName());
 				}
 				
 				if(!isCustomSize)
@@ -480,7 +479,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			case GmmlColorGradient.USE_SAMPLE_ALL:
 				label = "All samples"; break;
 			default:
-				label = gmmlGex.getSamples().get(dataColumn).name; break;
+				label = gmmlGex.getSamples().get(dataColumn).getName(); break;
 			}
 			Point labelSize = e.gc.textExtent(label);
 			e.gc.drawString(label, (end - start) / 2 - labelSize.x / 2, 

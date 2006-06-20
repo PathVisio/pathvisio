@@ -189,7 +189,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		for(int id : keys)
 		{
 			coNumSampleIndex.add(id);
-			coNumSampleNames[id] = samples.get(id).name;
+			coNumSampleNames[id] = samples.get(id).getName();
 		}
 	}
 	
@@ -756,13 +756,13 @@ public class ColorSetWindow extends ApplicationWindow {
 	{
 		ArrayList<String> noStringSamples = new ArrayList<String>();
 		coSampleIndex = new ArrayList<Integer>();
-		if(cs.useSamples.size() == 0)
-		{ //No samlpes are selected for visalization, makes no sense to create a gradient, so display warning
-			MessageDialog.openError(getShell(), "Error", "No samples selected for visualization\n" +
-					"Select samples from list and click '>'");
-			setMiddleCompositeContents(cs);
-			return false;
-		}
+//		if(cs.useSamples.size() == 0)
+//		{ //No samlpes are selected for visalization, makes no sense to create a gradient, so display warning
+//			MessageDialog.openError(getShell(), "Error", "No samples selected for visualization\n" +
+//					"Select samples from list and click '>'");
+//			setMiddleCompositeContents(cs);
+//			return false;
+//		}
 		noStringSamples.add("All samples");
 		coSampleIndex.add(GmmlColorGradient.USE_SAMPLE_ALL);
 		//Get the selected samples and store their name and index
@@ -771,7 +771,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			Sample s = cs.useSamples.get(i);
 			if(s.dataType == Types.REAL) //Filter out samples containing string data
 			{
-				noStringSamples.add(s.name);
+				noStringSamples.add(s.getName());
 				coSampleIndex.add(s.idSample);
 			}
 		}
@@ -1086,6 +1086,15 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 		
 		public void widgetSelected(SelectionEvent e) {
+			int csIndex = csCombo.getSelectionIndex();
+			if(csIndex >= gmmlGex.colorSets.size()) return;
+			GmmlColorSet cs = gmmlGex.colorSets.get(csIndex);
+			if(cs.useSamples.size() == 0)
+			{ //No samlpes are selected for visalization, makes no sense to create a gradient, so display warning
+				MessageDialog.openError(getShell(), "Error", "No samples selected for visualization\n" +
+						"Select samples from list and click '>'");
+				return;
+			}
 			dialog = new NewCoDialog(Display.getCurrent().getActiveShell());
 			dialog.open();
 		}
@@ -1611,7 +1620,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	{
 		public String getText(Object element)
 		{
-			return ((Sample)element).name;
+			return ((Sample)element).getName();
 		}
 	}
 	
@@ -1651,7 +1660,7 @@ public class ColorSetWindow extends ApplicationWindow {
 				GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 				switch(columnIndex) {
 				case 0: //Name
-					return s.name;
+					return s.getName();
 				case 1: //Type
 					return GmmlColorSet.SAMPLE_TYPES[cs.sampleTypes.get(cs.useSamples.indexOf(s))];
 				}
@@ -1687,7 +1696,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());	
 			switch(stColNames.indexOf(property)) {
 			case 0:
-				return s.name;
+				return s.getName();
 			case 1:
 				return cs.sampleTypes.get(cs.useSamples.indexOf(s));
 			}

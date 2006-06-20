@@ -2,18 +2,10 @@ package graphics;
 
 
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
@@ -27,11 +19,10 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
 import util.SwtUtils;
-
-import colorSet.*;
-import data.*;
-import data.GmmlGex.RefData;
-import data.GmmlGex.Sample;
+import colorSet.GmmlColorSet;
+import data.GmmlGdb;
+import data.GmmlGex;
+import data.GmmlGex.CachedData.Data;
 
 public class GmmlGpColor {
 		
@@ -57,56 +48,10 @@ public class GmmlGpColor {
 	public static final int MAX_COLOR_SIZE = 20;
 	Color c;
 	Font f;
+	PaintEvent e;
+	GC buffer;
 	
-	protected void draw(PaintEvent e, GC buffer)
-	{
-		c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
-		f = new Font(e.display, "ARIAL", parent.fontSize, SWT.NONE);
-		
-		Rectangle r = parent.getBounds();
-		buffer.setBackground(c);
-		buffer.fillRectangle(r.x, r.y, r.width, r.height);
-		if(!(gmmlGex.con == null) && canvas.colorSetIndex > -1 && 
-				!canvas.isEditMode() && gmmlGex.colorSets.size() > 0)
-		{
-			// Get visualization area
-			Rectangle colorArea = parent.getBounds();
-//			colorArea.width = (int)Math.ceil(COLOR_AREA_RATIO * colorArea.width);
-			
-			// Adjust width to enable to divide into nrSamples equal rectangles
-			GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
-			colorArea.width = (int)Math.min(COLOR_AREA_RATIO * colorArea.width, 
-					MAX_COLOR_SIZE * cs.useSamples.size());
-			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
-			// Get x position
-			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
-			
-			if(gmmlGex.hasData(parent.name, parent.getSystemCode()))
-			{
-				colorByData(e, buffer, colorArea);
-			}
-			else
-			{				
-				colorByGeneNotFound(e, buffer, colorArea);
-			}
-			drawLabel(e, buffer, colorArea);
-			
-		} else {			
-			buffer.setFont (f);
-			Point textSize = buffer.textExtent (parent.geneID);
-			
-			c = SwtUtils.changeColor(c, parent.color, e.display);
-			buffer.setForeground(c);
-			buffer.drawString (parent.geneID, 
-				(int) parent.centerx - (textSize.x / 2) , 
-				(int) parent.centery - (textSize.y / 2), true);
-		}
-		
-		c.dispose();
-		f.dispose();
-	}
-	
-	private void drawLabel(PaintEvent e, GC buffer, Rectangle colorArea)
+	private void drawLabel(Rectangle colorArea)
 	{
 		Point textSize = null;
 		Rectangle r = parent.getBounds();
@@ -127,7 +72,7 @@ public class GmmlGpColor {
 		
 	}
 	
-	private void colorByGeneNotFound(PaintEvent e, GC buffer, Rectangle colorArea)
+	private void colorByGeneNotFound(Rectangle colorArea)
 	{
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
 		
@@ -137,11 +82,10 @@ public class GmmlGpColor {
 		buffer.fillRectangle(colorArea.x, colorArea.y, colorArea.width, colorArea.height);
 	}
 	
-	private void colorByData(PaintEvent e, GC buffer, Rectangle colorArea)
+	private void colorByData(Rectangle colorArea)
 	{
 		RGB rgb = null;
-		RefData refData = gmmlGex.data.get(parent.name);
-		HashMap<Integer, Object> data = refData.getAvgSampleData();
+		Data mappIdData = gmmlGex.getCachedData(parent.name, parent.getSystemCode());
 		
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
 		
@@ -149,41 +93,39 @@ public class GmmlGpColor {
 		int width = colorArea.width / nr;
 		for(int i = 0; i < nr; i++)
 		{
+			int idSample = cs.useSamples.get(i).idSample; // The sample to visualize
+			
 			// Get sub-rectangle
 			int x = colorArea.x + width * i;
 			Rectangle r = new Rectangle(x,
 					colorArea.y, width, colorArea.height);
-			// Get the color
-			c = SwtUtils.changeColor(c, cs.color_gene_not_found, e.display);
-			rgb = cs.getColor(data, cs.useSamples.get(i).idSample);
-			if(rgb != null)
-			{
-				c = SwtUtils.changeColor(c, rgb, e.display);
-			}
-			buffer.setBackground(c);
-			
-			// Visualize according column type
-			
-			switch(cs.sampleTypes.get(i))
+						
+			// Visualize according sample type
+			int sampleType = cs.sampleTypes.get(i);
+			switch(sampleType)
 			{
 			case GmmlColorSet.SAMPLE_TYPE_PROT:
-				Image image = parent.canvas.gmmlVision.imageRegistry.get("data.protein");
-				drawDataTypeImage(e, buffer, image, r);
-				break;
 			case GmmlColorSet.SAMPLE_TYPE_TRANS:
-				image = parent.canvas.gmmlVision.imageRegistry.get("data.mRNA");
-				drawDataTypeImage(e, buffer, image, r);
+				setBackgroundColor(cs, mappIdData.getAverageSampleData(), idSample);
+				drawAsImage(sampleType, r);
 				break;
 			case GmmlColorSet.SAMPLE_TYPE_UNDEF:
-				buffer.fillRectangle(r.x, r.y, r.width, r.height);
-				buffer.setForeground(e.display.getSystemColor(SWT.COLOR_DARK_GRAY));
-				buffer.drawRectangle(r.x, r.y, r.width, r.height);
+				switch(cs.getMultipleDataDisplay()) {
+				case GmmlColorSet.MULT_DATA_AVG:
+					setBackgroundColor(cs, mappIdData.getAverageSampleData(), idSample);
+					buffer.fillRectangle(r.x, r.y, r.width, r.height);
+					buffer.setForeground(e.display.getSystemColor(SWT.COLOR_DARK_GRAY));
+					buffer.drawRectangle(r.x, r.y, r.width, r.height);
+					break;
+				case GmmlColorSet.MULT_DATA_DIV:
+					drawAsHorizontalBars(cs, mappIdData, idSample, r);
+				}
 			}
 		}
 		
 		Rectangle r = parent.getBounds();
 		
-		if(refData.isAveraged())
+		if(mappIdData.hasMultipleData())
 		{
 			org.eclipse.swt.graphics.Rectangle clip = buffer.getClipping();
 			Region noClipping = null;
@@ -199,8 +141,31 @@ public class GmmlGpColor {
 		}
 	}
 	
-	protected void drawDataTypeImage(PaintEvent e, GC buffer, Image image, Rectangle r)
+	private void setBackgroundColor(GmmlColorSet cs, HashMap<Integer, Object> data, int idSample)
 	{
+		c = SwtUtils.changeColor(c, cs.color_gene_not_found, e.display);
+		RGB rgb = null;
+		if((rgb = cs.getColor(data, idSample)) != null)
+			c = SwtUtils.changeColor(c, rgb, e.display);
+		buffer.setBackground(c);
+	}
+	
+	private void drawAsHorizontalBars(GmmlColorSet cs, Data mappIdData, 
+			int idSample, Rectangle r)
+	{
+		//TODO: divide in horizontal bars and color
+	}
+	
+	private void drawAsImage(int sampleType, Rectangle r)
+	{
+		Image image = null;
+		switch(sampleType)
+		{
+		case GmmlColorSet.SAMPLE_TYPE_PROT:
+			image = parent.canvas.gmmlVision.imageRegistry.get("data.mRNA"); break;
+		case GmmlColorSet.SAMPLE_TYPE_TRANS:
+			image = parent.canvas.gmmlVision.imageRegistry.get("data.protein"); break;
+		}
 		
 		if(image != null)
 		{
@@ -217,6 +182,55 @@ public class GmmlGpColor {
 		} else {
 			buffer.fillRectangle(r.x, r.y, r.width, r.height);
 		}
+	}
+
+	protected void draw(PaintEvent e, GC buffer)
+	{
+		c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
+		f = new Font(e.display, "ARIAL", parent.fontSize, SWT.NONE);
+		this.e = e;
+		this.buffer = buffer;
+		
+		Rectangle r = parent.getBounds();
+		buffer.setBackground(c);
+		buffer.fillRectangle(r.x, r.y, r.width, r.height);
+		if(!(gmmlGex.con == null) && canvas.colorSetIndex > -1 && 
+				!canvas.isEditMode() && gmmlGex.colorSets.size() > 0)
+		{
+			// Get visualization area
+			Rectangle colorArea = parent.getBounds();
+			
+			// Adjust width to enable to divide into nrSamples equal rectangles
+			GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
+			colorArea.width = (int)Math.min(COLOR_AREA_RATIO * colorArea.width, 
+					MAX_COLOR_SIZE * cs.useSamples.size());
+			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
+			// Get x position
+			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
+			
+			if(gmmlGex.hasData(parent.name, parent.getSystemCode()))
+			{
+				colorByData(colorArea);
+			}
+			else
+			{				
+				colorByGeneNotFound(colorArea);
+			}
+			drawLabel(colorArea);
+			
+		} else {			
+			buffer.setFont (f);
+			Point textSize = buffer.textExtent (parent.geneID);
+			
+			c = SwtUtils.changeColor(c, parent.color, e.display);
+			buffer.setForeground(c);
+			buffer.drawString (parent.geneID, 
+				(int) parent.centerx - (textSize.x / 2) , 
+				(int) parent.centery - (textSize.y / 2), true);
+		}
+		
+		c.dispose();
+		f.dispose();
 	}
 	
 	protected void draw(PaintEvent e)

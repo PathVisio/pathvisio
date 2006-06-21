@@ -14,6 +14,8 @@ AllowNoIcons=yes
 OutputBaseFilename=Install-GMML-Vision-beta
 Compression=lzma
 SolidCompression=yes
+OutputDir=dist
+
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

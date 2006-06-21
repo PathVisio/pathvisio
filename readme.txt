@@ -61,25 +61,34 @@ the top directory, i.e. the directory containing build.xml.
 * HOW TO BUILD WITH ANT *
 *************************
 
-Make sure ant is set up properly. It comes with eclipse, but you'll have
+Using the ant build file, you can build the project
+from the command line. You can also use ant to generate
+the apidocs and to create an executable jar.
+
+It is also possible to set up eclipse to build ant targets.
+
+First make sure ant is set up properly. It comes with eclipse, but you'll have
 to check if the path is set correctly if you want to run it from the 
-command line. Alternatively, you can run ant targets directly from eclipse.
+command line.
 
 The ant build file provides the following targets, which you can invoke
-with 
+it from the directory which contains build.xml with 
 	ant <target>
-	
-compile: just compile all classes
-docs: generate all apidocs
-jar: generate executable jar file
-clean: remove all generated files
-all: clean, then compile, jar and docs.
+
+where <target> is one of:
+
+compile:   just compile all classes
+docs:      generate all apidocs
+jar:       generate executable jar file
+clean:     remove all generated files
+all:       clean, then compile, jar and docs.
 
 ********************************
 * HOW TO RUN FROM THE TERMINAL *
 ********************************
 
-If you have managed to build
+If you have managed to build the classes with ant or with eclipse, you 
+can use gmml-visio.bat to start java from the command line.
 
 **********************************
 * HOW TO BUILD WINDOWS INSTALLER *

@@ -1,1 +1,0 @@
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\interpro.txt.table' INTO TABLE interpro;

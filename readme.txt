@@ -32,7 +32,30 @@ gmml-visio.iss           - inno-setup script, to generate installer
 * HOW TO IMPORT IN ECLIPSE *
 ****************************
 
-More explanation later ...
+After obtaining the source:
+
+Open Eclipse
+File->New->Project...
+Java Project from existing Ant buildfile
+select "build.xml" from the gmml-visio source tree
+
+At this point the project will get imported and compiled. 
+If you see a ton of errors, this is probably because you haven't enabled 
+java 5.0 complicance. If this is the case, do
+
+Project->Properties
+Java Compiler
+mark "enable project specific settings"
+Set compiler compliance level to 5.0
+Apply
+The project gets rebuilt.
+
+If you want to run the gmml-visio, you need to select gmmlVision.GmmlVision 
+as the main class.
+
+If you get FileNotFoundExceptions for things like images\mrna.bmp, this means that
+the working directory is not set properly. Make sure the working directory is set to 
+the top directory, i.e. the directory containing build.xml. 
 
 *************************
 * HOW TO BUILD WITH ANT *

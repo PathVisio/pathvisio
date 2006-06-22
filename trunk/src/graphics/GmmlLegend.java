@@ -231,6 +231,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 				setSampleImage();
 				sampleLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				sampleLabel.setImage(sampleImage);
+				pack();
 				layout();
 			}
 			
@@ -243,7 +244,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
 			
 			int nr = colorSet.useSamples.size();
-			Point imageSize = new Point(Math.min(GmmlGeneProduct.INITIAL_WIDTH / 2 + nr * 10, sg.getClientArea().width - MARGIN), 
+			Point imageSize = new Point(sg.getClientArea().width - MARGIN, 
 					SAMPLE_IMAGE_HEIGHT);
 			if(sampleImage != null)
 			{
@@ -321,8 +322,9 @@ public class GmmlLegend extends Composite implements MouseListener,
 				}
 				
 				//Draw label for special criteria ('no gene found', 'no criteria met')
-				String[] specialLabels = {"No criteria met", "Gene not found"};
-				RGB[] specialColors = {colorSet.color_no_criteria_met, colorSet.color_gene_not_found};
+				String[] specialLabels = {"No criteria met", "Gene not found", "No data found"};
+				RGB[] specialColors = {colorSet.color_no_criteria_met, colorSet.color_no_gene_found,
+						colorSet.color_no_data_found};
 				
 				for(int i = 0; i < specialColors.length; i++)
 				{

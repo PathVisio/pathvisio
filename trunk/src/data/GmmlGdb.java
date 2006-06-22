@@ -14,7 +14,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -79,7 +78,7 @@ public class GmmlGdb {
 				propsFile.createNewFile();
 				props.setProperty("currentGdb", "none");
 			}
-			if(!props.get("currentGdb").equals("none"))
+			if(!(props.get("currentGdb") == null) && !props.get("currentGdb").equals("none"))
 			{
 				gdbFile = new File((String)props.get("currentGdb"));
 				try {
@@ -138,6 +137,23 @@ public class GmmlGdb {
 		}
 	}
 	
+	/**
+	 * Checks whether the given gene exists in the gene database
+	 * @param id
+	 * @param code
+	 * @return	true if the gene exists, false if not
+	 */
+	public boolean hasGene(String id, String code)
+	{
+		try {
+			ResultSet r = con.createStatement().executeQuery(
+					"SELECT COUNT(*) FROM gene WHERE " +
+					"id = '" + id + "' AND code = '" + code +"'"
+			);
+			r.next();
+			return r.getInt(1) > 0 ? true : false;
+		} catch(Exception e) { return false; }
+	}
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id

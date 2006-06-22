@@ -4,6 +4,10 @@
 	<property name="src.dir" value="src"/>
 	<property name="build.dir" value="build"/>
 	<property name="apidoc.dir" value="apidoc"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="svn.exec.svnversion" value="svnversion"/>
+	<property name="exec.inno.setup" value="iscc"/>
+	
 	<path id="project.class.path">
 		<pathelement location="lib/swt.jar"/>
 		<pathelement location="lib/jdom.jar"/>
@@ -15,6 +19,7 @@
 	<target name="prepare">
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
+		<mkdir dir="${dist.dir}"/>
 	</target>
 	
 	<target name="clean" description="Remove all generated files.">
@@ -28,7 +33,7 @@
 		</javac>
 			
 	</target>
-	
+
 	<target name="jar" depends="compile" description="Generates executable jar file">
 		<jar jarfile="gmml-visio.jar" manifest="src/MANIFEST.MF">
 			<fileset dir="${build.dir}" includes="**/*.class"/>
@@ -47,9 +52,37 @@
 			<package name="util"/>
 			<package name="data"/>
 			<sourcepath location="${src.dir}"/>
-		</javadoc>
-		
+		</javadoc>		
+	</target>
+
+
+	<target name="dist" depends="compile,jar" description="Creates distribution zip and installer">
+
+		<!-- query the repository for the revision nr. !-->
+		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
+			<arg line="-n ."/>
+		</exec>
+		<echo>Current Revision ${subversion_revision}</echo>
+
+		<zip zipfile="${dist.dir}/GMML-Visio.${subversion_revision}.zip">		
+			<fileset dir="." includes="backpage/*"/>
+			<fileset dir="." includes="icons/*"/>
+			<fileset dir="." includes="images/*"/>
+			<fileset dir="." includes="lib/*"/>
+			<fileset dir="." includes="gmml-visio.jar"/>
+			<fileset dir="." includes="swt-win32-3139.dll"/>
+			<fileset dir="." includes="gmml-visio.exe"/>
+		</zip>
+
+		<!-- create a windows installer using inno-setup and gmml-visio.iss!-->
+		<exec executable="${exec.inno.setup}">
+			<arg line="gmml-visio.iss"/>
+		</exec>		
+		<move file="${dist.dir}/GMML-Vision-Setup.exe" 
+			tofile="${dist.dir}/GMML-Vision-Setup.${subversion_revision}.exe" 
+			overwrite="true"/>			
 	</target>
 	
-	<target name="all" depends="clean,jar,docs" description="Rebuild all"/>
+	<target name="all" depends="clean,jar,docs,dist" description="Rebuild all"/>
+	
 </project>

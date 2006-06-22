@@ -56,7 +56,7 @@ public class GmmlPropertyTable {
 			"Color", "Style", "Type", "Rotation", "Orientation", "PicPointOffset",
 			"GeneID", "Xref", "TextLabel", "FontName", "FontWeight", "FontStyle", "FontSize",
 			"Name", "Organism", "Data-Source", "Version", "Author", "Maintained-By", "Email",
-			"Availability", "Last-Modified", "Notes", "BackPageHead", "GeneProduct-Data-Source",
+			"Availability", "Last-Modified", "Notes", "BackpageHead", "GeneProduct-Data-Source",
 			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight", "MapInfoLeft", "MapInfoTop"
 	});
 	

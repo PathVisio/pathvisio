@@ -1,5 +1,6 @@
 package colorSet;
 
+import gmmlVision.GmmlVision;
 import graphics.GmmlLegend;
 
 import java.io.FileInputStream;
@@ -480,7 +481,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    sampleTableComposite = new Composite(csSampleGroup, SWT.NONE);
 	    sampleTableComposite.setLayout(new FillLayout());
 	    sampleTableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	    sampleTable = new Table(sampleTableComposite, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+	    sampleTable = new Table(sampleTableComposite, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 	    
 	    sampleTable.setHeaderVisible(true);
 	    sampleTable.setLinesVisible(false);
@@ -1429,7 +1430,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			try {
 				criterionImage = new Image(null, new FileInputStream("icons/colorset.gif"));
 			} catch (Exception e) { 
-				e.printStackTrace();
+				GmmlVision.log.error("Unable to open image 'icons/colorset.gif'", e);
 			}
 		}
 		

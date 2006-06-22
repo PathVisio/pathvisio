@@ -1,5 +1,5 @@
 package attic;
-import java.io.*;
+import java.io.File;
 
 class GmmlFilter extends javax.swing.filechooser.FileFilter 
 {

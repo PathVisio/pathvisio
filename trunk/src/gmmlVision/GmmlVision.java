@@ -4,6 +4,7 @@ import graphics.GmmlDrawing;
 import graphics.GmmlGeneProduct;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -44,7 +45,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import colorSet.ColorSetWindow;
@@ -52,6 +52,7 @@ import data.GmmlData;
 import data.GmmlGdb;
 import data.GmmlGex;
 import data.ImportExprDataWizard;
+import debug.Logger;
 
 
 /**
@@ -63,6 +64,8 @@ public class GmmlVision extends ApplicationWindow
 {
 	private static final long serialVersionUID = 1L;
 	private static int ZOOM_TO_FIT = -1;
+	
+	public static Logger log;
 	
 	/**
 	 * {@link Action} to create a new gmml pathway
@@ -347,7 +350,6 @@ public class GmmlVision extends ApplicationWindow
 				setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
-				e.printStackTrace();
 				MessageDialog.openError(getShell(), "Failed to open Gene Database", e.getMessage());
 			}
 		}
@@ -404,7 +406,7 @@ public class GmmlVision extends ApplicationWindow
 					dialog.run(true, true, gmmlGex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
 					drawing.redraw();
 				} catch(Exception e) {
-					e.printStackTrace();
+					GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
 				}
 			}
 		}
@@ -491,7 +493,7 @@ public class GmmlVision extends ApplicationWindow
 				try {
 					dialog.run(true, true, gmmlGex.convertRunnable);
 				} catch(Exception e) {
-					e.printStackTrace();
+					GmmlVision.log.error("while converting GenMAPP gex: " + e.getMessage(), e);
 				}
 				
 			}
@@ -550,7 +552,7 @@ public class GmmlVision extends ApplicationWindow
 					try {
 						dialog.run(true, true, gmmlGdb.convertRunnable);
 					} catch(Exception e) {
-						e.printStackTrace();
+						GmmlVision.log.error("while converting GenMAPP gene database: " + e.getMessage(), e);
 					}
 
 				}
@@ -1200,6 +1202,10 @@ public class GmmlVision extends ApplicationWindow
 		addMenuBar();
 		addStatusLine();
 		addCoolBar(SWT.FLAT | SWT.LEFT);
+		
+		log = new Logger();
+		try { log.setStream(new PrintStream("log.txt")); } catch(Exception e) {}
+		log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 	}
 
 	/**
@@ -1226,6 +1232,7 @@ public class GmmlVision extends ApplicationWindow
 	   window.gmmlGdb.close();
 	   window.gmmlGex.close();
 	   Display.getCurrent().dispose();
+	   GmmlVision.log.getStream().close();
 	}
 	
 	public ScrolledComposite sc;
@@ -1320,7 +1327,10 @@ public class GmmlVision extends ApplicationWindow
 		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND, this);
 		
 		// initialize new JDOM gmml representation and read the file
-		gmmlData = new GmmlData(fnPwy, drawing);
+		try { gmmlData = new GmmlData(fnPwy, drawing); } catch(Exception e) {
+			MessageDialog.openError(getShell(), "Unable to open Gmml file", e.getMessage());
+			drawing = null;
+		}
 		
 		if(drawing != null)
 		{

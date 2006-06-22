@@ -1,5 +1,7 @@
 package colorSet;
 
+import gmmlVision.GmmlVision;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -110,8 +112,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 			rgb = new RGB((int)red, (int)green, (int)blue);
 //			System.out.println("Found color: " + rgb);
 		} catch (Exception e) { 
-			System.out.println("GmmlColorGradient:getColor:Error: " + 
-					red + "," + green + "," +blue + ", at value " + value);
+			GmmlVision.log.error("GmmlColorGradient:getColor: " + 
+					red + "," + green + "," +blue + ", for value " + value, e);
 		}
 		return rgb;
 	}
@@ -129,10 +131,10 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 			double value = (Double)data.get(applySample); //Try to get the data
 			return getColor(value);
 		} catch(NullPointerException ne) { //No data available
-			System.out.println("GmmlColorGradient:getColor:Error: No data to calculate color");
+			GmmlVision.log.error("GmmlColorGradient:getColor: No data to calculate color", ne);
 		} catch(ClassCastException ce) { //Data not of type double
 		} catch(Exception e) { //Any other exception
-			e.printStackTrace();
+			GmmlVision.log.error("GmmlColorGradient:getColor", e);
 		}
 		return null; //If anything goes wrong, return null
 	}
@@ -169,7 +171,8 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to parse color gradient data " +
+					"stored in expression database: " + criterion, e);
 		}
 	}
 	

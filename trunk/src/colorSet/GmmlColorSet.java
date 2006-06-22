@@ -1,4 +1,6 @@
 package colorSet;
+import gmmlVision.GmmlVision;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -205,7 +207,8 @@ public class GmmlColorSet {
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to parse colorset data stored in " +
+					"expression database: " + criterion, e);
 		}
 	}
 	
@@ -236,7 +239,8 @@ public class GmmlColorSet {
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to parse color '" + colorString + 
+					"'stored in expression database", e);
 			return new RGB(0,0,0);
 		}
 	}
@@ -292,7 +296,10 @@ public class GmmlColorSet {
 		{
 			try { 
 				a.add(gmmlGex.getSamples().get(Integer.parseInt(s[i])));
-			} catch (Exception e) { e.printStackTrace();}
+			} catch (Exception e) { 
+				GmmlVision.log.error("Unable to parse arraylist as stored in " +
+						"expression database: " + arrayListString, e);
+			}
 		}
 		return a;
 	}

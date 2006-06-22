@@ -866,7 +866,6 @@ PaintListener, MouseTrackListener, KeyListener
 		for(GmmlDrawingObject o : toRemove)
 		{
 			drawingObjects.remove(o);
-			System.out.println("Removed " + o);
 		}	
 	}
 	

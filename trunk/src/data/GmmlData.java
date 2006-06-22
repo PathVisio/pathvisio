@@ -1,10 +1,10 @@
 package data;
 
+import gmmlVision.GmmlVision;
 import graphics.GmmlDrawing;
 import graphics.GmmlGraphics;
 import graphics.GmmlMappInfo;
 
-import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -92,14 +92,14 @@ public class GmmlData
 	 * @param file		String pointing to the gmml file to open
 	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
-	public GmmlData(String file, GmmlDrawing drawing)
+	public GmmlData(String file, GmmlDrawing drawing) throws Exception
 	{
 		// Initialize systemcode mappings
 		initSysName2Code();
 		// Create the drawing
 		this.drawing = drawing;
 		// Start XML processing
-		System.out.println("Start reading the XML file: " + file);
+		GmmlVision.log.info("Start reading the Gmml file: " + file);
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 		try
@@ -114,29 +114,11 @@ public class GmmlData
 		}
 		catch(JDOMParseException pe) 
 		{
-			 System.out.println("Parse error: " + pe.getMessage());
-			 MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
-				"Parse error: " + pe.getMessage());
+			throw new Exception("Parse error: " + pe.getMessage());
 		}
 		catch(JDOMException e)
 		{
-			System.out.println(file + " is invalid.");
-			System.out.println(e.getMessage());
-			 MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
-						"JDOM exception: " + e.getMessage());
-		}
-		catch(IOException e)
-		{
-			System.out.println("Could not access " + file);
-			System.out.println(e.getMessage());
-			MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
-						"IOException: " + e.getMessage());
-		}
-		catch(Exception e)
-		{
-			System.out.println("Error: " + e.getMessage());
-			MessageDialog.openError (drawing.gmmlVision.getShell(), "Error", 
-						"Exception: " + e.getMessage());
+			throw new Exception("JDOM exception: " + e.getMessage());
 		}
 	}
 	
@@ -169,22 +151,22 @@ public class GmmlData
 		try {
 			Class cl = Class.forName("graphics.Gmml"+e.getName());
 			Constructor con = cl.getConstructor(new Class[] { Element.class, GmmlDrawing.class });
-			System.out.println(e.getName());
+			GmmlVision.log.trace("Mapping gmml element " + e.getName());
 			Object obj = con.newInstance(new Object[] { e, drawing });
 			drawing.addElement((GmmlGraphics)obj);
 		}
 		catch (ClassNotFoundException cnfe)
 		{
-//			System.out.println(e.getName() + " could not be mapped");
+			GmmlVision.log.error(e.getName() + " could not be mapped", cnfe);
 		}
 		catch (NoSuchMethodException nsme)
 		{
-			System.out.println("The GmmlGraphics class representing '" + e.getName() + 
+			GmmlVision.log.trace("The GmmlGraphics class representing '" + e.getName() + 
 					"' has no constructor for a JDOM element");
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			GmmlVision.log.error("while mapping gmml elements: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -223,16 +205,17 @@ public class GmmlData
 				SAXOutputter so = new SAXOutputter(vh);
 				so.output(doc);
 				// If no errors occur, the file is valid according to the gmml xml schema definition
-				System.out.println("Document is valid according to the xml schema definition '" + 
+				//TODO: open dialog to report error
+				GmmlVision.log.info("Document is valid according to the xml schema definition '" + 
 						xsdFile.toString() + "'");
 			} catch (SAXException se) {
-				System.out.println("Could not parse the xml-schema definition: " + se.getMessage());
+				GmmlVision.log.error("Could not parse the xml-schema definition", se);
 			} catch (JDOMException je) {
-				System.out.println("Document is invalid according to the xml-schema definition!");
-				System.out.println(je.getMessage());
+				GmmlVision.log.error("Document is invalid according to the xml-schema definition!: " + 
+						je.getMessage(), je);
 			}
 		} else {
-			System.out.println("Document is not validated because the xml schema definition '" + 
+			GmmlVision.log.info("Document is not validated because the xml schema definition '" + 
 					xsdFile.toString() + "' could not be found");
 		}
 	}
@@ -252,11 +235,10 @@ public class GmmlData
 			FileWriter writer = new FileWriter(file);
 			//Send XML code to the filewriter
 			xmlcode.output(doc, writer);
-			System.out.println("File '" + file.toString() + "' is saved");
 		}
 		catch (IOException e) 
 		{
-			System.err.println(e);
+			GmmlVision.log.error("Unable to save file " + file + ": " + e.getMessage(), e);
 		}
 	}
 	

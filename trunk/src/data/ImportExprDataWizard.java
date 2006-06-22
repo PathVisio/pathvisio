@@ -82,7 +82,7 @@ public class ImportExprDataWizard extends Wizard {
 								importInformation,
 								(ImportPage) getPage("ImportPage")));
 			} catch (Exception e) {
-				e.printStackTrace();
+				GmmlVision.log.error("while running expression data import process: " + e.getMessage(), e);
 			} // TODO: handle exception
 			ip.setTitle("Import finished");
 			ip.setDescription("Press finish to return to Gmml-Visio");
@@ -420,7 +420,7 @@ public class ImportExprDataWizard extends Wizard {
 				ti.setText(1, line);
 			}
 		} catch (IOException e) { // TODO: handle IOException
-			e.printStackTrace();
+			GmmlVision.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 	}
 
@@ -448,7 +448,7 @@ public class ImportExprDataWizard extends Wizard {
 				ti.setText(line.split(ImportInformation.DELIMITER));
 			}
 		} catch (IOException e) { // TODO: handle IOException
-			e.printStackTrace();
+			GmmlVision.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 	}
 
@@ -579,7 +579,9 @@ public class ImportExprDataWizard extends Wizard {
 		{
 			//Close the connection to the previous file if exist
 			if(in != null) {
-				try { in.close(); } catch(Exception e) { e.printStackTrace(); }
+				try { in.close(); } catch(Exception e) { 
+					GmmlVision.log.error("on closing file " + this.txtFile + ": " + e.getMessage(), e);
+				}
 				in = null;
 			}
 			this.txtFile = txtFile;
@@ -709,7 +711,7 @@ public class ImportExprDataWizard extends Wizard {
 					i++; // Go to headerline
 				return in.readLine().split(ImportInformation.DELIMITER);
 			} catch (IOException e) { // TODO: handle IOException
-				e.printStackTrace();
+				GmmlVision.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
 				return new String[] {};
 			}
 		}

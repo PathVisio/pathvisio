@@ -1,5 +1,7 @@
 package colorSet;
 
+import gmmlVision.GmmlVision;
+
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.RGB;
@@ -12,9 +14,7 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 	private HashMap<String, Double> symTab;
 	
 	private RGB color;
-	public void setColor(RGB color) { 
-		System.out.println("setting color to " + color);
-		this.color = color; }
+	public void setColor(RGB color) { this.color = color; }
 	public RGB getColor() { return color == null ? INITIAL_COLOR : color; }
 	
 	private String expression;
@@ -65,8 +65,8 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		try {
 			if(evaluate(expression)) return color;
 		} catch (Exception e) { 
-			e.printStackTrace();
-			//TODO: notify that expression is incorrect
+			GmmlVision.log.error("Unable to evaluate expression '" + expression + "'", e);
+			//TODO: tell user that expression is incorrect
 		}
 		return null;
 	}
@@ -82,7 +82,8 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to parse color criterion data stored in " +
+					"expression database: " + criterion, e);
 		}
 	}
 
@@ -427,50 +428,50 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		{
 			for (int i = 0; i < level; ++i)
 			{
-				System.out.print ("--- ");
+				GmmlVision.log.trace ("--- ");
 			}
 			switch (type)
 			{
 				case Token.TOKEN_AND:
-					System.out.println("AND");
+					GmmlVision.log.trace("AND");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_OR:
-					System.out.println("OR");
+					GmmlVision.log.trace("OR");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_LE:
-					System.out.println("<=");
+					GmmlVision.log.trace("<=");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_LT:
-					System.out.println("<");
+					GmmlVision.log.trace("<");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_GT:
-					System.out.println(">");
+					GmmlVision.log.trace(">");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_GE:
-					System.out.println(">=");
+					GmmlVision.log.trace(">=");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_EQ:
-					System.out.println("=");
+					GmmlVision.log.trace("=");
 					left.printMe(level + 1);
 					right.printMe(level + 1);
 				break;
 				case Token.TOKEN_ID:
-					System.out.println("ID: " + symbolValue);
+					GmmlVision.log.trace("ID: " + symbolValue);
 				break;
 				case Token.TOKEN_NUMBER:
-					System.out.println("NUMBER: " + numberValue);
+					GmmlVision.log.trace("NUMBER: " + numberValue);
 				break;
 			}
 		}

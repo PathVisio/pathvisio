@@ -1,13 +1,11 @@
 package graphics;
 //~ import java.awt.Graphics;
 import java.awt.Rectangle;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.events.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.JComponent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.GC;
 
 
 //~ abstract class GmmlDrawingObject extends JComponent 

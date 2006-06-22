@@ -98,7 +98,7 @@ public class GmmlBpBrowser extends Composite {
 				header += line.trim();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
 		}
 	}
 }

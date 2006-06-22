@@ -1,15 +1,11 @@
 package graphics;
-import java.awt.BasicStroke;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.Point2D;
-//~ import java.awt.Graphics;
-//~ import java.awt.Graphics2D;
-//~ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.*;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.GC;
 
 /**
  * This class implements and handles handles for 

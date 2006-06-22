@@ -1,21 +1,33 @@
 package graphics;
 
-import java.util.*;
+import gmmlVision.GmmlVision;
+
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.*;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Text;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
 import util.GmmlColorConvertor;
 import util.SwtUtils;
-
 import data.GmmlData;
 
 /**
@@ -75,7 +87,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	public GmmlGeneProduct(GmmlDrawing canvas)
 	{
-		System.out.println ("New Gene Product!!!");
 		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;
 		
 		this.canvas = canvas;
@@ -428,7 +439,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	private void mapAttributes (Element e) {
 		// Map attributes
-		System.out.println("> Mapping element '" + e.getName()+ "'");
+		GmmlVision.log.trace("> Mapping element '" + e.getName()+ "'");
 		Iterator it = e.getAttributes().iterator();
 		while(it.hasNext()) {
 			Attribute at = (Attribute)it.next();
@@ -461,7 +472,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 						this.geneProductDataSource = value; 
 						break;
 					case -1:
-						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
+						GmmlVision.log.trace("\t> Attribute '" + at.getName() + "' is not recognized");
 			}
 		}
 		// Map child's attributes

@@ -1,30 +1,29 @@
 package graphics;
 
-import java.awt.Polygon;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.Point2D;
-import java.awt.BasicStroke;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.*;
+import gmmlVision.GmmlVision;
 
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
 import util.GmmlColorConvertor;
 import util.SwtUtils;
-
 import data.GmmlData;
-
-import java.util.*;
-
-import javax.swing.JTable;
 
 /**
  * This class represents a GMMLShape, which can be a 
@@ -353,7 +352,7 @@ public class GmmlShape extends GmmlGraphics
 	 */
 	private void mapAttributes (Element e) {
 		// Map attributes
-		System.out.println("> Mapping element '" + e.getName()+ "'");
+		GmmlVision.log.trace("> Mapping element '" + e.getName()+ "'");
 		Iterator it = e.getAttributes().iterator();
 		while(it.hasNext()) {
 			Attribute at = (Attribute)it.next();
@@ -379,7 +378,7 @@ public class GmmlShape extends GmmlGraphics
 					case 7: // Notes
 						this.notes = value; break;
 					case -1:
-						System.out.println("\t> Attribute '" + at.getName() + "' is not recognized");
+						GmmlVision.log.trace("\t> Attribute '" + at.getName() + "' is not recognized");
 			}
 		}
 		// Map child's attributes

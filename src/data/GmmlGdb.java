@@ -1,5 +1,7 @@
 package data;
 
+import gmmlVision.GmmlVision;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -88,8 +90,7 @@ public class GmmlGdb {
 				}
 			}
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			GmmlVision.log.error("on reading gdb.properties " + e.getMessage(), e);
 		}
 	}
 	
@@ -112,8 +113,7 @@ public class GmmlGdb {
 		try {
 			props.store(new FileOutputStream(propsFile),"Gene Database Properties");
 		} catch(Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to store gdb.properties " + e.getMessage(), e);
 		}
 	}
 	
@@ -131,10 +131,7 @@ public class GmmlGdb {
 			r.next();
 			String result = r.getString(1);
 			return result;
-		} catch(Exception e) {
-//			e.printStackTrace();
-			return null;
-		}
+		} catch(Exception e) { return null;	} //Gene not found
 	}
 	
 	/**
@@ -172,7 +169,8 @@ public class GmmlGdb {
 				crossIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to get cross references for ensembl gene " +
+					"'" + ensId + "'", e);
 		}
 		return crossIds;
 	}
@@ -196,7 +194,8 @@ public class GmmlGdb {
 				ensIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to get ensembl genes for ensembl gene " +
+					"'" + ref + ", with systemcode '" + code + "'", e);
 		}
 		return ensIds;
 	}
@@ -229,7 +228,8 @@ public class GmmlGdb {
 				crossIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			GmmlVision.log.error("Unable to get cross references for gene " +
+					"'" + id + ", with systemcode '" + code + "'", e);
 		}
 		return crossIds;
 	}
@@ -270,8 +270,7 @@ public class GmmlGdb {
 				sh.close();
 				con = null;
 			} catch (Exception e) {
-				System.out.println ("Error: " +e.getMessage());
-				e.printStackTrace();
+				GmmlVision.log.error("while shutting down gdb: " +e.getMessage(), e);
 			}
 		}
 	}
@@ -290,7 +289,7 @@ public class GmmlGdb {
 	    try {
 	        error = new PrintWriter(new FileWriter("convert_gdb_log.txt"));
 	    } catch(IOException ex) {
-	        ex.printStackTrace();
+	        GmmlVision.log.error("Unable to open error file: " + ex.getMessage(), ex);
 	    }
 	    
 		error.println ("Info:  Fetching data from gdb");
@@ -311,7 +310,6 @@ public class GmmlGdb {
 						database_before + gmGdbFile.toString() + database_after, "", "");
 			} catch (Exception e) {
 				error.println("Error: " +e.getMessage());
-//				e.printStackTrace();
 			}
 			
 			//Create hsqldb gdb
@@ -330,7 +328,6 @@ public class GmmlGdb {
 			catch (Exception e)
 			{
 				error.println("Error: " + e.getMessage());
-//				e.printStackTrace();
 			}
 			
 			// Fetch size of database to convert (for progress monitor)
@@ -400,7 +397,6 @@ public class GmmlGdb {
 						catch (SQLException e)
 						{
 							error.println("Error: " + e.getMessage() + "at " + idLeft + ", " + idRight);
-							//e.printStackTrace();
 						}
 					}
 				}
@@ -450,7 +446,6 @@ public class GmmlGdb {
 									colName + "<TH>" + colVal;
 								} catch (SQLException e) {
 									error.println ("Error: " + e.getMessage() + " at: " + bpText);
-									//e.printStackTrace();
 								}
 							}
 							bpText = bpText + "</TABLE>";
@@ -461,7 +456,6 @@ public class GmmlGdb {
 							pstmt.execute();
 						} catch (SQLException e) {
 							error.println ("Error: " + e.getMessage());
-							//e.printStackTrace();
 						}
 					}
 				}
@@ -492,7 +486,6 @@ public class GmmlGdb {
 		catch (Exception e)
 		{
 			error.println ("Error: " + e.getMessage());
-			e.printStackTrace();
 		}
 	}
 	
@@ -560,14 +553,14 @@ public class GmmlGdb {
 	 * @param convertCon	The connection to the database the tables are created in
 	 */
 	public void createTables(Connection convertCon) {
-		System.out.println ("Info:  Creating tables");
+		GmmlVision.log.trace("Info:  Creating tables");
 		
 		try {
 			Statement sh = convertCon.createStatement();
 			sh.execute("DROP TABLE link IF EXISTS");
 			sh.execute("DROP TABLE gene IF EXISTS");
 		} catch(Exception e) {
-			System.out.println("Error: "+e.getMessage());
+			GmmlVision.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
 		}
 		try
 		{
@@ -612,8 +605,7 @@ public class GmmlGdb {
 			
 		} catch (Exception e)
 		{
-			System.out.println ("Error: " + e.getMessage());
-			e.printStackTrace();
+			GmmlVision.log.error("while creating gdb tables: " + e.getMessage(), e);
 		}
 	}
 	

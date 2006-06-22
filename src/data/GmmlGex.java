@@ -1,5 +1,7 @@
 package data;
 
+import gmmlVision.GmmlVision;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -126,7 +128,7 @@ public class GmmlGex {
 			con.setReadOnly(true);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			GmmlVision.log.error("while saving colorset information to expression database: " + gexFile, e);
 		}
 		
 //		setGexReadOnly(true);
@@ -170,7 +172,7 @@ public class GmmlGex {
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			GmmlVision.log.error("while loading colorset information from expression database: " + gexFile, e);
 		}
 		
 	}
@@ -312,7 +314,7 @@ public class GmmlGex {
 				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			GmmlVision.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
 		}
 	}
 	
@@ -467,7 +469,7 @@ public class GmmlGex {
 						}
 					} catch (Exception e)
 					{
-						e.printStackTrace();
+						GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
 					}
 				}
 				if(mappGeneData.hasData()) cachedData.addData(id, mappGeneData);
@@ -645,7 +647,6 @@ public class GmmlGex {
 		try {
 			error = new PrintWriter(new FileWriter(errorFile));
 		} catch(IOException ex) {
-			ex.printStackTrace();
 			page.println("Error: could not open exception file: " + ex.getMessage());
 		}
 		
@@ -757,7 +758,6 @@ public class GmmlGex {
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
-			e.printStackTrace();
 			close(true, true);
 			error.close();
 		}
@@ -790,7 +790,7 @@ public class GmmlGex {
 		try {
 			error = new PrintWriter(new FileWriter("convert_gex_error.txt"));
 		} catch(IOException ex) {
-			ex.printStackTrace();
+			GmmlVision.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
 		}
 		
 		try {
@@ -876,7 +876,6 @@ public class GmmlGex {
 			con.commit();	
 		} catch(Exception e) {
 			error.println("Error: " + e.getMessage());
-			e.printStackTrace();
 		}
 		error.println("END");
 		error.close();
@@ -948,8 +947,7 @@ public class GmmlGex {
 				sh.close();
 				con = null;
 			} catch (Exception e) {
-				System.out.println ("Error: " +e.getMessage());
-				e.printStackTrace();
+				GmmlVision.log.error("Error while closing connection to expression dataset " + gexFile, e);
 			}
 		}
 	}
@@ -976,8 +974,8 @@ public class GmmlGex {
 			conGmGex = DriverManager.getConnection(
 					database_before + gmGexFile.toString() + database_after, "", "");
 		} catch (Exception e) {
-			System.out.println ("Error: " +e.getMessage());
-			e.printStackTrace();
+			GmmlVision.log.error("Error: Unable to open connection go GenMAPP gex " + gmGexFile +
+					": " +e.getMessage(), e);
 		}
 	}
 	
@@ -991,8 +989,7 @@ public class GmmlGex {
 				conGmGex.close();
 				conGmGex = null;
 			} catch (Exception e) {
-				System.out.println ("Error: " +e.getMessage());
-				e.printStackTrace();
+				GmmlVision.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
 			}
 		}
 	}
@@ -1011,7 +1008,7 @@ public class GmmlGex {
 			sh.execute("DROP TABLE colorSetObjects IF EXISTS");
 			sh.execute("DROP TABLE textdata IF EXISTS");
 		} catch(Exception e) {
-			System.out.println("Error: "+e.getMessage());
+			GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e);
 		}
 		try
 		{
@@ -1062,8 +1059,7 @@ public class GmmlGex {
 			" )							");
 		} catch (Exception e)
 		{
-			System.out.println ("Error: " + e.getMessage());
-			e.printStackTrace();
+			GmmlVision.log.error("Error while creating expression data tables: " + e.getMessage(), e);
 		}
 	}
 }

@@ -144,6 +144,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 		csColorGnf.dispose();
 		csColorNc.dispose();
+		csColorDnf.dispose();
 		ccColor.dispose();
 	}
 		
@@ -152,7 +153,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	 */
 	public boolean close()
 	{
-		if(!saveMaximizedComposite())
+		if(!saveMaximizedComposite(false))
 		{
 			return false;
 		}
@@ -314,8 +315,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		okButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				//save colorset information and close shell
-				saveToGex();
-				getShell().close();
+				close();
 			}
 		});
 		okButton.pack();
@@ -367,8 +367,11 @@ public class ColorSetWindow extends ApplicationWindow {
 	private Button csColorButtonNc; //button for selecting color for 'no criteria met'
 	private CLabel csCLabelGnf; //displays color for 'gene not found'
 	private Button csColorButtonGnf;//button for selecting color for 'gene not found'
+	private CLabel csCLabelDnf; //displays color for 'no data found'
+	private Button csColorButtonDnf; //button for selecting color for 'no data found'
 	private Color csColorNc; //color for 'no criteria met'
 	private Color csColorGnf; //color for 'gene not found'
+	private Color csColorDnf; //color for 'no data found'
 	private Table sampleTable; //table that displays samples used for visualization
 	private TableViewer sampleTableViewer; //TableViewer for sampleTable
 	private ListViewer sampleListViewer; //ListViewer for sampleList
@@ -419,20 +422,30 @@ public class ColorSetWindow extends ApplicationWindow {
 	    csCLabelGnf = new CLabel(csGroup, SWT.SHADOW_IN);
 	    csColorButtonGnf = new Button(csGroup, SWT.PUSH);
 	    csColorButtonGnf.addSelectionListener(new ColorButtonAdapter());
+	    Label csColorLabelDnf = new Label(csGroup, SWT.CENTER);
+	    csCLabelDnf = new CLabel(csGroup, SWT.SHADOW_IN);
+	    csColorButtonDnf = new Button(csGroup, SWT.PUSH);
+	    csColorButtonDnf.addSelectionListener(new ColorButtonAdapter());
 	    
 	    csColorLabelNc.setText("No criteria met color:");
 	    csColorLabelGnf.setText("Gene not found color:");
+	    csColorLabelDnf.setText("No data found color:");
 	    csColorButtonNc.setText("...");
 	    csColorButtonGnf.setText("...");
+	    csColorButtonDnf.setText("...");
 	    
 	    csColorNc = SwtUtils.changeColor(csColorNc, GmmlColorSet.COLOR_NO_CRITERIA_MET, getShell().getDisplay());
 	    csColorGnf = SwtUtils.changeColor(csColorGnf, GmmlColorSet.COLOR_NO_GENE_FOUND, getShell().getDisplay());
+	    csColorDnf = SwtUtils.changeColor(csColorDnf, GmmlColorSet.COLOR_NO_DATA_FOUND, getShell().getDisplay());
 	    csCLabelNc.setLayoutData(colorGrid);
 	    csCLabelGnf.setLayoutData(colorGrid);
+	    csCLabelDnf.setLayoutData(colorGrid);
 	    csCLabelNc.setBackground(csColorNc);
-	    csCLabelNc.setBackground(csColorGnf);
+	    csCLabelGnf.setBackground(csColorGnf);
+	    csCLabelDnf.setBackground(csColorGnf);
 	    csColorButtonNc.setLayoutData(colorGrid);
 	    csColorButtonGnf.setLayoutData(colorGrid);
+	    csColorButtonDnf.setLayoutData(colorGrid);
 	    
 	    csNameLabel.setText("Name:");
 	    csNameText.setLayoutData(csNameTextGrid);
@@ -689,8 +702,9 @@ public class ColorSetWindow extends ApplicationWindow {
 	
 	/**
 	 * Maximizes one of the composites in {@link middleSash}
-	 * @param element an element of instance {@link GmmlColorSet} or {@link GmmlColorGradient}.
-	 *  for which respectively {@link csComposite} or {@link cgComposite} is maximized
+	 * @param element an element of instance {@link GmmlColorSet}, 
+	 * {@link GmmlColorGradient} or {@link GmmlColorCriterion}
+	 *  for which respectively {@link csComposite}, {@link cgComposite} or {@link ccComposite} is maximized
 	 */
 	public void setMiddleCompositeContents(Object element) {	
 		if(element == null) {
@@ -702,9 +716,11 @@ public class ColorSetWindow extends ApplicationWindow {
 			GmmlColorSet cs = (GmmlColorSet)element;
 			csNameText.setText(cs.name);
 			csColorNc = SwtUtils.changeColor(csColorNc, cs.color_no_criteria_met, getShell().getDisplay());
-		    csColorGnf = SwtUtils.changeColor(csColorGnf, cs.color_gene_not_found, getShell().getDisplay());
+		    csColorGnf = SwtUtils.changeColor(csColorGnf, cs.color_no_gene_found, getShell().getDisplay());
+		    csColorDnf = SwtUtils.changeColor(csColorDnf, cs.color_no_data_found, getShell().getDisplay());
 			csCLabelGnf.setBackground(csColorGnf);
 			csCLabelNc.setBackground(csColorNc);
+			csCLabelDnf.setBackground(csColorDnf);
 			sampleTableViewer.setInput(cs);
 			sampleListViewer.setInput(cs);
 			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cs);
@@ -848,9 +864,11 @@ public class ColorSetWindow extends ApplicationWindow {
 	class inputSelectionAdapter extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e)
 		{
-			saveMaximizedComposite();
+			saveMaximizedComposite(true);
 		}
-		public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
+		public void widgetDefaultSelected(SelectionEvent e) { 
+			saveMaximizedComposite(false);
+		}
 	}
 	
 	/**
@@ -874,48 +892,52 @@ public class ColorSetWindow extends ApplicationWindow {
 			super();
 		}
 		public void widgetSelected(SelectionEvent e) {
-			saveColorGradient();
+			saveColorGradient(false);
 		}
 	}
 	
 	/**
 	 * saves the information on the composite in the middle column that is currently maximized
 	 * (csComposite or cgComposite)
+	 * @param silent set true to prevent this method from generating error dialogs
 	 * @return true if the information is saved, false if not
 	 */
-	public boolean saveMaximizedComposite()
+	public boolean saveMaximizedComposite(boolean silent)
 	{
 		if(middleSash.getMaximizedControl() == cgComposite)
 		{
-			return saveColorGradient();
+			return saveColorGradient(silent);
 		}
 		if(middleSash.getMaximizedControl() == csComposite)
 		{
-			return saveColorSet();
+			return saveColorSet(silent);
 		}
 		if(middleSash.getMaximizedControl() == ccComposite)
 		{
-			return saveColorCriterion();
+			return saveColorCriterion(silent);
 		}
 		return true;
 	}
 	
 	/**
 	 * saves the information on the csComposite to the currently selected colorset
+	 * @param silent set true to prevent this method from generating error dialogs
 	 * @return true if the information is saved, false if not
 	 */
-	public boolean saveColorSet()
+	public boolean saveColorSet(boolean silent)
 	{
 		if(csNameText.getText().equals("")) { //Complain if name field is empty
-			MessageDialog.openError(getShell(), "Error", "Specify a name for the color set");
+			if(!silent)
+				MessageDialog.openError(getShell(), "Error", "Specify a name for the color set");
 			return false;
 		}
 		if(csCombo.getSelectionIndex() < 0) return true; //Colorset doesn't exist anymore
 		GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
 		//Save the control information to the colorset
 		cs.name = csNameText.getText();
-		cs.color_gene_not_found = csColorGnf.getRGB();
+		cs.color_no_gene_found = csColorGnf.getRGB();
 		cs.color_no_criteria_met = csColorNc.getRGB();
+		cs.color_no_data_found = csColorDnf.getRGB();
 		//Update the ui components
 		legend.setVisible(true);
 		legend.resetContents();
@@ -925,16 +947,19 @@ public class ColorSetWindow extends ApplicationWindow {
 
 	/**
 	 * saves the information on the cgComposite to the currently selected color gradient
+	 * @param silent set true to prevent this method from generating error dialogs
 	 * @return true if the information is saved, false if not
 	 */
-	public boolean saveColorGradient()
+	public boolean saveColorGradient(boolean silent)
 	{
 		if(cgNameText.getText().equals("")) { //Complain if name field is empty
-			MessageDialog.openError(getShell(), "Error", "Specify a name for the gradient");
+			if(!silent) 
+				MessageDialog.openError(getShell(), "Error", "Specify a name for the gradient");
 			return false;
 		}
 		if(cgCombo.getText().equals("")) { //Complain if no samples are selected
-			MessageDialog.openError(getShell(), "Error", "Choose a data column for the gradient");
+			if(!silent) 
+				MessageDialog.openError(getShell(), "Error", "Choose a data column for the gradient");
 			return false;
 		}
 		GmmlColorGradient cg = (GmmlColorGradient)
@@ -954,16 +979,19 @@ public class ColorSetWindow extends ApplicationWindow {
 	
 	/**
 	 * saves the information on the ccComposite to the currently selected color criterion
+	 * @param silent set true to prevent this method from generating error dialogs
 	 * @return true if the information is saved, false if not
 	 */
-	public boolean saveColorCriterion()
+	public boolean saveColorCriterion(boolean silent)
 	{
 		if(ccNameText.getText().equals("")) { //Complain if name field is empty
-			MessageDialog.openError(getShell(), "Error", "Specify a name for the criterion");
+			if(!silent) 
+				MessageDialog.openError(getShell(), "Error", "Specify a name for the criterion");
 			return false;
 		}
 		if(ccCombo.getText().equals("")) { //Complain if no samples are selected
-			MessageDialog.openError(getShell(), "Error", "Choose a data column for the criterion");
+			if(!silent) 
+				MessageDialog.openError(getShell(), "Error", "Choose a data column for the criterion");
 			return false;
 		}
 		GmmlColorCriterion cc = (GmmlColorCriterion)
@@ -971,7 +999,8 @@ public class ColorSetWindow extends ApplicationWindow {
 		if(cc == null) return true; //No gradient is selected (this should't happen)
 		String error = cc.setExpression(ccExpression.getText());
 		if(error != null) {
-			MessageDialog.openError(getShell(), "Error", "Expression syntax is not valid: " + error);
+			if(!silent) 
+				MessageDialog.openError(getShell(), "Error", "Expression syntax is not valid: " + error);
 			return false;
 		}
 		cc.setName(ccNameText.getText());
@@ -998,7 +1027,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	}
 	
 	/**
-	 *{@link SelectionAdapter} for csColorButtonGnf and csColorButtonNc
+	 *{@link SelectionAdapter} that opens a color chooser
 	 */
 	class ColorButtonAdapter extends SelectionAdapter {
     	public void widgetSelected(SelectionEvent e) {
@@ -1016,8 +1045,12 @@ public class ColorSetWindow extends ApplicationWindow {
     				ccColor = SwtUtils.changeColor(ccColor, rgb, getShell().getDisplay());
     				ccCLabel.setBackground(ccColor);
     			}
+    			if(e.widget == csColorButtonDnf) {
+    				csColorDnf = SwtUtils.changeColor(csColorDnf, rgb, getShell().getDisplay());
+    				csCLabelDnf.setBackground(csColorDnf);
+    			}
     		}
-    		saveMaximizedComposite();
+    		saveMaximizedComposite(true);
     	}
     }
 	
@@ -1029,7 +1062,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			super();
 		}
 		public void widgetSelected(SelectionEvent e) {
-			saveColorSet();
+			saveColorSet(false);
 		}
 	}
 	

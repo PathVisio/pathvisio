@@ -8,13 +8,14 @@ import data.GmmlGex.Sample;
 
 public class GmmlColorCriterion extends GmmlColorSetObject {
 	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
+	public static final RGB INITIAL_COLOR = new RGB(255, 255, 255);
 	private HashMap<String, Double> symTab;
 	
 	private RGB color;
 	public void setColor(RGB color) { 
 		System.out.println("setting color to " + color);
 		this.color = color; }
-	public RGB getColor() { return color; }
+	public RGB getColor() { return color == null ? INITIAL_COLOR : color; }
 	
 	private String expression;
 	public String getExpression() {  return expression == null ? "" : expression; }

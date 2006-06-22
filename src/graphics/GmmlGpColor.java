@@ -72,11 +72,11 @@ public class GmmlGpColor {
 		
 	}
 	
-	private void colorByGeneNotFound(Rectangle colorArea)
+	private void colorAsNotFound(Rectangle colorArea, RGB rgb)
 	{
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
 		
-		c = SwtUtils.changeColor(c, cs.color_gene_not_found, e.display);
+		c = SwtUtils.changeColor(c, rgb, e.display);
 		
 		buffer.setBackground(c);
 		buffer.fillRectangle(colorArea.x, colorArea.y, colorArea.width, colorArea.height);
@@ -143,7 +143,7 @@ public class GmmlGpColor {
 	
 	private void setBackgroundColor(GmmlColorSet cs, HashMap<Integer, Object> data, int idSample)
 	{
-		c = SwtUtils.changeColor(c, cs.color_gene_not_found, e.display);
+		c = SwtUtils.changeColor(c, cs.color_no_data_found, e.display);
 		RGB rgb = null;
 		if((rgb = cs.getColor(data, idSample)) != null)
 			c = SwtUtils.changeColor(c, rgb, e.display);
@@ -208,13 +208,16 @@ public class GmmlGpColor {
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			
-			if(gmmlGex.hasData(parent.name, parent.getSystemCode()))
+			if(gmmlGex.hasData(parent.name, parent.getSystemCode())) //Check if data is available
 			{
 				colorByData(colorArea);
 			}
-			else
-			{				
-				colorByGeneNotFound(colorArea);
+			else if(gmmlGdb.hasGene(parent.name, parent.getSystemCode())) //Check if gene exists in gdb
+			{		
+				colorAsNotFound(colorArea, cs.color_no_data_found);
+			}
+			else {
+				colorAsNotFound(colorArea, cs.color_no_gene_found);
 			}
 			drawLabel(colorArea);
 			

@@ -50,11 +50,16 @@ public class GmmlColorSet {
 	 */
 	public static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
 	/**
-	 * Standard color for when the gene is not found in the database or expression data
+	 * Standard color for when the gene is not found in the gene database
 	 */
 	public static RGB COLOR_NO_GENE_FOUND = new RGB(255, 255, 255);
+	/**
+	 * Standard color for when the gene is not found in the expression data
+	 */
+	public static RGB COLOR_NO_DATA_FOUND = new RGB(100, 100, 100);
 	public RGB color_no_criteria_met = COLOR_NO_CRITERIA_MET;
-	public RGB color_gene_not_found = COLOR_NO_GENE_FOUND;
+	public RGB color_no_gene_found = COLOR_NO_GENE_FOUND;
+	public RGB color_no_data_found = COLOR_NO_DATA_FOUND;
 	
 	private int multipleDataDisplay;
 	/**
@@ -149,7 +154,6 @@ public class GmmlColorSet {
 		{
 			GmmlColorSetObject gc = (GmmlColorSetObject)it.next();
 			RGB gcRgb = gc.getColor(data, sampleId);
-			System.out.println("Colorset evaluates " + gc + " which returned " + gcRgb);
 			if(gcRgb != null)
 			{
 				return gcRgb;
@@ -165,15 +169,16 @@ public class GmmlColorSet {
 	 */
 	public String getCriterionString()
 	{
-		// color_no_criteria_met | color_gene_not_found | useSamples | sampleTypes
-		// r, g, b			     | r, g, b		        | s1,...,sn  | t1,...,tn
+		// color_no_criteria_met | color_no_gene_found | useSamples | sampleTypes | color_no_data_found 
+		// r, g, b			     | r, g, b		       | s1,...,sn  | t1,...,tn | r, g, b	
 		String sep = "|";
 		StringBuilder criterion = new StringBuilder();
 		criterion.append(
 				getColorString(color_no_criteria_met) + sep +
-				getColorString(color_gene_not_found) + sep +
+				getColorString(color_no_gene_found) + sep +
 				getArrayListString(useSamples) + sep +
-				getArrayListString(sampleTypes)
+				getArrayListString(sampleTypes) + sep +
+				getColorString(color_no_data_found)
 				);
 		return criterion.toString();
 	}
@@ -185,20 +190,18 @@ public class GmmlColorSet {
 	 */
 	void parseCriterionString(String criterion)
 	{
-		String[] s = criterion.split("\\|");
-//		System.out.println(criterion);
-//		System.out.println(s[0] + "," + s[1] + "," + s[2] + "," + s[3]);
+		String[] s = criterion.split("\\|", 5);
 		try
 		{
 			color_no_criteria_met = parseColorString(s[0]);
-			color_gene_not_found= parseColorString(s[1]);
+			color_no_gene_found= parseColorString(s[1]);
+			
 			if(s.length > 2)
 			{
 				useSamples = parseSampleArrayList(s[2]);
 				sampleTypes = parseIntegerArrayList(s[3]);
+				color_no_data_found = parseColorString(s[4]);
 			}
-//			System.out.println(color_no_criteria_met + "," + color_gene_not_found + "," + useSamples + "," +
-//					sampleTypes);
 		}
 		catch (Exception e)
 		{
@@ -234,7 +237,7 @@ public class GmmlColorSet {
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			return null;
+			return new RGB(0,0,0);
 		}
 	}
 	

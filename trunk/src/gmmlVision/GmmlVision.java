@@ -956,7 +956,6 @@ public class GmmlVision extends ApplicationWindow
 	{
 		createCommonActionsCI();
 		createEditActionsCI();
-		createColorSetActionsCI();
 		createViewActionsCI();
 		
 		CoolBarManager coolBarManager = new CoolBarManager(style);
@@ -1055,9 +1054,17 @@ public class GmmlVision extends ApplicationWindow
 			protected Control createControl(Composite parent) {				
 				colorSetCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 				colorSetCombo.addSelectionListener(new ColorSetComboListener());
+				String[] colorSets = gmmlGex.getColorSetNames();
+				if(colorSets != null) {
+					String[] comboItems = new String[colorSets.length + 1];
+					comboItems[0] = COMBO_NO_COLORSET;
+					System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
+					colorSetCombo.setItems(comboItems);
+				}
 				colorSetCombo.pack();
 				return colorSetCombo;
-			}	});
+			}
+		});
 		
 		toolBarManager.add(colorSetManagerAction);
 		toolBarManager.add(showLegendAction);
@@ -1101,12 +1108,7 @@ public class GmmlVision extends ApplicationWindow
 			//Add the elements to the coolbar and update
 			getCoolBarManager().add(colorSetActionsCI);
 			getCoolBarManager().update(true);
-			//Update the combo items
-			String[] colorSets = gmmlGex.getColorSetNames();
-			String[] comboItems = new String[colorSets.length + 1];
-			comboItems[0] = COMBO_NO_COLORSET;
-			System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
-			colorSetCombo.setItems(comboItems);
+
 			//Select the colorset used in the drawing if loaded
 			if(drawing != null) { 
 				colorSetCombo.select(drawing.colorSetIndex + 1); 

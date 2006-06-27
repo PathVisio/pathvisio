@@ -432,6 +432,7 @@ public class GmmlVision extends ApplicationWindow
 			{
 				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
 						"select gene database before creating a new expression dataset");
+				return;
 			}
 			WizardDialog dialog = new WizardDialog(getShell(), new ImportExprDataWizard(window));
 			dialog.setBlockOnOpen(true);
@@ -1281,7 +1282,7 @@ public class GmmlVision extends ApplicationWindow
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
 	static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
-	public ImageRegistry imageRegistry;
+	public static ImageRegistry imageRegistry;
 	/**
 	 * Loads images used throughout the applications into an {@link ImageRegistry}
 	 */
@@ -1291,7 +1292,7 @@ public class GmmlVision extends ApplicationWindow
 		imageRegistry = new ImageRegistry(getShell().getDisplay());
 		
 		// Labels for color by expressiondata (mRNA and Protein)
-		ImageData img = new ImageData("images/mrna.bmp");
+		ImageData img = new ImageData("images/mRNA.bmp");
 		img.transparentPixel = img.palette.getPixel(TRANSPARENT_COLOR);
 		imageRegistry.put("data.mRNA",
 				new Image(getShell().getDisplay(), img));

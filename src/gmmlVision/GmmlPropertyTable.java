@@ -22,13 +22,19 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import util.TableColumnResizer;
 
 public class GmmlPropertyTable {
 	public TableViewer tableViewer;
@@ -102,6 +108,8 @@ public class GmmlPropertyTable {
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
 		tableViewer.setCellModifier(cellModifier);
+		
+		t.addControlListener(new TableColumnResizer(t, t.getParent()));
 		
 		typeMappings = new Hashtable();
 		for(int i = 0; i < attributes.size(); i++)
@@ -269,4 +277,48 @@ public class GmmlPropertyTable {
 		}
 		public void removeListener(ILabelProviderListener listener) { }
 	};
+	
+	/**
+	 * {@link ControlAdapter} to fit the size of the table columns to the size of its parent composite
+	 */
+	class TableControlAdapter extends ControlAdapter {
+		Table table;
+
+		public TableControlAdapter(Table table) {
+			this.table = table;
+		}
+
+		public void controlResized(ControlEvent e) {
+			TableColumn[] cols = table.getColumns();
+			Rectangle area = table.getParent().getClientArea();
+			Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			int width = area.width - 2 * table.getBorderWidth();
+			if (preferredSize.y > area.height + table.getHeaderHeight()) {
+				// Subtract the scrollbar width from the total column width
+				// if a vertical scrollbar will be required
+				Point vBarSize = table.getVerticalBar().getSize();
+				width -= vBarSize.x;
+			}
+			Point oldSize = table.getSize();
+			if (oldSize.x > area.width) {
+				// table is getting smaller so make the columns
+				// smaller first and then resize the table to
+				// match the client area width
+				for (TableColumn col : cols) {
+					col.setWidth(width / cols.length);
+				}
+				
+				table.setSize(area.width, area.height);
+			} else {
+				// table is getting bigger so make the table
+				// bigger first and then make the columns wider
+				// to match the client area width
+				table.setSize(area.width, area.height);
+				
+				for (TableColumn col : cols) {
+					col.setWidth(width / cols.length);
+				}
+			}
+		}
+	}
 }

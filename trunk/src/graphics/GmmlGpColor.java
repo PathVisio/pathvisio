@@ -1,6 +1,8 @@
 package graphics;
 
 
+import gmmlVision.GmmlVision;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -162,9 +164,9 @@ public class GmmlGpColor {
 		switch(sampleType)
 		{
 		case GmmlColorSet.SAMPLE_TYPE_PROT:
-			image = parent.canvas.gmmlVision.imageRegistry.get("data.mRNA"); break;
+			image = GmmlVision.imageRegistry.get("data.mRNA"); break;
 		case GmmlColorSet.SAMPLE_TYPE_TRANS:
-			image = parent.canvas.gmmlVision.imageRegistry.get("data.protein"); break;
+			image = GmmlVision.imageRegistry.get("data.protein"); break;
 		}
 		
 		if(image != null)

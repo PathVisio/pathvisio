@@ -22,7 +22,12 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	 */
 	public ArrayList<ColorValuePair> getColorValuePairs() 
 	{ 
-		if(colorValuePairs == null) colorValuePairs = new ArrayList<ColorValuePair>();
+		if(colorValuePairs == null) {//Not initialized yet, use defaults
+			colorValuePairs = new ArrayList<ColorValuePair>();
+			colorValuePairs.add(new ColorValuePair(new RGB(0,255,0), -1));
+			colorValuePairs.add(new ColorValuePair(new RGB(255,255,0), 0));
+			colorValuePairs.add(new ColorValuePair(new RGB(255,0,0), 1));
+		}
 		return colorValuePairs;
 	}
 	/**
@@ -30,7 +35,9 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	 */
 	public void addColorValuePair(ColorValuePair cvp)
 	{
-		if(colorValuePairs == null) colorValuePairs = new ArrayList<ColorValuePair>();
+		if(colorValuePairs == null) { 
+			colorValuePairs = new ArrayList<ColorValuePair>();
+		}
 		colorValuePairs.add(cvp);
 	}
 	/**
@@ -49,6 +56,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	public GmmlColorGradient(GmmlColorSet parent, String name)
 	{
 		super(parent, name);
+		useSample = USE_SAMPLE_ALL;
 		getColorValuePairs();
 	}
 	

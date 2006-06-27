@@ -18,21 +18,21 @@ public class Ensembl2Visio {
 			"S", "X", "Em", "En", "L", "F", "T",
 			"H", "I", "M", "Om", "Pd", "Pf",
 			"Q", "R", "D", "U", "W",
-			"Z", "A"
+			"Z"//, "A"
 	};
 	
 	final static String[] sysNames = new String[] {
 		"UniProt/TrEMBL", "Affymetrix Probe Set ID", "EMBL", "Ensembl", "Entrez Gene", 
 		"FlyBase", "Gene Ontology", "HUGO", "InterPro", "MGI", 
 		"OMIM", "PDB", "Pfam", "RefSeq", "RGD", "SGD", 
-		"UniGene", "WormBase", "ZFIN", "Agilent Probe ID"
+		"UniGene", "WormBase", "ZFIN"//, "Agilent Probe ID"
 	};
 	
 	final static String[] lookFor = new String[] {
 			"(?i)uniprot","(?i)affy", "\\bEMBL\\b", "Ensembl", "EntrezGene", "FlyBase", "GO",
 			"HUGO", "InterPro", "MGI", "OMIM", "PDB", "Pfam", 
 			"RefSeq", "RGD", "SGD", "UniGene", "WormBase",
-			"ZFIN", "Agilent"
+			"ZFIN"//, "Agilent"
 	};
 	final static int ENS_CODE = 3;
 	
@@ -42,11 +42,8 @@ public class Ensembl2Visio {
     
     public static void main(String[] args) {
 //    	int nrGenes = 10;
-//    	String organism = "human";
-    	String file = "mouse/mus_musculus_core_38_35.txt";
-//    	String file = "test.txt";
-    	String dbname = "mouse/mus_musculus_core_38_35";
-//    	String dbname = "test";
+    	String dbname = "rat/rattus_norvegicus_core_39_34i";
+    	String file = dbname + ".txt";
     	Ensembl2Visio ensj = new Ensembl2Visio();
 //    	ensj.fetchFromEnsembl(nrGenes, organism, file); // Do this with perl
     	ensj.createGdbFromTxt(file, dbname);
@@ -74,6 +71,7 @@ public class Ensembl2Visio {
 	    
 	    compilePatterns();
 	    
+//	    setPropertyReadOnly(dbname, false);
     	connect(dbname);
 		createTables();
     	try
@@ -105,7 +103,7 @@ public class Ensembl2Visio {
     		while((l = in.readLine()) != null)
     		{
     			progress++;
-    			cols = l.split("\t");
+    			cols = l.split("\t", 4);
     			codeIndex = getSystemCodeIndex(cols[2]);
     			if(codeIndex > -1)
     			{
@@ -151,20 +149,13 @@ public class Ensembl2Visio {
     		System.out.println("total errors (duplicates): " + error);
     		r = con.createStatement().executeQuery("SELECT DISTINCT COUNT(idLeft) FROM link");
 	    	close();
-	    	// Set readonly to true
-	    	Properties prop = new Properties();
-	    	File propFile = new File(dbname + ".properties");
-			try {
-				prop.load(new FileInputStream(propFile));
-				prop.setProperty("readonly","true");
-				prop.store(new FileOutputStream(propFile), "HSQL Database Engine");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	    	setPropertyReadOnly(dbname, true);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			close();
+			setPropertyReadOnly(dbname, true);
 		}	
 		eout.println("END");
 		eout.close();
@@ -265,6 +256,18 @@ public class Ensembl2Visio {
 		}
 	}
 	
+	public void setPropertyReadOnly(String dbname, boolean readonly) {
+    	// Set readonly to true
+    	Properties prop = new Properties();
+    	File propFile = new File(dbname + ".properties");
+		try {
+			prop.load(new FileInputStream(propFile));
+			prop.setProperty("readonly",Boolean.toString(readonly));
+			prop.store(new FileOutputStream(propFile), "HSQL Database Engine");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	}
 	public void createTables() {
 		System.out.println ("Info:  Creating tables");
 	

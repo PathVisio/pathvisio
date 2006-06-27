@@ -80,6 +80,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import util.SwtUtils;
+import util.TableColumnResizer;
 import colorSet.GmmlColorGradient.ColorValuePair;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
@@ -272,10 +273,11 @@ public class ColorSetWindow extends ApplicationWindow {
 		coTableComposite.setLayoutData(tableGrid);
 		
 		Table table = new Table(coTableComposite, SWT.BORDER | SWT.SINGLE);
-		table.addControlListener(new TableGrowListener(table));
 		TableColumn coCol = new TableColumn(table, SWT.LEFT);
 		coCol.setText("Name");
 
+		table.addControlListener(new TableColumnResizer(table, coTableComposite));
+				
 		coTableViewer = new TableViewer(table);
 		coTableViewer.setContentProvider(new CoTableContentProvider());
 		coTableViewer.setLabelProvider(new CoTableLabelProvider());
@@ -485,14 +487,14 @@ public class ColorSetWindow extends ApplicationWindow {
 	    
 	    sampleTable.setHeaderVisible(true);
 	    sampleTable.setLinesVisible(false);
-	    sampleTable.addControlListener(new TableGrowListener(sampleTable));
 	    
 	    TableColumn nameCol = new TableColumn(sampleTable, SWT.LEFT);
 	    TableColumn typeCol = new TableColumn(sampleTable, SWT.LEFT);
 	    nameCol.setText(stColNames.get(0));
 	    typeCol.setText(stColNames.get(1));
-
-	    typeCol.setWidth(70);
+	    
+	    sampleTable.addControlListener(new TableColumnResizer(sampleTable, sampleTableComposite, 
+	    		new int[] { 60, 40 }));
 	    
 	    sampleTableViewer = new TableViewer(sampleTable);
 	    
@@ -673,13 +675,16 @@ public class ColorSetWindow extends ApplicationWindow {
 	    cgColorTable.setLayoutData(cGrid);
 	    
 	    cgColorTable.setHeaderVisible(true);
-	    cgColorTable.addControlListener(new TableGrowListener(cgColorTable));
 	    TableColumn colorCol = new TableColumn(cgColorTable, SWT.LEFT);
 	    TableColumn valueCol = new TableColumn(cgColorTable, SWT.LEFT);
 	    valueCol.setText(cgColorTableCols[1]);
 	    colorCol.setText(cgColorTableCols[0]);
 
-	    colorCol.setWidth(40); //width of valueCol is set by TableGrowListener
+	    colorCol.setWidth(45);
+	    colorCol.setResizable(false);
+	    
+	    cgColorTable.addControlListener(
+	    		new TableColumnResizer(cgColorTable, cgGroup, new int[] { 0, 100 }));
 	    
 	    cgColorTableViewer = new TableViewer(cgColorTable);
 	    
@@ -796,66 +801,6 @@ public class ColorSetWindow extends ApplicationWindow {
 		cgCombo.setItems(coSampleNames);
 		ccCombo.setItems(coSampleNames);
 		return true;
-	}
-	
-	/**
-	 * Listener to adapt the column width of a table to the size of a given composite 
-	 */
-	class TableGrowListener extends ControlAdapter {
-		Table table;
-		/**
-		 * Constructor for this class
-		 * @param table	the table for which the columns have to be adapted;
-		 * either sampleTable, cgColorTable or coTable
-		 */
-		public TableGrowListener(Table table)
-		{
-			super();
-			this.table = table;
-		}
-		public void controlResized(ControlEvent e) {
-			TableColumn[] cols = table.getColumns(); // The columns of the table
-			// Get the area that determines the size of the columns
-			Rectangle area = null;
-			if(table == sampleTable)
-			{
-				area = sampleTableComposite.getClientArea();
-				
-			} else if(table == cgColorTable) {
-				area = cgGroup.getClientArea();
-			} else {
-				area = coTableComposite.getClientArea();
-			}
-			//Check if a scrollbar is present, if so, subtract from new column width
-			Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			int width = area.width - 2*table.getBorderWidth();
-			if (preferredSize.y > area.height + table.getHeaderHeight()) {
-				Point vBarSize = table.getVerticalBar().getSize();
-				width -= vBarSize.x;
-			}
-			Point oldSize = table.getSize();
-			if (oldSize.x > area.width) { //Table shrinks, first set column width, then tablesize
-				if(table == sampleTable)
-				{
-					cols[0].setWidth(width - cols[1].getWidth());
-				} else if (table == cgColorTable) {
-					cols[1].setWidth(width - cols[0].getWidth());
-				} else {
-					cols[0].setWidth(width);
-				}
-				table.setSize(area.width, area.height);
-			} else { //Table grows, other way around
-				table.setSize(area.width, area.height);
-				if(table == sampleTable)
-				{
-					cols[0].setWidth(width - cols[1].getWidth());
-				} else if (table == cgColorTable) {
-					cols[1].setWidth(width - cols[0].getWidth());
-				} else {
-					cols[0].setWidth(width);
-				}
-			}
-		}
 	}
 	
 	/**

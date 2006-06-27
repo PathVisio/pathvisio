@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import util.TableColumnResizer;
+
 /**
  * This class is a {@link Wizard} that guides the user trough the process to
  * create an expression dataset from a delimited text file
@@ -254,35 +256,24 @@ public class ImportExprDataWizard extends Wizard {
 			setDescription("Specify the line with the column headers and from where the data starts");
 			setPageComplete(true);
 		}
-
+		
+		Spinner startSpinner;
+		Spinner headerSpinner;
 		public void createControl(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NULL);
 			composite.setLayout(new GridLayout(2, false));
 
 			Label headerLabel = new Label(composite, SWT.FLAT);
 			headerLabel.setText("Column headers at line: ");
-			final Spinner headerSpinner = new Spinner(composite, SWT.BORDER);
+			headerSpinner = new Spinner(composite, SWT.BORDER);
 			headerSpinner.setMinimum(1);
 			headerSpinner.setSelection(importInformation.headerRow);
 
 			Label startLabel = new Label(composite, SWT.FLAT);
 			startLabel.setText("Data starts at line: ");
-			final Spinner startSpinner = new Spinner(composite, SWT.BORDER);
+			startSpinner = new Spinner(composite, SWT.BORDER);
 			startSpinner.setMinimum(1);
 			startSpinner.setSelection(importInformation.firstDataRow);
-
-			headerSpinner.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					importInformation.headerRow = headerSpinner.getSelection();
-				}
-			});
-
-			startSpinner.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					importInformation.firstDataRow = startSpinner
-							.getSelection();
-				}
-			});
 
 			Group tableGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
 			GridData groupGrid = new GridData(GridData.FILL_BOTH);
@@ -299,15 +290,17 @@ public class ImportExprDataWizard extends Wizard {
 			nrCol.setText("line");
 			TableColumn txtCol = new TableColumn(previewTable, SWT.LEFT);
 			txtCol.setText("data");
-			nrCol.setWidth(30);
-			previewTable.addControlListener(new TableControlAdapter(
-					previewTable));
+			nrCol.setWidth(40);
+			nrCol.setResizable(false);
+			previewTable.addControlListener(new TableColumnResizer(previewTable, tableGroup, new int[] {0, 100}));
 
 			composite.pack();
 			setControl(composite);
 		}
 
 		public IWizardPage getNextPage() {
+			importInformation.headerRow = headerSpinner.getSelection();
+			importInformation.firstDataRow = startSpinner.getSelection();
 			setColumnTableContent(columnTable);
 			setColumnControlsContent();
 			return super.getNextPage();
@@ -383,8 +376,7 @@ public class ImportExprDataWizard extends Wizard {
 			columnTable = new Table(tableGroup, SWT.SINGLE | SWT.BORDER);
 			columnTable.setLinesVisible(true);
 			columnTable.setHeaderVisible(true);
-			columnTable
-					.addControlListener(new TableControlAdapter(columnTable));
+			columnTable.addControlListener(new TableColumnResizer(columnTable, tableGroup));
 
 			composite.pack();
 			setControl(composite);
@@ -422,6 +414,7 @@ public class ImportExprDataWizard extends Wizard {
 		} catch (IOException e) { // TODO: handle IOException
 			GmmlVision.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
+		previewTable.pack();
 	}
 
 	/**
@@ -450,6 +443,7 @@ public class ImportExprDataWizard extends Wizard {
 		} catch (IOException e) { // TODO: handle IOException
 			GmmlVision.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
+		columnTable.pack();
 	}
 
 	/**

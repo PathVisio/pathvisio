@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import util.TableColumnResizer;
 
-public class GmmlPropertyTable {
+public class GmmlPropertyTable extends Composite {
 	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
 	TextCellEditor textEditor;
@@ -87,7 +88,9 @@ public class GmmlPropertyTable {
 	
 	GmmlPropertyTable(Composite parent, int style)
 	{
-		Table t = new Table(parent, style);
+		super(parent, style);
+		this.setLayout(new FillLayout());
+		Table t = new Table(this, style);
 		TableColumn tcName = new TableColumn(t, SWT.LEFT);
 		TableColumn tcValue = new TableColumn(t, SWT.LEFT);
 		tcName.setText(colNames[0]);
@@ -121,6 +124,7 @@ public class GmmlPropertyTable {
 	public void setGraphics(GmmlGraphics g)
 	{
 		this.g = g;
+		tableViewer.setInput(g);
 	}
 		
 	private CellEditor getCellEditor(Object element)
@@ -277,48 +281,4 @@ public class GmmlPropertyTable {
 		}
 		public void removeListener(ILabelProviderListener listener) { }
 	};
-	
-	/**
-	 * {@link ControlAdapter} to fit the size of the table columns to the size of its parent composite
-	 */
-	class TableControlAdapter extends ControlAdapter {
-		Table table;
-
-		public TableControlAdapter(Table table) {
-			this.table = table;
-		}
-
-		public void controlResized(ControlEvent e) {
-			TableColumn[] cols = table.getColumns();
-			Rectangle area = table.getParent().getClientArea();
-			Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			int width = area.width - 2 * table.getBorderWidth();
-			if (preferredSize.y > area.height + table.getHeaderHeight()) {
-				// Subtract the scrollbar width from the total column width
-				// if a vertical scrollbar will be required
-				Point vBarSize = table.getVerticalBar().getSize();
-				width -= vBarSize.x;
-			}
-			Point oldSize = table.getSize();
-			if (oldSize.x > area.width) {
-				// table is getting smaller so make the columns
-				// smaller first and then resize the table to
-				// match the client area width
-				for (TableColumn col : cols) {
-					col.setWidth(width / cols.length);
-				}
-				
-				table.setSize(area.width, area.height);
-			} else {
-				// table is getting bigger so make the table
-				// bigger first and then make the columns wider
-				// to match the client area width
-				table.setSize(area.width, area.height);
-				
-				for (TableColumn col : cols) {
-					col.setWidth(width / cols.length);
-				}
-			}
-		}
-	}
 }

@@ -1,4 +1,6 @@
 package gmmlVision;
+import graphics.GmmlGeneProduct;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -33,20 +35,45 @@ public class GmmlBpBrowser extends Composite {
 	private String gexText;
 	private String header;
 	
+	private GmmlVision gmmlVision;
 	private Browser bpBrowser;
+	
+	private GmmlGeneProduct geneProduct;
 	
 	/**
 	 * Constructor for this class
 	 * @param parent	Parent {@link Composite} for the {@Browser} widget
 	 * @param style		Style for the {@Browser} widget
 	 */
-	public GmmlBpBrowser(Composite parent, int style) {
+	public GmmlBpBrowser(Composite parent, int style, GmmlVision gmmlVision) {
 		super(parent, style);
+		this.gmmlVision = gmmlVision;
+		
 		initializeHeader(); //Load the header including style information
 		this.setLayout(new FillLayout());
 		bpBrowser = new Browser(this, style); //Set the Browser widget
 		setGeneText(null);
 		setGexText(null);
+	}
+	
+	public void setGene(GmmlGeneProduct gp) 
+	{ 
+		geneProduct = gp;
+		if(gmmlVision.gmmlGdb == null || gmmlVision.gmmlGex == null) return;
+		if(gp == null) {
+			setGeneText(null);
+			setGexText(null);
+			return;
+		}
+		// Get the backpage text
+		String geneId = geneProduct.getId();
+		String systemCode = geneProduct.getSystemCode();
+		String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId, systemCode);
+		String gexText = gmmlVision.gmmlGex.getDataString(geneId, systemCode);
+		if (bpText != null) 	setGeneText(bpText);
+		else 					setGeneText("<I>No gene information found</I>");
+		if (gexText != null)	setGexText(gexText);
+		else 					setGexText("<I>No expression data found</I>");
 	}
 	
 	/**

@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import colorSet.ColorSetWindow;
 import data.GmmlData;
@@ -694,14 +696,14 @@ public class GmmlVision extends ApplicationWindow
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
 					drawing.setEditMode(true);
 					showEditActionsCI(true);
-					sashFormSplit.setMaximizedControl(propertyTable.tableViewer.getTable());
+					rightTabFolder.setSelection(1);
 				}
 				else
 				{
 					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
 					drawing.setEditMode(false);
 					showEditActionsCI(false);
-					sashFormSplit.setMaximizedControl(bpBrowser);
+					rightTabFolder.setSelection(0);
 				}
 			}
 			else //No gmml pathway loaded, deselect action and do nothing
@@ -944,7 +946,7 @@ public class GmmlVision extends ApplicationWindow
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		drawing.setNewGraphics(drawing.NEWNONE);
+		drawing.setNewGraphics(GmmlDrawing.NEWNONE);
 	}
 	
 	// Elements of the coolbar
@@ -1242,8 +1244,8 @@ public class GmmlVision extends ApplicationWindow
 	public GmmlBpBrowser bpBrowser; //Browser for showing backpage information
 	public GmmlPropertyTable propertyTable;	//Table showing properties of GmmlGraphics objects
 	SashForm sashForm; //SashForm containing the drawing area and sidebar
-	SashForm sashFormSplit;	//SashForm containing the two components of the sidebar (BpBrowser and PropertyTable)
 	ColorSetWindow colorSetWindow; //Window containing the colorset manager
+	TabFolder rightTabFolder; //TabFolder containing backbage browser and property editor
 	protected Control createContents(Composite parent)
 	{
 		Shell shell = parent.getShell();
@@ -1260,14 +1262,24 @@ public class GmmlVision extends ApplicationWindow
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setFocus();
 		
-		sashFormSplit = new SashForm (sashForm, SWT.VERTICAL);
+		rightTabFolder = new TabFolder(sashForm, SWT.NULL);
+		
+		//rightTabFolder controls
+		bpBrowser = new GmmlBpBrowser(rightTabFolder, SWT.NONE, this);
+		propertyTable = new GmmlPropertyTable(rightTabFolder, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		
+		//lefTabFolder TabItems
+		TabItem bpBrowserTab = new TabItem(rightTabFolder, SWT.NULL);
+		bpBrowserTab.setText("backpage");
+		bpBrowserTab.setControl(bpBrowser);
+		TabItem propertyTableTab = new TabItem(rightTabFolder, SWT.NULL);
+		propertyTableTab.setText("properties");
+		propertyTableTab.setControl(propertyTable);
+		
+		//show backpage browser tab
+		rightTabFolder.setSelection(0);
+		
 		sashForm.setWeights(new int[] {80, 20});
-		
-		propertyTable = new GmmlPropertyTable(sashFormSplit, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		
-		bpBrowser = new GmmlBpBrowser(sashFormSplit, SWT.NONE);
-		
-		sashFormSplit.setMaximizedControl(bpBrowser);
 		
 		setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 		

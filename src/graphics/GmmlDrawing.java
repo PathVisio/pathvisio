@@ -1,5 +1,6 @@
 package graphics;
 
+import gmmlVision.GmmlBpBrowser;
 import gmmlVision.GmmlVision;
 
 import java.awt.Rectangle;
@@ -376,68 +377,24 @@ PaintListener, MouseTrackListener, KeyListener
 	 */
 	public void mouseUp(MouseEvent e)
 	{
+		if(!editMode) return;
 		if(isDragging)
 		{
 			updatePropertyTable(gmmlVision.propertyTable.g);
 		} else if (isSelecting)
 		{
 			updatePropertyTable(null);
-//			redrawRectangleList(s.getSideAreas());
 			s.markDirty();
 			redrawDirtyRect();
-//			redraw();
 		}
 		isDragging = false;
 		isSelecting = false;
-//		redrawSelection(e.x,e.y,10,10);
 	}
 	
 	/**
 	 * Handles mouse entered input
 	 */
-	public void mouseDoubleClick(MouseEvent e)
-	{
-		if(!editMode) {
-			Point2D p = new Point2D.Double(e.x, e.y);
-			
-			Collections.sort(drawingObjects);
-			Iterator it = drawingObjects.iterator();
-			// drawingObjects is a sortedSet, so Guaranteed ordered checking
-			while (it.hasNext())
-			{
-				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
-				if (o.isContain(p))
-				{
-					if (o instanceof GmmlGeneProduct)
-					{
-						GmmlGeneProduct gp = (GmmlGeneProduct)o;
-						// Get the backpage text
-						String geneId = gp.getId();
-						String systemCode = gp.getSystemCode();
-						String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId, systemCode);
-						String gexText = gmmlVision.gmmlGex.getDataString(geneId, systemCode);
-						if (bpText != null) 
-						{
-							gmmlVision.bpBrowser.setGeneText(bpText);
-						} 
-						else 
-						{
-							gmmlVision.bpBrowser.setGeneText("<I>No gene information found</I>");
-						}
-						if (gexText != null) 
-						{
-							gmmlVision.bpBrowser.setGexText(gexText);
-						}
-						else 
-						{
-							gmmlVision.bpBrowser.setGexText("<I>No expression data found</I>");
-						}
-						break;
-					}
-				}
-			}
-		}	
-	}
+	public void mouseDoubleClick(MouseEvent e) {	}
 
 	/**
 	 * Paints all components in the drawing.
@@ -496,30 +453,42 @@ PaintListener, MouseTrackListener, KeyListener
 	/**
 	 * Updates the propertytable to display information about the given GmmlDrawingObject
 	 * @param o object to update the property table for, if instanceof {@link GmmlHandle}, 
-	 * then the parent object is used
+	 * then the parent object is used, if null, then the property table is cleared
 	 */
 	public void updatePropertyTable(GmmlDrawingObject o)
 	{
-		GmmlGraphics g;
+		GmmlGraphics g = null;
 		if (o != null)
 		{
-			if (o instanceof GmmlHandle)
+			if (o instanceof GmmlHandle && ((GmmlHandle)o).isVisible())
 			{
-				g = ((GmmlHandle)o).parent;
+				o = ((GmmlHandle)o).parent;
 			}
-			else
+			if (o instanceof GmmlGraphics)
 			{
 				g = (GmmlGraphics)o;
+				g.updateToPropItems();
 			}
 		}
-		else
-		{
-			g = mappInfo;
-		}
-		g.updateToPropItems();
-		gmmlVision.propertyTable.tableViewer.setInput(g);
+		gmmlVision.propertyTable.setGraphics(g);
 	}
 	
+	/**
+	 * Updates the {@link GmmlBpBrowser} to display information about the given GmmlDrawingObject
+	 * (currently only if it's a {@link GmmlGeneProduct})
+	 * @param o object to update the backpage browser for, if instance of {@link GmmlHandle}, then the
+	 * parent object is used, if null, then the backpage is cleared
+	 */
+	public void updateBackpageInfo(GmmlDrawingObject o)
+	{
+		GmmlGeneProduct gp = null;
+		if (o instanceof GmmlHandle  && ((GmmlHandle)o).isVisible()) 
+			o = ((GmmlHandle)o).parent;
+		if (o instanceof GmmlGeneProduct)
+			gp = (GmmlGeneProduct)o;
+		gmmlVision.bpBrowser.setGene(gp);
+	}
+
 	/**
 	 * deselect all elements on the drawing
 	 */
@@ -536,8 +505,23 @@ PaintListener, MouseTrackListener, KeyListener
 	 * (does nothing yet)
 	 * @param e	the mouse event to handle
 	 */
-	private void mouseDownViewMode(MouseEvent e) { }
-
+	private void mouseDownViewMode(MouseEvent e) 
+	{ 
+		Point2D p = new Point2D.Double(e.x, e.y);
+		GmmlDrawingObject obj = null;
+		Collections.sort(drawingObjects);
+		for (GmmlDrawingObject o : drawingObjects)
+		{
+			if (o.isContain(p))
+			{
+				obj = o;
+				break;
+			}
+		}
+		updatePropertyTable(obj);
+		updateBackpageInfo(obj);
+	}
+	
 	/**
 	 * Initializes selection, resetting the selectionbox
 	 * and then setting it to the position specified
@@ -590,11 +574,6 @@ PaintListener, MouseTrackListener, KeyListener
 			if(pressedObject instanceof GmmlHandle)
 			{
 				((GmmlHandle)pressedObject).parent.select();
-				updatePropertyTable(((GmmlHandle)pressedObject).parent);
-			}
-			else
-			{
-				updatePropertyTable(pressedObject);
 			}
 			
 			// start dragging
@@ -611,6 +590,8 @@ PaintListener, MouseTrackListener, KeyListener
 			isSelecting = true;
 			initSelection(p2d);
 		}		
+		updatePropertyTable(pressedObject);
+		updateBackpageInfo(pressedObject);
 		redrawDirtyRect();
 	}
 

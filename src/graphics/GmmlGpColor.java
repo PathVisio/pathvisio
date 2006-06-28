@@ -86,7 +86,6 @@ public class GmmlGpColor {
 	
 	private void colorByData(Rectangle colorArea)
 	{
-		RGB rgb = null;
 		Data mappIdData = gmmlGex.getCachedData(parent.name, parent.getSystemCode());
 		
 		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
@@ -164,9 +163,9 @@ public class GmmlGpColor {
 		switch(sampleType)
 		{
 		case GmmlColorSet.SAMPLE_TYPE_PROT:
-			image = GmmlVision.imageRegistry.get("data.mRNA"); break;
-		case GmmlColorSet.SAMPLE_TYPE_TRANS:
 			image = GmmlVision.imageRegistry.get("data.protein"); break;
+		case GmmlColorSet.SAMPLE_TYPE_TRANS:
+			image = GmmlVision.imageRegistry.get("data.mRNA"); break;
 		}
 		
 		if(image != null)

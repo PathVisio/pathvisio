@@ -50,7 +50,7 @@ public class GmmlBpBrowser extends Composite {
 		this.gmmlVision = gmmlVision;
 		
 		initializeHeader(); //Load the header including style information
-		this.setLayout(new FillLayout());
+		setLayout(new FillLayout());
 		bpBrowser = new Browser(this, style); //Set the Browser widget
 		setGeneText(null);
 		setGexText(null);

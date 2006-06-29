@@ -47,8 +47,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 import colorSet.ColorSetWindow;
 import data.GmmlData;
@@ -724,7 +722,7 @@ public class GmmlVision extends ApplicationWindow
 		GmmlVision window;
 		public ShowLegendAction (GmmlVision w)
 		{
-			super("&Show legend", IAction.AS_CHECK_BOX);
+			super("Show &legend", IAction.AS_CHECK_BOX);
 			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/legend.gif"));
 			window = w;
 		}
@@ -741,6 +739,26 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	public ShowLegendAction showLegendAction = new ShowLegendAction(this);
+	
+	/**
+	 * {@link Action} to show or hide the right sidepanel
+	 */
+	public class ShowRightPanelAction extends Action
+	{
+		GmmlVision window;
+		public ShowRightPanelAction (GmmlVision w)
+		{
+			super("Show &information panel", IAction.AS_CHECK_BOX);
+			window = w;
+			setChecked(true);
+		}
+		
+		public void run() {
+			if(isChecked()) rightPanel.restore();
+			else rightPanel.hide();
+		}
+	}
+	public ShowRightPanelAction showRightPanelAction = new ShowRightPanelAction(this);
 	
 	/**
 	 * {@link Action} to add a new element to the gmml pathway
@@ -1148,13 +1166,16 @@ public class GmmlVision extends ApplicationWindow
 //		editMenu.add(propertyAction);
 		MenuManager viewMenu = new MenuManager ("&View");
 		viewMenu.add(showLegendAction);
-		viewMenu.add(new ZoomAction(this, 50));
-		viewMenu.add(new ZoomAction(this, 75));
-		viewMenu.add(new ZoomAction(this, 100));
-		viewMenu.add(new ZoomAction(this, 125));
-		viewMenu.add(new ZoomAction(this, 150));
-		viewMenu.add(new ZoomAction(this, 200));
-		viewMenu.add(new ZoomAction(this, ZOOM_TO_FIT));
+		viewMenu.add(showRightPanelAction);
+		MenuManager zoomMenu = new MenuManager("&Zoom");
+		zoomMenu.add(new ZoomAction(this, 50));
+		zoomMenu.add(new ZoomAction(this, 75));
+		zoomMenu.add(new ZoomAction(this, 100));
+		zoomMenu.add(new ZoomAction(this, 125));
+		zoomMenu.add(new ZoomAction(this, 150));
+		zoomMenu.add(new ZoomAction(this, 200));
+		zoomMenu.add(new ZoomAction(this, ZOOM_TO_FIT));
+		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(selectGexAction);
@@ -1265,7 +1286,7 @@ public class GmmlVision extends ApplicationWindow
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setFocus();
 		
-		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
+		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL, this);
 		
 		//rightPanel controls
 		bpBrowser = new GmmlBpBrowser(rightPanel.getTabFolder(), SWT.NONE, this);
@@ -1313,6 +1334,9 @@ public class GmmlVision extends ApplicationWindow
 				new Image(getShell().getDisplay(), img));
 		img = new ImageData("icons/minimize.gif");
 		imageRegistry.put("sidepanel.minimize",
+				new Image(getShell().getDisplay(), img));
+		img = new ImageData("icons/close.gif");
+		imageRegistry.put("sidepanel.hide",
 				new Image(getShell().getDisplay(), img));
 		
 	}

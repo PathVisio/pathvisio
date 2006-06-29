@@ -1,5 +1,7 @@
 package gmmlVision.sidepanels;
 
+import gmmlVision.GmmlVision;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -25,10 +27,11 @@ public class TabbedSidePanel extends SidePanel {
 	 * Constructor for this class
 	 * @param parent	The parent composite (needs to be an {@link SashForm} for the
 	 * minimize button to work
-	 * @param style		
+	 * @param style	
+	 * @param gmmlVision	
 	 */
-	public TabbedSidePanel(Composite parent, int style) {
-		super(parent, style);
+	public TabbedSidePanel(Composite parent, int style, GmmlVision gmmlVision) {
+		super(parent, style, gmmlVision);
 		tabFolder = new TabFolder(contentComposite, SWT.NULL);
 	}
 	

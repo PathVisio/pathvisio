@@ -1,5 +1,6 @@
 package gmmlVision;
 
+import gmmlVision.sidepanels.TabbedSidePanel;
 import graphics.GmmlDrawing;
 import graphics.GmmlGeneProduct;
 
@@ -696,14 +697,14 @@ public class GmmlVision extends ApplicationWindow
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
 					drawing.setEditMode(true);
 					showEditActionsCI(true);
-					rightTabFolder.setSelection(1);
+					rightPanel.getTabFolder().setSelection(1);
 				}
 				else
 				{
 					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
 					drawing.setEditMode(false);
 					showEditActionsCI(false);
-					rightTabFolder.setSelection(0);
+					rightPanel.getTabFolder().setSelection(0);
 				}
 			}
 			else //No gmml pathway loaded, deselect action and do nothing
@@ -1245,9 +1246,11 @@ public class GmmlVision extends ApplicationWindow
 	public GmmlPropertyTable propertyTable;	//Table showing properties of GmmlGraphics objects
 	SashForm sashForm; //SashForm containing the drawing area and sidebar
 	ColorSetWindow colorSetWindow; //Window containing the colorset manager
-	TabFolder rightTabFolder; //TabFolder containing backbage browser and property editor
+	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
 	protected Control createContents(Composite parent)
 	{
+		loadImages();
+		
 		Shell shell = parent.getShell();
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
@@ -1262,22 +1265,18 @@ public class GmmlVision extends ApplicationWindow
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setFocus();
 		
-		rightTabFolder = new TabFolder(sashForm, SWT.NULL);
+		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
 		
-		//rightTabFolder controls
-		bpBrowser = new GmmlBpBrowser(rightTabFolder, SWT.NONE, this);
-		propertyTable = new GmmlPropertyTable(rightTabFolder, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		//rightPanel controls
+		bpBrowser = new GmmlBpBrowser(rightPanel.getTabFolder(), SWT.NONE, this);
+		propertyTable = new GmmlPropertyTable(
+				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		
-		//lefTabFolder TabItems
-		TabItem bpBrowserTab = new TabItem(rightTabFolder, SWT.NULL);
-		bpBrowserTab.setText("backpage");
-		bpBrowserTab.setControl(bpBrowser);
-		TabItem propertyTableTab = new TabItem(rightTabFolder, SWT.NULL);
-		propertyTableTab.setText("properties");
-		propertyTableTab.setControl(propertyTable);
+		rightPanel.addTab(bpBrowser, "backpage");
+		rightPanel.addTab(propertyTable, "properties");
 		
 		//show backpage browser tab
-		rightTabFolder.setSelection(0);
+		rightPanel.getTabFolder().setSelection(0);
 		
 		sashForm.setWeights(new int[] {80, 20});
 		
@@ -1285,8 +1284,6 @@ public class GmmlVision extends ApplicationWindow
 		
 		colorSetWindow = new ColorSetWindow(shell);
 		colorSetWindow.setGmmlGex(gmmlGex);
-
-		loadImages();
 		
 		return parent;
 		
@@ -1313,7 +1310,10 @@ public class GmmlVision extends ApplicationWindow
 		img = new ImageData("images/protein.bmp");
 		img.transparentPixel = img.palette.getPixel(TRANSPARENT_COLOR);
 		imageRegistry.put("data.protein",
-				new Image(getShell().getDisplay(), img));	
+				new Image(getShell().getDisplay(), img));
+		img = new ImageData("icons/minimize.gif");
+		imageRegistry.put("sidepanel.minimize",
+				new Image(getShell().getDisplay(), img));
 		
 	}
 	

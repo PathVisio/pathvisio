@@ -89,7 +89,7 @@ public class GmmlPropertyTable extends Composite {
 	GmmlPropertyTable(Composite parent, int style)
 	{
 		super(parent, style);
-		this.setLayout(new FillLayout());
+		setLayout(new FillLayout());
 		Table t = new Table(this, style);
 		TableColumn tcName = new TableColumn(t, SWT.LEFT);
 		TableColumn tcValue = new TableColumn(t, SWT.LEFT);
@@ -100,7 +100,6 @@ public class GmmlPropertyTable extends Composite {
 		tableViewer = new TableViewer(t);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setHeaderVisible(true);
-		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableViewer.setContentProvider(tableContentProvider);
 		tableViewer.setLabelProvider(tableLabelProvider);
 		

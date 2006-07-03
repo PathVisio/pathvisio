@@ -1,5 +1,6 @@
 package gmmlVision;
 
+import gmmlVision.sidepanels.SidePanel;
 import gmmlVision.sidepanels.TabbedSidePanel;
 import graphics.GmmlDrawing;
 import graphics.GmmlGeneProduct;
@@ -48,6 +49,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import search.SearchMethods;
+import search.SearchResultTable;
+import search.SearchWindow;
 import colorSet.ColorSetWindow;
 import data.GmmlData;
 import data.GmmlGdb;
@@ -324,6 +328,27 @@ public class GmmlVision extends ApplicationWindow
 	}
 	
 	/**
+	 * {@link Action} to open search window
+	 */
+	private class SearchAction extends Action
+	{
+		GmmlVision window;
+		public SearchAction(GmmlVision w)
+		{
+			window = w;
+			setText("&Search...");
+			setToolTipText("Search for pathways or genes");
+		}
+		
+		public void run() {
+			SearchWindow sd = new SearchWindow(window);
+			sd.open();
+			
+		}
+	}
+	private SearchAction searchAction = new SearchAction(this);
+	
+	/**
 	 * {@link Action} to select a Gene Database
 	 */
 	private class SelectGdbAction extends Action
@@ -332,7 +357,7 @@ public class GmmlVision extends ApplicationWindow
 		public SelectGdbAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Select Gene Database");
+			setText("Select &Gene Database");
 			setToolTipText("Select Gene Database");
 		}
 		
@@ -366,7 +391,7 @@ public class GmmlVision extends ApplicationWindow
 		public SelectGexAction(GmmlVision w)
 		{
 			window = w;
-			setText("&Select Expression Data");
+			setText("Select &Expression Data");
 			setToolTipText("Select Expression Data");
 		}
 		
@@ -1177,6 +1202,7 @@ public class GmmlVision extends ApplicationWindow
 		zoomMenu.add(new ZoomAction(this, ZOOM_TO_FIT));
 		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
+		dataMenu.add(searchAction);
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(selectGexAction);
 		dataMenu.add(createGexAction);
@@ -1213,6 +1239,10 @@ public class GmmlVision extends ApplicationWindow
 	 * {@link GmmlGex} object to handle expression data related actions
 	 */
 	public GmmlGex gmmlGex = new GmmlGex(gmmlGdb);
+	/**
+	 * {@link SearchMethods} object holding search operations
+	 */
+	public SearchMethods search = new SearchMethods(gmmlGex, gmmlGdb);
 	
 	public GmmlVision()
 	{
@@ -1268,6 +1298,8 @@ public class GmmlVision extends ApplicationWindow
 	SashForm sashForm; //SashForm containing the drawing area and sidebar
 	ColorSetWindow colorSetWindow; //Window containing the colorset manager
 	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
+	public SidePanel searchPanel; //side panel for displaying search results
+	public SearchResultTable searchResults; //table for displaying search results
 	protected Control createContents(Composite parent)
 	{
 		loadImages();
@@ -1283,6 +1315,8 @@ public class GmmlVision extends ApplicationWindow
 		
 		sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
 		
+		searchPanel = new SidePanel(sashForm, SWT.NULL, this);
+		
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setFocus();
 		
@@ -1295,11 +1329,15 @@ public class GmmlVision extends ApplicationWindow
 		
 		rightPanel.addTab(bpBrowser, "backpage");
 		rightPanel.addTab(propertyTable, "properties");
+			
+		//searchPanel controls
+		searchResults = new SearchResultTable(searchPanel.getContentComposite(),
+				SWT.NULL, this);
 		
-		//show backpage browser tab
-		rightPanel.getTabFolder().setSelection(0);
+		sashForm.setWeights(new int[] {20, 60, 20});
 		
-		sashForm.setWeights(new int[] {80, 20});
+		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
+		searchPanel.hide(); //hide search results panel
 		
 		setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 		

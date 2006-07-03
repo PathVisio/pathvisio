@@ -7,11 +7,9 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -21,9 +19,10 @@ import org.eclipse.swt.widgets.Sash;
  * This class can be extended to create a sidepanel with minimize button
  * for use as component of a {@link SashForm}
  */
-public abstract class SidePanel extends Composite {
+public class SidePanel extends Composite {
 	private GmmlVision gmmlVision;
 	private SashForm parentSash;
+	private Composite contentComposite;
 	
 	/**
 	 * Constructor for this class
@@ -40,8 +39,9 @@ public abstract class SidePanel extends Composite {
 		createControls();
 	}
 
+	public Composite getContentComposite() { return contentComposite; }
+	
 	Composite buttonBar;
-	Composite contentComposite;
 	Composite stackComposite;
 	Composite emptyComposite;
 	StackLayout stackLayout;

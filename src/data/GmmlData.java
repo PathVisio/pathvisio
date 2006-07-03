@@ -9,8 +9,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -35,9 +37,9 @@ import org.xml.sax.SAXException;
 public class GmmlData
 {
 	/**
-	 * factor to convert screen coördinates used in GenMAPP to pixel coördinates
-	 * NOTE: maybe it is better to adapt gmml to store coördinates as pixels and
-	 * divide the GenMAPP coördinates by this factor on conversion
+	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
+	 * NOTE: maybe it is better to adapt gmml to store cordinates as pixels and
+	 * divide the GenMAPP cordinates by this factor on conversion
 	 */
 	final public static int GMMLZOOM = 15;
 	/**
@@ -57,12 +59,7 @@ public class GmmlData
 	 * JDOM representation of the gmml pathway currently loaded
 	 */
 	public Document doc;
-	
-	/**
-	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
-	 */
-	public static final HashMap<String,String> sysName2Code = new HashMap<String,String>();
-	
+		
 	/**
 	 * Contructor for this class, creates a new gmml document
 	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
@@ -126,10 +123,12 @@ public class GmmlData
 	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
 	 * and system code
 	 */
-	private void initSysName2Code()
+	private static HashMap<String, String> initSysName2Code()
 	{
+		HashMap<String, String> sn2c = new HashMap<String,String>();
 		for(int i = 0; i < systemNames.length; i++)
-			sysName2Code.put(systemNames[i], systemCodes[i]);
+			sn2c.put(systemNames[i], systemCodes[i]);
+		return sn2c;
 	}
 
 	/**
@@ -242,16 +241,21 @@ public class GmmlData
 		}
 	}
 	
-	private final static String[] systemCodes = new String[] 	{ 
+	public final static String[] systemCodes = new String[] 	{ 
 		"D", "F", "G", "I", "L", "M",
 		"Q", "R", "S", "T", "U",
 		"W", "Z", "X", "O"
 	};
 	
-	private final static String[] systemNames = new String[] {
+	public final static String[] systemNames = new String[] {
 		"SGD", "FlyBase", "GenBank", "InterPro" ,"LocusLink", "MGI",
 		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
 		"WormBase", "ZFIN", "Affy", "Other"
 	};
+	
+	/**
+	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
+	 */
+	public static final HashMap<String,String> sysName2Code = initSysName2Code();
 	
 }

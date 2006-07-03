@@ -32,7 +32,7 @@ public class TabbedSidePanel extends SidePanel {
 	 */
 	public TabbedSidePanel(Composite parent, int style, GmmlVision gmmlVision) {
 		super(parent, style, gmmlVision);
-		tabFolder = new TabFolder(contentComposite, SWT.NULL);
+		tabFolder = new TabFolder(getContentComposite(), SWT.NULL);
 	}
 	
 	/**

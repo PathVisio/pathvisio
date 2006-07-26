@@ -15,7 +15,7 @@ GMML format	Gmml / BioPAX integration -> add reaction information to links	Marti
 gmml visualization	MVC aproach for GmmlGraphics	Martijn	9	low					
 Packaging	Test app in linux	Martijn		low					
 Packaging	auto-generate executable JAR and installer	Martijn		low				done	
-search	add searchdialog/results to right sidepanel	Thomas	1	high					
+search	add searchdialog/results to right sidepanel	Thomas	1	high				done	
 search	mark found genes (add highlighted property)	Thomas	1	high					
 user preferences	Create general class + file to store user preferences (directories, gdb)	Thomas	2	high					
 user preferences	Create UI for editing preferences	Thomas	2	high					
@@ -35,7 +35,7 @@ statistics	Display R results object in GmmlVision	Thomas	10.3	medium
 editor	Update editor to support links between Gmml objects	Thomas	11	medium					
 SNP	Test human SNP database: design feasible method to include SNP data	Thomas	12	medium					after SNP course
 Packaging	Add lots of api-doc comments	Thomas		high				done	
-UI	don't adapt windowsize to size given in gmml file on open	Thomas		high					
+UI	don't adapt windowsize to size given in gmml file on open	Thomas		high				done	
 colorset	add inputvalidator to value text fields	Thomas		low					
 legend	add 'using ... Gex' to legend	Thomas		low					
 database	try to put db files into a single file (e.g. zip or jar without compression)	Thomas		low					

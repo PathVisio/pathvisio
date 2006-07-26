@@ -22,14 +22,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -212,11 +207,17 @@ public class GmmlPropertyTable extends Composite {
 			
 			switch((Integer)typeMappings.get(key))
 			{
-			case DOUBLE: 	value = Double.parseDouble((String)value); break;
-			case INTEGER: 	value = Integer.parseInt((String)value); break;
+			case DOUBLE: 	try { value = Double.parseDouble((String)value); break; } 
+				catch(Exception e) { GmmlVision.log.error("GmmlPropertyTable: Unable to parse double", e); 
+					return; }
+			case INTEGER: 	try { value = Integer.parseInt((String)value); break; }
+				catch(Exception e) { GmmlVision.log.error("GmmlPropertyTable: Unable to parse int", e); 
+					return; }
 			case TYPE:
-				if(key.equals("GeneProduct-Data-Source"))
+				if(key.equals("GeneProduct-Data-Source")) {
+					if((Integer)value == -1) return; //Nothing selected
 					value = (String)GmmlGeneProduct.dataSources.get((Integer)value);
+				}
 			}
 			
 			g.propItems.put(key, value);

@@ -158,8 +158,8 @@ public class GmmlGdb {
 	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 */
-	public ArrayList ensId2Refs(String ensId) {
-		ArrayList crossIds = new ArrayList();
+	public ArrayList<String> ensId2Refs(String ensId) {
+		ArrayList<String> crossIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight FROM link " +
@@ -182,9 +182,9 @@ public class GmmlGdb {
 	 * @return		{@ArrayList} containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
 	 */
-	public ArrayList ref2EnsIds(String ref, String code)
+	public ArrayList<String> ref2EnsIds(String ref, String code)
 	{
-		ArrayList ensIds = new ArrayList();
+		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idLeft FROM link " +
@@ -202,19 +202,31 @@ public class GmmlGdb {
 	
 	/**
 	 * Get all cross references (ids from every system representing 
-	 * the same gene as the given id) for a given id (from any system)
+	 * the same gene as the given id) for a given id
+	 * @param id	gene identifier to get the cross references for
+	 * @param code	systemcode of the gene identifier
+	 * @return
+	 */
+	public ArrayList getCrossRefs(String id, String code) {
+		ArrayList<String> refs = new ArrayList<String>();
+		ArrayList<String> ensIds = ref2EnsIds(id, code);
+		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
+		return refs;
+	}
+	/**
+	 * Get all cross references (ids from every system representing 
+	 * the same gene as the given id) for a given id (from any system) using a
+	 * single SQL query
 	 * NOTE: Don't use this due to performance reasons. Hsqldb seems to have
 	 * trouble with more complicated select statements like this. Using multiple 
-	 * simple select statements showed to be much faster, so subsequentially use 
-	 * {@link ref2EnsIds} and {@link ensIds2Refs} to get all cross references for
-	 * a given non-ensembl gene id
+	 * simple select statements showed to be much faster, so use getCrossRefs instead
 	 * @param id	gene identifier to get the cross references for
 	 * @param code	systemcode of the gene identifier
 	 * @return
 	 */
 //	Don't use this, multiple simple select queries is faster
-//	Subsequentially use ref2EnsIds ensIds2Refs
-	public ArrayList getCrossRefs(String id, String code) {
+//	Use getCrossRefs instead
+	public ArrayList getCrossRefs1Query(String id, String code) {
 		ArrayList crossIds = new ArrayList();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(

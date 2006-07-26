@@ -1,0 +1,139 @@
+Feature	Task	Who	Order	Priority	Orig Est	Curr Est	Elapsed	Remain	
+gdb	add CAS ids in GDB + backpage info	Martijn	1	medium					before 16 aug.
+editor	add sidebar to add arbitrary text and store in gmml as comment or Cdata	Martijn	2	medium					
+GMML format	Update XML schema to include keys for all elements	Martijn	3.1	high					
+GMML format	Modify converter to convert to new schema, generate default keys	Martijn	3.2	high					
+GMML format	Modify gmml reader-writer to use new format. Possibly in a new branch?	Martijn	3.3	high					
+gmml visualization	add graphical representation for all supported GMML objects	Martijn	4.1	medium					
+gmml visualization	use rotation field (add rotation handle)	Martijn	4.2	medium					
+gmml visualization	standarize fill and line color	Martijn	4.3	medium					
+editor	copy/paste of gmml objects, within program and outside program (as gmml)	Martijn	5.1	medium					
+editor	copy/paste as vector graphics	Martijn	5.2	low					
+cytoscape	GmmlVision as Cytoscape plugin	Martijn	6	low					
+mapp conversion	automatic conversion of GenMAPP mapps to Gmml	Martijn	7	low					
+GMML format	Gmml / BioPAX integration -> add reaction information to links	Martijn	8	medium					
+gmml visualization	MVC aproach for GmmlGraphics	Martijn	9	low					
+Packaging	Test app in linux	Martijn		low					
+Packaging	auto-generate executable JAR and installer	Martijn		low				done	
+search	add searchdialog/results to right sidepanel	Thomas	1	high					
+search	mark found genes (add highlighted property)	Thomas	1	high					
+user preferences	Create general class + file to store user preferences (directories, gdb)	Thomas	2	high					
+user preferences	Create UI for editing preferences	Thomas	2	high					
+editor	GMML from scratch (valid)	Thomas	3	high					
+legend	Legend to sidepanel	Thomas	4	medium					
+editor	multi-select: add resize handles to selectionbox	Thomas	5	low					
+editor	multi-select by pressing CTRL	Thomas	5	medium					
+help	help as wiki-page (public), to open from help menu	Thomas	6	high					
+test	user test: edit mapp, visualize data from tab-delimited text file	Thomas	7	medium					end of september
+drawing	align to gird	Thomas	8	medium					
+drawing	align/resize buttons	Thomas	8	medium					
+drawing	undo/redo, quick solution: store entire drawing	Thomas	9	medium					
+statistics	Design R objects to constrain structure of expression/pathway data	Thomas	10	medium					
+statistics	Create example R-script to do create a simple top-list of pathways	Thomas	10.1	medium					
+statistics	Create R-objects from GmmlVision and call R-scirpts from java	Thomas	10.2	medium					
+statistics	Display R results object in GmmlVision	Thomas	10.3	medium					
+editor	Update editor to support links between Gmml objects	Thomas	11	medium					
+SNP	Test human SNP database: design feasible method to include SNP data	Thomas	12	medium					after SNP course
+Packaging	Add lots of api-doc comments	Thomas		high				done	
+UI	don't adapt windowsize to size given in gmml file on open	Thomas		high					
+colorset	add inputvalidator to value text fields	Thomas		low					
+legend	add 'using ... Gex' to legend	Thomas		low					
+database	try to put db files into a single file (e.g. zip or jar without compression)	Thomas		low					
+property editor	adding geneproduct: option to search id in gdb	Thomas		low					
+gex	speed up caching gex data on loading mapp	Thomas		medium					
+Packaging	stabilize API: use more getters / setters and private members	Thomas		medium					
+UI	Check for modification, ask to save when quitting program	Thomas		medium					
+colorset	implement drag and drop	Thomas						done	
+colorset	add option to delete colorset / object	Thomas						done	
+colorset	get gradient data columns from gex	Thomas						done	
+colorset	add action colorsetmanager	Thomas						done
+colorset	add combo in toolbar, select colorset	Thomas						done
+colorset	speed up saving colorset on closing colorsetwindow	Thomas						done
+colorset / drawing	color geneproducts by selected colorset	Thomas						done
+criteria builder	create ui window	Thomas						done
+criteria builder	implement 'color by gradient'	Thomas						done
+database	open/close connection to db only at start and end of program	Thomas						done
+drawing	fix retained selection	Thomas						done
+drawing	disable sticky line ends on shape	Thomas						done
+drawing	fix changing fontsize after subsequentially zooming	Thomas						done
+drawing	re-implement selection box	Thomas						done
+drawing	resize geneproduct labels when zooming	Thomas						done
+drawing	zoom to fit	Thomas						done
+drawing	fix selection box only works from topleft to bottomright	Thomas						done
+drawing	make it possible to use mouse scrollbutton	Thomas						done
+drawing	create mouse listener methods for drawing new graphics	Thomas						done
+drawing	fix negative width/height of graphics elements	Thomas						done
+drawing	fix flickering when moving objects	Thomas						done
+drawing	implement double buffering for further flicker reduction	Thomas						done
+drawing	fix deselect when pressing only handle of selected object	Thomas						done
+drawing	clip text label in geneproduct (when too large)	Thomas						done
+drawing	allocate coloring by expression in seperate gmmlgraphics class	Thomas						done
+drawing	pre-load coloring data on opening mapp / gex	Thomas						done
+drawing	add colorset legend (use colorsetpreview)	Thomas						done
+drawing / gmml	ensure update of gmml document on changing graphics	Thomas						done
+drawing / gmml	create new jdom element when creating new graphic	Thomas						done
+drawing / gmml	add non-graphics attributes to updateJdomGraphics()	Thomas						done
+drawing / gmml	fix color from and to gmml	Thomas						done
+expression data	read gex to temporary database	Thomas						done
+expression data	dialog option 'load gex'	Thomas						done
+expression data	add expression data to gene info	Thomas						done
+expression data	add 'convert gex' option	Thomas						done
+expression data	change 'load gex' to 'select gex'	Thomas						done
+gdb2hsqldb	write queries	Thomas						done
+gdb2hsqldb	fixed file location / properties	Thomas						done
+gdb2hsqldb	dialog option 'convert'	Thomas						done
+gdb2hsqldb	thread / progress	Thomas						done
+map gene info	write queries	Thomas						done
+map gene info	create ui for displaying info	Thomas						done
+map gene info	lookup gene when clicked	Thomas						done
+property editor	add more geneproduct attributes to property editor	Thomas						done
+property editor	sort labels in property editor	Thomas						done
+property editor	custom labels in property editor (so not neccesarily attribute names)	Thomas						done
+property editor	dropdownlist for choosing datasource on geneproduct	Thomas						done
+select gdb	create select menu	Thomas						done
+select gdb	test when db files moved	Thomas						done
+UI	add save as	Thomas						done
+UI	re-implement property table	Thomas						done
+UI	create view / edit mode	Thomas						done	
+UI	create toolbar for drawing new graphics	Thomas						done	
+UI	hide optiontable when in view mode	Thomas						done	
+UI	hide backpageviewer when in edit mode	Thomas						done	
+colorset	implement color by criteria	Thomas						done	
+colorset	clear textfields when changing colorset / object	Thomas						done	
+colorset	refresh coloring when opening new mapp	Thomas						done	
+colorset	refresh coloring when edited colorset	Thomas						done	
+colorset	colorsetWindow: fetch datacolumns from cache and filter out string columns with gradient	Thomas						done	
+colorset	colorsetWindow: create options for colorset (indicate multiple values per gene, no criteria met..)	Thomas						done	
+drawing	give drawing order to objects	Thomas						done	
+drawing / colorset	disable color by expression when editing	Thomas						done	
+gdb	create gene databases from ensembl	Thomas							partly done: human + mouse
+gdb / expression data	choose representative file for database (.properties), fix filechoosers	Thomas						done	
+gex builder	import exprssion data from text	Thomas						done	
+gex builder	create ui window for gex import	Thomas						done	
+gui	add imageregistry for managing icons	Thomas						done	
+colorset	add error messages to color by criteria	Thomas						done	
+drawing	add delete function for graphics objects	Thomas 		medium				done	
+editor	handles on corners of drawing objects, no handle in center		1	low					
+visualization	formalize API for visualization classes: plugin structure		1	medium					"3 visualization types: tooltip, drawing, sidepanel; choose and setup via colorset dialog"
+editor	scroll when moving object out of display		2	low					
+visualization	Add visualization plugin to add expression value(s) next to genebox		2	medium					
+editor	nudge: move object with arrow keys		3	low					
+visualization	Add visualization plugin to color with horizontal bar per multiple annotation		3	medium					
+editor	check if objects are moved out of drawing boundaries and expand if so		4	low					
+editor	auto-calculate drawing board size on open		4	low					
+visualization	Add visualization plugin to display labels as LATEX, to display formulas		4	medium					
+shell integration	double click on gmml file opens in GmmlVision		5	medium					
+visualization	Enable anti-aliasing for icons		5.1	medium					extra dll file needed in windows!
+visualization	Increase icon size to 64x64/128x128		5.2	low					
+visualization	Find optimal font size for labels (to fit in gene box)		6	medium					
+gdb	support using multilple gdb's at the same time		7	medium					specify priority for which database to search first
+gdb	remove dependency on ENSEMBL Gene		8	medium					
+editor	undo/redo, more sophisticated solution: only store objects that are changed		9	medium					
+visualization	export function to html/bmp/pdf		10	medium					
+gdb	gene database editor (e.g. To edit 'others' table)		11	medium					first look for generic hsqldb editor
+UI	MDI: open multiple pathways, by split-window button		12	medium					
+help	internal help viewer		13	medium					look for standard solution in SWT
+statistics	Gmml from R: create API that can be called from R		14	medium					
+command line	batch mapping		15	low					
+command line	get version		16	low					
+command line	help		17	low					

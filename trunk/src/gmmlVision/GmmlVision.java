@@ -1,6 +1,5 @@
 package gmmlVision;
 
-import gmmlVision.sidepanels.SidePanel;
 import gmmlVision.sidepanels.TabbedSidePanel;
 import graphics.GmmlDrawing;
 import graphics.GmmlGeneProduct;
@@ -49,9 +48,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import search.PathwaySearchComposite;
 import search.SearchMethods;
-import search.SearchResultTable;
-import search.SearchWindow;
 import colorSet.ColorSetWindow;
 import data.GmmlData;
 import data.GmmlGdb;
@@ -326,27 +324,6 @@ public class GmmlVision extends ApplicationWindow
 			}
 		}
 	}
-	
-	/**
-	 * {@link Action} to open search window
-	 */
-	private class SearchAction extends Action
-	{
-		GmmlVision window;
-		public SearchAction(GmmlVision w)
-		{
-			window = w;
-			setText("&Search...");
-			setToolTipText("Search for pathways or genes");
-		}
-		
-		public void run() {
-			SearchWindow sd = new SearchWindow(window);
-			sd.open();
-			
-		}
-	}
-	private SearchAction searchAction = new SearchAction(this);
 	
 	/**
 	 * {@link Action} to select a Gene Database
@@ -1202,7 +1179,6 @@ public class GmmlVision extends ApplicationWindow
 		zoomMenu.add(new ZoomAction(this, ZOOM_TO_FIT));
 		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
-		dataMenu.add(searchAction);
 		dataMenu.add(selectGdbAction);
 		dataMenu.add(selectGexAction);
 		dataMenu.add(createGexAction);
@@ -1242,7 +1218,7 @@ public class GmmlVision extends ApplicationWindow
 	/**
 	 * {@link SearchMethods} object holding search operations
 	 */
-	public SearchMethods search = new SearchMethods(gmmlGex, gmmlGdb);
+	public SearchMethods search = new SearchMethods(gmmlGdb);
 	
 	public GmmlVision()
 	{
@@ -1298,8 +1274,7 @@ public class GmmlVision extends ApplicationWindow
 	SashForm sashForm; //SashForm containing the drawing area and sidebar
 	ColorSetWindow colorSetWindow; //Window containing the colorset manager
 	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
-	public SidePanel searchPanel; //side panel for displaying search results
-	public SearchResultTable searchResults; //table for displaying search results
+	PathwaySearchComposite pwSearchComposite; //Composite that handles pathway searches and displays results
 	protected Control createContents(Composite parent)
 	{
 		loadImages();
@@ -1309,13 +1284,11 @@ public class GmmlVision extends ApplicationWindow
 		shell.setLocation(100, 100);
 		
 		shell.setText("GmmlVision");
-		
+
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
 		
 		sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
-		
-		searchPanel = new SidePanel(sashForm, SWT.NULL, this);
 		
 		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setFocus();
@@ -1326,18 +1299,15 @@ public class GmmlVision extends ApplicationWindow
 		bpBrowser = new GmmlBpBrowser(rightPanel.getTabFolder(), SWT.NONE, this);
 		propertyTable = new GmmlPropertyTable(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
 		
-		rightPanel.addTab(bpBrowser, "backpage");
-		rightPanel.addTab(propertyTable, "properties");
-			
-		//searchPanel controls
-		searchResults = new SearchResultTable(searchPanel.getContentComposite(),
-				SWT.NULL, this);
+		rightPanel.addTab(bpBrowser, "Backpage");
+		rightPanel.addTab(propertyTable, "Properties");
+		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		
-		sashForm.setWeights(new int[] {20, 60, 20});
+		sashForm.setWeights(new int[] {60, 40});
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
-		searchPanel.hide(); //hide search results panel
 		
 		setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
 		
@@ -1399,8 +1369,8 @@ public class GmmlVision extends ApplicationWindow
 	 * Opens a GMML representation of a pathway or reaction and creates 
 	 * a scrollpane of the drawing, which is loaded in the frame.
 	 */
-	private void openPathway(String fnPwy)
-	{		
+	public void openPathway(String fnPwy)
+	{
 		drawing = new GmmlDrawing(sc, SWT.NO_BACKGROUND, this);
 		
 		// initialize new JDOM gmml representation and read the file
@@ -1411,9 +1381,8 @@ public class GmmlVision extends ApplicationWindow
 		
 		if(drawing != null)
 		{
-			getShell().setSize((int)(1000 * drawing.mappInfo.windowWidth / sashForm.getWeights()[0]), 
-					drawing.mappInfo.windowHeight); //getWeights() returns 800,200 instead of 80,20 :?
 			drawing.setEditMode(switchEditModeAction.isChecked());
+			
 			if(gmmlGex.con != null)
 			{
 				cacheExpressionData();

@@ -48,6 +48,10 @@ public class TableColumnResizer extends ControlAdapter {
 	}
 	
 	public void controlResized(ControlEvent e) {
+		doResize();
+	}
+	
+	public void doResize() {
 		//Check if number of columns is the same
 		if(table.getColumns().length != cols.length) {
 			cols = table.getColumns();

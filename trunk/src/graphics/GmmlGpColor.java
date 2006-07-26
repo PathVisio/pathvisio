@@ -175,11 +175,11 @@ public class GmmlGpColor {
 			
 			buffer.fillRectangle(r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
 			
-//			buffer.setAntialias(SWT.ON);
+			buffer.setAntialias(SWT.ON);
 //			buffer.setInterpolation(SWT.HIGH);
 			buffer.drawImage(image, 0, 0, imgData.width, imgData.height, 
 					r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
-//			buffer.setAntialias(SWT.DEFAULT);
+			buffer.setAntialias(SWT.DEFAULT);
 		} else {
 			buffer.fillRectangle(r.x, r.y, r.width, r.height);
 		}

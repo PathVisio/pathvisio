@@ -3,8 +3,10 @@ package search;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -13,39 +15,57 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import search.SearchMethods.GeneParser.IdCodePair;
+import search.PathwaySearchComposite.SearchRunnableWithProgress;
+import search.SearchMethods.GeneParser.Gene;
 import search.SearchResults.Attribute;
 import search.SearchResults.SearchResult;
 import data.GmmlData;
 import data.GmmlGdb;
-import data.GmmlGex;
 
-//TODO: progress bar
 public class SearchMethods {
-	private GmmlGex gmmlGex;
 	private GmmlGdb gmmlGdb;
 	
-	public SearchMethods(GmmlGex gmmlGex, GmmlGdb gmmlGdb) {
-		this.gmmlGex = gmmlGex;
+	public SearchMethods(GmmlGdb gmmlGdb) {
 		this.gmmlGdb = gmmlGdb;
 	}
 	
 	/**
 	 * Search for pathways containing the given gene and display result in given result table
-	 * @param id
-	 * @param code
-	 * @param folder
-	 * @param srt
+	 * @param id	Gene identifier to search for
+	 * @param code	System code of the gene identifier
+	 * @param folder	Directory to search (includes sub-directories)
+	 * @param srt	{@link SearchResultTable} to display the results in
+	 * @return the number of results found, -1 if the process is cancelled
 	 */
-	public int pathwaysContainingGene(String id, String code, File folder, SearchResultTable srt) {
+	public int pathwaysContainingGene(String id, String code, File folder, 
+			SearchResultTable srt) {
+		return pathwaysContainingGene(id, code, folder, srt);
+	}
+	
+	/**
+	 * Search for pathways containing the given gene and display result in given result table
+	 * @param id	Gene identifier to search for
+	 * @param code	System code of the gene identifier
+	 * @param folder	Directory to search (includes sub-directories)
+	 * @param srt	{@link SearchResultTable} to display the results in
+	 * @param runnable	{@link SearchRunnableWithProgress} containing the monitor responsible for
+	 * displaying the progress
+	 * @return the number of results found, -1 if the process is cancelled
+	 */
+	public int pathwaysContainingGene(String id, String code, File folder, 
+			SearchResultTable srt, SearchRunnableWithProgress runnable) {
+		
 		SearchResults srs = new SearchResults();
 		srs.addAttribute("pathway", Attribute.TYPE_TEXT);
 		srs.addAttribute("directory", Attribute.TYPE_TEXT);
+		srs.addAttribute("file", Attribute.TYPE_TEXT, false);
 
 		srt.setSearchResults(srs);
-		//Get the ensembl ids for the gene to search for
-		ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code);
-		if(ensIds.size() == 0) return 0; //Gene not found
+		//Get all cross references
+		ArrayList<String> refs = gmmlGdb.getCrossRefs(id, code);
+		if(refs.size() == 0) return 0; //Gene not found
+		
+		runnable.updateMonitor(200);
 		
 		//get all pathway files in the folder and subfolders
 		ArrayList<File> pathways = getPathwayFiles(folder);
@@ -53,46 +73,91 @@ public class SearchMethods {
 		try {
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			for(File f : pathways) {
+				if(runnable.monitor.isCanceled()) return -1;
 				//Get all genes in the pathway
 				GeneParser parser = new GeneParser();
 				xmlReader.setContentHandler(parser);
 				xmlReader.setErrorHandler(parser);
 				try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { }
-				ArrayList<IdCodePair> genes = parser.getGenes();
-				GmmlVision.log.trace("searching pathway " + f.getName() + "...");
-				long time = System.currentTimeMillis();
-				//Get all ensembl ids of the genes in the pathway
-				ArrayList<String> pwEnsIds = new ArrayList<String>();
-				for(IdCodePair idcp : genes) {
-					pwEnsIds.addAll(gmmlGdb.ref2EnsIds(idcp.id, idcp.code)); 
-				}
-				GmmlVision.log.trace("\t...getting ensembl ids took " + 
-						(System.currentTimeMillis() - time) + " ms");
-				//Check if one of the given gene's ensids is in the pathway
-				for(String ensId : ensIds) {
-					if(pwEnsIds.contains(ensId)) {//Gene found, add pathway to search result and break
+				ArrayList<Gene> genes = parser.getGenes();
+				//Check if one of the given ids is in the pathway
+				for(Gene gene : genes) {
+					if(refs.contains(gene.id)) {//Gene found, add pathway to search result and break
 						SearchResult sr = srs.new SearchResult();
 						sr.setAttribute("pathway", f.getName());
-						sr.setAttribute("directory", f.getPath());
-						GmmlVision.log.trace("result found!: " + f.getName() + ", " + f.getPath());
-						srt.getTableViewer().refresh(true);
+						sr.setAttribute("directory", f.getParentFile().getName());
+						sr.setAttribute("file", f.getAbsolutePath());
+						srt.refreshTableViewer(true);
 						break;
 					}
 				}
+				runnable.updateMonitor((int)Math.ceil(800.0 / pathways.size()));
 			}
 		} catch(Exception e) { GmmlVision.log.error("while searching", e); }
 		GmmlVision.log.trace("search finished");
 		return srs.getResults().size();
-		
 	}
 	
+	public int pathwaysContainingGeneSymbol(String regex, File folder, 
+			SearchResultTable srt, SearchRunnableWithProgress runnable) {
+		
+		//Create regex
+		Pattern pattern = Pattern.compile(regex);
+		
+		SearchResults srs = new SearchResults();
+		srs.addAttribute("pathway", Attribute.TYPE_TEXT);
+		srs.addAttribute("directory", Attribute.TYPE_TEXT);
+		srs.addAttribute("file", Attribute.TYPE_TEXT, false);
+		srs.addAttribute("matches", Attribute.TYPE_TEXT);
+
+		srt.setSearchResults(srs);
+		
+		//get all pathway files in the folder and subfolders
+		ArrayList<File> pathways = getPathwayFiles(folder);
+		
+		try {
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			for(File f : pathways) {
+				if(runnable.monitor.isCanceled()) return -1;
+				//Get all genes in the pathway
+				GeneParser parser = new GeneParser();
+				xmlReader.setContentHandler(parser);
+				xmlReader.setErrorHandler(parser);
+				try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { }
+				ArrayList<Gene> genes = parser.getGenes();
+				//Find what symbols match
+				ArrayList<Gene> matched = new ArrayList<Gene>();
+				for(Gene gene : genes) {
+					Matcher m = pattern.matcher(gene.symbol);
+					if(m.find()) matched.add(gene);
+				}
+				if(matched.size() > 0) {
+					SearchResult sr = srs.new SearchResult();
+					sr.setAttribute("pathway", f.getName());
+					sr.setAttribute("directory", f.getParentFile().getName());
+					sr.setAttribute("file", f.getAbsolutePath());
+					sr.setAttribute("matches", matched.toString());
+					srt.refreshTableViewer(true);
+				}
+				runnable.updateMonitor((int)Math.ceil(1000.0 / pathways.size()));
+			}
+		} catch(Exception e) { GmmlVision.log.error("while searching", e); }
+		GmmlVision.log.trace("search finished");
+		return srs.getResults().size();
+	}
+	
+	/**
+	 * Get all pathway (.xml) file in a directory (including subdirectories)
+	 * @param folder
+	 * @return
+	 */
 	private ArrayList<File> getPathwayFiles(File folder) {
 		ArrayList<File> pathways = new ArrayList<File>();
 		
 		//Get all pathways in this directory
-		File[] files = folder.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return (name.endsWith(".xml") || dir.isDirectory()) ? true : false;
+		File[] files = folder.listFiles(new FileFilter() {
+			public boolean accept(File f) {
+				return (f.isDirectory() || f.getName().endsWith(".xml")) ? true : false;
 			}
 		});
 		//Recursively add the pathway files
@@ -104,14 +169,18 @@ public class SearchMethods {
 		return pathways;
 	}
 	
+	/**
+	 * This sax handler can be used to quickly parse gene information (id, systemcode) from
+	 * a gmml file
+	 */
 	public class GeneParser extends DefaultHandler {
-		private ArrayList<IdCodePair> genes;
+		private ArrayList<Gene> genes;
 		
 		public GeneParser() {
-			genes = new ArrayList<IdCodePair>();
+			genes = new ArrayList<Gene>();
 		}
 		
-		public ArrayList<IdCodePair> getGenes() { return genes; }
+		public ArrayList<Gene> getGenes() { return genes; }
 		
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 		throws SAXException {
@@ -119,11 +188,14 @@ public class SearchMethods {
 				String name = attributes.getValue("Name");
 				String sysName = attributes.getValue("GeneProduct-Data-Source");
 				String code = GmmlData.sysName2Code.get(sysName);
-				if(name != null && !name.equals("") && code != null) {
-					genes.add(new IdCodePair(name, code));
+				String symbol = attributes.getValue("GeneID");
+				name = name == null ? "" : name;
+				sysName = sysName == null ? "" : sysName;
+				code = code == null ? "" : code;
+				symbol = symbol == null ? "" : symbol;
+				genes.add(new Gene(name, code, symbol));
 				}
 			}
-		}
 		
 		public void error(SAXParseException e) { 
 			GmmlVision.log.error("Error while parsing xml document", e);
@@ -138,10 +210,14 @@ public class SearchMethods {
 			GmmlVision.log.error("Warning while parsing xml document", e);
 		}
 		
-		public class IdCodePair {
+		public class Gene {
 			String id;
 			String code;
-			public IdCodePair(String id, String code) { this.id = id; this.code = code; }
+			String symbol;
+			public Gene(String id, String code, String symbol) 
+			{ this.id = id; this.code = code; this.symbol = symbol; }
+			
+			public String toString() { return symbol; }
 		}
 	}
 }

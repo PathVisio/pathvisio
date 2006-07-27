@@ -1,5 +1,4 @@
 package graphics;
-//~ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -7,9 +6,7 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-
-//~ abstract class GmmlDrawingObject extends JComponent 
-abstract class GmmlDrawingObject implements Comparable
+public abstract class GmmlDrawingObject implements Comparable
 {	
 	/** 
 	 * mark the area currently occupied by this object for redraw 
@@ -20,6 +17,7 @@ abstract class GmmlDrawingObject implements Comparable
 	}
 	
 	private boolean isSelected;
+	private boolean isHighlighted;
 	
 	/**
 	 * Besides setting isSelected, this accomplishes this:
@@ -50,6 +48,37 @@ abstract class GmmlDrawingObject implements Comparable
 	public boolean isSelected()
 	{
 		return isSelected;
+	}
+	
+	/**
+	 * Besides setting isHighlighted, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in highlighted state
+	 */
+	public void highlight()
+	{
+		if(!isHighlighted)
+		{
+			isHighlighted = true;
+			markDirty();
+		}
+	}
+	
+	/**
+	 * Besides resetting isHighlighted, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in unhighlighted state
+	 */
+	public void unhighlight()
+	{
+		if(isHighlighted)
+		{
+			isHighlighted = false;
+			markDirty();
+		}
+	}
+	
+	public boolean isHighlighted()
+	{
+		return isHighlighted;
 	}
 	
 	int drawingOrder = GmmlDrawing.DRAW_ORDER_DEFAULT;

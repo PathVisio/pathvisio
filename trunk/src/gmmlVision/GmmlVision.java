@@ -1201,7 +1201,10 @@ public class GmmlVision extends ApplicationWindow
 	/**
 	 * The visual representation of the gmml pathway
 	 */
-	GmmlDrawing drawing;
+	private GmmlDrawing drawing;
+	
+	public GmmlDrawing getDrawing() { return drawing; }
+
 	/**
 	 * {@link GmmlData} object containing JDOM representation of the gmml pathway 
 	 * and handle gmml related actions

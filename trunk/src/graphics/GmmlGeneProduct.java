@@ -282,9 +282,9 @@ public class GmmlGeneProduct extends GmmlGraphics
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c = null;
-		if (isSelected())
+		if(isSelected())
 		{
-			c = SwtUtils.changeColor(c, new RGB(255, 0, 0), e.display);
+			c = SwtUtils.changeColor(c, selectColor, e.display);
 		}
 		else 
 		{
@@ -317,6 +317,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		Region r = null;
 		buffer.setClipping(r);
 		
+		drawHighlight(e, buffer);
+		
 		c.dispose();
 //		cFill.dispose();
 	}
@@ -325,6 +327,25 @@ public class GmmlGeneProduct extends GmmlGraphics
 	{
 		draw(e, e.gc);
 	}
+	
+	public void drawHighlight(PaintEvent e, GC buffer)
+	{
+		if(isHighlighted())
+		{
+			Color c = null;
+			c = SwtUtils.changeColor(c, highlightColor, e.display);
+			buffer.setForeground(c);
+			buffer.setLineWidth(2);
+			buffer.drawRectangle (
+					(int)(centerx - width / 2) - 1,
+					(int)(centery - height / 2) - 1,
+					(int)width + 3,
+					(int)height + 3
+				);
+			if(c != null) c.dispose();
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see GmmlGraphics#isContain(java.awt.geom.Point2D)

@@ -183,7 +183,7 @@ public class GmmlBrace extends GmmlGraphics
 		Color c = null;
 		if (isSelected())
 		{
-			c = SwtUtils.changeColor(c, new RGB(255, 0, 0), e.display);
+			c = SwtUtils.changeColor(c, selectColor, e.display);
 		}
 		else 
 		{

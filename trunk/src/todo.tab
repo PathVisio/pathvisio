@@ -17,8 +17,8 @@ Packaging	Test app in linux	Martijn		low
 Packaging	auto-generate executable JAR and installer	Martijn		low				done	
 search	add searchdialog/results to right sidepanel	Thomas	1	high				done	
 search	mark found genes (add highlighted property)	Thomas	1	high					
-user preferences	Create general class + file to store user preferences (directories, gdb)	Thomas	2	high					
-user preferences	Create UI for editing preferences	Thomas	2	high					
+user preferences	Create general class + file to store user preferences (directories, gdb)	Thomas	2	high				done	
+user preferences	Create UI for editing preferences	Thomas	2	high				done	
 editor	GMML from scratch (valid)	Thomas	3	high					
 legend	Legend to sidepanel	Thomas	4	medium					
 editor	multi-select: add resize handles to selectionbox	Thomas	5	low					

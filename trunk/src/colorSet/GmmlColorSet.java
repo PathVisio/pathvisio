@@ -8,8 +8,10 @@ import java.util.Vector;
 
 import org.eclipse.swt.graphics.RGB;
 
+import preferences.PreferenceLoader;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
+
 
 /**
  * This class represents a colorset, a set of criteria that can be evaluated and 
@@ -47,21 +49,10 @@ public class GmmlColorSet {
 	 * horizontal bars
 	 */
 	public static final int MULT_DATA_DIV = 1;
-	/**
-	 * Standard color for when the colorset returns no valid color (no criteria met)
-	 */
-	public static RGB COLOR_NO_CRITERIA_MET = new RGB(200, 200, 200);
-	/**
-	 * Standard color for when the gene is not found in the gene database
-	 */
-	public static RGB COLOR_NO_GENE_FOUND = new RGB(255, 255, 255);
-	/**
-	 * Standard color for when the gene is not found in the expression data
-	 */
-	public static RGB COLOR_NO_DATA_FOUND = new RGB(100, 100, 100);
-	public RGB color_no_criteria_met = COLOR_NO_CRITERIA_MET;
-	public RGB color_no_gene_found = COLOR_NO_GENE_FOUND;
-	public RGB color_no_data_found = COLOR_NO_DATA_FOUND;
+
+	public RGB color_no_criteria_met = PreferenceLoader.getColorProperty("colors.no_criteria_met");
+	public RGB color_no_gene_found = PreferenceLoader.getColorProperty("colors.no_gene_found");
+	public RGB color_no_data_found = PreferenceLoader.getColorProperty("colors.no_data_found");
 	
 	private int multipleDataDisplay;
 	/**

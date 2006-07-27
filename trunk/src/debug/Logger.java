@@ -1,6 +1,6 @@
 package debug;
 
-import java.io.*;
+import java.io.PrintStream;
 
 /**
 	Logs output to a stream, with the option to filter for types of messages

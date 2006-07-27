@@ -23,7 +23,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import util.GmmlColorConvertor;
+import util.ColorConverter;
 import util.SwtUtils;
 import data.GmmlData;
  
@@ -184,7 +184,7 @@ public class GmmlLine extends GmmlGraphics
 				jdomGraphics.setAttribute("StartY", Integer.toString((int)starty * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndX", Integer.toString((int)endx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndY", Integer.toString((int)endy * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
+				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
 		}
 	}
@@ -392,7 +392,7 @@ public class GmmlLine extends GmmlGraphics
 					case 3: // EndY
 						this.endy = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 4: // Color
-						this.color = GmmlColorConvertor.string2Color(value); break;
+						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 5: // Style
 						List styleMappings = Arrays.asList(new String[] {
 								"Solid", "Broken"

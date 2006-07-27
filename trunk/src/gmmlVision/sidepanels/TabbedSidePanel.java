@@ -3,6 +3,7 @@ package gmmlVision.sidepanels;
 import gmmlVision.GmmlVision;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;

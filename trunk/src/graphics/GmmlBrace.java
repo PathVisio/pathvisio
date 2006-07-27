@@ -23,7 +23,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import util.GmmlColorConvertor;
+import util.ColorConverter;
 import util.SwtUtils;
 import data.GmmlData;
 
@@ -148,7 +148,7 @@ public class GmmlBrace extends GmmlGraphics
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("PicPointOffset", Double.toString(ppo));
 				jdomGraphics.setAttribute("Orientation", (String)orientationMappings.get(orientation));
-				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
+				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
 		}
 	}
@@ -403,7 +403,7 @@ public class GmmlBrace extends GmmlGraphics
 							this.orientation = orientationMappings.indexOf(value);
 						break;
 					case 5: // Color
-						this.color = GmmlColorConvertor.string2Color(value); break;
+						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 6: // Notes
 						this.notes = value;
 					case -1:

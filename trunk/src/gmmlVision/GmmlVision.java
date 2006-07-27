@@ -23,6 +23,9 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -48,6 +51,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import preferences.GmmlPreferenceManager;
+import preferences.PreferenceLoader;
 import search.PathwaySearchComposite;
 import search.SearchMethods;
 import colorSet.ColorSetWindow;
@@ -106,7 +111,7 @@ public class GmmlVision extends ApplicationWindow
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
-			fd.setFilterPath("C:\\GenMAPP 2 Data\\MAPPs");
+			fd.setFilterPath(getPreferences().getString("directories.gmmlFiles"));
 			fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 	        String fnMapp = fd.open();
@@ -170,6 +175,8 @@ public class GmmlVision extends ApplicationWindow
 				fd.setText("Save");
 				fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 				fd.setFilterNames(new String[] {"Gmml file", "All files"});
+				fd.setFileName(gmmlData.getXmlFile().getName());
+				fd.setFilterPath(gmmlData.getXmlFile().getPath());
 				String fileName = fd.open();
 				// Only proceed if user selected a file
 				if(fileName == null) return;
@@ -242,37 +249,23 @@ public class GmmlVision extends ApplicationWindow
 	}
 	private ExitAction exitAction = new ExitAction(this);
 
-	
-//	private class PropertyAction extends Action 
-//	{
-//		GmmlVision window;
-//		public PropertyAction (GmmlVision w)
-//		{
-//			window = w;
-//			setText ("&Properties");
-//			setToolTipText ("View properties");
-//		}
-//		public void run () {
-//			if(drawing != null)
-//			{
-//				if(drawing.selectedGraphics != null)
-//				{
-//					//~ new GmmlPropertyInspector(drawing.selectedGraphics);
-//				}
-//				else
-//				{
-//					MessageDialog.openError (window.getShell(), "Error", 
-//						"No GMMLGraphics selected!");
-//				}
-//			}
-//			else
-//			{
-//				MessageDialog.openError (window.getShell(), "Error", 
-//					"No gmml file loaded! Open or create a new gmml file first");
-//			}
-//		}
-//	}
-//	private PropertyAction propertyAction = new PropertyAction(this);
+	private class PreferencesAction extends Action
+	{
+		GmmlVision window;
+		public PreferencesAction (GmmlVision w)
+		{
+			window = w;
+			setText("&Preferences");
+			setToolTipText("Edit preferences");
+		}
+		public void run () {
+			PreferenceManager pg = new GmmlPreferenceManager();
+			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
+			pd.setPreferenceStore(getPreferences());
+			pd.open();
+		}
+	}
+	private PreferencesAction preferencesAction = new PreferencesAction(this);
 
 	/**
 	 * {@link Action} that zooms a mapp to the specified zoomfactor
@@ -341,7 +334,7 @@ public class GmmlVision extends ApplicationWindow
 		public void run () {
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Gene Database");
-			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene databases");
+			fileDialog.setFilterPath(getPreferences().getString("directories.gdbFiles"));
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
 			String file = fileDialog.open();
@@ -350,7 +343,7 @@ public class GmmlVision extends ApplicationWindow
 			// Connect returns null when connection is established
 			try {
 				gmmlGdb.connect(new File(file));
-				setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
+				setStatus("Using Gene Database: '" + getPreferences().getString("currentGdb") + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
 				MessageDialog.openError(getShell(), "Failed to open Gene Database", e.getMessage());
@@ -375,7 +368,7 @@ public class GmmlVision extends ApplicationWindow
 		public void run () {
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Expression Dataset");
-			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Expression Datasets");
+			fileDialog.setFilterPath(getPreferences().getString("directories.exprFiles"));
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 			String file = fileDialog.open();
@@ -1165,7 +1158,7 @@ public class GmmlVision extends ApplicationWindow
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
 		editMenu.add(switchEditModeAction);
-//		editMenu.add(propertyAction);
+		editMenu.add(preferencesAction);
 		MenuManager viewMenu = new MenuManager ("&View");
 		viewMenu.add(showLegendAction);
 		viewMenu.add(showRightPanelAction);
@@ -1312,7 +1305,7 @@ public class GmmlVision extends ApplicationWindow
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		
-		setStatus("Using Gene Database: '" + gmmlGdb.getProps().getProperty("currentGdb") + "'");
+		setStatus("Using Gene Database: '" + getPreferences().getString("currentGdb") + "'");
 		
 		colorSetWindow = new ColorSetWindow(shell);
 		colorSetWindow.setGmmlGex(gmmlGex);
@@ -1351,6 +1344,9 @@ public class GmmlVision extends ApplicationWindow
 				new Image(getShell().getDisplay(), img));
 		
 	}
+	
+	private static PreferenceStore preferences = PreferenceLoader.loadPreferences();
+	public static PreferenceStore getPreferences() { return preferences; }
 	
 	/**
 	 * Creates a new empty drawing and loads it in the frame 

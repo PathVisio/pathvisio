@@ -19,7 +19,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -122,6 +121,7 @@ public class SearchResultTable extends Composite {
 		optionsComposite.setLayout(new GridLayout(2, false));
 		
 		highlightButton = new Button(optionsComposite, SWT.CHECK);
+		highlightButton.setSelection(true);
 		highlightButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				highlightResults(highlightButton.getSelection());
@@ -130,7 +130,6 @@ public class SearchResultTable extends Composite {
 		
 		Label highlightLabel = new Label(optionsComposite, SWT.CENTER);
 		highlightLabel.setText("Highlight found genes");
-		
 		
 		Table t = new Table(this, SWT.SINGLE | SWT.FULL_SELECTION);
 		t.setLayoutData(new GridData(GridData.FILL_BOTH));

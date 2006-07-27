@@ -123,18 +123,10 @@ public class PathwaySearchComposite extends Composite {
 				symText.setLayoutData(span2cols);
 								
 				Label dirLabel = new Label(parent, SWT.CENTER);
-				dirLabel.setText("Directory to search");
-				final Text dirText = new Text(parent, SWT.SINGLE | SWT.BORDER);
-				dirText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				Button dirButton = new Button(parent, SWT.PUSH);
-				dirButton.setText("Browse");
-				dirButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						DirectoryDialog dd = new DirectoryDialog(getShell());
-						String dirName = dd.open();
-						if(dirName != null) dirText.setText(dirName);
-					}
-				});
+				dirLabel.setText("Directory to search:");
+				
+				final Text dirText = createDirText(parent);
+				Button browseButton = createDirButton(parent, dirText);
 				
 				Button searchButton = new Button(parent, SWT.PUSH);
 				searchButton.setText("Search");
@@ -199,18 +191,10 @@ public class PathwaySearchComposite extends Composite {
 				systemCombo.setLayoutData(span2cols);
 				
 				Label dirLabel = new Label(parent, SWT.CENTER);
-				dirLabel.setText("Directory to search");
-				final Text dirText = new Text(parent, SWT.SINGLE | SWT.BORDER);
-				dirText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				Button dirButton = new Button(parent, SWT.PUSH);
-				dirButton.setText("Browse");
-				dirButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						DirectoryDialog dd = new DirectoryDialog(getShell());
-						String dirName = dd.open();
-						if(dirName != null) dirText.setText(dirName);
-					}
-				});
+				dirLabel.setText("Directory to search:");
+				
+				final Text dirText = createDirText(parent);
+				Button browseButton = createDirButton(parent, dirText);
 				
 				Button searchButton = new Button(parent, SWT.PUSH);
 				searchButton.setText("Search");
@@ -251,6 +235,27 @@ public class PathwaySearchComposite extends Composite {
 		};
 		searchControls.put("pathwaysContainingGene", comp); //Add to available search options
 		return comp;
+	}
+	
+	private Text createDirText(Composite parent) {
+		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		t.setText(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return t;
+	}
+	
+	private Button createDirButton(Composite parent, final Text dirText) {
+		Button b = new Button(parent, SWT.PUSH);
+		b.setText("Browse");
+		b.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dd = new DirectoryDialog(getShell());
+				dd.setFilterPath(dirText.getText());
+				String dirName = dd.open();
+				if(dirName != null) dirText.setText(dirName);
+			}
+		});
+		return b;
 	}
 	
 	public class SearchRunnableWithProgress implements IRunnableWithProgress {

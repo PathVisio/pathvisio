@@ -118,7 +118,7 @@ public class PathwaySearchComposite extends Composite {
 				span2cols.horizontalSpan = 2;
 				
 				Label symLabel = new Label(parent, SWT.CENTER);
-				symLabel.setText("Gene id:");
+				symLabel.setText("Gene symbol:");
 				final Text symText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 				symText.setLayoutData(span2cols);
 								
@@ -161,9 +161,6 @@ public class PathwaySearchComposite extends Composite {
 							MessageDialog.openError(getShell(), "Error", "Unable to perform search: " + ex.getMessage());
 							return;
 						}
-							
-						if(searchResultTable.getNrResults() == 0) 
-							MessageDialog.openInformation(getShell(), "Search result", "Nothing found");
 					}
 				});
 				
@@ -242,9 +239,6 @@ public class PathwaySearchComposite extends Composite {
 							MessageDialog.openError(getShell(), "Error", "Unable to perform search: " + ex.getMessage());
 							return;
 						}
-							
-						if(searchResultTable.getNrResults() == 0) 
-							MessageDialog.openInformation(getShell(), "Search result", "Nothing found");
 					}
 				});
 				
@@ -285,7 +279,11 @@ public class PathwaySearchComposite extends Composite {
 					
 			monitor.beginTask("Searching", 1000);
 			try {
-				searchMethod.invoke(gmmlVision.search, args);
+				String msg = (String)searchMethod.invoke(gmmlVision.search, args);
+				if(msg != null && !msg.equals(SearchMethods.MSG_CANCELLED)) {
+					openMessageDialog(msg);
+				}
+				
 			} catch (Exception e) { 
 				GmmlVision.log.error("while invoking search method",e);
 				throw new InterruptedException(e.getMessage());
@@ -299,6 +297,15 @@ public class PathwaySearchComposite extends Composite {
 					monitor.worked(w);
 				}
 			});
+		}
+		
+		public void openMessageDialog(final String msg) {
+			gmmlVision.getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					MessageDialog.openInformation(getShell(), "", msg);
+				}
+			});
+
 		}
 	}
 	

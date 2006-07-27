@@ -22,7 +22,11 @@ import search.SearchResults.SearchResult;
 import data.GmmlData;
 import data.GmmlGdb;
 
-public class SearchMethods {
+public class SearchMethods {	
+	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";
+	public static final String MSG_NOTHING_FOUND = "Nothing found";
+	public static final String MSG_CANCELLED = "cancelled";
+	
 	private GmmlGdb gmmlGdb;
 	
 	public SearchMethods(GmmlGdb gmmlGdb) {
@@ -35,9 +39,9 @@ public class SearchMethods {
 	 * @param code	System code of the gene identifier
 	 * @param folder	Directory to search (includes sub-directories)
 	 * @param srt	{@link SearchResultTable} to display the results in
-	 * @return the number of results found, -1 if the process is cancelled
+	 * @return string with message to display. if null, no message is displayed
 	 */
-	public int pathwaysContainingGene(String id, String code, File folder, 
+	public String pathwaysContainingGene(String id, String code, File folder, 
 			SearchResultTable srt) {
 		return pathwaysContainingGene(id, code, folder, srt);
 	}
@@ -50,20 +54,21 @@ public class SearchMethods {
 	 * @param srt	{@link SearchResultTable} to display the results in
 	 * @param runnable	{@link SearchRunnableWithProgress} containing the monitor responsible for
 	 * displaying the progress
-	 * @return the number of results found, -1 if the process is cancelled
+	 * @return string with message to display. if null, no message is displayed
 	 */
-	public int pathwaysContainingGene(String id, String code, File folder, 
+	public String pathwaysContainingGene(String id, String code, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) {
 		
 		SearchResults srs = new SearchResults();
 		srs.addAttribute("pathway", Attribute.TYPE_TEXT);
 		srs.addAttribute("directory", Attribute.TYPE_TEXT);
 		srs.addAttribute("file", Attribute.TYPE_TEXT, false);
+		srs.addAttribute("idsFound", Attribute.TYPE_ARRAYLIST, false);
 
 		srt.setSearchResults(srs);
 		//Get all cross references
 		ArrayList<String> refs = gmmlGdb.getCrossRefs(id, code);
-		if(refs.size() == 0) return 0; //Gene not found
+		if(refs.size() == 0) return MSG_NOT_IN_GDB;
 		
 		runnable.updateMonitor(200);
 		
@@ -73,7 +78,7 @@ public class SearchMethods {
 		try {
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			for(File f : pathways) {
-				if(runnable.monitor.isCanceled()) return -1;
+				if(runnable.monitor.isCanceled()) return MSG_CANCELLED;
 				//Get all genes in the pathway
 				GeneParser parser = new GeneParser();
 				xmlReader.setContentHandler(parser);
@@ -87,6 +92,9 @@ public class SearchMethods {
 						sr.setAttribute("pathway", f.getName());
 						sr.setAttribute("directory", f.getParentFile().getName());
 						sr.setAttribute("file", f.getAbsolutePath());
+						ArrayList idsFound = new ArrayList();
+						idsFound.add(gene.id);
+						sr.setAttribute("idsFound", idsFound);
 						srt.refreshTableViewer(true);
 						break;
 					}
@@ -95,20 +103,21 @@ public class SearchMethods {
 			}
 		} catch(Exception e) { GmmlVision.log.error("while searching", e); }
 		GmmlVision.log.trace("search finished");
-		return srs.getResults().size();
+		return srs.getResults().size() == 0 ? MSG_NOTHING_FOUND : null;
 	}
 	
-	public int pathwaysContainingGeneSymbol(String regex, File folder, 
+	public String pathwaysContainingGeneSymbol(String regex, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) {
 		
 		//Create regex
-		Pattern pattern = Pattern.compile(regex);
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		
 		SearchResults srs = new SearchResults();
 		srs.addAttribute("pathway", Attribute.TYPE_TEXT);
 		srs.addAttribute("directory", Attribute.TYPE_TEXT);
 		srs.addAttribute("file", Attribute.TYPE_TEXT, false);
-		srs.addAttribute("matches", Attribute.TYPE_TEXT);
+		srs.addAttribute("namesFound", Attribute.TYPE_ARRAYLIST);
+		srs.addAttribute("idsFound", Attribute.TYPE_ARRAYLIST, false);
 
 		srt.setSearchResults(srs);
 		
@@ -118,7 +127,7 @@ public class SearchMethods {
 		try {
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			for(File f : pathways) {
-				if(runnable.monitor.isCanceled()) return -1;
+				if(runnable.monitor.isCanceled()) return MSG_CANCELLED;
 				//Get all genes in the pathway
 				GeneParser parser = new GeneParser();
 				xmlReader.setContentHandler(parser);
@@ -127,23 +136,31 @@ public class SearchMethods {
 				ArrayList<Gene> genes = parser.getGenes();
 				//Find what symbols match
 				ArrayList<Gene> matched = new ArrayList<Gene>();
+				ArrayList<String> idsFound = new ArrayList<String>();
+				ArrayList<String> namesFound = new ArrayList<String>();
 				for(Gene gene : genes) {
 					Matcher m = pattern.matcher(gene.symbol);
-					if(m.find()) matched.add(gene);
+					if(m.find()) {
+						matched.add(gene);
+						idsFound.add(gene.id);
+						namesFound.add(gene.symbol);
+					}
 				}
 				if(matched.size() > 0) {
 					SearchResult sr = srs.new SearchResult();
 					sr.setAttribute("pathway", f.getName());
 					sr.setAttribute("directory", f.getParentFile().getName());
 					sr.setAttribute("file", f.getAbsolutePath());
-					sr.setAttribute("matches", matched.toString());
+					sr.setAttribute("idsFound", idsFound);
+					sr.setAttribute("namesFound", namesFound);
+					
 					srt.refreshTableViewer(true);
 				}
 				runnable.updateMonitor((int)Math.ceil(1000.0 / pathways.size()));
 			}
 		} catch(Exception e) { GmmlVision.log.error("while searching", e); }
 		GmmlVision.log.trace("search finished");
-		return srs.getResults().size();
+		return srs.getResults().size() == 0 ? MSG_NOTHING_FOUND : null;
 	}
 	
 	/**
@@ -217,7 +234,7 @@ public class SearchMethods {
 			public Gene(String id, String code, String symbol) 
 			{ this.id = id; this.code = code; this.symbol = symbol; }
 			
-			public String toString() { return symbol; }
+			public String toString() { return id; }
 		}
 	}
 }

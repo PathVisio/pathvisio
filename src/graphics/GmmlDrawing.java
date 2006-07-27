@@ -56,7 +56,8 @@ PaintListener, MouseTrackListener, KeyListener
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
-	ArrayList<GmmlDrawingObject> drawingObjects;
+	private ArrayList<GmmlDrawingObject> drawingObjects;
+	public ArrayList<GmmlDrawingObject> getDrawingObjects() { return drawingObjects; }
 	
 	/**
 	 * The {@link GmmlDrawingObject} that is pressed last mouseDown event}
@@ -535,6 +536,15 @@ PaintListener, MouseTrackListener, KeyListener
 		s.x2 = s.x1;
 		s.y1 = (int)p.getY();		
 		s.y2 = s.y1;		
+	}
+	
+	/**
+	 * Resets highlighting, unhighlights all GmmlDrawingObjects
+	 */
+	public void resetHighlight() 
+	{
+		for(GmmlDrawingObject o : drawingObjects) o.unhighlight();
+		redraw();
 	}
 	
 	/**

@@ -63,6 +63,10 @@ public class SearchResults {
 			if(attributes.containsKey(name)) attributes.get(name).setNumeric(value);
 		}
 		
+		public void setAttribute(String name, ArrayList value) {
+			if(attributes.containsKey(name)) attributes.get(name).setArray(value);
+		}
+		
 		public Attribute getAttribute(String name) throws Exception {
 			if(attributes.containsKey(name)) return attributes.get(name);
 			throw new Exception("Attribute " + name + " does not exist");
@@ -85,10 +89,14 @@ public class SearchResults {
 	public class Attribute {
 		public static final int TYPE_TEXT = 0;
 		public static final int TYPE_NUM  = 1;
+		public static final int TYPE_ARRAYLIST = 2;
 		
 		private String name;
+		
 		private String textValue;
 		private double numValue;
+		private ArrayList arrayValue;
+		
 		private int type;
 		private boolean visible;
 		
@@ -96,10 +104,21 @@ public class SearchResults {
 		public Attribute(String n, int t, boolean visible) { this(n, t); this.visible = visible; }
 		
 		public String getName() { return name; }
-		public String getText() { return type == TYPE_NUM ? Double.toString(numValue) : textValue; }
+		public String getText() { 
+			String text = "";
+			switch(type) {
+			case TYPE_TEXT: text = textValue; break;
+			case TYPE_NUM: text = Double.toString(numValue); break;
+			case TYPE_ARRAYLIST: text = arrayValue.toString();
+			}
+			return text;
+		}
+		
 		public double getNumeric() { return numValue; }
+		public ArrayList getArray() { return arrayValue; }
 		public void setText(String value) { textValue = value; }
 		public void setNumeric(double value) { numValue = value; }
+		public void setArray(ArrayList value) { arrayValue = value; }
 		public boolean isVisible() { return visible; }
 	}
 }

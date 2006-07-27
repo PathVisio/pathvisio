@@ -75,6 +75,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import preferences.PreferenceLoader;
 import util.SwtUtils;
 import util.TableColumnResizer;
 import colorSet.GmmlColorGradient.ColorValuePair;
@@ -433,9 +434,12 @@ public class ColorSetWindow extends ApplicationWindow {
 	    csColorButtonGnf.setText("...");
 	    csColorButtonDnf.setText("...");
 	    
-	    csColorNc = SwtUtils.changeColor(csColorNc, GmmlColorSet.COLOR_NO_CRITERIA_MET, getShell().getDisplay());
-	    csColorGnf = SwtUtils.changeColor(csColorGnf, GmmlColorSet.COLOR_NO_GENE_FOUND, getShell().getDisplay());
-	    csColorDnf = SwtUtils.changeColor(csColorDnf, GmmlColorSet.COLOR_NO_DATA_FOUND, getShell().getDisplay());
+	    csColorNc = SwtUtils.changeColor(csColorNc, 
+	    		PreferenceLoader.getColorProperty("colors.no_criteria_met"), getShell().getDisplay());
+	    csColorGnf = SwtUtils.changeColor(csColorGnf, 
+	    		PreferenceLoader.getColorProperty("colors.no_gene_found"), getShell().getDisplay());
+	    csColorDnf = SwtUtils.changeColor(csColorDnf, 
+	    		PreferenceLoader.getColorProperty("colors.no_data_found"), getShell().getDisplay());
 	    csCLabelNc.setLayoutData(colorGrid);
 	    csCLabelGnf.setLayoutData(colorGrid);
 	    csCLabelDnf.setLayoutData(colorGrid);

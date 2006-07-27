@@ -21,7 +21,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import util.GmmlColorConvertor;
+import util.ColorConverter;
 import util.SwtUtils;
 import data.GmmlData;
 
@@ -156,7 +156,7 @@ public class GmmlArc extends GmmlGraphics
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Rotation", Double.toString(rotation));
-				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
+				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
 		}
 	}
@@ -337,7 +337,7 @@ public class GmmlArc extends GmmlGraphics
 					case 3: // Height
 						this.height = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 4: // Color
-						this.color = GmmlColorConvertor.string2Color(value); break;
+						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 5: // Rotation
 						this.rotation = Double.parseDouble(value); 
 						break;

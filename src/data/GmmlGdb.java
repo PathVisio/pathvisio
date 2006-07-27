@@ -26,13 +26,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
-public class GmmlGdb {
-	/**
-	 * Property file containing the last used gene database
-	 * TODO: Create a general property file used in the whole program
-	 */
-	final static File propsFile = new File("gdb.properties");
-	
+public class GmmlGdb {	
 	/**
 	 * The {@link Connection} to the Gene Database
 	 */
@@ -43,17 +37,7 @@ public class GmmlGdb {
 	 * @return
 	 */
 	public Connection getCon() { return con; }
-	
-	/**
-	 * {@link Properties} object containing the last used Gene Database
-	 */
-	private Properties props;
-	/**
-	 * Gets the {@link Properties} object containing the last used Gene Database
-	 * @return
-	 */
-	public Properties getProps() { return props; }
-	
+		
 	/**
 	 * {@link File} pointing to the current Gene Database (.properties file of the Hsql database)
 	 */
@@ -70,27 +54,15 @@ public class GmmlGdb {
 	 */
 	public GmmlGdb()
 	{
-		props = new Properties();
-		try {
-			// Check if properties file exists
-			if(propsFile.canRead()) {
-				props.load(new FileInputStream(propsFile));
-			} else {
-				// Create properties file
-				propsFile.createNewFile();
-				props.setProperty("currentGdb", "none");
+		String currGdb = GmmlVision.getPreferences().getString("currentGdb");
+		if(!currGdb.equals("") && !GmmlVision.getPreferences().isDefault("currentGdb"))
+		{
+			gdbFile = new File(currGdb);
+			try {
+				connect(null);
+			} catch(Exception e) {
+				setCurrentGdb(GmmlVision.getPreferences().getDefaultString("currentGdb"));
 			}
-			if(!(props.get("currentGdb") == null) && !props.get("currentGdb").equals("none"))
-			{
-				gdbFile = new File((String)props.get("currentGdb"));
-				try {
-					connect(null);
-				} catch(Exception e) {
-					setCurrentGdb("none");
-				}
-			}
-		} catch(Exception e) {
-			GmmlVision.log.error("on reading gdb.properties " + e.getMessage(), e);
 		}
 	}
 	
@@ -99,24 +71,12 @@ public class GmmlGdb {
 	 * @param gdb	The name of the gene database
 	 */
 	public void setCurrentGdb(String gdb) {
-		this.gdbFile = new File(gdb);
-		changeProps("currentGdb", gdb);
+		gdbFile = new File(gdb);
+		GmmlVision.getPreferences().setValue("currentGdb", gdb);
+		try { GmmlVision.getPreferences().save(); } 
+		catch(Exception e) { GmmlVision.log.error("Unable to save preferences", e); } 
 	}
-	
-	/**
-	 * Changes a given property in {@link props} and saves the changes to the {@propsFile}
-	 * @param name		The name of the property
-	 * @param value		The value of the property
-	 */
-	public void changeProps(String name, String value) {
-		props.setProperty(name, value);
-		try {
-			props.store(new FileOutputStream(propsFile),"Gene Database Properties");
-		} catch(Exception e) {
-			GmmlVision.log.error("Unable to store gdb.properties " + e.getMessage(), e);
-		}
-	}
-	
+		
 	/**
 	 * Gets the backpage info for the given gene id for display on {@GmmlBpBrowser}
 	 * @param id	The gene id to get the backpage info for

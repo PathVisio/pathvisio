@@ -3,9 +3,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
+
+import preferences.PreferenceLoader;
 
 
 /**
@@ -14,8 +14,8 @@ import org.eclipse.swt.graphics.RGB;
  */
 public abstract class GmmlGraphics extends GmmlDrawingObject
 {
-	public static RGB selectColor = new RGB(255, 0, 0);
-	public static RGB highlightColor = new RGB(0, 250, 0);
+	public static RGB selectColor = PreferenceLoader.getColorProperty("colors.selectColor");
+	public static RGB highlightColor = PreferenceLoader.getColorProperty("colors.highlightColor");
 	
 	/**
 	 * Resizes GmmlGraphics in x-direction

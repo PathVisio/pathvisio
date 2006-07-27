@@ -44,7 +44,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import util.GmmlColorConvertor;
+import util.ColorConverter;
 import util.SwtUtils;
 import data.GmmlData;
 
@@ -190,7 +190,7 @@ public class GmmlLabel extends GmmlGraphics
 				jdomGraphics.setAttribute("CenterY", Integer.toString((int)centery * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
+				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
 		}
 	}
@@ -423,7 +423,7 @@ public class GmmlLabel extends GmmlGraphics
 						this.fontSize = Integer.parseInt(value);
 						this.fontSizeDouble = this.fontSize; break;
 					case 9: // Color
-						this.color = GmmlColorConvertor.string2Color(value); break;
+						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 10: // Notes
 						this.notes = value; break;
 					case -1:

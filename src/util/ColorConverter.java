@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 
-public class GmmlColorConvertor
+public class ColorConverter
 {
 	public static final List colorMappings = Arrays.asList(new String[]{
 		"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
@@ -32,13 +32,10 @@ public class GmmlColorConvertor
 		{1, 1, 1}		// white
 	});
 	
-//	private static final char[] hexadecimalMappings = {'1', '2', '3', '4', '5',
-//		'6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f'};
-	
 	/**
 	 * Constructor for this class
 	 */
-	public GmmlColorConvertor()
+	public ColorConverter()
 	{}	
 	
 	/**
@@ -46,7 +43,7 @@ public class GmmlColorConvertor
 	 * @param color
 	 * @return
 	 */
-	public static String color2String(RGB color)
+	public static String color2HexBin(RGB color)
 	{
 		String red = padding(Integer.toBinaryString(color.red), 8, '0');
 		String green = padding(Integer.toBinaryString(color.green), 8, '0');
@@ -61,7 +58,7 @@ public class GmmlColorConvertor
 	 * @param strColor
 	 * @return
 	 */
-    public static RGB string2Color(String strColor)
+    public static RGB gmmlString2Color(String strColor)
     {
     	if(colorMappings.contains(strColor))
     	{
@@ -87,6 +84,39 @@ public class GmmlColorConvertor
     	return new RGB(0,0,0);
     }
     
+    /**
+	 * Creates a string representing a {@link RGB} object which is parsable by {@link parseRgbString}
+	 * @param rgb the {@link RGB} object to create a string from
+	 * @return the string representing the {@link RGB} object
+	 */
+	public static String getRgbString(RGB rgb)
+	{
+		return rgb.red + "," + rgb.green + "," + rgb.blue;
+	}
+	
+	/**
+	 * Parses a string representing a {@link RGB} object created with {@link getRgbString}
+	 * @param rgbString the string to be parsed
+	 * @return the {@link RGB} object this string represented
+	 */
+	public static RGB parseRgbString(String rgbString)
+	{
+		String[] s = rgbString.split(",");
+		try 
+		{
+			return new RGB(
+					Integer.parseInt(s[0]), 
+					Integer.parseInt(s[1]), 
+					Integer.parseInt(s[2]));
+		}
+		catch(Exception e)
+		{
+			GmmlVision.log.error("Unable to parse color '" + rgbString + 
+					"'stored in expression database", e);
+			return new RGB(0,0,0);
+		}
+	}
+	
     /**
      * Prepends character c x-times to the input string to make it length n
      * @param s	String to pad

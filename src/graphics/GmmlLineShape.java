@@ -21,7 +21,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import util.GmmlColorConvertor;
+import util.ColorConverter;
 import util.SwtUtils;
 import data.GmmlData;
 
@@ -148,7 +148,7 @@ public class GmmlLineShape extends GmmlGraphics
 				jdomGraphics.setAttribute("StartY", Integer.toString((int)starty * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndX", Integer.toString((int)endx * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("EndY", Integer.toString((int)endy * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Color", GmmlColorConvertor.color2String(color));
+				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
 		}
 	}
@@ -438,7 +438,7 @@ public class GmmlLineShape extends GmmlGraphics
 							this.type = typeMappings.indexOf(value);
 						break;
 					case 5: // Color
-						this.color = GmmlColorConvertor.string2Color(value); break;
+						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 6: // Notes
 						this.notes = value; break;
 					case -1:

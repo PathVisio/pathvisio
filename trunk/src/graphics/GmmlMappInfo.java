@@ -38,13 +38,13 @@ public class GmmlMappInfo extends GmmlGraphics {
 	String availability = "";
 	String lastModified = "";
 	
-	public int boardWidth;
-	public int boardHeight;
-	public int windowWidth;
-	public int windowHeight;
+	int boardWidth;
+	int boardHeight;
+	int windowWidth;
+	int windowHeight;
 	
-	public int mapInfoLeft;
-	public int mapInfoTop;
+	int mapInfoLeft;
+	int mapInfoTop;
 	
 	Element jdomElement;
 	
@@ -72,6 +72,31 @@ public class GmmlMappInfo extends GmmlGraphics {
 		canvas.addElement(handlecenter);
 	}
 	
+	public void setName(String name) { 
+		markDirty();
+		this.name = name;  
+		markDirty();
+		canvas.redrawDirtyRect();
+		updateJdomElement();
+	}
+	
+	public void setBoardSize(Point size) {
+		boardWidth = size.x;
+		boardHeight = size.y;
+		updateJdomElement(); 
+		canvas.setSize(boardWidth, boardHeight);
+	}
+	
+	public void setWindowSize(Point size) {
+		windowWidth = size.x;
+		windowHeight= size.y;
+		updateJdomElement(); 
+//		canvas.gmmlVision.getShell().setSize(windowWidth, windowHeight);
+	}
+	
+	public Point getBoardSize() { return new Point(boardWidth, boardHeight); }
+	
+
 	public void mapAttributes(Element e)
 	{
 		Iterator it = e.getAttributes().iterator();

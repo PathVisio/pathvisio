@@ -47,7 +47,7 @@ public class GmmlGpColor {
 	}
 	
 	public static final double COLOR_AREA_RATIO = 0.5;
-	public static final int MAX_COLOR_SIZE = 20;
+//	public static final int MAX_COLOR_SIZE = 20;
 	Color c;
 	Font f;
 	PaintEvent e;
@@ -171,7 +171,7 @@ public class GmmlGpColor {
 		if(image != null)
 		{
 			ImageData imgData = image.getImageData();
-			int imageHeight = Math.min(r.width, MAX_COLOR_SIZE);
+			int imageHeight = r.width;
 			
 			buffer.fillRectangle(r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
 			
@@ -203,8 +203,7 @@ public class GmmlGpColor {
 			
 			// Adjust width to enable to divide into nrSamples equal rectangles
 			GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
-			colorArea.width = (int)Math.min(COLOR_AREA_RATIO * colorArea.width, 
-					MAX_COLOR_SIZE * cs.useSamples.size());
+			colorArea.width = (int)(COLOR_AREA_RATIO * colorArea.width);
 			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);

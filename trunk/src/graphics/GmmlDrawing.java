@@ -75,7 +75,7 @@ PaintListener, MouseTrackListener, KeyListener
 	 * (TODO: has to be implemented to behave the same as any GmmlGraphics object
 	 * when displayed on the drawing)
 	 */
-	public GmmlMappInfo mappInfo;
+	GmmlMappInfo mappInfo;
 	
 	public GmmlLegend legend;
 	
@@ -165,6 +165,12 @@ PaintListener, MouseTrackListener, KeyListener
 		drawingObjects.add(mappInfo);
 	}
 
+	/**
+	 * Gets the {@link MappInfo} containing information on the pathway
+	 * @return
+	 */
+	public GmmlMappInfo getMappInfo() { return mappInfo; }
+	
 	/**
 	 * Adds an element to the drawing
 	 * @param o the element to add

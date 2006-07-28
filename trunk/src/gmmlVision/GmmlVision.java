@@ -175,8 +175,13 @@ public class GmmlVision extends ApplicationWindow
 				fd.setText("Save");
 				fd.setFilterExtensions(new String[] {"*.xml","*.*"});
 				fd.setFilterNames(new String[] {"Gmml file", "All files"});
-				fd.setFileName(gmmlData.getXmlFile().getName());
-				fd.setFilterPath(gmmlData.getXmlFile().getPath());
+				File xmlFile = gmmlData.getXmlFile();
+				if(xmlFile != null) {
+					fd.setFileName(xmlFile.getName());
+					fd.setFilterPath(xmlFile.getPath());
+				} else {
+					fd.setFileName(getPreferences().getString("directories.gmmlFiles"));
+				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
 				if(fileName == null) return;
@@ -199,6 +204,7 @@ public class GmmlVision extends ApplicationWindow
 					drawing.updateJdomElements();
 					// Overwrite the existing xml file
 					gmmlData.writeToXML(checkFile);
+					gmmlData.setXmlFile(checkFile);
 					// Set zoom back
 					drawing.setPctZoom(usedZoom);
 				}
@@ -1357,11 +1363,11 @@ public class GmmlVision extends ApplicationWindow
 		
 		gmmlData = new GmmlData(drawing);
 		
-		drawing.setSize(800, 600);
 		switchEditModeAction.setChecked(true);
 		switchEditModeAction.run();
-		sc.setContent(drawing);
 		
+		sc.setContent(drawing);
+		drawing.redraw();
 	}
 	
 	/**

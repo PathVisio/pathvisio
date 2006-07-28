@@ -503,7 +503,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    sampleTableViewer.setColumnProperties(stColNames.toArray(new String[stColNames.size()]));
 	    CellEditor[] cellEditors = new CellEditor[2];
 	    cellEditors[0] = new TextCellEditor(sampleTable);
-	    cellEditors[1] = new ComboBoxCellEditor(sampleTable, GmmlColorSet.SAMPLE_TYPES);
+	    cellEditors[1] = new ComboBoxCellEditor(sampleTable, GmmlColorSet.SAMPLE_TYPES, SWT.READ_ONLY);
 	    sampleTableViewer.setCellEditors(cellEditors);
 	    sampleTableViewer.setCellModifier(new SampleTableCellModifier());
 
@@ -983,15 +983,15 @@ public class ColorSetWindow extends ApplicationWindow {
     				csColorGnf = SwtUtils.changeColor(csColorGnf, rgb, getShell().getDisplay());
     				csCLabelGnf.setBackground(csColorGnf);
     			}
-    			if(e.widget == csColorButtonNc) {
+    			else if(e.widget == csColorButtonNc) {
     				csColorNc = SwtUtils.changeColor(csColorNc, rgb, getShell().getDisplay());
     				csCLabelNc.setBackground(csColorNc);
     			}
-    			if(e.widget == ccColorButton) {
+    			else if(e.widget == ccColorButton) {
     				ccColor = SwtUtils.changeColor(ccColor, rgb, getShell().getDisplay());
     				ccCLabel.setBackground(ccColor);
     			}
-    			if(e.widget == csColorButtonDnf) {
+    			else if(e.widget == csColorButtonDnf) {
     				csColorDnf = SwtUtils.changeColor(csColorDnf, rgb, getShell().getDisplay());
     				csCLabelDnf.setBackground(csColorDnf);
     			}

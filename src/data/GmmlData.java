@@ -50,6 +50,7 @@ public class GmmlData
 	 * @return
 	 */
 	public File getXmlFile () { return xmlFile; }
+	public void setXmlFile (File file) { xmlFile = file; }
 	
 	private GmmlDrawing drawing;
 	/**
@@ -71,14 +72,10 @@ public class GmmlData
 		root.addContent(graphics);
 		root.addContent(new Element("InfoBox"));
 		doc.setRootElement(root);
-		drawing.mappInfo = new GmmlMappInfo(drawing, root);
-		int width = drawing.gmmlVision.sc.getSize().x;
-		int height = drawing.gmmlVision.sc.getSize().y;
-		drawing.mappInfo.boardWidth = width;
-		drawing.mappInfo.boardHeight = height;
-		drawing.mappInfo.windowWidth = width;
-		drawing.mappInfo.windowHeight = height;	
-		drawing.mappInfo.mapInfoLeft = drawing.mappInfo.mapInfoTop = 0;
+		drawing.setMappInfo(new GmmlMappInfo(drawing, root));
+		drawing.getMappInfo().setBoardSize(drawing.gmmlVision.sc.getSize());
+		drawing.getMappInfo().setWindowSize(drawing.gmmlVision.getShell().getSize());
+		drawing.getMappInfo().setName("New Pathway");
 	}
 	
 	/**
@@ -174,7 +171,7 @@ public class GmmlData
 		Element root = doc.getRootElement();
 		drawing.setMappInfo(new GmmlMappInfo(drawing, root));
 		
-		drawing.setSize(drawing.mappInfo.boardWidth, drawing.mappInfo.boardHeight);
+		drawing.setSize(drawing.getMappInfo().getBoardSize());
 //		drawing.gmmlVision.getShell().setSize(drawing.mappInfo.windowWidth, drawing.mappInfo.windowHeight);
 		
 		// Iterate over direct children of the root element

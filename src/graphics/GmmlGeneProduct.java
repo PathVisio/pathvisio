@@ -21,6 +21,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -213,10 +216,20 @@ public class GmmlGeneProduct extends GmmlGraphics
 	
 	private Text t;
 	public void createTextControl()
-	{
-		t = new Text(canvas, SWT.SINGLE | SWT.BORDER);
-		t.setLocation((int)centerx, (int)centery - 10);
-		t.setSize(100,20);
+	{		
+		Color background = canvas.getShell().getDisplay()
+		.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		
+		Composite textComposite = new Composite(canvas, SWT.NONE);
+		textComposite.setLayout(new GridLayout());
+		textComposite.setLocation((int)centerx, (int)centery - 10);
+		textComposite.setBackground(background);
+		
+		Label label = new Label(textComposite, SWT.CENTER);
+		label.setText("Specify gene name:");
+		label.setBackground(background);
+		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
+		
 		t.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
 				disposeTextControl();
@@ -232,23 +245,24 @@ public class GmmlGeneProduct extends GmmlGraphics
 			}
 			public void keyReleased(KeyEvent e) {}
 		});
+		
+		textComposite.pack();
+		
 		t.setFocus();
 		t.setVisible(true);
 	}
 	
 	protected void disposeTextControl()
-	{
-		Rectangle rp = getBounds();
-		
+	{	
+		markDirty();
 		geneID = t.getText();
+		markDirty();
 		canvas.updatePropertyTable(this);
-		t.setVisible(false);
-		t.dispose();
-
-		Rectangle r = getBounds();
-		r.add(rp);
-		r.grow(5,5);
-		canvas.redraw(r.x, r.y, r.width, r.height, false);
+		Composite c = t.getParent();
+		c.setVisible(false);
+		c.dispose();
+		
+		canvas.redrawDirtyRect();
 	}
 	
 	protected void createJdomElement(Document doc) {

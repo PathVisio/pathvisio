@@ -39,6 +39,10 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -198,9 +202,19 @@ public class GmmlLabel extends GmmlGraphics
 	private Text t;
 	public void createTextControl()
 	{
-		t = new Text(canvas, SWT.SINGLE | SWT.BORDER);
-		t.setLocation((int)centerx, (int)centery - 10);
-		t.setSize(100,20);
+		Color background = canvas.getShell().getDisplay()
+		.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		
+		Composite textComposite = new Composite(canvas, SWT.NONE);
+		textComposite.setLayout(new GridLayout());
+		textComposite.setLocation((int)centerx, (int)centery - 10);
+		textComposite.setBackground(background);
+		
+		Label label = new Label(textComposite, SWT.CENTER);
+		label.setText("Specify label name:");
+		label.setBackground(background);
+		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
+
 		t.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
 				disposeTextControl();
@@ -216,18 +230,23 @@ public class GmmlLabel extends GmmlGraphics
 			}
 			public void keyReleased(KeyEvent e) {}
 		});
+		
+		textComposite.pack();
+		
 		t.setFocus();
 		t.setVisible(true);
 	}
 	
 	protected void disposeTextControl()
 	{
-		
-		text = t.getText();
-		t.setVisible(false);
-		t.dispose();
-		
 		markDirty();
+		text = t.getText();
+		markDirty();
+		Composite c = t.getParent();
+		c.setVisible(false);
+		c.dispose();
+		
+		canvas.redrawDirtyRect();
 	}
 	
 	protected void createJdomElement(Document doc) {

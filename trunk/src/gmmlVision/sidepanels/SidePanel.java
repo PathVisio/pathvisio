@@ -62,16 +62,22 @@ public class SidePanel extends Composite {
 			buttonBar.setLayout(barLayout);
 						
 			minButton = new Button(buttonBar, SWT.TOGGLE);
+			minButton.setToolTipText("Minimize this sidepanel");
 			minButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if(minButton.getSelection())
+					if(minButton.getSelection()) {
 						minimize();
-					else
+						minButton.setToolTipText("Restore this sidepanel");
+					}
+					else {
 						restore();
+						minButton.setToolTipText("Minimize this sidepanel");
+					}
 				}
 			});
 			minButton.setImage(GmmlVision.imageRegistry.get("sidepanel.minimize"));
 			final Button hideButton = new Button(buttonBar, SWT.PUSH);
+			hideButton.setToolTipText("Close this sidepanel (use view menu to open again)");
 			hideButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					hide();
@@ -116,6 +122,12 @@ public class SidePanel extends Composite {
 		parentSash.setWeights(calculateWeights(WEIGHTS_HIDE));
 	}
 	
+	public void show() {
+		int sidePanelSize = GmmlVision.getPreferences().getInt("display.sidePanelSize");
+		if(sidePanelSize == 0) sidePanelSize = 10; //Force show if initial size = 0
+		parentSash.setWeights(calculateWeights(sidePanelSize));
+	}
+	
 	/**
 	 * Restores the size of the panel to its previous size
 	 */
@@ -127,17 +139,18 @@ public class SidePanel extends Composite {
 	}
 	
 	private int[] oldWeights;
-	private static final int WEIGHTS_HIDE = 0;
-	private static final int WEIGHTS_MINIMIZE = 1;
+	private static final int WEIGHTS_HIDE = -1;
+	private static final int WEIGHTS_MINIMIZE = -2;
 	/**
 	 * Calculates weights that have to be passed to the parent {@link SashForm#setWeights(int[])}
-	 * to minimize or hide this panel
-	 * @param method one of WEIGHTS_HIDE or WEIGHTS_MINIMIZE, in the first case the panel is hidden,
+	 * to resize, minimize or hide this panel
+	 * @param percent percentage of total size for this panel or 
+	 * one of WEIGHTS_HIDE or WEIGHTS_MINIMIZE, in the first case the panel is hidden,
 	 * so its weight is set to zero, in the second case the panel is miminized in a way the minimize 
 	 * button is still visible
 	 * @return
 	 */
-	private int[] calculateWeights(int method) {
+	private int[] calculateWeights(int percent) {
 		Control[] controls = parentSash.getChildren();
 		int[] weights = parentSash.getWeights();
 		oldWeights = weights.clone();
@@ -157,8 +170,23 @@ public class SidePanel extends Composite {
 		
 		//Calculate widths needed to calculate new weight 
 		int newWidth;
-		if(method == WEIGHTS_MINIMIZE) newWidth = minButton.getSize().x;
-		else newWidth = 0;
+		switch(percent) {
+		case WEIGHTS_MINIMIZE: newWidth = minButton.getSize().x; break;
+		case WEIGHTS_HIDE: newWidth = 0; break;
+		default:
+			//Calculate new weights
+			int percentLeft = 100 - percent;
+			int sum = 0;
+			for(int i = 0; i < weights.length; i++) {
+				sum += weights[i];
+				System.out.println("old: " + weights[i]);
+				if(i == thisIndex) continue;
+				weights[i] = (int)(((double)weights[i] / 100) * percentLeft);
+				System.out.println("new: " + weights[i]);
+			}
+			weights[thisIndex] = (int)(((double)percent / 100) * sum);
+			return weights;
+			}
 		
 		int thisWidth = getSize().x;
 		

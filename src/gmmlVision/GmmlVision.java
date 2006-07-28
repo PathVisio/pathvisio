@@ -680,11 +680,14 @@ public class GmmlVision extends ApplicationWindow
 	 */
 	private class SwitchEditModeAction extends Action
 	{
+		final String ttChecked = "Exit edit mode";
+		final String ttUnChecked = "Switch to edit mode to edit the pathway content";
 		GmmlVision window;
 		public SwitchEditModeAction (GmmlVision w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
 			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/edit.gif"));
+			setToolTipText(ttUnChecked);
 			window = w;
 		}
 		
@@ -711,6 +714,17 @@ public class GmmlVision extends ApplicationWindow
 				setChecked(false);
 			}
 			getCoolBarManager().update(true);
+		}
+		
+		public void setChecked(boolean check) {
+			super.setChecked(check);
+			setToolTipText(check ? ttChecked : ttUnChecked);
+		}
+		
+		public void switchEditMode(boolean edit) {
+			setChecked(edit);
+			run();
+			
 		}
 	}
 	private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
@@ -755,7 +769,7 @@ public class GmmlVision extends ApplicationWindow
 		}
 		
 		public void run() {
-			if(isChecked()) rightPanel.restore();
+			if(isChecked()) rightPanel.show();
 			else rightPanel.hide();
 		}
 	}
@@ -1075,6 +1089,7 @@ public class GmmlVision extends ApplicationWindow
 		toolBarManager.add(new ControlContribution("ColorSetCombo") {
 			protected Control createControl(Composite parent) {				
 				colorSetCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+				colorSetCombo.setToolTipText("Select the colorset for coloring gene boxes");
 				colorSetCombo.addSelectionListener(new ColorSetComboListener());
 				String[] colorSets = gmmlGex.getColorSetNames();
 				if(colorSets != null) {
@@ -1307,7 +1322,9 @@ public class GmmlVision extends ApplicationWindow
 		rightPanel.addTab(propertyTable, "Properties");
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		
-		sashForm.setWeights(new int[] {60, 40});
+		int sidePanelSize = getPreferences().getInt("display.sidePanelSize");
+		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
+		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		
@@ -1363,8 +1380,7 @@ public class GmmlVision extends ApplicationWindow
 		
 		gmmlData = new GmmlData(drawing);
 		
-		switchEditModeAction.setChecked(true);
-		switchEditModeAction.run();
+		switchEditModeAction.switchEditMode(true);
 		
 		sc.setContent(drawing);
 		drawing.redraw();

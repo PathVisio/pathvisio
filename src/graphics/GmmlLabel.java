@@ -34,6 +34,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -41,6 +43,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -177,6 +180,19 @@ public class GmmlLabel extends GmmlGraphics
 		setHandleLocation();
 	}
 	
+	public void setText(String text) {
+		this.text = text;
+		
+		//Adjust width to text length
+		GC gc = new GC(canvas.getDisplay());
+		Font f = new Font(canvas.getDisplay(), fontName, fontSize, getFontStyle());
+		gc.setFont (f);
+		width = gc.textExtent(text).x;
+		updateToPropItems();
+		
+		f.dispose();
+		gc.dispose();
+	}
 	/**
 	 * Updates the JDom representation of this label
 	 */
@@ -211,36 +227,33 @@ public class GmmlLabel extends GmmlGraphics
 		textComposite.setBackground(background);
 		
 		Label label = new Label(textComposite, SWT.CENTER);
-		label.setText("Specify label name:");
+		label.setText("Specify label:");
 		label.setBackground(background);
 		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
 
-		t.addFocusListener(new FocusListener() {
-			public void focusLost(FocusEvent e) {
+		t.addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
 				disposeTextControl();
 			}
-			public void focusGained(FocusEvent e) {}
 		});
-		t.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				if(e.keyCode == SWT.CR)
-				{
-					disposeTextControl();
-				}
+				
+		t.setFocus();
+		
+		Button b = new Button(textComposite, SWT.PUSH);
+		b.setText("OK");
+		b.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				disposeTextControl();
 			}
-			public void keyReleased(KeyEvent e) {}
 		});
 		
 		textComposite.pack();
-		
-		t.setFocus();
-		t.setVisible(true);
 	}
 	
 	protected void disposeTextControl()
 	{
 		markDirty();
-		text = t.getText();
+		setText(t.getText());
 		markDirty();
 		Composite c = t.getParent();
 		c.setVisible(false);
@@ -273,12 +286,7 @@ public class GmmlLabel extends GmmlGraphics
 		setHandleLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#draw(java.awt.Graphics)
-	 */
-	protected void draw(PaintEvent e, GC buffer)
-	{
+	private int getFontStyle() {
 		int style = SWT.NONE;
 		
 		if (fontWeight.equalsIgnoreCase("bold"))
@@ -290,6 +298,16 @@ public class GmmlLabel extends GmmlGraphics
 		{
 			style |= SWT.ITALIC;
 		}
+		return style;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see GmmlGraphics#draw(java.awt.Graphics)
+	 */
+	protected void draw(PaintEvent e, GC buffer)
+	{
+		int style = getFontStyle();
 		
 		Font f = new Font(e.display, fontName, fontSize, style);
 		
@@ -393,7 +411,7 @@ public class GmmlLabel extends GmmlGraphics
 	{
 		markDirty();
 		
-		text		= (String)propItems.get(attributes.get(0));
+		String text = ((String)propItems.get(attributes.get(0)));
 		centerx		= (Double)propItems.get(attributes.get(1));
 		centery		= (Double)propItems.get(attributes.get(2));
 		width		= (Double)propItems.get(attributes.get(3));
@@ -404,6 +422,9 @@ public class GmmlLabel extends GmmlGraphics
 		fontSize	= (Integer)propItems.get(attributes.get(8));
 		color		= (RGB)propItems.get(attributes.get(9));
 		notes		= (String)propItems.get(attributes.get(10));
+		
+		//Check for change in text and resize width if needed
+		if(!this.text.equals(text)) setText(text);
 		
 		markDirty();
 		setHandleLocation();

@@ -16,12 +16,17 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -229,27 +234,24 @@ public class GmmlGeneProduct extends GmmlGraphics
 		label.setText("Specify gene name:");
 		label.setBackground(background);
 		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
-		
-		t.addFocusListener(new FocusListener() {
-			public void focusLost(FocusEvent e) {
+				
+		t.addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
 				disposeTextControl();
 			}
-			public void focusGained(FocusEvent e) {}
 		});
-		t.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				if(e.keyCode == SWT.CR)
-				{
-					disposeTextControl();
-				}
+				
+		t.setFocus();
+		
+		Button b = new Button(textComposite, SWT.PUSH);
+		b.setText("OK");
+		b.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				disposeTextControl();
 			}
-			public void keyReleased(KeyEvent e) {}
 		});
 		
 		textComposite.pack();
-		
-		t.setFocus();
-		t.setVisible(true);
 	}
 	
 	protected void disposeTextControl()

@@ -76,7 +76,7 @@ public class GmmlGpColor {
 	
 	private void colorAsNotFound(Rectangle colorArea, RGB rgb)
 	{
-		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
+		GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(gmmlGex.getColorSetIndex());
 		
 		c = SwtUtils.changeColor(c, rgb, e.display);
 		
@@ -88,7 +88,7 @@ public class GmmlGpColor {
 	{
 		Data mappIdData = gmmlGex.getCachedData(parent.name, parent.getSystemCode());
 		
-		GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
+		GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(gmmlGex.getColorSetIndex());
 		
 		int nr = cs.useSamples.size();
 		int width = colorArea.width / nr;
@@ -187,6 +187,7 @@ public class GmmlGpColor {
 
 	protected void draw(PaintEvent e, GC buffer)
 	{
+		int colorSetIndex = gmmlGex.getColorSetIndex();
 		c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
 		f = new Font(e.display, "ARIAL", parent.fontSize, SWT.NONE);
 		this.e = e;
@@ -195,14 +196,14 @@ public class GmmlGpColor {
 		Rectangle r = parent.getBounds();
 		buffer.setBackground(c);
 		buffer.fillRectangle(r.x, r.y, r.width, r.height);
-		if(!(gmmlGex.con == null) && canvas.colorSetIndex > -1 && 
-				!canvas.isEditMode() && gmmlGex.colorSets.size() > 0)
+		if(!(gmmlGex.con == null) && colorSetIndex > -1 && 
+				!canvas.isEditMode() && gmmlGex.getColorSets().size() > 0)
 		{
 			// Get visualization area
 			Rectangle colorArea = parent.getBounds();
 			
 			// Adjust width to enable to divide into nrSamples equal rectangles
-			GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(canvas.colorSetIndex);
+			GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(colorSetIndex);
 			colorArea.width = (int)(COLOR_AREA_RATIO * colorArea.width);
 			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
 			// Get x position

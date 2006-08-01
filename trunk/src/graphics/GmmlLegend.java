@@ -7,16 +7,22 @@ import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -28,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ScrollBar;
 
 import util.SwtUtils;
 import colorSet.GmmlColorCriterion;
@@ -38,50 +45,23 @@ import colorSet.GmmlColorGradient.ColorValuePair;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
-public class GmmlLegend extends Composite implements MouseListener, 
-													 MouseMoveListener, 
-													 PaintListener 
-													 {
+public class GmmlLegend extends Composite {
 	
-	GmmlDrawing drawing;
 	GmmlGex gmmlGex;
 	public int colorSetIndex;
 	ArrayList<Integer> diffSamples;
 	HashMap extremes;
-	boolean isMovable;
-	
-	Point lastFitSize;
-	
-	public GmmlLegend(Composite parent, int style, boolean movable)
+		
+	public GmmlLegend(Composite parent, int style, GmmlGex gmmlGex)
 	{
 		super(parent, style);
 			
 		createContents();
-		
-		addPaintListener(this);
-		
-		isMovable = movable;
-		if(isMovable)
-		{
-			addMouseMoveListener(this);
-			addMouseListener(this);
-		}
-	}
-	
-	public GmmlLegend(Composite parent, int style)
-	{
-		this(parent, style, true);
-	}
-	
-	public void setDrawing(GmmlDrawing drawing)
-	{
-		this.drawing = drawing;
-	}
-	
-	public void setGmmlGex(GmmlGex gmmlGex)
-	{
+						
 		this.gmmlGex = gmmlGex;
 	}
+	
+	public void setGmmlGex(GmmlGex gmmlGex) { this.gmmlGex = gmmlGex; }
 	
 	GradientCanvas gradients;
 	CriteriaComposite criteria;
@@ -95,7 +75,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 	public void createContents()
 	{	
 		setLayout(new GridLayout(1, false));
-		
+				
 		title = new Label(this, SWT.CENTER);
 		sg = new Group(this, SWT.SHADOW_IN);
 		gg = new Group(this, SWT.SHADOW_IN);
@@ -106,10 +86,8 @@ public class GmmlLegend extends Composite implements MouseListener,
 		criteria.setLegend(this);
 		samples = new SampleComposite(sg, SWT.NONE);
 		samples.setLegend(this);
-		
-		gGrid = new GridData(GridData.FILL_HORIZONTAL);
-		gGrid.heightHint = 40;
-		gg.setLayoutData(gGrid);
+
+		gg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		cg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		sg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -133,63 +111,36 @@ public class GmmlLegend extends Composite implements MouseListener,
 		{
 			controls[i].setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		}
-		layout();
-		setVisible(false);
 	}
-
+	
 	Vector<GmmlColorSetObject> colorSetObjects;
 	GmmlColorSet colorSet;
-	public void paintControl (PaintEvent e)
-	{	
-		if(colorSetIndex > -1)
-		{			
-			Rectangle r = getClientArea();
-			e.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
-			e.gc.drawRectangle(r.x, r.y, r.width - 1, r.height -1);
-		}
-		else if(isCustomSize)
-		{
-			samples.resetContents();
-		}
-	}
 
 	static final String FONT = "arial narrow";
 	static final int FONTSIZE = 8;
 	public void resetContents()
 	{
-		if(drawing != null) {
-			colorSetIndex = drawing.colorSetIndex;
-			gmmlGex = drawing.gmmlVision.gmmlGex;
-		}
-		if(colorSetIndex > -1 && gmmlGex.colorSets.size() > 0)
-		{
-			colorSet = (GmmlColorSet)gmmlGex.colorSets.get(colorSetIndex);
-		} else {
-			return;
-		}
+		if(gmmlGex == null) return;
+		
+		colorSetIndex = gmmlGex.getColorSetIndex();
+		if(colorSetIndex < 0) return;
+			
+		colorSet = (GmmlColorSet)gmmlGex.getColorSets().get(colorSetIndex);
 		colorSetObjects = colorSet.colorSetObjects;
 		
 		setDiffGradients();
 		
+		System.out.println("resetting contents");
 		samples.resetContents();
+		gradients.resetContents();
 		criteria.resetContents();
-		gradients.redraw();
-		
-		if(!isCustomSize && !isDragging)
-		{
-			gGrid.heightHint = (MAX_BAR_HEIGHT + 20) * diffSamples.size();
-			layout(true);
-			pack(true);
-			lastFitSize = getSize();
-		}
-		samples.resetContents();
-		redraw();
+		layout(true, true);
 	}
-	
-	private class SampleComposite extends Composite 
+		
+	private class SampleComposite extends Composite
 	{
 		GmmlLegend legend;
-		Image sampleImage;
+		Canvas sampleCanvas;
 		
 		public SampleComposite(Composite parent, int style)
 		{
@@ -210,10 +161,11 @@ public class GmmlLegend extends Composite implements MouseListener,
 			{
 				controls[i].dispose();
 			}
+			
+			sampleCanvas = getSampleCanvas(this, SWT.NONE);
+
 			if(legend.colorSetObjects != null)
-			{
-				Label sampleLabel = new Label(this, SWT.FLAT);
-				
+			{				
 				int i = 0;
 				for(Sample s : colorSet.useSamples)
 				{
@@ -222,65 +174,74 @@ public class GmmlLegend extends Composite implements MouseListener,
 					l.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 					l.setText(i + ": " + s.getName());
 				}
-				
-				if(!isCustomSize)
-				{
-					layout(true);
-					pack(true);
-				}
-				setSampleImage();
-				sampleLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				sampleLabel.setImage(sampleImage);
-				pack();
-				layout();
 			}
-			
 		}
 		
 		final static int MARGIN = 5;
 		final static int SAMPLE_IMAGE_HEIGHT = GmmlGeneProduct.INITIAL_HEIGHT;
-		public void setSampleImage()
-		{
-			Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
+		
+		private Canvas getSampleCanvas(Composite parent, int style) {
+			final Canvas c = new Canvas(parent, style);
 			
-			int nr = colorSet.useSamples.size();
-			Point imageSize = new Point(sg.getClientArea().width - MARGIN, 
-					SAMPLE_IMAGE_HEIGHT);
-			if(sampleImage != null)
-			{
-				sampleImage.dispose();
-			}
-			sampleImage = new Image(getDisplay(), imageSize.x, imageSize.y);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = SAMPLE_IMAGE_HEIGHT + 1;
+			c.setLayoutData(gd);
 			
-			GC imageGc = new GC(sampleImage);
-			imageGc.setFont(f);
-			String exampleId = "Gene ID";
-			Point stringSize = imageGc.textExtent(exampleId);
-			
-			Rectangle drawArea = sampleImage.getBounds();
-			drawArea.height -= 1;
-			drawArea.width = (int)Math.ceil(GmmlGpColor.COLOR_AREA_RATIO * drawArea.width);
-			if(nr > 0) drawArea.width -= drawArea.width % nr;
+			c.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			c.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					GC gc = e.gc;
+					Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
+					
+					int nr = colorSet.useSamples.size();
+				
+					gc.setFont(f);
+					String exampleId = "Gene";
+					Point stringSize = gc.textExtent(exampleId);
+					
+					Point p = ((Canvas)(e.widget)).getSize();
+					Rectangle drawArea = new Rectangle(0, 0, p.x, p.y);
+					drawArea.width = drawArea.width;
+					drawArea.height = SAMPLE_IMAGE_HEIGHT;
+					
+					Rectangle sampleArea = new Rectangle(0, 0, drawArea.width, drawArea.height);
+					sampleArea.width = (int)Math.ceil(GmmlGpColor.COLOR_AREA_RATIO * drawArea.width);
+					if(nr > 0) sampleArea.width -= sampleArea.width % nr;
+					
+					int stringSpace = drawArea.width - sampleArea.width;
+					
+					//If sample numbers don't fit, steal space from gene label if possible
+					Point sampleSize = gc.textExtent(Integer.toString(nr));
+					int sampleSpace = sampleArea.width / nr;
+					if(sampleSize.x > sampleSpace) { 		
+						if(stringSpace > stringSize.x) {
+							int steal = sampleSize.x * nr - sampleArea.width;
+							if(!(stringSpace - steal > stringSize.x)) steal = stringSpace - stringSize.x;
+							stringSpace -= steal;
+							sampleArea.width += steal;
+						}
+					}
+										
+					gc.drawString(exampleId, stringSpace / 2 - stringSize.x / 2, sampleArea.height / 2 - stringSize.y / 2 );
+					gc.drawRectangle(0, 0, stringSpace - 1, sampleArea.height);
+					
+					sampleArea.x += stringSpace - 1;
+					for(int i = 0; i < nr; i++)
+					{
+						Rectangle r = new Rectangle(sampleArea.x + i * sampleArea.width / nr,
+								sampleArea.y, sampleArea.width / nr, sampleArea.height);
+						gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+						gc.drawRectangle(r.x, r.y, r.width, r.height);
+						Point numberSize = gc.textExtent(Integer.toString(i + 1));
+						gc.drawString(Integer.toString(i + 1), r.x + r.width / 2 - numberSize.x / 2,
+								r.height / 2 - numberSize.y / 2, true);
+					}
 
-			int w = sampleImage.getBounds().width - drawArea.width;
-			imageGc.drawString(exampleId, w / 2 - stringSize.x / 2, drawArea.height / 2 - stringSize.y / 2 );
-			imageGc.drawRectangle(0, 0, w - 1, drawArea.height);
-			
-			drawArea.x += w - 1;
-			for(int i = 0; i < nr; i++)
-			{
-				Rectangle r = new Rectangle(drawArea.x + i * drawArea.width / nr,
-						drawArea.y, drawArea.width / nr, drawArea.height);
-				imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
-				imageGc.drawRectangle(r.x, r.y, r.width, r.height);
-				Point numberSize = imageGc.textExtent(Integer.toString(i + 1));
-				imageGc.drawString(Integer.toString(i + 1), r.x + r.width / 2 - numberSize.x / 2,
-						r.height / 2 - numberSize.y / 2, true);
-			}
-			
-			imageGc.dispose();
-			f.dispose();
-		}		
+					f.dispose();
+				}
+			});
+			return c;
+		}
 	}
 	
 	private class CriteriaComposite extends Composite
@@ -355,7 +316,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 				multipleDataLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				multipleDataLabel.setText("Gene maps to multiple ids");
 				
-				layout();
 				c.dispose();
 				imageGc.dispose();
 			}
@@ -387,13 +347,25 @@ public class GmmlLegend extends Composite implements MouseListener,
 			super(parent, style);
 			addPaintListener(this);
 			setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			setGridData();
 		}
 		
 		public void setLegend(GmmlLegend legend)
 		{
 			this.legend = legend;
 		}
-
+		
+		public void resetContents() {
+			setGridData();
+			redraw();
+		}
+		
+		public void setGridData() {
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = diffSamples != null ? (MAX_BAR_HEIGHT + 20) * diffSamples.size() : 40;
+			setLayoutData(gGrid);
+		}
+		
 		public void paintControl (PaintEvent e)
 		{
 			if(legend.colorSetObjects != null)
@@ -441,7 +413,7 @@ public class GmmlLegend extends Composite implements MouseListener,
 			
 			// Get region to draw
 			int yStart = r.y + MARGIN_VERTICAL;
-			int barHeight = Math.min(r.height - MARGIN_VERTICAL, MAX_BAR_HEIGHT - MARGIN_VERTICAL);
+			int barHeight = Math.min(r.height - MARGIN_VERTICAL -LABEL_WIDTH, MAX_BAR_HEIGHT - MARGIN_VERTICAL);
 			int start = r.x + MARGIN_HORIZONTAL;
 			int end = r.width - MARGIN_HORIZONTAL;
 			
@@ -491,6 +463,10 @@ public class GmmlLegend extends Composite implements MouseListener,
 			f.dispose();
 	}
 
+	/**
+	 * Sets the number of gradients to draw in the legend. That is
+	 * the number of gradients applying to a different sample
+	 */
 	private void setDiffGradients()
 	{
 		diffSamples = new ArrayList<Integer>();
@@ -504,118 +480,6 @@ public class GmmlLegend extends Composite implements MouseListener,
 					diffSamples.add(new Integer(sampleId));
 				}
 			}
-		}
-	}
-	
-	public void adjustToZoom(double factor)
-	{
-		Point p = getLocation();
-		p.x *= factor;
-		p.y *= factor;
-	}
-
-	boolean isDragging;
-	boolean isCustomSize;
-	public void mouseDoubleClick(MouseEvent arg0) {	}
-	
-	public void mouseDown(MouseEvent e) {
-		isDragging = true;
-		prevX = e.x;
-		prevY = e.y;
-	}
-	
-	public void mouseUp(MouseEvent arg0) {
-		resetContents();
-		isDragging = false;
-	}
-
-	int prevX;
-	int prevY;
-	
-	static final int RW = 4;
-	Cursor c;
-	int cursorStyle = SWT.CURSOR_ARROW;
-	
-	public void mouseMove(MouseEvent e) {
-		if(isDragging)
-		{
-			int addX = 0;
-			int addY = 0;
-			int locX = getLocation().x;
-			int locY = getLocation().y;
-			
-			switch(cursorStyle)
-			{
-			case SWT.CURSOR_ARROW:
-				Point p = getLocation();
-				setLocation(p.x + e.x - prevX, p.y + e.y - prevY);
-				return;
-			case SWT.CURSOR_SIZEN:
-				break;
-			case SWT.CURSOR_SIZES:
-				addY = e.y - prevY;
-				break;
-			case SWT.CURSOR_SIZEE:
-				addX = e.x - prevX;
-				break;
-			case SWT.CURSOR_SIZEW:
-				break;
-			case SWT.CURSOR_SIZESE:
-				addX = e.x - prevX;
-				addY = e.y - prevY;
-			}
-			
-			if(addX != 0 || addY != 0)
-			{
-				isCustomSize = true;
-			}
-			
-			Point p = getSize();
-			setSize(p.x + addX, p.y + addY);
-			setLocation(locX, locY);
-			
-			prevX = e.x;
-			prevY = e.y;
-		}
-		else
-		{
-			if(c != null)
-			{
-				c.dispose();
-			}
-			
-			cursorStyle = SWT.CURSOR_ARROW;
-			
-			Point s = new Point(getClientArea().width, getClientArea().height);
-//			Rectangle north = new Rectangle(0, -RW, s.x, 2*RW);
-			Rectangle south = new Rectangle(0, s.y - RW, s.x, 2*RW);
-//			Rectangle west = new Rectangle(-RW, 0, 2*RW, s.y);
-			Rectangle east = new Rectangle(s.x - RW, 0, 2*RW, s.y);
-			Rectangle se = new Rectangle(s.x - RW, s.y - RW, 2*RW, 2*RW);
-			
-//			if(north.contains(e.x, e.y))
-//			{
-//				cursorStyle = SWT.CURSOR_SIZEN;
-//			}
-			if(south.contains(e.x, e.y))
-			{
-				cursorStyle = SWT.CURSOR_SIZES;
-			}
-			if(east.contains(e.x, e.y))
-			{
-				cursorStyle = SWT.CURSOR_SIZEE;
-			}
-//			if(west.contains(e.x, e.y))
-//			{
-//				cursorStyle = SWT.CURSOR_SIZEW;
-//			}
-			if(se.contains(e.x, e.y))
-			{
-				cursorStyle = SWT.CURSOR_SIZESE;
-			}
-			
-			c = new Cursor(this.getShell().getDisplay(), cursorStyle);
-			this.setCursor(c);
 		}
 	}
 }

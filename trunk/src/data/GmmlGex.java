@@ -1,6 +1,7 @@
 package data;
 
 import gmmlVision.GmmlVision;
+import graphics.GmmlDrawing;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,19 +49,56 @@ public class GmmlGex {
 	public File gexFile;
 	public GmmlGdb gmmlGdb;
 	
+	private GmmlVision gmmlVision;
+	
+	private Vector<GmmlColorSet> colorSets;
+	
 	/**
-	 * {@link ColorSet}s used for the currently loaded Expression data
+	 * Gets the {@link ColorSet}s used for the currently loaded Expression data
 	 */
-	public Vector<GmmlColorSet> colorSets;
+	public Vector<GmmlColorSet> getColorSets() { return colorSets; }
+	
+	/**
+	 * Index of the colorSet that is currently used
+	 */
+	private int colorSetIndex = -1;
 	
 	/**
 	 * Constructur for this class
-	 * @param gmmlGdb	{@link GmmlGdb} object containing a connection to the Gene Database
+	 * @param gmmlVision	Pointer to the {@link GmmlVision} application
 	 */
-	public GmmlGex(GmmlGdb gmmlGdb) 
+	public GmmlGex(GmmlVision gmmlVision) 
 	{
-		this.gmmlGdb = gmmlGdb;
+		this.gmmlVision = gmmlVision;
+		this.gmmlGdb = gmmlVision.gmmlGdb;
 		colorSets = new Vector<GmmlColorSet>();
+	}
+	
+	/**
+	 * Set the index of the colorset to use
+	 * @param colorSetIndex
+	 */
+	public void setColorSetIndex(int colorSetIndex)
+	{
+		System.out.println("CSI set to " + colorSetIndex);
+		this.colorSetIndex = colorSetIndex;
+		if(colorSetIndex < 0)
+		{
+			gmmlVision.showLegend(false);
+		} else {
+			gmmlVision.showLegend(true);
+		}
+		GmmlDrawing d = gmmlVision.getDrawing();
+		if(d != null) { d.redraw(); }
+	}
+	
+	/**
+	 * Get the index of the currently used colorset
+	 * @return
+	 */
+	public int getColorSetIndex() { 
+		if(colorSetIndex > colorSets.size() - 1) System.out.println("Help!");
+		return colorSetIndex;
 	}
 	
 	/**
@@ -70,6 +108,28 @@ public class GmmlGex {
 	public void setColorSets(Vector<GmmlColorSet> colorSets)
 	{
 		this.colorSets = colorSets;
+	}
+	
+	/**
+	 * Removes this {@link ColorSet}
+	 * @param cs Colorset to remove
+	 */
+	public void removeColorSet(GmmlColorSet cs) {
+		if(colorSets.contains(cs)) {
+			colorSets.remove(cs);
+			if(colorSetIndex == 0 && colorSets.size() > 0) setColorSetIndex(colorSetIndex);
+			else setColorSetIndex(colorSetIndex - 1);
+		}
+	}
+	
+	/**
+	 * Removes this {@link ColorSet}
+	 * @param i index of ColorSet to remove
+	 */
+	public void removeColorSet(int i) {
+		if(i > -1 && i < colorSets.size()) {
+			removeColorSet(colorSets.get(i));
+		}
 	}
 	
 	/**

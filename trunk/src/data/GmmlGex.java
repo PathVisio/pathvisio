@@ -80,7 +80,6 @@ public class GmmlGex {
 	 */
 	public void setColorSetIndex(int colorSetIndex)
 	{
-		System.out.println("CSI set to " + colorSetIndex);
 		this.colorSetIndex = colorSetIndex;
 		if(colorSetIndex < 0)
 		{

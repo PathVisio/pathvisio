@@ -1283,7 +1283,7 @@ public class GmmlVision extends ApplicationWindow
 		propertyTable = new GmmlPropertyTable(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
-		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.NONE, gmmlGex);
+		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL, gmmlGex);
 		
 		
 		rightPanel.addTab(bpBrowser, "Backpage");

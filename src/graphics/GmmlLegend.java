@@ -45,7 +45,7 @@ import colorSet.GmmlColorGradient.ColorValuePair;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
-public class GmmlLegend extends Composite {
+public class GmmlLegend extends ScrolledComposite {
 	
 	GmmlGex gmmlGex;
 	public int colorSetIndex;
@@ -63,6 +63,7 @@ public class GmmlLegend extends Composite {
 	
 	public void setGmmlGex(GmmlGex gmmlGex) { this.gmmlGex = gmmlGex; }
 	
+	Composite topComposite;
 	GradientCanvas gradients;
 	CriteriaComposite criteria;
 	SampleComposite samples;
@@ -74,12 +75,17 @@ public class GmmlLegend extends Composite {
 	GridData gGrid;
 	public void createContents()
 	{	
-		setLayout(new GridLayout(1, false));
-				
-		title = new Label(this, SWT.CENTER);
-		sg = new Group(this, SWT.SHADOW_IN);
-		gg = new Group(this, SWT.SHADOW_IN);
-		cg = new Group(this, SWT.SHADOW_IN);
+		topComposite = new Composite(this, SWT.NULL);
+		topComposite.setLayout(new GridLayout(1, false));
+		
+		setContent(topComposite);
+		setExpandHorizontal(true);
+		setExpandVertical(true);
+		
+		title = new Label(topComposite, SWT.CENTER);
+		sg = new Group(topComposite, SWT.SHADOW_IN);
+		gg = new Group(topComposite, SWT.SHADOW_IN);
+		cg = new Group(topComposite, SWT.SHADOW_IN);
 		gradients = new GradientCanvas(gg, SWT.NONE);
 		gradients.setLegend(this);
 		criteria = new CriteriaComposite(cg, SWT.NONE);
@@ -118,6 +124,7 @@ public class GmmlLegend extends Composite {
 
 	static final String FONT = "arial narrow";
 	static final int FONTSIZE = 8;
+
 	public void resetContents()
 	{
 		if(gmmlGex == null) return;
@@ -129,12 +136,13 @@ public class GmmlLegend extends Composite {
 		colorSetObjects = colorSet.colorSetObjects;
 		
 		setDiffGradients();
-		
-		System.out.println("resetting contents");
+	
 		samples.resetContents();
 		gradients.resetContents();
 		criteria.resetContents();
-		layout(true, true);
+		topComposite.layout(true, true);
+		
+		setMinSize(topComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 		
 	private class SampleComposite extends Composite

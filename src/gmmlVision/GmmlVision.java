@@ -3,6 +3,7 @@ package gmmlVision;
 import gmmlVision.sidepanels.TabbedSidePanel;
 import graphics.GmmlDrawing;
 import graphics.GmmlGeneProduct;
+import graphics.GmmlLegend;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -385,8 +386,10 @@ public class GmmlVision extends ApplicationWindow
 				gmmlGex.connect();
 				cacheExpressionData();
 				showColorSetActionsCI(true);
+				showLegend(true);
 			} catch(Exception e) {
 				MessageDialog.openError(getShell(), "Failed to open Expression Dataset", e.getMessage());
+				GmmlVision.log.error("while opening expression dataset", e);
 			}
 			
 		}
@@ -581,11 +584,8 @@ public class GmmlVision extends ApplicationWindow
 			{
 				colorSetWindow.run();
 				showColorSetActionsCI(true);
-				if(drawing != null)
-				{
-					drawing.redraw();
-					drawing.legend.resetContents();
-				}
+				legend.resetContents();
+				if(drawing != null) drawing.redraw();
 			}
 			else
 			{
@@ -657,19 +657,16 @@ public class GmmlVision extends ApplicationWindow
 		}
 		public void widgetSelected(SelectionEvent e)
 		{
-			if(drawing != null)
+			if(colorSetCombo.getText().equals(COMBO_NO_COLORSET))
 			{
-				if(colorSetCombo.getText().equals(COMBO_NO_COLORSET))
+				gmmlGex.setColorSetIndex(-1);
+			}
+			else
+			{
+				gmmlGex.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+				if(gmmlGdb.getCon() == null)
 				{
-					drawing.setColorSetIndex(-1);
-				}
-				else
-				{
-					drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
-					if(gmmlGdb.getCon() == null)
-					{
-						MessageDialog.openWarning(getShell(), "Warning", "No gene database selected");
-					}
+					MessageDialog.openWarning(getShell(), "Warning", "No gene database selected");
 				}
 			}
 		}
@@ -728,33 +725,7 @@ public class GmmlVision extends ApplicationWindow
 		}
 	}
 	private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
-	
-	/**
-	 * {@link Action} to show or hide a legend for the selected colorset
-	 */
-	public class ShowLegendAction extends Action
-	{
-		GmmlVision window;
-		public ShowLegendAction (GmmlVision w)
-		{
-			super("Show &legend", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/legend.gif"));
-			window = w;
-		}
 		
-		public void run () {
-			if(drawing == null || gmmlGex.con == null)
-			{
-				setChecked(false);
-			}
-			else
-			{
-				drawing.showLegend(isChecked());			
-			}
-		}
-	}
-	public ShowLegendAction showLegendAction = new ShowLegendAction(this);
-	
 	/**
 	 * {@link Action} to show or hide the right sidepanel
 	 */
@@ -1104,7 +1075,6 @@ public class GmmlVision extends ApplicationWindow
 		});
 		
 		toolBarManager.add(colorSetManagerAction);
-		toolBarManager.add(showLegendAction);
 		colorSetActionsCI = new ToolBarContributionItem(toolBarManager, "ColorSetActions");
 	}
 	
@@ -1147,11 +1117,7 @@ public class GmmlVision extends ApplicationWindow
 			getCoolBarManager().update(true);
 
 			//Select the colorset used in the drawing if loaded
-			if(drawing != null) { 
-				colorSetCombo.select(drawing.colorSetIndex + 1); 
-			} else {
-				colorSetCombo.select(0);
-			}
+			colorSetCombo.select(gmmlGex.getColorSetIndex() + 1); 
 		}
 		else { 
 			getCoolBarManager().remove(colorSetActionsCI);
@@ -1181,7 +1147,6 @@ public class GmmlVision extends ApplicationWindow
 		editMenu.add(switchEditModeAction);
 		editMenu.add(preferencesAction);
 		MenuManager viewMenu = new MenuManager ("&View");
-		viewMenu.add(showLegendAction);
 		viewMenu.add(showRightPanelAction);
 		MenuManager zoomMenu = new MenuManager("&Zoom");
 		zoomMenu.add(new ZoomAction(this, 50));
@@ -1231,7 +1196,7 @@ public class GmmlVision extends ApplicationWindow
 	/**
 	 * {@link GmmlGex} object to handle expression data related actions
 	 */
-	public GmmlGex gmmlGex = new GmmlGex(gmmlGdb);
+	public GmmlGex gmmlGex = new GmmlGex(this);
 	/**
 	 * {@link SearchMethods} object holding search operations
 	 */
@@ -1292,6 +1257,7 @@ public class GmmlVision extends ApplicationWindow
 	ColorSetWindow colorSetWindow; //Window containing the colorset manager
 	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
 	PathwaySearchComposite pwSearchComposite; //Composite that handles pathway searches and displays results
+	GmmlLegend legend; //Legend to display colorset information
 	protected Control createContents(Composite parent)
 	{
 		loadImages();
@@ -1317,16 +1283,20 @@ public class GmmlVision extends ApplicationWindow
 		propertyTable = new GmmlPropertyTable(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
+		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.NONE, gmmlGex);
+		
 		
 		rightPanel.addTab(bpBrowser, "Backpage");
 		rightPanel.addTab(propertyTable, "Properties");
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
+		rightPanel.addTab(legend, "Legend");
 		
 		int sidePanelSize = getPreferences().getInt("display.sidePanelSize");
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
+		rightPanel.hideTab("Legend"); //hide legend on startup
 		
 		setStatus("Using Gene Database: '" + getPreferences().getString("currentGdb") + "'");
 		
@@ -1336,6 +1306,19 @@ public class GmmlVision extends ApplicationWindow
 		return parent;
 		
 	};
+	
+	public GmmlLegend getLegend() { return legend; }
+	
+	public void showLegend(boolean show) {	
+		if(show && gmmlGex.con != null && gmmlGex.getColorSetIndex() > -1) {
+			legend.resetContents();
+			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
+			rightPanel.showTab("Legend", 0);
+			rightPanel.selectTab("Legend");
+		}
+		
+		else rightPanel.hideTab("Legend");
+	}
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
@@ -1407,7 +1390,7 @@ public class GmmlVision extends ApplicationWindow
 			if(gmmlGex.con != null)
 			{
 				cacheExpressionData();
-				if(!drawing.isEditMode()) drawing.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
+				if(!drawing.isEditMode()) gmmlGex.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
 			}		
 			sc.setContent(drawing);
 		}	

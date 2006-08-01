@@ -48,11 +48,6 @@ PaintListener, MouseTrackListener, KeyListener
 	public GmmlVision gmmlVision;
 	
 	/**
-	 * Index of the colorSet that is currently used
-	 */
-	public int colorSetIndex;
-
-	/**
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
@@ -76,9 +71,7 @@ PaintListener, MouseTrackListener, KeyListener
 	 * when displayed on the drawing)
 	 */
 	GmmlMappInfo mappInfo;
-	
-	public GmmlLegend legend;
-	
+		
 	GmmlSelectionBox s; 
 		
 	private boolean editMode;
@@ -139,22 +132,8 @@ PaintListener, MouseTrackListener, KeyListener
 		addKeyListener(this);
 		
 //		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		
-		initLegend(this);
-		
-		colorSetIndex = -1;
 	}
-	
-	/**
-	 * Initializes the legend
-	 * @param parent	parent composite to add the legend to
-	 */
-	public void initLegend(Composite parent) {
-		//Add to scrolledcomposite (so that you can place it outside the drawing boundaries
-		legend = new GmmlLegend(parent, SWT.NONE);
-		legend.setDrawing(this);
-	}
-	
+		
 	/**
 	 * Sets the {@link MappInfo} containing information on the pathway
 	 * @param mappInfo
@@ -225,39 +204,8 @@ PaintListener, MouseTrackListener, KeyListener
 		{
 			clearSelection();
 		}
-		showLegend(!editMode);	
+		gmmlVision.showLegend(!editMode);	
 		redraw();
-	}
-	
-	/**
-	 * Set the index of the colorset to use
-	 * @param colorSetIndex
-	 */
-	public void setColorSetIndex(int colorSetIndex)
-	{
-		this.colorSetIndex = colorSetIndex;
-		if(colorSetIndex < 0)
-		{
-			showLegend(false);
-		} else {
-			showLegend(true);
-		}
-		redraw();	
-	}
-	
-	/**
-	 * Show or hide the legend
-	 * @param show	true to show, false to hide the legend
-	 */
-	public void showLegend(boolean show)
-	{
-		if(show && colorSetIndex > -1 && !editMode && gmmlVision.showLegendAction.isChecked())
-		{
-			legend.resetContents();
-			legend.setVisible(true);
-		} else {
-			legend.setVisible(false);
-		}
 	}
 	
 	private double zoomFactor = 1;
@@ -287,7 +235,7 @@ PaintListener, MouseTrackListener, KeyListener
 			}
 		}
 		
-		legend.adjustToZoom(factor);
+//		legend.adjustToZoom(factor);
 		redraw();
 	}
 
@@ -775,7 +723,7 @@ PaintListener, MouseTrackListener, KeyListener
 	 * hovering over a geneproduct
 	 */
 	public void mouseHover(MouseEvent e) {
-		if(!editMode && colorSetIndex > -1 && gmmlVision.gmmlGex.con != null) {
+		if(!editMode && gmmlVision.gmmlGex.getColorSetIndex() > -1 && gmmlVision.gmmlGex.con != null) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
 			GmmlGex gmmlGex = gmmlVision.gmmlGex;
@@ -812,7 +760,7 @@ PaintListener, MouseTrackListener, KeyListener
 			            HashMap<Integer, Object> data = mappIdData.getAverageSampleData();
 			            String textL = "";
 			            String textR = "";
-			            for(Sample s : gmmlGex.colorSets.get(colorSetIndex).useSamples)
+			            for(Sample s : gmmlGex.getColorSets().get(gmmlVision.gmmlGex.getColorSetIndex()).useSamples)
 			            {
 			            	textL += s.getName() + ":  \n";
 			            	textR += data.get(new Integer(s.idSample)) + "\n";

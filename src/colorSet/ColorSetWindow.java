@@ -110,11 +110,6 @@ public class ColorSetWindow extends ApplicationWindow {
 	private GmmlGex gmmlGex;
 	
 	/**
-	 *index of the colorset edited last time the window was open
-	 */
-	private int lastColorSetIndex;
-	
-	/**
 	 * Constructor of this class
 	 * @param parent
 	 */
@@ -137,7 +132,6 @@ public class ColorSetWindow extends ApplicationWindow {
 	 */
 	public void run()
 	{
-		if(gmmlGex.colorSets == null) gmmlGex.loadColorSets();
 		setCoNumSamples();
 		open();
 		
@@ -284,8 +278,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		middleSash.setLayout(new FillLayout());
 		initiateSashForm();
 		
-		legend = new GmmlLegend(topSash, SWT.NONE, false);
-		legend.setGmmlGex(gmmlGex);
+		legend = new GmmlLegend(topSash, SWT.NONE, gmmlGex);
 		
 		topSash.setWeights(new int[] {25, 55, 20} );
 		
@@ -328,13 +321,15 @@ public class ColorSetWindow extends ApplicationWindow {
 		shell.setSize(topSash.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 50, 500);
 		
 		//Select last edited colorset
-		csCombo.select(lastColorSetIndex);
+		csCombo.select(gmmlGex.getColorSetIndex() == -1 && gmmlGex.getColorSets().size() > 0 ?
+				0 : gmmlGex.getColorSetIndex());
 		//selectionListener is not triggered, so perform actions triggered when selecting a colorset
 		if(csCombo.getSelectionIndex() > -1)
 		{
-			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+			GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 			coTableViewer.setInput(cs);
 			setMiddleCompositeContents(cs);
+			legend.resetContents();
 		}
 		return parent;
 	}
@@ -729,7 +724,6 @@ public class ColorSetWindow extends ApplicationWindow {
 			csCLabelDnf.setBackground(csColorDnf);
 			sampleTableViewer.setInput(cs);
 			sampleListViewer.setInput(cs);
-			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cs);
 			legend.setVisible(true);
 			legend.resetContents();
 			middleSash.setMaximizedControl(csComposite);
@@ -745,7 +739,6 @@ public class ColorSetWindow extends ApplicationWindow {
 			}
 			cgCombo.select(coSampleIndex.indexOf(cg.useSample));
 			middleSash.setMaximizedControl(cgComposite);
-			legend.colorSetIndex = gmmlGex.colorSets.indexOf(cg.getParent());
 			legend.setVisible(true);
 			legend.resetContents();
 			topSash.layout();
@@ -762,6 +755,8 @@ public class ColorSetWindow extends ApplicationWindow {
 			}
 			ccCombo.select(coSampleIndex.indexOf(cc.useSample));
 			middleSash.setMaximizedControl(ccComposite);
+			legend.setVisible(true);
+			legend.resetContents();
 			topSash.layout();
 			return;
 		}
@@ -823,10 +818,11 @@ public class ColorSetWindow extends ApplicationWindow {
 	 */
 	class CsComboSelectionAdapter extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
-			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+			int selection = csCombo.getSelectionIndex();
+			GmmlColorSet cs = gmmlGex.getColorSets().get(selection);
+			gmmlGex.setColorSetIndex(selection);
 			coTableViewer.setInput(cs);
 			setMiddleCompositeContents(cs);
-			lastColorSetIndex = csCombo.getSelectionIndex();
 		}
 	}
 	
@@ -878,7 +874,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			return false;
 		}
 		if(csCombo.getSelectionIndex() < 0) return true; //Colorset doesn't exist anymore
-		GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+		GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 		//Save the control information to the colorset
 		cs.name = csNameText.getText();
 		cs.color_no_gene_found = csColorGnf.getRGB();
@@ -1028,9 +1024,9 @@ public class ColorSetWindow extends ApplicationWindow {
 			int rc = d.open();
 			if(rc == Window.OK) {
 				GmmlColorSet cs = new GmmlColorSet(d.getValue(), gmmlGex);
-				gmmlGex.colorSets.add(cs);
+				gmmlGex.getColorSets().add(cs);
 				csCombo.setItems(gmmlGex.getColorSetNames());
-				csCombo.select(gmmlGex.colorSets.indexOf(cs));
+				csCombo.select(gmmlGex.getColorSets().indexOf(cs));
 				coTableViewer.setInput(cs);
 				setMiddleCompositeContents(cs);
 			}
@@ -1048,7 +1044,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 		public void widgetSelected(SelectionEvent e) {
 			if(csCombo.getSelectionIndex() > -1) {
-				GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+				GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 				setMiddleCompositeContents(cs);
 			}
 		}
@@ -1066,8 +1062,8 @@ public class ColorSetWindow extends ApplicationWindow {
 		
 		public void widgetSelected(SelectionEvent e) {
 			int csIndex = csCombo.getSelectionIndex();
-			if(csIndex >= gmmlGex.colorSets.size()) return;
-			GmmlColorSet cs = gmmlGex.colorSets.get(csIndex);
+			if(csIndex >= gmmlGex.getColorSets().size()) return;
+			GmmlColorSet cs = gmmlGex.getColorSets().get(csIndex);
 			if(cs.useSamples.size() == 0)
 			{ //No samlpes are selected for visalization, makes no sense to create a gradient, so display warning
 				MessageDialog.openError(getShell(), "Error", "No samples selected for visualization\n" +
@@ -1090,12 +1086,12 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void widgetSelected(SelectionEvent e) {
 			if(csCombo.getSelectionIndex() > -1)
 			{
-				gmmlGex.colorSets.remove(csCombo.getSelectionIndex());
+				gmmlGex.removeColorSet(csCombo.getSelectionIndex());
 				csCombo.setItems(gmmlGex.getColorSetNames());
-				csCombo.select(0);
-				if(csCombo.getSelectionIndex() > -1) //First colorset selected
+				csCombo.select(gmmlGex.getColorSetIndex());
+				if(csCombo.getSelectionIndex() > -1)
 				{
-					GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+					GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 					coTableViewer.setInput(cs);
 					setMiddleCompositeContents(cs);
 				} else { //No colorset left
@@ -1136,7 +1132,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void widgetSelected(SelectionEvent e) {
 			if(csCombo.getSelectionIndex() > -1)
 			{
-				GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+				GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 				Iterator it = ((IStructuredSelection)sampleListViewer.getSelection()).iterator();
 				while(it.hasNext())
 				{
@@ -1161,7 +1157,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		public void widgetSelected(SelectionEvent e) {
 			if(csCombo.getSelectionIndex() > -1)
 			{
-				GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+				GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 				Iterator it = ((IStructuredSelection)sampleTableViewer.getSelection()).iterator();
 				while(it.hasNext())
 				{
@@ -1194,7 +1190,7 @@ public class ColorSetWindow extends ApplicationWindow {
     		if(selected instanceof GmmlColorSetObject)
     		{
     			GmmlColorSetObject cso = (GmmlColorSetObject)selected;
-    			int csIndex = gmmlGex.colorSets.indexOf(cso.getParent());
+    			int csIndex = gmmlGex.getColorSets().indexOf(cso.getParent());
     			int csoIndex = cso.getParent().colorSetObjects.indexOf(cso);
     			//Put object type and index in a string that is transferred
     			e.data = TRANSFER_CSOBJECT + TRANSFER_SEP + csIndex + TRANSFER_SEP + csoIndex;
@@ -1218,7 +1214,7 @@ public class ColorSetWindow extends ApplicationWindow {
     			{
     				int csIndex = Integer.parseInt(data[1]); //The parent index
     				int csoIndex = Integer.parseInt(data[2]); //The colorset object index
-    				GmmlColorSet cs = (GmmlColorSet)gmmlGex.colorSets.get(csIndex);
+    				GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(csIndex);
     				GmmlColorSetObject cso = (GmmlColorSetObject)cs.colorSetObjects.get(csoIndex);
     				moveElement(cs.colorSetObjects, cso, cs.colorSetObjects.indexOf(selected));
     			}
@@ -1286,7 +1282,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		    
 			buttonOk.addSelectionListener(new SelectionAdapter() {
 		    	public void widgetSelected(SelectionEvent e) {
-		    		GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+		    		GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 		    		if(csText.getText().equals("")) {
 		    			MessageDialog.openError(getShell(), "Error", "Specify a name for the Color Set");
 		    			return;
@@ -1565,6 +1561,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			}
 			cgColorTableViewer.refresh();
 			coTableViewer.refresh();
+			legend.resetContents();
 		}
 	}
 	
@@ -1636,7 +1633,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			Sample s = (Sample)element;
 			if(csCombo.getSelectionIndex() > -1)
 			{
-				GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+				GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 				switch(columnIndex) {
 				case 0: //Name
 					return s.getName();
@@ -1672,7 +1669,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		public Object getValue(Object element, String property)
 		{
 			Sample s = (Sample)element;
-			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());	
+			GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());	
 			switch(stColNames.indexOf(property)) {
 			case 0:
 				return s.getName();
@@ -1692,7 +1689,7 @@ public class ColorSetWindow extends ApplicationWindow {
 				s = (Sample)element;
 			}
 
-			GmmlColorSet cs = gmmlGex.colorSets.get(csCombo.getSelectionIndex());
+			GmmlColorSet cs = gmmlGex.getColorSets().get(csCombo.getSelectionIndex());
 			
 			switch(stColNames.indexOf(property)) {
 			case 1:

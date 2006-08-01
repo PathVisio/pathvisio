@@ -20,7 +20,7 @@ search	mark found genes (add highlighted property)	Thomas	1	high				done
 user preferences	Create general class + file to store user preferences (directories, gdb)	Thomas	2	high				done	
 user preferences	Create UI for editing preferences	Thomas	2	high				done	
 editor	GMML from scratch (valid)	Thomas	3	high				done, however gmml not valid yet	
-legend	Legend to sidepanel	Thomas	4	medium					
+legend	Legend to sidepanel	Thomas	4	medium				done	
 editor	multi-select: add resize handles to selectionbox	Thomas	5	low					
 editor	multi-select by pressing CTRL	Thomas	5	medium					
 help	help as wiki-page (public), to open from help menu	Thomas	6	high					

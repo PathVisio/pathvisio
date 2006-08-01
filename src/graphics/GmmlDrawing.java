@@ -277,11 +277,7 @@ PaintListener, MouseTrackListener, KeyListener
 						
 		if (isSelecting)
 		{
-			// adjust selection area
-			s.markDirty();
-			s.x2 = e.x;
-			s.y2 = e.y;
-			s.markDirty(); // also mark selection area
+			s.setCorner(e.x, e.y);
 			
 			for(GmmlDrawingObject o : drawingObjects)
 			{
@@ -291,7 +287,6 @@ PaintListener, MouseTrackListener, KeyListener
 					if (g.intersects(s.getRectangle()))
 					{
 						g.select();
-						
 					}
 					else
 					{
@@ -336,10 +331,11 @@ PaintListener, MouseTrackListener, KeyListener
 		if(isDragging)
 		{
 			updatePropertyTable(gmmlVision.propertyTable.g);
+			if(s.isSelected()) s.fitToSelection(); redrawDirtyRect();
 		} else if (isSelecting)
 		{
 			updatePropertyTable(null);
-			s.markDirty();
+			if(s.hasMultipleSelection()) s.select(); else s.markDirty();
 			redrawDirtyRect();
 		}
 		isDragging = false;
@@ -522,22 +518,22 @@ PaintListener, MouseTrackListener, KeyListener
 					pressedObject = o;
 			}
 		}
-				
+		
 		// if we clicked on an object
 		if (pressedObject != null)
 		{
+			// if our object is an handle, select also it's parent.
+			if(pressedObject instanceof GmmlHandle)
+			{
+				((GmmlHandle)pressedObject).parent.select();
+			}
 			// if we click on an object outside the selection
-			if(!pressedObject.isSelected())
+			else if(!pressedObject.isSelected())
 			{
 				// clear the selection
 				//TODO: if ctrl is pressed, don't clear, but just add object				
 				initSelection(p2d);
 				pressedObject.select();
-			}
-			// if our object is an handle, select also it's parent.
-			if(pressedObject instanceof GmmlHandle)
-			{
-				((GmmlHandle)pressedObject).parent.select();
 			}
 			
 			// start dragging
@@ -799,6 +795,12 @@ PaintListener, MouseTrackListener, KeyListener
 			}
 			removeDrawingObjects(toRemove);
 			redraw();
+		}
+		if(e.keyCode == SWT.HOME) {
+			System.out.println("================");
+			Collections.sort(drawingObjects);
+			for(GmmlDrawingObject o : drawingObjects) 
+				System.out.println(o.toString() + "\t" + o.isSelected() + "\t" + o.drawingOrder);
 		}
 	}
 	

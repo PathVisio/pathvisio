@@ -33,7 +33,7 @@ class GmmlHandle extends GmmlDrawingObject
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
 	
-	GmmlGraphics parent;
+	GmmlDrawingObject parent;
 	
 	double centerx;
 	double centery;
@@ -41,7 +41,7 @@ class GmmlHandle extends GmmlDrawingObject
 	Rectangle2D rect;
 	boolean visible;
 	
-	public GmmlHandle(int type, GmmlGraphics parent, GmmlDrawing canvas)
+	public GmmlHandle(int type, GmmlDrawingObject parent, GmmlDrawing canvas)
 	{
 		drawingOrder = GmmlDrawing.DRAW_ORDER_HANDLE;
 		
@@ -75,7 +75,7 @@ class GmmlHandle extends GmmlDrawingObject
 		return isVisible;
 	}
 	
-	/*
+	/**
 	 * call show() to cause this handle to show up and mark its area dirty 
 	 * A handle should show itself only if it's parent object is active / selected
 	 * @see hide(), isvisible()
@@ -89,7 +89,7 @@ class GmmlHandle extends GmmlDrawingObject
 		}
 	}
 	
-	/*
+	/**
 	 * hide handle, and also mark its area dirty
 	 * @see show(), isvisible()
 	 */
@@ -145,25 +145,20 @@ class GmmlHandle extends GmmlDrawingObject
 	 */
 	protected void moveBy(double dx, double dy)
 	{
-		if (type == HANDLETYPE_CENTER)
-		{
-			parent.moveBy(dx, dy);
-		}
-		if (type == HANDLETYPE_WIDTH)
-		{
-			parent.resizeX(dx);
-		}
-		if (type == HANDLETYPE_HEIGHT)
-		{
-			parent.resizeY(dy);
-		}
-		if (type == HANDLETYPE_LINE_START)
-		{
-			parent.moveLineStart(dx, dy);
-		}
-		if (type == HANDLETYPE_LINE_END)
-		{
-			parent.moveLineEnd(dx, dy);
+		switch(type) {
+		case HANDLETYPE_CENTER:
+			parent.moveBy(dx, dy); 
+			break;
+		case HANDLETYPE_WIDTH:
+			parent.resizeX(dx); 
+			break;
+		case HANDLETYPE_HEIGHT:
+			parent.resizeY(dy); 
+			break;
+		case HANDLETYPE_LINE_START:
+			((GmmlGraphics)parent).moveLineStart(dx, dy);
+		case HANDLETYPE_LINE_END:
+			((GmmlGraphics)parent).moveLineEnd(dx, dy);
 		}
 	}
 	

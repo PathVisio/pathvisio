@@ -16,19 +16,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 {
 	public static RGB selectColor = PreferenceLoader.getColorProperty("colors.selectColor");
 	public static RGB highlightColor = PreferenceLoader.getColorProperty("colors.highlightColor");
-	
-	/**
-	 * Resizes GmmlGraphics in x-direction
-	 * @param dx - the value with wich to resize the object
-	 */
-	protected void resizeX(double dx){}
-	
-	/**
-	 * Resizes GmmlGraphics in y-direction
-	 * @param dx - the value with wich to resize the object
-	 */
-	void resizeY(double dy){}
-	
+		
 	/**
 	 * Moves the start of a line by numbers specified
 	 * @param dx - the value of x-increment
@@ -48,6 +36,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 	 * specified in the drawing it is part of
 	 * @param factor - the factor to scale the objects coordinates and measures with
 	 */
+	abstract void adjustToZoom(double factor);
 	
 	public void select()
 	{
@@ -69,8 +58,6 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 	
 	abstract Vector<GmmlHandle> getHandles();
 	
-	abstract void adjustToZoom(double factor);
-
 	abstract void updateToPropItems();
 	
 	public abstract void updateFromPropItems();

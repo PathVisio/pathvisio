@@ -117,6 +117,18 @@ public abstract class GmmlDrawingObject implements Comparable
 	protected void moveBy(double dx, double dy) {}
 	
 	/**
+	 * Resizes GmmlDrawingObject in x-direction
+	 * @param dx - the value with wich to resize the object
+	 */
+	protected void resizeX(double dx){}
+	
+	/**
+	 * Resizes GmmlDrawingObject in y-direction
+	 * @param dy - the value with wich to resize the object
+	 */
+	protected void resizeY(double dy){}
+	
+	/**
 	 * Orders GmmlDrawingObjects by their drawingOrder.
 	 * The comparison is consistent with "equals", i.e. it doesn't return 0 if
 	 * the objects are different, even if their drawing order is the same.
@@ -141,11 +153,14 @@ public abstract class GmmlDrawingObject implements Comparable
 		az = drawingOrder;
 		bz = d.drawingOrder;
 		
-		if(isSelected())
+		if(isSelected() && d.isSelected()) {
+			; //objects are both selected, keep original sort order
+		}
+		else if(isSelected())
 		{
 			az = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}
-		if(d.isSelected())
+		else if(d.isSelected())
 		{
 			bz = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}

@@ -1,6 +1,8 @@
 package graphics;
 
 
+import static graphics.GmmlLegend.FONT;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -8,21 +10,12 @@ import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -34,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ScrollBar;
 
 import util.SwtUtils;
 import colorSet.GmmlColorCriterion;
@@ -47,21 +39,16 @@ import data.GmmlGex.Sample;
 
 public class GmmlLegend extends ScrolledComposite {
 	
-	GmmlGex gmmlGex;
 	public int colorSetIndex;
 	ArrayList<Integer> diffSamples;
 	HashMap extremes;
 		
-	public GmmlLegend(Composite parent, int style, GmmlGex gmmlGex)
+	public GmmlLegend(Composite parent, int style)
 	{
 		super(parent, style);
 			
 		createContents();
-						
-		this.gmmlGex = gmmlGex;
 	}
-	
-	public void setGmmlGex(GmmlGex gmmlGex) { this.gmmlGex = gmmlGex; }
 	
 	Composite topComposite;
 	GradientCanvas gradients;
@@ -127,12 +114,12 @@ public class GmmlLegend extends ScrolledComposite {
 
 	public void resetContents()
 	{
-		if(gmmlGex == null) return;
+		if(!GmmlGex.isConnected()) return;
 		
-		colorSetIndex = gmmlGex.getColorSetIndex();
+		colorSetIndex = GmmlGex.getColorSetIndex();
 		if(colorSetIndex < 0) return;
 			
-		colorSet = (GmmlColorSet)gmmlGex.getColorSets().get(colorSetIndex);
+		colorSet = (GmmlColorSet)GmmlGex.getColorSets().get(colorSetIndex);
 		colorSetObjects = colorSet.colorSetObjects;
 		
 		setDiffGradients();
@@ -461,7 +448,7 @@ public class GmmlLegend extends ScrolledComposite {
 			case GmmlColorGradient.USE_SAMPLE_ALL:
 				label = "All samples"; break;
 			default:
-				label = gmmlGex.getSamples().get(dataColumn).getName(); break;
+				label = GmmlGex.getSamples().get(dataColumn).getName(); break;
 			}
 			Point labelSize = e.gc.textExtent(label);
 			e.gc.drawString(label, (end - start) / 2 - labelSize.x / 2, 

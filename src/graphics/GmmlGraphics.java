@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import org.eclipse.swt.graphics.RGB;
 
-import preferences.PreferenceLoader;
+import preferences.GmmlPreferences;
 
 
 /**
@@ -14,8 +14,8 @@ import preferences.PreferenceLoader;
  */
 public abstract class GmmlGraphics extends GmmlDrawingObject
 {
-	public static RGB selectColor = PreferenceLoader.getColorProperty("colors.selectColor");
-	public static RGB highlightColor = PreferenceLoader.getColorProperty("colors.highlightColor");
+	public static RGB selectColor = GmmlPreferences.getColorProperty("colors.selectColor");
+	public static RGB highlightColor = GmmlPreferences.getColorProperty("colors.highlightColor");
 		
 	/**
 	 * Moves the start of a line by numbers specified

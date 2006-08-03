@@ -26,33 +26,38 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
-public class GmmlGdb {	
+public abstract class GmmlGdb {	
 	/**
 	 * The {@link Connection} to the Gene Database
 	 */
-	private Connection con;
+	private static Connection con;
 	
 	/**
 	 * Gets the {{@link Connection} to the Gene Database
 	 * @return
 	 */
-	public Connection getCon() { return con; }
-		
+	public static Connection getCon() { return con; }
+	/**
+	 * Check whether a connection to the database exists
+	 * @return	true is a connection exists, false if not
+	 */
+	public static boolean isConnected() { return con != null; }
+	
 	/**
 	 * {@link File} pointing to the current Gene Database (.properties file of the Hsql database)
 	 */
-	private File gdbFile;
+	private static File gdbFile;
 	/**
 	 * Gets the private property gdbFile
 	 * @return {@File} object that points to the file containing the Gene Database
 	 */
-	public File getGdbFile() { return gdbFile; }
+	public static File getGdbFile() { return gdbFile; }
 	
 	/**
-	 * Constructor for this class. Checks the properties file for a previously
+	 * Initiates this class. Checks the properties file for a previously
 	 * used Gene Database and tries to open a connection if found.
 	 */
-	public GmmlGdb()
+	public static void init()
 	{
 		String currGdb = GmmlVision.getPreferences().getString("currentGdb");
 		if(!currGdb.equals("") && !GmmlVision.getPreferences().isDefault("currentGdb"))
@@ -70,7 +75,7 @@ public class GmmlGdb {
 	 * Sets the Gene Database that is currently in use
 	 * @param gdb	The name of the gene database
 	 */
-	public void setCurrentGdb(String gdb) {
+	public static void setCurrentGdb(String gdb) {
 		gdbFile = new File(gdb);
 		GmmlVision.getPreferences().setValue("currentGdb", gdb);
 		try { GmmlVision.getPreferences().save(); } 
@@ -83,7 +88,7 @@ public class GmmlGdb {
 	 * @param code	systemcode of the gene identifier
 	 * @return		String with the backpage info, null if the gene was not found
 	 */
-	public String getBpInfo(String id, String code) {
+	public static String getBpInfo(String id, String code) {
 		try {
 			Statement s = con.createStatement();
 			ResultSet r = s.executeQuery("SELECT backpageText FROM gene " +
@@ -100,7 +105,7 @@ public class GmmlGdb {
 	 * @param code
 	 * @return	true if the gene exists, false if not
 	 */
-	public boolean hasGene(String id, String code)
+	public static boolean hasGene(String id, String code)
 	{
 		try {
 			ResultSet r = con.createStatement().executeQuery(
@@ -118,7 +123,7 @@ public class GmmlGdb {
 	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 */
-	public ArrayList<String> ensId2Refs(String ensId) {
+	public static ArrayList<String> ensId2Refs(String ensId) {
 		ArrayList<String> crossIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
@@ -142,7 +147,7 @@ public class GmmlGdb {
 	 * @return		{@ArrayList} containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
 	 */
-	public ArrayList<String> ref2EnsIds(String ref, String code)
+	public static ArrayList<String> ref2EnsIds(String ref, String code)
 	{
 		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
@@ -167,7 +172,7 @@ public class GmmlGdb {
 	 * @param code	systemcode of the gene identifier
 	 * @return
 	 */
-	public ArrayList getCrossRefs(String id, String code) {
+	public static ArrayList getCrossRefs(String id, String code) {
 		ArrayList<String> refs = new ArrayList<String>();
 		ArrayList<String> ensIds = ref2EnsIds(id, code);
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
@@ -186,7 +191,7 @@ public class GmmlGdb {
 	 */
 //	Don't use this, multiple simple select queries is faster
 //	Use getCrossRefs instead
-	public ArrayList getCrossRefs1Query(String id, String code) {
+	public static ArrayList getCrossRefs1Query(String id, String code) {
 		ArrayList crossIds = new ArrayList();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
@@ -212,9 +217,9 @@ public class GmmlGdb {
 	 * .properties file of the Hsqldb database
 	 * @return	null if the connection was created, a String with an error message if an error occured
 	 */
-	public void connect(File gdbFile) throws Exception
+	public static void connect(File gdbFile) throws Exception
 	{
-		if(gdbFile == null) gdbFile = this.gdbFile;
+		if(gdbFile == null) gdbFile = GmmlGdb.gdbFile;
 		if(!gdbFile.canRead()) throw new Exception("Can't access file '" + gdbFile.toString() + "'");
 		Class.forName("org.hsqldb.jdbcDriver");
 		Properties prop = new Properties();
@@ -231,7 +236,7 @@ public class GmmlGdb {
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
 	 */
-	public void close()
+	public static void close()
 	{
 		if(con != null)
 		{
@@ -255,13 +260,13 @@ public class GmmlGdb {
 	 * @param gdbFile		The file where the new Hsqldb Gene Database has to be stored (the .properties
 	 * file of the Hsqldb database)
 	 */
-	public void convertGdb(File gmGdbFile, File gdbFile) {
+	public static void convertGdb(File gmGdbFile, File gdbFile) {
 
 		PrintWriter error = null;
 	    try {
 	        error = new PrintWriter(new FileWriter("convert_gdb_log.txt"));
 	    } catch(IOException ex) {
-	        GmmlVision.log.error("Unable to open error file: " + ex.getMessage(), ex);
+	    	GmmlVision.log.error("Unable to open error file: " + ex.getMessage(), ex);
 	    }
 	    
 		error.println ("Info:  Fetching data from gdb");
@@ -465,15 +470,26 @@ public class GmmlGdb {
 	 * {@link ConvertThread} for conversion of the GenMAPP Gene Database
 	 * @see {@link convertGdb}
 	 */
-	private ConvertThread convertThread;
-	public File convertGmGdbFile;
-	public File convertGdbFile;
+	private static ConvertThread convertThread;
+	
+	private static File convertGmGdbFile;
+	private static File convertGdbFile;
+	/**
+	 * Set the GenMAPP Gene database file to convert from
+	 * @param file
+	 */
+	public static void setConvertGmGdbFile(File file) { convertGmGdbFile = file; }
+	/**
+	 * Set the Gene database file to convert to
+	 * @param file
+	 */
+	public static void setConvertGdbFile(File file) { convertGdbFile = file; }
 	
 	/**
 	 * This class is a {@link Thread} that converts a GenMAPP Gene Database and keeps the progress
 	 * of the conversion
 	 */
-	public class ConvertThread extends Thread
+	public static class ConvertThread extends Thread
 	{
 		volatile double progress;
 		volatile boolean isInterrupted;
@@ -496,10 +512,12 @@ public class GmmlGdb {
 	}
 	
 	/**
-	 * This {@link IRunnableWithProgress} starts the {@link ConvertThread} 
-	 * and monitors the progress of the conversion
+	 * Gets the {@link IRunnableWithProgress} for starting the {@link ConvertThread} 
+	 * and monitor the progress of the conversion
 	 */
-	public IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {		
+	public static IRunnableWithProgress getConvertRunnable() { return convertRunnable; }
+	
+	private static IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {		
 		public void run(IProgressMonitor monitor) {
 			monitor.beginTask("Converting Gene Database",100);
 			convertThread = new ConvertThread();
@@ -524,7 +542,7 @@ public class GmmlGdb {
 	 * connection is connected to
 	 * @param convertCon	The connection to the database the tables are created in
 	 */
-	public void createTables(Connection convertCon) {
+	public static void createTables(Connection convertCon) {
 		GmmlVision.log.trace("Info:  Creating tables");
 		
 		try {

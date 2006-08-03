@@ -9,6 +9,9 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import data.GmmlGdb;
+import data.GmmlGex;
+
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
  */
@@ -35,7 +38,6 @@ public class GmmlBpBrowser extends Composite {
 	private String gexText;
 	private String header;
 	
-	private GmmlVision gmmlVision;
 	private Browser bpBrowser;
 	
 	private GmmlGeneProduct geneProduct;
@@ -45,9 +47,8 @@ public class GmmlBpBrowser extends Composite {
 	 * @param parent	Parent {@link Composite} for the {@Browser} widget
 	 * @param style		Style for the {@Browser} widget
 	 */
-	public GmmlBpBrowser(Composite parent, int style, GmmlVision gmmlVision) {
+	public GmmlBpBrowser(Composite parent, int style) {
 		super(parent, style);
-		this.gmmlVision = gmmlVision;
 		
 		initializeHeader(); //Load the header including style information
 		setLayout(new FillLayout());
@@ -59,7 +60,6 @@ public class GmmlBpBrowser extends Composite {
 	public void setGene(GmmlGeneProduct gp) 
 	{ 
 		geneProduct = gp;
-		if(gmmlVision.gmmlGdb == null || gmmlVision.gmmlGex == null) return;
 		if(gp == null) {
 			setGeneText(null);
 			setGexText(null);
@@ -68,8 +68,8 @@ public class GmmlBpBrowser extends Composite {
 		// Get the backpage text
 		String geneId = geneProduct.getId();
 		String systemCode = geneProduct.getSystemCode();
-		String bpText = gmmlVision.gmmlGdb.getBpInfo(geneId, systemCode);
-		String gexText = gmmlVision.gmmlGex.getDataString(geneId, systemCode);
+		String bpText = GmmlGdb.getBpInfo(geneId, systemCode);
+		String gexText = GmmlGex.getDataString(geneId, systemCode);
 		if (bpText != null) 	setGeneText(bpText);
 		else 					setGeneText("<I>No gene information found</I>");
 		if (gexText != null)	setGexText(gexText);

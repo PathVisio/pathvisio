@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.jdom.Document;
 
 import data.GmmlGex;
 import data.GmmlGex.Sample;
@@ -44,9 +45,7 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 PaintListener, MouseTrackListener, KeyListener
 {	
 	private static final long serialVersionUID = 1L;
-	
-	public GmmlVision gmmlVision;
-	
+		
 	/**
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
@@ -116,10 +115,9 @@ PaintListener, MouseTrackListener, KeyListener
 	/**
 	 *Constructor for this class
 	 */	
-	public GmmlDrawing(Composite parent, int style, GmmlVision gmmlVision)
+	public GmmlDrawing(Composite parent, int style)
 	{
 		super (parent, style);
-		this.gmmlVision = gmmlVision;
 		
 		drawingObjects	= new ArrayList<GmmlDrawingObject>();
 		
@@ -204,7 +202,7 @@ PaintListener, MouseTrackListener, KeyListener
 		{
 			clearSelection();
 		}
-		gmmlVision.showLegend(!editMode);	
+		GmmlVision.getWindow().showLegend(!editMode);	
 		redraw();
 	}
 	
@@ -330,7 +328,7 @@ PaintListener, MouseTrackListener, KeyListener
 		if(!editMode) return;
 		if(isDragging)
 		{
-			updatePropertyTable(gmmlVision.propertyTable.g);
+			updatePropertyTable(GmmlVision.getWindow().propertyTable.g);
 			if(s.isSelected()) s.fitToSelection(); redrawDirtyRect();
 		} else if (isSelecting)
 		{
@@ -421,7 +419,7 @@ PaintListener, MouseTrackListener, KeyListener
 				g.updateToPropItems();
 			}
 		}
-		gmmlVision.propertyTable.setGraphics(g);
+		GmmlVision.getWindow().propertyTable.setGraphics(g);
 	}
 	
 	/**
@@ -437,7 +435,7 @@ PaintListener, MouseTrackListener, KeyListener
 			o = ((GmmlHandle)o).parent;
 		if (o instanceof GmmlGeneProduct)
 			gp = (GmmlGeneProduct)o;
-		gmmlVision.bpBrowser.setGene(gp);
+		GmmlVision.getWindow().bpBrowser.setGene(gp);
 	}
 
 	/**
@@ -530,10 +528,12 @@ PaintListener, MouseTrackListener, KeyListener
 			// if we click on an object outside the selection
 			else if(!pressedObject.isSelected())
 			{
-				// clear the selection
-				//TODO: if ctrl is pressed, don't clear, but just add object				
-				initSelection(p2d);
+				// clear the selection if CTRL isn't pressed
+				if(!ctrlPressed) initSelection(p2d);
 				pressedObject.select();
+			} else {
+				// object is already selected, deselect if CTRL is pressed
+				if(ctrlPressed) pressedObject.deselect();
 			}
 			
 			// start dragging
@@ -584,12 +584,13 @@ PaintListener, MouseTrackListener, KeyListener
 	{
 		GmmlGraphics g = null;
 		GmmlHandle h = null;
+		Document d = GmmlVision.getGmmlData().getDocument();
 		
 		switch(newGraphics) {
 		case NEWNONE:
 			return;
 		case NEWLINE:
-			g = new GmmlLine(e.x, e.y, e.x, e.y,stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLine(e.x, e.y, e.x, e.y,stdRGB, this, d);
 			GmmlLine l = (GmmlLine)g;
 			l.style = GmmlLine.STYLE_SOLID;
 			l.type = GmmlLine.TYPE_LINE;
@@ -597,7 +598,7 @@ PaintListener, MouseTrackListener, KeyListener
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
-			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, d);
 			l = (GmmlLine)g;
 			l.style = GmmlLine.STYLE_SOLID;
 			l.type = GmmlLine.TYPE_ARROW;
@@ -605,7 +606,7 @@ PaintListener, MouseTrackListener, KeyListener
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
-			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, d);
 			l = (GmmlLine)g;
 			l.style = GmmlLine.STYLE_DASHED;
 			l.type = GmmlLine.TYPE_LINE;
@@ -613,7 +614,7 @@ PaintListener, MouseTrackListener, KeyListener
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
-			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, d);
 			l = (GmmlLine)g;
 			l.style = GmmlLine.STYLE_DASHED;
 			l.type = GmmlLine.TYPE_ARROW;
@@ -622,60 +623,60 @@ PaintListener, MouseTrackListener, KeyListener
 			break;
 		case NEWLABEL:
 			g = new GmmlLabel(e.x, e.y, (int)(GmmlLabel.INITIAL_WIDTH * zoomFactor),
-					(int)(GmmlLabel.INITIAL_HEIGHT * zoomFactor), this, gmmlVision.gmmlData.doc);
+					(int)(GmmlLabel.INITIAL_HEIGHT * zoomFactor), this, GmmlVision.getGmmlData().getDocument());
 			((GmmlLabel)g).createTextControl();
 			h = ((GmmlLabel)g).handlecenter;
 			break;
 		case NEWARC:
-			g = new GmmlArc(e.x, e.y, 0, zoomFactor *80, stdRGB, 0, this, gmmlVision.gmmlData.doc);
+			g = new GmmlArc(e.x, e.y, 0, zoomFactor *80, stdRGB, 0, this, d);
 			h = ((GmmlArc)g).handlex;
 			isDragging = true;
 			break;
 		case NEWBRACE:
 			g = new GmmlBrace(e.x, e.y, 0, GmmlBrace.INITIAL_PPO * zoomFactor, GmmlBrace.ORIENTATION_BOTTOM, 
-					stdRGB, this, gmmlVision.gmmlData.doc);
+					stdRGB, this, d);
 			h = ((GmmlBrace)g).handlewidth;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
 			g = new GmmlGeneProduct(e.x, e.y, GmmlGeneProduct.INITIAL_WIDTH * zoomFactor, 
 					GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor, "", "", stdRGB, this, 
-					gmmlVision.gmmlData.doc);
+					d);
 			((GmmlGeneProduct)g).createTextControl();
 			h = ((GmmlGeneProduct)g).handlecenter;
 			break;
 		case NEWRECTANGLE:
-			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_RECTANGLE, stdRGB, 0, this, gmmlVision.gmmlData.doc);
+			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_RECTANGLE, stdRGB, 0, this, d);
 			h = ((GmmlShape)g).handlex;
 			isDragging = true;
 			break;
 		case NEWOVAL:
-			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_OVAL, stdRGB, 0, this, gmmlVision.gmmlData.doc);
+			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_OVAL, stdRGB, 0, this, d);
 			h = ((GmmlShape)g).handlex;
 			isDragging = true;
 			break;
 		case NEWTBAR:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_TBAR, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_TBAR, stdRGB, this, d);
 			h = ((GmmlLineShape)g).handleEnd;
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_ROUND, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_ROUND, stdRGB, this, d);
 			h = ((GmmlLineShape)g).handleEnd;
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_SQUARE, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_SQUARE, stdRGB, this, d);
 			h = ((GmmlLineShape)g).handleEnd;
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_ROUND, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_ROUND, stdRGB, this, d);
 			h = ((GmmlLineShape)g).handleEnd;
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_SQUARE, stdRGB, this, gmmlVision.gmmlData.doc);
+			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_SQUARE, stdRGB, this, d);
 			h = ((GmmlLineShape)g).handleEnd;
 			isDragging = true;
 			break;
@@ -691,7 +692,7 @@ PaintListener, MouseTrackListener, KeyListener
 		previousX = e.x;
 		previousY = e.y;
 		
-		gmmlVision.deselectNewItemActions();
+		GmmlVision.getWindow().deselectNewItemActions();
 	}
 	
 
@@ -719,10 +720,9 @@ PaintListener, MouseTrackListener, KeyListener
 	 * hovering over a geneproduct
 	 */
 	public void mouseHover(MouseEvent e) {
-		if(!editMode && gmmlVision.gmmlGex.getColorSetIndex() > -1 && gmmlVision.gmmlGex.con != null) {
+		if(!editMode && GmmlGex.getColorSetIndex() > -1 && GmmlGex.isConnected()) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
-			GmmlGex gmmlGex = gmmlVision.gmmlGex;
 			Collections.sort(drawingObjects);
 			Iterator it = drawingObjects.iterator();
 			while (it.hasNext())
@@ -751,12 +751,12 @@ PaintListener, MouseTrackListener, KeyListener
 			            labelR.setBackground(getShell().getDisplay()
 			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			            
-			            Data mappIdData = gmmlGex.getCachedData(gp.name, gp.getSystemCode());
+			            Data mappIdData = GmmlGex.getCachedData(gp.name, gp.getSystemCode());
 			            if(mappIdData == null) return; //No data in cache for this geneproduct
 			            HashMap<Integer, Object> data = mappIdData.getAverageSampleData();
 			            String textL = "";
 			            String textR = "";
-			            for(Sample s : gmmlGex.getColorSets().get(gmmlVision.gmmlGex.getColorSetIndex()).useSamples)
+			            for(Sample s : GmmlGex.getColorSets().get(GmmlGex.getColorSetIndex()).useSamples)
 			            {
 			            	textL += s.getName() + ":  \n";
 			            	textR += data.get(new Integer(s.idSample)) + "\n";
@@ -775,14 +775,18 @@ PaintListener, MouseTrackListener, KeyListener
 	}
 	}
 
-	public void keyPressed(KeyEvent e) { }
+	private boolean ctrlPressed;
+	private void ctrlPressed() 	{ ctrlPressed = true; 	}
+	private void ctrlReleased() 	{ ctrlPressed = false; 	}
+	
+	public void keyPressed(KeyEvent e) { 
+		if(e.keyCode == SWT.CTRL) ctrlPressed();
+	}
 
-	/**
-	 * This event is triggered when a key is released. Currently implements action for delete key
-	 */
 	public void keyReleased(KeyEvent e) {
 		ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
 		
+		if(e.keyCode == SWT.CTRL) ctrlReleased();
 		if(e.keyCode == SWT.DEL) {
 			for(GmmlDrawingObject o : drawingObjects)
 			{

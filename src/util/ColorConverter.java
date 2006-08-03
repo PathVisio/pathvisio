@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 
-public class ColorConverter
+public abstract class ColorConverter
 {
 	public static final List colorMappings = Arrays.asList(new String[]{
 		"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",

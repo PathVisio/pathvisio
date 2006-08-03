@@ -28,8 +28,6 @@ import data.GmmlGex.CachedData.Data;
 
 public class GmmlGpColor {
 		
-	GmmlGdb gmmlGdb;
-	GmmlGex gmmlGex;
 	GmmlGeneProduct parent;
 	
 	public ArrayList ensIds;
@@ -42,8 +40,6 @@ public class GmmlGpColor {
 	{
 		this.parent = parent;
 		canvas = parent.canvas;
-		gmmlGdb = canvas.gmmlVision.gmmlGdb;
-		gmmlGex = canvas.gmmlVision.gmmlGex;
 	}
 	
 	public static final double COLOR_AREA_RATIO = 0.5;
@@ -76,8 +72,6 @@ public class GmmlGpColor {
 	
 	private void colorAsNotFound(Rectangle colorArea, RGB rgb)
 	{
-		GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(gmmlGex.getColorSetIndex());
-		
 		c = SwtUtils.changeColor(c, rgb, e.display);
 		
 		buffer.setBackground(c);
@@ -86,9 +80,9 @@ public class GmmlGpColor {
 	
 	private void colorByData(Rectangle colorArea)
 	{
-		Data mappIdData = gmmlGex.getCachedData(parent.name, parent.getSystemCode());
+		Data mappIdData = GmmlGex.getCachedData(parent.name, parent.getSystemCode());
 		
-		GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(gmmlGex.getColorSetIndex());
+		GmmlColorSet cs = (GmmlColorSet)GmmlGex.getColorSets().get(GmmlGex.getColorSetIndex());
 		
 		int nr = cs.useSamples.size();
 		int width = colorArea.width / nr;
@@ -163,9 +157,9 @@ public class GmmlGpColor {
 		switch(sampleType)
 		{
 		case GmmlColorSet.SAMPLE_TYPE_PROT:
-			image = GmmlVision.imageRegistry.get("data.protein"); break;
+			image = GmmlVision.getImageRegistry().get("data.protein"); break;
 		case GmmlColorSet.SAMPLE_TYPE_TRANS:
-			image = GmmlVision.imageRegistry.get("data.mRNA"); break;
+			image = GmmlVision.getImageRegistry().get("data.mRNA"); break;
 		}
 		
 		if(image != null)
@@ -187,7 +181,7 @@ public class GmmlGpColor {
 
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		int colorSetIndex = gmmlGex.getColorSetIndex();
+		int colorSetIndex = GmmlGex.getColorSetIndex();
 		c = new Color(e.display, GmmlGeneProduct.INITIAL_FILL_COLOR);
 		f = new Font(e.display, "ARIAL", parent.fontSize, SWT.NONE);
 		this.e = e;
@@ -196,24 +190,24 @@ public class GmmlGpColor {
 		Rectangle r = parent.getBounds();
 		buffer.setBackground(c);
 		buffer.fillRectangle(r.x, r.y, r.width, r.height);
-		if(!(gmmlGex.con == null) && colorSetIndex > -1 && 
-				!canvas.isEditMode() && gmmlGex.getColorSets().size() > 0)
+		if(GmmlGex.isConnected() && colorSetIndex > -1 && 
+				!canvas.isEditMode() && GmmlGex.getColorSets().size() > 0)
 		{
 			// Get visualization area
 			Rectangle colorArea = parent.getBounds();
 			
 			// Adjust width to enable to divide into nrSamples equal rectangles
-			GmmlColorSet cs = (GmmlColorSet)gmmlGex.getColorSets().get(colorSetIndex);
+			GmmlColorSet cs = (GmmlColorSet)GmmlGex.getColorSets().get(colorSetIndex);
 			colorArea.width = (int)(COLOR_AREA_RATIO * colorArea.width);
 			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			
-			if(gmmlGex.hasData(parent.name, parent.getSystemCode())) //Check if data is available
+			if(GmmlGex.hasData(parent.name, parent.getSystemCode())) //Check if data is available
 			{
 				colorByData(colorArea);
 			}
-			else if(gmmlGdb.hasGene(parent.name, parent.getSystemCode())) //Check if gene exists in gdb
+			else if(GmmlGdb.hasGene(parent.name, parent.getSystemCode())) //Check if gene exists in gdb
 			{		
 				colorAsNotFound(colorArea, cs.color_no_data_found);
 			}

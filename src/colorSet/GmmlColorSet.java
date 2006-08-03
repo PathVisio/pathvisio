@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import org.eclipse.swt.graphics.RGB;
 
-import preferences.PreferenceLoader;
+import preferences.GmmlPreferences;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
@@ -50,11 +50,12 @@ public class GmmlColorSet {
 	 */
 	public static final int MULT_DATA_DIV = 1;
 
-	public RGB color_no_criteria_met = PreferenceLoader.getColorProperty("colors.no_criteria_met");
-	public RGB color_no_gene_found = PreferenceLoader.getColorProperty("colors.no_gene_found");
-	public RGB color_no_data_found = PreferenceLoader.getColorProperty("colors.no_data_found");
+	public RGB color_no_criteria_met = GmmlPreferences.getColorProperty("colors.no_criteria_met");
+	public RGB color_no_gene_found = GmmlPreferences.getColorProperty("colors.no_gene_found");
+	public RGB color_no_data_found = GmmlPreferences.getColorProperty("colors.no_data_found");
 	
 	private int multipleDataDisplay;
+	
 	/**
 	 * Sets how this colorset has to display genes with multiple data values
 	 * @param type one of the field constants of this class starting with MULT_DATA
@@ -74,8 +75,6 @@ public class GmmlColorSet {
 	
 	public Vector<GmmlColorSetObject> colorSetObjects;
 	
-	public GmmlGex gmmlGex;
-	
 	/**
 	 * Samples selected for visualization
 	 */
@@ -88,12 +87,10 @@ public class GmmlColorSet {
 	/**
 	 * Constructor of this class
 	 * @param name		name of the colorset
-	 * @param gmmlGex	reference to {@link GmmlGex} object containing the expression data
 	 */
-	public GmmlColorSet(String name, GmmlGex gmmlGex)
+	public GmmlColorSet(String name)
 	{
 		this.name = name;
-		this.gmmlGex = gmmlGex;
 		colorSetObjects = new Vector<GmmlColorSetObject>();
 		useSamples = new ArrayList<Sample>();
 		sampleTypes = new ArrayList<Integer>();
@@ -104,11 +101,10 @@ public class GmmlColorSet {
 	 * @param name			name of the colorset
 	 * @param criterion		string containing information to generate the colorset as stored
 	 * in the expression database
-	 * @param gmmlGex 		reference to {@link GmmlGex} object containing the expression data
 	 */
-	public GmmlColorSet(String name, String criterion, GmmlGex gmmlGex)
+	public GmmlColorSet(String name, String criterion)
 	{
-		this(name, gmmlGex);
+		this(name);
 		parseCriterionString(criterion);
 	}
 		
@@ -286,7 +282,7 @@ public class GmmlColorSet {
 		for(int i = 0; i < s.length; i++)
 		{
 			try { 
-				a.add(gmmlGex.getSamples().get(Integer.parseInt(s[i])));
+				a.add(GmmlGex.getSamples().get(Integer.parseInt(s[i])));
 			} catch (Exception e) { 
 				GmmlVision.log.error("Unable to parse arraylist as stored in " +
 						"expression database: " + arrayListString, e);

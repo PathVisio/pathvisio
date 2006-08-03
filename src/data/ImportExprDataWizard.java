@@ -44,20 +44,7 @@ import util.TableColumnResizer;
 public class ImportExprDataWizard extends Wizard {
 	ImportInformation importInformation;
 
-	GmmlVision gmmlVision;
-
-	GmmlGex gmmlGex;
-
-	/**
-	 * Constructor for this class
-	 * 
-	 * @param gmmlVision
-	 *            The GmmlVision window from which the wizard is opened
-	 */
-	public ImportExprDataWizard(GmmlVision gmmlVision) {
-		this.gmmlVision = gmmlVision;
-		this.gmmlGex = gmmlVision.gmmlGex;
-
+	public ImportExprDataWizard() {
 		importInformation = new ImportInformation();
 
 		setWindowTitle("Create an expression dataset");
@@ -80,7 +67,7 @@ public class ImportExprDataWizard extends Wizard {
 			try {
 				// Start import process
 				getContainer().run(true, true,
-						gmmlGex.new ImportRunnableWithProgress(
+						new GmmlGex.ImportRunnableWithProgress(
 								importInformation,
 								(ImportPage) getPage("ImportPage")));
 			} catch (Exception e) {
@@ -468,7 +455,7 @@ public class ImportExprDataWizard extends Wizard {
 					| SWT.WRAP);
 			progressText.setText("Ready to import data" + Text.DELIMITER);
 			progressText.append("> Using gene database: "
-					+ gmmlVision.gmmlGdb.getGdbFile().toString()
+					+ GmmlGdb.getGdbFile().toString()
 					+ Text.DELIMITER);
 			progressText
 					.append("> If this is not the correct gene database, close this window"

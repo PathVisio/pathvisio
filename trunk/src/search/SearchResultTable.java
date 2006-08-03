@@ -1,6 +1,7 @@
 package search;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 import graphics.GmmlDrawingObject;
 import graphics.GmmlGeneProduct;
@@ -37,12 +38,12 @@ import util.TableColumnResizer;
  * displayed
  */
 public class SearchResultTable extends Composite {
-	private GmmlVision gmmlVision;
+	private GmmlVisionWindow gmmlVision;
 	private TableViewer tableViewer;
 	private TableColumnResizer columnResizer;
 	private Display display;
 	
-	public SearchResultTable(Composite parent, int style, GmmlVision gmmlVision) {
+	public SearchResultTable(Composite parent, int style, GmmlVisionWindow gmmlVision) {
 		super(parent, SWT.NULL);
 		display = getShell().getDisplay();
 		this.gmmlVision = gmmlVision;
@@ -88,7 +89,7 @@ public class SearchResultTable extends Composite {
 	public TableViewer getTableViewer() { return tableViewer; }
 	
 	public void highlightResults(boolean highlight) {
-		GmmlDrawing drawing = gmmlVision.getDrawing();
+		GmmlDrawing drawing = GmmlVision.getDrawing();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
@@ -149,7 +150,7 @@ public class SearchResultTable extends Composite {
 			if(sr == null) return;
 			try {
 				String pw = sr.getAttribute("file").getText();
-				gmmlVision.openPathway(pw);
+				GmmlVision.openPathway(pw);
 				highlightResults(highlightButton.getSelection());
 			} catch(Exception ex) { 
 				GmmlVision.log.error("when trying to open pathway from search results", ex);

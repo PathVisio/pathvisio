@@ -1,6 +1,7 @@
 package search;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVisionWindow;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -33,9 +34,9 @@ public class PathwaySearchComposite extends Composite {
 
 	HashMap<String, SearchOptionComposite> searchControls;
 	
-	GmmlVision gmmlVision;
+	GmmlVisionWindow gmmlVision;
 	
-	public PathwaySearchComposite(Composite parent, int style, GmmlVision gmmlVision) {
+	public PathwaySearchComposite(Composite parent, int style, GmmlVisionWindow gmmlVision) {
 		super(parent, style);
 		this.gmmlVision = gmmlVision;
 				
@@ -126,7 +127,7 @@ public class PathwaySearchComposite extends Composite {
 				dirLabel.setText("Directory to search:");
 				
 				final Text dirText = createDirText(parent);
-				Button browseButton = createDirButton(parent, dirText);
+				createDirButton(parent, dirText);
 				
 				Button searchButton = new Button(parent, SWT.PUSH);
 				searchButton.setText("Search");
@@ -284,7 +285,7 @@ public class PathwaySearchComposite extends Composite {
 					
 			monitor.beginTask("Searching", 1000);
 			try {
-				String msg = (String)searchMethod.invoke(gmmlVision.search, args);
+				String msg = (String)searchMethod.invoke(null, args);
 				if(msg != null && !msg.equals(SearchMethods.MSG_CANCELLED)) {
 					openMessageDialog(msg);
 				}

@@ -22,17 +22,11 @@ import search.SearchResults.SearchResult;
 import data.GmmlData;
 import data.GmmlGdb;
 
-public class SearchMethods {	
+public abstract class SearchMethods {	
 	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";
 	public static final String MSG_NOTHING_FOUND = "Nothing found";
 	public static final String MSG_CANCELLED = "cancelled";
-	
-	private GmmlGdb gmmlGdb;
-	
-	public SearchMethods(GmmlGdb gmmlGdb) {
-		this.gmmlGdb = gmmlGdb;
-	}
-	
+		
 	/**
 	 * Search for pathways containing the given gene and display result in given result table
 	 * @param id	Gene identifier to search for
@@ -41,7 +35,7 @@ public class SearchMethods {
 	 * @param srt	{@link SearchResultTable} to display the results in
 	 * @return string with message to display. if null, no message is displayed
 	 */
-	public String pathwaysContainingGene(String id, String code, File folder, 
+	public static String pathwaysContainingGene(String id, String code, File folder, 
 			SearchResultTable srt) {
 		return pathwaysContainingGene(id, code, folder, srt);
 	}
@@ -56,7 +50,7 @@ public class SearchMethods {
 	 * displaying the progress
 	 * @return string with message to display. if null, no message is displayed
 	 */
-	public String pathwaysContainingGene(String id, String code, File folder, 
+	public static String pathwaysContainingGene(String id, String code, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) {
 		
 		SearchResults srs = new SearchResults();
@@ -67,7 +61,7 @@ public class SearchMethods {
 
 		srt.setSearchResults(srs);
 		//Get all cross references
-		ArrayList<String> refs = gmmlGdb.getCrossRefs(id, code);
+		ArrayList<String> refs = GmmlGdb.getCrossRefs(id, code);
 		if(refs.size() == 0) return MSG_NOT_IN_GDB;
 		
 		runnable.updateMonitor(200);
@@ -106,7 +100,7 @@ public class SearchMethods {
 		return srs.getResults().size() == 0 ? MSG_NOTHING_FOUND : null;
 	}
 	
-	public String pathwaysContainingGeneSymbol(String regex, File folder, 
+	public static String pathwaysContainingGeneSymbol(String regex, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) {
 		
 		//Create regex
@@ -168,7 +162,7 @@ public class SearchMethods {
 	 * @param folder
 	 * @return
 	 */
-	private ArrayList<File> getPathwayFiles(File folder) {
+	private static ArrayList<File> getPathwayFiles(File folder) {
 		ArrayList<File> pathways = new ArrayList<File>();
 		
 		//Get all pathways in this directory
@@ -190,7 +184,7 @@ public class SearchMethods {
 	 * This sax handler can be used to quickly parse gene information (id, systemcode) from
 	 * a gmml file
 	 */
-	public class GeneParser extends DefaultHandler {
+	public static class GeneParser extends DefaultHandler {
 		private ArrayList<Gene> genes;
 		
 		public GeneParser() {

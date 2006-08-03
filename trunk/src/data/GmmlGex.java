@@ -1,6 +1,7 @@
 package data;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 
 import java.io.BufferedReader;
@@ -38,56 +39,60 @@ import data.ImportExprDataWizard.ImportPage;
  * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
  * to hsqldb format
  */
-public class GmmlGex {
+public abstract class GmmlGex {
+
+	private static Connection con;
 	/**
-	 * {@link Connection} to the Expression data
+	 * Get the {@link Connection} to the Expression-data database
+	 * @return
 	 */
-	public Connection con;
+	public static Connection getCon() { return con; }
 	/**
-	 * {@link File} pointing to the Expression data (.properties file of the Hsql database)
+	 * Check whether a connection to the database exists
+	 * @return	true is a connection exists, false if not
 	 */
-	public File gexFile;
-	public GmmlGdb gmmlGdb;
+	public static boolean isConnected() { return con != null; }
 	
-	private GmmlVision gmmlVision;
+	private static File gexFile;
+	/**
+	 * Get the {@link File} pointing to the Expression data 
+	 * (.properties file of the Hsql database)
+	 */
+	public static File getGexFile() { return gexFile; }
 	
-	private Vector<GmmlColorSet> colorSets;
+	/**
+	 * Set the {@link File} pointing to the Expression data
+	 * (.properties file of the Hsql database)
+	 */
+	public static void setGexFile(File file) { gexFile = file; }
+	
+	private static Vector<GmmlColorSet> colorSets = new Vector<GmmlColorSet>();
 	
 	/**
 	 * Gets the {@link ColorSet}s used for the currently loaded Expression data
 	 */
-	public Vector<GmmlColorSet> getColorSets() { return colorSets; }
+	public static Vector<GmmlColorSet> getColorSets() { return colorSets; }
 	
 	/**
 	 * Index of the colorSet that is currently used
 	 */
-	private int colorSetIndex = -1;
-	
-	/**
-	 * Constructur for this class
-	 * @param gmmlVision	Pointer to the {@link GmmlVision} application
-	 */
-	public GmmlGex(GmmlVision gmmlVision) 
-	{
-		this.gmmlVision = gmmlVision;
-		this.gmmlGdb = gmmlVision.gmmlGdb;
-		colorSets = new Vector<GmmlColorSet>();
-	}
+	private static int colorSetIndex = -1;
 	
 	/**
 	 * Set the index of the colorset to use
 	 * @param colorSetIndex
 	 */
-	public void setColorSetIndex(int colorSetIndex)
+	public static void setColorSetIndex(int _colorSetIndex)
 	{
-		this.colorSetIndex = colorSetIndex;
+		GmmlVisionWindow window = GmmlVision.getWindow();
+		colorSetIndex = _colorSetIndex;
 		if(colorSetIndex < 0)
 		{
-			gmmlVision.showLegend(false);
+			window.showLegend(false);
 		} else {
-			gmmlVision.showLegend(true);
+			window.showLegend(true);
 		}
-		GmmlDrawing d = gmmlVision.getDrawing();
+		GmmlDrawing d = GmmlVision.getDrawing();
 		if(d != null) { d.redraw(); }
 	}
 	
@@ -95,8 +100,7 @@ public class GmmlGex {
 	 * Get the index of the currently used colorset
 	 * @return
 	 */
-	public int getColorSetIndex() { 
-		if(colorSetIndex > colorSets.size() - 1) System.out.println("Help!");
+	public static int getColorSetIndex() { 
 		return colorSetIndex;
 	}
 	
@@ -104,16 +108,16 @@ public class GmmlGex {
 	 * Sets the {@link ColorSet}s used for the currently loaded Expression data
 	 * @param colorSets {@link Vector} containing the {@link ColorSet} objects
 	 */
-	public void setColorSets(Vector<GmmlColorSet> colorSets)
+	public static void setColorSets(Vector<GmmlColorSet> _colorSets)
 	{
-		this.colorSets = colorSets;
+		colorSets = _colorSets;
 	}
 	
 	/**
 	 * Removes this {@link ColorSet}
 	 * @param cs Colorset to remove
 	 */
-	public void removeColorSet(GmmlColorSet cs) {
+	public static void removeColorSet(GmmlColorSet cs) {
 		if(colorSets.contains(cs)) {
 			colorSets.remove(cs);
 			if(colorSetIndex == 0 && colorSets.size() > 0) setColorSetIndex(colorSetIndex);
@@ -125,7 +129,7 @@ public class GmmlGex {
 	 * Removes this {@link ColorSet}
 	 * @param i index of ColorSet to remove
 	 */
-	public void removeColorSet(int i) {
+	public static void removeColorSet(int i) {
 		if(i > -1 && i < colorSets.size()) {
 			removeColorSet(colorSets.get(i));
 		}
@@ -135,7 +139,7 @@ public class GmmlGex {
 	 * Gets the names of all {@link GmmlColorSet}s used 
 	 * @return
 	 */
-	public String[] getColorSetNames()
+	public static String[] getColorSetNames()
 	{
 		String[] colorSetNames = new String[colorSets.size()];
 		for(int i = 0; i < colorSetNames.length; i++)
@@ -148,7 +152,7 @@ public class GmmlGex {
 	/**
 	 * Saves the {@link ColorSets} in the Vector {@link colorSets} to the Expression database
 	 */
-	public void saveColorSets()
+	public static void saveColorSets()
 	{
 		try
 		{
@@ -197,7 +201,7 @@ public class GmmlGex {
 	/**
 	 * Load the colorset data stored in the Expression database in memory
 	 */
-	public void loadColorSets()
+	public static void loadColorSets()
 	{
 		try
 		{
@@ -207,7 +211,7 @@ public class GmmlGex {
 			colorSets = new Vector<GmmlColorSet>();
 			while(r.next())
 			{
-				GmmlColorSet cs = new GmmlColorSet(r.getString(2), r.getString(3), this);
+				GmmlColorSet cs = new GmmlColorSet(r.getString(2), r.getString(3));
 				colorSets.add(cs);
 				ResultSet rCso = sCso.executeQuery(
 						"SELECT * FROM colorSetObjects" +
@@ -236,8 +240,8 @@ public class GmmlGex {
 		
 	}
 	
-	public CachedData cachedData;
-	public class CachedData
+	public static CachedData cachedData;
+	public static class CachedData
 	{
 		private HashMap<String, Data> data;		
 		public CachedData()
@@ -356,11 +360,11 @@ public class GmmlGex {
 		}
 	}
     
-	private HashMap<Integer, Sample> samples;
+	private static HashMap<Integer, Sample> samples;
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
 	 */
-	public void setSamples()
+	public static void setSamples()
 	{
 		try {
 			ResultSet r = con.createStatement().executeQuery(
@@ -380,7 +384,7 @@ public class GmmlGex {
 	/**
 	 * This class represents a record in the Sample table of the Expression database. 
 	 */
-	public class Sample implements Comparable
+	public static class Sample implements Comparable
 	{
 		public int idSample;
 		private String name;
@@ -436,18 +440,18 @@ public class GmmlGex {
 	 * @param code	The systemcode of the gene identifier
 	 * @return		true if Expression data is found in cache, false if not
 	 */
-	public boolean hasData(String id, String code)
+	public static boolean hasData(String id, String code)
 	{
 		if(cachedData == null) return false;
 		return cachedData.hasData(id, code);
 	}
 	
-	public HashMap<Integer, Sample> getSamples()
+	public static HashMap<Integer, Sample> getSamples()
 	{
 		return samples;
 	}
 	
-	public Data getCachedData(String id, String code)
+	public static Data getCachedData(String id, String code)
 	{
 		if(cachedData != null) return cachedData.getData(id, code);
 		return null;
@@ -461,14 +465,14 @@ public class GmmlGex {
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	public String getDataString(String id, String code)
+	public static String getDataString(String id, String code)
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + id + "</B><TABLE border='1'>";
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| gmmlGdb.getCon() == null //and to the gene database
+				|| GmmlGdb.getCon() == null //and to the gene database
 		) return noDataFound;
 		
 		Data mappIdData = cachedData.getData(id, code);
@@ -498,14 +502,14 @@ public class GmmlGex {
 	 * @param code	Systemcodes of the gene identifiers
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(ArrayList<String> ids, ArrayList<String> codes)
+	public static void cacheData(ArrayList<String> ids, ArrayList<String> codes)
 	{	
 		cachedData = new CachedData();
 		for(int i = 0; i < ids.size(); i++)
 		{
 			String id = ids.get(i);
 			String code = codes.get(i);
-			ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
+			ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
 			if(ensIds.size() > 0) //Only create a RefData object if the id maps to an Ensembl gene
 			{
 				Data mappGeneData = cachedData.new Data(id, code);
@@ -546,12 +550,12 @@ public class GmmlGex {
 	 * {@link CacheThread} to facilitate caching of Expression data of genes in a pathway in a
 	 * seperate {@link Thread}
 	 */
-	private CacheThread cacheThread;
+	private static CacheThread cacheThread;
 	/**
 	 * This class is a {@link Thread} that is responsible for calling {@link cacheData()}
 	 * and keeping the progress of its progress
 	 */
-	private class CacheThread extends Thread
+	private static class CacheThread extends Thread
 	{
 		volatile double progress;
 		volatile boolean isInterrupted;
@@ -588,7 +592,7 @@ public class GmmlGex {
 	 * @param codes		the systemcodes of the gene identifiers
 	 * @return
 	 */
-	public IRunnableWithProgress createCacheRunnable(
+	public static IRunnableWithProgress createCacheRunnable(
 			final ArrayList<String> mappIds, 
 			final ArrayList<String> codes )
 	{
@@ -614,12 +618,12 @@ public class GmmlGex {
 		};
 	}
 	
-	private ConvertThread convertThread;
+	private static ConvertThread convertThread;
 	/**
 	 * This class is a {@link Thread} that converts a GenMAPP Expression dataset and keeps the progress
 	 * of the conversion
 	 */
-	private class ConvertThread extends Thread
+	private static class ConvertThread extends Thread
 	{
 		volatile double progress;
 		volatile boolean isInterrupted;
@@ -644,7 +648,7 @@ public class GmmlGex {
 	 * This {@link IRunnableWithProgress} starts the {@link ConvertThread} 
 	 * and monitors the progress of the conversion
 	 */
-	public IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {
+	public static IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Converting Gene Expression Dataset",100);
@@ -670,7 +674,7 @@ public class GmmlGex {
 	 * process and monitor the progress
 	 * {@see GmmlGex#importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
 	 */
-	public class ImportRunnableWithProgress implements IRunnableWithProgress {
+	public static class ImportRunnableWithProgress implements IRunnableWithProgress {
 		ImportInformation info;
 		ImportPage page;
 		
@@ -697,7 +701,7 @@ public class GmmlGex {
 	 * @param monitor	{@link IProgressMonitor} that reports the progress of the process and enables
 	 * the user to cancel
 	 */
-	private void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
+	private static void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
 	{
 //		Open a connection to the error file
 		String errorFile = info.gexFile + ".ex.txt";
@@ -775,7 +779,7 @@ public class GmmlGex {
 				//Check id and add data
 				String id = data[info.idColumn];
 				String code = data[info.codeColumn];
-				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
@@ -822,7 +826,7 @@ public class GmmlGex {
 		}
 	}
 	
-	private int reportError(PrintWriter out, String message, int nrError) 
+	private static int reportError(PrintWriter out, String message, int nrError) 
 	{
 		out.println(message);
 		nrError++;
@@ -831,18 +835,24 @@ public class GmmlGex {
 	/**
 	 * {@link Connection} to the GenMAPP Expression Dataset
 	 */
-	private Connection conGmGex;
+	private static Connection conGmGex;
+
+	private static File gmGexFile;
 	/**
-	 * File that contains the GenMAPP Expression Dataset
+	 * Returns the file that contains the GenMAPP Expression Dataset
 	 */
-	public File gmGexFile;
+	public static File getGmGexFile() { return gmGexFile; }
+	/**
+	 * Sets the file that contains the GenMAPP Expression Dataset
+	 */
+	public static void setGmGexFile(File file) { gmGexFile = file; }
 	
 	/**
 	 * Converts the GenMAPP Expression Dataset (given in {@link gmGexFile}) to a expression database
 	 * in Hsqldb format as used by this program.
 	 * <BR><BR>This method reports all errors occured during the conversion to a file named 'convert_gex_error.txt'
 	 */
-	public void convertGex()
+	public static void convertGex()
 	{
 		//Open a connection to the error file
 		PrintWriter error = null;
@@ -898,7 +908,7 @@ public class GmmlGex {
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = gmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
@@ -952,7 +962,7 @@ public class GmmlGex {
 	 * @param 	clean true if the old database has to be removed, false for just connecting
 	 * @return 	null if the connection was created, a String with an error message if an error occured
 	 */
-	public void connect(boolean clean) throws Exception
+	public static void connect(boolean clean) throws Exception
 	{
 		if(clean)
 		{
@@ -971,7 +981,7 @@ public class GmmlGex {
 	 * Connects to the Expression database (location given in {@link gexFile}
 	 * @return null if the connection was created, a String with an error message if an error occured
 	 */
-	public void connect() throws Exception
+	public static void connect() throws Exception
 	{
 		Class.forName("org.hsqldb.jdbcDriver");
 		Properties prop = new Properties();
@@ -992,7 +1002,7 @@ public class GmmlGex {
 	 * statement before calling {@link Connection.close()}
 	 * @param shutdown	true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
-	public void close(boolean shutdown, boolean compact)
+	public static void close(boolean shutdown, boolean compact)
 	{
 		if(con != null)
 		{
@@ -1015,7 +1025,7 @@ public class GmmlGex {
 	 * Close the connection excecuting the 'SHUTDOWN' statement 
 	 * before calling {@link Connection.close()}
 	 */
-	public void close()
+	public static void close()
 	{
 		close(true, false);
 	}
@@ -1024,7 +1034,7 @@ public class GmmlGex {
 	 * Connect to the GenMAPP Expression Dataset specified by the given file
 	 * @param gmGexFile	File containing the GenMAPP Expression Dataset
 	 */
-	public void connectGmGex(File gmGexFile) {
+	public static void connectGmGex(File gmGexFile) {
 		String database_after = ";DriverID=22;READONLY=true";
 		String database_before =
 			"jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
@@ -1041,7 +1051,7 @@ public class GmmlGex {
 	/**
 	 * Close the connection to the GenMAPP Expression Dataset
 	 */
-	public void closeGmGex() {
+	public static void closeGmGex() {
 		if(conGmGex != null)
 		{
 			try {
@@ -1057,7 +1067,7 @@ public class GmmlGex {
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	public void createTables() {	
+	public static void createTables() {	
 		try {
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();

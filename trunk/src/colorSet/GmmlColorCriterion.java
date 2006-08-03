@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.graphics.RGB;
 
+import data.GmmlGex;
 import data.GmmlGex.Sample;
 
 public class GmmlColorCriterion extends GmmlColorSetObject {
@@ -33,7 +34,7 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 	public void testExpression(String expression) throws Exception
 	{
 		//Set some value for every sample
-		HashMap<Integer, Sample> samples = getParent().gmmlGex.getSamples();
+		HashMap<Integer, Sample> samples = GmmlGex.getSamples();
 		clearSymbols();
 		for(Sample s : samples.values()) {
 			addSymbol(s.getName(), 1.0);
@@ -55,7 +56,7 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 		if(useSample != USE_SAMPLE_ALL && useSample != idSample) return null; 
 		
 		//Add current sample values to symTab if they are of type Double
-		HashMap<Integer, Sample> samples = getParent().gmmlGex.getSamples();
+		HashMap<Integer, Sample> samples = GmmlGex.getSamples();
 		clearSymbols();
 		for(Sample s : samples.values()) {
 			Object value = data.get(s.idSample);

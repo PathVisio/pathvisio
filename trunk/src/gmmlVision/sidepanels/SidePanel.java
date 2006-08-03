@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Sash;
  * for use as component of a {@link SashForm}
  */
 public class SidePanel extends Composite {
-	private GmmlVision gmmlVision;
 	private SashForm parentSash;
 	private Composite contentComposite;
 	
@@ -31,9 +30,8 @@ public class SidePanel extends Composite {
 	 * @param style
 	 * @param gmmlVision
 	 */
-	public SidePanel(Composite parent, int style, GmmlVision gmmlVision) {
+	public SidePanel(Composite parent, int style) {
 		super(parent, style);
-		this.gmmlVision = gmmlVision;
 		if(parent instanceof SashForm) //Minimize button only works if parent is sashform
 			parentSash = (SashForm)parent;
 		createControls();
@@ -75,16 +73,16 @@ public class SidePanel extends Composite {
 					}
 				}
 			});
-			minButton.setImage(GmmlVision.imageRegistry.get("sidepanel.minimize"));
+			minButton.setImage(GmmlVision.getImageRegistry().get("sidepanel.minimize"));
 			final Button hideButton = new Button(buttonBar, SWT.PUSH);
 			hideButton.setToolTipText("Close this sidepanel (use view menu to open again)");
 			hideButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					hide();
-					gmmlVision.showRightPanelAction.setChecked(false);
+					GmmlVision.getWindow().showRightPanelAction.setChecked(false);
 				}
 			});
-			hideButton.setImage(GmmlVision.imageRegistry.get("sidepanel.hide"));
+			hideButton.setImage(GmmlVision.getImageRegistry().get("sidepanel.hide"));
 			
 			GridData buttonGrid = new GridData();
 			buttonGrid.widthHint = 12;

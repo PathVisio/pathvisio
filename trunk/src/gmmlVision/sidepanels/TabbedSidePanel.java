@@ -2,8 +2,6 @@ package gmmlVision.sidepanels;
 
 import java.util.HashMap;
 
-import gmmlVision.GmmlVision;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
@@ -32,11 +30,10 @@ public class TabbedSidePanel extends SidePanel {
 	 * Constructor for this class
 	 * @param parent	The parent composite (needs to be an {@link SashForm} for the
 	 * minimize button to work
-	 * @param style	
-	 * @param gmmlVision	
+	 * @param style		
 	 */
-	public TabbedSidePanel(Composite parent, int style, GmmlVision gmmlVision) {
-		super(parent, style, gmmlVision);
+	public TabbedSidePanel(Composite parent, int style) {
+		super(parent, style);
 		controls = new HashMap<String, Control>();
 		tabItems = new HashMap<String, TabItem>();
 		

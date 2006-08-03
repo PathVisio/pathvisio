@@ -1,6 +1,7 @@
 package data;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 import graphics.GmmlGraphics;
 import graphics.GmmlMappInfo;
@@ -53,10 +54,12 @@ public class GmmlData
 	public void setXmlFile (File file) { xmlFile = file; }
 	
 	private GmmlDrawing drawing;
+
+	private Document doc;
 	/**
-	 * JDOM representation of the gmml pathway currently loaded
+	 * JDOM representation of the gmml pathway
 	 */
-	public Document doc;
+	public Document getDocument() { return doc; }
 		
 	/**
 	 * Contructor for this class, creates a new gmml document
@@ -64,6 +67,7 @@ public class GmmlData
 	 */
 	public GmmlData(GmmlDrawing drawing) 
 	{
+		GmmlVisionWindow window = GmmlVision.getWindow();
 		this.drawing = drawing;
 		doc = new Document();
 		//Set the root element (pathway) and its graphics
@@ -73,8 +77,8 @@ public class GmmlData
 		root.addContent(new Element("InfoBox"));
 		doc.setRootElement(root);
 		drawing.setMappInfo(new GmmlMappInfo(drawing, root));
-		drawing.getMappInfo().setBoardSize(drawing.gmmlVision.sc.getSize());
-		drawing.getMappInfo().setWindowSize(drawing.gmmlVision.getShell().getSize());
+		drawing.getMappInfo().setBoardSize(window.sc.getSize());
+		drawing.getMappInfo().setWindowSize(window.getShell().getSize());
 		drawing.getMappInfo().setName("New Pathway");
 	}
 	

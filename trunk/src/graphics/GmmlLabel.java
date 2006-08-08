@@ -19,14 +19,10 @@ limitations under the License.
 
 import gmmlVision.GmmlVision;
 
-import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -51,7 +47,7 @@ import util.SwtUtils;
 import data.GmmlData;
 
 
-public class GmmlLabel extends GmmlGraphics
+public class GmmlLabel extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	private static final int INITIAL_FONTSIZE = 10;
@@ -71,27 +67,17 @@ public class GmmlLabel extends GmmlGraphics
 	int fontSize;
 	double fontSizeDouble;
 	RGB color = new RGB(0,0,0);
-	
 	String notes = "";
-	double centerx;
-	double centery;
-	double width;
-	double height;
-		
-	Element jdomElement;
-	
-	GmmlHandle handlecenter;
-
+			
 	/**
 	 * Constructor for this class
 	 * @param canvas - the GmmlDrawing this label will be part of
 	 */
 	public GmmlLabel(GmmlDrawing canvas)
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_LABEL;
-		
-		this.canvas = canvas;
-		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
+
 		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.getZoomFactor();
 		this.fontSize = (int)this.fontSizeDouble;
 	}
@@ -115,10 +101,10 @@ public class GmmlLabel extends GmmlGraphics
 	{
 		this(canvas);
 		
-		this.centerx  = x;
-		this.centery = y;
-		this.width = width;
-		this.height = height;
+		this.centerX  = x;
+		this.centerY = y;
+		setGmmlWidth(width);
+		setGmmlHeight(height);
 		this.text = text;
 		this.fontName = font;
 		this.fontWeight = fontWeight;
@@ -127,8 +113,8 @@ public class GmmlLabel extends GmmlGraphics
 		this.fontSizeDouble = fontSize;
 		this.color = color;
 		
+		calcStart();
 		setHandleLocation();
-		canvas.addElement(handlecenter);
 		createJdomElement(doc);
 	}
 	
@@ -136,13 +122,13 @@ public class GmmlLabel extends GmmlGraphics
 	{
 		this(canvas);
 		
-		this.centerx = x;
-		this.centery = y;
-		this.height = height;
-		this.width = width;
+		this.centerX = x;
+		this.centerY = y;
+		setGmmlWidth(height);
+		setGmmlHeight(width);
 		
+		calcStart();
 		setHandleLocation();
-		canvas.addElement(handlecenter);
 		createJdomElement(doc);
 	}
 	
@@ -156,22 +142,7 @@ public class GmmlLabel extends GmmlGraphics
 		
 		this.jdomElement = e;
 		mapAttributes(e);
-		canvas.addElement(handlecenter);
-		setHandleLocation();
-	}
-
-	/**
-	  * Sets label upper corner to the specified coordinate
-	  * <BR>
-	  * <DL><B>Parameters</B>
-	  * <DD>Double x	- the new x coordinate
-	  * <DD>Double y	- the new y coordinates
-	  * <DL> 
-	  */	
-	public void setLocation(double x, double y)
-	{
-		this.centerx = x;
-		this.centery = y;
+		calcStart();
 		setHandleLocation();
 	}
 	
@@ -188,6 +159,7 @@ public class GmmlLabel extends GmmlGraphics
 		f.dispose();
 		gc.dispose();
 	}
+	
 	/**
 	 * Updates the JDom representation of this label
 	 */
@@ -201,8 +173,8 @@ public class GmmlLabel extends GmmlGraphics
 			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
-				jdomGraphics.setAttribute("CenterX", Integer.toString((int)centerx * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("CenterY", Integer.toString((int)centery * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("CenterX", Integer.toString(getCenterX() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("CenterY", Integer.toString(getCenterY() * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
@@ -218,7 +190,7 @@ public class GmmlLabel extends GmmlGraphics
 		
 		Composite textComposite = new Composite(canvas, SWT.NONE);
 		textComposite.setLayout(new GridLayout());
-		textComposite.setLocation((int)centerx, (int)centery - 10);
+		textComposite.setLocation(getCenterX(), getCenterY() - 10);
 		textComposite.setBackground(background);
 		
 		Label label = new Label(textComposite, SWT.CENTER);
@@ -266,14 +238,10 @@ public class GmmlLabel extends GmmlGraphics
 		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#adjustToZoom()
-	 */
 	protected void adjustToZoom(double factor)
 	{
-		centerx		*= factor;
-		centery		*= factor;
+		startX		*= factor;
+		startY		*= factor;
 		width		*= factor;
 		height		*= factor;
 		fontSizeDouble *= factor;
@@ -296,10 +264,6 @@ public class GmmlLabel extends GmmlGraphics
 		return style;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#draw(java.awt.Graphics)
-	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		int style = getFontStyle();
@@ -322,8 +286,8 @@ public class GmmlLabel extends GmmlGraphics
 		buffer.setForeground (c);
 		
 		buffer.drawString (text, 
-			(int) centerx - (textSize.x / 2) , 
-			(int) centery - (textSize.y / 2), true);
+			(int) getCenterX() - (textSize.x / 2) , 
+			(int) getCenterY() - (textSize.y / 2), true);
 		
 		f.dispose();
 		c.dispose();
@@ -334,53 +298,7 @@ public class GmmlLabel extends GmmlGraphics
 	{
 		draw(e, e.gc);
 	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#moveBy(double, double)
-	 */
-	protected void moveBy(double dx, double dy)
-	{
-		markDirty();
-		setLocation(centerx  + dx, centery + dy);
-		markDirty();
-		setHandleLocation();
-	}
-
-	/**
-	  *Method isContain uses the coordinates of a specific point (pointx, pointy) 
-	  *to determine whether a label contains this point. 
-	  *To do this, a 'real' rectangle object is formed, on which the normal contains method is used.
-	  */	
-	protected boolean isContain(Point2D p)
-	{
-		Rectangle2D rect = new Rectangle2D.Double(centerx - (width/2), centery - (height/2), width, height);
-		return rect.contains(p);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
-	 */
-	protected boolean intersects(Rectangle2D.Double r)
-	{
-		return r.intersects(centerx - width/2, centery - height/2, width, height);
-	}
-
-	protected Rectangle getBounds()
-	{
-		Rectangle2D rect = new Rectangle2D.Double(
-				centerx - width/2, centery - height/2, width, height);
-		return rect.getBounds();
-	}
-	
-	public Vector<GmmlHandle> getHandles()
-	{
-		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
-		v.add(handlecenter);
-		return v;
-	}
-	
+		
 	public List getAttributes() {
 		return attributes;
 	}
@@ -392,8 +310,8 @@ public class GmmlLabel extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {text, centerx, 
-				centery, width, height, fontName, fontWeight, 
+		Object[] values = new Object[] {text, getCenterX(), 
+				getCenterY(), width, height, fontName, fontWeight, 
 				fontStyle, fontSize, color, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
@@ -407,8 +325,8 @@ public class GmmlLabel extends GmmlGraphics
 		markDirty();
 		
 		String text = ((String)propItems.get(attributes.get(0)));
-		centerx		= (Double)propItems.get(attributes.get(1));
-		centery		= (Double)propItems.get(attributes.get(2));
+		centerX		= (Double)propItems.get(attributes.get(1));
+		centerY		= (Double)propItems.get(attributes.get(2));
 		width		= (Double)propItems.get(attributes.get(3));
 		height 		= (Double)propItems.get(attributes.get(4));
 		fontName	= (String)propItems.get(attributes.get(5));
@@ -421,6 +339,7 @@ public class GmmlLabel extends GmmlGraphics
 		//Check for change in text and resize width if needed
 		if(!this.text.equals(text)) setText(text);
 		
+		calcStart();
 		markDirty();
 		setHandleLocation();
 	}
@@ -441,9 +360,9 @@ public class GmmlLabel extends GmmlGraphics
 					case 0: // TextLabel
 						this.text = value; break;
 					case 1: // CenterX
-						this.centerx = Integer.parseInt(value) / GmmlData.GMMLZOOM ; break;
+						this.centerX = Integer.parseInt(value) / GmmlData.GMMLZOOM ; break;
 					case 2: // CenterY
-						this.centery = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						this.centerY = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 3: // Width
 						this.width = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 4:	// Height
@@ -471,13 +390,4 @@ public class GmmlLabel extends GmmlGraphics
 			mapAttributes((Element)it.next());
 		}
 	}
-
-	/**
-	 * Sets the handles in this class at the correct location.
-	 */
-	private void setHandleLocation()
-	{
-		handlecenter.setLocation(centerx, centery - height/2 - handlecenter.HEIGHT/2);
-	}
-
-} // end of class
+}

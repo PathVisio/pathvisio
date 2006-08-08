@@ -2,23 +2,17 @@ package graphics;
 
 import gmmlVision.GmmlVision;
 
-import java.awt.BasicStroke;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Transform;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -31,7 +25,7 @@ import data.GmmlData;
  * This class implements a brace and provides 
  * methods to resize and draw it
  */
-public class GmmlBrace extends GmmlGraphics
+public class GmmlBrace extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -45,21 +39,10 @@ public class GmmlBrace extends GmmlGraphics
 			"CenterX", "CenterY", "Width", "PicPointOffset", "Orientation", "Color",
 			"Notes"
 	});
-
-	double centerx;
-	double centery;
-	double width;
-	double ppo;
 	
-	int orientation; //orientation: 0=top, 1=right, 2=bottom, 3=left
 	RGB color;
 	
 	String notes = "";
-	
-	Element jdomElement;
-	
-	GmmlHandle handlecenter;
-	GmmlHandle handlewidth;
 	
 	// Some mappings to Gmml
 	private final List orientationMappings = Arrays.asList(new String[] {
@@ -72,14 +55,8 @@ public class GmmlBrace extends GmmlGraphics
 	 */
 	public GmmlBrace(GmmlDrawing canvas)
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_BRACE;
-		
-		this.canvas = canvas;
-
-		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
-		handlewidth	= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlewidth);
 	}
 	
 	/**
@@ -96,17 +73,16 @@ public class GmmlBrace extends GmmlGraphics
 	{
 		this(canvas);
 		
-		this.centerx = centerX;
-		this.centery = centerY;
-		this.width = width;
-		this.ppo = ppo;
-		this.orientation = orientation;
+		this.centerX = centerX;
+		this.centerY = centerY;
+		setGmmlWidth(width);
+		setGmmlHeight(ppo);
+		setOrientation(orientation);
 		this.color = color;
 
+		calcStart();
 		setHandleLocation();
-		
 		createJdomElement(doc);
-
 	}
 
 	/**
@@ -120,19 +96,30 @@ public class GmmlBrace extends GmmlGraphics
 		this.jdomElement = e;
 		
 		mapAttributes(e);
+		
+		calcStart();
+		setHandleLocation();
 	}
 
-	/**
-	 * Sets the brace at the location specified
-	 * @param centerX - the x coordinate
-	 * @param centerY - the y coordinate
-	 */
-	public void setLocation(double centerX, double centerY)
-	{
-		this.centerx = centerX;
-		this.centery = centerY;
+	public void setOrientation(int orientation) {
+		if(orientation == ORIENTATION_TOP) rotation = 0;
+		if(orientation == ORIENTATION_LEFT) rotation = Math.PI/2;
+		if(orientation == ORIENTATION_BOTTOM) rotation = Math.PI;
+		if(orientation == ORIENTATION_RIGHT) rotation = Math.PI*(3.0/2);
+	}
 		
-		
+	public int getOrientation() {
+		double r = rotation / Math.PI;
+		if(r < 1.0/4 || r >= 7.0/4) return ORIENTATION_RIGHT;
+		if(r > 1.0/4 && r <= 3.0/4) return ORIENTATION_TOP;
+		if(r > 3.0/4 && r <= 5.0/4) return ORIENTATION_LEFT;
+		if(r > 5.0/4 && r <= 7.0/4) return ORIENTATION_BOTTOM;
+		return 0;
+	}
+	
+	public void setRotation(double angle) {
+		super.setRotation(angle);
+		setOrientation(getOrientation());
 	}
 	
 	/**
@@ -143,11 +130,11 @@ public class GmmlBrace extends GmmlGraphics
 			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
-				jdomGraphics.setAttribute("CenterX", Integer.toString((int)centerx * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("CenterY", Integer.toString((int)centery * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("PicPointOffset", Double.toString(ppo));
-				jdomGraphics.setAttribute("Orientation", (String)orientationMappings.get(orientation));
+				jdomGraphics.setAttribute("CenterX", Integer.toString(getCenterX() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("CenterY", Integer.toString(getCenterY() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Integer.toString(getGmmlWidth()));
+				jdomGraphics.setAttribute("PicPointOffset", Integer.toString(getGmmlHeight()));
+				jdomGraphics.setAttribute("Orientation", (String)orientationMappings.get(getOrientation()));
 				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
 		}
@@ -168,10 +155,10 @@ public class GmmlBrace extends GmmlGraphics
 	 */
 	protected void adjustToZoom(double factor)
 	{
-		centerx	*= factor;
-		centery	*= factor;
+		startX	*= factor;
+		startY	*= factor;
 		width	*= factor;
-		ppo		*= factor;
+		height	*= factor;
 	}
 
 	/*
@@ -179,7 +166,7 @@ public class GmmlBrace extends GmmlGraphics
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
 	protected void draw(PaintEvent e, GC buffer)
-	{
+	{		
 		Color c = null;
 		if (isSelected())
 		{
@@ -193,57 +180,22 @@ public class GmmlBrace extends GmmlGraphics
 		buffer.setLineStyle (SWT.LINE_SOLID);
 		buffer.setLineWidth (2);
 		
-		int cx = (int)centerx;
-		int cy = (int)centery;
+		Transform tr = new Transform(e.display);
+		rotateGC(buffer, tr);
+		
+		int cx = getCenterX();
+		int cy = getCenterY();
 		int w = (int)width;
-		int d = (int)ppo;
-
-		if (orientation == ORIENTATION_TOP)
-		{
-			buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
-			buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
-			
-			buffer.drawArc (cx - w/2, cy, d, d, -180, -90); //arc on the left
-			buffer.drawArc (cx - d, cy - d,	d, d, -90, 90); //left arc in the middle
-			buffer.drawArc (cx, cy - d, d, d, -90, -90); //right arc in the middle
-			buffer.drawArc (cx + w/2 - d, cy, d, d, 0, 90); //arc on the right
-		}
+		int d = (int)height;
 		
-		else if (orientation == ORIENTATION_RIGHT)
-		{
-			buffer.drawLine (cx, cy + d/2, cx, cy + w/2 - d/2); //line on the bottom
-			buffer.drawLine (cx, cy - d/2, cx, cy - w/2 + d/2); //line on the top
-			
-			buffer.drawArc (cx - d,cy - w/2, d, d, 0, 90); //arc on the top
-			buffer.drawArc (cx, cy - d, d, d, -90, -90); //upper arc in the middle
-			buffer.drawArc (cx, cy, d, d, 90, 90); //lower arc in the middle
-			buffer.drawArc (cx - d, cy + w/2 - d, d, d, 0, -90); //arc on the bottom
-
-		}
+		buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
+		buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
+		buffer.drawArc (cx - w/2, cy, d, d, -180, -90); //arc on the left
+		buffer.drawArc (cx - d, cy - d,	d, d, -90, 90); //left arc in the middle
+		buffer.drawArc (cx, cy - d, d, d, -90, -90); //right arc in the middle
+		buffer.drawArc (cx + w/2 - d, cy, d, d, 0, 90); //arc on the right
 		
-		else if (orientation == ORIENTATION_BOTTOM)
-		{ 
-			buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
-			buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
-			
-			buffer.drawArc (cx - w/2, cy - d, d, d, -180, 90); //arc on the left
-			buffer.drawArc (cx - d, cy, d, d, 90, -90); //left arc in the middle
-			buffer.drawArc (cx, cy, d, d, 90, 90); //right arc in the middle
-			buffer.drawArc (cx + w/2 - d, cy - d, d, d, 0, -90); //arc on the right
-
-		}
-		
-		else if (orientation == ORIENTATION_LEFT)
-		{
-			buffer.drawLine (cx, cy + d/2, cx, cy + w/2 - d/2); //line on the bottom
-			buffer.drawLine (cx, cy - d/2, cx, cy - w/2 + d/2); //line on the top
-			
-			buffer.drawArc (cx, cy - w/2, d, d, -180, -90); //arc on the top
-			buffer.drawArc (cx - d, cy - d, d, d, -90, 90); //upper arc in the middle
-			buffer.drawArc (cx - d, cy, d, d, 90, -90); //lower arc in the middle
-			buffer.drawArc (cx, cy + w/2 - d, d, d, -90, -90); //arc on the bottom
-
-		}
+		buffer.setTransform(null);
 		
 		c.dispose();
 	}
@@ -253,93 +205,6 @@ public class GmmlBrace extends GmmlGraphics
 		draw(e, e.gc);
 	}
 			
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#isContain(java.awt.geom.Point2D)
-	 */
-	protected boolean isContain(Point2D p)
-	{
-		Shape outline = getOutline();
-		
-		return outline.contains(p);
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
-	 */
-	protected boolean intersects(Rectangle2D.Double r)
-	{
-		Shape outline = getOutline();
-		return outline.intersects(r.x, r.y, r.width, r.height);
-	}
-	
-	protected Rectangle getBounds()
-	{
-		return getOutline().getBounds();
-	}
-	
-	protected Shape getOutline()
-	{
-		Line2D l = new Line2D.Double();
-		if (orientation == ORIENTATION_TOP)
-		{
-			l = new Line2D.Double(centerx - width/2, centery, centerx + width/2, centery);
-		}
-		else if (orientation == ORIENTATION_RIGHT)
-		{
-			l = new Line2D.Double(centerx, centery - width/2, centerx, centery + width/2);
-		}
-		else if (orientation == ORIENTATION_BOTTOM)
-		{
-			l = new Line2D.Double(centerx - width/2, centery, centerx + width/2, centery);
-		}
-		else if (orientation == ORIENTATION_LEFT)
-		{
-			l = new Line2D.Double(centerx, centery - width/2, centerx, centery + width/2);
-		}
-		BasicStroke stroke = new BasicStroke(10);
-		return stroke.createStrokedShape(l);
-	}
-	
-	public Vector<GmmlHandle> getHandles()
-	{
-		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
-		v.add(handlecenter);
-		v.add(handlewidth);
-		return v;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#moveBy(double, double)
-	 */
-	protected void moveBy(double dx, double dy)
-	{
-		markDirty();
-		setLocation(centerx + dx, centery + dy);
-		markDirty();
-		setHandleLocation();
-	}
-
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#resizeX(double)
-	 */
-	protected void resizeX(double dx)
-	{
-		markDirty();
-		width = Math.abs(width + dx);
-		markDirty();
-		setHandleLocation();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#resizeY(double)
-	 */
-	protected void resizeY(double dy){}
-	
 	public List getAttributes() {
 		return attributes;
 	}
@@ -351,8 +216,8 @@ public class GmmlBrace extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {centerx, centery,
-				width, ppo, orientation, color, notes};
+		Object[] values = new Object[] {getCenterX(), getCenterY(),
+				width, height, getOrientation(), color, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
 		{
@@ -364,14 +229,14 @@ public class GmmlBrace extends GmmlGraphics
 	{
 		markDirty();	
 		
-		centerx		= (Double)propItems.get(attributes.get(0));
-		centery		= (Double)propItems.get(attributes.get(1));
+		centerX = ((Integer)propItems.get(attributes.get(0)));
+		centerY = ((Integer)propItems.get(attributes.get(1)));
 		width		= (Double)propItems.get(attributes.get(2));
-		ppo			= (Double)propItems.get(attributes.get(3));
-		orientation	= (Integer)propItems.get(attributes.get(4));
+		height		= (Double)propItems.get(attributes.get(3));
+		setOrientation((Integer)propItems.get(attributes.get(4)));
 		color 		= (RGB)propItems.get(attributes.get(5));
 		notes		= (String)propItems.get(attributes.get(6));
-		
+		calcStart();
 		markDirty();
 		setHandleLocation();
 		canvas.redrawDirtyRect();
@@ -391,16 +256,16 @@ public class GmmlBrace extends GmmlGraphics
 			String value = at.getValue();
 			switch(index) {
 					case 0: // CenterX
-						this.centerx = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						centerX = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 1: // CenterY
-						this.centery = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						centerY = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 2: // Width
-						this.width = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						setGmmlWidth(Integer.parseInt(value) / GmmlData.GMMLZOOM); break;
 					case 3: // PicPointOffset
-						this.ppo = Double.parseDouble(value) / GmmlData.GMMLZOOM; break;
+						setGmmlHeight(Double.parseDouble(value) / GmmlData.GMMLZOOM); break;
 					case 4: // Orientation
 						if(orientationMappings.indexOf(value) > -1)
-							this.orientation = orientationMappings.indexOf(value);
+							setOrientation(orientationMappings.indexOf(value));
 						break;
 					case 5: // Color
 						this.color = ColorConverter.gmmlString2Color(value); break;
@@ -416,27 +281,4 @@ public class GmmlBrace extends GmmlGraphics
 			mapAttributes((Element)it.next());
 		}
 	}
-	
-	private void setHandleLocation()
-	{
-		handlecenter.setLocation(centerx, centery);
-		if (orientation == ORIENTATION_TOP)
-		{
-			handlewidth.setLocation(centerx + width/2, centery);
-		}
-		else if (orientation == ORIENTATION_RIGHT)
-		{
-			handlewidth.setLocation(centerx, centery + width/2);
-		}
-		else if (orientation == ORIENTATION_BOTTOM)
-		{
-			handlewidth.setLocation(centerx + width/2, centery);	
-		}
-		else if (orientation == ORIENTATION_LEFT)
-		{
-			handlewidth.setLocation(centerx, centery + width/2);
-		}
-	}
-	
-	
-} //end of GmmlBrace
+}

@@ -18,8 +18,16 @@ class GmmlSelectionBox extends GmmlDrawingObject
 	
 	int x1, y1, x2, y2;
 	
-	GmmlHandle handlex;
-	GmmlHandle handley;
+//	Side handles
+	GmmlHandle handleN;
+	GmmlHandle handleE;
+	GmmlHandle handleS;
+	GmmlHandle handleW;
+	//Corner handles
+	GmmlHandle handleNE;
+	GmmlHandle handleSE;
+	GmmlHandle handleSW;
+	GmmlHandle handleNW;
 	
 	/**
 	 * Constructor for this class
@@ -27,18 +35,18 @@ class GmmlSelectionBox extends GmmlDrawingObject
 	 */
 	public GmmlSelectionBox(GmmlDrawing canvas)
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
+
+		handleN	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
+		handleE	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
+		handleS	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
+		handleW	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
 		
-		this.canvas = canvas;
-		canvas.addElement(this);
-		
-		handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);
-		handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this, canvas);
-		
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
-		
-		resetRectangle();
+		handleNE	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
+		handleSE	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
+		handleSW	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
+		handleNW	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
 	}	
 	
 	/**
@@ -90,6 +98,14 @@ class GmmlSelectionBox extends GmmlDrawingObject
 		return new Rectangle2D.Double(x,y,width,height);
 	}
 	
+	public GmmlHandle[] getHandles()
+	{
+		return new GmmlHandle[] {
+				handleN, handleNE, handleE, handleSE,
+				handleS, handleSW, handleW,	handleNW,
+		};
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
@@ -109,17 +125,19 @@ class GmmlSelectionBox extends GmmlDrawingObject
 	public void select()
 	{
 		super.select();
-		hideCanvasHandles();
-		fitToSelection();
-		handlex.show();
-		handley.show();
+		for (GmmlHandle h : getHandles())
+		{
+			h.show();
+		}
 	}
 	
 	public void deselect()
 	{
 		super.deselect();
-		handlex.hide();
-		handley.hide();
+		for (GmmlHandle h : getHandles())
+		{
+			h.hide();
+		}
 	}
 	
 	private void hideCanvasHandles() {
@@ -161,6 +179,28 @@ class GmmlSelectionBox extends GmmlDrawingObject
 		return false;
 	}
 	
+	public void adjustToHandle(GmmlHandle h) {
+		double dx = 0;
+		double dy = 0;
+		
+		if	(h == handleN || h == handleNE || h == handleNW) {
+			dy = h.centery - y1;
+		}
+		if	(h == handleS || h == handleSE || h == handleSW ) {
+			dy = h.centery - y2;
+		}
+		if	(h == handleE || h == handleNE || h == handleSE) {
+			dx = h.centerx - x1;
+		}
+		if	(h == handleW || h == handleNW || h== handleSW) {
+			dx = h.centerx - x2;
+		}
+		resizeX(dx);
+		resizeY(dy);
+		
+		setHandleLocation(h);
+	}
+	
 	protected void resizeX(double dx) {
 		markDirty();
 		x2 += dx;
@@ -171,13 +211,11 @@ class GmmlSelectionBox extends GmmlDrawingObject
 			if(o instanceof GmmlGraphics) {
 				if(o.isSelected()) {
 					GmmlGraphics g = (GmmlGraphics)o;
-					g.moveLineStart(dx / 2, 0);
 					g.moveBy(dx / 2, 0); 
 					g.resizeX(dx / 2); 
 				} else break; //Sorted, so all selected GmmlGraphics at end
 			}
 		}
-		setHandleLocation();
 		markDirty();
 	}
 	
@@ -191,13 +229,11 @@ class GmmlSelectionBox extends GmmlDrawingObject
 			if(o instanceof GmmlGraphics) {
 				if(o.isSelected()) {
 					GmmlGraphics g = (GmmlGraphics)o;
-					g.moveLineStart(0, dy / 2);
 					g.moveBy(0, dy / 2); 
 					g.resizeY(dy / 2); 
 				} else break; //Sorted, so all selected GmmlGraphics at end
 			}
 		}
-		setHandleLocation();
 		markDirty();
 	}
 	
@@ -244,24 +280,30 @@ class GmmlSelectionBox extends GmmlDrawingObject
 	}
 	
 	/**
-	 * Sets this class's handles at the correct location
+	 * Sets the handles at the correct location;
+	 * left border.
 	 */
 	private void setHandleLocation()
 	{
-		Rectangle2D.Double r = getRectangle();
-		handley.setLocation(r.x + r.width / 2, r.y);
-		handlex.setLocation(r.x + r.width, r.y + r.height / 2);
+		setHandleLocation(null);
 	}
 	
-//	protected ArrayList getSideAreas()
-//	{
-//	int w = 4;
-//	ArrayList rl = new ArrayList();
-//	Rectangle r = getRectangle().getBounds();
-//	rl.add(new Rectangle(r.x - w/2, r.y - w/2, r.width + w, w));
-//	rl.add(new Rectangle(r.x + r.width - w/2, r.y - w/2, w, r.height + w/2));
-//	rl.add(new Rectangle(r.x - w/2, r.y + r.height - w/2, r.width + w, w));
-//	rl.add(new Rectangle(r.x - w/2, r.y + w/2, w, r.height + w));
-//	return rl;
-//	} 
-} // end of class
+	/**
+	 * Sets the handles at the correct location;
+	 * @param ignore the position of this handle will not be adjusted
+	 */
+	private void setHandleLocation(GmmlHandle ignore)
+	{
+		Rectangle2D.Double r = getRectangle();
+		
+		if(ignore != handleN) handleN.setLocation(r.x + r.width/2, r.y);
+		if(ignore != handleE) handleE.setLocation(r.x + r.width, r.y + r.height/2);
+		if(ignore != handleS) handleS.setLocation(r.x + r.width/2, r.y + r.height);
+		if(ignore != handleW) handleW.setLocation(r.x, r.y + r.width/2);
+		
+		if(ignore != handleNE) handleNE.setLocation(r.x + r.width, r.y);
+		if(ignore != handleSE) handleSE.setLocation(r.x + r.width, r.y + r.height);
+		if(ignore != handleSW) handleSW.setLocation(r.x, r.y + r.height);
+		if(ignore != handleNW) handleNW.setLocation(r.x, r.y);
+	}
+}

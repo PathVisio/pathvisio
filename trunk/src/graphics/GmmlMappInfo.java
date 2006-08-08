@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -46,10 +45,6 @@ public class GmmlMappInfo extends GmmlGraphics {
 	int mapInfoLeft;
 	int mapInfoTop;
 	
-	Element jdomElement;
-	
-	GmmlHandle handlecenter;
-	
 	//Elements not stored in gmml
 	String fontName			= "Times New Roman";
 	String fontWeight		= "regular";
@@ -61,15 +56,11 @@ public class GmmlMappInfo extends GmmlGraphics {
 	
 	public GmmlMappInfo(GmmlDrawing canvas, Element e) 
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;
 		
-		this.canvas = canvas;
 		jdomElement = e;
 		mapAttributes(e);
-		
-		handlecenter = new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
-		setHandleLocation();
-		canvas.addElement(handlecenter);
 	}
 	
 	public void setName(String name) { 
@@ -186,7 +177,6 @@ public class GmmlMappInfo extends GmmlGraphics {
 		mapInfoLeft	= (Integer)propItems.get(attributes.get(13));
 		mapInfoTop		= (Integer)propItems.get(attributes.get(14));
 		markDirty();
-		setHandleLocation();
 		canvas.redrawDirtyRect();
 		//Also update the canvas and window size:
 		canvas.setSize(boardWidth, boardHeight);
@@ -247,13 +237,7 @@ public class GmmlMappInfo extends GmmlGraphics {
 		markDirty();
 		mapInfoTop  += dy;
 		mapInfoLeft += dx;
-		setHandleLocation();
 		markDirty();
-	}
-	
-	private void setHandleLocation()
-	{
-		handlecenter.setLocation(mapInfoLeft, mapInfoTop);
 	}
 	
 	public void draw(PaintEvent e) 
@@ -303,12 +287,5 @@ public class GmmlMappInfo extends GmmlGraphics {
 		
 		fBold.dispose();
 		fNormal.dispose();
-	}
-	
-	public Vector<GmmlHandle> getHandles()
-	{
-		Vector handles = new Vector<GmmlHandle>();
-		handles.add(handlecenter);
-		return handles;
 	}
 }

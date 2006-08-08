@@ -1,4 +1,5 @@
 package graphics;
+
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -7,28 +8,31 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
+import util.LinAlg;
+import util.LinAlg.Point;
+
 /**
  * This class implements and handles handles for 
- * other GmmlGraphics objects, which are used to 
+ * objects on the drawing which are used to 
  * resize them or change their location.
  */
 class GmmlHandle extends GmmlDrawingObject
 {
 	private static final long serialVersionUID = 1L;
 	
-	/** because isSelected really doesn't make sense for GmmlHandles, 
+	/** 
+	 * because isSelected really doesn't make sense for GmmlHandles, 
 	 * I added this variable isVisible. It should be set automatically by its parent
 	 * through calls of show() and hide()
 	 */
 	private boolean isVisible = false;
 	
-	int type = 0;
-	// possible types:
-	public static final int HANDLETYPE_CENTER		= 0;
-	public static final int HANDLETYPE_WIDTH		= 1;
-	public static final int HANDLETYPE_HEIGHT		= 2;
-	public static final int HANDLETYPE_LINE_START	= 3;
-	public static final int HANDLETYPE_LINE_END		= 4;
+	//The direction this handle is allowed to move in
+	int direction;
+	public static final int DIRECTION_XY = 0;
+	public static final int DIRECTION_X	 = 1;
+	public static final int DIRECTION_Y  = 2; 
+	public static final int DIRECTION_ROT = 3;
 	
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
@@ -37,20 +41,34 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	double centerx;
 	double centery;
-		
+	
+	double rotation;
+	
 	Rectangle2D rect;
 	boolean visible;
 	
-	public GmmlHandle(int type, GmmlDrawingObject parent, GmmlDrawing canvas)
+	/**
+	 * Constructor for this class, creates a handle given the parent, direction and canvas
+	 * @param direction	Direction this handle can be moved in (one of DIRECTION_*)
+	 * @param parent	The object this handle belongs to
+	 * @param canvas	The {@link GmmlDrawing} to draw this handle on
+	 */
+	public GmmlHandle(int direction, GmmlDrawingObject parent, GmmlDrawing canvas)
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_HANDLE;
 		
-		this.type = type;
+		this.direction = direction;
 		this.parent = parent;
-		this.canvas = canvas;
-
+		
 		constructRectangle();
 	}
+	
+	/**
+	 * Get the direction this handle is allowed to move in
+	 * @return one of DIRECTION_*
+	 */
+	public int getDirection() { return direction; }
 	
 	public Point2D getCenterPoint()
 	{
@@ -108,24 +126,41 @@ class GmmlHandle extends GmmlDrawingObject
 	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		if (isVisible)
-		{
+		if (!isVisible) return;
+		
+		if(direction == DIRECTION_ROT) {
+			buffer.setLineWidth (1);
+			buffer.setLineStyle(SWT.LINE_SOLID);
+			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_GREEN));
+			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
+			buffer.fillOval(
+					(int)(centerx - WIDTH/2), 
+					(int)(centery - HEIGHT/2), 
+					(int)WIDTH, 
+					(int)HEIGHT);
+			buffer.drawOval(
+					(int)(centerx - WIDTH/2), 
+					(int)(centery - HEIGHT/2), 
+					(int)WIDTH, 
+					(int)HEIGHT);
+		} else {
 			constructRectangle();
 			buffer.setLineWidth (1);
 			buffer.setLineStyle(SWT.LINE_SOLID);
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
-			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLUE));
+			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.fillRectangle (
 					(int)(centerx - WIDTH/2), 
 					(int)(centery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);	
 			buffer.drawRectangle (
-				(int)(centerx - WIDTH/2), 
-				(int)(centery - HEIGHT/2), 
-				(int)WIDTH, 
-				(int)HEIGHT);		
+					(int)(centerx - WIDTH/2), 
+					(int)(centery - HEIGHT/2), 
+					(int)WIDTH, 
+					(int)HEIGHT);	
 		}
+		
 	}
 	
 	protected void draw(PaintEvent e)
@@ -137,41 +172,45 @@ class GmmlHandle extends GmmlDrawingObject
 	{
 		return rect.contains(p);
 	}
-	
+		
 	/**
-	 * Unlike moveBy methods of most other GmmlDrawingObjects, not the object itself
-	 * but its parent is moved, and the movement may affect position, width or height of the
-	 * parent object depending on the handle type.
+	 * Moves this handle by the specified increments and
+	 * adjusts the {@link GmmlDrawingObject} to the new position
 	 */
-	protected void moveBy(double dx, double dy)
-	{
-		switch(type) {
-		case HANDLETYPE_CENTER:
-			parent.moveBy(dx, dy); 
-			break;
-		case HANDLETYPE_WIDTH:
-			parent.resizeX(dx); 
-			break;
-		case HANDLETYPE_HEIGHT:
-			parent.resizeY(dy); 
-			break;
-		case HANDLETYPE_LINE_START:
-			((GmmlGraphics)parent).moveLineStart(dx, dy);
-		case HANDLETYPE_LINE_END:
-			((GmmlGraphics)parent).moveLineEnd(dx, dy);
+	public void moveBy(double dx, double dy)
+	{	
+		markDirty();
+
+		Point dxdy = new Point(dx, dy);
+		if		(direction == DIRECTION_X) {
+			Point xr = LinAlg.rotate(new Point(1,0), rotation);
+			Point prj = LinAlg.project(dxdy, xr);
+			dx = prj.x; dy = prj.y;
 		}
+		else if	(direction == DIRECTION_Y) {
+			Point yr = LinAlg.rotate(new Point(0,1), rotation);
+			Point prj = LinAlg.project(dxdy, yr);
+			dx = prj.x; dy= prj.y;
+		}
+		
+			centerx += dx;
+			centery += dy;
+			
+		parent.adjustToHandle(this);
+		
+		markDirty();
+		getDrawing().redraw();
 	}
-	
-	// TODO: Check this method, it doesn't make much sense ~ Martijn 
+		
 	protected boolean intersects(Rectangle2D.Double r)
 	{	
-		return parent.isSelected();
+		constructRectangle();
+		return rect.intersects(r);
 	}
 	
 	protected Rectangle getBounds()
 	{
 		constructRectangle();
-		rect.add(parent.getBounds());
 		return rect.getBounds();
 	}
 	
@@ -180,8 +219,10 @@ class GmmlHandle extends GmmlDrawingObject
 		rect = new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
 	}
 	
-	public String toString() { return "Handle with parent: " + parent.toString(); }
-
+	public String toString() { 
+		return 	"Handle with parent: " + parent.toString() +
+		" and direction " + direction; 
+	}
 } // end of class
 
 

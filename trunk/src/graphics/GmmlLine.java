@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -30,7 +29,7 @@ import data.GmmlData;
 /**
  * This class implements and handles a line
  */
-public class GmmlLine extends GmmlGraphics
+public class GmmlLine extends GmmlGraphicsLine
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -43,28 +42,11 @@ public class GmmlLine extends GmmlGraphics
 	public final List attributes = Arrays.asList(new String[] {
 			"StartX", "StartY", "EndX", "EndY", "Color", "Style", "Type", "Notes"
 	});
-	
-	double startx;
-	double starty;
-	double endx;
-	double endy;
-	double mx;
-	double my;
-	
+		
 	int style;
 	int type;
-	
 	RGB color;
-	
 	String notes = "";
-	
-	Line2D line;
-	
-	Element jdomElement;
-	
-	GmmlHandle handlecenter;
-	GmmlHandle handleStart;
-	GmmlHandle handleEnd;
 	
 	/**
 	 * Constructor for this class
@@ -72,16 +54,8 @@ public class GmmlLine extends GmmlGraphics
 	 */
 	public GmmlLine(GmmlDrawing canvas)
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_LINE;
-		
-		this.canvas = canvas;
-		
-		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
-		handleStart	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_START, this, canvas);
-		handleEnd	= new GmmlHandle(GmmlHandle.HANDLETYPE_LINE_END, this, canvas);
-		canvas.addElement(handlecenter);
-		canvas.addElement(handleStart);
-		canvas.addElement(handleEnd);
 	}
 	
 	/**
@@ -104,8 +78,6 @@ public class GmmlLine extends GmmlGraphics
 		
 		this.color = color;
 		
-		line = new Line2D.Double(startx, starty, endx, endy);
-
 		setHandleLocation();
 		
 		createJdomElement(doc);
@@ -122,54 +94,8 @@ public class GmmlLine extends GmmlGraphics
 		this.jdomElement = e;
 
 		mapAttributes(e);
-		
-		line = new Line2D.Double(startx, starty, endx, endy);
-		
+				
 		setHandleLocation();
-	}
-
-	/**
-	 * Constructs the internal line in this class
-	 */
-	public void constructLine()
-	{
-		line = new Line2D.Double(startx, starty, endx, endy);
-	}
-	
-	/**
-	 * Sets the line start and end to the coordinates specified
-	 * <DL><B>Parameters</B>
-	 * <DD>Double x1	- new startx 
-	 * <DD>Double y1	- new starty
-	 * <DD>Double x2	- new endx
-	 * <DD>Double y2	- new endy
-	 */
-	public void setLine(double x1, double y1, double x2, double y2)
-	{
-		startx = x1;
-		starty = y1;
-		endx   = x2;
-		endy   = y2;
-		
-		constructLine();
-		
-	}
-
-	/**
-	 * Sets the line start and en to the points specified
-	 * <DL><B>Parameters</B>
-	 * <DD>Point2D start	- new start point 
-	 * <DD>Point2D end		- new end point
-	 * <DL>
-	 */
-	public void setLine(Point2D start, Point2D end)
-	{
-		startx = start.getX();
-		starty = start.getY();
-		endx   = end.getX();
-		endy   = end.getY();
-		
-		constructLine();
 	}
 
 	/**
@@ -197,59 +123,39 @@ public class GmmlLine extends GmmlGraphics
 		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#adjustToZoom()
-	 */
-	protected void adjustToZoom(double factor)
-	{
-		startx	*= factor;
-		starty	*= factor;
-		endx 	*= factor;
-		endy	*= factor;
-		
-		constructLine();
-		setHandleLocation();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#draw(java.awt.Graphics)
-	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		if(line!=null)
+		Line2D line = getLine();
+		Color c = null;
+		if (isSelected())
 		{
-			Color c = null;
-			if (isSelected())
-			{
-				c = SwtUtils.changeColor(c, selectColor, e.display);
-			}
-			else 
-			{
-				c = SwtUtils.changeColor(c, this.color, e.display);
-			}
-			buffer.setForeground (c);
-			buffer.setBackground (c);
-			
-			buffer.setLineWidth (1);
-			if (style == STYLE_SOLID)
-			{
-				buffer.setLineStyle (SWT.LINE_SOLID);
-			}
-			else if (style == STYLE_DASHED)
-			{ 
-				buffer.setLineStyle (SWT.LINE_DASH);
-			}
-			
-			buffer.drawLine ((int)line.getX1(), (int)line.getY1(), (int)line.getX2(), (int)line.getY2());
-			
-			if (type == TYPE_ARROW)
-			{
-				drawArrowhead(buffer);
-			}
-			c.dispose();
-		}	
+			c = SwtUtils.changeColor(c, selectColor, e.display);
+		}
+		else 
+		{
+			c = SwtUtils.changeColor(c, this.color, e.display);
+		}
+		buffer.setForeground (c);
+		buffer.setBackground (c);
+		
+		buffer.setLineWidth (1);
+		if (style == STYLE_SOLID)
+		{
+			buffer.setLineStyle (SWT.LINE_SOLID);
+		}
+		else if (style == STYLE_DASHED)
+		{ 
+			buffer.setLineStyle (SWT.LINE_DASH);
+		}
+		
+		buffer.drawLine ((int)line.getX1(), (int)line.getY1(), (int)line.getX2(), (int)line.getY2());
+		
+		if (type == TYPE_ARROW)
+		{
+			drawArrowhead(buffer);
+		}
+		c.dispose();
+		
 	}
 	
 	protected void draw(PaintEvent e)
@@ -257,25 +163,17 @@ public class GmmlLine extends GmmlGraphics
 		draw(e, e.gc);
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#isContain(java.awt.geom.Point2D)
-	 */
 	protected boolean isContain(Point2D p)
 	{
 		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(line);
+		Shape outline = stroke.createStrokedShape(getLine());
 		return outline.contains(p);
 	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
-	 */
+
 	protected boolean intersects(Rectangle2D.Double r)
 	{
 		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(line);
+		Shape outline = stroke.createStrokedShape(getLine());
 		
 		return outline.intersects(r);
 	}
@@ -283,57 +181,8 @@ public class GmmlLine extends GmmlGraphics
 	protected Rectangle getBounds()
 	{
 		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(line);
+		Shape outline = stroke.createStrokedShape(getLine());
 		return outline.getBounds();
-	}
-	
-	public Vector<GmmlHandle> getHandles()
-	{
-		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
-		v.add(handlecenter);
-		v.add(handleStart);
-		v.add(handleEnd);
-		return v;
-	}
-	
-	/*
- 	 *  (non-Javadoc)
- 	 * @see GmmlGraphics#moveBy(double, double)
- 	 */
-	protected void moveBy(double dx, double dy)
-	{
-		markDirty();
-		setLine(startx + dx, starty + dy, endx + dx, endy + dy);
-		markDirty();		
-		setHandleLocation();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#moveLineStart(double, double)
-	 */
-	protected void moveLineStart(double dx, double dy)
-	{
-		markDirty();
-		startx += dx;
-		starty += dy;
-		constructLine();
-		markDirty();
-		setHandleLocation();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#moveLineEnd(double, double)
-	 */
-	protected void moveLineEnd(double dx, double dy)
-	{
-		markDirty();
-		endx += dx;
-		endy += dy;
-		constructLine();
-		markDirty();
-		setHandleLocation();
 	}
 	
 	/**
@@ -452,22 +301,9 @@ public class GmmlLine extends GmmlGraphics
 		style		= (Integer)propItems.get(attributes.get(5));
 		type		= (Integer)propItems.get(attributes.get(6));
 		notes		= (String)propItems.get(attributes.get(7));
-		
-		constructLine();
-		
+				
 		markDirty();
 		setHandleLocation();
 		
 	}
-
-	/**
-	 * Sets the handles in this class at the correct location
-	 */
-	private void setHandleLocation()
-	{
-		handlecenter.setLocation((startx + endx)/2, (starty + endy)/2);
-		handleStart.setLocation(startx, starty);
-		handleEnd.setLocation(endx, endy);
-	}
-
-} // end of classdsw
+}

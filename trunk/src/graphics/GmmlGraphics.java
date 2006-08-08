@@ -1,9 +1,10 @@
 package graphics;
+
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.graphics.RGB;
+import org.jdom.Element;
 
 import preferences.GmmlPreferences;
 
@@ -16,27 +17,12 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 {
 	public static RGB selectColor = GmmlPreferences.getColorProperty("colors.selectColor");
 	public static RGB highlightColor = GmmlPreferences.getColorProperty("colors.highlightColor");
-		
-	/**
-	 * Moves the start of a line by numbers specified
-	 * @param dx - the value of x-increment
-	 * @param dy - the value of y-increment
-	 */
-	void moveLineStart(double dx, double dy){}
 	
-	/**
-	 * Moves the start of a line by numbers specified
-	 * @param dx - the value of x-increment
-	 * @param dy - the value of y-increment
-	 */	
-	void moveLineEnd(double dx, double dy){}
+	Element jdomElement;
 	
-	/**
-	 * Adjusts the GmmlGraphics object to the zoom
-	 * specified in the drawing it is part of
-	 * @param factor - the factor to scale the objects coordinates and measures with
-	 */
-	abstract void adjustToZoom(double factor);
+	public GmmlGraphics(GmmlDrawing canvas) {
+		super(canvas);
+	}
 	
 	public void select()
 	{
@@ -56,17 +42,18 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 		}
 	}
 	
-	abstract Vector<GmmlHandle> getHandles();
+	//Methods dealing with property table
+	public Hashtable propItems;
 	
 	abstract void updateToPropItems();
 	
 	public abstract void updateFromPropItems();
 	
+	//Methods dealing with the GMML representation
 	abstract void updateJdomElement();
 	
 	public abstract List getAttributes();
 	
 	public List attributes;
-	public Hashtable propItems;
 	
 }

@@ -2,14 +2,10 @@ package graphics;
 
 import gmmlVision.GmmlVision;
 
-import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -36,7 +32,7 @@ import data.GmmlData;
  * This class implements a geneproduct and 
  * provides methods to resize and draw it.
  */
-public class GmmlGeneProduct extends GmmlGraphics
+public class GmmlGeneProduct extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	private static final int INITIAL_FONTSIZE = 10;
@@ -57,18 +53,12 @@ public class GmmlGeneProduct extends GmmlGraphics
 			"WormBase", "Affy", "ZFIN"
 	});
 	
-	double centerx;
-	double centery;
-	double width;
-	double height;
 	double fontSizeDouble;
 	int fontSize;
 
 	RGB color = new RGB (0,0,0);
 	RGB fillColor = INITIAL_FILL_COLOR;
-	
-	Element jdomElement;
-	
+		
 	String geneID;
 	String xref;
 	String name = "GeneID";
@@ -76,11 +66,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 	String type = "unknown";
 	String notes = "";
 	String geneProductDataSource = "";
-	
-	GmmlHandle handlecenter;
-	GmmlHandle handlex;
-	GmmlHandle handley;
-	
+		
 	GmmlGpColor gpColor;
 	
 	/**
@@ -89,16 +75,10 @@ public class GmmlGeneProduct extends GmmlGraphics
 	 */
 	public GmmlGeneProduct(GmmlDrawing canvas)
 	{
+		super(canvas);
+		
 		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;
-		
-		this.canvas = canvas;
-		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
-		handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);
-		handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this, canvas);
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
-		
+				
 		gpColor = new GmmlGpColor(this);
 		
 		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.getZoomFactor();
@@ -119,16 +99,16 @@ public class GmmlGeneProduct extends GmmlGraphics
 	public GmmlGeneProduct(double x, double y, double width, double height, String geneLabel, String xref, RGB color, GmmlDrawing canvas, Document doc){
 		this(canvas);
 		
-		this.centerx = x;
-		this.centery = y;
-		this.width = width;
-		this.height = height;
+		centerX = x;
+		centerY = y;
+		setGmmlWidth(width);
+		setGmmlHeight(height);
 		this.geneID = geneLabel;
 		this.xref = xref;
 		this.color = color;
 
+		calcStart();
 		setHandleLocation();
-		
 		createJdomElement(doc);
 	}
 	
@@ -143,28 +123,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 		this.jdomElement = e;
 		mapAttributes(e);
 		
-		
+		calcStart();
 		setHandleLocation();
-	}
-
-	/**
-	 * Set the geneproduct at the location specified
-	 * @param x - new x coordinate
-	 * @param y - new y coordinate
-	 */
-	public void setLocation(double x, double y)
-	{
-		centerx = x;
-		centery = y;
-	}
-	
-	public Vector<GmmlHandle> getHandles()
-	{
-		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
-		v.add(handlecenter);
-		v.add(handlex);
-		v.add(handley);
-		return v;
 	}
 	
 	/**
@@ -180,8 +140,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
-				jdomGraphics.setAttribute("CenterX", Integer.toString((int)centerx * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("CenterY", Integer.toString((int)centery * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("CenterX", Integer.toString(getCenterX() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("CenterY", Integer.toString(getCenterY() * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
 				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
@@ -221,7 +181,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		
 		Composite textComposite = new Composite(canvas, SWT.NONE);
 		textComposite.setLayout(new GridLayout());
-		textComposite.setLocation((int)centerx, (int)centery - 10);
+		textComposite.setLocation(getCenterX(), getCenterY() - 10);
 		textComposite.setBackground(background);
 		
 		Label label = new Label(textComposite, SWT.CENTER);
@@ -270,14 +230,22 @@ public class GmmlGeneProduct extends GmmlGraphics
 		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#adjustToZoom()
-	 */
+	public GmmlHandle[] getHandles() //No rotate handle
+	{
+		return new GmmlHandle[] {
+				handleN, handleNE, handleE, handleSE,
+				handleS, handleSW, handleW,	handleNW,
+		};
+	}
+	public int getGmmlWidth() { return (int)width; }
+	public void setGmmlWidth(double width) { this.width = width; }
+	public int getGmmlHeight() { return (int)height; }
+	public void setGmmlHeight(double height) { this.height = height; }
+	
 	public void adjustToZoom(double factor)
 	{
-		centerx	*= factor;
-		centery	*= factor;
+		startX	*= factor;
+		startY	*= factor;
 		width	*= factor;
 		height	*= factor;
 		fontSizeDouble *= factor;
@@ -285,10 +253,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 		setHandleLocation();
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#draw(java.awt.Graphics)
-	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c = null;
@@ -306,21 +270,18 @@ public class GmmlGeneProduct extends GmmlGraphics
 		buffer.setLineWidth (1);		
 		
 		buffer.drawRectangle (
-			(int)(centerx - width / 2),
-			(int)(centery - height / 2),
+			(int)(startX),
+			(int)(startY),
 			(int)width,
 			(int)height
 		);
 		
 		buffer.setClipping (
-				(int)(centerx - width / 2) + 1,
-				(int)(centery - height / 2) + 1,
+				(int)(startX) + 1,
+				(int)(startY) + 1,
 				(int)width - 1,
 				(int)height - 1
 			);
-
-//		Rectangle clip = getBounds();
-//		buffer.setClipping(clip.x + 1, clip.y + 1, clip.width - 1, clip.height - 1);
 		
 		gpColor.draw(e, buffer);
 		
@@ -330,7 +291,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 		drawHighlight(e, buffer);
 		
 		c.dispose();
-//		cFill.dispose();
 	}
 	
 	protected void draw(PaintEvent e)
@@ -347,8 +307,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 			buffer.setForeground(c);
 			buffer.setLineWidth(2);
 			buffer.drawRectangle (
-					(int)(centerx - width / 2) - 1,
-					(int)(centery - height / 2) - 1,
+					(int)(startX) - 1,
+					(int)(startY) - 1,
 					(int)width + 3,
 					(int)height + 3
 				);
@@ -356,70 +316,6 @@ public class GmmlGeneProduct extends GmmlGraphics
 		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#isContain(java.awt.geom.Point2D)
-	 */
-	protected boolean isContain(Point2D point)
-	{
-		Rectangle2D rect = new Rectangle2D.Double(
-			centerx - width/2, centery - height/2, width, height);
-		
-		return rect.contains(point);
-	}	
-
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
-	 */
-	protected boolean intersects(Rectangle2D.Double r)
-	{
-		return r.intersects(centerx - width/2, centery - height/2, width+1, height+1);
-	}
-	
-	protected Rectangle getBounds()
-	{
-		Rectangle rect = new Rectangle(
-				(int)(centerx - width/2), (int)(centery - height/2), (int)width, (int)height);
-		return rect;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#moveBy(double, double)
-	 */
-	protected void moveBy(double dx, double dy)
-	{
-		markDirty(); // erase old location
-		setLocation(centerx + dx, centery + dy);
-		setHandleLocation();
-		markDirty(); // draw new location
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#resizeX(double)
-	 */
-	protected void resizeX(double dx)
-	{
-		markDirty(); // erase old location
-		width = Math.abs(width + dx);		
-		setHandleLocation();
-		markDirty(); // draw new location
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#resizeY(double)
-	 */
-	protected void resizeY(double dy)
-	{
-		markDirty(); // erase old location
-		height = Math.abs(height - dy);		
-		setHandleLocation();
-		markDirty(); // draw new location
-	}
-
 	public List getAttributes() {
 		return attributes;
 	}
@@ -432,7 +328,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		}
 
 		Object[] values = new Object[] {name, geneProductDataSource,
-				geneID, centerx, centery, width, height, color,
+				geneID, getCenterX(), getCenterY(), width, height, color,
 				xref, backpageHead, type, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
@@ -444,8 +340,8 @@ public class GmmlGeneProduct extends GmmlGraphics
 	public void updateFromPropItems()
 	{
 		markDirty();
-		centerx		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterX")));
-		centery		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterY")));
+		centerX		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterX")));
+		centerY		= (Double)propItems.get(attributes.get(attributes.indexOf("CenterY")));
 		width		= (Double)propItems.get(attributes.get(attributes.indexOf("Width")));
 		height		= (Double)propItems.get(attributes.get(attributes.indexOf("Height")));
 		geneID		= (String)propItems.get(attributes.get(attributes.indexOf("GeneID")));
@@ -460,6 +356,7 @@ public class GmmlGeneProduct extends GmmlGraphics
 		// Update jdom element to store gene id
 		jdomElement.setAttribute("Name", name);
 		
+		calcStart();
 		markDirty();
 		setHandleLocation();
 	}
@@ -478,13 +375,13 @@ public class GmmlGeneProduct extends GmmlGraphics
 			String value = at.getValue();
 			switch(index) {
 					case 3:// CenterX
-						this.centerx = Integer.parseInt(value) / GmmlData.GMMLZOOM ; break;
+						this.centerX = Integer.parseInt(value) / GmmlData.GMMLZOOM ; break;
 					case 4:// CenterY
-						this.centery = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						this.centerY = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 5:// Width
-						this.width = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						setGmmlWidth(Integer.parseInt(value) / GmmlData.GMMLZOOM); break;
 					case 6:// Height
-						this.height = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						setGmmlHeight(Integer.parseInt(value) / GmmlData.GMMLZOOM); break;
 					case 2:// GeneLabel
 						this.geneID = value; break;
 					case 8:// Xref
@@ -506,20 +403,11 @@ public class GmmlGeneProduct extends GmmlGraphics
 						GmmlVision.log.trace("\t> Attribute '" + at.getName() + "' is not recognized");
 			}
 		}
+		
 		// Map child's attributes
 		it = e.getChildren().iterator();
 		while(it.hasNext()) {
 			mapAttributes((Element)it.next());
 		}
 	}
-
-	/**
-	 * Sets this class's handles at the correct location
-	 */
-	private void setHandleLocation()
-	{
-		handlecenter.setLocation(centerx, centery);
-		handlex.setLocation(centerx + width/2, centery);
-		handley.setLocation(centerx, centery - height/2);
-	}
-} //end of GmmlGeneProduct
+}

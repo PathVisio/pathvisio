@@ -8,125 +8,24 @@ import org.eclipse.swt.graphics.GC;
 
 public abstract class GmmlDrawingObject implements Comparable
 {	
-	/** 
-	 * mark the area currently occupied by this object for redraw 
-	 */
-	public void markDirty()
-	{
-		canvas.addDirtyRect(this);
-	}
+	protected GmmlDrawing canvas;
 	
-	private boolean isSelected;
-	private boolean isHighlighted;
-	
-	/**
-	 * Besides setting isSelected, this accomplishes this:
-	 * - marking the area dirty, so the object has a chance to redraw itself in selected state
-	 */
-	public void select()
-	{
-		if (!isSelected)
-		{
-			isSelected = true;
-			markDirty();			
-		}
-	}
-	
-	/**
-	 * Besides resetting isSelected, this accomplishes this:
-	 * - marking the area dirty, so the object has a chance to redraw itself in unselected state
-	 */
-	public void deselect()
-	{
-		if (isSelected)
-		{
-			isSelected = false;
-			markDirty();			
-		}
-	}
-	
-	public boolean isSelected()
-	{
-		return isSelected;
-	}
-	
-	/**
-	 * Besides setting isHighlighted, this accomplishes this:
-	 * - marking the area dirty, so the object has a chance to redraw itself in highlighted state
-	 */
-	public void highlight()
-	{
-		if(!isHighlighted)
-		{
-			isHighlighted = true;
-			markDirty();
-		}
-	}
-	
-	/**
-	 * Besides resetting isHighlighted, this accomplishes this:
-	 * - marking the area dirty, so the object has a chance to redraw itself in unhighlighted state
-	 */
-	public void unhighlight()
-	{
-		if(isHighlighted)
-		{
-			isHighlighted = false;
-			markDirty();
-		}
-	}
-	
-	public boolean isHighlighted()
-	{
-		return isHighlighted;
+	GmmlDrawingObject(GmmlDrawing canvas) {
+		this.canvas = canvas;
+		canvas.addElement(this);
 	}
 	
 	int drawingOrder = GmmlDrawing.DRAW_ORDER_DEFAULT;
+	private boolean isHighlighted;
 	
-	protected GmmlDrawing canvas;
-	
-	/**
-	 * Draws the GmmlDrawingObject object on the GmmlDrawing
-	 * it is part of
-	 * @param g - the Graphics object to use for drawing
-	 */
-	protected abstract void draw(PaintEvent e, GC buffer);
-	protected abstract void draw(PaintEvent e);
-	/**
-	 * Determines wheter a GmmlGraphics object contains
-	 * the point specified
-	 * @param point - the point to check
-	 * @return True if the object contains the point, false otherwise
-	 */
-	protected abstract boolean isContain(Point2D point);
+	private boolean isSelected;
 	
 	/**
-	 * Determines whether a GmmlGraphics object intersects 
-	 * the rectangle specified
-	 * @param r - the rectangle to check
-	 * @return True if the object intersects the rectangle, false otherwise
+	 * Adjusts this object to the zoom
+	 * specified in the drawing it is part of
+	 * @param factor - the factor to scale the objects coordinates and measures with
 	 */
-	protected abstract boolean intersects(Rectangle2D.Double r);
-	
-	protected abstract Rectangle getBounds();
-	/**
-	 * Moves GmmlGraphics object by specified increments
-	 * @param dx - the value of x-increment
-	 * @param dy - the value of y-increment
-	 */
-	protected void moveBy(double dx, double dy) {}
-	
-	/**
-	 * Resizes GmmlDrawingObject in x-direction
-	 * @param dx - the value with wich to resize the object
-	 */
-	protected void resizeX(double dx){}
-	
-	/**
-	 * Resizes GmmlDrawingObject in y-direction
-	 * @param dy - the value with wich to resize the object
-	 */
-	protected void resizeY(double dy){}
+	void adjustToZoom(double factor) {}
 	
 	/**
 	 * Orders GmmlDrawingObjects by their drawingOrder.
@@ -181,5 +80,143 @@ public abstract class GmmlDrawingObject implements Comparable
 			return -1;				
 		
 	}
+	
+	/**
+	 * Besides resetting isSelected, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in unselected state
+	 */
+	public void deselect()
+	{
+		if (isSelected)
+		{
+			isSelected = false;
+			markDirty();			
+		}
+	}
+	
+	protected abstract void draw(PaintEvent e);
+	
+	/**
+	 * Draws the GmmlDrawingObject object on the GmmlDrawing
+	 * it is part of
+	 * @param g - the Graphics object to use for drawing
+	 */
+	protected abstract void draw(PaintEvent e, GC buffer);
+	
+	/**
+	 * Get the drawing this object belongs to
+	 * @return
+	 */
+	public GmmlDrawing getDrawing() {
+		return canvas;
+	}
+	
+	protected abstract Rectangle getBounds();
+	
+	/**
+	 * Besides setting isHighlighted, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in highlighted state
+	 */
+	public void highlight()
+	{
+		if(!isHighlighted)
+		{
+			isHighlighted = true;
+			markDirty();
+		}
+	}
+	
+	/**
+	 * Determines whether a GmmlGraphics object intersects 
+	 * the rectangle specified
+	 * @param r - the rectangle to check
+	 * @return True if the object intersects the rectangle, false otherwise
+	 */
+	protected abstract boolean intersects(Rectangle2D.Double r);
+	
+	/**
+	 * Determines wheter a GmmlGraphics object contains
+	 * the point specified
+	 * @param point - the point to check
+	 * @return True if the object contains the point, false otherwise
+	 */
+	protected abstract boolean isContain(Point2D point);
+	public boolean isHighlighted()
+	{
+		return isHighlighted;
+	}
+	public boolean isSelected()
+	{
+		return isSelected;
+	}
+	
+	/** 
+	 * mark the area currently occupied by this object for redraw 
+	 */
+	public void markDirty()
+	{
+		canvas.addDirtyRect(this);
+	}
+	
+	/**
+	 * Besides setting isSelected, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in selected state
+	 */
+	public void select()
+	{
+		if (!isSelected)
+		{
+			isSelected = true;
+			markDirty();			
+		}
+	}
+
+	/**
+	 * Besides resetting isHighlighted, this accomplishes this:
+	 * - marking the area dirty, so the object has a chance to redraw itself in unhighlighted state
+	 */
+	public void unhighlight()
+	{
+		if(isHighlighted)
+		{
+			isHighlighted = false;
+			markDirty();
+		}
+	}
+	
+	/**
+	 * Transforms this object to fit to the coordinates
+	 * of the given handle
+	 * @param h	The {@link GmmlHandle} to adjust to
+	 */
+	protected void adjustToHandle(GmmlHandle h) {}
+	
+	/**
+	 * Get all the handles belonging to this object
+	 * @return an array of {@link GmmlHandle}s, an empty array if the object
+	 * has no handles
+	 */
+	protected GmmlHandle[] getHandles() { return new GmmlHandle[] {}; }
+	
+//	/**
+//	 * Resizes object in x-direction 
+//	 * (while center coordinates stay unchanged!)
+//	 * @param dx - the value with wich to resize the object
+//	 */
+//	protected void resizeX(double dx) { }
+//	
+//	/**
+//	 * Resizes object in y-direction 
+//	 * (while center coordinates stay unchanged!)
+//	 * @param dy - the value with wich to resize the object
+//	 */
+//	protected void resizeY(double dy) { }
+	
+	/**
+	 * Moves the implementing object by specified increments
+	 * @param dx - the value of x-increment
+	 * @param dy - the value of y-increment
+	 */
+	protected void moveBy(double dx, double dy) { }
 	
 }

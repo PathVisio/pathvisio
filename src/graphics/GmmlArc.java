@@ -3,20 +3,19 @@ package graphics;
 import gmmlVision.GmmlVision;
 
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Transform;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -29,7 +28,7 @@ import data.GmmlData;
  * This class implements an arc and provides 
  * methods to resize and draw it
  */
-public class GmmlArc extends GmmlGraphics
+public class GmmlArc extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 
@@ -39,44 +38,23 @@ public class GmmlArc extends GmmlGraphics
 			"Height","Color","Rotation", "Notes"
 		});
 	
-	double startx;
-	double starty;
-	double width;
-	double height;
-	double rotation;
-	
 	String notes = "";
-	
 	RGB color;
-	
-	Element jdomElement;
-	
-	GmmlHandle handlecenter;
-	GmmlHandle handlex;
-	GmmlHandle handley;
-		
+				
 	/**
 	 * Constructor for this class
 	 * @param canvas - the GmmlDrawing this arc will be part of
 	 */
 	public GmmlArc(GmmlDrawing canvas)
 	{
+		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_ARC;
-		
-		this.canvas = canvas;
-		handlecenter	= new GmmlHandle(GmmlHandle.HANDLETYPE_CENTER, this, canvas);
-		handlex		= new GmmlHandle(GmmlHandle.HANDLETYPE_WIDTH, this, canvas);
-		handley		= new GmmlHandle(GmmlHandle.HANDLETYPE_HEIGHT, this, canvas);
-		
-		canvas.addElement(handlecenter);
-		canvas.addElement(handlex);
-		canvas.addElement(handley);
 	}
 
 	/**
 	 * Constructor for this class
-	 * @param x	- the arcs upper left x coordinate 	
-	 * @param y - the arcs upper left y coordinate
+	 * @param startx	- the arcs upper left x coordinate 	
+	 * @param starty - the arcs upper left y coordinate
 	 * @param width - the arcs widht
 	 * @param height - the arcs height
 	 * @param color - the color the arc will be painted
@@ -87,12 +65,12 @@ public class GmmlArc extends GmmlGraphics
 	{
 		this(canvas);
 		
-		this.startx 	= startx;
-		this.starty 	= starty;
-		this.width 		= width;
-		this.height		= height;
+		this.startX 	= startx;
+		this.startY 	= starty;
+		setGmmlWidth(width);
+		setGmmlHeight(height);
 		this.color 		= color;
-		this.rotation 	= Math.toDegrees(rotation);
+		this.rotation 	= rotation;
 				
 		setHandleLocation();
 		createJdomElement(doc);
@@ -112,37 +90,6 @@ public class GmmlArc extends GmmlGraphics
 		setHandleLocation();
 	}
 	
-	public Vector<GmmlHandle> getHandles()
-	{
-		Vector<GmmlHandle> v = new Vector<GmmlHandle>();
-		v.add(handlecenter);
-		v.add(handlex);
-		v.add(handley);
-		return v;
-	}
-	
-	/**
-	 * Sets this class's handles at the correct location
-	 */
-	public void setHandleLocation()
-	{
-		handlecenter.setLocation(startx - width, starty + height);
-		handlex.setLocation(startx + width, starty - height/2);
-		handley.setLocation(startx + width/2, starty + height);
-	}
-
-	/**
-	 * Sets the location of this arc to the coordinate specified
-	 * @param x - new x coordinate
-	 * @param y - new y coordinate
-	 */
-	public void setLocation(double x, double y)
-	{
-		this.startx = x;
-		this.starty = y;
-		setHandleLocation();
-	}
-
 	/**
 	 * Updates the JDom representation of this arc
 	 */
@@ -151,10 +98,10 @@ public class GmmlArc extends GmmlGraphics
 			jdomElement.setAttribute("Notes", notes);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics != null) {
-				jdomGraphics.setAttribute("StartX", Integer.toString((int)startx * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("StartY", Integer.toString((int)starty * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Width", Integer.toString((int)width * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Height", Integer.toString((int)height * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("StartX", Integer.toString((int)startX * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("StartY", Integer.toString((int)startY * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Integer.toString(getGmmlWidth()));
+				jdomGraphics.setAttribute("Height", Integer.toString(getGmmlHeight()));
 				jdomGraphics.setAttribute("Rotation", Double.toString(rotation));
 				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(color));
 			}
@@ -170,23 +117,15 @@ public class GmmlArc extends GmmlGraphics
 		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#adjustToZoom()
-	 */
 	protected void adjustToZoom(double factor)
 	{
-		startx	*= factor;
-		starty	*= factor;
+		startX	*= factor;
+		startY	*= factor;
 		width	*= factor;
 		height	*= factor;
 		setHandleLocation();
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#draw(java.awt.Graphics)
-	 */
 	protected void draw(PaintEvent e, GC buffer)
 	{
 		Color c = null;
@@ -202,11 +141,17 @@ public class GmmlArc extends GmmlGraphics
 		buffer.setLineStyle (SWT.LINE_SOLID);
 		buffer.setLineWidth (2);
 		
-		buffer.drawArc((int)(startx-width), (int)(starty-height),
-			(int)(2*width), (int)(2*height),
-			(int)(180 - (rotation * 180 / Math.PI)), 180
+		Transform tr = new Transform(e.display);
+		rotateGC(buffer, tr);
+		
+		buffer.drawArc((int)(startX), (int)(startY),
+			(int)(width), (int)(height),
+			 0, -180
 		);
 		
+		buffer.setTransform(null);
+		
+		tr.dispose();
 		c.dispose();
 	}
 	
@@ -215,70 +160,24 @@ public class GmmlArc extends GmmlGraphics
 		draw(e, e.gc);
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#isContain(java.awt.geom.Point2D)
-	 */
-	protected boolean isContain(Point2D p)
-	{
-		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
-
-		return arc.contains(p);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#intersects(java.awt.geom.Rectangle2D.Double)
-	 */
-	protected boolean intersects(Rectangle2D.Double r)
-	{
-		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
-
-		return arc.intersects(r.x, r.y, r.width, r.height);
-	
+	protected Rectangle rotate(Rectangle r, double angle) {
+		AffineTransform t = AffineTransform.getRotateInstance(angle);
+		return (Rectangle)t.createTransformedShape(r);
 	}
 	
-	protected Rectangle getBounds()
-	{
-		Arc2D arc = new Arc2D.Double(startx-width, starty-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
-		return arc.getBounds();
+	public void negativeHeight(GmmlHandle h) {
+		height = -height;
+		rotation += Math.PI;
+		if(!(h == handleN || h == handleS)) {
+			h = getOppositeHandle(h, GmmlHandle.DIRECTION_X);
+			canvas.setPressedObject(h);
+		}
 	}
 	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#moveBy(double, double)
-	 */
-	protected void moveBy(double dx, double dy)
-	{
-		markDirty();
-		setLocation(startx + dx, starty + dy);
-		markDirty();
+	protected Arc2D.Double getArc() {
+		return new Arc2D.Double(startX-width, startY-height, 2*width, 2*height, 180 - (rotation * 180 / Math.PI), 180, 0);
 	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#resizeX(double)
-	 */
-	protected void resizeX(double dx)
-	{
-		markDirty();
-		width = Math.abs(width + dx);
-		markDirty();
-		setHandleLocation();
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#resizeY(double)
-	 */
-	protected void resizeY(double dy)
-	{
-		markDirty();
-		height = Math.abs(height + dy);
-		markDirty();
-		setHandleLocation();		
-	}
-	
+				
 	public List getAttributes() {
 		return attributes;
 	}
@@ -290,7 +189,7 @@ public class GmmlArc extends GmmlGraphics
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {startx, starty,
+		Object[] values = new Object[] {startX, startY,
 				width, height, color, rotation, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
@@ -303,8 +202,8 @@ public class GmmlArc extends GmmlGraphics
 	{
 		markDirty();
 		
-		startx		= (Double)propItems.get(attributes.get(0));
-		starty		= (Double)propItems.get(attributes.get(1));
+		startX		= (Double)propItems.get(attributes.get(0));
+		startY		= (Double)propItems.get(attributes.get(1));
 		width		= (Double)propItems.get(attributes.get(2));
 		height		= (Double)propItems.get(attributes.get(3));
 		color 		= (RGB)propItems.get(attributes.get(4));
@@ -329,13 +228,13 @@ public class GmmlArc extends GmmlGraphics
 			String value = at.getValue();
 			switch(index) {
 					case 0: // StartX
-						this.startx = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						this.startX = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 1: // StartY
-						this.starty = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						this.startY = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
 					case 2: // Width
-						this.width = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						setGmmlWidth(Integer.parseInt(value) / GmmlData.GMMLZOOM); break;
 					case 3: // Height
-						this.height = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
+						setGmmlHeight(Integer.parseInt(value) / GmmlData.GMMLZOOM); break;
 					case 4: // Color
 						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 5: // Rotation

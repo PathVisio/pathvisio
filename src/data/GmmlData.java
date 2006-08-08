@@ -3,7 +3,6 @@ package data;
 import gmmlVision.GmmlVision;
 import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
-import graphics.GmmlGraphics;
 import graphics.GmmlMappInfo;
 
 import java.io.File;
@@ -150,7 +149,6 @@ public class GmmlData
 			Constructor con = cl.getConstructor(new Class[] { Element.class, GmmlDrawing.class });
 			GmmlVision.log.trace("Mapping gmml element " + e.getName());
 			Object obj = con.newInstance(new Object[] { e, drawing });
-			drawing.addElement((GmmlGraphics)obj);
 		}
 		catch (ClassNotFoundException cnfe)
 		{

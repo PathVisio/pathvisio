@@ -237,6 +237,10 @@ PaintListener, MouseTrackListener, KeyListener
 		redraw();
 	}
 
+	public void setPressedObject(GmmlDrawingObject o) {
+		pressedObject = o;
+	}
+	
 	int previousX;
 	int previousY;
 	boolean isSelecting;
@@ -253,9 +257,10 @@ PaintListener, MouseTrackListener, KeyListener
 		}
 		
 		if (isDragging)
-		{		
+		{
+			
 			// if the main selection is a handle
-			if (pressedObject != null && pressedObject instanceof GmmlHandle)
+			if (pressedObject instanceof GmmlHandle)
 			{
 				// move only the handle
 				pressedObject.moveBy(e.x - previousX, e.y - previousY);
@@ -265,8 +270,10 @@ PaintListener, MouseTrackListener, KeyListener
 				// move anything but handles
 				for(GmmlDrawingObject o : drawingObjects)
 				{
-					if (o.isSelected() && !(o instanceof GmmlHandle)) 
-						o.moveBy(e.x - previousX, e.y - previousY);
+					if (o.isSelected() && !(o instanceof GmmlHandle))
+					{
+						pressedObject.moveBy(e.x - previousX, e.y - previousY);
+					}
 				}
 			}
 			previousX = e.x;
@@ -366,6 +373,9 @@ PaintListener, MouseTrackListener, KeyListener
 		GC buffer = new GC(image);
 		buffer.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
 		buffer.fillRectangle(e.x, e.y, e.width, e.height);
+		
+		buffer.setAntialias(SWT.ON);
+
 //		buffer.setForeground(e.display.getSystemColor(SWT.COLOR_CYAN));
 //		buffer.drawRectangle(e.x, e.y, e.width, e.height);
 		
@@ -625,34 +635,32 @@ PaintListener, MouseTrackListener, KeyListener
 			g = new GmmlLabel(e.x, e.y, (int)(GmmlLabel.INITIAL_WIDTH * zoomFactor),
 					(int)(GmmlLabel.INITIAL_HEIGHT * zoomFactor), this, GmmlVision.getGmmlData().getDocument());
 			((GmmlLabel)g).createTextControl();
-			h = ((GmmlLabel)g).handlecenter;
+			h = ((GmmlLabel)g).handleSE;
 			break;
 		case NEWARC:
-			g = new GmmlArc(e.x, e.y, 0, zoomFactor *80, stdRGB, 0, this, d);
-			h = ((GmmlArc)g).handlex;
+			g = new GmmlArc(e.x, e.y, 1, 1, stdRGB, 0, this, d);
+			h = ((GmmlArc)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWBRACE:
-			g = new GmmlBrace(e.x, e.y, 0, GmmlBrace.INITIAL_PPO * zoomFactor, GmmlBrace.ORIENTATION_BOTTOM, 
-					stdRGB, this, d);
-			h = ((GmmlBrace)g).handlewidth;
+			g = new GmmlBrace(e.x, e.y, 1, 1, GmmlBrace.ORIENTATION_RIGHT, stdRGB, this, d);
+			h = ((GmmlBrace)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
 			g = new GmmlGeneProduct(e.x, e.y, GmmlGeneProduct.INITIAL_WIDTH * zoomFactor, 
-					GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor, "", "", stdRGB, this, 
-					d);
-			((GmmlGeneProduct)g).createTextControl();
-			h = ((GmmlGeneProduct)g).handlecenter;
+					GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor, "Gene", "", stdRGB, this, d);
+//			((GmmlGeneProduct)g).createTextControl();
+			h = null;
 			break;
 		case NEWRECTANGLE:
-			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_RECTANGLE, stdRGB, 0, this, d);
-			h = ((GmmlShape)g).handlex;
+			g = new GmmlShape(e.x, e.y, 1, 1, GmmlShape.TYPE_RECTANGLE, stdRGB, 0, this, d);
+			h = ((GmmlShape)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWOVAL:
-			g = new GmmlShape(e.x, e.y, 0, zoomFactor *20, GmmlShape.TYPE_OVAL, stdRGB, 0, this, d);
-			h = ((GmmlShape)g).handlex;
+			g = new GmmlShape(e.x, e.y, 50 * zoomFactor, 50 * zoomFactor, GmmlShape.TYPE_OVAL, stdRGB, 0, this, d);
+			h = ((GmmlShape)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWTBAR:
@@ -681,11 +689,9 @@ PaintListener, MouseTrackListener, KeyListener
 			isDragging = true;
 			break;
 		}
-		
-		addElement(g);
+
 		clearSelection();
 		g.select();
-		h.select();
 		pressedObject = h;
 		updatePropertyTable(g);
 		

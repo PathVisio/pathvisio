@@ -61,7 +61,6 @@ public class GmmlGpColor {
 		f = SwtUtils.changeFont(f, new FontData("Arial narrow", fontSize, SWT.NONE), e.display);
 		buffer.setFont(f);
 		textSize = buffer.textExtent (parent.geneID);
-
 		c = SwtUtils.changeColor(c, parent.color, e.display);
 		buffer.setForeground(c);
 		buffer.drawString (parent.geneID, 
@@ -169,11 +168,8 @@ public class GmmlGpColor {
 			
 			buffer.fillRectangle(r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
 			
-			buffer.setAntialias(SWT.ON);
-//			buffer.setInterpolation(SWT.HIGH);
 			buffer.drawImage(image, 0, 0, imgData.width, imgData.height, 
 					r.x, r.y + r.height / 2 - imageHeight / 2, r.width, imageHeight);
-			buffer.setAntialias(SWT.DEFAULT);
 		} else {
 			buffer.fillRectangle(r.x, r.y, r.width, r.height);
 		}
@@ -219,12 +215,11 @@ public class GmmlGpColor {
 		} else {			
 			buffer.setFont (f);
 			Point textSize = buffer.textExtent (parent.geneID);
-			
 			c = SwtUtils.changeColor(c, parent.color, e.display);
 			buffer.setForeground(c);
 			buffer.drawString (parent.geneID, 
-				(int) parent.centerx - (textSize.x / 2) , 
-				(int) parent.centery - (textSize.y / 2), true);
+				(int) parent.getCenterX() - (textSize.x / 2) , 
+				(int) parent.getCenterY() - (textSize.y / 2), true);
 		}
 		
 		c.dispose();

@@ -28,6 +28,13 @@ mappdiff.pl returns the number of differences found as exit code
 
 =cut
 
+my $magic = 1; 
+# turn on special comparisons to handle all kind of GenMAPP weirdnesses.
+# this will:
+#
+# - compare only the lower 4 bits when comparing Systemcodes of labels
+
+
 if (!(@ARGV == 2 && -r $ARGV[0] && -r $ARGV[1])) 
 { 
 	die "Incorrect number of command line arguments, ".
@@ -49,7 +56,7 @@ sub get_db_handle
 		"DBQ=" . $fn
 	) or die $!;
 	
-	my $dbh = DBI->connect( "DBI:ODBC:" . $odbc_dsn );
+	my $dbh = DBI->connect( "DBI:ODBC:" . $odbc_dsn, '', '', { RaiseError => 1, LongReadLen => 500 });
 	unless ($dbh) { die; }	
 	return $dbh;
 }
@@ -102,10 +109,37 @@ sub object_rows_hitscore
 	my $score = 0;
 	for (qw(ID SystemCode Type CenterX CenterY SecondX SecondY Width Height Rotation Color Label Head Remarks Image Links Notes))
 	{
-		no warnings;
-		if ($$row1{$_} eq $$row2{$_}) { $score++; }
+		if (magic_eq ($row1, $row2, $_)) { $score++; }
 	}
 	return $score;
+}
+
+sub magic_cmp
+{
+	my $row1 = shift;
+	my $row2 = shift;
+	my $col = shift;
+	
+	my $a = $$row1{$col};
+	my $b = $$row2{$col};
+	
+	if ($magic)
+	{
+		no warnings;
+		if ($col eq "SystemCode" && $$row1{Type} eq "Label")
+		{
+				$a = ord ($a) & 0xF;
+				$b = ord ($b) & 0xF;
+		}
+	}
+	
+	no warnings;
+	return ($a cmp $b);
+}
+
+sub magic_eq
+{
+	return (magic_cmp (@_) == 0);
 }
 
 # Compares two rows column by column
@@ -118,15 +152,22 @@ sub object_row_diff
 	for (qw(ID SystemCode Type CenterX CenterY SecondX SecondY Width Height Rotation Color Label Head Remarks Image Links Notes))
 	{
 		no warnings;
-		unless ($$row1{$_} eq $$row2{$_}) 
+		unless (magic_eq ($row1, $row2, $_)) 
 		{
-			$output .= "Column $_ : '" . $$row1{$_} . "' <-> '" . $$row2{$_} . "'\n";
+			if ($$row1{Type} eq "Label" && $_ eq "SystemCode")
+			{
+				$output .= "Column $_ : '" . ord($$row1{$_}) . "' <-> '" . ord($$row2{$_}) . "'\n";
+			}
+			else
+			{
+				$output .= "Column $_ : '" . $$row1{$_} . "' <-> '" . $$row2{$_} . "'\n";
+			}
 		}
 	}
 	if ($output)
 	{
-		print "In row Type='", $$row1{Type}, "' ID='", $$row1{ID}, "' CenterX='", 
-			$$row1{CenterX}, "' CenterY='", $$row1{CenterY}, "' :\n", $output;
+		print "In row Type<", $$row1{Type}, "> ID<", $$row1{ID}, "> Label<", $$row1{Label}, 
+			"> CenterX<", $$row1{CenterX}, ">\n", $output;
 	}
 }
 
@@ -140,7 +181,7 @@ sub info_row_diff
 	for (qw(Title MAPP GeneDB GeneDBVersion Version Author Maint Email Copyright Modify Remarks BoardWidth BoardHeight WindowWidth WindowHeight Notes))
 	{
 		no warnings;
-		unless ($$row1{$_} eq $$row2{$_}) 
+		unless (magic_eq ($row1, $row2, $_)) 
 		{
 			$output .= "Column $_ : '" . $$row1{$_} . "' <-> '" . $$row2{$_} . "'\n";
 		}
@@ -160,7 +201,7 @@ sub by_object_row ($$)
 	for my $col (qw(Type ID CenterX CenterY SystemCode SecondX SecondY Width Height Rotation Color Label Head Remarks Image Links Notes))
 	{
 		no warnings;
-		my $result = $$a{$col} cmp $$b{$col};
+		my $result = magic_cmp ($a, $b, $col);
 		if ($result != 0) { return $result; }
 	}	
 }
@@ -173,6 +214,7 @@ while (@data1 > 0 || @data2 > 0)
 {
 	my $row1 = shift @data1;
 	my $row2 = shift @data2;
+
 	my $score = object_rows_hitscore ($row1, $row2);
 	if ($score != 17)
 	{
@@ -185,7 +227,7 @@ while (@data1 > 0 || @data2 > 0)
 	else
 	{
 		my $cmp = by_object_row ($row1, $row2);
-		if ($cmp < 0)
+		if ($cmp < 0 || !defined($row2))
 		{
 			print "Unique in 1: ";
 			print "row Type='", $$row1{Type}, "' ID='", $$row1{ID}, "' CenterX='", 

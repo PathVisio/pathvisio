@@ -66,6 +66,11 @@ sub read_from_pwf
 		ENSEMBL_GENE_ID => "En",
 		HGNC => "H",
 		UNIPROT => "S",
+		ENTREZ => "L",
+		UNIGENE => "U",
+		AFFYMETRIX => "X",
+		PDB_ID => "Pd",
+		SGD_ID => "D"
 	);
 	
 	if (exists $markerToSystemCode{$props{PATHWAY_MARKER}})

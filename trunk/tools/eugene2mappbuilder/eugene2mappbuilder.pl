@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use ListData;
+use File::Find;
 
 =pod
 
@@ -13,7 +14,8 @@ Eugene to mappbuilder converter, proof-of-concept
 
 =head1 DESCRIPTION
 
-This will convert all data\*.pwf files into 
+This will convert all *.pwf files in the current
+directory and all subdirectories into 
 tab delimited text files with corresponding names,
 that can be opened by MappBuilder.
 
@@ -28,7 +30,18 @@ such as .gmml or .mapp.
 #   main   #
 ############
 
-my @fnList = glob ("data/*.pwf");
+my @fnList;
+
+sub wanted 
+{
+	if (/\.pwf$/)
+	{
+		push @fnList, $File::Find::name;
+	}
+}
+
+# search current directory and all subdirectories for pwf files
+find (\&wanted, ".");
 
 for my $fnIn (@fnList)
 {

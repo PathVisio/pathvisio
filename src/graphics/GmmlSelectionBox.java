@@ -1,9 +1,11 @@
 package graphics;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -12,22 +14,13 @@ import org.eclipse.swt.graphics.GC;
 /**
  * This class implements a selectionbox 
  */ 
-class GmmlSelectionBox extends GmmlDrawingObject
+class GmmlSelectionBox extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
-	
-	int x1, y1, x2, y2;
-	
-//	Side handles
-	GmmlHandle handleN;
-	GmmlHandle handleE;
-	GmmlHandle handleS;
-	GmmlHandle handleW;
-	//Corner handles
-	GmmlHandle handleNE;
-	GmmlHandle handleSE;
-	GmmlHandle handleSW;
-	GmmlHandle handleNW;
+		
+	private ArrayList<GmmlDrawingObject> selection;
+	boolean isSelecting;
+	boolean isVisible;
 	
 	/**
 	 * Constructor for this class
@@ -37,273 +30,240 @@ class GmmlSelectionBox extends GmmlDrawingObject
 	{
 		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
-
-		handleN	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
-		handleE	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
-		handleS	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
-		handleW	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
 		
-		handleNE	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
-		handleSE	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
-		handleSW	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
-		handleNW	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
+		selection = new ArrayList<GmmlDrawingObject>();
 	}	
 	
 	/**
-	 * resets the selectionbox rectangle position to the upper 
-	 * left corner of the screen
+	 * Add an object to the selection
+	 * @param o
 	 */
-	public void resetRectangle()
-	{
-		x1 = 0;
-		y1 = 0;
-		x2 = 0;
-		y2 = 0;
+	public void addToSelection(GmmlDrawingObject o) { 
+		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
+		o.select();
+		selection.add(o);
+		if(isSelecting) return;
+		if(hasMultipleSelection()) { //Show and fit to selection
+			stopSelecting();
+		}
+		 
+	}
+	/**
+	 * Remove an object from the selection
+	 * @param o
+	 */
+	public void removeFromSelection(GmmlDrawingObject o) { 
+		selection.remove(o); 
+		o.deselect();
 	}
 	
-	public void setCorner(int x, int y) {
-		markDirty();
-		x2 = x;
-		y2 = y;
-		setHandleLocation();
-		markDirty();
+	/**
+	 * Removes the object at the given coördinates from the selection
+	 * (if exists and is selected)
+	 * @param p
+	 */
+	public void removeFromSelection(Point2D p) {
+		for(GmmlDrawingObject o : selection) {
+			if(o.isContain(p)) removeFromSelection(o);
+		}
+		if(!isSelecting) {
+			fitToSelection();
+		}
 	}
 	
-	public void setRectangle(Rectangle r) {
-		markDirty();
-		x1 = r.x;
-		x2 = r.x + r.width;
-		y1 = r.y;
-		y2 = r.y + r.height;
-		setHandleLocation();
-		markDirty();
+	/**
+	 * Returns true if the selectionbox has multiple objects in its selection, false otherwise
+	 * @return
+	 */
+	public boolean hasMultipleSelection() { return selection.size() > 1 ? true : false; }
+	
+	/**
+	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
+	 * to upperleft corner
+	 */
+	public void reset() { 
+		reset(0, 0);
 	}
 	
-	public Rectangle2D.Double getRectangle() {
-		double width = x2-x1;
-		double height = y2-y1;
-		double x = x1;
-		double y = y1;
+	/**
+	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
+	 * to specified start coördinates
+	 */
+	public void reset(double startX, double startY) {
+		markDirty();
+		for(GmmlDrawingObject o : selection) o.deselect();
+		selection.clear();
 		
-		if(width < 0)
-		{
-			width = -width;
-			x = x - width;
-		}
-		if(height < 0)
-		{
-			height = -height;
-			y = y - height;
-		}
-		return new Rectangle2D.Double(x,y,width,height);
+		this.startX = startX;
+		this.startY = startY;
+		width = 0;
+		height = 0;
+		setHandleLocation();
 	}
-	
-	public GmmlHandle[] getHandles()
-	{
-		return new GmmlHandle[] {
-				handleN, handleNE, handleE, handleSE,
-				handleS, handleSW, handleW,	handleNW,
-		};
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see GmmlGraphics#draw(java.awt.Graphics)
+
+	/**
+	 * Returns true if this selectionbox is in selecting state (selects containing objects when resized)
+	 * @return
 	 */
+	public boolean isSelecting() { return isSelecting; }
+	
+	/**
+	 * Start selecting
+	 */
+	public void startSelecting() {
+		isSelecting = true;
+		setHandleRestriction(false);
+		show();
+	}
+	
+	/**
+	 * Stop selecting
+	 */
+	public void stopSelecting() {
+		isSelecting = false;
+		if(!hasMultipleSelection()) {
+			if(selection.size() == 1) {
+				GmmlDrawingObject passTo = selection.get(0);
+				reset();
+				passTo.select();
+			} else {
+				reset();
+			}
+		} else {
+			select();
+			fitToSelection();
+			setHandleRestriction(true);
+		}
+	}
+	
+	/**
+	 * Sets movement direction restriction for this object's handles
+	 * @param restrict if true, handle movement is restricted in XY direction,
+	 * else handles can move freely
+	 */
+	private void setHandleRestriction(boolean restrict) {
+		if(restrict) {
+			handleNE.setDirection(GmmlHandle.DIRECTION_MINXY);
+			handleSW.setDirection(GmmlHandle.DIRECTION_MINXY);
+			handleNW.setDirection(GmmlHandle.DIRECTION_XY);
+			handleSE.setDirection(GmmlHandle.DIRECTION_XY);
+		} else {
+			for(GmmlHandle h : getHandles()) 
+				h.setDirection(GmmlHandle.DIRECTION_FREE); 
+		}
+	}
+	
+	public void select() {
+		super.select();
+		for(GmmlDrawingObject o : selection) {
+			o.select();
+			for(GmmlHandle h : o.getHandles()) h.hide();
+		}
+	}
+		
+	/**
+	 * Fit the size of this object to the selected objects
+	 */
+	public void fitToSelection() {
+		if(selection.size() == 0) return; //No objects in selection
+		if(! hasMultipleSelection()) { //Only one object in selection, hide selectionbox
+			GmmlDrawingObject passTo = selection.get(0);
+			reset();
+			passTo.select();
+			return;
+		}
+		markDirty();
+		Rectangle r = null;
+		for(GmmlDrawingObject o : selection) {
+			if(r == null) r = o.getBounds();
+			else r.add(o.getBounds());
+			for(GmmlHandle h : o.getHandles()) h.hide();
+		}
+		startX = r.x;
+		startY = r.y;
+		width = r.width;
+		height = r.height;
+		setHandleLocation();
+		markDirty();
+	}
+			
+	/**
+	 * Show the selectionbox
+	 */
+	public void show() { 
+		isVisible = true; 
+		markDirty();
+	}
+	
+	/**
+	 * Hide the selectionbox
+	 */
+	public void hide() { 
+		isVisible = false;
+		reset();
+	}
+	
+	/**
+	 * Gets the corner handle (South east) for start dragging
+	 * @return
+	 */
+	public GmmlHandle getCornerHandle() { return handleSE; }
+	
+	public void adjustToHandle(GmmlHandle h) {	
+		//Store original size and location before adjusting to handle
+		double oWidth = width;
+		double oHeight = height;
+		double oCenterX = getCenterX();
+		double oCenterY = getCenterY();
+		
+		super.adjustToHandle(h);
+		if(isSelecting) { //Selecting, so add containing objects to selection
+			Rectangle r = getBounds();
+			Rectangle2D.Double bounds = new Rectangle2D.Double(r.x, r.y, r.width, r.height);
+			for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
+				if((o == this) || (o instanceof GmmlHandle)) continue;
+				if(o.intersects(bounds)) { 
+					addToSelection(o);
+				} else removeFromSelection(o);
+			}
+		} else { //Resizing, so resize child objects too
+			//Scale all selected objects in x and y direction			
+			for(GmmlDrawingObject o : selection) { 
+				Rectangle2D.Double r = o.getScaleRectangle();
+				double rw = width / oWidth;
+				double rh = height / oHeight;
+				double nwo = r.width * rw;
+				double nho = r.height * rh;
+				double ncdx = (r.x - oCenterX) * rw;
+				double ncdy = (r.y - oCenterY) * rh;
+				o.setScaleRectangle(new Rectangle2D.Double(getCenterX() + ncdx, getCenterY() + ncdy, nwo, nho));
+			}
+		}
+	}
+	
+	public void moveBy(double dx, double dy) {
+		super.moveBy(dx, dy);
+		//Move the selected objects
+		for(GmmlDrawingObject o : selection) {
+			o.moveBy(dx, dy);
+		}
+	}
+	
 	protected void draw(PaintEvent e, GC buffer)
 	{
-		if(canvas.isSelecting || isSelected())
-		{
+		if(isVisible) {
+			buffer.setAntialias(SWT.OFF);
 			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.setLineStyle (SWT.LINE_DOT);
 			buffer.setLineWidth (1);
-			buffer.drawRectangle (x1, y1, x2-x1, y2-y1);
+			buffer.drawRectangle ((int)startX, (int)startY, (int)width, (int)height);
+			buffer.setAntialias(SWT.ON);
 		}
-	}
-	
-	public void select()
-	{
-		super.select();
-		for (GmmlHandle h : getHandles())
-		{
-			h.show();
-		}
-	}
-	
-	public void deselect()
-	{
-		super.deselect();
-		for (GmmlHandle h : getHandles())
-		{
-			h.hide();
-		}
-	}
-	
-	private void hideCanvasHandles() {
-		ArrayList<GmmlDrawingObject> drw = canvas.getDrawingObjects();
-		Collections.sort(drw);
-		for(int i = drw.size(); i > 0; i--) {
-			GmmlDrawingObject o = drw.get(i - 1);
-			if(o instanceof GmmlGraphics) {
-				if(o.isSelected())
-					for(GmmlHandle h : ((GmmlGraphics)o).getHandles()) h.hide();
-				else break; //Sorted, so all selected GmmlGraphics at end
-			}
-		}
-	}
-	
-	public void fitToSelection() {
-		Rectangle r = null;
-		for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
-			if(o.isSelected() && !(o instanceof GmmlSelectionBox)) {
-				if(r == null) r = (Rectangle)o.getBounds().clone();
-				else r.add(o.getBounds());
-			}
-		}
-		if(r != null) setRectangle(r);
-	}
-	
-	public boolean hasMultipleSelection() {
-		int ns = 0;
-		ArrayList<GmmlDrawingObject> drw = canvas.getDrawingObjects();
-		Collections.sort(drw);
-		for(int i = drw.size(); i > 0; i--) {
-			GmmlDrawingObject o = drw.get(i - 1);
-			if(o instanceof GmmlGraphics) {
-				if(o.isSelected()) ns++;
-				else break; //Sorted, so all selected GmmlGraphics at end
-			}
-			if(ns > 1) return true;
-		}
-		return false;
-	}
-	
-	public void adjustToHandle(GmmlHandle h) {
-		double dx = 0;
-		double dy = 0;
-		
-		if	(h == handleN || h == handleNE || h == handleNW) {
-			dy = h.centery - y1;
-		}
-		if	(h == handleS || h == handleSE || h == handleSW ) {
-			dy = h.centery - y2;
-		}
-		if	(h == handleE || h == handleNE || h == handleSE) {
-			dx = h.centerx - x1;
-		}
-		if	(h == handleW || h == handleNW || h== handleSW) {
-			dx = h.centerx - x2;
-		}
-		resizeX(dx);
-		resizeY(dy);
-		
-		setHandleLocation(h);
-	}
-	
-	protected void resizeX(double dx) {
-		markDirty();
-		x2 += dx;
-		ArrayList<GmmlDrawingObject> drw = canvas.getDrawingObjects();
-		Collections.sort(drw);
-		for(int i = drw.size(); i > 0; i--) {
-			GmmlDrawingObject o = drw.get(i - 1);
-			if(o instanceof GmmlGraphics) {
-				if(o.isSelected()) {
-					GmmlGraphics g = (GmmlGraphics)o;
-					g.moveBy(dx / 2, 0); 
-					g.resizeX(dx / 2); 
-				} else break; //Sorted, so all selected GmmlGraphics at end
-			}
-		}
-		markDirty();
-	}
-	
-	protected void resizeY(double dy) {
-		markDirty();
-		y1 += dy;
-		ArrayList<GmmlDrawingObject> drw = canvas.getDrawingObjects();
-		Collections.sort(drw);
-		for(int i = drw.size(); i > 0; i--) {
-			GmmlDrawingObject o = drw.get(i - 1);
-			if(o instanceof GmmlGraphics) {
-				if(o.isSelected()) {
-					GmmlGraphics g = (GmmlGraphics)o;
-					g.moveBy(0, dy / 2); 
-					g.resizeY(dy / 2); 
-				} else break; //Sorted, so all selected GmmlGraphics at end
-			}
-		}
-		markDirty();
-	}
-	
-	protected void moveBy(double dx, double dy) {
-		markDirty();
-		x1 += dx; x2 += dx;
-		y1 += dy; y2 += dy;
-		setHandleLocation();
-		markDirty();
 	}
 	
 	protected void draw(PaintEvent e)
 	{
 		draw(e, e.gc);
-	}
-	
-	protected boolean intersects(Rectangle2D.Double r)
-	{	
-		ArrayList<GmmlDrawingObject> drw = canvas.getDrawingObjects();
-		Collections.sort(drw);
-		for(int i = drw.size(); i > 0; i--) {
-			GmmlDrawingObject o = drw.get(i - 1);
-			if(o instanceof GmmlGraphics) {
-				if(o.isSelected()) {
-					if(o.intersects(r)) return true;
-				} else break; //Sorted, so all selected GmmlGraphics at end
-			}
-		}
-		return false;
-	}
-	
-	/*
-	 *  (non-Javadoc)
-	 * @see GmmlDrawingObject#isContain(java.awt.geom.Point2D)
-	 */
-	protected boolean isContain(Point2D point)
-	{
-		return false;
-	}
-	
-	protected Rectangle getBounds()
-	{
-		return getRectangle().getBounds();
-	}
-	
-	/**
-	 * Sets the handles at the correct location;
-	 * left border.
-	 */
-	private void setHandleLocation()
-	{
-		setHandleLocation(null);
-	}
-	
-	/**
-	 * Sets the handles at the correct location;
-	 * @param ignore the position of this handle will not be adjusted
-	 */
-	private void setHandleLocation(GmmlHandle ignore)
-	{
-		Rectangle2D.Double r = getRectangle();
-		
-		if(ignore != handleN) handleN.setLocation(r.x + r.width/2, r.y);
-		if(ignore != handleE) handleE.setLocation(r.x + r.width, r.y + r.height/2);
-		if(ignore != handleS) handleS.setLocation(r.x + r.width/2, r.y + r.height);
-		if(ignore != handleW) handleW.setLocation(r.x, r.y + r.width/2);
-		
-		if(ignore != handleNE) handleNE.setLocation(r.x + r.width, r.y);
-		if(ignore != handleSE) handleSE.setLocation(r.x + r.width, r.y + r.height);
-		if(ignore != handleSW) handleSW.setLocation(r.x, r.y + r.height);
-		if(ignore != handleNW) handleNW.setLocation(r.x, r.y);
 	}
 }

@@ -96,43 +96,7 @@ public class GmmlShape extends GmmlGraphicsShape
 		calcStart();
 		setHandleLocation();
 	}
-	
-	/**
-	 * Sets the width of the graphical representation.
-	 * This differs from the GMML representation:
-	 * in GMML height and width are radius in case of TYPE_OVAL,
-	 * while in the graphical representation, these are the diameter.
-	 * TODO: solve this by seperating the graphical and GMML representation!
-	 * @param gmmlWidth the width as specified in the GMML representation
-	 */
-	public void setGmmlWidth(double gmmlWidth) {
-		this.width = gmmlWidth;
-		if(type == TYPE_OVAL) width *= 2;
-	}
-	
-	public int getGmmlWidth() {
-		double width = this.width * GmmlData.GMMLZOOM;
-		return (int)(type == TYPE_OVAL ? width / 2 : width);
-	}
-	
-	/**
-	 * Sets the height of the graphical representation.
-	 * This differs from the GMML representation:
-	 * in GMML height and width are radius in case of TYPE_OVAL,
-	 * while in the graphical representation, these are the diameter.
-	 * TODO: solve this by seperating the graphical and GMML representation!
-	 *  @param gmmlHeight the height as specified in the GMML representation
-	 */
-	public void setGmmlHeight(double gmmlHeight) {
-		this.height = gmmlHeight;
-		if(type == TYPE_OVAL) height *= 2;
-	}
-	
-	public int getGmmlHeight() {
-		double height = this.height * GmmlData.GMMLZOOM;
-		return (int)(type == TYPE_OVAL ? height / 2 : height);
-	}
-	
+			
 	/**
 	 * Updates the JDom representation of the GMML file. 
 	 */

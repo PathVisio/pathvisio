@@ -1,5 +1,6 @@
 package graphics;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -44,16 +45,18 @@ public abstract class GmmlGraphics extends GmmlDrawingObject
 	
 	//Methods dealing with property table
 	public Hashtable propItems;
-	
-	abstract void updateToPropItems();
-	
-	public abstract void updateFromPropItems();
-	
-	//Methods dealing with the GMML representation
-	abstract void updateJdomElement();
-	
-	public abstract List getAttributes();
-	
 	public List attributes;
 	
+	public void updateToPropItems() {}
+	
+	public void updateFromPropItems() {}
+	
+	//Methods dealing with the GMML representation
+	public Element getJdomElement() { 
+		return jdomElement; 
+	}
+	
+	public void updateJdomElement() {}
+	
+	public List getAttributes() { return attributes == null ? new ArrayList() : attributes; }
 }

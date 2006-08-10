@@ -112,8 +112,8 @@ public class GmmlLabel extends GmmlGraphicsShape
 		this.fontSize = fontSize;
 		this.fontSizeDouble = fontSize;
 		this.color = color;
-		
-		calcStart();
+				
+		calcStart();	
 		setHandleLocation();
 		createJdomElement(doc);
 	}
@@ -124,10 +124,10 @@ public class GmmlLabel extends GmmlGraphicsShape
 		
 		this.centerX = x;
 		this.centerY = y;
-		setGmmlWidth(height);
-		setGmmlHeight(width);
+		setGmmlWidth(width);
+		setGmmlHeight(height);
 		
-		calcStart();
+		calcStart();	
 		setHandleLocation();
 		createJdomElement(doc);
 	}
@@ -145,6 +145,11 @@ public class GmmlLabel extends GmmlGraphicsShape
 		calcStart();
 		setHandleLocation();
 	}
+		
+	public void setFontSize(double size) {
+		fontSizeDouble = size;
+		fontSize = (int)size;
+	}
 	
 	public void setText(String text) {
 		this.text = text;
@@ -153,9 +158,19 @@ public class GmmlLabel extends GmmlGraphicsShape
 		GC gc = new GC(canvas.getDisplay());
 		Font f = new Font(canvas.getDisplay(), fontName, fontSize, getFontStyle());
 		gc.setFont (f);
-		width = gc.textExtent(text).x;
+		Point ts = gc.textExtent(text);
+		
+		//Keep center location
+		double nWidth = ts.x + 10 * getDrawing().getZoomFactor();
+		double nHeight = ts.y + 10 * getDrawing().getZoomFactor();
+		startX -= (nWidth - width)/2;
+		startY -= (nHeight - height)/2;
+		width = nWidth;
+		height = nHeight;
+		
 		updateToPropItems();
 		
+		setHandleLocation();
 		f.dispose();
 		gc.dispose();
 	}
@@ -225,7 +240,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		Composite c = t.getParent();
 		c.setVisible(false);
 		c.dispose();
-		
+				
 		canvas.redrawDirtyRect();
 	}
 	
@@ -310,8 +325,8 @@ public class GmmlLabel extends GmmlGraphicsShape
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {text, getCenterX(), 
-				getCenterY(), width, height, fontName, fontWeight, 
+		Object[] values = new Object[] {text, (double)getCenterX(), 
+				(double)getCenterY(), width, height, fontName, fontWeight, 
 				fontStyle, fontSize, color, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)

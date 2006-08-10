@@ -57,6 +57,7 @@ public class GmmlMappInfo extends GmmlGraphics {
 	public GmmlMappInfo(GmmlDrawing canvas, Element e) 
 	{
 		super(canvas);
+		canvas.setMappInfo(this);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;
 		
 		jdomElement = e;

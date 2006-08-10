@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.Document;
+import org.jdom.Element;
 
 import data.GmmlGex;
 import data.GmmlGex.Sample;
@@ -128,8 +129,6 @@ PaintListener, MouseTrackListener, KeyListener
 		addPaintListener (this);
 		addMouseTrackListener(this);
 		addKeyListener(this);
-		
-//		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 		
 	/**
@@ -139,7 +138,6 @@ PaintListener, MouseTrackListener, KeyListener
 	public void setMappInfo(GmmlMappInfo mappInfo)
 	{
 		this.mappInfo = mappInfo;
-		drawingObjects.add(mappInfo);
 	}
 
 	/**
@@ -243,7 +241,6 @@ PaintListener, MouseTrackListener, KeyListener
 	
 	int previousX;
 	int previousY;
-	boolean isSelecting;
 	boolean isDragging;
 	/**
 	 * handles mouse movement
@@ -255,50 +252,13 @@ PaintListener, MouseTrackListener, KeyListener
 		{
 			if(!tip.isDisposed()) tip.dispose();
 		}
-		
+		// If draggin, drag the pressed object
 		if (isDragging)
 		{
+			pressedObject.moveBy(e.x - previousX, e.y - previousY);
 			
-			// if the main selection is a handle
-			if (pressedObject instanceof GmmlHandle)
-			{
-				// move only the handle
-				pressedObject.moveBy(e.x - previousX, e.y - previousY);
-			}
-			else
-			{
-				// move anything but handles
-				for(GmmlDrawingObject o : drawingObjects)
-				{
-					if (o.isSelected() && !(o instanceof GmmlHandle))
-					{
-						pressedObject.moveBy(e.x - previousX, e.y - previousY);
-					}
-				}
-			}
 			previousX = e.x;
 			previousY = e.y;
-		}
-						
-		if (isSelecting)
-		{
-			s.setCorner(e.x, e.y);
-			
-			for(GmmlDrawingObject o : drawingObjects)
-			{
-				if (o instanceof GmmlGraphics)
-				{
-					GmmlGraphics g = (GmmlGraphics) o;
-					if (g.intersects(s.getRectangle()))
-					{
-						g.select();
-					}
-					else
-					{
-						g.deselect();						
-					}
-				}				
-			}
 		}
 		redrawDirtyRect();
 	}
@@ -336,15 +296,12 @@ PaintListener, MouseTrackListener, KeyListener
 		if(isDragging)
 		{
 			updatePropertyTable(GmmlVision.getWindow().propertyTable.g);
-			if(s.isSelected()) s.fitToSelection(); redrawDirtyRect();
-		} else if (isSelecting)
-		{
-			updatePropertyTable(null);
-			if(s.hasMultipleSelection()) s.select(); else s.markDirty();
-			redrawDirtyRect();
+			if(s.isSelecting()) { //If we were selecting, stop it
+				s.stopSelecting();
+				redrawDirtyRect();
+			}
 		}
 		isDragging = false;
-		isSelecting = false;
 	}
 	
 	/**
@@ -453,10 +410,8 @@ PaintListener, MouseTrackListener, KeyListener
 	 */
 	private void clearSelection()
 	{
-		for (GmmlDrawingObject g : drawingObjects)
-		{			
-			g.deselect(); 
-		}		
+		for(GmmlDrawingObject o : drawingObjects) o.deselect(); //Deselect all objects
+		s.reset();
 	}
 
 	/**
@@ -486,16 +441,14 @@ PaintListener, MouseTrackListener, KeyListener
 	 * and then setting it to the position specified
 	 * @param p - the point to start with the selection
 	 */
-	private void initSelection(Point2D p)
+	private void startSelecting(Point2D p)
 	{
 		clearSelection();
-		s.resetRectangle();
-		s.x1 = (int)p.getX();
-		s.x2 = s.x1;
-		s.y1 = (int)p.getY();		
-		s.y2 = s.y1;		
+		s.reset(p.getX(), p.getY());
+		s.startSelecting();
+		pressedObject = s.getCornerHandle();
 	}
-	
+		
 	/**
 	 * Resets highlighting, unhighlights all GmmlDrawingObjects
 	 */
@@ -526,7 +479,6 @@ PaintListener, MouseTrackListener, KeyListener
 					pressedObject = o;
 			}
 		}
-		
 		// if we clicked on an object
 		if (pressedObject != null)
 		{
@@ -539,26 +491,28 @@ PaintListener, MouseTrackListener, KeyListener
 			else if(!pressedObject.isSelected())
 			{
 				// clear the selection if CTRL isn't pressed
-				if(!ctrlPressed) initSelection(p2d);
-				pressedObject.select();
+				if(!ctrlPressed) clearSelection();
+				s.addToSelection(pressedObject);
+			
 			} else {
 				// object is already selected, deselect if CTRL is pressed
-				if(ctrlPressed) pressedObject.deselect();
+				if(ctrlPressed) s.removeFromSelection(p2d);
 			}
 			
 			// start dragging
 			previousX = p.x;
 			previousY = p.y;
 			
-			isSelecting = false;
 			isDragging = true;			
 		}
 		else
 		{
-			// start selecting
-			isDragging = false;
-			isSelecting = true;
-			initSelection(p2d);
+			// start dragging selectionbox
+			previousX = p.x;
+			previousY = p.y;
+			isDragging = true;
+	
+			startSelecting(p2d);
 		}		
 		updatePropertyTable(pressedObject);
 		updateBackpageInfo(pressedObject);
@@ -635,7 +589,7 @@ PaintListener, MouseTrackListener, KeyListener
 			g = new GmmlLabel(e.x, e.y, (int)(GmmlLabel.INITIAL_WIDTH * zoomFactor),
 					(int)(GmmlLabel.INITIAL_HEIGHT * zoomFactor), this, GmmlVision.getGmmlData().getDocument());
 			((GmmlLabel)g).createTextControl();
-			h = ((GmmlLabel)g).handleSE;
+			h = null;
 			break;
 		case NEWARC:
 			g = new GmmlArc(e.x, e.y, 1, 1, stdRGB, 0, this, d);
@@ -823,7 +777,11 @@ PaintListener, MouseTrackListener, KeyListener
 		for(GmmlDrawingObject o : toRemove)
 		{
 			drawingObjects.remove(o);
-		}	
+			if(o instanceof GmmlGraphics) {
+				Element e = ((GmmlGraphics)o).getJdomElement();
+				GmmlVision.getGmmlData().getDocument().getRootElement().removeContent(e);
+			}
+		}
 	}
 	
 	

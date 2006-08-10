@@ -75,10 +75,10 @@ public class GmmlData
 		root.addContent(graphics);
 		root.addContent(new Element("InfoBox"));
 		doc.setRootElement(root);
-		drawing.setMappInfo(new GmmlMappInfo(drawing, root));
-		drawing.getMappInfo().setBoardSize(window.sc.getSize());
-		drawing.getMappInfo().setWindowSize(window.getShell().getSize());
-		drawing.getMappInfo().setName("New Pathway");
+		GmmlMappInfo mpi = new GmmlMappInfo(drawing, root);
+		mpi.setBoardSize(window.sc.getSize());
+		mpi.setWindowSize(window.getShell().getSize());
+		mpi.setName("New Pathway");
 	}
 	
 	/**

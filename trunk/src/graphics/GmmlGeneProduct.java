@@ -160,6 +160,11 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		}
 	}
 	
+	public void setFontSize(double size) {
+		fontSizeDouble = size;
+		fontSize = (int)size;
+	}
+	
 	/**
 	 * Looks up the systemcode for this gene in {@link GmmlData#sysName2Code}
 	 * @param systemName	The system name (as in gmml)
@@ -229,19 +234,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 			doc.getRootElement().addContent(jdomElement);
 		}
 	}
-	
-	public GmmlHandle[] getHandles() //No rotate handle
-	{
-		return new GmmlHandle[] {
-				handleN, handleNE, handleE, handleSE,
-				handleS, handleSW, handleW,	handleNW,
-		};
-	}
-	public int getGmmlWidth() { return (int)width; }
-	public void setGmmlWidth(double width) { this.width = width; }
-	public int getGmmlHeight() { return (int)height; }
-	public void setGmmlHeight(double height) { this.height = height; }
-	
+		
 	public void adjustToZoom(double factor)
 	{
 		startX	*= factor;
@@ -328,7 +321,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		}
 
 		Object[] values = new Object[] {name, geneProductDataSource,
-				geneID, getCenterX(), getCenterY(), width, height, color,
+				geneID, (double)getCenterX(), (double)getCenterY(), width, height, color,
 				xref, backpageHead, type, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)

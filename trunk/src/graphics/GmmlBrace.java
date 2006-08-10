@@ -110,10 +110,10 @@ public class GmmlBrace extends GmmlGraphicsShape
 		
 	public int getOrientation() {
 		double r = rotation / Math.PI;
-		if(r < 1.0/4 || r >= 7.0/4) return ORIENTATION_RIGHT;
-		if(r > 1.0/4 && r <= 3.0/4) return ORIENTATION_TOP;
-		if(r > 3.0/4 && r <= 5.0/4) return ORIENTATION_LEFT;
-		if(r > 5.0/4 && r <= 7.0/4) return ORIENTATION_BOTTOM;
+		if(r < 1.0/4 || r >= 7.0/4) return ORIENTATION_TOP;
+		if(r > 1.0/4 && r <= 3.0/4) return ORIENTATION_LEFT;
+		if(r > 3.0/4 && r <= 5.0/4) return ORIENTATION_BOTTOM;
+		if(r > 5.0/4 && r <= 7.0/4) return ORIENTATION_RIGHT;
 		return 0;
 	}
 	
@@ -216,7 +216,7 @@ public class GmmlBrace extends GmmlGraphicsShape
 			propItems = new Hashtable();
 		}
 		
-		Object[] values = new Object[] {getCenterX(), getCenterY(),
+		Object[] values = new Object[] {(double)getCenterX(), (double)getCenterY(),
 				width, height, getOrientation(), color, notes};
 		
 		for (int i = 0; i < attributes.size(); i++)
@@ -229,8 +229,8 @@ public class GmmlBrace extends GmmlGraphicsShape
 	{
 		markDirty();	
 		
-		centerX = ((Integer)propItems.get(attributes.get(0)));
-		centerY = ((Integer)propItems.get(attributes.get(1)));
+		centerX = ((Double)propItems.get(attributes.get(0)));
+		centerY = ((Double)propItems.get(attributes.get(1)));
 		width		= (Double)propItems.get(attributes.get(2));
 		height		= (Double)propItems.get(attributes.get(3));
 		setOrientation((Integer)propItems.get(attributes.get(4)));

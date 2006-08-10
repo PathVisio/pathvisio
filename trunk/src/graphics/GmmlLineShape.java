@@ -105,6 +105,7 @@ public class GmmlLineShape extends GmmlGraphicsLine
 	public void updateJdomElement() {
 		if(jdomElement != null) {
 			jdomElement.setAttribute("Notes", notes);
+			jdomElement.setAttribute("Type", (String)typeMappings.get(type));
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
 				jdomGraphics.setAttribute("StartX", Integer.toString((int)startx * GmmlData.GMMLZOOM));

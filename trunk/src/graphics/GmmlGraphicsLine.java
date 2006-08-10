@@ -1,6 +1,7 @@
 package graphics;
 
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * This is an {@link GmmlGraphics} class representing line forms,
@@ -18,8 +19,8 @@ public abstract class GmmlGraphicsLine extends GmmlGraphics {
 	public GmmlGraphicsLine(GmmlDrawing canvas) {
 		super(canvas);
 		
-		handleStart	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
-		handleEnd	= new GmmlHandle(GmmlHandle.DIRECTION_XY, this, canvas);
+		handleStart	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		handleEnd	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
 	}
 	
 	/**
@@ -46,6 +47,21 @@ public abstract class GmmlGraphicsLine extends GmmlGraphics {
 		endy   = y2;
 		
 		setHandleLocation();		
+	}
+	
+	public void setScaleRectangle(Rectangle2D.Double r) {
+		markDirty();
+		startx = r.x;
+		starty = r.y;
+		endx = r.x + r.width;
+		endy = r.y + r.height;
+		
+		setHandleLocation();
+		markDirty();
+	}
+	
+	protected Rectangle2D.Double getScaleRectangle() {
+		return new Rectangle2D.Double(startx, starty, endx - startx, endy - starty);
 	}
 	
 	/**
@@ -81,34 +97,6 @@ public abstract class GmmlGraphicsLine extends GmmlGraphics {
 		setLine(startx + dx, starty + dy, endx + dx, endy + dy);
 		markDirty();		
 		setHandleLocation();
-	}
-	
-//	protected void moveLineStart(double dx, double dy)
-//	{
-//		markDirty();
-//		startx += dx;
-//		starty += dy;
-//		constructLine();
-//		markDirty();
-//		setHandleLocation();
-//	}
-//	
-//	protected void moveLineEnd(double dx, double dy)
-//	{
-//		markDirty();
-//		endx += dx;
-//		endy += dy;
-//		constructLine();
-//		markDirty();
-//		setHandleLocation();
-//	}
-	
-	public void resizeX(double dx) {
-		//TODO: implement
-	}
-	
-	public void resizeY(double dy) {
-		//TODO: implement
 	}
 	
 	protected void adjustToZoom(double factor)

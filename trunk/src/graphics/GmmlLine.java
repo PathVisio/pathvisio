@@ -104,6 +104,8 @@ public class GmmlLine extends GmmlGraphicsLine
 	public void updateJdomElement() {
 		if(jdomElement != null) {
 			jdomElement.setAttribute("Notes", notes);
+			jdomElement.setAttribute("Type", type == TYPE_LINE ? "Line" : "Arrow");
+			jdomElement.setAttribute("Style", style == STYLE_SOLID ? "Solid" : "Broken");
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics != null) {
 				jdomGraphics.setAttribute("StartX", Integer.toString((int)startx * GmmlData.GMMLZOOM));
@@ -243,18 +245,10 @@ public class GmmlLine extends GmmlGraphicsLine
 					case 4: // Color
 						this.color = ColorConverter.gmmlString2Color(value); break;
 					case 5: // Style
-						List styleMappings = Arrays.asList(new String[] {
-								"Solid", "Broken"
-						});
-						if(styleMappings.indexOf(value) > -1)
-							this.type = styleMappings.indexOf(value);
+						this.style = value.equalsIgnoreCase("Solid") ? STYLE_SOLID : STYLE_DASHED;
 						break;
 					case 6: // Type
-						List typeMappings = Arrays.asList(new String[] {
-								"Line", "Arrow"
-						});
-						if(typeMappings.indexOf(value) > -1)
-							this.type = typeMappings.indexOf(value);
+						this.type = value.equalsIgnoreCase("Line") ? TYPE_LINE : TYPE_ARROW;
 						break;
 					case 7: //Notes
 						this.notes = value; break;

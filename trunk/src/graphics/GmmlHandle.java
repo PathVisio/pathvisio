@@ -1,12 +1,15 @@
 package graphics;
 
+import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Transform;
 
 import util.LinAlg;
 import util.LinAlg.Point;
@@ -29,10 +32,12 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	//The direction this handle is allowed to move in
 	int direction;
-	public static final int DIRECTION_XY = 0;
+	public static final int DIRECTION_FREE = 0;
 	public static final int DIRECTION_X	 = 1;
 	public static final int DIRECTION_Y  = 2; 
 	public static final int DIRECTION_ROT = 3;
+	public static final int DIRECTION_XY = 4;
+	public static final int DIRECTION_MINXY = 5;
 	
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
@@ -44,7 +49,6 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	double rotation;
 	
-	Rectangle2D rect;
 	boolean visible;
 	
 	/**
@@ -60,8 +64,6 @@ class GmmlHandle extends GmmlDrawingObject
 		
 		this.direction = direction;
 		this.parent = parent;
-		
-		constructRectangle();
 	}
 	
 	/**
@@ -69,6 +71,8 @@ class GmmlHandle extends GmmlDrawingObject
 	 * @return one of DIRECTION_*
 	 */
 	public int getDirection() { return direction; }
+	
+	public void setDirection(int direction) { this.direction = direction; }
 	
 	public Point2D getCenterPoint()
 	{
@@ -143,8 +147,7 @@ class GmmlHandle extends GmmlDrawingObject
 					(int)(centery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);
-		} else {
-			constructRectangle();
+		} else {			
 			buffer.setLineWidth (1);
 			buffer.setLineStyle(SWT.LINE_SOLID);
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
@@ -170,7 +173,7 @@ class GmmlHandle extends GmmlDrawingObject
 
 	protected boolean isContain(Point2D p)
 	{
-		return rect.contains(p);
+		return getOutline().contains(p);
 	}
 		
 	/**
@@ -181,42 +184,54 @@ class GmmlHandle extends GmmlDrawingObject
 	{	
 		markDirty();
 
-		Point dxdy = new Point(dx, dy);
-		if		(direction == DIRECTION_X) {
-			Point xr = LinAlg.rotate(new Point(1,0), rotation);
-			Point prj = LinAlg.project(dxdy, xr);
-			dx = prj.x; dy = prj.y;
-		}
-		else if	(direction == DIRECTION_Y) {
-			Point yr = LinAlg.rotate(new Point(0,1), rotation);
-			Point prj = LinAlg.project(dxdy, yr);
+		if(direction != DIRECTION_FREE && direction != DIRECTION_ROT) {
+			Point v = new Point(0,0);
+			double xtraRot = 0;
+			if		(direction == DIRECTION_X) {
+				v = new Point(1,0);
+			}
+			else if	(direction == DIRECTION_Y) {
+				v = new Point(0,1);
+			}
+			else if (direction == DIRECTION_XY) {
+				Rectangle b = parent.getBounds();
+				v = new Point(b.width + 1, b.height + 1);
+			}
+			else if (direction == DIRECTION_MINXY) {
+				xtraRot = Math.PI/2;
+				Rectangle b = parent.getBounds();
+				v = new Point(b.height + 1, b.width + 1);
+			}
+			Point yr = LinAlg.rotate(v, rotation + xtraRot);
+			Point prj = LinAlg.project(new Point(dx, dy), yr);
 			dx = prj.x; dy= prj.y;
 		}
 		
-			centerx += dx;
-			centery += dy;
-			
+		centerx += dx;
+		centery += dy;
+		
 		parent.adjustToHandle(this);
-		
 		markDirty();
-		getDrawing().redraw();
 	}
-		
+	
 	protected boolean intersects(Rectangle2D.Double r)
 	{	
-		constructRectangle();
-		return rect.intersects(r);
+		return getOutline().intersects(r);
 	}
 	
 	protected Rectangle getBounds()
 	{
-		constructRectangle();
-		return rect.getBounds();
+		
+		return getOutline().getBounds();
 	}
 	
-	private void constructRectangle()
+	public Shape getOutline() {
+		return constructRectangle();
+	}
+	
+	private Rectangle2D.Double constructRectangle()
 	{
-		rect = new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
+		return new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
 	}
 	
 	public String toString() { 

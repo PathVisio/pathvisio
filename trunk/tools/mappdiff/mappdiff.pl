@@ -54,16 +54,15 @@ sub get_db_handle
 		"Microsoft Access Driver (*.mdb)",
 		"DSN=" . $odbc_dsn,
 		"DBQ=" . $fn
-	) or die $!;
+	) or die "ODBC error on file $fn, $!";
 	
-	my $dbh = DBI->connect( "DBI:ODBC:" . $odbc_dsn, '', '', { RaiseError => 1, LongReadLen => 500 });
+	my $dbh = DBI->connect( "DBI:ODBC:" . $odbc_dsn, '', '', { RaiseError => 1, LongReadLen => 2000 });
 	unless ($dbh) { die; }	
 	return $dbh;
 }
 
 my $fnMapp1 = $ARGV[0];
 my $fnMapp2 = $ARGV[1];
-
 
 # read all object data from mapp 1
 my @data1;
@@ -128,8 +127,45 @@ sub magic_cmp
 		no warnings;
 		if ($col eq "SystemCode" && $$row1{Type} eq "Label")
 		{
-				$a = ord ($a) & 0xF;
-				$b = ord ($b) & 0xF;
+			#compare only lower 4 bits of systemcode for labels
+			$a = ord ($a) & 0xF;
+			$b = ord ($b) & 0xF;
+		}
+		if ($col eq "SystemCode" && $$row1{Type} eq "Gene")
+		{
+			# trim trailing whitespace
+			$a =~ s/\s*$//;
+			$b =~ s/\s*$//;
+		}
+		elsif ($col eq "Color" && $$row1{Type} eq "Gene")
+		{
+			#ignore color field for genes
+			$a = 0;
+			$b = 0;
+		}
+		elsif ($col =~ /^(Remarks|Width|Height)$/ && $$row1{Type} eq "InfoBox")
+		{
+			#ignore most fields for InfoBox
+			$a = 0;
+			$b = 0;
+		}
+		elsif ($col eq "Height" && $$row1{Type} =~ /^(Vesicle|Poly)$/)
+		{
+			#ignore height for some shapes like Vesicle and Poly, only width counts.
+			$a = 0;
+			$b = 0;
+		}
+		elsif ($col eq "Color" && $$row1{Type} =~ /^(Vesicle)$/)
+		{
+			#ignore color for some shapes.
+			$a = 0;
+			$b = 0;
+		}
+		elsif ($col eq "Head" && $$row1{Type} eq "Label")
+		{
+			# trim trailing whitespace
+			$a =~ s/\s*$//;
+			$b =~ s/\s*$//;
 		}
 	}
 	

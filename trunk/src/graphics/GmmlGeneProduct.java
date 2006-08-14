@@ -46,13 +46,6 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 			"Xref", "BackpageHead","Type", "Notes" 
 	});
 	
-	public static final List dataSources = Arrays.asList(new String[] {
-			"FlyBase", "GenBank", "GenBank", 
-			"InterPro", "LocusLink", "MGI", "RefSeq", "RGD", 
-			"SGD", "SwissProt", "TAIR", "UniGene", "UniProt",
-			"WormBase", "Affy", "ZFIN"
-	});
-	
 	double fontSizeDouble;
 	int fontSize;
 

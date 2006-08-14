@@ -167,20 +167,6 @@ sub magic_cmp
 			$a =~ s/\s*$//;
 			$b =~ s/\s*$//;
 		}
-		
-		#defaults for empties:
-		if ($col =~ /^(SecondX|SecondY|Width|Height|Rotation)$/)
-		{
-			# empty is the same as 0.
-			if ($a eq "") { $a = "0.0"; }
-			if ($b eq "") { $b = "0.0"; }
-		}
-		if ($col eq "Color")
-		{
-			# empty is the same as -1.
-			if ($a eq "") { $a = "-1"; }
-			if ($b eq "") { $b = "-1"; }
-		}
 	}
 	
 	no warnings;

@@ -38,13 +38,13 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 * Add an object to the selection
 	 * @param o
 	 */
-	public void addToSelection(GmmlDrawingObject o) { 
+	public void addToSelection(GmmlDrawingObject o) {
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
 		o.select();
 		selection.add(o);
-		if(isSelecting) return;
-		if(hasMultipleSelection()) { //Show and fit to selection
-			stopSelecting();
+		if(isSelecting) return; //All we have to do if user is dragging selectionbox
+		if(hasMultipleSelection()) { 
+			stopSelecting(); //show and fit to SelectionBox if performed after dragging
 		}
 		 
 	}
@@ -55,6 +55,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	public void removeFromSelection(GmmlDrawingObject o) { 
 		selection.remove(o); 
 		o.deselect();
+		if(!isSelecting) fitToSelection();
 	}
 	
 	/**
@@ -62,12 +63,18 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 * (if exists and is selected)
 	 * @param p
 	 */
-	public void removeFromSelection(Point2D p) {
+	public void selectionClicked(Point2D p) {
+		GmmlDrawingObject clicked = null;
 		for(GmmlDrawingObject o : selection) {
-			if(o.isContain(p)) removeFromSelection(o);
+			if(o.isContain(p)) clicked = o;
 		}
-		if(!isSelecting) {
-			fitToSelection();
+		if(clicked.isSelected()) //Object is selected, remove
+		{
+			removeFromSelection(clicked);
+		} 
+		else //Object is not selected, add
+		{
+			addToSelection(clicked);
 		}
 	}
 	
@@ -224,7 +231,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 				if((o == this) || (o instanceof GmmlHandle)) continue;
 				if(o.intersects(bounds)) { 
 					addToSelection(o);
-				} else removeFromSelection(o);
+				} else if(o.isSelected()) removeFromSelection(o);
 			}
 		} else { //Resizing, so resize child objects too
 			//Scale all selected objects in x and y direction			

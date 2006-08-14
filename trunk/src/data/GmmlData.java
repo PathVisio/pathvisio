@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -27,6 +28,7 @@ import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
+
 
 /**
 *	This class handles GMML file IO and keeps a JDOM representation of the GMML document
@@ -66,8 +68,6 @@ public class GmmlData
 	 */
 	public GmmlData(GmmlDrawing drawing) 
 	{
-		GmmlVisionWindow window = GmmlVision.getWindow();
-		this.drawing = drawing;
 		doc = new Document();
 		//Set the root element (pathway) and its graphics
 		Element root = new Element("Pathway");
@@ -75,12 +75,15 @@ public class GmmlData
 		root.addContent(graphics);
 		root.addContent(new Element("InfoBox"));
 		doc.setRootElement(root);
-		GmmlMappInfo mpi = new GmmlMappInfo(drawing, root);
+		
+		this.drawing = drawing;
+		GmmlVisionWindow window = GmmlVision.getWindow();
+		GmmlMappInfo mpi = new GmmlMappInfo(drawing, doc.getRootElement());		
 		mpi.setBoardSize(window.sc.getSize());
 		mpi.setWindowSize(window.getShell().getSize());
 		mpi.setName("New Pathway");
 	}
-	
+		
 	/**
 	 * Constructor for this class, opens a gmml pathway and adds its elements to the drawing
 	 * @param file		String pointing to the gmml file to open
@@ -88,46 +91,22 @@ public class GmmlData
 	 */
 	public GmmlData(String file, GmmlDrawing drawing) throws Exception
 	{
-		// Initialize systemcode mappings
-		initSysName2Code();
 		// Create the drawing
 		this.drawing = drawing;
 		// Start XML processing
 		GmmlVision.log.info("Start reading the Gmml file: " + file);
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
-		try
-		{
-			xmlFile = new File(file);
-			// build JDOM tree
-			doc = builder.build(xmlFile);
-			// Validate the JDOM document
-			validateDocument(doc);
-			// Copy the pathway information to a GmmlDrawing
-			toGmmlGraphics();
-		}
-		catch(JDOMParseException pe) 
-		{
-			throw new Exception("Parse error: " + pe.getMessage());
-		}
-		catch(JDOMException e)
-		{
-			throw new Exception("JDOM exception: " + e.getMessage());
-		}
+
+		xmlFile = new File(file);
+		readFromXml(xmlFile);
+		// build JDOM tree
+		// Validate the JDOM document
+		validateDocument(doc);
+		// Copy the pathway information to a GmmlDrawing
+		toGmmlGraphics();
 	}
 	
-	/**
-	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
-	 * and system code
-	 */
-	private static HashMap<String, String> initSysName2Code()
-	{
-		HashMap<String, String> sn2c = new HashMap<String,String>();
-		for(int i = 0; i < systemNames.length; i++)
-			sn2c.put(systemNames[i], systemCodes[i]);
-		return sn2c;
-	}
-
 	/**
 	 * Method to get the private property drawing
 	 * @return drawing
@@ -237,6 +216,55 @@ public class GmmlData
 		}
 	}
 	
+	public void readFromXml(File file)
+	{
+		// Start XML processing
+		GmmlVision.log.info("Start reading the XML file: " + file);
+		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
+		// try to read the file; if an error occurs, catch the exception and print feedback
+		try
+		{
+			// build JDOM tree
+			doc = builder.build(file);
+		}
+		catch(JDOMParseException pe) 
+		{
+			 GmmlVision.log.error(pe.getMessage());
+		}
+		catch(JDOMException e)
+		{
+			GmmlVision.log.error(file + " is invalid.");
+			GmmlVision.log.error(e.getMessage());
+		}
+		catch(IOException e)
+		{
+			GmmlVision.log.error("Could not access " + file);
+			GmmlVision.log.error(e.getMessage());
+		}
+	}
+	
+	public void readFromMapp (File file) throws ConverterException
+	{
+        String inputString = file.getAbsolutePath();
+
+        String[][] mappObjects = MappFile.importMAPPObjects(inputString);
+        String[][] mappInfo = MappFile.importMAPPInfo(inputString);
+
+        // Copy the info table to the new gmml pathway
+        
+        // Copy the objects table to the new gmml pahtway
+    	MappToGmml.copyMappInfo(mappInfo, doc);
+        MappToGmml.copyMappObjects(mappObjects, doc);        	
+	}
+	
+	public void writeToMapp (File file) throws ConverterException
+	{
+		String[][] mappInfo = MappToGmml.uncopyMappInfo (doc);
+		List mappObjects = MappToGmml.uncopyMappObjects (doc);
+		
+		MappFile.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);		
+	}
+	
 	public final static String[] systemCodes = new String[] 	{ 
 		"D", "F", "G", "I", "L", "M",
 		"Q", "R", "S", "T", "U",
@@ -253,5 +281,16 @@ public class GmmlData
 	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
 	 */
 	public static final HashMap<String,String> sysName2Code = initSysName2Code();
-	
+
+	/**
+	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
+	 * and system code
+	 */
+	private static HashMap<String, String> initSysName2Code()
+	{
+		HashMap<String, String> sn2c = new HashMap<String,String>();
+		for(int i = 0; i < systemNames.length; i++)
+			sn2c.put(systemNames[i], systemCodes[i]);
+		return sn2c;
+	}
 }

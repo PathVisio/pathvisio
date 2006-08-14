@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import data.GmmlData;
+
 import util.TableColumnResizer;
 
 public class GmmlPropertyTable extends Composite {
@@ -78,6 +80,9 @@ public class GmmlPropertyTable extends Composite {
 		STRING, STRING, STRING, STRING, STRING, STRING, STRING, STRING,
 		STRING, STRING, TYPE, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER
 	};
+	
+	//System names converted to arraylist for easy index lookup
+	final static List<String> systemNames = Arrays.asList(GmmlData.systemNames);
 	
 	Hashtable typeMappings;
 	
@@ -148,7 +153,7 @@ public class GmmlPropertyTable extends Composite {
 			}
 			else if (key.equals("GeneProduct-Data-Source"))
 			{
-				types = (String[])GmmlGeneProduct.dataSources.toArray();
+				types = (String[])systemNames.toArray();
 			}
 			else
 			{
@@ -192,7 +197,7 @@ public class GmmlPropertyTable extends Composite {
 				case ORIENTATION:
 				case TYPE: 
 					if (key.equals("GeneProduct-Data-Source"))
-						return GmmlGeneProduct.dataSources.indexOf((String)value);
+						return systemNames.indexOf((String)value);
 					else if (g instanceof GmmlMappInfo || g instanceof GmmlGeneProduct)
 						return (String)value;
 					else
@@ -216,7 +221,7 @@ public class GmmlPropertyTable extends Composite {
 			case TYPE:
 				if(key.equals("GeneProduct-Data-Source")) {
 					if((Integer)value == -1) return; //Nothing selected
-					value = (String)GmmlGeneProduct.dataSources.get((Integer)value);
+					value = (String)systemNames.get((Integer)value);
 				}
 			}
 			

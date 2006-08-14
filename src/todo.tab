@@ -5,7 +5,7 @@ GMML format	Update XML schema to include keys for all elements	Martijn	3.1	high
 GMML format	Modify converter to convert to new schema, generate default keys	Martijn	3.2	high					
 GMML format	Modify gmml reader-writer to use new format. Possibly in a new branch?	Martijn	3.3	high					
 gmml visualization	add graphical representation for all supported GMML objects	Martijn	4.1	medium					
-gmml visualization	use rotation field (add rotation handle)	Martijn	4.2	medium					
+gmml visualization	use rotation field (add rotation handle)	Thomas	4.2	medium				done	
 gmml visualization	standarize fill and line color	Martijn	4.3	medium					
 editor	copy/paste of gmml objects, within program and outside program (as gmml)	Martijn	5.1	medium					
 editor	copy/paste as vector graphics	Martijn	5.2	low					
@@ -21,8 +21,8 @@ user preferences	Create general class + file to store user preferences (director
 user preferences	Create UI for editing preferences	Thomas	2	high				done	
 editor	GMML from scratch (valid)	Thomas	3	high				done, however gmml not valid yet	
 legend	Legend to sidepanel	Thomas	4	medium				done	
-editor	multi-select: add resize handles to selectionbox	Thomas	5	low					
-editor	multi-select by pressing CTRL	Thomas	5	medium					
+editor	multi-select: add resize handles to selectionbox	Thomas	5	low				done	
+editor	multi-select by pressing CTRL	Thomas	5	medium				done	
 help	help as wiki-page (public), to open from help menu	Thomas	6	high					
 test	user test: edit mapp, visualize data from tab-delimited text file	Thomas	7	medium					end of september
 drawing	align to gird	Thomas	8	medium					
@@ -113,7 +113,7 @@ gex builder	create ui window for gex import	Thomas						done
 gui	add imageregistry for managing icons	Thomas						done	
 colorset	add error messages to color by criteria	Thomas						done	
 drawing	add delete function for graphics objects	Thomas 		medium				done	
-editor	handles on corners of drawing objects, no handle in center		1	low					
+editor	handles on corners of drawing objects, no handle in center		1	low				done	
 visualization	formalize API for visualization classes: plugin structure		1	medium					"3 visualization types: tooltip, drawing, sidepanel; choose and setup via colorset dialog"
 editor	scroll when moving object out of display		2	low					
 visualization	Add visualization plugin to add expression value(s) next to genebox		2	medium					

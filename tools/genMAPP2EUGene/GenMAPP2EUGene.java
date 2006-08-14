@@ -136,11 +136,11 @@ public class GenMAPP2EUGene {
 				 return;
 			}
 			 //Print the data
-			 out.println("//PATHWAY_NAME: " + name);
-			 out.println("//PATHWAY_SOURCE: GenMAPP");
-			 out.println("//PATHWAY_MARKER: " + euGeneSystem);
+			 out.println("//PATHWAY_NAME = " + name);
+			 out.println("//PATHWAY_SOURCE = GenMAPP");
+			 out.println("//PATHWAY_MARKER = " + euGeneSystem);
 			 if(missedGenes.length() > 0) out.println("//GENES_NOT_CONVERTED (id, systemcode):" + missedGenes );
-			 out.println(geneString);
+			 out.print(geneString);
 			
 			 out.close();
 		 }

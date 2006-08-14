@@ -253,7 +253,7 @@ PaintListener, MouseTrackListener, KeyListener
 			if(!tip.isDisposed()) tip.dispose();
 		}
 		// If draggin, drag the pressed object
-		if (isDragging)
+		if (pressedObject != null && isDragging)
 		{
 			pressedObject.moveBy(e.x - previousX, e.y - previousY);
 			
@@ -487,16 +487,29 @@ PaintListener, MouseTrackListener, KeyListener
 			{
 				((GmmlHandle)pressedObject).parent.select();
 			}
-			// if we click on an object outside the selection
-			else if(!pressedObject.isSelected())
+			//Ctrl pressed, add/remove from selection
+			else if(ctrlPressed) 
 			{
-				// clear the selection if CTRL isn't pressed
-				if(!ctrlPressed) clearSelection();
-				s.addToSelection(pressedObject);
-			
-			} else {
-				// object is already selected, deselect if CTRL is pressed
-				if(ctrlPressed) s.removeFromSelection(p2d);
+				if(pressedObject instanceof GmmlSelectionBox) {
+					//Object inside selectionbox clicked, pass to selectionbox
+					s.selectionClicked(p2d);
+				}
+				else if(pressedObject.isSelected()) { //Already in selection: remove
+					s.removeFromSelection(pressedObject);
+				} else {
+					s.addToSelection(pressedObject); //Not in selection: add
+				}
+				pressedObject = null; //Disable dragging
+			} 
+			else //Ctrl not pressed
+			{
+				//If pressedobject is not selectionbox:
+				//Clear current selection and select pressed object
+				if(!(pressedObject instanceof GmmlSelectionBox))
+				{
+					clearSelection();
+					pressedObject.select();
+				}
 			}
 			
 			// start dragging

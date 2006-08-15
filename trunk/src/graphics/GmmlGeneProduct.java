@@ -131,6 +131,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 			jdomElement.setAttribute("Name", name);
 			jdomElement.setAttribute("BackpageHead", backpageHead);
 			jdomElement.setAttribute("Notes", notes);
+			jdomElement.setAttribute("GeneProduct-Data-Source", geneProductDataSource);
 			Element jdomGraphics = jdomElement.getChild("Graphics");
 			if(jdomGraphics !=null) {
 				jdomGraphics.setAttribute("CenterX", Integer.toString(getCenterX() * GmmlData.GMMLZOOM));

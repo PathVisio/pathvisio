@@ -508,7 +508,7 @@ PaintListener, MouseTrackListener, KeyListener
 				if(!(pressedObject instanceof GmmlSelectionBox))
 				{
 					clearSelection();
-					pressedObject.select();
+					s.addToSelection(pressedObject);
 				}
 			}
 			

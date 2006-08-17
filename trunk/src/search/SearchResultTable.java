@@ -38,15 +38,13 @@ import util.TableColumnResizer;
  * displayed
  */
 public class SearchResultTable extends Composite {
-	private GmmlVisionWindow gmmlVision;
 	private TableViewer tableViewer;
 	private TableColumnResizer columnResizer;
 	private Display display;
 	
-	public SearchResultTable(Composite parent, int style, GmmlVisionWindow gmmlVision) {
+	public SearchResultTable(Composite parent, int style) {
 		super(parent, SWT.NULL);
 		display = getShell().getDisplay();
-		this.gmmlVision = gmmlVision;
 
 		createContents();
 	}

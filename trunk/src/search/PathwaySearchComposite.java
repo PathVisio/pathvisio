@@ -99,8 +99,7 @@ public class PathwaySearchComposite extends Composite {
 		group.setText("Results");
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 		group.setLayout(new FillLayout());
-		searchResultTable = new SearchResultTable(group,
-				SWT.NULL, gmmlVision);
+		searchResultTable = new SearchResultTable(group, SWT.NULL);
 		
 	}
 	

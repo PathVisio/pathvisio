@@ -47,6 +47,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import R.RController;
+
 import preferences.GmmlPreferenceManager;
 import search.PathwaySearchComposite;
 import colorSet.ColorSetWindow;
@@ -430,7 +432,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		}
 		
 		public void run() {
-			if(GmmlGdb.isConnected())
+			if(!GmmlGdb.isConnected())
 			{
 				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
 						"select gene database before creating a new expression dataset");
@@ -613,6 +615,26 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 	private AboutAction aboutAction = new AboutAction(this);
 	
 	/**
+	 * {@link Action} to open the R-interface dialog
+	 */
+	private class RAction extends Action
+	{
+		GmmlVisionWindow window;
+		public RAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText("Pathway &statistics@Ctrl+R");
+		}
+		
+		public void run() {
+			RController rc = new RController(getShell());
+			if(rc.startR()) rc.open();
+		}
+	}
+	private RAction rAction = new RAction(this);
+	
+	
+	/**
 	 * String displayed in the colorset combo when no colorset is selected
 	 */
 	final static String COMBO_NO_COLORSET = "No colorset";
@@ -661,7 +683,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			else
 			{
 				GmmlGex.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1);
-				if(GmmlGdb.isConnected())
+				if(!GmmlGdb.isConnected())
 				{
 					MessageDialog.openWarning(getShell(), "Warning", "No gene database selected");
 				}
@@ -1171,6 +1193,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		dataMenu.add(selectGexAction);
 		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);
+		dataMenu.add(rAction);
 		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
 		convertMenu.add(convertGexAction);
 		convertMenu.add(convertGdbAction);

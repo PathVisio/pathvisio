@@ -509,6 +509,8 @@ PaintListener, MouseTrackListener, KeyListener
 				{
 					clearSelection();
 					s.addToSelection(pressedObject);
+				} else { //Check if clicked object inside selectionbox
+					if(s.getChild(p2d) == null) clearSelection();
 				}
 			}
 			

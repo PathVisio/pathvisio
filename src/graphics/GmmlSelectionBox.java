@@ -59,20 +59,31 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	}
 	
 	/**
-	 * Removes the object at the given coördinates from the selection
-	 * (if exists and is selected)
+	 * Get the child object at the given coordinates (relative to canvas)
 	 * @param p
+	 * @return the child object or null if none is present at the given location
 	 */
-	public void selectionClicked(Point2D p) {
+	public GmmlDrawingObject getChild(Point2D p) {
 		GmmlDrawingObject clicked = null;
 		for(GmmlDrawingObject o : selection) {
 			if(o.isContain(p)) clicked = o;
 		}
-		if(clicked.isSelected()) //Object is selected, remove
+		return clicked;
+	}
+	
+	/**
+	 * Removes the object at the given coï¿½rdinates from the selection
+	 * (if exists and is selected)
+	 * @param p
+	 */
+	public void selectionClicked(Point2D p) {
+		GmmlDrawingObject clicked = getChild(p);
+		if(clicked == null) return; //Nothing clicked
+		if(clicked.isSelected()) 	//Object is selected, remove
 		{
 			removeFromSelection(clicked);
 		} 
-		else //Object is not selected, add
+		else 						//Object is not selected, add
 		{
 			addToSelection(clicked);
 		}
@@ -94,7 +105,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	/**
 	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
-	 * to specified start coördinates
+	 * to specified start coï¿½rdinates
 	 */
 	public void reset(double startX, double startY) {
 		markDirty();

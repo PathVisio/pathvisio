@@ -1,6 +1,5 @@
 package graphics;
 
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
@@ -9,7 +8,6 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Transform;
 
 import util.LinAlg;
 import util.LinAlg.Point;

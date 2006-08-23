@@ -2,10 +2,6 @@ package R;
 
 import gmmlVision.GmmlVision;
 
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -14,7 +10,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
@@ -24,8 +19,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
-
-import sun.nio.ch.SocketOpts.IP;
 
 public class RController extends ApplicationWindow implements RMainLoopCallbacks {
 	Rengine re;
@@ -42,7 +35,6 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	
 	public RController(Shell shell) {		
 		super(shell);
-		Rengine.DEBUG = 1;
 	}
 	
 	public Composite createContents(Composite parent) {
@@ -69,8 +61,12 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	
 	public int open() {
 		int o = super.open();
-		re.addMainLoopCallbacks(this);
-		re.startMainLoop();
+//		re.addMainLoopCallbacks(this);
+//		re.startMainLoop();
+		
+		//Test some stuff
+		System.out.println(re.eval("source('prompt.r')"));
+		
 		return o;
 	}
 	
@@ -109,7 +105,6 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 		if(re != null) {
 //			re.end();
 			re.eval("q(save = 'no')");
-//			re.rniStop(0);
 		}
 	}
 	

@@ -1,7 +1,6 @@
 package search;
 
 import gmmlVision.GmmlVision;
-import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 import graphics.GmmlDrawingObject;
 import graphics.GmmlGeneProduct;

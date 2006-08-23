@@ -2,16 +2,16 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=GMML-Vision
-AppVerName=GMML-Vision beta
+AppName=Gmml-Visio
+AppVerName=Gmml-Visio beta
 AppPublisher=BiGCaT group, University of Maastricht
 AppPublisherURL=http://www.genmapp.org
 AppSupportURL=http://www.genmapp.org
 AppUpdatesURL=http://www.genmapp.org
-DefaultDirName={pf}\GMML-Vision
-DefaultGroupName=GMML-Vision
+DefaultDirName={pf}\Gmml-Visio
+DefaultGroupName=Gmml-Visio
 AllowNoIcons=yes
-OutputBaseFilename=GMML-Vision-Setup
+OutputBaseFilename=Gmml-Visio-Setup
 Compression=lzma
 SolidCompression=yes
 OutputDir=dist
@@ -26,12 +26,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "gmml-visio.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "gmml-visio.jar"; DestDir: "{app}"; Flags: ignoreversion
-Source: "swt-win32-3139.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "images\protein.bmp"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "images\logo.jpg"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "images\logo-fullsize.png"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "images\logo-tiny.jpg"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "images\mRNA.bmp"; DestDir: "{app}\images"; Flags: ignoreversion
+Source: "icons\minimize.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
+Source: "icons\close.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\select.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\colorset.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\edit.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
@@ -59,18 +60,23 @@ Source: "icons\save.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\sample_checked.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "icons\sample_unchecked.gif"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "backpage\header.html"; DestDir: "{app}\backpage"; Flags: ignoreversion
-Source: "lib\swt.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "lib\hsqldb.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "lib\jdom.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "lib\org.eclipse.core.runtime_3.1.2.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "lib\org.eclipse.jface_3.1.1.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\JRI.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\jri.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\org.eclipse.swt_3.2.0.v3232o.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\org.eclipse.jface_3.2.0.I20060605-1400.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\org.eclipse.core.commands_3.2.0.I20060605-1400.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "lib\org.eclipse.equinox.common_3.2.0.v20060603.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "swt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\GMML-Vision"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"
-Name: "{group}\{cm:UninstallProgram,GMML-Vision}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\GMML-Vision"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{group}\Gmml-Visio"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"
+Name: "{group}\{cm:UninstallProgram,Gmml-Visio}"; Filename: "{uninstallexe}"
+Name: "{userdesktop}\Gmml-Visio"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\gmml-visio.exe"; Description: "{cm:LaunchProgram,GMML-Vision}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\gmml-visio.exe"; Description: "{cm:LaunchProgram,Gmml-Visio}"; Flags: nowait postinstall skipifsilent
 

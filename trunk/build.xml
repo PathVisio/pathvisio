@@ -9,10 +9,13 @@
 	<property name="exec.inno.setup" value="iscc"/>
 	
 	<path id="project.class.path">
-		<pathelement location="lib/swt.jar"/>
+		<pathelement location="lib/org.eclipse.swt_3.2.0.v3232o.jar"/>
+		<pathelement location="lib/org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar"/>
 		<pathelement location="lib/jdom.jar"/>
-		<pathelement location="lib/org.eclipse.core.runtime_3.1.2.jar"/>
-		<pathelement location="lib/org.eclipse.jface_3.1.1.jar"/>
+		<pathelement location="lib/JRI.jar"/>
+		<pathelement location="lib/org.eclipse.core.commands_3.2.0.I20060605-1400.jar"/>
+		<pathelement location="lib/org.eclipse.equinox.common_3.2.0.v20060603.jar"/>
+		<pathelement location="lib/org.eclipse.jface_3.2.0.I20060605-1400.jar"/>
 		<pathelement location="lib/hsqldb.jar"/>
 	</path>
 	
@@ -70,7 +73,8 @@
 			<fileset dir="." includes="images/*"/>
 			<fileset dir="." includes="lib/*"/>
 			<fileset dir="." includes="gmml-visio.jar"/>
-			<fileset dir="." includes="swt-win32-3139.dll"/>
+			<fileset dir="." includes="swt-win32-3232.dll"/>
+			<fileset dir="." includes="jri.dll"/>
 			<fileset dir="." includes="gmml-visio.exe"/>
 		</zip>
 
@@ -78,8 +82,8 @@
 		<exec executable="${exec.inno.setup}">
 			<arg line="gmml-visio.iss"/>
 		</exec>		
-		<move file="${dist.dir}/GMML-Vision-Setup.exe" 
-			tofile="${dist.dir}/GMML-Vision-Setup.${subversion_revision}.exe" 
+		<move file="${dist.dir}/GMML-Visio-Setup.exe" 
+			tofile="${dist.dir}/GMML-Visio-Setup.${subversion_revision}.exe" 
 			overwrite="true"/>			
 	</target>
 	

@@ -47,10 +47,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
-import R.RController;
-
 import preferences.GmmlPreferenceManager;
 import search.PathwaySearchComposite;
+import R.RController;
 import colorSet.ColorSetWindow;
 import data.GmmlData;
 import data.GmmlGdb;
@@ -1264,7 +1263,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
 		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL);
 		
-		rightPanel.addTab(bpBrowser, "Backpage");
+		rightPanel.addTab(bpBrowser, "Visualization");
 		rightPanel.addTab(propertyTable, "Properties");
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
@@ -1318,7 +1317,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			drawing.setSize(drawing.getMappInfo().getBoardSize());
 			if(GmmlGex.isConnected()) { 
 				cacheExpressionData();
-				if(!colorSetCombo.isDisposed())
+				if(colorSetCombo != null && !colorSetCombo.isDisposed())
 					GmmlGex.setColorSetIndex(colorSetCombo.getSelectionIndex() - 1); //-1 because the first item is "no colorset"
 			}
 		}

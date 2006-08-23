@@ -1,9 +1,7 @@
 package graphics;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D;
 
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;

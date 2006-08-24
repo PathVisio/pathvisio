@@ -74,6 +74,9 @@
 			<fileset dir="." includes="lib/*"/>
 			<fileset dir="." includes="gmml-visio.jar"/>
 			<fileset dir="." includes="swt-win32-3232.dll"/>
+			<fileset dir="." includes="swt-awt-win32-3232.dll"/>
+			<fileset dir="." includes="swt-wgl-win32-3232.dll"/>
+			<fileset dir="." includes="gdiplus.dll"/>
 			<fileset dir="." includes="jri.dll"/>
 			<fileset dir="." includes="gmml-visio.exe"/>
 		</zip>

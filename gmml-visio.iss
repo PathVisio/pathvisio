@@ -26,6 +26,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "gmml-visio.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "gmml-visio.jar"; DestDir: "{app}"; Flags: ignoreversion
+Source: "swt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "swt-awt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "swt-gdip-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "swt-wgl-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "gdiplus.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "images\protein.bmp"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "images\logo.jpg"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "images\logo-fullsize.png"; DestDir: "{app}\images"; Flags: ignoreversion
@@ -69,7 +74,6 @@ Source: "lib\org.eclipse.swt_3.2.0.v3232o.jar"; DestDir: "{app}\lib"; Flags: ign
 Source: "lib\org.eclipse.jface_3.2.0.I20060605-1400.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "lib\org.eclipse.core.commands_3.2.0.I20060605-1400.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "lib\org.eclipse.equinox.common_3.2.0.v20060603.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "swt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

@@ -424,6 +424,7 @@ PaintListener, MouseTrackListener, KeyListener
 		Point2D p = new Point2D.Double(e.x, e.y);
 		GmmlDrawingObject obj = null;
 		Collections.sort(drawingObjects);
+		Collections.reverse(drawingObjects);
 		for (GmmlDrawingObject o : drawingObjects)
 		{
 			if (o.isContain(p))

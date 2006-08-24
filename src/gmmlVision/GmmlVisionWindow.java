@@ -1263,7 +1263,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
 		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL);
 		
-		rightPanel.addTab(bpBrowser, "Visualization");
+		rightPanel.addTab(bpBrowser, "Backpage");
 		rightPanel.addTab(propertyTable, "Properties");
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");

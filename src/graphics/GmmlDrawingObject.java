@@ -200,11 +200,11 @@ public abstract class GmmlDrawingObject implements Comparable
 		if(isSelected() && d.isSelected()) {
 			; //objects are both selected, keep original sort order
 		}
-		else if(isSelected())
+		else if(isSelected() || isHighlighted())
 		{
 			az = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}
-		else if(d.isSelected())
+		else if(d.isSelected() || d.isHighlighted())
 		{
 			bz = GmmlDrawing.DRAW_ORDER_SELECTED;
 		}

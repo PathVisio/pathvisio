@@ -19,6 +19,8 @@ limitations under the License.
 
 import gmmlVision.GmmlVision;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -159,6 +161,8 @@ public class GmmlLabel extends GmmlGraphicsShape
 		Font f = new Font(canvas.getDisplay(), fontName, fontSize, getFontStyle());
 		gc.setFont (f);
 		Point ts = gc.textExtent(text);
+		f.dispose();
+		gc.dispose();
 		
 		//Keep center location
 		double nWidth = ts.x + 10 * getDrawing().getZoomFactor();
@@ -171,8 +175,6 @@ public class GmmlLabel extends GmmlGraphicsShape
 		updateToPropItems();
 		
 		setHandleLocation();
-		f.dispose();
-		gc.dispose();
 	}
 	
 	/**
@@ -313,7 +315,22 @@ public class GmmlLabel extends GmmlGraphicsShape
 	{
 		draw(e, e.gc);
 	}
+	
+	protected Rectangle getBounds()
+	{
+		Rectangle bounds = getOutline().getBounds();
+		GC gc = new GC(canvas);
+		Font f = new Font(canvas.getDisplay(), fontName, fontSize, getFontStyle());
+		gc.setFont (f);
+		org.eclipse.swt.graphics.Point p = gc.textExtent(text);
+		util.LinAlg.Point c = getCenter();
+		bounds.add(new Rectangle2D.Double(c.x - p.x/2, c.y - p.y/2, p.x, p.y));
 		
+		gc.dispose();
+		f.dispose();
+		return bounds;
+	}
+	
 	public List getAttributes() {
 		return attributes;
 	}

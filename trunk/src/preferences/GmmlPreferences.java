@@ -61,10 +61,12 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 		if(e.getProperty().equals("colors.selectColor")) { 
 			if(e.getNewValue() instanceof RGB) GmmlGraphics.selectColor = (RGB)e.getNewValue();
 			else GmmlGraphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
+			GmmlVision.getDrawing().redraw();
 		}
 		else if(e.getProperty().equals("colors.highlightColor")) {
 			if(e.getNewValue() instanceof RGB) GmmlGraphics.highlightColor = (RGB)e.getNewValue();
 			else GmmlGraphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
+			GmmlVision.getDrawing().redraw();
 		}
 	}
 	

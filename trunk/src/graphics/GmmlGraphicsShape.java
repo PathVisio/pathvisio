@@ -456,6 +456,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 			org.eclipse.swt.graphics.Point p = gc.textExtent(((GmmlLabel)this).text);
 			Point c = getCenter();
 			bounds.add(new Rectangle2D.Double(c.x - p.x/2, c.y - p.y/2, c.x + p.x/2, c.y + p.y/2)); 
+			gc.dispose();
 		}
 		return getOutline().getBounds();
 	}

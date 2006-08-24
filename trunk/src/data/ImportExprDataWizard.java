@@ -327,8 +327,8 @@ public class ImportExprDataWizard extends Wizard {
 
 			Label columnLabel = new Label(composite, SWT.FLAT | SWT.WRAP);
 			columnLabel
-					.setText("Select the columns containing data that should not be treated"
-							+ "as numeric from the list below");
+					.setText("Select the columns containing data that should NOT be treated"
+							+ " as NUMERIC from the list below");
 
 			columnList = new List(composite, SWT.BORDER | SWT.MULTI
 					| SWT.V_SCROLL);
@@ -459,7 +459,7 @@ public class ImportExprDataWizard extends Wizard {
 					+ Text.DELIMITER);
 			progressText
 					.append("> If this is not the correct gene database, close this window"
-							+ " and change the gene database in the menu 'data' -> 'choose gene database'");
+							+ " and change the gene database in the menu 'data' -> 'choose gene database\n'");
 			setControl(composite);
 		}
 

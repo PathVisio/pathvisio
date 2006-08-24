@@ -317,9 +317,9 @@ public class ColorSetWindow extends ApplicationWindow {
 		if(csCombo.getSelectionIndex() > -1)
 		{
 			GmmlColorSet cs = GmmlGex.getColorSets().get(csCombo.getSelectionIndex());
+			GmmlGex.setColorSetIndex(csCombo.getSelectionIndex());
 			coTableViewer.setInput(cs);
 			setMiddleCompositeContents(cs);
-			legend.resetContents();
 		}
 		return parent;
 	}
@@ -697,7 +697,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	 * {@link GmmlColorGradient} or {@link GmmlColorCriterion}
 	 *  for which respectively {@link csComposite}, {@link cgComposite} or {@link ccComposite} is maximized
 	 */
-	public void setMiddleCompositeContents(Object element) {	
+	public void setMiddleCompositeContents(Object element) {
 		if(element == null) {
 			middleSash.setMaximizedControl(cnComposite);
 			legend.setVisible(false);
@@ -750,6 +750,8 @@ public class ColorSetWindow extends ApplicationWindow {
 			topSash.layout();
 			return;
 		}
+		
+		legend.resetContents();
 	}
 
 	/**
@@ -938,6 +940,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		cc.setName(ccNameText.getText());
 		cc.useSample = coSampleIndex.get(ccCombo.getSelectionIndex());
 		cc.setColor(ccColor.getRGB());
+		coTableViewer.refresh();
 		return true;
 	}
 	
@@ -948,6 +951,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	public void saveToGex()
 	{
 		GmmlGex.saveColorSets();
+		GmmlVision.getWindow().updateColorSetCombo();
 	}
 	/**
 	 * restores all colorsets from the expression database
@@ -1015,6 +1019,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			if(rc == Window.OK) {
 				GmmlColorSet cs = new GmmlColorSet(d.getValue());
 				GmmlGex.getColorSets().add(cs);
+				GmmlGex.setColorSet(cs);
 				csCombo.setItems(GmmlGex.getColorSetNames());
 				csCombo.select(GmmlGex.getColorSets().indexOf(cs));
 				coTableViewer.setInput(cs);

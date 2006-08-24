@@ -1092,13 +1092,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				colorSetCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 				colorSetCombo.setToolTipText("Select the colorset for coloring gene boxes");
 				colorSetCombo.addSelectionListener(new ColorSetComboListener());
-				String[] colorSets = GmmlGex.getColorSetNames();
-				if(colorSets != null) {
-					String[] comboItems = new String[colorSets.length + 1];
-					comboItems[0] = COMBO_NO_COLORSET;
-					System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
-					colorSetCombo.setItems(comboItems);
-				}
+				setColorSetComboItems();
 				colorSetCombo.pack();
 				return colorSetCombo;
 			}
@@ -1155,6 +1149,22 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		getCoolBarManager().update(true);
 	}
 
+	public void updateColorSetCombo() {
+		if(colorSetCombo == null || colorSetCombo.isDisposed()) return;
+		setColorSetComboItems();
+	}
+	
+	private void setColorSetComboItems() {
+		if(colorSetCombo == null || colorSetCombo.isDisposed()) return;
+		String[] colorSets = GmmlGex.getColorSetNames();
+		if(colorSets != null) {
+			String[] comboItems = new String[colorSets.length + 1];
+			comboItems[0] = COMBO_NO_COLORSET;
+			System.arraycopy(colorSets, 0, comboItems, 1, colorSets.length);
+			colorSetCombo.setItems(comboItems);
+		}
+	}
+	
 	protected StatusLineManager createStatusLineManager() {
 		return super.createStatusLineManager();
 	}

@@ -203,15 +203,17 @@ public class GmmlLegend extends ScrolledComposite {
 					
 					int stringSpace = drawArea.width - sampleArea.width;
 					
-					//If sample numbers don't fit, steal space from gene label if possible
-					Point sampleSize = gc.textExtent(Integer.toString(nr));
-					int sampleSpace = sampleArea.width / nr;
-					if(sampleSize.x > sampleSpace) { 		
-						if(stringSpace > stringSize.x) {
-							int steal = sampleSize.x * nr - sampleArea.width;
-							if(!(stringSpace - steal > stringSize.x)) steal = stringSpace - stringSize.x;
-							stringSpace -= steal;
-							sampleArea.width += steal;
+					if(nr > 0) {
+						//If sample numbers don't fit, steal space from gene label if possible
+						Point sampleSize = gc.textExtent(Integer.toString(nr));
+						int sampleSpace = sampleArea.width / nr;
+						if(sampleSize.x > sampleSpace) { 		
+							if(stringSpace > stringSize.x) {
+								int steal = sampleSize.x * nr - sampleArea.width;
+								if(!(stringSpace - steal > stringSize.x)) steal = stringSpace - stringSize.x;
+								stringSpace -= steal;
+								sampleArea.width += steal;
+							}
 						}
 					}
 										

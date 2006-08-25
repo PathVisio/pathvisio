@@ -4,6 +4,7 @@ import graphics.GmmlGeneProduct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
@@ -69,11 +70,22 @@ public class GmmlBpBrowser extends Composite {
 		String geneId = geneProduct.getId();
 		String systemCode = geneProduct.getSystemCode();
 		String bpText = GmmlGdb.getBpInfo(geneId, systemCode);
+		String crossRefText = getCrossRefText(geneId, systemCode);
 		String gexText = GmmlGex.getDataString(geneId, systemCode);
 		if (bpText != null) 	setGeneText(bpText);
 		else 					setGeneText("<I>No gene information found</I>");
-		if (gexText != null)	setGexText(gexText);
+		if (gexText != null)	setGexText(gexText + crossRefText);
 		else 					setGexText("<I>No expression data found</I>");
+		
+	}
+	
+	public String getCrossRefText(String id, String code) {
+		ArrayList<String> crfs = GmmlGdb.getCrossRefs(id, code);
+		if(crfs.size() == 0) return "";
+		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
+		for(Object cr : GmmlGdb.getCrossRefs(id, code))
+			crt.append(cr + "<br>");
+		return crt.toString();
 	}
 	
 	/**

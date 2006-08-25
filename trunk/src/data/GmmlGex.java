@@ -498,7 +498,7 @@ public abstract class GmmlGex {
 			}
 		}
 		
-		return exprInfo + colNames + dataString;
+		return exprInfo + colNames + dataString + "</TABLE>";
 	}
 	
 	/**

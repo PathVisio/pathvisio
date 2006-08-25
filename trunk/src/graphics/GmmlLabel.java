@@ -80,7 +80,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		super(canvas);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_LABEL;
 
-		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.getZoomFactor();
+		this.fontSizeDouble = INITIAL_FONTSIZE * canvas.getZoomFactor();
 		this.fontSize = (int)this.fontSizeDouble;
 	}
 	

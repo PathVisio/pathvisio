@@ -766,7 +766,7 @@ PaintListener, MouseTrackListener, KeyListener
 		if(e.keyCode == SWT.DEL) {
 			for(GmmlDrawingObject o : drawingObjects)
 			{
-				if(!o.isSelected()) continue; //Object not selected, skip
+				if(!o.isSelected() || o == s || o == mappInfo) continue; //Object not selected, skip
 				toRemove.add(o);
 				if(o instanceof GmmlGraphics) //Also add handles
 				{

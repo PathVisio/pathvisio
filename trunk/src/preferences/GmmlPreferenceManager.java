@@ -77,6 +77,10 @@ public class GmmlPreferenceManager extends PreferenceManager {
 			ColorFieldEditor f5 = new ColorFieldEditor("colors.highlightColor", 
 					"Line color for highlighted objects:", getFieldEditorParent());
 			addField(f5);
+			ColorFieldEditor f6 = new ColorFieldEditor("colors.ambigious_reporter", 
+					"Color for marking gene products with ambigious reporter:", getFieldEditorParent());
+			addField(f6);
+			
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package preferences;
 
 import gmmlVision.GmmlVision;
+import graphics.GmmlGpColor;
 import graphics.GmmlGraphics;
 
 import org.eclipse.jface.preference.PreferenceStore;
@@ -37,6 +38,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 		setDefault("colors.no_data_found", ColorConverter.getRgbString(NO_DATA_FOUND));
 		setDefault("colors.selectColor", ColorConverter.getRgbString(SELECTED));
 		setDefault("colors.highlightColor", ColorConverter.getRgbString(HIGHLIGHTED));
+		setDefault("colors.ambigious_reporter", ColorConverter.getRgbString(AMBIGIOUS_REP));
 		setDefault("currentGdb", CURRENT_GDB);
 		setDefault("display.sidePanelSize", SIDEPANEL_SIZE);
 		
@@ -68,6 +70,11 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 			else GmmlGraphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
+		else if(e.getProperty().equals("colors.ambigious_reporter")) {
+			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();
+			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
+			GmmlVision.getDrawing().redraw();
+		}
 	}
 	
 	// Defaults
@@ -80,6 +87,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	static RGB NO_DATA_FOUND = new RGB(100, 100, 100);
 	static RGB SELECTED = new RGB(255, 0, 0);
 	static RGB HIGHLIGHTED = new RGB(0, 255, 0);
+	static RGB AMBIGIOUS_REP = new RGB(0, 0, 255);
 	
 	// current gene database
 	static String CURRENT_GDB = "none";

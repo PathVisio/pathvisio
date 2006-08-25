@@ -74,7 +74,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 				
 		gpColor = new GmmlGpColor(this);
 		
-		this.fontSizeDouble = INITIAL_FONTSIZE / canvas.getZoomFactor();
+		this.fontSizeDouble = INITIAL_FONTSIZE * canvas.getZoomFactor();
 		this.fontSize = (int)this.fontSizeDouble;
 	}
 	

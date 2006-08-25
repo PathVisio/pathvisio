@@ -20,6 +20,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
+import preferences.GmmlPreferences;
+
 import util.SwtUtils;
 import colorSet.GmmlColorSet;
 import data.GmmlGdb;
@@ -27,7 +29,8 @@ import data.GmmlGex;
 import data.GmmlGex.CachedData.Data;
 
 public class GmmlGpColor {
-		
+	public static RGB color_ambigious = GmmlPreferences.getColorProperty("colors.ambigious_reporter");
+	
 	GmmlGeneProduct parent;
 	
 	public ArrayList ensIds;
@@ -84,7 +87,7 @@ public class GmmlGpColor {
 		GmmlColorSet cs = (GmmlColorSet)GmmlGex.getColorSets().get(GmmlGex.getColorSetIndex());
 		
 		int nr = cs.useSamples.size();
-		int width = colorArea.width / nr;
+		int width = nr > 0 ? colorArea.width / nr : colorArea.width;
 		for(int i = 0; i < nr; i++)
 		{
 			int idSample = cs.useSamples.get(i).idSample; // The sample to visualize
@@ -119,19 +122,23 @@ public class GmmlGpColor {
 		
 		Rectangle r = parent.getBounds();
 		
+		//Mark ambigious reporters
 		if(mappIdData.hasMultipleData())
 		{
 			org.eclipse.swt.graphics.Rectangle clip = buffer.getClipping();
 			Region noClipping = null;
 			buffer.setClipping(noClipping);
 			
-			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
+			Color c = new Color(e.display, color_ambigious);
+			buffer.setForeground(c);
 			int oldLineWidth = buffer.getLineWidth();
 			buffer.setLineWidth(1);
 			buffer.drawRectangle(r.x + 1, r.y + 1, r.width - 2, r.height - 2);
 			buffer.setLineWidth(oldLineWidth);
 			
 			buffer.setClipping(clip);
+			
+			c.dispose();
 		}
 	}
 	
@@ -195,7 +202,9 @@ public class GmmlGpColor {
 			// Adjust width to enable to divide into nrSamples equal rectangles
 			GmmlColorSet cs = (GmmlColorSet)GmmlGex.getColorSets().get(colorSetIndex);
 			colorArea.width = (int)(COLOR_AREA_RATIO * colorArea.width);
-			colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
+			if(cs.useSamples.size() > 0) {
+				colorArea.width += cs.useSamples.size() - colorArea.width % cs.useSamples.size();
+			}
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			

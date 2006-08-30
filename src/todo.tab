@@ -131,9 +131,13 @@ gdb	remove dependency on ENSEMBL Gene		8	medium
 editor	undo/redo, more sophisticated solution: only store objects that are changed		9	medium					
 visualization	export function to html/bmp/pdf		10	medium					
 gdb	gene database editor (e.g. To edit 'others' table)		11	medium					first look for generic hsqldb editor
-UI	MDI: open multiple pathways, by split-window button		12	medium					
+UI	Multiple documents: open multiple pathways, by split-window button		12	medium					
 help	internal help viewer		13	medium					look for standard solution in SWT
 statistics	Gmml from R: create API that can be called from R		14	medium					
 command line	batch mapping		15	low					
 command line	get version		16	low					
 command line	help		17	low					
+bug/misfeature	add new colorsetobject ON TOP	Thomas							
+bug/misfeature	automaticly add name for new gradient/criterion	Thomas							
+bug/misfeature	dropdownlist for new line: add normal line without dropdown	Thomas							
+bug/misfeature	special lineshape tops are not redrawn properly	Thomas							

@@ -1202,7 +1202,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		dataMenu.add(selectGexAction);
 		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);
-//		dataMenu.add(rAction);
+		dataMenu.add(rAction);
 		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
 		convertMenu.add(convertGexAction);
 		convertMenu.add(convertGdbAction);

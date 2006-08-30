@@ -2,6 +2,7 @@ package R;
 
 import gmmlVision.GmmlVision;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,10 +27,13 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	Text rInput;
 	boolean inputReady;
 	
+	static { Rengine.DEBUG = 1; }
+	
+	//NOTE: commandline arguments don't seem to work...
 	static final String[] rArgs = new String[] {
-		"--no-save", 		//Don't save .RData on quit
-		"--no-restore",		//Don't restore .RData on startup
-		"--quiet"			//Don't display copyright message
+		"--no-save", 			//Don't save .RData on quit
+		"--no-restore",			//Don't restore .RData on startup
+		"--quiet"				//Don't display copyright message
 	};
 	static final String ln = Text.DELIMITER; 
 	
@@ -41,7 +45,7 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 		Composite content = new Composite(parent, SWT.NULL);
 		content.setLayout(new GridLayout());
 		
-		rOutput = new Text(content, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER);
+		rOutput = new Text(content, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
 		GridData outGrid = new GridData(GridData.FILL_BOTH);
 		outGrid.heightHint = 200;
 		outGrid.widthHint = 300;
@@ -52,6 +56,11 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 		rInput.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if(e.keyCode == SWT.CR) inputReady = true;
+				if(e.keyCode == SWT.ALT) { //TEST
+					RData rdata = new RData(new File(
+						"/home/thomas/afstuderen/visio_data/pathways/test"), true);
+					rdata.doTest(re);
+				}
 			}
 		});
 		rInput.setFocus();
@@ -61,17 +70,15 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	
 	public int open() {
 		int o = super.open();
-//		re.addMainLoopCallbacks(this);
-//		re.startMainLoop();
 		
-		//Test some stuff
-		System.out.println(re.eval("source('prompt.r')"));
-		
+		rInput.setEnabled(false);
+		re.addMainLoopCallbacks(this);
+		re.startMainLoop();
+		rInput.setEnabled(true);
 		return o;
 	}
 	
 	public boolean close() {
-		System.out.println("closing");
 		endR();
 		return super.close();
 	}
@@ -102,32 +109,42 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	}
 	
 	public void endR() {
-		if(re != null) {
-//			re.end();
-			re.eval("q(save = 'no')");
+		if(re != null && re.isAlive()) {
+			setInput("q(save='no');");
+			while(re.isAlive()) {} //Wait for R to shutdown
 		}
 	}
 	
 	private void printConsole(final String line) {
-		if(rOutput == null || rOutput.isDisposed()) return;
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
+				if(rOutput == null || rOutput.isDisposed()) return;
 				rOutput.append(line);
 			}
 		});
 	}
 	
-	private String getInput() {
+	private void setInput(String input) {
+		altInput = input; 	//Results getInput() to return altInput
+		while(rBusy) { } 	//Wait until R processed the command
+	}
+	
+	String altInput;
+	synchronized private String getInput() {
 		final StringBuilder input = new StringBuilder();
 		while(!inputReady) { 
 			// Wait until user pressed RC key
-			if(re.isInterrupted()) { return ""; }//return if thread is interrupted
+			if(re.isInterrupted()) { return ""; } //return if thread is interrupted
+			if(altInput != null) { //process input passed programatically
+				String toReturn = new String(altInput);
+				altInput = null;
+				return toReturn;
+			}
 		}
 		
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				input.append(rInput.getText());
-				System.out.println(input);
 				rInput.setText("");
 			}
 		});
@@ -141,10 +158,13 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	
 	//LoopCallBack implementation
 	public void rWriteConsole(Rengine re, String msg) { 
+		GmmlVision.log.trace("R> " + msg);
 		printConsole(msg);
 	}
 	
+	boolean rBusy = false;
 	public void rBusy(Rengine re, int which) { 
+		rBusy = which == 1;
 		String msg = which == 0 ? "" : "Busy...\n";
 		printConsole(msg);
 	}

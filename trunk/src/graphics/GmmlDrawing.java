@@ -774,6 +774,7 @@ PaintListener, MouseTrackListener, KeyListener
 				}
 			}
 			removeDrawingObjects(toRemove);
+			s.fitToSelection();
 			redraw();
 		}
 		if(e.keyCode == SWT.HOME) {
@@ -792,8 +793,9 @@ PaintListener, MouseTrackListener, KeyListener
 	{
 		for(GmmlDrawingObject o : toRemove)
 		{
-			drawingObjects.remove(o);
-			if(o instanceof GmmlGraphics) {
+			drawingObjects.remove(o); //Remove from drawing
+			s.removeFromSelection(o); //Remove from selection
+			if(o instanceof GmmlGraphics) { //Remove from gmml document
 				Element e = ((GmmlGraphics)o).getJdomElement();
 				GmmlVision.getGmmlData().getDocument().getRootElement().removeContent(e);
 			}

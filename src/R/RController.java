@@ -58,7 +58,8 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 				if(e.keyCode == SWT.CR) inputReady = true;
 				if(e.keyCode == SWT.ALT) { //TEST
 					RData rdata = new RData(new File(
-						"/home/thomas/afstuderen/visio_data/pathways/test"), true);
+						"/home/thomas/afstuderen/visio_data/pathways/Hs_Contributed_20060605"), true);
+//				"D:\\Mijn Documenten\\Studie\\afstuderen\\visio_data\\pathways\\Hs_Contributed_20060605"), true);
 					rdata.doTest(re);
 				}
 			}
@@ -110,7 +111,7 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	
 	public void endR() {
 		if(re != null && re.isAlive()) {
-			setInput("q(save='no');");
+			re.interrupt();
 			while(re.isAlive()) {} //Wait for R to shutdown
 		}
 	}
@@ -159,6 +160,7 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	//LoopCallBack implementation
 	public void rWriteConsole(Rengine re, String msg) { 
 		GmmlVision.log.trace("R> " + msg);
+		System.err.println("R> " + msg);
 		printConsole(msg);
 	}
 	
@@ -179,6 +181,7 @@ public class RController extends ApplicationWindow implements RMainLoopCallbacks
 	}
 	
 	public void rShowMessage(Rengine re, String msg) {
+		GmmlVision.log.trace("R message: " + msg);
 		MessageDialog.openInformation(getShell(), "R message", msg);
 	}
 	

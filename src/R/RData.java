@@ -11,6 +11,8 @@ import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import R.RCommands.RException;
+
 import util.FileUtils;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
@@ -33,48 +35,49 @@ public class RData {
 	}
 	
 	public void doTest(Rengine re) {
-		//TEST:
-		// just send all the genes in the pathways to R and save workspace
+//		TEST:
+//		 just send all the genes in the pathways to R and save workspace
+		System.err.println("setting home directory");
 		re.eval("setwd('/home/thomas/afstuderen/code/gmml-visio/trunk/tools/GmmlVisio2R')");
+//		re.eval("setwd('D:/Mijn Documenten/Studie/afstuderen/code/gmml-visio/trunk/tools/GmmlVisio2R')");
+		System.err.println("sourcing source.r");
 		re.eval("source('source.r')");
 		long t = System.currentTimeMillis();
 		List<Pathway> pws = new ArrayList<Pathway>();
 		List<GeneProduct> gps = new ArrayList<GeneProduct>();
 		try {
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			for(File f : pwFiles) { 
-//				System.out.println("start " + f.getName());
+			for(File f : pwFiles) { ;
 				gps.clear();
-//				System.out.println("cleared gps");
 				PathwayParser p = new PathwayParser(xmlReader);
 				try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
 					GmmlVision.log.error("Couldn't read " + f, e); 
 					continue; 
 				}
-//				System.out.println("parsed file");
 				for(Gene g : p.getGenes()) {
-//					System.out.println("\t> processing gene " + g.getId());
 					gps.add(new GeneProduct(g.getId(), g.getCode()));
 				}
 				pws.add(new Pathway(p.getName(), f.getName(), gps));
-//				System.out.println("created pathway");
 			}
 		} catch(Exception e) { e.printStackTrace(); }
 		PathwaySet testPathwaySet = new PathwaySet("testset", pws);
-		testPathwaySet.toR(re, "testset");
+		try { testPathwaySet.toR(re, "testset"); }
+		catch(RException e) { e.printStackTrace(); }
 		System.out.println("Time: " + (System.currentTimeMillis() - t));
 //		re.eval("save(file='test.RData', list='testset')");
-//		re.eval("y");
+		
 	}
 	
 	abstract class RObject {
-		static final long NOREF = 0;
+		REXP rexp = null; //Cache REXP, leads to JNI errors!
 		
-		long ref = NOREF;
+		abstract REXP getREXP(Rengine re) throws RException;
 		
-		abstract long getRef(Rengine re);
+		long getRef(Rengine re) throws RException {
+	        return getREXP(re).xp;
+		}
 		
-		void toR(Rengine re, String symbol) {
+		void toR(Rengine re, String symbol) throws RException {
 			long ref = getRef(re);
 			re.rniAssign(symbol, ref, 0);
 		}
@@ -89,18 +92,17 @@ public class RData {
 			this.pathways = pathways;
 		}
 		
-		long getRef(Rengine re) {
-			if(ref != NOREF) return ref;
+		REXP getREXP(Rengine re) throws RException {
+//			if(rexp != null) return rexp;
+			
 			RCommands.assign(re, "tmpPws", pathways);
 			
-			REXP rexp = re.eval("PathwaySet('" + name + "', tmpPws)");
-	        ref = rexp.xp;
-	          
-			RCommands.rm(re, "tmpPws");
+			String cmd = "PathwaySet('" + name + "', tmpPws)";
+			rexp = RCommands.evalE(re, cmd);
 			
-			return ref;
-		}
-		
+			RCommands.rm(re, "tmpPws");
+			return rexp;
+		}	
 	}
 	
 	class Pathway extends RObject {
@@ -116,18 +118,16 @@ public class RData {
 		
 		void addGeneProduct(GeneProduct gp) { geneProducts.add(gp); }
 		
-		long getRef(Rengine re) {
-			if(ref != NOREF) return ref;
+		REXP getREXP(Rengine re) throws RException {
+//			if(rexp != null) return rexp;
+			
 			RCommands.assign(re, "tmpGps", geneProducts);
 			
-			REXP rexp = re.eval("Pathway('" + name + "','" + fileName + "', tmpGps)");
-	        ref = rexp.xp;
+			rexp = RCommands.evalE(re, "Pathway('" + name + "','" + fileName + "', tmpGps)");;
 	          
 			RCommands.rm(re, "tmpGps");
-			
-			return ref;
-		}
-		
+			return rexp;
+		}		
 	}
 	
 	class GeneProduct extends RObject {
@@ -149,24 +149,26 @@ public class RData {
 			codes.add(code);
 		}
 		
-		long getRef(Rengine re) {
-			if(ref != NOREF) return ref;
+		REXP getREXP(Rengine re) throws RException {
+//			if(rexp != null) { System.err.println("\t### REXP existed"); return rexp; }
+			
 			RCommands.assign(re, "tmpIds", ids.toArray(new String[ids.size()]));
 			RCommands.assign(re, "tmpCodes", codes.toArray(new String[codes.size()]));
 
-            REXP rexp = re.eval("GeneProduct(tmpIds, tmpCodes)");
-            ref = rexp.xp;
-			
+            rexp = RCommands.evalE(re, "GeneProduct(tmpIds, tmpCodes)");
 			RCommands.rm(re, new String[] { "tmpIds", "tmpCodes" });
-			return ref;
+			return rexp;
+		}
+		
+		public String toString() {
+			return "GeneProduct: " + ids + ", " + codes;
 		}
 	}
 	
 	class ResultSet extends RObject {
 
-		long getRef(Rengine re) {
-			return NOREF;
+		REXP getREXP(Rengine re) throws RException {
+			return null;
 		}
-		
-	}	
+	}
 }

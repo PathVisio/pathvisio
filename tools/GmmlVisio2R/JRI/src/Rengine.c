@@ -210,6 +210,28 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniRunMainLoop
       run_Rmainloop();
 }
 
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniCustomLoop
+  (JNIEnv *env, jobject this)
+{
+		printf("C: starting REPL loop\n");
+		jboolean interrupted = 0;
+
+		// Get the instance of the java Rengine, and the isInterrupted method
+		jclass cls = (*env)->GetObjectClass(env, this);
+		jmethodID mid = (*env)->GetMethodID(env, cls, "isInterrupted", "()Z");
+		if(mid == 0) {
+			return;
+		}
+		R_ReplDLLinit();
+		while(!interrupted) {
+			printf("C: not interrupted: iteration\n");
+			int state = R_ReplDLLdo1();
+		 	printf("C: checking interrupt");
+			interrupted = (*env)->CallBooleanMethod(env, this, mid, 1);
+		}
+		printf("C: Ending.....\n");
+}
+
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutString
 (JNIEnv *env, jobject this, jstring s)
 {

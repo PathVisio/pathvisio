@@ -90,7 +90,7 @@ public class MappFormat
 	}
     
     public static void exportMapp (String filename, 
-    		String[][] mappInfo, List mappObjects)
+    		String[][] mappInfo, List<String[]> mappObjects)
     {
     	File template = new File("E:\\prg\\gmml\\trunk\\gmml2mapp\\MAPPTmpl.gtp");
     	
@@ -118,12 +118,10 @@ public class MappFormat
             		"Color, Label, Head, Remarks, Image, Links, Notes) " +
             		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             
-            Iterator it = mappObjects.iterator();
+            
             int k = 1;
-            while (it.hasNext())
+            for (String[] row : mappObjects)
             {
-    			String[] row = (String[])(it.next());
-    			
     			sObjects.setInt (1, k);
     			for (int j = 1; j < row.length; ++j)
     			{
@@ -356,7 +354,7 @@ public class MappFormat
     	return null;
     }
 
-	public static List uncopyMappObjects(GmmlData data) throws ConverterException
+	public static List<String[]> uncopyMappObjects(GmmlData data) throws ConverterException
 	{
 		List<String[]> result = new ArrayList<String[]>();
 		

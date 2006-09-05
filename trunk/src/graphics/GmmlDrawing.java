@@ -6,10 +6,7 @@ import gmmlVision.GmmlVision;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -846,10 +843,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
 			Collections.sort(drawingObjects);
-			Iterator it = drawingObjects.iterator();
-			while (it.hasNext())
-			{
-				GmmlDrawingObject o = (GmmlDrawingObject) it.next();
+			for (GmmlDrawingObject o : drawingObjects)			
+			{				
 				if (o.isContain(p))
 				{
 					if (o instanceof GmmlGeneProduct)

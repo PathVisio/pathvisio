@@ -60,9 +60,9 @@ public class ConvertType
     	int i = Integer.parseInt(s);
     	
     	RGB result = new RGB(
-    			(i & 0xFF0000) >> 16,
+    			i & 0xFF,
     			(i & 0xFF00) >> 8,
-    			i & 0xFF
+    			(i & 0xFF0000) >> 16
     	);
     	
     	return result;
@@ -88,7 +88,7 @@ public class ConvertType
     		return "-1";
     	else
     	{
-	    	int c = ((int)rgb.red << 16) + ((int)rgb.green << 8) + rgb.blue;
+	    	int c = ((int)rgb.red) + ((int)rgb.green << 8) + ((int)rgb.blue << 16);
 	    	return "" + c;
     	}
     }

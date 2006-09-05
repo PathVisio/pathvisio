@@ -55,7 +55,7 @@ public class GmmlFormat {
 	
 	public static Logger log;
 
-	public static Document createJdom(GmmlData data)
+	public static Document createJdom(GmmlData data) throws ConverterException
 	{
 		Document doc = new Document();
 		

@@ -20,9 +20,9 @@ import data.*;
  */
 public class GmmlLine extends GmmlGraphics
 {
-	//TODO: make private
-	public GmmlHandle handleStart;
-	public GmmlHandle handleEnd;
+	private GmmlHandle handleStart;
+	private GmmlHandle handleEnd;
+	public GmmlHandle getHandleEnd() { return handleEnd; }
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -105,8 +105,7 @@ public class GmmlLine extends GmmlGraphics
 				break;
 			case LineType.RECEPTOR_ROUND:
 			{
-				// TODO: this code is not safe for division by zero!
-				double theta 	= Math.toDegrees(Math.atan((endx - startx)/(endy - starty)));
+				double theta 	= Math.toDegrees(Math.atan2((endx - startx),(endy - starty)));
 				double dx 		= (endx - startx)/s;
 				double dy 		= (endy - starty)/s;	
 				

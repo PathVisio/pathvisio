@@ -144,6 +144,7 @@ public abstract class GmmlVision {
 	 */
 	public static void newPathway() {
 		gmmlData = new GmmlData();
+		gmmlData.initMappInfo();
 		drawing = getWindow().createNewDrawing();
 		drawing.fromGmmlData(gmmlData);
 		firePropertyChange(new PropertyEvent(drawing, PROPERTY_NEW_PATHWAY));

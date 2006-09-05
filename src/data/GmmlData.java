@@ -48,16 +48,25 @@ public class GmmlData
 	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
 	public GmmlData() 
+	{		
+	}
+	
+	/*
+	 * Call when making a new mapp.
+	 */
+	public void initMappInfo()
 	{
-		
 		GmmlVisionWindow window = GmmlVision.getWindow();
-		
+
 		GmmlDataObject mapInfo = new GmmlDataObject();
 		mapInfo.setObjectType(ObjectType.MAPPINFO);
-		mapInfo.setBoardWidth(window.sc.getSize().x);
-		mapInfo.setBoardHeight(window.sc.getSize().y);
-		mapInfo.setWindowWidth(window.getShell().getSize().x);
-		mapInfo.setWindowHeight(window.getShell().getSize().y);
+		if (window.sc != null)
+		{
+			mapInfo.setBoardWidth(window.sc.getSize().x);
+			mapInfo.setBoardHeight(window.sc.getSize().y);
+			mapInfo.setWindowWidth(window.getShell().getSize().x);
+			mapInfo.setWindowHeight(window.getShell().getSize().y);
+		}
 		mapInfo.setMapInfoName("New Pathway");
 		dataObjects.add(mapInfo);
 	}

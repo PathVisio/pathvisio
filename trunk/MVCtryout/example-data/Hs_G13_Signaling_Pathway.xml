@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway Name="G13 Signaling Pathway" Data-Source="GenMAPP 2.0" Version="20041103" Author="Anita Chow" Maintained-By="GenMAPP.org" Email="genmapp@gladstone.ucsf.edu" Availability="2000, Gladstone Institutes" Last-Modified="3/6/02">
+  <Notes></Notes>
+  <Comment></Comment>
+  <Graphics BoardWidth="14200.0" BoardHeight="12500.0" WindowWidth="14512.0" WindowHeight="14177.0" />
+  <GeneProduct GeneID="LIMK1" Xref="" Type="unknown" Name="3984" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="12450.0" CenterY="7650.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="GNA13" Xref="" Type="unknown" Name="10672" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6900.0" CenterY="1400.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ARHA" Xref="" Type="unknown" Name="387" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6900.0" CenterY="3300.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PIK3R2" Xref="" Type="unknown" Name="5296" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="8700.0" CenterY="3800.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="DIAPH1" Xref="" Type="unknown" Name="1729" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="10250.0" CenterY="3300.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PFN1" Xref="" Type="unknown" Name="5216" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="12100.0" CenterY="3300.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PIP5K2A" Xref="" Type="unknown" Name="5305" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="10250.0" CenterY="5000.0" Width="1300.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="MAPK10" Xref="" Type="unknown" Name="5602" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="12550.0" CenterY="5900.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PRKCL1" Xref="" Type="unknown" Name="5585" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="3050.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="MYBPH" Xref="" Type="unknown" Name="4608" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="4900.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PPP1CB" Xref="" Type="unknown" Name="5500" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="3700.0" CenterY="5950.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ARHGDIB" Xref="" Type="unknown" Name="397" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6850.0" CenterY="5600.0" Width="1000.0000000000001" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="RAC1" Xref="" Type="unknown" Name="5879" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="8350.0" CenterY="6950.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="MAP3K4" Xref="" Type="unknown" Name="4216" BackpageHead="MEKK4" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="4500.0" CenterY="8450.0" Width="1000.0000000000001" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PAK3" Xref="" Type="unknown" Name="5063" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="9500.0" CenterY="8150.000000000001" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="WAS" Xref="" Type="unknown" Name="7454" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="2550.0" CenterY="8150.000000000001" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="MYL1" Xref="" Type="unknown" Name="4632" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="3700.0" CenterY="5650.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CIT" Xref="" Type="unknown" Name="11113" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="1950.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CDC42" Xref="" Type="unknown" Name="998" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="5550.0" CenterY="6900.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="IQGAP1" Xref="" Type="unknown" Name="8826" BackpageHead="IQGAP1" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6200.0" CenterY="8200.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="IQGAP2" Xref="" Type="unknown" Name="10788" BackpageHead="IQGAP2" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6200.0" CenterY="8500.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="WASL" Xref="" Type="unknown" Name="8976" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="2550.0" CenterY="7850.000000000001" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACK" Xref="" Type="unknown" Name="" BackpageHead="" GeneProduct-Data-Source="GenBank">
+    <Notes></Notes>
+    <Comment>S33596</Comment>
+    <Graphics Color="000000" CenterX="2000.0000000000002" CenterY="6950.0" Width="1020.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ROCK1" Xref="" Type="unknown" Name="6093" BackpageHead="ROCK 1" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment>S69211</Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="4300.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ROCK2" Xref="" Type="unknown" Name="9475" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment>BAA31594</Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="4600.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PIK3CA" Xref="" Type="unknown" Name="5290" BackpageHead="PI 3-Kinase A" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="7899.999999999999" CenterY="8200.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PIK3CB" Xref="" Type="unknown" Name="5291" BackpageHead="PI 3-Kinase B" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="7899.999999999999" CenterY="8500.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PIK3CD" Xref="" Type="unknown" Name="5293" BackpageHead="PI 3-Kinase D" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment>P42338</Comment>
+    <Graphics Color="000000" CenterX="7899.999999999999" CenterY="8800.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CFL2" Xref="" Type="unknown" Name="1073" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="12450.0" CenterY="8750.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CFL1" Xref="" Type="unknown" Name="1072" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="12450.0" CenterY="8450.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="RTKN" Xref="" Type="unknown" Name="6242" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="3650.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="RHPN2" Xref="" Type="unknown" Name="85415" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="4650.0" CenterY="3350.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ARHGDIG" Xref="" Type="unknown" Name="398" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6850.0" CenterY="5900.0" Width="1000.0000000000001" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CALM1" Xref="" Type="unknown" Name="801" BackpageHead="Calmodulin" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="2500.0" CenterY="9100.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ARHGEF1" Xref="" Type="unknown" Name="9138" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6900.0" CenterY="2300.0" Width="1000.0000000000001" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="RPS6KB1" Xref="" Type="unknown" Name="6198" BackpageHead="" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment>A41687</Comment>
+    <Graphics Color="000000" CenterX="4500.0" CenterY="8150.000000000001" Width="1000.0000000000001" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="SH3MD2" Xref="" Type="unknown" Name="57630" BackpageHead="Posh" GeneProduct-Data-Source="LocusLink">
+    <Notes></Notes>
+    <Comment>Posh</Comment>
+    <Graphics Color="000000" CenterX="10250.0" CenterY="5900.0" Width="1300.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="p140 Sra-1" Xref="" Type="unknown" Name="" BackpageHead="" GeneProduct-Data-Source="SwissProt">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="10250.0" CenterY="5450.0" Width="1300.0" Height="300.0" />
+  </GeneProduct>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6850.0" y="1650.0" />
+      <Point x="6850.0" y="2100.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6850.0" y="2550.0" />
+      <Point x="6850.0" y="3100.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6850.0" y="3500.0" />
+      <Point x="6850.0" y="4200.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="8200.0" y="3800.0" />
+      <Point x="7150.0" y="3800.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="7150.0" y="3800.0" />
+      <Point x="6850.0" y="3900.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="8000.000000000001" y="3300.0" />
+      <Point x="9600.0" y="3300.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="10950.0" y="5900.0" />
+      <Point x="11900.0" y="5900.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="12550.0" y="6150.0" />
+      <Point x="12550.0" y="6400.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="12450.0" y="7850.000000000001" />
+      <Point x="12450.0" y="8250.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6850.0" y="4500.0" />
+      <Point x="6850.0" y="5400.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="7300.0" y="6150.0" />
+      <Point x="8200.0" y="6750.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="8400.0" y="6700.0" />
+      <Point x="9300.0" y="5550.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="8750.0" y="3300.0" />
+      <Point x="10200.0" y="4000.0000000000005" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="10200.0" y="4000.0000000000005" />
+      <Point x="10200.0" y="4800.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="10450.0" y="4800.0" />
+      <Point x="11950.0" y="4400.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="10950.0" y="5450.0" />
+      <Point x="12000.0" y="5450.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="3800.0" y="4550.0" />
+      <Point x="3400.0" y="4550.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="3650.0" y="1950.0" />
+      <Point x="2100.0" y="1950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="3700.0" y="5500.0" />
+      <Point x="3700.0" y="4800.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="3700.0" y="4850.0" />
+      <Point x="3600.0" y="4550.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="4900.0" y="6950.0" />
+      <Point x="2900.0" y="6950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="10850.0" y="3300.0" />
+      <Point x="11550.0" y="3300.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="12100.0" y="3550.0" />
+      <Point x="12100.0" y="3800.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6400.0" y="6150.0" />
+      <Point x="5600.0" y="6750.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6150.0" y="3300.0" />
+      <Point x="5750.0" y="3300.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9000.0" y="7000.0" />
+      <Point x="11750.0" y="7600.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="4900.0" y="7150.0" />
+      <Point x="2850.0" y="7600.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="2500.0" y="8350.0" />
+      <Point x="2500.0" y="8850.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="5600.0" y="7100.0" />
+      <Point x="6500.0" y="7650.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="8150.000000000001" y="7200.0" />
+      <Point x="7200.0" y="7650.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="12450.0" y="8950.0" />
+      <Point x="12450.0" y="9900.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="12200.0" y="9950.0" />
+      <Point x="12750.0" y="9950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9450.0" y="8350.0" />
+      <Point x="9450.0" y="9850.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="2500.0" y="9300.0" />
+      <Point x="2500.0" y="9950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Line" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6550.0" y="950.0" />
+      <Point x="7300.0" y="950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6200.0" y="8750.0" />
+      <Point x="6200.0" y="9850.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="13">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="7000.0" CenterY="750.0" Width="350.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Activated Rho A">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6900.0" CenterY="4350.0" Width="1910.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cytokinesis">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1150.0" CenterY="1950.0" Width="1430.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Stress Fiber Contraction">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1700.0" CenterY="4850.0" Width="2870.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Interaction, Focal Adhesion">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1750.0" CenterY="4600.0" Width="3200.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Contraction &amp; Actin-Myosin">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1700.0" CenterY="4300.0" Width="3215.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Actin">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12100.0" CenterY="3949.9999999999995" Width="665.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Membrane">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12650.0" CenterY="5250.0" Width="1280.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Ruffling">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12650.0" CenterY="5500.0" Width="979.9999999999999" Height="285.0" />
+  </Label>
+  <Label TextLabel="Anti-Apoptotic">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12500.0" CenterY="6550.0" Width="1715.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Actin Polymerization">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2650.0" CenterY="10100.0" Width="2435.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Polymerization">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12150.0" CenterY="4200.0" Width="1790.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Filopodia Formation">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2650.0" CenterY="10450.0" Width="2375.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Actin Reorganization">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="5950.0" CenterY="10100.0" Width="2480.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Stress Fiber">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9650.0" CenterY="10100.0" Width="1460.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Disassembly of Actin">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12550.0" CenterY="10250.0" Width="2480.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cell-Cell Adhesion">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6000.0" CenterY="10450.0" Width="2180.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="G">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6750.0" CenterY="700.0" Width="260.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Disappearance">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9650.0" CenterY="10450.0" Width="1805.0" Height="285.0" />
+  </Label>
+  <Brace>
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="5700.0" CenterY="3300.0" Width="3320.0" PicPointOffset="130.0" Orientation="bottom" />
+  </Brace>
+  <Brace>
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="9350.0" CenterY="5500.0" Width="1620.0" PicPointOffset="130.0" Orientation="left" />
+  </Brace>
+  <Brace>
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000" CenterX="6850.0" CenterY="7749.999999999999" Width="6050.0" PicPointOffset="130.0" Orientation="top" />
+  </Brace>
+  <InfoBox CenterX="182.5" CenterY="186.5" />
+  <Legend CenterX="10148.5" CenterY="547.0" />
+</Pathway>
+

@@ -108,7 +108,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		}
 		setSize(getMappInfo().getBoardSize());
 		data.fireObjectModifiedEvent(new GmmlEvent(null, GmmlEvent.MODIFIED_GENERAL));
-//		drawing.gmmlVision.getShell().setSize(drawing.mappInfo.windowWidth, drawing.mappInfo.windowHeight);
+		data.addListener(this);
 	}
 
 	private int newGraphics = NEWNONE;
@@ -162,9 +162,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		addMouseMoveListener(this);
 		addPaintListener (this);
 		addMouseTrackListener(this);
-		addKeyListener(this);
-		
-		GmmlVision.getGmmlData().addListener(this);
+		addKeyListener(this);		
 	}
 		
 	/**

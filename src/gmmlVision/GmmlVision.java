@@ -40,6 +40,8 @@ public abstract class GmmlVision {
 	private static ImageRegistry imageRegistry;
 	private static GmmlPreferences preferences;
 	public static final Logger log = new Logger();
+	
+	static boolean USE_R;
 		
 	/**
 	 * Get the {@link ApplicationWindow}, the UI of the program

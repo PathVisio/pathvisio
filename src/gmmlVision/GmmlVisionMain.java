@@ -1,5 +1,7 @@
 package gmmlVision;
 
+import java.io.PrintStream;
+
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -21,9 +23,13 @@ public abstract class GmmlVisionMain {
 	{
 		boolean debugHandles = false;
 		for(String a : args) {
-			if(	a.equalsIgnoreCase("--MonitorHandles") ||
-				a.equalsIgnoreCase("-mh")) {
+			if(		a.equalsIgnoreCase("--MonitorHandles") ||
+					a.equalsIgnoreCase("-mh")) {
 				debugHandles = true;
+			}
+			else if(a.equalsIgnoreCase("--UseR") ||
+					a.equalsIgnoreCase("-ur")) {
+				GmmlVision.USE_R = true;
 			}
 		}
 		
@@ -53,9 +59,9 @@ public abstract class GmmlVisionMain {
 	 */
 	public static void initiate() {
 		//initiate logger
-//		try { 
-//			GmmlVision.log.setStream(new PrintStream("log.txt")); 
-//		} catch(Exception e) {}
+		try { 
+			GmmlVision.log.setStream(new PrintStream("log.txt")); 
+		} catch(Exception e) {}
 		GmmlVision.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		
 		//initiate Gene database (to load previously used gdb)

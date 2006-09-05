@@ -698,11 +698,11 @@ public class MappFormat
     	
     	String syscode = mappObject[colSystemCode];
     	if (syscode == null) syscode = "";
-    	syscode.trim();
+    	syscode = syscode.trim();
     	
         o.setDataSource(mapBetween (
 				systemCodes, dataSources, syscode));  
-        
+
         o.setBackpageHead(mappObject[colHead]);
         o.setGeneProductName(mappObject[colID]);
         o.setGeneID(mappObject[colLabel]);
@@ -710,7 +710,9 @@ public class MappFormat
         // TODO:  for some IDs the type is known, e.g. SwissProt is always a
 		// protein, incorporate this knowledge to assign a type per ID
         o.setGeneProductType("unknown");
-        o.setXref(mappObject[colLinks]);
+        String xrefv = mappObject[colLinks];
+        if (xrefv == null) { xrefv = ""; }
+        o.setXref(xrefv);
         
         mapShape(o, mappObject);
         return o;			

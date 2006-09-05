@@ -184,7 +184,6 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 * Fit the size of this object to the selected objects
 	 */
 	public void fitToSelection() {
-		System.out.println(selection);
 		if(selection.size() == 0) { //No objects in selection
 			reset(); 
 			return;

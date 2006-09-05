@@ -48,6 +48,10 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 		}
 	}
 	
+	public GmmlDataObject getGmmlData() {
+		return gdata;
+	}
+	
 //	public List getAttributes() { return gdata.getAttributes() ;}
 	
 	public void gmmlObjectModified(GmmlEvent e) {		

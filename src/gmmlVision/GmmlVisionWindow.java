@@ -8,7 +8,6 @@ import graphics.GmmlGeneProduct;
 import graphics.GmmlLegend;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
@@ -943,10 +942,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				actions.add(new NewElementAction(GmmlDrawing.NEWRECEPTORSQUARE));
 			}
 			
-			Iterator it = actions.iterator();
-			while(it.hasNext())
-			{
-				addActionToMenu(menu, (Action)it.next());
+			for (Action act : actions)
+			{			
+				addActionToMenu(menu, act);
 			}
 
 			return menu;

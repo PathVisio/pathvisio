@@ -217,7 +217,7 @@ public class GmmlData
 	public void writeToMapp (File file) throws ConverterException
 	{
 		String[][] mappInfo = MappFormat.uncopyMappInfo (this);
-		List mappObjects = MappFormat.uncopyMappObjects (this);
+		List<String[]> mappObjects = MappFormat.uncopyMappObjects (this);
 		
 		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);		
 	}

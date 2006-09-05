@@ -31,7 +31,7 @@ public class GmmlData
 	/**
 	 * file containing the gmml schema definition
 	 */
-	final private static File xsdFile = new File("E:\\prg\\gmml-visio-mvctryout\\GMML_compat.xsd");
+	final private static File xsdFile = new File("GMML_compat.xsd");
 	
 	public List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
 	
@@ -118,7 +118,7 @@ public class GmmlData
 			}
 		} else {
 			GmmlVision.log.info("Document is not validated because the xml schema definition '" + 
-					xsdFile.toString() + "' could not be found");
+					xsdFile.getAbsolutePath() + "' could not be found");
 		}
 	}
 	
@@ -128,9 +128,7 @@ public class GmmlData
 	 */
 	public void writeToXML(File file, boolean validate) {
 		try 
-		{	
-			
-			
+		{			
 			Document doc = GmmlFormat.createJdom(this);
 			
 			//Validate the JDOM document

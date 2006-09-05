@@ -289,13 +289,15 @@ public class GmmlLine extends GmmlGraphics
 	
 	protected void adjustToHandle(GmmlHandle h) {
 //		markDirty();
+		double cx = h.centerx;
+		double cy = h.centery;
 		if		(h == handleStart) {
-			gdata.setStartX(h.centerx); 
-			gdata.setStartY(h.centery);
+			gdata.setStartX(cx); 
+			gdata.setStartY(cy);
 		}
 		else if	(h == handleEnd) {
-			gdata.setEndX(h.centerx); 
-			gdata.setEndY(h.centery);
+			gdata.setEndX(cx); 
+			gdata.setEndY(cy);
 		}
 //		markDirty();
 	}

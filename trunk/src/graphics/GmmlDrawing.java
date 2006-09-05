@@ -126,6 +126,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 */
 	public void addDirtyRect(Rectangle r)
 	{
+		if(r == null) { //In case r is null, add whole drawing
+			org.eclipse.swt.graphics.Rectangle b = getBounds();
+			r = new Rectangle(b.x, b.y, b.width, b.height);
+		}
 		if(dirtyRect == null)
 			dirtyRect = r;
 		else
@@ -159,6 +163,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		addPaintListener (this);
 		addMouseTrackListener(this);
 		addKeyListener(this);
+		
+		GmmlVision.getGmmlData().addListener(this);
 	}
 		
 	/**
@@ -808,6 +814,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		previousX = e.x;
 		previousY = e.y;
 		
+		if(gdata != null) {
+			GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(gdata, GmmlEvent.ADDED));
+		}
+		
 		GmmlVision.getWindow().deselectNewItemActions();
 	}
 	
@@ -914,8 +924,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 				}
 			}
 			removeDrawingObjects(toRemove);
-			s.fitToSelection();
-			redraw();
 		}
 		if(e.keyCode == SWT.HOME) {
 			System.out.println("================");
@@ -935,7 +943,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		{
 			drawingObjects.remove(o); //Remove from drawing
 			s.removeFromSelection(o); //Remove from selection
+			if(o instanceof GmmlGraphics) {
+				GmmlGraphics g = (GmmlGraphics)o;
+				GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(g.getGmmlData(), GmmlEvent.DELETED));
+			}
+			
 		}
+		s.fitToSelection();
 	}
 
 	public void gmmlObjectModified(GmmlEvent e) {
@@ -944,13 +958,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			case GmmlEvent.MODIFIED_GENERAL:		
 				addDirtyRect(null); // mark everything dirty
 				break;
-			case GmmlEvent.DELETED:		
+			case GmmlEvent.DELETED:
+				GmmlVision.getGmmlData().dataObjects.remove((GmmlDataObject)e.getAffectedData());
 				addDirtyRect(null); // mark everything dirty
 				break;
-			case GmmlEvent.ADDED:		
+			case GmmlEvent.ADDED:
+				GmmlVision.getGmmlData().dataObjects.add((GmmlDataObject)e.getAffectedData());
 				addDirtyRect(null); // mark everything dirty
 				break;
 		}
+		redrawDirtyRect();
 	}
 	
 } // end of class

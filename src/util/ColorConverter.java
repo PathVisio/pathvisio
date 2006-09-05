@@ -11,7 +11,7 @@ public abstract class ColorConverter
 	public static final List colorMappings = Arrays.asList(new String[]{
 		"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
 		"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
-		"White", "Yellow"
+		"White", "Yellow", "Transparent"
 	});
 	
 	public static final List rgbMappings = Arrays.asList(new double[][] {
@@ -29,7 +29,9 @@ public abstract class ColorConverter
 		{1, 0, 0}, 		// red
 		{.75, .75, .75},// silver
 		{0, .5, .5}, 	// teal
-		{1, 1, 1}		// white
+		{1, 1, 1},		// white
+		{1, 1, 0},		// yellow
+		{0, 0, 0}		// transparent (actually irrelevant)
 	});
 	
 	/**

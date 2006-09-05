@@ -22,7 +22,7 @@ public class Logger
 	private boolean errorEnabled = true;
 	private boolean fatalEnabled = true;
 		
-	private PrintStream s;
+	private PrintStream s = System.err;
 		
 	public PrintStream getStream () { return s; }	
 	public void setStream (PrintStream _s) { s = _s; }

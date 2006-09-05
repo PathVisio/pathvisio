@@ -1,9 +1,7 @@
 package graphics;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -38,13 +36,13 @@ import data.GmmlGex.Sample;
 public class GmmlLegend extends ScrolledComposite {
 	
 	public int colorSetIndex;
-	ArrayList<Integer> diffSamples;
+	List<Integer> diffSamples;
 	HashMap extremes;
 		
 	public GmmlLegend(Composite parent, int style)
 	{
 		super(parent, style);
-			
+		
 		createContents();
 	}
 	

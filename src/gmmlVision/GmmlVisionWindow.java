@@ -108,7 +108,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
-	        if(fnMapp != null) { GmmlVision.openPathway(fnMapp); }
+	        if(fnMapp != null) { 
+	        	GmmlVision.openPathway(fnMapp); 
+	        }
 		}
 	}
 	private OpenAction openAction = new OpenAction (this);
@@ -133,12 +135,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			
 			double usedZoom = drawing.getZoomFactor() * 100;
 			// Set zoom to 100%
-			drawing.setPctZoom(100);
-			drawing.updateJdomElements();
+			drawing.setPctZoom(100);			
 			// Overwrite the existing xml file
 			if (gmmlData.getXmlFile() != null)
 			{
-				gmmlData.writeToXML(gmmlData.getXmlFile());
+				gmmlData.writeToXML(gmmlData.getXmlFile(), true);
 			}
 			else
 			{
@@ -197,10 +198,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				{
 					double usedZoom = drawing.getZoomFactor() * 100;
 					// Set zoom to 100%
-					drawing.setPctZoom(100);
-					drawing.updateJdomElements();
+					drawing.setPctZoom(100);					
 					// Overwrite the existing xml file
-					gmmlData.writeToXML(checkFile);
+					gmmlData.writeToXML(checkFile, true);
 					gmmlData.setXmlFile(checkFile);
 					// Set zoom back
 					drawing.setPctZoom(usedZoom);

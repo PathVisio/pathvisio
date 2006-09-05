@@ -17,6 +17,7 @@ public abstract class GmmlDrawingObject implements Comparable
 	
 	int drawingOrder = GmmlDrawing.DRAW_ORDER_DEFAULT;
 	private boolean isHighlighted;
+	private Rectangle oldrect = null;
 	
 	private boolean isSelected;
 	
@@ -37,11 +38,17 @@ public abstract class GmmlDrawingObject implements Comparable
 	protected abstract void draw(PaintEvent e, GC buffer);
 	
 	/** 
-	 * mark the area currently occupied by this object for redraw 
+	 * mark both the area currently and previously occupied by this object for redraw 
 	 */
-	public void markDirty()
+	protected void markDirty()
 	{
-		canvas.addDirtyRect(this);
+		if (oldrect != null)
+		{
+			canvas.addDirtyRect(oldrect);
+		}
+		Rectangle newrect = getBounds();
+		canvas.addDirtyRect(newrect);
+		oldrect = newrect;
 	}
 
 	/**
@@ -222,7 +229,6 @@ public abstract class GmmlDrawingObject implements Comparable
 		if (az != bz) 
 			return bz - az; 
 		else
-			return -1;				
-		
+			return -1;
 	}
 }

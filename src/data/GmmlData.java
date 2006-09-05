@@ -3,30 +3,19 @@ package data;
 import gmmlVision.GmmlVision;
 import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
-import graphics.GmmlMappInfo;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.ValidatorHandler;
+import javax.xml.validation.*;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.JDOMParseException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.SAXOutputter;
-import org.jdom.output.XMLOutputter;
+import org.jdom.*;
+import org.jdom.input.*;
+import org.jdom.output.*;
 import org.xml.sax.SAXException;
+
 
 /**
 *	This class handles GMML file IO and keeps a JDOM representation of the GMML document
@@ -42,7 +31,9 @@ public class GmmlData
 	/**
 	 * file containing the gmml schema definition
 	 */
-	final private static File xsdFile = new File("GMML_compat.xsd");
+	final private static File xsdFile = new File("E:\\prg\\gmml-visio-mvctryout\\GMML_compat.xsd");
+	
+	public List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
 	
 	private File xmlFile;
 	/**
@@ -51,90 +42,41 @@ public class GmmlData
 	 */
 	public File getXmlFile () { return xmlFile; }
 	public void setXmlFile (File file) { xmlFile = file; }
-	
-	private GmmlDrawing drawing;
 
-	private Document doc;
-	/**
-	 * JDOM representation of the gmml pathway
-	 */
-	public Document getDocument() { return doc; }
-		
 	/**
 	 * Contructor for this class, creates a new gmml document
 	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
-	public GmmlData(GmmlDrawing drawing) 
+	public GmmlData() 
 	{
+		/*
 		GmmlVisionWindow window = GmmlVision.getWindow();
-		this.drawing = drawing;
-		doc = new Document();
-		//Set the root element (pathway) and its graphics
-		Element root = new Element("Pathway");
-		Element graphics = new Element("Graphics");
-		root.addContent(graphics);
-		root.addContent(new Element("InfoBox"));
-		doc.setRootElement(root);
-		GmmlMappInfo mpi = new GmmlMappInfo(drawing, root);
-		mpi.setBoardSize(window.sc.getSize());
-		mpi.setWindowSize(window.getShell().getSize());
-		mpi.setName("New Pathway");
+		
+		
+			GmmlDataObject mapInfo = new GmmlDataObject();
+			mapInfo.setObjectType(ObjectType.MAPPINFO);
+			mapInfo.setBoardWidth(window.sc.getSize().x);
+			mapInfo.setBoardHeight(window.sc.getSize().y);
+			mapInfo.setWindowWidth(window.getShell().getSize().x);
+			mapInfo.setWindowHeight(window.getShell().getSize().y);
+			mapInfo.setMapInfoName("New Pathway");
+		*/
 	}
-	
+		
 	/**
 	 * Constructor for this class, opens a gmml pathway and adds its elements to the drawing
 	 * @param file		String pointing to the gmml file to open
 	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
-	public GmmlData(String file, GmmlDrawing drawing) throws Exception
+	public GmmlData(String file) throws Exception
 	{
-		// Initialize systemcode mappings
-		initSysName2Code();
-		// Create the drawing
-		this.drawing = drawing;
 		// Start XML processing
 		GmmlVision.log.info("Start reading the Gmml file: " + file);
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
-		try
-		{
-			xmlFile = new File(file);
-			// build JDOM tree
-			doc = builder.build(xmlFile);
-			// Validate the JDOM document
-			validateDocument(doc);
-			// Copy the pathway information to a GmmlDrawing
-			toGmmlGraphics();
-		}
-		catch(JDOMParseException pe) 
-		{
-			throw new Exception("Parse error: " + pe.getMessage());
-		}
-		catch(JDOMException e)
-		{
-			throw new Exception("JDOM exception: " + e.getMessage());
-		}
-	}
-	
-	/**
-	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
-	 * and system code
-	 */
-	private static HashMap<String, String> initSysName2Code()
-	{
-		HashMap<String, String> sn2c = new HashMap<String,String>();
-		for(int i = 0; i < systemNames.length; i++)
-			sn2c.put(systemNames[i], systemCodes[i]);
-		return sn2c;
-	}
 
-	/**
-	 * Method to get the private property drawing
-	 * @return drawing
-	 */
-	public GmmlDrawing getDrawing()
-	{
-		return drawing;
+		xmlFile = new File(file);
+		readFromXml(xmlFile, true);		
 	}
 	
 	/**
@@ -144,45 +86,11 @@ public class GmmlData
 	private void mapElement(Element e) {
 		// Check if a GmmlGraphics exists for this element
 		// Assumes that classname = 'Gmml' + Elementname
-		try {
-			Class cl = Class.forName("graphics.Gmml"+e.getName());
-			Constructor con = cl.getConstructor(new Class[] { Element.class, GmmlDrawing.class });
-			GmmlVision.log.trace("Mapping gmml element " + e.getName());
-			Object obj = con.newInstance(new Object[] { e, drawing });
-		}
-		catch (ClassNotFoundException cnfe)
-		{
-			GmmlVision.log.error(e.getName() + " could not be mapped", cnfe);
-		}
-		catch (NoSuchMethodException nsme)
-		{
-			GmmlVision.log.trace("The GmmlGraphics class representing '" + e.getName() + 
-					"' has no constructor for a JDOM element");
-		}
-		catch (Exception ex)
-		{
-			GmmlVision.log.error("while mapping gmml elements: " + ex.getMessage(), ex);
-		}
+		GmmlDataObject o = new GmmlDataObject();
+		o.mapComplete(e);
+		dataObjects.add(o);
 	}
 
-	/**
-	 * Maps the contents of the JDOM tree to a GmmlDrawing
-	 */
-	public void toGmmlGraphics() {
-		// Get the pathway element
-		Element root = doc.getRootElement();
-		drawing.setMappInfo(new GmmlMappInfo(drawing, root));
-		
-		drawing.setSize(drawing.getMappInfo().getBoardSize());
-//		drawing.gmmlVision.getShell().setSize(drawing.mappInfo.windowWidth, drawing.mappInfo.windowHeight);
-		
-		// Iterate over direct children of the root element
-		Iterator it = root.getChildren().iterator();
-		while (it.hasNext()) {
-			mapElement((Element)it.next());
-		}
-	}
-	
 	/**
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate
@@ -219,13 +127,22 @@ public class GmmlData
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved
 	 */
-	public void writeToXML(File file) {
+	public void writeToXML(File file, boolean validate) {
 		try 
-		{
+		{	
+			
+			
+			Document doc = GmmlFormat.createJdom(this);
+			
 			//Validate the JDOM document
-			validateDocument(doc);
-			//Get the XML code
+			if (validate) validateDocument(doc);
+			//			Get the XML code
 			XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+			Format f = xmlcode.getFormat();
+			f.setEncoding("ISO-8859-1");
+			f.setTextMode(Format.TextMode.PRESERVE);
+			xmlcode.setFormat(f);
+			
 			//Open a filewriter
 			FileWriter writer = new FileWriter(file);
 			//Send XML code to the filewriter
@@ -236,6 +153,70 @@ public class GmmlData
 			GmmlVision.log.error("Unable to save file " + file + ": " + e.getMessage(), e);
 		}
 	}
+	
+	public void readFromXml(File file, boolean validate)
+	{
+		// Start XML processing
+		GmmlVision.log.info("Start reading the XML file: " + file);
+		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
+		// try to read the file; if an error occurs, catch the exception and print feedback
+		try
+		{
+			// build JDOM tree
+			Document doc = builder.build(file);
+
+			if (validate) validateDocument(doc);
+			
+			// Copy the pathway information to a GmmlDrawing
+			Element root = doc.getRootElement();
+			
+			mapElement(root); // MappInfo
+			
+			// Iterate over direct children of the root element
+			Iterator it = root.getChildren().iterator();
+			while (it.hasNext()) {
+				mapElement((Element)it.next());
+			}
+		}
+		catch(JDOMParseException pe) 
+		{
+			 GmmlVision.log.error(pe.getMessage());
+		}
+		catch(JDOMException e)
+		{
+			GmmlVision.log.error(file + " is invalid.");
+			GmmlVision.log.error(e.getMessage());
+		}
+		catch(IOException e)
+		{
+			GmmlVision.log.error("Could not access " + file);
+			GmmlVision.log.error(e.getMessage());
+		}
+	}
+	
+	public void readFromMapp (File file) throws ConverterException
+	{
+        String inputString = file.getAbsolutePath();
+
+        String[][] mappObjects = MappFormat.importMAPPObjects(inputString);
+        String[][] mappInfo = MappFormat.importMAPPInfo(inputString);
+
+        // Copy the info table to the new gmml pathway
+        
+        // Copy the objects table to the new gmml pahtway
+    	MappFormat.copyMappInfo(mappInfo, this);
+        MappFormat.copyMappObjects(mappObjects, this);        	
+	}
+	
+	
+	public void writeToMapp (File file) throws ConverterException
+	{
+		String[][] mappInfo = MappFormat.uncopyMappInfo (this);
+		List mappObjects = MappFormat.uncopyMappObjects (this);
+		
+		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);		
+	}
+	
 	
 	public final static String[] systemCodes = new String[] 	{ 
 		"D", "F", "G", "I", "L", "M",
@@ -253,5 +234,27 @@ public class GmmlData
 	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
 	 */
 	public static final HashMap<String,String> sysName2Code = initSysName2Code();
+
+	/**
+	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
+	 * and system code
+	 */
+	private static HashMap<String, String> initSysName2Code()
+	{
+		HashMap<String, String> sn2c = new HashMap<String,String>();
+		for(int i = 0; i < systemNames.length; i++)
+			sn2c.put(systemNames[i], systemCodes[i]);
+		return sn2c;
+	}
 	
+	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
+	public void addListener(GmmlListener v) { listeners.add(v); }
+	public void removeListener(GmmlListener v) { listeners.remove(v); }
+	public void fireObjectModifiedEvent(GmmlEvent e) 
+	{
+		for (GmmlListener g : listeners)
+		{
+			g.gmmlObjectModified(e);
+		}
+	}
 }

@@ -12,6 +12,8 @@ import org.eclipse.swt.graphics.Transform;
 import util.LinAlg;
 import util.LinAlg.Point;
 import data.GmmlData;
+import data.GmmlDataObject;
+import data.GmmlEvent;
 
 /**
  * This is an {@link GmmlGraphics} class representing shapelike forms,
@@ -19,14 +21,6 @@ import data.GmmlData;
  * (rotated) rectangle around the shape and a rotation handle
  */
 public abstract class GmmlGraphicsShape extends GmmlGraphics {
-	
-	//Internal coordinates
-	double startX;
-	double startY;
-	double width;
-	double height;
-	
-	double rotation; //in radians
 	
 	//Side handles
 	GmmlHandle handleN;
@@ -43,18 +37,18 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	
 	final GmmlHandle[][] handleMatrix; //Used to get opposite handles
 	
-	public GmmlGraphicsShape(GmmlDrawing canvas) {
-		super(canvas);
+	public GmmlGraphicsShape(GmmlDrawing canvas, GmmlDataObject o) {
+		super(canvas, o);
 		
 		handleN	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
 		handleE	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
 		handleS	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
 		handleW	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
 				
-		handleNE	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleSE	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleSW	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleNW	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		handleNE = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		handleSE = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		handleSW = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		handleNW = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
 		
 		handleR = new GmmlHandle(GmmlHandle.DIRECTION_ROT, this, canvas);
 		
@@ -67,39 +61,39 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * Get the x-coördinate of the center point of this object
 	 * @return the center x-coördinate as integer
 	 */
-	public int getCenterX() { return (int)(startX + width/2); }
+	public int getCenterX() { return (int)gdata.getCenterX(); }
 
 	/**
 	 * Get the y-coördinate of the center point of this object
 	 * @return the center y-coördinate as integer
 	 */
-	public int getCenterY() { return (int)(startY + height/2); }
+	public int getCenterY() { return (int)gdata.getCenterY(); }
 	
 	public void moveBy(double dx, double dy)
 	{
-		markDirty();
-		startX += dx; 
-		startY += dy;
-		markDirty();
-		setHandleLocation();		
+//		markDirty();
+		gdata.setLeft(gdata.getLeft() + dx); 
+		gdata.setTop(gdata.getTop() + dy);
+//		markDirty();
+//		setHandleLocation();		
 	}
 				
 	public void setScaleRectangle(Rectangle2D.Double r) {
-		markDirty();
+//		markDirty();
 		
 		//Scale object
-		width = r.width;
-		height = r.height;
+		gdata.setWidth (r.width);
+		gdata.setHeight (r.height);
 		//Translate object
-		startX = r.x;
-		startY = r.y;
+		gdata.setLeft(r.x);
+		gdata.setTop(r.y);
 		
-		setHandleLocation();
-		markDirty();
+//		setHandleLocation();
+//		markDirty();
 	}
 
 	protected Rectangle2D.Double getScaleRectangle() {
-		return new Rectangle2D.Double(startX, startY, width, height);
+		return new Rectangle2D.Double(gdata.getLeft(), gdata.getTop(), gdata.getWidth(), gdata.getHeight());
 	}
 	
 	public GmmlHandle[] getHandles()
@@ -133,7 +127,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	private Point toInternal(Point p) {
 		Point pt = relativeToCenter(p);
-		Point pr = LinAlg.rotate(pt, -rotation);
+		Point pr = LinAlg.rotate(pt, -gdata.getRotation());
 		return pr;
 	}
 	
@@ -143,7 +137,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param Point p
 	 */
 	private Point toExternal(Point p) {
-		Point pr = LinAlg.rotate(p, rotation);
+		Point pr = LinAlg.rotate(p, gdata.getRotation());
 		Point pt = relativeToCanvas(pr);
 		return pt;
 	}
@@ -184,7 +178,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @return
 	 */
 	public Point getCenter() {
-		return new Point(startX + width/2, startY + height/2);
+		return new Point(gdata.getCenterX(), gdata.getCenterY());
 	}
 	
 	/**
@@ -192,8 +186,8 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param cn
 	 */
 	public void setCenter(Point cn) {
-		startX = cn.x - width/2;
-		startY = cn.y - height/2;
+		gdata.setCenterX(cn.x);
+		gdata.setCenterY(cn.y);
 	}
 	
 	/**
@@ -204,8 +198,8 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @return
 	 */
 	public Point calcNewCenter(double newWidth, double newHeight) {
-		Point cn = new Point((newWidth - width)/2, (newHeight - height)/2);
-		Point cr = LinAlg.rotate(cn, rotation);
+		Point cn = new Point((newWidth - gdata.getWidth())/2, (newHeight - gdata.getHeight())/2);
+		Point cr = LinAlg.rotate(cn, gdata.getRotation());
 		return relativeToCanvas(cr);
 	}
 	
@@ -214,9 +208,9 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param angle angle of rotation in radians
 	 */
 	public void setRotation(double angle) {
-		rotation = angle;
-		if(angle < 0) rotation += Math.PI*2;
-		if(angle > Math.PI*2) rotation -= Math.PI*2;
+		gdata.setRotation(angle);
+		if(angle < 0) gdata.setRotation(angle + Math.PI*2);
+		if(angle > Math.PI*2) gdata.setRotation (angle - Math.PI*2);
 	}
 	
 	/**
@@ -226,7 +220,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	protected void rotateGC(GC gc, Transform tr) {
 		tr.translate(getCenterX(), getCenterY());
-		tr.rotate((float)Math.toDegrees(-rotation));	
+		tr.rotate((float)Math.toDegrees(-gdata.getRotation()));	
 		tr.translate(-getCenterX(), -getCenterY());
 		gc.setTransform(tr);
 	}
@@ -237,9 +231,9 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 			Point def = relativeToCenter(getHandleLocation(h));
 			Point cur = relativeToCenter(new Point(h.centerx, h.centery));
 			
-			setRotation(rotation - LinAlg.angle(def, cur));
+			setRotation(gdata.getRotation() - LinAlg.angle(def, cur));
 		
-			setHandleLocation(h);
+//			setHandleLocation(h);
 			return;
 		}
 					
@@ -252,36 +246,36 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		double dh = 0;
 			
 		if	(h == handleN || h == handleNE || h == handleNW) {
-			dy = -(hi.y + height/2);
+			dy = -(hi.y + gdata.getHeight()/2);
 			dh = -dy;
 		}
 		if	(h == handleS || h == handleSE || h == handleSW ) {
-			dy = hi.y - height/2;
+			dy = hi.y - gdata.getHeight()/2;
 			dh = dy;
 		}
 		if	(h == handleE || h == handleNE || h == handleSE) {
-			dx = hi.x - width/2;
+			dx = hi.x - gdata.getWidth()/2;
 			dw = dx;
 		}
 		if	(h == handleW || h == handleNW || h== handleSW) {
-			dx = -(hi.x + width/2);
+			dx = -(hi.x + gdata.getWidth()/2);
 			dw = -dx;
 		};
 		
-		Point nc = calcNewCenter(width + dw, height + dh);
-		height += dy;
-		width += dx;
+		Point nc = calcNewCenter(gdata.getWidth() + dw, gdata.getHeight() + dh);
+		gdata.setHeight(gdata.getHeight() + dy);
+		gdata.setWidth(gdata.getWidth() + dx);
 		setCenter(nc);		
 	
 		//In case object had zero width, switch handles
-		if(width < 0) {
+		if(gdata.getWidth() < 0) {
 			negativeWidth(h);
 		}
-		if(height < 0) {
+		if(gdata.getHeight() < 0) {
 			negativeHeight(h);
 		}	
 				
-		setHandleLocation(h);
+//		setHandleLocation(h);
 	}
 	
 	/**
@@ -295,8 +289,8 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		} else {
 			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
 		}
-		width = -width;
-		startX -= width;
+		gdata.setWidth (-gdata.getWidth());
+		gdata.setLeft(gdata.getLeft() - gdata.getWidth());
 		canvas.setPressedObject(h);
 	}
 	
@@ -311,8 +305,8 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		} else {
 			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
 		}
-		height = -height;
-		startY -= height;
+		gdata.setHeight(-gdata.getHeight());
+		gdata.setTop(gdata.getTop() - gdata.getHeight());
 		canvas.setPressedObject(h);
 	}
 	
@@ -344,7 +338,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		p = getHandleLocation(handleR);
 		if(ignore != handleR) handleR.setLocation(p.x, p.y);
 		
-		for(GmmlHandle h : getHandles()) h.rotation = rotation;
+		for(GmmlHandle h : getHandles()) h.rotation = gdata.getRotation();
 	}
 	
 	/**
@@ -362,17 +356,17 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @return
 	 */
 	private Point getHandleLocation(GmmlHandle h) {
-		if(h == handleN) return toExternal(0, -height/2);
-		if(h == handleE) return toExternal(width/2, 0);
-		if(h == handleS) return toExternal(0,  height/2);
-		if(h == handleW) return toExternal(-width/2, 0);
+		if(h == handleN) return toExternal(0, -gdata.getHeight()/2);
+		if(h == handleE) return toExternal(gdata.getWidth()/2, 0);
+		if(h == handleS) return toExternal(0,  gdata.getHeight()/2);
+		if(h == handleW) return toExternal(-gdata.getWidth()/2, 0);
 		
-		if(h == handleNE) return toExternal(width/2, -height/2);
-		if(h == handleSE) return toExternal(width/2, height/2);
-		if(h == handleSW) return toExternal(-width/2, height/2);
-		if(h == handleNW) return toExternal(-width/2, -height/2);
+		if(h == handleNE) return toExternal(gdata.getWidth()/2, -gdata.getHeight()/2);
+		if(h == handleSE) return toExternal(gdata.getWidth()/2, gdata.getHeight()/2);
+		if(h == handleSW) return toExternal(-gdata.getWidth()/2, gdata.getHeight()/2);
+		if(h == handleNW) return toExternal(-gdata.getWidth()/2, -gdata.getHeight()/2);
 
-		if(h == handleR) return toExternal(width/2 + (30*getDrawing().getZoomFactor()), 0);
+		if(h == handleR) return toExternal(gdata.getWidth()/2 + (30*getDrawing().getZoomFactor()), 0);
 		return null;
 	}
 	
@@ -453,104 +447,16 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		Rectangle bounds = getOutline().getBounds();
 		if(this instanceof GmmlLabel) {
 			GC gc = new GC(canvas);
-			org.eclipse.swt.graphics.Point p = gc.textExtent(((GmmlLabel)this).text);
+			org.eclipse.swt.graphics.Point p = gc.textExtent(((GmmlLabel)this).getLabelText());
 			Point c = getCenter();
 			bounds.add(new Rectangle2D.Double(c.x - p.x/2, c.y - p.y/2, c.x + p.x/2, c.y + p.y/2)); 
 			gc.dispose();
 		}
 		return getOutline().getBounds();
 	}
-		
-	/*
-	Methods for compatibility with GMML elements that use centerx,centery instead of startx, starty
-	Will be removed when GMML is updated
-	*/
-	double centerX;
-	double centerY;
-	/**
-	 * Method for compatibility with GMML element, which uses centerx,centery instead of startx,starty.
-	 * Call this method after setting width, height and centerx, centery.
-	 * Will be removed when GMML is updated and all shape-like elements have startx,starty
-	 */
-	public void calcStart() {
-		startX = centerX - width/2;
-		startY = centerY - height/2;
-	}
 	
-	/**
-	 * Method for compatibility with GMML element, which uses centerx,centery instead of startx,starty.
-	 * Call this method after setting width, height.
-	 * Will be removed when GMML is updated and all shape-like elements have startx,starty
-	 * @param cx x-coördinate of the center
-	 * @param cy y-coördinate of the center
-	 */
-	public void calcStart(double cx, double cy) {
-		centerX = cx;
-		centerY = cy;
-		calcStart();
-	}
-	
-	/**
-	 * Sets the width of the graphical representation.
-	 * This differs from the GMML representation:
-	 * in GMML height and width are radius, here for all shapes the width is diameter
-	 * TODO: change to diameter in gmml
-	 * @param gmmlWidth the width as specified in the GMML representation
-	 */
-	public void setGmmlWidth(double gmmlWidth) {
-		this.width = gmmlWidth * 2;
-		
-		if(this instanceof GmmlShape) {			
-			if(((GmmlShape)this).type == GmmlShape.TYPE_RECTANGLE) width /= 2;
-		}
-		else if(this instanceof GmmlLabel ||
-				this instanceof GmmlGeneProduct ) { width /=2; }
-	}
-	
-	/**
-	 * Get the width as stored in GMML
-	 * @return
-	 */
-	public int getGmmlWidth() {
-		double width = this.width * GmmlData.GMMLZOOM;
-		if(this instanceof GmmlShape) {
-			return (int)(((GmmlShape)this).type == GmmlShape.TYPE_OVAL ? width / 2 : width);
-		}
-		else if(this instanceof GmmlLabel ||
-				this instanceof GmmlGeneProduct) return (int)width;
-		
-		return (int)((this.width * GmmlData.GMMLZOOM)/2);
-	}
-	
-	/**
-	 * Sets the height of the graphical representation.
-	 * This differs from the GMML representation:
-	 * in some GMML objects height and width are radius, here for all shapes the width is diameter
-	 * TODO: change to diameter in gmml
-	 *  @param gmmlHeight the height as specified in the GMML representation
-	 */
-	public void setGmmlHeight(double gmmlHeight) {
-		this.height = gmmlHeight * 2;
-		
-		if(this instanceof GmmlShape) {
-			if(((GmmlShape)this).type == GmmlShape.TYPE_RECTANGLE) height /= 2;
-		}
-		else if(this instanceof GmmlLabel ||
-				this instanceof GmmlGeneProduct) { height /=2; }
-	}
-	
-	/**
-	 * Get the height as stored in GMML
-	 * @return
-	 */
-	public int getGmmlHeight() {
-		double height = this.height * GmmlData.GMMLZOOM;
-		if(this instanceof GmmlShape) {
-			return (int)(((GmmlShape)this).type == GmmlShape.TYPE_OVAL ? height / 2 : height);
-		}
-		else if(this instanceof GmmlLabel ||
-				this instanceof GmmlGeneProduct) return (int)height;
-		
-		return (int)((this.height * GmmlData.GMMLZOOM)/2);
+	public void gmmlObjectModified(GmmlEvent e) {		
+		markDirty(); // mark everything dirty
+		setHandleLocation();
 	}
 }

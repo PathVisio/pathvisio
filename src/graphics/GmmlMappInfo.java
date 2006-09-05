@@ -14,36 +14,12 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 
-import data.GmmlData;
+import data.*;
 
 public class GmmlMappInfo extends GmmlGraphics {
-	
-	final static List attributes =  Arrays.asList(new String[] {
-		"Name", "Organism", "Data-Source", "Version", "Author",
-		"Maintained-By", "Email", "Availability", "Last-Modified",
-		"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
-		"MapInfoLeft", "MapInfoTop"
-	});
-	
-	String name = "";
-	String organism = "";
-	String dataSource = "";
-	String version = "";
-	String author = "";
-	String maintainedBy = ""; 
-	String email = "";
-	String availability = "";
-	String lastModified = "";
-	
-	int boardWidth;
-	int boardHeight;
-	int windowWidth;
-	int windowHeight;
-	
-	int mapInfoLeft;
-	int mapInfoTop;
 	
 	//Elements not stored in gmml
 	String fontName			= "Times New Roman";
@@ -54,190 +30,63 @@ public class GmmlMappInfo extends GmmlGraphics {
 	int sizeX = 1;
 	int sizeY = 1; //Real size is calculated on first call to draw()
 	
-	public GmmlMappInfo(GmmlDrawing canvas, Element e) 
-	{
-		super(canvas);
+	public GmmlMappInfo (GmmlDrawing canvas, GmmlDataObject o) {
+		super(canvas, o);
 		canvas.setMappInfo(this);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;
-		
-		jdomElement = e;
-		mapAttributes(e);
+		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;		
 	}
-	
+
 	public void setName(String name) { 
 		markDirty();
-		this.name = name;  
+		gdata.setMapInfoName(name);  
 		markDirty();
 		canvas.redrawDirtyRect();
-		updateJdomElement();
 	}
 	
 	public void setBoardSize(Point size) {
-		boardWidth = size.x;
-		boardHeight = size.y;
-		updateJdomElement(); 
-		canvas.setSize(boardWidth, boardHeight);
+		gdata.setBoardWidth (size.x);
+		gdata.setBoardHeight (size.y);
+		canvas.setSize((int)gdata.getBoardWidth(), (int)gdata.getBoardHeight());
 	}
 	
 	public void setWindowSize(Point size) {
-		windowWidth = size.x;
-		windowHeight= size.y;
-		updateJdomElement(); 
+		gdata.setWindowWidth (size.x);
+		gdata.setWindowHeight (size.y);
 //		canvas.gmmlVision.getShell().setSize(windowWidth, windowHeight);
 	}
 	
-	public Point getBoardSize() { return new Point(boardWidth, boardHeight); }
-	
-
-	public void mapAttributes(Element e)
-	{
-		Iterator it = e.getAttributes().iterator();
-		while(it.hasNext()) {
-			Attribute at = (Attribute)it.next();
-			int index = attributes.indexOf(at.getName());
-			String value = at.getValue();
-			switch(index) {
-					case 0: //Name
-						name = value; break;
-					case 1: //Organism
-						organism = value; break;
-					case 2: //Data-Source
-						dataSource = value; break;
-					case 3: //Version
-						version = value; break;
-					case 4: //Author
-						author = value; break;
-					case 5: //Maintained-By
-						maintainedBy = value; break;
-					case 6: //Email
-						email = value; break;
-					case 7: //Availability
-						availability = value; break;
-					case 8: //Last-Modified
-						lastModified = value; break;
-					case 9: //BoardWidth 
-						boardWidth = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
-					case 10: //BoardHeight
-						boardHeight = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
-					case 11: //WindowWidth
-						windowWidth = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
-					case 12: //WindowHeight
-						windowHeight = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
-					case 13: //MapInfoLeft
-						mapInfoLeft = Integer.parseInt(value) / GmmlData.GMMLZOOM; 
-						break;
-					case 14: //mapInfoTop
-						mapInfoTop = Integer.parseInt(value) / GmmlData.GMMLZOOM; break;
-			}
-		}
-		// Map the graphics attributes
-		Element graphics = e.getChild("Graphics");
-		if(graphics != null) {
-			mapAttributes(graphics);
-		}
-	}
-	
-	public List getAttributes() {
-		return attributes;
-	}
-	
-	public void updateToPropItems()
-	{
-		if (propItems == null)
-		{
-			propItems = new Hashtable();
-		}
-		
-		Object[] values = new Object[] {name, organism, dataSource, version,
-				author, maintainedBy, email, availability, lastModified,
-				boardWidth, boardHeight, windowWidth, windowHeight, mapInfoLeft, mapInfoTop
-				};
-		
-		for (int i = 0; i < attributes.size(); i++)
-		{
-			propItems.put(attributes.get(i), values[i]);
-		}
-	}
-
-	public void updateFromPropItems()
-	{
-		markDirty();
-		name			= (String)propItems.get(attributes.get(0));
-		organism		= (String)propItems.get(attributes.get(1));
-		dataSource		= (String)propItems.get(attributes.get(2));
-		version			= (String)propItems.get(attributes.get(3));
-		author			= (String)propItems.get(attributes.get(4));
-		maintainedBy	= (String)propItems.get(attributes.get(5));
-		email			= (String)propItems.get(attributes.get(6));
-		availability	= (String)propItems.get(attributes.get(7));
-		lastModified	= (String)propItems.get(attributes.get(8));
-		boardWidth		= (Integer)propItems.get(attributes.get(9));
-		boardHeight		= (Integer)propItems.get(attributes.get(10));
-		windowWidth		= (Integer)propItems.get(attributes.get(11));
-		windowHeight	= (Integer)propItems.get(attributes.get(12));
-		mapInfoLeft	= (Integer)propItems.get(attributes.get(13));
-		mapInfoTop		= (Integer)propItems.get(attributes.get(14));
-		markDirty();
-		canvas.redrawDirtyRect();
-		//Also update the canvas and window size:
-		canvas.setSize(boardWidth, boardHeight);
-//		canvas.gmmlVision.getShell().setSize(windowWidth, windowHeight);
-	}
-	
-	public void updateJdomElement() {
-		if(jdomElement != null) {
-			jdomElement.setAttribute("Name", name);
-			jdomElement.setAttribute("Organism", organism);
-			jdomElement.setAttribute("Data-Source", dataSource);
-			jdomElement.setAttribute("Version", version);
-			jdomElement.setAttribute("Author", author);
-			jdomElement.setAttribute("Maintained-By", maintainedBy);
-			jdomElement.setAttribute("Email", email);
-			jdomElement.setAttribute("Availability", availability);
-			jdomElement.setAttribute("Last-Modified", lastModified);
-			
-			Element jdomGraphics = jdomElement.getChild("Graphics");
-			if(jdomGraphics !=null) {
-				jdomGraphics.setAttribute("BoardWidth", Integer.toString((int)boardWidth * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("BoardHeight", Integer.toString((int)boardHeight * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("WindowWidth", Integer.toString((int)windowWidth * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("WindowHeight", Integer.toString((int)windowHeight * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("MapInfoLeft", Integer.toString(mapInfoLeft * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("MapInfoTop", Integer.toString(mapInfoTop * GmmlData.GMMLZOOM));
-			}
-		}
-	}
+	public Point getBoardSize() { return new Point((int)gdata.getBoardWidth(), (int)gdata.getBoardHeight()); }
 	
 	public void adjustToZoom(double factor) 
 	{
-		mapInfoLeft		*= factor;
-		mapInfoTop		*= factor;
+		gdata.setMapInfoLeft((int)(gdata.getMapInfoLeft() * factor));
+		gdata.setMapInfoTop((int)(gdata.getMapInfoTop() * factor));
 		fontSizeDouble *= factor;
 		fontSize = (int)this.fontSizeDouble;
 	}
 	
 	public boolean intersects(Rectangle2D.Double r) 
 	{
-		Rectangle2D rect = new Rectangle2D.Double(mapInfoLeft, mapInfoTop, sizeX, sizeY);
+		Rectangle2D rect = new Rectangle2D.Double(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
 		return rect.intersects(r);
 	}
 	
 	public boolean isContain(Point2D p) 
 	{
-		Rectangle2D rect = new Rectangle2D.Double(mapInfoLeft, mapInfoTop, sizeX, sizeY);
+		Rectangle2D rect = new Rectangle2D.Double(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
 		return rect.contains(p);
 	}
 	
 	public Rectangle getBounds()
 	{
-		return new Rectangle(mapInfoLeft, mapInfoTop, sizeX, sizeY);
+		return new Rectangle(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
 	}
 	
 	protected void moveBy(double dx, double dy)
 	{
 		markDirty();
-		mapInfoTop  += dy;
-		mapInfoLeft += dx;
+		gdata.setMapInfoTop (gdata.getMapInfoTop()  + (int)dy);
+		gdata.setMapInfoLeft (gdata.getMapInfoLeft() + (int)dx);
 		markDirty();
 	}
 	
@@ -264,17 +113,19 @@ public class GmmlMappInfo extends GmmlGraphics {
 				
 		//Draw Name, Organism, Data-Source, Version, Author, Maintained-by, Email, Availability and last modified
 		String[][] text = new String[][] {
-				{"Name: ", name},
-				{"Maintained by: ", maintainedBy},
-				{"Email: ", email},
-				{"Availability: ", availability},
-				{"Last modified: ", lastModified},
-				{"Organism: ", organism},
-				{"Data Source: ", dataSource}};
+				{"Name: ", gdata.getMapInfoName()},
+				{"Maintained by: ", gdata.getMaintainedBy()},
+				{"Email: ", gdata.getEmail()},
+				{"Availability: ", gdata.getAvailability()},
+				{"Last modified: ", gdata.getLastModified()},
+				{"Organism: ", gdata.getOrganism()},
+				{"Data Source: ", gdata.getDataSource()}};
 		int shift = 0;
+		int mapInfoLeft = gdata.getMapInfoLeft();
+		int mapInfoTop = gdata.getMapInfoTop();
 		for(String[] s : text)
 		{
-			if(s == null || s[1].equals("")) continue; //Skip empty labels
+			if(s[1] == null || s[1].equals("")) continue; //Skip empty labels
 			buffer.setFont(fBold);
 			Point labelSize = buffer.textExtent(s[0], SWT.DRAW_TRANSPARENT);
 			buffer.drawString(s[0], mapInfoLeft, mapInfoTop + shift, true);
@@ -289,4 +140,10 @@ public class GmmlMappInfo extends GmmlGraphics {
 		fBold.dispose();
 		fNormal.dispose();
 	}
+
+	public int compareTo(Object arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
+ 

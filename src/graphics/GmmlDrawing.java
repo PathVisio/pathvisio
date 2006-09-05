@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import data.GmmlGex;
+import data.*;
 import data.GmmlGex.Sample;
 import data.GmmlGex.CachedData.Data;
 
@@ -43,7 +43,7 @@ import data.GmmlGex.CachedData.Data;
  * event handling.
  */
 public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, 
-PaintListener, MouseTrackListener, KeyListener
+PaintListener, MouseTrackListener, KeyListener, GmmlListener
 {	
 	private static final long serialVersionUID = 1L;
 		
@@ -71,7 +71,8 @@ PaintListener, MouseTrackListener, KeyListener
 	 * when displayed on the drawing)
 	 */
 	GmmlMappInfo mappInfo;
-		
+	GmmlData data;
+	
 	GmmlSelectionBox s; 
 		
 	private boolean editMode;
@@ -81,6 +82,35 @@ PaintListener, MouseTrackListener, KeyListener
 	 */
 	public boolean isEditMode() { return editMode; }
 	
+	/**
+	 * Maps the contents of a pathway to a GmmlDrawing
+	 */	
+	public void fromGmmlData(GmmlData _data)
+	{		
+		data = _data;
+			
+		for (GmmlDataObject o : data.dataObjects)
+		{
+			switch (o.getObjectType())
+			{
+				case ObjectType.BRACE: drawingObjects.add(new GmmlBrace(this, o)); break;
+				case ObjectType.GENEPRODUCT: drawingObjects.add(new GmmlGeneProduct(this, o)); break;
+				case ObjectType.SHAPE: drawingObjects.add(new GmmlShape(this, o)); break;
+				case ObjectType.LINE: drawingObjects.add(new GmmlLine(this, o)); break;
+				case ObjectType.MAPPINFO: 
+					GmmlMappInfo mi = new GmmlMappInfo(this, o);
+					drawingObjects.add(mi); 
+					setMappInfo(mi); 
+					break;				
+				case ObjectType.LABEL: drawingObjects.add(new GmmlLabel(this, o)); break;					
+			}
+						
+		}
+		setSize(mappInfo.getBoardSize());
+		data.fireObjectModifiedEvent(new GmmlEvent(null, GmmlEvent.MODIFIED_GENERAL));
+//		drawing.gmmlVision.getShell().setSize(drawing.mappInfo.windowWidth, drawing.mappInfo.windowHeight);
+	}
+
 	private int newGraphics = NEWNONE;
 	/**
 	 * Method to set the new graphics type that has to be added next time the user clicks on the
@@ -94,12 +124,12 @@ PaintListener, MouseTrackListener, KeyListener
 	 * Adds object boundaries to the 'dirty rectangle', which marks the area that needs to be redrawn
 	 * @param g	drawing object of which the boundaries have to be added
 	 */
-	public void addDirtyRect(GmmlDrawingObject g)
+	public void addDirtyRect(Rectangle r)
 	{
 		if(dirtyRect == null)
-			dirtyRect = g.getBounds();
+			dirtyRect = r;
 		else
-			dirtyRect.add(g.getBounds());	
+			dirtyRect.add(r);	
 	}
 	
 	/**
@@ -166,7 +196,7 @@ PaintListener, MouseTrackListener, KeyListener
 		{
 			if(o instanceof GmmlGeneProduct)
 			{
-				mappIds.add(((GmmlGeneProduct)o).name);
+				mappIds.add(((GmmlGeneProduct)o).getName());
 			}
 		}
 		return mappIds;
@@ -295,7 +325,7 @@ PaintListener, MouseTrackListener, KeyListener
 		if(!editMode) return;
 		if(isDragging)
 		{
-			updatePropertyTable(GmmlVision.getWindow().propertyTable.g);
+			updatePropertyTable(GmmlVision.getWindow().propertyTable.getGmmlDataObject());
 			if(s.isSelecting()) { //If we were selecting, stop it
 				s.stopSelecting();
 				redrawDirtyRect();
@@ -353,25 +383,11 @@ PaintListener, MouseTrackListener, KeyListener
 	}
 
 	/**
-	 * Updates the JDOM nodes for all elements on this drawing
-	 */
-	public void updateJdomElements() {
-		// Update jdomElement for every graphics object
-		Iterator it = drawingObjects.iterator();
-		while(it.hasNext()) {
-			GmmlDrawingObject o = (GmmlDrawingObject)it.next();
-			if(o instanceof GmmlGraphics) {
-				((GmmlGraphics)o).updateJdomElement();
-			}
-		}
-	}
-
-	/**
 	 * Updates the propertytable to display information about the given GmmlDrawingObject
 	 * @param o object to update the property table for, if instanceof {@link GmmlHandle}, 
 	 * then the parent object is used, if null, then the property table is cleared
 	 */
-	public void updatePropertyTable(GmmlDrawingObject o)
+	private void updatePropertyTable(GmmlDrawingObject o)
 	{
 		GmmlGraphics g = null;
 		if (o != null)
@@ -383,12 +399,19 @@ PaintListener, MouseTrackListener, KeyListener
 			if (o instanceof GmmlGraphics)
 			{
 				g = (GmmlGraphics)o;
-				g.updateToPropItems();
+				updatePropertyTable (g.gdata);
 			}
-		}
-		GmmlVision.getWindow().propertyTable.setGraphics(g);
+		}		
 	}
-	
+
+	private void updatePropertyTable(GmmlDataObject o)
+	{
+		if (o != null)
+		{
+			GmmlVision.getWindow().propertyTable.setGmmlDataObject(o);
+		}		
+	}
+
 	/**
 	 * Updates the {@link GmmlBpBrowser} to display information about the given GmmlDrawingObject
 	 * (currently only if it's a {@link GmmlGeneProduct})
@@ -562,100 +585,217 @@ PaintListener, MouseTrackListener, KeyListener
 	 */
 	private void newObject(Point e)
 	{
+		GmmlDataObject gdata = null;
 		GmmlGraphics g = null;
 		GmmlHandle h = null;
-		Document d = GmmlVision.getGmmlData().getDocument();
-		
+		GmmlLine l = null;
 		switch(newGraphics) {
 		case NEWNONE:
 			return;
 		case NEWLINE:
-			g = new GmmlLine(e.x, e.y, e.x, e.y,stdRGB, this, d);
-			GmmlLine l = (GmmlLine)g;
-			l.style = GmmlLine.STYLE_SOLID;
-			l.type = GmmlLine.TYPE_LINE;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.LINE);
+			g = l = new GmmlLine(this, gdata);
 			h = l.handleEnd;
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
-			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, d);
-			l = (GmmlLine)g;
-			l.style = GmmlLine.STYLE_SOLID;
-			l.type = GmmlLine.TYPE_ARROW;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.ARROW);
+			g = l = new GmmlLine(this, gdata);
 			h = l.handleEnd;
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
-			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, d);
-			l = (GmmlLine)g;
-			l.style = GmmlLine.STYLE_DASHED;
-			l.type = GmmlLine.TYPE_LINE;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.DASHED);
+			gdata.setLineType (LineType.LINE);
+			g = l = new GmmlLine(this, gdata);
 			h = l.handleEnd;
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
-			g = new GmmlLine(e.x, e.y, e.x, e.y, stdRGB, this, d);
-			l = (GmmlLine)g;
-			l.style = GmmlLine.STYLE_DASHED;
-			l.type = GmmlLine.TYPE_ARROW;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.DASHED);
+			gdata.setLineType (LineType.ARROW);
+			g = l = new GmmlLine(this, gdata);
 			h = l.handleEnd;
 			isDragging = true;
 			break;
 		case NEWLABEL:
-			g = new GmmlLabel(e.x, e.y, (int)(GmmlLabel.INITIAL_WIDTH * zoomFactor),
-					(int)(GmmlLabel.INITIAL_HEIGHT * zoomFactor), this, GmmlVision.getGmmlData().getDocument());
+			gdata = new GmmlDataObject();
+			gdata.setObjectType(ObjectType.LABEL);
+			gdata.setCenterX(e.x);
+			gdata.setCenterY(e.y);
+			gdata.setWidth((GmmlLabel.INITIAL_WIDTH * zoomFactor));
+			gdata.setHeight((GmmlLabel.INITIAL_HEIGHT * zoomFactor));
+			gdata.setFontSize (GmmlLabel.INITIAL_FONTSIZE);
+			g = new GmmlLabel (this, gdata);
 			((GmmlLabel)g).createTextControl();
 			h = null;
 			break;
 		case NEWARC:
-			g = new GmmlArc(e.x, e.y, 1, 1, stdRGB, 0, this, d);
-			h = ((GmmlArc)g).handleSE;
+			gdata = new GmmlDataObject();
+			gdata.setObjectType(ObjectType.SHAPE);
+			gdata.setShapeType(ShapeType.ARC);
+			gdata.setCenterX (e.x);
+			gdata.setCenterY (e.y);
+			gdata.setWidth(1);
+			gdata.setHeight(1);
+			gdata.setColor(stdRGB);
+			gdata.setRotation (0);
+			g = new GmmlShape(this, gdata);
+			h = ((GmmlShape)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWBRACE:
-			g = new GmmlBrace(e.x, e.y, 1, 1, GmmlBrace.ORIENTATION_RIGHT, stdRGB, this, d);
+			gdata = new GmmlDataObject();
+			gdata.setObjectType(ObjectType.BRACE);
+			gdata.setCenterX(e.x);
+			gdata.setCenterY(e.y);
+			gdata.setWidth(1);
+			gdata.setHeight(1);
+			gdata.setOrientation(OrientationType.RIGHT);
+			gdata.setColor(stdRGB);
+			g = new GmmlBrace(this, gdata);
 			h = ((GmmlBrace)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
-			g = new GmmlGeneProduct(e.x, e.y, GmmlGeneProduct.INITIAL_WIDTH * zoomFactor, 
-					GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor, "Gene", "", stdRGB, this, d);
-//			((GmmlGeneProduct)g).createTextControl();
+			gdata = new GmmlDataObject();
+			gdata.setObjectType(ObjectType.GENEPRODUCT);
+			gdata.setCenterX(e.x);
+			gdata.setCenterY(e.y);
+			gdata.setWidth(GmmlGeneProduct.INITIAL_WIDTH * zoomFactor);
+			gdata.setHeight(GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor);
+			gdata.setGeneID("Gene");
+			gdata.setXref("");
+			gdata.setColor(stdRGB);
+			g = new GmmlGeneProduct (this, gdata);
 			h = null;
 			break;
 		case NEWRECTANGLE:
-			g = new GmmlShape(e.x, e.y, 1, 1, GmmlShape.TYPE_RECTANGLE, stdRGB, 0, this, d);
+			gdata = new GmmlDataObject();
+			gdata.setObjectType(ObjectType.SHAPE);
+			gdata.setShapeType(ShapeType.RECTANGLE);
+			gdata.setCenterX (e.x);
+			gdata.setCenterY (e.y);
+			gdata.setWidth(1);
+			gdata.setHeight(1);
+			gdata.setColor(stdRGB);
+			gdata.setRotation (0);
+			g = new GmmlShape(this, gdata);
 			h = ((GmmlShape)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWOVAL:
-			g = new GmmlShape(e.x, e.y, 50 * zoomFactor, 50 * zoomFactor, GmmlShape.TYPE_OVAL, stdRGB, 0, this, d);
+			gdata = new GmmlDataObject();
+			gdata.setObjectType(ObjectType.SHAPE);
+			gdata.setShapeType(ShapeType.OVAL);
+			gdata.setCenterX (e.x);
+			gdata.setCenterY (e.y);
+			gdata.setWidth(50 * zoomFactor);
+			gdata.setHeight(50 * zoomFactor);
+			gdata.setColor(stdRGB);
+			gdata.setRotation (0);
+			g = new GmmlShape(this, gdata);
 			h = ((GmmlShape)g).handleSE;
 			isDragging = true;
 			break;
 		case NEWTBAR:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_TBAR, stdRGB, this, d);
-			h = ((GmmlLineShape)g).handleEnd;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.TBAR);
+			g = l = new GmmlLine(this, gdata);
+			h = ((GmmlLine)g).handleEnd;						
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_ROUND, stdRGB, this, d);
-			h = ((GmmlLineShape)g).handleEnd;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.RECEPTOR_ROUND);
+			g = l = new GmmlLine(this, gdata);
+			h = ((GmmlLine)g).handleEnd;						
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_RECEPTOR_SQUARE, stdRGB, this, d);
-			h = ((GmmlLineShape)g).handleEnd;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.RECEPTOR_SQUARE);
+			g = l = new GmmlLine(this, gdata);
+			h = ((GmmlLine)g).handleEnd;						
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_ROUND, stdRGB, this, d);
-			h = ((GmmlLineShape)g).handleEnd;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.LIGAND_ROUND);
+			g = l = new GmmlLine(this, gdata);
+			h = ((GmmlLine)g).handleEnd;						
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
-			g = new GmmlLineShape(e.x, e.y, e.x, e.y, GmmlLineShape.TYPE_LIGAND_SQUARE, stdRGB, this, d);
-			h = ((GmmlLineShape)g).handleEnd;
+			gdata = new GmmlDataObject();
+			gdata.setStartX(e.x);
+			gdata.setStartY(e.y);
+			gdata.setEndX(e.x);
+			gdata.setEndY(e.y);	
+			gdata.setColor (stdRGB);
+			gdata.setObjectType(ObjectType.LINE);
+			gdata.setLineStyle (LineStyle.SOLID);
+			gdata.setLineType (LineType.LIGAND_SQUARE);
+			g = l = new GmmlLine(this, gdata);
+			h = ((GmmlLine)g).handleEnd;						
 			isDragging = true;
 			break;
 		}
@@ -727,7 +867,7 @@ PaintListener, MouseTrackListener, KeyListener
 			            labelR.setBackground(getShell().getDisplay()
 			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			            
-			            Data mappIdData = GmmlGex.getCachedData(gp.name, gp.getSystemCode());
+			            Data mappIdData = GmmlGex.getCachedData(gp.getName(), gp.getSystemCode());
 			            if(mappIdData == null) return; //No data in cache for this geneproduct
 			            HashMap<Integer, Object> data = mappIdData.getAverageSampleData();
 			            String textL = "";
@@ -795,12 +935,22 @@ PaintListener, MouseTrackListener, KeyListener
 		{
 			drawingObjects.remove(o); //Remove from drawing
 			s.removeFromSelection(o); //Remove from selection
-			if(o instanceof GmmlGraphics) { //Remove from gmml document
-				Element e = ((GmmlGraphics)o).getJdomElement();
-				GmmlVision.getGmmlData().getDocument().getRootElement().removeContent(e);
-			}
 		}
 	}
-	
+
+	public void gmmlObjectModified(GmmlEvent e) {
+		switch (e.getType())
+		{
+			case GmmlEvent.MODIFIED_GENERAL:		
+				addDirtyRect(null); // mark everything dirty
+				break;
+			case GmmlEvent.DELETED:		
+				addDirtyRect(null); // mark everything dirty
+				break;
+			case GmmlEvent.ADDED:		
+				addDirtyRect(null); // mark everything dirty
+				break;
+		}
+	}
 	
 } // end of class

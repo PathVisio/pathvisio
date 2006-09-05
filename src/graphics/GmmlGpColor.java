@@ -63,10 +63,10 @@ public class GmmlGpColor {
 		fontSize += 2;
 		f = SwtUtils.changeFont(f, new FontData("Arial narrow", fontSize, SWT.NONE), e.display);
 		buffer.setFont(f);
-		textSize = buffer.textExtent (parent.geneID);
-		c = SwtUtils.changeColor(c, parent.color, e.display);
+		textSize = buffer.textExtent (parent.gdata.getGeneID());
+		c = SwtUtils.changeColor(c, parent.gdata.getColor(), e.display);
 		buffer.setForeground(c);
-		buffer.drawString (parent.geneID, 
+		buffer.drawString (parent.gdata.getGeneID(), 
 			r.x + (int)(r.width / 2) - (int)(textSize.x / 2),
 			r.y + (int)(r.height / 2) - (int)(textSize.y / 2), true);
 		
@@ -82,7 +82,7 @@ public class GmmlGpColor {
 	
 	private void colorByData(Rectangle colorArea)
 	{
-		Data mappIdData = GmmlGex.getCachedData(parent.name, parent.getSystemCode());
+		Data mappIdData = GmmlGex.getCachedData(parent.getName(), parent.getSystemCode());
 		
 		GmmlColorSet cs = (GmmlColorSet)GmmlGex.getColorSets().get(GmmlGex.getColorSetIndex());
 		
@@ -208,11 +208,11 @@ public class GmmlGpColor {
 			// Get x position
 			colorArea.x = colorArea.x + (parent.getBounds().width - colorArea.width);
 			
-			if(GmmlGex.hasData(parent.name, parent.getSystemCode())) //Check if data is available
+			if(GmmlGex.hasData(parent.getName(), parent.getSystemCode())) //Check if data is available
 			{
 				colorByData(colorArea);
 			}
-			else if(GmmlGdb.hasGene(parent.name, parent.getSystemCode())) //Check if gene exists in gdb
+			else if(GmmlGdb.hasGene(parent.getName(), parent.getSystemCode())) //Check if gene exists in gdb
 			{		
 				colorAsNotFound(colorArea, cs.color_no_data_found);
 			}
@@ -223,12 +223,14 @@ public class GmmlGpColor {
 			
 		} else {			
 			buffer.setFont (f);
-			Point textSize = buffer.textExtent (parent.geneID);
-			c = SwtUtils.changeColor(c, parent.color, e.display);
+			String label = parent.gdata.getGeneID();
+			Point textSize = buffer.textExtent (label);
+			c = SwtUtils.changeColor(c, parent.gdata.getColor(), e.display);
 			buffer.setForeground(c);
-			buffer.drawString (parent.geneID, 
-				(int) parent.getCenterX() - (textSize.x / 2) , 
-				(int) parent.getCenterY() - (textSize.y / 2), true);
+			int x = (int) parent.getCenterX() - (textSize.x / 2);
+			int y = (int) parent.getCenterY() - (textSize.y / 2);
+			RGB rgb = c.getRGB();
+			buffer.drawString (label, x , y, true);
 		}
 		
 		c.dispose();

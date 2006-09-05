@@ -160,7 +160,7 @@ public abstract class GmmlGdb {
 			}
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to get ensembl genes for ensembl gene " +
-					"'" + ref + ", with systemcode '" + code + "'", e);
+					"'" + ref + "' with systemcode '" + code + "'", e);
 		}
 		return ensIds;
 	}

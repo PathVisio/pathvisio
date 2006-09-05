@@ -55,9 +55,9 @@ public abstract class GmmlVisionMain {
 	 */
 	public static void initiate() {
 		//initiate logger
-		try { 
-			GmmlVision.log.setStream(new PrintStream("log.txt")); 
-		} catch(Exception e) {}
+//		try { 
+//			GmmlVision.log.setStream(new PrintStream("log.txt")); 
+//		} catch(Exception e) {}
 		GmmlVision.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		
 		//initiate Gene database (to load previously used gdb)

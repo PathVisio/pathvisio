@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
+import org.jdom.Document;
+
+import data.GmmlDataObject;
 
 /**
  * This class implements a selectionbox 
@@ -25,7 +28,8 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 */
 	public GmmlSelectionBox(GmmlDrawing canvas)
 	{
-		super(canvas);
+		// TODO: selectionbox shouldn't need a dataobject...
+		super(canvas, new GmmlDataObject());
 		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
 		
 		selection = new ArrayList<GmmlDrawingObject>();
@@ -109,10 +113,10 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 		for(GmmlDrawingObject o : selection) o.deselect();
 		selection.clear();
 		
-		this.startX = startX;
-		this.startY = startY;
-		width = 0;
-		height = 0;
+		gdata.setLeft(startX);
+		gdata.setTop(startY);
+		gdata.setWidth(0);
+		gdata.setHeight(0);
 		setHandleLocation();
 	}
 
@@ -198,10 +202,10 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 			else r.add(o.getBounds());
 			for(GmmlHandle h : o.getHandles()) h.hide();
 		}
-		startX = r.x;
-		startY = r.y;
-		width = r.width;
-		height = r.height;
+		gdata.setLeft(r.x);
+		gdata.setTop(r.y);
+		gdata.setWidth(r.width);
+		gdata.setHeight(r.height);
 		setHandleLocation();
 		markDirty();
 	}
@@ -230,8 +234,8 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	public void adjustToHandle(GmmlHandle h) {	
 		//Store original size and location before adjusting to handle
-		double oWidth = width;
-		double oHeight = height;
+		double oWidth = gdata.getWidth();
+		double oHeight = gdata.getHeight();
 		double oCenterX = getCenterX();
 		double oCenterY = getCenterY();
 		
@@ -249,8 +253,8 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 			//Scale all selected objects in x and y direction			
 			for(GmmlDrawingObject o : selection) { 
 				Rectangle2D.Double r = o.getScaleRectangle();
-				double rw = width / oWidth;
-				double rh = height / oHeight;
+				double rw = gdata.getWidth() / oWidth;
+				double rh = gdata.getHeight() / oHeight;
 				double nwo = r.width * rw;
 				double nho = r.height * rh;
 				double ncdx = (r.x - oCenterX) * rw;
@@ -276,7 +280,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.setLineStyle (SWT.LINE_DOT);
 			buffer.setLineWidth (1);
-			buffer.drawRectangle ((int)startX, (int)startY, (int)width, (int)height);
+			buffer.drawRectangle ((int)gdata.getLeft(), (int)gdata.getTop(), (int)gdata.getWidth(), (int)gdata.getHeight());
 			buffer.setAntialias(SWT.ON);
 		}
 	}
@@ -285,4 +289,5 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	{
 		draw(e, e.gc);
 	}
+	
 }

@@ -3,16 +3,10 @@ package search;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import search.PathwaySearchComposite.SearchRunnableWithProgress;
@@ -20,7 +14,6 @@ import search.SearchResults.Attribute;
 import search.SearchResults.SearchResult;
 import util.FileUtils;
 import util.XmlUtils.PathwayParser;
-import data.GmmlData;
 import data.GmmlGdb;
 
 public abstract class SearchMethods {	
@@ -62,7 +55,7 @@ public abstract class SearchMethods {
 
 		srt.setSearchResults(srs);
 		//Get all cross references
-		ArrayList<String> refs = GmmlGdb.getCrossRefs(id, code);
+		List<String> refs = GmmlGdb.getCrossRefs(id, code);
 		if(refs.size() == 0) return MSG_NOT_IN_GDB;
 		
 		runnable.updateMonitor(200);
@@ -85,7 +78,7 @@ public abstract class SearchMethods {
 						sr.setAttribute("pathway", f.getName());
 						sr.setAttribute("directory", f.getParentFile().getName());
 						sr.setAttribute("file", f.getAbsolutePath());
-						ArrayList idsFound = new ArrayList();
+						ArrayList<String> idsFound = new ArrayList<String>();
 						idsFound.add(gene.getId());
 						sr.setAttribute("idsFound", idsFound);
 						srt.refreshTableViewer(true);

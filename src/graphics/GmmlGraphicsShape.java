@@ -11,7 +11,6 @@ import org.eclipse.swt.graphics.Transform;
 
 import util.LinAlg;
 import util.LinAlg.Point;
-import data.GmmlData;
 import data.GmmlDataObject;
 import data.GmmlEvent;
 

@@ -229,7 +229,7 @@ public class GmmlGpColor {
 			buffer.setForeground(c);
 			int x = (int) parent.getCenterX() - (textSize.x / 2);
 			int y = (int) parent.getCenterY() - (textSize.y / 2);
-			RGB rgb = c.getRGB();
+//			RGB rgb = c.getRGB();
 			buffer.drawString (label, x , y, true);
 		}
 		

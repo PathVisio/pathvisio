@@ -2,7 +2,6 @@ package gmmlVision;
 
 import graphics.GmmlDrawing;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -187,6 +186,8 @@ public abstract class GmmlVision {
 	}
 	
 	public static class PropertyEvent extends EventObject {
+		private static final long serialVersionUID = 1L;
+
 		public Object source;
 		public String name;
 		public String oldValue;

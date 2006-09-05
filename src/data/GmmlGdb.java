@@ -15,8 +15,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -172,7 +171,7 @@ public abstract class GmmlGdb {
 	 * @param code	systemcode of the gene identifier
 	 * @return
 	 */
-	public static ArrayList getCrossRefs(String id, String code) {
+	public static List<String> getCrossRefs(String id, String code) {
 		ArrayList<String> refs = new ArrayList<String>();
 		ArrayList<String> ensIds = ref2EnsIds(id, code);
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
@@ -191,8 +190,8 @@ public abstract class GmmlGdb {
 	 */
 //	Don't use this, multiple simple select queries is faster
 //	Use getCrossRefs instead
-	public static ArrayList getCrossRefs1Query(String id, String code) {
-		ArrayList crossIds = new ArrayList();
+	public static List<String> getCrossRefs1Query(String id, String code) {
+		List<String> crossIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight FROM link " +

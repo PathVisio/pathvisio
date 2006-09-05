@@ -66,6 +66,7 @@ public class RCommands {
 	}
 	
 	public static class RException extends Exception {
+		private static final long serialVersionUID = 1L;
 		Rengine re;
 		String msg;
 
@@ -77,6 +78,7 @@ public class RCommands {
 	}
 	
 	public static class REvalException extends RException {
+		private static final long serialVersionUID = 1L;
 		String cmd;
 		
 		public REvalException(Rengine re, String cmd) {
@@ -88,6 +90,7 @@ public class RCommands {
 	}
 	
 	public static class RniException extends RException {
+		private static final long serialVersionUID = 1L;
 		long ref;
 		String method;
 		

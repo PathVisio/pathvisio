@@ -1,7 +1,5 @@
 package gmmlVision;
 
-import java.io.PrintStream;
-
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;

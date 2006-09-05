@@ -80,7 +80,6 @@ public class GmmlData
 	{
 		// Start XML processing
 		GmmlVision.log.info("Start reading the Gmml file: " + file);
-		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 
 		xmlFile = new File(file);

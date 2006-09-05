@@ -202,7 +202,7 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 	/**
 	 * This class contains a color and its corresponding value used for the {@link GmmlColorGradient}
 	 */
-	public class ColorValuePair implements Comparable {
+	public class ColorValuePair implements Comparable<ColorValuePair> {
 		public RGB color;
 		public double value;
 		public ColorValuePair(RGB color, double value)
@@ -211,10 +211,9 @@ public class GmmlColorGradient extends GmmlColorSetObject {
 			this.value = value;
 		}
 		
-		public int compareTo(Object o) throws ClassCastException
+		public int compareTo(ColorValuePair o)
 		{
-			if(!(o instanceof ColorValuePair)) throw new ClassCastException("Object not of class ColorValuePair");
-			return (int)(value - ((ColorValuePair)o).value);
+			return (int)(value - o.value);
 		}
 	}
 }

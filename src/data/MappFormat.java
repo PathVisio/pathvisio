@@ -12,7 +12,6 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.*;
 
-import org.jdom.*;
 import debug.Logger;
 
 public class MappFormat
@@ -453,8 +452,6 @@ public class MappFormat
 	// pathway
     public static void copyMappObjects(String[][] mappObjects, GmmlData data) throws ConverterException
     {
-    	List elementList = new ArrayList();
-    	
         log.trace ("CONVERTING OBJECTS TABLE TO GMML");
 
 		// Create the GenMAPP --> GMML mappings list for use in the switch

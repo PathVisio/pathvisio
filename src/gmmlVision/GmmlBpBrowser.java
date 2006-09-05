@@ -4,7 +4,7 @@ import graphics.GmmlGeneProduct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
@@ -80,7 +80,7 @@ public class GmmlBpBrowser extends Composite {
 	}
 	
 	public String getCrossRefText(String id, String code) {
-		ArrayList<String> crfs = GmmlGdb.getCrossRefs(id, code);
+		List<String> crfs = GmmlGdb.getCrossRefs(id, code);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
 		for(Object cr : GmmlGdb.getCrossRefs(id, code))

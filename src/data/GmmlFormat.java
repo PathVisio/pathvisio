@@ -15,7 +15,7 @@ public class GmmlFormat {
 	 *  
 	 * @author Martijn.vanIersel
 	 */
-	private static class ByElementName implements Comparator
+	private static class ByElementName implements Comparator<Element>
 	{
 		// hashmap for quick lookups during sorting
 		private HashMap<String, Integer> elementOrdering;
@@ -46,13 +46,9 @@ public class GmmlFormat {
 		 * Graphics -> index 2 in elements array.
 		 * If a.getName() is Comment and b.getName() is Graphics, returns 1-2 -> -1
 		 */
-		public int compare(Object a, Object b) {
-			if (!(a instanceof Element && b instanceof Element))
-			{
-				throw new ClassCastException();
-			}			
-			return ((Integer)elementOrdering.get(((Element)a).getName())).intValue() - 
-				((Integer)elementOrdering.get(((Element)b).getName())).intValue();
+		public int compare(Element a, Element b) {
+			return ((Integer)elementOrdering.get(a.getName())).intValue() - 
+				((Integer)elementOrdering.get(b.getName())).intValue();
 		}
 		
 	}

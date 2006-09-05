@@ -1,25 +1,12 @@
 package graphics;
 
-import gmmlVision.GmmlVision;
-
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
 
-import util.ColorConverter;
 import util.SwtUtils;
-import data.GmmlData;
 import data.*;
 
 /**

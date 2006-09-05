@@ -17,15 +17,6 @@ limitations under the License.
 */
 
 
-import gmmlVision.GmmlVision;
-
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,19 +25,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-
-import util.ColorConverter;
 import util.SwtUtils;
-import data.GmmlData;
 import data.*;
 
 public class GmmlLabel extends GmmlGraphicsShape

@@ -1,6 +1,5 @@
 package gmmlVision;
 
-import graphics.*;
 import data.*;
 
 import java.util.Arrays;
@@ -101,7 +100,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 	//System names converted to arraylist for easy index lookup
 	final static List<String> systemNames = Arrays.asList(GmmlData.systemNames);
 	
-	Hashtable typeMappings;
+	Hashtable<String, Integer> typeMappings;
 	
 	GmmlPropertyTable(Composite parent, int style)
 	{
@@ -130,7 +129,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 		
 		t.addControlListener(new TableColumnResizer(t, t.getParent()));
 		
-		typeMappings = new Hashtable();
+		typeMappings = new Hashtable<String, Integer>();
 		for(int i = 0; i < totalAttributes.size(); i++)
 		{
 			typeMappings.put(totalAttributes.get(i), attributeTypes[i]);

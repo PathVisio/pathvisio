@@ -389,7 +389,7 @@ public abstract class GmmlGex {
 	/**
 	 * This class represents a record in the Sample table of the Expression database. 
 	 */
-	public static class Sample implements Comparable
+	public static class Sample implements Comparable<Sample>
 	{
 		public int idSample;
 		private String name;
@@ -420,14 +420,9 @@ public abstract class GmmlGex {
 		 * lower idSample, positive if this object has a higher idSample
 		 * @throws ClassCastException
 		 */
-		public int compareTo(Object o) throws ClassCastException
+		public int compareTo(Sample o)
 		{
-			if(o instanceof Sample)
-			{
-				return idSample - ((Sample)o).idSample;
-			} else {
-				throw new ClassCastException("Object is not of type Sample");
-			}
+			return idSample - o.idSample;
 		}
 		
 		/**

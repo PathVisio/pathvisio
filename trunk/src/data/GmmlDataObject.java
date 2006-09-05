@@ -3,7 +3,6 @@ package data;
 import graphics.GmmlGraphicsData;
 
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
@@ -380,29 +379,6 @@ public class GmmlDataObject extends GmmlGraphicsData
 		
 	}
 	
-	private void updateMappInfoData(Element e)
-	{
-		e.setAttribute("Name", mapInfoName);
-		e.setAttribute("Organism", organism);
-		e.setAttribute("Data-Source", mapInfoDataSource);
-		e.setAttribute("Version", version);
-		e.setAttribute("Author", author);
-		e.setAttribute("Maintained-By", maintainedBy);
-		e.setAttribute("Email", email);
-		e.setAttribute("Availability", availability);
-		e.setAttribute("Last-Modified", lastModified);
-		
-		Element jdomGraphics = e.getChild("Graphics");
-		if(jdomGraphics !=null) {
-			jdomGraphics.setAttribute("BoardWidth", Integer.toString((int)boardWidth * GmmlData.GMMLZOOM));
-			jdomGraphics.setAttribute("BoardHeight", Integer.toString((int)boardHeight * GmmlData.GMMLZOOM));
-			jdomGraphics.setAttribute("WindowWidth", Integer.toString((int)windowWidth * GmmlData.GMMLZOOM));
-			jdomGraphics.setAttribute("WindowHeight", Integer.toString((int)windowHeight * GmmlData.GMMLZOOM));
-			//jdomGraphics.setAttribute("MapInfoLeft", Integer.toString(mapInfoLeft * GmmlData.GMMLZOOM));
-			//jdomGraphics.setAttribute("MapInfoTop", Integer.toString(mapInfoTop * GmmlData.GMMLZOOM));
-		}
-	}
-
 	public List<String> getAttributes()
 	{
 		List<String> result = Arrays.asList(new String[] { 

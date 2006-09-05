@@ -1224,7 +1224,7 @@ public class ColorSetWindow extends ApplicationWindow {
      * @param 	o the object that has to be moved
      * @param 	newIndex the index to move the object to
      */
-    public void moveElement(Vector v, Object o, int newIndex)
+    public <T> void moveElement(Vector<T> v, T o, int newIndex)
     {
     	v.remove(o);
     	v.add(newIndex, o);
@@ -1357,12 +1357,12 @@ public class ColorSetWindow extends ApplicationWindow {
 	 * {@link ITabbleLabelPovider for {@link coTable}
 	 */
 	private class CoTableLabelProvider implements ITableLabelProvider {
-		private java.util.List listeners;
+		private java.util.List<ILabelProviderListener> listeners;
 		private Image criterionImage;
 		private Image gradientImage;
 				
 		public CoTableLabelProvider() {
-			listeners = new ArrayList();
+			listeners = new ArrayList<ILabelProviderListener>();
 			try {
 				criterionImage = new Image(null, new FileInputStream("icons/colorset.gif"));
 			} catch (Exception e) { 
@@ -1476,11 +1476,11 @@ public class ColorSetWindow extends ApplicationWindow {
 	 * {@link ITabbleLabelPovider} for {@link cgColorTable}
 	 */
 	private class CgColorTableLabelProvider implements ITableLabelProvider {
-		private java.util.List listeners;
+		private java.util.List<ILabelProviderListener> listeners;
 		private Image colorImage;
 				
 		public CgColorTableLabelProvider() {
-			listeners = new ArrayList();
+			listeners = new ArrayList<ILabelProviderListener>();
 		}
 		
 		public void addListener(ILabelProviderListener listener) {

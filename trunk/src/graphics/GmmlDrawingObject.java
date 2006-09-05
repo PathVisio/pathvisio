@@ -6,7 +6,7 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-public abstract class GmmlDrawingObject implements Comparable
+public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 {	
 	protected GmmlDrawing canvas;
 	
@@ -188,14 +188,8 @@ public abstract class GmmlDrawingObject implements Comparable
 	 * @return
 	 * @throws ClassCastException
 	 */
-	public int compareTo(Object o) throws ClassCastException
+	public int compareTo(GmmlDrawingObject d)
 	{
-		if(!(o instanceof GmmlDrawingObject))
-		{
-			throw new ClassCastException("Object is not of type GmmlDrawingObject");
-		}
-		GmmlDrawingObject d = ((GmmlDrawingObject)o);
-		
 		// same object? easy...
 		if (d == this)
 			return 0;

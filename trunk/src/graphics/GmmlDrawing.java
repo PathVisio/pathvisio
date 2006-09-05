@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.jdom.Document;
-import org.jdom.Element;
 
 import data.*;
 import data.GmmlGex.Sample;

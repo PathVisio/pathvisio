@@ -602,7 +602,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LINE);
 			g = l = new GmmlLine(this, gdata);
-			h = l.handleEnd;
+			h = l.getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
@@ -616,7 +616,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.ARROW);
 			g = l = new GmmlLine(this, gdata);
-			h = l.handleEnd;
+			h = l.getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
@@ -630,7 +630,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.LINE);
 			g = l = new GmmlLine(this, gdata);
-			h = l.handleEnd;
+			h = l.getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
@@ -644,7 +644,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.ARROW);
 			g = l = new GmmlLine(this, gdata);
-			h = l.handleEnd;
+			h = l.getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLABEL:
@@ -738,7 +738,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.TBAR);
 			g = l = new GmmlLine(this, gdata);
-			h = ((GmmlLine)g).handleEnd;						
+			h = l.getHandleEnd();						
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
@@ -752,7 +752,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_ROUND);
 			g = l = new GmmlLine(this, gdata);
-			h = ((GmmlLine)g).handleEnd;						
+			h = l.getHandleEnd();						
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
@@ -766,7 +766,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_SQUARE);
 			g = l = new GmmlLine(this, gdata);
-			h = ((GmmlLine)g).handleEnd;						
+			h = l.getHandleEnd();						
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
@@ -780,7 +780,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_ROUND);
 			g = l = new GmmlLine(this, gdata);
-			h = ((GmmlLine)g).handleEnd;						
+			h = l.getHandleEnd();						
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
@@ -794,7 +794,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_SQUARE);
 			g = l = new GmmlLine(this, gdata);
-			h = ((GmmlLine)g).handleEnd;						
+			h = l.getHandleEnd();						
 			isDragging = true;
 			break;
 		}

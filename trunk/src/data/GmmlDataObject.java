@@ -565,7 +565,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 		return result;
 	}
 
-	public Element createJdomElement() 
+	public Element createJdomElement() throws ConverterException 
 	{		
 		Element e = null;
 		
@@ -637,7 +637,10 @@ public class GmmlDataObject extends GmmlGraphicsData
 				updateSimpleCenter (e);
 				break;
 		}
+		if (e == null)
+		{
+			throw new ConverterException ("Error creating jdom element");
+		}
 		return e;
-		// TODO: throw exception if null!
 	}
 }

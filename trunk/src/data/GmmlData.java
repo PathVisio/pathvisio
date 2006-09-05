@@ -157,6 +157,10 @@ public class GmmlData
 		{
 			GmmlVision.log.error("Unable to save file " + file + ": " + e.getMessage(), e);
 		}
+		catch (ConverterException e)
+		{
+			GmmlVision.log.error("Unable to convert to GMML, file: " + file + ": " + e.getMessage(), e);
+		}
 	}
 	
 	public void readFromXml(File file, boolean validate)

@@ -855,12 +855,12 @@
   <Shape Type="Arc">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="000000" Rotation="3.144562" CenterX="10000.0" CenterY="6100.0" Width="9522.429" Height="1400.893" />
+    <Graphics Color="000000" Rotation="3.144562" CenterX="10000.0" CenterY="6100.0" Width="19044.858" Height="2801.786" />
   </Shape>
   <Shape Type="Arc">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="000000" Rotation="0.02309242" CenterX="16150.000000000002" CenterY="3400.0" Width="951.3149" Height="304.1381" />
+    <Graphics Color="000000" Rotation="0.02309242" CenterX="16150.000000000002" CenterY="3400.0" Width="1902.6298" Height="608.2762" />
   </Shape>
   <Shape Type="Rectangle">
     <Notes></Notes>

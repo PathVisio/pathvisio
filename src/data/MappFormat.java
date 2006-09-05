@@ -643,6 +643,20 @@ public class MappFormat
     	o.setWidth(Double.parseDouble(mappObject[colWidth]) / GmmlData.GMMLZOOM);
     	o.setHeight(Double.parseDouble(mappObject[colHeight]) / GmmlData.GMMLZOOM);	
 	}
+	
+	private static void unmapShape_half (GmmlDataObject o, String[] mappObject)
+	{
+    	unmapCenter(o, mappObject);    	
+    	mappObject[colWidth] = "" + o.getWidth() * GmmlData.GMMLZOOM / 2;
+    	mappObject[colHeight] = "" + o.getHeight() * GmmlData.GMMLZOOM / 2;	
+	}
+
+	private static void mapShape_half (GmmlDataObject o, String[] mappObject)
+	{
+    	mapCenter(o, mappObject);    	
+    	o.setWidth(Double.parseDouble(mappObject[colWidth]) * 2 / GmmlData.GMMLZOOM);
+    	o.setHeight(Double.parseDouble(mappObject[colHeight]) * 2 / GmmlData.GMMLZOOM);	
+	}
 
 	public static void unmapBraceType (GmmlDataObject o, String[] mappObject) throws ConverterException
     {    	
@@ -810,8 +824,12 @@ public class MappFormat
     {
     	GmmlDataObject o = new GmmlDataObject();
     	o.setObjectType(ObjectType.SHAPE);
-    	o.setShapeType(ShapeType.fromMappName(mappObject[colType]));        
-        mapShape (o, mappObject);
+    	int shapeType = ShapeType.fromMappName(mappObject[colType]);
+    	o.setShapeType(shapeType);        
+    	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
+    		mapShape_half (o, mappObject);
+    	else
+    		mapShape (o, mappObject);
         mapColor (o, mappObject);
         mapRotation (o, mappObject);        
         return o;
@@ -820,8 +838,11 @@ public class MappFormat
     public static void unmapShapeType (GmmlDataObject o, String[] mappObject)
     {    	
     	int shapeType = o.getShapeType();
-    	mappObject[colType] = ShapeType.toMappName(shapeType);    	
-    	unmapShape (o, mappObject);
+    	mappObject[colType] = ShapeType.toMappName(shapeType);
+    	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
+    		unmapShape_half (o, mappObject);
+    	else
+    		unmapShape (o, mappObject);
     	unmapColor (o, mappObject);
     	unmapRotation (o, mappObject);    	
     }

@@ -1599,7 +1599,7 @@
   <Label TextLabel="Histone Deacetylases">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="10" Color="ff0000" CenterX="1600.0" CenterY="11650.0" Width="2090.0" Height="240.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="10" Color="0000ff" CenterX="1600.0" CenterY="11650.0" Width="2090.0" Height="240.0" />
   </Label>
   <Label TextLabel="+u">
     <Notes></Notes>
@@ -1694,12 +1694,12 @@
   <Label TextLabel="HDAC">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Times" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="ff0000" CenterX="3949.9999999999995" CenterY="8150.000000000001" Width="785.0" Height="285.0" />
+    <Graphics FontName="Times" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="3949.9999999999995" CenterY="8150.000000000001" Width="785.0" Height="285.0" />
   </Label>
   <Label TextLabel="E2F">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="ff0000" CenterX="5450.0" CenterY="8450.0" Width="530.0" Height="285.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="5450.0" CenterY="8450.0" Width="530.0" Height="285.0" />
   </Label>
   <Label TextLabel="DNA">
     <Notes></Notes>
@@ -1809,7 +1809,7 @@
   <Label TextLabel="Transcription Factor E2F">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="10" Color="ff0000" CenterX="4550.0" CenterY="11650.0" Width="2390.0" Height="240.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="10" Color="0000ff" CenterX="4550.0" CenterY="11650.0" Width="2390.0" Height="240.0" />
   </Label>
   <Label TextLabel="Ubiquitin">
     <Notes></Notes>
@@ -1879,7 +1879,7 @@
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="11300.0" CenterY="2800.0" Width="600.0" Height="200.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="11300.0" CenterY="2800.0" Width="1200.0" Height="400.0" />
   </Shape>
   <Shape Type="Rectangle">
     <Notes></Notes>
@@ -1889,7 +1889,7 @@
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="6850.0" CenterY="8650.0" Width="111.8034" Height="100.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="6850.0" CenterY="8650.0" Width="223.6068" Height="200.0" />
   </Shape>
   <Shape Type="Rectangle">
     <Notes></Notes>
@@ -1899,12 +1899,12 @@
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="7400.0" CenterY="9550.0" Width="111.8034" Height="100.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="7400.0" CenterY="9550.0" Width="223.6068" Height="200.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="9450.0" CenterY="9550.0" Width="850.0361" Height="200.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="9450.0" CenterY="9550.0" Width="1700.0722" Height="400.0" />
   </Shape>
   <Shape Type="Rectangle">
     <Notes></Notes>

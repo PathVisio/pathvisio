@@ -182,92 +182,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 			e.setAttribute("GeneProduct-Data-Source", dataSource);
 		}
 	}
-	 
-	/**
-	 * Sets the width of the graphical representation.
-	 * This differs from the GMML representation:
-	 * in GMML height and width are radius, here for all shapes the width is diameter
-	 * TODO: change to diameter in gmml
-	 * @param gmmlWidth the width as specified in the GMML representation
-	 */
-	private void setGmmlWidth(double gmmlWidth) {
-//		if ((objectType == ObjectType.SHAPE &&
-//				shapeType == ShapeType.RECTANGLE) ||
-//				objectType == ObjectType.LABEL ||
-//				objectType == ObjectType.GENEPRODUCT)
-//		{
-//			width = gmmlWidth;
-//		}		
-//		else
-//		{
-//			width = gmmlWidth * 2;
-//		}
-		width = gmmlWidth;
-	}
-	
-	/**
-	 * Get the width as stored in GMML
-	 * @return
-	 */
-	private double getGmmlWidth() 
-	{
-//		if ((objectType == ObjectType.SHAPE &&
-//				shapeType == ShapeType.RECTANGLE) ||
-//				objectType == ObjectType.LABEL ||
-//				objectType == ObjectType.GENEPRODUCT)
-//		{
-//			return width;
-//		}		
-//		else
-//		{
-//			return width / 2;
-//		}
-		return width;
-	}
-	
-	/**
-	 * Sets the height of the graphical representation.
-	 * This differs from the GMML representation:
-	 * in some GMML objects height and width are radius, here for all shapes the width is diameter
-	 * TODO: change to diameter in gmml
-	 *  @param gmmlHeight the height as specified in the GMML representation
-	 */
-	private void setGmmlHeight(double gmmlHeight) 
-	{
-//		if ((objectType == ObjectType.SHAPE &&
-//				shapeType == ShapeType.RECTANGLE) ||
-//				objectType == ObjectType.LABEL ||
-//				objectType == ObjectType.GENEPRODUCT)
-//		{
-//			height = gmmlHeight;
-//		}		
-//		else
-//		{
-//			height = gmmlHeight * 2;
-//		}			
-		height = gmmlHeight;
-	}
-	
-	/**
-	 * Get the height as stored in GMML
-	 * @return
-	 */
-	private double getGmmlHeight() 
-	{
-//		if ((objectType == ObjectType.SHAPE &&
-//				shapeType == ShapeType.RECTANGLE) ||
-//				objectType == ObjectType.LABEL ||
-//				objectType == ObjectType.GENEPRODUCT)
-//		{
-//			return height;
-//		}
-//		else
-//		{
-//			return height / 2;
-//		}
-		return height;
-	}
-
+	 	
 	// internal helper routine
 	private void mapCenter(Element e)
 	{
@@ -292,7 +207,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 	private void mapWidth(Element e)
 	{
     	Element graphics = e.getChild("Graphics");
-		setGmmlWidth(Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM);
+		width = Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM;
 			
 	}
 	
@@ -303,7 +218,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 			Element jdomGraphics = e.getChild("Graphics");
 			if(jdomGraphics !=null) 
 			{
-				jdomGraphics.setAttribute("Width", Double.toString(getGmmlWidth() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Double.toString(width * GmmlData.GMMLZOOM));
 			}
 		}		
 	}
@@ -327,8 +242,8 @@ public class GmmlDataObject extends GmmlGraphicsData
 	{
     	mapCenter(e);
 		Element graphics = e.getChild("Graphics");
-		setGmmlWidth(Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM); 
-		setGmmlHeight(Double.parseDouble(graphics.getAttributeValue("Height")) / GmmlData.GMMLZOOM);
+		width = Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM; 
+		height = Double.parseDouble(graphics.getAttributeValue("Height")) / GmmlData.GMMLZOOM;
 	}
 	
 	private void updateShapeData(Element e)
@@ -339,8 +254,8 @@ public class GmmlDataObject extends GmmlGraphicsData
 			if(jdomGraphics !=null) 
 			{
 				updateCenter(e);
-				jdomGraphics.setAttribute("Width", Double.toString(getGmmlWidth() * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Height", Double.toString(getGmmlHeight() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Double.toString(width * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Height", Double.toString(height * GmmlData.GMMLZOOM));
 			}
 		}
 	}
@@ -362,8 +277,8 @@ public class GmmlDataObject extends GmmlGraphicsData
 	{
     	mapCenter(e);
 		Element graphics = e.getChild("Graphics");
-		setGmmlWidth(Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM); 
-		setGmmlHeight(Double.parseDouble(graphics.getAttributeValue("PicPointOffset")) / GmmlData.GMMLZOOM);
+		width = Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM; 
+		height = Double.parseDouble(graphics.getAttributeValue("PicPointOffset")) / GmmlData.GMMLZOOM;
 		int orientation = OrientationType.getMapping(graphics.getAttributeValue("Orientation"));
 		if(orientation > -1)
 			setOrientation(orientation);

@@ -1046,12 +1046,12 @@
   <Label TextLabel="2. Activation of the pre-replicative complex">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="000080" CenterX="3100.0" CenterY="4300.0" Width="5720.0" Height="315.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="3100.0" CenterY="4300.0" Width="5720.0" Height="315.0" />
   </Label>
   <Label TextLabel="3. DNA replication initiation">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="000080" CenterX="1950.0" CenterY="8049.999999999999" Width="3620.0" Height="315.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="1950.0" CenterY="8049.999999999999" Width="3620.0" Height="315.0" />
   </Label>
   <Label TextLabel="Pre-replicative complex">
     <Notes></Notes>
@@ -1061,7 +1061,7 @@
   <Label TextLabel="1. Assembly of the pre-replicative complex">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="000080" CenterX="3050.0" CenterY="1550.0" Width="5720.0" Height="315.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="3050.0" CenterY="1550.0" Width="5720.0" Height="315.0" />
   </Label>
   <Label TextLabel="Mcm2">
     <Notes></Notes>
@@ -1131,12 +1131,12 @@
   <Label TextLabel="4. Switching of origins to post-replicative state">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="000080" CenterX="3350.0" CenterY="11100.0" Width="6140.0" Height="315.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="3350.0" CenterY="11100.0" Width="6140.0" Height="315.0" />
   </Label>
   <Label TextLabel="5. Leading/lagging strand synthesis">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="000080" CenterX="2550.0" CenterY="14250.0" Width="4715.0" Height="315.0" />
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="2550.0" CenterY="14250.0" Width="4715.0" Height="315.0" />
   </Label>
   <Label TextLabel="Orc complex">
     <Notes></Notes>
@@ -1176,67 +1176,67 @@
   <Shape Type="Arc">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="000000" Rotation="3.141593" CenterX="19200.0" CenterY="3750.0" Width="450.0" Height="225.0" />
+    <Graphics Color="000000" Rotation="3.141593" CenterX="19200.0" CenterY="3750.0" Width="900.0" Height="450.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="2950.0" CenterY="2350.0" Width="474.3416" Height="450.0" />
+    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="2950.0" CenterY="2350.0" Width="948.6832" Height="900.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="8350.0" CenterY="2550.0" Width="851.4693" Height="751.6648" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="8350.0" CenterY="2550.0" Width="1702.9386" Height="1503.3296" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="11250.0" CenterY="2600.0" Width="900.0" Height="800.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="11250.0" CenterY="2600.0" Width="1800.0" Height="1600.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="5400.0" CenterY="2450.0" Width="632.4555" Height="651.9202" />
+    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="5400.0" CenterY="2450.0" Width="1264.911" Height="1303.8404" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="19800.0" CenterY="4500.0" Width="632.4555" Height="651.9202" />
+    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="19800.0" CenterY="4500.0" Width="1264.911" Height="1303.8404" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="25600.0" CenterY="3200.0" Width="1476.906" Height="1375.227" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="25600.0" CenterY="3200.0" Width="2953.812" Height="2750.454" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="9850.0" CenterY="16350.0" Width="2900.431" Height="300.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="9850.0" CenterY="16350.0" Width="5800.862" Height="600.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="16500.0" CenterY="16400.0" Width="3050.0" Height="600.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="16500.0" CenterY="16400.0" Width="6100.0" Height="1200.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="23050.0" CenterY="16400.0" Width="2600.481" Height="552.2681" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="23050.0" CenterY="16400.0" Width="5200.962" Height="1104.5362" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="17600.0" CenterY="2700.0" Width="900.0898" Height="700.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="17600.0" CenterY="2700.0" Width="1800.1796" Height="1400.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="20950.0" CenterY="2650.0" Width="900.0" Height="800.0" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="20950.0" CenterY="2650.0" Width="1800.0" Height="1600.0" />
   </Shape>
   <Shape Type="Oval">
     <Notes></Notes>
     <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="29300.0" CenterY="3250.0" Width="1476.906" Height="1375.227" />
+    <Graphics Color="Transparent" Rotation="0.0" CenterX="29300.0" CenterY="3250.0" Width="2953.812" Height="2750.454" />
   </Shape>
   <Brace>
     <Notes></Notes>

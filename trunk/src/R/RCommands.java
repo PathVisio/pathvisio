@@ -26,7 +26,7 @@ public class RCommands {
     */
     public static REXP evalE(Rengine re, String s) throws REvalException {
     	REXP rexp = re.eval(s);
-    	if(rexp == null) throw new REvalException(s);
+    	if(rexp == null) throw new REvalException(re, s);
     	return rexp;
     }
     
@@ -66,17 +66,21 @@ public class RCommands {
 	}
 	
 	public static class RException extends Exception {
+		Rengine re;
 		String msg;
 
-		public RException(String msg) 	{ this.msg = msg; }
-		public String getMessage() 		{ return msg; }
+		public RException(Rengine re, String msg) 	{ this.msg = msg; this.re = re;}
+		public String getMessage() 		{
+			REXP err = re.eval("geterrmessage()");
+			return err == null ? msg + "\n R> no error message" : msg + "\nR> " + err.getContent();
+		}
 	}
 	
 	public static class REvalException extends RException {
 		String cmd;
 		
-		public REvalException(String cmd) {
-			super("R was unable to evaluate the command '" + cmd + "'");
+		public REvalException(Rengine re, String cmd) {
+			super(re, "R was unable to evaluate the command '" + cmd + "'");
 			this.cmd = cmd;
 		}
 		
@@ -87,8 +91,8 @@ public class RCommands {
 		long ref;
 		String method;
 		
-		public RniException(String method, long ref) { 
-			super("R was unable to process rni method '" + method + "'");
+		public RniException(Rengine re, String method, long ref) { 
+			super(re, "R was unable to process rni method '" + method + "'");
 			this.method = method;
 			this.ref = ref;
 		}

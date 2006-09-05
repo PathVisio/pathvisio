@@ -49,18 +49,17 @@ public class GmmlData
 	 */
 	public GmmlData() 
 	{
-		/*
+		
 		GmmlVisionWindow window = GmmlVision.getWindow();
 		
-		
-			GmmlDataObject mapInfo = new GmmlDataObject();
-			mapInfo.setObjectType(ObjectType.MAPPINFO);
-			mapInfo.setBoardWidth(window.sc.getSize().x);
-			mapInfo.setBoardHeight(window.sc.getSize().y);
-			mapInfo.setWindowWidth(window.getShell().getSize().x);
-			mapInfo.setWindowHeight(window.getShell().getSize().y);
-			mapInfo.setMapInfoName("New Pathway");
-		*/
+		GmmlDataObject mapInfo = new GmmlDataObject();
+		mapInfo.setObjectType(ObjectType.MAPPINFO);
+		mapInfo.setBoardWidth(window.sc.getSize().x);
+		mapInfo.setBoardHeight(window.sc.getSize().y);
+		mapInfo.setWindowWidth(window.getShell().getSize().x);
+		mapInfo.setWindowHeight(window.getShell().getSize().y);
+		mapInfo.setMapInfoName("New Pathway");
+		dataObjects.add(mapInfo);
 	}
 		
 	/**

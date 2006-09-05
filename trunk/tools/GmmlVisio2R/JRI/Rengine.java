@@ -244,6 +244,9 @@ public class Rengine extends Thread {
     public synchronized native int rniExpType(long exp);
     /** RNI: run the main loop.<br> <i>Note:</i> this is an internal method and it doesn't return until the loop exits. Don't use directly! */
     public native void rniRunMainLoop();
+        
+    /**RNI: custom main loop (test) **/
+    public native void rniCustomLoop();
     
     /** RNI: run other event handlers in R */
     public synchronized native void rniIdle();
@@ -254,7 +257,7 @@ public class Rengine extends Thread {
         // we don't really "add", we just replace ... (so far)
         callback = c;
     }
-
+		
     /** if Rengine was initialized with <code>runMainLoop=false</code> then this method can be used to start the main loop at a later point. It has no effect if the loop is running already. This method returns immediately but the loop will be started once the engine is ready. Please note that there is currently no way of stopping the R thread if the R event loop is running other than using <code>quit</code> command in R which closes the entire application. */
     public void startMainLoop() {
 		runLoop=true;
@@ -375,7 +378,7 @@ public class Rengine extends Thread {
         if (DEBUG>0) System.out.println("Rengine.eval("+s+"): END (ERR)"+Thread.currentThread());
         return null;
     }
-    
+        
     /** This method is very much like {@link #eval(String)}, except that it is non-blocking and returns <code>null</code> if the engine is busy.
         @param s string to evaluate
         @return result of the evaluation or <code>null</code> if the engine is busy
@@ -447,7 +450,8 @@ public class Rengine extends Thread {
 						if (DEBUG>0)
 							System.out.println("***> launching main loop:");
                         loopRunning=true;
-                        rniRunMainLoop();
+                        //runReplLoop();
+                        rniCustomLoop();
 						// actually R never returns from runMainLoop ...
                         loopRunning=false;
 						if (DEBUG>0)

@@ -43,6 +43,10 @@ void jri_checkExceptions(JNIEnv *env, int describe);
 
 void jri_error(char *fmt, ...);
 
+void R_ReplDLLinit(void);
+int R_ReplDLLdo1(void);
+void end_Rmainloop(void);
+
 #ifdef __cplusplus
 }
 #endif

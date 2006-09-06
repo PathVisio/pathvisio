@@ -223,7 +223,7 @@ public class GmmlGpColor {
 			
 		} else {			
 			buffer.setFont (f);
-			String label = parent.gdata.getGeneID();
+			String label = parent.getName();
 			Point textSize = buffer.textExtent (label);
 			c = SwtUtils.changeColor(c, parent.gdata.getColor(), e.display);
 			buffer.setForeground(c);

@@ -507,9 +507,9 @@ public class GmmlDataObject extends GmmlGraphicsData
 				
 			case 15: setOrientation	((Integer)value); break;
 	
-			case 16: setGeneID 			((String) value); break;
+			case 16: setGeneProductName ((String) value); break;
 			case 17: setDataSource		((String) value); break;
-			case 18: setGeneProductName	((String)value); break;
+			case 18: setGeneID			((String)value); break;
 			case 19: setXref			((String)  value); break;
 			case 20: setBackpageHead	((String)value); break;
 			case 21: setGeneProductType ((String)  value); break;
@@ -550,9 +550,9 @@ public class GmmlDataObject extends GmmlGraphicsData
 			
 			case 15: result = getOrientation(); break;
 						
-			case 16: result = getGeneID(); break;
+			case 16: result = getGeneProductName(); break;
 			case 17: result = getDataSource(); break;
-			case 18: result = getGeneProductName(); break;
+			case 18: result = getGeneID(); break;
 			case 19: result = getXref(); break;
 			case 20: result = getBackpageHead(); break;
 			case 21: result = getGeneProductType(); break;

@@ -70,7 +70,7 @@ public class GmmlBpBrowser extends Composite {
 		String geneHeader = geneProduct.getGmmlData().getBackpageHead();
 		String geneId = geneProduct.getID();
 		String systemCode = geneProduct.getSystemCode();
-		String bpText = geneHeader.equals("") ? geneHeader : "Gene: " + geneHeader + "<br>";
+		String bpText = geneHeader.equals("") ? geneHeader : "<H2>" + geneHeader + "</H2><P>";
 		String bpInfo = GmmlGdb.getBpInfo(geneId, systemCode);
 		bpText += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 		String crossRefText = getCrossRefText(geneId, systemCode);

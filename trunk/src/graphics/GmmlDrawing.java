@@ -195,7 +195,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		{
 			if(o instanceof GmmlGeneProduct)
 			{
-				mappIds.add(((GmmlGeneProduct)o).getName());
+				mappIds.add(((GmmlGeneProduct)o).getID());
 			}
 		}
 		return mappIds;

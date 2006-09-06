@@ -14,7 +14,7 @@ public class RCommands {
 	 * @param symbol The name of the object to remove
 	 */
 	public static void rm(Rengine re, String symbol) throws RException {
-		evalE(re, "rm(" + symbol + ")");
+//		evalE(re, "try(rm(" + symbol + "))");
 	}
 	
 	public static void rm(Rengine re, String[] symbols) throws RException {
@@ -32,37 +32,36 @@ public class RCommands {
     
 	public static void assign(Rengine re, String symbol, List list) throws 	RException,
 																			ClassCastException {
-		//Using rni methods
-//		long[] refs = new long[list.size()];
-//		for(int i = 0; i < list.size(); i++) {
-//			RObject ro = (RObject)list.get(i);
-//			refs[i] = ro.getRef(re);
-//		};
-//		long listRef = re.rniPutVector(refs);
-//		re.rniAssign(symbol, listRef, 0);
+		//Using rni methods - faster
+		long[] refs = new long[list.size()];
+		for(int i = 0; i < list.size(); i++) {
+			RObject ro = (RObject)list.get(i);
+			refs[i] = ro.getRef(re);
+		};
+		long listRef = re.rniPutVector(refs);
+		re.rniAssign(symbol, listRef, 0);
 		
-		//Using high level API methods
-		evalE(re, symbol + "= list()");
-
-		for(Object o : list) {
-			((RObject)o).toR(re, "tmpobj");
-			evalE(re, symbol + "= append(" + symbol + ", list(tmpobj))");
-		}
-		
-		rm(re, "tmpobj");
+		//Using high level API methods - more stable?
+//		evalE(re, symbol + "= list()");
+//
+//		for(Object o : list) {
+//			((RObject)o).toR(re, "tmpobj");
+//			evalE(re, symbol + "= append(" + symbol + ", list(tmpobj))");
+//		}
+//		rm(re, "tmpobj");
 	}
 	
 	public static void assign(Rengine re, String symbol, String[] sa) throws RException {
-		// Using rni methods
-//		long r = re.rniPutStringArray(sa);
-//		if(r == 0) throw new RniException("rniPutStringArray", r);
-//		re.rniAssign(symbol, r, 0);
+		// Using rni methods - faster
+		long r = re.rniPutStringArray(sa);
+		if(r == 0) throw new RniException(re, "rniPutStringArray", r);
+		re.rniAssign(symbol, r, 0);
 		
-		// Using high level API
-		evalE(re, symbol + "= character()");
-		for(String s : sa) {
-			evalE(re, symbol + "= append(" + symbol + ", '" + s + "')");
-		}
+//		// Using high level API - more stable?
+//		evalE(re, symbol + "= character()");
+//		for(String s : sa) {
+//			evalE(re, symbol + "= append(" + symbol + ", '" + s + "')");
+//		}
 	}
 	
 	public static class RException extends Exception {

@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -40,7 +41,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 	public static final int INITIAL_FONTSIZE = 10;
 	public static final int INITIAL_WIDTH = 80;
 	public static final int INITIAL_HEIGHT = 20;
-	
+		
 	double getFontSize()
 	{
 		return gdata.getFontSize() * canvas.getZoomFactor();
@@ -49,11 +50,6 @@ public class GmmlLabel extends GmmlGraphicsShape
 	void setFontSize(double v)
 	{
 		gdata.setFontSize(v / canvas.getZoomFactor());
-	}
-	
-	String getLabelText()
-	{
-		return gdata.getLabelText();
 	}
 				
 	/**
@@ -67,17 +63,21 @@ public class GmmlLabel extends GmmlGraphicsShape
 		setHandleLocation();
 	}
 	
+	public String getLabelText() {
+		return gdata.getLabelText();
+	}
 	
-	public void setLabelText(String text) {
-		gdata.setLabelText (text);
+	String prevText = "";
+	public void adjustWidthToText() {
+		if(gdata.getLabelText().equals(prevText)) return;
+		prevText = getLabelText();
 		
-		//Adjust width to text length
 		GC gc = new GC(canvas.getDisplay());
 		Font f = new Font(canvas.getDisplay(), 
 				gdata.getFontName(), 
 				(int)gdata.getFontSize(), getFontStyle());
 		gc.setFont (f);
-		Point ts = gc.textExtent(text);
+		Point ts = gc.textExtent(gdata.getLabelText());
 		f.dispose();
 		gc.dispose();
 		
@@ -85,10 +85,12 @@ public class GmmlLabel extends GmmlGraphicsShape
 		double nWidth = ts.x + 10 * getDrawing().getZoomFactor();
 		double nHeight = ts.y + 10 * getDrawing().getZoomFactor();
 		
+		listen = false; //Disable listener
 		gdata.setLeft(gdata.getLeft() - (nWidth - gdata.getWidth())/2);
 		gdata.setTop(gdata.getTop() - (nHeight - gdata.getHeight())/2);
 		gdata.setWidth(nWidth);
 		gdata.setHeight(nHeight);
+		listen = true; //Enable listener
 		
 		setHandleLocation();
 	}
@@ -108,7 +110,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		label.setText("Specify label:");
 		label.setBackground(background);
 		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
-
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				disposeTextControl();
@@ -131,7 +133,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 	protected void disposeTextControl()
 	{
 //		markDirty();
-		setLabelText(t.getText());
+		gdata.setLabelText(t.getText());
 //		markDirty();
 		Composite c = t.getParent();
 		c.setVisible(false);
@@ -199,4 +201,11 @@ public class GmmlLabel extends GmmlGraphicsShape
 	{
 		draw(e, e.gc);
 	}	
+	
+	public void gmmlObjectModified(GmmlEvent e) {
+		if(listen) {
+			super.gmmlObjectModified(e);
+			adjustWidthToText();
+		}
+	}
 }

@@ -57,14 +57,14 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 		
 	/**
-	 * Get the x-coördinate of the center point of this object
-	 * @return the center x-coördinate as integer
+	 * Get the x-coï¿½rdinate of the center point of this object
+	 * @return the center x-coï¿½rdinate as integer
 	 */
 	public int getCenterX() { return (int)gdata.getCenterX(); }
 
 	/**
-	 * Get the y-coördinate of the center point of this object
-	 * @return the center y-coördinate as integer
+	 * Get the y-coï¿½rdinate of the center point of this object
+	 * @return the center y-coï¿½rdinate as integer
 	 */
 	public int getCenterY() { return (int)gdata.getCenterY(); }
 	
@@ -142,7 +142,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 	
 	/**
-	 * Translate the given coördinates to external coordinate system (of the
+	 * Translate the given coï¿½rdinates to external coordinate system (of the
 	 * drawing canvas)
 	 * @param x
 	 * @param y
@@ -153,7 +153,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 				
 	/**
-	 * Get the coördinates of the given point relative
+	 * Get the coï¿½rdinates of the given point relative
 	 * to this object's center
 	 * @param p
 	 * @return
@@ -163,7 +163,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 	
 	/**
-	 * Get the coördinates of the given point relative
+	 * Get the coï¿½rdinates of the given point relative
 	 * to the canvas' origin
 	 * @param p
 	 * @return
@@ -288,8 +288,10 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		} else {
 			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
 		}
-		gdata.setWidth (-gdata.getWidth());
-		gdata.setLeft(gdata.getLeft() - gdata.getWidth());
+		double w = -gdata.getWidth();
+		double sx = gdata.getLeft() - w;
+		gdata.setWidth (w);
+		gdata.setLeft(sx);
 		canvas.setPressedObject(h);
 	}
 	
@@ -304,8 +306,10 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		} else {
 			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
 		}
-		gdata.setHeight(-gdata.getHeight());
-		gdata.setTop(gdata.getTop() - gdata.getHeight());
+		double ht = -gdata.getHeight();
+		double sy = gdata.getTop() - ht;
+		gdata.setHeight(ht);
+		gdata.setTop(sy);
 		canvas.setPressedObject(h);
 	}
 	
@@ -350,7 +354,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	
 	/**
 	 * Get the default location of the given handle 
-	 * (in coördinates relative to the canvas)
+	 * (in coï¿½rdinates relative to the canvas)
 	 * @param h
 	 * @return
 	 */

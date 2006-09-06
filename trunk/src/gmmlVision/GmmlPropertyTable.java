@@ -3,6 +3,7 @@ package gmmlVision;
 import data.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -67,34 +68,68 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 	final static int STRING = 5;
 	final static int ORIENTATION = 6;
 	
-	// Type mappings
-	final static List<String> totalAttributes = Arrays.asList(new String[] {
-			"CenterX", "CenterY", "StartX", "StartY", "EndX", "EndY", "Width", "Height", 
-			"Color", "LineStyle", "Type", "Rotation", "Orientation", "PicPointOffset",
-			"GeneID", "Xref", "TextLabel", "FontName", "FontWeight", "FontStyle", "FontSize",
-			"Name", "Organism", "Data-Source", "Version", "Author", "Maintained-By", "Email",
-			"Availability", "Last-Modified", "Notes", "BackpageHead", "GeneProduct-Data-Source",
-			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight", "MapInfoLeft", "MapInfoTop",
-			"Comment", "LineType"
-	});
+	final static List<String> totalAttributes = GmmlDataObject.attributes;
 	
-	final static List labelMappings = Arrays.asList(new String[] {
-			"Center X", "Center Y", "Start X", "Start Y", "End X", "End Y", "Width", "Height", 
-			"Color", "Line Style", "Type", "Rotation", "Orientation", "Pic point offset",
-			"Gene label", "Link (xref)", "Label text", "Font name", "Font weight", "Font style", "Font size",
-			"Name", "Organism", "Data source", "Version", "Author", "Maintained by", "E-mail",
-			"Availability", "Last modified", "Notes", "Backpage header", "System",
-			"Board Width", "Board Height", "Window Width", "Window Height", "Location X", "Location Y",
-			"Comment", "Line Type"
+	final static List<String> labelMappings = Arrays.asList(new String[] {
+			
+			// all
+			"Notes", "Comment",
+
+			// line, shape, brace, geneproduct, label
+			"Color", 
+			
+			// shape, brace, geneproduct, label
+			"Center X", "Center Y", "Width", "Height", 
+			
+			// shape
+			"Shape Type", "Rotation", 
+			
+			// line
+			"Start X", "Start Y", "End X", "End Y",			
+			"Line Type", "Line Style",
+			
+			// brace
+			"Orientation",
+			
+			// gene product
+			"ID", "Data-Source (ID system)", "Gene Symbol", 
+			"Link (xref)", "Backpage Header", "Type", 
+			
+			// label
+			"Label Text", 
+			"Font Name","Font Weight","Font Style","Font Size"
+			
 	});
 
 	final static int[] attributeTypes = new int[] {
-		DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, 
-		COLOR, LINESTYLE, TYPE, DOUBLE, ORIENTATION, DOUBLE,
-		STRING, STRING, STRING, STRING, STRING, STRING, INTEGER, STRING, 
-		STRING, STRING, STRING, STRING, STRING, STRING, STRING, STRING,
-		STRING, STRING, TYPE, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER,
-		STRING, TYPE, TYPE
+			
+			// all
+			STRING, STRING,
+
+			// line, shape, brace, geneproduct, label
+			COLOR, 
+			
+			// shape, brace, geneproduct, label
+			DOUBLE, DOUBLE, DOUBLE, DOUBLE, 
+			
+			// shape
+			TYPE, DOUBLE, 
+			
+			// line
+			DOUBLE, DOUBLE, DOUBLE, DOUBLE,			
+			TYPE, TYPE,
+			
+			// brace
+			INTEGER,
+			
+			// gene product
+			STRING, TYPE, STRING, 
+			STRING, STRING, STRING, 
+			
+			// label
+			STRING, 
+			STRING, TYPE, TYPE, TYPE
+			
 	};
 	
 	//System names converted to arraylist for easy index lookup
@@ -150,8 +185,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			String[] types = new String[] {""};
 			if (g.getObjectType() == ObjectType.LINE)
 			{
-				types = new String[] {"Line", "Arrow", "TBar", "Receptor round",
-						"Ligand round", "Receptor square", "Ligand square"};
+				types = GmmlDataObject.gmmlLineTypes.toArray(
+						new String[GmmlDataObject.gmmlLineTypes.size()]);
 			}
 			else if (g.getObjectType() == ObjectType.SHAPE)
 			{

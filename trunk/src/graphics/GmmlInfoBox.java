@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Point;
 
 import data.*;
 
-public class GmmlMappInfo extends GmmlGraphics {
+public class GmmlInfoBox extends GmmlGraphics {
 	
 	//Elements not stored in gmml
 	String fontName			= "Times New Roman";
@@ -23,7 +23,7 @@ public class GmmlMappInfo extends GmmlGraphics {
 	int sizeX = 1;
 	int sizeY = 1; //Real size is calculated on first call to draw()
 	
-	public GmmlMappInfo (GmmlDrawing canvas, GmmlDataObject o) {
+	public GmmlInfoBox (GmmlDrawing canvas, GmmlDataObject o) {
 		super(canvas, o);
 		canvas.setMappInfo(this);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;		

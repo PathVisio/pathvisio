@@ -113,6 +113,7 @@ public class GmmlLine extends GmmlGraphics
 				buffer.drawArc ((int)endx - 8, (int)endy - 8, 16, 16, (int)theta + 180, -180);			
 			}
 				break;
+			case LineType.RECEPTOR: //TODO: implement receptor
 			case LineType.RECEPTOR_SQUARE:
 			{
 				s /= 8;

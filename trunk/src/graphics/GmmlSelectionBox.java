@@ -52,7 +52,8 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 * Remove an object from the selection
 	 * @param o
 	 */
-	public void removeFromSelection(GmmlDrawingObject o) { 
+	public void removeFromSelection(GmmlDrawingObject o) {
+		if(o == this) return;
 		selection.remove(o); 
 		o.deselect();
 		if(!isSelecting) fitToSelection();
@@ -64,19 +65,24 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 * @return the child object or null if none is present at the given location
 	 */
 	public GmmlDrawingObject getChild(Point2D p) {
-		GmmlDrawingObject clicked = null;
+		//First check selection
 		for(GmmlDrawingObject o : selection) {
-			if(o.isContain(p)) clicked = o;
+			if(o.isContain(p)) return o;
 		}
-		return clicked;
+		//Nothing in selection, check all other objects
+		for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
+			if(o.isContain(p) && o != this)
+				return o;
+		}
+		return null; //Nothing found
 	}
 	
 	/**
-	 * Removes the object at the given co�rdinates from the selection
-	 * (if exists and is selected)
+	 * Removes or adds the object (if exists) at the given co�rdinates from the selection,
+	 * depending on its selection-state
 	 * @param p
 	 */
-	public void selectionClicked(Point2D p) {
+	public void objectClicked(Point2D p) {
 		GmmlDrawingObject clicked = getChild(p);
 		if(clicked == null) return; //Nothing clicked
 		if(clicked.isSelected()) 	//Object is selected, remove
@@ -100,23 +106,31 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 * to upperleft corner
 	 */
 	public void reset() { 
-		reset(0, 0);
+		reset(0, 0, true);
 	}
+	
 	
 	/**
 	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
-	 * to specified start co�rdinates
+	 * to upperleft corner
+	 * @param clearSelection if true the selection is cleared
 	 */
+	public void reset(boolean clearSelection) { 
+		reset(0, 0, clearSelection);
+	}
+	
 	public void reset(double startX, double startY) {
-		markDirty();
+		reset(startX, startY, true);
+	}
+	
+	private void reset(double startX, double startY, boolean clearSelection) {
 		for(GmmlDrawingObject o : selection) o.deselect();
-		selection.clear();
+		if(clearSelection) selection.clear();
 		
 		gdata.setLeft(startX);
 		gdata.setTop(startY);
 		gdata.setWidth(0);
 		gdata.setHeight(0);
-		setHandleLocation();
 	}
 
 	/**
@@ -184,28 +198,28 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	 */
 	public void fitToSelection() {
 		if(selection.size() == 0) { //No objects in selection
-			reset(); 
+			hide(); 
 			return;
 		}
 		if(! hasMultipleSelection()) { //Only one object in selection, hide selectionbox
 			GmmlDrawingObject passTo = selection.get(0);
-			reset();
+			hide(false);
 			passTo.select();
 			return;
 		}
-		markDirty();
+
 		Rectangle r = null;
 		for(GmmlDrawingObject o : selection) {
 			if(r == null) r = o.getBounds();
 			else r.add(o.getBounds());
 			for(GmmlHandle h : o.getHandles()) h.hide();
 		}
-		gdata.setLeft(r.x);
-		gdata.setTop(r.y);
+
 		gdata.setWidth(r.width);
 		gdata.setHeight(r.height);
-		setHandleLocation();
-		markDirty();
+		gdata.setLeft(r.x);
+		gdata.setTop(r.y);
+		setHandleLocation();		
 	}
 			
 	/**
@@ -219,9 +233,14 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	/**
 	 * Hide the selectionbox
 	 */
-	public void hide() { 
+	public void hide() {
+		hide(true);
+	}
+	
+	public void hide(boolean reset) {
+		for(GmmlHandle h : getHandles()) h.hide();
 		isVisible = false;
-		reset();
+		if(reset) reset();
 	}
 	
 	/**

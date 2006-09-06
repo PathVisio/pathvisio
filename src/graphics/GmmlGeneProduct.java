@@ -192,8 +192,8 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 			buffer.setForeground(c);
 			buffer.setLineWidth(2);
 			buffer.drawRectangle (
-					(int)(gdata.getStartX()) - 1,
-					(int)(gdata.getStartY()) - 1,
+					(int)(gdata.getLeft()) - 1,
+					(int)(gdata.getTop()) - 1,
 					(int)gdata.getWidth() + 3,
 					(int)gdata.getHeight() + 3
 				);

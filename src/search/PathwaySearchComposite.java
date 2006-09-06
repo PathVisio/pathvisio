@@ -213,7 +213,7 @@ public class PathwaySearchComposite extends Composite {
 						}
 						
 						SearchRunnableWithProgress srwp = new SearchRunnableWithProgress(
-								"pathwaysContainingGene", 
+								"pathwaysContainingGeneID", 
 								new Class[] { String.class, String.class, File.class, 
 										SearchResultTable.class, SearchRunnableWithProgress.class });
 						srwp.setArgs(new Object[] {id, code, new File(folder), searchResultTable, srwp });

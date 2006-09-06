@@ -44,7 +44,7 @@ public abstract class SearchMethods {
 	 * displaying the progress
 	 * @return string with message to display. if null, no message is displayed
 	 */
-	public static String pathwaysContainingGene(String id, String code, File folder, 
+	public static String pathwaysContainingGeneID(String id, String code, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) {
 		
 		SearchResults srs = new SearchResults();
@@ -88,7 +88,6 @@ public abstract class SearchMethods {
 				runnable.updateMonitor((int)Math.ceil(800.0 / pathways.size()));
 			}
 		} catch(Exception e) { GmmlVision.log.error("while searching", e); }
-		GmmlVision.log.trace("search finished");
 		return srs.getResults().size() == 0 ? MSG_NOTHING_FOUND : null;
 	}
 	
@@ -143,7 +142,6 @@ public abstract class SearchMethods {
 				runnable.updateMonitor((int)Math.ceil(1000.0 / pathways.size()));
 			}
 		} catch(Exception e) { GmmlVision.log.error("while searching", e); }
-		GmmlVision.log.trace("search finished");
 		return srs.getResults().size() == 0 ? MSG_NOTHING_FOUND : null;
 	}
 }

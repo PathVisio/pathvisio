@@ -61,10 +61,14 @@ public class RData {
 			}
 		} catch(Exception e) { e.printStackTrace(); }
 		PathwaySet testPathwaySet = new PathwaySet("testset", pws);
-		try { testPathwaySet.toR(re, "testset"); }
+		try { 
+			testPathwaySet.toR(re, "testset"); 
+		}
 		catch(RException e) { e.printStackTrace(); }
 		System.out.println("Time: " + (System.currentTimeMillis() - t));
-//		re.eval("save(file='test.RData', list='testset')");
+		try {
+			RCommands.evalE(re, "save(file='test.RData', list='testset')");
+		} catch(RException e) { e.printStackTrace(); }
 		
 	}
 	
@@ -122,7 +126,7 @@ public class RData {
 //			if(rexp != null) return rexp;
 			
 			RCommands.assign(re, "tmpGps", geneProducts);
-			
+			System.err.println(RCommands.evalE(re, "exists('tmpGps')"));
 			rexp = RCommands.evalE(re, "Pathway('" + name + "','" + fileName + "', tmpGps)");;
 	          
 			RCommands.rm(re, "tmpGps");

@@ -73,7 +73,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 		}
 	}
 	
-	private static final List<String> gmmlLineTypes = Arrays.asList(new String[] {
+	public static final List<String> gmmlLineTypes = Arrays.asList(new String[] {
 			"Line", "Arrow", "TBar", "Receptor", "LigandSquare", 
 			"ReceptorSquare", "LigandRound", "ReceptorRound"});
 
@@ -449,7 +449,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 	}
 	
 
-	private static final List<String> attributes = Arrays.asList(new String[] {
+	public static final List<String> attributes = Arrays.asList(new String[] {
 			
 			// all
 			"Notes", "Comment",
@@ -476,14 +476,15 @@ public class GmmlDataObject extends GmmlGraphicsData
 			
 			// label
 			"TextLabel", 
-			"FontName","FontWeight","FontStyle","FontSize"		 
+			"FontName","FontWeight","FontStyle","FontSize"
+			
 	});
 	
 	public void setProperty(String key, Object value)
 	{
 		int i = attributes.indexOf(key);	
 		switch (i)
-		{
+		{		
 			case 0: setNotes		((String) value); break;
 			case 1: setComment 		((String) value); break;
 	
@@ -506,12 +507,12 @@ public class GmmlDataObject extends GmmlGraphicsData
 				
 			case 15: setOrientation	((Integer)value); break;
 	
-			case 16: setGeneID 		((String) value); break;
-			case 17: setXref			((String) value); break;
+			case 16: setGeneID 			((String) value); break;
+			case 17: setDataSource		((String) value); break;
 			case 18: setGeneProductName	((String)value); break;
-			case 19: setBackpageHead	((String)  value); break;
-			case 20: setGeneProductType	((String)value); break;
-			case 21: setDataSource 	((String)  value); break;
+			case 19: setXref			((String)  value); break;
+			case 20: setBackpageHead	((String)value); break;
+			case 21: setGeneProductType ((String)  value); break;
 			
 			case 22: setLabelText 	((String) value); break;
 			case 23: setFontName		((String)  value); break;
@@ -548,10 +549,10 @@ public class GmmlDataObject extends GmmlGraphicsData
 			case 14: result = getLineStyle(); break;
 			
 			case 15: result = getOrientation(); break;
-			
-			case 16: result = getGeneProductName(); break;
+						
+			case 16: result = getGeneID(); break;
 			case 17: result = getDataSource(); break;
-			case 18: result = getGeneID(); break;
+			case 18: result = getGeneProductName(); break;
 			case 19: result = getXref(); break;
 			case 20: result = getBackpageHead(); break;
 			case 21: result = getGeneProductType(); break;

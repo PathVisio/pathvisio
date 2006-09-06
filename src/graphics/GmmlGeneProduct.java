@@ -48,14 +48,16 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	
 	public String getName()
 	{
-		return gdata.getGeneProductName();
+		//Looks like the wrong way around, but in gmml the name/symbol is attribute 'GeneID'
+		//NOTE: maybe change this in gmml?
+		return gdata.getGeneID();
 	}
 	
-	/**
-	 * Fetches the gene identifier from the Jdom representation
-	 */
-	public String getId() {
-		return gdata.getGeneID();
+	public String getID() 
+	{
+		//Looks like the wrong way around, but in gmml the ID is attribute 'Name'
+		//NOTE: maybe change this in gmml?
+		return gdata.getGeneProductName();
 	}
 	
 	public void setFontSize(double size) {

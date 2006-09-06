@@ -100,7 +100,7 @@ public class SearchResultTable extends Composite {
 				for(GmmlDrawingObject o : drawing.getDrawingObjects()) {
 					if(o instanceof GmmlGeneProduct) {
 						gp = (GmmlGeneProduct)o;
-						if(idsFound.contains(gp.getId())) gp.highlight();
+						if(idsFound.contains(gp.getID())) gp.highlight();
 					}
 				}
 				drawing.redraw();

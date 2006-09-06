@@ -46,8 +46,8 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	}
 	
 //	public List getAttributes() { return gdata.getAttributes() ;}
-	
-	public void gmmlObjectModified(GmmlEvent e) {		
-		markDirty(); // mark everything dirty
+	boolean listen = true;
+	public void gmmlObjectModified(GmmlEvent e) {	
+		if(listen) markDirty(); // mark everything dirty
 	}
 }

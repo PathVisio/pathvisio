@@ -60,12 +60,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	public GmmlGraphics selectedGraphics = null;
 	
 	/**
-	 * {@link GmmlMappInfo} object that contains information about this pathway,
+	 * {@link GmmlInfoBox} object that contains information about this pathway,
 	 * currently only used for information in {@link gmmlVision.GmmlPropertyTable}
 	 * (TODO: has to be implemented to behave the same as any GmmlGraphics object
 	 * when displayed on the drawing)
 	 */
-	GmmlMappInfo mappInfo;
+	GmmlInfoBox infoBox;
 	GmmlData data;
 	
 	GmmlSelectionBox s; 
@@ -93,7 +93,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 				case ObjectType.SHAPE: drawingObjects.add(new GmmlShape(this, o)); break;
 				case ObjectType.LINE: drawingObjects.add(new GmmlLine(this, o)); break;
 				case ObjectType.MAPPINFO: 
-					GmmlMappInfo mi = new GmmlMappInfo(this, o);
+					GmmlInfoBox mi = new GmmlInfoBox(this, o);
 					drawingObjects.add(mi); 
 					setMappInfo(mi); 
 					break;				
@@ -164,16 +164,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 * Sets the {@link MappInfo} containing information on the pathway
 	 * @param mappInfo
 	 */
-	public void setMappInfo(GmmlMappInfo mappInfo)
+	public void setMappInfo(GmmlInfoBox mappInfo)
 	{
-		this.mappInfo = mappInfo;
+		this.infoBox = mappInfo;
 	}
 
 	/**
 	 * Gets the {@link MappInfo} containing information on the pathway
 	 * @return
 	 */
-	public GmmlMappInfo getMappInfo() { return mappInfo; }
+	public GmmlInfoBox getMappInfo() { return infoBox; }
 	
 	/**
 	 * Adds an element to the drawing
@@ -515,7 +515,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			{
 				if(pressedObject instanceof GmmlSelectionBox) {
 					//Object inside selectionbox clicked, pass to selectionbox
-					s.selectionClicked(p2d);
+					s.objectClicked(p2d);
 				}
 				else if(pressedObject.isSelected()) { //Already in selection: remove
 					s.removeFromSelection(pressedObject);
@@ -801,6 +801,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 
 		clearSelection();
 		g.select();
+		s.addToSelection(g);
 		pressedObject = h;
 		updatePropertyTable(g);
 		
@@ -907,7 +908,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		if(e.keyCode == SWT.DEL) {
 			for(GmmlDrawingObject o : drawingObjects)
 			{
-				if(!o.isSelected() || o == s || o == mappInfo) continue; //Object not selected, skip
+				if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
 				toRemove.add(o);
 				if(o instanceof GmmlGraphics) //Also add handles
 				{

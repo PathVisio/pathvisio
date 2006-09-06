@@ -67,13 +67,15 @@ public class GmmlBpBrowser extends Composite {
 			return;
 		}
 		// Get the backpage text
-		String geneId = geneProduct.getId();
+		String geneHeader = geneProduct.getGmmlData().getBackpageHead();
+		String geneId = geneProduct.getID();
 		String systemCode = geneProduct.getSystemCode();
-		String bpText = GmmlGdb.getBpInfo(geneId, systemCode);
+		String bpText = geneHeader.equals("") ? geneHeader : "Gene: " + geneHeader + "<br>";
+		String bpInfo = GmmlGdb.getBpInfo(geneId, systemCode);
+		bpText += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 		String crossRefText = getCrossRefText(geneId, systemCode);
 		String gexText = GmmlGex.getDataString(geneId, systemCode);
 		if (bpText != null) 	setGeneText(bpText);
-		else 					setGeneText("<I>No gene information found</I>");
 		if (gexText != null)	setGexText(gexText + crossRefText);
 		else 					setGexText("<I>No expression data found</I>");
 		

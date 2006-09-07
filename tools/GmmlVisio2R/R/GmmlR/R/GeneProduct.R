@@ -1,6 +1,3 @@
-
-source("util.r")
-
 #######################################################
 ################## GeneProduct class ##################
 #######################################################
@@ -8,7 +5,7 @@ source("util.r")
 ##########################
 #### Class Definition ####
 ##########################
-setClass("GeneProduct", 
+setClass("GeneProduct",
 	representation(
 		ids = 	"character",
 		systems = "character"
@@ -21,8 +18,8 @@ setClass("GeneProduct",
 
 ## Validity:
 ## 1: length(ids) == length(systems)
-setValidity("GeneProduct", function(x) {
-	chk = 	length(getIds(x)) == length(getSystems(x))
+setValidity("GeneProduct", function(object) {
+	chk = 	length(getIds(object)) == length(getSystems(object))
 	if(chk) 	TRUE
 	else		"Number of ids and systems does not match"
 })
@@ -30,11 +27,9 @@ setValidity("GeneProduct", function(x) {
 ######################
 #### Constructors ####
 ######################
-setGeneric("GeneProduct", 
-	function(ids, systems) {
+GeneProduct <- function(ids, systems) {
 		new("GeneProduct", ids = ids, systems = systems)
-	}
-)
+}
 
 #################
 #### Methods ####
@@ -63,14 +58,17 @@ createMethod("as.matrix", "GeneProduct", function(x) {
 	} else stop(paste("object is not a valid", "GeneProduct"))
 })
 
-createMethod("print", "GeneProduct", function(x, ...) {
+setMethod("print", "GeneProduct", function(x, ...) {
 	print(as.matrix(x))
 })
 
 createMethod("==", c("GeneProduct", "GeneProduct"), function(e1, e2) {
 	if(validObject(e1) && validObject(e2)) {
-		for(i in getIds(e1)) for(j in getIds(e2)) {
-			if(i == j) return(TRUE)
+		ids1 = getIds(e1); ids2 = getIds(e2)
+		s1 = getSystems(e1); s2 = getSystems(e2)
+		
+		for(i in 1:length(ids1)) for(j in length(ids2)) {
+			if(ids1[i] == ids2[i] && s1[i] == s2[i]) return(TRUE)
 		}
 		FALSE
 	} else stop(paste("object is not a valid", "GeneProduct"))

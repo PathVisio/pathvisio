@@ -1,5 +1,3 @@
-source("util.r")
-
 #######################################################
 ################## DataSet class ##################
 #######################################################
@@ -66,7 +64,7 @@ createReplaceMethod("setData", "Pathway", function(x, value) {
 	if(!validObject(x)) stop("given data matrix is not valid (check dims)")
 	x
 })
-createReplaceMethod("setsubSet", "Pathway", function(x, value) {
+createReplaceMethod("setSubsets", "Pathway", function(x, value) {
 	x@subsets = value
 	if(!validObject(x)) stop("given subsets matrix list is not valid (check dims)")
 	x

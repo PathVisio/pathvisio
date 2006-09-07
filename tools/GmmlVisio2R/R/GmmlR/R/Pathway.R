@@ -1,5 +1,3 @@
-source("util.r")
-
 #######################################################
 ################## Pathway class ##################
 #######################################################
@@ -60,7 +58,7 @@ createReplaceMethod("setGeneProducts", "Pathway", function(x, value) {
 })
 
 ## Generic and Primitive implementations ##
-createMethod("print", "Pathway", function(x, ...) {
+setMethod("print", "Pathway", function(x, ...) {
 	print(paste("Pathway with name: ",getName(x)));
 })
 
@@ -68,7 +66,7 @@ createMethod("print", "Pathway", function(x, ...) {
 ## Check for every GeneProduct in the list gps whether it is 
 ## in the pathway or not
 ## Returns a logical vector of the same length as gps
-createMethod("contains", c("Pathway","GeneProduct"), function(x, gps) {
+createMethod("hasGeneProduct", c("Pathway", "GeneProduct"), function(x, gps, ...) {
 	present = logical(length(gps))
 	pgps = getGeneProducts(x)
 	for(i in 1:length(gps))

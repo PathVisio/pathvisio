@@ -1,5 +1,3 @@
-source("util.r")
-
 #######################################################
 ################## PathwaySet class ##################
 #######################################################
@@ -58,6 +56,6 @@ createReplaceMethod("setPathways", "PathwaySet", function(x, value) {
 })
 
 ## Generic and Primitive implementations ##
-createMethod("print", "PathwaySet", function(x, ...) {
+setMethod("print", "PathwaySet", function(x, ...) {
 	print(paste("PathwaySet with name: ", getName(x)))
 })

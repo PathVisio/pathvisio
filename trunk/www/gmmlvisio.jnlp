@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp codebase=http://blog.bigcat.unimaas.nl/~martijn/gmmlvisio>
+	<href="gmmlvisio.jnlp">
+	<information>
+		 <title>Gmml Visio</title>
+		 <vendor>BiGCaT / University Maastricht</vendor>
+		 <homepage ref="index.html">
+		 <offline-allowed/>
+	</information>
+	<resources>
+		 <j2se version=1.5/>
+		 <jar href="gmml-visio.jar"/>
+		 <jar href="hsqldb.jar"/>
+		 <jar href="
+	</resources>
+	<resources os="Windows"/>
+		<nativelib="swt-win32.jar"/>	
+	</resources>
+	<resources os="Linux"> 
+		<jar href="swt-linux.jar"/>
+	</resources>
+	<application-desc main-class="gmmlVision.GmmlVisionMain"/>
+	<security>
+		 <all-permissions/>
+	</security>
+</jnlp>

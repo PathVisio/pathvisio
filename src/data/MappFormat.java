@@ -690,14 +690,16 @@ public class MappFormat
 		{ 
 		"D", "F", "G", "I", "L", "M",
 		"Q", "R", "S", "T", "U",
-		"W", "Z", "X", "O", ""
+		"W", "Z", "X", "En", "Em", 
+		"H", "Om", "Pd", "Pf", "O", ""
 		};
 	
 	final static String[] dataSources = 
 		{
-		"SGD", "FlyBase", "GenBank", "InterPro" ,"LocusLink", "MGI",
+		"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
 		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
-		"WormBase", "ZFIN", "Affy", "Other", ""
+		"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
+		"HUGO", "OMIM", "PDB", "Pfam", "Other", ""
 		};
 
     public static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException

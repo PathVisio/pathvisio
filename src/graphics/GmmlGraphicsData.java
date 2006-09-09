@@ -13,7 +13,6 @@ public abstract class GmmlGraphicsData
 	public int getObjectType() { return objectType; }
 	public void setObjectType(int v) 
 	{ 
-		// TODO: only fire event if v != objectType. This goes for ALL fields.
 		if (objectType != v)
 		{
 			objectType = v;		

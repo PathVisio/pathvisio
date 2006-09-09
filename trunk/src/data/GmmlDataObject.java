@@ -358,6 +358,10 @@ public class GmmlDataObject extends GmmlGraphicsData
 	{
 		mapInfoName = e.getAttributeValue("Name");
 		organism = e.getAttributeValue("Organism");
+		
+		if (organism == null) organism = "";
+		// TODO: should this safety check for organism be done for all properties?
+		
 		mapInfoDataSource = e.getAttributeValue("Data-Source");
 		version = e.getAttributeValue("Version");
 		author = e.getAttributeValue("Author");
@@ -386,6 +390,15 @@ public class GmmlDataObject extends GmmlGraphicsData
 		});
 		switch (getObjectType())
 		{
+			case ObjectType.MAPPINFO:
+				result = ( Arrays.asList (new String[] {
+						"Notes", "Comment",
+						"MapInfoName", "Organism", "Data-Source",
+						"Version", "Author", "Maintained-By", 
+						"Email", "Last-modified", "Availability",
+						"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"						
+				}));
+				break;
 			case ObjectType.GENEPRODUCT:
 				result = ( Arrays.asList (new String[] {
 						"Notes", "Comment",
@@ -476,13 +489,19 @@ public class GmmlDataObject extends GmmlGraphicsData
 			
 			// label
 			"TextLabel", 
-			"FontName","FontWeight","FontStyle","FontSize"
-			
+			"FontName","FontWeight","FontStyle","FontSize",
+
+			// mappinfo
+			"MapInfoName", "Organism", "Data-Source",
+			"Version", "Author", "Maintained-By", 
+			"Email", "Last-modified", "Availability",
+			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"
 	});
 	
 	public void setProperty(String key, Object value)
 	{
 		int i = attributes.indexOf(key);	
+		// todo: use enum instead of integer index.
 		switch (i)
 		{		
 			case 0: setNotes		((String) value); break;
@@ -519,6 +538,21 @@ public class GmmlDataObject extends GmmlGraphicsData
 			case 24: setBold 		((Boolean) value); break;
 			case 25: setItalic 		((Boolean) value); break;
 			case 26: setFontSize		((Double)  value); break;
+
+			case 27: setMapInfoName((String) value); break;
+			case 28: setOrganism ((String) value); break;
+			case 29: setDataSource ((String) value); break;
+			case 30: setVersion ((String) value); break;
+			case 31: setAuthor ((String) value); break;
+			case 32: setMaintainedBy((String) value); break;
+			case 33: setEmail ((String) value); break;
+			case 34: setLastModified ((String)value); break;
+			case 35: setAvailability ((String)value); break;
+			case 36: setBoardWidth ((Double)value); break;
+			case 37: setBoardHeight ((Double)value); break;
+			case 38: setWindowWidth ((Double)value); break;
+			case 39: setWindowHeight ((Double)value); break;
+
 		}
 	}
 	
@@ -562,6 +596,21 @@ public class GmmlDataObject extends GmmlGraphicsData
 			case 24: result = isBold(); break;
 			case 25: result = isItalic(); break;
 			case 26: result = getFontSize(); break;
+
+			case 27: result = getMapInfoName(); break;
+			case 28: result = getOrganism (); break;
+			case 29: result = getDataSource (); break;
+			case 30: result = getVersion (); break;
+			case 31: result = getAuthor (); break;
+			case 32: result = getMaintainedBy(); break;
+			case 33: result = getEmail (); break;
+			case 34: result = getLastModified (); break;
+			case 35: result = getAvailability (); break;
+			case 36: result = getBoardWidth (); break;
+			case 37: result = getBoardHeight (); break;
+			case 38: result = getWindowWidth (); break;
+			case 39: result = getWindowHeight (); break;
+
 		}
 		return result;
 	}

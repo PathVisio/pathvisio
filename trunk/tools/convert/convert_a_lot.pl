@@ -18,17 +18,16 @@ use converter;
 #################
 
 my $dirMapps = "E:/GenMAPP 2 Data/MAPPs";
-my $dirGmml = "E:/Gmml-Visio Data/Mapps";
+my $dirGmml = "E:/Gmml-Visio Data/MAPPs";
 
 #################
 #   globals     #
 #################
 
-my $fnSchemaOld = 'e:/prg/gmml/trunk/xsd/GMML_compat.xsd';
-my $fnSchemaNew = 'e:/prg/gmml/trunk/xsd/GMML.xsd';
+my $fnSchemaOld = 'e:/prg/gmml-visio-trunk/GMML_compat.xsd';
 my $uriSchemaSchema = 'http://www.w3.org/2001/XMLSchema.xsd';
 
-my $dieOnError = 1; # die on first error encountered
+my $dieOnError = 0; # die on first error encountered
 
 #################
 #    subs       #
@@ -62,9 +61,13 @@ sub convert
 	my $fnMapp = shift;
 	my $fnOut = shift;
 	
-	system ("java", "-cp", ".;\"E:\\lib\\jdom.jar\"", "Converter", $fnMapp, $fnOut);
+	system ("java", "-cp", '"lib/JRI.jar";"lib/org.eclipse.core.commands_3.2.0.I20060605-1400.jar";"lib/org.eclipse.equinox.common_3.2.0.v20060603.jar";"lib/org.eclipse.jface_3.2.0.I20060605-1400.jar";"lib/org.eclipse.swt_3.2.0.v3232o.jar";"lib/jdom.jar";build;"lib/hsqldb.jar";"lib/org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar"', "util.Converter", $fnMapp, $fnOut);
 	print "Exit status ", $? >> 8, "\n";
-	die if ($dieOnError && $?);
+	if ($?)
+	{
+		die if ($dieOnError);
+		unlink $fnOut;
+	}
 }
 
 #################
@@ -80,7 +83,7 @@ find (\&wanted, $dirMapps);
 my $last;
 @list = sort @list;
 
-chdir ("../mapp2gmml/src");
+chdir ("../..");
 my %okDirs;
 
 #convert mapps 2 gmmlOld

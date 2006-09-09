@@ -97,8 +97,15 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			
 			// label
 			"Label Text", 
-			"Font Name","Font Weight","Font Style","Font Size"
+			"Font Name","Font Weight","Font Style","Font Size",
+			//mappinfo
 			
+			// mappinfo
+			"MapInfo Name", "Organism", "MapInfo Data-Source",
+			"Version", "Author", "Maintained-By", 
+			"Email", "Last-modified", "Availability",
+			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"
+
 	});
 
 	final static int[] attributeTypes = new int[] {
@@ -128,8 +135,13 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			
 			// label
 			STRING, 
-			STRING, TYPE, TYPE, TYPE
+			STRING, TYPE, TYPE, TYPE,
 			
+			// mappinfo
+			STRING, STRING, STRING,
+			STRING, STRING, STRING,
+			STRING, STRING, STRING,
+			DOUBLE, DOUBLE, DOUBLE, DOUBLE
 	};
 	
 	//System names converted to arraylist for easy index lookup

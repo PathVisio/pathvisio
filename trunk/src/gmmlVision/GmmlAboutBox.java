@@ -34,7 +34,7 @@ public class GmmlAboutBox extends Dialog
 		Shell parent = getParent();
 		final Shell shell = new Shell (parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 
-		shell.setText ("About GMML-Vision");		
+		shell.setText ("About Gmml-Visio");		
 		GridLayout ly = new GridLayout();
 		ly.numColumns = 2;
 		shell.setLayout (ly);

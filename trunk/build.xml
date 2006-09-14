@@ -9,13 +9,13 @@
 	<property name="exec.inno.setup" value="iscc"/>
 	
 	<path id="project.class.path">
-		<pathelement location="lib/org.eclipse.swt_3.2.0.v3232o.jar"/>
-		<pathelement location="lib/org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar"/>
+		<pathelement location="lib/swt-win32.jar"/>
+		<pathelement location="lib/swt-linux.jar"/>
 		<pathelement location="lib/jdom.jar"/>
 		<pathelement location="lib/JRI.jar"/>
-		<pathelement location="lib/org.eclipse.core.commands_3.2.0.I20060605-1400.jar"/>
-		<pathelement location="lib/org.eclipse.equinox.common_3.2.0.v20060603.jar"/>
-		<pathelement location="lib/org.eclipse.jface_3.2.0.I20060605-1400.jar"/>
+		<pathelement location="lib/org.eclipse.core.commands.jar"/>
+		<pathelement location="lib/org.eclipse.equinox.common.jar"/>
+		<pathelement location="lib/org.eclipse.jface.jar"/>
 		<pathelement location="lib/hsqldb.jar"/>
 	</path>
 	
@@ -39,13 +39,43 @@
 
 	<target name="jar" depends="compile" description="Generates executable jar file">
 		<jar jarfile="gmml-visio.jar" manifest="src/MANIFEST.MF">
-			<fileset dir="${build.dir}" includes="**/*.class"/>
-<!--			<fileset dir="." includes="backpage/*"/>
+			<fileset dir="${build.dir}" includes="**/*.class"/>			
+		</jar>
+		<jar jarfile="lib/resources.jar">
+			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>
-			<fileset dir="." includes="images/*"/>			!-->
+			<fileset dir="." includes="images/*"/>
+		</jar>
+		<jar jarfile="lib/swt-win32-lib.jar">
+			<fileset dir="lib/swt-win32-lib" includes="*.dll"/>
+		</jar>
+		<jar jarfile="lib/swt-linux-lib.jar">
+			<fileset dir="lib/swt-linux-lib" includes="*.so"/>
 		</jar>
 	</target>
 	
+	<target name="sign-jar" depends="compile,jar" description="Signs jar files">
+		<signjar jar="gmml-visio.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore">
+			<fileset dir="lib" includes="**/*.jar"/>
+		</signjar>
+<!--	<signjar jar="lib/swt-win32-lib.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar jar="lib/swt-win32.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar jar="lib/org.eclipse.jface.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar jar="lib/org.eclipse.core.commands.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar jar="lib/org.eclipse.equinox.common.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar jar="lib/hsqldb.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
+		<signjar jar="lib/jdom.jar"
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/> !-->
+	</target>
+		
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<javadoc destdir="${apidoc.dir}">
 			<classpath refid="project.class.path"/>

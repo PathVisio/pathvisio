@@ -4,6 +4,7 @@ import graphics.GmmlGeneProduct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
@@ -131,8 +132,8 @@ public class GmmlBpBrowser extends Composite {
 	 */
 	private void initializeHeader() {
 		try {
-			File headerFile = new File(BPDIR,HEADERFILE);
-			BufferedReader input = new BufferedReader(new FileReader(headerFile));
+			BufferedReader input = new BufferedReader(new InputStreamReader(
+						GmmlVision.getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
 			String line;
 			header = "";
 			while((line = input.readLine()) != null) {

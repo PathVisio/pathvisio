@@ -2,7 +2,7 @@
 <jnlp codebase="http://blog.bigcat.unimaas.nl/~thomas/gmmlvisio" href="gmmlvisio.jnlp">
 	<information>
 		 <title>Gmml Visio</title>
-		 <vendor>BiGCaT / University Maastricht</vendor>
+		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.jpg"/>
 		 <offline-allowed/>

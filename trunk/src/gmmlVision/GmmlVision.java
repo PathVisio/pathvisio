@@ -2,6 +2,7 @@ package gmmlVision;
 
 import graphics.GmmlDrawing;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.RGB;
@@ -95,6 +97,17 @@ public abstract class GmmlVision {
 	 */
 	public static void setImageRegistry(ImageRegistry _imageRegistry) {
 		imageRegistry = _imageRegistry;
+	}
+	
+	/**
+	 * Get the {@link URL} for the resource stored in a jar file in the classpath
+	 * @param name	the filename of the resource
+	 * @return the URL pointing to the resource
+	 */
+	public static URL getResourceURL(String name) {
+		URL url = GmmlVision.class.getClassLoader().getResource(name);
+		if(url == null) log.error("Couldn't load resource '" + name + "'");
+		return url;
 	}
 	
 	/**

@@ -8,6 +8,7 @@ import graphics.GmmlGeneProduct;
 import graphics.GmmlLegend;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.Shell;
 import preferences.GmmlPreferenceManager;
 import search.PathwaySearchComposite;
 import R.RController;
+import R.RWindow;
 import colorSet.ColorSetWindow;
 import data.GmmlData;
 import data.GmmlGdb;
@@ -77,7 +79,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			window = w;
 			setText ("&New mapp@Ctrl+N");
 			setToolTipText ("Create new mapp");
-			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/new.gif"));
+			setImageDescriptor(ImageDescriptor.createFromURL(
+					GmmlVision.getResourceURL("icons/new.gif")));
 		}
 		public void run () {
 			GmmlVision.newPathway();
@@ -96,7 +99,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			window = w;
 			setText ("&Open mapp@Ctrl+O");
 			setToolTipText ("Open mapp");
-			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/open.gif"));
+			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/open.gif")));
 		}
 		public void run () 
 		{
@@ -125,7 +128,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			window = w;
 			setText ("&Save mapp@Ctrl+S");
 			setToolTipText ("Save mapp");
-			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/save.gif"));
+			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/save.gif")));
 		}
 		
 		public void run () {
@@ -574,7 +577,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			window = w;
 			setText("&Color Set manager");
 			setToolTipText("Create and edit color sets");
-			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/colorset.gif"));
+			setImageDescriptor(ImageDescriptor.createFromURL(
+					GmmlVision.getResourceURL("icons/colorset.gif")));
 		}
 		public void run () {
 			if(GmmlGex.isConnected())
@@ -625,8 +629,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		}
 		
 		public void run() {
-			RController rc = new RController(getShell());
-			if(rc.startR()) rc.open();
+			RWindow rw = new RWindow(getShell());
+			if(RController.startR()) rw.open();
 		}
 	}
 	private RAction rAction = new RAction(this);
@@ -700,7 +704,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public SwitchEditModeAction (GmmlVisionWindow w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromFile(null,"icons/edit.gif"));
+			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/edit.gif")));
 			setToolTipText(ttUnChecked);
 			window = w;
 			
@@ -792,97 +796,97 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			element = e;
 		
 			String toolTipText;
-			String image;
-			toolTipText = image = null;
+			URL imageURL = null;
+			toolTipText = null;
 			switch(element) {
 			case GmmlDrawing.NEWLINE: 
 				toolTipText = "Draw new line";
-				image = "icons/newline.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newline.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLINEARROW:
 				toolTipText = "Draw new arrow";
-				image = "icons/newarrow.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newarrow.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLINEDASHED:
 				toolTipText = "Draw new dashed line";
-				image = "icons/newdashedline.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newdashedline.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLINEDASHEDARROW:
 				toolTipText = "Draw new dashed arrow";
-				image = "icons/newdashedarrow.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newdashedarrow.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLABEL:
 				toolTipText = "Draw new label";
-				image = "icons/newlabel.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newlabel.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWARC:
 				toolTipText = "Draw new arc";
-				image = "icons/newarc.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newarc.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWBRACE:
 				toolTipText = "Draw new brace";
-				image = "icons/newbrace.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newbrace.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWGENEPRODUCT:
 				toolTipText = "Draw new geneproduct";
-				image = "icons/newgeneproduct.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newgeneproduct.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWRECTANGLE:
-				image = "icons/newrectangle.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newrectangle.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWOVAL:
 				toolTipText = "Draw new oval";
-				image = "icons/newoval.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newoval.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWTBAR:
 				toolTipText = "Draw new TBar";
-				image = "icons/newtbar.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newtbar.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWRECEPTORROUND:
 				toolTipText = "Draw new round receptor";
-				image = "icons/newreceptorround.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newreceptorround.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWRECEPTORSQUARE:
 				toolTipText = "Draw new square receptor";
-				image = "icons/newreceptorsquare.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newreceptorsquare.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLIGANDROUND:
 				toolTipText = "Draw new round ligand";
-				image = "icons/newligandround.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newligandround.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLIGANDSQUARE:
 				toolTipText = "Draw new square ligand";
-				image = "icons/newligandsquare.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newligandsquare.gif");
 				setChecked(false);
 				break;
 			case GmmlDrawing.NEWLINEMENU:
 				setMenuCreator(new NewItemMenuCreator(GmmlDrawing.NEWLINEMENU));
-				image = "icons/newlinemenu.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newlinemenu.gif");
 				toolTipText = "Draw new line or arrow";
 				break;
 			case GmmlDrawing.NEWLINESHAPEMENU:
 				setMenuCreator(new NewItemMenuCreator(GmmlDrawing.NEWLINESHAPEMENU));
-				image = "icons/newlineshapemenu.gif";
+				imageURL = GmmlVision.getResourceURL("icons/newlineshapemenu.gif");
 				toolTipText = "Draw new ligand or receptor";
 				break;
 			}
 			setToolTipText(toolTipText);
 			setId("newItemAction");
-			setImageDescriptor(ImageDescriptor.createFromFile(null,image));
+			if(imageURL != null) setImageDescriptor(ImageDescriptor.createFromURL(imageURL));
 		}
 				
 		public void run () {

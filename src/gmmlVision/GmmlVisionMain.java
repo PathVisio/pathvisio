@@ -94,7 +94,8 @@ public class GmmlVisionMain {
 				ImageDescriptor.createFromURL(cl.getResource("icons/minimize.gif")));
 		imageRegistry.put("sidepanel.hide",
 				ImageDescriptor.createFromURL(cl.getResource("icons/close.gif")));
-		
+		imageRegistry.put("shell.icon", 
+				ImageDescriptor.createFromURL(cl.getResource("images/bigcateye.gif")));
 		GmmlVision.setImageRegistry(imageRegistry);
 	}
 	

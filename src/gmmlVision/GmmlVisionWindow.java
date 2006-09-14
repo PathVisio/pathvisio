@@ -1254,9 +1254,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
 		
-		shell.setText("GmmlVision");
+		shell.setText("Gmml-Visio");
 		
 		GmmlVisionMain.loadImages(shell.getDisplay());
+		
+		shell.setImage(GmmlVision.getImageRegistry().get("shell.icon"));
 		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());

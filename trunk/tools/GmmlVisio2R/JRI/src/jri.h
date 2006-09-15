@@ -8,8 +8,8 @@
 
 /* the viewpoint is from R, i.e. "get" means "Java->R" whereas "put" means "R->Java" */
 
-#define JRI_VERSION 0x0301 /* JRI v0.3-1 */
-#define JRI_API     0x0105 /* API-version 1.5 */
+#define JRI_VERSION 0x0304 /* JRI v0.3-4 */
+#define JRI_API     0x0106 /* API-version 1.6 */
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,6 +24,8 @@ jstring jri_callToString(JNIEnv *env, jobject o);
 
 SEXP jri_getDoubleArray(JNIEnv *env, jarray o);
 SEXP jri_getIntArray(JNIEnv *env, jarray o);
+SEXP jri_getBoolArrayI(JNIEnv *env, jarray o);
+SEXP jri_getBoolArray(JNIEnv *env, jarray o);
 SEXP jri_getObjectArray(JNIEnv *env, jarray o);
 SEXP jri_getString(JNIEnv *env, jstring s);
 SEXP jri_getStringArray(JNIEnv *env, jarray o);
@@ -33,6 +35,7 @@ SEXP jri_installString(JNIEnv *env, jstring s); /* as Rf_install, just for Java 
 
 jarray  jri_putDoubleArray(JNIEnv *env, SEXP e);
 jarray  jri_putIntArray(JNIEnv *env, SEXP e);
+jarray  jri_putBoolArrayI(JNIEnv *env, SEXP e);
 jstring jri_putString(JNIEnv *env, SEXP e, int ix); /* ix=index, 0=1st */
 jarray  jri_putStringArray(JNIEnv *env, SEXP e);
 jarray jri_putSEXPLArray(JNIEnv *env, SEXP e); /* SEXPs are strored as "long"s */
@@ -42,10 +45,6 @@ jstring jri_putSymbolName(JNIEnv *env, SEXP e);
 void jri_checkExceptions(JNIEnv *env, int describe);
 
 void jri_error(char *fmt, ...);
-
-void R_ReplDLLinit(void);
-int R_ReplDLLdo1(void);
-void end_Rmainloop(void);
 
 #ifdef __cplusplus
 }
@@ -63,4 +62,6 @@ void end_Rmainloop(void);
        + rniInherits
        + rniGetSymbolName
        + rniInstallSymbol
+   1.6 JRI 0.3-2
+       + rniPutBoolArray, rniPutBoolArrayI, rniGetBoolArrayI
 */

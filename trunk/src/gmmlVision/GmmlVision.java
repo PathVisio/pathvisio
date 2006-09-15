@@ -10,7 +10,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.RGB;

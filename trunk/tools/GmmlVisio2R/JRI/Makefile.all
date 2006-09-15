@@ -11,6 +11,8 @@
 EX_JAVA=$(wildcard examples/*.java)
 EX_CLASS=$(EX_JAVA:%.java=%.class)
 
+JFLAGS+=-target 1.4 -source 1.4
+
 TARGETS=src/JRI.jar $(JRILIB) $(EX_CLASS)
 
 all: $(TARGETS)
@@ -26,7 +28,7 @@ $(JRILIB): src/$(JRILIB)
 	cp $< $@
 
 examples/%.class: examples/%.java src/JRI.jar
-	$(JAVAC) -classpath src/JRI.jar -d examples $<
+	$(JAVAC) $(JFLAGS) -classpath src/JRI.jar -d examples $<
 
 clean:
 	$(MAKE) -C src clean

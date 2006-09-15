@@ -60,6 +60,9 @@ public class REXP {
 	/** xpression type: RBool[] */
 	public static final int XT_ARRAY_BOOL = 36;
 
+	/** xpression type: int[] to be interpreted as boolean */
+	public static final int XT_ARRAY_BOOL_INT = 37;
+
 	/** xpression type: unknown; no assumptions can be made about the content */
 	public static final int XT_UNKNOWN = 48;
 
@@ -209,6 +212,9 @@ public class REXP {
 		} else if (rtype == REALSXP) {
 			cont = re.rniGetDoubleArray(xp);
 			Xt = XT_ARRAY_DOUBLE;
+		} else if (rtype == LGLSXP) {
+		    cont = re.rniGetBoolArrayI(xp);
+		    Xt = XT_ARRAY_BOOL_INT;
 		} else if (rtype == VECSXP) {
 			long[] l = re.rniGetVector(xp);
 			cont = new RVector();
@@ -316,11 +322,25 @@ public class REXP {
 		this(XT_ARRAY_STR, val);
 	}
 
+    /** construct new expression with the contents of a boolean vector
+	@since JRI 0.3-2
+	@param val contents */
+	public REXP(boolean[] val) {
+	    Xt = XT_ARRAY_BOOL_INT;
+	    if (val==null) { cont = new int[0]; } else {
+		int [] ic = new int[val.length];
+		int i=0;
+		while (i<val.length) { ic[i]=val[i]?1:0; i++; }
+		cont = ic;
+	    }
+	    attr = null;
+	}
+
 	/**	get attributes of the REXP. In R every object can have attached attribute
 		xpression. Some more complex structures such as classes are built that
 		way.
 		@return attribute xpression or <code>null</code> if there is none associated
-		@ since JRI 0.3, replaces <code>getAttribute()</code>
+		@since JRI 0.3, replaces <code>getAttribute()</code> but should be avoided if possible - use {@link #getAttribute(name)} instead.
 		*/
 	public REXP getAttributes() {
 		return attr;
@@ -466,7 +486,11 @@ public class REXP {
 	 *         logical value
 	 */
 	public RBool asBool() {
-		return (Xt == XT_BOOL) ? (RBool) cont : null;
+	    if (Xt == XT_ARRAY_BOOL_INT) {
+		int [] ba = (int[]) cont;
+		return (ba!=null && ba.length>0)?new RBool(ba[0]):null;
+	    }
+	    return (Xt == XT_BOOL) ? (RBool) cont : null;
 	}
 
 	/**
@@ -510,13 +534,14 @@ public class REXP {
 	 * {@link #asDoubleArray} <u>NO</u> automatic conversion is done if the
 	 * content is not an array of the correct type, because there is no
 	 * canonical representation of doubles as integers. A single integer is
-	 * returned as an array of the length 1.
+	 * returned as an array of the length 1. This method can be also used
+	 * to access a logical array in its integer form (0=FALSE, 1=TRUE, 2=NA).
 	 * 
-	 * @return double[] content or <code>null</code> if the REXP is not a
+	 * @return int[] content or <code>null</code> if the REXP is not a
 	 *         array of integers
 	 */
 	public int[] asIntArray() {
-		if (Xt == XT_ARRAY_INT)
+		if (Xt == XT_ARRAY_INT || Xt == XT_ARRAY_BOOL_INT)
 			return (int[]) cont;
 		if (Xt == XT_INT) {
 			int[] i = new int[1];
@@ -698,6 +723,7 @@ public class REXP {
 		if (xt==XT_ARRAY_STR) return "STRING*";
 		if (xt==XT_ARRAY_DOUBLE) return "REAL*";
 		if (xt==XT_ARRAY_BOOL) return "BOOL*";
+		if (xt==XT_ARRAY_BOOL_INT) return "BOOLi*";
 		if (xt==XT_SYM) return "SYMBOL";
 		if (xt==XT_LANG) return "LANG";
 		if (xt==XT_LIST) return "LIST";

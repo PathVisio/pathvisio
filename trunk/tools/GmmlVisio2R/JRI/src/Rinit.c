@@ -3,6 +3,7 @@
 #include <Rinternals.h>
 #include "Rinit.h"
 #include "Rcallbacks.h"
+#include "Rdecl.h"
 
 /*-------------------------------------------------------------------*
  * UNIX initialization (includes Darwin/Mac OS X)                    *

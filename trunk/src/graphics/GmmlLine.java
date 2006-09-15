@@ -214,6 +214,8 @@ public class GmmlLine extends GmmlGraphics
 		double startx = gdata.getStartX();
 		double starty = gdata.getStartY();
 		
+		if(startx == endx && starty == endy) return; //Unable to determine direction
+		
 		a = endx-startx;
 		b = endy-starty;
 		norm = 8/(Math.sqrt((a*a)+(b*b)));				

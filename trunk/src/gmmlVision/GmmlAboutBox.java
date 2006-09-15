@@ -40,7 +40,7 @@ public class GmmlAboutBox extends Dialog
 		shell.setLayout (ly);
 		
 		Label lbl = new Label (shell, SWT.NULL);
-		lbl.setText ("GMML-Vision");
+		lbl.setText ("Gmml-Visio");
 		GridData gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
 		gd.horizontalSpan = 2;		
 		lbl.setLayoutData (gd);

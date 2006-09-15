@@ -105,6 +105,34 @@ jarray jri_putIntArray(JNIEnv *env, SEXP e)
     }
 }
 
+jarray jri_putBoolArrayI(JNIEnv *env, SEXP e)
+{
+    if (TYPEOF(e)!=LGLSXP) return 0;
+    rjprintf(" integer vector of length %d\n",LENGTH(e));
+    {
+        unsigned len=LENGTH(e);
+        jintArray da=(*env)->NewIntArray(env,len);
+        jint *dae;
+
+        if (!da) {
+            jri_error("newIntArray.new(%d) failed",len);
+            return 0;
+        }
+        
+        if (len>0) {
+            dae=(*env)->GetIntArrayElements(env, da, 0);
+            if (!dae) {
+                (*env)->DeleteLocalRef(env,da);
+                jri_error("newIntArray.GetIntArrayElements failed");
+                return 0;
+            }
+            memcpy(dae,INTEGER(e),sizeof(jint)*len);
+            (*env)->ReleaseIntArrayElements(env, da, dae, 0);
+        }
+        return da;
+    }
+}
+
 jarray jri_putSEXPLArray(JNIEnv *env, SEXP e)
 {
     rjprintf(" general vector of length %d\n",LENGTH(e));
@@ -311,6 +339,60 @@ SEXP jri_getIntArray(JNIEnv *env, jarray o) {
   UNPROTECT(1);
   (*env)->ReleaseIntArrayElements(env, o, ap, 0);
   profReport("RgetIntArrayCont[%d]:",o);
+  return ar;
+}
+
+/** get contents of the integer array object (int) into a logical R vector */
+SEXP jri_getBoolArrayI(JNIEnv *env, jarray o) {
+  SEXP ar;
+  int l;
+  jint *ap;
+
+  profStart();
+  rjprintf(" jarray %d\n",o);
+  if (!o) return R_NilValue;
+  l=(int)(*env)->GetArrayLength(env, o);
+  rjprintf("convert int array of length %d into R bool\n",l);
+  if (l<1) return R_NilValue;
+  ap=(jint*)(*env)->GetIntArrayElements(env, o, 0);
+  if (!ap) {
+      jri_error("RgetBoolArrayICont: can't fetch array contents");
+      return 0;
+  }
+  PROTECT(ar=allocVector(LGLSXP,l));
+  memcpy(LOGICAL(ar),ap,sizeof(jint)*l);
+  UNPROTECT(1);
+  (*env)->ReleaseIntArrayElements(env, o, ap, 0);
+  profReport("RgetBoolArrayICont[%d]:",o);
+  return ar;
+}
+
+/** get contents of the boolean array object into a logical R vector */
+SEXP jri_getBoolArray(JNIEnv *env, jarray o) {
+  SEXP ar;
+  int l;
+  jboolean *ap;
+
+  profStart();
+  rjprintf(" jarray %d\n",o);
+  if (!o) return R_NilValue;
+  l=(int)(*env)->GetArrayLength(env, o);
+  rjprintf("convert boolean array of length %d into R bool\n",l);
+  if (l<1) return R_NilValue;
+  ap=(jboolean*)(*env)->GetBooleanArrayElements(env, o, 0);
+  if (!ap) {
+      jri_error("RgetBoolArrayCont: can't fetch array contents");
+      return 0;
+  }
+  PROTECT(ar=allocVector(LGLSXP,l));
+  {
+    int i=0;
+    int *lgl = LOGICAL(ar);
+    while (i<l) { lgl[i]=ap[i]?1:0; i++; }
+  }
+  UNPROTECT(1);
+  (*env)->ReleaseBooleanArrayElements(env, o, ap, 0);
+  profReport("RgetBoolArrayCont[%d]:",o);
   return ar;
 }
 

@@ -55,25 +55,11 @@
 	</target>
 	
 	<target name="sign-jar" depends="compile,jar" description="Signs jar files">
-		<signjar jar="gmml-visio.jar"
+		<signjar jar="gmml-visio.jar" lazy="true" 
 			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
 		<signjar alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore">
 			<fileset dir="lib" includes="**/*.jar"/>
 		</signjar>
-<!--	<signjar jar="lib/swt-win32-lib.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar jar="lib/swt-win32.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar jar="lib/org.eclipse.jface.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar jar="lib/org.eclipse.core.commands.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar jar="lib/org.eclipse.equinox.common.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar jar="lib/hsqldb.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar jar="lib/jdom.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/> !-->
 	</target>
 		
 	<target name="docs" depends="prepare" description="generate api-docs">

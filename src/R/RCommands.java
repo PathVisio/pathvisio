@@ -14,7 +14,7 @@ public class RCommands {
 	 * @param symbol The name of the object to remove
 	 */
 	public static void rm(Rengine re, String symbol) throws RException {
-//		evalE(re, "try(rm(" + symbol + "))");
+		evalE(re, "try(rm(" + symbol + "))");
 	}
 	
 	public static void rm(Rengine re, String[] symbols) throws RException {
@@ -39,6 +39,7 @@ public class RCommands {
 			refs[i] = ro.getRef(re);
 		};
 		long listRef = re.rniPutVector(refs);
+		if(listRef == 0) throw new RniException(re, "rniPutVector", "zero reference", listRef);
 		re.rniAssign(symbol, listRef, 0);
 		
 		//Using high level API methods - more stable?
@@ -54,7 +55,7 @@ public class RCommands {
 	public static void assign(Rengine re, String symbol, String[] sa) throws RException {
 		// Using rni methods - faster
 		long r = re.rniPutStringArray(sa);
-		if(r == 0) throw new RniException(re, "rniPutStringArray", r);
+		if(r == 0) throw new RniException(re, "rniPutStringArray", "zero reference", r);
 		re.rniAssign(symbol, r, 0);
 		
 //		// Using high level API - more stable?
@@ -92,10 +93,12 @@ public class RCommands {
 		private static final long serialVersionUID = 1L;
 		long ref;
 		String method;
+		String cause;
 		
-		public RniException(Rengine re, String method, long ref) { 
-			super(re, "R was unable to process rni method '" + method + "'");
+		public RniException(Rengine re, String method, String cause, long ref) { 
+			super(re, "R was unable to process rni method '" + method + "; " + cause);
 			this.method = method;
+			this.cause = cause;
 			this.ref = ref;
 		}
 		

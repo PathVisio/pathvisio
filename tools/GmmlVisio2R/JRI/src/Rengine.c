@@ -8,6 +8,7 @@
 #include "Rcallbacks.h"
 #include "Rinit.h"
 #include "globals.h"
+#include "Rdecl.h"
 
 #ifdef Win32
 #include <windows.h>
@@ -178,6 +179,12 @@ JNIEXPORT jintArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetIntArray
       return jri_putIntArray(env, L2SEXP(exp));
 }
 
+JNIEXPORT jintArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetBoolArrayI
+  (JNIEnv *env, jobject this, jlong exp)
+{
+      return jri_putBoolArrayI(env, L2SEXP(exp));
+}
+
 JNIEXPORT jintArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetDoubleArray
   (JNIEnv *env, jobject this, jlong exp)
 {
@@ -210,28 +217,6 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniRunMainLoop
       run_Rmainloop();
 }
 
-JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniCustomLoop
-  (JNIEnv *env, jobject this)
-{
-		printf("C: starting REPL loop\n");
-		jboolean interrupted = 0;
-
-		// Get the instance of the java Rengine, and the isInterrupted method
-		jclass cls = (*env)->GetObjectClass(env, this);
-		jmethodID mid = (*env)->GetMethodID(env, cls, "isInterrupted", "()Z");
-		if(mid == 0) {
-			return;
-		}
-		R_ReplDLLinit();
-		while(!interrupted) {
-			printf("C: not interrupted: iteration\n");
-			int state = R_ReplDLLdo1();
-		 	printf("C: checking interrupt");
-			interrupted = (*env)->CallBooleanMethod(env, this, mid, 1);
-		}
-		printf("C: Ending.....\n");
-}
-
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutString
 (JNIEnv *env, jobject this, jstring s)
 {
@@ -248,6 +233,18 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutIntArray
 (JNIEnv *env, jobject this, jintArray a)
 {
     return SEXP2L(jri_getIntArray(env, a));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutBoolArrayI
+(JNIEnv *env, jobject this, jintArray a)
+{
+    return SEXP2L(jri_getBoolArrayI(env, a));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutBoolArray
+(JNIEnv *env, jobject this, jbooleanArray a)
+{
+    return SEXP2L(jri_getBoolArray(env, a));
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutDoubleArray

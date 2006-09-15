@@ -2,6 +2,7 @@
 
 #include "jri.h"
 #include "globals.h"
+#include "Rdecl.h"
 
 #include "org_rosuda_JRI_Rengine.h"
 #include <R_ext/Parse.h>

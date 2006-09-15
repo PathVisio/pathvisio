@@ -1,4 +1,4 @@
-AC_INIT([JRI],[0.1],[urbanek@research.att.com])
+AC_INIT([JRI],[0.3],[simon.urbanek@r-project.org])
 AC_CONFIG_SRCDIR([src/jri.h])
 AC_CONFIG_HEADER([src/config.h])
 AC_CONFIG_AUX_DIR([tools])
@@ -53,8 +53,10 @@ RINC=`${R_HOME}/bin/R CMD config --cppflags`
 RLD=`${R_HOME}/bin/R CMD config --ldflags`
 
 if test -z "$RLD"; then
-   AC_MSG_ERROR([*** R was not compiled with --enable-R-shlib!
-*** You must have libR.so or equivalent in order to use JRI])
+   AC_MSG_ERROR([R was not compiled with --enable-R-shlib
+
+*** You must have libR.so or equivalent in order to use JRI ***
+])
 fi
 
 AC_SUBST(R_HOME)
@@ -104,7 +106,9 @@ if test -z "$JAVAC"; then have_all_java=no; fi
 if test -z "$JAVAH"; then have_all_java=no; fi
 if test -z "$JAR"; then have_all_java=no; fi
 if test ${have_all_java} = no; then
-  AC_MSG_ERROR([*** JDK is incomplete! Please make sure you have a complete JDK. JRE is *not* sufficient.])
+  AC_MSG_ERROR([one or more Java tools are missing.
+
+*** JDK is incomplete! Please make sure you have a complete JDK. JRE is *not* sufficient.])
 fi
 
 ## this is where our test-class lives
@@ -178,7 +182,7 @@ JAVA_INC="-I${JNI_H}"
 jac_found_md=no
 for mddir in . linux solaris ppc irix alpha aix hp-ux genunix cygwin win32 freebsd; do
 AC_CHECK_FILE(${JNI_H}/$mddir/jni_md.h,[JAVA_INC="${JAVA_INC} -I${JNI_H}/$mddir" jac_found_md=yes])
-if test $jac_found_md == yes; then break; fi
+if test ${jac_found_md} = yes; then break; fi
 done
 
 LIBS="${LIBS} ${JAVA_LIBS}"

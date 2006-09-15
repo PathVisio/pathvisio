@@ -3,6 +3,9 @@ package R;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +13,8 @@ import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import data.GmmlGex;
 
 import R.RCommands.RException;
 
@@ -20,6 +25,22 @@ import util.XmlUtils.PathwayParser.Gene;
 public class RData {
 	List<File> pwFiles;
 	
+	boolean exportPws;			//Export pathways or not
+	boolean exportData;			//Export data or not
+	boolean incCrit;			//Include criteria in export data or not
+	
+	String pwDir = "";			//Pathway directory to import
+	String exportFile = "";		//File name to export RData
+	String pwsName = "";		//Name of pathwayset object
+	String dsName = "";			//Name of dataset object
+ 
+	PathwaySet cachePathwaySet;
+	DataSet cacheDataSet;
+	
+	
+	public RData() {
+		pwFiles = new ArrayList<File>();
+	}
 	
 	/**
 	 * Create a new RData instance containing the given pathway(s) and expression data (if loaded).
@@ -30,55 +51,64 @@ public class RData {
 	 * to a single file)
 	 */
 	public RData(File pathways, boolean recursive) {
+		this();
 		//Get the pathway files
 		pwFiles = FileUtils.getFiles(pathways, "xml", recursive);
 	}
 	
-	public void doTest(Rengine re) {
-//		TEST:
-//		 just send all the genes in the pathways to R and save workspace
-		System.err.println("setting home directory");
-		re.eval("setwd('/home/thomas/afstuderen/code/gmml-visio/trunk/tools/GmmlVisio2R')");
-//		re.eval("setwd('D:/Mijn Documenten/Studie/afstuderen/code/gmml-visio/trunk/tools/GmmlVisio2R')");
-		System.err.println("sourcing source.r");
-		re.eval("source('source.r')");
-		long t = System.currentTimeMillis();
+	public List<File> getPathwayFiles() { return pwFiles; }
+	
+	public void exportToR(Rengine re) throws Exception {
+		if(exportData) doExportData(re);
+		if(exportPws) doExportPws(re);
+	}
+
+	public void doExportPws(Rengine re) throws Exception {
+		File pwDir = new File(this.pwDir);
+		
+		//Check some parameters
+		if(exportFile.equals("")) throw new Exception("specify file to export to");
+		if(!pwDir.canRead()) throw new Exception("invalid pathway directory: " + this.pwDir);
+		if(pwsName.equals("")) throw new Exception("No name specified for the exported pathways object");
+		
+		pwFiles = FileUtils.getFiles(pwDir, "xml", true);
+
 		List<Pathway> pws = new ArrayList<Pathway>();
 		List<GeneProduct> gps = new ArrayList<GeneProduct>();
-		try {
-			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			for(File f : pwFiles) { ;
-				gps.clear();
-				PathwayParser p = new PathwayParser(xmlReader);
-				try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
-					GmmlVision.log.error("Couldn't read " + f, e); 
-					continue; 
-				}
-				for(Gene g : p.getGenes()) {
-					gps.add(new GeneProduct(g.getId(), g.getCode()));
-				}
-				pws.add(new Pathway(p.getName(), f.getName(), gps));
+
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		for(File f : pwFiles) {
+			gps.clear();
+			PathwayParser p = new PathwayParser(xmlReader);
+			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
+				GmmlVision.log.error("Couldn't read " + f, e); 
+				continue; 
 			}
-		} catch(Exception e) { e.printStackTrace(); }
-		PathwaySet testPathwaySet = new PathwaySet("testset", pws);
-		try { 
-			testPathwaySet.toR(re, "testset"); 
+
+			for(Gene g : p.getGenes()) {
+				gps.add(new GeneProduct(g.getId(), g.getCode()));
+			}
+			
+			pws.add(new Pathway(p.getName(), f.getName(), gps));
 		}
-		catch(RException e) { e.printStackTrace(); }
-		System.out.println("Time: " + (System.currentTimeMillis() - t));
-		try {
-			RCommands.evalE(re, "save(file='test.RData', list='testset')");
-		} catch(RException e) { e.printStackTrace(); }
+		PathwaySet testPathwaySet = new PathwaySet(pwsName, pws);
+		testPathwaySet.toR(re, pwsName); 
+		RCommands.evalE(re, "save.image(file='"+ exportFile + "')");
+	}
+
+	public void doExportData(Rengine re) throws Exception {
 		
 	}
-	
+		
 	abstract class RObject {
 		REXP rexp = null; //Cache REXP, leads to JNI errors!
 		
 		abstract REXP getREXP(Rengine re) throws RException;
 		
 		long getRef(Rengine re) throws RException {
-	        return getREXP(re).xp;
+	        long ref = getREXP(re).xp;
+	        if(ref == 0) throw new RException(re, "Unable to get reference to symbol");
+	        return ref;
 		}
 		
 		void toR(Rengine re, String symbol) throws RException {
@@ -125,8 +155,9 @@ public class RData {
 		REXP getREXP(Rengine re) throws RException {
 //			if(rexp != null) return rexp;
 			
+			System.err.println(geneProducts);
 			RCommands.assign(re, "tmpGps", geneProducts);
-			System.err.println(RCommands.evalE(re, "exists('tmpGps')"));
+			
 			rexp = RCommands.evalE(re, "Pathway('" + name + "','" + fileName + "', tmpGps)");;
 	          
 			RCommands.rm(re, "tmpGps");
@@ -169,6 +200,37 @@ public class RData {
 		}
 	}
 	
+	class DataSet extends RObject {
+		String name;
+		List<GeneProduct> geneProducts;
+		double[][] data;
+		int[][] subsets; //value either 1 or 0
+		
+		DataSet() throws Exception {
+			//Get the data from GmmlGex
+			if(!GmmlGex.isConnected()) return;
+			Statement s = GmmlGex.getCon().createStatement();
+			
+			//Get distinct gps
+			java.sql.ResultSet r = s.executeQuery("SELECT DISTINCT id, code FROM data");
+		
+			//Subset samples (numeric)
+			
+			//Get sample data for gps
+			
+			
+		}
+		/*
+		representation(
+		name = "character",
+		geneProducts = "list",
+		data = "matrix",
+		subsets = "matrix"(non-Javadoc)
+		 */
+		REXP getREXP(Rengine re) throws RException {
+			return null;
+		}
+	}
 	class ResultSet extends RObject {
 
 		REXP getREXP(Rengine re) throws RException {

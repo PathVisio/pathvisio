@@ -57,6 +57,11 @@ class TextConsole implements RMainLoopCallbacks
 
 public class rtest {
     public static void main(String[] args) {
+	// just making sure we have the right version of everything
+	if (!Rengine.versionCheck()) {
+	    System.err.println("** Version mismatch - Java files don't match library version.");
+	    System.exit(1);
+	}
         System.out.println("Creating Rengine (with arguments)");
 		// 1) we pass the arguments from the command line
 		// 2) we won't use the main loop at first, we'll start it later
@@ -91,7 +96,25 @@ public class rtest {
 				System.out.println("and once again from the list:");
 				int i=0; while (i<k.length) System.out.println(k[i++]);
 			}			
+
+			// get boolean array
+			System.out.println(x=re.eval("iris[[1]]>mean(iris[[1]])"));
+			// R knows about TRUE/FALSE/NA, so we cannot use boolean[] this way
+			// instead, we use int[] which is more convenient (and what R uses internally anyway)
+			int[] bi = x.asIntArray();
+			{
+			    int i = 0; while (i<bi.length) { System.out.print(bi[i]==0?"F ":(bi[i]==1?"T ":"NA ")); i++; }
+			    System.out.println("");
+			}
 			
+			// push a boolean array
+			boolean by[] = { true, false, false };
+			re.assign("bool", by);
+			System.out.println(x=re.eval("bool"));
+			// asBool returns the first element of the array as RBool
+			// (mostly useful for boolean arrays of the length 1). is should return true
+			System.out.println("isTRUE? "+x.asBool().isTRUE());
+
 			// now for a real dotted-pair list:
 			System.out.println(x=re.eval("pairlist(a=1,b='foo',c=1:5)"));
 			RList l = x.asList();

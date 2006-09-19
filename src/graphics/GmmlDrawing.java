@@ -962,4 +962,47 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		redrawDirtyRect();
 	}
 	
+	List<GmmlDataObject> clipboard = null;
+	
+	public void copyToClipboard()
+	{
+		List<GmmlDataObject> result = new ArrayList<GmmlDataObject>();
+		for (GmmlDrawingObject g : drawingObjects)
+		{
+			if (g.isSelected() && g instanceof GmmlGraphics)
+			{
+				result.add(((GmmlGraphics)g).gdata.clone());
+			}
+		}
+		if (result.size() > 0)
+		{
+			clipboard = result;
+		}
+		else
+		{
+			clipboard = null;
+		}
+	}
+	
+	public void pasteFromClipboad()
+	{
+		if (clipboard != null)
+		{
+			for (GmmlDataObject o : clipboard)
+			{
+				o.setStartX(o.getStartX() + 10);
+				o.setStartY(o.getStartY() + 10);
+				o.setEndX(o.getEndX() + 10);
+				o.setEndY(o.getEndY() + 10);
+				o.setLeft(o.getLeft() + 10);
+				o.setTop(o.getTop() + 10);
+				data.dataObjects.add(o);
+				GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.ADDED));
+				// TODO: firing of event doesn't lead to creation of GmmlGrahics.
+				// modify structure to make GmmlGraphicsObject get created automatically
+				// after an "ADD" event is fired.
+			}
+		}
+	}
+	
 } // end of class

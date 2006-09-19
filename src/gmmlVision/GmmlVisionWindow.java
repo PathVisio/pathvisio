@@ -616,6 +616,40 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 	}
 	private AboutAction aboutAction = new AboutAction(this);
 	
+	private class CopyAction extends Action
+	{
+		GmmlVisionWindow window;
+		public CopyAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("Copy@Ctrl+C");
+			setToolTipText ("Copy selected objects to clipboard");
+		}
+		public void run()
+		{
+			GmmlVision.drawing.copyToClipboard();
+		}
+	}
+		
+	private CopyAction copyAction = new CopyAction(this);
+	
+	private class PasteAction extends Action
+	{
+		GmmlVisionWindow window;
+		public PasteAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("Paste@Ctrl+V");
+			setToolTipText ("Paste contents of clipboard");
+		}
+		public void run()
+		{
+			GmmlVision.drawing.pasteFromClipboad();
+		}
+	}
+	
+	private PasteAction pasteAction = new PasteAction(this);
+
 	/**
 	 * {@link Action} to open the R-interface dialog
 	 */
@@ -1186,6 +1220,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
+		//editMenu.add(copyAction);
+		//editMenu.add(pasteAction);
+		editMenu.add(new Separator());
 		editMenu.add(switchEditModeAction);
 		editMenu.add(preferencesAction);
 		MenuManager viewMenu = new MenuManager ("&View");

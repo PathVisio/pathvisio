@@ -10,4 +10,4 @@ License: ...
 URL: http://www.r-project.org, http://www.bigcat.nl
 SaveImage: yes
 LazyLoad: yes
-Collate: util.R GeneProduct.R Pathway.R PathwaySet.R DataSet.R
+Collate: util.R GeneProduct.R Pathway.R PathwaySet.R DataSet.R GeneProductData.R

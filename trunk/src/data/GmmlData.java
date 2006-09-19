@@ -265,5 +265,5 @@ public class GmmlData
 		{
 			g.gmmlObjectModified(e);
 		}
-	}
+	}	
 }

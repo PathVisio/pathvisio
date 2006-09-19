@@ -551,5 +551,5 @@ public abstract class GmmlGraphicsData
 		{
 			g.gmmlObjectModified(e);
 		}
-	}	
+	}
 }

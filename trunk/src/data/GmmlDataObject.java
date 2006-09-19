@@ -207,7 +207,6 @@ public class GmmlDataObject extends GmmlGraphicsData
 	{
     	Element graphics = e.getChild("Graphics");
 		width = Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM;
-			
 	}
 	
 	private void updateWidth(Element e)
@@ -552,7 +551,6 @@ public class GmmlDataObject extends GmmlGraphicsData
 			case 37: setBoardHeight ((Double)value); break;
 			case 38: setWindowWidth ((Double)value); break;
 			case 39: setWindowHeight ((Double)value); break;
-
 		}
 	}
 	
@@ -693,4 +691,58 @@ public class GmmlDataObject extends GmmlGraphicsData
 		}
 		return e;
 	}
+	
+	public GmmlDataObject clone()
+	{
+		GmmlDataObject result = new GmmlDataObject();
+		
+		result.author = author;
+		result.availability = availability;
+		result.backpageHead = backpageHead;
+		result.boardHeight = boardHeight;
+		result.boardWidth = boardWidth;
+		result.centerx = centerx;
+		result.centery = centery;
+		result.color = color;
+		result.comment = comment;
+		result.dataSource = dataSource;
+		result.email = email;
+		result.endx = endx;
+		result.endy = endy;
+		result.fBold = fBold;
+		result.fItalic = fItalic;
+		result.fontName = fontName;
+		result.fontSize = fontSize;
+		result.fStrikethru = fStrikethru;
+		result.fTransparent = fTransparent;
+		result.fUnderline = fUnderline;
+		result.geneID = geneID;
+		result.geneProductName = geneProductName;
+		result.geneProductType = geneProductType;
+		result.height = height;
+		result.labelText = labelText;
+		result.lastModified = lastModified;
+		result.lineStyle = lineStyle;
+		result.lineType = lineType;
+		result.maintainedBy = maintainedBy;
+		result.mapInfoDataSource = mapInfoDataSource;
+		result.mapInfoLeft = mapInfoLeft;
+		result.mapInfoName = mapInfoName;
+		result.mapInfoTop = mapInfoTop;
+		result.notes = notes;
+		result.objectType = objectType;
+		result.organism = organism;
+		result.rotation = rotation;
+		result.shapeType = shapeType;
+		result.startx = startx;
+		result.starty = starty;
+		result.version = version;
+		result.width = width;
+		result.windowHeight = windowHeight;
+		result.windowWidth = windowWidth;
+		result.xref = xref;
+		
+		return result;
+	}
+	
 }

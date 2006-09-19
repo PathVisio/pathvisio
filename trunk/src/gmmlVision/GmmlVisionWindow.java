@@ -1277,6 +1277,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		GmmlVision.addPropertyListener(this);
 	}
 	
+	public boolean close() {
+		GmmlVision.firePropertyChange(
+				new PropertyEvent(this, GmmlVision.PROPERTY_CLOSE_APPLICATION));
+		return super.close();
+	}
+	
 	public ScrolledComposite sc;
 	public GmmlBpBrowser bpBrowser; //Browser for showing backpage information
 	public GmmlPropertyTable propertyTable;	//Table showing properties of GmmlGraphics objects

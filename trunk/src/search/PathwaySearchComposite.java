@@ -5,13 +5,11 @@ import gmmlVision.GmmlVisionWindow;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +26,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import search.SearchMethods.SearchException;
+import util.SwtUtils.SimpleRunnableWithProgress;
 import data.GmmlData;
 
 public class PathwaySearchComposite extends Composite {
@@ -258,60 +258,28 @@ public class PathwaySearchComposite extends Composite {
 		return b;
 	}
 	
-	public class SearchRunnableWithProgress implements IRunnableWithProgress {
-		Method searchMethod;
-		private Object[] args;
-		IProgressMonitor monitor;
-		
-		public SearchRunnableWithProgress(String method, Class[] parameters) {
-			super();
-			try {
-				searchMethod = SearchMethods.class.getMethod(method, parameters);
-			} catch (Exception e) { GmmlVision.log.error("while setting search method",e); }
-		}
-		
-		public void setArgs(Object[] args) { this.args = args; }
-		
-		public void run(IProgressMonitor monitor) 
-		throws InvocationTargetException, InterruptedException {
-			this.monitor = monitor;
-			
-			if(args == null || searchMethod == null) {
-				InterruptedException ex = new InterruptedException("missing parameters, see error log for details");
-				GmmlVision.log.error("unable to perform search", ex);
-				throw ex;
-			}
-					
-			monitor.beginTask("Searching", 1000);
-			try {
-				String msg = (String)searchMethod.invoke(null, args);
-				if(msg != null && !msg.equals(SearchMethods.MSG_CANCELLED)) {
-					openMessageDialog(msg);
-				}
-				
-			} catch (Exception e) { 
-				GmmlVision.log.error("while invoking search method",e);
-				throw new InterruptedException(e.getMessage());
-			}
-			monitor.done();
-		}
-		
-		public void updateMonitor(final int w) {
-			gmmlVision.getShell().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					monitor.worked(w);
-				}
-			});
-		}
-		
-		public void openMessageDialog(final String msg) {
-			gmmlVision.getShell().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					MessageDialog.openInformation(getShell(), "", msg);
-				}
-			});
+	public class SearchRunnableWithProgress extends SimpleRunnableWithProgress {
 
+		public SearchRunnableWithProgress(String method, Class[] parameters) {
+			super(SearchMethods.class, method, parameters);
 		}
+		
+		public void run(IProgressMonitor monitor) {
+			try {
+				super.run(monitor);
+			} catch (InterruptedException e) {
+				openMessageDialog("error", e.getMessage());
+				GmmlVision.log.error("Unable to start search", e);
+			} catch (InvocationTargetException e) {
+				if(e.getCause() instanceof SearchException)
+					openMessageDialog("", e.getCause().getMessage());
+				else {
+					openMessageDialog("error", "Cause: " + e.getCause().getMessage());
+					GmmlVision.log.error("while searching", e);
+				}
+			}
+		}
+		
 	}
 	
 	public abstract class SearchOptionComposite extends Composite {

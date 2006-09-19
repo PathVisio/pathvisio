@@ -172,6 +172,7 @@ public abstract class GmmlVision {
 	//Property event handling
 	public static final String PROPERTY_OPEN_PATHWAY = "property_open_pathway";
 	public static final String PROPERTY_NEW_PATHWAY = "property_new_pathway";
+	public static final String PROPERTY_CLOSE_APPLICATION = "property_close_app";
 	
 	static List<PropertyListener> propertyListeners;
 	

@@ -1,20 +1,22 @@
 package R;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
+import util.SwtUtils.SimpleRunnableWithProgress;
+
 import R.RData.RObject;
 
-public class RCommands {
-
+public class RCommands {	
 	/**
 	 * Remove an object from the workspace
 	 * @param symbol The name of the object to remove
 	 */
 	public static void rm(Rengine re, String symbol) throws RException {
-		evalE(re, "try(rm(" + symbol + "))");
+		evalEN(re, "try(rm(" + symbol + "))");
 	}
 	
 	public static void rm(Rengine re, String[] symbols) throws RException {
@@ -23,18 +25,28 @@ public class RCommands {
 	
     /**
      * Wrapper for {@link Rengine#eval(String s)}, throws {@link REvalException}
+     * @throws InterruptedException 
     */
-    public static REXP evalE(Rengine re, String s) throws REvalException {
+    public static REXP evalE(Rengine re, String s) throws RException {
+    	checkCancelled();
+    	
     	REXP rexp = re.eval(s);
     	if(rexp == null) throw new REvalException(re, s);
     	return rexp;
     }
     
-	public static void assign(Rengine re, String symbol, List list) throws 	RException,
-																			ClassCastException {
+    public static void evalEN(Rengine re, String s) throws RException {
+    	checkCancelled();
+    	
+    	re.eval(s + "; NULL");
+    }
+    
+	public static void assign(Rengine re, String symbol, List list) throws 	RException {
 		//Using rni methods - faster
 		long[] refs = new long[list.size()];
 		for(int i = 0; i < list.size(); i++) {
+			checkCancelled();
+			
 			RObject ro = (RObject)list.get(i);
 			refs[i] = ro.getRef(re);
 		};
@@ -53,6 +65,8 @@ public class RCommands {
 	}
 	
 	public static void assign(Rengine re, String symbol, String[] sa) throws RException {
+		checkCancelled();
+		
 		// Using rni methods - faster
 		long r = re.rniPutStringArray(sa);
 		if(r == 0) throw new RniException(re, "rniPutStringArray", "zero reference", r);
@@ -63,6 +77,16 @@ public class RCommands {
 //		for(String s : sa) {
 //			evalE(re, symbol + "= append(" + symbol + ", '" + s + "')");
 //		}
+	}
+	
+	/**
+	 * Check wether the user pressed cancel (for long running operations
+	 * using the {@link SimpleRunnableWithProgress}
+	 * @return
+	 */
+	static void checkCancelled() throws RInterruptedException {
+		if(SimpleRunnableWithProgress.isCancelled())
+			throw new RInterruptedException();
 	}
 	
 	public static class RException extends Exception {
@@ -103,5 +127,17 @@ public class RCommands {
 		}
 		
 		public long getRef() { return ref; }
+	}
+	
+	public static class RInterruptedException extends RException {
+		static final String MSG_INTERRUPT = "R command was interrupted";
+		
+		public RInterruptedException(Rengine re) {
+			super(re, MSG_INTERRUPT);
+		}
+		
+		public RInterruptedException() {
+			this(null);
+		}
 	}
 }

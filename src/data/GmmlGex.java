@@ -412,6 +412,7 @@ public abstract class GmmlGex {
 		}
 		
 		public String getName() { return name == null ? "" : name; }
+		public int getDataType() { return dataType; }
 		
 		/**
 		 * Compares this object to another {@link Sample} object based on the idSample property
@@ -448,6 +449,7 @@ public abstract class GmmlGex {
 	
 	public static HashMap<Integer, Sample> getSamples()
 	{
+		if(samples == null) setSamples();
 		return samples;
 	}
 	
@@ -1112,6 +1114,9 @@ public abstract class GmmlGex {
 			sh.execute(
 					"CREATE INDEX i_expression_data " +
 			"ON expression(data)	     ");
+			sh.execute(
+					"CREATE INDEX i_expression_code " +
+			"ON expression(code)	 ");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSets					" +

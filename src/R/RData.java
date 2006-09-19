@@ -3,24 +3,29 @@ package R;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import data.GmmlGex;
-
-import R.RCommands.RException;
-
 import util.FileUtils;
+import util.Utils;
+import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
+import R.RCommands.RException;
+import R.RCommands.RInterruptedException;
+import data.GmmlGex;
+import data.GmmlGex.Sample;
 
 public class RData {
 	List<File> pwFiles;
@@ -58,9 +63,32 @@ public class RData {
 	
 	public List<File> getPathwayFiles() { return pwFiles; }
 	
-	public void exportToR(Rengine re) throws Exception {
-		if(exportData) doExportData(re);
-		if(exportPws) doExportPws(re);
+	public void doExport(Rengine re) throws Exception {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(GmmlVision.getWindow().getShell());
+		SimpleRunnableWithProgress rwp = null;
+		try {
+			if(exportData) {
+				rwp = new SimpleRunnableWithProgress(
+						this.getClass(), "doExportData", 
+						new Class[] { re.getClass() }, new Object[] { re }, this);
+				rwp.setMonitorInfo("Exporting data", IProgressMonitor.UNKNOWN);
+				dialog.run(true, true, rwp); 
+			}
+			if(exportPws) {
+				rwp = new SimpleRunnableWithProgress(
+						this.getClass(), "doExportPws", 
+						new Class[] { re.getClass() }, new Object[] { re }, this);
+				rwp.setMonitorInfo("Exporting pathways", IProgressMonitor.UNKNOWN);
+				dialog.run(true, true, rwp);
+			}
+			
+			RCommands.evalEN(re, "save.image(file='"+ exportFile + "')");
+			
+		} catch(InvocationTargetException ex) {
+			rwp.openMessageDialog("Error", "Unable to export data: " + ex.getCause().getMessage());
+			GmmlVision.log.error("Unable to export to R", ex);
+			return;
+		}
 	}
 
 	public void doExportPws(Rengine re) throws Exception {
@@ -93,13 +121,14 @@ public class RData {
 		}
 		PathwaySet testPathwaySet = new PathwaySet(pwsName, pws);
 		testPathwaySet.toR(re, pwsName); 
-		RCommands.evalE(re, "save.image(file='"+ exportFile + "')");
 	}
-
+	
 	public void doExportData(Rengine re) throws Exception {
-		
+		if(!GmmlGex.isConnected()) throw new Exception("No expression data loaded");
+		DataSet ds = new DataSet(dsName);
+		ds.toR(re, dsName);
 	}
-		
+			
 	abstract class RObject {
 		REXP rexp = null; //Cache REXP, leads to JNI errors!
 		
@@ -200,35 +229,158 @@ public class RData {
 		}
 	}
 	
-	class DataSet extends RObject {
-		String name;
-		List<GeneProduct> geneProducts;
-		double[][] data;
-		int[][] subsets; //value either 1 or 0
+	class GeneProductData extends RObject {
+		GeneProduct geneProduct;
 		
-		DataSet() throws Exception {
-			//Get the data from GmmlGex
-			if(!GmmlGex.isConnected()) return;
+		HashMap<Sample, HashMap<String, Object>> data;
+		HashMap<Sample, HashMap<String, Integer>> sets;
+		
+		GeneProductData(GeneProduct geneProduct) throws Exception {
+			this.geneProduct = geneProduct;
+			data = new HashMap<Sample, HashMap<String, Object>>();
+			sets = new HashMap<Sample, HashMap<String, Integer>>();
+			
+			queryData();
+		}
+		
+		/**
+		 * Queries the data for this objecs's {@link GeneProduct} from {@link GmmlGex}
+		 */
+		void queryData() throws Exception {
 			Statement s = GmmlGex.getCon().createStatement();
 			
-			//Get distinct gps
-			java.sql.ResultSet r = s.executeQuery("SELECT DISTINCT id, code FROM data");
-		
-			//Subset samples (numeric)
+//			//Get size of data array
+//			java.sql.ResultSet r = s.executeQuery(
+//					" SELECT TOP 1 COUNT(idSample) as nr FROM " +
+//					"	SELECT idSample FROM data " +
+//					" 		WHERE id IN(" + Utils.list2String(geneProduct.ids, '\'', ',') + ")" +
+//					" 		AND code IN(" + Utils.list2String(geneProduct.codes, '\'', ',') + ")" +
+//					" GROUP BY nr ORDER BY nr DESC"	);
+//			r.next();
+//			int size = r.getInt(1);
+
+			//Using IN()
+//			long t = System.currentTimeMillis();
+//			java.sql.ResultSet r = s.executeQuery(
+//				"SELECT id, code, idSample, data FROM expression " +
+//				" WHERE id IN(" + Utils.list2String(geneProduct.ids, '\'', ',') + ")");
+//			System.out.println("GeneProductData query took: " + (System.currentTimeMillis() - t));
 			
-			//Get sample data for gps
-			
-			
+			//Split over multiple queries
+			long t = System.currentTimeMillis();
+			java.sql.ResultSet r;
+			for(int i = 0; i < geneProduct.codes.size(); i++) {
+				r = s.executeQuery(
+						"SELECT id, code, idSample, data FROM expression " +
+						"WHERE id = '" + geneProduct.ids.get(i) + "' AND " +
+						"code = '" + geneProduct.codes.get(i) + "'");
+				HashMap<Integer, Sample> samples = GmmlGex.getSamples();
+				while(r.next()) {
+					int idSample = r.getInt("idSample");
+					String idc = r.getString("id") + "|" + r.getString("code");
+					Object dobj = r.getObject("data"); //The actual data
+					Sample smp = samples.get(idSample);//The sample
+					
+					if(data.containsKey(smp)) {
+						data.get(smp).put(idc, dobj);
+					} else {
+						HashMap<String, Object> hm = new HashMap<String, Object>();
+						hm.put(idc, dobj);
+						data.put(smp, hm);
+					}
+				}
+			}
+			System.out.println("GeneProductData queries took: " + (System.currentTimeMillis() - t));
 		}
-		/*
-		representation(
-		name = "character",
-		geneProducts = "list",
-		data = "matrix",
-		subsets = "matrix"(non-Javadoc)
-		 */
+		
 		REXP getREXP(Rengine re) throws RException {
-			return null;
+			geneProduct.toR(re, "tmpGp");
+			
+			//Assign data.frame with data
+			assignData(re, "tmpData");
+			
+			rexp = RCommands.evalE(re, 
+					"GeneProductData(geneProduct = tmpGp, data = tmpData)");
+			
+			RCommands.rm(re, "tmpGp");
+			
+			return rexp;
+		}
+		
+		void assignData(Rengine re, String symbol) throws RException {
+			RCommands.evalEN(re, symbol + "= list()");
+			
+			for(Sample smp : data.keySet()) {
+				HashMap<String, Object> d = data.get(smp);
+				
+				int type = GmmlGex.getSamples().get(smp.idSample).getDataType();
+				
+				//Store rownames
+				String[] idcs = new String[d.size()];
+				int i = 0;
+				for(String idc : d.keySet()) { idcs[i++] = idc;}
+				re.assign("tmpRn", idcs);
+								
+				if(type == Types.REAL) {
+					double[] dd = new double[d.size()];
+					i = 0;
+					for(String idc : d.keySet()) dd[i++] = Double.parseDouble((String)d.get(idc));
+					re.assign("tmpV", dd);
+				} else {
+					String[] sd = new String[d.size()];
+					i = 0;
+					for(String idc : d.keySet()) sd[i++] = (String)d.get(idc);
+					re.assign("tmpV", sd);
+				}
+				
+				RCommands.evalEN(re, 
+						"cbind(tmpV); " +
+						"rownames(tmpV) = tmpRn");
+				RCommands.evalEN(re, "tmpL = list(tmpV)");
+				RCommands.evalEN(re, "names(tmpL) = '" + smp.getName() + "'");
+				RCommands.evalEN(re, symbol + "= append(" + symbol + ", tmpL)");
+			}
+			RCommands.rm(re, new String[] {"tmpRn", "tmpL", "tmpV"});
+		}
+	}
+	
+	class DataSet extends RObject {
+		String name;
+		List<GeneProductData> data;
+		
+		DataSet(String name) throws Exception {
+			this.name = name;
+			data = new ArrayList<GeneProductData>();
+			List<GeneProduct> geneProducts = new ArrayList<GeneProduct>();
+			
+			//Get the data from GmmlGex
+			Statement s = GmmlGex.getCon().createStatement();
+			
+			//Create distinct gene products
+			long t = System.currentTimeMillis();
+			java.sql.ResultSet r = s.executeQuery("SELECT DISTINCT id, code FROM expression");
+			System.out.println("DataSet query took: " + (System.currentTimeMillis() - t));
+			
+			while(r.next()) {
+				RCommands.checkCancelled();
+				String id = r.getString("id");
+				String code = r.getString("code");
+				geneProducts.add(new GeneProduct(id, code));
+			}
+
+			//Set GeneProductData for every GeneProduct
+			for(GeneProduct gp : geneProducts) {
+				RCommands.checkCancelled();
+				data.add(new GeneProductData(gp));
+			}
+		}
+
+		REXP getREXP(Rengine re) throws RException {
+			RCommands.assign(re, "tmpData", data);
+			rexp = RCommands.evalE(re, "DataSet(name = '" + name + "', data = tmpData)");
+			
+			RCommands.rm(re, "tmpData");
+			return rexp;
 		}
 	}
 	class ResultSet extends RObject {

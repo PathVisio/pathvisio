@@ -55,7 +55,7 @@
 	</target>
 	
 	<target name="sign-jar" depends="compile,jar" description="Signs jar files">
-		<signjar jar="gmml-visio.jar" lazy="true" 
+		<signjar jar="gmml-visio.jar"
 			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
 		<signjar alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore">
 			<fileset dir="lib" includes="**/*.jar"/>

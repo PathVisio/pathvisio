@@ -1,6 +1,8 @@
 package R;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVision.PropertyEvent;
+import gmmlVision.GmmlVision.PropertyListener;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -12,14 +14,14 @@ import org.rosuda.JRI.Rengine;
 
 import R.RCommands.RException;
 
-public abstract class RController {
+public abstract class RController implements PropertyListener{
 	static final String importGmmlR = "library(GmmlR)";
 	
 	private static Rengine re;
 	
 	public static Rengine getRengine() throws RException { 
 		if(re != null && re.isAlive()) return re;
-		throw new RException(re, "R is not started");
+		throw new RException(re, "R is thread not started yet");
 	}
 	
 	static { Rengine.DEBUG = 1; }
@@ -40,7 +42,8 @@ public abstract class RController {
 				InterruptedException 
 				{
 					m.beginTask("Starting R engine", IProgressMonitor.UNKNOWN);
-					re = new Rengine(rArgs, false, null);
+					if(re == null) re = new Rengine(rArgs, false, null);
+					else if(!re.isAlive()) re.run();
 					m.done();
 				}
 			});
@@ -69,7 +72,7 @@ public abstract class RController {
 	
 	public static void endR() {
 		if(re != null && re.isAlive()) {
-			re.interrupt();
+			re.end();
 			while(re.isAlive()) {} //Wait for R to shutdown
 		}
 	}
@@ -78,5 +81,11 @@ public abstract class RController {
 		MessageDialog.openError(GmmlVision.getWindow().getShell(), 
 				"Unable to load R-engine", e.getClass() + ": " + e.getMessage());
 		GmmlVision.log.error("Unable to load R-engine", e);
+	}
+	
+	public void propertyChanged(PropertyEvent e) {
+		if(e.name == GmmlVision.PROPERTY_CLOSE_APPLICATION) {
+			endR();
+		}
 	}
 }

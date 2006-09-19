@@ -22,14 +22,14 @@ setClass("GeneProductData",
 setValidity("GeneProductData", function(object) {
 	if(!isClass("GeneProduct", geneProduct))
 		return("No object of class 'GeneProduct' for slot geneProduct")
-	if((nrows(data) != 0 && nrows(sets) != 0) && (nrows(data) != nrows(sets)))
-		return("number of rows of 'data' and 'sets' does not match")
+	if((length(object@data) != 0 && length(object@sets) != 0) && (length(object@data) != length(object@sets)))
+		return("length of 'data' and 'sets' does not match")
 })
 
 ######################
 #### Constructors ####
 ######################
-GeneProductData <- function(geneProduct, data = matrix(), sets = matrix()) {
+GeneProductData <- function(geneProduct, data = list(), sets = list()) {
 		new("GeneProductData", geneProduct = geneProduct, data = data, sets = sets)
 }
 

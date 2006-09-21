@@ -225,7 +225,7 @@ public class GmmlData
 		
 		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);		
 	}
-	
+
 	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
 	public void addListener(GmmlListener v) { listeners.add(v); }
 	public void removeListener(GmmlListener v) { listeners.remove(v); }

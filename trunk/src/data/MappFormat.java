@@ -685,7 +685,7 @@ public class MappFormat
 		mappObject[colLinks] = o.getXref();    	
 		unmapShape(o, mappObject);
     }
-    	
+        
     public static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException
 	{
     	GmmlDataObject o = new GmmlDataObject();
@@ -695,8 +695,7 @@ public class MappFormat
     	if (syscode == null) syscode = "";
     	syscode = syscode.trim();
     	
-        
-		o.setDataSource(mapBetween (
+        o.setDataSource(mapBetween (
 				systemCodes, dataSources, syscode));  
 
         o.setBackpageHead(mappObject[colHead]);
@@ -901,7 +900,7 @@ public class MappFormat
         unmapRotation (o, mappObject);
     	mappObject[colWidth] = "" + o.getWidth();
     }
-
+    
     public final static String[] systemCodes = 
 	{ 
 		"D", "F", "G", "I", "L", "M",
@@ -937,4 +936,5 @@ public class MappFormat
 
 	//System names converted to arraylist for easy index lookup
 	public final static List<String> lDataSources = Arrays.asList(dataSources);
+    
 }

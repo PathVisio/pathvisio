@@ -18,11 +18,11 @@ public class RCommands {
 	 * @param symbol The name of the object to remove
 	 */
 	public static void rm(String symbol) throws RException {
-		evalEN("try(rm(" + symbol + "))");
+		eval("try(rm(" + symbol + "))");
 	}
 	
 	public static void rm(List<String> symbols) throws RException {
-		evalEN("try(rm(list = list(" + Utils.list2String(symbols, "", ",") + ")))");
+		eval("try(rm(list = list(" + Utils.list2String(symbols, "", ",") + ")))");
 	}
 	
 	public static void rm(String[] symbols) throws RException {
@@ -33,55 +33,59 @@ public class RCommands {
      * Wrapper for {@link Rengine#eval(String s)}, throws {@link RException}
      * @throws InterruptedException 
     */
-    public static REXP evalE(String s) throws RException {
-    	Rengine re = RController.getR();
-    	checkCancelled();
-    	REXP rexp = re.eval(s);
-    	if(rexp == null) throw new REvalException(re, s);
-    	return rexp;
+    public static REXP eval(String s) throws RException {
+    	return eval(s, false);
     }
     
     /**
      * Wrapper for {@link Rengine#eval(String)}, evaluates the string
-     * and returns NULL to JRI, throws {@link RException}
+     * and returns an empty REXP, throws {@link RException}
      * @param re
      * @param s
      * @throws RException
      */
-    public static void evalEN(String s) throws RException {
+    public static REXP eval(String s, boolean convert) throws RException {
     	Rengine re = RController.getR();
     	checkCancelled();
-    	if(re.eval(s + "; NULL") == null) throw new REvalException(re, s);
+    	REXP rexp = re.eval(s, false);
+    	if(rexp == null) throw new REvalException(re, s);
+    	return rexp;
     }
     
-	public static void assign(Rengine re, String symbol, List list) throws RException {
+	public static void assign(String symbol, List list) throws RException {
+		Rengine re = RController.getR();
+		
 //		//Using rni methods - faster
-//		long[] refs = new long[list.size()];
-//		for(int i = 0; i < list.size(); i++) {
-//			checkCancelled();
-//			
-//			RObject ro = (RObject)list.get(i);
-//			refs[i] = ro.getRef(re);
-//		};
-//		long listRef = re.rniPutVector(refs);
-//		if(listRef == 0) throw new RniException(re, "rniPutVector", "zero reference", listRef);
-//		re.rniAssign(symbol, listRef, 0);
+		long[] refs = new long[list.size()];
+		for(int i = 0; i < list.size(); i++) {
+			checkCancelled();
+			
+			RObject ro = (RObject)list.get(i);
+			refs[i] = ro.getRef();
+			re.rniProtect(refs[i]);
+		};
+		long listRef = re.rniPutVector(refs);
+		if(listRef == 0) throw new RniException(re, "rniPutVector", "zero reference", listRef);
+		re.rniAssign(symbol, listRef, 0);
+		
+		re.rniUnprotect(refs.length);
 		
 		//Using high level API methods - more stable?	
-		int i = 0;
-		String[] tmpVars = new String[list.size()];
-		
-		for(Object o : list) {
-			tmpVars[i++] = ((RObject)o).toRTemp(re, true);
-		}
-		
-		String varList = Utils.array2String(tmpVars, "", ",");
-		evalEN(symbol + "= list(" + varList + ")");
-		
-		RTemp.unprotect(tmpVars);
+//		int i = 0;
+//		String[] tmpVars = new String[list.size()];
+//		
+//		for(Object o : list) {
+//			tmpVars[i++] = ((RObject)o).toRTemp(re, true);
+//		}
+//		
+//		String varList = Utils.array2String(tmpVars, "", ",");
+//		evalEN(symbol + "= list(" + varList + ")");
+//		
+//		RTemp.unprotect(tmpVars);
 	}
 	
-	public static void assign(Rengine re, String symbol, String[] sa) throws RException {
+	public static void assign(String symbol, String[] sa) throws RException {
+		Rengine re = RController.getR();
 		checkCancelled();
 		
 		// Using rni methods - faster
@@ -106,21 +110,28 @@ public class RCommands {
 			throw new RInterruptedException();
 	}
 	
-	public static class RTemp {
+	public static class RTemp {		
 		static final String prefix = "tmp_";	
-		static int MAX_VARS = 100;
+		static int MAX_VARS = 500;
 				
 		static HashMap<String, String> tmpVars = new HashMap<String, String>();
 		static List<String> toProtect = new ArrayList<String>();
 		
-		static String assign(Rengine re, String cmd, boolean protect) throws RException {			
+		static String assign(String cmd) throws RException {
+			return assign(cmd, true);
+		}
+		static String assign(String cmd, boolean protect) throws RException {			
 			String tmpVar = getNewVar(protect);
-			evalEN(tmpVar + "= " + cmd);
+			eval(tmpVar + "= " + cmd);
 			return tmpVar;
 		}
 		
 		static int nextNm = 0;
 		static String getUniqueSymbol() { return prefix + nextNm++; }
+		
+		static String getNewVar() throws RException {
+			return getNewVar(true);
+		}
 		
 		static String getNewVar(boolean protect) throws RException {
 			check();
@@ -139,9 +150,18 @@ public class RCommands {
 		static void unprotect(String symbol) throws RException { 
 			toProtect.remove(symbol);
 		}
-		
+				
 		static void unprotect(String[] symbols) throws RException {
 			for(String s : symbols) unprotect(s);
+		}
+		
+		static void dispose(String symbol) throws RException {
+			unprotect(symbol);
+			check();
+		}
+		
+		static void dispose(String[] symbols) throws RException {
+			unprotect(symbols);
 			check();
 		}
 		
@@ -167,7 +187,11 @@ public class RCommands {
 		static void flush() throws RException { flush(false); }
 		
 		static void flush(boolean all) throws RException {
-			System.err.println("FLUSHING " + all);
+			System.err.println("RTemp: FLUSHING " + all);
+			System.err.println("\tBefore:");
+			System.err.println("\t> tmpVars:\t" + tmpVars.size());
+			System.err.println("\t> toProtect:\t" + toProtect.size());
+			
 			List<String> toRemove = new ArrayList<String>();
 			if(all) {
 				toRemove.addAll(tmpVars.keySet());
@@ -178,6 +202,10 @@ public class RCommands {
 				}
 			}
 			remove(toRemove);
+
+			System.err.println("\tAfter:");
+			System.err.println("\t> tmpVars:\t" + tmpVars.size());
+			System.err.println("\t> toProtect:\t" + toProtect.size());
 		}
 	}
 	

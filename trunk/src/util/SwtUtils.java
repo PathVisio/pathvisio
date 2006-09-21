@@ -43,8 +43,8 @@ public class SwtUtils {
 		static IProgressMonitor monitor;
 		Object instance;
 		
-		String taskName = "";
-		int totalWork = 1000;
+		static String taskName = "";
+		static int totalWork = 1000;
 				
 		public SimpleRunnableWithProgress(Class fromClass, String method, 
 				Class[] parameters,	Object[] args, Object instance) {
@@ -66,20 +66,30 @@ public class SwtUtils {
 		
 		public void setInstance(Object obj) { instance = obj; } 
 		
-		public IProgressMonitor getMonitor() { return monitor; }
+		public static IProgressMonitor getMonitor() { return monitor; }
+		
+		public static int getTotalWork() { return totalWork; }
 		
 		public static boolean isCancelled() {
 			if(monitor != null) return monitor.isCanceled();
 			else return false; //Not canceled if no monitor
 		}
-		public void setMonitorInfo(String taskName, int totalWork) {
-			this.taskName = taskName;
-			this.totalWork = totalWork;
+		public static void setMonitorInfo(String tn, int tw) {
+			taskName = tn;
+			totalWork = tw;
+		}
+		
+		public static void setTotalWork(int tw) {
+			totalWork = tw;
+		}
+		
+		public static void setTaskName(String tn) {
+			taskName = tn;
 		}
 		
 		public void run(IProgressMonitor monitor) throws InterruptedException,
 			InvocationTargetException {
-			monitor = monitor;
+			SimpleRunnableWithProgress.monitor = monitor;
 			
 			if(args == null || doMethod == null) {
 				InterruptedException ex = new InterruptedException("missing method or arguments, see error log for details");

@@ -18,7 +18,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import util.FileUtils;
-import util.Utils;
+//import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;

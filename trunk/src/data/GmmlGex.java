@@ -504,7 +504,7 @@ public abstract class GmmlGex {
 	 * @param code	Systemcodes of the gene identifiers
 	 * (typically all genes in a pathway)
 	 */
-	public static void cacheData(ArrayList<String> ids, ArrayList<String> codes)
+	private static void cacheData(ArrayList<String> ids, ArrayList<String> codes)
 	{	
 		cachedData = new CachedData();
 		for(int i = 0; i < ids.size(); i++)

@@ -67,7 +67,7 @@ public abstract class RController implements PropertyListener{
 	}
 	
 	private static void importLibraries() throws RException {
-		RCommands.evalE(importGmmlR); //GmmlR package, don't continue without it
+		RCommands.eval(importGmmlR); //GmmlR package, don't continue without it
 	}
 	
 	public static void endR() {

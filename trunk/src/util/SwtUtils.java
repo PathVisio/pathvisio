@@ -79,7 +79,7 @@ public class SwtUtils {
 		
 		public void run(IProgressMonitor monitor) throws InterruptedException,
 			InvocationTargetException {
-			this.monitor = monitor;
+			monitor = monitor;
 			
 			if(args == null || doMethod == null) {
 				InterruptedException ex = new InterruptedException("missing method or arguments, see error log for details");
@@ -109,7 +109,6 @@ public class SwtUtils {
 		public void openMessageDialog(final String title, final String msg) {
 			GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					monitor.done(); //Stop the monitor before displaying message
 					MessageDialog.openInformation(GmmlVision.getWindow().getShell(), title, msg);
 				}
 			});

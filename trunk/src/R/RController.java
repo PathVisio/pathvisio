@@ -19,7 +19,7 @@ public abstract class RController implements PropertyListener{
 	
 	private static Rengine re;
 	
-	public static Rengine getRengine() throws RException { 
+	public static Rengine getR() throws RException { 
 		if(re != null && re.isAlive()) return re;
 		throw new RException(re, "R is thread not started yet");
 	}
@@ -67,7 +67,7 @@ public abstract class RController implements PropertyListener{
 	}
 	
 	private static void importLibraries() throws RException {
-		RCommands.evalE(re, importGmmlR); //GmmlR package, don't continue without it
+		RCommands.evalE(importGmmlR); //GmmlR package, don't continue without it
 	}
 	
 	public static void endR() {

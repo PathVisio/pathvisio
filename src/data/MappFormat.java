@@ -685,23 +685,7 @@ public class MappFormat
 		mappObject[colLinks] = o.getXref();    	
 		unmapShape(o, mappObject);
     }
-    
-    final static String[] systemCodes = 
-		{ 
-		"D", "F", "G", "I", "L", "M",
-		"Q", "R", "S", "T", "U",
-		"W", "Z", "X", "En", "Em", 
-		"H", "Om", "Pd", "Pf", "O", ""
-		};
-	
-	final static String[] dataSources = 
-		{
-		"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
-		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
-		"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
-		"HUGO", "OMIM", "PDB", "Pfam", "Other", ""
-		};
-
+    	
     public static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException
 	{
     	GmmlDataObject o = new GmmlDataObject();
@@ -711,7 +695,8 @@ public class MappFormat
     	if (syscode == null) syscode = "";
     	syscode = syscode.trim();
     	
-        o.setDataSource(mapBetween (
+        
+		o.setDataSource(mapBetween (
 				systemCodes, dataSources, syscode));  
 
         o.setBackpageHead(mappObject[colHead]);
@@ -916,5 +901,40 @@ public class MappFormat
         unmapRotation (o, mappObject);
     	mappObject[colWidth] = "" + o.getWidth();
     }
-    
+
+    public final static String[] systemCodes = 
+	{ 
+		"D", "F", "G", "I", "L", "M",
+		"Q", "R", "S", "T", "U",
+		"W", "Z", "X", "En", "Em", 
+		"H", "Om", "Pd", "Pf", "O", ""
+	};
+
+	public final static String[] dataSources = 
+		{
+		"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
+		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
+		"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
+		"HUGO", "OMIM", "PDB", "Pfam", "Other", ""
+		};
+	
+	/**
+	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
+	 */
+	public static final HashMap<String,String> sysName2Code = initSysName2Code();
+
+	/**
+	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
+	 * and system code
+	 */
+	private static HashMap<String, String> initSysName2Code()
+	{
+		HashMap<String, String> sn2c = new HashMap<String,String>();
+		for(int i = 0; i < dataSources.length; i++)
+			sn2c.put(dataSources[i], systemCodes[i]);
+		return sn2c;
+	}
+
+	//System names converted to arraylist for easy index lookup
+	public final static List<String> lDataSources = Arrays.asList(dataSources);
 }

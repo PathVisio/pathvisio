@@ -10,7 +10,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import data.GmmlData;
+import data.MappFormat;
 
 public class XmlUtils {
 	/**
@@ -41,7 +41,7 @@ public class XmlUtils {
 			if(localName.equals("GeneProduct")) { //For every geneproduct, store gene/code
 				String name = attributes.getValue("Name");
 				String sysName = attributes.getValue("GeneProduct-Data-Source");
-				String code = GmmlData.sysName2Code.get(sysName);
+				String code = MappFormat.sysName2Code.get(sysName);
 				String symbol = attributes.getValue("GeneID");
 				name = name == null ? "" : name;
 				sysName = sysName == null ? "" : sysName;

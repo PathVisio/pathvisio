@@ -2,10 +2,7 @@ package gmmlVision;
 
 import data.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
@@ -143,10 +140,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			STRING, STRING, STRING,
 			DOUBLE, DOUBLE, DOUBLE, DOUBLE
 	};
-	
-	//System names converted to arraylist for easy index lookup
-	final static List<String> systemNames = Arrays.asList(GmmlData.systemNames);
-	
+		
 	Hashtable<String, Integer> typeMappings;
 	
 	GmmlPropertyTable(Composite parent, int style)
@@ -206,7 +200,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			}
 			else if (key.equals("GeneProduct-Data-Source"))
 			{
-				types = (String[])systemNames.toArray();
+				types = MappFormat.dataSources;
 			}
 			else
 			{
@@ -250,7 +244,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 				case ORIENTATION:
 				case TYPE: 
 					if (key.equals("GeneProduct-Data-Source"))
-						return systemNames.indexOf((String)value);
+						return MappFormat.lDataSources.indexOf((String)value);
 					else if (g.getObjectType() == ObjectType.MAPPINFO || g.getObjectType() == ObjectType.GENEPRODUCT)
 						return (String)value;
 					else
@@ -274,7 +268,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			case TYPE:
 				if(key.equals("GeneProduct-Data-Source")) {
 					if((Integer)value == -1) return; //Nothing selected
-					value = (String)systemNames.get((Integer)value);
+					value = MappFormat.lDataSources.get((Integer)value);
 				}
 			}
 			

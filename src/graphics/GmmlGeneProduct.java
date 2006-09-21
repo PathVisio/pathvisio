@@ -73,8 +73,8 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	public String getSystemCode()
 	{
 		String systemCode = "";
-		if(GmmlData.sysName2Code.containsKey(gdata.getDataSource())) 
-			systemCode = GmmlData.sysName2Code.get(gdata.getDataSource());
+		if(MappFormat.sysName2Code.containsKey(gdata.getDataSource())) 
+			systemCode = MappFormat.sysName2Code.get(gdata.getDataSource());
 		return systemCode;
 	}
 	

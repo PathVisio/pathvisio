@@ -88,7 +88,7 @@ public class RWindow extends ApplicationWindow {
 		doExport.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					rData.doExport(RController.getRengine());
+					rData.doExport(RController.getR());
 				} catch(Exception re) {
 					MessageDialog.openError(getShell(), "Error when exporting data", re.getMessage());
 					GmmlVision.log.error("when exporting data to R", re);

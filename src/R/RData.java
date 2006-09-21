@@ -12,18 +12,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import util.FileUtils;
-//import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
-import R.RCommands.RInterruptedException;
+import R.RCommands.RTemp;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
@@ -81,8 +79,8 @@ public class RData {
 				rwp.setMonitorInfo("Exporting pathways", IProgressMonitor.UNKNOWN);
 				dialog.run(true, true, rwp);
 			}
-			
-			RCommands.evalEN(re, "save.image(file='"+ exportFile + "')");
+						
+			RCommands.evalEN("save.image(file='"+ exportFile + "')");
 			
 		} catch(InvocationTargetException ex) {
 			rwp.openMessageDialog("Error", "Unable to export data: " + ex.getCause().getMessage());
@@ -92,6 +90,8 @@ public class RData {
 	}
 
 	public void doExportPws(Rengine re) throws Exception {
+		long t = System.currentTimeMillis();
+		
 		File pwDir = new File(this.pwDir);
 		
 		//Check some parameters
@@ -121,28 +121,29 @@ public class RData {
 		}
 		PathwaySet testPathwaySet = new PathwaySet(pwsName, pws);
 		testPathwaySet.toR(re, pwsName); 
+		
+		RTemp.flush(true);
+		
+		System.out.println("Exporting " + pwFiles.size() + " pathways took " + (System.currentTimeMillis() - t) + " ms");
 	}
 	
 	public void doExportData(Rengine re) throws Exception {
 		if(!GmmlGex.isConnected()) throw new Exception("No expression data loaded");
 		DataSet ds = new DataSet(dsName);
 		ds.toR(re, dsName);
+		
+		RTemp.flush(true);
 	}
 			
-	abstract class RObject {
-		REXP rexp = null; //Cache REXP, leads to JNI errors!
+	abstract class RObject {		
+		abstract void toR(Rengine re, String symbol) throws RException;
 		
-		abstract REXP getREXP(Rengine re) throws RException;
+		String toRTemp(Rengine re) throws RException { return toRTemp(re, false); }
 		
-		long getRef(Rengine re) throws RException {
-	        long ref = getREXP(re).xp;
-	        if(ref == 0) throw new RException(re, "Unable to get reference to symbol");
-	        return ref;
-		}
-		
-		void toR(Rengine re, String symbol) throws RException {
-			long ref = getRef(re);
-			re.rniAssign(symbol, ref, 0);
+		String toRTemp(Rengine re, boolean protect) throws RException {
+			String tmpVar = RTemp.getNewVar(protect);
+			toR(re, tmpVar);			
+			return tmpVar;
 		}
 	}
 	
@@ -155,18 +156,16 @@ public class RData {
 			this.pathways = pathways;
 		}
 		
-		REXP getREXP(Rengine re) throws RException {
-//			if(rexp != null) return rexp;
+		void toR(Rengine re, String symbol) throws RException {
+			String tmpVar = RTemp.getNewVar(true);
+			RCommands.assign(re, tmpVar, pathways);
 			
-			RCommands.assign(re, "tmpPws", pathways);
+			String cmd = symbol + "= PathwaySet('" + name + "', " + tmpVar + ")";
+			RCommands.evalEN(cmd);
 			
-			String cmd = "PathwaySet('" + name + "', tmpPws)";
-			rexp = RCommands.evalE(re, cmd);
-			
-			RCommands.rm(re, "tmpPws");
-			return rexp;
-		}	
-	}
+			RTemp.unprotect(tmpVar);
+		}
+}
 	
 	class Pathway extends RObject {
 		String name;
@@ -181,16 +180,14 @@ public class RData {
 		
 		void addGeneProduct(GeneProduct gp) { geneProducts.add(gp); }
 		
-		REXP getREXP(Rengine re) throws RException {
-//			if(rexp != null) return rexp;
+		void toR(Rengine re, String symbol) throws RException {	
+			String tmpVar = RTemp.getNewVar(true);
+			RCommands.assign(re, tmpVar, geneProducts);
+						
+			String cmd = symbol + "= Pathway('" + name + "','" + fileName + "', " + tmpVar + ")";
+			RCommands.evalEN(cmd);
 			
-			System.err.println(geneProducts);
-			RCommands.assign(re, "tmpGps", geneProducts);
-			
-			rexp = RCommands.evalE(re, "Pathway('" + name + "','" + fileName + "', tmpGps)");;
-	          
-			RCommands.rm(re, "tmpGps");
-			return rexp;
+			RTemp.unprotect(tmpVar);
 		}		
 	}
 	
@@ -213,15 +210,14 @@ public class RData {
 			codes.add(code);
 		}
 		
-		REXP getREXP(Rengine re) throws RException {
-//			if(rexp != null) { System.err.println("\t### REXP existed"); return rexp; }
-			
-			RCommands.assign(re, "tmpIds", ids.toArray(new String[ids.size()]));
-			RCommands.assign(re, "tmpCodes", codes.toArray(new String[codes.size()]));
+		void toR(Rengine re, String symbol) throws RException {	
+			String tmpIds = RTemp.getNewVar(false);
+			RCommands.assign(re, tmpIds, ids.toArray(new String[ids.size()]));
+			String tmpCodes = RTemp.getNewVar(false);
+			RCommands.assign(re, tmpCodes, codes.toArray(new String[codes.size()]));
 
-            rexp = RCommands.evalE(re, "GeneProduct(tmpIds, tmpCodes)");
-			RCommands.rm(re, new String[] { "tmpIds", "tmpCodes" });
-			return rexp;
+			String cmd = symbol + "= GeneProduct("+ tmpIds +", " + tmpCodes + ")";
+            RCommands.evalEN(cmd);
 		}
 		
 		public String toString() {
@@ -248,16 +244,6 @@ public class RData {
 		 */
 		void queryData() throws Exception {
 			Statement s = GmmlGex.getCon().createStatement();
-			
-//			//Get size of data array
-//			java.sql.ResultSet r = s.executeQuery(
-//					" SELECT TOP 1 COUNT(idSample) as nr FROM " +
-//					"	SELECT idSample FROM data " +
-//					" 		WHERE id IN(" + Utils.list2String(geneProduct.ids, '\'', ',') + ")" +
-//					" 		AND code IN(" + Utils.list2String(geneProduct.codes, '\'', ',') + ")" +
-//					" GROUP BY nr ORDER BY nr DESC"	);
-//			r.next();
-//			int size = r.getInt(1);
 
 			//Using IN()
 //			long t = System.currentTimeMillis();
@@ -293,22 +279,20 @@ public class RData {
 			System.out.println("GeneProductData queries took: " + (System.currentTimeMillis() - t));
 		}
 		
-		REXP getREXP(Rengine re) throws RException {
-			geneProduct.toR(re, "tmpGp");
+		void toR(Rengine re, String symbol) throws RException {
+			String tmpGp = geneProduct.toRTemp(re);
 			
 			//Assign data.frame with data
-			assignData(re, "tmpData");
+			String tmpData = assignData(re);
 			
-			rexp = RCommands.evalE(re, 
-					"GeneProductData(geneProduct = tmpGp, data = tmpData)");
-			
-			RCommands.rm(re, "tmpGp");
-			
-			return rexp;
+			String cmd = 
+				symbol + "= GeneProductData(geneProduct = " + tmpGp + ", data = " + tmpData +")";
+			RCommands.evalEN(cmd);
 		}
 		
-		void assignData(Rengine re, String symbol) throws RException {
-			RCommands.evalEN(re, symbol + "= list()");
+		String assignData(Rengine re) throws RException {
+			//Protect, just in case there are a lot of samples
+			String tmpData = RTemp.assign(re, "list()", true);
 			
 			for(Sample smp : data.keySet()) {
 				HashMap<String, Object> d = data.get(smp);
@@ -319,28 +303,32 @@ public class RData {
 				String[] idcs = new String[d.size()];
 				int i = 0;
 				for(String idc : d.keySet()) { idcs[i++] = idc;}
-				re.assign("tmpRn", idcs);
-								
+				
+				String tmpRn = RTemp.getNewVar(false);
+				RCommands.assign(re, tmpRn, idcs);
+						
+				String tmpV = RTemp.getNewVar(false);
 				if(type == Types.REAL) {
 					double[] dd = new double[d.size()];
 					i = 0;
 					for(String idc : d.keySet()) dd[i++] = Double.parseDouble((String)d.get(idc));
-					re.assign("tmpV", dd);
+					re.assign(tmpV, dd);
 				} else {
 					String[] sd = new String[d.size()];
 					i = 0;
 					for(String idc : d.keySet()) sd[i++] = (String)d.get(idc);
-					re.assign("tmpV", sd);
+					re.assign(tmpV, sd);
 				}
 				
-				RCommands.evalEN(re, 
-						"cbind(tmpV); " +
-						"rownames(tmpV) = tmpRn");
-				RCommands.evalEN(re, "tmpL = list(tmpV)");
-				RCommands.evalEN(re, "names(tmpL) = '" + smp.getName() + "'");
-				RCommands.evalEN(re, symbol + "= append(" + symbol + ", tmpL)");
+				RCommands.evalEN( 
+						"cbind(" + tmpV +"); " +
+						"rownames(" + tmpV + ") = " + tmpRn);
+				String tmpL = RTemp.assign(re, "list(" + tmpV + ")", false);
+				RCommands.evalEN("names(" + tmpL + ") = '" + smp.getName() + "'");
+				RCommands.evalEN(tmpData + "= append(" + tmpData + ", " + tmpL + ")");
 			}
-			RCommands.rm(re, new String[] {"tmpRn", "tmpL", "tmpV"});
+			
+			return tmpData;
 		}
 	}
 	
@@ -375,18 +363,14 @@ public class RData {
 			}
 		}
 
-		REXP getREXP(Rengine re) throws RException {
-			RCommands.assign(re, "tmpData", data);
-			rexp = RCommands.evalE(re, "DataSet(name = '" + name + "', data = tmpData)");
+		void toR(Rengine re, String symbol) throws RException {
+			String tmpData = RTemp.getNewVar(true);
+			RCommands.assign(re, tmpData, data);
 			
-			RCommands.rm(re, "tmpData");
-			return rexp;
-		}
-	}
-	class ResultSet extends RObject {
-
-		REXP getREXP(Rengine re) throws RException {
-			return null;
+			String cmd = symbol + "= DataSet(name = '" + name + "', data = " + tmpData + ")";
+			RCommands.evalE(cmd);
+			
+			RTemp.unprotect(tmpData);
 		}
 	}
 }

@@ -2,7 +2,10 @@ package gmmlVision;
 
 import data.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
@@ -140,7 +143,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			STRING, STRING, STRING,
 			DOUBLE, DOUBLE, DOUBLE, DOUBLE
 	};
-		
+	
 	Hashtable<String, Integer> typeMappings;
 	
 	GmmlPropertyTable(Composite parent, int style)

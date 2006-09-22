@@ -45,8 +45,8 @@ public class RData {
 	PathwaySet cachePathwaySet;
 	DataSet cacheDataSet;
 	
-	static int totalWorkData = 10000;
-	static int totalWorkPws = IProgressMonitor.UNKNOWN;
+	static int totalWorkData = (int)1E6;
+	static int totalWorkPws = (int)1E3;
 	
 	
 	public RData() {
@@ -89,18 +89,19 @@ public class RData {
 						"Exporting pathways", totalWorkPws);
 				dialog.run(true, true, rwp);
 			}
-						
 			RCommands.eval("save.image(file='"+ exportFile + "')");
-			
 		} catch(InvocationTargetException ex) {
 			rwp.openMessageDialog("Error", "Unable to export data: " + ex.getCause().getMessage());
 			GmmlVision.log.error("Unable to export to R", ex);
+			RTemp.flush(true); //Clear temp variables
+			RCommands.eval("save.image(file='"+ exportFile + ".EX.RData')"); //Save datafile (to check what went wrong)
 			return;
 		}
 	}
 
 	public void doExportPws(Rengine re) throws Exception {
-		long t = System.currentTimeMillis();
+		double contribXml = 0.3;
+		double contribR = 1 - contribXml;
 		
 		File pwDir = new File(this.pwDir);
 		
@@ -111,6 +112,10 @@ public class RData {
 		
 		pwFiles = FileUtils.getFiles(pwDir, "xml", true);
 
+		//Calculate contribution of single Pathway
+		Pathway.progressContribution = (int)((double)totalWorkPws * contribR / pwFiles.size());
+		int pwContribXml = (int)(((double)totalWorkPws * contribXml) / pwFiles.size());
+		
 		List<Pathway> pws = new ArrayList<Pathway>();
 		List<GeneProduct> gps = new ArrayList<GeneProduct>();
 
@@ -128,13 +133,13 @@ public class RData {
 			}
 			
 			pws.add(new Pathway(p.getName(), f.getName(), gps));
+			//Update progress
+			SimpleRunnableWithProgress.updateMonitor(pwContribXml);
 		}
 		PathwaySet testPathwaySet = new PathwaySet(pwsName, pws);
 		testPathwaySet.toR(pwsName); 
 		
 		RTemp.flush(true);
-		
-		System.out.println("Exporting " + pwFiles.size() + " pathways took " + (System.currentTimeMillis() - t) + " ms");
 	}
 	
 	public void doExportData(Rengine re) throws Exception {
@@ -161,6 +166,18 @@ public class RData {
 		}
 		
 		abstract long getRef() throws RException;
+		
+		long disposeAndReturn(long xp, String tmp) throws RException {
+			return disposeAndReturn(xp, new String[] { tmp });
+		}
+		
+		long disposeAndReturn(long xp, String[] tmp) throws RException {			
+			//Check for error in reference
+			if(xp == 0) throw new RniException(RController.getR(), RniException.CAUSE_XP_ZERO);
+			
+			RTemp.dispose(tmp);
+			return xp;
+		}
 	}
 	
 	static class PathwaySet extends RObject {
@@ -180,12 +197,13 @@ public class RData {
 			String cmd = "PathwaySet('" + name + "', " + tmpVar + ")";		
 			long xp = RCommands.eval(cmd).xp;
 			
-			RTemp.dispose(tmpVar);
-			return xp;
+			return disposeAndReturn(xp, tmpVar);
 		}
 }
 	
 	static class Pathway extends RObject {
+		static int progressContribution;
+		
 		String name;
 		String fileName;
 		List<GeneProduct> geneProducts;
@@ -205,12 +223,12 @@ public class RData {
 			String cmd = "Pathway('" + name + "','" + fileName + "', " + tmpVar + ")";			
 			long xp =  RCommands.eval(cmd).xp;
 			
-			RTemp.dispose(tmpVar);
-			return xp;
+			SimpleRunnableWithProgress.updateMonitor(progressContribution);
+			return disposeAndReturn(xp, tmpVar);
 		}
 	}
 	
-	static class GeneProduct extends RObject {
+	static class GeneProduct extends RObject {		
 		List<String> ids;
 		List<String> codes;
 		
@@ -230,7 +248,6 @@ public class RData {
 		}
 		
 		long getRef() throws RException {
-			System.err.println(ids + "\n" + codes);
 			String tmpIds = RTemp.getNewVar(true);
 			RCommands.assign(tmpIds, ids.toArray(new String[ids.size()]));
 			String tmpCodes = RTemp.getNewVar(true);
@@ -239,9 +256,7 @@ public class RData {
 			String cmd = "GeneProduct("+ tmpIds +", " + tmpCodes + ")";
             long xp = RCommands.eval(cmd).xp;
             
-            RTemp.dispose(new String[] { tmpIds, tmpCodes});
-            return xp;
-            
+            return disposeAndReturn(xp, new String[] { tmpIds, tmpCodes});            
 		}
 		
 		public String toString() {
@@ -306,20 +321,15 @@ public class RData {
 
 			//Assign list with data
 			String tmpData = tmpData();
-			
-			System.err.println(geneProduct.ids);
-			System.err.println(geneProduct.codes);
-			
+						
 			String cmd = 
 				"GeneProductData(geneProduct = " + tmpGp + ", data = " + tmpData +")";
 			long xp = RCommands.eval(cmd).xp;
 			
-			RTemp.dispose(new String[] { tmpGp, tmpData });
-			
 			//Update progress
 			SimpleRunnableWithProgress.updateMonitor(progressContribution);
 			
-			return xp;
+			return disposeAndReturn(xp, new String[] { tmpGp, tmpData });
 		}
 		
 		String tmpData() throws RException {
@@ -356,7 +366,11 @@ public class RData {
 				if(type == Types.REAL) {
 					double[] dd = new double[d.size()];
 					i = 0;
-					for(String idc : d.keySet()) dd[i++] = Double.parseDouble((String)d.get(idc));
+					for(String idc : d.keySet())  
+						try { dd[i++] = Double.parseDouble((String)d.get(idc)); }
+						catch(NumberFormatException e) { //Skip if not a number
+							GmmlVision.log.error("while exporting data to R", e);
+						}
 					re.assign(tmpV, dd);
 				} else {
 					String[] sd = new String[d.size()];
@@ -370,7 +384,7 @@ public class RData {
 						"rownames(" + tmpV + ") = " + tmpRn);	//set rownames
 				long xp = RCommands.eval(tmpV).xp;
 				if(xp == 0) 
-					throw new RniException(re, "GeneProductData#tmpData()", "reference zero", xp);
+					throw new RniException(re, RniException.CAUSE_XP_ZERO);
 				re.rniProtect(xp);
 				refs[j] = xp;
 				listNames[j] = smp.getName();
@@ -413,7 +427,7 @@ public class RData {
 			r.beforeFirst(); //Set the cursor back to the start
 			
 			//Calculate the progress contribution of a single GeneProductData
-			GeneProductData.progressContribution = totalWorkData / nrRows;
+			GeneProductData.progressContribution = (int)((double)totalWorkData / nrRows);
 			
 			//Set GeneProductData for every GeneProduct
 			while(r.next()) {
@@ -431,9 +445,8 @@ public class RData {
 			String cmd = "DataSet(name = '" + name + "', data = " + tmpData + ")";
 			long xp = RCommands.eval(cmd).xp;
 			
-			RTemp.dispose(tmpData);
-
-			return xp;
+			System.err.println("Number of gene products processed: " + nrRows);
+			return disposeAndReturn(xp, tmpData);
 		}
 	}
 }

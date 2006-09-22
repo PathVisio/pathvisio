@@ -53,7 +53,7 @@ public abstract class RController implements PropertyListener{
 			return false;
 		}
 		if(!re.waitForR()) { //Unable to load if waitForR() is true
-			startError(new Exception("Rengine.waitForR() is true"));
+			startError(new RException(re, "Rengine.waitForR() is true"));
 			return false;
 		}
 		
@@ -86,6 +86,8 @@ public abstract class RController implements PropertyListener{
 	public void propertyChanged(PropertyEvent e) {
 		if(e.name == GmmlVision.PROPERTY_CLOSE_APPLICATION) {
 			endR();
+			re.interrupt();
+			while(re.isAlive()) { System.out.println("R> waiting to shut down...."); }
 		}
 	}
 }

@@ -47,7 +47,10 @@ public class XmlUtils {
 				sysName = sysName == null ? "" : sysName;
 				code = code == null ? "" : code;
 				symbol = symbol == null ? "" : symbol;
-				genes.add(new Gene(name, code, symbol));
+				
+				Gene gene = new Gene(name, code, symbol);
+				if(!genes.contains(gene)) //Don't add duplicate genes
+					genes.add(gene);
 			}
 			else if(localName.equals("Pathway")) {
 				name = attributes.getValue("Name");
@@ -71,6 +74,7 @@ public class XmlUtils {
 			String id;
 			String code;
 			String symbol;
+			
 			public Gene(String id, String code, String symbol) 
 			{ this.id = id; this.code = code; this.symbol = symbol; }
 			
@@ -78,6 +82,14 @@ public class XmlUtils {
 			public String getId() { return id; }
 			public String getCode() { return code; }
 			public String getSymbol() { return symbol; }
+			
+			public boolean equals(Object o) {
+				if(o instanceof Gene) {
+					Gene g = (Gene)o;
+					return g.id == id && g.code == code;
+				}
+				return false;
+			}
 		}
 	}
 }

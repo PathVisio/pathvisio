@@ -18,15 +18,19 @@ public class RCommands {
 	 * @param symbol The name of the object to remove
 	 */
 	public static void rm(String symbol) throws RException {
-		eval("try(rm(" + symbol + "))");
+		eval("rm('" + symbol + "')");
 	}
 	
 	public static void rm(List<String> symbols) throws RException {
-		eval("try(rm(list = list(" + Utils.list2String(symbols, "", ",") + ")))");
+		rm(symbols.toArray(new String[symbols.size()]));
+//		eval("try(rm(list = list(" + Utils.list2String(symbols, "\"", ",") + ")))");
 	}
 	
 	public static void rm(String[] symbols) throws RException {
-		rm(Arrays.asList(symbols));
+		assign("tmp", symbols);
+		eval("rm(list = tmp)");
+		eval("rm(tmp)");
+		
 	}
 	
     /**
@@ -55,7 +59,7 @@ public class RCommands {
 	public static void assign(String symbol, List list) throws RException {
 		Rengine re = RController.getR();
 		
-//		//Using rni methods - faster
+		//Using rni methods - faster
 		long[] refs = new long[list.size()];
 		for(int i = 0; i < list.size(); i++) {
 			checkCancelled();
@@ -65,7 +69,8 @@ public class RCommands {
 			re.rniProtect(refs[i]);
 		};
 		long listRef = re.rniPutVector(refs);
-		if(listRef == 0) throw new RniException(re, "rniPutVector", "zero reference", listRef);
+		if(listRef == 0) throw new RniException(re, RniException.CAUSE_XP_ZERO);
+		
 		re.rniAssign(symbol, listRef, 0);
 		
 		re.rniUnprotect(refs.length);
@@ -90,7 +95,7 @@ public class RCommands {
 		
 		// Using rni methods - faster
 		long r = re.rniPutStringArray(sa);
-		if(r == 0) throw new RniException(re, "rniPutStringArray", "zero reference", r);
+		if(r == 0) throw new RniException(re, RniException.CAUSE_XP_ZERO);
 		re.rniAssign(symbol, r, 0);
 		
 //		// Using high level API - more stable?
@@ -112,7 +117,7 @@ public class RCommands {
 	
 	public static class RTemp {		
 		static final String prefix = "tmp_";	
-		static int MAX_VARS = 500;
+		static int MAX_VARS = 100;
 				
 		static HashMap<String, String> tmpVars = new HashMap<String, String>();
 		static List<String> toProtect = new ArrayList<String>();
@@ -181,7 +186,12 @@ public class RCommands {
 		}
 		
 		static void remove(List<String> symbols) throws RException {
-			for(String s : symbols) remove(s);
+//			for(String s : symbols) remove(s);
+			rm(symbols);
+			for(String s : symbols) {
+				toProtect.remove(s);
+				tmpVars.remove(s);
+			}
 		}
 		
 		static void flush() throws RException { flush(false); }
@@ -235,18 +245,21 @@ public class RCommands {
 	
 	public static class RniException extends RException {
 		private static final long serialVersionUID = 1L;
-		long ref;
-		String method;
-		String cause;
 		
-		public RniException(Rengine re, String method, String cause, long ref) { 
-			super(re, "R was unable to process rni method '" + method + "; " + cause);
-			this.method = method;
+		public static final int CAUSE_XP_ZERO = 0;
+		
+		int cause;
+		
+		public RniException(Rengine re, int cause) {
+			super(re, "");
+			String cm = "unknown";
+			switch(cause) {
+			case CAUSE_XP_ZERO: cm = "invalid foreign reference"; break;
+			}
+			
+			msg = cm;
 			this.cause = cause;
-			this.ref = ref;
 		}
-		
-		public long getRef() { return ref; }
 	}
 	
 	public static class RInterruptedException extends RException {

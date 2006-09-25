@@ -61,7 +61,8 @@ public class GmmlVisionMain {
 	public static void initiate() {
 		//initiate logger
 		try { 
-			GmmlVision.log.setStream(new PrintStream("log.txt")); 
+			GmmlVision.log.setStream(new PrintStream(
+					GmmlVision.getPreferences().getString("files.log"))); 
 		} catch(Exception e) {}
 		GmmlVision.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		

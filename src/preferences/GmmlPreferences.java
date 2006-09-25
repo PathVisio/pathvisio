@@ -1,5 +1,7 @@
 package preferences;
 
+import java.io.File;
+
 import gmmlVision.GmmlVision;
 import graphics.GmmlGpColor;
 import graphics.GmmlGraphics;
@@ -15,10 +17,10 @@ import util.ColorConverter;
  * This class contains all user preferences used in this application
  */
 public class GmmlPreferences extends PreferenceStore implements IPropertyChangeListener {
-	private static final String preferenceFile = "user.properties";
+	private static final File preferenceFile = new File(System.getProperty("user.home"), ".GmmlVisio");
 	
 	public GmmlPreferences() {
-		this(preferenceFile);
+		this(preferenceFile.toString());
 	}
 	
 	public GmmlPreferences(String fileName) {
@@ -33,6 +35,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	{
 		addPropertyChangeListener(this);
 		
+		setDefault("files.log", new File(System.getProperty("user.home"), ".GmmlVisioLog").toString());
 		setDefault("colors.no_criteria_met", ColorConverter.getRgbString(NO_CRITERIA_MET));
 		setDefault("colors.no_gene_found", ColorConverter.getRgbString(NO_GENE_FOUND));
 		setDefault("colors.no_data_found", ColorConverter.getRgbString(NO_DATA_FOUND));

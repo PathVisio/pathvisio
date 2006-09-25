@@ -14,7 +14,7 @@ import org.rosuda.JRI.Rengine;
 
 import R.RCommands.RException;
 
-public abstract class RController implements PropertyListener{
+public class RController implements PropertyListener{
 	static final String importGmmlR = "library(GmmlR)";
 	
 	private static Rengine re;
@@ -63,6 +63,9 @@ public abstract class RController implements PropertyListener{
 			startError(new Exception("Unable to load required libraries: " + re.getMessage()));
 			return false;
 		}
+		//Add a listener to close R on closing gmml-visio
+		GmmlVision.addPropertyListener(new RController());
+		
 		return true;
 	}
 	
@@ -71,9 +74,9 @@ public abstract class RController implements PropertyListener{
 	}
 	
 	public static void endR() {
-		if(re != null && re.isAlive()) {
+		if(re != null) {
 			re.end();
-			while(re.isAlive()) {} //Wait for R to shutdown
+			re.interrupt();
 		}
 	}
 
@@ -86,8 +89,6 @@ public abstract class RController implements PropertyListener{
 	public void propertyChanged(PropertyEvent e) {
 		if(e.name == GmmlVision.PROPERTY_CLOSE_APPLICATION) {
 			endR();
-			re.interrupt();
-			while(re.isAlive()) { System.out.println("R> waiting to shut down...."); }
 		}
 	}
 }

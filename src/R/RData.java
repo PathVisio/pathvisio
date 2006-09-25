@@ -4,6 +4,7 @@ import gmmlVision.GmmlVision;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -21,12 +25,14 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import util.FileUtils;
+import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
+import data.GmmlGdb;
 import data.GmmlGex;
 import data.GmmlGex.Sample;
 
@@ -73,14 +79,6 @@ public class RData {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(GmmlVision.getWindow().getShell());
 		SimpleRunnableWithProgress rwp = null;
 		try {
-			if(exportData) {
-				rwp = new SimpleRunnableWithProgress(
-						this.getClass(), "doExportData", 
-						new Class[] { re.getClass() }, new Object[] { re }, this);
-				SimpleRunnableWithProgress.setMonitorInfo(
-						"Exporting data", totalWorkData);
-				dialog.run(true, true, rwp); 
-			}
 			if(exportPws) {
 				rwp = new SimpleRunnableWithProgress(
 						this.getClass(), "doExportPws", 
@@ -88,6 +86,14 @@ public class RData {
 				SimpleRunnableWithProgress.setMonitorInfo(
 						"Exporting pathways", totalWorkPws);
 				dialog.run(true, true, rwp);
+			}
+			if(exportData) {
+				rwp = new SimpleRunnableWithProgress(
+						this.getClass(), "doExportData", 
+						new Class[] { re.getClass() }, new Object[] { re }, this);
+				SimpleRunnableWithProgress.setMonitorInfo(
+						"Exporting data", totalWorkData);
+				dialog.run(true, true, rwp); 
 			}
 			RCommands.eval("save.image(file='"+ exportFile + "')");
 		} catch(InvocationTargetException ex) {
@@ -136,21 +142,29 @@ public class RData {
 			//Update progress
 			SimpleRunnableWithProgress.updateMonitor(pwContribXml);
 		}
-		PathwaySet testPathwaySet = new PathwaySet(pwsName, pws);
-		testPathwaySet.toR(pwsName); 
+		cachePathwaySet = new PathwaySet(pwsName, pws);
+		cachePathwaySet.toR(pwsName);
 		
 		RTemp.flush(true);
 	}
 	
 	public void doExportData(Rengine re) throws Exception {
-		if(!GmmlGex.isConnected()) throw new Exception("No expression data loaded");
 		DataSet ds = new DataSet(dsName);
+		
+		//Add pathway cross references
+		if(exportPws) ds.addCrossRefs(cachePathwaySet);
+		
 		ds.toR(dsName);
 		
 		RTemp.flush(true);
 	}
 			
-	static abstract class RObject {		
+	static abstract class RObject {	
+		static final RException EX_NO_GDB = 
+			new RException(null, "No gene database loaded!");
+		static final RException EX_NO_GEX = 
+			new RException(null, "No expression dataset selected!");
+		
 		void toR(String symbol) throws RException {
 			Rengine re = RController.getR();
 			long xp = getRef();
@@ -182,7 +196,7 @@ public class RData {
 	
 	static class PathwaySet extends RObject {
 		String name;
-		List<Pathway> pathways;
+		List<Pathway> pathways;	
 		
 		PathwaySet(String name, List<Pathway> pathways) {
 			this.name = name;
@@ -199,6 +213,12 @@ public class RData {
 			
 			return disposeAndReturn(xp, tmpVar);
 		}
+		
+		Set<GeneProduct> getAllGeneProducts() {
+			Set<GeneProduct> allGps = new HashSet<GeneProduct>();
+			for(Pathway pw : pathways) allGps.addAll(pw.geneProducts);
+			return allGps;
+		}
 }
 	
 	static class Pathway extends RObject {
@@ -213,8 +233,6 @@ public class RData {
 			this.fileName = fileName;
 			this.geneProducts = geneProducts;
 		}
-		
-		void addGeneProduct(GeneProduct gp) { geneProducts.add(gp); }
 		
 		long getRef() throws RException {
 			String tmpVar = RTemp.getNewVar(true);
@@ -259,8 +277,23 @@ public class RData {
             return disposeAndReturn(xp, new String[] { tmpIds, tmpCodes});            
 		}
 		
+		public void merge(GeneProduct gp) {
+			for(String id : gp.ids) if(!ids.contains(id)) ids.add(id);
+			for(String code : gp.codes) if(!codes.contains(code)) codes.add(code);
+		}
+		
 		public String toString() {
 			return "GeneProduct: " + ids + ", " + codes;
+		}
+		
+		public boolean equals(Object o) {
+			if(!(o instanceof GeneProduct)) return false;
+			GeneProduct gp = (GeneProduct)o;
+			boolean codeMatch = false;
+			boolean idMatch = false;
+			for(String code : codes) if(gp.codes.contains(code)) { codeMatch = true; break; }
+			for(String id : ids) if(gp.ids.contains(id)) { idMatch = true; break; }
+			return idMatch && codeMatch;
 		}
 	}
 	
@@ -287,15 +320,20 @@ public class RData {
 				new HashMap<Sample, HashMap<String, Object>>();
 			
 			Statement s = GmmlGex.getCon().createStatement();
-
+			
+			PreparedStatement ps = GmmlGex.getCon().prepareStatement(
+					" SELECT id, code, idSample, data FROM expression " +
+					" WHERE id = ? AND" +
+					" code = ?");
+			
 			//Split over multiple queries
 			long t = System.currentTimeMillis();
 			java.sql.ResultSet r;
 			for(int i = 0; i < geneProduct.codes.size(); i++) {
-				r = s.executeQuery(
-						"SELECT id, code, idSample, data FROM expression " +
-						"WHERE id = '" + geneProduct.ids.get(i) + "' AND " +
-						"code = '" + geneProduct.codes.get(i) + "'");
+				ps.setString(1, geneProduct.ids.get(i));
+				ps.setString(2, geneProduct.codes.get(i));
+				r = ps.executeQuery();
+				
 				HashMap<Integer, Sample> samples = GmmlGex.getSamples();
 				while(r.next()) {
 					int idSample = r.getInt("idSample");
@@ -409,14 +447,18 @@ public class RData {
 		String name;
 		List<GeneProductData> data;
 		
+		List<String> occuringCodes;
+		List<GeneProduct> probes;
+		
 		DataSet(String name) throws Exception {
-			this.name = name;
-			data = new ArrayList<GeneProductData>();
+			if(!GmmlGex.isConnected()) throw EX_NO_GEX;
 			
-			//Get the data from GmmlGex
-			Statement s = GmmlGex.getCon().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			this.name = name;
+			probes = new ArrayList<GeneProduct>();
+			data = new ArrayList<GeneProductData>();
+						Statement s = GmmlGex.getCon().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 						
-			//Create distinct gene products
+			//Get all probes
 			long t = System.currentTimeMillis();
 			java.sql.ResultSet r = s.executeQuery("SELECT DISTINCT id, code FROM expression");
 			System.out.println("DataSet query took: " + (System.currentTimeMillis() - t));
@@ -429,12 +471,14 @@ public class RData {
 			//Calculate the progress contribution of a single GeneProductData
 			GeneProductData.progressContribution = (int)((double)totalWorkData / nrRows);
 			
-			//Set GeneProductData for every GeneProduct
+			//Set GeneProductData for every probe
 			while(r.next()) {
 				RCommands.checkCancelled();
 				String id = r.getString("id");
 				String code = r.getString("code");
-				data.add(new GeneProductData(new GeneProduct(id, code)));
+				GeneProduct gp = new GeneProduct(id, code);
+				data.add(new GeneProductData(gp));
+				probes.add(gp);
 			}
 		}
 
@@ -447,6 +491,75 @@ public class RData {
 			
 			System.err.println("Number of gene products processed: " + nrRows);
 			return disposeAndReturn(xp, tmpData);
+		}
+		
+		/**
+		 * Add cross references of the GeneProducts in given PathwaySet to probes that
+		 * mapp to these genes
+		 * @param pw
+		 * @throws Exception
+		 */
+		void addCrossRefs(PathwaySet pws) throws Exception {
+			if(!GmmlGdb.isConnected()) throw EX_NO_GDB;
+			
+			Set<GeneProduct> allGps = pws.getAllGeneProducts();
+			
+			//First create a temporary table with all system codes
+			GmmlGdb.getCon().setReadOnly(false);
+			Statement s = GmmlGdb.getCon().createStatement();
+			
+			s.execute(" DROP TABLE IF EXISTS tmp_codes ");
+			s.execute(
+					" CREATE TEMPORARY TABLE tmp_codes " +
+					"( 									" +
+					"	code VARCHAR(50) PRIMARY KEY	" +
+					")");
+			
+			PreparedStatement ps = GmmlGdb.getCon().prepareStatement(
+					" INSERT INTO tmp_codes (code) VALUES (?)");
+			
+			//Add all codes used in this dataset
+			for(String code : getOccuringCodes()) {
+				ps.setString(1, code);
+				ps.execute();
+			}
+			
+			//Now match probes with pathway geneproducts
+			//And add pathway cross refs to probe geneproduct
+			ps = GmmlGdb.getCon().prepareStatement(
+					" SELECT id, code FROM gene 	" +
+					" INNER JOIN tmp_codes ON gene.code = tmp_codes.code " +
+					" WHERE  id = ? AND code = ? ");
+			
+			java.sql.ResultSet r;
+			for(GeneProduct gp : allGps) {
+				for(int i = 0; i < gp.ids.size(); i++) {
+					ps.setString(1, gp.ids.get(i));
+					ps.setString(2, gp.codes.get(i));
+					r = ps.executeQuery();
+					GeneProduct refs = new GeneProduct();
+					while(r.next()) {
+						refs.addReference(r.getString("id"), r.getString("code"));
+					}
+					for(GeneProduct pr : probes) if(refs.equals(pr)) pr.merge(gp);
+				}
+			}
+		}
+		
+		List<String> getOccuringCodes() throws Exception {
+			if(occuringCodes != null) return occuringCodes;
+			occuringCodes = new ArrayList<String>();
+
+			java.sql.ResultSet r = GmmlGex.getCon().createStatement().executeQuery(
+					"SELECT DISTINCT code FROM expression");
+
+			while(r.next()) {
+				String code = r.getString("code");
+				System.out.println(code);
+				occuringCodes.add(code);
+			}
+			
+			return occuringCodes;
 		}
 	}
 }

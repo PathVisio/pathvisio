@@ -228,7 +228,6 @@ public abstract class GmmlGdb {
 		String file = gdbFile.getAbsolutePath().toString();
 		con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
 				file.substring(0, file.lastIndexOf(".")), prop);
-		con.setReadOnly(true);
 		setCurrentGdb(gdbFile.getAbsoluteFile().toString());
 	}
 	

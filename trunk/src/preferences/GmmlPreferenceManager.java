@@ -3,6 +3,7 @@ package preferences;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
@@ -15,12 +16,24 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		PreferenceNode display = new PreferenceNode("display", new DisplayPage());
 	    PreferenceNode colors = new PreferenceNode("colors", new ColorsPage());
 	    PreferenceNode directories = new PreferenceNode("directories", new DirectoriesPage());
+	    PreferenceNode files = new PreferenceNode("files", new FilesPage());
 	    
 	    addToRoot(display);
 	    addTo("display", colors);
 	    addToRoot(directories);
+	    addToRoot(files);
 	}
 	
+	private class FilesPage extends FieldEditorPreferencePage {
+		public FilesPage() {
+			super("Files", GRID);
+		}
+		
+		protected void createFieldEditors() {
+			FileFieldEditor f1 = new FileFieldEditor("files.log", "Log file:", getFieldEditorParent());
+			addField(f1);
+		}
+	}
 	
 	private class DirectoriesPage extends FieldEditorPreferencePage {
 		public DirectoriesPage() {

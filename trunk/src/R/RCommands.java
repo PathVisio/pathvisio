@@ -226,6 +226,7 @@ public class RCommands {
 
 		public RException(Rengine re, String msg) 	{ this.msg = msg; this.re = re;}
 		public String getMessage() 		{
+			if(re == null) return msg;
 			REXP err = re.eval("geterrmessage()");
 			return err == null ? msg + "\n R> no error message" : msg + "\nR> " + err.getContent();
 		}

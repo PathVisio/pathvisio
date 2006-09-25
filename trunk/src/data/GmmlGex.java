@@ -33,6 +33,7 @@ import colorSet.GmmlColorSetObject;
 import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
+import util.StopWatch;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -511,13 +512,15 @@ public abstract class GmmlGex {
 		{
 			String id = ids.get(i);
 			String code = codes.get(i);
+			
 			ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
+			
 			if(ensIds.size() > 0) //Only create a RefData object if the id maps to an Ensembl gene
 			{
 				Data mappGeneData = cachedData.new Data(id, code);
 				
 				for(String ensId : ensIds)
-				{				
+				{	
 					try {					
 						ResultSet r = con.createStatement().executeQuery(
 								"SELECT id, code, data, idSample FROM expression " +
@@ -538,7 +541,7 @@ public abstract class GmmlGex {
 					}
 				}
 				if(mappGeneData.hasData()) cachedData.addData(id, mappGeneData);
-			}
+			}			
 			if(cacheThread.isInterrupted) //Check if the process is interrupted
 			{
 				return;

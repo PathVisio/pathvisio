@@ -81,13 +81,13 @@ public class GmmlShape extends GmmlGraphicsShape
 				);
 				break;
 			case ShapeType.ARC:
-				buffer.setLineWidth (2);
+				buffer.setLineWidth (1);
 				buffer.drawArc(
 						startX, 
 						startY,
 						width, 
 						height,
-					 0, -180
+					 0, 180
 				);
 				break;
 		}

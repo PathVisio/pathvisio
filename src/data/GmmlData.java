@@ -1,6 +1,7 @@
 package data;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVisionMain;
 import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 
@@ -11,6 +12,8 @@ import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.*;
 
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.ImageData;
 import org.jdom.*;
 import org.jdom.input.*;
 import org.jdom.output.*;
@@ -31,7 +34,7 @@ public class GmmlData
 	/**
 	 * file containing the gmml schema definition
 	 */
-	final private static File xsdFile = new File("GMML_compat.xsd");
+	final private static String xsdFile = "GMML_compat.xsd";
 	
 	public List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
 	
@@ -103,13 +106,14 @@ public class GmmlData
 	 * @param doc the document to validate
 	 */
 	public static void validateDocument(Document doc) {
-		// validate JDOM tree if xsd file exists
-		if(xsdFile.canRead()) {
-	
+		
+		ClassLoader cl = GmmlVisionMain.class.getClassLoader();
+		InputStream is = cl.getResourceAsStream(xsdFile);
+		if(is != null) {	
 			Schema schema;
 			try {
 				SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				StreamSource ss = new StreamSource(xsdFile);
+				StreamSource ss = new StreamSource (is);
 				schema = factory.newSchema(ss);
 				ValidatorHandler vh =  schema.newValidatorHandler();
 				SAXOutputter so = new SAXOutputter(vh);
@@ -126,7 +130,7 @@ public class GmmlData
 			}
 		} else {
 			GmmlVision.log.info("Document is not validated because the xml schema definition '" + 
-					xsdFile.getAbsolutePath() + "' could not be found");
+					xsdFile + "' could not be found in classpath");
 		}
 	}
 	

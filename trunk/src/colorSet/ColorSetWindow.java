@@ -151,10 +151,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	 */
 	public boolean close(boolean save)
 	{
-		if(save)
-			return close();
-		else
-			return super.close();
+		return save ? close() : super.close();
 	}
 	
 	/**

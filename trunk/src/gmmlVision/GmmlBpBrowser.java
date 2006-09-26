@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import data.GmmlGdb;
 import data.GmmlGex;
+import data.GmmlGdb.IdCodePair;
 
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
@@ -81,11 +82,11 @@ public class GmmlBpBrowser extends Composite {
 	}
 	
 	public String getCrossRefText(String id, String code) {
-		List<String> crfs = GmmlGdb.getCrossRefs(id, code);
+		List<IdCodePair> crfs = GmmlGdb.getCrossRefs(id, code);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
-		for(Object cr : GmmlGdb.getCrossRefs(id, code))
-			crt.append(cr + "<br>");
+		for(IdCodePair cr : crfs)
+			crt.append(cr.getId() + ", " + cr.getCode() + "<br>");
 		return crt.toString();
 	}
 	

@@ -37,20 +37,39 @@ GeneProductData <- function(geneProduct, data = list(), sets = list()) {
 #### Methods ####
 #################
 ## Getters ##
-createMethod("getGeneProduct", "GeneProductData", function(x) x@geneProduct)
-createMethod("getData", "GeneProductData", function(x) x@data)
-createMethod("getSets", "GeneProductData", function(x) x@sets)
+createMethod("geneProduct", "GeneProductData", function(x) x@geneProduct)
+createMethod("datalist", "GeneProductData", function(x) x@data)
+createMethod("setlist", "GeneProductData", function(x) x@sets)
 
 ## Setters ##)
-createReplaceMethod("setGeneProduct", "GeneProductData", function(x, value) {
+createReplaceMethod("geneProduct", "GeneProductData", function(x, value) {
 	x@geneProduct = value
 	x
 })
-createReplaceMethod("setData", "GeneProductData", function(x, value) {
+createReplaceMethod("datalist", "GeneProductData", function(x, value) {
 	x@data = value
 	x
 })
-createReplaceMethod("setSets", "GeneProductData", function(x, value) {
+createReplaceMethod("setlist", "GeneProductData", function(x, value) {
 	x@sets = value
+	x
+})
+
+## Generic and Primitive implementations ##
+createMethod("print", "GeneProductData", function(x, ...) {
+	cat("GeneProductData", "\t@GeneProduct", paste("\t\t", name(geneProduct(x))),
+	"\t@data", sep="\n")
+	dta = datalist(x)
+	sts = setlist(x)
+	for(i in 1:length(dta)) cat("\t\t", names(dta)[i], "\t", dta[[i]], "\n")
+	if(length(sts) > 0) {
+		cat("\t@sets\n")
+		for(i in 1:length(sts)) cat("\t\t", names(sts)[i], "\t", sts[[i]], "\n")
+	}
+})
+
+## Other ##
+createMethod("addSet", "GeneProductData", function(x, set, ...) {
+	setlist(x) = append(setlist(x), set)
 	x
 })

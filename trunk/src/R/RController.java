@@ -76,7 +76,6 @@ public class RController implements PropertyListener{
 	public static void endR() {
 		if(re != null) {
 			re.end();
-			re.interrupt();
 		}
 	}
 

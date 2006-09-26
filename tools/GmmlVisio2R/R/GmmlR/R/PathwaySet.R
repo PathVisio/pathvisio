@@ -19,7 +19,7 @@ setClass("PathwaySet",
 ## Validity:
 ## 1: all elements in @pathways must be instance of class Pathway
 setValidity("PathwaySet", function(x) {
-	for(p in getPathways(x))
+	for(p in pathways(x))
 		if(!isClass("Pathway", p)) return("list @pathways contains non-Pathway objects")
 	TRUE
 })
@@ -29,7 +29,9 @@ setValidity("PathwaySet", function(x) {
 ######################
 setGeneric("PathwaySet", 
 	function(name = "", pathways) {
-		new("PathwaySet", name = name, pathways = pathways)
+		pws = new("PathwaySet", name = name, pathways = pathways)
+		# Set rownames of pathways list
+		names(pathways(pws)) = sapply(pathways(pws), function(x) name(x))
 	}
 )
 
@@ -37,15 +39,15 @@ setGeneric("PathwaySet",
 #### Methods ####
 #################
 ## Getters ##
-createMethod("getName", "PathwaySet", function(x) x@name)
-createMethod("getPathways", "PathwaySet", function(x) x@pathways)
+createMethod("name", "PathwaySet", function(x) x@name)
+createMethod("pathways", "PathwaySet", function(x) x@pathways)
 
 ## Setters ##)
-createReplaceMethod("setName", "PathwaySet", function(x, value) {
+createReplaceMethod("name", "PathwaySet", function(x, value) {
 	x@name = value
 	x
 })
-createReplaceMethod("setPathways", "PathwaySet", function(x, value) {
+createReplaceMethod("pathways", "PathwaySet", function(x, value) {
 	##Check if argument is valid
 	if(!is.list(value)) stop("value of @pathways must be a list")
 	for(p in value)
@@ -56,6 +58,9 @@ createReplaceMethod("setPathways", "PathwaySet", function(x, value) {
 })
 
 ## Generic and Primitive implementations ##
-setMethod("print", "PathwaySet", function(x, ...) {
-	print(paste("PathwaySet with name: ", getName(x)))
+createMethod("print", "PathwaySet", function(x, ...) {
+	cat("PathwaySet:", paste("\t@name:\n\t\t ", name(x)), "\t@pathways:", sep="\n")
+	for(pw in pathways(x)) cat("\t\t", name(pw), "\n")
 })
+
+createMethod("as.list", "PathwaySet", function(x) pathways(x))

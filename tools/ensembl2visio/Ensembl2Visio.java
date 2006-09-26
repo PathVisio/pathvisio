@@ -262,7 +262,7 @@ public class Ensembl2Visio {
     	File propFile = new File(dbname + ".properties");
 		try {
 			prop.load(new FileInputStream(propFile));
-			prop.setProperty("readonly",Boolean.toString(readonly));
+			prop.setProperty("hsqldb.files_readonly", Boolean.toString(readonly));
 			prop.store(new FileOutputStream(propFile), "HSQL Database Engine");
 			} catch (Exception e) {
 				e.printStackTrace();

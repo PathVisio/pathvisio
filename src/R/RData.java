@@ -34,6 +34,7 @@ import R.RCommands.RTemp;
 import R.RCommands.RniException;
 import data.GmmlGdb;
 import data.GmmlGex;
+import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
 
 public class RData {
@@ -188,6 +189,7 @@ public class RData {
 		long disposeAndReturn(long xp, String[] tmp) throws RException {			
 			//Check for error in reference
 			if(xp == 0) throw new RniException(RController.getR(), RniException.CAUSE_XP_ZERO);
+			RController.getR().rniProtect(xp); //Protect this reference...we have to unprotect it somewhere?
 			
 			RTemp.dispose(tmp);
 			return xp;
@@ -318,8 +320,6 @@ public class RData {
 		HashMap<Sample, HashMap<String, Object>> queryData() throws SQLException {
 			HashMap<Sample, HashMap<String, Object>> data =
 				new HashMap<Sample, HashMap<String, Object>>();
-			
-			Statement s = GmmlGex.getCon().createStatement();
 			
 			PreparedStatement ps = GmmlGex.getCon().prepareStatement(
 					" SELECT id, code, idSample, data FROM expression " +
@@ -508,40 +508,48 @@ public class RData {
 			GmmlGdb.getCon().setReadOnly(false);
 			Statement s = GmmlGdb.getCon().createStatement();
 			
-			s.execute(" DROP TABLE IF EXISTS tmp_codes ");
-			s.execute(
-					" CREATE TEMPORARY TABLE tmp_codes " +
-					"( 									" +
-					"	code VARCHAR(50) PRIMARY KEY	" +
-					")");
+//			s.execute(" DROP TABLE IF EXISTS tmp_codes ");
+//			s.execute(
+//					" CREATE MEMORY TABLE tmp_codes " +
+//					"( 									" +
+//					"	code VARCHAR(50) PRIMARY KEY	" +
+//					")");
+//			
+//			PreparedStatement ps = GmmlGdb.getCon().prepareStatement(
+//					" INSERT INTO tmp_codes VALUES (?)");
+//			
+//			//Add all codes used in this dataset
+//			for(String code : getOccuringCodes()) {
+//				ps.setString(1, code);
+//				ps.execute();
+//			}
 			
-			PreparedStatement ps = GmmlGdb.getCon().prepareStatement(
-					" INSERT INTO tmp_codes (code) VALUES (?)");
+//			//Now match probes with pathway geneproducts
+//			//And add pathway cross refs to probe geneproduct
+//			ps = GmmlGdb.getCon().prepareStatement(
+//					" SELECT idRight, codeRight FROM link " +
+//					" INNER JOIN tmp_codes ON link.codeRight = tmp_codes.code " +
+//					" WHERE  gene.id = ? AND gene.code = ? ");
 			
-			//Add all codes used in this dataset
-			for(String code : getOccuringCodes()) {
-				ps.setString(1, code);
-				ps.execute();
-			}
-			
-			//Now match probes with pathway geneproducts
-			//And add pathway cross refs to probe geneproduct
-			ps = GmmlGdb.getCon().prepareStatement(
-					" SELECT id, code FROM gene 	" +
-					" INNER JOIN tmp_codes ON gene.code = tmp_codes.code " +
-					" WHERE  id = ? AND code = ? ");
-			
-			java.sql.ResultSet r;
 			for(GeneProduct gp : allGps) {
 				for(int i = 0; i < gp.ids.size(); i++) {
-					ps.setString(1, gp.ids.get(i));
-					ps.setString(2, gp.codes.get(i));
-					r = ps.executeQuery();
-					GeneProduct refs = new GeneProduct();
-					while(r.next()) {
-						refs.addReference(r.getString("id"), r.getString("code"));
+//					ps.setString(1, gp.ids.get(i));
+//					ps.setString(2, gp.codes.get(i));
+//					r = ps.executeQuery();
+//					GeneProduct refs = new GeneProduct();
+//					while(r.next()) {
+//						refs.addReference(r.getString("id"), r.getString("code"));
+//					}
+					List<IdCodePair> refs = GmmlGdb.getCrossRefs(gp.ids.get(i), gp.codes.get(i));
+					GeneProduct gpRefs = new GeneProduct();
+					for(IdCodePair ref : refs) {
+						gpRefs.addReference(ref.getId(), ref.getCode());
 					}
-					for(GeneProduct pr : probes) if(refs.equals(pr)) pr.merge(gp);
+					for(GeneProduct pr : probes) {
+						if(gpRefs.equals(pr)) {
+							pr.merge(gp);
+						}
+					}
 				}
 			}
 		}

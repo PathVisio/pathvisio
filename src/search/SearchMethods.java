@@ -16,6 +16,7 @@ import search.SearchResults.SearchResult;
 import util.FileUtils;
 import util.XmlUtils.PathwayParser;
 import data.GmmlGdb;
+import data.GmmlGdb.IdCodePair;
 
 public abstract class SearchMethods {	
 	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";
@@ -57,7 +58,7 @@ public abstract class SearchMethods {
 
 		srt.setSearchResults(srs);
 		//Get all cross references
-		List<String> refs = GmmlGdb.getCrossRefs(id, code);
+		List<IdCodePair> refs = GmmlGdb.getCrossRefs(id, code);
 		if(refs.size() == 0) throw new NoGdbException();
 		
 		runnable.updateMonitor(200);
@@ -74,7 +75,7 @@ public abstract class SearchMethods {
 			ArrayList<PathwayParser.Gene> genes = parser.getGenes();
 			//Check if one of the given ids is in the pathway
 			for(PathwayParser.Gene gene : genes) {
-				if(refs.contains(gene.getId())) {//Gene found, add pathway to search result and break
+				if(refs.contains(new IdCodePair(gene.getId(), gene.getCode()))) {//Gene found, add pathway to search result and break
 					SearchResult sr = srs.new SearchResult();
 					sr.setAttribute("pathway", f.getName());
 					sr.setAttribute("directory", f.getParentFile().getName());

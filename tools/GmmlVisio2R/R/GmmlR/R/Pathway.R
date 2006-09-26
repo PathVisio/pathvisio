@@ -20,7 +20,7 @@ setClass("Pathway",
 ## Validity:
 ## 1: all elements in @geneProducts must be instance of class GeneProduct
 setValidity("Pathway", function(x) {
-	for(gp in getGeneProducts(x))
+	for(gp in geneProducts(x))
 		if(!isClass("GeneProduct", gp)) return("list @geneProduct contains non-GeneProduct objects")
 	TRUE
 })
@@ -38,29 +38,32 @@ setGeneric("Pathway",
 #### Methods ####
 #################
 ## Getters ##
-createMethod("getName", "Pathway", function(x) x@name)
-createMethod("getFileName", "Pathway", function(x) x@fileName)
-createMethod("getGeneProducts", "Pathway", function(x) x@geneProducts)
+createMethod("name", "Pathway", function(x) x@name)
+createMethod("fileName", "Pathway", function(x) x@fileName)
+createMethod("geneProducts", "Pathway", function(x) x@geneProducts)
 
 ## Setters ##)
-createReplaceMethod("setName", "Pathway", function(x, value) {
+createReplaceMethod("name", "Pathway", function(x, value) {
 	x@name = value
 	x
 })
-createReplaceMethod("setFileName", "Pathway", function(x, value) {
+createReplaceMethod("fileName", "Pathway", function(x, value) {
 	x@fileName = value
 	x
 })
-createReplaceMethod("setGeneProducts", "Pathway", function(x, value) {
+createReplaceMethod("geneProducts", "Pathway", function(x, value) {
 	x@geneProducts = value
 	if(!validObject(x)) stop("given GeneProducts list is not valid (check length and class of elements)")
 	x
 })
 
 ## Generic and Primitive implementations ##
-setMethod("print", "Pathway", function(x, ...) {
-	print(paste("Pathway with name: ",getName(x)));
+createMethod("print", "Pathway", function(x, ...) {
+	cat("Pathway:", "\t@name", paste("\t\t",name(x)), "\t@geneProducts", sep = "\n")
+	for(gp in geneProducts(x)) cat("\t\t", name(gp), "\n");
 })
+
+createMethod("as.list", "Pathway", function(x, ...) { geneProducts(x) })
 
 ## Other ##
 ## Check for every GeneProduct in the list gps whether it is 
@@ -68,7 +71,7 @@ setMethod("print", "Pathway", function(x, ...) {
 ## Returns a logical vector of the same length as gps
 createMethod("hasGeneProduct", c("Pathway", "GeneProduct"), function(x, gps, ...) {
 	present = logical(length(gps))
-	pgps = getGeneProducts(x)
+	pgps = geneProducts(x)
 	for(i in 1:length(gps))
 		for(gp in pgps) {
 			bool = gp == gps[[i]]

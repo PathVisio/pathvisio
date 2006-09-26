@@ -11,6 +11,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import data.MappFormat;
+import data.GmmlGdb.IdCodePair;
 
 public class XmlUtils {
 	/**
@@ -70,26 +71,14 @@ public class XmlUtils {
 			GmmlVision.log.error("Warning while parsing xml document", e);
 		}
 		
-		public class Gene {
-			String id;
-			String code;
+		public class Gene extends IdCodePair {
 			String symbol;
 			
 			public Gene(String id, String code, String symbol) 
-			{ this.id = id; this.code = code; this.symbol = symbol; }
+			{ super(id, code); this.symbol = symbol; }
 			
 			public String toString() { return getId(); }
-			public String getId() { return id; }
-			public String getCode() { return code; }
 			public String getSymbol() { return symbol; }
-			
-			public boolean equals(Object o) {
-				if(o instanceof Gene) {
-					Gene g = (Gene)o;
-					return g.id == id && g.code == code;
-				}
-				return false;
-			}
 		}
 	}
 }

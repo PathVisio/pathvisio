@@ -122,15 +122,15 @@ public abstract class GmmlGdb {
 	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 */
-	public static ArrayList<String> ensId2Refs(String ensId) {
-		ArrayList<String> crossIds = new ArrayList<String>();
+	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
+		ArrayList<IdCodePair> crossIds = new ArrayList<IdCodePair>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idRight FROM link " +
+					"SELECT idRight, codeRight FROM link " +
 					"WHERE idLeft = '" + ensId + "'"
 					);
 			while(r1.next()) {
-				crossIds.add(r1.getString(1));
+				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
 			}
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to get cross references for ensembl gene " +
@@ -171,10 +171,11 @@ public abstract class GmmlGdb {
 	 * @param code	systemcode of the gene identifier
 	 * @return
 	 */
-	public static List<String> getCrossRefs(String id, String code) {
-		ArrayList<String> refs = new ArrayList<String>();
+	public static List<IdCodePair> getCrossRefs(String id, String code) {
+		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
 		ArrayList<String> ensIds = ref2EnsIds(id, code);
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
+
 		return refs;
 	}
 	/**
@@ -203,11 +204,48 @@ public abstract class GmmlGdb {
 			while(r1.next()) {
 				crossIds.add(r1.getString(1));
 			}
+			
+//			//OR
+//			con.createStatement().execute(
+//					" SELECT idLeft INTO TEMP tmp_ens		" +
+//					" FROM link				  						" +
+//					" WHERE idRight = '" + id + "'" + 
+//					" AND codeRight = '" + code + "'");
+//				
+//				ResultSet r = con.createStatement().executeQuery(
+//					" SELECT idRight, codeRight FROM link " +
+//					" INNER JOIN tmp_ens " +
+//					" ON tmp_ens.idLeft = link.idLeft ");
+//				
+//			while(r.next()) crossIds.add(r.getString("idRight"));
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to get cross references for gene " +
 					"'" + id + ", with systemcode '" + code + "'", e);
 		}
 		return crossIds;
+	}
+	
+	/**
+	 * Class to store an id/code combination, which represents
+	 * an unique gene product
+	 */
+	public static class IdCodePair {
+		String id;
+		String code;
+		
+		public IdCodePair(String id, String code) {
+			this.id = id;
+			this.code = code;
+		}
+		
+		public String getCode() { return code; }
+		public String getId() { return id; }
+		
+		public boolean equals(Object o) {
+			if(!(o instanceof IdCodePair)) return false;
+			IdCodePair idc = (IdCodePair)o;
+			return idc.getId() == getId() && idc.getCode() == getCode();
+		}
 	}
 	
 	/**

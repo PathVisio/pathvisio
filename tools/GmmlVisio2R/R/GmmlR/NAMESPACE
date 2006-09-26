@@ -1,14 +1,14 @@
 exportClasses(DataSet, GeneProduct, GeneProductData, Pathway, PathwaySet)
 
-exportMethods(	getName, "setName<-", 			   				#Pathway, GeneProduct, DataSet, PathwaySet
-			getGeneProducts, "setGeneProducts<-", 					#Pathway
-			getGeneProduct, "setGeneProduct<-", 
-			getSets, "setSets<-",														#GeneProductData
-			getData, "setData<-", 													#GeneProductData, DataSet
-			getIds, "setIds<-", getSystems, "setSystems<-", #GeneProduct
-			getFileName, "setFileName<-", hasGeneProduct, 	#Pathway
-			getPathways, "setPathways<-",										#PathwaySet
-			"==", print, as.matrix													#Generic/primitive
+exportMethods(	name, "name<-", 			   				#Pathway, GeneProduct, DataSet, PathwaySet
+			geneProducts, "geneProducts<-", 					#Pathway
+			geneProduct, "geneProduct<-", 
+			setlist, "setlist<-",														#GeneProductData
+			datalist, "datalist<-", 													#GeneProductData, DataSet
+			ids, "ids<-", systems, "systems<-", #GeneProduct
+			fileName, "fileName<-", hasGeneProduct, 	#Pathway
+			pathways, "pathways<-",										#PathwaySet
+			"==", print, as.matrix, as.list						#Generic/primitive
 		   )
 			
 export(DataSet, GeneProduct, GeneProductData, Pathway, PathwaySet)

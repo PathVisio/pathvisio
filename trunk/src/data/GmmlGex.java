@@ -34,6 +34,7 @@ import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
 import util.StopWatch;
+import util.Utils;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -41,7 +42,8 @@ import util.StopWatch;
  * to hsqldb format
  */
 public abstract class GmmlGex {
-
+	private static final int COMPAT_VERSION = 1;
+	
 	private static Connection con;
 	/**
 	 * Get the {@link Connection} to the Expression-data database
@@ -428,11 +430,11 @@ public abstract class GmmlGex {
 		}
 		
 		/**
-		 * Returns a String representation of this object, which is the idSample property in String form
+		 * Returns a readable String representation of this object
 		 */
 		public String toString()
 		{
-			return Integer.toString(idSample);
+			return "Sample '"+ getName() + "' with id " + idSample + " and type " + getDataType();
 		}
 	}
 	
@@ -763,8 +765,8 @@ public abstract class GmmlGex {
 			pstmt = con.prepareStatement(
 					"INSERT INTO expression			" +
 					"	(id, code, ensId,			" + 
-					"	 idSample, data)			" +
-			"VALUES	(?, ?, ?, ?, ?)			");
+					"	 idSample, data, groupId)	" +
+			"VALUES	(?, ?, ?, ?, ?, ?)			");
 			String line = null;
 			int n = info.firstDataRow - 1;
 			int added = 0;
@@ -802,6 +804,7 @@ public abstract class GmmlGex {
 								pstmt.setString(3, ensId);
 								pstmt.setString(4, Integer.toString(dataCols.indexOf(col)));
 								pstmt.setString(5, data[col]);
+								pstmt.setInt(6, added);
 								pstmt.execute();
 							} catch (Exception e) {
 								errors = reportError(error, "Line " + n + ":\t" + line + "\n" + 
@@ -974,20 +977,8 @@ public abstract class GmmlGex {
 			//remove old property file
 			File gexPropFile = gexFile;
 			gexPropFile.delete();
-			connect();
 		}
-		else
-		{
-			connect();
-		}
-	}
-	
-	/**
-	 * Connects to the Expression database (location given in {@link gexFile}
-	 * @return null if the connection was created, a String with an error message if an error occured
-	 */
-	public static void connect() throws Exception
-	{
+		
 		Class.forName("org.hsqldb.jdbcDriver");
 		Properties prop = new Properties();
 		prop.setProperty("user","sa");
@@ -998,10 +989,21 @@ public abstract class GmmlGex {
 				file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
 		con.setReadOnly(true);
 		
+		if(!clean) Utils.checkDbVersion(con, COMPAT_VERSION);
+		
 		setSamples();
 		loadColorSets();
 	}
 	
+	/**
+	 * Connects to the Expression database (location given in {@link gexFile}
+	 * @return null if the connection was created, a String with an error message if an error occured
+	 */
+	public static void connect() throws Exception
+	{
+		connect(false);
+	}
+		
 	/**
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
 	 * statement before calling {@link Connection.close()}
@@ -1072,10 +1074,11 @@ public abstract class GmmlGex {
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	public static void createTables() {	
+	public static void createTables() throws Exception {	
 		try {
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();
+			sh.execute("DROP TABLE info IF EXISTS");
 			sh.execute("DROP TABLE samples IF EXISTS");
 			sh.execute("DROP TABLE expression IF EXISTS");
 			sh.execute("DROP TABLE colorSets IF EXISTS");
@@ -1084,9 +1087,14 @@ public abstract class GmmlGex {
 		} catch(Exception e) {
 			GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e);
 		}
-		try
-		{
 			Statement sh = con.createStatement();
+			sh.execute(
+					"CREATE CACHED TABLE					" +
+					"		info							" +
+					"(	  version INTEGER PRIMARY KEY		" +
+					")");
+			sh.execute( //Add compatibility version of GEX
+					"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
 			sh.execute(
 					"CREATE CACHED TABLE                    " +
 					"		samples							" +
@@ -1102,9 +1110,10 @@ public abstract class GmmlGex {
 					"     code VARCHAR(50),					" +
 					"	  ensId VARCHAR(50),				" +
 					"     idSample INTEGER,					" +
-					"     data VARCHAR(50)					" +
+					"     data VARCHAR(50),					" +
+					"	  groupId INTEGER					" +
 //					"     PRIMARY KEY (id, code, idSample, data)	" +
-			" )										");
+					")										");
 			sh.execute(
 					"CREATE INDEX i_expression_id " +
 			"ON expression(id)			 ");
@@ -1134,9 +1143,5 @@ public abstract class GmmlGex {
 					"	colorSetId INTEGER,				" +
 					"	criterion VARCHAR(100)			" +
 			" )							");
-		} catch (Exception e)
-		{
-			GmmlVision.log.error("Error while creating expression data tables: " + e.getMessage(), e);
-		}
 	}
 }

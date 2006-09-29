@@ -1,5 +1,9 @@
 package util;
 
+import gmmlVision.GmmlVision;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,5 +36,21 @@ public class Utils {
 	 */
 	public static String array2String(Object[] array, String quote, String sep) {
 		return list2String(Arrays.asList(array), quote, sep);
+	}
+	
+	/**
+	 * Checks the version of the Gene database or Expression dataset to be opened
+	 */
+	public static void checkDbVersion(Connection con, int compat_version) throws Exception
+	{
+		boolean check = false;
+		try {
+			ResultSet r = con.createStatement().executeQuery("SELECT version FROM info");
+			if(r.next()) check = r.getInt("version") == compat_version;
+		} catch (Exception e) {
+			GmmlVision.log.error("Database compatibility version number could not be read", e);
+		}
+		if(check) return;
+		throw new Exception("Incompatible version of database schema");
 	}
 }

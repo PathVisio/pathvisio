@@ -1,14 +1,10 @@
-exportClasses(DataSet, GeneProduct, GeneProductData, Pathway, PathwaySet)
+exportClasses(DataSet, GeneProduct, Pathway, PathwaySet)
 
 exportMethods(	name, "name<-", 			   				#Pathway, GeneProduct, DataSet, PathwaySet
-			geneProducts, "geneProducts<-", 					#Pathway
-			geneProduct, "geneProduct<-", 
-			setlist, "setlist<-",														#GeneProductData
-			datalist, "datalist<-", 													#GeneProductData, DataSet
-			ids, "ids<-", systems, "systems<-", #GeneProduct
-			fileName, "fileName<-", hasGeneProduct, 	#Pathway
-			pathways, "pathways<-",										#PathwaySet
-			"==", print, as.matrix, as.list						#Generic/primitive
-		   )
+			reporters, "reporters<-", dataByReporter,		#DataSet
+			"addReference<-",			 				#GeneProduct
+			fileName, "fileName<-", hasGeneProduct, 		#Pathway
+			"==", print								#Generic/primitive
+)
 			
-export(DataSet, GeneProduct, GeneProductData, Pathway, PathwaySet)
+export(DataSet, GeneProduct, Pathway, PathwaySet)

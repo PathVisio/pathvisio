@@ -5,21 +5,18 @@
 ##########################
 #### Class Definition ####
 ##########################
-setClass("DataSet", 
+setClass("DataSet", contains = "matrix",
 	representation(
-		name = "character",
-		data = "list"
+		name = "character"
 	),
-	prototype = list(
-		data = list()
+	prototype(
+		name = character()
 	)
 )
 
 ## Validity:
 ## all elements in @data must be instance of class GeneProductData
-setValidity("DataSet", function(x) {
-	for(p in datalist(x))
-		if(!isClass("GeneProductData", p)) return("list @data contains non-GeneProductData objects")
+setValidity("DataSet", function(object) {
 	TRUE
 })
 
@@ -27,50 +24,40 @@ setValidity("DataSet", function(x) {
 #### Constructors ####
 ######################
 setGeneric("DataSet", 
-	function(name, data = matrix()) {
-		ds = new("DataSet", name = name, data = data)
-		names(datalist(ds)) = sapply(datalist(ds), function(x) name(geneProduct(x)))
-	}
-)
+	function(name, reporters = NULL, data) {
+	if(!is.null(reporters)) rownames(data) = reporters
+	new("DataSet", data, name = name)
+})
 
 #################
 #### Methods ####
 #################
 ## Getters ##
-createMethod("name", "DataSet", function(x) x@name)
-createMethod("datalist", "DataSet", function(x) x@data)
+createMethod("name", "DataSet", function(x, ...) x@name)
+createMethod("reporters", "DataSet", function(x, ...) rownames(x))
 
 ## Setters ##)
-createReplaceMethod("name", "DataSet", function(x, value) {
+createReplaceMethod("name", "DataSet", function(x, value, ...) {
 	x@name = value
+	validObject(x, test=TRUE);
 	x
 })
-createReplaceMethod("datalist", "DataSet", function(x, value) {
-	x@data = value
-	if(!validObject(x)) stop("given data matrix is not valid (check dims)")
+createReplaceMethod("reporters", "DataSet", function(x, value, ...) {
+	rownames(x) = value
+	validObject(x, test=TRUE);
 	x
 })
 
 ## Primitive or Generic
-createMethod("print", "DataSet", function(x, ...) {
-	cat("DataSet:", "\t@name", paste("\t\t", name(x)), 
-	"\t@data", paste("\t\t", length(datalist(x)), " GeneProductData instances"), sep="\n")
+setMethod("print", "DataSet", function(x, ...) {
+	cat("DataSet:", "\t@name", paste("\t\t", name(x)),
+	"\tdata", paste("\t\tsamples: ", names(x)),
+	"\treporters", paste("\t\tNumber of reporters: ", length(rownames(x))), sep="\n")
 })
 
-createMethod("as.list", "DataSet", function(x, ...) { datalist(x) }
-
-## Other ##
-createMethod("addSet", "DataSet", function(x, set, ...) {
-	dta = datalist(x)
-	ndta = list()
-	for(i in 1:length(dta)) ndta[[i]] = addSet(dta[[i]], set[i])
-	datalist(x) = ndta
-	x
+## Other
+createMethod("dataByReporter", c("DataSet", "character"), function(obj, reporter) {
+	obj[which(names(obj) == reporter),]
 })
-
-createMethod("calcSet", "DataSet", function(dataSet, name, fun) {
-	set = lapply(datalist(dataSet), fun)
-	names(set) = rep(name, length(set))
-	addSet(dataSet, set)
-})
-		
+	
+	

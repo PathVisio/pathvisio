@@ -55,25 +55,40 @@ public class RCommands {
     	if(rexp == null) throw new REvalException(re, s);
     	return rexp;
     }
-    
+        
 	public static void assign(String symbol, List list) throws RException {
 		Rengine re = RController.getR();
-		
-		//Using rni methods - faster
-		long[] refs = new long[list.size()];
+			
+		//Using extra methods added to JRI - no hassle with lists longer than protection stack (10.000)
+		long xpv = re.rniInitVector(list.size());
+		re.rniProtect(xpv);
+			
 		for(int i = 0; i < list.size(); i++) {
 			checkCancelled();
 			
 			RObject ro = (RObject)list.get(i);
-			refs[i] = ro.getRef();
-			re.rniProtect(refs[i]);
-		};
-		long listRef = re.rniPutVector(refs);
-		if(listRef == 0) throw new RniException(re, RniException.CAUSE_XP_ZERO);
+			long xpe = ro.getRef();
+			re.rniVectorSetElement(xpe, xpv, i);
+		}
 		
-		re.rniAssign(symbol, listRef, 0);
-		
-		re.rniUnprotect(refs.length);
+		re.rniAssign(symbol, xpv, 0);
+		re.rniUnprotect(1);
+				
+//		//Using rni methods - faster
+//		long[] refs = new long[list.size()];
+//		for(int i = 0; i < list.size(); i++) {
+//			checkCancelled();
+//			
+//			RObject ro = (RObject)list.get(i);
+//			refs[i] = ro.getRef();
+//			re.rniProtect(refs[i]);
+//		};
+//		long listRef = re.rniPutVector(refs);
+//		if(listRef == 0) throw new RniException(re, RniException.CAUSE_XP_ZERO);
+//		
+//		re.rniAssign(symbol, listRef, 0);
+//		
+//		re.rniUnprotect(refs.length);
 		
 		//Using high level API methods - more stable?	
 //		int i = 0;
@@ -117,7 +132,7 @@ public class RCommands {
 	
 	public static class RTemp {		
 		static final String prefix = "tmp_";	
-		static int MAX_VARS = 100;
+		static int MAX_VARS = 500;
 				
 		static HashMap<String, String> tmpVars = new HashMap<String, String>();
 		static List<String> toProtect = new ArrayList<String>();
@@ -186,7 +201,6 @@ public class RCommands {
 		}
 		
 		static void remove(List<String> symbols) throws RException {
-//			for(String s : symbols) remove(s);
 			rm(symbols);
 			for(String s : symbols) {
 				toProtect.remove(s);

@@ -165,6 +165,8 @@ public class Rengine extends Thread {
 	@return reference to the resulting VECSXP */
     public synchronized native long rniPutVector(long[] exps);
     
+    public synchronized native void rniVectorSetElement(long e, long v, int i);
+    
     /** RNI: get an attribute
 	@param exp reference to the object whose attribute is requested
 	@param name name of the attribute

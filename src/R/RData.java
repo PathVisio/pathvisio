@@ -102,6 +102,7 @@ public class RData {
 			GmmlVision.log.error("Unable to export to R", ex);
 			RTemp.flush(true); //Clear temp variables
 			RCommands.eval("save.image(file='"+ exportFile + ".EX.RData')"); //Save datafile (to check what went wrong)
+			RCommands.eval("rm(list=ls())"); //Remove everything from R workspace
 			return;
 		}
 	}
@@ -128,6 +129,8 @@ public class RData {
 
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pwFiles) {
+			RCommands.checkCancelled();
+			
 			gps.clear();
 			PathwayParser p = new PathwayParser(xmlReader);
 			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
@@ -150,10 +153,11 @@ public class RData {
 	}
 	
 	public void doExportData(Rengine re) throws Exception {
-		DataSet ds = new DataSet(dsName);
+		double contribQuery = 0.1;
+		double contribCrossRef = 0.2;
+		double contribData = 0.7;
 		
-		//Add pathway cross references
-		if(exportPws) ds.addCrossRefs(cachePathwaySet);
+		DataSet ds = new DataSet(dsName);
 		
 		ds.toR(dsName);
 		
@@ -182,14 +186,14 @@ public class RData {
 		
 		abstract long getRef() throws RException;
 		
-		long disposeAndReturn(long xp, String tmp) throws RException {
-			return disposeAndReturn(xp, new String[] { tmp });
+		protected long returnRef(long xp, String tmp) throws RException {
+			return returnRef(xp, new String[] { tmp });
 		}
 		
-		long disposeAndReturn(long xp, String[] tmp) throws RException {			
+		long returnRef(long xp, String[] tmp) throws RException {			
 			//Check for error in reference
 			if(xp == 0) throw new RniException(RController.getR(), RniException.CAUSE_XP_ZERO);
-			RController.getR().rniProtect(xp); //Protect this reference...we have to unprotect it somewhere?
+//			RController.getR().rniProtect(xp); //Protect this reference...we have to unprotect it somewhere?
 			
 			RTemp.dispose(tmp);
 			return xp;
@@ -205,15 +209,15 @@ public class RData {
 			this.pathways = pathways;
 		}
 				
-		long getRef() throws RException {			
+		long getRef() throws RException {				
 			String tmpVar = RTemp.getNewVar(true);
 			
 			RCommands.assign(tmpVar, pathways);
 	
-			String cmd = "PathwaySet('" + name + "', " + tmpVar + ")";		
+			String cmd = "PathwaySet(name = '" + name + "', pathways = " + tmpVar + ")";		
 			long xp = RCommands.eval(cmd).xp;
 			
-			return disposeAndReturn(xp, tmpVar);
+			return returnRef(xp, tmpVar);
 		}
 		
 		Set<GeneProduct> getAllGeneProducts() {
@@ -236,25 +240,25 @@ public class RData {
 			this.geneProducts = geneProducts;
 		}
 		
-		long getRef() throws RException {
+		long getRef() throws RException {			
 			String tmpVar = RTemp.getNewVar(true);
 			RCommands.assign(tmpVar, geneProducts);
 						
-			String cmd = "Pathway('" + name + "','" + fileName + "', " + tmpVar + ")";			
+			String cmd = "Pathway(name = '" + name + 
+				"',fileName = '" + fileName + 
+				"', geneProducts = " + tmpVar + ")";			
 			long xp =  RCommands.eval(cmd).xp;
 			
 			SimpleRunnableWithProgress.updateMonitor(progressContribution);
-			return disposeAndReturn(xp, tmpVar);
+			return returnRef(xp, tmpVar);
 		}
 	}
 	
 	static class GeneProduct extends RObject {		
-		List<String> ids;
-		List<String> codes;
+		List<IdCodePair> refs;
 		
 		GeneProduct() {
-			ids = new ArrayList<String>();
-			codes = new ArrayList<String>();
+			refs = new ArrayList<IdCodePair>();
 		}
 		
 		GeneProduct(String id, String code) {
@@ -262,312 +266,190 @@ public class RData {
 			addReference(id, code);
 		}
 		
-		void addReference(String id, String code) { 
-			ids.add(id);
-			codes.add(code);
+		void addReference(IdCodePair idc) {
+			if(!refs.contains(idc)) refs.add(idc);
+		}
+		
+		void addReference(String id, String code) {
+			IdCodePair idc = new IdCodePair(id, code);
+			addReference(idc);
 		}
 		
 		long getRef() throws RException {
-			String tmpIds = RTemp.getNewVar(true);
-			RCommands.assign(tmpIds, ids.toArray(new String[ids.size()]));
-			String tmpCodes = RTemp.getNewVar(true);
-			RCommands.assign(tmpCodes, codes.toArray(new String[codes.size()]));
-
-			String cmd = "GeneProduct("+ tmpIds +", " + tmpCodes + ")";
-            long xp = RCommands.eval(cmd).xp;
+			Rengine re = RController.getR();
+			String[] ar = new String[refs.size() * 2];
+			int i = 0;
+			for(IdCodePair ref : refs) {
+				ar[i] = ref.getId(); //id
+				ar[i++ + refs.size()] = ref.getCode(); //code
+			}
+			
+			long ref_gp = re.rniPutStringArray(ar);
+			re.rniProtect(ref_gp);
+			re.rniSetAttr(ref_gp, "dim", re.rniPutIntArray(new int[] { refs.size(), 2 }));
+			re.rniSetAttr(ref_gp, "class", re.rniPutString("GeneProduct"));
+            re.rniUnprotect(1);
             
-            return disposeAndReturn(xp, new String[] { tmpIds, tmpCodes});            
+            return ref_gp;            
 		}
 		
 		public void merge(GeneProduct gp) {
-			for(String id : gp.ids) if(!ids.contains(id)) ids.add(id);
-			for(String code : gp.codes) if(!codes.contains(code)) codes.add(code);
+			for(IdCodePair ref : gp.refs) addReference(ref);
 		}
 		
 		public String toString() {
-			return "GeneProduct: " + ids + ", " + codes;
+			return "GeneProduct: " + refs;
+		}
+		
+		public String getName() {
+			return refs.size() == 0 ? "no reference" : refs.get(0).toString();
 		}
 		
 		public boolean equals(Object o) {
 			if(!(o instanceof GeneProduct)) return false;
 			GeneProduct gp = (GeneProduct)o;
-			boolean codeMatch = false;
-			boolean idMatch = false;
-			for(String code : codes) if(gp.codes.contains(code)) { codeMatch = true; break; }
-			for(String id : ids) if(gp.ids.contains(id)) { idMatch = true; break; }
-			return idMatch && codeMatch;
+			for(IdCodePair ref : refs) 
+				for(IdCodePair oref : gp.refs) 
+					if(ref.equals(oref)) return true;
+			return false;
 		}
 	}
-	
-	static class GeneProductData extends RObject {
-		static int progressContribution;
 		
-		GeneProduct geneProduct;
-		
-		//We would like to cache the data, but often the datasets
-		//are too large and cause 'out of heapspace' error...
-		//So make only local references to the data and let the garbage collector do its work
-//		HashMap<Sample, HashMap<String, Object>> data;
-//		HashMap<Sample, HashMap<String, Integer>> sets;
-		
-		GeneProductData(GeneProduct geneProduct) throws Exception {
-			this.geneProduct = geneProduct;
-		}
-		
-		/**
-		 * Queries the data for this objecs's {@link GeneProduct} from {@link GmmlGex}
-		 */
-		HashMap<Sample, HashMap<String, Object>> queryData() throws SQLException {
-			HashMap<Sample, HashMap<String, Object>> data =
-				new HashMap<Sample, HashMap<String, Object>>();
-			
-			PreparedStatement ps = GmmlGex.getCon().prepareStatement(
-					" SELECT id, code, idSample, data FROM expression " +
-					" WHERE id = ? AND" +
-					" code = ?");
-			
-			//Split over multiple queries
-			long t = System.currentTimeMillis();
-			java.sql.ResultSet r;
-			for(int i = 0; i < geneProduct.codes.size(); i++) {
-				ps.setString(1, geneProduct.ids.get(i));
-				ps.setString(2, geneProduct.codes.get(i));
-				r = ps.executeQuery();
-				
-				HashMap<Integer, Sample> samples = GmmlGex.getSamples();
-				while(r.next()) {
-					int idSample = r.getInt("idSample");
-					String idc = r.getString("id") + "|" + r.getString("code");
-					Object dobj = r.getString("data"); //The actual data
-					Sample smp = samples.get(idSample);//The sample
-					
-					if(data.containsKey(smp)) {
-						data.get(smp).put(idc, dobj);
-					} else {
-						HashMap<String, Object> hm = new HashMap<String, Object>();
-						hm.put(idc, dobj);
-						data.put(smp, hm);
-					}
-				}
-			}
-			System.err.println("GeneProductData queries took: " + (System.currentTimeMillis() - t));
-			return data;
-		}
-		
-		long getRef() throws RException {			
-			String tmpGp = geneProduct.toRTemp(true);
-
-			//Assign list with data
-			String tmpData = tmpData();
-						
-			String cmd = 
-				"GeneProductData(geneProduct = " + tmpGp + ", data = " + tmpData +")";
-			long xp = RCommands.eval(cmd).xp;
-			
-			//Update progress
-			SimpleRunnableWithProgress.updateMonitor(progressContribution);
-			
-			return disposeAndReturn(xp, new String[] { tmpGp, tmpData });
-		}
-		
-		String tmpData() throws RException {
-			Rengine re = RController.getR();
-			
-			//Query data from database
-			HashMap<Sample, HashMap<String, Object>> data = null;
-			try { 
-				data = queryData();
-			} catch(SQLException e ) { 
-				throw new RException(null, "SQLException: "  + e.getMessage());
-			}
-			
-			//Tmp vars
-			String tmpData = RTemp.getNewVar(), tmpV = RTemp.getNewVar(), 
-			tmpRn =  RTemp.getNewVar();
-						
-			List<Sample> smps = new ArrayList<Sample>(data.keySet());
-			long[] refs = new long[smps.size()];
-			String[] listNames = new String[smps.size()];
-			
-			for(int j = 0; j < smps.size(); j++) {
-				Sample smp = smps.get(j);
-				HashMap<String, Object> d = data.get(smp);
-				
-				int type = GmmlGex.getSamples().get(smp.idSample).getDataType();
-				
-				//Store rownames
-				String[] idcs = new String[d.size()];
-				int i = 0;
-				for(String idc : d.keySet()) { idcs[i++] = idc;}
-				RCommands.assign(tmpRn, idcs);
-						
-				if(type == Types.REAL) {
-					double[] dd = new double[d.size()];
-					i = 0;
-					for(String idc : d.keySet())  
-						try { dd[i++] = Double.parseDouble((String)d.get(idc)); }
-						catch(NumberFormatException e) { //Skip if not a number
-							GmmlVision.log.error("while exporting data to R", e);
-						}
-					re.assign(tmpV, dd);
-				} else {
-					String[] sd = new String[d.size()];
-					i = 0;
-					for(String idc : d.keySet()) sd[i++] = (String)d.get(idc);
-					re.assign(tmpV, sd);
-				}
-		
-				RCommands.eval( 
-						"cbind(" + tmpV +"); " +				//matrix out of vector
-						"rownames(" + tmpV + ") = " + tmpRn);	//set rownames
-				long xp = RCommands.eval(tmpV).xp;
-				if(xp == 0) 
-					throw new RniException(re, RniException.CAUSE_XP_ZERO);
-				re.rniProtect(xp);
-				refs[j] = xp;
-				listNames[j] = smp.getName();
-			}
-						
-			long xp = re.rniPutVector(refs);
-			long xp_nms = re.rniPutStringArray(listNames);
-			re.rniSetAttr(xp, "names", xp_nms);
-			
-			re.rniAssign(tmpData, xp, 0);
-			re.rniUnprotect(refs.length);
-			
-			RTemp.dispose(new String[] { tmpV, tmpRn,  } );
-			
-			return tmpData;
-		}
-	}
-	
 	static class DataSet extends RObject {
-		int nrRows;
+		String[][] data;
+		IdCodePair [] reporters;
+		HashMap<Integer, Integer> sample2Col;
+		int[] col2Sample;
 		
 		String name;
-		List<GeneProductData> data;
 		
-		List<String> occuringCodes;
-		List<GeneProduct> probes;
-		
-		DataSet(String name) throws Exception {
-			if(!GmmlGex.isConnected()) throw EX_NO_GEX;
-			
+		DataSet(String name) throws Exception {		
 			this.name = name;
-			probes = new ArrayList<GeneProduct>();
-			data = new ArrayList<GeneProductData>();
-						Statement s = GmmlGex.getCon().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-						
-			//Get all probes
-			long t = System.currentTimeMillis();
-			java.sql.ResultSet r = s.executeQuery("SELECT DISTINCT id, code FROM expression");
-			System.out.println("DataSet query took: " + (System.currentTimeMillis() - t));
-			
-			//Get the size of the dataset
-			r.last();
-			nrRows = r.getRow();
-			r.beforeFirst(); //Set the cursor back to the start
-			
-			//Calculate the progress contribution of a single GeneProductData
-			GeneProductData.progressContribution = (int)((double)totalWorkData / nrRows);
-			
-			//Set GeneProductData for every probe
-			while(r.next()) {
-				RCommands.checkCancelled();
-				String id = r.getString("id");
-				String code = r.getString("code");
-				GeneProduct gp = new GeneProduct(id, code);
-				data.add(new GeneProductData(gp));
-				probes.add(gp);
-			}
-		}
-
-		long getRef() throws RException {
-			String tmpData = RTemp.getNewVar();
-			RCommands.assign(tmpData, data);
-			
-			String cmd = "DataSet(name = '" + name + "', data = " + tmpData + ")";
-			long xp = RCommands.eval(cmd).xp;
-			
-			System.err.println("Number of gene products processed: " + nrRows);
-			return disposeAndReturn(xp, tmpData);
+			queryData(); //Get the data from the gex database
 		}
 		
-		/**
-		 * Add cross references of the GeneProducts in given PathwaySet to probes that
-		 * mapp to these genes
-		 * @param pw
-		 * @throws Exception
-		 */
-		void addCrossRefs(PathwaySet pws) throws Exception {
-			if(!GmmlGdb.isConnected()) throw EX_NO_GDB;
+		long getRef() throws RException {
+			Rengine re = RController.getR();
 			
-			Set<GeneProduct> allGps = pws.getAllGeneProducts();
+			//Create the data matrix in R
+			//#1 create a long 1-dimensional list -> rows first
+			//#2 set dims attribute to c(nrow, ncol)
+			//et voila, we have a matrix
+			HashMap<Integer, Sample> samples = GmmlGex.getSamples();
+			long l_ref = re.rniInitVector(data.length * data[0].length);
+			re.rniProtect(l_ref);
 			
-			//First create a temporary table with all system codes
-			GmmlGdb.getCon().setReadOnly(false);
-			Statement s = GmmlGdb.getCon().createStatement();
-			
-//			s.execute(" DROP TABLE IF EXISTS tmp_codes ");
-//			s.execute(
-//					" CREATE MEMORY TABLE tmp_codes " +
-//					"( 									" +
-//					"	code VARCHAR(50) PRIMARY KEY	" +
-//					")");
-//			
-//			PreparedStatement ps = GmmlGdb.getCon().prepareStatement(
-//					" INSERT INTO tmp_codes VALUES (?)");
-//			
-//			//Add all codes used in this dataset
-//			for(String code : getOccuringCodes()) {
-//				ps.setString(1, code);
-//				ps.execute();
-//			}
-			
-//			//Now match probes with pathway geneproducts
-//			//And add pathway cross refs to probe geneproduct
-//			ps = GmmlGdb.getCon().prepareStatement(
-//					" SELECT idRight, codeRight FROM link " +
-//					" INNER JOIN tmp_codes ON link.codeRight = tmp_codes.code " +
-//					" WHERE  gene.id = ? AND gene.code = ? ");
-			
-			for(GeneProduct gp : allGps) {
-				for(int i = 0; i < gp.ids.size(); i++) {
-//					ps.setString(1, gp.ids.get(i));
-//					ps.setString(2, gp.codes.get(i));
-//					r = ps.executeQuery();
-//					GeneProduct refs = new GeneProduct();
-//					while(r.next()) {
-//						refs.addReference(r.getString("id"), r.getString("code"));
-//					}
-					List<IdCodePair> refs = GmmlGdb.getCrossRefs(gp.ids.get(i), gp.codes.get(i));
-					GeneProduct gpRefs = new GeneProduct();
-					for(IdCodePair ref : refs) {
-						gpRefs.addReference(ref.getId(), ref.getCode());
-					}
-					for(GeneProduct pr : probes) {
-						if(gpRefs.equals(pr)) {
-							pr.merge(gp);
+			for(int j = 0; j < data[0].length; j++) { //Columns (samples)
+				int sid = col2Sample[j];
+				int type = samples.get(sid).getDataType();
+				
+				for(int i = 0; i < data.length; i++) { //Rows (groups)
+					long e_ref;
+					if(type == Types.REAL) {
+						double[] value = new double[1];
+						try {
+							value[0] = Double.parseDouble(data[i][j]);
+						} catch(Exception e) {
+							GmmlVision.log.error("Unable to parse double when converting data to R: " + data[i][j], e);
 						}
+						e_ref = re.rniPutDoubleArray(new double[] { value[0] });
+					} else {
+						e_ref = re.rniPutString(data[i][j]);
 					}
+					re.rniVectorSetElement(e_ref, l_ref, i * j);
 				}
 			}
+			
+			//Set dimensions
+			long d_ref = re.rniPutIntArray(new int[] { data[0].length, data.length });
+			re.rniSetAttr(l_ref, "dim", d_ref);
+			
+			//Set rownames (reporters) and colnames (samples)
+			String[] rep_names = new String[reporters.length];
+			String[] smp_names = new String[data[0].length];
+			
+			for(int k = 0; k < reporters.length; k++)
+				rep_names[k] = reporters[k].getName();
+			
+			for(int k = 0; k < data[0].length; k++) 
+				smp_names[k] = samples.get(col2Sample[k]).getName();
+			
+			long dn_ref = re.rniInitVector(2);
+			re.rniProtect(dn_ref);
+			
+			long rown_ref = re.rniPutStringArray(rep_names);
+			re.rniVectorSetElement(rown_ref, dn_ref, 0);
+			
+			long coln_ref = re.rniPutStringArray(smp_names);
+			re.rniVectorSetElement(coln_ref, dn_ref, 1);		
+			
+			re.rniSetAttr(l_ref, "dimnames",  dn_ref);
+			re.rniUnprotect(1);
+			
+			//Assign data matrix
+			String tmpData = RTemp.getNewVar();
+			re.rniAssign(tmpData, l_ref, 0);
+			
+			//Assign new dataset
+			long xp = RCommands.eval("DataSet(data = " + tmpData + ", name = '" + name + "')").xp;
+			
+//			re.rniUnprotect(1);
+			return returnRef(xp, tmpData);
 		}
 		
-		List<String> getOccuringCodes() throws Exception {
-			if(occuringCodes != null) return occuringCodes;
-			occuringCodes = new ArrayList<String>();
-
-			java.sql.ResultSet r = GmmlGex.getCon().createStatement().executeQuery(
-					"SELECT DISTINCT code FROM expression");
-
-			while(r.next()) {
-				String code = r.getString("code");
-				System.out.println(code);
-				occuringCodes.add(code);
+		void queryData() throws Exception {
+			//Get the 'groups'
+			Statement s = GmmlGex.getCon().createStatement(
+					ResultSet.TYPE_SCROLL_INSENSITIVE, 
+					ResultSet.CONCUR_READ_ONLY);
+			ResultSet r = s.executeQuery("SELECT DISTINCT groupId FROM expression");
+			
+			//Set the proper dimensions for the data matrix
+			//Rows:
+			r.last();
+			int nrow = r.getRow();
+			r.beforeFirst(); //Set the cursor back to the start
+			//Columns:
+			int ncol = GmmlGex.getSamples().size();
+			
+			data = new String[nrow][ncol];
+			reporters = new IdCodePair[nrow];
+			sample2Col = new HashMap<Integer, Integer>();
+			int col = 0;
+			col2Sample = new int[ncol];
+			for(int sid : GmmlGex.getSamples().keySet()) {
+				col2Sample[col] = sid;
+				sample2Col.put(sid, col++);
 			}
 			
-			return occuringCodes;
-		}
+			//Calculate the progress contribution of a single group
+			int progressContribution = (int)((double)totalWorkData / nrow);
+						
+			//Fill data matrix for every 'group'
+			PreparedStatement pst_dta = GmmlGex.getCon().prepareStatement(
+					"SELECT idSample, data FROM expression WHERE groupId = ?");
+			PreparedStatement pst_rep = GmmlGex.getCon().prepareStatement(
+					"SELECT DISTINCT id, code FROM expression WHERE groupid = ?");
+			int i = -1;
+			while(r.next()) {
+				RCommands.checkCancelled();
+				
+				int group = r.getInt(1);
+				pst_dta.setInt(1, group);
+				pst_rep.setInt(1, group);
+				
+				ResultSet r1 = pst_rep.executeQuery();
+				if(r1.next()) 
+					reporters[++i] = new IdCodePair(r1.getString("id"), r1.getString("code"));
+				r1 = pst_dta.executeQuery();
+				while(r1.next()) {
+					int sid = r1.getInt("idSample");
+					String dta = r1.getString("data");
+					data[i][sample2Col.get(sid)] = dta;
+				}
+				
+				SimpleRunnableWithProgress.updateMonitor(progressContribution);
+			}
+		}	
 	}
 }

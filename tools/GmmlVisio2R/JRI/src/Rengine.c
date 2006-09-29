@@ -259,6 +259,19 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutVector
     return SEXP2L(jri_getSEXPLArray(env, a));
 }
 
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniVectorSetElement
+(JNIEnv *env, jobject this, jlong e, jlong v, jint i)
+{
+	//Put element e to vector v	at position i
+	SET_VECTOR_ELT(L2SEXP(v), (int)i, L2SEXP(e));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniInitVector
+(JNIEnv *env, jobject this, jint l)
+{
+	return(SEXP2L(allocVector(VECSXP,(int)l)));
+}
+
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetAttr
 (JNIEnv *env, jobject this, jlong exp, jstring name)
 {

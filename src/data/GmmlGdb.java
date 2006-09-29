@@ -20,12 +20,16 @@ import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import util.Utils;
+
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
 public abstract class GmmlGdb {	
+	private static final int COMPAT_VERSION = 1;
+	
 	/**
 	 * The {@link Connection} to the Gene Database
 	 */
@@ -241,6 +245,9 @@ public abstract class GmmlGdb {
 		public String getCode() { return code; }
 		public String getId() { return id; }
 		
+		public String getName() { return code + ":" + id; }
+		public String toString() { return getName(); }
+		
 		public boolean equals(Object o) {
 			if(!(o instanceof IdCodePair)) return false;
 			IdCodePair idc = (IdCodePair)o;
@@ -266,6 +273,9 @@ public abstract class GmmlGdb {
 		String file = gdbFile.getAbsolutePath().toString();
 		con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
 				file.substring(0, file.lastIndexOf(".")), prop);
+		
+		//Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
+		
 		setCurrentGdb(gdbFile.getAbsoluteFile().toString());
 	}
 	
@@ -583,6 +593,7 @@ public abstract class GmmlGdb {
 		
 		try {
 			Statement sh = convertCon.createStatement();
+			sh.execute("DROP TABLE info IF EXISTS");
 			sh.execute("DROP TABLE link IF EXISTS");
 			sh.execute("DROP TABLE gene IF EXISTS");
 		} catch(Exception e) {
@@ -591,6 +602,13 @@ public abstract class GmmlGdb {
 		try
 		{
 			Statement sh = convertCon.createStatement();
+			sh.execute(
+					"CREATE CACHED TABLE					" +
+					"		info							" +
+					"(	  version INTEGER PRIMARY KEY		" +
+					")");
+			sh.execute( //Add compatibility version of GDB
+					"INSERT INTO version VALUES ( " + COMPAT_VERSION + ")");
 			sh.execute("DROP TABLE link IF EXISTS");
 			sh.execute(
 					"CREATE CACHED TABLE					" +

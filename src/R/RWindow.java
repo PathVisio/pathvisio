@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 public class RWindow extends ApplicationWindow {
-	public static String stdPwObjName = "pathways";
-	public static String stdExprObjName = "data";
+	public static String stdPwObjName = "myPathways";
+	public static String stdExprObjName = "myData";
 	
 	RData rData;
 	

@@ -33,7 +33,6 @@ import colorSet.GmmlColorSetObject;
 import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
-import util.StopWatch;
 import util.Utils;
 
 /**

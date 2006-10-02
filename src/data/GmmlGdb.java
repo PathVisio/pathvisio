@@ -127,11 +127,17 @@ public abstract class GmmlGdb {
 	 * (empty if nothing found)
 	 */
 	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
+		return ensId2Refs(ensId, null);
+	}
+	
+	public static ArrayList<IdCodePair> ensId2Refs(String ensId, String code) {
+		String whereCode = code == null ? "" : " AND codeRight = '" + code + "'";
+		
 		ArrayList<IdCodePair> crossIds = new ArrayList<IdCodePair>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight, codeRight FROM link " +
-					"WHERE idLeft = '" + ensId + "'"
+					"WHERE idLeft = '" + ensId + "'" + whereCode
 					);
 			while(r1.next()) {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
@@ -151,7 +157,7 @@ public abstract class GmmlGdb {
 	 * (empty if nothing found)
 	 */
 	public static ArrayList<String> ref2EnsIds(String ref, String code)
-	{
+	{		
 		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
@@ -166,6 +172,18 @@ public abstract class GmmlGdb {
 					"'" + ref + "' with systemcode '" + code + "'", e);
 		}
 		return ensIds;
+	}
+	
+	public static List<IdCodePair> getCrossRefs(IdCodePair idc, List<String> codes) {
+		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
+		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
+		for(String ensId : ensIds) for(String code : codes) refs.addAll(ensId2Refs(ensId, code));
+
+		return refs;
+	}
+		
+	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
+		return getCrossRefs(idc.getId(), idc.getCode());
 	}
 	
 	/**
@@ -248,10 +266,14 @@ public abstract class GmmlGdb {
 		public String getName() { return code + ":" + id; }
 		public String toString() { return getName(); }
 		
+		public int hashCode() {
+			return getName().hashCode();
+		}
+		
 		public boolean equals(Object o) {
 			if(!(o instanceof IdCodePair)) return false;
 			IdCodePair idc = (IdCodePair)o;
-			return idc.getId() == getId() && idc.getCode() == getCode();
+			return idc.getId().equals(getId()) && idc.getCode().equals(getCode());
 		}
 	}
 	

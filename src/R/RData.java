@@ -48,13 +48,12 @@ public class RData {
 	String exportFile = "";		//File name to export RData
 	String pwsName = "";		//Name of pathwayset object
 	String dsName = "";			//Name of dataset object
- 
-	PathwaySet cachePathwaySet;
-	DataSet cacheDataSet;
-	
+ 	
 	static int totalWorkData = (int)1E6;
-	static int totalWorkPws = (int)1E3;
+	static int totalWorkPws = (int)1E6;
 	
+	DataSet cacheDataSet;
+	PathwaySet cachePathwaySet;
 	
 	public RData() {
 		pwFiles = new ArrayList<File>();
@@ -80,14 +79,6 @@ public class RData {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(GmmlVision.getWindow().getShell());
 		SimpleRunnableWithProgress rwp = null;
 		try {
-			if(exportPws) {
-				rwp = new SimpleRunnableWithProgress(
-						this.getClass(), "doExportPws", 
-						new Class[] { re.getClass() }, new Object[] { re }, this);
-				SimpleRunnableWithProgress.setMonitorInfo(
-						"Exporting pathways", totalWorkPws);
-				dialog.run(true, true, rwp);
-			}
 			if(exportData) {
 				rwp = new SimpleRunnableWithProgress(
 						this.getClass(), "doExportData", 
@@ -95,6 +86,14 @@ public class RData {
 				SimpleRunnableWithProgress.setMonitorInfo(
 						"Exporting data", totalWorkData);
 				dialog.run(true, true, rwp); 
+			}
+			if(exportPws) {
+				rwp = new SimpleRunnableWithProgress(
+						this.getClass(), "doExportPws", 
+						new Class[] { re.getClass() }, new Object[] { re }, this);
+				SimpleRunnableWithProgress.setMonitorInfo(
+						"Exporting pathways", totalWorkPws);
+				dialog.run(true, true, rwp);
 			}
 			RCommands.eval("save.image(file='"+ exportFile + "')");
 		} catch(InvocationTargetException ex) {
@@ -108,8 +107,9 @@ public class RData {
 	}
 
 	public void doExportPws(Rengine re) throws Exception {
-		double contribXml = 0.3;
-		double contribR = 1 - contribXml;
+		double contribXml = 0.2;
+		PathwaySet.contribGdb = 0.7;
+		double contribR = 0.1;
 		
 		File pwDir = new File(this.pwDir);
 		
@@ -122,44 +122,45 @@ public class RData {
 
 		//Calculate contribution of single Pathway
 		Pathway.progressContribution = (int)((double)totalWorkPws * contribR / pwFiles.size());
-		int pwContribXml = (int)(((double)totalWorkPws * contribXml) / pwFiles.size());
+		int pwContribXml = (int)((double)totalWorkPws * contribXml / pwFiles.size());
 		
-		List<Pathway> pws = new ArrayList<Pathway>();
-		List<GeneProduct> gps = new ArrayList<GeneProduct>();
-
+		cachePathwaySet = new PathwaySet(pwsName);
+		
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pwFiles) {
 			RCommands.checkCancelled();
-			
-			gps.clear();
+
 			PathwayParser p = new PathwayParser(xmlReader);
 			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
 				GmmlVision.log.error("Couldn't read " + f, e); 
 				continue; 
 			}
+			
+			Pathway pw = new Pathway(p.getName(), f.getName(), cachePathwaySet);
 
 			for(Gene g : p.getGenes()) {
-				gps.add(new GeneProduct(g.getId(), g.getCode()));
+				String id = g.getId();
+				String code = g.getCode();
+				if(id.length() == 0 && code.length() == 0) continue; //Skip empty fields
+				pw.addGeneProduct(new IdCodePair(g.getId(), g.getCode()));
 			}
 			
-			pws.add(new Pathway(p.getName(), f.getName(), gps));
 			//Update progress
 			SimpleRunnableWithProgress.updateMonitor(pwContribXml);
 		}
-		cachePathwaySet = new PathwaySet(pwsName, pws);
+
+		if(exportData && cacheDataSet != null) 
+			cachePathwaySet.addCrossRefs(cacheDataSet);
+		
 		cachePathwaySet.toR(pwsName);
 		
 		RTemp.flush(true);
 	}
 	
-	public void doExportData(Rengine re) throws Exception {
-		double contribQuery = 0.1;
-		double contribCrossRef = 0.2;
-		double contribData = 0.7;
+	public void doExportData(Rengine re) throws Exception {		
+		cacheDataSet = new DataSet(dsName);
 		
-		DataSet ds = new DataSet(dsName);
-		
-		ds.toR(dsName);
+		cacheDataSet.toR(dsName);
 		
 		RTemp.flush(true);
 	}
@@ -201,14 +202,20 @@ public class RData {
 	}
 	
 	static class PathwaySet extends RObject {
+		static double contribGdb;
 		String name;
 		List<Pathway> pathways;	
 		
-		PathwaySet(String name, List<Pathway> pathways) {
+		HashMap<IdCodePair, GeneProduct> geneProducts;
+		
+		PathwaySet(String name) {
 			this.name = name;
-			this.pathways = pathways;
+			pathways = new ArrayList<Pathway>();
+			geneProducts = new HashMap<IdCodePair, GeneProduct>();
 		}
-				
+		
+		void addPathway(Pathway pw) { pathways.add(pw); }
+		
 		long getRef() throws RException {				
 			String tmpVar = RTemp.getNewVar(true);
 			
@@ -220,10 +227,37 @@ public class RData {
 			return returnRef(xp, tmpVar);
 		}
 		
-		Set<GeneProduct> getAllGeneProducts() {
-			Set<GeneProduct> allGps = new HashSet<GeneProduct>();
-			for(Pathway pw : pathways) allGps.addAll(pw.geneProducts);
-			return allGps;
+		GeneProduct getUniqueGeneProduct(IdCodePair idc) {
+			GeneProduct gp = geneProducts.get(idc);
+			if(gp == null) {
+				gp = new GeneProduct(idc);
+				geneProducts.put(idc, gp);
+			}
+			return gp;
+		}
+		
+		void addCrossRefs(DataSet dataSet) throws Exception {
+			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
+			
+			List<String> codes = dataSet.getCodes();
+			HashMap repHash = dataSet.getReporterHash();
+			
+			for(IdCodePair pwidc : geneProducts.keySet()) {
+				RCommands.checkCancelled();
+				
+				System.out.println("Processing " + pwidc);
+				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc, codes);
+				System.out.println("Crossrefs: " + pwrefs);
+				for(IdCodePair ref : pwrefs) {
+					if(repHash.containsKey(ref)) {
+						geneProducts.get(pwidc).addReference(ref);
+						System.out.println("adding " + ref + " to " + geneProducts.get(pwidc));
+						break;
+					}
+				}
+				SimpleRunnableWithProgress.updateMonitor(worked);
+			}
+			System.out.println("Finished processing " + geneProducts.size() + " geneproducts");
 		}
 }
 	
@@ -233,11 +267,19 @@ public class RData {
 		String name;
 		String fileName;
 		List<GeneProduct> geneProducts;
+		PathwaySet pws;
 		
-		Pathway(String name, String fileName, List<GeneProduct> geneProducts) {
+		Pathway(String name, String fileName, PathwaySet pathwaySet) {
 			this.name = name;
 			this.fileName = fileName;
-			this.geneProducts = geneProducts;
+			this.pws = pathwaySet;
+			geneProducts = new ArrayList<GeneProduct>();
+			
+			pws.addPathway(this);
+		}
+		
+		void addGeneProduct(IdCodePair ref) {
+			geneProducts.add(pws.getUniqueGeneProduct(ref));
 		}
 		
 		long getRef() throws RException {			
@@ -264,6 +306,11 @@ public class RData {
 		GeneProduct(String id, String code) {
 			this();
 			addReference(id, code);
+		}
+		
+		GeneProduct(IdCodePair idc) {
+			this();
+			addReference(idc);
 		}
 		
 		void addReference(IdCodePair idc) {
@@ -316,7 +363,7 @@ public class RData {
 	}
 		
 	static class DataSet extends RObject {
-		String[][] data;
+		String[][] data; //[samples][reporters] (transposed for export convenience)
 		IdCodePair [] reporters;
 		HashMap<Integer, Integer> sample2Col;
 		int[] col2Sample;
@@ -328,22 +375,38 @@ public class RData {
 			queryData(); //Get the data from the gex database
 		}
 		
+		HashMap<IdCodePair, IdCodePair> getReporterHash() {
+			HashMap<IdCodePair, IdCodePair> repHash = new HashMap<IdCodePair, IdCodePair>();
+			for(IdCodePair rep : reporters) {
+				repHash.put(rep, rep);
+			}
+			return repHash;
+		}
+		
+		List<String> getCodes() throws Exception {
+			List<String> codes = new ArrayList<String>();
+			ResultSet r = GmmlGex.getCon().createStatement().executeQuery(
+					"SELECT DISTINCT code FROM expression");
+			while(r.next()) codes.add(r.getString("code"));
+			return codes;
+		}
+		
 		long getRef() throws RException {
 			Rengine re = RController.getR();
 			
-			//Create the data matrix in R
-			//#1 create a long 1-dimensional list -> rows first
+			//Create the mixed-type data matrix in R
+			//#1 create a long 1-dimensional list -> fill rows first
 			//#2 set dims attribute to c(nrow, ncol)
 			//et voila, we have a matrix
 			HashMap<Integer, Sample> samples = GmmlGex.getSamples();
 			long l_ref = re.rniInitVector(data.length * data[0].length);
 			re.rniProtect(l_ref);
 			
-			for(int j = 0; j < data[0].length; j++) { //Columns (samples)
-				int sid = col2Sample[j];
+			for(int i = 0; i < data.length; i++) { //Rows (samples)
+				int sid = col2Sample[i];
 				int type = samples.get(sid).getDataType();
 				
-				for(int i = 0; i < data.length; i++) { //Rows (groups)
+				for(int j = 0; j < data[i].length; j++) { //Columns (reporters)
 					long e_ref;
 					if(type == Types.REAL) {
 						double[] value = new double[1];
@@ -352,13 +415,14 @@ public class RData {
 						} catch(Exception e) {
 							GmmlVision.log.error("Unable to parse double when converting data to R: " + data[i][j], e);
 						}
-						e_ref = re.rniPutDoubleArray(new double[] { value[0] });
+						e_ref = re.rniPutDoubleArray(value);
 					} else {
 						e_ref = re.rniPutString(data[i][j]);
 					}
-					re.rniVectorSetElement(e_ref, l_ref, i * j);
+					re.rniVectorSetElement(e_ref, l_ref, i*data[i].length + j);
 				}
 			}
+			
 			
 			//Set dimensions
 			long d_ref = re.rniPutIntArray(new int[] { data[0].length, data.length });
@@ -366,26 +430,23 @@ public class RData {
 			
 			//Set rownames (reporters) and colnames (samples)
 			String[] rep_names = new String[reporters.length];
-			String[] smp_names = new String[data[0].length];
+			String[] smp_names = new String[data.length];
 			
 			for(int k = 0; k < reporters.length; k++)
 				rep_names[k] = reporters[k].getName();
 			
-			for(int k = 0; k < data[0].length; k++) 
+			for(int k = 0; k < data.length; k++) 
 				smp_names[k] = samples.get(col2Sample[k]).getName();
 			
 			long dn_ref = re.rniInitVector(2);
 			re.rniProtect(dn_ref);
-			
 			long rown_ref = re.rniPutStringArray(rep_names);
 			re.rniVectorSetElement(rown_ref, dn_ref, 0);
-			
 			long coln_ref = re.rniPutStringArray(smp_names);
-			re.rniVectorSetElement(coln_ref, dn_ref, 1);		
-			
-			re.rniSetAttr(l_ref, "dimnames",  dn_ref);
+			re.rniVectorSetElement(coln_ref, dn_ref, 1);
+			re.rniSetAttr(l_ref, "dimnames", dn_ref);
 			re.rniUnprotect(1);
-			
+					
 			//Assign data matrix
 			String tmpData = RTemp.getNewVar();
 			re.rniAssign(tmpData, l_ref, 0);
@@ -393,7 +454,7 @@ public class RData {
 			//Assign new dataset
 			long xp = RCommands.eval("DataSet(data = " + tmpData + ", name = '" + name + "')").xp;
 			
-//			re.rniUnprotect(1);
+			re.rniUnprotect(1);
 			return returnRef(xp, tmpData);
 		}
 		
@@ -412,7 +473,7 @@ public class RData {
 			//Columns:
 			int ncol = GmmlGex.getSamples().size();
 			
-			data = new String[nrow][ncol];
+			data = new String[ncol][nrow];
 			reporters = new IdCodePair[nrow];
 			sample2Col = new HashMap<Integer, Integer>();
 			int col = 0;
@@ -445,7 +506,7 @@ public class RData {
 				while(r1.next()) {
 					int sid = r1.getInt("idSample");
 					String dta = r1.getString("data");
-					data[i][sample2Col.get(sid)] = dta;
+					data[sample2Col.get(sid)][i] = dta;
 				}
 				
 				SimpleRunnableWithProgress.updateMonitor(progressContribution);

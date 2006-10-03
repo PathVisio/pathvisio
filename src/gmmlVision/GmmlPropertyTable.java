@@ -273,7 +273,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 				}
 			}
 			
-			g.setProperty(key, value);			
+			g.setProperty(key, value);
+			tableViewer.refresh();
 		}
 	};
 	

@@ -12,7 +12,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	
 	GmmlDrawingObject(GmmlDrawing canvas) {
 		this.canvas = canvas;
-		canvas.addElement(this);
+		canvas.addObject(this);
 	}
 	
 	int drawingOrder = GmmlDrawing.DRAW_ORDER_DEFAULT;

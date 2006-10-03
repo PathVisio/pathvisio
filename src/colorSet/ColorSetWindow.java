@@ -927,7 +927,7 @@ public class ColorSetWindow extends ApplicationWindow {
 		}
 		GmmlColorCriterion cc = (GmmlColorCriterion)
 		((IStructuredSelection)coTableViewer.getSelection()).getFirstElement();
-		if(cc == null) return true; //No gradient is selected (this should't happen)
+		if(cc == null) return true; //No criterium is selected (this should't happen)
 		String error = cc.setExpression(ccExpression.getText());
 		if(error != null) {
 			if(!silent) 

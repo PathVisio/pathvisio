@@ -9,6 +9,7 @@ public class GmmlEvent
 	public static final int DELETED = 2;
 	public static final int ADDED = 3;
 	public static final int PROPERTY = 4; // e.g. name change
+	public static final int WINDOW = 5;
 	
 	private GmmlGraphicsData affectedData;
 	public GmmlGraphicsData getAffectedData () { return affectedData; }

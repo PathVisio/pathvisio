@@ -88,16 +88,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		{
 			switch (o.getObjectType())
 			{
-				case ObjectType.BRACE: drawingObjects.add(new GmmlBrace(this, o)); break;
-				case ObjectType.GENEPRODUCT: drawingObjects.add(new GmmlGeneProduct(this, o)); break;
-				case ObjectType.SHAPE: drawingObjects.add(new GmmlShape(this, o)); break;
-				case ObjectType.LINE: drawingObjects.add(new GmmlLine(this, o)); break;
+				case ObjectType.BRACE: new GmmlBrace(this, o); break;
+				case ObjectType.GENEPRODUCT: new GmmlGeneProduct(this, o); break;
+				case ObjectType.SHAPE: new GmmlShape(this, o); break;
+				case ObjectType.LINE: new GmmlLine(this, o); break;
 				case ObjectType.MAPPINFO: 
 					GmmlInfoBox mi = new GmmlInfoBox(this, o);
-					drawingObjects.add(mi); 
+					addObject(mi); 
 					setMappInfo(mi); 
 					break;				
-				case ObjectType.LABEL: drawingObjects.add(new GmmlLabel(this, o)); break;					
+				case ObjectType.LABEL: new GmmlLabel(this, o); break;					
 			}
 						
 		}
@@ -157,7 +157,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		addMouseMoveListener(this);
 		addPaintListener (this);
 		addMouseTrackListener(this);
-		addKeyListener(this);		
+		addKeyListener(this);	
 	}
 		
 	/**
@@ -179,8 +179,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 * Adds an element to the drawing
 	 * @param o the element to add
 	 */
-	public void addElement(GmmlDrawingObject o)
+	public void addObject(GmmlDrawingObject o)
 	{
+		if(drawingObjects.contains(o)) return; //Don't add duplicates!
 		drawingObjects.add(o);
 	}
 
@@ -920,8 +921,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		if(e.keyCode == SWT.HOME) {
 			System.out.println("================");
 			Collections.sort(drawingObjects);
-			for(GmmlDrawingObject o : drawingObjects) 
-				System.out.println(o.toString() + "\t" + o.isSelected() + "\t" + o.drawingOrder);
+			for(GmmlDrawingObject o : drawingObjects) {
+				System.out.println(o.toString() + "\t" + o.isSelected() + "\t" + o.drawingOrder + "\t");
+				if(o instanceof GmmlGraphics) {
+					System.out.println("\t is GmmlGraphics\t" + ((GmmlGraphics)o).getGmmlData().objectType);
+				}
+			}
 		}
 	}
 	
@@ -958,6 +963,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 				GmmlVision.getGmmlData().dataObjects.add((GmmlDataObject)e.getAffectedData());
 				addDirtyRect(null); // mark everything dirty
 				break;
+			case GmmlEvent.WINDOW:
+				setSize((int)infoBox.getGmmlData().getBoardWidth(), 
+						(int)infoBox.getGmmlData().getBoardHeight());
 		}
 		redrawDirtyRect();
 	}

@@ -61,14 +61,14 @@ public abstract class SearchMethods {
 		List<IdCodePair> refs = GmmlGdb.getCrossRefs(id, code);
 		if(refs.size() == 0) throw new NoGdbException();
 		
-		runnable.updateMonitor(200);
+		SearchRunnableWithProgress.updateMonitor(200);
 		
 		//get all pathway files in the folder and subfolders
 		ArrayList<File> pathways = FileUtils.getFiles(folder, "xml", true);
 
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pathways) {
-			if(runnable.getMonitor().isCanceled()) return;
+			if(SearchRunnableWithProgress.getMonitor().isCanceled()) return;
 			//Get all genes in the pathway
 			PathwayParser parser = new PathwayParser(xmlReader);
 			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { }
@@ -87,7 +87,7 @@ public abstract class SearchMethods {
 					break;
 				}
 			}
-			runnable.updateMonitor((int)Math.ceil(800.0 / pathways.size()));
+			SearchRunnableWithProgress.updateMonitor((int)Math.ceil(800.0 / pathways.size()));
 		}
 		if(srs.getResults().size() == 0) throw new NothingFoundException();
 	}
@@ -113,7 +113,7 @@ public abstract class SearchMethods {
 
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pathways) {
-			if(runnable.getMonitor().isCanceled()) return;
+			if(SearchRunnableWithProgress.getMonitor().isCanceled()) return;
 			//Get all genes in the pathway
 			PathwayParser parser = new PathwayParser(xmlReader);
 			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { }
@@ -140,24 +140,30 @@ public abstract class SearchMethods {
 
 				srt.refreshTableViewer(true);
 			}
-			runnable.updateMonitor((int)Math.ceil(1000.0 / pathways.size()));
+			SearchRunnableWithProgress.updateMonitor((int)Math.ceil(1000.0 / pathways.size()));
 		}
 		if(srs.getResults().size() == 0) throw new NothingFoundException();
 	}
 	
 	static class SearchException extends Exception {
+		private static final long serialVersionUID = 1L;
+
 		SearchException(String msg) {
 			super(msg);
 		}
 	}
 	
 	static class NothingFoundException extends SearchException {
+		private static final long serialVersionUID = 1L;
+
 		NothingFoundException() {
 			super(MSG_NOTHING_FOUND);
 		}
 	}
 	
 	static class NoGdbException extends SearchException {
+		private static final long serialVersionUID = 1L;
+
 		NoGdbException() {
 			super(MSG_NOT_IN_GDB);
 		}

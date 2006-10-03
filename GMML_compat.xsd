@@ -154,7 +154,7 @@
 
 				<xsd:element ref="InfoBox" minOccurs="1" maxOccurs="1" />
 				
-				<xsd:element ref="Legend" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="Legend" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 
 			<xsd:attribute name="Name" type="NameType" use="required">
@@ -431,7 +431,13 @@
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />					
 			<xsd:attribute name="TextLabel" use="required"
 				type="xsd:string"/>
-
+			<xsd:attribute name="Xref" type="xsd:string" use="optional">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">GenMAPP
+						Links</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			
 		</xsd:complexType>
 
 	</xsd:element>

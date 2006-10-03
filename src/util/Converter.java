@@ -8,6 +8,8 @@ package util;
 
 import data.*;
 import java.io.*;
+import java.sql.SQLException;
+
 import debug.Logger;
 
 /**
@@ -150,9 +152,18 @@ public class Converter {
 			}
 			catch (ConverterException e)
 			{
-				log.error(e.getMessage());
-				e.printStackTrace();
+				log.error(e.getMessage(), e);
 				System.exit(-2);			
+			}
+			catch (SQLException e)
+			{
+				log.error(e.getMessage(), e);
+				System.exit(-2);	
+			}
+			catch (ClassNotFoundException e)
+			{
+				log.error (e.getMessage(), e);
+				System.exit(-2);
 			}
 			System.exit(valid ? 0 : -3);
 		}

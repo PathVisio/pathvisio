@@ -16,9 +16,8 @@ use converter;
 #    config     #
 #################
 
-my $dirMapps = "E:/Genmapp 2 Data/MAPPs";
-my $dirGmmlOld = "e:/gmml/old";
-my $dirGmmlNew = "e:/gmml/new";
+my $dirMapps = "E:/GenMAPP 2 Data/MAPPs";
+my $dirGmml = "E:/Gmml-Visio Data/MAPPs";
 my $fnConf = "e:/convert_test.conf";
 
 #################
@@ -29,6 +28,7 @@ my $fnSchema = 'GMML_compat.xsd';
 my $uriSchemaSchema = 'http://www.w3.org/2001/XMLSchema.xsd';
 
 my $dieOnError = 1; # die on first error encountered
+my $fResume = 1; # if true, starts from entry saved in $fnConf.
 
 #################
 #    subs       #
@@ -61,9 +61,12 @@ sub convert
 {
 	my $fnMapp = shift;
 	my $fnOut = shift;
-	
+	print " in: $fnMapp\n";
+	print "out: $fnOut\n";
 	system ("java", "-cp", '"lib/JRI.jar";"lib/org.eclipse.core.commands_3.2.0.I20060605-1400.jar";"lib/org.eclipse.equinox.common_3.2.0.v20060603.jar";"lib/org.eclipse.jface_3.2.0.I20060605-1400.jar";"lib/org.eclipse.swt_3.2.0.v3232o.jar";"lib/jdom.jar";build;"lib/hsqldb.jar";"lib/org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar"', "util.Converter", $fnMapp, $fnOut);
-	print "Exit status ", $? >> 8, "\n";
+	print "Exit status ", $? >> 8;
+	if ($?) { print " Error!"; }
+	print "\n";
 	die if ($dieOnError && $?);
 }
 
@@ -73,7 +76,9 @@ sub validateSchemas
 	print "Info:  Validating $fnSchema\n";
 	system ("xmllint", "-noout", "-schema", $uriSchemaSchema, $fnSchema);
 	
-	print "Exit status ", $? >> 8, "\n";
+	print "Exit status ", $? >> 8;
+	if ($?) { print " Error!"; }
+	print "\n";
 	die if ($dieOnError && $?);
 }
 
@@ -83,7 +88,9 @@ sub validate
 
 	# validate GMML file
 	system ("xmllint", "-noout", "-schema", $fnSchema, $fnGmml);
-	print "Exit status ", $? >> 8, "\n";
+	print "Exit status ", $? >> 8;
+	if ($?) { print " Error!"; }
+	print "\n";
 	die if ($dieOnError && $?);
 }
 
@@ -92,7 +99,9 @@ sub mappdiff
 	my $fn1 = shift;
 	my $fn2 = shift;
 	system ("tools\\mappdiff\\mappdiff.pl", $fn1, $fn2);
-	print "Exit status ", $? >> 8, "\n";
+	print "Exit status ", $? >> 8;
+	if ($?) { print " Error!"; }
+	print "\n";
 	die if ($dieOnError && $?);
 }
 
@@ -100,20 +109,35 @@ sub mappdiff
 #   main        #
 #################
 
+
 chdir ("../..");
+my %okDirs;
 
 # find all mapps on computer...
 
 my @list;
-sub wanted { if (-f $_ && /\.mapp$/i && ! (/_back\.mapp$/i)) { push @list, $File::Find::name; } }
-find (\&wanted, $dirMapps);
+#~ sub wanted { if (-f $_ && /\.mapp$/i && ! (/_back\.mapp$/i)) { push @list, $File::Find::name; } }
+#~ find (\&wanted, $dirMapps);
+
+@list = ("E:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_1_BiGCaT.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_2_BiGCaT.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_Meta_BiGCaT.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA repair.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA replication.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/I-kappaB kinase NF-kappaB cascade.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/aaa.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_1_1_Trichloro_2_2_bis_4_chlorophenyl_ethane_DDT_degradation.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_4_Dichlorobenzene_degradation.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_2_4_Dichlorobenzoate_degradation.mapp",
+	"E:/GenMAPP 2 Data/MAPPs/Mm_GO_Samples_20050810/Biological Process/DNA packaging.mapp",
+	);
 
 #~ sub wanted { if (-f $_ && /\.xml$/i) { push @list, File::Spec->abs2rel ($File::Find::name, $dirGmmlOld); } }
 #~ find (\&wanted, $dirGmmlOld);
 
 my $last;
 @list = sort @list;
-if (-r $fnConf)
+if (-r $fnConf && $fResume)
 {
 	#read last tested from conf file.
 	open INFILE, "$fnConf" or die;
@@ -137,7 +161,17 @@ for my $fnIn (@list)
 	close OUTFILE;
 
 	my $fnOut = $fnIn; 
-	$fnOut =~ s/(.mapp$)/.xml/i;
+	$fnOut =~ s/(.mapp$)/.xml/i;	
+	$fnOut =~ s/$dirMapps/$dirGmml/i;
+
+	my $targetDir = $fnOut;
+	$targetDir =~ s#[^/]*$##; #remove part after last slash
+	unless (exists $okDirs{$targetDir})
+	{
+		mkdirs ($targetDir);
+		$okDirs{$targetDir} = 1;
+	}
+	
 	convert ($fnIn, $fnOut);
 	validate($fnOut);
 	my $fnBack = $fnIn;
@@ -149,5 +183,8 @@ for my $fnIn (@list)
 	{
 		mappdiff ($fnIn, $fnBack);
 	}
+	
+	unlink $fnBack; #remove back-converted file cruft.
+	
+	print "\n";
 }
-

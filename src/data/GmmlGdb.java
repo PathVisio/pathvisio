@@ -20,8 +20,6 @@ import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import util.Utils;
-
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database

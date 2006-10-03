@@ -30,7 +30,7 @@ public class ShapeType
 	public static final List GmmlMappings = Arrays.asList(new String[] {
 			"Rectangle","Oval","Arc",
 			"CellA", "Ribosome",
-			"OrganA", "OrganB", "OrganC", "ProteinB", "Triangle", 
+			"OrganA", "OrganB", "OrganC", "ProteinComplex", "Triangle", 
 			"Vesicle", "Pentagon", "Hexagon"
 	});
 

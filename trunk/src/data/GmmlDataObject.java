@@ -168,6 +168,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 	{
 		geneID = e.getAttributeValue("GeneID");
 		xref = e.getAttributeValue("Xref");
+		if (xref == null) xref = "";
 		geneProductType = e.getAttributeValue("Type");
 		geneProductName = e.getAttributeValue("Name");
 		backpageHead = e.getAttributeValue("BackpageHead");
@@ -337,6 +338,8 @@ public class GmmlDataObject extends GmmlGraphicsData
     	fStrikethru = (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
     	
     	fontName = graphics.getAttributeValue("FontName");
+    	xref = e.getAttributeValue("Xref");
+    	if (xref == null) xref = "";
 	}
 	
 	private void updateLabelData(Element e)
@@ -344,10 +347,11 @@ public class GmmlDataObject extends GmmlGraphicsData
 		if(e != null) 
 		{
 			e.setAttribute("TextLabel", labelText);
+			e.setAttribute("Xref", xref == null ? "" : xref);
 			Element graphics = e.getChild("Graphics");
 			if(graphics !=null) 
 			{
-				graphics.setAttribute("FontName", fontName);			
+				graphics.setAttribute("FontName", fontName == null ? "" : fontName);			
 				graphics.setAttribute("FontWeight", fBold ? "Bold" : "Normal");
 				graphics.setAttribute("FontStyle", fItalic ? "Italic" : "Normal");
 				graphics.setAttribute("FontDecoration", fUnderline ? "Underline" : "Normal");
@@ -450,7 +454,7 @@ public class GmmlDataObject extends GmmlGraphicsData
 				break;
 			case ObjectType.LABEL:
 				result = ( Arrays.asList(new String[] {
-						"Notes", "Comment",
+						"Notes", "Comment", "Xref", 
 						"CenterX", "CenterY", "Width", "Height",
 						// line, shape, brace, geneproduct, label
 						"Color", 

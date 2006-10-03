@@ -28,11 +28,12 @@ mappdiff.pl returns the number of differences found as exit code
 
 =cut
 
-my $magic = 1; 
+my $magic = 1;
 # turn on special comparisons to handle all kind of GenMAPP weirdnesses.
 # this will:
 #
 # - compare only the lower 4 bits when comparing Systemcodes of labels
+# - ... (much more)
 
 
 if (!(@ARGV == 2 && -r $ARGV[0] && -r $ARGV[1])) 
@@ -56,7 +57,7 @@ sub get_db_handle
 		"DBQ=" . $fn
 	) or die "ODBC error on file $fn, $!";
 	
-	my $dbh = DBI->connect( "DBI:ODBC:" . $odbc_dsn, '', '', { RaiseError => 1, LongReadLen => 2000 });
+	my $dbh = DBI->connect( "DBI:ODBC:" . $odbc_dsn, '', '', { RaiseError => 1, LongReadLen => 4000 });
 	unless ($dbh) { die; }	
 	return $dbh;
 }
@@ -167,7 +168,7 @@ sub magic_cmp
 			$a =~ s/\s*$//;
 			$b =~ s/\s*$//;
 		}
-		
+	
 		#defaults for empties:
 		if ($col =~ /^(SecondX|SecondY|Width|Height|Rotation)$/)
 		{

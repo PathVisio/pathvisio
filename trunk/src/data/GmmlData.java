@@ -6,14 +6,13 @@ import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.*;
 
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.ImageData;
 import org.jdom.*;
 import org.jdom.input.*;
 import org.jdom.output.*;
@@ -204,18 +203,11 @@ public class GmmlData
 		}
 	}
 	
-	public void readFromMapp (File file) throws ConverterException
+	public void readFromMapp (File file) throws ConverterException, SQLException, ClassNotFoundException
 	{
         String inputString = file.getAbsolutePath();
 
-        String[][] mappObjects = MappFormat.importMAPPObjects(inputString);
-        String[][] mappInfo = MappFormat.importMAPPInfo(inputString);
-
-        // Copy the info table to the new gmml pathway
-        
-        // Copy the objects table to the new gmml pahtway
-    	MappFormat.copyMappInfo(mappInfo, this);
-        MappFormat.copyMappObjects(mappObjects, this);        	
+        MappFormat.readFromMapp (inputString, this);
 	}
 	
 	

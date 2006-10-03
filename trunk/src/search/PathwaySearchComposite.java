@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Text;
 
 import search.SearchMethods.SearchException;
 import util.SwtUtils.SimpleRunnableWithProgress;
-import data.GmmlData;
 import data.MappFormat;
 
 public class PathwaySearchComposite extends Composite {

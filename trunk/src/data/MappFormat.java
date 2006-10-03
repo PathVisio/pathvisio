@@ -16,60 +16,129 @@ import debug.Logger;
 
 public class MappFormat
 {	
-	
+	private static final String sqlInfoInsert = 
+		"INSERT INTO INFO (Title, MAPP, GeneDB, Version, Author, " +
+		"Maint, Email, Copyright, Modify, Remarks, BoardWidth, BoardHeight, " +
+		"WindowWidth, WindowHeight, Notes) " +
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	// note: column GeneDBVersion is not in all mapps. 
+	// Notably the mapps converted from kegg are different from the rest. 
+	private static final String sqlObjectsInsert = 
+		"INSERT INTO OBJECTS (ObjKey, ID, SystemCode, Type, CenterX, " + 
+		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
+		"Color, Label, Head, Remarks, Image, Links, Notes) " +
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	private static final String sqlInfoSelect = 
+		"SELECT Title, MAPP, GeneDB, Version, Author, " +
+		"Maint, Email, Copyright, Modify, Remarks, BoardWidth, BoardHeight, " +
+		"WindowWidth, WindowHeight, Notes " +
+		"FROM INFO";
+	private static final String sqlObjectsSelect = 
+		"SELECT ObjKey, ID, SystemCode, Type, CenterX, " + 
+		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
+		"Color, Label, Head, Remarks, Image, Links, Notes " +
+		"FROM OBJECTS";
+
     private static String database_after = ";DriverID=22;READONLY=true";
     private static String database_before =
             "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-    // This method returns the OBJECTS data of the given .MAPP file as a Nx18 string array
-    public static String[][] importMAPPObjects(String filename) {
-        log.trace ("IMPORTING OBJECTS TABLE OF MAPP FILE '"+filename+"'");
-        String database = database_before + filename + database_after;
-		String[] headers = {"ObjKey", "ID", "SystemCode", "Type", "CenterX",
-                "CenterY",
-                "SecondX", "SecondY", "Width", "Height", "Rotation",
-                "Color", "Label", "Head",
-                "Remarks", "Image", "Links", "Notes"};
-                String[][] result = null;
+    
+    //  These constants define columns in the info table.
+	static final int icolTitle = 0;
+	static final int icolMAPP = 1;
+	static final int icolGeneDB = 2;
+	static final int icolVersion = 3;
+	static final int icolAuthor = 4;
+	static final int icolMaint = 5;
+	static final int icolEmail = 6;
+	static final int icolCopyright = 7;
+	static final int icolModify = 8;
+	static final int icolRemarks = 9;
+	static final int icolBoardWidth = 10;
+	static final int icolBoardHeight = 11;
+	static final int icolWindowWidth = 12;
+	static final int icolWindowHeight = 13;
+	static final int icolNotes = 14;
 
-                try {
-                    // Load Sun's jdbc-odbc driver
-                    Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-                    
-                    log.debug ("Connection string: " + database);
-					
-					// Create the connection to the database
-                    Connection con = DriverManager.getConnection(database, "", "");
-                    
-                    // Create a new sql statement
-                    Statement s = con.createStatement();
-                    // Count the rows of the column "Type" (has an instance for every object)
-                    ResultSet r = s.executeQuery(
-                            "SELECT COUNT(Type) AS rowcount FROM Objects");
-                    r.next();
-                    int nrRows = r.getInt("rowcount")+1;
-                    // now create a nrRows*18 string array
-                    result = new String[nrRows + 1][headers.length];
-                    result[0] = headers;
-                    // and fill it
-                    for (int j = 0; j < headers.length; j++) {
-                        r = s.executeQuery("SELECT " + headers[j] + " FROM Objects");
-                        for (int i = 1; i < nrRows; i++) {
-                            r.next();
-                            result[i][j] = r.getString(1);
-                            //GUI.GUIframe.textOut.append("added " + result[i][j] + " to " +
-                            //        headers[j] + " at row " + i+"\n");
-                        }
-                    }
-                    r.close();
-                    con.close();
-                } catch (SQLException ex) {
-                    log.error ("-> SQLException: "+ex.getMessage());
-                    log.error ("-> Could not import data from file '"+filename+"' due to an SQL exception \n"+ex.getMessage()+"\n");
-					ex.printStackTrace();
-                } catch (ClassNotFoundException cl_ex) {
-                    log.error ("-> Could not find the Sun JbdcObdcDriver\n");
-                }
-                return result;
+	// these constants define the columns in the Objects table.
+	static final int colObjKey = 0;
+	static final int colID = 1;
+	static final int colSystemCode = 2;
+	static final int colType = 3;
+	static final int colCenterX = 4;
+	static final int colCenterY = 5;
+	static final int colSecondX = 6;
+	static final int colSecondY = 7;
+	static final int colWidth = 8;
+	static final int colHeight = 9;
+	static final int colRotation = 10;
+	static final int colColor = 11;
+	static final int colLabel = 12;
+	static final int colHead = 13;
+	static final int colRemarks = 14;
+	static final int colImage = 15;
+	static final int colLinks = 16;
+	static final int colNotes = 17;
+
+    public final static String[] systemCodes = 
+	{ 
+	"D", "F", "G", "I", "L", "M",
+	"Q", "R", "S", "T", "U",
+	"W", "Z", "X", "En", "Em", 
+	"H", "Om", "Pd", "Pf", "O", ""
+	};
+
+    public final static String[] dataSources = 
+	{
+	"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
+	"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
+	"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
+	"HUGO", "OMIM", "PDB", "Pfam", "Other", ""
+	};
+
+    public static Logger log;
+    
+    static void readFromMapp (String filename, GmmlData data)
+    	throws SQLException, ClassNotFoundException, ConverterException
+    {
+    	String database = database_before + filename + database_after;
+
+    	// Load Sun's jdbc-odbc driver
+        Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+        
+        log.debug ("Connection string: " + database);
+		
+		// Create the connection to the database
+        Connection con = DriverManager.getConnection(database, "", "");
+        
+        Statement s = con.createStatement();
+        
+        log.trace ("READING INFO TABLE");
+        // first do the INFO table, only one row.
+	    {
+	        ResultSet r = s.executeQuery(sqlInfoSelect);
+	        r.next();
+	        int cCol = r.getMetaData().getColumnCount();
+	        String[] row = new String[cCol];
+	        for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
+	        
+	        copyMappInfo(row, data);
+    	}    
+
+        log.trace ("READING OBJECTS TABLE");
+        // now do the OBJECTS table, multiple rows
+        {
+	        ResultSet r = s.executeQuery(sqlObjectsSelect);
+	        int cCol = r.getMetaData().getColumnCount();
+	        String[] row = new String[cCol];
+	        while (r.next())
+	        {
+	        	for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
+	        	copyMappObjects(row, data);
+	        }
+        }
+    
     }
     
     private static void copyFile(java.io.File source, java.io.File destination) throws IOException 
@@ -92,6 +161,7 @@ public class MappFormat
     public static void exportMapp (String filename, 
     		String[][] mappInfo, List<String[]> mappObjects)
     {
+    	// TODO: no hard-coded paths!
     	File template = new File("E:\\prg\\gmml\\trunk\\gmml2mapp\\MAPPTmpl.gtp");
     	
         String database = database_before + filename + ";DriverID=22";
@@ -106,23 +176,16 @@ public class MappFormat
             Connection con = DriverManager.getConnection(database, "", "");
             
             // Create a new sql statement
-            PreparedStatement sInfo = con.prepareStatement(
-            		"INSERT INTO INFO (Title, MAPP, GeneDB, GeneDBVersion, Version, Author, " +
-            		"Maint, Email, Copyright, Modify, Remarks, BoardWidth, BoardHeight, " +
-            		"WindowWidth, WindowHeight, Notes) " +
-            		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-            	);
-            PreparedStatement sObjects = con.prepareStatement(
-            		"INSERT INTO OBJECTS (ObjKey, ID, SystemCode, Type, CenterX, " + 
-            		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
-            		"Color, Label, Head, Remarks, Image, Links, Notes) " +
-            		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    		PreparedStatement sInfo = con.prepareStatement(sqlInfoInsert);
+            PreparedStatement sObjects = con.prepareStatement(sqlObjectsInsert);
             
             
             int k = 1;
             for (String[] row : mappObjects)
             {
     			sObjects.setInt (1, k);
+    			//for (int j = 1; j < row.length; ++j)
     			for (int j = 1; j < row.length; ++j)
     			{
     				
@@ -133,8 +196,16 @@ public class MappFormat
     					sObjects.setObject(j + 1, row[j], Types.LONGVARCHAR);
     					// bug workaround, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4401822
     				}
+    				else if (j == 1)
+    				{
+    					// bugfix for Hs_Contributed_20060824/cellular_process-GenMAPP/Hs_Signaling_of_Hepatocyte_Growth_Factor_Receptor_Biocarta.mapp. 
+    					// No idea why this is necessary
+    					if (row[j] == null) row[j] = "";
+    					sObjects.setString(j + 1, row[j]);
+    				}
     				else
     				{
+    					
     					sObjects.setString(j + 1, row[j]);
     				}
     			}
@@ -164,73 +235,6 @@ public class MappFormat
         }
     }
     
-    // This method returns the INFO data of the given .MAPP file as a 1x16 string array
-    public static String[][] importMAPPInfo(String filename) {
-        log.trace ("IMPORTING INFO TABLE OF MAPP FILE '"+filename+"'");
-        String database = database_before + filename + database_after;
-        String[] headers = {"Title", "MAPP", "GeneDB", "GeneDBVersion", "Version", "Author",
-                "Maint", "Email", "Copyright",
-                "Modify", "Remarks", "BoardWidth", "BoardHeight",
-                "WindowWidth", "WindowHeight", "Notes"};
-        String[][] result = null;
-        
-        try {
-                    // Load Sun's jdbc-odbc driver
-                    Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-                    
-                    // Create the connection to the database
-                    Connection con = DriverManager.getConnection(database, "", "");
-                    
-                    // Create a new sql statement
-                    Statement s = con.createStatement();
-                    
-                    // now create a nrRows*18 string array
-                    result = new String[2][headers.length];
-                    result[0] = headers;
-                    ResultSet r = null;
-                    // and fill it
-                    for (int j = 0; j < headers.length; j++) {
-                        r = s.executeQuery("SELECT " + headers[j] + " FROM Info");
-                        r.next();
-                        result[1][j] = r.getString(1);
-                    }
-                    r.close();
-                    con.close();
-                } catch (ClassNotFoundException cl_ex) {
-                    log.error ("-> Could not find the Sun JbdcObdcDriver\n");
-                } catch (SQLException ex) {
-                    log.error ("-> SQLException: "+ex.getMessage());
-                    log.error ("-> Could not import data from file '"+filename+"' due to an SQL exception:\n"+ex.getMessage()+"\n");
-                }
-                return result;
-                
-    }
-    
-    public static Logger log;
-
-	// These constants define columns in the info table.
-	static final int icolTitle = 0;
-	static final int icolMAPP = 1;
-	static final int icolGeneDB = 2;
-	static final int icolGeneDBVersion = 3;
-	static final int icolVersion = 4;
-	static final int icolAuthor = 5;
-	static final int icolMaint = 6;
-	static final int icolEmail = 7;
-	static final int icolCopyright = 8;
-	static final int icolModify = 9;
-	static final int icolRemarks = 10;
-	static final int icolBoardWidth = 11;
-	static final int icolBoardHeight = 12;
-	static final int icolWindowWidth = 13;
-	static final int icolWindowHeight = 14;
-	static final int icolNotes = 15;
-
-    String[] headers = {"Title", "MAPP", "GeneDB", "GeneDBVersion", "Version", "Author",
-            "Maint", "Email", "Copyright",
-            "Modify", "Remarks", "BoardWidth", "BoardHeight",
-            "WindowWidth", "WindowHeight", "Notes"};
-
 	public static String[][] uncopyMappInfo (GmmlData data)
 	{
 		String[][] mappInfo = new String[2][16];
@@ -263,18 +267,18 @@ public class MappFormat
 	
 	// This method copies the Info table of the genmapp mapp to a new gmml
 	// pathway
-	public static void copyMappInfo( String[][] mappInfo, GmmlData data)
+	public static void copyMappInfo(String[] row, GmmlData data)
 	{
 
 		/* Data is lost when converting from GenMAPP to GMML:
 		*
 		* GenMAPP: 
-		*		"Title", "MAPP", "Version", "Author","GeneDBVersion",
+		*		"Title", "MAPP", "Version", "Author",
 		* 		"Maint", "Email", "Copyright","Modify", 
 		*		"Remarks", "BoardWidth", "BoardHeight","WindowWidth",
 		*		"WindowHeight", "GeneDB", "Notes"
 		* GMML:    
-		*		"Name", NONE, Version, "Author", NONE, 
+		*		"Name", NONE, Version, "Author",  
 		*		"MaintainedBy", "Email", "Availability", "LastModified",
 		*		"Comment", "BoardWidth", "BoardHeight", NONE, 
 		*		NONE, NONE, "Notes"
@@ -282,62 +286,29 @@ public class MappFormat
 		*/
 	
 		log.trace ("CONVERTING INFO TABLE TO GMML");
-	
-		/*
-		*
-    	* from: fileInOut.MappFile.importMAPPInfo(String filename)
-		* below mappInfo array is indexed in the following order -- NOT
-		* like in the SQL order from the Info table.  *sigh*
-		*
-		* 0 "Title", 1 "MAPP", 2 "Version", 3 "Author", 4 "GeneDBVersion",
-		* 5 "Maint", 6 "Email", 7 "Copyright", 8 "Modify", 9 "Remarks",
-		* 10 "BoardWidth", 11 "BoardHeight", 12 "WindowWidth",
-		* 13 "WindowHeight", 14 "GeneDB", 15 "Notes"
-		*
-		*/
-
+		
 		GmmlDataObject o = new GmmlDataObject();
 		o.setObjectType(ObjectType.MAPPINFO);
-		o.setMapInfoName(mappInfo[1][icolTitle]);
+		o.setMapInfoName(row[icolTitle]);
 		o.setMapInfoDataSource("GenMAPP 2.0");
-		o.setVersion(mappInfo[1][icolVersion]);
-		o.setAuthor(mappInfo[1][icolAuthor]);
-		o.setMaintainedBy(mappInfo[1][icolMaint]);
-		o.setEmail(mappInfo[1][icolEmail]);
-		o.setAvailability(mappInfo[1][icolCopyright]);
-		o.setLastModified(mappInfo[1][icolModify]);
+		o.setVersion(row[icolVersion]);
+		o.setAuthor(row[icolAuthor]);
+		o.setMaintainedBy(row[icolMaint]);
+		o.setEmail(row[icolEmail]);
+		o.setAvailability(row[icolCopyright]);
+		o.setLastModified(row[icolModify]);
 		
-		o.setNotes(mappInfo[1][icolNotes]);
-		o.setComment(mappInfo[1][icolRemarks]);		
+		o.setNotes(row[icolNotes]);
+		o.setComment(row[icolRemarks]);		
 
-		o.setBoardWidth(Double.parseDouble(mappInfo[1][icolBoardWidth]) / GmmlData.GMMLZOOM);
-		o.setBoardHeight(Double.parseDouble(mappInfo[1][icolBoardHeight]) / GmmlData.GMMLZOOM);
-		o.setWindowWidth(Double.parseDouble(mappInfo[1][icolWindowWidth]) / GmmlData.GMMLZOOM);
-		o.setWindowHeight(Double.parseDouble(mappInfo[1][icolWindowHeight]) / GmmlData.GMMLZOOM);
+		o.setBoardWidth(Double.parseDouble(row[icolBoardWidth]) / GmmlData.GMMLZOOM);
+		o.setBoardHeight(Double.parseDouble(row[icolBoardHeight]) / GmmlData.GMMLZOOM);
+		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]) / GmmlData.GMMLZOOM);
+		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.GMMLZOOM);
 		
 		data.dataObjects.add(o);
 	}
-    
-	// these constants define the columns in the Objects table.
-	static final int colObjKey = 0;
-	static final int colID = 1;
-	static final int colSystemCode = 2;
-	static final int colType = 3;
-	static final int colCenterX = 4;
-	static final int colCenterY = 5;
-	static final int colSecondX = 6;
-	static final int colSecondY = 7;
-	static final int colWidth = 8;
-	static final int colHeight = 9;
-	static final int colRotation = 10;
-	static final int colColor = 11;
-	static final int colLabel = 12;
-	static final int colHead = 13;
-	static final int colRemarks = 14;
-	static final int colImage = 15;
-	static final int colLinks = 16;
-	static final int colNotes = 17;
-    
+       
 	private static String mapBetween (String[] from, String[] to, String value) throws ConverterException
     {
     	for(int i=0; i < from.length; i++) 
@@ -448,9 +419,8 @@ public class MappFormat
 
 	// This list adds the elements from the OBJECTS table to the new gmml
 	// pathway
-    public static void copyMappObjects(String[][] mappObjects, GmmlData data) throws ConverterException
+    public static void copyMappObjects(String[] row, GmmlData data) throws ConverterException
     {
-        log.trace ("CONVERTING OBJECTS TABLE TO GMML");
 
 		// Create the GenMAPP --> GMML mappings list for use in the switch
 		// statement
@@ -462,78 +432,70 @@ public class MappFormat
 				"LigandRd", "ReceptorRd", "CellA", "Arc", "Ribosome",
 				"OrganA", "OrganB", "OrganC", "ProteinB", "Poly", "Vesicle"
 		});
-
-		/*index 0 are heades*//*last row is always null*/
-
-		for(int i=1; i<mappObjects.length-1; i++)
-		{
-			GmmlDataObject o = null;
-			
-			int index = typeslist.indexOf(mappObjects[i][colType]);
-			
-			switch(index) {
-			
-					case 0: /*Arrow*/							
-					case 1: /*DottedArrow*/							
-					case 2: /*DottedLine"*/							
-					case 3: /*Line*/
-					case 11: /*TBar*/
-					case 12: /*Receptor*/           
-					case 13: /*LigandSq*/           
-					case 14: /*ReceptorSq*/         
-					case 15: /*LigandRd*/
-					case 16: /*ReceptorRd*/
-							o = mapLineType(mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;							
-					case 4: /*Brace*/
-							o = mapBraceType(mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;							
-					case 5: /*Gene*/
-							o = mapGeneProductType(mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;																					
-					case 6: /*InfoBox*/
-							o = mapInfoBoxType (mappObjects[i]);
-							break;
-					case 7: /*Label*/
-							o = mapLabelType(mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;
-					case 8: /*Legend*/
-							o = mapLegendType(mappObjects[i]);
-							break;							
-					case 9: /*Oval*/						
-					case 10: /*Rectangle*/
-					case 18: /*Arc*/
-							o = mapShapeType( mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;							
-					case 17: /*CellA*/
-					case 19: /*Ribosome*/							
-					case 20: /*OrganA*/							
-					case 21: /*OrganB*/							
-					case 22: /*OrganC*/
-							o = mapFixedShapeType(mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;							
-					case 23: /*ProteinB*/
-					case 24: /*Poly*/
-					case 25: /*Vesicle*/
-							o = mapComplexShapeType(mappObjects[i]);
-							mapNotesAndComments (o, mappObjects[i]);
-							break;
-					default: 
-							throw new ConverterException (
-								"-> Type '" 
-								+ mappObjects[i][colType]
-								+ "' is not recognised as a GenMAPP type "
-								+ "and is therefore not processed.\n");							
-			}
-			
-			data.dataObjects.add(o);
-		}		
+		GmmlDataObject o = null;		
+		int index = typeslist.indexOf(row[colType]);		
+		switch(index) {
+		
+				case 0: /*Arrow*/							
+				case 1: /*DottedArrow*/							
+				case 2: /*DottedLine"*/							
+				case 3: /*Line*/
+				case 11: /*TBar*/
+				case 12: /*Receptor*/           
+				case 13: /*LigandSq*/           
+				case 14: /*ReceptorSq*/         
+				case 15: /*LigandRd*/
+				case 16: /*ReceptorRd*/
+						o = mapLineType(row);
+						mapNotesAndComments (o, row);
+						break;							
+				case 4: /*Brace*/
+						o = mapBraceType(row);
+						mapNotesAndComments (o, row);
+						break;							
+				case 5: /*Gene*/
+						o = mapGeneProductType(row);
+						mapNotesAndComments (o, row);
+						break;																					
+				case 6: /*InfoBox*/
+						o = mapInfoBoxType (row);
+						break;
+				case 7: /*Label*/
+						o = mapLabelType(row);
+						mapNotesAndComments (o, row);
+						break;
+				case 8: /*Legend*/
+						o = mapLegendType(row);
+						break;							
+				case 9: /*Oval*/						
+				case 10: /*Rectangle*/
+				case 18: /*Arc*/
+						o = mapShapeType( row);
+						mapNotesAndComments (o, row);
+						break;							
+				case 17: /*CellA*/
+				case 19: /*Ribosome*/							
+				case 20: /*OrganA*/							
+				case 21: /*OrganB*/							
+				case 22: /*OrganC*/
+						o = mapFixedShapeType(row);
+						mapNotesAndComments (o, row);
+						break;							
+				case 23: /*ProteinB*/
+				case 24: /*Poly*/
+				case 25: /*Vesicle*/
+						o = mapComplexShapeType(row);
+						mapNotesAndComments (o, row);
+						break;
+				default: 
+						throw new ConverterException (
+							"-> Type '" 
+							+ row[colType]
+							+ "' is not recognised as a GenMAPP type "
+							+ "and is therefore not processed.\n");							
+		}
+		
+		data.dataObjects.add(o);
     }
 
     
@@ -571,8 +533,7 @@ public class MappFormat
 
 	public static GmmlDataObject mapLineType(String [] mappObject) throws ConverterException
 	{
-		// TODO: this shouldn't be named "GmmlLineTypes"
-		final List gmmlLineTypes = Arrays.asList(new String[] {
+		final List mappLineTypes = Arrays.asList(new String[] {
 				"DottedLine", "DottedArrow", "Line", "Arrow", "TBar", "Receptor", "LigandSq", 
 				"ReceptorSq", "LigandRd", "ReceptorRd"});
 		
@@ -581,7 +542,7 @@ public class MappFormat
     	
 		String type = mappObject[colType];
     	int lineStyle = LineStyle.SOLID;		
-    	int lineType = gmmlLineTypes.indexOf(type);
+    	int lineType = mappLineTypes.indexOf(type);
     	if(type.equals("DottedLine") || type.equals("DottedArrow"))
     	{
 			lineStyle = LineStyle.DASHED;
@@ -685,7 +646,7 @@ public class MappFormat
 		mappObject[colLinks] = o.getXref();    	
 		unmapShape(o, mappObject);
     }
-        
+    
     public static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException
 	{
     	GmmlDataObject o = new GmmlDataObject();
@@ -773,6 +734,7 @@ public class MappFormat
         o.setUnderline((style & styleUnderline) > 0);
         o.setStrikethru((style & styleStrikethru) > 0);
         
+        o.setXref(mappObject[colLinks]);
         return o;
     }
 
@@ -799,6 +761,7 @@ public class MappFormat
     	stylechars[0] = (char)style;
     	
     	mappObject[colSystemCode] = new String (stylechars);    	
+		mappObject[colLinks] = o.getXref();    	
     }
     
 	public static GmmlDataObject mapShapeType(String[] mappObject)
@@ -901,22 +864,6 @@ public class MappFormat
     	mappObject[colWidth] = "" + o.getWidth();
     }
     
-    public final static String[] systemCodes = 
-	{ 
-		"D", "F", "G", "I", "L", "M",
-		"Q", "R", "S", "T", "U",
-		"W", "Z", "X", "En", "Em", 
-		"H", "Om", "Pd", "Pf", "O", ""
-	};
-
-	public final static String[] dataSources = 
-		{
-		"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
-		"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
-		"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
-		"HUGO", "OMIM", "PDB", "Pfam", "Other", ""
-		};
-	
 	/**
 	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
 	 */

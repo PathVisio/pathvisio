@@ -1,14 +1,10 @@
 package R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
-import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import R.RData.RObject;
 

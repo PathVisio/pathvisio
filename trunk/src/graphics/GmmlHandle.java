@@ -236,6 +236,9 @@ class GmmlHandle extends GmmlDrawingObject
 		return 	"Handle with parent: " + parent.toString() +
 		" and direction " + direction; 
 	}
+	
+	public void adjustToZoom(double factor) { }
+	
 } // end of class
 
 

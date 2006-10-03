@@ -261,7 +261,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			}
 		}
 		
-//		legend.adjustToZoom(factor);
 		redraw();
 	}
 

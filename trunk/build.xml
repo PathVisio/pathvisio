@@ -5,6 +5,9 @@
 	<property name="build.dir" value="build"/>
 	<property name="apidoc.dir" value="apidoc"/>
 	<property name="dist.dir" value="dist"/>
+	<property name="webstart.dir" value="webstart"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="exec.perl" value="perl"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="exec.inno.setup" value="iscc"/>
 	
@@ -57,12 +60,25 @@
 	
 	<target name="sign-jar" depends="compile,jar" description="Signs jar files">
 		<signjar jar="gmml-visio.jar"
-			alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore"/>
-		<signjar alias="gmmlvisio" storepass="gmmlvisio" keystore="lib/visioKeyStore">
-			<fileset dir="lib" includes="**/*.jar"/>
+			alias="gmmlvisio" storepass="gmmlvisio" keystore="${lib.dir}/visioKeyStore"/>
+		<signjar alias="gmmlvisio" storepass="gmmlvisio" keystore="${lib.dir}/visioKeyStore">
+			<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		</signjar>
 	</target>
-		
+	
+	<target name="webstart" depends="compile,jar,sign-jar" description="Upload webstart files">
+		<!-- Copy files needed for webstart !-->
+		<copy toDir="${webstart.dir}/www">
+			<fileset dir="${lib.dir}" includes="*.jar"/>
+		</copy>
+		<copy file="gmml-visio.jar" toDir="${webstart.dir}/www"/>
+		<copy file="${webstart.dir}/gmmlvisio.jnlp" toDir="${webstart.dir}/www"/>
+		<!-- Run perl script to upload to server !-->
+		<exec executable="${exec.perl}" dir="${webstart.dir}">
+			<arg line="autoftp.pl"/>
+		</exec>	
+	</target>
+	
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<javadoc destdir="${apidoc.dir}">
 			<classpath refid="project.class.path"/>

@@ -1,0 +1,13 @@
+
+
+remotehost=blog.bigcat.unimaas.nl
+login=gmmlvisio
+pass=*******
+
+#note: must have trailing slash
+local_basedir=./www/
+
+#note: must have trailing slash
+remote_basedir=/home/gmmlvisio/public_html/
+
+timestampfile=autoftp_timestamp.txt

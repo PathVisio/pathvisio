@@ -307,4 +307,5 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 		draw(e, e.gc);
 	}
 	
+	public void adjustToZoom(double factor) { fitToSelection(); }
 }

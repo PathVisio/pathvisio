@@ -26,7 +26,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * specified in the drawing it is part of
 	 * @param factor - the factor to scale the objects coordinates and measures with
 	 */
-	void adjustToZoom(double factor) {}
+	abstract void adjustToZoom(double factor);
 	
 	protected abstract void draw(PaintEvent e);
 	

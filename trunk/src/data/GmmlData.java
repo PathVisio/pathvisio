@@ -94,11 +94,8 @@ public class GmmlData
 	 * @param e		the JDOM {@link Element} to map
 	 */
 	private void mapElement(Element e) {
-		// Check if a GmmlGraphics exists for this element
-		// Assumes that classname = 'Gmml' + Elementname
-		GmmlDataObject o = new GmmlDataObject();
-		o.mapComplete(e);
-		dataObjects.add(o);
+		GmmlDataObject o = GmmlDataObject.mapComplete(e);
+		if(o != null) dataObjects.add(o);
 	}
 
 	/**

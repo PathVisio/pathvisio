@@ -12,65 +12,69 @@ import util.ColorConverter;
 
 
 public class GmmlDataObject extends GmmlGraphicsData 
-{	
-	public void mapComplete(Element e)
+{		
+	public static GmmlDataObject mapComplete(Element e)
 	{
+		GmmlDataObject o = new GmmlDataObject();
 		String tag = e.getName();
-		objectType = ObjectType.getTagMapping(tag);
-		switch (objectType)
+		o.objectType = ObjectType.getTagMapping(tag);
+		switch (o.objectType)
 		{
 		
 			case ObjectType.BRACE: // brace
-				mapNotesAndComment(e);
-				mapColor(e);
-				mapBraceData(e);
+				o.mapNotesAndComment(e);
+				o.mapColor(e);
+				o.mapBraceData(e);
 				break;
 			case ObjectType.GENEPRODUCT:
-				mapShapeData(e);
-				mapColor(e);
-				mapNotesAndComment(e);
-				mapGeneProductData(e);
+				o.mapShapeData(e);
+				o.mapColor(e);
+				o.mapNotesAndComment(e);
+				o.mapGeneProductData(e);
 				break;
 			case ObjectType.LABEL:
-				mapShapeData(e);
-				mapColor(e);
-				mapLabelData(e);
-				mapNotesAndComment(e);
+				o.mapShapeData(e);
+				o.mapColor(e);
+				o.mapLabelData(e);
+				o.mapNotesAndComment(e);
 				break;
 			case ObjectType.LINE:
-				mapLineData(e);
-				mapColor(e);
-				mapNotesAndComment(e);
+				o.mapLineData(e);
+				o.mapColor(e);
+				o.mapNotesAndComment(e);
 				break;
 			case ObjectType.MAPPINFO:
-				mapMappInfoData(e);
+				o.mapMappInfoData(e);
 				break;
 			case ObjectType.SHAPE:
-				mapShapeData(e);
-				mapColor(e);
-				mapNotesAndComment(e);
-				mapShapeType(e);
-				mapRotation(e);
+				o.mapShapeData(e);
+				o.mapColor(e);
+				o.mapNotesAndComment(e);
+				o.mapShapeType(e);
+				o.mapRotation(e);
 				break;
 			case ObjectType.FIXEDSHAPE:
-				mapCenter(e);
-				mapNotesAndComment(e);
-				mapShapeType(e);
+				o.mapCenter(e);
+				o.mapNotesAndComment(e);
+				o.mapShapeType(e);
 				break;
 			case ObjectType.COMPLEXSHAPE:
-				mapCenter(e);
-				mapWidth(e);
-				mapNotesAndComment(e);
-				mapShapeType(e);
-				mapRotation(e);
+				o.mapCenter(e);
+				o.mapWidth(e);
+				o.mapNotesAndComment(e);
+				o.mapShapeType(e);
+				o.mapRotation(e);
 				break;
 			case ObjectType.LEGEND:
-				mapSimpleCenter(e);
+				o.mapSimpleCenter(e);
 				break;
 			case ObjectType.INFOBOX:
-				mapSimpleCenter (e);
+				o.mapSimpleCenter (e);
 				break;
+			default:
+				o = null; //If objecttype is invalid, return null
 		}
+		return o;
 	}
 	
 	public static final List<String> gmmlLineTypes = Arrays.asList(new String[] {

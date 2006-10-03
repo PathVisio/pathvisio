@@ -1,5 +1,7 @@
 package graphics;
 
+import gmmlVision.GmmlVision;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -484,7 +486,8 @@ public abstract class GmmlGraphicsData
 		if (boardWidth != v)
 		{
 			boardWidth = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			GmmlVision.getGmmlData().
+				fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 
@@ -495,7 +498,8 @@ public abstract class GmmlGraphicsData
 		if (boardHeight != v)
 		{
 			boardHeight = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			GmmlVision.getGmmlData().
+			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 
@@ -506,7 +510,8 @@ public abstract class GmmlGraphicsData
 		if (windowWidth != v)
 		{
 			windowWidth = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			GmmlVision.getGmmlData().
+			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 
@@ -517,7 +522,8 @@ public abstract class GmmlGraphicsData
 		if (windowHeight != v)
 		{
 			windowHeight = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			GmmlVision.getGmmlData().
+			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 	

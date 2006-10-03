@@ -988,7 +988,7 @@ public abstract class GmmlGex {
 				file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
 		con.setReadOnly(true);
 		
-		if(!clean) Utils.checkDbVersion(con, COMPAT_VERSION);
+//		if(!clean) Utils.checkDbVersion(con, COMPAT_VERSION);
 		
 		setSamples();
 		loadColorSets();

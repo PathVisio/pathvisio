@@ -46,8 +46,7 @@ public class GmmlAboutBox extends Dialog
 		lbl.setLayoutData (gd);
 		
 		lbl = new Label (shell, SWT.NULL);
-		Image img = new Image (shell.getDisplay(), "images/logo.jpg");
-		lbl.setImage (img);
+		lbl.setImage (GmmlVision.getImageRegistry().get("about.logo"));
 
 		lbl = new Label (shell, SWT.NULL);
 		lbl.setText ("R.M.H. Besseling\nS.P.M.Crijns\nI.Kaashoek\nM.M.Palm\n" +
@@ -75,7 +74,5 @@ public class GmmlAboutBox extends Dialog
 			if (!display.readAndDispatch())
 				display.sleep();			
 		}
-		
-		img.dispose();
 	}
 }

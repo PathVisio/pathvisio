@@ -69,6 +69,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 	
 	String prevText = "";
 	public void adjustWidthToText() {
+		System.out.println("adjusting");
 		if(gdata.getLabelText().equals(prevText)) return;
 		prevText = getLabelText();
 		
@@ -132,9 +133,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 	
 	protected void disposeTextControl()
 	{
-//		markDirty();
 		gdata.setLabelText(t.getText());
-//		markDirty();
 		Composite c = t.getParent();
 		c.setVisible(false);
 		c.dispose();
@@ -144,12 +143,11 @@ public class GmmlLabel extends GmmlGraphicsShape
 	
 	protected void adjustToZoom(double factor)
 	{
-		gdata.setLeft(gdata.getLeft() * factor);
-		gdata.setTop(gdata.getTop() * factor);
-		gdata.setWidth(gdata.getWidth() * factor);
-		gdata.setHeight(gdata.getHeight() * factor);
+		listen = false;
+		super.adjustToZoom(factor);
 		gdata.setFontSize(gdata.getFontSize() * factor);
-		setHandleLocation();
+		listen = true;
+		
 	}
 
 	private int getFontStyle() {

@@ -27,16 +27,7 @@ public class GmmlShape extends GmmlGraphicsShape
 		drawingOrder = GmmlDrawing.DRAW_ORDER_SHAPE;
 		setHandleLocation();
 	}
-	
-	protected void adjustToZoom(double factor)
-	{
-		gdata.setLeft(gdata.getLeft() * factor);
-		gdata.setTop(gdata.getTop() * factor);
-		gdata.setWidth(gdata.getWidth() * factor);
-		gdata.setHeight(gdata.getHeight() * factor);
-		setHandleLocation();
-	}
-	
+		
 	protected void draw(PaintEvent e, GC buffer)
 	{	
 		Color c = null;

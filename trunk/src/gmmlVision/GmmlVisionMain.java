@@ -97,6 +97,8 @@ public class GmmlVisionMain {
 				ImageDescriptor.createFromURL(cl.getResource("icons/close.gif")));
 		imageRegistry.put("shell.icon", 
 				ImageDescriptor.createFromURL(cl.getResource("images/bigcateye.gif")));
+		imageRegistry.put("about.logo",
+				ImageDescriptor.createFromURL(cl.getResource("images/logo.jpg")));
 		GmmlVision.setImageRegistry(imageRegistry);
 	}
 	

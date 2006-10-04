@@ -31,17 +31,6 @@ public class GmmlBrace extends GmmlGraphicsShape
 	}
 	
 	/*
-	 *  (non-Javadoc)
-	 * @see GmmlGraphics#adjustToZoom()
-	 */
-	protected void adjustToZoom(double factor)
-	{
-		gdata.setLeft(gdata.getLeft() * factor);
-		gdata.setTop(gdata.getTop() * factor);
-		gdata.setWidth(gdata.getWidth() * factor);
-		gdata.setHeight(gdata.getHeight() * factor);	}
-
-	/*
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */

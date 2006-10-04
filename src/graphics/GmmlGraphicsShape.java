@@ -70,27 +70,29 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	
 	public void moveBy(double dx, double dy)
 	{
-//		markDirty();
 		gdata.setLeft(gdata.getLeft() + dx); 
-		gdata.setTop(gdata.getTop() + dy);
-//		markDirty();
-//		setHandleLocation();		
+		gdata.setTop(gdata.getTop() + dy);		
 	}
-				
+	
+	public void setShape(double left, double top, double width, double height) {
+		gdata.setWidth(width);
+		gdata.setHeight(height);
+		gdata.setLeft(left);
+		gdata.setTop(top);
+	}
+	
 	public void setScaleRectangle(Rectangle2D.Double r) {
-//		markDirty();
-		
-		//Scale object
-		gdata.setWidth (r.width);
-		gdata.setHeight (r.height);
-		//Translate object
-		gdata.setLeft(r.x);
-		gdata.setTop(r.y);
-		
-//		setHandleLocation();
-//		markDirty();
+		setShape(r.width, r.height, r.x, r.y);
 	}
 
+	protected void adjustToZoom(double factor)
+	{
+		setShape(gdata.getLeft() * factor, 
+				gdata.getTop() * factor, 
+				gdata.getWidth() * factor, 
+				gdata.getHeight() * factor);
+	}
+	
 	protected Rectangle2D.Double getScaleRectangle() {
 		return new Rectangle2D.Double(gdata.getLeft(), gdata.getTop(), gdata.getWidth(), gdata.getHeight());
 	}
@@ -231,8 +233,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 			Point cur = relativeToCenter(new Point(h.centerx, h.centery));
 			
 			setRotation(gdata.getRotation() - LinAlg.angle(def, cur));
-		
-//			setHandleLocation(h);
+			
 			return;
 		}
 					
@@ -272,9 +273,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		}
 		if(gdata.getHeight() < 0) {
 			negativeHeight(h);
-		}	
-				
-//		setHandleLocation(h);
+		}
 	}
 	
 	/**

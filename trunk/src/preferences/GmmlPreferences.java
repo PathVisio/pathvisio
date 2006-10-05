@@ -1,10 +1,10 @@
 package preferences;
 
-import java.io.File;
-
 import gmmlVision.GmmlVision;
 import graphics.GmmlGpColor;
 import graphics.GmmlGraphics;
+
+import java.io.File;
 
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;

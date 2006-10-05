@@ -9,7 +9,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.rosuda.JRI.Rengine;

@@ -583,7 +583,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public void run () {
 			if(GmmlGex.isConnected())
 			{
-				colorSetWindow.run();
+				colorSetWindow.open();
 				showColorSetActionsCI(true);
 				legend.resetContents();
 				if(GmmlVision.isDrawingOpen()) GmmlVision.getDrawing().redraw();
@@ -1188,6 +1188,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 	public void updateColorSetCombo() {
 		if(colorSetCombo == null || colorSetCombo.isDisposed()) return;
 		setColorSetComboItems();
+		colorSetCombo.select(GmmlGex.getColorSetIndex() + 1); 
 	}
 	
 	private void setColorSetComboItems() {

@@ -31,8 +31,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
 import util.SwtUtils;
-import data.*;
+import data.GmmlDataObject;
+import data.GmmlEvent;
 
 public class GmmlLabel extends GmmlGraphicsShape
 {

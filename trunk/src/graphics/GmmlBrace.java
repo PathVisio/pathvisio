@@ -7,7 +7,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
 
 import util.SwtUtils;
-import data.*;
+import data.GmmlDataObject;
 
 /**
  * This class implements a brace and provides 

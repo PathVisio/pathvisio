@@ -13,7 +13,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
 import util.SwtUtils;
-import data.*;
+import data.GmmlDataObject;
+import data.GmmlEvent;
+import data.LineStyle;
+import data.LineType;
  
 /**
  * This class implements and handles a line

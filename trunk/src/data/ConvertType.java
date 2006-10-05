@@ -1,6 +1,6 @@
 package data;
 
-import java.math.*;
+import java.math.BigDecimal;
 
 import org.eclipse.swt.graphics.RGB;
 

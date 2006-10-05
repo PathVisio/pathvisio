@@ -1,6 +1,6 @@
 package data;
 
-import graphics.*;
+import graphics.GmmlGraphicsData;
 
 public class GmmlEvent 
 {

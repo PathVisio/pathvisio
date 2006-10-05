@@ -44,6 +44,7 @@ public class GmmlColorCriterion extends GmmlColorSetObject {
 	
 	public GmmlColorCriterion(GmmlColorSet parent, String name) {
 		super(parent, name);
+		useSample = USE_SAMPLE_ALL;
 	}
 	
 	public GmmlColorCriterion(GmmlColorSet parent, String name, String criterion)

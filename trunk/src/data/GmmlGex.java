@@ -33,7 +33,6 @@ import colorSet.GmmlColorSetObject;
 import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
-import util.Utils;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -163,7 +162,6 @@ public abstract class GmmlGex {
 	{
 		try
 		{
-//			setGexReadOnly(false);
 			con.setReadOnly(false);
 			Statement s = con.createStatement();
 			s.execute("DELETE FROM colorSets");
@@ -200,9 +198,6 @@ public abstract class GmmlGex {
 		catch (Exception e) {
 			GmmlVision.log.error("while saving colorset information to expression database: " + gexFile, e);
 		}
-		
-//		setGexReadOnly(true);
-		
 	}
 	
 	/**
@@ -239,6 +234,7 @@ public abstract class GmmlGex {
 					}
 				}
 			}
+			setColorSetIndex(colorSets.size() > 0 ? 0 : -1);
 		}
 		catch (Exception e)
 		{
@@ -433,7 +429,7 @@ public abstract class GmmlGex {
 		 */
 		public String toString()
 		{
-			return "Sample '"+ getName() + "' with id " + idSample + " and type " + getDataType();
+			return Integer.toString(idSample);
 		}
 	}
 	

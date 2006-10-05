@@ -15,7 +15,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import util.SwtUtils;
-import data.*;
+import data.GmmlData;
+import data.GmmlDataObject;
+import data.MappFormat;
 
 /**
  * This class implements a geneproduct and 

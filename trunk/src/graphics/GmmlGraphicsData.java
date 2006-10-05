@@ -7,7 +7,13 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 
-import data.*;
+import data.GmmlEvent;
+import data.GmmlListener;
+import data.LineStyle;
+import data.LineType;
+import data.ObjectType;
+import data.OrientationType;
+import data.ShapeType;
 
 public abstract class GmmlGraphicsData 
 {

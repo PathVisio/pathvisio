@@ -3,7 +3,9 @@ package graphics;
 import org.eclipse.swt.graphics.RGB;
 
 import preferences.GmmlPreferences;
-import data.*;
+import data.GmmlDataObject;
+import data.GmmlEvent;
+import data.GmmlListener;
 
 
 /**

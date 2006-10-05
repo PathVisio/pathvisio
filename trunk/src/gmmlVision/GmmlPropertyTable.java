@@ -1,7 +1,5 @@
 package gmmlVision;
 
-import data.*;
-
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
@@ -26,6 +24,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import util.TableColumnResizer;
+import data.GmmlDataObject;
+import data.GmmlEvent;
+import data.GmmlListener;
+import data.MappFormat;
+import data.ObjectType;
 
 public class GmmlPropertyTable extends Composite implements GmmlListener {
 	public TableViewer tableViewer;

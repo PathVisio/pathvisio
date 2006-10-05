@@ -6,10 +6,13 @@ package util;
  * Created on 15 augustus 2005, 20:28
  */
 
-import data.*;
-import java.io.*;
+import java.io.File;
 import java.sql.SQLException;
 
+import data.ConverterException;
+import data.GmmlData;
+import data.GmmlFormat;
+import data.MappFormat;
 import debug.Logger;
 
 /**

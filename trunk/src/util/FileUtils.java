@@ -1,7 +1,13 @@
 package util;
 
+import gmmlVision.GmmlVision;
+
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 public class FileUtils {
@@ -35,5 +41,31 @@ public class FileUtils {
 			}
 		}
 		return fileList;
+	}
+
+	/**
+	 * Determine the number of lines in the given file.
+	 * @param fileName	The file to get the number of lines from
+	 * @return	the number of lines, or -1 if unable to determine the number of lines
+	 */
+	public static int getNrLines(String fileName) {
+		int nrLines = -1;
+		try
+		{
+			RandomAccessFile randFile = new RandomAccessFile(fileName, "r");
+			long lastRec=randFile.length();
+			randFile.close();
+			FileReader fileRead = new FileReader(fileName);
+			LineNumberReader lineRead = new LineNumberReader(fileRead);
+			lineRead.skip(lastRec);
+			nrLines=lineRead.getLineNumber()-1;
+			fileRead.close();
+			lineRead.close();
+		}
+		catch(IOException e)
+		{
+			GmmlVision.log.error("Unable to determine number of lines in file " + fileName, e);
+		}
+		return nrLines;
 	}
 }

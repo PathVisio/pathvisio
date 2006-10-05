@@ -231,14 +231,13 @@ public class RData {
 		void addCrossRefs(DataSet dataSet) throws Exception {
 			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
 			
-			List<String> codes = dataSet.getCodes();
 			HashMap repHash = dataSet.getReporterHash();
 			
 			for(IdCodePair pwidc : geneProducts.keySet()) {
 				RCommands.checkCancelled();
 				
 				System.out.println("Processing " + pwidc);
-				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc, codes);
+				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
 				System.out.println("Crossrefs: " + pwrefs);
 				for(IdCodePair ref : pwrefs) {
 					if(repHash.containsKey(ref)) {

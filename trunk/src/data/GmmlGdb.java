@@ -125,19 +125,13 @@ public abstract class GmmlGdb {
 	 * @param ensId		The Ensembl id to get the cross references for
 	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
-	 */
-	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
-		return ensId2Refs(ensId, null);
-	}
-	
-	public static ArrayList<IdCodePair> ensId2Refs(String ensId, String code) {
-		String whereCode = code == null ? "" : " AND codeRight = '" + code + "'";
-		
+	 */	
+	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {		
 		ArrayList<IdCodePair> crossIds = new ArrayList<IdCodePair>();
 		try {
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight, codeRight FROM link " +
-					"WHERE idLeft = '" + ensId + "'" + whereCode
+					"WHERE idLeft = '" + ensId + "'"
 					);
 			while(r1.next()) {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
@@ -174,16 +168,12 @@ public abstract class GmmlGdb {
 		return ensIds;
 	}
 	
-	public static List<IdCodePair> getCrossRefs(IdCodePair idc, List<String> codes) {
+	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
 		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
 		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
-		for(String ensId : ensIds) for(String code : codes) refs.addAll(ensId2Refs(ensId, code));
+		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
 
 		return refs;
-	}
-		
-	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
-		return getCrossRefs(idc.getId(), idc.getCode());
 	}
 	
 	/**

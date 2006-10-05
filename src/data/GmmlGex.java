@@ -26,6 +26,8 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import util.FileUtils;
+
 import colorSet.GmmlColorCriterion;
 import colorSet.GmmlColorGradient;
 import colorSet.GmmlColorSet;
@@ -677,6 +679,7 @@ public abstract class GmmlGex {
 	 * {@see GmmlGex#importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
 	 */
 	public static class ImportRunnableWithProgress implements IRunnableWithProgress {
+		static final int totalWork = (int)1E6;
 		ImportInformation info;
 		ImportPage page;
 		
@@ -688,7 +691,7 @@ public abstract class GmmlGex {
 		
 		public void run(IProgressMonitor monitor) 
 		throws InvocationTargetException, InterruptedException {
-			monitor.beginTask("Importing expression data", IProgressMonitor.UNKNOWN);
+			monitor.beginTask("Importing expression data", totalWork);
 			importFromTxt(info, page, monitor);
 			monitor.done();
 		}
@@ -727,7 +730,9 @@ public abstract class GmmlGex {
 			page.println("Importing data");
 			page.println("> Processing headers");
 			BufferedReader in = new BufferedReader(new FileReader(info.getTxtFile()));
-			in.mark(10000);
+			//Get the number of lines in the file (for progress)
+			int nrLines = FileUtils.getNrLines(info.getTxtFile().toString());
+			
 			String[] headers = info.getColNames();
 			//Parse sample names and add to Sample table
 			PreparedStatement pstmt = con.prepareStatement(
@@ -754,8 +759,8 @@ public abstract class GmmlGex {
 			}
 			
 			page.println("> Processing lines");
+			
 			//Check ids and add expression data
-			in.reset();
 			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
 			pstmt = con.prepareStatement(
 					"INSERT INTO expression			" +
@@ -765,6 +770,7 @@ public abstract class GmmlGex {
 			String line = null;
 			int n = info.firstDataRow - 1;
 			int added = 0;
+			int worked = ImportRunnableWithProgress.totalWork / nrLines;
 			while((line = in.readLine()) != null) 
 			{
 				if(monitor.isCanceled()) { close(); error.close(); return; } //User pressed cancel
@@ -810,6 +816,7 @@ public abstract class GmmlGex {
 					}
 					if(success) added++;
 				}
+				monitor.worked(worked);
 			}
 			page.println(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {

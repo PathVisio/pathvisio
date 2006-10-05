@@ -10,7 +10,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-import data.*;
+import data.GmmlDataObject;
 
 public class GmmlInfoBox extends GmmlGraphics {
 	

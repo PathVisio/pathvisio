@@ -1,6 +1,8 @@
 package R;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;

@@ -6,7 +6,10 @@ import gmmlVision.GmmlVision;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -27,7 +30,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import data.*;
+import data.GmmlData;
+import data.GmmlDataObject;
+import data.GmmlEvent;
+import data.GmmlGex;
+import data.GmmlListener;
+import data.LineStyle;
+import data.LineType;
+import data.ObjectType;
+import data.OrientationType;
+import data.ShapeType;
 import data.GmmlGex.Sample;
 import data.GmmlGex.CachedData.Data;
 

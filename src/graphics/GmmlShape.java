@@ -7,7 +7,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
 
 import util.SwtUtils;
-import data.*;
+import data.GmmlDataObject;
+import data.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a 

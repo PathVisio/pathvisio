@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
 import preferences.GmmlPreferences;
-
 import util.SwtUtils;
 import colorSet.GmmlColorSet;
 import data.GmmlGdb;

@@ -1,7 +1,12 @@
 package graphics;
 
 
-import java.util.*;
+import static graphics.GmmlLegend.FONT;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;

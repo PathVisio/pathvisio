@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
-import org.jdom.*;
+import org.jdom.Element;
 
 import util.ColorConverter;
 

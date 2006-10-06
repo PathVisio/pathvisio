@@ -881,7 +881,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			            labelR.setBackground(getShell().getDisplay()
 			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			            
-			            Data mappIdData = GmmlGex.getCachedData(gp.getName(), gp.getSystemCode());
+			            Data mappIdData = GmmlGex.getCachedData(gp.getID(), gp.getSystemCode());
 			            if(mappIdData == null) return; //No data in cache for this geneproduct
 			            HashMap<Integer, Object> data = mappIdData.getAverageSampleData();
 			            String textL = "";

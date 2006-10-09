@@ -138,12 +138,12 @@ print "successfully logged in to $remotehost as $login\n";
 
 foreach $i (@transferlist)
 {
-	if ($i =~ /\.(jpg|jpeg|gif|zip|png|exe)$/i)
+	if ($i =~ /\.(jar|jpg|jpeg|gif|zip|png|exe)$/i)
 	{
 		$ftp->binary();
 		print "Binary: ";
 	}
-	elsif ($i =~ /\.(txt|html|htm)$/i)
+	elsif ($i =~ /\.(jnlp|txt|html|htm)$/i)
 	{
 		$ftp->ascii();
 		print "Ascii: ";

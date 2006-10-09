@@ -3,8 +3,8 @@ exportClasses(DataSet, GeneProduct, Pathway, PathwaySet)
 exportMethods(	name, "name<-", 			   				#Pathway, GeneProduct, DataSet, PathwaySet
 			reporters, "reporters<-", dataByReporter,		#DataSet
 			"addReference<-",			 				#GeneProduct
-			fileName, "fileName<-", hasGeneProduct, 		#Pathway
-			"==", print								#Generic/primitive
+			fileName, "fileName<-", allRefs, "allRefs<-", 		#Pathway
+			"==", print, match							#Generic/primitive
 )
 			
 export(DataSet, GeneProduct, Pathway, PathwaySet)

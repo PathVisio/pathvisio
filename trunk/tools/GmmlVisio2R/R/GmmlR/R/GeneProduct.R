@@ -13,6 +13,7 @@ setClass("GeneProduct", contains = "matrix",
 ## 1: length(ids) == length(systems)
 setValidity("GeneProduct", function(object) {
 	if(ncol(object) != 2) return("malformed matrix")
+	if(is.null(rownames(object))) return("no row names, should be string of the form 'code:id'")
 	TRUE
 })
 
@@ -21,7 +22,30 @@ setValidity("GeneProduct", function(object) {
 ######################
 GeneProduct <- function(refs) {
 		colnames(refs) = c("id", "code")
+		rownames(refs) = getRowNames(refs)
 		gp =	new("GeneProduct", refs)		
+}
+
+GeneProductFromString = function(string) {
+	idcode = parseGpString(string)
+	gp = GeneProduct(rbind(rev(idcode)))
+	rownames(gp) = string
+	gp
+}
+
+##################
+#### Functions ###
+##################
+parseGpString = function(str) {
+	strsplit(string, ":")[[1]]
+}
+
+getGpString = function(idcode) {
+	paste(idcode[2],":",idcode[1],sep="")
+}
+
+getRowNames = function(refs) {
+	apply(refs, 1, function(ref) getGpString(ref))
 }
 
 #################
@@ -32,10 +56,13 @@ GeneProduct <- function(refs) {
 createMethod("name", "GeneProduct", function(x, ...) {
 	validObject(x, test=TRUE)
 	if(nrow(x) < 1) return(NA)
-	paste(x[1,2],x[1,1],sep=":") # code:id
+	nm = getGpString(x[1,])
+	if(nrow(x) > 1) nm = paste(nm, "...", nrow(x), "more references");
+	nm
 })
 
 createReplaceMethod("addReference", c("GeneProduct", "vector"), function(x, value, ...) {
+	rownames(x) = getGpString(x)
 	rbind(x, value)
 })
 
@@ -43,8 +70,17 @@ createReplaceMethod("addReference", c("GeneProduct", "vector"), function(x, valu
 createMethod("==", c("GeneProduct", "GeneProduct"), function(e1, e2) {
 	validObject(e1, test=TRUE)
 	validObject(e2, test=TRUE) #generates error when not valid
-	
-	for(i in 1:nrow(e1)) for(j in 1:nrow(e2)) 
-		if(e1[i,1] == e2[j,1] && e1[i,2] == e2[j,2]) return(TRUE)
+	e2refs = rownames(e2);
+	for(ref in rownames(e1)) if(ref %in% e2refs) return(TRUE)
 	FALSE
+})
+
+createMethod("==", c("GeneProduct", "character"), function(e1, e2) {
+	validObject(e1, test=TRUE)
+	if(length(e2) > 1) getGpString(e2) %in% rownames(e1)
+	else e2 %in% rownames(e1)
+})
+
+createMethod("==", c("character", "GeneProduct"), function(e1, e2) {
+	e2 == e1
 })

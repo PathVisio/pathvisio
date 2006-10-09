@@ -1113,7 +1113,7 @@ public abstract class GmmlGex {
 					"	  ensId VARCHAR(50),				" +
 					"     idSample INTEGER,					" +
 					"     data VARCHAR(50),					" +
-					"	  groupId INTEGER					" +
+					"	  groupId INTEGER 					" +
 //					"     PRIMARY KEY (id, code, idSample, data)	" +
 					")										");
 			sh.execute(
@@ -1131,6 +1131,9 @@ public abstract class GmmlGex {
 			sh.execute(
 					"CREATE INDEX i_expression_code " +
 			"ON expression(code)	 ");
+			sh.execute(
+					"CREATE INDEX i_expression_groupId" +
+			" ON expression(groupId)	");
 			sh.execute(
 					"CREATE CACHED TABLE				" +
 					"		colorSets					" +

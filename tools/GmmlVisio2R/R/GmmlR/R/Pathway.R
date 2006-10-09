@@ -1,5 +1,5 @@
 #######################################################
-################## Pathway class ##################
+################## Pathway class ######################
 #######################################################
 
 ##########################
@@ -8,11 +8,13 @@
 setClass("Pathway", contains = "list",
 	representation(
 		name = "character",
-		fileName = "character"
+		fileName = "character",
+		allRefs = "character" #Vector conaining all references of the geneproducts in this pathway (for performance of match method)
 	),
 	prototype(
 		name = character(),
-		fileName = character()
+		fileName = character(),
+		allRefs = character()
 	)
 )
 
@@ -29,9 +31,20 @@ setValidity("Pathway", function(object) {
 ######################
 setGeneric("Pathway", 
 	function(name = character(), fileName = character(), geneProducts = list()) {
-		new("Pathway", geneProducts, name = name, fileName = fileName)
+		pw = new("Pathway", geneProducts, name = name, fileName = fileName)
+		allRefs(pw) = getAllRefs(pw)
+		pw
 	}
 )
+
+######################
+#### Functions	  ####
+######################
+getAllRefs = function(pw) {
+	allRefs = character()
+	for(gp in pw) allRefs = append(allRefs, rownames(gp)) ##TODO: filter out duplicates...
+	allRefs
+}
 
 #################
 #### Methods ####
@@ -39,6 +52,7 @@ setGeneric("Pathway",
 ## Getters ##
 createMethod("name", "Pathway", function(x) x@name)
 createMethod("fileName", "Pathway", function(x) x@fileName)
+createMethod("allRefs", "Pathway", function(x) x@allRefs)
 
 ## Setters ##)
 createReplaceMethod("name", "Pathway", function(x, value) {
@@ -49,6 +63,10 @@ createReplaceMethod("fileName", "Pathway", function(x, value) {
 	x@fileName = value
 	x
 })
+createReplaceMethod("allRefs", "Pathway", function(x, value) {
+	x@allRefs = value
+	x
+})
 
 ## Generic and Primitive implementations ##
 setMethod("print", "Pathway", function(x, ...) {
@@ -56,12 +74,12 @@ setMethod("print", "Pathway", function(x, ...) {
 	for(gp in x) cat("\t\t", name(gp), "\n");
 })
 
-## Other ##
-createMethod("hasGeneProduct", c("Pathway", "GeneProduct"), function(x, gp, ...) {
-	for(pgp in x) if(gp == pgp) return(TRUE)
+createMethod("match", c(x = "ANY", table = "Pathway"), 
+function(x, table, nomatch = NA, incomparables = FALSE) {
+	pwrefs = allRefs(table)
+	if(length(x) == 1) 		#just a string
+		return(x %in% pwrefs) 
+	if(class(x) == "GeneProduct") 	#Object of class GeneProduct
+		for(ref in rownames(x)) if(x %in% pwrefs) return(TRUE)
 	FALSE
-})
-
-createMethod("hasGeneProduct", c("Pathway", "list"), function(x, gp, ...) {
-	sapply(gp, function(g) hasGeneProduct(x, g))
 })

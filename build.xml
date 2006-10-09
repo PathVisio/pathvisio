@@ -31,6 +31,7 @@
 	<target name="clean" description="Remove all generated files.">
 		<delete dir="${build.dir}"/>
 		<delete dir="${apidoc.dir}"/>
+		<delete dir="${webstart.dir}/www"/>
 	</target>
 	
 	<target name="compile" depends="prepare" description="Compile all sources">
@@ -59,9 +60,10 @@
 	</target>
 	
 	<target name="sign-jar" depends="compile,jar" description="Signs jar files">
-		<signjar jar="gmml-visio.jar"
+		<signjar jar="gmml-visio.jar" lazy="true" 
 			alias="gmmlvisio" storepass="gmmlvisio" keystore="${lib.dir}/visioKeyStore"/>
-		<signjar alias="gmmlvisio" storepass="gmmlvisio" keystore="${lib.dir}/visioKeyStore">
+		<signjar alias="gmmlvisio" lazy = "true" 
+			storepass="gmmlvisio" keystore="${lib.dir}/visioKeyStore">
 			<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		</signjar>
 	</target>

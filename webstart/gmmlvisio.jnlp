@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://blog.bigcat.unimaas.nl/~thomas/gmmlvisio" href="gmmlvisio.jnlp">
+<jnlp codebase="http://blog.bigcat.unimaas.nl/~gmmlvisio" href="gmmlvisio.jnlp">
 	<information>
 		 <title>Gmml Visio</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
-		 <icon href="bigcateye.jpg"/>
+		 <icon href="bigcateye.gif"/>
 		 <offline-allowed/>
 	</information>
 	<resources>

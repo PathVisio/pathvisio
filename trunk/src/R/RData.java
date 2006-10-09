@@ -28,6 +28,7 @@ import data.GmmlGdb;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
+import debug.StopWatch;
 
 public class RData {
 	List<File> pwFiles;
@@ -41,8 +42,8 @@ public class RData {
 	String pwsName = "";		//Name of pathwayset object
 	String dsName = "";			//Name of dataset object
  	
-	static int totalWorkData = (int)1E6;
-	static int totalWorkPws = (int)1E6;
+	static int totalWorkData = Integer.MAX_VALUE;
+	static int totalWorkPws = Integer.MAX_VALUE;
 	
 	DataSet cacheDataSet;
 	PathwaySet cachePathwaySet;
@@ -229,25 +230,36 @@ public class RData {
 		}
 		
 		void addCrossRefs(DataSet dataSet) throws Exception {
+			//TODO: iterate over Math.min(reporters.size(), geneProducts.size())
 			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
 			
+			StopWatch sw = new StopWatch();
+			sw.start();
 			HashMap repHash = dataSet.getReporterHash();
+			sw.stopToLog("createing reporter hashmap");
 			
+			sw.start();
+			StopWatch sw2 = new StopWatch();
 			for(IdCodePair pwidc : geneProducts.keySet()) {
+				sw2.start();
 				RCommands.checkCancelled();
 				
 				System.out.println("Processing " + pwidc);
 				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
+				sw2.stopToLog("\tfetching crossrefs for " + pwidc);
 				System.out.println("Crossrefs: " + pwrefs);
+				sw2.start();
 				for(IdCodePair ref : pwrefs) {
 					if(repHash.containsKey(ref)) {
 						geneProducts.get(pwidc).addReference(ref);
 						System.out.println("adding " + ref + " to " + geneProducts.get(pwidc));
-						break;
 					}
 				}
+				sw2.stopToLog("\t\tmatching with reporters");
 				SimpleRunnableWithProgress.updateMonitor(worked);
 			}
+			sw.stopToLog("Fetching crossrefs");
+			
 			System.out.println("Finished processing " + geneProducts.size() + " geneproducts");
 		}
 }
@@ -313,6 +325,13 @@ public class RData {
 			addReference(idc);
 		}
 		
+		String[] getRowNames() {
+			String[] rowNames = new String[refs.size()];
+			int i = 0;
+			for(IdCodePair ref : refs) rowNames[i++] = ref.getCode() + ":" + ref.getId();
+			return rowNames;
+		}
+		
 		long getRef() throws RException {
 			Rengine re = RController.getR();
 			String[] ar = new String[refs.size() * 2];
@@ -325,6 +344,7 @@ public class RData {
 			long ref_gp = re.rniPutStringArray(ar);
 			re.rniProtect(ref_gp);
 			re.rniSetAttr(ref_gp, "dim", re.rniPutIntArray(new int[] { refs.size(), 2 }));
+			RCommands.setDimNames(ref_gp, getRowNames(), new String[] { "id", "code" });
 			re.rniSetAttr(ref_gp, "class", re.rniPutString("GeneProduct"));
             re.rniUnprotect(1);
             
@@ -429,14 +449,7 @@ public class RData {
 			for(int k = 0; k < data.length; k++) 
 				smp_names[k] = samples.get(col2Sample[k]).getName();
 			
-			long dn_ref = re.rniInitVector(2);
-			re.rniProtect(dn_ref);
-			long rown_ref = re.rniPutStringArray(rep_names);
-			re.rniVectorSetElement(rown_ref, dn_ref, 0);
-			long coln_ref = re.rniPutStringArray(smp_names);
-			re.rniVectorSetElement(coln_ref, dn_ref, 1);
-			re.rniSetAttr(l_ref, "dimnames", dn_ref);
-			re.rniUnprotect(1);
+			RCommands.setDimNames(l_ref, rep_names, smp_names);
 					
 			//Assign data matrix
 			String tmpData = RTemp.getNewVar();
@@ -449,13 +462,14 @@ public class RData {
 			return returnRef(xp, tmpData);
 		}
 		
-		void queryData() throws Exception {
+		void queryData() throws Exception {			
 			//Get the 'groups'
 			Statement s = GmmlGex.getCon().createStatement(
 					ResultSet.TYPE_SCROLL_INSENSITIVE, 
 					ResultSet.CONCUR_READ_ONLY);
-			ResultSet r = s.executeQuery("SELECT DISTINCT groupId FROM expression");
 			
+			ResultSet r = s.executeQuery("SELECT DISTINCT groupId FROM expression");
+
 			//Set the proper dimensions for the data matrix
 			//Rows:
 			r.last();

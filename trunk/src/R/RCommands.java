@@ -118,6 +118,19 @@ public class RCommands {
 //		}
 	}
 	
+	public static void setDimNames(long ref, String[] rowNames, String[] colNames) throws RException {
+		Rengine re = RController.getR();
+		
+		long dn_ref = re.rniInitVector(2);
+		re.rniProtect(dn_ref);
+		long rown_ref = re.rniPutStringArray(rowNames);
+		re.rniVectorSetElement(rown_ref, dn_ref, 0);
+		long coln_ref = re.rniPutStringArray(colNames);
+		re.rniVectorSetElement(coln_ref, dn_ref, 1);
+		re.rniSetAttr(ref, "dimnames", dn_ref);
+		re.rniUnprotect(1);
+	}
+	
 	/**
 	 * Check wether the user pressed cancel (for long running operations
 	 * using the {@link SimpleRunnableWithProgress}

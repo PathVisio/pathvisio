@@ -121,6 +121,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	public ColorSetWindow(Shell parent)
 	{
 		super(parent);
+		setBlockOnOpen(true);
 	}
 
 	public int open() {

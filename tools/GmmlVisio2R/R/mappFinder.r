@@ -18,3 +18,23 @@ zscore = function(pathway, reporters, set) {
 	cat(paste(N,R,n,r,sep=","))
 	(r-n*R/N) / sqrt(n*(R/N)*(1-R/N)*(1-(n-1)/(N-1)))
 }
+
+## Calculates the z-score and p-values (via permutation like in GenMAPP)
+## for the given pathways and reporters, tested against the
+## given subset
+permuteP = function(pathway, reporters, set) {
+	# Calculate z-score for every pathway
+	zscore = function(pw) zscore(pw, reporters, set)
+	
+	# Calculate non-parametric statistic based on 2000 permutations
+	# N and R are constant
+	N = length(reporters)
+	R = sum(as.logical(set))
+		
+	nperm = 2000;
+	for(np in nperm) {
+		# Re-assign genes randomly -> from which set of genes? total reporters? reporters mapping to a pathway? reporters matching criterion?
+		# Also vary size? --> NO
+		
+	}
+}

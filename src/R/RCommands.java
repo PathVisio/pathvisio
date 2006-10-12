@@ -8,7 +8,7 @@ import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 import util.SwtUtils.SimpleRunnableWithProgress;
-import R.RData.RObject;
+import R.RDataOut.RObject;
 
 public class RCommands {	
 	/**
@@ -49,7 +49,7 @@ public class RCommands {
     public static REXP eval(String s, boolean convert) throws RException {
     	Rengine re = RController.getR();
     	checkCancelled();
-    	REXP rexp = re.eval(s, false);
+    	REXP rexp = re.eval(s, convert);
     	if(rexp == null) throw new REvalException(re, s);
     	return rexp;
     }
@@ -116,6 +116,16 @@ public class RCommands {
 //		for(String s : sa) {
 //			evalE(re, symbol + "= append(" + symbol + ", '" + s + "')");
 //		}
+	}
+	
+	public static String[] ls(String objClass) throws RException {
+		eval("tmpls = ls()");
+		eval("ofclass = sapply(tmpls, function(x) " +
+				"eval(parse(text = paste('class(', x, ') == \"" + objClass + "\"'))))");
+		String[] list =  eval("tmpls[ofclass]", true).asStringArray();
+		
+		rm(new String[] { "tmpls", "ofclass" });
+		return list;
 	}
 	
 	public static void setDimNames(long ref, String[] rowNames, String[] colNames) throws RException {

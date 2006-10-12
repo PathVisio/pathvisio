@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 
 import preferences.GmmlPreferences;
@@ -180,23 +181,22 @@ public class GmmlColorSet {
 	void parseCriterionString(String criterion)
 	{
 		String[] s = criterion.split("\\|", 5);
-		try
+		try { color_no_criteria_met = parseColorString(s[0]); } catch(Exception e) { printParseError(criterion, e); }
+		try { color_no_gene_found= parseColorString(s[1]); } catch(Exception e) { printParseError(criterion, e); }
+
+		if(s.length > 2)
 		{
-			color_no_criteria_met = parseColorString(s[0]);
-			color_no_gene_found= parseColorString(s[1]);
-			
-			if(s.length > 2)
-			{
-				useSamples = parseSampleArrayList(s[2]);
-				sampleTypes = parseIntegerArrayList(s[3]);
-				color_no_data_found = parseColorString(s[4]);
-			}
+			try { useSamples = parseSampleArrayList(s[2]); } catch(Exception e) { printParseError(criterion, e); }
+			try { sampleTypes = parseIntegerArrayList(s[3]); } catch(Exception e) { printParseError(criterion, e); }
+			try { color_no_data_found = parseColorString(s[4]); } catch(Exception e) { printParseError(criterion, e); }
 		}
-		catch (Exception e)
-		{
-			GmmlVision.log.error("Unable to parse colorset data stored in " +
-					"expression database: " + criterion, e);
-		}
+	}
+	
+	static void printParseError(String criterion, Exception e) {
+		GmmlVision.log.error("Unable to parse colorset data stored in " +
+				"expression database: " + criterion, e);
+		MessageDialog.openWarning(GmmlVision.getWindow().getShell(), 
+					"Warning", "Unable to parse the colorset data in this expression dataset");
 	}
 	
 	/**

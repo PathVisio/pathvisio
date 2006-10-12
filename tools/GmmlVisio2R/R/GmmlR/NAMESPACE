@@ -4,7 +4,7 @@ exportMethods(	name, "name<-", 			   				#Pathway, GeneProduct, DataSet, Pathway
 			reporters, "reporters<-", dataByReporter,		#DataSet
 			"addReference<-",			 				#GeneProduct
 			fileName, "fileName<-", allRefs, "allRefs<-", 		#Pathway
-			"==", print, match							#Generic/primitive
+			"==", print, domatch							#Generic/primitive
 )
 			
 export(DataSet, GeneProduct, Pathway, PathwaySet)

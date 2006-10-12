@@ -30,17 +30,17 @@ import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
 import debug.StopWatch;
 
-public class RData {
+public class RDataOut {
 	List<File> pwFiles;
 	
-	boolean exportPws;			//Export pathways or not
-	boolean exportData;			//Export data or not
-	boolean incCrit;			//Include criteria in export data or not
+	boolean exportPws = true;			//Export pathways or not
+	boolean exportData = true;			//Export data or not
 	
-	String pwDir = "";			//Pathway directory to import
-	String exportFile = "";		//File name to export RData
-	String pwsName = "";		//Name of pathwayset object
-	String dsName = "";			//Name of dataset object
+	File pwDir = new File(
+		GmmlVision.getPreferences().getString("directories.gmmlFiles"));	//Pathway directory to import
+	String exportFile = "temp.Rd";		//File name to export RData
+	String pwsName = "myPathways";		//Name of pathwayset object
+	String dsName = "myData";			//Name of dataset object
  	
 	static int totalWorkData = Integer.MAX_VALUE;
 	static int totalWorkPws = Integer.MAX_VALUE;
@@ -48,9 +48,18 @@ public class RData {
 	DataSet cacheDataSet;
 	PathwaySet cachePathwaySet;
 	
-	public RData() {
+	public RDataOut() {
 		pwFiles = new ArrayList<File>();
 	}
+	
+	public void setPathwayDir(File dir) 		{ pwDir = dir; }
+	public File getPathwayDir()					{ return pwDir; }
+	public void setExportFile(String fn) 		{ exportFile = fn; }
+	public String getExportFile()				{ return exportFile; }
+	public void setPathwaySetName(String pwn) 	{ pwsName = pwn; }
+	public String getPathwaySetName()			{ return pwsName; }
+	public void setDataSetName(String dsn) 		{ dsName = dsn; }
+	public String getDataSetName()				{ return dsName; }
 	
 	/**
 	 * Create a new RData instance containing the given pathway(s) and expression data (if loaded).
@@ -60,7 +69,7 @@ public class RData {
 	 * @param recursive Whether to include subdirectories or not (ignored if argument 'pathways' points
 	 * to a single file)
 	 */
-	public RData(File pathways, boolean recursive) {
+	public RDataOut(File pathways, boolean recursive) {
 		this();
 		//Get the pathway files
 		pwFiles = FileUtils.getFiles(pathways, "xml", recursive);
@@ -68,7 +77,20 @@ public class RData {
 	
 	public List<File> getPathwayFiles() { return pwFiles; }
 	
-	public void doExport(Rengine re) throws Exception {
+	public void checkValid() throws Exception {
+		if(exportPws) {
+			if(exportFile.equals("")) throw new Exception("specify file to export to");
+			if(!pwDir.canRead()) throw new Exception("invalid pathway directory: " + this.pwDir);
+			if(pwsName.equals("")) throw new Exception("No name specified for the exported pathwayset object");
+		}
+		if(exportData) {
+			if(dsName.equals("")) throw new Exception("No name specified for the exported dataset object");
+		}
+	}
+	
+	public void doExport() throws Exception {
+		Rengine re = RController.getR();
+		
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(GmmlVision.getWindow().getShell());
 		SimpleRunnableWithProgress rwp = null;
 		try {
@@ -103,13 +125,8 @@ public class RData {
 		double contribXml = 0.2;
 		PathwaySet.contribGdb = 0.7;
 		double contribR = 0.1;
-		
-		File pwDir = new File(this.pwDir);
-		
-		//Check some parameters
-		if(exportFile.equals("")) throw new Exception("specify file to export to");
-		if(!pwDir.canRead()) throw new Exception("invalid pathway directory: " + this.pwDir);
-		if(pwsName.equals("")) throw new Exception("No name specified for the exported pathways object");
+			
+		checkValid();
 		
 		pwFiles = FileUtils.getFiles(pwDir, "xml", true);
 
@@ -150,14 +167,16 @@ public class RData {
 		RTemp.flush(true);
 	}
 	
-	public void doExportData(Rengine re) throws Exception {		
+	public void doExportData(Rengine re) throws Exception {
+		checkValid();
+		
 		cacheDataSet = new DataSet(dsName);
 		
 		cacheDataSet.toR(dsName);
 		
 		RTemp.flush(true);
 	}
-			
+		
 	static abstract class RObject {	
 		static final RException EX_NO_GDB = 
 			new RException(null, "No gene database loaded!");

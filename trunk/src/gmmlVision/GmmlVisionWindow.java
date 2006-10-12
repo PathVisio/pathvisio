@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Shell;
 import preferences.GmmlPreferenceManager;
 import search.PathwaySearchComposite;
 import R.RController;
-import R.RWindow;
+import R.wizard.RWizard;
 import colorSet.ColorSetWindow;
 import data.GmmlData;
 import data.GmmlGdb;
@@ -663,8 +663,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		}
 		
 		public void run() {
-			RWindow rw = new RWindow(getShell());
-			if(RController.startR()) rw.open();
+//			RWindow rw = new RWindow(getShell());
+			WizardDialog wd = new RWizard.RWizardDialog(getShell(), new RWizard());
+			if(RController.startR()) wd.open();
 		}
 	}
 	private RAction rAction = new RAction(this);

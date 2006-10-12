@@ -13,6 +13,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.rosuda.JRI.Rengine;
 
 import R.RCommands.RException;
+import R.wizard.RFunctionLoader;
 
 public class RController implements PropertyListener{
 	static final String importGmmlR = "library(GmmlR)";
@@ -59,6 +60,7 @@ public class RController implements PropertyListener{
 		
 		try {
 			importLibraries();
+			RFunctionLoader.loadFunctions();
 		} catch(RException re) {
 			startError(new Exception("Unable to load required libraries: " + re.getMessage()));
 			return false;

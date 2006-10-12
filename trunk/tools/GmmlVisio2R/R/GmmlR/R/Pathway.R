@@ -74,12 +74,12 @@ setMethod("print", "Pathway", function(x, ...) {
 	for(gp in x) cat("\t\t", name(gp), "\n");
 })
 
-createMethod("match", c(x = "ANY", table = "Pathway"), 
+createMethod("domatch", c(x = "ANY", table = "Pathway"), 
 function(x, table, nomatch = NA, incomparables = FALSE) {
 	pwrefs = allRefs(table)
-	if(length(x) == 1) 		#just a string
-		return(x %in% pwrefs) 
-	if(class(x) == "GeneProduct") 	#Object of class GeneProduct
-		for(ref in rownames(x)) if(x %in% pwrefs) return(TRUE)
+	if(length(x) == 1)
+		return(x %in% pwrefs)
+	if(class(x) == "GeneProduct")
+		for(ref in rownames(x)) if(ref %in% pwrefs) return(TRUE)
 	FALSE
 })

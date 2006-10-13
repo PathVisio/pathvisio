@@ -106,7 +106,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
 			fd.setFilterPath(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
-			fd.setFilterExtensions(new String[] {"*.xml","*.*"});
+			fd.setFilterExtensions(new String[] {"*.gmml","*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
@@ -173,7 +173,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*.xml","*.*"});
+				fd.setFilterExtensions(new String[] {"*.gmml","*.*"});
 				fd.setFilterNames(new String[] {"Gmml file", "All files"});
 				File xmlFile = gmmlData.getXmlFile();
 				if(xmlFile != null) {
@@ -185,8 +185,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				String fileName = fd.open();
 				// Only proceed if user selected a file
 				if(fileName == null) return;
-				// Append .xml extension if not already present
-				if(!fileName.endsWith(".xml")) fileName += ".xml";
+				// Append .gmml extension if not already present
+				if(!fileName.endsWith(".gmml")) fileName += ".gmml";
 				
 				File checkFile = new File(fileName);
 				boolean confirmed = true;

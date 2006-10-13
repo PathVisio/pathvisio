@@ -4,10 +4,16 @@
 # and validate every step automagically.
 #
 
+#
+# Please note that some part of the converter is
+# sensitive to the digital symbol. Please convert
+# pathways on a computer with the digital symbol set 
+# to "." (american)
+#
+
 use warnings;
 use strict;
 
-use XML::LibXML;
 use File::Find;
 use File::Spec;
 use converter;
@@ -16,9 +22,9 @@ use converter;
 #    config     #
 #################
 
-my $dirMapps = "E:/GenMAPP 2 Data/MAPPs";
-my $dirGmml = "E:/Gmml-Visio Data/MAPPs";
-my $fnConf = "e:/convert_test.conf";
+my $dirMapps = "c:/GenMAPP 2 Data/MAPPs";
+my $dirGmml = "c:/Gmml-Visio Data/MAPPs";
+my $fnConf = "c:/prg/convert_test.conf";
 
 #################
 #   globals     #
@@ -63,7 +69,7 @@ sub convert
 	my $fnOut = shift;
 	print " in: $fnMapp\n";
 	print "out: $fnOut\n";
-	system ("java", "-cp", '"lib/JRI.jar";"lib/org.eclipse.core.commands_3.2.0.I20060605-1400.jar";"lib/org.eclipse.equinox.common_3.2.0.v20060603.jar";"lib/org.eclipse.jface_3.2.0.I20060605-1400.jar";"lib/org.eclipse.swt_3.2.0.v3232o.jar";"lib/jdom.jar";build;"lib/hsqldb.jar";"lib/org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar"', "util.Converter", $fnMapp, $fnOut);
+	system ("java", "-cp", '"lib/JRI.jar";"lib/org.eclipse.equinox.common.jar";"lib/org.eclipse.equinox.supplement.jar";"lib/org.eclipse.jface.jar";"lib/swt-win32.jar";"lib/org.eclipse.core.commands.jar";"lib/jdom.jar";build;"lib/hsqldb.jar";"lib/swt-win32-lib.jar";"lib/resources.jar"', "util.Converter", $fnMapp, $fnOut);
 	print "Exit status ", $? >> 8;
 	if ($?) { print " Error!"; }
 	print "\n";
@@ -119,20 +125,20 @@ my @list;
 #~ sub wanted { if (-f $_ && /\.mapp$/i && ! (/_back\.mapp$/i)) { push @list, $File::Find::name; } }
 #~ find (\&wanted, $dirMapps);
 
-@list = ("E:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_1_BiGCaT.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_2_BiGCaT.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_Meta_BiGCaT.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA repair.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA replication.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/I-kappaB kinase NF-kappaB cascade.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/aaa.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_1_1_Trichloro_2_2_bis_4_chlorophenyl_ethane_DDT_degradation.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_4_Dichlorobenzene_degradation.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_2_4_Dichlorobenzoate_degradation.mapp",
-	"E:/GenMAPP 2 Data/MAPPs/Mm_GO_Samples_20050810/Biological Process/DNA packaging.mapp",
+@list = ("C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_1_BiGCaT.mapp",
+	"C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_2_BiGCaT.mapp",
+	"C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_Meta_BiGCaT.mapp",
+	"C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA repair.mapp",
+	"C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA replication.mapp",
+	"C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/I-kappaB kinase NF-kappaB cascade.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/aaa.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_1_1_Trichloro_2_2_bis_4_chlorophenyl_ethane_DDT_degradation.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_4_Dichlorobenzene_degradation.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_2_4_Dichlorobenzoate_degradation.mapp",
+	"C:/GenMAPP 2 Data/MAPPs/Mm_GO_Samples_20050810/Biological Process/DNA packaging.mapp",
 	);
 
-#~ sub wanted { if (-f $_ && /\.xml$/i) { push @list, File::Spec->abs2rel ($File::Find::name, $dirGmmlOld); } }
+#~ sub wanted { if (-f $_ && /\.gmml$/i) { push @list, File::Spec->abs2rel ($File::Find::name, $dirGmmlOld); } }
 #~ find (\&wanted, $dirGmmlOld);
 
 my $last;
@@ -151,7 +157,7 @@ if (-r $fnConf && $fResume)
 	@list = (@after_last, @before_last);
 }
 
-validateSchemas();
+#~ validateSchemas();
 
 #convert mapps 2 gmmlOld
 for my $fnIn (@list)
@@ -161,7 +167,7 @@ for my $fnIn (@list)
 	close OUTFILE;
 
 	my $fnOut = $fnIn; 
-	$fnOut =~ s/(.mapp$)/.xml/i;	
+	$fnOut =~ s/(.mapp$)/.gmml/i;	
 	$fnOut =~ s/$dirMapps/$dirGmml/i;
 
 	my $targetDir = $fnOut;

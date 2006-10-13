@@ -50,6 +50,7 @@
 			<fileset dir="." includes="icons/*"/>
 			<fileset dir="." includes="images/*"/>
 			<fileset dir="." includes="GMML_compat.xsd"/>
+			<fileset dir="." includes="MAPPTmpl.gtp"/>
 		</jar>
 		<jar jarfile="lib/swt-win32-lib.jar">
 			<fileset dir="lib/swt-win32-lib" includes="*.dll"/>

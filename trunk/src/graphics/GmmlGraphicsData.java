@@ -492,8 +492,7 @@ public abstract class GmmlGraphicsData
 		if (boardWidth != v)
 		{
 			boardWidth = v;
-			GmmlVision.getGmmlData().
-				fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
+			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 
@@ -504,7 +503,6 @@ public abstract class GmmlGraphicsData
 		if (boardHeight != v)
 		{
 			boardHeight = v;
-			GmmlVision.getGmmlData().
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
@@ -516,7 +514,6 @@ public abstract class GmmlGraphicsData
 		if (windowWidth != v)
 		{
 			windowWidth = v;
-			GmmlVision.getGmmlData().
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
@@ -528,7 +525,6 @@ public abstract class GmmlGraphicsData
 		if (windowHeight != v)
 		{
 			windowHeight = v;
-			GmmlVision.getGmmlData().
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}

@@ -90,7 +90,7 @@ my %okDirs;
 for my $fnIn (@list)
 {
 	my $fnOut = $fnIn; 
-	$fnOut =~ s/(.mapp$)/.xml/i;
+	$fnOut =~ s/(.mapp$)/.gmml/i;
 	$fnOut =~ s/$dirMapps/$dirGmml/i;
 
 	my $targetDir = $fnOut;

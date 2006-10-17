@@ -2,9 +2,7 @@ package R.wizard;
 
 import java.io.File;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -17,14 +15,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import R.RCommands;
-import R.RController;
 import R.RDataIn;
 import R.RDataOut;
 
@@ -160,7 +155,7 @@ public class PageData extends WizardPage {
 		});
 
 		exportBrowse.addSelectionListener(browseListener);
-		
+		importBrowse.addSelectionListener(browseListener);
 		radioExport.addSelectionListener(radioListener);
 		radioImport.addSelectionListener(radioListener);
 	}

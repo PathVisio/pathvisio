@@ -74,7 +74,7 @@ setMethod("print", "Pathway", function(x, ...) {
 	for(gp in x) cat("\t\t", name(gp), "\n");
 })
 
-createMethod("domatch", c(x = "ANY", table = "Pathway"), 
+createMethod("match", c(x = "ANY", table = "Pathway"), 
 function(x, table, nomatch = NA, incomparables = FALSE) {
 	pwrefs = allRefs(table)
 	if(length(x) == 1)

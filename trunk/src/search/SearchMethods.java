@@ -11,10 +11,11 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import search.PathwaySearchComposite.SearchRunnableWithProgress;
-import search.SearchResults.Attribute;
-import search.SearchResults.SearchResult;
 import util.FileUtils;
 import util.XmlUtils.PathwayParser;
+import util.tableviewer.TableData;
+import util.tableviewer.TableData.Column;
+import util.tableviewer.TableData.Row;
 import data.GmmlGdb;
 import data.GmmlGdb.IdCodePair;
 
@@ -50,18 +51,18 @@ public abstract class SearchMethods {
 			SearchResultTable srt, SearchRunnableWithProgress runnable) 
 			throws SearchException, SAXException {
 		
-		SearchResults srs = new SearchResults();
-		srs.addAttribute("pathway", Attribute.TYPE_TEXT);
-		srs.addAttribute("directory", Attribute.TYPE_TEXT);
-		srs.addAttribute("file", Attribute.TYPE_TEXT, false);
-		srs.addAttribute("idsFound", Attribute.TYPE_ARRAYLIST, false);
+		TableData srs = new TableData();
+		srs.addAttribute("pathway", Column.TYPE_TEXT);
+		srs.addAttribute("directory", Column.TYPE_TEXT);
+		srs.addAttribute("file", Column.TYPE_TEXT, false);
+		srs.addAttribute("idsFound", Column.TYPE_ARRAYLIST, false);
 
-		srt.setSearchResults(srs);
+		srt.setTableData(srs);
 		//Get all cross references
 		List<IdCodePair> refs = GmmlGdb.getCrossRefs(id, code);
 		if(refs.size() == 0) throw new NoGdbException();
 		
-		SearchRunnableWithProgress.updateMonitor(200);
+		SearchRunnableWithProgress.monitorWorked(200);
 		
 		//get all pathway files in the folder and subfolders
 		ArrayList<File> pathways = FileUtils.getFiles(folder, "xml", true);
@@ -76,7 +77,7 @@ public abstract class SearchMethods {
 			//Check if one of the given ids is in the pathway
 			for(PathwayParser.Gene gene : genes) {
 				if(refs.contains(new IdCodePair(gene.getId(), gene.getCode()))) {//Gene found, add pathway to search result and break
-					SearchResult sr = srs.new SearchResult();
+					Row sr = srs.new Row();
 					sr.setAttribute("pathway", f.getName());
 					sr.setAttribute("directory", f.getParentFile().getName());
 					sr.setAttribute("file", f.getAbsolutePath());
@@ -87,7 +88,7 @@ public abstract class SearchMethods {
 					break;
 				}
 			}
-			SearchRunnableWithProgress.updateMonitor((int)Math.ceil(800.0 / pathways.size()));
+			SearchRunnableWithProgress.monitorWorked((int)Math.ceil(800.0 / pathways.size()));
 		}
 		if(srs.getResults().size() == 0) throw new NothingFoundException();
 	}
@@ -99,14 +100,14 @@ public abstract class SearchMethods {
 		//Create regex
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		
-		SearchResults srs = new SearchResults();
-		srs.addAttribute("pathway", Attribute.TYPE_TEXT);
-		srs.addAttribute("directory", Attribute.TYPE_TEXT);
-		srs.addAttribute("file", Attribute.TYPE_TEXT, false);
-		srs.addAttribute("namesFound", Attribute.TYPE_ARRAYLIST);
-		srs.addAttribute("idsFound", Attribute.TYPE_ARRAYLIST, false);
+		TableData srs = new TableData();
+		srs.addAttribute("pathway", Column.TYPE_TEXT);
+		srs.addAttribute("directory", Column.TYPE_TEXT);
+		srs.addAttribute("file", Column.TYPE_TEXT, false);
+		srs.addAttribute("namesFound", Column.TYPE_ARRAYLIST);
+		srs.addAttribute("idsFound", Column.TYPE_ARRAYLIST, false);
 
-		srt.setSearchResults(srs);
+		srt.setTableData(srs);
 		
 		//get all pathway files in the folder and subfolders
 		ArrayList<File> pathways = FileUtils.getFiles(folder, "xml", true);
@@ -131,7 +132,7 @@ public abstract class SearchMethods {
 				}
 			}
 			if(matched.size() > 0) {
-				SearchResult sr = srs.new SearchResult();
+				Row sr = srs.new Row();
 				sr.setAttribute("pathway", f.getName());
 				sr.setAttribute("directory", f.getParentFile().getName());
 				sr.setAttribute("file", f.getAbsolutePath());
@@ -140,7 +141,7 @@ public abstract class SearchMethods {
 
 				srt.refreshTableViewer(true);
 			}
-			SearchRunnableWithProgress.updateMonitor((int)Math.ceil(1000.0 / pathways.size()));
+			SearchRunnableWithProgress.monitorWorked((int)Math.ceil(1000.0 / pathways.size()));
 		}
 		if(srs.getResults().size() == 0) throw new NothingFoundException();
 	}

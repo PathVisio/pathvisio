@@ -110,7 +110,7 @@ public class RDataOut {
 						"Exporting pathways", totalWorkPws);
 				dialog.run(true, true, rwp);
 			}
-			RCommands.eval("save.image(file='"+ exportFile + "')");
+			RCommands.eval("save(list = c('" + dsName + "', '" + pwsName + "'), file='"+ exportFile + "')");
 		} catch(InvocationTargetException ex) {
 			rwp.openMessageDialog("Error", "Unable to export data: " + ex.getCause().getMessage());
 			GmmlVision.log.error("Unable to export to R", ex);
@@ -146,7 +146,7 @@ public class RDataOut {
 				continue; 
 			}
 			
-			Pathway pw = new Pathway(p.getName(), f.getName(), cachePathwaySet);
+			Pathway pw = new Pathway(p.getName(), f.toString(), cachePathwaySet);
 
 			for(Gene g : p.getGenes()) {
 				String id = g.getId();
@@ -156,7 +156,7 @@ public class RDataOut {
 			}
 			
 			//Update progress
-			SimpleRunnableWithProgress.updateMonitor(pwContribXml);
+			SimpleRunnableWithProgress.monitorWorked(pwContribXml);
 		}
 
 		if(exportData && cacheDataSet != null) 
@@ -275,7 +275,7 @@ public class RDataOut {
 					}
 				}
 				sw2.stopToLog("\t\tmatching with reporters");
-				SimpleRunnableWithProgress.updateMonitor(worked);
+				SimpleRunnableWithProgress.monitorWorked(worked);
 			}
 			sw.stopToLog("Fetching crossrefs");
 			
@@ -313,7 +313,7 @@ public class RDataOut {
 				"', geneProducts = " + tmpVar + ")";			
 			long xp =  RCommands.eval(cmd).xp;
 			
-			SimpleRunnableWithProgress.updateMonitor(progressContribution);
+			SimpleRunnableWithProgress.monitorWorked(progressContribution);
 			return returnRef(xp, tmpVar);
 		}
 	}
@@ -533,7 +533,7 @@ public class RDataOut {
 					data[sample2Col.get(sid)][i] = dta;
 				}
 				
-				SimpleRunnableWithProgress.updateMonitor(progressContribution);
+				SimpleRunnableWithProgress.monitorWorked(progressContribution);
 			}
 		}	
 	}

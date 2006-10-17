@@ -1,30 +1,29 @@
-package search;
+package util.tableviewer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class holds a collection of {@link SearchResult}s sharing the same attribute types
+ * This class holds a collection of {@link Row}s sharing the same {@link Column}s
  */
-public class SearchResults {
-	private ArrayList<Attribute> attributeTemp;
+public class TableData {
+	private ArrayList<Column> columnTemp;
 	
-	private ArrayList<SearchResult> results;
+	private ArrayList<Row> rows;
 	
-	public SearchResults() {
-		attributeTemp = new ArrayList<Attribute>();
-		
-		results = new ArrayList<SearchResult>();
+	public TableData() {
+		columnTemp = new ArrayList<Column>();
+		rows = new ArrayList<Row>();
 	}
 	
-	public ArrayList<SearchResult> getResults() { return results; }
+	public ArrayList<Row> getResults() { return rows; }
 	public ArrayList<String> getAttributeNames() { 
 		return getAttributeNames(false); 
 	}
 	
 	public ArrayList<String> getAttributeNames(boolean showHidden) {
 		ArrayList<String> attrNames = new ArrayList<String>();
-		for(Attribute at : attributeTemp) {
+		for(Column at : columnTemp) {
 			if(!showHidden) { if(at.isVisible()) attrNames.add(at.name); }
 			else attrNames.add(at.name);
 		}
@@ -32,27 +31,27 @@ public class SearchResults {
 	}
 	
 	public void addAttribute(String name, int type) {
-		attributeTemp.add(new Attribute(name, type, true));
+		columnTemp.add(new Column(name, type, true));
 	}
 	public void addAttribute(String name, int type, boolean visible) {
-		attributeTemp.add(new Attribute(name, type, visible));
+		columnTemp.add(new Column(name, type, visible));
 	}
 	
-	public void addResult(SearchResult rs) { results.add(rs); }
+	public void addResult(Row rs) { rows.add(rs); }
 	
 	/**
 	 * This class contains a single result from a search
 	 */
-	public class SearchResult {
-		private HashMap<String, Attribute> attributes;
+	public class Row {
+		private HashMap<String, Column> attributes;
 		
-		public SearchResult() { 
-			attributes = new HashMap<String, Attribute>();
-			for(Attribute at : attributeTemp) {
+		public Row() { 
+			attributes = new HashMap<String, Column>();
+			for(Column at : columnTemp) {
 				attributes.put(at.getName(),
-						new Attribute(at.getName(), at.type, at.isVisible()));
+						new Column(at.getName(), at.type, at.isVisible()));
 			}
-			results.add(this);
+			rows.add(this);
 		}
 		
 		public void setAttribute(String name, String value) {
@@ -67,15 +66,15 @@ public class SearchResults {
 			if(attributes.containsKey(name)) attributes.get(name).setArray(value);
 		}
 		
-		public Attribute getAttribute(String name) throws Exception {
+		public Column getAttribute(String name) throws Exception {
 			if(attributes.containsKey(name)) return attributes.get(name);
 			throw new Exception("Attribute " + name + " does not exist");
 		}
 		
-		public ArrayList<Attribute> getAttributes(boolean onlyVisible) {
-			ArrayList<Attribute> attr = new ArrayList<Attribute>();
-			for(Attribute at : attributeTemp) {
-				Attribute atr = attributes.get(at.getName());
+		public ArrayList<Column> getAttributes(boolean onlyVisible) {
+			ArrayList<Column> attr = new ArrayList<Column>();
+			for(Column at : columnTemp) {
+				Column atr = attributes.get(at.getName());
 				if(atr.isVisible()) attr.add(atr);
 			}
 			return attr;
@@ -83,10 +82,10 @@ public class SearchResults {
 	}
 	
 	/**
-	 * This class represents a search attribute, which can either
+	 * This class represents a column, which can either
 	 * have a numeric or text value
 	 */
-	public class Attribute {
+	public class Column {
 		public static final int TYPE_TEXT = 0;
 		public static final int TYPE_NUM  = 1;
 		public static final int TYPE_ARRAYLIST = 2;
@@ -100,8 +99,8 @@ public class SearchResults {
 		private int type;
 		private boolean visible;
 		
-		public Attribute(String n, int t) { name = n; type = t; textValue = ""; this.visible = true; }
-		public Attribute(String n, int t, boolean visible) { this(n, t); this.visible = visible; }
+		public Column(String n, int t) { name = n; type = t; textValue = ""; this.visible = true; }
+		public Column(String n, int t, boolean visible) { this(n, t); this.visible = visible; }
 		
 		public String getName() { return name; }
 		public String getText() { 

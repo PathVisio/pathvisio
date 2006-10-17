@@ -3,6 +3,8 @@ package gmmlVision.sidepanels;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -15,16 +17,16 @@ import org.eclipse.swt.widgets.TabItem;
  * returned by {@link #getTabFolder()}
  */
 public class TabbedSidePanel extends SidePanel {
-	private TabFolder tabFolder;
+	private CTabFolder tabFolder;
 	HashMap<String, Control> controls;
-	HashMap<String, TabItem> tabItems;
+	HashMap<String, CTabItem> tabItems;
 	
 	/**
 	 * Returns the {@link TabFolder} containing the different
 	 * tabItems of this sidepanel
 	 * @return
 	 */
-	public TabFolder getTabFolder() { return tabFolder; }
+	public CTabFolder getTabFolder() { return tabFolder; }
 	
 	/**
 	 * Constructor for this class
@@ -35,9 +37,10 @@ public class TabbedSidePanel extends SidePanel {
 	public TabbedSidePanel(Composite parent, int style) {
 		super(parent, style);
 		controls = new HashMap<String, Control>();
-		tabItems = new HashMap<String, TabItem>();
+		tabItems = new HashMap<String, CTabItem>();
 		
-		tabFolder = new TabFolder(getContentComposite(), SWT.NULL);
+		tabFolder = new CTabFolder(getContentComposite(), SWT.BORDER);
+		tabFolder.setSimple(false);
 	}
 	
 	/**
@@ -48,7 +51,13 @@ public class TabbedSidePanel extends SidePanel {
 	 */
 	public void addTab(Control content, String title)
 	{		
-		createTabItem(content, title);
+		createTabItem(content, title, false);
+		controls.put(title, content);
+	}
+	
+	public void addTab(Control content, String title, boolean close)
+	{		
+		createTabItem(content, title, close);
 		controls.put(title, content);
 	}
 	
@@ -56,11 +65,12 @@ public class TabbedSidePanel extends SidePanel {
 	 * Creates an {@link TabItem} with the given control and title
 	 * @param content
 	 * @param title
+	 * @param close
 	 * @returns
 	 */
-	private TabItem createTabItem(Control content, String title)
+	private CTabItem createTabItem(Control content, String title, boolean close)
 	{
-		return createTabItem(content, title, tabFolder.getItemCount());
+		return createTabItem(content, title, tabFolder.getItemCount(), close);
 	}
 	
 	/**
@@ -73,13 +83,13 @@ public class TabbedSidePanel extends SidePanel {
 	 * @param index
 	 * @return
 	 */
-	private TabItem createTabItem(Control content, String title, int index) {
+	private CTabItem createTabItem(Control content, String title, int index, boolean close) {
 		int nrTabs = tabFolder.getItemCount();
 		
 		if(index > nrTabs) index = nrTabs; //If index is invalid, choose first or last tab
 		else if(index < 0) index = 0;
 		
-		TabItem ti = new TabItem(tabFolder, SWT.NULL, index);
+		CTabItem ti = new CTabItem(tabFolder, close ? SWT.CLOSE : SWT.NULL, index);
 		ti.setText(title);
 		ti.setControl(content);
 		tabItems.put(title, ti);
@@ -113,7 +123,7 @@ public class TabbedSidePanel extends SidePanel {
 	 */
 	public boolean showTab(String title, int position) {
 		if(controls.containsKey(title)) {
-			createTabItem(controls.get(title), title, position);
+			createTabItem(controls.get(title), title, position, false);
 			return true;
 		}
 		return false;
@@ -121,7 +131,7 @@ public class TabbedSidePanel extends SidePanel {
 	
 	public void selectTab(String title) {
 		if(tabItems.containsKey(title)) 
-			tabFolder.setSelection(new TabItem[] {tabItems.get(title)});
+			tabFolder.setSelection(tabItems.get(title));
 	}
 	
 	/**

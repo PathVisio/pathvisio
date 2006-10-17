@@ -20,6 +20,22 @@ import org.eclipse.swt.graphics.RGB;
 public class GmmlDataObject
 {		
 	/**
+	 * Default constructor will be removed, to force setting
+	 * of object type to a valid value.
+	 * 
+	 * @deprecated
+	 */
+	public GmmlDataObject ()
+	{
+	
+	}
+	
+	public GmmlDataObject (int ot)
+	{
+		setObjectType (ot);
+	}
+	
+	/**
 	 * Parent of this object: may be null (for example,
 	 * when object is in clipboard)
 	 */

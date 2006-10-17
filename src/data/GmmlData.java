@@ -55,6 +55,16 @@ public class GmmlData
 	public List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
 	
 	/**
+	 * Getter for dataobjects contained. There is no setter, you
+	 * have to add dataobjects individually
+	 * @return
+	 */
+	public List<GmmlDataObject> getDataObjects() 
+	{
+		return dataObjects;
+	}
+	
+	/**
 	 * Add dataObject; You don't need to call this
 	 * explicitly, because this is called automatically
 	 * when setting the parent.

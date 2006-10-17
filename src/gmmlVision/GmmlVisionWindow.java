@@ -1342,6 +1342,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		
 	};
 	
+	public TabbedSidePanel getSidePanel() { return rightPanel; }
+	
 	public GmmlLegend getLegend() { return legend; }
 	
 	public void showLegend(boolean show) {	

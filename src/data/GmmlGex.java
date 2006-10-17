@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import util.FileUtils;
-
 import colorSet.GmmlColorCriterion;
 import colorSet.GmmlColorGradient;
 import colorSet.GmmlColorSet;

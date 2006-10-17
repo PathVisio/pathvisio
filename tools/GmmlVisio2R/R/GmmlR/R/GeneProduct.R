@@ -21,15 +21,16 @@ setValidity("GeneProduct", function(object) {
 #### Constructors ####
 ######################
 GeneProduct <- function(refs) {
+		if(is.null(dim(refs))) return(GeneProductFromString(refs))
 		colnames(refs) = c("id", "code")
 		rownames(refs) = getRowNames(refs)
 		gp =	new("GeneProduct", refs)		
 }
 
-GeneProductFromString = function(string) {
-	idcode = parseGpString(string)
+GeneProductFromString = function(str) {
+	idcode = parseGpString(str)
 	gp = GeneProduct(rbind(rev(idcode)))
-	rownames(gp) = string
+	rownames(gp) = str
 	gp
 }
 
@@ -37,7 +38,7 @@ GeneProductFromString = function(string) {
 #### Functions ###
 ##################
 parseGpString = function(str) {
-	strsplit(string, ":")[[1]]
+	strsplit(str, ":")[[1]]
 }
 
 getGpString = function(idcode) {

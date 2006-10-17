@@ -1,10 +1,13 @@
-exportClasses(DataSet, GeneProduct, Pathway, PathwaySet)
+exportClasses(DataSet, GeneProduct, Pathway, PathwaySet, GmmlFunction)
 
-exportMethods(	name, "name<-", 			   				#Pathway, GeneProduct, DataSet, PathwaySet
+exportMethods(	name, "name<-", 			   			#Pathway, GeneProduct, DataSet, PathwaySet
 			reporters, "reporters<-", dataByReporter,		#DataSet
-			"addReference<-",			 				#GeneProduct
+			"addReference<-",			 		#GeneProduct
 			fileName, "fileName<-", allRefs, "allRefs<-", 		#Pathway
-			"==", print, domatch							#Generic/primitive
+			"description", "arg_descr", "arg_class", "getArgs", 
+			"getDefaults",						#GmmlFunction
+			"fileNames",						#ResultSet
+			"==", print, match					#Generic/primitive
 )
 			
-export(DataSet, GeneProduct, Pathway, PathwaySet)
+export(DataSet, GeneProduct, Pathway, PathwaySet, GmmlFunction, ResultSet)

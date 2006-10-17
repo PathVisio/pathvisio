@@ -108,10 +108,18 @@ public class SwtUtils {
 			monitor.done();
 		}
 		
-		public static void updateMonitor(final int w) {
+		public static void monitorWorked(final int w) {
 			GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					monitor.worked(w);
+				}
+			});
+		}
+		
+		public static void monitorSetTaskName(final String taskName) {
+			GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					monitor.setTaskName(taskName);
 				}
 			});
 		}

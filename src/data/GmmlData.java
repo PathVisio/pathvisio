@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,12 +43,62 @@ public class GmmlData
 	 * divide the GenMAPP cordinates by this factor on conversion
 	 */
 	final public static int GMMLZOOM = 15;
+	
 	/**
-	 * file containing the gmml schema definition
+	 * name of resource containing the gmml schema definition
 	 */
 	final private static String xsdFile = "GMML_compat.xsd";
 	
+	/**
+	 * List of contained dataObjects
+	 */
 	public List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
+	
+	/**
+	 * Add dataObject; You don't need to call this
+	 * explicitly, because this is called automatically
+	 * when setting the parent.
+	 * @param o The object to add
+	 */
+	public void addDataObject (GmmlDataObject o)
+	{
+		dataObjects.add(o);
+	}
+	
+	/**
+	 * You don't need to call this explicitly,
+	 * GmmlDataObjects are automatically removed when
+	 * changing its parent through setParent. 
+	 * @param o the object to remove
+	 */
+	public void removeDataObject (GmmlDataObject o)
+	{
+		dataObjects.remove(o);
+	}
+	
+	/**
+	 * Stores references of line endpoints to other objects
+	 */
+	private HashMap<String, List<GmmlDataObject>> graphRefs;
+	public void addRef (String ref, GmmlDataObject target)
+	{
+		if (graphRefs.containsKey(ref))
+		{
+			List<GmmlDataObject> l = graphRefs.get(ref);
+			l.add(target);
+		}
+		else
+		{
+			List<GmmlDataObject> l = new ArrayList<GmmlDataObject>();
+			l.add(target);		
+			graphRefs.put(ref, l);
+		}
+	}
+	
+	public void removeRef (String ref, GmmlDataObject target)
+	{
+		// TODO
+	}
 	
 	private File xmlFile;
 	/**
@@ -62,7 +113,7 @@ public class GmmlData
 	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
 	public GmmlData() 
-	{		
+	{	
 	}
 	
 	/*
@@ -73,6 +124,7 @@ public class GmmlData
 		GmmlVisionWindow window = GmmlVision.getWindow();
 
 		GmmlDataObject mapInfo = new GmmlDataObject();
+		mapInfo.setParent(this);
 		mapInfo.setObjectType(ObjectType.MAPPINFO);
 		if (window.sc != null)
 		{
@@ -100,15 +152,6 @@ public class GmmlData
 		readFromXml(xmlFile, true);		
 	}
 	
-	/**
-	 * Maps the element specified to a GmmlGraphics object
-	 * @param e		the JDOM {@link Element} to map
-	 */
-	private void mapElement(Element e) {
-		GmmlDataObject o = GmmlDataObject.mapComplete(e);
-		if(o != null) dataObjects.add(o);
-	}
-
 	/**
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate
@@ -191,12 +234,12 @@ public class GmmlData
 			// Copy the pathway information to a GmmlDrawing
 			Element root = doc.getRootElement();
 			
-			mapElement(root); // MappInfo
+			GmmlFormat.mapElement(root, this); // MappInfo
 			
 			// Iterate over direct children of the root element
 			Iterator it = root.getChildren().iterator();
 			while (it.hasNext()) {
-				mapElement((Element)it.next());
+				GmmlFormat.mapElement((Element)it.next(), this);
 			}
 		}
 		catch(JDOMParseException pe) 
@@ -221,7 +264,6 @@ public class GmmlData
 
         MappFormat.readFromMapp (inputString, this);
 	}
-	
 	
 	public void writeToMapp (File file) throws ConverterException
 	{

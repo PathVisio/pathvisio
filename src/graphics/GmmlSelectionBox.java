@@ -1,4 +1,6 @@
 package graphics;
+import gmmlVision.GmmlVision;
+
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -28,6 +30,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	public GmmlSelectionBox(GmmlDrawing canvas)
 	{
 		// TODO: selectionbox shouldn't need a dataobject...
+		// note, not setting parent of GmmlDataObject here.
 		super(canvas, new GmmlDataObject());
 		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
 		

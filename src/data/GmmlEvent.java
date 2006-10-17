@@ -1,7 +1,5 @@
 package data;
 
-import graphics.GmmlGraphicsData;
-
 public class GmmlEvent 
 {
 	public static final int MODIFIED_GENERAL = 0;
@@ -11,15 +9,15 @@ public class GmmlEvent
 	public static final int PROPERTY = 4; // e.g. name change
 	public static final int WINDOW = 5;
 	
-	private GmmlGraphicsData affectedData;
-	public GmmlGraphicsData getAffectedData () { return affectedData; }
+	private GmmlDataObject affectedData;
+	public GmmlDataObject getAffectedData () { return affectedData; }
 	
 	private int type;
 	public int getType() { return type; }
 	
-	public GmmlEvent (GmmlGraphicsData g, int t)
+	public GmmlEvent (GmmlDataObject object, int t)
 	{
-		affectedData = g;
+		affectedData = object;
 		type = t;
 	}
 }

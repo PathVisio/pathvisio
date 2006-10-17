@@ -311,6 +311,8 @@ public class MappFormat
 		log.trace ("CONVERTING INFO TABLE TO GMML");
 		
 		GmmlDataObject o = new GmmlDataObject();
+		o.setParent(data);
+		
 		o.setObjectType(ObjectType.MAPPINFO);
 		o.setMapInfoName(row[icolTitle]);
 		o.setMapInfoDataSource("GenMAPP 2.0");
@@ -327,9 +329,7 @@ public class MappFormat
 		o.setBoardWidth(Double.parseDouble(row[icolBoardWidth]) / GmmlData.GMMLZOOM);
 		o.setBoardHeight(Double.parseDouble(row[icolBoardHeight]) / GmmlData.GMMLZOOM);
 		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]) / GmmlData.GMMLZOOM);
-		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.GMMLZOOM);
-		
-		data.dataObjects.add(o);
+		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.GMMLZOOM);		
 	}
        
 	private static String mapBetween (String[] from, String[] to, String value) throws ConverterException
@@ -493,7 +493,7 @@ public class MappFormat
 				case 9: /*Oval*/						
 				case 10: /*Rectangle*/
 				case 18: /*Arc*/
-						o = mapShapeType( row);
+						o = mapShapeType(row);
 						mapNotesAndComments (o, row);
 						break;							
 				case 17: /*CellA*/
@@ -517,8 +517,7 @@ public class MappFormat
 							+ "' is not recognised as a GenMAPP type "
 							+ "and is therefore not processed.\n");							
 		}
-		
-		data.dataObjects.add(o);
+		o.setParent(data);
     }
 
     
@@ -814,7 +813,7 @@ public class MappFormat
     	unmapRotation (o, mappObject);    	
     }
     
-    private static GmmlDataObject mapFixedShapeType( String[] mappObject)
+    private static GmmlDataObject mapFixedShapeType(String[] mappObject)
     {
     	GmmlDataObject o = new GmmlDataObject();
     	o.setObjectType(ObjectType.FIXEDSHAPE);

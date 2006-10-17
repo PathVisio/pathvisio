@@ -821,6 +821,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		previousY = e.y;
 		
 		if(gdata != null) {
+			gdata.setParent(GmmlVision.getGmmlData());
 			GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(gdata, GmmlEvent.ADDED));
 		}
 		
@@ -935,7 +936,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			for(GmmlDrawingObject o : drawingObjects) {
 				System.out.println(o.toString() + "\t" + o.isSelected() + "\t" + o.drawingOrder + "\t");
 				if(o instanceof GmmlGraphics) {
-					System.out.println("\t is GmmlGraphics\t" + ((GmmlGraphics)o).getGmmlData().objectType);
+					System.out.println("\t is GmmlGraphics\t" + ((GmmlGraphics)o).getGmmlData().getObjectType());
 				}
 			}
 		}

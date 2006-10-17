@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import util.TableColumnResizer;
 import data.GmmlDataObject;
+import data.GmmlFormat;
 import data.GmmlEvent;
 import data.GmmlListener;
 import data.MappFormat;
@@ -71,6 +72,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 	
 	final static List<String> totalAttributes = GmmlDataObject.attributes;
 	
+	// TODO: this is nearly redundant with GmmlDataObject.attributes
 	final static List<String> labelMappings = Arrays.asList(new String[] {
 			
 			// all
@@ -105,7 +107,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			"MapInfo Name", "Organism", "MapInfo Data-Source",
 			"Version", "Author", "Maintained-By", 
 			"Email", "Last-modified", "Availability",
-			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"
+			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
+
+			// other
+			"GraphId", "StartGraphRef", "EndGraphRef"
 
 	});
 
@@ -142,7 +147,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			STRING, STRING, STRING,
 			STRING, STRING, STRING,
 			STRING, STRING, STRING,
-			DOUBLE, DOUBLE, DOUBLE, DOUBLE
+			DOUBLE, DOUBLE, DOUBLE, DOUBLE,
+			
+			//other
+			STRING, STRING, STRING
 	};
 	
 	Hashtable<String, Integer> typeMappings;
@@ -195,8 +203,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 			String[] types = new String[] {""};
 			if (g.getObjectType() == ObjectType.LINE)
 			{
-				types = GmmlDataObject.gmmlLineTypes.toArray(
-						new String[GmmlDataObject.gmmlLineTypes.size()]);
+				types = GmmlFormat.gmmlLineTypes.toArray(
+						new String[GmmlFormat.gmmlLineTypes.size()]);
 			}
 			else if (g.getObjectType() == ObjectType.SHAPE)
 			{
@@ -323,6 +331,11 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 					//TODO: prettier labels for different value types
 					if(attributes.contains(key))
 					{
+						Object result = g.getProperty(key);
+						if (result == null)
+						{
+							GmmlVision.log.error ("Property '" + key + "' not found");
+						}
 						return g.getProperty(key).toString();
 					}
 			}

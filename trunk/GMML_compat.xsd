@@ -323,7 +323,8 @@
 								<xsd:complexType>
 									<xsd:attribute name="x" type="xsd:float"/>
 									<xsd:attribute name="y" type="xsd:float"/>
-									<xsd:attribute name="GraphRef" type="xsd:IDREF" use="optional" />					
+									<xsd:attribute name="GraphRef"  type="xsd:IDREF" use="optional" />					
+									<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>

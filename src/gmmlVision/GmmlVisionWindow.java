@@ -1350,7 +1350,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		if(show && GmmlGex.isConnected() && GmmlGex.getColorSetIndex() > -1) {
 			legend.resetContents();
 			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
-			rightPanel.showTab("Legend", 0);
+			rightPanel.unhideTab("Legend", 0);
 			rightPanel.selectTab("Legend");
 		}
 		

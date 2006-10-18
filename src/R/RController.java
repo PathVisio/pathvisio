@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,9 +53,11 @@ public class RController implements PropertyListener{
 					if(re == null) re = new Rengine(rArgs, false, null);
 					if(!re.isAlive()) re.run();
 					m.done();
+					if(m.isCanceled()) throw new InterruptedException();
 				}
 			});
 		} catch(InterruptedException ie) { 
+			return false;
 		} catch(Exception e) {
 			startError(e);
 			return false;

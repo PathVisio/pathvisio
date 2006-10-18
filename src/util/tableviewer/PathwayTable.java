@@ -1,9 +1,6 @@
 package util.tableviewer;
 
 import gmmlVision.GmmlVision;
-import graphics.GmmlDrawing;
-import graphics.GmmlDrawingObject;
-import graphics.GmmlGeneProduct;
 
 import java.util.ArrayList;
 
@@ -13,6 +10,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -21,10 +19,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -58,13 +54,18 @@ public class PathwayTable extends Composite {
 				Table t = tableViewer.getTable();
 				for(TableColumn tc : t.getColumns()) tc.dispose();
 				
-				ArrayList<String> attrNames = srs.getAttributeNames();
+				ArrayList<String> attrNames = srs.getColNames();
 				String[] colProps = new String[attrNames.size()];
 				for(int i = 0; i < attrNames.size(); i++) {
-					TableColumn tc = new TableColumn(t, SWT.NULL);
+					final TableColumn tc = new TableColumn(t, SWT.NULL);
 					tc.setText(attrNames.get(i));
 					tc.setWidth(20);
 					colProps[i] = attrNames.get(i);
+					tc.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							tableViewer.setSorter(new PathwaySorter(tc.getText()));
+						}
+					});
 				}
 				tableViewer.setColumnProperties(colProps);
 				tableViewer.setInput(srs);
@@ -110,7 +111,7 @@ public class PathwayTable extends Composite {
 			((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
 			if(sr == null) return;
 			try {
-				String pw = sr.getAttribute(COLNAME_FILE).getText();
+				String pw = sr.getColumn(COLNAME_FILE).getText();
 				GmmlVision.openPathway(pw);
 			} catch(Exception ex) { 
 				GmmlVision.log.error("when trying to open pathway from pathway table", ex);
@@ -141,7 +142,7 @@ public class PathwayTable extends Composite {
 			TableData.Row sr = (TableData.Row)element;
 			String name = (String)tableViewer.getColumnProperties()[columnIndex];
 			
-			try { return sr.getAttribute(name).getText(); } catch (Exception e) { return "error"; }
+			try { return sr.getColumn(name).getText(); } catch (Exception e) { return "error"; }
 		}
 
 		public void addListener(ILabelProviderListener listener) {	}
@@ -150,4 +151,19 @@ public class PathwayTable extends Composite {
 		public void removeListener(ILabelProviderListener arg0) { }
 		
 	};
+	
+	private class PathwaySorter extends ViewerSorter {
+		String property;
+		int propertyIndex;
+		
+		public PathwaySorter(String sortByProperty) {
+			property = sortByProperty;
+		}
+		
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			Row r1 = (Row)e1;
+			Row r2 = (Row)e2;
+			return r1.getColumn(property).compareTo(r2.getColumn(property));
+		}
+	}
 }	

@@ -52,6 +52,7 @@ import search.PathwaySearchComposite;
 import R.RController;
 import R.wizard.RWizard;
 import colorSet.ColorSetWindow;
+import data.ConverterException;
 import data.GmmlData;
 import data.GmmlGdb;
 import data.GmmlGex;
@@ -141,7 +142,19 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			// Overwrite the existing xml file
 			if (gmmlData.getXmlFile() != null)
 			{
-				gmmlData.writeToXML(gmmlData.getXmlFile(), true);
+				try
+				{
+					gmmlData.writeToXml(gmmlData.getXmlFile(), true);
+				}
+				catch (ConverterException e)
+				{
+					String msg = "While writing xml to " 
+							+ gmmlData.getXmlFile().getAbsolutePath();					
+					MessageDialog.openError (window.getShell(), "Error", 
+							"Error: " + msg + "\n\n" + 
+							"See the error log for details.");
+					GmmlVision.log.error(msg, e);
+				}
 			}
 			else
 			{
@@ -202,10 +215,22 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					// Set zoom to 100%
 					drawing.setPctZoom(100);					
 					// Overwrite the existing xml file
-					gmmlData.writeToXML(checkFile, true);
-					gmmlData.setXmlFile(checkFile);
-					// Set zoom back
-					drawing.setPctZoom(usedZoom);
+					try
+					{
+						gmmlData.writeToXml(checkFile, true);					
+						gmmlData.setXmlFile(checkFile);
+						// Set zoom back
+						drawing.setPctZoom(usedZoom);
+					}
+					catch (ConverterException e)
+					{
+						String msg = "While writing xml to " 
+							+ checkFile.getAbsolutePath();					
+					MessageDialog.openError (window.getShell(), "Error", 
+							"Error: " + msg + "\n\n" + 
+							"See the error log for details.");
+					GmmlVision.log.error(msg, e);
+					}
 				}
 			}
 			else

@@ -13,6 +13,10 @@ import org.eclipse.swt.graphics.RGB;
  * contain a union of all possible fields (e.g it has
  * both start and endpoints for lines, and label text for labels)
  * Each field can be accessed through a specific accessor, or
+ * through getProperty() and setProperty()
+ * 
+ * most fields cannot be set to null. Notable exceptions are
+ * graphId, startGraphRef and endGraphRef.
  * 
  * @author Martijn
  *
@@ -32,7 +36,11 @@ public class GmmlDataObject
 	
 	public GmmlDataObject (int ot)
 	{
-		setObjectType (ot);
+		if (ot < ObjectType.MIN_VALID || ot > ObjectType.MAX_VALID)
+		{
+			throw new IllegalArgumentException("Trying to set objectType to " + ot);
+		}
+		objectType = ot;
 	}
 	
 	/**
@@ -40,11 +48,12 @@ public class GmmlDataObject
 	 * when object is in clipboard)
 	 */
 	private GmmlData parent = null;
-	
+	public GmmlData getParent() { return parent; }
 	/**
 	 * Set parent. Parent may be set to null.
 	 * When parent is set to not null, it is automatically added.
 	 * If parent is set to null, it is automatically removed.
+	 * Also, takes care of reference accounting.
 	 * @param v
 	 */
 	public void setParent(GmmlData v)
@@ -53,12 +62,28 @@ public class GmmlDataObject
 		{
 			if (parent != null)
 			{
+				if (startGraphRef != null)
+				{
+					parent.removeRef(startGraphRef, this);
+				}
+				if (endGraphRef != null)
+				{
+					parent.removeRef(startGraphRef, this);
+				}
 				parent.removeDataObject (this);
 			}			
 			parent = v;
 			if (v != null)
 			{
 				v.addDataObject(this);
+				if (startGraphRef != null)
+				{
+					v.addRef(startGraphRef, this);
+				}
+				if (endGraphRef != null)
+				{
+					v.addRef(startGraphRef, this);
+				}
 			}
 		}
 	}
@@ -83,11 +108,12 @@ public class GmmlDataObject
 				result = ( Arrays.asList (new String[] {
 						"Notes", "Comment",
 						"CenterX", "CenterY", "Width", "Height",
-				// line, shape, brace, geneproduct, label
-				"Color",				
-				// gene product
-				"Name", "GeneProduct-Data-Source", "GeneID", 
-				"Xref", "BackpageHead", "Type", "GraphId"
+						
+						// line, shape, brace, geneproduct, label
+						"Color",				
+						// gene product
+						"Name", "GeneProduct-Data-Source", "GeneID", 
+						"Xref", "BackpageHead", "Type", "GraphId"
 				}));
 				break;
 			case ObjectType.SHAPE:
@@ -106,11 +132,11 @@ public class GmmlDataObject
 						
 						"Notes", "Comment",
 						"CenterX", "CenterY", "Width", "Height",
-				// line, shape, brace, geneproduct, label
-				"Color", 
-				
-				// brace
-				"Orientation", "GraphId"
+						// line, shape, brace, geneproduct, label
+						"Color", 
+						
+						// brace
+						"Orientation", "GraphId"
 				}));
 				break;
 			case ObjectType.LINE:
@@ -182,8 +208,20 @@ public class GmmlDataObject
 			"GraphId", "StartGraphRef", "EndGraphRef"
 	});
 	
+	/**
+	 * This works so that
+	 * o.setNotes(x) is the equivalent of
+	 * o.setProperty("Notes", x);
+	 * 
+	 * Value may be null in some cases, e.g. graphRef
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	public void setProperty(String key, Object value)
 	{
+		assert (key != null);
+		
 		int i = attributes.indexOf(key);	
 		// TODO: use enum instead of integer index.
 		switch (i)
@@ -240,6 +278,7 @@ public class GmmlDataObject
 			case 40: setGraphId ((String)value); break;
 			case 41: setStartGraphRef ((String)value); break;
 			case 42: setEndGraphRef ((String)value); break;
+			default: throw new IllegalArgumentException("Invalid key");
 		}
 	}
 	
@@ -311,8 +350,8 @@ public class GmmlDataObject
 	 */
 	public GmmlDataObject clone()
 	{
-		GmmlDataObject result = new GmmlDataObject();
-		result.parent = parent;		
+		GmmlDataObject result = new GmmlDataObject(objectType);
+		result.parent = parent;
 		result.author = author;
 		result.availability = availability;
 		result.backpageHead = backpageHead;
@@ -347,7 +386,6 @@ public class GmmlDataObject
 		result.mapInfoName = mapInfoName;
 		result.mapInfoTop = mapInfoTop;
 		result.notes = notes;
-		result.objectType = objectType;
 		result.organism = organism;
 		result.rotation = rotation;
 		result.shapeType = shapeType;
@@ -367,6 +405,14 @@ public class GmmlDataObject
 
 	protected int objectType = ObjectType.GENEPRODUCT;
 	public int getObjectType() { return objectType; }
+	
+	/**
+	 * in the future, change of objecttype won't be possible at all.
+	 * Objecttype should be set through constructor
+	 * 
+	 * @deprecated
+	 * @param v
+	 */
 	public void setObjectType(int v) 
 	{ 
 		if (objectType != v)
@@ -447,7 +493,7 @@ public class GmmlDataObject
 	public RGB getColor() { return color; }
 	public void setColor(RGB v) 
 	{
-		assert (v != null);
+		if (v == null) throw new IllegalArgumentException();
 		if (color != v)
 		{
 			color = v; 
@@ -471,6 +517,7 @@ public class GmmlDataObject
 	public String getComment() { return comment; }
 	public void setComment (String v) 
 	{
+		if (v == null) throw new IllegalArgumentException();
 		if (comment != v)
 		{
 			comment = v; 
@@ -482,6 +529,7 @@ public class GmmlDataObject
 	public String getNotes() { return notes; }
 	public void setNotes (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (notes != v)
 		{
 			notes = v;		
@@ -494,6 +542,7 @@ public class GmmlDataObject
 	public String getGeneID() { return geneID; }
 	public void setGeneID(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (geneID != v)
 		{
 			geneID = v;		
@@ -505,6 +554,7 @@ public class GmmlDataObject
 	public String getXref() { return xref; }
 	public void setXref(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (xref != v)
 		{
 			xref = v; 
@@ -516,6 +566,7 @@ public class GmmlDataObject
 	public String getGeneProductName() { return geneProductName; }
 	public void setGeneProductName(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (geneProductName != v)
 		{
 			geneProductName = v;		
@@ -527,6 +578,7 @@ public class GmmlDataObject
 	public String getBackpageHead() { return backpageHead; }
 	public void setBackpageHead(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (backpageHead != v)
 		{
 			backpageHead = v;		
@@ -538,6 +590,7 @@ public class GmmlDataObject
 	public String getGeneProductType() { return geneProductType; }
 	public void setGeneProductType(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (geneProductType != v)
 		{
 			geneProductType = v; 
@@ -549,6 +602,7 @@ public class GmmlDataObject
 	public String getDataSource() { return dataSource; }
 	public void setDataSource(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (dataSource != v)
 		{
 			dataSource = v; 
@@ -706,6 +760,7 @@ public class GmmlDataObject
 	public String getFontName() { return fontName; }
 	public void setFontName(String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (fontName != v)
 		{
 			fontName = v;
@@ -717,6 +772,7 @@ public class GmmlDataObject
 	public String getLabelText() { return labelText; }
 	public void setLabelText (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (labelText != v)
 		{
 			labelText = v;
@@ -739,6 +795,7 @@ public class GmmlDataObject
 	public String getMapInfoName() { return mapInfoName; }
 	public void setMapInfoName (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (mapInfoName != v)
 		{
 			mapInfoName = v;
@@ -750,6 +807,7 @@ public class GmmlDataObject
 	public String getOrganism() { return organism; }
 	public void setOrganism (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (organism != v)
 		{
 			organism = v;
@@ -761,6 +819,7 @@ public class GmmlDataObject
 	public String getMapInfoDataSource() { return mapInfoDataSource; }
 	public void setMapInfoDataSource (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (mapInfoDataSource != v)
 		{
 			mapInfoDataSource = v;
@@ -772,6 +831,7 @@ public class GmmlDataObject
 	public String getVersion() { return version; }
 	public void setVersion (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (version != v)
 		{
 			version = v;
@@ -783,6 +843,7 @@ public class GmmlDataObject
 	public String getAuthor() { return author; }
 	public void setAuthor (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (author != v)
 		{
 			author = v;
@@ -794,6 +855,7 @@ public class GmmlDataObject
 	public String getMaintainedBy() { return maintainedBy; }
 	public void setMaintainedBy (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (maintainedBy != v)
 		{
 			maintainedBy = v;
@@ -805,6 +867,7 @@ public class GmmlDataObject
 	public String getEmail() { return email; }
 	public void setEmail (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (email != v)
 		{
 			email = v;
@@ -816,6 +879,7 @@ public class GmmlDataObject
 	public String getAvailability() { return availability; }
 	public void setAvailability (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (availability != v)
 		{
 			availability = v;
@@ -827,6 +891,7 @@ public class GmmlDataObject
 	public String getLastModified() { return lastModified; }
 	public void setLastModified (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (lastModified != v)
 		{
 			lastModified = v;
@@ -899,7 +964,7 @@ public class GmmlDataObject
 		}
 	}
 
-	protected String graphId = "";
+	protected String graphId = null;
 	public String getGraphId() { return graphId; }
 	public void setGraphId (String v) 
 	{ 
@@ -910,23 +975,56 @@ public class GmmlDataObject
 		}
 	}
 
-	protected String startGraphRef = "";
+	protected String startGraphRef = null;
 	public String getStartGraphRef() { return startGraphRef; }
+	/**
+	 * Set a reference to another object with a graphId.
+	 * If a parent is set, this will automatically deregister
+	 * the previously held reference and register the new reference
+	 * as necessary
+	 * @param v: reference to set.
+	 */
 	public void setStartGraphRef (String v) 
 	{ 
 		if (startGraphRef != v)
 		{
+			if (parent != null)
+			{
+				if (startGraphRef != null)
+				{
+					parent.removeRef(startGraphRef, this);
+				}
+				if (v != null)
+				{
+					parent.addRef(v, this);
+				}
+			}
 			startGraphRef = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 
-	protected String endGraphRef = "";
+	protected String endGraphRef = null;
 	public String getEndGraphRef() { return endGraphRef; }
+	/**
+	 * @see setStartGraphRef();
+	 * @param v
+	 */
 	public void setEndGraphRef (String v) 
 	{ 
 		if (endGraphRef != v)
 		{
+			if (parent != null)
+			{
+				if (endGraphRef != null)
+				{
+					parent.removeRef(endGraphRef, this);
+				}
+				if (v != null)
+				{
+					parent.addRef(v, this);
+				}
+			}
 			endGraphRef = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}

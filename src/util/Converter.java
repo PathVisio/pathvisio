@@ -7,12 +7,8 @@ package util;
  */
 
 import java.io.File;
-import java.sql.SQLException;
 
-import data.ConverterException;
-import data.GmmlData;
-import data.GmmlFormat;
-import data.MappFormat;
+import data.*;
 import debug.Logger;
 
 /**
@@ -144,7 +140,7 @@ public class Converter {
 				{
 					GmmlData gmmlData = new GmmlData();
 					gmmlData.readFromMapp(inputFile);
-					gmmlData.writeToXML(outputFile, true);					
+					gmmlData.writeToXml(outputFile, true);					
 				}
 				else
 				{
@@ -157,16 +153,6 @@ public class Converter {
 			{
 				log.error(e.getMessage(), e);
 				System.exit(-2);			
-			}
-			catch (SQLException e)
-			{
-				log.error(e.getMessage(), e);
-				System.exit(-2);	
-			}
-			catch (ClassNotFoundException e)
-			{
-				log.error (e.getMessage(), e);
-				System.exit(-2);
 			}
 			System.exit(valid ? 0 : -3);
 		}

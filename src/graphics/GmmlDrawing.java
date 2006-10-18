@@ -604,13 +604,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		case NEWNONE:
 			return;
 		case NEWLINE:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LINE);
 			g = l = new GmmlLine(this, gdata);
@@ -618,13 +617,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.ARROW);
 			g = l = new GmmlLine(this, gdata);
@@ -632,13 +630,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.LINE);
 			g = l = new GmmlLine(this, gdata);
@@ -646,13 +643,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.ARROW);
 			g = l = new GmmlLine(this, gdata);
@@ -660,8 +656,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWLABEL:
-			gdata = new GmmlDataObject();
-			gdata.setObjectType(ObjectType.LABEL);
+			gdata = new GmmlDataObject(ObjectType.LABEL);
 			gdata.setCenterX(e.x);
 			gdata.setCenterY(e.y);
 			gdata.setWidth((GmmlLabel.INITIAL_WIDTH * zoomFactor));
@@ -672,8 +667,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			h = null;
 			break;
 		case NEWARC:
-			gdata = new GmmlDataObject();
-			gdata.setObjectType(ObjectType.SHAPE);
+			gdata = new GmmlDataObject(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.ARC);
 			gdata.setCenterX (e.x);
 			gdata.setCenterY (e.y);
@@ -686,8 +680,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWBRACE:
-			gdata = new GmmlDataObject();
-			gdata.setObjectType(ObjectType.BRACE);
+			gdata = new GmmlDataObject(ObjectType.BRACE);
 			gdata.setCenterX(e.x);
 			gdata.setCenterY(e.y);
 			gdata.setWidth(1);
@@ -699,8 +692,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
-			gdata = new GmmlDataObject();
-			gdata.setObjectType(ObjectType.GENEPRODUCT);
+			gdata = new GmmlDataObject(ObjectType.GENEPRODUCT);
 			gdata.setCenterX(e.x);
 			gdata.setCenterY(e.y);
 			gdata.setWidth(GmmlGeneProduct.INITIAL_WIDTH * zoomFactor);
@@ -712,8 +704,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			h = null;
 			break;
 		case NEWRECTANGLE:
-			gdata = new GmmlDataObject();
-			gdata.setObjectType(ObjectType.SHAPE);
+			gdata = new GmmlDataObject(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.RECTANGLE);
 			gdata.setCenterX (e.x);
 			gdata.setCenterY (e.y);
@@ -726,8 +717,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWOVAL:
-			gdata = new GmmlDataObject();
-			gdata.setObjectType(ObjectType.SHAPE);
+			gdata = new GmmlDataObject(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.OVAL);
 			gdata.setCenterX (e.x);
 			gdata.setCenterY (e.y);
@@ -740,13 +730,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWTBAR:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.TBAR);
 			g = l = new GmmlLine(this, gdata);
@@ -754,13 +743,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_ROUND);
 			g = l = new GmmlLine(this, gdata);
@@ -768,13 +756,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_SQUARE);
 			g = l = new GmmlLine(this, gdata);
@@ -782,13 +769,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_ROUND);
 			g = l = new GmmlLine(this, gdata);
@@ -796,13 +782,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
-			gdata = new GmmlDataObject();
+			gdata = new GmmlDataObject(ObjectType.LINE);
 			gdata.setStartX(e.x);
 			gdata.setStartY(e.y);
 			gdata.setEndX(e.x);
 			gdata.setEndY(e.y);	
 			gdata.setColor (stdRGB);
-			gdata.setObjectType(ObjectType.LINE);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_SQUARE);
 			g = l = new GmmlLine(this, gdata);

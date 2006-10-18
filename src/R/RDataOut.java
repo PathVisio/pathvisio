@@ -22,7 +22,6 @@ import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
-import R.RCommands.RInterruptedException;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
 import data.GmmlGdb;

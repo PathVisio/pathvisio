@@ -334,9 +334,12 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 						Object result = g.getProperty(key);
 						if (result == null)
 						{
-							GmmlVision.log.error ("Property '" + key + "' not found");
+							return "";
 						}
-						return g.getProperty(key).toString();
+						else
+						{
+							return result.toString();
+						}
 					}
 			}
 			return null;

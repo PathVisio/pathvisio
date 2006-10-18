@@ -130,13 +130,21 @@ public class GmmlFormat {
 		return doc;
 	}
 	
-	private static GmmlDataObject mapComplete(Element e, GmmlData p)
+	public static void mapElement(Element e, GmmlData p) throws ConverterException
 	{
-		GmmlDataObject o = new GmmlDataObject();
+		String tag = e.getName();
+		int ot = ObjectType.getTagMapping(tag);
+		if (ot == -1)
+		{
+			// do nothing. This could be caused by
+			// tags <notes> or <comment> that appear
+			// as subtags of <pathway>
+			return;
+		}
+		
+		GmmlDataObject o = new GmmlDataObject(ot);
 		o.setParent(p);
 		
-		String tag = e.getName();
-		o.setObjectType (ObjectType.getTagMapping(tag));
 		switch (o.getObjectType())
 		{
 			case ObjectType.BRACE: // brace
@@ -196,9 +204,8 @@ public class GmmlFormat {
 				mapSimpleCenter (o, e);
 				break;
 			default:
-				o = null; //If objecttype is invalid, return null
+				throw new ConverterException("Invalid ObjectType'" + tag + "'");
 		}
-		return o;
 	}
 	
 	public static final List<String> gmmlLineTypes = Arrays.asList(new String[] {
@@ -244,7 +251,7 @@ public class GmmlFormat {
 			jdomGraphics.addContent(p1);
 			p1.setAttribute("x", Double.toString(o.getStartX() * GmmlData.GMMLZOOM));
 			p1.setAttribute("y", Double.toString(o.getStartY() * GmmlData.GMMLZOOM));
-			if (!o.getStartGraphRef().equals(""))
+			if (o.getStartGraphRef() != null)
 			{
 				p1.setAttribute("GraphRef", o.getStartGraphRef());
 			}
@@ -252,7 +259,7 @@ public class GmmlFormat {
 			jdomGraphics.addContent(p2);
 			p2.setAttribute("x", Double.toString(o.getEndX() * GmmlData.GMMLZOOM));
 			p2.setAttribute("y", Double.toString(o.getEndY() * GmmlData.GMMLZOOM));
-			if (!o.getEndGraphRef().equals(""))
+			if (o.getEndGraphRef() != null)
 			{
 				p2.setAttribute("GraphRef", o.getEndGraphRef());
 			}
@@ -318,7 +325,7 @@ public class GmmlFormat {
 	{
 		String id = o.getGraphId();
 		// id has to be unique!
-		if (!id.equals (""))
+		if (id != null && !id.equals(""))
 		{
 			e.setAttribute("GraphId", o.getGraphId());
 		}
@@ -633,17 +640,9 @@ public class GmmlFormat {
 		}
 		if (e == null)
 		{
-			throw new ConverterException ("Error creating jdom element");
+			throw new ConverterException ("Error creating jdom element with objectType " + o.getObjectType());
 		}
 		return e;
-	}
-
-	/**
-	 * Maps the element specified to a GmmlGraphics object
-	 * @param e		the JDOM {@link Element} to map
-	 */
-	public static void mapElement(Element e, GmmlData data) {
-		GmmlDataObject o = mapComplete(e, data);
 	}
 
 }

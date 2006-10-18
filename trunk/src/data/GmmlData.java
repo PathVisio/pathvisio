@@ -5,15 +5,8 @@ import gmmlVision.GmmlVisionMain;
 import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -89,7 +82,7 @@ public class GmmlData
 	/**
 	 * Stores references of line endpoints to other objects
 	 */
-	private HashMap<String, List<GmmlDataObject>> graphRefs;
+	private HashMap<String, List<GmmlDataObject>> graphRefs = new HashMap<String, List<GmmlDataObject>>();
 	public void addRef (String ref, GmmlDataObject target)
 	{
 		if (graphRefs.containsKey(ref))
@@ -107,7 +100,19 @@ public class GmmlData
 	
 	public void removeRef (String ref, GmmlDataObject target)
 	{
-		// TODO
+		if (!graphRefs.containsKey(ref)) throw new IllegalArgumentException();
+		
+		graphRefs.get(ref).remove(target);
+		if (graphRefs.get(ref).size() == 0)
+			graphRefs.remove(ref);
+	}
+	
+	/**
+	 * Returns all lines that refer to an object with a particular graphId.
+	 */
+	public List<GmmlDataObject> getReferringObjects (String id)
+	{
+		return graphRefs.get(id);
 	}
 	
 	private File xmlFile;
@@ -133,9 +138,8 @@ public class GmmlData
 	{
 		GmmlVisionWindow window = GmmlVision.getWindow();
 
-		GmmlDataObject mapInfo = new GmmlDataObject();
+		GmmlDataObject mapInfo = new GmmlDataObject(ObjectType.MAPPINFO);
 		mapInfo.setParent(this);
-		mapInfo.setObjectType(ObjectType.MAPPINFO);
 		if (window.sc != null)
 		{
 			mapInfo.setBoardWidth(window.sc.getSize().x);
@@ -152,7 +156,7 @@ public class GmmlData
 	 * @param file		String pointing to the gmml file to open
 	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
-	public GmmlData(String file) throws Exception
+	public GmmlData(String file) throws ConverterException
 	{
 		// Start XML processing
 		GmmlVision.log.info("Start reading the Gmml file: " + file);
@@ -199,36 +203,35 @@ public class GmmlData
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved
 	 */
-	public void writeToXML(File file, boolean validate) {
-		try 
-		{			
-			Document doc = GmmlFormat.createJdom(this);
-			
-			//Validate the JDOM document
-			if (validate) validateDocument(doc);
-			//			Get the XML code
-			XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-			Format f = xmlcode.getFormat();
-			f.setEncoding("ISO-8859-1");
-			f.setTextMode(Format.TextMode.PRESERVE);
-			xmlcode.setFormat(f);
-			
-			//Open a filewriter
+	public void writeToXml(File file, boolean validate) throws ConverterException 
+	{
+		Document doc = GmmlFormat.createJdom(this);
+		
+		//Validate the JDOM document
+		if (validate) validateDocument(doc);
+		//			Get the XML code
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("ISO-8859-1");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+		
+		//Open a filewriter
+		try
+		{
 			FileWriter writer = new FileWriter(file);
 			//Send XML code to the filewriter
 			xmlcode.output(doc, writer);
 		}
-		catch (IOException e) 
+		catch (IOException ie)
 		{
-			GmmlVision.log.error("Unable to save file " + file + ": " + e.getMessage(), e);
-		}
-		catch (ConverterException e)
-		{
-			GmmlVision.log.error("Unable to convert to GMML, file: " + file + ": " + e.getMessage(), e);
+			ConverterException ce = new ConverterException("IO Exception while converting");
+			ce.setStackTrace(ie.getStackTrace());
+			throw ce;
 		}
 	}
 	
-	public void readFromXml(File file, boolean validate)
+	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
 		// Start XML processing
 		GmmlVision.log.info("Start reading the XML file: " + file);
@@ -268,7 +271,7 @@ public class GmmlData
 		}
 	}
 	
-	public void readFromMapp (File file) throws ConverterException, SQLException, ClassNotFoundException
+	public void readFromMapp (File file) throws ConverterException
 	{
         String inputString = file.getAbsolutePath();
 

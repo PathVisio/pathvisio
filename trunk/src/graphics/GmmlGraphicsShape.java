@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
@@ -13,6 +14,7 @@ import util.LinAlg;
 import util.LinAlg.Point;
 import data.GmmlDataObject;
 import data.GmmlEvent;
+import data.ObjectType;
 
 /**
  * This is an {@link GmmlGraphics} class representing shapelike forms,
@@ -71,7 +73,30 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	public void moveBy(double dx, double dy)
 	{
 		gdata.setLeft(gdata.getLeft() + dx); 
-		gdata.setTop(gdata.getTop() + dy);		
+		gdata.setTop(gdata.getTop() + dy);
+		
+		String id = gdata.getGraphId();
+		List<GmmlDataObject> refs = gdata.getParent().getReferringObjects(id);
+		
+		if (refs != null) 
+		{
+			for (GmmlDataObject o : refs)
+			{
+				if (o.getObjectType() == ObjectType.LINE)
+				{
+					if (o.getStartGraphRef().equals (id))
+					{
+						o.setStartX(o.getStartX() + dx);
+						o.setStartY(o.getStartY() + dy);
+					}
+					if (o.getEndGraphRef().equals (id))
+					{
+						o.setEndX(o.getEndX() + dx);
+						o.setEndY(o.getEndY() + dy);
+					}
+				}
+			}
+		}
 	}
 	
 	public void setShape(double left, double top, double width, double height) {

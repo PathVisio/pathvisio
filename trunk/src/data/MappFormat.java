@@ -123,48 +123,66 @@ public class MappFormat
 	/**
 	 * Reference to global logger.
 	 */
-    public static Logger log;
+    public static Logger log; // TODO: do away with this
     
     static void readFromMapp (String filename, GmmlData data)
-    	throws SQLException, ClassNotFoundException, ConverterException
+    	throws ConverterException
     {
     	String database = database_before + filename + database_after;
 
-    	// Load Sun's jdbc-odbc driver
-        Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-        
+    	try
+    	{
+	    	// Load Sun's jdbc-odbc driver
+	        Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+    	} catch (ClassNotFoundException cnfe)
+    	{
+    		// decoupling: wrap classnotfoundexception into converterexception
+    		ConverterException ce = new ConverterException("Class not found exception in converter");
+    		ce.setStackTrace(cnfe.getStackTrace());
+    		throw ce;
+    	}
         log.debug ("Connection string: " + database);
 		
 		// Create the connection to the database
-        Connection con = DriverManager.getConnection(database, "", "");
         
-        Statement s = con.createStatement();
-        
-        log.trace ("READING INFO TABLE");
-        // first do the INFO table, only one row.
-	    {
-	        ResultSet r = s.executeQuery(sqlInfoSelect);
-	        r.next();
-	        int cCol = r.getMetaData().getColumnCount();
-	        String[] row = new String[cCol];
-	        for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
-	        
-	        copyMappInfo(row, data);
-    	}    
-
-        log.trace ("READING OBJECTS TABLE");
-        // now do the OBJECTS table, multiple rows
+        try 
         {
-	        ResultSet r = s.executeQuery(sqlObjectsSelect);
-	        int cCol = r.getMetaData().getColumnCount();
-	        String[] row = new String[cCol];
-	        while (r.next())
+	        Connection con = DriverManager.getConnection(database, "", "");
+	        
+	        Statement s = con.createStatement();
+	        
+	        log.trace ("READING INFO TABLE");
+	        // first do the INFO table, only one row.
+		    {
+		        ResultSet r = s.executeQuery(sqlInfoSelect);
+		        r.next();
+		        int cCol = r.getMetaData().getColumnCount();
+		        String[] row = new String[cCol];
+		        for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
+		        
+		        copyMappInfo(row, data);
+	    	}    
+	
+	        log.trace ("READING OBJECTS TABLE");
+	        // now do the OBJECTS table, multiple rows
 	        {
-	        	for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
-	        	copyMappObjects(row, data);
+		        ResultSet r = s.executeQuery(sqlObjectsSelect);
+		        int cCol = r.getMetaData().getColumnCount();
+		        String[] row = new String[cCol];
+		        while (r.next())
+		        {
+		        	for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
+		        	copyMappObjects(row, data);
+		        }
 	        }
         }
-    
+        catch (SQLException sqle)
+        {
+        	// decoupling: wrap sqlexception into converterexception
+    		ConverterException ce = new ConverterException("SQLException while converting");
+    		ce.setStackTrace(sqle.getStackTrace());
+    		throw ce;
+        }
     }
     
     private static void copyResource(String resource, java.io.File destination) throws IOException 
@@ -220,16 +238,12 @@ public class MappFormat
     					sObjects.setObject(j + 1, row[j], Types.LONGVARCHAR);
     					// bug workaround, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4401822
     				}
-    				else if (j == 1)
-    				{
-    					// bugfix for Hs_Contributed_20060824/cellular_process-GenMAPP/Hs_Signaling_of_Hepatocyte_Growth_Factor_Receptor_Biocarta.mapp. 
-    					// No idea why this is necessary
-    					if (row[j] == null) row[j] = "";
-    					sObjects.setString(j + 1, row[j]);
-    				}
     				else
     				{
-    					
+    					// the line below is a bugfix for 
+    					// Hs_Contributed_20060824/cellular_process-GenMAPP/Hs_Signaling_of_Hepatocyte_Growth_Factor_Receptor_Biocarta.mapp. 
+    					// No idea why this is necessary
+    					if (row[j] == null) row[j] = "";
     					sObjects.setString(j + 1, row[j]);
     				}
     			}
@@ -310,10 +324,9 @@ public class MappFormat
 	
 		log.trace ("CONVERTING INFO TABLE TO GMML");
 		
-		GmmlDataObject o = new GmmlDataObject();
+		GmmlDataObject o = new GmmlDataObject(ObjectType.MAPPINFO);
 		o.setParent(data);
 		
-		o.setObjectType(ObjectType.MAPPINFO);
 		o.setMapInfoName(row[icolTitle]);
 		o.setMapInfoDataSource("GenMAPP 2.0");
 		o.setVersion(row[icolVersion]);
@@ -559,8 +572,7 @@ public class MappFormat
 				"DottedLine", "DottedArrow", "Line", "Arrow", "TBar", "Receptor", "LigandSq", 
 				"ReceptorSq", "LigandRd", "ReceptorRd"});
 		
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.LINE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.LINE);
     	
 		String type = mappObject[colType];
     	int lineStyle = LineStyle.SOLID;		
@@ -646,8 +658,7 @@ public class MappFormat
 
     private static GmmlDataObject mapBraceType(String[] mappObject) throws ConverterException
     {
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.BRACE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.BRACE);
     	
     	mapShape(o, mappObject);
     	mapColor(o, mappObject);
@@ -671,8 +682,7 @@ public class MappFormat
     
     private static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException
 	{
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.GENEPRODUCT);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.GENEPRODUCT);
     	
     	String syscode = mappObject[colSystemCode];
     	if (syscode == null) syscode = "";
@@ -698,8 +708,7 @@ public class MappFormat
     
 	private static GmmlDataObject mapInfoBoxType (String[] mappObject)
 	{
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.INFOBOX);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.INFOBOX);
         
     	mapCenter (o, mappObject);                
         return o;
@@ -714,8 +723,7 @@ public class MappFormat
 
 	private static GmmlDataObject mapLegendType (String[] mappObject)
 	{
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.LEGEND);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.LEGEND);
  
     	mapCenter (o, mappObject);
     	        
@@ -736,8 +744,7 @@ public class MappFormat
     
     private static GmmlDataObject mapLabelType(String[] mappObject) 
     {
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.LABEL);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.LABEL);
 
     	mapShape(o, mappObject);
     	mapColor(o, mappObject);
@@ -756,7 +763,10 @@ public class MappFormat
         o.setUnderline((style & styleUnderline) > 0);
         o.setStrikethru((style & styleStrikethru) > 0);
         
-        o.setXref(mappObject[colLinks]);
+        
+        String xrefv = mappObject[colLinks];
+        if (xrefv == null) { xrefv = ""; }
+        o.setXref(xrefv);
         return o;
     }
 
@@ -788,8 +798,7 @@ public class MappFormat
     
 	private static GmmlDataObject mapShapeType(String[] mappObject)
     {
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.SHAPE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
     	int shapeType = ShapeType.fromMappName(mappObject[colType]);
     	o.setShapeType(shapeType);        
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
@@ -815,8 +824,7 @@ public class MappFormat
     
     private static GmmlDataObject mapFixedShapeType(String[] mappObject)
     {
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.FIXEDSHAPE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.FIXEDSHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
         mapCenter (o, mappObject);
         return o;        
@@ -839,8 +847,7 @@ public class MappFormat
         
     private static GmmlDataObject mapComplexShapeType(String[] mappObject) throws ConverterException 
 	{       		
-    	GmmlDataObject o = new GmmlDataObject();
-    	o.setObjectType(ObjectType.COMPLEXSHAPE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.COMPLEXSHAPE);
     	
     	if (mappObject[colType].equals("Poly"))
         {

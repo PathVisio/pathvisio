@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import preferences.GmmlPreferences;
+import data.ConverterException;
 import data.GmmlData;
 import debug.Logger;
 
@@ -136,7 +137,7 @@ public abstract class GmmlVision {
 		// initialize new JDOM gmml representation and read the file
 		try { 
 			_gmmlData = new GmmlData(pwf);
-		} catch(Exception e) {
+		} catch(ConverterException e) {
 			MessageDialog.openError(getWindow().getShell(), 
 					"Unable to open Gmml file", e.getClass() + e.getMessage());
 			log.error("Unable to open Gmml file", e);

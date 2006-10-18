@@ -1,6 +1,9 @@
 package R.wizard;
 
+import gmmlVision.GmmlVision;
+
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -14,14 +17,20 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import data.GmmlGex;
+
+import R.RCommands;
 import R.RDataIn;
 import R.RDataOut;
+import R.RCommands.RInterruptedException;
+import R.RCommands.RTemp;
 
 public class PageData extends WizardPage {
 	RDataOut rDataOut;
@@ -49,6 +58,8 @@ public class PageData extends WizardPage {
 		
 		radioExport = new Button(content, SWT.RADIO);
 		radioExport.setText("Export data to R");
+		//Only available when expression data is loadded
+		radioExport.setEnabled(GmmlGex.isConnected());
 			
 		radioImport = new Button(content, SWT.RADIO);
 		radioImport.setText("Load previously exported data");
@@ -163,8 +174,6 @@ public class PageData extends WizardPage {
 	SelectionAdapter browseListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			FileDialog fd = new FileDialog(getShell());
-			fd.setFilterExtensions(new String[] { "RData", "Rd", "*.*" });
-			fd.setFilterNames(new String[] { "R data file", "R data file", "All files" });
 			String file = fd.open();
 			if(file != null) {
 				if		(e.widget == exportBrowse) 	exportFile.setText(file);
@@ -226,9 +235,13 @@ public class PageData extends WizardPage {
 				rDataIn.load();
 			}
 		} catch(Exception e) {
+			if(e instanceof RInterruptedException) return false;
+			
 			String action = radioExport.getSelection() ? "exporting" : "loading";
-			MessageDialog.openError(getShell(), "Error while " + action + " data", e + "\n" + e.getMessage());
-			e.printStackTrace();
+			String msg = (e instanceof InvocationTargetException) ? e.getCause().getMessage() : e.getMessage();
+			
+			MessageDialog.openError(getShell(), "Error", "Unable to " + action + " data: " + msg);
+			GmmlVision.log.error("Unable to export to R", e);
 			return false;
 		}
 		return true;

@@ -17,11 +17,11 @@ public class TableData {
 	}
 	
 	public ArrayList<Row> getResults() { return rows; }
-	public ArrayList<String> getAttributeNames() { 
-		return getAttributeNames(false); 
+	public ArrayList<String> getColNames() { 
+		return getColNames(false); 
 	}
 	
-	public ArrayList<String> getAttributeNames(boolean showHidden) {
+	public ArrayList<String> getColNames(boolean showHidden) {
 		ArrayList<String> attrNames = new ArrayList<String>();
 		for(Column at : columnTemp) {
 			if(!showHidden) { if(at.isVisible()) attrNames.add(at.name); }
@@ -30,51 +30,51 @@ public class TableData {
 		return attrNames;
 	}
 	
-	public void addAttribute(String name, int type) {
+	public void addColumn(String name, int type) {
 		columnTemp.add(new Column(name, type, true));
 	}
-	public void addAttribute(String name, int type, boolean visible) {
+	public void addColumn(String name, int type, boolean visible) {
 		columnTemp.add(new Column(name, type, visible));
 	}
 	
-	public void addResult(Row rs) { rows.add(rs); }
+	private void addResult(Row rs) { rows.add(rs); }
 	
 	/**
 	 * This class contains a single result from a search
 	 */
 	public class Row {
-		private HashMap<String, Column> attributes;
+		private HashMap<String, Column> columns;
 		
 		public Row() { 
-			attributes = new HashMap<String, Column>();
+			columns = new HashMap<String, Column>();
 			for(Column at : columnTemp) {
-				attributes.put(at.getName(),
+				columns.put(at.getName(),
 						new Column(at.getName(), at.type, at.isVisible()));
 			}
-			rows.add(this);
+			addResult(this);
 		}
 		
-		public void setAttribute(String name, String value) {
-			if(attributes.containsKey(name)) attributes.get(name).setText(value);
+		public void setColumn(String name, String value) {
+			if(columns.containsKey(name)) columns.get(name).setText(value);
 		}
 		
-		public void setAttribute(String name, double value) {
-			if(attributes.containsKey(name)) attributes.get(name).setNumeric(value);
+		public void setColumn(String name, double value) {
+			if(columns.containsKey(name)) columns.get(name).setNumeric(value);
 		}
 		
-		public void setAttribute(String name, ArrayList value) {
-			if(attributes.containsKey(name)) attributes.get(name).setArray(value);
+		public void setColumn(String name, ArrayList value) {
+			if(columns.containsKey(name)) columns.get(name).setArray(value);
 		}
 		
-		public Column getAttribute(String name) throws Exception {
-			if(attributes.containsKey(name)) return attributes.get(name);
-			throw new Exception("Attribute " + name + " does not exist");
+		public Column getColumn(String name) throws IllegalArgumentException {
+			if(columns.containsKey(name)) return columns.get(name);
+			throw new IllegalArgumentException("Attribute " + name + " does not exist");
 		}
 		
-		public ArrayList<Column> getAttributes(boolean onlyVisible) {
+		public ArrayList<Column> getColumns(boolean onlyVisible) {
 			ArrayList<Column> attr = new ArrayList<Column>();
 			for(Column at : columnTemp) {
-				Column atr = attributes.get(at.getName());
+				Column atr = columns.get(at.getName());
 				if(atr.isVisible()) attr.add(atr);
 			}
 			return attr;
@@ -85,7 +85,7 @@ public class TableData {
 	 * This class represents a column, which can either
 	 * have a numeric or text value
 	 */
-	public class Column {
+	public class Column implements Comparable {
 		public static final int TYPE_TEXT = 0;
 		public static final int TYPE_NUM  = 1;
 		public static final int TYPE_ARRAYLIST = 2;
@@ -119,5 +119,19 @@ public class TableData {
 		public void setNumeric(double value) { numValue = value; }
 		public void setArray(ArrayList value) { arrayValue = value; }
 		public boolean isVisible() { return visible; }
+		
+		public int compareTo(Object o) {
+			Column c = (Column)o;
+			if(type != c.type) return type - c.type;
+			
+			switch(type) {
+			case TYPE_TEXT: return textValue.compareTo(c.getText());
+			case TYPE_NUM: return (int)(numValue - c.getNumeric());
+			case TYPE_ARRAYLIST: return arrayValue.size() - c.getArray().size();
+			default: return -1;
+			}
+		}
+		
+		
 	}
 }

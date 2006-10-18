@@ -6,6 +6,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
@@ -27,6 +29,8 @@ public class TabbedSidePanel extends SidePanel {
 	 * @return
 	 */
 	public CTabFolder getTabFolder() { return tabFolder; }
+	
+	public HashMap<String, CTabItem> getTabItemHash() { return tabItems; }
 	
 	/**
 	 * Constructor for this class
@@ -89,9 +93,14 @@ public class TabbedSidePanel extends SidePanel {
 		if(index > nrTabs) index = nrTabs; //If index is invalid, choose first or last tab
 		else if(index < 0) index = 0;
 		
-		CTabItem ti = new CTabItem(tabFolder, close ? SWT.CLOSE : SWT.NULL, index);
+		final CTabItem ti = new CTabItem(tabFolder, close ? SWT.CLOSE : SWT.NULL, index);
 		ti.setText(title);
 		ti.setControl(content);
+		ti.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				tabItems.remove(ti.getText());
+			}
+		});
 		tabItems.put(title, ti);
 		return ti;
 	}
@@ -111,8 +120,8 @@ public class TabbedSidePanel extends SidePanel {
 	 * @param title	The title of the tabitem, also serves to find the {@link Control} for the tabItem
 	 * @return true if the tab is added, false if not ({@link Control} not found)
 	 */
-	public boolean showTab(String title) {
-		return showTab(title, tabFolder.getItemCount());
+	public boolean unhideTab(String title) {
+		return unhideTab(title, tabFolder.getItemCount());
 	}
 	
 	/**
@@ -121,7 +130,7 @@ public class TabbedSidePanel extends SidePanel {
 	 * @param position The index of the position to add the tab
 	 * @return true if the tab is added, false if not ({@link Control} not found)
 	 */
-	public boolean showTab(String title, int position) {
+	public boolean unhideTab(String title, int position) {
 		if(controls.containsKey(title)) {
 			createTabItem(controls.get(title), title, position, false);
 			return true;
@@ -139,5 +148,14 @@ public class TabbedSidePanel extends SidePanel {
 	 */
 	public boolean isVisible(String title) {
 		return tabItems.containsKey(title) && controls.containsKey(title);
+	}
+	
+	/**
+	 * Check whether a tabitem with the given title exists
+	 * @param title
+	 * @return
+	 */
+	public boolean hasTab(String title) {
+		return tabItems.containsKey(title);
 	}
 }

@@ -106,6 +106,7 @@ public class SwtUtils {
 				throw new InvocationTargetException(e, "Unable to invoke method " + doMethod);
 			}
 			monitor.done();
+			SimpleRunnableWithProgress.monitor = null;
 		}
 		
 		public static void monitorWorked(final int w) {

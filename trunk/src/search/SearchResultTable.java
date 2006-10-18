@@ -50,7 +50,7 @@ public class SearchResultTable extends PathwayTable {
 			if(sr == null) return; //Nothing selected
 			
 			try {
-				ArrayList idsFound = sr.getAttribute("idsFound").getArray();
+				ArrayList idsFound = sr.getColumn("idsFound").getArray();
 				GmmlGeneProduct gp = null;
 				for(GmmlDrawingObject o : drawing.getDrawingObjects()) {
 					if(o instanceof GmmlGeneProduct) {

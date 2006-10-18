@@ -22,6 +22,7 @@ import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
+import R.RCommands.RInterruptedException;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
 import data.GmmlGdb;
@@ -88,7 +89,7 @@ public class RDataOut {
 		}
 	}
 	
-	public void doExport() throws Exception {
+	public void doExport() throws RException, InvocationTargetException, InterruptedException {
 		Rengine re = RController.getR();
 		
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(GmmlVision.getWindow().getShell());
@@ -112,12 +113,10 @@ public class RDataOut {
 			}
 			RCommands.eval("save(list = c('" + dsName + "', '" + pwsName + "'), file='"+ exportFile + "')");
 		} catch(InvocationTargetException ex) {
-			rwp.openMessageDialog("Error", "Unable to export data: " + ex.getCause().getMessage());
-			GmmlVision.log.error("Unable to export to R", ex);
 			RTemp.flush(true); //Clear temp variables
 			RCommands.eval("save.image(file='"+ exportFile + ".EX.RData')"); //Save datafile (to check what went wrong)
 			RCommands.eval("rm(list=ls())"); //Remove everything from R workspace
-			return;
+			throw ex; //pay it forward!
 		}
 	}
 
@@ -164,6 +163,7 @@ public class RDataOut {
 		
 		cachePathwaySet.toR(pwsName);
 		
+		cachePathwaySet = null; //Not used anymore (maybe in future)..let garbage collector take care of it
 		RTemp.flush(true);
 	}
 	
@@ -174,6 +174,7 @@ public class RDataOut {
 		
 		cacheDataSet.toR(dsName);
 		
+		cacheDataSet = null; //Not used anymore (maybe in future)..let garbage collector take care of it
 		RTemp.flush(true);
 	}
 		

@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.TableItem;
 
 import util.TableColumnResizer;
 import data.GmmlDataObject;
-import data.GmmlFormat;
 import data.GmmlEvent;
+import data.GmmlFormat;
 import data.GmmlListener;
 import data.MappFormat;
 import data.ObjectType;

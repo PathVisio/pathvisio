@@ -58,5 +58,5 @@ zscore = GmmlFunction(.zscore_impl,	name = "Z-score",
 	arg_descr = c(	"The pathways to calculate the z-scores for (instance of class 'PathwaySet')",
 			"The measured data (instance of class 'DataSet')",
 			"A logical vector that specifies for each reporter whether it meets a criterion or not"),
-	arg_class = c("PathwaySet", "DataSet", "vector")
+	arg_class = c("PathwaySet", "DataSet", "logical")
 )

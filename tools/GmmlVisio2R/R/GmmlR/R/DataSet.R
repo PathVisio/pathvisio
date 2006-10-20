@@ -34,11 +34,17 @@ setGeneric("DataSet",
 #################
 ## Getters ##
 createMethod("name", "DataSet", function(x, ...) x@name)
+createMethod("samples", "DataSet", function(x, ...) colnames(x))
 createMethod("reporters", "DataSet", function(x, ...) rownames(x))
 
 ## Setters ##)
 createReplaceMethod("name", "DataSet", function(x, value, ...) {
 	x@name = value
+	validObject(x, test=TRUE);
+	x
+})
+createReplaceMethod("samples", "DataSet", function(x, value, ...) {
+	colnames(x) = value
 	validObject(x, test=TRUE);
 	x
 })

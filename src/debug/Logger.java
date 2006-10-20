@@ -48,7 +48,7 @@ public class Logger
 	public void info  (String msg) { if (infoEnabled) s.println ("Info:  " + msg); }
 	public void warn  (String msg) { if (warnEnabled) s.println ("Warn:  " + msg); }
 	public void error (String msg) { if (errorEnabled) s.println ("Error: " + msg); }
-	public void error (String msg, Exception e) 
+	public void error (String msg, Throwable e) 
 	{
 		if(errorEnabled) { error(msg); }
 		if(debugEnabled) { e.printStackTrace(s); }

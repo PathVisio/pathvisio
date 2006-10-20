@@ -29,7 +29,7 @@ GeneProduct <- function(refs) {
 
 GeneProductFromString = function(str) {
 	idcode = parseGpString(str)
-	gp = GeneProduct(rbind(rev(idcode)))
+	gp = GeneProduct(rbind(idcode))
 	rownames(gp) = str
 	gp
 }
@@ -38,7 +38,7 @@ GeneProductFromString = function(str) {
 #### Functions ###
 ##################
 parseGpString = function(str) {
-	strsplit(str, ":")[[1]]
+	rev(strsplit(str, ":")[[1]])
 }
 
 getGpString = function(idcode) {
@@ -62,9 +62,16 @@ createMethod("name", "GeneProduct", function(x, ...) {
 	nm
 })
 
-createReplaceMethod("addReference", c("GeneProduct", "vector"), function(x, value, ...) {
-	rownames(x) = getGpString(x)
-	rbind(x, value)
+createReplaceMethod("addReference", c("GeneProduct", "character"), function(x, value, ...) {
+	if(length(value) == 1) value = parseGpString(value)
+	print(matrix(value, ncol = 2))
+	addReference(x) = matrix(value, ncol = 2)
+	x
+})
+
+createReplaceMethod("addReference", c("GeneProduct", "matrix"), function(x, value, ...) {
+	rownames(value) = getRowNames(value)
+	GeneProduct(rbind(x, value))
 })
 
 ## Generic and Primitive implementations ##

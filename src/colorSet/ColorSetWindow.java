@@ -560,7 +560,7 @@ public class ColorSetWindow extends ApplicationWindow {
 	    ccOpsList = new org.eclipse.swt.widgets.List
     	(criterionGroup, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 	    ccOpsList.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-	    ccOpsList.setItems(GmmlColorCriterion.tokens);
+	    ccOpsList.setItems(Criterion.tokens);
 	    ccOpsList.addMouseListener(new MouseAdapter() {
 	    	public void mouseDoubleClick(MouseEvent e) {
 	    		String[] selection = ccOpsList.getSelection();
@@ -721,7 +721,7 @@ public class ColorSetWindow extends ApplicationWindow {
 			GmmlColorCriterion cc = (GmmlColorCriterion)element;
 			ccNameText.setText(cc.getName());
 			ccColor = SwtUtils.changeColor(ccColor, cc.getColor(), getShell().getDisplay());
-			ccExpression.setText(cc.getExpression());
+			ccExpression.setText(cc.getCriterion().getExpression());
 			ccCLabel.setBackground(ccColor);
 			if(!setCoComboItems(cc.getParent())) {
 				setListen(true);
@@ -930,13 +930,14 @@ public class ColorSetWindow extends ApplicationWindow {
 		coTableViewer.refresh();
 		legend.setVisible(true);
 		legend.resetContents();
-		String error = cc.setExpression(ccExpression.getText());
-		if(error != null) {
+		try {
+			cc.getCriterion().setExpression(ccExpression.getText(), ccSampleList.getItems());
+			return true;
+		} catch(Exception e) {
 			if(!silent) 
-				MessageDialog.openError(getShell(), "Error", "Expression syntax is not valid: " + error);
+				MessageDialog.openError(getShell(), "Error", "Expression syntax is not valid: " + e.getMessage());
 			return false;
 		}
-		return true;
 	}
 	
 	/**

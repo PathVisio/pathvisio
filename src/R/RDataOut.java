@@ -13,15 +13,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RVector;
 import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import colorSet.Criterion;
+import colorSet.GmmlColorCriterion;
 
 import util.FileUtils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
+import R.RCommands.RInterruptedException;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
 import data.GmmlGdb;
@@ -176,7 +182,32 @@ public class RDataOut {
 		cacheDataSet = null; //Not used anymore (maybe in future)..let garbage collector take care of it
 		RTemp.flush(true);
 	}
+	
+	public static void createSetVector(Criterion c, String dsName, String setName) 
+	throws RException {
+		Rengine re = RController.getR();
 		
+		int nrow = RCommands.dim(dsName)[0];
+		String[] colnames = RCommands.colnames(dsName);
+				
+		//evaluate row by row
+		boolean[] set = new boolean[nrow];
+		for(int i = 0; i < nrow; i++) {
+			REXP rexp = RCommands.eval(dsName + "[" + (i + 1) + ",]", true);
+			RVector values = rexp.asVector();
+			double[] dvalues = new double[values.size()];
+			for(int j = 0; j < dvalues.length; j++) 
+				dvalues[j] = values.at(j).asDouble();
+			try {
+				set[i] = c.evaluate(colnames, dvalues);
+			} catch(Exception e) {
+				set[i] = false;
+			}
+		}
+		
+		re.assign(setName, set);
+	}
+	
 	static abstract class RObject {	
 		static final RException EX_NO_GDB = 
 			new RException(null, "No gene database loaded!");

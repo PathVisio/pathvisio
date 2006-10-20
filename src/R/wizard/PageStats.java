@@ -106,7 +106,7 @@ public class PageStats extends WizardPage {
 	}
 	
 	private void doCancel() {
-		RController.endR();
+		RController.interruptRProcess();
 	}
 	
 	public void showFinish() {

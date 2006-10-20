@@ -56,8 +56,6 @@ public class RController implements PropertyListener{
 					if(m.isCanceled()) throw new InterruptedException();
 				}
 			});
-		} catch(InterruptedException ie) { 
-			return false;
 		} catch(Exception e) {
 			startError(e);
 			return false;
@@ -71,13 +69,13 @@ public class RController implements PropertyListener{
 			importLibraries();
 			RFunctionLoader.loadFunctions();
 		} catch(Exception re) {
-			startError(new Exception("Unable to load required libraries and functions: " + re.getMessage()));
+			startError("Unable to load required libraries and functions", re);
 			return false;
 		}
 		try {
 			sink(rOutFile);
 		} catch(Exception e) {
-			startError(e);
+			startError("Unable to set R standard output to file", e);
 		}
 		//Add a listener to close R on closing gmml-visio
 		GmmlVision.addPropertyListener(new RController());
@@ -89,9 +87,16 @@ public class RController implements PropertyListener{
 		RCommands.eval(importGmmlR); //GmmlR package, don't continue without it
 	}
 	
-	public static void endR() {
+	public static void interruptRProcess() {
 		if(re != null) {
 			try { re.rniStop(0); } catch(Exception e) { e.printStackTrace(); }
+			re.end();
+			re = null;
+		}
+	}
+	
+	public static void endR() {
+		if(re != null) {
 			re.end();
 		}
 	}
@@ -121,12 +126,23 @@ public class RController implements PropertyListener{
 		return output;
 	}
 	
-	private static void startError(Exception e) {
-		MessageDialog.openError(GmmlVision.getWindow().getShell(), 
-				"Unable to load R-engine", e.getClass() + ": " + e.getMessage());
-		GmmlVision.log.error("Unable to load R-engine", e);
+	static final String ERR_MSG_PRE = "Unable to start R";
+	private static void startError(Throwable e) {
+		startError(null, e);
 	}
 	
+	private static void startError(String msg, Throwable e) {
+		if(e instanceof InterruptedException) 
+			return;
+		else if (e instanceof InvocationTargetException)
+			e = e.getCause();
+		
+		MessageDialog.openError(GmmlVision.getWindow().getShell(), 
+				ERR_MSG_PRE, (msg == null ? "" : msg + "\n") + e.getMessage() + 
+				" (" + e.getClass().getName() + ")");
+		GmmlVision.log.error(ERR_MSG_PRE, e);
+	}
+		
 	public void propertyChanged(PropertyEvent e) {
 		if(e.name == GmmlVision.PROPERTY_CLOSE_APPLICATION) {
 			endR();

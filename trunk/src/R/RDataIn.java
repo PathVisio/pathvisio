@@ -42,11 +42,11 @@ public class RDataIn {
 		
 		private void loadFromR() throws RException {
 			name = RCommands.eval("name(" + varName + ")", true).asString();
-			String[] cols = RCommands.eval("colnames(" + varName + ")", true).asStringArray();
+			String[] cols = RCommands.colnames(varName);
 			for(String col : cols) {
 				addColumn(col, Column.TYPE_TEXT, !col.equalsIgnoreCase(PathwayTable.COLNAME_FILE));
 			}
-			int nrow = RCommands.eval("nrow(" + varName + ")", true).asInt();
+			int nrow = RCommands.dim(varName)[0];
 			for(int i = 1; i < nrow + 1; i++) {
 				String[] data = RCommands.eval(varName + "[" + i + ",]", true).asStringArray();
 				Row row = new Row();

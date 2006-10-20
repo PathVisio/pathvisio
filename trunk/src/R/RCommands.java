@@ -161,6 +161,36 @@ public class RCommands {
 	}
 	
 	/**
+	 * Wrapper for the R function 'dim'; Get the dimensions of an R object
+	 * @param symbol	the name of the R object
+	 * @return the dimensions as int[]
+	 * @throws RException
+	 */
+	public static int[] dim(String symbol) throws RException {
+		return eval("dim(" + symbol + ")", true).asIntArray();
+	}
+	
+	/**
+	 * Wrapper for the R function 'colnames'; Get the column names of an R object
+	 * @param symbol	the name of the R object
+	 * @return	the column names as String[]
+	 * @throws RException
+	 */
+	public static String[] colnames(String symbol) throws RException {
+		return eval("colnames(" + symbol + ")", true).asStringArray();
+	}
+	
+	/**
+	 * Wrapper for the R function 'rownames'; Get the row names of an R object
+	 * @param symbol	the name of the R object
+	 * @return	the row names as String[]
+	 * @throws RException
+	 */
+	public static String[] rownames(String symbol) throws RException {
+		return eval("rownames(" + symbol + ")", true).asStringArray();
+	}
+	
+	/**
 	 * Set the dimnames attribute for the SEXP that ref points to
 	 * @param ref	a reference to the SEXP object to set the dimnames attribute for
 	 * @param rowNames	the row names (dimnames[[1]])
@@ -284,7 +314,8 @@ public class RCommands {
 		}
 		
 		/**
-		 * Unprotect this symbol and check whether 
+		 * Unprotect given symbol and check whether or not the number of temporary
+		 * object exceeds {@link MAX_VARS} 
 		 * @param symbol
 		 * @throws RException
 		 */
@@ -293,26 +324,52 @@ public class RCommands {
 			check();
 		}
 		
+		/**
+		 * Unprotect given symbols and check whether or not the number of temporary
+		 * object exceeds {@link MAX_VARS} 
+		 * @param symbols
+		 * @throws RException
+		 */
 		static void dispose(String[] symbols) throws RException {
 			unprotect(symbols);
 			check();
 		}
 		
+		/**
+		 * Check if a temporary object is protected or not
+		 * @param symbol	the variable name of the temporary object
+		 * @return	true if the object is protected, false if not
+		 */
 		static boolean isProtected(String symbol) {
 			return toProtect.contains(symbol);
 		}
 		
+		/**
+		 * Checks whether the number of temporary objects exceeds the threshold set
+		 * by {@link MAX_VARS}
+		 * @throws RException
+		 */
 		static void check() throws RException {
 			int inUse = tmpVars.size() - toProtect.size();
 			if (inUse > MAX_VARS) flush();
 		}
 		
+		/**
+		 * Remove the given temporary object
+		 * @param s	the variable name of the object to remove
+		 * @throws RException
+		 */
 		static void remove(String s) throws RException {
 			rm(s);
 			toProtect.remove(s);
 			tmpVars.remove(s);
 		}
 		
+		/**
+		 * Remove the given {@link List} of temporary objects
+		 * @param symbols	the objects to remove
+		 * @throws RException
+		 */
 		static void remove(List<String> symbols) throws RException {
 			rm(symbols);
 			for(String s : symbols) {
@@ -321,14 +378,19 @@ public class RCommands {
 			}
 		}
 		
+		/**
+		 * Remove all temporary objects (excluding the protected ones)
+		 * (equivalent to calling flush(false))
+		 * @throws RException
+		 */
 		static void flush() throws RException { flush(false); }
 		
+		/**
+		 * Remove all temporary objects
+		 * @param all	whether the protected variables have to be removed as well
+		 * @throws RException
+		 */
 		static void flush(boolean all) throws RException {
-			System.err.println("RTemp: FLUSHING " + all);
-			System.err.println("\tBefore:");
-			System.err.println("\t> tmpVars:\t" + tmpVars.size());
-			System.err.println("\t> toProtect:\t" + toProtect.size());
-			
 			List<String> toRemove = new ArrayList<String>();
 			if(all) {
 				toRemove.addAll(tmpVars.keySet());
@@ -339,18 +401,23 @@ public class RCommands {
 				}
 			}
 			remove(toRemove);
-
-			System.err.println("\tAfter:");
-			System.err.println("\t> tmpVars:\t" + tmpVars.size());
-			System.err.println("\t> toProtect:\t" + toProtect.size());
 		}
 	}
 	
+	/**
+	 * Exception for R commands
+	 * @author thomas
+	 */
 	public static class RException extends Exception {
 		private static final long serialVersionUID = 1L;
 		Rengine re;
 		String msg;
-
+		
+		/**
+		 * Constructor of this class
+		 * @param re	the {@link Rengine} used when this exception occured
+		 * @param msg	message to specify the error
+		 */
 		public RException(Rengine re, String msg) 	{ this.msg = msg; this.re = re;}
 		public String getMessage() 		{
 			if(re == null) return msg;
@@ -371,18 +438,25 @@ public class RCommands {
 		public String getCmd() { return cmd; }
 	}
 	
+	/**
+	 * Exception occured during methods that use the native JRI methods
+	 * @author thomas
+	 *
+	 */
 	public static class RniException extends RException {
 		private static final long serialVersionUID = 1L;
 		
 		public static final int CAUSE_XP_ZERO = 0;
+		private static final String MSG_XP_ZERO = "invalid foreign reference";
 		
 		int cause;
 		
 		public RniException(Rengine re, int cause) {
 			super(re, "");
-			String cm = "unknown";
+			String cm;
 			switch(cause) {
-			case CAUSE_XP_ZERO: cm = "invalid foreign reference"; break;
+			case CAUSE_XP_ZERO: cm = MSG_XP_ZERO; break;
+			default: cm = "no type specified";
 			}
 			
 			msg = cm;
@@ -390,6 +464,10 @@ public class RCommands {
 		}
 	}
 	
+	/**
+	 * Exception the occured because an R command was interrupted
+	 * @author thomas
+	 */
 	public static class RInterruptedException extends RException {
 		private static final long serialVersionUID = 1L;
 		static final String MSG_INTERRUPT = "R command was interrupted";

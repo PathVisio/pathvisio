@@ -52,11 +52,10 @@ public class RFunctionLoader {
 						name.endsWith(".r");
 			}})) {
 			try {
-				for(RFunction rf : getFunctions(f.toString()))
+				for(RFunction rf : getFunctions(RCommands.fileToString(f)))
 					functions.put(rf.getName(), rf);
 			} catch(RException e) { 
-				MessageDialog.openError(Display.getCurrent().getActiveShell(), 
-						"Unable to load function", e.getMessage());
+				RController.openError("Unable to load functions in " + f.toString(), e);
 			}
 		}
 	}

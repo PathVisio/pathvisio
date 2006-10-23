@@ -10,7 +10,8 @@ import java.io.LineNumberReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-public class FileUtils {
+
+public class FileUtils {	
 	/**
 	 * Get all files in a directory
 	 * @param directory	The directory to get the files from

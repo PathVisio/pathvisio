@@ -4,7 +4,15 @@ import java.lang.*;
 
 /** Rengine class is the interface between an instance of R and the Java VM. Due to the fact that R has no threading support, you can run only one instance of R withing a multi-threaded application. There are two ways to use R from Java: individual call and full event loop. See the Rengine {@link #Rengine constructor} for details. <p> <u>Important note:</u> All methods starting with <code>rni</code> (R Native Interface) are low-level native methods that should be avoided if a high-level methods exists. They do NOT attempt any synchronization, so it is the duty of the calling program to ensure that the invocation is safe (see {@link getRsync()} for details). At some point in the future when the high-level API is complete they should become private. However, currently this high-level layer is not complete, so they are available for now.<p>All <code>rni</code> methods use <code>long</code> type to reference <code>SEXP</code>s on R side. Those reference should never be modified or used in arithmetics - the only reason for not using an extra interface class to wrap those references is that <code>rni</code> methods are all <i>native</i> methods and therefore it would be too expensive to handle the unwrapping on the C side.<p><code>jri</code> methods are called internally by R and invoke the corresponding method from the even loop handler. Those methods should usualy not be called directly. */
 public class Rengine extends Thread {
-    static {
+
+	/*
+	 * Modifications to Rengine.java v0.3.4
+	 */
+	
+	//Removed static block that loads library
+	//To catch possible UnsatisfiedLinkErrors and support
+	//different versions of R can be used, we load the library from RController.java
+	/*static {
         try {
             System.loadLibrary("jri");
         } catch (UnsatisfiedLinkError e) {
@@ -12,8 +20,28 @@ public class Rengine extends Thread {
             e.printStackTrace();
             System.exit(1);
         }
-    }
-
+    }*/
+       
+    /**
+     * Initiates an R generic vector (aka list) with given length l
+     * @param l	the length of the generic vector to initiate
+     * @return	a reference to the created object
+     */
+    public synchronized native long rniInitVector(int l);
+    
+    /**
+     * Set an element in the given generic vector at given position
+     * @param e	reference to the element to set in the vector
+     * @param v	reference to the generic vector
+     * @param i index at which the element should be set
+     */
+    public synchronized native void rniVectorSetElement(long e, long v, int i);
+    
+    /*
+     * end of modifications
+     */
+    
+    
 	/**	API version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match. This should be done using {@link #versionCheck}
 		@return version number as <code>long</code> in the form <code>0xMMmm</code> */
     public static long getVersion() {
@@ -54,7 +82,7 @@ public class Rengine extends Thread {
 	@param runMainLoop if set to <code>true</code> the the event loop will be started as soon as possible, otherwise no event loop is started. Running loop requires <code>initialCallbacks</code> to be set correspondingly as well.
 	@param initialCallbacks an instance implementing the {@link org.rosuda.JRI.RMainLoopCallbacks RMainLoopCallbacks} interface that provides methods to be called by R
     */
-    public Rengine(String[] args, boolean runMainLoop, RMainLoopCallbacks initialCallbacks) {
+    public Rengine(String[] args, boolean runMainLoop, RMainLoopCallbacks initialCallbacks) throws UnsatisfiedLinkError {
         super();
         Rsync=new Mutex();
         died=false;
@@ -164,10 +192,6 @@ public class Rengine extends Thread {
 	@param exps initial contents of the vector consisiting of an array of references
 	@return reference to the resulting VECSXP */
     public synchronized native long rniPutVector(long[] exps);
-    
-    public synchronized native long rniInitVector(int l);
-    
-    public synchronized native void rniVectorSetElement(long e, long v, int i);
     
     /** RNI: get an attribute
 	@param exp reference to the object whose attribute is requested

@@ -9,6 +9,24 @@ import java.util.List;
 
 public class Utils {
 	
+	public static final int OS_UNSUPPORTED = -1;
+	public static final int OS_WINDOWS = 0;
+	public static final int OS_LINUX = 1;
+	
+	/**
+	 * Get the OS
+	 * @returns 
+	 */
+	public static int getOS() {
+		String os = System.getProperty("os.name");
+		if			(os.startsWith("Win"))
+			return OS_WINDOWS;			
+		else if		(os.startsWith("Lin"))
+			return OS_LINUX;
+		else
+			return OS_UNSUPPORTED;
+	}
+	
 	/**
 	 * Converts a list to a string
 	 * @param list The list to convert to a string

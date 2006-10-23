@@ -2,6 +2,7 @@ package gmmlVision;
 
 import graphics.GmmlDrawing;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -25,6 +26,8 @@ import debug.Logger;
  * This class contains the essential parts of the program: the window, drawing and gmml data
  */
 public abstract class GmmlVision {
+	public static final String APPLICATION_NAME = "Gmml-Visio";
+	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
@@ -43,6 +46,7 @@ public abstract class GmmlVision {
 	private static GmmlPreferences preferences;
 	public static final Logger log = new Logger();
 	
+	private static File DIR_APPLICATION;
 	static boolean USE_R;
 		
 	/**
@@ -170,6 +174,18 @@ public abstract class GmmlVision {
 	 */
 	public static boolean isDrawingOpen() { return drawing != null; }
 			
+	/**
+	 * Get the working directory of this application
+	 * @return
+	 */
+	public static File getApplicationDir() {
+		if(DIR_APPLICATION == null) {
+			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + APPLICATION_NAME);
+			DIR_APPLICATION.mkdir();
+		}
+		return DIR_APPLICATION;
+	}
+		
 	//Property event handling
 	public static final String PROPERTY_OPEN_PATHWAY = "property_open_pathway";
 	public static final String PROPERTY_NEW_PATHWAY = "property_new_pathway";

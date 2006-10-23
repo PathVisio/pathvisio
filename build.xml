@@ -20,6 +20,7 @@
 		<pathelement location="lib/org.eclipse.equinox.common.jar"/>
 		<pathelement location="lib/org.eclipse.jface.jar"/>
 		<pathelement location="lib/hsqldb.jar"/>
+		<pathelement location="lib/rversion.jar"/>
 	</path>
 	
 	<target name="prepare">
@@ -51,6 +52,8 @@
 			<fileset dir="." includes="images/*"/>
 			<fileset dir="." includes="GMML_compat.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
+			<fileset dir="." includes="R/**/*"/>
+			<fileset dir="." includes="lib/JRI-lib/*"/>
 		</jar>
 		<jar jarfile="lib/swt-win32-lib.jar">
 			<fileset dir="lib/swt-win32-lib" includes="*.dll"/>

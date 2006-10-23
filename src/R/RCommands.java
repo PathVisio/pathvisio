@@ -1,5 +1,6 @@
 package R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -208,6 +209,22 @@ public class RCommands {
 		re.rniVectorSetElement(coln_ref, dn_ref, 1);
 		re.rniSetAttr(ref, "dimnames", dn_ref);
 		re.rniUnprotect(1);
+	}
+	
+	/**
+	 * Converts this file to a string that can be used in R (backslashes are converted to slashes)
+	 */
+	public static String fileToString(File f) {
+		return fileNameToString(f.getAbsoluteFile().toString());
+	}
+	
+	/**
+	 * Converts given filename to a filename that can be read by R (backslashes are converted to slashes)
+	 * @param f	The string that points to a file
+	 * @return
+	 */
+	public static String fileNameToString(String f) {
+		return f.replace('\\', '/');
 	}
 	
 	/**
@@ -421,6 +438,7 @@ public class RCommands {
 		public RException(Rengine re, String msg) 	{ this.msg = msg; this.re = re;}
 		public String getMessage() 		{
 			if(re == null) return msg;
+			re.eval("traceback()");
 			REXP err = re.eval("geterrmessage()");
 			return err == null ? msg + "\n R> no error message" : msg + "\nR> " + err.getContent();
 		}

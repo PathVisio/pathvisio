@@ -18,7 +18,7 @@ public class RDataIn {
 	
 	public void load() throws Exception {
 		checkValid();
-		RCommands.eval("load('" + rDataFileName + "')");
+		RCommands.eval("load('" + RCommands.fileNameToString(rDataFileName) + "')");
 	}
 	
 	public static String[] getPathwaySets() throws RException {

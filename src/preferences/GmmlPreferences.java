@@ -17,7 +17,7 @@ import util.ColorConverter;
  * This class contains all user preferences used in this application
  */
 public class GmmlPreferences extends PreferenceStore implements IPropertyChangeListener {
-	private static final File preferenceFile = new File(System.getProperty("user.home"), ".GmmlVisio");
+	private static final File preferenceFile = new File(GmmlVision.getApplicationDir(), ".GmmlVisio");
 	
 	public GmmlPreferences() {
 		this(preferenceFile.toString());
@@ -35,7 +35,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	{
 		addPropertyChangeListener(this);
 		
-		setDefault("files.log", new File(System.getProperty("user.home"), ".GmmlVisioLog").toString());
+		setDefault("files.log", new File(GmmlVision.getApplicationDir(), ".GmmlVisioLog").toString());
 		setDefault("colors.no_criteria_met", ColorConverter.getRgbString(NO_CRITERIA_MET));
 		setDefault("colors.no_gene_found", ColorConverter.getRgbString(NO_GENE_FOUND));
 		setDefault("colors.no_data_found", ColorConverter.getRgbString(NO_DATA_FOUND));

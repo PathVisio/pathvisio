@@ -116,10 +116,10 @@ public class RDataOut {
 						"Exporting pathways", totalWorkPws);
 				dialog.run(true, true, rwp);
 			}
-			RCommands.eval("save(list = c('" + dsName + "', '" + pwsName + "'), file='"+ exportFile + "')");
+			RCommands.eval("save(list = c('" + dsName + "', '" + pwsName + "'), file='"+ RCommands.fileNameToString(exportFile) + "')");
 		} catch(InvocationTargetException ex) {
 			RTemp.flush(true); //Clear temp variables
-			RCommands.eval("save.image(file='"+ exportFile + ".EX.RData')"); //Save datafile (to check what went wrong)
+			RCommands.eval("save.image(file='"+ RCommands.fileNameToString(exportFile) + ".EX.RData')"); //Save datafile (to check what went wrong)
 			RCommands.eval("rm(list=ls())"); //Remove everything from R workspace
 			throw ex; //pay it forward!
 		}

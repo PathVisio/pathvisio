@@ -25,6 +25,27 @@ extern int UserBreak;
 #include <unistd.h>
 #endif
 
+/*
+ * Modifications for Gmml-Visio
+ */
+
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniVectorSetElement
+(JNIEnv *env, jobject this, jlong e, jlong v, jint i)
+{
+	//Put element e to vector v	at position i
+	SET_VECTOR_ELT(L2SEXP(v), (int)i, L2SEXP(e));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniInitVector
+(JNIEnv *env, jobject this, jint l)
+{
+	return(SEXP2L(allocVector(VECSXP,(int)l)));
+}
+
+/*
+ * End of modifications
+ */
+ 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetVersion
 (JNIEnv *env, jclass this)
 {
@@ -257,19 +278,6 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutVector
 (JNIEnv *env, jobject this, jlongArray a)
 {
     return SEXP2L(jri_getSEXPLArray(env, a));
-}
-
-JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniVectorSetElement
-(JNIEnv *env, jobject this, jlong e, jlong v, jint i)
-{
-	//Put element e to vector v	at position i
-	SET_VECTOR_ELT(L2SEXP(v), (int)i, L2SEXP(e));
-}
-
-JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniInitVector
-(JNIEnv *env, jobject this, jint l)
-{
-	return(SEXP2L(allocVector(VECSXP,(int)l)));
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetAttr

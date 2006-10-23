@@ -26,7 +26,7 @@ extern int UserBreak;
 #endif
 
 /*
- * Modifications for Gmml-Visio
+ * Modifications for Gmml-Visio (JRI v0.3.6)
  */
 
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniVectorSetElement
@@ -68,7 +68,7 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
       engineClass=(*env)->NewGlobalRef(env, (*env)->GetObjectClass(env, engineObj));
       eenv=env;
       
-      if (a) { // retrieve the content of the String[] and construct argv accordingly
+      if (a) { /* retrieve the content of the String[] and construct argv accordingly */
           int len = (int)(*env)->GetArrayLength(env, a);
           if (len>0) {              
               int i=0;
@@ -95,7 +95,7 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
           }
       }
       initRes=initR(argc, argv);
-      // we don't release the argv in case R still needs it later (even if it shouldn't), but it's not really a significant leak
+      /* we don't release the argv in case R still needs it later (even if it shouldn't), but it's not really a significant leak */
       
       return initRes;
 }
@@ -177,7 +177,7 @@ JNIEXPORT jobject JNICALL Java_org_rosuda_JRI_Rengine_rniXrefToJava
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniJavaToXref
 (JNIEnv *env, jobject this, jobject o)
 {
-	// this is pretty much from Rglue.c of rJava
+  /* this is pretty much from Rglue.c of rJava */
 	return SEXP2L(R_MakeExternalPtr(o, R_NilValue, R_NilValue));
 }
 
@@ -299,9 +299,9 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetAttr
 
     setAttrib(L2SEXP(exp), an, (attr==0)?R_NilValue:L2SEXP(attr));
     
-    // this is not official API, but whoever uses this should know what he's doing
-    // it's ok for directly constructing attr lists, and that's what it should be used for
-    //SET_ATTRIB(L2SEXP(exp), (attr==0)?R_NilValue:L2SEXP(attr));
+    /* this is not official API, but whoever uses this should know what he's doing
+       it's ok for directly constructing attr lists, and that's what it should be used for
+       SET_ATTRIB(L2SEXP(exp), (attr==0)?R_NilValue:L2SEXP(attr)); */
     
 }
 
@@ -366,7 +366,7 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniTAG
     return 0;
 }
 
-// creates a list from SEXPs provided in long[]
+/* creates a list from SEXPs provided in long[] */
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutList
 (JNIEnv *env, jobject this, jlongArray o)
 {
@@ -389,7 +389,7 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutList
     return SEXP2L(t);
 }
 
-// retrieves a list (shallow copy) and returns the SEXPs in long[]
+/* retrieves a list (shallow copy) and returns the SEXPs in long[] */
 JNIEXPORT jlongArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetList
 (JNIEnv *env, jobject this, jlong exp)
 {
@@ -480,6 +480,7 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
     /* not really a perfect solution ... need to clarify what's the best ... */
     kill(getpid(), SIGINT);
 #endif
+    return 0;
 }
 
 

@@ -10,7 +10,7 @@ JFLAGS+=-target 1.4 -source 1.4
 all: $(TARGETS)
 
 JRI.jar: $(JRI_JSRC) $(JNIPREFIX)jri$(JNISO)
-	$(JAVAC) -d . $(JRI_JSRC)
+	$(JAVAC) $(JFLAGS) -d . $(JRI_JSRC)
 	$(JAR) fc $@ org $(JNIPREFIX)jri$(JNISO)
 
 org_rosuda_JRI_Rengine.h: org/rosuda/JRI/Rengine.class
@@ -38,7 +38,7 @@ win32/libjvm.dll.a:
 	make -C win32 libjvm.dll.a
 
 org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: $(JRI_JSRC)
-	$(JAVAC) -d . $^
+	$(JAVAC) $(JFLAGS) -d . $^
 
 clean:
 	rm -rf $(TARGETS) org *.o *~ org_rosuda_JRI_Rengine.h *$(JNISO) *.class *~

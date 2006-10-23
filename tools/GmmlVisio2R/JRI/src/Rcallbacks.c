@@ -55,10 +55,10 @@ JNIEnv *checkEnvironment()
     jsize l;
     jint res;
     
-    if (!jvm) { // we're hoping that the JVM pointer won't change :P we fetch it just once
+    if (!jvm) { /* we're hoping that the JVM pointer won't change :P we fetch it just once */
         res= JNI_GetCreatedJavaVMs(&jvm, 1, &l);
         if (res!=0) {
-            fprintf(stderr, "JNI_GetCreatedJavaVMs failed! (%d)\n",res); return 0;
+            fprintf(stderr, "JNI_GetCreatedJavaVMs failed! (%d)\n",(int)res); return 0;
         }
         if (l<1) {
             fprintf(stderr, "JNI_GetCreatedJavaVMs said there's no JVM running!\n"); return 0;
@@ -66,7 +66,7 @@ JNIEnv *checkEnvironment()
     }
     res = (*jvm)->AttachCurrentThread(jvm, (void*) &env, 0);
     if (res!=0) {
-        fprintf(stderr, "AttachCurrentThread failed! (%d)\n",res); return 0;
+        fprintf(stderr, "AttachCurrentThread failed! (%d)\n",(int)res); return 0;
     }
 #ifdef JRI_DEBUG
     if (eenv!=env)
@@ -133,16 +133,18 @@ void Re_WriteConsole(char *buf, int len)
 {
     JNIEnv *lenv=checkEnvironment();
     jri_checkExceptions(lenv, 1);
-    jstring s=(*lenv)->NewStringUTF(lenv, buf);
-    jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
-    jri_checkExceptions(lenv, 0);
+    {
+      jstring s=(*lenv)->NewStringUTF(lenv, buf);
+      jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
+      jri_checkExceptions(lenv, 0);
 #ifdef JRI_DEBUG
-	printf("jriWriteConsole mid=%x\n", mid);
+      printf("jriWriteConsole mid=%x\n", mid);
 #endif
-    if (!mid) return;
-	(*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
-    jri_checkExceptions(lenv, 1);
-    (*lenv)->DeleteLocalRef(lenv, s);
+      if (!mid) return;
+      (*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+      jri_checkExceptions(lenv, 1);
+      (*lenv)->DeleteLocalRef(lenv, s);
+    }
 }
 
 /* Indicate that input is coming from the console */
@@ -155,14 +157,16 @@ void Re_FlushConsole()
 {
     JNIEnv *lenv=checkEnvironment();
     jri_checkExceptions(lenv, 1);
-    jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriFlushConsole", "()V");
-    jri_checkExceptions(lenv, 0);
+    {
+      jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriFlushConsole", "()V");
+      jri_checkExceptions(lenv, 0);
 #ifdef JRI_DEBUG
-	printf("jriWriteconsole mid=%x\n", mid);
+      printf("jriWriteconsole mid=%x\n", mid);
 #endif
-	if (!mid) return;
-	(*lenv)->CallVoidMethod(lenv, engineObj, mid);
-    jri_checkExceptions(lenv, 1);
+      if (!mid) return;
+      (*lenv)->CallVoidMethod(lenv, engineObj, mid);
+      jri_checkExceptions(lenv, 1);
+    }
 }
 
 /* Reset stdin if the user types EOF on the console. */
@@ -261,7 +265,7 @@ void Re_loadhistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 	{
 		SEXP sfile;
-		char file[PATH_MAX], *p;
+		char *p;
 
 		checkArity(op, args);
 		sfile = CAR(args);
@@ -295,7 +299,7 @@ void Re_savehistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 	{
 		SEXP sfile;
-		char file[PATH_MAX], *p;
+		char *p;
 		
 		checkArity(op, args);
 		sfile = CAR(args);

@@ -4,7 +4,7 @@
 
 # The values are all auto-configured
 RHOME=@R_HOME@
-JAVAC=@JAVAC@ $(JFLAGS)
+JAVAC=@JAVAC@
 JAVAH=@JAVAH@
 JAVA=@JAVA_PROG@
 

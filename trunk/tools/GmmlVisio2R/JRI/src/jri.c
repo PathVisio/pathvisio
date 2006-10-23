@@ -8,14 +8,15 @@
 
 /* debugging output (enable with -DRJ_DEBUG) */
 #ifdef RJ_DEBUG
-void rjprintf(char *fmt, ...) {
+static void rjprintf(char *fmt, ...) {
   va_list v;
   va_start(v,fmt);
   vprintf(fmt,v);
   va_end(v);
 }
+#define _dbg(X) X
 #else
-#define rjprintf(...)
+#define _dbg(X)
 #endif
 
 void jri_error(char *fmt, ...) {
@@ -29,7 +30,7 @@ void jri_error(char *fmt, ...) {
 #ifdef RJ_PROFILE
 #include <sys/time.h>
 
-long time_ms() {
+static long time_ms() {
 #ifdef Win32
   return 0; /* in Win32 we have no gettimeofday :( */
 #else
@@ -42,7 +43,7 @@ long time_ms() {
 long profilerTime;
 
 #define profStart() profilerTime=time_ms()
-void profReport(char *fmt, ...) {
+static void profReport(char *fmt, ...) {
   long npt=time_ms();
   va_list v;
   va_start(v,fmt);
@@ -51,9 +52,10 @@ void profReport(char *fmt, ...) {
   printf(" %ld ms\n",npt-profilerTime);
   profilerTime=npt;
 }
+#define _prof(X) X
 #else
 #define profStart()
-#define profReport(...)
+#define _prof(X)
 #endif
 
 jstring jri_putString(JNIEnv *env, SEXP e, int ix) {
@@ -69,7 +71,7 @@ jarray jri_putStringArray(JNIEnv *env, SEXP e)
         if (!sa) { jri_error("Unable to create string array."); return 0; }
         while (j<LENGTH(e)) {
             jobject s=(*env)->NewStringUTF(env, CHAR(STRING_ELT(e,j)));
-            rjprintf (" [%d] \"%s\"\n",j,CHAR(STRING_ELT(e,j)));
+            _dbg(rjprintf (" [%d] \"%s\"\n",j,CHAR(STRING_ELT(e,j))));
             (*env)->SetObjectArrayElement(env,sa,j,s);
             j++;
         }
@@ -80,7 +82,7 @@ jarray jri_putStringArray(JNIEnv *env, SEXP e)
 jarray jri_putIntArray(JNIEnv *env, SEXP e)
 {
     if (TYPEOF(e)!=INTSXP) return 0;
-    rjprintf(" integer vector of length %d\n",LENGTH(e));
+    _dbg(rjprintf(" integer vector of length %d\n",LENGTH(e)));
     {
         unsigned len=LENGTH(e);
         jintArray da=(*env)->NewIntArray(env,len);
@@ -108,7 +110,7 @@ jarray jri_putIntArray(JNIEnv *env, SEXP e)
 jarray jri_putBoolArrayI(JNIEnv *env, SEXP e)
 {
     if (TYPEOF(e)!=LGLSXP) return 0;
-    rjprintf(" integer vector of length %d\n",LENGTH(e));
+    _dbg(rjprintf(" integer vector of length %d\n",LENGTH(e)));
     {
         unsigned len=LENGTH(e);
         jintArray da=(*env)->NewIntArray(env,len);
@@ -135,7 +137,7 @@ jarray jri_putBoolArrayI(JNIEnv *env, SEXP e)
 
 jarray jri_putSEXPLArray(JNIEnv *env, SEXP e)
 {
-    rjprintf(" general vector of length %d\n",LENGTH(e));
+    _dbg(rjprintf(" general vector of length %d\n",LENGTH(e)));
     {
         unsigned len=LENGTH(e);
         jlongArray da=(*env)->NewLongArray(env,len);
@@ -168,7 +170,7 @@ jarray jri_putSEXPLArray(JNIEnv *env, SEXP e)
 jarray jri_putDoubleArray(JNIEnv *env, SEXP e)
 {
     if (TYPEOF(e)!=REALSXP) return 0;
-    rjprintf(" real vector of length %d\n",LENGTH(e));
+    _dbg(rjprintf(" real vector of length %d\n",LENGTH(e)));
     {
         unsigned len=LENGTH(e);
         jdoubleArray da=(*env)->NewDoubleArray(env,len);
@@ -208,7 +210,7 @@ SEXP jri_getString(JNIEnv *env, jstring s) {
   SET_STRING_ELT(r, 0, mkChar(c));
   UNPROTECT(1);
   (*env)->ReleaseStringUTFChars(env, s, c);
-  profReport("jri_getString:");
+  _prof(profReport("jri_getString:"));
   return r;
 }
 
@@ -225,7 +227,7 @@ SEXP jri_installString(JNIEnv *env, jstring s) {
     }
     r = install(c);
     (*env)->ReleaseStringUTFChars(env, s, c);
-    profReport("jri_getString:");
+    _prof(profReport("jri_getString:"));
     return r;
 }
 
@@ -256,15 +258,13 @@ jstring jri_callToString(JNIEnv *env, jobject o) {
 
 SEXP jri_getObjectArray(JNIEnv *env, jarray o) {
   SEXP ar;
-  jobject el;
   int l,i;
-  jint *ap;
 
   profStart();
-  rjprintf(" jarray %d\n",o);
+  _dbg(rjprintf(" jarray %d\n",o));
   if (!o) return R_NilValue;
   l=(int)(*env)->GetArrayLength(env, o);
-  rjprintf("convert object array of length %d\n",l);
+  _dbg(rjprintf("convert object array of length %d\n",l));
   if (l<1) return R_NilValue;
   PROTECT(ar=allocVector(INTSXP,l));
   i=0;
@@ -273,23 +273,21 @@ SEXP jri_getObjectArray(JNIEnv *env, jarray o) {
     i++;
   }
   UNPROTECT(1);
-  profReport("RgetObjectArrayCont[%d]:",o);
+  _prof(profReport("RgetObjectArrayCont[%d]:",o));
   return ar;
 }
 
 /** get contents of the object array in the form of int* */
 SEXP jri_getStringArray(JNIEnv *env, jarray o) {
   SEXP ar;
-  jobject el;
   int l,i;
-  jint *ap;
   const char *c;
 
   profStart();
-  rjprintf(" jarray %d\n",o);
+  _dbg(rjprintf(" jarray %d\n",o));
   if (!o) return R_NilValue;
   l=(int)(*env)->GetArrayLength(env, o);
-  rjprintf("convert string array of length %d\n",l);
+  _dbg(rjprintf("convert string array of length %d\n",l));
   if (l<1) return R_NilValue;
   PROTECT(ar=allocVector(STRSXP,l));
   i=0;
@@ -313,7 +311,7 @@ SEXP jri_getStringArray(JNIEnv *env, jarray o) {
     i++;
   }
   UNPROTECT(1);
-  profReport("RgetStringArrayCont[%d]:",o);
+  _prof(profReport("RgetStringArrayCont[%d]:",o));
   return ar;
 }
 
@@ -324,10 +322,10 @@ SEXP jri_getIntArray(JNIEnv *env, jarray o) {
   jint *ap;
 
   profStart();
-  rjprintf(" jarray %d\n",o);
+  _dbg(rjprintf(" jarray %d\n",o));
   if (!o) return R_NilValue;
   l=(int)(*env)->GetArrayLength(env, o);
-  rjprintf("convert int array of length %d\n",l);
+  _dbg(rjprintf("convert int array of length %d\n",l));
   if (l<1) return R_NilValue;
   ap=(jint*)(*env)->GetIntArrayElements(env, o, 0);
   if (!ap) {
@@ -338,7 +336,7 @@ SEXP jri_getIntArray(JNIEnv *env, jarray o) {
   memcpy(INTEGER(ar),ap,sizeof(jint)*l);
   UNPROTECT(1);
   (*env)->ReleaseIntArrayElements(env, o, ap, 0);
-  profReport("RgetIntArrayCont[%d]:",o);
+  _prof(profReport("RgetIntArrayCont[%d]:",o));
   return ar;
 }
 
@@ -349,10 +347,10 @@ SEXP jri_getBoolArrayI(JNIEnv *env, jarray o) {
   jint *ap;
 
   profStart();
-  rjprintf(" jarray %d\n",o);
+  _dbg(rjprintf(" jarray %d\n",o));
   if (!o) return R_NilValue;
   l=(int)(*env)->GetArrayLength(env, o);
-  rjprintf("convert int array of length %d into R bool\n",l);
+  _dbg(rjprintf("convert int array of length %d into R bool\n",l));
   if (l<1) return R_NilValue;
   ap=(jint*)(*env)->GetIntArrayElements(env, o, 0);
   if (!ap) {
@@ -363,7 +361,7 @@ SEXP jri_getBoolArrayI(JNIEnv *env, jarray o) {
   memcpy(LOGICAL(ar),ap,sizeof(jint)*l);
   UNPROTECT(1);
   (*env)->ReleaseIntArrayElements(env, o, ap, 0);
-  profReport("RgetBoolArrayICont[%d]:",o);
+  _prof(profReport("RgetBoolArrayICont[%d]:",o));
   return ar;
 }
 
@@ -374,10 +372,10 @@ SEXP jri_getBoolArray(JNIEnv *env, jarray o) {
   jboolean *ap;
 
   profStart();
-  rjprintf(" jarray %d\n",o);
+  _dbg(rjprintf(" jarray %d\n",o));
   if (!o) return R_NilValue;
   l=(int)(*env)->GetArrayLength(env, o);
-  rjprintf("convert boolean array of length %d into R bool\n",l);
+  _dbg(rjprintf("convert boolean array of length %d into R bool\n",l));
   if (l<1) return R_NilValue;
   ap=(jboolean*)(*env)->GetBooleanArrayElements(env, o, 0);
   if (!ap) {
@@ -392,7 +390,7 @@ SEXP jri_getBoolArray(JNIEnv *env, jarray o) {
   }
   UNPROTECT(1);
   (*env)->ReleaseBooleanArrayElements(env, o, ap, 0);
-  profReport("RgetBoolArrayCont[%d]:",o);
+  _prof(profReport("RgetBoolArrayCont[%d]:",o));
   return ar;
 }
 
@@ -402,10 +400,10 @@ SEXP jri_getSEXPLArray(JNIEnv *env, jarray o) {
     jlong *ap;
     
     profStart();
-    rjprintf(" jarray %d\n",o);
+    _dbg(rjprintf(" jarray %d\n",o));
     if (!o) return R_NilValue;
     l=(int)(*env)->GetArrayLength(env, o);
-    rjprintf("convert SEXPL array of length %d\n",l);
+    _dbg(rjprintf("convert SEXPL array of length %d\n",l));
     if (l<1) return R_NilValue;
     ap=(jlong*)(*env)->GetLongArrayElements(env, o, 0);
     if (!ap) {
@@ -419,7 +417,7 @@ SEXP jri_getSEXPLArray(JNIEnv *env, jarray o) {
     }
     UNPROTECT(1);
     (*env)->ReleaseLongArrayElements(env, o, ap, 0);
-    profReport("jri_getSEXPLArray[%d]:",o);
+    _prof(profReport("jri_getSEXPLArray[%d]:",o));
     return ar;
 }
 
@@ -430,10 +428,10 @@ SEXP jri_getDoubleArray(JNIEnv *env, jarray o) {
   jdouble *ap;
 
   profStart();
-  rjprintf(" jarray %d\n",o);
+  _dbg(rjprintf(" jarray %d\n",o));
   if (!o) return R_NilValue;
   l=(int)(*env)->GetArrayLength(env, o);
-  rjprintf("convert double array of length %d\n",l);
+  _dbg(rjprintf("convert double array of length %d\n",l));
   if (l<1) return R_NilValue;
   ap=(jdouble*)(*env)->GetDoubleArrayElements(env, o, 0);
   if (!ap) {
@@ -444,7 +442,7 @@ SEXP jri_getDoubleArray(JNIEnv *env, jarray o) {
   memcpy(REAL(ar),ap,sizeof(jdouble)*l);
   UNPROTECT(1);
   (*env)->ReleaseDoubleArrayElements(env, o, ap, 0);
-  profReport("RgetDoubleArrayCont[%d]:",o);
+  _prof(profReport("RgetDoubleArrayCont[%d]:",o));
   return ar;
 }
 

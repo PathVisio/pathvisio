@@ -3,7 +3,6 @@ package data;
 import java.io.*;
 import java.util.*;
 
-import debug.Logger;
 import junit.framework.TestCase;
 
 public class Test extends TestCase implements GmmlListener {
@@ -169,17 +168,26 @@ public class Test extends TestCase implements GmmlListener {
 		File temp = File.createTempFile ("data.test", ".gmml");
 		temp.deleteOnExit();
 		data.writeToXml(temp, false);
+
+		try {
+			data.readFromXml(new File ("testData/test.mapp"), false);
+			fail ("Loading wrong format, Exception expected");
+		} catch (Exception e) {}
 	}
 
 	public void testMapp() throws IOException, ConverterException
 	{
-		// TODO: this first line shouldn't be necessary
-		MappFormat.log = new Logger();
 		data.readFromMapp(new File("testData/test.mapp"));
 		assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".mapp");
 		temp.deleteOnExit();
 		data.writeToMapp(temp);
+		
+		try {
+			data.readFromMapp(new File ("testData/test.gmml"));
+			fail ("Loading wrong format, Exception expected");
+		} catch (Exception e) {}
+			
 	}
 
 	// event listener

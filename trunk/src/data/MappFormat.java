@@ -1,6 +1,8 @@
 // $Id: MappToGmml.java,v 1.5 2005/10/21 12:33:27 gontran Exp $
 package data;
 
+import gmmlVision.GmmlVision;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import debug.Logger;
 
 /**
  * The class MappFormat is responsible for all interaction with 
@@ -119,11 +119,6 @@ public class MappFormat
      * in the classpath, normally in resources.jar.
      */
 	private static String mappTemplateFile = "MAPPTmpl.gtp";
-
-	/**
-	 * Reference to global logger.
-	 */
-    public static Logger log; // TODO: do away with this
     
     static void readFromMapp (String filename, GmmlData data)
     	throws ConverterException
@@ -141,7 +136,7 @@ public class MappFormat
     		ce.setStackTrace(cnfe.getStackTrace());
     		throw ce;
     	}
-        log.debug ("Connection string: " + database);
+        GmmlVision.log.debug ("Connection string: " + database);
 		
 		// Create the connection to the database
         
@@ -151,7 +146,7 @@ public class MappFormat
 	        
 	        Statement s = con.createStatement();
 	        
-	        log.trace ("READING INFO TABLE");
+	        GmmlVision.log.trace ("READING INFO TABLE");
 	        // first do the INFO table, only one row.
 		    {
 		        ResultSet r = s.executeQuery(sqlInfoSelect);
@@ -163,7 +158,7 @@ public class MappFormat
 		        copyMappInfo(row, data);
 	    	}    
 	
-	        log.trace ("READING OBJECTS TABLE");
+		    GmmlVision.log.trace ("READING OBJECTS TABLE");
 	        // now do the OBJECTS table, multiple rows
 	        {
 		        ResultSet r = s.executeQuery(sqlObjectsSelect);
@@ -231,7 +226,7 @@ public class MappFormat
     			for (int j = 1; j < row.length; ++j)
     			{
     				
-    				log.trace("[" + (j + 1) + "] " + row[j]);
+    				GmmlVision.log.trace("[" + (j + 1) + "] " + row[j]);
     				if (j >= 14 && j < 17)
     				{
     					if (row[j] != null && row[j].equals("")) row[j] = null;
@@ -254,7 +249,7 @@ public class MappFormat
 
 			for (int j = 0; j < mappInfo.length; ++j)
 			{
-				log.trace("[" + (j + 1) + "] " + mappInfo[j]);
+				GmmlVision.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
 				
 				sInfo.setString (j + 1, mappInfo[j]);
 			}    			
@@ -262,13 +257,13 @@ public class MappFormat
             con.close();
             
         } catch (ClassNotFoundException cl_ex) {
-            log.error ("-> Could not find the Sun JbdcObdcDriver\n");
+        	GmmlVision.log.error ("-> Could not find the Sun JbdcObdcDriver\n");
         } catch (SQLException ex) {
-            log.error ("-> SQLException: "+ex.getMessage());        
+        	GmmlVision.log.error ("-> SQLException: "+ex.getMessage());        
             ex.printStackTrace();
         } catch (IOException e)
         {
-        	log.error (e.getMessage());
+        	GmmlVision.log.error (e.getMessage());
         }
     }
     
@@ -322,7 +317,7 @@ public class MappFormat
 		*
 		*/
 	
-		log.trace ("CONVERTING INFO TABLE TO GMML");
+		GmmlVision.log.trace ("CONVERTING INFO TABLE TO GMML");
 		
 		GmmlDataObject o = new GmmlDataObject(ObjectType.MAPPINFO);
 		o.setParent(data);

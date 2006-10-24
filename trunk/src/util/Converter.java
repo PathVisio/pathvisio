@@ -55,9 +55,6 @@ public class Converter {
 						//debug, trace, info, warn, error, fatal
 		log.setLogLevel (false, false, true, true, true, true);
 		
-		MappFormat.log = log;
-		GmmlFormat.log = log;
-		
 		boolean error = false;
 		if (args.length == 0)
 		{

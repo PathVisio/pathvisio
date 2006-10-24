@@ -4,10 +4,16 @@ import gmmlVision.GmmlVision;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -32,6 +38,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.rosuda.JRI.REXP;
 
+import util.JarUtils;
+
 import colorSet.Criterion;
 import colorSet.CriterionComposite;
 
@@ -39,24 +47,29 @@ import R.RCommands.RException;
 
 
 public class RFunctionLoader {
-	static final String funDir = "RFunctions";
+	static final String funDir = "R/functions";
 	
 	static final HashMap<String, RFunction> functions = new HashMap<String, RFunction>();
 	
 	
-	public static void loadFunctions() {
-		//Look for functions in directory functions
-		for(File f : new File(funDir).listFiles(new FilenameFilter() {
-			public boolean accept(File f, String name) {
-				return	name.endsWith(".R") ||
-						name.endsWith(".r");
-			}})) {
-			try {
-				for(RFunction rf : getFunctions(RCommands.fileToString(f)))
-					functions.put(rf.getName(), rf);
-			} catch(RException e) { 
-				RController.openError("Unable to load functions in " + f.toString(), e);
-			}
+	public static void loadFunctions() throws IOException {
+		URL url = GmmlVision.getResourceURL(funDir);
+		JarURLConnection conn = (JarURLConnection)url.openConnection();
+		
+		JarFile jfile = conn.getJarFile();
+		Enumeration e = jfile.entries();
+		while (e.hasMoreElements()) {
+		    ZipEntry entry = (ZipEntry)e.nextElement();
+		    String entryname = entry.getName();
+		    if (	entryname.startsWith(funDir) && 
+		    		(entryname.endsWith(".R") || entryname.endsWith(".r"))) {
+		    	File tmp = JarUtils.resourceToNamedTempFile(entryname, new File(entryname).getName());
+		    	try {
+		    		RCommands.eval("source('" + RCommands.fileToString(tmp) + "')");
+		    	} catch(RException re) {
+		    		RController.openError("Unable to load functions in " + tmp.toString(), re);
+		    	}
+		    }
 		}
 	}
 	
@@ -69,9 +82,8 @@ public class RFunctionLoader {
 	public static RFunction getFunction(String name) {
 		return functions.get(name);
 	}
-	
-	public static List<RFunction> getFunctions(String rFileName) throws RException {
-		RCommands.eval("source('" + rFileName + "')");
+		
+	public static List<RFunction> getFunctions() throws RException {
 		List<RFunction> functions = new ArrayList<RFunction>();
 		
 		String[] names = RCommands.ls("GmmlFunction");

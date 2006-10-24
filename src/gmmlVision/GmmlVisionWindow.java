@@ -78,8 +78,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public NewAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText ("&New mapp@Ctrl+N");
-			setToolTipText ("Create new mapp");
+			setText ("&New pathway@Ctrl+N");
+			setToolTipText ("Create new pathway");
 			setImageDescriptor(ImageDescriptor.createFromURL(
 					GmmlVision.getResourceURL("icons/new.gif")));
 		}
@@ -98,8 +98,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public OpenAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText ("&Open mapp@Ctrl+O");
-			setToolTipText ("Open mapp");
+			setText ("&Open pathway@Ctrl+O");
+			setToolTipText ("Open pathway");
 			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/open.gif")));
 		}
 		public void run () 
@@ -107,16 +107,46 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
 			fd.setFilterPath(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
-			fd.setFilterExtensions(new String[] {"*.gmml","*.*"});
+			fd.setFilterExtensions(new String[] {"*.gmml", "*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
+	        
 	        if(fnMapp != null) { 
 	        	GmmlVision.openPathway(fnMapp); 
 	        }
 		}
 	}
 	private OpenAction openAction = new OpenAction (this);
+	
+	/**
+	 * {@link Action} to open an gmml pathway
+	 */
+	private class ImportAction extends Action 
+	{
+		GmmlVisionWindow window;
+		public ImportAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("&Import");
+			setToolTipText ("Import Pathway in GenMAPP format");
+		}
+		public void run () 
+		{
+			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
+			fd.setText("Open");
+			fd.setFilterPath(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+			fd.setFilterExtensions(new String[] {"*.mapp", "*.*"});
+			fd.setFilterNames(new String[] {"GenMAPP Pathway file", "All files"});
+	        String fnMapp = fd.open();
+	        // Only open pathway if user selected a file
+	        
+	        if(fnMapp != null) { 
+	        	GmmlVision.openPathway(fnMapp); 
+	        }
+		}
+	}
+	private ImportAction importAction = new ImportAction (this);
 	
 	/**
 	 * {@link Action} to save a gmml pathway
@@ -127,8 +157,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public SaveAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText ("&Save mapp@Ctrl+S");
-			setToolTipText ("Save mapp");
+			setText ("&Save pathway@Ctrl+S");
+			setToolTipText ("Save pathway");
 			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/save.gif")));
 		}
 		
@@ -140,16 +170,16 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			// Set zoom to 100%
 			drawing.setPctZoom(100);			
 			// Overwrite the existing xml file
-			if (gmmlData.getXmlFile() != null)
+			if (gmmlData.getSourceFile() != null)
 			{
 				try
 				{
-					gmmlData.writeToXml(gmmlData.getXmlFile(), true);
+					gmmlData.writeToXml(gmmlData.getSourceFile(), true);
 				}
 				catch (ConverterException e)
 				{
 					String msg = "While writing xml to " 
-							+ gmmlData.getXmlFile().getAbsolutePath();					
+							+ gmmlData.getSourceFile().getAbsolutePath();					
 					MessageDialog.openError (window.getShell(), "Error", 
 							"Error: " + msg + "\n\n" + 
 							"See the error log for details.");
@@ -175,8 +205,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public SaveAsAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText ("Save mapp &As");
-			setToolTipText ("Save mapp with new file name");
+			setText ("Save pathway &As");
+			setToolTipText ("Save pathway with new file name");
 		}
 		public void run () {
 			GmmlDrawing drawing = GmmlVision.getDrawing();
@@ -186,9 +216,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*.gmml","*.*"});
+				fd.setFilterExtensions(new String[] {"*.gmml", "*.*"});
 				fd.setFilterNames(new String[] {"Gmml file", "All files"});
-				File xmlFile = gmmlData.getXmlFile();
+				
+				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
 					fd.setFileName(xmlFile.getName());
 					fd.setFilterPath(xmlFile.getPath());
@@ -197,9 +228,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
+				
 				if(fileName == null) return;
+				
 				// Append .gmml extension if not already present
-				if(!fileName.endsWith(".gmml")) fileName += ".gmml";
+				if(!fileName.endsWith(".gmml")) 
+					fileName += ".gmml";
 				
 				File checkFile = new File(fileName);
 				boolean confirmed = true;
@@ -217,8 +251,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					// Overwrite the existing xml file
 					try
 					{
-						gmmlData.writeToXml(checkFile, true);					
-						gmmlData.setXmlFile(checkFile);
+						gmmlData.writeToXml(checkFile, true);
 						// Set zoom back
 						drawing.setPctZoom(usedZoom);
 					}
@@ -226,10 +259,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					{
 						String msg = "While writing xml to " 
 							+ checkFile.getAbsolutePath();					
-					MessageDialog.openError (window.getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-							"See the error log for details.");
-					GmmlVision.log.error(msg, e);
+						MessageDialog.openError (window.getShell(), "Error", 
+								"Error: " + msg + "\n\n" + 
+								"See the error log for details.");
+						GmmlVision.log.error(msg, e);
 					}
 				}
 			}
@@ -241,7 +274,86 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		}
 	}
 	private SaveAsAction saveAsAction = new SaveAsAction (this);
-		
+
+	/**
+	 * {@link Action} to save a gmml pathway to a file specified by the user
+	 */
+	private class ExportAction extends Action 
+	{
+		GmmlVisionWindow window;
+		public ExportAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("&Export");
+			setToolTipText ("Export Pathway to GenMAPP format");
+		}
+		public void run () {
+			GmmlDrawing drawing = GmmlVision.getDrawing();
+			GmmlData gmmlData = GmmlVision.getGmmlData();
+			// Check if a gmml pathway is loaded
+			if (drawing != null)
+			{
+				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+				fd.setText("Save");
+				fd.setFilterExtensions(new String[] {"*.mapp", "*.*"});
+				fd.setFilterNames(new String[] {"GenMAPP pathway file", "All files"});
+				
+				File xmlFile = gmmlData.getSourceFile();
+				if(xmlFile != null) {
+					fd.setFileName(xmlFile.getName());
+					fd.setFilterPath(xmlFile.getPath());
+				} else {
+					fd.setFileName(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+				}
+				String fileName = fd.open();
+				// Only proceed if user selected a file
+				
+				if(fileName == null) return;
+				
+				// Append .gmml extension if not already present
+				if(!fileName.endsWith(".mapp")) 
+					fileName += ".mapp";
+				
+				File checkFile = new File(fileName);
+				boolean confirmed = true;
+				// If file exists, ask overwrite permission
+				if(checkFile.exists())
+				{
+					confirmed = MessageDialog.openQuestion(window.getShell(),"",
+					"File already exists, overwrite?");
+				}
+				if(confirmed)
+				{
+					double usedZoom = drawing.getZoomFactor() * 100;
+					// Set zoom to 100%
+					drawing.setPctZoom(100);					
+					// Overwrite the existing xml file
+					try
+					{
+						gmmlData.writeToMapp(checkFile);
+						// Set zoom back
+						drawing.setPctZoom(usedZoom);
+					}
+					catch (ConverterException e)
+					{
+						String msg = "While writing mapp to " 
+							+ checkFile.getAbsolutePath();					
+						MessageDialog.openError (window.getShell(), "Error", 
+								"Error: " + msg + "\n\n" + 
+								"See the error log for details.");
+						GmmlVision.log.error(msg, e);
+					}
+				}
+			}
+			else
+			{
+				MessageDialog.openError (window.getShell(), "Error", 
+					"No pathway to save! Open or create a new pathway first");
+			}			
+		}
+	}
+	private ExportAction exportAction = new ExportAction (this);
+
 	/**
 	 * {@link Action} to close the gmml pathway (does nothing yet)
 	 */
@@ -251,8 +363,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public CloseAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText ("&Close mapp@Ctrl+W");
-			setToolTipText ("Close this map");
+			setText ("&Close pathway@Ctrl+W");
+			setToolTipText ("Close this pathway");
 		}
 		public void run () {
 			//TODO: unload drawing, ask to save
@@ -377,7 +489,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString("currentGdb") + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
-				MessageDialog.openError(getShell(), "Failed to open Gene Database", e.getMessage());
+				String msg = "Failed to open Gene Database; " + e.getMessage();
+				MessageDialog.openError (window.getShell(), "Error", 
+						"Error: " + msg + "\n\n" + 
+						"See the error log for details.");
+				GmmlVision.log.error(msg, e);
 			}
 		}
 	}
@@ -412,8 +528,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				showColorSetActionsCI(true);
 				showLegend(true);
 			} catch(Exception e) {
-				MessageDialog.openError(getShell(), "Failed to open Expression Dataset", e.getMessage());
-				GmmlVision.log.error("while opening expression dataset", e);
+				String msg = "Failed to open Expression Dataset" + e.getMessage();
+				MessageDialog.openError (window.getShell(), "Error", 
+						"Error: " + msg + "\n\n" + 
+						"See the error log for details.");
+				GmmlVision.log.error(msg, e);
 			}
 			
 		}
@@ -436,7 +555,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					dialog.run(true, true, GmmlGex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
 					drawing.redraw();
 				} catch(Exception e) {
-					GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
+					String msg = "while caching expression data: " + e.getMessage();					
+					MessageDialog.openError (getShell(), "Error", 
+							"Error: " + msg + "\n\n" + 
+							"See the error log for details.");
+					GmmlVision.log.error(msg, e);
 				}
 			}
 		}
@@ -524,7 +647,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				try {
 					dialog.run(true, true, GmmlGex.convertRunnable);
 				} catch(Exception e) {
-					GmmlVision.log.error("while converting GenMAPP gex: " + e.getMessage(), e);
+					String msg = "While converting GenMAPP GEX: " + e.getMessage();
+					MessageDialog.openError (window.getShell(), "Error", 
+							"Error: " + msg + "\n\n" + 
+							"See the error log for details.");
+					GmmlVision.log.error(msg, e);
 				}
 				
 			}
@@ -583,7 +710,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					try {
 						dialog.run(true, true, GmmlGdb.getConvertRunnable());
 					} catch(Exception e) {
-						GmmlVision.log.error("while converting GenMAPP gene database: " + e.getMessage(), e);
+						String msg = "While converting GenMAPP gene database: "+ e.getMessage();
+						MessageDialog.openError (window.getShell(), "Error", 
+								"Error: " + msg + "\n\n" + 
+								"See the error log for details.");
+						GmmlVision.log.error(msg, e);
 					}
 
 				}
@@ -1243,7 +1374,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		fileMenu.add(openAction);
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
-		fileMenu.add(closeAction);
+		//fileMenu.add(closeAction);
+		fileMenu.add(new Separator());
+		fileMenu.add(importAction);
+		fileMenu.add(exportAction);
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");

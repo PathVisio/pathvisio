@@ -34,6 +34,12 @@ public class GmmlDataObject
 	
 	}
 	
+	/**
+	 * The required parameter objectType ensures only
+	 * objects with a valid type can be created.
+	 * 
+	 * @param ot Type of object, one of the ObjectType.* fields
+	 */
 	public GmmlDataObject (int ot)
 	{
 		if (ot < ObjectType.MIN_VALID || ot > ObjectType.MAX_VALID)
@@ -49,6 +55,7 @@ public class GmmlDataObject
 	 */
 	private GmmlData parent = null;
 	public GmmlData getParent() { return parent; }
+	
 	/**
 	 * Set parent. Parent may be set to null.
 	 * When parent is set to not null, it is automatically added.

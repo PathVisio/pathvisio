@@ -8,4 +8,12 @@ public class ConverterException extends Exception {
 	{
 		super(msg);
 	}
+
+	ConverterException(Exception e)
+	{
+		super(e.getClass() + ": " + e.getMessage());
+		setStackTrace(e.getStackTrace());
+	}
+
+
 }

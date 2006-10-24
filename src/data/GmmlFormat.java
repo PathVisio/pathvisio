@@ -12,8 +12,6 @@ import org.jdom.Element;
 
 import util.ColorConverter;
 
-import debug.Logger;
-
 /**
  * class responsible for interaction with Gmml format.
  * Contains all gmml-specific constants,
@@ -71,8 +69,6 @@ public class GmmlFormat {
 		
 	}
 	
-	public static Logger log;
-
 	public static Document createJdom(GmmlData data) throws ConverterException
 	{
 		Document doc = new Document();

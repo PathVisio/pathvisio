@@ -16,7 +16,7 @@ import java.io.PrintStream;
 public class Logger
 {
 	private boolean debugEnabled = true;
-	private boolean traceEnabled = true;
+	private boolean traceEnabled = false;
 	private boolean infoEnabled = true;
 	private boolean warnEnabled = true;
 	private boolean errorEnabled = true;

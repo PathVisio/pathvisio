@@ -115,13 +115,14 @@ public class GmmlData
 		return graphRefs.get(id);
 	}
 	
-	private File xmlFile;
+	private File sourceFile = null;
+	
 	/**
-	 * Gets the xml file containing the Gmml pathway currently displayed
+	 * Gets the xml file containing the Gmml/mapp pathway currently displayed
 	 * @return
 	 */
-	public File getXmlFile () { return xmlFile; }
-	public void setXmlFile (File file) { xmlFile = file; }
+	public File getSourceFile () { return sourceFile; }
+	private void setSourceFile (File file) { sourceFile = file; }
 
 	/**
 	 * Contructor for this class, creates a new gmml document
@@ -155,6 +156,8 @@ public class GmmlData
 	 * Constructor for this class, opens a gmml pathway and adds its elements to the drawing
 	 * @param file		String pointing to the gmml file to open
 	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gmml pathway
+	 * 
+	 * @deprecated - use general constructor, then specify readFromXml or readFromMapp
 	 */
 	public GmmlData(String file) throws ConverterException
 	{
@@ -162,8 +165,8 @@ public class GmmlData
 		GmmlVision.log.info("Start reading the Gmml file: " + file);
 		// try to read the file; if an error occurs, catch the exception and print feedback
 
-		xmlFile = new File(file);
-		readFromXml(xmlFile, true);		
+		sourceFile = new File(file);
+		readFromXml(sourceFile, true);		
 	}
 	
 	/**
@@ -222,12 +225,11 @@ public class GmmlData
 			FileWriter writer = new FileWriter(file);
 			//Send XML code to the filewriter
 			xmlcode.output(doc, writer);
+			setSourceFile (file);
 		}
 		catch (IOException ie)
 		{
-			ConverterException ce = new ConverterException("IO Exception while converting");
-			ce.setStackTrace(ie.getStackTrace());
-			throw ce;
+			throw new ConverterException(ie);
 		}
 	}
 	
@@ -254,20 +256,20 @@ public class GmmlData
 			while (it.hasNext()) {
 				GmmlFormat.mapElement((Element)it.next(), this);
 			}
+			
+			setSourceFile (file);
 		}
 		catch(JDOMParseException pe) 
 		{
-			 GmmlVision.log.error(pe.getMessage());
+			 throw new ConverterException (pe);
 		}
 		catch(JDOMException e)
 		{
-			GmmlVision.log.error(file + " is invalid.");
-			GmmlVision.log.error(e.getMessage());
+			throw new ConverterException (e);
 		}
 		catch(IOException e)
 		{
-			GmmlVision.log.error("Could not access " + file);
-			GmmlVision.log.error(e.getMessage());
+			throw new ConverterException (e);
 		}
 	}
 	
@@ -276,6 +278,8 @@ public class GmmlData
         String inputString = file.getAbsolutePath();
 
         MappFormat.readFromMapp (inputString, this);
+        
+        setSourceFile (file);
 	}
 	
 	public void writeToMapp (File file) throws ConverterException
@@ -283,7 +287,8 @@ public class GmmlData
 		String[] mappInfo = MappFormat.uncopyMappInfo (this);
 		List<String[]> mappObjects = MappFormat.uncopyMappObjects (this);
 		
-		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);		
+		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);
+		setSourceFile (file);
 	}
 
 	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();

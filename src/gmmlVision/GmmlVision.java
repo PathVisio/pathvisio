@@ -140,7 +140,16 @@ public abstract class GmmlVision {
 		
 		// initialize new JDOM gmml representation and read the file
 		try { 
-			_gmmlData = new GmmlData(pwf);
+			
+			_gmmlData = new GmmlData();
+			if (pwf.endsWith(".mapp"))
+			{
+				_gmmlData.readFromMapp(new File(pwf));
+			}
+			else
+			{
+				_gmmlData.readFromXml(new File(pwf), true);
+			}
 		} catch(ConverterException e) {
 			MessageDialog.openError(getWindow().getShell(), 
 					"Unable to open Gmml file", e.getClass() + e.getMessage());

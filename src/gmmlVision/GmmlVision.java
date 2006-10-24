@@ -27,6 +27,7 @@ import debug.Logger;
  */
 public abstract class GmmlVision {
 	public static final String APPLICATION_NAME = "Gmml-Visio";
+	public static final String PATHWAY_FILE_EXTENSION = "gmml";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
@@ -47,6 +48,7 @@ public abstract class GmmlVision {
 	public static final Logger log = new Logger();
 	
 	private static File DIR_APPLICATION;
+	private static File DIR_DATA;
 	static boolean USE_R;
 		
 	/**
@@ -190,11 +192,19 @@ public abstract class GmmlVision {
 	public static File getApplicationDir() {
 		if(DIR_APPLICATION == null) {
 			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + APPLICATION_NAME);
-			DIR_APPLICATION.mkdir();
+			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
 		}
 		return DIR_APPLICATION;
 	}
 		
+	public static File getDataDir() {
+		if(DIR_DATA == null) {
+			DIR_DATA = new File(System.getProperty("user.home"), APPLICATION_NAME + "-Data");
+			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
+		}
+		return DIR_DATA;
+	}
+	
 	//Property event handling
 	public static final String PROPERTY_OPEN_PATHWAY = "property_open_pathway";
 	public static final String PROPERTY_NEW_PATHWAY = "property_new_pathway";

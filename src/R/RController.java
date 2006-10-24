@@ -15,15 +15,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
 import org.rosuda.JRI.Rengine;
 
 import rversion.GetRVersion;
-
-import util.FileUtils;
 import util.JarUtils;
 import util.Utils;
-
 import R.RCommands.RException;
 
 public class RController implements PropertyListener{
@@ -79,7 +75,7 @@ public class RController implements PropertyListener{
 	}
 	
 	
-	private static boolean doStartR() throws UnsatisfiedLinkError, IOException{
+	private static boolean doStartR() throws UnsatisfiedLinkError, IOException, RException {
 		//Extract the JRI shared library for the OS / R version on this system
 		extractJRI();
 		
@@ -92,7 +88,7 @@ public class RController implements PropertyListener{
 		}
 		
 		try { //Redirect the R standard output to a text file
-			sink(File.createTempFile("visioR", null, null));
+			if(rOut == null) sink(File.createTempFile("visioR", null, null));
 		} catch(Exception e) {
 			startError("Unable to redirect R standard output to file", e);
 			return false;
@@ -217,7 +213,14 @@ public class RController implements PropertyListener{
 		
 	public void propertyChanged(PropertyEvent e) {
 		if(e.name == GmmlVision.PROPERTY_CLOSE_APPLICATION) {
-			endR();
+			endR(); //End the R process
+			if(rOut != null) { //Close the R output file
+				try { 
+					rOut.close(); 
+				} catch(Exception ie) { 
+					GmmlVision.log.error("Unable to close R output file", ie);
+				}
+			}
 		}
 	}
 }

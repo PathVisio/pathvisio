@@ -19,17 +19,14 @@ import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import colorSet.Criterion;
-import colorSet.GmmlColorCriterion;
-
 import util.FileUtils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
-import R.RCommands.RInterruptedException;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
+import colorSet.Criterion;
 import data.GmmlGdb;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;
@@ -78,7 +75,7 @@ public class RDataOut {
 	public RDataOut(File pathways, boolean recursive) {
 		this();
 		//Get the pathway files
-		pwFiles = FileUtils.getFiles(pathways, "xml", recursive);
+		pwFiles = FileUtils.getFiles(pathways, GmmlVision.PATHWAY_FILE_EXTENSION, recursive);
 	}
 	
 	public List<File> getPathwayFiles() { return pwFiles; }
@@ -105,7 +102,7 @@ public class RDataOut {
 						this.getClass(), "doExportData", 
 						new Class[] { re.getClass() }, new Object[] { re }, this);
 				SimpleRunnableWithProgress.setMonitorInfo(
-						"Exporting data", totalWorkData);
+						"Exporting data (task 1/2)", totalWorkData);
 				dialog.run(true, true, rwp); 
 			}
 			if(exportPws) {
@@ -113,7 +110,7 @@ public class RDataOut {
 						this.getClass(), "doExportPws", 
 						new Class[] { re.getClass() }, new Object[] { re }, this);
 				SimpleRunnableWithProgress.setMonitorInfo(
-						"Exporting pathways", totalWorkPws);
+						"Exporting pathways (task 2/2)", totalWorkPws);
 				dialog.run(true, true, rwp);
 			}
 			RCommands.eval("save(list = c('" + dsName + "', '" + pwsName + "'), file='"+ RCommands.fileNameToString(exportFile) + "')");
@@ -123,6 +120,10 @@ public class RDataOut {
 			RCommands.eval("rm(list=ls())"); //Remove everything from R workspace
 			throw ex; //pay it forward!
 		}
+		
+		// Free up memory (especially cacheDataSet is big)
+		cacheDataSet = null;
+		cachePathwaySet = null; 
 	}
 
 	public void doExportPws(Rengine re) throws Exception {
@@ -132,7 +133,7 @@ public class RDataOut {
 			
 		checkValid();
 		
-		pwFiles = FileUtils.getFiles(pwDir, "xml", true);
+		pwFiles = FileUtils.getFiles(pwDir, GmmlVision.PATHWAY_FILE_EXTENSION, true);
 
 		//Calculate contribution of single Pathway
 		Pathway.progressContribution = (int)((double)totalWorkPws * contribR / pwFiles.size());
@@ -150,7 +151,7 @@ public class RDataOut {
 				continue; 
 			}
 			
-			Pathway pw = new Pathway(p.getName(), f.toString(), cachePathwaySet);
+			Pathway pw = new Pathway(p.getName(), RCommands.fileToString(f), cachePathwaySet);
 
 			for(Gene g : p.getGenes()) {
 				String id = g.getId();
@@ -167,8 +168,7 @@ public class RDataOut {
 			cachePathwaySet.addCrossRefs(cacheDataSet);
 		
 		cachePathwaySet.toR(pwsName);
-		
-		cachePathwaySet = null; //Not used anymore (maybe in future)..let garbage collector take care of it
+	
 		RTemp.flush(true);
 	}
 	
@@ -179,7 +179,6 @@ public class RDataOut {
 		
 		cacheDataSet.toR(dsName);
 		
-		cacheDataSet = null; //Not used anymore (maybe in future)..let garbage collector take care of it
 		RTemp.flush(true);
 	}
 	
@@ -237,7 +236,6 @@ public class RDataOut {
 		long returnRef(long xp, String[] tmp) throws RException {			
 			//Check for error in reference
 			if(xp == 0) throw new RniException(RController.getR(), RniException.CAUSE_XP_ZERO);
-//			RController.getR().rniProtect(xp); //Protect this reference...we have to unprotect it somewhere?
 			
 			RTemp.dispose(tmp);
 			return xp;
@@ -280,13 +278,12 @@ public class RDataOut {
 		}
 		
 		void addCrossRefs(DataSet dataSet) throws Exception {
-			//TODO: iterate over Math.min(reporters.size(), geneProducts.size())
 			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
 			
 			StopWatch sw = new StopWatch();
 			sw.start();
 			HashMap repHash = dataSet.getReporterHash();
-			sw.stopToLog("createing reporter hashmap");
+			sw.stopToLog("creating reporter hashmap");
 			
 			sw.start();
 			StopWatch sw2 = new StopWatch();
@@ -454,6 +451,9 @@ public class RDataOut {
 		
 		long getRef() throws RException {
 			Rengine re = RController.getR();
+			
+			if(data == null || data.length == 0)
+				throw new RException(re, "No exportable data found in expression dataset");
 			
 			//Create the mixed-type data matrix in R
 			//#1 create a long 1-dimensional list -> fill rows first

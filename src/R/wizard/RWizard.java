@@ -16,7 +16,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
 import util.SwtUtils.SimpleRunnableWithProgress;
@@ -45,17 +44,17 @@ public class RWizard extends Wizard {
 		ps.finishText.setText("");
 		boolean ok = false;
 		try {
+//			//Not possible to cancel the evaluation of an R command for now, so disable cancel
+//			((RWizardDialog)getContainer()).getButton(WizardDialog.CANCEL).setEnabled(false);
+//			getContainer().updateButtons();
+			
 			SimpleRunnableWithProgress srwp = 
 				new SimpleRunnableWithProgress(ps.getClass(), "performFinish", new Class[] { });
 			srwp.setArgs(new Object[] { });
 			srwp.setInstance(ps);
 			SimpleRunnableWithProgress.setTotalWork(IProgressMonitor.UNKNOWN);
 			getContainer().run(true, true, srwp);
-			
-			//Not possible to cancel the evaluation of an R command for now, so disable cancel
-			((RWizardDialog)getContainer()).getButton(WizardDialog.CANCEL).setEnabled(false);
-			getContainer().updateButtons();
-			
+					
 			//Load resultset and display in sidepanel
 			ResultSet rs = new ResultSet(ps.getResultVar());
 			
@@ -83,7 +82,7 @@ public class RWizard extends Wizard {
 		if(!ok) ps.showConfig();
 		return ok;
 	}
-	
+		
 	private String getTabItemName(String prefName, TabbedSidePanel tsp) {
 		HashMap<String, CTabItem> tabItems = tsp.getTabItemHash();
 		if(!tabItems.containsKey(prefName)) return prefName;
@@ -103,9 +102,9 @@ public class RWizard extends Wizard {
 			super(parent, wizard);
 		}
 		
-		public Button getButton(int id) {
-			return super.getButton(id);
-		}
+//		public Button getButton(int id) {
+//			return super.getButton(id);
+//		}
 		
 		protected void nextPressed() {
 			IWizardPage page = getCurrentPage();

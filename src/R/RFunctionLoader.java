@@ -3,8 +3,8 @@ package R;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,16 +15,15 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -39,11 +38,10 @@ import org.eclipse.swt.widgets.Text;
 import org.rosuda.JRI.REXP;
 
 import util.JarUtils;
-
+import util.SwtUtils.SimpleRunnableWithProgress;
+import R.RCommands.RException;
 import colorSet.Criterion;
 import colorSet.CriterionComposite;
-
-import R.RCommands.RException;
 
 
 public class RFunctionLoader {
@@ -52,7 +50,7 @@ public class RFunctionLoader {
 	static final HashMap<String, RFunction> functions = new HashMap<String, RFunction>();
 	
 	
-	public static void loadFunctions() throws IOException {
+	public static void loadFunctions() throws IOException, RException {
 		URL url = GmmlVision.getResourceURL(funDir);
 		JarURLConnection conn = (JarURLConnection)url.openConnection();
 		
@@ -71,6 +69,7 @@ public class RFunctionLoader {
 		    	}
 		    }
 		}
+		initFunctions();
 	}
 	
 	public static String[] getFunctionNames() {
@@ -83,15 +82,16 @@ public class RFunctionLoader {
 		return functions.get(name);
 	}
 		
-	public static List<RFunction> getFunctions() throws RException {
-		List<RFunction> functions = new ArrayList<RFunction>();
-		
+	public static void initFunctions() throws RException {		
 		String[] names = RCommands.ls("GmmlFunction");
 		for(String name : names) {
-			if(name.equals("zscore")) functions.add(new ZScore(name)); //Think of something to load the RFunction subclass (if exitst) for a function
-			else functions.add(new RFunction(name));
+			if(name.equals("zscore")) functions.put(name, new ZScore(name)); //Think of something to load the RFunction subclass (if exitst) for a function
+			else functions.put(name, new RFunction(name));
 		}
-		return functions;
+	}
+	
+	public static List<RFunction> getFunctions() {
+		return new ArrayList<RFunction>(functions.values());
 	}
 	
 	public static class RFunction {
@@ -129,7 +129,7 @@ public class RFunctionLoader {
 		public String getDescription() { return description; }
 		public String getVarName() { return varName; }
 		
-		protected Composite getArgsComposite(Composite parent) {
+		protected Composite getArgsComposite(Composite parent) {			
 			Composite argComp = new Composite(parent, SWT.NULL);
 			argComp.setLayout(new GridLayout());
 			
@@ -152,9 +152,9 @@ public class RFunctionLoader {
 		
 		public Composite getConfigComposite(Composite parent) {
 			if(configComp != null && !configComp.isDisposed()) configComp.dispose();
-			
+						
 			configComp = getArgsComposite(parent);
-			
+
 			return configComp;
 		}
 		
@@ -229,7 +229,9 @@ public class RFunctionLoader {
 			
 			configComp = new Composite(parent, SWT.NULL);
 			configComp.setLayout(new GridLayout());
+			
 			getArgsComposite(configComp);
+			
 			Button setButton = new Button(configComp, SWT.PUSH);
 			setButton.setText("Add a set");
 			setButton.addSelectionListener(new SelectionAdapter() {
@@ -243,11 +245,12 @@ public class RFunctionLoader {
 					}
 				}
 			});
+			setButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
 			return configComp;
 		}
 				
-		private class SetConfigDialog extends ApplicationWindow {
+		public class SetConfigDialog extends ApplicationWindow {
 			String[] dataSets;
 			Combo dataSetCombo;
 			HashMap<String, String[]> availableSymbols;
@@ -256,7 +259,7 @@ public class RFunctionLoader {
 			
 			public SetConfigDialog(Shell shell) throws Exception {
 				super(shell);
-				setShellStyle(SWT.RESIZE);
+				setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE);
 				setBlockOnOpen(true);
 				availableSymbols = new HashMap<String, String[]>();
 				criterion = new Criterion();
@@ -267,20 +270,36 @@ public class RFunctionLoader {
 				
 			}
 			
-			private void saveSet() {
+			private boolean saveSet() {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
+						this.getClass(), "doSaveSet", new Class[] { }, new Object[] { }, this);
+				SimpleRunnableWithProgress.setMonitorInfo(
+						"Exporting set to R", IProgressMonitor.UNKNOWN);
+				rwp.setRunAsSyncExec(true);
 				try {
-					if(setVar.equals("")) throw new Error("No R variable name specified");
-					criterion.getConfigComposite().saveToCriterion();
-					RDataOut.createSetVector(criterion, dataSetCombo.getText(), setVar);
-				} catch(Exception ex) {
-					MessageDialog.openError(getShell(), "Unable to save set", ex.getMessage());
-					GmmlVision.log.error("Unable to save set to R", ex);
-				}
+					dialog.run(true, true, rwp); 
+				} catch(InvocationTargetException ex) {
+					MessageDialog.openError(getShell(), "Unable to export set", ex.getCause().getMessage());
+					GmmlVision.log.error("Unable to export set to R", ex);
+					return false;
+				} catch(InterruptedException ie) { return false; }
+				return true;
 			}
-
+			
+			public void doSaveSet() throws Exception {
+				if(setVar == null || setVar.equals("")) 
+					throw new Exception("No R variable name specified");
+				criterion.getConfigComposite().saveToCriterion();
+				RDataOut.createSetVector(criterion, dataSetCombo.getText(), setVar);
+			}
+			
 			protected Control createContents(Composite parent) {
 				Composite contents = new Composite(parent, SWT.NULL);
-				contents.setLayout(new GridLayout());
+				contents.setLayout(new GridLayout(2, false));
+				
+				Label dataSetLabel = new Label(contents, SWT.NULL);
+				dataSetLabel.setText("Apply to data set:");
 				
 				dataSetCombo = new Combo(contents, SWT.SINGLE | SWT.READ_ONLY);
 				dataSetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -293,10 +312,15 @@ public class RFunctionLoader {
 				});
 							
 				final CriterionComposite critConf = criterion.getConfigComposite(contents);
-				critConf.setLayoutData(new GridData(GridData.FILL_BOTH));
-												
+				GridData critGrid = new GridData(GridData.FILL_BOTH);
+				critGrid.horizontalSpan = 2;
+				critConf.setLayoutData(critGrid);
+									
+				GridData span2cols = new GridData(GridData.FILL_HORIZONTAL);
+				span2cols.horizontalSpan = 2;
+				
 				Composite saveComp = new Composite(contents, SWT.NULL);
-				saveComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				saveComp.setLayoutData(span2cols);
 				saveComp.setLayout(new GridLayout(3, false));
 				
 				Label varLabel = new Label(saveComp, SWT.CENTER);
@@ -311,17 +335,34 @@ public class RFunctionLoader {
 				});
 				
 				Button saveCrit = new Button(saveComp, SWT.PUSH);
-				saveCrit.setText("Save set to R");
+				saveCrit.setText("Export set to R");
 				saveCrit.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						saveSet();
 					}
 				});
 				
-				Button ok = new Button(contents, SWT.PUSH);
-				ok.setText("  Ok  ");
+				GridData okGrid = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
+				okGrid.horizontalSpan = 2;
+				
+				Composite okComp = new Composite(contents, SWT.NULL);
+				okComp.setLayoutData(okGrid);
+				okComp.setLayout(new GridLayout(2, false));
+				
+				Button ok = new Button(okComp, SWT.PUSH);
+				ok.setText(" Ok ");
 				ok.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				ok.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if(saveSet()) close();
+					}
+				});
+				ok.setFocus();
+				
+				Button cancel = new Button(okComp, SWT.PUSH);
+				cancel.setText("  Cancel  ");
+				cancel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				cancel.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						close();
 					}

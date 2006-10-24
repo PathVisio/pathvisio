@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -17,20 +18,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import data.GmmlGex;
-
-import R.RCommands;
 import R.RDataIn;
 import R.RDataOut;
 import R.RCommands.RInterruptedException;
-import R.RCommands.RTemp;
+import data.GmmlGex;
 
 public class PageData extends WizardPage {
 	RDataOut rDataOut;
@@ -53,8 +50,12 @@ public class PageData extends WizardPage {
 	}
 	
 	public void createControl(Composite parent) {
-		Composite content = new Composite(parent, SWT.NULL);
-		content.setLayout(new GridLayout());
+		ScrolledComposite sc = new ScrolledComposite(parent, SWT.VERTICAL | SWT.HORIZONTAL);
+		
+		Composite content = new Composite(sc, SWT.NULL);
+		content.setLayout(new GridLayout(1, false));
+				
+		sc.setContent(content);
 		
 		radioExport = new Button(content, SWT.RADIO);
 		radioExport.setText("Export data to R");
@@ -65,17 +66,21 @@ public class PageData extends WizardPage {
 		radioImport.setText("Load previously exported data");
 		
 		settingsComp = new Composite(content, SWT.NULL);
-		settingsComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		settingsComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		StackLayout settingsStack = new StackLayout();
 		settingsComp.setLayout(settingsStack);
 		
 		exportSettings = createExportSettings(settingsComp);
 		importSettings = createImportSettings(settingsComp);
 		
-		
 		setListeners();
 		setInitialValues();
-		setControl(content);
+		
+		content.layout(true);
+		sc.setMinSize(content.computeSize(300, SWT.DEFAULT, true));
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		setControl(sc);
 	}
 	
 	private void setInitialValues() {
@@ -86,7 +91,7 @@ public class PageData extends WizardPage {
 	
 	public Composite createExportSettings(Composite parent) {
 		Composite settings = new Composite(parent, SWT.NULL);
-		settings.setLayout(new GridLayout(1, false));
+		settings.setLayout(new GridLayout());
 		
 		GridData groupGrid = new GridData(GridData.FILL_HORIZONTAL);
 		GridData span2Cols = new GridData(GridData.FILL_HORIZONTAL);
@@ -109,6 +114,7 @@ public class PageData extends WizardPage {
 			pwBrowse = new Button(pwsGroup, SWT.PUSH);
 			pwBrowse.setText("Browse");
 		}
+		pwsGroup.layout(true);
 		
 		Group dataGroup = new Group(settings, SWT.NONE);
 		dataGroup.setLayout(new GridLayout(3, false));
@@ -120,7 +126,8 @@ public class PageData extends WizardPage {
 			exprObj = new Text(dataGroup, SWT.SINGLE | SWT.BORDER);
 			exprObj.setLayoutData(span2Cols);
 		}
-				
+		dataGroup.layout(true);
+		
 		Composite export = new Composite(settings, SWT.NULL);
 		export.setLayoutData(groupGrid);
 		export.setLayout(new GridLayout(3, false));
@@ -188,7 +195,6 @@ public class PageData extends WizardPage {
 			((StackLayout)settingsComp.getLayout()).topControl = 
 				radioExport.getSelection() ? exportSettings : importSettings;
 			settingsComp.layout();
-			//TODO: adapt size
 			checkPageComplete();
 		}
 	};

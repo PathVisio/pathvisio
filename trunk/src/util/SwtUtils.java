@@ -61,8 +61,9 @@ public class SwtUtils {
 		Method doMethod; 					//The method to perform
 		private Object[] args;				//The arguments to pass to the method
 		Object instance;					//The instance of the class that contains the method to be run
+		boolean runAsSyncExec;
 		
-		static IProgressMonitor monitor;	//The progress monitor
+		volatile static IProgressMonitor monitor;	//The progress monitor
 		
 		static String taskName = "";		//Taskname to display in the progress monitor
 		static int totalWork = 1000;		//Total work to be performed
@@ -157,9 +158,15 @@ public class SwtUtils {
 		public static void setTaskName(String tn) {
 			taskName = tn;
 		}
-	
+		
+		public void setRunAsSyncExec(boolean useSyncExec) {
+			runAsSyncExec = useSyncExec;
+		}
+		
+		Throwable runException;
 		public void run(IProgressMonitor monitor) throws InterruptedException,
 			InvocationTargetException {
+			
 			SimpleRunnableWithProgress.monitor = monitor;
 			
 			if(args == null || doMethod == null) {
@@ -169,16 +176,36 @@ public class SwtUtils {
 			}
 					
 			monitor.beginTask(taskName, totalWork);
-			try {
-				doMethod.invoke(instance, args);
-			} catch (IllegalAccessException e) {
-				throw new InvocationTargetException(e, "Unable to invoke method " + doMethod);
-			} catch (IllegalArgumentException e) {
-				throw new InvocationTargetException(e, "Unable to invoke method " + doMethod);
-			} finally {
-				monitor.done();
-				SimpleRunnableWithProgress.monitor = null;
+
+			runException = null;
+			if(runAsSyncExec) {//Invoke in syncExec, method may access widgets from this thread
+				GmmlVision.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						runException = doInvoke();
+					}
+				});
+			} else {
+				runException = doInvoke();
 			}
+			
+			monitor.done();
+			SimpleRunnableWithProgress.monitor = null;
+			
+			if(runException != null) {
+				if		(runException instanceof IllegalAccessException)
+					throw new InvocationTargetException(runException, "Unable to invoke method " + doMethod);
+				else if	(runException instanceof IllegalArgumentException)
+					throw new InvocationTargetException(runException, "Unable to invoke method " + doMethod);
+				else if (runException instanceof InvocationTargetException)
+					throw (InvocationTargetException)runException;
+				else
+					throw new InvocationTargetException(runException);
+			}
+		}
+		
+		private Throwable doInvoke() {
+			try { doMethod.invoke(instance, args); } catch(Throwable t) { return t; }
+			return null;
 		}
 
 		/**
@@ -190,7 +217,7 @@ public class SwtUtils {
 		public static void monitorWorked(final int w) {
 			GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					monitor.worked(w);
+					if(monitor != null) monitor.worked(w);
 				}
 			});
 		}
@@ -203,7 +230,7 @@ public class SwtUtils {
 		public static void monitorSetTaskName(final String taskName) {
 			GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					monitor.setTaskName(taskName);
+					if(monitor != null) monitor.setTaskName(taskName);
 				}
 			});
 		}

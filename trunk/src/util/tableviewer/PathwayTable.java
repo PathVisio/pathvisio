@@ -63,6 +63,13 @@ public class PathwayTable extends Composite {
 					colProps[i] = attrNames.get(i);
 					tc.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
+							Table t = tableViewer.getTable();
+							if(tableViewer.getTable().getSortColumn() == tc)
+								t.setSortDirection(t.getSortDirection() == SWT.DOWN ? SWT.UP : SWT.DOWN);
+							else {
+								tableViewer.getTable().setSortColumn(tc);
+								if(t.getSortDirection() == SWT.NONE) t.setSortDirection(SWT.DOWN);
+							}
 							tableViewer.setSorter(new PathwaySorter(tc.getText()));
 						}
 					});
@@ -161,8 +168,19 @@ public class PathwayTable extends Composite {
 		}
 		
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			Row r1 = (Row)e1;
-			Row r2 = (Row)e2;
+			int sortDirection = SWT.DOWN;
+			if(viewer instanceof TableViewer)
+				sortDirection = ((TableViewer)viewer).getTable().getSortDirection();
+			
+			Row r1, r2;
+			if(sortDirection == SWT.UP) {
+				r1 = (Row)e2;
+				r2 = (Row)e1;
+			} else {
+				r1 = (Row)e1;
+				r2 = (Row)e2;
+			}
+
 			return r1.getColumn(property).compareTo(r2.getColumn(property));
 		}
 	}

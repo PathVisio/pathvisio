@@ -45,13 +45,30 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 		setDefault("currentGdb", CURRENT_GDB);
 		setDefault("display.sidePanelSize", SIDEPANEL_SIZE);
 		
+		setDefault("directories.gmmlFiles", DIR_PWFILES);
+		setDefault("directories.gdbFiles", DIR_GDBFILES);
+		setDefault("directories.exprFiles", DIR_EXPRFILES);
+		setDefault("directories.RdataFiles", DIR_RDATAFILES);
+		
 		try {
 			load();
 		} catch(Exception e) { 
 			try { save(); } catch(Exception ex) { } 
 		}
+		
+		createDataDirectories();
+		
 	}
 
+	private void createDataDirectories() {
+		// For the data directories: if not defined by user, create default directories
+		String[] dataProps = new String[] { "gmmlFiles", "gdbFiles", "exprFiles", "RdataFiles" };
+		for(String prop : dataProps) {
+			File dir = new File(getString("directories." + prop));
+			if(!dir.exists()) dir.mkdirs();
+		}
+	}
+	
 	/**
 	 * Returns the current value of the {@link RGB}-valued preference with  the given name
 	 * @param name the name of the preference
@@ -78,6 +95,9 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
+		else if(e.getProperty().startsWith("directories")) {
+			createDataDirectories();
+		}
 	}
 	
 	// Defaults
@@ -94,4 +114,10 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	
 	// current gene database
 	static String CURRENT_GDB = "none";
+
+	// directories
+	static String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();
+	static String DIR_GDBFILES = new File(GmmlVision.getDataDir().toString(), "gene databases").toString();
+	static String DIR_EXPRFILES = new File(GmmlVision.getDataDir().toString(), "expression datasets").toString();
+	static String DIR_RDATAFILES = new File(GmmlVision.getDataDir().toString(), "R data").toString();
 }

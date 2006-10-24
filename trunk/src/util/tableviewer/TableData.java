@@ -122,10 +122,26 @@ public class TableData {
 		
 		public int compareTo(Object o) {
 			Column c = (Column)o;
-			if(type != c.type) return type - c.type;
 			
 			switch(type) {
-			case TYPE_TEXT: return textValue.compareTo(c.getText());
+			case TYPE_TEXT: 
+				{
+					//Try to treat as numeric
+					double numThis = 0;
+					double numThat = 0;
+					boolean isNumThis = true;
+					boolean isNumThat = true;
+					try { numThis = Double.parseDouble(textValue); } 
+					catch(NumberFormatException e) { isNumThis = false; }
+					try { numThat = Double.parseDouble(c.getText()); } 
+					catch(NumberFormatException e) { isNumThat = false; }
+					
+					if(isNumThis && isNumThat) 	return (int)Math.ceil(numThis - numThat);
+					if(isNumThis) return 1;
+					if(isNumThat) return -1;
+					//Both are strings
+					return textValue.compareTo(c.getText());
+				}
 			case TYPE_NUM: return (int)(numValue - c.getNumeric());
 			case TYPE_ARRAYLIST: return arrayValue.size() - c.getArray().size();
 			default: return -1;

@@ -107,7 +107,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
 			fd.setFilterPath(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
-			fd.setFilterExtensions(new String[] {"*.gmml", "*.*"});
+			fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
@@ -216,7 +216,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*.gmml", "*.*"});
+				fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
 				fd.setFilterNames(new String[] {"Gmml file", "All files"});
 				
 				File xmlFile = gmmlData.getSourceFile();
@@ -232,8 +232,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				if(fileName == null) return;
 				
 				// Append .gmml extension if not already present
-				if(!fileName.endsWith(".gmml")) 
-					fileName += ".gmml";
+				if(!fileName.endsWith("." + GmmlVision.PATHWAY_FILE_EXTENSION)) 
+					fileName += "." + GmmlVision.PATHWAY_FILE_EXTENSION;
 				
 				File checkFile = new File(fileName);
 				boolean confirmed = true;
@@ -821,6 +821,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public void run() {
 //			RWindow rw = new RWindow(getShell());
 			WizardDialog wd = new RWizard.RWizardDialog(getShell(), new RWizard());
+			wd.setBlockOnOpen(true);
 			if(RController.startR()) wd.open();
 		}
 	}

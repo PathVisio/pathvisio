@@ -42,14 +42,15 @@ public class PageStats extends WizardPage {
 	public String getResultVar() { return resultVar; }
 	
 	public void createControl(Composite parent) {
+		
 		Composite content = new Composite(parent, SWT.NULL);
 		StackLayout topStack = new StackLayout();
 		content.setLayout(topStack);
 		
-		//Composite for statistical functions
+
 		Composite statsComp = new Composite(content, SWT.NULL);
 		statsComp.setLayout(new GridLayout(2, false));
-		
+				
 		Label flbl = new Label(statsComp, SWT.NULL);
 		flbl.setText("Choose a function to apply:");
 		comboFunc = new Combo(statsComp, SWT.BORDER | SWT.READ_ONLY);
@@ -62,6 +63,7 @@ public class PageStats extends WizardPage {
 		compSettings.setLayoutData(span2Cols);
 		
 		compSettings.setLayout(new StackLayout());
+		
 		for(String fn : comboFunc.getItems()) {
 			RFunctionLoader.getFunction(fn).getConfigComposite(compSettings);
 		}
@@ -118,12 +120,11 @@ public class PageStats extends WizardPage {
 	}
 	
 	protected void doSetTopToParent(final Control top) {
-		getShell().getDisplay().asyncExec(new Runnable() {
+		GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				((StackLayout)((Composite)getControl()).getLayout()).topControl = top.getParent();
 				((Composite)getControl()).layout();
-			}
-		});
+			}});
 	}
 	
 	public void performFinish() throws RException {
@@ -136,7 +137,6 @@ public class PageStats extends WizardPage {
 						try { sleep(250); } catch(InterruptedException e) { GmmlVision.log.error("", e); }
 						if(SimpleRunnableWithProgress.isCancelled()) {
 							doCancel();
-							this.interrupt();
 							return;
 						}
 						String rout = RController.getNewOutput();

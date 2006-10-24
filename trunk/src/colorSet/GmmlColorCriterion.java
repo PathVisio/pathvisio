@@ -6,9 +6,6 @@ import java.util.HashMap;
 
 import org.eclipse.swt.graphics.RGB;
 
-import data.GmmlGex;
-import data.GmmlGex.Sample;
-
 public class GmmlColorCriterion extends GmmlColorSetObject {
 	Criterion criterion = new Criterion();
 	

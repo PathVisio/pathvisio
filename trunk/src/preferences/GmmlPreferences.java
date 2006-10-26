@@ -35,20 +35,20 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	{
 		addPropertyChangeListener(this);
 		
-		setDefault("files.log", new File(GmmlVision.getApplicationDir(), ".GmmlVisioLog").toString());
-		setDefault("colors.no_criteria_met", ColorConverter.getRgbString(NO_CRITERIA_MET));
-		setDefault("colors.no_gene_found", ColorConverter.getRgbString(NO_GENE_FOUND));
-		setDefault("colors.no_data_found", ColorConverter.getRgbString(NO_DATA_FOUND));
-		setDefault("colors.selectColor", ColorConverter.getRgbString(SELECTED));
-		setDefault("colors.highlightColor", ColorConverter.getRgbString(HIGHLIGHTED));
-		setDefault("colors.ambigious_reporter", ColorConverter.getRgbString(AMBIGIOUS_REP));
-		setDefault("currentGdb", CURRENT_GDB);
-		setDefault("display.sidePanelSize", SIDEPANEL_SIZE);
+		setDefault(GmmlPreferences.PREF_FILES_LOG, new File(GmmlVision.getApplicationDir(), ".GmmlVisioLog").toString());
+		setDefault(PREF_COL_NO_CRIT_MET, ColorConverter.getRgbString(NO_CRITERIA_MET));
+		setDefault(GmmlPreferences.PREF_COL_NO_GENE_FOUND, ColorConverter.getRgbString(NO_GENE_FOUND));
+		setDefault(GmmlPreferences.PREF_COL_NO_DATA_FOUND, ColorConverter.getRgbString(NO_DATA_FOUND));
+		setDefault(GmmlPreferences.PREF_COL_SELECTED, ColorConverter.getRgbString(SELECTED));
+		setDefault(GmmlPreferences.PREF_COL_HIGHLIGHTED, ColorConverter.getRgbString(HIGHLIGHTED));
+		setDefault(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, ColorConverter.getRgbString(AMBIGIOUS_REP));
+		setDefault(GmmlPreferences.PREF_CURR_GDB, CURRENT_GDB);
+		setDefault(GmmlPreferences.PREF_SIDEPANEL_SIZE, SIDEPANEL_SIZE);
 		
-		setDefault("directories.gmmlFiles", DIR_PWFILES);
-		setDefault("directories.gdbFiles", DIR_GDBFILES);
-		setDefault("directories.exprFiles", DIR_EXPRFILES);
-		setDefault("directories.RdataFiles", DIR_RDATAFILES);
+		setDefault(PREF_DIR_PWFILES, DIR_PWFILES);
+		setDefault(PREF_DIR_GDB, DIR_GDBFILES);
+		setDefault(PREF_DIR_EXPR, DIR_EXPRFILES);
+		setDefault(PREF_DIR_RDATA, DIR_RDATAFILES);
 		
 		try {
 			load();
@@ -80,17 +80,17 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	}
 	
 	public void propertyChange(PropertyChangeEvent e) {
-		if(e.getProperty().equals("colors.selectColor")) { 
+		if(e.getProperty().equals(GmmlPreferences.PREF_COL_SELECTED)) { 
 			if(e.getNewValue() instanceof RGB) GmmlGraphics.selectColor = (RGB)e.getNewValue();
 			else GmmlGraphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
-		else if(e.getProperty().equals("colors.highlightColor")) {
+		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_HIGHLIGHTED)) {
 			if(e.getNewValue() instanceof RGB) GmmlGraphics.highlightColor = (RGB)e.getNewValue();
 			else GmmlGraphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
-		else if(e.getProperty().equals("colors.ambigious_reporter")) {
+		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_AMBIGIOUS_REP)) {
 			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();
 			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
@@ -99,6 +99,24 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 			createDataDirectories();
 		}
 	}
+	
+	// Preference names
+	public static final String PREF_FILES_LOG = "files.log";
+	
+	public static final String PREF_COL_NO_CRIT_MET = "colors.no_criteria_met";
+	public static final String PREF_COL_NO_GENE_FOUND = "colors.no_gene_found";
+	public static final String PREF_COL_NO_DATA_FOUND = "colors.no_data_found";
+	public static final String PREF_COL_SELECTED = "colors.selectColor";
+	public static final String PREF_COL_HIGHLIGHTED = "colors.highlightColor";
+	public static final String PREF_COL_AMBIGIOUS_REP = "colors.ambigious_reporter";
+		
+	public static final String PREF_DIR_PWFILES = "directories.gmmlFiles";
+	public static final String PREF_DIR_GDB = "directories.gdbFiles";
+	public static final String PREF_DIR_EXPR = "directories.exprFiles";
+	public static final String PREF_DIR_RDATA = "directories.RdataFiles";
+		
+	public static final String PREF_CURR_GDB = "currentGdb";
+	public static final String PREF_SIDEPANEL_SIZE = "display.sidePanelSize";	
 	
 	// Defaults
 	//> display
@@ -116,8 +134,8 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	static String CURRENT_GDB = "none";
 
 	// directories
-	static String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();
-	static String DIR_GDBFILES = new File(GmmlVision.getDataDir().toString(), "gene databases").toString();
-	static String DIR_EXPRFILES = new File(GmmlVision.getDataDir().toString(), "expression datasets").toString();
-	static String DIR_RDATAFILES = new File(GmmlVision.getDataDir().toString(), "R data").toString();
+	static final String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();
+	static final String DIR_GDBFILES = new File(GmmlVision.getDataDir().toString(), "gene databases").toString();
+	static final String DIR_EXPRFILES = new File(GmmlVision.getDataDir().toString(), "expression datasets").toString();
+	static final String DIR_RDATAFILES = new File(GmmlVision.getDataDir().toString(), "R data").toString();
 }

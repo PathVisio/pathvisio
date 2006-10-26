@@ -412,11 +412,11 @@ public class ColorSetWindow extends ApplicationWindow {
 	    csColorButtonDnf.setText("...");
 	    
 	    csColorNc = SwtUtils.changeColor(csColorNc, 
-	    		GmmlPreferences.getColorProperty("colors.no_criteria_met"), getShell().getDisplay());
+	    		GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_CRIT_MET), getShell().getDisplay());
 	    csColorGnf = SwtUtils.changeColor(csColorGnf, 
-	    		GmmlPreferences.getColorProperty("colors.no_gene_found"), getShell().getDisplay());
+	    		GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_GENE_FOUND), getShell().getDisplay());
 	    csColorDnf = SwtUtils.changeColor(csColorDnf, 
-	    		GmmlPreferences.getColorProperty("colors.no_data_found"), getShell().getDisplay());
+	    		GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_DATA_FOUND), getShell().getDisplay());
 	    csCLabelNc.setLayoutData(colorGrid);
 	    csCLabelGnf.setLayoutData(colorGrid);
 	    csCLabelDnf.setLayoutData(colorGrid);

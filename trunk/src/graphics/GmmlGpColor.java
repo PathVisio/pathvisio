@@ -28,7 +28,7 @@ import data.GmmlGex;
 import data.GmmlGex.CachedData.Data;
 
 public class GmmlGpColor {
-	public static RGB color_ambigious = GmmlPreferences.getColorProperty("colors.ambigious_reporter");
+	public static RGB color_ambigious = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_AMBIGIOUS_REP);
 	
 	GmmlGeneProduct parent;
 	

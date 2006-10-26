@@ -48,8 +48,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
 import preferences.GmmlPreferenceManager;
+import preferences.GmmlPreferences;
 import search.PathwaySearchComposite;
 import R.RController;
+import R.RDataIn;
+import R.RCommands.RException;
 import R.wizard.RWizard;
 import colorSet.ColorSetWindow;
 import data.ConverterException;
@@ -106,7 +109,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
-			fd.setFilterPath(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 			fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
 			fd.setFilterNames(new String[] {"Gmml file", "All files"});
 	        String fnMapp = fd.open();
@@ -135,7 +138,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
-			fd.setFilterPath(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 			fd.setFilterExtensions(new String[] {"*.mapp", "*.*"});
 			fd.setFilterNames(new String[] {"GenMAPP Pathway file", "All files"});
 	        String fnMapp = fd.open();
@@ -224,7 +227,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					fd.setFileName(xmlFile.getName());
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
-					fd.setFileName(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+					fd.setFileName(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
@@ -303,7 +306,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 					fd.setFileName(xmlFile.getName());
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
-					fd.setFileName(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+					fd.setFileName(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
@@ -477,7 +480,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public void run () {
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Gene Database");
-			fileDialog.setFilterPath(GmmlVision.getPreferences().getString("directories.gdbFiles"));
+			fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
 			String file = fileDialog.open();
@@ -486,7 +489,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 			// Connect returns null when connection is established
 			try {
 				GmmlGdb.connect(new File(file));
-				setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString("currentGdb") + "'");
+				setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
@@ -515,7 +518,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		public void run () {
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 			fileDialog.setText("Select Expression Dataset");
-			fileDialog.setFilterPath(GmmlVision.getPreferences().getString("directories.exprFiles"));
+			fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
 			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
 			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
 			String file = fileDialog.open();
@@ -807,25 +810,53 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 	private PasteAction pasteAction = new PasteAction(this);
 
 	/**
-	 * {@link Action} to open the R-interface dialog
+	 * {@link Action} to open the pathway statistics wizard
 	 */
-	private class RAction extends Action
+	private class RStatsAction extends Action
 	{
 		GmmlVisionWindow window;
-		public RAction (GmmlVisionWindow w)
+		public RStatsAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText("Pathway &statistics@Ctrl+R");
+			setText("Perform statistical test@Ctrl+R");
 		}
 		
 		public void run() {
-//			RWindow rw = new RWindow(getShell());
 			WizardDialog wd = new RWizard.RWizardDialog(getShell(), new RWizard());
 			wd.setBlockOnOpen(true);
 			if(RController.startR()) wd.open();
 		}
 	}
-	private RAction rAction = new RAction(this);
+	private RStatsAction rStatsAction = new RStatsAction(this);
+	
+	/**
+	 * {@link Action} to load results from pathway statistics
+	 */
+	private class RLoadStatsAction extends Action
+	{
+		GmmlVisionWindow window;
+		public RLoadStatsAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText("&Load results");
+		}
+		
+		public void run() {
+			FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
+			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA));
+			fd.setFilterNames(new String[] {"R data file"});
+			fd.setFilterExtensions(new String[] {"*.*"});
+			File file = new File(fd.open());
+			if(file.canRead()) {
+				try {
+					RDataIn.displayResults(RDataIn.loadResultSets(file), file.getName());
+				} catch(RException e) {
+					MessageDialog.openError(getShell(), "Unable to load results", e.getMessage());
+				}
+			}
+		}
+	}
+	private RLoadStatsAction rLoadStatsAction = new RLoadStatsAction(this);
 	
 	
 	/**
@@ -1403,7 +1434,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		dataMenu.add(selectGexAction);
 		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);
-		if(GmmlVision.USE_R) dataMenu.add(rAction);
+		if(GmmlVision.USE_R) {
+			MenuManager statsMenu = new MenuManager("&Pathway statistics");
+			dataMenu.add(statsMenu);
+			statsMenu.add(rStatsAction);
+			statsMenu.add(rLoadStatsAction);
+		}
 		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
 		convertMenu.add(convertGexAction);
 		convertMenu.add(convertGdbAction);
@@ -1487,14 +1523,14 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
 		
-		int sidePanelSize = GmmlVision.getPreferences().getInt("display.sidePanelSize");
+		int sidePanelSize = GmmlVision.getPreferences().getInt(GmmlPreferences.PREF_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
-		setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString("currentGdb") + "'");
+		setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
 		
 		colorSetWindow = new ColorSetWindow(shell);
 		

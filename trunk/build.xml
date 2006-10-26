@@ -62,6 +62,12 @@
 		<jar jarfile="lib/swt-linux-lib.jar">
 			<fileset dir="lib/swt-linux-lib" includes="*.so"/>
 		</jar>
+		<jar jarfile="lib/RVersion-win32-lib.jar">
+			<fileset dir="lib/RVersion-win32-lib" includes="*.dll"/>
+		</jar>
+		<jar jarfile="lib/RVersion-linux-lib.jar">
+			<fileset dir="lib/RVersion-linux-lib" includes="*.so"/>
+		</jar>
 	</target>
 	
 	<target name="sign-jar" depends="compile,jar" description="Signs jar files">

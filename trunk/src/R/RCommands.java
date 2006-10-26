@@ -2,12 +2,17 @@ package R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
+import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import R.RDataOut.RObject;
 
@@ -48,7 +53,7 @@ public class RCommands {
     /**
      * Wrapper for {@link Rengine#eval(String s)}, throws {@link RException}
      * Equivalent to eval(String s, false)
-     * @throws InterruptedException 
+     * @throws RException
     */
     public static REXP eval(String s) throws RException {
     	return eval(s, false);
@@ -92,35 +97,6 @@ public class RCommands {
 		
 		re.rniAssign(symbol, xpv, 0);
 		re.rniUnprotect(1);
-				
-//		//Using rni methods - faster
-//		long[] refs = new long[list.size()];
-//		for(int i = 0; i < list.size(); i++) {
-//			checkCancelled();
-//			
-//			RObject ro = (RObject)list.get(i);
-//			refs[i] = ro.getRef();
-//			re.rniProtect(refs[i]);
-//		};
-//		long listRef = re.rniPutVector(refs);
-//		if(listRef == 0) throw new RniException(re, RniException.CAUSE_XP_ZERO);
-//		
-//		re.rniAssign(symbol, listRef, 0);
-//		
-//		re.rniUnprotect(refs.length);
-		
-		//Using high level API methods - more stable?	
-//		int i = 0;
-//		String[] tmpVars = new String[list.size()];
-//		
-//		for(Object o : list) {
-//			tmpVars[i++] = ((RObject)o).toRTemp(re, true);
-//		}
-//		
-//		String varList = Utils.array2String(tmpVars, "", ",");
-//		evalEN(symbol + "= list(" + varList + ")");
-//		
-//		RTemp.unprotect(tmpVars);
 	}
 	
 	/**
@@ -137,12 +113,6 @@ public class RCommands {
 		long r = re.rniPutStringArray(sa);
 		if(r == 0) throw new RniException(re, RniException.CAUSE_XP_ZERO);
 		re.rniAssign(symbol, r, 0);
-		
-//		// Using high level API - more stable?
-//		evalE(re, symbol + "= character()");
-//		for(String s : sa) {
-//			evalE(re, symbol + "= append(" + symbol + ", '" + s + "')");
-//		}
 	}
 	
 	/**
@@ -159,6 +129,43 @@ public class RCommands {
 		
 		rm(new String[] { "tmpls", "ofclass" });
 		return list;
+	}
+	
+	/**
+	 * Wrapper for the R function 'ls'; List all objects in current workspace
+	 * @return
+	 * @throws RException
+	 */
+	public static String[] ls() throws RException {
+		return eval("ls()", true).asStringArray();
+	}
+	
+	/**
+	 * Wrapper for the R function 'load'
+	 * @param f
+	 * @throws RException
+	 */
+	public static void load(File f) throws RException {
+		load(f.getAbsoluteFile().toString());
+	}
+	
+	/**
+	 * Wrapper for the R function 'load'
+	 * @param fn
+	 * @throws RException
+	 */
+	public static void load(String fn) throws RException {
+		eval("load('" + fileNameToString(fn) + "')");
+	}
+	
+	/**
+	 * Wrapper for the R function 'exists'; Check if an R object with given name exists
+	 * @param symbol	the name of the R object
+	 * @return	true if the R object exists, false if not
+	 * @throws RException
+	 */
+	public static boolean exists(String symbol) throws RException {
+		return eval("exists('" + symbol + "')", true).asBool().isTRUE() ? true : false;
 	}
 	
 	/**
@@ -227,6 +234,20 @@ public class RCommands {
 		return f.replace('\\', '/');
 	}
 	
+	static final char[] forbidden = new char[] 
+	    { ' ', '\\', '/', ',', ';', ':', '\t', '\"','\'', '[', ']', '(', ')', '=', '-', '+' };
+	public static String format(String symbol) {
+		for(char c : forbidden) {
+			switch(c) {
+			case ',': case ';': case ':':
+				symbol = symbol.replace(c, '.'); break;
+			default:
+				symbol = symbol.replace(c, '_'); break;
+			}
+		}
+		return symbol;
+	}
+	
 	/**
 	 * Check wether the user pressed cancel (for long running operations
 	 * using the {@link SimpleRunnableWithProgress}
@@ -235,6 +256,56 @@ public class RCommands {
 	static void checkCancelled() throws RInterruptedException {
 		if(SimpleRunnableWithProgress.isCancelled())
 			throw new RInterruptedException();
+	}
+	
+	/**
+	 * A container that can be used to store R variable names
+	 * and save a subset of the current R environment to a file
+	 * @author thomas
+	 */
+	public static class RObjectContainer {
+		File dataFile;
+		Set<String> objects;
+		
+		public RObjectContainer() {
+			objects = new TreeSet<String>();
+		}
+		
+		public void clear() { objects.clear(); }
+		
+		public void setDataFile(File f) { dataFile = f; }
+		public File getDataFile() { return dataFile; }
+		
+		public void save() throws RException {
+			RCommands.eval(
+					"save(list = c(" + Utils.collection2String(objects, "'", ",") + 
+					"), file='" + RCommands.fileToString(dataFile) + "')");
+		}
+		
+		public void addObject(String name) {
+			objects.add(name);
+		}
+		
+		public void addObjects(Collection<String> names) {
+			objects.addAll(names);
+		}
+		
+		public void addObjects(String[] names) {
+			objects.addAll(Arrays.asList(names));
+		}
+		
+		public void removeObject(String name, boolean fromR) throws RException {
+			objects.remove(name);
+			if(fromR) rm(name);
+		}
+		
+		public void loadFromFile() throws RException {
+			List<String> current = Arrays.asList(ls());
+			eval("load('" + fileToString(dataFile) + "')");
+			for(String obj : ls()) {
+				if(!current.contains(obj)) addObject(obj);
+			}
+		}
 	}
 	
 	/**

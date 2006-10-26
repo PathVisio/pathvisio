@@ -24,6 +24,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import preferences.GmmlPreferences;
+
+import R.RCommands;
 import R.RDataIn;
 import R.RDataOut;
 import R.RCommands.RInterruptedException;
@@ -59,7 +62,7 @@ public class PageData extends WizardPage {
 		
 		radioExport = new Button(content, SWT.RADIO);
 		radioExport.setText("Export data to R");
-		//Only available when expression data is loadded
+		//Only available when expression data is loaded
 		radioExport.setEnabled(GmmlGex.isConnected());
 			
 		radioImport = new Button(content, SWT.RADIO);
@@ -180,7 +183,9 @@ public class PageData extends WizardPage {
 	
 	SelectionAdapter browseListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			FileDialog fd = new FileDialog(getShell());
+			FileDialog fd = new FileDialog(getShell(), 
+					e.widget == exportBrowse ? SWT.SAVE : SWT.OPEN);
+			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA));
 			String file = fd.open();
 			if(file != null) {
 				if		(e.widget == exportBrowse) 	exportFile.setText(file);
@@ -206,9 +211,9 @@ public class PageData extends WizardPage {
 			else if	(e.widget == exportFile)
 				rDataOut.setExportFile(exportFile.getText());
 			else if (e.widget == pwObj)
-				rDataOut.setPathwaySetName(pwObj.getText());
+				rDataOut.setPathwaySetName(RCommands.format(pwObj.getText()));
 			else if (e.widget == exprObj)
-				rDataOut.setDataSetName(exprObj.getText());
+				rDataOut.setDataSetName(RCommands.format(exprObj.getText()));
 			else if (e.widget == importFile)
 				rDataIn.setRDataFile(importFile.getText());
 			checkPageComplete();
@@ -236,8 +241,10 @@ public class PageData extends WizardPage {
 	public boolean performFinish() {
 		try {
 			if(radioExport.getSelection()) { //Export the data
+				RWizard.usedRObjects = rDataOut.getUsedObjects();
 				rDataOut.doExport();
 			} else { //Load the data into R
+				RWizard.usedRObjects = rDataIn.getUsedObjects();
 				rDataIn.load();
 			}
 		} catch(Exception e) {

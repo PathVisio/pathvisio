@@ -1,6 +1,10 @@
 
 package R.wizard;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import gmmlVision.GmmlVision;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -148,7 +152,9 @@ public class PageStats extends WizardPage {
 		
 		thr.start();
 		RFunction fun = RFunctionLoader.getFunction(function);
-		resultVar = "rs";
+		Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+		SimpleDateFormat sdf =  new java.text.SimpleDateFormat("yyMMdd_HHmmss");
+		resultVar = "result_" + fun.getVarName() + sdf.format(cal.getTime());
 		fun.run(resultVar);
 		thr.interrupt();
 	}

@@ -14,8 +14,8 @@ import data.GmmlListener;
  */
 public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlListener
 {
-	public static RGB selectColor = GmmlPreferences.getColorProperty("colors.selectColor");
-	public static RGB highlightColor = GmmlPreferences.getColorProperty("colors.highlightColor");
+	public static RGB selectColor = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_SELECTED);
+	public static RGB highlightColor = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
 	
 	protected GmmlDataObject gdata = null;
 	

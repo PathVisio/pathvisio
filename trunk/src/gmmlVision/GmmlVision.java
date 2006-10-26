@@ -205,6 +205,8 @@ public abstract class GmmlVision {
 		return DIR_DATA;
 	}
 	
+	public static boolean isUseR() { return USE_R; }
+	
 	//Property event handling
 	public static final String PROPERTY_OPEN_PATHWAY = "property_open_pathway";
 	public static final String PROPERTY_NEW_PATHWAY = "property_new_pathway";

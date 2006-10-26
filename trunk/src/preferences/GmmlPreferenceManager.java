@@ -1,5 +1,8 @@
 package preferences;
 
+import gmmlVision.GmmlVision;
+import gmmlVision.GmmlVisionMain;
+
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -30,7 +33,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			FileFieldEditor f1 = new FileFieldEditor("files.log", "Log file:", getFieldEditorParent());
+			FileFieldEditor f1 = new FileFieldEditor(GmmlPreferences.PREF_FILES_LOG, "Log file:", getFieldEditorParent());
 			addField(f1);
 		}
 	}
@@ -42,17 +45,23 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			DirectoryFieldEditor d1 = new DirectoryFieldEditor("directories.gmmlFiles",
+			DirectoryFieldEditor d1 = new DirectoryFieldEditor(GmmlPreferences.DIR_PWFILES,
 					"Gmml pathways:", getFieldEditorParent());
 			addField(d1);
 			
-			DirectoryFieldEditor d2 = new DirectoryFieldEditor("directories.gdbFiles",
+			DirectoryFieldEditor d2 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_GDB,
 					"Gene databases:", getFieldEditorParent());
 			addField(d2);
 			
-			DirectoryFieldEditor d3 = new DirectoryFieldEditor("directories.exprFiles",
+			DirectoryFieldEditor d3 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_EXPR,
 					"Expression datasets:", getFieldEditorParent());
 			addField(d3);
+
+			if(GmmlVision.isUseR()) {
+				DirectoryFieldEditor d4 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_EXPR,
+						"Results from pathway statistics:", getFieldEditorParent());
+				addField(d4);
+			}
 		}
 	}
 	
@@ -62,7 +71,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			IntegerFieldEditor f = new IntegerFieldEditor("display.sidePanelSize",
+			IntegerFieldEditor f = new IntegerFieldEditor(GmmlPreferences.PREF_SIDEPANEL_SIZE,
 					"Initial side panel size (percent of window size):", getFieldEditorParent());
 			f.setValidRange(0, 100);
 			addField(f);
@@ -75,22 +84,22 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			ColorFieldEditor f1 = new ColorFieldEditor("colors.no_criteria_met", 
+			ColorFieldEditor f1 = new ColorFieldEditor(GmmlPreferences.PREF_COL_NO_CRIT_MET, 
 					"Default color for 'no criteria met':", getFieldEditorParent());
 			addField(f1);
-			ColorFieldEditor f2 = new ColorFieldEditor("colors.no_gene_found", 
+			ColorFieldEditor f2 = new ColorFieldEditor(GmmlPreferences.PREF_COL_NO_GENE_FOUND, 
 					"Default color for 'gene not found':", getFieldEditorParent());
 			addField(f2);
-			ColorFieldEditor f3 = new ColorFieldEditor("colors.no_data_found", 
+			ColorFieldEditor f3 = new ColorFieldEditor(GmmlPreferences.PREF_COL_NO_DATA_FOUND, 
 					"Default color for 'no data found':", getFieldEditorParent());
 			addField(f3);
-			ColorFieldEditor f4 = new ColorFieldEditor("colors.selectColor", 
+			ColorFieldEditor f4 = new ColorFieldEditor(GmmlPreferences.PREF_COL_SELECTED, 
 					"Line color for selected objects:", getFieldEditorParent());
 			addField(f4);
-			ColorFieldEditor f5 = new ColorFieldEditor("colors.highlightColor", 
+			ColorFieldEditor f5 = new ColorFieldEditor(GmmlPreferences.PREF_COL_HIGHLIGHTED, 
 					"Line color for highlighted objects:", getFieldEditorParent());
 			addField(f5);
-			ColorFieldEditor f6 = new ColorFieldEditor("colors.ambigious_reporter", 
+			ColorFieldEditor f6 = new ColorFieldEditor(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, 
 					"Color for marking gene products with ambigious reporter:", getFieldEditorParent());
 			addField(f6);
 			

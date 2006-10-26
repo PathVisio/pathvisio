@@ -66,6 +66,10 @@ public class TableData {
 			if(columns.containsKey(name)) columns.get(name).setArray(value);
 		}
 		
+		public void overrideColumn(Column col) {
+			columns.put(col.getName(), col);
+		}
+		
 		public Column getColumn(String name) throws IllegalArgumentException {
 			if(columns.containsKey(name)) return columns.get(name);
 			throw new IllegalArgumentException("Attribute " + name + " does not exist");
@@ -87,8 +91,8 @@ public class TableData {
 	 */
 	public class Column implements Comparable {
 		public static final int TYPE_TEXT = 0;
-		public static final int TYPE_NUM  = 1;
-		public static final int TYPE_ARRAYLIST = 2;
+		public static final int TYPE_ARRAYLIST = 1;
+		public static final int TYPE_NUM  = 2;
 		
 		private String name;
 		
@@ -101,6 +105,8 @@ public class TableData {
 		
 		public Column(String n, int t) { name = n; type = t; textValue = ""; this.visible = true; }
 		public Column(String n, int t, boolean visible) { this(n, t); this.visible = visible; }
+		
+		public void setType(int type) { this.type = type; }
 		
 		public String getName() { return name; }
 		public String getText() { 
@@ -123,29 +129,41 @@ public class TableData {
 		public int compareTo(Object o) {
 			Column c = (Column)o;
 			
-			switch(type) {
-			case TYPE_TEXT: 
-				{
-					//Try to treat as numeric
-					double numThis = 0;
-					double numThat = 0;
-					boolean isNumThis = true;
-					boolean isNumThat = true;
-					try { numThis = Double.parseDouble(textValue); } 
-					catch(NumberFormatException e) { isNumThis = false; }
-					try { numThat = Double.parseDouble(c.getText()); } 
-					catch(NumberFormatException e) { isNumThat = false; }
-					
-					if(isNumThis && isNumThat) 	return (int)Math.ceil(numThis - numThat);
-					if(isNumThis) return 1;
-					if(isNumThat) return -1;
-					//Both are strings
-					return textValue.compareTo(c.getText());
+//			switch(type) {
+//			case TYPE_TEXT: 
+//				{
+//					System.out.println("COMPARE: " + c.getText() + ", " + c.getText());
+//					//Try to treat as numeric
+//					double numThis = 0;
+//					double numThat = 0;
+//					boolean isNumThis = true;
+//					boolean isNumThat = true;
+//					try { numThis = Double.parseDouble(textValue); } 
+//					catch(NumberFormatException e) { isNumThis = false; }
+//					try { numThat = Double.parseDouble(c.getText()); } 
+//					catch(NumberFormatException e) { isNumThat = false; }
+//					
+//					if(isNumThis && isNumThat) 	{
+//						double diff = numThis - numThat;
+//						return (int)(diff > 0 ? Math.ceil(diff) : Math.floor(diff));
+//					}
+//					if(isNumThis) return 1;
+//					if(isNumThat) return -1;
+//					//Both are strings
+//					return textValue.compareTo(c.getText());
+//				}
+//			case TYPE_NUM: return (int)(numValue - c.getNumeric());
+//			case TYPE_ARRAYLIST: return arrayValue.size() - c.getArray().size();
+//			default: return -1;
+			
+			if(type == c.type) {
+				switch(type) {
+				case TYPE_TEXT: return textValue.compareTo(c.textValue);
+				case TYPE_NUM: return (int)Math.ceil(numValue - c.numValue);
+				case TYPE_ARRAYLIST: return arrayValue.size() - c.arrayValue.size();
+				default: return -1;
 				}
-			case TYPE_NUM: return (int)(numValue - c.getNumeric());
-			case TYPE_ARRAYLIST: return arrayValue.size() - c.getArray().size();
-			default: return -1;
-			}
+			} else return type - c.type;
 		}
 		
 		

@@ -8,6 +8,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
+import preferences.GmmlPreferences;
+
 import data.GmmlGdb;
 import data.GmmlGex;
 
@@ -62,7 +64,7 @@ public class GmmlVisionMain {
 		//initiate logger
 		try { 
 			GmmlVision.log.setStream(new PrintStream(
-					GmmlVision.getPreferences().getString("files.log"))); 
+					GmmlVision.getPreferences().getString(GmmlPreferences.PREF_FILES_LOG))); 
 		} catch(Exception e) {}
 		GmmlVision.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		

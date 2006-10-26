@@ -1,0 +1,27 @@
+##Specify OS here (linux or windows)
+OS= linux
+
+##Location of java and R
+JAVA= /usr/lib/jvm/java-1.5.0-sun
+R=  /usr/lib/R
+
+LIBNAME_WIN= RVersion.dll
+LIBNAME_LIN= libRVersion.so
+
+CC= gcc
+
+ifeq ($(OS),linux)
+CMD= $(CC) -o $(LIBNAME_LIN) -shared \
+-I$(JAVA)/include -I$(JAVA)/include/linux -I$(R)/include GetRVersion.c
+else
+CMD= $(CC) -Wall -D_JNI_IMPLEMENTATION_ -Wl,--kill-at -I$(JAVA)/include -I$(JAVA)/include/win32 \
+		-I$(R)/include -shared -o $(LIBNAME_WIN) GetRVersion.c
+
+endif
+	
+default: build
+build:
+		javac rversion/GetRVersion.java
+		jar cf rversion.jar rversion/GetRVersion.class
+		javah -jni rversion.GetRVersion
+		$(CMD)

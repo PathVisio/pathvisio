@@ -22,6 +22,8 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import preferences.GmmlPreferences;
+
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
@@ -62,14 +64,14 @@ public abstract class GmmlGdb {
 	 */
 	public static void init()
 	{
-		String currGdb = GmmlVision.getPreferences().getString("currentGdb");
-		if(!currGdb.equals("") && !GmmlVision.getPreferences().isDefault("currentGdb"))
+		String currGdb = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB);
+		if(!currGdb.equals("") && !GmmlVision.getPreferences().isDefault(GmmlPreferences.PREF_CURR_GDB))
 		{
 			gdbFile = new File(currGdb);
 			try {
 				connect(null);
 			} catch(Exception e) {
-				setCurrentGdb(GmmlVision.getPreferences().getDefaultString("currentGdb"));
+				setCurrentGdb(GmmlVision.getPreferences().getDefaultString(GmmlPreferences.PREF_CURR_GDB));
 			}
 		}
 	}
@@ -80,7 +82,7 @@ public abstract class GmmlGdb {
 	 */
 	public static void setCurrentGdb(String gdb) {
 		gdbFile = new File(gdb);
-		GmmlVision.getPreferences().setValue("currentGdb", gdb);
+		GmmlVision.getPreferences().setValue(GmmlPreferences.PREF_CURR_GDB, gdb);
 		try { GmmlVision.getPreferences().save(); } 
 		catch(Exception e) { GmmlVision.log.error("Unable to save preferences", e); } 
 	}

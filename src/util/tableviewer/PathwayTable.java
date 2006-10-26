@@ -17,6 +17,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -35,7 +36,7 @@ import util.tableviewer.TableData.Row;
 public class PathwayTable extends Composite {
 	public static final String COLNAME_FILE = "fileName";
 	
-	private TableViewer tableViewer;
+	protected TableViewer tableViewer;
 	private TableColumnResizer columnResizer;
 	private Display display;
 	
@@ -95,15 +96,14 @@ public class PathwayTable extends Composite {
 	
 	public TableViewer getTableViewer() { return tableViewer; }
 		
-	private void createContents() {
-		setLayout(new GridLayout(1, false));		
-		initTable();
+	protected void createContents() {
+		setLayout(new FillLayout());
+		initTable(this);
 	}
 	
-	protected void initTable() {
-		Table t = new Table(this, SWT.SINGLE | SWT.FULL_SELECTION);
-		t.setLayoutData(new GridData(GridData.FILL_BOTH));
-		columnResizer = new TableColumnResizer(t, this);
+	protected void initTable(Composite parent) {
+		Table t = new Table(parent, SWT.SINGLE | SWT.FULL_SELECTION);
+		columnResizer = new TableColumnResizer(t, parent);
 		t.addControlListener(columnResizer);
 		t.addMouseListener(tableMouseListener);
 		t.setHeaderVisible(true);

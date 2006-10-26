@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import preferences.GmmlPreferences;
+
 import search.SearchMethods.SearchException;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import data.MappFormat;
@@ -194,7 +196,7 @@ public class PathwaySearchComposite extends Composite {
 				dirLabel.setText("Directory to search:");
 				
 				final Text dirText = createDirText(parent);
-				Button browseButton = createDirButton(parent, dirText);
+				createDirButton(parent, dirText);
 				
 				Button searchButton = new Button(parent, SWT.PUSH);
 				searchButton.setText("Search");
@@ -239,7 +241,7 @@ public class PathwaySearchComposite extends Composite {
 	
 	private Text createDirText(Composite parent) {
 		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		t.setText(GmmlVision.getPreferences().getString("directories.gmmlFiles"));
+		t.setText(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return t;
 	}

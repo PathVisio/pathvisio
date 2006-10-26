@@ -51,9 +51,9 @@ public class GmmlColorSet {
 	 */
 	public static final int MULT_DATA_DIV = 1;
 
-	public RGB color_no_criteria_met = GmmlPreferences.getColorProperty("colors.no_criteria_met");
-	public RGB color_no_gene_found = GmmlPreferences.getColorProperty("colors.no_gene_found");
-	public RGB color_no_data_found = GmmlPreferences.getColorProperty("colors.no_data_found");
+	public RGB color_no_criteria_met = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_CRIT_MET);
+	public RGB color_no_gene_found = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_GENE_FOUND);
+	public RGB color_no_data_found = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_DATA_FOUND);
 	
 	private int multipleDataDisplay;
 	

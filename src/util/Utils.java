@@ -5,6 +5,7 @@ import gmmlVision.GmmlVision;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class Utils {
@@ -34,7 +35,7 @@ public class Utils {
 	 * @param sep The separator to use
 	 * @return a String representing the list with given seperator and quote (no parentheses)
 	 */
-	public static String list2String(List list, String quote, String sep) {
+	public static String collection2String(Collection list, String quote, String sep) {
 		StringBuilder strb = new StringBuilder();
 		for(Object o : list) {
 			strb.append(quote + o.toString() + quote + sep);
@@ -53,7 +54,7 @@ public class Utils {
 	 * @return a String representing the array with given seperator and quote (no parentheses)
 	 */
 	public static String array2String(Object[] array, String quote, String sep) {
-		return list2String(Arrays.asList(array), quote, sep);
+		return collection2String(Arrays.asList(array), quote, sep);
 	}
 	
 	/**

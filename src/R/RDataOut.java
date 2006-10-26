@@ -19,11 +19,14 @@ import org.rosuda.JRI.Rengine;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import preferences.GmmlPreferences;
+
 import util.FileUtils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import R.RCommands.RException;
+import R.RCommands.RObjectContainer;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
 import colorSet.Criterion;
@@ -40,8 +43,8 @@ public class RDataOut {
 	boolean exportData = true;			//Export data or not
 	
 	File pwDir = new File(
-		GmmlVision.getPreferences().getString("directories.gmmlFiles"));	//Pathway directory to import
-	String exportFile = "temp.Rd";		//File name to export RData
+		GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));	//Pathway directory to import
+//	String exportFile = "temp.Rd";		//File name to export RData
 	String pwsName = "myPathways";		//Name of pathwayset object
 	String dsName = "myData";			//Name of dataset object
  	
@@ -51,18 +54,22 @@ public class RDataOut {
 	DataSet cacheDataSet;
 	PathwaySet cachePathwaySet;
 	
+	RObjectContainer outFileObjects; //Objects to be saved
+	
 	public RDataOut() {
 		pwFiles = new ArrayList<File>();
+		outFileObjects = new RObjectContainer();
 	}
 	
 	public void setPathwayDir(File dir) 		{ pwDir = dir; }
 	public File getPathwayDir()					{ return pwDir; }
-	public void setExportFile(String fn) 		{ exportFile = fn; }
-	public String getExportFile()				{ return exportFile; }
-	public void setPathwaySetName(String pwn) 	{ pwsName = pwn; }
+	public void setExportFile(String fn) 		{ outFileObjects.setDataFile(new File(fn)); }
+	public String getExportFile()				{ return outFileObjects.getDataFile().toString(); }
+	public void setPathwaySetName(String pwn) 	{ pwsName = RCommands.format(pwn); }
 	public String getPathwaySetName()			{ return pwsName; }
-	public void setDataSetName(String dsn) 		{ dsName = dsn; }
+	public void setDataSetName(String dsn) 		{ dsName = RCommands.format(dsn); }
 	public String getDataSetName()				{ return dsName; }
+	public RObjectContainer getUsedObjects() 	{ return outFileObjects; }
 	
 	/**
 	 * Create a new RData instance containing the given pathway(s) and expression data (if loaded).
@@ -82,7 +89,7 @@ public class RDataOut {
 	
 	public void checkValid() throws Exception {
 		if(exportPws) {
-			if(exportFile.equals("")) throw new Exception("specify file to export to");
+			if(getExportFile().equals("")) throw new Exception("specify file to export to");
 			if(!pwDir.canRead()) throw new Exception("invalid pathway directory: " + this.pwDir);
 			if(pwsName.equals("")) throw new Exception("No name specified for the exported pathwayset object");
 		}
@@ -104,6 +111,7 @@ public class RDataOut {
 				SimpleRunnableWithProgress.setMonitorInfo(
 						"Exporting data (task 1/2)", totalWorkData);
 				dialog.run(true, true, rwp); 
+				outFileObjects.addObject(dsName);
 			}
 			if(exportPws) {
 				rwp = new SimpleRunnableWithProgress(
@@ -112,11 +120,13 @@ public class RDataOut {
 				SimpleRunnableWithProgress.setMonitorInfo(
 						"Exporting pathways (task 2/2)", totalWorkPws);
 				dialog.run(true, true, rwp);
+				outFileObjects.addObject(pwsName);
 			}
-			RCommands.eval("save(list = c('" + dsName + "', '" + pwsName + "'), file='"+ RCommands.fileNameToString(exportFile) + "')");
+			outFileObjects.save();
+			
 		} catch(InvocationTargetException ex) {
 			RTemp.flush(true); //Clear temp variables
-			RCommands.eval("save.image(file='"+ RCommands.fileNameToString(exportFile) + ".EX.RData')"); //Save datafile (to check what went wrong)
+//			RCommands.eval("save.image(file='"+ RCommands.fileNameToString(getExportFile()) + ".EX.RData')"); //Save datafile (to check what went wrong)
 			RCommands.eval("rm(list=ls())"); //Remove everything from R workspace
 			throw ex; //pay it forward!
 		}
@@ -205,8 +215,10 @@ public class RDataOut {
 		}
 		
 		re.assign(setName, set);
+		RCommands.eval(setName + " = cbind(" + setName + ")");
+		RCommands.eval("colnames(" + setName + ") = '" + setName +"'");
 	}
-	
+		
 	static abstract class RObject {	
 		static final RException EX_NO_GDB = 
 			new RException(null, "No gene database loaded!");

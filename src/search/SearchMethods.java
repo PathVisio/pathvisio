@@ -15,6 +15,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import search.PathwaySearchComposite.SearchRunnableWithProgress;
 import util.FileUtils;
 import util.XmlUtils.PathwayParser;
+import util.tableviewer.PathwayTable;
 import util.tableviewer.TableData;
 import util.tableviewer.TableData.Column;
 import util.tableviewer.TableData.Row;
@@ -56,8 +57,8 @@ public abstract class SearchMethods {
 		TableData srs = new TableData();
 		srs.addColumn("pathway", Column.TYPE_TEXT);
 		srs.addColumn("directory", Column.TYPE_TEXT);
-		srs.addColumn("file", Column.TYPE_TEXT, false);
-		srs.addColumn("idsFound", Column.TYPE_ARRAYLIST, false);
+		srs.addColumn(PathwayTable.COLNAME_FILE, Column.TYPE_TEXT, false);
+		srs.addColumn(SearchResultTable.COLUMN_FOUND_IDS, Column.TYPE_ARRAYLIST, false);
 
 		srt.setTableData(srs);
 		//Get all cross references
@@ -82,10 +83,10 @@ public abstract class SearchMethods {
 					Row sr = srs.new Row();
 					sr.setColumn("pathway", f.getName());
 					sr.setColumn("directory", f.getParentFile().getName());
-					sr.setColumn("file", f.getAbsolutePath());
+					sr.setColumn(PathwayTable.COLNAME_FILE, f.getAbsolutePath());
 					ArrayList<String> idsFound = new ArrayList<String>();
 					idsFound.add(gene.getId());
-					sr.setColumn("idsFound", idsFound);
+					sr.setColumn(SearchResultTable.COLUMN_FOUND_IDS, idsFound);
 					srt.refreshTableViewer(true);
 					break;
 				}
@@ -105,9 +106,9 @@ public abstract class SearchMethods {
 		TableData srs = new TableData();
 		srs.addColumn("pathway", Column.TYPE_TEXT);
 		srs.addColumn("directory", Column.TYPE_TEXT);
-		srs.addColumn("file", Column.TYPE_TEXT, false);
+		srs.addColumn(PathwayTable.COLNAME_FILE, Column.TYPE_TEXT, false);
 		srs.addColumn("namesFound", Column.TYPE_ARRAYLIST);
-		srs.addColumn("idsFound", Column.TYPE_ARRAYLIST, false);
+		srs.addColumn(SearchResultTable.COLUMN_FOUND_IDS, Column.TYPE_ARRAYLIST, false);
 
 		srt.setTableData(srs);
 		
@@ -137,8 +138,8 @@ public abstract class SearchMethods {
 				Row sr = srs.new Row();
 				sr.setColumn("pathway", f.getName());
 				sr.setColumn("directory", f.getParentFile().getName());
-				sr.setColumn("file", f.getAbsolutePath());
-				sr.setColumn("idsFound", idsFound);
+				sr.setColumn(PathwayTable.COLNAME_FILE, f.getAbsolutePath());
+				sr.setColumn(SearchResultTable.COLUMN_FOUND_IDS, idsFound);
 				sr.setColumn("namesFound", namesFound);
 
 				srt.refreshTableViewer(true);

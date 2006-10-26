@@ -66,7 +66,7 @@ public class TableColumnResizer extends ControlAdapter {
 			// Subtract the scrollbar width from the total column width
 			// if a vertical scrollbar will be required
 			Point vBarSize = table.getVerticalBar().getSize();
-			width -= vBarSize.x;
+			width -= vBarSize.x * 2;
 		}
 		
 		//Subtract width of columns with fixed size from available width

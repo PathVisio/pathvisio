@@ -32,11 +32,11 @@ public class RController implements PropertyListener{
 	private static BufferedReader rOut;
 	
 	public static Rengine getR() throws RException { 
-		if(re != null && re.isAlive()) return re;
-		throw new RException(re, "R is thread not started yet");
+		if(re == null || !re.isAlive()) startR();
+		return re;
 	}
 	
-	static { Rengine.DEBUG = 1; }
+	static { Rengine.DEBUG = 0; }
 	
 	//NOTE: commandline arguments don't seem to work...
 	static final String[] rArgs = new String[] {
@@ -109,32 +109,64 @@ public class RController implements PropertyListener{
 		return true;
 	}
 	private static void extractJRI() throws IOException, UnsatisfiedLinkError {
-		String libFileName;
-		String stuffix;
-		switch(Utils.getOS()) {
-		case Utils.OS_WINDOWS:
-			libFileName = "jri"; stuffix = ".dll"; break;
-		case Utils.OS_LINUX:
-			libFileName = "libjri"; stuffix = ".so"; break;
-		default:
-			return;//TODO: exception
-		}
+		GmmlVision.log.trace("Loading R");
+		
+		String libFileName = System.mapLibraryName("jri");
+		String ext = libFileName.substring(libFileName.lastIndexOf('.'));
 		String rversion = GetRVersion.rniGetVersionR(); //e.g. 2.2.1, ignore last digit
-			
+		
+		GmmlVision.log.trace("\tDetected R version " + rversion);
 		File libFile = JarUtils.resourceToNamedTempFile("lib/JRI-lib/jri-" + 
-				rversion.substring(0, 3) + stuffix, libFileName + stuffix, false);
+				rversion.substring(0, 3) + ext, libFileName, false);
+		GmmlVision.log.trace("\tExtracted library " + libFile.toString());
 		
 		//Load the library
-		System.load(libFile.toString());
+		loadJRI(libFile);
 	}
 	
+	private static void loadJRI(File libFile) throws UnsatisfiedLinkError, IOException {
+//		try {
+			System.load(libFile.toString());
+		/* Doesn't work
+		 * We need to find a way to change LD_LIBRARY_PATH from within
+		 * this application
+		 */
+//		} catch(UnsatisfiedLinkError e) {
+//			//Problably libR.so or R.dll wasn't found
+//			//Add to LD_LIBRARY_PATH...needs restart...
+//			//Or try to load with System.load...?
+//			String rLib = locateRLib();
+//			if(rLib == null) throw e;
+//			Runtime.getRuntime().exec("sh export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:" + rLib);
+//			loadJRI(libFile);
+//		}
+	}
+	
+/* Useless, can't point jri to right location from within Java */
+//	private static String locateRLib() {
+//		final String CANCEL = "C";
+//		final StringBuilder value = new StringBuilder(CANCEL);
+//		GmmlVision.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+//			public void run() {
+//				String libName = System.mapLibraryName("jri");
+//				InputDialog libDialog = new InputDialog(GmmlVision.getWindow().getShell(),
+//					"System couldn't find " + libName, "Please specify location of file " + libName, "", null);
+//				if(libDialog.open() == InputDialog.OK) {
+//					value.delete(0, CANCEL.length());
+//					value.append(libDialog.getValue());
+//				}
+//			}
+//				
+//		});
+//		String str = value.toString();
+//		return str.equals(CANCEL) ? null : str;
+//	}
+	
 	private static void importLibraries() throws RException {
-		System.out.println("Importing GmmlR library");
 		RCommands.eval(IMPORT_LIB_GmmlR); //GmmlR package, don't continue without it
 	}
 	
 	private static void installLibraries() throws Exception {
-		System.out.println("Installing GmmlR library");
 		File pkgFile;
 		switch(Utils.getOS()) {
 		case Utils.OS_WINDOWS:
@@ -150,8 +182,6 @@ public class RController implements PropertyListener{
 	public static void interruptRProcess() {
 		if(re != null) {
 			try { re.rniStop(0); } catch(Exception e) { e.printStackTrace(); }
-			re.end();
-			re = null;
 		}
 	}
 	
@@ -168,7 +198,6 @@ public class RController implements PropertyListener{
 			rOut = null;
 		}
 		else {
-			System.out.println("R sink to " + f.toString());
 			RCommands.eval("sink('" + RCommands.fileToString(f) + "')");
 			rOut = new BufferedReader(new FileReader(f));
 		}
@@ -216,7 +245,7 @@ public class RController implements PropertyListener{
 			endR(); //End the R process
 			if(rOut != null) { //Close the R output file
 				try { 
-					rOut.close(); 
+					rOut.close();
 				} catch(Exception ie) { 
 					GmmlVision.log.error("Unable to close R output file", ie);
 				}

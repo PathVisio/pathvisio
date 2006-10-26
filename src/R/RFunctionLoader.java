@@ -3,6 +3,7 @@ package R;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -35,41 +37,60 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.rosuda.JRI.REXP;
 
 import util.JarUtils;
+import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import R.RCommands.RException;
+import R.wizard.RWizard;
 import colorSet.Criterion;
 import colorSet.CriterionComposite;
 
 
 public class RFunctionLoader {
-	static final String funDir = "R/functions";
+	static final String FUN_DIR = "R/functions";
 	
 	static final HashMap<String, RFunction> functions = new HashMap<String, RFunction>();
 	
 	
 	public static void loadFunctions() throws IOException, RException {
-		URL url = GmmlVision.getResourceURL(funDir);
-		JarURLConnection conn = (JarURLConnection)url.openConnection();
+		URL url = GmmlVision.getResourceURL(FUN_DIR);
 		
-		JarFile jfile = conn.getJarFile();
-		Enumeration e = jfile.entries();
-		while (e.hasMoreElements()) {
-		    ZipEntry entry = (ZipEntry)e.nextElement();
-		    String entryname = entry.getName();
-		    if (	entryname.startsWith(funDir) && 
-		    		(entryname.endsWith(".R") || entryname.endsWith(".r"))) {
-		    	File tmp = JarUtils.resourceToNamedTempFile(entryname, new File(entryname).getName());
-		    	try {
-		    		RCommands.eval("source('" + RCommands.fileToString(tmp) + "')");
-		    	} catch(RException re) {
-		    		RController.openError("Unable to load functions in " + tmp.toString(), re);
-		    	}
-		    }
-		}
+		String protocol = url.getProtocol();
+		if(protocol.equals("jar")) {
+			JarURLConnection conn = (JarURLConnection)url.openConnection();
+
+			JarFile jfile = conn.getJarFile();
+			Enumeration e = jfile.entries();
+			while (e.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry)e.nextElement();
+				String entryname = entry.getName();
+				if (	entryname.startsWith(FUN_DIR) && 
+						(entryname.endsWith(".R") || entryname.endsWith(".r"))) {
+					File tmp = JarUtils.resourceToNamedTempFile(entryname, new File(entryname).getName());
+					loadFunction(tmp);
+				}
+			}
+		} else if(protocol.equals("file")) {
+			File dir = new File(url.getFile());
+			File[] rfiles = dir.listFiles(new FilenameFilter() {
+				public boolean accept(File f, String name) {
+					if(name.endsWith("R") || name.endsWith("r")) return true;
+					return false;
+				}
+				
+			});
+			for(File f : rfiles) loadFunction(f);
+		} else throw new IOException("Unable to find R functions for statistical tests");
 		initFunctions();
+	}
+	
+	private static void loadFunction(File funFile) {
+    	try {
+    		RCommands.eval("source('" + RCommands.fileToString(funFile) + "')");
+    	} catch(RException re) {
+    		RController.openError("Unable to load functions in " + funFile.toString(), re);
+    	}
 	}
 	
 	public static String[] getFunctionNames() {
@@ -95,17 +116,12 @@ public class RFunctionLoader {
 	}
 	
 	public static class RFunction {
-		String varName;
-		String name;
-		String description;
-		String[] args;
-		String[] argDefaults;
-		String[] argDescriptions;
-		String[] argClasses;
+		String varName, name, description;
+		String[] args, argDefaults, argDescriptions, argClasses;
 		HashMap<String, String> argValues;
 		Composite configComp;
-		
 		Combo[] valueCombos;
+	
 		
 		public RFunction(String varName) throws RException {
 			this.varName = varName;
@@ -147,7 +163,7 @@ public class RFunctionLoader {
 			int ai = -1;
 			for(int i = 0; i < args.length; i++) 
 				if(args[i].equals(arg)) { ai = i; break; }
-			updateValueComboItems(ai);
+			updateItem(ai);
 		}
 		
 		public Composite getConfigComposite(Composite parent) {
@@ -158,39 +174,53 @@ public class RFunctionLoader {
 			return configComp;
 		}
 		
-		private void setArgGroup(final int index, Composite parent) {
-			Group argG = new Group(parent, SWT.NULL);
-			argG.setLayout(new GridLayout(2, false));
-			argG.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			
+		protected void setArgGroup(final int index, Composite parent) {
+			Group argG = createArgGroup(parent);
 			//Description
-			Label descr = new Label(argG, SWT.NULL);
+			createArgDescr(index, argG);
+			//Combo box for value
+			createArgCombo(index, argG);
+		}
+		
+		protected Group createArgGroup(Composite parent) {
+			Group argG = new Group(parent, SWT.NULL);
+			argG.setLayout(new GridLayout(1, false));
+			argG.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			return argG;
+		}
+		
+		protected Composite createArgDescr(final int index, Composite parent) {
+			Composite descrComp = new Composite(parent, SWT.NULL);
+			descrComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			descrComp.setLayout(new GridLayout(2, false));
+			Label descr = new Label(descrComp, SWT.NULL);
 			descr.setText(args[index] + ": ");
-			Label argDescr = new Label(argG, SWT.FLAT | SWT.WRAP);
+			Label argDescr = new Label(descrComp, SWT.FLAT | SWT.WRAP);
 			argDescr.setText(argDescriptions[index]);
 			argDescr.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			
-			//Combo box for value
-			final Combo argT = new Combo(argG, SWT.SINGLE | SWT.BORDER);
+			return descrComp;
+		}
+		
+		protected Combo createArgCombo(final int index, Composite parent) {
+			final Combo argT = new Combo(parent, SWT.SINGLE | SWT.BORDER);
 			argT.setText(argDefaults[index]);
-			GridData comboGrid = new GridData(GridData.FILL_HORIZONTAL);
-			comboGrid.horizontalSpan = 2;
-			argT.setLayoutData(comboGrid);
+			argT.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			argT.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					argValues.put(args[index], argT.getText());
 				}
 			});
 			valueCombos[index] = argT;
+			return argT;
 		}
 		
 		public void initValueComboItems() throws RException {
 			for(int i = 0; i < args.length; i++) {
-				updateValueComboItems(i);
+				updateItem(i);
 			}
 		}
 		
-		protected void updateValueComboItems(int i) throws RException {
+		protected void updateItem(int i) throws RException {
 			valueCombos[i].setItems(RCommands.ls(argClasses[i]));
 			if(!argDefaults[i].equals("")) valueCombos[i].setText(argDefaults[i]);
 			else valueCombos[i].select(0);
@@ -199,8 +229,7 @@ public class RFunctionLoader {
 		public Composite getConfigComposite() { return configComp; }
 		
 		public void run(String resultVar) throws RException {
-			REXP res = RCommands.eval(getRunCommand(resultVar), true);
-			System.out.println(res.asStringArray());
+			RCommands.eval(getRunCommand(resultVar));			
 		}
 		
 		public String getRunCommand(String resultVar) {
@@ -219,37 +248,83 @@ public class RFunctionLoader {
 	
 	//This class will later be stored in a jar together with R file...
 	public static class ZScore extends RFunction {
+		static final String SETS_ARG = "sets";
 		
 		public ZScore(String varName) throws RException {
 			super(varName);
 		}
+			
+		org.eclipse.swt.widgets.List setList;
+		protected void setArgGroup(final int i, Composite parent) {
+			if(args[i].equals(SETS_ARG)) {
+				Group argG = createArgGroup(parent);
+				argG.setLayoutData(new GridData(GridData.FILL_BOTH));
+				createArgDescr(i, argG);
+				
+				//List instead of combo
+				Composite listComp = new Composite(argG, SWT.NULL);
+				listComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+				listComp.setLayout(new GridLayout(2, false));
+				setList = new org.eclipse.swt.widgets.List(listComp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+				setList.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						putSetValues();
+					}
+				});
+				setList.setLayoutData(new GridData(GridData.FILL_BOTH));
+				//Buttons to add/remove sets
+				createSetButtons(listComp);
+				
+			} else super.setArgGroup(i, parent);
+		}
 		
-		public Composite getConfigComposite(Composite parent) {
-			if(configComp != null && !configComp.isDisposed()) configComp.dispose();
-			
-			configComp = new Composite(parent, SWT.NULL);
-			configComp.setLayout(new GridLayout());
-			
-			getArgsComposite(configComp);
-			
-			Button setButton = new Button(configComp, SWT.PUSH);
+		private void putSetValues() {
+			String cmd = "cbind(" + Utils.array2String(setList.getSelection(), "", ",") + ")";
+			argValues.put(SETS_ARG, cmd);
+		}
+		
+		private void createSetButtons(Composite parent) {
+			Composite buttonComp = new Composite(parent, SWT.NULL);
+			buttonComp.setLayout(new RowLayout(SWT.VERTICAL));
+			Button setButton = new Button(buttonComp, SWT.PUSH);
 			setButton.setText("Add a set");
 			setButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					try {
 						new SetConfigDialog(Display.getCurrent().getActiveShell()).open();
-						updateArgGroup("set");
+						updateArgGroup(SETS_ARG);
 					} catch(Exception ex) {
 						MessageDialog.openError(e.display.getActiveShell(), "Error", ex.getMessage());
 						GmmlVision.log.error("", ex);
 					}
 				}
 			});
-			setButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			
-			return configComp;
+			Button removeButton = new Button(buttonComp, SWT.PUSH);
+			removeButton.setText("Remove selected sets");
+			removeButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					try {
+						for(String setName : setList.getItems()) {
+							RWizard.usedRObjects.removeObject(setName, true);
+						}
+						RWizard.usedRObjects.save();
+						updateArgGroup(SETS_ARG);
+					} catch(Exception ex) {
+						MessageDialog.openError(e.display.getActiveShell(), "Error", ex.getMessage());
+						GmmlVision.log.error("", ex);
+					}
+				}
+			});
 		}
-				
+		
+		protected void updateItem(int i) throws RException {
+			if(args[i].equals(SETS_ARG)) {
+				setList.setItems(RCommands.ls(argClasses[i]));
+				setList.selectAll();
+				putSetValues();
+			} else super.updateItem(i);
+		}
+		
 		public class SetConfigDialog extends ApplicationWindow {
 			String[] dataSets;
 			Combo dataSetCombo;
@@ -263,7 +338,7 @@ public class RFunctionLoader {
 				setBlockOnOpen(true);
 				availableSymbols = new HashMap<String, String[]>();
 				criterion = new Criterion();
-				dataSets = RDataIn.getDataSets();
+				dataSets = RDataIn.listDataSets();
 				if(dataSets == null || dataSets.length == 0)
 					throw new Exception("No objects of class DataSet available in R");
 				for(String ds : dataSets) availableSymbols.put(ds, RCommands.colnames(ds));
@@ -290,8 +365,11 @@ public class RFunctionLoader {
 			public void doSaveSet() throws Exception {
 				if(setVar == null || setVar.equals("")) 
 					throw new Exception("No R variable name specified");
+				setVar = RCommands.format(setVar);
 				criterion.getConfigComposite().saveToCriterion();
 				RDataOut.createSetVector(criterion, dataSetCombo.getText(), setVar);
+				RWizard.usedRObjects.addObject(setVar);
+				RWizard.usedRObjects.save();
 			}
 			
 			protected Control createContents(Composite parent) {
@@ -330,7 +408,7 @@ public class RFunctionLoader {
 				setVarText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				setVarText.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
-						setVar = setVarText.getText();
+						setVar = RCommands.format(setVarText.getText());
 					}
 				});
 				
@@ -354,7 +432,13 @@ public class RFunctionLoader {
 				ok.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				ok.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						if(saveSet()) close();
+						boolean exists = false;
+						try {
+							exists = RCommands.exists(setVar);
+						} catch(RException re) {}
+						
+						if(exists) close(); //Prevent the set from beeing exported twice
+						else if (saveSet()) close();
 					}
 				});
 				ok.setFocus();

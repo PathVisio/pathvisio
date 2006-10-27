@@ -75,6 +75,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		gdata.setLeft(gdata.getLeft() + dx); 
 		gdata.setTop(gdata.getTop() + dy);
 		
+		if(gdata.getParent() == null) return; //NOTE: Quick fix for GmmlSelectionBox -> shouldn't extend GmmlGraphics
 		String id = gdata.getGraphId();
 		List<GmmlDataObject> refs = gdata.getParent().getReferringObjects(id);
 		
@@ -107,7 +108,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 	
 	public void setScaleRectangle(Rectangle2D.Double r) {
-		setShape(r.width, r.height, r.x, r.y);
+		setShape(r.x, r.y, r.width, r.height);
 	}
 
 	protected void adjustToZoom(double factor)

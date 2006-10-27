@@ -303,18 +303,25 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		}
 		redrawDirtyRect();
 	}
-
 	/**
 	 * Handles mouse Pressed input
 	 */
+	//TODO: Variable ctrlPressed is not set to false when editting labels.
+	//		Probably the keyRelease event is not picked up.
+    public boolean firstClick = true;
 	public void mouseDown(MouseEvent e)
 	{		
 		setFocus();
 		if (editMode)
 		{
-			if (newGraphics != NEWNONE)
+			if (newGraphics != NEWNONE && (ctrlPressed || firstClick))
 			{
 				newObject(new Point(e.x, e.y));
+				if (!ctrlPressed && !firstClick)
+				{
+					GmmlVision.getWindow().deselectNewItemActions();
+				}
+				firstClick =false;
 			}
 			else
 			{
@@ -810,7 +817,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(gdata, GmmlEvent.ADDED));
 		}
 		
-		GmmlVision.getWindow().deselectNewItemActions();
 	}
 	
 

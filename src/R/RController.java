@@ -26,27 +26,7 @@ import util.JarUtils;
 import util.Utils;
 import R.RCommands.RException;
 
-public class RController implements PropertyListener{
-	static final String LIBR_FILE = System.mapLibraryName("R");
-	static final String LIBJRI_FILE = System.mapLibraryName("jri");
-	static final String CMD_R_VERSION = "R --version";
-	static final String NO_JRI_VERSION = 
-		"Unable to find a version of " + LIBJRI_FILE +
-		" for your R version. Pleases re-install an updated version of R";
-	static final String ERR_MSG_PRE = "Problems when starting R-interface";
-	static final String ERR_MSG_NOR_LINUX = 
-		" and that environment variable LD_LIBRARY_PATH " +
-		"is set to the directory containing " + LIBR_FILE + "\n";
-	static final String ERR_MSG_NOR = 
-		"Unable to find the R shared library '" + LIBR_FILE +
-		"'.\nMake sure you have installed R (www.r-project.org)" +
-		(Utils.getOS() == Utils.OS_LINUX ? ERR_MSG_NOR_LINUX : "");
-	
-	static final String IMPORT_LIB_GmmlR = "library(GmmlR)";
-	static final String INSTALL_GmmlR_win = "R/library/GmmlR.zip";
-	static final String INSTALL_GmmlR_linux = "R/library/GmmlR.tar.gz";
-	static final String INSTALL_SCRIPT = "R/library/install.R";
-	
+public class RController implements PropertyListener{	
 	private static Rengine re;
 	private static BufferedReader rOut;
 	
@@ -59,9 +39,7 @@ public class RController implements PropertyListener{
 	
 	//NOTE: commandline arguments don't seem to work...
 	static final String[] rArgs = new String[] {
-		"--no-save", 			//Don't save .RData on quit
-		"--no-restore",			//Don't restore .RData on startup
-		"--quiet"				//Don't display copyright message
+		"--vanilla", //No messages at all, no save, no restore
 	};
 			
 	public static boolean startR() {
@@ -96,7 +74,7 @@ public class RController implements PropertyListener{
 	}
 	
 	
-	private static void doStartR() throws UnsatisfiedLinkError, IOException, RException, InvocationTargetException {
+	private static void doStartR() throws UnsatisfiedLinkError, IOException, RException, InvocationTargetException, InterruptedException {
 		//Extract the JRI shared library for the OS / R version on this system
 		extractJRI();
 		
@@ -125,15 +103,21 @@ public class RController implements PropertyListener{
 		RFunctionLoader.loadFunctions();
 	}
 	
-	private static void extractJRI() throws IOException, UnsatisfiedLinkError {
+	private static void extractJRI() throws IOException, UnsatisfiedLinkError, InterruptedException {
 		GmmlVision.log.trace("Loading R");
 		
-		String ext = LIBR_FILE.substring(LIBR_FILE.lastIndexOf('.'));
+		String ext = LIB_JRI_FILE.substring(LIB_JRI_FILE.lastIndexOf('.'));
 		String rversion = getRVersion();
-		
 		GmmlVision.log.trace("\tDetected R version " + rversion);
-		File libFile = JarUtils.resourceToNamedTempFile("lib/JRI-lib/jri-" + 
-				rversion.substring(0, 3) + ext, LIBR_FILE, false);
+		File libFile = null;
+		try {
+			libFile = JarUtils.resourceToNamedTempFile("lib/JRI-lib/jri-" + 
+					rversion.substring(0, 3) + ext, LIB_JRI_FILE, false);
+		} catch(Exception e) {
+			throw new IOException(ERR_NO_JRI_VERSION + 
+					"\nCurrently installed R version: " + rversion + "\n");
+		}
+				
 		GmmlVision.log.trace("\tExtracted library " + libFile.toString());
 		
 		//Load the library
@@ -144,44 +128,63 @@ public class RController implements PropertyListener{
 	 * 
 	 * @return R_MAJOR.R_MINOR
 	 * @throws IOException 
+	 * @throws InterruptedException 
 	 */
-	private static String getRVersion() throws IOException {
+	private static String getRVersion() throws IOException, InterruptedException {
 		switch(Utils.getOS()) {
 		default:
 		case Utils.OS_LINUX:
 			//Assume that R is in path
-			return parseRVersion(CMD_R_VERSION);
+			return getRVersionCmd();
 		case Utils.OS_WINDOWS:
-			//R probably not in path, but location is in registry in most cases
-			
-			return null;
+			//Location should be in registry
+			return getRVersionReg();
 		}
 	}
+
+	private static String getRVersionReg() throws IOException, InterruptedException {
+		Process child = Runtime.getRuntime().exec(CMD_R_VERSION_REG);
+		//If registry key can't be found exit code will be 1: try via R version command
+		if(child.waitFor() != 0) return getRVersionCmd();
+		
+		InputStream in = child.getInputStream();
+		StringBuilder output = new StringBuilder();
+		int c;
+		while ((c = in.read()) != -1) output.append((char)c);
+		in.close();
+
+		//Match 'REG_SZ' -> output will be "REG_SZ x.x.x"
+		Pattern regex = Pattern.compile("REG_SZ");
+		Matcher matcher = regex.matcher(output.toString());
+		if(matcher.find())
+			return output.substring(matcher.end() + 1, matcher.end() + 6);
+		else
+			return null;
+	}
 	
-	private static String parseRVersion(String cmd) throws IOException {
+	private static String getRVersionCmd() throws IOException, InterruptedException {
 		Process child = null;
 		try {
-        	 child = Runtime.getRuntime().exec(cmd);
-        } catch(IOException e) {
-        	child = Runtime.getRuntime().exec(specifyRVersionCmd());
-        }
-        InputStream in = child.getInputStream();
-        StringBuilder output = new StringBuilder();
-        int c;
-        while ((c = in.read()) != -1) output.append((char)c);
-        in.close();
-        
-	    //Match 'R version x.x.x'
-	    String prefix = "R version ";
-	    Pattern regex = Pattern.compile(prefix + "[0-9].[0-9].[0-9]");
-	    
-	    String txt = output.toString();
-	    Matcher matcher = regex.matcher(txt);
-	    if(matcher.find())
-	    	return txt.substring(matcher.start() + prefix.length(), matcher.end());
-	    else
-	    	return null;
+			child = Runtime.getRuntime().exec(CMD_R_VERSION);
+		} catch(IOException e) {
+			child = Runtime.getRuntime().exec(specifyRVersionCmd());
 		}
+		child.waitFor();
+		InputStream in = child.getInputStream();
+		StringBuilder output = new StringBuilder();
+		int c;
+		while ((c = in.read()) != -1) output.append((char)c);
+		in.close();
+
+		//Match 'R version x.x.x'
+		String prefix = "R version ";
+		Pattern regex = Pattern.compile(prefix + "[0-9].[0-9].[0-9]");
+		Matcher matcher = regex.matcher(output.toString());
+		if(matcher.find())
+			return output.substring(matcher.start() + prefix.length(), matcher.end());
+		else
+			return null;
+	}
 	
 	private static String specifyRVersionCmd() {
 		final StringBuilder cmd = new StringBuilder();
@@ -313,8 +316,8 @@ public class RController implements PropertyListener{
 		if (e instanceof InvocationTargetException)
 			e = e.getCause();
 		if(e instanceof UnsatisfiedLinkError) {
-			if(e.getMessage().contains(LIBR_FILE)) msg = ERR_MSG_NOR;	
-			else msg = "Unable to load shared libraries";
+			if(e.getMessage().contains(LIB_R_FILE)) msg = ERR_MSG_NOR;	
+			else msg = ERR_MSG_NOR;
 		}
 		GmmlVision.log.error(ERR_MSG_PRE, e);
 		openError(msg, e);
@@ -342,4 +345,33 @@ public class RController implements PropertyListener{
 			}
 		}
 	}
+	
+	//Shared libraries
+	static final String LIB_R_FILE = System.mapLibraryName("R");
+	static final String LIB_JRI_FILE = System.mapLibraryName("jri");
+	
+	//Shell commands
+	static final String CMD_R_VERSION = "R --version";
+	static final String CMD_R_VERSION_REG = 
+		"REG QUERY HKLM\\Software\\R-core\\R /v \"Current Version\"";
+
+	//Error messages
+	static final String WWW_R = "http://www.r-project.org";
+	static final String ERR_NO_JRI_VERSION = 
+		"Your version of R is not supported, pleases install an updated version of R (" + WWW_R + ")"; 
+	static final String ERR_MSG_PRE = "Problems when starting R-interface";
+	static final String ERR_MSG_NOR_LINUX = 
+		" and that environment variable LD_LIBRARY_PATH " +
+		"is set to the directory containing " + LIB_R_FILE + "\n";
+	static final String ERR_MSG_NOR = 
+		"Unable to find the R shared library '" + LIB_R_FILE +
+		"'.\nMake sure you have installed R (" + WWW_R + ") and added the " +
+				" directory containing " + LIB_R_FILE + " to your PATH environment variable" +
+		(Utils.getOS() == Utils.OS_LINUX ? ERR_MSG_NOR_LINUX : "");
+	
+	//R scripts/libraries/commands
+	static final String IMPORT_LIB_GmmlR = "library(GmmlR)";
+	static final String INSTALL_GmmlR_win = "R/library/GmmlR.zip";
+	static final String INSTALL_GmmlR_linux = "R/library/GmmlR.tar.gz";
+	static final String INSTALL_SCRIPT = "R/library/install.R";
 }

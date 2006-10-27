@@ -1118,6 +1118,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements PropertyListe
 				deselectNewItemActions();
 				setChecked(true);
 				GmmlVision.getDrawing().setNewGraphics(element);
+				GmmlVision.getDrawing().firstClick = true;
 			}
 			else
 			{	

@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import preferences.GmmlPreferences;
+
 import util.TableColumnResizer;
 
 /**
@@ -144,6 +146,7 @@ public class ImportExprDataWizard extends Wizard {
 							"*.*" });
 					fileDialog.setFilterNames(new String[] { "Text file",
 							"All files" });
+					fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
 					String file = fileDialog.open();
 					if (file != null) {
 						txtText.setText(file);

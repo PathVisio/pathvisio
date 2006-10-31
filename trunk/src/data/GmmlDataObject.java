@@ -693,8 +693,8 @@ public class GmmlDataObject
 		{
 			case OrientationType.TOP: setRotation(0); break;
 			case OrientationType.LEFT: setRotation(Math.PI/2); break;
-			case OrientationType.RIGHT: setRotation(Math.PI); break;
-			case OrientationType.BOTTOM: setRotation(Math.PI*(3.0/2)); break;
+			case OrientationType.BOTTOM: setRotation(Math.PI); break;
+			case OrientationType.RIGHT: setRotation(Math.PI*(3.0/2)); break;
 		}
 	}
 		

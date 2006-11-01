@@ -135,18 +135,25 @@ public class PageStats extends WizardPage {
 		showFinish();
 		
 		Thread thr = new Thread() {
+			volatile boolean stop = false;
 			public void run() {
 				try {
-					while(!isInterrupted()) {
-						try { sleep(250); } catch(InterruptedException e) { GmmlVision.log.error("", e); }
+					while(!stop) {
+						String rout = RController.getNewOutput();
+						if(rout != null) updateFinishText(rout + "\n");
+						
+						try { sleep(250); } catch(InterruptedException e) { 
+							return;
+						}
 						if(SimpleRunnableWithProgress.isCancelled()) {
 							doCancel();
 							return;
 						}
-						String rout = RController.getNewOutput();
-						if(rout != null) updateFinishText(rout + "\n");
 					}
 				} catch(Exception re) { re.printStackTrace(); }
+			}
+			public void interrupt() {
+				stop = true;
 			}
 		};
 		

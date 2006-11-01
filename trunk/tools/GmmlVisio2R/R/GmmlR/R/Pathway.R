@@ -74,12 +74,45 @@ setMethod("print", "Pathway", function(x, ...) {
 	for(gp in x) cat("\t\t", name(gp), "\n");
 })
 
-createMethod("match", c(x = "ANY", table = "Pathway"), 
-function(x, table, nomatch = NA, incomparables = FALSE) {
-	pwrefs = allRefs(table)
-	if(length(x) == 1)
-		return(x %in% pwrefs)
-	if(class(x) == "GeneProduct")
-		for(ref in rownames(x)) if(ref %in% pwrefs) return(TRUE)
-	FALSE
+createMethod("hasReference", c(ref = "ANY", pathway = "Pathway"), 
+function(ref, pathway) {
+	pwrefs = allRefs(pathway)
+	if(class(ref) == "GeneProduct") {
+		for(gpref in rownames(ref)) if(gpref %in% pwrefs) return(TRUE)
+		return(FALSE)
+	}
+	else
+		return(ref %in% pwrefs)
 })
+
+createMethod("matchReferences", c(refs = "ANY", pathway = "Pathway"), 
+function(refs, pathway) {
+	pwrefs = allRefs(pathway)
+	if(class(refs) == "character") {
+		return(refs %in% pwrefs)
+	}
+	else {
+		return(sapply(refs, function(x) hasReference(x, pathway)))	
+	}
+})
+
+createMethod("inReferences", c(pathway = "Pathway", refs = "ANY"), 
+function(pathway, refs) {
+	refMatch = matchReferences(refs, pathway)
+	inPathway = refs[refMatch]
+	pwrefs = allRefs(pathway)
+	sapply(pathway, function(gp) {
+		b = FALSE
+		for(ref in inPathway) {
+			if(ref == gp) {
+				b = TRUE 
+				break
+			}
+		}
+		b
+	})
+})
+
+
+
+

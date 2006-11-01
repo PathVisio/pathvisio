@@ -1,5 +1,6 @@
 package gmmlVision;
 
+import java.io.File;
 import java.io.PrintStream;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -71,8 +72,27 @@ public class GmmlVisionMain {
 		//initiate Gene database (to load previously used gdb)
 		GmmlGdb.init();
 		
+		//create data directories if they don't exist yet
+		createDataDirectories();
+		
 		//NOTE: ImageRegistry will be initiated in "createContents" of GmmlVisionWindow,
 		//since the window has to be opened first (need an active Display)
+	}
+	
+	/**
+	 * Creates data directories stored in preferences (if not exist)
+	 */
+	static void createDataDirectories() {
+		String[] dirPrefs = new String[] {
+				GmmlPreferences.PREF_DIR_EXPR,
+				GmmlPreferences.PREF_DIR_GDB,
+				GmmlPreferences.PREF_DIR_PWFILES,
+				GmmlPreferences.PREF_DIR_RDATA,
+		};
+		for(String pref : dirPrefs) {
+			File dir = new File(GmmlVision.getPreferences().getString(pref));
+			if(!dir.exists()) dir.mkdir();
+		}
 	}
 	
 	/**

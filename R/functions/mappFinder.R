@@ -4,6 +4,7 @@
 require(GmmlR)
 
 .zscore_impl = function(pathwaySet, dataSet, sets) {
+	#Check arguments
 	if(class(pathwaySet) != "PathwaySet")
 		for(pw in pathwaySet) if(class(pw) != "Pathway") 
 			stop("pathwaySet list contains non-Pathway elements")	
@@ -17,7 +18,7 @@ require(GmmlR)
 	setnames = colnames(sets)
 	if(is.null(setnames)) colnames(sets) = .genSetNames(sets, name(dataSet))
 	
-	#Progress reporting
+	#Progress reporting variables
 	reporters = reporters(dataSet)	
 	total = length(pathwaySet)
 	current = 1
@@ -26,15 +27,17 @@ require(GmmlR)
 	environment(.calcZscore) = environment()
 	environment(.matchPathways) = environment()
 	
-	#Match pathways
+	#Match reporters with pathways
 	cat("Matching reporters with pathways\n")
 	pwMatches = .matchPathways(pathwaySet, reporters)
 	
 	cat("Calculating z-scores\n")
 	results = list()
 	for(i in 1:ncol(sets)) {
-		zscores = as.matrix(sapply(pwMatches, function(x) .calcZscore(x, sets[,i])))
-		colnames(zscores) = "z-score"
+		zscores = t(as.matrix(sapply(names(pathwaySet), function(pwname) {
+			.calcZscore(sets[,i], pwMatches[[pwname]], pathwaySet[[pwname]])
+		})))
+		colnames(zscores) = c("in pathway", "in set", "z-score")
 	
 		##Create a ResultSet to return
 		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, stats = zscores)
@@ -43,14 +46,21 @@ require(GmmlR)
 	else return(results)
 }
 
+## For every pathway match with reporters
+## Returns:
+## A named list (names = names(pathwaySet)) where every element is a logical vector (length = length(reporters))
+## that specifies whether a reporter is present in the pathway (TRUE) or not (FALSE)
 .matchPathways = function(pathwaySet, reporters) {
 	matchResult = lapply(pathwaySet, function(pathway) {
+		## Progress reporting
 		cat("\tprocessing pathway '", name(pathway),"' ", " (", 
 			current, " of ", total, ")\n", sep="");
 		assign("current", current + 1, envir=parent.env(environment()))
-		sapply(reporters, function(y) match(y, pathway))
+		
+		## Apply match between this pathway and all reporters
+		matchReferences(reporters, pathway)
 	})
-	
+	names(matchResult) = names(pathwaySet)
 	matchResult			
 }
 
@@ -58,20 +68,21 @@ require(GmmlR)
 	sapply(1:ncol(sets), function(x) paste("zscore",dataSetName,"criterion",x,sep="-"))
 }
 
-.calcZscore = function(reporterMatch, set) {	
-	N = length(reporterMatch)		## Total number of genes measured
+.calcZscore = function(set, reporterMatch, pathway) {	
+	N = length(reporters)			## Total number of genes measured
 	R = sum(as.logical(set))		## Total number of genes belonging to the set
 	
 	if(R == N) return(NaN) # All reporters matching criterion
 	if(R == 0) return(0)   # No reporters matching criterion
-		
-	n = sum(reporterMatch)			## Total number of genes in the pathway
+			
+	n = length(pathway)			## Total number of genes in the pathway
 	r = sum(reporterMatch[as.logical(set)])	## Number of genes that are in the subset and on the pathway
 	
 	RoverN = R / N
 	num = r - n*RoverN
 	den = sqrt(n * RoverN * (1 - RoverN) * (1 - (n - 1)/(N - 1)))
-	num / den
+	print(c(n, r, num / den))
+	c(n, r, num / den)
 }
 
 zscore = GmmlFunction(.zscore_impl,	name = "Z-score", 

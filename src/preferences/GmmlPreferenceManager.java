@@ -58,7 +58,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 			addField(d3);
 
 			if(GmmlVision.isUseR()) {
-				DirectoryFieldEditor d4 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_EXPR,
+				DirectoryFieldEditor d4 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_RDATA,
 						"Results from pathway statistics:", getFieldEditorParent());
 				addField(d4);
 			}

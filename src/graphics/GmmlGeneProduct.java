@@ -48,6 +48,9 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		setHandleLocation();
 	}
 	
+	/**
+	 * @deprecated: get this info from GmmlDataObject directly
+	 */
 	public String getName()
 	{
 		//Looks like the wrong way around, but in gmml the name/symbol is attribute 'GeneID'
@@ -55,6 +58,9 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		return gdata.getGeneID();
 	}
 	
+	/**
+	 * @deprecated: get this info from GmmlDataObject directly
+	 */
 	public String getID() 
 	{
 		//Looks like the wrong way around, but in gmml the ID is attribute 'Name'
@@ -71,6 +77,8 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	 * Looks up the systemcode for this gene in {@link GmmlData#sysName2Code}
 	 * @param systemName	The system name (as in gmml)
 	 * @return	The system code or an empty string if the system is not found
+	 * 
+	 * @deprecated: use GmmlDataObject.getSystemCode()
 	 */
 	public String getSystemCode()
 	{

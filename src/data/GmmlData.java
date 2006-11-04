@@ -4,6 +4,8 @@ import gmmlVision.GmmlVision;
 import gmmlVision.GmmlVisionMain;
 import gmmlVision.GmmlVisionWindow;
 import graphics.GmmlDrawing;
+import graphics.GmmlDrawingObject;
+import graphics.GmmlGeneProduct;
 
 import java.io.*;
 import java.util.*;
@@ -26,7 +28,12 @@ import org.xml.sax.SAXException;
 
 
 /**
-*	This class handles GMML file IO and keeps a JDOM representation of the GMML document
+* This class is the model for pathway data. It is responsible for
+* storing all information necessary for maintaining, loading and saving
+* pathway data.
+* 
+* GmmlData contains multiple GmmlDataObjects. GmmlData is guaranteed
+* to always have exactly one object of the type MAPPINFO.
 */
 public class GmmlData
 {
@@ -57,25 +64,50 @@ public class GmmlData
 		return dataObjects;
 	}
 	
+	private GmmlDataObject mappInfo = null;
+	
 	/**
-	 * Add dataObject; You don't need to call this
-	 * explicitly, because this is called automatically
-	 * when setting the parent.
+	 * get the one and only MappInfo object.
+	 * There is no setter, a MappInfo object is automatically
+	 * created in the constructor.
+	 * 
+	 * @return a GmmlDataObject with ObjectType set to mappinfo.
+	 */
+	public GmmlDataObject getMappInfo()
+	{
+		return mappInfo;
+	}
+	
+	/**
+	 * Add dataObject; You shouldn't to call this
+	 * directly, this can only be called by GmmlDataObject.setParent()
+	 * 
+	 * fires GmmlEvent.ADDED event <i>after</i> addition of the object
+	 * 
 	 * @param o The object to add
 	 */
 	public void addDataObject (GmmlDataObject o)
 	{
+		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
+			throw new IllegalArgumentException("Can't add more mappinfo objects");
 		dataObjects.add(o);
+		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.ADDED));
 	}
 	
 	/**
-	 * You don't need to call this explicitly,
+	 * You shouldn't call this directly,
 	 * GmmlDataObjects are automatically removed when
-	 * changing its parent through setParent. 
+	 * changing its parent through setParent.
+	 *
+	 * fires GmmlEvent.DELETED event <i>before</i> removal of the object
+	 *  
 	 * @param o the object to remove
 	 */
 	public void removeDataObject (GmmlDataObject o)
 	{
+		if (o.getObjectType() == ObjectType.MAPPINFO)
+			throw new IllegalArgumentException("Can't remove mappinfo object!");
+		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.DELETED));
 		dataObjects.remove(o);
 	}
 	
@@ -129,7 +161,9 @@ public class GmmlData
 	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
 	 */
 	public GmmlData() 
-	{	
+	{
+		mappInfo = new GmmlDataObject(ObjectType.MAPPINFO);
+		mappInfo.setParent(this);
 	}
 	
 	/*
@@ -138,18 +172,14 @@ public class GmmlData
 	public void initMappInfo()
 	{
 		GmmlVisionWindow window = GmmlVision.getWindow();
-
-		GmmlDataObject mapInfo = new GmmlDataObject(ObjectType.MAPPINFO);
-		mapInfo.setParent(this);
 		if (window.sc != null)
 		{
-			mapInfo.setBoardWidth(window.sc.getSize().x);
-			mapInfo.setBoardHeight(window.sc.getSize().y);
-			mapInfo.setWindowWidth(window.getShell().getSize().x);
-			mapInfo.setWindowHeight(window.getShell().getSize().y);
+			mappInfo.setBoardWidth(window.sc.getSize().x);
+			mappInfo.setBoardHeight(window.sc.getSize().y);
+			mappInfo.setWindowWidth(window.getShell().getSize().x);
+			mappInfo.setWindowHeight(window.getShell().getSize().y);
 		}
-		mapInfo.setMapInfoName("New Pathway");
-		dataObjects.add(mapInfo);
+		mappInfo.setMapInfoName("New Pathway");
 	}
 		
 	/**
@@ -300,5 +330,23 @@ public class GmmlData
 		{
 			g.gmmlObjectModified(e);
 		}
-	}	
+	}
+	
+	/**
+	 * Get the systemcodes of all genes in this pathway
+	 * @return	{@link ArrayList<String>} containing a systemcode for every gene on the mapp
+	 */
+	public ArrayList<String> getSystemCodes()
+	{
+		ArrayList<String> systemCodes = new ArrayList<String>();
+		for(GmmlDataObject o : dataObjects)
+		{
+			if(o.getObjectType() == ObjectType.GENEPRODUCT)
+			{
+				systemCodes.add(o.getSystemCode());
+			}
+		}
+		return systemCodes;
+	}
+
 }

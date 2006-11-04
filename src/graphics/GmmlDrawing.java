@@ -79,6 +79,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 */
 	GmmlInfoBox infoBox;
 	GmmlData data;
+	public GmmlData getGmmlData () { return data; }
 	
 	GmmlSelectionBox s; 
 		
@@ -982,7 +983,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		{
 			if (g.isSelected() && g instanceof GmmlGraphics)
 			{
-				result.add(((GmmlGraphics)g).gdata.clone());
+				result.add(((GmmlGraphics)g).gdata.copy(null));
 			}
 		}
 		if (result.size() > 0)

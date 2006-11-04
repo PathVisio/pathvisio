@@ -353,12 +353,17 @@ public class GmmlDataObject
 	}
 	
 	/**
-	 * Clone Object. It will have the same parent as the original.
+	 * Copy Object. The parent will be set to the passed parameter.
+	 * 
+	 * No events will be sent to the parent of the original.
+	 * If the new parent is not null, it will be automatically
+	 * added and receive a GmmlEvent of type ADDED.
+	 * the new parent may be the same as the old parent
 	 */
-	public GmmlDataObject clone()
+	public GmmlDataObject copy(GmmlData newParent)
 	{
 		GmmlDataObject result = new GmmlDataObject(objectType);
-		result.parent = parent;
+		result.parent = null;
 		result.author = author;
 		result.availability = availability;
 		result.backpageHead = backpageHead;
@@ -406,6 +411,7 @@ public class GmmlDataObject
 		result.startGraphRef = startGraphRef;
 		result.endGraphRef = endGraphRef;
 		result.graphId = graphId;
+		result.setParent (newParent);
 		
 		return result;
 	}
@@ -615,7 +621,18 @@ public class GmmlDataObject
 			dataSource = v; 
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
-	} 
+	}
+	/**
+	 * SystemCode is a one- or two-letter abbreviation of datasource,
+	 * used in the MappFormat but also in databases.
+	 */
+	public String getSystemCode()
+	{
+		String systemCode = "";
+		if(MappFormat.sysName2Code.containsKey(dataSource)) 
+			systemCode = MappFormat.sysName2Code.get(dataSource);
+		return systemCode;
+	}
 	 
 	protected double centerx = 0;
 	public double getCenterX() { return centerx; }

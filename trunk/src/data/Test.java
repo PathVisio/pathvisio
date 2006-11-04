@@ -15,12 +15,14 @@ public class Test extends TestCase implements GmmlListener {
 	public void setUp()
 	{
 		data = new GmmlData();
+		data.addListener(this);
 		o = new GmmlDataObject(ObjectType.GENEPRODUCT);
 		received = new ArrayList<GmmlEvent>();
 		o.addListener(this);
 		o.setParent(data);
 		l = new GmmlDataObject(ObjectType.LINE);		
 		l.setParent(data);
+		received.clear();
 	}
 	
 	public void testFields ()
@@ -97,11 +99,18 @@ public class Test extends TestCase implements GmmlListener {
 	}
 	
 	public void testParent()
-	{		
-		assertTrue ("Setting parent adds to container", data.getDataObjects().contains(o));
-		
+	{				
+		// remove
 		o.setParent(null);
 		assertFalse ("Setting parent null removes from container", data.getDataObjects().contains(o));
+		assertEquals (received.size(), 1);
+		assertEquals ("Event type should be DELETED", received.get(0).getType(), GmmlEvent.DELETED); 
+		
+		// re-add
+		o.setParent(data);
+		assertTrue ("Setting parent adds to container", data.getDataObjects().contains(o));
+		assertEquals (received.size(), 2);
+		assertEquals ("Event type should be ADDED", received.get(1).getType(), GmmlEvent.ADDED); 
 	}
 
 	/**
@@ -190,7 +199,36 @@ public class Test extends TestCase implements GmmlListener {
 			
 	}
 
+	/**
+	 * Test that there is one and only one MAPPINFO object
+	 *
+	 */
+	public void testMappInfo()
+	{
+		GmmlDataObject mi;
+
+		mi = data.getMappInfo();
+		assertEquals (mi.getObjectType(), ObjectType.MAPPINFO); 
+
+		try
+		{
+			mi = new GmmlDataObject(ObjectType.MAPPINFO);
+			mi.setParent(data);
+			fail("data should already have a MAPPINFO and shouldn't accept more");
+		}
+		catch (IllegalArgumentException e) {}
+		
+		mi = data.getMappInfo();
+		try
+		{
+			mi.setParent(null);
+			fail ("Shouldn't be able to remove mappinfo object!");
+		}
+		catch (IllegalArgumentException e) {}
+	}
+	
 	// event listener
+	// receives events generated on objects o and data
 	public void gmmlObjectModified(GmmlEvent e) 
 	{
 		// store all received events

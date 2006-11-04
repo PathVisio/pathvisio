@@ -1,8 +1,6 @@
 package gmmlVision;
 
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
@@ -44,6 +42,45 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 	public GmmlDataObject getGmmlDataObject ()
 	{
 		return g;
+	}
+
+	/**
+	 * This is for selecting multiple objects
+	 * 
+	 * TODO: currently not called anywhere. This needs
+	 * to be called as objects are added to the selection.
+	 */
+	public void setGmmlDataObjects (List<GmmlDataObject> l)
+	{
+		HashMap<String, Integer> master = new HashMap<String, Integer>();
+		for (GmmlDataObject o : l)
+		{
+			for (String attr : g.getAttributes())
+			{
+				if (master.containsKey(attr))
+				{
+					master.put(attr, master.get(attr) + 1);
+				}
+				else
+				{
+					master.put(attr, 1);
+				}
+			}
+		}
+		attributes = new ArrayList<String>();
+		for (String attr : master.keySet())
+		{
+			if (master.get(attr) == l.size())
+			{
+				attributes.add(attr);
+			}
+		}
+		System.out.println ("--------------");
+		for (String attr: attributes)
+		{
+			System.out.println(attr);
+		}
+		System.out.println ("--------------");
 	}
 	
 	public void setGmmlDataObject (GmmlDataObject o)

@@ -319,7 +319,7 @@ public class MappFormat
 	
 		GmmlVision.log.trace ("CONVERTING INFO TABLE TO GMML");
 		
-		GmmlDataObject o = new GmmlDataObject(ObjectType.MAPPINFO);
+		GmmlDataObject o = data.getMappInfo();
 		o.setParent(data);
 		
 		o.setMapInfoName(row[icolTitle]);

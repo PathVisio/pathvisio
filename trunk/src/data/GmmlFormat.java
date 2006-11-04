@@ -138,8 +138,16 @@ public class GmmlFormat {
 			return;
 		}
 		
-		GmmlDataObject o = new GmmlDataObject(ot);
-		o.setParent(p);
+		GmmlDataObject o;
+		if (ot == ObjectType.MAPPINFO)
+		{
+			o = p.getMappInfo();
+		}
+		else
+		{
+			o = new GmmlDataObject(ot);
+			o.setParent(p);
+		}
 		
 		switch (o.getObjectType())
 		{

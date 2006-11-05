@@ -1,8 +1,7 @@
 package graphics;
 
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.Shape;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -57,24 +56,7 @@ public class GmmlInfoBox extends GmmlGraphics {
 		fontSizeDouble *= factor;
 		fontSize = (int)this.fontSizeDouble;
 	}
-	
-	public boolean intersects(Rectangle2D.Double r) 
-	{
-		Rectangle2D rect = new Rectangle2D.Double(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
-		return rect.intersects(r);
-	}
-	
-	public boolean isContain(Point2D p) 
-	{
-		Rectangle2D rect = new Rectangle2D.Double(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
-		return rect.contains(p);
-	}
-	
-	public Rectangle getBounds()
-	{
-		return new Rectangle(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
-	}
-	
+			
 	protected void moveBy(double dx, double dy)
 	{
 		markDirty();
@@ -132,6 +114,10 @@ public class GmmlInfoBox extends GmmlGraphics {
 		
 		fBold.dispose();
 		fNormal.dispose();
+	}
+
+	protected Shape getOutline() {
+		return new Rectangle(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
 	}
 
 }

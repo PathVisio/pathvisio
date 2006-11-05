@@ -52,8 +52,8 @@ public class GmmlBrace extends GmmlGraphicsShape
 		Transform tr = new Transform(e.display);
 		rotateGC(buffer, tr);
 		
-		int cx = getCenterX();
-		int cy = getCenterY();
+		int cx = (int)gdata.getCenterX();
+		int cy = (int)gdata.getCenterY();
 		int w = (int)gdata.getWidth();
 		int d = (int)gdata.getHeight();
 		

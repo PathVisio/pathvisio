@@ -172,28 +172,13 @@ public class GmmlLine extends GmmlGraphics
 	{
 		draw(e, e.gc);
 	}
-	
-	protected boolean isContain(Point2D p)
-	{
-		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(getLine());
-		return outline.contains(p);
-	}
-
-	protected boolean intersects(Rectangle2D.Double r)
-	{
-		BasicStroke stroke = new BasicStroke(10);
-		Shape outline = stroke.createStrokedShape(getLine());
 		
-		return outline.intersects(r);
-	}
-	
-	protected Rectangle getBounds()
+	protected Shape getOutline()
 	{
 		BasicStroke stroke = new BasicStroke(10);
 		Shape outline = stroke.createStrokedShape(getLine());
-		return outline.getBounds();
-	}
+		return outline;
+	}	
 	
 	/**
 	 * If the line type is arrow, this method draws the arrowhead

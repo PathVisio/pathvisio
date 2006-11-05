@@ -168,11 +168,6 @@ class GmmlHandle extends GmmlDrawingObject
 	{
 		draw(e, e.gc);
 	}
-
-	protected boolean isContain(Point2D p)
-	{
-		return getOutline().contains(p);
-	}
 		
 	/**
 	 * Moves this handle by the specified increments and
@@ -211,27 +206,11 @@ class GmmlHandle extends GmmlDrawingObject
 		parent.adjustToHandle(this);
 		markDirty();
 	}
-	
-	protected boolean intersects(Rectangle2D.Double r)
-	{	
-		return getOutline().intersects(r);
-	}
-	
-	protected Rectangle getBounds()
-	{
-		
-		return getOutline().getBounds();
-	}
-	
+			
 	public Shape getOutline() {
-		return constructRectangle();
-	}
-	
-	private Rectangle2D.Double constructRectangle()
-	{
 		return new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
 	}
-	
+		
 	public String toString() { 
 		return 	"Handle with parent: " + parent.toString() +
 		" and direction " + direction; 

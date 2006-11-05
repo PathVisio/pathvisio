@@ -1,9 +1,7 @@
 package graphics;
 
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -35,7 +33,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	GmmlHandle handleNW;
 	//Rotation handle
 	GmmlHandle handleR;
-	
+		
 	final GmmlHandle[][] handleMatrix; //Used to get opposite handles
 	
 	public GmmlGraphicsShape(GmmlDrawing canvas, GmmlDataObject o) {
@@ -59,16 +57,16 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 		
 	/**
-	 * Get the x-co�rdinate of the center point of this object
-	 * @return the center x-co�rdinate as integer
+	 * Get the x-coordinate of the center point of this object
+	 * @return the center x-coordinate as integer
 	 */
-	public int getCenterX() { return (int)gdata.getCenterX(); }
+	protected int getCenterX() { return (int)gdata.getCenterX(); }
 
 	/**
-	 * Get the y-co�rdinate of the center point of this object
-	 * @return the center y-co�rdinate as integer
+	 * Get the y-coordinate of the center point of this object
+	 * @return the center y-coordinate as integer
 	 */
-	public int getCenterY() { return (int)gdata.getCenterY(); }
+	protected int getCenterY() { return (int)gdata.getCenterY(); }
 	
 	public void moveBy(double dx, double dy)
 	{
@@ -100,7 +98,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		}
 	}
 	
-	public void setShape(double left, double top, double width, double height) {
+	private void setShape(double left, double top, double width, double height) {
 		gdata.setWidth(width);
 		gdata.setHeight(height);
 		gdata.setLeft(left);
@@ -181,7 +179,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 				
 	/**
-	 * Get the co�rdinates of the given point relative
+	 * Get the coordinates of the given point relative
 	 * to this object's center
 	 * @param p
 	 * @return
@@ -191,7 +189,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 	
 	/**
-	 * Get the co�rdinates of the given point relative
+	 * Get the coordinates of the given point relative
 	 * to the canvas' origin
 	 * @param p
 	 * @return
@@ -383,7 +381,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param h
 	 * @return
 	 */
-	private Point getHandleLocation(GmmlHandle h) {
+	protected Point getHandleLocation(GmmlHandle h) {
 		if(h == handleN) return toExternal(0, -gdata.getHeight()/2);
 		if(h == handleE) return toExternal(gdata.getWidth()/2, 0);
 		if(h == handleS) return toExternal(0,  gdata.getHeight()/2);
@@ -442,7 +440,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	/**
 	 * Creates a shape of the outline of this object
 	 */
-	public Shape getOutline()
+	protected Shape getOutline()
 	{
 		int[] x = new int[4];
 		int[] y = new int[4];
@@ -459,30 +457,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		Polygon pol = new Polygon(x, y, 4);
 		return pol;
 	}
-	
-	protected boolean isContain(Point2D point)
-	{
-		return getOutline().contains(point);
-	}	
-
-	protected boolean intersects(Rectangle2D.Double r)
-	{
-		return getOutline().intersects(r);
-	}
-	
-	protected Rectangle getBounds()
-	{
-		Rectangle bounds = getOutline().getBounds();
-		if(this instanceof GmmlLabel) {
-			GC gc = new GC(canvas);
-			org.eclipse.swt.graphics.Point p = gc.textExtent(((GmmlLabel)this).getLabelText());
-			Point c = getCenter();
-			bounds.add(new Rectangle2D.Double(c.x - p.x/2, c.y - p.y/2, c.x + p.x/2, c.y + p.y/2)); 
-			gc.dispose();
-		}
-		return getOutline().getBounds();
-	}
-	
+			
 	public void gmmlObjectModified(GmmlEvent e) {		
 		markDirty(); // mark everything dirty
 		setHandleLocation();

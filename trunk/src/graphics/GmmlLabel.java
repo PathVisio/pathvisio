@@ -17,6 +17,11 @@ limitations under the License.
 */
 
 
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -148,8 +153,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		listen = false;
 		super.adjustToZoom(factor);
 		gdata.setFontSize(gdata.getFontSize() * factor);
-		listen = true;
-		
+		listen = true;		
 	}
 
 	private int getFontStyle() {
@@ -208,4 +212,38 @@ public class GmmlLabel extends GmmlGraphicsShape
 			adjustWidthToText();
 		}
 	}
+	
+	/**
+	 * Outline of a label is determined by
+	 * - position of the handles
+	 * - size of the text
+	 * Because the text can sometimes be larger than the handles
+	 */
+	protected Shape getOutline()
+	{
+		int[] x = new int[4];
+		int[] y = new int[4];
+		
+		int[] p = getHandleLocation(handleNE).asIntArray();
+		x[0] = p[0]; y[0] = p[1];
+		p = getHandleLocation(handleSE).asIntArray();
+		x[1] = p[0]; y[1] = p[1];
+		p = getHandleLocation(handleSW).asIntArray();
+		x[2] = p[0]; y[2] = p[1];
+		p = getHandleLocation(handleNW).asIntArray();
+		x[3] = p[0]; y[3] = p[1];
+		
+		Polygon pol = new Polygon(x, y, 4);
+		
+		Rectangle bounds = pol.getBounds();
+		
+		GC gc = new GC(canvas);
+		org.eclipse.swt.graphics.Point q = gc.textExtent(((GmmlLabel)this).getLabelText());
+		util.LinAlg.Point c = getCenter();
+		bounds.add(new Rectangle2D.Double(c.x - q.x/2, c.y - q.y/2, c.x + q.x/2, c.y + q.y/2)); 
+		gc.dispose();
+		
+		return bounds;
+	}
+	
 }

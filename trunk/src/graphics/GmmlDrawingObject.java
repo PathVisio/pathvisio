@@ -1,5 +1,6 @@
 package graphics;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -100,7 +101,10 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param r - the rectangle to check
 	 * @return True if the object intersects the rectangle, false otherwise
 	 */
-	protected abstract boolean intersects(Rectangle2D.Double r);
+	protected final boolean intersects(Rectangle2D.Double r)
+	{
+		return getOutline().intersects(r);
+	}
 	
 	/**
 	 * Determines wheter a GmmlGraphics object contains
@@ -108,7 +112,12 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param point - the point to check
 	 * @return True if the object contains the point, false otherwise
 	 */
-	protected abstract boolean isContain(Point2D point);
+	protected final boolean isContain(Point2D point)
+	{
+		return getOutline().contains(point);
+	}	
+
+
 	public boolean isSelected()
 	{
 		return isSelected;
@@ -165,7 +174,13 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * Get the rectangular boundary of this object
 	 * @return
 	 */
-	protected abstract Rectangle getBounds();
+	protected final Rectangle getBounds()
+	{
+		return getOutline().getBounds();
+	}
+	
+	abstract protected Shape getOutline();
+
 
 	/**
 	 * Scales the object to the given rectangle

@@ -1,6 +1,7 @@
 package util;
 
 import gmmlVision.GmmlVision;
+import graphics.GmmlDrawing;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,11 +12,24 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 public class SwtUtils {
 
+	public static GridData getColorLabelGrid() {
+		GridData colorLabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		colorLabelGrid.widthHint = colorLabelGrid.heightHint = 15;
+		return colorLabelGrid;
+	}
+	
 	/**
 	 * Change the given {@link Color}; this method disposes the old color for you
 	 * @param cOld	the old {@link Color}
@@ -48,7 +62,104 @@ public class SwtUtils {
 			fOld.dispose();
 			fOld = null;
 		}
-		return new Font(display, fd);
+		return fd != null ? new Font(display, fd) : null;
+	}
+	
+	public static Image changeImage(Image iOld, ImageData iNew, Display display)
+	{
+		if(iOld != null && !iOld.isDisposed())
+		{
+			iOld.dispose();
+			iOld = null;
+		}
+		return iNew != null ? new Image(display, iNew) : null;
+	}
+	
+	public static void setCompositeAndChildrenEnabled(Composite comp, boolean enable) {
+		comp.setEnabled(enable);
+		for(Control c : comp.getChildren()) {
+			c.setEnabled(enable);
+			if(c instanceof Composite)
+				setCompositeAndChildrenEnabled((Composite) c, enable);
+		}
+	}
+	
+	public static void setCompositeAndChildrenBackground(Composite comp, Color color) {
+		comp.setBackground(color);
+		for(Control c : comp.getChildren()) {
+			c.setBackground(color);
+			if(c instanceof Composite)
+				setCompositeAndChildrenBackground((Composite) c, color);
+		}
+	}
+	
+	static int[] incrs;
+	static int ii;
+	static int pixratio;
+	public static Font adjustFontSize(Font f, Point toFit, String text, GC gc, Display display) {
+		GmmlDrawing d = GmmlVision.getDrawing();
+		pixratio = (int)Math.ceil(3 * (d == null ? 1 : d.getZoomFactor()));
+		ii = 3;
+		incrs = new int[3];
+//		System.err.println(">>>>>>>>>>>> Starting adjust <<<<<<<<<<<<,");
+//		System.err.println("INITIAL: "+ f.getFontData()[0].getHeight());
+		f = setFontSize(f.getFontData()[0].getHeight(), f, gc, display);
+		return findFontSize(f, toFit, text, gc, display);		
+	}
+	
+	static int getIncrement(Point toFit, String text, GC gc) {	
+		int borderX = 3;
+		int borderY = 0;
+		
+		Point size = gc.textExtent(text);
+		
+		int dx = size.x - toFit.x + borderX;
+		int dy = size.y - toFit.y + borderY;
+		if(dx == 0 && dy == 0) return 0; //rare case
+		return add(pix2point(-Math.max(dx, dy)));
+	}
+	
+	static Font findFontSize(Font f, Point toFit, String text, GC gc, Display display) {
+		int incr = getIncrement(toFit, text, gc);
+//		System.err.println("incr: " + incr);
+		if(incr != 0 && checkIncrs()) {
+			int size = f.getFontData()[0].getHeight() + incr;
+//			System.err.println("Size: " + size);
+			if(size < 0) {
+				pixratio++;
+//				System.err.println("Increasing pixratio: " + pixratio);
+			} else {
+				f = setFontSize(size, f, gc,display);
+			}
+			f = findFontSize(f, toFit, text, gc, display);
+		}
+		return f;
+	}
+	
+	static boolean checkIncrs() {
+		//System.err.println(incrs[0] + " : " + incrs[1] + " : " + incrs[2]);
+		return !(incrs[0] == incrs[2]);
+	}
+	
+	static int add(int incr) {
+		incrs[0] = incrs[1];
+		incrs[1] = incrs[2];
+		incrs[2] = incr;
+		return incr;
+	}
+	
+	static int pix2point(int pix) { 
+		//System.err.println("pix: " + pix);
+		//System.err.println("point: " + (double)pix/pixratio);
+		return pix / pixratio; 
+	}
+	
+	static Font setFontSize(int size, Font f, GC gc, Display display) {
+		FontData fd = f.getFontData()[0];
+		fd.setHeight(size);
+		f = changeFont(f, fd, display);
+		gc.setFont(f);
+		return f;
 	}
 	
 	/**

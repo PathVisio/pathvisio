@@ -34,7 +34,7 @@ public class GmmlBrace extends GmmlGraphicsShape
 	 * (non-Javadoc)
 	 * @see GmmlGraphics#draw(java.awt.Graphics)
 	 */
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{		
 		Color c = null;
 		if (isSelected())

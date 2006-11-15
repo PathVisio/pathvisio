@@ -1,14 +1,18 @@
 package data;
 
 import gmmlVision.GmmlVision;
-import gmmlVision.GmmlVisionWindow;
-import graphics.GmmlDrawing;
+import gmmlVision.GmmlVision.ApplicationEvent;
+import gmmlVision.GmmlVision.ApplicationEventListener;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -19,18 +23,24 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import util.FileUtils;
-import colorSet.GmmlColorCriterion;
-import colorSet.GmmlColorGradient;
-import colorSet.GmmlColorSet;
-import colorSet.GmmlColorSetObject;
+import visualization.VisualizationManager;
+import visualization.colorset.ColorSetManager;
+import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
@@ -40,7 +50,8 @@ import data.ImportExprDataWizard.ImportPage;
  * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
  * to hsqldb format
  */
-public abstract class GmmlGex {
+public class GmmlGex implements ApplicationEventListener {
+	public static final String XML_ELEMENT = "expression-data-visualizations";
 	private static final int COMPAT_VERSION = 1;
 	
 	private static Connection con;
@@ -67,225 +78,125 @@ public abstract class GmmlGex {
 	 * (.properties file of the Hsql database)
 	 */
 	public static void setGexFile(File file) { gexFile = file; }
-	
-	private static Vector<GmmlColorSet> colorSets = new Vector<GmmlColorSet>();
-	
-	/**
-	 * Gets the {@link ColorSet}s used for the currently loaded Expression data
-	 */
-	public static Vector<GmmlColorSet> getColorSets() { return colorSets; }
-	
-	/**
-	 * Index of the colorSet that is currently used
-	 */
-	private static int colorSetIndex = -1;
-	
-	/**
-	 * Set the index of the colorset to use
-	 * @param colorSetIndex
-	 */
-	public static void setColorSetIndex(int _colorSetIndex)
-	{
-		GmmlVisionWindow window = GmmlVision.getWindow();
-		colorSetIndex = _colorSetIndex;
-		if(colorSetIndex < 0)
-		{
-			window.showLegend(false);
-		} else {
-			window.showLegend(true);
-		}
-		GmmlDrawing d = GmmlVision.getDrawing();
-		if(d != null) { d.redraw(); }
-	}
-	
-	public static void setColorSet(GmmlColorSet cs) {
-		int ci = getColorSets().indexOf(cs);
-		if(ci > -1) setColorSetIndex(ci);
-	}
-	
-	/**
-	 * Get the index of the currently used colorset
-	 * @return
-	 */
-	public static int getColorSetIndex() { 
-		return colorSetIndex;
-	}
-	
-	/**
-	 * Sets the {@link ColorSet}s used for the currently loaded Expression data
-	 * @param colorSets {@link Vector} containing the {@link ColorSet} objects
-	 */
-	public static void setColorSets(Vector<GmmlColorSet> _colorSets)
-	{
-		colorSets = _colorSets;
-	}
-	
-	/**
-	 * Removes this {@link ColorSet}
-	 * @param cs Colorset to remove
-	 */
-	public static void removeColorSet(GmmlColorSet cs) {
-		if(colorSets.contains(cs)) {
-			colorSets.remove(cs);
-			if(colorSetIndex == 0 && colorSets.size() > 0) setColorSetIndex(colorSetIndex);
-			else setColorSetIndex(colorSetIndex - 1);
+				
+	public static InputStream getXmlInput() {
+		File xmlFile = new File(gexFile + ".xml");
+		try {
+			if(!xmlFile.exists()) xmlFile.createNewFile();
+			InputStream in = new FileInputStream(xmlFile);
+			return in;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	/**
-	 * Removes this {@link ColorSet}
-	 * @param i index of ColorSet to remove
-	 */
-	public static void removeColorSet(int i) {
-		if(i > -1 && i < colorSets.size()) {
-			removeColorSet(colorSets.get(i));
+	public static OutputStream getXmlOutput() {
+		try {
+			File f = new File(gexFile + ".xml");
+			OutputStream out = new FileOutputStream(f);
+			return out;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	/**
-	 * Gets the names of all {@link GmmlColorSet}s used 
-	 * @return
-	 */
-	public static String[] getColorSetNames()
-	{
-		String[] colorSetNames = new String[colorSets.size()];
-		for(int i = 0; i < colorSetNames.length; i++)
-		{
-			colorSetNames[i] = ((GmmlColorSet)colorSets.get(i)).name;
+	public static void saveXML() {
+		if(!isConnected()) return;
+		
+		OutputStream out = getXmlOutput();
+		
+		Document xmlDoc = new Document();
+		Element root = new Element(XML_ELEMENT);
+		xmlDoc.setRootElement(root);
+		
+		root.addContent(VisualizationManager.getNonGenericXML());
+		root.addContent(ColorSetManager.getXML());
+		
+		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		try {
+			xmlOut.output(xmlDoc, out);
+			out.close();
+		} catch(IOException e) {
+			GmmlVision.log.error("Unable to save visualization settings", e);
 		}
-		return colorSetNames;
 	}
 	
-	/**
-	 * Saves the {@link ColorSets} in the Vector {@link colorSets} to the Expression database
-	 */
-	public static void saveColorSets()
-	{
-		try
-		{
-			con.setReadOnly(false);
-			Statement s = con.createStatement();
-			s.execute("DELETE FROM colorSets");
-			s.execute("DELETE FROM colorSetObjects");
+	public static void loadXML() {
+		Document doc = getXML();
+		Element root = doc.getRootElement();
+		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
+		VisualizationManager.loadNonGenericXML(vis);
+		Element cs = root.getChild(ColorSetManager.XML_ELEMENT);
+		ColorSetManager.fromXML(cs);
+	}
+	
+	public static Document getXML() {
+		InputStream in = GmmlGex.getXmlInput();
+		Document doc;
+		Element root;
+		try {
+			SAXBuilder parser = new SAXBuilder();
+			doc = parser.build(in);
+			in.close();
 			
-			PreparedStatement sCs = con.prepareStatement(
-					"INSERT INTO colorSets	" +
-					"( colorSetId, name, criterion ) VALUES	" +
-			"( ?, ?, ? )"	);
-			PreparedStatement sCso = con.prepareStatement(
-					"INSERT INTO colorSetObjects 	" +
-					"( 	name, colorSetId,		" +
-					"	criterion	) VALUES		" +
-			"(	?, ?, ?	)"	);
+			root = doc.getRootElement();
+		} catch(Exception e) {
+			doc = new Document();
+			root = new Element(XML_ELEMENT);
+			doc.setRootElement(root);
 			
-			for(int i = 0; i < colorSets.size(); i++)
-			{
-				GmmlColorSet cs = (GmmlColorSet)colorSets.get(i);
-				sCs.setInt(1, i);
-				sCs.setString(2, cs.name);
-				sCs.setString(3, cs.getCriterionString());
-				sCs.execute();
-				for(int j = 0; j < cs.colorSetObjects.size(); j++)
-				{
-					GmmlColorSetObject cso = (GmmlColorSetObject)cs.colorSetObjects.get(j);
-					sCso.setString(1, cso.getName());
-					sCso.setInt(2, i);
-					sCso.setString(3, cso.getCriterionString());
-					sCso.execute();
-				}
-			}
-			con.setReadOnly(true);
-		}
-		catch (Exception e) {
-			GmmlVision.log.error("while saving colorset information to expression database: " + gexFile, e);
-		}
-	}
-	
-	/**
-	 * Load the colorset data stored in the Expression database in memory
-	 */
-	public static void loadColorSets()
-	{
-		try
-		{
-			Statement sCso = con.createStatement();
-			ResultSet r = con.createStatement().executeQuery(
-			"SELECT colorSetId, name, criterion FROM colorSets ORDER BY colorSetId" );
-			colorSets = new Vector<GmmlColorSet>();
-			while(r.next())
-			{
-				GmmlColorSet cs = new GmmlColorSet(r.getString(2), r.getString(3));
-				colorSets.add(cs);
-				ResultSet rCso = sCso.executeQuery(
-						"SELECT * FROM colorSetObjects" +
-						" WHERE colorSetId = " + r.getInt(1) +
-				" ORDER BY id");
-				while(rCso.next())
-				{
-					String name = rCso.getString(2);
-					String criterion = rCso.getString(4);
-					if(criterion.contains("GRADIENT"))
-					{
-						GmmlColorSetObject co = new GmmlColorGradient(cs, name, criterion);
-						cs.addObject(co);
-					} else if(criterion.contains("EXPRESSION"))
-					{
-						GmmlColorSetObject co = new GmmlColorCriterion(cs, name, criterion);
-						cs.addObject(co);
-					}
-				}
-			}
-			setColorSetIndex(colorSets.size() > 0 ? 0 : -1);
-		}
-		catch (Exception e)
-		{
-			GmmlVision.log.error("while loading colorset information from expression database: " + gexFile, e);
 		}
 		
+		return doc;
 	}
-	
+		
 	public static CachedData cachedData;
 	public static class CachedData
 	{
-		private HashMap<String, Data> data;		
+		private HashMap<IdCodePair, Data> data;		
 		public CachedData()
 		{
 			if(samples == null) setSamples(); //Cache the samples in the dataset
-			data = new HashMap<String, Data>();
+			data = new HashMap<IdCodePair, Data>();
 		}
 		
-		public boolean hasData(String id, String code)
+		public boolean hasData(IdCodePair idc)
 		{
-			if(data.containsKey(id)) return data.get(id).id.equalsIgnoreCase(id);
+			if(data.containsKey(idc)) return data.get(idc).idcode.equals(idc);
 			else return false;
 		}
 		
-		public Data getData(String id, String code)
+		public Data getData(IdCodePair idc)
 		{
 			Data d = null;
-			if(data.containsKey(id)) { 
-				d = data.get(id);
-				if(!d.id.equalsIgnoreCase(id)) d = null;
+			if(data.containsKey(idc)) { 
+				d = data.get(idc);
+				if(!d.idcode.equals(idc)) d = null;
 			}
 			return d;
 		}
 		
-		public void addData(String id, Data mappIdData)
+		public void addData(String id, String code, Data mappIdData)
 		{
-			data.put(id, mappIdData);
+			data.put(new IdCodePair(id, code), mappIdData);
 		}
 		
-		public class Data
+		public class Data implements Comparable
 		{
-			private String id;
-			private String code;
+			private IdCodePair idcode;
 			private HashMap<Integer, Object> sampleData;
-			private HashMap<String, Data> refData;
+			private HashMap<IdCodePair, Data> refData;
 			
 			public Data(String id, String code) {
-				this.id = id;
-				this.code = code;
-				refData = new HashMap<String, Data>();
+				idcode = new IdCodePair(id, code);
+				refData = new HashMap<IdCodePair, Data>();
+				sampleData = new HashMap<Integer, Object>();
+			}
+			
+			public Data(IdCodePair idcode) {
+				this.idcode = idcode;
 				sampleData = new HashMap<Integer, Object>();
 			}
 			
@@ -294,14 +205,15 @@ public abstract class GmmlGex {
 			public void addRefData(String id, String code, int sampleId, String data) 
 			{ 
 				Data ref = null;
-				if(refData.containsKey(id)) ref = refData.get(id);
-				else ref = new Data(id, code);
+				IdCodePair idcode = new IdCodePair(id, code);
+				if(refData.containsKey(idcode)) ref = refData.get(idcode);
+				else ref = new Data(idcode);
 				
 				Object parsedData = null;
 				try { parsedData = Double.parseDouble(data); }
 				catch(Exception e) { parsedData = data; }
 				ref.addSampleData(sampleId, parsedData);
-				refData.put(id, ref);
+				refData.put(idcode, ref);
 			}
 			
 			public void addSampleData(int sampleId, Object data)
@@ -309,9 +221,11 @@ public abstract class GmmlGex {
 				if(data != null) sampleData.put(sampleId, data);
 			}
 			
-			public ArrayList<Data> getRefData()
+			public List<Data> getRefData()
 			{
-				return new ArrayList<Data>(refData.values());
+				List<Data> rd = new ArrayList<Data>(refData.values());
+				Collections.sort(rd);
+				return rd;
 			}
 			
 			public Object getData(int idSample)
@@ -323,6 +237,13 @@ public abstract class GmmlGex {
 			public boolean hasMultipleData()
 			{
 				return refData.keySet().size() > 1;
+			}
+			
+			public HashMap<Integer, Object> getSampleData() {
+				if(sampleData.size() == 0) {
+					if(refData.size() > 0) return getAverageSampleData();
+				}
+				return sampleData;
 			}
 			
 			public HashMap<Integer, Object> getAverageSampleData()
@@ -361,6 +282,11 @@ public abstract class GmmlGex {
 				int end = sb.lastIndexOf(", ");
 				return end < 0 ? "" : sb.substring(0, end).toString();
 			}
+
+			public int compareTo(Object o) {
+				Data d = (Data)o;
+				return idcode.compareTo(d.idcode);
+			}
 		}
 	}
     
@@ -385,14 +311,18 @@ public abstract class GmmlGex {
 		}
 	}
 	
+	public static Sample getSample(int id) {
+		return getSamples().get(id);
+	}
+	
 	/**
 	 * This class represents a record in the Sample table of the Expression database. 
 	 */
 	public static class Sample implements Comparable<Sample>
 	{
-		public int idSample;
+		private int idSample;
 		private String name;
-		public int dataType;
+		private int dataType;
 		
 		/**
 		 * Constructor of this class
@@ -411,8 +341,11 @@ public abstract class GmmlGex {
 		}
 		
 		public String getName() { return name == null ? "" : name; }
+		protected void setName(String nm) { name = nm; }
 		public int getDataType() { return dataType; }
-		
+		protected void setDataType(int type) { dataType = type; }
+		public int getId() { return idSample; }
+		protected void setId(int id) { idSample = id; }
 		/**
 		 * Compares this object to another {@link Sample} object based on the idSample property
 		 * @param o	The {@link Sample} object to compare with
@@ -425,6 +358,15 @@ public abstract class GmmlGex {
 			return idSample - o.idSample;
 		}
 		
+		public int hashCode() {
+			return idSample;
+		}
+		
+		public boolean equals(Object o) {
+			if(o instanceof Sample) return ((Sample) o).idSample == idSample;
+			return false;
+		}
+		
 		/**
 		 * Returns a readable String representation of this object
 		 */
@@ -435,15 +377,14 @@ public abstract class GmmlGex {
 	}
 	
 	/**
-	 * Checks whether Expression data is cached for a given gene id
-	 * @param id	the gene id
-	 * @param code	The systemcode of the gene identifier
+	 * Checks whether Expression data is cached for a given gene product
+	 * @param idc	the {@link IdCodePair} containing the id and code of the geneproduct to look for
 	 * @return		true if Expression data is found in cache, false if not
 	 */
-	public static boolean hasData(String id, String code)
+	public static boolean hasData(IdCodePair idc)
 	{
 		if(cachedData == null) return false;
-		return cachedData.hasData(id, code);
+		return cachedData.hasData(idc);
 	}
 	
 	public static HashMap<Integer, Sample> getSamples()
@@ -452,37 +393,62 @@ public abstract class GmmlGex {
 		return samples;
 	}
 	
-	public static Data getCachedData(String id, String code)
+	public static List<String> getSampleNames() {
+		return getSampleNames(-1);
+	}
+	
+	public static List<String> getSampleNames(int dataType) {
+		List<String> names = new ArrayList<String>();
+		List<Sample> sorted = new ArrayList<Sample>(samples.values());
+		Collections.sort(sorted);
+		for(Sample s : sorted) {
+			if(dataType == s.dataType || dataType == -1)
+				names.add(s.getName());
+		}
+		return names;
+	}
+	
+	public static List<Sample> getSamples(int dataType) {
+		List<Sample> smps = new ArrayList<Sample>();
+		List<Sample> sorted = new ArrayList<Sample>(samples.values());
+		Collections.sort(sorted);
+		for(Sample s : sorted) {
+			if(dataType == s.dataType || dataType == -1)
+				smps.add(s);
+		}
+		return smps;
+	}
+	
+	public static Data getCachedData(IdCodePair idc)
 	{
-		if(cachedData != null) return cachedData.getData(id, code);
+		if(cachedData != null) return cachedData.getData(idc);
 		return null;
 	}
 	
 	/**
 	 * Gets all available expression data for the given gene id and returns a string
 	 * containing this data in a HTML table
-	 * @param id	the gene id for which the data has to be returned
-	 * @param code	The systemcode of the gene identifier
+	 * @param idc	the {@link IdCodePair} containing the id and code of the geneproduct to look for
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	public static String getDataString(String id, String code)
+	public static String getDataString(IdCodePair idc)
 	{
 		String noDataFound = "<P><I>No expression data found";
-		String exprInfo = "<P><B>Gene id on mapp: " + id + "</B><TABLE border='1'>";
+		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
 				|| GmmlGdb.getCon() == null //and to the gene database
 		) return noDataFound;
 		
-		Data mappIdData = cachedData.getData(id, code);
+		Data mappIdData = cachedData.getData(idc);
 		if(mappIdData == null) return noDataFound;
-		ArrayList<Data> refData = mappIdData.getRefData();
+		List<Data> refData = mappIdData.getRefData();
 		if(refData == null) return noDataFound; //The gene doesn't have data after all
 		for(Data d : refData)
 		{
-			colNames += "<TH>" + d.id;
+			colNames += "<TH>" + d.idcode.getId();
 		}
 		String dataString = "";
 		for(Sample s : getSamples().values())
@@ -538,7 +504,7 @@ public abstract class GmmlGex {
 						GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
 					}
 				}
-				if(mappGeneData.hasData()) cachedData.addData(id, mappGeneData);
+				if(mappGeneData.hasData()) cachedData.addData(id, code, mappGeneData);
 			}			
 			if(cacheThread.isInterrupted) //Check if the process is interrupted
 			{
@@ -826,6 +792,9 @@ public abstract class GmmlGex {
 			monitor.setTaskName("Closing database connection");
 			close(true, true);
 			error.close();
+			
+			setPropertyReadOnly(gexFile, true);
+			
 			connect(); //re-connect and use the created expression dataset
 			
 		} catch(Exception e) { 
@@ -992,8 +961,10 @@ public abstract class GmmlGex {
 		
 //		if(!clean) Utils.checkDbVersion(con, COMPAT_VERSION);
 		
+		loadXML();
 		setSamples();
-		loadColorSets();
+		
+		fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_OPENED));
 	}
 	
 	/**
@@ -1016,6 +987,8 @@ public abstract class GmmlGex {
 		{
 			try
 			{
+				saveXML();
+				
 				Statement sh = con.createStatement();
 				if(shutdown) {
 					//Shutdown to write last changes, compact to compact the data file (can take a while)
@@ -1023,6 +996,7 @@ public abstract class GmmlGex {
 				}
 				sh.close();
 				con = null;
+				fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 			} catch (Exception e) {
 				GmmlVision.log.error("Error while closing connection to expression dataset " + gexFile, e);
 			}
@@ -1069,6 +1043,65 @@ public abstract class GmmlGex {
 				GmmlVision.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
 			}
 		}
+	}
+	
+	public void applicationEvent(ApplicationEvent e) {
+		switch(e.type) {
+		case ApplicationEvent.CLOSE_APPLICATION:
+			if(isConnected()) close();
+		}
+	}
+	
+	static List<ExpressionDataListener> listeners;
+	
+	/**
+	 * Add a {@link ExpressionDataListener}, that will be notified if an
+	 * event related to expression data occurs
+	 * @param l The {@link ExpressionDataListener} to add
+	 */
+	public static void addListener(ExpressionDataListener l) {
+		if(listeners == null) listeners = new ArrayList<ExpressionDataListener>();
+		listeners.add(l);
+	}
+	
+	/**
+	 * Fire a {@link ExpressionDataEvent} to notify all {@link ExpressionDataListener}s registered
+	 * to this class
+	 * @param e
+	 */
+	public static void fireExpressionDataEvent(ExpressionDataEvent e) {
+		for(ExpressionDataListener l : listeners) l.expressionDataEvent(e);
+	}
+	
+	public interface ExpressionDataListener {
+		public void expressionDataEvent(ExpressionDataEvent e);
+	}
+	
+	public static class ExpressionDataEvent extends EventObject {
+		private static final long serialVersionUID = 1L;
+		public static final int CONNECTION_OPENED = 0;
+		public static final int CONNECTION_CLOSED = 1;
+
+		public Object source;
+		public int type;
+		
+		public ExpressionDataEvent(Object source, int type) {
+			super(source);
+			this.source = source;
+			this.type = type;
+		}
+	}
+	
+	public static void setPropertyReadOnly(File propertyFile, boolean readonly) {
+    	// Set readonly to true
+    	Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(propertyFile));
+			prop.setProperty("hsqldb.files_readonly", Boolean.toString(readonly));
+			prop.store(new FileOutputStream(propertyFile), "HSQL Database Engine");
+			} catch (Exception e) {
+				GmmlVision.log.error("Unable to set database properties to readonly", e);
+			}
 	}
 	
 	/**
@@ -1133,19 +1166,5 @@ public abstract class GmmlGex {
 			sh.execute(
 					"CREATE INDEX i_expression_groupId" +
 			" ON expression(groupId)	");
-			sh.execute(
-					"CREATE CACHED TABLE				" +
-					"		colorSets					" +
-					"(	colorSetId INTEGER PRIMARY KEY,	" +
-					"	name VARCHAR(50)," +
-			"	criterion VARCHAR(100)	)");
-			sh.execute(
-					"CREATE CACHED TABLE				" +
-					"		colorSetObjects				" +
-					"(	id INTEGER IDENTITY,			" +
-					"	name VARCHAR(50),				" +
-					"	colorSetId INTEGER,				" +
-					"	criterion VARCHAR(100)			" +
-			" )							");
 	}
 }

@@ -171,7 +171,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		return style;
 	}
 	
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{
 		int style = getFontStyle();
 		

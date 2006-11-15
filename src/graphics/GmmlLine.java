@@ -1,10 +1,8 @@
 package graphics;
 
 import java.awt.BasicStroke;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.eclipse.swt.SWT;
@@ -41,7 +39,7 @@ public class GmmlLine extends GmmlGraphics
 		setHandleLocation();
 	}
 		
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{
 		double endx = gdata.getEndX();
 		double endy = gdata.getEndY();

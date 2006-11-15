@@ -126,7 +126,7 @@ class GmmlHandle extends GmmlDrawingObject
 	 * draws itself, but only if isVisible() is true, there is 
 	 * no need for a check for isVisible() before calling draw().
 	 */
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{
 		if (!isVisible) return;
 		

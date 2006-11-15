@@ -20,16 +20,15 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import preferences.GmmlPreferences;
-
 import util.FileUtils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
+import visualization.colorset.Criterion;
 import R.RCommands.RException;
 import R.RCommands.RObjectContainer;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
-import colorSet.Criterion;
 import data.GmmlGdb;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;

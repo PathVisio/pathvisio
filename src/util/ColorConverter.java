@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
+import org.jdom.Element;
 
 public abstract class ColorConverter
 {
@@ -133,5 +134,26 @@ public abstract class ColorConverter
     		s = c + s;
     	}
     	return s;
+    }
+    
+    final static String XML_ELEMENT_COLOR = "color";
+	final static String XML_COLOR_R = "red";
+	final static String XML_COLOR_G = "green";
+	final static String XML_COLOR_B = "blue";
+    public static Element createColorElement(String name, RGB rgb) {
+    	Element elm = new Element(XML_ELEMENT_COLOR);
+    	elm.setName(name);
+    	elm.setAttribute(XML_COLOR_R, Integer.toString(rgb.red));
+    	elm.setAttribute(XML_COLOR_G, Integer.toString(rgb.green));
+    	elm.setAttribute(XML_COLOR_B, Integer.toString(rgb.blue));
+    	
+    	return elm;
+    }
+    
+    public static RGB parseColorElement(Element xml) {
+    	int r = Integer.parseInt(xml.getAttributeValue(XML_COLOR_R));
+    	int g = Integer.parseInt(xml.getAttributeValue(XML_COLOR_G));
+    	int b = Integer.parseInt(xml.getAttributeValue(XML_COLOR_B));
+    	return new RGB(r,g,b);
     }
 }

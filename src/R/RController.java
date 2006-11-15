@@ -1,8 +1,8 @@
 package R;
 
 import gmmlVision.GmmlVision;
-import gmmlVision.GmmlVision.PropertyEvent;
-import gmmlVision.GmmlVision.PropertyListener;
+import gmmlVision.GmmlVision.ApplicationEvent;
+import gmmlVision.GmmlVision.ApplicationEventListener;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,7 +26,7 @@ import util.JarUtils;
 import util.Utils;
 import R.RCommands.RException;
 
-public class RController implements PropertyListener{	
+public class RController implements ApplicationEventListener{	
 	private static Rengine re;
 	private static BufferedReader rOut;
 	
@@ -67,7 +67,7 @@ public class RController implements PropertyListener{
 			return false;
 		} finally {
 			//Add a listener to close R on closing gmml-visio
-			GmmlVision.addPropertyListener(new RController());
+			GmmlVision.addApplicationEventListener(new RController());
 		}
 
 		return true;
@@ -333,8 +333,8 @@ public class RController implements PropertyListener{
 		});
 	}
 		
-	public void propertyChanged(PropertyEvent e) {
-		if(e.name == GmmlVision.PROPERTY_CLOSE_APPLICATION) {
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.type == ApplicationEvent.CLOSE_APPLICATION) {
 			endR(); //End the R process
 			if(rOut != null) { //Close the R output file
 				try { 

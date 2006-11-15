@@ -29,7 +29,7 @@ public class GmmlShape extends GmmlGraphicsShape
 		setHandleLocation();
 	}
 		
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{	
 		Color c = null;
 		if (isSelected())

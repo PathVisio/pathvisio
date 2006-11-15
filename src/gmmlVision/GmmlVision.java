@@ -32,7 +32,7 @@ public abstract class GmmlVision {
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
-	static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
+	public static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
 	
 	/**
 	 * {@link GmmlData} object containing JDOM representation of the gmml pathway 
@@ -163,7 +163,7 @@ public abstract class GmmlVision {
 			drawing = _drawing;
 			gmmlData = _gmmlData;
 			drawing.fromGmmlData(_gmmlData);
-			firePropertyChange(new PropertyEvent(drawing, PROPERTY_OPEN_PATHWAY));
+			fireApplicationEvent(new ApplicationEvent(drawing, ApplicationEvent.OPEN_PATHWAY));
 		}
 		
 	}
@@ -176,7 +176,7 @@ public abstract class GmmlVision {
 		gmmlData.initMappInfo();
 		drawing = getWindow().createNewDrawing();
 		drawing.fromGmmlData(gmmlData);
-		firePropertyChange(new PropertyEvent(drawing, PROPERTY_NEW_PATHWAY));
+		fireApplicationEvent(new ApplicationEvent(drawing, ApplicationEvent.NEW_PATHWAY));
 	}
 	
 	/**
@@ -207,54 +207,44 @@ public abstract class GmmlVision {
 	
 	public static boolean isUseR() { return USE_R; }
 	
-	//Property event handling
-	public static final String PROPERTY_OPEN_PATHWAY = "property_open_pathway";
-	public static final String PROPERTY_NEW_PATHWAY = "property_new_pathway";
-	public static final String PROPERTY_CLOSE_APPLICATION = "property_close_app";
 	
-	static List<PropertyListener> propertyListeners;
+	static List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
 	
 	/**
-	 * Add a {@link PropertyListener} PropertyListener, that will be notified if a
+	 * Add an {@link ApplicationEventListener}, that will be notified if a
 	 * property changes that has an effect throughout the program (e.g. opening a pathway)
-	 * @param l The {@link PropertyListener} to add
+	 * @param l The {@link ApplicationEventListener} to add
 	 */
-	public static void addPropertyListener(PropertyListener l) {
-		if(propertyListeners == null) 
-			propertyListeners = new ArrayList<PropertyListener>();
-		propertyListeners.add(l);
+	public static void addApplicationEventListener(ApplicationEventListener l) {
+		applicationEventListeners.add(l);
 	}
 	
 	/**
-	 * Fire a {@link PropertyEvent} to notify all {@link PropertyListeners} registered
+	 * Fire a {@link ApplicationEvent} to notify all {@link ApplicationEventListener}s registered
 	 * to this class
 	 * @param e
 	 */
-	public static void firePropertyChange(PropertyEvent e) {
-		for(PropertyListener l : propertyListeners) l.propertyChanged(e);
+	public static void fireApplicationEvent(ApplicationEvent e) {
+		for(ApplicationEventListener l : applicationEventListeners) l.applicationEvent(e);
 	}
 	
-	public interface PropertyListener {
-		public void propertyChanged(PropertyEvent e);
+	public interface ApplicationEventListener {
+		public void applicationEvent(ApplicationEvent e);
 	}
 	
-	public static class PropertyEvent extends EventObject {
+	public static class ApplicationEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
+		public static final int OPEN_PATHWAY = 1;
+		public static final int NEW_PATHWAY = 2;
+		public static final int CLOSE_APPLICATION = 3;
 
 		public Object source;
-		public String name;
-		public String oldValue;
-		public String newValue;
+		public int type;
 		
-		public PropertyEvent(Object source, String name, String oldValue, String newValue) {
+		public ApplicationEvent(Object source, int type) {
 			super(source);
 			this.source = source;
-			this.name = name;
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
-		public PropertyEvent(Object source, String name) {
-			this(source, name, "", "");
+			this.type = type;
 		}
 	}
 

@@ -41,10 +41,10 @@ import org.eclipse.swt.widgets.Text;
 import util.JarUtils;
 import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
+import visualization.colorset.Criterion;
+import visualization.colorset.CriterionComposite;
 import R.RCommands.RException;
 import R.wizard.RWizard;
-import colorSet.Criterion;
-import colorSet.CriterionComposite;
 
 
 public class RFunctionLoader {

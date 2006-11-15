@@ -76,8 +76,8 @@ public class GmmlLabel extends GmmlGraphicsShape
 	
 	String prevText = "";
 	public void adjustWidthToText() {
-		System.out.println("adjusting");
 		if(gdata.getLabelText().equals(prevText)) return;
+		
 		prevText = getLabelText();
 		
 		GC gc = new GC(canvas.getDisplay());

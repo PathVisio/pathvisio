@@ -77,7 +77,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		String id = gdata.getGraphId();
 		List<GmmlDataObject> refs = gdata.getParent().getReferringObjects(id);
 		
-		if (refs != null) 
+		if (refs != null && !id.equals("")) 
 		{
 			for (GmmlDataObject o : refs)
 			{

@@ -1,5 +1,9 @@
 package gmmlVision;
+import graphics.GmmlDrawingObject;
 import graphics.GmmlGeneProduct;
+import graphics.GmmlSelectionBox;
+import graphics.GmmlSelectionBox.SelectionEvent;
+import graphics.GmmlSelectionBox.SelectionListener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,7 +20,7 @@ import data.GmmlGdb.IdCodePair;
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
  */
-public class GmmlBpBrowser extends Composite {
+public class GmmlBpBrowser extends Composite implements SelectionListener {
 	/**
 	 * Directory containing HTML files needed to display the backpage information
 	 */
@@ -56,10 +60,14 @@ public class GmmlBpBrowser extends Composite {
 		bpBrowser = new Browser(this, style); //Set the Browser widget
 		setGeneText(null);
 		setGexText(null);
+		
+		GmmlSelectionBox.addListener(this);
 	}
 	
-	public void setGene(GmmlGeneProduct gp) 
+	public void setGeneProduct(GmmlGeneProduct gp) 
 	{ 
+		if(geneProduct == gp) return;
+		
 		geneProduct = gp;
 		if(gp == null) {
 			setGeneText(null);
@@ -140,6 +148,25 @@ public class GmmlBpBrowser extends Composite {
 			}
 		} catch (Exception e) {
 			GmmlVision.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
+		}
+	}
+
+	public void drawingEvent(SelectionEvent e) {
+		switch(e.type) {
+		case SelectionEvent.OBJECT_ADDED:
+			//Just take the first GeneProduct in the selection
+			for(GmmlDrawingObject o : e.selection) {
+				if(o instanceof GmmlGeneProduct) {
+					if(geneProduct != o) setGeneProduct((GmmlGeneProduct)o);
+					break; //Selects the first, TODO: use setGmmlDataObjects
+				}
+			}
+			break;
+		case SelectionEvent.OBJECT_REMOVED:
+			if(e.selection.size() != 0) break;
+		case SelectionEvent.SELECTION_CLEARED:
+			setGeneProduct(null);
+			break;
 		}
 	}
 }

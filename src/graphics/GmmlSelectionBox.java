@@ -45,7 +45,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
 		o.select();
 		selection.add(o);
-		fireSelectionEvent(new SelectionEvent(o, SelectionEvent.OBJECT_ADDED, selection));
+		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_ADDED, o));
 		if(isSelecting) return; //All we have to do if user is dragging selectionbox
 		if(hasMultipleSelection()) { 
 			stopSelecting(); //show and fit to SelectionBox if performed after dragging
@@ -60,7 +60,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		if(o == this) return;
 		selection.remove(o); 
 		o.deselect();
-		fireSelectionEvent(new SelectionEvent(o, SelectionEvent.OBJECT_REMOVED, selection));
+		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_REMOVED, o));
 		if(!isSelecting) fitToSelection();
 	}
 	
@@ -133,7 +133,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		if(clearSelection) {
 			selection.clear();
 			fireSelectionEvent(
-					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED, selection));
+					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED));
 		}
 		
 		gdata.setLeft(startX);
@@ -351,15 +351,21 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		public static final int OBJECT_REMOVED = 1;
 		public static final int SELECTION_CLEARED = 2;
 
-		public Object source;
+		public GmmlSelectionBox source;
+		public GmmlDrawingObject affectedObject;
 		public int type;
 		public List<GmmlDrawingObject> selection;
 
-		public SelectionEvent(Object source, int type, List<GmmlDrawingObject> selection) {
+		public SelectionEvent(GmmlSelectionBox source, int type, GmmlDrawingObject affectedObject) {
 			super(source);
 			this.source = source;
 			this.type = type;
-			this.selection = selection;
+			this.selection = source.selection;
+			this.affectedObject = affectedObject;
+		}
+		
+		public SelectionEvent(GmmlSelectionBox source, int type) {
+			this(source, type, null);
 		}
 	}	
 	

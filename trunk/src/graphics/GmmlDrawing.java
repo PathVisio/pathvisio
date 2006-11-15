@@ -342,7 +342,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	{
 		if(isDragging)
 		{
-			updatePropertyTable(GmmlVision.getWindow().propertyTable.getGmmlDataObject());
 			if(s.isSelecting()) { //If we were selecting, stop it
 				s.stopSelecting();
 				redrawDirtyRect();
@@ -384,7 +383,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		    	
 		Collections.sort(drawingObjects);
 		
-		//Draw visualizations and highlights
 		Visualization v = VisualizationManager.getCurrent();
 		for(GmmlDrawingObject o : drawingObjects)
 		{
@@ -412,55 +410,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 
 	boolean checkDrawAllowed(GmmlDrawingObject o) {
-		return !isEditMode() && !(	
-				o instanceof GmmlHandle ||
-				(o == s && !isDragging)
-				);
-	}
-	/**
-	 * Updates the propertytable to display information about the given GmmlDrawingObject
-	 * @param o object to update the property table for, if instanceof {@link GmmlHandle}, 
-	 * then the parent object is used, if null, then the property table is cleared
-	 */
-	private void updatePropertyTable(GmmlDrawingObject o)
-	{
-		GmmlGraphics g = null;
-		if (o != null)
-		{
-			if (o instanceof GmmlHandle && ((GmmlHandle)o).isVisible())
-			{
-				o = ((GmmlHandle)o).parent;
-			}
-			if (o instanceof GmmlGraphics)
-			{
-				g = (GmmlGraphics)o;
-				updatePropertyTable (g.gdata);
-			}
-		}		
-	}
-
-	private void updatePropertyTable(GmmlDataObject o)
-	{
-		if (o != null)
-		{
-			GmmlVision.getWindow().propertyTable.setGmmlDataObject(o);
-		}		
-	}
-
-	/**
-	 * Updates the {@link GmmlBpBrowser} to display information about the given GmmlDrawingObject
-	 * (currently only if it's a {@link GmmlGeneProduct})
-	 * @param o object to update the backpage browser for, if instance of {@link GmmlHandle}, then the
-	 * parent object is used, if null, then the backpage is cleared
-	 */
-	public void updateBackpageInfo(GmmlDrawingObject o)
-	{
-		GmmlGeneProduct gp = null;
-		if (o instanceof GmmlHandle  && ((GmmlHandle)o).isVisible()) 
-			o = ((GmmlHandle)o).parent;
-		if (o instanceof GmmlGeneProduct)
-			gp = (GmmlGeneProduct)o;
-		GmmlVision.getWindow().bpBrowser.setGene(gp);
+		if(isEditMode()) return true;
+		else return !(	o instanceof GmmlHandle ||
+						(o == s && !isDragging)
+					);
 	}
 
 	/**
@@ -489,9 +442,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			startSelecting(p2d);
 
 		redrawDirtyRect();
-		
-		updatePropertyTable(pressedObject);
-		updateBackpageInfo(pressedObject);
 	}
 	
 	/**
@@ -552,8 +502,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			// start dragging selectionbox	
 			startSelecting(p2d);
 		}		
-		updatePropertyTable(pressedObject);
-		updateBackpageInfo(pressedObject);
+
 		redrawDirtyRect();
 	}
 
@@ -831,10 +780,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 
 		clearSelection();
-		g.select();
 		s.addToSelection(g);
 		pressedObject = h;
-		updatePropertyTable(g);
+//		updatePropertyTable(g);
 		
 		previousX = e.x;
 		previousY = e.y;

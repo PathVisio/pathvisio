@@ -1,5 +1,11 @@
 package gmmlVision;
 
+import graphics.GmmlDrawingObject;
+import graphics.GmmlGraphics;
+import graphics.GmmlSelectionBox;
+import graphics.GmmlSelectionBox.SelectionEvent;
+import graphics.GmmlSelectionBox.SelectionListener;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +39,7 @@ import data.GmmlListener;
 import data.MappFormat;
 import data.ObjectType;
 
-public class GmmlPropertyTable extends Composite implements GmmlListener {
+public class GmmlPropertyTable extends Composite implements GmmlListener, SelectionListener {
 	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
 	TextCellEditor textEditor;
@@ -41,7 +47,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 	ComboBoxCellEditor comboBoxEditor;
 	
 	private GmmlDataObject g = null;
+	
 	private List<String> attributes;
+
 	
 	public GmmlDataObject getGmmlDataObject ()
 	{
@@ -59,7 +67,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 		HashMap<String, Integer> master = new HashMap<String, Integer>();
 		for (GmmlDataObject o : l)
 		{
-			for (String attr : g.getAttributes())
+			for (String attr : o.getAttributes())
 			{
 				if (master.containsKey(attr))
 				{
@@ -93,10 +101,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 		{
 			if (g != null) { g.removeListener(this); }
 			g = o;
-			attributes = g.getAttributes();
+			attributes = g != null ? g.getAttributes() : null;
 			tableViewer.setInput(g);			
 			tableViewer.refresh();
-			g.addListener(this);
+			if(g != null) g.addListener(this);
 		}
 	}
 
@@ -228,6 +236,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 		{
 			typeMappings.put(totalAttributes.get(i), attributeTypes[i]);
 		}
+		
+		GmmlSelectionBox.addListener(this);
 	}
 	
 	private CellEditor getCellEditor(Object element)
@@ -397,5 +407,25 @@ public class GmmlPropertyTable extends Composite implements GmmlListener {
 	public void gmmlObjectModified(GmmlEvent e) {
 		tableViewer.refresh();
 		GmmlVision.drawing.redrawDirtyRect();
+	}
+
+	public void drawingEvent(SelectionEvent e) {
+		switch(e.type) {
+		case SelectionEvent.OBJECT_ADDED:
+			for(GmmlDrawingObject o : e.selection) {
+				if(o instanceof GmmlGraphics) {
+					setGmmlDataObject(((GmmlGraphics)o).getGmmlData());
+					break; //Selects the first, TODO: use setGmmlDataObjects
+				}
+			}
+			break;
+		case SelectionEvent.OBJECT_REMOVED:
+			if(e.selection.size() == 0) setGmmlDataObject(null);
+			break;
+		case SelectionEvent.SELECTION_CLEARED:
+			setGmmlDataObject(null);
+			break;
+		}
+		
 	}
 }

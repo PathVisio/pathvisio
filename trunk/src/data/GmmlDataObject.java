@@ -1,6 +1,8 @@
 package data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 
@@ -1054,11 +1056,20 @@ public class GmmlDataObject
 		}
 	}
 
+	boolean doFireEvents = true;
+	public void dontFireEventsOnce() {
+		doFireEvents = false;
+	}
+	
 	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
 	public void addListener(GmmlListener v) { listeners.add(v); }
 	public void removeListener(GmmlListener v) { listeners.remove(v); }
 	public void fireObjectModifiedEvent(GmmlEvent e) 
 	{
+		if(!doFireEvents) {
+			doFireEvents = true;
+			return;
+		}
 		for (GmmlListener g : listeners)
 		{
 			g.gmmlObjectModified(e);

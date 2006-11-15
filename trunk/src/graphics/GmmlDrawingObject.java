@@ -36,7 +36,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * it is part of
 	 * @param g - the Graphics object to use for drawing
 	 */
-	protected abstract void draw(PaintEvent e, GC buffer);
+	public abstract void draw(PaintEvent e, GC buffer);
 	
 	/** 
 	 * mark both the area currently and previously occupied by this object for redraw 

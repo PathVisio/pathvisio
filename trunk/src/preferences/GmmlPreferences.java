@@ -1,7 +1,6 @@
 package preferences;
 
 import gmmlVision.GmmlVision;
-import graphics.GmmlGpColor;
 import graphics.GmmlGraphics;
 
 import java.io.File;
@@ -41,7 +40,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 		setDefault(GmmlPreferences.PREF_COL_NO_DATA_FOUND, ColorConverter.getRgbString(NO_DATA_FOUND));
 		setDefault(GmmlPreferences.PREF_COL_SELECTED, ColorConverter.getRgbString(SELECTED));
 		setDefault(GmmlPreferences.PREF_COL_HIGHLIGHTED, ColorConverter.getRgbString(HIGHLIGHTED));
-		setDefault(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, ColorConverter.getRgbString(AMBIGIOUS_REP));
+//		setDefault(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, ColorConverter.getRgbString(AMBIGIOUS_REP));
 		setDefault(GmmlPreferences.PREF_CURR_GDB, CURRENT_GDB);
 		setDefault(GmmlPreferences.PREF_SIDEPANEL_SIZE, SIDEPANEL_SIZE);
 		
@@ -90,11 +89,11 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 			else GmmlGraphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
-		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_AMBIGIOUS_REP)) {
-			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();
-			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
-			GmmlVision.getDrawing().redraw();
-		}
+//		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_AMBIGIOUS_REP)) {
+//			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();
+//			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
+//			GmmlVision.getDrawing().redraw();
+//		}
 		else if(e.getProperty().startsWith("directories")) {
 			createDataDirectories();
 		}
@@ -108,7 +107,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	public static final String PREF_COL_NO_DATA_FOUND = "colors.no_data_found";
 	public static final String PREF_COL_SELECTED = "colors.selectColor";
 	public static final String PREF_COL_HIGHLIGHTED = "colors.highlightColor";
-	public static final String PREF_COL_AMBIGIOUS_REP = "colors.ambigious_reporter";
+//	public static final String PREF_COL_AMBIGIOUS_REP = "colors.ambigious_reporter";
 		
 	public static final String PREF_DIR_PWFILES = "directories.gmmlFiles";
 	public static final String PREF_DIR_GDB = "directories.gdbFiles";

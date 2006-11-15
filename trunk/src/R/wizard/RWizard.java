@@ -1,12 +1,8 @@
 package R.wizard;
 
 import gmmlVision.GmmlVision;
-import gmmlVision.sidepanels.TabbedSidePanel;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -14,13 +10,10 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Shell;
 
 import util.SwtUtils.SimpleRunnableWithProgress;
 import R.RDataIn;
-import R.StatsResultTable;
 import R.RCommands.RException;
 import R.RCommands.RObjectContainer;
 

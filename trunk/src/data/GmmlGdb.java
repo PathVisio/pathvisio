@@ -243,7 +243,7 @@ public abstract class GmmlGdb {
 	 * Class to store an id/code combination, which represents
 	 * an unique gene product
 	 */
-	public static class IdCodePair {
+	public static class IdCodePair implements Comparable {
 		String id;
 		String code;
 		
@@ -266,6 +266,11 @@ public abstract class GmmlGdb {
 			if(!(o instanceof IdCodePair)) return false;
 			IdCodePair idc = (IdCodePair)o;
 			return idc.getId().equals(getId()) && idc.getCode().equals(getCode());
+		}
+
+		public int compareTo(Object o) {
+			IdCodePair idc = (IdCodePair)o;
+			return getName().compareTo(idc.getName());
 		}
 	}
 	

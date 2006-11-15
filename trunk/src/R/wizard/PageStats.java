@@ -1,11 +1,11 @@
 
 package R.wizard;
 
+import gmmlVision.GmmlVision;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import gmmlVision.GmmlVision;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;

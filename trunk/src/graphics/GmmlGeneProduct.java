@@ -5,8 +5,12 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,12 +40,10 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 
 	// note: not the same as color!
 	RGB fillColor = INITIAL_FILL_COLOR;
-	GmmlGpColor gpColor;
 		
 	public GmmlGeneProduct (GmmlDrawing canvas, GmmlDataObject o) {
 		super(canvas, o);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;				
-		gpColor = new GmmlGpColor(this);
 		
 		fontSizeDouble = INITIAL_FONTSIZE * canvas.getZoomFactor();
 		fontSize = (int)fontSizeDouble;
@@ -144,9 +146,11 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		fontSize = (int)fontSizeDouble;
 	}
 
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{
 		Color c = null;
+		Font f = null;
+		
 		if(isSelected())
 		{
 			c = SwtUtils.changeColor(c, selectColor, e.display);
@@ -160,26 +164,28 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		buffer.setLineStyle (SWT.LINE_SOLID);
 		buffer.setLineWidth (1);		
 		
-		buffer.drawRectangle (
-			(int)(gdata.getLeft()),
-			(int)(gdata.getTop()),
-			(int)gdata.getWidth(),
-			(int)gdata.getHeight()
-		);
+		Rectangle area = new Rectangle(
+				(int)gdata.getLeft(), 
+				(int)gdata.getTop(), 
+				(int)gdata.getWidth(), 
+				(int)gdata.getHeight());
 		
-		buffer.setClipping (
-				(int)(gdata.getLeft()) + 1,
-				(int)(gdata.getTop()) + 1,
-				(int)gdata.getWidth() - 1,
-				(int)gdata.getHeight() - 1
-			);
+		buffer.drawRectangle (area);
 		
-		gpColor.draw(e, buffer);
+		buffer.setClipping ( area.x - 1, area.y - 1, area.width + 1, area.height + 1);
 		
+		f = SwtUtils.changeFont(f, new FontData(gdata.getFontName(), fontSize, SWT.NONE), e.display);
+		buffer.setFont(f);
+		
+		String label = getName();
+		Point textSize = buffer.textExtent (label);
+		buffer.drawString (label, 
+				area.x + (int)(area.width / 2) - (int)(textSize.x / 2),
+				area.y + (int)(area.height / 2) - (int)(textSize.y / 2), true);
+				
+				
 		Region r = null;
 		buffer.setClipping(r);
-		
-		drawHighlight(e, buffer);
 		
 		c.dispose();
 	}
@@ -206,5 +212,4 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 			if(c != null) c.dispose();
 		}
 	}
-	
 }

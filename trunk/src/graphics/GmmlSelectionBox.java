@@ -3,6 +3,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -13,7 +15,7 @@ import data.GmmlDataObject;
 /**
  * This class implements a selectionbox 
  */ 
-class GmmlSelectionBox extends GmmlGraphicsShape
+public class GmmlSelectionBox extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 		
@@ -43,6 +45,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
 		o.select();
 		selection.add(o);
+		fireSelectionEvent(new SelectionEvent(o, SelectionEvent.OBJECT_ADDED, selection));
 		if(isSelecting) return; //All we have to do if user is dragging selectionbox
 		if(hasMultipleSelection()) { 
 			stopSelecting(); //show and fit to SelectionBox if performed after dragging
@@ -57,6 +60,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 		if(o == this) return;
 		selection.remove(o); 
 		o.deselect();
+		fireSelectionEvent(new SelectionEvent(o, SelectionEvent.OBJECT_REMOVED, selection));
 		if(!isSelecting) fitToSelection();
 	}
 	
@@ -126,7 +130,11 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	private void reset(double startX, double startY, boolean clearSelection) {
 		for(GmmlDrawingObject o : selection) o.deselect();
-		if(clearSelection) selection.clear();
+		if(clearSelection) {
+			selection.clear();
+			fireSelectionEvent(
+					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED, selection));
+		}
 		
 		gdata.setLeft(startX);
 		gdata.setTop(startY);
@@ -290,7 +298,7 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 		}
 	}
 	
-	protected void draw(PaintEvent e, GC buffer)
+	public void draw(PaintEvent e, GC buffer)
 	{
 		if(isVisible) {
 			buffer.setAntialias(SWT.OFF);
@@ -309,4 +317,50 @@ class GmmlSelectionBox extends GmmlGraphicsShape
 	}
 	
 	public void adjustToZoom(double factor) { fitToSelection(); }
+	
+	static List<SelectionListener> listeners;
+
+	/**
+	 * Add a {@link SelectionListener}, that will be notified if a selection event occurs
+	 * @param l The {@link SelectionListener} to add
+	 */
+	public static void addListener(SelectionListener l) {
+		if(listeners == null)
+			listeners = new ArrayList<SelectionListener>();
+		listeners.add(l);
+	}
+
+	/**
+	 * Fire a {@link SelectionEvent} to notify all {@link SelectionListener}s registered
+	 * to this class
+	 * @param e
+	 */
+	public static void fireSelectionEvent(SelectionEvent e) {
+		for(SelectionListener l : listeners) {
+			l.drawingEvent(e);
+		}
+	}
+
+	public interface SelectionListener {
+		public void drawingEvent(SelectionEvent e);
+	}
+
+	public static class SelectionEvent extends EventObject {
+		private static final long serialVersionUID = 1L;
+		public static final int OBJECT_ADDED = 0;
+		public static final int OBJECT_REMOVED = 1;
+		public static final int SELECTION_CLEARED = 2;
+
+		public Object source;
+		public int type;
+		public List<GmmlDrawingObject> selection;
+
+		public SelectionEvent(Object source, int type, List<GmmlDrawingObject> selection) {
+			super(source);
+			this.source = source;
+			this.type = type;
+			this.selection = selection;
+		}
+	}	
+	
 }

@@ -1,7 +1,6 @@
 package preferences;
 
 import gmmlVision.GmmlVision;
-import gmmlVision.GmmlVisionMain;
 
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -99,9 +98,9 @@ public class GmmlPreferenceManager extends PreferenceManager {
 			ColorFieldEditor f5 = new ColorFieldEditor(GmmlPreferences.PREF_COL_HIGHLIGHTED, 
 					"Line color for highlighted objects:", getFieldEditorParent());
 			addField(f5);
-			ColorFieldEditor f6 = new ColorFieldEditor(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, 
-					"Color for marking gene products with ambigious reporter:", getFieldEditorParent());
-			addField(f6);
+//			ColorFieldEditor f6 = new ColorFieldEditor(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, 
+//					"Color for marking gene products with ambigious reporter:", getFieldEditorParent());
+//			addField(f6);
 			
 		}
 	}

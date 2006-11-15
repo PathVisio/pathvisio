@@ -10,7 +10,8 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
 import preferences.GmmlPreferences;
-
+import visualization.VisualizationManager;
+import visualization.plugins.PluginManager;
 import data.GmmlGdb;
 import data.GmmlGex;
 
@@ -72,9 +73,15 @@ public class GmmlVisionMain {
 		//initiate Gene database (to load previously used gdb)
 		GmmlGdb.init();
 		
+		//load visualizations and plugins
+		loadVisualizations();
+		
 		//create data directories if they don't exist yet
 		createDataDirectories();
 		
+		//register listeners for static classes
+		registerListeners();
+				
 		//NOTE: ImageRegistry will be initiated in "createContents" of GmmlVisionWindow,
 		//since the window has to be opened first (need an active Display)
 	}
@@ -93,6 +100,26 @@ public class GmmlVisionMain {
 			File dir = new File(GmmlVision.getPreferences().getString(pref));
 			if(!dir.exists()) dir.mkdir();
 		}
+	}
+	
+			
+	static void registerListeners() {
+		VisualizationManager vmgr = new VisualizationManager();
+		GmmlGex gex = new GmmlGex();
+		
+		GmmlVision.addApplicationEventListener(vmgr);
+		GmmlVision.addApplicationEventListener(gex);
+	}
+	
+	static void loadVisualizations() {
+		//load visualization plugins
+		try {
+			PluginManager.loadPlugins();
+		} catch (Throwable e) {
+			GmmlVision.log.error("When loading visualization plugins", e);
+		}
+		
+		VisualizationManager.loadGeneric();
 	}
 	
 	/**
@@ -121,6 +148,12 @@ public class GmmlVisionMain {
 				ImageDescriptor.createFromURL(cl.getResource("images/bigcateye.gif")));
 		imageRegistry.put("about.logo",
 				ImageDescriptor.createFromURL(cl.getResource("images/logo.jpg")));
+						imageRegistry.put("checkbox.unchecked",
+				ImageDescriptor.createFromURL(cl.getResource("icons/unchecked.gif")));
+		imageRegistry.put("checkbox.unavailable",
+				ImageDescriptor.createFromURL(cl.getResource("icons/unchecked_unavailable.gif")));
+		imageRegistry.put("checkbox.checked",
+				ImageDescriptor.createFromURL(cl.getResource("icons/checked.gif")));
 		GmmlVision.setImageRegistry(imageRegistry);
 	}
 	

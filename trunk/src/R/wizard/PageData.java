@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import preferences.GmmlPreferences;
-
 import R.RCommands;
 import R.RDataIn;
 import R.RDataOut;

@@ -1,8 +1,8 @@
 package search;
 
 import gmmlVision.GmmlVision;
-import gmmlVision.GmmlVision.PropertyEvent;
-import gmmlVision.GmmlVision.PropertyListener;
+import gmmlVision.GmmlVision.ApplicationEvent;
+import gmmlVision.GmmlVision.ApplicationEventListener;
 import graphics.GmmlDrawing;
 import graphics.GmmlDrawingObject;
 import graphics.GmmlGeneProduct;
@@ -28,12 +28,12 @@ import util.tableviewer.TableData.Row;
  * This composite displays a table on which {@link SearchResults}s can be
  * displayed
  */
-public class SearchResultTable extends PathwayTable implements PropertyListener {
+public class SearchResultTable extends PathwayTable implements ApplicationEventListener {
 	public static String COLUMN_FOUND_IDS = "idsFound";
 	
 	public SearchResultTable(Composite parent, int style) {
 		super(parent, SWT.NULL);
-		GmmlVision.addPropertyListener(this);
+		GmmlVision.addApplicationEventListener(this);
 	}
 		
 	public int getNrResults() { return getNrRows(); }
@@ -87,8 +87,8 @@ public class SearchResultTable extends PathwayTable implements PropertyListener 
 		initTable(tableComposite);
 	}
 
-	public void propertyChanged(PropertyEvent e) {
-		if(e.name.equals(GmmlVision.PROPERTY_OPEN_PATHWAY))
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.type == ApplicationEvent.OPEN_PATHWAY)
 				highlightResults(highlightButton.getSelection());
 	}
 }	

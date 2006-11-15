@@ -8,7 +8,8 @@ package util;
 
 import java.io.File;
 
-import data.*;
+import data.ConverterException;
+import data.GmmlData;
 import debug.Logger;
 
 /**

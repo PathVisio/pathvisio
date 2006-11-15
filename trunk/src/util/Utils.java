@@ -57,6 +57,47 @@ public class Utils {
 		return collection2String(Arrays.asList(array), quote, sep);
 	}
 	
+    /**
+     * Moves an element in a {@link List}
+     * @param 	l the list the object is in
+     * @param 	o the object that has to be moved
+     * @param 	newIndex the index to move the object to
+     */
+    public<T> void moveElement(List<T> l, T o, int newIndex)
+    {
+    	l.remove(o);
+    	l.add(newIndex, o);
+    }
+    
+	public static final int ORDER_UP = 1;
+	public static final int ORDER_DOWN = -1;
+	public static final int ORDER_FIRST = 2;
+	public static final int ORDER_LAST = -2;
+	
+	public static <T> void setDrawingOrder(List<T> l, T o, int order) {
+		int index = l.indexOf(o);
+		switch(order) {
+		case ORDER_UP:
+			if(index == 0) break;
+			l.remove(index);
+			l.add(index - 1, o);
+			break;
+		case ORDER_DOWN:
+			if(index == l.size() - 1) break;
+			l.remove(index);
+			l.add(index + 1, o);
+			break;
+		case ORDER_FIRST:
+			l.remove(index);
+			l.add(0, o);
+			break;
+		case ORDER_LAST:
+			l.remove(index);
+			l.add(o);
+			break;
+		}
+	}
+	
 	/**
 	 * Checks the version of the Gene database or Expression dataset to be opened
 	 */

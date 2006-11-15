@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import preferences.GmmlPreferences;
-
 import util.TableColumnResizer;
 
 /**

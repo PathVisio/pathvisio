@@ -8,7 +8,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -24,24 +23,23 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import visualization.Visualization;
+import visualization.VisualizationManager;
+import visualization.VisualizationManager.VisualizationEvent;
+import visualization.VisualizationManager.VisualizationListener;
 import data.GmmlData;
 import data.GmmlDataObject;
 import data.GmmlEvent;
-import data.GmmlGex;
 import data.GmmlListener;
 import data.LineStyle;
 import data.LineType;
 import data.ObjectType;
 import data.OrientationType;
 import data.ShapeType;
-import data.GmmlGex.Sample;
-import data.GmmlGex.CachedData.Data;
 
 /**
  * This class implements and handles a drawing.
@@ -50,7 +48,7 @@ import data.GmmlGex.CachedData.Data;
  * event handling.
  */
 public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, 
-PaintListener, MouseTrackListener, KeyListener, GmmlListener
+PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListener
 {	
 	private static final long serialVersionUID = 1L;
 		
@@ -170,7 +168,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		addMouseMoveListener(this);
 		addPaintListener (this);
 		addMouseTrackListener(this);
-		addKeyListener(this);	
+		addKeyListener(this);
+		VisualizationManager.addListener(this);
 	}
 		
 	/**
@@ -187,7 +186,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 * @return
 	 */
 	public GmmlInfoBox getMappInfo() { return infoBox; }
-	
+		
 	/**
 	 * Adds an element to the drawing
 	 * @param o the element to add
@@ -341,7 +340,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 */
 	public void mouseUp(MouseEvent e)
 	{
-		if(!editMode) return;
 		if(isDragging)
 		{
 			updatePropertyTable(GmmlVision.getWindow().propertyTable.getGmmlDataObject());
@@ -381,19 +379,31 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		buffer.fillRectangle(e.x, e.y, e.width, e.height);
 		
 		buffer.setAntialias(SWT.ON);
-
-//		buffer.setForeground(e.display.getSystemColor(SWT.COLOR_CYAN));
-//		buffer.drawRectangle(e.x, e.y, e.width, e.height);
 		
 		Rectangle2D.Double r = new Rectangle.Double(e.x, e.y, e.width, e.height);
 		    	
 		Collections.sort(drawingObjects);
-		    	    	 
+		
+		//Draw visualizations and highlights
+		Visualization v = VisualizationManager.getCurrent();
 		for(GmmlDrawingObject o : drawingObjects)
 		{
 			if(o.intersects(r))
 			{
-				o.draw (e, buffer);
+				if(checkDrawAllowed(o)) {
+					o.draw (e, buffer);
+				}
+				
+				if(v != null && o instanceof GmmlGraphics) {
+						try {
+							v.drawToObject((GmmlGraphics) o, e, buffer);
+						} catch(Exception ex) {
+							GmmlVision.log.error(
+									"Unable to apply visualization " + v + " on " + o, ex);
+							ex.printStackTrace();
+						}
+				}
+				if(o instanceof GmmlGeneProduct) ((GmmlGeneProduct)o).drawHighlight(e, buffer);
 			}
 		}
 		
@@ -401,6 +411,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 		buffer.dispose();
 	}
 
+	boolean checkDrawAllowed(GmmlDrawingObject o) {
+		return !isEditMode() && !(	
+				o instanceof GmmlHandle ||
+				(o == s && !isDragging)
+				);
+	}
 	/**
 	 * Updates the propertytable to display information about the given GmmlDrawingObject
 	 * @param o object to update the property table for, if instanceof {@link GmmlHandle}, 
@@ -462,21 +478,20 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 * @param e	the mouse event to handle
 	 */
 	private void mouseDownViewMode(MouseEvent e) 
-	{ 
-		Point2D p = new Point2D.Double(e.x, e.y);
-		GmmlDrawingObject obj = null;
-		Collections.sort(drawingObjects);
-		Collections.reverse(drawingObjects);
-		for (GmmlDrawingObject o : drawingObjects)
-		{
-			if (o.isContain(p))
-			{
-				obj = o;
-				break;
-			}
-		}
-		updatePropertyTable(obj);
-		updateBackpageInfo(obj);
+	{
+		Point2D p2d = new Point2D.Double(e.x, e.y);
+
+		pressedObject = findPressedObject(p2d);
+		
+		if (pressedObject != null)
+			doClickSelect(p2d);
+		else
+			startSelecting(p2d);
+
+		redrawDirtyRect();
+		
+		updatePropertyTable(pressedObject);
+		updateBackpageInfo(pressedObject);
 	}
 	
 	/**
@@ -486,6 +501,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 */
 	private void startSelecting(Point2D p)
 	{
+		previousX = (int)p.getX();
+		previousY = (int)p.getY();
+		isDragging = true;
+		
 		clearSelection();
 		s.reset(p.getX(), p.getY());
 		s.startSelecting();
@@ -509,8 +528,38 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	{
 		Point2D p2d = new Point2D.Double(p.x, p.y);
 		
-		pressedObject = null;
+		pressedObject = findPressedObject(p2d);
+		
+		// if we clicked on an object
+		if (pressedObject != null)
+		{
+			// if our object is an handle, select also it's parent.
+			if(pressedObject instanceof GmmlHandle)
+			{
+				((GmmlHandle)pressedObject).parent.select();
+			} else {
+				doClickSelect(p2d);
+			}
+			
+			// start dragging
+			previousX = p.x;
+			previousY = p.y;
+			
+			isDragging = true;		
+		}
+		else
+		{
+			// start dragging selectionbox	
+			startSelecting(p2d);
+		}		
+		updatePropertyTable(pressedObject);
+		updateBackpageInfo(pressedObject);
+		redrawDirtyRect();
+	}
+
+	GmmlDrawingObject findPressedObject(Point2D p2d) {
 		Collections.sort(drawingObjects);
+		GmmlDrawingObject probj = null;
 		for (GmmlDrawingObject o : drawingObjects)
 		{
 			if (o.isContain(p2d))
@@ -519,64 +568,41 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
 					;
 				else 
-					pressedObject = o;
+					probj = o;
 			}
 		}
-		// if we clicked on an object
-		if (pressedObject != null)
-		{
-			// if our object is an handle, select also it's parent.
-			if(pressedObject instanceof GmmlHandle)
-			{
-				((GmmlHandle)pressedObject).parent.select();
-			}
-			//Ctrl pressed, add/remove from selection
-			else if(ctrlPressed) 
-			{
-				if(pressedObject instanceof GmmlSelectionBox) {
-					//Object inside selectionbox clicked, pass to selectionbox
-					s.objectClicked(p2d);
-				}
-				else if(pressedObject.isSelected()) { //Already in selection: remove
-					s.removeFromSelection(pressedObject);
-				} else {
-					s.addToSelection(pressedObject); //Not in selection: add
-				}
-				pressedObject = null; //Disable dragging
-			} 
-			else //Ctrl not pressed
-			{
-				//If pressedobject is not selectionbox:
-				//Clear current selection and select pressed object
-				if(!(pressedObject instanceof GmmlSelectionBox))
-				{
-					clearSelection();
-					s.addToSelection(pressedObject);
-				} else { //Check if clicked object inside selectionbox
-					if(s.getChild(p2d) == null) clearSelection();
-				}
-			}
-			
-			// start dragging
-			previousX = p.x;
-			previousY = p.y;
-			
-			isDragging = true;			
-		}
-		else
-		{
-			// start dragging selectionbox
-			previousX = p.x;
-			previousY = p.y;
-			isDragging = true;
-	
-			startSelecting(p2d);
-		}		
-		updatePropertyTable(pressedObject);
-		updateBackpageInfo(pressedObject);
-		redrawDirtyRect();
+		return probj;
 	}
-
+	
+	void doClickSelect(Point2D p2d) {
+		//Ctrl pressed, add/remove from selection
+		if(ctrlPressed) 
+		{
+			if(pressedObject instanceof GmmlSelectionBox) {
+				//Object inside selectionbox clicked, pass to selectionbox
+				s.objectClicked(p2d);
+			}
+			else if(pressedObject.isSelected()) { //Already in selection: remove
+				s.removeFromSelection(pressedObject);
+			} else {
+				s.addToSelection(pressedObject); //Not in selection: add
+			}
+			pressedObject = null; //Disable dragging
+		} 
+		else //Ctrl not pressed
+		{
+			//If pressedobject is not selectionbox:
+			//Clear current selection and select pressed object
+			if(!(pressedObject instanceof GmmlSelectionBox))
+			{
+				clearSelection();
+				s.addToSelection(pressedObject);
+			} else { //Check if clicked object inside selectionbox
+				if(s.getChild(p2d) == null) clearSelection();
+			}
+		}
+	}
+	
 	public static final int NEWNONE = -1;
 	public static final int NEWLINE = 0;
 	public static final int NEWLABEL = 1;
@@ -845,7 +871,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 	 * hovering over a geneproduct
 	 */
 	public void mouseHover(MouseEvent e) {
-		if(!editMode && GmmlGex.getColorSetIndex() > -1 && GmmlGex.isConnected()) {
+		Visualization v = VisualizationManager.getCurrent();
+		if(v != null && v.usesToolTip()) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
 			Collections.sort(drawingObjects);
@@ -853,45 +880,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			{				
 				if (o.isContain(p))
 				{
-					if (o instanceof GmmlGeneProduct)
+					if (o instanceof GmmlGraphics)
 					{
-						GmmlGeneProduct gp = (GmmlGeneProduct)o;
-						
-						if(tip != null && !tip.isDisposed()) tip.dispose();
-						
-						tip = new Shell(getShell().getDisplay(), SWT.ON_TOP | SWT.TOOL);  
-						tip.setBackground(getShell().getDisplay()
-			                   .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-						tip.setLayout(new RowLayout());
-						Label labelL = new Label(tip, SWT.NONE);
-			            Label labelR = new Label(tip, SWT.NONE);
-			            labelL.setForeground(getShell().getDisplay()
-			                    .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			            labelL.setBackground(getShell().getDisplay()
-			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			            labelR.setForeground(getShell().getDisplay()
-			                    .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			            labelR.setBackground(getShell().getDisplay()
-			                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			            
-			            Data mappIdData = GmmlGex.getCachedData(gp.getID(), gp.getSystemCode());
-			            if(mappIdData == null) return; //No data in cache for this geneproduct
-			            HashMap<Integer, Object> data = mappIdData.getAverageSampleData();
-			            String textL = "";
-			            String textR = "";
-			            for(Sample s : GmmlGex.getColorSets().get(GmmlGex.getColorSetIndex()).useSamples)
-			            {
-			            	textL += s.getName() + ":  \n";
-			            	textR += data.get(new Integer(s.idSample)) + "\n";
-			            }
-			            if(textL.equals("") && textR.equals("")) return;
-			            labelL.setText(textL);
-			            labelR.setText(textR);
-			            tip.pack();
-			            Point mp = toDisplay(e.x, e.y);
-			            tip.setLocation(mp.x + 15, mp.y + 15);
+						tip = v.getToolTip(e.display, (GmmlGraphics)o);
+						if(tip == null) return;
+						Point mp = toDisplay(e.x, e.y);
+						tip.setLocation(mp.x + 15, mp.y + 15);
 			            tip.setVisible(true);
-						break;
 					}
 				}
 			}
@@ -1016,5 +1011,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener
 			}
 		}
 	}
-	
+
+	public void visualizationEvent(VisualizationEvent e) {
+		switch(e.type) {
+		case(VisualizationEvent.COLORSET_MODIFIED):
+		case(VisualizationEvent.VISUALIZATION_SELECTED):
+		case(VisualizationEvent.VISUALIZATION_MODIFIED):
+		case(VisualizationEvent.PLUGIN_MODIFIED):
+			redraw();
+		}
+	}	
 } // end of class

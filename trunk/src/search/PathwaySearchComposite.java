@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import preferences.GmmlPreferences;
-
 import search.SearchMethods.SearchException;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import data.MappFormat;

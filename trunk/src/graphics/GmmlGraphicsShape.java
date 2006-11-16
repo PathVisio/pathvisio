@@ -239,7 +239,8 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	public void setRotation(double angle) {
 		if(angle < 0) gdata.setRotation(angle + Math.PI*2);
-		if(angle > Math.PI*2) gdata.setRotation (angle - Math.PI*2);
+		else if(angle > Math.PI*2) gdata.setRotation (angle - Math.PI*2);
+		else gdata.setRotation(angle);
 	}
 	
 	/**

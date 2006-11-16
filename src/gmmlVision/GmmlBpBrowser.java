@@ -64,31 +64,37 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 		GmmlSelectionBox.addListener(this);
 	}
 	
-	public void setGeneProduct(GmmlGeneProduct gp) 
+	public void setGeneProduct(final GmmlGeneProduct gp) 
 	{ 
 		if(geneProduct == gp) return;
 		
-		geneProduct = gp;
-		if(gp == null) {
-			setGeneText(null);
-			setGexText(null);
-			return;
-		}
-		// Get the backpage text
-		String geneHeader = geneProduct.getGmmlData().getBackpageHead();
-		String geneId = geneProduct.getID();
-		String systemCode = geneProduct.getSystemCode();
-		String bpText = geneHeader.equals("") ? geneHeader : "<H2>" + geneHeader + "</H2><P>";
-		String bpInfo = GmmlGdb.getBpInfo(geneId, systemCode);
-		bpText += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
-		String crossRefText = getCrossRefText(geneId, systemCode);
-		String gexText = GmmlGex.getDataString(new IdCodePair(geneId, systemCode));
-		if (bpText != null) 	setGeneText(bpText);
-		if (gexText != null)	setGexText(gexText + crossRefText);
-		else 					setGexText("<I>No expression data found</I>");
+		Thread fetchThread = new Thread() {
+			public void run() {
+				geneProduct = gp;
+				if(gp == null) {
+					setGeneText(null);
+					setGexText(null);
+					return;
+				}
+				// Get the backpage text
+				String geneHeader = geneProduct.getGmmlData().getBackpageHead();
+				String geneId = geneProduct.getID();
+				String systemCode = geneProduct.getSystemCode();
+				String bpText = geneHeader.equals("") ? geneHeader : "<H2>" + geneHeader + "</H2><P>";
+				String bpInfo = GmmlGdb.getBpInfo(geneId, systemCode);
+				bpText += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
+				String crossRefText = getCrossRefText(geneId, systemCode);
+				String gexText = GmmlGex.getDataString(new IdCodePair(geneId, systemCode));
+				if (bpText != null) 	setGeneText(bpText);
+				if (gexText != null)	setGexText(gexText + crossRefText);
+				else 					setGexText("<I>No expression data found</I>");
+			}
+		};
 		
+		//Run in seperate thread so that this method can return
+		fetchThread.start();
 	}
-	
+		
 	public String getCrossRefText(String id, String code) {
 		List<IdCodePair> crfs = GmmlGdb.getCrossRefs(id, code);
 		if(crfs.size() == 0) return "";
@@ -130,7 +136,11 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	 * Refreshes the text displayed in the browser
 	 */
 	public void refresh() {
-		bpBrowser.setText(header + bpText + gexText);
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				bpBrowser.setText(header + bpText + gexText);	
+			}
+		});
 	}
 	
 	/**

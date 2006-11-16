@@ -237,6 +237,7 @@ public class GmmlLine extends GmmlGraphics
 	 */
 	public void setLine(double x1, double y1, double x2, double y2)
 	{
+		gdata.dontFireEvents(3);
 		gdata.setStartX(x1);
 		gdata.setStartY(y1);
 		gdata.setEndX(x2);
@@ -270,10 +271,12 @@ public class GmmlLine extends GmmlGraphics
 		double cx = h.centerx;
 		double cy = h.centery;
 		if		(h == handleStart) {
+			gdata.dontFireEvents(1);
 			gdata.setStartX(cx); 
 			gdata.setStartY(cy);
 		}
 		else if	(h == handleEnd) {
+			gdata.dontFireEvents(1);
 			gdata.setEndX(cx); 
 			gdata.setEndY(cy);
 		}

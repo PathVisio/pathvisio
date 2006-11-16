@@ -28,7 +28,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	static final int refMarkRadius = 12;
 	static final int refMarkAlpha = 128;
 	
-	HashMap<Integer, RGB> id2col;
+	HashMap<String, RGB> id2col;
 	Random rnd;
 	
 	public ColorByLinkPlugin(Visualization v) {
@@ -37,7 +37,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		setIsGeneric(true);
 		setIsConfigurable(false);
 		
-		id2col = new HashMap<Integer, RGB>();
+		id2col = new HashMap<String, RGB>();
 		rnd = new Random();
 	}
 
@@ -48,20 +48,20 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 
 	public void draw(GmmlGraphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
-		int[] ids = parseIds(gd);
-		if(ids[0] != 0) { //This is a shape
+		String[] ids = parseIds(gd);
+		if(ids[0] != null) { //This is a shape
 			drawShape(ids[0], g, e, buffer);
 			return;
 		}
-		if(ids[1] != 0) {
+		if(ids[1] != null) {
 			drawLineStart(ids[1], g, e, buffer);
 		}
-		if(ids[2] != 0) {
+		if(ids[2] != null) {
 			drawLineEnd(ids[2], g, e, buffer);
 		}
 	}
 	
-	void drawLineStart(int id, GmmlGraphics g, PaintEvent e, GC buffer) {
+	void drawLineStart(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
@@ -70,7 +70,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 				e, buffer);
 	}
 	
-	void drawLineEnd(int id, GmmlGraphics g, PaintEvent e, GC buffer) {
+	void drawLineEnd(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
@@ -79,7 +79,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 				e, buffer);
 	}
 	
-	void drawRefMark(int id, int x, int y, PaintEvent e, GC buffer) {
+	void drawRefMark(String id, int x, int y, PaintEvent e, GC buffer) {
 		int origAlpha = buffer.getAlpha();
 		Color c = new Color(e.display, getRGB(id));
 		buffer.setBackground(c);
@@ -88,17 +88,16 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		buffer.setAlpha(origAlpha);
 	}
 	
-	void drawShape(int id, GmmlGraphics g, PaintEvent e, GC buffer) {
+	void drawShape(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		RGB oldRGB = gd.getColor();
-		gd.dontFireEventsOnce();
+		gd.dontFireEvents(2);
 		gd.setColor(getRGB(id));
 		g.draw(e, buffer);
-		gd.dontFireEventsOnce();
 		gd.setColor(oldRGB);
 	}
 	
-	RGB getRGB(int id) {
+	RGB getRGB(String id) {
 		RGB rgb = id2col.get(id);
 		if(rgb == null) {
 			rgb = randomRGB();
@@ -113,11 +112,14 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		return new RGB(c.getRed(), c.getGreen(), c.getBlue());
 	}
 	
-	int[] parseIds(GmmlDataObject gd) {
-		int[] ids = new int[3];
-		try { ids[0] = Integer.parseInt(gd.getGraphId()); } catch(NumberFormatException e) {}
-		try { ids[1] = Integer.parseInt(gd.getStartGraphRef()); } catch(NumberFormatException e) {}
-		try { ids[2] = Integer.parseInt(gd.getEndGraphRef()); } catch(NumberFormatException e) {}
+	String[] parseIds(GmmlDataObject gd) {
+		String[] ids = new String[3];
+		String gid = gd.getGraphId();
+		String sr = gd.getStartGraphRef();
+		String er =  gd.getEndGraphRef();
+		if(gid != null) ids[0] = gid.equals("") ? null : gid;
+		if(sr != null) 	ids[1] = sr.equals("") ? null : sr;
+		if(er != null) 	ids[2] = er.equals("") ? null : er;
 		return ids;
 	}
 		

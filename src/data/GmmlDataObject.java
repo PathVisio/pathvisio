@@ -231,7 +231,7 @@ public class GmmlDataObject
 	{
 		assert (key != null);
 		
-		int i = attributes.indexOf(key);	
+		int i = attributes.indexOf(key);
 		// TODO: use enum instead of integer index.
 		switch (i)
 		{		
@@ -292,7 +292,7 @@ public class GmmlDataObject
 	}
 	
 	public Object getProperty(String key)
-	{
+	{		
 		//TODO: use hashtable or other way better than switch statement
 		int i = attributes.indexOf(key);
 		Object result = null;
@@ -351,6 +351,7 @@ public class GmmlDataObject
 			case 42: result = getEndGraphRef (); break;
 
 		}
+
 		return result;
 	}
 	
@@ -1056,9 +1057,9 @@ public class GmmlDataObject
 		}
 	}
 
-	boolean doFireEvents = true;
-	public void dontFireEventsOnce() {
-		doFireEvents = false;
+	int noFire = 0;
+	public void dontFireEvents(int times) {
+		noFire = times;
 	}
 	
 	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
@@ -1066,8 +1067,8 @@ public class GmmlDataObject
 	public void removeListener(GmmlListener v) { listeners.remove(v); }
 	public void fireObjectModifiedEvent(GmmlEvent e) 
 	{
-		if(!doFireEvents) {
-			doFireEvents = true;
+		if(noFire > 0) {
+			noFire -= 1;
 			return;
 		}
 		for (GmmlListener g : listeners)

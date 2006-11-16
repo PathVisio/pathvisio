@@ -1,6 +1,5 @@
 package gmmlVision;
 
-import graphics.GmmlDrawingObject;
 import graphics.GmmlGraphics;
 import graphics.GmmlSelectionBox;
 import graphics.GmmlSelectionBox.SelectionEvent;
@@ -8,10 +7,13 @@ import graphics.GmmlSelectionBox.SelectionListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -21,7 +23,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -46,26 +47,92 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	ColorCellEditor colorEditor;
 	ComboBoxCellEditor comboBoxEditor;
 	
-	private GmmlDataObject g = null;
+	private List<GmmlDataObject> dataObjects;
 	
 	private List<String> attributes;
-
 	
-	public GmmlDataObject getGmmlDataObject ()
-	{
-		return g;
-	}
+	final static int TYPES_DIFF = ObjectType.MIN_VALID -1;
+	final static Object VALUE_DIFF = new Object() {
+		public boolean equals(Object o) { return false; }
+		public String toString() { return "different values"; }
+	};
 
 	/**
-	 * This is for selecting multiple objects
-	 * 
-	 * TODO: currently not called anywhere. This needs
-	 * to be called as objects are added to the selection.
+	 * Add a {@link GmmlDataObject} to the list of objects of which 
+	 * the properties are displayed
+	 * @param o
 	 */
-	public void setGmmlDataObjects (List<GmmlDataObject> l)
+	public void addGmmlDataObject(GmmlDataObject o) {
+		if(!dataObjects.contains(o)) {
+			if(dataObjects.add(o)) {
+				o.addListener(this);
+				refresh();
+			}
+		}
+	}
+	
+	/**
+	 * Remove a {@link GmmlDataObject} from the list of objects of which 
+	 * the properties are displayed
+	 * @param o
+	 */
+	public void removeGmmlDataObject(GmmlDataObject o) {
+		if(dataObjects.remove(o)) {
+			o.removeListener(this);
+			refresh();
+		}
+	}
+	
+	/**
+	 * Clear the list of objects of which the properties are displayed
+	 */
+	public void clearGmmlDataObjects() {
+		for(GmmlDataObject o : dataObjects) o.removeListener(this);
+		dataObjects.clear();
+		refresh();
+	}
+	
+	/**
+	 * Refresh the table and attributes to display
+	 */
+	void refresh() {
+		setAttributes();
+		tableViewer.refresh();
+	}
+	
+	int getAggregateType() {
+		int type = TYPES_DIFF;
+		for(int i = 0; i < dataObjects.size(); i++) {
+			GmmlDataObject g = dataObjects.get(i);
+			
+			if(i != 0 && type != g.getObjectType()) return TYPES_DIFF;
+			
+			type = g.getObjectType();
+		}
+		return type;
+	}
+	
+	Object getAggregateValue(String key) {
+		Object value = VALUE_DIFF;
+		for(int i = 0; i < dataObjects.size(); i++) {
+			GmmlDataObject g = dataObjects.get(i);
+			Object o = g.getProperty(key);
+			if(i != 0 && (o == null || !o.equals(value))) return VALUE_DIFF;
+
+			value = o;
+		}
+		return value;
+	}
+		
+	/**
+	 * Sets the attributes for the selected objects
+	 * Only attributes that are present in all objects in the selection will be
+	 * added to the attributes list and shown in the property table
+	 */
+	public void setAttributes ()
 	{
 		HashMap<String, Integer> master = new HashMap<String, Integer>();
-		for (GmmlDataObject o : l)
+		for (GmmlDataObject o : dataObjects)
 		{
 			for (String attr : o.getAttributes())
 			{
@@ -79,33 +146,29 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				}
 			}
 		}
-		attributes = new ArrayList<String>();
+		attributes.clear();
 		for (String attr : master.keySet())
 		{
-			if (master.get(attr) == l.size())
+			if (master.get(attr) == dataObjects.size())
 			{
 				attributes.add(attr);
 			}
 		}
-		System.out.println ("--------------");
-		for (String attr: attributes)
-		{
-			System.out.println(attr);
-		}
-		System.out.println ("--------------");
+		sortAttributes();
+//		System.out.println ("--------------");
+//		for (String attr: attributes)
+//		{
+//			System.out.println(attr);
+//		}
+//		System.out.println ("--------------");
 	}
 	
-	public void setGmmlDataObject (GmmlDataObject o)
-	{
-		if (o != g)
-		{
-			if (g != null) { g.removeListener(this); }
-			g = o;
-			attributes = g != null ? g.getAttributes() : null;
-			tableViewer.setInput(g);			
-			tableViewer.refresh();
-			if(g != null) g.addListener(this);
-		}
+	void sortAttributes() {
+		Collections.sort(attributes, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return totalAttributes.indexOf(o1) - totalAttributes.indexOf(o2);
+			}
+		});
 	}
 
 	final static String[] colNames = new String[] {"Property", "Value"};
@@ -237,6 +300,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			typeMappings.put(totalAttributes.get(i), attributeTypes[i]);
 		}
 		
+		dataObjects = new ArrayList<GmmlDataObject>();
+		attributes = new ArrayList<String>();
+		tableViewer.setInput(attributes);
+		
 		GmmlSelectionBox.addListener(this);
 	}
 	
@@ -252,12 +319,13 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		case COLOR: 	return colorEditor;
 		case TYPE:
 			String[] types = new String[] {""};
-			if (g.getObjectType() == ObjectType.LINE)
+			int objType = getAggregateType();
+			if (objType == ObjectType.LINE)
 			{
 				types = GmmlFormat.gmmlLineTypes.toArray(
 						new String[GmmlFormat.gmmlLineTypes.size()]);
 			}
-			else if (g.getObjectType() == ObjectType.SHAPE)
+			else if (objType == ObjectType.SHAPE)
 			{
 				types = new String[] {"Rectangle", "Oval", "Arc"};
 			}
@@ -288,32 +356,33 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			{
 				return false;
 			}
+			
 			cellEditors[1] = getCellEditor(element);
 			return true;
 		}
-		
+
 		public Object getValue(Object element, String property) {
 			String key = (String)element;
-//			if(g.propItems.containsKey(key))
-//			{
-				Object value = g.getProperty(key);
-				switch((Integer)typeMappings.get(key))
-				{
-				case DOUBLE:
-				case INTEGER: return value.toString();
-				case STRING: return (String)value;
-				case COLOR: return (RGB)value;
-				case LINESTYLE:
-				case ORIENTATION:
-				case TYPE: 
-					if (key.equals("GeneProduct-Data-Source"))
-						return MappFormat.lDataSources.indexOf((String)value);
-					else if (g.getObjectType() == ObjectType.MAPPINFO || g.getObjectType() == ObjectType.GENEPRODUCT)
-						return (String)value;
-					else
-						return (Integer)value;
-				}
-//			}
+			Object value = getAggregateValue(key);
+			
+			int type = (Integer)typeMappings.get(key);
+			switch(type)
+			{
+			case DOUBLE:
+			case INTEGER: return value.toString();
+			case STRING: return value == null ? "" : (String)value;
+			case COLOR: return (RGB)value;
+			case LINESTYLE:
+			case ORIENTATION:
+			case TYPE: 
+				int t = getAggregateType();
+				if (key.equals("GeneProduct-Data-Source"))
+					return MappFormat.lDataSources.indexOf((String)value);
+				else if (t == ObjectType.MAPPINFO || t == ObjectType.GENEPRODUCT)
+					return (String)value;
+				else
+					return (Integer)value;
+			}
 			return null;
 		}
 		
@@ -335,29 +404,15 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				}
 			}
 			
-			g.setProperty(key, value);
+			for(GmmlDataObject o : dataObjects) {
+				o.setProperty(key, value);
+			}
 			tableViewer.refresh();
+			GmmlVision.getDrawing().redrawDirtyRect();
 		}
 	};
 	
-	private IStructuredContentProvider tableContentProvider = new IStructuredContentProvider()
-	{
-		public Object[] getElements(Object inputElement) {
-			if(inputElement != null)
-			{
-				g = (GmmlDataObject)inputElement;
-				return g.getAttributes().toArray();
-			}
-			return null;
-		}
-		
-		public void dispose() { }
-		
-		public void inputChanged(
-				Viewer viewer,
-				Object oldInput,
-				Object newInput) { }
-	};
+	private IStructuredContentProvider tableContentProvider = new ArrayContentProvider();
 	
 	private ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -371,7 +426,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 					{
 						if(key.equals("Name"))
 						{
-							if(g.getObjectType() == ObjectType.GENEPRODUCT)
+							if(getAggregateType() == ObjectType.GENEPRODUCT)
 							{
 								return "Gene ID";
 							}
@@ -382,15 +437,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 					//TODO: prettier labels for different value types
 					if(attributes.contains(key))
 					{
-						Object result = g.getProperty(key);
-						if (result == null)
-						{
-							return "";
-						}
-						else
-						{
-							return result.toString();
-						}
+						Object value = getAggregateValue(key);
+						return value == null ? null : value.toString();
 					}
 			}
 			return null;
@@ -406,26 +454,23 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 
 	public void gmmlObjectModified(GmmlEvent e) {
 		tableViewer.refresh();
-		GmmlVision.drawing.redrawDirtyRect();
 	}
 
 	public void drawingEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
-			for(GmmlDrawingObject o : e.selection) {
-				if(o instanceof GmmlGraphics) {
-					setGmmlDataObject(((GmmlGraphics)o).getGmmlData());
-					break; //Selects the first, TODO: use setGmmlDataObjects
-				}
-			}
+			if(e.affectedObject instanceof GmmlGraphics)
+				addGmmlDataObject(((GmmlGraphics)e.affectedObject).getGmmlData());
 			break;
 		case SelectionEvent.OBJECT_REMOVED:
-			if(e.selection.size() == 0) setGmmlDataObject(null);
+			if(e.affectedObject instanceof GmmlGraphics)
+				removeGmmlDataObject(((GmmlGraphics)e.affectedObject).getGmmlData());
 			break;
 		case SelectionEvent.SELECTION_CLEARED:
-			setGmmlDataObject(null);
+			 clearGmmlDataObjects();
 			break;
 		}
 		
 	}
 }
+

@@ -144,8 +144,6 @@ public class GmmlLabel extends GmmlGraphicsShape
 		Composite c = t.getParent();
 		c.setVisible(false);
 		c.dispose();
-				
-		canvas.redrawDirtyRect();
 	}
 	
 	protected void adjustToZoom(double factor)

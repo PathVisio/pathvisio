@@ -193,8 +193,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void addObject(GmmlDrawingObject o)
 	{
-		if(drawingObjects.contains(o)) return; //Don't add duplicates!
-		drawingObjects.add(o);
+		if(!drawingObjects.contains(o)) { //Don't add duplicates!
+			drawingObjects.add(o);
+		}
+		
 	}
 
 	/**
@@ -300,8 +302,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			
 			previousX = e.x;
 			previousY = e.y;
+			redrawDirtyRect();
 		}
-		redrawDirtyRect();
 	}
 	/**
 	 * Handles mouse Pressed input
@@ -440,8 +442,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			doClickSelect(p2d);
 		else
 			startSelecting(p2d);
-
-		redrawDirtyRect();
 	}
 	
 	/**
@@ -502,8 +502,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			// start dragging selectionbox	
 			startSelecting(p2d);
 		}		
-
-		redrawDirtyRect();
 	}
 
 	GmmlDrawingObject findPressedObject(Point2D p2d) {
@@ -550,6 +548,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				if(s.getChild(p2d) == null) clearSelection();
 			}
 		}
+		redrawDirtyRect();
 	}
 	
 	public static final int NEWNONE = -1;
@@ -778,11 +777,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		}
-
+				
 		clearSelection();
 		s.addToSelection(g);
 		pressedObject = h;
-//		updatePropertyTable(g);
 		
 		previousX = e.x;
 		previousY = e.y;
@@ -890,6 +888,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			if(o instanceof GmmlGraphics) {
 				GmmlGraphics g = (GmmlGraphics)o;
 				GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(g.getGmmlData(), GmmlEvent.DELETED));
+				g.getGmmlData().removeListener(this);
 			}
 			
 		}

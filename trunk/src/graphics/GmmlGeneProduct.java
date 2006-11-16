@@ -90,54 +90,54 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		return systemCode;
 	}
 	
-	private Text t;
-	public void createTextControl()
-	{		
-		Color background = canvas.getShell().getDisplay()
-		.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		
-		Composite textComposite = new Composite(canvas, SWT.NONE);
-		textComposite.setLayout(new GridLayout());
-		textComposite.setLocation(getCenterX(), getCenterY() - 10);
-		textComposite.setBackground(background);
-		
-		Label label = new Label(textComposite, SWT.CENTER);
-		label.setText("Specify gene name:");
-		label.setBackground(background);
-		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
-				
-		t.addSelectionListener(new SelectionAdapter() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				disposeTextControl();
-			}
-		});
-				
-		t.setFocus();
-		
-		Button b = new Button(textComposite, SWT.PUSH);
-		b.setText("OK");
-		b.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				disposeTextControl();
-			}
-		});
-		
-		textComposite.pack();
-	}
+//	private Text t;
+//	public void createTextControl()
+//	{		
+//		Color background = canvas.getShell().getDisplay()
+//		.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+//		
+//		Composite textComposite = new Composite(canvas, SWT.NONE);
+//		textComposite.setLayout(new GridLayout());
+//		textComposite.setLocation(getCenterX(), getCenterY() - 10);
+//		textComposite.setBackground(background);
+//		
+//		Label label = new Label(textComposite, SWT.CENTER);
+//		label.setText("Specify gene name:");
+//		label.setBackground(background);
+//		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
+//				
+//		t.addSelectionListener(new SelectionAdapter() {
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				disposeTextControl();
+//			}
+//		});
+//				
+//		t.setFocus();
+//		
+//		Button b = new Button(textComposite, SWT.PUSH);
+//		b.setText("OK");
+//		b.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				disposeTextControl();
+//			}
+//		});
+//		
+//		textComposite.pack();
+//	}
 	
-	protected void disposeTextControl()
-	{	
-		markDirty();
-		gdata.setGeneID (t.getText());
-		markDirty();
-		//TODO: implement listener. 
-		//canvas.updatePropertyTable(this);
-		Composite c = t.getParent();
-		c.setVisible(false);
-		c.dispose();
-		
-		canvas.redrawDirtyRect();
-	}
+//	protected void disposeTextControl()
+//	{	
+//		markDirty();
+//		gdata.setGeneID (t.getText());
+//		markDirty();
+//		//TODO: implement listener. 
+//		//canvas.updatePropertyTable(this);
+//		Composite c = t.getParent();
+//		c.setVisible(false);
+//		c.dispose();
+//		
+//		canvas.redrawDirtyRect();
+//	}
 		
 	public void adjustToZoom(double factor)
 	{

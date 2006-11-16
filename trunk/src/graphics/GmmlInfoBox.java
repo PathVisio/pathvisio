@@ -32,7 +32,6 @@ public class GmmlInfoBox extends GmmlGraphics {
 		markDirty();
 		gdata.setMapInfoName(name);  
 		markDirty();
-		canvas.redrawDirtyRect();
 	}
 	
 	public void setBoardSize(Point size) {

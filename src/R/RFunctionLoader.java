@@ -366,7 +366,6 @@ public class RFunctionLoader {
 				if(setVar == null || setVar.equals("")) 
 					throw new Exception("No R variable name specified");
 				setVar = RCommands.format(setVar);
-				//TODO: check for error in expression
 				RDataOut.createSetVector(criterion, dataSetCombo.getText(), setVar);
 				RWizard.usedRObjects.addObject(setVar);
 				RWizard.usedRObjects.save();

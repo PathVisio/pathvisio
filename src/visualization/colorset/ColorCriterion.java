@@ -67,6 +67,8 @@ public class ColorCriterion extends ColorSetObject {
 			String expression = xml.getAttributeValue(XML_ATTR_EXPRESSION);
 			criterion = new Criterion();
 			criterion.setExpression(expression);
+			Element ce = xml.getChild(XML_ELM_COLOR);
+			if(ce != null) color = ColorConverter.parseColorElement(ce);
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to load ColorCriterion", e);
 		}
@@ -76,7 +78,8 @@ public class ColorCriterion extends ColorSetObject {
 	static final String XML_ATTR_EXPRESSION = "expression";
 	public Element toXML() {
 		Element elm = super.toXML();
-		ColorConverter.createColorElement(XML_ELM_COLOR, getColor());
+		Element ce = ColorConverter.createColorElement(XML_ELM_COLOR, getColor());
+		elm.addContent(ce);
 		elm.setAttribute(XML_ATTR_EXPRESSION, criterion.getExpression());
 		
 		return elm;

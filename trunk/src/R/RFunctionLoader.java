@@ -389,7 +389,7 @@ public class RFunctionLoader {
 					}
 				});
 							
-				final CriterionComposite critConf = criterion.getConfigComposite(contents);
+				final CriterionComposite critConf = criterion.createConfigComposite(contents);
 				GridData critGrid = new GridData(GridData.FILL_BOTH);
 				critGrid.horizontalSpan = 2;
 				critConf.setLayoutData(critGrid);

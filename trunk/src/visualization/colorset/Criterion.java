@@ -5,6 +5,7 @@ import gmmlVision.GmmlVision;
 import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 import visualization.VisualizationManager;
 import visualization.VisualizationManager.VisualizationEvent;
@@ -12,20 +13,21 @@ import data.GmmlGex;
 import data.GmmlGex.Sample;
 
 public class Criterion {
+	static final String displaySample = "|Displayed sample|";
 	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
 	private HashMap<String, Double> symTab;
 
 	private String preExpression;
 	private String expression;
-	
+		
 	CriterionComposite configComp;
-	
+		
 	public String getExpression() {  
 		return expression == null ? "" : expression; 
 	}
 	
 	public void setExpression(String expression) throws Exception {
-		parse(expression);
+		parse(expression); //Throws exception on syntax error
 		this.expression = expression;
 		fireModifiedEvent();
 	}
@@ -40,16 +42,6 @@ public class Criterion {
 	public String getPreExpression() {
 		return preExpression == null ? "" : preExpression;
 	}
-
-//	public void testExpression(String expression) throws Exception {
-//		//Set some value for every sample
-//		HashMap<Integer, Sample> samples = GmmlGex.getSamples();
-//		clearSymbols();
-//		for(Sample s : samples.values()) {
-//			addSymbol(s.getName(), 1.0);
-//		}
-//		evaluate(expression);
-//	}
 	
 	public void testExpression(String expression, String[] symbols) throws Exception {
 		for(String s : symbols) {
@@ -58,7 +50,7 @@ public class Criterion {
 		evaluate(expression);
 	}
 
-	public boolean evaluate(HashMap<Integer, Object> data) throws Exception {
+	void setSampleData(HashMap<Integer, Object> data) {
 		// Add current sample values to symTab if they are of type Double
 		HashMap<Integer, Sample> samples = GmmlGex.getSamples();
 		clearSymbols();
@@ -66,7 +58,18 @@ public class Criterion {
 			Object value = data.get(s.getId());
 			if(value instanceof Double) addSymbol(s.getName(), (Double)value);
 		}
+	}
+	
+	public boolean evaluate(HashMap<Integer, Object> data, int displaySampleId) throws Exception {
+		setSampleData(data);
+		Object value = data.get(displaySampleId);
+		if(value instanceof Double) addSymbol(displaySample, (Double)value);
 
+		return evaluate(expression);
+	}
+	
+	public boolean evaluate(HashMap<Integer, Object> data) throws Exception {
+		setSampleData(data);
 		return evaluate(expression);
 	}
 	
@@ -89,12 +92,12 @@ public class Criterion {
 		if(symTab == null) return;
 		symTab.clear();
 	}
-
+		
 	public CriterionComposite getConfigComposite() {
 		return configComp;
 	}
 	
-	public CriterionComposite getConfigComposite(Composite parent) {
+	public CriterionComposite createConfigComposite(Composite parent) {
 		if(configComp != null && !configComp.isDisposed()) return configComp;
 		configComp = new CriterionComposite(parent, this);
 		return configComp;

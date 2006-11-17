@@ -4,7 +4,6 @@ import gmmlVision.GmmlVision;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
@@ -17,12 +16,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.jdom.Element;
 
 import util.ColorConverter;
 import util.SwtUtils;
 
-public class ColorCriterion extends ColorSetObject {
+public class ColorCriterion extends ColorSetObject {	
 	public static final String XML_ELEMENT_NAME = "ColorCriterion";
 	
 	Criterion criterion;
@@ -49,7 +49,7 @@ public class ColorCriterion extends ColorSetObject {
 	
 	RGB getColor(HashMap<Integer, Object> data, int idSample) {
 		try {
-			if(criterion.evaluate(data)) return color;
+			if(criterion.evaluate(data, idSample)) return color;
 		} catch (Exception e) { 
 			GmmlVision.log.error("Unable to evaluate expression '" + criterion.getExpression() + "'", e);
 			//TODO: tell user that expression is incorrect
@@ -85,6 +85,7 @@ public class ColorCriterion extends ColorSetObject {
 	public static class ColorCriterionComposite extends ConfigComposite {
 		final int colorLabelSize = 15;
 		CriterionComposite critComp;
+		Text exprText;
 		CLabel colorLabel;
 		Color color;
 		
@@ -106,13 +107,11 @@ public class ColorCriterion extends ColorSetObject {
 			if(input != null) try {
 				critComp.saveToCriterion();
 			} catch(Exception e) {
-				MessageDialog.openError(getShell(), "Unable to save expression",
-						"Invalid expression syntax: " + e.getMessage());
 				return false;
 			}
 			return true;
 		}
-		
+			
 		public void setInput(ColorSetObject o) {
 			super.setInput(o);
 			if(o == null) critComp.setInput(null);
@@ -141,7 +140,7 @@ public class ColorCriterion extends ColorSetObject {
 			}
 		}
 		
-		void createContents() {
+				void createContents() {
 			setLayout(new GridLayout());
 			
 			Composite superComp = super.createNameComposite(this);

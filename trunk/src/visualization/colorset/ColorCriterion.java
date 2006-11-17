@@ -103,14 +103,14 @@ public class ColorCriterion extends ColorSetObject {
 			return (ColorCriterion)input;
 		}
 		
-		public boolean save() {
-			if(input != null) try {
-				critComp.saveToCriterion();
-			} catch(Exception e) {
-				return false;
-			}
-			return true;
-		}
+//		public boolean save() {
+//			if(input != null) try {
+//				critComp.saveToCriterion();
+//			} catch(Exception e) {
+//				return false;
+//			}
+//			return true;
+//		}
 			
 		public void setInput(ColorSetObject o) {
 			super.setInput(o);

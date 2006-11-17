@@ -5,6 +5,8 @@ import gmmlVision.GmmlVision;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,7 +24,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -62,7 +63,7 @@ import data.GmmlGex;
  * @author thomas
  *
  */
-public class VisualizationDialog extends ApplicationWindow {
+public class VisualizationDialog extends Dialog {
 	VisualizationSettings settingsComp;
 	Composite noneSelectedComp;
 	
@@ -93,6 +94,11 @@ public class VisualizationDialog extends ApplicationWindow {
 		setBlockOnOpen(true);
 	}
 	
+	protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID,
+                IDialogConstants.OK_LABEL, true);
+	}
+	
 	public boolean close() {
 		GmmlGex.saveXML();
 		return super.close();
@@ -102,14 +108,10 @@ public class VisualizationDialog extends ApplicationWindow {
 		tabItemOnOpen = index;
 	}
 	
-	public Control createContents(Composite parent) {
-		Shell shell = getShell();
-		shell.setSize(700, 600);
-		
-		Composite content = new Composite(parent, SWT.NULL);
-		content.setLayout(new GridLayout());
-		
-		CTabFolder tabs = new CTabFolder(content, SWT.BORDER);
+	public Control createDialogArea(Composite parent) {
+		Composite superComp = (Composite)super.createDialogArea(parent);
+
+		CTabFolder tabs = new CTabFolder(superComp, SWT.BORDER);
 		tabs.setSimple(false);
 		tabs.setSelectionBackground(new Color[] {
 				tabs.getSelectionBackground(),
@@ -126,22 +128,12 @@ public class VisualizationDialog extends ApplicationWindow {
 		}
 
 		tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		final Button ok = new Button(content, SWT.NULL);
-		ok.setText("  Ok  ");
-		ok.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				close();
-			}
-		});
-		ok.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		
+				
 		Visualization v = VisualizationManager.getCurrent();
 		if(v != null) visList.setSelection(new StructuredSelection(v));
 		
 		tabs.setSelection(tabItemOnOpen);
-		content.setFocus();
-		return tabs;
+		return superComp;
 	}
 
 	Composite createVisualizationComp(Composite parent) {

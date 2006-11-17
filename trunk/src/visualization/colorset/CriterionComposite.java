@@ -7,9 +7,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Text;
 import data.GmmlGex;
 
 public class CriterionComposite extends Composite {
-	String preExpression = "";
+	ErrorArea errorArea;
 	Criterion criterion;
 	List symbolList;
 	Text exprText;
@@ -43,8 +43,13 @@ public class CriterionComposite extends Composite {
 		}
 	}
 	
-	public void saveToCriterion() throws Exception {
-		criterion.setExpression(preExpression, symbolList.getItems());
+	void setExpression(String expression) {
+		if(criterion != null) {
+			criterion.setExpression(expression);
+			Exception e = criterion.getParseException();
+			if(e != null) errorArea.setErrorMessage(
+					"Invalid boolean expression: " + e.getMessage());
+		}
 	}
 	
 	public void setInput(Criterion input) {
@@ -60,16 +65,19 @@ public class CriterionComposite extends Composite {
 	}
 	
 	protected void createContents() {
-		setLayout(new FillLayout());
+		setLayout(new GridLayout());
+		
+		errorArea = new ErrorArea(this, SWT.NULL);
 		
 		Group criterionGroup = new Group(this, SWT.SHADOW_IN);
+		criterionGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 	    criterionGroup.setLayout(new GridLayout(2, false));
 	    
 	    Label expressionLabel = new Label(criterionGroup, SWT.CENTER);
 	    expressionLabel.setText("Boolean expression:");
 	    exprText = new Text(criterionGroup, SWT.SINGLE | SWT.BORDER);
 	    exprText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    
+
 	    Label opsLabel = new Label(criterionGroup, SWT.CENTER);
 	    opsLabel.setText("Operators:");
 	    Label sampleLabel = new Label(criterionGroup, SWT.CENTER);
@@ -99,8 +107,31 @@ public class CriterionComposite extends Composite {
 	    	    
 	    exprText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				preExpression = exprText.getText();
+				setExpression(exprText.getText());
 			}
 	    });
+	}
+	
+	class ErrorArea extends Composite {
+		Label errorImage;
+		Label errorText;
+		
+		public ErrorArea(Composite parent, int style) {
+			super(parent, style);
+			setLayout(new RowLayout());
+			errorImage = new Label(this, SWT.NULL);
+			errorText = new Label(this,SWT.WRAP);
+		}
+		
+		public void setErrorMessage(String error) {
+			if(error == null) {
+				errorImage.setImage(null);
+				errorText.setText("");
+			} else {
+				errorImage.setImage(getDisplay().getSystemImage(SWT.ICON_ERROR));
+				errorText.setText(error);
+			}
+			getParent().layout(true, true);
+		}
 	}
 }

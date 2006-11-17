@@ -5,7 +5,6 @@ import gmmlVision.GmmlVision;
 import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 
 import visualization.VisualizationManager;
 import visualization.VisualizationManager.VisualizationEvent;
@@ -17,37 +16,49 @@ public class Criterion {
 	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
 	private HashMap<String, Double> symTab;
 
-	private String preExpression;
 	private String expression;
 		
+	private Exception parseException;
+	
 	CriterionComposite configComp;
 		
 	public String getExpression() {  
 		return expression == null ? "" : expression; 
 	}
 	
-	public void setExpression(String expression) throws Exception {
-		parse(expression); //Throws exception on syntax error
+	public boolean setExpression(String expression) {
 		this.expression = expression;
 		fireModifiedEvent();
+		return testExpression(expression);
 	}
 	
-	public void setExpression(String expression, String[] symbols) throws Exception {
+	public boolean setExpression(String expression, String[] symbols) {
 		//Evaluate with dummy data:
-		testExpression(expression, symbols);
 		this.expression = expression;
 		fireModifiedEvent();
+		return testExpression(expression, symbols);
 	}
 	
-	public String getPreExpression() {
-		return preExpression == null ? "" : preExpression;
+	public boolean testExpression(String expression) {
+		try {
+			evaluate(expression);
+			parseException = null;
+			return true;
+		} catch(Exception e) { 
+			parseException = e;
+			return false;
+		}
 	}
 	
-	public void testExpression(String expression, String[] symbols) throws Exception {
+	public boolean testExpression(String expression, String[] symbols) {
 		for(String s : symbols) {
 			addSymbol(s, 1.0);
 		}
-		evaluate(expression);
+		return testExpression(expression);
+	}
+	
+	public Exception getParseException() { 
+		return parseException;
 	}
 
 	void setSampleData(HashMap<Integer, Object> data) {

@@ -45,10 +45,17 @@ public class CriterionComposite extends Composite {
 	
 	void setExpression(String expression) {
 		if(criterion != null) {
-			criterion.setExpression(expression);
+			criterion.setExpression(expression, symbolList.getItems());
 			Exception e = criterion.getParseException();
-			if(e != null) errorArea.setErrorMessage(
-					"Invalid boolean expression: " + e.getMessage());
+			if(e == null) {
+				errorArea.setErrorMessage(null);
+			} else if(expression.equals("")) {
+				errorArea.setWarningMessage("Please specify a boolean expression");
+			} else {
+				errorArea.setErrorMessage(
+						"Invalid boolean expression: " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -120,7 +127,7 @@ public class CriterionComposite extends Composite {
 			super(parent, style);
 			setLayout(new RowLayout());
 			errorImage = new Label(this, SWT.NULL);
-			errorText = new Label(this,SWT.WRAP);
+			errorText = new Label(this, SWT.WRAP | SWT.CENTER);
 		}
 		
 		public void setErrorMessage(String error) {
@@ -130,6 +137,17 @@ public class CriterionComposite extends Composite {
 			} else {
 				errorImage.setImage(getDisplay().getSystemImage(SWT.ICON_ERROR));
 				errorText.setText(error);
+			}
+			getParent().layout(true, true);
+		}
+		
+		public void setWarningMessage(String warning) {
+			if(warning == null) {
+				errorImage.setImage(null);
+				errorText.setText("");
+			} else {
+				errorImage.setImage(getDisplay().getSystemImage(SWT.ICON_WARNING));
+				errorText.setText(warning);
 			}
 			getParent().layout(true, true);
 		}

@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -60,7 +63,7 @@ public abstract class VisualizationPlugin implements Comparable {
 	
 	public final void openConfigDialog(Shell shell) {
 		if(!CONFIGURABLE) return; //Not configurable, so don't open config dialog
-		Dialog d = new ConfigurationDialog(shell);
+		ApplicationWindow d = new ConfigurationDialog(shell);
 		d.open();
 	}
 	
@@ -130,24 +133,38 @@ public abstract class VisualizationPlugin implements Comparable {
 				new VisualizationEvent(this, VisualizationEvent.PLUGIN_MODIFIED));
 	}
 	
-	private class ConfigurationDialog extends Dialog {
+	private class ConfigurationDialog extends ApplicationWindow {
 		public ConfigurationDialog(Shell shell) {
 			super(shell);
 			setBlockOnOpen(true);
 		}
 		
-		public Control createDialogArea(Composite parent) {
-			Composite superComp = (Composite)super.createDialogArea(parent);
+		public Control createContents(Composite parent) {
+			Composite contents = new Composite(parent, SWT.NULL);
+			contents.setLayout(new GridLayout());
 			
-			Composite config = createConfigComposite(superComp);
+			Composite config = createConfigComposite(contents);
 			config.setLayoutData(new GridData(GridData.FILL_BOTH));
 			
-			return superComp;
+			Composite buttonComp = createButtonComposite(contents);
+			buttonComp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			
+			return contents;
 		}
 		
-		protected void createButtonsForButtonBar(Composite parent) {
-	        createButton(parent, IDialogConstants.OK_ID,
-	            IDialogConstants.OK_LABEL, true);
+		public Composite createButtonComposite(Composite parent) {
+			Composite comp = new Composite(parent, SWT.NULL);
+			comp.setLayout(new GridLayout(2, false));
+			
+			Button ok = new Button(comp, SWT.PUSH);
+			ok.setText(" Ok ");
+			ok.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent arg0) {
+					close();
+				}
+			});
+			
+			return comp;
 		}
 	}
 	

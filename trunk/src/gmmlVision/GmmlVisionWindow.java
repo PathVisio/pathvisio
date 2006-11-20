@@ -512,16 +512,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		}
 		
 		public void run () {
-			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-			fileDialog.setText("Select Expression Dataset");
-			fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
-			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
-			fileDialog.setFilterNames(new String[] {"Expression Dataset","All files"});
-			String file = fileDialog.open();
-			// Only proceed if user selected a file
-			if(file == null) return;
-			GmmlGex.setGexFile(new File(file));
 			try {
+				DBConnector dbcon = GmmlVision.getDBConnector();
+				String dbName = dbcon.openChooseDbDialog(getShell());
+				GmmlGex.setDbName(dbName);
 				GmmlGex.connect();
 			} catch(Exception e) {
 				String msg = "Failed to open Expression Dataset" + e.getMessage();
@@ -529,8 +523,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 						"Error: " + msg + "\n\n" + 
 						"See the error log for details.");
 				GmmlVision.log.error(msg, e);
-			}
-			
+			}		
 		}
 	}
 	private SelectGexAction selectGexAction = new SelectGexAction(this);
@@ -619,25 +612,22 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			if(file == null) return;
 			gmGexFile = new File(file);
 			
-			// Initialize filedialog to save new Expression dataset
-			FileDialog saveDialog = new FileDialog(window.getShell(), SWT.SAVE);
-			saveDialog.setText("Save");
-			saveDialog.setFilterExtensions(new String[] {"*.properties", "*.*"});
-			saveDialog.setFilterNames(new String[] {"Gmml Vision Gex", "All files"});
-			saveDialog.setFileName(gmGexFile.getName().replace(".gex", ".properties"));
-			String fileName = saveDialog.open();
-			// Only proceed if user selected a file
-			if(file == null) return; 
-			gexFile = new File(fileName);
-			boolean confirmed = true;
-			if(gexFile.exists())
-			{
-				confirmed = MessageDialog.openQuestion(window.getShell(),"",
-				"File already exists, overwrite?");
+			String dbName = null;
+			try {
+				DBConnector dbcon = GmmlVision.getDBConnector();
+				dbName = dbcon.openNewDbDialog(getShell(), 
+						gmGexFile.getName().replace(".gex", ".properties"));
+			} catch(Exception e) {
+				String msg = "Failed to get database connector" + e.getMessage();
+				MessageDialog.openError (window.getShell(), "Error", 
+						"Error: " + msg + "\n\n" + 
+						"See the error log for details.");
+				GmmlVision.log.error(msg, e);
 			}
-			if(confirmed)
-			{
-				GmmlGex.setGexFile(gexFile);
+			
+			// Only proceed if user selected a file
+			if(dbName != null) {
+				GmmlGex.setDbName(dbName);
 				GmmlGex.setGmGexFile(gmGexFile);
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				try {

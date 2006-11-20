@@ -9,6 +9,7 @@ import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.preference.StringFieldEditor;
 
 public class GmmlPreferenceManager extends PreferenceManager {
 	
@@ -19,11 +20,13 @@ public class GmmlPreferenceManager extends PreferenceManager {
 	    PreferenceNode colors = new PreferenceNode("colors", new ColorsPage());
 	    PreferenceNode directories = new PreferenceNode("directories", new DirectoriesPage());
 	    PreferenceNode files = new PreferenceNode("files", new FilesPage());
+	    PreferenceNode database = new PreferenceNode("database", new DatabasePage());
 	    
 	    addToRoot(display);
 	    addTo("display", colors);
 	    addToRoot(directories);
 	    addToRoot(files);
+	    addToRoot(database);
 	}
 	
 	private class FilesPage extends FieldEditorPreferencePage {
@@ -104,4 +107,17 @@ public class GmmlPreferenceManager extends PreferenceManager {
 			
 		}
 	}
+	
+	private class DatabasePage extends FieldEditorPreferencePage {
+		public DatabasePage() {
+			super("Database", GRID);
+		}
+		
+		protected void createFieldEditors() {
+			StringFieldEditor f = new StringFieldEditor(GmmlPreferences.PREF_DB_ENGINE,
+					"Database connector class:", getFieldEditorParent());
+			addField(f);
+		}
+	}
+	
 }

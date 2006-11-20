@@ -457,7 +457,7 @@ public class ImportExprDataWizard extends Wizard {
 					| SWT.WRAP);
 			progressText.setText("Ready to import data" + Text.DELIMITER);
 			progressText.append("> Using gene database: "
-					+ GmmlGdb.getGdbFile().toString()
+					+ GmmlGdb.getDbName()
 					+ Text.DELIMITER);
 			progressText
 					.append("> If this is not the correct gene database, close this window"

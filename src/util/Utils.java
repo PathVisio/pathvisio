@@ -113,4 +113,12 @@ public class Utils {
 		if(check) return;
 		throw new Exception("Incompatible version of database schema");
 	}
+	
+	public static boolean isInterface(Class c, String ifName) {
+		Class[] interfaces = c.getInterfaces();
+		for(Class i : interfaces) { 
+			if(ifName.equals(i.getCanonicalName())) return true; 
+		}
+		return false;
+	}
 }

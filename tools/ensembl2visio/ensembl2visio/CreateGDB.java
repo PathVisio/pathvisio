@@ -2,7 +2,7 @@ package ensembl2visio;
 
 public class CreateGDB {
 	final static String[] dbfiles = new String[] {
-		"human/homo_sapiens_38_36_short",
+		"human/homo_sapiens_38_36",
 		"rat/rattus_norvegicus_core_39_34_i",
 	};
 	

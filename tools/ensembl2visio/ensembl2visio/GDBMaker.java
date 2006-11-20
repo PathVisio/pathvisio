@@ -137,7 +137,7 @@ public abstract class GDBMaker {
 		catch (Exception e) {
 			e.printStackTrace();
 		}	
-		
+		info("Closing connections");
     	close();
     	info("Timer stopped: " + timer.stop());
     }

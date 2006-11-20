@@ -3,8 +3,6 @@ package data;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,13 +15,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import preferences.GmmlPreferences;
-import util.Utils;
+import debug.StopWatch;
 
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
@@ -169,10 +166,15 @@ public abstract class GmmlGdb {
 	}
 	
 	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
+		GmmlVision.log.trace("Fetching cross references");
+		StopWatch timer = new StopWatch();
+		timer.start();
+		
 		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
 		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
 
+		GmmlVision.log.trace("END Fetching cross references; time:\t" + timer.stop());
 		return refs;
 	}
 	
@@ -216,20 +218,6 @@ public abstract class GmmlGdb {
 			while(r1.next()) {
 				crossIds.add(r1.getString(1));
 			}
-			
-//			//OR
-//			con.createStatement().execute(
-//					" SELECT idLeft INTO TEMP tmp_ens		" +
-//					" FROM link				  						" +
-//					" WHERE idRight = '" + id + "'" + 
-//					" AND codeRight = '" + code + "'");
-//				
-//				ResultSet r = con.createStatement().executeQuery(
-//					" SELECT idRight, codeRight FROM link " +
-//					" INNER JOIN tmp_ens " +
-//					" ON tmp_ens.idLeft = link.idLeft ");
-//				
-//			while(r.next()) crossIds.add(r.getString("idRight"));
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to get cross references for gene " +
 					"'" + id + ", with systemcode '" + code + "'", e);
@@ -342,7 +330,7 @@ public abstract class GmmlGdb {
 			
 			//Create hsqldb gdb
 			connector = GmmlVision.getDBConnector();
-			convertCon = connector.createConnection(dbName, true);
+			convertCon = connector.createConnection(dbName, DBConnector.PROP_RECREATE);
 			
 			// Fetch size of database to convert (for progress monitor)
 			Statement s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -578,9 +566,9 @@ public abstract class GmmlGdb {
 		
 		try {
 			Statement sh = convertCon.createStatement();
-			sh.execute("DROP TABLE info IF EXISTS");
-			sh.execute("DROP TABLE link IF EXISTS");
-			sh.execute("DROP TABLE gene IF EXISTS");
+			sh.execute("DROP TABLE info");
+			sh.execute("DROP TABLE link");
+			sh.execute("DROP TABLE gene");
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
 		}
@@ -588,15 +576,14 @@ public abstract class GmmlGdb {
 		{
 			Statement sh = convertCon.createStatement();
 			sh.execute(
-					"CREATE CACHED TABLE					" +
+					"CREATE TABLE					" +
 					"		info							" +
 					"(	  version INTEGER PRIMARY KEY		" +
 					")");
 			sh.execute( //Add compatibility version of GDB
 					"INSERT INTO version VALUES ( " + COMPAT_VERSION + ")");
-			sh.execute("DROP TABLE link IF EXISTS");
 			sh.execute(
-					"CREATE CACHED TABLE					" +
+					"CREATE TABLE					" +
 					"		link							" +
 					" (   idLeft VARCHAR(50) NOT NULL,		" +
 					"     codeLeft VARCHAR(50) NOT NULL,	" +
@@ -618,9 +605,8 @@ public abstract class GmmlGdb {
 					"CREATE INDEX i_codeRight" +
 					" ON link(codeRight)"
 					);
-			sh.execute("DROP TABLE gene IF EXISTS");
 			sh.execute(
-					"CREATE CACHED TABLE							" +
+					"CREATE TABLE							" +
 					"		gene							" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +

@@ -3,6 +3,8 @@ package data;
 import gmmlVision.GmmlVision;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,26 +21,32 @@ public class DBConnHsqldb implements DBConnector {
 	String DB_FILE_EXT = "properties";
 	
 	public Connection createConnection(String dbName) throws Exception {
-		return createConnection(dbName, false);
+		return createConnection(dbName, PROP_NONE);
 	}
 	
-	public Connection createConnection(String dbName, boolean forceCreate) throws Exception {
-		if(!forceCreate) {
+	public Connection createConnection(String dbName, int props) throws Exception {
+		if((props & PROP_RECREATE) != 0) {
 			File dbFile = dbName2File(dbName);
 			if(!dbFile.canRead()) throw new Exception("Can't access file '" + dbFile.toString() + "'");
 		}
-				
+	
 		Class.forName("org.hsqldb.jdbcDriver");
 		Properties prop = new Properties();
 		prop.setProperty("user","sa");
 		prop.setProperty("password","");
+		prop.setProperty("hsqldb.default_table_type", "cached");
 		return DriverManager.getConnection("jdbc:hsqldb:file:" + dbName, prop);
 	}
 
 	public void closeConnection(Connection con) throws SQLException {
+		closeConnection(con, PROP_NONE);
+	}
+	
+	public void closeConnection(Connection con, int props) throws SQLException {
+		boolean compact = (props & PROP_COMPACT) != 0;
 		if(con != null) {
 			Statement sh = con.createStatement();
-			sh.executeQuery("SHUTDOWN"); // required, to write last changes
+			sh.executeQuery("SHUTDOWN" + (compact ? " COMPACT" : ""));
 			sh.close();
 			con.close();
 		}
@@ -75,5 +83,17 @@ public class DBConnHsqldb implements DBConnector {
 		String end = '.' + DB_FILE_EXT;
 		return fileName.endsWith(end) ? 
 				fileName.substring(0, fileName.length() -  end.length()) : fileName;
+	}
+	
+	public void setPropertyReadOnly(String dbName, boolean readonly) {
+    	Properties prop = new Properties();
+		try {
+			File propertyFile = dbName2File(dbName);
+			prop.load(new FileInputStream(propertyFile));
+			prop.setProperty("hsqldb.files_readonly", Boolean.toString(readonly));
+			prop.store(new FileOutputStream(propertyFile), "HSQL Database Engine");
+			} catch (Exception e) {
+				GmmlVision.log.error("Unable to set database properties to readonly", e);
+			}
 	}
 }

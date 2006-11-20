@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -150,23 +151,22 @@ public class ImportExprDataWizard extends Wizard {
 					if (file != null) {
 						txtText.setText(file);
 						gexText.setText(file.replace(file.substring(file
-								.lastIndexOf(".")), ".properties"));
+								.lastIndexOf(".")), ""));
 					}
 				}
 			});
 
 			gexButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					fileDialog
-							.setText("Specify location to save the expression dataset");
-					fileDialog.setFilterExtensions(new String[] {
-							"*.properties", "*.*" });
-					fileDialog.setFilterNames(new String[] {
-							"Expression dataset", "All files" });
-					fileDialog.setFileName(gexText.getText());
-					String file = fileDialog.open();
-					if (file != null)
-						gexText.setText(file);
+					try {
+						DBConnector dbcon = GmmlVision.getDBConnector();
+						String dbName = dbcon.openNewDbDialog(getShell(), gexText.getText());
+						if(dbName != null) gexText.setText(dbName);
+						
+					} catch(Exception ex) {
+						MessageDialog.openError(getShell(), "Error", "Unable to open connection dialog");
+						GmmlVision.log.error("", ex);
+					}
 				}
 			});
 
@@ -179,7 +179,7 @@ public class ImportExprDataWizard extends Wizard {
 
 			gexText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					setGexFile(new File(gexText.getText()));
+					setDbName(gexText.getText());
 					setPageComplete(txtFileComplete && gexFileComplete);
 				}
 			});
@@ -210,18 +210,13 @@ public class ImportExprDataWizard extends Wizard {
 		}
 
 		/**
-		 * Stores the given {@link File} pointing to the loaction to save the
+		 * Sets the name of the database to save the
 		 * expression database to the {@link ImportInformation} object
 		 * @param file
 		 */
-		private void setGexFile(File file) {
-			String fname = file.getAbsolutePath().toString();
-			if (!fname.endsWith(".properties")) {
-				fname += ".properties";
-			}
-			file = new File(fname);
-			importInformation.gexFile = file;
-			setMessage("Location to save expression dataset: " + fname);
+		private void setDbName(String name) {
+			importInformation.dbName = name;
+			setMessage("Expression dataset location: " + name);
 			gexFileComplete = true;
 		}
 
@@ -577,9 +572,9 @@ public class ImportExprDataWizard extends Wizard {
 		public File getTxtFile() { return txtFile; } 
 		
 		/**
-		 * Points to the (.properties) file of the hsqldb expression database
+		 * The database name in which the expression data is saved
 		 */
-		public File gexFile;
+		public String dbName;
 
 		/**
 		 * linenumber (first line is 1) of the line where the data begins

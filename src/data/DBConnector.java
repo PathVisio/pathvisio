@@ -5,10 +5,14 @@ import java.sql.Connection;
 import org.eclipse.swt.widgets.Shell;
 
 public interface DBConnector {
+	int PROP_NONE = 0;
+	int PROP_COMPACT = 2;
+	int PROP_RECREATE = 4;
 	
 	public Connection createConnection(String dbName) throws Exception;
-	public Connection createConnection(String dbName, boolean forceCreate) throws Exception;
+	public Connection createConnection(String dbName, int props) throws Exception;
 	public void closeConnection(Connection con) throws Exception;
+	public void closeConnection(Connection con, int props) throws Exception;
 	
 	public String openChooseDbDialog(Shell shell);
 	public String openNewDbDialog(Shell shell, String defaultName);

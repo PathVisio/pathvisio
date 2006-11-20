@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -44,6 +43,7 @@ import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
+import debug.StopWatch;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -66,21 +66,20 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	public static boolean isConnected() { return con != null; }
 	
-	private static File gexFile;
+	private static String dbName;
 	/**
-	 * Get the {@link File} pointing to the Expression data 
-	 * (.properties file of the Hsql database)
+	 * Get the database name of the expression data currently loaded
 	 */
-	public static File getGexFile() { return gexFile; }
+	public static String getDbName() { return dbName; }
 	
 	/**
-	 * Set the {@link File} pointing to the Expression data
-	 * (.properties file of the Hsql database)
+	 * Set the database name of the expression data currently loaded
+	 * (Connection is not reset)
 	 */
-	public static void setGexFile(File file) { gexFile = file; }
+	public static void setDbName(String name) { dbName = name; }
 				
 	public static InputStream getXmlInput() {
-		File xmlFile = new File(gexFile + ".xml");
+		File xmlFile = new File(dbName + ".xml");
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
 			InputStream in = new FileInputStream(xmlFile);
@@ -93,7 +92,7 @@ public class GmmlGex implements ApplicationEventListener {
 	
 	public static OutputStream getXmlOutput() {
 		try {
-			File f = new File(gexFile + ".xml");
+			File f = new File(dbName + ".xml");
 			OutputStream out = new FileOutputStream(f);
 			return out;
 		} catch(Exception e) {
@@ -472,6 +471,8 @@ public class GmmlGex implements ApplicationEventListener {
 	private static void cacheData(ArrayList<String> ids, ArrayList<String> codes)
 	{	
 		cachedData = new CachedData();
+		StopWatch timer = new StopWatch();
+		timer.start();
 		for(int i = 0; i < ids.size(); i++)
 		{
 			String id = ids.get(i);
@@ -513,6 +514,8 @@ public class GmmlGex implements ApplicationEventListener {
 			cacheThread.progress += 100.0 / ids.size(); //Update the progress
 		}
 		cacheThread.progress = 100;
+		GmmlVision.log.trace("Caching expression data took:\t" + timer.stop() + " ms");
+		GmmlVision.log.trace("> Nr of ids queried:\t" + ids.size());
 	}
 	
 	/**
@@ -674,7 +677,7 @@ public class GmmlGex implements ApplicationEventListener {
 	private static void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
 	{
 //		Open a connection to the error file
-		String errorFile = info.gexFile + ".ex.txt";
+		String errorFile = info.dbName + ".ex.txt";
 		int errors = 0;
 		PrintWriter error = null;
 		try {
@@ -683,17 +686,21 @@ public class GmmlGex implements ApplicationEventListener {
 			page.println("Error: could not open exception file: " + ex.getMessage());
 		}
 		
+		StopWatch timer = new StopWatch();
 		try 
 		{
 			page.println("Creating expression dataset");
-			
+						
 			//Create a new expression database (or overwrite existing)
-			gexFile = info.gexFile;
-			connect(true);
+			dbName = info.dbName;
+			connect(true, false);
 			createTables();
 			
 			page.println("Importing data");
 			page.println("> Processing headers");
+			
+			timer.start();
+			
 			BufferedReader in = new BufferedReader(new FileReader(info.getTxtFile()));
 			//Get the number of lines in the file (for progress)
 			int nrLines = FileUtils.getNrLines(info.getTxtFile().toString());
@@ -707,7 +714,7 @@ public class GmmlGex implements ApplicationEventListener {
 			int sampleId = 0;
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++) {
-				if(monitor.isCanceled()) { close(true, true); error.close(); return; } //User pressed cancel
+				if(monitor.isCanceled()) { close(true); error.close(); return; } //User pressed cancel
 				if(i != info.idColumn && i != info.codeColumn) { //skip the gene and systemcode column
 					try {
 						pstmt.setInt(1, sampleId++);
@@ -790,16 +797,16 @@ public class GmmlGex implements ApplicationEventListener {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
 			monitor.setTaskName("Closing database connection");
-			close(true, true);
-			error.close();
+			close(true);
 			
-			setPropertyReadOnly(gexFile, true);
+			error.println("Time to create expression dataset: " + timer.stop());
+			error.close();
 			
 			connect(); //re-connect and use the created expression dataset
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
-			close(true, true);
+			close(true);
 			error.close();
 		}
 	}
@@ -841,7 +848,7 @@ public class GmmlGex implements ApplicationEventListener {
 		}
 		
 		try {
-			connect(true); //Connect and delete the old database if exists
+			connect(true, false); //Connect and delete the old database if exists
 			connectGmGex(gmGexFile); //Connect to the GenMAPP gex
 			createTables();
 			
@@ -940,31 +947,16 @@ public class GmmlGex implements ApplicationEventListener {
 	 * @param 	clean true if the old database has to be removed, false for just connecting
 	 * @return 	null if the connection was created, a String with an error message if an error occured
 	 */
-	public static void connect(boolean clean) throws Exception
+	public static void connect(boolean clean, boolean fireEvent) throws Exception
 	{
-		if(clean)
-		{
-			//remove old property file
-			File gexPropFile = gexFile;
-			gexPropFile.delete();
-		}
-		
-		Class.forName("org.hsqldb.jdbcDriver");
-		Properties prop = new Properties();
-		prop.setProperty("user","sa");
-		prop.setProperty("password","");
-		//prop.setProperty("hsqldb.default_table_type","cached");
-		String file = gexFile.getAbsolutePath().toString();
-		con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-				file.substring(0,file.lastIndexOf(".")) + ";shutdown=true", prop);
-		con.setReadOnly(true);
-		
-//		if(!clean) Utils.checkDbVersion(con, COMPAT_VERSION);
+		DBConnector connector = GmmlVision.getDBConnector();
+		con = connector.createConnection(dbName, clean ? DBConnector.PROP_RECREATE : DBConnector.PROP_NONE);
 		
 		loadXML();
 		setSamples();
 		
-		fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_OPENED));
+		if(fireEvent)
+			fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_OPENED));
 	}
 	
 	/**
@@ -973,7 +965,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	public static void connect() throws Exception
 	{
-		connect(false);
+		connect(false, true);
 	}
 		
 	/**
@@ -981,7 +973,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 * statement before calling {@link Connection.close()}
 	 * @param shutdown	true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
-	public static void close(boolean shutdown, boolean compact)
+	public static void close(boolean compact)
 	{
 		if(con != null)
 		{
@@ -989,16 +981,11 @@ public class GmmlGex implements ApplicationEventListener {
 			{
 				saveXML();
 				
-				Statement sh = con.createStatement();
-				if(shutdown) {
-					//Shutdown to write last changes, compact to compact the data file (can take a while)
-					sh.executeQuery((shutdown ? "SHUTDOWN" : "") + (compact ? " COMPACT" : ""));
-				}
-				sh.close();
-				con = null;
+				DBConnector connector = GmmlVision.getDBConnector();
+				connector.closeConnection(con, compact ? DBConnector.PROP_COMPACT : DBConnector.PROP_NONE);
 				fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 			} catch (Exception e) {
-				GmmlVision.log.error("Error while closing connection to expression dataset " + gexFile, e);
+				GmmlVision.log.error("Error while closing connection to expression dataset " + dbName, e);
 			}
 		}
 	}
@@ -1009,7 +996,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	public static void close()
 	{
-		close(true, false);
+		close(false);
 	}
 	
 	/**
@@ -1091,19 +1078,7 @@ public class GmmlGex implements ApplicationEventListener {
 			this.type = type;
 		}
 	}
-	
-	public static void setPropertyReadOnly(File propertyFile, boolean readonly) {
-    	// Set readonly to true
-    	Properties prop = new Properties();
-		try {
-			prop.load(new FileInputStream(propertyFile));
-			prop.setProperty("hsqldb.files_readonly", Boolean.toString(readonly));
-			prop.store(new FileOutputStream(propertyFile), "HSQL Database Engine");
-			} catch (Exception e) {
-				GmmlVision.log.error("Unable to set database properties to readonly", e);
-			}
-	}
-	
+		
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
@@ -1112,25 +1087,22 @@ public class GmmlGex implements ApplicationEventListener {
 		try {
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();
-			sh.execute("DROP TABLE info IF EXISTS");
-			sh.execute("DROP TABLE samples IF EXISTS");
-			sh.execute("DROP TABLE expression IF EXISTS");
-			sh.execute("DROP TABLE colorSets IF EXISTS");
-			sh.execute("DROP TABLE colorSetObjects IF EXISTS");
-			sh.execute("DROP TABLE textdata IF EXISTS");
+			sh.execute("DROP TABLE info");
+			sh.execute("DROP TABLE samples");
+			sh.execute("DROP TABLE expression");
 		} catch(Exception e) {
 			GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e);
 		}
 			Statement sh = con.createStatement();
 			sh.execute(
-					"CREATE CACHED TABLE					" +
+					"CREATE TABLE					" +
 					"		info							" +
 					"(	  version INTEGER PRIMARY KEY		" +
 					")");
 			sh.execute( //Add compatibility version of GEX
 					"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
 			sh.execute(
-					"CREATE CACHED TABLE                    " +
+					"CREATE TABLE                    " +
 					"		samples							" +
 					" (   idSample INTEGER PRIMARY KEY,		" +
 					"     name VARCHAR(50),					" +
@@ -1138,7 +1110,7 @@ public class GmmlGex implements ApplicationEventListener {
 			" )										");
 			
 			sh.execute(
-					"CREATE CACHED TABLE					" +
+					"CREATE TABLE					" +
 					"		expression						" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +

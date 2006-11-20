@@ -14,6 +14,8 @@ public interface DBConnector {
 	public void closeConnection(Connection con) throws Exception;
 	public void closeConnection(Connection con, int props) throws Exception;
 	
-	public String openChooseDbDialog(Shell shell);
+	public void setDatabaseReadonly(String dbName, boolean readonly);
+	
+	public String openChooseDbDialog(Shell shell, String filterPath);
 	public String openNewDbDialog(Shell shell, String defaultName);
 }

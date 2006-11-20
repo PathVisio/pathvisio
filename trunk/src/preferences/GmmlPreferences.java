@@ -42,7 +42,8 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 		setDefault(PREF_COL_HIGHLIGHTED, ColorConverter.getRgbString(HIGHLIGHTED));
 //		setDefault(PREF_COL_AMBIGIOUS_REP, ColorConverter.getRgbString(AMBIGIOUS_REP));
 		setDefault(PREF_CURR_GDB, CURRENT_GDB);
-		setDefault(PREF_DB_ENGINE, DB_ENGINE);
+		setDefault(PREF_DB_ENGINE_GDB, DB_ENGINE_GDB);
+		setDefault(PREF_DB_ENGINE_EXPR, DB_ENGINE_EXPR);
 		setDefault(PREF_SIDEPANEL_SIZE, SIDEPANEL_SIZE);
 		
 		setDefault(PREF_DIR_PWFILES, DIR_PWFILES);
@@ -116,7 +117,8 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	public static final String PREF_DIR_RDATA = "directories.RdataFiles";
 		
 	public static final String PREF_CURR_GDB = "currentGdb";
-	public static final String PREF_DB_ENGINE = "database engine";
+	public static final String PREF_DB_ENGINE_GDB = "dbengine.gdb";
+	public static final String PREF_DB_ENGINE_EXPR = "dbengine.expr";
 	public static final String PREF_SIDEPANEL_SIZE = "display.sidePanelSize";	
 	
 	// Defaults
@@ -135,7 +137,8 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	static String CURRENT_GDB = "none";
 
 	//database engine
-	static String DB_ENGINE = "data.DBConnHsqldb";
+	static String DB_ENGINE_EXPR = "data.DBConnHsqldb";
+	static String DB_ENGINE_GDB = "data.DBConnHsqldb";
 	
 	// directories
 	static final String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();

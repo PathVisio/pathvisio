@@ -159,7 +159,7 @@ public class ImportExprDataWizard extends Wizard {
 			gexButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					try {
-						DBConnector dbcon = GmmlVision.getDBConnector();
+						DBConnector dbcon = GmmlGex.getDBConnector();
 						String dbName = dbcon.openNewDbDialog(getShell(), gexText.getText());
 						if(dbName != null) gexText.setText(dbName);
 						

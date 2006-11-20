@@ -25,7 +25,8 @@ public class DBConnHsqldb implements DBConnector {
 	}
 	
 	public Connection createConnection(String dbName, int props) throws Exception {
-		if((props & PROP_RECREATE) != 0) {
+		boolean recreate = (props & PROP_RECREATE) != 0;
+		if(recreate) {
 			File dbFile = dbName2File(dbName);
 			if(!dbFile.canRead()) throw new Exception("Can't access file '" + dbFile.toString() + "'");
 		}
@@ -35,7 +36,7 @@ public class DBConnHsqldb implements DBConnector {
 		prop.setProperty("user","sa");
 		prop.setProperty("password","");
 		prop.setProperty("hsqldb.default_table_type", "cached");
-		return DriverManager.getConnection("jdbc:hsqldb:file:" + dbName, prop);
+		return DriverManager.getConnection("jdbc:hsqldb:file:" + dbName + ";create=" + recreate, prop);
 	}
 
 	public void closeConnection(Connection con) throws SQLException {
@@ -52,10 +53,10 @@ public class DBConnHsqldb implements DBConnector {
 		}
 	}
 	
-	public String openChooseDbDialog(Shell shell) {
+	public String openChooseDbDialog(Shell shell, String filterPath) {
 		FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
 		fileDialog.setText("Select database file");
-		fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
+		if(filterPath != null) fileDialog.setFilterPath(filterPath);
 		fileDialog.setFilterExtensions(new String[] {"*." + DB_FILE_EXT,"*.*"});
 		fileDialog.setFilterNames(new String[] {"Database file","All files"});
 		String file = fileDialog.open();
@@ -85,7 +86,11 @@ public class DBConnHsqldb implements DBConnector {
 				fileName.substring(0, fileName.length() -  end.length()) : fileName;
 	}
 	
-	public void setPropertyReadOnly(String dbName, boolean readonly) {
+	public void setDatabaseReadonly(String dbName, boolean readonly) {
+		 setPropertyReadOnly(dbName, readonly);
+	}
+	
+	void setPropertyReadOnly(String dbName, boolean readonly) {
     	Properties prop = new Properties();
 		try {
 			File propertyFile = dbName2File(dbName);

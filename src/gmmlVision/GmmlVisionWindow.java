@@ -481,8 +481,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		public void run () {			
 			try {
-				DBConnector dbcon = GmmlVision.getDBConnector();
-				String dbName = dbcon.openChooseDbDialog(getShell());
+				DBConnector dbcon = GmmlGdb.getDBConnector();
+				String dbName = dbcon.openChooseDbDialog(getShell(),
+						GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
+				
+				if(dbName == null) return;
 				
 				GmmlGdb.connect(dbName);
 				setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
@@ -513,8 +516,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		public void run () {
 			try {
-				DBConnector dbcon = GmmlVision.getDBConnector();
-				String dbName = dbcon.openChooseDbDialog(getShell());
+				DBConnector dbcon = GmmlGex.getDBConnector();
+				String dbName = dbcon.openChooseDbDialog(getShell(),
+						GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
+				
+				if(dbName == null) return;
+				
 				GmmlGex.setDbName(dbName);
 				GmmlGex.connect();
 			} catch(Exception e) {
@@ -614,7 +621,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			
 			String dbName = null;
 			try {
-				DBConnector dbcon = GmmlVision.getDBConnector();
+				DBConnector dbcon = GmmlGex.getDBConnector();
 				dbName = dbcon.openNewDbDialog(getShell(), 
 						gmGexFile.getName().replace(".gex", ".properties"));
 			} catch(Exception e) {
@@ -674,7 +681,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			gmGdbFile = new File(file);
 
 			try {
-				DBConnector dbcon = GmmlVision.getDBConnector();
+				DBConnector dbcon = GmmlGex.getDBConnector();
 				dbName = dbcon.openNewDbDialog(getShell(), 
 						gmGdbFile.getName().replace(".gdb", ".properties"));
 			} catch(Exception e) {

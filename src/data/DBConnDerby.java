@@ -1,32 +1,35 @@
 package data;
 
-import gmmlVision.GmmlVision;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import preferences.GmmlPreferences;
-
 public class DBConnDerby implements DBConnector {
+	String lastDbName;
 	
 	public Connection createConnection(String dbName) throws Exception {
 		return createConnection(dbName, PROP_NONE);
 	}
 	
 	public Connection createConnection(String dbName, int props) throws Exception {
-		String urlAttr = "";
-		if((props & PROP_RECREATE) != 0) {
+		boolean recreate = (props & PROP_RECREATE) != 0;
+		if(recreate) {
 			File dbFile = new File(dbName);
-			dbFile.delete();
-			urlAttr += "create=true"; 
+			dbFile.delete(); 
 		}
+		
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-		return DriverManager.getConnection("jdbc:derby:" + dbName + ";" + urlAttr);
+		Properties prop = new Properties();
+		prop.setProperty("create", Boolean.toString(recreate));
+//		prop.setProperty("shutdown", "true");
+		Connection con = DriverManager.getConnection("jdbc:derby:" + dbName + ";", prop);
+		lastDbName = dbName;
+		return con;
 	}
 
 	public void closeConnection(Connection con) throws SQLException {
@@ -35,13 +38,15 @@ public class DBConnDerby implements DBConnector {
 	
 	public void closeConnection(Connection con, int props) throws SQLException {
 		if(con != null) {
+			if(lastDbName != null) 
+				DriverManager.getConnection("jdbc:derby:" + lastDbName + ";shutdown=true");
 			con.close();
 		}
 	}
 	
-	public String openChooseDbDialog(Shell shell) {
+	public String openChooseDbDialog(Shell shell, String filterPath) {
 		DirectoryDialog dialog = new DirectoryDialog(shell);
-		dialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
+		if(filterPath != null) dialog.setFilterPath(filterPath);
 		String dir = dialog.open();
 		return dir;
 	}
@@ -52,4 +57,6 @@ public class DBConnDerby implements DBConnector {
 		String dir = dialog.open();
 		return dir;
 	}
+
+	public void setDatabaseReadonly(String dbName, boolean readonly) {	}
 }

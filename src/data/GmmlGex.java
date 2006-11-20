@@ -36,7 +36,10 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import preferences.GmmlPreferences;
+
 import util.FileUtils;
+import util.Utils;
 import visualization.VisualizationManager;
 import visualization.colorset.ColorSetManager;
 import data.GmmlGdb.IdCodePair;
@@ -714,7 +717,7 @@ public class GmmlGex implements ApplicationEventListener {
 			int sampleId = 0;
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++) {
-				if(monitor.isCanceled()) { close(true); error.close(); return; } //User pressed cancel
+				if(monitor.isCanceled()) { close(true, true); error.close(); return; } //User pressed cancel
 				if(i != info.idColumn && i != info.codeColumn) { //skip the gene and systemcode column
 					try {
 						pstmt.setInt(1, sampleId++);
@@ -797,7 +800,7 @@ public class GmmlGex implements ApplicationEventListener {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
 			monitor.setTaskName("Closing database connection");
-			close(true);
+			close(true, true);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
@@ -806,7 +809,7 @@ public class GmmlGex implements ApplicationEventListener {
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
-			close(true);
+			close(true, true);
 			error.close();
 		}
 	}
@@ -941,6 +944,17 @@ public class GmmlGex implements ApplicationEventListener {
 		convertThread.progress = 100;
 	}
 	
+	public static DBConnector getDBConnector() throws Exception {
+		DBConnector connector = null;
+		Class dbc = Class.forName(
+				GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_EXPR));
+		
+		if(Utils.isInterface(dbc, "data.DBConnector")) {
+			connector = (DBConnector)dbc.newInstance();
+		}
+		return connector;
+	}
+	
 	/**
 	 * Connects to the Expression database (location given in {@link gexFile} with
 	 * option to remove the old database
@@ -949,11 +963,13 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	public static void connect(boolean clean, boolean fireEvent) throws Exception
 	{
-		DBConnector connector = GmmlVision.getDBConnector();
+		DBConnector connector = getDBConnector();
 		con = connector.createConnection(dbName, clean ? DBConnector.PROP_RECREATE : DBConnector.PROP_NONE);
 		
 		loadXML();
 		setSamples();
+		
+		con.setReadOnly( !clean );
 		
 		if(fireEvent)
 			fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_OPENED));
@@ -973,7 +989,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 * statement before calling {@link Connection.close()}
 	 * @param shutdown	true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
-	public static void close(boolean compact)
+	public static void close(boolean compact, boolean setReadOnly)
 	{
 		if(con != null)
 		{
@@ -981,8 +997,11 @@ public class GmmlGex implements ApplicationEventListener {
 			{
 				saveXML();
 				
-				DBConnector connector = GmmlVision.getDBConnector();
+				DBConnector connector = getDBConnector();
 				connector.closeConnection(con, compact ? DBConnector.PROP_COMPACT : DBConnector.PROP_NONE);
+				
+				if(setReadOnly) connector.setDatabaseReadonly(dbName, true);
+				
 				fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 			} catch (Exception e) {
 				GmmlVision.log.error("Error while closing connection to expression dataset " + dbName, e);
@@ -996,7 +1015,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	public static void close()
 	{
-		close(false);
+		close(false, false);
 	}
 	
 	/**

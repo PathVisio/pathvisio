@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import preferences.GmmlPreferences;
+import util.Utils;
 import debug.StopWatch;
 
 /**
@@ -116,6 +117,8 @@ public abstract class GmmlGdb {
 			return r.getInt(1) > 0 ? true : false;
 		} catch(Exception e) { return false; }
 	}
+	
+	static PreparedStatement pstEnsId2Refs;
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id
@@ -123,13 +126,20 @@ public abstract class GmmlGdb {
 	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 */	
-	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {		
+	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
+		StopWatch timer = new StopWatch();
+		timer.start();
+		
 		ArrayList<IdCodePair> crossIds = new ArrayList<IdCodePair>();
 		try {
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idRight, codeRight FROM link " +
-					"WHERE idLeft = '" + ensId + "'"
-					);
+			if(pstEnsId2Refs == null) {
+				pstEnsId2Refs = getCon().prepareStatement(
+						"SELECT idRight, codeRight FROM link " +
+						"WHERE idLeft = ?"
+				);
+			}
+			pstEnsId2Refs.setString(1, ensId);
+			ResultSet r1 = pstEnsId2Refs.executeQuery();
 			while(r1.next()) {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
 			}
@@ -137,9 +147,12 @@ public abstract class GmmlGdb {
 			GmmlVision.log.error("Unable to get cross references for ensembl gene " +
 					"'" + ensId + "'", e);
 		}
+		
+		GmmlVision.log.trace("\t> endId2Refs:\t" + ensId + "\t" + timer.stop());
 		return crossIds;
 	}
 	
+	static PreparedStatement pstRef2EnsIds;
 	/**
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
 	 * @param ref	The gene id to get the Ensembl ids for
@@ -148,13 +161,21 @@ public abstract class GmmlGdb {
 	 * (empty if nothing found)
 	 */
 	public static ArrayList<String> ref2EnsIds(String ref, String code)
-	{		
+	{	
+		StopWatch timer = new StopWatch();
+		timer.start();
+		
 		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idLeft FROM link " +
-					"WHERE idRight = '" + ref + "' AND codeRight = '" + code + "'"
-			);
+			if(pstRef2EnsIds == null) {
+				pstRef2EnsIds = getCon().prepareStatement(
+						"SELECT idLeft FROM link " +
+						"WHERE idRight = ? AND codeRight = ?"
+				);
+			}
+			pstRef2EnsIds.setString(1, ref);
+			pstRef2EnsIds.setString(2, code);
+			ResultSet r1 = pstRef2EnsIds.executeQuery();
 			while(r1.next()) {
 				ensIds.add(r1.getString(1));
 			}
@@ -162,6 +183,8 @@ public abstract class GmmlGdb {
 			GmmlVision.log.error("Unable to get ensembl genes for ensembl gene " +
 					"'" + ref + "' with systemcode '" + code + "'", e);
 		}
+		
+		GmmlVision.log.trace("\t> ref2EnsIds:\t" + ref + "," + code + "\t" + timer.stop());
 		return ensIds;
 	}
 	
@@ -174,10 +197,11 @@ public abstract class GmmlGdb {
 		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
 
-		GmmlVision.log.trace("END Fetching cross references; time:\t" + timer.stop());
+		GmmlVision.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
 	}
 	
+	static boolean SINGLE_QUERY = false;
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given id
@@ -186,12 +210,13 @@ public abstract class GmmlGdb {
 	 * @return
 	 */
 	public static List<IdCodePair> getCrossRefs(String id, String code) {
-		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
-		ArrayList<String> ensIds = ref2EnsIds(id, code);
-		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
-
-		return refs;
+		if(SINGLE_QUERY) 
+			return getCrossRefs1Query(id, code);
+		else
+			return getCrossRefs(new IdCodePair(id, code));
 	}
+	
+	static PreparedStatement pstCrossRefs1Query;
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given id (from any system) using a
@@ -205,18 +230,24 @@ public abstract class GmmlGdb {
 	 */
 //	Don't use this, multiple simple select queries is faster
 //	Use getCrossRefs instead
-	public static List<String> getCrossRefs1Query(String id, String code) {
-		List<String> crossIds = new ArrayList<String>();
+	public static List<IdCodePair> getCrossRefs1Query(String id, String code) {
+		List<IdCodePair> crossIds = new ArrayList<IdCodePair>();
 		try {
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idRight FROM link " +
-					"WHERE codeRight = '" + code + "' AND " +
-							"idLeft IN ( 		  " +
-					"SELECT idLeft FROM link " +
-					"WHERE idRight = '" + id + "')"
-					);
+			if(pstCrossRefs1Query == null) {
+				pstCrossRefs1Query = getCon().prepareStatement(
+						"SELECT idRight, codeRight FROM link " +
+						"WHERE codeLeft = ? AND idLeft IN ( " +
+						"SELECT idLeft FROM link " +
+						"WHERE idRight = ? )"
+				);
+			}
+			pstCrossRefs1Query.setString(1, code);
+			pstCrossRefs1Query.setString(2, id);
+			ResultSet r1 = pstCrossRefs1Query.executeQuery();
 			while(r1.next()) {
-				crossIds.add(r1.getString(1));
+				String rid = r1.getString(1);
+				String rcode = r1.getString(2);
+				crossIds.add(new IdCodePair(rid, rcode));
 			}
 		} catch(Exception e) {
 			GmmlVision.log.error("Unable to get cross references for gene " +
@@ -260,6 +291,17 @@ public abstract class GmmlGdb {
 		}
 	}
 	
+	public static DBConnector getDBConnector() throws Exception {
+		DBConnector connector = null;
+		Class dbc = Class.forName(
+				GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_GDB));
+		
+		if(Utils.isInterface(dbc, "data.DBConnector")) {
+			connector = (DBConnector)dbc.newInstance();
+		}
+		return connector;
+	}
+	
 	/**
 	 * Opens a {@link Connection} to the Gene Database located in the given file
 	 * @param gdbFile	The file containing the Gene Database. This file needs to be the
@@ -270,8 +312,9 @@ public abstract class GmmlGdb {
 	{
 		if(dbName == null) dbName = getDbName();
 		
-		DBConnector connector = GmmlVision.getDBConnector();
+		DBConnector connector = getDBConnector();
 		con = connector.createConnection(dbName);
+		con.setReadOnly(true);
 //		Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
 		setCurrentGdb(dbName);
 	}
@@ -283,7 +326,7 @@ public abstract class GmmlGdb {
 	{
 		if(con != null) {
 			try {
-				DBConnector connector = GmmlVision.getDBConnector();
+				DBConnector connector = getDBConnector();
 				connector.closeConnection(con);
 			} catch(Exception e) {
 				GmmlVision.log.error("Unable to close database connection", e);
@@ -329,7 +372,7 @@ public abstract class GmmlGdb {
 			}
 			
 			//Create hsqldb gdb
-			connector = GmmlVision.getDBConnector();
+			connector = getDBConnector();
 			convertCon = connector.createConnection(dbName, DBConnector.PROP_RECREATE);
 			
 			// Fetch size of database to convert (for progress monitor)

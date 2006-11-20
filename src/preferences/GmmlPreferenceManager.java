@@ -114,9 +114,12 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			StringFieldEditor f = new StringFieldEditor(GmmlPreferences.PREF_DB_ENGINE,
-					"Database connector class:", getFieldEditorParent());
-			addField(f);
+			StringFieldEditor f1 = new StringFieldEditor(GmmlPreferences.PREF_DB_ENGINE_GDB,
+					"Database connector class for gene database:", getFieldEditorParent());
+			addField(f1);
+			StringFieldEditor f2 = new StringFieldEditor(GmmlPreferences.PREF_DB_ENGINE_EXPR,
+					"Database connector class for expression dataset:", getFieldEditorParent());
+			addField(f2);
 		}
 	}
 	

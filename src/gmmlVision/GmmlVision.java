@@ -206,18 +206,7 @@ public abstract class GmmlVision {
 		}
 		return DIR_DATA;
 	}
-	
-	public static DBConnector getDBConnector() throws Exception {
-		DBConnector connector = null;
-		Class dbc = Class.forName(
-				GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE));
 		
-		if(Utils.isInterface(dbc, "data.DBConnector")) {
-			connector = (DBConnector)dbc.newInstance();
-		}
-		return connector;
-	}
-	
 	public static boolean isUseR() { return USE_R; }
 	
 	

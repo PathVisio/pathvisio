@@ -34,15 +34,16 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	{
 		addPropertyChangeListener(this);
 		
-		setDefault(GmmlPreferences.PREF_FILES_LOG, new File(GmmlVision.getApplicationDir(), ".GmmlVisioLog").toString());
+		setDefault(PREF_FILES_LOG, new File(GmmlVision.getApplicationDir(), ".GmmlVisioLog").toString());
 		setDefault(PREF_COL_NO_CRIT_MET, ColorConverter.getRgbString(NO_CRITERIA_MET));
-		setDefault(GmmlPreferences.PREF_COL_NO_GENE_FOUND, ColorConverter.getRgbString(NO_GENE_FOUND));
-		setDefault(GmmlPreferences.PREF_COL_NO_DATA_FOUND, ColorConverter.getRgbString(NO_DATA_FOUND));
-		setDefault(GmmlPreferences.PREF_COL_SELECTED, ColorConverter.getRgbString(SELECTED));
-		setDefault(GmmlPreferences.PREF_COL_HIGHLIGHTED, ColorConverter.getRgbString(HIGHLIGHTED));
-//		setDefault(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, ColorConverter.getRgbString(AMBIGIOUS_REP));
-		setDefault(GmmlPreferences.PREF_CURR_GDB, CURRENT_GDB);
-		setDefault(GmmlPreferences.PREF_SIDEPANEL_SIZE, SIDEPANEL_SIZE);
+		setDefault(PREF_COL_NO_GENE_FOUND, ColorConverter.getRgbString(NO_GENE_FOUND));
+		setDefault(PREF_COL_NO_DATA_FOUND, ColorConverter.getRgbString(NO_DATA_FOUND));
+		setDefault(PREF_COL_SELECTED, ColorConverter.getRgbString(SELECTED));
+		setDefault(PREF_COL_HIGHLIGHTED, ColorConverter.getRgbString(HIGHLIGHTED));
+//		setDefault(PREF_COL_AMBIGIOUS_REP, ColorConverter.getRgbString(AMBIGIOUS_REP));
+		setDefault(PREF_CURR_GDB, CURRENT_GDB);
+		setDefault(PREF_DB_ENGINE, DB_ENGINE);
+		setDefault(PREF_SIDEPANEL_SIZE, SIDEPANEL_SIZE);
 		
 		setDefault(PREF_DIR_PWFILES, DIR_PWFILES);
 		setDefault(PREF_DIR_GDB, DIR_GDBFILES);
@@ -115,6 +116,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	public static final String PREF_DIR_RDATA = "directories.RdataFiles";
 		
 	public static final String PREF_CURR_GDB = "currentGdb";
+	public static final String PREF_DB_ENGINE = "database engine";
 	public static final String PREF_SIDEPANEL_SIZE = "display.sidePanelSize";	
 	
 	// Defaults
@@ -132,6 +134,9 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	// current gene database
 	static String CURRENT_GDB = "none";
 
+	//database engine
+	static String DB_ENGINE = "data.DBConnHsqldb";
+	
 	// directories
 	static final String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();
 	static final String DIR_GDBFILES = new File(GmmlVision.getDataDir().toString(), "gene databases").toString();

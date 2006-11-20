@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import preferences.GmmlPreferences;
+import util.Utils;
 
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
@@ -48,15 +49,12 @@ public abstract class GmmlGdb {
 	 */
 	public static boolean isConnected() { return con != null; }
 	
+	private static String dbName;
 	/**
-	 * {@link File} pointing to the current Gene Database (.properties file of the Hsql database)
+	 * Gets the name of te currently used gene database
+	 * @return the database name as specified in the connection string
 	 */
-	private static File gdbFile;
-	/**
-	 * Gets the private property gdbFile
-	 * @return {@File} object that points to the file containing the Gene Database
-	 */
-	public static File getGdbFile() { return gdbFile; }
+	public static String getDbName() { return dbName; }
 	
 	/**
 	 * Initiates this class. Checks the properties file for a previously
@@ -67,7 +65,7 @@ public abstract class GmmlGdb {
 		String currGdb = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB);
 		if(!currGdb.equals("") && !GmmlVision.getPreferences().isDefault(GmmlPreferences.PREF_CURR_GDB))
 		{
-			gdbFile = new File(currGdb);
+			dbName = currGdb;
 			try {
 				connect(null);
 			} catch(Exception e) {
@@ -80,9 +78,9 @@ public abstract class GmmlGdb {
 	 * Sets the Gene Database that is currently in use
 	 * @param gdb	The name of the gene database
 	 */
-	public static void setCurrentGdb(String gdb) {
-		gdbFile = new File(gdb);
-		GmmlVision.getPreferences().setValue(GmmlPreferences.PREF_CURR_GDB, gdb);
+	public static void setCurrentGdb(String dbNm) {
+		dbName = dbNm;
+		GmmlVision.getPreferences().setValue(GmmlPreferences.PREF_CURR_GDB, dbNm);
 		try { GmmlVision.getPreferences().save(); } 
 		catch(Exception e) { GmmlVision.log.error("Unable to save preferences", e); } 
 	}
@@ -280,44 +278,31 @@ public abstract class GmmlGdb {
 	 * .properties file of the Hsqldb database
 	 * @return	null if the connection was created, a String with an error message if an error occured
 	 */
-	public static void connect(File gdbFile) throws Exception
+	public static void connect(String dbName) throws Exception
 	{
-		if(gdbFile == null) gdbFile = GmmlGdb.gdbFile;
-		if(!gdbFile.canRead()) throw new Exception("Can't access file '" + gdbFile.toString() + "'");
-		Class.forName("org.hsqldb.jdbcDriver");
-		Properties prop = new Properties();
-		prop.setProperty("user","sa");
-		prop.setProperty("password","");
-		//prop.setProperty("hsqldb.default_table_type","cached");
-		String file = gdbFile.getAbsolutePath().toString();
-		con = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-				file.substring(0, file.lastIndexOf(".")), prop);
+		if(dbName == null) dbName = getDbName();
 		
-		//Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
-		
-		setCurrentGdb(gdbFile.getAbsoluteFile().toString());
+		DBConnector connector = GmmlVision.getDBConnector();
+		con = connector.createConnection(dbName);
+//		Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
+		setCurrentGdb(dbName);
 	}
 	
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
 	 */
-	public static void close()
+	public static void close() 
 	{
-		if(con != null)
-		{
-			try
-			{
-				Statement sh = con.createStatement();
-				sh.executeQuery("SHUTDOWN"); // required, to write last changes
-				sh.close();
-				con = null;
-			} catch (Exception e) {
-				GmmlVision.log.error("while shutting down gdb: " +e.getMessage(), e);
+		if(con != null) {
+			try {
+				DBConnector connector = GmmlVision.getDBConnector();
+				connector.closeConnection(con);
+			} catch(Exception e) {
+				GmmlVision.log.error("Unable to close database connection", e);
 			}
 		}
 	}
-	
-	
+		
 	/**
 	 * Converts the given GenMAPP Gene Database to a Hsqldb Gene Database as used in this program
 	 * <BR>This method reports all errors occured during the conversion to a file named 'convert_gdb_log.txt'
@@ -325,7 +310,7 @@ public abstract class GmmlGdb {
 	 * @param gdbFile		The file where the new Hsqldb Gene Database has to be stored (the .properties
 	 * file of the Hsqldb database)
 	 */
-	public static void convertGdb(File gmGdbFile, File gdbFile) {
+	public static void convertGdb(File gmGdbFile, String dbName) {
 
 		PrintWriter error = null;
 	    try {
@@ -339,6 +324,7 @@ public abstract class GmmlGdb {
 		{
 			close();
 			
+			DBConnector connector = null;
 			Connection convertCon = null;
 			Connection conGdb = null;
 			
@@ -355,22 +341,8 @@ public abstract class GmmlGdb {
 			}
 			
 			//Create hsqldb gdb
-			// remove old property file
-			error.println("Deleted old hsqldb file: " + gdbFile.delete());
-			Properties prop = new Properties();
-			prop.setProperty("user","sa");
-			prop.setProperty("password","");
-			try
-			{
-				String file = gdbFile.getAbsolutePath().toString();
-				Class.forName("org.hsqldb.jdbcDriver");
-				convertCon = DriverManager.getConnection("jdbc:hsqldb:file:" + 
-						file.substring(0, file.lastIndexOf(".")) + ";shutdown=true", prop);
-			}
-			catch (Exception e)
-			{
-				error.println("Error: " + e.getMessage());
-			}
+			connector = GmmlVision.getDBConnector();
+			convertCon = connector.createConnection(dbName, true);
 			
 			// Fetch size of database to convert (for progress monitor)
 			Statement s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -511,17 +483,11 @@ public abstract class GmmlGdb {
 			sh.executeQuery("SHUTDOWN COMPACT");
 			sh.close();
 			conGdb.close();
-			convertCon.close();
-			
-			//Set readonly to true
-			prop = new Properties();
-			prop.load(new FileInputStream(convertGdbFile));
-			prop.setProperty("readonly","true");
-			prop.store(new FileOutputStream(convertGdbFile), "HSQL Database Engine");
-			
-			if(gdbFile != null)
+			connector.closeConnection(convertCon);
+						
+			if(dbName != null)
 			{
-				connect(gdbFile);
+				connect(dbName);
 			}
 			convertThread.progress = 100;
 		}
@@ -538,17 +504,17 @@ public abstract class GmmlGdb {
 	private static ConvertThread convertThread;
 	
 	private static File convertGmGdbFile;
-	private static File convertGdbFile;
+	private static String convertDbName;
 	/**
 	 * Set the GenMAPP Gene database file to convert from
 	 * @param file
 	 */
 	public static void setConvertGmGdbFile(File file) { convertGmGdbFile = file; }
 	/**
-	 * Set the Gene database file to convert to
-	 * @param file
+	 * Set the Gene database name to convert to
+	 * @param name
 	 */
-	public static void setConvertGdbFile(File file) { convertGdbFile = file; }
+	public static void setConvertGdbName(String name) { convertDbName = name; }
 	
 	/**
 	 * This class is a {@link Thread} that converts a GenMAPP Gene Database and keeps the progress
@@ -567,7 +533,7 @@ public abstract class GmmlGdb {
 		public void run()
 		{
 			progress = 0;
-			convertGdb(convertGmGdbFile, convertGdbFile);
+			convertGdb(convertGmGdbFile, convertDbName);
 		}
 		
 		public void interrupt()

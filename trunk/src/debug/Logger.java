@@ -50,7 +50,7 @@ public class Logger
 	public void error (String msg) { if (errorEnabled) s.println ("Error: " + msg); }
 	public void error (String msg, Throwable e) 
 	{
-		if(errorEnabled) { error(msg); }
+		if(errorEnabled) { error(msg + "\n\t" + e.toString() + ": " + e.getMessage()); }
 		if(debugEnabled) { e.printStackTrace(s); }
 	}
 	public void fatal (String msg) { if (fatalEnabled) s.println ("Fatal: " + msg); }

@@ -18,7 +18,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import preferences.GmmlPreferences;
+import util.Utils;
 import data.ConverterException;
+import data.DBConnector;
 import data.GmmlData;
 import debug.Logger;
 
@@ -203,6 +205,17 @@ public abstract class GmmlVision {
 			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
 		}
 		return DIR_DATA;
+	}
+	
+	public static DBConnector getDBConnector() throws Exception {
+		DBConnector connector = null;
+		Class dbc = Class.forName(
+				GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE));
+		
+		if(Utils.isInterface(dbc, "data.DBConnector")) {
+			connector = (DBConnector)dbc.newInstance();
+		}
+		return connector;
 	}
 	
 	public static boolean isUseR() { return USE_R; }

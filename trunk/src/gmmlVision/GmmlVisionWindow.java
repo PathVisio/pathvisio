@@ -54,6 +54,7 @@ import R.RDataIn;
 import R.RCommands.RException;
 import R.wizard.RWizard;
 import data.ConverterException;
+import data.DBConnector;
 import data.GmmlData;
 import data.GmmlGdb;
 import data.GmmlGex;
@@ -478,18 +479,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			setToolTipText("Select Gene Database");
 		}
 		
-		public void run () {
-			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-			fileDialog.setText("Select Gene Database");
-			fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
-			fileDialog.setFilterExtensions(new String[] {"*.properties","*.*"});
-			fileDialog.setFilterNames(new String[] {"Gene Database","All files"});
-			String file = fileDialog.open();
-			// Only proceed if user selected a file
-			if(file == null) return;
-			// Connect returns null when connection is established
+		public void run () {			
 			try {
-				GmmlGdb.connect(new File(file));
+				DBConnector dbcon = GmmlVision.getDBConnector();
+				String dbName = dbcon.openChooseDbDialog(getShell());
+				
+				GmmlGdb.connect(dbName);
 				setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
@@ -675,7 +670,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		}
 		
 		public void run () {
-			File gdbFile = null;
+			String dbName = null;
 			File gmGdbFile = null;
 			// Initialize filedialog to open GenMAPP gdb
 			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
@@ -687,38 +682,33 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			// Only proceed if user selected a file
 			if(file == null) return;
 			gmGdbFile = new File(file);
-			// Initialize filedialog to save new Gene database
-			FileDialog saveDialog = new FileDialog(window.getShell(), SWT.SAVE);
-			saveDialog.setText("Save");
-			saveDialog.setFilterExtensions(new String[] {"*.properties", "*.*"});
-			saveDialog.setFilterNames(new String[] {"Gmml Vision Gdb", "All files"});
-			saveDialog.setFileName(gmGdbFile.getName().replace(".gdb", ".properties"));
-			String fileName = saveDialog.open();
-			// Only proceed if user selected a file
-			if(fileName == null) return;
-				gdbFile = new File(fileName);
-				boolean confirmed = true;
-				if(gdbFile.exists())
-				{
-					confirmed = MessageDialog.openQuestion(window.getShell(),"",
-							"File already exists, overwrite?");
-				}
-				if(confirmed)
-				{
-					GmmlGdb.setConvertGdbFile(gdbFile);
-					GmmlGdb.setConvertGmGdbFile(gmGdbFile);
-					ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-					try {
-						dialog.run(true, true, GmmlGdb.getConvertRunnable());
-					} catch(Exception e) {
-						String msg = "While converting GenMAPP gene database: "+ e.getMessage();
-						MessageDialog.openError (window.getShell(), "Error", 
-								"Error: " + msg + "\n\n" + 
-								"See the error log for details.");
-						GmmlVision.log.error(msg, e);
-					}
 
+			try {
+				DBConnector dbcon = GmmlVision.getDBConnector();
+				dbName = dbcon.openNewDbDialog(getShell(), 
+						gmGdbFile.getName().replace(".gdb", ".properties"));
+			} catch(Exception e) {
+				MessageDialog.openError(getShell(), 
+						"Error", "Unable to create database connector, " +
+						"see error log for details");
+				GmmlVision.log.error("Unable to create database connector", e);	
+			}
+			
+			// Only proceed if user selected a database name
+			if(dbName != null) {
+				GmmlGdb.setConvertGdbName(dbName);
+				GmmlGdb.setConvertGmGdbFile(gmGdbFile);
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				try {
+					dialog.run(true, true, GmmlGdb.getConvertRunnable());
+				} catch(Exception e) {
+					String msg = "While converting GenMAPP gene database: "+ e.getMessage();
+					MessageDialog.openError (window.getShell(), "Error", 
+							"Error: " + msg + "\n\n" + 
+					"See the error log for details.");
+					GmmlVision.log.error(msg, e);
 				}
+			}
 		}
 	}
 	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);

@@ -118,7 +118,7 @@ public abstract class GmmlGdb {
 		} catch(Exception e) { return false; }
 	}
 	
-	static PreparedStatement pstEnsId2Refs;
+//	static PreparedStatement pstEnsId2Refs;
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id
@@ -132,14 +132,17 @@ public abstract class GmmlGdb {
 		
 		ArrayList<IdCodePair> crossIds = new ArrayList<IdCodePair>();
 		try {
-			if(pstEnsId2Refs == null) {
-				pstEnsId2Refs = getCon().prepareStatement(
-						"SELECT idRight, codeRight FROM link " +
-						"WHERE idLeft = ?"
-				);
-			}
-			pstEnsId2Refs.setString(1, ensId);
-			ResultSet r1 = pstEnsId2Refs.executeQuery();
+//			if(pstEnsId2Refs == null) {
+//				pstEnsId2Refs = getCon().prepareStatement(
+//						"SELECT idRight, codeRight FROM link " +
+//						"WHERE idLeft = ?"
+//				);
+//			}
+//			pstEnsId2Refs.setString(1, ensId);
+//			ResultSet r1 = pstEnsId2Refs.executeQuery();
+			ResultSet r1 = con.createStatement().executeQuery(
+					"SELECT idRight, codeRight FROM link " +
+					"WHERE idLeft = '" + ensId + "'");
 			while(r1.next()) {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
 			}
@@ -152,7 +155,7 @@ public abstract class GmmlGdb {
 		return crossIds;
 	}
 	
-	static PreparedStatement pstRef2EnsIds;
+//	static PreparedStatement pstRef2EnsIds;
 	/**
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
 	 * @param ref	The gene id to get the Ensembl ids for
@@ -167,15 +170,18 @@ public abstract class GmmlGdb {
 		
 		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
-			if(pstRef2EnsIds == null) {
-				pstRef2EnsIds = getCon().prepareStatement(
-						"SELECT idLeft FROM link " +
-						"WHERE idRight = ? AND codeRight = ?"
-				);
-			}
-			pstRef2EnsIds.setString(1, ref);
-			pstRef2EnsIds.setString(2, code);
-			ResultSet r1 = pstRef2EnsIds.executeQuery();
+//			if(pstRef2EnsIds == null) {
+//				pstRef2EnsIds = getCon().prepareStatement(
+//						"SELECT idLeft FROM link " +
+//						"WHERE idRight = ? AND codeRight = ?"
+//				);
+//			}
+//			pstRef2EnsIds.setString(1, ref);
+//			pstRef2EnsIds.setString(2, code);
+//			ResultSet r1 = pstRef2EnsIds.executeQuery();
+			ResultSet r1 = con.createStatement().executeQuery(
+					"SELECT idLeft FROM link " +
+					"WHERE idRight = '" + ref + "' AND codeRight = '" + code + "'");
 			while(r1.next()) {
 				ensIds.add(r1.getString(1));
 			}
@@ -210,13 +216,13 @@ public abstract class GmmlGdb {
 	 * @return
 	 */
 	public static List<IdCodePair> getCrossRefs(String id, String code) {
-		if(SINGLE_QUERY) 
+		if(SINGLE_QUERY)
 			return getCrossRefs1Query(id, code);
 		else
 			return getCrossRefs(new IdCodePair(id, code));
 	}
 	
-	static PreparedStatement pstCrossRefs1Query;
+//	static PreparedStatement pstCrossRefs1Query;
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given id (from any system) using a
@@ -230,20 +236,28 @@ public abstract class GmmlGdb {
 	 */
 //	Don't use this, multiple simple select queries is faster
 //	Use getCrossRefs instead
-	public static List<IdCodePair> getCrossRefs1Query(String id, String code) {
+	public static List<IdCodePair> getCrossRefs1Query(String id, String code) {	
+		StopWatch timer = new StopWatch();
+		timer.start();
+		
 		List<IdCodePair> crossIds = new ArrayList<IdCodePair>();
-		try {
-			if(pstCrossRefs1Query == null) {
-				pstCrossRefs1Query = getCon().prepareStatement(
-						"SELECT idRight, codeRight FROM link " +
-						"WHERE codeLeft = ? AND idLeft IN ( " +
-						"SELECT idLeft FROM link " +
-						"WHERE idRight = ? )"
-				);
-			}
-			pstCrossRefs1Query.setString(1, code);
-			pstCrossRefs1Query.setString(2, id);
-			ResultSet r1 = pstCrossRefs1Query.executeQuery();
+		try {			
+//			if(pstCrossRefs1Query == null) {
+//				pstCrossRefs1Query = getCon().prepareStatement(
+//						"SELECT idRight, codeRight FROM link " +
+//						"WHERE idLeft IN ( " +
+//						"SELECT idLeft FROM link " +
+//						"WHERE codeRight = ? AND idRight = ? )"
+//				);
+//			}
+//			pstCrossRefs1Query.setString(1, code);
+//			pstCrossRefs1Query.setString(2, id);
+//			ResultSet r1 = pstCrossRefs1Query.executeQuery();
+			ResultSet r1 = con.createStatement().executeQuery(
+					"SELECT idRight, codeRight FROM link " +
+					"WHERE idLeft IN ( " +
+					"SELECT idLeft FROM link " +
+					"WHERE codeRight = '" + code + "' AND idRight = '" + id + "' )");
 			while(r1.next()) {
 				String rid = r1.getString(1);
 				String rcode = r1.getString(2);
@@ -253,6 +267,8 @@ public abstract class GmmlGdb {
 			GmmlVision.log.error("Unable to get cross references for gene " +
 					"'" + id + ", with systemcode '" + code + "'", e);
 		}
+		
+		GmmlVision.log.trace("\t> getCrossRefs1Query:\t" + timer.stop());
 		return crossIds;
 	}
 	

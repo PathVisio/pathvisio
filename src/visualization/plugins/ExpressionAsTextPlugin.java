@@ -94,7 +94,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 				String str = getDataString(s, data, SEP + "\n") + 
 				(++i == useSamples.size() ? "" : SEP);
 				Point size = buffer.textExtent(str);
-				buffer.drawText(str, startx + w, starty - size.y / 2);
+				buffer.drawText(str, startx + w, starty - size.y / 2, true);
 				w += size.x;
 			}
 				

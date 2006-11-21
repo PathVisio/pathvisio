@@ -98,13 +98,13 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 	
 	public boolean isGeneric() {
-		for(PluginSet pr : plugins.values())
+		for(PluginSet pr : getPlugins())
 			if(pr.isActive() && !pr.isGeneric()) return false; //One or more active non-generic plugins, so not generic
 		return true;
 	}
 		
-	public Collection getPlugins() {
-		return plugins.values();
+	public List<PluginSet> getPlugins() {
+		return drawingOrder;
 	}
 		
 	public void setRepresentation(Class pluginClass, PluginSet pr) {
@@ -115,7 +115,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 			
 	public void drawToObject(GmmlGraphics g, PaintEvent e, GC buffer) {
-		for(PluginSet pr : drawingOrder) {
+		for(PluginSet pr : getPlugins()) {
 			if(pr.isDrawing()) pr.getDrawingPlugin().draw(g, e, buffer);
 		}
 	}
@@ -124,7 +124,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		//Determine number of active plugins that to reserve a region
 		int nrRes = 0;
 		int index = 0;
-		for(PluginSet pr : drawingOrder) {
+		for(PluginSet pr : getPlugins()) {
 			if(pr.getDrawingPlugin() == p) index = nrRes;
 			nrRes += (pr.getDrawingPlugin().isActive() && pr.getDrawingPlugin().isUseReservedRegion()) ? 1 : 0;
 		}
@@ -186,8 +186,9 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 	
 	public boolean usesToolTip() {
-		for(PluginSet pr : plugins.values())
+		for(PluginSet pr : drawingOrder) {
 			if(pr.isToolTip()) return true;
+		}
 		return false;
 	}
 	
@@ -375,6 +376,13 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 			return pr;
 		}
 
+//		public String toString() {
+//			return 	"PluginSet:  " + pluginClass + "\n" +
+//					" \tToolTip:" + isToolTip() +
+//					" \tDrawing:" + isDrawing() +
+//					" \tSidepanel:" + isSidePanel();
+//		}
+		
 		public int hashCode() {
 			return pluginClass.hashCode();
 		}

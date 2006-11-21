@@ -84,7 +84,12 @@ public abstract class VisualizationPlugin implements Comparable {
 	public void loadXML(Element xml) { }
 		
 	public final boolean isActive() { return isActive; }
-	public final void setActive(boolean active) { isActive = active; }
+	public final void setActive(boolean active) { 
+		if(isActive != active) {
+			isActive = active;
+			fireModifiedEvent();
+		}	
+	}
 	
 	public final boolean canSidePanel() { return (DISPLAY_OPT & SIDEPANEL) != 0; }
 	public final boolean canToolTip() { return (DISPLAY_OPT & TOOLTIP) != 0; }

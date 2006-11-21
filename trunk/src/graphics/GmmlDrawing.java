@@ -821,22 +821,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if(v != null && v.usesToolTip()) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
-			Collections.sort(drawingObjects);
-			for (GmmlDrawingObject o : drawingObjects)			
-			{				
-				if (o.isContain(p))
-				{
-					if (o instanceof GmmlGraphics)
-					{
-						tip = v.getToolTip(e.display, (GmmlGraphics)o);
-						if(tip == null) return;
-						Point mp = toDisplay(e.x, e.y);
-						tip.setLocation(mp.x + 15, mp.y + 15);
-			            tip.setVisible(true);
-					}
-				}
+			GmmlDrawingObject o = findPressedObject(p);
+			if(o != null && o instanceof GmmlGraphics) {
+				System.out.println(o);
+				tip = v.getToolTip(e.display, (GmmlGraphics)o);
+				if(tip == null) return;
+				Point mp = toDisplay(e.x, e.y);
+				tip.setLocation(mp.x + 15, mp.y + 15);
+	            tip.setVisible(true);
 			}
-	}
+		}
 	}
 
 	private boolean ctrlPressed;

@@ -390,8 +390,7 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 		colorSetCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				colorSetSelected();
-				if(colorSet == null) enableSettings(false);
-				else enableSettings(true);
+				enableSettings(colorSet != null);
 			}
 			
 			void enableSettings(boolean enable) {

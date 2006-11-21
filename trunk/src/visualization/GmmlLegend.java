@@ -116,7 +116,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 	Composite createLegendComp(Composite parent) {
 		Group legendGroup = new Group(parent, SWT.NULL);
-		legendGroup.setLayout(new GridLayout());
+		legendGroup.setLayout(new FillLayout(SWT.VERTICAL));
 		legendGroup.setText("Legend");
 
 		Group cg = new Group(legendGroup, SWT.SHADOW_IN);
@@ -124,9 +124,6 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 		criteria = new CriteriaComposite(cg, SWT.NONE);
 		gradients = new GradientCanvas(gg, SWT.NONE);
-
-		cg.setLayoutData(new GridData(GridData.FILL_BOTH));
-		gg.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		cg.setText("Criteria");
 		gg.setText("Gradients");
@@ -247,14 +244,14 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			if(colorSet == null) return;
 
 			//Divide canvas in nr-gradients rows
-			Point size = getSize();
+			Point size = getParent().getSize();
 			int n = getNrGradients();
 			int i = 0;
 			for(ColorSetObject co : colorSet.getObjects()) {
 				if(co instanceof ColorGradient) {
 					ColorGradient cg = (ColorGradient)co;
 					Rectangle area = new Rectangle(
-							0, i * size.y / n,
+							0, i++ * size.y / n,
 							size.x, size.y / n++);
 					drawColorGradient(e, cg, area);
 				}
@@ -264,7 +261,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		final static int LABEL_WIDTH = 20;
 		final static int MAX_BAR_HEIGHT = 35;
 		final static int MARGIN_VERTICAL = 20;
-		final static int MARGIN_HORIZONTAL = 10;
+		final static int MARGIN_HORIZONTAL = 15;
 		final static int MARKER_LENGTH = 4;
 		public void drawColorGradient(PaintEvent e, ColorGradient cg, Rectangle r)
 		{

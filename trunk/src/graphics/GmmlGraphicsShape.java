@@ -70,7 +70,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	
 	public void moveBy(double dx, double dy)
 	{
-		gdata.dontFireEvents(1);
+//		gdata.dontFireEvents(1);
 		gdata.setLeft(gdata.getLeft() + dx); 
 		gdata.setTop(gdata.getTop() + dy);
 		
@@ -86,13 +86,13 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 				{
 					if (o.getStartGraphRef().equals (id))
 					{
-						o.dontFireEvents(1);
+//						o.dontFireEvents(1);
 						o.setStartX(o.getStartX() + dx);
 						o.setStartY(o.getStartY() + dy);
 					}
 					if (o.getEndGraphRef().equals (id))
 					{
-						o.dontFireEvents(1);
+//						o.dontFireEvents(1);
 						o.setEndX(o.getEndX() + dx);
 						o.setEndY(o.getEndY() + dy);
 					}
@@ -102,7 +102,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 	
 	private void setShape(double left, double top, double width, double height) {
-		gdata.dontFireEvents(3);
+//		gdata.dontFireEvents(3);
 		gdata.setWidth(width);
 		gdata.setHeight(height);
 		gdata.setLeft(left);
@@ -215,7 +215,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param cn
 	 */
 	public void setCenter(Point cn) {
-		gdata.dontFireEvents(1);
+//		gdata.dontFireEvents(1);
 		gdata.setCenterX(cn.x);
 		gdata.setCenterY(cn.y);
 	}
@@ -292,7 +292,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		};
 		
 		Point nc = calcNewCenter(gdata.getWidth() + dw, gdata.getHeight() + dh);
-		gdata.dontFireEvents(1);
+//		gdata.dontFireEvents(1);
 		gdata.setHeight(gdata.getHeight() + dy);
 		gdata.setWidth(gdata.getWidth() + dx);
 		setCenter(nc);		
@@ -319,7 +319,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		}
 		double w = -gdata.getWidth();
 		double sx = gdata.getLeft() - w;
-		gdata.dontFireEvents(1);
+//		gdata.dontFireEvents(1);
 		gdata.setWidth (w);
 		gdata.setLeft(sx);
 		canvas.setPressedObject(h);
@@ -338,7 +338,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		}
 		double ht = -gdata.getHeight();
 		double sy = gdata.getTop() - ht;
-		gdata.dontFireEvents(1);
+//		gdata.dontFireEvents(1);
 		gdata.setHeight(ht);
 		gdata.setTop(sy);
 		canvas.setPressedObject(h);

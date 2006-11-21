@@ -63,7 +63,7 @@ public class Utils {
      * @param 	o the object that has to be moved
      * @param 	newIndex the index to move the object to
      */
-    public<T> void moveElement(List<T> l, T o, int newIndex)
+    public static <T> void moveElement(List<T> l, T o, int newIndex)
     {
     	l.remove(o);
     	l.add(newIndex, o);

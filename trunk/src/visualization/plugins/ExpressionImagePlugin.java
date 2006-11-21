@@ -96,17 +96,19 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		
 		ImageSample is = (ImageSample)s;
 		ImageData id = is.getImageData(rgb);
-		Image image = new Image(e.display, id);
-		Point scaleTo = is.getScaleSize(new Point(area.width, area.height));
-		
-		drawBackground(area, buffer, e);
-		
-		Rectangle ib = image.getBounds();
-		int xs = area.width - scaleTo.x;
-		int ys = area.height - scaleTo.y;
-		buffer.drawImage(image, ib.x, ib.y, ib.width, ib.height, 
-				area.x + xs / 2, area.y + ys / 2, scaleTo.x, scaleTo.y);
-		image.dispose();
+		if(id != null) {
+			Image image = new Image(e.display, id);
+			Point scaleTo = is.getScaleSize(new Point(area.width, area.height));
+
+			drawBackground(area, buffer, e);
+
+			Rectangle ib = image.getBounds();
+			int xs = area.width - scaleTo.x;
+			int ys = area.height - scaleTo.y;
+			buffer.drawImage(image, ib.x, ib.y, ib.width, ib.height, 
+					area.x + xs / 2, area.y + ys / 2, scaleTo.x, scaleTo.y);
+			image.dispose();
+		}
 	}
 		
 	void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC buffer) {

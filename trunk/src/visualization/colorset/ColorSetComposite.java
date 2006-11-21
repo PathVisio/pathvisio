@@ -1,5 +1,7 @@
 package visualization.colorset;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -114,6 +116,7 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 	public void refreshCombo() {
 		colorSetCombo.setItems(ColorSetManager.getColorSetNames());
 		colorSetCombo.layout();
+		colorSetCombo.select(0);
 	}
 
 	void createContents() {
@@ -159,28 +162,29 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 			public void dispose() { }
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { }
 		});
-		objectsTable.setLabelProvider(new ITableLabelProvider() {
-			private Image criterionImage;
-			private Image gradientImage;
+		objectsTable.setLabelProvider(new ITableLabelProvider() {			
+			private HashMap<Object, Image> images = new HashMap<Object, Image>();
 											
 			public void dispose() {
-				disposeImage(criterionImage);
-				disposeImage(gradientImage);
+				for(Image img : images.values()) disposeImage(img);
 			}
 			
-			void disposeImage(Image img) { if(img != null) img.dispose(); }
+			void disposeImage(Image img) { if(img != null && !img.isDisposed()) img.dispose(); }
 			
-			public Image getColumnImage(Object element, int columnIndex) { 
+			public Image getColumnImage(Object element, int columnIndex) {
+				Image img = images.get(element);
 				if(element instanceof ColorGradient) {
-					disposeImage(gradientImage);
-					gradientImage = new Image(null, createGradientImage((ColorGradient)element));
-					return gradientImage;
+					disposeImage(img);
+					img = new Image(null, createGradientImage((ColorGradient)element));
+					images.put(element, img);
+					return img;
 				}
 				if(element instanceof ColorCriterion) {
-					disposeImage(criterionImage);
-					criterionImage = new Image(null, createColorImage(
+					disposeImage(img);
+					img = new Image(null, createColorImage(
 							((ColorCriterion)element).getColor()));
-					return criterionImage;
+					images.put(element, img);
+					return img;
 				}
 				return null;
 			}
@@ -587,10 +591,9 @@ public class ColorSetComposite extends Composite implements VisualizationListene
     	}
     	
     	public void dragSetData(DragSourceEvent e) {
-    		System.out.println("here");
     		ColorSetObject selected = getSelectedObject();
     		int csoIndex = colorSet.colorSetObjects.indexOf(selected);
-    		e.data = csoIndex;
+    		e.data = Integer.toString(csoIndex);
     		System.out.println("Dragging: " + e.data);
     	}
     }
@@ -602,11 +605,12 @@ public class ColorSetComposite extends Composite implements VisualizationListene
     		if(item != null)
     		{
     			Object selected = item.getData();
-
-    			int index = (Integer)e.data;
+    			System.out.println("dropping to " + selected);
+    			int index = Integer.parseInt((String)e.data);
     			if(index >= 0) {
     				ColorSetObject cso = colorSet.getObjects().get(index);
-    				Utils.setDrawingOrder(colorSet.getObjects(), cso, colorSet.getObjects().indexOf(selected));
+    				Utils.moveElement(colorSet.getObjects(), cso, colorSet.getObjects().indexOf(selected));
+    				objectsTable.refresh();
     			}
     		}
     	}

@@ -302,7 +302,8 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			public void widgetSelected(SelectionEvent e) {
 				FontDialog fd = new FontDialog(font.getShell());
 				fd.setFontList(new FontData[] { getFontData() });
-				setFontData(fd.open());
+				FontData data = fd.open();
+				if(data != null) setFontData(data);
 			}
 		});
 		createRoundComp(optionsComp);

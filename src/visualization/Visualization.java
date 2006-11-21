@@ -199,7 +199,8 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		boolean hasOne = false;
 		for(PluginSet pr : drawingOrder) {
 			if(pr.isToolTip()) {
-				if(pr.getToolTipPlugin().getToolTipComposite(tip, g) != null) hasOne = true;
+				Composite ttc = pr.getToolTipPlugin().getToolTipComposite(tip, g);
+				if(ttc != null) hasOne = true;
 			}
 		}
 		tip.pack();

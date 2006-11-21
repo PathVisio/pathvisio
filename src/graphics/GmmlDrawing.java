@@ -346,8 +346,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		{
 			if(s.isSelecting()) { //If we were selecting, stop it
 				s.stopSelecting();
-				redrawDirtyRect();
 			}
+			redrawDirtyRect();
 		}
 		isDragging = false;
 	}

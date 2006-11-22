@@ -1,5 +1,7 @@
 package data;
 
+import gmmlVision.GmmlVision;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +10,8 @@ import java.util.Properties;
 
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
+
+import debug.StopWatch;
 
 public class DBConnDerby implements DBConnector {
 	String lastDbName;
@@ -27,7 +31,14 @@ public class DBConnDerby implements DBConnector {
 		Properties prop = new Properties();
 		prop.setProperty("create", Boolean.toString(recreate));
 //		prop.setProperty("shutdown", "true");
+		
+		StopWatch timer = new StopWatch();
+		timer.start();
+		
 		Connection con = DriverManager.getConnection("jdbc:derby:" + dbName + ";", prop);
+		
+		GmmlVision.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
+		
 		lastDbName = dbName;
 		return con;
 	}

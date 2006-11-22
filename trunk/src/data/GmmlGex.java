@@ -20,6 +20,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -476,6 +477,18 @@ public class GmmlGex implements ApplicationEventListener {
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();
 		timer.start();
+		
+//		PreparedStatement pstData = null;
+//		try {
+//			pstData = con.prepareStatement(
+//					"SELECT id, code, data, idSample FROM expression " +
+//			"WHERE ensId = ?");
+//		} catch(SQLException e) {
+//			GmmlVision.log.error("Unable to prepare statement", e);
+//			return;
+//		}
+
+		
 		for(int i = 0; i < ids.size(); i++)
 		{
 			String id = ids.get(i);
@@ -489,7 +502,9 @@ public class GmmlGex implements ApplicationEventListener {
 				
 				for(String ensId : ensIds)
 				{	
-					try {					
+					try {			
+//						pstData.setString(1, ensId);
+//						ResultSet r = pstData.executeQuery();
 						ResultSet r = con.createStatement().executeQuery(
 								"SELECT id, code, data, idSample FROM expression " +
 								" WHERE ensId = '" + ensId + "'");
@@ -809,6 +824,7 @@ public class GmmlGex implements ApplicationEventListener {
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
+			GmmlVision.log.error("Expression data import error", e);
 			close(true, true);
 			error.close();
 		}

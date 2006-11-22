@@ -15,6 +15,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import debug.StopWatch;
+
 import preferences.GmmlPreferences;
 
 public class DBConnHsqldb implements DBConnector {
@@ -28,7 +30,7 @@ public class DBConnHsqldb implements DBConnector {
 		boolean recreate = (props & PROP_RECREATE) != 0;
 		if(recreate) {
 			File dbFile = dbName2File(dbName);
-			if(!dbFile.canRead()) throw new Exception("Can't access file '" + dbFile.toString() + "'");
+			if(dbFile.exists()) dbFile.delete();
 		}
 	
 		Class.forName("org.hsqldb.jdbcDriver");
@@ -36,7 +38,13 @@ public class DBConnHsqldb implements DBConnector {
 		prop.setProperty("user","sa");
 		prop.setProperty("password","");
 		prop.setProperty("hsqldb.default_table_type", "cached");
-		return DriverManager.getConnection("jdbc:hsqldb:file:" + dbName + ";create=" + recreate, prop);
+		prop.setProperty("ifexists", Boolean.toString(!recreate));
+		
+		StopWatch timer = new StopWatch();
+		timer.start();
+		Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + dbName, prop);
+		GmmlVision.log.info("Connecting with hsqldb to " + dbName + ":\t" + timer.stop());
+		return con;
 	}
 
 	public void closeConnection(Connection con) throws SQLException {

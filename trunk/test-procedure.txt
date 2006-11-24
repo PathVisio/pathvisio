@@ -1,0 +1,32 @@
+This is to be put on the wiki as soon as it is available on the new server.
+
+= Test procedure
+
+test procedure: perform all these steps before a webstart release, and after making large changes that could have unintended consequences
+
+== PathVisio 1.0 features
+
+# open Hs_Apoptosis.gmml. Add a gene product. save to a temporary location
+# import Hs_Apoptosis.mapp.
+# Search pathways for occurences of TNF. Click on one to open it.
+# create a new pathway. 
+# draw two geneproducts and a line between them. draw a circle and a tbar.
+# select everything, copy and paste
+# select two gene products and change their color property to blue
+# open human gene database. 
+# rename one geneproduct to TNF, and look it up (locuslink id ???)
+# check that the backpage for TNF displays correctly
+# zoom to 200%
+# zoom to fit
+# save to a temporary location. Export to a .mapp
+# Open the just created mapp in GenMAPP.
+
+== packaging
+
+# create the installer, and install it
+# check the version nr. in the about box.
+
+== PathVisio 2.0 features
+
+# map Griffin Data on Sc_Galactose.gpml
+# ...

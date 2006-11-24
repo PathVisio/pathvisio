@@ -103,7 +103,7 @@ public class GenMAPP2EUGene {
 		 public Pathway(File f)  { 
 			 this.file = f;
 			 this.name = f.getName().replace(".mapp", "");
-			 //TODO: GMML support and switch between GMML/GenMAPP depending on filetype
+			 //TODO: GPML support and switch between GPML/GenMAPP depending on filetype
 			 readGenMAPP();
 		 }
 		 

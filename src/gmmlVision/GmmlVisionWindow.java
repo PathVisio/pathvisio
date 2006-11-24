@@ -64,9 +64,9 @@ import data.GmmlGex.ExpressionDataListener;
 
 
 /**
- * This class is the main class in the GMML project. 
+ * This class is the main class in the GPML project. 
  * It acts as a container for pathwaydrawings and facilitates
- * loading, creating and saving drawings to and from GMML.
+ * loading, creating and saving drawings to and from GPML.
  */
 public class GmmlVisionWindow extends ApplicationWindow implements 
 						ApplicationEventListener, ExpressionDataListener
@@ -75,7 +75,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private static int ZOOM_TO_FIT = -1;
 		
 	/**
-	 * {@link Action} to create a new gmml pathway
+	 * {@link Action} to create a new gpml pathway
 	 */
 	private class NewAction extends Action 
 	{
@@ -95,7 +95,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private NewAction newAction = new NewAction (this);
 	
 	/**
-	 * {@link Action} to open an gmml pathway
+	 * {@link Action} to open an gpml pathway
 	 */
 	private class OpenAction extends Action 
 	{
@@ -113,7 +113,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			fd.setText("Open");
 			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 			fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {"Gmml file", "All files"});
+			fd.setFilterNames(new String[] {"Gpml file", "All files"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
 	        
@@ -125,7 +125,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private OpenAction openAction = new OpenAction (this);
 	
 	/**
-	 * {@link Action} to open an gmml pathway
+	 * {@link Action} to open an gpml pathway
 	 */
 	private class ImportAction extends Action 
 	{
@@ -154,7 +154,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private ImportAction importAction = new ImportAction (this);
 	
 	/**
-	 * {@link Action} to save a gmml pathway
+	 * {@link Action} to save a gpml pathway
 	 */
 	private class SaveAction extends Action 
 	{
@@ -202,7 +202,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private SaveAction saveAction = new SaveAction(this);
 	
 	/**
-	 * {@link Action} to save a gmml pathway to a file specified by the user
+	 * {@link Action} to save a gpml pathway to a file specified by the user
 	 */
 	private class SaveAsAction extends Action 
 	{
@@ -216,13 +216,13 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {
 			GmmlDrawing drawing = GmmlVision.getDrawing();
 			GmmlData gmmlData = GmmlVision.getGmmlData();
-			// Check if a gmml pathway is loaded
+			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
 				fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {"Gmml file", "All files"});
+				fd.setFilterNames(new String[] {"Gpml file", "All files"});
 				
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
@@ -236,7 +236,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				
 				if(fileName == null) return;
 				
-				// Append .gmml extension if not already present
+				// Append .gpml extension if not already present
 				if(!fileName.endsWith("." + GmmlVision.PATHWAY_FILE_EXTENSION)) 
 					fileName += "." + GmmlVision.PATHWAY_FILE_EXTENSION;
 				
@@ -274,14 +274,14 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			else
 			{
 				MessageDialog.openError (window.getShell(), "Error", 
-					"No gmml file loaded! Open or create a new gmml file first");
+					"No gpml file loaded! Open or create a new gpml file first");
 			}			
 		}
 	}
 	private SaveAsAction saveAsAction = new SaveAsAction (this);
 
 	/**
-	 * {@link Action} to save a gmml pathway to a file specified by the user
+	 * {@link Action} to save a gpml pathway to a file specified by the user
 	 */
 	private class ExportAction extends Action 
 	{
@@ -295,7 +295,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {
 			GmmlDrawing drawing = GmmlVision.getDrawing();
 			GmmlData gmmlData = GmmlVision.getGmmlData();
-			// Check if a gmml pathway is loaded
+			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
@@ -315,7 +315,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				
 				if(fileName == null) return;
 				
-				// Append .gmml extension if not already present
+				// Append .gpml extension if not already present
 				if(!fileName.endsWith(".mapp")) 
 					fileName += ".mapp";
 				
@@ -360,7 +360,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private ExportAction exportAction = new ExportAction (this);
 
 	/**
-	 * {@link Action} to close the gmml pathway (does nothing yet)
+	 * {@link Action} to close the gpml pathway (does nothing yet)
 	 */
 	private class CloseAction extends Action 
 	{
@@ -461,7 +461,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			else
 			{
 				MessageDialog.openError (window.getShell(), "Error", 
-					"No gmml file loaded! Open or create a new gmml file first");
+					"No gpml file loaded! Open or create a new gpml file first");
 			}
 		}
 	}
@@ -600,8 +600,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public ConvertGexAction(GmmlVisionWindow w)
 		{
 			window = w;
-			setText("&Gex to Gmml-Vision");
-			setToolTipText("Convert from GenMAPP 2 Gex to Gmml-Vision Expression Data");
+			setText("&Gex to PathVisio");
+			setToolTipText("Convert from GenMAPP 2 Gex to PathVisio Expression Data");
 		}
 		
 		public void run () {
@@ -662,8 +662,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public ConvertGdbAction(GmmlVisionWindow w)
 		{
 			window = w;
-			setText("&Gdb to Gmml-Vision");
-			setToolTipText("Convert from GenMAPP 2 Gene database to Gmml-Vision Gene database");
+			setText("&Gdb to PathVisio");
+			setToolTipText("Convert from GenMAPP 2 Gene database to PathVisio Gene database");
 		}
 		
 		public void run () {
@@ -770,7 +770,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		{
 			window = w;
 			setText ("&About@F1");
-			setToolTipText ("About Gmml-Vision");
+			setToolTipText ("About PathVisio");
 		}
 		public void run () {
 			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
@@ -899,7 +899,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 					rightPanel.getTabFolder().setSelection(0);
 				}
 			}
-			else //No gmml pathway loaded, deselect action and do nothing
+			else //No gpml pathway loaded, deselect action and do nothing
 			{
 				setChecked(false);
 			}
@@ -949,7 +949,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	public ShowRightPanelAction showRightPanelAction = new ShowRightPanelAction(this);
 	
 	/**
-	 * {@link Action} to add a new element to the gmml pathway
+	 * {@link Action} to add a new element to the gpml pathway
 	 */
 	private class NewElementAction extends Action
 	{
@@ -1389,7 +1389,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
 		
-		shell.setText("Gmml-Visio");
+		shell.setText(GmmlVision.APPLICATION_NAME);
 		
 		GmmlVisionMain.loadImages(shell.getDisplay());
 		

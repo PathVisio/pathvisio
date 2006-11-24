@@ -33,13 +33,13 @@ public class GmmlAboutBox extends Dialog
 		Shell parent = getParent();
 		final Shell shell = new Shell (parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 
-		shell.setText ("About Gmml-Visio");		
+		shell.setText ("About " + GmmlVision.APPLICATION_NAME);		
 		GridLayout ly = new GridLayout();
 		ly.numColumns = 2;
 		shell.setLayout (ly);
 		
 		Label lbl = new Label (shell, SWT.NULL);
-		lbl.setText ("Gmml-Visio");
+		lbl.setText (GmmlVision.APPLICATION_NAME);
 		GridData gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
 		gd.horizontalSpan = 2;		
 		lbl.setLayoutData (gd);

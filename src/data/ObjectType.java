@@ -18,7 +18,7 @@ public class ObjectType {
 	public static final int MAPPINFO = 9;
 	public static final int MAX_VALID = 9;
 	 
-	// Some mappings to Gmml TAGS
+	// Some mappings to Gpml TAGS
 	 // TODO: is this actually used?
 	private static final List<String> tagMappings = Arrays.asList(new String[] {
 		"Brace", "Shape", "ComplexShape", "FixedShape", "GeneProduct", "Label", "Line", "Legend", "InfoBox", 

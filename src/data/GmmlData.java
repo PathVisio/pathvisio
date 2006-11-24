@@ -43,15 +43,15 @@ public class GmmlData
 {
 	/**
 	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
-	 * NOTE: maybe it is better to adapt gmml to store cordinates as pixels and
+	 * NOTE: maybe it is better to adapt gpml to store cordinates as pixels and
 	 * divide the GenMAPP cordinates by this factor on conversion
 	 */
 	final public static int GMMLZOOM = 15;
 	
 	/**
-	 * name of resource containing the gmml schema definition
+	 * name of resource containing the gpml schema definition
 	 */
-	final private static String xsdFile = "GMML_compat.xsd";
+	final private static String xsdFile = "GPML.xsd";
 	
 	/**
 	 * List of contained dataObjects
@@ -154,15 +154,15 @@ public class GmmlData
 	private File sourceFile = null;
 	
 	/**
-	 * Gets the xml file containing the Gmml/mapp pathway currently displayed
+	 * Gets the xml file containing the Gpml/mapp pathway currently displayed
 	 * @return
 	 */
 	public File getSourceFile () { return sourceFile; }
 	private void setSourceFile (File file) { sourceFile = file; }
 
 	/**
-	 * Contructor for this class, creates a new gmml document
-	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gmml pathway
+	 * Contructor for this class, creates a new gpml document
+	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gpml pathway
 	 */
 	public GmmlData() 
 	{
@@ -187,16 +187,16 @@ public class GmmlData
 	}
 		
 	/**
-	 * Constructor for this class, opens a gmml pathway and adds its elements to the drawing
-	 * @param file		String pointing to the gmml file to open
-	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gmml pathway
+	 * Constructor for this class, opens a gpml pathway and adds its elements to the drawing
+	 * @param file		String pointing to the gpml file to open
+	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gpml pathway
 	 * 
 	 * @deprecated - use general constructor, then specify readFromXml or readFromMapp
 	 */
 	public GmmlData(String file) throws ConverterException
 	{
 		// Start XML processing
-		GmmlVision.log.info("Start reading the Gmml file: " + file);
+		GmmlVision.log.info("Start reading the Gpml file: " + file);
 		// try to read the file; if an error occurs, catch the exception and print feedback
 
 		sourceFile = new File(file);
@@ -220,7 +220,7 @@ public class GmmlData
 				ValidatorHandler vh =  schema.newValidatorHandler();
 				SAXOutputter so = new SAXOutputter(vh);
 				so.output(doc);
-				// If no errors occur, the file is valid according to the gmml xml schema definition
+				// If no errors occur, the file is valid according to the gpml xml schema definition
 				//TODO: open dialog to report error
 				GmmlVision.log.info("Document is valid according to the xml schema definition '" + 
 						xsdFile.toString() + "'");

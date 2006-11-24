@@ -13,7 +13,7 @@ import data.GmmlDataObject;
 
 public class GmmlInfoBox extends GmmlGraphics {
 	
-	//Elements not stored in gmml
+	//Elements not stored in gpml
 	String fontName			= "Times New Roman";
 	String fontWeight		= "regular";
 	int fontSize			= 10;

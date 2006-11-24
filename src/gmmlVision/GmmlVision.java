@@ -25,11 +25,11 @@ import data.GmmlData;
 import debug.Logger;
 
 /**
- * This class contains the essential parts of the program: the window, drawing and gmml data
+ * This class contains the essential parts of the program: the window, drawing and gpml data
  */
 public abstract class GmmlVision {
-	public static final String APPLICATION_NAME = "Gmml-Visio";
-	public static final String PATHWAY_FILE_EXTENSION = "gmml";
+	public static final String APPLICATION_NAME = "PathVisio";
+	public static final String PATHWAY_FILE_EXTENSION = "gpml";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
@@ -37,8 +37,8 @@ public abstract class GmmlVision {
 	public static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
 	
 	/**
-	 * {@link GmmlData} object containing JDOM representation of the gmml pathway 
-	 * and handle gmml related actions
+	 * {@link GmmlData} object containing JDOM representation of the gpml pathway 
+	 * and handle gpml related actions
 	 */
 	
 	static GmmlVisionWindow window;
@@ -135,14 +135,14 @@ public abstract class GmmlVision {
 	}
 	
 	/**
-	 * Open a pathway from a gmml file
+	 * Open a pathway from a gpml file
 	 */
 	public static void openPathway(String pwf)
 	{
 		GmmlData _gmmlData = null;
 		GmmlDrawing _drawing = getWindow().createNewDrawing();
 		
-		// initialize new JDOM gmml representation and read the file
+		// initialize new JDOM gpml representation and read the file
 		try { 
 			
 			_gmmlData = new GmmlData();
@@ -156,8 +156,8 @@ public abstract class GmmlVision {
 			}
 		} catch(ConverterException e) {
 			MessageDialog.openError(getWindow().getShell(), 
-					"Unable to open Gmml file", e.getClass() + e.getMessage());
-			log.error("Unable to open Gmml file", e);
+					"Unable to open Gpml file", e.getClass() + e.getMessage());
+			log.error("Unable to open Gpml file", e);
 		}
 		
 		if(_gmmlData != null) //Only continue if the data is correctly loaded
@@ -171,7 +171,7 @@ public abstract class GmmlVision {
 	}
 	
 	/**
-	 * Create a new pathway (drawing + gmml data)
+	 * Create a new pathway (drawing + gpml data)
 	 */
 	public static void newPathway() {
 		gmmlData = new GmmlData();

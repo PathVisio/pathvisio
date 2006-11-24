@@ -174,9 +174,9 @@ public class Test extends TestCase implements GmmlListener {
 	
 	public void testXml() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gmml"), false);
+		data.readFromXml(new File("testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
-		File temp = File.createTempFile ("data.test", ".gmml");
+		File temp = File.createTempFile ("data.test", ".gpml");
 		temp.deleteOnExit();
 		data.writeToXml(temp, false);
 
@@ -195,7 +195,7 @@ public class Test extends TestCase implements GmmlListener {
 		data.writeToMapp(temp);
 		
 		try {
-			data.readFromMapp(new File ("testData/test.gmml"));
+			data.readFromMapp(new File ("testData/test.gpml"));
 			fail ("Loading wrong format, Exception expected");
 		} catch (Exception e) {}
 			

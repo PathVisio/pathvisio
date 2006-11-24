@@ -22,7 +22,7 @@ that can be opened by MappBuilder.
 The actual work is done by ListData.pm. The ListData package is set 
 up in such a way that in
 the future it will be easy to add other output options, 
-such as .gmml or .mapp.
+such as .gpml or .mapp.
 
 =cut
 

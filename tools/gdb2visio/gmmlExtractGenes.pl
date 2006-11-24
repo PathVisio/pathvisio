@@ -12,13 +12,13 @@ use File::Basename;
 #  config
 ######################
 
-my $fnGmml = "d:/prg/gmml-visio/trunk/gmml_mapp_examples/Hs_Cell_cycle_KEGG.xml";
+my $fnGpml = "d:/prg/gmml-visio/trunk/gmml_mapp_examples/Hs_Cell_cycle_KEGG.xml";
 
 ######################
 #  main
 ######################
 
-open GMML, "$fnGmml" or die;
+open GPML, "$fnGpml" or die;
 my @genes;
 
 my %systemCodes = (
@@ -39,9 +39,9 @@ my %systemCodes = (
 	"Other"        => "O",
 );
 
-#extract genes from gmml mapps, the easy way, without bothering 
+#extract genes from gpml files, the easy way, without bothering 
 #about xml and all that
-for (<GMML>)
+for (<GPML>)
 {
 	if (/<GeneProduct\s.*?\sGeneProduct-Data-Source="(.*?)".*?\sName="(.*?)".*?>/s)
 	{
@@ -55,9 +55,9 @@ for (<GMML>)
 	}
 }
 
-close GMML;
+close GPML;
 
-#print "Info:  Read ", scalar @genes, " gene id's from ", basename($fnGmml), "\n";
+#print "Info:  Read ", scalar @genes, " gene id's from ", basename($fnGpml), "\n";
 
 #print in tab-del format:
 #~ for (@genes) { print $$_[0], "\t", $$_[1], "\n"; }

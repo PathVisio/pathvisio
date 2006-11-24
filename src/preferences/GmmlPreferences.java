@@ -16,7 +16,7 @@ import util.ColorConverter;
  * This class contains all user preferences used in this application
  */
 public class GmmlPreferences extends PreferenceStore implements IPropertyChangeListener {
-	private static final File preferenceFile = new File(GmmlVision.getApplicationDir(), ".GmmlVisio");
+	private static final File preferenceFile = new File(GmmlVision.getApplicationDir(), ".PathVisio");
 	
 	public GmmlPreferences() {
 		this(preferenceFile.toString());
@@ -34,7 +34,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	{
 		addPropertyChangeListener(this);
 		
-		setDefault(PREF_FILES_LOG, new File(GmmlVision.getApplicationDir(), ".GmmlVisioLog").toString());
+		setDefault(PREF_FILES_LOG, new File(GmmlVision.getApplicationDir(), ".PathVisioLog").toString());
 		setDefault(PREF_COL_NO_CRIT_MET, ColorConverter.getRgbString(NO_CRITERIA_MET));
 		setDefault(PREF_COL_NO_GENE_FOUND, ColorConverter.getRgbString(NO_GENE_FOUND));
 		setDefault(PREF_COL_NO_DATA_FOUND, ColorConverter.getRgbString(NO_DATA_FOUND));
@@ -63,7 +63,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 
 	private void createDataDirectories() {
 		// For the data directories: if not defined by user, create default directories
-		String[] dataProps = new String[] { "gmmlFiles", "gdbFiles", "exprFiles", "RdataFiles" };
+		String[] dataProps = new String[] { "gpmlFiles", "gdbFiles", "exprFiles", "RdataFiles" };
 		for(String prop : dataProps) {
 			File dir = new File(getString("directories." + prop));
 			if(!dir.exists()) dir.mkdirs();

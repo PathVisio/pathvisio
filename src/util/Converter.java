@@ -2,7 +2,7 @@ package util;
 
 /*
  * Converter.java
- * Command Line GenMAPP to GMML Converter
+ * Command Line GenMAPP to GPML Converter
  * Created on 15 augustus 2005, 20:28
  */
 
@@ -19,15 +19,15 @@ public class Converter {
     
 	public static void printUsage()
 	{
-		System.out.println ("GenMAPP <-> GMML Converter\n" +
+		System.out.println ("GenMAPP <-> GPML Converter\n" +
 				"Usage:\n" +
 				"\tjava Converter <input filename> [<output filename>]\n" +
 				"\n" +
-				"Converts between GenMAPP mapp format and Gmml-visio GMML format.\n" +
+				"Converts between GenMAPP mapp format and PathVisio GPML format.\n" +
 				"The conversion direction is determined from the extension of the input file.\n" +
 				"Valid extensions are:\n" +
 				"\t.mapp for GenMAPP mapp format,\n" +
-				"\t.xml or .gmml for Gmml-visio GMML format\n." +
+				"\t.xml or .gpml for PathVisio GPML format\n." +
 				"\n" +
 				"Return codes:\n" +
 				"\t 0: OK\n" +
@@ -83,13 +83,13 @@ public class Converter {
 			{
 				fromMappToGmml = false;
 			}
-			else if (inputString.endsWith(".gmml"))
+			else if (inputString.endsWith(".gpml"))
 			{
 				fromMappToGmml = false;
 			}
 			else
 			{
-				log.error ("Wrong extension for input file: must be .mapp, .xml or .gmml");
+				log.error ("Wrong extension for input file: must be .mapp, .xml or .gpml");
 				error = true;
 			}
 		}
@@ -106,7 +106,7 @@ public class Converter {
 				int pos = outputString.lastIndexOf('.');
 				if (pos >= 0)
 					outputString = outputString.substring(0, pos);
-				outputString = outputString + (fromMappToGmml ? ".xml" : ".mapp");
+				outputString = outputString + (fromMappToGmml ? ".gpml" : ".mapp");
 			}
 			outputFile = new File (outputString);
 		}
@@ -128,7 +128,7 @@ public class Converter {
 			log.info("Source: " + inputString);
 			log.info("Dest:   " + outputString);
 			log.info("Going from " + 
-					(fromMappToGmml ? "mapp to gmml " : "gmml to mapp"));
+					(fromMappToGmml ? "mapp to gpml " : "gpml to mapp"));
 
 			boolean valid = true;
 			

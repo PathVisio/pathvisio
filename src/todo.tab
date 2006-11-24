@@ -104,27 +104,27 @@ help	open help pages on wiki	Thomas	1.0 beta
 database	"try to put db files into a single file (e.g. zip or jar without compression), regenerate in derby format"	Thomas	1.0 beta					
 packaging	aankondiging beta (website + mailtje)	All	1.0 beta					
 Packaging	revision nr + version nr in about box	Martijn	1.0 beta	4				
-editor	rename gmml to gpml	Martijn	1.0 beta	2				
-editor	rename program to PathVisio	Martijn	1.0 beta	2				
+editor	rename gmml to gpml	Martijn	1.0 beta	2	2	2	done	
+editor	rename program to PathVisio	Martijn	1.0 beta	2	2	2	done	
 Packaging	"rename classes org.bigcat.*, gmml -> gpml of weg"	Martijn	1.0 beta	4				
 Packaging	"twee webstarts, een voor 1.0 en een voor 2.0 met verschillende jars"	Martijn	1.0 beta	8				
-editor	link graphrefs en graphids through GUI	Martijn	1.0	8				
-gmml visualization	add graphical representation for all supported GMML objects	Martijn	1.0					
-gmml visualization	add support for Molecular Interaction Maps	Martijn	1.0					
-Packaging	Test webstart in mac	Martijn	1.0	4				
-help	write help pages on wiki	Thomas	1.0					
-test	"user test: edit mapp, visualize data from tab-delimited text file"	All	1.0					december
-drawing	align to straight angles	Thomas	1.0					van belang voor MIM
-drawing	"undo/redo, quick solution: store entire drawing"	Martijn	1.0	12				
-property editor	adding geneproduct: option to search id in gdb	Thomas	1.0					
-UI	"Check for modification, ask to save when quitting program"	Martijn	1.0	4				
-editor	scroll when moving object out of display	Martijn	1.0	4				
-editor	check if objects are moved out of drawing boundaries and expand if so	Thomas	1.0					
-editor	auto-calculate drawing board size on open	Thomas	1.0					
-shell integration	double click on gmml file opens in GmmlVision	Martijn	1.0	4				
-bug/misfeature	dropdownlist for new line: add normal line without dropdown	Thomas	1.0					
-editor	quick gene insert dialog	Martijn	1.0	8				
-editor	right-click = add segment to line	Martijn	1.0	16				
+editor	link graphrefs en graphids through GUI	Martijn	1	8				
+gmml visualization	add graphical representation for all supported GMML objects	Martijn	1					
+gmml visualization	add support for Molecular Interaction Maps	Martijn	1					
+Packaging	Test webstart in mac	Martijn	1	4				
+help	write help pages on wiki	Thomas	1					
+test	"user test: edit mapp, visualize data from tab-delimited text file"	All	1					december
+drawing	align to straight angles	Thomas	1					van belang voor MIM
+drawing	"undo/redo, quick solution: store entire drawing"	Martijn	1	12				
+property editor	adding geneproduct: option to search id in gdb	Thomas	1					
+UI	"Check for modification, ask to save when quitting program"	Martijn	1	4				
+editor	scroll when moving object out of display	Martijn	1	4				
+editor	check if objects are moved out of drawing boundaries and expand if so	Thomas	1					
+editor	auto-calculate drawing board size on open	Thomas	1					
+shell integration	double click on gmml file opens in GmmlVision	Martijn	1	4				
+bug/misfeature	dropdownlist for new line: add normal line without dropdown	Thomas	1					
+editor	quick gene insert dialog	Martijn	1	8				
+editor	right-click = add segment to line	Martijn	1	16				
 optimization	Don't create unneccessary handles		2.0 alpha					
 optimization	link events together at places where you generate a lot of events		2.0 alpha					
 documentation	apidoc documentatie	Thomas	2.0 alpha					

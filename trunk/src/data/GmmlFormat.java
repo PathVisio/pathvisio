@@ -13,8 +13,8 @@ import org.jdom.Element;
 import util.ColorConverter;
 
 /**
- * class responsible for interaction with Gmml format.
- * Contains all gmml-specific constants,
+ * class responsible for interaction with Gpml format.
+ * Contains all gpml-specific constants,
  * and should be the only class that needs to import jdom
  *  
  * @author Martijn
@@ -23,7 +23,7 @@ import util.ColorConverter;
 public class GmmlFormat {
 
 	/**
-	 * The GMML xsd implies a certain ordering for children of the pathway element.
+	 * The GPML xsd implies a certain ordering for children of the pathway element.
 	 * (e.g. GeneProduct always comes before LineShape, etc.)
 	 * 
 	 * This Comparator can sort jdom Elements so that they are in the correct order

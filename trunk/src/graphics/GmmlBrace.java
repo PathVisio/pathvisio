@@ -21,7 +21,7 @@ public class GmmlBrace extends GmmlGraphicsShape
 
 	/**
 	 * Constructor for mapping a JDOM Element.
-	 * @param e	- the GMML element which will be loaded as a GmmlBrace
+	 * @param e	- the GPML element which will be loaded as a GmmlBrace
 	 * @param canvas - the GmmlDrawing this GmmlBrace will be part of
 	 */
 	public GmmlBrace(GmmlDrawing canvas, GmmlDataObject o) {

@@ -16,14 +16,14 @@ use File::Basename;
 
 my $fnGdb = "d:/GenMAPP data/Tutorial-Database.gdb";
 my $fnGex = "d:/GenMAPP data/Tutorial-ExpressionData.gex";
-my $fnGmml = "d:/prg/gmml-visio/trunk/gmml_mapp_examples/Hs_Apoptosis.xml";
+my $fnGpml = "d:/prg/gmml-visio/trunk/gmml_mapp_examples/Hs_Apoptosis.xml";
 my $fnGdbNew = "d:/GenMAPP data/Tutorial-Database-converted.mdb";
 
 ######################
 #
 ######################
 
-open GMML, "$fnGmml" or die;
+open GPML, "$fnGpml" or die;
 my @genes;
 
 my %systemCodes = (
@@ -44,9 +44,9 @@ my %systemCodes = (
 	"Other"        => "O",
 );
 
-#extract genes from gmml mapps, the easy way, without bothering 
+#extract genes from gpml mapps, the easy way, without bothering 
 #about xml and all that
-for (<GMML>)
+for (<GPML>)
 {
 	if (/<GeneProduct BackpageHead="(.*)" GeneID="(.*)" GeneProduct-Data-Source="(.*)" Type="(.*)" Xref="(.*)" Name="(.*)">/)
 	{
@@ -60,9 +60,9 @@ for (<GMML>)
 	}
 }
 
-close GMML;
+close GPML;
 
-print "Info:  Read ", scalar @genes, " gene id's from ", basename($fnGmml), "\n";
+print "Info:  Read ", scalar @genes, " gene id's from ", basename($fnGpml), "\n";
 
 my $dbhGdb;
 

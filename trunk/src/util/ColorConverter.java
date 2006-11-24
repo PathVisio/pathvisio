@@ -56,7 +56,7 @@ public abstract class ColorConverter
 	}
 	
 	/**
-	 * Converts a string containing either a named color (as specified in gmml) or a hexbinary number
+	 * Converts a string containing either a named color (as specified in gpml) or a hexbinary number
 	 * to an {@link RGB} object
 	 * @param strColor
 	 * @return

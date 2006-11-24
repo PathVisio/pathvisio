@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# program will convert old GMML files to new ones,
+# program will convert old GPML files to new ones,
 # and validate every step automagically.
 #
 
@@ -18,13 +18,13 @@ use converter;
 #################
 
 my $dirMapps = "E:/GenMAPP 2 Data/MAPPs";
-my $dirGmml = "E:/Gmml-Visio Data/MAPPs";
+my $dirGpml = "E:/Gmml-Visio Data/MAPPs";
 
 #################
 #   globals     #
 #################
 
-my $fnSchemaOld = 'e:/prg/gmml-visio-trunk/GMML_compat.xsd';
+my $fnSchemaOld = 'e:/prg/gmml-visio-trunk/GPML.xsd';
 my $uriSchemaSchema = 'http://www.w3.org/2001/XMLSchema.xsd';
 
 my $dieOnError = 0; # die on first error encountered
@@ -90,8 +90,8 @@ my %okDirs;
 for my $fnIn (@list)
 {
 	my $fnOut = $fnIn; 
-	$fnOut =~ s/(.mapp$)/.gmml/i;
-	$fnOut =~ s/$dirMapps/$dirGmml/i;
+	$fnOut =~ s/(.mapp$)/.gpml/i;
+	$fnOut =~ s/$dirMapps/$dirGpml/i;
 
 	my $targetDir = $fnOut;
 	$targetDir =~ s#[^/]*$##; #remove part after last slash

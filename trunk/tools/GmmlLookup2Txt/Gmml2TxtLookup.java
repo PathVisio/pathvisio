@@ -15,7 +15,7 @@ import data.GmmlGdb;
 import data.GmmlGdb.IdCodePair;
 
 /**
- * Creates a txt file from a Gmml pathway and looks up cross references in the gene database
+ * Creates a txt file from a Gpml pathway and looks up cross references in the gene database
  */
 public class Gmml2TxtLookup {
 	//The codes of the cross-reference types you want to lookup
@@ -53,9 +53,9 @@ public class Gmml2TxtLookup {
 		
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pwFiles) {
-			System.out.println("parsing Gmml file " + f.getName());
+			System.out.println("parsing Gpml file " + f.getName());
 			
-			//Parse the Gmml file
+			//Parse the Gpml file
 			PathwayParser pwp = new PathwayParser(xmlReader);
 			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
 				GmmlVision.log.error("Couldn't read " + f, e); 

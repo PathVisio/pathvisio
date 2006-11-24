@@ -66,7 +66,7 @@ public class RController implements ApplicationEventListener{
 			startError(e);
 			return false;
 		} finally {
-			//Add a listener to close R on closing gmml-visio
+			//Add a listener to close R on closing PathVisio
 			GmmlVision.addApplicationEventListener(new RController());
 		}
 

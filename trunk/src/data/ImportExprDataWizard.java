@@ -76,7 +76,7 @@ public class ImportExprDataWizard extends Wizard {
 				GmmlVision.log.error("while running expression data import process: " + e.getMessage(), e);
 			} // TODO: handle exception
 			ip.setTitle("Import finished");
-			ip.setDescription("Press finish to return to Gmml-Visio");
+			ip.setDescription("Press finish to return to " + GmmlVision.APPLICATION_NAME);
 			importFinished = true;
 			return false;
 		}

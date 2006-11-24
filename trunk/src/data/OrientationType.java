@@ -11,7 +11,7 @@ public class OrientationType {
 	public static final int BOTTOM	= 2;
 	public static final int LEFT	= 3;
 
-	// Some mappings to Gmml
+	// Some mappings to Gpml
 	private static final List orientationMappings = Arrays.asList(new String[] {
 			"top", "right", "bottom", "left"
 	});

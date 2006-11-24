@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# program will convert old GMML files to new ones,
+# program will convert old GPML files to new ones,
 # and validate every step automagically.
 #
 
@@ -23,14 +23,14 @@ use converter;
 #################
 
 my $dirMapps = "c:/GenMAPP 2 Data/MAPPs";
-my $dirGmml = "c:/Gmml-Visio Data/MAPPs";
+my $dirGpml = "c:/Gmml-Visio Data/MAPPs";
 my $fnConf = "c:/prg/convert_test.conf";
 
 #################
 #   globals     #
 #################
 
-my $fnSchema = 'GMML_compat.xsd';
+my $fnSchema = 'GPML.xsd';
 my $uriSchemaSchema = 'http://www.w3.org/2001/XMLSchema.xsd';
 
 my $dieOnError = 1; # die on first error encountered
@@ -92,7 +92,7 @@ sub validate
 {
 	my $fnGmml = shift;
 
-	# validate GMML file
+	# validate GPML file
 	system ("xmllint", "-noout", "-schema", $fnSchema, $fnGmml);
 	print "Exit status ", $? >> 8;
 	if ($?) { print " Error!"; }
@@ -138,8 +138,8 @@ my @list;
 	"C:/GenMAPP 2 Data/MAPPs/Mm_GO_Samples_20050810/Biological Process/DNA packaging.mapp",
 	);
 
-#~ sub wanted { if (-f $_ && /\.gmml$/i) { push @list, File::Spec->abs2rel ($File::Find::name, $dirGmmlOld); } }
-#~ find (\&wanted, $dirGmmlOld);
+#~ sub wanted { if (-f $_ && /\.gpml$/i) { push @list, File::Spec->abs2rel ($File::Find::name, $dirGpmlOld); } }
+#~ find (\&wanted, $dirGpmlOld);
 
 my $last;
 @list = sort @list;
@@ -167,8 +167,8 @@ for my $fnIn (@list)
 	close OUTFILE;
 
 	my $fnOut = $fnIn; 
-	$fnOut =~ s/(.mapp$)/.gmml/i;	
-	$fnOut =~ s/$dirMapps/$dirGmml/i;
+	$fnOut =~ s/(.mapp$)/.gpml/i;	
+	$fnOut =~ s/$dirMapps/$dirGpml/i;
 
 	my $targetDir = $fnOut;
 	$targetDir =~ s#[^/]*$##; #remove part after last slash

@@ -2,16 +2,16 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Gmml-Visio
-AppVerName=Gmml-Visio beta
+AppName=PathVisio
+AppVerName=PathVisio 1.0 beta
 AppPublisher=BiGCaT group, University of Maastricht
 AppPublisherURL=http://www.genmapp.org
 AppSupportURL=http://www.genmapp.org
 AppUpdatesURL=http://www.genmapp.org
-DefaultDirName={pf}\Gmml-Visio
-DefaultGroupName=Gmml-Visio
+DefaultDirName={pf}\PathVisio
+DefaultGroupName=PathVisio
 AllowNoIcons=yes
-OutputBaseFilename=Gmml-Visio-Setup
+OutputBaseFilename=PathVisio-Setup
 Compression=lzma
 SolidCompression=yes
 OutputDir=dist
@@ -24,8 +24,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "gmml-visio.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "gmml-visio.jar"; DestDir: "{app}"; Flags: ignoreversion
+Source: "pathvisio.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "pathvisio.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "swt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "swt-awt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "swt-gdip-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -77,10 +77,10 @@ Source: "lib\org.eclipse.equinox.common_3.2.0.v20060603.jar"; DestDir: "{app}\li
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\Gmml-Visio"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"
-Name: "{group}\{cm:UninstallProgram,Gmml-Visio}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\Gmml-Visio"; Filename: "{app}\gmml-visio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{group}\PathVisio"; Filename: "{app}\pathvisio.exe"; WorkingDir: "{app}"
+Name: "{group}\{cm:UninstallProgram,PathVisio}"; Filename: "{uninstallexe}"
+Name: "{userdesktop}\PathVisio"; Filename: "{app}\pathvisio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\gmml-visio.exe"; Description: "{cm:LaunchProgram,Gmml-Visio}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\pathvisio.exe"; Description: "{cm:LaunchProgram,PathVisio}"; Flags: nowait postinstall skipifsilent
 

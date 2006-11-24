@@ -58,7 +58,7 @@ public class TestInputGroup extends Composite {
 		gexButton.addListener(SWT.Selection, new browseListener(GEX));
 		
 		mappLabel = new Label(group, SWT.CENTER);
-		mappLabel.setText("Gmml pathway:");
+		mappLabel.setText("Gpml pathway:");
 		mappText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		mappText.setLayoutData(textLayout);
 		mappButton = new Button(group, SWT.PUSH);
@@ -117,8 +117,8 @@ public class TestInputGroup extends Composite {
 				break;
 			case MAPP:
 				fileDialog.setFilterPath(genMappDir + "\\MAPPs");
-				fileDialog.setFilterExtensions(new String[] {"*.xml","*.*"});
-				fileDialog.setFilterNames(new String[] {"Gmml Pathway","All files"});
+				fileDialog.setFilterExtensions(new String[] {"*.gpml","*.*"});
+				fileDialog.setFilterNames(new String[] {"Gpml Pathway","All files"});
 				file = fileDialog.open();
 				if(file != null) {
 					mappText.setText(file);

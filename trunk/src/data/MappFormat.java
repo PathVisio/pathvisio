@@ -297,19 +297,19 @@ public class MappFormat
 		return mappInfo;
 	}
 	
-	// This method copies the Info table of the genmapp mapp to a new gmml
+	// This method copies the Info table of the genmapp mapp to a new gpml
 	// pathway
 	public static void copyMappInfo(String[] row, GmmlData data)
 	{
 
-		/* Data is lost when converting from GenMAPP to GMML:
+		/* Data is lost when converting from GenMAPP to GPML:
 		*
 		* GenMAPP: 
 		*		"Title", "MAPP", "Version", "Author",
 		* 		"Maint", "Email", "Copyright","Modify", 
 		*		"Remarks", "BoardWidth", "BoardHeight","WindowWidth",
 		*		"WindowHeight", "GeneDB", "Notes"
-		* GMML:    
+		* GPML:    
 		*		"Name", NONE, Version, "Author",  
 		*		"MaintainedBy", "Email", "Availability", "LastModified",
 		*		"Comment", "BoardWidth", "BoardHeight", NONE, 
@@ -317,7 +317,7 @@ public class MappFormat
 		*
 		*/
 	
-		GmmlVision.log.trace ("CONVERTING INFO TABLE TO GMML");
+		GmmlVision.log.trace ("CONVERTING INFO TABLE TO GPML");
 		
 		GmmlDataObject o = data.getMappInfo();
 		o.setParent(data);
@@ -448,12 +448,12 @@ public class MappFormat
         }
 	}
 
-	// This list adds the elements from the OBJECTS table to the new gmml
+	// This list adds the elements from the OBJECTS table to the new gpml
 	// pathway
     public static void copyMappObjects(String[] row, GmmlData data) throws ConverterException
     {
 
-		// Create the GenMAPP --> GMML mappings list for use in the switch
+		// Create the GenMAPP --> GPML mappings list for use in the switch
 		// statement
 
 		List typeslist = Arrays.asList(new String[] { 
@@ -889,12 +889,12 @@ public class MappFormat
     }
     
 	/**
-	 * {@link HashMap} containing mappings from system name (as used in Gmml) to system code
+	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
 	 */
 	public static final HashMap<String,String> sysName2Code = initSysName2Code();
 
 	/**
-	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gmml)
+	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gpml)
 	 * and system code
 	 */
 	private static HashMap<String, String> initSysName2Code()

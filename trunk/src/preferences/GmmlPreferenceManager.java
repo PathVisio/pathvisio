@@ -48,7 +48,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		
 		protected void createFieldEditors() {
 			DirectoryFieldEditor d1 = new DirectoryFieldEditor(GmmlPreferences.DIR_PWFILES,
-					"Gmml pathways:", getFieldEditorParent());
+					"Gpml pathways:", getFieldEditorParent());
 			addField(d1);
 			
 			DirectoryFieldEditor d2 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_GDB,

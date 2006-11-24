@@ -16,7 +16,7 @@ import data.GmmlGdb.IdCodePair;
 public class XmlUtils {
 	/**
 	 * This sax handler can be used to quickly parse pathway information from
-	 * a gmml file
+	 * a gpml file
 	 */
 	public static class PathwayParser extends DefaultHandler {
 		String name;

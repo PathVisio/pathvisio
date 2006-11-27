@@ -585,7 +585,6 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 	
     private class ColorSetObjectDragAdapter extends DragSourceAdapter {
     	public void dragStart(DragSourceEvent e) {
-    		System.out.println("Starting to drag " + getSelectedObject());
     		e.doit = getSelectedObject() == null ? false : true;
     	}
     	
@@ -593,18 +592,15 @@ public class ColorSetComposite extends Composite implements VisualizationListene
     		ColorSetObject selected = getSelectedObject();
     		int csoIndex = colorSet.colorSetObjects.indexOf(selected);
     		e.data = Integer.toString(csoIndex);
-    		System.out.println("Dragging: " + e.data);
     	}
     }
     
     private class ColorSetObjectDropAdapter extends DropTargetAdapter {
     	public void drop(DropTargetEvent e) {
     		TableItem item = (TableItem)e.item;
-    		System.out.println("dropping "+ e.item);
     		if(item != null)
     		{
     			Object selected = item.getData();
-    			System.out.println("dropping to " + selected);
     			int index = Integer.parseInt((String)e.data);
     			if(index >= 0) {
     				ColorSetObject cso = colorSet.getObjects().get(index);

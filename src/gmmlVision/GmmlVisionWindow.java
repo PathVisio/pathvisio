@@ -482,8 +482,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {			
 			try {
 				DBConnector dbcon = GmmlGdb.getDBConnector();
-				String dbName = dbcon.openChooseDbDialog(getShell(),
-						GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
+				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
 				
@@ -517,8 +516,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {
 			try {
 				DBConnector dbcon = GmmlGex.getDBConnector();
-				String dbName = dbcon.openChooseDbDialog(getShell(),
-						GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
+				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
 				

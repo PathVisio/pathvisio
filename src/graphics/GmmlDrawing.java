@@ -1,6 +1,5 @@
 package graphics;
 
-import gmmlVision.GmmlBpBrowser;
 import gmmlVision.GmmlVision;
 
 import java.awt.Rectangle;

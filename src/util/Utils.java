@@ -121,4 +121,13 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	public static boolean isSubClass(Class c, Class superClass) {
+		Class sc = c;
+		while((sc = sc.getSuperclass()) != null) {
+			GmmlVision.log.trace("\t\t>" + c + " with superclass: " + superClass);
+			if(superClass.equals(superClass)) return true;
+		}
+		return false;
+	}
 }

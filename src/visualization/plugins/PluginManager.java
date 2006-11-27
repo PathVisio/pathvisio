@@ -24,6 +24,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import util.Utils;
 import visualization.Visualization;
 import visualization.VisualizationManager;
 import visualization.VisualizationManager.VisualizationEvent;
@@ -280,13 +281,7 @@ public abstract class PluginManager {
 			GmmlVision.log.trace("\t\t> Class " + c + " is not a visualization plugin (is abstract)");
 			return false;
 		}
-		Class superClass = c;
-		while((superClass = superClass.getSuperclass()) != null) {
-			GmmlVision.log.trace("\t\t>" + c + " with superclass: " + superClass);
-			if(superClass.equals(VisualizationPlugin.class)) return true;
-		}
-		GmmlVision.log.trace("\t\t> Class " + c + " is not a visualization plugin");
-		return false;
+		return Utils.isSubClass(c, VisualizationPlugin.class);
 	}
 			
 	static  FilenameFilter classFilter = new FilenameFilter() {

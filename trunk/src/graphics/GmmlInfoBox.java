@@ -27,24 +27,6 @@ public class GmmlInfoBox extends GmmlGraphics {
 		canvas.setMappInfo(this);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;		
 	}
-
-	public void setName(String name) { 
-		markDirty();
-		gdata.setMapInfoName(name);  
-		markDirty();
-	}
-	
-	public void setBoardSize(Point size) {
-		gdata.setBoardWidth (size.x);
-		gdata.setBoardHeight (size.y);
-		canvas.setSize((int)gdata.getBoardWidth(), (int)gdata.getBoardHeight());
-	}
-	
-	public void setWindowSize(Point size) {
-		gdata.setWindowWidth (size.x);
-		gdata.setWindowHeight (size.y);
-//		canvas.gmmlVision.getShell().setSize(windowWidth, windowHeight);
-	}
 	
 	public Point getBoardSize() { return new Point((int)gdata.getBoardWidth(), (int)gdata.getBoardHeight()); }
 	

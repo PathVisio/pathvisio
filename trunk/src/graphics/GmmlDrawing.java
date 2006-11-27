@@ -178,6 +178,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public void setMappInfo(GmmlInfoBox mappInfo)
 	{
 		this.infoBox = mappInfo;
+		infoBox.getGmmlData().addListener(this);
 	}
 
 	/**
@@ -891,9 +892,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public void gmmlObjectModified(GmmlEvent e) {
 		switch (e.getType())
 		{
-			case GmmlEvent.MODIFIED_GENERAL:		
-				addDirtyRect(null); // mark everything dirty
-				break;
 			case GmmlEvent.DELETED:
 				GmmlVision.getGmmlData().dataObjects.remove((GmmlDataObject)e.getAffectedData());
 				addDirtyRect(null); // mark everything dirty

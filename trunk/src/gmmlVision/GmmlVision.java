@@ -206,6 +206,27 @@ public abstract class GmmlVision {
 		}
 		return DIR_DATA;
 	}
+	
+	public static DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		DBConnector connector = null;
+		String className = null;
+		switch(type) {
+		case DBConnector.TYPE_GDB:
+			className = getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_GDB);
+		case DBConnector.TYPE_GEX:
+			className = getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_EXPR);
+		}
+		if(className == null) return null;
+		
+		Class dbc = Class.forName(className);
+		
+		if(Utils.isSubClass(dbc, DBConnector.class)) {
+			connector = (DBConnector)dbc.newInstance();
+			connector.setDbType(type);
+		}
+	
+		return connector;
+	}
 		
 	public static boolean isUseR() { return USE_R; }
 	

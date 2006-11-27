@@ -456,7 +456,7 @@ public class ImportExprDataWizard extends Wizard {
 					+ Text.DELIMITER);
 			progressText
 					.append("> If this is not the correct gene database, close this window"
-							+ " and change the gene database in the menu 'data' -> 'choose gene database\n'");
+							+ " and change the gene database in the menu 'data' -> 'choose gene database'\n");
 			setControl(composite);
 		}
 

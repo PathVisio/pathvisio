@@ -69,4 +69,13 @@ public class FileUtils {
 		}
 		return nrLines;
 	}
+	
+	/**
+	 * Removes the file extension (everything after the last occurence of '.')
+	 */
+	public static String removeExtension(String fname) {
+		int dot = fname.lastIndexOf('.');
+		if(dot > 0) fname = fname.substring(0, dot);
+		return fname;
+	}
 }

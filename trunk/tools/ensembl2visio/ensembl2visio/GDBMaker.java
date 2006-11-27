@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -49,7 +50,10 @@ public abstract class GDBMaker {
     	createGDBFromTxt(txtFile, getDbName());
     }
     
-    public void createGDBFromTxt(String file, String dbname) {
+    PreparedStatement pstGene;
+    PreparedStatement pstLink;
+    
+    void createGDBFromTxt(String file, String dbname) {
     	StopWatch timer = new StopWatch();
     	info("Timer started");
     	timer.start();
@@ -61,13 +65,13 @@ public abstract class GDBMaker {
     		createTables();
     		
     		con.setAutoCommit(false);
-    		java.sql.PreparedStatement pstGene = con.prepareStatement(
+    		pstGene = con.prepareStatement(
     				"INSERT INTO gene " +
     				"	(id, code," +
     				"	 backpageText)" +
     				"VALUES (?, ?, ?)"
     		);
-    		java.sql.PreparedStatement pstLink = con.prepareStatement(
+    		pstLink = con.prepareStatement(
     				"INSERT INTO link " +
     				"	(idLeft, codeLeft," +
     				"	 idRight, codeRight)" +
@@ -80,40 +84,24 @@ public abstract class GDBMaker {
     		int codeIndex = -1;
     		int error = 0;
     		int progress = 0;
-    		String[] cols = new String[4];
+    		String[] cols = new String[6];
         	// Columns in input:
         	// <ENSG> <XREF/ENSG> <DBNAME> <GENENAME> <DESCR>
     		// new: <ENSG> <PRIM_ID> <DBNAME> <DISP_NAME> <GENENAME> <DESCR>
     		while((l = in.readLine()) != null)
     		{
     			progress++;
-    			cols = l.split("\t", 4);
+    			cols = l.split("\t", 6);
     			codeIndex = getSystemCodeIndex(cols[2]);
     			if(codeIndex > -1) {
     				code = sysCodes[codeIndex];
     				
-    				try {
-    					//System.out.println(cols[1] + "\t" + code + "\t" + createBackpageText(cols));
-    					pstGene.setString(1, cols[1]);
-    					pstGene.setString(2, code);
-    					pstGene.setString(3, createBackpageText(cols));
-    					pstGene.executeUpdate();
-    				} catch (Exception e) { 
-    					logError.error(cols[0] + "\t" + cols[1] + "\t" + code, e);
-    					//e.printStackTrace();
-    					error++;
-    				}
-    				try {
-    					//System.out.println(cols[0] + "\t" + sysCodes[ENS_CODE] + "\t" + cols[1] + "\t" + code);
-    					pstLink.setString(1, cols[0]);
-    					pstLink.setString(2, sysCodes[ENS_CODE]);
-    					pstLink.setString(3, cols[1]);
-    					pstLink.setString(4, code);
-    					pstLink.executeUpdate();
-    				} catch (Exception e) { 
-    					//e.printStackTrace();
-    					logError.error(cols[0] + "\t" + cols[1] + "\t" + code, e);
-    					error++;
+    				error += addGene(cols, code);
+    				error += addLink(cols, code);
+    				
+    				if(codeIndex == SGD_CODE) {
+    					//Also add display_name and parse accnr from description
+    					error += processSGD(cols);
     				}
     			}
     			else {
@@ -142,6 +130,78 @@ public abstract class GDBMaker {
     	info("Timer stopped: " + timer.stop());
     }
     
+    int addGene(String[] cols, String code) {
+    	return addGene(cols[0], cols[1], code, createBackpageText(cols));
+    }
+    
+    int addGene(String ens, String id, String code, String bpText) {
+		try {
+			pstGene.setString(1, id);
+			pstGene.setString(2, code);
+			pstGene.setString(3, bpText);
+			pstGene.executeUpdate();
+		} catch (Exception e) { 
+			logError.error(ens + "\t" + id + "\t" + code, e);
+			return 1;
+		}
+		return 0;
+    }
+    
+    int addLink(String[] cols, String code) {
+    	return addLink(cols[0], cols[1], code);
+    }
+    
+    int addLink(String ens, String id, String code) {
+    	try {
+			pstLink.setString(1, ens);
+			pstLink.setString(2, sysCodes[ENS_CODE]);
+			pstLink.setString(3, id);
+			pstLink.setString(4, code);
+			pstLink.executeUpdate();
+		} catch (Exception e) {
+			logError.error(ens + "\t" + id + "\t" + code, e);
+			return 1;
+		}
+		return 0;
+    }
+    
+    final static int DISPLAY_NAME_INDEX = 3;
+    //GenMAPP SGD also accepts:
+    //- acc nr: e.g. S0000001
+    //- orf name: e.g. YHR055C (Ensembl id in Ensembl)
+    //- gene name: e.g. CUP1-2
+    int processSGD(String[] cols) {
+    	int error = 0;
+    	String ens = cols[0];
+    	String code = sysCodes[SGD_CODE];
+    	String dpn = cols[DISPLAY_NAME_INDEX];
+    	String bpTxt = createBackpageText(cols);
+    	
+    	error += addGene(ens, ens, code, bpTxt);
+    	error += addLink(ens, ens, code);
+    	
+    	error += addGene(ens, dpn, code, bpTxt);
+    	error += addLink(ens, dpn, code);
+
+    	String acc = parseSgdDescription(cols[5]);
+    	if(acc != null) {
+    		error += addGene(ens, acc, code, bpTxt);
+    		error += addLink(ens, acc, code);
+    	}
+
+    	return error;
+    }
+    
+    Pattern sgdPattern;
+    final static String sgd_descr = "Source:Saccharomyces Genome Database;Acc:";
+    String parseSgdDescription(String descr) {
+    	if(sgdPattern == null) sgdPattern = Pattern.compile(sgd_descr);
+    	Matcher m = sgdPattern.matcher(descr);
+    	if(m.find()) {
+    		return descr.substring(m.end(), descr.indexOf(']', m.end()));
+    	}
+    	return null;
+    }
     
     void setLoggers() {
     	logInfo = new Logger();
@@ -181,17 +241,10 @@ public abstract class GDBMaker {
     
     public String createBackpageText(String[] cols) {
     	int sysIndex = getSystemCodeIndex(cols[2]);
-    	String descr = "";
-    	String name = "";
-    	String secId = "";
-    	switch(cols.length) {
-    	case 6:
-    		descr = cols[5];
-    	case 5:
-    		name = cols[4];
-    	case 4:
-    		secId = cols[3];
-    	}
+    	String descr = cols[5] == null ? "" : cols[5];
+    	String name = cols[4] == null ? "" : cols[4];
+    	String secId = cols[3] == null ? "" : cols[3];
+
     	String bpText = "<TABLE border='1'>" +
     			"<TR><TH>Gene ID:<TH>" + cols[1] +
     			"<TR><TH>Gene Name:<TH>" + name +
@@ -298,5 +351,6 @@ public abstract class GDBMaker {
 	};
 	
 	final static int ENS_CODE = 3;
+	final static int SGD_CODE = 15;
 	final static long PROGRESS_INTERVAL = 10000;
 }

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import preferences.GmmlPreferences;
-import util.Utils;
 import debug.StopWatch;
 
 /**
@@ -307,15 +306,8 @@ public abstract class GmmlGdb {
 		}
 	}
 	
-	public static DBConnector getDBConnector() throws Exception {
-		DBConnector connector = null;
-		Class dbc = Class.forName(
-				GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_GDB));
-		
-		if(Utils.isInterface(dbc, "data.DBConnector")) {
-			connector = (DBConnector)dbc.newInstance();
-		}
-		return connector;
+	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return GmmlVision.getDbConnector(DBConnector.TYPE_GDB);
 	}
 	
 	/**

@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import debug.StopWatch;
 
-import preferences.GmmlPreferences;
-
-public class DBConnHsqldb implements DBConnector {
-	String DB_FILE_EXT = "properties";
+public class DBConnHsqldb extends DBConnector {
+	static final String DB_FILE_EXT = "properties";
+	static final String[] DB_EXT = new String[] { "*." + DB_FILE_EXT };
+	static final String[] DB_EXT_NAMES = new String[] { "Hsqldb Database" };
 	
 	public Connection createConnection(String dbName) throws Exception {
 		return createConnection(dbName, PROP_NONE);
@@ -52,36 +52,13 @@ public class DBConnHsqldb implements DBConnector {
 	}
 	
 	public void closeConnection(Connection con, int props) throws SQLException {
-		boolean compact = (props & PROP_COMPACT) != 0;
+		boolean compact = (props & PROP_FINALIZE) != 0;
 		if(con != null) {
 			Statement sh = con.createStatement();
 			sh.executeQuery("SHUTDOWN" + (compact ? " COMPACT" : ""));
 			sh.close();
 			con.close();
 		}
-	}
-	
-	public String openChooseDbDialog(Shell shell, String filterPath) {
-		FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-		fileDialog.setText("Select database file");
-		if(filterPath != null) fileDialog.setFilterPath(filterPath);
-		fileDialog.setFilterExtensions(new String[] {"*." + DB_FILE_EXT,"*.*"});
-		fileDialog.setFilterNames(new String[] {"Database file","All files"});
-		String file = fileDialog.open();
-		if(file != null) file = file2DbName(file);
-		return file;
-	}
-	
-	public String openNewDbDialog(Shell shell, String defaultName) {
-		FileDialog saveDialog = new FileDialog(shell, SWT.SAVE);
-		saveDialog.setText("Save");
-		saveDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB));
-		saveDialog.setFilterExtensions(new String[] {"*." + DB_FILE_EXT, "*.*"});
-		saveDialog.setFilterNames(new String[] {"Database file", "All files"});
-		saveDialog.setFileName(defaultName);
-		String file = saveDialog.open();
-		if(file != null) file = file2DbName(file);
-		return file;
 	}
 	
 	File dbName2File(String dbName) {
@@ -108,5 +85,27 @@ public class DBConnHsqldb implements DBConnector {
 			} catch (Exception e) {
 				GmmlVision.log.error("Unable to set database properties to readonly", e);
 			}
+	}
+
+	Connection newDbCon;
+	public Connection createNewDatabase(String dbName) throws Exception {
+		newDbCon = createConnection(dbName, PROP_RECREATE);
+		return newDbCon;
+	}
+
+	public void finalizeNewDatabase(String dbName) throws Exception {
+		if(newDbCon != null) closeConnection(newDbCon, PROP_FINALIZE);
+		setPropertyReadOnly(dbName, true);
+	}
+
+	public String openChooseDbDialog(Shell shell) {
+		FileDialog fd = createFileDialog(shell, SWT.OPEN, DB_EXT, DB_EXT_NAMES);
+		return fd.open();
+	}
+
+	public String openNewDbDialog(Shell shell, String defaultName) {
+		FileDialog fd = createFileDialog(shell, SWT.SAVE, DB_EXT, DB_EXT_NAMES);
+		if(defaultName != null) fd.setFileName(defaultName);
+		return fd.open();
 	}
 }

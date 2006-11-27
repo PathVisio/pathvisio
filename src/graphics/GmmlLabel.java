@@ -80,14 +80,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		
 		prevText = getLabelText();
 		
-		GC gc = new GC(canvas.getDisplay());
-		Font f = new Font(canvas.getDisplay(), 
-				gdata.getFontName(), 
-				(int)gdata.getFontSize(), getFontStyle());
-		gc.setFont (f);
-		Point ts = gc.textExtent(gdata.getLabelText());
-		f.dispose();
-		gc.dispose();
+		Point ts = computeTextSize();
 		
 		//Keep center location
 		double nWidth = ts.x + 10 * getDrawing().getZoomFactor();
@@ -136,6 +129,19 @@ public class GmmlLabel extends GmmlGraphicsShape
 		});
 		
 		textComposite.pack();
+	}
+	
+	Point computeTextSize() {
+		GC gc = new GC(canvas.getDisplay());
+		Font f = new Font(canvas.getDisplay(), 
+				gdata.getFontName(), 
+				(int)gdata.getFontSize(), getFontStyle());
+		gc.setFont (f);
+		Point ts = gc.textExtent(gdata.getLabelText());
+		f.dispose();
+		gc.dispose();
+		
+		return ts;
 	}
 	
 	protected void disposeTextControl()
@@ -235,11 +241,9 @@ public class GmmlLabel extends GmmlGraphicsShape
 		
 		Rectangle bounds = pol.getBounds();
 		
-		GC gc = new GC(canvas);
-		org.eclipse.swt.graphics.Point q = gc.textExtent(((GmmlLabel)this).getLabelText());
+		Point q = computeTextSize();
 		util.LinAlg.Point c = getCenter();
-		bounds.add(new Rectangle2D.Double(c.x - q.x/2, c.y - q.y/2, c.x + q.x/2, c.y + q.y/2)); 
-		gc.dispose();
+		bounds.add(new Rectangle2D.Double(c.x - q.x / 2, c.y - q.y / 2, q.x, q.y)); 
 		
 		return bounds;
 	}

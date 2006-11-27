@@ -212,7 +212,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			
 			// label
 			"Label Text", 
-			"Font Name","Font Weight","Font Style","Font Size",
+			"Font Name", "Font Weight", "Font Style", "Font Size",
 			//mappinfo
 			
 			// mappinfo
@@ -253,7 +253,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			
 			// label
 			STRING, 
-			STRING, TYPE, TYPE, TYPE,
+			STRING, TYPE, TYPE, DOUBLE,
 			
 			// mappinfo
 			STRING, STRING, STRING,

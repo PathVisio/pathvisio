@@ -121,6 +121,9 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 	
 	public Region getReservedRegion(VisualizationPlugin p, GmmlGraphics g) {
+		if(!p.isUseReservedRegion()) 
+			throw new IllegalArgumentException("useProvidedArea set to false for this plug-in");
+		
 		//Determine number of active plugins that to reserve a region
 		int nrRes = 0;
 		int index = 0;

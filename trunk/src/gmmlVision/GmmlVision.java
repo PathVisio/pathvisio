@@ -30,6 +30,7 @@ import debug.Logger;
 public abstract class GmmlVision {
 	public static final String APPLICATION_NAME = "PathVisio";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
+	public static final String HELP_URL = "http://blog.bigcat.unimaas.nl/gmmlvisio/index.php/Main_Page";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data

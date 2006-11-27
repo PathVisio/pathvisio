@@ -7,6 +7,7 @@ import graphics.GmmlDrawing;
 import graphics.GmmlGeneProduct;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Vector;
 
@@ -46,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import preferences.GmmlPreferenceManager;
 import preferences.GmmlPreferences;
 import search.PathwaySearchComposite;
+import util.SwtUtils.SimpleRunnableWithProgress;
 import visualization.GmmlLegend;
 import visualization.VisualizationDialog;
 import visualization.VisualizationManager;
@@ -61,6 +63,7 @@ import data.GmmlGex;
 import data.ImportExprDataWizard;
 import data.GmmlGex.ExpressionDataEvent;
 import data.GmmlGex.ExpressionDataListener;
+import edu.stanford.ejalbert.BrowserLauncher;
 
 
 /**
@@ -767,8 +770,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public AboutAction (GmmlVisionWindow w)
 		{
 			window = w;
-			setText ("&About@F1");
-			setToolTipText ("About PathVisio");
+			setText ("&About");
+			setToolTipText ("About " + GmmlVision.APPLICATION_NAME);
 		}
 		public void run () {
 			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
@@ -776,6 +779,44 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		}
 	}
 	private AboutAction aboutAction = new AboutAction(this);
+	
+	/**
+	 * {@link Action} to open a {@link GmmlAboutBox} window
+	 */
+	private class HelpAction extends Action 
+	{
+		GmmlVisionWindow window;
+		public HelpAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("&Help@F1");
+			setToolTipText ("Opens " + GmmlVision.APPLICATION_NAME + " help in your web browser");
+		}
+		public void run () {
+			SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
+					window.getClass(), "openHelp", new Class[] {}, new Object[] {}, null);
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+			try {
+				dialog.run(true, true, rwp);
+			} catch (InvocationTargetException e) {
+				Throwable cause = e.getCause();
+				String msg = cause == null ? null : cause.getMessage();
+				MessageDialog.openError(getShell(), "Unable to open help",
+				"Unable to open web browser" +
+				(msg == null ? "" : ": " + msg) +
+				"\nYou can open the help page manually:\n" +
+				GmmlVision.HELP_URL);
+			} catch (InterruptedException ignore) {}
+			
+
+		}
+	}
+	private HelpAction helpAction = new HelpAction(this);
+	
+	public static void openHelp() throws Exception {
+		BrowserLauncher bl = new BrowserLauncher(null);
+		bl.openURLinBrowser(GmmlVision.HELP_URL);
+	}
 	
 	private class CopyAction extends Action
 	{
@@ -1339,6 +1380,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
+		helpMenu.add(helpAction);
 		m.add(fileMenu);
 		m.add(editMenu);
 		m.add(viewMenu);

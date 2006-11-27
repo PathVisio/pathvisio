@@ -179,10 +179,8 @@ public class SidePanel extends Composite {
 			int sum = 0;
 			for(int i = 0; i < weights.length; i++) {
 				sum += weights[i];
-				System.out.println("old: " + weights[i]);
 				if(i == thisIndex) continue;
 				weights[i] = (int)(((double)weights[i] / 100) * percentLeft);
-				System.out.println("new: " + weights[i]);
 			}
 			weights[thisIndex] = (int)(((double)percent / 100) * sum);
 			return weights;

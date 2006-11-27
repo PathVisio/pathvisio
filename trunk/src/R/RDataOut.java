@@ -301,24 +301,19 @@ public class RDataOut {
 			for(IdCodePair pwidc : geneProducts.keySet()) {
 				sw2.start();
 				RCommands.checkCancelled();
-				
-				System.out.println("Processing " + pwidc);
+			
 				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
 				sw2.stopToLog("\tfetching crossrefs for " + pwidc);
-				System.out.println("Crossrefs: " + pwrefs);
 				sw2.start();
 				for(IdCodePair ref : pwrefs) {
 					if(repHash.containsKey(ref)) {
 						geneProducts.get(pwidc).addReference(ref);
-						System.out.println("adding " + ref + " to " + geneProducts.get(pwidc));
 					}
 				}
 				sw2.stopToLog("\t\tmatching with reporters");
 				SimpleRunnableWithProgress.monitorWorked(worked);
 			}
 			sw.stopToLog("Fetching crossrefs");
-			
-			System.out.println("Finished processing " + geneProducts.size() + " geneproducts");
 		}
 }
 	

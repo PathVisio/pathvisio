@@ -39,7 +39,6 @@ public class DBConnDerby extends DBConnector {
 	
 	public Connection createConnection(String dbName, int props) throws Exception {
 		boolean recreate = (props & PROP_RECREATE) != 0;
-		System.out.println(recreate);
 		if(recreate) {
 			File dbFile = new File(dbName);
 			dbFile.delete(); 

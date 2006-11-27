@@ -823,7 +823,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			
 			GmmlDrawingObject o = findPressedObject(p);
 			if(o != null && o instanceof GmmlGraphics) {
-				System.out.println(o);
 				tip = v.getToolTip(e.display, (GmmlGraphics)o);
 				if(tip == null) return;
 				Point mp = toDisplay(e.x, e.y);

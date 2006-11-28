@@ -32,7 +32,9 @@ public class DBConnHsqldb extends DBConnector {
 			File dbFile = dbName2File(dbName);
 			if(dbFile.exists()) dbFile.delete();
 		}
-	
+		
+		dbName = file2DbName(dbName);
+		
 		Class.forName("org.hsqldb.jdbcDriver");
 		Properties prop = new Properties();
 		prop.setProperty("user","sa");

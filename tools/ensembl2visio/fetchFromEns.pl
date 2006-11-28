@@ -1,39 +1,43 @@
-use warnings;
-use strict;
+use     warnings;
+use     strict;
 
-#Load the Ensembl Perl API
-use lib 'C:\\Documents and Settings\\thomas.kelder\\My Documents\\ensembl gdb\\ensembl\\modules';
-use Bio::EnsEMBL::DBSQL::DBAdaptor;
-use BIO::EnsEMBL::DBSQL::GeneAdaptor;
-use BIO::EnsEMBL::DBEntry;
-use BIO::EnsEMBL::Gene;
+#Load   the     Ensembl Perl API
+use lib 'ensPerl/ensembl/modules';
+use     Bio::EnsEMBL::Registry;
+use     Bio::EnsEMBL::DBSQL::GeneAdaptor;
+use     Bio::EnsEMBL::DBEntry;
+use     Bio::EnsEMBL::Gene;
+use     Getopt::Long;
 
-# Specify organism here
-my $organism = "human";
+my $organism;
+my $fnOutput;
 
-my %databases = ( 
-	"human" => 'homo_sapiens_core_38_36',
-	"mouse" => 'mus_musculus_core_38_35',
-	"rat"   => 'rattus_norvegicus_core_39_34i'
+my $result = GetOptions (
+	"organism=s" => \$organism,
+	"output=s" => \$fnOutput,
 );
 
-print $databases{$organism};	
-	
-my $host		= 'localhost';
-my $user		= 'root';
-my $pass		= '0000';
-my $dbname = $databases{$organism};
+##Use this when connecting to local database
+#my $host		= 'localhost';
+#my $user		= 'root';
+#my $pass		= '0000';
+#my $dbname = $databases{$organism};
+#
+## Connect to the database
+#my $db = new Bio::EnsEMBL::DBSQL::DBAdaptor(
+#-host 	=> $host,
+#-user 	=> $user,
+#-password => $pass,
+#-dbname => $dbname
+#);
 
-# Connect to the database
-my $db = new Bio::EnsEMBL::DBSQL::DBAdaptor(
--host 	=> $host,
--user 	=> $user,
--password => $pass,
--dbname => $dbname
-);
+my  $reg = "Bio::EnsEMBL::Registry";
+$reg->load_registry_from_db(
+	 -host => "ensembldb.ensembl.org",
+	 -user => "anonymous",);
 
-# Load the gene adaptor
-my $ga = $db->get_GeneAdaptor();
+# obtain a gene adaptor from the registry
+my $ga = $reg->get_adaptor($organism,"core","gene");
 
 print "gene adaptor loaded\n";
 
@@ -53,7 +57,7 @@ foreach my $gene (@{$genes}) {
 	my $name = $gene->external_name;
 	my $disp_id = $gene->display_id;
 	my $descr = $gene->description;
-	
+
 	# Some fields may be undefined, so supress warnings
 	{
 		no warnings;
@@ -78,12 +82,12 @@ foreach my $gene (@{$genes}) {
 				$output = $output."$ens_id\t$ext_id\t$dbname\t$disp_id\t$name\t$ext_descr\n";
 			}
 		} else {
-				next;
+			next;
 		}
 	}
 	print OUTPUT $output;
 	if(($progress % 100) == 0) {
-				print "$progress genes processed\n";
+		print "$progress genes processed\n";
 	}
 }
 print " $progress genes total";

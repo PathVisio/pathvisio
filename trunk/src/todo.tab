@@ -1,19 +1,19 @@
-Feature	Task	Who	Version	Orig Est	Curr Est	Elapsed	Remain
-editor	GMML from scratch (valid)	Thomas	1.0 beta				"done, however gmml not valid yet"
-gdb	add CAS ids in GDB + backpage info	Martijn	1.0 beta				done
-GMML format	Update XML schema to include keys for all elements	Martijn	1.0 beta				done
-GMML format	Modify converter to convert to new schema	Martijn	1.0 beta				done
-GMML format	Modify gmml reader-writer to use new format. Possibly in a new branch?	Martijn	1.0 beta				done
-gmml visualization	use rotation field (add rotation handle)	Thomas	1.0 beta				done
-gmml visualization	MVC aproach for GmmlGraphics	Martijn	1.0 beta				done
-Packaging	auto-generate executable JAR and installer	Martijn	1.0 beta				done
-search	add searchdialog/results to right sidepanel	Thomas	1.0 beta				done
-search	mark found genes (add highlighted property)	Thomas	1.0 beta				done
-user preferences	"Create general class + file to store user preferences (directories, gdb)"	Thomas	1.0 beta				done
-user preferences	Create UI for editing preferences	Thomas	1.0 beta				done
-legend	Legend to sidepanel	Thomas	1.0 beta				done
-editor	multi-select: add resize handles to selectionbox	Thomas	1.0 beta				done
-editor	multi-select by pressing CTRL	Thomas	1.0 beta				done
+Feature	Task	Who	Version	Orig Est	Curr Est	Elapsed	Remain	
+editor	GMML from scratch (valid)	Thomas	1.0 beta				done, however gmml not valid yet	
+gdb	add CAS ids in GDB + backpage info	Martijn	1.0 beta				done	
+GMML format	Update XML schema to include keys for all elements	Martijn	1.0 beta				done	
+GMML format	Modify converter to convert to new schema	Martijn	1.0 beta				done	
+GMML format	Modify gmml reader-writer to use new format. Possibly in a new branch?	Martijn	1.0 beta				done	
+gmml visualization	use rotation field (add rotation handle)	Thomas	1.0 beta				done	
+gmml visualization	MVC aproach for GmmlGraphics	Martijn	1.0 beta				done	
+Packaging	auto-generate executable JAR and installer	Martijn	1.0 beta				done	
+search	add searchdialog/results to right sidepanel	Thomas	1.0 beta				done	
+search	mark found genes (add highlighted property)	Thomas	1.0 beta				done	
+user preferences	Create general class + file to store user preferences (directories, gdb)	Thomas	1.0 beta				done	
+user preferences	Create UI for editing preferences	Thomas	1.0 beta				done	
+legend	Legend to sidepanel	Thomas	1.0 beta				done	
+editor	multi-select: add resize handles to selectionbox	Thomas	1.0 beta				done	
+editor	multi-select by pressing CTRL	Thomas	1.0 beta				done	
 statistics	Design R objects to constrain structure of expression/pathway data	Thomas	1.0 beta				done	
 statistics	Create example R-script to do create a simple top-list of pathways	Thomas	1.0 beta				done	
 statistics	Create R-objects from GmmlVision and call R-scirpts from java	Thomas	1.0 beta				done	
@@ -26,98 +26,98 @@ colorset	implement drag and drop	Thomas	1.0 beta				done
 colorset	add option to delete colorset / object	Thomas	1.0 beta				done	
 colorset	get gradient data columns from gex	Thomas	1.0 beta				done	
 colorset	add action colorsetmanager	Thomas	1.0 beta				done	
-colorset	"add combo in toolbar, select colorset"	Thomas	1.0 beta				done	
+colorset	add combo in toolbar, select colorset	Thomas	1.0 beta				done	
 colorset	speed up saving colorset on closing colorsetwindow	Thomas	1.0 beta				done	
 colorset / drawing	color geneproducts by selected colorset	Thomas	1.0 beta				done	
 criteria builder	create ui window	Thomas	1.0 beta				done	
-criteria builder	implement 'color by gradient'	Thomas	1.0 beta				done
-database	open/close connection to db only at start and end of program	Thomas	1.0 beta				done
-drawing	fix retained selection	Thomas	1.0 beta				done
-drawing	disable sticky line ends on shape	Thomas	1.0 beta				done
-drawing	fix changing fontsize after subsequentially zooming	Thomas	1.0 beta				done
-drawing	re-implement selection box	Thomas	1.0 beta				done
-drawing	resize geneproduct labels when zooming	Thomas	1.0 beta				done
-drawing	zoom to fit	Thomas	1.0 beta				done
-drawing	fix selection box only works from topleft to bottomright	Thomas	1.0 beta				done
-drawing	make it possible to use mouse scrollbutton	Thomas	1.0 beta				done
-drawing	create mouse listener methods for drawing new graphics	Thomas	1.0 beta				done
-drawing	fix negative width/height of graphics elements	Thomas	1.0 beta				done
-drawing	fix flickering when moving objects	Thomas	1.0 beta				done
-drawing	implement double buffering for further flicker reduction	Thomas	1.0 beta				done
-drawing	fix deselect when pressing only handle of selected object	Thomas	1.0 beta				done
-drawing	clip text label in geneproduct (when too large)	Thomas	1.0 beta				done
-drawing	allocate coloring by expression in seperate gmmlgraphics class	Thomas	1.0 beta				done
-drawing	pre-load coloring data on opening mapp / gex	Thomas	1.0 beta				done
-drawing	add colorset legend (use colorsetpreview)	Thomas	1.0 beta				done
-drawing / gmml	ensure update of gmml document on changing graphics	Thomas	1.0 beta				done
-drawing / gmml	create new jdom element when creating new graphic	Thomas	1.0 beta				done
-drawing / gmml	add non-graphics attributes to updateJdomGraphics()	Thomas	1.0 beta				done
-drawing / gmml	fix color from and to gmml	Thomas	1.0 beta				done
-expression data	read gex to temporary database	Thomas	1.0 beta				done
-expression data	dialog option 'load gex'	Thomas	1.0 beta				done
-expression data	add expression data to gene info	Thomas	1.0 beta				done
-expression data	add 'convert gex' option	Thomas	1.0 beta				done
-expression data	change 'load gex' to 'select gex'	Thomas	1.0 beta				done
-gdb2hsqldb	write queries	Thomas	1.0 beta				done
-gdb2hsqldb	fixed file location / properties	Thomas	1.0 beta				done
-gdb2hsqldb	dialog option 'convert'	Thomas	1.0 beta				done
-gdb2hsqldb	thread / progress	Thomas	1.0 beta				done
-map gene info	write queries	Thomas	1.0 beta				done
-map gene info	create ui for displaying info	Thomas	1.0 beta				done
-map gene info	lookup gene when clicked	Thomas	1.0 beta				done
-property editor	add more geneproduct attributes to property editor	Thomas	1.0 beta				done
-property editor	sort labels in property editor	Thomas	1.0 beta				done
-property editor	custom labels in property editor (so not neccesarily attribute names)	Thomas	1.0 beta				done
-property editor	dropdownlist for choosing datasource on geneproduct	Thomas	1.0 beta				done
-select gdb	create select menu	Thomas	1.0 beta				done
-select gdb	test when db files moved	Thomas	1.0 beta				done
-UI	add save as	Thomas	1.0 beta				done
-UI	re-implement property table	Thomas	1.0 beta				done
-UI	create view / edit mode	Thomas	1.0 beta				done
-UI	create toolbar for drawing new graphics	Thomas	1.0 beta				done
-UI	hide optiontable when in view mode	Thomas	1.0 beta				done
-UI	hide backpageviewer when in edit mode	Thomas	1.0 beta				done
-colorset	implement color by criteria	Thomas	1.0 beta				done
+criteria builder	implement 'color by gradient'	Thomas	1.0 beta				done	
+database	open/close connection to db only at start and end of program	Thomas	1.0 beta				done	
+drawing	fix retained selection	Thomas	1.0 beta				done	
+drawing	disable sticky line ends on shape	Thomas	1.0 beta				done	
+drawing	fix changing fontsize after subsequentially zooming	Thomas	1.0 beta				done	
+drawing	re-implement selection box	Thomas	1.0 beta				done	
+drawing	resize geneproduct labels when zooming	Thomas	1.0 beta				done	
+drawing	zoom to fit	Thomas	1.0 beta				done	
+drawing	fix selection box only works from topleft to bottomright	Thomas	1.0 beta				done	
+drawing	make it possible to use mouse scrollbutton	Thomas	1.0 beta				done	
+drawing	create mouse listener methods for drawing new graphics	Thomas	1.0 beta				done	
+drawing	fix negative width/height of graphics elements	Thomas	1.0 beta				done	
+drawing	fix flickering when moving objects	Thomas	1.0 beta				done	
+drawing	implement double buffering for further flicker reduction	Thomas	1.0 beta				done	
+drawing	fix deselect when pressing only handle of selected object	Thomas	1.0 beta				done	
+drawing	clip text label in geneproduct (when too large)	Thomas	1.0 beta				done	
+drawing	allocate coloring by expression in seperate gmmlgraphics class	Thomas	1.0 beta				done	
+drawing	pre-load coloring data on opening mapp / gex	Thomas	1.0 beta				done	
+drawing	add colorset legend (use colorsetpreview)	Thomas	1.0 beta				done	
+drawing / gmml	ensure update of gmml document on changing graphics	Thomas	1.0 beta				done	
+drawing / gmml	create new jdom element when creating new graphic	Thomas	1.0 beta				done	
+drawing / gmml	add non-graphics attributes to updateJdomGraphics()	Thomas	1.0 beta				done	
+drawing / gmml	fix color from and to gmml	Thomas	1.0 beta				done	
+expression data	read gex to temporary database	Thomas	1.0 beta				done	
+expression data	dialog option 'load gex'	Thomas	1.0 beta				done	
+expression data	add expression data to gene info	Thomas	1.0 beta				done	
+expression data	add 'convert gex' option	Thomas	1.0 beta				done	
+expression data	change 'load gex' to 'select gex'	Thomas	1.0 beta				done	
+gdb2hsqldb	write queries	Thomas	1.0 beta				done	
+gdb2hsqldb	fixed file location / properties	Thomas	1.0 beta				done	
+gdb2hsqldb	dialog option 'convert'	Thomas	1.0 beta				done	
+gdb2hsqldb	thread / progress	Thomas	1.0 beta				done	
+map gene info	write queries	Thomas	1.0 beta				done	
+map gene info	create ui for displaying info	Thomas	1.0 beta				done	
+map gene info	lookup gene when clicked	Thomas	1.0 beta				done	
+property editor	add more geneproduct attributes to property editor	Thomas	1.0 beta				done	
+property editor	sort labels in property editor	Thomas	1.0 beta				done	
+property editor	custom labels in property editor (so not neccesarily attribute names)	Thomas	1.0 beta				done	
+property editor	dropdownlist for choosing datasource on geneproduct	Thomas	1.0 beta				done	
+select gdb	create select menu	Thomas	1.0 beta				done	
+select gdb	test when db files moved	Thomas	1.0 beta				done	
+UI	add save as	Thomas	1.0 beta				done	
+UI	re-implement property table	Thomas	1.0 beta				done	
+UI	create view / edit mode	Thomas	1.0 beta				done	
+UI	create toolbar for drawing new graphics	Thomas	1.0 beta				done	
+UI	hide optiontable when in view mode	Thomas	1.0 beta				done	
+UI	hide backpageviewer when in edit mode	Thomas	1.0 beta				done	
+colorset	implement color by criteria	Thomas	1.0 beta				done	
 colorset	clear textfields when changing colorset / object	Thomas	1.0 beta				done	
 colorset	refresh coloring when opening new mapp	Thomas	1.0 beta				done	
 colorset	refresh coloring when edited colorset	Thomas	1.0 beta				done	
 colorset	colorsetWindow: fetch datacolumns from cache and filter out string columns with gradient	Thomas	1.0 beta				done	
-colorset	"colorsetWindow: create options for colorset (indicate multiple values per gene, no criteria met..)"	Thomas	1.0 beta				done	
+colorset	colorsetWindow: create options for colorset (indicate multiple values per gene, no criteria met..)	Thomas	1.0 beta				done	
 drawing	give drawing order to objects	Thomas	1.0 beta				done	
 drawing / colorset	disable color by expression when editing	Thomas	1.0 beta				done	
 gdb	create gene databases from ensembl	Thomas	1.0 beta				done	mens + muis + rat + gist
-gdb / expression data	"choose representative file for database (.properties), fix filechoosers"	Thomas	1.0 beta				done	
+gdb / expression data	choose representative file for database (.properties), fix filechoosers	Thomas	1.0 beta				done	
 gex builder	import exprssion data from text	Thomas	1.0 beta				done	
 gex builder	create ui window for gex import	Thomas	1.0 beta				done	
 gui	add imageregistry for managing icons	Thomas	1.0 beta				done	
 colorset	add error messages to color by criteria	Thomas	1.0 beta				done	
 drawing	add delete function for graphics objects	Thomas 	1.0 beta				done	
-editor	"handles on corners of drawing objects, no handle in center"	Thomas	1.0 beta				done	
+editor	handles on corners of drawing objects, no handle in center	Thomas	1.0 beta				done	
 visualization	formalize API for visualization classes: plugin structure	Thomas	1.0 beta				done	"3 visualization types: tooltip, drawing, sidepanel; choose and setup via colorset dialog"
 visualization	Enable anti-aliasing for icons	Thomas	1.0 beta				done	extra dll file needed in windows!
 bug/misfeature	automaticly add name for new gradient/criterion	Thomas	1.0 beta				done	
 Packaging	Java webstart release	Martijn	1.0 beta				done	
 gmml visualization	fill color voor shapes toevoegen aan gpml	Martijn	1.0 beta	4				
 bugs	lijn kleur bij converteren negeren.	Martijn	1.0 beta	2				
-editor	"copy/paste of gmml objects, within program"	Martijn	1.0 beta	4				
-help	open help pages on wiki	Thomas	1.0 beta					
-database	"try to put db files into a single file (e.g. zip or jar without compression), regenerate in derby format"	Thomas	1.0 beta					
+editor	copy/paste of gmml objects, within program	Martijn	1.0 beta	4				
+help	open help pages on wiki	Thomas	1.0 beta				done	
+database	try to put db files into a single file (e.g. zip or jar without compression), regenerate in derby format	Thomas	1.0 beta				done	
 packaging	aankondiging beta (website + mailtje)	All	1.0 beta					
 Packaging	revision nr + version nr in about box	Martijn	1.0 beta	4				
 editor	rename gmml to gpml	Martijn	1.0 beta	2	2	2	done	
 editor	rename program to PathVisio	Martijn	1.0 beta	2	2	2	done	
-Packaging	"rename classes org.bigcat.*, gmml -> gpml of weg"	Martijn	1.0 beta	4				
-Packaging	"twee webstarts, een voor 1.0 en een voor 2.0 met verschillende jars"	Martijn	1.0 beta	8				
+Packaging	rename classes org.bigcat.*, gmml -> gpml of weg	Martijn	1.0 beta	4				
+Packaging	twee webstarts, een voor 1.0 en een voor 2.0 met verschillende jars	Martijn	1.0 beta	8				
 editor	link graphrefs en graphids through GUI	Martijn	1	8				
 gmml visualization	add graphical representation for all supported GMML objects	Martijn	1					
 gmml visualization	add support for Molecular Interaction Maps	Martijn	1					
 Packaging	Test webstart in mac	Martijn	1	4				
 help	write help pages on wiki	Thomas	1					
-test	"user test: edit mapp, visualize data from tab-delimited text file"	All	1					december
+test	user test: edit mapp, visualize data from tab-delimited text file	All	1					december
 drawing	align to straight angles	Thomas	1					van belang voor MIM
-drawing	"undo/redo, quick solution: store entire drawing"	Martijn	1	12				
+drawing	undo/redo, quick solution: store entire drawing	Martijn	1	12				
 property editor	adding geneproduct: option to search id in gdb	Thomas	1					
-UI	"Check for modification, ask to save when quitting program"	Martijn	1	4				
+UI	Check for modification, ask to save when quitting program	Martijn	1	4				
 editor	scroll when moving object out of display	Martijn	1	4				
 editor	check if objects are moved out of drawing boundaries and expand if so	Thomas	1					
 editor	auto-calculate drawing board size on open	Thomas	1					
@@ -143,13 +143,13 @@ drawing	align/resize buttons	Thomas	later
 SNP	Test human SNP database: design feasible method to include SNP data		later					after SNP course
 editor	add 'using ... Gex' to statusbar	Thomas	later					
 editor	nudge: move object with arrow keys		later					
-visualization	"Add visualization plugin to display labels as LATEX, to display formulas"	Martijn	later					
+visualization	Add visualization plugin to display labels as LATEX, to display formulas	Martijn	later					
 gdb	support using multilple gdb's at the same time		later					specify priority for which database to search first
 gdb	remove dependency on ENSEMBL Gene		later					
-editor	"undo/redo, more sophisticated solution: only store objects that are changed"	Martijn	later					
+editor	undo/redo, more sophisticated solution: only store objects that are changed	Martijn	later					
 visualization	export function to html/bmp/pdf		later					
 gdb	gene database editor (e.g. To edit 'others' table)		later					first look for generic hsqldb editor
-UI	"Multiple documents: open multiple pathways, by split-window button"		later					
+UI	Multiple documents: open multiple pathways, by split-window button		later					
 command line	batch mapping		later					
 command line	get version		later					
 command line	help		later					

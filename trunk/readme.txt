@@ -28,6 +28,7 @@ SciTE.properties         - project file for the SciTE text editor.
 GPML.xsd                 - Latest version of the XML Schema used by PathVisio.
 pathvisio.iss            - inno-setup script, to generate installer
 
+
 ****************************
 * HOW TO IMPORT IN ECLIPSE *
 ****************************

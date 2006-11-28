@@ -63,9 +63,14 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 
 	private void createDataDirectories() {
 		// For the data directories: if not defined by user, create default directories
-		String[] dataProps = new String[] { "gpmlFiles", "gdbFiles", "exprFiles", "RdataFiles" };
+		String[] dataProps = new String[] 
+		{ 
+			PREF_DIR_EXPR, PREF_DIR_GDB, 
+			PREF_DIR_PWFILES, PREF_DIR_RDATA 
+		};
+		
 		for(String prop : dataProps) {
-			File dir = new File(getString("directories." + prop));
+			File dir = new File(getString(prop));
 			if(!dir.exists()) dir.mkdirs();
 		}
 	}
@@ -111,7 +116,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	public static final String PREF_COL_HIGHLIGHTED = "colors.highlightColor";
 //	public static final String PREF_COL_AMBIGIOUS_REP = "colors.ambigious_reporter";
 		
-	public static final String PREF_DIR_PWFILES = "directories.gmmlFiles";
+	public static final String PREF_DIR_PWFILES = "directories.pathwayFiles";
 	public static final String PREF_DIR_GDB = "directories.gdbFiles";
 	public static final String PREF_DIR_EXPR = "directories.exprFiles";
 	public static final String PREF_DIR_RDATA = "directories.RdataFiles";
@@ -137,8 +142,8 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	static String CURRENT_GDB = "none";
 
 	//database engine
-	static String DB_ENGINE_EXPR = "data.DBConnHsqldb";
-	static String DB_ENGINE_GDB = "data.DBConnHsqldb";
+	static String DB_ENGINE_EXPR = "data.DBConnDerby";
+	static String DB_ENGINE_GDB = "data.DBConnDerby";
 	
 	// directories
 	static final String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();

@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ControlContribution;
@@ -114,7 +115,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
-			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+			String pwpath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES);
+			fd.setFilterPath(pwpath);
 			fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
 			fd.setFilterNames(new String[] {"Gpml file", "All files"});
 	        String fnMapp = fd.open();
@@ -795,6 +797,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {
 			SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
 					window.getClass(), "openHelp", new Class[] {}, new Object[] {}, null);
+			SimpleRunnableWithProgress.setMonitorInfo("Opening help", IProgressMonitor.UNKNOWN);
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 			try {
 				dialog.run(true, true, rwp);

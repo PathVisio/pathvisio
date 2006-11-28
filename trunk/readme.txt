@@ -8,25 +8,25 @@ backpage/                - template for backpage html,
                            as is shown in the side-panel
 dist/                    - output: windows installer and zip package.
 tools/                   - various small tools related to the 
-                           gmml-visio project
+                           PathVisio project
 lib/                     - contains the 5 external libraries 
-                           that gmml-visio needs.
+                           that PathVisio needs.
 images/                  - artwork
 icons/                   - toolbar and menu icons
 example-data/            - mapp and gmml files for quick testing
 src/                     - the java source tree
-gmml-visio.bat           - shortcut for running gmml-visio from the command line.
+pathvisio.bat            - shortcut for running PathVisio from the command line.
                            note: this runs on the class files generated with ant.
 readme.txt               - this file
 build.xml                - ant build file (see below)
-gmml-visio.exe           - helper exe, checks for the presence of the 
+pathvisio.exe            - helper exe, checks for the presence of the 
                            java runtime environment and generates a helpful error
 						   message if it isn't present. Otherwise, it starts the .jar
 swt-win32-3139.dll       - dll required on windows for the swt library
 SciTE.properties         - project file for the SciTE text editor.
                            ignore this if you're not using SciTE.
-GMML_compat.xsd          - Latest version of the XML Schema used by gmml-visio.
-gmml-visio.iss           - inno-setup script, to generate installer
+GPML.xsd                 - Latest version of the XML Schema used by PathVisio.
+pathvisio.iss            - inno-setup script, to generate installer
 
 ****************************
 * HOW TO IMPORT IN ECLIPSE *

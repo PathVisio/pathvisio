@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp codebase="http://blog.bigcat.unimaas.nl/~gmmlvisio" href="pathvisio_v1.jnlp">
+	<information>
+		 <title>PathVisio 1.0</title>
+		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
+		 <homepage href="index.html"/>
+		 <icon href="bigcateye.gif"/>
+		 <offline-allowed/>
+	</information>
+	<resources>
+		 <j2se version="1.5"/>
+		 <jar href="pathvisio_v1.jar"/>
+		 <jar href="resources.jar"/>
+		 <jar href="hsqldb.jar"/>
+		 <jar href="derby.jar"/>
+		 <jar href="BrowserLauncher.jar"/>
+		 <jar href="jdom.jar"/>
+		 <jar href="org.eclipse.core.commands.jar"/>
+		 <jar href="org.eclipse.equinox.common.jar"/>
+		 <jar href="org.eclipse.jface.jar"/>
+		 <jar href="org.eclipse.equinox.supplement.jar"/>
+	</resources>
+	<resources os="Windows">
+		<jar href="swt-win32.jar"/>
+		<nativelib href="swt-win32-lib.jar"/>	
+	</resources>
+	<resources os="Linux">
+		<jar href="swt-linux.jar"/>
+		<nativelib href="swt-linux-lib.jar"/>	
+	</resources>
+	<application-desc main-class="gmmlVision.GmmlVisionMain"/>
+	<security>
+		 <all-permissions/>
+	</security>
+</jnlp>

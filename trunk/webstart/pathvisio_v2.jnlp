@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://blog.bigcat.unimaas.nl/~gmmlvisio" href="gmmlvisio.jnlp">
+<jnlp codebase="http://blog.bigcat.unimaas.nl/~gmmlvisio" href="pathvisio_v2.jnlp">
 	<information>
-		 <title>Gmml Visio</title>
+		 <title>PathVisio 2.0</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
@@ -9,10 +9,13 @@
 	</information>
 	<resources>
 		 <j2se version="1.5"/>
-		 <jar href="gmml-visio.jar"/>
+		 <jar href="pathvisio_v2.jar"/>
 		 <jar href="resources.jar"/>
+		 <jar href="R-resources.jar"/>
 		 <jar href="hsqldb.jar"/>
+		 <jar href="derby.jar"/>
 		 <jar href="jdom.jar"/>
+		 <jar href="BrowserLauncher.jar"/>
 		 <jar href="org.eclipse.core.commands.jar"/>
 		 <jar href="org.eclipse.equinox.common.jar"/>
 		 <jar href="org.eclipse.jface.jar"/>

@@ -24,7 +24,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "pathvisio.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "pathvisio.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "swt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "swt-awt-win32-3232.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -77,9 +76,9 @@ Source: "lib\org.eclipse.equinox.common_3.2.0.v20060603.jar"; DestDir: "{app}\li
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\PathVisio"; Filename: "{app}\pathvisio.exe"; WorkingDir: "{app}"
+Name: "{group}\PathVisio"; Filename: "{app}\pathvisio.jar"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram,PathVisio}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\PathVisio"; Filename: "{app}\pathvisio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{userdesktop}\PathVisio"; Filename: "{app}\pathvisio.jar"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\pathvisio.exe"; Description: "{cm:LaunchProgram,PathVisio}"; Flags: nowait postinstall skipifsilent

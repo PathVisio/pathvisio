@@ -1,17 +1,13 @@
 <?xml version="1.0"?>
 <project name="PathVisio" default="compile-v2" basedir=".">
 	
-	<property name="src.core.dir" value="src/core"/>
-	<property name="src.v1.dir" value="src/v1"/>
-	<property name="src.v2.dir" value="src/v2"/>
-	<property name="src.test.dir" value="src/test"/>
+	<property name="src.dir" value="src"/>
         
 	<property name="build.v1.dir" value="build/v1"/>
 	<property name="build.v2.dir" value="build/v2"/>
-	<property name="build.core.dir" value="build/v2"/>
-	<property name="build.test.dir" value="build/v2"/>
-	<property name="apidoc.dir" value="apidoc"/>
-	<property name="dist.dir" value="dist"/>
+
+        <property name="apidoc.dir" value="apidoc"/>
+	<!-- <property name="dist.dir" value="dist"/> -->
 	<property name="webstart.dir" value="webstart"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="exec.perl" value="perl"/>
@@ -29,11 +25,11 @@
 		<pathelement location="lib/junit.jar"/>
 		<pathelement location="lib/BrowserLauncher.jar"/>
 		<pathelement location="lib/resources.jar"/>
-                <pathelement location="${build.v1.dir}"/>
-                <pathelement location="${build.core.dir}"/>
+		<pathelement location="${build.v1.dir}"/>
+		<pathelement location="${build.core.dir}"/>
 	</path>
 
-        <path id="project.v2.class.path">
+	<path id="project.v2.class.path">
 		<pathelement location="lib/swt-win32.jar"/>
 		<pathelement location="lib/swt-linux.jar"/>
 		<pathelement location="lib/jdom.jar"/>
@@ -45,17 +41,15 @@
 		<pathelement location="lib/junit.jar"/>
 		<pathelement location="lib/BrowserLauncher.jar"/>
 		<pathelement location="lib/resources.jar"/>
-                <pathelement location="${build.v2.dir}"/>
-                <pathelement location="${build.core.dir}"/>
+		<pathelement location="lib/R-resources.jar"/>
+		<pathelement location="${build.v2.dir}"/>
+		<pathelement location="${build.core.dir}"/>
 	</path>
 
 	<target name="prepare">
 		<mkdir dir="${build.v1.dir}"/>
 		<mkdir dir="${build.v2.dir}"/>
-		<mkdir dir="${build.core.dir}"/>
-		<mkdir dir="${build.test.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
-		<mkdir dir="${dist.dir}"/>
 	</target>
 	
 	<target name="clean" description="Remove all generated files.">
@@ -68,14 +62,14 @@
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
-            <javac srcdir="src" 
-                includes="v1/**,core/**"
-                destdir="build/v1">
-                <classpath refid="project.v1.class.path"/>
-            </javac>
+		<javac srcdir="src" 
+			includes="v1/**,core/**"
+			destdir="build/v1">
+			<classpath refid="project.v1.class.path"/>
+		</javac>
 	</target>
 
-        <target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
+	<target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
 		<javac srcdir="src" 
                     includes="v2/**,core/**"
                     destdir="build/v2">
@@ -93,6 +87,10 @@
 			<fileset dir="." includes="R/**/*"/>
 			<fileset dir="." includes="lib/JRI-lib/*"/>
 		</jar>
+		<jar jarfile="lib/R-resources.jar">
+			<fileset dir="." includes="R/**/*"/>
+			<fileset dir="." includes="lib/JRI-lib/*"/>
+		</jar>
 		<jar jarfile="lib/swt-win32-lib.jar">
 			<fileset dir="lib/swt-win32-lib" includes="*.dll"/>
 		</jar>
@@ -101,43 +99,48 @@
 		</jar>
 	</target>
 	
-	<target name="jar" depends="compile-v2" description="Generates executable jar file">
-		<jar jarfile="pathvisio.jar" manifest="src/MANIFEST.MF">
-			<fileset dir="${build.dir}" includes="**/*.class"/>			
+	<target name="jar" depends="compile-v1,compile-v2" description="Generates executable jar file">
+		<jar jarfile="pathvisio_v2.jar" manifest="src/MANIFEST.MF">
+			<fileset dir="${build.v2.dir}" includes="**/*.class"/>			
 		</jar>
-	</target>
-	
-	<target name="sign-jar" depends="compile-v2,jar,resources-jar" description="Signs jar files">
-		<signjar jar="pathvisio.jar" lazy="true" 
-			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
-		<signjar alias="PathVisio" lazy = "true" 
-			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
-			<fileset dir="${lib.dir}" includes="**/*.jar"/>
-		</signjar>
-	</target>
-	
-        <target name="run-v1" depends="compile-v1">
-            <java classname="gmmlVision.GmmlVisionMain" fork="true">
-                <classpath refid="project.v1.class.path"/>
-                <jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
-            </java>
-        </target>
+		<jar jarfile="pathvisio_v1.jar" manifest="src/MANIFEST.MF">
+			<fileset dir="${build.v1.dir}" includes="**/*.class"/>			
+		</jar>
+    </target>
 
-        <target name="run-v2" depends="compile-v2">
-            <java classname="gmmlVision.GmmlVisionMain" fork="true">
-                <classpath refid="project.v2.class.path"/>
-                <jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
-            </java>
-        </target>
+	<target name="run-v1" depends="compile-v1">
+		<java classname="gmmlVision.GmmlVisionMain" fork="true">
+			<classpath refid="project.v1.class.path"/>
+			<jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
+		</java>
+	</target>
 
-	<target name="webstart" depends="compile-v2,jar,sign-jar" description="Upload webstart files">
+	<target name="run-v2" depends="compile-v2">
+		<java classname="gmmlVision.GmmlVisionMain" fork="true">
+			<classpath refid="project.v2.class.path"/>
+			<jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
+		</java>
+	</target>
+
+	<target name="webstart" depends="jar,resources-jar" description="Sign jars and upload webstart files">
 		<!-- Copy files needed for webstart !-->
-		<copy toDir="${webstart.dir}/www">
+		<copy file="pathvisio_v1.jar" toDir="${webstart.dir}/www"/>
+		<copy file="pathvisio_v2.jar" toDir="${webstart.dir}/www"/>
+		<signjar jar="pathvisio_v1.jar" lazy="true" 
+			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+		<signjar jar="pathvisio_v2.jar" lazy="true" 
+			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+                
+		<copy toDir="${webstart.dir}/www" overwrite="true">
 			<fileset dir="${lib.dir}" includes="*.jar"/>
 		</copy>
-		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
-		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
-		<!-- Run perl script to upload to server !-->
+		<signjar alias="PathVisio" lazy = "true" 
+			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
+			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
+		</signjar>
+		<copy file="${webstart.dir}/pathvisio_v1.jnlp" toDir="${webstart.dir}/www"/>
+		<copy file="${webstart.dir}/pathvisio_v2.jnlp" toDir="${webstart.dir}/www"/>
+                <!-- Run perl script to upload to server !-->
 		<exec executable="${exec.perl}" dir="${webstart.dir}">
 			<arg line="autoftp.pl"/>
 		</exec>	
@@ -155,38 +158,22 @@
 		</javadoc>		
 	</target>
 
+        <!--
+	<target name="dist" depends="jar-v1, jar-v2" description="Creates distribution zip and installer">
 
-	<target name="dist" depends="compile-v2,jar" description="Creates distribution zip and installer">
-
-		<!-- query the repository for the revision nr. !-->
+		--><!-- query the repository for the revision nr. !--><!--
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
 			<arg line="-n ."/>
 		</exec>
 		<echo>Current Revision ${subversion_revision}</echo>
 
-		<zip zipfile="${dist.dir}/PathVisio.${subversion_revision}.zip">		
-			<fileset dir="." includes="backpage/*"/>
-			<fileset dir="." includes="icons/*"/>
-			<fileset dir="." includes="images/*"/>
-			<fileset dir="." includes="lib/*"/>
-			<fileset dir="." includes="pathvisio.jar"/>
-			<fileset dir="." includes="swt-win32-3232.dll"/>
-			<fileset dir="." includes="swt-awt-win32-3232.dll"/>
-			<fileset dir="." includes="swt-wgl-win32-3232.dll"/>
-			<fileset dir="." includes="gdiplus.dll"/>
-			<fileset dir="." includes="jri.dll"/>
-			<fileset dir="." includes="pathvisio.exe"/>
-		</zip>
-
-		<!-- create a windows installer using inno-setup and pathvisio.iss!-->
+		--><!-- create a windows installer using inno-setup and pathvisio.iss!--><!--
 		<exec executable="${exec.inno.setup}">
 			<arg line="pathvisio.iss"/>
 		</exec>		
 		<move file="${dist.dir}/PathVisio-Setup.exe" 
 			tofile="${dist.dir}/PathVisio-Setup.${subversion_revision}.exe" 
 			overwrite="true"/>			
-	</target>
-	
-	<target name="all" depends="clean,jar,docs,dist" description="Rebuild all"/>
-	
+	</target> -->
+		
 </project>

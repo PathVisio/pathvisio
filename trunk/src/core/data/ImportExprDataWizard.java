@@ -317,11 +317,13 @@ public class ImportExprDataWizard extends Wizard {
 			Label idLabel = new Label(composite, SWT.FLAT);
 			idLabel.setText("Select column with gene identifiers");
 			idCombo = new Combo(composite, SWT.READ_ONLY);
-
+			idCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			
 			Label sysLabel = new Label(composite, SWT.FLAT);
 			sysLabel.setText("Select column with Systemcode");
 			codeCombo = new Combo(composite, SWT.READ_ONLY);
-
+			codeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			
 			Label columnLabel = new Label(composite, SWT.FLAT | SWT.WRAP);
 			columnLabel
 					.setText("Select the columns containing data that should NOT be treated"

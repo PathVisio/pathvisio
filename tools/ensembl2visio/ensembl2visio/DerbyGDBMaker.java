@@ -22,11 +22,24 @@ public class DerbyGDBMaker extends GDBMaker {
 	}   	
 	
 	public void connect(boolean create) throws SQLException, ClassNotFoundException {
+		if(create) {
+			//Remove old db files
+			removeFiles(new File(getDbName()));
+		}
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 		con = DriverManager.getConnection("jdbc:derby:" + getDbName() + (create ? ";create=true" : ""));
 	}
+	
 	public void connect() throws ClassNotFoundException, SQLException {
 		connect(true);
+	}
+	
+	void removeFiles(File file) {
+		info("Removing old files");
+		for(File f : file.listFiles()) {
+			if(f.isDirectory()) removeFiles(f);
+		}
+		file.delete();
 	}
 	
 	String dbName;

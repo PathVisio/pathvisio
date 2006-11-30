@@ -35,9 +35,9 @@ public class DerbyGDBMaker extends GDBMaker {
 	}
 	
 	void removeFiles(File file) {
-		info("Removing old files");
-		for(File f : file.listFiles()) {
-			if(f.isDirectory()) removeFiles(f);
+		info("Removing old file: " + file.toString());
+		if(file.isDirectory()) {
+			for(File f : file.listFiles()) removeFiles(f);
 		}
 		file.delete();
 	}

@@ -21,9 +21,12 @@ public class DerbyGDBMaker extends GDBMaker {
 		super(txtFile, dbName);
 	}   	
 	
-	public void connect() throws ClassNotFoundException, SQLException {
+	public void connect(boolean create) throws SQLException, ClassNotFoundException {
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-		con = DriverManager.getConnection("jdbc:derby:" + getDbName() + ";create=true");
+		con = DriverManager.getConnection("jdbc:derby:" + getDbName() + (create ? ";create=true" : ""));
+	}
+	public void connect() throws ClassNotFoundException, SQLException {
+		connect(true);
 	}
 	
 	String dbName;
@@ -39,8 +42,9 @@ public class DerbyGDBMaker extends GDBMaker {
 	public void close() {
 		try {
 			if(con != null) {
-				con.close();
+				compact();
 				DriverManager.getConnection("jdbc:derby:" + getDbName() + ";shutdown=true");
+				con.close();
 			}
 		} catch(Exception e) {
 			error("Database shutdown", e);

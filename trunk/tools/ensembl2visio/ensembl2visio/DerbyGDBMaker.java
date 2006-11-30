@@ -69,6 +69,8 @@ public class DerbyGDBMaker extends GDBMaker {
 	public void compact() throws SQLException {
 		info("Compressing tables");
 
+		con.setAutoCommit(true);
+
 		CallableStatement cs = con.prepareCall
 		("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
 		//Gene table
@@ -83,10 +85,14 @@ public class DerbyGDBMaker extends GDBMaker {
 		cs.setShort(3, (short) 1);
 		cs.execute();
 		
+		con.commit(); //Just to be sure...
+
 		info("END Compressing tables");
 	}
 	
 	public void createIndices() throws SQLException {
+		super.createIndices();
+
 		//Also create non-unique indices for first column of primary key combination 
 		Statement sh = con.createStatement();
 		sh.execute(

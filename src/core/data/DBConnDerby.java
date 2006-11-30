@@ -41,7 +41,7 @@ public class DBConnDerby extends DBConnector {
 		boolean recreate = (props & PROP_RECREATE) != 0;
 		if(recreate) {
 			File dbFile = new File(dbName);
-			dbFile.delete(); 
+			FileUtils.deleteRecursive(dbFile);
 		}
 		
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -67,7 +67,9 @@ public class DBConnDerby extends DBConnector {
 	}
 	
 	public Connection createNewDatabase(String dbName) throws Exception {
-		return createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
+		Connection con = createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
+		initDatabase(con);
+		return con;
 	}
 	
 	public void finalizeNewDatabase(String dbName) throws Exception {

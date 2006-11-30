@@ -53,7 +53,7 @@ import debug.StopWatch;
  */
 public class GmmlGex implements ApplicationEventListener {
 	public static final String XML_ELEMENT = "expression-data-visualizations";
-	private static final int COMPAT_VERSION = 1;
+	static final int COMPAT_VERSION = 1;
 	
 	private static Connection con;
 	/**
@@ -497,9 +497,16 @@ public class GmmlGex implements ApplicationEventListener {
 			{
 				Data mappGeneData = cachedData.new Data(id, code);
 				
+				StopWatch tt = new StopWatch();
+				StopWatch ts = new StopWatch();
+				
+				tt.start();
+				
 				for(String ensId : ensIds)
 				{	
-					try {			
+					try {
+						ts.start();
+						
 //						pstData.setString(1, ensId);
 //						ResultSet r = pstData.executeQuery();
 						ResultSet r = con.createStatement().executeQuery(
@@ -515,12 +522,16 @@ public class GmmlGex implements ApplicationEventListener {
 									idSample,
 									r.getString("data"));	
 						}
+						
+						ts.stopToLog("\tFetching data for ens id: " + ensId);
 					} catch (Exception e)
 					{
 						GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
 					}
 				}
 				if(mappGeneData.hasData()) cachedData.addData(id, code, mappGeneData);
+				
+				tt.stopToLog(id + ", " + code + ": adding data to cache");
 			}			
 			if(cacheThread.isInterrupted) //Check if the process is interrupted
 			{
@@ -529,7 +540,7 @@ public class GmmlGex implements ApplicationEventListener {
 			cacheThread.progress += 100.0 / ids.size(); //Update the progress
 		}
 		cacheThread.progress = 100;
-		GmmlVision.log.trace("Caching expression data took:\t" + timer.stop() + " ms");
+		timer.stopToLog("Caching expression data");
 		GmmlVision.log.trace("> Nr of ids queried:\t" + ids.size());
 	}
 	
@@ -712,7 +723,6 @@ public class GmmlGex implements ApplicationEventListener {
 			//Create a new expression database (or overwrite existing)
 			dbName = info.dbName;
 			connect(true, false);
-			createTables();
 			
 			page.println("Importing data");
 			page.println("> Processing headers");
@@ -873,7 +883,6 @@ public class GmmlGex implements ApplicationEventListener {
 		try {
 			connect(true, false); //Connect and delete the old database if exists
 			connectGmGex(gmGexFile); //Connect to the GenMAPP gex
-			createTables();
 			
 			con.setAutoCommit(false); //Keep control over when to commit, should increase speed
 			Statement s = conGmGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -974,11 +983,11 @@ public class GmmlGex implements ApplicationEventListener {
 	 * @param 	clean true if the old database has to be removed, false for just connecting
 	 * @return 	null if the connection was created, a String with an error message if an error occured
 	 */
-	public static void connect(boolean clean, boolean fireEvent) throws Exception
+	public static void connect(boolean create, boolean fireEvent) throws Exception
 	{
 		DBConnector connector = getDBConnector();
 		
-		if(clean) {
+		if(create) {
 			con = connector.createNewDatabase(dbName);
 		} else {
 			con = connector.createConnection(dbName);
@@ -986,7 +995,7 @@ public class GmmlGex implements ApplicationEventListener {
 			setSamples();
 		}
 
-		con.setReadOnly( !clean );
+		con.setReadOnly( !create );
 		
 		if(fireEvent)
 			fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_OPENED));
@@ -1114,66 +1123,5 @@ public class GmmlGex implements ApplicationEventListener {
 			this.source = source;
 			this.type = type;
 		}
-	}
-		
-	/**
-	 * Excecutes several SQL statements to create the tables and indexes for storing 
-	 * the expression data
-	 */
-	public static void createTables() throws Exception {	
-		try {
-			con.setReadOnly(false);
-			Statement sh = con.createStatement();
-			sh.execute("DROP TABLE info");
-			sh.execute("DROP TABLE samples");
-			sh.execute("DROP TABLE expression");
-		} catch(Exception e) {
-			GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e);
-		}
-			Statement sh = con.createStatement();
-			sh.execute(
-					"CREATE TABLE					" +
-					"		info							" +
-					"(	  version INTEGER PRIMARY KEY		" +
-					")");
-			sh.execute( //Add compatibility version of GEX
-					"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
-			sh.execute(
-					"CREATE TABLE                    " +
-					"		samples							" +
-					" (   idSample INTEGER PRIMARY KEY,		" +
-					"     name VARCHAR(50),					" +
-					"	  dataType INTEGER					" +
-			" )										");
-			
-			sh.execute(
-					"CREATE TABLE					" +
-					"		expression						" +
-					" (   id VARCHAR(50),					" +
-					"     code VARCHAR(50),					" +
-					"	  ensId VARCHAR(50),				" +
-					"     idSample INTEGER,					" +
-					"     data VARCHAR(50),					" +
-					"	  groupId INTEGER 					" +
-//					"     PRIMARY KEY (id, code, idSample, data)	" +
-					")										");
-			sh.execute(
-					"CREATE INDEX i_expression_id " +
-			"ON expression(id)			 ");
-			sh.execute(
-					"CREATE INDEX i_expression_ensId " +
-			"ON expression(ensId)			 ");
-			sh.execute(
-					"CREATE INDEX i_expression_idSample " +
-			"ON expression(idSample)	 ");
-			sh.execute(
-					"CREATE INDEX i_expression_data " +
-			"ON expression(data)	     ");
-			sh.execute(
-					"CREATE INDEX i_expression_code " +
-			"ON expression(code)	 ");
-			sh.execute(
-					"CREATE INDEX i_expression_groupId" +
-			" ON expression(groupId)	");
 	}
 }

@@ -49,14 +49,37 @@ public class DerbyGDBMaker extends GDBMaker {
 		toZip();
 	}
 	
-	public void compact() throws Exception {
+	public void compact() throws SQLException {
 		info("Compressing tables");
-		//TODO
+
+		CallableStatement cs = con.prepareCall
+		("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
+		//Gene table
+		cs.setString(1, "APP");
+		cs.setString(2, "GENE");
+		cs.setShort(3, (short) 1);
+		cs.execute();
+		
+		//Link table
+		cs.setString(1, "APP");
+		cs.setString(2, "LINK");
+		cs.setShort(3, (short) 1);
+		cs.execute();
+		
 		info("END Compressing tables");
 	}
 	
 	public void createIndices() throws SQLException {
-		//Derby automatically creates indices for all primary keys (also combined)
+		//Also create non-unique indices for first column of primary key combination 
+		Statement sh = con.createStatement();
+		sh.execute(
+				"CREATE INDEX i_idLeft" +
+				" ON link(idLeft)"
+		);
+		sh.execute(
+				"CREATE INDEX i_code" +
+				" ON gene(code)"
+		);
 	}
 	
 	void toZip() {

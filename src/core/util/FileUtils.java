@@ -43,7 +43,14 @@ public class FileUtils {
 		}
 		return fileList;
 	}
-
+	
+	public static void deleteRecursive(File file) {
+		if(file.isDirectory()) {
+			for(File f : file.listFiles()) deleteRecursive(f);
+		}
+		file.delete();
+	}
+	
 	/**
 	 * Determine the number of lines in the given file.
 	 * @param fileName	The file to get the number of lines from

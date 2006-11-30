@@ -230,7 +230,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 					fd.setFileName(xmlFile.getName());
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
-					fd.setFileName(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file

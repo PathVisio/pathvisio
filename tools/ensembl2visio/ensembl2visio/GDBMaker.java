@@ -64,6 +64,8 @@ public abstract class GDBMaker {
         	
     		createTables();
     		
+    		createIndices();
+    		
     		con.setAutoCommit(false);
     		pstGene = con.prepareStatement(
     				"INSERT INTO gene " +
@@ -302,6 +304,20 @@ public abstract class GDBMaker {
 				"     PRIMARY KEY (idLeft, codeLeft,    " +
 				"		idRight, codeRight) 			" +
 		" )										");
+		
+		try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
+		sh.execute(
+				"CREATE TABLE							" +
+				"		gene							" +
+				" (   id VARCHAR(50),					" +
+				"     code VARCHAR(50),					" +
+				"     backpageText VARCHAR(800),				" +
+				"     PRIMARY KEY (id, code)			" +
+		" )										");
+	}
+	
+	public void createIndices() throws SQLException {
+		Statement sh = con.createStatement();
 		sh.execute(
 				"CREATE INDEX i_codeLeft" +
 				" ON link(codeLeft)"
@@ -314,15 +330,6 @@ public abstract class GDBMaker {
 				"CREATE INDEX i_codeRight" +
 				" ON link(codeRight)"
 		);
-		try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
-		sh.execute(
-				"CREATE TABLE							" +
-				"		gene							" +
-				" (   id VARCHAR(50),					" +
-				"     code VARCHAR(50),					" +
-				"     backpageText VARCHAR(800),				" +
-				"     PRIMARY KEY (id, code)			" +
-		" )										");
 		sh.execute(
 				"CREATE INDEX i_code" +
 				" ON gene(code)"

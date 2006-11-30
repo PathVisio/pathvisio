@@ -214,8 +214,10 @@ public abstract class GmmlVision {
 		switch(type) {
 		case DBConnector.TYPE_GDB:
 			className = getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_GDB);
+			break;
 		case DBConnector.TYPE_GEX:
 			className = getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_EXPR);
+			break;
 		}
 		if(className == null) return null;
 		

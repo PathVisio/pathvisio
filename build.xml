@@ -1,8 +1,15 @@
 <?xml version="1.0"?>
-<project name="PathVisio" default="compile" basedir=".">
+<project name="PathVisio" default="compile-v2" basedir=".">
 	
-	<property name="src.dir" value="src"/>
-	<property name="build.dir" value="build"/>
+	<property name="src.core.dir" value="src/core"/>
+	<property name="src.v1.dir" value="src/v1"/>
+	<property name="src.v2.dir" value="src/v2"/>
+	<property name="src.test.dir" value="src/test"/>
+        
+	<property name="build.v1.dir" value="build/v1"/>
+	<property name="build.v2.dir" value="build/v2"/>
+	<property name="build.core.dir" value="build/v2"/>
+	<property name="build.test.dir" value="build/v2"/>
 	<property name="apidoc.dir" value="apidoc"/>
 	<property name="dist.dir" value="dist"/>
 	<property name="webstart.dir" value="webstart"/>
@@ -11,7 +18,22 @@
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="exec.inno.setup" value="iscc"/>
 	
-	<path id="project.class.path">
+	<path id="project.v1.class.path">
+		<pathelement location="lib/swt-win32.jar"/>
+		<pathelement location="lib/swt-linux.jar"/>
+		<pathelement location="lib/jdom.jar"/>
+		<pathelement location="lib/org.eclipse.core.commands.jar"/>
+		<pathelement location="lib/org.eclipse.equinox.common.jar"/>
+		<pathelement location="lib/org.eclipse.jface.jar"/>
+		<pathelement location="lib/hsqldb.jar"/>
+		<pathelement location="lib/junit.jar"/>
+		<pathelement location="lib/BrowserLauncher.jar"/>
+		<pathelement location="lib/resources.jar"/>
+                <pathelement location="${build.v1.dir}"/>
+                <pathelement location="${build.core.dir}"/>
+	</path>
+
+        <path id="project.v2.class.path">
 		<pathelement location="lib/swt-win32.jar"/>
 		<pathelement location="lib/swt-linux.jar"/>
 		<pathelement location="lib/jdom.jar"/>
@@ -22,31 +44,46 @@
 		<pathelement location="lib/hsqldb.jar"/>
 		<pathelement location="lib/junit.jar"/>
 		<pathelement location="lib/BrowserLauncher.jar"/>
+		<pathelement location="lib/resources.jar"/>
+                <pathelement location="${build.v2.dir}"/>
+                <pathelement location="${build.core.dir}"/>
 	</path>
-	
+
 	<target name="prepare">
-		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.v1.dir}"/>
+		<mkdir dir="${build.v2.dir}"/>
+		<mkdir dir="${build.core.dir}"/>
+		<mkdir dir="${build.test.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		<mkdir dir="${dist.dir}"/>
 	</target>
 	
 	<target name="clean" description="Remove all generated files.">
-		<delete dir="${build.dir}"/>
+		<delete dir="${build.v1.dir}"/>
+		<delete dir="${build.v2.dir}"/>
+		<delete dir="${build.core.dir}"/>
+		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
 	</target>
 	
-	<target name="compile" depends="prepare" description="Compile all sources">
-		<javac srcdir="${src.dir}" destdir="${build.dir}">
-			<classpath refid="project.class.path"/>
-		</javac>
-			
+	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
+            <javac srcdir="src" 
+                includes="v1/**,core/**"
+                destdir="build/v1">
+                <classpath refid="project.v1.class.path"/>
+            </javac>
 	</target>
 
-	<target name="jar" depends="compile" description="Generates executable jar file">
-		<jar jarfile="pathvisio.jar" manifest="src/MANIFEST.MF">
-			<fileset dir="${build.dir}" includes="**/*.class"/>			
-		</jar>
+        <target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
+		<javac srcdir="src" 
+                    includes="v2/**,core/**"
+                    destdir="build/v2">
+                    <classpath refid="project.v2.class.path"/>
+		</javac>	
+	</target>
+
+	<target name="resources-jar" description="Generates jar with resources">
 		<jar jarfile="lib/resources.jar">
 			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>
@@ -64,7 +101,13 @@
 		</jar>
 	</target>
 	
-	<target name="sign-jar" depends="compile,jar" description="Signs jar files">
+	<target name="jar" depends="compile-v2" description="Generates executable jar file">
+		<jar jarfile="pathvisio.jar" manifest="src/MANIFEST.MF">
+			<fileset dir="${build.dir}" includes="**/*.class"/>			
+		</jar>
+	</target>
+	
+	<target name="sign-jar" depends="compile-v2,jar,resources-jar" description="Signs jar files">
 		<signjar jar="pathvisio.jar" lazy="true" 
 			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
 		<signjar alias="PathVisio" lazy = "true" 
@@ -73,7 +116,21 @@
 		</signjar>
 	</target>
 	
-	<target name="webstart" depends="compile,jar,sign-jar" description="Upload webstart files">
+        <target name="run-v1" depends="compile-v1">
+            <java classname="gmmlVision.GmmlVisionMain" fork="true">
+                <classpath refid="project.v1.class.path"/>
+                <jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
+            </java>
+        </target>
+
+        <target name="run-v2" depends="compile-v2">
+            <java classname="gmmlVision.GmmlVisionMain" fork="true">
+                <classpath refid="project.v2.class.path"/>
+                <jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
+            </java>
+        </target>
+
+	<target name="webstart" depends="compile-v2,jar,sign-jar" description="Upload webstart files">
 		<!-- Copy files needed for webstart !-->
 		<copy toDir="${webstart.dir}/www">
 			<fileset dir="${lib.dir}" includes="*.jar"/>
@@ -99,7 +156,7 @@
 	</target>
 
 
-	<target name="dist" depends="compile,jar" description="Creates distribution zip and installer">
+	<target name="dist" depends="compile-v2,jar" description="Creates distribution zip and installer">
 
 		<!-- query the repository for the revision nr. !-->
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">

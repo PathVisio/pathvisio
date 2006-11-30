@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.CallableStatement;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.ZipEntry;
@@ -41,10 +43,20 @@ public class DerbyGDBMaker extends GDBMaker {
 				DriverManager.getConnection("jdbc:derby:" + getDbName() + ";shutdown=true");
 			}
 		} catch(Exception e) {
-			error("Unable to shutdown", e);
+			error("Database shutdown", e);
 		}
 		super.close();
 		toZip();
+	}
+	
+	public void compact() throws Exception {
+		info("Compressing tables");
+		//TODO
+		info("END Compressing tables");
+	}
+	
+	public void createIndices() throws SQLException {
+		//Derby automatically creates indices for all primary keys (also combined)
 	}
 	
 	void toZip() {

@@ -98,7 +98,7 @@ public class DerbyGDBMaker extends GDBMaker {
 				"CREATE INDEX i_codeleft ON link(codeleft)"
 		);
 		sh.execute(
-				"CREATE INDEX i_gene ON gene(gene)"
+				"CREATE INDEX i_gene ON gene(id)"
 		);
 		sh.execute(
 				"CREATE INDEX i_code ON gene(code)"

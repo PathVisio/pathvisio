@@ -90,7 +90,7 @@ public class DBConnHsqldb extends DBConnector {
 	}
 
 	Connection newDbCon;
-	public Connection createNewDatabase(String dbName) throws Exception {
+	public Connection createNewDatabaseConnection(String dbName) throws Exception {
 		newDbCon = createConnection(dbName, PROP_RECREATE);
 		return newDbCon;
 	}

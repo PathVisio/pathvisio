@@ -57,7 +57,6 @@ public class DerbyGDBMaker extends GDBMaker {
 	public void close() {
 		try {
 			if(con != null) {
-				compact();
 				DriverManager.getConnection("jdbc:derby:" + getDbName() + ";shutdown=true");
 				con.close();
 			}
@@ -69,8 +68,7 @@ public class DerbyGDBMaker extends GDBMaker {
 	}
 	
 	public void compact() throws SQLException {
-		info("Compressing tables");
-
+		con.commit();
 		con.setAutoCommit(true);
 
 		CallableStatement cs = con.prepareCall
@@ -88,22 +86,22 @@ public class DerbyGDBMaker extends GDBMaker {
 		cs.execute();
 		
 		con.commit(); //Just to be sure...
-
-		info("END Compressing tables");
 	}
 	
 	public void createIndices() throws SQLException {
-		super.createIndices();
-
-		//Also create non-unique indices for first column of primary key combination 
+		//LINK table
 		Statement sh = con.createStatement();
 		sh.execute(
-				"CREATE INDEX i_idLeft" +
-				" ON link(idLeft)"
+				"CREATE INDEX i_right ON link(idright, coderight)"
 		);
 		sh.execute(
-				"CREATE INDEX i_code" +
-				" ON gene(code)"
+				"CREATE INDEX i_codeleft ON link(codeleft)"
+		);
+		sh.execute(
+				"CREATE INDEX i_gene ON gene(gene)"
+		);
+		sh.execute(
+				"CREATE INDEX i_code ON gene(code)"
 		);
 	}
 	

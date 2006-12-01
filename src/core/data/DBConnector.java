@@ -34,15 +34,14 @@ public abstract class DBConnector {
 		con.close();
 	}
 	
-	public Connection createNewDatabase(String dbName) throws Exception {
-		Connection con = createConnection(dbName, PROP_RECREATE);
-		initDatabase(con);
+	public final Connection createNewDatabase(String dbName) throws Exception {
+		Connection con = createNewDatabaseConnection(dbName);
+		createTables(con);
 		return con;
 	}
 	
-	protected void initDatabase(Connection con) throws Exception {
-		createTables(con);
-		createIndices(con);
+	protected Connection createNewDatabaseConnection(String dbName) throws Exception {
+		return createConnection(dbName, PROP_RECREATE);
 	}
 	
 	public abstract void finalizeNewDatabase(String dbName) throws Exception;
@@ -92,7 +91,7 @@ public abstract class DBConnector {
 					")										");
 	}
 	
-	public static void createIndices(Connection con) throws SQLException {
+	public void createIndices(Connection con) throws SQLException {
 		con.setReadOnly(false);
 		Statement sh = con.createStatement();
 		sh.execute(
@@ -113,6 +112,10 @@ public abstract class DBConnector {
 		sh.execute(
 				"CREATE INDEX i_expression_groupId" +
 		" ON expression(groupId)	");
+	}
+	
+	public void compact(Connection con) throws SQLException {
+		//May be implemented by subclasses
 	}
 	
 	protected FileDialog createFileDialog(Shell shell, int type, String[] filterExtensions, String[] filterNames) {

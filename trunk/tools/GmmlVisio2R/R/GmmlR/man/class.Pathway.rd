@@ -53,10 +53,21 @@ Objects can be created by calls of the form
     	\code{signature(x = "Pathway")}:
     	prints this object in readable form
     }
-    \item{match}{
-    	\code{signature{x = "ANY", table = "Pathway"}}:
+    \item{hasReference}{
+    	\code{signature{ref = "ANY", pathway = "Pathway"}}:
     	returns TRUE or FALSE depending on whether this pathway contains the given 
-    	\code{\link{GeneProduct}} or reference (of the form \code{"code:id"}
+    	\code{\link{GeneProduct}} or reference (\code{character} of the form \code{"code:id"})
+    }
+    \item{matchReferences}{
+    	\code{signature{refs = "ANY", pathway = "Pathway"}}:
+    	matchs the given references to the pathway and returns a logical vector indicating for every
+    	reference whether it is present in the pathway or not. 
+    	Argument refs has to be a list of \code{\link{GeneProduct}s} or vector of references (\code{character} of the form \code{"code:id"})
+    }
+    \item{inReferences}{
+    	\code{signature{pathway = "Pathway", refs = "ANY"}}:
+    	Check for every \code{\link{GeneProduct}} in the pathway whether it is in the given list of references. 
+      Argument refs has to be a list of \code{\link{GeneProduct}s} or vector of references (\code{character} of the form \code{"code:id"})	
     }
    }
 } 

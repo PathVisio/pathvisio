@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -66,10 +67,8 @@ public class DBConnDerby extends DBConnector {
 		return con;
 	}
 	
-	public Connection createNewDatabase(String dbName) throws Exception {
-		Connection con = createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
-		initDatabase(con);
-		return con;
+	public Connection createNewDatabaseConnection(String dbName) throws Exception {
+		return createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
 	}
 	
 	public void finalizeNewDatabase(String dbName) throws Exception {
@@ -83,7 +82,7 @@ public class DBConnDerby extends DBConnector {
 		
 		toZip(new File(dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt()), dbDir);
 		
-		dbDir.delete();
+		FileUtils.deleteRecursive(dbDir);
 	}
 	
 	public void closeConnection(Connection con) throws SQLException {
@@ -96,6 +95,20 @@ public class DBConnDerby extends DBConnector {
 				DriverManager.getConnection("jdbc:derby:" + lastDbName + ";shutdown=true");
 			con.close();
 		}
+	}
+	
+	public void compact(Connection con) throws SQLException {
+		con.setAutoCommit(true);
+
+		CallableStatement cs = con.prepareCall
+		("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
+		//Expression table
+		cs.setString(1, "APP");
+		cs.setString(2, "EXPRESSION");
+		cs.setShort(3, (short) 1);
+		cs.execute();
+		
+		con.commit(); //Just to be sure...
 	}
 		
 	void toZip(File zipFile, File dbDir) {

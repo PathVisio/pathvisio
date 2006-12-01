@@ -96,6 +96,8 @@ function(refs, pathway) {
 	}
 })
 
+## 
+##
 createMethod("inReferences", c(pathway = "Pathway", refs = "ANY"), 
 function(pathway, refs) {
 	refMatch = matchReferences(refs, pathway)

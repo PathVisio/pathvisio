@@ -54,6 +54,7 @@ public class RDataIn {
 	public static List<ResultSet> loadResultSets(File f) throws RException {
 		RCommands.load(f);
 		String[] resultVars = listResultSets();
+		if(resultVars.length == 0) throw new RException(null, "No result sets in " + f);
 		List<ResultSet> results = new ArrayList<ResultSet>();
 		for(String resVar : resultVars) results.add(new ResultSet(resVar));
 		return results;

@@ -89,12 +89,17 @@ public abstract class GmmlGdb {
 	 * @return		String with the backpage info, null if the gene was not found
 	 */
 	public static String getBpInfo(String id, String code) {
+		StopWatch timer = new StopWatch();
+		timer.start();
+		
 		try {
 			Statement s = con.createStatement();
 			ResultSet r = s.executeQuery("SELECT backpageText FROM gene " +
 					"WHERE id = '" + id + "' AND code = '" + code + "'");
 			r.next();
 			String result = r.getString(1);
+			
+			timer.stopToLog("> getBpInfo");
 			return result;
 		} catch(Exception e) { return null;	} //Gene not found
 	}

@@ -702,6 +702,9 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	private static void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
 	{
+		int importWork = (int)(ImportRunnableWithProgress.totalWork * 0.8);
+		int finalizeWork = (int)(ImportRunnableWithProgress.totalWork * 0.2);
+		
 //		Open a connection to the error file
 		String errorFile = info.dbName + ".ex.txt";
 		int errors = 0;
@@ -770,7 +773,7 @@ public class GmmlGex implements ApplicationEventListener {
 			String line = null;
 			int n = info.firstDataRow - 1;
 			int added = 0;
-			int worked = ImportRunnableWithProgress.totalWork / nrLines;
+			int worked = importWork / nrLines;
 			while((line = in.readLine()) != null) 
 			{
 				if(monitor.isCanceled()) { close(); error.close(); return; } //User pressed cancel
@@ -826,6 +829,7 @@ public class GmmlGex implements ApplicationEventListener {
 			}
 			monitor.setTaskName("Closing database connection");
 			close(true);
+			monitor.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
@@ -1024,10 +1028,13 @@ public class GmmlGex implements ApplicationEventListener {
 				saveXML();
 				
 				DBConnector connector = getDBConnector();
-				if(finalize)
+				if(finalize) {
+					connector.compact(con);
+					connector.createIndices(con);
 					connector.finalizeNewDatabase(dbName);
-				else
+				} else {
 					connector.closeConnection(con);
+				}
 				fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 				
 			} catch (Exception e) {

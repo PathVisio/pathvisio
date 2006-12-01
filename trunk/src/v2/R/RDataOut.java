@@ -144,6 +144,8 @@ public class RDataOut {
 		
 		pwFiles = FileUtils.getFiles(pwDir, GmmlVision.PATHWAY_FILE_EXTENSION, true);
 
+		if(pwFiles.size() == 0) throw new Exception("No pathway files (*.gpml) found in " + pwDir);
+		
 		//Calculate contribution of single Pathway
 		Pathway.progressContribution = (int)((double)totalWorkPws * contribR / pwFiles.size());
 		int pwContribXml = (int)((double)totalWorkPws * contribXml / pwFiles.size());

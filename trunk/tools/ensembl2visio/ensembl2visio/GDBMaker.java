@@ -63,9 +63,7 @@ public abstract class GDBMaker {
         	connect();
         	
     		createTables();
-    		
-    		createIndices();
-    		
+    		    		
     		con.setAutoCommit(false);
     		pstGene = con.prepareStatement(
     				"INSERT INTO gene " +
@@ -122,12 +120,19 @@ public abstract class GDBMaker {
     		info("total errors (duplicates): " + error);
     		r = con.createStatement().executeQuery("SELECT DISTINCT COUNT(idLeft) FROM link");
     		
-    		info("END");
+    		info("END processint text file");
+    		
+    		info("Creating indices");
+    		createIndices();
+    		
+    		info("Compacing database");
+    		compact();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}	
 		info("Closing connections");
+				
     	close();
     	info("Timer stopped: " + timer.stop());
     }
@@ -287,6 +292,10 @@ public abstract class GDBMaker {
     		i++;
     	}
 		return -1;
+    }
+    
+    public void compact() throws SQLException { 
+    	
     }
     
 	public void createTables() throws SQLException {

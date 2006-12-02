@@ -48,7 +48,7 @@ import R.wizard.RWizard;
 
 
 public class RFunctionLoader {
-	static final String FUN_DIR = "R/functions";
+	static final String FUN_DIR = "lib/R/functions";
 	
 	static final HashMap<String, RFunction> functions = new HashMap<String, RFunction>();
 	

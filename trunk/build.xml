@@ -84,11 +84,10 @@
 			<fileset dir="." includes="images/*"/>
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
-			<fileset dir="." includes="R/**/*"/>
 			<fileset dir="." includes="lib/JRI-lib/*"/>
 		</jar>
 		<jar jarfile="lib/R-resources.jar">
-			<fileset dir="." includes="R/**/*"/>
+			<fileset dir="." includes="lib/R/**/*"/>
 			<fileset dir="." includes="lib/JRI-lib/*"/>
 		</jar>
 		<jar jarfile="lib/swt-win32-lib.jar">

@@ -261,6 +261,11 @@ public class RController implements ApplicationEventListener{
 		}
 	}
 	
+	public static boolean needLibraryUpdate() {
+		
+		return false;
+	}
+	
 	public static File createInstallScript(File pkgFile) throws IOException {
 		File srcFile = File.createTempFile("install", null);
 		FileWriter out = new FileWriter(srcFile);

@@ -8,7 +8,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.JarURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class JarUtils {
 	static final String PREFIX_TMP = GmmlVision.APPLICATION_NAME;
@@ -47,6 +53,23 @@ public class JarUtils {
 		}
 		in.close();
 		out.close();
+	}
+	
+	public static List<String> listResources(String path) throws IOException {
+		List<String> resNames = new ArrayList<String>();
+		
+		URL url = GmmlVision.class.getClassLoader().getResource(path);
+		if(url.getProtocol().equals("jar")) {
+			JarURLConnection conn = (JarURLConnection)url.openConnection();
+			JarFile jf = conn.getJarFile();
+			Enumeration e = jf.entries();
+			while(e.hasMoreElements()) {
+				JarEntry je = (JarEntry)e.nextElement();
+				if(!je.isDirectory() && je.getName().startsWith(path))
+					resNames.add(je.getName());
+			}
+		}
+		return resNames;
 	}
 	
 	/**

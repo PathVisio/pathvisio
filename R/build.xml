@@ -1,0 +1,47 @@
+<project name="GmmlR" default="build" basedir=".">
+    <description>
+        Build the GmmlR library and repository
+    </description>
+
+	<property name="build" location="../lib/R"/>
+  <property name="src" location="GmmlR"/>
+  <property name="lib" location="library"/>
+  <property name="fun" location="functions"/>
+  
+  <property name="Rexec" value="R"/>
+  
+  <condition property="isWindows">
+    <os family="windows"/>
+  </condition>
+    	
+	<target name="build">
+		<exec executable="${Rexec}" dir="${src}">
+			<arg value="CMD"/>
+			<arg value="build"/>
+			<arg value="${src}"/>
+		</exec>
+		
+		<antcall target="build-win"/>
+		
+		<copy toDir="${build}/functions">
+			<fileset dir="${fun}" includes="*.R"/>
+		</copy>
+				
+		<copy toDir="${build}/library">
+			<fileset dir="${src}" includes="*.tar.gz"/>
+			<fileset dir="${src}" includes="*.zip"/>
+		</copy>
+
+	</target>
+	
+	<target name="build-win" if="isWindows">
+		<exec executable="${Rexec}" dir="${src}">
+			<arg value="CMD"/>
+			<arg value="build"/>
+			<arg value="-binary"/>
+			<arg value="${src}"/>
+		</exec>
+	</target>
+				
+</project>
+

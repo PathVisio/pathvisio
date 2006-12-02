@@ -126,7 +126,7 @@ public class Utils {
 		Class sc = c;
 		while((sc = sc.getSuperclass()) != null) {
 			GmmlVision.log.trace("\t\t>" + c + " with superclass: " + superClass);
-			if(superClass.equals(superClass)) return true;
+			if(sc.equals(superClass)) return true;
 		}
 		return false;
 	}

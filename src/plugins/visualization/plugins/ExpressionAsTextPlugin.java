@@ -39,6 +39,7 @@ import org.jdom.Element;
 
 import util.SwtUtils;
 import visualization.Visualization;
+import visualization.plugins.VisualizationPlugin;
 import data.GmmlDataObject;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;

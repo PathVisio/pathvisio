@@ -1,0 +1,13 @@
+exportClasses(DataSet, GeneProduct, Pathway, PathwaySet, VisioFunction)
+
+exportMethods(	name, "name<-", hasReference, matchReferences, inReferences,	#Pathway, GeneProduct, DataSet, PathwaySet
+			reporters, "reporters<-", dataByReporter,		#DataSet
+			"addReference<-",			 		#GeneProduct
+			fileName, "fileName<-", allRefs, "allRefs<-", 		#Pathway
+			"description", "arg_descr", "arg_class", "getArgs", 
+			"getDefaults",						#VisioFunction
+			"fileNames",						#ResultSet
+			"==", print						#Generic/primitive
+)
+			
+export(DataSet, GeneProduct, Pathway, PathwaySet, VisioFunction, ResultSet)

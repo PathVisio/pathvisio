@@ -11,7 +11,9 @@
 		 <j2se version="1.5"/>
 		 <jar href="pathvisio_v2.jar"/>
 		 <jar href="resources.jar"/>
+		 <jar href="plugins.jar"/>
 		 <jar href="R-resources.jar"/>
+         <jar href="JRI.jar"/>
 		 <jar href="hsqldb.jar"/>
 		 <jar href="derby.jar"/>
 		 <jar href="jdom.jar"/>
@@ -29,7 +31,9 @@
 		<jar href="swt-linux.jar"/>
 		<nativelib href="swt-linux-lib.jar"/>	
 	</resources>
-	<application-desc main-class="gmmlVision.GmmlVisionMain"/>
+	<application-desc main-class="gmmlVision.GmmlVisionMain">
+		<argument>-ur</argument>
+	</application-desc>
 	<security>
 		 <all-permissions/>
 	</security>

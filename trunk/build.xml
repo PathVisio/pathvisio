@@ -59,6 +59,7 @@
 		<delete dir="${build.v1.dir}"/>
 		<delete dir="${build.v2.dir}"/>
 		<delete dir="${build.core.dir}"/>
+		<delete dir="${build.plugins.dir}"/>
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>

@@ -5,6 +5,7 @@
         
 	<property name="build.v1.dir" value="build/v1"/>
 	<property name="build.v2.dir" value="build/v2"/>
+	<property name="build.plugins.dir" value="build/plugins"/>
 
         <property name="apidoc.dir" value="apidoc"/>
 	<!-- <property name="dist.dir" value="dist"/> -->
@@ -42,6 +43,7 @@
 		<pathelement location="lib/BrowserLauncher.jar"/>
 		<pathelement location="lib/resources.jar"/>
 		<pathelement location="lib/R-resources.jar"/>
+		<pathelement location="lib/plugins.jar"/>
 		<pathelement location="${build.v2.dir}"/>
 		<pathelement location="${build.core.dir}"/>
 	</path>
@@ -49,6 +51,7 @@
 	<target name="prepare">
 		<mkdir dir="${build.v1.dir}"/>
 		<mkdir dir="${build.v2.dir}"/>
+		<mkdir dir="${build.plugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 	</target>
 	
@@ -64,7 +67,7 @@
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
 		<javac srcdir="src" 
 			includes="v1/**,core/**"
-			destdir="build/v1">
+			destdir="${build.v1.dir}">
 			<classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>
@@ -72,9 +75,14 @@
 	<target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
 		<javac srcdir="src" 
                     includes="v2/**,core/**"
-                    destdir="build/v2">
+                    destdir="${build.v2.dir}">
                     <classpath refid="project.v2.class.path"/>
-		</javac>	
+		</javac>
+		<javac srcdir="src" 
+                    includes="plugins/**"
+                    destdir="${build.plugins.dir}">
+                    <classpath refid="project.v2.class.path"/>
+		</javac>
 	</target>
 
 	<target name="resources-jar" description="Generates jar with resources">
@@ -84,11 +92,10 @@
 			<fileset dir="." includes="images/*"/>
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
-			<fileset dir="." includes="lib/JRI-lib/*"/>
 		</jar>
 		<jar jarfile="lib/R-resources.jar">
-			<fileset dir="." includes="lib/R/**/*"/>
-			<fileset dir="." includes="lib/JRI-lib/*"/>
+			<fileset dir="lib" includes="R/**/*"/>
+			<fileset dir="lib" includes="JRI-lib/*"/>
 		</jar>
 		<jar jarfile="lib/swt-win32-lib.jar">
 			<fileset dir="lib/swt-win32-lib" includes="*.dll"/>
@@ -104,6 +111,9 @@
 		</jar>
 		<jar jarfile="pathvisio_v1.jar" manifest="src/MANIFEST.MF">
 			<fileset dir="${build.v1.dir}" includes="**/*.class"/>			
+		</jar>
+		<jar jarfile="lib/plugins.jar">
+			<fileset dir="${build.plugins.dir}" includes="**/*.class"/>			
 		</jar>
     </target>
 

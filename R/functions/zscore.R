@@ -1,7 +1,7 @@
 ######################################################################
 ################## Statistics similar to MappFinder ##################
 ######################################################################
-require(GmmlR)
+require(pathVisio)
 
 .zscore_impl = function(pathwaySet, dataSet, sets) {
 	#Check arguments
@@ -85,7 +85,7 @@ require(GmmlR)
 	c(n, r, num / den)
 }
 
-zscore = GmmlFunction(.zscore_impl,	name = "Z-score", 
+zscore = VisioFunction(.zscore_impl,	name = "Z-score", 
 	description = "Calculate z-score for the given pathways where 'sets' are one or more vectors which specify for each reporter whether it meets a criterion or not", 
 	arg_descr = c(	"The pathways to calculate the z-scores for (instance of class 'PathwaySet')",
 			"The measured data (instance of class 'DataSet')",

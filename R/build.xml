@@ -4,17 +4,24 @@
     </description>
 
 	<property name="build" location="../lib/R"/>
-  <property name="src" location="GmmlR"/>
-  <property name="lib" location="library"/>
-  <property name="fun" location="functions"/>
+  	<property name="src" location="pathVisio"/>
+  	<property name="fun" location="functions"/>
   
-  <property name="Rexec" value="R"/>
+  	<property name="Rexec" value="R"/>
   
-  <condition property="isWindows">
-    <os family="windows"/>
-  </condition>
-    	
-	<target name="build">
+  	<condition property="isWindows">
+   		<os family="windows"/>
+  	</condition>
+  
+	<target name="prepare">
+		<mkdir dir="${build}"/>
+	</target>
+			
+	<target name="clean" description="Remove all generated files.">
+		<delete dir="${build}"/>
+	</target>
+		
+	<target name="build" depends="prepare">
 		<exec executable="${Rexec}" dir="${src}">
 			<arg value="CMD"/>
 			<arg value="build"/>
@@ -27,10 +34,10 @@
 			<fileset dir="${fun}" includes="*.R"/>
 		</copy>
 				
-		<copy toDir="${build}/library">
+		<move toDir="${build}/library">
 			<fileset dir="${src}" includes="*.tar.gz"/>
 			<fileset dir="${src}" includes="*.zip"/>
-		</copy>
+		</move>
 
 	</target>
 	

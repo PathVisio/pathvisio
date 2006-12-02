@@ -32,6 +32,7 @@ import data.GmmlGex;
 
 public abstract class PluginManager {
 	static final String PLUGIN_PKG = "visualization.plugins";
+	static final String PKG_DIR = PLUGIN_PKG.replace('.', '/');
 	static final String FILE_ADD_PLUGINS = "visplugins.xml";
 	static final String XML_ELEMENT = "additional-plugins";
 	static final String XML_ELM_PLUGIN = "plugin";
@@ -107,7 +108,11 @@ public abstract class PluginManager {
         while (resources.hasMoreElements()) {
         	URL url = resources.nextElement();
         	GmmlVision.log.trace("visualization.plugins package found in: " + url);
-        	loadPlugin(url);
+        	try {
+        		loadPlugin(url);
+        	} catch(Throwable e) {
+        		GmmlVision.log.error("Error when loading plugins from " + url, e);
+        	}
         }
         loadAdditional();
   	}
@@ -124,10 +129,12 @@ public abstract class PluginManager {
 	}
 		
 	static void loadPlugin(URL url) throws Throwable {
-    	if(url.getProtocol().equals("jar")) loadFromJar(url);
-    	else if(url.getProtocol().equals("file")) {
+    	if(url.getProtocol().equals("jar")) {
+    		loadFromJar(url);
+    	} else if(url.getProtocol().equals("file")) {
     		File f = new File(url.getFile());
-    		if(f.getName().endsWith(".jar")) loadFromJar(url);
+    		if(f.getName().endsWith(".jar")) 
+    			loadFromJar(url);
     		else loadFromDir(url);
     	}
 		else GmmlVision.log.error("Unable to load additional plugin", new Exception("Unsupported URL protocol"));
@@ -251,7 +258,7 @@ public abstract class PluginManager {
 			ZipEntry entry = (ZipEntry)e.nextElement();
 			GmmlVision.log.trace("Checking " + entry);
 			String entryname = entry.getName();
-			if(entryname.endsWith(".class")) {
+			if(entryname.startsWith(PKG_DIR) && entryname.endsWith(".class")) {
 				try {
 					String cn = removeClassExt(entryname.replace('/', '.'));
 					Class pluginClass = Class.forName(cn, true, cl);

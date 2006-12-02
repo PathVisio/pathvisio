@@ -75,6 +75,7 @@ public abstract class PluginManager {
 		try {
 			return getInstance(pluginClass, null).isGeneric();
 		} catch(Throwable e) { 
+			e.printStackTrace();
 			GmmlVision.log.error("Unable to determine if plugin is generic", e);
 			return false; 
 		}
@@ -102,11 +103,11 @@ public abstract class PluginManager {
 	public static void loadPlugins() throws Throwable {	
 		GmmlVision.log.trace("> Loading visualization plugins");
 		Enumeration<URL> resources = 
-			ClassLoader.getSystemClassLoader().getResources(PLUGIN_PKG.replace('.', '/'));
+			GmmlVision.class.getClassLoader().getResources(PLUGIN_PKG.replace('.', '/'));
         while (resources.hasMoreElements()) {
         	URL url = resources.nextElement();
+        	GmmlVision.log.trace("visualization.plugins package found in: " + url);
         	loadPlugin(url);
-        	GmmlVision.log.trace("visualization.plugins package found in: ");
         }
         loadAdditional();
   	}

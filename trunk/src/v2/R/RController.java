@@ -12,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 import util.JarUtils;
@@ -29,6 +32,8 @@ import R.RCommands.RException;
 public class RController implements ApplicationEventListener{	
 	private static Rengine re;
 	private static BufferedReader rOut;
+	
+	private static File pkgFile;
 	
 	public static Rengine getR() throws RException { 
 		if(re == null || !re.isAlive()) startR();
@@ -87,16 +92,14 @@ public class RController implements ApplicationEventListener{
 		
 		try { //Redirect the R standard output to a text file
 			if(rOut == null) sink(File.createTempFile("visioR", null, null));
-		} catch(Exception e) {
+		} catch(Throwable e) {
 			throw new InvocationTargetException(e, "Unable to redirect R standard output to file");
 		}
 		
 		try { //Import or install R libraries and load functions
-			try { importLibraries(); } catch(RException re) { 
-				installLibraries();
-				importLibraries();
-			}
-		} catch(Exception e) {
+				installPackage();
+				importPackage();
+		} catch(Throwable e) {
 			throw new InvocationTargetException(e, "Unable to load or install required libraries");
 		}
 		
@@ -111,7 +114,7 @@ public class RController implements ApplicationEventListener{
 		GmmlVision.log.trace("\tDetected R version " + rversion);
 		File libFile = null;
 		try {
-			libFile = JarUtils.resourceToNamedTempFile("lib/JRI-lib/jri-" + 
+			libFile = JarUtils.resourceToNamedTempFile(LIB_JRI_PATH + "/jri-" + 
 					rversion.substring(0, 3) + ext, LIB_JRI_FILE, false);
 		} catch(Exception e) {
 			throw new IOException(ERR_NO_JRI_VERSION + 
@@ -167,7 +170,7 @@ public class RController implements ApplicationEventListener{
 		try {
 			child = Runtime.getRuntime().exec(CMD_R_VERSION);
 		} catch(IOException e) {
-			child = Runtime.getRuntime().exec(specifyRVersionCmd());
+			child = Runtime.getRuntime().exec(locateRExec());
 		}
 		child.waitFor();
 		InputStream in = child.getInputStream();
@@ -186,14 +189,15 @@ public class RController implements ApplicationEventListener{
 			return null;
 	}
 	
-	private static String specifyRVersionCmd() {
+	private static String locateRExec() {
 		final StringBuilder cmd = new StringBuilder();
 		GmmlVision.getWindow().getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String exec = Utils.getOS() == Utils.OS_WINDOWS ? "R.exe" : "R";
 				InputDialog libDialog = new InputDialog(GmmlVision.getWindow().getShell(),
 						"Unable to find R executable",
-						"System can't find " + exec + "\nPlease specify location:", "", null);
+						"Unable to locate " + exec + "\nPlease install R (" + WWW_R + ") " +
+						" or specify location:", "", null);
 				if(libDialog.open() == InputDialog.OK) {
 					cmd.append(new File(libDialog.getValue()).getPath() + "/" + CMD_R_VERSION);
 				}
@@ -240,30 +244,76 @@ public class RController implements ApplicationEventListener{
 //		return str.equals(CANCEL) ? null : str;
 //	}
 	
-	private static void importLibraries() throws RException {
-		RCommands.eval(IMPORT_LIB_GmmlR); //GmmlR package, don't continue without it
+	private static void importPackage() throws RException {
+		RCommands.eval(IMPORT_LIB_PKG); //GmmlR package, don't continue without it
 	}
-	
-	private static void installLibraries() throws FileNotFoundException, IOException, RException, InterruptedException {
-		File pkgFile;
-		switch(Utils.getOS()) {
-		case Utils.OS_WINDOWS:
-			pkgFile = JarUtils.resourceToNamedTempFile(INSTALL_GmmlR_win, "GmmlR");
-			String pkgFileName = RCommands.fileToString(pkgFile);
-			RCommands.eval("install.packages('" + pkgFileName + "', repos=NULL)");
-			break;			
-		case Utils.OS_LINUX: //In linux we need to be root to install (is gksudo available in all linux distr?)
-		default:
-			pkgFile = JarUtils.resourceToNamedTempFile(INSTALL_GmmlR_linux, "GmmlR");
-			File srcFile = createInstallScript(pkgFile);
+
+	private static void installPackage() throws FileNotFoundException, IOException, RException, InterruptedException {
+		File pkgFile = getPackageFile();
+		if(needsPackageUpdate(pkgFile.getName())) {
+			GmmlVision.log.info("R package " + PKG_NAME + " is out of date or not installed yet: installing newest version");
+			switch(Utils.getOS()) {
+			case Utils.OS_WINDOWS:
+				String pkgFileName = RCommands.fileToString(pkgFile);
+				RCommands.eval("install.packages('" + pkgFileName + "', repos=NULL)");
+				break;			
+			case Utils.OS_LINUX: //In linux we need to be root to install (is gksudo available in all linux distr?)
+			default:
+				File srcFile = createInstallScript(pkgFile);
 			Process proc = Runtime.getRuntime().exec("gksudo R CMD BATCH " + srcFile.toString());
 			proc.waitFor();
+			}
 		}
 	}
 	
-	public static boolean needLibraryUpdate() {
+	static File getPackageFile() throws RException, IOException {
+		if(pkgFile == null) {
 		
-		return false;
+		List<String> dircontent = JarUtils.listResources(PKG_PATH);
+		String ext = null;
+		switch(Utils.getOS()) {
+		case Utils.OS_WINDOWS: 
+			ext = "zip";
+			break;
+		case Utils.OS_LINUX:
+		default: ext = "tar.gz";
+		}
+		Pattern regex = Pattern.compile(PKG_NAME + "_[0-9].[0-9].[0-9]." + ext);
+		for(String f : dircontent) {
+			if(regex.matcher(f).find()) {
+				pkgFile =  JarUtils.resourceToNamedTempFile(f, new File(f).getName());
+				if(pkgFile != null) break;
+			}
+		}
+		if(pkgFile == null) 
+			throw new RException(null, "Unable to find " + PKG_NAME + " package");
+		}
+		return pkgFile;
+	}
+	
+	static boolean needsPackageUpdate(String pkgFileName) throws RException {
+		String curr = getCurrentPackageUpdate();
+		if(curr == null) {
+			return true;
+		} else {
+			String injar = file2Version(pkgFileName);
+			return injar.compareTo(curr) > 0;
+		}
+	}
+	
+	static String getCurrentPackageUpdate() throws RException {
+		REXP rexp = RController.getR().eval(
+				"packageDescription('" + PKG_NAME + "', fields='Version')", true);
+		return rexp.asString();
+	}
+	
+	static String file2Version(String libFileName) {
+		Pattern regex = Pattern.compile("_[0-9].[0-9].[0-9].");
+		Matcher matcher = regex.matcher(libFileName);
+		if(matcher.find())
+			return libFileName.substring(matcher.start() + 1, matcher.end() - 1);
+		else
+			return "";
 	}
 	
 	public static File createInstallScript(File pkgFile) throws IOException {
@@ -351,9 +401,13 @@ public class RController implements ApplicationEventListener{
 		}
 	}
 	
+	static final String PKG_NAME = "pathVisio";
+	static final String PKG_PATH = "R/library";
+	
 	//Shared libraries
 	static final String LIB_R_FILE = System.mapLibraryName("R");
 	static final String LIB_JRI_FILE = System.mapLibraryName("jri");
+	static final String LIB_JRI_PATH = "JRI-lib";
 	
 	//Shell commands
 	static final String CMD_R_VERSION = "R --version";
@@ -375,8 +429,5 @@ public class RController implements ApplicationEventListener{
 		(Utils.getOS() == Utils.OS_LINUX ? ERR_MSG_NOR_LINUX : "");
 	
 	//R scripts/libraries/commands
-	static final String IMPORT_LIB_GmmlR = "library(GmmlR)";
-	static final String INSTALL_GmmlR_win = "R/library/GmmlR.zip";
-	static final String INSTALL_GmmlR_linux = "R/library/GmmlR.tar.gz";
-	static final String INSTALL_SCRIPT = "R/library/install.R";
+	static final String IMPORT_LIB_PKG = "library(" + PKG_NAME + ")";
 }

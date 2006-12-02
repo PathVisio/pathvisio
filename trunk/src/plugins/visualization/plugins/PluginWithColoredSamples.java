@@ -54,6 +54,7 @@ import util.TableColumnResizer;
 import visualization.Visualization;
 import visualization.colorset.ColorSet;
 import visualization.colorset.ColorSetManager;
+import visualization.plugins.VisualizationPlugin;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;

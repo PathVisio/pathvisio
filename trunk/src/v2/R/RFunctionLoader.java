@@ -48,7 +48,8 @@ import R.wizard.RWizard;
 
 
 public class RFunctionLoader {
-	static final String FUN_DIR = "lib/R/functions";
+	static final String FUN_DIR = "R/functions";
+	static final String FUN_CLASS = "VisioFunction";
 	
 	static final HashMap<String, RFunction> functions = new HashMap<String, RFunction>();
 	
@@ -104,7 +105,7 @@ public class RFunctionLoader {
 	}
 		
 	public static void initFunctions() throws RException {		
-		String[] names = RCommands.ls("GmmlFunction");
+		String[] names = RCommands.ls(FUN_CLASS);
 		for(String name : names) {
 			if(name.equals("zscore")) functions.put(name, new ZScore(name)); //Think of something to load the RFunction subclass (if exitst) for a function
 			else functions.put(name, new RFunction(name));

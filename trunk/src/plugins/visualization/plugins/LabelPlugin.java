@@ -28,6 +28,7 @@ import org.jdom.Element;
 
 import util.SwtUtils;
 import visualization.Visualization;
+import visualization.plugins.VisualizationPlugin;
 
 /**
  * Provides label for Gene Product

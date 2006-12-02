@@ -57,16 +57,18 @@ public class JarUtils {
 	
 	public static List<String> listResources(String path) throws IOException {
 		List<String> resNames = new ArrayList<String>();
-		
+
 		URL url = GmmlVision.class.getClassLoader().getResource(path);
-		if(url.getProtocol().equals("jar")) {
-			JarURLConnection conn = (JarURLConnection)url.openConnection();
-			JarFile jf = conn.getJarFile();
-			Enumeration e = jf.entries();
-			while(e.hasMoreElements()) {
-				JarEntry je = (JarEntry)e.nextElement();
-				if(!je.isDirectory() && je.getName().startsWith(path))
-					resNames.add(je.getName());
+		if(url != null) {
+			if(url.getProtocol().equals("jar")) {
+				JarURLConnection conn = (JarURLConnection)url.openConnection();
+				JarFile jf = conn.getJarFile();
+				Enumeration e = jf.entries();
+				while(e.hasMoreElements()) {
+					JarEntry je = (JarEntry)e.nextElement();
+					if(!je.isDirectory() && je.getName().startsWith(path))
+						resNames.add(je.getName());
+				}
 			}
 		}
 		return resNames;

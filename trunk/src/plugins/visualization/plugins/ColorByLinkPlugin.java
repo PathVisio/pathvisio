@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
 import visualization.Visualization;
+import visualization.plugins.VisualizationPlugin;
 import data.GmmlDataObject;
 
 /**

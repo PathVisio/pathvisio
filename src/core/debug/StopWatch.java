@@ -24,6 +24,6 @@ public class StopWatch {
 	}
 	
 	public void stopToLog(String msg) {
-		GmmlVision.log.trace(msg + "; t = " + stop());
+		GmmlVision.log.trace(msg + "\t" + stop());
 	}
 }

@@ -523,7 +523,7 @@ public class GmmlGex implements ApplicationEventListener {
 									r.getString("data"));	
 						}
 						
-						ts.stopToLog("\tFetching data for ens id: " + ensId);
+						ts.stopToLog("Fetching data for ens id: " + ensId + "\t");
 					} catch (Exception e)
 					{
 						GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
@@ -531,7 +531,7 @@ public class GmmlGex implements ApplicationEventListener {
 				}
 				if(mappGeneData.hasData()) cachedData.addData(id, code, mappGeneData);
 				
-				tt.stopToLog(id + ", " + code + ": adding data to cache");
+				tt.stopToLog(id + ", " + code + ": adding data to cache\t\t");
 			}			
 			if(cacheThread.isInterrupted) //Check if the process is interrupted
 			{
@@ -540,7 +540,7 @@ public class GmmlGex implements ApplicationEventListener {
 			cacheThread.progress += 100.0 / ids.size(); //Update the progress
 		}
 		cacheThread.progress = 100;
-		timer.stopToLog("Caching expression data");
+		timer.stopToLog("Caching expression data\t\t\t");
 		GmmlVision.log.trace("> Nr of ids queried:\t" + ids.size());
 	}
 	
@@ -834,11 +834,11 @@ public class GmmlGex implements ApplicationEventListener {
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
-			try {
-				connect(); //re-connect and use the created expression dataset
-			} catch(Exception e) {
-				GmmlVision.log.error("Exception on connecting expression dataset from import thread", e);
-			}
+//			try {
+//				connect(); //re-connect and use the created expression dataset
+//			} catch(Exception e) {
+//				GmmlVision.log.error("Exception on connecting expression dataset from import thread", e);
+//			}
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());

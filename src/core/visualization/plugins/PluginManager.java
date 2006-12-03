@@ -247,10 +247,10 @@ public abstract class PluginManager {
 		} else {
 			f = new JarFile(url.getFile());
 		}
-		loadFromJar(f, new URLClassLoader(new URL[] { url }));
+		loadFromJar(f);
 	}
 		
-	static void loadFromJar(JarFile jfile, URLClassLoader cl) throws Throwable {
+	static void loadFromJar(JarFile jfile) throws Throwable {
 		Throwable error = null;
 		GmmlVision.log.trace("\tLoading from jar file " + jfile);
 		Enumeration e = jfile.entries();
@@ -260,8 +260,8 @@ public abstract class PluginManager {
 			String entryname = entry.getName();
 			if(entryname.startsWith(PKG_DIR) && entryname.endsWith(".class")) {
 				try {
-					String cn = removeClassExt(entryname.replace('/', '.'));
-					Class pluginClass = Class.forName(cn, true, cl);
+					String cn = removeClassExt(entryname.replace('/', '.').replace('$', '.'));
+					Class pluginClass = Class.forName(cn);
 					addPlugin(pluginClass);
 				} catch(Throwable ex) {
 					GmmlVision.log.error("Unable to load plugin", ex);

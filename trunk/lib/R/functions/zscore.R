@@ -23,8 +23,8 @@ require(pathVisio)
 	total = length(pathwaySet)
 	current = 1
 	
-	#Give .calcZscore access to my objects
-	environment(.calcZscore) = environment()
+	#Give .calcStats access to my objects
+	environment(.calcStats) = environment()
 	environment(.matchPathways) = environment()
 	
 	#Match reporters with pathways
@@ -35,9 +35,9 @@ require(pathVisio)
 	results = list()
 	for(i in 1:ncol(sets)) {
 		zscores = t(as.matrix(sapply(names(pathwaySet), function(pwname) {
-			.calcZscore(sets[,i], pwMatches[[pwname]], pathwaySet[[pwname]])
+			.calcStats(sets[,i], pwMatches[[pwname]], pathwaySet[[pwname]])
 		})))
-		colnames(zscores) = c("in pathway", "in set", "z-score")
+		colnames(zscores) = c("on pathway", "mapped", "in set", "z-score")
 	
 		##Create a ResultSet to return
 		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, stats = zscores)
@@ -68,21 +68,23 @@ require(pathVisio)
 	sapply(1:ncol(sets), function(x) paste("zscore",dataSetName,"criterion",x,sep="-"))
 }
 
-.calcZscore = function(set, reporterMatch, pathway) {	
+.calcStats = function(set, reporterMatch, pathway) {	
 	N = length(reporters)			## Total number of genes measured
 	R = sum(as.logical(set))		## Total number of genes belonging to the set
-	
-	if(R == N) return(NaN) # All reporters matching criterion
-	if(R == 0) return(0)   # No reporters matching criterion
-			
+				
 	n = length(pathway)			## Total number of genes in the pathway
 	r = sum(reporterMatch[as.logical(set)])	## Number of genes that are in the subset and on the pathway
 	
+    m = sum(reporterMatch)  ## Number of mapping genes
+    
 	RoverN = R / N
 	num = r - n*RoverN
 	den = sqrt(n * RoverN * (1 - RoverN) * (1 - (n - 1)/(N - 1)))
-	print(c(n, r, num / den))
-	c(n, r, num / den)
+    zscore = num/den
+    
+    cat(paste(N,R,n,m,r,RoverN,num,den,zscore,sep="\t"))
+    cat("\n")
+	c(n, m, r, zscore)
 }
 
 zscore = VisioFunction(.zscore_impl,	name = "Z-score", 

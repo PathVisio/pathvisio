@@ -1,4 +1,4 @@
-<project name="GmmlR" default="build" basedir=".">
+<project name="pathVisio R package" default="build" basedir=".">
     <description>
         Build the GmmlR library and repository
     </description>
@@ -21,7 +21,7 @@
 		<delete dir="${build}"/>
 	</target>
 		
-	<target name="build" depends="prepare">
+	<target name="build" depends="build-functions">
 		<exec executable="${Rexec}" dir="${src}">
 			<arg value="CMD"/>
 			<arg value="build"/>
@@ -29,16 +29,17 @@
 		</exec>
 		
 		<antcall target="build-win"/>
-		
-		<copy toDir="${build}/functions">
-			<fileset dir="${fun}" includes="*.R"/>
-		</copy>
-				
+						
 		<move toDir="${build}/library">
 			<fileset dir="${src}" includes="*.tar.gz"/>
 			<fileset dir="${src}" includes="*.zip"/>
 		</move>
-
+	</target>
+	
+	<target name="build-functions" depends="prepare">
+		<copy toDir="${build}/functions">
+			<fileset dir="${fun}" includes="*.R"/>
+		</copy>
 	</target>
 	
 	<target name="build-win" if="isWindows">

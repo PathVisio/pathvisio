@@ -155,7 +155,7 @@ public abstract class GmmlGdb {
 					"'" + ensId + "'", e);
 		}
 		
-		GmmlVision.log.trace("\t> endId2Refs:\t" + ensId + "\t" + timer.stop());
+		timer.stopToLog("> endId2Refs: (" + ensId + ")");
 		return crossIds;
 	}
 	
@@ -194,7 +194,7 @@ public abstract class GmmlGdb {
 					"'" + ref + "' with systemcode '" + code + "'", e);
 		}
 		
-		GmmlVision.log.trace("\t> ref2EnsIds:\t" + ref + "," + code + "\t" + timer.stop());
+		timer.stopToLog("> ref2EnsIds (" + ref + "," + code + ")");
 		return ensIds;
 	}
 	

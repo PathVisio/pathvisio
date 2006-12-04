@@ -21,9 +21,9 @@ public class Test extends TestCase implements GmmlListener {
 		o = new GmmlDataObject(ObjectType.GENEPRODUCT);
 		received = new ArrayList<GmmlEvent>();
 		o.addListener(this);
-		o.setParent(data);
+		data.add (o);
 		l = new GmmlDataObject(ObjectType.LINE);		
-		l.setParent(data);
+		data.add(l);
 		received.clear();
 	}
 	
@@ -103,14 +103,14 @@ public class Test extends TestCase implements GmmlListener {
 	public void testParent()
 	{				
 		// remove
-		o.setParent(null);
-		assertFalse ("Setting parent null removes from container", data.getDataObjects().contains(o));
+		data.remove (o);
+		assertNull ("removing object set parents null", o.getParent());
 		assertEquals (received.size(), 1);
 		assertEquals ("Event type should be DELETED", received.get(0).getType(), GmmlEvent.DELETED); 
 		
 		// re-add
-		o.setParent(data);
-		assertTrue ("Setting parent adds to container", data.getDataObjects().contains(o));
+		data.add(o);
+		assertEquals ("adding sets parent", o.getParent(), data);
 		assertEquals (received.size(), 2);
 		assertEquals ("Event type should be ADDED", received.get(1).getType(), GmmlEvent.ADDED); 
 	}
@@ -132,7 +132,7 @@ public class Test extends TestCase implements GmmlListener {
 		assertNull ("reference removed", data.getReferringObjects("1"));
 		
 		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);
-		o2.setParent(data);
+		data.add (o2);
 		
 		// create link in opposite order
 		o.setGraphId("2");
@@ -146,7 +146,7 @@ public class Test extends TestCase implements GmmlListener {
 		o.setGraphId("1");
 
 		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);
-		o2.setParent(data);
+		data.add (o2);
 		try
 		{
 			
@@ -163,13 +163,13 @@ public class Test extends TestCase implements GmmlListener {
 		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);		
 		// note: parent not set yet!		
 		o2.setGraphId ("3");
-		o2.setParent(data); // reference should now be created
+		data.add(o2) // reference should now be created
 
 		assertNull ("default endGraphRef is null", l.getEndGraphRef());
 		
 		l.setEndGraphRef("3");
 
-		assertTrue ("reference created through setparent", data.getReferringObjects("3").contains(l));
+		assertTrue ("reference created through adding", data.getReferringObjects("3").contains(l));
 	}
 	
 	public void testXml() throws IOException, ConverterException
@@ -215,7 +215,7 @@ public class Test extends TestCase implements GmmlListener {
 		try
 		{
 			mi = new GmmlDataObject(ObjectType.MAPPINFO);
-			mi.setParent(data);
+			data.add (mi);
 			fail("data should already have a MAPPINFO and shouldn't accept more");
 		}
 		catch (IllegalArgumentException e) {}
@@ -223,7 +223,7 @@ public class Test extends TestCase implements GmmlListener {
 		mi = data.getMappInfo();
 		try
 		{
-			mi.setParent(null);
+			data.remove(mi);
 			fail ("Shouldn't be able to remove mappinfo object!");
 		}
 		catch (IllegalArgumentException e) {}

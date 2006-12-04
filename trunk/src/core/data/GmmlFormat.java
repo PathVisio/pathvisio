@@ -78,7 +78,7 @@ public class GmmlFormat {
 
 		List<Element> elementList = new ArrayList<Element>();
     	
-		for (GmmlDataObject o : data.dataObjects)
+		for (GmmlDataObject o : data.getDataObjects())
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
@@ -146,7 +146,7 @@ public class GmmlFormat {
 		else
 		{
 			o = new GmmlDataObject(ot);
-			o.setParent(p);
+			p.add (o);
 		}
 		
 		switch (o.getObjectType())

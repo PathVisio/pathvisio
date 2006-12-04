@@ -59,11 +59,11 @@ public class GmmlDataObject
 	public GmmlData getParent() { return parent; }
 	
 	/**
-	 * Set parent. Parent may be set to null.
-	 * When parent is set to not null, it is automatically added.
-	 * If parent is set to null, it is automatically removed.
-	 * Also, takes care of reference accounting.
-	 * @param v
+	 * Set parent. Do not use this method directly!
+	 * parent is set automatically when using GmmlData.add/remove
+	 * 
+	 * This method takes care of graphref reference accounting.
+	 * @param v the parent
 	 */
 	public void setParent(GmmlData v)
 	{
@@ -79,12 +79,10 @@ public class GmmlDataObject
 				{
 					parent.removeRef(startGraphRef, this);
 				}
-				parent.removeDataObject (this);
 			}			
 			parent = v;
 			if (v != null)
 			{
-				v.addDataObject(this);
 				if (startGraphRef != null)
 				{
 					v.addRef(startGraphRef, this);
@@ -356,14 +354,13 @@ public class GmmlDataObject
 	}
 	
 	/**
-	 * Copy Object. The parent will be set to the passed parameter.
+	 * Copy Object. The object will not
+	 * be part of the same GmmlData object, it's parent
+	 * will be set to null.
 	 * 
 	 * No events will be sent to the parent of the original.
-	 * If the new parent is not null, it will be automatically
-	 * added and receive a GmmlEvent of type ADDED.
-	 * the new parent may be the same as the old parent
 	 */
-	public GmmlDataObject copy(GmmlData newParent)
+	public GmmlDataObject copy()
 	{
 		GmmlDataObject result = new GmmlDataObject(objectType);
 		result.parent = null;
@@ -414,7 +411,6 @@ public class GmmlDataObject
 		result.startGraphRef = startGraphRef;
 		result.endGraphRef = endGraphRef;
 		result.graphId = graphId;
-		result.setParent (newParent);
 		
 		return result;
 	}

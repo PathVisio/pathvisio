@@ -5,40 +5,18 @@ import gmmlVision.GmmlVision;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
-import visualization.Visualization;
-import visualization.VisualizationManager;
-import visualization.VisualizationManager.VisualizationEvent;
-import visualization.VisualizationManager.VisualizationListener;
-import data.GmmlData;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.GmmlListener;
-import data.LineStyle;
-import data.LineType;
-import data.ObjectType;
-import data.OrientationType;
-import data.ShapeType;
+import data.*;
+
+import visualization.*;
+import visualization.VisualizationManager.*;
 
 /**
  * This class implements and handles a drawing.
@@ -75,8 +53,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * when displayed on the drawing)
 	 */
 	GmmlInfoBox infoBox;
-	GmmlData data;
-	public GmmlData getGmmlData () { return data; }
+	private GmmlData data;
+	public GmmlData getGmmlData()
+	{
+		return data;
+	}
 	
 	GmmlSelectionBox s; 
 		
@@ -88,28 +69,38 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public boolean isEditMode() { return editMode; }
 	
 	/**
-	 * Maps the contents of a pathway to a GmmlDrawing
+	 * Map the contents of a single data object to this GmmlDrawing
+	 */	
+	private GmmlGraphics fromGmmlDataObject (GmmlDataObject o)
+	{
+		GmmlGraphics result = null;
+		switch (o.getObjectType())
+		{
+			case ObjectType.BRACE: result = new GmmlBrace(this, o); break;
+			case ObjectType.GENEPRODUCT: result = new GmmlGeneProduct(this, o); break;
+			case ObjectType.SHAPE: result = new GmmlShape(this, o); break;
+			case ObjectType.LINE: result = new GmmlLine(this, o); break;
+			case ObjectType.MAPPINFO: 
+				GmmlInfoBox mi = new GmmlInfoBox(this, o);
+				addObject(mi); 
+				setMappInfo(mi);
+				result = mi; 
+				break;				
+			case ObjectType.LABEL: result = new GmmlLabel(this, o); break;					
+		}
+		return result;
+	}
+	
+	/**
+	 * Maps the contents of a pathway to this GmmlDrawing
 	 */	
 	public void fromGmmlData(GmmlData _data)
 	{		
 		data = _data;
 			
-		for (GmmlDataObject o : data.dataObjects)
+		for (GmmlDataObject o : data.getDataObjects())
 		{
-			switch (o.getObjectType())
-			{
-				case ObjectType.BRACE: new GmmlBrace(this, o); break;
-				case ObjectType.GENEPRODUCT: new GmmlGeneProduct(this, o); break;
-				case ObjectType.SHAPE: new GmmlShape(this, o); break;
-				case ObjectType.LINE: new GmmlLine(this, o); break;
-				case ObjectType.MAPPINFO: 
-					GmmlInfoBox mi = new GmmlInfoBox(this, o);
-					addObject(mi); 
-					setMappInfo(mi); 
-					break;				
-				case ObjectType.LABEL: new GmmlLabel(this, o); break;					
-			}
-						
+			fromGmmlDataObject (o);
 		}
 		setSize(getMappInfo().getBoardSize());
 		data.fireObjectModifiedEvent(new GmmlEvent(null, GmmlEvent.MODIFIED_GENERAL));
@@ -202,6 +193,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Get the gene identifiers of all genes in this pathway
 	 * @return	{@link ArrayList<String>} containing an identifier for every gene on the mapp
+	 * @deprecated: get this info from GmmlData directly
 	 */
 	public ArrayList<String> getMappIds()
 	{
@@ -219,6 +211,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Get the systemcodes of all genes in this pathway
 	 * @return	{@link ArrayList<String>} containing a systemcode for every gene on the mapp
+	 * 
+	 * @deprecated: get this info from GmmlData directly
 	 */
 	public ArrayList<String> getSystemCodes()
 	{
@@ -579,9 +573,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	private void newObject(Point e)
 	{
 		GmmlDataObject gdata = null;
-		GmmlGraphics g = null;
 		GmmlHandle h = null;
-		GmmlLine l = null;
+		lastAdded = null; // reset lastAdded class member
 		switch(newGraphics) {
 		case NEWNONE:
 			return;
@@ -594,8 +587,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LINE);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
@@ -607,8 +600,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.ARROW);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
@@ -620,8 +613,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.LINE);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
@@ -633,8 +626,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.ARROW);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLABEL:
@@ -644,8 +637,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setWidth((GmmlLabel.INITIAL_WIDTH * zoomFactor));
 			gdata.setHeight((GmmlLabel.INITIAL_HEIGHT * zoomFactor));
 			gdata.setFontSize (GmmlLabel.INITIAL_FONTSIZE);
-			g = new GmmlLabel (this, gdata);
-			((GmmlLabel)g).createTextControl();
+			data.add (gdata); // will cause lastAdded to be set
+			((GmmlLabel)lastAdded).createTextControl();
 			h = null;
 			break;
 		case NEWARC:
@@ -657,8 +650,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
-			g = new GmmlShape(this, gdata);
-			h = ((GmmlShape)g).handleSE;
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlShape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWBRACE:
@@ -669,8 +662,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setHeight(1);
 			gdata.setOrientation(OrientationType.RIGHT);
 			gdata.setColor(stdRGB);
-			g = new GmmlBrace(this, gdata);
-			h = ((GmmlBrace)g).handleSE;
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlBrace)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
@@ -682,7 +675,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setGeneID("Gene");
 			gdata.setXref("");
 			gdata.setColor(stdRGB);
-			g = new GmmlGeneProduct (this, gdata);
+			data.add (gdata); // will cause lastAdded to be set
 			h = null;
 			break;
 		case NEWRECTANGLE:
@@ -694,8 +687,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
-			g = new GmmlShape(this, gdata);
-			h = ((GmmlShape)g).handleSE;
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlShape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWOVAL:
@@ -707,8 +700,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setHeight(50 * zoomFactor);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
-			g = new GmmlShape(this, gdata);
-			h = ((GmmlShape)g).handleSE;
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlShape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWTBAR:
@@ -720,8 +713,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.TBAR);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();						
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
@@ -733,8 +726,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_ROUND);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();						
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
@@ -746,8 +739,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_SQUARE);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();						
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
@@ -759,8 +752,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_ROUND);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();						
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
@@ -772,24 +765,20 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_SQUARE);
-			g = l = new GmmlLine(this, gdata);
-			h = l.getHandleEnd();						
+			data.add (gdata); // will cause lastAdded to be set
+			h = ((GmmlLine)lastAdded).getHandleEnd();
 			isDragging = true;
 			break;
 		}
 				
 		clearSelection();
-		s.addToSelection(g);
+		lastAdded.select();
+		s.addToSelection(lastAdded);
 		pressedObject = h;
 		
 		previousX = e.x;
 		previousY = e.y;
-		
-		if(gdata != null) {
-			gdata.setParent(GmmlVision.getGmmlData());
-			GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(gdata, GmmlEvent.ADDED));
-		}
-		
+				
 	}
 	
 
@@ -888,15 +877,17 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		s.fitToSelection();
 	}
 
+	GmmlGraphics lastAdded = null;
+	
 	public void gmmlObjectModified(GmmlEvent e) {
 		switch (e.getType())
 		{
 			case GmmlEvent.DELETED:
-				GmmlVision.getGmmlData().dataObjects.remove((GmmlDataObject)e.getAffectedData());
+				// TODO: affected object should be removed
 				addDirtyRect(null); // mark everything dirty
 				break;
 			case GmmlEvent.ADDED:
-				GmmlVision.getGmmlData().dataObjects.add((GmmlDataObject)e.getAffectedData());
+				lastAdded = fromGmmlDataObject(e.getAffectedData());
 				addDirtyRect(null); // mark everything dirty
 				break;
 			case GmmlEvent.WINDOW:
@@ -905,46 +896,58 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 		redrawDirtyRect();
 	}
-	
-	List<GmmlDataObject> clipboard = null;
-	
+		
+	/**
+	 * Makes a copy of all GmmlDataObjects in current selection,
+	 * and puts them in the global clipboard.
+	 *
+	 */
 	public void copyToClipboard()
 	{
 		List<GmmlDataObject> result = new ArrayList<GmmlDataObject>();
 		for (GmmlDrawingObject g : drawingObjects)
 		{
-			if (g.isSelected() && g instanceof GmmlGraphics)
+			if (g.isSelected() && g instanceof GmmlGraphics
+					&& !(g instanceof GmmlSelectionBox))
 			{
-				result.add(((GmmlGraphics)g).gdata.copy(null));
+				result.add(((GmmlGraphics)g).gdata.copy());
 			}
 		}
 		if (result.size() > 0)
 		{
-			clipboard = result;
+			GmmlVision.clipboard = result;
 		}
 		else
 		{
-			clipboard = null;
+			GmmlVision.clipboard = null;
 		}
 	}
 	
+	/**
+	 * If global clipboard contains GmmlDataObjects,
+	 * makes another copy of these objects, and pastes them in. 
+	 * The clipboard contents will be moved 10 pixels souteast,
+	 * so they won't exactly overlap with the original.
+	 */
 	public void pasteFromClipboad()
 	{
-		if (clipboard != null)
+		if (GmmlVision.clipboard != null)
 		{
-			for (GmmlDataObject o : clipboard)
+			clearSelection();
+			for (GmmlDataObject o : GmmlVision.clipboard)
 			{
+				lastAdded = null;
 				o.setStartX(o.getStartX() + 10);
 				o.setStartY(o.getStartY() + 10);
 				o.setEndX(o.getEndX() + 10);
 				o.setEndY(o.getEndY() + 10);
 				o.setLeft(o.getLeft() + 10);
 				o.setTop(o.getTop() + 10);
-				data.dataObjects.add(o);
-				GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.ADDED));
-				// TODO: firing of event doesn't lead to creation of GmmlGrahics.
-				// modify structure to make GmmlGraphicsObject get created automatically
-				// after an "ADD" event is fired.
+				// make another copy to preserve clipboard contents for next paste
+				GmmlDataObject p = o.copy(); 
+				data.add (p); // causes lastAdded to be set
+				lastAdded.select();
+				s.addToSelection(lastAdded);
 			}
 		}
 	}

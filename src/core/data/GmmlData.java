@@ -56,7 +56,7 @@ public class GmmlData
 	/**
 	 * List of contained dataObjects
 	 */
-	public List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
+	private List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
 	
 	/**
 	 * Getter for dataobjects contained. There is no setter, you
@@ -83,36 +83,38 @@ public class GmmlData
 	}
 	
 	/**
-	 * Add dataObject; You shouldn't to call this
-	 * directly, this can only be called by GmmlDataObject.setParent()
+	 * Add a GmmlDataObject to this GmmlData.
+	 * takes care of setting parent and removing from possible previous
+	 * parent. 
 	 * 
 	 * fires GmmlEvent.ADDED event <i>after</i> addition of the object
 	 * 
 	 * @param o The object to add
 	 */
-	public void addDataObject (GmmlDataObject o)
+	public void add (GmmlDataObject o)
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
 			throw new IllegalArgumentException("Can't add more mappinfo objects");
+		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
+		o.setParent(this);
 		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.ADDED));
 	}
 	
 	/**
-	 * You shouldn't call this directly,
-	 * GmmlDataObjects are automatically removed when
-	 * changing its parent through setParent.
-	 *
+	 * removes object
+	 * sets parent of object to null
 	 * fires GmmlEvent.DELETED event <i>before</i> removal of the object
 	 *  
 	 * @param o the object to remove
 	 */
-	public void removeDataObject (GmmlDataObject o)
+	public void remove (GmmlDataObject o)
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO)
 			throw new IllegalArgumentException("Can't remove mappinfo object!");
 		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.DELETED));
 		dataObjects.remove(o);
+		o.setParent(null);
 	}
 	
 	/**
@@ -167,7 +169,7 @@ public class GmmlData
 	public GmmlData() 
 	{
 		mappInfo = new GmmlDataObject(ObjectType.MAPPINFO);
-		mappInfo.setParent(this);
+		this.add (mappInfo);
 	}
 	
 	/*

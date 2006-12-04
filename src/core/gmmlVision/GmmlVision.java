@@ -22,6 +22,7 @@ import util.Utils;
 import data.ConverterException;
 import data.DBConnector;
 import data.GmmlData;
+import data.GmmlDataObject;
 import debug.Logger;
 
 /**
@@ -134,6 +135,11 @@ public abstract class GmmlVision {
 	public static GmmlData getGmmlData() {
 		return gmmlData;
 	}
+	
+	/**
+	 * application global clipboard.
+	 */
+	public static List<GmmlDataObject> clipboard = null;
 	
 	/**
 	 * Open a pathway from a gpml file

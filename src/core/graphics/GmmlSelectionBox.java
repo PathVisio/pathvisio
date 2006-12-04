@@ -11,6 +11,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
 import data.GmmlDataObject;
+import data.ObjectType;
 
 /**
  * This class implements a selectionbox 
@@ -31,7 +32,8 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	{
 		// TODO: selectionbox shouldn't need a dataobject...
 		// note, not setting parent of GmmlDataObject here.
-		super(canvas, new GmmlDataObject());
+		super(canvas, new GmmlDataObject(ObjectType.SHAPE));
+		
 		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
 		
 		selection = new ArrayList<GmmlDrawingObject>();

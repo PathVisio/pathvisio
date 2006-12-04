@@ -272,7 +272,7 @@ public class MappFormat
 		String[] mappInfo = new String[15];
 		
 		GmmlDataObject mi = null;
-		for (GmmlDataObject o : data.dataObjects)
+		for (GmmlDataObject o : data.getDataObjects())
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 				mi = o;
@@ -320,7 +320,6 @@ public class MappFormat
 		GmmlVision.log.trace ("CONVERTING INFO TABLE TO GPML");
 		
 		GmmlDataObject o = data.getMappInfo();
-		o.setParent(data);
 		
 		o.setMapInfoName(row[icolTitle]);
 		o.setMapInfoDataSource("GenMAPP 2.0");
@@ -360,7 +359,7 @@ public class MappFormat
 	{
 		List<String[]> result = new ArrayList<String[]>();
 		
-		for (GmmlDataObject o : data.dataObjects)
+		for (GmmlDataObject o : data.getDataObjects())
 		{
 			int objectType = o.getObjectType();
 			String[] row = new String[18];
@@ -525,7 +524,7 @@ public class MappFormat
 							+ "' is not recognised as a GenMAPP type "
 							+ "and is therefore not processed.\n");							
 		}
-		o.setParent(data);
+		data.add(o);
     }
 
     

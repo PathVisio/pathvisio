@@ -1094,8 +1094,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
-		//editMenu.add(copyAction);
-		//editMenu.add(pasteAction);
+		editMenu.add(copyAction);
+		editMenu.add(pasteAction);
 		editMenu.add(new Separator());
 		editMenu.add(switchEditModeAction);
 		editMenu.add(preferencesAction);

@@ -25,10 +25,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -200,6 +198,8 @@ public class GmmlData
 			mappInfo.setBoardHeight(window.sc.getSize().y);
 			mappInfo.setWindowWidth(window.getShell().getSize().x);
 			mappInfo.setWindowHeight(window.getShell().getSize().y);
+			String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+			mappInfo.setVersion(dateString);
 		}
 		mappInfo.setMapInfoName("New Pathway");
 	}

@@ -197,6 +197,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		buffer.setClipping(r);
 		
 		c.dispose();
+		f.dispose();
 	}
 	
 	protected void draw(PaintEvent e)

@@ -111,128 +111,117 @@ public class GmmlDataObject
 		}
 	}
 		
-	public List<String> getAttributes()
+	public List<PropertyType> getAttributes()
 	{
-		List<String> result = Arrays.asList(new String[] { 
-				"Notes", "Comment"
+		List<PropertyType> result = Arrays.asList(new PropertyType[] { 
+				PropertyType.NOTES, 
+				PropertyType.COMMENT
 		});
 		switch (getObjectType())
 		{
 			case ObjectType.MAPPINFO:
-				result = ( Arrays.asList (new String[] {
-						"Notes", "Comment",
-						"MapInfoName", "Organism", "Data-Source",
-						"Version", "Author", "Maintained-By", 
-						"Email", "Last-modified", "Availability",
-						"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight"						
+				result = ( Arrays.asList (new PropertyType[] {
+						PropertyType.NOTES, 
+						PropertyType.COMMENT,
+						PropertyType.MAPINFONAME,
+						PropertyType.ORGANISM,
+						PropertyType.DATA_SOURCE,
+						PropertyType.VERSION,
+						PropertyType.AUTHOR,
+						PropertyType.MAINTAINED_BY,
+						PropertyType.EMAIL,
+						PropertyType.LAST_MODIFIED,
+						PropertyType.AVAILABILITY,
+						PropertyType.BOARDWIDTH,
+						PropertyType.BOARDHEIGHT,
+						PropertyType.WINDOWWIDTH,
+						PropertyType.WINDOWHEIGHT
 				}));
 				break;
 			case ObjectType.GENEPRODUCT:
-				result = ( Arrays.asList (new String[] {
-						"Notes", "Comment",
-						"CenterX", "CenterY", "Width", "Height",
-						
-						// line, shape, brace, geneproduct, label
-						"Color",				
-						// gene product
-						"Name", "GeneProduct-Data-Source", "GeneID", 
-						"Xref", "BackpageHead", "Type", "GraphId"
+				result = ( Arrays.asList (new PropertyType[] {
+						PropertyType.NOTES,
+						PropertyType.COMMENT,
+						PropertyType.CENTERX,
+						PropertyType.CENTERY,
+						PropertyType.WIDTH,
+						PropertyType.HEIGHT,
+						PropertyType.COLOR,
+						PropertyType.NAME,
+						PropertyType.GENEPRODUCT_DATA_SOURCE,
+						PropertyType.GENEID,
+						PropertyType.XREF,
+						PropertyType.BACKPAGEHEAD,
+						PropertyType.TYPE,
+						PropertyType.GENEID
 				}));
 				break;
 			case ObjectType.SHAPE:
-				result = ( Arrays.asList(new String[] {
-						"Notes", "Comment",
-						"CenterX", "CenterY", "Width", "Height",
-						// line, shape, brace, geneproduct, label
-						"Color",  
-						
-						// shape
-						"FillColor", "ShapeType", "Rotation", "GraphId", "Transparent"
+				result = ( Arrays.asList(new PropertyType[] {
+						PropertyType.NOTES,
+						PropertyType.COMMENT,
+						PropertyType.CENTERX,
+						PropertyType.CENTERY,
+						PropertyType.WIDTH,
+						PropertyType.HEIGHT,
+						PropertyType.COLOR,
+						PropertyType.FILLCOLOR,
+						PropertyType.SHAPETYPE,
+						PropertyType.ROTATION,
+						PropertyType.GRAPHID,
+						PropertyType.TRANSPARENT
 				}));
 				break;
 			case ObjectType.BRACE:
-				result = (Arrays.asList(new String[] {
-						
-						"Notes", "Comment",
-						"CenterX", "CenterY", "Width", "Height",
-						// line, shape, brace, geneproduct, label
-						"Color", 
-						
-						// brace
-						"Orientation", "GraphId"
+				result = (Arrays.asList(new PropertyType[] {
+						PropertyType.NOTES,
+						PropertyType.COMMENT,
+						PropertyType.CENTERX,
+						PropertyType.CENTERY,
+						PropertyType.WIDTH,
+						PropertyType.HEIGHT,
+						PropertyType.COLOR,
+						PropertyType.ORIENTATION,
+						PropertyType.GRAPHID
 				}));
 				break;
 			case ObjectType.LINE:
-				result = ( Arrays.asList(new String[] {
-						"Notes", "Comment",
-						
-						// line, shape, brace, geneproduct, label
-						"Color", 
-						
-						// line
-						"StartX", "StartY", "EndX", "EndY",			
-						"LineType", "LineStyle", "StartGraphRef", "EndGraphRef"						
+				result = ( Arrays.asList(new PropertyType[] {
+						PropertyType.NOTES,
+						PropertyType.COMMENT,
+						PropertyType.COLOR,
+						PropertyType.STARTX,
+						PropertyType.STARTY,
+						PropertyType.ENDX,
+						PropertyType.ENDY,
+						PropertyType.LINETYPE,
+						PropertyType.LINESTYLE,
+						PropertyType.STARTGRAPHREF,
+						PropertyType.ENDGRAPHREF
 				}));
 				break;
 			case ObjectType.LABEL:
-				result = ( Arrays.asList(new String[] {
-						"Notes", "Comment", "Xref", 
-						"CenterX", "CenterY", "Width", "Height",
-						// line, shape, brace, geneproduct, label
-						"Color", 
-						// label
-						"TextLabel", 
-						"FontName","FontWeight","FontStyle","FontSize",
-						"GraphId"
+				result = ( Arrays.asList(new PropertyType[] {
+						PropertyType.NOTES,
+						PropertyType.COMMENT,
+						PropertyType.XREF,
+						PropertyType.CENTERX,
+						PropertyType.CENTERY,
+						PropertyType.WIDTH,
+						PropertyType.HEIGHT,
+						PropertyType.COLOR,
+						PropertyType.TEXTLABEL,
+						PropertyType.FONTNAME,
+						PropertyType.FONTWEIGHT,
+						PropertyType.FONTSTYLE,
+						PropertyType.FONTSIZE,
+						PropertyType.GRAPHID
 				}));
 				break;
 				
 		}
 		return result;
 	}
-	
-
-	public static final List<String> attributes = Arrays.asList(new String[] {
-			
-			// all
-			"Notes", "Comment",
-
-			// line, shape, brace, geneproduct, label
-			"Color", 
-			
-			// shape, brace, geneproduct, label
-			"CenterX", "CenterY", "Width", "Height", 
-			
-			// shape
-			"FillColor", "ShapeType", "Rotation", 
-			
-			// line
-			"StartX", "StartY", "EndX", "EndY",			
-			"LineType", "LineStyle",
-			
-			// brace
-			"Orientation",
-			
-			// gene product
-			"Name", "GeneProduct-Data-Source", "GeneID", 
-			"Xref", "BackpageHead", "Type", 
-			
-			// label
-			"TextLabel", 
-			"FontName","FontWeight","FontStyle","FontSize",
-
-			// mappinfo
-			"MapInfoName", "Organism", "Data-Source",
-			"Version", "Author", "Maintained-By", 
-			"Email", "Last-modified", "Availability",
-			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
-			
-			// other
-			"GraphId", "StartGraphRef", "EndGraphRef",
-					
-			// shape again
-			"Transparent"
-	});
 	
 	/**
 	 * This works so that
@@ -244,132 +233,125 @@ public class GmmlDataObject
 	 * @param key
 	 * @param value
 	 */
-	public void setProperty(String key, Object value)
+	public void setProperty(PropertyType key, Object value)
 	{
-		assert (key != null);
-		
-		int i = attributes.indexOf(key);
-		// TODO: use enum instead of integer index.
-		switch (i)
+		switch (key)
 		{		
-			case 0: setNotes		((String) value); break;
-			case 1: setComment 		((String) value); break;
-	
-			case 2: setColor 		((RGB)    value); break;
+			case NOTES: setNotes		((String) value); break;
+			case COMMENT: setComment 		((String) value); break;
+			case COLOR: setColor 		((RGB)    value); break;
 				
-			case 3: setCenterX 		((Double) value); break;
-			case 4: setCenterY 		((Double) value); break;
-			case 5: setWidth		((Double) value); break;
-			case 6: setHeight		((Double) value); break;
+			case CENTERX: setCenterX 		((Double) value); break;
+			case CENTERY: setCenterY 		((Double) value); break;
+			case WIDTH: setWidth		((Double) value); break;
+			case HEIGHT: setHeight		((Double) value); break;
 			
-			case 7: setFillColor	((RGB)	  value); break;
-			case 8: setShapeType	((Integer)value); break;
-			case 9: setRotation		((Double) value); break;
+			case FILLCOLOR: setFillColor	((RGB)	  value); break;
+			case SHAPETYPE: setShapeType	((Integer)value); break;
+			case ROTATION: setRotation		((Double) value); break;
 				
-			case 10: setStartX 		((Double) value); break;
-			case 11: setStartY 		((Double) value); break;
-			case 12: setEndX 		((Double) value); break;
-			case 13: setEndY 		((Double) value); break;
-			case 14: setLineType		((Integer)value); break;
-			case 15: setLineStyle	((Integer)value); break;
+			case STARTX: setStartX 		((Double) value); break;
+			case STARTY: setStartY 		((Double) value); break;
+			case ENDX: setEndX 		((Double) value); break;
+			case ENDY: setEndY 		((Double) value); break;
+			case LINETYPE: setLineType		((Integer)value); break;
+			case LINESTYLE: setLineStyle	((Integer)value); break;
 				
-			case 16: setOrientation	((Integer)value); break;
+			case ORIENTATION: setOrientation	((Integer)value); break;
 	
-			case 17: setGeneProductName ((String) value); break;
-			case 18: setDataSource		((String) value); break;
-			case 19: setGeneID			((String)value); break;
-			case 20: setXref			((String)  value); break;
-			case 21: setBackpageHead	((String)value); break;
-			case 22: setGeneProductType ((String)  value); break;
+			case NAME: setGeneProductName ((String) value); break;
+			case GENEPRODUCT_DATA_SOURCE: setDataSource		((String) value); break;
+			case GENEID: setGeneID			((String)value); break;
+			case XREF: setXref			((String)  value); break;
+			case BACKPAGEHEAD: setBackpageHead	((String)value); break;
+			case TYPE: setGeneProductType ((String)  value); break;
 			
-			case 23: setLabelText 	((String) value); break;
-			case 24: setFontName		((String)  value); break;
-			case 25: setBold 		((Boolean) value); break;
-			case 26: setItalic 		((Boolean) value); break;
-			case 27: setFontSize		((Double)  value); break;
+			case TEXTLABEL: setLabelText 	((String) value); break;
+			case FONTNAME: setFontName		((String)  value); break;
+			case FONTWEIGHT: setBold 		((Boolean) value); break;
+			case FONTSTYLE: setItalic 		((Boolean) value); break;
+			case FONTSIZE: setFontSize		((Double)  value); break;
 
-			case 28: setMapInfoName((String) value); break;
-			case 29: setOrganism ((String) value); break;
-			case 30: setDataSource ((String) value); break;
-			case 31: setVersion ((String) value); break;
-			case 32: setAuthor ((String) value); break;
-			case 33: setMaintainedBy((String) value); break;
-			case 34: setEmail ((String) value); break;
-			case 35: setLastModified ((String)value); break;
-			case 36: setAvailability ((String)value); break;
-			case 37: setBoardWidth ((Double)value); break;
-			case 38: setBoardHeight ((Double)value); break;
-			case 39: setWindowWidth ((Double)value); break;
-			case 40: setWindowHeight ((Double)value); break;
+			case MAPINFONAME: setMapInfoName((String) value); break;
+			case ORGANISM: setOrganism ((String) value); break;
+			case DATA_SOURCE: setDataSource ((String) value); break;
+			case VERSION: setVersion ((String) value); break;
+			case AUTHOR: setAuthor ((String) value); break;
+			case MAINTAINED_BY: setMaintainedBy((String) value); break;
+			case EMAIL: setEmail ((String) value); break;
+			case LAST_MODIFIED: setLastModified ((String)value); break;
+			case AVAILABILITY: setAvailability ((String)value); break;
+			case BOARDWIDTH: setBoardWidth ((Double)value); break;
+			case BOARDHEIGHT: setBoardHeight ((Double)value); break;
+			case WINDOWWIDTH: setWindowWidth ((Double)value); break;
+			case WINDOWHEIGHT: setWindowHeight ((Double)value); break;
 			
-			case 41: setGraphId ((String)value); break;
-			case 42: setStartGraphRef ((String)value); break;
-			case 43: setEndGraphRef ((String)value); break;
-			case 44: setTransparent ((Boolean)value); break;
-			default: throw new IllegalArgumentException("Invalid key");
+			case GRAPHID: setGraphId ((String)value); break;
+			case STARTGRAPHREF: setStartGraphRef ((String)value); break;
+			case ENDGRAPHREF: setEndGraphRef ((String)value); break;
+			case TRANSPARENT: setTransparent ((Boolean)value); break;
 		}
 	}
 	
-	public Object getProperty(String key)
+	public Object getProperty(PropertyType x)
 	{		
 		//TODO: use hashtable or other way better than switch statement
-		int i = attributes.indexOf(key);
 		Object result = null;
-		switch (i)
+		switch (x)
 		{
-			case 0: result = getNotes(); break;
-			case 1: result = getComment(); break;
-			case 2: result = getColor(); break;
+			case NOTES: result = getNotes(); break;
+			case COMMENT: result = getComment(); break;
+			case COLOR: result = getColor(); break;
 			
-			case 3: result = getCenterX(); break;
-			case 4: result = getCenterY(); break;
-			case 5: result = getWidth(); break;
-			case 6: result = getHeight(); break;
+			case CENTERX: result = getCenterX(); break;
+			case CENTERY: result = getCenterY(); break;
+			case WIDTH: result = getWidth(); break;
+			case HEIGHT: result = getHeight(); break;
 			
-			case 7: result = getFillColor(); break;
-			case 8: result = getShapeType(); break;
-			case 9: result = getRotation(); break;
+			case FILLCOLOR: result = getFillColor(); break;
+			case SHAPETYPE: result = getShapeType(); break;
+			case ROTATION: result = getRotation(); break;
 			
-			case 10: result = getStartX(); break;
-			case 11: result = getStartY(); break;
-			case 12: result = getEndX(); break;
-			case 13: result = getEndY(); break;
-			case 14: result = getLineType(); break;
-			case 15: result = getLineStyle(); break;
+			case STARTX: result = getStartX(); break;
+			case STARTY: result = getStartY(); break;
+			case ENDX: result = getEndX(); break;
+			case ENDY: result = getEndY(); break;
+			case LINETYPE: result = getLineType(); break;
+			case LINESTYLE: result = getLineStyle(); break;
 			
-			case 16: result = getOrientation(); break;
+			case ORIENTATION: result = getOrientation(); break;
 						
-			case 17: result = getGeneProductName(); break;
-			case 18: result = getDataSource(); break;
-			case 19: result = getGeneID(); break;
-			case 20: result = getXref(); break;
-			case 21: result = getBackpageHead(); break;
-			case 22: result = getGeneProductType(); break;
+			case NAME: result = getGeneProductName(); break;
+			case GENEPRODUCT_DATA_SOURCE: result = getDataSource(); break;
+			case GENEID: result = getGeneID(); break;
+			case XREF: result = getXref(); break;
+			case BACKPAGEHEAD: result = getBackpageHead(); break;
+			case TYPE: result = getGeneProductType(); break;
 			
-			case 23: result = getLabelText(); break;	
-			case 24: result = getFontName(); break;
-			case 25: result = isBold(); break;
-			case 26: result = isItalic(); break;
-			case 27: result = getFontSize(); break;
+			case TEXTLABEL: result = getLabelText(); break;	
+			case FONTNAME: result = getFontName(); break;
+			case FONTWEIGHT: result = isBold(); break;
+			case FONTSTYLE: result = isItalic(); break;
+			case FONTSIZE: result = getFontSize(); break;
 
-			case 28: result = getMapInfoName(); break;
-			case 29: result = getOrganism (); break;
-			case 30: result = getDataSource (); break;
-			case 31: result = getVersion (); break;
-			case 32: result = getAuthor (); break;
-			case 33: result = getMaintainedBy(); break;
-			case 34: result = getEmail (); break;
-			case 35: result = getLastModified (); break;
-			case 36: result = getAvailability (); break;
-			case 37: result = getBoardWidth (); break;
-			case 38: result = getBoardHeight (); break;
-			case 39: result = getWindowWidth (); break;
-			case 40: result = getWindowHeight (); break;
+			case MAPINFONAME: result = getMapInfoName(); break;
+			case ORGANISM: result = getOrganism (); break;
+			case DATA_SOURCE: result = getDataSource (); break;
+			case VERSION: result = getVersion (); break;
+			case AUTHOR: result = getAuthor (); break;
+			case MAINTAINED_BY: result = getMaintainedBy(); break;
+			case EMAIL: result = getEmail (); break;
+			case LAST_MODIFIED: result = getLastModified (); break;
+			case AVAILABILITY: result = getAvailability (); break;
+			case BOARDWIDTH: result = getBoardWidth (); break;
+			case BOARDHEIGHT: result = getBoardHeight (); break;
+			case WINDOWWIDTH: result = getWindowWidth (); break;
+			case WINDOWHEIGHT: result = getWindowHeight (); break;
 
-			case 41: result = getGraphId (); break;
-			case 42: result = getStartGraphRef (); break;
-			case 43: result = getEndGraphRef (); break;
-			case 44: result = isTransparent (); break;
+			case GRAPHID: result = getGraphId (); break;
+			case STARTGRAPHREF: result = getStartGraphRef (); break;
+			case ENDGRAPHREF: result = getEndGraphRef (); break;
+			case TRANSPARENT: result = isTransparent (); break;
 		}
 
 		return result;

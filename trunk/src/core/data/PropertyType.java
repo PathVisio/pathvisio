@@ -63,7 +63,7 @@ public enum PropertyType
 			
 	// gene product
 	NAME ("Name", "Name", PropertyClass.STRING), 
-	GENEPRODUCT_DATA_SOURCE ("GeneProductDataSource", "Geneproduct data-source", PropertyClass.STRING), 
+	GENEPRODUCT_DATA_SOURCE ("GeneProduct-Data-Source", "Geneproduct data-source", PropertyClass.STRING), 
 	GENEID ("GeneID", "Gene ID", PropertyClass.STRING),
 	XREF ("Xref", "Xref", PropertyClass.STRING), 
 	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
@@ -79,12 +79,12 @@ public enum PropertyType
 	// mappinfo
 	MAPINFONAME ("MapInfoName", "Map Info Name", PropertyClass.STRING),
 	ORGANISM ("Organism", "Organism", PropertyClass.STRING), 
-	DATA_SOURCE ("DataSource", "Data-Source", PropertyClass.DATASOURCE),
+	DATA_SOURCE ("Data-Source", "Data-Source", PropertyClass.DATASOURCE),
 	VERSION ("Version", "Version", PropertyClass.STRING), 
 	AUTHOR ("Author", "Author", PropertyClass.STRING), 
-	MAINTAINED_BY ("MaintainedBy", "Maintainer", PropertyClass.STRING),
+	MAINTAINED_BY ("Maintained-By", "Maintainer", PropertyClass.STRING),
 	EMAIL ("Email", "Email", PropertyClass.STRING), 
-	LAST_MODIFIED ("LastModified", "Last Modified", PropertyClass.STRING), 
+	LAST_MODIFIED ("Last-Modified", "Last Modified", PropertyClass.STRING), 
 	AVAILABILITY ("Availability", "Availability", PropertyClass.STRING),
 	BOARDWIDTH ("BoardWidth", "Board Width", PropertyClass.DOUBLE), 
 	BOARDHEIGHT ("BoardHeight", "Board Height", PropertyClass.DOUBLE), 
@@ -119,5 +119,5 @@ public enum PropertyType
 	public int type()
 	{
 		return type;
-	}
+	}	
 }

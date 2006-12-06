@@ -22,11 +22,8 @@ import graphics.GmmlSelectionBox.SelectionEvent;
 import graphics.GmmlSelectionBox.SelectionListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -49,12 +46,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import util.TableColumnResizer;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.GmmlFormat;
-import data.GmmlListener;
-import data.MappFormat;
-import data.ObjectType;
+import data.*;
 
 public class GmmlPropertyTable extends Composite implements GmmlListener, SelectionListener {
 	public TableViewer tableViewer;
@@ -65,7 +57,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	
 	private List<GmmlDataObject> dataObjects;
 	
-	private List<String> attributes;
+	private List<PropertyType> attributes;
 	
 	final static int TYPES_DIFF = ObjectType.MIN_VALID -1;
 	final static Object VALUE_DIFF = new Object() {
@@ -128,7 +120,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		return type;
 	}
 	
-	Object getAggregateValue(String key) {
+	Object getAggregateValue(PropertyType key) {
 		Object value = VALUE_DIFF;
 		for(int i = 0; i < dataObjects.size(); i++) {
 			GmmlDataObject g = dataObjects.get(i);
@@ -147,10 +139,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	 */
 	public void setAttributes ()
 	{
-		HashMap<String, Integer> master = new HashMap<String, Integer>();
+		HashMap<PropertyType, Integer> master = new HashMap<PropertyType, Integer>();
 		for (GmmlDataObject o : dataObjects)
 		{
-			for (String attr : o.getAttributes())
+			for (PropertyType attr : o.getAttributes())
 			{
 				if (master.containsKey(attr))
 				{
@@ -163,14 +155,16 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			}
 		}
 		attributes.clear();
-		for (String attr : master.keySet())
+		for (PropertyType attr : master.keySet())
 		{
 			if (master.get(attr) == dataObjects.size())
 			{
 				attributes.add(attr);
 			}
 		}
-		sortAttributes();
+		// sortAttributes();
+		Collections.sort (attributes);
+		
 //		System.out.println ("--------------");
 //		for (String attr: attributes)
 //		{
@@ -179,112 +173,16 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 //		System.out.println ("--------------");
 	}
 	
-	void sortAttributes() {
-		Collections.sort(attributes, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				return totalAttributes.indexOf(o1) - totalAttributes.indexOf(o2);
-			}
-		});
-	}
+//	void sortAttributes() {
+//		Collections.sort(attributes, new Comparator() {
+//			public int compare(Object o1, Object o2) {
+//				return o1.ordinal() - o2.ordinal();
+//			}
+//		});
+//	}
 
 	final static String[] colNames = new String[] {"Property", "Value"};
-	
-	// Types
-	final static int DOUBLE = 0;
-	final static int INTEGER = 1;
-	final static int TYPE = 2;
-	final static int LINESTYLE = 3;
-	final static int COLOR = 4;
-	final static int STRING = 5;
-	final static int ORIENTATION = 6;
-	
-	final static List<String> totalAttributes = GmmlDataObject.attributes;
-	
-	// TODO: this is nearly redundant with GmmlDataObject.attributes
-	final static List<String> labelMappings = Arrays.asList(new String[] {
-			
-			// all
-			"Notes", "Comment",
-
-			// line, shape, brace, geneproduct, label
-			"Color", 
-			
-			// shape, brace, geneproduct, label
-			"Center X", "Center Y", "Width", "Height", 
-			
-			// shape
-			"FillColor", "Shape Type", "Rotation", 
-			
-			// line
-			"Start X", "Start Y", "End X", "End Y",			
-			"Line Type", "Line Style",
-			
-			// brace
-			"Orientation",
-			
-			// gene product
-			"ID", "Data-Source (ID system)", "Gene Symbol", 
-			"Link (xref)", "Backpage Header", "Type", 
-			
-			// label
-			"Label Text", 
-			"Font Name", "Font Weight", "Font Style", "Font Size",
-			//mappinfo
-			
-			// mappinfo
-			"MapInfo Name", "Organism", "MapInfo Data-Source",
-			"Version", "Author", "Maintained-By", 
-			"Email", "Last-modified", "Availability",
-			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
-
-			// other
-			"GraphId", "StartGraphRef", "EndGraphRef",
-					
-			"Transparent"
-
-	});
-
-	final static int[] attributeTypes = new int[] {
-			
-			// all
-			STRING, STRING,
-
-			// line, shape, brace, geneproduct, label
-			COLOR, 
-			
-			// shape, brace, geneproduct, label
-			DOUBLE, DOUBLE, DOUBLE, DOUBLE, 
-			
-			// shape
-			TYPE, COLOR, TYPE, DOUBLE, 
-			
-			// line
-			DOUBLE, DOUBLE, DOUBLE, DOUBLE,			
-			TYPE, TYPE,
-			
-			// brace
-			INTEGER,
-			
-			// gene product
-			STRING, TYPE, STRING, 
-			STRING, STRING, STRING, 
-			
-			// label
-			STRING, 
-			STRING, TYPE, TYPE, DOUBLE,
-			
-			// mappinfo
-			STRING, STRING, STRING,
-			STRING, STRING, STRING,
-			STRING, STRING, STRING,
-			DOUBLE, DOUBLE, DOUBLE, DOUBLE,
-			
-			//other
-			STRING, STRING, STRING
-	};
-	
-	Hashtable<String, Integer> typeMappings;
-	
+				
 	GmmlPropertyTable(Composite parent, int style)
 	{
 		super(parent, style);
@@ -312,14 +210,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		
 		t.addControlListener(new TableColumnResizer(t, t.getParent()));
 		
-		typeMappings = new Hashtable<String, Integer>();
-		for(int i = 0; i < totalAttributes.size(); i++)
-		{
-			typeMappings.put(totalAttributes.get(i), attributeTypes[i]);
-		}
-		
 		dataObjects = new ArrayList<GmmlDataObject>();
-		attributes = new ArrayList<String>();
+		attributes = new ArrayList<PropertyType>();
 		tableViewer.setInput(attributes);
 		
 		GmmlSelectionBox.addListener(this);
@@ -327,41 +219,35 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	
 	private CellEditor getCellEditor(Object element)
 	{
-		String key = (String)element;
-		int type = (Integer)typeMappings.get(key);
+		PropertyType key = (PropertyType)element;
+		int type = key.type();
 		switch(type)
 		{
-		case STRING:
-		case DOUBLE:
-		case INTEGER: 	return textEditor;
-		case COLOR: 	return colorEditor;
-		case TYPE:
-			String[] types = new String[] {""};
-			int objType = getAggregateType();
-			if (objType == ObjectType.LINE)
-			{
-				types = GmmlFormat.gmmlLineTypes.toArray(
-						new String[GmmlFormat.gmmlLineTypes.size()]);
-			}
-			else if (objType == ObjectType.SHAPE)
-			{
-				types = new String[] {"Rectangle", "Oval", "Arc"};
-			}
-			else if (key.equals("GeneProduct-Data-Source"))
-			{
-				types = MappFormat.dataSources;
-			}
-			else
-			{
-				return textEditor;
-			}
-			comboBoxEditor.setItems(types);
+		case PropertyClass.FONT:
+		case PropertyClass.GENETYPE:
+		case PropertyClass.STRING:
+		case PropertyClass.DOUBLE:
+		case PropertyClass.INTEGER: 	return textEditor;
+		case PropertyClass.COLOR: 	return colorEditor;
+		case PropertyClass.LINETYPE:
+			comboBoxEditor.setItems(new String[] {
+					"Line", "Arrow", "TBar", "Receptor", "LigandSquare", 
+					"ReceptorSquare", "LigandRound", "ReceptorRound"});
 			return comboBoxEditor;
-		case ORIENTATION:
+		case PropertyClass.SHAPETYPE:
+			comboBoxEditor.setItems(new String[] {"Rectangle", "Oval", "Arc"});
+			return comboBoxEditor;
+		case PropertyClass.DATASOURCE:			
+			comboBoxEditor.setItems(MappFormat.dataSources);
+			return comboBoxEditor;
+		case PropertyClass.ORIENTATION:
 			comboBoxEditor.setItems(new String[] {"Top", "Right", "Bottom", "Left"});
 			return comboBoxEditor;
-		case LINESTYLE:
+		case PropertyClass.LINESTYLE:
 			comboBoxEditor.setItems(new String[] {"Solid", "Dashed"});
+			return comboBoxEditor;
+		case PropertyClass.BOOLEAN:
+			comboBoxEditor.setItems(new String[] {"false", "true"});
 			return comboBoxEditor;
 		}
 		return textEditor;
@@ -380,46 +266,75 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		}
 
 		public Object getValue(Object element, String property) {
-			String key = (String)element;
+			PropertyType key = (PropertyType)element;
 			Object value = getAggregateValue(key);
 			
-			int type = (Integer)typeMappings.get(key);
-			switch(type)
+			switch(key.type())
 			{
-			case DOUBLE:
-			case INTEGER: return value.toString();
-			case STRING: return value == null ? "" : (String)value;
-			case COLOR: return (RGB)value;
-			case LINESTYLE:
-			case ORIENTATION:
-			case TYPE: 
-				int t = getAggregateType();
-				if (key.equals("GeneProduct-Data-Source"))
-					return MappFormat.lDataSources.indexOf((String)value);
-				else if (t == ObjectType.MAPPINFO || t == ObjectType.GENEPRODUCT)
-					return (String)value;
-				else
+				case PropertyClass.DOUBLE:
+				case PropertyClass.INTEGER: 
+					return value.toString();
+				case PropertyClass.STRING: 
+					return value == null ? "" : (String)value;
+				case PropertyClass.COLOR: 
+					return (RGB)value;	
+				case PropertyClass.DATASOURCE:
+					return MappFormat.lDataSources.indexOf((String)value);					
+				
+				// for all combobox types:
+				case PropertyClass.BOOLEAN:
+					return (Boolean)value;
+				case PropertyClass.LINETYPE:
+				case PropertyClass.SHAPETYPE:
+				case PropertyClass.ORIENTATION:
+				case PropertyClass.LINESTYLE:
 					return (Integer)value;
 			}
 			return null;
 		}
 		
 		public void modify(Object element, String property, Object value) {
-			String key = (String)((TableItem)element).getData();
+			PropertyType key = (PropertyType)((TableItem)element).getData();
 			
-			switch((Integer)typeMappings.get(key))
+			switch(key.type())
 			{
-			case DOUBLE: 	try { value = Double.parseDouble((String)value); break; } 
-				catch(Exception e) { GmmlVision.log.error("GmmlPropertyTable: Unable to parse double", e); 
-					return; }
-			case INTEGER: 	try { value = Integer.parseInt((String)value); break; }
-				catch(Exception e) { GmmlVision.log.error("GmmlPropertyTable: Unable to parse int", e); 
-					return; }
-			case TYPE:
-				if(key.equals("GeneProduct-Data-Source")) {
-					if((Integer)value == -1) return; //Nothing selected
-					value = MappFormat.lDataSources.get((Integer)value);
+			case PropertyClass.DOUBLE: 	
+				try 
+				{ 
+					value = Double.parseDouble((String)value); 
+					break; 
+				} 
+				catch(Exception e) 
+				{ 
+					GmmlVision.log.error("GmmlPropertyTable: Unable to parse double", e); 
+					return; 
 				}
+			case PropertyClass.INTEGER: 	
+				try 
+				{ 
+					value = Integer.parseInt((String)value); 
+					break; 
+				}
+				catch(Exception e) 
+				{ 
+					GmmlVision.log.error("GmmlPropertyTable: Unable to parse int", e); 
+					return; 
+				}
+			case PropertyClass.DATASOURCE:
+				if((Integer)value == -1) return; //Nothing selected
+				value = MappFormat.lDataSources.get((Integer)value);
+				break;
+//			case PropertyClass.BOOLEAN:
+//				try 
+//				{ 
+//					value = Boolean.parseBoolean((String)value); 
+//					break; 
+//				}
+//				catch(Exception e) 
+//				{ 
+//					GmmlVision.log.error("GmmlPropertyTable: Unable to parse boolean", e); 
+//					return; 
+//				}
 			}
 			
 			for(GmmlDataObject o : dataObjects) {
@@ -437,20 +352,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			return null;
 		}
 		public String getColumnText(Object element, int columnIndex) {
-			String key = (String)element;
+			PropertyType key = (PropertyType)element;
 			switch(columnIndex) {
 				case 0:
-					if(totalAttributes.contains(key))
-					{
-						if(key.equals("Name"))
-						{
-							if(getAggregateType() == ObjectType.GENEPRODUCT)
-							{
-								return "Gene ID";
-							}
-						}
-						return (String)labelMappings.get(totalAttributes.indexOf(key));
-					}
+					return key.desc();					
 				case 1:
 					//TODO: prettier labels for different value types
 					if(attributes.contains(key))

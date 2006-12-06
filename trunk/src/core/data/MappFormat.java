@@ -815,7 +815,11 @@ public class MappFormat
     		mapShape_half (o, mappObject);
     	else
     		mapShape (o, mappObject);
-        mapColor (o, mappObject);
+		
+        int i = Integer.parseInt(mappObject[colColor]);
+        o.setTransparent(i < 0);
+		o.setFillColor(ConvertType.fromMappColor(mappObject[colColor]));	
+		
         mapRotation (o, mappObject);        
         return o;
     }
@@ -828,8 +832,12 @@ public class MappFormat
     		unmapShape_half (o, mappObject);
     	else
     		unmapShape (o, mappObject);
-    	unmapColor (o, mappObject);
-    	unmapRotation (o, mappObject);    	
+		
+		// note: when converting gpml to mapp,
+		// line color is discarded
+		mappObject[colColor] = ConvertType.toMappColor(o.getFillColor(), o.isTransparent());	
+    	
+		unmapRotation (o, mappObject);    	
     }
     
     private static GmmlDataObject mapFixedShapeType(String[] mappObject)

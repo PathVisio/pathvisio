@@ -1,0 +1,123 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2007 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
+
+/*
+ * PropertyType.java
+ *
+ * Created on 6 december 2006, 9:50
+ *
+ */
+
+package data;
+
+/**
+ *
+ * @author Martijn
+ */
+public enum PropertyType 
+{
+	// all
+	NOTES ("Notes", "Notes", PropertyClass.STRING),
+	COMMENT ("Comment", "Comment", PropertyClass.STRING),
+
+	// line, shape, brace, geneproduct, label
+	COLOR ("Color", "Color", PropertyClass.COLOR),
+			
+	// shape, brace, geneproduct, label
+	CENTERX ("CenterX", "Center X", PropertyClass.DOUBLE),
+	CENTERY ("CenterY", "Center Y", PropertyClass.DOUBLE),
+	WIDTH ("Width", "Width", PropertyClass.DOUBLE),
+	HEIGHT ("Height", "Height", PropertyClass.DOUBLE),
+			
+	// shape
+	TRANSPARENT ("Transparent", "Transparent", PropertyClass.BOOLEAN),
+	FILLCOLOR ("FillColor", "Fill Color", PropertyClass.COLOR),
+	SHAPETYPE ("ShapeType", "Shape Type", PropertyClass.SHAPETYPE),
+	ROTATION ("Rotation", "Rotation", PropertyClass.DOUBLE),
+			
+	// line
+	STARTX ("StartX", "Start X", PropertyClass.DOUBLE), 
+	STARTY ("StartY", "Start Y", PropertyClass.DOUBLE), 
+	ENDX ("EndX", "End X", PropertyClass.DOUBLE), 
+	ENDY ("EndY", "End Y", PropertyClass.DOUBLE),
+			
+	LINETYPE ("LineType", "Line Type", PropertyClass.LINETYPE), 
+	LINESTYLE ("LineStyle", "Line Style", PropertyClass.LINESTYLE),
+			
+	// brace
+	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION),
+			
+	// gene product
+	NAME ("Name", "Name", PropertyClass.STRING), 
+	GENEPRODUCT_DATA_SOURCE ("GeneProductDataSource", "Geneproduct data-source", PropertyClass.STRING), 
+	GENEID ("GeneID", "Gene ID", PropertyClass.STRING),
+	XREF ("Xref", "Xref", PropertyClass.STRING), 
+	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
+	TYPE ("Type", "Type", PropertyClass.GENETYPE),
+			
+	// label
+	TEXTLABEL ("TextLabel", "Text Label", PropertyClass.STRING), 
+	FONTNAME ("FontName", "Font Name", PropertyClass.FONT),
+	FONTWEIGHT ("FontWeight", "Bold", PropertyClass.BOOLEAN), 
+	FONTSTYLE ("FontStyle", "Italic", PropertyClass.BOOLEAN), 
+	FONTSIZE ("FontSize", "Font Size", PropertyClass.DOUBLE),
+
+	// mappinfo
+	MAPINFONAME ("MapInfoName", "Map Info Name", PropertyClass.STRING),
+	ORGANISM ("Organism", "Organism", PropertyClass.STRING), 
+	DATA_SOURCE ("DataSource", "Data-Source", PropertyClass.DATASOURCE),
+	VERSION ("Version", "Version", PropertyClass.STRING), 
+	AUTHOR ("Author", "Author", PropertyClass.STRING), 
+	MAINTAINED_BY ("MaintainedBy", "Maintainer", PropertyClass.STRING),
+	EMAIL ("Email", "Email", PropertyClass.STRING), 
+	LAST_MODIFIED ("LastModified", "Last Modified", PropertyClass.STRING), 
+	AVAILABILITY ("Availability", "Availability", PropertyClass.STRING),
+	BOARDWIDTH ("BoardWidth", "Board Width", PropertyClass.DOUBLE), 
+	BOARDHEIGHT ("BoardHeight", "Board Height", PropertyClass.DOUBLE), 
+	WINDOWWIDTH ("WindowWidth", "Window Width", PropertyClass.DOUBLE), 
+	WINDOWHEIGHT ("WindowHeight", "Window Height", PropertyClass.DOUBLE),
+
+	// other
+	GRAPHID ("GraphId", "GraphId", PropertyClass.STRING), 
+	STARTGRAPHREF ("StartGraphRef", "StartGraphRef", PropertyClass.STRING), 
+	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING);
+
+	private String tag, desc;
+	private int type;
+	
+	PropertyType (String _tag, String _desc, int _type)
+	{
+		tag = _tag;
+		type = _type;
+		desc = _desc;
+	}
+	
+	public String tag()
+	{
+		return tag;
+	}
+	
+	public String desc()
+	{
+		return desc;
+	}
+	
+	public int type()
+	{
+		return type;
+	}
+}

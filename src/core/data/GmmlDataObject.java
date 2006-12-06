@@ -144,10 +144,10 @@ public class GmmlDataObject
 						"Notes", "Comment",
 						"CenterX", "CenterY", "Width", "Height",
 						// line, shape, brace, geneproduct, label
-						"Color", 
+						"Color",  
 						
 						// shape
-						"ShapeType", "Rotation", "GraphId"
+						"FillColor", "ShapeType", "Rotation", "GraphId", "Transparent"
 				}));
 				break;
 			case ObjectType.BRACE:
@@ -204,7 +204,7 @@ public class GmmlDataObject
 			"CenterX", "CenterY", "Width", "Height", 
 			
 			// shape
-			"ShapeType", "Rotation", 
+			"FillColor", "ShapeType", "Rotation", 
 			
 			// line
 			"StartX", "StartY", "EndX", "EndY",			
@@ -228,7 +228,10 @@ public class GmmlDataObject
 			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
 			
 			// other
-			"GraphId", "StartGraphRef", "EndGraphRef"
+			"GraphId", "StartGraphRef", "EndGraphRef",
+					
+			// shape again
+			"Transparent"
 	});
 	
 	/**
@@ -259,48 +262,50 @@ public class GmmlDataObject
 			case 5: setWidth		((Double) value); break;
 			case 6: setHeight		((Double) value); break;
 			
-			case 7: setShapeType	((Integer)value); break;
-			case 8: setRotation		((Double) value); break;
+			case 7: setFillColor	((RGB)	  value); break;
+			case 8: setShapeType	((Integer)value); break;
+			case 9: setRotation		((Double) value); break;
 				
-			case 9: setStartX 		((Double) value); break;
-			case 10: setStartY 		((Double) value); break;
-			case 11: setEndX 		((Double) value); break;
-			case 12: setEndY 		((Double) value); break;
-			case 13: setLineType		((Integer)value); break;
-			case 14: setLineStyle	((Integer)value); break;
+			case 10: setStartX 		((Double) value); break;
+			case 11: setStartY 		((Double) value); break;
+			case 12: setEndX 		((Double) value); break;
+			case 13: setEndY 		((Double) value); break;
+			case 14: setLineType		((Integer)value); break;
+			case 15: setLineStyle	((Integer)value); break;
 				
-			case 15: setOrientation	((Integer)value); break;
+			case 16: setOrientation	((Integer)value); break;
 	
-			case 16: setGeneProductName ((String) value); break;
-			case 17: setDataSource		((String) value); break;
-			case 18: setGeneID			((String)value); break;
-			case 19: setXref			((String)  value); break;
-			case 20: setBackpageHead	((String)value); break;
-			case 21: setGeneProductType ((String)  value); break;
+			case 17: setGeneProductName ((String) value); break;
+			case 18: setDataSource		((String) value); break;
+			case 19: setGeneID			((String)value); break;
+			case 20: setXref			((String)  value); break;
+			case 21: setBackpageHead	((String)value); break;
+			case 22: setGeneProductType ((String)  value); break;
 			
-			case 22: setLabelText 	((String) value); break;
-			case 23: setFontName		((String)  value); break;
-			case 24: setBold 		((Boolean) value); break;
-			case 25: setItalic 		((Boolean) value); break;
-			case 26: setFontSize		((Double)  value); break;
+			case 23: setLabelText 	((String) value); break;
+			case 24: setFontName		((String)  value); break;
+			case 25: setBold 		((Boolean) value); break;
+			case 26: setItalic 		((Boolean) value); break;
+			case 27: setFontSize		((Double)  value); break;
 
-			case 27: setMapInfoName((String) value); break;
-			case 28: setOrganism ((String) value); break;
-			case 29: setDataSource ((String) value); break;
-			case 30: setVersion ((String) value); break;
-			case 31: setAuthor ((String) value); break;
-			case 32: setMaintainedBy((String) value); break;
-			case 33: setEmail ((String) value); break;
-			case 34: setLastModified ((String)value); break;
-			case 35: setAvailability ((String)value); break;
-			case 36: setBoardWidth ((Double)value); break;
-			case 37: setBoardHeight ((Double)value); break;
-			case 38: setWindowWidth ((Double)value); break;
-			case 39: setWindowHeight ((Double)value); break;
+			case 28: setMapInfoName((String) value); break;
+			case 29: setOrganism ((String) value); break;
+			case 30: setDataSource ((String) value); break;
+			case 31: setVersion ((String) value); break;
+			case 32: setAuthor ((String) value); break;
+			case 33: setMaintainedBy((String) value); break;
+			case 34: setEmail ((String) value); break;
+			case 35: setLastModified ((String)value); break;
+			case 36: setAvailability ((String)value); break;
+			case 37: setBoardWidth ((Double)value); break;
+			case 38: setBoardHeight ((Double)value); break;
+			case 39: setWindowWidth ((Double)value); break;
+			case 40: setWindowHeight ((Double)value); break;
 			
-			case 40: setGraphId ((String)value); break;
-			case 41: setStartGraphRef ((String)value); break;
-			case 42: setEndGraphRef ((String)value); break;
+			case 41: setGraphId ((String)value); break;
+			case 42: setStartGraphRef ((String)value); break;
+			case 43: setEndGraphRef ((String)value); break;
+			case 44: setTransparent ((Boolean)value); break;
 			default: throw new IllegalArgumentException("Invalid key");
 		}
 	}
@@ -321,49 +326,50 @@ public class GmmlDataObject
 			case 5: result = getWidth(); break;
 			case 6: result = getHeight(); break;
 			
-			case 7: result = getShapeType(); break;
-			case 8: result = getRotation(); break;
+			case 7: result = getFillColor(); break;
+			case 8: result = getShapeType(); break;
+			case 9: result = getRotation(); break;
 			
-			case 9: result = getStartX(); break;
-			case 10: result = getStartY(); break;
-			case 11: result = getEndX(); break;
-			case 12: result = getEndY(); break;
-			case 13: result = getLineType(); break;
-			case 14: result = getLineStyle(); break;
+			case 10: result = getStartX(); break;
+			case 11: result = getStartY(); break;
+			case 12: result = getEndX(); break;
+			case 13: result = getEndY(); break;
+			case 14: result = getLineType(); break;
+			case 15: result = getLineStyle(); break;
 			
-			case 15: result = getOrientation(); break;
+			case 16: result = getOrientation(); break;
 						
-			case 16: result = getGeneProductName(); break;
-			case 17: result = getDataSource(); break;
-			case 18: result = getGeneID(); break;
-			case 19: result = getXref(); break;
-			case 20: result = getBackpageHead(); break;
-			case 21: result = getGeneProductType(); break;
+			case 17: result = getGeneProductName(); break;
+			case 18: result = getDataSource(); break;
+			case 19: result = getGeneID(); break;
+			case 20: result = getXref(); break;
+			case 21: result = getBackpageHead(); break;
+			case 22: result = getGeneProductType(); break;
 			
-			case 22: result = getLabelText(); break;	
-			case 23: result = getFontName(); break;
-			case 24: result = isBold(); break;
-			case 25: result = isItalic(); break;
-			case 26: result = getFontSize(); break;
+			case 23: result = getLabelText(); break;	
+			case 24: result = getFontName(); break;
+			case 25: result = isBold(); break;
+			case 26: result = isItalic(); break;
+			case 27: result = getFontSize(); break;
 
-			case 27: result = getMapInfoName(); break;
-			case 28: result = getOrganism (); break;
-			case 29: result = getDataSource (); break;
-			case 30: result = getVersion (); break;
-			case 31: result = getAuthor (); break;
-			case 32: result = getMaintainedBy(); break;
-			case 33: result = getEmail (); break;
-			case 34: result = getLastModified (); break;
-			case 35: result = getAvailability (); break;
-			case 36: result = getBoardWidth (); break;
-			case 37: result = getBoardHeight (); break;
-			case 38: result = getWindowWidth (); break;
-			case 39: result = getWindowHeight (); break;
+			case 28: result = getMapInfoName(); break;
+			case 29: result = getOrganism (); break;
+			case 30: result = getDataSource (); break;
+			case 31: result = getVersion (); break;
+			case 32: result = getAuthor (); break;
+			case 33: result = getMaintainedBy(); break;
+			case 34: result = getEmail (); break;
+			case 35: result = getLastModified (); break;
+			case 36: result = getAvailability (); break;
+			case 37: result = getBoardWidth (); break;
+			case 38: result = getBoardHeight (); break;
+			case 39: result = getWindowWidth (); break;
+			case 40: result = getWindowHeight (); break;
 
-			case 40: result = getGraphId (); break;
-			case 41: result = getStartGraphRef (); break;
-			case 42: result = getEndGraphRef (); break;
-
+			case 41: result = getGraphId (); break;
+			case 42: result = getStartGraphRef (); break;
+			case 43: result = getEndGraphRef (); break;
+			case 44: result = isTransparent (); break;
 		}
 
 		return result;
@@ -388,6 +394,7 @@ public class GmmlDataObject
 		result.centerx = centerx;
 		result.centery = centery;
 		result.color = color;
+		result.fillColor = fillColor;
 		result.comment = comment;
 		result.dataSource = dataSource;
 		result.email = email;
@@ -427,7 +434,6 @@ public class GmmlDataObject
 		result.startGraphRef = startGraphRef;
 		result.endGraphRef = endGraphRef;
 		result.graphId = graphId;
-		
 		return result;
 	}
 
@@ -528,7 +534,21 @@ public class GmmlDataObject
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
 		}
 	}
-	
+
+	/** 
+	 * if fillcolor is null, that means transparent!
+	 */
+	protected RGB fillColor = null;	
+	public RGB getFillColor() { return fillColor; }
+	public void setFillColor(RGB v) 
+	{
+		if (fillColor != v)
+		{
+			fillColor = v;
+			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
+		}
+	}
+
 	protected boolean fTransparent;
 	public boolean isTransparent() { return fTransparent; }
 	public void setTransparent(boolean v) 

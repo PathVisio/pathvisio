@@ -213,7 +213,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			"Center X", "Center Y", "Width", "Height", 
 			
 			// shape
-			"Shape Type", "Rotation", 
+			"FillColor", "Shape Type", "Rotation", 
 			
 			// line
 			"Start X", "Start Y", "End X", "End Y",			
@@ -238,7 +238,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			"BoardWidth", "BoardHeight", "WindowWidth", "WindowHeight",
 
 			// other
-			"GraphId", "StartGraphRef", "EndGraphRef"
+			"GraphId", "StartGraphRef", "EndGraphRef",
+					
+			"Transparent"
 
 	});
 
@@ -254,7 +256,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			DOUBLE, DOUBLE, DOUBLE, DOUBLE, 
 			
 			// shape
-			TYPE, DOUBLE, 
+			TYPE, COLOR, TYPE, DOUBLE, 
 			
 			// line
 			DOUBLE, DOUBLE, DOUBLE, DOUBLE,			

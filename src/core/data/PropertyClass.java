@@ -23,16 +23,16 @@ package data;
  */
 public class PropertyClass 
 {
-	final static int BOOLEAN = 0;
-	final static int DOUBLE = 1;
-	final static int INTEGER = 2;
-	final static int DATASOURCE= 3;
-	final static int LINESTYLE = 4;
-	final static int COLOR = 5;
-	final static int STRING = 6;
-	final static int ORIENTATION = 7;
-	final static int SHAPETYPE = 8;
-	final static int LINETYPE = 9;
-	final static int GENETYPE = 10;
-	final static int FONT = 11;
+	public final static int BOOLEAN = 0;
+	public final static int DOUBLE = 1;
+	public final static int INTEGER = 2;
+	public final static int DATASOURCE= 3;
+	public final static int LINESTYLE = 4;
+	public final static int COLOR = 5;
+	public final static int STRING = 6;
+	public final static int ORIENTATION = 7;
+	public final static int SHAPETYPE = 8;
+	public final static int LINETYPE = 9;
+	public final static int GENETYPE = 10;
+	public final static int FONT = 11;
 }

@@ -233,6 +233,7 @@ public class PathwaySearchComposite extends Composite {
 								"pathwaysContainingGeneID", 
 								new Class[] { String.class, String.class, File.class, 
 										SearchResultTable.class, SearchRunnableWithProgress.class });
+						SearchRunnableWithProgress.setMonitorInfo("Searching", (int)SearchMethods.TOTAL_WORK);
 						srwp.setArgs(new Object[] {id, code, new File(folder), searchResultTable, srwp });
 						ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 						try { dialog.run(true, true, srwp); } catch(Exception ex) 

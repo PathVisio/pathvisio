@@ -58,7 +58,7 @@ public class RWizard extends Wizard {
 				new SimpleRunnableWithProgress(ps.getClass(), "performFinish", new Class[] { });
 			srwp.setArgs(new Object[] { });
 			srwp.setInstance(ps);
-			SimpleRunnableWithProgress.setTotalWork(IProgressMonitor.UNKNOWN);
+			SimpleRunnableWithProgress.setMonitorInfo("", IProgressMonitor.UNKNOWN);
 			getContainer().run(true, true, srwp);
 					
 			RDataIn.displayResults(RDataIn.getResultSets(ps.getResultVar()), ps.function);

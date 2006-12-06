@@ -23,6 +23,7 @@ import graphics.GmmlSelectionBox.SelectionListener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
@@ -115,9 +116,70 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 		List<IdCodePair> crfs = GmmlGdb.getCrossRefs(id, code);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
-		for(IdCodePair cr : crfs)
-			crt.append(cr.getId() + ", " + cr.getCode() + "<br>");
+		for(IdCodePair cr : crfs) {
+			String idtxt = cr.getId();
+			String url = getCrossRefLink(cr);
+			if(url != null)
+				idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
+			crt.append( idtxt + ", " + cr.getCode() + "<br>");
+		}
 		return crt.toString();
+	}
+	
+	String getCrossRefLink(IdCodePair idc) {
+		String c = idc.getCode();
+		String id = idc.getId();
+		if(c.equalsIgnoreCase("En"))
+			return "http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q=" + id;
+		if(c.equalsIgnoreCase("P"))
+			return "http://www.expasy.org/uniprot/" + id;
+		if(c.equalsIgnoreCase("Q")) {
+			String pre = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?";
+			if(id.startsWith("NM")) {
+				return pre + "db=Nucleotide&cmd=Search&term=" + id;
+			} else {
+				return pre + "db=Protein&cmd=search&term=" + id;
+			}
+		}
+		if(c.equalsIgnoreCase("T"))
+			return "http://godatabase.org/cgi-bin/go.cgi?view=details&search_constraint=terms&depth=0&query=" + id;
+		if(c.equalsIgnoreCase("I"))
+			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
+		if(c.equalsIgnoreCase("Pd"))
+			return "http://bip.weizmann.ac.il/oca-bin/ocashort?id=" + id;
+		if(c.equalsIgnoreCase("X"))
+			return "http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id=" + id;
+		if(c.equalsIgnoreCase("Em"))
+			return "http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id=" + id;
+		if(c.equalsIgnoreCase("L"))
+			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids=" + id;
+		if(c.equalsIgnoreCase("H"))
+			return "http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id=" + id;
+		if(c.equalsIgnoreCase("I"))
+			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
+		if(c.equalsIgnoreCase("M"))
+			return "http://www.informatics.jax.org/searches/accession_report.cgi?id=" + id;
+		if(c.equalsIgnoreCase("Om"))
+			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?" + id;
+		if(c.equalsIgnoreCase("Pf"))
+			return "http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?" + id;
+		if(c.equalsIgnoreCase("R"))
+			return "http://rgd.mcw.edu/generalSearch/RgdSearch.jsp?quickSearch=1&searchKeyword=" + id;
+		if(c.equalsIgnoreCase("D"))
+			return "http://db.yeastgenome.org/cgi-bin/locus.pl?locus=" + id;
+		if(c.equalsIgnoreCase("S"))
+			return "http://www.expasy.org/uniprot/" + id;
+		if(c.equalsIgnoreCase("U")) {
+			String [] org_nr = id.split("\\.");
+			if(org_nr.length == 2) {
+				return "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=" + 
+				org_nr[0] + "&CID=" + org_nr[1];
+			}
+			else {
+				return null;
+			}
+		}
+		return null;
 	}
 	
 	/**

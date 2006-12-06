@@ -42,6 +42,8 @@ public abstract class SearchMethods {
 	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";
 	public static final String MSG_NOTHING_FOUND = "Nothing found";
 	public static final String MSG_CANCELLED = "cancelled";
+	
+	public static final double TOTAL_WORK = 1000.0;
 		
 	/**
 	 * Search for pathways containing the given gene and display result in given result table
@@ -81,7 +83,7 @@ public abstract class SearchMethods {
 		List<IdCodePair> refs = GmmlGdb.getCrossRefs(id, code);
 		if(refs.size() == 0) throw new NoGdbException();
 		
-		SearchRunnableWithProgress.monitorWorked(200);
+		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));
 		
 		//get all pathway files in the folder and subfolders
 		ArrayList<File> pathways = FileUtils.getFiles(folder, GmmlVision.PATHWAY_FILE_EXTENSION, true);
@@ -107,7 +109,7 @@ public abstract class SearchMethods {
 					break;
 				}
 			}
-			SearchRunnableWithProgress.monitorWorked((int)Math.ceil(800.0 / pathways.size()));
+			SearchRunnableWithProgress.monitorWorked((int)Math.ceil(TOTAL_WORK / pathways.size()));
 		}
 		if(srs.getResults().size() == 0) throw new NothingFoundException();
 	}
@@ -160,7 +162,7 @@ public abstract class SearchMethods {
 
 				srt.refreshTableViewer(true);
 			}
-			SearchRunnableWithProgress.monitorWorked((int)Math.ceil(1000.0 / pathways.size()));
+			SearchRunnableWithProgress.monitorWorked((int)Math.ceil(TOTAL_WORK / pathways.size()));
 		}
 		if(srs.getResults().size() == 0) throw new NothingFoundException();
 	}

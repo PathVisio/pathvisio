@@ -192,8 +192,10 @@ public class SwtUtils {
 		
 		volatile static IProgressMonitor monitor;	//The progress monitor
 		
-		static String taskName = "";		//Taskname to display in the progress monitor
-		static int totalWork = 1000;		//Total work to be performed
+		static final String INIT_TASKNAME = "";
+		static final int INIT_TOTALWORK = 1000;
+		static String taskName = INIT_TASKNAME;		//Taskname to display in the progress monitor
+		static int totalWork = INIT_TOTALWORK;		//Total work to be performed
 				
 		/**
 		 * Constructor for this class<BR>
@@ -316,7 +318,7 @@ public class SwtUtils {
 			}
 			
 			monitor.done();
-			SimpleRunnableWithProgress.monitor = null;
+			resetMonitor();
 			
 			if(runException != null) {
 				if		(runException instanceof IllegalAccessException)
@@ -328,6 +330,12 @@ public class SwtUtils {
 				else
 					throw new InvocationTargetException(runException);
 			}
+		}
+		
+		void resetMonitor() {
+			monitor = null;
+			totalWork = INIT_TOTALWORK;
+			taskName = INIT_TASKNAME;
 		}
 		
 		private Throwable doInvoke() {

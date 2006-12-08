@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 
 import preferences.GmmlPreferences;
 import util.Utils;
@@ -59,7 +60,7 @@ public class StatsResultTable extends PathwayTable {
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		initTable(tableComposite);
 	}
-	
+		
 	Combo resultCombo;
 	private Composite createStatsComposite() {
 		Composite saveComp = new Composite(this, SWT.NULL);

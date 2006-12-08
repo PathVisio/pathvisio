@@ -20,18 +20,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class holds a collection of {@link Row}s sharing the same {@link Column}s
+ * This class holds a collection of {@link Row}s sharing the same {@link Cell}s
  */
 public class TableData {
-	private ArrayList<Column> columnTemp;
-	
+	private HashMap<String, Column> colHash;
+	private ArrayList<Column> cols;
 	private ArrayList<Row> rows;
 	
 	public TableData() {
-		columnTemp = new ArrayList<Column>();
+		colHash = new HashMap<String, Column>();
+		cols = new ArrayList<Column>();
 		rows = new ArrayList<Row>();
 	}
-	
+		
 	public ArrayList<Row> getResults() { return rows; }
 	public ArrayList<String> getColNames() { 
 		return getColNames(false); 
@@ -39,18 +40,24 @@ public class TableData {
 	
 	public ArrayList<String> getColNames(boolean showHidden) {
 		ArrayList<String> attrNames = new ArrayList<String>();
-		for(Column at : columnTemp) {
-			if(!showHidden) { if(at.isVisible()) attrNames.add(at.name); }
-			else attrNames.add(at.name);
+		for(Column c : cols) {
+			if(!showHidden) { if(c.isVisible()) attrNames.add(c.getName()); }
+			else attrNames.add(c.getName());
 		}
 		return attrNames;
 	}
 	
-	public void addColumn(String name, int type) {
-		columnTemp.add(new Column(name, type, true));
+	public void addColumn(String name) {
+		addColumn(name, true);
 	}
-	public void addColumn(String name, int type, boolean visible) {
-		columnTemp.add(new Column(name, type, visible));
+	public void addColumn(String name, boolean visible) {
+		Column c = new Column(name, visible);
+		cols.add(c);
+		colHash.put(name, c);	
+	}
+	
+	public Column colByName(String colName) {
+		return colHash.get(colName);
 	}
 	
 	private void addResult(Row rs) { rows.add(rs); }
@@ -59,72 +66,89 @@ public class TableData {
 	 * This class contains a single result from a search
 	 */
 	public class Row {
-		private HashMap<String, Column> columns;
+		private HashMap<Column, Cell> cells;
 		
 		public Row() { 
-			columns = new HashMap<String, Column>();
-			for(Column at : columnTemp) {
-				columns.put(at.getName(),
-						new Column(at.getName(), at.type, at.isVisible()));
+			cells = new HashMap<Column, Cell>();
+			for(Column c : cols) {
+				cells.put(c,
+						new Cell(c, Cell.TYPE_TEXT));
 			}
 			addResult(this);
 		}
 		
-		public void setColumn(String name, String value) {
-			if(columns.containsKey(name)) columns.get(name).setText(value);
+		public void setCell(String name, String value) {
+			Cell c = cells.get(colByName(name));
+			if(c != null) c.setText(value);
 		}
 		
-		public void setColumn(String name, double value) {
-			if(columns.containsKey(name)) columns.get(name).setNumeric(value);
+		public void setCell(String name, double value) {
+			Cell c = cells.get(colByName(name));
+			if(c != null) c.setNumeric(value);
 		}
 		
-		public void setColumn(String name, ArrayList value) {
-			if(columns.containsKey(name)) columns.get(name).setArray(value);
+		public void setCell(String name, ArrayList value) {
+			Cell c = cells.get(colByName(name));
+			if(c != null) c.setArray(value);
 		}
-		
-		public void overrideColumn(Column col) {
-			columns.put(col.getName(), col);
-		}
-		
-		public Column getColumn(String name) throws IllegalArgumentException {
-			if(columns.containsKey(name)) return columns.get(name);
-			throw new IllegalArgumentException("Attribute " + name + " does not exist");
-		}
-		
-		public ArrayList<Column> getColumns(boolean onlyVisible) {
-			ArrayList<Column> attr = new ArrayList<Column>();
-			for(Column at : columnTemp) {
-				Column atr = columns.get(at.getName());
-				if(atr.isVisible()) attr.add(atr);
-			}
-			return attr;
+				
+		public Cell getCell(String name) throws IllegalArgumentException {
+			Cell c = cells.get(colByName(name));
+			if(c != null) return c;
+			else 
+				throw new IllegalArgumentException("Attribute " + name + " does not exist");
 		}
 	}
 	
 	/**
-	 * This class represents a column, which can either
+	 * This class represents a column
+	 */
+	public class Column {
+		String name;
+		boolean visible;
+		
+		public Column(String name, boolean visible) {
+			this.name = name;
+			this.visible = visible;
+		}
+		
+		public Column(String name) {
+			this(name, true);
+		}
+		
+		boolean isVisible() { return visible; }
+		String getName() { return name; }
+	}
+	
+	/**
+	 * This class represents a cell, which can either
 	 * have a numeric or text value
 	 */
-	public class Column implements Comparable {
+	public class Cell implements Comparable {
+		Column col;
+		
 		public static final int TYPE_TEXT = 0;
 		public static final int TYPE_ARRAYLIST = 1;
 		public static final int TYPE_NUM  = 2;
-		
-		private String name;
-		
+				
 		private String textValue;
 		private double numValue;
 		private ArrayList arrayValue;
 		
 		private int type;
-		private boolean visible;
 		
-		public Column(String n, int t) { name = n; type = t; textValue = ""; this.visible = true; }
-		public Column(String n, int t, boolean visible) { this(n, t); this.visible = visible; }
+		public Cell(Column c, int t) {
+			col = c;
+			type = t; 
+			textValue = ""; 
+		}
 		
-		public void setType(int type) { this.type = type; }
+		public Column getColumn() { return col; }
 		
-		public String getName() { return name; }
+		public void setType(int type) { 
+			this.type = type;
+		}
+		
 		public String getText() { 
 			String text = "";
 			switch(type) {
@@ -137,51 +161,35 @@ public class TableData {
 		
 		public double getNumeric() { return numValue; }
 		public ArrayList getArray() { return arrayValue; }
-		public void setText(String value) { textValue = value; }
-		public void setNumeric(double value) { numValue = value; }
-		public void setArray(ArrayList value) { arrayValue = value; }
-		public boolean isVisible() { return visible; }
 		
+		public void setText(String value) {
+			setType(TYPE_TEXT);
+			textValue = value; 
+		}
+		public void setNumeric(double value) {
+			setType(TYPE_NUM);
+			numValue = value; 
+		}
+		public void setArray(ArrayList value) { 
+			setType(TYPE_ARRAYLIST);
+			arrayValue = value; 
+		}
+				
 		public int compareTo(Object o) {
-			Column c = (Column)o;
-			
-//			switch(type) {
-//			case TYPE_TEXT: 
-//				{
-//					System.out.println("COMPARE: " + c.getText() + ", " + c.getText());
-//					//Try to treat as numeric
-//					double numThis = 0;
-//					double numThat = 0;
-//					boolean isNumThis = true;
-//					boolean isNumThat = true;
-//					try { numThis = Double.parseDouble(textValue); } 
-//					catch(NumberFormatException e) { isNumThis = false; }
-//					try { numThat = Double.parseDouble(c.getText()); } 
-//					catch(NumberFormatException e) { isNumThat = false; }
-//					
-//					if(isNumThis && isNumThat) 	{
-//						double diff = numThis - numThat;
-//						return (int)(diff > 0 ? Math.ceil(diff) : Math.floor(diff));
-//					}
-//					if(isNumThis) return 1;
-//					if(isNumThat) return -1;
-//					//Both are strings
-//					return textValue.compareTo(c.getText());
-//				}
-//			case TYPE_NUM: return (int)(numValue - c.getNumeric());
-//			case TYPE_ARRAYLIST: return arrayValue.size() - c.getArray().size();
-//			default: return -1;
-			
+			Cell c = (Cell)o;
+						
 			if(type == c.type) {
 				switch(type) {
 				case TYPE_TEXT: return textValue.compareTo(c.textValue);
-				case TYPE_NUM: return (int)Math.ceil(numValue - c.numValue);
+				case TYPE_NUM:
+					//Make sure NaNs are lowest
+					if(Double.isNaN(numValue)) return -1;
+					if(Double.isNaN(c.numValue)) return 1;
+					return Double.compare(numValue, c.numValue);
 				case TYPE_ARRAYLIST: return arrayValue.size() - c.arrayValue.size();
 				default: return -1;
 				}
 			} else return type - c.type;
 		}
-		
-		
 	}
 }

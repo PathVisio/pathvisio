@@ -64,7 +64,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 			if(sr == null) return; //Nothing selected
 			
 			try {
-				ArrayList idsFound = sr.getColumn(COLUMN_FOUND_IDS).getArray();
+				ArrayList idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
 				GmmlGeneProduct gp = null;
 				for(GmmlDrawingObject o : drawing.getDrawingObjects()) {
 					if(o instanceof GmmlGeneProduct) {

@@ -296,6 +296,7 @@ public class RController implements ApplicationEventListener{
 		}
 		Pattern regex = Pattern.compile(PKG_NAME + "_[0-9].[0-9].[0-9]." + ext);
 		for(String f : dircontent) {
+			GmmlVision.log.trace(f);
 			if(regex.matcher(f).find()) {
 				pkgFile =  JarUtils.resourceToNamedTempFile(f, new File(f).getName());
 				if(pkgFile != null) break;

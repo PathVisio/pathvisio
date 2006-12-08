@@ -33,7 +33,6 @@ import util.FileUtils;
 import util.XmlUtils.PathwayParser;
 import util.tableviewer.PathwayTable;
 import util.tableviewer.TableData;
-import util.tableviewer.TableData.Column;
 import util.tableviewer.TableData.Row;
 import data.GmmlGdb;
 import data.GmmlGdb.IdCodePair;
@@ -73,10 +72,10 @@ public abstract class SearchMethods {
 			throws SearchException, SAXException {
 		
 		TableData srs = new TableData();
-		srs.addColumn("pathway", Column.TYPE_TEXT);
-		srs.addColumn("directory", Column.TYPE_TEXT);
-		srs.addColumn(PathwayTable.COLNAME_FILE, Column.TYPE_TEXT, false);
-		srs.addColumn(SearchResultTable.COLUMN_FOUND_IDS, Column.TYPE_ARRAYLIST, false);
+		srs.addColumn("pathway");
+		srs.addColumn("directory");
+		srs.addColumn(PathwayTable.COLNAME_FILE, false);
+		srs.addColumn(SearchResultTable.COLUMN_FOUND_IDS, false);
 
 		srt.setTableData(srs);
 		//Get all cross references
@@ -99,12 +98,12 @@ public abstract class SearchMethods {
 			for(PathwayParser.Gene gene : genes) {
 				if(refs.contains(new IdCodePair(gene.getId(), gene.getCode()))) {//Gene found, add pathway to search result and break
 					Row sr = srs.new Row();
-					sr.setColumn("pathway", f.getName());
-					sr.setColumn("directory", f.getParentFile().getName());
-					sr.setColumn(PathwayTable.COLNAME_FILE, f.getAbsolutePath());
+					sr.setCell("pathway", f.getName());
+					sr.setCell("directory", f.getParentFile().getName());
+					sr.setCell(PathwayTable.COLNAME_FILE, f.getAbsolutePath());
 					ArrayList<String> idsFound = new ArrayList<String>();
 					idsFound.add(gene.getId());
-					sr.setColumn(SearchResultTable.COLUMN_FOUND_IDS, idsFound);
+					sr.setCell(SearchResultTable.COLUMN_FOUND_IDS, idsFound);
 					srt.refreshTableViewer(true);
 					break;
 				}
@@ -122,11 +121,11 @@ public abstract class SearchMethods {
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		
 		TableData srs = new TableData();
-		srs.addColumn("pathway", Column.TYPE_TEXT);
-		srs.addColumn("directory", Column.TYPE_TEXT);
-		srs.addColumn(PathwayTable.COLNAME_FILE, Column.TYPE_TEXT, false);
-		srs.addColumn("namesFound", Column.TYPE_ARRAYLIST);
-		srs.addColumn(SearchResultTable.COLUMN_FOUND_IDS, Column.TYPE_ARRAYLIST, false);
+		srs.addColumn("pathway");
+		srs.addColumn("directory");
+		srs.addColumn(PathwayTable.COLNAME_FILE, false);
+		srs.addColumn("namesFound");
+		srs.addColumn(SearchResultTable.COLUMN_FOUND_IDS, false);
 
 		srt.setTableData(srs);
 		
@@ -154,11 +153,11 @@ public abstract class SearchMethods {
 			}
 			if(matched.size() > 0) {
 				Row sr = srs.new Row();
-				sr.setColumn("pathway", f.getName());
-				sr.setColumn("directory", f.getParentFile().getName());
-				sr.setColumn(PathwayTable.COLNAME_FILE, f.getAbsolutePath());
-				sr.setColumn(SearchResultTable.COLUMN_FOUND_IDS, idsFound);
-				sr.setColumn("namesFound", namesFound);
+				sr.setCell("pathway", f.getName());
+				sr.setCell("directory", f.getParentFile().getName());
+				sr.setCell(PathwayTable.COLNAME_FILE, f.getAbsolutePath());
+				sr.setCell(SearchResultTable.COLUMN_FOUND_IDS, idsFound);
+				sr.setCell("namesFound", namesFound);
 
 				srt.refreshTableViewer(true);
 			}

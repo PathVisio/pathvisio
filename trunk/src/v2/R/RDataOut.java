@@ -42,6 +42,7 @@ import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
 import visualization.colorset.Criterion;
 import R.RCommands.RException;
+import R.RCommands.RInterruptedException;
 import R.RCommands.RObjectContainer;
 import R.RCommands.RTemp;
 import R.RCommands.RniException;
@@ -306,32 +307,47 @@ public class RDataOut {
 			return gp;
 		}
 		
-		void addCrossRefs(DataSet dataSet) throws Exception {
+		void addCrossRefs(DataSet dataSet) throws Exception {			
+			int nRep = dataSet.reporters.length;
+			int nPwg = geneProducts.size();
+			if(nRep > nPwg) {
+				addCrossRefsByGeneProduct(dataSet);
+			} else {
+				addCrossRefsByReporter(dataSet);
+			}
+		}
+		
+		private void addCrossRefsByGeneProduct(DataSet dataSet) throws RInterruptedException {
 			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
 			
-			StopWatch sw = new StopWatch();
-			sw.start();
 			HashMap repHash = dataSet.getReporterHash();
-			sw.stopToLog("creating reporter hashmap");
-			
-			sw.start();
-			StopWatch sw2 = new StopWatch();
+
 			for(IdCodePair pwidc : geneProducts.keySet()) {
-				sw2.start();
 				RCommands.checkCancelled();
 			
 				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
-				sw2.stopToLog("\tfetching crossrefs for " + pwidc);
-				sw2.start();
 				for(IdCodePair ref : pwrefs) {
 					if(repHash.containsKey(ref)) {
 						geneProducts.get(pwidc).addReference(ref);
 					}
 				}
-				sw2.stopToLog("\t\tmatching with reporters");
 				SimpleRunnableWithProgress.monitorWorked(worked);
 			}
-			sw.stopToLog("Fetching crossrefs");
+		}
+		
+		private void addCrossRefsByReporter(DataSet dataSet) throws RInterruptedException {
+			int worked = (int)((double)(totalWorkPws * contribGdb) / dataSet.reporters.length);
+			
+			for(IdCodePair rep : dataSet.reporters) {
+				RCommands.checkCancelled();
+			
+				List<IdCodePair> reprefs = GmmlGdb.getCrossRefs(rep);
+				for(IdCodePair ref : reprefs) {
+					GeneProduct gp = geneProducts.get(ref);
+					if(gp != null) gp.addReference(rep);
+				}
+				SimpleRunnableWithProgress.monitorWorked(worked);
+			}
 		}
 }
 	
@@ -353,7 +369,9 @@ public class RDataOut {
 		}
 		
 		void addGeneProduct(IdCodePair ref) {
-			geneProducts.add(pws.getUniqueGeneProduct(ref));
+			if(ref.valid()) {
+				geneProducts.add(pws.getUniqueGeneProduct(ref));
+			}
 		}
 		
 		long getRef() throws RException {			
@@ -373,13 +391,8 @@ public class RDataOut {
 	static class GeneProduct extends RObject {		
 		List<IdCodePair> refs;
 		
-		GeneProduct() {
+		private GeneProduct() {
 			refs = new ArrayList<IdCodePair>();
-		}
-		
-		GeneProduct(String id, String code) {
-			this();
-			addReference(id, code);
 		}
 		
 		GeneProduct(IdCodePair idc) {
@@ -389,11 +402,6 @@ public class RDataOut {
 		
 		void addReference(IdCodePair idc) {
 			if(!refs.contains(idc)) refs.add(idc);
-		}
-		
-		void addReference(String id, String code) {
-			IdCodePair idc = new IdCodePair(id, code);
-			addReference(idc);
 		}
 		
 		String[] getRowNames() {
@@ -423,7 +431,9 @@ public class RDataOut {
 		}
 		
 		public void merge(GeneProduct gp) {
-			for(IdCodePair ref : gp.refs) addReference(ref);
+			for(IdCodePair ref : gp.refs) {
+				addReference(ref);
+			}
 		}
 		
 		public String toString() {

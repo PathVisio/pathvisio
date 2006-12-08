@@ -139,7 +139,7 @@ public class RDataIn {
 			name = RCommands.eval("name(" + varName + ")", true).asString();
 			String[] cols = RCommands.colnames(varName);
 			for(String col : cols) {
-				addColumn(col, Column.TYPE_TEXT, !col.equalsIgnoreCase(PathwayTable.COLNAME_FILE));
+				addColumn(col, !col.equalsIgnoreCase(PathwayTable.COLNAME_FILE));
 			}
 			int nrow = RCommands.dim(varName)[0];
 			for(int i = 1; i < nrow + 1; i++) {
@@ -148,10 +148,9 @@ public class RDataIn {
 				for(int j = 0; j < data.length; j++) {
 					try { //Try to parse data as number
 						double num = Double.parseDouble(data[j]);
-						row.overrideColumn(new Column(cols[j], Column.TYPE_NUM));
-						row.setColumn(cols[j], num);
+						row.setCell(cols[j], num);
 					} catch(NumberFormatException e) {
-						row.setColumn(cols[j], data[j]);
+						row.setCell(cols[j], data[j]);
 					}
 					
 				}

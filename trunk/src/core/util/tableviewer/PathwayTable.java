@@ -132,7 +132,7 @@ public class PathwayTable extends Composite {
 			((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
 			if(sr == null) return;
 			try {
-				String pw = sr.getColumn(COLNAME_FILE).getText();
+				String pw = sr.getCell(COLNAME_FILE).getText();
 				GmmlVision.openPathway(pw);
 			} catch(Exception ex) { 
 				GmmlVision.log.error("when trying to open pathway from pathway table", ex);
@@ -163,7 +163,7 @@ public class PathwayTable extends Composite {
 			TableData.Row sr = (TableData.Row)element;
 			String name = (String)tableViewer.getColumnProperties()[columnIndex];
 			
-			try { return sr.getColumn(name).getText(); } catch (Exception e) { return "error"; }
+			try { return sr.getCell(name).getText(); } catch (Exception e) { return "error"; }
 		}
 
 		public void addListener(ILabelProviderListener listener) {	}
@@ -188,14 +188,14 @@ public class PathwayTable extends Composite {
 			
 			Row r1, r2;
 			if(sortDirection == SWT.UP) {
-				r1 = (Row)e2;
-				r2 = (Row)e1;
-			} else {
 				r1 = (Row)e1;
 				r2 = (Row)e2;
+			} else {
+				r1 = (Row)e2;
+				r2 = (Row)e1;
 			}
 
-			return r1.getColumn(property).compareTo(r2.getColumn(property));
+			return r1.getCell(property).compareTo(r2.getCell(property));
 		}
 	}
 }	

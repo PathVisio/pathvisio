@@ -32,7 +32,7 @@ require(pathVisio)
 		stop("set argument should have the same length (or number of rows) as number of reporters in dataset")
 
 	setnames = colnames(sets)
-	if(is.null(setnames)) colnames(sets) = .genSetNames(sets, name(dataSet))
+	if(is.null(setnames)) colnames(sets) = .setNames(sets, name(dataSet))
 	
 	#Progress reporting variables
 	reporters = reporters(dataSet)	
@@ -50,10 +50,12 @@ require(pathVisio)
 	cat("Calculating z-scores\n")
 	results = list()
 	for(i in 1:ncol(sets)) {
-		zscores = t(as.matrix(sapply(names(pathwaySet), function(pwname) {
+		zscores = t(sapply(names(pathwaySet), function(pwname) {
 			.calcStats(sets[,i], pwMatches[[pwname]], pathwaySet[[pwname]])
-		})))
-		colnames(zscores) = c("on pathway", "mapped", "in set", "z-score")
+		}))
+        colnames(zscores) = .statNames()
+        
+        print(zscores)
 	
 		##Create a ResultSet to return
 		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, stats = zscores)
@@ -80,7 +82,7 @@ require(pathVisio)
 	matchResult			
 }
 
-.genSetNames = function(sets, dataSetName) {
+.setNames = function(sets, dataSetName) {
 	sapply(1:ncol(sets), function(x) paste("zscore",dataSetName,"criterion",x,sep="-"))
 }
 
@@ -88,19 +90,23 @@ require(pathVisio)
 	N = length(reporters)			## Total number of genes measured
 	R = sum(as.logical(set))		## Total number of genes belonging to the set
 				
-	n = length(pathway)			## Total number of genes in the pathway
+	n = sum(reporterMatch)			## Total number of measured(!) genes in the pathway
 	r = sum(reporterMatch[as.logical(set)])	## Number of genes that are in the subset and on the pathway
-	
-    m = sum(reporterMatch)  ## Number of mapping genes
     
-	RoverN = R / N
+    zscore = .z(N, R, n, r)
+
+    P = length(pathway)     ## Total number of genes in the pathway
+    
+   c(P, n, r, zscore)
+}
+
+.statNames = function() { c("on pathway", "measured", "in set", "z-score") }
+
+.z = function(N, R, n, r) {
+    RoverN = R / N
 	num = r - n*RoverN
 	den = sqrt(n * RoverN * (1 - RoverN) * (1 - (n - 1)/(N - 1)))
-    zscore = num/den
-    
-    cat(paste(N,R,n,m,r,RoverN,num,den,zscore,sep="\t"))
-    cat("\n")
-	c(n, m, r, zscore)
+    num/den
 }
 
 zscore = VisioFunction(.zscore_impl,	name = "Z-score", 

@@ -325,6 +325,10 @@ public abstract class GmmlGdb {
 			IdCodePair idc = (IdCodePair)o;
 			return getName().compareTo(idc.getName());
 		}
+		
+		public boolean valid() {
+			return code.length() > 0 && id.length() > 0;
+		}
 	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {

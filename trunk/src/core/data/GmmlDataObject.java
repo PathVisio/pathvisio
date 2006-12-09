@@ -531,7 +531,7 @@ public class GmmlDataObject
 		}
 	}
 
-	protected boolean fTransparent;
+	protected boolean fTransparent = true;
 	public boolean isTransparent() { return fTransparent; }
 	public void setTransparent(boolean v) 
 	{

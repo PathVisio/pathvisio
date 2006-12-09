@@ -146,10 +146,12 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			{
 				if (master.containsKey(attr))
 				{
+					// increment
 					master.put(attr, master.get(attr) + 1);
 				}
 				else
 				{
+					// set to 1
 					master.put(attr, 1);
 				}
 			}
@@ -163,14 +165,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			}
 		}
 		// sortAttributes();
-		Collections.sort (attributes);
-		
-//		System.out.println ("--------------");
-//		for (String attr: attributes)
-//		{
-//			System.out.println(attr);
-//		}
-//		System.out.println ("--------------");
+		Collections.sort (attributes);		
 	}
 	
 //	void sortAttributes() {
@@ -217,6 +212,12 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		GmmlSelectionBox.addListener(this);
 	}
 	
+	/**
+	 * return the right cell editor for a certain object. Will return
+	 * one of existing editors. In the case of a list of possible values, 
+	 * a comboboxeditor will be set up with the proper values for
+	 * the drop down list.
+	 */
 	private CellEditor getCellEditor(Object element)
 	{
 		PropertyType key = (PropertyType)element;
@@ -283,7 +284,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				
 				// for all combobox types:
 				case PropertyClass.BOOLEAN:
-					return (Boolean)value;
+					return ((Boolean)value) ? 1 : 0;
 				case PropertyClass.LINETYPE:
 				case PropertyClass.SHAPETYPE:
 				case PropertyClass.ORIENTATION:
@@ -296,6 +297,15 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		public void modify(Object element, String property, Object value) {
 			PropertyType key = (PropertyType)((TableItem)element).getData();
 			
+			/*
+			 * Here, we transform the output of the cell editor
+			 * to a value understood by GmmlDataObject.SetProperty().
+			 * 
+			 * For linetype, shapetype, we go from Integer to Integer. easy
+			 * For boolean, we go from Integer to Boolean
+			 * For Double / Integer, we go from String to Double
+			 * For Datasource, we go from Integer to String.
+			 */
 			switch(key.type())
 			{
 			case PropertyClass.DOUBLE: 	
@@ -324,17 +334,15 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				if((Integer)value == -1) return; //Nothing selected
 				value = MappFormat.lDataSources.get((Integer)value);
 				break;
-//			case PropertyClass.BOOLEAN:
-//				try 
-//				{ 
-//					value = Boolean.parseBoolean((String)value); 
-//					break; 
-//				}
-//				catch(Exception e) 
-//				{ 
-//					GmmlVision.log.error("GmmlPropertyTable: Unable to parse boolean", e); 
-//					return; 
-//				}
+			case PropertyClass.BOOLEAN:
+				if ((Integer)value == 0)
+				{
+					value = new Boolean (false);
+				}
+				else
+				{
+					value = new Boolean (true);
+				}
 			}
 			
 			for(GmmlDataObject o : dataObjects) {

@@ -74,27 +74,27 @@ public class GmmlShape extends GmmlGraphicsShape
 		{
 			case ShapeType.RECTANGLE: 
 				buffer.setLineWidth (1);
-				buffer.fillRectangle (
-					startX,	startY,	width, height);
 				if (gdata.isTransparent())
-					buffer.drawRectangle (
-						startX,	startY,	width, height);				
+					buffer.fillRectangle (
+						startX,	startY,	width, height);
+				buffer.drawRectangle (
+					startX,	startY,	width, height);				
 				break;
 			case ShapeType.OVAL:				
 				buffer.setLineWidth (1);
-				buffer.fillOval (
-					startX, startY,	width, height);
 				if (gdata.isTransparent())
-					buffer.drawOval (
+					buffer.fillOval (
 						startX, startY,	width, height);
+				buffer.drawOval (
+					startX, startY,	width, height);
 				break;
 			case ShapeType.ARC:
 				buffer.setLineWidth (1);
-				buffer.fillArc(
-						startX, startY,	width, height, 0, 180);					
 				if (gdata.isTransparent())
-					buffer.drawArc(
-							startX, startY,	width, height, 0, 180);
+					buffer.fillArc(
+							startX, startY,	width, height, 0, 180);					
+				buffer.drawArc(
+						startX, startY,	width, height, 0, 180);
 				break;
 		}
 

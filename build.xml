@@ -27,7 +27,6 @@
 		<pathelement location="lib/BrowserLauncher.jar"/>
 		<pathelement location="lib/resources.jar"/>
 		<pathelement location="${build.v1.dir}"/>
-		<pathelement location="${build.core.dir}"/>
 	</path>
 
 	<path id="project.v2.class.path">
@@ -45,7 +44,6 @@
 		<pathelement location="lib/R-resources.jar"/>
 		<pathelement location="lib/plugins.jar"/>
 		<pathelement location="${build.v2.dir}"/>
-		<pathelement location="${build.core.dir}"/>
 	</path>
 
 	<target name="prepare">

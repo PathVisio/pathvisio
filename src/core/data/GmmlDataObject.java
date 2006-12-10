@@ -518,12 +518,13 @@ public class GmmlDataObject
 	}
 
 	/** 
-	 * if fillcolor is null, that means transparent!
+	 * fillcolor can't be null!
 	 */
-	protected RGB fillColor = null;	
+	protected RGB fillColor = new RGB (0, 0, 0);	
 	public RGB getFillColor() { return fillColor; }
 	public void setFillColor(RGB v) 
 	{
+		if (v == null) throw new IllegalArgumentException();
 		if (fillColor != v)
 		{
 			fillColor = v;

@@ -197,8 +197,7 @@ public class GmmlFormat {
 				break;
 			case ObjectType.SHAPE:
 				mapShapeData(o, e);
-				mapFillColor (o, e);
-				mapColor(o, e);
+				mapShapeColor (o, e);
 				mapNotesAndComment(o, e);
 				mapShapeType(o, e);
 				mapRotation(o, e);
@@ -292,14 +291,17 @@ public class GmmlFormat {
     	Element graphics = e.getChild("Graphics");
     	String scol = graphics.getAttributeValue("Color");
     	o.setColor (ColorConverter.gmmlString2Color(scol));
+    	o.setTransparent(scol == null || scol.equals("Transparent"));
 	}
 
-	private static void mapFillColor(GmmlDataObject o, Element e)
+	private static void mapShapeColor(GmmlDataObject o, Element e)
 	{
     	Element graphics = e.getChild("Graphics");
     	String scol = graphics.getAttributeValue("FillColor");
     	o.setFillColor (ColorConverter.gmmlString2Color(scol));
     	o.setTransparent (scol == null || scol.equals("Transparent"));
+    	scol = graphics.getAttributeValue("Color");
+    	o.setColor (ColorConverter.gmmlString2Color(scol));
 	}
 
 	private static void updateColor(GmmlDataObject o, Element e)
@@ -309,12 +311,15 @@ public class GmmlFormat {
 			Element jdomGraphics = e.getChild("Graphics");
 			if(jdomGraphics != null) 
 			{
-				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(o.getColor()));
+				if (o.isTransparent())
+					jdomGraphics.setAttribute("Color", "Transparent");
+				else
+					jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(o.getColor()));
 			}
 		}
 	}
 		
-	private static void updateFillColor(GmmlDataObject o, Element e)
+	private static void updateShapeColor(GmmlDataObject o, Element e)
 	{
 		if(e != null) 
 		{
@@ -324,8 +329,8 @@ public class GmmlFormat {
 				if (o.isTransparent())
 					jdomGraphics.setAttribute("FillColor", "Transparent");
 				else
-					jdomGraphics.setAttribute("FillColor", ColorConverter.color2HexBin(o.getColor()));
-			}
+					jdomGraphics.setAttribute("FillColor", ColorConverter.color2HexBin(o.getFillColor()));
+				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(o.getColor()));			}
 		}
 	}
 
@@ -619,8 +624,7 @@ public class GmmlFormat {
 				e = new Element ("Shape");		
 				updateNotesAndComment(o, e);
 				e.addContent(new Element("Graphics"));
-				updateColor(o, e);
-				updateFillColor(o, e);
+				updateShapeColor(o, e);
 				updateRotation(o, e);
 				updateShapeData(o, e);
 				updateShapeType(o, e);

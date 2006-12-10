@@ -41,7 +41,7 @@ use converter;
 
 my $dirMapps = "c:/GenMAPP 2 Data/MAPPs";
 my $dirGpml = "c:/Gmml-Visio Data/MAPPs";
-my $fnConf = "c:/prg/convert_test.conf";
+my $fnConf = "d:/prg/convert_test.conf";
 
 #################
 #   globals     #
@@ -139,21 +139,21 @@ my %okDirs;
 # find all mapps on computer...
 
 my @list;
-#~ sub wanted { if (-f $_ && /\.mapp$/i && ! (/_back\.mapp$/i)) { push @list, $File::Find::name; } }
-#~ find (\&wanted, $dirMapps);
+sub wanted { if (-f $_ && /\.mapp$/i && ! (/_back\.mapp$/i)) { push @list, $File::Find::name; } }
+find (\&wanted, $dirMapps);
 
-@list = ("C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_1_BiGCaT.mapp",
-	"C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_2_BiGCaT.mapp",
-	"C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_Meta_BiGCaT.mapp",
-	"C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA repair.mapp",
-	"C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA replication.mapp",
-	"C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/I-kappaB kinase NF-kappaB cascade.mapp",
+#~ @list = ("C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_1_BiGCaT.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_2_BiGCaT.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_Contributed_20060824/metabolic_process-GenMAPP/Hs_Fatty_Acid_Beta_Oxidation_Meta_BiGCaT.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA repair.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/DNA replication.mapp",
+	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_GO_Samples_20050810/Biological process/I-kappaB kinase NF-kappaB cascade.mapp",
 	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/aaa.mapp",
 	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_1_1_Trichloro_2_2_bis_4_chlorophenyl_ethane_DDT_degradation.mapp",
 	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_1_4_Dichlorobenzene_degradation.mapp",
 	#~ "C:/GenMAPP 2 Data/MAPPs/Hs_KEGG_Converted_20041111/Hs_2_4_Dichlorobenzoate_degradation.mapp",
-	"C:/GenMAPP 2 Data/MAPPs/Mm_GO_Samples_20050810/Biological Process/DNA packaging.mapp",
-	);
+	#~ "C:/GenMAPP 2 Data/MAPPs/Mm_GO_Samples_20050810/Biological Process/DNA packaging.mapp",
+	#~ );
 
 #~ sub wanted { if (-f $_ && /\.gpml$/i) { push @list, File::Spec->abs2rel ($File::Find::name, $dirGpmlOld); } }
 #~ find (\&wanted, $dirGpmlOld);

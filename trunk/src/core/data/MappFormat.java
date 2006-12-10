@@ -702,7 +702,14 @@ public class MappFormat
 				systemCodes, dataSources, syscode));  
 
         o.setBackpageHead(mappObject[colHead]);
-        o.setGeneProductName(mappObject[colID]);
+        if (mappObject[colID] == null)
+        {
+        	o.setGeneProductName("");
+        }
+        else
+        {
+        	o.setGeneProductName(mappObject[colID]);
+        }
         o.setGeneID(mappObject[colLabel]);
 
         // TODO:  for some IDs the type is known, e.g. SwissProt is always a
@@ -761,7 +768,15 @@ public class MappFormat
         
     	o.setLabelText(mappObject[colLabel]);
         
-        o.setFontName(mappObject[colID]);
+    	if (mappObject[colID] == null)
+    	{
+    		o.setFontName("");
+    	}
+    	else
+    	{
+    		o.setFontName(mappObject[colID]);
+    	}
+    	
         
         o.setFontSize(Double.parseDouble(mappObject[colSecondX]));
         
@@ -818,7 +833,14 @@ public class MappFormat
 		
         int i = Integer.parseInt(mappObject[colColor]);
         o.setTransparent(i < 0);
-		o.setFillColor(ConvertType.fromMappColor(mappObject[colColor]));	
+        if (shapeType == ShapeType.ARC)
+        {
+        	o.setColor(ConvertType.fromMappColor(mappObject[colColor]));
+        }
+        else
+        {
+        	o.setFillColor(ConvertType.fromMappColor(mappObject[colColor]));
+        }        
 		
         mapRotation (o, mappObject);        
         return o;
@@ -834,9 +856,15 @@ public class MappFormat
     		unmapShape (o, mappObject);
 		
 		// note: when converting gpml to mapp,
-		// line color is discarded
-		mappObject[colColor] = ConvertType.toMappColor(o.getFillColor(), o.isTransparent());	
-    	
+		// line color is discarded for oval and rect
+    	if (shapeType == ShapeType.ARC)
+    	{
+    		mappObject[colColor] = ConvertType.toMappColor(o.getColor(), o.isTransparent());	
+    	}
+    	else
+    	{
+    		mappObject[colColor] = ConvertType.toMappColor(o.getFillColor(), o.isTransparent());
+    	}
 		unmapRotation (o, mappObject);    	
     }
     

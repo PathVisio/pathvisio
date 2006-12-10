@@ -466,6 +466,7 @@
 						<xsd:attribute name="Height" type="Dimension"/>
 						<xsd:attribute name="Color" type="ColorType"/>
 						<xsd:attribute name="Rotation" type="xsd:float"/>
+						<xsd:attribute name="FillColor" type="ColorType"/>
 					</xsd:complexType>
 				</xsd:element>
 

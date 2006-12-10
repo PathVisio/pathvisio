@@ -50,11 +50,11 @@ public class Test extends TestCase implements GmmlListener {
 		assertEquals ("test set/get CenterX", 1.0, o.getCenterX(), 0.0001);		
 		
 		assertEquals ("Setting CenterX should generate single event", received.size(), 1);
-		assertEquals ("test getProperty()", 1.0, (Double)o.getProperty("CenterX"), 0.0001);
+		assertEquals ("test getProperty()", 1.0, (Double)o.getProperty(PropertyType.CENTERX), 0.0001);
 		
 		try 
 		{
-			o.setProperty("CenterX", null);
+			o.setProperty(PropertyType.CENTERX, null);
 			fail("Setting centerx property to null should generate exception");
 		}
 		catch (Exception e) {}
@@ -67,14 +67,7 @@ public class Test extends TestCase implements GmmlListener {
 	}
 	
 	public void testProperties()
-	{		
-		try 
-		{
-			o.setProperty("asdfg", new Object());
-			fail("Setting non-existing property should generate exception");
-		}
-		catch (Exception e) {}
-
+	{
 		try 
 		{
 			o.setProperty(null, new Object());
@@ -179,7 +172,7 @@ public class Test extends TestCase implements GmmlListener {
 		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);		
 		// note: parent not set yet!		
 		o2.setGraphId ("3");
-		data.add(o2) // reference should now be created
+		data.add(o2); // reference should now be created
 
 		assertNull ("default endGraphRef is null", l.getEndGraphRef());
 		

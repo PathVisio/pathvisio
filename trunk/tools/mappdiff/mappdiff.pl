@@ -181,9 +181,11 @@ sub magic_cmp
 		}
 		elsif ($col eq "Head" && $$row1{Type} eq "Label")
 		{
-			# trim trailing whitespace
-			$a =~ s/\s*$//;
-			$b =~ s/\s*$//;
+			#ignore heading for label.
+			# This occurs in c:/GenMAPP 2 Data/MAPPs/Cf_GO_Samples_20050810/Biological process/protein metabolism.mapp
+			# I think it is a bug in the way large GO maps are generated.
+			$a = 0;
+			$b = 0;
 		}
 	
 		#defaults for empties:
@@ -234,6 +236,7 @@ sub object_row_diff
 	}
 	if ($output)
 	{
+		no warnings;
 		print "In row Type<", $$row1{Type}, "> ID<", $$row1{ID}, "> Label<", $$row1{Label}, 
 			"> CenterX<", $$row1{CenterX}, ">\n", $output;
 	}

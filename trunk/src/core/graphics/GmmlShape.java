@@ -74,7 +74,7 @@ public class GmmlShape extends GmmlGraphicsShape
 		{
 			case ShapeType.RECTANGLE: 
 				buffer.setLineWidth (1);
-				if (gdata.isTransparent())
+				if (!gdata.isTransparent())
 					buffer.fillRectangle (
 						startX,	startY,	width, height);
 				buffer.drawRectangle (
@@ -82,7 +82,7 @@ public class GmmlShape extends GmmlGraphicsShape
 				break;
 			case ShapeType.OVAL:				
 				buffer.setLineWidth (1);
-				if (gdata.isTransparent())
+				if (!gdata.isTransparent())
 					buffer.fillOval (
 						startX, startY,	width, height);
 				buffer.drawOval (
@@ -90,11 +90,17 @@ public class GmmlShape extends GmmlGraphicsShape
 				break;
 			case ShapeType.ARC:
 				buffer.setLineWidth (1);
-				if (gdata.isTransparent())
-					buffer.fillArc(
-							startX, startY,	width, height, 0, 180);					
+				/**
+				 * Arcs are different from Oval and Rect, in that
+				 * they are not filled in GenMAPP, and that the
+				 * color column is used for the line color.
+				 * Likewise, we don't fill them in PathVisio.
+				 */
+//				if (!gdata.isTransparent())
+//					buffer.fillArc(
+//							startX, startY,	width, height, 90, 180);					
 				buffer.drawArc(
-						startX, startY,	width, height, 0, 180);
+						startX, startY,	width, height, 90, 180);
 				break;
 		}
 

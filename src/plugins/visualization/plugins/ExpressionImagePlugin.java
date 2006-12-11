@@ -549,5 +549,5 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		
 	}
 	
-	public Composite getToolTipComposite(Composite parent, GmmlGraphics g) { return null; }
+	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) { return null; }
 }

@@ -92,7 +92,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public String getName() { return NAME; }
 	public String getDescription() { return DESCRIPTION; }
 	
-	public void draw(GmmlGraphics g, PaintEvent e, GC buffer) {
+	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		if(g instanceof GmmlGeneProduct) {
 			GmmlGeneProduct gp = (GmmlGeneProduct) g;
 			Data data = GmmlGex.getCachedData(new IdCodePair(gp.getID(), gp.getSystemCode()));
@@ -119,7 +119,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		}
 	}
 	
-	public Composite getToolTipComposite(Composite parent, GmmlGraphics g) {
+	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) {
 		if(g instanceof GmmlGeneProduct) {
 			GmmlGeneProduct gp = (GmmlGeneProduct)g;
 			Data data = GmmlGex.getCachedData(new IdCodePair(gp.getID(), gp.getSystemCode()));
@@ -353,8 +353,8 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	}
 	
 	
-	public void updateSidePanel(Collection<GmmlGraphics> objects) { }
-	public void createSidePanelComposite(Composite parent) { }
+	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) { }
+	public void initSidePanel(Composite parent) { }
 
 	static final String XML_ATTR_FONTDATA = "font";
 	static final String XML_ATTR_AVG = "mean";

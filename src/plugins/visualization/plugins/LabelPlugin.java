@@ -84,17 +84,17 @@ public class LabelPlugin extends VisualizationPlugin {
 	public String getName() { return NAME; }
 	public String getDescription() { return DESCRIPTION; }
 	
-	public void createSidePanelComposite(Composite parent) {
+	public void initSidePanel(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NULL);
 		comp.setLayout(new FillLayout());
 		labelSidePanel = new Label(comp, SWT.CENTER);
 	}
 
-	public void draw(GmmlGraphics g, PaintEvent e, GC buffer) {
+	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		if(g instanceof GmmlGeneProduct) {
 			Font f = null;
 			
-			Region region = getVisualization().getReservedRegion(this, g);
+			Region region = getVisualization().provideDrawArea(this, g);
 			Rectangle area = region.getBounds();
 			
 			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
@@ -159,7 +159,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		return fd;
 	}
 	
-	public Composite getToolTipComposite(Composite parent, GmmlGraphics g) {
+	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) {
 		if(g instanceof GmmlGeneProduct) {
 			Composite comp = new Composite(parent, SWT.NULL);
 			comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -227,7 +227,7 @@ public class LabelPlugin extends VisualizationPlugin {
 	}
 	
 	
-	public void updateSidePanel(Collection<GmmlGraphics> objects) { }
+	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) { }
 	
 	private String getLabelText(GmmlGeneProduct g) {
 		switch(style) {

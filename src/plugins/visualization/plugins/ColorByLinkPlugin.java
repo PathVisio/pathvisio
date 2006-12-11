@@ -61,9 +61,9 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	public String getName() { return NAME; }
 	public String getDescription() { return DESCRIPTION; }
 	
-	public void createSidePanelComposite(Composite parent) { }
+	public void initSidePanel(Composite parent) { }
 
-	public void draw(GmmlGraphics g, PaintEvent e, GC buffer) {
+	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		String[] ids = parseIds(gd);
 		if(ids[0] != null) { //This is a shape
@@ -140,7 +140,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		return ids;
 	}
 		
-	public Composite getToolTipComposite(Composite parent, GmmlGraphics g) { return null; }
+	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) { return null; }
 	
-	public void updateSidePanel(Collection<GmmlGraphics> objects) {	}
+	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) {	}
 }

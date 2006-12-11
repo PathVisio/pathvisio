@@ -91,13 +91,13 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		setUseProvidedArea(true);
 	}
 		
-	public void draw(GmmlGraphics g, PaintEvent e, GC buffer) {
+	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		if(!(g instanceof GmmlGeneProduct)) return;
 		if(useSamples.size() == 0) return; //Nothing to draw
 		
 		GmmlGeneProduct gp = (GmmlGeneProduct) g;
 		
-		Region region = getVisualization().getReservedRegion(this, g);
+		Region region = getVisualization().provideDrawArea(this, g);
 		Rectangle area = region.getBounds();
 		
 		drawArea(gp, area, e, buffer);
@@ -170,7 +170,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		}
 	}
 	
-	public void createSidePanelComposite(Composite parent) { 
+	public void initSidePanel(Composite parent) { 
 		sidePanel = new Canvas(parent, SWT.NULL);
 		sidePanel.setBackground(sidePanel.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		sidePanel.addPaintListener(new PaintListener() {
@@ -180,7 +180,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		});
 	}
 	
-	public void updateSidePanel(Collection<GmmlGraphics> objects) {
+	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) {
 		spGraphics = objects;
 		sidePanel.redraw();
 	}

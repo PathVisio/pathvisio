@@ -320,20 +320,15 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	//TODO: Variable ctrlPressed is not set to false when editting labels.
 	//		Probably the keyRelease event is not picked up.
-    public boolean firstClick = true;
 	public void mouseDown(MouseEvent e)
 	{		
 		setFocus();
 		if (editMode)
 		{
-			if (newGraphics != NEWNONE && (ctrlPressed || firstClick))
+			if (newGraphics != NEWNONE)
 			{
 				newObject(new Point(e.x, e.y));
-				if (!ctrlPressed && !firstClick)
-				{
-					GmmlVision.getWindow().deselectNewItemActions();
-				}
-				firstClick =false;
+				GmmlVision.getWindow().deselectNewItemActions();
 			}
 			else
 			{

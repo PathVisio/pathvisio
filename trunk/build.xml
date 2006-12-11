@@ -51,6 +51,18 @@
 		<mkdir dir="${build.v2.dir}"/>
 		<mkdir dir="${build.plugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
+		
+		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
+			<arg line="-n ."/>
+		</exec>
+		<echo file="${src.dir}/core/gmmlVision/Revision.java">
+package gmmlVision;
+class Revision 
+{
+	public static final String REVISION = "${subversion_revision}";
+};
+</echo>
+		
 	</target>
 	
 	<target name="clean" description="Remove all generated files.">
@@ -84,7 +96,7 @@
 		</javac>
 	</target>
 
-	<target name="resources-jar" description="Generates jar with resources">
+	<target name="resources-jar" depends="prepare" description="Generates jar with resources">
 		<jar jarfile="lib/resources.jar">
 			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>

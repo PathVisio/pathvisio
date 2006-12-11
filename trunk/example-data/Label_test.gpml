@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway Name="" Data-Source="GenMAPP 2.0" Version="20060601" Author="" Maintained-By="" Email="" Availability="" Last-Modified="">
+  <Notes></Notes>
+  <Comment></Comment>
+  <Graphics BoardWidth="22700.0" BoardHeight="17000.0" WindowWidth="10800.0" WindowHeight="11085.0" />
+  <Label TextLabel="Default">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1150.0" CenterY="450.5" Width="890.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Regular">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Normal" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1150.0" CenterY="1150.0" Width="890.0" Height="270.0" />
+  </Label>
+  <Label TextLabel="Italic">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Normal" FontStyle="Italic" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1150.0" CenterY="1850.5" Width="575.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Bold Italic">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Italic" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1250.0" CenterY="3350.0" Width="1175.0" Height="270.0" />
+  </Label>
+  <Label TextLabel="Bold">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1150.0" CenterY="2600.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Label">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2750.0" CenterY="500.00000000000006" Width="710.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Regular Strikeout">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Normal" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Strikethru" FontSize="12" Color="000000" CenterX="2900.0" CenterY="450.0" Width="1880.0" Height="270.0" />
+  </Label>
+  <Label TextLabel="Italic Strikeout">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Normal" FontStyle="Italic" FontDecoration="Normal" FontStrikethru="Strikethru" FontSize="12" Color="000000" CenterX="2750.0" CenterY="1100.0" Width="1580.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Bold Strikeout">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Strikethru" FontSize="12" Color="000000" CenterX="2900.0" CenterY="1800.5" Width="1715.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Bold Italic Strikeout">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Italic" FontDecoration="Normal" FontStrikethru="Strikethru" FontSize="12" Color="000000" CenterX="3200.0" CenterY="2650.0" Width="2270.0" Height="270.0" />
+  </Label>
+  <Label TextLabel="Regular Strikeout Underline">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Normal" FontStyle="Normal" FontDecoration="Underline" FontStrikethru="Strikethru" FontSize="12" Color="000000" CenterX="3900.0" CenterY="3900.0" Width="2930.0" Height="270.0" />
+  </Label>
+  <Label TextLabel="Regular Underline">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Normal" FontStyle="Normal" FontDecoration="Underline" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1250.0" CenterY="3850.0000000000005" Width="1940.0000000000002" Height="270.0" />
+  </Label>
+  <Label TextLabel="Bold underline">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Underline" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1200.0" CenterY="4600.0" Width="1760.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Bold strikeout underline">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Underline" FontStrikethru="Strikethru" FontSize="12" Color="000000" CenterX="4000.0000000000005" CenterY="4700.0" Width="2825.0" Height="285.0" />
+  </Label>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Legend CenterX="0.0" CenterY="1701.0" />
+</Pathway>
+

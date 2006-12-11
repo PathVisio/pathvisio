@@ -14,12 +14,16 @@ test procedure: perform all these steps before a webstart release, and after mak
 # Search pathways for occurences of TNF (Gene symbol). Click on one to open it.
 # create a new pathway. 
 # draw two geneproducts and a line between them. draw a circle and a tbar.
+# link the two geneproducts with the line by changing graphRef and GraphId properties.
 # select everything, copy and paste
 # select two gene products and change their color property to blue
+# select a circle, make its rim red and center yellow.
 # zoom to 200%
 # zoom to fit
 # save to a temporary location. Export to a .mapp
 # Open the just created mapp in GenMAPP.
+# Open the online help.
+# Open the about box. Check if the revision nr. is correct
 
 == packaging
 

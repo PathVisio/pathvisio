@@ -16,6 +16,7 @@
 //
 package data;
 
+import gmmlVision.Globals;
 import gmmlVision.GmmlVision;
 
 import java.io.BufferedReader;
@@ -92,7 +93,7 @@ public class ImportExprDataWizard extends Wizard {
 				GmmlVision.log.error("while running expression data import process: " + e.getMessage(), e);
 			} // TODO: handle exception
 			ip.setTitle("Import finished");
-			ip.setDescription("Press finish to return to " + GmmlVision.APPLICATION_NAME);
+			ip.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
 			importFinished = true;
 			return false;
 		}

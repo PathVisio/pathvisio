@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway Name="" Data-Source="GenMAPP 2.0" Version="20060601" Author="" Maintained-By="" Email="" Availability="" Last-Modified="">
+  <Notes></Notes>
+  <Comment></Comment>
+  <Graphics BoardWidth="22700.0" BoardHeight="17000.0" WindowWidth="9314.0" WindowHeight="7679.0" />
+  <Shape Type="Oval">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" Rotation="5.300392" CenterX="2600.0" CenterY="1750.0" Width="400.0" Height="200.0" />
+  </Shape>
+  <FixedShape Type="OrganA">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics CenterX="5750.0" CenterY="2900.0" />
+  </FixedShape>
+  <FixedShape Type="OrganB">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics CenterX="7150.0" CenterY="2700.0" />
+  </FixedShape>
+  <FixedShape Type="OrganC">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics CenterX="1200.0" CenterY="4500.0" />
+  </FixedShape>
+  <FixedShape Type="CellA">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics CenterX="2000.0000000000002" CenterY="1000.0000000000001" />
+  </FixedShape>
+  <FixedShape Type="Ribosome">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics CenterX="3200.0" CenterY="1900.0" />
+  </FixedShape>
+  <ComplexShape Type="ProteinB">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Rotation="0.0" CenterX="1050.0" CenterY="2650.0" Width="7058.822999999999" />
+  </ComplexShape>
+  <ComplexShape Type="Triangle">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Rotation="0.390607" CenterX="4350.0" CenterY="750.0" Width="10500.0" />
+  </ComplexShape>
+  <ComplexShape Type="Pentagon">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Rotation="0.674741" CenterX="4450.0" CenterY="1850.0" Width="16500.0" />
+  </ComplexShape>
+  <ComplexShape Type="Hexagon">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Rotation="0.6107259" CenterX="4350.0" CenterY="3800.0" Width="16500.0" />
+  </ComplexShape>
+  <ComplexShape Type="Vesicle">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Rotation="0.6107259" CenterX="4300.0" CenterY="3400.0" Width="36750.0" />
+  </ComplexShape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Legend CenterX="0.0" CenterY="1701.0" />
+</Pathway>
+

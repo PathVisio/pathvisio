@@ -98,9 +98,9 @@ public class GmmlShape extends GmmlGraphicsShape
 				 */
 //				if (!gdata.isTransparent())
 //					buffer.fillArc(
-//							startX, startY,	width, height, 90, 180);					
+//							startX, startY,	width, height, 0, 180);					
 				buffer.drawArc(
-						startX, startY,	width, height, 90, 180);
+						startX, startY,	width, height, 0, 180);
 				break;
 		}
 

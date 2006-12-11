@@ -45,9 +45,7 @@ import debug.Logger;
  * This class contains the essential parts of the program: the window, drawing and gpml data
  */
 public abstract class GmmlVision {
-	public static final String APPLICATION_NAME = "PathVisio";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
-	public static final String HELP_URL = "http://blog.bigcat.unimaas.nl/gmmlvisio/index.php/Help";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
@@ -216,7 +214,7 @@ public abstract class GmmlVision {
 	 */
 	public static File getApplicationDir() {
 		if(DIR_APPLICATION == null) {
-			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + APPLICATION_NAME);
+			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + Globals.APPLICATION_NAME);
 			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
 		}
 		return DIR_APPLICATION;
@@ -224,7 +222,7 @@ public abstract class GmmlVision {
 		
 	public static File getDataDir() {
 		if(DIR_DATA == null) {
-			DIR_DATA = new File(System.getProperty("user.home"), APPLICATION_NAME + "-Data");
+			DIR_DATA = new File(System.getProperty("user.home"), Globals.APPLICATION_NAME + "-Data");
 			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
 		}
 		return DIR_DATA;

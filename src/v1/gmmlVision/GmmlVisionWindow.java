@@ -28,18 +28,7 @@ import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ControlContribution;
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -53,12 +42,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 import preferences.GmmlPreferenceManager;
 import preferences.GmmlPreferences;
@@ -66,11 +50,7 @@ import search.PathwaySearchComposite;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import visualization.GmmlLegend;
 import visualization.VisualizationManager;
-import data.ConverterException;
-import data.DBConnector;
-import data.GmmlData;
-import data.GmmlGdb;
-import data.GmmlGex;
+import data.*;
 import data.GmmlGex.ExpressionDataEvent;
 import data.GmmlGex.ExpressionDataListener;
 import edu.stanford.ejalbert.BrowserLauncher;
@@ -892,7 +872,6 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				deselectNewItemActions();
 				setChecked(true);
 				GmmlVision.getDrawing().setNewGraphics(element);
-				GmmlVision.getDrawing().firstClick = true;
 			}
 			else
 			{	

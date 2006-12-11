@@ -789,7 +789,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		{
 			window = w;
 			setText ("&About");
-			setToolTipText ("About " + GmmlVision.APPLICATION_NAME);
+			setToolTipText ("About " + Globals.APPLICATION_VERSION_NAME);
 		}
 		public void run () {
 			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
@@ -808,7 +808,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		{
 			window = w;
 			setText ("&Help@F1");
-			setToolTipText ("Opens " + GmmlVision.APPLICATION_NAME + " help in your web browser");
+			setToolTipText ("Opens " + Globals.APPLICATION_VERSION_NAME + " help in your web browser");
 		}
 		public void run () {
 			SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
@@ -824,7 +824,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				"Unable to open web browser" +
 				(msg == null ? "" : ": " + msg) +
 				"\nYou can open the help page manually:\n" +
-				GmmlVision.HELP_URL);
+				Globals.HELP_URL);
 			} catch (InterruptedException ignore) {}
 			
 
@@ -834,7 +834,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	public static void openHelp() throws Exception {
 		BrowserLauncher bl = new BrowserLauncher(null);
-		bl.openURLinBrowser(GmmlVision.HELP_URL);
+		bl.openURLinBrowser(Globals.HELP_URL);
 	}
 	
 	private class CopyAction extends Action
@@ -1122,7 +1122,6 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				deselectNewItemActions();
 				setChecked(true);
 				GmmlVision.getDrawing().setNewGraphics(element);
-				GmmlVision.getDrawing().firstClick = true;
 			}
 			else
 			{	
@@ -1448,7 +1447,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
 		
-		shell.setText(GmmlVision.APPLICATION_NAME);
+		shell.setText(Globals.APPLICATION_VERSION_NAME);
 		
 		GmmlVisionMain.loadImages(shell.getDisplay());
 		

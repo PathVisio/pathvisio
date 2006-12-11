@@ -161,7 +161,7 @@ class Revision
 		<copy file="${webstart.dir}/pathvisio_v1.jnlp" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio_v2.jnlp" toDir="${webstart.dir}/www"/>
                 <!-- Run perl script to upload to server !-->
-		<exec executable="${exec.perl}" dir="${webstart.dir}">
+		<exec executable="${exec.perl}" dir="${webstart.dir}" failifexecutionfails="true">
 			<arg line="autoftp.pl"/>
 		</exec>	
 	</target>

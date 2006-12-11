@@ -97,16 +97,16 @@ visualization	formalize API for visualization classes: plugin structure	Thomas	1
 visualization	Enable anti-aliasing for icons	Thomas	1.0 beta				done	extra dll file needed in windows!
 bug/misfeature	automaticly add name for new gradient/criterion	Thomas	1.0 beta				done	
 Packaging	Java webstart release	Martijn	1.0 beta				done	
-gmml visualization	fill color voor shapes toevoegen aan gpml	Martijn	1.0 beta	4				
-bugs	lijn kleur bij converteren negeren.	Martijn	1.0 beta	2				
+gmml visualization	fill color voor shapes toevoegen aan gpml	Martijn	1.0 beta	4			done	
+bugs	lijn kleur bij converteren negeren.	Martijn	1.0 beta	2			done	
 editor	"copy/paste of gmml objects, within program"	Martijn	1.0 beta	4	2	2	done	
 help	open help pages on wiki	Thomas	1.0 beta				done	
 database	"try to put db files into a single file (e.g. zip or jar without compression), regenerate in derby format"	Thomas	1.0 beta				done	
 packaging	aankondiging beta (website + mailtje)	All	1.0 beta					
-Packaging	revision nr + version nr in about box	Martijn	1.0 beta	4				
+Packaging	revision nr + version nr in about box	Martijn	1.0 beta	4			done	
 editor	rename gmml to gpml	Martijn	1.0 beta	2	2	2	done	
 editor	rename program to PathVisio	Martijn	1.0 beta	2	2	2	done	
-Packaging	"rename classes org.bigcat.*, gmml -> gpml of weg"	Martijn	1.0 beta	4				
+Packaging	"rename classes org.bigcat.*, gmml -> gpml of weg"	Martijn	1	4				
 Packaging	"Copyright notice in all source files, license file"	Martijn	1.0 beta	0	2	2	done	
 Packaging	"twee webstarts, een voor 1.0 en een voor 2.0 met verschillende jars"	Martijn	1.0 beta	8	8	8	done	
 Packaging	"fix jar-signing so only changed jars are signed, saves time in compilation and downloading through webstart"	Martijn	1	4				

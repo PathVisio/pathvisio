@@ -50,7 +50,6 @@ import data.GmmlGdb;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
-import debug.StopWatch;
 
 public class RDataOut {
 	List<File> pwFiles;

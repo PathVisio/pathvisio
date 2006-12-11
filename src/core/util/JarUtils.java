@@ -17,6 +17,7 @@
 package util;
 
 import gmmlVision.GmmlVision;
+import gmmlVision.Globals;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +34,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class JarUtils {
-	static final String PREFIX_TMP = GmmlVision.APPLICATION_NAME;
+	static final String PREFIX_TMP = Globals.APPLICATION_NAME;
 	
 	public static File resourceToTempFile(String name) throws FileNotFoundException, IOException {
 		File tmp = File.createTempFile(PREFIX_TMP, null, null);

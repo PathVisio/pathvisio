@@ -518,65 +518,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				}
 			}
 		}
-	}
-	
-	/**
-	 * {@link Action} to start conversion of a GenMAPP Gene database to a gene database 
-	 * in hsqldb format
-	 */
-	private class ConvertGdbAction extends Action
-	{
-		GmmlVisionWindow window;
-		public ConvertGdbAction(GmmlVisionWindow w)
-		{
-			window = w;
-			setText("&Gdb to PathVisio");
-			setToolTipText("Convert from GenMAPP 2 Gene database to PathVisio Gene database");
-		}
-		
-		public void run () {
-			String dbName = null;
-			File gmGdbFile = null;
-			// Initialize filedialog to open GenMAPP gdb
-			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-			fileDialog.setText("Select Gene database to convert");
-			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene Databases");
-			fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
-			fileDialog.setFilterNames(new String[] {"Gene database","All files"});
-			String file = fileDialog.open();
-			// Only proceed if user selected a file
-			if(file == null) return;
-			gmGdbFile = new File(file);
-
-			try {
-				DBConnector dbcon = GmmlGex.getDBConnector();
-				dbName = dbcon.openNewDbDialog(getShell(), 
-						gmGdbFile.getName().replace(".gdb", ".properties"));
-			} catch(Exception e) {
-				MessageDialog.openError(getShell(), 
-						"Error", "Unable to create database connector, " +
-						"see error log for details");
-				GmmlVision.log.error("Unable to create database connector", e);	
-			}
-			
-			// Only proceed if user selected a database name
-			if(dbName != null) {
-				GmmlGdb.setConvertGdbName(dbName);
-				GmmlGdb.setConvertGmGdbFile(gmGdbFile);
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				try {
-					dialog.run(true, true, GmmlGdb.getConvertRunnable());
-				} catch(Exception e) {
-					String msg = "While converting GenMAPP gene database: "+ e.getMessage();
-					MessageDialog.openError (window.getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-					"See the error log for details.");
-					GmmlVision.log.error(msg, e);
-				}
-			}
-		}
-	}
-	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);
+	}	
 	
 	/**
 	 * {@link Action} to open a {@link GmmlAboutBox} window
@@ -588,7 +530,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		{
 			window = w;
 			setText ("&About");
-			setToolTipText ("About " + GmmlVision.APPLICATION_NAME);
+			setToolTipText ("About " + Globals.APPLICATION_VERSION_NAME);
 		}
 		public void run () {
 			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
@@ -607,7 +549,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		{
 			window = w;
 			setText ("&Help@F1");
-			setToolTipText ("Opens " + GmmlVision.APPLICATION_NAME + " help in your web browser");
+			setToolTipText ("Opens " + Globals.APPLICATION_VERSION_NAME + " help in your web browser");
 		}
 		public void run () {
 			SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
@@ -623,7 +565,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				"Unable to open web browser" +
 				(msg == null ? "" : ": " + msg) +
 				"\nYou can open the help page manually:\n" +
-				GmmlVision.HELP_URL);
+				Globals.HELP_URL);
 			} catch (InterruptedException ignore) {}
 			
 
@@ -633,7 +575,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	public static void openHelp() throws Exception {
 		BrowserLauncher bl = new BrowserLauncher(null);
-		bl.openURLinBrowser(GmmlVision.HELP_URL);
+		bl.openURLinBrowser(Globals.HELP_URL);
 	}
 	
 	private class CopyAction extends Action
@@ -1104,9 +1046,6 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
-		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
-		convertMenu.add(convertGdbAction);
-		dataMenu.add(convertMenu);
 		
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
@@ -1159,7 +1098,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
 		
-		shell.setText(GmmlVision.APPLICATION_NAME);
+		shell.setText(Globals.APPLICATION_VERSION_NAME);
 		
 		GmmlVisionMain.loadImages(shell.getDisplay());
 		

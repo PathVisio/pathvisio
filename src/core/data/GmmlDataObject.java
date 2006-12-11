@@ -153,7 +153,7 @@ public class GmmlDataObject
 						PropertyType.XREF,
 						PropertyType.BACKPAGEHEAD,
 						PropertyType.TYPE,
-						PropertyType.GENEID
+						PropertyType.GRAPHID
 				}));
 				break;
 			case ObjectType.SHAPE:
@@ -168,8 +168,8 @@ public class GmmlDataObject
 						PropertyType.FILLCOLOR,
 						PropertyType.SHAPETYPE,
 						PropertyType.ROTATION,
-						PropertyType.GRAPHID,
-						PropertyType.TRANSPARENT
+						PropertyType.TRANSPARENT,
+						PropertyType.GRAPHID
 				}));
 				break;
 			case ObjectType.BRACE:

@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 package gmmlVision;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,13 +50,13 @@ public class GmmlAboutBox extends Dialog
 		Shell parent = getParent();
 		final Shell shell = new Shell (parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 
-		shell.setText ("About " + GmmlVision.APPLICATION_NAME);		
+		shell.setText ("About " + Globals.APPLICATION_VERSION_NAME);		
 		GridLayout ly = new GridLayout();
 		ly.numColumns = 2;
 		shell.setLayout (ly);
 		
 		Label lbl = new Label (shell, SWT.NULL);
-		lbl.setText (GmmlVision.APPLICATION_NAME);
+		lbl.setText (Globals.APPLICATION_VERSION_NAME + "\nRevision: " + Revision.REVISION);
 		GridData gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
 		gd.horizontalSpan = 2;		
 		lbl.setLayoutData (gd);

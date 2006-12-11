@@ -585,7 +585,7 @@ public class VisualizationDialog extends ApplicationWindow {
 			
 			switch(columnIndex) {
 			case 1: 
-				if(ps.getInstance().canDrawingObject())
+				if(ps.getInstance().canDrawing())
 					return ps.isDrawing() ? checkTrue : checkFalse;
 				else return checkUnavailable;
 			case 2: 
@@ -613,7 +613,7 @@ public class VisualizationDialog extends ApplicationWindow {
 			int index = getColumnIndex(property);
 			switch(index) {
 			case 0: return false;
-			case 1: return ps.getInstance().canDrawingObject();
+			case 1: return ps.getInstance().canDrawing();
 			case 2: return ps.getInstance().canSidePanel();
 			case 3: return ps.getInstance().canToolTip();
 			default: return false;

@@ -49,7 +49,6 @@ import data.GmmlGex.ExpressionDataListener;
 /**
  * Represents a set of configured visualization plugins
  * @author thomas
- *
  */
 public class Visualization implements ExpressionDataListener, VisualizationListener {
 	public static final String XML_ELEMENT = "visualization";
@@ -61,6 +60,11 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	
 	Composite sidePanel;
 	
+	/**
+	 * Constructor for this class. Creates an instance of {@link Visualization} with the
+	 * given name
+	 * @param name The name of this {@link Visualization}
+	 */
 	public Visualization(String name) {
 		initPlugins();
 		this.name = name;
@@ -68,23 +72,35 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		VisualizationManager.addListener(this);
 	}
 	
+	/**
+	 * Create initial instances of {@link PluginSet} for each visualization
+	 * plugin class
+	 */
 	void initPlugins() {
 		plugins = new HashMap<Class, PluginSet>();
 		drawingOrder = new ArrayList<PluginSet>();
 		for(Class c : PluginManager.getPlugins()) {
-			addPlugin(c);
+			addPluginClass(c);
 		}
 	}
 	
-	void refreshPlugins() {
+	/**
+	 * Refresh the available subclasses of {@link VisualizationPlugin}.
+	 */
+	void refreshPluginClasses() {
 		for(Class c : PluginManager.getPlugins()) {
 			if(!plugins.containsKey(c)) {
-				addPlugin(c);
+				addPluginClass(c);
 			}
 		}
 	}
 	
-	void addPlugin(Class c) {
+	/**
+	 * Add a subclass of {@link VisualizationPlugin} to the available
+	 * visualization plugin classes
+	 * @param c	The class of the visualization plugin to add
+	 */
+	void addPluginClass(Class c) {
 		try {
 			PluginSet pr = new PluginSet(c, this);
 			plugins.put(c, pr);
@@ -94,58 +110,85 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		}
 	}
 
-	void updateAvailablePlugins() {
-		for(Class pc : PluginManager.getPlugins()) {
-			if(!plugins.containsKey(pc)) {
-					addPlugin(pc);
-			}
-		}
-	}
-
+	/**
+	 * Get the name of this {@link Visualization}
+	 * @return the name
+	 */
 	public String getName() { return name; }
+	
+	/**
+	 * Set the name of this {@link Visualization}
+	 * @param name the name for this visualization
+	 */
 	public void setName(String name) { 
 		this.name = name;
 		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
 	}
 	
-	public final void fireVisualizationEvent(int type) {
+	/**
+	 * Fire an {@link VisualizationEvent} for this visualization and the given type
+	 * @param type The type of the {@link VisualizationEvent} to fire
+	 */
+	private final void fireVisualizationEvent(int type) {
 		VisualizationManager.fireVisualizationEvent(
 				new VisualizationEvent(this, type));
 	}
 	
+	/**
+	 * Returnts whether this visualization is generic or not. A visualization is
+	 * generic only if all of its active plugins are generic.
+	 * @see VisualizationPlugin#isGeneric()
+	 * @return true if this visualization is generic, false otherwise
+	 */
 	public boolean isGeneric() {
-		for(PluginSet pr : getPlugins())
+		for(PluginSet pr : getPluginSets())
 			if(pr.isActive() && !pr.isGeneric()) return false; //One or more active non-generic plugins, so not generic
 		return true;
 	}
-		
-	public List<PluginSet> getPlugins() {
+	
+	/**
+	 * Get the {@link PluginSets} of this visualization
+	 * @return An ordered list of {@link PluginSet}s
+	 */
+	private List<PluginSet> getPluginSets() {
 		return drawingOrder;
 	}
-		
-	public void setRepresentation(Class pluginClass, PluginSet pr) {
-		drawingOrder.remove(pr);
-		plugins.put(pluginClass, pr);
-		drawingOrder.add(pr);
+	
+	/**
+	 * Set the {@link PluginSet} for the given subclass of {@link VisualizationPlugin}
+	 * @param pluginClass	The class to set the given {@link PluginSet} for
+	 * @param ps			The {@link PluginSet} to set
+	 */
+	private void setPluginSet(Class pluginClass, PluginSet ps) {
+		drawingOrder.remove(ps);
+		plugins.put(pluginClass, ps);
+		drawingOrder.add(ps);
 		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
 	}
-			
-	public void drawToObject(GmmlGraphics g, PaintEvent e, GC buffer) {
-		for(PluginSet pr : getPlugins()) {
-			if(pr.isDrawing()) pr.getDrawingPlugin().draw(g, e, buffer);
+	
+	/**
+	 * Draw this visualization to the pathway drawing for the given {@link GmmlGraphics} object.
+	 * @see VisualizationPlugin#visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
+	 * @param g	The {@link GmmlGraphics} object the visualization applies to
+	 * @param e	{@link PaintEvent} containing information about the paint
+	 * @param gc Graphical context on which drawing operations can be performed
+	 */
+	public void drawVisualization(GmmlGraphics g, PaintEvent e, GC gc) {
+		for(PluginSet pr : getPluginSets()) {
+			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, e, gc);
 		}
 	}
 	
-	public Region getReservedRegion(VisualizationPlugin p, GmmlGraphics g) {
-		if(!p.isUseReservedRegion()) 
+	public Region provideDrawArea(VisualizationPlugin p, GmmlGraphics g) {
+		if(!p.isUseProvidedArea()) 
 			throw new IllegalArgumentException("useProvidedArea set to false for this plug-in");
 		
 		//Determine number of active plugins that to reserve a region
 		int nrRes = 0;
 		int index = 0;
-		for(PluginSet pr : getPlugins()) {
+		for(PluginSet pr : getPluginSets()) {
 			if(pr.getDrawingPlugin() == p) index = nrRes;
-			nrRes += (pr.getDrawingPlugin().isActive() && pr.getDrawingPlugin().isUseReservedRegion()) ? 1 : 0;
+			nrRes += (pr.getDrawingPlugin().isActive() && pr.getDrawingPlugin().isUseProvidedArea()) ? 1 : 0;
 		}
 		
 		Region region = g.createVisualizationRegion();
@@ -175,7 +218,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	public void updateSidePanel(Collection<GmmlGraphics> objects) {
 		for(PluginSet pr : drawingOrder) {
 			if(pr.isSidePanel())
-				pr.getSidePanelPlugin().updateSidePanel(objects);
+				pr.getSidePanelPlugin().visualizeOnSidePanel(objects);
 		}
 	}
 	
@@ -189,7 +232,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 				group.setBackground(group.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 				group.setLayout(new FillLayout());
 				group.setText(pr.getSidePanelPlugin().getName());
-				pr.getSidePanelPlugin().createSidePanelComposite(group);
+				pr.getSidePanelPlugin().initSidePanel(group);
 			}
 		}
 		return sidePanel;
@@ -219,7 +262,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		boolean hasOne = false;
 		for(PluginSet pr : drawingOrder) {
 			if(pr.isToolTip()) {
-				Composite ttc = pr.getToolTipPlugin().getToolTipComposite(tip, g);
+				Composite ttc = pr.getToolTipPlugin().visualizeOnToolTip(tip, g);
 				if(ttc != null) hasOne = true;
 			}
 		}
@@ -244,7 +287,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		for(Object o : xml.getChildren(PluginSet.XML_ELEMENT)) {
 			try {
 				PluginSet pr = PluginSet.fromXML((Element)o, v);
-				v.setRepresentation(pr.getClass(), pr);
+				v.setPluginSet(pr.getClass(), pr);
 			} catch(Throwable e) {
 				GmmlVision.log.error("Unable to load plugin", e);
 			}
@@ -260,7 +303,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	public void expressionDataEvent(ExpressionDataEvent e) {
 		switch(e.type) {
 		case ExpressionDataEvent.CONNECTION_OPENED:
-			updateAvailablePlugins();
+			refreshPluginClasses();
 		}
 		
 	}
@@ -268,13 +311,19 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	public void visualizationEvent(VisualizationEvent e) {
 		switch(e.type) {
 		case VisualizationEvent.PLUGIN_ADDED: 
-			refreshPlugins();
+			refreshPluginClasses();
 			break;
 		}
 	}
 	
-	public static class PluginSet {
-		static final int NR = 3;
+	/**
+	 * Set of instances from subclass of {@link VisualizationPlugin} (all instances
+	 * have the same class).
+	 * The set contains one instance for each display option (drawing, side panel, tool tip)
+	 * @author Thomas
+	 */
+	protected static class PluginSet {
+		static final int NR = 3; //Number of display options
 		static final int TOOLTIP = 0;
 		static final int DRAWING = 1;
 		static final int SIDEPANEL = 2;
@@ -394,13 +443,6 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 						sidepanel.getChild(VisualizationPlugin.XML_ELEMENT), v), SIDEPANEL);
 			return pr;
 		}
-
-//		public String toString() {
-//			return 	"PluginSet:  " + pluginClass + "\n" +
-//					" \tToolTip:" + isToolTip() +
-//					" \tDrawing:" + isDrawing() +
-//					" \tSidepanel:" + isSidePanel();
-//		}
 		
 		public int hashCode() {
 			return pluginClass.hashCode();

@@ -53,12 +53,13 @@ require(pathVisio)
 		zscores = t(sapply(names(pathwaySet), function(pwname) {
 			.calcStats(sets[,i], pwMatches[[pwname]], pathwaySet[[pwname]])
 		}))
-        colnames(zscores) = .statNames()
-        
-        print(zscores)
-	
+    colnames(zscores) = .statNames()
+    
+    ##Calculate global stats
+    globals = .calcGlobals(sets[,i], reporters);
+      	
 		##Create a ResultSet to return
-		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, stats = zscores)
+		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, globals = globals, stats = zscores)
 	}
 	if(length(results) == 1) return(results[[1]])
 	else return(results)
@@ -98,6 +99,13 @@ require(pathVisio)
     P = length(pathway)     ## Total number of genes in the pathway
     
    c(P, n, r, zscore)
+}
+
+.calcGlobals = function(set, reporters) {
+	globals = matrix(nrow = 2, ncol = 2)
+	globals[1,] = c("Number of genes measured (N)", length(reporters))
+	globals[2,] = c("Number of genes in set (R)", sum(as.logical(set)))
+	globals
 }
 
 .statNames = function() { c("on pathway", "measured", "in set", "z-score") }

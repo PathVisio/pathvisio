@@ -29,10 +29,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import preferences.GmmlPreferences;
@@ -53,7 +55,9 @@ public class StatsResultTable extends PathwayTable {
 		setLayout(new GridLayout(1, false));
 		
 		createStatsComposite();
-
+		
+		createGlobalsComposite();
+		
 		Composite tableComposite = new Composite(this, SWT.NULL);
 		tableComposite.setLayout(new FillLayout());
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -76,7 +80,29 @@ public class StatsResultTable extends PathwayTable {
 		
 		return saveComp;
 	}
+	
+	Label globalNames;
+	Label globalValues;
+	private Composite createGlobalsComposite() {
+		Group globComp = new Group(this, SWT.NULL);
+		globComp.setLayout(new RowLayout());
+		globalNames = new Label(globComp, SWT.NULL);
+		globalValues = new Label(globComp, SWT.NULL);
+		return globComp;
+	}
 
+	void setGlobals(ResultSet rs) {
+		String[] names = rs.getGlobalNames();
+		String[] values = rs.getGlobalValues();
+		String nmText = "";
+		String vText = "";
+		if(names != null) for(String n : names) nmText += n + ":\n";
+		if(values != null) for(String v : values) vText += v + "\n";
+		globalNames.setText(nmText);
+		globalValues.setText(vText);
+		layout();
+	}
+	
 	private void createResultCombo(Composite parent) {
 		Label comLabel = new Label(parent, SWT.NULL);
 		comLabel.setText("Results: ");
@@ -85,9 +111,14 @@ public class StatsResultTable extends PathwayTable {
 		resultCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ResultSet rs = results.get(resultCombo.getSelectionIndex());
-				setTableData(rs);
+				setInput(rs);
 			}
 		});
+	}
+	
+	public void setInput(ResultSet rs) {
+		setTableData(rs);
+		setGlobals(rs);
 	}
 	
 	private void createSaveButton(Composite parent) {
@@ -114,7 +145,7 @@ public class StatsResultTable extends PathwayTable {
 		for(int i = 0; i < results.size(); i++) resultNames[i] = results.get(i).getName();
 		resultCombo.setItems(resultNames);
 		resultCombo.select(0);
-		setTableData(results.get(0));
+		setInput(results.get(0));
 	}
 	
 	public void saveResults(File saveTo) throws RException {

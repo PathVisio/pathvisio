@@ -126,6 +126,8 @@ public class RDataIn {
 	public static class ResultSet extends TableData {
 		String name;
 		String varName;
+		String[] globalNames;
+		String[] globalValues;
 		
 		public ResultSet(String varName) throws RException {
 			this.varName = varName;
@@ -134,9 +136,13 @@ public class RDataIn {
 		
 		public String getName() { return name; }
 		public String getVarName() { return varName; }
+		public String[] getGlobalNames() { return globalNames; }
+		public String[] getGlobalValues() { return globalValues; }
 		
 		private void loadFromR() throws RException {
 			name = RCommands.eval("name(" + varName + ")", true).asString();
+			globalNames = RCommands.eval("globals(" + varName + ")[,1]", true).asStringArray();
+			globalValues = RCommands.eval("globals(" + varName + ")[,2]", true).asStringArray();
 			String[] cols = RCommands.colnames(varName);
 			for(String col : cols) {
 				addColumn(col, !col.equalsIgnoreCase(PathwayTable.COLNAME_FILE));

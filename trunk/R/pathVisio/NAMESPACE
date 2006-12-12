@@ -6,7 +6,7 @@ exportMethods(	name, "name<-", hasReference, matchReferences, inReferences,	#Pat
 			fileName, "fileName<-", allRefs, "allRefs<-", 		#Pathway
 			"description", "arg_descr", "arg_class", "getArgs", 
 			"getDefaults",						#VisioFunction
-			"fileNames",						#ResultSet
+			"fileNames", "globals",					#ResultSet
 			"==", print						#Generic/primitive
 )
 			

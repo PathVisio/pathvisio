@@ -21,6 +21,7 @@ import graphics.GmmlGraphics;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -147,11 +148,18 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 	
 	/**
-	 * Get the {@link PluginSets} of this visualization
+	 * Get the {@link PluginSet}s of this visualization
 	 * @return An ordered list of {@link PluginSet}s
 	 */
-	private List<PluginSet> getPluginSets() {
+	public List<PluginSet> getPluginSets() {
 		return drawingOrder;
+	}
+	
+	/**
+	 * Get the {@link PluginSet} for the given plugin class
+	 */
+	public PluginSet getPluginSet(Class c) {
+		return plugins.get(c);
 	}
 	
 	/**
@@ -174,7 +182,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @param gc Graphical context on which drawing operations can be performed
 	 */
 	public void drawVisualization(GmmlGraphics g, PaintEvent e, GC gc) {
-		for(PluginSet pr : getPluginSets()) {
+		for(PluginSet pr : getPluginsSorted()) {
 			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, e, gc);
 		}
 	}
@@ -186,7 +194,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		//Determine number of active plugins that to reserve a region
 		int nrRes = 0;
 		int index = 0;
-		for(PluginSet pr : getPluginSets()) {
+		for(PluginSet pr : getPluginsSorted()) {
 			if(pr.getDrawingPlugin() == p) index = nrRes;
 			nrRes += (pr.getDrawingPlugin().isActive() && pr.getDrawingPlugin().isUseProvidedArea()) ? 1 : 0;
 		}
@@ -211,12 +219,14 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
 	}
 	
-	public List<PluginSet> getPluginsSorted() {
-		return drawingOrder;
+	private List<PluginSet> getPluginsSorted() {
+		List<PluginSet> sorted = new ArrayList<PluginSet>(drawingOrder);
+		Collections.reverse(sorted);
+		return sorted;
 	}
 	
 	public void updateSidePanel(Collection<GmmlGraphics> objects) {
-		for(PluginSet pr : drawingOrder) {
+		for(PluginSet pr : getPluginsSorted()) {
 			if(pr.isSidePanel())
 				pr.getSidePanelPlugin().visualizeOnSidePanel(objects);
 		}
@@ -226,7 +236,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		sidePanel = new Composite(parent, SWT.NULL);
 		sidePanel.setLayout(new FillLayout(SWT.VERTICAL));
 		
-		for(PluginSet pr : drawingOrder) {
+		for(PluginSet pr : getPluginsSorted()) {
 			if(pr.isSidePanel()) {
 				Group group = new Group(sidePanel, SWT.NULL);
 				group.setBackground(group.getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -260,7 +270,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		tip.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		boolean hasOne = false;
-		for(PluginSet pr : drawingOrder) {
+		for(PluginSet pr : getPluginsSorted()) {
 			if(pr.isToolTip()) {
 				Composite ttc = pr.getToolTipPlugin().visualizeOnToolTip(tip, g);
 				if(ttc != null) hasOne = true;
@@ -322,7 +332,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * The set contains one instance for each display option (drawing, side panel, tool tip)
 	 * @author Thomas
 	 */
-	protected static class PluginSet {
+	public static class PluginSet {
 		static final int NR = 3; //Number of display options
 		static final int TOOLTIP = 0;
 		static final int DRAWING = 1;
@@ -394,7 +404,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		public void setActive(int representation, boolean active) {
 			checkIndex(representation);
 			reps[representation].setActive(active);
-			VisualizationManager.fireVisualizationEvent(
+			if(representation == SIDEPANEL) VisualizationManager.fireVisualizationEvent(
 					new VisualizationEvent(this, VisualizationEvent.PLUGIN_SIDEPANEL_ACTIVATED));
 		}
 		

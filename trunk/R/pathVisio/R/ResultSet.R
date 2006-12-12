@@ -23,11 +23,13 @@
 ##########################
 setClass("ResultSet", contains = "matrix",
 	representation(
-		name = "character"
+		name = "character",
+		globals = "matrix"
 	),
 	prototype(
 		matrix(),
-		name = character()
+		name = character(),
+		globals = matrix()
 	)
 )
 
@@ -40,14 +42,14 @@ setValidity("ResultSet", function(object) {
 #### Constructors ####
 ######################
 setGeneric("ResultSet", 
-	function(name, pathwaySet, stats) {
+	function(name, pathwaySet, globals, stats) {
 	if(length(pathwaySet) != nrow(stats)) 
 		error("Number of pathways and number of rows in 'stats' matrix don't match")
 	results = sapply(pathwaySet, function(x) c(name(x), fileName(x)))
 	results = t(results)
 	colnames(results) = c("pathway", "fileName")
 	data = cbind(results, stats)
-	new("ResultSet", data, name = name)
+	new("ResultSet", data, name = name, globals = globals)
 })
 
 #################
@@ -55,6 +57,7 @@ setGeneric("ResultSet",
 #################
 ## Getters ##
 createMethod("name", "ResultSet", function(x, ...) x@name)
+createMethod("globals", "ResultSet", function(x, ...) x@globals)
 
 ## Other ##
 createMethod("fileNames", "ResultSet", function(x, ...) {

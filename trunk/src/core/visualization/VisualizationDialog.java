@@ -334,7 +334,7 @@ public class VisualizationDialog extends ApplicationWindow {
 			pluginTable = new TableViewer(createPluginTable(comp));
 			pluginTable.setContentProvider(new IStructuredContentProvider() {
 				public Object[] getElements(Object input) {
-					return ((Visualization)input).getPluginsSorted().toArray();
+					return ((Visualization)input).getPluginSets().toArray();
 				}
 				public void dispose() {}
 				public void inputChanged(Viewer arg0, Object arg1, Object arg2) {}
@@ -430,6 +430,7 @@ public class VisualizationDialog extends ApplicationWindow {
 						openPluginConfiguration(PluginSet.TOOLTIP);
 					else if	(e.widget == spConfig) 
 						openPluginConfiguration(PluginSet.SIDEPANEL);
+					pluginTable.refresh();
 				}
 			};
 			
@@ -481,14 +482,22 @@ public class VisualizationDialog extends ApplicationWindow {
 		void setPluginButtonsEnabled(boolean enable) {
 			
 			PluginSet ps = getSelectedPluginSet();
-			setConfigButtonsEnabled(enable && ps.getInstance().isConfigurable(), ps);
+		
+			setConfigButtonsEnabled(enable, ps);
 			setOrderButtonsEnabled(enable);
 		}
 		
 		void setConfigButtonsEnabled(boolean doEnable, PluginSet ps) {
-			drConfig.setEnabled(doEnable && ps.isDrawing());
-			ttConfig.setEnabled(doEnable && ps.isToolTip());
-			spConfig.setEnabled(doEnable && ps.isSidePanel());
+			if(ps == null) {
+				drConfig.setEnabled(false);
+				ttConfig.setEnabled(false);
+				spConfig.setEnabled(false);
+			} else {
+				doEnable = doEnable && ps.getInstance().isConfigurable();
+				drConfig.setEnabled(doEnable && ps.isDrawing());
+				ttConfig.setEnabled(doEnable && ps.isToolTip());
+				spConfig.setEnabled(doEnable && ps.isSidePanel());
+			}
 		}
 		
 		void setOrderButtonsEnabled(boolean enable) {

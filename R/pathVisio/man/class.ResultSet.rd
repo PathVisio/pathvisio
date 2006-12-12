@@ -18,6 +18,7 @@
 Objects can be created by calls of the form 
 \code{ResultSet(name, pathwaySet, stats)} where\cr
 \code{pathwaySet} is an object of class \code{\link{PathwaySet}};\cr
+\code{globals} is a matrix with global results (not per pathway)
 \code{stats} is a matrix with an equal number of rows as the length of \code{pathwaySet} and an arbitrary number of columns, containing results of a statistical test on the pathways in \code{pathwaySet}\cr
 the other arguments are slot values
 }
@@ -33,6 +34,10 @@ the other arguments are slot values
     \item{name}{
     	\code{signature(x = "ResultSet")}:
     	accessor for the slot 'name'
+    }
+    \item{globals}{
+    	\code{signature(x = "ResultSet")}:
+    	accessor for the slot 'globals'
     }
     \item{fileNames}{
     	\code{signature(x = "ResultSet")}:

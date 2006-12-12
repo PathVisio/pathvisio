@@ -26,25 +26,31 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.jdom.Element;
 
+import util.ColorConverter;
 import util.SwtUtils;
+import util.Utils;
 import visualization.Visualization;
-import visualization.plugins.VisualizationPlugin;
+import visualization.Visualization.PluginSet;
 
 /**
  * Provides label for Gene Product
@@ -61,12 +67,18 @@ public class LabelPlugin extends VisualizationPlugin {
 	final static int STYLE_ID = 0;
 	final static int STYLE_SYMBOL = 1;
 	
+	final static int ALIGN_CENTER = 0;
+	final static int ALIGN_LEFT = 1;
+	final static int ALIGN_RIGHT = 2;
+	
 	Label labelSidePanel;
 	
 	int style = STYLE_SYMBOL;
 	boolean adaptFontSize = true;
+	int align;
 	
 	FontData fontData;
+	RGB fontColor;
 	
 	public LabelPlugin(Visualization v) {
 		super(v);		
@@ -81,6 +93,25 @@ public class LabelPlugin extends VisualizationPlugin {
 		fireModifiedEvent();
 	}
 	
+	void setAlignment(int alignMode) {
+		align = alignMode;
+		fireModifiedEvent();
+	}
+	
+	int getAlignment() { return align; }
+	
+	void setOverlay(boolean overlay) {
+		if(overlay) {
+			Visualization v = getVisualization();
+			PluginSet p = v.getPluginSet(this.getClass());
+			v.setDrawingOrder(p, Utils.ORDER_FIRST);
+		}
+		setUseProvidedArea(!overlay);
+		fireModifiedEvent();
+	}
+	
+	boolean getOverlay() { return !isUseProvidedArea(); }
+	
 	public String getName() { return NAME; }
 	public String getDescription() { return DESCRIPTION; }
 	
@@ -93,13 +124,23 @@ public class LabelPlugin extends VisualizationPlugin {
 	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		if(g instanceof GmmlGeneProduct) {
 			Font f = null;
+			Color fc = null;
 			
-			Region region = getVisualization().provideDrawArea(this, g);
+			Region region;
+			
+			if(isUseProvidedArea()) {
+				region = getVisualization().provideDrawArea(this, g);
+			} else {
+				region = g.createVisualizationRegion();
+			}
+			
 			Rectangle area = region.getBounds();
 			
+			if(!getOverlay()) {
+				buffer.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
+				buffer.fillRectangle(area);
+			}
 			buffer.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
-			buffer.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
-			buffer.fillRectangle(area);
 			buffer.drawRectangle(area);
 			
 			buffer.setClipping(region);
@@ -110,23 +151,32 @@ public class LabelPlugin extends VisualizationPlugin {
 			
 			if(adaptFontSize) {
 				SwtUtils.adjustFontSize(f, new Point(area.width, area.height), label, buffer, e.display);
-			} else
+			} else {
 				buffer.setFont(f);
+			}
+			
+			fc = SwtUtils.changeColor(fc, getFontColor(), e.display);
+			buffer.setForeground(fc);
 			
 			Point textSize = buffer.textExtent (label);
-			buffer.drawString (label, 
-					area.x + (int)(area.width / 2) - (int)(textSize.x / 2),
-					area.y + (int)(area.height / 2) - (int)(textSize.y / 2), true);
 			
-//			buffer.drawRectangle( 
-//					area.x + (int)(area.width / 2) - (int)(textSize.x / 2),
-//					area.y + (int)(area.height / 2) - (int)(textSize.y / 2), textSize.x, textSize.y);
+			switch(align) {
+			case ALIGN_RIGHT: 
+				area.x += area.width - textSize.x;
+				break;
+			case ALIGN_CENTER:
+				area.x += (int)(area.width / 2) - (int)(textSize.x / 2);
+			}
+			buffer.drawString (label, 
+					area.x,
+					area.y + (int)(area.height / 2) - (int)(textSize.y / 2), true);
 			
 			Region none = null;
 			buffer.setClipping(none);
 						
-			f.dispose();
-			region.dispose();
+			if(f != null) f.dispose();
+			if(region != null) region.dispose();
+			if(fc != null) fc.dispose();
 		}
 	}
 	
@@ -140,6 +190,15 @@ public class LabelPlugin extends VisualizationPlugin {
 			fontData = fd;
 			fireModifiedEvent();
 		}
+	}
+	
+	void setFontColor(RGB fc) {
+		fontColor = fc;
+		fireModifiedEvent();
+	}
+	
+	RGB getFontColor() { 
+		return fontColor == null ? new RGB(0,0,0) : fontColor;
 	}
 	
 	int getFontSize() {
@@ -174,10 +233,8 @@ public class LabelPlugin extends VisualizationPlugin {
 
 	protected Composite createConfigComposite(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NULL);
-		comp.setLayout(new GridLayout());
-		
-		createFontComp(comp);
-		
+		comp.setLayout(new FillLayout(SWT.VERTICAL));
+				
 		Group typeGroup = new Group(comp, SWT.NULL);
 		typeGroup.setLayout(new RowLayout(SWT.VERTICAL));
 		typeGroup.setText("Label text");
@@ -199,23 +256,33 @@ public class LabelPlugin extends VisualizationPlugin {
 		id.addSelectionListener(radioAdapter);
 		symbol.addSelectionListener(radioAdapter);
 		
+		createFontComp(comp);
+		createOtherComp(comp);
+		
 		return comp;
 	}
 		
 	Composite createFontComp(Composite parent) {
+		GridData span = new GridData(GridData.FILL_HORIZONTAL);
+		span.horizontalSpan = 2;
+		
 		Group fontSizeComp = new Group(parent, SWT.NULL);
 		fontSizeComp.setText("Label font");
-		fontSizeComp.setLayout(new RowLayout(SWT.VERTICAL));
+		fontSizeComp.setLayout(new GridLayout(2, false));
 		final Button font = new Button(fontSizeComp, SWT.PUSH);
+		font.setLayoutData(span);
 		font.setText("Change label font");
 		font.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FontDialog fd = new FontDialog(font.getShell());
+				fd.setRGB(getFontColor());
 				fd.setFontList(new FontData[] { getFontData() });
 				setFontData(fd.open());
+				setFontColor(fd.getRGB());
 			}
 		});
 		final Button adapt = new Button(fontSizeComp, SWT.CHECK);
+		adapt.setLayoutData(span);
 		adapt.setText("Adapt font size to genebox size");
 		adapt.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -223,7 +290,32 @@ public class LabelPlugin extends VisualizationPlugin {
 			}
 		});
 		adapt.setSelection(adaptFontSize);
+		Label alignLabel = new Label(fontSizeComp, SWT.NONE);
+		alignLabel.setText("Alignment:");
+		final Combo align = new Combo(fontSizeComp, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+		align.setItems(new String[] { "Center", "Left", "Right" });
+		align.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setAlignment(align.getSelectionIndex());
+			}
+		});
+		align.select(getAlignment());
 		return fontSizeComp;
+	}
+	
+	Composite createOtherComp(Composite parent) {		
+		Group other = new Group(parent, SWT.NULL);
+		other.setText("Other options");
+		other.setLayout(new RowLayout(SWT.VERTICAL));
+		final Button overlay = new Button(other, SWT.CHECK);
+		overlay.setText("Draw over other visualizations");
+		overlay.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setOverlay(overlay.getSelection());
+			}
+		});
+		overlay.setSelection(getOverlay());
+		return other;
 	}
 	
 	
@@ -240,11 +332,15 @@ public class LabelPlugin extends VisualizationPlugin {
 	static final String XML_ATTR_STYLE = "style";
 	static final String XML_ATTR_ADAPT_FONT = "adjustFontSize";
 	static final String XML_ATTR_FONTDATA = "font";
+	static final String XML_ELM_FONTCOLOR = "font-color";
+	static final String XML_ATTR_OVERLAY = "overlay";
 	public Element toXML() {
 		Element elm = super.toXML();
 		elm.setAttribute(XML_ATTR_STYLE, Integer.toString(style));
 		elm.setAttribute(XML_ATTR_ADAPT_FONT, Boolean.toString(adaptFontSize));
 		elm.setAttribute(XML_ATTR_FONTDATA, getFontData().toString());
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_FONTCOLOR, getFontColor()));
+		elm.setAttribute(XML_ATTR_OVERLAY, Boolean.toString(getOverlay()));
 		return elm;
 	}
 	
@@ -254,12 +350,16 @@ public class LabelPlugin extends VisualizationPlugin {
 		String styleStr = xml.getAttributeValue(XML_ATTR_STYLE);
 		String adaptStr = xml.getAttributeValue(XML_ATTR_ADAPT_FONT);
 		String fontStr = xml.getAttributeValue(XML_ATTR_FONTDATA);
+		String ovrStr = xml.getAttributeValue(XML_ATTR_OVERLAY);
+		Element fcElm = xml.getChild(XML_ELM_FONTCOLOR);
 		try {
-			setStyle(Integer.parseInt(styleStr));
-			adaptFontSize = Boolean.parseBoolean(adaptStr);
-			fontData = new FontData(fontStr);
+			if(styleStr != null) setStyle(Integer.parseInt(styleStr));
+			if(adaptStr != null) adaptFontSize = Boolean.parseBoolean(adaptStr);
+			if(fontStr != null) fontData = new FontData(fontStr);
+			if(ovrStr != null) setOverlay(Boolean.parseBoolean(ovrStr));
+			if(fcElm != null) fontColor = ColorConverter.parseColorElement(fcElm);
 		} catch(NumberFormatException e) {
-			GmmlVision.log.error("Unable to get style for " + NAME, e);
+			GmmlVision.log.error("Unable to load configuration for " + NAME, e);
 		}
 	}
 }

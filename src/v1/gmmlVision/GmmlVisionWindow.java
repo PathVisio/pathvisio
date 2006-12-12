@@ -107,7 +107,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			String pwpath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES);
 			fd.setFilterPath(pwpath);
 			fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {"Gpml file", "All files"});
+			fd.setFilterNames(new String[] {GmmlVision.PATHWAY_FILTER_NAME, "All files (*.*)"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
 	        
@@ -135,8 +135,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
 			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
-			fd.setFilterExtensions(new String[] {"*.mapp", "*.*"});
-			fd.setFilterNames(new String[] {"GenMAPP Pathway file", "All files"});
+			fd.setFilterExtensions(new String[] {"*." + GmmlVision.GENMAPP_FILE_EXTENSION, "*.*"});
+			fd.setFilterNames(new String[] {GmmlVision.GENMAPP_FILTER_NAME, "All files (*.*)"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
 	        
@@ -216,7 +216,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
 				fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {"Gpml file", "All files"});
+				fd.setFilterNames(new String[] {GmmlVision.PATHWAY_FILTER_NAME, "All files (*.*)"});
 				
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
@@ -294,12 +294,19 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*.mapp", "*.*"});
-				fd.setFilterNames(new String[] {"GenMAPP pathway file", "All files"});
+				fd.setFilterExtensions(new String[] {"*." + GmmlVision.GENMAPP_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {GmmlVision.GENMAPP_FILTER_NAME, "All files (*.*)"});
 				
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
-					fd.setFileName(xmlFile.getName());
+					String name = xmlFile.getName();
+					if (name.endsWith("." + GmmlVision.PATHWAY_FILE_EXTENSION))
+					{
+						name = name.substring(0, name.length() - 
+							GmmlVision.PATHWAY_FILE_EXTENSION.length()) +
+							GmmlVision.GENMAPP_FILE_EXTENSION;
+					}
+					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
 					fd.setFileName(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
@@ -309,9 +316,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				
 				if(fileName == null) return;
 				
-				// Append .gpml extension if not already present
-				if(!fileName.endsWith(".mapp")) 
-					fileName += ".mapp";
+				// Append .mapp extension if not already present
+				if(!fileName.endsWith("." + GmmlVision.GENMAPP_FILE_EXTENSION)) 
+					fileName += "." + GmmlVision.GENMAPP_FILE_EXTENSION;
 				
 				File checkFile = new File(fileName);
 				boolean confirmed = true;

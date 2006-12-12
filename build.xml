@@ -168,13 +168,26 @@ class Revision
 	
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<javadoc destdir="${apidoc.dir}">
-			<classpath refid="project.class.path"/>
+			<classpath refid="project.v2.class.path"/>
 			<package name="gmmlVision"/>
+			<package name="gmmlVision.sidepanels"/>
 			<package name="graphics"/>
 			<package name="colorSet"/>
 			<package name="util"/>
+			<package name="util.tableviewer"/>
 			<package name="data"/>
-			<sourcepath location="${src.dir}"/>
+			<package name="search"/>
+			<package name="R"/>
+			<package name="R.wizard"/>
+			<package name="visualization"/>
+			<package name="visualization.colorset"/>
+			<package name="visualization.plugins"/>
+			<package name="preferences"/>
+			<package name="debug"/>
+			<sourcepath>			
+				<pathelement location="${src.dir}/core"/>
+				<pathelement location="${src.dir}/v2"/>
+			</sourcepath>
 		</javadoc>		
 	</target>
 

@@ -82,7 +82,8 @@ public class GmmlLine extends GmmlGraphics
 		}
 		else if (ls == LineStyle.DASHED)
 		{ 
-			buffer.setLineStyle (SWT.LINE_DASH);
+			// TODO: This works well on windows. I wonder if this is the same on all platforms
+			buffer.setLineDash (new int[] {4, 4});
 		}			
 
 		double s = Math.sqrt(((endx-startx)*(endx-startx)) + ((endy - starty)*(endy - starty)));

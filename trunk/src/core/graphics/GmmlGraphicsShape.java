@@ -182,7 +182,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param Point p
 	 */
 	private Point toExternal(Point p) {
-		Point pr = LinAlg.rotate(p, gdata.getRotation());
+		Point pr = LinAlg.rotate(p, -gdata.getRotation());
 		Point pt = relativeToCanvas(pr);
 		return pt;
 	}
@@ -266,7 +266,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	protected void rotateGC(GC gc, Transform tr) {
 		tr.translate(getCenterX(), getCenterY());
-		tr.rotate((float)Math.toDegrees(-gdata.getRotation()));	
+		tr.rotate((float)Math.toDegrees(gdata.getRotation()));	
 		tr.translate(-getCenterX(), -getCenterY());
 		gc.setTransform(tr);
 	}
@@ -277,7 +277,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 			Point def = relativeToCenter(getHandleLocation(h));
 			Point cur = relativeToCenter(new Point(h.centerx, h.centery));
 			
-			setRotation(gdata.getRotation() - LinAlg.angle(def, cur));
+			setRotation(gdata.getRotation() + LinAlg.angle(def, cur));
 			
 			return;
 		}

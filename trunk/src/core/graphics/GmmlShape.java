@@ -100,7 +100,7 @@ public class GmmlShape extends GmmlGraphicsShape
 //					buffer.fillArc(
 //							startX, startY,	width, height, 0, 180);					
 				buffer.drawArc(
-						startX, startY,	width, height, 0, 180);
+						startX, startY,	width, height, 0, -180);
 				break;
 		}
 

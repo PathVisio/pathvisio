@@ -46,6 +46,9 @@ import debug.Logger;
  */
 public abstract class GmmlVision {
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
+	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
+	public static final String GENMAPP_FILE_EXTENSION = "mapp";
+	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data

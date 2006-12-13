@@ -56,8 +56,8 @@ import org.jdom.output.XMLOutputter;
 import util.FileUtils;
 import visualization.VisualizationManager;
 import visualization.colorset.ColorSetManager;
+import data.CachedData.Data;
 import data.GmmlGdb.IdCodePair;
-import data.GmmlGex.CachedData.Data;
 import data.ImportExprDataWizard.ImportInformation;
 import data.ImportExprDataWizard.ImportPage;
 import debug.StopWatch;
@@ -72,6 +72,9 @@ public class GmmlGex implements ApplicationEventListener {
 	static final int COMPAT_VERSION = 1;
 	
 	private static Connection con;
+	
+	public static CachedData cachedData;
+	
 	/**
 	 * Get the {@link Connection} to the Expression-data database
 	 * @return
@@ -167,145 +170,7 @@ public class GmmlGex implements ApplicationEventListener {
 		
 		return doc;
 	}
-		
-	public static CachedData cachedData;
-	public static class CachedData
-	{
-		private HashMap<IdCodePair, Data> data;		
-		public CachedData()
-		{
-			if(samples == null) setSamples(); //Cache the samples in the dataset
-			data = new HashMap<IdCodePair, Data>();
-		}
-		
-		public boolean hasData(IdCodePair idc)
-		{
-			if(data.containsKey(idc)) return data.get(idc).idcode.equals(idc);
-			else return false;
-		}
-		
-		public Data getData(IdCodePair idc)
-		{
-			Data d = null;
-			if(data.containsKey(idc)) { 
-				d = data.get(idc);
-				if(!d.idcode.equals(idc)) d = null;
-			}
-			return d;
-		}
-		
-		public void addData(String id, String code, Data mappIdData)
-		{
-			data.put(new IdCodePair(id, code), mappIdData);
-		}
-		
-		public class Data implements Comparable
-		{
-			private IdCodePair idcode;
-			private HashMap<Integer, Object> sampleData;
-			private HashMap<IdCodePair, Data> refData;
-			
-			public Data(String id, String code) {
-				idcode = new IdCodePair(id, code);
-				refData = new HashMap<IdCodePair, Data>();
-				sampleData = new HashMap<Integer, Object>();
-			}
-			
-			public Data(IdCodePair idcode) {
-				this.idcode = idcode;
-				sampleData = new HashMap<Integer, Object>();
-			}
-			
-			public boolean hasData() { return refData.size() > 0; }
-			
-			public void addRefData(String id, String code, int sampleId, String data) 
-			{ 
-				Data ref = null;
-				IdCodePair idcode = new IdCodePair(id, code);
-				if(refData.containsKey(idcode)) ref = refData.get(idcode);
-				else ref = new Data(idcode);
-				
-				Object parsedData = null;
-				try { parsedData = Double.parseDouble(data); }
-				catch(Exception e) { parsedData = data; }
-				ref.addSampleData(sampleId, parsedData);
-				refData.put(idcode, ref);
-			}
-			
-			public void addSampleData(int sampleId, Object data)
-			{
-				if(data != null) sampleData.put(sampleId, data);
-			}
-			
-			public List<Data> getRefData()
-			{
-				List<Data> rd = new ArrayList<Data>(refData.values());
-				Collections.sort(rd);
-				return rd;
-			}
-			
-			public Object getData(int idSample)
-			{
-				if(sampleData.containsKey(idSample)) return sampleData.get(idSample);
-				return null;
-			}
-			
-			public boolean hasMultipleData()
-			{
-				return refData.keySet().size() > 1;
-			}
-			
-			public HashMap<Integer, Object> getSampleData() {
-				if(sampleData.size() == 0) {
-					if(refData.size() > 0) return getAverageSampleData();
-				}
-				return sampleData;
-			}
-			
-			public HashMap<Integer, Object> getAverageSampleData()
-			{
-				if(refData.size() == 0) return null;
-				HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
-				for(int idSample: samples.keySet())
-				{
-					int dataType = samples.get(idSample).dataType;
-					if(dataType == Types.REAL) {
-						averageData.put(idSample, averageDouble(idSample));
-					} else {
-						averageData.put(idSample, averageString(idSample));
-					}
-				}
-				return averageData;
-			}
-			
-			private Object averageDouble(int idSample)
-			{
-				double avg = 0;
-				int n = 0;
-				for(Data d : refData.values()) {
-					try { avg += (Double)d.getData(idSample); n++; } catch(Exception e) {}
-				}
-				if(n > 0) return avg / n;
-				return averageString(idSample);
-			}
-			
-			private Object averageString(int idSample)
-			{
-				StringBuilder sb = new StringBuilder();
-				for(Data d : refData.values()) {
-					sb.append(d.getData(idSample) + ", ");
-				}
-				int end = sb.lastIndexOf(", ");
-				return end < 0 ? "" : sb.substring(0, end).toString();
-			}
-
-			public int compareTo(Object o) {
-				Data d = (Data)o;
-				return idcode.compareTo(d.idcode);
-			}
-		}
-	}
-    
+		    
 	private static HashMap<Integer, Sample> samples;
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
@@ -391,18 +256,7 @@ public class GmmlGex implements ApplicationEventListener {
 			return Integer.toString(idSample);
 		}
 	}
-	
-	/**
-	 * Checks whether Expression data is cached for a given gene product
-	 * @param idc	the {@link IdCodePair} containing the id and code of the geneproduct to look for
-	 * @return		true if Expression data is found in cache, false if not
-	 */
-	public static boolean hasData(IdCodePair idc)
-	{
-		if(cachedData == null) return false;
-		return cachedData.hasData(idc);
-	}
-	
+		
 	public static HashMap<Integer, Sample> getSamples()
 	{
 		if(samples == null) setSamples();
@@ -435,12 +289,19 @@ public class GmmlGex implements ApplicationEventListener {
 		return smps;
 	}
 	
-	public static Data getCachedData(IdCodePair idc)
+	public static List<Data> getCachedData(IdCodePair idc)
 	{
-		if(cachedData != null) return cachedData.getData(idc);
-		return null;
+		if(cachedData != null) {
+			return cachedData.getData(idc);
+		} else {
+			return null;
+		}
 	}
 	
+	public static CachedData getCachedData() {
+		return cachedData;
+	}
+
 	/**
 	 * Gets all available expression data for the given gene id and returns a string
 	 * containing this data in a HTML table
@@ -458,21 +319,21 @@ public class GmmlGex implements ApplicationEventListener {
 				|| GmmlGdb.getCon() == null //and to the gene database
 		) return noDataFound;
 		
-		Data mappIdData = cachedData.getData(idc);
-		if(mappIdData == null) return noDataFound;
-		List<Data> refData = mappIdData.getRefData();
-		if(refData == null) return noDataFound; //The gene doesn't have data after all
-		for(Data d : refData)
-		{
-			colNames += "<TH>" + d.idcode.getId();
+		List<Data> pwData = cachedData.getData(idc);
+		
+		if(pwData == null) return noDataFound;
+		
+		for(Data d : pwData){
+			colNames += "<TH>" + d.getIdCodePair().getId();
 		}
+		
 		String dataString = "";
 		for(Sample s : getSamples().values())
 		{
 			dataString += "<TR><TH>" + s.name;
-			for(Data d : refData)
+			for(Data d : pwData)
 			{
-				dataString += "<TH>" + d.getData(s.idSample);
+				dataString += "<TH>" + d.getSampleData(s.idSample);
 			}
 		}
 		
@@ -506,17 +367,19 @@ public class GmmlGex implements ApplicationEventListener {
 		{
 			String id = ids.get(i);
 			String code = codes.get(i);
-			
+			IdCodePair pwIdc = new IdCodePair(id, code);
 			ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
 			
-			if(ensIds.size() > 0) //Only create a RefData object if the id maps to an Ensembl gene
-			{
-				Data mappGeneData = cachedData.new Data(id, code);
-				
+			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
+			
+			if(ensIds.size() > 0) //Only create a Data object if the id maps to an Ensembl gene
+			{				
 				StopWatch tt = new StopWatch();
 				StopWatch ts = new StopWatch();
 				
 				tt.start();
+				
+				groupData.clear();
 				
 				for(String ensId : ensIds)
 				{	
@@ -526,17 +389,22 @@ public class GmmlGex implements ApplicationEventListener {
 //						pstData.setString(1, ensId);
 //						ResultSet r = pstData.executeQuery();
 						ResultSet r = con.createStatement().executeQuery(
-								"SELECT id, code, data, idSample FROM expression " +
+								"SELECT id, code, data, idSample, groupId FROM expression " +
 								" WHERE ensId = '" + ensId + "'");
 						//r contains all genes and data mapping to the Ensembl id
 						while(r.next())
 						{
+							int group = r.getInt("groupId");
+							IdCodePair ref = new IdCodePair(r.getString("id"), r.getString("code"));
+							Data data = groupData.get(group);
+							if(data == null) {
+								groupData.put(group, data = new Data(ref, group));
+								cachedData.addData(pwIdc, data);
+							}
+							
 							int idSample = r.getInt("idSample");
-							mappGeneData.addRefData(
-									r.getString("id"), 
-									r.getString("code"),
-									idSample,
-									r.getString("data"));	
+														
+							data.setSampleData(idSample, r.getString("data"));
 						}
 						
 						ts.stopToLog("Fetching data for ens id: " + ensId + "\t");
@@ -545,7 +413,6 @@ public class GmmlGex implements ApplicationEventListener {
 						GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
 					}
 				}
-				if(mappGeneData.hasData()) cachedData.addData(id, code, mappGeneData);
 				
 				tt.stopToLog(id + ", " + code + ": adding data to cache\t\t");
 			}			

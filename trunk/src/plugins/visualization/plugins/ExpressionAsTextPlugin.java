@@ -55,12 +55,12 @@ import org.jdom.Element;
 
 import util.SwtUtils;
 import visualization.Visualization;
-import visualization.plugins.VisualizationPlugin;
+import data.CachedData;
 import data.GmmlDataObject;
 import data.GmmlGex;
+import data.CachedData.Data;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
-import data.GmmlGex.CachedData.Data;
 
 /**
  * Provides label for Gene Product
@@ -95,9 +95,12 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		if(g instanceof GmmlGeneProduct) {
 			GmmlGeneProduct gp = (GmmlGeneProduct) g;
-			Data data = GmmlGex.getCachedData(new IdCodePair(gp.getID(), gp.getSystemCode()));
-			if(data == null || useSamples.size() == 0) return;
+			CachedData  cache = GmmlGex.getCachedData();
 			
+			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
+			
+			if(cache.hasData(idc)|| useSamples.size() == 0) return;
+						
 			Font f = new Font(e.display, getFontData());
 			
 			GmmlDataObject gd = g.getGmmlData();
@@ -108,7 +111,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			buffer.setFont(f);
 			int w = 0, i = 0;
 			for(Sample s : useSamples) {
-				String str = getDataString(s, data, SEP + "\n") + 
+				String str = getDataString(s, idc, cache, SEP + "\n") + 
 				(++i == useSamples.size() ? "" : SEP);
 				Point size = buffer.textExtent(str);
 				buffer.drawText(str, startx + w, starty - size.y / 2, true);
@@ -121,10 +124,13 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	
 	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) {
 		if(g instanceof GmmlGeneProduct) {
-			GmmlGeneProduct gp = (GmmlGeneProduct)g;
-			Data data = GmmlGex.getCachedData(new IdCodePair(gp.getID(), gp.getSystemCode()));
-			if(data == null) return null;
+			GmmlGeneProduct gp = (GmmlGeneProduct) g;
+			CachedData  cache = GmmlGex.getCachedData();
 			
+			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
+			
+			if(cache.hasData(idc)|| useSamples.size() == 0) return null;
+						
 			Group group = new Group(parent, SWT.NULL);
 			group.setLayout(new GridLayout(2, false));
 			group.setText("Expression data");
@@ -133,7 +139,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 				Label labelL = new Label(group, SWT.NULL);
 				labelL.setText(getLabelLeftText(s));
 				Label labelR = new Label(group, SWT.NULL);
-				labelR.setText(getLabelRightText(s, data));
+				labelR.setText(getLabelRightText(s, idc, cache));
 			}
 			SwtUtils.setCompositeAndChildrenBackground(group, 
 					group.getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -145,27 +151,27 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		return s.getName() + ":";
 	}
 	
-	String getLabelRightText(Sample s, Data data) {
-		return getDataString(s, data, SEP);
+	String getLabelRightText(Sample s, IdCodePair idc, CachedData cache) {
+		return getDataString(s, idc, cache, SEP);
 	}
 	
-	String getDataString(Sample s, Data data, String multSep) {	
+	String getDataString(Sample s, IdCodePair idc, CachedData cache, String multSep) {	
 		Object str = null;
-		if(data.hasMultipleData())
-			str = formatData(getSampleStringMult(s, data, multSep));
+		if(cache.hasMultipleData(idc))
+			str = formatData(getSampleStringMult(s, idc, cache, multSep));
 		else
-			str =  formatData(getSampleData(s, data));
+			str =  formatData(getSampleData(s, cache.getSingleData(idc)));
 		return str == null ? "" : str.toString();
 	}
 	
 	Object getSampleData(Sample s, Data data) {
-		return data.getSampleData().get(s.getId());
+		return data.getSampleData(s.getId());
 	}
 	
-	Object getSampleStringMult(Sample s, Data data, String sep) {
-		if(mean) return data.getAverageSampleData().get(s.getId());
+	Object getSampleStringMult(Sample s, IdCodePair idc, CachedData cache, String sep) {
+		if(mean) return cache.getAverageSampleData(idc);
 		
-		List<Data> refdata = data.getRefData();
+		List<Data> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();
 		for(Data d : refdata) {
 			strb.append(formatData(d.getSampleData().get(s.getId())) + sep);

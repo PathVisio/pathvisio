@@ -70,11 +70,10 @@ import util.TableColumnResizer;
 import visualization.Visualization;
 import visualization.colorset.ColorSet;
 import visualization.colorset.ColorSetManager;
-import visualization.plugins.VisualizationPlugin;
+import data.CachedData;
 import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
-import data.GmmlGex.CachedData.Data;
 
 public abstract class PluginWithColoredSamples extends VisualizationPlugin {	
 	static final String[] useSampleColumns = { "sample", "color set" };
@@ -120,16 +119,19 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 					area.y,
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
-			Data data = GmmlGex.getCachedData(new IdCodePair(gp.getID(), gp.getSystemCode()));
+			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
+			CachedData cache = GmmlGex.getCachedData();
 			
 			if(s.getColorSet() == null) continue; //No colorset for this sample
-			if(data == null) drawNoDataFound(s, area, e, buffer);
-			else drawSample(s, data, r, e, buffer);
+			if(cache.hasData(idc)) 
+				drawSample(s, idc, r, e, buffer);
+			else 
+				drawNoDataFound(s, area, e, buffer);
 		}
 	}
 	
 	abstract void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC buffer);
-	abstract void drawSample(ConfiguredSample s, Data data, Rectangle area, PaintEvent e, GC buffer);
+	abstract void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC buffer);
 
 	static final int SIDEPANEL_SPACING = 3;
 	static final int SIDEPANEL_MARGIN = 5;

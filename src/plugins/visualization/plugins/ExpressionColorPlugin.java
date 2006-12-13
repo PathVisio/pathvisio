@@ -19,6 +19,7 @@ package visualization.plugins;
 import gmmlVision.GmmlVision;
 import graphics.GmmlGraphics;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -49,8 +50,11 @@ import util.ColorConverter;
 import util.SwtUtils;
 import visualization.Visualization;
 import visualization.colorset.ColorSet;
+import data.CachedData;
+import data.GmmlGex;
+import data.CachedData.Data;
+import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
-import data.GmmlGex.CachedData.Data;
 
 public class ExpressionColorPlugin extends PluginWithColoredSamples {
 	final String NAME = "Color by expression";
@@ -73,33 +77,36 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 		drawColoredRectangle(area, cs.getColor(ColorSet.ID_COLOR_NO_DATA_FOUND), e, buffer);
 	}
 
-	protected void drawSample(ConfiguredSample s, Data data, Rectangle area, PaintEvent e, GC buffer) {
+	protected void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC buffer) {
 		ColorSample smp = (ColorSample)s;
-		if(data.hasMultipleData()) {
+		CachedData cache = GmmlGex.getCachedData();
+		
+		if(cache.hasMultipleData(idc)) {
 			switch(smp.getAmbigiousType()) {
 			case ColorSample.AMBIGIOUS_AVG:
-				drawSampleAvg(smp, data, area, e, buffer);
+				drawSampleAvg(smp, idc, cache, area, e, buffer);
 				break;
 			case ColorSample.AMBIGIOUS_BARS:
-				drawSampleBar(smp, data, area, e, buffer);
+				drawSampleBar(smp, idc, cache, area, e, buffer);
 				break;
 			}
 		} else {
 			ColorSet cs = smp.getColorSet();
-			RGB rgb = cs.getColor(data.getSampleData(), smp.getId());
+			HashMap<Integer, Object> data = cache.getSingleData(idc).getSampleData();
+			RGB rgb = cs.getColor(data, smp.getId());
 			drawColoredRectangle(area, rgb, e, buffer);
 		}
 	}
 
-	void drawSampleAvg(ConfiguredSample s, Data data, Rectangle area, PaintEvent e, GC buffer) {
+	void drawSampleAvg(ConfiguredSample s, IdCodePair idc, CachedData cache, Rectangle area, PaintEvent e, GC buffer) {
 		ColorSet cs = s.getColorSet();
-		RGB rgb = cs.getColor(data.getAverageSampleData(), s.getId());
+		RGB rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());
 		drawColoredRectangle(area, rgb, e, buffer);
 	}
 	
-	void drawSampleBar(ConfiguredSample s, Data data, Rectangle area, PaintEvent e, GC buffer) {
+	void drawSampleBar(ConfiguredSample s, IdCodePair idc, CachedData cache, Rectangle area, PaintEvent e, GC buffer) {
 		ColorSet cs = s.getColorSet();
-		List<Data> refdata = data.getRefData();
+		List<Data> refdata = cache.getData(idc);
 		int n = refdata.size();
 		int left = area.height % n;
 		int h = area.height / n;
@@ -273,7 +280,7 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 		}
 					
 		public void refresh() {
-			if(input == null || input.length > 1) setAllEnabled(false);
+			if(input == null || input.length != 1) setAllEnabled(false);
 			else {
 				setAllEnabled(true);
 				boolean avg = getInput().getAmbigiousType() == ColorSample.AMBIGIOUS_AVG;

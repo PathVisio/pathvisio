@@ -68,8 +68,10 @@ import util.ColorConverter;
 import util.SwtUtils;
 import visualization.Visualization;
 import visualization.colorset.ColorSet;
+import data.CachedData;
+import data.GmmlGex;
+import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
-import data.GmmlGex.CachedData.Data;
 
 public class ExpressionImagePlugin extends PluginWithColoredSamples {
 	static final String NAME = "Colored image";
@@ -104,11 +106,11 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		if(url.getProtocol().equals("file")) imageURLs.remove(url);
 	}
 	
-	protected void drawSample(ConfiguredSample s, Data data, Rectangle area, PaintEvent e, GC buffer) {
-		if(data == null) return;
+	protected void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC buffer) {
+		CachedData cache = GmmlGex.getCachedData();
 		ColorSet cs = s.getColorSet();
 
-		RGB rgb = cs.getColor(data.getAverageSampleData(), s.getId());
+		RGB rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());
 		
 		ImageSample is = (ImageSample)s;
 		ImageData id = is.getImageData(rgb);
@@ -325,7 +327,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		}
 		
 		void refreshImage() {
-			if(input == null) {
+			if(input == null || input.length < 1) {
 				image = null;
 			} else {
 				Point size = imageLabel.getSize();
@@ -361,7 +363,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		}
 				
 		public void refresh() {
-			if(input == null || input.length > 1) {
+			if(input == null || input.length != 1) {
 				setAllEnabled(false);
 				refreshImage();
 			}

@@ -110,7 +110,15 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 					GmmlVision.getResourceURL("icons/new.gif")));
 		}
 		public void run () {
-			GmmlVision.newPathway();
+			public void run () {
+				if (GmmlVision.gmmlData == null ||
+					MessageDialog.openQuestion(window.getShell(), "Discard changes?",
+							"Warning: This will discard any changes to " +
+							"the current pathway. Are you sure?"))
+				{
+					GmmlVision.newPathway();
+				}
+			}
 		}
 	}
 	private NewAction newAction = new NewAction (this);

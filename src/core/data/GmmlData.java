@@ -51,7 +51,8 @@ import org.xml.sax.SAXException;
 * pathway data.
 * 
 * GmmlData contains multiple GmmlDataObjects. GmmlData is guaranteed
-* to always have exactly one object of the type MAPPINFO.
+* to always have exactly one object of the type MAPPINFO and exactly
+* one object of the type INFOBOX.
 */
 public class GmmlData
 {
@@ -83,6 +84,7 @@ public class GmmlData
 	}
 	
 	private GmmlDataObject mappInfo = null;
+	private GmmlDataObject infoBox = null;
 	
 	/**
 	 * get the one and only MappInfo object.
@@ -95,7 +97,18 @@ public class GmmlData
 	{
 		return mappInfo;
 	}
-	
+
+	/**
+	 * get the one and only InfoBox object.
+	 * There is no setter, a MappInfo object is automatically
+	 * created in the constructor.
+	 * 
+	 * @return a GmmlDataObject with ObjectType set to mappinfo.
+	 */
+	public GmmlDataObject getInfoBox()
+	{
+		return infoBox;
+	}
 	/**
 	 * Add a GmmlDataObject to this GmmlData.
 	 * takes care of setting parent and removing from possible previous
@@ -108,6 +121,8 @@ public class GmmlData
 	public void add (GmmlDataObject o)
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
+			throw new IllegalArgumentException("Can't add more mappinfo objects");
+		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
 			throw new IllegalArgumentException("Can't add more mappinfo objects");
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
@@ -126,6 +141,8 @@ public class GmmlData
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO)
 			throw new IllegalArgumentException("Can't remove mappinfo object!");
+		if (o.getObjectType() == ObjectType.INFOBOX)
+			throw new IllegalArgumentException("Can't remove infobox object!");
 		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.DELETED));
 		dataObjects.remove(o);
 		o.setParent(null);
@@ -184,6 +201,8 @@ public class GmmlData
 	{
 		mappInfo = new GmmlDataObject(ObjectType.MAPPINFO);
 		this.add (mappInfo);
+		infoBox = new GmmlDataObject(ObjectType.INFOBOX);
+		this.add (infoBox);
 	}
 	
 	/*

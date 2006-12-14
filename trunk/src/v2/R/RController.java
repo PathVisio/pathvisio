@@ -111,7 +111,7 @@ public class RController implements ApplicationEventListener{
 			throw new InvocationTargetException(e, "Unable to redirect R standard output to file");
 		}
 		
-		try { //Import or install R libraries and load functions
+		try { //Import or install R package and load functions
 				installPackage();
 				importPackage();
 		} catch(Throwable e) {

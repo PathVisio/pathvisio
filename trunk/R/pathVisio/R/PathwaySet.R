@@ -63,6 +63,15 @@ createReplaceMethod("name", "PathwaySet", function(x, value) {
 	x
 })
 
+## Other ##
+createMethod("asEnsembl", "PathwaySet", function(x, ...) {
+	egenes = vector()
+	for(pw in x) {
+		egenes = append(egenes, asEnsembl(pw))
+	}
+	unique(egenes)
+})
+
 ## Generic and Primitive implementations ##
 setMethod("print", "PathwaySet", function(x, ...) {
 	cat("PathwaySet:", paste("\t@name:\n\t\t ", name(x)), "\t@pathways:", sep="\n")

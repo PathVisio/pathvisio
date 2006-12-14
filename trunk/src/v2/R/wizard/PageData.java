@@ -104,7 +104,8 @@ public class PageData extends WizardPage {
 	private void setInitialValues() {
 		exprObj.setText(rDataOut.getDataSetName());
 		pwObj.setText(rDataOut.getPathwaySetName());
-		pwDir.setText(rDataOut.getPathwayDir().toString());
+		File pd = rDataOut.getPathwayDir();
+		pwDir.setText(pd == null ? "" : pd.toString());
 	}
 	
 	public Composite createExportSettings(Composite parent) {
@@ -183,7 +184,9 @@ public class PageData extends WizardPage {
 		pwBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog fd = new DirectoryDialog(getShell());
-				fd.setFilterPath(pwDir.getText());
+				String pwTxt = pwDir.getText();
+				fd.setFilterPath(pwTxt.equals("") ? 
+						GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES) : pwTxt);
 				String dir = fd.open();
 				if(dir != null) pwDir.setText(dir);
 				checkPageComplete();
@@ -200,7 +203,8 @@ public class PageData extends WizardPage {
 		public void widgetSelected(SelectionEvent e) {
 			FileDialog fd = new FileDialog(getShell(), 
 					e.widget == exportBrowse ? SWT.SAVE : SWT.OPEN);
-			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA));
+			String expTxt = exportFile.getText();
+			fd.setFilterPath(expTxt.equals("") ? GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA) : expTxt);
 			String file = fd.open();
 			if(file != null) {
 				if		(e.widget == exportBrowse) 	exportFile.setText(file);

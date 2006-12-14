@@ -106,15 +106,22 @@ public class RCommands {
 		for(int i = 0; i < list.size(); i++) {
 			checkCancelled();
 			
-			RObject ro = (RObject)list.get(i);
-			long xpe = ro.getRef();
+			Object o = list.get(i);
+			long xpe = 0;
+			if(o instanceof RObject) {
+				RObject ro = (RObject)list.get(i);
+				xpe = ro.getRef();
+			} else if (o instanceof String) {
+				xpe = eval((String)o, true).xp;
+			}
+			
 			re.rniVectorSetElement(xpe, xpv, i);
 		}
 		
 		re.rniAssign(symbol, xpv, 0);
 		re.rniUnprotect(1);
 	}
-	
+		
 	/**
 	 * Wrapper for the function {@link Rengine#assign(String, String[])}
 	 * @param symbol	the name of the R variable

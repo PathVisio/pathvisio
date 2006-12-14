@@ -37,6 +37,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import preferences.GmmlPreferences;
 import util.FileUtils;
+import util.Utils;
 import util.SwtUtils.SimpleRunnableWithProgress;
 import util.XmlUtils.PathwayParser;
 import util.XmlUtils.PathwayParser.Gene;
@@ -57,8 +58,7 @@ public class RDataOut {
 	boolean exportPws = true;			//Export pathways or not
 	boolean exportData = true;			//Export data or not
 	
-	File pwDir = new File(
-		GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));	//Pathway directory to import
+	File pwDir;	//Pathway directory to import
 //	String exportFile = "temp.Rd";		//File name to export RData
 	String pwsName = "myPathways";		//Name of pathwayset object
 	String dsName = "myData";			//Name of dataset object
@@ -191,8 +191,8 @@ public class RDataOut {
 			SimpleRunnableWithProgress.monitorWorked(pwContribXml);
 		}
 
-		if(exportData && cacheDataSet != null) 
-			cachePathwaySet.addCrossRefs(cacheDataSet);
+//		if(exportData && cacheDataSet != null) 
+//			cachePathwaySet.addCrossRefs(cacheDataSet);
 		
 		cachePathwaySet.toR(pwsName);
 	
@@ -302,52 +302,60 @@ public class RDataOut {
 			if(gp == null) {
 				gp = new GeneProduct(idc);
 				geneProducts.put(idc, gp);
+				addEnsembl(gp, idc);
 			}
 			return gp;
 		}
-		
-		void addCrossRefs(DataSet dataSet) throws Exception {			
-			int nRep = dataSet.reporters.length;
-			int nPwg = geneProducts.size();
-			if(nRep > nPwg) {
-				addCrossRefsByGeneProduct(dataSet);
-			} else {
-				addCrossRefsByReporter(dataSet);
-			}
-		}
-		
-		private void addCrossRefsByGeneProduct(DataSet dataSet) throws RInterruptedException {
-			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
-			
-			HashMap repHash = dataSet.getReporterHash();
 
-			for(IdCodePair pwidc : geneProducts.keySet()) {
-				RCommands.checkCancelled();
-			
-				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
-				for(IdCodePair ref : pwrefs) {
-					if(repHash.containsKey(ref)) {
-						geneProducts.get(pwidc).addReference(ref);
-					}
-				}
-				SimpleRunnableWithProgress.monitorWorked(worked);
+		void addEnsembl(GeneProduct gp, IdCodePair idc) {
+			List<String> ensIds = GmmlGdb.ref2EnsIds(idc.getId(), idc.getCode());
+			for(String ens : ensIds) {
+				gp.addReference(new IdCodePair(ens, "En"));
 			}
 		}
+
+//		void addCrossRefs(DataSet dataSet) throws Exception {			
+//			int nRep = dataSet.reporters.length;
+//			int nPwg = geneProducts.size();
+//			if(nRep > nPwg) {
+//				addCrossRefsByGeneProduct(dataSet);
+//			} else {
+//				addCrossRefsByReporter(dataSet);
+//			}
+//		}
 		
-		private void addCrossRefsByReporter(DataSet dataSet) throws RInterruptedException {
-			int worked = (int)((double)(totalWorkPws * contribGdb) / dataSet.reporters.length);
-			
-			for(IdCodePair rep : dataSet.reporters) {
-				RCommands.checkCancelled();
-			
-				List<IdCodePair> reprefs = GmmlGdb.getCrossRefs(rep);
-				for(IdCodePair ref : reprefs) {
-					GeneProduct gp = geneProducts.get(ref);
-					if(gp != null) gp.addReference(rep);
-				}
-				SimpleRunnableWithProgress.monitorWorked(worked);
-			}
-		}
+//		private void addCrossRefsByGeneProduct(DataSet dataSet) throws RInterruptedException {
+//			int worked = (int)((double)(totalWorkPws * contribGdb) / geneProducts.size());
+//			
+//			HashMap repHash = dataSet.getReporterHash();
+//
+//			for(IdCodePair pwidc : geneProducts.keySet()) {
+//				RCommands.checkCancelled();
+//			
+//				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
+//				for(IdCodePair ref : pwrefs) {
+//					if(repHash.containsKey(ref)) {
+//						geneProducts.get(pwidc).addReference(ref);
+//					}
+//				}
+//				SimpleRunnableWithProgress.monitorWorked(worked);
+//			}
+//		}
+//		
+//		private void addCrossRefsByReporter(DataSet dataSet) throws RInterruptedException {
+//			int worked = (int)((double)(totalWorkPws * contribGdb) / dataSet.reporters.length);
+//			
+//			for(IdCodePair rep : dataSet.reporters) {
+//				RCommands.checkCancelled();
+//			
+//				List<IdCodePair> reprefs = GmmlGdb.getCrossRefs(rep);
+//				for(IdCodePair ref : reprefs) {
+//					GeneProduct gp = geneProducts.get(ref);
+//					if(gp != null) gp.addReference(rep);
+//				}
+//				SimpleRunnableWithProgress.monitorWorked(worked);
+//			}
+//		}
 }
 	
 	static class Pathway extends RObject {
@@ -372,7 +380,7 @@ public class RDataOut {
 				geneProducts.add(pws.getUniqueGeneProduct(ref));
 			}
 		}
-		
+			
 		long getRef() throws RException {			
 			String tmpVar = RTemp.getNewVar(true);
 			RCommands.assign(tmpVar, geneProducts);
@@ -406,7 +414,7 @@ public class RDataOut {
 		String[] getRowNames() {
 			String[] rowNames = new String[refs.size()];
 			int i = 0;
-			for(IdCodePair ref : refs) rowNames[i++] = ref.getCode() + ":" + ref.getId();
+			for(IdCodePair ref : refs) rowNames[i++] = ref2String(ref);
 			return rowNames;
 		}
 		
@@ -451,6 +459,10 @@ public class RDataOut {
 					if(ref.equals(oref)) return true;
 			return false;
 		}
+		
+		public static String ref2String(IdCodePair ref) {
+			return ref.getCode() + ":" + ref.getId();
+		}
 	}
 		
 	static class DataSet extends RObject {
@@ -458,6 +470,7 @@ public class RDataOut {
 		IdCodePair [] reporters;
 		HashMap<Integer, Integer> sample2Col;
 		int[] col2Sample;
+		HashMap<IdCodePair, String> rep2ens;
 		
 		String name;
 		
@@ -480,6 +493,19 @@ public class RDataOut {
 					"SELECT DISTINCT code FROM expression");
 			while(r.next()) codes.add(r.getString("code"));
 			return codes;
+		}
+		
+		void addRep2Ens(IdCodePair rep) {
+			if(rep2ens == null) 
+				rep2ens = new HashMap<IdCodePair, String>();
+			if(!rep2ens.containsKey(rep)) {
+				List<String> ensIds = GmmlGdb.ref2EnsIds(rep.getId(), rep.getCode());
+				if(ensIds.size() > 0) {
+					StringBuilder cmd = new StringBuilder("c(");
+					for(String ens : ensIds) cmd.append("'En:" + ens + "',");
+					rep2ens.put(rep, cmd.substring(0, cmd.length() - 1) + ")");
+				}
+			}
 		}
 		
 		long getRef() throws RException {
@@ -538,11 +564,28 @@ public class RDataOut {
 			String tmpData = RTemp.getNewVar();
 			re.rniAssign(tmpData, l_ref, 0);
 			
+			//Assign rep2ens			
+			List<String> rep2ensCmd = new ArrayList<String>();
+			String[] rep2ensNms = new String[rep2ens.size()];
+			int i = 0;
+			for(IdCodePair idc : rep2ens.keySet()) {
+				rep2ensCmd.add(rep2ens.get(idc));
+				rep2ensNms[i++] = GeneProduct.ref2String(idc);
+			}
+			
+			String tmpRep2Ens = RTemp.getNewVar();
+			RCommands.assign(tmpRep2Ens, rep2ensCmd);
+			String tmpNames = RTemp.getNewVar();
+			RCommands.assign(tmpNames, rep2ensNms);
+			RCommands.eval("names(" + tmpRep2Ens + ") = " + tmpNames, false);
+			
+			
 			//Assign new dataset
-			long xp = RCommands.eval("DataSet(data = " + tmpData + ", name = '" + name + "')").xp;
+			long xp = RCommands.eval("DataSet(data = " + tmpData + ", name = '" + name + 
+					"', rep2ens = " + tmpRep2Ens + ")").xp;
 			
 			re.rniUnprotect(1);
-			return returnRef(xp, tmpData);
+			return returnRef(xp, new String[] { tmpData, tmpRep2Ens, tmpNames } );
 		}
 		
 		void queryData() throws Exception {			
@@ -588,8 +631,11 @@ public class RDataOut {
 				pst_rep.setInt(1, group);
 				
 				ResultSet r1 = pst_rep.executeQuery();
-				if(r1.next()) 
-					reporters[++i] = new IdCodePair(r1.getString("id"), r1.getString("code"));
+				if(r1.next()) {
+					IdCodePair rep = new IdCodePair(r1.getString("id"), r1.getString("code"));
+					reporters[++i] = rep;
+					addRep2Ens(rep);
+				}
 				r1 = pst_dta.executeQuery();
 				while(r1.next()) {
 					int sid = r1.getInt("idSample");

@@ -25,7 +25,7 @@ setClass("Pathway", contains = "list",
 	representation(
 		name = "character",
 		fileName = "character",
-		allRefs = "character" #Vector conaining all references of the geneproducts in this pathway (for performance of match method)
+		allRefs = "character" #Vector containing all references of the geneproducts in this pathway (for performance of match method)
 	),
 	prototype(
 		name = character(),
@@ -84,6 +84,14 @@ createReplaceMethod("allRefs", "Pathway", function(x, value) {
 	x
 })
 
+## Other ##
+createMethod("asEnsembl", "Pathway", function(x, ...) {
+	refs = allRefs(x)
+	isEns = sapply(refs, function(ref) { parseGpString(ref)[2] == "En" })
+	if(length(isEns) > 0) refs[isEns]
+	else character()
+})
+
 ## Generic and Primitive implementations ##
 setMethod("print", "Pathway", function(x, ...) {
 	cat("Pathway:", "\t@name", paste("\t\t",name(x)), "\t@geneProducts", sep = "\n")
@@ -112,8 +120,6 @@ function(refs, pathway) {
 	}
 })
 
-## 
-##
 createMethod("inReferences", c(pathway = "Pathway", refs = "ANY"), 
 function(pathway, refs) {
 	refMatch = matchReferences(refs, pathway)

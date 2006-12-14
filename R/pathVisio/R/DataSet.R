@@ -23,10 +23,12 @@
 ##########################
 setClass("DataSet", contains = "matrix",
 	representation(
-		name = "character"
+		name = "character",
+		rep2ens = "list"
 	),
 	prototype(
-		name = character()
+		name = character(),
+		rep2ens = list()
 	)
 )
 
@@ -40,9 +42,9 @@ setValidity("DataSet", function(object) {
 #### Constructors ####
 ######################
 setGeneric("DataSet", 
-	function(name, reporters = NULL, data) {
+	function(name, reporters = NULL, data, rep2ens = list()) {
 	if(!is.null(reporters)) rownames(data) = reporters
-	new("DataSet", data, name = name)
+	new("DataSet", data, name = name, rep2ens = rep2ens)
 })
 
 #################
@@ -52,6 +54,7 @@ setGeneric("DataSet",
 createMethod("name", "DataSet", function(x, ...) x@name)
 createMethod("samples", "DataSet", function(x, ...) colnames(x))
 createMethod("reporters", "DataSet", function(x, ...) rownames(x))
+createMethod("rep2ens", "DataSet", function(x, ...) x@rep2ens)
 
 ## Setters ##)
 createReplaceMethod("name", "DataSet", function(x, value, ...) {
@@ -81,5 +84,25 @@ setMethod("print", "DataSet", function(x, ...) {
 createMethod("dataByReporter", c("DataSet", "character"), function(obj, reporter) {
 	obj[which(names(obj) == reporter),]
 })
+
+createMethod("asEnsembl", c("DataSet"), function(x, data = x, ...) {
+	.aggregateEnsembl(x, data)
+})
+
+.aggregateEnsembl = function(ds, data) {
+	data = as.matrix(data)
+	reps = reporters(ds)
+	j = 0
+	for(i in 1:length(reps)) {
+		row = rbind(data[i,])
+		ensIds = rep2ens(ds)[[reps[i]]]
+		for(ens in ensIds) {
+			rownames(row) = ens
+			if(exists("eds")) eds = rbind(eds, row)
+			else eds = row
+		}
+	}
+	eds
+}
 	
 	

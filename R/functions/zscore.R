@@ -1,22 +1,3 @@
-# PathVisio,
-# a tool for data visualization and analysis using Biological Pathways
-# Copyright 2006-2007 BiGCaT Bioinformatics
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); 
-# you may not use this file except in compliance with the License. 
-# You may obtain a copy of the License at 
-# 
-# http://www.apache.org/licenses/LICENSE-2.0 
-#  
-# Unless required by applicable law or agreed to in writing, software 
-# distributed under the License is distributed on an "AS IS" BASIS, 
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-# See the License for the specific language governing permissions and 
-# limitations under the License.
-#
-######################################################################
-################## Statistics similar to MappFinder ##################
-######################################################################
 require(pathVisio)
 
 .zscore_impl = function(pathwaySet, dataSet, sets) {
@@ -39,83 +20,88 @@ require(pathVisio)
 	total = length(pathwaySet)
 	current = 1
 	
-	#Give .calcStats access to my objects
-	environment(.calcStats) = environment()
-	environment(.matchPathways) = environment()
+	dgenes = rownames(asEnsembl(dataSet))
+	ugenes = unique(dgenes)
 	
-	#Match reporters with pathways
-	cat("Matching reporters with pathways\n")
-	pwMatches = .matchPathways(pathwaySet, reporters)
+	pgenesTotal = asEnsembl(pathwaySet)
 	
-	cat("Calculating z-scores\n")
+	ePws = lapply(pathwaySet, function(pw) { asEnsembl(pw) })
+	nvalues = vector()
+	for(i in 1:length(pathwaySet)) {
+		nvalues[i] = .calcn(ePws[[i]], ugenes)
+	}
+	N = .calcN(ugenes, pgenesTotal)
+	
 	results = list()
 	for(i in 1:ncol(sets)) {
-		zscores = t(sapply(names(pathwaySet), function(pwname) {
-			.calcStats(sets[,i], pwMatches[[pwname]], pathwaySet[[pwname]])
-		}))
-    colnames(zscores) = .statNames()
+		eset = asEnsembl(dataSet, sets[,i])
+		uset = .uniqueSet(ugenes, dgenes, eset)
+		
+		R = .calcR(uset, ugenes, pgenesTotal)
+		
+		zscores = Pvalues = Evalues = rvalues = vector()
+		for(j in 1:length(pathwaySet)) {
+			pgenes = unique(ePws[[j]])
+			rvalues[j] = .calcr(uset, ugenes, pgenes) ## genes in set and on pathway
+			zscores[j] = .calcZ(N, R, nvalues[j], rvalues[j])
+			Pvalues[j] = length(pathwaySet[[j]]) ##Original number of pathway genes
+			Evalues[j] = length(pgenes) ##Number of ensembl genes on pathway
+    }
     
-    ##Calculate global stats
-    globals = .calcGlobals(sets[,i], reporters);
-      	
+    stats = cbind(Pvalues, Evalues, nvalues, rvalues, zscores)
+    print(stats)
+    colnames(stats) = c("Genes on pathway", "Ensembl on pathway", "n", "r", "zscore")
+    
+    globals = matrix(nrow = 5, ncol = 2)
+    globals[1,] = c("Number of reporters measured", length(reporters))
+    globals[2,] = c("Number ensembl genes measured", length(ugenes))
+    globals[3,] = c("Number of reporters in set", sum(sets[,i]))
+		globals[4,] = c("Measured gene-products on a pathway (N)", N)
+    globals[5,] = c("Gene-products on a pathway and in set (R)", R)
+    
 		##Create a ResultSet to return
-		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, globals = globals, stats = zscores)
+		results[[i]] = ResultSet(name = colnames(sets)[i], pathwaySet = pathwaySet, globals = globals, stats = stats)
 	}
 	if(length(results) == 1) return(results[[1]])
 	else return(results)
 }
 
-## For every pathway match with reporters
-## Returns:
-## A named list (names = names(pathwaySet)) where every element is a logical vector (length = length(reporters))
-## that specifies whether a reporter is present in the pathway (TRUE) or not (FALSE)
-.matchPathways = function(pathwaySet, reporters) {
-	matchResult = lapply(pathwaySet, function(pathway) {
-		## Progress reporting
-		cat("\tprocessing pathway '", name(pathway),"' ", " (", 
-			current, " of ", total, ")\n", sep="");
-		assign("current", current + 1, envir=parent.env(environment()))
-		
-		## Apply match between this pathway and all reporters
-		matchReferences(reporters, pathway)
-	})
-	names(matchResult) = names(pathwaySet)
-	matchResult			
-}
-
-.setNames = function(sets, dataSetName) {
-	sapply(1:ncol(sets), function(x) paste("zscore",dataSetName,"criterion",x,sep="-"))
-}
-
-.calcStats = function(set, reporterMatch, pathway) {	
-	N = length(reporters)			## Total number of genes measured
-	R = sum(as.logical(set))		## Total number of genes belonging to the set
-				
-	n = sum(reporterMatch)			## Total number of measured(!) genes in the pathway
-	r = sum(reporterMatch[as.logical(set)])	## Number of genes that are in the subset and on the pathway
-    
-    zscore = .z(N, R, n, r)
-
-    P = length(pathway)     ## Total number of genes in the pathway
-    
-   c(P, n, r, zscore)
-}
-
-.calcGlobals = function(set, reporters) {
-	globals = matrix(nrow = 2, ncol = 2)
-	globals[1,] = c("Number of genes measured (N)", length(reporters))
-	globals[2,] = c("Number of genes in set (R)", sum(as.logical(set)))
-	globals
-}
-
-.statNames = function() { c("on pathway", "measured", "in set", "z-score") }
-
-.z = function(N, R, n, r) {
+.calcZ = function(N, R, n, r) {
     RoverN = R / N
 	num = r - n*RoverN
 	den = sqrt(n * RoverN * (1 - RoverN) * (1 - (n - 1)/(N - 1)))
     num/den
 }
+
+.calcN = function(ugenes, pgenesTotal) {
+	pmatch = ugenes %in% pgenesTotal
+	sum(pmatch)
+}
+
+.calcn = function(pgenes, ugenes) {
+		measured = ugenes %in% pgenes
+		sum(measured)
+}
+
+.calcR = function(uset, ugenes, pgenesTotal) {
+	pmatch = ugenes[as.logical(uset)] %in% pgenesTotal
+	sum(pmatch)
+}
+
+.calcr = function(uset, ugenes, pgenes) {
+	pmatch = ugenes[as.logical(uset)] %in% pgenes
+	sum(pmatch)
+}
+	
+.uniqueSet = function(ugenes, egenes, set) {
+	uset = ugenes
+	for(i in 1:length(ugenes)) {
+		m = grep(uset[i], egenes)
+		uset[i] = sum(as.logical(set[m])) > 0
+	}
+	uset
+}
+
 
 zscore = VisioFunction(.zscore_impl,	name = "Z-score", 
 	description = "Calculate z-score for the given pathways where 'sets' are one or more vectors which specify for each reporter whether it meets a criterion or not", 

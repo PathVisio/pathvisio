@@ -104,6 +104,7 @@ public class RFunctionLoader {
 	
 	private static void loadFunction(File funFile) {
     	try {
+    		GmmlVision.log.trace("Loading R function: " + funFile);
     		RCommands.eval("source('" + RCommands.fileToString(funFile) + "')");
     	} catch(RException re) {
     		RController.openError("Unable to load functions in " + funFile.toString(), re);

@@ -122,8 +122,13 @@ public class GmmlData
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
 			throw new IllegalArgumentException("Can't add more mappinfo objects");
-		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
-			throw new IllegalArgumentException("Can't add more mappinfo objects");
+		if (o.getObjectType() == ObjectType.INFOBOX)
+		{
+			if (o != infoBox)
+				throw new IllegalArgumentException("Can't add more infobox objects");
+			else
+				return; // trying to re-add, just ignore.
+		}
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
 		o.setParent(this);

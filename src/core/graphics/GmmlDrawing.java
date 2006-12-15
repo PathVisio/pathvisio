@@ -880,7 +880,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			s.removeFromSelection(o); //Remove from selection
 			if(o instanceof GmmlGraphics) {
 				GmmlGraphics g = (GmmlGraphics)o;
-				GmmlVision.getGmmlData().fireObjectModifiedEvent(new GmmlEvent(g.getGmmlData(), GmmlEvent.DELETED));
+				GmmlVision.getGmmlData().remove(g.getGmmlData());
 				g.getGmmlData().removeListener(this);
 			}
 			

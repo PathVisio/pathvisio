@@ -31,6 +31,10 @@
 		<jar href="swt-linux.jar"/>
 		<nativelib href="swt-linux-lib.jar"/>	
 	</resources>
+	<resources os="Mac OS X">
+		<jar href="swt-mac.jar"/>
+		<nativelib href="swt-mac-lib.jar"/>	
+	</resources>
 	<application-desc main-class="gmmlVision.GmmlVisionMain">
 		<argument>-ur</argument>
 	</application-desc>

@@ -114,6 +114,9 @@ class Revision
 		<jar jarfile="lib/swt-linux-lib.jar">
 			<fileset dir="lib/swt-linux-lib" includes="*.so"/>
 		</jar>
+		<jar jarfile="lib/swt-mac-lib.jar">
+			<fileset dir="lib/swt-mac-lib" includes="*.jnilib"/>
+		</jar>
 	</target>
 	
 	<target name="jar" depends="compile-v1,compile-v2" description="Generates executable jar file">

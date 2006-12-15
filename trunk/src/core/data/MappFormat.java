@@ -504,7 +504,7 @@ public class MappFormat
 						mapNotesAndComments (o, row);
 						break;																					
 				case 6: /*InfoBox*/
-						o = mapInfoBoxType (row);
+						o = mapInfoBoxType (row, data);
 						break;
 				case 7: /*Label*/
 						o = mapLabelType(row);
@@ -723,9 +723,9 @@ public class MappFormat
         return o;			
 	}
     
-	private static GmmlDataObject mapInfoBoxType (String[] mappObject)
+	private static GmmlDataObject mapInfoBoxType (String[] mappObject, GmmlData data)
 	{
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.INFOBOX);
+    	GmmlDataObject o = data.getInfoBox();
         
     	mapCenter (o, mappObject);                
         return o;

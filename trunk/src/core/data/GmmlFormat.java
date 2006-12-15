@@ -159,6 +159,10 @@ public class GmmlFormat {
 		{
 			o = p.getMappInfo();
 		}
+		else if (ot == ObjectType.INFOBOX)
+		{
+			o = p.getInfoBox();
+		}
 		else
 		{
 			o = new GmmlDataObject(ot);

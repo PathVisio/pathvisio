@@ -158,6 +158,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	public void draw(PaintEvent e, GC buffer)
 	{
 		Color c = null;
+		Color b = SwtUtils.changeColor(c, new RGB(255, 255, 255), e.display);
 		Font f = null;
 		
 		if(isSelected())
@@ -170,6 +171,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		}
 		
 		buffer.setForeground(c);
+		buffer.setBackground(b);
 		buffer.setLineStyle (SWT.LINE_SOLID);
 		buffer.setLineWidth (1);		
 		
@@ -179,6 +181,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 				(int)gdata.getWidth(), 
 				(int)gdata.getHeight());
 		
+		buffer.fillRectangle (area); // white background
 		buffer.drawRectangle (area);
 		
 		buffer.setClipping ( area.x - 1, area.y - 1, area.width + 1, area.height + 1);
@@ -197,6 +200,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		buffer.setClipping(r);
 		
 		c.dispose();
+		b.dispose();
 		f.dispose();
 	}
 	

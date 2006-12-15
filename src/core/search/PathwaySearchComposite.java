@@ -69,7 +69,7 @@ public class PathwaySearchComposite extends Composite {
 	private void initSearchComposite() {
 		searchControls = new HashMap<String, SearchOptionComposite>();
 
-		String[] soLabels = new String[] { "gene symbol", "gene id" };
+		String[] soLabels = new String[] { "gene id", "gene symbol" };
 		final HashMap<String, String> labelMappings = new HashMap<String, String>();
 		labelMappings.put(soLabels[0], "pathwaysContainingGene");
 		labelMappings.put(soLabels[1], "pathwaysContainingGeneSymbol");
@@ -107,8 +107,9 @@ public class PathwaySearchComposite extends Composite {
 		});
 		
 		//Set initial selection
-		pathwaySearchStack.topControl = searchOptionControls[0];
-		combo.select(0);
+		//set symbol search as default
+		pathwaySearchStack.topControl = searchOptionControls[1];
+		combo.select(1);
 	}
 	
 	private void initSearchResultTable() {

@@ -18,6 +18,7 @@ test procedure: perform all these steps before a webstart release, and after mak
 # select everything, copy and paste
 # select two gene products and change their color property to blue
 # select a circle, make its rim red and center yellow.
+# delete an object
 # zoom to 200%
 # zoom to fit
 # save to a temporary location. Export to a .mapp

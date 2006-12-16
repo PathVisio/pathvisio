@@ -141,10 +141,13 @@ public class ColorSet {
 		while(it.hasNext())
 		{
 			ColorSetObject gc = (ColorSetObject)it.next();
-			RGB gcRgb = gc.getColor(data, sampleId);
-			if(gcRgb != null)
-			{
-				return gcRgb;
+			try{ 
+				RGB gcRgb = gc.getColor(data, sampleId);
+				if(gcRgb != null) {
+					return gcRgb;
+				}
+			} catch(Exception e) {
+				GmmlVision.log.error("ColorSetObject " + gc + " could not evaluate data: " + e.getMessage());
 			}
 		}
 		return rgb;

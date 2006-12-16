@@ -159,15 +159,10 @@ public class ColorGradient extends ColorSetObject {
 		return rgb;
 	}
 	
-	public RGB getColor(HashMap<Integer, Object> data, int idSample)
+	public RGB getColor(HashMap<Integer, Object> data, int idSample) throws NumberFormatException
 	{
-		try {
-			double value = (Double)data.get(idSample); //Try to get the data
-			return getColor(value);
-		} catch(Exception e) {
-			GmmlVision.log.error("GmmlColorGradient:getColor", e);
-		}
-		return null; //If anything goes wrong, return null
+		double value = (Double)data.get(idSample);
+		return getColor(value);
 	}
 	
 	String getXmlElementName() {

@@ -35,6 +35,10 @@ Objects can be created by calls of the form
     	\code{signature(x = "PathwaySet")}:
     	prints this object in readable form
     }
+    \item{asEnsembl}{
+    	\code{signature(x = "PathwaySet")}:
+    	returns a vector containing all Ensembl genes in this pathway-set
+    }
 }
 \author{Thomas Kelder (BiGCaT)}
 

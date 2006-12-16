@@ -60,6 +60,8 @@ public abstract class ColorSetObject {
 	 */
 	public String getName() { return name; }
 	
+	public ColorSet getColorSet() { return parent; }
+	
 	/**
 	 * Constructor for this class
 	 * @param parent 		colorset this gradient belongs to
@@ -82,8 +84,9 @@ public abstract class ColorSetObject {
 	 * @param sample id of the sample that is visualized using this color
 	 * @return {@link RGB} with the color returned by the colorset object after evaluating the input data,
 	 * null if the input data doesn't result in a valid color
+	 * @throws Exception 
 	 */
-	abstract RGB getColor(HashMap<Integer, Object> data, int idSample);
+	abstract RGB getColor(HashMap<Integer, Object> data, int idSample) throws Exception;
 	
 	/**
 	 * Returns the parent colorset

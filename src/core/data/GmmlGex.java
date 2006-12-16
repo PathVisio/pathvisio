@@ -685,6 +685,10 @@ public class GmmlGex implements ApplicationEventListener {
 					{
 						for(int col : dataCols)
 						{
+							if(!info.isStringCol(col) 
+									&& (data[col] == null || data[col].equals(""))) {
+								data[col] = "NaN";
+							}
 							try {
 								pstmt.setString(1,id);
 								pstmt.setString(2,code);

@@ -51,6 +51,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -131,7 +132,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	}
 	
 	abstract void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC buffer);
-	abstract void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC buffer);
+	abstract void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC gc);
 
 	static final int SIDEPANEL_SPACING = 3;
 	static final int SIDEPANEL_MARGIN = 5;
@@ -161,6 +162,25 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		e.gc.setFont(e.display.getSystemFont());
 		int tw = 0;
 		for(GmmlGeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getName()).x);
+		
+//		//Draw sample labels (vertical)
+//		int lw = 0;
+//		for(ConfiguredSample s : useSamples) lw = Math.max(lw, e.gc.textExtent(s.getName()).x);
+//		
+//		Rectangle larea = new Rectangle(area.x + tw, area.width - tw, area.y, lw);
+//		int tx = larea.x + larea.width / 2;
+//		int ty = larea.y + larea.height / 2;
+//		
+//		Transform t = new Transform(e.display);
+//		SwtUtils.rotateGC(e.gc, t, 90, tx, ty);
+//		e.gc.setTransform(t);
+//		int ns = useSamples.size();
+//		
+//		for(int i = 0; i < ns; i++) {
+//			e.gc.drawText(useSamples.get(i).getName(), larea.y, larea.x + i * (larea.width / ns));
+//		}
+//		SwtUtils.rotateGC(e.gc, t, -90, tx, ty);
+//		t.dispose();
 		
 		int h = area.height / nr;
 		for(int i = 0; i < nr; i++) {

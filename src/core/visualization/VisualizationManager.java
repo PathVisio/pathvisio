@@ -322,12 +322,12 @@ public class VisualizationManager implements ApplicationEventListener {
 		public void drawingEvent(graphics.GmmlSelectionBox.SelectionEvent e) {
 			switch(e.type) {
 			case graphics.GmmlSelectionBox.SelectionEvent.OBJECT_ADDED:
-				if(e.source instanceof GmmlGraphics) 
-					addInput((GmmlGraphics)e.source);
+				if(e.affectedObject instanceof GmmlGraphics) 
+					addInput((GmmlGraphics)e.affectedObject);
 				break;
 			case graphics.GmmlSelectionBox.SelectionEvent.OBJECT_REMOVED:
-				if(e.source instanceof GmmlGraphics) 
-					removeInput((GmmlGraphics)e.source);
+				if(e.affectedObject instanceof GmmlGraphics) 
+					removeInput((GmmlGraphics)e.affectedObject);
 				break;
 			case graphics.GmmlSelectionBox.SelectionEvent.SELECTION_CLEARED:
 				clearInput();

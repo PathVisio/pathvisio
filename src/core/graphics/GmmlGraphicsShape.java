@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
 
 import util.LinAlg;
+import util.SwtUtils;
 import util.LinAlg.Point;
 import data.GmmlDataObject;
 import data.GmmlEvent;
@@ -264,11 +265,9 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * @param gc	the {@link GC} to rotate
 	 * @param tr	a {@link Transform} that can be used for rotation
 	 */
-	protected void rotateGC(GC gc, Transform tr) {
-		tr.translate(getCenterX(), getCenterY());
-		tr.rotate((float)Math.toDegrees(gdata.getRotation()));	
-		tr.translate(-getCenterX(), -getCenterY());
-		gc.setTransform(tr);
+	protected void rotateGC(GC gc, Transform tr) {		
+		SwtUtils.rotateGC(gc, tr, (float)Math.toDegrees(gdata.getRotation()), 
+				getCenterX(), getCenterY());
 	}
 	
 	public void adjustToHandle(GmmlHandle h) {

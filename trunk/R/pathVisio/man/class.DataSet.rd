@@ -21,10 +21,12 @@
 
 \section{Creating objects}{
 Objects can be created by calls of the form 
-\code{DataSet(name, reporters, data)} where\cr
-\code{reporters} A vector with reporter names. In order to link the reporters to \code{\link{GeneProduct} objects, they need to be in the form \code{"code:id"}. If this argument is missing, the rownames of \code{data} will be taken as reporter names;\cr
+\code{DataSet(name, reporters = NULL, data , rep2ens = list())} where\cr
+\code{reporters} A vector with reporter names. In order to link the reporters to \code{\link{GeneProduct}} objects, they need to be in the form \code{"code:id"}. If this argument is missing, the rownames of \code{data} will be taken as reporter names;\cr
 \code{data} is a matrix with experimental data, where every row is a reporter (e.g. microarray probe) and every column is a sample (e.g. a disease stage);\cr
 the other arguments are slot values
+\code{rep2ens} is a list which contains the mappings from the reporters to Ensembl genes. The names of the list have to be the reporter names ("code:id") and 
+the elements are character vectors containing the Ensembl genes (in the form  "En:id")
 }
 
 \section{Slots}{
@@ -46,6 +48,11 @@ the other arguments are slot values
     \item{reporters}{
     	\code{signature(x = "DataSet")}:
     	get the reporter names of this dataset (equivalent to \code{rownames(x)})
+    }
+    \item(asEnsembl(x, data = x)}{
+    	\code{signature(x = "DataSet")}:
+    	Create a data matrix where rows are Ensembl genes instead of reporters. Every reporter will be linked to one or more
+    	Ensembl genes using x@rep2ens.
     }
     \item{print}{
     	\code{signature(x = "DataSet")}:

@@ -99,9 +99,11 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
 			
-			if(cache.hasData(idc)|| useSamples.size() == 0) return;
+			if(!cache.hasData(idc)|| useSamples.size() == 0) {
+				return;
+			}
 						
-			Font f = new Font(e.display, getFontData());
+			Font f = new Font(e.display, getFontData(true));
 			
 			GmmlDataObject gd = g.getGmmlData();
 			int startx = (int)(gd.getLeft() + gd.getWidth());
@@ -129,7 +131,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
 			
-			if(cache.hasData(idc)|| useSamples.size() == 0) return null;
+			if(!cache.hasData(idc)|| useSamples.size() == 0) {
+				return null;
+			}
 						
 			Group group = new Group(parent, SWT.NULL);
 			group.setLayout(new GridLayout(2, false));

@@ -69,6 +69,10 @@ Objects can be created by calls of the form
     	Check for every \code{\link{GeneProduct}} in the pathway whether it is in the given list of references. 
       Argument refs has to be a list of \code{\link{GeneProduct}s} or vector of references (\code{character} of the form \code{"code:id"})	
     }
+    \item{asEnsembl}{
+    	\code{signature(x = "PathwaySet")}:
+    	returns a vector containing all Ensembl genes in this pathway-set
+    }
    }
 } 
 \author{Thomas Kelder (BiGCaT)}

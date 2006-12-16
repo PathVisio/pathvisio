@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -176,6 +177,21 @@ public class SwtUtils {
 		f = changeFont(f, fd, display);
 		gc.setFont(f);
 		return f;
+	}
+	
+	/**
+	 * Rotates the {@link GC} around the objects center
+	 * @param gc	the {@link GC} to rotate
+	 * @param tr	a {@link Transform} that can be used for rotation
+	 * @param rotation The rotation in degrees
+	 * @param x The x-coordinate of the rotation center
+	 * @param y The y-coordinate of the rotation center
+	 */
+	public static void rotateGC(GC gc, Transform tr, float rotation, int x, int y) {
+		tr.translate(x, y);
+		tr.rotate(rotation);	
+		tr.translate(-x, -y);
+		gc.setTransform(tr);
 	}
 	
 	/**

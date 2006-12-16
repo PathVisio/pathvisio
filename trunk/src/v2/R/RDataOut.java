@@ -533,7 +533,8 @@ public class RDataOut {
 						try {
 							value[0] = Double.parseDouble(data[i][j]);
 						} catch(Exception e) {
-							GmmlVision.log.error("Unable to parse double when converting data to R: " + data[i][j], e);
+							GmmlVision.log.error("Unable to parse double when converting data to R: " + data[i][j] + ", value set to NaN");
+							value[0] = Double.NaN;
 						}
 						e_ref = re.rniPutDoubleArray(value);
 					} else {
@@ -542,7 +543,6 @@ public class RDataOut {
 					re.rniVectorSetElement(e_ref, l_ref, i*data[i].length + j);
 				}
 			}
-			
 			
 			//Set dimensions
 			long d_ref = re.rniPutIntArray(new int[] { data[0].length, data.length });

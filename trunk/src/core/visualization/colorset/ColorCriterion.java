@@ -63,13 +63,8 @@ public class ColorCriterion extends ColorSetObject {
 		super(parent, xml);
 	}
 	
-	RGB getColor(HashMap<Integer, Object> data, int idSample) {
-		try {
-			if(criterion.evaluate(data, idSample)) return color;
-		} catch (Exception e) { 
-			GmmlVision.log.error("Unable to evaluate expression '" + criterion.getExpression() + "'", e);
-			//TODO: tell user that expression is incorrect
-		}
+	RGB getColor(HashMap<Integer, Object> data, int idSample) throws Exception {
+		if(criterion.evaluate(data, idSample)) return color;
 		return null;
 	}
 	

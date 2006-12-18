@@ -150,7 +150,7 @@ public class GmmlDataObject
 						PropertyType.NAME,
 						PropertyType.GENEPRODUCT_DATA_SOURCE,
 						PropertyType.GENEID,
-						PropertyType.XREF,
+						//PropertyType.XREF,
 						PropertyType.BACKPAGEHEAD,
 						PropertyType.TYPE,
 						PropertyType.GRAPHID

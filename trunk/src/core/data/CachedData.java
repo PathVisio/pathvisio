@@ -70,7 +70,7 @@ public class CachedData {
 		double avg = 0;
 		int n = 0;
 		for(Data d : dlist) {
-			try { avg += (Double)d.getSampleData(idSample); n++; } catch(Exception e) {}
+			try { avg += (Double)d.getSampleData(idSample); n++; } catch(Exception e) { e.printStackTrace(); }
 		}
 		if(n > 0) {
 			return avg / n;

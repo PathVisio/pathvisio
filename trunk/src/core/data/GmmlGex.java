@@ -929,6 +929,7 @@ public class GmmlGex implements ApplicationEventListener {
 			} catch (Exception e) {
 				GmmlVision.log.error("Error while closing connection to expression dataset " + dbName, e);
 			}
+			con = null;
 		}
 	}
 	

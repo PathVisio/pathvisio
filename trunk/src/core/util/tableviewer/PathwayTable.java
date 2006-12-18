@@ -18,8 +18,11 @@ package util.tableviewer;
 
 import gmmlVision.GmmlVision;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,11 +39,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import preferences.GmmlPreferences;
+
+import data.ConverterException;
+
 import util.TableColumnResizer;
 import util.tableviewer.TableData.Row;
+import util.SwtUtils.FileInputDialog;
 
 
 /**
@@ -133,6 +142,17 @@ public class PathwayTable extends Composite {
 			if(sr == null) return;
 			try {
 				String pw = sr.getCell(COLNAME_FILE).getText();
+				File pwFile = new File(pw);
+				if(!pwFile.canRead()) {
+					FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
+					fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					FileInputDialog fid = new FileInputDialog(getShell(), "Specify pathway file", 
+							"Couldn't find pathway file, please specify which pathway to open",
+							pwFile.getAbsolutePath(), null, fd);
+					if(fid.open() == FileInputDialog.OK) {
+						pw = fid.getValue();
+					}
+				}
 				GmmlVision.openPathway(pw);
 			} catch(Exception ex) { 
 				GmmlVision.log.error("when trying to open pathway from pathway table", ex);

@@ -64,7 +64,8 @@ public class FileUtils {
 		if(file.isDirectory()) {
 			for(File f : file.listFiles()) deleteRecursive(f);
 		}
-		file.delete();
+		boolean deleted = file.delete();
+		GmmlVision.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
 	}
 	
 	/**

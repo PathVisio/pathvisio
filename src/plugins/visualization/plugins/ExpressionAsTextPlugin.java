@@ -92,6 +92,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public String getName() { return NAME; }
 	public String getDescription() { return DESCRIPTION; }
 	
+	static final int SPACING = 3;
 	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
 		if(g instanceof GmmlGeneProduct) {
 			GmmlGeneProduct gp = (GmmlGeneProduct) g;
@@ -106,7 +107,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			Font f = new Font(e.display, getFontData(true));
 			
 			GmmlDataObject gd = g.getGmmlData();
-			int startx = (int)(gd.getLeft() + gd.getWidth());
+			int startx = (int)(gd.getLeft() + gd.getWidth() + SPACING);
 			int starty = (int)(gd.getTop() + gd.getHeight() / 2);
 			
 
@@ -173,7 +174,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	}
 	
 	Object getSampleStringMult(Sample s, IdCodePair idc, CachedData cache, String sep) {
-		if(mean) return cache.getAverageSampleData(idc);
+		if(mean) return cache.getAverageSampleData(idc).get(s.getId());
 		
 		List<Data> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();

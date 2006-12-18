@@ -19,12 +19,18 @@ package util;
 import gmmlVision.GmmlVision;
 import graphics.GmmlDrawing;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -35,9 +41,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 public class SwtUtils {
 
@@ -77,7 +86,6 @@ public class SwtUtils {
 		if(fOld != null && !fOld.isDisposed())
 		{
 			fOld.dispose();
-			fOld = null;
 		}
 		return fd != null ? new Font(display, fd) : null;
 	}
@@ -87,7 +95,6 @@ public class SwtUtils {
 		if(iOld != null && !iOld.isDisposed())
 		{
 			iOld.dispose();
-			iOld = null;
 		}
 		return iNew != null ? new Image(display, iNew) : null;
 	}
@@ -192,6 +199,29 @@ public class SwtUtils {
 		tr.rotate(rotation);	
 		tr.translate(-x, -y);
 		gc.setTransform(tr);
+	}
+	
+	public static class FileInputDialog extends InputDialog {
+		FileDialog fd;
+		public FileInputDialog(Shell parentShell, String dialogTitle, 
+				String dialogMessage, String initialValue, 
+				IInputValidator validator, FileDialog fileDialog) {
+			super(parentShell, dialogTitle, dialogMessage, initialValue, validator); 
+			fd = fileDialog;
+		}
+
+		protected Control createDialogArea(Composite parent) {
+			Composite composite = (Composite) super.createDialogArea(parent);
+			Button browse = new Button(parent, SWT.PUSH);
+			browse.setText("Browse");
+			browse.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					String fn = fd.open();
+					if(fn != null) getText().setText(fn);
+				}
+			});
+			return composite;
+		}
 	}
 	
 	/**

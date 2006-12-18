@@ -150,7 +150,7 @@ public class LabelPlugin extends VisualizationPlugin {
 			String label = getLabelText((GmmlGeneProduct) g);
 			
 			if(adaptFontSize) {
-				SwtUtils.adjustFontSize(f, new Point(area.width, area.height), label, buffer, e.display);
+				f = SwtUtils.adjustFontSize(f, new Point(area.width, area.height), label, buffer, e.display);
 			} else {
 				buffer.setFont(f);
 			}

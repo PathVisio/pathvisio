@@ -368,6 +368,9 @@ public class GmmlGex implements ApplicationEventListener {
 			String id = ids.get(i);
 			String code = codes.get(i);
 			IdCodePair pwIdc = new IdCodePair(id, code);
+			
+			if(cachedData.hasData(pwIdc)) continue;
+			
 			ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
@@ -396,14 +399,16 @@ public class GmmlGex implements ApplicationEventListener {
 						{
 							int group = r.getInt("groupId");
 							IdCodePair ref = new IdCodePair(r.getString("id"), r.getString("code"));
+							System.out.println("Adding " + ref);
 							Data data = groupData.get(group);
 							if(data == null) {
+								System.out.println("new data object for group " + group);
 								groupData.put(group, data = new Data(ref, group));
 								cachedData.addData(pwIdc, data);
 							}
 							
 							int idSample = r.getInt("idSample");
-														
+							System.out.println("\t> Sample: " + idSample);					
 							data.setSampleData(idSample, r.getString("data"));
 						}
 						

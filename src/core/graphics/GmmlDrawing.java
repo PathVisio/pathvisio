@@ -832,12 +832,24 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 	}
 
+	private void selectGeneProducts() {
+		clearSelection();
+		for(GmmlDrawingObject o : getDrawingObjects()) {
+			if(o instanceof GmmlGeneProduct) s.addToSelection(o);
+		}
+	}
+	
 	private boolean ctrlPressed;
 	private void ctrlPressed() 	{ ctrlPressed = true; 	}
 	private void ctrlReleased() 	{ ctrlPressed = false; 	}
 	
 	public void keyPressed(KeyEvent e) { 
 		if(e.keyCode == SWT.CTRL) ctrlPressed();
+		if(e.keyCode == 103) 
+			if(ctrlPressed) {
+				selectGeneProducts();
+				redraw();
+			}
 	}
 
 	public void keyReleased(KeyEvent e) {

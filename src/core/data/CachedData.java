@@ -76,7 +76,7 @@ public class CachedData {
 					avg += value;
 					n++;
 				}
-			} catch(Exception e) { e.printStackTrace(); }
+			} catch(Exception e) { }
 		}
 		if(n > 0) {
 			return avg / n;

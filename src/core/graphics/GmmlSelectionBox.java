@@ -219,7 +219,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			for(GmmlHandle h : o.getHandles()) h.hide();
 		}
 	}
-		
+	
 	/**
 	 * Fit the size of this object to the selected objects
 	 */

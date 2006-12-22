@@ -555,8 +555,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				
 				if(dbName == null) return;
 				
-				GmmlGex.setDbName(dbName);
-				GmmlGex.connect();
+				GmmlGex.connect(dbName);
 			} catch(Exception e) {
 				String msg = "Failed to open Expression Dataset" + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 

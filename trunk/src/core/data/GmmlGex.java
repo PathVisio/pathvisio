@@ -399,16 +399,13 @@ public class GmmlGex implements ApplicationEventListener {
 						{
 							int group = r.getInt("groupId");
 							IdCodePair ref = new IdCodePair(r.getString("id"), r.getString("code"));
-							System.out.println("Adding " + ref);
 							Data data = groupData.get(group);
 							if(data == null) {
-								System.out.println("new data object for group " + group);
 								groupData.put(group, data = new Data(ref, group));
 								cachedData.addData(pwIdc, data);
 							}
 							
-							int idSample = r.getInt("idSample");
-							System.out.println("\t> Sample: " + idSample);					
+							int idSample = r.getInt("idSample");					
 							data.setSampleData(idSample, r.getString("data"));
 						}
 						
@@ -612,8 +609,7 @@ public class GmmlGex implements ApplicationEventListener {
 			page.println("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
-			dbName = info.dbName;
-			connect(true, false);
+			connect(info.dbName, true, false);
 			
 			page.println("Importing data");
 			page.println("> Processing headers");
@@ -777,7 +773,7 @@ public class GmmlGex implements ApplicationEventListener {
 		}
 		
 		try {
-			connect(true, false); //Connect and delete the old database if exists
+			connect(null, true, false); //Connect and delete the old database if exists
 			connectGmGex(gmGexFile); //Connect to the GenMAPP gex
 			
 			con.setAutoCommit(false); //Keep control over when to commit, should increase speed
@@ -879,9 +875,11 @@ public class GmmlGex implements ApplicationEventListener {
 	 * @param 	clean true if the old database has to be removed, false for just connecting
 	 * @return 	null if the connection was created, a String with an error message if an error occured
 	 */
-	public static void connect(boolean create, boolean fireEvent) throws Exception
+	public static void connect(String dbName, boolean create, boolean fireEvent) throws Exception
 	{
 		close();
+		
+		if(dbName != null) setDbName(dbName);
 		
 		DBConnector connector = getDBConnector();
 		
@@ -905,7 +903,12 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	public static void connect() throws Exception
 	{
-		connect(false, true);
+		connect(null, false, true);
+	}
+	
+	public static void connect(String dbName) throws Exception
+	{
+		connect(dbName, false, true);
 	}
 		
 	/**

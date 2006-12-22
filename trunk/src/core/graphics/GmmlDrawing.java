@@ -300,11 +300,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void mouseMove(MouseEvent e)
 	{
-		// Dispose the tooltip if shown
-		if(tip != null)
-		{
-			if(!tip.isDisposed()) tip.dispose();
-		}
+//		// Dispose the tooltip if shown
+//		if(tip != null)
+//		{
+//			if(!tip.isDisposed()) tip.dispose();
+//		}
 		// If draggin, drag the pressed object
 		if (pressedObject != null && isDragging)
 		{
@@ -810,7 +810,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 
 	public void mouseExit(MouseEvent e) {}
 
-	Shell tip;
+//	Shell tip;
 	
 	/**
 	 * Responsible for drawing a tooltip displaying expression data when 
@@ -823,10 +823,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			
 			GmmlDrawingObject o = findPressedObject(p);
 			if(o != null && o instanceof GmmlGraphics) {
-				tip = v.getToolTip(e.display, (GmmlGraphics)o);
+				Shell tip = v.getToolTip(getShell(), this, (GmmlGraphics)o);
 				if(tip == null) return;
-				Point mp = toDisplay(e.x, e.y);
-				tip.setLocation(mp.x + 15, mp.y + 15);
+				Point mp = toDisplay(e.x + 15, e.y + 15);
+				tip.setLocation(mp.x, mp.y);
 	            tip.setVisible(true);
 			}
 		}

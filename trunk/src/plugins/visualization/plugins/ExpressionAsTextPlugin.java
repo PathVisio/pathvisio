@@ -187,6 +187,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	Object formatData(Object data) {
 		if(data instanceof Double) {
 			double d = (Double)data;
+			
+			if(Double.isNaN(d)) return "NaN";
+			
 			int dec = (int)Math.pow(10, getRoundTo());
 			double rounded = (double)(Math.round(d * dec)) / dec;
 			data = dec == 1 ? Integer.toString((int)rounded) : Double.toString(rounded);

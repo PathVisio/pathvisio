@@ -26,6 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -33,8 +37,11 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
 
@@ -264,10 +271,21 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		return false;
 	}
 	
-	public Shell getToolTip(Display display, GmmlGraphics g) {
-		Shell tip = new Shell(display, SWT.ON_TOP | SWT.TOOL);  
-		tip.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+	public Shell getToolTip(Shell parent, Control control, GmmlGraphics g) {
+		final Shell tip = new Shell(parent, SWT.ON_TOP | SWT.TOOL);  
+		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tip.setLayout(new RowLayout(SWT.VERTICAL));
+		
+		tip.addMouseTrackListener(new MouseTrackAdapter() {
+			public void mouseExit(MouseEvent e) {
+				tip.dispose();
+			}
+		});
+		control.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				tip.dispose();
+			}
+		});
 		
 		boolean hasOne = false;
 		for(PluginSet pr : getPluginsSorted()) {
@@ -279,7 +297,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		tip.pack();
 		return hasOne ? tip : null;
 	}
-	
+		
 	public Element toXML() {
 		Element vis = new Element(XML_ELEMENT);
 		vis.setAttribute(XML_ATTR_NAME, getName());

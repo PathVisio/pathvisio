@@ -51,6 +51,8 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import data.GmmlGex;
+import data.GmmlGex.ExpressionDataEvent;
 import data.GmmlGex.ExpressionDataListener;
 
 /**
@@ -58,7 +60,13 @@ import data.GmmlGex.ExpressionDataListener;
  * @author thomas
  *
  */
-public class VisualizationManager implements ApplicationEventListener {	
+public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener {	
+	static {
+		VisualizationManager vm = new VisualizationManager();
+		GmmlVision.addApplicationEventListener(vm);
+		GmmlGex.addListener(vm);
+	}
+	
 	public static final String XML_ELEMENT = "visualizations";
 		
 	static final String FILENAME_GENERIC = "visualizations.xml";
@@ -179,13 +187,21 @@ public class VisualizationManager implements ApplicationEventListener {
 		return xml;
 	}
 	
-	public static void loadNonGenericXML(Element xml) {
+	public static void loadNonGenericXML(Element xml) {		
 		if(xml == null) return;
 		
 		for(Object o : xml.getChildren(Visualization.XML_ELEMENT)) {
 			Visualization vis = Visualization.fromXML((Element) o);
 			if(!visualizations.contains(vis)) addVisualization(vis);				
 		}
+	}
+	
+	static void removeNonGeneric() {
+		List<Visualization> toRemove = new ArrayList<Visualization>();
+		for(Visualization v : getVisualizations()) {
+			if(!v.isGeneric()) toRemove.add(v);
+		}
+		for(Visualization v : toRemove) removeVisualization(v);
 	}
 	
 	static File getGenericFile() {
@@ -400,5 +416,11 @@ public class VisualizationManager implements ApplicationEventListener {
 			this.source = source;
 			this.type = type;
 		}
-	}	
+	}
+
+	public void expressionDataEvent(ExpressionDataEvent e) {
+		if(e.type == ExpressionDataEvent.CONNECTION_CLOSED) {
+			removeNonGeneric();
+		}
+	}
 }

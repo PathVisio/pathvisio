@@ -20,20 +20,29 @@ require(pathVisio)
 	total = length(pathwaySet)
 	current = 1
 	
+	print(paste("Calculating z-score for", total, "pathways"))
+	
 	dgenes = rownames(asEnsembl(dataSet))
 	ugenes = unique(dgenes)
+	
+	print("Matching reporters with gene-products")
 	
 	pgenesTotal = asEnsembl(pathwaySet)
 	
 	ePws = lapply(pathwaySet, function(pw) { asEnsembl(pw) })
+	
+	print("Matching ensembl genes with pathways")
 	nvalues = vector()
 	for(i in 1:length(pathwaySet)) {
+		print(paste("\t> Processing pathway",i,"out of",total))
 		nvalues[i] = .calcn(ePws[[i]], ugenes)
 	}
 	N = .calcN(ugenes, pgenesTotal)
 	
 	results = list()
 	for(i in 1:ncol(sets)) {
+		print(paste("Calculating z-scores for set",i,"out of",ncol(sets)))
+		
 		eset = asEnsembl(dataSet, sets[,i])
 		uset = .uniqueSet(ugenes, dgenes, eset)
 		
@@ -49,7 +58,6 @@ require(pathVisio)
     }
     
     stats = cbind(Pvalues, Evalues, nvalues, rvalues, zscores)
-    print(stats)
     colnames(stats) = c("Genes on pathway", "Ensembl on pathway", "n", "r", "zscore")
     
     globals = matrix(nrow = 5, ncol = 2)
@@ -107,6 +115,6 @@ zscore = VisioFunction(.zscore_impl,	name = "Z-score",
 	description = "Calculate z-score for the given pathways where 'sets' are one or more vectors which specify for each reporter whether it meets a criterion or not", 
 	arg_descr = c(	"The pathways to calculate the z-scores for (instance of class 'PathwaySet')",
 			"The measured data (instance of class 'DataSet')",
-			"A logical vector that specifies for each reporter whether it meets a criterion or not, or a matrix (where the columns is a criterion)"),
+			"A logical vector that specifies for each reporter whether it meets a criterion or not, or a matrix (where each columns is a criterion and each row a reporter)"),
 	arg_class = c("PathwaySet", "DataSet", "matrix")
 )

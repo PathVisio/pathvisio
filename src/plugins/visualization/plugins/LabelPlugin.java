@@ -334,6 +334,7 @@ public class LabelPlugin extends VisualizationPlugin {
 	static final String XML_ATTR_FONTDATA = "font";
 	static final String XML_ELM_FONTCOLOR = "font-color";
 	static final String XML_ATTR_OVERLAY = "overlay";
+	static final String XML_ATTR_ALIGN = "alignment";
 	public Element toXML() {
 		Element elm = super.toXML();
 		elm.setAttribute(XML_ATTR_STYLE, Integer.toString(style));
@@ -341,6 +342,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		elm.setAttribute(XML_ATTR_FONTDATA, getFontData().toString());
 		elm.addContent(ColorConverter.createColorElement(XML_ELM_FONTCOLOR, getFontColor()));
 		elm.setAttribute(XML_ATTR_OVERLAY, Boolean.toString(getOverlay()));
+		elm.setAttribute(XML_ATTR_ALIGN, Integer.toString(getAlignment()));
 		return elm;
 	}
 	
@@ -351,6 +353,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		String adaptStr = xml.getAttributeValue(XML_ATTR_ADAPT_FONT);
 		String fontStr = xml.getAttributeValue(XML_ATTR_FONTDATA);
 		String ovrStr = xml.getAttributeValue(XML_ATTR_OVERLAY);
+		String alnStr = xml.getAttributeValue(XML_ATTR_ALIGN);
 		Element fcElm = xml.getChild(XML_ELM_FONTCOLOR);
 		try {
 			if(styleStr != null) setStyle(Integer.parseInt(styleStr));
@@ -358,6 +361,7 @@ public class LabelPlugin extends VisualizationPlugin {
 			if(fontStr != null) fontData = new FontData(fontStr);
 			if(ovrStr != null) setOverlay(Boolean.parseBoolean(ovrStr));
 			if(fcElm != null) fontColor = ColorConverter.parseColorElement(fcElm);
+			if(alnStr != null) align = Integer.parseInt(alnStr);
 		} catch(NumberFormatException e) {
 			GmmlVision.log.error("Unable to load configuration for " + NAME, e);
 		}

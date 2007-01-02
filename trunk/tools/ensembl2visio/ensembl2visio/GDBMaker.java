@@ -39,6 +39,7 @@ import debug.StopWatch;
 
 
 public abstract class GDBMaker {   	
+	static final int COMPAT_VERSION = 1;
 	List<Pattern> patterns;
     
     Connection con;
@@ -318,6 +319,15 @@ public abstract class GDBMaker {
 		info("Info:  Creating tables");
 		Statement sh = con.createStatement();
 		try { sh.execute("DROP TABLE link"); } catch (Exception e) {}
+		try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
+		try { sh.execute("DROP TABLE version"); } catch (Exception e) {}
+		sh.execute(
+				"CREATE TABLE					" +
+				"		info							" +
+				"(	  version INTEGER PRIMARY KEY		" +
+				")");
+		sh.execute( //Add compatibility version of GDB
+				"INSERT INTO version VALUES ( " + COMPAT_VERSION + ")");
 		sh.execute(
 				"CREATE TABLE					" +
 				"		link							" +

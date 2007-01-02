@@ -384,7 +384,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		void setPlugin(VisualizationPlugin p, int representation) throws Throwable {
 			p.setActive(true);
 			reps[representation] = p;
-			if(pluginClass == null || pluginClass.equals(p.getClass())) 
+			if(pluginClass == null || !pluginClass.equals(p.getClass())) 
 				setPluginClass(p.getClass());
 		}
 		

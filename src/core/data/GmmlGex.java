@@ -176,7 +176,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 * Loads the samples used in the expression data (Sample table) in memory
 	 */
 	public static void setSamples()
-	{
+	{		
 		try {
 			ResultSet r = con.createStatement().executeQuery(
 					"SELECT idSample, name, dataType FROM samples"
@@ -887,8 +887,8 @@ public class GmmlGex implements ApplicationEventListener {
 			con = connector.createNewDatabase(dbName);
 		} else {
 			con = connector.createConnection(dbName);
-			loadXML();
 			setSamples();
+			loadXML();
 		}
 
 		con.setReadOnly( !create );

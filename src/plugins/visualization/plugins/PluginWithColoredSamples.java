@@ -122,6 +122,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
 			CachedData cache = GmmlGex.getCachedData();
+			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) continue; //No colorset for this sample
 			if(cache.hasData(idc)) 

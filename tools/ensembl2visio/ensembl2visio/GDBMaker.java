@@ -327,7 +327,7 @@ public abstract class GDBMaker {
 				"(	  version INTEGER PRIMARY KEY		" +
 				")");
 		sh.execute( //Add compatibility version of GDB
-				"INSERT INTO version VALUES ( " + COMPAT_VERSION + ")");
+				"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
 		sh.execute(
 				"CREATE TABLE					" +
 				"		link							" +

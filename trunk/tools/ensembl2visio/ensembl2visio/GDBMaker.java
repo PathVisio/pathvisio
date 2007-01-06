@@ -320,7 +320,7 @@ public abstract class GDBMaker {
 		Statement sh = con.createStatement();
 		try { sh.execute("DROP TABLE link"); } catch (Exception e) {}
 		try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
-		try { sh.execute("DROP TABLE version"); } catch (Exception e) {}
+		try { sh.execute("DROP TABLE info"); } catch (Exception e) {}
 		sh.execute(
 				"CREATE TABLE					" +
 				"		info							" +

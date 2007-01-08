@@ -173,7 +173,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	private Point toInternal(Point p) {
 		Point pt = relativeToCenter(p);
-		Point pr = LinAlg.rotate(pt, -gdata.getRotation());
+		Point pr = LinAlg.rotate(pt, gdata.getRotation());
 		return pr;
 	}
 	
@@ -246,7 +246,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	public Point calcNewCenter(double newWidth, double newHeight) {
 		Point cn = new Point((newWidth - gdata.getWidth())/2, (newHeight - gdata.getHeight())/2);
-		Point cr = LinAlg.rotate(cn, gdata.getRotation());
+		Point cr = LinAlg.rotate(cn, -gdata.getRotation());
 		return relativeToCanvas(cr);
 	}
 	

@@ -211,7 +211,7 @@ class GmmlHandle extends GmmlDrawingObject
 				Rectangle b = parent.getBounds();
 				v = new Point(b.height + 1, b.width + 1);
 			}
-			Point yr = LinAlg.rotate(v, rotation + xtraRot);
+			Point yr = LinAlg.rotate(v, -rotation + xtraRot);
 			Point prj = LinAlg.project(new Point(dx, dy), yr);
 			dx = prj.x; dy= prj.y;
 		}

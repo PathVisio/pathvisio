@@ -40,7 +40,7 @@ public class RWizard extends Wizard {
 	public RWizard() {
 		super();
 		
-		setWindowTitle("Create an expression dataset");
+		setWindowTitle("Pathway statistics");
 		setNeedsProgressMonitor(true);
 	}
 

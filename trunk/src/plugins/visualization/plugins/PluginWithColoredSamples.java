@@ -51,7 +51,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -262,6 +261,24 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	}
 	
 	abstract void loadAttributes(Element xml);
+	
+	public Composite createLegendComposite(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NULL);
+		comp.setLayout(new FillLayout());
+		Label label = new Label(comp, SWT.NULL);
+		String text;
+		if(useSamples.size() == 0) {
+			text = "No samples selected";
+		} else {
+			text = "Samples from left to right:";
+			for(ConfiguredSample s : useSamples) {
+				text += "\n- " + s.getName();
+			}
+		}
+		label.setText(text);
+		SwtUtils.setCompositeAndChildrenBackground(comp, parent.getBackground());
+		return comp;
+	}
 	
 	TableViewer useSampleTable;
 	SampleConfigComposite sampleConfigComp;

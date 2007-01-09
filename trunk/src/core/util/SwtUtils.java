@@ -19,7 +19,6 @@ package util;
 import gmmlVision.GmmlVision;
 import graphics.GmmlDrawing;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -184,6 +183,13 @@ public class SwtUtils {
 		f = changeFont(f, fd, display);
 		gc.setFont(f);
 		return f;
+	}
+	
+	public static int getAverageCharWidth(Display d) {
+		GC gc = new GC(d);
+		int w = gc.getFontMetrics().getAverageCharWidth();
+		gc.dispose();
+		return w;
 	}
 	
 	/**

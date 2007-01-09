@@ -112,6 +112,19 @@ public class ColorSet {
 		return colorSetObjects;
 	}
 	
+	/**
+	 * Checks whether this color-set contains one or more color gradients
+	 * (instances of class {@link ColorGradient}
+	 * @return true if one or more of the objects of this color-set is an instance of
+	 * {@link ColorGradient}
+	 */
+	public boolean hasColorGradient() {
+		for(ColorSetObject o : colorSetObjects) {
+			if(o instanceof ColorGradient) return true;
+		}
+		return false;
+	}
+
 	public boolean nameExists(String name) {
 		for(ColorSetObject o : colorSetObjects) 
 			if(o.getName().equalsIgnoreCase(name)) return true;

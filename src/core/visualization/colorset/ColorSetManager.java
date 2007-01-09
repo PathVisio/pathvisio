@@ -77,6 +77,15 @@ public class ColorSetManager {
 		}
 	}
 	
+	/**
+	 * Clears all color-set information
+	 */
+	public static void clearColorSets() {
+		colorSets.clear();
+		VisualizationManager.fireVisualizationEvent(
+				new VisualizationEvent(null, VisualizationEvent.COLORSET_REMOVED));
+	}
+	
 	public static ColorSet getColorSet(int index) {
 		if(index >= 0 && index < colorSets.size())
 			return colorSets.get(index);
@@ -116,7 +125,7 @@ public class ColorSetManager {
 	}
 
 	public static void fromXML(Element xml) {
-		colorSets.clear();
+		clearColorSets();
 		
 		if(xml == null) return;
 

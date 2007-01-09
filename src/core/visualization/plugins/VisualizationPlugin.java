@@ -119,7 +119,19 @@ public abstract class VisualizationPlugin implements Comparable {
 	 * @param parent The parent of the new {@link Composite}
 	 */
 	public abstract void initSidePanel(Composite parent);
-				
+	
+	/**
+	 * Create a {@link Composite} that is displayed in the legend for every plug-in that is
+	 * activated on the pathway drawing.
+	 * This method may be overridden if the plug-in needs to show a legend item when it is
+	 * active on the pathway drawing.
+	 * @param parent The parent of the new {@link Composite} to return
+	 * @return A {@linkc Composite} that displays the legend information for this plug-in
+	 */
+	public Composite createLegendComposite(Composite parent) {
+		return null;
+	}
+	
 	/**
 	 * Create a {@link Composite} that can be used to configure this visualization plugin
 	 * Override this method when the visualization plugin can be configured by the user
@@ -142,14 +154,6 @@ public abstract class VisualizationPlugin implements Comparable {
 		d.open();
 	}
 	
-	
-//	public String[] getDisplayOptions() {
-//		List<String> reps = new ArrayList<String>();
-//		if(canDrawingObject()) 	reps.add(disp_names[0]);
-//		if(canSidePanel()) 		reps.add(disp_names[1]);
-//		if(canToolTip()) 	reps.add(disp_names[2]);
-//		return reps.toArray(new String[reps.size()]);
-//	}
 	
 	/**
 	 * Save the configuration of the current instance of this class to an XML element.<br>

@@ -1509,8 +1509,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	public void showLegend(boolean show) {	
 		if(show && GmmlGex.isConnected()) {
-			legend.refresh();
-			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
+			if(rightPanel.isVisible("Legend")) return; //Legend already visible
 			rightPanel.unhideTab("Legend", 0);
 			rightPanel.selectTab("Legend");
 		}

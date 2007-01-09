@@ -25,14 +25,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -41,6 +40,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import util.SwtUtils;
+import visualization.Visualization.PluginSet;
 import visualization.VisualizationManager.VisualizationEvent;
 import visualization.VisualizationManager.VisualizationListener;
 import visualization.colorset.ColorCriterion;
@@ -54,10 +54,13 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	static final String FONT = "arial narrow";
 	static final int FONTSIZE = 8;
 
+	Button combine;
+	Boolean doCombine = true;
+	
 	ColorSet colorSet;
 
-	GradientCanvas gradients;
-	CriteriaComposite criteria;
+	ColorSetComposite colorSets;
+	PluginComposite plugins;
 
 	Combo colorSetCombo;
 
@@ -66,6 +69,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		super(parent, style);
 
 		createContents();
+		initialize();
 		VisualizationManager.addListener(this);
 	}
 
@@ -74,19 +78,33 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		refreshContent();
 	}
 
-	public void refresh() {
+	public void initialize() {
+		combine.setSelection(true);
+		
 		String[] names = ColorSetManager.getColorSetNames();
-		if(names.length == 0) colorSetCombo.setEnabled(false);
-		else {
-			colorSetCombo.setEnabled(true);
-			colorSetCombo.setItems(names);
-			colorSetCombo.select(0);
-			setInput(ColorSetManager.getColorSets().get(0));
+		colorSetCombo.setItems(names);
+		if(names.length == 0) {
+			colorSetCombo.setEnabled(false);
 		}
+		else {
+			colorSetCombo.setEnabled(!doCombine);
+			colorSetCombo.select(0);
+		}
+		
+		refreshContent();
 	}
+	
+	void setCombine(boolean comb) {
+		doCombine = comb;
+		colorSetCombo.setEnabled(!doCombine);
+		refreshContent();
+	}
+	
 	void refreshContent() {		
-		criteria.refresh();
-		gradients.refresh();
+		colorSets.refresh();
+		plugins.refresh();
+		setMinSize(getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		layout(true);
 	}
 
 	void createContents() {	
@@ -103,8 +121,6 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		legendComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		setChildrenBackground(contents);
-		
-		setMinSize(contents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	void setChildrenBackground(Composite comp) {
@@ -118,8 +134,18 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	Composite createColorSetCombo(Composite parent) {
 		Composite comboComp = new Composite(parent, SWT.NULL);
 		comboComp.setLayout(new GridLayout(2, false));
+		combine = new Button(parent, SWT.CHECK);
+		GridData span = new GridData(GridData.FILL_HORIZONTAL);
+		span.horizontalSpan = 2;
+		combine.setLayoutData(span);
+		combine.setText("Show all color-sets");
+		combine.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setCombine(combine.getSelection());
+			}
+		});
 		Label label = new Label(comboComp, SWT.NULL);
-		label.setText("Color set:");
+		label.setText("Show color-set:");
 		colorSetCombo = new Combo(comboComp, SWT.READ_ONLY);
 		colorSetCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		colorSetCombo.addSelectionListener(new SelectionAdapter() {
@@ -131,44 +157,155 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	}
 
 	Composite createLegendComp(Composite parent) {
-		Group legendGroup = new Group(parent, SWT.NULL);
-		legendGroup.setLayout(new FillLayout(SWT.VERTICAL));
-		legendGroup.setText("Legend");
+		Composite legendComp = new Composite(parent, SWT.NULL);
+		legendComp.setLayout(new GridLayout());
 
-		Group cg = new Group(legendGroup, SWT.SHADOW_IN);
-		Group gg = new Group(legendGroup, SWT.SHADOW_IN);
+		Group cg = new Group(legendComp, SWT.SHADOW_IN);
+		Group pg = new Group(legendComp, SWT.SHADOW_IN);
 
-		criteria = new CriteriaComposite(cg, SWT.NONE);
-		gradients = new GradientCanvas(gg, SWT.NONE);
+		colorSets = new ColorSetComposite(cg, SWT.NONE);
+		plugins = new PluginComposite(pg, SWT.NONE);
 
-		cg.setText("Criteria");
-		gg.setText("Gradients");
+		cg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		pg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		cg.setText("Color-sets");
+		pg.setText("Plug-ins");
 
-		gg.setLayout(new FillLayout());
 		cg.setLayout(new FillLayout());
+		pg.setLayout(new FillLayout());
 
-		return legendGroup;
+		return legendComp;
 	}
 
+	private class PluginComposite extends Composite
+	{
+		public PluginComposite(Composite parent, int style) {
+			super(parent, style);
+			setLayout(new GridLayout());
+			setChildrenBackground(this);
+		}
+		
+		public void refresh() {
+			for(Control c : getChildren()) c.dispose();
+			
+			Visualization v = VisualizationManager.getCurrent();
+			if(v == null) return;
+			
+			for(PluginSet ps : v.getPluginSets()) {
+				if(ps.isDrawing()) {
+					Group g = new Group(this, SWT.NULL);
+					g.setBackground(getBackground());
+					g.setLayoutData(new GridData(GridData.FILL_BOTH));
+					g.setLayout(new GridLayout());
+					g.setText(ps.getInstance().getName());
+					Composite c = ps.getDrawingPlugin().createLegendComposite(g);
+					if(c == null) g.dispose();
+					else c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				}
+			}
+			layout();
+		}
+	}
+	
+	private class ColorSetComposite extends Composite
+	{
+			public ColorSetComposite(Composite parent, int style) {
+				super(parent, style);
+				setLayout(new GridLayout());
+				setChildrenBackground(this);
+			}
+			
+			public void refresh() {
+				for(Control c : getChildren()) c.dispose();
+				
+				if(doCombine) {
+					for(ColorSet cs : ColorSetManager.getColorSets()) {
+						drawColorSet(this, cs);
+					}
+				} else {
+					if(colorSet == null) return;
+					drawColorSet(this, colorSet);
+				}
+				
+				layout();
+			}
+			
+			void drawColorSet(Composite parent, ColorSet cs) {
+				ColorSetGroup csg = new ColorSetGroup(parent, SWT.NULL);
+				csg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				csg.setInput(cs);
+			}
+	}
+
+	private class ColorSetGroup extends Composite
+	{
+		CriteriaComposite criteria;
+		GradientCanvas gradients;
+		Group group;
+		
+		ColorSet colorSet;
+		
+		public ColorSetGroup(Composite parent, int style) {
+			super(parent, style);
+			createContents();
+		}
+		
+		void setInput(ColorSet cs) {
+			colorSet = cs;
+			criteria.setInput(cs);
+			gradients.setInput(cs);
+			refresh();
+		}
+		
+		void createContents() {
+			setLayout(new FillLayout());
+			group = new Group(this, SWT.NULL);
+			group.setLayout(new GridLayout());
+			criteria = new CriteriaComposite(group, SWT.NULL);
+			criteria.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			gradients = new GradientCanvas(group, SWT.NULL);
+			gradients.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			setChildrenBackground(this);
+		}
+		
+		public void refresh() {
+			if(colorSet != null) group.setText(colorSet.getName());
+			criteria.refresh();
+			gradients.refresh();
+		}
+		
+	}
+	
 	private class CriteriaComposite extends Composite
 	{
-
+		ColorSet colorSet;
+		
 		public CriteriaComposite(Composite parent, int style)
 		{
 			super(parent, style);
-			setLayout(new GridLayout(2, false));
+			setChildrenBackground(this);
 		}
 
+		void setInput(ColorSet cs) {
+			colorSet = cs;
+			refresh();
+		}
+		
 		final static int CLABEL_SIZE = 10;
 		public void refresh()
 		{
 			for(Control c : getChildren()) c.dispose();
 
-			Color c = null;
-			Image image = null;
-
 			if(colorSet == null) return;
-
+			drawColorSet(this, colorSet);
+		}
+		
+		void drawColorSet(Composite parent, ColorSet colorSet) {			
+			Color c = null;
+			
+			parent.setLayout(new GridLayout(2, false));
+			
 			//Draw label for special criteria ('no gene found', 'no criteria met')
 			String[] specialLabels = {"No criteria met", "Gene not found", "No data found"};
 			RGB[] specialColors = {
@@ -179,29 +316,8 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			for(int i = 0; i < specialColors.length; i++)
 			{
 				c = SwtUtils.changeColor(c, specialColors[i], getDisplay());
-				createCriterionLabel(specialLabels[i], c);
+				createCriterionLabel(parent, specialLabels[i], c);
 			}
-
-			//This label requires an image
-			Label multipleData = new Label(this, SWT.LEFT | SWT.FLAT);
-			multipleData.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-			clabelGrid.widthHint = CLABEL_SIZE;
-			clabelGrid.heightHint = CLABEL_SIZE;
-			multipleData.setLayoutData(clabelGrid);
-
-			if(image != null && !image.isDisposed()) image.dispose();
-
-			image = new Image(getDisplay(), CLABEL_SIZE, CLABEL_SIZE);
-			GC imageGc = new GC(image);
-			imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
-			imageGc.drawRectangle(1, 1, CLABEL_SIZE - 3, CLABEL_SIZE - 3);
-			imageGc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
-			imageGc.drawRectangle(0, 0, CLABEL_SIZE - 1, CLABEL_SIZE - 1);
-			multipleData.setImage(image);
-			Label multipleDataLabel = new Label(this, SWT.LEFT);
-			multipleDataLabel.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			multipleDataLabel.setText("Gene maps to multiple ids");
 
 			//Draw CLabel for every criterion
 			for(ColorSetObject co : colorSet.getObjects())
@@ -209,25 +325,22 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 				if(!(co instanceof ColorCriterion)) continue; //skip objects other than criretia
 				ColorCriterion cc = (ColorCriterion)co;
 				c = SwtUtils.changeColor(c, cc.getColor(), getDisplay());
-				createCriterionLabel(cc.getName(), c);
+				createCriterionLabel(parent, cc.getName(), c);
 			}
 			
 			if(c != null) c.dispose();
-			if(imageGc != null) imageGc.dispose();
-			
-			layout();
 		}
-
-		private void createCriterionLabel(String text, Color c)
+		
+		private void createCriterionLabel(Composite parent, String text, Color c)
 		{
 			GridData clabelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 			clabelGrid.widthHint = CLABEL_SIZE;
 			clabelGrid.heightHint = CLABEL_SIZE;
 
-			CLabel cLabel = new CLabel(this, SWT.SHADOW_IN);
-			Label label = new Label(this, SWT.LEFT);
+			CLabel cLabel = new CLabel(parent, SWT.SHADOW_IN);
+			Label label = new Label(parent, SWT.LEFT);
 
-			label.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			label.setBackground(getBackground());
 			label.setText(text);
 
 			cLabel.setBackground(c);
@@ -236,14 +349,22 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	}
 
 	private class GradientCanvas extends Canvas implements PaintListener
-	{		
+	{	
+		ColorSet colorSet;
+		
 		public GradientCanvas(Composite parent, int style)
 		{
 			super(parent, style);
 			addPaintListener(this);
 		}
 
+		public void setInput(ColorSet input) {
+			colorSet = input;
+			refresh();
+		}
+		
 		public void refresh() {
+			layout();
 			redraw();
 		}
 
@@ -258,9 +379,10 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		public void paintControl (PaintEvent e)
 		{
 			if(colorSet == null) return;
-
+			
 			//Divide canvas in nr-gradients rows
-			Point size = getParent().getSize();
+			Rectangle cla = getClientArea();
+			Point size = new Point(cla.width, cla.height);
 			int n = getNrGradients();
 			int i = 0;
 			for(ColorSetObject co : colorSet.getObjects()) {
@@ -274,8 +396,26 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			}
 		}
 
+		public Point computeSize(int wHint, int hHint) {
+			if(colorSet == null) return new Point(0,0);
+			
+			int nr = colorSet.getObjects().size();
+			
+			int charw = SwtUtils.getAverageCharWidth(getDisplay());
+			int x = 0;
+			for(ColorSetObject co : colorSet.getObjects()) {
+				x = Math.max(x, co.getName().length() * charw);
+			}
+			int y = nr * (MAX_BAR_HEIGHT + MARGIN_VERTICAL + LABEL_WIDTH);
+			return new Point(x, y);
+		}
+		
+		public Point computeSize(int wHint, int hHint, boolean changed) {
+			return computeSize(wHint, hHint);
+		}
+		
 		final static int LABEL_WIDTH = 20;
-		final static int MAX_BAR_HEIGHT = 35;
+		final static int MAX_BAR_HEIGHT = 10;
 		final static int MARGIN_VERTICAL = 20;
 		final static int MARGIN_HORIZONTAL = 15;
 		final static int MARKER_LENGTH = 4;
@@ -294,7 +434,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 			// Get region to draw
 			int yStart = r.y + MARGIN_VERTICAL;
-			int barHeight = Math.min(r.height - MARGIN_VERTICAL - LABEL_WIDTH, MAX_BAR_HEIGHT - MARGIN_VERTICAL);
+			int barHeight = MAX_BAR_HEIGHT;
 			int start = r.x + MARGIN_HORIZONTAL;
 			int end = r.width - MARGIN_HORIZONTAL;
 
@@ -337,115 +477,14 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	}
 
 	public void visualizationEvent(VisualizationEvent e) {
-		refresh();
+		switch(e.type) {
+		case VisualizationEvent.COLORSET_ADDED:
+		case VisualizationEvent.COLORSET_REMOVED:
+			initialize();
+			break;
+		case VisualizationEvent.COLORSET_MODIFIED:
+		case VisualizationEvent.VISUALIZATION_SELECTED:
+			refreshContent();
+		}
 	}
 }
-
-//private class SampleComposite extends Composite
-//{
-//GmmlLegend legend;
-//Canvas sampleCanvas;
-
-//public SampleComposite(Composite parent, int style)
-//{
-//super(parent, style);
-//setLayout(new GridLayout(1, false));
-//setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-//}
-
-//public void setLegend(GmmlLegend legend)
-//{
-//this.legend = legend;
-//}
-
-//public void resetContents()
-//{			
-//Control[] controls = getChildren();
-//for(int i = 0; i < controls.length; i++)
-//{
-//controls[i].dispose();
-//}
-
-//sampleCanvas = getSampleCanvas(this, SWT.NONE);
-
-//if(legend.colorSetObjects != null)
-//{				
-//int i = 0;
-//for(Sample s : colorSet.useSamples)
-//{
-//i++;
-//Label l = new Label(this, SWT.FLAT);
-//l.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-//l.setText(i + ": " + s.getName());
-//}
-//}
-//}
-
-//final static int MARGIN = 5;
-//final static int SAMPLE_IMAGE_HEIGHT = GmmlGeneProduct.INITIAL_HEIGHT;
-
-//private Canvas getSampleCanvas(Composite parent, int style) {
-//final Canvas c = new Canvas(parent, style);
-
-//GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//gd.heightHint = SAMPLE_IMAGE_HEIGHT + 1;
-//c.setLayoutData(gd);
-
-//c.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-//c.addPaintListener(new PaintListener() {
-//public void paintControl(PaintEvent e) {
-//GC gc = e.gc;
-//Font f = new Font(getDisplay(), FONT, FONTSIZE, SWT.NONE);
-
-//int nr = colorSet.useSamples.size();
-
-//gc.setFont(f);
-//String exampleId = "Gene";
-//Point stringSize = gc.textExtent(exampleId);
-
-//Point p = ((Canvas)(e.widget)).getSize();
-//Rectangle drawArea = new Rectangle(0, 0, p.x, p.y);
-//drawArea.width = drawArea.width;
-//drawArea.height = SAMPLE_IMAGE_HEIGHT;
-
-//Rectangle sampleArea = new Rectangle(0, 0, drawArea.width, drawArea.height);
-//sampleArea.width = (int)Math.ceil(GmmlGpColor.COLOR_AREA_RATIO * drawArea.width);
-//if(nr > 0) sampleArea.width -= sampleArea.width % nr;
-
-//int stringSpace = drawArea.width - sampleArea.width;
-
-//if(nr > 0) {
-////If sample numbers don't fit, steal space from gene label if possible
-//Point sampleSize = gc.textExtent(Integer.toString(nr));
-//int sampleSpace = sampleArea.width / nr;
-//if(sampleSize.x > sampleSpace) { 		
-//if(stringSpace > stringSize.x) {
-//int steal = sampleSize.x * nr - sampleArea.width;
-//if(!(stringSpace - steal > stringSize.x)) steal = stringSpace - stringSize.x;
-//stringSpace -= steal;
-//sampleArea.width += steal;
-//}
-//}
-//}
-
-//gc.drawString(exampleId, stringSpace / 2 - stringSize.x / 2, sampleArea.height / 2 - stringSize.y / 2 );
-//gc.drawRectangle(0, 0, stringSpace - 1, sampleArea.height);
-
-//sampleArea.x += stringSpace - 1;
-//for(int i = 0; i < nr; i++)
-//{
-//Rectangle r = new Rectangle(sampleArea.x + i * sampleArea.width / nr,
-//sampleArea.y, sampleArea.width / nr, sampleArea.height);
-//gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
-//gc.drawRectangle(r.x, r.y, r.width, r.height);
-//Point numberSize = gc.textExtent(Integer.toString(i + 1));
-//gc.drawString(Integer.toString(i + 1), r.x + r.width / 2 - numberSize.x / 2,
-//r.height / 2 - numberSize.y / 2, true);
-//}
-
-//f.dispose();
-//}
-//});
-//return c;
-//}
-//}

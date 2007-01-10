@@ -48,9 +48,11 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -133,7 +135,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	
 	abstract void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC buffer);
 	abstract void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC gc);
-
+	
 	static final int SIDEPANEL_SPACING = 3;
 	static final int SIDEPANEL_MARGIN = 5;
 	void drawSidePanel(PaintEvent e) {
@@ -162,26 +164,33 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		e.gc.setFont(e.display.getSystemFont());
 		int tw = 0;
 		for(GmmlGeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getName()).x);
+		tw += e.gc.getFontMetrics().getHeight();
 		
-//		//Draw sample labels (vertical)
-//		int lw = 0;
-//		for(ConfiguredSample s : useSamples) lw = Math.max(lw, e.gc.textExtent(s.getName()).x);
-//		
-//		Rectangle larea = new Rectangle(area.x + tw, area.width - tw, area.y, lw);
-//		int tx = larea.x + larea.width / 2;
-//		int ty = larea.y + larea.height / 2;
-//		
-//		Transform t = new Transform(e.display);
-//		SwtUtils.rotateGC(e.gc, t, 90, tx, ty);
-//		e.gc.setTransform(t);
-//		int ns = useSamples.size();
-//		
-//		for(int i = 0; i < ns; i++) {
-//			e.gc.drawText(useSamples.get(i).getName(), larea.y, larea.x + i * (larea.width / ns));
-//		}
-//		SwtUtils.rotateGC(e.gc, t, -90, tx, ty);
-//		t.dispose();
+		//Draw sample labels (vertical)
+		int lw = 0;
+		for(ConfiguredSample s : useSamples) lw = Math.max(lw, e.gc.textExtent(s.getName()).x);
 		
+		
+		Rectangle larea = new Rectangle(area.x + tw, area.y, area.width - tw, lw);
+
+		Transform t = new Transform(e.display);
+		int ns = useSamples.size();
+		
+		for(int i = 0; i < ns; i++) {
+			int tx = larea.x + i * (larea.width / ns) + larea.width / (2*ns);
+			int ty = larea.y;
+			t.translate(tx, ty);
+			t.rotate(90);
+			e.gc.setTransform(t);
+			e.gc.drawText(useSamples.get(i).getName(), 0, 0);
+			t.rotate(-90);
+			t.translate(-tx, -ty);
+			e.gc.setTransform(t);
+		}
+		t.dispose();
+		
+		area.y += lw;
+		area.height -= lw;
 		int h = area.height / nr;
 		for(int i = 0; i < nr; i++) {
 			int y = area.y + i*h;
@@ -263,21 +272,58 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	abstract void loadAttributes(Element xml);
 	
 	public Composite createLegendComposite(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NULL);
-		comp.setLayout(new FillLayout());
-		Label label = new Label(comp, SWT.NULL);
-		String text;
-		if(useSamples.size() == 0) {
-			text = "No samples selected";
-		} else {
-			text = "Samples from left to right:";
-			for(ConfiguredSample s : useSamples) {
-				text += "\n- " + s.getName();
+		final Canvas canvas = new Canvas(parent, SWT.NULL);
+		canvas.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				drawLegend(canvas, e);
 			}
+		});
+		SwtUtils.setCompositeAndChildrenBackground(canvas, parent.getBackground());
+		return canvas;
+	}
+	
+	final static int LEGEND_MARGIN = 5;
+	final static int LEGEND_SPACING = 5;
+	final static int LEGEND_BOXHEIGHT = 20;
+	void drawLegend(Canvas c, PaintEvent e) {
+		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
+		
+		//Draw a square divided into ns blocks
+		//Draw labels for samplenames
+		//Draw vertical line to labels
+		
+		Rectangle r = c.getClientArea();
+		r.x += LEGEND_MARGIN;
+		r.y += LEGEND_MARGIN;
+		r.width -= 2*LEGEND_MARGIN;
+		r.height -= 2*LEGEND_MARGIN;
+		
+		int ns = useSamples.size();
+		int w = r.width / ns;
+		int hi = (r.height - LEGEND_BOXHEIGHT) / ns + LEGEND_SPACING;
+		
+		for(int i = 0; i < ns; i++) {
+			ConfiguredSample s = useSamples.get(i);
+			Rectangle area = new Rectangle(w * i, r.y, w, LEGEND_BOXHEIGHT);
+			drawLegendSample(s, area, e, e.gc);
+			
+			Point ts = e.gc.textExtent(s.getName());
+			int cx = area.x + area.width / 2;
+			int cy = area.y + area.height / 2;
+			int yo = (i == 0 ? 10 : 0);
+			int xo = cx - ts.x / 2;
+			if(i == 0) xo = Math.max(0, xo);
+			else if(i == ns - 1) xo = Math.min(xo, area.x + area.width - ts.x);
+		
+			e.gc.drawLine(cx, cy, cx, area.y + area.height + (hi * i) + yo);
+			e.gc.drawString(s.getName(), xo, 
+					area.y + area.height + (hi * i) + yo, true);
+			
 		}
-		label.setText(text);
-		SwtUtils.setCompositeAndChildrenBackground(comp, parent.getBackground());
-		return comp;
+	}
+	
+	protected void drawLegendSample(ConfiguredSample s, Rectangle area, PaintEvent e, GC gc) {
+		e.gc.drawRectangle(area);
 	}
 	
 	TableViewer useSampleTable;

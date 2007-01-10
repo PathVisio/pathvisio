@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
@@ -38,10 +37,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
 
@@ -64,7 +60,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	
 	String name;
 	HashMap<Class, PluginSet> plugins;
-	List<PluginSet> drawingOrder;
+	List<PluginSet> pluginPlacement;
 	
 	Composite sidePanel;
 	
@@ -86,7 +82,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 */
 	void initPlugins() {
 		plugins = new HashMap<Class, PluginSet>();
-		drawingOrder = new ArrayList<PluginSet>();
+		pluginPlacement = new ArrayList<PluginSet>();
 		for(Class c : PluginManager.getPlugins()) {
 			addPluginClass(c);
 		}
@@ -112,7 +108,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		try {
 			PluginSet pr = new PluginSet(c, this);
 			plugins.put(c, pr);
-			drawingOrder.add(pr);
+			pluginPlacement.add(pr);
 		} catch(Throwable e) {
 			GmmlVision.log.error("Unable to create instance of plugin " + c, e);
 		}
@@ -159,7 +155,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @return An ordered list of {@link PluginSet}s
 	 */
 	public List<PluginSet> getPluginSets() {
-		return drawingOrder;
+		return pluginPlacement;
 	}
 	
 	/**
@@ -175,9 +171,9 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @param ps			The {@link PluginSet} to set
 	 */
 	private void setPluginSet(Class pluginClass, PluginSet ps) {
-		drawingOrder.remove(ps);
+		pluginPlacement.remove(ps);
 		plugins.put(pluginClass, ps);
-		drawingOrder.add(ps);
+		pluginPlacement.add(ps);
 		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
 	}
 	
@@ -189,7 +185,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @param gc Graphical context on which drawing operations can be performed
 	 */
 	public void drawVisualization(GmmlGraphics g, PaintEvent e, GC gc) {
-		for(PluginSet pr : getPluginsSorted()) {
+		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, e, gc);
 		}
 	}
@@ -201,7 +197,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		//Determine number of active plugins that to reserve a region
 		int nrRes = 0;
 		int index = 0;
-		for(PluginSet pr : getPluginsSorted()) {
+		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.getDrawingPlugin() == p) index = nrRes;
 			nrRes += (pr.getDrawingPlugin().isActive() && pr.getDrawingPlugin().isUseProvidedArea()) ? 1 : 0;
 		}
@@ -222,18 +218,18 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 		
 	public void setDrawingOrder(PluginSet pr, int order) {
-		Utils.setDrawingOrder(drawingOrder, pr, order);
+		Utils.setDrawingOrder(pluginPlacement, pr, order);
 		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
 	}
 	
-	private List<PluginSet> getPluginsSorted() {
-		List<PluginSet> sorted = new ArrayList<PluginSet>(drawingOrder);
+	public List<PluginSet> getPluginSetsDrawingOrder() {
+		List<PluginSet> sorted = new ArrayList<PluginSet>(pluginPlacement);
 		Collections.reverse(sorted);
 		return sorted;
 	}
 	
 	public void updateSidePanel(Collection<GmmlGraphics> objects) {
-		for(PluginSet pr : getPluginsSorted()) {
+		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isSidePanel())
 				pr.getSidePanelPlugin().visualizeOnSidePanel(objects);
 		}
@@ -243,7 +239,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		sidePanel = new Composite(parent, SWT.NULL);
 		sidePanel.setLayout(new FillLayout(SWT.VERTICAL));
 		
-		for(PluginSet pr : getPluginsSorted()) {
+		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isSidePanel()) {
 				Group group = new Group(sidePanel, SWT.NULL);
 				group.setBackground(group.getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -265,7 +261,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 	
 	public boolean usesToolTip() {
-		for(PluginSet pr : drawingOrder) {
+		for(PluginSet pr : pluginPlacement) {
 			if(pr.isToolTip()) return true;
 		}
 		return false;
@@ -288,7 +284,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		});
 		
 		boolean hasOne = false;
-		for(PluginSet pr : getPluginsSorted()) {
+		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isToolTip()) {
 				Composite ttc = pr.getToolTipPlugin().visualizeOnToolTip(tip, g);
 				if(ttc != null) hasOne = true;
@@ -301,7 +297,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	public Element toXML() {
 		Element vis = new Element(XML_ELEMENT);
 		vis.setAttribute(XML_ATTR_NAME, getName());
-		for(PluginSet pr : drawingOrder)
+		for(PluginSet pr : pluginPlacement)
 			if(pr.isActive()) 
 				vis.addContent(pr.toXML());
 		return vis;

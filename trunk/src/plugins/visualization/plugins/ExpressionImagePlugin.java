@@ -106,24 +106,32 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		if(url.getProtocol().equals("file")) imageURLs.remove(url);
 	}
 	
-	protected void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC buffer) {
+	protected void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC gc) {
 		CachedData cache = GmmlGex.getCachedData();
 		ColorSet cs = s.getColorSet();
 
 		RGB rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());
 		
-		ImageSample is = (ImageSample)s;
+		drawImage((ImageSample)s, rgb, area, e, gc);
+	}
+	
+	protected void drawLegendSample(ConfiguredSample s, Rectangle area, PaintEvent e, GC gc) {
+		drawImage((ImageSample)s, new RGB(255, 255, 255), area, e, gc);
+		e.gc.drawRectangle(area);
+	}
+	
+	void drawImage(ImageSample is, RGB rgb, Rectangle area, PaintEvent e, GC gc) {
 		ImageData id = is.getImageData(rgb);
 		if(id != null) {
 			Image image = new Image(e.display, id);
 			Point scaleTo = is.getScaleSize(new Point(area.width, area.height));
 
-			drawBackground(area, buffer, e);
+			drawBackground(area, gc, e);
 
 			Rectangle ib = image.getBounds();
 			int xs = area.width - scaleTo.x;
 			int ys = area.height - scaleTo.y;
-			buffer.drawImage(image, ib.x, ib.y, ib.width, ib.height, 
+			gc.drawImage(image, ib.x, ib.y, ib.width, ib.height, 
 					area.x + xs / 2, area.y + ys / 2, scaleTo.x, scaleTo.y);
 			image.dispose();
 		}

@@ -170,6 +170,10 @@ public class GmmlVisionMain {
 				ImageDescriptor.createFromURL(cl.getResource("icons/unchecked_unavailable.gif")));
 		imageRegistry.put("checkbox.checked",
 				ImageDescriptor.createFromURL(cl.getResource("icons/checked.gif")));
+		imageRegistry.put("tree.collapsed",
+				ImageDescriptor.createFromURL(cl.getResource("icons/tree_collapsed.gif")));
+		imageRegistry.put("tree.expanded",
+				ImageDescriptor.createFromURL(cl.getResource("icons/tree_expanded.gif")));
 		GmmlVision.setImageRegistry(imageRegistry);
 	}
 	

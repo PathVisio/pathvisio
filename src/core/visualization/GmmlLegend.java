@@ -16,9 +16,18 @@
 //
 package visualization;
 
+import gmmlVision.GmmlVision;
+
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -40,6 +49,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import util.SwtUtils;
+import visualization.GmmlLegend.CollapseGroup.CollapseListener;
 import visualization.Visualization.PluginSet;
 import visualization.VisualizationManager.VisualizationEvent;
 import visualization.VisualizationManager.VisualizationListener;
@@ -61,6 +71,9 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 	ColorSetComposite colorSets;
 	PluginComposite plugins;
+	
+	CollapseGroup colorSetGroup;
+	CollapseGroup pluginGroup;
 
 	Combo colorSetCombo;
 
@@ -97,16 +110,22 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	void setCombine(boolean comb) {
 		doCombine = comb;
 		colorSetCombo.setEnabled(!doCombine);
-		refreshContent();
+		setInput(ColorSetManager.getColorSets().get(colorSetCombo.getSelectionIndex()));
 	}
 	
 	void refreshContent() {		
 		colorSets.refresh();
 		plugins.refresh();
-		setMinSize(getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		layout(true);
+		rearrange();
 	}
 
+	void rearrange() {
+		layout();
+		colorSetGroup.refresh();
+		pluginGroup.refresh();
+		setMinSize(getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+	
 	void createContents() {	
 		Composite contents = new Composite(this, SWT.NULL);
 		setContent(contents);
@@ -158,22 +177,36 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 	Composite createLegendComp(Composite parent) {
 		Composite legendComp = new Composite(parent, SWT.NULL);
-		legendComp.setLayout(new GridLayout());
+		GridLayout legendGrid = new GridLayout();
+		legendGrid.marginWidth = legendGrid.marginLeft = legendGrid.marginRight = 0;
+		legendComp.setLayout(legendGrid);
 
-		Group cg = new Group(legendComp, SWT.SHADOW_IN);
-		Group pg = new Group(legendComp, SWT.SHADOW_IN);
+		colorSetGroup = new CollapseGroup(this, legendComp, SWT.NULL);
+		pluginGroup = new CollapseGroup(this, legendComp, SWT.NULL);
 
-		colorSets = new ColorSetComposite(cg, SWT.NONE);
-		plugins = new PluginComposite(pg, SWT.NONE);
+		colorSets = new ColorSetComposite(colorSetGroup.getGroup(), SWT.NONE);
+		plugins = new PluginComposite(pluginGroup.getGroup(), SWT.NONE);
 
-		cg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		pg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		colorSetGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		pluginGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		cg.setText("Color-sets");
-		pg.setText("Plug-ins");
+		colorSetGroup.setText("Color-sets");
+		pluginGroup.setText("Plug-ins");
 
-		cg.setLayout(new FillLayout());
-		pg.setLayout(new FillLayout());
+		colorSetGroup.getGroup().setLayout(new FillLayout());
+		pluginGroup.getGroup().setLayout(new FillLayout());
+		
+		CollapseListener cl = new CollapseListener() {
+			public void collapsed(visualization.GmmlLegend.CollapseGroup.CollapseEvent e) {
+				rearrange();
+			}
+			public void expanded(visualization.GmmlLegend.CollapseGroup.CollapseEvent e) {
+				rearrange();
+			}
+		};
+		
+		colorSetGroup.addCollapseListener(cl);
+		pluginGroup.addCollapseListener(cl);
 
 		return legendComp;
 	}
@@ -192,16 +225,15 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			Visualization v = VisualizationManager.getCurrent();
 			if(v == null) return;
 			
-			for(PluginSet ps : v.getPluginSets()) {
+			for(PluginSet ps : v.getPluginSetsDrawingOrder()) {
 				if(ps.isDrawing()) {
 					Group g = new Group(this, SWT.NULL);
 					g.setBackground(getBackground());
 					g.setLayoutData(new GridData(GridData.FILL_BOTH));
-					g.setLayout(new GridLayout());
+					g.setLayout(new FillLayout());
 					g.setText(ps.getInstance().getName());
 					Composite c = ps.getDrawingPlugin().createLegendComposite(g);
 					if(c == null) g.dispose();
-					else c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				}
 			}
 			layout();
@@ -398,13 +430,15 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 		public Point computeSize(int wHint, int hHint) {
 			if(colorSet == null) return new Point(0,0);
-			
-			int nr = colorSet.getObjects().size();
-			
+						
 			int charw = SwtUtils.getAverageCharWidth(getDisplay());
 			int x = 0;
+			int nr = 0;
 			for(ColorSetObject co : colorSet.getObjects()) {
-				x = Math.max(x, co.getName().length() * charw);
+				if(co instanceof ColorGradient) {
+					x = Math.max(x, co.getName().length() * charw);
+					nr++;
+				}
 			}
 			int y = nr * (MAX_BAR_HEIGHT + MARGIN_VERTICAL + LABEL_WIDTH);
 			return new Point(x, y);
@@ -482,9 +516,131 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		case VisualizationEvent.COLORSET_REMOVED:
 			initialize();
 			break;
-		case VisualizationEvent.COLORSET_MODIFIED:
-		case VisualizationEvent.VISUALIZATION_SELECTED:
+		default:
 			refreshContent();
+		}
+	}
+	
+	static class CollapseGroup extends Composite {
+		static final int SWITCH_SIZE = 9;
+		GmmlLegend legend;
+		Group group;
+		Composite stackComp;
+		StackLayout stackLayout;
+		Label groupLabel;
+		Label switchLabel;
+		
+		boolean expanded = true;
+		
+		public CollapseGroup(GmmlLegend legend, Composite parent, int style) {
+			super(parent, style);
+			this.legend = legend;
+			GridLayout grid = new GridLayout(2, false);
+			grid.horizontalSpacing = 3;
+			grid.marginBottom = grid.marginHeight = 0;
+			grid.marginLeft = grid.marginRight = grid.marginBottom = grid.marginTop = 0;
+			setLayout(grid);
+			createContents();
+		}
+		
+		void createContents() {
+			switchLabel = new Label(this, SWT.NULL);
+			GridData labelGrid = new GridData(	GridData.HORIZONTAL_ALIGN_BEGINNING | 
+												GridData.VERTICAL_ALIGN_BEGINNING);
+			labelGrid.widthHint = labelGrid.heightHint = SWITCH_SIZE;
+			switchLabel.setLayoutData(labelGrid);
+			switchLabel.addMouseListener(new MouseAdapter() {
+				public void mouseUp(MouseEvent e) {
+					if(expanded) collapse();
+					else expand();
+				}
+			});
+			stackComp = new Composite(this, SWT.NULL);
+			stackComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+			stackLayout = new StackLayout();
+			stackComp.setLayout(stackLayout);
+					
+			groupLabel = new Label(stackComp, SWT.NULL);
+			group = new Group(stackComp, SWT.NULL);
+			
+			expand();
+		}
+		
+		public Group getGroup() {
+			return group;
+		}
+		
+		public Label getSwitchLabel() {
+			return switchLabel;
+		}
+		
+		public void setText(String text) {
+			groupLabel.setText(text);
+			group.setText(text);
+		}
+		
+		void collapse() {
+			setExpanded(false);
+		}
+		
+		void expand() {
+			setExpanded(true);
+		}
+
+		public void layout(boolean changed, boolean all) {
+			super.layout(changed, all);
+			getParent().layout(changed, all);
+		}
+		
+		public Point computeSize(int wHint, int hHint, boolean changed) {
+			int x = super.computeSize(wHint, hHint, changed).x;
+			int y = expanded ?
+					group.computeSize(wHint, hHint, changed).y :
+					groupLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			return new Point(x, y);
+		}
+		
+		public void refresh() {
+			stackLayout.topControl = expanded ? group : groupLabel;
+			stackComp.layout();
+			Object ld = getLayoutData();
+			if(ld instanceof GridData) {
+				GridData gd = (GridData) ld;
+				gd.heightHint = computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			}
+			layout();
+			switchLabel.setImage(GmmlVision.getImageRegistry().get(
+					expanded ? "tree.expanded" : "tree.collapsed"));
+		}
+		
+		void setExpanded(boolean exp) {
+			expanded = exp;
+			
+			refresh();
+			
+			for(CollapseListener l : listeners) 
+				l.expanded(new CollapseEvent(this, expanded ? CollapseEvent.EXPANDED : CollapseEvent.COLLAPSED));
+		}
+		
+		List<CollapseListener> listeners = new ArrayList<CollapseListener>();
+		
+		void addCollapseListener(CollapseListener l) {
+			listeners.add(l);
+		}
+				
+		static class CollapseEvent extends EventObject {
+			static final int COLLAPSED = 0;
+			static final int EXPANDED = 1;
+			int type;
+			public CollapseEvent(Object source, int type) {
+				super(source);
+				this.type = type;
+			}		
+		}
+		
+		static interface CollapseListener {
+			public void collapsed(CollapseEvent e);
+			public void expanded(CollapseEvent e);
 		}
 	}
 }

@@ -42,6 +42,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -100,7 +101,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
 			
-			if(!cache.hasData(idc)|| useSamples.size() == 0) {
+			if(cache == null || !cache.hasData(idc)|| useSamples.size() == 0) {
 				return;
 			}
 						
@@ -150,6 +151,19 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 					group.getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			return group;
 		} else return null;
+	}
+	
+	public Composite createLegendComposite(Composite parent) {
+		Composite lc = new Composite(parent, SWT.NULL);
+		lc.setLayout(new FillLayout());
+		Label label = new Label(lc, SWT.NULL);
+		String s = "Displayed value" + (useSamples.size() > 1 ? "s from left to right:" : " on drawing:");
+		for(Sample smp : useSamples) {
+			s += "\n- " + smp.getName();
+		}
+		label.setText(s);
+		SwtUtils.setCompositeAndChildrenBackground(lc, parent.getBackground());
+		return lc;
 	}
 	
 	String getLabelLeftText(Sample s) {

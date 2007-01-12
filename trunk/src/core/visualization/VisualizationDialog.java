@@ -456,7 +456,7 @@ public class VisualizationDialog extends ApplicationWindow {
 						order = Utils.ORDER_UP;
 					else if (e.widget == downButton) 
 						order = Utils.ORDER_DOWN;
-					v.setDrawingOrder(ps, order);
+					v.setDisplayOrder(ps, order);
 					pluginTable.refresh();
 					colorPluginTable();
 				}

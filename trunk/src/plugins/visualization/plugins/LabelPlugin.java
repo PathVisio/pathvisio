@@ -104,7 +104,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		if(overlay) {
 			Visualization v = getVisualization();
 			PluginSet p = v.getPluginSet(this.getClass());
-			v.setDrawingOrder(p, Utils.ORDER_FIRST);
+			v.setDisplayOrder(p, Utils.ORDER_FIRST);
 		}
 		setUseProvidedArea(!overlay);
 		fireModifiedEvent();

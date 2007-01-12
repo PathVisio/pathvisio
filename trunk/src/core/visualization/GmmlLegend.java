@@ -60,14 +60,19 @@ import visualization.colorset.ColorSetManager;
 import visualization.colorset.ColorSetObject;
 import visualization.colorset.ColorGradient.ColorValuePair;
 
+/**
+ * This class shows a legend for the currently loaded visualization and color-sets.
+ * @author Thomas
+ *
+ */
 public class GmmlLegend extends ScrolledComposite implements VisualizationListener {
 	static final String FONT = "arial narrow";
 	static final int FONTSIZE = 8;
 
-	Button combine;
-	Boolean doCombine = true;
+	Button combine; //Checkbutton to show all colorsets or not
+	Boolean doCombine = true;	//true: all colorsets are shown, false: only colorSetCombo selection
 	
-	ColorSet colorSet;
+	ColorSet colorSet; //Currently selected color-set
 
 	ColorSetComposite colorSets;
 	PluginComposite plugins;
@@ -82,16 +87,24 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		super(parent, style);
 
 		createContents();
-		initialize();
+		rebuildContent();
 		VisualizationManager.addListener(this);
 	}
 
+	/**
+	 * Set the color-set to show in the legend (ignored if doCombine)
+	 * @param input The color-set to show in the legend
+	 */
 	public void setInput(ColorSet input) {
 		colorSet = input;
 		refreshContent();
 	}
 
-	public void initialize() {
+	/**
+	 * Rebuild the contents of the legend (refresh the names
+	 * in colorSetCombo and refresh the content)
+	 */
+	public void rebuildContent() {
 		combine.setSelection(true);
 		
 		String[] names = ColorSetManager.getColorSetNames();
@@ -107,25 +120,42 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		refreshContent();
 	}
 	
+	/**
+	 * Set whether the legend has to show all color-sets or only the one
+	 * selected in colorSetCombo
+	 * @param comb if true all color-sets are shown, if false only the one selected
+	 * in colorSetCombo is shown
+	 */
 	void setCombine(boolean comb) {
 		doCombine = comb;
 		colorSetCombo.setEnabled(!doCombine);
 		setInput(ColorSetManager.getColorSets().get(colorSetCombo.getSelectionIndex()));
 	}
 	
+	/**
+	 * Refresh the content of the legend
+	 */
 	void refreshContent() {		
 		colorSets.refresh();
 		plugins.refresh();
 		rearrange();
 	}
 
+	/**
+	 * Rearrange the elements of the legend:
+	 * re-layout the elements and compute the minimum size
+	 * for the scrollbars
+	 */
 	void rearrange() {
 		layout();
-		colorSetGroup.refresh();
-		pluginGroup.refresh();
+		colorSetGroup.rearrange();
+		pluginGroup.rearrange();
 		setMinSize(getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	
+	/**
+	 * Create the contents of the legend
+	 */
 	void createContents() {	
 		Composite contents = new Composite(this, SWT.NULL);
 		setContent(contents);
@@ -142,6 +172,11 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		setChildrenBackground(contents);
 	}
 
+	/**
+	 * Set the background of the given {@link Composite} and all its children
+	 * to background color of the legend (SWT.COLOR_WHITE).
+	 * @param comp the {@link Composite} for which the background has to be set
+	 */
 	void setChildrenBackground(Composite comp) {
 		comp.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		for(Control c : comp.getChildren()) {
@@ -150,6 +185,12 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		}
 	}
 
+	/**
+	 * Creates the composite that holds the color-set combo to select
+	 *  the color-set to display
+	 * @param parent The parent composite
+	 * @return The {@link Composite} that displays the color-set combo
+	 */
 	Composite createColorSetCombo(Composite parent) {
 		Composite comboComp = new Composite(parent, SWT.NULL);
 		comboComp.setLayout(new GridLayout(2, false));
@@ -175,14 +216,19 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		return comboComp;
 	}
 
+	/**
+	 * Create the {@link Composite} that holds the legend contents
+	 * @param parent The parent {@link Composite}
+	 * @return The {@link Composite} that holds the legend contents
+	 */
 	Composite createLegendComp(Composite parent) {
 		Composite legendComp = new Composite(parent, SWT.NULL);
 		GridLayout legendGrid = new GridLayout();
 		legendGrid.marginWidth = legendGrid.marginLeft = legendGrid.marginRight = 0;
 		legendComp.setLayout(legendGrid);
 
-		colorSetGroup = new CollapseGroup(this, legendComp, SWT.NULL);
-		pluginGroup = new CollapseGroup(this, legendComp, SWT.NULL);
+		colorSetGroup = new CollapseGroup(legendComp, SWT.NULL);
+		pluginGroup = new CollapseGroup(legendComp, SWT.NULL);
 
 		colorSets = new ColorSetComposite(colorSetGroup.getGroup(), SWT.NONE);
 		plugins = new PluginComposite(pluginGroup.getGroup(), SWT.NONE);
@@ -197,10 +243,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		pluginGroup.getGroup().setLayout(new FillLayout());
 		
 		CollapseListener cl = new CollapseListener() {
-			public void collapsed(visualization.GmmlLegend.CollapseGroup.CollapseEvent e) {
-				rearrange();
-			}
-			public void expanded(visualization.GmmlLegend.CollapseGroup.CollapseEvent e) {
+			public void stateChanged(visualization.GmmlLegend.CollapseGroup.CollapseEvent e) {
 				rearrange();
 			}
 		};
@@ -211,6 +254,13 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		return legendComp;
 	}
 
+	/**
+	 * This class displays a legend for every {@link VisualizaitonPlugin} that is activated
+	 * on the drawing for the currently selected {@link Visualization} 
+	 * and implements the method {@link VisualizationPlugin#createLegendComposite(Composite)}
+	 * @author Thomas
+	 *
+	 */
 	private class PluginComposite extends Composite
 	{
 		public PluginComposite(Composite parent, int style) {
@@ -219,6 +269,11 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			setChildrenBackground(this);
 		}
 		
+		/**
+		 * Refresh the contents. That is, reload the plug-in information
+		 * for the currently selected visualization and re-create their
+		 * legend-composites.
+		 */
 		public void refresh() {
 			for(Control c : getChildren()) c.dispose();
 			
@@ -240,6 +295,10 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		}
 	}
 	
+	/**
+	 * This class displays the legend for the color-sets.
+	 * @author Thomas
+	 */
 	private class ColorSetComposite extends Composite
 	{
 			public ColorSetComposite(Composite parent, int style) {
@@ -248,6 +307,10 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 				setChildrenBackground(this);
 			}
 			
+			/**
+			 * Refresh the contents. That is, reload the color-set
+			 * information and re-create the {@link ColorSetGroup}s.
+			 */
 			public void refresh() {
 				for(Control c : getChildren()) c.dispose();
 				
@@ -263,6 +326,11 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 				layout();
 			}
 			
+			/**
+			 * Create a {@link ColorSetGroup} for the given colorset
+			 * @param parent The parent {@link Composite} to create the {@link ColorSetGroup} on
+			 * @param cs The color-set to create the {@link ColorSetGroup} for
+			 */
 			void drawColorSet(Composite parent, ColorSet cs) {
 				ColorSetGroup csg = new ColorSetGroup(parent, SWT.NULL);
 				csg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -270,6 +338,10 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			}
 	}
 
+	/**
+	 * This class displays the legend for a single {@link ColorSet}
+	 * @author Thomas
+	 */
 	private class ColorSetGroup extends Composite
 	{
 		CriteriaComposite criteria;
@@ -283,13 +355,17 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			createContents();
 		}
 		
+		/**
+		 * Set the color-set of which the legend will be displayed
+		 * @param cs The color-set to display the legend of
+		 */
 		void setInput(ColorSet cs) {
 			colorSet = cs;
 			criteria.setInput(cs);
 			gradients.setInput(cs);
 			refresh();
 		}
-		
+
 		void createContents() {
 			setLayout(new FillLayout());
 			group = new Group(this, SWT.NULL);
@@ -309,9 +385,15 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		
 	}
 	
+	/**
+	 * This class shows the legend for all {@link ColorCriterion} in a color-set as well as
+	 * the 'special colors' ({@link ColorSet#COLOR_NO_GENE_FOUND}, {@link COLORSET#COLOR_NO_DATA_FOUND},
+	 * {@link ColorSet#COLOR_NO_CRITERIA_MET})
+	 * @author Thomas
+	 */
 	private class CriteriaComposite extends Composite
 	{
-		ColorSet colorSet;
+		ColorSet colorSet; //The currently displayed color-set
 		
 		public CriteriaComposite(Composite parent, int style)
 		{
@@ -319,12 +401,17 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			setChildrenBackground(this);
 		}
 
+		/**
+		 * Set the color-set to display the criteria legend for
+		 * @param cs
+		 */
 		void setInput(ColorSet cs) {
 			colorSet = cs;
 			refresh();
 		}
 		
-		final static int CLABEL_SIZE = 10;
+		final static int CLABEL_SIZE = 10; //Size of the colored labels
+		
 		public void refresh()
 		{
 			for(Control c : getChildren()) c.dispose();
@@ -333,6 +420,11 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			drawColorSet(this, colorSet);
 		}
 		
+		/**
+		 * Create a {@Composite} that displays the criteria legend
+		 * @param parent The parent Composite
+		 * @param colorSet The color-set to display the legend for
+		 */
 		void drawColorSet(Composite parent, ColorSet colorSet) {			
 			Color c = null;
 			
@@ -357,7 +449,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 				if(!(co instanceof ColorCriterion)) continue; //skip objects other than criretia
 				ColorCriterion cc = (ColorCriterion)co;
 				c = SwtUtils.changeColor(c, cc.getColor(), getDisplay());
-				createCriterionLabel(parent, cc.getName(), c);
+				createCriterionLabel(parent, cc.getName() + "\n(" + cc.getCriterion().getExpression() + ")", c);
 			}
 			
 			if(c != null) c.dispose();
@@ -380,9 +472,14 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		}
 	}
 
+	/**
+	 * This class displays the legend information for all {@link ColorGradient}s in
+	 * the given color-set
+	 * @author Thomas
+	 */
 	private class GradientCanvas extends Canvas implements PaintListener
 	{	
-		ColorSet colorSet;
+		ColorSet colorSet; //The color-set to display the gradient information for
 		
 		public GradientCanvas(Composite parent, int style)
 		{
@@ -390,6 +487,10 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			addPaintListener(this);
 		}
 
+		/**
+		 * Set the color-set to display the gradient legend for
+		 * @param input
+		 */
 		public void setInput(ColorSet input) {
 			colorSet = input;
 			refresh();
@@ -453,7 +554,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		final static int MARGIN_VERTICAL = 20;
 		final static int MARGIN_HORIZONTAL = 15;
 		final static int MARKER_LENGTH = 4;
-		public void drawColorGradient(PaintEvent e, ColorGradient cg, Rectangle r)
+		void drawColorGradient(PaintEvent e, ColorGradient cg, Rectangle r)
 		{
 			Color c = null;
 			RGB oldBackground = getBackground().getRGB();
@@ -514,16 +615,20 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		switch(e.type) {
 		case VisualizationEvent.COLORSET_ADDED:
 		case VisualizationEvent.COLORSET_REMOVED:
-			initialize();
+			rebuildContent();
 			break;
 		default:
 			refreshContent();
 		}
 	}
 	
+	/**
+	 * This class contains an {@link Group} that can be collapsed and expanded.
+	 * Contents can to the {@link Group} by using {@link #getGroup()}
+	 * @author Thomas
+	 */
 	static class CollapseGroup extends Composite {
-		static final int SWITCH_SIZE = 9;
-		GmmlLegend legend;
+		static final int SWITCH_SIZE = 9; //Size of the switch label
 		Group group;
 		Composite stackComp;
 		StackLayout stackLayout;
@@ -532,9 +637,8 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		
 		boolean expanded = true;
 		
-		public CollapseGroup(GmmlLegend legend, Composite parent, int style) {
+		public CollapseGroup(Composite parent, int style) {
 			super(parent, style);
-			this.legend = legend;
 			GridLayout grid = new GridLayout(2, false);
 			grid.horizontalSpacing = 3;
 			grid.marginBottom = grid.marginHeight = 0;
@@ -566,14 +670,18 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			expand();
 		}
 		
+		/**
+		 * Get the collapsable group (e.g. to add contents or set layout)
+		 * @return The collapsable group
+		 */
 		public Group getGroup() {
 			return group;
 		}
 		
-		public Label getSwitchLabel() {
-			return switchLabel;
-		}
-		
+		/**
+		 * Set the text of the collapsable {@link Group}
+		 * @param text The text to set
+		 */
 		public void setText(String text) {
 			groupLabel.setText(text);
 			group.setText(text);
@@ -600,7 +708,11 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 			return new Point(x, y);
 		}
 		
-		public void refresh() {
+		/**
+		 * Rearrange the contents. That is, reset the size of the group
+		 * and layout
+		 */
+		void rearrange() {
 			stackLayout.topControl = expanded ? group : groupLabel;
 			stackComp.layout();
 			Object ld = getLayoutData();
@@ -616,31 +728,54 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		void setExpanded(boolean exp) {
 			expanded = exp;
 			
-			refresh();
+			rearrange();
 			
 			for(CollapseListener l : listeners) 
-				l.expanded(new CollapseEvent(this, expanded ? CollapseEvent.EXPANDED : CollapseEvent.COLLAPSED));
+				l.stateChanged(new CollapseEvent(this, expanded ? CollapseEvent.EXPANDED : CollapseEvent.COLLAPSED));
 		}
 		
 		List<CollapseListener> listeners = new ArrayList<CollapseListener>();
 		
-		void addCollapseListener(CollapseListener l) {
+		/**
+		 * Add a collapse listener that is triggered when the group is collapsed or expanded
+		 * @param l The listener to add
+		 */
+		public void addCollapseListener(CollapseListener l) {
 			listeners.add(l);
 		}
 				
-		static class CollapseEvent extends EventObject {
-			static final int COLLAPSED = 0;
-			static final int EXPANDED = 1;
+		/**
+		 * This event is fired when a {@link CollapseGroup} is collapsed or expanded
+		 * @author Thomas
+		 */
+		public static class CollapseEvent extends EventObject {
+			private static final long serialVersionUID = 1L;
+			public static final int COLLAPSED = 0;
+			public static final int EXPANDED = 1;
 			int type;
+			
+			/**
+			 * Constructor for this class
+			 * @param source The source object that is collapsed or expanded
+			 * @param type one of {@link #COLLAPSED} or {@link #EXPANDED}
+			 */
 			public CollapseEvent(Object source, int type) {
 				super(source);
 				this.type = type;
 			}		
 		}
 		
-		static interface CollapseListener {
-			public void collapsed(CollapseEvent e);
-			public void expanded(CollapseEvent e);
+		/**
+		 * Implement this interface to listen for {@link CollapseEvent}s
+		 * @author Thomas
+		 */
+		public static interface CollapseListener {
+			/**
+			 * This method is triggered when the collapse state of a {@link CollapseGroup} 
+			 * is changed (collapsed or expanded)
+			 * @param e The collapse event contains information of the state change
+			 */
+			public void stateChanged(CollapseEvent e);
 		}
 	}
 }

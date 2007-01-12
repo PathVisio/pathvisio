@@ -83,12 +83,34 @@ public class Utils {
     	l.add(newIndex, o);
     }
     
+    /**
+     * Switches the index of the element with the one before the element
+     * @see #changeOrder(List, Object, int)
+     */
 	public static final int ORDER_UP = 1;
+	/**
+	 * Switches the index of the element with the one after the element
+	 * @see #changeOrder(List, Object, int)
+	 */
 	public static final int ORDER_DOWN = -1;
+	/**
+	 * Puts the element at the start of the list
+	 */
 	public static final int ORDER_FIRST = 2;
+	/**
+	 * Puts the element at the end of the list
+	 */
 	public static final int ORDER_LAST = -2;
 	
-	public static <T> void setDrawingOrder(List<T> l, T o, int order) {
+	/**
+	 * Change the order of the element in the given {@link List}
+	 * @param <T>
+	 * @param l The list containing the element to change the order for
+	 * @param o The element of which the order has to be changed
+	 * @param order The order constant (one of {@link #ORDER_UP}, {@link #ORDER_DOWN},
+	 * {@link #ORDER_FIRST}, {@link #ORDER_LAST})
+	 */
+	public static <T> void changeOrder(List<T> l, T o, int order) {
 		int index = l.indexOf(o);
 		switch(order) {
 		case ORDER_UP:
@@ -128,7 +150,13 @@ public class Utils {
 		throw new Exception("Incompatible version of database schema");
 	}
 	
-	public static boolean isInterface(Class c, String ifName) {
+	/**
+	 * Check if the given class implements the given interface
+	 * @param c the class
+	 * @param ifName the name of the interface
+	 * @return true if the class implements the interface, false if not
+	 */
+	public static boolean implementsInterface(Class c, String ifName) {
 		Class[] interfaces = c.getInterfaces();
 		for(Class i : interfaces) { 
 			if(ifName.equals(i.getCanonicalName())) return true; 
@@ -136,6 +164,12 @@ public class Utils {
 		return false;
 	}
 	
+	/**
+	 * Check whether the given class is a subclass of the given super-class
+	 * @param c the class
+	 * @param superClass the super-class
+	 * @return true if the class is a sub-class of superClass, false if not
+	 */
 	public static boolean isSubClass(Class c, Class superClass) {
 		Class sc = c;
 		while((sc = sc.getSuperclass()) != null) {

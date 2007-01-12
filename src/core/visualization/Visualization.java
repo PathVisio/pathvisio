@@ -190,6 +190,14 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		}
 	}
 	
+	/**
+	 * Provide an drawing area on the given GmmlGraphics for the given VisualizationPlugin (only
+	 * when {@link VisualizationPlugin#isUseProvidedArea()})
+	 * @param p the VisualizationPlugin to provide the area for
+	 * @param g the Graphics on which the area is created
+	 * @return An {@link Region} object that contains the area in which the
+	 * VisualizationPlugin can draw its visualization
+	 */
 	public Region provideDrawArea(VisualizationPlugin p, GmmlGraphics g) {
 		if(!p.isUseProvidedArea()) 
 			throw new IllegalArgumentException("useProvidedArea set to false for this plug-in");
@@ -216,26 +224,49 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		region.intersect(bounds);
 		return region;
 	}
-		
-	public void setDrawingOrder(PluginSet pr, int order) {
-		Utils.setDrawingOrder(pluginPlacement, pr, order);
+	
+	/**
+	 * Set the display order of the given plugin-set. {@link Utils#ORDER_FIRST} makes the
+	 * plug-in to be drawn last (so displayed on top of the visualization).
+	 * @param pr The plugin-set to set the drawing order for
+	 * @param order The order constant (as specified in {@link Utils#changeOrder(List, Object, int)}
+	 * @see Utils#changeOrder(List, Object, int)
+	 */
+	public void setDisplayOrder(PluginSet pr, int order) {
+		Utils.changeOrder(pluginPlacement, pr, order);
 		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
 	}
 	
+	/**
+	 * Get the plugin-sets in the order of which they are to be drawn
+	 * @return a list of plugin-sets in the order of which they are to be drawn
+	 */
 	public List<PluginSet> getPluginSetsDrawingOrder() {
 		List<PluginSet> sorted = new ArrayList<PluginSet>(pluginPlacement);
 		Collections.reverse(sorted);
 		return sorted;
 	}
 	
-	public void updateSidePanel(Collection<GmmlGraphics> objects) {
+	/**
+	 * Update the side-panel for all plug-ins that are activated
+	 * in the side-panel to visualize the given pathway elements
+	 * @param objects The pathway elements to visualize
+	 */
+	void updateSidePanel(Collection<GmmlGraphics> objects) {
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isSidePanel())
 				pr.getSidePanelPlugin().visualizeOnSidePanel(objects);
 		}
 	}
 	
-	public Composite createSideSidePanel(Composite parent) {
+	/**
+	 * Create the side-panel composite for plug-ins that are activated
+	 * in the side-panel.
+	 * @param parent The parent Composite to create the new Composite on
+	 * @return A Composite that displays the side-panel visualization for the plug-ins
+	 * that are activated in the side-panel
+	 */
+	Composite createSideSidePanel(Composite parent) {
 		sidePanel = new Composite(parent, SWT.NULL);
 		sidePanel.setLayout(new FillLayout(SWT.VERTICAL));
 		
@@ -251,15 +282,19 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		return sidePanel;
 	}
 	
-	public Composite getSidePanel() {
-		return sidePanel;
-	}
-	
-	public void disposeSidePanel() {
+	/**
+	 * Disposes the side-panel composite created with {@link #createSideSidePanel(Composite)}
+	 */
+	void disposeSidePanel() {
 		if(sidePanel != null && !sidePanel.isDisposed())
 			sidePanel.dispose();
 	}
 	
+	/**
+	 * Checks whether this visualization has one or more plug-ins activated on
+	 * the tool-tip
+	 * @return true if one or more plug-ins are activated on the tool-tip, false if not
+	 */
 	public boolean usesToolTip() {
 		for(PluginSet pr : pluginPlacement) {
 			if(pr.isToolTip()) return true;
@@ -267,6 +302,14 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		return false;
 	}
 	
+	/**
+	 * Create a tool-tip for the given pathway element
+	 * @param parent The parent shell
+	 * @param control The control on which the tool-tip is created
+	 * @param g The pathway element to create the tool-tip for
+	 * @return A tool-tip that displays visualizations for the given gene-product 
+	 * by the plug-ins activated on the tool-tip
+	 */
 	public Shell getToolTip(Shell parent, Control control, GmmlGraphics g) {
 		final Shell tip = new Shell(parent, SWT.ON_TOP | SWT.TOOL);  
 		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -293,7 +336,12 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		tip.pack();
 		return hasOne ? tip : null;
 	}
-		
+	
+	/**
+	 * Save the information to re-build this visualization to an
+	 * XML element
+	 * @return The XML element containing the information to re-build this visualization
+	 */
 	public Element toXML() {
 		Element vis = new Element(XML_ELEMENT);
 		vis.setAttribute(XML_ATTR_NAME, getName());
@@ -303,6 +351,11 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		return vis;
 	}
 	
+	/**
+	 * Re-build a visualization based on the information in the given XML element
+	 * @param xml The XML element that contains the information to re-build the visualization
+	 * @return The visualization that is re-build based on the information in the XML element
+	 */
 	public static Visualization fromXML(Element xml) {
 		String name = xml.getAttributeValue(XML_ATTR_NAME);
 		if(name == null) name = VisualizationManager.getNewName();
@@ -361,6 +414,12 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 			reps = new VisualizationPlugin[NR];
 		}
 		
+		/**
+		 * Constructor for this class
+		 * @param pluginClass The class of the plug-in this set will contain
+		 * @param v The visualization this plugin-set belongs to
+		 * @throws Throwable
+		 */
 		public PluginSet(Class pluginClass, Visualization v) throws Throwable {
 			this(v);
 			this.pluginClass = pluginClass;
@@ -389,32 +448,83 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 				throw new IllegalArgumentException("invalid representation index");
 		}
 		
+		/**
+		 * Get the plug-in instance that will be used for visualization on the pahtway drawing
+		 * @return The plug-in instance for visualization on the drawing
+		 */
 		public VisualizationPlugin getDrawingPlugin() { return reps[DRAWING]; }
+		/**
+		 * Get the plug-in instance that will be used for visualization on the pahtway tool-tip
+		 * @return The plug-in instance for visualization on the tool-tip
+		 */
 		public VisualizationPlugin getToolTipPlugin() { return reps[TOOLTIP]; }
+		/**
+		 * Get the plug-in instance that will be used for visualization on the pahtway side-panel
+		 * @return The plug-in instance for visualization on the side-panel
+		 */
 		public VisualizationPlugin getSidePanelPlugin() { return reps[SIDEPANEL]; }
+		
+		/**
+		 * Get the plug-in instance for the given representation
+		 * @param representation one of {@link #TOOLTIP}, {@link #SIDEPANEL}, {@link #DRAWING})
+		 * @return The instance of the plug-in for the given representation
+		 */
 		public VisualizationPlugin getPlugin(int representation) { 
 			checkIndex(representation);
 			return reps[representation]; 
 		}
 		
-		public VisualizationPlugin getInstance() { return reps[0]; }
+		/**
+		 * Get an instance of the plugin-class this plugin-set contains.
+		 * Convenience method to query information about the plug-in, don't use
+		 * the instance for visualization!
+		 * @return An instance of the plugin-class
+		 */
+		VisualizationPlugin getInstance() { return reps[0]; }
 		
+		/**
+		 * Check whether one or more of the plug-ins in this set are activated
+		 * @return true if one or more of the plug-ins are activated, false if not
+		 * @see VisualizationPlugin#isActive()
+		 */
 		public boolean isActive() {
 			for(VisualizationPlugin p : reps) 
 				if(p.isActive()) return true;
 			return false;
 		}
 		
+		/**
+		 * Check whether all plug-ins in this set are generic
+		 * @return true if all plug-ins in this set are generic, false if not
+		 * @see VisualizationPlugin#isGeneric()
+		 */
 		public boolean isGeneric() {
 			for(VisualizationPlugin p : reps) 
 				if(!p.isGeneric()) return false;
 			return true;
 		}
 		
+		/**
+		 * Check whether the pathway drawing representation in this set is activated
+		 * @return true if the drawing representation is active, false if not
+		 */
 		public boolean isDrawing() { return getDrawingPlugin().isActive(); }
+		/**
+		 * Check whether the side-panel representation in this set is activated
+		 * @return true if the sice-panel representation is active, false if not
+		 */
 		public boolean isSidePanel() { return getSidePanelPlugin().isActive(); }
+		/**
+		 * Check whether the tool-tip representation in this set is activated
+		 * @return true if the tool-tip representation is active, false if not
+		 */
 		public boolean isToolTip() { return getToolTipPlugin().isActive(); }
 
+		/**
+		 * Set the activation state of the instance of the plug-in for the given representaion
+		 * @param representation The representation (one of {@link #DRAWING}, {@link #SIDEPANEL}, {@link #TOOLTIP})
+		 * @param active true to activate, false to de-activate
+		 */
 		public void setActive(int representation, boolean active) {
 			checkIndex(representation);
 			reps[representation].setActive(active);
@@ -428,6 +538,11 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		static final String XML_ELM_TOOLTIP = "tooltip";
 		static final String XML_ELM_SIDEPANEL = "sidepanel";
 		
+		/**
+		 * Save the information to re-build this plugin-ste to an
+		 * XML element
+		 * @return The XML element containing the information to re-build this plugin-set
+		 */
 		public Element toXML() {
 			Element e = new Element(XML_ELEMENT);
 			e.setAttribute(XML_ATTR_CLASS, pluginClass.getCanonicalName());		 
@@ -450,6 +565,11 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 			return e;
 		}
 		
+		/**
+		 * Re-build a plugin-set based on the information in the given XML element
+		 * @param xml The XML element that contains the information to re-build the plugin-set
+		 * @return The plugin-set that is re-build based on the information in the XML element
+		 */
 		public static PluginSet fromXML(Element xml, Visualization v) throws Throwable {
 			PluginSet pr = new PluginSet(v);
 			

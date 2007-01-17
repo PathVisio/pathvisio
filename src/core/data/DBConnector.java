@@ -29,50 +29,107 @@ import org.eclipse.swt.widgets.Shell;
 
 import preferences.GmmlPreferences;
 
+/**
+ * This class provides the connection for the databases (annotation and expression database) used
+ * in PathVisio. Implement the abstract methods when you want to add support for a new database engine.
+ * @author Thomas
+ */
 public abstract class DBConnector {
-	static final int PROP_NONE = 0;
-	static final int PROP_RECREATE = 4;
-	static final int PROP_FINALIZE = 8;
+	protected final int PROP_NONE = 0;
+	protected static final int PROP_RECREATE = 4;
+	protected static final int PROP_FINALIZE = 8;
 	
+	/**
+	 * Type for gene database
+	 */
 	public static final int TYPE_GDB = 0;
+	/**
+	 * Type for expression database
+	 */
 	public static final int TYPE_GEX = 1;
 	
-	int dbType;
+	private int dbType;
 	
 	public abstract Connection createConnection(String dbName) throws Exception;
 	public abstract Connection createConnection(String dbName, int props) throws Exception;	
 	
+	/**
+	 * Close the given connection
+	 * @param con The connection to be closed
+	 * @throws Exception
+	 */
 	public void closeConnection(Connection con) throws Exception {
 		closeConnection(con, PROP_NONE);
 	}
 	
+	/**
+	 * Close the given connection, and optionally finalize it after creation (using {@link #PROP_FINALIZE})
+	 * @param con The connection to be closed
+	 * @param props Close properties (one of {@link #PROP_NONE}, {@link #PROP_FINALIZE} or {@link #PROP_RECREATE})
+	 * @throws Exception
+	 */
 	void closeConnection(Connection con, int props) throws Exception {
 		con.close();
 	}
 	
-	public final Connection createNewDatabase(String dbName) throws Exception {
+	/**
+	 * Create a new database with the given name. This includes creating tables.
+	 * @param dbName The name of the database to create
+	 * @return A connection to the newly created database
+	 * @throws Exception
+	 */
+	protected final Connection createNewDatabase(String dbName) throws Exception {
 		Connection con = createNewDatabaseConnection(dbName);
 		createTables(con);
 		return con;
 	}
 	
-	protected Connection createNewDatabaseConnection(String dbName) throws Exception {
+	private Connection createNewDatabaseConnection(String dbName) throws Exception {
 		return createConnection(dbName, PROP_RECREATE);
 	}
 	
-	public abstract void finalizeNewDatabase(String dbName) throws Exception;
+	/**
+	 * This method is called to finalize the given database after creation
+	 * (e.g. set read-only, archive files)
+	 * @param dbName The name of the database to finalize	
+	 * @throws Exception
+	 */
+	protected abstract void finalizeNewDatabase(String dbName) throws Exception;
 	
+	/**
+	 * This method will be called when the user
+	 * needs to select a database. Open a dialog (e.g. FileDialog) in this
+	 * method to let the user select the database and return the database name.
+	 * @param shell The shell to create the dialog
+	 * @return The database name that was selected by the user, or null if no database was selected
+	 */
 	public abstract String openChooseDbDialog(Shell shell);
+	
+	/**
+	 * This method will be called when the user
+	 * needs to select a database to create. Open a dialog (e.g. FileDialog) in this
+	 * method to let the user select the new database name/file/directory and return the database name.
+	 * @param shell The shell to create the dialog
+	 * @return The database name to create, or null if no database was specified
+	 */
 	public abstract String openNewDbDialog(Shell shell, String defaultName);
 	
+	/**
+	 * Set the database type (one of {@link #TYPE_GDB} or {@link #TYPE_GEX})
+	 * @param type The type of the database that will be used for this class
+	 */
 	public void setDbType(int type) { dbType = type; }
+	/**
+	 * Get the database type (one of {@link #TYPE_GDB} or {@link #TYPE_GEX})
+	 * return The type of the database that is used for this class
+	 */
 	public int getDbType() { return dbType; }
 	
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	public static void createTables(Connection con) throws Exception {	
+	protected static void createTables(Connection con) throws Exception {	
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();
 			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
@@ -107,7 +164,12 @@ public abstract class DBConnector {
 					")										");
 	}
 	
-	public void createIndices(Connection con) throws SQLException {
+	/**
+	 * Creates indices for a newly created expression database.
+	 * @param con The connection to the expression database
+	 * @throws SQLException
+	 */
+	protected void createIndices(Connection con) throws SQLException {
 		con.setReadOnly(false);
 		Statement sh = con.createStatement();
 		sh.execute(
@@ -130,10 +192,26 @@ public abstract class DBConnector {
 		" ON expression(groupId)	");
 	}
 	
-	public void compact(Connection con) throws SQLException {
+	/**
+	 * This method may be implemented when the database files need to be
+	 * compacted or defragmented after creation of a new database. It will be called
+	 * after all data is added to the database.
+	 * @param con A connection to the database
+	 * @throws SQLException
+	 */
+	protected void compact(Connection con) throws SQLException {
 		//May be implemented by subclasses
 	}
 	
+	/**
+	 * Shortcut for creating a file dialog that has the right default directories for
+	 * the database type of this connector
+	 * @param shell
+	 * @param type
+	 * @param filterExtensions
+	 * @param filterNames
+	 * @return A file dialog with the default directories set
+	 */
 	protected FileDialog createFileDialog(Shell shell, int type, String[] filterExtensions, String[] filterNames) {
 		FileDialog fileDialog = new FileDialog(shell, type);
 		fileDialog.setText("Select database file");
@@ -154,6 +232,12 @@ public abstract class DBConnector {
 		return fileDialog;
 	}
 	
+	/**
+	 * Shortcut for creating a directory dialog that has the right default directories for
+	 * the database type of this connector
+	 * @param shell
+	 * @return A directory dialog with the default directories set
+	 */
 	protected DirectoryDialog createDirectoryDialog(Shell shell) {
 		DirectoryDialog dirDialog = new DirectoryDialog(shell, SWT.NONE);
 		dirDialog.setText("Select database file");

@@ -8,18 +8,39 @@ import java.util.List;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
 
+/**
+ * This class represents cached expression data for a pathway.
+ * The caching of expression data will occur when a pathway is opened and an expression dataset is loaded.
+ * The cache will be refreshed when another dataset is selected, another gene database is selected or another
+ * pathway is opened.
+ * A CachedData object will contain a list of {@link Data} object for every gene-product on the pathway for 
+ * which data is available in the expression dataset
+ * @author Thomas
+ * @see GmmlGex#cacheData
+ */
 public class CachedData {
 	
-	HashMap<IdCodePair, List<Data>> data;
+	HashMap<IdCodePair, List<Data>> data; //Data objects for gene-products on the pathway
 		
-	public CachedData() {
+	protected CachedData() {
 		data = new HashMap<IdCodePair, List<Data>>();
 	}
 	
+	/**
+	 * Check whether the cached data contains data for the given gene-product
+	 * @param pwId The IdCodePair that represents the gene-product
+	 * @return true if data is available for the gene-product, false if not
+	 */
 	public boolean hasData(IdCodePair pwId) {
 		return data.containsKey(pwId);
 	}
 	
+	/**
+	 * Check whether the cached data contains multiple data instances for the given gene-product.
+	 * This can occur when multiple reporters in the dataset correspond to the same gene-product.
+	 * @param pwId The IdCodePair that represents the gene-product
+	 * @return true if multiple data is available for the gene-product, false if not
+	 */
 	public boolean hasMultipleData(IdCodePair pwId) {
 		List<Data> d = data.get(pwId);
 		if(d != null) {
@@ -29,23 +50,44 @@ public class CachedData {
 		}
 	}
 	
+	/**
+	 * Get the cached data the given gene-product
+	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
+	 * @return a list of {@link Data} object containing the cached data, or null when no data is available
+	 */
 	public List<Data> getData(IdCodePair idc) {
 		return data.get(idc);
 	}
 	
+	/**
+	 * Get the first {@link Data} instance of the cached data for this gene-product.
+	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
+	 * @return a {@link Data} instance that contains the cached data
+	 */
 	public Data getSingleData(IdCodePair idc) {
 		List<Data> dlist = data.get(idc);
 		if(dlist != null && dlist.size() > 0) return dlist.get(0);
 		return null;
 	}
 	
-	public void addData(IdCodePair idc, Data d) {
+	/**
+	 * Add cached data for the given gene-product
+	 * @param idc The IdCodePair that represents the gene-product for which the data has to be added
+	 * @param d The data that has to be added
+	 */
+	protected void addData(IdCodePair idc, Data d) {
 		List<Data> dlist = data.get(idc);
 		if(dlist == null) 
 			data.put(idc, dlist = new ArrayList<Data>());
 		dlist.add(d);
 	}
 	
+	/**
+	 * Get the averaged sample data for the given gene-product
+	 * @param idc The IdCodePair that represents the gene-product to get the data for
+	 * @return a HashMap where the keys represent the sample ids and the values the averaged data
+	 * @see Data#getSampleData()
+	 */
 	public HashMap<Integer, Object> getAverageSampleData(IdCodePair idc)
 	{
 		HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
@@ -64,6 +106,7 @@ public class CachedData {
 		}
 		return averageData;
 	}
+	
 	
 	private Object averageDouble(List<Data> dlist, int idSample)
 	{
@@ -95,29 +138,70 @@ public class CachedData {
 		return end < 0 ? "" : sb.substring(0, end).toString();
 	}
 	
+	/**
+	 * This class represents cached expression data for a reporter in the dataset.
+	 * The data is stored in a {@link HashMap} where the keys are the sample ids and the value
+	 * is an object of class {@link String} or {@link Double} for text and numeric data respectively.
+	 * @author Thomas
+	 */
 	public static class Data {
 		IdCodePair idc;
 		int group;
 		HashMap<Integer, Object> sampleData;
 		
-		public Data(IdCodePair ref, int groupId) {
+		/**
+		 * Constructor for this class. Creates a new {@link Data} object for the given reporter
+		 * @param ref The IdCodePair that represents the reporter
+		 * @param groupId An id that groups the expression data from duplicate reporters
+		 */
+		protected Data(IdCodePair ref, int groupId) {
 			idc = ref;
 			group = groupId;
 			sampleData = new HashMap<Integer, Object>();
 		}
 		
+		/**
+		 * Get the reporter this object contains data for
+		 * @return The IdCodePair that represents the reporter this object contains data for
+		 */
 		public IdCodePair getIdCodePair() { return idc; }
+		
+		/**
+		 * Get the group id for this object
+		 * @return a group id that can be used to distinct identical reporters that occur more
+		 * than once in the dataset
+		 */
 		public int getGroup() { return group; }
 		
+		/**
+		 * Get the data for each sample
+		 * @return A {@link HashMap} that contains the data for each sample. The key is a sampleId and value
+		 * is an object of class {@link String} or {@link Double}, depending on the data type of the sample.
+		 * @see Sample#getDataType()
+		 * @see Sample#getId()
+		 */
 		public HashMap<Integer, Object> getSampleData() {
 			return sampleData;
 		}
 		
+		/**
+		 * Get the cached data for the given sample (shortcut for getSampleData().get(sampleId))
+		 * @param sampleId The id of the sample to get the data for
+		 * @return An object of class {@link String} or {@link Double}, depending on the datatype of the sample.
+		 * @see Sample#getDataType()
+		 * @see Sample#getId()
+		 */
 		public Object getSampleData(int sampleId) {
 			return sampleData.get(sampleId);
 		}
 		
-		public void setSampleData(int sampleId, String data) {
+		/**
+		 * Set the data for the given sample. Data will be parsed to double if possible
+		 * @param sampleId The id of the sample to set the data for
+		 * @param data The {@link String} representation of the data to add
+		 * @see GmmlGex#cacheData
+		 */
+		protected void setSampleData(int sampleId, String data) {
 			Object parsedData = null;
 			try { parsedData = Double.parseDouble(data); }
 			catch(Exception e) { parsedData = data; }
@@ -125,106 +209,4 @@ public class CachedData {
 		}
 		
 	}
-	
-	
-//	public static class CachedData
-//	{
-//		private HashMap<IdCodePair, Data> data;		
-//		
-//		public boolean hasData(IdCodePair idc)
-//		{
-//			if(data.containsKey(idc)) return data.get(idc).idcode.equals(idc);
-//			else return false;
-//		}
-//		
-//		public Data getData(IdCodePair idc)
-//		{
-//			Data d = null;
-//			if(data.containsKey(idc)) { 
-//				d = data.get(idc);
-//				if(!d.idcode.equals(idc)) d = null;//why??
-//			}
-//			return d;
-//		}
-//		
-//		public void addData(String id, String code, Data mappIdData)
-//		{
-//			data.put(new IdCodePair(id, code), mappIdData);
-//		}
-//		
-//		public class Data implements Comparable
-//		{
-//			private IdCodePair idcode;
-//			private HashMap<Integer, Object> sampleData;
-//			private HashMap<IdCodePair, Data> refData;
-//			
-//			public Data(String id, String code) {
-//				idcode = new IdCodePair(id, code);
-//				refData = new HashMap<IdCodePair, Data>();
-//				sampleData = new HashMap<Integer, Object>();
-//			}
-//			
-//			public Data(IdCodePair idcode) {
-//				this.idcode = idcode;
-//				sampleData = new HashMap<Integer, Object>();
-//			}
-//			
-//			public boolean hasData() { return refData.size() > 0; }
-//			
-//			public void addRefData(String id, String code, int sampleId, String data) 
-//			{ 
-//				Data ref = null;
-//				IdCodePair idcode = new IdCodePair(id, code);
-//				if(refData.containsKey(idcode)) {
-//					ref = refData.get(idcode);
-//				} else ref = new Data(idcode);
-//				
-//				Object parsedData = null;
-//				try { parsedData = Double.parseDouble(data); }
-//				catch(Exception e) { parsedData = data; }
-//				ref.addSampleData(sampleId, parsedData);
-//				refData.put(idcode, ref);
-//			}
-//			
-//			public void addSampleData(int sampleId, Object data)
-//			{
-//				if(data != null) sampleData.put(sampleId, data);
-//			}
-//			
-//			public List<Data> getRefData()
-//			{
-//				List<Data> rd = new ArrayList<Data>(refData.values());
-//				Collections.sort(rd);
-//				return rd;
-//			}
-//			
-//			public Object getData(int idSample)
-//			{
-//				if(sampleData.containsKey(idSample)) return sampleData.get(idSample);
-//				return null;
-//			}
-//			
-//			public boolean hasMultipleData()
-//			{
-//				return refData.keySet().size() > 1;
-//			}
-//			
-//			public HashMap<Integer, Object> getSampleData() {
-//				if(sampleData.size() == 0) {
-//					if(refData.size() > 0) return getAverageSampleData();
-//				}
-//				return sampleData;
-//			}
-//			
-//
-//			
-//
-//
-//			public int compareTo(Object o) {
-//				Data d = (Data)o;
-//				return idcode.compareTo(d.idcode);
-//			}
-//		}
-//	}
-	
 }

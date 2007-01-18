@@ -81,9 +81,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		
 	static final RGB DEFAULT_TRANSPARENT = GmmlVision.TRANSPARENT_COLOR;
 		
-	List<URL> imageURLs = new ArrayList<URL>(Arrays.asList(new URL[] {
-			GmmlVision.getResourceURL("images/protein.bmp"),
-			GmmlVision.getResourceURL("images/mRNA.bmp") }));
+	List<URL> imageURLs;
 	
 	public ExpressionImagePlugin(Visualization v) {
 		super(v);
@@ -95,8 +93,17 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 
 	public String getName() { return NAME; }
 	public String getDescription() { return DESCRIPTION; }
+
+	private List<URL> defaultURLs() {
+		return new ArrayList<URL>(Arrays.asList(new URL[] {
+				GmmlVision.getResourceURL("images/protein_hi.bmp"),
+				GmmlVision.getResourceURL("images/mRNA_hi.bmp") }));
+	}
 	
-	List<URL> getImageURLs() { return imageURLs; }
+	List<URL> getImageURLs() { 
+		if(imageURLs == null) imageURLs = defaultURLs();
+		return imageURLs;
+	}
 	
 	void addImageURL(URL url) {
 		if(!imageURLs.contains(url))imageURLs.add(url);

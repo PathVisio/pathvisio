@@ -651,11 +651,15 @@ public class ImportExprDataWizard extends Wizard {
 			try {
 				if (in == null) {
 					in = new BufferedReader(new FileReader(txtFile));
-					in.mark(10000);
+					// changed readahead from 10000 to 50000
+					// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4616869
+					// TODO: this may still fail for long lines (more than 50000 bytes in 50 lines) 
+					in.mark(50000);
 				} else {
 					in.reset();
 				}
 			} catch (Exception e) {
+				GmmlVision.log.error("Error reading file", e);
 			} // TODO: handle exception
 			return in;
 		}

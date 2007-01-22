@@ -210,16 +210,29 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 			setLayout(new FillLayout());
 			Group group = new Group(this, SWT.NULL);
 			group.setText("Image to display for this sample");
-			group.setLayout(new GridLayout(2, false));
+			group.setLayout(new FillLayout(SWT.HORIZONTAL));
 			
-			Composite listComp = createListComp(group);
-			listComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-			
-			Composite imageComp = createImageComp(group);
-			imageComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+			createListComp(group);
+			createImageComp(group);
 			
 			imageList.setInput(getImageURLs());
 			setInput(null);
+		}
+		
+		String shortenURL(String urlString) {
+			//Remove middle path (after first /, to before last /)
+			if(urlString == null) return "null";
+			String[] parts = urlString.split("/");
+			if(parts.length <= 2) {
+				return urlString;
+			} else {
+				String shorten = "";
+				for(int i = 0; i < parts.length; i ++) {
+					if(i == 1) shorten = parts[i - 1] + "/" + parts[i] + "/.../";
+					else if (i == parts.length - 1) shorten += parts[i];
+				}
+				return shorten;
+			}
 		}
 		
 		Composite createListComp(Composite parent) {
@@ -231,7 +244,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 			imageList.setContentProvider(new ArrayContentProvider());
 			imageList.setLabelProvider(new LabelProvider() {
 				public String getText(Object element) {
-					return ((URL)element).toString();
+					return shortenURL(((URL)element).toString());
 				}
 			});
 			imageList.addSelectionChangedListener(new ISelectionChangedListener() {

@@ -77,13 +77,21 @@ import data.GmmlGex;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
 
+/**
+ * Extend this class if you want to create a visualization plug-in where the user
+ * can select which samples to visualize.
+ * 
+ * For an example of an implementation see {@link PluginWithColoredSamples} 
+ * @author Thomas
+ *
+ */
 public abstract class PluginWithColoredSamples extends VisualizationPlugin {	
 	static final String[] useSampleColumns = { "sample", "color set" };
 	static final RGB LINE_COLOR_DEFAULT = new RGB(0, 0, 0);
 	
-	List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
-	Canvas sidePanel;
-	Collection<GmmlGraphics> spGraphics;
+	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
+	private Canvas sidePanel;
+	private Collection<GmmlGraphics> spGraphics;
 	
 	public PluginWithColoredSamples(Visualization v) {
 		super(v);
@@ -91,8 +99,17 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		setIsGeneric(false);
 		setUseProvidedArea(true);
 	}
-		
-	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
+	
+	/**
+	 * This method determines the area in the gene-box to use for visualization and calls
+	 * {@link #drawArea(GmmlGeneProduct, Rectangle, PaintEvent, GC)} to draw the samples.
+	 * If you want to visualize the data in the gene-box, implement 
+	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, IdCodePair, Rectangle, PaintEvent, GC)}
+	 * and
+	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}.
+	 * @see VisualizationPlugin#visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
+	 */
+	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC gc) {
 		if(!(g instanceof GmmlGeneProduct)) return;
 		if(useSamples.size() == 0) return; //Nothing to draw
 		
@@ -101,17 +118,28 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		Region region = getVisualization().provideDrawArea(this, g);
 		Rectangle area = region.getBounds();
 		
-		drawArea(gp, area, e, buffer);
+		drawArea(gp, area, e, gc);
 		
 		Color c = SwtUtils.changeColor(null, gp.getGmmlData().getColor(), e.display);
-		buffer.setForeground(c);
-		buffer.drawRectangle(area);
+		gc.setForeground(c);
+		gc.drawRectangle(area);
 		
 		c.dispose();
 		region.dispose();
 	}
 	
-	void drawArea(GmmlGeneProduct gp, Rectangle area, PaintEvent e, GC buffer) {
+	/**
+	 * Divides the given area in a rectangle for each sample and calls
+	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, IdCodePair, Rectangle, PaintEvent, GC)}
+	 * (when data is available) or
+	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}
+	 * (when no data is available).
+	 * @param gp The gene-product to visualize the data for
+	 * @param area The area in which to draw
+	 * @param e
+	 * @param gc
+	 */
+	void drawArea(GmmlGeneProduct gp, Rectangle area, PaintEvent e, GC gc) {
 		int nr = useSamples.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
 		int w = area.width / nr;
@@ -127,17 +155,47 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			
 			if(s.getColorSet() == null) continue; //No colorset for this sample
 			if(cache.hasData(idc)) 
-				drawSample(s, idc, r, e, buffer);
+				drawSample(s, idc, r, e, gc);
 			else 
-				drawNoDataFound(s, area, e, buffer);
+				drawNoDataFound(s, area, e, gc);
 		}
 	}
 	
-	abstract void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC buffer);
+	/**
+	 * Implement this method to perform the drawing operation for a single sample in case no data is found
+	 * for a gene-product
+	 * @see #visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
+	 * @param s The sample that will be visualized
+	 * @param area The area to draw in
+	 * @param e	{@link PaintEvent} containing information about the paint
+	 * @param gc Graphical context on which drawing operations can be performed
+	 */
+	abstract void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC gc);
+	
+	/**
+	 * Implement this method to perform the drawing operation for a single sample when data is
+	 * present for the gene-product to visualize.
+	 * @see #visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
+	 * @see CachedData#getData(IdCodePair)
+	 * @param s The sample that will be visualized
+	 * @param idc The id and code of the gene-product
+	 * @param area The area to draw in
+	 * @param e	{@link PaintEvent} containing information about the paint
+	 * @param gc Graphical context on which drawing operations can be performed
+	 */
 	abstract void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC gc);
 	
 	static final int SIDEPANEL_SPACING = 3;
 	static final int SIDEPANEL_MARGIN = 5;
+	
+	/**
+	 * This method implements a visualization on the side-panel, which is divided
+	 * in horizontal bars, one for each selected gene-product. In the horizontal bars, the samples
+	 * are visualized by calling {@link #drawArea(GmmlGeneProduct, Rectangle, PaintEvent, GC)}
+	 * @see #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, IdCodePair, Rectangle, PaintEvent, GC)
+	 * @see #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)
+	 * @param e
+	 */
 	void drawSidePanel(PaintEvent e) {
 		if(spGraphics == null) return;
 		
@@ -216,6 +274,10 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		sidePanel.redraw();
 	}
 	
+	/**
+	 * Add a sample to use for visualization
+	 * @param s The sample to add
+	 */
 	void addUseSample(Sample s) {
 		if(s != null) {
 			if(!useSamples.contains(s)) useSamples.add(createConfiguredSample(s));
@@ -223,6 +285,10 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		}
 	}
 	
+	/**
+	 * Add samples to use for visualization
+	 * @param selection A selection containing samples to add
+	 */
 	void addUseSamples(IStructuredSelection selection) {
 		Iterator it = selection.iterator();
 		while(it.hasNext()) {
@@ -233,6 +299,10 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		fireModifiedEvent();
 	}
 	
+	/**
+	 * Remove samples from the samples that will be used for visualization
+	 * @param selection A selection containing samples to remove
+	 */
 	void removeUseSamples(IStructuredSelection selection) {
 		Iterator it = selection.iterator();
 		while(it.hasNext()) {
@@ -241,6 +311,10 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		fireModifiedEvent();
 	}
 	
+	/**
+	 * Remove a sample from the samples that will be used for visualization
+	 * @param s
+	 */
 	void removeUseSample(ConfiguredSample s) {
 		if(s != null) {
 			useSamples.remove(s);
@@ -255,6 +329,11 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		return xml;
 	}
 	
+	/**
+	 * Implement this method to save attributes to the XML element 
+	 * that contain additional configuration of this plug-ins
+	 * @param xml The XML element to save the attributes to
+	 */
 	abstract void saveAttributes(Element xml);
 	
 	public final void loadXML(Element xml) {
@@ -269,10 +348,15 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		}	
 	}
 	
+	/**
+	 * Implement this method to load additional attributes that were saved to XML
+	 * by {@link #saveAttributes(Element)}
+	 * @param xml The XML element containig the attributes
+	 */
 	abstract void loadAttributes(Element xml);
 	
 	public Composite createLegendComposite(Composite parent) {
-		final Canvas canvas = new Canvas(parent, SWT.NULL);
+		final Canvas canvas = new LegendCanvas(parent, SWT.NULL);
 		canvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				drawLegend(canvas, e);
@@ -282,8 +366,23 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		return canvas;
 	}
 	
+	private class LegendCanvas extends Canvas {
+		public LegendCanvas(Composite parent, int style) {
+			super(parent, style);
+		}
+		
+		
+		public Point computeSize(int wHint, int hHint, boolean changed) {
+			Point size = super.computeSize(wHint, hHint, changed);
+			size.y = 2*LEGEND_MARGIN + useSamples.size() * SAMPLE_HEIGHT + LEGEND_BOXHEIGHT;
+			return size;
+		}
+		
+	}
+	
 	final static int LEGEND_MARGIN = 5;
 	final static int LEGEND_SPACING = 5;
+	final static int SAMPLE_HEIGHT = LEGEND_SPACING + 15;
 	final static int LEGEND_BOXHEIGHT = 20;
 	void drawLegend(Canvas c, PaintEvent e) {
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
@@ -322,6 +421,14 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		}
 	}
 	
+	/**
+	 * Draw an example visualization for the legend.
+	 * (default implementation is an empty rectangle)
+	 * @param s
+	 * @param area
+	 * @param e
+	 * @param gc
+	 */
 	protected void drawLegendSample(ConfiguredSample s, Rectangle area, PaintEvent e, GC gc) {
 		e.gc.drawRectangle(area);
 	}
@@ -342,6 +449,12 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		return config;
 	}
 	
+	/**
+	 * Create a composite that displays items for additional configuration
+	 * of the visualization plug-in.
+	 * @param parent The parent Composite
+	 * @return A Composite for additional configuration
+	 */
 	abstract Composite createOptionsComp(Composite parent);
 	
 	Composite createSamplesComp(Composite parent) {
@@ -465,9 +578,21 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		for(Object o : selection) samples[i++] = (ConfiguredSample)o;
 		return samples;
 	}
-	
+	/**
+	 * Create a composite for configuring a sample selected for visualization.
+	 * You can use an implementation of {@link SampleConfigComposite}.
+	 * @see SampleConfigComposite
+	 * @param parent
+	 * @return
+	 */
 	abstract SampleConfigComposite createSampleConfigComp(Composite parent);
 	
+	/**
+	 * This class provides a framework to create a composite to configure a sample selected
+	 * for visualization.
+	 * @author Thomas
+	 *
+	 */
 	abstract class SampleConfigComposite extends Composite {
 		ConfiguredSample[] input;
 		
@@ -476,21 +601,31 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			createContents();
 		}
 		
+		/**
+		 * Create the contents for this composite
+		 */
 		abstract void createContents();
 		
+		/**
+		 * Set the samples to display the configuration for
+		 */
 		public void setInput(ConfiguredSample[] samples) {
 			input = samples;
 			refresh();
 		}
-		
-		public void refresh() {
+
+		/**
+		 * Refresh the information in this composite
+		 *
+		 */
+		void refresh() {
 			if(input == null) setAllEnabled(false);
 			else {
 				setAllEnabled(true);
 			}
 		}
 		
-		public void setAllEnabled(boolean enable) {
+		protected final void setAllEnabled(boolean enable) {
 			SwtUtils.setCompositeAndChildrenEnabled(this, enable);
 		}
 	}
@@ -499,6 +634,13 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	
 	abstract ConfiguredSample createConfiguredSample(Element xml) throws Exception;
 	
+	/**
+	 * This class stores the configuration for a sample that is selected for
+	 * visualization. In this implementation, a color-set to use for visualization is stored.
+	 * Extend this class to store additional configuration data.
+	 * @author Thomas
+	 *
+	 */
 	abstract class ConfiguredSample extends Sample {		
 		int colorSetIndex = 0;
 		
@@ -506,26 +648,53 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			super(idSample, name, dataType);
 		}
 		
+		/**
+		 * Create a configured sample based on an existing sample
+		 * @param s The sample to base the configured sample on
+		 */
 		public ConfiguredSample(Sample s) {
 			super(s.getId(), s.getName(), s.getDataType());
 		}
 		
+		/**
+		 * Create a configured sample from the information in the given XML element
+		 * @param xml The XML element containing information to create the configured sample from
+		 * @throws Exception
+		 */
 		public ConfiguredSample(Element xml) throws Exception {
 			super(0, "", 0);
 			loadXML(xml);
 		}
 		
+		/**
+		 * Set the color-set to use for visualization of this sample
+		 * @param index
+		 */
 		protected void setColorSetIndex(int index) { 
 			colorSetIndex = index;
 			fireModifiedEvent();
 		}
 		
+		/**
+		 * Get the color-set to use for visualization of this sample
+		 * @return the color-set
+		 */
 		protected ColorSet getColorSet() { return ColorSetManager.getColorSet(colorSetIndex); }
 		
+		/**
+		 * Get the name of the color-sets that is selected for visualization
+		 * @return The name of the selected color-set, or "no colorsets available", if no
+		 * color-sets exist
+		 */
 		protected String getColorSetName() {
 			ColorSet cs = getColorSet();
 			return cs == null ? "no colorsets available" : cs.getName();
 		}
+		
+		/**
+		 * Get the index of the color-set that is selected for visualization
+		 * @return The index of the color-set
+		 */
 		protected int getColorSetIndex() { return colorSetIndex; }
 				
 		static final String XML_ELEMENT = "sample";
@@ -551,8 +720,18 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			loadAttributes(xml);
 		}
 		
+		/**
+		 * Implement this method to save attributes to the XML element 
+		 * that contain additional configuration of this configured sample
+		 * @param xml The XML element to save the attributes to
+		 */
 		abstract void saveAttributes(Element xml);
 		
+		/**
+		 * Implement this method to load additional attributes that were saved to XML
+		 * by {@link #saveAttributes(Element)}
+		 * @param xml The XML element containig the attributes
+		 */
 		abstract void loadAttributes(Element xml);
 	}
 }

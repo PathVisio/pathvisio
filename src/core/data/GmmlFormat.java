@@ -366,7 +366,6 @@ public class GmmlFormat {
 	private static void mapGraphId (GmmlDataObject o, Element e)
 	{
 		String id = e.getAttributeValue("GraphId");
-		if (id == null) id = "";
 		o.setGraphId (id);
 	}
 	

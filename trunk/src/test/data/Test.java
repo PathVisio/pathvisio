@@ -149,6 +149,10 @@ public class Test extends TestCase implements GmmlListener {
 		assertTrue ("reference created (2)", data.getReferringObjects("2").contains(l));
 	}
 	
+	/**
+	 * Test for maintaining list of unique id's per GmmlData.
+	 *
+	 */
 	public void testRefUniq()
 	{
 		// test for uniqueness
@@ -157,12 +161,47 @@ public class Test extends TestCase implements GmmlListener {
 		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);
 		data.add (o2);
 		try
-		{
-			
+		{			
+			// try setting the same id again
 			o2.setGraphId("1");
-			fail("graphId's should be unique");
+			fail("shouldn't be able to set the same id twice");
 		}
-		catch (IllegalArgumentException e) {}	
+		catch (IllegalArgumentException e) {}
+		
+		// test random id
+		String x = data.getUniqueId();
+		try
+		{			
+			// test that we can use it as unique id
+			o.setGraphId(x);
+			assertEquals (x, o.getGraphId());
+			// test that we can't use the same id twice
+			o2.setGraphId(x);
+			fail("shouldn't be able to set the same id twice");
+		}
+		catch (IllegalArgumentException e) {}
+		
+		// test that a second random id is unique again
+		x = data.getUniqueId();
+		o2.setGraphId(x);
+		assertEquals (x, o2.getGraphId());
+		
+		// test setting id first, then parent
+		GmmlDataObject o3 = new GmmlDataObject(ObjectType.GENEPRODUCT);
+		x = data.getUniqueId();
+		o3.setGraphId(x);
+		data.add (o3);
+		assertEquals (o3.getGraphId(), x);
+		
+		try
+		{			
+			GmmlDataObject o4 = new GmmlDataObject(ObjectType.GENEPRODUCT);
+			// try setting the same id again
+			o4.setGraphId(x);
+			data.add (o4);
+			fail("shouldn't be able to set the same id twice");
+		}
+		catch (IllegalArgumentException e) {}
 	}
 	
 	public void testRef2()
@@ -195,19 +234,25 @@ public class Test extends TestCase implements GmmlListener {
 		} catch (Exception e) {}
 	}
 
+	/**
+	 * test exporting of .mapp (genmapp format)
+	 * Note: this test is only run whenever os.name starts with Windows
+	 */
 	public void testMapp() throws IOException, ConverterException
 	{
-		data.readFromMapp(new File("testData/test.mapp"));
-		assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);
-		File temp = File.createTempFile ("data.test", ".mapp");
-		temp.deleteOnExit();
-		data.writeToMapp(temp);
-		
-		try {
-			data.readFromMapp(new File ("testData/test.gpml"));
-			fail ("Loading wrong format, Exception expected");
-		} catch (Exception e) {}
+//		if (System.getProperty("os.name").startsWith("Windows"))
+//		{
+			data.readFromMapp(new File("testData/test.mapp"));
+			assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);
+			File temp = File.createTempFile ("data.test", ".mapp");
+			temp.deleteOnExit();
+			data.writeToMapp(temp);
 			
+			try {
+				data.readFromMapp(new File ("testData/test.gpml"));
+				fail ("Loading wrong format, Exception expected");
+			} catch (Exception e) {}
+//		}	
 	}
 
 	/**

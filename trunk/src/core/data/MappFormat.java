@@ -498,10 +498,12 @@ public class MappFormat
 				case 4: /*Brace*/
 						o = mapBraceType(row);
 						mapNotesAndComments (o, row);
+						o.setGraphId(data.getUniqueId());
 						break;							
 				case 5: /*Gene*/
 						o = mapGeneProductType(row);
 						mapNotesAndComments (o, row);
+						o.setGraphId(data.getUniqueId());
 						break;																					
 				case 6: /*InfoBox*/
 						o = mapInfoBoxType (row, data);
@@ -509,6 +511,7 @@ public class MappFormat
 				case 7: /*Label*/
 						o = mapLabelType(row);
 						mapNotesAndComments (o, row);
+						o.setGraphId(data.getUniqueId());
 						break;
 				case 8: /*Legend*/
 						o = mapLegendType(row);
@@ -518,6 +521,7 @@ public class MappFormat
 				case 18: /*Arc*/
 						o = mapShapeType(row);
 						mapNotesAndComments (o, row);
+						o.setGraphId(data.getUniqueId());
 						break;							
 				case 17: /*CellA*/
 				case 19: /*Ribosome*/							
@@ -526,12 +530,14 @@ public class MappFormat
 				case 22: /*OrganC*/
 						o = mapFixedShapeType(row);
 						mapNotesAndComments (o, row);
+						o.setGraphId(data.getUniqueId());
 						break;							
 				case 23: /*ProteinB*/
 				case 24: /*Poly*/
 				case 25: /*Vesicle*/
 						o = mapComplexShapeType(row);
 						mapNotesAndComments (o, row);
+						o.setGraphId(data.getUniqueId());
 						break;
 				default: 
 						throw new ConverterException (
@@ -641,7 +647,7 @@ public class MappFormat
 	{
     	mapCenter(o, mappObject);    	
     	o.setWidth(Double.parseDouble(mappObject[colWidth]) / GmmlData.GMMLZOOM);
-    	o.setHeight(Double.parseDouble(mappObject[colHeight]) / GmmlData.GMMLZOOM);	
+    	o.setHeight(Double.parseDouble(mappObject[colHeight]) / GmmlData.GMMLZOOM);
 	}
 	
 	private static void unmapShape_half (GmmlDataObject o, String[] mappObject)

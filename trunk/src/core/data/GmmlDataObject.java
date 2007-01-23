@@ -95,6 +95,10 @@ public class GmmlDataObject
 				{
 					parent.removeRef(startGraphRef, this);
 				}
+				if (graphId != null)
+				{
+					parent.removeGraphId(graphId);
+				}
 			}			
 			parent = v;
 			if (v != null)
@@ -106,6 +110,10 @@ public class GmmlDataObject
 				if (endGraphRef != null)
 				{
 					v.addRef(startGraphRef, this);
+				}
+				if (graphId != null)
+				{
+					parent.addGraphId(graphId);
 				}
 			}
 		}
@@ -197,7 +205,8 @@ public class GmmlDataObject
 						PropertyType.LINETYPE,
 						PropertyType.LINESTYLE,
 						PropertyType.STARTGRAPHREF,
-						PropertyType.ENDGRAPHREF
+						PropertyType.ENDGRAPHREF,
+						PropertyType.GRAPHID
 				}));
 				break;
 			case ObjectType.LABEL:
@@ -1008,10 +1017,26 @@ public class GmmlDataObject
 
 	protected String graphId = null;
 	public String getGraphId() { return graphId; }
+	/**
+	 * Set graphId. This id must be any string unique within the GmmlData object 
+	 * 
+	 * @see GmmlData.getUniqueId()
+	 */
 	public void setGraphId (String v) 
 	{ 
 		if (graphId != v)
 		{
+			if (parent != null)
+			{
+				if (v == null)
+				{
+					parent.removeGraphId(v);
+				}
+				else
+				{
+					parent.addGraphId(v);
+				}
+			}
 			graphId = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}

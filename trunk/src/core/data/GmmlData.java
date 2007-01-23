@@ -157,6 +157,8 @@ public class GmmlData
 	 * Stores references of line endpoints to other objects
 	 */
 	private HashMap<String, List<GmmlDataObject>> graphRefs = new HashMap<String, List<GmmlDataObject>>();
+	private Set<String> graphIds = new HashSet<String>();
+	
 	public void addRef (String ref, GmmlDataObject target)
 	{
 		if (graphRefs.containsKey(ref))
@@ -172,6 +174,11 @@ public class GmmlData
 		}
 	}
 	
+	/**
+	 * Remove a reference to another Id. 
+	 * @param ref
+	 * @param target
+	 */
 	public void removeRef (String ref, GmmlDataObject target)
 	{
 		if (!graphRefs.containsKey(ref)) throw new IllegalArgumentException();
@@ -179,6 +186,51 @@ public class GmmlData
 		graphRefs.get(ref).remove(target);
 		if (graphRefs.get(ref).size() == 0)
 			graphRefs.remove(ref);
+	}
+	
+	/**
+	 * Registers an id that can subsequently be used for
+	 * referrral. It is tested for uniqueness
+	 * @param id
+	 */
+	public void addGraphId (String id)
+	{
+		if (id == null)
+		{
+			throw new IllegalArgumentException ("unique id can't be null");
+		}
+		if (graphIds.contains(id))
+		{
+			throw new IllegalArgumentException ("id '" + id + "' is not unique");
+		}
+		graphIds.add (id);
+	}
+	
+	public void removeGraphId (String id)
+	{
+		graphIds.remove(id);
+	}
+	
+	/**
+	 * Generate random ids, based on strings of hex digits (0..9 or a..f)
+	 * @return an Id unique for this pathway
+	 */
+	public String getUniqueId ()
+	{
+		String result;
+		Random rn = new Random();
+		int mod = 0x1000; // 3 hex letters
+		
+		// in case this map is getting big, do more hex letters
+		if (graphIds.size() > 1000) mod = Integer.MAX_VALUE;
+				
+		do
+		{
+			result = Integer.toHexString(Math.abs(rn.nextInt()) % mod);
+		}
+		while (graphIds.contains(result));
+		
+		return result;
 	}
 	
 	/**

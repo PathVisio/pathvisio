@@ -648,6 +648,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setWidth((GmmlLabel.INITIAL_WIDTH * zoomFactor));
 			gdata.setHeight((GmmlLabel.INITIAL_HEIGHT * zoomFactor));
 			gdata.setFontSize (GmmlLabel.INITIAL_FONTSIZE);
+			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
 			((GmmlLabel)lastAdded).createTextControl();
 			h = null;
@@ -686,6 +687,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setGeneID("Gene");
 			gdata.setXref("");
 			gdata.setColor(stdRGB);
+			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
 			h = null;
 			break;
@@ -698,6 +700,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
+			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((GmmlShape)lastAdded).handleSE;
 			isDragging = true;
@@ -711,6 +714,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setHeight(50 * zoomFactor);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
+			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((GmmlShape)lastAdded).handleSE;
 			isDragging = true;
@@ -967,7 +971,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				o.setLeft(o.getLeft() + 10);
 				o.setTop(o.getTop() + 10);
 				// make another copy to preserve clipboard contents for next paste
-				GmmlDataObject p = o.copy(); 
+				GmmlDataObject p = o.copy();
+				
+				// create new unique id
+				if (o.getGraphId() != null)
+				{
+					o.setGraphId(data.getUniqueId());
+				}
+				
 				data.add (p); // causes lastAdded to be set
 				lastAdded.select();
 				s.addToSelection(lastAdded);

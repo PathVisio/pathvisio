@@ -212,4 +212,22 @@ class Revision
 			overwrite="true"/>			
 	</target> -->
 		
+	<target name="test" depends="compile-v2">
+		<javac srcdir="src" 
+					includes="test/**"
+					destdir="${build.v2.dir}">
+					<classpath refid="project.v2.class.path"/>
+		</javac>
+		<junit printsummary="on" haltonfailure="true">
+			<formatter type="brief" usefile="false"/>
+			<classpath refid="project.v2.class.path"/>
+			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
+			<batchtest>
+				<fileset dir="src/test">
+					<include name="**/Test.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
 </project>

@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -983,6 +984,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void copyToClipboard()
 	{
+		//Clipboard clipboard = new Clipboard (this.getDisplay());
+		
 		List<GmmlDataObject> result = new ArrayList<GmmlDataObject>();
 		for (GmmlDrawingObject g : drawingObjects)
 		{
@@ -1000,6 +1003,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		{
 			GmmlVision.clipboard = null;
 		}
+		
+		//clipboard.dispose();
 	}
 	
 	/**

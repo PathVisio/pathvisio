@@ -312,6 +312,24 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			
 			previousX = e.x;
 			previousY = e.y;
+			
+			if (pressedObject instanceof GmmlHandle && altPressed &&
+					((GmmlHandle)pressedObject).parent instanceof GmmlLine)
+			{
+				Point2D p2d = new Point2D.Double(e.x, e.y);
+				List<GmmlDrawingObject> objects = getObjectsAt (p2d); 
+				GmmlHandle g = (GmmlHandle)pressedObject;
+				GmmlLine l = (GmmlLine)g.parent;
+				GmmlDrawingObject x = null;
+				for (GmmlDrawingObject o : objects)
+				{
+					if (o instanceof GmmlGraphicsShape && o != l)
+					{
+						l.link(g, (GmmlGraphicsShape)o);
+					}
+				}
+				
+			}
 			redrawDirtyRect();
 		}
 	}
@@ -441,7 +459,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	{
 		Point2D p2d = new Point2D.Double(e.x, e.y);
 
-		pressedObject = findPressedObject(p2d);
+		pressedObject = getObjectAt(p2d);
 		
 		if (pressedObject != null)
 			doClickSelect(p2d);
@@ -483,7 +501,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	{
 		Point2D p2d = new Point2D.Double(p.x, p.y);
 		
-		pressedObject = findPressedObject(p2d);
+		pressedObject = getObjectAt(p2d);
 		
 		// if we clicked on an object
 		if (pressedObject != null)
@@ -509,7 +527,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}		
 	}
 
-	GmmlDrawingObject findPressedObject(Point2D p2d) {
+	/**
+	 * Find the object at a particular location on the drawing
+	 * 
+	 * if you want to get more than one @see getObjectsAdd
+	 */
+	GmmlDrawingObject getObjectAt(Point2D p2d) {
 		Collections.sort(drawingObjects);
 		GmmlDrawingObject probj = null;
 		for (GmmlDrawingObject o : drawingObjects)
@@ -524,6 +547,29 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			}
 		}
 		return probj;
+	}
+	
+	/**
+	 * Find all objects at a particular location on the drawing
+	 * 
+	 * if you only need the top object, @see getObjectAt
+	 */
+	List<GmmlDrawingObject> getObjectsAt(Point2D p2d) 
+	{
+		List<GmmlDrawingObject> result = new ArrayList<GmmlDrawingObject>();
+		GmmlDrawingObject probj = null;
+		for (GmmlDrawingObject o : drawingObjects)
+		{
+			if (o.isContain(p2d))
+			{
+				// select this object, unless it is an invisible gmmlHandle
+				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
+					;
+				else 
+					result.add(o);
+			}
+		}
+		return result;
 	}
 	
 	void doClickSelect(Point2D p2d) {
@@ -825,7 +871,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if(v != null && v.usesToolTip()) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
-			GmmlDrawingObject o = findPressedObject(p);
+			GmmlDrawingObject o = getObjectAt(p);
 			if(o != null && o instanceof GmmlGraphics) {
 				Shell tip = v.getToolTip(getShell(), this, (GmmlGraphics)o);
 				if(tip == null) return;
@@ -846,9 +892,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	private boolean ctrlPressed;
 	private void ctrlPressed() 	{ ctrlPressed = true; 	}
 	private void ctrlReleased() 	{ ctrlPressed = false; 	}
-	
+
+	private boolean altPressed;
+	private void altPressed() 	{ altPressed = true; 	}
+	private void altReleased() 	{ altPressed = false; 	}
+
 	public void keyPressed(KeyEvent e) { 
 		if(e.keyCode == SWT.CTRL) ctrlPressed();
+		if(e.keyCode == SWT.ALT) altPressed();
 		if(e.keyCode == 103) 
 			if(ctrlPressed) {
 				selectGeneProducts();
@@ -860,6 +911,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
 		
 		if(e.keyCode == SWT.CTRL) ctrlReleased();
+		if(e.keyCode == SWT.ALT) altReleased();
 		if(e.keyCode == SWT.DEL) {
 			for(GmmlDrawingObject o : drawingObjects)
 			{
@@ -961,6 +1013,36 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if (GmmlVision.clipboard != null)
 		{
 			clearSelection();
+			Map<String, String> idmap = new HashMap<String, String>();
+			Set<String> newids = new HashSet<String>();
+			
+			/*
+			 * Step 1: generate new unique ids for copied items
+			 */
+			for (GmmlDataObject o : GmmlVision.clipboard)
+			{
+				String id = o.getGraphId();
+				if (id != null) 
+				{
+					String x;
+					do
+					{
+						/* generate a unique id.
+						 * at the same time, check that it is not 
+						 * equal to one of the unique ids
+						 * that we generated since the start of this
+						 * method
+						 */ 
+						x = data.getUniqueId();
+					} while (newids.contains(x));
+					newids.add(x); // make sure we don't generate this one again
+					
+					idmap.put(id, x);
+				}
+			}
+			/*
+			 * Step 2: do the actual copying 
+			 */
 			for (GmmlDataObject o : GmmlVision.clipboard)
 			{
 				lastAdded = null;
@@ -973,10 +1055,37 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				// make another copy to preserve clipboard contents for next paste
 				GmmlDataObject p = o.copy();
 				
-				// create new unique id
-				if (o.getGraphId() != null)
+				// set new unique id
+				if (p.getGraphId() != null)
+				{					
+					p.setGraphId(idmap.get(p.getGraphId()));					
+				}
+				// update graphref
+				String y = p.getStartGraphRef(); 
+				if (y != null)
 				{
-					o.setGraphId(data.getUniqueId());
+					//TODO: mapping graphrefs to newly created id's 
+					// doesn't work properly yet
+				/*	if (idmap.containsKey(y))
+					{
+						p.setStartGraphRef(idmap.get(y));
+					}
+					else
+					{*/
+						p.setStartGraphRef(null);
+					//}				
+				}
+				y = p.getEndGraphRef(); 
+				if (y != null)
+				{
+				/*	if (idmap.containsKey(y))
+					{
+						p.setEndGraphRef(idmap.get(y));
+					}
+					else
+					{*/
+						p.setEndGraphRef(null);
+				//	}				
 				}
 				
 				data.add (p); // causes lastAdded to be set

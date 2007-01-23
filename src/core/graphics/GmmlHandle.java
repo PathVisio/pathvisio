@@ -233,7 +233,7 @@ class GmmlHandle extends GmmlDrawingObject
 	}
 	
 	public void adjustToZoom(double factor) { }
-	
+		
 } // end of class
 
 

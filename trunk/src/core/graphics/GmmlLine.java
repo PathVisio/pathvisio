@@ -317,5 +317,20 @@ public class GmmlLine extends GmmlGraphics
 		markDirty(); // mark everything dirty
 		setHandleLocation();
 	}
+	
+	public void link (GmmlHandle h, GmmlGraphics x)
+	{
+		String id = x.gdata.getGraphId();
+		if (id == null) return;
+		
+		if (h == handleStart)
+		{
+			gdata.setStartGraphRef(id);
+		}
+		else if (h == handleEnd)
+		{
+			gdata.setEndGraphRef(id);			
+		}
+	}
 
 }

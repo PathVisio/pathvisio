@@ -33,7 +33,7 @@ import visualization.plugins.VisualizationPlugin;
 import data.GmmlDataObject;
 
 /**
- * Provides label for Gene Product
+ * Colors drawing-objects according to their graphId / graphRef values
  * @author thomas
  *
  */

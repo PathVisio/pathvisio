@@ -20,7 +20,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
+
+import preferences.GmmlPreferences;
 
 import util.SwtUtils;
 import data.GmmlDataObject;
@@ -52,6 +55,11 @@ public class GmmlShape extends GmmlGraphicsShape
 		if (isSelected())
 		{
 			c = SwtUtils.changeColor(c, selectColor, e.display);
+		}
+		else if (isHighlighted())
+		{
+			RGB rgb = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
+			c = SwtUtils.changeColor(c, rgb, e.display);
 		}
 		else 
 		{

@@ -46,12 +46,15 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import preferences.GmmlPreferences;
 
 import util.SwtUtils;
 import data.GmmlDataObject;
@@ -205,6 +208,11 @@ public class GmmlLabel extends GmmlGraphicsShape
 		if (isSelected())
 		{
 			c = SwtUtils.changeColor(c, selectColor, e.display);
+		}
+		else if (isHighlighted())
+		{
+			RGB rgb = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
+			c = SwtUtils.changeColor(c, rgb, e.display);
 		}
 		else 
 		{

@@ -19,7 +19,6 @@ package data;
 import gmmlVision.GmmlVision;
 import gmmlVision.GmmlVisionMain;
 import gmmlVision.GmmlVisionWindow;
-import graphics.GmmlDrawing;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -18,7 +18,6 @@ package data;
 
 import gmmlVision.GmmlVision;
 
-import java.io.FileWriter;
 import java.util.List;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;

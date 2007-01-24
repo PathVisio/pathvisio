@@ -40,8 +40,6 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	private static final int INITIAL_FONTSIZE = 10;
-	public static final int INITIAL_WIDTH = 80;
-	public static final int INITIAL_HEIGHT = 20;
 	public static final RGB INITIAL_FILL_COLOR = new RGB(255, 255, 255);
 	
 	double fontSizeDouble;

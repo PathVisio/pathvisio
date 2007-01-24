@@ -362,7 +362,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 
 	}
-	
+		
 	/**
 	 * Handles mouse Released input
 	 */
@@ -373,6 +373,15 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			if(s.isSelecting()) { //If we were selecting, stop it
 				s.stopSelecting();
 			}
+			// check if we placed a new object by clicking or dragging
+			// if it was a click, give object the initial size.
+			else if (newObject != null && 
+					Math.abs(newObjectDragStart.x - e.x) <= MIN_DRAG_LENGTH &&
+					Math.abs(newObjectDragStart.y - e.y) <= MIN_DRAG_LENGTH)
+			{
+				newObject.setInitialSize();
+			}
+			newObject = null;
 			redrawDirtyRect();
 		}
 		isDragging = false;
@@ -626,12 +635,27 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public static final RGB stdRGB = new RGB(0, 0, 0);
 
 	/**
+	 * pathvisio distinguishes between placing objects with a click
+	 * or with a drag. If you don't move the cursor in between the mousedown
+	 * and mouseup event, the object is placed with a default initial size.
+	 * 
+	 * newObjectDragStart is used to determine the mousemovement during the click.
+	 */
+	private Point newObjectDragStart;
+	
+	/** newly placed object, is set to null again when mouse button is released */
+	private GmmlDataObject newObject = null;
+	/** minimum drag length for it to be considered a drag and not a click */
+	private static final int MIN_DRAG_LENGTH = 3;
+
+	/**
 	 * Add a new object to the drawing
 	 * {@see GmmlDrawing#setNewGraphics(int)}
 	 * @param p	The point where the user clicked on the drawing to add a new graphics
 	 */
 	private void newObject(Point e)
 	{
+		newObjectDragStart = e;
 		GmmlDataObject gdata = null;
 		GmmlHandle h = null;
 		lastAdded = null; // reset lastAdded class member
@@ -717,8 +741,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWBRACE:
 			gdata = new GmmlDataObject(ObjectType.BRACE);
-			gdata.setCenterX(e.x);
-			gdata.setCenterY(e.y);
+			gdata.setCenterX (e.x);
+			gdata.setCenterY (e.y);
 			gdata.setWidth(1);
 			gdata.setHeight(1);
 			gdata.setOrientation(OrientationType.RIGHT);
@@ -731,14 +755,15 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata = new GmmlDataObject(ObjectType.GENEPRODUCT);
 			gdata.setCenterX(e.x);
 			gdata.setCenterY(e.y);
-			gdata.setWidth(GmmlGeneProduct.INITIAL_WIDTH * zoomFactor);
-			gdata.setHeight(GmmlGeneProduct.INITIAL_HEIGHT * zoomFactor);
+			gdata.setWidth(1);
+			gdata.setHeight(1);
 			gdata.setGeneID("Gene");
 			gdata.setXref("");
 			gdata.setColor(stdRGB);
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
-			h = null;
+			h = ((GmmlGeneProduct)lastAdded).handleSE;
+			isDragging = true;
 			break;
 		case NEWRECTANGLE:
 			gdata = new GmmlDataObject(ObjectType.SHAPE);
@@ -759,8 +784,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setShapeType(ShapeType.OVAL);
 			gdata.setCenterX (e.x);
 			gdata.setCenterY (e.y);
-			gdata.setWidth(50 * zoomFactor);
-			gdata.setHeight(50 * zoomFactor);
+			gdata.setWidth(1);
+			gdata.setHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
 			gdata.setGraphId(data.getUniqueId());
@@ -834,7 +859,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		}
-				
+		
+		newObject = gdata;
 		clearSelection();
 		lastAdded.select();
 		s.addToSelection(lastAdded);

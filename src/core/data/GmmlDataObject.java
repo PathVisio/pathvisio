@@ -1117,5 +1117,43 @@ public class GmmlDataObject
 			g.gmmlObjectModified(e);
 		}
 	}
+	
+	private static final int INITIAL_SHAPE_SIZE = 30; // initial Radius for rect and oval
+	private static final int INITIAL_BRACE_HEIGHT = 15;
+	private static final int INITIAL_BRACE_WIDTH = 60; 
+	private static final int INITIAL_GENEPRODUCT_WIDTH = 80;
+	private static final int INITIAL_GENEPRODUCT_HEIGHT = 20;
+
+	/**
+	 * This sets the object to a suitable default size.
+	 * 
+	 * This method is intended to be called right after the object is
+	 * placed on the drawing with a click. 
+	 */
+	public void setInitialSize()
+	{
+
+		switch (objectType)
+		{
+			case ObjectType.SHAPE:
+			case ObjectType.FIXEDSHAPE:
+			case ObjectType.COMPLEXSHAPE:
+				setWidth(INITIAL_SHAPE_SIZE);
+				setHeight(INITIAL_SHAPE_SIZE);
+				break;
+			case ObjectType.BRACE:
+				setWidth(INITIAL_BRACE_WIDTH);
+				setHeight(INITIAL_BRACE_HEIGHT);
+				break;
+			case ObjectType.GENEPRODUCT:
+				setWidth(INITIAL_GENEPRODUCT_WIDTH);
+				setHeight(INITIAL_GENEPRODUCT_HEIGHT);
+				break;
+			case ObjectType.LINE:
+				setEndX(getStartX() + INITIAL_SHAPE_SIZE);
+				setEndY(getStartY() + INITIAL_SHAPE_SIZE);
+				break;
+		}
+	}
 
 }

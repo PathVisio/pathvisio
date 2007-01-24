@@ -46,7 +46,6 @@ public class SidePanel extends Composite {
 	 * @param parent	The parent composite (needs to be an {@link SashForm} for the
 	 * minimize button to work
 	 * @param style
-	 * @param gmmlVision
 	 */
 	public SidePanel(Composite parent, int style) {
 		super(parent, style);

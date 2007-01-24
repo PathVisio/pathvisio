@@ -29,9 +29,6 @@ public class LinAlg {
 		
 	/**
 	 * negative: ccw positive: cw
-	 * @param v1
-	 * @param v2
-	 * @return
 	 */
 	public static double direction(Point p1, Point p2) {
 		return Math.signum(p1.x * p2.y - p1.y * p2.x);

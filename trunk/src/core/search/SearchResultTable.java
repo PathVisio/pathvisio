@@ -41,7 +41,7 @@ import util.tableviewer.TableData.Row;
 
 
 /**
- * This composite displays a table on which {@link SearchResults}s can be
+ * This composite displays a table on which SearchResults can be
  * displayed
  */
 public class SearchResultTable extends PathwayTable implements ApplicationEventListener {

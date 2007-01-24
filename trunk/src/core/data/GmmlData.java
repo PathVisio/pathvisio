@@ -76,7 +76,7 @@ public class GmmlData
 	/**
 	 * Getter for dataobjects contained. There is no setter, you
 	 * have to add dataobjects individually
-	 * @return
+	 * @return List of dataObjects contained in this pathway
 	 */
 	public List<GmmlDataObject> getDataObjects() 
 	{
@@ -245,14 +245,13 @@ public class GmmlData
 	
 	/**
 	 * Gets the xml file containing the Gpml/mapp pathway currently displayed
-	 * @return
+	 * @return current xml file
 	 */
 	public File getSourceFile () { return sourceFile; }
 	private void setSourceFile (File file) { sourceFile = file; }
 
 	/**
 	 * Contructor for this class, creates a new gpml document
-	 * @param drawing {@link GmmlDrawing} that displays the visual representation of the gpml pathway
 	 */
 	public GmmlData() 
 	{
@@ -283,7 +282,6 @@ public class GmmlData
 	/**
 	 * Constructor for this class, opens a gpml pathway and adds its elements to the drawing
 	 * @param file		String pointing to the gpml file to open
-	 * @param drawing	{@link GmmlDrawing} that displays the visual representation of the gpml pathway
 	 * 
 	 * @deprecated - use general constructor, then specify readFromXml or readFromMapp
 	 */
@@ -432,7 +430,7 @@ public class GmmlData
 	
 	/**
 	 * Get the systemcodes of all genes in this pathway
-	 * @return	{@link ArrayList<String>} containing a systemcode for every gene on the mapp
+	 * @return	a list of systemcodes for every gene on the mapp
 	 */
 	public ArrayList<String> getSystemCodes()
 	{

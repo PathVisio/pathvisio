@@ -104,7 +104,6 @@ public class ColorSetManager {
 
 	/**
 	 * Gets the names of all {@link ColorSet}s used 
-	 * @return
 	 */
 	public static String[] getColorSetNames()
 	{

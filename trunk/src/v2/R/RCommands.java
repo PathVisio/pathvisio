@@ -78,8 +78,6 @@ public class RCommands {
     /**
      * Wrapper for {@link Rengine#eval(String)}, evaluates the string
      * and returns an empty REXP (does not convert the evaluation result to a Java object)
-     * @param re
-     * @param s
      * @throws RException
      */
     public static REXP eval(String s, boolean convert) throws RException {
@@ -156,7 +154,6 @@ public class RCommands {
 	
 	/**
 	 * Wrapper for the R function 'ls'; List all objects in current workspace
-	 * @return
 	 * @throws RException
 	 */
 	public static String[] ls() throws RException {
@@ -251,7 +248,6 @@ public class RCommands {
 	/**
 	 * Converts given filename to a filename that can be read by R (backslashes are converted to slashes)
 	 * @param f	The string that points to a file
-	 * @return
 	 */
 	public static String fileNameToString(String f) {
 		return f.replace('\\', '/');

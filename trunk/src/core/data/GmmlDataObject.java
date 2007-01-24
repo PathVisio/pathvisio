@@ -1020,7 +1020,7 @@ public class GmmlDataObject
 	/**
 	 * Set graphId. This id must be any string unique within the GmmlData object 
 	 * 
-	 * @see GmmlData.getUniqueId()
+	 * @see GmmlData#getUniqueId()
 	 */
 	public void setGraphId (String v) 
 	{ 
@@ -1044,12 +1044,13 @@ public class GmmlDataObject
 
 	protected String startGraphRef = null;
 	public String getStartGraphRef() { return startGraphRef; }
+
 	/**
 	 * Set a reference to another object with a graphId.
 	 * If a parent is set, this will automatically deregister
 	 * the previously held reference and register the new reference
 	 * as necessary
-	 * @param v: reference to set.
+	 * @param v reference to set.
 	 */
 	public void setStartGraphRef (String v) 
 	{ 
@@ -1074,7 +1075,7 @@ public class GmmlDataObject
 	protected String endGraphRef = null;
 	public String getEndGraphRef() { return endGraphRef; }
 	/**
-	 * @see setStartGraphRef();
+	 * @see #setStartGraphRef(String)
 	 * @param v
 	 */
 	public void setEndGraphRef (String v) 

@@ -52,8 +52,7 @@ public abstract class GmmlGdb {
 	private static Connection con;
 	
 	/**
-	 * Gets the {{@link Connection} to the Gene Database
-	 * @return
+	 * Gets the Connection to the Gene Database
 	 */
 	public static Connection getCon() { return con; }
 	/**
@@ -89,7 +88,7 @@ public abstract class GmmlGdb {
 	
 	/**
 	 * Sets the Gene Database that is currently in use
-	 * @param gdb	The name of the gene database
+	 * @param dbNm	The name of the gene database
 	 */
 	public static void setCurrentGdb(String dbNm) {
 		dbName = dbNm;
@@ -99,10 +98,10 @@ public abstract class GmmlGdb {
 	}
 		
 	/**
-	 * Gets the backpage info for the given gene id for display on {@GmmlBpBrowser}
-	 * @param id	The gene id to get the backpage info for
-	 * @param code	systemcode of the gene identifier
-	 * @return		String with the backpage info, null if the gene was not found
+	 * Gets the backpage info for the given gene id for display on GmmlBpBrowser
+	 * @param id The gene id to get the backpage info for
+	 * @param code systemcode of the gene identifier
+	 * @return String with the backpage info, null if the gene was not found
 	 */
 	public static String getBpInfo(String id, String code) {
 		StopWatch timer = new StopWatch();
@@ -143,7 +142,7 @@ public abstract class GmmlGdb {
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id
 	 * @param ensId		The Ensembl id to get the cross references for
-	 * @return			{@ArrayList} containing all cross references found for this Ensembl id
+	 * @return			List containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 */	
 	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
@@ -180,7 +179,7 @@ public abstract class GmmlGdb {
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
 	 * @param ref	The gene id to get the Ensembl ids for
 	 * @param code	systemcode of the gene identifier
-	 * @return		{@ArrayList} containing all Ensembl ids found for this gene id
+	 * @return		ArrayList containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
 	 */
 	public static ArrayList<String> ref2EnsIds(String ref, String code)
@@ -233,7 +232,7 @@ public abstract class GmmlGdb {
 	 * the same gene as the given id) for a given id
 	 * @param id	gene identifier to get the cross references for
 	 * @param code	systemcode of the gene identifier
-	 * @return
+	 * @return list of crossrefs
 	 */
 	public static List<IdCodePair> getCrossRefs(String id, String code) {
 		if(SINGLE_QUERY)
@@ -252,7 +251,7 @@ public abstract class GmmlGdb {
 	 * simple select statements showed to be much faster, so use getCrossRefs instead
 	 * @param id	gene identifier to get the cross references for
 	 * @param code	systemcode of the gene identifier
-	 * @return
+	 * @return list of IdCodePair-s
 	 */
 //	Don't use this, multiple simple select queries is faster
 //	Use getCrossRefs instead
@@ -337,9 +336,8 @@ public abstract class GmmlGdb {
 	
 	/**
 	 * Opens a {@link Connection} to the Gene Database located in the given file
-	 * @param gdbFile	The file containing the Gene Database. This file needs to be the
+	 * @param dbName The file containing the Gene Database. This file needs to be the
 	 * .properties file of the Hsqldb database
-	 * @return	null if the connection was created, a String with an error message if an error occured
 	 */
 	public static void connect(String dbName) throws Exception
 	{
@@ -368,11 +366,11 @@ public abstract class GmmlGdb {
 	}
 		
 	/**
-	 * Converts the given GenMAPP Gene Database to a Hsqldb Gene Database as used in this program
+	 * Converts the given GenMAPP Gene Database to a Gene Database as used in this program
 	 * <BR>This method reports all errors occured during the conversion to a file named 'convert_gdb_log.txt'
 	 * @param gmGdbFile		The file containing the GenMAPP Gene Database to be converted
-	 * @param gdbFile		The file where the new Hsqldb Gene Database has to be stored (the .properties
-	 * file of the Hsqldb database)
+	 * @param dbName		The file where the new Gene Database has to be stored (the .properties
+	 * file of the database)
 	 */
 	public static void convertGdb(File gmGdbFile, String dbName) {
 

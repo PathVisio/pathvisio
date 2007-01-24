@@ -65,8 +65,8 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	
 	/**
 	 * Constructor for this class
-	 * @param parent	Parent {@link Composite} for the {@Browser} widget
-	 * @param style		Style for the {@Browser} widget
+	 * @param parent	Parent {@link Composite} for the Browser widget
+	 * @param style		Style for the Browser widget
 	 */
 	public GmmlBpBrowser(Composite parent, int style) {
 		super(parent, style);
@@ -183,7 +183,7 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	
 	/**
 	 * Sets the text for the Gene information part of the browser. Will be prepended by a paragraph
-	 * header as defined in {@link bpHeader}
+	 * header as defined in bpHeader
 	 * @param bpText	Text to display in HTML format
 	 */
 	public void setGeneText(String bpText) {
@@ -197,7 +197,7 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	
 	/**
 	 * Sets the text for the expression part of the browser. Will be prepended by a paragraph
-	 * header as defined in {@link gexHeader}
+	 * header as defined in gexHeader
 	 * @param gexText	Text to display in HTML format
 	 */
 	public void setGexText(String gexText) {

@@ -74,7 +74,6 @@ public abstract class GmmlVision {
 		
 	/**
 	 * Get the {@link ApplicationWindow}, the UI of the program
-	 * @return
 	 */
 	public static GmmlVisionWindow getWindow() {
 		if(window == null) window = new GmmlVisionWindow();
@@ -103,7 +102,6 @@ public abstract class GmmlVision {
 	
 	/**
 	 * Get the {@link GmmlPreferences} containing the user preferences
-	 * @return
 	 */
 	public static PreferenceStore getPreferences() { 
 		if(preferences == null) preferences = new GmmlPreferences();
@@ -112,7 +110,6 @@ public abstract class GmmlVision {
 	
 	/**
 	 * Get the {@link ImageRegistry} containing commonly used images
-	 * @return
 	 */
 	public static ImageRegistry getImageRegistry() { 
 		if(imageRegistry == null) imageRegistry = new ImageRegistry();
@@ -139,7 +136,6 @@ public abstract class GmmlVision {
 	
 	/**
 	 * Gets the currently open drawing
-	 * @return
 	 */
 	public static GmmlDrawing getDrawing() {
 		return drawing;
@@ -147,7 +143,6 @@ public abstract class GmmlVision {
 		
 	/**
 	 * Returns the currently open GmmlData
-	 * @return
 	 */
 	public static GmmlData getGmmlData() {
 		return gmmlData;
@@ -213,7 +208,6 @@ public abstract class GmmlVision {
 			
 	/**
 	 * Get the working directory of this application
-	 * @return
 	 */
 	public static File getApplicationDir() {
 		if(DIR_APPLICATION == null) {

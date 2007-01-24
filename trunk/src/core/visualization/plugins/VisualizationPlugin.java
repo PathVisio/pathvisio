@@ -114,7 +114,7 @@ public abstract class VisualizationPlugin implements Comparable {
 	public abstract Composite visualizeOnToolTip(Composite parent, GmmlGraphics g);
 	
 	/**
-	 * Initialize a {@Composite} for visualization on the side panel
+	 * Initialize a Composite for visualization on the side panel
 	 * This method will only be called when the plugin display options contains {@link VisualizationPlugin#SIDEPANEL}.
 	 * @param parent The parent of the new {@link Composite}
 	 */
@@ -126,7 +126,7 @@ public abstract class VisualizationPlugin implements Comparable {
 	 * This method may be overridden if the plug-in needs to show a legend item when it is
 	 * active on the pathway drawing.
 	 * @param parent The parent of the new {@link Composite} to return
-	 * @return A {@linkc Composite} that displays the legend information for this plug-in
+	 * @return A {@link Composite} that displays the legend information for this plug-in
 	 */
 	public Composite createLegendComposite(Composite parent) {
 		return null;

@@ -77,7 +77,6 @@ public class GmmlGex implements ApplicationEventListener {
 	
 	/**
 	 * Get the {@link Connection} to the Expression-data database
-	 * @return
 	 */
 	public static Connection getCon() { return con; }
 	/**
@@ -435,7 +434,7 @@ public class GmmlGex implements ApplicationEventListener {
 	 */
 	private static CacheThread cacheThread;
 	/**
-	 * This class is a {@link Thread} that is responsible for calling {@link cacheData()}
+	 * This class is a {@link Thread} that is responsible for calling {@link #cacheData(ArrayList<String>, ArrayList<String>)}
 	 * and keeping the progress of its progress
 	 */
 	private static class CacheThread extends Thread
@@ -470,10 +469,9 @@ public class GmmlGex implements ApplicationEventListener {
 	
 	/**
 	 * Creates an {@link IRunnableWithProgress} responsible for starting the 
-	 * {@link CacheThread} and keeping track of the progress of this thread
-	 * @param mappIds	the gene ids to pass on to {@link cacheData()}
+	 * CacheThread and keeping track of the progress of this thread
+	 * @param mappIds	the gene ids to pass on to cacheData(ArrayList<String>, ArrayList<String>)
 	 * @param codes		the systemcodes of the gene identifiers
-	 * @return
 	 */
 	public static IRunnableWithProgress createCacheRunnable(
 			final ArrayList<String> mappIds, 
@@ -528,7 +526,7 @@ public class GmmlGex implements ApplicationEventListener {
 	}
 	
 	/**
-	 * This {@link IRunnableWithProgress} starts the {@link ConvertThread} 
+	 * This {@link IRunnableWithProgress} starts the ConvertThread
 	 * and monitors the progress of the conversion
 	 */
 	public static IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {
@@ -555,7 +553,7 @@ public class GmmlGex implements ApplicationEventListener {
 	/**
 	 * This {@link IRunnableWithProgress} is responsible for running the import expression data
 	 * process and monitor the progress
-	 * {@see GmmlGex#importFromTxt(ImportInformation, ImportPage, IProgressMonitor)}
+	 * See GmmlGex.importFromTxt
 	 */
 	public static class ImportRunnableWithProgress implements IRunnableWithProgress {
 		static final int totalWork = (int)1E6;
@@ -758,7 +756,7 @@ public class GmmlGex implements ApplicationEventListener {
 	public static void setGmGexFile(File file) { gmGexFile = file; }
 	
 	/**
-	 * Converts the GenMAPP Expression Dataset (given in {@link gmGexFile}) to a expression database
+	 * Converts the GenMAPP Expression Dataset to a expression database
 	 * in Hsqldb format as used by this program.
 	 * <BR><BR>This method reports all errors occured during the conversion to a file named 'convert_gex_error.txt'
 	 */
@@ -870,10 +868,9 @@ public class GmmlGex implements ApplicationEventListener {
 	}
 	
 	/**
-	 * Connects to the Expression database (location given in {@link gexFile} with
+	 * Connects to the Expression database with
 	 * option to remove the old database
-	 * @param 	clean true if the old database has to be removed, false for just connecting
-	 * @return 	null if the connection was created, a String with an error message if an error occured
+	 * @param 	create true if the old database has to be removed, false for just connecting
 	 */
 	public static void connect(String dbName, boolean create, boolean fireEvent) throws Exception
 	{
@@ -898,8 +895,7 @@ public class GmmlGex implements ApplicationEventListener {
 	}
 	
 	/**
-	 * Connects to the Expression database (location given in {@link gexFile}
-	 * @return null if the connection was created, a String with an error message if an error occured
+	 * Connects to the Expression database 
 	 */
 	public static void connect() throws Exception
 	{
@@ -913,8 +909,8 @@ public class GmmlGex implements ApplicationEventListener {
 		
 	/**
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
-	 * statement before calling {@link Connection.close()}
-	 * @param shutdown	true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
+	 * statement before calling {@link Connection#close()}
+	 * @param finalize true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
 	public static void close(boolean finalize)
 	{
@@ -943,7 +939,7 @@ public class GmmlGex implements ApplicationEventListener {
 	
 	/**
 	 * Close the connection excecuting the 'SHUTDOWN' statement 
-	 * before calling {@link Connection.close()}
+	 * before calling {@link Connection#close()}
 	 */
 	public static void close()
 	{

@@ -90,7 +90,6 @@ public abstract class ColorSetObject {
 	
 	/**
 	 * Returns the parent colorset
-	 * @return
 	 */
 	public ColorSet getParent()
 	{

@@ -60,7 +60,6 @@ public abstract class ColorConverter
 	/**
 	 * Converts an {@link RGB} object to a hexbinary string
 	 * @param color
-	 * @return
 	 */
 	public static String color2HexBin(RGB color)
 	{
@@ -75,7 +74,6 @@ public abstract class ColorConverter
 	 * Converts a string containing either a named color (as specified in gpml) or a hexbinary number
 	 * to an {@link RGB} object
 	 * @param strColor
-	 * @return
 	 */
     public static RGB gmmlString2Color(String strColor)
     {
@@ -104,7 +102,7 @@ public abstract class ColorConverter
     }
     
     /**
-	 * Creates a string representing a {@link RGB} object which is parsable by {@link parseRgbString}
+	 * Creates a string representing a {@link RGB} object which is parsable by {@link #parseRgbString(String)}
 	 * @param rgb the {@link RGB} object to create a string from
 	 * @return the string representing the {@link RGB} object
 	 */
@@ -114,7 +112,7 @@ public abstract class ColorConverter
 	}
 	
 	/**
-	 * Parses a string representing a {@link RGB} object created with {@link getRgbString}
+	 * Parses a string representing a {@link RGB} object created with {@link #getRgbString(RGB)}
 	 * @param rgbString the string to be parsed
 	 * @return the {@link RGB} object this string represented
 	 */

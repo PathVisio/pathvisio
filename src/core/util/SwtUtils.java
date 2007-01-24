@@ -301,7 +301,6 @@ public class SwtUtils {
 		
 		/**
 		 * Get the total work to be performed
-		 * @return
 		 */
 		public static int getTotalWork() { return totalWork; }
 		
@@ -326,7 +325,6 @@ public class SwtUtils {
 		
 		/**
 		 * Set the total work to be performed
-		 * @return
 		 */
 		public static void setTotalWork(int tw) {
 			totalWork = tw;
@@ -334,7 +332,6 @@ public class SwtUtils {
 		
 		/**
 		 * Set the task name that is displayed on the progress monitor
-		 * @return
 		 */
 		public static void setTaskName(String tn) {
 			taskName = tn;

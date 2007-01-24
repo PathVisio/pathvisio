@@ -135,7 +135,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	private Rectangle dirtyRect = null;
 	/**
 	 * Adds object boundaries to the 'dirty rectangle', which marks the area that needs to be redrawn
-	 * @param g	drawing object of which the boundaries have to be added
 	 */
 	public void addDirtyRect(Rectangle r)
 	{
@@ -180,7 +179,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 		
 	/**
-	 * Sets the {@link MappInfo} containing information on the pathway
+	 * Sets the MappInfo containing information on the pathway
 	 * @param mappInfo
 	 */
 	public void setMappInfo(GmmlInfoBox mappInfo)
@@ -190,8 +189,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 
 	/**
-	 * Gets the {@link MappInfo} containing information on the pathway
-	 * @return
+	 * Gets the MappInfo containing information on the pathway
 	 */
 	public GmmlInfoBox getMappInfo() { return infoBox; }
 		
@@ -209,8 +207,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 
 	/**
 	 * Get the gene identifiers of all genes in this pathway
-	 * @return	{@link ArrayList<String>} containing an identifier for every gene on the mapp
-	 * @deprecated: get this info from GmmlData directly
+	 * @return	List containing an identifier for every gene on the mapp
+	 * @deprecated get this info from GmmlData directly
 	 */
 	public ArrayList<String> getMappIds()
 	{
@@ -227,9 +225,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	
 	/**
 	 * Get the systemcodes of all genes in this pathway
-	 * @return	{@link ArrayList<String>} containing a systemcode for every gene on the mapp
+	 * @return	List containing a systemcode for every gene on the mapp
 	 * 
-	 * @deprecated: get this info from GmmlData directly
+	 * @deprecated get this info from GmmlData directly
 	 */
 	public ArrayList<String> getSystemCodes()
 	{
@@ -938,8 +936,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 	
 	/**
-	 * Removes the {@link GmmlDrawingObject}s in the {@link ArrayList} from the drawing
-	 * @param toRemove	The {@link ArrayList<GmmlDrawingObject>} containing the objects to be removed
+	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
+	 * @param toRemove	The List containing the objects to be removed
 	 */
 	public void removeDrawingObjects(ArrayList<GmmlDrawingObject>toRemove)
 	{

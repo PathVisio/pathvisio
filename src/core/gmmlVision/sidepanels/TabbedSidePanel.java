@@ -42,7 +42,6 @@ public class TabbedSidePanel extends SidePanel {
 	/**
 	 * Returns the {@link TabFolder} containing the different
 	 * tabItems of this sidepanel
-	 * @return
 	 */
 	public CTabFolder getTabFolder() { return tabFolder; }
 	
@@ -169,7 +168,6 @@ public class TabbedSidePanel extends SidePanel {
 	/**
 	 * Check whether a tabitem with the given title exists
 	 * @param title
-	 * @return
 	 */
 	public boolean hasTab(String title) {
 		return tabItems.containsKey(title);

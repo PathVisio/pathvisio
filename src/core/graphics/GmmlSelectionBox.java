@@ -120,7 +120,6 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	/**
 	 * Returns true if the selectionbox has multiple objects in its selection, false otherwise
-	 * @return
 	 */
 	public boolean hasMultipleSelection() { return selection.size() > 1 ? true : false; }
 	
@@ -162,7 +161,6 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 
 	/**
 	 * Returns true if this selectionbox is in selecting state (selects containing objects when resized)
-	 * @return
 	 */
 	public boolean isSelecting() { return isSelecting; }
 	
@@ -272,7 +270,6 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	/**
 	 * Gets the corner handle (South east) for start dragging
-	 * @return
 	 */
 	public GmmlHandle getCornerHandle() { return handleSE; }
 	

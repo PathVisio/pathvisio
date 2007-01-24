@@ -30,7 +30,6 @@ public class Utils {
 	
 	/**
 	 * Get the OS
-	 * @returns 
 	 */
 	public static int getOS() {
 		String os = System.getProperty("os.name");

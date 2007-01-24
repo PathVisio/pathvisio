@@ -60,7 +60,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	}
 	
 	/**
-	 * @deprecated: get this info from GmmlDataObject directly
+	 * @deprecated get this info from GmmlDataObject directly
 	 */
 	public String getName()
 	{
@@ -70,7 +70,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	}
 	
 	/**
-	 * @deprecated: get this info from GmmlDataObject directly
+	 * @deprecated get this info from GmmlDataObject directly
 	 */
 	public String getID() 
 	{
@@ -85,11 +85,10 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	}
 	
 	/**
-	 * Looks up the systemcode for this gene in {@link GmmlData#sysName2Code}
-	 * @param systemName	The system name (as in gpml)
+	 * Looks up the systemcode for this gene in GmmlData.sysName2Code
 	 * @return	The system code or an empty string if the system is not found
 	 * 
-	 * @deprecated: use GmmlDataObject.getSystemCode()
+	 * @deprecated use GmmlDataObject.getSystemCode()
 	 */
 	public String getSystemCode()
 	{

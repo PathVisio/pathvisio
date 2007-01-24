@@ -50,7 +50,6 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	/**
 	 * Draws the GmmlDrawingObject object on the GmmlDrawing
 	 * it is part of
-	 * @param g - the Graphics object to use for drawing
 	 */
 	public abstract void draw(PaintEvent e, GC buffer);
 	
@@ -70,7 +69,6 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 
 	/**
 	 * Get the drawing this object belongs to
-	 * @return
 	 */
 	public GmmlDrawing getDrawing() {
 		return canvas;
@@ -104,7 +102,6 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	
 	/**
 	 * Returns true if this object is highlighted, false otherwise
-	 * @return
 	 */
 	public boolean isHighlighted()
 	{
@@ -168,13 +165,13 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	/**
 	 * Transforms this object to fit to the coordinates
 	 * of the given handle
-	 * @param h	The {@link GmmlHandle} to adjust to
+	 * @param h	The GmmlHandle to adjust to
 	 */
 	protected void adjustToHandle(GmmlHandle h) {}
 
 	/**
 	 * Get all the handles belonging to this object
-	 * @return an array of {@link GmmlHandle}s, an empty array if the object
+	 * @return an array of GmmlHandles, an empty array if the object
 	 * has no handles
 	 */
 	protected GmmlHandle[] getHandles() { return new GmmlHandle[] {}; }
@@ -188,7 +185,6 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	
 	/**
 	 * Get the rectangular boundary of this object
-	 * @return
 	 */
 	protected final Rectangle getBounds()
 	{
@@ -206,7 +202,6 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	
 	/**
 	 * Gets the rectangle used to scale the object
-	 * @return
 	 */
 	protected Rectangle2D.Double getScaleRectangle() { return new Rectangle2D.Double(); }
 
@@ -215,9 +210,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * The comparison is consistent with "equals", i.e. it doesn't return 0 if
 	 * the objects are different, even if their drawing order is the same.
 	 * 
-	 * @param o
-	 * @return
-	 * @throws ClassCastException
+	 * @param d
 	 */
 	public int compareTo(GmmlDrawingObject d)
 	{

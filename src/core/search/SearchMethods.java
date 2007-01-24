@@ -65,7 +65,6 @@ public abstract class SearchMethods {
 	 * @param srt	{@link SearchResultTable} to display the results in
 	 * @param runnable	{@link SearchRunnableWithProgress} containing the monitor responsible for
 	 * displaying the progress
-	 * @return string with message to display. if null, no message is displayed
 	 */
 	public static void pathwaysContainingGeneID(String id, String code, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) 

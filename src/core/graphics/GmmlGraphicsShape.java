@@ -193,7 +193,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * drawing canvas)
 	 * @param x
 	 * @param y
-	 * @return
 	 */
 	private Point toExternal(double x, double y) {
 		return toExternal(new Point(x, y));
@@ -203,7 +202,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * Get the coordinates of the given point relative
 	 * to this object's center
 	 * @param p
-	 * @return
 	 */
 	private Point relativeToCenter(Point p) {
 		return p.subtract(getCenter());
@@ -213,7 +211,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * Get the coordinates of the given point relative
 	 * to the canvas' origin
 	 * @param p
-	 * @return
 	 */
 	private Point relativeToCanvas(Point p) {
 		return p.add(getCenter());
@@ -221,7 +218,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	
 	/**
 	 * Get the center point of this object
-	 * @return
 	 */
 	public Point getCenter() {
 		return new Point(gdata.getCenterX(), gdata.getCenterY());
@@ -242,7 +238,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * way that the center moves over the rotated axis of this object
 	 * @param newWidth
 	 * @param newHeight
-	 * @return
 	 */
 	public Point calcNewCenter(double newWidth, double newHeight) {
 		Point cn = new Point((newWidth - gdata.getWidth())/2, (newHeight - gdata.getHeight())/2);
@@ -402,7 +397,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * Get the default location of the given handle 
 	 * (in co�rdinates relative to the canvas)
 	 * @param h
-	 * @return
 	 */
 	protected Point getHandleLocation(GmmlHandle h) {
 		if(h == handleN) return toExternal(0, -gdata.getHeight()/2);

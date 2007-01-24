@@ -46,9 +46,6 @@ public class GpmlTransfer extends ByteArrayTransfer
 		
 		if (!(data instanceof List)) { return; } // wrong type of data
 		
-		byte[] contentAsByteArray=null;
-		
-		
 		byte[] result = null;
 		List<GmmlDataObject> clipboard = (List<GmmlDataObject>)data;
 		Document doc = new Document();

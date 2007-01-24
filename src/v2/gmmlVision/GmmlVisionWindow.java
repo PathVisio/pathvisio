@@ -1210,8 +1210,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	}
 	
 	/**
-	 * Deselects all {@link NewElementAction}s on the toolbar and sets 
-	 * {@link GmmlDrawing}.newGraphics to {@link GmmlDrawing}.NEWNONE
+	 * Deselects all NewElementActions on the toolbar and sets 
+	 * GmmlDrawing.newGraphics to GmmlDrawing.NEWNONE
 	 */
 	public void deselectNewItemActions()
 	{

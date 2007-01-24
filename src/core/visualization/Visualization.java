@@ -184,7 +184,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @param e	{@link PaintEvent} containing information about the paint
 	 * @param gc Graphical context on which drawing operations can be performed
 	 */
-	public void drawVisualization(GmmlGraphics g, PaintEvent e, GC gc) {
+	public void visualizeDrawing(GmmlGraphics g, PaintEvent e, GC gc) {
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, e, gc);
 		}
@@ -252,7 +252,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * in the side-panel to visualize the given pathway elements
 	 * @param objects The pathway elements to visualize
 	 */
-	void updateSidePanel(Collection<GmmlGraphics> objects) {
+	void visualizeSidePanel(Collection<GmmlGraphics> objects) {
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isSidePanel())
 				pr.getSidePanelPlugin().visualizeOnSidePanel(objects);
@@ -310,7 +310,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @return A tool-tip that displays visualizations for the given gene-product 
 	 * by the plug-ins activated on the tool-tip
 	 */
-	public Shell getToolTip(Shell parent, Control control, GmmlGraphics g) {
+	public Shell visualizeToolTip(Shell parent, Control control, GmmlGraphics g) {
 		final Shell tip = new Shell(parent, SWT.ON_TOP | SWT.TOOL);  
 		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tip.setLayout(new RowLayout(SWT.VERTICAL));

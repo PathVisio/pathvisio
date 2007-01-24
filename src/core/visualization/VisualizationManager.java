@@ -331,7 +331,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		}
 		
 		void refresh() {
-			if(vis != null) vis.updateSidePanel(input);
+			if(vis != null) vis.visualizeSidePanel(input);
 			layout(true, true);
 		}
 

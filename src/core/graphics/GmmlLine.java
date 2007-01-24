@@ -121,67 +121,79 @@ public class GmmlLine extends GmmlGraphics
 				break;
 			case LineType.LIGAND_ROUND:
 			{
-				double dx = (endx - startx)/s;
-				double dy = (endy - starty)/s;
-							
-				buffer.drawLine ((int)startx, (int)starty, (int)(endx - 6 * dx), (int)(endy - 6 * dy));
-				buffer.drawOval ((int)endx - 5, (int)endy - 5, 10, 10);
-				buffer.fillOval ((int)endx - 5, (int)endy - 5, 10, 10);
+				if (endx != startx || endy != starty)
+				{
+					double dx = (endx - startx)/s;
+					double dy = (endy - starty)/s;
+								
+					buffer.drawLine ((int)startx, (int)starty, (int)(endx - 6 * dx), (int)(endy - 6 * dy));
+					buffer.drawOval ((int)endx - 5, (int)endy - 5, 10, 10);
+					buffer.fillOval ((int)endx - 5, (int)endy - 5, 10, 10);
+				}
 			}
 				break;
 			case LineType.RECEPTOR_ROUND:
 			{
-				double theta 	= Math.toDegrees(Math.atan2((endx - startx),(endy - starty)));
-				double dx 		= (endx - startx)/s;
-				double dy 		= (endy - starty)/s;	
-				
-				buffer.drawLine ((int)startx, (int)starty, (int)(endx - (8*dx)), (int)(endy - (8*dy)));
-				buffer.drawArc ((int)endx - 8, (int)endy - 8, 16, 16, (int)theta + 180, -180);			
+				if (endx != startx || endy != starty)
+				{
+					double theta 	= Math.toDegrees(Math.atan2((endx - startx),(endy - starty)));
+					double dx 		= (endx - startx)/s;
+					double dy 		= (endy - starty)/s;	
+					
+					buffer.drawLine ((int)startx, (int)starty, (int)(endx - (8*dx)), (int)(endy - (8*dy)));
+					buffer.drawArc ((int)endx - 8, (int)endy - 8, 16, 16, (int)theta + 180, -180);
+				}
 			}
 				break;
 			case LineType.RECEPTOR: //TODO: implement receptor
 			case LineType.RECEPTOR_SQUARE:
 			{
-				s /= 8;
+				if (endx != startx || endy != starty)
+				{
+					s /= 8;
+					
+					double x3 		= endx - ((endx - startx)/s);
+					double y3 		= endy - ((endy - starty)/s);
+					double capx1 	= ((-endy + starty)/s) + x3;
+					double capy1 	= (( endx - startx)/s) + y3;
+					double capx2 	= (( endy - starty)/s) + x3;
+					double capy2 	= ((-endx + startx)/s) + y3;			
+					double rx1		= capx1 + 1.5*(endx - startx)/s;
+					double ry1 		= capy1 + 1.5*(endy - starty)/s;
+					double rx2 		= capx2 + 1.5*(endx - startx)/s;
+					double ry2 		= capy2 + 1.5*(endy - starty)/s;
 				
-				double x3 		= endx - ((endx - startx)/s);
-				double y3 		= endy - ((endy - starty)/s);
-				double capx1 	= ((-endy + starty)/s) + x3;
-				double capy1 	= (( endx - startx)/s) + y3;
-				double capx2 	= (( endy - starty)/s) + x3;
-				double capy2 	= ((-endx + startx)/s) + y3;			
-				double rx1		= capx1 + 1.5*(endx - startx)/s;
-				double ry1 		= capy1 + 1.5*(endy - starty)/s;
-				double rx2 		= capx2 + 1.5*(endx - startx)/s;
-				double ry2 		= capy2 + 1.5*(endy - starty)/s;
-			
-				buffer.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
-				buffer.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
-				buffer.drawLine ((int)capx1, (int)capy1, (int)rx1, (int)ry1);
-				buffer.drawLine ((int)capx2, (int)capy2, (int)rx2, (int)ry2);
+					buffer.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
+					buffer.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
+					buffer.drawLine ((int)capx1, (int)capy1, (int)rx1, (int)ry1);
+					buffer.drawLine ((int)capx2, (int)capy2, (int)rx2, (int)ry2);
+				}
 			}
 				break;
 			case LineType.LIGAND_SQUARE:
 			{
-				s /= 6;
-				double x3 		= endx - ((endx - startx)/s);
-				double y3 		= endy - ((endy - starty)/s);
-	
-				int[] points = new int[4 * 2];
-				
-				points[0] = (int) (((-endy + starty)/s) + x3);
-				points[1] = (int) ((( endx - startx)/s) + y3);
-				points[2] = (int) ((( endy - starty)/s) + x3);
-				points[3] = (int) (((-endx + startx)/s) + y3);
-	
-				points[4] = (int) (points[2] + 1.5*(endx - startx)/s);
-				points[5] = (int) (points[3] + 1.5*(endy - starty)/s);
-				points[6] = (int) (points[0] + 1.5*(endx - startx)/s);
-				points[7] = (int) (points[1] + 1.5*(endy - starty)/s);
-				
-				buffer.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
-				buffer.drawPolygon(points);
-				buffer.fillPolygon(points);
+				if (endx != startx || endy != starty)
+				{
+					s /= 6;
+					double x3 		= endx - ((endx - startx)/s);
+					double y3 		= endy - ((endy - starty)/s);
+		
+					int[] points = new int[4 * 2];
+					
+					points[0] = (int) (((-endy + starty)/s) + x3);
+					points[1] = (int) ((( endx - startx)/s) + y3);
+					points[2] = (int) ((( endy - starty)/s) + x3);
+					points[3] = (int) (((-endx + startx)/s) + y3);
+		
+					points[4] = (int) (points[2] + 1.5*(endx - startx)/s);
+					points[5] = (int) (points[3] + 1.5*(endy - starty)/s);
+					points[6] = (int) (points[0] + 1.5*(endx - startx)/s);
+					points[7] = (int) (points[1] + 1.5*(endy - starty)/s);
+					
+					buffer.drawLine ((int)startx, (int)starty, (int)x3, (int)y3);
+					buffer.drawPolygon(points);
+					buffer.fillPolygon(points);
+				}
 			}
 				break;
 		}
@@ -198,7 +210,8 @@ public class GmmlLine extends GmmlGraphics
 		
 	protected Shape getOutline()
 	{
-		BasicStroke stroke = new BasicStroke(10);
+		//TODO: bigger than necessary, just to include the arrowhead / shape at the end
+		BasicStroke stroke = new BasicStroke(20);
 		Shape outline = stroke.createStrokedShape(getLine());
 		return outline;
 	}	

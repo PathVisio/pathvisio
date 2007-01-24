@@ -624,7 +624,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	/**
 	 *{@link Action} to start conversion of a GenMAPP gex to an expression database in
-	 *hsqldb format
+	 * pgex format
 	 */
 	private class ConvertGexAction extends Action
 	{

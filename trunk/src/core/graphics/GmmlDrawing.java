@@ -315,8 +315,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			if (pressedObject instanceof GmmlHandle && altPressed &&
 					((GmmlHandle)pressedObject).parent instanceof GmmlLine)
 			{
+				resetHighlight();
 				Point2D p2d = new Point2D.Double(e.x, e.y);
-				List<GmmlDrawingObject> objects = getObjectsAt (p2d); 
+				List<GmmlDrawingObject> objects = getObjectsAt (p2d);
+				Collections.sort(objects);
 				GmmlHandle g = (GmmlHandle)pressedObject;
 				GmmlLine l = (GmmlLine)g.parent;
 				GmmlDrawingObject x = null;
@@ -324,9 +326,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				{
 					if (o instanceof GmmlGraphicsShape && o != l)
 					{
+						x = o;
 						l.link(g, (GmmlGraphicsShape)o);
 					}
 				}
+				if(x != null) x.highlight();
 				
 			}
 			redrawDirtyRect();
@@ -418,7 +422,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				
 				if(v != null && o instanceof GmmlGraphics) {
 						try {
-							v.drawVisualization((GmmlGraphics) o, e, buffer);
+							v.visualizeDrawing((GmmlGraphics) o, e, buffer);
 						} catch(Exception ex) {
 							GmmlVision.log.error(
 									"Unable to apply visualization " + v + " on " + o, ex);
@@ -872,7 +876,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			
 			GmmlDrawingObject o = getObjectAt(p);
 			if(o != null && o instanceof GmmlGraphics) {
-				Shell tip = v.getToolTip(getShell(), this, (GmmlGraphics)o);
+				Shell tip = v.visualizeToolTip(getShell(), this, (GmmlGraphics)o);
 				if(tip == null) return;
 				Point mp = toDisplay(e.x + 15, e.y + 15);
 				tip.setLocation(mp.x, mp.y);
@@ -894,7 +898,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 
 	private boolean altPressed;
 	private void altPressed() 	{ altPressed = true; 	}
-	private void altReleased() 	{ altPressed = false; 	}
+	private void altReleased() 	{ 
+		resetHighlight();
+		altPressed = false; 	
+	}
 
 	public void keyPressed(KeyEvent e) { 
 		if(e.keyCode == SWT.CTRL) ctrlPressed();

@@ -101,13 +101,15 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 			{
 				if (o.getObjectType() == ObjectType.LINE)
 				{
-					if (o.getStartGraphRef().equals (id))
+					String startRef = o.getStartGraphRef();
+					if (startRef != null && startRef.equals (id))
 					{
 //						o.dontFireEvents(1);
 						o.setStartX(o.getStartX() + dx);
 						o.setStartY(o.getStartY() + dy);
 					}
-					if (o.getEndGraphRef().equals (id))
+					String endRef = o.getEndGraphRef();
+					if (endRef != null && o.getEndGraphRef().equals (id))
 					{
 //						o.dontFireEvents(1);
 						o.setEndX(o.getEndX() + dx);

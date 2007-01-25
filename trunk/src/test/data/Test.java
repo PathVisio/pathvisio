@@ -240,8 +240,8 @@ public class Test extends TestCase implements GmmlListener {
 	 */
 	public void testMapp() throws IOException, ConverterException
 	{
-//		if (System.getProperty("os.name").startsWith("Windows"))
-//		{
+		if (System.getProperty("os.name").startsWith("Windows"))
+		{
 			data.readFromMapp(new File("testData/test.mapp"));
 			assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);
 			File temp = File.createTempFile ("data.test", ".mapp");
@@ -252,7 +252,7 @@ public class Test extends TestCase implements GmmlListener {
 				data.readFromMapp(new File ("testData/test.gpml"));
 				fail ("Loading wrong format, Exception expected");
 			} catch (Exception e) {}
-//		}	
+		}	
 	}
 
 	/**

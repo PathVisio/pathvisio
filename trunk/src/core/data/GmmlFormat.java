@@ -36,8 +36,9 @@ import util.ColorConverter;
  * @author Martijn
  *
  */
-public class GmmlFormat {
-
+public class GmmlFormat 
+{
+	
 	/**
 	 * The GPML xsd implies a certain ordering for children of the pathway element.
 	 * (e.g. GeneProduct always comes before LineShape, etc.)
@@ -302,7 +303,10 @@ public class GmmlFormat {
 	{
     	Element graphics = e.getChild("Graphics");
     	String scol = graphics.getAttributeValue("FillColor");
-    	o.setFillColor (ColorConverter.gmmlString2Color(scol));
+    	if (scol != null) 
+    	{
+    		o.setFillColor (ColorConverter.gmmlString2Color(scol));
+    	}
     	o.setTransparent (scol == null || scol.equals("Transparent"));
     	scol = graphics.getAttributeValue("Color");
     	o.setColor (ColorConverter.gmmlString2Color(scol));

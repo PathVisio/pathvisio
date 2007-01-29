@@ -121,13 +121,9 @@ public class GmmlData
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
 			throw new IllegalArgumentException("Can't add more mappinfo objects");
-		if (o.getObjectType() == ObjectType.INFOBOX)
-		{
-			if (o != infoBox)
-				throw new IllegalArgumentException("Can't add more infobox objects");
-			else
-				return; // trying to re-add, just ignore.
-		}
+		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
+			throw new IllegalArgumentException("Can't add more infobox objects");
+		if (o.getParent() == this) return; // trying to re-add the same object
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
 		o.setParent(this);
@@ -218,14 +214,18 @@ public class GmmlData
 	{
 		String result;
 		Random rn = new Random();
-		int mod = 0x1000; // 3 hex letters
-		
+		int mod = 0x600; // 3 hex letters
+		int min = 0xa00; // has to start with a letter
 		// in case this map is getting big, do more hex letters
-		if (graphIds.size() > 1000) mod = Integer.MAX_VALUE;
+		if (graphIds.size() > 1000) 
+		{
+			mod = 0x60000;
+			min = 0xa0000;
+		}
 				
 		do
 		{
-			result = Integer.toHexString(Math.abs(rn.nextInt()) % mod);
+			result = Integer.toHexString(Math.abs(rn.nextInt()) % mod + min);
 		}
 		while (graphIds.contains(result));
 		
@@ -298,8 +298,8 @@ public class GmmlData
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate
 	 */
-	public static void validateDocument(Document doc) {
-		
+	public static void validateDocument(Document doc) throws ConverterException
+	{	
 		ClassLoader cl = GmmlVisionMain.class.getClassLoader();
 		InputStream is = cl.getResourceAsStream(xsdFile);
 		if(is != null) {	
@@ -317,12 +317,16 @@ public class GmmlData
 						xsdFile.toString() + "'");
 			} catch (SAXException se) {
 				GmmlVision.log.error("Could not parse the xml-schema definition", se);
+				throw new ConverterException (se);
 			} catch (JDOMException je) {
 				GmmlVision.log.error("Document is invalid according to the xml-schema definition!: " + 
 						je.getMessage(), je);
+				throw new ConverterException (je);
 			}
 		} else {
-			GmmlVision.log.info("Document is not validated because the xml schema definition '" + 
+			GmmlVision.log.error("Document is not validated because the xml schema definition '" + 
+					xsdFile + "' could not be found in classpath");
+			throw new ConverterException ("Document is not validated because the xml schema definition '" + 
 					xsdFile + "' could not be found in classpath");
 		}
 	}
@@ -330,6 +334,8 @@ public class GmmlData
 	/**
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved
+	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error, 
+	 * 		or the xsd is not in the classpath, an exception will be thrown. 
 	 */
 	public void writeToXml(File file, boolean validate) throws ConverterException 
 	{

@@ -265,6 +265,8 @@ public class Test extends TestCase implements GmmlListener {
 
 		mi = data.getMappInfo();
 		assertEquals (mi.getObjectType(), ObjectType.MAPPINFO); 
+		assertTrue (data.getDataObjects().contains(mi));
+		assertNotNull (mi);
 
 		try
 		{
@@ -282,6 +284,66 @@ public class Test extends TestCase implements GmmlListener {
 		}
 		catch (IllegalArgumentException e) {}
 	}
+
+	/**
+	 * Test that there is one and only one MAPPINFO object
+	 *
+	 */
+	public void testInfoBox()
+	{
+		GmmlDataObject ib;
+
+		ib = data.getInfoBox();
+		assertTrue (data.getDataObjects().contains(ib));
+		assertNotNull (ib);
+		assertEquals (ib.getObjectType(), ObjectType.INFOBOX); 
+
+		try
+		{
+			ib = new GmmlDataObject(ObjectType.INFOBOX);
+			data.add (ib);
+			fail("data should already have a MAPPINFO and shouldn't accept more");
+		}
+		catch (IllegalArgumentException e) {}
+		
+		ib = data.getMappInfo();
+		try
+		{
+			data.remove(ib);
+			fail ("Shouldn't be able to remove mappinfo object!");
+		}
+		catch (IllegalArgumentException e) {}
+	}
+	
+	public void testValidator() throws IOException
+	{
+		File tmp = File.createTempFile("test", ".gpml");
+		o.setMCenterX(50.0);
+		o.setMCenterY(50.0);
+		o.setInitialSize();
+		o.setGraphId(data.getUniqueId());
+		GmmlDataObject o2 = new GmmlDataObject (ObjectType.LINE);
+		o2.setMStartX(10.0);
+		o2.setMStartY(10.0);
+		o2.setInitialSize();
+		data.add(o2);
+		GmmlDataObject o3 = new GmmlDataObject (ObjectType.LABEL);
+		o3.setMCenterX(100.0);
+		o3.setMCenterY(50);
+		o3.setGraphId(data.getUniqueId());
+		data.add(o3);
+		GmmlDataObject mi;
+
+		mi = data.getMappInfo();
+		try
+		{
+			data.writeToXml(tmp, false);
+		} catch (ConverterException e)
+		{
+			e.printStackTrace();
+			fail ("Exception while writing newly created pathway");
+		}
+	}
 	
 	// event listener
 	// receives events generated on objects o and data
@@ -290,4 +352,5 @@ public class Test extends TestCase implements GmmlListener {
 		// store all received events
 		received.add(e);
 	}
+	
 }

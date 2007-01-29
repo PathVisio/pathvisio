@@ -68,6 +68,34 @@ public class MappFormat
 		"Color, Label, Head, Remarks, Image, Links, Notes " +
 		"FROM OBJECTS";
 
+	static final String[] organism_latin_name = {
+		"Mus musculus",
+		"Homo sapiens",
+		"Rattus norvegicus",
+		"Bos taurus",
+		"Caenorhabditis elegans",
+		"Gallus gallus",
+		"Danio rero",
+		"Drosophila melanogaster",
+		"Canis familiaris",
+		"Xenopus tropicalis",
+		"Arabidopsis thaliana"				
+	};
+
+	static final String[] organism_short_code = {
+		"Mm_", 
+		"Hs_", 
+		"Rn_", 
+		"Bt_", 
+		"Ce_", 
+		"Gg_", 
+		"Dr_", 
+		"Dm_", 
+		"Cf_", 
+		"Xt_", 
+		"At_", 				
+	};
+
     private static String database_after = ";DriverID=22;READONLY=true";
     private static String database_before =
             "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
@@ -171,7 +199,7 @@ public class MappFormat
 		        String[] row = new String[cCol];
 		        for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
 		        
-		        copyMappInfo(row, data);
+		        copyMappInfo(row, data, filename);
 	    	}    
 	
 		    GmmlVision.log.trace ("READING OBJECTS TABLE");
@@ -315,7 +343,7 @@ public class MappFormat
 	
 	// This method copies the Info table of the genmapp mapp to a new gpml
 	// pathway
-	public static void copyMappInfo(String[] row, GmmlData data)
+	public static void copyMappInfo(String[] row, GmmlData data, String filename)
 	{
 
 		/* Data is lost when converting from GenMAPP to GPML:
@@ -352,7 +380,14 @@ public class MappFormat
 		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]) / GmmlData.OLD_GMMLZOOM);
 		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]) / GmmlData.OLD_GMMLZOOM);
 		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]) / GmmlData.OLD_GMMLZOOM);
-		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.OLD_GMMLZOOM);		
+		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.OLD_GMMLZOOM);
+		
+		// guess organism based on first three characters of filename
+		String short_code = new File (filename).getName().substring(0, 3);
+		if (code2organism.containsKey(short_code))
+		{		
+			o.setOrganism(code2organism.get(short_code));
+		}
 	}
        
 	private static String mapBetween (String[] from, String[] to, String value) throws ConverterException
@@ -962,6 +997,18 @@ public class MappFormat
 		return sn2c;
 	}
 
+	/**
+	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
+	 */
+	private static final HashMap<String,String> code2organism = initOrganism2code();
+
+	private static HashMap<String, String> initOrganism2code()
+	{
+		HashMap<String, String> result = new HashMap<String,String>();
+		for(int i = 0; i < organism_latin_name.length; i++)
+			result.put(organism_short_code[i], organism_latin_name[i]);
+		return result;
+	}
 	//System names converted to arraylist for easy index lookup
 	public final static List<String> lDataSources = Arrays.asList(dataSources);
     

@@ -40,8 +40,8 @@ use converter;
 #################
 
 my $dirMapps = "c:/GenMAPP 2 Data/MAPPs";
-my $dirGpml = "c:/Gmml-Visio Data/MAPPs";
-my $fnConf = "d:/prg/convert_test.conf";
+my $dirGpml = "c:/PathVisio Data/MAPPs";
+my $fnConf = "c:/convert_test.conf";
 
 #################
 #   globals     #

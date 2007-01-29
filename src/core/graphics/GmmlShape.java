@@ -73,10 +73,10 @@ public class GmmlShape extends GmmlGraphicsShape
 		Transform tr = new Transform(e.display);
 		rotateGC(buffer, tr);
 		
-		int startX = (int)gdata.getLeft();
-		int startY = (int)gdata.getTop();
-		int width = (int)gdata.getWidth();
-		int height = (int)gdata.getHeight();
+		int vStartX = getVLeft();
+		int vStartY = getVTop();
+		int vWidth = getVWidth();
+		int vHeight = getVHeight();
 		
 		switch (gdata.getShapeType())
 		{
@@ -84,17 +84,17 @@ public class GmmlShape extends GmmlGraphicsShape
 				buffer.setLineWidth (1);
 				if (!gdata.isTransparent())
 					buffer.fillRectangle (
-						startX,	startY,	width, height);
+						vStartX,	vStartY,	vWidth, vHeight);
 				buffer.drawRectangle (
-					startX,	startY,	width, height);				
+					vStartX,	vStartY,	vWidth, vHeight);				
 				break;
 			case ShapeType.OVAL:				
 				buffer.setLineWidth (1);
 				if (!gdata.isTransparent())
 					buffer.fillOval (
-						startX, startY,	width, height);
+						vStartX, vStartY,	vWidth, vHeight);
 				buffer.drawOval (
-					startX, startY,	width, height);
+					vStartX, vStartY,	vWidth, vHeight);
 				break;
 			case ShapeType.ARC:
 				buffer.setLineWidth (1);
@@ -108,7 +108,7 @@ public class GmmlShape extends GmmlGraphicsShape
 //					buffer.fillArc(
 //							startX, startY,	width, height, 0, 180);					
 				buffer.drawArc(
-						startX, startY,	width, height, 0, -180);
+						vStartX, vStartY,	vWidth, vHeight, 0, -180);
 				break;
 		}
 

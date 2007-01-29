@@ -15,23 +15,6 @@
 // limitations under the License.
 //
 package graphics;
-/*
-Copyright 2005 H.C. Achterberg, R.M.H. Besseling, I.Kaashoek, 
-M.M.Palm, E.D Pelgrim, BiGCaT (http://www.BiGCaT.unimaas.nl/)
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software 
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and 
-limitations under the License.
-*/
-
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -64,18 +47,18 @@ public class GmmlLabel extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	
-	public static final int INITIAL_FONTSIZE = 10;
-	public static final int INITIAL_WIDTH = 80;
-	public static final int INITIAL_HEIGHT = 20;
+	public static final int M_INITIAL_FONTSIZE = 10;
+	public static final int M_INITIAL_WIDTH = 80;
+	public static final int M_INITIAL_HEIGHT = 20;
 		
 	double getFontSize()
 	{
-		return gdata.getFontSize() * canvas.getZoomFactor();
+		return gdata.getMFontSize() * canvas.getZoomFactor();
 	}
 	
 	void setFontSize(double v)
 	{
-		gdata.setFontSize(v / canvas.getZoomFactor());
+		gdata.setMFontSize(v / canvas.getZoomFactor());
 	}
 				
 	/**
@@ -99,17 +82,17 @@ public class GmmlLabel extends GmmlGraphicsShape
 		
 		prevText = getLabelText();
 		
-		Point ts = computeTextSize();
+		Point mts = mComputeTextSize();
 		
 		//Keep center location
-		double nWidth = ts.x + 10 * getDrawing().getZoomFactor();
-		double nHeight = ts.y + 10 * getDrawing().getZoomFactor();
+		double mWidth = mts.x;
+		double mHeight = mts.y;
 		
 		listen = false; //Disable listener
-		gdata.setLeft(gdata.getLeft() - (nWidth - gdata.getWidth())/2);
-		gdata.setTop(gdata.getTop() - (nHeight - gdata.getHeight())/2);
-		gdata.setWidth(nWidth);
-		gdata.setHeight(nHeight);
+		gdata.setMLeft(gdata.getMLeft() - (mWidth - gdata.getMWidth())/2);
+		gdata.setMTop(gdata.getMTop() - (mHeight - gdata.getMHeight())/2);
+		gdata.setMWidth(mWidth);
+		gdata.setMHeight(mHeight);
 		listen = true; //Enable listener
 		
 		setHandleLocation();
@@ -123,7 +106,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		
 		Composite textComposite = new Composite(canvas, SWT.NONE);
 		textComposite.setLayout(new GridLayout());
-		textComposite.setLocation(getCenterX(), getCenterY() - 10);
+		textComposite.setLocation(getVCenterX(), getVCenterY() - 10);
 		textComposite.setBackground(background);
 		
 		Label label = new Label(textComposite, SWT.CENTER);
@@ -150,11 +133,11 @@ public class GmmlLabel extends GmmlGraphicsShape
 		textComposite.pack();
 	}
 	
-	Point computeTextSize() {
+	Point mComputeTextSize() {
 		GC gc = new GC(canvas.getDisplay());
 		Font f = new Font(canvas.getDisplay(), 
 				gdata.getFontName(), 
-				(int)gdata.getFontSize(), getFontStyle());
+				(int)gdata.getMFontSize(), getFontStyle());
 		gc.setFont (f);
 		Point ts = gc.textExtent(gdata.getLabelText());
 		f.dispose();
@@ -170,13 +153,10 @@ public class GmmlLabel extends GmmlGraphicsShape
 		c.setVisible(false);
 		c.dispose();
 	}
-	
-	protected void adjustToZoom(double factor)
+		
+	double getVFontSize()
 	{
-		listen = false;
-		super.adjustToZoom(factor);
-		gdata.setFontSize(gdata.getFontSize() * factor);
-		listen = true;		
+		return vFromM(gdata.getMFontSize());
 	}
 
 	private int getFontStyle() {
@@ -198,7 +178,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 	{
 		int style = getFontStyle();
 		
-		Font f = new Font(e.display, gdata.getFontName(), (int)gdata.getFontSize(), style);
+		Font f = new Font(e.display, gdata.getFontName(), (int)getVFontSize(), style);
 		
 		buffer.setFont (f);
 		
@@ -221,8 +201,8 @@ public class GmmlLabel extends GmmlGraphicsShape
 		buffer.setForeground (c);
 		
 		buffer.drawString (gdata.getLabelText(), 
-			(int) getCenterX() - (textSize.x / 2) , 
-			(int) getCenterY() - (textSize.y / 2), true);
+			(int) getVCenterX() - (textSize.x / 2) , 
+			(int) getVCenterY() - (textSize.y / 2), true);
 		
 		f.dispose();
 		c.dispose();
@@ -247,27 +227,29 @@ public class GmmlLabel extends GmmlGraphicsShape
 	 * - size of the text
 	 * Because the text can sometimes be larger than the handles
 	 */
-	protected Shape getOutline()
+	protected Shape getVOutline()
 	{
-		int[] x = new int[4];
-		int[] y = new int[4];
+		int[] vx = new int[4];
+		int[] vy = new int[4];
 		
-		int[] p = getHandleLocation(handleNE).asIntArray();
-		x[0] = p[0]; y[0] = p[1];
-		p = getHandleLocation(handleSE).asIntArray();
-		x[1] = p[0]; y[1] = p[1];
-		p = getHandleLocation(handleSW).asIntArray();
-		x[2] = p[0]; y[2] = p[1];
-		p = getHandleLocation(handleNW).asIntArray();
-		x[3] = p[0]; y[3] = p[1];
+		int[] p = getVHandleLocation(handleNE).asIntArray();
+		vx[0] = p[0]; vy[0] = p[1];
+		p = getVHandleLocation(handleSE).asIntArray();
+		vx[1] = p[0]; vy[1] = p[1];
+		p = getVHandleLocation(handleSW).asIntArray();
+		vx[2] = p[0]; vy[2] = p[1];
+		p = getVHandleLocation(handleNW).asIntArray();
+		vx[3] = p[0]; vy[3] = p[1];
 		
-		Polygon pol = new Polygon(x, y, 4);
-		
+		Polygon pol = new Polygon(vx, vy, 4);		
 		Rectangle bounds = pol.getBounds();
 		
-		Point q = computeTextSize();
-		util.LinAlg.Point c = getCenter();
-		bounds.add(new Rectangle2D.Double(c.x - q.x / 2, c.y - q.y / 2, q.x, q.y)); 
+		Point mq = mComputeTextSize();
+		double vqx = vFromM(mq.x);
+		double vqy = vFromM(mq.y);
+		
+		util.LinAlg.Point c = getVCenter();
+		bounds.add(new Rectangle2D.Double(c.x - vqx / 2, c.y - vqy / 2, vqx, vqy)); 
 		
 		return bounds;
 	}

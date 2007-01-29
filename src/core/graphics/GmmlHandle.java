@@ -58,8 +58,8 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	GmmlDrawingObject parent;
 	
-	double centerx;
-	double centery;
+	double mCenterx;
+	double mCentery;
 	
 	double rotation;
 	
@@ -88,20 +88,22 @@ class GmmlHandle extends GmmlDrawingObject
 	
 	public void setDirection(int direction) { this.direction = direction; }
 	
-	public Point2D getCenterPoint()
+	public void setVLocation(double vx, double vy)
 	{
-		Point2D p = new Point2D.Double(centerx, centery);
-		return p;
+		markDirty();
+		mCenterx = mFromV(vx);
+		mCentery = mFromV(vy);
+		markDirty();
 	}
 
-	public void setLocation(double x, double y)
+	public void setMLocation(double mx, double my)
 	{
 		markDirty();
-		centerx = x;
-		centery = y;
+		mCenterx = mx;
+		mCentery = my;
 		markDirty();
 	}
-	
+
 	/**
 	 * returns the visibility of this handle
 	 * @see hide(), show()
@@ -145,6 +147,8 @@ class GmmlHandle extends GmmlDrawingObject
 	public void draw(PaintEvent e, GC buffer)
 	{
 		if (!isVisible) return;
+		double vCenterx = vFromM (mCenterx);
+		double vCentery = vFromM (mCentery);
 		
 		if(direction == DIRECTION_ROT) {
 			buffer.setLineWidth (1);
@@ -152,13 +156,13 @@ class GmmlHandle extends GmmlDrawingObject
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_GREEN));
 			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.fillOval(
-					(int)(centerx - WIDTH/2), 
-					(int)(centery - HEIGHT/2), 
+					(int)(vCenterx - WIDTH/2), 
+					(int)(vCentery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);
 			buffer.drawOval(
-					(int)(centerx - WIDTH/2), 
-					(int)(centery - HEIGHT/2), 
+					(int)(vCenterx - WIDTH/2), 
+					(int)(vCentery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);
 		} else {			
@@ -167,13 +171,13 @@ class GmmlHandle extends GmmlDrawingObject
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_YELLOW));
 			buffer.setForeground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.fillRectangle (
-					(int)(centerx - WIDTH/2), 
-					(int)(centery - HEIGHT/2), 
+					(int)(vCenterx - WIDTH/2), 
+					(int)(vCentery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);	
 			buffer.drawRectangle (
-					(int)(centerx - WIDTH/2), 
-					(int)(centery - HEIGHT/2), 
+					(int)(vCenterx - WIDTH/2), 
+					(int)(vCentery - HEIGHT/2), 
 					(int)WIDTH, 
 					(int)HEIGHT);	
 		}
@@ -189,7 +193,7 @@ class GmmlHandle extends GmmlDrawingObject
 	 * Moves this handle by the specified increments and
 	 * adjusts the {@link GmmlDrawingObject} to the new position
 	 */
-	public void moveBy(double dx, double dy)
+	public void vMoveBy(double vdx, double vdy)
 	{	
 		markDirty();
 
@@ -203,37 +207,36 @@ class GmmlHandle extends GmmlDrawingObject
 				v = new Point(0,1);
 			}
 			else if (direction == DIRECTION_XY) {
-				Rectangle b = parent.getBounds();
+				Rectangle b = parent.getVBounds();
 				v = new Point(b.width + 1, b.height + 1);
 			}
 			else if (direction == DIRECTION_MINXY) {
 				xtraRot = Math.PI/2;
-				Rectangle b = parent.getBounds();
+				Rectangle b = parent.getVBounds();
 				v = new Point(b.height + 1, b.width + 1);
 			}
 			Point yr = LinAlg.rotate(v, -rotation + xtraRot);
-			Point prj = LinAlg.project(new Point(dx, dy), yr);
-			dx = prj.x; dy= prj.y;
+			Point prj = LinAlg.project(new Point(vdx, vdy), yr);
+			vdx = prj.x; vdy= prj.y;
 		}
 		
-		centerx += dx;
-		centery += dy;
+		mCenterx += mFromV(vdx);
+		mCentery += mFromV(vdy);
 		
 		parent.adjustToHandle(this);
 		markDirty();
 	}
 			
-	public Shape getOutline() {
-		return new Rectangle2D.Double(centerx - WIDTH/2, centery - HEIGHT/2, WIDTH, HEIGHT);
+	public Shape getVOutline() {
+		return new Rectangle2D.Double(vFromM(mCenterx) - WIDTH/2, vFromM(mCentery) - HEIGHT/2, 
+				WIDTH, HEIGHT);
 	}
 		
 	public String toString() { 
 		return 	"Handle with parent: " + parent.toString() +
 		" and direction " + direction; 
 	}
-	
-	public void adjustToZoom(double factor) { }
-		
+			
 } // end of class
 
 

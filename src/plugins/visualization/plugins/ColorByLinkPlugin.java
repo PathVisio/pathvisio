@@ -82,8 +82,9 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		GmmlDataObject gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
-				(int)gd.getStartX() - refMarkRadius/2, 
-				(int)gd.getStartY() - refMarkRadius/2,
+				// TODO: this should be in visual coords
+				(int)gd.getMStartX() - refMarkRadius/2, 
+				(int)gd.getMStartY() - refMarkRadius/2,
 				e, buffer);
 	}
 	
@@ -91,8 +92,9 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		GmmlDataObject gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
-				(int)gd.getEndX() - refMarkRadius/2, 
-				(int)gd.getEndY() - refMarkRadius/2,
+				// TODO: this should be in visual coords
+				(int)gd.getMEndX() - refMarkRadius/2, 
+				(int)gd.getMEndY() - refMarkRadius/2,
 				e, buffer);
 	}
 	

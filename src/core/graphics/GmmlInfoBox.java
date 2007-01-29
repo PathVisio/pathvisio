@@ -32,8 +32,7 @@ public class GmmlInfoBox extends GmmlGraphics {
 	//Elements not stored in gpml
 	String fontName			= "Times New Roman";
 	String fontWeight		= "regular";
-	int fontSize			= 10;
-	double fontSizeDouble = fontSize;
+	static final double M_INITIAL_FONTSIZE	= 10.0;
 	
 	int sizeX = 1;
 	int sizeY = 1; //Real size is calculated on first call to draw()
@@ -44,17 +43,14 @@ public class GmmlInfoBox extends GmmlGraphics {
 		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;		
 	}
 	
-	public Point getBoardSize() { return new Point((int)gdata.getBoardWidth(), (int)gdata.getBoardHeight()); }
+	public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }
 	
-	public void adjustToZoom(double factor) 
+	int getVFontSize()
 	{
-		gdata.setMapInfoLeft((int)(gdata.getMapInfoLeft() * factor));
-		gdata.setMapInfoTop((int)(gdata.getMapInfoTop() * factor));
-		fontSizeDouble *= factor;
-		fontSize = (int)this.fontSizeDouble;
+		return (int)(vFromM(M_INITIAL_FONTSIZE));
 	}
 			
-	protected void moveBy(double dx, double dy)
+	protected void vMoveBy(double dx, double dy)
 	{
 		markDirty();
 		gdata.setMapInfoTop (gdata.getMapInfoTop()  + (int)dy);
@@ -71,8 +67,8 @@ public class GmmlInfoBox extends GmmlGraphics {
 	{		
 		sizeX = 1; //Reset sizeX
 		
-		Font fBold = new Font(e.display, fontName, fontSize, SWT.BOLD);
-		Font fNormal = new Font(e.display, fontName, fontSize, SWT.NONE);
+		Font fBold = new Font(e.display, fontName, getVFontSize(), SWT.BOLD);
+		Font fNormal = new Font(e.display, fontName, getVFontSize(), SWT.NONE);
 		
 		if (isSelected())
 		{
@@ -113,7 +109,7 @@ public class GmmlInfoBox extends GmmlGraphics {
 		fNormal.dispose();
 	}
 
-	protected Shape getOutline() {
+	protected Shape getVOutline() {
 		return new Rectangle(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
 	}
 

@@ -221,7 +221,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		
 		e.gc.setFont(e.display.getSystemFont());
 		int tw = 0;
-		for(GmmlGeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getName()).x);
+		for(GmmlGeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getGmmlData().getGeneProductName()).x);
 		tw += e.gc.getFontMetrics().getHeight();
 		
 		//Draw sample labels (vertical)
@@ -253,7 +253,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		for(int i = 0; i < nr; i++) {
 			int y = area.y + i*h;
 			e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
-			e.gc.drawText(gps[i].getName(), area.x, y + h / 2 - e.gc.getFontMetrics().getHeight() / 2);
+			e.gc.drawText(gps[i].getGmmlData().getGeneProductName(), area.x, y + h / 2 - e.gc.getFontMetrics().getHeight() / 2);
 			Rectangle r = new Rectangle(area.x + tw, y, area.width - tw, h - SIDEPANEL_SPACING);
 			drawArea(gps[i], r, e, e.gc);
 		}

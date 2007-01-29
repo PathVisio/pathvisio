@@ -37,7 +37,9 @@ import data.ObjectType;
  * (rotated) rectangle around the shape and a rotation handle
  */
 public abstract class GmmlGraphicsShape extends GmmlGraphics {
-	
+
+	private static final double M_ROTATION_HANDLE_POSITION = 20.0;
+
 	//Side handles
 	GmmlHandle handleN;
 	GmmlHandle handleE;
@@ -72,24 +74,12 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 				{ handleNW, 	handleNE },
 				{ handleSW, 	handleSE }};
 	}
-		
-	/**
-	 * Get the x-coordinate of the center point of this object
-	 * @return the center x-coordinate as integer
-	 */
-	protected int getCenterX() { return (int)gdata.getCenterX(); }
-
-	/**
-	 * Get the y-coordinate of the center point of this object
-	 * @return the center y-coordinate as integer
-	 */
-	protected int getCenterY() { return (int)gdata.getCenterY(); }
 	
-	public void moveBy(double dx, double dy)
+	public void vMoveBy(double vdx, double vdy)
 	{
 //		gdata.dontFireEvents(1);
-		gdata.setLeft(gdata.getLeft() + dx); 
-		gdata.setTop(gdata.getTop() + dy);
+		gdata.setMLeft(gdata.getMLeft() + mFromV(vdx)); 
+		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
 		
 		if(gdata.getParent() == null) return; //NOTE: Quick fix for GmmlSelectionBox -> shouldn't extend GmmlGraphics
 		String id = gdata.getGraphId();
@@ -105,43 +95,41 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 					if (startRef != null && startRef.equals (id))
 					{
 //						o.dontFireEvents(1);
-						o.setStartX(o.getStartX() + dx);
-						o.setStartY(o.getStartY() + dy);
+						o.setMStartX(o.getMStartX() + mFromV(vdx));
+						o.setMStartY(o.getMStartY() + mFromV(vdy));
 					}
 					String endRef = o.getEndGraphRef();
 					if (endRef != null && o.getEndGraphRef().equals (id))
 					{
 //						o.dontFireEvents(1);
-						o.setEndX(o.getEndX() + dx);
-						o.setEndY(o.getEndY() + dy);
+						o.setMEndX(o.getMEndX() + mFromV(vdx));
+						o.setMEndY(o.getMEndY() + mFromV(vdy));
 					}
 				}
 			}
 		}
 	}
 	
-	private void setShape(double left, double top, double width, double height) {
-//		gdata.dontFireEvents(3);
-		gdata.setWidth(width);
-		gdata.setHeight(height);
-		gdata.setLeft(left);
-		gdata.setTop(top);
-	}
-	
-	public void setScaleRectangle(Rectangle2D.Double r) {
-		setShape(r.x, r.y, r.width, r.height);
-	}
-
-	protected void adjustToZoom(double factor)
+	/**
+	 * Adjust model to changes in the shape, 
+	 * and at the same time calculates the new position 
+	 * in gpml coordinates (so without zoom factor)
+	 */
+	private void setVShape(double vleft, double vtop, double vwidth, double vheight) 
 	{
-		setShape(gdata.getLeft() * factor, 
-				gdata.getTop() * factor, 
-				gdata.getWidth() * factor, 
-				gdata.getHeight() * factor);
+//		gdata.dontFireEvents(3);
+		gdata.setMWidth(mFromV(vwidth));
+		gdata.setMHeight(mFromV(vheight));
+		gdata.setMLeft(mFromV(vleft));
+		gdata.setMTop(mFromV(vtop));
 	}
 	
-	protected Rectangle2D.Double getScaleRectangle() {
-		return new Rectangle2D.Double(gdata.getLeft(), gdata.getTop(), gdata.getWidth(), gdata.getHeight());
+	public void setVScaleRectangle(Rectangle2D.Double r) {
+		setVShape(r.x, r.y, r.width, r.height);
+	}
+	
+	protected Rectangle2D.Double getVScaleRectangle() {
+		return new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
 	}
 	
 	public GmmlHandle[] getHandles()
@@ -173,80 +161,103 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * (origin in center and axis direction rotated with this objects rotation
 	 * @param Point p
 	 */
-	private Point toInternal(Point p) {
-		Point pt = relativeToCenter(p);
+	private Point mToInternal(Point p) {
+		Point pt = mRelativeToCenter(p);
 		Point pr = LinAlg.rotate(pt, gdata.getRotation());
 		return pr;
 	}
-	
+
 	/**
 	 * Translate the given point to external coordinate system (of the
 	 * drawing canvas)
 	 * @param Point p
 	 */
-	private Point toExternal(Point p) {
+	private Point mToExternal(Point p) {
 		Point pr = LinAlg.rotate(p, -gdata.getRotation());
-		Point pt = relativeToCanvas(pr);
+		Point pt = mRelativeToCanvas(pr);
 		return pt;
 	}
-	
+
 	/**
-	 * Translate the given co�rdinates to external coordinate system (of the
+	 * Translate the given coordinates to external coordinate system (of the
 	 * drawing canvas)
 	 * @param x
 	 * @param y
 	 */
-	private Point toExternal(double x, double y) {
-		return toExternal(new Point(x, y));
+	private Point mToExternal(double x, double y) {
+		return mToExternal(new Point(x, y));
 	}
-				
+
 	/**
 	 * Get the coordinates of the given point relative
 	 * to this object's center
 	 * @param p
 	 */
-	private Point relativeToCenter(Point p) {
-		return p.subtract(getCenter());
+	private Point mRelativeToCenter(Point p) {
+		return p.subtract(getMCenter());
 	}
-	
+
 	/**
 	 * Get the coordinates of the given point relative
 	 * to the canvas' origin
 	 * @param p
 	 */
-	private Point relativeToCanvas(Point p) {
-		return p.add(getCenter());
+	private Point vRelativeToCanvas(Point p) {
+		return p.add(getVCenter());
 	}
-	
+
+	private Point mRelativeToCanvas(Point p) {
+		return p.add(getMCenter());
+	}
+
 	/**
 	 * Get the center point of this object
 	 */
-	public Point getCenter() {
-		return new Point(gdata.getCenterX(), gdata.getCenterY());
+	public Point getVCenter() {
+		return new Point(getVCenterX(), getVCenterY());
 	}
-	
+
+	/**
+	 * Get the center point of this object
+	 */
+	public Point getMCenter() {
+		return new Point(gdata.getMCenterX(), gdata.getMCenterY());
+	}
+
 	/**
 	 * Set the center point of this object
 	 * @param cn
 	 */
-	public void setCenter(Point cn) {
+	public void setMCenter(Point mcn) {
 //		gdata.dontFireEvents(1);
-		gdata.setCenterX(cn.x);
-		gdata.setCenterY(cn.y);
+		gdata.setMCenterX(mcn.x);
+		gdata.setMCenterY(mcn.y);
 	}
-	
+
+	public void setVCenter(Point vcn) {
+//		gdata.dontFireEvents(1);
+		gdata.setMCenterX(mFromV(vcn.x));
+		gdata.setMCenterY(mFromV(vcn.y));
+	}
+
 	/**
 	 * Calculate a new center point given the new width and height, in a
 	 * way that the center moves over the rotated axis of this object
-	 * @param newWidth
-	 * @param newHeight
+	 * @param mWidthNew
+	 * @param mHeightNew
 	 */
-	public Point calcNewCenter(double newWidth, double newHeight) {
-		Point cn = new Point((newWidth - gdata.getWidth())/2, (newHeight - gdata.getHeight())/2);
-		Point cr = LinAlg.rotate(cn, -gdata.getRotation());
-		return relativeToCanvas(cr);
+	public Point mCalcNewCenter(double mWidthNew, double mHeightNew) {
+		Point mcn = new Point((mWidthNew - gdata.getMWidth())/2, (mHeightNew - gdata.getMHeight())/2);
+		Point mcr = LinAlg.rotate(mcn, -gdata.getRotation());
+		return mRelativeToCanvas(mcr);
 	}
-	
+
+	public Point vCalcNewCenter(double vWidthNew, double vHeightNew) {
+		Point vcn = new Point((vWidthNew - getVWidth())/2, (vHeightNew - getVHeight())/2);
+		Point vcr = LinAlg.rotate(vcn, -gdata.getRotation());
+		return vRelativeToCanvas(vcr);
+	}
+
 	/**
 	 * Set the rotation of this object
 	 * @param angle angle of rotation in radians
@@ -264,14 +275,14 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 */
 	protected void rotateGC(GC gc, Transform tr) {		
 		SwtUtils.rotateGC(gc, tr, (float)Math.toDegrees(gdata.getRotation()), 
-				getCenterX(), getCenterY());
+				getVCenterX(), getVCenterY());
 	}
 	
 	public void adjustToHandle(GmmlHandle h) {
 		//Rotation
 		if 	(h == handleR) {
-			Point def = relativeToCenter(getHandleLocation(h));
-			Point cur = relativeToCenter(new Point(h.centerx, h.centery));
+			Point def = mRelativeToCenter(getMHandleLocation(h));
+			Point cur = mRelativeToCenter(new Point(h.mCenterx, h.mCentery));
 			
 			setRotation(gdata.getRotation() + LinAlg.angle(def, cur));
 			
@@ -279,41 +290,41 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		}
 					
 		// Transformation
-		Point hi = toInternal(new Point(h.centerx, h.centery));
+		Point mih = mToInternal(new Point(h.mCenterx, h.mCentery));
 		
-		double dx = 0;
-		double dy = 0;
-		double dw = 0;
-		double dh = 0;
+		double mdx = 0;
+		double mdy = 0;
+		double mdw = 0;
+		double mdh = 0;
 			
 		if	(h == handleN || h == handleNE || h == handleNW) {
-			dy = -(hi.y + gdata.getHeight()/2);
-			dh = -dy;
+			mdy = -(mih.y + gdata.getMHeight()/2);
+			mdh = -mdy;
 		}
 		if	(h == handleS || h == handleSE || h == handleSW ) {
-			dy = hi.y - gdata.getHeight()/2;
-			dh = dy;
+			mdy = mih.y - gdata.getMHeight()/2;
+			mdh = mdy;
 		}
 		if	(h == handleE || h == handleNE || h == handleSE) {
-			dx = hi.x - gdata.getWidth()/2;
-			dw = dx;
+			mdx = mih.x - gdata.getMWidth()/2;
+			mdw = mdx;
 		}
 		if	(h == handleW || h == handleNW || h== handleSW) {
-			dx = -(hi.x + gdata.getWidth()/2);
-			dw = -dx;
+			mdx = -(mih.x + gdata.getMWidth()/2);
+			mdw = -mdx;
 		};
 		
-		Point nc = calcNewCenter(gdata.getWidth() + dw, gdata.getHeight() + dh);
+		Point mnc = mCalcNewCenter(gdata.getMWidth() + mdw, gdata.getMHeight() + mdh);
 //		gdata.dontFireEvents(1);
-		gdata.setHeight(gdata.getHeight() + dy);
-		gdata.setWidth(gdata.getWidth() + dx);
-		setCenter(nc);		
+		gdata.setMHeight(gdata.getMHeight() + mdy);
+		gdata.setMWidth(gdata.getMWidth() + mdx);
+		setMCenter(mnc);		
 	
 		//In case object had zero width, switch handles
-		if(gdata.getWidth() < 0) {
+		if(gdata.getMWidth() < 0) {
 			negativeWidth(h);
 		}
-		if(gdata.getHeight() < 0) {
+		if(gdata.getMHeight() < 0) {
 			negativeHeight(h);
 		}
 	}
@@ -329,11 +340,11 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		} else {
 			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
 		}
-		double w = -gdata.getWidth();
-		double sx = gdata.getLeft() - w;
+		double mw = -gdata.getMWidth();
+		double msx = gdata.getMLeft() - mw;
 //		gdata.dontFireEvents(1);
-		gdata.setWidth (w);
-		gdata.setLeft(sx);
+		gdata.setMWidth (mw);
+		gdata.setMLeft(msx);
 		canvas.setPressedObject(h);
 	}
 	
@@ -348,11 +359,11 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		} else {
 			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
 		}
-		double ht = -gdata.getHeight();
-		double sy = gdata.getTop() - ht;
+		double ht = -gdata.getMHeight();
+		double sy = gdata.getMTop() - ht;
 //		gdata.dontFireEvents(1);
-		gdata.setHeight(ht);
-		gdata.setTop(sy);
+		gdata.setMHeight(ht);
+		gdata.setMTop(sy);
 		canvas.setPressedObject(h);
 	}
 	
@@ -363,26 +374,26 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	private void setHandleLocation(GmmlHandle ignore)
 	{
 		Point p;
-		p = getHandleLocation(handleN);
-		if(ignore != handleN) handleN.setLocation(p.x, p.y);
-		p = getHandleLocation(handleE);
-		if(ignore != handleE) handleE.setLocation(p.x, p.y);
-		p = getHandleLocation(handleS);
-		if(ignore != handleS) handleS.setLocation(p.x, p.y);
-		p = getHandleLocation(handleW);
-		if(ignore != handleW) handleW.setLocation(p.x, p.y);
+		p = getMHandleLocation(handleN);
+		if(ignore != handleN) handleN.setMLocation(p.x, p.y);
+		p = getMHandleLocation(handleE);
+		if(ignore != handleE) handleE.setMLocation(p.x, p.y);
+		p = getMHandleLocation(handleS);
+		if(ignore != handleS) handleS.setMLocation(p.x, p.y);
+		p = getMHandleLocation(handleW);
+		if(ignore != handleW) handleW.setMLocation(p.x, p.y);
 		
-		p = getHandleLocation(handleNE);
-		if(ignore != handleNE) handleNE.setLocation(p.x, p.y);
-		p = getHandleLocation(handleSE);
-		if(ignore != handleSE) handleSE.setLocation(p.x, p.y);
-		p = getHandleLocation(handleSW);
-		if(ignore != handleSW) handleSW.setLocation(p.x, p.y);
-		p = getHandleLocation(handleNW);
-		if(ignore != handleNW) handleNW.setLocation(p.x, p.y);
+		p = getMHandleLocation(handleNE);
+		if(ignore != handleNE) handleNE.setMLocation(p.x, p.y);
+		p = getMHandleLocation(handleSE);
+		if(ignore != handleSE) handleSE.setMLocation(p.x, p.y);
+		p = getMHandleLocation(handleSW);
+		if(ignore != handleSW) handleSW.setMLocation(p.x, p.y);
+		p = getMHandleLocation(handleNW);
+		if(ignore != handleNW) handleNW.setMLocation(p.x, p.y);
 
-		p = getHandleLocation(handleR);
-		if(ignore != handleR) handleR.setLocation(p.x, p.y);
+		p = getMHandleLocation(handleR);
+		if(ignore != handleR) handleR.setMLocation(p.x, p.y);
 		
 		for(GmmlHandle h : getHandles()) h.rotation = gdata.getRotation();
 	}
@@ -400,18 +411,26 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * (in co�rdinates relative to the canvas)
 	 * @param h
 	 */
-	protected Point getHandleLocation(GmmlHandle h) {
-		if(h == handleN) return toExternal(0, -gdata.getHeight()/2);
-		if(h == handleE) return toExternal(gdata.getWidth()/2, 0);
-		if(h == handleS) return toExternal(0,  gdata.getHeight()/2);
-		if(h == handleW) return toExternal(-gdata.getWidth()/2, 0);
-		
-		if(h == handleNE) return toExternal(gdata.getWidth()/2, -gdata.getHeight()/2);
-		if(h == handleSE) return toExternal(gdata.getWidth()/2, gdata.getHeight()/2);
-		if(h == handleSW) return toExternal(-gdata.getWidth()/2, gdata.getHeight()/2);
-		if(h == handleNW) return toExternal(-gdata.getWidth()/2, -gdata.getHeight()/2);
+	protected Point getVHandleLocation(GmmlHandle h) 
+	{
+		Point mp = getMHandleLocation (h);
+		if (mp != null)			
+			return new Point (vFromM(mp.x), vFromM(mp.y));
+		else return null;
+	}
 
-		if(h == handleR) return toExternal(gdata.getWidth()/2 + (30*getDrawing().getZoomFactor()), 0);
+	protected Point getMHandleLocation(GmmlHandle h) {
+		if(h == handleN) return mToExternal(0, -gdata.getMHeight()/2);
+		if(h == handleE) return mToExternal(gdata.getMWidth()/2, 0);
+		if(h == handleS) return mToExternal(0,  gdata.getMHeight()/2);
+		if(h == handleW) return mToExternal(-gdata.getMWidth()/2, 0);
+		
+		if(h == handleNE) return mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
+		if(h == handleSE) return mToExternal(gdata.getMWidth()/2, gdata.getMHeight()/2);
+		if(h == handleSW) return mToExternal(-gdata.getMWidth()/2, gdata.getMHeight()/2);
+		if(h == handleNW) return mToExternal(-gdata.getMWidth()/2, -gdata.getMHeight()/2);
+
+		if(h == handleR) return mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
 		return null;
 	}
 	
@@ -459,18 +478,18 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	/**
 	 * Creates a shape of the outline of this object
 	 */
-	protected Shape getOutline()
+	protected Shape getVOutline()
 	{
 		int[] x = new int[4];
 		int[] y = new int[4];
 		
-		int[] p = getHandleLocation(handleNE).asIntArray();
+		int[] p = getVHandleLocation(handleNE).asIntArray();
 		x[0] = p[0]; y[0] = p[1];
-		p = getHandleLocation(handleSE).asIntArray();
+		p = getVHandleLocation(handleSE).asIntArray();
 		x[1] = p[0]; y[1] = p[1];
-		p = getHandleLocation(handleSW).asIntArray();
+		p = getVHandleLocation(handleSW).asIntArray();
 		x[2] = p[0]; y[2] = p[1];
-		p = getHandleLocation(handleNW).asIntArray();
+		p = getVHandleLocation(handleNW).asIntArray();
 		x[3] = p[0]; y[3] = p[1];
 		
 		Polygon pol = new Polygon(x, y, 4);
@@ -481,4 +500,5 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		markDirty(); // mark everything dirty
 		setHandleLocation();
 	}
+	
 }

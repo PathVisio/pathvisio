@@ -118,10 +118,10 @@ public class GmmlFormat {
 				Element graphics = new Element("Graphics");
 				root.addContent(graphics);
 				
-				graphics.setAttribute("BoardWidth", "" + o.getBoardWidth()* GmmlData.GMMLZOOM);
-				graphics.setAttribute("BoardHeight", "" + o.getBoardHeight()* GmmlData.GMMLZOOM);
-				graphics.setAttribute("WindowWidth", "" + o.getWindowWidth()* GmmlData.GMMLZOOM);
-				graphics.setAttribute("WindowHeight", "" + o.getWindowHeight()* GmmlData.GMMLZOOM);
+				graphics.setAttribute("BoardWidth", "" + o.getMBoardWidth()* GmmlData.OLD_GMMLZOOM);
+				graphics.setAttribute("BoardHeight", "" + o.getMBoardHeight()* GmmlData.OLD_GMMLZOOM);
+				graphics.setAttribute("WindowWidth", "" + o.getWindowWidth()* GmmlData.OLD_GMMLZOOM);
+				graphics.setAttribute("WindowHeight", "" + o.getWindowHeight()* GmmlData.OLD_GMMLZOOM);
 				
 			}
 			else
@@ -243,15 +243,15 @@ public class GmmlFormat {
     	Element p1 = (Element)graphics.getChildren().get(0);
     	Element p2 = (Element)graphics.getChildren().get(1);
     	
-    	o.setStartX (Double.parseDouble(p1.getAttributeValue("x")) / GmmlData.GMMLZOOM);
-    	o.setStartY (Double.parseDouble(p1.getAttributeValue("y")) / GmmlData.GMMLZOOM);
+    	o.setMStartX (Double.parseDouble(p1.getAttributeValue("x")) / GmmlData.OLD_GMMLZOOM);
+    	o.setMStartY (Double.parseDouble(p1.getAttributeValue("y")) / GmmlData.OLD_GMMLZOOM);
     	
     	String ref1 = p1.getAttributeValue("GraphRef");
     	if (ref1 == null) ref1 = "";
     	o.setStartGraphRef (ref1);
 
-    	o.setEndX (Double.parseDouble(p2.getAttributeValue("x")) / GmmlData.GMMLZOOM);
-    	o.setEndY (Double.parseDouble(p2.getAttributeValue("y")) / GmmlData.GMMLZOOM); 
+    	o.setMEndX (Double.parseDouble(p2.getAttributeValue("x")) / GmmlData.OLD_GMMLZOOM);
+    	o.setMEndY (Double.parseDouble(p2.getAttributeValue("y")) / GmmlData.OLD_GMMLZOOM); 
     	
     	String ref2 = p2.getAttributeValue("GraphRef");
     	if (ref2 == null) ref2 = "";
@@ -273,16 +273,16 @@ public class GmmlFormat {
 			Element jdomGraphics = e.getChild("Graphics");
 			Element p1 = new Element("Point");
 			jdomGraphics.addContent(p1);
-			p1.setAttribute("x", Double.toString(o.getStartX() * GmmlData.GMMLZOOM));
-			p1.setAttribute("y", Double.toString(o.getStartY() * GmmlData.GMMLZOOM));
+			p1.setAttribute("x", Double.toString(o.getMStartX() * GmmlData.OLD_GMMLZOOM));
+			p1.setAttribute("y", Double.toString(o.getMStartY() * GmmlData.OLD_GMMLZOOM));
 			if (o.getStartGraphRef() != null)
 			{
 				p1.setAttribute("GraphRef", o.getStartGraphRef());
 			}
 			Element p2 = new Element("Point");
 			jdomGraphics.addContent(p2);
-			p2.setAttribute("x", Double.toString(o.getEndX() * GmmlData.GMMLZOOM));
-			p2.setAttribute("y", Double.toString(o.getEndY() * GmmlData.GMMLZOOM));
+			p2.setAttribute("x", Double.toString(o.getMEndX() * GmmlData.OLD_GMMLZOOM));
+			p2.setAttribute("y", Double.toString(o.getMEndY() * GmmlData.OLD_GMMLZOOM));
 			if (o.getEndGraphRef() != null)
 			{
 				p2.setAttribute("GraphRef", o.getEndGraphRef());
@@ -407,8 +407,8 @@ public class GmmlFormat {
 	private static void mapCenter(GmmlDataObject o, Element e)
 	{
     	Element graphics = e.getChild("Graphics");
-    	o.setCenterX (Double.parseDouble(graphics.getAttributeValue("CenterX")) / GmmlData.GMMLZOOM); 
-    	o.setCenterY (Double.parseDouble(graphics.getAttributeValue("CenterY")) / GmmlData.GMMLZOOM);	
+    	o.setMCenterX (Double.parseDouble(graphics.getAttributeValue("CenterX")) / GmmlData.OLD_GMMLZOOM); 
+    	o.setMCenterY (Double.parseDouble(graphics.getAttributeValue("CenterY")) / GmmlData.OLD_GMMLZOOM);	
 	}
 	
 	private static void updateCenter(GmmlDataObject o, Element e)
@@ -418,8 +418,8 @@ public class GmmlFormat {
 			Element jdomGraphics = e.getChild("Graphics");
 			if(jdomGraphics !=null) 
 			{
-				jdomGraphics.setAttribute("CenterX", Double.toString(o.getCenterX() * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("CenterY", Double.toString(o.getCenterY() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("CenterX", Double.toString(o.getMCenterX() * GmmlData.OLD_GMMLZOOM));
+				jdomGraphics.setAttribute("CenterY", Double.toString(o.getMCenterY() * GmmlData.OLD_GMMLZOOM));
 			}
 		}		
 	}
@@ -427,7 +427,7 @@ public class GmmlFormat {
 	private static void mapWidth(GmmlDataObject o, Element e)
 	{
     	Element graphics = e.getChild("Graphics");
-    	o.setWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM);
+    	o.setMWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.OLD_GMMLZOOM);
 	}
 	
 	private static void updateWidth(GmmlDataObject o, Element e)
@@ -437,23 +437,23 @@ public class GmmlFormat {
 			Element jdomGraphics = e.getChild("Graphics");
 			if(jdomGraphics !=null) 
 			{
-				jdomGraphics.setAttribute("Width", Double.toString(o.getWidth() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Double.toString(o.getMWidth() * GmmlData.OLD_GMMLZOOM));
 			}
 		}		
 	}
 
 	private static void mapSimpleCenter(GmmlDataObject o, Element e)
 	{
-		o.setCenterX (Double.parseDouble(e.getAttributeValue("CenterX")) / GmmlData.GMMLZOOM); 
-		o.setCenterY (Double.parseDouble(e.getAttributeValue("CenterY")) / GmmlData.GMMLZOOM);	
+		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX")) / GmmlData.OLD_GMMLZOOM); 
+		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")) / GmmlData.OLD_GMMLZOOM);	
 	}
 	
 	private static void updateSimpleCenter(GmmlDataObject o, Element e)
 	{
 		if(e != null) 
 		{
-			e.setAttribute("CenterX", Double.toString(o.getCenterX() * GmmlData.GMMLZOOM));
-			e.setAttribute("CenterY", Double.toString(o.getCenterY() * GmmlData.GMMLZOOM));			
+			e.setAttribute("CenterX", Double.toString(o.getMCenterX() * GmmlData.OLD_GMMLZOOM));
+			e.setAttribute("CenterY", Double.toString(o.getMCenterY() * GmmlData.OLD_GMMLZOOM));			
 		}		
 	}
 
@@ -461,8 +461,8 @@ public class GmmlFormat {
 	{
     	mapCenter(o, e);
 		Element graphics = e.getChild("Graphics");
-		o.setWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM); 
-		o.setHeight (Double.parseDouble(graphics.getAttributeValue("Height")) / GmmlData.GMMLZOOM);
+		o.setMWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.OLD_GMMLZOOM); 
+		o.setMHeight (Double.parseDouble(graphics.getAttributeValue("Height")) / GmmlData.OLD_GMMLZOOM);
 	}
 	
 	private static void updateShapeData(GmmlDataObject o, Element e)
@@ -473,8 +473,8 @@ public class GmmlFormat {
 			if(jdomGraphics !=null) 
 			{
 				updateCenter(o, e);
-				jdomGraphics.setAttribute("Width", Double.toString(o.getWidth() * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("Height", Double.toString(o.getHeight() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Double.toString(o.getMWidth() * GmmlData.OLD_GMMLZOOM));
+				jdomGraphics.setAttribute("Height", Double.toString(o.getMHeight() * GmmlData.OLD_GMMLZOOM));
 			}
 		}
 	}
@@ -496,8 +496,8 @@ public class GmmlFormat {
 	{
     	mapCenter(o, e);
 		Element graphics = e.getChild("Graphics");
-		o.setWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.GMMLZOOM); 
-		o.setHeight (Double.parseDouble(graphics.getAttributeValue("PicPointOffset")) / GmmlData.GMMLZOOM);
+		o.setMWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.OLD_GMMLZOOM); 
+		o.setMHeight (Double.parseDouble(graphics.getAttributeValue("PicPointOffset")) / GmmlData.OLD_GMMLZOOM);
 		int orientation = OrientationType.getMapping(graphics.getAttributeValue("Orientation"));
 		if(orientation > -1)
 			o.setOrientation(orientation);
@@ -511,8 +511,8 @@ public class GmmlFormat {
 			if(jdomGraphics !=null) 
 			{
 				updateCenter(o, e);
-				jdomGraphics.setAttribute("Width", Double.toString(o.getWidth() * GmmlData.GMMLZOOM));
-				jdomGraphics.setAttribute("PicPointOffset", Double.toString(o.getHeight() * GmmlData.GMMLZOOM));
+				jdomGraphics.setAttribute("Width", Double.toString(o.getMWidth() * GmmlData.OLD_GMMLZOOM));
+				jdomGraphics.setAttribute("PicPointOffset", Double.toString(o.getMHeight() * GmmlData.OLD_GMMLZOOM));
 				jdomGraphics.setAttribute("Orientation", OrientationType.getMapping(o.getOrientation()));
 			}
 		}
@@ -541,7 +541,7 @@ public class GmmlFormat {
 		o.setLabelText (e.getAttributeValue("TextLabel"));
     	Element graphics = e.getChild("Graphics");
     	
-    	o.setFontSize (Integer.parseInt(graphics.getAttributeValue("FontSize")));
+    	o.setMFontSize (Integer.parseInt(graphics.getAttributeValue("FontSize")));
     	
     	String fontWeight = graphics.getAttributeValue("FontWeight");
     	String fontStyle = graphics.getAttributeValue("FontStyle");
@@ -574,7 +574,7 @@ public class GmmlFormat {
 				graphics.setAttribute("FontStyle", o.isItalic() ? "Italic" : "Normal");
 				graphics.setAttribute("FontDecoration", o.isUnderline() ? "Underline" : "Normal");
 				graphics.setAttribute("FontStrikethru", o.isStrikethru() ? "Strikethru" : "Normal");
-				graphics.setAttribute("FontSize", Integer.toString((int)o.getFontSize()));
+				graphics.setAttribute("FontSize", Integer.toString((int)o.getMFontSize()));
 			}
 		}
 	}
@@ -597,10 +597,10 @@ public class GmmlFormat {
 		o.setAvailability (e.getAttributeValue("Availability"));
 		
 		Element g = e.getChild("Graphics");
-		o.setBoardWidth (Double.parseDouble(g.getAttributeValue("BoardWidth")) / GmmlData.GMMLZOOM);
-		o.setBoardHeight (Double.parseDouble(g.getAttributeValue("BoardHeight"))/ GmmlData.GMMLZOOM);
-		o.setWindowWidth (Double.parseDouble(g.getAttributeValue("WindowWidth")) / GmmlData.GMMLZOOM);
-		o.setWindowHeight (Double.parseDouble(g.getAttributeValue("WindowHeight"))/ GmmlData.GMMLZOOM);
+		o.setMBoardWidth (Double.parseDouble(g.getAttributeValue("BoardWidth")) / GmmlData.OLD_GMMLZOOM);
+		o.setMBoardHeight (Double.parseDouble(g.getAttributeValue("BoardHeight"))/ GmmlData.OLD_GMMLZOOM);
+		o.setWindowWidth (Double.parseDouble(g.getAttributeValue("WindowWidth")) / GmmlData.OLD_GMMLZOOM);
+		o.setWindowHeight (Double.parseDouble(g.getAttributeValue("WindowHeight"))/ GmmlData.OLD_GMMLZOOM);
 		o.setMapInfoLeft (0);//Integer.parseInt(g.getAttributeValue("MapInfoLeft")) / GmmlData.GMMLZOOM;		
 		o.setMapInfoTop (0);//Integer.parseInt(g.getAttributeValue("MapInfoTop")) / GmmlData.GMMLZOOM;
 		

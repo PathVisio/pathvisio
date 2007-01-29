@@ -60,7 +60,7 @@ public class GmmlData
 	 * NOTE: maybe it is better to adapt gpml to store cordinates as pixels and
 	 * divide the GenMAPP cordinates by this factor on conversion
 	 */
-	final public static int GMMLZOOM = 15;
+	final public static int OLD_GMMLZOOM = 15;
 	
 	/**
 	 * name of resource containing the gpml schema definition
@@ -268,8 +268,8 @@ public class GmmlData
 		GmmlVisionWindow window = GmmlVision.getWindow();
 		if (window.sc != null)
 		{
-			mappInfo.setBoardWidth(window.sc.getSize().x);
-			mappInfo.setBoardHeight(window.sc.getSize().y);
+			mappInfo.setMBoardWidth(window.sc.getSize().x);
+			mappInfo.setMBoardHeight(window.sc.getSize().y);
 			mappInfo.setWindowWidth(window.getShell().getSize().x);
 			mappInfo.setWindowHeight(window.getShell().getSize().y);
 			String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());

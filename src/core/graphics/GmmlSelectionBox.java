@@ -39,7 +39,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	private ArrayList<GmmlDrawingObject> selection;
 	boolean isSelecting;
 	boolean isVisible;
-	
+		
 	/**
 	 * Constructor for this class
 	 * @param canvas - the GmmlDrawing this selectionbox will be part of
@@ -90,11 +90,11 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	public GmmlDrawingObject getChild(Point2D p) {
 		//First check selection
 		for(GmmlDrawingObject o : selection) {
-			if(o.isContain(p)) return o;
+			if(o.vContains(p)) return o;
 		}
 		//Nothing in selection, check all other objects
 		for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
-			if(o.isContain(p) && o != this)
+			if(o.vContains(p) && o != this)
 				return o;
 		}
 		return null; //Nothing found
@@ -141,11 +141,11 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		reset(0, 0, clearSelection);
 	}
 	
-	public void reset(double startX, double startY) {
-		reset(startX, startY, true);
+	public void reset(double vStartX, double vStartY) {
+		reset(vStartX, vStartY, true);
 	}
 	
-	private void reset(double startX, double startY, boolean clearSelection) {
+	private void reset(double vStartX, double vStartY, boolean clearSelection) {
 		for(GmmlDrawingObject o : selection) o.deselect();
 		if(clearSelection) {
 			selection.clear();
@@ -153,10 +153,10 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED));
 		}
 		
-		gdata.setLeft(startX);
-		gdata.setTop(startY);
-		gdata.setWidth(0);
-		gdata.setHeight(0);
+		gdata.setMLeft(mFromV(vStartX));
+		gdata.setMTop(mFromV(vStartY));
+		gdata.setMWidth(0);
+		gdata.setMHeight(0);
 	}
 
 	/**
@@ -233,17 +233,17 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			return;
 		}
 
-		Rectangle r = null;
+		Rectangle vr = null;
 		for(GmmlDrawingObject o : selection) {
-			if(r == null) r = o.getBounds();
-			else r.add(o.getBounds());
+			if(vr == null) vr = o.getVBounds();
+			else vr.add(o.getVBounds());
 			for(GmmlHandle h : o.getHandles()) h.hide();
 		}
 
-		gdata.setWidth(r.width);
-		gdata.setHeight(r.height);
-		gdata.setLeft(r.x);
-		gdata.setTop(r.y);
+		gdata.setMWidth(mFromV(vr.width));
+		gdata.setMHeight(mFromV(vr.height));
+		gdata.setMLeft(mFromV(vr.x));
+		gdata.setMTop(mFromV(vr.y));
 		setHandleLocation();		
 	}
 			
@@ -275,41 +275,41 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	public void adjustToHandle(GmmlHandle h) {	
 		//Store original size and location before adjusting to handle
-		double oWidth = gdata.getWidth();
-		double oHeight = gdata.getHeight();
-		double oCenterX = getCenterX();
-		double oCenterY = getCenterY();
+		double vWidthOld = getVWidth();
+		double vHeightOld = getVHeight();
+		double vCenterXOld = getVCenterX();
+		double vCenterYOld = getVCenterY();
 		
 		super.adjustToHandle(h);
 		if(isSelecting) { //Selecting, so add containing objects to selection
-			Rectangle r = getBounds();
-			Rectangle2D.Double bounds = new Rectangle2D.Double(r.x, r.y, r.width, r.height);
+			Rectangle vr = getVBounds();
+			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.x, vr.y, vr.width, vr.height);
 			for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
 				if((o == this) || (o instanceof GmmlHandle)) continue;
-				if(o.intersects(bounds)) { 
+				if(o.vIntersects(bounds)) { 
 					addToSelection(o);
 				} else if(o.isSelected()) removeFromSelection(o);
 			}
 		} else { //Resizing, so resize child objects too
 			//Scale all selected objects in x and y direction			
 			for(GmmlDrawingObject o : selection) { 
-				Rectangle2D.Double r = o.getScaleRectangle();
-				double rw = gdata.getWidth() / oWidth;
-				double rh = gdata.getHeight() / oHeight;
-				double nwo = r.width * rw;
-				double nho = r.height * rh;
-				double ncdx = (r.x - oCenterX) * rw;
-				double ncdy = (r.y - oCenterY) * rh;
-				o.setScaleRectangle(new Rectangle2D.Double(getCenterX() + ncdx, getCenterY() + ncdy, nwo, nho));
+				Rectangle2D.Double vr = o.getVScaleRectangle();
+				double rw = getVWidth() / vWidthOld;
+				double rh = getVHeight() / vHeightOld;
+				double nwo = vr.width * rw;
+				double nho = vr.height * rh;
+				double ncdx = (vr.x - vCenterXOld) * rw;
+				double ncdy = (vr.y - vCenterYOld) * rh;
+				o.setVScaleRectangle(new Rectangle2D.Double(getVCenterX() + ncdx, getVCenterY() + ncdy, nwo, nho));
 			}
 		}
 	}
 	
-	public void moveBy(double dx, double dy) {
-		super.moveBy(dx, dy);
+	public void vMoveBy(double dx, double dy) {
+		super.vMoveBy(dx, dy);
 		//Move the selected objects
 		for(GmmlDrawingObject o : selection) {
-			o.moveBy(dx, dy);
+			o.vMoveBy(dx, dy);
 		}
 	}
 	
@@ -321,7 +321,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			buffer.setBackground (e.display.getSystemColor (SWT.COLOR_BLACK));
 			buffer.setLineStyle (SWT.LINE_DOT);
 			buffer.setLineWidth (1);
-			buffer.drawRectangle ((int)gdata.getLeft(), (int)gdata.getTop(), (int)gdata.getWidth(), (int)gdata.getHeight());
+			buffer.drawRectangle (getVLeft(), getVTop(), getVWidth(), getVHeight());
 			buffer.setAntialias(SWT.ON);
 		}
 	}

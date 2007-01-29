@@ -305,10 +305,10 @@ public class MappFormat
 		mappInfo[icolNotes] = mi.getNotes();
 		mappInfo[icolRemarks] = mi.getComment();		
 		
-		mappInfo[icolBoardWidth] = "" + mi.getBoardWidth() *  GmmlData.GMMLZOOM;
-		mappInfo[icolBoardHeight] = "" + mi.getBoardHeight() *  GmmlData.GMMLZOOM;
-		mappInfo[icolWindowWidth] = "" + mi.getWindowWidth() *  GmmlData.GMMLZOOM;
-		mappInfo[icolWindowHeight] = "" + mi.getWindowHeight() *  GmmlData.GMMLZOOM;
+		mappInfo[icolBoardWidth] = "" + mi.getMBoardWidth() *  GmmlData.OLD_GMMLZOOM;
+		mappInfo[icolBoardHeight] = "" + mi.getMBoardHeight() *  GmmlData.OLD_GMMLZOOM;
+		mappInfo[icolWindowWidth] = "" + mi.getWindowWidth() *  GmmlData.OLD_GMMLZOOM;
+		mappInfo[icolWindowHeight] = "" + mi.getWindowHeight() *  GmmlData.OLD_GMMLZOOM;
 		
 		return mappInfo;
 	}
@@ -349,10 +349,10 @@ public class MappFormat
 		o.setNotes(row[icolNotes]);
 		o.setComment(row[icolRemarks]);		
 
-		o.setBoardWidth(Double.parseDouble(row[icolBoardWidth]) / GmmlData.GMMLZOOM);
-		o.setBoardHeight(Double.parseDouble(row[icolBoardHeight]) / GmmlData.GMMLZOOM);
-		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]) / GmmlData.GMMLZOOM);
-		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.GMMLZOOM);		
+		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]) / GmmlData.OLD_GMMLZOOM);
+		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]) / GmmlData.OLD_GMMLZOOM);
+		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]) / GmmlData.OLD_GMMLZOOM);
+		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]) / GmmlData.OLD_GMMLZOOM);		
 	}
        
 	private static String mapBetween (String[] from, String[] to, String value) throws ConverterException
@@ -563,10 +563,10 @@ public class MappFormat
 			style = "Dotted" + style;
 		
 		mappObject[colType] = style;		
-		mappObject[colCenterX] = "" + o.getStartX() * GmmlData.GMMLZOOM;
-    	mappObject[colCenterY] = "" + o.getStartY() * GmmlData.GMMLZOOM;
-    	mappObject[colSecondX] = "" + o.getEndX() * GmmlData.GMMLZOOM;
-    	mappObject[colSecondY] = "" + o.getEndY() * GmmlData.GMMLZOOM;
+		mappObject[colCenterX] = "" + o.getMStartX() * GmmlData.OLD_GMMLZOOM;
+    	mappObject[colCenterY] = "" + o.getMStartY() * GmmlData.OLD_GMMLZOOM;
+    	mappObject[colSecondX] = "" + o.getMEndX() * GmmlData.OLD_GMMLZOOM;
+    	mappObject[colSecondY] = "" + o.getMEndY() * GmmlData.OLD_GMMLZOOM;
     	unmapColor (o, mappObject);    	
     }
 
@@ -606,24 +606,24 @@ public class MappFormat
     	o.setLineStyle(lineStyle);
     	o.setLineType(lineType);
 		
-        o.setStartX(Double.parseDouble(mappObject[colCenterX]) / GmmlData.GMMLZOOM);       
-        o.setStartY(Double.parseDouble(mappObject[colCenterY]) / GmmlData.GMMLZOOM);
-        o.setEndX(Double.parseDouble(mappObject[colSecondX]) / GmmlData.GMMLZOOM);
-        o.setEndY(Double.parseDouble(mappObject[colSecondY]) / GmmlData.GMMLZOOM);
+        o.setMStartX(Double.parseDouble(mappObject[colCenterX]) / GmmlData.OLD_GMMLZOOM);       
+        o.setMStartY(Double.parseDouble(mappObject[colCenterY]) / GmmlData.OLD_GMMLZOOM);
+        o.setMEndX(Double.parseDouble(mappObject[colSecondX]) / GmmlData.OLD_GMMLZOOM);
+        o.setMEndY(Double.parseDouble(mappObject[colSecondY]) / GmmlData.OLD_GMMLZOOM);
         mapColor(o, mappObject);        
         return o;
 	}
     
 	private static void unmapCenter (GmmlDataObject o, String[] mappObject)
 	{
-		mappObject[colCenterX] = "" + o.getCenterX() * GmmlData.GMMLZOOM;
-    	mappObject[colCenterY] = "" + o.getCenterY() * GmmlData.GMMLZOOM;	
+		mappObject[colCenterX] = "" + o.getMCenterX() * GmmlData.OLD_GMMLZOOM;
+    	mappObject[colCenterY] = "" + o.getMCenterY() * GmmlData.OLD_GMMLZOOM;	
 	}
 	
 	private static void mapCenter (GmmlDataObject o, String[] mappObject)
 	{
-		o.setCenterX(Double.parseDouble(mappObject[colCenterX]) / GmmlData.GMMLZOOM);
-		o.setCenterY(Double.parseDouble(mappObject[colCenterY]) / GmmlData.GMMLZOOM);
+		o.setMCenterX(Double.parseDouble(mappObject[colCenterX]) / GmmlData.OLD_GMMLZOOM);
+		o.setMCenterY(Double.parseDouble(mappObject[colCenterY]) / GmmlData.OLD_GMMLZOOM);
 	}
 
 	private static void unmapRotation (GmmlDataObject o, String[] mappObject)
@@ -639,29 +639,29 @@ public class MappFormat
 	private static void unmapShape (GmmlDataObject o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);    	
-    	mappObject[colWidth] = "" + o.getWidth() * GmmlData.GMMLZOOM;
-    	mappObject[colHeight] = "" + o.getHeight() * GmmlData.GMMLZOOM;	
+    	mappObject[colWidth] = "" + o.getMWidth() * GmmlData.OLD_GMMLZOOM;
+    	mappObject[colHeight] = "" + o.getMHeight() * GmmlData.OLD_GMMLZOOM;	
 	}
 
 	private static void mapShape (GmmlDataObject o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);    	
-    	o.setWidth(Double.parseDouble(mappObject[colWidth]) / GmmlData.GMMLZOOM);
-    	o.setHeight(Double.parseDouble(mappObject[colHeight]) / GmmlData.GMMLZOOM);
+    	o.setMWidth(Double.parseDouble(mappObject[colWidth]) / GmmlData.OLD_GMMLZOOM);
+    	o.setMHeight(Double.parseDouble(mappObject[colHeight]) / GmmlData.OLD_GMMLZOOM);
 	}
 	
 	private static void unmapShape_half (GmmlDataObject o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);    	
-    	mappObject[colWidth] = "" + o.getWidth() * GmmlData.GMMLZOOM / 2;
-    	mappObject[colHeight] = "" + o.getHeight() * GmmlData.GMMLZOOM / 2;	
+    	mappObject[colWidth] = "" + o.getMWidth() * GmmlData.OLD_GMMLZOOM / 2;
+    	mappObject[colHeight] = "" + o.getMHeight() * GmmlData.OLD_GMMLZOOM / 2;	
 	}
 
 	private static void mapShape_half (GmmlDataObject o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);    	
-    	o.setWidth(Double.parseDouble(mappObject[colWidth]) * 2 / GmmlData.GMMLZOOM);
-    	o.setHeight(Double.parseDouble(mappObject[colHeight]) * 2 / GmmlData.GMMLZOOM);	
+    	o.setMWidth(Double.parseDouble(mappObject[colWidth]) * 2 / GmmlData.OLD_GMMLZOOM);
+    	o.setMHeight(Double.parseDouble(mappObject[colHeight]) * 2 / GmmlData.OLD_GMMLZOOM);	
 	}
 
 	private static void unmapBraceType (GmmlDataObject o, String[] mappObject) throws ConverterException
@@ -784,7 +784,7 @@ public class MappFormat
     	}
     	
         
-        o.setFontSize(Double.parseDouble(mappObject[colSecondX]));
+        o.setMFontSize(Double.parseDouble(mappObject[colSecondX]));
         
         String styleString = mappObject[colSystemCode]; 
         int style = styleString == null ? 0 : (int)(styleString.charAt(0));
@@ -810,7 +810,7 @@ public class MappFormat
     	unmapColor(o, mappObject);
     	
     	mappObject[colID] = o.getFontName();
-    	mappObject[colSecondX] = "" + o.getFontSize();
+    	mappObject[colSecondX] = "" + o.getMFontSize();
     	
     	int style = 16; 
     	// note: from VB source I learned that 16 is added to prevent field from becoming 0, 
@@ -918,7 +918,7 @@ public class MappFormat
     		o.setShapeType(ShapeType.fromMappName(mappObject[colType]));            
     	}
         
-        o.setWidth(Double.parseDouble(mappObject[colWidth]));
+        o.setMWidth(Double.parseDouble(mappObject[colWidth]));
         mapCenter (o, mappObject);
         mapRotation (o, mappObject);
         return o;
@@ -942,7 +942,7 @@ public class MappFormat
     	
     	unmapCenter (o, mappObject);
         unmapRotation (o, mappObject);
-    	mappObject[colWidth] = "" + o.getWidth();
+    	mappObject[colWidth] = "" + o.getMWidth();
     }
     
 	/**

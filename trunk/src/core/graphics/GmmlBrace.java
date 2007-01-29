@@ -78,10 +78,10 @@ public class GmmlBrace extends GmmlGraphicsShape
 		Transform tr = new Transform(e.display);
 		rotateGC(buffer, tr);
 		
-		int cx = (int)gdata.getCenterX();
-		int cy = (int)gdata.getCenterY();
-		int w = (int)gdata.getWidth();
-		int d = (int)gdata.getHeight();
+		int cx = getVCenterX();
+		int cy = getVCenterY();
+		int w = getVWidth();
+		int d = getVHeight();
 		
 		buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
 		buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left

@@ -45,9 +45,9 @@ public class Test extends TestCase implements GmmlListener {
 	
 	public void testFields ()
 	{
-		o.setCenterX(1.0);
+		o.setMCenterX(1.0);
 		
-		assertEquals ("test set/get CenterX", 1.0, o.getCenterX(), 0.0001);		
+		assertEquals ("test set/get CenterX", 1.0, o.getMCenterX(), 0.0001);		
 		
 		assertEquals ("Setting CenterX should generate single event", received.size(), 1);
 		assertEquals ("test getProperty()", 1.0, (Double)o.getProperty(PropertyType.CENTERX), 0.0001);

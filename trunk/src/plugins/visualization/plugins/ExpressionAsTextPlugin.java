@@ -108,8 +108,8 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			Font f = new Font(e.display, getFontData(true));
 			
 			GmmlDataObject gd = g.getGmmlData();
-			int startx = (int)(gd.getLeft() + gd.getWidth() + SPACING);
-			int starty = (int)(gd.getTop() + gd.getHeight() / 2);
+			int startx = (int)(gd.getMLeft() + gd.getMWidth() + SPACING);
+			int starty = (int)(gd.getMTop() + gd.getMHeight() / 2);
 			
 
 			buffer.setFont(f);

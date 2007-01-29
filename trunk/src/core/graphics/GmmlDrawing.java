@@ -259,7 +259,27 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	
 	private double zoomFactor = 1;
 	/**
-	 * Get the current zoomfactor used
+	 * Get the current zoomfactor used. 
+	 * 1.0 means 100%, 15 gpml unit = 1 pixel
+	 * 2.0 means 200%, 7.5 gpml unit = 1 pixel
+	 * 
+	 * The 15/1 ratio is there because of 
+	 * the Visual Basic legacy of GenMAPP
+	 * 
+	 * To distinguish between model coordinates and view coordinates,
+	 * we prefix all coordinates with either v or m (or V or M). For example:
+	 * 
+	 * mTop = gdata.getMTop();
+	 * vTop = GmmlGeneProduct.getVTop();
+	 * 
+	 * Calculations done on M's and V's should always match.
+	 * The only way to convert is to use the functions
+	 * mFromV and vFromM.
+	 * 
+	 * Correct: mRight = mLeft + mWidth;
+	 * Wrong: mLeft += vDx; 
+	 * Fixed: mLeft += mFromV(vDx);
+	 * 
 	 * @return	the current zoomfactor
 	 */
 	public double getZoomFactor() { return zoomFactor; }
@@ -273,17 +293,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		double factor = 0.01*pctZoomFactor/zoomFactor;
 		zoomFactor = pctZoomFactor / 100;
 		setSize((int)(getSize().x * factor), (int)(getSize().y * factor));
-		
-		// iterate over all graphics to adjust them
-		for(GmmlDrawingObject o : drawingObjects)
-		{
-			if (o instanceof GmmlGraphics)
-			{
-				GmmlGraphics g = (GmmlGraphics) o;
-				g.adjustToZoom(factor);		
-			}
-		}
-		
+				
 		redraw();
 	}
 
@@ -291,13 +301,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		pressedObject = o;
 	}
 	
-	int previousX;
-	int previousY;
+	int vPreviousX;
+	int vPreviousY;
 	boolean isDragging;
 	/**
 	 * handles mouse movement
 	 */
-	public void mouseMove(MouseEvent e)
+	public void mouseMove(MouseEvent ve)
 	{
 //		// Dispose the tooltip if shown
 //		if(tip != null)
@@ -307,16 +317,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		// If draggin, drag the pressed object
 		if (pressedObject != null && isDragging)
 		{
-			pressedObject.moveBy(e.x - previousX, e.y - previousY);
+			pressedObject.vMoveBy(ve.x - vPreviousX, ve.y - vPreviousY);
 			
-			previousX = e.x;
-			previousY = e.y;
+			vPreviousX = ve.x;
+			vPreviousY = ve.y;
 			
 			if (pressedObject instanceof GmmlHandle && altPressed &&
 					((GmmlHandle)pressedObject).parent instanceof GmmlLine)
 			{
 				resetHighlight();
-				Point2D p2d = new Point2D.Double(e.x, e.y);
+				Point2D p2d = new Point2D.Double(ve.x, ve.y);
 				List<GmmlDrawingObject> objects = getObjectsAt (p2d);
 				Collections.sort(objects);
 				GmmlHandle g = (GmmlHandle)pressedObject;
@@ -423,7 +433,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		Visualization v = VisualizationManager.getCurrent();
 		for(GmmlDrawingObject o : drawingObjects)
 		{
-			if(o.intersects(r))
+			if(o.vIntersects(r))
 			{
 				if(checkDrawAllowed(o)) {
 					o.draw (e, buffer);
@@ -482,16 +492,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Initializes selection, resetting the selectionbox
 	 * and then setting it to the position specified
-	 * @param p - the point to start with the selection
+	 * @param vp - the point to start with the selection
 	 */
-	private void startSelecting(Point2D p)
+	private void startSelecting(Point2D vp)
 	{
-		previousX = (int)p.getX();
-		previousY = (int)p.getY();
+		vPreviousX = (int)vp.getX();
+		vPreviousY = (int)vp.getY();
 		isDragging = true;
 		
 		clearSelection();
-		s.reset(p.getX(), p.getY());
+		s.reset(vp.getX(), vp.getY());
 		s.startSelecting();
 		pressedObject = s.getCornerHandle();
 	}
@@ -527,8 +537,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			}
 			
 			// start dragging
-			previousX = p.x;
-			previousY = p.y;
+			vPreviousX = p.x;
+			vPreviousY = p.y;
 			
 			isDragging = true;		
 		}
@@ -542,14 +552,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Find the object at a particular location on the drawing
 	 * 
-	 * if you want to get more than one @see getObjectsAdd
+	 * if you want to get more than one @see #getObjectsAt(Point2D)
 	 */
 	GmmlDrawingObject getObjectAt(Point2D p2d) {
 		Collections.sort(drawingObjects);
 		GmmlDrawingObject probj = null;
 		for (GmmlDrawingObject o : drawingObjects)
 		{
-			if (o.isContain(p2d))
+			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
 				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
@@ -564,15 +574,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Find all objects at a particular location on the drawing
 	 * 
-	 * if you only need the top object, @see getObjectAt
+	 * if you only need the top object, @see #getObjectAt(Point2D)
 	 */
 	List<GmmlDrawingObject> getObjectsAt(Point2D p2d) 
 	{
 		List<GmmlDrawingObject> result = new ArrayList<GmmlDrawingObject>();
-		GmmlDrawingObject probj = null;
 		for (GmmlDrawingObject o : drawingObjects)
 		{
-			if (o.isContain(p2d))
+			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
 				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
@@ -653,9 +662,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * {@see GmmlDrawing#setNewGraphics(int)}
 	 * @param p	The point where the user clicked on the drawing to add a new graphics
 	 */
-	private void newObject(Point e)
+	private void newObject(Point ve)
 	{
-		newObjectDragStart = e;
+		newObjectDragStart = ve;
+		int mx = (int)mFromV((double)ve.x);
+		int my = (int)mFromV((double)ve.y); 
+		
 		GmmlDataObject gdata = null;
 		GmmlHandle h = null;
 		lastAdded = null; // reset lastAdded class member
@@ -664,10 +676,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			return;
 		case NEWLINE:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LINE);
@@ -677,10 +689,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWLINEARROW:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.ARROW);
@@ -690,10 +702,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWLINEDASHED:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.LINE);
@@ -703,10 +715,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWLINEDASHEDARROW:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.ARROW);
@@ -716,11 +728,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWLABEL:
 			gdata = new GmmlDataObject(ObjectType.LABEL);
-			gdata.setCenterX(e.x);
-			gdata.setCenterY(e.y);
-			gdata.setWidth((GmmlLabel.INITIAL_WIDTH * zoomFactor));
-			gdata.setHeight((GmmlLabel.INITIAL_HEIGHT * zoomFactor));
-			gdata.setFontSize (GmmlLabel.INITIAL_FONTSIZE);
+			gdata.setMCenterX(mx);
+			gdata.setMCenterY(my);
+			gdata.setMWidth(mFromV(GmmlLabel.M_INITIAL_WIDTH));
+			gdata.setMHeight(mFromV(GmmlLabel.M_INITIAL_HEIGHT));
+			gdata.setMFontSize (mFromV(GmmlLabel.M_INITIAL_FONTSIZE));
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
 			((GmmlLabel)lastAdded).createTextControl();
@@ -729,10 +741,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		case NEWARC:
 			gdata = new GmmlDataObject(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.ARC);
-			gdata.setCenterX (e.x);
-			gdata.setCenterY (e.y);
-			gdata.setWidth(1);
-			gdata.setHeight(1);
+			gdata.setMCenterX (mx);
+			gdata.setMCenterY (my);
+			gdata.setMWidth(1);
+			gdata.setMHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
 			data.add (gdata); // will cause lastAdded to be set
@@ -741,10 +753,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWBRACE:
 			gdata = new GmmlDataObject(ObjectType.BRACE);
-			gdata.setCenterX (e.x);
-			gdata.setCenterY (e.y);
-			gdata.setWidth(1);
-			gdata.setHeight(1);
+			gdata.setMCenterX (mx);
+			gdata.setMCenterY (my);
+			gdata.setMWidth(1);
+			gdata.setMHeight(1);
 			gdata.setOrientation(OrientationType.RIGHT);
 			gdata.setColor(stdRGB);
 			data.add (gdata); // will cause lastAdded to be set
@@ -753,10 +765,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWGENEPRODUCT:
 			gdata = new GmmlDataObject(ObjectType.GENEPRODUCT);
-			gdata.setCenterX(e.x);
-			gdata.setCenterY(e.y);
-			gdata.setWidth(1);
-			gdata.setHeight(1);
+			gdata.setMCenterX(mx);
+			gdata.setMCenterY(my);
+			gdata.setMWidth(1);
+			gdata.setMHeight(1);
 			gdata.setGeneID("Gene");
 			gdata.setXref("");
 			gdata.setColor(stdRGB);
@@ -768,10 +780,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		case NEWRECTANGLE:
 			gdata = new GmmlDataObject(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.RECTANGLE);
-			gdata.setCenterX (e.x);
-			gdata.setCenterY (e.y);
-			gdata.setWidth(1);
-			gdata.setHeight(1);
+			gdata.setMCenterX (mx);
+			gdata.setMCenterY (my);
+			gdata.setMWidth(1);
+			gdata.setMHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
 			gdata.setGraphId(data.getUniqueId());
@@ -782,10 +794,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		case NEWOVAL:
 			gdata = new GmmlDataObject(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.OVAL);
-			gdata.setCenterX (e.x);
-			gdata.setCenterY (e.y);
-			gdata.setWidth(1);
-			gdata.setHeight(1);
+			gdata.setMCenterX (mx);
+			gdata.setMCenterY (my);
+			gdata.setMWidth(1);
+			gdata.setMHeight(1);
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
 			gdata.setGraphId(data.getUniqueId());
@@ -795,10 +807,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWTBAR:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.TBAR);
@@ -808,10 +820,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWRECEPTORROUND:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_ROUND);
@@ -821,10 +833,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWRECEPTORSQUARE:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_SQUARE);
@@ -834,10 +846,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWLIGANDROUND:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_ROUND);
@@ -847,10 +859,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			break;
 		case NEWLIGANDSQUARE:
 			gdata = new GmmlDataObject(ObjectType.LINE);
-			gdata.setStartX(e.x);
-			gdata.setStartY(e.y);
-			gdata.setEndX(e.x);
-			gdata.setEndY(e.y);	
+			gdata.setMStartX(mx);
+			gdata.setMStartY(my);
+			gdata.setMEndX(mx);
+			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_SQUARE);
@@ -866,8 +878,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		s.addToSelection(lastAdded);
 		pressedObject = h;
 		
-		previousX = e.x;
-		previousY = e.y;
+		vPreviousX = ve.x;
+		vPreviousY = ve.y;
 				
 	}
 	
@@ -1002,8 +1014,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				addDirtyRect(null); // mark everything dirty
 				break;
 			case GmmlEvent.WINDOW:
-				setSize((int)infoBox.getGmmlData().getBoardWidth(), 
-						(int)infoBox.getGmmlData().getBoardHeight());
+				setSize((int)infoBox.getGmmlData().getMBoardWidth(), 
+						(int)infoBox.getGmmlData().getMBoardHeight());
 		}
 		redrawDirtyRect();
 	}
@@ -1082,12 +1094,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			for (GmmlDataObject o : GmmlVision.clipboard)
 			{
 				lastAdded = null;
-				o.setStartX(o.getStartX() + 10);
-				o.setStartY(o.getStartY() + 10);
-				o.setEndX(o.getEndX() + 10);
-				o.setEndY(o.getEndY() + 10);
-				o.setLeft(o.getLeft() + 10);
-				o.setTop(o.getTop() + 10);
+				o.setMStartX(o.getMStartX() + 10);
+				o.setMStartY(o.getMStartY() + 10);
+				o.setMEndX(o.getMEndX() + 10);
+				o.setMEndY(o.getMEndY() + 10);
+				o.setMLeft(o.getMLeft() + 10);
+				o.setMTop(o.getMTop() + 10);
 				// make another copy to preserve clipboard contents for next paste
 				GmmlDataObject p = o.copy();
 				
@@ -1140,4 +1152,15 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			redraw();
 		}
 	}	
+	
+	/** 
+	 * helper method to convert view coordinates to model coordinates 
+	 * */
+	public double mFromV(double v) { return v / zoomFactor; }
+
+	/** 
+	 * helper method to convert view coordinates to model coordinates 
+	 * */
+	public double vFromM(double m) { return m * zoomFactor; }
+	
 } // end of class

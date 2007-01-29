@@ -41,16 +41,12 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class GmmlDataObject
 {		
-	/**
-	 * Default constructor will be removed, to force setting
-	 * of object type to a valid value.
-	 * 
-	 * @deprecated
-	 */
-	public GmmlDataObject ()
-	{
-	
-	}
+
+	private static final int M_INITIAL_SHAPE_SIZE = 30; // initial Radius for rect and oval
+	private static final int M_INITIAL_BRACE_HEIGHT = 15;
+	private static final int M_INITIAL_BRACE_WIDTH = 60; 
+	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80;
+	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20;
 	
 	/**
 	 * The required parameter objectType ensures only
@@ -250,19 +246,19 @@ public class GmmlDataObject
 			case COMMENT: setComment 		((String) value); break;
 			case COLOR: setColor 		((RGB)    value); break;
 				
-			case CENTERX: setCenterX 		((Double) value); break;
-			case CENTERY: setCenterY 		((Double) value); break;
-			case WIDTH: setWidth		((Double) value); break;
-			case HEIGHT: setHeight		((Double) value); break;
+			case CENTERX: setMCenterX 		((Double) value); break;
+			case CENTERY: setMCenterY 		((Double) value); break;
+			case WIDTH: setMWidth		((Double) value); break;
+			case HEIGHT: setMHeight		((Double) value); break;
 			
 			case FILLCOLOR: setFillColor	((RGB)	  value); break;
 			case SHAPETYPE: setShapeType	((Integer)value); break;
 			case ROTATION: setRotation		((Double) value); break;
 				
-			case STARTX: setStartX 		((Double) value); break;
-			case STARTY: setStartY 		((Double) value); break;
-			case ENDX: setEndX 		((Double) value); break;
-			case ENDY: setEndY 		((Double) value); break;
+			case STARTX: setMStartX 		((Double) value); break;
+			case STARTY: setMStartY 		((Double) value); break;
+			case ENDX: setMEndX 		((Double) value); break;
+			case ENDY: setMEndY 		((Double) value); break;
 			case LINETYPE: setLineType		((Integer)value); break;
 			case LINESTYLE: setLineStyle	((Integer)value); break;
 				
@@ -279,7 +275,7 @@ public class GmmlDataObject
 			case FONTNAME: setFontName		((String)  value); break;
 			case FONTWEIGHT: setBold 		((Boolean) value); break;
 			case FONTSTYLE: setItalic 		((Boolean) value); break;
-			case FONTSIZE: setFontSize		((Double)  value); break;
+			case FONTSIZE: setMFontSize		((Double)  value); break;
 
 			case MAPINFONAME: setMapInfoName((String) value); break;
 			case ORGANISM: setOrganism ((String) value); break;
@@ -290,8 +286,8 @@ public class GmmlDataObject
 			case EMAIL: setEmail ((String) value); break;
 			case LAST_MODIFIED: setLastModified ((String)value); break;
 			case AVAILABILITY: setAvailability ((String)value); break;
-			case BOARDWIDTH: setBoardWidth ((Double)value); break;
-			case BOARDHEIGHT: setBoardHeight ((Double)value); break;
+			case BOARDWIDTH: setMBoardWidth ((Double)value); break;
+			case BOARDHEIGHT: setMBoardHeight ((Double)value); break;
 			case WINDOWWIDTH: setWindowWidth ((Double)value); break;
 			case WINDOWHEIGHT: setWindowHeight ((Double)value); break;
 			
@@ -312,19 +308,19 @@ public class GmmlDataObject
 			case COMMENT: result = getComment(); break;
 			case COLOR: result = getColor(); break;
 			
-			case CENTERX: result = getCenterX(); break;
-			case CENTERY: result = getCenterY(); break;
-			case WIDTH: result = getWidth(); break;
-			case HEIGHT: result = getHeight(); break;
+			case CENTERX: result = getMCenterX(); break;
+			case CENTERY: result = getMCenterY(); break;
+			case WIDTH: result = getMWidth(); break;
+			case HEIGHT: result = getMHeight(); break;
 			
 			case FILLCOLOR: result = getFillColor(); break;
 			case SHAPETYPE: result = getShapeType(); break;
 			case ROTATION: result = getRotation(); break;
 			
-			case STARTX: result = getStartX(); break;
-			case STARTY: result = getStartY(); break;
-			case ENDX: result = getEndX(); break;
-			case ENDY: result = getEndY(); break;
+			case STARTX: result = getMStartX(); break;
+			case STARTY: result = getMStartY(); break;
+			case ENDX: result = getMEndX(); break;
+			case ENDY: result = getMEndY(); break;
 			case LINETYPE: result = getLineType(); break;
 			case LINESTYLE: result = getLineStyle(); break;
 			
@@ -341,7 +337,7 @@ public class GmmlDataObject
 			case FONTNAME: result = getFontName(); break;
 			case FONTWEIGHT: result = isBold(); break;
 			case FONTSTYLE: result = isItalic(); break;
-			case FONTSIZE: result = getFontSize(); break;
+			case FONTSIZE: result = getMFontSize(); break;
 
 			case MAPINFONAME: result = getMapInfoName(); break;
 			case ORGANISM: result = getOrganism (); break;
@@ -352,8 +348,8 @@ public class GmmlDataObject
 			case EMAIL: result = getEmail (); break;
 			case LAST_MODIFIED: result = getLastModified (); break;
 			case AVAILABILITY: result = getAvailability (); break;
-			case BOARDWIDTH: result = getBoardWidth (); break;
-			case BOARDHEIGHT: result = getBoardHeight (); break;
+			case BOARDWIDTH: result = getMBoardWidth (); break;
+			case BOARDHEIGHT: result = getMBoardHeight (); break;
 			case WINDOWWIDTH: result = getWindowWidth (); break;
 			case WINDOWHEIGHT: result = getWindowHeight (); break;
 
@@ -380,28 +376,28 @@ public class GmmlDataObject
 		result.author = author;
 		result.availability = availability;
 		result.backpageHead = backpageHead;
-		result.boardHeight = boardHeight;
-		result.boardWidth = boardWidth;
-		result.centerx = centerx;
-		result.centery = centery;
+		result.mBoardHeight = mBoardHeight;
+		result.mBoardWidth = mBoardWidth;
+		result.mCenterx = mCenterx;
+		result.mCentery = mCentery;
 		result.color = color;
 		result.fillColor = fillColor;
 		result.comment = comment;
 		result.dataSource = dataSource;
 		result.email = email;
-		result.endx = endx;
-		result.endy = endy;
+		result.mEndx = mEndx;
+		result.mEndy = mEndy;
 		result.fBold = fBold;
 		result.fItalic = fItalic;
 		result.fontName = fontName;
-		result.fontSize = fontSize;
+		result.mFontSize = mFontSize;
 		result.fStrikethru = fStrikethru;
 		result.fTransparent = fTransparent;
 		result.fUnderline = fUnderline;
 		result.geneID = geneID;
 		result.geneProductName = geneProductName;
 		result.geneProductType = geneProductType;
-		result.height = height;
+		result.mHeight = mHeight;
 		result.labelText = labelText;
 		result.lastModified = lastModified;
 		result.lineStyle = lineStyle;
@@ -415,10 +411,10 @@ public class GmmlDataObject
 		result.organism = organism;
 		result.rotation = rotation;
 		result.shapeType = shapeType;
-		result.startx = startx;
-		result.starty = starty;
+		result.mStartx = mStartx;
+		result.mStarty = mStarty;
 		result.version = version;
-		result.width = width;
+		result.mWidth = mWidth;
 		result.windowHeight = windowHeight;
 		result.windowWidth = windowWidth;
 		result.xref = xref;
@@ -448,46 +444,46 @@ public class GmmlDataObject
 	}
 	
 	// only for lines:	
-	protected double startx = 0;
-	public double getStartX() { return startx; }
-	public void setStartX(double v) 
+	protected double mStartx = 0;
+	public double getMStartX() { return mStartx; }
+	public void setMStartX(double v) 
 	{ 
-		if (startx != v)
+		if (mStartx != v)
 		{
-			startx = v;		
+			mStartx = v;		
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 	
-	protected double starty = 0;
-	public double getStartY() { return starty; }
-	public void setStartY(double v) 
+	protected double mStarty = 0;
+	public double getMStartY() { return mStarty; }
+	public void setMStartY(double v) 
 	{ 
-		if (starty != v)
+		if (mStarty != v)
 		{
-			starty = v; 
+			mStarty = v; 
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 	
-	protected double endx = 0;
-	public double getEndX() { return endx; }
-	public void setEndX(double v) 
+	protected double mEndx = 0;
+	public double getMEndX() { return mEndx; }
+	public void setMEndX(double v) 
 	{
-		if (endx != v)
+		if (mEndx != v)
 		{
-			endx = v; 
+			mEndx = v; 
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 	
-	protected double endy = 0;
-	public double getEndY() { return endy; }
-	public void setEndY(double v) 
+	protected double mEndy = 0;
+	public double getMEndY() { return mEndy; }
+	public void setMEndY(double v) 
 	{
-		if (endy != v)
+		if (mEndy != v)
 		{
-			endy = v; 
+			mEndy = v; 
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
 		}
 	}
@@ -661,63 +657,63 @@ public class GmmlDataObject
 		return systemCode;
 	}
 	 
-	protected double centerx = 0;
-	public double getCenterX() { return centerx; }
-	public void setCenterX(double v) 
+	protected double mCenterx = 0;
+	public double getMCenterX() { return mCenterx; }
+	public void setMCenterX(double v) 
 	{
-		if (centerx != v)
+		if (mCenterx != v)
 		{
-			centerx = v; 
+			mCenterx = v; 
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
 		}
 	}
 	
-	protected double centery = 0;
-	public double getCenterY() { return centery; }
-	public void setCenterY(double v) 
+	protected double mCentery = 0;
+	public double getMCenterY() { return mCentery; }
+	public void setMCenterY(double v) 
 	{ 
-		if (centery != v)
+		if (mCentery != v)
 		{
-			centery = v;
+			mCentery = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 	
-	protected double width = 0;
-	public double getWidth() { return width; }
-	public void setWidth(double v) 
+	protected double mWidth = 0;
+	public double getMWidth() { return mWidth; }
+	public void setMWidth(double v) 
 	{ 
-		if (width != v)
+		if (mWidth != v)
 		{
-			width = v;
+			mWidth = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 	
-	protected double height = 0;
-	public double getHeight() { return height; }
-	public void setHeight(double v) 
+	protected double mHeight = 0;
+	public double getMHeight() { return mHeight; }
+	public void setMHeight(double v) 
 	{ 
-		if (height != v)
+		if (mHeight != v)
 		{
-			height = v;
+			mHeight = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
 		
 	// starty for shapes
-	public double getTop() { return centery - height / 2; }
-	public void setTop(double v) 
+	public double getMTop() { return mCentery - mHeight / 2; }
+	public void setMTop(double v) 
 	{ 
-		centery = v + height / 2;
+		mCentery = v + mHeight / 2;
 		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 	}
 	
 	// startx for shapes
-	public double getLeft() { return centerx - width / 2; }
-	public void setLeft(double v) 
+	public double getMLeft() { return mCenterx - mWidth / 2; }
+	public void setMLeft(double v) 
 	{ 
-		centerx = v + width / 2;
+		mCenterx = v + mWidth / 2;
 		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 	}
 	
@@ -831,13 +827,13 @@ public class GmmlDataObject
 		}
 	}
 	
-	protected double fontSize = 1;	
-	public double getFontSize() { return fontSize; }
-	public void setFontSize(double v) 
+	protected double mFontSize = 1;	
+	public double getMFontSize() { return mFontSize; }
+	public void setMFontSize(double v) 
 	{ 
-		if (fontSize != v)
+		if (mFontSize != v)
 		{
-			fontSize = v;
+			mFontSize = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}	
@@ -950,30 +946,43 @@ public class GmmlDataObject
 		}
 	}
 	
-	protected double boardWidth;
-	public double getBoardWidth() { return boardWidth; }
-	public void setBoardWidth(double v) 
+	// TODO: rename to DrawingWidth/height
+	protected double mBoardWidth;
+	public double getMBoardWidth() { return mBoardWidth; }
+	public void setMBoardWidth(double v) 
 	{ 
-		if (boardWidth != v)
+		if (mBoardWidth != v)
 		{
-			boardWidth = v;
+			mBoardWidth = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 
-	protected double boardHeight;
-	public double getBoardHeight() { return boardHeight; }
-	public void setBoardHeight(double v) 
+	protected double mBoardHeight;
+	public double getMBoardHeight() { return mBoardHeight; }
+	public void setMBoardHeight(double v) 
 	{ 
-		if (boardHeight != v)
+		if (mBoardHeight != v)
 		{
-			boardHeight = v;
+			mBoardHeight = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
 		}
 	}
 
 	protected double windowWidth;
+
+	/**
+	 * GenMAPP Legacy attribute
+	 * maintained only for reverse compatibility reasons, 
+	 * no longer used by PathVisio	
+	 */
 	public double getWindowWidth() { return windowWidth; }
+
+	/**
+	 * GenMAPP Legacy attribute
+	 * maintained only for reverse compatibility reasons, 
+	 * no longer used by PathVisio	
+	 */
 	public void setWindowWidth(double v) 
 	{ 
 		if (windowWidth != v)
@@ -984,7 +993,19 @@ public class GmmlDataObject
 	}
 
 	protected double windowHeight;
+
+	/**
+	 * GenMAPP Legacy attribute
+	 * maintained only for reverse compatibility reasons, 
+	 * no longer used by PathVisio	
+	 */
 	public double getWindowHeight() { return windowHeight; }
+	
+	/**
+	 * GenMAPP Legacy attribute
+	 * maintained only for reverse compatibility reasons, 
+	 * no longer used by PathVisio	
+	 */
 	public void setWindowHeight(double v) 
 	{ 
 		if (windowHeight != v)
@@ -995,7 +1016,15 @@ public class GmmlDataObject
 	}
 	
 	protected int mapInfoLeft;
+	
+	/**
+	 * @deprecated use regular mLeft and mTop
+	 */
 	public int getMapInfoLeft() { return mapInfoLeft; }
+	
+	/**
+	 * @deprecated use regular mLeft and mTop
+	 */
 	public void setMapInfoLeft(int v) 
 	{ 
 		if (mapInfoLeft != v)
@@ -1005,7 +1034,15 @@ public class GmmlDataObject
 		}
 	}
 	protected int mapInfoTop;
+	
+	/**
+	 * @deprecated 
+	 */
 	public int getMapInfoTop() { return mapInfoTop; }
+	
+	/**
+	 * @deprecated 
+	 */
 	public void setMapInfoTop(int v) 
 	{ 
 		if (mapInfoTop != v)
@@ -1118,12 +1155,6 @@ public class GmmlDataObject
 		}
 	}
 	
-	private static final int INITIAL_SHAPE_SIZE = 30; // initial Radius for rect and oval
-	private static final int INITIAL_BRACE_HEIGHT = 15;
-	private static final int INITIAL_BRACE_WIDTH = 60; 
-	private static final int INITIAL_GENEPRODUCT_WIDTH = 80;
-	private static final int INITIAL_GENEPRODUCT_HEIGHT = 20;
-
 	/**
 	 * This sets the object to a suitable default size.
 	 * 
@@ -1138,20 +1169,20 @@ public class GmmlDataObject
 			case ObjectType.SHAPE:
 			case ObjectType.FIXEDSHAPE:
 			case ObjectType.COMPLEXSHAPE:
-				setWidth(INITIAL_SHAPE_SIZE);
-				setHeight(INITIAL_SHAPE_SIZE);
+				setMWidth(M_INITIAL_SHAPE_SIZE);
+				setMHeight(M_INITIAL_SHAPE_SIZE);
 				break;
 			case ObjectType.BRACE:
-				setWidth(INITIAL_BRACE_WIDTH);
-				setHeight(INITIAL_BRACE_HEIGHT);
+				setMWidth(M_INITIAL_BRACE_WIDTH);
+				setMHeight(M_INITIAL_BRACE_HEIGHT);
 				break;
 			case ObjectType.GENEPRODUCT:
-				setWidth(INITIAL_GENEPRODUCT_WIDTH);
-				setHeight(INITIAL_GENEPRODUCT_HEIGHT);
+				setMWidth(M_INITIAL_GENEPRODUCT_WIDTH);
+				setMHeight(M_INITIAL_GENEPRODUCT_HEIGHT);
 				break;
 			case ObjectType.LINE:
-				setEndX(getStartX() + INITIAL_SHAPE_SIZE);
-				setEndY(getStartY() + INITIAL_SHAPE_SIZE);
+				setMEndX(getMStartX() + M_INITIAL_SHAPE_SIZE);
+				setMEndY(getMStartY() + M_INITIAL_SHAPE_SIZE);
 				break;
 		}
 	}

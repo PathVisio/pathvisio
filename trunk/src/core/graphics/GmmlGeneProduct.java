@@ -28,7 +28,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 
 import util.SwtUtils;
-import data.GmmlData;
 import data.GmmlDataObject;
 import data.MappFormat;
 
@@ -39,34 +38,18 @@ import data.MappFormat;
 public class GmmlGeneProduct extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
-	private static final int INITIAL_FONTSIZE = 10;
+	private static final double M_INITIAL_FONTSIZE = 10;
 	public static final RGB INITIAL_FILL_COLOR = new RGB(255, 255, 255);
 	
-	double fontSizeDouble;
-	int fontSize;
-
 	// note: not the same as color!
 	RGB fillColor = INITIAL_FILL_COLOR;
 		
 	public GmmlGeneProduct (GmmlDrawing canvas, GmmlDataObject o) {
 		super(canvas, o);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;				
-		
-		fontSizeDouble = INITIAL_FONTSIZE * canvas.getZoomFactor();
-		fontSize = (int)fontSizeDouble;
+		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;		
 		setHandleLocation();
 	}
-	
-	/**
-	 * @deprecated get this info from GmmlDataObject directly
-	 */
-	public String getName()
-	{
-		//Looks like the wrong way around, but in gpml the name/symbol is attribute 'GeneID'
-		//NOTE: maybe change this in gpml?
-		return gdata.getGeneID();
-	}
-	
+		
 	/**
 	 * @deprecated get this info from GmmlDataObject directly
 	 */
@@ -76,12 +59,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		//NOTE: maybe change this in gpml?
 		return gdata.getGeneProductName();
 	}
-	
-	public void setFontSize(double size) {
-		fontSizeDouble = size;
-		fontSize = (int)size;
-	}
-	
+		
 	/**
 	 * Looks up the systemcode for this gene in GmmlData.sysName2Code
 	 * @return	The system code or an empty string if the system is not found
@@ -144,12 +122,13 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 //		
 //		canvas.redrawDirtyRect();
 //	}
-		
-	public void adjustToZoom(double factor)
+			
+	/**
+	 * Calculate the font size adjusted to the canvas zoom factor.
+	 */
+	private int getVFontSize()
 	{
-		super.adjustToZoom(factor);
-		fontSizeDouble *= factor;
-		fontSize = (int)fontSizeDouble;
+		return (int)(vFromM (M_INITIAL_FONTSIZE));
 	}
 
 	public void draw(PaintEvent e, GC buffer)
@@ -173,20 +152,17 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		buffer.setLineWidth (1);		
 		
 		Rectangle area = new Rectangle(
-				(int)gdata.getLeft(), 
-				(int)gdata.getTop(), 
-				(int)gdata.getWidth(), 
-				(int)gdata.getHeight());
+				getVLeft(), getVTop(), getVWidth(), getVHeight());
 		
 		buffer.fillRectangle (area); // white background
 		buffer.drawRectangle (area);
 		
 		buffer.setClipping ( area.x - 1, area.y - 1, area.width + 1, area.height + 1);
 		
-		f = SwtUtils.changeFont(f, new FontData(gdata.getFontName(), fontSize, SWT.NONE), e.display);
+		f = SwtUtils.changeFont(f, new FontData(gdata.getFontName(), getVFontSize(), SWT.NONE), e.display);
 		buffer.setFont(f);
 		
-		String label = getName();
+		String label = gdata.getGeneID();
 		Point textSize = buffer.textExtent (label);
 		buffer.drawString (label, 
 				area.x + (int)(area.width / 2) - (int)(textSize.x / 2),
@@ -215,10 +191,10 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 			buffer.setForeground(c);
 			buffer.setLineWidth(2);
 			buffer.drawRectangle (
-					(int)(gdata.getLeft()) - 1,
-					(int)(gdata.getTop()) - 1,
-					(int)gdata.getWidth() + 3,
-					(int)gdata.getHeight() + 3
+					getVLeft() - 1,
+					getVTop() - 1,
+					getVWidth() + 3,
+					getVHeight() + 3
 				);
 			if(c != null) c.dispose();
 		}

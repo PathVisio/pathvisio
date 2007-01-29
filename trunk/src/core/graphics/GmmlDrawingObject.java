@@ -37,14 +37,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	private Rectangle oldrect = null;
 	
 	private boolean isSelected;
-	
-	/**
-	 * Adjusts this object to the zoom
-	 * specified in the drawing it is part of
-	 * @param factor - the factor to scale the objects coordinates and measures with
-	 */
-	abstract void adjustToZoom(double factor);
-	
+		
 	protected abstract void draw(PaintEvent e);
 	
 	/**
@@ -62,7 +55,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 		{
 			canvas.addDirtyRect(oldrect);
 		}
-		Rectangle newrect = getBounds();
+		Rectangle newrect = getVBounds();
 		canvas.addDirtyRect(newrect);
 		oldrect = newrect;
 	}
@@ -114,9 +107,9 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param r - the rectangle to check
 	 * @return True if the object intersects the rectangle, false otherwise
 	 */
-	protected final boolean intersects(Rectangle2D.Double r)
+	protected final boolean vIntersects(Rectangle2D.Double r)
 	{
-		return getOutline().intersects(r);
+		return getVOutline().intersects(r);
 	}
 	
 	/**
@@ -125,9 +118,9 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param point - the point to check
 	 * @return True if the object contains the point, false otherwise
 	 */
-	protected final boolean isContain(Point2D point)
+	protected final boolean vContains(Point2D point)
 	{
-		return getOutline().contains(point);
+		return getVOutline().contains(point);
 	}	
 
 
@@ -181,29 +174,29 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param dx - the value of x-increment
 	 * @param dy - the value of y-increment
 	 */
-	protected void moveBy(double dx, double dy) { }
+	protected void vMoveBy(double dx, double dy) { }
 	
 	/**
 	 * Get the rectangular boundary of this object
 	 */
-	protected final Rectangle getBounds()
+	protected final Rectangle getVBounds()
 	{
-		return getOutline().getBounds();
+		return getVOutline().getBounds();
 	}
 	
-	abstract protected Shape getOutline();
+	abstract protected Shape getVOutline();
 
 
 	/**
 	 * Scales the object to the given rectangle
 	 * @param r
 	 */
-	protected void setScaleRectangle(Rectangle2D.Double r) { }
+	protected void setVScaleRectangle(Rectangle2D.Double r) { }
 	
 	/**
 	 * Gets the rectangle used to scale the object
 	 */
-	protected Rectangle2D.Double getScaleRectangle() { return new Rectangle2D.Double(); }
+	protected Rectangle2D.Double getVScaleRectangle() { return new Rectangle2D.Double(); }
 
 	/**
 	 * Orders GmmlDrawingObjects by their drawingOrder.
@@ -249,4 +242,15 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 		else
 			return -1;
 	}
+	
+	/** 
+	 * helper method to convert view coordinates to model coordinates 
+	 * */
+	protected double mFromV(double v) { return canvas.mFromV(v); }
+
+	/** 
+	 * helper method to convert view coordinates to model coordinates 
+	 * */
+	protected double vFromM(double m) { return canvas.vFromM(m); } 
+
 }

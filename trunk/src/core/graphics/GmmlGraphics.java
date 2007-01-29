@@ -72,8 +72,36 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	
 	public Region createVisualizationRegion() {
 		Region region = new Region();
-		java.awt.Rectangle r = getBounds();
+		java.awt.Rectangle r = getVBounds();
 		region.add(r.x, r.y, r.width, r.height);
 		return region;
 	}
+	
+	
+	/**
+	 * Get the x-coordinate of the center point of this object
+	 * adjusted to the current zoom factor
+
+	 * @return the center x-coordinate as integer
+	 */
+	protected int getVCenterX() { return (int)(vFromM(gdata.getMCenterX())); }
+
+	/**
+	 * Get the y-coordinate of the center point of this object
+	 * adjusted to the current zoom factor
+	 * 
+	 * @return the center y-coordinate as integer
+	 */
+	protected int getVCenterY() { return (int)(vFromM(gdata.getMCenterY())); }
+
+	protected int getVLeft() { return (int)(vFromM(gdata.getMLeft())); }
+	protected int getVWidth() { return (int)(vFromM(gdata.getMWidth()));  }
+	protected int getVTop() { return (int)(vFromM(gdata.getMTop())); }
+	protected int getVHeight() { return (int)(vFromM(gdata.getMHeight())); }
+
+	protected int getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
+	protected int getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
+	protected int getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
+	protected int getVEndY() { return (int)(vFromM(gdata.getMEndY())); }
+	
 }

@@ -1061,18 +1061,15 @@ public class GmmlDataObject
 	 */
 	public void setGraphId (String v) 
 	{ 
-		if (graphId != v)
+		if (graphId == null || !graphId.equals(v))
 		{
 			if (parent != null)
 			{
-				if (v == null)
+				if (v != null)
 				{
 					parent.removeGraphId(v);
 				}
-				else
-				{
-					parent.addGraphId(v);
-				}
+				parent.addGraphId(v);
 			}
 			graphId = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));

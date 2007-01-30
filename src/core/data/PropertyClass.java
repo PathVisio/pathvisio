@@ -18,21 +18,23 @@
 package data;
 
 /**
- *
- * @author Martijn
+ * The properties in {@link PropertyType} define properties of different classes,
+ * all the possible classes are defined here.
  */
-public class PropertyClass 
+public enum PropertyClass 
 {
-	public final static int BOOLEAN = 0;
-	public final static int DOUBLE = 1;
-	public final static int INTEGER = 2;
-	public final static int DATASOURCE= 3;
-	public final static int LINESTYLE = 4;
-	public final static int COLOR = 5;
-	public final static int STRING = 6;
-	public final static int ORIENTATION = 7;
-	public final static int SHAPETYPE = 8;
-	public final static int LINETYPE = 9;
-	public final static int GENETYPE = 10;
-	public final static int FONT = 11;
+	BOOLEAN,
+	DOUBLE,
+	INTEGER, 
+	DATASOURCE,
+	LINESTYLE,
+	COLOR,
+	STRING,
+	ORIENTATION,
+	SHAPETYPE,
+	LINETYPE,
+	GENETYPE,
+	FONT,
+	ANGLE,
+	ORGANISM
 }

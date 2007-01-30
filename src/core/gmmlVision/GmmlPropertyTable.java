@@ -22,10 +22,12 @@ import graphics.GmmlSelectionBox.SelectionEvent;
 import graphics.GmmlSelectionBox.SelectionListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
@@ -48,6 +50,10 @@ import org.eclipse.swt.widgets.TableItem;
 import util.TableColumnResizer;
 import data.*;
 
+/**
+ * This class implements the sidepanel where you can edit graphical properties
+ * of each object on the pathway.
+ */
 public class GmmlPropertyTable extends Composite implements GmmlListener, SelectionListener {
 	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
@@ -218,38 +224,53 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	 * a comboboxeditor will be set up with the proper values for
 	 * the drop down list.
 	 */
+	final static String[] orientation_names = {"Top", "Right", "Bottom", "Left"};
+	final static String[] linestyle_names = {"Solid", "Dashed"};
+	final static String[] boolean_names = {"false", "true"};
+	final static String[] shape_names = {"Rectangle", "Oval", "Arc"};
+	final static String[] linetype_names = {
+			"Line", "Arrow", "TBar", "Receptor", "LigandSquare", 
+			"ReceptorSquare", "LigandRound", "ReceptorRound"};
+	final static String[] genetype_names = {
+			"", "unknown", "protein", "rna", "complex"
+		};
+	
 	private CellEditor getCellEditor(Object element)
 	{
 		PropertyType key = (PropertyType)element;
-		int type = key.type();
+		PropertyClass type = key.type();
 		switch(type)
 		{
-		case PropertyClass.FONT:
-		case PropertyClass.GENETYPE:
-		case PropertyClass.STRING:
-		case PropertyClass.DOUBLE:
-		case PropertyClass.INTEGER: 	return textEditor;
-		case PropertyClass.COLOR: 	return colorEditor;
-		case PropertyClass.LINETYPE:
-			comboBoxEditor.setItems(new String[] {
-					"Line", "Arrow", "TBar", "Receptor", "LigandSquare", 
-					"ReceptorSquare", "LigandRound", "ReceptorRound"});
-			return comboBoxEditor;
-		case PropertyClass.SHAPETYPE:
-			comboBoxEditor.setItems(new String[] {"Rectangle", "Oval", "Arc"});
-			return comboBoxEditor;
-		case PropertyClass.DATASOURCE:			
-			comboBoxEditor.setItems(MappFormat.dataSources);
-			return comboBoxEditor;
-		case PropertyClass.ORIENTATION:
-			comboBoxEditor.setItems(new String[] {"Top", "Right", "Bottom", "Left"});
-			return comboBoxEditor;
-		case PropertyClass.LINESTYLE:
-			comboBoxEditor.setItems(new String[] {"Solid", "Dashed"});
-			return comboBoxEditor;
-		case PropertyClass.BOOLEAN:
-			comboBoxEditor.setItems(new String[] {"false", "true"});
-			return comboBoxEditor;
+			case FONT:				
+			case STRING:
+			case DOUBLE:
+			case ANGLE:
+			case INTEGER: 	return textEditor;
+			case COLOR: 	return colorEditor;
+			case LINETYPE:
+				comboBoxEditor.setItems(linetype_names);
+				return comboBoxEditor;
+			case SHAPETYPE:
+				comboBoxEditor.setItems(shape_names);
+				return comboBoxEditor;
+			case DATASOURCE:			
+				comboBoxEditor.setItems(MappFormat.dataSources);
+				return comboBoxEditor;
+			case ORIENTATION:
+				comboBoxEditor.setItems(orientation_names);
+				return comboBoxEditor;
+			case LINESTYLE:
+				comboBoxEditor.setItems(linestyle_names);
+				return comboBoxEditor;
+			case BOOLEAN:
+				comboBoxEditor.setItems(boolean_names);
+				return comboBoxEditor;
+			case ORGANISM:
+				comboBoxEditor.setItems(MappFormat.organism_latin_name);
+				return comboBoxEditor;
+			case GENETYPE:
+				comboBoxEditor.setItems(genetype_names);
+				return comboBoxEditor;
 		}
 		return textEditor;
 	}
@@ -266,30 +287,58 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			return true;
 		}
 
-		public Object getValue(Object element, String property) {
+		/**
+		 * Getvalue is the value that is passed to the Cell Editor when it is 
+		 * activated.
+		 * It should return an Integer object for ComboboxCellEditors.
+		 */
+		public Object getValue(Object element, String property) 
+		{
 			PropertyType key = (PropertyType)element;
 			Object value = getAggregateValue(key);
 			
 			switch(key.type())
 			{
-				case PropertyClass.DOUBLE:
-				case PropertyClass.INTEGER: 
+				case ANGLE:
+				{
+					Double x = Math.round((Double)(value) * 1800.0 / Math.PI) / 10.0;
+					return x.toString();
+				}
+				case DOUBLE:
+				{
+					Double x = Math.round((Double)(value) * 100.0) / 100.0;
+					return x.toString();
+				}
+				case INTEGER: 
 					return value.toString();
-				case PropertyClass.STRING: 
+				case ORGANISM:
+					return Arrays.asList(MappFormat.organism_latin_name).indexOf((String)value);
+				case GENETYPE:
+					return Arrays.asList(genetype_names).indexOf((String)value);
+				case STRING: 
+				case FONT:
 					return value == null ? "" : (String)value;
-				case PropertyClass.COLOR: 
+				case COLOR: 
 					return (RGB)value;	
-				case PropertyClass.DATASOURCE:
-					return MappFormat.lDataSources.indexOf((String)value);					
-				
+				case DATASOURCE:
+					return MappFormat.lDataSources.indexOf((String)value);				
 				// for all combobox types:
-				case PropertyClass.BOOLEAN:
+				case BOOLEAN:
 					return ((Boolean)value) ? 1 : 0;
-				case PropertyClass.LINETYPE:
-				case PropertyClass.SHAPETYPE:
-				case PropertyClass.ORIENTATION:
-				case PropertyClass.LINESTYLE:
-					return (Integer)value;
+				case LINETYPE:
+				case SHAPETYPE:
+				case ORIENTATION:
+				case LINESTYLE:
+				{
+//					try 
+//					{
+						return (Integer)value;
+//					}
+//					catch (ClassCastException e)
+//					{
+//						MessageDialog.openWarning(getShell(), "warning", "Can't cast " + value + " to Integer!");
+//					}
+				}
 			}
 			return null;
 		}
@@ -301,25 +350,40 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			 * Here, we transform the output of the cell editor
 			 * to a value understood by GmmlDataObject.SetProperty().
 			 * 
-			 * For linetype, shapetype, we go from Integer to Integer. easy
+			 * The output of a comboboxCellEditor is Integer.
+			 * The output of a textCellEditor is String.
+			 * 
+			 * For linetype and shapetype we go from Integer to Integer. easy
 			 * For boolean, we go from Integer to Boolean
 			 * For Double / Integer, we go from String to Double
 			 * For Datasource, we go from Integer to String.
 			 */
 			switch(key.type())
 			{
-			case PropertyClass.DOUBLE: 	
+			case ANGLE: 	
+				try 
+				{ 
+					// convert degrees (property editor) to radians (model)
+					value = Double.parseDouble((String)value) * Math.PI / 180;					
+					break;
+				} 
+				catch(Exception e) 
+				{
+					// invalid input, ignore
+					return; 
+				}
+			case DOUBLE: 	
 				try 
 				{ 
 					value = Double.parseDouble((String)value); 
 					break; 
 				} 
 				catch(Exception e) 
-				{ 
-					GmmlVision.log.error("GmmlPropertyTable: Unable to parse double", e); 
+				{
+					// invalid input, ignore
 					return; 
 				}
-			case PropertyClass.INTEGER: 	
+			case INTEGER: 	
 				try 
 				{ 
 					value = Integer.parseInt((String)value); 
@@ -327,14 +391,14 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				}
 				catch(Exception e) 
 				{ 
-					GmmlVision.log.error("GmmlPropertyTable: Unable to parse int", e); 
+					// invalid input, ignore 
 					return; 
 				}
-			case PropertyClass.DATASOURCE:
+			case DATASOURCE:
 				if((Integer)value == -1) return; //Nothing selected
 				value = MappFormat.lDataSources.get((Integer)value);
 				break;
-			case PropertyClass.BOOLEAN:
+			case BOOLEAN:
 				if ((Integer)value == 0)
 				{
 					value = new Boolean (false);
@@ -343,6 +407,15 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				{
 					value = new Boolean (true);
 				}
+				break;
+			case ORGANISM:
+				if((Integer)value == -1) return; //Nothing selected
+				value = MappFormat.organism_latin_name[(Integer)value];
+				break;
+			case GENETYPE:
+				if((Integer)value == -1) return; //Nothing selected
+				value = genetype_names[(Integer)value];
+				break;
 			}
 			
 			for(GmmlDataObject o : dataObjects) {
@@ -369,7 +442,74 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 					if(attributes.contains(key))
 					{
 						Object value = getAggregateValue(key);
-						return value == null ? null : value.toString();
+						if (value == null)
+						{
+							return null;
+						}
+						else 
+						{
+							switch (key.type())
+							{
+								case ANGLE:
+								{
+									if (value instanceof Double)
+									{
+										Double x = Math.round((Double)(value) * 1800.0 / Math.PI) / 10.0;
+										return x.toString();
+									}
+									else
+										return value.toString();
+								}
+								case DOUBLE:								
+									if (value instanceof Double)
+									{
+										Double x = Math.round((Double)(value) * 10.0) / 10.0;
+										return x.toString();
+									}
+									else
+										return value.toString();
+										
+								case BOOLEAN:
+								{
+									if (value instanceof Boolean)
+									{
+										return (Boolean)(value) ? "true" : "false";
+									}
+									else
+										return value.toString();
+								}
+								case LINETYPE:
+								{
+									if (value instanceof Integer)
+										return linetype_names[(Integer)(value)];
+									else
+										return value.toString();
+								}
+								case LINESTYLE:
+								{
+									if (value instanceof Integer)
+										return linestyle_names[(Integer)(value)];
+									else
+										return value.toString();
+								}
+								case ORIENTATION:
+								{
+									if (value instanceof Integer)
+										return orientation_names[(Integer)(value)];
+									else
+										return value.toString();									
+								}
+								case SHAPETYPE:
+								{
+									if (value instanceof Integer)
+										return shape_names[(Integer)(value)];
+									else
+										return value.toString();
+								}
+								default:
+									return value.toString();
+							}
+						}
 					}
 			}
 			return null;
@@ -387,6 +527,13 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		tableViewer.refresh();
 	}
 
+	//TODO: implement all attribute types as subclasses of MyType.
+//	class MyType {
+//		abstract String getColumnText(Object value);
+//		abstract Object adjustedValue(Object value);
+//		abstract CellEditor getCellEditor()
+//	}
+	
 	public void drawingEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:

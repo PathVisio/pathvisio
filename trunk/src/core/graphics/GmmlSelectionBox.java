@@ -18,9 +18,7 @@ package graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -305,11 +303,48 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		}
 	}
 	
-	public void vMoveBy(double dx, double dy) {
-		super.vMoveBy(dx, dy);
+	public void vMoveBy(double vdx, double vdy) 
+	{
+
+		gdata.setMLeft(gdata.getMLeft() + mFromV(vdx)); 
+		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
+
 		//Move the selected objects
-		for(GmmlDrawingObject o : selection) {
-			o.vMoveBy(dx, dy);
+		
+		Set<GmmlDataObject> starts = new HashSet<GmmlDataObject>();
+		Set<GmmlDataObject> ends = new HashSet<GmmlDataObject>();
+		Set<GmmlDataObject> not = new HashSet<GmmlDataObject>();
+		
+		for(GmmlDrawingObject o : selection) 
+		{
+			if (o instanceof GmmlGraphics)
+			{
+				GmmlDataObject g = ((GmmlGraphics)o).getGmmlData();
+			
+				starts.addAll(g.getStickyStarts()); 			
+				ends.addAll(g.getStickyEnds());
+				not.add (g);
+			}
+		}
+		
+		starts.removeAll(not);
+		ends.removeAll(not);
+		
+		for(GmmlDrawingObject o : selection) 
+		{				
+			o.vMoveBy(vdx, vdy);
+		}
+
+		for(GmmlDataObject g : starts) 
+		{				
+			g.setMStartX(g.getMStartX() + mFromV(vdx));
+			g.setMStartY(g.getMStartY() + mFromV(vdy));
+		}
+
+		for(GmmlDataObject g : ends) 
+		{				
+			g.setMEndX(g.getMEndX() + mFromV(vdx));
+			g.setMEndY(g.getMEndY() + mFromV(vdy));
 		}
 	}
 	

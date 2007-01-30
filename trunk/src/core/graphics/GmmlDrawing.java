@@ -317,8 +317,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		// If draggin, drag the pressed object
 		if (pressedObject != null && isDragging)
 		{
-			pressedObject.vMoveBy(ve.x - vPreviousX, ve.y - vPreviousY);
-			
+			double vdx = ve.x - vPreviousX;
+			double vdy = ve.y - vPreviousY;
+			pressedObject.vMoveBy(vdx, vdy);
+				
 			vPreviousX = ve.x;
 			vPreviousY = ve.y;
 			
@@ -342,6 +344,22 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				}
 				if(x != null) x.highlight();
 				
+			}
+			if (pressedObject instanceof GmmlGraphics)
+			{
+				GmmlDataObject x = ((GmmlGraphics)pressedObject).getGmmlData();
+				
+				for(GmmlDataObject g : x.getStickyStarts()) 
+				{				
+					g.setMStartX(g.getMStartX() + mFromV(vdx));
+					g.setMStartY(g.getMStartY() + mFromV(vdy));
+				}
+
+				for(GmmlDataObject g : x.getStickyEnds()) 
+				{				
+					g.setMEndX(g.getMEndX() + mFromV(vdx));
+					g.setMEndY(g.getMEndY() + mFromV(vdy));
+				}
 			}
 			redrawDirtyRect();
 		}

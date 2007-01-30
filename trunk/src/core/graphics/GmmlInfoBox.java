@@ -50,12 +50,12 @@ public class GmmlInfoBox extends GmmlGraphics {
 		return (int)(vFromM(M_INITIAL_FONTSIZE));
 	}
 			
-	protected void vMoveBy(double dx, double dy)
+	protected void vMoveBy(double vdx, double vdy)
 	{
-		markDirty();
-		gdata.setMapInfoTop (gdata.getMapInfoTop()  + (int)dy);
-		gdata.setMapInfoLeft (gdata.getMapInfoLeft() + (int)dx);
-		markDirty();
+//		markDirty();
+		gdata.setMapInfoTop ((int)(gdata.getMapInfoTop()  + vdy));
+		gdata.setMapInfoLeft ((int)(gdata.getMapInfoLeft() + vdx));
+//		markDirty();
 	}
 	
 	public void draw(PaintEvent e) 

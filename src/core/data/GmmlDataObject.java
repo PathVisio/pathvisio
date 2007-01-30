@@ -18,7 +18,9 @@ package data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.graphics.RGB;
 
@@ -1184,4 +1186,67 @@ public class GmmlDataObject
 		}
 	}
 
+	/**
+	 * Gets a list of all lines that refer to this object with their startPoints
+	 */
+	public Set<GmmlDataObject> getStickyStarts()
+	{
+		Set<GmmlDataObject> result = 
+			new HashSet<GmmlDataObject>();
+
+		if (parent == null) return result;
+		
+		List<GmmlDataObject> reflist = parent.getReferringObjects(graphId);
+		
+		if (reflist != null && !graphId.equals("")) 
+		{
+			// get all referring lines as a hashset, so
+			// that a line that refers to the same object twice
+			// is only treated once.
+			for (GmmlDataObject o : reflist)
+			{
+				if (o.getObjectType() == ObjectType.LINE)
+				{
+					String startRef = o.getStartGraphRef();
+					if (startRef != null && startRef.equals (graphId))
+					{
+						result.add(o);
+					}
+				}
+			}
+		}
+		return result;	
+	}
+	
+	/**
+	 * Gets a list of all lines that refer to this object with their endPoints
+	 */
+	public Set<GmmlDataObject> getStickyEnds()
+	{		
+		Set<GmmlDataObject> result = 
+			new HashSet<GmmlDataObject>();
+
+		if (parent == null) return result;
+		
+		List<GmmlDataObject> reflist = parent.getReferringObjects(graphId);
+		
+		if (reflist != null && !graphId.equals("")) 
+		{
+			// get all referring lines as a hashset, so
+			// that a line that refers to the same object twice
+			// is only treated once.
+			for (GmmlDataObject o : reflist)
+			{
+				if (o.getObjectType() == ObjectType.LINE)
+				{
+					String endRef = o.getEndGraphRef();
+					if (endRef != null && o.getEndGraphRef().equals (graphId))
+					{
+						result.add(o);
+					}
+				}
+			}
+		}
+		return result;
+	}
 }

@@ -19,7 +19,6 @@ package graphics;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
@@ -29,7 +28,6 @@ import util.SwtUtils;
 import util.LinAlg.Point;
 import data.GmmlDataObject;
 import data.GmmlEvent;
-import data.ObjectType;
 
 /**
  * This is an {@link GmmlGraphics} class representing shapelike forms,
@@ -75,40 +73,6 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 				{ handleSW, 	handleSE }};
 	}
 	
-	public void vMoveBy(double vdx, double vdy)
-	{
-//		gdata.dontFireEvents(1);
-		gdata.setMLeft(gdata.getMLeft() + mFromV(vdx)); 
-		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
-		
-		if(gdata.getParent() == null) return; //NOTE: Quick fix for GmmlSelectionBox -> shouldn't extend GmmlGraphics
-		String id = gdata.getGraphId();
-		List<GmmlDataObject> refs = gdata.getParent().getReferringObjects(id);
-		
-		if (refs != null && !id.equals("")) 
-		{
-			for (GmmlDataObject o : refs)
-			{
-				if (o.getObjectType() == ObjectType.LINE)
-				{
-					String startRef = o.getStartGraphRef();
-					if (startRef != null && startRef.equals (id))
-					{
-//						o.dontFireEvents(1);
-						o.setMStartX(o.getMStartX() + mFromV(vdx));
-						o.setMStartY(o.getMStartY() + mFromV(vdy));
-					}
-					String endRef = o.getEndGraphRef();
-					if (endRef != null && o.getEndGraphRef().equals (id))
-					{
-//						o.dontFireEvents(1);
-						o.setMEndX(o.getMEndX() + mFromV(vdx));
-						o.setMEndY(o.getMEndY() + mFromV(vdy));
-					}
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Adjust model to changes in the shape, 
@@ -124,6 +88,12 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		gdata.setMTop(mFromV(vtop));
 	}
 	
+	protected void vMoveBy(double vdx, double vdy)
+	{
+		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
+		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
+	}
+
 	public void setVScaleRectangle(Rectangle2D.Double r) {
 		setVShape(r.x, r.y, r.width, r.height);
 	}

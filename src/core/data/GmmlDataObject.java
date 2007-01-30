@@ -446,6 +446,7 @@ public class GmmlDataObject
 	}
 	
 	// only for lines:	
+	// TODO: move to point subclass
 	protected double mStartx = 0;
 	public double getMStartX() { return mStartx; }
 	public void setMStartX(double v) 
@@ -457,6 +458,7 @@ public class GmmlDataObject
 		}
 	}
 	
+	// TODO: move to point subclass
 	protected double mStarty = 0;
 	public double getMStartY() { return mStarty; }
 	public void setMStartY(double v) 
@@ -468,6 +470,7 @@ public class GmmlDataObject
 		}
 	}
 	
+	// TODO: move to point subclass
 	protected double mEndx = 0;
 	public double getMEndX() { return mEndx; }
 	public void setMEndX(double v) 
@@ -479,6 +482,7 @@ public class GmmlDataObject
 		}
 	}
 	
+	// TODO: move to point subclass
 	protected double mEndy = 0;
 	public double getMEndY() { return mEndy; }
 	public void setMEndY(double v) 
@@ -659,6 +663,7 @@ public class GmmlDataObject
 		return systemCode;
 	}
 	 
+	// TODO: move to point subclass
 	protected double mCenterx = 0;
 	public double getMCenterX() { return mCenterx; }
 	public void setMCenterX(double v) 
@@ -670,6 +675,7 @@ public class GmmlDataObject
 		}
 	}
 	
+	// TODO: move to point subclass
 	protected double mCentery = 0;
 	public double getMCenterY() { return mCentery; }
 	public void setMCenterY(double v) 

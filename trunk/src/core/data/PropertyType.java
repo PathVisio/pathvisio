@@ -47,7 +47,7 @@ public enum PropertyType
 	TRANSPARENT ("Transparent", "Transparent", PropertyClass.BOOLEAN),
 	FILLCOLOR ("FillColor", "Fill Color", PropertyClass.COLOR),
 	SHAPETYPE ("ShapeType", "Shape Type", PropertyClass.SHAPETYPE),
-	ROTATION ("Rotation", "Rotation", PropertyClass.DOUBLE),
+	ROTATION ("Rotation", "Rotation", PropertyClass.ANGLE),
 			
 	// line
 	STARTX ("StartX", "Start X", PropertyClass.DOUBLE), 
@@ -78,7 +78,7 @@ public enum PropertyType
 
 	// mappinfo
 	MAPINFONAME ("MapInfoName", "Map Info Name", PropertyClass.STRING),
-	ORGANISM ("Organism", "Organism", PropertyClass.STRING), 
+	ORGANISM ("Organism", "Organism", PropertyClass.ORGANISM), 
 	DATA_SOURCE ("Data-Source", "Data-Source", PropertyClass.STRING),
 	VERSION ("Version", "Version", PropertyClass.STRING), 
 	AUTHOR ("Author", "Author", PropertyClass.STRING), 
@@ -88,8 +88,8 @@ public enum PropertyType
 	AVAILABILITY ("Availability", "Availability", PropertyClass.STRING),
 	BOARDWIDTH ("BoardWidth", "Board Width", PropertyClass.DOUBLE), 
 	BOARDHEIGHT ("BoardHeight", "Board Height", PropertyClass.DOUBLE), 
-	WINDOWWIDTH ("WindowWidth", "Window Width", PropertyClass.DOUBLE), 
-	WINDOWHEIGHT ("WindowHeight", "Window Height", PropertyClass.DOUBLE),
+	WINDOWWIDTH ("WindowWidth", "Window Width", PropertyClass.DOUBLE, true), 
+	WINDOWHEIGHT ("WindowHeight", "Window Height", PropertyClass.DOUBLE, true),
 
 	// other
 	GRAPHID ("GraphId", "GraphId", PropertyClass.STRING), 
@@ -97,15 +97,22 @@ public enum PropertyType
 	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING);
 
 	private String tag, desc;
-	private int type;
+	private PropertyClass type;
+	private boolean hidden;
 	
-	PropertyType (String _tag, String _desc, int _type)
+	PropertyType (String _tag, String _desc, PropertyClass _type, boolean _hidden)
 	{
 		tag = _tag;
 		type = _type;
 		desc = _desc;
+		hidden = _hidden;
 	}
-	
+
+	PropertyType (String _tag, String _desc, PropertyClass _type)
+	{
+		this(_tag, _desc, _type, false);
+	}
+
 	public String tag()
 	{
 		return tag;
@@ -116,8 +123,13 @@ public enum PropertyType
 		return desc;
 	}
 	
-	public int type()
+	public PropertyClass type()
 	{
 		return type;
+	}	
+
+	public boolean hidden()
+	{
+		return hidden;
 	}	
 }

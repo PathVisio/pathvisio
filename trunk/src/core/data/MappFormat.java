@@ -68,7 +68,8 @@ public class MappFormat
 		"Color, Label, Head, Remarks, Image, Links, Notes " +
 		"FROM OBJECTS";
 
-	static final String[] organism_latin_name = {
+	public static final String[] organism_latin_name = {
+		"",
 		"Mus musculus",
 		"Homo sapiens",
 		"Rattus norvegicus",
@@ -79,10 +80,12 @@ public class MappFormat
 		"Drosophila melanogaster",
 		"Canis familiaris",
 		"Xenopus tropicalis",
-		"Arabidopsis thaliana"				
+		"Arabidopsis thaliana"
+
 	};
 
 	static final String[] organism_short_code = {
+		"___",
 		"Mm_", 
 		"Hs_", 
 		"Rn_", 

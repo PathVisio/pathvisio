@@ -21,6 +21,7 @@ import java.util.List;
 
 public class ObjectType {
 	 
+	//TODO: enum
 	public static final int MIN_VALID = 0; // lowest valid value
 	public static final int BRACE = 0;
 	public static final int SHAPE = 1;

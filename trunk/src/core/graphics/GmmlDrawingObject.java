@@ -174,6 +174,9 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param dx - the value of x-increment
 	 * @param dy - the value of y-increment
 	 */
+	// TODO: should really be mMoveBy, using model coords,
+	// because implementations do a lot of conversions anyway
+	// perhaps could even be partially implemented in GmmlDataObject 
 	protected void vMoveBy(double dx, double dy) { }
 	
 	/**

@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway Name="Fatty Acid Beta Oxidation 1" Data-Source="GenMAPP 2.0" Version="20041216" Author="Charles Redfern, Nathan Salomonis and Chris Evelo" Maintained-By="Chris Evelo for NuGO" Email="mapps@bigcat.unimaas.nl" Availability="Gladstone Institutes and BiGCaT Bioinformatics" Last-Modified="11/22/05">
+  <Notes>Updated from Charles Redfern and Nathan Salomonis&#x2019; original by Magali Jaillard, Marijke Vermeer, Michiel Adrieans, Ron Schormans and Chris Evelo, see website.</Notes>
+  <Comment>http://www.bigcat.unimaas.nl/mapps</Comment>
+  <Graphics BoardWidth="23273.0" BoardHeight="12474.0" WindowWidth="19380.0" WindowHeight="12465.0" />
+  <GeneProduct GeneID="TPI1" Xref="" Type="unknown" Name="7167" BackpageHead="TPI1 | triosephosphate isomerase 1" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="5500.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="GK" Xref="" Type="unknown" Name="2710" BackpageHead="GK | glycerol kinase" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment>&#xD;
+</Comment>
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="2350.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="GK2" Xref="" Type="unknown" Name="2712" BackpageHead="GK2 | glycerol kinase 2" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="2650.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="GPD2" Xref="" Type="unknown" Name="2820" BackpageHead="GPD2 | glycerol-3-phosphate dehydrogenase 2 (mi..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="4100.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CPT2" Xref="" Type="unknown" Name="1376" BackpageHead="CPT2 | carnitine palmitoyltransferase II" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="5800.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CPT1A" Xref="" Type="unknown" Name="1374" BackpageHead="CPT1A | carnitine palmitoyltransferase 1A (live..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="5200.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CHKB" Xref="" Type="unknown" Name="1120" BackpageHead="CHKB | choline kinase beta" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="5500.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="SLC25A20" Xref="" Type="unknown" Name="788" BackpageHead="SLC25A20 | solute carrier family 25 (carnitine/..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="6100.0" Width="1100.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CRAT" Xref="" Type="unknown" Name="1384" BackpageHead="CRAT | carnitine acetyltransferase" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="4900.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACSL1" Xref="" Type="unknown" Name="2180" BackpageHead="ACSL1 | acyl-CoA synthetase long-chain family m..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="2550.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACAS2" Xref="" Type="unknown" Name="55902" BackpageHead="ACAS2 | acetyl-Coenzyme A synthetase 2 (ADP for..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="2250.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACSL3" Xref="" Type="unknown" Name="2181" BackpageHead="ACSL3 | acyl-CoA synthetase long-chain family m..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="2850.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACSL4" Xref="" Type="unknown" Name="2182" BackpageHead="ACSL4 | acyl-CoA synthetase long-chain family m..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="3150.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACSL5" Xref="" Type="unknown" Name="51703" BackpageHead="ACSL5 | acyl-CoA synthetase long-chain family m..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="3450.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACSL6" Xref="" Type="unknown" Name="23305" BackpageHead="ACSL6 | acyl-CoA synthetase long-chain family m..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="3750.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="CPT1B" Xref="" Type="unknown" Name="1375" BackpageHead="CPT1B | carnitine palmitoyltransferase 1B (musc..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="6250.0" CenterY="6400.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACADVL" Xref="" Type="unknown" Name="37" BackpageHead="ACADVL | acyl-Coenzyme A dehydrogenase very lo..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="2100.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="3850.0000000000005" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="4150.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="6000.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="5700.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="7749.999999999999" Width="1200.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACADL" Xref="" Type="unknown" Name="33" BackpageHead="ACADL | acyl-Coenzyme A dehydrogenase long cha..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14950.0" CenterY="2550.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14950.0" CenterY="4500.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14900.0" CenterY="5950.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14900.0" CenterY="7899.999999999999" Width="1200.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ECHS1" Xref="" Type="unknown" Name="1892" BackpageHead="ECHS1 | enoyl Coenzyme A hydratase short chain..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="20050.0" CenterY="4400.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHSC" Xref="" Type="unknown" Name="3033" BackpageHead="HADHSC | L-3-hydroxyacyl-Coenzyme A dehydrogena..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="20000.0" CenterY="6000.0" Width="1000.0000000000001" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="20000.0" CenterY="7850.000000000001" Width="1200.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="LIPE" Xref="" Type="unknown" Name="3991" BackpageHead="LIPE | lipase hormone-sensitive" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="1000.0000000000001" CenterY="1200.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="LIPC" Xref="" Type="unknown" Name="3990" BackpageHead="LIPC | lipase hepatic" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="1000.0000000000001" CenterY="900.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="PNPLA2" Xref="" Type="unknown" Name="57104" BackpageHead="PNPLA2 | patatin-like phospholipase domain cont..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="1000.0000000000001" CenterY="1800.0" Width="900.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="LIPF" Xref="" Type="unknown" Name="8513" BackpageHead="LIPF | lipase gastric" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="1000.0000000000001" CenterY="1500.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="LPL" Xref="" Type="unknown" Name="4023" BackpageHead="LPL | lipoprotein lipase" GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="4450.0" CenterY="1000.0000000000001" Width="1100.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14900.0" CenterY="7600.0" Width="1200.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="9400.0" CenterY="7450.0" Width="1200.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="ACADL" Xref="" Type="unknown" Name="33" BackpageHead="ACADL | acyl-Coenzyme A dehydrogenase long cha..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="20050.0" CenterY="2900.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14950.0" CenterY="4200.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHB" Xref="" Type="unknown" Name="3032" BackpageHead="HADHB | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="14900.0" CenterY="6250.0" Width="800.0" Height="300.0" />
+  </GeneProduct>
+  <GeneProduct GeneID="HADHA" Xref="" Type="unknown" Name="3030" BackpageHead="HADHA | hydroxyacyl-Coenzyme A dehydrogenase/3-..." GeneProduct-Data-Source="Entrez Gene">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="Transparent" CenterX="20000.0" CenterY="7550.0" Width="1200.0" Height="300.0" />
+  </GeneProduct>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="2850.0" y="1950.0" />
+      <Point x="2850.0" y="3250.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="4750.0" y="750.0" />
+      <Point x="5700.0" y="1700.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="4200.0" y="750.0" />
+      <Point x="3250.0" y="1700.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="2850.0" y="6400.0" />
+      <Point x="2850.0" y="6950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="2850.0" y="3650.0" />
+      <Point x="2850.0" y="4650.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="2850.0" y="5000.0" />
+      <Point x="2850.0" y="6000.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6250.0" y="2000.0000000000002" />
+      <Point x="6250.0" y="4200.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6250.0" y="4550.0" />
+      <Point x="6250.0" y="6750.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="6900.0" y="6750.0" />
+      <Point x="8600.0" y="2250.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9400.0" y="2200.0" />
+      <Point x="9400.0" y="2850.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9400.0" y="3200.0" />
+      <Point x="9400.0" y="4750.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9400.0" y="5050.0" />
+      <Point x="9400.0" y="6600.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9600.0" y="6950.0" />
+      <Point x="10200.0" y="8500.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="9200.0" y="6950.0" />
+      <Point x="8600.0" y="8500.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="11000.0" y="8500.0" />
+      <Point x="14000.0" y="2600.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="14950.0" y="2700.0" />
+      <Point x="14950.0" y="3050.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="14950.0" y="3400.0" />
+      <Point x="14950.0" y="5000.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="14900.0" y="5350.0" />
+      <Point x="14900.0" y="6750.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="14600.0" y="7150.0" />
+      <Point x="14000.0" y="8950.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="15200.0" y="7200.0" />
+      <Point x="15700.000000000002" y="8900.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="16500.0" y="8950.0" />
+      <Point x="19200.0" y="3000.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="20050.0" y="3050.0" />
+      <Point x="20050.0" y="3400.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="20000.0" y="3750.0" />
+      <Point x="20000.0" y="5050.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="20000.0" y="5500.0" />
+      <Point x="20000.0" y="6800.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="19650.0" y="7100.0" />
+      <Point x="19000.0" y="9250.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Solid">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="20350.0" y="7100.0" />
+      <Point x="21100.0" y="9150.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="21100.0" y="9550.0" />
+      <Point x="20500.0" y="11150.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="8450.0" y="8750.0" />
+      <Point x="8300.0" y="9200.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="14000.0" y="9250.0" />
+      <Point x="13850.0" y="9700.0" />
+    </Graphics>
+  </Line>
+  <Line Type="Arrow" Style="Broken">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics Color="000000">
+      <Point x="18900.0" y="9500.0" />
+      <Point x="18750.0" y="9950.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Triacylglycerol" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="4550.0" CenterY="600.0" Width="1748.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Glycerol" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2850.0" CenterY="1850.0" Width="1028.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Dihydroxyacetone Phosphate" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2900.0" CenterY="4800.0" Width="3416.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Fatty Acid" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6250.0" CenterY="1850.0" Width="1220.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Acyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6250.0" CenterY="4400.0" Width="1112.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Palmitoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6250.0" CenterY="6900.0" Width="1664.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Glyceraldehyde-3-Phosphate" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2950.0" CenterY="6200.0" Width="3356.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="L-Glycerol-3-Phosphate" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2900.0" CenterY="3450.0" Width="2768.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="See Glycolysis MAPP" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="2900.0" CenterY="7150.0" Width="2492.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Trans-Hexadecanoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9350.0" CenterY="3050.0" Width="2960.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="(S)-3-Hydroxyhexadecanoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9300.0" CenterY="4900.0" Width="3764.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="3-Oxopalmitoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9450.0" CenterY="6800.0" Width="2336.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Myristoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="10400.0" CenterY="8650.0" Width="1676.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Acetyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="8400.0" CenterY="8650.0" Width="1328.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Trans-Tetradex-2-enoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="14950.0" CenterY="3250.0" Width="3296.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="(S)-3-Hydroxytetradecanoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="14950.0" CenterY="5150.0" Width="3752.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Dxotetradecanoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="15050.0" CenterY="6950.0" Width="2624.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Acetyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="13900.0" CenterY="9150.0" Width="1328.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Lauroyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="16000.000000000002" CenterY="9150.0" Width="1484.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="2-trans-dodecenoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20150.0" CenterY="3600.0" Width="2828.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="(S)-3-Hydroxydodexanonyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20100.0" CenterY="5250.0" Width="3656.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="3-Oxododexanoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20000.0" CenterY="6900.0" Width="2624.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Acetyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="18800.0" CenterY="9400.0" Width="1328.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Decanoyl-CoA" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="21400.0" CenterY="9350.0" Width="1676.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="See Beta Oxidation 2 MAPP" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="20100.0" CenterY="11350.0" Width="3200.0" Height="288.0" />
+  </Label>
+  <Label TextLabel="Lipases" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="11" Color="000000" CenterX="1000.0000000000001" CenterY="550.0" Width="896.0" Height="252.0" />
+  </Label>
+  <Label TextLabel="See TCA Cycle MAPP" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="8300.0" CenterY="9350.0" Width="3200.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="See TCA Cycle MAPP" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="13950.0" CenterY="9850.0" Width="3200.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="See TCA Cycle MAPP" Xref="">
+    <Notes></Notes>
+    <Comment></Comment>
+    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="0000ff" CenterX="18750.0" CenterY="10150.0" Width="3200.0" Height="285.0" />
+  </Label>
+  <InfoBox CenterX="4000.0000000000005" CenterY="10600.0" />
+  <Legend CenterX="70.0" CenterY="7700.000000000001" />
+</Pathway>
+

@@ -1,0 +1,357 @@
+<?xml version="1.0" standalone="no"?>
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+
+	"http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+version="1.0" width="831.6" height="831.6">
+
+<rect x="190" y="366.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="190" y="366.666666667" style="font-family:Arial;font-size:12"> TPI1
+		</text>
+<rect x="190" y="156.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="190" y="156.666666667" style="font-family:Arial;font-size:12"> GK
+		</text>
+<rect x="190" y="176.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="190" y="176.666666667" style="font-family:Arial;font-size:12"> GK2
+		</text>
+<rect x="190" y="273.333333333" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="190" y="273.333333333" style="font-family:Arial;font-size:12"> GPD2
+		</text>
+<rect x="416.666666667" y="386.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="386.666666667" style="font-family:Arial;font-size:12"> CPT2
+		</text>
+<rect x="416.666666667" y="346.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="346.666666667" style="font-family:Arial;font-size:12"> CPT1A
+		</text>
+<rect x="416.666666667" y="366.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="366.666666667" style="font-family:Arial;font-size:12"> CHKB
+		</text>
+<rect x="416.666666667" y="406.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="73.3333333333" height="20"/>
+
+<text x="416.666666667" y="406.666666667" style="font-family:Arial;font-size:12"> SLC25A20
+		</text>
+<rect x="416.666666667" y="326.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="326.666666667" style="font-family:Arial;font-size:12"> CRAT
+		</text>
+<rect x="416.666666667" y="170" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="170" style="font-family:Arial;font-size:12"> ACSL1
+		</text>
+<rect x="416.666666667" y="150" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="150" style="font-family:Arial;font-size:12"> ACAS2
+		</text>
+<rect x="416.666666667" y="190" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="190" style="font-family:Arial;font-size:12"> ACSL3
+		</text>
+<rect x="416.666666667" y="210" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="210" style="font-family:Arial;font-size:12"> ACSL4
+		</text>
+<rect x="416.666666667" y="230" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="230" style="font-family:Arial;font-size:12"> ACSL5
+		</text>
+<rect x="416.666666667" y="250" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="250" style="font-family:Arial;font-size:12"> ACSL6
+		</text>
+<rect x="416.666666667" y="426.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="416.666666667" y="426.666666667" style="font-family:Arial;font-size:12"> CPT1B
+		</text>
+<rect x="626.666666667" y="140" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="60" height="20"/>
+
+<text x="626.666666667" y="140" style="font-family:Arial;font-size:12"> ACADVL
+		</text>
+<rect x="626.666666667" y="256.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="626.666666667" y="256.666666667" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<rect x="626.666666667" y="276.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="626.666666667" y="276.666666667" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="626.666666667" y="400" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="626.666666667" y="400" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<rect x="626.666666667" y="380" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="626.666666667" y="380" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="626.666666667" y="516.6" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="80" height="20"/>
+
+<text x="626.666666667" y="516.6" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="996.666666667" y="170" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="996.666666667" y="170" style="font-family:Arial;font-size:12"> ACADL
+		</text>
+<rect x="996.666666667" y="300" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="996.666666667" y="300" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="993.333333333" y="396.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="993.333333333" y="396.666666667" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<rect x="993.333333333" y="526.6" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="80" height="20"/>
+
+<text x="993.333333333" y="526.6" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="1336.66666667" y="293.333333333" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="1336.66666667" y="293.333333333" style="font-family:Arial;font-size:12"> ECHS1
+		</text>
+<rect x="1333.33333333" y="400" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="66.6666666667" height="20"/>
+
+<text x="1333.33333333" y="400" style="font-family:Arial;font-size:12"> HADHSC
+		</text>
+<rect x="1333.33333333" y="523.333333333" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="80" height="20"/>
+
+<text x="1333.33333333" y="523.333333333" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="66.6666666667" y="80" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="66.6666666667" y="80" style="font-family:Arial;font-size:12"> LIPE
+		</text>
+<rect x="66.6666666667" y="60" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="66.6666666667" y="60" style="font-family:Arial;font-size:12"> LIPC
+		</text>
+<rect x="66.6666666667" y="120" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="60" height="20"/>
+
+<text x="66.6666666667" y="120" style="font-family:Arial;font-size:12"> PNPLA2
+		</text>
+<rect x="66.6666666667" y="100" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="66.6666666667" y="100" style="font-family:Arial;font-size:12"> LIPF
+		</text>
+<rect x="296.666666667" y="66.6666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="73.3333333333" height="20"/>
+
+<text x="296.666666667" y="66.6666666667" style="font-family:Arial;font-size:12"> LPL
+		</text>
+<rect x="993.333333333" y="506.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="80" height="20"/>
+
+<text x="993.333333333" y="506.666666667" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<rect x="626.666666667" y="496.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="80" height="20"/>
+
+<text x="626.666666667" y="496.666666667" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<rect x="1336.66666667" y="193.333333333" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="1336.66666667" y="193.333333333" style="font-family:Arial;font-size:12"> ACADL
+		</text>
+<rect x="996.666666667" y="280" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="996.666666667" y="280" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<rect x="993.333333333" y="416.666666667" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="53.3333333333" height="20"/>
+
+<text x="993.333333333" y="416.666666667" style="font-family:Arial;font-size:12"> HADHB
+		</text>
+<rect x="1333.33333333" y="503.333333333" style="fill:rgb(255,255,255);stroke-width:1;
+	stroke:rgb(0,0,0)" width="80" height="20"/>
+
+<text x="1333.33333333" y="503.333333333" style="font-family:Arial;font-size:12"> HADHA
+		</text>
+<text x="303.333333333" y="40" style="font-family:Arial.ttf;font-size:12"> Triacylglycerol
+		</text>
+<text x="190" y="123.333333333" style="font-family:Arial.ttf;font-size:12"> Glycerol
+		</text>
+<text x="193.333333333" y="320" style="font-family:Arial.ttf;font-size:12"> Dihydroxyacetone Phosphate
+		</text>
+<text x="416.666666667" y="123.333333333" style="font-family:Arial.ttf;font-size:12"> Fatty Acid
+		</text>
+<text x="416.666666667" y="293.333333333" style="font-family:Arial.ttf;font-size:12"> Acyl-CoA
+		</text>
+<text x="416.666666667" y="460" style="font-family:Arial.ttf;font-size:12"> Palmitoyl-CoA
+		</text>
+<text x="196.666666667" y="413.333333333" style="font-family:Arial.ttf;font-size:12"> Glyceraldehyde-3-Phosphate
+		</text>
+<text x="193.333333333" y="230" style="font-family:Arial.ttf;font-size:12"> L-Glycerol-3-Phosphate
+		</text>
+<text x="193.333333333" y="476.666666667" style="font-family:Arial.ttf;font-size:12"> See Glycolysis MAPP
+		</text>
+<text x="623.333333333" y="203.333333333" style="font-family:Arial.ttf;font-size:12"> Trans-Hexadecanoyl-CoA
+		</text>
+<text x="620" y="326.666666667" style="font-family:Arial.ttf;font-size:12"> (S)-3-Hydroxyhexadecanoyl-CoA
+		</text>
+<text x="630" y="453.333333333" style="font-family:Arial.ttf;font-size:12"> 3-Oxopalmitoyl-CoA
+		</text>
+<text x="693.333333333" y="576.666666667" style="font-family:Arial.ttf;font-size:12"> Myristoyl-CoA
+		</text>
+<text x="560" y="576.666666667" style="font-family:Arial.ttf;font-size:12"> Acetyl-CoA
+		</text>
+<text x="996.666666667" y="216.666666667" style="font-family:Arial.ttf;font-size:12"> Trans-Tetradex-2-enoyl-CoA
+		</text>
+<text x="996.666666667" y="343.333333333" style="font-family:Arial.ttf;font-size:12"> (S)-3-Hydroxytetradecanoyl-CoA
+		</text>
+<text x="1003.33333333" y="463.333333333" style="font-family:Arial.ttf;font-size:12"> Dxotetradecanoyl-CoA
+		</text>
+<text x="926.666666667" y="610" style="font-family:Arial.ttf;font-size:12"> Acetyl-CoA
+		</text>
+<text x="1066.66666667" y="610" style="font-family:Arial.ttf;font-size:12"> Lauroyl-CoA
+		</text>
+<text x="1343.33333333" y="240" style="font-family:Arial.ttf;font-size:12"> 2-trans-dodecenoyl-CoA
+		</text>
+<text x="1340" y="350" style="font-family:Arial.ttf;font-size:12"> (S)-3-Hydroxydodexanonyl-CoA
+		</text>
+<text x="1333.33333333" y="460" style="font-family:Arial.ttf;font-size:12"> 3-Oxododexanoyl-CoA
+		</text>
+<text x="1253.33333333" y="626.666666667" style="font-family:Arial.ttf;font-size:12"> Acetyl-CoA
+		</text>
+<text x="1426.66666667" y="623.333333333" style="font-family:Arial.ttf;font-size:12"> Decanoyl-CoA
+		</text>
+<text x="1340" y="756.666666667" style="font-family:Arial.ttf;font-size:12"> See Beta Oxidation 2 MAPP
+		</text>
+<text x="66.6666666667" y="36.6666666667" style="font-family:Arial.ttf;font-size:11"> Lipases
+		</text>
+<text x="553.333333333" y="623.333333333" style="font-family:Arial.ttf;font-size:12"> See TCA Cycle MAPP
+		</text>
+<text x="930" y="656.666666667" style="font-family:Arial.ttf;font-size:12"> See TCA Cycle MAPP
+		</text>
+<text x="1250" y="676.666666667" style="font-family:Arial.ttf;font-size:12"> See TCA Cycle MAPP
+		</text>
+<line x1="190" y1="130" x2="190" y2="213.666666667"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="187, 213.666666667, 193, 213.666666667, 190, 216.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="316.666666667" y1="50" x2="377.878679656" y2="111.21201299"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="375.757359313, 113.333333333, 380, 109.090692646, 380, 113.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="280" y1="50" x2="218.78798701" y2="111.21201299"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="216.666666667, 109.090692646, 220.909307354, 113.333333333, 216.666666667, 113.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="190" y1="426.666666667" x2="190" y2="460.333333333"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="187, 460.333333333, 193, 460.333333333, 190, 463.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="190" y1="243.333333333" x2="190" y2="307"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="187, 307, 193, 307, 190, 310"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="190" y1="333.333333333" x2="190" y2="397"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="187, 397, 193, 397, 190, 400"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="416.666666667" y1="133.333333333" x2="416.666666667" y2="277"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="413.666666667, 277, 419.666666667, 277, 416.666666667, 280"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="416.666666667" y1="303.333333333" x2="416.666666667" y2="447"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="413.666666667, 447, 419.666666667, 447, 416.666666667, 450"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="460" y1="450" x2="572.273131627" y2="152.806416281"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="575.079547908, 153.866617987, 569.466715346, 151.746214575, 573.333333333, 150"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="626.666666667" y1="146.666666667" x2="626.666666667" y2="187"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="623.666666667, 187, 629.666666667, 187, 626.666666667, 190"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="626.666666667" y1="213.333333333" x2="626.666666667" y2="313.666666667"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="623.666666667, 313.666666667, 629.666666667, 313.666666667, 626.666666667, 316.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="626.666666667" y1="336.666666667" x2="626.666666667" y2="437"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="623.666666667, 437, 629.666666667, 437, 626.666666667, 440"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="640" y1="463.333333333" x2="678.917017692" y2="563.868962372"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="676.119313398, 564.95194468, 681.714721987, 562.785980064, 680, 566.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="613.333333333" y1="463.333333333" x2="574.416315641" y2="563.868962372"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="571.618611346, 562.785980064, 577.214019936, 564.95194468, 573.333333333, 566.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="733.333333333" y1="566.666666667" x2="931.973593304" y2="176.007488724"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="934.647748695, 177.367228753, 929.299437914, 174.647748695, 933.333333333, 173.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="996.666666667" y1="180" x2="996.666666667" y2="200.333333333"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="993.666666667, 200.333333333, 999.666666667, 200.333333333, 996.666666667, 203.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="996.666666667" y1="226.666666667" x2="996.666666667" y2="330.333333333"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="993.666666667, 330.333333333, 999.666666667, 330.333333333, 996.666666667, 333.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="993.333333333" y1="356.666666667" x2="993.333333333" y2="447"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="990.333333333, 447, 996.333333333, 447, 993.333333333, 450"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="973.333333333" y1="476.666666667" x2="934.282016631" y2="593.820616773"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="931.435966737, 592.871933474, 937.128066526, 594.769300071, 933.333333333, 596.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1013.33333333" y1="480" x2="1045.82016769" y2="590.455236829"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1042.94207119, 591.301735801, 1048.6982642, 589.608737857, 1046.66666667, 593.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1100" y1="596.666666667" x2="1278.76032105" y2="202.731885084"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1281.49220614, 203.97156403, 1276.02843597, 201.492206138, 1280, 200"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1336.66666667" y1="203.333333333" x2="1336.66666667" y2="223.666666667"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1333.66666667, 223.666666667, 1339.66666667, 223.666666667, 1336.66666667, 226.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1333.33333333" y1="250" x2="1333.33333333" y2="333.666666667"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1330.33333333, 333.666666667, 1336.33333333, 333.666666667, 1333.33333333, 336.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1333.33333333" y1="366.666666667" x2="1333.33333333" y2="450.333333333"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1330.33333333, 450.333333333, 1336.33333333, 450.333333333, 1333.33333333, 453.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1310" y1="473.333333333" x2="1267.53483517" y2="613.795032385"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1264.66320089, 612.926863881, 1270.40646945, 614.663200889, 1266.66666667, 616.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1356.66666667" y1="473.333333333" x2="1405.63592207" y2="607.182631444"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1402.81855352, 608.213376037, 1408.45329063, 606.15188685, 1406.66666667, 610"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1406.66666667" y1="636.666666667" x2="1367.72003699" y2="740.524345801"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1364.91104946, 739.470975476, 1370.52902452, 741.577716125, 1366.66666667, 743.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="563.333333333" y1="583.333333333" x2="554.282016631" y2="610.487283439"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="551.435966737, 609.538600141, 557.128066526, 611.435966737, 553.333333333, 613.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="933.333333333" y1="616.666666667" x2="924.282016631" y2="643.820616773"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="921.435966737, 642.871933474, 927.128066526, 644.769300071, 923.333333333, 646.666666667"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/><line x1="1260" y1="633.333333333" x2="1250.9486833" y2="660.487283439"
+style="stroke:rgb(99,99,99);stroke-width:2"/><polygon points="1248.1026334, 659.538600141, 1253.79473319, 661.435966737, 1250, 663.333333333"
+style="fill:#cccccc;
+stroke:#000000;stroke-width:1"/></svg>

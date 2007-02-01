@@ -16,12 +16,7 @@
 //
 package data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -38,6 +33,161 @@ import util.ColorConverter;
  */
 public class GmmlFormat 
 {
+	static class AttributeInfo
+	{
+		/**
+		 * xsd validated type. Note that in the current implementation
+		 * we don't do anything with restrictions, only with the
+		 * base type.
+		 */
+		public String schemaType;
+		
+		/**
+		 * default value for the attribute
+		 */
+		public String def; // default
+		
+		/**
+		 * use of the attribute: can be "required" or "optional"
+		 */
+		public String use;
+		
+		AttributeInfo (String _schemaType, String _def, String _use)
+		{
+			schemaType = _schemaType;
+			def = _def;
+			use = _use;
+		}
+	}
+
+	static final Map<String, AttributeInfo> attributeInfo = initAttributeInfo();
+	
+	static Map<String, AttributeInfo> initAttributeInfo()
+	{
+		Map<String, AttributeInfo> result = new HashMap<String, AttributeInfo>();
+		// IMPORTANT: this array has been generated from the xsd with 
+		// an automated perl script. Don't edit this directly, use the perl script instead.
+		/* START OF AUTO-GENERATED CONTENT */
+		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Pathway.Graphics@WindowHeight", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Pathway.Graphics@MapInfoLeft", new AttributeInfo ("xsd:float", "0", "optional"));
+		result.put("Pathway.Graphics@MapInfoTop", new AttributeInfo ("xsd:float", "0", "optional"));
+		result.put("Pathway@Name", new AttributeInfo ("NameType", null, "required"));
+		result.put("Pathway@Organism", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Data-Source", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Version", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Author", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Maintained-By", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Email", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Availability", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Last-Modified", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("GeneProduct.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("GeneProduct.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("GeneProduct.Graphics@Width", new AttributeInfo ("Dimension", "600", "optional"));
+		result.put("GeneProduct.Graphics@Height", new AttributeInfo ("Dimension", "300", "optional"));
+		result.put("GeneProduct.Graphics@Color", new AttributeInfo ("ColorType", null, "optional"));
+		result.put("GeneProduct@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("GeneProduct@Name", new AttributeInfo ("NameType", null, "required"));
+		result.put("GeneProduct@GeneProduct-Data-Source", new AttributeInfo ("GeneProductDataSourceType", null, "required"));
+		result.put("GeneProduct@GeneID", new AttributeInfo ("NameType", null, "optional"));
+		result.put("GeneProduct@BackpageHead", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("GeneProduct@Xref", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("GeneProduct@Type", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
+		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("Line.Graphics@Color", new AttributeInfo ("ColorType", "Black", "optional"));
+		result.put("Line@Type", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("Line@Style", new AttributeInfo ("xsd:string", "Solid", "optional"));
+		result.put("Label.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Label.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Label.Graphics@Width", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Label.Graphics@Height", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Label.Graphics@Color", new AttributeInfo ("ColorType", null, "optional"));
+		result.put("Label.Graphics@FontName", new AttributeInfo ("xsd:string", "Arial", "optional"));
+		result.put("Label.Graphics@FontStyle", new AttributeInfo ("xsd:string", "Normal", "optional"));
+		result.put("Label.Graphics@FontDecoration", new AttributeInfo ("xsd:string", "Normal", "optional"));
+		result.put("Label.Graphics@FontStrikethru", new AttributeInfo ("xsd:string", "Normal", "optional"));
+		result.put("Label.Graphics@FontWeight", new AttributeInfo ("xsd:string", "Normal", "optional"));
+		result.put("Label.Graphics@FontSize", new AttributeInfo ("xsd:nonNegativeInteger", "12", "optional"));
+		result.put("Label@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("Label@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("Label@Xref", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Shape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Shape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Shape.Graphics@Width", new AttributeInfo ("Dimension", null, "optional"));
+		result.put("Shape.Graphics@Height", new AttributeInfo ("Dimension", null, "optional"));
+		result.put("Shape.Graphics@Color", new AttributeInfo ("ColorType", null, "optional"));
+		result.put("Shape.Graphics@Rotation", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Shape.Graphics@FillColor", new AttributeInfo ("ColorType", null, "optional"));
+		result.put("Shape@Type", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("Shape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("Brace.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Brace.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Brace.Graphics@Width", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Brace.Graphics@PicPointOffset", new AttributeInfo ("Dimension", null, "optional"));
+		result.put("Brace.Graphics@Color", new AttributeInfo ("ColorType", "Black", "optional"));
+		result.put("Brace.Graphics@Orientation", new AttributeInfo ("xsd:string", "top", "optional"));
+		result.put("Brace@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("FixedShape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("FixedShape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("FixedShape@Type", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("FixedShape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("ComplexShape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("ComplexShape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("ComplexShape.Graphics@Width", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("ComplexShape.Graphics@Rotation", new AttributeInfo ("xsd:float", "0", "optional"));
+		result.put("ComplexShape@Type", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("ComplexShape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("InfoBox@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("InfoBox@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Legend@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Legend@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		/* END OF AUTO-GENERATED CONTENT */
+		
+		return result;
+	};
+	
+	/**
+	 * Sets a certain attribute value, 
+	 * Does a basic check for some types,
+	 * throws an exception when you're trying to set an invalid value
+	 * If you're trying to set a default value, or an optional value to null,
+	 * the attribute is omitted,
+	 * leading to a leaner xml output. 
+	 * 
+	 * @param tag used for lookup in the defaults table
+	 * @param name used for lookup in the defaults table
+	 * @param el jdom element where this attribute belongs in
+	 * @param value value you wan't to check and set
+	 */
+	private static void setAttribute (String tag, String name, Element el, String value) throws ConverterException
+	{
+		String key = tag + "@" + name;
+		if (!attributeInfo.containsKey(key)) 
+			throw new ConverterException ("Trying to set invalid attribute " + key);
+		el.setAttribute(name, value);
+	}
+
+	/**
+	 * Gets a certain attribute value,
+	 * replaces it with a suitable default under certain conditions.
+	 * 
+	 * @param tag used for lookup in the defaults table
+	 * @param name used for lookup in the defaults table
+	 * @param el jdom element to get the attribute from
+	 * @throws ConverterException
+	 */
+	private static String getAttribute (String tag, String name, Element el) throws ConverterException
+	{
+		String key = tag + "@" + name;
+		if (!attributeInfo.containsKey(key)) 
+			throw new ConverterException ("Trying to get invalid attribute " + key);
+		return el.getAttributeValue(name);		
+	}
 	
 	/**
 	 * The GPML xsd implies a certain ordering for children of the pathway element.
@@ -99,14 +249,14 @@ public class GmmlFormat
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
-				root.setAttribute("Name", o.getMapInfoName());
-				root.setAttribute("Data-Source", "GenMAPP 2.0");
-				root.setAttribute("Version", o.getVersion());
-				root.setAttribute("Author", o.getAuthor());
-				root.setAttribute("Maintained-By", o.getMaintainedBy());
-				root.setAttribute("Email", o.getEmail());
-				root.setAttribute("Availability", o.getAvailability());
-				root.setAttribute("Last-Modified", o.getLastModified());
+				setAttribute("Pathway", "Name", root, o.getMapInfoName());
+				setAttribute("Pathway", "Data-Source", root, "GenMAPP 2.0");
+				setAttribute("Pathway", "Version", root, o.getVersion());
+				setAttribute("Pathway", "Author", root, o.getAuthor());
+				setAttribute("Pathway", "Maintained-By", root, o.getMaintainedBy());
+				setAttribute("Pathway", "Email", root, o.getEmail());
+				setAttribute("Pathway", "Availability", root, o.getAvailability());
+				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
 
 				Element notes = new Element("Notes");
 				notes.addContent(o.getNotes());
@@ -119,11 +269,10 @@ public class GmmlFormat
 				Element graphics = new Element("Graphics");
 				root.addContent(graphics);
 				
-				graphics.setAttribute("BoardWidth", "" + o.getMBoardWidth()* GmmlData.OLD_GMMLZOOM);
-				graphics.setAttribute("BoardHeight", "" + o.getMBoardHeight()* GmmlData.OLD_GMMLZOOM);
-				graphics.setAttribute("WindowWidth", "" + o.getWindowWidth()* GmmlData.OLD_GMMLZOOM);
-				graphics.setAttribute("WindowHeight", "" + o.getWindowHeight()* GmmlData.OLD_GMMLZOOM);
-				
+				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth()* GmmlData.OLD_GMMLZOOM);
+				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight()* GmmlData.OLD_GMMLZOOM);
+				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth()* GmmlData.OLD_GMMLZOOM);
+				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight()* GmmlData.OLD_GMMLZOOM);				
 			}
 			else
 			{

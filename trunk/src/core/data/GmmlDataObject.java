@@ -1073,11 +1073,14 @@ public class GmmlDataObject
 		{
 			if (parent != null)
 			{
-				if (v != null)
+				if (graphId != null)
 				{
 					parent.removeGraphId(v);
 				}
-				parent.addGraphId(v);
+				if (v != null)
+				{
+					parent.addGraphId(v);
+				}
 			}
 			graphId = v;
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));

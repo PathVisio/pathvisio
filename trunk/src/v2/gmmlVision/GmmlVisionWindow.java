@@ -120,7 +120,89 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		}
 	}
 	private NewAction newAction = new NewAction (this);
-	
+
+	/**
+	 * {@link Action} to create a new gpml pathway
+	 */
+	private class SvgExportAction extends Action 
+	{
+		GmmlVisionWindow window;
+		public SvgExportAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("Export to SVG");
+			setToolTipText ("Export to Scalable Vector Graphics (SVG) " +
+					"for publication-quality images");
+		}
+		public void run () 
+		{
+			GmmlDrawing drawing = GmmlVision.getDrawing();
+			GmmlData gmmlData = GmmlVision.getGmmlData();
+			// Check if a gpml pathway is loaded
+			if (drawing != null)
+			{
+				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+				fd.setText("Save");
+				fd.setFilterExtensions(new String[] {"*." + GmmlVision.SVG_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {GmmlVision.SVG_FILTER_NAME, "All files (*.*)"});
+				
+				File xmlFile = gmmlData.getSourceFile();
+				if(xmlFile != null) {
+					String name = xmlFile.getName();
+					if (name.endsWith("." + GmmlVision.PATHWAY_FILE_EXTENSION))
+					{
+						name = name.substring(0, name.length() - 
+							GmmlVision.PATHWAY_FILE_EXTENSION.length()) +
+							GmmlVision.SVG_FILE_EXTENSION;
+					}
+					fd.setFileName(name);
+					fd.setFilterPath(xmlFile.getPath());
+				} else {
+					fd.setFileName(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+				}
+				String fileName = fd.open();
+				// Only proceed if user selected a file
+				
+				if(fileName == null) return;
+				
+				// Append .svg extension if not already present
+				if(!fileName.endsWith("." + GmmlVision.SVG_FILE_EXTENSION)) 
+					fileName += "." + GmmlVision.SVG_FILE_EXTENSION;
+				
+				File checkFile = new File(fileName);
+				boolean confirmed = true;
+				// If file exists, ask overwrite permission
+				if(checkFile.exists())
+				{
+					confirmed = MessageDialog.openQuestion(window.getShell(),"",
+					"File already exists, overwrite?");
+				}
+				if(confirmed)
+				{
+					try
+					{
+						gmmlData.writeToSvg(checkFile);
+					}
+					catch (ConverterException e)
+					{
+						String msg = "While writing svg to " 
+							+ checkFile.getAbsolutePath();					
+						MessageDialog.openError (window.getShell(), "Error", 
+								"Error: " + msg + "\n\n" + 
+								"See the error log for details.");
+						GmmlVision.log.error(msg, e);
+					}
+				}
+			}
+			else
+			{
+				MessageDialog.openError (window.getShell(), "Error", 
+					"No pathway to save! Open or create a new pathway first");
+			}			
+		}
+	}
+	private SvgExportAction svgExportAction = new SvgExportAction (this);
+
 	/**
 	 * {@link Action} to open an gpml pathway
 	 */
@@ -278,15 +360,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				}
 				if(confirmed)
 				{
-					double usedZoom = drawing.getZoomFactor() * 100;
-					// Set zoom to 100%
-					drawing.setPctZoom(100);					
-					// Overwrite the existing xml file
 					try
 					{
 						gmmlData.writeToXml(checkFile, true);
-						// Set zoom back
-						drawing.setPctZoom(usedZoom);
 					}
 					catch (ConverterException e)
 					{
@@ -364,15 +440,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				}
 				if(confirmed)
 				{
-					double usedZoom = drawing.getZoomFactor() * 100;
-					// Set zoom to 100%
-					drawing.setPctZoom(100);					
-					// Overwrite the existing xml file
 					try
 					{
 						gmmlData.writeToMapp(checkFile);
-						// Set zoom back
-						drawing.setPctZoom(usedZoom);
 					}
 					catch (ConverterException e)
 					{
@@ -1363,7 +1433,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	 */
 	protected MenuManager createMenuManager()
 	{
-		MenuManager m = new MenuManager();
+		menuManager = new MenuManager();
 		MenuManager fileMenu = new MenuManager ("&File");
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
@@ -1373,6 +1443,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		fileMenu.add(new Separator());
 		fileMenu.add(importAction);
 		fileMenu.add(exportAction);
+		fileMenu.add(svgExportAction);
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
@@ -1412,12 +1483,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);
 		helpMenu.add(helpAction);
-		m.add(fileMenu);
-		m.add(editMenu);
-		m.add(viewMenu);
-		m.add(dataMenu);
-		m.add(helpMenu);
-		return m;
+		menuManager.add(fileMenu);
+		menuManager.add(editMenu);
+		menuManager.add(viewMenu);
+		menuManager.add(dataMenu);
+		menuManager.add(helpMenu);
+		return menuManager;
 	}
 	
 	public GmmlVisionWindow()
@@ -1425,6 +1496,17 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		this(null);
 	}
 	
+	private MenuManager menuManager = null;
+	/**
+	 * can be accessed by plugins etc. 
+	 * to add menu items and even complete menus.
+	 * 
+	 * (plugin API)
+	 */
+	public MenuManager getMenuManager()
+	{
+		return menuManager;
+	}
 	/**
 	 *Constructor for the GmmlVision class
 	 *Initializes new GmmlVision and sets properties for frame

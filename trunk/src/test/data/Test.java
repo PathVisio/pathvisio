@@ -256,6 +256,19 @@ public class Test extends TestCase implements GmmlListener {
 	}
 
 	/**
+	 * test exporting of .svg
+	 */
+	public void testSvg() throws IOException, ConverterException
+	{
+		data.readFromXml(new File("testData/test.gpml"), false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".svg");
+		temp.deleteOnExit();
+		
+		data.writeToSvg(temp);
+	}
+
+	/**
 	 * Test that there is one and only one MAPPINFO object
 	 *
 	 */

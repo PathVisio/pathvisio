@@ -506,13 +506,19 @@ public class GmmlFormat
 	{
 		if(e != null) 
 		{
-			Element n = new Element("Notes");
-			n.setText(o.getNotes());
-			e.addContent(n);
+			if (!o.getNotes().equals(""))
+			{
+				Element n = new Element("Notes");
+				n.setText(o.getNotes());
+				e.addContent(n);
+			}
 			
-			Element c = new Element ("Comment");
-			c.setText(o.getComment());
-			e.addContent(c);
+			if (!o.getComment().equals(""))
+			{
+				Element c = new Element ("Comment");
+				c.setText(o.getComment());
+				e.addContent(c);
+			}
 		}
 	}
 	

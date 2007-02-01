@@ -422,6 +422,34 @@ public class GmmlData
 		setSourceFile (file);
 	}
 
+	public void writeToSvg (File file) throws ConverterException
+	{
+		Document doc = SvgFormat.createJdom(this);
+		
+		//Validate the JDOM document
+//		if (validate) validateDocument(doc);
+		//			Get the XML code
+		
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("ISO-8859-1");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+		
+		//Open a filewriter
+		try
+		{
+			FileWriter writer = new FileWriter(file);
+			//Send XML code to the filewriter
+			xmlcode.output(doc, writer);
+			setSourceFile (file);
+		}
+		catch (IOException ie)
+		{
+			throw new ConverterException(ie);
+		}
+	}
+
 	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
 	public void addListener(GmmlListener v) { listeners.add(v); }
 	public void removeListener(GmmlListener v) { listeners.remove(v); }

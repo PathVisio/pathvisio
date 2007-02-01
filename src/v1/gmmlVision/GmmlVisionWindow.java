@@ -336,15 +336,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				}
 				if(confirmed)
 				{
-					double usedZoom = drawing.getZoomFactor() * 100;
-					// Set zoom to 100%
-					drawing.setPctZoom(100);					
-					// Overwrite the existing xml file
 					try
 					{
 						gmmlData.writeToMapp(checkFile);
-						// Set zoom back
-						drawing.setPctZoom(usedZoom);
 					}
 					catch (ConverterException e)
 					{

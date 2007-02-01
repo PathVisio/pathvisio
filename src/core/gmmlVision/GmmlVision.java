@@ -45,6 +45,8 @@ import debug.Logger;
  * This class contains the essential parts of the program: the window, drawing and gpml data
  */
 public abstract class GmmlVision {
+	public static final String SVG_FILE_EXTENSION = "svg";
+	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
 	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";

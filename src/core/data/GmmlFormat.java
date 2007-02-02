@@ -26,7 +26,8 @@ import util.ColorConverter;
 /**
  * class responsible for interaction with Gpml format.
  * Contains all gpml-specific constants,
- * and should be the only class that needs to import jdom
+ * and should be the only class (apart from svgFormat)
+ * that needs to import jdom
  *  
  * @author Martijn
  *
@@ -68,10 +69,10 @@ public class GmmlFormat
 		// IMPORTANT: this array has been generated from the xsd with 
 		// an automated perl script. Don't edit this directly, use the perl script instead.
 		/* START OF AUTO-GENERATED CONTENT */
-		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Pathway.Graphics@WindowHeight", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("Dimension", "18000", "optional"));
+		result.put("Pathway.Graphics@WindowHeight", new AttributeInfo ("Dimension", "12000", "optional"));
 		result.put("Pathway.Graphics@MapInfoLeft", new AttributeInfo ("xsd:float", "0", "optional"));
 		result.put("Pathway.Graphics@MapInfoTop", new AttributeInfo ("xsd:float", "0", "optional"));
 		result.put("Pathway@Name", new AttributeInfo ("NameType", null, "required"));
@@ -95,12 +96,12 @@ public class GmmlFormat
 		result.put("GeneProduct@BackpageHead", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("GeneProduct@Xref", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("GeneProduct@Type", new AttributeInfo ("xsd:string", null, "required"));
-		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "optional"));
-		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics@Color", new AttributeInfo ("ColorType", "Black", "optional"));
-		result.put("Line@Type", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("Line@Type", new AttributeInfo ("xsd:string", "Line", "optional"));
 		result.put("Line@Style", new AttributeInfo ("xsd:string", "Solid", "optional"));
 		result.put("Label.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Label.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
@@ -116,13 +117,13 @@ public class GmmlFormat
 		result.put("Label@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Label@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Label@Xref", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Shape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "optional"));
-		result.put("Shape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "optional"));
-		result.put("Shape.Graphics@Width", new AttributeInfo ("Dimension", null, "optional"));
-		result.put("Shape.Graphics@Height", new AttributeInfo ("Dimension", null, "optional"));
-		result.put("Shape.Graphics@Color", new AttributeInfo ("ColorType", null, "optional"));
-		result.put("Shape.Graphics@Rotation", new AttributeInfo ("xsd:float", null, "optional"));
-		result.put("Shape.Graphics@FillColor", new AttributeInfo ("ColorType", null, "optional"));
+		result.put("Shape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Shape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Shape.Graphics@Width", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Shape.Graphics@Height", new AttributeInfo ("Dimension", null, "required"));
+		result.put("Shape.Graphics@Color", new AttributeInfo ("ColorType", "Black", "optional"));
+		result.put("Shape.Graphics@Rotation", new AttributeInfo ("xsd:float", "0.0", "optional"));
+		result.put("Shape.Graphics@FillColor", new AttributeInfo ("ColorType", "Transparent", "optional"));
 		result.put("Shape@Type", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Shape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Brace.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
@@ -138,7 +139,7 @@ public class GmmlFormat
 		result.put("FixedShape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("ComplexShape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("ComplexShape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("ComplexShape.Graphics@Width", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("ComplexShape.Graphics@Width", new AttributeInfo ("Dimension", null, "required"));
 		result.put("ComplexShape.Graphics@Rotation", new AttributeInfo ("xsd:float", "0", "optional"));
 		result.put("ComplexShape@Type", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("ComplexShape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));

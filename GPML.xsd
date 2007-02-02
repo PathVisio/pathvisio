@@ -121,15 +121,17 @@
 								the coordinates of the GenMAPP drawing board, and Map
 								Information Area.</xsd:documentation>
 						</xsd:annotation>
-						<xsd:attribute name="BoardWidth" type="xsd:float"
+						<xsd:attribute name="BoardWidth" type="Dimension"
 							use="required"/>
-						<xsd:attribute name="BoardHeight" type="xsd:float"
+						<xsd:attribute name="BoardHeight" type="Dimension"
 							use="required"/>
-						<xsd:attribute name="WindowWidth" type="xsd:float"
-							use="required"/>
-						<xsd:attribute name="WindowHeight" type="xsd:float"
-							use="required"/>
-							<!-- TODO: I suspect these below aren't used for anything -->
+						<!-- windowwidth and windowheight are only
+						for compatibilty with GenMAPP, not used by Pathvisio !-->
+						<xsd:attribute name="WindowWidth" type="Dimension"
+							use="optional" default="18000"/>
+						<xsd:attribute name="WindowHeight" type="Dimension"
+							use="optional" default="12000"/>
+						<!-- TODO: I suspect these below aren't used for anything -->
 						<xsd:attribute name="MapInfoLeft" type="xsd:float"
 							use="optional" default="0"/>
 						<xsd:attribute name="MapInfoTop" type="xsd:float"
@@ -321,8 +323,8 @@
 						<xsd:sequence>
 							<xsd:element name="Point" minOccurs="2" maxOccurs="2">
 								<xsd:complexType>
-									<xsd:attribute name="x" type="xsd:float"/>
-									<xsd:attribute name="y" type="xsd:float"/>
+									<xsd:attribute name="x" type="xsd:float" use="required"/>
+									<xsd:attribute name="y" type="xsd:float" use="required"/>
 									<xsd:attribute name="GraphRef"  type="xsd:IDREF" use="optional" />					
 									<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 								</xsd:complexType>
@@ -335,7 +337,7 @@
 
 			</xsd:sequence>
 
-			<xsd:attribute name="Type" use="required">
+			<xsd:attribute name="Type" default="Line">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Line"/>
@@ -460,13 +462,13 @@
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="CenterX" type="xsd:float"/>
-						<xsd:attribute name="CenterY" type="xsd:float"/>
-						<xsd:attribute name="Width" type="Dimension"/>
-						<xsd:attribute name="Height" type="Dimension"/>
-						<xsd:attribute name="Color" type="ColorType"/>
-						<xsd:attribute name="Rotation" type="xsd:float"/>
-						<xsd:attribute name="FillColor" type="ColorType"/>
+						<xsd:attribute name="CenterX" type="xsd:float" use="required" />
+						<xsd:attribute name="CenterY" type="xsd:float" use="required" />
+						<xsd:attribute name="Width" type="Dimension" use="required" />
+						<xsd:attribute name="Height" type="Dimension" use="required" />
+						<xsd:attribute name="Color" type="ColorType" default="Black" />
+						<xsd:attribute name="Rotation" type="xsd:float" default="0.0" />
+						<xsd:attribute name="FillColor" type="ColorType" default="Transparent"/>
 					</xsd:complexType>
 				</xsd:element>
 
@@ -588,7 +590,7 @@
 							use="required"/>
 						<xsd:attribute name="CenterY" type="xsd:float"
 							use="required"/>
-						<xsd:attribute name="Width" type="xsd:float" use="required"/>
+						<xsd:attribute name="Width" type="Dimension" use="required"/>
 						<xsd:attribute name="Rotation" type="xsd:float" default="0"/>
 					</xsd:complexType>
 				</xsd:element>

@@ -13,7 +13,7 @@ require(pathVisio)
 		stop("set argument should have the same length (or number of rows) as number of reporters in dataset")
 
 	setnames = colnames(sets)
-	if(is.null(setnames)) colnames(sets) = .setNames(sets, name(dataSet))
+	if(is.null(setnames)) colnames(sets) = .generateSetNames(sets, name(dataSet))
 	
 	#Progress reporting variables
 	reporters = reporters(dataSet)	
@@ -108,6 +108,10 @@ require(pathVisio)
 		uset[i] = sum(as.logical(set[m])) > 0
 	}
 	uset
+}
+
+.generateSetNames = function(sets, dataSetName) {
+	sapply(1:ncol(sets), function(x) paste("zscore",dataSetName,"criterion",x,sep="-"))
 }
 
 

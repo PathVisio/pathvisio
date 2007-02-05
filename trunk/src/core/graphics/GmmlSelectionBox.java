@@ -99,7 +99,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	}
 	
 	/**
-	 * Removes or adds the object (if exists) at the given co�rdinates from the selection,
+	 * Removes or adds the object (if exists) at the given coordinates from the selection,
 	 * depending on its selection-state
 	 * @param p
 	 */

@@ -16,7 +16,6 @@
 	<property name="exec.inno.setup" value="iscc"/>
 	
 	<path id="project.v1.class.path">
-		<pathelement location="lib/swt-win32.jar"/>
 		<pathelement location="lib/swt-linux.jar"/>
 		<pathelement location="lib/jdom.jar"/>
 		<pathelement location="lib/org.eclipse.core.commands.jar"/>
@@ -30,7 +29,6 @@
 	</path>
 
 	<path id="project.v2.class.path">
-		<pathelement location="lib/swt-win32.jar"/>
 		<pathelement location="lib/swt-linux.jar"/>
 		<pathelement location="lib/jdom.jar"/>
 		<pathelement location="lib/JRI.jar"/>
@@ -134,14 +132,14 @@ class Revision
 	<target name="run-v1" depends="compile-v1">
 		<java classname="gmmlVision.GmmlVisionMain" fork="true">
 			<classpath refid="project.v1.class.path"/>
-			<jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
+			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>
 	</target>
 
 	<target name="run-v2" depends="compile-v2">
 		<java classname="gmmlVision.GmmlVisionMain" fork="true">
 			<classpath refid="project.v2.class.path"/>
-			<jvmarg value='-Djava.library.path=lib/swt-win32-lib'/>
+			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>
 	</target>
 
@@ -218,7 +216,7 @@ class Revision
 					destdir="${build.v2.dir}">
 					<classpath refid="project.v2.class.path"/>
 		</javac>
-		<junit printsummary="on" haltonfailure="true">
+		<junit printsummary="on" haltonfailure="true" fork="true">
 			<formatter type="brief" usefile="false"/>
 			<classpath refid="project.v2.class.path"/>
 			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>

@@ -378,7 +378,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	
 	/**
 	 * Get the default location of the given handle 
-	 * (in co�rdinates relative to the canvas)
+	 * (in coordinates relative to the canvas)
 	 * @param h
 	 */
 	protected Point getVHandleLocation(GmmlHandle h) 

@@ -53,7 +53,7 @@ import org.xml.sax.SAXException;
 * to always have exactly one object of the type MAPPINFO and exactly
 * one object of the type INFOBOX.
 */
-public class GmmlData
+public class GmmlData implements GmmlListener
 {
 	/**
 	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
@@ -126,6 +126,7 @@ public class GmmlData
 		if (o.getParent() == this) return; // trying to re-add the same object
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
+		o.addListener(this);
 		o.setParent(this);
 		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.ADDED));
 	}
@@ -144,7 +145,8 @@ public class GmmlData
 		if (o.getObjectType() == ObjectType.INFOBOX)
 			throw new IllegalArgumentException("Can't remove infobox object!");
 		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.DELETED));
-		dataObjects.remove(o);
+		o.removeListener(this);
+		dataObjects.remove(o);		
 		o.setParent(null);
 	}
 	
@@ -476,6 +478,34 @@ public class GmmlData
 			}
 		}
 		return systemCodes;
+	}
+	
+	UndoManager undoManager = new UndoManager();
+	
+	public void undo()
+	{
+		undoManager.undo();
+	}
+
+	/**
+	 * register undo actions,
+	 * disabled for the moment.
+	 */
+	public void gmmlObjectModified(GmmlEvent e) 
+	{
+		switch (e.getType())
+		{
+			case GmmlEvent.MODIFIED_GENERAL:
+			case GmmlEvent.MODIFIED_SHAPE:
+				undoManager.newChangeAction(e.getAffectedData());
+				break;
+			case GmmlEvent.ADDED:
+				undoManager.newAddAction(e.getAffectedData());
+				break;
+			case GmmlEvent.DELETED:
+				undoManager.newRemoveAction(e.getAffectedData());
+				break;
+		}
 	}
 
 }

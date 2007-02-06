@@ -19,20 +19,42 @@ package data;
 public class UndoAction 
 {
 	
-	public UndoAction(String message, GmmlData parent)
+	public UndoAction(String _message, 
+			int _actionType,
+			GmmlDataObject _affectedObject)
 	{
-	
+		parent = _affectedObject.getParent();
+		message = _message;
+		actionType = _actionType;
+		affectedObject = _affectedObject;
+		if (actionType == UNDO_CHANGE)
+		{
+			//TODO: doesn't work right now because
+			//copy is made after change already took place!
+			savedObject = affectedObject.copy(); 
+		}
 	}
 	
+	String message;
 	GmmlData parent;
 	
-	static final int UNDO_ADD = 1;
-	static final int UNDO_REMOVE = 2;
-	static final int UNDO_CHANGE = 3;
+	public static final int UNDO_ADD = 1;
+	public static final int UNDO_REMOVE = 2;
+	public static final int UNDO_CHANGE = 3;
 	
 	int actionType;
-	GmmlDataObject affectedObject;
-	GmmlDataObject savedObject;
+	
+	/**
+	 * affectedObject contains a reference to the actual object,
+	 * used in all three event types.
+	 * It acts like a pointer, its fields may be changed by following actions. 
+	 */
+	private GmmlDataObject affectedObject;
+	/**
+	 * savedObject contains a copy of the actual object,
+	 * used only for the UNDO_CHANGE type.
+	 */
+	private GmmlDataObject savedObject = null;
 	
 	public void undo()
 	{
@@ -45,8 +67,7 @@ public class UndoAction
 				parent.add(affectedObject);
 				break;
 			case UNDO_CHANGE:
-				parent.remove(affectedObject);
-				parent.add (savedObject);
+				affectedObject.copyValuesFrom(savedObject);
 				break;
 		}
 	}

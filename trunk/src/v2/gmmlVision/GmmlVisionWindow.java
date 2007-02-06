@@ -95,6 +95,25 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private static final long serialVersionUID = 1L;
 	private static int ZOOM_TO_FIT = -1;
 		
+	private class UndoAction extends Action
+	{
+		GmmlVisionWindow window;
+		public UndoAction (GmmlVisionWindow w)
+		{
+			window = w;
+			setText ("&Undo@Ctrl+Z");
+			setToolTipText ("Undo last action");
+		}
+		public void run() 
+		{
+			if (GmmlVision.gmmlData != null)
+			{
+				GmmlVision.gmmlData.undo();
+			}
+		}
+	}
+	private UndoAction undoAction = new UndoAction(this);
+	
 	/**
 	 * {@link Action} to create a new gpml pathway
 	 */
@@ -1447,6 +1466,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
+		editMenu.add(undoAction); // only in v2 while testing!
+		editMenu.add(new Separator());
 		editMenu.add(copyAction);
 		editMenu.add(pasteAction);
 		editMenu.add(new Separator());

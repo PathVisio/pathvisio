@@ -365,6 +365,65 @@ public class GmmlDataObject
 	}
 	
 	/**
+	 * Note: doesn't change parent, only fields
+	 * 
+	 * Used by UndoAction.
+	 * @param src
+	 */
+	public void copyValuesFrom(GmmlDataObject src)
+	{
+		author = src.author;
+		availability = src.availability;
+		backpageHead = src.backpageHead;
+		mBoardHeight = src.mBoardHeight;
+		mBoardWidth = src.mBoardWidth;
+		mCenterx = src.mCenterx;
+		mCentery = src.mCentery;
+		color = src.color;
+		fillColor = src.fillColor;
+		comment = src.comment;
+		dataSource = src.dataSource;
+		email = src.email;
+		mEndx = src.mEndx;
+		mEndy = src.mEndy;
+		fBold = src.fBold;
+		fItalic = src.fItalic;
+		fontName = src.fontName;
+		mFontSize = src.mFontSize;
+		fStrikethru = src.fStrikethru;
+		fTransparent = src.fTransparent;
+		fUnderline = src.fUnderline;
+		geneID = src.geneID;
+		geneProductName = src.geneProductName;
+		geneProductType = src.geneProductType;
+		mHeight = src.mHeight;
+		labelText = src.labelText;
+		lastModified = src.lastModified;
+		lineStyle = src.lineStyle;
+		lineType = src.lineType;
+		maintainedBy = src.maintainedBy;
+		mapInfoDataSource = src.mapInfoDataSource;
+		mapInfoLeft = src.mapInfoLeft;
+		mapInfoName = src.mapInfoName;
+		mapInfoTop = src.mapInfoTop;
+		notes = src.notes;
+		organism = src.organism;
+		rotation = src.rotation;
+		shapeType = src.shapeType;
+		mStartx = src.mStartx;
+		mStarty = src.mStarty;
+		version = src.version;
+		mWidth = src.mWidth;
+		windowHeight = src.windowHeight;
+		windowWidth = src.windowWidth;
+		xref = src.xref;
+		startGraphRef = src.startGraphRef;
+		endGraphRef = src.endGraphRef;
+		graphId = src.graphId;	
+		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+	}
+	
+	/**
 	 * Copy Object. The object will not
 	 * be part of the same GmmlData object, it's parent
 	 * will be set to null.
@@ -374,55 +433,8 @@ public class GmmlDataObject
 	public GmmlDataObject copy()
 	{
 		GmmlDataObject result = new GmmlDataObject(objectType);
+		result.copyValuesFrom(this);
 		result.parent = null;
-		result.author = author;
-		result.availability = availability;
-		result.backpageHead = backpageHead;
-		result.mBoardHeight = mBoardHeight;
-		result.mBoardWidth = mBoardWidth;
-		result.mCenterx = mCenterx;
-		result.mCentery = mCentery;
-		result.color = color;
-		result.fillColor = fillColor;
-		result.comment = comment;
-		result.dataSource = dataSource;
-		result.email = email;
-		result.mEndx = mEndx;
-		result.mEndy = mEndy;
-		result.fBold = fBold;
-		result.fItalic = fItalic;
-		result.fontName = fontName;
-		result.mFontSize = mFontSize;
-		result.fStrikethru = fStrikethru;
-		result.fTransparent = fTransparent;
-		result.fUnderline = fUnderline;
-		result.geneID = geneID;
-		result.geneProductName = geneProductName;
-		result.geneProductType = geneProductType;
-		result.mHeight = mHeight;
-		result.labelText = labelText;
-		result.lastModified = lastModified;
-		result.lineStyle = lineStyle;
-		result.lineType = lineType;
-		result.maintainedBy = maintainedBy;
-		result.mapInfoDataSource = mapInfoDataSource;
-		result.mapInfoLeft = mapInfoLeft;
-		result.mapInfoName = mapInfoName;
-		result.mapInfoTop = mapInfoTop;
-		result.notes = notes;
-		result.organism = organism;
-		result.rotation = rotation;
-		result.shapeType = shapeType;
-		result.mStartx = mStartx;
-		result.mStarty = mStarty;
-		result.version = version;
-		result.mWidth = mWidth;
-		result.windowHeight = windowHeight;
-		result.windowWidth = windowWidth;
-		result.xref = xref;
-		result.startGraphRef = startGraphRef;
-		result.endGraphRef = endGraphRef;
-		result.graphId = graphId;
 		return result;
 	}
 

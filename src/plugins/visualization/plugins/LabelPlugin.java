@@ -74,7 +74,7 @@ public class LabelPlugin extends VisualizationPlugin {
 	Label labelSidePanel;
 	
 	int style = STYLE_SYMBOL;
-	boolean adaptFontSize = true;
+	boolean adaptFontSize;
 	int align;
 	
 	FontData fontData;
@@ -212,7 +212,7 @@ public class LabelPlugin extends VisualizationPlugin {
 	FontData getFontData(boolean adjustZoom) {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
-			fd = new FontData(fd.getName(), fd.height, fd.getStyle());
+			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
 			fd.setHeight((int)Math.ceil(fd.getHeight() * GmmlVision.getDrawing().getZoomFactor()));
 		}
 		return fd;

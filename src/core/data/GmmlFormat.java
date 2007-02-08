@@ -165,12 +165,34 @@ public class GmmlFormat
 	 * @param el jdom element where this attribute belongs in
 	 * @param value value you wan't to check and set
 	 */
-	private static void setAttribute (String tag, String name, Element el, String value) throws ConverterException
-	{
+	private static void setAttribute(String tag, String name, Element el,
+			String value) throws ConverterException {
 		String key = tag + "@" + name;
-		if (!attributeInfo.containsKey(key)) 
-			throw new ConverterException ("Trying to set invalid attribute " + key);
-		el.setAttribute(name, value);
+		if (!attributeInfo.containsKey(key))
+			throw new ConverterException("Trying to set invalid attribute "
+					+ key);
+		AttributeInfo aInfo = attributeInfo.get(key);
+		boolean isDefault = false;
+		// here we start seeing if the attribute is equal to the
+		// default value
+		// if so, we can leave out the attribute from the jdom
+		// altogether
+		if (aInfo.use.equals("optional")) {
+			if (aInfo.schemaType.equals("xsd:string")
+					|| aInfo.schemaType.equals("xsd:ID")) {
+				if ((aInfo.def == null && value == null)
+						|| aInfo.def.equals(value))
+					isDefault = true;
+			} else if (aInfo.schemaType.equals("xsd:float")
+					|| aInfo.schemaType.equals("Dimension")) {
+				Double x = Double.parseDouble(aInfo.def);
+				Double y = Double.parseDouble(value);
+				if (Math.abs(x - y) < 1e-6)
+					isDefault = true;
+			}
+		}
+		if (!isDefault)
+			el.setAttribute(name, value);
 	}
 
 	/**
@@ -182,12 +204,18 @@ public class GmmlFormat
 	 * @param el jdom element to get the attribute from
 	 * @throws ConverterException
 	 */
-	private static String getAttribute (String tag, String name, Element el) throws ConverterException
+	private static String getAttribute(String tag, String name, Element el) throws ConverterException 
 	{
 		String key = tag + "@" + name;
-		if (!attributeInfo.containsKey(key)) 
-			throw new ConverterException ("Trying to get invalid attribute " + key);
-		return el.getAttributeValue(name);		
+		if (!attributeInfo.containsKey(key))
+				throw new ConverterException("Trying to get invalid attribute " + key);
+		AttributeInfo aInfo = attributeInfo.get(key);
+		String result = el.getAttributeValue(name);
+		if (aInfo.use.equals("optional") && result == null) 
+		{
+			result = aInfo.def;
+		}
+		return result;
 	}
 	
 	/**

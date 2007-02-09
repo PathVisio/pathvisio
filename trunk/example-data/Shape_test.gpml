@@ -33,7 +33,7 @@
     <Comment></Comment>
     <Graphics CenterX="3200.0" CenterY="1900.0" />
   </FixedShape>
-  <ComplexShape Type="ProteinB">
+  <ComplexShape Type="ProteinComplex">
     <Notes></Notes>
     <Comment></Comment>
     <Graphics Rotation="0.0" CenterX="1050.0" CenterY="2650.0" Width="7058.822999999999" />

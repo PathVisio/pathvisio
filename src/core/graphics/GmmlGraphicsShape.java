@@ -99,7 +99,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	}
 	
 	protected Rectangle2D.Double getVScaleRectangle() {
-		return new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
+		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
 	}
 	
 	public GmmlHandle[] getHandles()

@@ -989,6 +989,11 @@ public class MappFormat
 	public static final HashMap<String,String> sysName2Code = initSysName2Code();
 
 	/**
+	 * {@link HashMap} containing mappings from system code to system name (as used in Gpml)
+	 */
+	public static final HashMap<String,String> sysCode2Name = initSysCode2Name();
+
+	/**
 	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gpml)
 	 * and system code
 	 */
@@ -997,6 +1002,18 @@ public class MappFormat
 		HashMap<String, String> sn2c = new HashMap<String,String>();
 		for(int i = 0; i < dataSources.length; i++)
 			sn2c.put(dataSources[i], systemCodes[i]);
+		return sn2c;
+	}
+	
+	/**
+	 * Initializes the {@link HashMap} containing the mappings between system code and 
+	 * system name (as used in Gpml)
+	 */
+	private static HashMap<String, String> initSysCode2Name()
+	{
+		HashMap<String, String> sn2c = new HashMap<String,String>();
+		for(int i = 0; i < systemCodes.length; i++)
+			sn2c.put(systemCodes[i], dataSources[i]);
 		return sn2c;
 	}
 

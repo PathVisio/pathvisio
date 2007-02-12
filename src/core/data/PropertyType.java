@@ -62,7 +62,7 @@ public enum PropertyType
 	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION),
 			
 	// gene product
-	NAME ("Name", "Database Identifier", PropertyClass.STRING), //TODO: change tag 
+	NAME ("Name", "Database Identifier", PropertyClass.DB_ID), //TODO: change tag 
 	GENEPRODUCT_DATA_SOURCE ("GeneProduct-Data-Source", "Database Name", PropertyClass.DATASOURCE), 
 	GENEID ("GeneID", "Label", PropertyClass.STRING), // TODO: change tag
 	XREF ("Xref", "Xref", PropertyClass.STRING), // unused 

@@ -21,19 +21,44 @@ import gmmlVision.GmmlVision;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
-import data.*;
-
-import visualization.*;
-import visualization.VisualizationManager.*;
+import visualization.Visualization;
+import visualization.VisualizationManager;
+import visualization.VisualizationManager.VisualizationEvent;
+import visualization.VisualizationManager.VisualizationListener;
+import data.GmmlData;
+import data.GmmlDataObject;
+import data.GmmlEvent;
+import data.GmmlListener;
+import data.LineStyle;
+import data.LineType;
+import data.ObjectType;
+import data.OrientationType;
+import data.ShapeType;
 
 /**
  * This class implements and handles a drawing.

@@ -36,5 +36,6 @@ public enum PropertyClass
 	GENETYPE,
 	FONT,
 	ANGLE,
-	ORGANISM
+	ORGANISM,
+	DB_ID
 }

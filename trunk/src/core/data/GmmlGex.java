@@ -47,6 +47,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -566,10 +567,15 @@ public class GmmlGex implements ApplicationEventListener {
 			this.page = page;
 		}
 		
-		public void run(IProgressMonitor monitor) 
+		public void run(final IProgressMonitor monitor) 
 		throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Importing expression data", totalWork);
-			importFromTxt(info, page, monitor);
+			page.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					importFromTxt(info, page, monitor);
+				}
+			});
+					
 			monitor.done();
 		}
 	}
@@ -720,11 +726,11 @@ public class GmmlGex implements ApplicationEventListener {
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
-//			try {
-//				connect(); //re-connect and use the created expression dataset
-//			} catch(Exception e) {
-//				GmmlVision.log.error("Exception on connecting expression dataset from import thread", e);
-//			}
+			try {
+				connect(); //re-connect and use the created expression dataset
+			} catch(Exception e) {
+				GmmlVision.log.error("Exception on connecting expression dataset from import thread", e);
+			}
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
@@ -881,9 +887,9 @@ public class GmmlGex implements ApplicationEventListener {
 		DBConnector connector = getDBConnector();
 		
 		if(create) {
-			con = connector.createNewDatabase(dbName);
+			con = connector.createNewDatabase(getDbName());
 		} else {
-			con = connector.createConnection(dbName);
+			con = connector.createConnection(getDbName());
 			setSamples();
 			loadXML();
 		}
@@ -924,7 +930,8 @@ public class GmmlGex implements ApplicationEventListener {
 				if(finalize) {
 					connector.compact(con);
 					connector.createIndices(con);
-					connector.finalizeNewDatabase(dbName);
+					String newDb = connector.finalizeNewDatabase(dbName);
+					setDbName(newDb);
 				} else {
 					connector.closeConnection(con);
 				}

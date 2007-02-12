@@ -30,6 +30,9 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
@@ -37,7 +40,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
 
@@ -315,17 +320,30 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tip.setLayout(new RowLayout(SWT.VERTICAL));
 		
-		tip.addMouseTrackListener(new MouseTrackAdapter() {
-			public void mouseExit(MouseEvent e) {
-				tip.dispose();
+		Listener hideListener = new Listener() {
+			public void handleEvent(Event event) {
+	 			switch (event.type) {
+	 			case SWT.MouseDown:
+	 			case SWT.MouseExit:
+	 			case SWT.MouseMove:
+	 			case SWT.FocusOut:
+	 				tip.dispose();
+	 			}
 			}
-		});
-		control.addMouseMoveListener(new MouseMoveListener() {
-			public void mouseMove(MouseEvent e) {
-				tip.dispose();
-			}
-		});
+		};
 		
+		tip.addListener(SWT.MouseDown, hideListener);
+		tip.addListener(SWT.MouseExit, hideListener);
+		control.addListener(SWT.MouseMove, hideListener);
+		parent.addShellListener(new ShellAdapter() {
+			public void shellClosed(ShellEvent e) {
+				tip.dispose();	
+			}
+			public void shellDeactivated(ShellEvent e) {
+				tip.dispose();
+			}
+		});
+				
 		boolean hasOne = false;
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isToolTip()) {

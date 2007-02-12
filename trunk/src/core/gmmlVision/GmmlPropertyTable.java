@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
@@ -48,7 +47,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import util.TableColumnResizer;
-import data.*;
+import data.GmmlDataObject;
+import data.GmmlEvent;
+import data.GmmlListener;
+import data.MappFormat;
+import data.ObjectType;
+import data.PropertyClass;
+import data.PropertyType;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties
@@ -60,6 +65,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	TextCellEditor textEditor;
 	ColorCellEditor colorEditor;
 	ComboBoxCellEditor comboBoxEditor;
+	SuggestCellEditor suggestGdbEditor;
 	
 	private List<GmmlDataObject> dataObjects;
 	
@@ -204,6 +210,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		cellEditors[1] = cellEditors[0] = textEditor = new TextCellEditor(tableViewer.getTable());
 		colorEditor = new ColorCellEditor(tableViewer.getTable());
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
+		suggestGdbEditor = new SuggestGdbCellEditor(tableViewer.getTable());
 		
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
@@ -271,6 +278,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			case GENETYPE:
 				comboBoxEditor.setItems(genetype_names);
 				return comboBoxEditor;
+			case DB_ID:
+				return suggestGdbEditor;
+				
 		}
 		return textEditor;
 	}

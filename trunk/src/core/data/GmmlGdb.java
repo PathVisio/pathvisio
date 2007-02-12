@@ -328,6 +328,11 @@ public abstract class GmmlGdb {
 		public boolean valid() {
 			return code.length() > 0 && id.length() > 0;
 		}
+
+		public String getDatabaseName() {
+			String name = MappFormat.sysCode2Name.get(getCode());
+			return name == null ? getCode() : name;
+		}
 	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {

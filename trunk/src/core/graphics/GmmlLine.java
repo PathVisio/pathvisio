@@ -304,8 +304,8 @@ public class GmmlLine extends GmmlGraphics
 	}
 	
 	protected Rectangle2D.Double getVScaleRectangle() {
-		return new Rectangle2D.Double(getVStartX(), getVStartY(), getVEndX()
-				- getVStartX(), getVEndY() - getVStartY());
+		return new Rectangle2D.Double(getVStartXDouble(), getVStartYDouble(), getVEndXDouble()
+				- getVStartXDouble(), getVEndYDouble() - getVStartYDouble());
 	}
 	
 	/**

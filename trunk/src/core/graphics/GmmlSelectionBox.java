@@ -273,10 +273,10 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	
 	public void adjustToHandle(GmmlHandle h) {	
 		//Store original size and location before adjusting to handle
-		double vWidthOld = getVWidth();
-		double vHeightOld = getVHeight();
-		double vCenterXOld = getVCenterX();
-		double vCenterYOld = getVCenterY();
+		double vWidthOld = getVWidthDouble();
+		double vHeightOld = getVHeightDouble();
+		double vCenterXOld = getVCenterXDouble();
+		double vCenterYOld = getVCenterYDouble();
 		
 		super.adjustToHandle(h);
 		if(isSelecting) { //Selecting, so add containing objects to selection
@@ -292,13 +292,17 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			//Scale all selected objects in x and y direction			
 			for(GmmlDrawingObject o : selection) { 
 				Rectangle2D.Double vr = o.getVScaleRectangle();
-				double rw = getVWidth() / vWidthOld;
-				double rh = getVHeight() / vHeightOld;
-				double nwo = vr.width * rw;
-				double nho = vr.height * rh;
-				double ncdx = (vr.x - vCenterXOld) * rw;
-				double ncdy = (vr.y - vCenterYOld) * rh;
-				o.setVScaleRectangle(new Rectangle2D.Double(getVCenterX() + ncdx, getVCenterY() + ncdy, nwo, nho));
+				double widthRatio = getVWidthDouble() / vWidthOld;
+				double heightRatio = getVHeightDouble() / vHeightOld;
+				double newObjectWidth = vr.width * widthRatio;
+				double newObjectHeight = vr.height * heightRatio;
+				double objectFromCenterX = (vr.x - vCenterXOld) * widthRatio;
+				double objectFromCenterY = (vr.y - vCenterYOld) * heightRatio;
+				o.setVScaleRectangle(new Rectangle2D.Double(
+						getVCenterXDouble() + objectFromCenterX, 
+						getVCenterYDouble() + objectFromCenterY, 
+						newObjectWidth, 
+						newObjectHeight));
 			}
 		}
 	}

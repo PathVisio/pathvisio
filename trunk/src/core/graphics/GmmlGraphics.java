@@ -85,7 +85,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	 * @return the center x-coordinate as integer
 	 */
 	protected int getVCenterX() { return (int)(vFromM(gdata.getMCenterX())); }
-
+	
 	/**
 	 * Get the y-coordinate of the center point of this object
 	 * adjusted to the current zoom factor
@@ -103,5 +103,31 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	protected int getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
 	protected int getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
 	protected int getVEndY() { return (int)(vFromM(gdata.getMEndY())); }
+	
+	/**
+	 * Get the x-coordinate of the center point of this object
+	 * adjusted to the current zoom factor
+
+	 * @return the center x-coordinate as double
+	 */
+	protected double getVCenterXDouble() { return vFromM(gdata.getMCenterX()); }
+	
+	/**
+	 * Get the y-coordinate of the center point of this object
+	 * adjusted to the current zoom factor
+	 * 
+	 * @return the center y-coordinate as double
+	 */
+	protected double getVCenterYDouble() { return vFromM(gdata.getMCenterY()); }
+
+	protected double getVLeftDouble() { return vFromM(gdata.getMLeft()); }
+	protected double getVWidthDouble() { return vFromM(gdata.getMWidth());  }
+	protected double getVTopDouble() { return vFromM(gdata.getMTop()); }
+	protected double getVHeightDouble() { return vFromM(gdata.getMHeight()); }
+
+	protected double getVStartXDouble() { return vFromM(gdata.getMStartX()); }
+	protected double getVStartYDouble() { return vFromM(gdata.getMStartY()); }
+	protected double getVEndXDouble() { return vFromM(gdata.getMEndX()); }
+	protected double getVEndYDouble() { return vFromM(gdata.getMEndY()); }
 	
 }

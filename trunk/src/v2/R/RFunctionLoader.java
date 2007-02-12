@@ -322,7 +322,7 @@ public class RFunctionLoader {
 			removeButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					try {
-						for(String setName : setList.getItems()) {
+						for(String setName : setList.getSelection()) {
 							RWizard.usedRObjects.removeObject(setName, true);
 						}
 						RWizard.usedRObjects.save();

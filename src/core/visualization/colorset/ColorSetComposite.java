@@ -153,7 +153,6 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 
 		refreshCombo();
 		
-		SwtUtils.setCompositeAndChildrenEnabled(objectsGroup, false);
 		colorSetCombo.select(0);
 	}
 

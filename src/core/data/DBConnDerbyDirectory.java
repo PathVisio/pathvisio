@@ -27,12 +27,13 @@ import util.FileUtils;
 public class DBConnDerbyDirectory extends DBConnDerby {	
 	String lastDbName;
 		
-	public void finalizeNewDatabase(String dbName) throws Exception {
+	public String finalizeNewDatabase(String dbName) throws Exception {
 		try {
 			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
 		} catch(Exception e) {
 			GmmlVision.log.error("Database closed", e);
 		}
+		return dbName;
 	}
 	
 	public String openChooseDbDialog(Shell shell) {

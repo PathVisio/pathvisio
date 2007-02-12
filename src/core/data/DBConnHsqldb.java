@@ -111,9 +111,10 @@ public class DBConnHsqldb extends DBConnector {
 		return newDbCon;
 	}
 
-	public void finalizeNewDatabase(String dbName) throws Exception {
+	public String finalizeNewDatabase(String dbName) throws Exception {
 		if(newDbCon != null) closeConnection(newDbCon, PROP_FINALIZE);
 		setPropertyReadOnly(dbName, true);
+		return dbName;
 	}
 
 	public String openChooseDbDialog(Shell shell) {

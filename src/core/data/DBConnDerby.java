@@ -87,7 +87,7 @@ public class DBConnDerby extends DBConnector {
 		return createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
 	}
 	
-	public void finalizeNewDatabase(String dbName) throws Exception {
+	public String finalizeNewDatabase(String dbName) throws Exception {
 		//Transfer db to zip and clear old dbfiles
 		File dbDir = new File(FileUtils.removeExtension(dbName));
 		try {
@@ -95,10 +95,13 @@ public class DBConnDerby extends DBConnector {
 		} catch(Exception e) {
 			GmmlVision.log.error("Database closed", e);
 		}
-		
-		toZip(new File(dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt()), dbDir);
+		File zipFile = new File(dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt());
+		toZip(zipFile, dbDir);
 		
 		FileUtils.deleteRecursive(dbDir);
+		
+		//Return new database file
+		return zipFile.toString();
 	}
 	
 	public void closeConnection(Connection con) throws SQLException {

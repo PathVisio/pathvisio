@@ -90,11 +90,14 @@ public abstract class DBConnector {
 	
 	/**
 	 * This method is called to finalize the given database after creation
-	 * (e.g. set read-only, archive files)
+	 * (e.g. set read-only, archive files). The database name needs to returned, this
+	 * may change when finalizing the database modifies the storage type (e.g. from directory
+	 * to single file).
 	 * @param dbName The name of the database to finalize	
 	 * @throws Exception
+	 * @return The name of the finalized database
 	 */
-	protected abstract void finalizeNewDatabase(String dbName) throws Exception;
+	protected abstract String finalizeNewDatabase(String dbName) throws Exception;
 	
 	/**
 	 * This method will be called when the user

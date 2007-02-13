@@ -16,6 +16,7 @@
 //
 package gmmlVision;
 
+import gmmlVision.SuggestGdbCellEditor.AutoFillData;
 import graphics.GmmlGraphics;
 import graphics.GmmlSelectionBox;
 import graphics.GmmlSelectionBox.SelectionEvent;
@@ -46,6 +47,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import util.SuggestCellEditor;
 import util.TableColumnResizer;
 import data.GmmlDataObject;
 import data.GmmlEvent;
@@ -325,7 +327,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 					return Arrays.asList(MappFormat.organism_latin_name).indexOf((String)value);
 				case GENETYPE:
 					return Arrays.asList(genetype_names).indexOf((String)value);
-				case STRING: 
+				case STRING:
 				case FONT:
 					return value == null ? "" : (String)value;
 				case COLOR: 
@@ -349,6 +351,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 //						MessageDialog.openWarning(getShell(), "warning", "Can't cast " + value + " to Integer!");
 //					}
 				}
+				case DB_ID:
+					if(value instanceof String) return (String)value;
+					if(value instanceof AutoFillData) 
+						return ((AutoFillData)value).getMainValue();
 			}
 			return null;
 		}
@@ -426,8 +432,18 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				if((Integer)value == -1) return; //Nothing selected
 				value = genetype_names[(Integer)value];
 				break;
+			case DB_ID:
+				if(value instanceof AutoFillData) {
+					AutoFillData adf = (AutoFillData)value;
+					for(GmmlDataObject o : dataObjects) {
+						if(o.getObjectType() == ObjectType.GENEPRODUCT) {
+							adf.fillData(o);
+						}
+					}
+					value = adf.getMainValue();
+				}
+				break;
 			}
-			
 			for(GmmlDataObject o : dataObjects) {
 				o.setProperty(key, value);
 			}

@@ -20,11 +20,22 @@ public abstract class SuggestCellEditor extends CellEditor {
 		
 	protected Control createControl(Composite parent) {
 		suggestCombo = new SuggestCombo(parent, getSuggestionProvider());
+
+		setKeyListeners();
+		setFocusListeners();
+
+		return suggestCombo;
+	}
+
+	protected void setKeyListeners() {
 		suggestCombo.getControl().addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 keyReleaseOccured(e);
             }
 		});
+	}
+	
+	protected void setFocusListeners() {
         suggestCombo.getControl().addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e) {
             	if(!suggestCombo.isSuggestFocus()) {
@@ -32,9 +43,7 @@ public abstract class SuggestCellEditor extends CellEditor {
             	}
             }
         });
-		return suggestCombo;
 	}
-
 	public abstract SuggestionProvider getSuggestionProvider();
 		
 	protected Object doGetValue() {

@@ -16,7 +16,6 @@
 //
 package gmmlVision;
 
-import gmmlVision.SuggestGdbCellEditor.AutoFillData;
 import graphics.GmmlGraphics;
 import graphics.GmmlSelectionBox;
 import graphics.GmmlSelectionBox.SelectionEvent;
@@ -27,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -353,8 +353,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				}
 				case DB_ID:
 					if(value instanceof String) return (String)value;
-					if(value instanceof AutoFillData) 
-						return ((AutoFillData)value).getMainValue();
+					if(value instanceof GmmlPropertyTable.AutoFillData) 
+						return ((GmmlPropertyTable.AutoFillData)value).getMainValue();
 			}
 			return null;
 		}
@@ -433,8 +433,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				value = genetype_names[(Integer)value];
 				break;
 			case DB_ID:
-				if(value instanceof AutoFillData) {
-					AutoFillData adf = (AutoFillData)value;
+				if(value instanceof GmmlPropertyTable.AutoFillData) {
+					GmmlPropertyTable.AutoFillData adf = (GmmlPropertyTable.AutoFillData)value;
 					for(GmmlDataObject o : dataObjects) {
 						if(o.getObjectType() == ObjectType.GENEPRODUCT) {
 							adf.fillData(o);
@@ -575,6 +575,49 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			break;
 		}
 		
+	}
+
+	static class AutoFillData {
+		PropertyType mProp;
+		Object mValue;
+		HashMap<PropertyType, String> values;
+		
+		private boolean doGuess = false;
+		
+		public AutoFillData(PropertyType mainProperty, String mainValue) {
+			values = new HashMap<PropertyType, String>();
+			mProp = mainProperty;
+			mValue = mainValue;
+			setProperty(mainProperty, mainValue);
+		}
+		
+		public void setProperty(PropertyType property, String value) {
+			values.put(property, value);
+		}
+		
+		public PropertyType getMainProperty() { return mProp; }
+		public Object getMainValue() { return mValue; }
+		
+		public String getProperty(PropertyType property) { return values.get(property); }
+		
+		public Set<PropertyType> getProperties() { return values.keySet(); }
+		
+		public void fillData(GmmlDataObject o) {
+			if(doGuess) guessData(o);
+			for(PropertyType p : getProperties()) {
+				Object vNew = getProperty(p);
+				if(o.isDefaultProperty(p)) {
+					o.setProperty(p, vNew);
+				}
+			}
+		}
+		
+		public void setDoGuessData(boolean doGuessData) {
+			doGuess = doGuessData;
+		}
+		
+		protected void guessData(GmmlDataObject o) {
+		}
 	}
 }
 

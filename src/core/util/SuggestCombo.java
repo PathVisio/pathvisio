@@ -54,7 +54,6 @@ public class SuggestCombo extends Composite {
 	}
 	
 	public void setText(String s) {
-		System.out.println("Setting text: " + s);
 		text.setText(s);
 	}
 	
@@ -74,7 +73,8 @@ public class SuggestCombo extends Composite {
 				case SWT.Modify:
 					String[] s = suggestionProvider.getSuggestions(text.getText());
 					if(s.length > 1 && !noModifyListen) {
-						displaySuggestions(s);
+						//Only display suggestions if this control has focus
+						if(isFocusControl()) displaySuggestions(s);
 						text.setFocus();
 					} else {
 						hideSuggestions();
@@ -89,12 +89,17 @@ public class SuggestCombo extends Composite {
 						}
 					}
 					break;
+				case SWT.FocusOut:
+					//Check if focus is on suggestShell/suggestList
+					if(!isSuggestFocus()) hideSuggestions();
+					break;
 				}
 			}
 		};
 		
 		text.addListener(SWT.Modify, textListener);
 		text.addListener(SWT.KeyDown, textListener);
+		text.addListener(SWT.FocusOut, textListener);
 
 		suggestShell = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP);
 		suggestShell.setLayout(new FillLayout());
@@ -110,12 +115,16 @@ public class SuggestCombo extends Composite {
 					String[] selection = suggestList.getSelection();
 					if(selection.length > 0) 
 						suggestionSelected(suggestList.getSelection()[0]);
+					break;
+				case SWT.FocusOut:
+					hideSuggestions();
 				}
 			}
 		};
 		suggestList.addListener(SWT.KeyDown, listListener);
 		suggestList.addListener(SWT.DefaultSelection, listListener);
 		suggestList.addListener(SWT.MouseDown, listListener);
+		suggestList.addListener(SWT.FocusOut, listListener);
 		
 		getShell().addShellListener(new ShellAdapter() {
 			public void shellDeactivated(ShellEvent e) {

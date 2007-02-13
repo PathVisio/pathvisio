@@ -31,6 +31,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -96,7 +98,33 @@ public abstract class GmmlGdb {
 		try { GmmlVision.getPreferences().save(); } 
 		catch(Exception e) { GmmlVision.log.error("Unable to save preferences", e); } 
 	}
+	
+	/**
+	 * <TABLE border='1'><TR><TH>Gene ID:<TH>g4507224_3p_at<TR><TH>Gene Name:<TH>SRY<TR><TH>Description:<TH>Sex-determining region Y protein (Testis-determining factor). [Source:Uniprot/SWISSPROT;Acc:Q05066]<TR><TH>Secondary id:<TH>g4507224_3p_at<TR><TH>Systemcode:<TH>X<TR><TH>System name:<TH>Affymetrix Probe Set ID<TR><TH>Database name (Ensembl):<TH>Affymx Microarray U133</TABLE>
+	 * @param id The gene id to get the symbol info for
+	 * @param code systemcode of the gene identifier
+	 * @return The gene symbol, or null if the symbol could not be found
+	 */
+	public static String getGeneSymbol(String id, String code) {
+		String bpInfo = getBpInfo(id, code);
+		return bpInfo == null ? null : parseGeneSymbol(bpInfo);
 		
+	}
+	
+	/**
+	 * Parses the gene symbol from the backpage info
+	 * @param bpInfo The backpage info (as obtained from {@link #getBpInfo(String, String)})
+	 * @return The parsed gene symbol, or null if no symbol could be found
+	 */
+	public static String parseGeneSymbol(String bpInfo) {
+		Pattern regex = Pattern.compile("<TH>Gene Name:<TH>(.+?)<TR>");
+		Matcher matcher = regex.matcher(bpInfo);
+		if(matcher.find())
+			return matcher.group(1);
+		else
+			return null;
+	}
+	
 	/**
 	 * Gets the backpage info for the given gene id for display on GmmlBpBrowser
 	 * @param id The gene id to get the backpage info for

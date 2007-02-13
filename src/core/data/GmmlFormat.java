@@ -181,7 +181,7 @@ public class GmmlFormat
 			if (aInfo.schemaType.equals("xsd:string")
 					|| aInfo.schemaType.equals("xsd:ID")) {
 				if ((aInfo.def == null && value == null)
-						|| aInfo.def.equals(value))
+						|| (aInfo.def != null && aInfo.def.equals(value)))
 					isDefault = true;
 			} else if (aInfo.schemaType.equals("xsd:float")
 					|| aInfo.schemaType.equals("Dimension")) {

@@ -1,4 +1,5 @@
 <?php
-print hexdec(substr("FFAA00", 4,2)); 
+$data = array("a" => "\n");
+echo http_build_query($data); 
 ?> 
 

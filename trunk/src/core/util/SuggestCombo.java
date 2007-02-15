@@ -4,6 +4,8 @@ package util;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
@@ -16,8 +18,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import util.SuggestCombo.SuggestionProvider.SuggestThread;
+
 public class SuggestCombo extends Composite {
-	protected boolean noModifyListen;
+	protected boolean ignoreModify;
+
+	private SuggestThread currThread;
 	
 	private java.util.List<SuggestionListener> listeners;
 	private SuggestionProvider suggestionProvider;
@@ -37,6 +43,10 @@ public class SuggestCombo extends Composite {
 	
 	public Control getControl() { 
 		return text;
+	}
+	
+	public SuggestionProvider getSuggestionProvider() { 
+		return suggestionProvider; 
 	}
 	
 	public boolean isFocusControl() {		
@@ -71,14 +81,12 @@ public class SuggestCombo extends Composite {
 			public void handleEvent(Event e) {
 				switch(e.type) {
 				case SWT.Modify:
-					String[] s = suggestionProvider.getSuggestions(text.getText());
-					if(s.length > 1 && !noModifyListen) {
-						//Only display suggestions if this control has focus
-						if(isFocusControl()) displaySuggestions(s);
-						text.setFocus();
+					if(!ignoreModify) {
+						startSuggesting();
+						currThread.setText(text.getText());
 					} else {
-						hideSuggestions();
-						noModifyListen = false;
+//						hideSuggestions();
+						ignoreModify = false;
 					}
 					break;
 				case SWT.KeyDown:
@@ -91,7 +99,7 @@ public class SuggestCombo extends Composite {
 					break;
 				case SWT.FocusOut:
 					//Check if focus is on suggestShell/suggestList
-					if(!isSuggestFocus()) hideSuggestions();
+					if(!isSuggestFocus()) stopSuggesting();
 					break;
 				}
 			}
@@ -117,7 +125,7 @@ public class SuggestCombo extends Composite {
 						suggestionSelected(suggestList.getSelection()[0]);
 					break;
 				case SWT.FocusOut:
-					hideSuggestions();
+					stopSuggesting();
 				}
 			}
 		};
@@ -128,18 +136,24 @@ public class SuggestCombo extends Composite {
 		
 		getShell().addShellListener(new ShellAdapter() {
 			public void shellDeactivated(ShellEvent e) {
-				hideSuggestions();
+				stopSuggesting();
 			}
 		});
 		suggestShell.addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent arg0) {
-				unhideSuggestions();
+				showSuggestions();
+			}
+		});
+		// DisposeListener, in case user closes PathVisio while suggestShell is still active
+		suggestShell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				stopSuggesting();
 			}
 		});
 	}
 	
 	public void setVisible(boolean visible) {
-		hideSuggestions();
+		stopSuggesting();
 		super.setVisible(visible);
 	}
 	
@@ -148,30 +162,97 @@ public class SuggestCombo extends Composite {
 		suggestShell.dispose();
 	}
 	
-	void displaySuggestions(String[] suggestions) {
-		suggestList.setItems(suggestions);
-		Point listSize = suggestList.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	void startSuggesting() {		
+		if(!suggestShell.isVisible()) {
+			initSuggestShell();
+		}
+		if(!isSuggesting()) {
+			currThread = new SuggestThread(text.getText(), this);
+			currThread.start();
+		}
+	}
+	
+	void stopSuggesting() {
+		doHideSuggestions();
+		if(currThread != null) {
+			System.out.println("> SuggestThread interrupt requested");
+			currThread.interrupt();
+		}
+		currThread = null;
+	}
+	
+	boolean isSuggesting() {
+		return currThread != null && currThread.getState() != Thread.State.TERMINATED;
+	}
+	
+	public void addSuggestion(final String suggestion) {
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				doAddSuggestion(suggestion);
+			}
+		});
+}
+	
+	void doAddSuggestion(String suggestion) {
+			suggestList.add(suggestion);
+			showSuggestions();
+			resizeSuggestShell();
+	}
+	
+
+	
+	void initSuggestShell() {
 		Point location = text.getLocation();
 		location.y += text.getSize().y;
 		suggestShell.setLocation(text.toDisplay(location));
+		resizeSuggestShell();
+	}
+	
+	void resizeSuggestShell() {
+		Point listSize = suggestList.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		suggestShell.setSize(listSize.x, listSize.y < maxHeight ? listSize.y : maxHeight);
-		suggestShell.setVisible(true);
 	}
 	
-	void hideSuggestions() {
-		suggestShell.setVisible(false);
+	public void setSuggestions(final String[] suggestions) {
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				doSetSuggestions(suggestions);
+			}
+		});
 	}
 	
-	void unhideSuggestions() {
-		suggestShell.setVisible(true);
+	void doSetSuggestions(String[] suggestions) {
+		suggestList.setItems(suggestions);
+		resizeSuggestShell();
+		showSuggestions();
+	}
+	
+	public void hideSuggestions() {
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				doHideSuggestions();
+			}
+		});
+	}
+	
+	void doHideSuggestions() {
+		if(!suggestShell.isDisposed()) 
+			suggestShell.setVisible(false);
+	}
+	
+	void showSuggestions() {
+		if(isFocusControl() && suggestList.getItemCount() > 0)
+			suggestShell.setVisible(true);
+		else
+			doHideSuggestions();
 	}
 	
 	void suggestionSelected(String suggestion) {
-		noModifyListen = true;
+		ignoreModify = true;
 		text.setText(suggestion);
-		hideSuggestions();
+		doHideSuggestions();
 		for(SuggestionListener l : listeners) {
-			noModifyListen = true;
+			ignoreModify = true;
 			l.suggestionSelected(suggestion);
 		}
 	}
@@ -181,9 +262,54 @@ public class SuggestCombo extends Composite {
 	}
 	
 	public interface SuggestionProvider {
-		public String[] getSuggestions(String text);
+		
+		public void doSuggest(String text, SuggestCombo suggestCombo);
+		
+		public class SuggestThread extends Thread {
+			protected SuggestCombo suggestCombo;
+			volatile protected String text;
+			volatile protected boolean textChange;
+			
+			public SuggestCombo getSuggestCombo() { return suggestCombo; }
+			public String getText() { return text; }
+			
+			public void setText(String newText) { 
+				text = newText;
+				textChange = true;
+			}
+			
+			public SuggestThread(String _text, SuggestCombo _suggestCombo) {
+				text = _text;
+				suggestCombo = _suggestCombo;
+			}
+			
+			public void start() {
+				if(suggestCombo == null || suggestCombo.isDisposed()) return;
+				super.start();
+			}
+
+			public void run() {
+				while(!isInterrupted()) {
+					if(textChange) {
+						if(!text.equals("")) 
+							suggestCombo.getSuggestionProvider().doSuggest(text, suggestCombo);
+						else 
+							suggestCombo.hideSuggestions();
+						textChange = false;
+					} else {						
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							System.out.println(this + " interrupted");
+							return;
+						}
+					}
+				}
+				System.out.println(this + " interrupted");
+			}
+		}
 	}
-	
+		
 	public interface SuggestionListener {
 		public void suggestionSelected(String suggestion);
 	}

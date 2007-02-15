@@ -151,13 +151,10 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 			return PropertyType.GENEID;
 		}
 	}
+	
+	public String[] getSuggestions(String text, SuggestCombo suggestCombo) {
+		int limit = getLimit();
 		
-	public void doSuggest(String text, SuggestCombo suggestCombo) {
-		List<String> suggestions = getSuggestions(text, getLimit());
-		suggestCombo.setSuggestions(suggestions.toArray(new String[suggestions.size()]));
-	}
-
-	List<String> getSuggestions(String text, int limit) {
 		List<String> sugg = new ArrayList<String>();
 		try {
 			Statement s = GmmlGdb.getCon().createStatement();
@@ -208,7 +205,7 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 			GmmlVision.log.error("Unable to query suggestions", e);
 		}
 		if(limit > NO_LIMIT && sugg.size() == limit) sugg.add("...results limited to " + limit);
-		return sugg;
+		return sugg.toArray(new String[sugg.size()]);
 	}
 
 	int getLimit() {
@@ -246,4 +243,5 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 			}
 		}
 	}
+
 }

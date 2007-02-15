@@ -264,6 +264,7 @@ public class RCommands {
 				symbol = symbol.replace(c, '_'); break;
 			}
 		}
+		if(symbol.matches("^[0-9].+")) symbol = symbol.substring(1, symbol.length());
 		return symbol;
 	}
 	

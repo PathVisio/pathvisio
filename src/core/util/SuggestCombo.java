@@ -261,14 +261,15 @@ public class SuggestCombo extends Composite {
 		listeners.add(l);
 	}
 	
-	public interface SuggestionProvider {
-		
-		public void doSuggest(String text, SuggestCombo suggestCombo);
+	public interface SuggestionProvider {		
+		public String[] getSuggestions(String text, SuggestCombo suggestCombo);
 		
 		public class SuggestThread extends Thread {
 			protected SuggestCombo suggestCombo;
 			volatile protected String text;
 			volatile protected boolean textChange;
+			
+			private Thread doSuggestThread;
 			
 			public SuggestCombo getSuggestCombo() { return suggestCombo; }
 			public String getText() { return text; }
@@ -288,24 +289,37 @@ public class SuggestCombo extends Composite {
 				super.start();
 			}
 
+			void setSuggestions(String[] suggestions) {
+				if(Thread.currentThread() == doSuggestThread) {
+					suggestCombo.setSuggestions(suggestions);
+				}
+			}
+			
 			public void run() {
 				while(!isInterrupted()) {
 					if(textChange) {
-						if(!text.equals("")) 
-							suggestCombo.getSuggestionProvider().doSuggest(text, suggestCombo);
-						else 
+						if(doSuggestThread != null) doSuggestThread.interrupt();
+						suggestCombo.hideSuggestions();
+						if(!text.equals("")) {
+							doSuggestThread = new Thread() {
+								public void run() {
+									SuggestionProvider sp = suggestCombo.getSuggestionProvider();
+									setSuggestions(sp.getSuggestions(text, suggestCombo));
+								}
+							};
+							doSuggestThread.start();
+						} else {
 							suggestCombo.hideSuggestions();
+						}
 						textChange = false;
 					} else {						
 						try {
-							Thread.sleep(10);
+							Thread.sleep(300); //Wait for a while, in case user continues typing
 						} catch (InterruptedException e) {
-							System.out.println(this + " interrupted");
 							return;
 						}
 					}
 				}
-				System.out.println(this + " interrupted");
 			}
 		}
 	}

@@ -211,6 +211,8 @@ public class RDataOut {
 	
 	public static void createSetVector(Criterion c, String dsName, String setName) 
 	throws RException {
+		setName = RCommands.format(setName);
+		
 		Rengine re = RController.getR();
 		
 		int nrow = RCommands.dim(dsName)[0];

@@ -34,7 +34,7 @@ my $wiki_url = "http://blog.bigcat.unimaas.nl/pathwaywiki";
 my %organisms = (
 	Hs => "Human",
 	Sc => "Yeast",
-	Nm => "Mouse",
+	Mm => "Mouse",
 	Rn => "Rat",
 	);
 
@@ -82,7 +82,8 @@ while ($allpages =~ /<td><a href=\"(.*?)\" title=\"(.*?)\">(.*?)<\/a><\/td>/gs) 
    		$mech->content =~ /<textarea .*?>(.*?)<\/textarea>/gs;
    		my $page_content = $1;
    		
-   		if(chomp($page_content) eq "" || $overwrite) {
+   		chomp($page_content);
+   		if($page_content eq "" || $overwrite) {
    			# submit the new content
    			$mech->submit_form(
    				form_name => 'editform',

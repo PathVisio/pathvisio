@@ -14,6 +14,10 @@ import util.SuggestCombo.SuggestionProvider;
 public abstract class SuggestCellEditor extends CellEditor {
 	protected SuggestCombo suggestCombo;
 	
+	public SuggestCellEditor() {
+		super();
+	}
+	
 	public SuggestCellEditor(Composite parent) {
 		super(parent);
 	}

@@ -37,5 +37,6 @@ public enum PropertyClass
 	FONT,
 	ANGLE,
 	ORGANISM,
-	DB_ID
+	DB_ID,
+	DB_SYMBOL,
 }

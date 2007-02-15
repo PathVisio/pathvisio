@@ -67,7 +67,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	TextCellEditor textEditor;
 	ColorCellEditor colorEditor;
 	ComboBoxCellEditor comboBoxEditor;
-	SuggestCellEditor suggestGdbEditor;
+	SuggestCellEditor identifierSuggestEditor;
+	SuggestCellEditor symbolSuggestEditor;
 	
 	private List<GmmlDataObject> dataObjects;
 	
@@ -212,7 +213,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		cellEditors[1] = cellEditors[0] = textEditor = new TextCellEditor(tableViewer.getTable());
 		colorEditor = new ColorCellEditor(tableViewer.getTable());
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
-		suggestGdbEditor = new SuggestGdbCellEditor(tableViewer.getTable());
+		identifierSuggestEditor = new SuggestGdbCellEditor(tableViewer.getTable(), SuggestGdbCellEditor.TYPE_IDENTIFIER);
+		symbolSuggestEditor = new SuggestGdbCellEditor(tableViewer.getTable(), SuggestGdbCellEditor.TYPE_SYMBOL);
 		
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
@@ -281,7 +283,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				comboBoxEditor.setItems(genetype_names);
 				return comboBoxEditor;
 			case DB_ID:
-				return suggestGdbEditor;
+				return identifierSuggestEditor;
+			case DB_SYMBOL:
+				return symbolSuggestEditor;
 				
 		}
 		return textEditor;
@@ -352,9 +356,11 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 //					}
 				}
 				case DB_ID:
+				case DB_SYMBOL:
 					if(value instanceof String) return (String)value;
 					if(value instanceof GmmlPropertyTable.AutoFillData) 
 						return ((GmmlPropertyTable.AutoFillData)value).getMainValue();
+					
 			}
 			return null;
 		}
@@ -432,6 +438,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				if((Integer)value == -1) return; //Nothing selected
 				value = genetype_names[(Integer)value];
 				break;
+			case DB_SYMBOL:
 			case DB_ID:
 				if(value instanceof GmmlPropertyTable.AutoFillData) {
 					GmmlPropertyTable.AutoFillData adf = (GmmlPropertyTable.AutoFillData)value;
@@ -606,9 +613,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			if(doGuess) guessData(o);
 			for(PropertyType p : getProperties()) {
 				Object vNew = getProperty(p);
-				if(o.isDefaultProperty(p)) {
-					o.setProperty(p, vNew);
-				}
+				o.setProperty(p, vNew);
 			}
 		}
 		

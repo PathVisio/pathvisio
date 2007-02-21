@@ -201,7 +201,7 @@ sub uploadPathwayFiles {
                                 $descr .= $description;
                         }
                         $wiki->uploadFile("$dir/$file",$descr,{ wikiname=>$file, ignoreWarnings=>$ovrFiles });
-			$wiki->setFileDescription($file,$descr, { ignoreWarnings=>$ovrFiles }); #Description not overwritten by uploading, so do it manually
+			$wiki->setFileDescription($file,$descr, { overwrite=>$ovrFiles }); #Description not overwritten by uploading, so do it manually
                 } else {
                         print "!! Skipped file: $file does not exist\n";
                 }
@@ -278,7 +278,8 @@ sub uploadFile {
 
         
         print "Uploading $file. Description:\n";
-        print $descr."\n" . "-" x 75 . "\n";
+        print $descr."\n" . "-" x 75 . "\n";
+
         my $eckey=encode('utf8',$file);
          if($eckey ne $file) {
                 symlink("$file","$eckey");
@@ -327,7 +328,6 @@ sub setPageContent {
 		$append = $options{append};
 		$overwrite = $options{overwrite};
 	}
-
         my $mech = $self->{mech};
         my $php = $self->{php};
 

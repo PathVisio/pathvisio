@@ -312,7 +312,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		{
 			PropertyType key = (PropertyType)element;
 			Object value = getAggregateValue(key);
-			
+			if(value == VALUE_DIFF) {
+				return VALUE_DIFF.toString();
+			}
 			switch(key.type())
 			{
 				case ANGLE:
@@ -368,6 +370,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		public void modify(Object element, String property, Object value) {
 			PropertyType key = (PropertyType)((TableItem)element).getData();
 			
+			if(value == VALUE_DIFF || value == VALUE_DIFF.toString()) {
+				return;
+			}
 			/*
 			 * Here, we transform the output of the cell editor
 			 * to a value understood by GmmlDataObject.SetProperty().

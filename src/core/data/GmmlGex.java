@@ -570,11 +570,7 @@ public class GmmlGex implements ApplicationEventListener {
 		public void run(final IProgressMonitor monitor) 
 		throws InvocationTargetException, InterruptedException {
 			monitor.beginTask("Importing expression data", totalWork);
-			page.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					importFromTxt(info, page, monitor);
-				}
-			});
+			importFromTxt(info, page, monitor);
 					
 			monitor.done();
 		}

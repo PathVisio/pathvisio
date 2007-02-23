@@ -285,7 +285,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 			case DB_ID:
 				return identifierSuggestEditor;
 			case DB_SYMBOL:
-				return symbolSuggestEditor;
+				return textEditor;
 				
 		}
 		return textEditor;

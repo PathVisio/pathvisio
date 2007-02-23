@@ -18,10 +18,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import sun.awt.FocusingTextField;
 import util.SuggestCombo.SuggestionProvider.SuggestThread;
 
 public class SuggestCombo extends Composite {
 	protected boolean ignoreModify;
+	protected boolean ignoreFocusOut;
 
 	private SuggestThread currThread;
 	
@@ -98,8 +100,10 @@ public class SuggestCombo extends Composite {
 					}
 					break;
 				case SWT.FocusOut:
-					//Check if focus is on suggestShell/suggestList
-					if(!isSuggestFocus()) stopSuggesting();
+					if(!ignoreFocusOut) {
+						//Check if focus is on suggestShell/suggestList
+						if(!isSuggestFocus()) stopSuggesting();
+					}
 					break;
 				}
 			}
@@ -124,8 +128,14 @@ public class SuggestCombo extends Composite {
 					if(selection.length > 0) 
 						suggestionSelected(suggestList.getSelection()[0]);
 					break;
+				case SWT.FocusIn:
+					System.out.println("Focus on list");
+					//try { throw new Exception(); } catch(Exception ex) { ex.printStackTrace(); }
+					break;
 				case SWT.FocusOut:
-					stopSuggesting();
+					if(!ignoreFocusOut) {
+						stopSuggesting();
+					}
 				}
 			}
 		};
@@ -133,6 +143,7 @@ public class SuggestCombo extends Composite {
 		suggestList.addListener(SWT.DefaultSelection, listListener);
 		suggestList.addListener(SWT.MouseDown, listListener);
 		suggestList.addListener(SWT.FocusOut, listListener);
+		suggestList.addListener(SWT.FocusIn, listListener);
 		
 		getShell().addShellListener(new ShellAdapter() {
 			public void shellDeactivated(ShellEvent e) {
@@ -241,10 +252,19 @@ public class SuggestCombo extends Composite {
 	}
 	
 	void showSuggestions() {
-		if(isFocusControl() && suggestList.getItemCount() > 0)
+		boolean restoreFocus = text.isFocusControl();
+		if(isFocusControl() && suggestList.getItemCount() > 0) {
 			suggestShell.setVisible(true);
-		else
+			
+			if(restoreFocus) {
+				ignoreFocusOut = true;
+				text.setFocus();
+				ignoreFocusOut = false;
+			}
+			
+		} else {
 			doHideSuggestions();
+		}
 	}
 	
 	void suggestionSelected(String suggestion) {

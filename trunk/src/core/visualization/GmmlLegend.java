@@ -611,17 +611,21 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		}
 	}
 
-	public void visualizationEvent(VisualizationEvent e) {
-		switch(e.type) {
-		case VisualizationEvent.COLORSET_ADDED:
-		case VisualizationEvent.COLORSET_REMOVED:
-			rebuildContent();
-			break;
-		default:
-			refreshContent();
-		}
+	public void visualizationEvent(final VisualizationEvent e) {
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				switch(e.type) {
+				case VisualizationEvent.COLORSET_ADDED:
+				case VisualizationEvent.COLORSET_REMOVED:
+					rebuildContent();
+					break;
+				default:
+					refreshContent();
+				}
+			}
+		});
 	}
-	
+
 	/**
 	 * This class contains an {@link Group} that can be collapsed and expanded.
 	 * Contents can to the {@link Group} by using {@link #getGroup()}

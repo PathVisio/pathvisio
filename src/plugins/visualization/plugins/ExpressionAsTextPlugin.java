@@ -193,9 +193,12 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		List<Data> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();
 		for(Data d : refdata) {
-			strb.append(formatData(d.getSampleData().get(s.getId())) + sep);
+			String str = formatData(d.getSampleData().get(s.getId())).toString();
+			if(!str.equals("NaN")) {
+				strb.append(str + sep);
+			}
 		}
-		return strb.substring(0, strb.length() - (sep).length());
+		return strb.length() > sep.length() ? strb.substring(0, strb.length() - sep.length()) : strb;
 	}
 	
 	Object formatData(Object data) {

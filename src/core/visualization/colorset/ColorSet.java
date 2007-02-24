@@ -147,6 +147,8 @@ public class ColorSet {
 	public RGB getColor(HashMap<Integer, Object> data, int sampleId)
 	{
 		if(data == null) return color_no_data_found;
+		Object value = data.get(sampleId);
+		if(value == null || value.equals(Double.NaN)) return color_no_data_found;
 		
 		RGB rgb = color_no_criteria_met; //The color to return
 		Iterator it = colorSetObjects.iterator();

@@ -670,7 +670,7 @@ public class GmmlGex implements ApplicationEventListener {
 							errors);
 					continue;
 				}
-				monitor.setTaskName("Importing expression data - processing line " + n + "; " + errors + " errors");
+				monitor.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
 				//Check id and add data
 				String id = data[info.idColumn].trim();
 				String code = data[info.codeColumn].trim();
@@ -700,7 +700,7 @@ public class GmmlGex implements ApplicationEventListener {
 								pstmt.execute();
 							} catch (Exception e) {
 								errors = reportError(error, "Line " + n + ":\t" + line + "\n" + 
-										"\tError: " + error, errors);
+										"\tException: " + error, errors);
 								success = false;
 							}
 						}
@@ -711,7 +711,7 @@ public class GmmlGex implements ApplicationEventListener {
 			}
 			page.println(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
-				page.println(errors + " errors occured, see file '" + errorFile + "' for details");
+				page.println(errors + " exceptions occured, see file '" + errorFile + "' for details");
 			} else {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}

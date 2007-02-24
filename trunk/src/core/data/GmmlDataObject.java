@@ -1111,7 +1111,7 @@ public class GmmlDataObject
 	 */
 	public void setStartGraphRef (String v) 
 	{ 
-		if (startGraphRef != v)
+		if (startGraphRef != v && v != null && !v.equals(""))
 		{
 			if (parent != null)
 			{
@@ -1137,7 +1137,7 @@ public class GmmlDataObject
 	 */
 	public void setEndGraphRef (String v) 
 	{ 
-		if (endGraphRef != v)
+		if (endGraphRef != v && v != null && !v.equals(""))
 		{
 			if (parent != null)
 			{

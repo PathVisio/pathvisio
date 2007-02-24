@@ -931,12 +931,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public static final int DRAW_ORDER_SELECTIONBOX = 1;
 	public static final int DRAW_ORDER_SELECTED = 2;
 	public static final int DRAW_ORDER_GENEPRODUCT = 3;
-	public static final int DRAW_ORDER_LABEL = 4;
-	public static final int DRAW_ORDER_SHAPE = 5;
-	public static final int DRAW_ORDER_ARC = 6;
-	public static final int DRAW_ORDER_BRACE = 7;
-	public static final int DRAW_ORDER_LINESHAPE = 8;
-	public static final int DRAW_ORDER_LINE = 9;
+	public static final int DRAW_ORDER_LINE = 4;
+	public static final int DRAW_ORDER_LINESHAPE = 5;
+	public static final int DRAW_ORDER_LABEL = 6;
+	public static final int DRAW_ORDER_ARC = 7;
+	public static final int DRAW_ORDER_BRACE = 8;
+	public static final int DRAW_ORDER_SHAPE = 9;
 	public static final int DRAW_ORDER_MAPPINFO = 10;
 	public static final int DRAW_ORDER_DEFAULT = 11;
 	

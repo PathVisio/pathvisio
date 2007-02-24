@@ -323,9 +323,9 @@ public class LabelPlugin extends VisualizationPlugin {
 	
 	private String getLabelText(GmmlGeneProduct g) {
 		switch(style) {
-		case STYLE_ID: 		return g.getGmmlData().getGeneID();
+		case STYLE_ID: 		return g.getGmmlData().getGeneProductName();
 		case STYLE_SYMBOL:
-		default:			return g.getGmmlData().getGeneProductName();
+		default:			return g.getGmmlData().getGeneID();
 		}
 	}
 

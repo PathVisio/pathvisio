@@ -554,6 +554,9 @@ public class GmmlFormat
 	private static void mapGraphId (GmmlDataObject o, Element e)
 	{
 		String id = e.getAttributeValue("GraphId");
+		if(id == null || id.equals("")) {
+			id = o.getParent().getUniqueId();
+		}
 		o.setGraphId (id);
 	}
 	
@@ -564,7 +567,7 @@ public class GmmlFormat
 		if (id != null && !id.equals(""))
 		{
 			e.setAttribute("GraphId", o.getGraphId());
-		}
+		} 
 	}
 	
 	private static void mapGeneProductData(GmmlDataObject o, Element e)

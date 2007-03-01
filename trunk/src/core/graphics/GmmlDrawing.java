@@ -118,8 +118,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		GmmlGraphics result = null;
 		switch (o.getObjectType())
 		{
-			case ObjectType.BRACE: result = new GmmlBrace(this, o); break;
-			case ObjectType.GENEPRODUCT: result = new GmmlGeneProduct(this, o); break;
+			case ObjectType.DATANODE: result = new GmmlGeneProduct(this, o); break;
 			case ObjectType.SHAPE: result = new GmmlShape(this, o); break;
 			case ObjectType.LINE: result = new GmmlLine(this, o); break;
 			case ObjectType.MAPPINFO: 
@@ -795,7 +794,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWBRACE:
-			gdata = new GmmlDataObject(ObjectType.BRACE);
+			gdata = new GmmlDataObject(ObjectType.SHAPE);
+			gdata.setShapeType(ShapeType.BRACE);
 			gdata.setMCenterX (mx);
 			gdata.setMCenterY (my);
 			gdata.setMWidth(1);
@@ -803,16 +803,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setOrientation(OrientationType.RIGHT);
 			gdata.setColor(stdRGB);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlBrace)lastAdded).handleSE;
+			h = ((GmmlShape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
-			gdata = new GmmlDataObject(ObjectType.GENEPRODUCT);
+			gdata = new GmmlDataObject(ObjectType.DATANODE);
 			gdata.setMCenterX(mx);
 			gdata.setMCenterY(my);
 			gdata.setMWidth(1);
 			gdata.setMHeight(1);
-			gdata.setGeneID("Gene");
+			gdata.setTextLabel("Gene");
 			gdata.setXref("");
 			gdata.setColor(stdRGB);
 			gdata.setGraphId(data.getUniqueId());

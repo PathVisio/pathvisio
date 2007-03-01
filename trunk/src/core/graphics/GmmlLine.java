@@ -33,7 +33,6 @@ import util.SwtUtils;
 import data.GmmlDataObject;
 import data.GmmlEvent;
 import data.LineStyle;
-import data.LineType;
  
 /**
  * This class implements and handles a line
@@ -99,14 +98,14 @@ public class GmmlLine extends GmmlGraphics
 		switch (gdata.getLineType())
 		{
 		
-			case LineType.LINE:
+			case LINE:
 				buffer.drawLine ((int)vStartx, (int)vStarty, (int)vEndx, (int)vEndy);
 				break;
-			case LineType.ARROW:				
+			case ARROW:				
 				buffer.drawLine ((int)vStartx, (int)vStarty, (int)vEndx, (int)vEndy);
 				drawArrowhead(buffer);
 				break;
-			case LineType.TBAR:
+			case TBAR:
 			{
 				s /= 8;
 	
@@ -119,7 +118,7 @@ public class GmmlLine extends GmmlGraphics
 				buffer.drawLine ((int)capx1, (int)capy1, (int)capx2, (int)capy2);
 			}
 				break;
-			case LineType.LIGAND_ROUND:
+			case LIGAND_ROUND:
 			{
 				if (vEndx != vStartx || vEndy != vStarty)
 				{
@@ -132,7 +131,7 @@ public class GmmlLine extends GmmlGraphics
 				}
 			}
 				break;
-			case LineType.RECEPTOR_ROUND:
+			case RECEPTOR_ROUND:
 			{
 				if (vEndx != vStartx || vEndy != vStarty)
 				{
@@ -145,8 +144,8 @@ public class GmmlLine extends GmmlGraphics
 				}
 			}
 				break;
-			case LineType.RECEPTOR: //TODO: implement receptor
-			case LineType.RECEPTOR_SQUARE:
+			case RECEPTOR: //TODO: implement receptor
+			case RECEPTOR_SQUARE:
 			{
 				if (vEndx != vStartx || vEndy != vStarty)
 				{
@@ -170,7 +169,7 @@ public class GmmlLine extends GmmlGraphics
 				}
 			}
 				break;
-			case LineType.LIGAND_SQUARE:
+			case LIGAND_SQUARE:
 			{
 				if (vEndx != vStartx || vEndy != vStarty)
 				{
@@ -362,5 +361,15 @@ public class GmmlLine extends GmmlGraphics
 			gdata.setEndGraphRef(id);			
 		}
 	}
+
+	protected int getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
+	protected int getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
+	protected int getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
+	protected int getVEndY() { return (int)(vFromM(gdata.getMEndY())); }
+
+	protected double getVStartXDouble() { return vFromM(gdata.getMStartX()); }
+	protected double getVStartYDouble() { return vFromM(gdata.getMStartY()); }
+	protected double getVEndXDouble() { return vFromM(gdata.getMEndX()); }
+	protected double getVEndYDouble() { return vFromM(gdata.getMEndY()); }
 
 }

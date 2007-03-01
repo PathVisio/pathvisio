@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The class MappFormat is responsible for all interaction with 
@@ -328,9 +329,9 @@ public class MappFormat
 		mappInfo[icolTitle] = mi.getMapInfoName();
 		mappInfo[icolVersion] = mi.getVersion();
 		mappInfo[icolAuthor] = mi.getAuthor();
-		mappInfo[icolMaint] = mi.getMaintainedBy();
+		mappInfo[icolMaint] = mi.getMaintainer();
 		mappInfo[icolEmail] = mi.getEmail();
-		mappInfo[icolCopyright] = mi.getAvailability();
+		mappInfo[icolCopyright] = mi.getCopyright();
 		mappInfo[icolModify] = mi.getLastModified();
 		
 		mappInfo[icolNotes] = mi.getNotes();
@@ -372,9 +373,9 @@ public class MappFormat
 		o.setMapInfoDataSource("GenMAPP 2.0");
 		o.setVersion(row[icolVersion]);
 		o.setAuthor(row[icolAuthor]);
-		o.setMaintainedBy(row[icolMaint]);
+		o.setMaintainer(row[icolMaint]);
 		o.setEmail(row[icolEmail]);
-		o.setAvailability(row[icolCopyright]);
+		o.setCopyright(row[icolCopyright]);
 		o.setLastModified(row[icolModify]);
 		
 		o.setNotes(row[icolNotes]);
@@ -435,12 +436,7 @@ public class MappFormat
 					unmapLineType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.BRACE:
-					unmapNotesAndComments (o, row);
-					unmapBraceType(o, row);
-					result.add(row);
-					break;
-				case ObjectType.GENEPRODUCT:	
+				case ObjectType.DATANODE:	
 					unmapNotesAndComments (o, row);
 					unmapGeneProductType(o, row);
 					result.add(row);
@@ -458,19 +454,33 @@ public class MappFormat
 					unmapLegendType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.SHAPE:			
+				case ObjectType.SHAPE:
+					
 					unmapNotesAndComments (o, row);
-					unmapShapeType(o, row);
-					result.add(row);
-					break;
-				case ObjectType.FIXEDSHAPE:					
-					unmapNotesAndComments (o, row);
-					unmapFixedShapeType(o, row);
-					result.add(row);
-					break;
-				case ObjectType.COMPLEXSHAPE:			
-					unmapNotesAndComments (o, row);
-					unmapComplexShapeType(o, row);
+					switch (o.getShapeType())
+					{
+						case BRACE:
+							unmapBraceType(o, row);
+							break;
+						case OVAL:
+						case ARC:
+						case RECTANGLE:					
+							unmapShapeType(o, row);
+							break;
+						case CELLA:
+						case PROTEINB:
+						case ORGANA:
+						case ORGANB:
+						case ORGANC:
+							unmapFixedShapeType(o, row);
+							break;
+						case PENTAGON: //TODO: incorrect separation
+						case HEXAGON:
+						case RIBOSOME:
+						case TRIANGLE:
+						case VESICLE:							
+							unmapComplexShapeType(o, row);
+					}
 					result.add(row);
 					break;
 			}
@@ -589,14 +599,10 @@ public class MappFormat
 
     
     private static void unmapLineType (GmmlDataObject o, String[] mappObject)
-    {    	
-    	final String[] genmappLineTypes = {
-    		"Line", "Arrow", "TBar", "Receptor", "LigandSq", 
-    		"ReceptorSq", "LigandRd", "ReceptorRd"};
-    	
+    {   	
     	int lineStyle = o.getLineStyle();
-		int lineType = o.getLineType();
-		String style = genmappLineTypes[lineType];
+		LineType lineType = o.getLineType();
+		String style = lineType.getMappName();
 		if (lineStyle == LineStyle.DASHED && (lineType == LineType.ARROW || lineType == LineType.LINE))
 			style = "Dotted" + style;
 		
@@ -620,30 +626,35 @@ public class MappFormat
 		mappObject[colColor] = ConvertType.toMappColor(o.getColor(), o.isTransparent());	
 	}
 
-	private static GmmlDataObject mapLineType(String [] mappObject) throws ConverterException
+	private static Map<String,LineType> mappLineTypes = initMappLineTypes();
+	
+	static private Map<String,LineType> initMappLineTypes()
 	{
-		final List mappLineTypes = Arrays.asList(new String[] {
-				"DottedLine", "DottedArrow", "Line", "Arrow", "TBar", "Receptor", "LigandSq", 
-				"ReceptorSq", "LigandRd", "ReceptorRd"});
-		
+		Map<String,LineType> result = new HashMap<String,LineType>();
+		result.put ("DottedLine", LineType.LINE);
+		result.put ("DottedArrow", LineType.ARROW);
+		for (LineType l : LineType.values())
+		{
+			result.put (l.getMappName(), l);
+		}
+		return result;
+	}
+	
+	private static GmmlDataObject mapLineType(String [] mappObject) throws ConverterException
+	{		
     	GmmlDataObject o = new GmmlDataObject(ObjectType.LINE);
     	
 		String type = mappObject[colType];
-    	int lineStyle = LineStyle.SOLID;		
-    	int lineType = mappLineTypes.indexOf(type);
-    	if(type.equals("DottedLine") || type.equals("DottedArrow"))
+    	if(type.startsWith("Dotted"))
     	{
-			lineStyle = LineStyle.DASHED;
+			o.setLineStyle(LineStyle.DASHED);
     	}
     	else
     	{
-    		lineType -= 2;
+    		o.setLineStyle(LineStyle.SOLID);
     	}
-    	if (lineType < 0) throw new ConverterException ("Invalid Line Type '" + type + "'");
-    	
-    	o.setLineStyle(lineStyle);
-    	o.setLineType(lineType);
-		
+    	    	
+    	o.setLineType(mappLineTypes.get(type));		
         o.setMStartX(Double.parseDouble(mappObject[colCenterX]) / GmmlData.OLD_GMMLZOOM);       
         o.setMStartY(Double.parseDouble(mappObject[colCenterY]) / GmmlData.OLD_GMMLZOOM);
         o.setMEndX(Double.parseDouble(mappObject[colSecondX]) / GmmlData.OLD_GMMLZOOM);
@@ -712,8 +723,8 @@ public class MappFormat
 
     private static GmmlDataObject mapBraceType(String[] mappObject) throws ConverterException
     {
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.BRACE);
-    	
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
+    	o.setShapeType (ShapeType.BRACE);
     	mapShape(o, mappObject);
     	mapColor(o, mappObject);
     	o.setOrientation((int)Double.parseDouble(mappObject[colRotation]));
@@ -728,15 +739,15 @@ public class MappFormat
 					o.getDataSource());
 
 		mappObject[colHead] = o.getBackpageHead();
-		mappObject[colID] = o.getGeneProductName();
-		mappObject[colLabel] = o.getGeneID();
+		mappObject[colID] = o.getGeneID();
+		mappObject[colLabel] = o.getTextLabel();
 		mappObject[colLinks] = o.getXref();    	
 		unmapShape(o, mappObject);
     }
     
     private static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException
 	{
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.GENEPRODUCT);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.DATANODE);
     	
     	String syscode = mappObject[colSystemCode];
     	if (syscode == null) syscode = "";
@@ -748,17 +759,17 @@ public class MappFormat
         o.setBackpageHead(mappObject[colHead]);
         if (mappObject[colID] == null)
         {
-        	o.setGeneProductName("");
+        	o.setGeneID("");
         }
         else
         {
-        	o.setGeneProductName(mappObject[colID]);
+        	o.setGeneID(mappObject[colID]);
         }
-        o.setGeneID(mappObject[colLabel]);
+        o.setTextLabel(mappObject[colLabel]);
 
         // TODO:  for some IDs the type is known, e.g. SwissProt is always a
 		// protein, incorporate this knowledge to assign a type per ID
-        o.setGeneProductType("unknown");
+        o.setDataNodeType("GeneProduct");
         String xrefv = mappObject[colLinks];
         if (xrefv == null) { xrefv = ""; }
         o.setXref(xrefv);
@@ -810,7 +821,7 @@ public class MappFormat
     	mapShape(o, mappObject);
     	mapColor(o, mappObject);
         
-    	o.setLabelText(mappObject[colLabel]);
+    	o.setTextLabel(mappObject[colLabel]);
         
     	if (mappObject[colID] == null)
     	{
@@ -842,7 +853,7 @@ public class MappFormat
     private static void unmapLabelType (GmmlDataObject o, String[] mappObject)
     {    	
     	mappObject[colType] = "Label";
-    	mappObject[colLabel] = o.getLabelText();
+    	mappObject[colLabel] = o.getTextLabel();
     	
     	unmapShape(o, mappObject);
     	unmapColor(o, mappObject);
@@ -868,7 +879,7 @@ public class MappFormat
 	private static GmmlDataObject mapShapeType(String[] mappObject)
     {
     	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
-    	int shapeType = ShapeType.fromMappName(mappObject[colType]);
+    	ShapeType shapeType = ShapeType.fromMappName(mappObject[colType]);
     	o.setShapeType(shapeType);        
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		mapShape_half (o, mappObject);
@@ -892,7 +903,7 @@ public class MappFormat
     
     private static void unmapShapeType (GmmlDataObject o, String[] mappObject)
     {    	
-    	int shapeType = o.getShapeType();
+    	ShapeType shapeType = o.getShapeType();
     	mappObject[colType] = ShapeType.toMappName(shapeType);
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		unmapShape_half (o, mappObject);
@@ -914,7 +925,7 @@ public class MappFormat
     
     private static GmmlDataObject mapFixedShapeType(String[] mappObject)
     {
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.FIXEDSHAPE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
         mapCenter (o, mappObject);
         return o;        
@@ -922,7 +933,7 @@ public class MappFormat
 
     private static void unmapFixedShapeType (GmmlDataObject o, String[] mappObject)
     {    	
-    	int shapeType = o.getShapeType();
+    	ShapeType shapeType = o.getShapeType();
     	mappObject[colType] = ShapeType.toMappName(shapeType);
     	
     	if (shapeType == ShapeType.CELLA)
@@ -937,7 +948,7 @@ public class MappFormat
         
     private static GmmlDataObject mapComplexShapeType(String[] mappObject) throws ConverterException 
 	{       		
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.COMPLEXSHAPE);
+    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
     	
     	if (mappObject[colType].equals("Poly"))
         {
@@ -964,7 +975,7 @@ public class MappFormat
     
     private static void unmapComplexShapeType (GmmlDataObject o, String[] mappObject)
     {   
-    	int shapeType = o.getShapeType();
+    	ShapeType shapeType = o.getShapeType();
     	mappObject[colType] = ShapeType.toMappName(shapeType);
  		
     	if (shapeType == ShapeType.TRIANGLE)

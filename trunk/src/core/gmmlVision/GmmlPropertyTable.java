@@ -49,13 +49,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import util.SuggestCellEditor;
 import util.TableColumnResizer;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.GmmlListener;
-import data.MappFormat;
-import data.ObjectType;
-import data.PropertyClass;
-import data.PropertyType;
+import data.*;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties
@@ -238,12 +232,12 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	final static String[] orientation_names = {"Top", "Right", "Bottom", "Left"};
 	final static String[] linestyle_names = {"Solid", "Dashed"};
 	final static String[] boolean_names = {"false", "true"};
-	final static String[] shape_names = {"Rectangle", "Oval", "Arc"};
+	final static String[] shape_names = ShapeType.getNames();
 	final static String[] linetype_names = {
 			"Line", "Arrow", "TBar", "Receptor", "LigandSquare", 
-			"ReceptorSquare", "LigandRound", "ReceptorRound"};
+			"ReceptorSquare", "LigandRound", "ReceptorRound"}; 
 	final static String[] genetype_names = {
-			"", "unknown", "protein", "rna", "complex"
+			"", "unknown", "protein", "rna", "complex" //TODO
 		};
 	
 	private CellEditor getCellEditor(Object element)
@@ -343,8 +337,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				// for all combobox types:
 				case BOOLEAN:
 					return ((Boolean)value) ? 1 : 0;
-				case LINETYPE:
 				case SHAPETYPE:
+					return ((ShapeType)value);
+				case LINETYPE:
 				case ORIENTATION:
 				case LINESTYLE:
 				{
@@ -448,7 +443,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				if(value instanceof GmmlPropertyTable.AutoFillData) {
 					GmmlPropertyTable.AutoFillData adf = (GmmlPropertyTable.AutoFillData)value;
 					for(GmmlDataObject o : dataObjects) {
-						if(o.getObjectType() == ObjectType.GENEPRODUCT) {
+						if(o.getObjectType() == ObjectType.DATANODE) {
 							adf.fillData(o);
 						}
 					}

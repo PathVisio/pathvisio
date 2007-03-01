@@ -34,7 +34,7 @@ public class Test extends TestCase implements GmmlListener {
 	{
 		data = new GmmlData();
 		data.addListener(this);
-		o = new GmmlDataObject(ObjectType.GENEPRODUCT);
+		o = new GmmlDataObject(ObjectType.DATANODE);
 		received = new ArrayList<GmmlEvent>();
 		o.addListener(this);
 		data.add (o);
@@ -88,7 +88,7 @@ public class Test extends TestCase implements GmmlListener {
 	
 	public void testObjectType()
 	{
-		assertEquals ("getObjectType() test", o.getObjectType(), ObjectType.GENEPRODUCT);
+		assertEquals ("getObjectType() test", o.getObjectType(), ObjectType.DATANODE);
 		
 		try
 		{
@@ -140,7 +140,7 @@ public class Test extends TestCase implements GmmlListener {
 		l.setStartGraphRef("2");
 		assertNull ("reference removed", data.getReferringObjects("1"));
 		
-		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);
+		GmmlDataObject o2 = new GmmlDataObject(ObjectType.DATANODE);
 		data.add (o2);
 		
 		// create link in opposite order
@@ -158,7 +158,7 @@ public class Test extends TestCase implements GmmlListener {
 		// test for uniqueness
 		o.setGraphId("1");
 
-		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);
+		GmmlDataObject o2 = new GmmlDataObject(ObjectType.DATANODE);
 		data.add (o2);
 		try
 		{			
@@ -187,7 +187,7 @@ public class Test extends TestCase implements GmmlListener {
 		assertEquals (x, o2.getGraphId());
 		
 		// test setting id first, then parent
-		GmmlDataObject o3 = new GmmlDataObject(ObjectType.GENEPRODUCT);
+		GmmlDataObject o3 = new GmmlDataObject(ObjectType.DATANODE);
 		x = data.getUniqueId();
 		o3.setGraphId(x);
 		data.add (o3);
@@ -195,7 +195,7 @@ public class Test extends TestCase implements GmmlListener {
 		
 		try
 		{			
-			GmmlDataObject o4 = new GmmlDataObject(ObjectType.GENEPRODUCT);
+			GmmlDataObject o4 = new GmmlDataObject(ObjectType.DATANODE);
 			// try setting the same id again
 			o4.setGraphId(x);
 			data.add (o4);
@@ -208,7 +208,7 @@ public class Test extends TestCase implements GmmlListener {
 	{
 		o.setGraphId("1");
 
-		GmmlDataObject o2 = new GmmlDataObject(ObjectType.GENEPRODUCT);		
+		GmmlDataObject o2 = new GmmlDataObject(ObjectType.DATANODE);		
 		// note: parent not set yet!		
 		o2.setGraphId ("3");
 		data.add(o2); // reference should now be created

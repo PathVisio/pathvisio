@@ -98,11 +98,6 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	protected int getVWidth() { return (int)(vFromM(gdata.getMWidth()));  }
 	protected int getVTop() { return (int)(vFromM(gdata.getMTop())); }
 	protected int getVHeight() { return (int)(vFromM(gdata.getMHeight())); }
-
-	protected int getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
-	protected int getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
-	protected int getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
-	protected int getVEndY() { return (int)(vFromM(gdata.getMEndY())); }
 	
 	/**
 	 * Get the x-coordinate of the center point of this object
@@ -124,10 +119,5 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	protected double getVWidthDouble() { return vFromM(gdata.getMWidth());  }
 	protected double getVTopDouble() { return vFromM(gdata.getMTop()); }
 	protected double getVHeightDouble() { return vFromM(gdata.getMHeight()); }
-
-	protected double getVStartXDouble() { return vFromM(gdata.getMStartX()); }
-	protected double getVStartYDouble() { return vFromM(gdata.getMStartY()); }
-	protected double getVEndXDouble() { return vFromM(gdata.getMEndX()); }
-	protected double getVEndYDouble() { return vFromM(gdata.getMEndY()); }
 	
 }

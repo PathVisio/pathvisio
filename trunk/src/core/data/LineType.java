@@ -16,15 +16,45 @@
 //
 package data;
 
-public class LineType {
-	public static final int LINE = 0;
-	public static final int ARROW = 1;
-	public static final int TBAR = 2;
-	public static final int RECEPTOR = 3;
-	public static final int LIGAND_SQUARE = 4;
-	public static final int RECEPTOR_SQUARE = 5;
-	public static final int LIGAND_ROUND = 6;
-	public static final int RECEPTOR_ROUND = 7;	
+import java.util.*;
+
+public enum LineType 
+{
+	LINE ("Line", "Line"),
+	ARROW ("Arrow", "Arrow"),
+	TBAR ("TBar", "TBar"),
+	RECEPTOR ("Receptor", "Receptor"),
+	LIGAND_SQUARE ("LigandSq", "LigandSquare"),
+	RECEPTOR_SQUARE ("ReceptorSq", "ReceptorSquare"),
+	LIGAND_ROUND ("LigandRd", "LigandRound"),
+	RECEPTOR_ROUND ("ReceptorRd", "ReceptorRound");
 	
+	private LineType (String _mappName, String _gpmlName)
+	{
+		mappName = _mappName; 
+		gpmlName = _gpmlName;
+	}
 	
+	private String mappName;
+	private String gpmlName;
+	
+	String getMappName() { return mappName; }
+	String getGpmlName() { return gpmlName; }
+	
+	static private Map<String, LineType> gpmlMapping = initGpmlMapping();
+	
+	static private Map<String, LineType> initGpmlMapping()
+	{
+		Map<String, LineType> result = new HashMap<String, LineType>();
+		for (LineType l : LineType.values())
+		{
+			result.put (l.getGpmlName(), l);
+		}
+		return result;
+	}
+	
+	static LineType getByGpmlName(String value)
+	{
+		return gpmlMapping.get (value);
+	}
 }

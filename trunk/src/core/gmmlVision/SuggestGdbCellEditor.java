@@ -112,14 +112,14 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
     }
 
     public String getLabel(AutoFillData adf) {
-    	String iddb = adf.getProperty(PropertyType.NAME) + " (" +
-    	adf.getProperty(PropertyType.GENEPRODUCT_DATA_SOURCE) + ")";
+    	String iddb = adf.getProperty(PropertyType.GENEID) + " (" +
+    	adf.getProperty(PropertyType.SYSTEMCODE) + ")";
     	switch(type) {
     	case TYPE_IDENTIFIER:
     		return 	iddb;
     	case TYPE_SYMBOL:
     	default:
-    		return adf.getProperty(PropertyType.GENEID) + ": " + iddb;
+    		return adf.getProperty(PropertyType.TEXTLABEL) + ": " + iddb;
     	}
 				
 	}
@@ -145,10 +145,10 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 	protected PropertyType getMainPropertyType() {
 		switch(type) {
 		case TYPE_IDENTIFIER:
-			return PropertyType.NAME;
+			return PropertyType.GENEID;
 		case TYPE_SYMBOL:
 		default:
-			return PropertyType.GENEID;
+			return PropertyType.TEXTLABEL;
 		}
 	}
 	
@@ -185,15 +185,15 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 				AutoFillData adf = null;
 				switch(type) {
 				case TYPE_IDENTIFIER:
-					adf = new GdbAutoFillData(PropertyType.NAME, r.getString("id"));
-					adf.setProperty(PropertyType.GENEPRODUCT_DATA_SOURCE, sysName);
+					adf = new GdbAutoFillData(PropertyType.GENEID, r.getString("id"));
+					adf.setProperty(PropertyType.SYSTEMCODE, sysName);
 					break;
 				case TYPE_SYMBOL:
 				default:
 					String symbol = GmmlGdb.parseGeneSymbol(r.getString("backpageText"));
-					adf = new GdbAutoFillData(PropertyType.GENEID, symbol);
-					adf.setProperty(PropertyType.GENEPRODUCT_DATA_SOURCE, sysName);
-					adf.setProperty(PropertyType.NAME, r.getString("id"));
+					adf = new GdbAutoFillData(PropertyType.TEXTLABEL, symbol);
+					adf.setProperty(PropertyType.SYSTEMCODE, sysName);
+					adf.setProperty(PropertyType.GENEID, r.getString("id"));
 					
 				}
 				
@@ -225,12 +225,12 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 		
 		protected void guessData(GmmlDataObject o) {
 			//Fetch info from self
-			String id = getProperty(PropertyType.NAME);
-			String sysName = getProperty(PropertyType.GENEPRODUCT_DATA_SOURCE);
+			String id = getProperty(PropertyType.GENEID);
+			String sysName = getProperty(PropertyType.SYSTEMCODE);
 			
 			//If null, fetch from dataobject
-			if(id == null) id = (String)o.getProperty(PropertyType.NAME);
-			if(sysName == null) sysName = (String)o.getProperty(PropertyType.GENEPRODUCT_DATA_SOURCE);
+			if(id == null) id = (String)o.getProperty(PropertyType.GENEID);
+			if(sysName == null) sysName = (String)o.getProperty(PropertyType.SYSTEMCODE);
 			
 			String code = sysName == null ? null : MappFormat.sysName2Code.get(sysName);
 			
@@ -238,7 +238,7 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 			if(id != null && code != null) {
 				String symbol = GmmlGdb.getGeneSymbol(id, code);
 				if(symbol != null) {
-					setProperty(PropertyType.GENEID, symbol);
+					setProperty(PropertyType.TEXTLABEL, symbol);
 				}
 			}
 		}

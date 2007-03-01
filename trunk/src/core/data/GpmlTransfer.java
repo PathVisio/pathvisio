@@ -24,6 +24,7 @@ import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -48,12 +49,13 @@ public class GpmlTransfer extends ByteArrayTransfer
 		byte[] result = null;
 		List<GmmlDataObject> clipboard = (List<GmmlDataObject>)data;
 		Document doc = new Document();
-		
+		Namespace ns = Namespace.getNamespace("http://www.w3.org/2000/svg");
+
 		for (GmmlDataObject o : clipboard)
 		{
 			try
 			{
-				Element e = GmmlFormat.createJdomElement(o);
+				Element e = GpmlFormat.createJdomElement(o, ns);
 				doc.addContent(e);
 			}
 			catch (Exception e)

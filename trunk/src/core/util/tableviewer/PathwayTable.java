@@ -21,8 +21,6 @@ import gmmlVision.GmmlVision;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,8 +42,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import preferences.GmmlPreferences;
-
-import data.ConverterException;
 
 import util.TableColumnResizer;
 import util.tableviewer.TableData.Row;

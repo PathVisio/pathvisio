@@ -16,39 +16,59 @@
 //
 package data;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class ShapeType 
+public enum ShapeType 
 {
-	public static final int RECTANGLE = 0;
-	public static final int OVAL = 1;
-	public static final int ARC = 2;
-	public static final int CELLA = 3;
-	public static final int RIBOSOME = 4;
-	public static final int ORGANA = 5;
-	public static final int ORGANB = 6;	
-	public static final int ORGANC = 7;
-	public static final int PROTEINB = 8;
-	public static final int TRIANGLE = 9; // poly in MAPP
-	public static final int VESICLE = 10;
-	public static final int PENTAGON = 11; // poly in MAPP
-	public static final int HEXAGON = 12; // poly in MAPP
 	
+	RECTANGLE ("Rectangle", "Rectangle"),
+	OVAL ("Oval", "Oval"),
+	ARC ("Arc", "Arc"),
+	CELLA ("CellA", "CellA"),
+	RIBOSOME ("Ribosome", "Ribosome"),
+	ORGANA ("OrganA", "OrganA"),
+	ORGANB ("OrganB", "OrganB"),
+	ORGANC ("OrganC", "OrganC"),
+	PROTEINB ("ProteinB", "ProteinComplex"),
+	TRIANGLE ("Poly", "Triangle"), // poly in MAPP
+	VESICLE ("Vesicle", "Vesicle"),
+	PENTAGON ("Poly", "Pentagon"), // poly in MAPP
+	HEXAGON ("Poly", "Hexagon"), // poly in MAPP
+	BRACE ("Brace", "Brace");
 	
+	private static final Map<String, ShapeType> mappMappings = initMappMappings();
+	private static final Map<String, ShapeType> gpmlMappings = initGpmlMappings();	
+	private String gpmlName;
+	private String mappName;
 	
-	public static final List MappMappings = Arrays.asList(new String[] {
-			"Rectangle","Oval","Arc",
-			"CellA", "Ribosome",
-			"OrganA", "OrganB", "OrganC", "ProteinB", "Poly", "Vesicle", "Poly", "Poly"
-	});
+	ShapeType(String _mappName, String _gpmlName)
+	{
+		mappName = _mappName;
+		gpmlName = _gpmlName;
+	}
+	
+	static Map<String, ShapeType> initMappMappings()
+	{
+		Map<String, ShapeType> result = new HashMap<String, ShapeType>();
+		
+		for (ShapeType s : ShapeType.values())
+		{
+			result.put(s.mappName, s);
+		}
+		return result;
+	}
 
-	public static final List GmmlMappings = Arrays.asList(new String[] {
-			"Rectangle","Oval","Arc",
-			"CellA", "Ribosome",
-			"OrganA", "OrganB", "OrganC", "ProteinComplex", "Triangle", 
-			"Vesicle", "Pentagon", "Hexagon"
-	});
+	static Map<String, ShapeType> initGpmlMappings()
+	{
+		Map<String, ShapeType> result = new HashMap<String, ShapeType>();
+		
+		for (ShapeType s : ShapeType.values())
+		{
+			result.put(s.gpmlName, s);
+		}
+		return result;
+	}
+
 
 	/*
 	 * Warning when using fromMappName: in case value == Poly, 
@@ -56,24 +76,35 @@ public class ShapeType
 	 * this special
 	 * case.
 	 */
-	public static int fromMappName (String value)
+	public static ShapeType fromMappName (String value)
 	{
-		return MappMappings.indexOf(value);
+		return mappMappings.get(value);
 	}
 	
-	public static String toMappName (int value)
+	public static String toMappName (ShapeType value)
 	{
-		return (String)MappMappings.get(value);
+		return value.mappName;
 	}
 
-	public static int fromGmmlName (String value)
+	public static ShapeType fromGpmlName (String value)
 	{
-		return GmmlMappings.indexOf(value);
+		return gpmlMappings.get(value);
 	}
 	
-	public static String toGmmlName (int value)
+	public static String toGpmlName (ShapeType value)
 	{
-		return (String)GmmlMappings.get(value);
+		return value.gpmlName;
+	}
+	
+	static public String[] getNames()
+	{
+		List<String> result = new ArrayList<String>();		
+		for (ShapeType s : ShapeType.values())
+		{
+			result.add("" + s);
+		}
+		String [] resultArray = new String [result.size()];
+		return result.toArray(resultArray);
 	}
 
 }

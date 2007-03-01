@@ -1,4 +1,8 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema targetNamespace="http://genmapp.org/GPML/2007"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:gpml="http://genmapp.org/GPML/2007"
+	elementFormDefault="qualified"
+	>
 
 	<xsd:annotation>
 		<xsd:documentation xml:lang="en">GenMAPP version 2.0 Pathway Schema
@@ -12,6 +16,39 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:maxLength value="50" fixed="true"/>
 		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- allow inclusion of any element from the biopax namespace !-->
+	<xsd:group name="BiopaxGroup">
+		<xsd:sequence>
+			<xsd:element name="Biopax" minOccurs="0"
+				maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:any namespace="http://www.biopax.org/release/biopax-level2.owl#"
+							processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:group>
+
+	<!-- a rotation is either a float value or a string for each of the four right angles !-->
+	<xsd:simpleType name="RotationType">
+		<xsd:union>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Top"/> <!-- rotation of 0.0 !-->
+					<xsd:enumeration value="Right"/> <!-- rotation of 1/2 pi !-->
+					<xsd:enumeration value="Bottom"/> <!-- rotation of 1 pi !-->
+					<xsd:enumeration value="Left"/> <!-- rotation of 3/2 pi !-->
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:float"/> <!-- rotation is always measured in radians !-->
+			</xsd:simpleType>
+		</xsd:union>
+		
 	</xsd:simpleType>
 
 	<xsd:simpleType name="ColorType">
@@ -43,13 +80,14 @@
 		</xsd:union>
 	</xsd:simpleType>
 
+	<!-- use Dimension for width and height, they can't be nagative !-->
 	<xsd:simpleType name="Dimension">
 		<xsd:restriction base="xsd:float">
 			<xsd:minInclusive value="0" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
-	<xsd:simpleType name="GeneProductDataSourceType">
+	<xsd:simpleType name="DatabaseType">
 		<xsd:union>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
@@ -79,40 +117,58 @@
 		</xsd:union>
 	</xsd:simpleType>
 
-<!-- End: Type Definitions -->
+	<xsd:simpleType name="GroupStyleType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Stack"/>
+			<xsd:enumeration value="Box"/>
+			<xsd:enumeration value="Complex"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 
+	<xsd:simpleType name="ObjectType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Node"/>
+			<xsd:enumeration value="Edge"/>
+			<xsd:enumeration value="Annotation"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 
-	<xsd:group name="NotesAndCommentGroup">
+	<xsd:simpleType name="DataNodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Protein"/>
+			<xsd:enumeration value="Rna"/>
+			<xsd:enumeration value="Complex"/>
+			<xsd:enumeration value="GeneProduct"/>
+			<xsd:enumeration value="Metabolite"/>
+			<xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- One or more comments - bundles GenMAPP notes and GenMAPP remarks together !-->
+	<xsd:group name="CommentGroup">
 		<xsd:sequence>
-			<xsd:element name="Notes" type="xsd:string" minOccurs="0"
-				maxOccurs="1">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">Pathway Notes appear in the
-						MAPP information window in GenMAPP. They are not limited in
-						length.</xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-	
-			<xsd:element name="Comment" type="xsd:string" minOccurs="0"
-			maxOccurs="1">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">Pathway Comments appear in the
-						MAPP information window in GenMAPP. Pathway Comments also
-						appear on the mapp information area on the map itself. They
-						are currently limited in length to 50 characters and are
-						GenMAPP REMARKS.</xsd:documentation>
-				</xsd:annotation>
+			<xsd:element name="Comment" minOccurs="0"
+			maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attribute name="source" type="xsd:string"/>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:group>
+	
+<!-- End: Type Definitions -->
+
 <!-- Pathway -->
 	<xsd:element name="Pathway">
-
 		<xsd:complexType>
-
 			<xsd:sequence>
 
-				<xsd:group ref="NotesAndCommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
 				
 				<xsd:element name="Graphics" minOccurs="0" maxOccurs="1">
 					<xsd:complexType>
@@ -121,45 +177,35 @@
 								the coordinates of the GenMAPP drawing board, and Map
 								Information Area.</xsd:documentation>
 						</xsd:annotation>
-						<xsd:attribute name="BoardWidth" type="Dimension"
+						<xsd:attribute name="BoardWidth" type="gpml:Dimension"
 							use="required"/>
-						<xsd:attribute name="BoardHeight" type="Dimension"
+						<xsd:attribute name="BoardHeight" type="gpml:Dimension"
 							use="required"/>
 						<!-- windowwidth and windowheight are only
 						for compatibilty with GenMAPP, not used by Pathvisio !-->
-						<xsd:attribute name="WindowWidth" type="Dimension"
+						<xsd:attribute name="WindowWidth" type="gpml:Dimension"
 							use="optional" default="18000"/>
-						<xsd:attribute name="WindowHeight" type="Dimension"
+						<xsd:attribute name="WindowHeight" type="gpml:Dimension"
 							use="optional" default="12000"/>
 						<!-- TODO: I suspect these below aren't used for anything -->
-						<xsd:attribute name="MapInfoLeft" type="xsd:float"
-							use="optional" default="0"/>
-						<xsd:attribute name="MapInfoTop" type="xsd:float"
-							use="optional" default="0"/>
 					</xsd:complexType>
 				</xsd:element>
 
-				<xsd:element ref="GeneProduct" minOccurs="0"
+				<xsd:element ref="gpml:DataNode" minOccurs="0"
 					maxOccurs="unbounded"/>
 
-				<xsd:element ref="Line" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gpml:Line" minOccurs="0" maxOccurs="unbounded"/>
 
-				<xsd:element ref="Label" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gpml:Label" minOccurs="0" maxOccurs="unbounded"/>
 
-				<xsd:element ref="Shape" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gpml:Shape" minOccurs="0" maxOccurs="unbounded"/>
 
-				<xsd:element ref="Brace" minOccurs="0" maxOccurs="unbounded"/>
-
-				<xsd:element ref="FixedShape" minOccurs="0" maxOccurs="unbounded"/>
-
-				<xsd:element ref="ComplexShape" minOccurs="0" maxOccurs="unbounded"/>
-
-				<xsd:element ref="InfoBox" minOccurs="1" maxOccurs="1" />
+				<xsd:element ref="gpml:InfoBox" minOccurs="1" maxOccurs="1" />
 				
-				<xsd:element ref="Legend" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="gpml:Legend" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 
-			<xsd:attribute name="Name" type="NameType" use="required">
+			<xsd:attribute name="Name" type="gpml:NameType" use="required">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">GenMAPP Pathway
 						Title</xsd:documentation>
@@ -194,11 +240,11 @@
 
 			<xsd:attribute name="Author" type="xsd:string" use="optional"/>
 
-			<xsd:attribute name="Maintained-By" type="xsd:string" use="optional"/>
+			<xsd:attribute name="Maintainer" type="xsd:string" use="optional"/>
 
 			<xsd:attribute name="Email" type="xsd:string" use="optional"/>
 
-			<xsd:attribute name="Availability" type="xsd:string" use="optional">
+			<xsd:attribute name="Copyright" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">Copyright
 						Information</xsd:documentation>
@@ -219,10 +265,10 @@
 
 
 <!-- Gene Product -->
-	<xsd:element name="GeneProduct">
+	<xsd:element name="DataNode">
 
 		<xsd:annotation>
-			<xsd:documentation xml:lang="en">GeneProduct is a gene in GenMAPP
+			<xsd:documentation xml:lang="en">DataNode is the old GeneProduct, a gene in GenMAPP
 				terminology.</xsd:documentation>
 		</xsd:annotation>
 
@@ -230,49 +276,32 @@
 
 			<xsd:sequence>
 
-				<xsd:group ref="NotesAndCommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup"/>
 				
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
 						<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
 						<xsd:attribute name="CenterY" type="xsd:float" use="required"/>
-						<xsd:attribute name="Width" default="600" type="Dimension"/>
-						<xsd:attribute name="Height" default="300" type="Dimension"/>
-						<xsd:attribute name="Color" type="ColorType"/>
+						<xsd:attribute name="Width" default="600" type="gpml:Dimension"/>
+						<xsd:attribute name="Height" default="300" type="gpml:Dimension"/>
+						<xsd:attribute name="Color" type="gpml:ColorType"/>
 					</xsd:complexType>
 				</xsd:element>
-
-
+				<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="Database" type="gpml:DatabaseType" use="required"/>
+						<xsd:attribute name="ID" type="gpml:NameType" use="required"/>						
+					</xsd:complexType>
+				</xsd:element>
 			</xsd:sequence>
 
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupStyle" type="gpml:GroupStyleType" default="Stack" />
+			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 			
-			<xsd:attribute name="Name" type="NameType" use="required">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP ID</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-
-			<xsd:attribute name="GeneProduct-Data-Source"
-					type="GeneProductDataSourceType" use="required">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP System
-					Code</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			
-			<xsd:attribute name="GeneID" type="NameType" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">The Gene Id used by GenMAPP
-					Gene Finder.  One of three components used to declare a gene in
-					GenMAPP.  The other two being the mapp Object.Type and System
-					Code, herein known as and Gene-Produc-DataSource.  Previously,
-					Attribute:Short-Name in ferrante xsd.  Found in the Object.ID
-					field.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
+		
 			<xsd:attribute name="BackpageHead" type="xsd:string"
 				use="optional">
 				<xsd:annotation>
@@ -281,27 +310,20 @@
 				</xsd:annotation>
 			</xsd:attribute>
 
-			<xsd:attribute name="Xref" type="xsd:string" use="optional">
+			<!-- corresponds to xref column in genmapp. depracated !-->
+			<xsd:attribute name="GenMAPP-Xref" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">GenMAPP
 						Links</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 
-			<xsd:attribute name="Type" use="required">
+			<xsd:attribute name="Type" type="gpml:DataNodeType" default="Unknown">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">There is not a correlary
 					field in GenMAPP mapp files which contains this information,
 					and ther is no clear determiner.</xsd:documentation>
 				</xsd:annotation>
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="protein"/>
-						<xsd:enumeration value="rna"/>
-						<xsd:enumeration value="complex"/>
-						<xsd:enumeration value="unknown"/>
-					</xsd:restriction>
-				</xsd:simpleType>
 			</xsd:attribute>
 
 		</xsd:complexType>
@@ -316,7 +338,7 @@
 
 			<xsd:sequence>
 
-				<xsd:group ref="NotesAndCommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -330,7 +352,7 @@
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>
-						<xsd:attribute name="Color" type="ColorType"
+						<xsd:attribute name="Color" type="gpml:ColorType"
 							default="Black"/>
 					</xsd:complexType>
 				</xsd:element>
@@ -377,7 +399,7 @@
 
 			<xsd:sequence>
 
-				<xsd:group ref="NotesAndCommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -386,11 +408,11 @@
 						<xsd:attribute name="CenterY" use="required"
 							type="xsd:float"/>
 						<xsd:attribute name="Width" use="required"
-							type="Dimension"/>
+							type="gpml:Dimension"/>
 						<xsd:attribute name="Height" use="required"
-							type="Dimension"/>
+							type="gpml:Dimension"/>
 						<xsd:attribute name="Color" use="optional"
-							type="ColorType"/>
+							type="gpml:ColorType"/>
 						<xsd:attribute name="FontName" default="Arial"
 							type="xsd:string"/>
 						<xsd:attribute name="FontStyle" default="Normal">
@@ -431,9 +453,12 @@
 				</xsd:element>
 
 			</xsd:sequence>
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />					
-			<xsd:attribute name="TextLabel" use="required"
-				type="xsd:string"/>
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupStyle" type="gpml:GroupStyleType" default="Stack" />
+			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
+
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 			<xsd:attribute name="Xref" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">GenMAPP
@@ -458,17 +483,17 @@
 
 			<xsd:sequence>
 
-				<xsd:group ref="NotesAndCommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
 						<xsd:attribute name="CenterX" type="xsd:float" use="required" />
 						<xsd:attribute name="CenterY" type="xsd:float" use="required" />
-						<xsd:attribute name="Width" type="Dimension" use="required" />
-						<xsd:attribute name="Height" type="Dimension" use="required" />
-						<xsd:attribute name="Color" type="ColorType" default="Black" />
-						<xsd:attribute name="Rotation" type="xsd:float" default="0.0" />
-						<xsd:attribute name="FillColor" type="ColorType" default="Transparent"/>
+						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
+						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
+						<xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
+						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
 					</xsd:complexType>
 				</xsd:element>
 
@@ -480,87 +505,12 @@
 						<xsd:enumeration value="Rectangle"/>
 						<xsd:enumeration value="Arc"/>
 						<xsd:enumeration value="Oval"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />					
-		</xsd:complexType>
-
-	</xsd:element>
-<!-- End: Shape -->
-
-
-<!-- Brace -->
-	<xsd:element name="Brace">
-
-		<xsd:complexType>
-
-			<xsd:sequence>
-
-				<xsd:group ref="NotesAndCommentGroup"/>
-
-				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:attribute name="CenterX" type="xsd:float"
-							use="required"/>
-						<xsd:attribute name="CenterY" type="xsd:float"
-							use="required"/>
-						<xsd:attribute name="Width" type="Dimension"
-							use="required"/>
-						<xsd:attribute name="PicPointOffset" type="Dimension"
-							use="optional"/>
-						<xsd:attribute name="Color" type="ColorType"
-							default="Black"/>
-
-						<xsd:attribute name="Orientation" default="top">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<!-- 0 in GenMAPP    -->
-									<xsd:enumeration value="top"/>
-									<!-- 1 in GenMAPP  -->
-									<xsd:enumeration value="right"/>
-									<!-- 2 in GenMAPP -->
-									<xsd:enumeration value="bottom"/>
-									<!-- 3 in GenMAPP   -->
-									<xsd:enumeration value="left"/>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-
-					</xsd:complexType>
-				</xsd:element>
-
-			</xsd:sequence>
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />					
-			
-		</xsd:complexType>
-
-	</xsd:element>
-<!-- End: Brace -->
-
-<!-- FixedShape -->
-	<xsd:element name="FixedShape">
-
-		<xsd:complexType>
-
-			<xsd:sequence>
-
-				<xsd:group ref="NotesAndCommentGroup"/>
-
-				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:attribute name="CenterX" type="xsd:float"
-							use="required"/>
-						<xsd:attribute name="CenterY" type="xsd:float"
-							use="required"/>
-					</xsd:complexType>
-				</xsd:element>
-
-			</xsd:sequence>
-
-			<xsd:attribute name="Type" use="required">
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Brace"/>
+						<xsd:enumeration value="Hexagon"/>
+						<xsd:enumeration value="Pentagon"/>
+						<xsd:enumeration value="Triangle"/>
+						<xsd:enumeration value="Vesicle"/>
+						<xsd:enumeration value="ProteinComplex"/>
 						<xsd:enumeration value="OrganA"/>
 						<xsd:enumeration value="OrganB"/>
 						<xsd:enumeration value="OrganC"/>
@@ -569,48 +519,16 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />					
-		</xsd:complexType>
-
-	</xsd:element>
-<!-- End: FixedShape -->
-
-
-<!-- ComplexShape -->
-	<xsd:element name="ComplexShape">
-
-		<xsd:complexType>
-			<xsd:sequence>
-
-				<xsd:group ref="NotesAndCommentGroup"/>
-
-				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:attribute name="CenterX" type="xsd:float"
-							use="required"/>
-						<xsd:attribute name="CenterY" type="xsd:float"
-							use="required"/>
-						<xsd:attribute name="Width" type="Dimension" use="required"/>
-						<xsd:attribute name="Rotation" type="xsd:float" default="0"/>
-					</xsd:complexType>
-				</xsd:element>
-			</xsd:sequence>
 			
-			<xsd:attribute name="Type" use="required">
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Hexagon"/>
-						<xsd:enumeration value="Pentagon"/>
-						<xsd:enumeration value="Triangle"/>
-						<xsd:enumeration value="Vesicle"/>
-						<xsd:enumeration value="ProteinComplex"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />					
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupStyle" type="gpml:GroupStyleType" default="Stack" />
+			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
+
 		</xsd:complexType>
+
 	</xsd:element>
-<!-- End: ComplexShape -->
+<!-- End: Shape -->
 
 <!-- InfoBox -->
 	<xsd:element name="InfoBox">
@@ -629,8 +547,7 @@
 <!-- End: InfoBox -->
 
 <!-- Legend -->
-	<xsd:element name="Legend">
-	
+	<xsd:element name="Legend">	
 		<xsd:complexType>
 			<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
 			<xsd:attribute name="CenterY" type="xsd:float" use="required"/>

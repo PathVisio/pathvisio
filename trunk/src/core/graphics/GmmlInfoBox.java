@@ -53,8 +53,8 @@ public class GmmlInfoBox extends GmmlGraphics {
 	protected void vMoveBy(double vdx, double vdy)
 	{
 //		markDirty();
-		gdata.setMapInfoTop ((int)(gdata.getMapInfoTop()  + vdy));
-		gdata.setMapInfoLeft ((int)(gdata.getMapInfoLeft() + vdx));
+		gdata.setMTop (gdata.getMTop()  + mFromV(vdy));
+		gdata.setMLeft (gdata.getMLeft() + mFromV(vdx));
 //		markDirty();
 	}
 	
@@ -82,24 +82,24 @@ public class GmmlInfoBox extends GmmlGraphics {
 		//Draw Name, Organism, Data-Source, Version, Author, Maintained-by, Email, Availability and last modified
 		String[][] text = new String[][] {
 				{"Name: ", gdata.getMapInfoName()},
-				{"Maintained by: ", gdata.getMaintainedBy()},
+				{"Maintained by: ", gdata.getMaintainer()},
 				{"Email: ", gdata.getEmail()},
-				{"Availability: ", gdata.getAvailability()},
+				{"Availability: ", gdata.getCopyright()},
 				{"Last modified: ", gdata.getLastModified()},
 				{"Organism: ", gdata.getOrganism()},
 				{"Data Source: ", gdata.getDataSource()}};
 		int shift = 0;
-		int mapInfoLeft = gdata.getMapInfoLeft();
-		int mapInfoTop = gdata.getMapInfoTop();
+		int vLeft = (int)vFromM(gdata.getMLeft());
+		int vTop = (int)vFromM(gdata.getMTop());
 		for(String[] s : text)
 		{
 			if(s[1] == null || s[1].equals("")) continue; //Skip empty labels
 			buffer.setFont(fBold);
 			Point labelSize = buffer.textExtent(s[0], SWT.DRAW_TRANSPARENT);
-			buffer.drawString(s[0], mapInfoLeft, mapInfoTop + shift, true);
+			buffer.drawString(s[0], vLeft, vTop + shift, true);
 			buffer.setFont(fNormal);
 			Point infoSize = buffer.textExtent(s[1], SWT.DRAW_TRANSPARENT);
-			buffer.drawString(s[1], mapInfoLeft + labelSize.x, mapInfoTop + shift, true);
+			buffer.drawString(s[1], vLeft + labelSize.x, vTop + shift, true);
 			shift += Math.max(infoSize.y, labelSize.y);
 			sizeX = Math.max(sizeX, infoSize.x + labelSize.x);
 		}
@@ -110,7 +110,9 @@ public class GmmlInfoBox extends GmmlGraphics {
 	}
 
 	protected Shape getVOutline() {
-		return new Rectangle(gdata.getMapInfoLeft(), gdata.getMapInfoTop(), sizeX, sizeY);
+		int vLeft = (int)vFromM(gdata.getMLeft());
+		int vTop = (int)vFromM(gdata.getMTop());
+		return new Rectangle(vLeft, vTop, sizeX, sizeY);
 	}
 
 }

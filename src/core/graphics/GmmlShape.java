@@ -80,7 +80,7 @@ public class GmmlShape extends GmmlGraphicsShape
 		
 		switch (gdata.getShapeType())
 		{
-			case ShapeType.RECTANGLE: 
+			case RECTANGLE: 
 				buffer.setLineWidth (1);
 				if (!gdata.isTransparent())
 					buffer.fillRectangle (
@@ -88,7 +88,7 @@ public class GmmlShape extends GmmlGraphicsShape
 				buffer.drawRectangle (
 					vStartX,	vStartY,	vWidth, vHeight);				
 				break;
-			case ShapeType.OVAL:				
+			case OVAL:				
 				buffer.setLineWidth (1);
 				if (!gdata.isTransparent())
 					buffer.fillOval (
@@ -96,7 +96,7 @@ public class GmmlShape extends GmmlGraphicsShape
 				buffer.drawOval (
 					vStartX, vStartY,	vWidth, vHeight);
 				break;
-			case ShapeType.ARC:
+			case ARC:
 				buffer.setLineWidth (1);
 				/**
 				 * Arcs are different from Oval and Rect, in that
@@ -109,6 +109,21 @@ public class GmmlShape extends GmmlGraphicsShape
 //							startX, startY,	width, height, 0, 180);					
 				buffer.drawArc(
 						vStartX, vStartY,	vWidth, vHeight, 0, -180);
+				break;
+			case BRACE:
+				buffer.setLineWidth (2);
+								
+				int cx = getVCenterX();
+				int cy = getVCenterY();
+				int w = getVWidth();
+				int d = getVHeight();
+				
+				buffer.drawLine (cx + d/2, cy, cx + w/2 - d/2, cy); //line on the right
+				buffer.drawLine (cx - d/2, cy, cx - w/2 + d/2, cy); //line on the left
+				buffer.drawArc (cx - w/2, cy, d, d, -180, -90); //arc on the left
+				buffer.drawArc (cx - d, cy - d,	d, d, -90, 90); //left arc in the middle
+				buffer.drawArc (cx, cy - d, d, d, -90, -90); //right arc in the middle
+				buffer.drawArc (cx + w/2 - d, cy, d, d, 0, 90); //arc on the right
 				break;
 		}
 

@@ -49,6 +49,6 @@ public class Test extends TestCase {
 		drawing.fromGmmlData(data);
 		assertEquals (drawing.getGmmlData(), data);
 		
-		data.add(new GmmlDataObject(ObjectType.GENEPRODUCT));
+		data.add(new GmmlDataObject(ObjectType.DATANODE));
 	}
 }

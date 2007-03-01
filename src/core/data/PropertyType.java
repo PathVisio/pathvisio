@@ -62,9 +62,8 @@ public enum PropertyType
 	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION),
 			
 	// gene product
-	NAME ("Name", "Database Identifier", PropertyClass.DB_ID), //TODO: change tag 
-	GENEPRODUCT_DATA_SOURCE ("GeneProduct-Data-Source", "Database Name", PropertyClass.DATASOURCE), 
-	GENEID ("GeneID", "Label", PropertyClass.DB_SYMBOL), // TODO: change tag
+	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID), //TODO: change tag 
+	SYSTEMCODE ("SystemCode", "Database Name", PropertyClass.DATASOURCE), 
 	XREF ("Xref", "Xref", PropertyClass.STRING), // unused 
 	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
 	TYPE ("Type", "Type", PropertyClass.GENETYPE),

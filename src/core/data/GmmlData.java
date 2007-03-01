@@ -341,7 +341,7 @@ public class GmmlData implements GmmlListener
 	 */
 	public void writeToXml(File file, boolean validate) throws ConverterException 
 	{
-		Document doc = GmmlFormat.createJdom(this);
+		Document doc = GpmlFormat.createJdom(this);
 		
 		//Validate the JDOM document
 		if (validate) validateDocument(doc);
@@ -382,12 +382,12 @@ public class GmmlData implements GmmlListener
 			// Copy the pathway information to a GmmlDrawing
 			Element root = doc.getRootElement();
 			
-			GmmlFormat.mapElement(root, this); // MappInfo
+			GpmlFormat.mapElement(root, this); // MappInfo
 			
 			// Iterate over direct children of the root element
 			Iterator it = root.getChildren().iterator();
 			while (it.hasNext()) {
-				GmmlFormat.mapElement((Element)it.next(), this);
+				GpmlFormat.mapElement((Element)it.next(), this);
 			}
 			
 			setSourceFile (file);
@@ -472,7 +472,7 @@ public class GmmlData implements GmmlListener
 		ArrayList<String> systemCodes = new ArrayList<String>();
 		for(GmmlDataObject o : dataObjects)
 		{
-			if(o.getObjectType() == ObjectType.GENEPRODUCT)
+			if(o.getObjectType() == ObjectType.DATANODE)
 			{
 				systemCodes.add(o.getSystemCode());
 			}

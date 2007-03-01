@@ -57,7 +57,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	{
 		//Looks like the wrong way around, but in gpml the ID is attribute 'Name'
 		//NOTE: maybe change this in gpml?
-		return gdata.getGeneProductName();
+		return gdata.getGeneID();
 	}
 		
 	/**
@@ -162,7 +162,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 		f = SwtUtils.changeFont(f, new FontData(gdata.getFontName(), getVFontSize(), SWT.NONE), e.display);
 		buffer.setFont(f);
 		
-		String label = gdata.getGeneID();
+		String label = gdata.getTextLabel();
 		Point textSize = buffer.textExtent (label);
 		buffer.drawString (label, 
 				area.x + (int)(area.width / 2) - (int)(textSize.x / 2),

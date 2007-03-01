@@ -1,45 +1,39 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Pathway Name="" Data-Source="GenMAPP 2.0" Version="20060809" Author="" Maintained-By="" Email="" Availability="" Last-Modified="">
-  <Notes></Notes>
+<Pathway 
+	Name="" Data-Source="GenMAPP 2.0" Version="20060809" Author="" Maintainer="" Email="" Copyright="" Last-Modified=""
+	xmlns="http://genmapp.org/GPML/2007"
+	>
   <Comment></Comment>
   <Graphics BoardWidth="22700.0" BoardHeight="17000.0" WindowWidth="9312.0" WindowHeight="7677.0" />
   <Shape Type="Rectangle">
-    <Notes></Notes>
-    <Comment></Comment>
+	<Comment></Comment>
     <Graphics FillColor="Transparent" Color="000000" Rotation="0.0" CenterX="1500.0" CenterY="2000.0000000000002" Width="1000.0000000000001" Height="1000.0000000000001" />
   </Shape>
   <Shape Type="Rectangle">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="Transparent" Color="000000" Rotation="0.0" CenterX="3000.0" CenterY="2000.0000000000002" Width="1000.0000000000001" Height="1000.0000000000001" />
   </Shape>
   <Shape Type="Rectangle">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="Transparent" Color="000000" Rotation="0.0" CenterX="4500.0" CenterY="2000.0000000000002" Width="1000.0000000000001" Height="1000.0000000000001" />
   </Shape>
   <Shape Type="Rectangle">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="Transparent" Color="000000" Rotation="0.0" CenterX="6000.0" CenterY="2000.0000000000002" Width="1000.0000000000001" Height="1000.0000000000001" />
   </Shape>
   <Shape Type="Arc">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="000000" Color="000000" Rotation="0.0" CenterX="1500.0" CenterY="1500.0" Width="1000.0000000000001" Height="2000.0000000000002" />
   </Shape>
   <Shape Type="Arc">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="000000" Color="000000" Rotation="4.712389" CenterX="2500.0" CenterY="2000.0000000000002" Width="1000.0000000000001" Height="2000.0000000000002" />
   </Shape>
   <Shape Type="Arc">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="000000" Color="000000" Rotation="1.570796" CenterX="6500.0" CenterY="2000.0000000000002" Width="1000.0000000000001" Height="2000.0000000000002" />
   </Shape>
   <Shape Type="Arc">
-    <Notes></Notes>
     <Comment></Comment>
     <Graphics FillColor="000000" Color="000000" Rotation="3.141593" CenterX="4500.0" CenterY="2500.0" Width="1000.0000000000001" Height="2000.0000000000002" />
   </Shape>

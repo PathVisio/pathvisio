@@ -273,8 +273,8 @@ public class MappFormat
     			sObjects.setInt (1, k);
     			for (int j = 1; j < row.length; ++j)
     			{
-    				
-    				GmmlVision.log.trace("[" + (j + 1) + "] " + row[j]);
+    				GmmlVision.log.trace ("[" + (j + 1) + "] " + row[j]);
+//    				System.err.println ("[" + (j + 1) + "] " + row[j]);
     				if (j >= 14 && j < 17)
     				{
     					if (row[j] != null && row[j].equals("")) row[j] = null;
@@ -334,8 +334,8 @@ public class MappFormat
 		mappInfo[icolCopyright] = mi.getCopyright();
 		mappInfo[icolModify] = mi.getLastModified();
 		
-		mappInfo[icolNotes] = mi.getNotes();
-		mappInfo[icolRemarks] = mi.getComment();		
+		mappInfo[icolNotes] = mi.findComment("GenMAPP notes");
+		mappInfo[icolRemarks] = mi.findComment("GenMAPP remarks");		
 		
 		mappInfo[icolBoardWidth] = "" + mi.getMBoardWidth() *  GmmlData.OLD_GMMLZOOM;
 		mappInfo[icolBoardHeight] = "" + mi.getMBoardHeight() *  GmmlData.OLD_GMMLZOOM;
@@ -377,9 +377,9 @@ public class MappFormat
 		o.setEmail(row[icolEmail]);
 		o.setCopyright(row[icolCopyright]);
 		o.setLastModified(row[icolModify]);
-		
-		o.setNotes(row[icolNotes]);
-		o.setComment(row[icolRemarks]);		
+	
+		o.addComment(row[icolNotes], "GenMAPP notes");
+		o.addComment(row[icolRemarks], "GenMAPP remarks");
 
 		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]) / GmmlData.OLD_GMMLZOOM);
 		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]) / GmmlData.OLD_GMMLZOOM);
@@ -491,9 +491,9 @@ public class MappFormat
 	}
 
 	private static void unmapNotesAndComments(GmmlDataObject o, String[] row)
-	{
-		row[colNotes] = o.getNotes();
-		row[colRemarks] = o.getComment();
+	{		
+		row[colNotes] = o.findComment("GenMAPP notes");
+		row[colRemarks] = o.findComment("GenMAPP remarks");		
 	}
 	
 	private static void mapNotesAndComments(GmmlDataObject o, String[] row)
@@ -501,13 +501,13 @@ public class MappFormat
         if (row[colNotes] != null &&
         		!row[colNotes].equals(""))
         {        	
-        	o.setNotes(row[colNotes]);
+    		o.addComment(row[colNotes], "GenMAPP notes");
         }
 
         if (row[colRemarks] != null &&
         		!row[colRemarks].equals(""))
         {            
-            o.setComment(row[colRemarks]);
+    		o.addComment(row[colRemarks], "GenMAPP remarks");
         }
 	}
 
@@ -927,7 +927,7 @@ public class MappFormat
     {
     	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
-        mapCenter (o, mappObject);
+        mapShape (o, mappObject);
         return o;        
     }
 
@@ -943,7 +943,7 @@ public class MappFormat
     		mappObject[colWidth] = "1500";
     		mappObject[colHeight] = "375";
     	}    	
-    	unmapCenter (o, mappObject);
+    	unmapShape (o, mappObject);
     }
         
     private static GmmlDataObject mapComplexShapeType(String[] mappObject) throws ConverterException 
@@ -967,8 +967,7 @@ public class MappFormat
     		o.setShapeType(ShapeType.fromMappName(mappObject[colType]));            
     	}
         
-        o.setMWidth(Double.parseDouble(mappObject[colWidth]));
-        mapCenter (o, mappObject);
+    	mapShape (o, mappObject);
         mapRotation (o, mappObject);
         return o;
     }
@@ -989,9 +988,8 @@ public class MappFormat
 			mappObject[colSecondY] = "6";  			
 		}
     	
-    	unmapCenter (o, mappObject);
+    	unmapShape (o, mappObject);
         unmapRotation (o, mappObject);
-    	mappObject[colWidth] = "" + o.getMWidth();
     }
     
 	/**

@@ -40,8 +40,9 @@ use converter;
 #################
 
 my $dirMapps = "c:/GenMAPP 2 Data/MAPPs";
-my $dirGpml = "c:/PathVisio Data/MAPPs";
+my $dirGpml = "C:/Documents and Settings/Martijn/PathVisio-Data/pathways";
 my $fnConf = "c:/convert_test.conf";
+my $fnArgs = "c:/arguments.txt";
 
 #################
 #   globals     #
@@ -84,9 +85,27 @@ sub convert
 {
 	my $fnMapp = shift;
 	my $fnOut = shift;
+	
+	#write arguments to a temporary file, to make it easier to reproduce in java
+	open (OUTFILE, "> $fnArgs") or die "$!";
+	print OUTFILE "\"$fnMapp\"\n\"$fnOut\"";
+	close OUTFILE;
+	
 	print " in: $fnMapp\n";
 	print "out: $fnOut\n";
-	system ("java", "-cp", '"lib/JRI.jar";"lib/org.eclipse.equinox.common.jar";"lib/org.eclipse.equinox.supplement.jar";"lib/org.eclipse.jface.jar";"lib/swt-win32.jar";"lib/org.eclipse.core.commands.jar";"lib/jdom.jar";build;"lib/hsqldb.jar";"lib/swt-win32-lib.jar";"lib/resources.jar"', "util.Converter", $fnMapp, $fnOut);
+	system ("java", "-cp", 
+		join (";", qw(
+			"lib/JRI.jar"
+			"lib/org.eclipse.equinox.common.jar"
+			"lib/org.eclipse.equinox.supplement.jar"
+			"lib/org.eclipse.jface.jar"
+			"lib/swt-win32.jar"
+			"lib/org.eclipse.core.commands.jar"
+			"lib/jdom.jar"
+			build
+			"lib/hsqldb.jar"
+			"lib/swt-win32-lib.jar"
+			"lib/resources.jar")), "util.Converter", $fnMapp, $fnOut);
 	print "Exit status ", $? >> 8;
 	if ($?) { print " Error!"; }
 	print "\n";

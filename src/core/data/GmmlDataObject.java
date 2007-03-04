@@ -46,7 +46,7 @@ public class GmmlDataObject
 
 	public class Comment implements Cloneable
 	{
-		Comment (String _source, String _comment)
+		Comment (String _comment, String _source)
 		{
 			source = _source;
 			comment = _comment;
@@ -607,7 +607,41 @@ public class GmmlDataObject
 	// general
 	List<Comment> comments = new ArrayList<Comment>();
 	
-	//TODO: no alternative yet
+	public List<Comment> getComments()
+	{
+		return comments;
+	}
+	
+	public void setComments(List<Comment> value)
+	{
+		if (comments != value)
+		{
+			comments = value; 
+			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));		
+		}
+	}
+	
+	public void addComment(String comment, String source)
+	{
+		comments.add(new Comment(comment, source));
+		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));		
+	}
+	
+	/**
+	 * Finds the first comment with a specific source
+	 */
+	public String findComment (String source)
+	{
+		for (Comment c : comments)
+		{
+			if (source.equals(c.source))
+			{
+				return c.comment;
+			}
+		}
+		return null;
+	}
+	
 	/** @deprecated */
 	protected String comment = "";
 	/** @deprecated */
@@ -623,7 +657,6 @@ public class GmmlDataObject
 		}
 	}
 	
-	//TODO: no alternative yet
 	/** @deprecated */
 	protected String notes = "";
 	/** @deprecated */

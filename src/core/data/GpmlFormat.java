@@ -70,7 +70,7 @@ public class GpmlFormat
 		// IMPORTANT: this array has been generated from the xsd with 
 		// an automated perl script. Don't edit this directly, use the perl script instead.
 		/* START OF AUTO-GENERATED CONTENT */
-		result.put("Comment@source", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Comment@Source", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("gpml:Dimension", "18000", "optional"));
@@ -277,13 +277,13 @@ public class GpmlFormat
 				setAttribute("Pathway", "Copyright", root, o.getCopyright());
 				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
 
-//				Element notes = new Element("Notes", ns);
-//				notes.addContent(o.getNotes());
-//				root.addContent(notes);
-
-				Element comments = new Element("Comment", ns);
-				comments.addContent(o.getComment());
-				root.addContent(comments);
+				for (GmmlDataObject.Comment c : o.getComments())
+				{
+					Element f = new Element ("Comment", ns);
+					f.setText (c.comment);
+					setAttribute("Comment", "Source", f, c.source);
+					root.addContent(f);
+				}				
 				
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
@@ -381,7 +381,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapLineData(GmmlDataObject o, Element e)
+	private static void mapLineData(GmmlDataObject o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
@@ -402,8 +402,8 @@ public class GpmlFormat
     	if (ref2 == null) ref2 = "";
     	o.setEndGraphRef (ref2);
 
-    	String style = e.getAttributeValue("Style", e.getNamespace());
-    	String type = e.getAttributeValue("Type", e.getNamespace());
+    	String style = getAttribute("Line", "Style", e);
+    	String type = getAttribute("Line", "Type", e);
     	
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
     	o.setLineType (LineType.getByGpmlName(type));
@@ -486,33 +486,24 @@ public class GpmlFormat
 		}
 	}
 
-	private static void mapComments(GmmlDataObject o, Element e)
+	private static void mapComments(GmmlDataObject o, Element e) throws ConverterException
 	{
-//		String notes = e.getChildText("Notes", e.getNamespace());
-//    	if (notes == null) notes = "";
-//    	o.setNotes(notes);
-    	
-    	String comment = e.getChildText("Comment", e.getNamespace());
-    	if (comment == null) comment = "";
-    	o.setComment(comment);
+		for (Object f : e.getChildren("Comment", e.getNamespace()))
+		{
+			o.addComment(((Element)f).getText(), getAttribute("Comment", "Source", (Element)f));
+		}    	
 	}
 	
-	private static void updateComments(GmmlDataObject o, Element e)
+	private static void updateComments(GmmlDataObject o, Element e) throws ConverterException
 	{
 		if(e != null) 
 		{
-//			if (!o.getNotes().equals(""))
-//			{
-//				Element n = new Element("Notes", e.getNamespace());
-//				n.setText(o.getNotes());
-//				e.addContent(n);
-//			}
-			
-			if (!o.getComment().equals(""))
+			for (GmmlDataObject.Comment c : o.getComments())
 			{
-				Element c = new Element ("Comment", e.getNamespace());
-				c.setText(o.getComment());
-				e.addContent(c);
+				Element f = new Element ("Comment", e.getNamespace());
+				f.setText (c.comment);
+				setAttribute("Comment", "Source", f, c.source);
+				e.addContent(f);
 			}
 		}
 	}
@@ -710,7 +701,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapMappInfoData(GmmlDataObject o, Element e)
+	private static void mapMappInfoData(GmmlDataObject o, Element e) throws ConverterException
 	{
 		o.setMapInfoName (e.getAttributeValue("Name"));
 		String organism = e.getAttributeValue("Organism"); 
@@ -733,8 +724,10 @@ public class GpmlFormat
 		o.setWindowWidth (Double.parseDouble(g.getAttributeValue("WindowWidth")) / GmmlData.OLD_GMMLZOOM);
 		o.setWindowHeight (Double.parseDouble(g.getAttributeValue("WindowHeight"))/ GmmlData.OLD_GMMLZOOM);
 		
-		o.setNotes (e.getChildText("Notes", e.getNamespace()));
-		o.setComment (e.getChildText("Comment", e.getNamespace()));
+		for (Object f : e.getChildren("Comment", e.getNamespace()))
+		{
+			o.addComment(((Element)f).getText(), getAttribute("Comment", "Source", (Element)f));
+		}		
 	}
 	
 	static public Element createJdomElement(GmmlDataObject o, Namespace ns) throws ConverterException 

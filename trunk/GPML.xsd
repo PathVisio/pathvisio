@@ -152,7 +152,7 @@
 				<xsd:complexType>
 					<xsd:simpleContent>
 						<xsd:extension base="xsd:string">
-							<xsd:attribute name="source" type="xsd:string"/>
+							<xsd:attribute name="Source" type="xsd:string"/>
 						</xsd:extension>
 					</xsd:simpleContent>
 				</xsd:complexType>

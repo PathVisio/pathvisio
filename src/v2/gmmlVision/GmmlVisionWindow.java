@@ -1635,12 +1635,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		case ApplicationEvent.NEW_PATHWAY:
 			drawing = GmmlVision.getDrawing();
 			sc.setContent(drawing);
-			drawing.setSize(drawing.getMappInfo().getBoardSize());
 			break;
 		case ApplicationEvent.OPEN_PATHWAY:
 			drawing = GmmlVision.getDrawing();
 			sc.setContent(drawing);
-			drawing.setSize(drawing.getMappInfo().getBoardSize());
 			if(GmmlGex.isConnected()) cacheExpressionData();
 			break;	
 		}

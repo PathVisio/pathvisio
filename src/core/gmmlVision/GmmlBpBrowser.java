@@ -95,7 +95,7 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 				// Get the backpage text
 				String geneHeader = geneProduct.getGmmlData().getBackpageHead();
 				if (geneHeader == null) geneHeader = "";
-				String geneId = geneProduct.getID();
+				String geneId = geneProduct.getGmmlData().getGeneID();
 				String systemCode = geneProduct.getGmmlData().getSystemCode();
 				String bpText = geneHeader.equals("") ? geneHeader : "<H2>" + geneHeader + "</H2><P>";
 				String bpInfo = GmmlGdb.getBpInfo(geneId, systemCode);

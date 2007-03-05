@@ -143,7 +143,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		{
 			fromGmmlDataObject (o);
 		}
-		setSize(getMappInfo().getBoardSize());
+		int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+		int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+		setSize(width, height); 
 		data.fireObjectModifiedEvent(new GmmlEvent(null, GmmlEvent.MODIFIED_GENERAL));
 		data.addListener(this);
 	}
@@ -281,11 +283,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		redraw();
 	}
 	
-	private double zoomFactor = 1;
+	private double zoomFactor = 1.0/15.0;
 	/**
 	 * Get the current zoomfactor used. 
-	 * 1.0 means 100%, 15 gpml unit = 1 pixel
-	 * 2.0 means 200%, 7.5 gpml unit = 1 pixel
+	 * 1/15 means 100%, 15 gpml unit = 1 pixel
+	 * 2/15 means 200%, 7.5 gpml unit = 1 pixel
 	 * 
 	 * The 15/1 ratio is there because of 
 	 * the Visual Basic legacy of GenMAPP
@@ -307,17 +309,23 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * @return	the current zoomfactor
 	 */
 	public double getZoomFactor() { return zoomFactor; }
-	
+
+	/**
+	 * same as getZoomFactor, but in %
+	 * @return
+	 */
+	public double getPctZoom() { return zoomFactor * 100 * 15.0; }
+
 	/**
 	 * Sets the drawings zoom in percent
 	 * @param pctZoomFactor zoomfactor in percent
 	 */
 	public void setPctZoom(double pctZoomFactor)
 	{
-		double factor = 0.01*pctZoomFactor/zoomFactor;
-		zoomFactor = pctZoomFactor / 100;
-		setSize((int)(getSize().x * factor), (int)(getSize().y * factor));
-				
+		zoomFactor = pctZoomFactor / 100.0 / 15.0;
+		int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+		int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+		setSize(width, height); 				
 		redraw();
 	}
 
@@ -458,6 +466,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				|| image.getBounds().width != getSize().x
 				|| image.getBounds().height != getSize().y)
 		{
+			GmmlVision.log.trace("Creating image of size " + getSize().x + ", " + getSize().y);
 			image = new Image(getDisplay(), getSize().x, getSize().y);
 			setData("double-buffer-image", image);
 		}
@@ -772,9 +781,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata = new GmmlDataObject(ObjectType.LABEL);
 			gdata.setMCenterX(mx);
 			gdata.setMCenterY(my);
-			gdata.setMWidth(mFromV(GmmlLabel.M_INITIAL_WIDTH));
-			gdata.setMHeight(mFromV(GmmlLabel.M_INITIAL_HEIGHT));
-			gdata.setMFontSize (mFromV(GmmlLabel.M_INITIAL_FONTSIZE));
+			gdata.setMWidth(GmmlLabel.M_INITIAL_WIDTH);
+			gdata.setMHeight(GmmlLabel.M_INITIAL_HEIGHT);
+			gdata.setMFontSize (GmmlLabel.M_INITIAL_FONTSIZE);
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
 			((GmmlLabel)lastAdded).createTextControl();
@@ -1057,8 +1066,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				addDirtyRect(null); // mark everything dirty
 				break;
 			case GmmlEvent.WINDOW:
-				setSize((int)infoBox.getGmmlData().getMBoardWidth(), 
-						(int)infoBox.getGmmlData().getMBoardHeight());
+				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+				int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+				setSize(width, height); 
+				break;
 		}
 		redrawDirtyRect();
 	}

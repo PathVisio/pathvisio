@@ -171,7 +171,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			GmmlData gmmlData = GmmlVision.getGmmlData();
 			GmmlDrawing drawing = GmmlVision.getDrawing();
 			
-			double usedZoom = drawing.getZoomFactor() * 100;
+			double usedZoom = drawing.getPctZoom();
 			// Set zoom to 100%
 			drawing.setPctZoom(100);			
 			// Overwrite the existing xml file
@@ -250,7 +250,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				}
 				if(confirmed)
 				{
-					double usedZoom = drawing.getZoomFactor() * 100;
+					double usedZoom = drawing.getPctZoom();
 					// Set zoom to 100%
 					drawing.setPctZoom(100);					
 					// Overwrite the existing xml file
@@ -453,8 +453,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
 					newPctZoomFactor = (int)Math.min(
-							drawing.getZoomFactor() * 100 * (double)shellSize.x / drawingSize.x,
-							drawing.getZoomFactor() * 100 * (double)shellSize.y / drawingSize.y
+							drawing.getPctZoom() * (double)shellSize.x / drawingSize.x,
+							drawing.getPctZoom() * (double)shellSize.y / drawingSize.y
 					);
 				} 
 				drawing.setPctZoom(newPctZoomFactor);
@@ -1177,12 +1177,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		case ApplicationEvent.NEW_PATHWAY:
 			drawing = GmmlVision.getDrawing();
 			sc.setContent(drawing);
-			drawing.setSize(drawing.getMappInfo().getBoardSize());
 			break;
 		case ApplicationEvent.OPEN_PATHWAY:
 			drawing = GmmlVision.getDrawing();
 			sc.setContent(drawing);
-			drawing.setSize(drawing.getMappInfo().getBoardSize());
 			if(GmmlGex.isConnected()) cacheExpressionData();
 			break;	
 		}

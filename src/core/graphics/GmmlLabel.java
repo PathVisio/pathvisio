@@ -47,9 +47,9 @@ public class GmmlLabel extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	
-	public static final int M_INITIAL_FONTSIZE = 10;
-	public static final int M_INITIAL_WIDTH = 80;
-	public static final int M_INITIAL_HEIGHT = 20;
+	public static final int M_INITIAL_FONTSIZE = 10 * 15;
+	public static final int M_INITIAL_WIDTH = 80 * 15;
+	public static final int M_INITIAL_HEIGHT = 20 * 15;
 		
 	double getFontSize()
 	{

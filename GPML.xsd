@@ -349,6 +349,23 @@
 									<xsd:attribute name="y" type="xsd:float" use="required"/>
 									<xsd:attribute name="GraphRef"  type="xsd:IDREF" use="optional" />					
 									<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+									<!-- Note: technically points in the middle can have a head,
+									but this will be ignored for most types.
+									!-->
+									<xsd:attribute name="Head" default="Line">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="Line"/>
+												<xsd:enumeration value="Arrow"/>
+												<xsd:enumeration value="Receptor"/>
+												<xsd:enumeration value="ReceptorRound"/>
+												<xsd:enumeration value="ReceptorSquare"/>
+												<xsd:enumeration value="LigandRound"/>
+												<xsd:enumeration value="LigandSquare"/>
+												<xsd:enumeration value="TBar"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>
@@ -358,21 +375,6 @@
 				</xsd:element>
 
 			</xsd:sequence>
-
-			<xsd:attribute name="Type" default="Line">
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Line"/>
-						<xsd:enumeration value="Arrow"/>
-						<xsd:enumeration value="Receptor"/>
-						<xsd:enumeration value="ReceptorRound"/>
-						<xsd:enumeration value="ReceptorSquare"/>
-						<xsd:enumeration value="LigandRound"/>
-						<xsd:enumeration value="LigandSquare"/>
-						<xsd:enumeration value="TBar"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
 
 			<xsd:attribute name="Style" default="Solid">
 				<xsd:simpleType>

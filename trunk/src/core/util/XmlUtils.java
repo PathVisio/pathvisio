@@ -53,24 +53,38 @@ public class XmlUtils {
 		
 		public String getName() { return name; }
 		
+		Gene currentGene = null;
+		
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException {
-			if(localName.equals("GeneProduct")) { //For every geneproduct, store gene/code
-				String name = attributes.getValue("Name");
-				String sysName = attributes.getValue("GeneProduct-Data-Source");
-				String code = MappFormat.sysName2Code.get(sysName);
-				String symbol = attributes.getValue("GeneID");
-				name = name == null ? "" : name;
-				sysName = sysName == null ? "" : sysName;
-				code = code == null ? "" : code;
-				symbol = symbol == null ? "" : symbol;
-				
-				Gene gene = new Gene(name, code, symbol);
-				if(!genes.contains(gene)) //Don't add duplicate genes
-					genes.add(gene);
+			if(localName.equals("DataNode")) 
+			{ 
+				// the only way this can be not null
+				// is when two consecutive DataNode opening tags don't have an Xref in between
+				assert (currentGene != null);				
+				currentGene = new Gene();
+
+				String symbol = attributes.getValue("TextLabel");
+				currentGene.setSymbol(symbol);		
 			}
 			else if(localName.equals("Pathway")) {
 				name = attributes.getValue("Name");
+			}
+			else if(localName.equals("Xref"))
+			{
+				String sysName = attributes.getValue("Database");
+				assert (sysName != null);
+				String code = MappFormat.sysName2Code.get(sysName);
+				assert (code != null);
+				String geneId = attributes.getValue("ID");
+				assert (geneId != null);
+				
+				currentGene.setCode(code);
+				currentGene.setId(geneId);
+				
+				if(!genes.contains(currentGene)) //Don't add duplicate genes
+					genes.add(currentGene);
+				currentGene = null;
 			}
 		}
 		
@@ -90,11 +104,11 @@ public class XmlUtils {
 		public class Gene extends IdCodePair {
 			String symbol;
 			
-			public Gene(String id, String code, String symbol) 
-			{ super(id, code); this.symbol = symbol; }
+			public Gene() { super (null, null); }			
 			
 			public String toString() { return getId(); }
 			public String getSymbol() { return symbol; }
+			public void setSymbol(String value) { symbol = value; }
 		}
 	}
 }

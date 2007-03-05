@@ -271,14 +271,14 @@ public class GmmlDataObject
 			case HEIGHT: setMHeight		((Double) value); break;
 			
 			case FILLCOLOR: setFillColor	((RGB)	  value); break;
-			case SHAPETYPE: setShapeType	((ShapeType)value); break;
+			case SHAPETYPE: setShapeType	(ShapeType.values()[(Integer)value]); break;
 			case ROTATION: setRotation		((Double) value); break;
 				
 			case STARTX: setMStartX 		((Double) value); break;
 			case STARTY: setMStartY 		((Double) value); break;
 			case ENDX: setMEndX 		((Double) value); break;
 			case ENDY: setMEndY 		((Double) value); break;
-			case LINETYPE: setLineType		((LineType)value); break;
+			case LINETYPE: setLineType		(LineType.values()[(Integer)value]); break;
 			case LINESTYLE: setLineStyle	((Integer)value); break;
 				
 			case ORIENTATION: setOrientation	((Integer)value); break;
@@ -919,10 +919,11 @@ public class GmmlDataObject
 		}
 	}	
 	
-	protected String mapInfoName = null;
+	protected String mapInfoName = "untitled";
 	public String getMapInfoName() { return mapInfoName; }
 	public void setMapInfoName (String v) 
 	{ 
+		if (v == null) throw new IllegalArgumentException();
 		if (mapInfoName != v)
 		{
 			mapInfoName = v;

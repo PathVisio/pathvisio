@@ -332,6 +332,9 @@ public abstract class GmmlGdb {
 			this.code = code;
 		}
 		
+		public void setCode (String value) { code = value; }
+		public void setId (String value) { id = value; }
+		
 		public String getCode() { return code; }
 		public String getId() { return id; }
 		

@@ -338,8 +338,9 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				case BOOLEAN:
 					return ((Boolean)value) ? 1 : 0;
 				case SHAPETYPE:
-					return ((ShapeType)value);
+					return (((ShapeType)value).ordinal());
 				case LINETYPE:
+					return (((LineType)value).ordinal());
 				case ORIENTATION:
 				case LINESTYLE:
 				{

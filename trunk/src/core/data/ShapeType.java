@@ -101,7 +101,7 @@ public enum ShapeType
 		List<String> result = new ArrayList<String>();		
 		for (ShapeType s : ShapeType.values())
 		{
-			result.add("" + s);
+			result.add("" + s.gpmlName);
 		}
 		String [] resultArray = new String [result.size()];
 		return result.toArray(resultArray);

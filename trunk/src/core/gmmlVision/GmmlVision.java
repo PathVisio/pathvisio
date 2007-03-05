@@ -175,10 +175,26 @@ public abstract class GmmlVision {
 			{
 				_gmmlData.readFromXml(new File(pwf), true);
 			}
-		} catch(ConverterException e) {
-			MessageDialog.openError(getWindow().getShell(), 
-					"Unable to open Gpml file", e.getClass() + e.getMessage());
-			log.error("Unable to open Gpml file", e);
+		} catch(ConverterException e) {		
+			if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
+			{
+				MessageDialog.openError(getWindow().getShell(), 
+						"Unable to open Gpml file", 
+						"Unable to open Gpml file.\n\n" +
+						"The most likely cause for this error is that you are trying to open an old Gpml file. " +
+						"Please note that the Gpml format has changed as of March 2007. " +
+						"The standard pathway set can be re-downloaded from http://pathvisio.org " +
+						"Non-standard pathways need to be recreated or upgraded. " +
+						"Please contact the authors at martijn.vaniersel@bigcat.unimaas.nl if you need help with this.\n" +
+						"\nSee error log for details");
+				log.error("Unable to open Gpml file", e);
+			}
+			else
+			{
+				MessageDialog.openError(getWindow().getShell(), 
+						"Unable to open Gpml file", e.getClass() + e.getMessage());
+				log.error("Unable to open Gpml file", e);
+			}
 		}
 		
 		if(_gmmlData != null) //Only continue if the data is correctly loaded

@@ -555,8 +555,13 @@ public class GmmlDataObject
 		}
 	}
 	
+	
+	/** @deprecated Line Type should be stored as head, for start and end */
+	//TODO: no alternative yet
 	protected LineType lineType = LineType.LINE;
+	/** @deprecated Line Type should be stored as head, for start and end */
 	public LineType getLineType() { return lineType; }
+	/** @deprecated Line Type should be stored as head, for start and end */
 	public void setLineType(LineType value) 
 	{
 		if (lineType != value)

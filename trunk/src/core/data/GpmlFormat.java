@@ -104,7 +104,7 @@ public class GpmlFormat
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
-		result.put("Line@Type", new AttributeInfo ("xsd:string", "Line", "optional"));
+		result.put("Line.Graphics.Point@Head", new AttributeInfo ("xsd:string", "Line", "optional"));
 		result.put("Line@Style", new AttributeInfo ("xsd:string", "Solid", "optional"));
 		result.put("Label.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Label.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
@@ -388,49 +388,49 @@ public class GpmlFormat
     	Element p1 = (Element)graphics.getChildren().get(0);
     	Element p2 = (Element)graphics.getChildren().get(1);
     	
-    	o.setMStartX (Double.parseDouble(p1.getAttributeValue("x")) / GmmlData.OLD_GMMLZOOM);
-    	o.setMStartY (Double.parseDouble(p1.getAttributeValue("y")) / GmmlData.OLD_GMMLZOOM);
+    	o.setMStartX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p1)) / GmmlData.OLD_GMMLZOOM);
+    	o.setMStartY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p1)) / GmmlData.OLD_GMMLZOOM);
     	
-    	String ref1 = p1.getAttributeValue("GraphRef", e.getNamespace());
+    	String ref1 = getAttribute("Line.Graphics.Point", "GraphRef", p1);
     	if (ref1 == null) ref1 = "";
     	o.setStartGraphRef (ref1);
 
-    	o.setMEndX (Double.parseDouble(p2.getAttributeValue("x")) / GmmlData.OLD_GMMLZOOM);
-    	o.setMEndY (Double.parseDouble(p2.getAttributeValue("y")) / GmmlData.OLD_GMMLZOOM); 
+    	o.setMEndX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p2)) / GmmlData.OLD_GMMLZOOM);
+    	o.setMEndY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p2)) / GmmlData.OLD_GMMLZOOM); 
     	
     	String ref2 = p2.getAttributeValue("GraphRef", e.getNamespace());
     	if (ref2 == null) ref2 = "";
     	o.setEndGraphRef (ref2);
 
     	String style = getAttribute("Line", "Style", e);
-    	String type = getAttribute("Line", "Type", e);
+    	String type = getAttribute("Line.Graphics.Point", "Head", p1);
     	
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
     	o.setLineType (LineType.getByGpmlName(type));
 	}
 	
-	private static void updateLineData(GmmlDataObject o, Element e)
+	private static void updateLineData(GmmlDataObject o, Element e) throws ConverterException
 	{
 		if(e != null) {
-			e.setAttribute("Type", o.getLineType().getGpmlName());
-			e.setAttribute("Style", o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
+			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
 			
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			Element p1 = new Element("Point", e.getNamespace());
 			jdomGraphics.addContent(p1);
-			p1.setAttribute("x", Double.toString(o.getMStartX() * GmmlData.OLD_GMMLZOOM));
-			p1.setAttribute("y", Double.toString(o.getMStartY() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "x", p1, Double.toString(o.getMStartX() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "y", p1, Double.toString(o.getMStartY() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "Head", p1, o.getLineType().getGpmlName());
 			if (o.getStartGraphRef() != null)
 			{
-				p1.setAttribute("GraphRef", o.getStartGraphRef());
+				setAttribute("Line.Graphics.Point", "GraphRef", p1, o.getStartGraphRef());
 			}
 			Element p2 = new Element("Point", e.getNamespace());
 			jdomGraphics.addContent(p2);
-			p2.setAttribute("x", Double.toString(o.getMEndX() * GmmlData.OLD_GMMLZOOM));
-			p2.setAttribute("y", Double.toString(o.getMEndY() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "x", p2, Double.toString(o.getMEndX() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "y", p2, Double.toString(o.getMEndY() * GmmlData.OLD_GMMLZOOM));
 			if (o.getEndGraphRef() != null)
 			{
-				p2.setAttribute("GraphRef", o.getEndGraphRef());
+				setAttribute("Line.Graphics.Point", "GraphRef", p2, o.getEndGraphRef());
 			}
 		}
 	}

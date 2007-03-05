@@ -172,8 +172,9 @@ public class GpmlFormat
 		if (aInfo.use.equals("optional")) {
 			if (aInfo.schemaType.equals("xsd:string")
 					|| aInfo.schemaType.equals("xsd:ID")) {
-				if ((aInfo.def == null && value == null)
-						|| (aInfo.def != null && aInfo.def.equals(value)))
+				if ((aInfo.def == null && value == null) ||
+						(aInfo.def != null && aInfo.def.equals(value)) ||
+						(aInfo.def == null && value != null && value.equals("")))
 					isDefault = true;
 			} else if (aInfo.schemaType.equals("xsd:float")
 					|| aInfo.schemaType.equals("Dimension")) {
@@ -276,6 +277,7 @@ public class GpmlFormat
 				setAttribute("Pathway", "Email", root, o.getEmail());
 				setAttribute("Pathway", "Copyright", root, o.getCopyright());
 				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
+				setAttribute("Pathway", "Organism", root, o.getOrganism());
 
 				for (GmmlDataObject.Comment c : o.getComments())
 				{
@@ -288,10 +290,10 @@ public class GpmlFormat
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
 				
-				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth()* GmmlData.OLD_GMMLZOOM);
-				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight()* GmmlData.OLD_GMMLZOOM);
-				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth()* GmmlData.OLD_GMMLZOOM);
-				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight()* GmmlData.OLD_GMMLZOOM);				
+				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth());
+				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight());
+				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
+				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
 			}
 			else
 			{
@@ -341,14 +343,14 @@ public class GpmlFormat
 		switch (o.getObjectType())
 		{
 			case ObjectType.DATANODE:
-				mapShapeData(o, e);
+				mapShapeData(o, e, "DataNode");
 				mapColor(o, e);
 				mapComments(o, e);
 				mapDataNode(o, e);
 				mapGraphId(o, e);
 				break;
 			case ObjectType.LABEL:
-				mapShapeData(o, e);
+				mapShapeData(o, e, "Label");
 				mapColor(o, e);
 				mapLabelData(o, e);
 				mapComments(o, e);
@@ -363,11 +365,10 @@ public class GpmlFormat
 				mapMappInfoData(o, e);
 				break;
 			case ObjectType.SHAPE:
-				mapShapeData(o, e);
+				mapShapeData(o, e, "Shape");
 				mapShapeColor (o, e);
 				mapComments(o, e);
 				mapShapeType(o, e);
-				mapRotation(o, e);
 				mapGraphId(o, e);
 				break;
 			case ObjectType.LEGEND:
@@ -388,15 +389,15 @@ public class GpmlFormat
     	Element p1 = (Element)graphics.getChildren().get(0);
     	Element p2 = (Element)graphics.getChildren().get(1);
     	
-    	o.setMStartX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p1)) / GmmlData.OLD_GMMLZOOM);
-    	o.setMStartY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p1)) / GmmlData.OLD_GMMLZOOM);
+    	o.setMStartX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p1)));
+    	o.setMStartY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p1)));
     	
     	String ref1 = getAttribute("Line.Graphics.Point", "GraphRef", p1);
     	if (ref1 == null) ref1 = "";
     	o.setStartGraphRef (ref1);
 
-    	o.setMEndX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p2)) / GmmlData.OLD_GMMLZOOM);
-    	o.setMEndY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p2)) / GmmlData.OLD_GMMLZOOM); 
+    	o.setMEndX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p2)));
+    	o.setMEndY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p2))); 
     	
     	String ref2 = p2.getAttributeValue("GraphRef", e.getNamespace());
     	if (ref2 == null) ref2 = "";
@@ -417,8 +418,8 @@ public class GpmlFormat
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			Element p1 = new Element("Point", e.getNamespace());
 			jdomGraphics.addContent(p1);
-			setAttribute("Line.Graphics.Point", "x", p1, Double.toString(o.getMStartX() * GmmlData.OLD_GMMLZOOM));
-			setAttribute("Line.Graphics.Point", "y", p1, Double.toString(o.getMStartY() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "x", p1, Double.toString(o.getMStartX()));
+			setAttribute("Line.Graphics.Point", "y", p1, Double.toString(o.getMStartY()));
 			setAttribute("Line.Graphics.Point", "Head", p1, o.getLineType().getGpmlName());
 			if (o.getStartGraphRef() != null)
 			{
@@ -426,8 +427,8 @@ public class GpmlFormat
 			}
 			Element p2 = new Element("Point", e.getNamespace());
 			jdomGraphics.addContent(p2);
-			setAttribute("Line.Graphics.Point", "x", p2, Double.toString(o.getMEndX() * GmmlData.OLD_GMMLZOOM));
-			setAttribute("Line.Graphics.Point", "y", p2, Double.toString(o.getMEndY() * GmmlData.OLD_GMMLZOOM));
+			setAttribute("Line.Graphics.Point", "x", p2, Double.toString(o.getMEndX()));
+			setAttribute("Line.Graphics.Point", "y", p2, Double.toString(o.getMEndY()));
 			if (o.getEndGraphRef() != null)
 			{
 				setAttribute("Line.Graphics.Point", "GraphRef", p2, o.getEndGraphRef());
@@ -550,86 +551,51 @@ public class GpmlFormat
 			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());			
 		}
 	}
-	 	
-	// internal helper routine
-	private static void mapCenter(GmmlDataObject o, Element e)
-	{
-    	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	o.setMCenterX (Double.parseDouble(graphics.getAttributeValue("CenterX")) / GmmlData.OLD_GMMLZOOM); 
-    	o.setMCenterY (Double.parseDouble(graphics.getAttributeValue("CenterY")) / GmmlData.OLD_GMMLZOOM);	
-	}
-	
-	private static void updateCenter(GmmlDataObject o, Element e)
-	{
-		if(e != null) 
-		{
-			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics !=null) 
-			{
-				jdomGraphics.setAttribute("CenterX", Double.toString(o.getMCenterX() * GmmlData.OLD_GMMLZOOM));
-				jdomGraphics.setAttribute("CenterY", Double.toString(o.getMCenterY() * GmmlData.OLD_GMMLZOOM));
-			}
-		}		
-	}
-
-	private static void mapWidth(GmmlDataObject o, Element e)
-	{
-    	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	o.setMWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.OLD_GMMLZOOM);
-	}
-	
-	private static void updateWidth(GmmlDataObject o, Element e)
-	{
-		if(e != null) 
-		{
-			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics !=null) 
-			{
-				jdomGraphics.setAttribute("Width", Double.toString(o.getMWidth() * GmmlData.OLD_GMMLZOOM));
-			}
-		}		
-	}
 
 	private static void mapSimpleCenter(GmmlDataObject o, Element e)
 	{
-		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX")) / GmmlData.OLD_GMMLZOOM); 
-		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")) / GmmlData.OLD_GMMLZOOM);	
+		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX"))); 
+		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")));	
 	}
 	
 	private static void updateSimpleCenter(GmmlDataObject o, Element e)
 	{
 		if(e != null) 
 		{
-			e.setAttribute("CenterX", Double.toString(o.getMCenterX() * GmmlData.OLD_GMMLZOOM));
-			e.setAttribute("CenterY", Double.toString(o.getMCenterY() * GmmlData.OLD_GMMLZOOM));			
+			e.setAttribute("CenterX", Double.toString(o.getMCenterX()));
+			e.setAttribute("CenterY", Double.toString(o.getMCenterY()));			
 		}		
 	}
 
-	private static void mapShapeData(GmmlDataObject o, Element e)
+	private static void mapShapeData(GmmlDataObject o, Element e, String base) throws ConverterException
 	{
-    	mapCenter(o, e);
 		Element graphics = e.getChild("Graphics", e.getNamespace());
-		o.setMWidth (Double.parseDouble(graphics.getAttributeValue("Width")) / GmmlData.OLD_GMMLZOOM); 
-		o.setMHeight (Double.parseDouble(graphics.getAttributeValue("Height")) / GmmlData.OLD_GMMLZOOM);
+    	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics))); 
+    	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)));	
+		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics))); 
+		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)));
 	}
 	
-	private static void updateShapeData(GmmlDataObject o, Element e)
+	private static void updateShapeData(GmmlDataObject o, Element e, String base) throws ConverterException
 	{
 		if(e != null) 
 		{
-			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics !=null) 
+			Element graphics = e.getChild("Graphics", e.getNamespace());
+			if(graphics !=null) 
 			{
-				updateCenter(o, e);
-				jdomGraphics.setAttribute("Width", Double.toString(o.getMWidth() * GmmlData.OLD_GMMLZOOM));
-				jdomGraphics.setAttribute("Height", Double.toString(o.getMHeight() * GmmlData.OLD_GMMLZOOM));
+				setAttribute(base + ".Graphics", "CenterX", graphics, "" + o.getMCenterX());
+				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY());
+				setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth());
+				setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight());
 			}
 		}
 	}
 	
-	private static void mapShapeType(GmmlDataObject o, Element e)
+	private static void mapShapeType(GmmlDataObject o, Element e) throws ConverterException
 	{
-		o.setShapeType (ShapeType.fromGpmlName(e.getAttributeValue("Type")));
+		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+    	o.setRotation (Double.parseDouble(graphics.getAttributeValue("Rotation"))); 
 	}
 	
 	private static void updateShapeType(GmmlDataObject o, Element e)
@@ -637,92 +603,74 @@ public class GpmlFormat
 		if(e != null) 
 		{
 			e.setAttribute("Type", ShapeType.toGpmlName(o.getShapeType()));
-		}
-	}
-	
-	private static void mapRotation(GmmlDataObject o, Element e)
-	{
-    	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	o.setRotation (Double.parseDouble(graphics.getAttributeValue("Rotation"))); 
-	}
-
-	private static void updateRotation(GmmlDataObject o, Element e)
-	{
-		if(e != null) 
-		{
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			if(jdomGraphics !=null) 
 			{
 				jdomGraphics.setAttribute("Rotation", Double.toString(o.getRotation()));
 			}
-		}	
+		}
 	}
 	
-	private static void mapLabelData(GmmlDataObject o, Element e)
+	private static void mapLabelData(GmmlDataObject o, Element e) throws ConverterException
 	{
-		o.setTextLabel (e.getAttributeValue("TextLabel"));
+		o.setTextLabel (getAttribute("Label", "TextLabel", e));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
     	o.setMFontSize (Integer.parseInt(graphics.getAttributeValue("FontSize")));
     	
-    	String fontWeight = graphics.getAttributeValue("FontWeight");
-    	String fontStyle = graphics.getAttributeValue("FontStyle");
-    	String fontDecoration = graphics.getAttributeValue ("FontDecoration");
-    	String fontStrikethru = graphics.getAttributeValue ("FontStrikethru");
+    	String fontWeight = getAttribute("Label.Graphics", "FontWeight", graphics);
+    	String fontStyle = getAttribute("Label.Graphics", "FontStyle", graphics);
+    	String fontDecoration = getAttribute("Label.Graphics", "FontDecoration", graphics);
+    	String fontStrikethru = getAttribute("Label.Graphics", "FontStrikethru", graphics);
     	
     	o.setBold (fontWeight != null && fontWeight.equals("Bold"));   	
     	o.setItalic (fontStyle != null && fontStyle.equals("Italic"));    	
     	o.setUnderline (fontDecoration != null && fontDecoration.equals("Underline"));    	
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
     	
-    	o.setFontName (graphics.getAttributeValue("FontName"));
+    	o.setFontName (getAttribute("Label.Graphics", "FontName", graphics));
     	
-    	String xref = e.getAttributeValue("Xref");
+    	String xref = getAttribute("Label", "Xref", e);
     	if (xref == null) xref = "";
     	o.setXref(xref);
 	}
 	
-	private static void updateLabelData(GmmlDataObject o, Element e)
+	private static void updateLabelData(GmmlDataObject o, Element e) throws ConverterException
 	{
 		if(e != null) 
 		{
-			e.setAttribute("TextLabel", o.getTextLabel());
-			e.setAttribute("Xref", o.getXref() == null ? "" : o.getXref());
+			setAttribute("Label", "TextLabel", e, o.getTextLabel());
+			setAttribute("Label", "Xref", e, o.getXref() == null ? "" : o.getXref());
 			Element graphics = e.getChild("Graphics", e.getNamespace());
 			if(graphics !=null) 
 			{
-				graphics.setAttribute("FontName", o.getFontName() == null ? "" : o.getFontName());			
-				graphics.setAttribute("FontWeight", o.isBold() ? "Bold" : "Normal");
-				graphics.setAttribute("FontStyle", o.isItalic() ? "Italic" : "Normal");
-				graphics.setAttribute("FontDecoration", o.isUnderline() ? "Underline" : "Normal");
-				graphics.setAttribute("FontStrikethru", o.isStrikethru() ? "Strikethru" : "Normal");
-				graphics.setAttribute("FontSize", Integer.toString((int)o.getMFontSize()));
+				setAttribute("Label.Graphics", "FontName", graphics, o.getFontName() == null ? "" : o.getFontName());			
+				setAttribute("Label.Graphics", "FontWeight", graphics, o.isBold() ? "Bold" : "Normal");
+				setAttribute("Label.Graphics", "FontStyle", graphics, o.isItalic() ? "Italic" : "Normal");
+				setAttribute("Label.Graphics", "FontDecoration", graphics, o.isUnderline() ? "Underline" : "Normal");
+				setAttribute("Label.Graphics", "FontStrikethru", graphics, o.isStrikethru() ? "Strikethru" : "Normal");
+				setAttribute("Label.Graphics", "FontSize", graphics, Integer.toString((int)o.getMFontSize()));
 			}
 		}
 	}
 	
 	private static void mapMappInfoData(GmmlDataObject o, Element e) throws ConverterException
 	{
-		o.setMapInfoName (e.getAttributeValue("Name"));
-		String organism = e.getAttributeValue("Organism"); 
-		if (organism == null) organism = "";
-		o.setOrganism (organism);
-		
-		// TODO: should this safety check for organism be done for all properties?
-		
-		o.setMapInfoDataSource (e.getAttributeValue("Data-Source"));
-		o.setVersion (e.getAttributeValue("Version"));
-		o.setAuthor (e.getAttributeValue("Author"));
-		o.setMaintainer (e.getAttributeValue("Maintainer"));
-		o.setEmail (e.getAttributeValue("Email"));
-		o.setLastModified (e.getAttributeValue("Last-Modified"));
-		o.setCopyright (e.getAttributeValue("Copyright"));
+		o.setMapInfoName (getAttribute("Pathway", "Name", e));
+		o.setOrganism (getAttribute("Pathway", "Organism", e));	
+		o.setMapInfoDataSource (getAttribute("Pathway", "Data-Source", e));
+		o.setVersion (getAttribute("Pathway", "Version", e));
+		o.setAuthor (getAttribute("Pathway", "Author", e));
+		o.setMaintainer (getAttribute("Pathway", "Maintainer", e));
+		o.setEmail (getAttribute("Pathway", "Email", e));
+		o.setLastModified (getAttribute("Pathway", "Last-Modified", e));
+		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 		
 		Element g = e.getChild("Graphics", e.getNamespace());
-		o.setMBoardWidth (Double.parseDouble(g.getAttributeValue("BoardWidth")) / GmmlData.OLD_GMMLZOOM);
-		o.setMBoardHeight (Double.parseDouble(g.getAttributeValue("BoardHeight"))/ GmmlData.OLD_GMMLZOOM);
-		o.setWindowWidth (Double.parseDouble(g.getAttributeValue("WindowWidth")) / GmmlData.OLD_GMMLZOOM);
-		o.setWindowHeight (Double.parseDouble(g.getAttributeValue("WindowHeight"))/ GmmlData.OLD_GMMLZOOM);
+		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
+		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
+		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
+		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
 		
 		for (Object f : e.getChildren("Comment", e.getNamespace()))
 		{
@@ -743,7 +691,7 @@ public class GpmlFormat
 				e.addContent(new Element("Xref", ns));			
 				updateDataNode(o, e);
 				updateColor(o, e);
-				updateShapeData(o, e);
+				updateShapeData(o, e, "DataNode");
 				updateGraphId(o, e);
 				break;
 			case ObjectType.SHAPE:
@@ -751,8 +699,7 @@ public class GpmlFormat
 				updateComments(o, e);
 				e.addContent(new Element("Graphics", ns));
 				updateShapeColor(o, e);
-				updateRotation(o, e);
-				updateShapeData(o, e);
+				updateShapeData(o, e, "Shape");
 				updateShapeType(o, e);
 				updateGraphId(o, e);
 				break;
@@ -769,7 +716,7 @@ public class GpmlFormat
 				e.addContent(new Element("Graphics", ns));					
 				updateLabelData(o, e);
 				updateColor(o, e);
-				updateShapeData(o, e);
+				updateShapeData(o, e, "Label");
 				updateGraphId(o, e);
 				break;
 			case ObjectType.LEGEND:

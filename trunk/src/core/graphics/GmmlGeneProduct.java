@@ -38,7 +38,7 @@ import data.MappFormat;
 public class GmmlGeneProduct extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
-	private static final double M_INITIAL_FONTSIZE = 10;
+	private static final double M_INITIAL_FONTSIZE = 150;
 	public static final RGB INITIAL_FILL_COLOR = new RGB(255, 255, 255);
 	
 	// note: not the same as color!

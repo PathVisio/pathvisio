@@ -74,11 +74,11 @@ public class GmmlDataObject
 		public double y;
 	}
 	
-	private static final int M_INITIAL_SHAPE_SIZE = 30; // initial Radius for rect and oval
-	private static final int M_INITIAL_BRACE_HEIGHT = 15;
-	private static final int M_INITIAL_BRACE_WIDTH = 60; 
-	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80;
-	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20;
+	private static final int M_INITIAL_SHAPE_SIZE = 30*15; // initial Radius for rect and oval
+	private static final int M_INITIAL_BRACE_HEIGHT = 15*15;
+	private static final int M_INITIAL_BRACE_WIDTH = 60*15; 
+	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80*15;
+	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20*15;
 	
 	/**
 	 * The required parameter objectType ensures only
@@ -487,15 +487,11 @@ public class GmmlDataObject
 	private Point[] defaultPoints = {new Point(0,0), new Point(0,0)};
 	private List<Point> mPoints = Arrays.asList(defaultPoints);
 	
-	//TODO: no alternative yet
-	/** @deprecated */
 	public double getMStartX() 
 	{ 
 		return mPoints.get(0).x; 
 	}
 	
-	//TODO: no alternative yet
-	/** @deprecated */
 	public void setMStartX(double v) 
 	{ 
 		if (mPoints.get(0).x != v)
@@ -505,10 +501,7 @@ public class GmmlDataObject
 		}
 	}
 	
-	//TODO: no alternative yet
-	/** @deprecated */
 	public double getMStartY() { return mPoints.get(0).y; }
-	/** @deprecated */
 	public void setMStartY(double v) 
 	{ 
 		if (mPoints.get(0).y != v)
@@ -518,10 +511,7 @@ public class GmmlDataObject
 		}
 	}
 	
-	//TODO: no alternative yet
-	/** @deprecated */
 	public double getMEndX() { return mPoints.get(mPoints.size()-1).x; }
-	/** @deprecated */
 	public void setMEndX(double v) 
 	{
 		if (mPoints.get(mPoints.size()-1).x != v)
@@ -531,10 +521,7 @@ public class GmmlDataObject
 		}
 	}
 	
-	//TODO: no alternative yet
-	/** @deprecated */
 	public double getMEndY() { return mPoints.get(mPoints.size()-1).y; }
-	/** @deprecated */
 	public void setMEndY(double v) 
 	{
 		if (mPoints.get(mPoints.size()-1).y != v)

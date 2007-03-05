@@ -284,23 +284,7 @@ public class GmmlData implements GmmlListener
 		}
 		mappInfo.setMapInfoName("New Pathway");
 	}
-		
-	/**
-	 * Constructor for this class, opens a gpml pathway and adds its elements to the drawing
-	 * @param file		String pointing to the gpml file to open
-	 * 
-	 * @deprecated - use general constructor, then specify readFromXml or readFromMapp
-	 */
-	public GmmlData(String file) throws ConverterException
-	{
-		// Start XML processing
-		GmmlVision.log.info("Start reading the Gpml file: " + file);
-		// try to read the file; if an error occurs, catch the exception and print feedback
 
-		sourceFile = new File(file);
-		readFromXml(sourceFile, true);		
-	}
-	
 	/**
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate

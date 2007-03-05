@@ -24,6 +24,6 @@ package gmmlVision;
  */
 public class Globals {
 	public static final String APPLICATION_NAME = "PathVisio";
-	public static final String APPLICATION_VERSION_NAME = "PathVisio 1.0 Beta";
+	public static final String APPLICATION_VERSION_NAME = "PathVisio 1.0 release candidate 1";
 	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
 }

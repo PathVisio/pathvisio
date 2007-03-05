@@ -70,7 +70,8 @@ public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListe
 PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListener
 {	
 	private static final long serialVersionUID = 1L;
-		
+	static final double M_PASTE_OFFSET = 10 * 15;
+	
 	/**
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
@@ -1148,12 +1149,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			for (GmmlDataObject o : GmmlVision.clipboard)
 			{
 				lastAdded = null;
-				o.setMStartX(o.getMStartX() + 10);
-				o.setMStartY(o.getMStartY() + 10);
-				o.setMEndX(o.getMEndX() + 10);
-				o.setMEndY(o.getMEndY() + 10);
-				o.setMLeft(o.getMLeft() + 10);
-				o.setMTop(o.getMTop() + 10);
+				o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
+				o.setMStartY(o.getMStartY() + M_PASTE_OFFSET);
+				o.setMEndX(o.getMEndX() + M_PASTE_OFFSET);
+				o.setMEndY(o.getMEndY() + M_PASTE_OFFSET);
+				o.setMLeft(o.getMLeft() + M_PASTE_OFFSET);
+				o.setMTop(o.getMTop() + M_PASTE_OFFSET);
 				// make another copy to preserve clipboard contents for next paste
 				GmmlDataObject p = o.copy();
 				

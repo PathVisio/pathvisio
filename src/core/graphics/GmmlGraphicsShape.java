@@ -36,7 +36,7 @@ import data.GmmlEvent;
  */
 public abstract class GmmlGraphicsShape extends GmmlGraphics {
 
-	private static final double M_ROTATION_HANDLE_POSITION = 20.0;
+	private static final double M_ROTATION_HANDLE_POSITION = 20.0 * 15;
 
 	//Side handles
 	GmmlHandle handleN;

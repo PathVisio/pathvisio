@@ -28,6 +28,7 @@ import util.SwtUtils;
 import util.LinAlg.Point;
 import data.GmmlDataObject;
 import data.GmmlEvent;
+import data.GraphLink;
 
 /**
  * This is an {@link GmmlGraphics} class representing shapelike forms,
@@ -92,6 +93,8 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	{
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
 		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
+		//Move graphRefs
+		GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
 	}
 
 	public void setVScaleRectangle(Rectangle2D.Double r) {

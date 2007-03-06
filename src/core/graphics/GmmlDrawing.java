@@ -342,11 +342,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void mouseMove(MouseEvent ve)
 	{
-//		// Dispose the tooltip if shown
-//		if(tip != null)
-//		{
-//			if(!tip.isDisposed()) tip.dispose();
-//		}
 		// If draggin, drag the pressed object
 		if (pressedObject != null && isDragging)
 		{
@@ -377,22 +372,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				}
 				if(x != null) x.highlight();
 				
-			}
-			if (pressedObject instanceof GmmlGraphics)
-			{
-				GmmlDataObject x = ((GmmlGraphics)pressedObject).getGmmlData();
-				
-				for(GmmlDataObject g : x.getStickyStarts()) 
-				{				
-					g.setMStartX(g.getMStartX() + mFromV(vdx));
-					g.setMStartY(g.getMStartY() + mFromV(vdy));
-				}
-
-				for(GmmlDataObject g : x.getStickyEnds()) 
-				{				
-					g.setMEndX(g.getMEndX() + mFromV(vdx));
-					g.setMEndY(g.getMEndY() + mFromV(vdy));
-				}
 			}
 			redrawDirtyRect();
 		}
@@ -953,8 +932,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public void mouseEnter(MouseEvent e) {}
 
 	public void mouseExit(MouseEvent e) {}
-
-//	Shell tip;
 	
 	/**
 	 * Responsible for drawing a tooltip displaying expression data when 
@@ -993,23 +970,35 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		resetHighlight();
 		altPressed = false; 	
 	}
+	
+	private void insertPressed() {
+		ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
+		for(GmmlDrawingObject o : s.getSelection()) {
+			if(o instanceof GmmlLine) {
+				((GmmlGraphics)o).gdata.splitLine();
+				toRemove.add(o);
+			}
+		}
+		removeDrawingObjects(toRemove);
+		s.addToSelection(lastAdded);
+	}
 
 	public void keyPressed(KeyEvent e) { 
 		if(e.keyCode == SWT.CTRL) ctrlPressed();
 		if(e.keyCode == SWT.ALT) altPressed();
-		if(e.keyCode == 103) 
+		if(e.keyCode == SWT.INSERT) insertPressed();
+		if(e.keyCode == 103) //CTRL-G to select all gene-products
 			if(ctrlPressed) {
 				selectGeneProducts();
 				redraw();
 			}
 	}
 
-	public void keyReleased(KeyEvent e) {
-		ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
-		
+	public void keyReleased(KeyEvent e) {		
 		if(e.keyCode == SWT.CTRL) ctrlReleased();
 		if(e.keyCode == SWT.ALT) altReleased();
 		if(e.keyCode == SWT.DEL) {
+			ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
 			for(GmmlDrawingObject o : drawingObjects)
 			{
 				if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
@@ -1021,16 +1010,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			}
 			removeDrawingObjects(toRemove);
 		}
-		if(e.keyCode == SWT.HOME) {
-			System.out.println("================");
-			Collections.sort(drawingObjects);
-			for(GmmlDrawingObject o : drawingObjects) {
-				System.out.println(o.toString() + "\t" + o.isSelected() + "\t" + o.drawingOrder + "\t");
-				if(o instanceof GmmlGraphics) {
-					System.out.println("\t is GmmlGraphics\t" + ((GmmlGraphics)o).getGmmlData().getObjectType());
-				}
-			}
-		}
 	}
 	
 	/**
@@ -1041,16 +1020,20 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	{
 		for(GmmlDrawingObject o : toRemove)
 		{
-			drawingObjects.remove(o); //Remove from drawing
-			s.removeFromSelection(o); //Remove from selection
-			if(o instanceof GmmlGraphics) {
-				GmmlGraphics g = (GmmlGraphics)o;
-				GmmlVision.getGmmlData().remove(g.getGmmlData());
-				g.getGmmlData().removeListener(this);
-			}
+			removeDrawingObject(o);
 			
 		}
 		s.fitToSelection();
+	}
+	
+	public void removeDrawingObject(GmmlDrawingObject toRemove) {
+		drawingObjects.remove(toRemove); //Remove from drawing
+		s.removeFromSelection(toRemove); //Remove from selection
+		if(toRemove instanceof GmmlGraphics) {
+			GmmlGraphics g = (GmmlGraphics)toRemove;
+			GmmlVision.getGmmlData().remove(g.getGmmlData());
+			g.getGmmlData().removeListener(this);
+		}
 	}
 
 	GmmlGraphics lastAdded = null;

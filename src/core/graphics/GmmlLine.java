@@ -28,10 +28,10 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 
 import preferences.GmmlPreferences;
-
 import util.SwtUtils;
 import data.GmmlDataObject;
 import data.GmmlEvent;
+import data.GraphLink;
 import data.LineStyle;
  
 /**
@@ -324,15 +324,22 @@ public class GmmlLine extends GmmlGraphics
 	protected void adjustToHandle(GmmlHandle h) {
 		double mcx = h.mCenterx;
 		double mcy = h.mCentery;
+		
 		if		(h == handleStart) {
-//			gdata.dontFireEvents(1);
+			double mxOld = gdata.getMStartX();
+			double myOld = gdata.getMStartY();
 			gdata.setMStartX(mcx); 
 			gdata.setMStartY(mcy);
+			//Move sticky points of line start
+			GraphLink.moveRefsBy(gdata.getMStart(), mcx - mxOld, mcy - myOld); 
 		}
 		else if	(h == handleEnd) {
-//			gdata.dontFireEvents(1);
+			double mxOld = gdata.getMEndX();
+			double myOld = gdata.getMEndY();
 			gdata.setMEndX(mcx); 
 			gdata.setMEndY(mcy);
+			//Move sticky points of line end
+			GraphLink.moveRefsBy(gdata.getMEnd(), mcx - mxOld, mcy - myOld); 
 		}
 	}
 	
@@ -340,6 +347,11 @@ public class GmmlLine extends GmmlGraphics
 	{
 		setMLine(gdata.getMStartX() + mFromV(vdx), gdata.getMStartY() + mFromV(vdy), 
 				gdata.getMEndX() + mFromV(vdx), gdata.getMEndY() + mFromV(vdy));
+		//Move graphRefs of end points
+		GraphLink.moveRefsBy(gdata.getMStart(), mFromV(vdx), mFromV(vdy));
+		GraphLink.moveRefsBy(gdata.getMEnd(), mFromV(vdx), mFromV(vdy));
+		//Move graphRefs of this line
+		GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
 	}
 	
 	public void gmmlObjectModified(GmmlEvent e) {		

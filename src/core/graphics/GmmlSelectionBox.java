@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.GC;
 
 import data.GmmlDataObject;
 import data.ObjectType;
+import data.GmmlDataObject.Point;
+import data.GraphLink.GraphRefContainer;
 
 /**
  * This class implements a selectionbox 
@@ -52,6 +54,10 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		
 		selection = new ArrayList<GmmlDrawingObject>();
 	}	
+	
+	public ArrayList<GmmlDrawingObject> getSelection() {
+		return selection;
+	}
 	
 	/**
 	 * Add an object to the selection
@@ -313,42 +319,36 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		gdata.setMLeft(gdata.getMLeft() + mFromV(vdx)); 
 		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
 
-		//Move the selected objects
-		
-		Set<GmmlDataObject> starts = new HashSet<GmmlDataObject>();
-		Set<GmmlDataObject> ends = new HashSet<GmmlDataObject>();
-		Set<GmmlDataObject> not = new HashSet<GmmlDataObject>();
+		//Move selected object and their references
+		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); //Will be moved by linking object
+		Set<GraphRefContainer> points = new HashSet<GraphRefContainer>(); //Will not be moved by linking object
 		
 		for(GmmlDrawingObject o : selection) 
 		{
 			if (o instanceof GmmlGraphics)
 			{
 				GmmlDataObject g = ((GmmlGraphics)o).getGmmlData();
-			
-				starts.addAll(g.getStickyStarts()); 			
-				ends.addAll(g.getStickyEnds());
-				not.add (g);
+				not.addAll(g.getStickyPoints());
+				if(g.getObjectType() == ObjectType.LINE) {
+					points.addAll(g.getMPoints());
+					for(Point p : g.getMPoints()) {
+						points.addAll(p.getStickyPoints());
+					}
+				}
 			}
 		}
 		
-		starts.removeAll(not);
-		ends.removeAll(not);
+		points.removeAll(not);
 		
 		for(GmmlDrawingObject o : selection) 
 		{				
-			o.vMoveBy(vdx, vdy);
+			if(!(o instanceof GmmlLine)) {
+				o.vMoveBy(vdx, vdy);
+			}
 		}
-
-		for(GmmlDataObject g : starts) 
-		{				
-			g.setMStartX(g.getMStartX() + mFromV(vdx));
-			g.setMStartY(g.getMStartY() + mFromV(vdy));
-		}
-
-		for(GmmlDataObject g : ends) 
-		{				
-			g.setMEndX(g.getMEndX() + mFromV(vdx));
-			g.setMEndY(g.getMEndY() + mFromV(vdy));
+		
+		for(GraphRefContainer ref : points) {
+			ref.moveBy(mFromV(vdx), mFromV(vdy));
 		}
 	}
 	

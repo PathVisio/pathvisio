@@ -25,7 +25,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -42,6 +49,8 @@ import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
+
+import data.GraphLink.GraphRefContainer;
 
 
 /**
@@ -155,19 +164,19 @@ public class GmmlData implements GmmlListener
 	/**
 	 * Stores references of line endpoints to other objects
 	 */
-	private HashMap<String, List<GmmlDataObject>> graphRefs = new HashMap<String, List<GmmlDataObject>>();
+	private HashMap<String, List<GraphRefContainer>> graphRefs = new HashMap<String, List<GraphRefContainer>>();
 	private Set<String> graphIds = new HashSet<String>();
 	
-	public void addRef (String ref, GmmlDataObject target)
+	public void addRef (String ref, GraphRefContainer target)
 	{
 		if (graphRefs.containsKey(ref))
 		{
-			List<GmmlDataObject> l = graphRefs.get(ref);
+			List<GraphRefContainer> l = graphRefs.get(ref);
 			l.add(target);
 		}
 		else
 		{
-			List<GmmlDataObject> l = new ArrayList<GmmlDataObject>();
+			List<GraphRefContainer> l = new ArrayList<GraphRefContainer>();
 			l.add(target);		
 			graphRefs.put(ref, l);
 		}
@@ -178,7 +187,7 @@ public class GmmlData implements GmmlListener
 	 * @param ref
 	 * @param target
 	 */
-	public void removeRef (String ref, GmmlDataObject target)
+	public void removeRef (String ref, GraphRefContainer target)
 	{
 		if (!graphRefs.containsKey(ref)) throw new IllegalArgumentException();
 		
@@ -239,7 +248,7 @@ public class GmmlData implements GmmlListener
 	/**
 	 * Returns all lines that refer to an object with a particular graphId.
 	 */
-	public List<GmmlDataObject> getReferringObjects (String id)
+	public List<GraphRefContainer> getReferringObjects (String id)
 	{
 		return graphRefs.get(id);
 	}

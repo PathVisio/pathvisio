@@ -18,11 +18,13 @@ package data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.RGB;
+
+import data.GraphLink.GraphIdContainer;
+import data.GraphLink.GraphRefContainer;
 
 /**
  * GmmlDataObject is responsible for maintaining the data
@@ -41,8 +43,8 @@ import org.eclipse.swt.graphics.RGB;
  * @author Martijn
  *
  */
-public class GmmlDataObject
-{		
+public class GmmlDataObject implements GraphIdContainer
+{	
 
 	public class Comment implements Cloneable
 	{
@@ -61,17 +63,86 @@ public class GmmlDataObject
 		public String comment;
 	}
 	
-	public class Point implements Cloneable 
+	public class Point implements Cloneable, GraphIdContainer, GraphRefContainer
 	{
+		private double x;
+		private double y;
+		
+		private String graphRef;
+		private String graphId;
+				
 		Point (double _x, double _y) { x = _x; y = _y; }
-
-		public Object clone() throws CloneNotSupportedException
-		{
-			return super.clone();
+		Point (Point p) {
+			x = p.x;
+			y = p.y;
+			if(p.graphRef != null) graphRef = new String(p.graphRef);
+			if(p.graphId != null) graphId = new String(p.graphId);
 		}
 		
-		public double x;
-		public double y;
+		public void moveBy(double dx, double dy) {
+			x += dx;
+			y += dy;
+			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+		}
+		
+		public void setX(double nx) {
+			if(nx != x) moveBy(nx - x, 0);
+		}
+		
+		public void setY(double ny) {
+			if(ny != y) moveBy(0, ny - y);
+		}
+		
+		public String getGraphId() { return graphId; }
+		
+		public void setGraphId (String v) { 
+			GraphLink.setGraphId(v, this, GmmlDataObject.this);
+			graphId = v;
+			fireObjectModifiedEvent(new GmmlEvent (GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+		}
+				
+		public String getGraphRef() { return graphRef; }
+
+		/**
+		 * Set a reference to another object with a graphId.
+		 * If a parent is set, this will automatically deregister
+		 * the previously held reference and register the new reference
+		 * as necessary
+		 * @param v reference to set.
+		 */
+		public void setGraphRef (String v) 
+		{ 
+			if (graphRef != v && v != null && !v.equals(""))
+			{
+				if (parent != null)
+				{
+					if (graphRef != null)
+					{
+						parent.removeRef(graphRef, this);
+					}
+					if (v != null)
+					{
+						parent.addRef(v, this);
+					}
+				}
+				graphRef = v;
+				//fireObjectModifiedEvent(new GmmlEvent (GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+			}
+		}
+
+		
+		public Object clone() throws CloneNotSupportedException
+		{
+			Point p = (Point)super.clone();
+			if(graphId != null) p.graphId = new String(graphId);
+			if(graphRef != null) p.graphRef = new String(graphRef);
+			return p;
+		}
+
+		public Set<GraphRefContainer> getStickyPoints() {
+			return GraphLink.getStickyPoints(this, parent);
+		}
+
 	}
 	
 	private static final int M_INITIAL_SHAPE_SIZE = 30*15; // initial Radius for rect and oval
@@ -115,13 +186,11 @@ public class GmmlDataObject
 		{
 			if (parent != null)
 			{
-				if (startGraphRef != null)
-				{
-					parent.removeRef(startGraphRef, this);
-				}
-				if (endGraphRef != null)
-				{
-					parent.removeRef(startGraphRef, this);
+				for(Point p : mPoints) {
+					if (p.getGraphRef() != null)
+					{
+						parent.removeRef(p.getGraphRef(), p);
+					}
 				}
 				if (graphId != null)
 				{
@@ -131,13 +200,10 @@ public class GmmlDataObject
 			parent = v;
 			if (v != null)
 			{
-				if (startGraphRef != null)
-				{
-					v.addRef(startGraphRef, this);
-				}
-				if (endGraphRef != null)
-				{
-					v.addRef(startGraphRef, this);
+				for(Point p : mPoints) {
+					if(p.getGraphRef() != null) {
+						v.addRef(p.getGraphRef(), p);
+					}
 				}
 				if (graphId != null)
 				{
@@ -418,11 +484,7 @@ public class GmmlDataObject
 		mPoints = new ArrayList<Point>();
 		for (Point p : src.mPoints)
 		{
-			try
-			{
-				mPoints.add((Point)p.clone());
-			}
-			catch (CloneNotSupportedException e) { /* not going to happen */ }
+				mPoints.add(new Point(p));
 		}
 		comments = new ArrayList<Comment>();
 		for (Comment c : src.comments)
@@ -438,8 +500,6 @@ public class GmmlDataObject
 		windowHeight = src.windowHeight;
 		windowWidth = src.windowWidth;
 		xref = src.xref;
-		startGraphRef = src.startGraphRef;
-		endGraphRef = src.endGraphRef;
 		graphId = src.graphId;	
 		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 	}
@@ -482,48 +542,36 @@ public class GmmlDataObject
 	private Point[] defaultPoints = {new Point(0,0), new Point(0,0)};
 	private List<Point> mPoints = Arrays.asList(defaultPoints);
 	
+	public Point getMStart() { return mPoints.get(0); }
+	public Point getMEnd() { return mPoints.get(mPoints.size() - 1); }
+	public List<Point> getMPoints() { return mPoints; }
+	
 	public double getMStartX() 
 	{ 
-		return mPoints.get(0).x; 
+		return getMStart().x; 
 	}
 	
 	public void setMStartX(double v) 
 	{ 
-		if (mPoints.get(0).x != v)
-		{
-			mPoints.get(0).x = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
+		getMStart().setX(v);
 	}
 	
-	public double getMStartY() { return mPoints.get(0).y; }
+	public double getMStartY() { return getMStart().y; }
 	public void setMStartY(double v) 
 	{ 
-		if (mPoints.get(0).y != v)
-		{
-			mPoints.get(0).y = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
+		getMStart().setY(v);
 	}
 	
 	public double getMEndX() { return mPoints.get(mPoints.size()-1).x; }
 	public void setMEndX(double v) 
 	{
-		if (mPoints.get(mPoints.size()-1).x != v)
-		{
-			mPoints.get(mPoints.size()-1).x = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
+		getMEnd().setX(v);
 	}
 	
-	public double getMEndY() { return mPoints.get(mPoints.size()-1).y; }
+	public double getMEndY() { return getMEnd().y; }
 	public void setMEndY(double v) 
 	{
-		if (mPoints.get(mPoints.size()-1).y != v)
-		{
-			mPoints.get(mPoints.size()-1).y = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
-		}
+		getMEnd().setY(v);
 	}
 	
 	protected int lineStyle = LineStyle.SOLID;
@@ -1066,7 +1114,8 @@ public class GmmlDataObject
 		}
 	}
 	
-	protected String graphId = null;
+	protected String graphId;
+	
 	public String getGraphId() { return graphId; }
 	/**
 	 * Set graphId. This id must be any string unique within the GmmlData object 
@@ -1075,80 +1124,58 @@ public class GmmlDataObject
 	 */
 	public void setGraphId (String v) 
 	{ 
-		if (graphId == null || !graphId.equals(v))
-		{
-			if (parent != null)
-			{
-				if (graphId != null)
-				{
-					parent.removeGraphId(v);
-				}
-				if (v != null)
-				{
-					parent.addGraphId(v);
-				}
-			}
-			graphId = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
+		GraphLink.setGraphId(v, this, this);
+		graphId = v;
+		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 	}
-
-	protected String startGraphRef = null;
-	public String getStartGraphRef() { return startGraphRef; }
-
-	/**
-	 * Set a reference to another object with a graphId.
-	 * If a parent is set, this will automatically deregister
-	 * the previously held reference and register the new reference
-	 * as necessary
-	 * @param v reference to set.
-	 */
-	public void setStartGraphRef (String v) 
-	{ 
-		if (startGraphRef != v && v != null && !v.equals(""))
-		{
-			if (parent != null)
-			{
-				if (startGraphRef != null)
-				{
-					parent.removeRef(startGraphRef, this);
-				}
-				if (v != null)
-				{
-					parent.addRef(v, this);
-				}
-			}
-			startGraphRef = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
+			
+	public String getStartGraphRef() {
+		return mPoints.get(0).getGraphRef();
 	}
-
-	protected String endGraphRef = null;
-	public String getEndGraphRef() { return endGraphRef; }
-	/**
-	 * @see #setStartGraphRef(String)
-	 * @param v
-	 */
-	public void setEndGraphRef (String v) 
-	{ 
-		if (endGraphRef != v && v != null && !v.equals(""))
-		{
-			if (parent != null)
-			{
-				if (endGraphRef != null)
-				{
-					parent.removeRef(endGraphRef, this);
-				}
-				if (v != null)
-				{
-					parent.addRef(v, this);
-				}
-			}
-			endGraphRef = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
+	
+	public void setStartGraphRef(String ref) {
+		Point start = mPoints.get(0);
+		start.setGraphRef(ref);
 	}
+	
+	public String getEndGraphRef() {
+		return mPoints.get(mPoints.size() - 1).getGraphRef();
+	}
+	
+	public void setEndGraphRef(String ref) {
+		Point end = mPoints.get(mPoints.size() - 1);
+		end.setGraphRef(ref);
+	}
+	
+	public GmmlDataObject[] splitLine() {
+		double centerX = (getMStartX() + getMEndX()) / 2;
+		double centerY = (getMStartY() + getMEndY()) / 2;
+		GmmlDataObject l1 = new GmmlDataObject(ObjectType.LINE);
+		l1.copyValuesFrom(this);
+		l1.setMStartX(getMStartX());
+		l1.setMStartY(getMStartY());
+		l1.setMEndX(centerX);
+		l1.setMEndY(centerY);
+		GmmlDataObject l2 = new GmmlDataObject(ObjectType.LINE);
+		l2.copyValuesFrom(this);
+		l2.setMStartX(centerX);
+		l2.setMStartY(centerY);
+		l2.setMEndX(getMEndX());
+		l2.setMEndY(getMEndY());
+		
+		parent.add(l1);
+		parent.add(l2);
+		
+		String id1 = parent.getUniqueId();
+		l1.getMEnd().setGraphId(id1);
+		l2.getMStart().setGraphRef(id1);
+		String id2 = parent.getUniqueId();
+		l2.getMStart().setGraphId(id2);
+		l1.getMEnd().setGraphRef(id2);
 
+		return new GmmlDataObject[] { l1, l2 };
+	}
+	
 	int noFire = 0;
 	public void dontFireEvents(int times) {
 		noFire = times;
@@ -1202,68 +1229,8 @@ public class GmmlDataObject
 				break;
 		}
 	}
-
-	/**
-	 * Gets a list of all lines that refer to this object with their startPoints
-	 */
-	public Set<GmmlDataObject> getStickyStarts()
-	{
-		Set<GmmlDataObject> result = 
-			new HashSet<GmmlDataObject>();
-
-		if (parent == null) return result;
-		
-		List<GmmlDataObject> reflist = parent.getReferringObjects(graphId);
-		
-		if (reflist != null && !graphId.equals("")) 
-		{
-			// get all referring lines as a hashset, so
-			// that a line that refers to the same object twice
-			// is only treated once.
-			for (GmmlDataObject o : reflist)
-			{
-				if (o.getObjectType() == ObjectType.LINE)
-				{
-					String startRef = o.getStartGraphRef();
-					if (startRef != null && startRef.equals (graphId))
-					{
-						result.add(o);
-					}
-				}
-			}
-		}
-		return result;	
-	}
 	
-	/**
-	 * Gets a list of all lines that refer to this object with their endPoints
-	 */
-	public Set<GmmlDataObject> getStickyEnds()
-	{		
-		Set<GmmlDataObject> result = 
-			new HashSet<GmmlDataObject>();
-
-		if (parent == null) return result;
-		
-		List<GmmlDataObject> reflist = parent.getReferringObjects(graphId);
-		
-		if (reflist != null && !graphId.equals("")) 
-		{
-			// get all referring lines as a hashset, so
-			// that a line that refers to the same object twice
-			// is only treated once.
-			for (GmmlDataObject o : reflist)
-			{
-				if (o.getObjectType() == ObjectType.LINE)
-				{
-					String endRef = o.getEndGraphRef();
-					if (endRef != null && o.getEndGraphRef().equals (graphId))
-					{
-						result.add(o);
-					}
-				}
-			}
-		}
-		return result;
+	public Set<GraphRefContainer> getStickyPoints() {
+		return GraphLink.getStickyPoints(this, parent);
 	}
 }

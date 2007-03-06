@@ -595,7 +595,30 @@ public class GpmlFormat
 	{
 		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	o.setRotation (Double.parseDouble(graphics.getAttributeValue("Rotation"))); 
+    	
+    	String rotation = graphics.getAttributeValue("Rotation");
+    	double result;
+    	if (rotation.equals("Top"))
+    	{
+    		result = 0.0;
+    	}
+    	else if (rotation.equals("Right"))
+		{
+    		result = 0.5 * Math.PI;
+		}
+    	else if (rotation.equals("Bottom"))
+    	{
+    		result = Math.PI;
+    	}
+    	else if (rotation.equals("Left"))
+    	{
+    		result = 1.5 * Math.PI;
+    	}
+    	else
+    	{
+    		result = Double.parseDouble(rotation);
+    	}
+    	o.setRotation (result); 
 	}
 	
 	private static void updateShapeType(GmmlDataObject o, Element e)

@@ -261,7 +261,6 @@ public class GmmlDataObject
 	{
 		switch (key)
 		{		
-			case NOTES: setNotes		((String) value); break;
 			case COMMENT: setComment 		((String) value); break;
 			case COLOR: setColor 		((RGB)    value); break;
 				
@@ -318,11 +317,9 @@ public class GmmlDataObject
 	
 	public Object getProperty(PropertyType x)
 	{		
-		//TODO: use hashtable or other way better than switch statement
 		Object result = null;
 		switch (x)
 		{
-			case NOTES: result = getNotes(); break;
 			case COMMENT: result = getComment(); break;
 			case COLOR: result = getColor(); break;
 			
@@ -396,7 +393,6 @@ public class GmmlDataObject
 		mCentery = src.mCentery;
 		color = src.color;
 		fillColor = src.fillColor;
-		comment = src.comment;
 		dataSource = src.dataSource;
 		email = src.email;
 		fBold = src.fBold;
@@ -416,7 +412,6 @@ public class GmmlDataObject
 		maintainer = src.maintainer;
 		mapInfoDataSource = src.mapInfoDataSource;
 		mapInfoName = src.mapInfoName;
-		notes = src.notes;
 		organism = src.organism;
 		rotation = src.rotation;
 		shapeType = src.shapeType;
@@ -648,22 +643,7 @@ public class GmmlDataObject
 			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 		}
 	}
-	
-	/** @deprecated */
-	protected String notes = "";
-	/** @deprecated */
-	public String getNotes() { return notes; }
-	/** @deprecated */
-	public void setNotes (String v) 
-	{ 
-		if (v == null) throw new IllegalArgumentException();
-		if (notes != v)
-		{
-			notes = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
-		}
-	}
-	
+		
 	protected String xref = null;
 	public String getXref() { return xref; }
 	public void setXref(String v) 
@@ -736,7 +716,6 @@ public class GmmlDataObject
 		return systemCode;
 	}
 	 
-	// TODO: move to point subclass
 	protected double mCenterx = 0;
 	public double getMCenterX() { return mCenterx; }
 	public void setMCenterX(double v) 
@@ -748,7 +727,6 @@ public class GmmlDataObject
 		}
 	}
 	
-	// TODO: move to point subclass
 	protected double mCentery = 0;
 	public double getMCenterY() { return mCentery; }
 	public void setMCenterY(double v) 

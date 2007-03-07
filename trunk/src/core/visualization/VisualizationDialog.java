@@ -99,9 +99,9 @@ public class VisualizationDialog extends ApplicationWindow {
 			"Name", "Drawing", "Side panel", "Tooltip"
 	};
 	final String[] columnTips = new String[] {
-			"Plugin name", "Choose whether to activate this plugin or not",
+			"Plugin name",
 			"Show this plugin on drawing", "Show this plugin in side panel", 
-			"Show this plugin in tooltip when hovering over Gene Product"
+			"Show this plugin in tooltip"
 	};
 	
 	public VisualizationDialog(Shell shell) {

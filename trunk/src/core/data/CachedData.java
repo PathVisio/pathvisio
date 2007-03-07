@@ -124,7 +124,7 @@ public class CachedData {
 		if(n > 0) {
 			return avg / n;
 		} else {
-			return averageString(dlist, idSample);
+			return Double.NaN;
 		}
 	}
 	

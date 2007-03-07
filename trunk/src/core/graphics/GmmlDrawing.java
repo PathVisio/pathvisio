@@ -1187,7 +1187,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		case(VisualizationEvent.VISUALIZATION_SELECTED):
 		case(VisualizationEvent.VISUALIZATION_MODIFIED):
 		case(VisualizationEvent.PLUGIN_MODIFIED):
-			redraw();
+			getDisplay().syncExec(new Runnable() {
+				public void run() {
+					redraw();
+				}
+			});
 		}
 	}	
 	

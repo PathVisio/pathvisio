@@ -136,9 +136,11 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 	 * Refresh the content of the legend
 	 */
 	void refreshContent() {		
-		colorSets.refresh();
-		plugins.refresh();
-		rearrange();
+		if(!isDisposed()) {
+			colorSets.refresh();
+			plugins.refresh();
+			rearrange();
+		}
 	}
 
 	/**

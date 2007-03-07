@@ -273,7 +273,11 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			case(VisualizationEvent.VISUALIZATION_ADDED):
 			case(VisualizationEvent.VISUALIZATION_REMOVED):
 			case(VisualizationEvent.VISUALIZATION_MODIFIED):
-				update();
+				visCombo.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						update();
+					}
+				});
 			}
 			
 		}

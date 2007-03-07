@@ -145,7 +145,10 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 	}
 		
 	void drawNoDataFound(ConfiguredSample s, Rectangle area, PaintEvent e, GC buffer) {
-		drawBackground(area, buffer, e);
+		Color c = new Color(e.display, s.getColorSet().getColor(ColorSet.ID_COLOR_NO_DATA_FOUND));
+		buffer.setBackground(c);
+		buffer.fillRectangle(area);
+		c.dispose();
 	}
 	
 	void drawBackground(Rectangle area, GC buffer, PaintEvent e) {

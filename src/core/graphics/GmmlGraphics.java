@@ -84,7 +84,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 
 	 * @return the center x-coordinate as integer
 	 */
-	protected int getVCenterX() { return (int)(vFromM(gdata.getMCenterX())); }
+	public int getVCenterX() { return (int)(vFromM(gdata.getMCenterX())); }
 	
 	/**
 	 * Get the y-coordinate of the center point of this object
@@ -92,12 +92,12 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	 * 
 	 * @return the center y-coordinate as integer
 	 */
-	protected int getVCenterY() { return (int)(vFromM(gdata.getMCenterY())); }
+	public int getVCenterY() { return (int)(vFromM(gdata.getMCenterY())); }
 
-	protected int getVLeft() { return (int)(vFromM(gdata.getMLeft())); }
-	protected int getVWidth() { return (int)(vFromM(gdata.getMWidth()));  }
-	protected int getVTop() { return (int)(vFromM(gdata.getMTop())); }
-	protected int getVHeight() { return (int)(vFromM(gdata.getMHeight())); }
+	public int getVLeft() { return (int)(vFromM(gdata.getMLeft())); }
+	public int getVWidth() { return (int)(vFromM(gdata.getMWidth()));  }
+	public int getVTop() { return (int)(vFromM(gdata.getMTop())); }
+	public int getVHeight() { return (int)(vFromM(gdata.getMHeight())); }
 	
 	/**
 	 * Get the x-coordinate of the center point of this object
@@ -105,7 +105,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 
 	 * @return the center x-coordinate as double
 	 */
-	protected double getVCenterXDouble() { return vFromM(gdata.getMCenterX()); }
+	public double getVCenterXDouble() { return vFromM(gdata.getMCenterX()); }
 	
 	/**
 	 * Get the y-coordinate of the center point of this object
@@ -113,11 +113,11 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	 * 
 	 * @return the center y-coordinate as double
 	 */
-	protected double getVCenterYDouble() { return vFromM(gdata.getMCenterY()); }
+	public double getVCenterYDouble() { return vFromM(gdata.getMCenterY()); }
 
-	protected double getVLeftDouble() { return vFromM(gdata.getMLeft()); }
-	protected double getVWidthDouble() { return vFromM(gdata.getMWidth());  }
-	protected double getVTopDouble() { return vFromM(gdata.getMTop()); }
-	protected double getVHeightDouble() { return vFromM(gdata.getMHeight()); }
+	public double getVLeftDouble() { return vFromM(gdata.getMLeft()); }
+	public double getVWidthDouble() { return vFromM(gdata.getMWidth());  }
+	public double getVTopDouble() { return vFromM(gdata.getMTop()); }
+	public double getVHeightDouble() { return vFromM(gdata.getMHeight()); }
 	
 }

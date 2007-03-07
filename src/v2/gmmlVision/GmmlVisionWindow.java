@@ -1647,16 +1647,16 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	public void expressionDataEvent(ExpressionDataEvent e) {
 		switch(e.type) {
 		case ExpressionDataEvent.CONNECTION_CLOSED:
-			getShell().getDisplay().asyncExec(new Runnable() {
+			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					showLegend(false);
 				}
 			});
 			break;
 		case ExpressionDataEvent.CONNECTION_OPENED:
-			cacheExpressionData();
-			getShell().getDisplay().asyncExec(new Runnable() {
+			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
+					cacheExpressionData();
 					showLegend(true);
 				}
 			});

@@ -61,6 +61,10 @@ public class DBConnDerby extends DBConnector {
 			FileUtils.deleteRecursive(dbFile);
 		}
 		
+		Properties sysprop = System.getProperties();
+		sysprop.setProperty("derby.storage.tempDirectory", System.getProperty("java.io.tmpdir"));
+		sysprop.setProperty("derby.stream.error.file", File.createTempFile("derby",".log").toString());
+		
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 		Properties prop = new Properties();
 		prop.setProperty("create", Boolean.toString(recreate));

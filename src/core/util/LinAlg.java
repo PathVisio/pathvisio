@@ -51,6 +51,11 @@ public class LinAlg {
 		return new Point(p2.x * c, p2.y * c);
 	}
 	
+	public static double distance(Point p1, Point p2) {
+		Point dp = p2.subtract(p1);
+		return dp.len();
+	}
+	
 	public static Point rotate(Point p, double angle) {
 		Point pr = new Point(0,0);
 		pr.x = p.x * Math.cos(angle) + p.y * Math.sin(angle);

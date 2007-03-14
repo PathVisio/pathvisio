@@ -56,10 +56,10 @@ public class GenMAPP2EUGene {
 	 
 	 public GenMAPP2EUGene(File directory) {
 		 createSystemMappings();
-		 String logFile = "conversion.log";
+		 File logFile = new File(directory, "conversion.log");
 		 try { log.setStream(new PrintStream(logFile)); } 
 		 catch(Exception e) { e.printStackTrace(); }
-		 System.out.println("Generated conversion log: '" + logFile);
+		 System.out.println("Generated conversion log: '" + logFile + "'");
 	 }
 	 
 	 void convert(File dir) {
@@ -136,7 +136,7 @@ public class GenMAPP2EUGene {
 					 if(code.equals(system)) { //Check if gene is of most occuring system
 						 geneString.append(id + "\n");
 					 } else {
-						 missedGenes.append("(" + id + ", " + code + ") ");
+						 missedGenes.append(id + "|" + code + "; ");
 						 log.error("id '" + id + "' differs from pathway annotation system");
 					 }
 				 }
@@ -155,7 +155,7 @@ public class GenMAPP2EUGene {
 			 out.println("//PATHWAY_NAME = " + name);
 			 out.println("//PATHWAY_SOURCE = GenMAPP");
 			 out.println("//PATHWAY_MARKER = " + euGeneSystem);
-			 if(missedGenes.length() > 0) out.println("//GENES_NOT_CONVERTED (id, systemcode):" + missedGenes );
+			 if(missedGenes.length() > 0) out.println("//LOST_DURING_CONVERSION: " + missedGenes );
 			 out.print(geneString);
 			
 			 out.close();
@@ -180,8 +180,11 @@ public class GenMAPP2EUGene {
 				 while(r.next()) {
 					 String id = r.getString("Id");
 					 String code = r.getString("SystemCode");
-					 if(id != null && code != null 
-							 && !id.equals("") && !code.equals("")) { ids.add(id); codes.add(code); }
+					 if(id == null || code == null || id.equals("") || code.equals("")) { 
+						 continue;
+					 }
+					 ids.add(id); 
+					 codes.add(code);
 					 
 					 //Increase code count for this code
 					 if(codeCount.containsKey(code)) codeCount.put(code, codeCount.get(code) + 1);

@@ -18,7 +18,11 @@ package graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -26,7 +30,7 @@ import org.eclipse.swt.graphics.GC;
 
 import data.GmmlDataObject;
 import data.ObjectType;
-import data.GmmlDataObject.Point;
+import data.GmmlDataObject.MPoint;
 import data.GraphLink.GraphRefContainer;
 
 /**
@@ -65,8 +69,15 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	 */
 	public void addToSelection(GmmlDrawingObject o) {
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
-		o.select();
-		selection.add(o);
+		if(o instanceof VPoint) {
+			for(GmmlLine l : ((VPoint)o).getLines()) {
+				l.select();
+				doAdd(l);
+			}
+		} else {
+			o.select();
+			doAdd(o);
+		}
 		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_ADDED, o));
 		if(isSelecting) return; //All we have to do if user is dragging selectionbox
 		if(hasMultipleSelection()) { 
@@ -74,6 +85,11 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		}
 		 
 	}
+	
+	private void doAdd(GmmlDrawingObject o) {
+		if(!selection.contains(o)) selection.add(o);
+	}
+	
 	/**
 	 * Remove an object from the selection
 	 * @param o
@@ -295,20 +311,30 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 				} else if(o.isSelected()) removeFromSelection(o);
 			}
 		} else { //Resizing, so resize child objects too
-			//Scale all selected objects in x and y direction			
+			double widthRatio = getVWidthDouble() / vWidthOld;
+			double heightRatio = getVHeightDouble() / vHeightOld;
+			//Scale all selected objects in x and y direction, treat points seperately
+			Set<VPoint> points = new HashSet<VPoint>();
 			for(GmmlDrawingObject o : selection) { 
-				Rectangle2D.Double vr = o.getVScaleRectangle();
-				double widthRatio = getVWidthDouble() / vWidthOld;
-				double heightRatio = getVHeightDouble() / vHeightOld;
-				double newObjectWidth = vr.width * widthRatio;
-				double newObjectHeight = vr.height * heightRatio;
-				double objectFromCenterX = (vr.x - vCenterXOld) * widthRatio;
-				double objectFromCenterY = (vr.y - vCenterYOld) * heightRatio;
-				o.setVScaleRectangle(new Rectangle2D.Double(
-						getVCenterXDouble() + objectFromCenterX, 
-						getVCenterYDouble() + objectFromCenterY, 
-						newObjectWidth, 
-						newObjectHeight));
+				if(o instanceof GmmlLine) {
+					points.addAll(((GmmlLine)o).getPoints());
+				} else { 
+					Rectangle2D.Double vr = o.getVScaleRectangle();
+					double newObjectWidth = vr.width * widthRatio;
+					double newObjectHeight = vr.height * heightRatio;
+					double objectFromCenterX = (vr.x - vCenterXOld) * widthRatio;
+					double objectFromCenterY = (vr.y - vCenterYOld) * heightRatio;
+					o.setVScaleRectangle(new Rectangle2D.Double(
+							getVCenterXDouble() + objectFromCenterX, 
+							getVCenterYDouble() + objectFromCenterY, 
+							newObjectWidth, 
+							newObjectHeight));
+				}
+			}
+			for(VPoint p : points) {
+				double dx = (p.getVX() - vCenterXOld) * widthRatio;
+				double dy = (p.getVY() - vCenterYOld) * heightRatio;
+				p.setVLocation(getVCenterXDouble() + dx, getVCenterYDouble() + dy);
 			}
 		}
 	}
@@ -321,34 +347,32 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 
 		//Move selected object and their references
 		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); //Will be moved by linking object
-		Set<GraphRefContainer> points = new HashSet<GraphRefContainer>(); //Will not be moved by linking object
+		Set<VPoint> points = new HashSet<VPoint>(); //Will not be moved by linking object
 		
 		for(GmmlDrawingObject o : selection) 
 		{
 			if (o instanceof GmmlGraphics)
 			{
 				GmmlDataObject g = ((GmmlGraphics)o).getGmmlData();
-				not.addAll(g.getStickyPoints());
+				if(!(o instanceof GmmlLine)) {
+					o.vMoveBy(vdx, vdy);
+					not.addAll(g.getReferences());
+				}
 				if(g.getObjectType() == ObjectType.LINE) {
-					points.addAll(g.getMPoints());
-					for(Point p : g.getMPoints()) {
-						points.addAll(p.getStickyPoints());
-					}
+					points.addAll(((GmmlLine)o).getPoints());
 				}
 			}
+
 		}
 		
-		points.removeAll(not);
-		
-		for(GmmlDrawingObject o : selection) 
-		{				
-			if(!(o instanceof GmmlLine)) {
-				o.vMoveBy(vdx, vdy);
+		for(GraphRefContainer ref : not) {
+			if(ref instanceof MPoint) {
+				points.remove(canvas.getPoint((MPoint)ref));
 			}
 		}
-		
-		for(GraphRefContainer ref : points) {
-			ref.moveBy(mFromV(vdx), mFromV(vdy));
+			
+		for(VPoint p : points) {
+			p.vMoveBy(vdx, vdy);
 		}
 	}
 	

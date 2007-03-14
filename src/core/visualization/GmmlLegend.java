@@ -59,6 +59,7 @@ import visualization.colorset.ColorSet;
 import visualization.colorset.ColorSetManager;
 import visualization.colorset.ColorSetObject;
 import visualization.colorset.ColorGradient.ColorValuePair;
+import visualization.plugins.VisualizationPlugin;
 
 /**
  * This class shows a legend for the currently loaded visualization and color-sets.

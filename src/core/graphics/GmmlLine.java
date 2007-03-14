@@ -20,6 +20,10 @@ import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -31,18 +35,19 @@ import preferences.GmmlPreferences;
 import util.SwtUtils;
 import data.GmmlDataObject;
 import data.GmmlEvent;
-import data.GraphLink;
 import data.LineStyle;
+import data.GmmlDataObject.MPoint;
+import data.GraphLink.GraphRefContainer;
  
 /**
  * This class implements and handles a line
  */
 public class GmmlLine extends GmmlGraphics
 {
-	private GmmlHandle handleStart;
-	private GmmlHandle handleEnd;
-	public GmmlHandle getHandleEnd() { return handleEnd; }
+
 	private static final long serialVersionUID = 1L;
+	
+	private List<VPoint> points;
 	
 	/**
 	 * Constructor for this class
@@ -52,11 +57,24 @@ public class GmmlLine extends GmmlGraphics
 	{
 		super(canvas, o);
 		drawingOrder = GmmlDrawing.DRAW_ORDER_LINE;
-		handleStart	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleEnd	= new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		setHandleLocation();
-	}
 		
+		points = new ArrayList<VPoint>();
+		for(MPoint mp : o.getMPoints()) {
+			VPoint vp = canvas.getPoint(mp);
+			points.add(vp);
+			vp.addLine(this);
+			vp.setHandleLocation();
+		}
+	}
+	
+	protected void swapPoint(VPoint pOld, VPoint pNew) {
+		int i = points.indexOf(pOld);
+		if(i > -1) {
+			points.remove(pOld);
+			points.add(i, pNew);
+		}
+	}
+			
 	public void draw(PaintEvent e, GC buffer)
 	{
 		double vEndx = getVEndX();
@@ -274,28 +292,8 @@ public class GmmlLine extends GmmlGraphics
 	 */
 	public void setVLine(double vx1, double vy1, double vx2, double vy2)
 	{
-//		gdata.dontFireEvents(3);
-		gdata.setMStartX(mFromV(vx1));
-		gdata.setMStartY(mFromV(vy1));
-		gdata.setMEndX(mFromV(vx2));
-		gdata.setMEndY(mFromV(vy2));		
-	}
-
-	/**
-	 * Sets the line start and end to the coordinates specified
-	 * <DL><B>Parameters</B>
-	 * <DD>Double x1	- new startx 
-	 * <DD>Double y1	- new starty
-	 * <DD>Double x2	- new endx
-	 * <DD>Double y2	- new endy
-	 */
-	public void setMLine(double mx1, double my1, double mx2, double my2)
-	{
-//		gdata.dontFireEvents(3);
-		gdata.setMStartX(mx1);
-		gdata.setMStartY(my1);
-		gdata.setMEndX(mx2);
-		gdata.setMEndY(my2);		
+		getStart().setVLocation(vx1, vy1);
+		getEnd().setVLocation(vx2, vy2);
 	}
 
 	public void setVScaleRectangle(Rectangle2D.Double r) {
@@ -307,73 +305,66 @@ public class GmmlLine extends GmmlGraphics
 				- getVStartXDouble(), getVEndYDouble() - getVStartYDouble());
 	}
 	
-	/**
-	 * Sets this class handles at the correct position 
-	 */
-	protected void setHandleLocation()
-	{
-		handleStart.setMLocation(gdata.getMStartX(), gdata.getMStartY());
-		handleEnd.setMLocation(gdata.getMEndX(), gdata.getMEndY());
-	}
-	
 	public GmmlHandle[] getHandles()
 	{
-		return new GmmlHandle[] { handleStart, handleEnd };
+		GmmlHandle[] handles = new GmmlHandle[points.size()];
+		for(int i = 0; i < handles.length; i++) {
+			handles[i] = points.get(i).getHandle();
+		}
+		return handles;
+	}
+		
+	public List<VPoint> getPoints() { return points; }
+	
+	public VPoint getStart() {
+		return points.get(0);
 	}
 	
-	protected void adjustToHandle(GmmlHandle h) {
-		double mcx = h.mCenterx;
-		double mcy = h.mCentery;
-		
-		if		(h == handleStart) {
-			double mxOld = gdata.getMStartX();
-			double myOld = gdata.getMStartY();
-			gdata.setMStartX(mcx); 
-			gdata.setMStartY(mcy);
-			//Move sticky points of line start
-			GraphLink.moveRefsBy(gdata.getMStart(), mcx - mxOld, mcy - myOld); 
-		}
-		else if	(h == handleEnd) {
-			double mxOld = gdata.getMEndX();
-			double myOld = gdata.getMEndY();
-			gdata.setMEndX(mcx); 
-			gdata.setMEndY(mcy);
-			//Move sticky points of line end
-			GraphLink.moveRefsBy(gdata.getMEnd(), mcx - mxOld, mcy - myOld); 
-		}
+	public VPoint getEnd() {
+		return points.get(points.size() - 1);
 	}
 	
 	protected void vMoveBy(double vdx, double vdy)
 	{
-		setMLine(gdata.getMStartX() + mFromV(vdx), gdata.getMStartY() + mFromV(vdy), 
-				gdata.getMEndX() + mFromV(vdx), gdata.getMEndY() + mFromV(vdy));
-		//Move graphRefs of end points
-		GraphLink.moveRefsBy(gdata.getMStart(), mFromV(vdx), mFromV(vdy));
-		GraphLink.moveRefsBy(gdata.getMEnd(), mFromV(vdx), mFromV(vdy));
-		//Move graphRefs of this line
-		GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
+		for(VPoint p : points) {
+			p.vMoveBy(vdx, vdy);
+		}
+		//Move graphRefs
+		Set<VPoint> toMove = new HashSet<VPoint>();
+		for(GraphRefContainer ref : gdata.getReferences()) {
+			if(ref instanceof MPoint) {
+				toMove.add(canvas.getPoint((MPoint)ref));
+			}
+		}
+		toMove.removeAll(points);
+		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
 	}
 	
 	public void gmmlObjectModified(GmmlEvent e) {		
-		markDirty(); // mark everything dirty
-		setHandleLocation();
+		markDirty();
+		for(VPoint p : points) {
+			p.markDirty();
+			p.setHandleLocation();
+		}
 	}
 	
-	public void link (GmmlHandle h, GmmlGraphics x)
-	{
-		String id = x.gdata.getGraphId();
-		if (id == null) return;
+	protected void destroyHandles() { 
+		//Do nothing, handles will be destroyed by VPoints
+	}
+	
+	protected void destroy() {
+		//don't call super.destroy(), this will destroy handles of VPoints
+		//which may be used by other lines
+		super.destroy();
 		
-		if (h == handleStart)
-		{
-			gdata.setStartGraphRef(id);
+		for(VPoint p : points) {
+			p.removeLine(this);
 		}
-		else if (h == handleEnd)
-		{
-			gdata.setEndGraphRef(id);			
+		for(MPoint p : gdata.getMPoints()) {
+			canvas.pointsMtoV.remove(p);
 		}
 	}
-
+	
 	protected int getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
 	protected int getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
 	protected int getVEndX() { return (int)(vFromM(gdata.getMEndX())); }

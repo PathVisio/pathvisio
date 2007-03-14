@@ -1,1253 +1,870 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Pathway Name="DNA Replication" Data-Source="GenMAPP 2.0" Version="20041216" Author="David Koren, Kam Dahlquist" Maintained-By="Kam Dahlquist" Email="genmapp@gladstone.ucsf.edu" Availability="" Last-Modified="4/8/04">
-  <Notes>http://www.genomeknowledge.org/cgi-bin/eventbrowser?DB=gk_current&amp;ID=69306</Notes>
-  <Comment>Based on www.genomeknowledge.org</Comment>
-  <Graphics BoardWidth="31241.700000000004" BoardHeight="20525.4" WindowWidth="18975.0" WindowHeight="14910.0" />
-  <GeneProduct GeneID="RPA2" Xref="" Type="unknown" Name="6118" BackpageHead="DNA replication factor-A protein 2" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="11450.0" CenterY="7050.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RPA3" Xref="" Type="unknown" Name="6119" BackpageHead="DNA replication factor-A protein 3" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="11450.0" CenterY="7350.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RPA4" Xref="" Type="unknown" Name="29935" BackpageHead="DNA replication factor-A protein 4" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="11450.0" CenterY="7650.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLA" Xref="" Type="unknown" Name="5422" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="15100.0" CenterY="7400.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="PRIM1" Xref="" Type="unknown" Name="5557" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="16200.0" CenterY="7100.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="PRIM2A" Xref="" Type="unknown" Name="5558" BackpageHead="p58" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="16200.0" CenterY="7400.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLE2" Xref="" Type="unknown" Name="5427" BackpageHead="DNA polymerase epsilon subunit B" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="19550.0" CenterY="7450.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLE" Xref="" Type="unknown" Name="5426" BackpageHead="DNA polymerase epsilon, catalytic subunit A" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="19550.0" CenterY="7749.999999999999" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ORC3L" Xref="" Type="unknown" Name="23595" BackpageHead="Orc3" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="850.0" CenterY="2550.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ORC2L" Xref="" Type="unknown" Name="4999" BackpageHead="Orc2" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="1800.0" CenterY="1950.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ORC5L" Xref="" Type="unknown" Name="5001" BackpageHead="Orc5" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="4000.0000000000005" CenterY="2950.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ORC4L" Xref="" Type="unknown" Name="5000" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="6500.0" CenterY="2000.0000000000002" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ORC1L" Xref="" Type="unknown" Name="4998" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="9500.0" CenterY="3200.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ORC6L" Xref="" Type="unknown" Name="23594" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="12700.0" CenterY="2100.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="GMNN" Xref="" Type="unknown" Name="51053" BackpageHead="Geminin" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="18450.0" CenterY="4000.0000000000005" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="CDT1" Xref="" Type="unknown" Name="81620" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="18450.0" CenterY="4300.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="UBA52" Xref="" Type="unknown" Name="7311" BackpageHead="Ubiquitin" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="19800.0" CenterY="4550.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM6" Xref="" Type="unknown" Name="4175" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="22650.0" CenterY="4800.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM5" Xref="" Type="unknown" Name="4174" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="22650.0" CenterY="4500.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM4" Xref="" Type="unknown" Name="4173" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="22650.0" CenterY="4200.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM3" Xref="" Type="unknown" Name="4172" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="22650.0" CenterY="3900.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM2" Xref="" Type="unknown" Name="4171" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="22650.0" CenterY="3600.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM7" Xref="" Type="unknown" Name="4176" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="22650.0" CenterY="5100.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="MCM10" Xref="" Type="unknown" Name="55388" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="27300.0" CenterY="2050.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="CDK2" Xref="" Type="unknown" Name="1017" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="2850.0" CenterY="4750.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLA2" Xref="" Type="unknown" Name="23649" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="15100.0" CenterY="7100.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RFC5" Xref="" Type="unknown" Name="5985" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="5900.0" CenterY="14350.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RFC4" Xref="" Type="unknown" Name="5984" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="5900.0" CenterY="14650.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RFC3" Xref="" Type="unknown" Name="5983" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="5900.0" CenterY="14950.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RFC2" Xref="" Type="unknown" Name="5982" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="5900.0" CenterY="15250.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RFC1" Xref="" Type="unknown" Name="5981" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="5900.0" CenterY="15550.000000000002" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="PCNA" Xref="" Type="unknown" Name="5111" BackpageHead="PCNA" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="12700.0" CenterY="17100.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="ASK" Xref="" Type="unknown" Name="10926" BackpageHead="Dbf4" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="2850.0" CenterY="5050.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="CDC7" Xref="" Type="unknown" Name="8317" BackpageHead="Cdc7" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="2850.0" CenterY="5350.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="RPA1" Xref="" Type="unknown" Name="6117" BackpageHead="DNA replication factor-A protein 1" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="11450.0" CenterY="6750.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="CDC45L" Xref="" Type="unknown" Name="8318" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="9100.0" CenterY="6750.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLD2" Xref="" Type="unknown" Name="5425" BackpageHead="DNA polymerase delta subunit 2" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="25750.0" CenterY="17550.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLD3" Xref="" Type="unknown" Name="10714" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="25750.0" CenterY="17850.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLD4" Xref="" Type="unknown" Name="57804" BackpageHead="DNA polymerase delta subunit 4" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="25750.0" CenterY="18150.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="POLD1" Xref="" Type="unknown" Name="5424" BackpageHead="DNA polymerase delta catalytic subunit" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="25750.0" CenterY="17250.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="CDC6" Xref="" Type="unknown" Name="990" BackpageHead="" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="15750.0" CenterY="3300.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <GeneProduct GeneID="UBC" Xref="" Type="unknown" Name="7316" BackpageHead="Ubiquitin" GeneProduct-Data-Source="LocusLink">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="19800.0" CenterY="4850.0" Width="900.0" Height="300.0" />
-  </GeneProduct>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="DNA Replication" Data-Source="GenMAPP 2.0" Version="20041203" Author="David Koren, Kam Dahlquist" Maintainer="Kam Dahlquist" Email="genmapp@gladstone.ucsf.edu" Last-Modified="4/8/04" Organism="Homo sapiens">
+  <Comment Source="GenMAPP notes">http://www.genomeknowledge.org/cgi-bin/eventbrowser?DB=gk_current&amp;ID=69306</Comment>
+  <Comment Source="GenMAPP remarks">Based on www.genomeknowledge.org</Comment>
+  <Graphics BoardWidth="31241.7" BoardHeight="20525.4" WindowWidth="18975.0" WindowHeight="14910.0" />
+  <DataNode TextLabel="RPA2" Type="GeneProduct" BackpageHead="RPA2 | replication protein A2 32kDa" GraphId="a2f">
+    <Graphics Color="Transparent" CenterX="11450.0" CenterY="7050.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="6118" />
+  </DataNode>
+  <DataNode TextLabel="RPA3" Type="GeneProduct" BackpageHead="RPA3 | replication protein A3 14kDa" GraphId="c15">
+    <Graphics Color="Transparent" CenterX="11450.0" CenterY="7350.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="6119" />
+  </DataNode>
+  <DataNode TextLabel="RPA4" Type="GeneProduct" BackpageHead="RPA4 | replication protein A4 34kDa" GraphId="f36">
+    <Graphics Color="Transparent" CenterX="11450.0" CenterY="7650.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="29935" />
+  </DataNode>
+  <DataNode TextLabel="POLA" Type="GeneProduct" BackpageHead="POLA | polymerase (DNA directed) alpha" GraphId="f90">
+    <Graphics Color="Transparent" CenterX="15100.0" CenterY="7400.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5422" />
+  </DataNode>
+  <DataNode TextLabel="PRIM1" Type="GeneProduct" BackpageHead="PRIM1 | primase polypeptide 1 49kDa" GraphId="d59">
+    <Graphics Color="Transparent" CenterX="16200.0" CenterY="7100.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5557" />
+  </DataNode>
+  <DataNode TextLabel="PRIM2A" Type="GeneProduct" BackpageHead="PRIM2A | primase polypeptide 2A 58kDa" GraphId="ed8">
+    <Graphics Color="Transparent" CenterX="16200.0" CenterY="7400.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5558" />
+  </DataNode>
+  <DataNode TextLabel="POLE2" Type="GeneProduct" BackpageHead="POLE2 | polymerase (DNA directed) epsilon 2 (p..." GraphId="b30">
+    <Graphics Color="Transparent" CenterX="19550.0" CenterY="7450.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5427" />
+  </DataNode>
+  <DataNode TextLabel="POLE" Type="GeneProduct" BackpageHead="POLE | polymerase (DNA directed) epsilon" GraphId="c0a">
+    <Graphics Color="Transparent" CenterX="19550.0" CenterY="7750.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5426" />
+  </DataNode>
+  <DataNode TextLabel="ORC3L" Type="GeneProduct" BackpageHead="ORC3L | origin recognition complex subunit 3-l..." GraphId="bc6">
+    <Graphics Color="Transparent" CenterX="850.0" CenterY="2550.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="23595" />
+  </DataNode>
+  <DataNode TextLabel="ORC2L" Type="GeneProduct" BackpageHead="ORC2L | origin recognition complex subunit 2-l..." GraphId="fea">
+    <Graphics Color="Transparent" CenterX="1800.0" CenterY="1950.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4999" />
+  </DataNode>
+  <DataNode TextLabel="ORC5L" Type="GeneProduct" BackpageHead="ORC5L | origin recognition complex subunit 5-l..." GraphId="ff4">
+    <Graphics Color="Transparent" CenterX="4000.0" CenterY="2950.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5001" />
+  </DataNode>
+  <DataNode TextLabel="ORC4L" Type="GeneProduct" BackpageHead="ORC4L | origin recognition complex subunit 4-l..." GraphId="bf7">
+    <Graphics Color="Transparent" CenterX="6500.0" CenterY="2000.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5000" />
+  </DataNode>
+  <DataNode TextLabel="ORC1L" Type="GeneProduct" BackpageHead="ORC1L | origin recognition complex subunit 1-l..." GraphId="e49">
+    <Graphics Color="Transparent" CenterX="9500.0" CenterY="3200.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4998" />
+  </DataNode>
+  <DataNode TextLabel="ORC6L" Type="GeneProduct" BackpageHead="ORC6L | origin recognition complex subunit 6 h..." GraphId="d9c">
+    <Graphics Color="Transparent" CenterX="12700.0" CenterY="2100.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="23594" />
+  </DataNode>
+  <DataNode TextLabel="GMNN" Type="GeneProduct" BackpageHead="GMNN | geminin DNA replication inhibitor" GraphId="cf4">
+    <Graphics Color="Transparent" CenterX="18450.0" CenterY="4000.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="51053" />
+  </DataNode>
+  <DataNode TextLabel="CDT1" Type="GeneProduct" BackpageHead="CDT1 | DNA replication factor" GraphId="b42">
+    <Graphics Color="Transparent" CenterX="18450.0" CenterY="4300.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="81620" />
+  </DataNode>
+  <DataNode TextLabel="UBA52" Type="GeneProduct" BackpageHead="UBA52 | ubiquitin A-52 residue ribosomal protei..." GraphId="f98">
+    <Graphics Color="Transparent" CenterX="19800.0" CenterY="4550.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="7311" />
+  </DataNode>
+  <DataNode TextLabel="MCM6" Type="GeneProduct" BackpageHead="MCM6 | MCM6 minichromosome maintenance deficien..." GraphId="e80">
+    <Graphics Color="Transparent" CenterX="22650.0" CenterY="4800.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4175" />
+  </DataNode>
+  <DataNode TextLabel="MCM5" Type="GeneProduct" BackpageHead="MCM5 | MCM5 minichromosome maintenance deficien..." GraphId="ca9">
+    <Graphics Color="Transparent" CenterX="22650.0" CenterY="4500.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4174" />
+  </DataNode>
+  <DataNode TextLabel="MCM4" Type="GeneProduct" BackpageHead="MCM4 | MCM4 minichromosome maintenance deficien..." GraphId="b35">
+    <Graphics Color="Transparent" CenterX="22650.0" CenterY="4200.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4173" />
+  </DataNode>
+  <DataNode TextLabel="MCM3" Type="GeneProduct" BackpageHead="MCM3 | MCM3 minichromosome maintenance deficien..." GraphId="e35">
+    <Graphics Color="Transparent" CenterX="22650.0" CenterY="3900.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4172" />
+  </DataNode>
+  <DataNode TextLabel="MCM2" Type="GeneProduct" BackpageHead="MCM2 | MCM2 minichromosome maintenance deficien..." GraphId="aff">
+    <Graphics Color="Transparent" CenterX="22650.0" CenterY="3600.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4171" />
+  </DataNode>
+  <DataNode TextLabel="MCM7" Type="GeneProduct" BackpageHead="MCM7 | MCM7 minichromosome maintenance deficien..." GraphId="d57">
+    <Graphics Color="Transparent" CenterX="22650.0" CenterY="5100.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="4176" />
+  </DataNode>
+  <DataNode TextLabel="MCM10" Type="GeneProduct" BackpageHead="MCM10 | MCM10 minichromosome maintenance defici..." GraphId="cf0">
+    <Graphics Color="Transparent" CenterX="27300.0" CenterY="2050.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="55388" />
+  </DataNode>
+  <DataNode TextLabel="CDK2" Type="GeneProduct" BackpageHead="CDK2 | cyclin-dependent kinase 2" GraphId="daa">
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="4750.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="1017" />
+  </DataNode>
+  <DataNode TextLabel="POLA2" Type="GeneProduct" BackpageHead="POLA2 | polymerase (DNA directed) alpha 2 (70k..." GraphId="fac">
+    <Graphics Color="Transparent" CenterX="15100.0" CenterY="7100.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="23649" />
+  </DataNode>
+  <DataNode TextLabel="RFC5" Type="GeneProduct" BackpageHead="RFC5 | replication factor C (activator 1) 5 36..." GraphId="e47">
+    <Graphics Color="Transparent" CenterX="5900.0" CenterY="14350.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5985" />
+  </DataNode>
+  <DataNode TextLabel="RFC4" Type="GeneProduct" BackpageHead="RFC4 | replication factor C (activator 1) 4 37..." GraphId="e0b">
+    <Graphics Color="Transparent" CenterX="5900.0" CenterY="14650.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5984" />
+  </DataNode>
+  <DataNode TextLabel="RFC3" Type="GeneProduct" BackpageHead="RFC3 | replication factor C (activator 1) 3 38..." GraphId="db8">
+    <Graphics Color="Transparent" CenterX="5900.0" CenterY="14950.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5983" />
+  </DataNode>
+  <DataNode TextLabel="RFC2" Type="GeneProduct" BackpageHead="RFC2 | replication factor C (activator 1) 2 40..." GraphId="bb9">
+    <Graphics Color="Transparent" CenterX="5900.0" CenterY="15250.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5982" />
+  </DataNode>
+  <DataNode TextLabel="RFC1" Type="GeneProduct" BackpageHead="RFC1 | replication factor C (activator 1) 1 14..." GraphId="a2d">
+    <Graphics Color="Transparent" CenterX="5900.0" CenterY="15550.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5981" />
+  </DataNode>
+  <DataNode TextLabel="PCNA" Type="GeneProduct" BackpageHead="PCNA | proliferating cell nuclear antigen" GraphId="f56">
+    <Graphics Color="Transparent" CenterX="12700.0" CenterY="17100.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5111" />
+  </DataNode>
+  <DataNode TextLabel="ASK" Type="GeneProduct" BackpageHead="ASK | activator of S phase kinase" GraphId="f01">
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="5050.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="10926" />
+  </DataNode>
+  <DataNode TextLabel="CDC7" Type="GeneProduct" BackpageHead="CDC7 | CDC7 cell division cycle 7 (S. cerevisia..." GraphId="b5c">
+    <Graphics Color="Transparent" CenterX="2850.0" CenterY="5350.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="8317" />
+  </DataNode>
+  <DataNode TextLabel="RPA1" Type="GeneProduct" BackpageHead="RPA1 | replication protein A1 70kDa" GraphId="fa0">
+    <Graphics Color="Transparent" CenterX="11450.0" CenterY="6750.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="6117" />
+  </DataNode>
+  <DataNode TextLabel="CDC45L" Type="GeneProduct" BackpageHead="CDC45L | CDC45 cell division cycle 45-like (S. ..." GraphId="a1c">
+    <Graphics Color="Transparent" CenterX="9100.0" CenterY="6750.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="8318" />
+  </DataNode>
+  <DataNode TextLabel="POLD2" Type="GeneProduct" BackpageHead="POLD2 | polymerase (DNA directed) delta 2 reg..." GraphId="b8b">
+    <Graphics Color="Transparent" CenterX="25750.0" CenterY="17550.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5425" />
+  </DataNode>
+  <DataNode TextLabel="POLD3" Type="GeneProduct" BackpageHead="POLD3 | polymerase (DNA-directed) delta 3 acc..." GraphId="e94">
+    <Graphics Color="Transparent" CenterX="25750.0" CenterY="17850.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="10714" />
+  </DataNode>
+  <DataNode TextLabel="POLD4" Type="GeneProduct" BackpageHead="POLD4 | polymerase (DNA-directed) delta 4" GraphId="a9d">
+    <Graphics Color="Transparent" CenterX="25750.0" CenterY="18150.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="57804" />
+  </DataNode>
+  <DataNode TextLabel="POLD1" Type="GeneProduct" BackpageHead="POLD1 | polymerase (DNA directed) delta 1 cat..." GraphId="a9b">
+    <Graphics Color="Transparent" CenterX="25750.0" CenterY="17250.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5424" />
+  </DataNode>
+  <DataNode TextLabel="CDC6" Type="GeneProduct" BackpageHead="CDC6 | CDC6 cell division cycle 6 homolog (S. c..." GraphId="a6c">
+    <Graphics Color="Transparent" CenterX="15750.0" CenterY="3300.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="990" />
+  </DataNode>
+  <DataNode TextLabel="UBC" Type="GeneProduct" BackpageHead="UBC | ubiquitin C" GraphId="b97">
+    <Graphics Color="Transparent" CenterX="19800.0" CenterY="4850.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="7316" />
+  </DataNode>
+  <Line>
     <Graphics Color="000000">
-      <Point x="1300.0" y="2400.0" />
+      <Point x="1300.0" y="2400.0" Head="Arrow" />
       <Point x="2450.0" y="2400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="1850.0" y="2100.0" />
+      <Point x="1850.0" y="2100.0" Head="Arrow" />
       <Point x="2050.0" y="2400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="3650.0" y="2350.0" />
+      <Point x="3650.0" y="2350.0" Head="Arrow" />
       <Point x="4750.0" y="2350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="4000.0000000000005" y="2800.0" />
+      <Point x="4000.0" y="2800.0" Head="Arrow" />
       <Point x="4200.0" y="2350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6100.0" y="2550.0" />
+      <Point x="6100.0" y="2550.0" Head="Arrow" />
       <Point x="7350.0" y="2550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6450.0" y="2150.0" />
+      <Point x="6450.0" y="2150.0" Head="Arrow" />
       <Point x="6800.0" y="2550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="9300.0" y="2550.0" />
+      <Point x="9300.0" y="2550.0" Head="Arrow" />
       <Point x="10200.0" y="2550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="9500.0" y="3050.0" />
+      <Point x="9500.0" y="3050.0" Head="Arrow" />
       <Point x="9750.0" y="2550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="12350.0" y="2700.0" />
+      <Point x="12350.0" y="2700.0" Head="Arrow" />
       <Point x="13900.0" y="2700.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="12750.0" y="2250.0" />
+      <Point x="12750.0" y="2250.0" Head="Arrow" />
       <Point x="13250.0" y="2700.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="15600.0" y="2700.0" />
+      <Point x="15600.0" y="2700.0" Head="Arrow" />
       <Point x="16650.0" y="2700.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="15850.000000000002" y="3150.0" />
-      <Point x="16099.999999999998" y="2700.0" />
+      <Point x="15850.0" y="3150.0" Head="Arrow" />
+      <Point x="16100.0" y="2700.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="18500.0" y="2750.0" />
+      <Point x="18500.0" y="2750.0" Head="Arrow" />
       <Point x="19850.0" y="2750.0" />
     </Graphics>
   </Line>
-  <Line Type="Line" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
       <Point x="19200.0" y="3500.0" />
       <Point x="19200.0" y="3400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="19200.0" y="3100.0" />
+      <Point x="19200.0" y="3100.0" Head="Arrow" />
       <Point x="19200.0" y="2750.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="21900.0" y="2550.0" />
+      <Point x="21900.0" y="2550.0" Head="Arrow" />
       <Point x="23850.0" y="2550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="22650.0" y="3450.0" />
+      <Point x="22650.0" y="3450.0" Head="Arrow" />
       <Point x="22900.0" y="2550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="27150.0" y="3150.0" />
+      <Point x="27150.0" y="3150.0" Head="Arrow" />
       <Point x="27750.0" y="3150.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="27250.0" y="2200.0" />
+      <Point x="27250.0" y="2200.0" Head="Arrow" />
       <Point x="27400.0" y="3150.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="3200.0" y="6050.0" />
+      <Point x="3200.0" y="6050.0" Head="Arrow" />
       <Point x="4250.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="2850.0" y="5500.0" />
+      <Point x="2850.0" y="5500.0" Head="Arrow" />
       <Point x="3450.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="3800.0" y="6050.0" />
+      <Point x="3800.0" y="6050.0" Head="Arrow" />
       <Point x="4100.0" y="6650.0" />
     </Graphics>
   </Line>
-  <Line Type="Line" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
       <Point x="4250.0" y="6050.0" />
       <Point x="5000.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="9250.0" y="6600.0" />
+      <Point x="9250.0" y="6600.0" Head="Arrow" />
       <Point x="9650.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="11250.0" y="6750.0" />
+      <Point x="11250.0" y="6750.0" Head="Arrow" />
       <Point x="11700.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Line" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
       <Point x="15150.0" y="6950.0" />
-      <Point x="15550.000000000002" y="6650.0" />
+      <Point x="15550.0" y="6650.0" />
     </Graphics>
   </Line>
-  <Line Type="Line" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
       <Point x="16050.0" y="6950.0" />
-      <Point x="15550.000000000002" y="6650.0" />
+      <Point x="15550.0" y="6650.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="15550.000000000002" y="6650.0" />
-      <Point x="15550.000000000002" y="6050.0" />
+      <Point x="15550.0" y="6650.0" Head="Arrow" />
+      <Point x="15550.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="9400.0" y="6050.0" />
+      <Point x="9400.0" y="6050.0" Head="Arrow" />
       <Point x="20450.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="19200.0" y="7300.0" />
+      <Point x="19200.0" y="7300.0" Head="Arrow" />
       <Point x="19750.0" y="6050.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6100.0" y="8550.0" />
+      <Point x="6100.0" y="8550.0" Head="Arrow" />
       <Point x="7300.0" y="8550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6600.0" y="9250.0" />
+      <Point x="6600.0" y="9250.0" Head="Arrow" />
       <Point x="6950.0" y="8550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="8950.0" y="8550.0" />
+      <Point x="8950.0" y="8550.0" Head="Arrow" />
       <Point x="10250.0" y="8550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="9350.0" y="9050.0" />
+      <Point x="9350.0" y="9050.0" Head="Arrow" />
       <Point x="9550.0" y="8550.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="3400.0" y="12250.0" />
+      <Point x="3400.0" y="12250.0" Head="Arrow" />
       <Point x="4350.0" y="12250.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="3500.0" y="12800.0" />
+      <Point x="3500.0" y="12800.0" Head="Arrow" />
       <Point x="3900.0" y="12250.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="4450.0" y="12250.0" />
+      <Point x="4450.0" y="12250.0" Head="Arrow" />
       <Point x="6150.0" y="12250.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="4800.0" y="12250.0" />
+      <Point x="4800.0" y="12250.0" Head="Arrow" />
       <Point x="5050.0" y="13150.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="5350.0" y="12250.0" />
+      <Point x="5350.0" y="12250.0" Head="Arrow" />
       <Point x="5600.0" y="11850.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6550.0" y="13400.0" />
+      <Point x="6550.0" y="13400.0" Head="Arrow" />
       <Point x="8650.0" y="13400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="7300.0" y="13100.0" />
+      <Point x="7300.0" y="13100.0" Head="Arrow" />
       <Point x="7800.0" y="13400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="10950.0" y="13400.0" />
+      <Point x="10950.0" y="13400.0" Head="Arrow" />
       <Point x="11900.0" y="13400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6200.0" y="12250.0" />
+      <Point x="6200.0" y="12250.0" Head="Arrow" />
       <Point x="6900.0" y="12250.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6400.0" y="11850.0" />
+      <Point x="6400.0" y="11850.0" Head="Arrow" />
       <Point x="6500.0" y="12250.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6950.0" y="12250.0" />
+      <Point x="6950.0" y="12250.0" Head="Arrow" />
       <Point x="8850.0" y="12250.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="7300.0" y="12250.0" />
+      <Point x="7300.0" y="12250.0" Head="Arrow" />
       <Point x="7400.0" y="11950.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="8300.0" y="12250.0" />
+      <Point x="8300.0" y="12250.0" Head="Arrow" />
       <Point x="8550.0" y="11600.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="10700.0" y="11450.0" />
+      <Point x="10700.0" y="11450.0" Head="Arrow" />
       <Point x="12550.0" y="11450.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="11350.0" y="11100.0" />
+      <Point x="11350.0" y="11100.0" Head="Arrow" />
       <Point x="11850.0" y="11400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="14850.0" y="11450.0" />
-      <Point x="15850.000000000002" y="11450.0" />
+      <Point x="14850.0" y="11450.0" Head="Arrow" />
+      <Point x="15850.0" y="11450.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6000.0" y="15700.000000000002" />
+      <Point x="6000.0" y="15700.0" Head="Arrow" />
       <Point x="6100.0" y="16350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="12850.0" y="16950.0" />
+      <Point x="12850.0" y="16950.0" Head="Arrow" />
       <Point x="13000.0" y="16350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="12600.0" y="15600.0" />
-      <Point x="13100.0" y="16300.000000000002" />
+      <Point x="12600.0" y="15600.0" Head="Arrow" />
+      <Point x="13100.0" y="16300.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="6250.0" y="16350.0" />
+      <Point x="6250.0" y="16350.0" Head="Arrow" />
       <Point x="6400.0" y="16850.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="19850.0" y="16400.0" />
-      <Point x="20250.0" y="15949.999999999998" />
+      <Point x="19850.0" y="16400.0" Head="Arrow" />
+      <Point x="20250.0" y="15950.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="25750.0" y="16350.0" />
+      <Point x="25750.0" y="16350.0" Head="Arrow" />
       <Point x="27050.0" y="16350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="26050.0" y="17100.0" />
+      <Point x="26050.0" y="17100.0" Head="Arrow" />
       <Point x="26350.0" y="16400.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="5550.0" y="16350.0" />
+      <Point x="5550.0" y="16350.0" Head="Arrow" />
       <Point x="6900.0" y="16350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="12800.0" y="16350.0" />
+      <Point x="12800.0" y="16350.0" Head="Arrow" />
       <Point x="13400.0" y="16350.0" />
     </Graphics>
   </Line>
-  <Line Type="Arrow" Style="Solid">
-    <Notes></Notes>
-    <Comment></Comment>
+  <Line>
     <Graphics Color="000000">
-      <Point x="19600.0" y="16400.0" />
+      <Point x="19600.0" y="16400.0" Head="Arrow" />
       <Point x="20250.0" y="16400.0" />
     </Graphics>
   </Line>
-  <Label TextLabel="Origin">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="850.0" CenterY="2200.0" Width="770.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc3">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2950.0" CenterY="2200.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc2">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2950.0" CenterY="2450.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc5">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="5400.0" CenterY="2800.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc2">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="5400.0" CenterY="2500.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc3">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="5400.0" CenterY="2200.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc5">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11300.0" CenterY="2650.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc4">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11300.0" CenterY="2900.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11300.0" CenterY="3150.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc3">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="8350.0" CenterY="2100.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc5">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="8350.0" CenterY="2700.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc4">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="8350.0" CenterY="2950.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc2">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="8350.0" CenterY="2400.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdc6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="17600.0" CenterY="2900.0" Width="680.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdc6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20950.0" CenterY="2750.0" Width="680.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdt1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20950.0" CenterY="3100.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdt1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="19250.0" CenterY="3250.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Geminin">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="19800.0" CenterY="4250.0" Width="1025.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdc6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="2500.0" Width="680.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdt1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="2750.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm10">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="4450.0" Width="890.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdt1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="4300.0" CenterY="6950.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Phosphorylation of Mcm 2-7 complex">
-    <Notes></Notes>
-    <Comment>aided by DDK</Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="7200.0" CenterY="6050.0" Width="4310.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="DNA polymerase alpha: primase: origin complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="23500.0" CenterY="6050.0" Width="5600.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="DNA polymerase alpha: primase: origin complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="3250.0" CenterY="8550.0" Width="5600.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="CTP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6550.0" CenterY="9550.0" Width="575.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="GTP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6550.0" CenterY="9850.0" Width="575.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="UTP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6550.0" CenterY="10150.0" Width="575.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="ATP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6550.0" CenterY="10450.0" Width="560.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RNA Primer">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="8150.000000000001" CenterY="8550.0" Width="1415.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="dCTP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9250.0" CenterY="9350.0" Width="725.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="dGTP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9250.0" CenterY="9650.0" Width="725.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="dUTP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9250.0" CenterY="9950.0" Width="725.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="dATP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9250.0" CenterY="10250.0" Width="710.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Phosphorylated Orc1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="5300.0" CenterY="13400.0" Width="2510.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Ubiquitin">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="7200.0" CenterY="12950.0" Width="1115.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="ATP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6500.0" CenterY="11700.0" Width="560.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="ADP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="7450.0" CenterY="11700.0" Width="590.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Phosphorylated Cdc6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9450.0" CenterY="11450.0" Width="2570.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Ubiquitinated Orc1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9850.0" CenterY="13400.0" Width="2210.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Ubiquitinated Cdc6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="13700.0" CenterY="11450.0" Width="2270.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Degraded by proteasome in cytosol">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="14050.0" CenterY="13400.0" Width="4145.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Degraded by proteasome in cytosol">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="17950.0" CenterY="11450.0" Width="4145.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RNA primer-DNA primer">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11950.0" CenterY="8600.0" Width="2795.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RNA primer-DNA primer">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="4150.0" CenterY="16350.0" Width="2795.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="ATP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="3500.0" CenterY="13000.0" Width="560.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="ADP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="5650.0" CenterY="11650.0" Width="590.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="p49">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6400.0" CenterY="17250.0" Width="500.00000000000006" Height="285.0" />
-  </Label>
-  <Label TextLabel="p58">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6400.0" CenterY="17550.0" Width="500.00000000000006" Height="285.0" />
-  </Label>
-  <Label TextLabel="p70">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6400.0" CenterY="17850.0" Width="500.00000000000006" Height="285.0" />
-  </Label>
-  <Label TextLabel="p180">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="6400.0" CenterY="17000.0" Width="635.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC36">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20300.0" CenterY="14450.0" Width="860.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC37">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20300.0" CenterY="14750.0" Width="860.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC38">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20300.0" CenterY="15050.0" Width="860.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC40">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20300.0" CenterY="15350.0" Width="860.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC140">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20300.0" CenterY="15649.999999999998" Width="994.9999999999999" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm 4,6,7 trimer forms and associates">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11200.0" CenterY="12250.0" Width="4430.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Ubiquitin">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11150.0" CenterY="10850.0" Width="1115.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="with the replication fork">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="14850.0" CenterY="12250.0" Width="2750.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc2">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11300.0" CenterY="2350.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc3">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="11300.0" CenterY="2050.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC Heteropentamer:RNA primer-DNA primer">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="9750.0" CenterY="16350.0" Width="5300.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="ATP">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="12500.0" CenterY="15400.000000000002" Width="560.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="PCNA homotrimer">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="16200.0" CenterY="16700.0" Width="2150.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RFC Heteropentamer:RNA primer-DNA primer:">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="16400.0" CenterY="16400.0" Width="5390.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="RNA primer-DNA primer:origin duplex:PCNA">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="23050.0" CenterY="16450.0" Width="5165.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Primase">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="16350.0" CenterY="7899.999999999999" Width="1009.9999999999999" Height="285.0" />
-  </Label>
-  <Label TextLabel="DNA Polymerase">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="14250.0" CenterY="7899.999999999999" Width="2015.0000000000002" Height="285.0" />
-  </Label>
-  <Label TextLabel="a">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Symbol" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="15400.000000000002" CenterY="7899.999999999999" Width="260.0" Height="300.0" />
-  </Label>
-  <Label TextLabel="Pre-replicative complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="1700.0" CenterY="6050.0" Width="2750.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="2. Activation of the pre-replicative complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="3100.0" CenterY="4300.0" Width="5720.0" Height="315.0" />
-  </Label>
-  <Label TextLabel="3. DNA replication initiation">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="1950.0" CenterY="8049.999999999999" Width="3620.0" Height="315.0" />
-  </Label>
-  <Label TextLabel="Pre-replicative complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="2050.0" CenterY="12250.0" Width="2750.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="1. Assembly of the pre-replicative complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="3050.0" CenterY="1550.0" Width="5720.0" Height="315.0" />
-  </Label>
-  <Label TextLabel="Mcm2">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="3000.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm3">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="3250.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm4">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="3500.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="4000.0000000000005" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm7">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="4250.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc Complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="2150.0" Width="1565.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdc6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="2450.0" Width="680.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Cdt1">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="2700.0" Width="620.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm2">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="2950.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm3">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="3200.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm4">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="3450.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm6">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="3949.9999999999995" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm7">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="4200.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="4. Switching of origins to post-replicative state">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="3350.0" CenterY="11100.0" Width="6140.0" Height="315.0" />
-  </Label>
-  <Label TextLabel="5. Leading/lagging strand synthesis">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="14" Color="800000" CenterX="2550.0" CenterY="14250.0" Width="4715.0" Height="315.0" />
-  </Label>
-  <Label TextLabel="Orc complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="14750.0" CenterY="2700.0" Width="1520.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Processive complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="28550.0" CenterY="16350.0" Width="2390.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="17600.0" CenterY="2500.0" Width="1520.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="20950.0" CenterY="2350.0" Width="1520.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Orc complex">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="2200.0" Width="1520.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm5">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="25550.0" CenterY="3750.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Label TextLabel="Mcm5">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics FontName="Arial" FontWeight="Bold" FontStyle="Normal" FontDecoration="Normal" FontStrikethru="Normal" FontSize="12" Color="000000" CenterX="29300.0" CenterY="3700.0" Width="755.0" Height="285.0" />
-  </Label>
-  <Shape Type="Arc">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" Rotation="3.141593" CenterX="19200.0" CenterY="3750.0" Width="900.0" Height="450.0" />
+  <Label TextLabel="Origin" GraphId="d61">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="850.0" CenterY="2200.0" Width="770.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc3" GraphId="a63">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2950.0" CenterY="2200.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc2" GraphId="df1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2950.0" CenterY="2450.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc5" GraphId="bca">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5400.0" CenterY="2800.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc2" GraphId="e24">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5400.0" CenterY="2500.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc3" GraphId="f06">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5400.0" CenterY="2200.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc5" GraphId="f26">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11300.0" CenterY="2650.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc4" GraphId="b1b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11300.0" CenterY="2900.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc1" GraphId="aa1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11300.0" CenterY="3150.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc3" GraphId="dcb">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8350.0" CenterY="2100.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc5" GraphId="e2d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8350.0" CenterY="2700.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc4" GraphId="afd">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8350.0" CenterY="2950.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc2" GraphId="aae">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8350.0" CenterY="2400.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdc6" GraphId="f4a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="17600.0" CenterY="2900.0" Width="680.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdc6" GraphId="e18">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20950.0" CenterY="2750.0" Width="680.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdt1" GraphId="be3">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20950.0" CenterY="3100.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdt1" GraphId="c71">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="19250.0" CenterY="3250.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Geminin" GraphId="ca0">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="19800.0" CenterY="4250.0" Width="1025.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdc6" GraphId="a46">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="2500.0" Width="680.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdt1" GraphId="d1a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="2750.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm10" GraphId="b88">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="4450.0" Width="890.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdt1" GraphId="d31">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4300.0" CenterY="6950.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Phosphorylation of Mcm 2-7 complex" GraphId="cef">
+    <Comment Source="GenMAPP remarks">aided by DDK</Comment>
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7200.0" CenterY="6050.0" Width="4310.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="DNA polymerase alpha: primase: origin complex" GraphId="a9a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="23500.0" CenterY="6050.0" Width="5600.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="DNA polymerase alpha: primase: origin complex" GraphId="c32">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3250.0" CenterY="8550.0" Width="5600.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="CTP" GraphId="fb7">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6550.0" CenterY="9550.0" Width="575.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="GTP" GraphId="dbc">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6550.0" CenterY="9850.0" Width="575.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="UTP" GraphId="a10">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6550.0" CenterY="10150.0" Width="575.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="ATP" GraphId="b00">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6550.0" CenterY="10450.0" Width="560.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RNA Primer" GraphId="c4b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8150.0" CenterY="8550.0" Width="1415.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="dCTP" GraphId="b53">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9250.0" CenterY="9350.0" Width="725.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="dGTP" GraphId="f9a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9250.0" CenterY="9650.0" Width="725.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="dUTP" GraphId="b93">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9250.0" CenterY="9950.0" Width="725.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="dATP" GraphId="ab1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9250.0" CenterY="10250.0" Width="710.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Phosphorylated Orc1" GraphId="aad">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5300.0" CenterY="13400.0" Width="2510.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Ubiquitin" GraphId="a8a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7200.0" CenterY="12950.0" Width="1115.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="ATP" GraphId="d16">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6500.0" CenterY="11700.0" Width="560.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="ADP" GraphId="fc2">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7450.0" CenterY="11700.0" Width="590.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Phosphorylated Cdc6" GraphId="ddf">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9450.0" CenterY="11450.0" Width="2570.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Ubiquitinated Orc1" GraphId="df2">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9850.0" CenterY="13400.0" Width="2210.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Ubiquitinated Cdc6" GraphId="eec">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="13700.0" CenterY="11450.0" Width="2270.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Degraded by proteasome in cytosol" GraphId="a09">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14050.0" CenterY="13400.0" Width="4145.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Degraded by proteasome in cytosol" GraphId="f73">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="17950.0" CenterY="11450.0" Width="4145.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RNA primer-DNA primer" GraphId="eb2">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11950.0" CenterY="8600.0" Width="2795.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RNA primer-DNA primer" GraphId="dd1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4150.0" CenterY="16350.0" Width="2795.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="ATP" GraphId="a39">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3500.0" CenterY="13000.0" Width="560.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="ADP" GraphId="e4c">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5650.0" CenterY="11650.0" Width="590.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="p49" GraphId="b6e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6400.0" CenterY="17250.0" Width="500.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="p58" GraphId="de1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6400.0" CenterY="17550.0" Width="500.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="p70" GraphId="c5d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6400.0" CenterY="17850.0" Width="500.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="p180" GraphId="ee6">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6400.0" CenterY="17000.0" Width="635.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC36" GraphId="b47">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20300.0" CenterY="14450.0" Width="860.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC37" GraphId="a50">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20300.0" CenterY="14750.0" Width="860.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC38" GraphId="a8d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20300.0" CenterY="15050.0" Width="860.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC40" GraphId="fef">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20300.0" CenterY="15350.0" Width="860.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC140" GraphId="cd7">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20300.0" CenterY="15650.0" Width="995.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm 4,6,7 trimer forms and associates" GraphId="cd8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11200.0" CenterY="12250.0" Width="4430.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Ubiquitin" GraphId="ebe">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11150.0" CenterY="10850.0" Width="1115.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="with the replication fork" GraphId="d55">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14850.0" CenterY="12250.0" Width="2750.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc2" GraphId="a33">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11300.0" CenterY="2350.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc3" GraphId="ae8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11300.0" CenterY="2050.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC Heteropentamer:RNA primer-DNA primer" GraphId="ec5">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9750.0" CenterY="16350.0" Width="5300.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="ATP" GraphId="b78">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12500.0" CenterY="15400.0" Width="560.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="PCNA homotrimer" GraphId="a15">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="16200.0" CenterY="16700.0" Width="2150.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RFC Heteropentamer:RNA primer-DNA primer:" GraphId="e71">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="16400.0" CenterY="16400.0" Width="5390.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="RNA primer-DNA primer:origin duplex:PCNA" GraphId="a7c">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="23050.0" CenterY="16450.0" Width="5165.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Primase" GraphId="f54">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="16350.0" CenterY="7900.0" Width="1010.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="DNA Polymerase" GraphId="e8f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14250.0" CenterY="7900.0" Width="2015.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="a" GraphId="aa5">
+    <Graphics FontName="Symbol" FontWeight="Bold" FontSize="180" Color="000000" CenterX="15400.0" CenterY="7900.0" Width="260.0" Height="300.0" />
+  </Label>
+  <Label TextLabel="Pre-replicative complex" GraphId="f3b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1700.0" CenterY="6050.0" Width="2750.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="2. Activation of the pre-replicative complex" GraphId="cb9">
+    <Graphics FontWeight="Bold" FontSize="210" Color="800000" CenterX="3100.0" CenterY="4300.0" Width="5720.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="3. DNA replication initiation" GraphId="c35">
+    <Graphics FontWeight="Bold" FontSize="210" Color="800000" CenterX="1950.0" CenterY="8050.0" Width="3620.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="Pre-replicative complex" GraphId="b2f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2050.0" CenterY="12250.0" Width="2750.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="1. Assembly of the pre-replicative complex" GraphId="f4b">
+    <Graphics FontWeight="Bold" FontSize="210" Color="800000" CenterX="3050.0" CenterY="1550.0" Width="5720.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="Mcm2" GraphId="dc5">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="3000.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm3" GraphId="f09">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="3250.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm4" GraphId="d04">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="3500.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm6" GraphId="dee">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="4000.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm7" GraphId="c63">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="4250.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc Complex" GraphId="c1a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="2150.0" Width="1565.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdc6" GraphId="ce2">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="2450.0" Width="680.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Cdt1" GraphId="d28">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="2700.0" Width="620.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm2" GraphId="c7f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="2950.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm3" GraphId="ce8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="3200.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm4" GraphId="cb8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="3450.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm6" GraphId="e81">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="3950.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm7" GraphId="e1f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="4200.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="4. Switching of origins to post-replicative state" GraphId="c19">
+    <Graphics FontWeight="Bold" FontSize="210" Color="800000" CenterX="3350.0" CenterY="11100.0" Width="6140.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="5. Leading/lagging strand synthesis" GraphId="fd2">
+    <Graphics FontWeight="Bold" FontSize="210" Color="800000" CenterX="2550.0" CenterY="14250.0" Width="4715.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="Orc complex" GraphId="e61">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14750.0" CenterY="2700.0" Width="1520.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Processive complex" GraphId="f99">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="28550.0" CenterY="16350.0" Width="2390.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc complex" GraphId="bbe">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="17600.0" CenterY="2500.0" Width="1520.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc complex" GraphId="cec">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="20950.0" CenterY="2350.0" Width="1520.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Orc complex" GraphId="f2e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="2200.0" Width="1520.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm5" GraphId="a37">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="25550.0" CenterY="3750.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Mcm5" GraphId="d4c">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="29300.0" CenterY="3700.0" Width="755.0" Height="285.0" />
+  </Label>
+  <Shape Type="Arc" GraphId="c1f">
+    <Graphics FillColor="000000" Color="000000" CenterX="19200.0" CenterY="3750.0" Width="900.0" Height="450.0" Rotation="3.141593" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="2950.0" CenterY="2350.0" Width="948.6832" Height="900.0" />
+  <Shape Type="Oval" GraphId="bef">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="2950.0" CenterY="2350.0" Width="948.6832" Height="900.0" Rotation="0.2474029" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="8350.0" CenterY="2550.0" Width="1702.9386" Height="1503.3296" />
+  <Shape Type="Oval" GraphId="a7d">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="8350.0" CenterY="2550.0" Width="1702.9386" Height="1503.3296" Rotation="0.0" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="11250.0" CenterY="2600.0" Width="1800.0" Height="1600.0" />
+  <Shape Type="Oval" GraphId="f14">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="11250.0" CenterY="2600.0" Width="1800.0" Height="1600.0" Rotation="0.0" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="5400.0" CenterY="2450.0" Width="1264.911" Height="1303.8404" />
+  <Shape Type="Oval" GraphId="f91">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5400.0" CenterY="2450.0" Width="1264.911" Height="1303.8404" Rotation="0.2474029" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.2474029" CenterX="19800.0" CenterY="4500.0" Width="1264.911" Height="1303.8404" />
+  <Shape Type="Oval" GraphId="eff">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="19800.0" CenterY="4500.0" Width="1264.911" Height="1303.8404" Rotation="0.2474029" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="25600.0" CenterY="3200.0" Width="2953.812" Height="2750.454" />
+  <Shape Type="Oval" GraphId="c13">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="25600.0" CenterY="3200.0" Width="2953.812" Height="2750.454" Rotation="0.0" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="9850.0" CenterY="16350.0" Width="5800.862" Height="600.0" />
+  <Shape Type="Brace" GraphId="a12">
+    <Graphics FillColor="000000" Color="000000" CenterX="15050.0" CenterY="7750.0" Width="800.0" Height="130.0" Rotation="3.141592653589793" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="16500.0" CenterY="16400.0" Width="6100.0" Height="1200.0" />
+  <Shape Type="Brace" GraphId="ef0">
+    <Graphics FillColor="000000" Color="000000" CenterX="16250.0" CenterY="7750.0" Width="800.0" Height="130.0" Rotation="3.141592653589793" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="23050.0" CenterY="16400.0" Width="5200.962" Height="1104.5362" />
+  <Shape Type="Oval" GraphId="d95">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="9850.0" CenterY="16350.0" Width="5800.862" Height="600.0" Rotation="0.0" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="17600.0" CenterY="2700.0" Width="1800.1796" Height="1400.0" />
+  <Shape Type="Oval" GraphId="f84">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="16500.0" CenterY="16400.0" Width="6100.0" Height="1200.0" Rotation="0.0" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="20950.0" CenterY="2650.0" Width="1800.0" Height="1600.0" />
+  <Shape Type="Oval" GraphId="bc0">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="23050.0" CenterY="16400.0" Width="5200.962" Height="1104.5362" Rotation="0.0" />
   </Shape>
-  <Shape Type="Oval">
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="Transparent" Rotation="0.0" CenterX="29300.0" CenterY="3250.0" Width="2953.812" Height="2750.454" />
+  <Shape Type="Oval" GraphId="eaa">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="17600.0" CenterY="2700.0" Width="1800.1796" Height="1400.0" Rotation="0.0" />
   </Shape>
-  <Brace>
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="15050.0" CenterY="7749.999999999999" Width="800.0" PicPointOffset="130.0" Orientation="right" />
-  </Brace>
-  <Brace>
-    <Notes></Notes>
-    <Comment></Comment>
-    <Graphics Color="000000" CenterX="16249.999999999998" CenterY="7749.999999999999" Width="800.0" PicPointOffset="130.0" Orientation="right" />
-  </Brace>
+  <Shape Type="Oval" GraphId="e5a">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="20950.0" CenterY="2650.0" Width="1800.0" Height="1600.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" GraphId="e6f">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="29300.0" CenterY="3250.0" Width="2953.812" Height="2750.454" Rotation="0.0" />
+  </Shape>
   <InfoBox CenterX="23.5" CenterY="82.5" />
   <Legend CenterX="26050.0" CenterY="7050.0" />
 </Pathway>

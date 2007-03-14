@@ -576,8 +576,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
 					newPctZoomFactor = (int)Math.min(
-							drawing.getZoomFactor() * 100 * (double)shellSize.x / drawingSize.x,
-							drawing.getZoomFactor() * 100 * (double)shellSize.y / drawingSize.y
+							drawing.getPctZoom() * (double)shellSize.x / drawingSize.x,
+							drawing.getPctZoom() * (double)shellSize.y / drawingSize.y
 					);
 				} 
 				drawing.setPctZoom(newPctZoomFactor);

@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
 import preferences.GmmlPreferences;
+import data.GmmlData;
 import data.GmmlDataObject;
 import data.GmmlEvent;
 import data.GmmlListener;
@@ -119,5 +120,12 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	public double getVWidthDouble() { return vFromM(gdata.getMWidth());  }
 	public double getVTopDouble() { return vFromM(gdata.getMTop()); }
 	public double getVHeightDouble() { return vFromM(gdata.getMHeight()); }
+	
+	protected void destroy() {
+		super.destroy();
+		gdata.removeListener(canvas);
+		GmmlData parent = gdata.getParent();
+		if(parent != null) parent.remove(gdata);
+	}
 	
 }

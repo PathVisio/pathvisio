@@ -102,7 +102,15 @@ class GmmlHandle extends GmmlDrawingObject
 		mCentery = my;
 		markDirty();
 	}
-
+	
+	public double getVCenterX() {
+		return vFromM(mCenterx);
+	}
+	
+	public double getVCenterY() {
+		return vFromM(mCentery);
+	}
+	
 	/**
 	 * returns the visibility of this handle
 	 * @see hide(), show()

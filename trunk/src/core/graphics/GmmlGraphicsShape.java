@@ -19,6 +19,8 @@ package graphics;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
@@ -28,7 +30,8 @@ import util.SwtUtils;
 import util.LinAlg.Point;
 import data.GmmlDataObject;
 import data.GmmlEvent;
-import data.GraphLink;
+import data.GmmlDataObject.MPoint;
+import data.GraphLink.GraphRefContainer;
 
 /**
  * This is an {@link GmmlGraphics} class representing shapelike forms,
@@ -94,7 +97,14 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
 		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
 		//Move graphRefs
-		GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
+		//GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
+		Set<VPoint> toMove = new HashSet<VPoint>();
+		for(GraphRefContainer ref : gdata.getReferences()) {
+			if(ref instanceof MPoint) {
+				toMove.add(canvas.getPoint((MPoint)ref));
+			}
+		}
+		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
 	}
 
 	public void setVScaleRectangle(Rectangle2D.Double r) {
@@ -132,7 +142,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	/**
 	 * Translate the given point to internal coordinate system
 	 * (origin in center and axis direction rotated with this objects rotation
-	 * @param Point p
+	 * @param MPoint p
 	 */
 	private Point mToInternal(Point p) {
 		Point pt = mRelativeToCenter(p);
@@ -143,7 +153,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	/**
 	 * Translate the given point to external coordinate system (of the
 	 * drawing canvas)
-	 * @param Point p
+	 * @param MPoint p
 	 */
 	private Point mToExternal(Point p) {
 		Point pr = LinAlg.rotate(p, -gdata.getRotation());

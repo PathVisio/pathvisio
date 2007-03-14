@@ -255,5 +255,17 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * helper method to convert view coordinates to model coordinates 
 	 * */
 	protected double vFromM(double m) { return canvas.vFromM(m); } 
+	
+	protected void destroyHandles() {
+		for(GmmlHandle h : getHandles()) {
+			h.destroy();
+		}
+	}
+	
+	protected void destroy() { 
+		//Remove from canvas
+		canvas.getDrawingObjects().remove(this);
+		destroyHandles();
+	}
 
 }

@@ -8,7 +8,8 @@ public abstract class GraphLink {
 	public interface GraphIdContainer {
 		String getGraphId();
 		void setGraphId(String id);
-		Set<GraphRefContainer> getStickyPoints();
+		String setGeneratedGraphId();
+		Set<GraphRefContainer> getReferences();
 	}
 	
 	public interface GraphRefContainer {
@@ -17,11 +18,11 @@ public abstract class GraphLink {
 		void moveBy(double dx, double dy);
 	}
 	
-	public static void moveRefsBy(GraphIdContainer idc, double dx, double dy) {
-		for(GraphRefContainer refc : idc.getStickyPoints()) {
-			refc.moveBy(dx, dy);
-		}
-	}
+//	public static void moveRefsBy(GraphIdContainer idc, double dx, double dy) {
+//		for(GraphRefContainer refc : idc.getStickyPoints()) {
+//			refc.moveBy(dx, dy);
+//		}
+//	}
 	
 	protected static void setGraphId(String v, GraphIdContainer c, GmmlDataObject gd) {
 		GmmlData data = gd.getParent();
@@ -42,7 +43,7 @@ public abstract class GraphLink {
 		}
 	}
 	
-	public static Set<GraphRefContainer> getStickyPoints(GraphIdContainer gid, GmmlData gd) {
+	public static Set<GraphRefContainer> getReferences(GraphIdContainer gid, GmmlData gd) {
 		Set<GraphRefContainer> result = 
 			new HashSet<GraphRefContainer>();
 

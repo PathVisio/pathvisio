@@ -59,6 +59,7 @@ import data.LineType;
 import data.ObjectType;
 import data.OrientationType;
 import data.ShapeType;
+import data.GmmlDataObject.MPoint;
 
 /**
  * This class implements and handles a drawing.
@@ -232,6 +233,32 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		
 	}
 
+	HashMap<MPoint, VPoint> pointsMtoV = new HashMap<MPoint, VPoint>();
+	protected VPoint getPoint(MPoint mPoint) {
+		VPoint p = pointsMtoV.get(mPoint);
+		if(p == null) {
+			p = newPoint(mPoint);
+		}
+		return p;
+	}
+	
+	
+	private VPoint newPoint(MPoint mPoint) {
+		VPoint p = null;
+		for(MPoint ep : mPoint.getEqualPoints()) {
+			p = pointsMtoV.get(ep);
+			if(p != null) {
+				p.addMPoint(mPoint);
+				pointsMtoV.put(mPoint, p);
+				break;
+			}
+		}
+		if(p == null) p = new VPoint(this);
+		p.addMPoint(mPoint);
+		pointsMtoV.put(mPoint, p);
+		return p;
+	}
+	
 	/**
 	 * Get the gene identifiers of all genes in this pathway
 	 * @return	List containing an identifier for every gene on the mapp
@@ -352,30 +379,40 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			vPreviousX = ve.x;
 			vPreviousY = ve.y;
 			
-			if (pressedObject instanceof GmmlHandle && altPressed &&
-					((GmmlHandle)pressedObject).parent instanceof GmmlLine)
+			if (pressedObject instanceof GmmlHandle && altPressed && newGraphics == NEWNONE &&
+					((GmmlHandle)pressedObject).parent instanceof VPoint)
 			{
 				resetHighlight();
 				Point2D p2d = new Point2D.Double(ve.x, ve.y);
 				List<GmmlDrawingObject> objects = getObjectsAt (p2d);
 				Collections.sort(objects);
 				GmmlHandle g = (GmmlHandle)pressedObject;
-				GmmlLine l = (GmmlLine)g.parent;
+				VPoint p = (VPoint)g.parent;
 				GmmlDrawingObject x = null;
 				for (GmmlDrawingObject o : objects)
 				{
-					if (o instanceof GmmlGraphicsShape && o != l)
-					{
+					if (o instanceof VPoint && o != p) {
 						x = o;
-						l.link(g, (GmmlGraphicsShape)o);
-					}
+						p.link((VPoint)o);
+						break;
+					} else if(o instanceof GmmlGraphics && !(o instanceof GmmlLine)) {
+						x = o;
+						p.link((GmmlGraphics)o);
+						break;
+					} 
 				}
 				if(x != null) x.highlight();
-				
 			}
 			redrawDirtyRect();
 		}
 	}
+	
+	public void selectObject(GmmlDrawingObject o) {
+		clearSelection();
+		lastAdded.select();
+		s.addToSelection(lastAdded);
+	}
+	
 	/**
 	 * Handles mouse Pressed input
 	 */
@@ -715,7 +752,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LINE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
@@ -728,7 +765,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.ARROW);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
@@ -741,7 +778,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.LINE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
@@ -754,7 +791,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.ARROW);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLABEL:
@@ -847,7 +884,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.TBAR);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
@@ -860,7 +897,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_ROUND);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
@@ -873,7 +910,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_SQUARE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
@@ -886,7 +923,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_ROUND);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
@@ -899,15 +936,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_SQUARE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getHandleEnd();
+			h = ((GmmlLine)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		}
 		
 		newObject = gdata;
-		clearSelection();
-		lastAdded.select();
-		s.addToSelection(lastAdded);
+		selectObject(lastAdded);
 		pressedObject = h;
 		
 		vPreviousX = ve.x;
@@ -972,14 +1007,28 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 	
 	private void insertPressed() {
-		ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
-		for(GmmlDrawingObject o : s.getSelection()) {
+		Set<GmmlDrawingObject> objects = new HashSet<GmmlDrawingObject>();
+		objects.addAll(s.getSelection());
+		for(GmmlDrawingObject o : objects) {
 			if(o instanceof GmmlLine) {
-				((GmmlGraphics)o).gdata.splitLine();
-				toRemove.add(o);
+				GmmlDataObject g = ((GmmlLine)o).getGmmlData();
+				GmmlDataObject[] gNew = g.splitLine();
+							
+				removeDrawingObject(o); //Remove the old line
+				
+				//Clear refs on middle point (which is new)
+				gNew[0].getMEnd().setGraphRef(null);
+				gNew[1].getMStart().setGraphRef(null);
+				
+				gNew[1].setGraphId(data.getUniqueId());
+				data.add(gNew[0]);
+				GmmlLine l1 = (GmmlLine)lastAdded;
+				data.add(gNew[1]);
+				GmmlLine l2 = (GmmlLine)lastAdded;				
+				
+				l1.getEnd().link(l2.getStart());
 			}
 		}
-		removeDrawingObjects(toRemove);
 		s.addToSelection(lastAdded);
 	}
 
@@ -1003,10 +1052,6 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			{
 				if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
 				toRemove.add(o);
-				if(o instanceof GmmlGraphics) //Also add handles
-				{
-					for(GmmlHandle h : ((GmmlGraphics)o).getHandles()) toRemove.add(h);
-				}
 			}
 			removeDrawingObjects(toRemove);
 		}
@@ -1027,13 +1072,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 	
 	public void removeDrawingObject(GmmlDrawingObject toRemove) {
-		drawingObjects.remove(toRemove); //Remove from drawing
+		toRemove.destroy(); //Object will remove itself from the drawing
 		s.removeFromSelection(toRemove); //Remove from selection
-		if(toRemove instanceof GmmlGraphics) {
-			GmmlGraphics g = (GmmlGraphics)toRemove;
-			GmmlVision.getGmmlData().remove(g.getGmmlData());
-			g.getGmmlData().removeListener(this);
-		}
 	}
 
 	GmmlGraphics lastAdded = null;

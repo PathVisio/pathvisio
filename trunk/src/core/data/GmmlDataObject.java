@@ -18,6 +18,7 @@ package data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class GmmlDataObject implements GraphIdContainer
 		public String comment;
 	}
 	
-	public class Point implements Cloneable, GraphIdContainer, GraphRefContainer
+	public class MPoint implements Cloneable, GraphIdContainer, GraphRefContainer
 	{
 		private double x;
 		private double y;
@@ -71,8 +72,8 @@ public class GmmlDataObject implements GraphIdContainer
 		private String graphRef;
 		private String graphId;
 				
-		Point (double _x, double _y) { x = _x; y = _y; }
-		Point (Point p) {
+		MPoint (double _x, double _y) { x = _x; y = _y; }
+		MPoint (MPoint p) {
 			x = p.x;
 			y = p.y;
 			if(p.graphRef != null) graphRef = new String(p.graphRef);
@@ -85,6 +86,12 @@ public class GmmlDataObject implements GraphIdContainer
 			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
 		}
 		
+		public void moveTo(MPoint p) {
+			x = p.x;
+			y = p.y;
+			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+		}
+		
 		public void setX(double nx) {
 			if(nx != x) moveBy(nx - x, 0);
 		}
@@ -93,14 +100,24 @@ public class GmmlDataObject implements GraphIdContainer
 			if(ny != y) moveBy(0, ny - y);
 		}
 		
-		public String getGraphId() { return graphId; }
+		public double getX() { return x; }
+		public double getY() { return y; }
+				
+		public String getGraphId() { 
+			return graphId;
+		}
+		
+		public String setGeneratedGraphId() {
+			setGraphId(parent.getUniqueId());
+			return graphId;
+		}
 		
 		public void setGraphId (String v) { 
 			GraphLink.setGraphId(v, this, GmmlDataObject.this);
 			graphId = v;
 			fireObjectModifiedEvent(new GmmlEvent (GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
 		}
-				
+					
 		public String getGraphRef() { return graphRef; }
 
 		/**
@@ -112,7 +129,7 @@ public class GmmlDataObject implements GraphIdContainer
 		 */
 		public void setGraphRef (String v) 
 		{ 
-			if (graphRef != v && v != null && !v.equals(""))
+			if (graphRef != v)
 			{
 				if (parent != null)
 				{
@@ -130,17 +147,29 @@ public class GmmlDataObject implements GraphIdContainer
 			}
 		}
 
+		public Set<MPoint> getEqualPoints() {
+			Set<MPoint> links = new HashSet<MPoint>();
+			for(GmmlDataObject o : parent.getDataObjects()) {
+				if(o != GmmlDataObject.this && o.objectType == ObjectType.LINE) {
+					for(MPoint p : o.getMPoints()) {
+						if(x == p.x && y == p.y) links.add(p);
+					}
+				}
+			}
+			links.add(this); //equal to itself
+			return links;
+		}
 		
 		public Object clone() throws CloneNotSupportedException
 		{
-			Point p = (Point)super.clone();
+			MPoint p = (MPoint)super.clone();
 			if(graphId != null) p.graphId = new String(graphId);
 			if(graphRef != null) p.graphRef = new String(graphRef);
 			return p;
 		}
 
-		public Set<GraphRefContainer> getStickyPoints() {
-			return GraphLink.getStickyPoints(this, parent);
+		public Set<GraphRefContainer> getReferences() {
+			return GraphLink.getReferences(this, parent);
 		}
 
 	}
@@ -186,7 +215,7 @@ public class GmmlDataObject implements GraphIdContainer
 		{
 			if (parent != null)
 			{
-				for(Point p : mPoints) {
+				for(MPoint p : mPoints) {
 					if (p.getGraphRef() != null)
 					{
 						parent.removeRef(p.getGraphRef(), p);
@@ -200,7 +229,7 @@ public class GmmlDataObject implements GraphIdContainer
 			parent = v;
 			if (v != null)
 			{
-				for(Point p : mPoints) {
+				for(MPoint p : mPoints) {
 					if(p.getGraphRef() != null) {
 						v.addRef(p.getGraphRef(), p);
 					}
@@ -481,10 +510,10 @@ public class GmmlDataObject implements GraphIdContainer
 		organism = src.organism;
 		rotation = src.rotation;
 		shapeType = src.shapeType;
-		mPoints = new ArrayList<Point>();
-		for (Point p : src.mPoints)
+		mPoints = new ArrayList<MPoint>();
+		for (MPoint p : src.mPoints)
 		{
-				mPoints.add(new Point(p));
+				mPoints.add(new MPoint(p));
 		}
 		comments = new ArrayList<Comment>();
 		for (Comment c : src.comments)
@@ -539,12 +568,20 @@ public class GmmlDataObject implements GraphIdContainer
 	}
 	
 	// only for lines:	
-	private Point[] defaultPoints = {new Point(0,0), new Point(0,0)};
-	private List<Point> mPoints = Arrays.asList(defaultPoints);
+	private MPoint[] defaultPoints = {new MPoint(0,0), new MPoint(0,0)};
+	private List<MPoint> mPoints = Arrays.asList(defaultPoints);
 	
-	public Point getMStart() { return mPoints.get(0); }
-	public Point getMEnd() { return mPoints.get(mPoints.size() - 1); }
-	public List<Point> getMPoints() { return mPoints; }
+	public MPoint getMStart() { return mPoints.get(0); }
+	public void setMStart(MPoint p) {
+		getMStart().moveTo(p);
+	}
+	
+	public MPoint getMEnd() { return mPoints.get(mPoints.size() - 1); }
+	public void setMEnd(MPoint p) {
+		getMEnd().moveTo(p);
+	}
+	
+	public List<MPoint> getMPoints() { return mPoints; }
 	
 	public double getMStartX() 
 	{ 
@@ -1116,7 +1153,14 @@ public class GmmlDataObject implements GraphIdContainer
 	
 	protected String graphId;
 	
-	public String getGraphId() { return graphId; }
+	public String doGetGraphId() {
+		return graphId; 
+	}
+	
+	public String getGraphId() {
+		return graphId;
+	}
+	
 	/**
 	 * Set graphId. This id must be any string unique within the GmmlData object 
 	 * 
@@ -1128,13 +1172,18 @@ public class GmmlDataObject implements GraphIdContainer
 		graphId = v;
 		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
 	}
+	
+	public String setGeneratedGraphId() {
+		setGraphId(parent.getUniqueId());
+		return graphId;
+	}
 			
 	public String getStartGraphRef() {
 		return mPoints.get(0).getGraphRef();
 	}
 	
 	public void setStartGraphRef(String ref) {
-		Point start = mPoints.get(0);
+		MPoint start = mPoints.get(0);
 		start.setGraphRef(ref);
 	}
 	
@@ -1143,7 +1192,7 @@ public class GmmlDataObject implements GraphIdContainer
 	}
 	
 	public void setEndGraphRef(String ref) {
-		Point end = mPoints.get(mPoints.size() - 1);
+		MPoint end = mPoints.get(mPoints.size() - 1);
 		end.setGraphRef(ref);
 	}
 	
@@ -1162,17 +1211,6 @@ public class GmmlDataObject implements GraphIdContainer
 		l2.setMStartY(centerY);
 		l2.setMEndX(getMEndX());
 		l2.setMEndY(getMEndY());
-		
-		parent.add(l1);
-		parent.add(l2);
-		
-		String id1 = parent.getUniqueId();
-		l1.getMEnd().setGraphId(id1);
-		l2.getMStart().setGraphRef(id1);
-		String id2 = parent.getUniqueId();
-		l2.getMStart().setGraphId(id2);
-		l1.getMEnd().setGraphRef(id2);
-
 		return new GmmlDataObject[] { l1, l2 };
 	}
 	
@@ -1230,7 +1268,7 @@ public class GmmlDataObject implements GraphIdContainer
 		}
 	}
 	
-	public Set<GraphRefContainer> getStickyPoints() {
-		return GraphLink.getStickyPoints(this, parent);
+	public Set<GraphRefContainer> getReferences() {
+		return GraphLink.getReferences(this, parent);
 	}
 }

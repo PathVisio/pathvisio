@@ -213,7 +213,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
 			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
-			fd.setHeight((int)Math.ceil(fd.getHeight() * GmmlVision.getDrawing().getZoomFactor()));
+			fd.setHeight((int)Math.ceil(GmmlVision.getDrawing().vFromM(fd.getHeight()) * 15)); //TODO: get rid of 15
 		}
 		return fd;
 	}
@@ -323,9 +323,9 @@ public class LabelPlugin extends VisualizationPlugin {
 	
 	private String getLabelText(GmmlGeneProduct g) {
 		switch(style) {
-		case STYLE_ID: 		return g.getGmmlData().getTextLabel();
+		case STYLE_ID: 		return g.getGmmlData().getGeneID();
 		case STYLE_SYMBOL:
-		default:			return g.getGmmlData().getGeneID();
+		default:			return g.getGmmlData().getTextLabel();
 		}
 	}
 

@@ -399,7 +399,7 @@ public class GpmlFormat
     	o.setMEndX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p2)));
     	o.setMEndY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p2))); 
     	
-    	String ref2 = p2.getAttributeValue("GraphRef", e.getNamespace());
+    	String ref2 = getAttribute("Line.Graphics.Point", "GraphRef", p2);
     	if (ref2 == null) ref2 = "";
     	o.setEndGraphRef (ref2);
 
@@ -421,7 +421,7 @@ public class GpmlFormat
 			setAttribute("Line.Graphics.Point", "x", p1, Double.toString(o.getMStartX()));
 			setAttribute("Line.Graphics.Point", "y", p1, Double.toString(o.getMStartY()));
 			setAttribute("Line.Graphics.Point", "Head", p1, o.getLineType().getGpmlName());
-			if (o.getStartGraphRef() != null)
+			if (o.getStartGraphRef() != null && !o.getStartGraphRef().equals(""))
 			{
 				setAttribute("Line.Graphics.Point", "GraphRef", p1, o.getStartGraphRef());
 			}
@@ -429,7 +429,7 @@ public class GpmlFormat
 			jdomGraphics.addContent(p2);
 			setAttribute("Line.Graphics.Point", "x", p2, Double.toString(o.getMEndX()));
 			setAttribute("Line.Graphics.Point", "y", p2, Double.toString(o.getMEndY()));
-			if (o.getEndGraphRef() != null)
+			if (o.getEndGraphRef() != null && !o.getEndGraphRef().equals(""))
 			{
 				setAttribute("Line.Graphics.Point", "GraphRef", p2, o.getEndGraphRef());
 			}

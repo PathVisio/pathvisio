@@ -796,8 +796,8 @@ public class GmmlDataObject implements GraphIdContainer
 	public String getSystemCode()
 	{
 		String systemCode = "";
-		if(MappFormat.sysName2Code.containsKey(dataSource)) 
-			systemCode = MappFormat.sysName2Code.get(dataSource);
+		if(DataSources.sysName2Code.containsKey(dataSource)) 
+			systemCode = DataSources.sysName2Code.get(dataSource);
 		return systemCode;
 	}
 	 

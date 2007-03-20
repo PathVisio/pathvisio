@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 
 import util.SwtUtils;
+import data.DataSources;
 import data.GmmlDataObject;
 import data.MappFormat;
 
@@ -69,8 +70,8 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	public String getSystemCode()
 	{
 		String systemCode = "";
-		if(MappFormat.sysName2Code.containsKey(gdata.getDataSource())) 
-			systemCode = MappFormat.sysName2Code.get(gdata.getDataSource());
+		if(DataSources.sysName2Code.containsKey(gdata.getDataSource())) 
+			systemCode = DataSources.sysName2Code.get(gdata.getDataSource());
 		return systemCode;
 	}
 	

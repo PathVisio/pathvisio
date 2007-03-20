@@ -29,9 +29,9 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import data.DataSources;
 import data.GmmlGdb;
 import data.GmmlGex;
-import data.MappFormat;
 import data.GmmlGdb.IdCodePair;
 
 /**
@@ -121,8 +121,9 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 			String idtxt = cr.getId();
 			String url = getCrossRefLink(cr);
 			if(url != null)
-				idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
-			String dbName = MappFormat.sysCode2Name.get(cr.getCode());
+//				idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
+				idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
+			String dbName = DataSources.sysCode2Name.get(cr.getCode());
 			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getCode()) + "<br>");
 		}
 		return crt.toString();
@@ -180,6 +181,30 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 			else {
 				return null;
 			}
+		}
+		if (c.equalsIgnoreCase("Nw"))
+		{
+			return "http://nugowiki.org/index.php/" + id;
+		}
+		if (c.equalsIgnoreCase("Ca"))
+		{
+			return "http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=" + id;
+		}
+		if (c.equalsIgnoreCase("Cp"))
+		{
+			return "http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=" + id;
+		}
+		if (c.equalsIgnoreCase("Ce"))
+		{
+			return "http://www.ebi.ac.uk/chebi/searchId=CHEBI:" + id;
+		}
+		if (c.equalsIgnoreCase("Ch"))
+		{
+			return "http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD=" + id + ".txt";
+		}
+		if (c.equalsIgnoreCase("Ck"))
+		{
+			return "http://www.genome.jp/dbget-bin/www_bget?cpd:" + id;
 		}
 		return null;
 	}

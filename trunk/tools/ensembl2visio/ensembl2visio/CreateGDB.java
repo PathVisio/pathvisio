@@ -35,22 +35,22 @@ public class CreateGDB {
 			System.out.println("No commandline options specified, using in-code setting");
 			String dbname = dbfiles[4];
 			String file = dbname + ".txt";
-//			GDBMaker gdbMaker = new HsqldbGDBMaker(file, dbname);
-//			GDBMaker gdbMaker = new H2GDBMaker(file, dbname);
-			GDBMaker gdbMaker = new DerbyGDBMaker(file, dbname);
-			gdbMaker.toGDB();
+//			GDBMaker gdbMaker = new HsqldbGDBMaker(dbname);
+//			GDBMaker gdbMaker = new H2GDBMaker(dbname);
+			GDBMaker gdbMaker = new DerbyGDBMaker(dbname);
+			gdbMaker.toGDB(file);
 		} else { //TODO: neat commandline options
 			String txt = args[0];
 			String dbname = args[1];
 			String dbtype = args[2];
 			GDBMaker gdbMaker = null;
 			if		(dbtype.equals("derby")) 
-				gdbMaker = new DerbyGDBMaker(txt, dbname);
+				gdbMaker = new DerbyGDBMaker(dbname);
 			else if	(dbtype.equals("hsqldb")) 
-				gdbMaker = new HsqldbGDBMaker(txt, dbname);
+				gdbMaker = new HsqldbGDBMaker(dbname);
 			else if	(dbtype.equals("h2")) 
-				gdbMaker = new H2GDBMaker(txt, dbname);
-			if(gdbMaker != null) gdbMaker.toGDB();
+				gdbMaker = new H2GDBMaker(dbname);
+			if(gdbMaker != null) gdbMaker.toGDB(txt);
 		}
 		
 	}

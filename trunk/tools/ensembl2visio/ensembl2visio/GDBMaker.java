@@ -45,14 +45,12 @@ public abstract class GDBMaker {
     Connection con;
       
     String dbName;
-    String txtFile;
     
     Logger logInfo;
     Logger logError;
     
-    public GDBMaker(String txtFile, String dbName) {
+    public GDBMaker(String dbName) {
     	this.dbName = dbName;
-    	this.txtFile = txtFile;
     	setLoggers();
     }
 
@@ -63,13 +61,13 @@ public abstract class GDBMaker {
     	}
     }
     
-    public void toGDB() {
+    public void toGDB(String txtFile) {
     	createGDBFromTxt(txtFile, getDbName());
     }
     
     PreparedStatement pstGene;
     PreparedStatement pstLink;
-    
+
     void createGDBFromTxt(String file, String dbname) {
     	StopWatch timer = new StopWatch();
     	info("Timer started");
@@ -142,7 +140,7 @@ public abstract class GDBMaker {
     		info("Creating indices");
     		createIndices();
     		
-    		info("Compacing database");
+    		info("Compacting database");
     		compact();
 		}
 		catch (Exception e) {
@@ -282,6 +280,7 @@ public abstract class GDBMaker {
     }
             
     public abstract void connect() throws ClassNotFoundException, SQLException;
+    public abstract void connect(boolean create) throws ClassNotFoundException, SQLException;
     
     public void close() {
     	try {
@@ -394,5 +393,5 @@ public abstract class GDBMaker {
 	
 	final static int ENS_CODE = 3;
 	final static int SGD_CODE = 15;
-	final static long PROGRESS_INTERVAL = 10000;
+	final static long PROGRESS_INTERVAL = 100;
 }

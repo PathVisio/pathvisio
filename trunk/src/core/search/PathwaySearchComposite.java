@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 import preferences.GmmlPreferences;
 import search.SearchMethods.SearchException;
 import util.SwtUtils.SimpleRunnableWithProgress;
-import data.MappFormat;
+import data.DataSources;
 
 public class PathwaySearchComposite extends Composite {
 
@@ -205,7 +205,7 @@ public class PathwaySearchComposite extends Composite {
 				Label systemLabel = new Label(parent, SWT.CENTER);
 				systemLabel.setText("Id system:");
 				final Combo systemCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY);
-				systemCombo.setItems(MappFormat.dataSources);
+				systemCombo.setItems(DataSources.dataSources);
 				systemCombo.setLayoutData(span2cols);
 				
 				Label dirLabel = new Label(parent, SWT.CENTER);
@@ -223,7 +223,7 @@ public class PathwaySearchComposite extends Composite {
 					public void widgetSelected(SelectionEvent e) {
 						String id = idText.getText();
 						int codeIndex = systemCombo.getSelectionIndex();
-						String code =  codeIndex == -1 ? "" : MappFormat.systemCodes[codeIndex];
+						String code =  codeIndex == -1 ? "" : DataSources.systemCodes[codeIndex];
 						String folder = dirText.getText();
 						if(id.equals("") || code.equals("") || folder.equals("")) {
 							MessageDialog.openError(getShell(), "error", "please specify id, code and pathway folder"); 

@@ -25,6 +25,7 @@ import util.SuggestCellEditor;
 import util.SuggestCombo;
 import util.SuggestCombo.SuggestionListener;
 import util.SuggestCombo.SuggestionProvider;
+import data.DataSources;
 import data.GmmlDataObject;
 import data.GmmlGdb;
 import data.MappFormat;
@@ -180,7 +181,7 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 	
 			while(r.next()) {
 				String sysCode = r.getString("code");
-				String sysName = MappFormat.sysCode2Name.get(sysCode);
+				String sysName = DataSources.sysCode2Name.get(sysCode);
 				
 				AutoFillData adf = null;
 				switch(type) {
@@ -232,7 +233,7 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 			if(id == null) id = (String)o.getProperty(PropertyType.GENEID);
 			if(sysName == null) sysName = (String)o.getProperty(PropertyType.SYSTEMCODE);
 			
-			String code = sysName == null ? null : MappFormat.sysName2Code.get(sysName);
+			String code = sysName == null ? null : DataSources.sysName2Code.get(sysName);
 			
 			//Guess symbol
 			if(id != null && code != null) {

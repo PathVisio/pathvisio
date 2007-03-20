@@ -361,7 +361,7 @@ public abstract class GmmlGdb {
 		}
 
 		public String getDatabaseName() {
-			String name = MappFormat.sysCode2Name.get(getCode());
+			String name = DataSources.sysCode2Name.get(getCode());
 			return name == null ? getCode() : name;
 		}
 	}

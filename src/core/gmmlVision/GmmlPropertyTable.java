@@ -259,7 +259,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				comboBoxEditor.setItems(shape_names);
 				return comboBoxEditor;
 			case DATASOURCE:			
-				comboBoxEditor.setItems(MappFormat.dataSources);
+				comboBoxEditor.setItems(DataSources.dataSources);
 				return comboBoxEditor;
 			case ORIENTATION:
 				comboBoxEditor.setItems(orientation_names);
@@ -333,7 +333,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				case COLOR: 
 					return (RGB)value;	
 				case DATASOURCE:
-					return MappFormat.lDataSources.indexOf((String)value);				
+					return DataSources.lDataSources.indexOf((String)value);				
 				// for all combobox types:
 				case BOOLEAN:
 					return ((Boolean)value) ? 1 : 0;
@@ -419,7 +419,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				}
 			case DATASOURCE:
 				if((Integer)value == -1) return; //Nothing selected
-				value = MappFormat.lDataSources.get((Integer)value);
+				value = DataSources.lDataSources.get((Integer)value);
 				break;
 			case BOOLEAN:
 				if ((Integer)value == 0)

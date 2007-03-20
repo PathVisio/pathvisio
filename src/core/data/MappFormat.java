@@ -145,22 +145,6 @@ public class MappFormat
 	static final int colLinks = 16;
 	static final int colNotes = 17;
 
-    public final static String[] systemCodes = 
-	{ 
-	"D", "F", "G", "I", "L", "M",
-	"Q", "R", "S", "T", "U",
-	"W", "Z", "X", "En", "Em", 
-	"H", "Om", "Pd", "Pf", "O", ""
-	};
-
-    public final static String[] dataSources = 
-	{
-	"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
-	"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
-	"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
-	"HUGO", "OMIM", "PDB", "Pfam", "Other", ""
-	};
-
     /**
      * MAPPTmpl.gtp is a template access database for newly generated
      * mapp's. This file should be
@@ -735,7 +719,7 @@ public class MappFormat
     {    	
     	mappObject[colType] = "Gene";
     	mappObject[colSystemCode] =
-			mapBetween (dataSources, systemCodes, 
+			mapBetween (DataSources.dataSources, DataSources.systemCodes, 
 					o.getDataSource());
 
 		mappObject[colHead] = o.getBackpageHead();
@@ -754,7 +738,7 @@ public class MappFormat
     	syscode = syscode.trim();
     	
         o.setDataSource(mapBetween (
-				systemCodes, dataSources, syscode));  
+				DataSources.systemCodes, DataSources.dataSources, syscode));  
 
         o.setBackpageHead(mappObject[colHead]);
         if (mappObject[colID] == null)
@@ -995,40 +979,6 @@ public class MappFormat
 	/**
 	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
 	 */
-	public static final HashMap<String,String> sysName2Code = initSysName2Code();
-
-	/**
-	 * {@link HashMap} containing mappings from system code to system name (as used in Gpml)
-	 */
-	public static final HashMap<String,String> sysCode2Name = initSysCode2Name();
-
-	/**
-	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gpml)
-	 * and system code
-	 */
-	private static HashMap<String, String> initSysName2Code()
-	{
-		HashMap<String, String> sn2c = new HashMap<String,String>();
-		for(int i = 0; i < dataSources.length; i++)
-			sn2c.put(dataSources[i], systemCodes[i]);
-		return sn2c;
-	}
-	
-	/**
-	 * Initializes the {@link HashMap} containing the mappings between system code and 
-	 * system name (as used in Gpml)
-	 */
-	private static HashMap<String, String> initSysCode2Name()
-	{
-		HashMap<String, String> sn2c = new HashMap<String,String>();
-		for(int i = 0; i < systemCodes.length; i++)
-			sn2c.put(systemCodes[i], dataSources[i]);
-		return sn2c;
-	}
-
-	/**
-	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
-	 */
 	private static final HashMap<String,String> code2organism = initOrganism2code();
 
 	private static HashMap<String, String> initOrganism2code()
@@ -1038,7 +988,5 @@ public class MappFormat
 			result.put(organism_short_code[i], organism_latin_name[i]);
 		return result;
 	}
-	//System names converted to arraylist for easy index lookup
-	public final static List<String> lDataSources = Arrays.asList(dataSources);
     
 }

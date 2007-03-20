@@ -26,6 +26,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import data.DataSources;
 import data.MappFormat;
 import data.GmmlGdb.IdCodePair;
 
@@ -74,7 +75,7 @@ public class XmlUtils {
 			{
 				String sysName = attributes.getValue("Database");
 				assert (sysName != null);
-				String code = MappFormat.sysName2Code.get(sysName);
+				String code = DataSources.sysName2Code.get(sysName);
 				assert (code != null);
 				String geneId = attributes.getValue("ID");
 				assert (geneId != null);

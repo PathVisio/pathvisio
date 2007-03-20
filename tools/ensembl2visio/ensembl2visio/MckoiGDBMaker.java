@@ -24,8 +24,8 @@ import java.util.Properties;
 
 public class MckoiGDBMaker extends GDBMaker {
 	
-	public MckoiGDBMaker(String txtFile, String dbName) {
-		super(txtFile, dbName);
+	public MckoiGDBMaker(String dbName) {
+		super(dbName);
 	}
 
     public void connect() throws ClassNotFoundException, SQLException {
@@ -53,5 +53,10 @@ public class MckoiGDBMaker extends GDBMaker {
 		
 		con.commit(); //Just to be sure...
 	}
+
+	public void connect(boolean create) throws ClassNotFoundException, SQLException {
+		connect();		
+	}
+
 }
 

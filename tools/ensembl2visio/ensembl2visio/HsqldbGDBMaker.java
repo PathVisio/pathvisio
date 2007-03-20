@@ -27,8 +27,8 @@ import java.util.Properties;
 
 public class HsqldbGDBMaker extends GDBMaker {
 	
-	public HsqldbGDBMaker(String txtFile, String dbName) {
-		super(txtFile, dbName);
+	public HsqldbGDBMaker(String dbName) {
+		super(dbName);
 	}
 
     public void connect() throws ClassNotFoundException, SQLException {
@@ -80,4 +80,9 @@ public class HsqldbGDBMaker extends GDBMaker {
 			error("Unable to set readonly to " + readonly, e);
 		}
     }
+
+	public void connect(boolean create) throws ClassNotFoundException, SQLException {
+		connect();		
+	}
+
 }

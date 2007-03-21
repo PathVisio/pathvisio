@@ -971,7 +971,7 @@ public class GmmlDataObject implements GraphIdContainer
 		}
 	}
 	
-	protected double mFontSize = 1;	
+	protected double mFontSize = 10 * 15;	
 	public double getMFontSize() { return mFontSize; }
 	public void setMFontSize(double v) 
 	{ 

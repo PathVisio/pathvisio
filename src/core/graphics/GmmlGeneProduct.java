@@ -39,7 +39,6 @@ import data.MappFormat;
 public class GmmlGeneProduct extends GmmlGraphicsShape
 {
 	private static final long serialVersionUID = 1L;
-	private static final double M_INITIAL_FONTSIZE = 150;
 	public static final RGB INITIAL_FILL_COLOR = new RGB(255, 255, 255);
 	
 	// note: not the same as color!
@@ -129,7 +128,7 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	 */
 	private int getVFontSize()
 	{
-		return (int)(vFromM (M_INITIAL_FONTSIZE));
+		return (int)(vFromM (gdata.getMFontSize()));
 	}
 
 	public void draw(PaintEvent e, GC buffer)

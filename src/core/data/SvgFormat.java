@@ -13,14 +13,14 @@ public class SvgFormat
 {
 	static final Namespace nsSVG = Namespace.getNamespace("http://www.w3.org/2000/svg");
 		
-	static Element refs;
+	static Element defs;
 	static Set<String> markers;
 	
 	static Document createJdom (GmmlData data) throws ConverterException
 	{
 		Document doc = new Document();		
 		
-		refs = new Element("refs", nsSVG);
+		defs = new Element("defs", nsSVG);
 		markers = new HashSet<String>();
 		
 		Element root = new Element("svg");
@@ -29,7 +29,7 @@ public class SvgFormat
 		DocType dt = new DocType("svg", "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
     	doc.setDocType(dt);
     	
-		root.addContent(refs);
+		root.addContent(defs);
 		
 		for (GmmlDataObject o : data.getDataObjects())
 		{
@@ -106,7 +106,7 @@ public class SvgFormat
 		}
 		
 		LineType type = o.getLineType();
-		String id = getColordMarker(type, o.getColor(), markers, refs);
+		String id = getColordMarker(type, o.getColor(), markers, defs);
 		if(type != LineType.LINE) {
 			e.setAttribute("marker-end", "url(#" + id + ")");
 		}

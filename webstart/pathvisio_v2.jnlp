@@ -8,7 +8,7 @@
 		 <offline-allowed/>
 	</information>
 	<resources>
-		 <j2se version="1.5"/>
+		 <j2se version="1.5+"/>
 		 <jar href="pathvisio_v2.jar"/>
 		 <jar href="resources.jar"/>
 		 <jar href="plugins.jar"/>

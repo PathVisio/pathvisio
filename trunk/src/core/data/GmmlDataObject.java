@@ -73,41 +73,48 @@ public class GmmlDataObject implements GraphIdContainer
 		private String graphId;
 				
 		MPoint (double _x, double _y) { x = _x; y = _y; }
-		MPoint (MPoint p) {
+		MPoint (MPoint p) 
+		{
 			x = p.x;
 			y = p.y;
 			if(p.graphRef != null) graphRef = new String(p.graphRef);
 			if(p.graphId != null) graphId = new String(p.graphId);
 		}
 		
-		public void moveBy(double dx, double dy) {
+		public void moveBy(double dx, double dy) 
+		{
 			x += dx;
 			y += dy;
 			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
 		}
 		
-		public void moveTo(MPoint p) {
+		public void moveTo(MPoint p) 
+		{
 			x = p.x;
 			y = p.y;
 			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
 		}
 		
-		public void setX(double nx) {
+		public void setX(double nx) 
+		{
 			if(nx != x) moveBy(nx - x, 0);
 		}
 		
-		public void setY(double ny) {
+		public void setY(double ny) 
+		{
 			if(ny != y) moveBy(0, ny - y);
 		}
 		
 		public double getX() { return x; }
 		public double getY() { return y; }
 				
-		public String getGraphId() { 
+		public String getGraphId() 
+		{ 
 			return graphId;
 		}
 		
-		public String setGeneratedGraphId() {
+		public String setGeneratedGraphId() 
+		{
 			setGraphId(parent.getUniqueId());
 			return graphId;
 		}
@@ -147,11 +154,15 @@ public class GmmlDataObject implements GraphIdContainer
 			}
 		}
 
-		public Set<MPoint> getEqualPoints() {
+		public Set<MPoint> getEqualPoints() 
+		{
 			Set<MPoint> links = new HashSet<MPoint>();
-			for(GmmlDataObject o : parent.getDataObjects()) {
-				if(o != GmmlDataObject.this && o.objectType == ObjectType.LINE) {
-					for(MPoint p : o.getMPoints()) {
+			for(GmmlDataObject o : parent.getDataObjects()) 
+			{
+				if(o != GmmlDataObject.this && o.objectType == ObjectType.LINE) 
+				{
+					for(MPoint p : o.getMPoints()) 
+					{
 						if(x == p.x && y == p.y) links.add(p);
 					}
 				}
@@ -168,8 +179,14 @@ public class GmmlDataObject implements GraphIdContainer
 			return p;
 		}
 
-		public Set<GraphRefContainer> getReferences() {
+		public Set<GraphRefContainer> getReferences() 
+		{
 			return GraphLink.getReferences(this, parent);
+		}
+		
+		public GmmlData getGmmlData() 
+		{			
+			return parent;
 		}
 
 	}
@@ -1270,5 +1287,9 @@ public class GmmlDataObject implements GraphIdContainer
 	
 	public Set<GraphRefContainer> getReferences() {
 		return GraphLink.getReferences(this, parent);
+	}
+
+	public GmmlData getGmmlData() {
+		return parent;
 	}
 }

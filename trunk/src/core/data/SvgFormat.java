@@ -192,7 +192,11 @@ public class SvgFormat
 			//Ignoring fill-color for now, not supported in PathVisio
 			//TODO: support fill in PathVisio
 			//e.setAttribute("fill", rgb2String(o.getFillColor()));
-			e.setAttribute("fill", "none");
+			if(o.getObjectType() == ObjectType.DATANODE) {
+				e.setAttribute("fill", "white");
+			} else {
+				e.setAttribute("fill", "none");
+			}
 		}
 	}
 	

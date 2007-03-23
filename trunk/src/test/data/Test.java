@@ -135,7 +135,7 @@ public class Test extends TestCase implements GmmlListener {
 		// create link
 		o.setGraphId("1");
 		l.setStartGraphRef("1");		
-		assertTrue ("reference created", data.getReferringObjects("1").contains(l));
+		assertTrue ("reference created", data.getReferringObjects("1").contains(l.getMStart()));
 		
 		l.setStartGraphRef("2");
 		assertNull ("reference removed", data.getReferringObjects("1"));
@@ -146,7 +146,7 @@ public class Test extends TestCase implements GmmlListener {
 		// create link in opposite order
 		o.setGraphId("2");
 		l.setEndGraphRef("2");		
-		assertTrue ("reference created (2)", data.getReferringObjects("2").contains(l));
+		assertTrue ("reference created (2)", data.getReferringObjects("2").contains(l.getMEnd()));
 	}
 	
 	/**
@@ -217,7 +217,7 @@ public class Test extends TestCase implements GmmlListener {
 		
 		l.setEndGraphRef("3");
 
-		assertTrue ("reference created through adding", data.getReferringObjects("3").contains(l));
+		assertTrue ("reference created through adding", data.getReferringObjects("3").contains(l.getMEnd()));
 	}
 	
 	public void testXml() throws IOException, ConverterException

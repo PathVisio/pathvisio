@@ -1,6 +1,9 @@
 package data;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.RGB;
@@ -31,10 +34,21 @@ public class SvgFormat
     	
 		root.addContent(defs);
 		
+		//DataNodes on top
+		List<GmmlDataObject> objects = data.getDataObjects();
+		Collections.sort(objects, new Comparator<GmmlDataObject>() {
+			public int compare(GmmlDataObject o1, GmmlDataObject o2) {
+				if(o1.getObjectType() != o2.getObjectType()) {
+					if(o1.getObjectType() == ObjectType.DATANODE) return 1;
+					if(o2.getObjectType() == ObjectType.DATANODE) return -1;
+				}
+				return o1.hashCode() - o2.hashCode();
+			}
+		});
 		for (GmmlDataObject o : data.getDataObjects())
 		{
 				addElement(root, o);
-		}		
+		}
 		return doc;
 	}
 
@@ -186,17 +200,18 @@ public class SvgFormat
 	
 	static void mapColor(Element e, GmmlDataObject o) {
 		e.setAttribute("stroke", rgb2String(o.getColor()));
+		//Ignoring fill-color for now, not supported in PathVisio
+		//DataNodes have fill="white", other shapes are transparent
+		//TODO: support fill in PathVisio
 		if(o.isTransparent()) {
 			e.setAttribute("fill", "none");
 		} else {
-			//Ignoring fill-color for now, not supported in PathVisio
-			//TODO: support fill in PathVisio
 			//e.setAttribute("fill", rgb2String(o.getFillColor()));
-			if(o.getObjectType() == ObjectType.DATANODE) {
-				e.setAttribute("fill", "white");
-			} else {
-				e.setAttribute("fill", "none");
-			}
+		}
+		if(o.getObjectType() == ObjectType.DATANODE) {
+			e.setAttribute("fill", "white");
+		} else {
+			e.setAttribute("fill", "none");
 		}
 	}
 	

@@ -1171,6 +1171,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			 */
 			for (GmmlDataObject o : GmmlVision.clipboard)
 			{
+				if (o.getObjectType() == ObjectType.MAPPINFO ||
+					o.getObjectType() == ObjectType.INFOBOX)
+				{
+					// these object types we skip,
+					// because they have to be unique in a pathway
+					continue;
+				}
+				
 				lastAdded = null;
 				o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
 				o.setMStartY(o.getMStartY() + M_PASTE_OFFSET);

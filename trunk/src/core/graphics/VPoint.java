@@ -18,8 +18,11 @@ public class VPoint extends GmmlDrawingObject {
 		super(canvas);
 		mPoints = new HashSet<MPoint>();
 		lines = new HashSet<GmmlLine>();
-		drawingOrder = GmmlDrawing.DRAW_ORDER_LINE;
 		handle = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+	}
+	
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_LINE;
 	}
 	
 	protected void addMPoint(MPoint p) {

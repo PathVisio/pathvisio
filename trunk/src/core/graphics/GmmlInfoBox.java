@@ -39,8 +39,11 @@ public class GmmlInfoBox extends GmmlGraphics {
 	
 	public GmmlInfoBox (GmmlDrawing canvas, GmmlDataObject o) {
 		super(canvas, o);
-		canvas.setMappInfo(this);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_MAPPINFO;		
+		canvas.setMappInfo(this);	
+	}
+	
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_MAPPINFO;
 	}
 	
 	public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }

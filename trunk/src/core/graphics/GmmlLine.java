@@ -56,7 +56,6 @@ public class GmmlLine extends GmmlGraphics
 	public GmmlLine(GmmlDrawing canvas, GmmlDataObject o)
 	{
 		super(canvas, o);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_LINE;
 		
 		points = new ArrayList<VPoint>();
 		for(MPoint mp : o.getMPoints()) {
@@ -65,6 +64,10 @@ public class GmmlLine extends GmmlGraphics
 			vp.addLine(this);
 			vp.setHandleLocation();
 		}
+	}
+	
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_LINE;
 	}
 	
 	protected void swapPoint(VPoint pOld, VPoint pNew) {

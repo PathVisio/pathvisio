@@ -42,10 +42,18 @@ public class GmmlShape extends GmmlGraphicsShape
 	public GmmlShape(GmmlDrawing canvas, GmmlDataObject o)
 	{
 		super(canvas, o);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_SHAPE;
 		setHandleLocation();
 	}
 		
+	public int getDrawingOrder() {
+		switch(gdata.getShapeType()) {
+		case BRACE:
+			return GmmlDrawing.DRAW_ORDER_BRACE;
+		default:
+			return GmmlDrawing.DRAW_ORDER_SHAPE;
+		}
+	}
+	
 	public void draw(PaintEvent e, GC buffer)
 	{	
 		Color c = null;

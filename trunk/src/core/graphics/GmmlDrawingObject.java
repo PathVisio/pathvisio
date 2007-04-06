@@ -32,7 +32,6 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 		canvas.addObject(this);
 	}
 	
-	int drawingOrder = GmmlDrawing.DRAW_ORDER_DEFAULT;
 	private boolean isHighlighted;
 	private Rectangle oldrect = null;
 	
@@ -201,12 +200,17 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 */
 	protected Rectangle2D.Double getVScaleRectangle() { return new Rectangle2D.Double(); }
 
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_DEFAULT;
+	}
+	
 	/**
 	 * Orders GmmlDrawingObjects by their drawingOrder.
 	 * The comparison is consistent with "equals", i.e. it doesn't return 0 if
 	 * the objects are different, even if their drawing order is the same.
 	 * 
 	 * @param d
+	 * @see #getDrawingOrder()
 	 */
 	public int compareTo(GmmlDrawingObject d)
 	{
@@ -215,8 +219,8 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 			return 0;
 		
 		int az, bz;
-		az = drawingOrder;
-		bz = d.drawingOrder;
+		az = getDrawingOrder();
+		bz = d.getDrawingOrder();
 		
 		if(isSelected() && d.isSelected()) {
 			; //objects are both selected, keep original sort order

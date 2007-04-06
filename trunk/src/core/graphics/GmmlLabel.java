@@ -67,8 +67,11 @@ public class GmmlLabel extends GmmlGraphicsShape
 	public GmmlLabel(GmmlDrawing canvas, GmmlDataObject o)
 	{
 		super(canvas, o);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_LABEL;
 		setHandleLocation();
+	}
+	
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_LABEL;
 	}
 	
 	public String getLabelText() {

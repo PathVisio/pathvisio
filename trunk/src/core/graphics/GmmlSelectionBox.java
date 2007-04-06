@@ -53,11 +53,13 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		// TODO: selectionbox shouldn't need a dataobject...
 		// note, not setting parent of GmmlDataObject here.
 		super(canvas, new GmmlDataObject(ObjectType.SHAPE));
-		
-		drawingOrder = GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
-		
+			
 		selection = new ArrayList<GmmlDrawingObject>();
 	}	
+	
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
+	}
 	
 	public ArrayList<GmmlDrawingObject> getSelection() {
 		return selection;

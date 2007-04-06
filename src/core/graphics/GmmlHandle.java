@@ -72,11 +72,13 @@ class GmmlHandle extends GmmlDrawingObject
 	 */
 	public GmmlHandle(int direction, GmmlDrawingObject parent, GmmlDrawing canvas)
 	{
-		super(canvas);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_HANDLE;
-		
+		super(canvas);		
 		this.direction = direction;
 		this.parent = parent;
+	}
+
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_HANDLE;
 	}
 	
 	/**

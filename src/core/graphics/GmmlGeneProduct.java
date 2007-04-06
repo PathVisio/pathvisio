@@ -30,7 +30,6 @@ import org.eclipse.swt.graphics.Region;
 import util.SwtUtils;
 import data.DataSources;
 import data.GmmlDataObject;
-import data.MappFormat;
 
 /**
  * This class implements a geneproduct and 
@@ -45,11 +44,14 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	RGB fillColor = INITIAL_FILL_COLOR;
 		
 	public GmmlGeneProduct (GmmlDrawing canvas, GmmlDataObject o) {
-		super(canvas, o);
-		drawingOrder = GmmlDrawing.DRAW_ORDER_GENEPRODUCT;		
+		super(canvas, o);		
 		setHandleLocation();
 	}
 		
+	public int getDrawingOrder() {
+		return GmmlDrawing.DRAW_ORDER_GENEPRODUCT;
+	}
+	
 	/**
 	 * @deprecated get this info from GmmlDataObject directly
 	 */

@@ -48,15 +48,23 @@ public class SvgFormat
 			ObjectType.INFOBOX,
 			ObjectType.LEGEND,
 			ObjectType.DATANODE,
-			ObjectType.LINE,
 			ObjectType.LABEL,
-			ObjectType.SHAPE
+			ObjectType.SHAPE,
+			ObjectType.LINE
+		);
+		List<ShapeType> shapeOrder = Arrays.asList(
+			ShapeType.BRACE //Everything not specified will be on top
 		);
 		public int compare(Object o1, Object o2) {
 			GmmlDataObject d1 = (GmmlDataObject)o1;
 			GmmlDataObject d2 = (GmmlDataObject)o2;
-			int i1 = order.indexOf(d1.getObjectType());
-			int i2 = order.indexOf(d2.getObjectType());
+			int ot1 = d1.getObjectType();
+			int ot2 = d2.getObjectType();
+			if(ot1 == ObjectType.SHAPE && ot2 == ObjectType.SHAPE) {
+				return shapeOrder.indexOf(d1.getShapeType()) - shapeOrder.indexOf(d2.getShapeType());
+			}
+			int i1 = order.indexOf(ot1);
+			int i2 = order.indexOf(ot2);
 			return i2- i1;
 		}
 	}
@@ -265,7 +273,7 @@ public class SvgFormat
 			marker.setAttribute("refX", "10");
 			marker.setAttribute("refY", "5");
 			marker.setAttribute("markerWidth", "10");
-			marker.setAttribute("markerHeight", "15");
+			marker.setAttribute("markerHeight", "10");
 			Element e = new Element("path", nsSVG);
 			e.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
 			e.setAttribute("stroke", c);
@@ -279,7 +287,7 @@ public class SvgFormat
 			marker.setAttribute("orient", "auto");
 			marker.setAttribute("refX", "1");
 			marker.setAttribute("refY", "8");
-			marker.setAttribute("markerWidth", "5");
+			marker.setAttribute("markerWidth", "2");
 			marker.setAttribute("markerHeight", "20");
 			e = new Element("rect", nsSVG);
 			e.setAttribute("x", "1");

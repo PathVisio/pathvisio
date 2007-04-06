@@ -1,5 +1,6 @@
 package data;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -33,25 +34,33 @@ public class SvgFormat
     	doc.setDocType(dt);
     	
 		root.addContent(defs);
-		
-		//DataNodes on top
 		List<GmmlDataObject> objects = data.getDataObjects();
-		Collections.sort(objects, new Comparator<GmmlDataObject>() {
-			public int compare(GmmlDataObject o1, GmmlDataObject o2) {
-				if(o1.getObjectType() != o2.getObjectType()) {
-					if(o1.getObjectType() == ObjectType.DATANODE) return 1;
-					if(o2.getObjectType() == ObjectType.DATANODE) return -1;
-				}
-				return o1.hashCode() - o2.hashCode();
-			}
-		});
+		Collections.sort(objects, new SvgComparator());
 		for (GmmlDataObject o : data.getDataObjects())
 		{
 				addElement(root, o);
-		}
+		}		
 		return doc;
 	}
 
+	private static class SvgComparator implements Comparator {		
+		List<Integer> order = Arrays.asList(
+			ObjectType.INFOBOX,
+			ObjectType.LEGEND,
+			ObjectType.DATANODE,
+			ObjectType.LINE,
+			ObjectType.LABEL,
+			ObjectType.SHAPE
+		);
+		public int compare(Object o1, Object o2) {
+			GmmlDataObject d1 = (GmmlDataObject)o1;
+			GmmlDataObject d2 = (GmmlDataObject)o2;
+			int i1 = order.indexOf(d1.getObjectType());
+			int i2 = order.indexOf(d2.getObjectType());
+			return i2- i1;
+		}
+	}
+	
 	static public void addElement (Element root, GmmlDataObject o) throws ConverterException 
 	{		
 		switch (o.getObjectType())
@@ -200,18 +209,18 @@ public class SvgFormat
 	
 	static void mapColor(Element e, GmmlDataObject o) {
 		e.setAttribute("stroke", rgb2String(o.getColor()));
-		//Ignoring fill-color for now, not supported in PathVisio
-		//DataNodes have fill="white", other shapes are transparent
-		//TODO: support fill in PathVisio
-		if(o.isTransparent()) {
+		if(o.isTransparent() && o.getObjectType() != ObjectType.DATANODE) {
 			e.setAttribute("fill", "none");
 		} else {
-			//e.setAttribute("fill", rgb2String(o.getFillColor()));
-		}
-		if(o.getObjectType() == ObjectType.DATANODE) {
-			e.setAttribute("fill", "white");
-		} else {
-			e.setAttribute("fill", "none");
+			e.setAttribute("fill", rgb2String(o.getFillColor()));
+			//Override for some shape types (TODO: make handling of colors consistent!)
+			if(o.getObjectType() == ObjectType.DATANODE) {
+				e.setAttribute("fill", "white");
+			} else if(o.getObjectType() == ObjectType.SHAPE){
+				//Fill/transparency in braces/arcs is not stored properly
+				if(o.getShapeType() == ShapeType.ARC || o.getShapeType() == ShapeType.BRACE)
+					e.setAttribute("fill", "none");
+			}
 		}
 	}
 	
@@ -227,7 +236,7 @@ public class SvgFormat
 		Element e = new Element("text", nsSVG);
 		e.setAttribute("x", "" + toPixel(o.getMCenterX()));
 		e.setAttribute("y", "" + (toPixel(o.getMCenterY()) + toPixel(o.getMFontSize())));
-		e.setAttribute("font-family", o.getFontName() + ".ttf"); 
+		e.setAttribute("font-family", o.getFontName()); 
 		e.setAttribute("font-size",toPixel(o.getMFontSize()) + "pt");
 		e.setAttribute("text-anchor", "middle");
 		//e.setAttribute("alignment-baseline", "middle"); //Not supported by firefox

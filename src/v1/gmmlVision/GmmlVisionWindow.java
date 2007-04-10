@@ -51,6 +51,7 @@ import util.SwtUtils.SimpleRunnableWithProgress;
 import visualization.GmmlLegend;
 import visualization.VisualizationManager;
 import data.*;
+import data.gpml.*;
 import data.GmmlGex.ExpressionDataEvent;
 import data.GmmlGex.ExpressionDataListener;
 import edu.stanford.ejalbert.BrowserLauncher;

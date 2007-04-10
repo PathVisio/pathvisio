@@ -26,10 +26,10 @@ import util.SuggestCombo;
 import util.SuggestCombo.SuggestionListener;
 import util.SuggestCombo.SuggestionProvider;
 import data.DataSources;
-import data.GmmlDataObject;
 import data.GmmlGdb;
-import data.MappFormat;
-import data.PropertyType;
+import data.gpml.GmmlDataObject;
+import data.gpml.MappFormat;
+import data.gpml.PropertyType;
 
 public class SuggestGdbCellEditor extends SuggestCellEditor implements SuggestionProvider, SuggestionListener {
 	public static final int TYPE_IDENTIFIER = 0;

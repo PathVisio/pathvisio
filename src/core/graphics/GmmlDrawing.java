@@ -41,7 +41,6 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -50,16 +49,17 @@ import visualization.Visualization;
 import visualization.VisualizationManager;
 import visualization.VisualizationManager.VisualizationEvent;
 import visualization.VisualizationManager.VisualizationListener;
-import data.GmmlData;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.GmmlListener;
-import data.LineStyle;
-import data.LineType;
-import data.ObjectType;
-import data.OrientationType;
-import data.ShapeType;
-import data.GmmlDataObject.MPoint;
+import data.gpml.GmmlData;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
+import data.gpml.GmmlListener;
+import data.gpml.LineStyle;
+import data.gpml.LineType;
+import data.gpml.ObjectType;
+import data.gpml.OrientationType;
+import data.gpml.ShapeType;
+import data.gpml.GmmlData.Color;
+import data.gpml.GmmlDataObject.MPoint;
 
 /**
  * This class implements and handles a drawing.
@@ -709,7 +709,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public static final int NEWLIGANDSQUARE = 14;
 	public static final int NEWLINEMENU = 15;
 	public static final int NEWLINESHAPEMENU = 16;
-	public static final RGB stdRGB = new RGB(0, 0, 0);
+	public static final Color stdRGB = new Color(0, 0, 0);
 
 	/**
 	 * pathvisio distinguishes between placing objects with a click

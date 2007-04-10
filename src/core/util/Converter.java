@@ -24,8 +24,8 @@ package util;
 
 import java.io.File;
 
-import data.ConverterException;
-import data.GmmlData;
+import data.gpml.ConverterException;
+import data.gpml.GmmlData;
 import debug.Logger;
 
 /**

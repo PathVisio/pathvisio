@@ -73,14 +73,14 @@ import R.RController;
 import R.RDataIn;
 import R.RCommands.RException;
 import R.wizard.RWizard;
-import data.ConverterException;
 import data.DBConnector;
-import data.GmmlData;
 import data.GmmlGdb;
 import data.GmmlGex;
 import data.ImportExprDataWizard;
 import data.GmmlGex.ExpressionDataEvent;
 import data.GmmlGex.ExpressionDataListener;
+import data.gpml.ConverterException;
+import data.gpml.GmmlData;
 import edu.stanford.ejalbert.BrowserLauncher;
 
 

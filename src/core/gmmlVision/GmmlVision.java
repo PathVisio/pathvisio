@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import preferences.GmmlPreferences;
 import util.Utils;
-import data.ConverterException;
 import data.DBConnector;
-import data.GmmlData;
-import data.GmmlDataObject;
+import data.gpml.ConverterException;
+import data.gpml.GmmlData;
+import data.gpml.GmmlDataObject;
 import debug.Logger;
 
 /**

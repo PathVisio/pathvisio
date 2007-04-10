@@ -27,8 +27,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import data.DataSources;
-import data.MappFormat;
 import data.GmmlGdb.IdCodePair;
+import data.gpml.MappFormat;
 
 public class XmlUtils {
 	/**

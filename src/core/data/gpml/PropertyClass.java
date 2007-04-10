@@ -14,32 +14,29 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package data;
 
-import java.util.Arrays;
-import java.util.List;
+package data.gpml;
 
-public class OrientationType {
-
-	// warning: don't change these constants. Correct mapping to .MAPP format depends on it.
-	public static final int TOP		= 0;
-	public static final int RIGHT	= 1;
-	public static final int BOTTOM	= 2;
-	public static final int LEFT	= 3;
-
-	// Some mappings to Gpml
-	private static final List orientationMappings = Arrays.asList(new String[] {
-			"top", "right", "bottom", "left"
-	});
-
-	public static int getMapping(String value)
-	{
-		return orientationMappings.indexOf(value);
-	}
-	
-	public static String getMapping(int value)
-	{
-		return (String)orientationMappings.get(value);
-	}
-
+/**
+ * The properties in {@link PropertyType} define properties of different classes,
+ * all the possible classes are defined here.
+ */
+public enum PropertyClass 
+{
+	BOOLEAN,
+	DOUBLE,
+	INTEGER, 
+	DATASOURCE,
+	LINESTYLE,
+	COLOR,
+	STRING,
+	ORIENTATION,
+	SHAPETYPE,
+	LINETYPE,
+	GENETYPE,
+	FONT,
+	ANGLE,
+	ORGANISM,
+	DB_ID,
+	DB_SYMBOL,
 }

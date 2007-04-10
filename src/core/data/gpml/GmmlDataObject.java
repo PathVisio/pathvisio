@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package data;
+package data.gpml;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,10 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.swt.graphics.RGB;
-
-import data.GraphLink.GraphIdContainer;
-import data.GraphLink.GraphRefContainer;
+import data.DataSources;
+import data.gpml.GmmlData.Color;
+import data.gpml.GraphLink.GraphIdContainer;
+import data.gpml.GraphLink.GraphRefContainer;
 
 /**
  * GmmlDataObject is responsible for maintaining the data
@@ -374,14 +374,14 @@ public class GmmlDataObject implements GraphIdContainer
 		switch (key)
 		{		
 			case COMMENT: setComment 		((String) value); break;
-			case COLOR: setColor 		((RGB)    value); break;
+			case COLOR: setColor 		((Color)    value); break;
 				
 			case CENTERX: setMCenterX 		((Double) value); break;
 			case CENTERY: setMCenterY 		((Double) value); break;
 			case WIDTH: setMWidth		((Double) value); break;
 			case HEIGHT: setMHeight		((Double) value); break;
 			
-			case FILLCOLOR: setFillColor	((RGB)	  value); break;
+			case FILLCOLOR: setFillColor	((Color)	  value); break;
 			case SHAPETYPE: setShapeType	(ShapeType.values()[(Integer)value]); break;
 			case ROTATION: setRotation		((Double) value); break;
 				
@@ -655,9 +655,9 @@ public class GmmlDataObject implements GraphIdContainer
 		}
 	}
 			
-	protected RGB color = new RGB(0, 0, 0);	
-	public RGB getColor() { return color; }
-	public void setColor(RGB v) 
+	protected Color color = new Color(0, 0, 0);	
+	public Color getColor() { return color; }
+	public void setColor(Color v) 
 	{
 		if (v == null) throw new IllegalArgumentException();
 		if (color != v)
@@ -670,9 +670,9 @@ public class GmmlDataObject implements GraphIdContainer
 	/** 
 	 * fillcolor can't be null!
 	 */
-	protected RGB fillColor = new RGB (0, 0, 0);	
-	public RGB getFillColor() { return fillColor; }
-	public void setFillColor(RGB v) 
+	protected Color fillColor = new Color (0, 0, 0);	
+	public Color getFillColor() { return fillColor; }
+	public void setFillColor(Color v) 
 	{
 		if (v == null) throw new IllegalArgumentException();
 		if (fillColor != v)

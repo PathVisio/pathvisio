@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Text;
 
 import preferences.GmmlPreferences;
 import util.SwtUtils;
-import data.GmmlDataObject;
-import data.GmmlEvent;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
 
 public class GmmlLabel extends GmmlGraphicsShape
 {

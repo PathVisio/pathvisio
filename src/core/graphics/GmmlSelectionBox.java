@@ -28,10 +28,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-import data.GmmlDataObject;
-import data.ObjectType;
-import data.GmmlDataObject.MPoint;
-import data.GraphLink.GraphRefContainer;
+import data.gpml.GmmlDataObject;
+import data.gpml.ObjectType;
+import data.gpml.GmmlDataObject.MPoint;
+import data.gpml.GraphLink.GraphRefContainer;
 
 /**
  * This class implements a selectionbox 

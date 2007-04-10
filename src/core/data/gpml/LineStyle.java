@@ -14,37 +14,9 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package data;
+package data.gpml;
 
-import java.util.*;
-
-public class UndoManager 
-{
-	private List<UndoAction> undoList = new ArrayList<UndoAction>();
-
-	void newAddAction (GmmlDataObject affectedObject)
-	{
-		undoList.clear();		
-	}
-	
-	void newChangeAction (GmmlDataObject affectedObject)
-	{
-		UndoAction a = new UndoAction ("Change object", UndoAction.UNDO_CHANGE, affectedObject);
-		undoList.add(a);
-	}
-	
-	void newRemoveAction (GmmlDataObject affectedObject)
-	{
-		undoList.clear();
-	}
-	
-	void undo()
-	{
-		if (undoList.size() > 0)
-		{
-			UndoAction a = undoList.get(undoList.size()-1);
-			a.undo();
-			undoList.remove(a);
-		}
-	}
+public class LineStyle {
+	public static final int SOLID = 0;
+	public static final int DASHED = 1;
 }

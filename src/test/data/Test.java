@@ -21,6 +21,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data.gpml.ConverterException;
+import data.gpml.GmmlData;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
+import data.gpml.GmmlListener;
+import data.gpml.ObjectType;
+import data.gpml.PropertyType;
+
 import junit.framework.TestCase;
 
 public class Test extends TestCase implements GmmlListener {

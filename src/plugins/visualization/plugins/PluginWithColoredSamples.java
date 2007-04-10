@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 
+import util.ColorConverter;
 import util.SwtUtils;
 import util.TableColumnResizer;
 import visualization.Visualization;
@@ -120,7 +121,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		
 		drawArea(gp, area, e, gc);
 		
-		Color c = SwtUtils.changeColor(null, gp.getGmmlData().getColor(), e.display);
+		Color c = SwtUtils.changeColor(null, ColorConverter.toRGB(gp.getGmmlData().getColor()), e.display);
 		gc.setForeground(c);
 		gc.drawRectangle(area);
 		

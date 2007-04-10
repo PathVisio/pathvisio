@@ -28,6 +28,9 @@ import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import data.gpml.GmmlDataObject;
+import data.gpml.GpmlFormat;
+
 public class GpmlTransfer extends ByteArrayTransfer 
 {
 	private static final String TYPENAME = "gpml";

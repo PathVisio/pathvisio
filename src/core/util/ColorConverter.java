@@ -23,6 +23,8 @@ import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 
+import data.gpml.GmmlData.Color;
+
 public abstract class ColorConverter
 {
 	public static final List colorMappings = Arrays.asList(new String[]{
@@ -58,10 +60,10 @@ public abstract class ColorConverter
 	{}	
 	
 	/**
-	 * Converts an {@link RGB} object to a hexbinary string
+	 * Converts an {@link Color} object to a hexbinary string
 	 * @param color
 	 */
-	public static String color2HexBin(RGB color)
+	public static String color2HexBin(Color color)
 	{
 		String red = padding(Integer.toBinaryString(color.red), 8, '0');
 		String green = padding(Integer.toBinaryString(color.green), 8, '0');
@@ -72,15 +74,15 @@ public abstract class ColorConverter
 	
 	/**
 	 * Converts a string containing either a named color (as specified in gpml) or a hexbinary number
-	 * to an {@link RGB} object
+	 * to an {@link Color} object
 	 * @param strColor
 	 */
-    public static RGB gmmlString2Color(String strColor)
+    public static Color gmmlString2Color(String strColor)
     {
     	if(colorMappings.contains(strColor))
     	{
     		double[] color = (double[])rgbMappings.get(colorMappings.indexOf(strColor));
-    		return new RGB((int)(255*color[0]),(int)(255*color[1]),(int)(255*color[2]));
+    		return new Color((int)(255*color[0]),(int)(255*color[1]),(int)(255*color[2]));
     	}
     	else
     	{
@@ -90,7 +92,7 @@ public abstract class ColorConverter
         		int red = Integer.valueOf(strColor.substring(0,2),16);
         		int green = Integer.valueOf(strColor.substring(2,4),16);
         		int blue = Integer.valueOf(strColor.substring(4,6),16);
-        		return new RGB(red,green,blue);
+        		return new Color(red,green,blue);
     		}
     		catch (Exception e)
     		{
@@ -98,7 +100,7 @@ public abstract class ColorConverter
     					"Color " + strColor + " is not valid, element color is set to black", e);
     		}
     	}
-    	return new RGB(0,0,0);
+    	return new Color(0,0,0);
     }
     
     /**
@@ -109,6 +111,14 @@ public abstract class ColorConverter
 	public static String getRgbString(RGB rgb)
 	{
 		return rgb.red + "," + rgb.green + "," + rgb.blue;
+	}
+	
+	public static RGB toRGB(Color c) {
+		return new RGB(c.red, c.green, c.blue);
+	}
+	
+	public static Color fromRGB(RGB rgb) {
+		return new Color(rgb.red, rgb.green, rgb.blue);
 	}
 	
 	/**

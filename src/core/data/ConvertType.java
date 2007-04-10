@@ -18,7 +18,7 @@ package data;
 
 import java.math.BigDecimal;
 
-import org.eclipse.swt.graphics.RGB;
+import data.gpml.GmmlData.Color;
 
 public class ConvertType
 {
@@ -70,12 +70,12 @@ public class ConvertType
         return hexstring;
     }
     
-    public static RGB fromMappColor(String s)
+    public static Color fromMappColor(String s)
     {
     	
     	int i = Integer.parseInt(s);
     	
-    	RGB result = new RGB(
+    	Color result = new Color(
     			i & 0xFF,
     			(i & 0xFF00) >> 8,
     			(i & 0xFF0000) >> 16
@@ -98,7 +98,7 @@ public class ConvertType
     	}
     }
     
-    public static String toMappColor(RGB rgb, boolean fTransparent)
+    public static String toMappColor(Color rgb, boolean fTransparent)
     {
     	if (fTransparent)
     		return "-1";

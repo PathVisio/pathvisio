@@ -7,7 +7,7 @@ import java.util.Set;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-import data.GmmlDataObject.MPoint;
+import data.gpml.GmmlDataObject.MPoint;
 
 public class VPoint extends GmmlDrawingObject {
 	GmmlHandle handle;

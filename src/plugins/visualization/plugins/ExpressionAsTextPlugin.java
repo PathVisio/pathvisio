@@ -57,11 +57,11 @@ import org.jdom.Element;
 import util.SwtUtils;
 import visualization.Visualization;
 import data.CachedData;
-import data.GmmlDataObject;
 import data.GmmlGex;
 import data.CachedData.Data;
 import data.GmmlGdb.IdCodePair;
 import data.GmmlGex.Sample;
+import data.gpml.GmmlDataObject;
 
 /**
  * Provides label for Gene Product

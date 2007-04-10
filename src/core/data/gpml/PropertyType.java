@@ -22,7 +22,7 @@
  *
  */
 
-package data;
+package data.gpml;
 
 /**
  *

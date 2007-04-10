@@ -33,11 +33,11 @@ import org.eclipse.swt.graphics.RGB;
 
 import preferences.GmmlPreferences;
 import util.SwtUtils;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.LineStyle;
-import data.GmmlDataObject.MPoint;
-import data.GraphLink.GraphRefContainer;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
+import data.gpml.LineStyle;
+import data.gpml.GmmlDataObject.MPoint;
+import data.gpml.GraphLink.GraphRefContainer;
  
 /**
  * This class implements and handles a line

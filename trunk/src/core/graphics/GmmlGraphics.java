@@ -20,10 +20,10 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
 import preferences.GmmlPreferences;
-import data.GmmlData;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.GmmlListener;
+import data.gpml.GmmlData;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
+import data.gpml.GmmlListener;
 
 
 /**

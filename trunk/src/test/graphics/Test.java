@@ -23,9 +23,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import data.GmmlData;
-import data.GmmlDataObject;
-import data.ObjectType;
+import data.gpml.GmmlData;
+import data.gpml.GmmlDataObject;
+import data.gpml.ObjectType;
 
 public class Test extends TestCase {
 	

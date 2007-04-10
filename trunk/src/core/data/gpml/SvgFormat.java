@@ -1,4 +1,4 @@
-package data;
+package data.gpml;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -7,11 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.swt.graphics.RGB;
 import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+
+import data.gpml.GmmlData.Color;
 
 public class SvgFormat 
 {
@@ -232,7 +233,7 @@ public class SvgFormat
 		}
 	}
 	
-	static String rgb2String(RGB rgb) {
+	static String rgb2String(Color rgb) {
 		return "rgb(" + rgb.red + "," + rgb.green + "," + rgb.blue + ")";
 	}
 	
@@ -257,7 +258,7 @@ public class SvgFormat
 		return e;
 	}
 	
-	static String getColordMarker(LineType type, RGB color, Set markers, Element defs) {
+	static String getColordMarker(LineType type, Color color, Set markers, Element defs) {
 		Element marker = null;
 		String id = type.getGpmlName() + color.toString().hashCode();
 		

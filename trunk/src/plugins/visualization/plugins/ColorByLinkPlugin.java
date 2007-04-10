@@ -30,7 +30,8 @@ import org.eclipse.swt.widgets.Composite;
 
 import visualization.Visualization;
 import visualization.plugins.VisualizationPlugin;
-import data.GmmlDataObject;
+import data.gpml.GmmlDataObject;
+import util.ColorConverter;
 
 /**
  * Colors drawing-objects according to their graphId / graphRef values
@@ -109,11 +110,11 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	
 	void drawShape(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
-		RGB oldRGB = gd.getColor();
+		RGB oldRGB = ColorConverter.toRGB(gd.getColor());
 		gd.dontFireEvents(2);
-		gd.setColor(getRGB(id));
+		gd.setColor(ColorConverter.fromRGB(getRGB(id)));
 		g.draw(e, buffer);
-		gd.setColor(oldRGB);
+		gd.setColor(ColorConverter.fromRGB(oldRGB));
 	}
 	
 	RGB getRGB(String id) {

@@ -47,6 +47,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import data.gpml.GmmlData;
+
 public class SwtUtils {
 
 	public static GridData getColorLabelGrid() {
@@ -71,6 +73,24 @@ public class SwtUtils {
 		}
 		if(rgbNew == null) rgbNew = new RGB(0,0,0);
 		return new Color(display, rgbNew);
+	}
+	
+	/**
+	 * Change the given {@link Color}; this method disposes the old color for you
+	 * @param cOld	the old {@link Color}
+	 * @param rgbNew	the {@link GmmlData.Color} to construct the new color
+	 * @param display	the display to assign the color to
+	 * @return	a brand new {@link Color}
+	 */
+	public static Color changeColor(Color cOld, GmmlData.Color rgbNew, Display display)
+	{
+		if(cOld != null && !cOld.isDisposed())
+		{
+			cOld.dispose();
+			cOld = null;
+		}
+		if(rgbNew == null) rgbNew = new GmmlData.Color(0,0,0);
+		return new Color(display, ColorConverter.toRGB(rgbNew));
 	}
 	
 	/**

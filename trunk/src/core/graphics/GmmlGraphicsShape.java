@@ -28,10 +28,10 @@ import org.eclipse.swt.graphics.Transform;
 import util.LinAlg;
 import util.SwtUtils;
 import util.LinAlg.Point;
-import data.GmmlDataObject;
-import data.GmmlEvent;
-import data.GmmlDataObject.MPoint;
-import data.GraphLink.GraphRefContainer;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
+import data.gpml.GmmlDataObject.MPoint;
+import data.gpml.GraphLink.GraphRefContainer;
 
 /**
  * This is an {@link GmmlGraphics} class representing shapelike forms,

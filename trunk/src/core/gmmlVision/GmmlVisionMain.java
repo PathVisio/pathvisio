@@ -30,6 +30,7 @@ import visualization.VisualizationManager;
 import visualization.plugins.PluginManager;
 import data.GmmlGdb;
 import data.GmmlGex;
+import data.gpml.GmmlData;
 
 /**
  * This class contains the main method and is responsible for initiating 
@@ -85,6 +86,7 @@ public class GmmlVisionMain {
 					GmmlVision.getPreferences().getString(GmmlPreferences.PREF_FILES_LOG))); 
 		} catch(Exception e) {}
 		GmmlVision.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+		GmmlData.setLogger(GmmlVision.log);
 		
 		//initiate Gene database (to load previously used gdb)
 		GmmlGdb.init();

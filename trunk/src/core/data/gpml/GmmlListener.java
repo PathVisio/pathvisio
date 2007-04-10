@@ -14,29 +14,11 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package data.gpml;
 
-package data;
+import java.util.EventListener;
 
-/**
- * The properties in {@link PropertyType} define properties of different classes,
- * all the possible classes are defined here.
- */
-public enum PropertyClass 
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER, 
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
+public interface GmmlListener extends EventListener {	
+	public void gmmlObjectModified(GmmlEvent e);
+	
 }

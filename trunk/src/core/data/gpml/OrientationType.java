@@ -14,11 +14,32 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package data;
+package data.gpml;
 
-import java.util.EventListener;
+import java.util.Arrays;
+import java.util.List;
 
-public interface GmmlListener extends EventListener {	
-	public void gmmlObjectModified(GmmlEvent e);
+public class OrientationType {
+
+	// warning: don't change these constants. Correct mapping to .MAPP format depends on it.
+	public static final int TOP		= 0;
+	public static final int RIGHT	= 1;
+	public static final int BOTTOM	= 2;
+	public static final int LEFT	= 3;
+
+	// Some mappings to Gpml
+	private static final List orientationMappings = Arrays.asList(new String[] {
+			"top", "right", "bottom", "left"
+	});
+
+	public static int getMapping(String value)
+	{
+		return orientationMappings.indexOf(value);
+	}
 	
+	public static String getMapping(int value)
+	{
+		return (String)orientationMappings.get(value);
+	}
+
 }

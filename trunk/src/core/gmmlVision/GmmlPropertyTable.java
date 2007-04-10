@@ -50,6 +50,15 @@ import org.eclipse.swt.widgets.TableItem;
 import util.SuggestCellEditor;
 import util.TableColumnResizer;
 import data.*;
+import data.gpml.GmmlDataObject;
+import data.gpml.GmmlEvent;
+import data.gpml.GmmlListener;
+import data.gpml.LineType;
+import data.gpml.MappFormat;
+import data.gpml.ObjectType;
+import data.gpml.PropertyClass;
+import data.gpml.PropertyType;
+import data.gpml.ShapeType;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties

@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 // $Id: MappToGmml.java,v 1.5 2005/10/21 12:33:27 gontran Exp $
-package data;
+package data.gpml;
 
 import gmmlVision.GmmlVision;
 
@@ -34,6 +34,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import data.ConvertType;
+import data.DataSources;
 
 /**
  * The class MappFormat is responsible for all interaction with 

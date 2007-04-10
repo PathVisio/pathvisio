@@ -14,11 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package data;
-
-import gmmlVision.GmmlVision;
-import gmmlVision.GmmlVisionMain;
-import gmmlVision.GmmlVisionWindow;
+package data.gpml;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -50,7 +46,8 @@ import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
 
-import data.GraphLink.GraphRefContainer;
+import data.gpml.GraphLink.GraphRefContainer;
+import debug.Logger;
 
 
 /**
@@ -64,6 +61,18 @@ import data.GraphLink.GraphRefContainer;
 */
 public class GmmlData implements GmmlListener
 {
+	/**
+	 * Logger to which all logging will be performed
+	 */
+	private static Logger log;
+	
+	/**
+	 * Set the logger to which all logging will be performed
+	 */
+	public static void setLogger(Logger l) {	
+		log = l;
+	}
+	
 	/**
 	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
 	 * NOTE: maybe it is better to adapt gpml to store cordinates as pixels and
@@ -281,16 +290,12 @@ public class GmmlData implements GmmlListener
 	 */	
 	public void initMappInfo()
 	{
-		GmmlVisionWindow window = GmmlVision.getWindow();
-		if (window.sc != null)
-		{
-			mappInfo.setMBoardWidth(M_INITIAL_BOARD_WIDTH);
-			mappInfo.setMBoardHeight(M_INITIAL_BOARD_HEIGHT);
-			mappInfo.setWindowWidth(M_INITIAL_BOARD_WIDTH);
-			mappInfo.setWindowHeight(M_INITIAL_BOARD_HEIGHT);
-			String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
-			mappInfo.setVersion(dateString);
-		}
+		mappInfo.setMBoardWidth(M_INITIAL_BOARD_WIDTH);
+		mappInfo.setMBoardHeight(M_INITIAL_BOARD_HEIGHT);
+		mappInfo.setWindowWidth(M_INITIAL_BOARD_WIDTH);
+		mappInfo.setWindowHeight(M_INITIAL_BOARD_HEIGHT);
+		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		mappInfo.setVersion(dateString);
 		mappInfo.setMapInfoName("New Pathway");
 	}
 
@@ -300,7 +305,7 @@ public class GmmlData implements GmmlListener
 	 */
 	public static void validateDocument(Document doc) throws ConverterException
 	{	
-		ClassLoader cl = GmmlVisionMain.class.getClassLoader();
+		ClassLoader cl = GmmlData.class.getClassLoader();
 		InputStream is = cl.getResourceAsStream(xsdFile);
 		if(is != null) {	
 			Schema schema;
@@ -313,18 +318,18 @@ public class GmmlData implements GmmlListener
 				so.output(doc);
 				// If no errors occur, the file is valid according to the gpml xml schema definition
 				//TODO: open dialog to report error
-				GmmlVision.log.info("Document is valid according to the xml schema definition '" + 
+				log.info("Document is valid according to the xml schema definition '" + 
 						xsdFile.toString() + "'");
 			} catch (SAXException se) {
-				GmmlVision.log.error("Could not parse the xml-schema definition", se);
+				log.error("Could not parse the xml-schema definition", se);
 				throw new ConverterException (se);
 			} catch (JDOMException je) {
-				GmmlVision.log.error("Document is invalid according to the xml-schema definition!: " + 
+				log.error("Document is invalid according to the xml-schema definition!: " + 
 						je.getMessage(), je);
 				throw new ConverterException (je);
 			}
 		} else {
-			GmmlVision.log.error("Document is not validated because the xml schema definition '" + 
+			log.error("Document is not validated because the xml schema definition '" + 
 					xsdFile + "' could not be found in classpath");
 			throw new ConverterException ("Document is not validated because the xml schema definition '" + 
 					xsdFile + "' could not be found in classpath");
@@ -367,7 +372,7 @@ public class GmmlData implements GmmlListener
 	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
 		// Start XML processing
-		GmmlVision.log.info("Start reading the XML file: " + file);
+		log.info("Start reading the XML file: " + file);
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 		try
@@ -506,4 +511,12 @@ public class GmmlData implements GmmlListener
 		}
 	}
 
+	public static class Color {
+		public int red, green, blue;
+		public Color(int r, int g, int b) {
+			red = r;
+			green = g;
+			blue = b;
+		}
+	}
 }

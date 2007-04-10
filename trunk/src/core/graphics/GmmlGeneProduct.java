@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Region;
 
 import util.SwtUtils;
 import data.DataSources;
-import data.GmmlDataObject;
+import data.gpml.GmmlDataObject;
 
 /**
  * This class implements a geneproduct and 

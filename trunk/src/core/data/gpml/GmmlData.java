@@ -64,7 +64,7 @@ public class GmmlData implements GmmlListener
 	/**
 	 * Logger to which all logging will be performed
 	 */
-	private static Logger log;
+	private static Logger log = new Logger();
 	
 	/**
 	 * Set the logger to which all logging will be performed

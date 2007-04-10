@@ -26,83 +26,7 @@ import org.jdom.Element;
 import data.gpml.GmmlData.Color;
 
 public abstract class ColorConverter
-{
-	public static final List colorMappings = Arrays.asList(new String[]{
-		"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
-		"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
-		"White", "Yellow", "Transparent"
-	});
-	
-	public static final List rgbMappings = Arrays.asList(new double[][] {
-		{0, 1, 1},		// aqua 
-		{0, 0, 0},	 	// black
-		{0, 0, 1}, 		// blue
-		{1, 0, 1},		// fuchsia
-		{.5, .5, .5,},	// gray
-		{0, .5, 0}, 	// green
-		{0, 1, 0},		// lime
-		{.5, 0, 0},		// maroon
-		{0, 0, .5},		// navy
-		{.5, .5, 0},	// olive
-		{.5, 0, .5},	// purple
-		{1, 0, 0}, 		// red
-		{.75, .75, .75},// silver
-		{0, .5, .5}, 	// teal
-		{1, 1, 1},		// white
-		{1, 1, 0},		// yellow
-		{0, 0, 0}		// transparent (actually irrelevant)
-	});
-	
-	/**
-	 * Constructor for this class
-	 */
-	public ColorConverter()
-	{}	
-	
-	/**
-	 * Converts an {@link Color} object to a hexbinary string
-	 * @param color
-	 */
-	public static String color2HexBin(Color color)
-	{
-		String red = padding(Integer.toBinaryString(color.red), 8, '0');
-		String green = padding(Integer.toBinaryString(color.green), 8, '0');
-		String blue = padding(Integer.toBinaryString(color.blue), 8, '0');
-		String hexBinary = Integer.toHexString(Integer.valueOf(red + green + blue, 2));
-		return padding(hexBinary, 6, '0');
-	}
-	
-	/**
-	 * Converts a string containing either a named color (as specified in gpml) or a hexbinary number
-	 * to an {@link Color} object
-	 * @param strColor
-	 */
-    public static Color gmmlString2Color(String strColor)
-    {
-    	if(colorMappings.contains(strColor))
-    	{
-    		double[] color = (double[])rgbMappings.get(colorMappings.indexOf(strColor));
-    		return new Color((int)(255*color[0]),(int)(255*color[1]),(int)(255*color[2]));
-    	}
-    	else
-    	{
-    		try
-    		{
-    			strColor = padding(strColor, 6, '0');
-        		int red = Integer.valueOf(strColor.substring(0,2),16);
-        		int green = Integer.valueOf(strColor.substring(2,4),16);
-        		int blue = Integer.valueOf(strColor.substring(4,6),16);
-        		return new Color(red,green,blue);
-    		}
-    		catch (Exception e)
-    		{
-    			GmmlVision.log.error("while converting color: " +
-    					"Color " + strColor + " is not valid, element color is set to black", e);
-    		}
-    	}
-    	return new Color(0,0,0);
-    }
-    
+{		    
     /**
 	 * Creates a string representing a {@link RGB} object which is parsable by {@link #parseRgbString(String)}
 	 * @param rgb the {@link RGB} object to create a string from
@@ -143,23 +67,7 @@ public abstract class ColorConverter
 			return new RGB(0,0,0);
 		}
 	}
-	
-    /**
-     * Prepends character c x-times to the input string to make it length n
-     * @param s	String to pad
-     * @param n	Number of characters of the resulting string
-     * @param c	character to append
-     * @return	string of length n or larger (if given string s > n)
-     */
-    public static String padding(String s, int n, char c)
-    {
-    	while(s.length() < n)
-    	{
-    		s = c + s;
-    	}
-    	return s;
-    }
-    
+	    
     final static String XML_ELEMENT_COLOR = "color";
 	final static String XML_COLOR_R = "red";
 	final static String XML_COLOR_G = "green";

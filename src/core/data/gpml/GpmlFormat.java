@@ -16,13 +16,21 @@
 //
 package data.gpml;
 
-import java.util.*;
+import gmmlVision.GmmlVision;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import util.ColorConverter;
+import data.gpml.GmmlData.Color;
 
 /**
  * class responsible for interaction with Gpml format.
@@ -440,7 +448,7 @@ public class GpmlFormat
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	String scol = graphics.getAttributeValue("Color");
-    	o.setColor (ColorConverter.gmmlString2Color(scol));
+    	o.setColor (gmmlString2Color(scol));
     	o.setTransparent(scol == null || scol.equals("Transparent"));
 	}
 
@@ -450,11 +458,11 @@ public class GpmlFormat
     	String scol = graphics.getAttributeValue("FillColor");
     	if (scol != null) 
     	{
-    		o.setFillColor (ColorConverter.gmmlString2Color(scol));
+    		o.setFillColor (gmmlString2Color(scol));
     	}
     	o.setTransparent (scol == null || scol.equals("Transparent"));
     	scol = graphics.getAttributeValue("Color");
-    	o.setColor (ColorConverter.gmmlString2Color(scol));
+    	o.setColor (gmmlString2Color(scol));
 	}
 
 	private static void updateColor(GmmlDataObject o, Element e)
@@ -467,7 +475,7 @@ public class GpmlFormat
 				if (o.isTransparent())
 					jdomGraphics.setAttribute("Color", "Transparent");
 				else
-					jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(o.getColor()));
+					jdomGraphics.setAttribute("Color", color2HexBin(o.getColor()));
 			}
 		}
 	}
@@ -482,8 +490,8 @@ public class GpmlFormat
 				if (o.isTransparent())
 					jdomGraphics.setAttribute("FillColor", "Transparent");
 				else
-					jdomGraphics.setAttribute("FillColor", ColorConverter.color2HexBin(o.getFillColor()));
-				jdomGraphics.setAttribute("Color", ColorConverter.color2HexBin(o.getColor()));			}
+					jdomGraphics.setAttribute("FillColor", color2HexBin(o.getFillColor()));
+				jdomGraphics.setAttribute("Color", color2HexBin(o.getColor()));			}
 		}
 	}
 
@@ -758,4 +766,89 @@ public class GpmlFormat
 		return e;
 	}
 
+	/**
+	 * Converts a string containing either a named color (as specified in gpml) or a hexbinary number
+	 * to an {@link Color} object
+	 * @param strColor
+	 */
+    public static Color gmmlString2Color(String strColor)
+    {
+    	if(colorMappings.contains(strColor))
+    	{
+    		double[] color = (double[])rgbMappings.get(colorMappings.indexOf(strColor));
+    		return new Color((int)(255*color[0]),(int)(255*color[1]),(int)(255*color[2]));
+    	}
+    	else
+    	{
+    		try
+    		{
+    			strColor = padding(strColor, 6, '0');
+        		int red = Integer.valueOf(strColor.substring(0,2),16);
+        		int green = Integer.valueOf(strColor.substring(2,4),16);
+        		int blue = Integer.valueOf(strColor.substring(4,6),16);
+        		return new Color(red,green,blue);
+    		}
+    		catch (Exception e)
+    		{
+    			GmmlVision.log.error("while converting color: " +
+    					"Color " + strColor + " is not valid, element color is set to black", e);
+    		}
+    	}
+    	return new Color(0,0,0);
+    }
+    
+	/**
+	 * Converts an {@link Color} object to a hexbinary string
+	 * @param color
+	 */
+	public static String color2HexBin(Color color)
+	{
+		String red = padding(Integer.toBinaryString(color.red), 8, '0');
+		String green = padding(Integer.toBinaryString(color.green), 8, '0');
+		String blue = padding(Integer.toBinaryString(color.blue), 8, '0');
+		String hexBinary = Integer.toHexString(Integer.valueOf(red + green + blue, 2));
+		return padding(hexBinary, 6, '0');
+	}
+	
+    /**
+     * Prepends character c x-times to the input string to make it length n
+     * @param s	String to pad
+     * @param n	Number of characters of the resulting string
+     * @param c	character to append
+     * @return	string of length n or larger (if given string s > n)
+     */
+    public static String padding(String s, int n, char c)
+    {
+    	while(s.length() < n)
+    	{
+    		s = c + s;
+    	}
+    	return s;
+    }
+    
+	public static final List rgbMappings = Arrays.asList(new double[][] {
+			{0, 1, 1},		// aqua 
+			{0, 0, 0},	 	// black
+			{0, 0, 1}, 		// blue
+			{1, 0, 1},		// fuchsia
+			{.5, .5, .5,},	// gray
+			{0, .5, 0}, 	// green
+			{0, 1, 0},		// lime
+			{.5, 0, 0},		// maroon
+			{0, 0, .5},		// navy
+			{.5, .5, 0},	// olive
+			{.5, 0, .5},	// purple
+			{1, 0, 0}, 		// red
+			{.75, .75, .75},// silver
+			{0, .5, .5}, 	// teal
+			{1, 1, 1},		// white
+			{1, 1, 0},		// yellow
+			{0, 0, 0}		// transparent (actually irrelevant)
+		});
+	
+	public static final List colorMappings = Arrays.asList(new String[]{
+			"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
+			"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
+			"White", "Yellow", "Transparent"
+		});
 }

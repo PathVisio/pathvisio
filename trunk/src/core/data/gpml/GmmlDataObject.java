@@ -188,6 +188,10 @@ public class GmmlDataObject implements GraphIdContainer
 		{			
 			return parent;
 		}
+		
+		public GmmlDataObject getParent() {
+			return GmmlDataObject.this;
+		}
 
 	}
 	

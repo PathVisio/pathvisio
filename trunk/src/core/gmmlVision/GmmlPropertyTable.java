@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import util.ColorConverter;
 import util.SuggestCellEditor;
 import util.TableColumnResizer;
 import data.*;
@@ -59,6 +60,7 @@ import data.gpml.ObjectType;
 import data.gpml.PropertyClass;
 import data.gpml.PropertyType;
 import data.gpml.ShapeType;
+import data.gpml.GmmlData.Color;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties
@@ -339,8 +341,6 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				case STRING:
 				case FONT:
 					return value == null ? "" : (String)value;
-				case COLOR: 
-					return (RGB)value;	
 				case DATASOURCE:
 					return DataSources.lDataSources.indexOf((String)value);				
 				// for all combobox types:
@@ -350,6 +350,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 					return (((ShapeType)value).ordinal());
 				case LINETYPE:
 					return (((LineType)value).ordinal());
+				case COLOR:
+					if(value instanceof Color)
+						value = ColorConverter.toRGB((Color)value);
+					return (RGB)value;
 				case ORIENTATION:
 				case LINESTYLE:
 				{
@@ -448,6 +452,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				if((Integer)value == -1) return; //Nothing selected
 				value = genetype_names[(Integer)value];
 				break;
+			case COLOR:
+				value = ColorConverter.fromRGB((RGB)value);
 			case DB_SYMBOL:
 			case DB_ID:
 				if(value instanceof GmmlPropertyTable.AutoFillData) {
@@ -549,6 +555,10 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 									else
 										return value.toString();
 								}
+								case COLOR:
+									if(value instanceof Color) {
+										return ColorConverter.toRGB((Color)value).toString();
+									}
 								default:
 									return value.toString();
 							}

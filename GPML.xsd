@@ -30,9 +30,61 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="PublicationXref" minOccurs="0" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:attribute name="ID" type="xsd:string" use="required"/>
+					<xsd:attribute name="Database" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>			
 		</xsd:sequence>
 	</xsd:group>
 
+	<xsd:attributeGroup name="FontAttributes">
+		<xsd:attribute name="FontName" default="Arial"
+			type="xsd:string"/>
+		<xsd:attribute name="FontStyle" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Italic"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontDecoration" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Underline"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontStrikethru" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Strikethru"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontWeight" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Bold"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontSize" type="xsd:nonNegativeInteger"
+			default="12"/>
+	</xsd:attributeGroup>
+
+	<xsd:attributeGroup name="RectAttributes">
+		<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
+		<xsd:attribute name="CenterY" type="xsd:float" use="required"/>
+		<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
+		<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
+	</xsd:attributeGroup>
+	
 	<!-- a rotation is either a float value or a string for each of the four right angles !-->
 	<xsd:simpleType name="RotationType">
 		<xsd:union>
@@ -198,7 +250,11 @@
 
 				<xsd:element ref="gpml:Label" minOccurs="0" maxOccurs="unbounded"/>
 
+				<xsd:element ref="gpml:Link" minOccurs="0" maxOccurs="unbounded"/>
+
 				<xsd:element ref="gpml:Shape" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:Group" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:InfoBox" minOccurs="1" maxOccurs="1" />
 				
@@ -277,13 +333,11 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
 				
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
-						<xsd:attribute name="CenterY" type="xsd:float" use="required"/>
-						<xsd:attribute name="Width" default="600" type="gpml:Dimension"/>
-						<xsd:attribute name="Height" default="300" type="gpml:Dimension"/>
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attribute name="Color" type="gpml:ColorType"/>
 					</xsd:complexType>
 				</xsd:element>
@@ -297,7 +351,6 @@
 
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
-			<xsd:attribute name="GroupStyle" type="gpml:GroupStyleType" default="Stack" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
@@ -339,6 +392,7 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -402,62 +456,20 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="CenterX" use="required"
-							type="xsd:float"/>
-						<xsd:attribute name="CenterY" use="required"
-							type="xsd:float"/>
-						<xsd:attribute name="Width" use="required"
-							type="gpml:Dimension"/>
-						<xsd:attribute name="Height" use="required"
-							type="gpml:Dimension"/>
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attribute name="Color" use="optional"
 							type="gpml:ColorType"/>
-						<xsd:attribute name="FontName" default="Arial"
-							type="xsd:string"/>
-						<xsd:attribute name="FontStyle" default="Normal">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:enumeration value="Normal"/>
-									<xsd:enumeration value="Italic"/>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-						<xsd:attribute name="FontDecoration" default="Normal">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:enumeration value="Normal"/>
-									<xsd:enumeration value="Underline"/>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-						<xsd:attribute name="FontStrikethru" default="Normal">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:enumeration value="Normal"/>
-									<xsd:enumeration value="Strikethru"/>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-						<xsd:attribute name="FontWeight" default="Normal">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:enumeration value="Normal"/>
-									<xsd:enumeration value="Bold"/>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-						<xsd:attribute name="FontSize" type="xsd:nonNegativeInteger"
-							default="12"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes" />
 					</xsd:complexType>
 				</xsd:element>
 
 			</xsd:sequence>
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
-			<xsd:attribute name="GroupStyle" type="gpml:GroupStyleType" default="Stack" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
@@ -473,6 +485,47 @@
 	</xsd:element>
 <!-- End: Label -->
 
+<!-- Link -->
+	<xsd:element name="Link">
+
+		<xsd:complexType>
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">This is text on a GenMAPP map that
+					can have associated comments.</xsd:documentation>
+			</xsd:annotation>
+
+			<xsd:sequence>
+
+				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
+
+				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
+						<xsd:attribute name="Color" use="optional"
+							type="gpml:ColorType"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes" />
+					</xsd:complexType>
+				</xsd:element>
+
+			</xsd:sequence>
+			<xsd:attribute name="Href" use="optional" type="xsd:string" />
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
+
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
+			<xsd:attribute name="Xref" type="xsd:string" use="optional">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">GenMAPP
+						Links</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			
+		</xsd:complexType>
+
+	</xsd:element>
+<!-- End: Link -->
 
 <!-- Shape -->
 	<xsd:element name="Shape">
@@ -486,13 +539,11 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="CenterX" type="xsd:float" use="required" />
-						<xsd:attribute name="CenterY" type="xsd:float" use="required" />
-						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
-						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
 						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
 						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
@@ -524,13 +575,26 @@
 			
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
-			<xsd:attribute name="GroupStyle" type="gpml:GroupStyleType" default="Stack" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 		</xsd:complexType>
 
 	</xsd:element>
 <!-- End: Shape -->
+
+<!-- Group -->
+
+	<xsd:element name="Group">	
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:BiopaxGroup"/>
+			</xsd:sequence>
+			
+			<xsd:attribute name="GroupId" type="xsd:string" use="required"/>
+			<xsd:attribute name="Style" type="gpml:GroupStyleType" default="Stack" />
+		</xsd:complexType>
+	</xsd:element>
 
 <!-- InfoBox -->
 	<xsd:element name="InfoBox">

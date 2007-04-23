@@ -31,13 +31,13 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.pathvisio.view.Pathway;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.Utils;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GmmlData;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.Globals;
@@ -49,9 +49,9 @@ public abstract class Engine {
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
-	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
+	public static final String PATHWAY_FILTER_NAME = "PathVisio VPathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
-	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
+	public static final String GENMAPP_FILTER_NAME = "GenMAPP VPathway (*." + GENMAPP_FILE_EXTENSION + ")";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
@@ -59,16 +59,16 @@ public abstract class Engine {
 	public static final RGB TRANSPARENT_COLOR = new RGB(255, 0, 255);
 	
 	/**
-	 * {@link GmmlData} object containing JDOM representation of the gpml pathway 
+	 * {@link Pathway} object containing JDOM representation of the gpml pathway 
 	 * and handle gpml related actions
 	 */
 	
-	static GmmlVisionWindow window;
-	static Pathway drawing;
-	static GmmlData gmmlData;
+	static MainWindow window;
+	static VPathway drawing;
+	static Pathway gmmlData;
 	
 	private static ImageRegistry imageRegistry;
-	private static GmmlPreferences preferences;
+	private static Preferences preferences;
 	public static final Logger log = new Logger();
 	
 	private static File DIR_APPLICATION;
@@ -78,18 +78,18 @@ public abstract class Engine {
 	/**
 	 * Get the {@link ApplicationWindow}, the UI of the program
 	 */
-	public static GmmlVisionWindow getWindow() {
-		if(window == null) window = new GmmlVisionWindow();
+	public static MainWindow getWindow() {
+		if(window == null) window = new MainWindow();
 		return window;
 	}
 	
 	/**
-	 * Initiates an instance of {@link GmmlVisionWindow} that is monitored by Sleak.java,
+	 * Initiates an instance of {@link MainWindow} that is monitored by Sleak.java,
 	 * to monitor what handles (to OS device context) are in use. For debug purposes only 
 	 * (to check for undisposed widgets)
-	 * @return The {@link GmmlVisionWindow} monitored by Sleak.java
+	 * @return The {@link MainWindow} monitored by Sleak.java
 	 */
-	public static GmmlVisionWindow getSleakWindow() {
+	public static MainWindow getSleakWindow() {
 		//<DEBUG to find undisposed system resources>
 		DeviceData data = new DeviceData();
 		data.tracking = true;
@@ -98,16 +98,16 @@ public abstract class Engine {
 		sleak.open();
 		
 		Shell shell = new Shell(display);
-		window = new GmmlVisionWindow(shell);
+		window = new MainWindow(shell);
 		return window;
 		//</DEBUG>
 	}
 	
 	/**
-	 * Get the {@link GmmlPreferences} containing the user preferences
+	 * Get the {@link Preferences} containing the user preferences
 	 */
 	public static PreferenceStore getPreferences() { 
-		if(preferences == null) preferences = new GmmlPreferences();
+		if(preferences == null) preferences = new Preferences();
 		return preferences; 
 	}
 	
@@ -140,34 +140,34 @@ public abstract class Engine {
 	/**
 	 * Gets the currently open drawing
 	 */
-	public static Pathway getDrawing() {
+	public static VPathway getDrawing() {
 		return drawing;
 	}
 		
 	/**
-	 * Returns the currently open GmmlData
+	 * Returns the currently open Pathway
 	 */
-	public static GmmlData getGmmlData() {
+	public static Pathway getGmmlData() {
 		return gmmlData;
 	}
 	
 	/**
 	 * application global clipboard.
 	 */
-	public static List<GmmlDataObject> clipboard = null;
+	public static List<PathwayElement> clipboard = null;
 	
 	/**
 	 * Open a pathway from a gpml file
 	 */
 	public static void openPathway(String pwf)
 	{
-		GmmlData _gmmlData = null;
-		Pathway _drawing = getWindow().createNewDrawing();
+		Pathway _gmmlData = null;
+		VPathway _drawing = getWindow().createNewDrawing();
 		
 		// initialize new JDOM gpml representation and read the file
 		try { 
 			
-			_gmmlData = new GmmlData();
+			_gmmlData = new Pathway();
 			if (pwf.endsWith(".mapp"))
 			{
 				_gmmlData.readFromMapp(new File(pwf));
@@ -177,7 +177,7 @@ public abstract class Engine {
 				_gmmlData.readFromXml(new File(pwf), true);
 			}
 		} catch(ConverterException e) {		
-			if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
+			if (e.getMessage().contains("Cannot find the declaration of element 'VPathway'"))
 			{
 				MessageDialog.openError(getWindow().getShell(), 
 						"Unable to open Gpml file", 
@@ -212,7 +212,7 @@ public abstract class Engine {
 	 * Create a new pathway (drawing + gpml data)
 	 */
 	public static void newPathway() {
-		gmmlData = new GmmlData();
+		gmmlData = new Pathway();
 		gmmlData.initMappInfo();
 		drawing = getWindow().createNewDrawing();
 		drawing.fromGmmlData(gmmlData);
@@ -249,10 +249,10 @@ public abstract class Engine {
 		String className = null;
 		switch(type) {
 		case DBConnector.TYPE_GDB:
-			className = getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_GDB);
+			className = getPreferences().getString(Preferences.PREF_DB_ENGINE_GDB);
 			break;
 		case DBConnector.TYPE_GEX:
-			className = getPreferences().getString(GmmlPreferences.PREF_DB_ENGINE_EXPR);
+			className = getPreferences().getString(Preferences.PREF_DB_ENGINE_EXPR);
 			break;
 		}
 		if(className == null) return null;

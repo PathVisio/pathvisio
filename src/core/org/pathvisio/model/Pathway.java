@@ -55,11 +55,11 @@ import org.pathvisio.debug.Logger;
 * storing all information necessary for maintaining, loading and saving
 * pathway data.
 * 
-* GmmlData contains multiple GmmlDataObjects. GmmlData is guaranteed
+* Pathway contains multiple PathwayElements. Pathway is guaranteed
 * to always have exactly one object of the type MAPPINFO and exactly
 * one object of the type INFOBOX.
 */
-public class GmmlData implements GmmlListener
+public class Pathway implements PathwayListener
 {
 	/**
 	 * Logger to which all logging will be performed
@@ -90,29 +90,29 @@ public class GmmlData implements GmmlListener
 	/**
 	 * List of contained dataObjects
 	 */
-	private List<GmmlDataObject> dataObjects = new ArrayList<GmmlDataObject>();
+	private List<PathwayElement> dataObjects = new ArrayList<PathwayElement>();
 	
 	/**
 	 * Getter for dataobjects contained. There is no setter, you
 	 * have to add dataobjects individually
 	 * @return List of dataObjects contained in this pathway
 	 */
-	public List<GmmlDataObject> getDataObjects() 
+	public List<PathwayElement> getDataObjects() 
 	{
 		return dataObjects;
 	}
 	
-	private GmmlDataObject mappInfo = null;
-	private GmmlDataObject infoBox = null;
+	private PathwayElement mappInfo = null;
+	private PathwayElement infoBox = null;
 	
 	/**
 	 * get the one and only MappInfo object.
 	 * There is no setter, a MappInfo object is automatically
 	 * created in the constructor.
 	 * 
-	 * @return a GmmlDataObject with ObjectType set to mappinfo.
+	 * @return a PathwayElement with ObjectType set to mappinfo.
 	 */
-	public GmmlDataObject getMappInfo()
+	public PathwayElement getMappInfo()
 	{
 		return mappInfo;
 	}
@@ -122,22 +122,22 @@ public class GmmlData implements GmmlListener
 	 * There is no setter, a MappInfo object is automatically
 	 * created in the constructor.
 	 * 
-	 * @return a GmmlDataObject with ObjectType set to mappinfo.
+	 * @return a PathwayElement with ObjectType set to mappinfo.
 	 */
-	public GmmlDataObject getInfoBox()
+	public PathwayElement getInfoBox()
 	{
 		return infoBox;
 	}
 	/**
-	 * Add a GmmlDataObject to this GmmlData.
+	 * Add a PathwayElement to this Pathway.
 	 * takes care of setting parent and removing from possible previous
 	 * parent. 
 	 * 
-	 * fires GmmlEvent.ADDED event <i>after</i> addition of the object
+	 * fires PathwayEvent.ADDED event <i>after</i> addition of the object
 	 * 
 	 * @param o The object to add
 	 */
-	public void add (GmmlDataObject o)
+	public void add (PathwayElement o)
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
 			throw new IllegalArgumentException("Can't add more mappinfo objects");
@@ -148,23 +148,23 @@ public class GmmlData implements GmmlListener
 		dataObjects.add(o);
 		o.addListener(this);
 		o.setParent(this);
-		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.ADDED));
+		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
 	
 	/**
 	 * removes object
 	 * sets parent of object to null
-	 * fires GmmlEvent.DELETED event <i>before</i> removal of the object
+	 * fires PathwayEvent.DELETED event <i>before</i> removal of the object
 	 *  
 	 * @param o the object to remove
 	 */
-	public void remove (GmmlDataObject o)
+	public void remove (PathwayElement o)
 	{
 		if (o.getObjectType() == ObjectType.MAPPINFO)
 			throw new IllegalArgumentException("Can't remove mappinfo object!");
 		if (o.getObjectType() == ObjectType.INFOBOX)
 			throw new IllegalArgumentException("Can't remove infobox object!");
-		fireObjectModifiedEvent(new GmmlEvent(o, GmmlEvent.DELETED));
+		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.removeListener(this);
 		dataObjects.remove(o);		
 		o.setParent(null);
@@ -274,11 +274,11 @@ public class GmmlData implements GmmlListener
 	/**
 	 * Contructor for this class, creates a new gpml document
 	 */
-	public GmmlData() 
+	public Pathway() 
 	{
-		mappInfo = new GmmlDataObject(ObjectType.MAPPINFO);
+		mappInfo = new PathwayElement(ObjectType.MAPPINFO);
 		this.add (mappInfo);
-		infoBox = new GmmlDataObject(ObjectType.INFOBOX);
+		infoBox = new PathwayElement(ObjectType.INFOBOX);
 		this.add (infoBox);
 	}
 	
@@ -296,7 +296,7 @@ public class GmmlData implements GmmlListener
 		mappInfo.setWindowHeight(M_INITIAL_BOARD_HEIGHT);
 		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		mappInfo.setVersion(dateString);
-		mappInfo.setMapInfoName("New Pathway");
+		mappInfo.setMapInfoName("New VPathway");
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class GmmlData implements GmmlListener
 	 */
 	public static void validateDocument(Document doc) throws ConverterException
 	{	
-		ClassLoader cl = GmmlData.class.getClassLoader();
+		ClassLoader cl = Pathway.class.getClassLoader();
 		InputStream is = cl.getResourceAsStream(xsdFile);
 		if(is != null) {	
 			Schema schema;
@@ -382,7 +382,7 @@ public class GmmlData implements GmmlListener
 
 			if (validate) validateDocument(doc);
 			
-			// Copy the pathway information to a Pathway
+			// Copy the pathway information to a VPathway
 			Element root = doc.getRootElement();
 			
 			GpmlFormat.mapElement(root, this); // MappInfo
@@ -455,12 +455,12 @@ public class GmmlData implements GmmlListener
 		}
 	}
 
-	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
-	public void addListener(GmmlListener v) { listeners.add(v); }
-	public void removeListener(GmmlListener v) { listeners.remove(v); }
-	public void fireObjectModifiedEvent(GmmlEvent e) 
+	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
+	public void addListener(PathwayListener v) { listeners.add(v); }
+	public void removeListener(PathwayListener v) { listeners.remove(v); }
+	public void fireObjectModifiedEvent(PathwayEvent e) 
 	{
-		for (GmmlListener g : listeners)
+		for (PathwayListener g : listeners)
 		{
 			g.gmmlObjectModified(e);
 		}
@@ -473,7 +473,7 @@ public class GmmlData implements GmmlListener
 	public ArrayList<String> getSystemCodes()
 	{
 		ArrayList<String> systemCodes = new ArrayList<String>();
-		for(GmmlDataObject o : dataObjects)
+		for(PathwayElement o : dataObjects)
 		{
 			if(o.getObjectType() == ObjectType.DATANODE)
 			{
@@ -494,18 +494,18 @@ public class GmmlData implements GmmlListener
 	 * register undo actions,
 	 * disabled for the moment.
 	 */
-	public void gmmlObjectModified(GmmlEvent e) 
+	public void gmmlObjectModified(PathwayEvent e) 
 	{
 		switch (e.getType())
 		{
-			case GmmlEvent.MODIFIED_GENERAL:
-			case GmmlEvent.MODIFIED_SHAPE:
+			case PathwayEvent.MODIFIED_GENERAL:
+			case PathwayEvent.MODIFIED_SHAPE:
 				undoManager.newChangeAction(e.getAffectedData());
 				break;
-			case GmmlEvent.ADDED:
+			case PathwayEvent.ADDED:
 				undoManager.newAddAction(e.getAffectedData());
 				break;
-			case GmmlEvent.DELETED:
+			case PathwayEvent.DELETED:
 				undoManager.newRemoveAction(e.getAffectedData());
 				break;
 		}

@@ -40,8 +40,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.GmmlVisionWindow;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.gui.MainWindow;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.search.SearchMethods.SearchException;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.data.DataSources;
@@ -50,9 +50,9 @@ public class PathwaySearchComposite extends Composite {
 
 	HashMap<String, SearchOptionComposite> searchControls;
 	
-	GmmlVisionWindow gmmlVision;
+	MainWindow gmmlVision;
 	
-	public PathwaySearchComposite(Composite parent, int style, GmmlVisionWindow gmmlVision) {
+	public PathwaySearchComposite(Composite parent, int style, MainWindow gmmlVision) {
 		super(parent, style);
 		this.gmmlVision = gmmlVision;
 				
@@ -257,7 +257,7 @@ public class PathwaySearchComposite extends Composite {
 	
 	private Text createDirText(Composite parent) {
 		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		t.setText(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+		t.setText(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return t;
 	}

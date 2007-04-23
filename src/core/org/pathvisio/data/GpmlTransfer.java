@@ -26,7 +26,7 @@ import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.gui.Engine;
 
@@ -49,11 +49,11 @@ public class GpmlTransfer extends ByteArrayTransfer
 		if (!(data instanceof List)) { return; } // wrong type of data
 		
 		byte[] result = null;
-		List<GmmlDataObject> clipboard = (List<GmmlDataObject>)data;
+		List<PathwayElement> clipboard = (List<PathwayElement>)data;
 		Document doc = new Document();
 		Namespace ns = Namespace.getNamespace("http://www.w3.org/2000/svg");
 
-		for (GmmlDataObject o : clipboard)
+		for (PathwayElement o : clipboard)
 		{
 			try
 			{

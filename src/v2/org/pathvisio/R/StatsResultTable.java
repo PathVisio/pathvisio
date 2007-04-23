@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.R.RCommands.RException;
@@ -127,7 +127,7 @@ public class StatsResultTable extends PathwayTable {
 		saveAsR.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fd = new FileDialog(getShell(), SWT.SAVE);
-				fd.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA));
+				fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_RDATA));
 				String fn = fd.open();
 				if(fn == null) return;
 				try {

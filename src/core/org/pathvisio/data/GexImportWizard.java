@@ -52,17 +52,17 @@ import org.eclipse.swt.widgets.Text;
 
 import org.pathvisio.Globals;
 import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.TableColumnResizer;
 
 /**
  * This class is a {@link Wizard} that guides the user trough the process to
  * create an expression dataset from a delimited text file
  */
-public class ImportExprDataWizard extends Wizard {
+public class GexImportWizard extends Wizard {
 	ImportInformation importInformation;
 
-	public ImportExprDataWizard() {
+	public GexImportWizard() {
 		importInformation = new ImportInformation();
 
 		setWindowTitle("Create an expression dataset");
@@ -85,7 +85,7 @@ public class ImportExprDataWizard extends Wizard {
 			try {
 				// Start import process
 				getContainer().run(true, true,
-						new GmmlGex.ImportRunnableWithProgress(
+						new Gex.ImportRunnableWithProgress(
 								importInformation,
 								(ImportPage) getPage("ImportPage")));
 			} catch (Exception e) {
@@ -162,7 +162,7 @@ public class ImportExprDataWizard extends Wizard {
 							"*.*" });
 					fileDialog.setFilterNames(new String[] { "Text file",
 							"All files" });
-					fileDialog.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
+					fileDialog.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_EXPR));
 					String file = fileDialog.open();
 					if (file != null) {
 						txtText.setText(file);
@@ -175,7 +175,7 @@ public class ImportExprDataWizard extends Wizard {
 			gexButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					try {
-						DBConnector dbcon = GmmlGex.getDBConnector();
+						DBConnector dbcon = Gex.getDBConnector();
 						String dbName = dbcon.openNewDbDialog(getShell(), gexText.getText());
 						if(dbName != null) gexText.setText(dbName);
 						
@@ -470,7 +470,7 @@ public class ImportExprDataWizard extends Wizard {
 					| SWT.WRAP);
 			progressText.setText("Ready to import data" + Text.DELIMITER);
 			progressText.append("> Using gene database: "
-					+ GmmlGdb.getDbName()
+					+ Gdb.getDbName()
 					+ Text.DELIMITER);
 			progressText
 					.append("> If this is not the correct gene database, close this window"
@@ -560,7 +560,7 @@ public class ImportExprDataWizard extends Wizard {
 	/**
 	 * This class contains the information needed to start importing a delimited
 	 * text file to an expression dataset. This information is gathered using
-	 * the {@link ImportExprDataWizard}
+	 * the {@link GexImportWizard}
 	 */
 	class ImportInformation {
 		/**

@@ -30,14 +30,14 @@ import org.pathvisio.view.Graphics;
 /**
  * This class contains all user preferences used in this application
  */
-public class GmmlPreferences extends PreferenceStore implements IPropertyChangeListener {
+public class Preferences extends PreferenceStore implements IPropertyChangeListener {
 	private static final File preferenceFile = new File(Engine.getApplicationDir(), ".PathVisio");
 	
-	public GmmlPreferences() {
+	public Preferences() {
 		this(preferenceFile.toString());
 	}
 	
-	public GmmlPreferences(String fileName) {
+	public Preferences(String fileName) {
 		super(fileName);
 		loadPreferences();
 	}
@@ -101,17 +101,17 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	}
 	
 	public void propertyChange(PropertyChangeEvent e) {
-		if(e.getProperty().equals(GmmlPreferences.PREF_COL_SELECTED)) { 
+		if(e.getProperty().equals(Preferences.PREF_COL_SELECTED)) { 
 			if(e.getNewValue() instanceof RGB) Graphics.selectColor = (RGB)e.getNewValue();
 			else Graphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			Engine.getDrawing().redraw();
 		}
-		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_HIGHLIGHTED)) {
+		else if(e.getProperty().equals(Preferences.PREF_COL_HIGHLIGHTED)) {
 			if(e.getNewValue() instanceof RGB) Graphics.highlightColor = (RGB)e.getNewValue();
 			else Graphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			Engine.getDrawing().redraw();
 		}
-//		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_AMBIGIOUS_REP)) {
+//		else if(e.getProperty().equals(Preferences.PREF_COL_AMBIGIOUS_REP)) {
 //			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();
 //			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
 //			Engine.getDrawing().redraw();

@@ -40,12 +40,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.R.RCommands;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RDataOut;
 import org.pathvisio.R.RCommands.RInterruptedException;
-import org.pathvisio.data.GmmlGex;
+import org.pathvisio.data.Gex;
 
 public class PageData extends WizardPage {
 	RDataOut rDataOut;
@@ -78,7 +78,7 @@ public class PageData extends WizardPage {
 		radioExport = new Button(content, SWT.RADIO);
 		radioExport.setText("Export data to R");
 		//Only available when expression data is loaded
-		radioExport.setEnabled(GmmlGex.isConnected());
+		radioExport.setEnabled(Gex.isConnected());
 			
 		radioImport = new Button(content, SWT.RADIO);
 		radioImport.setText("Load previously exported data");
@@ -186,7 +186,7 @@ public class PageData extends WizardPage {
 				DirectoryDialog fd = new DirectoryDialog(getShell());
 				String pwTxt = pwDir.getText();
 				fd.setFilterPath(pwTxt.equals("") ? 
-						Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES) : pwTxt);
+						Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES) : pwTxt);
 				String dir = fd.open();
 				if(dir != null) pwDir.setText(dir);
 				checkPageComplete();
@@ -204,7 +204,7 @@ public class PageData extends WizardPage {
 			FileDialog fd = new FileDialog(getShell(), 
 					e.widget == exportBrowse ? SWT.SAVE : SWT.OPEN);
 			String expTxt = exportFile.getText();
-			fd.setFilterPath(expTxt.equals("") ? Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA) : expTxt);
+			fd.setFilterPath(expTxt.equals("") ? Engine.getPreferences().getString(Preferences.PREF_DIR_RDATA) : expTxt);
 			String file = fd.open();
 			if(file != null) {
 				if		(e.widget == exportBrowse) 	exportFile.setText(file);

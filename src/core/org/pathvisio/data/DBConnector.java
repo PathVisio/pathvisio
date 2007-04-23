@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 
 /**
  * This class provides the connection for the databases (annotation and expression database) used
@@ -144,7 +144,7 @@ public abstract class DBConnector {
 					"(	  version INTEGER PRIMARY KEY		" +
 					")");
 			sh.execute( //Add compatibility version of GEX
-					"INSERT INTO info VALUES ( " + GmmlGex.COMPAT_VERSION + ")");
+					"INSERT INTO info VALUES ( " + Gex.COMPAT_VERSION + ")");
 			sh.execute(
 					"CREATE TABLE                    " +
 					"		samples							" +
@@ -221,10 +221,10 @@ public abstract class DBConnector {
 		String filterPath = null;
 		switch(getDbType()) {
 		case TYPE_GDB: 
-			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB);
+			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_GDB);
 			break;
 		case TYPE_GEX:
-			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR);
+			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) fileDialog.setFilterPath(filterPath);
@@ -247,10 +247,10 @@ public abstract class DBConnector {
 		String filterPath = null;
 		switch(getDbType()) {
 		case TYPE_GDB: 
-			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB);
+			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_GDB);
 			break;
 		case TYPE_GEX:
-			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR);
+			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) dirDialog.setFilterPath(filterPath);

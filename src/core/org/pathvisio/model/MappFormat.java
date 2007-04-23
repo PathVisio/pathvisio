@@ -154,7 +154,7 @@ public class MappFormat
      */
 	private static String mappTemplateFile = "MAPPTmpl.gtp";
     
-    static void readFromMapp (String filename, GmmlData data)
+    static void readFromMapp (String filename, Pathway data)
     	throws ConverterException
     {
     	String database = database_before + filename + database_after;
@@ -301,12 +301,12 @@ public class MappFormat
         }
     }
     
-	public static String[] uncopyMappInfo (GmmlData data)
+	public static String[] uncopyMappInfo (Pathway data)
 	{
 		String[] mappInfo = new String[15];
 		
-		GmmlDataObject mi = null;
-		for (GmmlDataObject o : data.getDataObjects())
+		PathwayElement mi = null;
+		for (PathwayElement o : data.getDataObjects())
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 				mi = o;
@@ -333,7 +333,7 @@ public class MappFormat
 	
 	// This method copies the Info table of the genmapp mapp to a new gpml
 	// pathway
-	public static void copyMappInfo(String[] row, GmmlData data, String filename)
+	public static void copyMappInfo(String[] row, Pathway data, String filename)
 	{
 
 		/* Data is lost when converting from GenMAPP to GPML:
@@ -353,7 +353,7 @@ public class MappFormat
 	
 		Engine.log.trace ("CONVERTING INFO TABLE TO GPML");
 		
-		GmmlDataObject o = data.getMappInfo();
+		PathwayElement o = data.getMappInfo();
 		
 		o.setMapInfoName(row[icolTitle]);
 		o.setMapInfoDataSource("GenMAPP 2.0");
@@ -396,11 +396,11 @@ public class MappFormat
     	return null;
     }
 
-	public static List<String[]> uncopyMappObjects(GmmlData data) throws ConverterException
+	public static List<String[]> uncopyMappObjects(Pathway data) throws ConverterException
 	{
 		List<String[]> result = new ArrayList<String[]>();
 		
-		for (GmmlDataObject o : data.getDataObjects())
+		for (PathwayElement o : data.getDataObjects())
 		{
 			int objectType = o.getObjectType();
 			String[] row = new String[18];
@@ -476,13 +476,13 @@ public class MappFormat
 		return result;
 	}
 
-	private static void unmapNotesAndComments(GmmlDataObject o, String[] row)
+	private static void unmapNotesAndComments(PathwayElement o, String[] row)
 	{		
 		row[colNotes] = o.findComment("GenMAPP notes");
 		row[colRemarks] = o.findComment("GenMAPP remarks");		
 	}
 	
-	private static void mapNotesAndComments(GmmlDataObject o, String[] row)
+	private static void mapNotesAndComments(PathwayElement o, String[] row)
 	{
         if (row[colNotes] != null &&
         		!row[colNotes].equals(""))
@@ -499,7 +499,7 @@ public class MappFormat
 
 	// This list adds the elements from the OBJECTS table to the new gpml
 	// pathway
-    public static void copyMappObjects(String[] row, GmmlData data) throws ConverterException
+    public static void copyMappObjects(String[] row, Pathway data) throws ConverterException
     {
 
 		// Create the GenMAPP --> GPML mappings list for use in the switch
@@ -512,7 +512,7 @@ public class MappFormat
 				"LigandRd", "ReceptorRd", "CellA", "Arc", "Ribosome",
 				"OrganA", "OrganB", "OrganC", "ProteinB", "Poly", "Vesicle"
 		});
-		GmmlDataObject o = null;		
+		PathwayElement o = null;		
 		int index = typeslist.indexOf(row[colType]);		
 		switch(index) {
 		
@@ -584,7 +584,7 @@ public class MappFormat
     }
 
     
-    private static void unmapLineType (GmmlDataObject o, String[] mappObject)
+    private static void unmapLineType (PathwayElement o, String[] mappObject)
     {   	
     	int lineStyle = o.getLineStyle();
 		LineType lineType = o.getLineType();
@@ -600,14 +600,14 @@ public class MappFormat
     	unmapColor (o, mappObject);    	
     }
 
-	private static void mapColor(GmmlDataObject o, String[] mappObject)
+	private static void mapColor(PathwayElement o, String[] mappObject)
 	{
         int i = Integer.parseInt(mappObject[colColor]);
         o.setTransparent(i < 0);
 		o.setColor(ConvertType.fromMappColor(mappObject[colColor]));	
 	}
 
-	private static void unmapColor(GmmlDataObject o, String[] mappObject)
+	private static void unmapColor(PathwayElement o, String[] mappObject)
 	{
 		mappObject[colColor] = ConvertType.toMappColor(o.getColor(), o.isTransparent());	
 	}
@@ -626,9 +626,9 @@ public class MappFormat
 		return result;
 	}
 	
-	private static GmmlDataObject mapLineType(String [] mappObject) throws ConverterException
+	private static PathwayElement mapLineType(String [] mappObject) throws ConverterException
 	{		
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.LINE);
+    	PathwayElement o = new PathwayElement(ObjectType.LINE);
     	
 		String type = mappObject[colType];
     	if(type.startsWith("Dotted"))
@@ -649,57 +649,57 @@ public class MappFormat
         return o;
 	}
     
-	private static void unmapCenter (GmmlDataObject o, String[] mappObject)
+	private static void unmapCenter (PathwayElement o, String[] mappObject)
 	{
 		mappObject[colCenterX] = "" + o.getMCenterX();
     	mappObject[colCenterY] = "" + o.getMCenterY();	
 	}
 	
-	private static void mapCenter (GmmlDataObject o, String[] mappObject)
+	private static void mapCenter (PathwayElement o, String[] mappObject)
 	{
 		o.setMCenterX(Double.parseDouble(mappObject[colCenterX]));
 		o.setMCenterY(Double.parseDouble(mappObject[colCenterY]));
 	}
 
-	private static void unmapRotation (GmmlDataObject o, String[] mappObject)
+	private static void unmapRotation (PathwayElement o, String[] mappObject)
 	{
 		mappObject[colRotation] = "" + o.getRotation();
 	}
 	
-	private static void mapRotation (GmmlDataObject o, String[] mappObject)
+	private static void mapRotation (PathwayElement o, String[] mappObject)
 	{
 		o.setRotation(Double.parseDouble(mappObject[colRotation]));
 	}
 	
-	private static void unmapShape (GmmlDataObject o, String[] mappObject)
+	private static void unmapShape (PathwayElement o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);    	
     	mappObject[colWidth] = "" + o.getMWidth();
     	mappObject[colHeight] = "" + o.getMHeight();	
 	}
 
-	private static void mapShape (GmmlDataObject o, String[] mappObject)
+	private static void mapShape (PathwayElement o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);    	
     	o.setMWidth(Double.parseDouble(mappObject[colWidth]));
     	o.setMHeight(Double.parseDouble(mappObject[colHeight]));
 	}
 	
-	private static void unmapShape_half (GmmlDataObject o, String[] mappObject)
+	private static void unmapShape_half (PathwayElement o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);    	
     	mappObject[colWidth] = "" + o.getMWidth() / 2;
     	mappObject[colHeight] = "" + o.getMHeight() / 2;	
 	}
 
-	private static void mapShape_half (GmmlDataObject o, String[] mappObject)
+	private static void mapShape_half (PathwayElement o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);    	
     	o.setMWidth(Double.parseDouble(mappObject[colWidth]) * 2);
     	o.setMHeight(Double.parseDouble(mappObject[colHeight]) * 2);	
 	}
 
-	private static void unmapBraceType (GmmlDataObject o, String[] mappObject) throws ConverterException
+	private static void unmapBraceType (PathwayElement o, String[] mappObject) throws ConverterException
     {    	
     	mappObject[colType] = "Brace";    	
     	mappObject[colRotation] = "" + o.getOrientation();    	
@@ -707,9 +707,9 @@ public class MappFormat
     	unmapColor (o, mappObject);
     }
 
-    private static GmmlDataObject mapBraceType(String[] mappObject) throws ConverterException
+    private static PathwayElement mapBraceType(String[] mappObject) throws ConverterException
     {
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
+    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
     	o.setShapeType (ShapeType.BRACE);
     	mapShape(o, mappObject);
     	mapColor(o, mappObject);
@@ -717,7 +717,7 @@ public class MappFormat
         return o;          
     }
     
-    private static void unmapGeneProductType (GmmlDataObject o, String[] mappObject) throws ConverterException
+    private static void unmapGeneProductType (PathwayElement o, String[] mappObject) throws ConverterException
     {    	
     	mappObject[colType] = "Gene";
     	mappObject[colSystemCode] =
@@ -731,9 +731,9 @@ public class MappFormat
 		unmapShape(o, mappObject);
     }
     
-    private static GmmlDataObject mapGeneProductType(String[] mappObject) throws ConverterException
+    private static PathwayElement mapGeneProductType(String[] mappObject) throws ConverterException
 	{
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.DATANODE);
+    	PathwayElement o = new PathwayElement(ObjectType.DATANODE);
     	
     	String syscode = mappObject[colSystemCode];
     	if (syscode == null) syscode = "";
@@ -764,31 +764,31 @@ public class MappFormat
         return o;			
 	}
     
-	private static GmmlDataObject mapInfoBoxType (String[] mappObject, GmmlData data)
+	private static PathwayElement mapInfoBoxType (String[] mappObject, Pathway data)
 	{
-    	GmmlDataObject o = data.getInfoBox();
+    	PathwayElement o = data.getInfoBox();
         
     	mapCenter (o, mappObject);                
         return o;
 	}
 	
-	private static void unmapInfoBoxType (GmmlDataObject o, String[] mappObject)
+	private static void unmapInfoBoxType (PathwayElement o, String[] mappObject)
     {    	
     	mappObject[colType] = "InfoBox";
     	
     	unmapCenter (o, mappObject);
     }
 
-	private static GmmlDataObject mapLegendType (String[] mappObject)
+	private static PathwayElement mapLegendType (String[] mappObject)
 	{
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.LEGEND);
+    	PathwayElement o = new PathwayElement(ObjectType.LEGEND);
  
     	mapCenter (o, mappObject);
     	        
         return o;
 	}
 	
-	private static void unmapLegendType (GmmlDataObject o, String[] mappObject)
+	private static void unmapLegendType (PathwayElement o, String[] mappObject)
     {    	
     	mappObject[colType] = "Legend";
     	
@@ -800,9 +800,9 @@ public class MappFormat
 	private final static int styleUnderline = 4;
 	private final static int styleStrikethru = 8;
     
-    private static GmmlDataObject mapLabelType(String[] mappObject) 
+    private static PathwayElement mapLabelType(String[] mappObject) 
     {
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.LABEL);
+    	PathwayElement o = new PathwayElement(ObjectType.LABEL);
 
     	mapShape(o, mappObject);
     	mapColor(o, mappObject);
@@ -836,7 +836,7 @@ public class MappFormat
         return o;
     }
 
-    private static void unmapLabelType (GmmlDataObject o, String[] mappObject)
+    private static void unmapLabelType (PathwayElement o, String[] mappObject)
     {    	
     	mappObject[colType] = "Label";
     	mappObject[colLabel] = o.getTextLabel();
@@ -862,9 +862,9 @@ public class MappFormat
 		mappObject[colLinks] = o.getXref();    	
     }
     
-	private static GmmlDataObject mapShapeType(String[] mappObject)
+	private static PathwayElement mapShapeType(String[] mappObject)
     {
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
+    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
     	ShapeType shapeType = ShapeType.fromMappName(mappObject[colType]);
     	o.setShapeType(shapeType);        
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
@@ -887,7 +887,7 @@ public class MappFormat
         return o;
     }
     
-    private static void unmapShapeType (GmmlDataObject o, String[] mappObject)
+    private static void unmapShapeType (PathwayElement o, String[] mappObject)
     {    	
     	ShapeType shapeType = o.getShapeType();
     	mappObject[colType] = ShapeType.toMappName(shapeType);
@@ -909,15 +909,15 @@ public class MappFormat
 		unmapRotation (o, mappObject);    	
     }
     
-    private static GmmlDataObject mapFixedShapeType(String[] mappObject)
+    private static PathwayElement mapFixedShapeType(String[] mappObject)
     {
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
+    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
         mapShape (o, mappObject);
         return o;        
     }
 
-    private static void unmapFixedShapeType (GmmlDataObject o, String[] mappObject)
+    private static void unmapFixedShapeType (PathwayElement o, String[] mappObject)
     {    	
     	ShapeType shapeType = o.getShapeType();
     	mappObject[colType] = ShapeType.toMappName(shapeType);
@@ -932,9 +932,9 @@ public class MappFormat
     	unmapShape (o, mappObject);
     }
         
-    private static GmmlDataObject mapComplexShapeType(String[] mappObject) throws ConverterException 
+    private static PathwayElement mapComplexShapeType(String[] mappObject) throws ConverterException 
 	{       		
-    	GmmlDataObject o = new GmmlDataObject(ObjectType.SHAPE);
+    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
     	
     	if (mappObject[colType].equals("Poly"))
         {
@@ -958,7 +958,7 @@ public class MappFormat
         return o;
     }
     
-    private static void unmapComplexShapeType (GmmlDataObject o, String[] mappObject)
+    private static void unmapComplexShapeType (PathwayElement o, String[] mappObject)
     {   
     	ShapeType shapeType = o.getShapeType();
     	mappObject[colType] = ShapeType.toMappName(shapeType);

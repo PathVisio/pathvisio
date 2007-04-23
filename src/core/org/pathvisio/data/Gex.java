@@ -56,9 +56,9 @@ import org.pathvisio.util.FileUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
-import org.pathvisio.data.ImportExprDataWizard.ImportInformation;
-import org.pathvisio.data.ImportExprDataWizard.ImportPage;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.GexImportWizard.ImportInformation;
+import org.pathvisio.data.GexImportWizard.ImportPage;
 import org.pathvisio.debug.StopWatch;
 
 /**
@@ -66,7 +66,7 @@ import org.pathvisio.debug.StopWatch;
  * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
  * to hsqldb format
  */
-public class GmmlGex implements ApplicationEventListener {
+public class Gex implements ApplicationEventListener {
 	public static final String XML_ELEMENT = "expression-data-visualizations";
 	static final int COMPAT_VERSION = 1;
 	
@@ -150,7 +150,7 @@ public class GmmlGex implements ApplicationEventListener {
 	}
 	
 	public static Document getXML() {
-		InputStream in = GmmlGex.getXmlInput();
+		InputStream in = Gex.getXmlInput();
 		Document doc;
 		Element root;
 		try {
@@ -314,7 +314,7 @@ public class GmmlGex implements ApplicationEventListener {
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| GmmlGdb.getCon() == null //and to the gene database
+				|| Gdb.getCon() == null //and to the gene database
 		) return noDataFound;
 		
 		List<Data> pwData = cachedData.getData(idc);
@@ -369,7 +369,7 @@ public class GmmlGex implements ApplicationEventListener {
 			
 			if(cachedData.hasData(pwIdc)) continue;
 			
-			ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
+			ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			
@@ -552,7 +552,7 @@ public class GmmlGex implements ApplicationEventListener {
 	/**
 	 * This {@link IRunnableWithProgress} is responsible for running the import expression data
 	 * process and monitor the progress
-	 * See GmmlGex.importFromTxt
+	 * See Gex.importFromTxt
 	 */
 	public static class ImportRunnableWithProgress implements IRunnableWithProgress {
 		static final int totalWork = (int)1E6;
@@ -576,9 +576,9 @@ public class GmmlGex implements ApplicationEventListener {
 	
 	/**
 	 * Imports expression data from a text file and saves it to an hsqldb expression database
-	 * @param info		{@link ImportExprDataWizard.ImportInformation} object that contains the 
+	 * @param info		{@link GexImportWizard.ImportInformation} object that contains the 
 	 * information needed to import the data
-	 * @param page		{@link ImportExprDataWizard.ImportPage} that reports information and errors
+	 * @param page		{@link GexImportWizard.ImportPage} that reports information and errors
 	 * during the import process
 	 * @param monitor	{@link IProgressMonitor} that reports the progress of the process and enables
 	 * the user to cancel
@@ -672,7 +672,7 @@ public class GmmlGex implements ApplicationEventListener {
 				//Check id and add data
 				String id = data[info.idColumn].trim();
 				String code = data[info.codeColumn].trim();
-				ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
@@ -815,7 +815,7 @@ public class GmmlGex implements ApplicationEventListener {
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = GmmlGdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
@@ -891,7 +891,7 @@ public class GmmlGex implements ApplicationEventListener {
 		con.setReadOnly( !create );
 		
 		if(fireEvent)
-			fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_OPENED));
+			fireExpressionDataEvent(new ExpressionDataEvent(Gex.class, ExpressionDataEvent.CONNECTION_OPENED));
 	}
 	
 	/**
@@ -929,7 +929,7 @@ public class GmmlGex implements ApplicationEventListener {
 				} else {
 					connector.closeConnection(con);
 				}
-				fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_CLOSED));
+				fireExpressionDataEvent(new ExpressionDataEvent(Gex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 				
 			} catch (Exception e) {
 				Engine.log.error("Error while closing connection to expression dataset " + dbName, e);

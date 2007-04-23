@@ -57,11 +57,11 @@ import org.jdom.Element;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.GmmlGex;
+import org.pathvisio.data.Gex;
 import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
-import org.pathvisio.data.GmmlGex.Sample;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.model.PathwayElement;
 
 /**
  * Provides label for Gene Product
@@ -97,7 +97,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC buffer) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = GmmlGex.getCachedData();
+			CachedData  cache = Gex.getCachedData();
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
 			
@@ -128,7 +128,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public Composite visualizeOnToolTip(Composite parent, Graphics g) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = GmmlGex.getCachedData();
+			CachedData  cache = Gex.getCachedData();
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
 			
@@ -333,7 +333,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		use.addSelectionChangedListener(slist);
 		samples.addSelectionChangedListener(slist);
 		
-		samples.setInput(GmmlGex.getSamples(-1));
+		samples.setInput(Gex.getSamples(-1));
 		use.setInput(useSamples);
 		
 		return sampleComp;
@@ -408,7 +408,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		for(Object o : xml.getChildren(XML_ELM_ID)) {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
-				useSamples.add(GmmlGex.getSample(id));
+				useSamples.add(Gex.getSample(id));
 			} catch(Exception e) { Engine.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));

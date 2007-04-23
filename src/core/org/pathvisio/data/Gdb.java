@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.debug.StopWatch;
 
 /**
@@ -44,7 +44,7 @@ import org.pathvisio.debug.StopWatch;
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
-public abstract class GmmlGdb {	
+public abstract class Gdb {	
 	private static final int COMPAT_VERSION = 1;
 	
 	/**
@@ -75,14 +75,14 @@ public abstract class GmmlGdb {
 	 */
 	public static void init()
 	{
-		String currGdb = Engine.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB);
-		if(!currGdb.equals("") && !Engine.getPreferences().isDefault(GmmlPreferences.PREF_CURR_GDB))
+		String currGdb = Engine.getPreferences().getString(Preferences.PREF_CURR_GDB);
+		if(!currGdb.equals("") && !Engine.getPreferences().isDefault(Preferences.PREF_CURR_GDB))
 		{
 			dbName = currGdb;
 			try {
 				connect(null);
 			} catch(Exception e) {
-				setCurrentGdb(Engine.getPreferences().getDefaultString(GmmlPreferences.PREF_CURR_GDB));
+				setCurrentGdb(Engine.getPreferences().getDefaultString(Preferences.PREF_CURR_GDB));
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public abstract class GmmlGdb {
 	 */
 	public static void setCurrentGdb(String dbNm) {
 		dbName = dbNm;
-		Engine.getPreferences().setValue(GmmlPreferences.PREF_CURR_GDB, dbNm);
+		Engine.getPreferences().setValue(Preferences.PREF_CURR_GDB, dbNm);
 		try { Engine.getPreferences().save(); } 
 		catch(Exception e) { Engine.log.error("Unable to save preferences", e); } 
 	}

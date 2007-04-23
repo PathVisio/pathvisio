@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.PathwayElement;
 
 public class InfoBox extends Graphics {
 	
@@ -37,13 +37,13 @@ public class InfoBox extends Graphics {
 	int sizeX = 1;
 	int sizeY = 1; //Real size is calculated on first call to draw()
 	
-	public InfoBox (Pathway canvas, GmmlDataObject o) {
+	public InfoBox (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
 		canvas.setMappInfo(this);	
 	}
 	
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_MAPPINFO;
+		return VPathway.DRAW_ORDER_MAPPINFO;
 	}
 	
 	public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }

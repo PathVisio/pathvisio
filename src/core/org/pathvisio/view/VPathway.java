@@ -50,8 +50,8 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.model.*;
-import org.pathvisio.model.GmmlDataObject.MPoint;
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.Pathway.Color;
 
 /**
  * This class implements and handles a drawing.
@@ -59,8 +59,8 @@ import org.pathvisio.model.GmmlData.Color;
  * visualized. The class also provides methods for mouse  and key
  * event handling.
  */
-public class Pathway extends Canvas implements MouseListener, MouseMoveListener, 
-PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListener
+public class VPathway extends Canvas implements MouseListener, MouseMoveListener, 
+PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationListener
 {	
 	private static final long serialVersionUID = 1L;
 	static final double M_PASTE_OFFSET = 10 * 15;
@@ -69,13 +69,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
-	private ArrayList<PathwayElement> drawingObjects;
-	public ArrayList<PathwayElement> getDrawingObjects() { return drawingObjects; }
+	private ArrayList<VPathwayElement> drawingObjects;
+	public ArrayList<VPathwayElement> getDrawingObjects() { return drawingObjects; }
 	
 	/**
-	 * The {@link PathwayElement} that is pressed last mouseDown event}
+	 * The {@link VPathwayElement} that is pressed last mouseDown event}
 	 */
-	PathwayElement pressedObject	= null;	
+	VPathwayElement pressedObject	= null;	
 	
 	/**
 	 * The {@link Graphics} that is directly selected since last mouseDown event
@@ -89,8 +89,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * when displayed on the drawing)
 	 */
 	InfoBox infoBox;
-	private GmmlData data;
-	public GmmlData getGmmlData()
+	private Pathway data;
+	public Pathway getGmmlData()
 	{
 		return data;
 	}
@@ -105,9 +105,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public boolean isEditMode() { return editMode; }
 	
 	/**
-	 * Map the contents of a single data object to this Pathway
+	 * Map the contents of a single data object to this VPathway
 	 */	
-	private Graphics fromGmmlDataObject (GmmlDataObject o)
+	private Graphics fromGmmlDataObject (PathwayElement o)
 	{
 		Graphics result = null;
 		switch (o.getObjectType())
@@ -127,20 +127,20 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 	
 	/**
-	 * Maps the contents of a pathway to this Pathway
+	 * Maps the contents of a pathway to this VPathway
 	 */	
-	public void fromGmmlData(GmmlData _data)
+	public void fromGmmlData(Pathway _data)
 	{		
 		data = _data;
 			
-		for (GmmlDataObject o : data.getDataObjects())
+		for (PathwayElement o : data.getDataObjects())
 		{
 			fromGmmlDataObject (o);
 		}
 		int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
 		int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
 		setSize(width, height); 
-		data.fireObjectModifiedEvent(new GmmlEvent(null, GmmlEvent.MODIFIED_GENERAL));
+		data.fireObjectModifiedEvent(new PathwayEvent(null, PathwayEvent.MODIFIED_GENERAL));
 		data.addListener(this);
 	}
 
@@ -182,11 +182,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 *Constructor for this class
 	 */	
-	public Pathway(Composite parent, int style)
+	public VPathway(Composite parent, int style)
 	{
 		super (parent, style);
 		
-		drawingObjects	= new ArrayList<PathwayElement>();
+		drawingObjects	= new ArrayList<VPathwayElement>();
 		
 		s = new SelectionBox(this);
 		
@@ -217,7 +217,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * Adds an element to the drawing
 	 * @param o the element to add
 	 */
-	public void addObject(PathwayElement o)
+	public void addObject(VPathwayElement o)
 	{
 		if(!drawingObjects.contains(o)) { //Don't add duplicates!
 			drawingObjects.add(o);
@@ -254,12 +254,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Get the gene identifiers of all genes in this pathway
 	 * @return	List containing an identifier for every gene on the mapp
-	 * @deprecated get this info from GmmlData directly
+	 * @deprecated get this info from Pathway directly
 	 */
 	public ArrayList<String> getMappIds()
 	{
 		ArrayList<String> mappIds = new ArrayList<String>();
-		for(PathwayElement o : drawingObjects)
+		for(VPathwayElement o : drawingObjects)
 		{
 			if(o instanceof GeneProduct)
 			{
@@ -273,12 +273,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * Get the systemcodes of all genes in this pathway
 	 * @return	List containing a systemcode for every gene on the mapp
 	 * 
-	 * @deprecated get this info from GmmlData directly
+	 * @deprecated get this info from Pathway directly
 	 */
 	public ArrayList<String> getSystemCodes()
 	{
 		ArrayList<String> systemCodes = new ArrayList<String>();
-		for(PathwayElement o : drawingObjects)
+		for(VPathwayElement o : drawingObjects)
 		{
 			if(o instanceof GeneProduct)
 			{
@@ -349,7 +349,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		redraw();
 	}
 
-	public void setPressedObject(PathwayElement o) {
+	public void setPressedObject(VPathwayElement o) {
 		pressedObject = o;
 	}
 	
@@ -376,12 +376,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			{
 				resetHighlight();
 				Point2D p2d = new Point2D.Double(ve.x, ve.y);
-				List<PathwayElement> objects = getObjectsAt (p2d);
+				List<VPathwayElement> objects = getObjectsAt (p2d);
 				Collections.sort(objects);
 				Handle g = (Handle)pressedObject;
 				VPoint p = (VPoint)g.parent;
-				PathwayElement x = null;
-				for (PathwayElement o : objects)
+				VPathwayElement x = null;
+				for (VPathwayElement o : objects)
 				{
 					if (o instanceof VPoint && o != p) {
 						x = o;
@@ -399,7 +399,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 	}
 	
-	public void selectObject(PathwayElement o) {
+	public void selectObject(VPathwayElement o) {
 		clearSelection();
 		lastAdded.select();
 		s.addToSelection(lastAdded);
@@ -491,7 +491,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		Collections.sort(drawingObjects);
 		
 		Visualization v = VisualizationManager.getCurrent();
-		for(PathwayElement o : drawingObjects)
+		for(VPathwayElement o : drawingObjects)
 		{
 			if(o.vIntersects(r))
 			{
@@ -516,7 +516,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		buffer.dispose();
 	}
 
-	boolean checkDrawAllowed(PathwayElement o) {
+	boolean checkDrawAllowed(VPathwayElement o) {
 		if(isEditMode()) return true;
 		else return !(	o instanceof Handle ||
 						(o == s && !isDragging)
@@ -528,7 +528,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	private void clearSelection()
 	{
-		for(PathwayElement o : drawingObjects) o.deselect(); //Deselect all objects
+		for(VPathwayElement o : drawingObjects) o.deselect(); //Deselect all objects
 		s.reset();
 	}
 
@@ -571,7 +571,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void resetHighlight() 
 	{
-		for(PathwayElement o : drawingObjects) o.unhighlight();
+		for(VPathwayElement o : drawingObjects) o.unhighlight();
 		redraw();
 	}
 	
@@ -614,10 +614,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * 
 	 * if you want to get more than one @see #getObjectsAt(Point2D)
 	 */
-	PathwayElement getObjectAt(Point2D p2d) {
+	VPathwayElement getObjectAt(Point2D p2d) {
 		Collections.sort(drawingObjects);
-		PathwayElement probj = null;
-		for (PathwayElement o : drawingObjects)
+		VPathwayElement probj = null;
+		for (VPathwayElement o : drawingObjects)
 		{
 			if (o.vContains(p2d))
 			{
@@ -636,10 +636,10 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * 
 	 * if you only need the top object, @see #getObjectAt(Point2D)
 	 */
-	List<PathwayElement> getObjectsAt(Point2D p2d) 
+	List<VPathwayElement> getObjectsAt(Point2D p2d) 
 	{
-		List<PathwayElement> result = new ArrayList<PathwayElement>();
-		for (PathwayElement o : drawingObjects)
+		List<VPathwayElement> result = new ArrayList<VPathwayElement>();
+		for (VPathwayElement o : drawingObjects)
 		{
 			if (o.vContains(p2d))
 			{
@@ -713,13 +713,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	private Point newObjectDragStart;
 	
 	/** newly placed object, is set to null again when mouse button is released */
-	private GmmlDataObject newObject = null;
+	private PathwayElement newObject = null;
 	/** minimum drag length for it to be considered a drag and not a click */
 	private static final int MIN_DRAG_LENGTH = 3;
 
 	/**
 	 * Add a new object to the drawing
-	 * {@see Pathway#setNewGraphics(int)}
+	 * {@see VPathway#setNewGraphics(int)}
 	 * @param p	The point where the user clicked on the drawing to add a new graphics
 	 */
 	private void newObject(Point ve)
@@ -728,14 +728,14 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		int mx = (int)mFromV((double)ve.x);
 		int my = (int)mFromV((double)ve.y); 
 		
-		GmmlDataObject gdata = null;
+		PathwayElement gdata = null;
 		Handle h = null;
 		lastAdded = null; // reset lastAdded class member
 		switch(newGraphics) {
 		case NEWNONE:
 			return;
 		case NEWLINE:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -748,7 +748,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -761,7 +761,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -774,7 +774,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -787,7 +787,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWLABEL:
-			gdata = new GmmlDataObject(ObjectType.LABEL);
+			gdata = new PathwayElement(ObjectType.LABEL);
 			gdata.setMCenterX(mx);
 			gdata.setMCenterY(my);
 			gdata.setMWidth(Label.M_INITIAL_WIDTH);
@@ -799,7 +799,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			h = null;
 			break;
 		case NEWARC:
-			gdata = new GmmlDataObject(ObjectType.SHAPE);
+			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.ARC);
 			gdata.setMCenterX (mx);
 			gdata.setMCenterY (my);
@@ -812,7 +812,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWBRACE:
-			gdata = new GmmlDataObject(ObjectType.SHAPE);
+			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.BRACE);
 			gdata.setMCenterX (mx);
 			gdata.setMCenterY (my);
@@ -825,7 +825,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
-			gdata = new GmmlDataObject(ObjectType.DATANODE);
+			gdata = new PathwayElement(ObjectType.DATANODE);
 			gdata.setMCenterX(mx);
 			gdata.setMCenterY(my);
 			gdata.setMWidth(1);
@@ -839,7 +839,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWRECTANGLE:
-			gdata = new GmmlDataObject(ObjectType.SHAPE);
+			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.RECTANGLE);
 			gdata.setMCenterX (mx);
 			gdata.setMCenterY (my);
@@ -853,7 +853,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWOVAL:
-			gdata = new GmmlDataObject(ObjectType.SHAPE);
+			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.OVAL);
 			gdata.setMCenterX (mx);
 			gdata.setMCenterY (my);
@@ -867,7 +867,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWTBAR:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -880,7 +880,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -893,7 +893,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -906,7 +906,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -919,7 +919,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
-			gdata = new GmmlDataObject(ObjectType.LINE);
+			gdata = new PathwayElement(ObjectType.LINE);
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
@@ -969,7 +969,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if(v != null && v.usesToolTip()) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
-			PathwayElement o = getObjectAt(p);
+			VPathwayElement o = getObjectAt(p);
 			if(o != null && o instanceof Graphics) {
 				Shell tip = v.visualizeToolTip(getShell(), this, (Graphics)o);
 				if(tip == null) return;
@@ -982,7 +982,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 
 	private void selectGeneProducts() {
 		clearSelection();
-		for(PathwayElement o : getDrawingObjects()) {
+		for(VPathwayElement o : getDrawingObjects()) {
 			if(o instanceof GeneProduct) s.addToSelection(o);
 		}
 	}
@@ -999,12 +999,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 	
 	private void insertPressed() {
-		Set<PathwayElement> objects = new HashSet<PathwayElement>();
+		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
 		objects.addAll(s.getSelection());
-		for(PathwayElement o : objects) {
+		for(VPathwayElement o : objects) {
 			if(o instanceof Line) {
-				GmmlDataObject g = ((Line)o).getGmmlData();
-				GmmlDataObject[] gNew = g.splitLine();
+				PathwayElement g = ((Line)o).getGmmlData();
+				PathwayElement[] gNew = g.splitLine();
 							
 				removeDrawingObject(o); //Remove the old line
 				
@@ -1039,8 +1039,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if(e.keyCode == SWT.CTRL) ctrlReleased();
 		if(e.keyCode == SWT.ALT) altReleased();
 		if(e.keyCode == SWT.DEL) {
-			ArrayList<PathwayElement> toRemove = new ArrayList<PathwayElement>();
-			for(PathwayElement o : drawingObjects)
+			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
+			for(VPathwayElement o : drawingObjects)
 			{
 				if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
 				toRemove.add(o);
@@ -1053,9 +1053,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
 	 * @param toRemove	The List containing the objects to be removed
 	 */
-	public void removeDrawingObjects(ArrayList<PathwayElement>toRemove)
+	public void removeDrawingObjects(ArrayList<VPathwayElement>toRemove)
 	{
-		for(PathwayElement o : toRemove)
+		for(VPathwayElement o : toRemove)
 		{
 			removeDrawingObject(o);
 			
@@ -1063,25 +1063,25 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		s.fitToSelection();
 	}
 	
-	public void removeDrawingObject(PathwayElement toRemove) {
+	public void removeDrawingObject(VPathwayElement toRemove) {
 		toRemove.destroy(); //Object will remove itself from the drawing
 		s.removeFromSelection(toRemove); //Remove from selection
 	}
 
 	Graphics lastAdded = null;
 	
-	public void gmmlObjectModified(GmmlEvent e) {
+	public void gmmlObjectModified(PathwayEvent e) {
 		switch (e.getType())
 		{
-			case GmmlEvent.DELETED:
+			case PathwayEvent.DELETED:
 				// TODO: affected object should be removed
 				addDirtyRect(null); // mark everything dirty
 				break;
-			case GmmlEvent.ADDED:
+			case PathwayEvent.ADDED:
 				lastAdded = fromGmmlDataObject(e.getAffectedData());
 				addDirtyRect(null); // mark everything dirty
 				break;
-			case GmmlEvent.WINDOW:
+			case PathwayEvent.WINDOW:
 				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
 				int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
 				setSize(width, height); 
@@ -1099,8 +1099,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	{
 		//Clipboard clipboard = new Clipboard (this.getDisplay());
 		
-		List<GmmlDataObject> result = new ArrayList<GmmlDataObject>();
-		for (PathwayElement g : drawingObjects)
+		List<PathwayElement> result = new ArrayList<PathwayElement>();
+		for (VPathwayElement g : drawingObjects)
 		{
 			if (g.isSelected() && g instanceof Graphics
 					&& !(g instanceof SelectionBox))
@@ -1137,7 +1137,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			/*
 			 * Step 1: generate new unique ids for copied items
 			 */
-			for (GmmlDataObject o : Engine.clipboard)
+			for (PathwayElement o : Engine.clipboard)
 			{
 				String id = o.getGraphId();
 				if (id != null) 
@@ -1161,7 +1161,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			/*
 			 * Step 2: do the actual copying 
 			 */
-			for (GmmlDataObject o : Engine.clipboard)
+			for (PathwayElement o : Engine.clipboard)
 			{
 				if (o.getObjectType() == ObjectType.MAPPINFO ||
 					o.getObjectType() == ObjectType.INFOBOX)
@@ -1179,7 +1179,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				o.setMLeft(o.getMLeft() + M_PASTE_OFFSET);
 				o.setMTop(o.getMTop() + M_PASTE_OFFSET);
 				// make another copy to preserve clipboard contents for next paste
-				GmmlDataObject p = o.copy();
+				PathwayElement p = o.copy();
 				
 				// set new unique id
 				if (p.getGraphId() != null)

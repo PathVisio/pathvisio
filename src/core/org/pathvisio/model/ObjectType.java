@@ -36,7 +36,7 @@ public class ObjectType {
 	 // TODO: is this actually used?
 	private static final List<String> tagMappings = Arrays.asList(new String[] {
 		"Shape", "DataNode", "Label", "Line", "Legend", "InfoBox", 
-		"Pathway"
+		"VPathway"
 	});
 
 	public static int getTagMapping(String value)

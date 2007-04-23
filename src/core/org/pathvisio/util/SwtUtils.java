@@ -45,8 +45,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.view.Pathway;
-import org.pathvisio.model.GmmlData;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.model.Pathway;
 
 public class SwtUtils {
 
@@ -77,18 +77,18 @@ public class SwtUtils {
 	/**
 	 * Change the given {@link Color}; this method disposes the old color for you
 	 * @param cOld	the old {@link Color}
-	 * @param rgbNew	the {@link GmmlData.Color} to construct the new color
+	 * @param rgbNew	the {@link Pathway.Color} to construct the new color
 	 * @param display	the display to assign the color to
 	 * @return	a brand new {@link Color}
 	 */
-	public static Color changeColor(Color cOld, GmmlData.Color rgbNew, Display display)
+	public static Color changeColor(Color cOld, Pathway.Color rgbNew, Display display)
 	{
 		if(cOld != null && !cOld.isDisposed())
 		{
 			cOld.dispose();
 			cOld = null;
 		}
-		if(rgbNew == null) rgbNew = new GmmlData.Color(0,0,0);
+		if(rgbNew == null) rgbNew = new Pathway.Color(0,0,0);
 		return new Color(display, ColorConverter.toRGB(rgbNew));
 	}
 	
@@ -139,7 +139,7 @@ public class SwtUtils {
 	static int ii;
 	static int pixratio;
 	public static Font adjustFontSize(Font f, Point toFit, String text, GC gc, Display display) {
-		Pathway d = Engine.getDrawing();
+		VPathway d = Engine.getDrawing();
 		pixratio = (int)Math.ceil(3 * (d == null ? 1 : d.getZoomFactor()));
 		ii = 3;
 		incrs = new int[3];

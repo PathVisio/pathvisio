@@ -40,8 +40,8 @@ import org.pathvisio.util.SuggestCombo;
 import org.pathvisio.util.SuggestCombo.SuggestionListener;
 import org.pathvisio.util.SuggestCombo.SuggestionProvider;
 import org.pathvisio.data.DataSources;
-import org.pathvisio.data.GmmlGdb;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.gui.PropertyPanel.AutoFillData;
@@ -173,7 +173,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 		
 		List<String> sugg = new ArrayList<String>();
 		try {
-			Statement s = GmmlGdb.getCon().createStatement();
+			Statement s = Gdb.getCon().createStatement();
 			
 			s.setQueryTimeout(query_timeout);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
@@ -206,7 +206,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 					break;
 				case TYPE_SYMBOL:
 				default:
-					String symbol = GmmlGdb.parseGeneSymbol(r.getString("backpageText"));
+					String symbol = Gdb.parseGeneSymbol(r.getString("backpageText"));
 					adf = new GdbAutoFillData(PropertyType.TEXTLABEL, symbol);
 					adf.setProperty(PropertyType.SYSTEMCODE, sysName);
 					adf.setProperty(PropertyType.GENEID, r.getString("id"));
@@ -239,7 +239,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			super(mainProperty, mainValue);
 		}
 		
-		protected void guessData(GmmlDataObject o) {
+		protected void guessData(PathwayElement o) {
 			//Fetch info from self
 			String id = getProperty(PropertyType.GENEID);
 			String sysName = getProperty(PropertyType.SYSTEMCODE);
@@ -252,7 +252,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			
 			//Guess symbol
 			if(id != null && code != null) {
-				String symbol = GmmlGdb.getGeneSymbol(id, code);
+				String symbol = Gdb.getGeneSymbol(id, code);
 				if(symbol != null) {
 					setProperty(PropertyType.TEXTLABEL, symbol);
 				}

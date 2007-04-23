@@ -73,9 +73,9 @@ import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
-import org.pathvisio.data.GmmlGex.Sample;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.Gex.Sample;
 
 /**
  * Extend this class if you want to create a visualization plug-in where the user
@@ -150,7 +150,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
-			CachedData cache = GmmlGex.getCachedData();
+			CachedData cache = Gex.getCachedData();
 			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) continue; //No colorset for this sample
@@ -480,7 +480,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 				return ((Sample)element).getName();
 			}
 		});
-		sampleList.setInput(GmmlGex.getSamples(Types.REAL));
+		sampleList.setInput(Gex.getSamples(Types.REAL));
 		
 		Composite buttons = new Composite(samplesGroup, SWT.NULL);
 		buttons.setLayout(new RowLayout(SWT.VERTICAL));
@@ -712,7 +712,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		private final void loadXML(Element xml) throws Exception {
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
 			int csi = Integer.parseInt(xml.getAttributeValue(XML_ATTR_COLORSET));
-			Sample s = GmmlGex.getSamples().get(id);
+			Sample s = Gex.getSamples().get(id);
 			setId(id);
 			setName(s.getName());
 			setDataType(s.getDataType());

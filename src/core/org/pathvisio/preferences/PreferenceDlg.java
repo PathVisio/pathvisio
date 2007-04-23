@@ -27,9 +27,9 @@ import org.eclipse.jface.preference.StringFieldEditor;
 
 import org.pathvisio.gui.Engine;
 
-public class GmmlPreferenceManager extends PreferenceManager {
+public class PreferenceDlg extends PreferenceManager {
 	
-	public GmmlPreferenceManager() {
+	public PreferenceDlg() {
 		super();
 
 		PreferenceNode display = new PreferenceNode("display", new DisplayPage());
@@ -51,7 +51,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			FileFieldEditor f1 = new FileFieldEditor(GmmlPreferences.PREF_FILES_LOG, "Log file:", getFieldEditorParent());
+			FileFieldEditor f1 = new FileFieldEditor(Preferences.PREF_FILES_LOG, "Log file:", getFieldEditorParent());
 			addField(f1);
 		}
 	}
@@ -63,20 +63,20 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			DirectoryFieldEditor d1 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_PWFILES,
+			DirectoryFieldEditor d1 = new DirectoryFieldEditor(Preferences.PREF_DIR_PWFILES,
 					"Gpml pathways:", getFieldEditorParent());
 			addField(d1);
 			
-			DirectoryFieldEditor d2 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_GDB,
+			DirectoryFieldEditor d2 = new DirectoryFieldEditor(Preferences.PREF_DIR_GDB,
 					"Gene databases:", getFieldEditorParent());
 			addField(d2);
 			
-			DirectoryFieldEditor d3 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_EXPR,
+			DirectoryFieldEditor d3 = new DirectoryFieldEditor(Preferences.PREF_DIR_EXPR,
 					"Expression datasets:", getFieldEditorParent());
 			addField(d3);
 
 			if(Engine.isUseR()) {
-				DirectoryFieldEditor d4 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_RDATA,
+				DirectoryFieldEditor d4 = new DirectoryFieldEditor(Preferences.PREF_DIR_RDATA,
 						"Results from pathway statistics:", getFieldEditorParent());
 				addField(d4);
 			}
@@ -89,7 +89,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			IntegerFieldEditor f = new IntegerFieldEditor(GmmlPreferences.PREF_SIDEPANEL_SIZE,
+			IntegerFieldEditor f = new IntegerFieldEditor(Preferences.PREF_SIDEPANEL_SIZE,
 					"Initial side panel size (percent of window size):", getFieldEditorParent());
 			f.setValidRange(0, 100);
 			addField(f);
@@ -102,22 +102,22 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			ColorFieldEditor f1 = new ColorFieldEditor(GmmlPreferences.PREF_COL_NO_CRIT_MET, 
+			ColorFieldEditor f1 = new ColorFieldEditor(Preferences.PREF_COL_NO_CRIT_MET, 
 					"Default color for 'no criteria met':", getFieldEditorParent());
 			addField(f1);
-			ColorFieldEditor f2 = new ColorFieldEditor(GmmlPreferences.PREF_COL_NO_GENE_FOUND, 
+			ColorFieldEditor f2 = new ColorFieldEditor(Preferences.PREF_COL_NO_GENE_FOUND, 
 					"Default color for 'gene not found':", getFieldEditorParent());
 			addField(f2);
-			ColorFieldEditor f3 = new ColorFieldEditor(GmmlPreferences.PREF_COL_NO_DATA_FOUND, 
+			ColorFieldEditor f3 = new ColorFieldEditor(Preferences.PREF_COL_NO_DATA_FOUND, 
 					"Default color for 'no data found':", getFieldEditorParent());
 			addField(f3);
-			ColorFieldEditor f4 = new ColorFieldEditor(GmmlPreferences.PREF_COL_SELECTED, 
+			ColorFieldEditor f4 = new ColorFieldEditor(Preferences.PREF_COL_SELECTED, 
 					"Line color for selected objects:", getFieldEditorParent());
 			addField(f4);
-			ColorFieldEditor f5 = new ColorFieldEditor(GmmlPreferences.PREF_COL_HIGHLIGHTED, 
+			ColorFieldEditor f5 = new ColorFieldEditor(Preferences.PREF_COL_HIGHLIGHTED, 
 					"Line color for highlighted objects:", getFieldEditorParent());
 			addField(f5);
-//			ColorFieldEditor f6 = new ColorFieldEditor(GmmlPreferences.PREF_COL_AMBIGIOUS_REP, 
+//			ColorFieldEditor f6 = new ColorFieldEditor(Preferences.PREF_COL_AMBIGIOUS_REP, 
 //					"Color for marking gene products with ambigious reporter:", getFieldEditorParent());
 //			addField(f6);
 			
@@ -130,10 +130,10 @@ public class GmmlPreferenceManager extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			StringFieldEditor f1 = new StringFieldEditor(GmmlPreferences.PREF_DB_ENGINE_GDB,
+			StringFieldEditor f1 = new StringFieldEditor(Preferences.PREF_DB_ENGINE_GDB,
 					"Database connector class for gene database:", getFieldEditorParent());
 			addField(f1);
-			StringFieldEditor f2 = new StringFieldEditor(GmmlPreferences.PREF_DB_ENGINE_EXPR,
+			StringFieldEditor f2 = new StringFieldEditor(Preferences.PREF_DB_ENGINE_EXPR,
 					"Database connector class for expression dataset:", getFieldEditorParent());
 			addField(f2);
 		}

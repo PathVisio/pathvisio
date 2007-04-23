@@ -32,7 +32,7 @@ import org.pathvisio.util.LinAlg.Point;
  * objects on the drawing which are used to 
  * resize them or change their location.
  */
-class Handle extends PathwayElement
+class Handle extends VPathwayElement
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -55,7 +55,7 @@ class Handle extends PathwayElement
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
 	
-	PathwayElement parent;
+	VPathwayElement parent;
 	
 	double mCenterx;
 	double mCentery;
@@ -68,9 +68,9 @@ class Handle extends PathwayElement
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
 	 * @param direction	Direction this handle can be moved in (one of DIRECTION_*)
 	 * @param parent	The object this handle belongs to
-	 * @param canvas	The {@link Pathway} to draw this handle on
+	 * @param canvas	The {@link VPathway} to draw this handle on
 	 */
-	public Handle(int direction, PathwayElement parent, Pathway canvas)
+	public Handle(int direction, VPathwayElement parent, VPathway canvas)
 	{
 		super(canvas);		
 		this.direction = direction;
@@ -78,7 +78,7 @@ class Handle extends PathwayElement
 	}
 
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_HANDLE;
+		return VPathway.DRAW_ORDER_HANDLE;
 	}
 	
 	/**
@@ -200,7 +200,7 @@ class Handle extends PathwayElement
 		
 	/**
 	 * Moves this handle by the specified increments and
-	 * adjusts the {@link PathwayElement} to the new position
+	 * adjusts the {@link VPathwayElement} to the new position
 	 */
 	public void vMoveBy(double vdx, double vdy)
 	{	

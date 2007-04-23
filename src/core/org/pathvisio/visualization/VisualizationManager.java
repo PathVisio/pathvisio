@@ -50,9 +50,9 @@ import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
-import org.pathvisio.data.GmmlGex.ExpressionDataListener;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gex.ExpressionDataEvent;
+import org.pathvisio.data.Gex.ExpressionDataListener;
 
 /**
  * Manages visualizations
@@ -63,7 +63,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	static {
 		VisualizationManager vm = new VisualizationManager();
 		Engine.addApplicationEventListener(vm);
-		GmmlGex.addListener(vm);
+		Gex.addListener(vm);
 	}
 	
 	public static final String XML_ELEMENT = "visualizations";

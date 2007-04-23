@@ -23,18 +23,18 @@ public class UndoManager
 {
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
-	void newAddAction (GmmlDataObject affectedObject)
+	void newAddAction (PathwayElement affectedObject)
 	{
 		undoList.clear();		
 	}
 	
-	void newChangeAction (GmmlDataObject affectedObject)
+	void newChangeAction (PathwayElement affectedObject)
 	{
 		UndoAction a = new UndoAction ("Change object", UndoAction.UNDO_CHANGE, affectedObject);
 		undoList.add(a);
 	}
 	
-	void newRemoveAction (GmmlDataObject affectedObject)
+	void newRemoveAction (PathwayElement affectedObject)
 	{
 		undoList.clear();
 	}

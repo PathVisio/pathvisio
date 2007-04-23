@@ -28,9 +28,9 @@ import org.eclipse.swt.graphics.Transform;
 import org.pathvisio.util.LinAlg;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.util.LinAlg.Point;
-import org.pathvisio.model.GmmlDataObject;
-import org.pathvisio.model.GmmlEvent;
-import org.pathvisio.model.GmmlDataObject.MPoint;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 /**
@@ -57,7 +57,7 @@ public abstract class GraphicsShape extends Graphics {
 		
 	final Handle[][] handleMatrix; //Used to get opposite handles
 	
-	public GraphicsShape(Pathway canvas, GmmlDataObject o) {
+	public GraphicsShape(VPathway canvas, PathwayElement o) {
 		super(canvas, o);
 		
 		handleN	= new Handle(Handle.DIRECTION_Y, this, canvas);
@@ -479,7 +479,7 @@ public abstract class GraphicsShape extends Graphics {
 		return pol;
 	}
 			
-	public void gmmlObjectModified(GmmlEvent e) {		
+	public void gmmlObjectModified(PathwayEvent e) {		
 		markDirty(); // mark everything dirty
 		setHandleLocation();
 	}

@@ -29,9 +29,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.GmmlDataObject.MPoint;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 /**
@@ -41,28 +41,28 @@ public class SelectionBox extends GraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 		
-	private ArrayList<PathwayElement> selection;
+	private ArrayList<VPathwayElement> selection;
 	boolean isSelecting;
 	boolean isVisible;
 		
 	/**
 	 * Constructor for this class
-	 * @param canvas - the Pathway this selectionbox will be part of
+	 * @param canvas - the VPathway this selectionbox will be part of
 	 */
-	public SelectionBox(Pathway canvas)
+	public SelectionBox(VPathway canvas)
 	{
 		// TODO: selectionbox shouldn't need a dataobject...
-		// note, not setting parent of GmmlDataObject here.
-		super(canvas, new GmmlDataObject(ObjectType.SHAPE));
+		// note, not setting parent of PathwayElement here.
+		super(canvas, new PathwayElement(ObjectType.SHAPE));
 			
-		selection = new ArrayList<PathwayElement>();
+		selection = new ArrayList<VPathwayElement>();
 	}	
 	
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_SELECTIONBOX;
+		return VPathway.DRAW_ORDER_SELECTIONBOX;
 	}
 	
-	public ArrayList<PathwayElement> getSelection() {
+	public ArrayList<VPathwayElement> getSelection() {
 		return selection;
 	}
 	
@@ -70,7 +70,7 @@ public class SelectionBox extends GraphicsShape
 	 * Add an object to the selection
 	 * @param o
 	 */
-	public void addToSelection(PathwayElement o) {
+	public void addToSelection(VPathwayElement o) {
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
 		if(o instanceof VPoint) {
 			for(Line l : ((VPoint)o).getLines()) {
@@ -89,7 +89,7 @@ public class SelectionBox extends GraphicsShape
 		 
 	}
 	
-	private void doAdd(PathwayElement o) {
+	private void doAdd(VPathwayElement o) {
 		if(!selection.contains(o)) selection.add(o);
 	}
 	
@@ -97,7 +97,7 @@ public class SelectionBox extends GraphicsShape
 	 * Remove an object from the selection
 	 * @param o
 	 */
-	public void removeFromSelection(PathwayElement o) {
+	public void removeFromSelection(VPathwayElement o) {
 		if(o == this) return;
 		selection.remove(o); 
 		o.deselect();
@@ -110,13 +110,13 @@ public class SelectionBox extends GraphicsShape
 	 * @param p
 	 * @return the child object or null if none is present at the given location
 	 */
-	public PathwayElement getChild(Point2D p) {
+	public VPathwayElement getChild(Point2D p) {
 		//First check selection
-		for(PathwayElement o : selection) {
+		for(VPathwayElement o : selection) {
 			if(o.vContains(p)) return o;
 		}
 		//Nothing in selection, check all other objects
-		for(PathwayElement o : canvas.getDrawingObjects()) {
+		for(VPathwayElement o : canvas.getDrawingObjects()) {
 			if(o.vContains(p) && o != this)
 				return o;
 		}
@@ -129,7 +129,7 @@ public class SelectionBox extends GraphicsShape
 	 * @param p
 	 */
 	public void objectClicked(Point2D p) {
-		PathwayElement clicked = getChild(p);
+		VPathwayElement clicked = getChild(p);
 		if(clicked == null) return; //Nothing clicked
 		if(clicked.isSelected()) 	//Object is selected, remove
 		{
@@ -169,7 +169,7 @@ public class SelectionBox extends GraphicsShape
 	}
 	
 	private void reset(double vStartX, double vStartY, boolean clearSelection) {
-		for(PathwayElement o : selection) o.deselect();
+		for(VPathwayElement o : selection) o.deselect();
 		if(clearSelection) {
 			selection.clear();
 			fireSelectionEvent(
@@ -203,7 +203,7 @@ public class SelectionBox extends GraphicsShape
 		isSelecting = false;
 		if(!hasMultipleSelection()) {
 			if(selection.size() == 1) {
-				PathwayElement passTo = selection.get(0);
+				VPathwayElement passTo = selection.get(0);
 				reset();
 				passTo.select();
 			} else {
@@ -235,7 +235,7 @@ public class SelectionBox extends GraphicsShape
 	
 	public void select() {
 		super.select();
-		for(PathwayElement o : selection) {
+		for(VPathwayElement o : selection) {
 			o.select();
 			for(Handle h : o.getHandles()) h.hide();
 		}
@@ -250,14 +250,14 @@ public class SelectionBox extends GraphicsShape
 			return;
 		}
 		if(! hasMultipleSelection()) { //Only one object in selection, hide selectionbox
-			PathwayElement passTo = selection.get(0);
+			VPathwayElement passTo = selection.get(0);
 			hide(false);
 			passTo.select();
 			return;
 		}
 
 		Rectangle vr = null;
-		for(PathwayElement o : selection) {
+		for(VPathwayElement o : selection) {
 			if(vr == null) vr = o.getVBounds();
 			else vr.add(o.getVBounds());
 			for(Handle h : o.getHandles()) h.hide();
@@ -307,7 +307,7 @@ public class SelectionBox extends GraphicsShape
 		if(isSelecting) { //Selecting, so add containing objects to selection
 			Rectangle vr = getVBounds();
 			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.x, vr.y, vr.width, vr.height);
-			for(PathwayElement o : canvas.getDrawingObjects()) {
+			for(VPathwayElement o : canvas.getDrawingObjects()) {
 				if((o == this) || (o instanceof Handle)) continue;
 				if(o.vIntersects(bounds)) { 
 					addToSelection(o);
@@ -318,7 +318,7 @@ public class SelectionBox extends GraphicsShape
 			double heightRatio = getVHeightDouble() / vHeightOld;
 			//Scale all selected objects in x and y direction, treat points seperately
 			Set<VPoint> points = new HashSet<VPoint>();
-			for(PathwayElement o : selection) { 
+			for(VPathwayElement o : selection) { 
 				if(o instanceof Line) {
 					points.addAll(((Line)o).getPoints());
 				} else { 
@@ -352,11 +352,11 @@ public class SelectionBox extends GraphicsShape
 		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); //Will be moved by linking object
 		Set<VPoint> points = new HashSet<VPoint>(); //Will not be moved by linking object
 		
-		for(PathwayElement o : selection) 
+		for(VPathwayElement o : selection) 
 		{
 			if (o instanceof Graphics)
 			{
-				GmmlDataObject g = ((Graphics)o).getGmmlData();
+				PathwayElement g = ((Graphics)o).getGmmlData();
 				if(!(o instanceof Line)) {
 					o.vMoveBy(vdx, vdy);
 					not.addAll(g.getReferences());
@@ -433,11 +433,11 @@ public class SelectionBox extends GraphicsShape
 		public static final int SELECTION_CLEARED = 2;
 
 		public SelectionBox source;
-		public PathwayElement affectedObject;
+		public VPathwayElement affectedObject;
 		public int type;
-		public List<PathwayElement> selection;
+		public List<VPathwayElement> selection;
 
-		public SelectionEvent(SelectionBox source, int type, PathwayElement affectedObject) {
+		public SelectionEvent(SelectionBox source, int type, VPathwayElement affectedObject) {
 			super(source);
 			this.source = source;
 			this.type = type;

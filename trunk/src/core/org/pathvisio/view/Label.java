@@ -36,11 +36,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.LinAlg;
 import org.pathvisio.util.SwtUtils;
-import org.pathvisio.model.GmmlDataObject;
-import org.pathvisio.model.GmmlEvent;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
 
 public class Label extends GraphicsShape
 {
@@ -62,16 +62,16 @@ public class Label extends GraphicsShape
 				
 	/**
 	 * Constructor for this class
-	 * @param canvas - the Pathway this label will be part of
+	 * @param canvas - the VPathway this label will be part of
 	 */
-	public Label(Pathway canvas, GmmlDataObject o)
+	public Label(VPathway canvas, PathwayElement o)
 	{
 		super(canvas, o);
 		setHandleLocation();
 	}
 	
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_LABEL;
+		return VPathway.DRAW_ORDER_LABEL;
 	}
 	
 	public String getLabelText() {
@@ -193,7 +193,7 @@ public class Label extends GraphicsShape
 		}
 		else if (isHighlighted())
 		{
-			RGB rgb = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
+			RGB rgb = Preferences.getColorProperty(Preferences.PREF_COL_HIGHLIGHTED);
 			c = SwtUtils.changeColor(c, rgb, e.display);
 		}
 		else 
@@ -216,7 +216,7 @@ public class Label extends GraphicsShape
 		draw(e, e.gc);
 	}	
 	
-	public void gmmlObjectModified(GmmlEvent e) {
+	public void gmmlObjectModified(PathwayEvent e) {
 		if(listen) {
 			super.gmmlObjectModified(e);
 			adjustWidthToText();

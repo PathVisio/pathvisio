@@ -31,12 +31,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils;
-import org.pathvisio.model.GmmlDataObject;
-import org.pathvisio.model.GmmlEvent;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.GmmlDataObject.MPoint;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
  
 /**
@@ -51,9 +51,9 @@ public class Line extends Graphics
 	
 	/**
 	 * Constructor for this class
-	 * @param canvas - the Pathway this line will be part of
+	 * @param canvas - the VPathway this line will be part of
 	 */
-	public Line(Pathway canvas, GmmlDataObject o)
+	public Line(VPathway canvas, PathwayElement o)
 	{
 		super(canvas, o);
 		
@@ -67,7 +67,7 @@ public class Line extends Graphics
 	}
 	
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_LINE;
+		return VPathway.DRAW_ORDER_LINE;
 	}
 	
 	protected void swapPoint(VPoint pOld, VPoint pNew) {
@@ -92,7 +92,7 @@ public class Line extends Graphics
 		}
 		else if (isHighlighted())
 		{
-			RGB rgb = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
+			RGB rgb = Preferences.getColorProperty(Preferences.PREF_COL_HIGHLIGHTED);
 			c = SwtUtils.changeColor(c, rgb, e.display);
 		}
 		else 
@@ -343,7 +343,7 @@ public class Line extends Graphics
 		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
 	}
 	
-	public void gmmlObjectModified(GmmlEvent e) {		
+	public void gmmlObjectModified(PathwayEvent e) {		
 		markDirty();
 		for(VPoint p : points) {
 			p.markDirty();

@@ -51,13 +51,13 @@ import org.pathvisio.util.SuggestCellEditor;
 import org.pathvisio.util.TableColumnResizer;
 import org.pathvisio.data.*;
 import org.pathvisio.model.*;
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.Pathway.Color;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties
  * of each object on the pathway.
  */
-public class PropertyPanel extends Composite implements GmmlListener, SelectionListener {
+public class PropertyPanel extends Composite implements PathwayListener, SelectionListener {
 	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
 	TextCellEditor textEditor;
@@ -66,7 +66,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	SuggestCellEditor identifierSuggestEditor;
 	SuggestCellEditor symbolSuggestEditor;
 	
-	private List<GmmlDataObject> dataObjects;
+	private List<PathwayElement> dataObjects;
 	
 	private List<PropertyType> attributes;
 	
@@ -77,11 +77,11 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	};
 
 	/**
-	 * Add a {@link GmmlDataObject} to the list of objects of which 
+	 * Add a {@link PathwayElement} to the list of objects of which 
 	 * the properties are displayed
 	 * @param o
 	 */
-	public void addGmmlDataObject(GmmlDataObject o) {
+	public void addGmmlDataObject(PathwayElement o) {
 		if(!dataObjects.contains(o)) {
 			if(dataObjects.add(o)) {
 				o.addListener(this);
@@ -91,11 +91,11 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	}
 	
 	/**
-	 * Remove a {@link GmmlDataObject} from the list of objects of which 
+	 * Remove a {@link PathwayElement} from the list of objects of which 
 	 * the properties are displayed
 	 * @param o
 	 */
-	public void removeGmmlDataObject(GmmlDataObject o) {
+	public void removeGmmlDataObject(PathwayElement o) {
 		if(dataObjects.remove(o)) {
 			o.removeListener(this);
 			refresh();
@@ -106,7 +106,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	 * Clear the list of objects of which the properties are displayed
 	 */
 	public void clearGmmlDataObjects() {
-		for(GmmlDataObject o : dataObjects) o.removeListener(this);
+		for(PathwayElement o : dataObjects) o.removeListener(this);
 		dataObjects.clear();
 		refresh();
 	}
@@ -122,7 +122,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	int getAggregateType() {
 		int type = TYPES_DIFF;
 		for(int i = 0; i < dataObjects.size(); i++) {
-			GmmlDataObject g = dataObjects.get(i);
+			PathwayElement g = dataObjects.get(i);
 			
 			if(i != 0 && type != g.getObjectType()) return TYPES_DIFF;
 			
@@ -134,7 +134,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	Object getAggregateValue(PropertyType key) {
 		Object value = VALUE_DIFF;
 		for(int i = 0; i < dataObjects.size(); i++) {
-			GmmlDataObject g = dataObjects.get(i);
+			PathwayElement g = dataObjects.get(i);
 			Object o = g.getProperty(key);
 			if(i != 0 && (o == null || !o.equals(value))) return VALUE_DIFF;
 
@@ -151,7 +151,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 	public void setAttributes ()
 	{
 		HashMap<PropertyType, Integer> master = new HashMap<PropertyType, Integer>();
-		for (GmmlDataObject o : dataObjects)
+		for (PathwayElement o : dataObjects)
 		{
 			for (PropertyType attr : o.getAttributes())
 			{
@@ -218,7 +218,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 		
 		t.addControlListener(new TableColumnResizer(t, t.getParent()));
 		
-		dataObjects = new ArrayList<GmmlDataObject>();
+		dataObjects = new ArrayList<PathwayElement>();
 		attributes = new ArrayList<PropertyType>();
 		tableViewer.setInput(attributes);
 		
@@ -375,7 +375,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 			}
 			/*
 			 * Here, we transform the output of the cell editor
-			 * to a value understood by GmmlDataObject.SetProperty().
+			 * to a value understood by PathwayElement.SetProperty().
 			 * 
 			 * The output of a comboboxCellEditor is Integer.
 			 * The output of a textCellEditor is String.
@@ -449,7 +449,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 			case DB_ID:
 				if(value instanceof PropertyPanel.AutoFillData) {
 					PropertyPanel.AutoFillData adf = (PropertyPanel.AutoFillData)value;
-					for(GmmlDataObject o : dataObjects) {
+					for(PathwayElement o : dataObjects) {
 						if(o.getObjectType() == ObjectType.DATANODE) {
 							adf.fillData(o);
 						}
@@ -458,7 +458,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 				}
 				break;
 			}
-			for(GmmlDataObject o : dataObjects) {
+			for(PathwayElement o : dataObjects) {
 				o.setProperty(key, value);
 			}
 			tableViewer.refresh();
@@ -567,7 +567,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 		public void removeListener(ILabelProviderListener listener) { }
 	};
 
-	public void gmmlObjectModified(GmmlEvent e) {
+	public void gmmlObjectModified(PathwayEvent e) {
 		tableViewer.refresh();
 	}
 
@@ -620,7 +620,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 		
 		public Set<PropertyType> getProperties() { return values.keySet(); }
 		
-		public void fillData(GmmlDataObject o) {
+		public void fillData(PathwayElement o) {
 			if(doGuess) guessData(o);
 			for(PropertyType p : getProperties()) {
 				Object vNew = getProperty(p);
@@ -632,7 +632,7 @@ public class PropertyPanel extends Composite implements GmmlListener, SelectionL
 			doGuess = doGuessData;
 		}
 		
-		protected void guessData(GmmlDataObject o) {
+		protected void guessData(PathwayElement o) {
 		}
 	}
 }

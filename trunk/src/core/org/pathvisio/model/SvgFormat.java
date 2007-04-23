@@ -28,7 +28,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.Pathway.Color;
 
 public class SvgFormat 
 {
@@ -37,7 +37,7 @@ public class SvgFormat
 	static Element defs;
 	static Set<String> markers;
 	
-	static Document createJdom (GmmlData data) throws ConverterException
+	static Document createJdom (Pathway data) throws ConverterException
 	{
 		Document doc = new Document();		
 		
@@ -51,9 +51,9 @@ public class SvgFormat
     	doc.setDocType(dt);
     	
 		root.addContent(defs);
-		List<GmmlDataObject> objects = data.getDataObjects();
+		List<PathwayElement> objects = data.getDataObjects();
 		Collections.sort(objects, new SvgComparator());
-		for (GmmlDataObject o : data.getDataObjects())
+		for (PathwayElement o : data.getDataObjects())
 		{
 				addElement(root, o);
 		}		
@@ -73,8 +73,8 @@ public class SvgFormat
 			ShapeType.BRACE //Everything not specified will be on top
 		);
 		public int compare(Object o1, Object o2) {
-			GmmlDataObject d1 = (GmmlDataObject)o1;
-			GmmlDataObject d2 = (GmmlDataObject)o2;
+			PathwayElement d1 = (PathwayElement)o1;
+			PathwayElement d2 = (PathwayElement)o2;
 			int ot1 = d1.getObjectType();
 			int ot2 = d2.getObjectType();
 			if(ot1 == ObjectType.SHAPE && ot2 == ObjectType.SHAPE) {
@@ -86,7 +86,7 @@ public class SvgFormat
 		}
 	}
 	
-	static public void addElement (Element root, GmmlDataObject o) throws ConverterException 
+	static public void addElement (Element root, PathwayElement o) throws ConverterException 
 	{		
 		switch (o.getObjectType())
 		{
@@ -108,7 +108,7 @@ public class SvgFormat
 		}
 	}
 	
-	static void mapInfo(Element root, GmmlDataObject o) {
+	static void mapInfo(Element root, PathwayElement o) {
 		root.setAttribute("width", "" + toPixel(o.getMBoardWidth()));
 		root.setAttribute("height", "" + toPixel(o.getMBoardHeight()));
 		String[][] text = new String[][] {
@@ -142,7 +142,7 @@ public class SvgFormat
 		root.addContent(e);
 	}
 	
-	static void mapLine(Element parent, GmmlDataObject o) {
+	static void mapLine(Element parent, PathwayElement o) {
 		Element e = new Element("line", nsSVG);
 		e.setAttribute("x1", "" + toPixel(o.getMStartX()));
 		e.setAttribute("y1", "" + toPixel(o.getMStartY()));
@@ -161,7 +161,7 @@ public class SvgFormat
 		parent.addContent(e);
 	}
 	
-	static void mapDataNode(Element parent, GmmlDataObject o) {
+	static void mapDataNode(Element parent, PathwayElement o) {
 		Element e = new Element("rect", nsSVG);
 		e.setAttribute("x", "" + toPixel(o.getMLeft()));
 		e.setAttribute("y", "" + toPixel(o.getMTop()));
@@ -174,13 +174,13 @@ public class SvgFormat
 		parent.addContent(e);
 	}
 	
-	static void mapLabel(Element parent, GmmlDataObject o) {
+	static void mapLabel(Element parent, PathwayElement o) {
 		Element e = createTextElement(o);
 		e.addContent(o.getTextLabel());
 		parent.addContent(e);
 	}
 	
-	static void mapShape(Element parent, GmmlDataObject o) {
+	static void mapShape(Element parent, PathwayElement o) {
 		double cx = toPixel(o.getMCenterX());
 		double cy = toPixel(o.getMCenterY());
 		double w = toPixel(o.getMWidth());
@@ -232,7 +232,7 @@ public class SvgFormat
 		parent.addContent(tr);
 	}
 	
-	static void mapColor(Element e, GmmlDataObject o) {
+	static void mapColor(Element e, PathwayElement o) {
 		e.setAttribute("stroke", rgb2String(o.getColor()));
 		if(o.isTransparent() && o.getObjectType() != ObjectType.DATANODE) {
 			e.setAttribute("fill", "none");
@@ -257,7 +257,7 @@ public class SvgFormat
 		return (int)(coordinate * 1/15);
 	}
 	
-	static Element createTextElement(GmmlDataObject o) {
+	static Element createTextElement(PathwayElement o) {
 		Element e = new Element("text", nsSVG);
 		e.setAttribute("x", "" + toPixel(o.getMCenterX()));
 		e.setAttribute("y", "" + (toPixel(o.getMCenterY()) + toPixel(o.getMFontSize())));

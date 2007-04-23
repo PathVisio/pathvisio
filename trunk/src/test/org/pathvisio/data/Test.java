@@ -22,31 +22,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GmmlData;
-import org.pathvisio.model.GmmlDataObject;
-import org.pathvisio.model.GmmlEvent;
-import org.pathvisio.model.GmmlListener;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PropertyType;
 
 import junit.framework.TestCase;
 
-public class Test extends TestCase implements GmmlListener {
+public class Test extends TestCase implements PathwayListener {
 
-	GmmlData data;
-	GmmlDataObject o;
-	List<GmmlEvent> received;
-	GmmlDataObject l;
+	Pathway data;
+	PathwayElement o;
+	List<PathwayEvent> received;
+	PathwayElement l;
 	
 	public void setUp()
 	{
-		data = new GmmlData();
+		data = new Pathway();
 		data.addListener(this);
-		o = new GmmlDataObject(ObjectType.DATANODE);
-		received = new ArrayList<GmmlEvent>();
+		o = new PathwayElement(ObjectType.DATANODE);
+		received = new ArrayList<PathwayEvent>();
 		o.addListener(this);
 		data.add (o);
-		l = new GmmlDataObject(ObjectType.LINE);		
+		l = new PathwayElement(ObjectType.LINE);		
 		data.add(l);
 		received.clear();
 	}
@@ -100,7 +100,7 @@ public class Test extends TestCase implements GmmlListener {
 		
 		try
 		{
-			new GmmlDataObject (-1);
+			new PathwayElement (-1);
 			fail ("Shouldn't be able to set invalid object type");
 		}
 		catch (IllegalArgumentException e)
@@ -109,7 +109,7 @@ public class Test extends TestCase implements GmmlListener {
 		
 		try
 		{
-			new GmmlDataObject (100);
+			new PathwayElement (100);
 			fail ("Shouldn't be able to set invalid object type");
 		}
 		catch (IllegalArgumentException e)
@@ -123,13 +123,13 @@ public class Test extends TestCase implements GmmlListener {
 		data.remove (o);
 		assertNull ("removing object set parents null", o.getParent());
 		assertEquals (received.size(), 1);
-		assertEquals ("Event type should be DELETED", received.get(0).getType(), GmmlEvent.DELETED); 
+		assertEquals ("Event type should be DELETED", received.get(0).getType(), PathwayEvent.DELETED); 
 		
 		// re-add
 		data.add(o);
 		assertEquals ("adding sets parent", o.getParent(), data);
 		assertEquals (received.size(), 2);
-		assertEquals ("Event type should be ADDED", received.get(1).getType(), GmmlEvent.ADDED); 
+		assertEquals ("Event type should be ADDED", received.get(1).getType(), PathwayEvent.ADDED); 
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class Test extends TestCase implements GmmlListener {
 		l.setStartGraphRef("2");
 		assertNull ("reference removed", data.getReferringObjects("1"));
 		
-		GmmlDataObject o2 = new GmmlDataObject(ObjectType.DATANODE);
+		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
 		data.add (o2);
 		
 		// create link in opposite order
@@ -158,7 +158,7 @@ public class Test extends TestCase implements GmmlListener {
 	}
 	
 	/**
-	 * Test for maintaining list of unique id's per GmmlData.
+	 * Test for maintaining list of unique id's per Pathway.
 	 *
 	 */
 	public void testRefUniq()
@@ -166,7 +166,7 @@ public class Test extends TestCase implements GmmlListener {
 		// test for uniqueness
 		o.setGraphId("1");
 
-		GmmlDataObject o2 = new GmmlDataObject(ObjectType.DATANODE);
+		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
 		data.add (o2);
 		try
 		{			
@@ -195,7 +195,7 @@ public class Test extends TestCase implements GmmlListener {
 		assertEquals (x, o2.getGraphId());
 		
 		// test setting id first, then parent
-		GmmlDataObject o3 = new GmmlDataObject(ObjectType.DATANODE);
+		PathwayElement o3 = new PathwayElement(ObjectType.DATANODE);
 		x = data.getUniqueId();
 		o3.setGraphId(x);
 		data.add (o3);
@@ -203,7 +203,7 @@ public class Test extends TestCase implements GmmlListener {
 		
 		try
 		{			
-			GmmlDataObject o4 = new GmmlDataObject(ObjectType.DATANODE);
+			PathwayElement o4 = new PathwayElement(ObjectType.DATANODE);
 			// try setting the same id again
 			o4.setGraphId(x);
 			data.add (o4);
@@ -216,7 +216,7 @@ public class Test extends TestCase implements GmmlListener {
 	{
 		o.setGraphId("1");
 
-		GmmlDataObject o2 = new GmmlDataObject(ObjectType.DATANODE);		
+		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);		
 		// note: parent not set yet!		
 		o2.setGraphId ("3");
 		data.add(o2); // reference should now be created
@@ -282,7 +282,7 @@ public class Test extends TestCase implements GmmlListener {
 	 */
 	public void testMappInfo()
 	{
-		GmmlDataObject mi;
+		PathwayElement mi;
 
 		mi = data.getMappInfo();
 		assertEquals (mi.getObjectType(), ObjectType.MAPPINFO); 
@@ -291,7 +291,7 @@ public class Test extends TestCase implements GmmlListener {
 
 		try
 		{
-			mi = new GmmlDataObject(ObjectType.MAPPINFO);
+			mi = new PathwayElement(ObjectType.MAPPINFO);
 			data.add (mi);
 			fail("data should already have a MAPPINFO and shouldn't accept more");
 		}
@@ -312,7 +312,7 @@ public class Test extends TestCase implements GmmlListener {
 	 */
 	public void testInfoBox()
 	{
-		GmmlDataObject ib;
+		PathwayElement ib;
 
 		ib = data.getInfoBox();
 		assertTrue (data.getDataObjects().contains(ib));
@@ -321,7 +321,7 @@ public class Test extends TestCase implements GmmlListener {
 
 		try
 		{
-			ib = new GmmlDataObject(ObjectType.INFOBOX);
+			ib = new PathwayElement(ObjectType.INFOBOX);
 			data.add (ib);
 			fail("data should already have a MAPPINFO and shouldn't accept more");
 		}
@@ -343,17 +343,17 @@ public class Test extends TestCase implements GmmlListener {
 		o.setMCenterY(50.0);
 		o.setInitialSize();
 		o.setGraphId(data.getUniqueId());
-		GmmlDataObject o2 = new GmmlDataObject (ObjectType.LINE);
+		PathwayElement o2 = new PathwayElement (ObjectType.LINE);
 		o2.setMStartX(10.0);
 		o2.setMStartY(10.0);
 		o2.setInitialSize();
 		data.add(o2);
-		GmmlDataObject o3 = new GmmlDataObject (ObjectType.LABEL);
+		PathwayElement o3 = new PathwayElement (ObjectType.LABEL);
 		o3.setMCenterX(100.0);
 		o3.setMCenterY(50);
 		o3.setGraphId(data.getUniqueId());
 		data.add(o3);
-		GmmlDataObject mi;
+		PathwayElement mi;
 
 		mi = data.getMappInfo();
 		try
@@ -368,7 +368,7 @@ public class Test extends TestCase implements GmmlListener {
 	
 	// event listener
 	// receives events generated on objects o and data
-	public void gmmlObjectModified(GmmlEvent e) 
+	public void gmmlObjectModified(PathwayEvent e) 
 	{
 		// store all received events
 		received.add(e);

@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.pathvisio.gui.Engine;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.data.GmmlGex.Sample;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gex.Sample;
 
 public class Criterion {
 	static final String displaySample = "|Displayed sample|";
@@ -78,7 +78,7 @@ public class Criterion {
 
 	void setSampleData(HashMap<Integer, Object> data) {
 		// Add current sample values to symTab if they are of type Double
-		HashMap<Integer, Sample> samples = GmmlGex.getSamples();
+		HashMap<Integer, Sample> samples = Gex.getSamples();
 		clearSymbols();
 		for(Sample s : samples.values()) {
 			Object value = data.get(s.getId());

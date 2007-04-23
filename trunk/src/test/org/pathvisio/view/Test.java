@@ -23,20 +23,20 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.pathvisio.model.GmmlData;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ObjectType;
 
 public class Test extends TestCase {
 	
-	Pathway drawing;
+	VPathway drawing;
     private Shell shell;
 	
 	public void setUp()
 	{
 		shell = new Shell(Display.getDefault());
         shell.setLayout(new FillLayout());
-        drawing = new Pathway(shell, SWT.NO_BACKGROUND);
+        drawing = new VPathway(shell, SWT.NO_BACKGROUND);
 	}
 
     protected void tearDown() throws Exception {
@@ -45,10 +45,10 @@ public class Test extends TestCase {
     
 	public void testInit()
 	{
-		GmmlData data = new GmmlData();
+		Pathway data = new Pathway();
 		drawing.fromGmmlData(data);
 		assertEquals (drawing.getGmmlData(), data);
 		
-		data.add(new GmmlDataObject(ObjectType.DATANODE));
+		data.add(new PathwayElement(ObjectType.DATANODE));
 	}
 }

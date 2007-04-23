@@ -70,7 +70,7 @@ import org.pathvisio.util.Utils;
 import org.pathvisio.visualization.Visualization.PluginSet;
 import org.pathvisio.visualization.colorset.ColorSetComposite;
 import org.pathvisio.visualization.plugins.PluginManager;
-import org.pathvisio.data.GmmlGex;
+import org.pathvisio.data.Gex;
 
 /**
  * Dialog to configure visualizations
@@ -109,7 +109,7 @@ public class VisualizationDialog extends ApplicationWindow {
 	}
 	
 	public boolean close() {
-		GmmlGex.saveXML();
+		Gex.saveXML();
 		return super.close();
 	}
 	
@@ -134,7 +134,7 @@ public class VisualizationDialog extends ApplicationWindow {
 		visTab.setControl(createVisualizationComp(tabs));
 		visTab.setText(tabItemNames[0]);
 
-		if(GmmlGex.isConnected()) {
+		if(Gex.isConnected()) {
 			CTabItem colorTab = new CTabItem(tabs, SWT.NULL);
 			colorTab.setControl(new ColorSetComposite(tabs, SWT.NULL));
 			colorTab.setText(tabItemNames[1]);

@@ -25,7 +25,7 @@ package org.pathvisio.util;
 import java.io.File;
 
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GmmlData;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.debug.Logger;
 
 /**
@@ -152,13 +152,13 @@ public class Converter {
 			{
 				if (fromMappToGmml)
 				{
-					GmmlData gmmlData = new GmmlData();
+					Pathway gmmlData = new Pathway();
 					gmmlData.readFromMapp(inputFile);
 					gmmlData.writeToXml(outputFile, true);					
 				}
 				else
 				{
-					GmmlData gmmlData = new GmmlData();
+					Pathway gmmlData = new Pathway();
 					gmmlData.readFromXml(inputFile, true);					
 					gmmlData.writeToMapp(outputFile);
 				}

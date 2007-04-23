@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.pathvisio.data.DataSources;
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.Pathway.Color;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 /**
- * GmmlDataObject is responsible for maintaining the data
+ * PathwayElement is responsible for maintaining the data
  * for all the individual objects that can appear on a pwy
  * (Lines, GeneProducts, Shapes, etc.) 
  * 
@@ -44,7 +44,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
  * @author Martijn
  *
  */
-public class GmmlDataObject implements GraphIdContainer
+public class PathwayElement implements GraphIdContainer
 {	
 
 	public class Comment implements Cloneable
@@ -85,14 +85,14 @@ public class GmmlDataObject implements GraphIdContainer
 		{
 			x += dx;
 			y += dy;
-			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 		}
 		
 		public void moveTo(MPoint p) 
 		{
 			x = p.x;
 			y = p.y;
-			fireObjectModifiedEvent(new GmmlEvent(GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 		}
 		
 		public void setX(double nx) 
@@ -120,9 +120,9 @@ public class GmmlDataObject implements GraphIdContainer
 		}
 		
 		public void setGraphId (String v) { 
-			GraphLink.setGraphId(v, this, GmmlDataObject.this);
+			GraphLink.setGraphId(v, this, PathwayElement.this);
 			graphId = v;
-			fireObjectModifiedEvent(new GmmlEvent (GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 		}
 					
 		public String getGraphRef() { return graphRef; }
@@ -150,16 +150,16 @@ public class GmmlDataObject implements GraphIdContainer
 					}
 				}
 				graphRef = v;
-				//fireObjectModifiedEvent(new GmmlEvent (GmmlDataObject.this, GmmlEvent.MODIFIED_GENERAL));
+				//fireObjectModifiedEvent(new PathwayEvent (PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 			}
 		}
 
 		public Set<MPoint> getEqualPoints() 
 		{
 			Set<MPoint> links = new HashSet<MPoint>();
-			for(GmmlDataObject o : parent.getDataObjects()) 
+			for(PathwayElement o : parent.getDataObjects()) 
 			{
-				if(o != GmmlDataObject.this && o.objectType == ObjectType.LINE) 
+				if(o != PathwayElement.this && o.objectType == ObjectType.LINE) 
 				{
 					for(MPoint p : o.getMPoints()) 
 					{
@@ -184,13 +184,13 @@ public class GmmlDataObject implements GraphIdContainer
 			return GraphLink.getReferences(this, parent);
 		}
 		
-		public GmmlData getGmmlData() 
+		public Pathway getGmmlData() 
 		{			
 			return parent;
 		}
 		
-		public GmmlDataObject getParent() {
-			return GmmlDataObject.this;
+		public PathwayElement getParent() {
+			return PathwayElement.this;
 		}
 
 	}
@@ -207,7 +207,7 @@ public class GmmlDataObject implements GraphIdContainer
 	 * 
 	 * @param ot Type of object, one of the ObjectType.* fields
 	 */
-	public GmmlDataObject (int ot)
+	public PathwayElement (int ot)
 	{
 		if (ot < ObjectType.MIN_VALID || ot > ObjectType.MAX_VALID)
 		{
@@ -220,17 +220,17 @@ public class GmmlDataObject implements GraphIdContainer
 	 * Parent of this object: may be null (for example,
 	 * when object is in clipboard)
 	 */
-	private GmmlData parent = null;
-	public GmmlData getParent() { return parent; }
+	private Pathway parent = null;
+	public Pathway getParent() { return parent; }
 	
 	/**
 	 * Set parent. Do not use this method directly!
-	 * parent is set automatically when using GmmlData.add/remove
+	 * parent is set automatically when using Pathway.add/remove
 	 * 
 	 * This method takes care of graphref reference accounting.
 	 * @param v the parent
 	 */
-	public void setParent(GmmlData v)
+	public void setParent(Pathway v)
 	{
 		if (v != parent)
 		{
@@ -498,7 +498,7 @@ public class GmmlDataObject implements GraphIdContainer
 	 * Used by UndoAction.
 	 * @param src
 	 */
-	public void copyValuesFrom(GmmlDataObject src)
+	public void copyValuesFrom(PathwayElement src)
 	{
 		author = src.author;
 		copyright = src.copyright;
@@ -551,19 +551,19 @@ public class GmmlDataObject implements GraphIdContainer
 		windowWidth = src.windowWidth;
 		xref = src.xref;
 		graphId = src.graphId;	
-		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
 	
 	/**
 	 * Copy Object. The object will not
-	 * be part of the same GmmlData object, it's parent
+	 * be part of the same Pathway object, it's parent
 	 * will be set to null.
 	 * 
 	 * No events will be sent to the parent of the original.
 	 */
-	public GmmlDataObject copy()
+	public PathwayElement copy()
 	{
-		GmmlDataObject result = new GmmlDataObject(objectType);
+		PathwayElement result = new PathwayElement(objectType);
 		result.copyValuesFrom(this);
 		result.parent = null;
 		return result;
@@ -584,7 +584,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (objectType != v)
 		{
 			objectType = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -639,7 +639,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (lineStyle != value)
 		{
 			lineStyle = value; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -655,7 +655,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (lineType != value)
 		{
 			lineType = value; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL)); 
 		}
 	}
 			
@@ -667,7 +667,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (color != v)
 		{
 			color = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL)); 
 		}
 	}
 
@@ -682,7 +682,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fillColor != v)
 		{
 			fillColor = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL)); 
 		}
 	}
 
@@ -693,7 +693,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fTransparent != v)
 		{
 			fTransparent = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -710,14 +710,14 @@ public class GmmlDataObject implements GraphIdContainer
 		if (comments != value)
 		{
 			comments = value; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));		
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));		
 		}
 	}
 	
 	public void addComment(String comment, String source)
 	{
 		comments.add(new Comment(comment, source));
-		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));		
+		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));		
 	}
 	
 	/**
@@ -746,7 +746,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (comment != v)
 		{
 			comment = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 		
@@ -757,7 +757,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (xref != v)
 		{
 			xref = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -769,7 +769,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (setGeneID != v)
 		{
 			setGeneID = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	} 
 	
@@ -780,7 +780,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (backpageHead != v)
 		{
 			backpageHead = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -792,7 +792,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (dataNodeType != v)
 		{
 			dataNodeType = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL)); 
 		}
 	}
 	
@@ -807,7 +807,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (dataSource != v)
 		{
 			dataSource = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	/**
@@ -829,7 +829,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mCenterx != v)
 		{
 			mCenterx = v; 
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL)); 
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL)); 
 		}
 	}
 	
@@ -840,7 +840,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mCentery != v)
 		{
 			mCentery = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -851,7 +851,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mWidth != v)
 		{
 			mWidth = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -862,7 +862,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mHeight != v)
 		{
 			mHeight = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 		
@@ -871,7 +871,7 @@ public class GmmlDataObject implements GraphIdContainer
 	public void setMTop(double v) 
 	{ 
 		mCentery = v + mHeight / 2;
-		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
 	
 	// startx for shapes
@@ -879,7 +879,7 @@ public class GmmlDataObject implements GraphIdContainer
 	public void setMLeft(double v) 
 	{ 
 		mCenterx = v + mWidth / 2;
-		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
 	
 	protected ShapeType shapeType = ShapeType.RECTANGLE;
@@ -889,7 +889,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (shapeType != v)
 		{
 			shapeType = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -919,7 +919,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (rotation != v)
 		{
 			rotation = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -931,7 +931,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fBold != v)
 		{
 			fBold = v;		
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -942,7 +942,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fStrikethru != v)
 		{
 			fStrikethru = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -953,7 +953,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fUnderline != v)
 		{
 			fUnderline = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -964,7 +964,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fItalic != v)
 		{
 			fItalic = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -976,7 +976,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (fontName != v)
 		{
 			fontName = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -988,7 +988,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (textLabel != v)
 		{
 			textLabel = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -999,7 +999,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mFontSize != v)
 		{
 			mFontSize = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}	
 	
@@ -1011,7 +1011,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mapInfoName != v)
 		{
 			mapInfoName = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -1022,7 +1022,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (organism != v)
 		{
 			organism = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1033,7 +1033,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mapInfoDataSource != v)
 		{
 			mapInfoDataSource = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1044,7 +1044,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (version != v)
 		{
 			version = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1055,7 +1055,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (author != v)
 		{
 			author = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1066,7 +1066,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (maintainer != v)
 		{
 			maintainer = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1077,7 +1077,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (email != v)
 		{
 			email = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1088,7 +1088,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (copyright != v)
 		{
 			copyright = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1099,7 +1099,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (lastModified != v)
 		{
 			lastModified = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	
@@ -1111,7 +1111,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mBoardWidth != v)
 		{
 			mBoardWidth = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.WINDOW));
 		}
 	}
 
@@ -1122,7 +1122,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (mBoardHeight != v)
 		{
 			mBoardHeight = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.WINDOW));
 		}
 	}
 
@@ -1145,7 +1145,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (windowWidth != v)
 		{
 			windowWidth = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.WINDOW));
 		}
 	}
 
@@ -1168,7 +1168,7 @@ public class GmmlDataObject implements GraphIdContainer
 		if (windowHeight != v)
 		{
 			windowHeight = v;
-			fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.WINDOW));
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.WINDOW));
 		}
 	}
 	
@@ -1183,15 +1183,15 @@ public class GmmlDataObject implements GraphIdContainer
 	}
 	
 	/**
-	 * Set graphId. This id must be any string unique within the GmmlData object 
+	 * Set graphId. This id must be any string unique within the Pathway object 
 	 * 
-	 * @see GmmlData#getUniqueId()
+	 * @see Pathway#getUniqueId()
 	 */
 	public void setGraphId (String v) 
 	{ 
 		GraphLink.setGraphId(v, this, this);
 		graphId = v;
-		fireObjectModifiedEvent(new GmmlEvent (this, GmmlEvent.MODIFIED_GENERAL));
+		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
 	
 	public String setGeneratedGraphId() {
@@ -1217,22 +1217,22 @@ public class GmmlDataObject implements GraphIdContainer
 		end.setGraphRef(ref);
 	}
 	
-	public GmmlDataObject[] splitLine() {
+	public PathwayElement[] splitLine() {
 		double centerX = (getMStartX() + getMEndX()) / 2;
 		double centerY = (getMStartY() + getMEndY()) / 2;
-		GmmlDataObject l1 = new GmmlDataObject(ObjectType.LINE);
+		PathwayElement l1 = new PathwayElement(ObjectType.LINE);
 		l1.copyValuesFrom(this);
 		l1.setMStartX(getMStartX());
 		l1.setMStartY(getMStartY());
 		l1.setMEndX(centerX);
 		l1.setMEndY(centerY);
-		GmmlDataObject l2 = new GmmlDataObject(ObjectType.LINE);
+		PathwayElement l2 = new PathwayElement(ObjectType.LINE);
 		l2.copyValuesFrom(this);
 		l2.setMStartX(centerX);
 		l2.setMStartY(centerY);
 		l2.setMEndX(getMEndX());
 		l2.setMEndY(getMEndY());
-		return new GmmlDataObject[] { l1, l2 };
+		return new PathwayElement[] { l1, l2 };
 	}
 	
 	int noFire = 0;
@@ -1240,16 +1240,16 @@ public class GmmlDataObject implements GraphIdContainer
 		noFire = times;
 	}
 	
-	private List<GmmlListener> listeners = new ArrayList<GmmlListener>();
-	public void addListener(GmmlListener v) { listeners.add(v); }
-	public void removeListener(GmmlListener v) { listeners.remove(v); }
-	public void fireObjectModifiedEvent(GmmlEvent e) 
+	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
+	public void addListener(PathwayListener v) { listeners.add(v); }
+	public void removeListener(PathwayListener v) { listeners.remove(v); }
+	public void fireObjectModifiedEvent(PathwayEvent e) 
 	{
 		if(noFire > 0) {
 			noFire -= 1;
 			return;
 		}
-		for (GmmlListener g : listeners)
+		for (PathwayListener g : listeners)
 		{
 			g.gmmlObjectModified(e);
 		}
@@ -1293,7 +1293,7 @@ public class GmmlDataObject implements GraphIdContainer
 		return GraphLink.getReferences(this, parent);
 	}
 
-	public GmmlData getGmmlData() {
+	public Pathway getGmmlData() {
 		return parent;
 	}
 }

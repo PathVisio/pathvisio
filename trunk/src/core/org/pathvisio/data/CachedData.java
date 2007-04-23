@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pathvisio.data.GmmlGdb.IdCodePair;
-import org.pathvisio.data.GmmlGex.Sample;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.Gex.Sample;
 
 /**
  * This class represents cached expression data for a pathway.
@@ -32,7 +32,7 @@ import org.pathvisio.data.GmmlGex.Sample;
  * A CachedData object will contain a list of {@link Data} object for every gene-product on the pathway for 
  * which data is available in the expression dataset
  * @author Thomas
- * @see GmmlGex#cacheData
+ * @see Gex#cacheData
  */
 public class CachedData {
 	
@@ -109,7 +109,7 @@ public class CachedData {
 		HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
 		List<Data> dlist = data.get(idc);
 		if(dlist != null) {
-			HashMap<Integer, Sample> samples = GmmlGex.getSamples();
+			HashMap<Integer, Sample> samples = Gex.getSamples();
 			for(int idSample : samples.keySet())
 			{
 				int dataType = samples.get(idSample).getDataType();
@@ -215,7 +215,7 @@ public class CachedData {
 		 * Set the data for the given sample. Data will be parsed to double if possible
 		 * @param sampleId The id of the sample to set the data for
 		 * @param data The {@link String} representation of the data to add
-		 * @see GmmlGex#cacheData
+		 * @see Gex#cacheData
 		 */
 		protected void setSampleData(int sampleId, String data) {
 			Object parsedData = null;

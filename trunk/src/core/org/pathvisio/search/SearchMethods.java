@@ -34,8 +34,8 @@ import org.pathvisio.util.XmlUtils.PathwayParser;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData;
 import org.pathvisio.util.tableviewer.TableData.Row;
-import org.pathvisio.data.GmmlGdb;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gdb.IdCodePair;
 
 public abstract class SearchMethods {	
 	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";
@@ -78,7 +78,7 @@ public abstract class SearchMethods {
 
 		srt.setTableData(srs);
 		//Get all cross references
-		List<IdCodePair> refs = GmmlGdb.getCrossRefs(id, code);
+		List<IdCodePair> refs = Gdb.getCrossRefs(id, code);
 		if(refs.size() == 0) throw new NoGdbException();
 		
 		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));

@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.Pathway.Color;
 
 public abstract class ColorConverter
 {		    

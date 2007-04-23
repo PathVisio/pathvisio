@@ -42,18 +42,18 @@ import org.pathvisio.gui.CommonActions;
 import org.pathvisio.gui.Engine.ApplicationEvent;
 import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.gui.TabbedSidePanel;
-import org.pathvisio.view.Pathway;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.preferences.GmmlPreferenceManager;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.PreferenceDlg;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.visualization.GmmlLegend;
+import org.pathvisio.visualization.LegendPanel;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.data.*;
 import org.pathvisio.model.*;
-import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
-import org.pathvisio.data.GmmlGex.ExpressionDataListener;
+import org.pathvisio.data.Gex.ExpressionDataEvent;
+import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.Globals;
 
 import edu.stanford.ejalbert.BrowserLauncher;
@@ -63,7 +63,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
  * It acts as a container for pathwaydrawings and facilitates
  * loading, creating and saving drawings to and from GPML.
  */
-public class GmmlVisionWindow extends ApplicationWindow implements 
+public class MainWindow extends ApplicationWindow implements 
 						ApplicationEventListener, ExpressionDataListener
 {
 	private static final long serialVersionUID = 1L;
@@ -90,8 +90,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	 */
 	private class SelectGdbAction extends Action
 	{
-		GmmlVisionWindow window;
-		public SelectGdbAction(GmmlVisionWindow w)
+		MainWindow window;
+		public SelectGdbAction(MainWindow w)
 		{
 			window = w;
 			setText("Select &Gene Database");
@@ -100,13 +100,13 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		public void run () {			
 			try {
-				DBConnector dbcon = GmmlGdb.getDBConnector();
+				DBConnector dbcon = Gdb.getDBConnector();
 				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
 				
-				GmmlGdb.connect(dbName);
-				setStatus("Using Gene Database: '" + Engine.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
+				Gdb.connect(dbName);
+				setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
@@ -120,19 +120,19 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
 	
 	/**
-	 * Loads expression data for all {@link GmmlGeneProduct}s in the loaded pathway
+	 * Loads expression data for all {@link GeneProduct}s in the loaded pathway
 	 */
 	private void cacheExpressionData()
 	{
 		if(Engine.isDrawingOpen())
 		{
-			Pathway drawing = Engine.getDrawing();
+			VPathway drawing = Engine.getDrawing();
 			//Check for neccesary connections
-			if(GmmlGex.isConnected() && GmmlGdb.isConnected())
+			if(Gex.isConnected() && Gdb.isConnected())
 			{
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				try {
-					dialog.run(true, true, GmmlGex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
+					dialog.run(true, true, Gex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
 					drawing.redraw();
 				} catch(Exception e) {
 					String msg = "while caching expression data: " + e.getMessage();					
@@ -152,8 +152,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	{
 		final String ttChecked = "Exit edit mode";
 		final String ttUnChecked = "Switch to edit mode to edit the pathway content";
-		GmmlVisionWindow window;
-		public SwitchEditModeAction (GmmlVisionWindow w)
+		MainWindow window;
+		public SwitchEditModeAction (MainWindow w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
 			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/edit.gif")));
@@ -166,7 +166,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {
 			if(Engine.isDrawingOpen())
 			{
-				Pathway drawing = Engine.getDrawing();
+				VPathway drawing = Engine.getDrawing();
 				if(isChecked())
 				{
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
@@ -216,8 +216,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	 */
 	public class ShowRightPanelAction extends Action
 	{
-		GmmlVisionWindow window;
-		public ShowRightPanelAction (GmmlVisionWindow w)
+		MainWindow window;
+		public ShowRightPanelAction (MainWindow w)
 		{
 			super("Show &information panel", IAction.AS_CHECK_BOX);
 			window = w;
@@ -236,12 +236,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	 */
 	private class NewElementAction extends Action
 	{
-		GmmlVisionWindow window;
+		MainWindow window;
 		int element;
 		
 		/**
 		 * Constructor for this class
-		 * @param e	type of element this action adds; a {@link Pathway} field constant
+		 * @param e	type of element this action adds; a {@link VPathway} field constant
 		 */
 		public NewElementAction (int e)
 		{
@@ -251,87 +251,87 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			URL imageURL = null;
 			toolTipText = null;
 			switch(element) {
-			case Pathway.NEWLINE: 
+			case VPathway.NEWLINE: 
 				toolTipText = "Draw new line";
 				imageURL = Engine.getResourceURL("icons/newline.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLINEARROW:
+			case VPathway.NEWLINEARROW:
 				toolTipText = "Draw new arrow";
 				imageURL = Engine.getResourceURL("icons/newarrow.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLINEDASHED:
+			case VPathway.NEWLINEDASHED:
 				toolTipText = "Draw new dashed line";
 				imageURL = Engine.getResourceURL("icons/newdashedline.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLINEDASHEDARROW:
+			case VPathway.NEWLINEDASHEDARROW:
 				toolTipText = "Draw new dashed arrow";
 				imageURL = Engine.getResourceURL("icons/newdashedarrow.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLABEL:
+			case VPathway.NEWLABEL:
 				toolTipText = "Draw new label";
 				imageURL = Engine.getResourceURL("icons/newlabel.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWARC:
+			case VPathway.NEWARC:
 				toolTipText = "Draw new arc";
 				imageURL = Engine.getResourceURL("icons/newarc.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWBRACE:
+			case VPathway.NEWBRACE:
 				toolTipText = "Draw new brace";
 				imageURL = Engine.getResourceURL("icons/newbrace.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWGENEPRODUCT:
+			case VPathway.NEWGENEPRODUCT:
 				toolTipText = "Draw new geneproduct";
 				imageURL = Engine.getResourceURL("icons/newgeneproduct.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWRECTANGLE:
+			case VPathway.NEWRECTANGLE:
 				imageURL = Engine.getResourceURL("icons/newrectangle.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWOVAL:
+			case VPathway.NEWOVAL:
 				toolTipText = "Draw new oval";
 				imageURL = Engine.getResourceURL("icons/newoval.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWTBAR:
+			case VPathway.NEWTBAR:
 				toolTipText = "Draw new TBar";
 				imageURL = Engine.getResourceURL("icons/newtbar.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWRECEPTORROUND:
+			case VPathway.NEWRECEPTORROUND:
 				toolTipText = "Draw new round receptor";
 				imageURL = Engine.getResourceURL("icons/newreceptorround.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWRECEPTORSQUARE:
+			case VPathway.NEWRECEPTORSQUARE:
 				toolTipText = "Draw new square receptor";
 				imageURL = Engine.getResourceURL("icons/newreceptorsquare.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLIGANDROUND:
+			case VPathway.NEWLIGANDROUND:
 				toolTipText = "Draw new round ligand";
 				imageURL = Engine.getResourceURL("icons/newligandround.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLIGANDSQUARE:
+			case VPathway.NEWLIGANDSQUARE:
 				toolTipText = "Draw new square ligand";
 				imageURL = Engine.getResourceURL("icons/newligandsquare.gif");
 				setChecked(false);
 				break;
-			case Pathway.NEWLINEMENU:
-				setMenuCreator(new NewItemMenuCreator(Pathway.NEWLINEMENU));
+			case VPathway.NEWLINEMENU:
+				setMenuCreator(new NewItemMenuCreator(VPathway.NEWLINEMENU));
 				imageURL = Engine.getResourceURL("icons/newlinemenu.gif");
 				toolTipText = "Draw new line or arrow";
 				break;
-			case Pathway.NEWLINESHAPEMENU:
-				setMenuCreator(new NewItemMenuCreator(Pathway.NEWLINESHAPEMENU));
+			case VPathway.NEWLINESHAPEMENU:
+				setMenuCreator(new NewItemMenuCreator(VPathway.NEWLINESHAPEMENU));
 				imageURL = Engine.getResourceURL("icons/newlineshapemenu.gif");
 				toolTipText = "Draw new ligand or receptor";
 				break;
@@ -350,7 +350,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			}
 			else
 			{	
-				Engine.getDrawing().setNewGraphics(Pathway.NEWNONE);
+				Engine.getDrawing().setNewGraphics(VPathway.NEWNONE);
 			}
 		}
 		
@@ -366,8 +366,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		/**
 		 * Constructor for this class
-		 * @param e	type of menu to create; one of {@link Pathway}.NEWLINEMENU
-		 * , {@link Pathway}.NEWLINESHAPEMENU
+		 * @param e	type of menu to create; one of {@link VPathway}.NEWLINEMENU
+		 * , {@link VPathway}.NEWLINESHAPEMENU
 		 */
 		public NewItemMenuCreator(int e) 
 		{
@@ -385,17 +385,17 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			menu = new Menu(parent);
 			Vector<Action> actions = new Vector<Action>();
 			switch(element) {
-			case Pathway.NEWLINEMENU:
-				actions.add(new NewElementAction(Pathway.NEWLINE));
-				actions.add(new NewElementAction(Pathway.NEWLINEARROW));
-				actions.add(new NewElementAction(Pathway.NEWLINEDASHED));
-				actions.add(new NewElementAction(Pathway.NEWLINEDASHEDARROW));
+			case VPathway.NEWLINEMENU:
+				actions.add(new NewElementAction(VPathway.NEWLINE));
+				actions.add(new NewElementAction(VPathway.NEWLINEARROW));
+				actions.add(new NewElementAction(VPathway.NEWLINEDASHED));
+				actions.add(new NewElementAction(VPathway.NEWLINEDASHEDARROW));
 				break;
-			case Pathway.NEWLINESHAPEMENU:
-				actions.add(new NewElementAction(Pathway.NEWLIGANDROUND));
-				actions.add(new NewElementAction(Pathway.NEWRECEPTORROUND));
-				actions.add(new NewElementAction(Pathway.NEWLIGANDSQUARE));
-				actions.add(new NewElementAction(Pathway.NEWRECEPTORSQUARE));
+			case VPathway.NEWLINESHAPEMENU:
+				actions.add(new NewElementAction(VPathway.NEWLIGANDROUND));
+				actions.add(new NewElementAction(VPathway.NEWRECEPTORROUND));
+				actions.add(new NewElementAction(VPathway.NEWLIGANDSQUARE));
+				actions.add(new NewElementAction(VPathway.NEWRECEPTORSQUARE));
 			}
 			
 			for (Action act : actions)
@@ -423,7 +423,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	/**
 	 * Deselects all {@link NewElementAction}s on the toolbar and sets 
-	 * {@link Pathway}.newGraphics to {@link Pathway}.NEWNONE
+	 * {@link VPathway}.newGraphics to {@link VPathway}.NEWNONE
 	 */
 	public void deselectNewItemActions()
 	{
@@ -435,7 +435,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		Engine.getDrawing().setNewGraphics(Pathway.NEWNONE);
+		Engine.getDrawing().setNewGraphics(VPathway.NEWNONE);
 	}
 	
 	// Elements of the coolbar
@@ -474,25 +474,25 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	protected void createEditActionsCI()
 	{
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
-		toolBarManager.add(new NewElementAction(Pathway.NEWGENEPRODUCT));
-		toolBarManager.add(new NewElementAction(Pathway.NEWLABEL));
-		toolBarManager.add(new NewElementAction(Pathway.NEWLINEMENU));
-		toolBarManager.add(new NewElementAction(Pathway.NEWRECTANGLE));
-		toolBarManager.add(new NewElementAction(Pathway.NEWOVAL));
-		toolBarManager.add(new NewElementAction(Pathway.NEWARC));
-		toolBarManager.add(new NewElementAction(Pathway.NEWBRACE));
-		toolBarManager.add(new NewElementAction(Pathway.NEWTBAR));
-		toolBarManager.add(new NewElementAction(Pathway.NEWLINESHAPEMENU));
+		toolBarManager.add(new NewElementAction(VPathway.NEWGENEPRODUCT));
+		toolBarManager.add(new NewElementAction(VPathway.NEWLABEL));
+		toolBarManager.add(new NewElementAction(VPathway.NEWLINEMENU));
+		toolBarManager.add(new NewElementAction(VPathway.NEWRECTANGLE));
+		toolBarManager.add(new NewElementAction(VPathway.NEWOVAL));
+		toolBarManager.add(new NewElementAction(VPathway.NEWARC));
+		toolBarManager.add(new NewElementAction(VPathway.NEWBRACE));
+		toolBarManager.add(new NewElementAction(VPathway.NEWTBAR));
+		toolBarManager.add(new NewElementAction(VPathway.NEWLINESHAPEMENU));
 		
 		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
 	}
 	
 	/**
-	 * Creates element of the coolbar containing controls related to viewing a pathway
+	 * Creates element of the coolbar containing controls related to viewing a VPathway
 	 */
 	protected void createViewActionsCI()
 	{
-		final GmmlVisionWindow window = this;
+		final MainWindow window = this;
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		//Add zoomCombo
 		toolBarManager.add(new ControlContribution("ZoomCombo") {
@@ -544,7 +544,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	}
 
 	/**
-	 *Builds and ads a menu to the GmmlVision frame
+	 *Builds and ads a menu to the frame
 	 */
 	protected MenuManager createMenuManager()
 	{
@@ -591,16 +591,16 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		return m;
 	}
 	
-	public GmmlVisionWindow()
+	public MainWindow()
 	{
 		this(null);
 	}
 	
 	/**
-	 *Constructor for the GmmlVision class
-	 *Initializes new GmmlVision and sets properties for frame
+	 *Constructor for the MainWindow class
+	 *Initializes new MainWindow and sets properties for frame
 	 */
-	public GmmlVisionWindow(Shell shell)
+	public MainWindow(Shell shell)
 	{
 		super(shell);
 		
@@ -609,7 +609,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
 		Engine.addApplicationEventListener(this);
-		GmmlGex.addListener(this);
+		Gex.addListener(this);
 	}
 	
 	public boolean close() {
@@ -620,11 +620,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	public ScrolledComposite sc;
 	public BackpagePanel bpBrowser; //Browser for showing backpage information
-	public PropertyPanel propertyTable;	//Table showing properties of GmmlGraphics objects
+	public PropertyPanel propertyTable;	//Table showing properties of Graphics objects
 	SashForm sashForm; //SashForm containing the drawing area and sidebar
 	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
 	PathwaySearchComposite pwSearchComposite; //Composite that handles pathway searches and displays results
-	GmmlLegend legend; //Legend to display colorset information
+	LegendPanel legend; //Legend to display colorset information
 	protected Control createContents(Composite parent)
 	{		
 		Shell shell = parent.getShell();
@@ -652,7 +652,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		propertyTable = new PropertyPanel(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
-		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL);
+		legend = new LegendPanel(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL);
 		Composite visPanel = VisualizationManager.createSidePanel(rightPanel.getTabFolder());
 		
 		rightPanel.addTab(bpBrowser, "Backpage");
@@ -661,14 +661,14 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		rightPanel.addTab(legend, "Legend");
 		rightPanel.addTab(visPanel, "Visualization");
 		
-		int sidePanelSize = Engine.getPreferences().getInt(GmmlPreferences.PREF_SIDEPANEL_SIZE);
+		int sidePanelSize = Engine.getPreferences().getInt(Preferences.PREF_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
-		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
+		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
 				
 		return parent;
 		
@@ -676,10 +676,10 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	public TabbedSidePanel getSidePanel() { return rightPanel; }
 	
-	public GmmlLegend getLegend() { return legend; }
+	public LegendPanel getLegend() { return legend; }
 	
 	public void showLegend(boolean show) {	
-		if(show && GmmlGex.isConnected()) {
+		if(show && Gex.isConnected()) {
 			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
 			rightPanel.unhideTab("Legend", 0);
 			rightPanel.selectTab("Legend");
@@ -690,15 +690,15 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			
 	/**
 	 * Creates a new empty drawing canvas
-	 * @return the empty {@link Pathway}
+	 * @return the empty {@link VPathway}
 	 */
-	public Pathway createNewDrawing()
+	public VPathway createNewDrawing()
 	{		
-		return new Pathway(sc, SWT.NO_BACKGROUND);
+		return new VPathway(sc, SWT.NO_BACKGROUND);
 	}
 	
 	public void applicationEvent(ApplicationEvent e) {
-		Pathway drawing = null;
+		VPathway drawing = null;
 		switch(e.type) {
 		case ApplicationEvent.NEW_PATHWAY:
 			drawing = Engine.getDrawing();
@@ -707,7 +707,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		case ApplicationEvent.OPEN_PATHWAY:
 			drawing = Engine.getDrawing();
 			sc.setContent(drawing);
-			if(GmmlGex.isConnected()) cacheExpressionData();
+			if(Gex.isConnected()) cacheExpressionData();
 			break;	
 		}
 	}

@@ -26,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.pathvisio.gui.Engine;
 import org.pathvisio.data.DataSources;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
+import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.model.MappFormat;
 
 public class XmlUtils {
@@ -67,7 +67,7 @@ public class XmlUtils {
 				String symbol = attributes.getValue("TextLabel");
 				currentGene.setSymbol(symbol);		
 			}
-			else if(localName.equals("Pathway")) {
+			else if(localName.equals("VPathway")) {
 				name = attributes.getValue("Name");
 			}
 			else if(localName.equals("Xref"))

@@ -23,9 +23,9 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
 
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.PathwayElement;
 
 /**
  * This class represents a GMMLShape, which can be a 
@@ -37,9 +37,9 @@ public class Shape extends GraphicsShape
 			
 	/**
 	 * Constructor for this class
-	 * @param canvas - the Pathway this Shape will be part of
+	 * @param canvas - the VPathway this Shape will be part of
 	 */
-	public Shape(Pathway canvas, GmmlDataObject o)
+	public Shape(VPathway canvas, PathwayElement o)
 	{
 		super(canvas, o);
 		setHandleLocation();
@@ -48,9 +48,9 @@ public class Shape extends GraphicsShape
 	public int getDrawingOrder() {
 		switch(gdata.getShapeType()) {
 		case BRACE:
-			return Pathway.DRAW_ORDER_BRACE;
+			return VPathway.DRAW_ORDER_BRACE;
 		default:
-			return Pathway.DRAW_ORDER_SHAPE;
+			return VPathway.DRAW_ORDER_SHAPE;
 		}
 	}
 	
@@ -64,7 +64,7 @@ public class Shape extends GraphicsShape
 		}
 		else if (isHighlighted())
 		{
-			RGB rgb = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
+			RGB rgb = Preferences.getColorProperty(Preferences.PREF_COL_HIGHLIGHTED);
 			c = SwtUtils.changeColor(c, rgb, e.display);
 		}
 		else 

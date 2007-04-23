@@ -51,10 +51,10 @@ import org.pathvisio.util.SwtUtils;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.GmmlGex;
+import org.pathvisio.data.Gex;
 import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
-import org.pathvisio.data.GmmlGex.Sample;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.Gex.Sample;
 
 public class ExpressionColorPlugin extends PluginWithColoredSamples {
 	final String NAME = "Color by expression";
@@ -79,7 +79,7 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 
 	protected void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, PaintEvent e, GC buffer) {
 		ColorSample smp = (ColorSample)s;
-		CachedData cache = GmmlGex.getCachedData();
+		CachedData cache = Gex.getCachedData();
 		
 		if(cache.hasMultipleData(idc)) {
 			switch(smp.getAmbigiousType()) {

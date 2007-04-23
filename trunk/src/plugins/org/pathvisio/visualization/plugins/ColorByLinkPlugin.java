@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.ColorConverter;
 
 /**
@@ -65,7 +65,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	public void initSidePanel(Composite parent) { }
 
 	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC buffer) {
-		GmmlDataObject gd = g.getGmmlData();
+		PathwayElement gd = g.getGmmlData();
 		String[] ids = parseIds(gd);
 		if(ids[0] != null) { //This is a shape
 			drawShape(ids[0], g, e, buffer);
@@ -80,7 +80,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	}
 	
 	void drawLineStart(String id, Graphics g, PaintEvent e, GC buffer) {
-		GmmlDataObject gd = g.getGmmlData();
+		PathwayElement gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
 				// TODO: this should be in visual coords
@@ -90,7 +90,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	}
 	
 	void drawLineEnd(String id, Graphics g, PaintEvent e, GC buffer) {
-		GmmlDataObject gd = g.getGmmlData();
+		PathwayElement gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
 				// TODO: this should be in visual coords
@@ -109,7 +109,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	}
 	
 	void drawShape(String id, Graphics g, PaintEvent e, GC buffer) {
-		GmmlDataObject gd = g.getGmmlData();
+		PathwayElement gd = g.getGmmlData();
 		RGB oldRGB = ColorConverter.toRGB(gd.getColor());
 		gd.dontFireEvents(2);
 		gd.setColor(ColorConverter.fromRGB(getRGB(id)));
@@ -132,7 +132,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		return new RGB(c.getRed(), c.getGreen(), c.getBlue());
 	}
 	
-	String[] parseIds(GmmlDataObject gd) {
+	String[] parseIds(PathwayElement gd) {
 		String[] ids = new String[3];
 		String gid = gd.getGraphId();
 		String sr = gd.getStartGraphRef();

@@ -21,7 +21,7 @@ public class UndoAction
 	
 	public UndoAction(String _message, 
 			int _actionType,
-			GmmlDataObject _affectedObject)
+			PathwayElement _affectedObject)
 	{
 		parent = _affectedObject.getParent();
 		message = _message;
@@ -36,7 +36,7 @@ public class UndoAction
 	}
 	
 	String message;
-	GmmlData parent;
+	Pathway parent;
 	
 	public static final int UNDO_ADD = 1;
 	public static final int UNDO_REMOVE = 2;
@@ -49,12 +49,12 @@ public class UndoAction
 	 * used in all three event types.
 	 * It acts like a pointer, its fields may be changed by following actions. 
 	 */
-	private GmmlDataObject affectedObject;
+	private PathwayElement affectedObject;
 	/**
 	 * savedObject contains a copy of the actual object,
 	 * used only for the UNDO_CHANGE type.
 	 */
-	private GmmlDataObject savedObject = null;
+	private PathwayElement savedObject = null;
 	
 	public void undo()
 	{

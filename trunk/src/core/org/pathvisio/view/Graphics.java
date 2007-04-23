@@ -19,25 +19,25 @@ package org.pathvisio.view;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
-import org.pathvisio.preferences.GmmlPreferences;
-import org.pathvisio.model.GmmlData;
-import org.pathvisio.model.GmmlDataObject;
-import org.pathvisio.model.GmmlEvent;
-import org.pathvisio.model.GmmlListener;
+import org.pathvisio.preferences.Preferences;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
 
 
 /**
  * This class is a parent class for all graphics
- * that can be added to a Pathway.
+ * that can be added to a VPathway.
  */
-public abstract class Graphics extends PathwayElement implements GmmlListener
+public abstract class Graphics extends VPathwayElement implements PathwayListener
 {
-	public static RGB selectColor = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_SELECTED);
-	public static RGB highlightColor = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
+	public static RGB selectColor = Preferences.getColorProperty(Preferences.PREF_COL_SELECTED);
+	public static RGB highlightColor = Preferences.getColorProperty(Preferences.PREF_COL_HIGHLIGHTED);
 	
-	protected GmmlDataObject gdata = null;
+	protected PathwayElement gdata = null;
 	
-	public Graphics(Pathway canvas, GmmlDataObject o) {
+	public Graphics(VPathway canvas, PathwayElement o) {
 		super(canvas);
 		o.addListener(this);
 		gdata = o;
@@ -61,13 +61,13 @@ public abstract class Graphics extends PathwayElement implements GmmlListener
 		}
 	}
 	
-	public GmmlDataObject getGmmlData() {
+	public PathwayElement getGmmlData() {
 		return gdata;
 	}
 	
 //	public List getAttributes() { return gdata.getAttributes() ;}
 	boolean listen = true;
-	public void gmmlObjectModified(GmmlEvent e) {	
+	public void gmmlObjectModified(PathwayEvent e) {	
 		if(listen) markDirty(); // mark everything dirty
 	}
 	
@@ -124,7 +124,7 @@ public abstract class Graphics extends PathwayElement implements GmmlListener
 	protected void destroy() {
 		super.destroy();
 		gdata.removeListener(canvas);
-		GmmlData parent = gdata.getParent();
+		Pathway parent = gdata.getParent();
 		if(parent != null) parent.remove(gdata);
 	}
 	

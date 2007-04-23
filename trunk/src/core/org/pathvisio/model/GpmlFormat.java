@@ -29,7 +29,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.Pathway.Color;
 
 /**
  * class responsible for interaction with Gpml format.
@@ -78,19 +78,19 @@ public class GpmlFormat
 		// an automated perl script. Don't edit this directly, use the perl script instead.
 		/* START OF AUTO-GENERATED CONTENT */
 		result.put("Comment@Source", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("gpml:Dimension", "18000", "optional"));
-		result.put("Pathway.Graphics@WindowHeight", new AttributeInfo ("gpml:Dimension", "12000", "optional"));
-		result.put("Pathway@Name", new AttributeInfo ("gpml:NameType", null, "required"));
-		result.put("Pathway@Organism", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Data-Source", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Version", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Author", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Maintainer", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Email", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Copyright", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Last-Modified", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway.Graphics@BoardWidth", new AttributeInfo ("gpml:Dimension", null, "required"));
+		result.put("VPathway.Graphics@BoardHeight", new AttributeInfo ("gpml:Dimension", null, "required"));
+		result.put("VPathway.Graphics@WindowWidth", new AttributeInfo ("gpml:Dimension", "18000", "optional"));
+		result.put("VPathway.Graphics@WindowHeight", new AttributeInfo ("gpml:Dimension", "12000", "optional"));
+		result.put("VPathway@Name", new AttributeInfo ("gpml:NameType", null, "required"));
+		result.put("VPathway@Organism", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Data-Source", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Version", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Author", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Maintainer", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Email", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Copyright", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("VPathway@Last-Modified", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("DataNode.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("DataNode.Graphics@Width", new AttributeInfo ("gpml:Dimension", "600", "optional"));
@@ -261,32 +261,32 @@ public class GpmlFormat
 		
 	}
 	
-	public static Document createJdom(GmmlData data) throws ConverterException
+	public static Document createJdom(Pathway data) throws ConverterException
 	{
 		Document doc = new Document();
 
 		Namespace ns = Namespace.getNamespace("http://genmapp.org/GPML/2007");
 
-		Element root = new Element("Pathway", ns);
+		Element root = new Element("VPathway", ns);
 		doc.setRootElement(root);
 
 		List<Element> elementList = new ArrayList<Element>();
     	
-		for (GmmlDataObject o : data.getDataObjects())
+		for (PathwayElement o : data.getDataObjects())
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
-				setAttribute("Pathway", "Name", root, o.getMapInfoName());
-				setAttribute("Pathway", "Data-Source", root, "GenMAPP 2.0");
-				setAttribute("Pathway", "Version", root, o.getVersion());
-				setAttribute("Pathway", "Author", root, o.getAuthor());
-				setAttribute("Pathway", "Maintainer", root, o.getMaintainer());
-				setAttribute("Pathway", "Email", root, o.getEmail());
-				setAttribute("Pathway", "Copyright", root, o.getCopyright());
-				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
-				setAttribute("Pathway", "Organism", root, o.getOrganism());
+				setAttribute("VPathway", "Name", root, o.getMapInfoName());
+				setAttribute("VPathway", "Data-Source", root, "GenMAPP 2.0");
+				setAttribute("VPathway", "Version", root, o.getVersion());
+				setAttribute("VPathway", "Author", root, o.getAuthor());
+				setAttribute("VPathway", "Maintainer", root, o.getMaintainer());
+				setAttribute("VPathway", "Email", root, o.getEmail());
+				setAttribute("VPathway", "Copyright", root, o.getCopyright());
+				setAttribute("VPathway", "Last-Modified", root, o.getLastModified());
+				setAttribute("VPathway", "Organism", root, o.getOrganism());
 
-				for (GmmlDataObject.Comment c : o.getComments())
+				for (PathwayElement.Comment c : o.getComments())
 				{
 					Element f = new Element ("Comment", ns);
 					f.setText (c.comment);
@@ -297,10 +297,10 @@ public class GpmlFormat
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
 				
-				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth());
-				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight());
-				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
-				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
+				setAttribute("VPathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth());
+				setAttribute("VPathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight());
+				setAttribute("VPathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
+				setAttribute("VPathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
 			}
 			else
 			{
@@ -320,7 +320,7 @@ public class GpmlFormat
 		return doc;
 	}
 	
-	public static void mapElement(Element e, GmmlData p) throws ConverterException
+	public static void mapElement(Element e, Pathway p) throws ConverterException
 	{
 		String tag = e.getName();
 		int ot = ObjectType.getTagMapping(tag);
@@ -332,7 +332,7 @@ public class GpmlFormat
 			return;
 		}
 		
-		GmmlDataObject o;
+		PathwayElement o;
 		if (ot == ObjectType.MAPPINFO)
 		{
 			o = p.getMappInfo();
@@ -343,7 +343,7 @@ public class GpmlFormat
 		}
 		else
 		{
-			o = new GmmlDataObject(ot);
+			o = new PathwayElement(ot);
 			p.add (o);
 		}
 		
@@ -389,7 +389,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapLineData(GmmlDataObject o, Element e) throws ConverterException
+	private static void mapLineData(PathwayElement o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
@@ -417,7 +417,7 @@ public class GpmlFormat
     	o.setLineType (LineType.getByGpmlName(type));
 	}
 	
-	private static void updateLineData(GmmlDataObject o, Element e) throws ConverterException
+	private static void updateLineData(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) {
 			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
@@ -443,7 +443,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapColor(GmmlDataObject o, Element e)
+	private static void mapColor(PathwayElement o, Element e)
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	String scol = graphics.getAttributeValue("Color");
@@ -451,7 +451,7 @@ public class GpmlFormat
     	o.setTransparent(scol == null || scol.equals("Transparent"));
 	}
 
-	private static void mapShapeColor(GmmlDataObject o, Element e)
+	private static void mapShapeColor(PathwayElement o, Element e)
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	String scol = graphics.getAttributeValue("FillColor");
@@ -464,7 +464,7 @@ public class GpmlFormat
     	o.setColor (gmmlString2Color(scol));
 	}
 
-	private static void updateColor(GmmlDataObject o, Element e)
+	private static void updateColor(PathwayElement o, Element e)
 	{
 		if(e != null) 
 		{
@@ -479,7 +479,7 @@ public class GpmlFormat
 		}
 	}
 		
-	private static void updateShapeColor(GmmlDataObject o, Element e)
+	private static void updateShapeColor(PathwayElement o, Element e)
 	{
 		if(e != null) 
 		{
@@ -494,7 +494,7 @@ public class GpmlFormat
 		}
 	}
 
-	private static void mapComments(GmmlDataObject o, Element e) throws ConverterException
+	private static void mapComments(PathwayElement o, Element e) throws ConverterException
 	{
 		for (Object f : e.getChildren("Comment", e.getNamespace()))
 		{
@@ -502,11 +502,11 @@ public class GpmlFormat
 		}    	
 	}
 	
-	private static void updateComments(GmmlDataObject o, Element e) throws ConverterException
+	private static void updateComments(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) 
 		{
-			for (GmmlDataObject.Comment c : o.getComments())
+			for (PathwayElement.Comment c : o.getComments())
 			{
 				Element f = new Element ("Comment", e.getNamespace());
 				f.setText (c.comment);
@@ -516,7 +516,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapGraphId (GmmlDataObject o, Element e)
+	private static void mapGraphId (PathwayElement o, Element e)
 	{
 		String id = e.getAttributeValue("GraphId");
 		if(id == null || id.equals("")) {
@@ -525,7 +525,7 @@ public class GpmlFormat
 		o.setGraphId (id);
 	}
 	
-	private static void updateGraphId (GmmlDataObject o, Element e)
+	private static void updateGraphId (PathwayElement o, Element e)
 	{
 		String id = o.getGraphId();
 		// id has to be unique!
@@ -535,7 +535,7 @@ public class GpmlFormat
 		} 
 	}
 	
-	private static void mapDataNode(GmmlDataObject o, Element e) throws ConverterException
+	private static void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel    (getAttribute("DataNode", "TextLabel", e));
 		o.setXref         (getAttribute("DataNode", "GenMAPP-Xref", e));
@@ -546,7 +546,7 @@ public class GpmlFormat
 		o.setDataSource (getAttribute("DataNode.Xref", "Database", xref));
 	}
 
-	private static void updateDataNode(GmmlDataObject o, Element e) throws ConverterException
+	private static void updateDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) {
 			setAttribute ("DataNode", "TextLabel", e, o.getTextLabel());
@@ -559,13 +559,13 @@ public class GpmlFormat
 		}
 	}
 
-	private static void mapSimpleCenter(GmmlDataObject o, Element e)
+	private static void mapSimpleCenter(PathwayElement o, Element e)
 	{
 		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX"))); 
 		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")));	
 	}
 	
-	private static void updateSimpleCenter(GmmlDataObject o, Element e)
+	private static void updateSimpleCenter(PathwayElement o, Element e)
 	{
 		if(e != null) 
 		{
@@ -574,7 +574,7 @@ public class GpmlFormat
 		}		
 	}
 
-	private static void mapShapeData(GmmlDataObject o, Element e, String base) throws ConverterException
+	private static void mapShapeData(PathwayElement o, Element e, String base) throws ConverterException
 	{
 		Element graphics = e.getChild("Graphics", e.getNamespace());
     	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics))); 
@@ -583,7 +583,7 @@ public class GpmlFormat
 		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)));
 	}
 	
-	private static void updateShapeData(GmmlDataObject o, Element e, String base) throws ConverterException
+	private static void updateShapeData(PathwayElement o, Element e, String base) throws ConverterException
 	{
 		if(e != null) 
 		{
@@ -598,7 +598,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapShapeType(GmmlDataObject o, Element e) throws ConverterException
+	private static void mapShapeType(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
@@ -628,7 +628,7 @@ public class GpmlFormat
     	o.setRotation (result); 
 	}
 	
-	private static void updateShapeType(GmmlDataObject o, Element e)
+	private static void updateShapeType(PathwayElement o, Element e)
 	{
 		if(e != null) 
 		{
@@ -641,7 +641,7 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapLabelData(GmmlDataObject o, Element e) throws ConverterException
+	private static void mapLabelData(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel (getAttribute("Label", "TextLabel", e));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
@@ -665,7 +665,7 @@ public class GpmlFormat
     	o.setXref(xref);
 	}
 	
-	private static void updateLabelData(GmmlDataObject o, Element e) throws ConverterException
+	private static void updateLabelData(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) 
 		{
@@ -684,23 +684,23 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapMappInfoData(GmmlDataObject o, Element e) throws ConverterException
+	private static void mapMappInfoData(PathwayElement o, Element e) throws ConverterException
 	{
-		o.setMapInfoName (getAttribute("Pathway", "Name", e));
-		o.setOrganism (getAttribute("Pathway", "Organism", e));	
-		o.setMapInfoDataSource (getAttribute("Pathway", "Data-Source", e));
-		o.setVersion (getAttribute("Pathway", "Version", e));
-		o.setAuthor (getAttribute("Pathway", "Author", e));
-		o.setMaintainer (getAttribute("Pathway", "Maintainer", e));
-		o.setEmail (getAttribute("Pathway", "Email", e));
-		o.setLastModified (getAttribute("Pathway", "Last-Modified", e));
-		o.setCopyright (getAttribute("Pathway", "Copyright", e));
+		o.setMapInfoName (getAttribute("VPathway", "Name", e));
+		o.setOrganism (getAttribute("VPathway", "Organism", e));	
+		o.setMapInfoDataSource (getAttribute("VPathway", "Data-Source", e));
+		o.setVersion (getAttribute("VPathway", "Version", e));
+		o.setAuthor (getAttribute("VPathway", "Author", e));
+		o.setMaintainer (getAttribute("VPathway", "Maintainer", e));
+		o.setEmail (getAttribute("VPathway", "Email", e));
+		o.setLastModified (getAttribute("VPathway", "Last-Modified", e));
+		o.setCopyright (getAttribute("VPathway", "Copyright", e));
 		
 		Element g = e.getChild("Graphics", e.getNamespace());
-		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
-		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
-		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
-		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
+		o.setMBoardWidth (Double.parseDouble(getAttribute("VPathway.Graphics", "BoardWidth", g)));
+		o.setMBoardHeight (Double.parseDouble(getAttribute("VPathway.Graphics", "BoardHeight", g)));
+		o.setWindowWidth (Double.parseDouble(getAttribute("VPathway.Graphics", "WindowWidth", g)));
+		o.setWindowHeight (Double.parseDouble(getAttribute("VPathway.Graphics", "WindowHeight", g)));
 		
 		for (Object f : e.getChildren("Comment", e.getNamespace()))
 		{
@@ -708,7 +708,7 @@ public class GpmlFormat
 		}		
 	}
 	
-	static public Element createJdomElement(GmmlDataObject o, Namespace ns) throws ConverterException 
+	static public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException 
 	{		
 		Element e = null;
 		

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.data.GmmlGex;
+import org.pathvisio.data.Gex;
 
 public class CriterionComposite extends Composite {
 	ErrorArea errorArea;
@@ -51,8 +51,8 @@ public class CriterionComposite extends Composite {
 	}
 	
 	public void fetchSymbolsFromGex() {
-		if(GmmlGex.isConnected()) {
-			java.util.List<String> numSmp = GmmlGex.getSampleNames(Types.REAL);
+		if(Gex.isConnected()) {
+			java.util.List<String> numSmp = Gex.getSampleNames(Types.REAL);
 			symbolList.setItems(numSmp.toArray(new String[numSmp.size()]));	
 		} else {
 			symbolList.setItems(new String[] {});

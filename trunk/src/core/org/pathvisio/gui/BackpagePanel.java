@@ -24,15 +24,15 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import org.pathvisio.view.PathwayElement;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.data.DataSources;
-import org.pathvisio.data.GmmlGdb;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gdb.IdCodePair;
 
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
@@ -99,10 +99,10 @@ public class BackpagePanel extends Composite implements SelectionListener {
 				String geneId = geneProduct.getGmmlData().getGeneID();
 				String systemCode = geneProduct.getGmmlData().getSystemCode();
 				String bpText = geneHeader.equals("") ? geneHeader : "<H2>" + geneHeader + "</H2><P>";
-				String bpInfo = GmmlGdb.getBpInfo(geneId, systemCode);
+				String bpInfo = Gdb.getBpInfo(geneId, systemCode);
 				bpText += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 				String crossRefText = getCrossRefText(geneId, systemCode);
-				String gexText = GmmlGex.getDataString(new IdCodePair(geneId, systemCode));
+				String gexText = Gex.getDataString(new IdCodePair(geneId, systemCode));
 				if (bpText != null) 	setGeneText(bpText);
 				if (gexText != null)	setGexText(gexText + crossRefText);
 				else 					setGexText("<I>No expression data found</I>");
@@ -114,7 +114,7 @@ public class BackpagePanel extends Composite implements SelectionListener {
 	}
 		
 	public String getCrossRefText(String id, String code) {
-		List<IdCodePair> crfs = GmmlGdb.getCrossRefs(id, code);
+		List<IdCodePair> crfs = Gdb.getCrossRefs(id, code);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
 		for(IdCodePair cr : crfs) {
@@ -270,7 +270,7 @@ public class BackpagePanel extends Composite implements SelectionListener {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			//Just take the first GeneProduct in the selection
-			for(PathwayElement o : e.selection) {
+			for(VPathwayElement o : e.selection) {
 				if(o instanceof GeneProduct) {
 					if(geneProduct != o) setGeneProduct((GeneProduct)o);
 					break; //Selects the first, TODO: use setGmmlDataObjects

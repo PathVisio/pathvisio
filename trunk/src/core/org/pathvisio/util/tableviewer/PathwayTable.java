@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.TableColumnResizer;
 import org.pathvisio.util.tableviewer.TableData.Row;
 import org.pathvisio.util.SwtUtils.FileInputDialog;
@@ -139,7 +139,7 @@ public class PathwayTable extends Composite {
 				File pwFile = new File(pw);
 				if(!pwFile.canRead()) {
 					FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-					fd.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
 					FileInputDialog fid = new FileInputDialog(getShell(), "Specify pathway file", 
 							"Couldn't find pathway file, please specify which pathway to open",
 							pwFile.getAbsolutePath(), null, fd);

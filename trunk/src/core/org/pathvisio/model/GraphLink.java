@@ -28,8 +28,8 @@ public abstract class GraphLink
 	
 	/**
 	 * All classes that have a graphId must implement this interface.
-	 * Those are GmmlDataObject.MPoint (i.e. points)
-	 * and GmmlDataObject (i.e. DataNodes, Shapes, etc).
+	 * Those are PathwayElement.MPoint (i.e. points)
+	 * and PathwayElement (i.e. DataNodes, Shapes, etc).
 	 * They are needed for being refered to.
 	 * 
 	 * This interface exists so we can easily iterate through all
@@ -46,13 +46,13 @@ public abstract class GraphLink
 		 * return the parent Gmmldata Object, 
 		 * needed for maintaining a consistent list of graphId's 
 		 */
-		GmmlData getGmmlData();
+		Pathway getGmmlData();
 	}
 	
 	/**
 	 * All classes that want to refer *to* a GraphIdContainer must 
 	 * implement this interface. At this time that only goes for 
-	 * GmmlDataObject.MPoint.
+	 * PathwayElement.MPoint.
 	 */
 	public interface GraphRefContainer 
 	{
@@ -64,7 +64,7 @@ public abstract class GraphLink
 		 * return the parent Gmmldata Object, 
 		 * needed for maintaining a consistent list of graphId's 
 		 */
-		GmmlData getGmmlData();
+		Pathway getGmmlData();
 	}
 	
 	/**
@@ -78,9 +78,9 @@ public abstract class GraphLink
 	 * @param c the object to is going to get the new graphId
 	 * @param gd the pathway model, which is maintaining a complete list of all graphId's in this pathway
 	 */
-	protected static void setGraphId(String v, GraphIdContainer c, GmmlDataObject gd) 
+	protected static void setGraphId(String v, GraphIdContainer c, PathwayElement gd) 
 	{
-		GmmlData data = gd.getParent();
+		Pathway data = gd.getParent();
 		String graphId = c.getGraphId();
 		if (graphId == null || !graphId.equals(v))
 		{
@@ -106,7 +106,7 @@ public abstract class GraphLink
 	 * @param gd
 	 * @return
 	 */
-	public static Set<GraphRefContainer> getReferences(GraphIdContainer gid, GmmlData gd) 
+	public static Set<GraphRefContainer> getReferences(GraphIdContainer gid, Pathway gd) 
 	{
 		Set<GraphRefContainer> result = 
 			new HashSet<GraphRefContainer>();

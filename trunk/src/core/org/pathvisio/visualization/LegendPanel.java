@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import org.pathvisio.util.SwtUtils;
-import org.pathvisio.visualization.GmmlLegend.CollapseGroup.CollapseListener;
+import org.pathvisio.visualization.LegendPanel.CollapseGroup.CollapseListener;
 import org.pathvisio.visualization.Visualization.PluginSet;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
@@ -65,7 +65,7 @@ import org.pathvisio.gui.Engine;
  * @author Thomas
  *
  */
-public class GmmlLegend extends ScrolledComposite implements VisualizationListener {
+public class LegendPanel extends ScrolledComposite implements VisualizationListener {
 	static final String FONT = "arial narrow";
 	static final int FONTSIZE = 8;
 
@@ -82,7 +82,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 
 	Combo colorSetCombo;
 
-	public GmmlLegend(Composite parent, int style)
+	public LegendPanel(Composite parent, int style)
 	{
 		super(parent, style);
 
@@ -245,7 +245,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 		pluginGroup.getGroup().setLayout(new FillLayout());
 		
 		CollapseListener cl = new CollapseListener() {
-			public void stateChanged(GmmlLegend.CollapseGroup.CollapseEvent e) {
+			public void stateChanged(LegendPanel.CollapseGroup.CollapseEvent e) {
 				rearrange();
 			}
 		};

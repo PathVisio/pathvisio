@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Label;
 import org.pathvisio.gui.Engine;
 import org.pathvisio.gui.Engine.ApplicationEvent;
 import org.pathvisio.gui.Engine.ApplicationEventListener;
-import org.pathvisio.view.Pathway;
-import org.pathvisio.view.PathwayElement;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData.Row;
@@ -54,7 +54,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	public int getNrResults() { return getNrRows(); }
 		
 	public void highlightResults(boolean highlight) {
-		Pathway drawing = Engine.getDrawing();
+		VPathway drawing = Engine.getDrawing();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
@@ -65,7 +65,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 			try {
 				ArrayList idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
 				GeneProduct gp = null;
-				for(PathwayElement o : drawing.getDrawingObjects()) {
+				for(VPathwayElement o : drawing.getDrawingObjects()) {
 					if(o instanceof GeneProduct) {
 						gp = (GeneProduct)o;
 						if(idsFound.contains(gp.getID())) gp.highlight();

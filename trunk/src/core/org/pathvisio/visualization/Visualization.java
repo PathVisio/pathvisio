@@ -44,9 +44,9 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.plugins.PluginManager;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
-import org.pathvisio.data.GmmlGex.ExpressionDataListener;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gex.ExpressionDataEvent;
+import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.gui.Engine;
 import org.pathvisio.view.Graphics;
 
@@ -72,7 +72,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	public Visualization(String name) {
 		initPlugins();
 		this.name = name;
-		GmmlGex.addListener(this);
+		Gex.addListener(this);
 		VisualizationManager.addListener(this);
 	}
 	

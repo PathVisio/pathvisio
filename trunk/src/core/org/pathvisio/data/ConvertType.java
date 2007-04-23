@@ -18,7 +18,7 @@ package org.pathvisio.data;
 
 import java.math.BigDecimal;
 
-import org.pathvisio.model.GmmlData.Color;
+import org.pathvisio.model.Pathway.Color;
 
 public class ConvertType
 {

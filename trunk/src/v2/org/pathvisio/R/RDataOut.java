@@ -44,10 +44,10 @@ import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
 import org.pathvisio.R.RCommands.RTemp;
 import org.pathvisio.R.RCommands.RniException;
-import org.pathvisio.data.GmmlGdb;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.data.GmmlGdb.IdCodePair;
-import org.pathvisio.data.GmmlGex.Sample;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.Gex.Sample;
 
 public class RDataOut {
 	List<File> pwFiles;
@@ -55,7 +55,7 @@ public class RDataOut {
 	boolean exportPws = true;			//Export pathways or not
 	boolean exportData = true;			//Export data or not
 	
-	File pwDir;	//Pathway directory to import
+	File pwDir;	//VPathway directory to import
 //	String exportFile = "temp.Rd";		//File name to export RData
 	String pwsName = "myPathways";		//Name of pathwayset object
 	String dsName = "myData";			//Name of dataset object
@@ -159,7 +159,7 @@ public class RDataOut {
 
 		if(pwFiles.size() == 0) throw new Exception("No pathway files (*.gpml) found in " + pwDir);
 		
-		//Calculate contribution of single Pathway
+		//Calculate contribution of single VPathway
 		Pathway.progressContribution = (int)((double)totalWorkPws * contribR / pwFiles.size());
 		int pwContribXml = (int)((double)totalWorkPws * contribXml / pwFiles.size());
 		
@@ -307,7 +307,7 @@ public class RDataOut {
 		}
 
 		void addEnsembl(GeneProduct gp, IdCodePair idc) {
-			List<String> ensIds = GmmlGdb.ref2EnsIds(idc.getId(), idc.getCode());
+			List<String> ensIds = Gdb.ref2EnsIds(idc.getId(), idc.getCode());
 			for(String ens : ensIds) {
 				gp.addReference(new IdCodePair(ens, "En"));
 			}
@@ -331,7 +331,7 @@ public class RDataOut {
 //			for(IdCodePair pwidc : geneProducts.keySet()) {
 //				RCommands.checkCancelled();
 //			
-//				List<IdCodePair> pwrefs = GmmlGdb.getCrossRefs(pwidc);
+//				List<IdCodePair> pwrefs = Gdb.getCrossRefs(pwidc);
 //				for(IdCodePair ref : pwrefs) {
 //					if(repHash.containsKey(ref)) {
 //						geneProducts.get(pwidc).addReference(ref);
@@ -347,7 +347,7 @@ public class RDataOut {
 //			for(IdCodePair rep : dataSet.reporters) {
 //				RCommands.checkCancelled();
 //			
-//				List<IdCodePair> reprefs = GmmlGdb.getCrossRefs(rep);
+//				List<IdCodePair> reprefs = Gdb.getCrossRefs(rep);
 //				for(IdCodePair ref : reprefs) {
 //					GeneProduct gp = geneProducts.get(ref);
 //					if(gp != null) gp.addReference(rep);
@@ -384,7 +384,7 @@ public class RDataOut {
 			String tmpVar = RTemp.getNewVar(true);
 			RCommands.assign(tmpVar, geneProducts);
 						
-			String cmd = "Pathway(name = '" + name + 
+			String cmd = "VPathway(name = '" + name + 
 				"',fileName = '" + fileName + 
 				"', geneProducts = " + tmpVar + ")";			
 			long xp =  RCommands.eval(cmd).xp;
@@ -488,7 +488,7 @@ public class RDataOut {
 		
 		List<String> getCodes() throws Exception {
 			List<String> codes = new ArrayList<String>();
-			ResultSet r = GmmlGex.getCon().createStatement().executeQuery(
+			ResultSet r = Gex.getCon().createStatement().executeQuery(
 					"SELECT DISTINCT code FROM expression");
 			while(r.next()) codes.add(r.getString("code"));
 			return codes;
@@ -498,7 +498,7 @@ public class RDataOut {
 			if(rep2ens == null) 
 				rep2ens = new HashMap<IdCodePair, String>();
 			if(!rep2ens.containsKey(rep)) {
-				List<String> ensIds = GmmlGdb.ref2EnsIds(rep.getId(), rep.getCode());
+				List<String> ensIds = Gdb.ref2EnsIds(rep.getId(), rep.getCode());
 				if(ensIds.size() > 0) {
 					StringBuilder cmd = new StringBuilder("c(");
 					for(String ens : ensIds) cmd.append("'En:" + ens + "',");
@@ -517,7 +517,7 @@ public class RDataOut {
 			//#1 create a long 1-dimensional list -> fill rows first
 			//#2 set dims attribute to c(nrow, ncol)
 			//et voila, we have a matrix
-			HashMap<Integer, Sample> samples = GmmlGex.getSamples();
+			HashMap<Integer, Sample> samples = Gex.getSamples();
 			long l_ref = re.rniInitVector(data.length * data[0].length);
 			re.rniProtect(l_ref);
 			
@@ -589,7 +589,7 @@ public class RDataOut {
 		
 		void queryData() throws Exception {			
 			//Get the 'groups'
-			Statement s = GmmlGex.getCon().createStatement(
+			Statement s = Gex.getCon().createStatement(
 					ResultSet.TYPE_SCROLL_INSENSITIVE, 
 					ResultSet.CONCUR_READ_ONLY);
 			
@@ -601,14 +601,14 @@ public class RDataOut {
 			int nrow = r.getRow();
 			r.beforeFirst(); //Set the cursor back to the start
 			//Columns:
-			int ncol = GmmlGex.getSamples().size();
+			int ncol = Gex.getSamples().size();
 			
 			data = new String[ncol][nrow];
 			reporters = new IdCodePair[nrow];
 			sample2Col = new HashMap<Integer, Integer>();
 			int col = 0;
 			col2Sample = new int[ncol];
-			for(int sid : GmmlGex.getSamples().keySet()) {
+			for(int sid : Gex.getSamples().keySet()) {
 				col2Sample[col] = sid;
 				sample2Col.put(sid, col++);
 			}
@@ -617,9 +617,9 @@ public class RDataOut {
 			int progressContribution = (int)((double)totalWorkData / nrow);
 						
 			//Fill data matrix for every 'group'
-			PreparedStatement pst_dta = GmmlGex.getCon().prepareStatement(
+			PreparedStatement pst_dta = Gex.getCon().prepareStatement(
 					"SELECT idSample, data FROM expression WHERE groupId = ?");
-			PreparedStatement pst_rep = GmmlGex.getCon().prepareStatement(
+			PreparedStatement pst_rep = Gex.getCon().prepareStatement(
 					"SELECT DISTINCT id, code FROM expression WHERE groupid = ?");
 			int i = -1;
 			while(r.next()) {

@@ -23,14 +23,14 @@ import java.util.Set;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-import org.pathvisio.model.GmmlDataObject.MPoint;
+import org.pathvisio.model.PathwayElement.MPoint;
 
-public class VPoint extends PathwayElement {
+public class VPoint extends VPathwayElement {
 	Handle handle;
 	Set<Line> lines;
 	Set<MPoint> mPoints;
 	
-	VPoint(Pathway canvas) {
+	VPoint(VPathway canvas) {
 		super(canvas);
 		mPoints = new HashSet<MPoint>();
 		lines = new HashSet<Line>();
@@ -38,7 +38,7 @@ public class VPoint extends PathwayElement {
 	}
 	
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_LINE;
+		return VPathway.DRAW_ORDER_LINE;
 	}
 	
 	protected void addMPoint(MPoint p) {

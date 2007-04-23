@@ -25,12 +25,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
-import org.pathvisio.data.GmmlGdb;
-import org.pathvisio.data.GmmlGex;
-import org.pathvisio.model.GmmlData;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gex;
+import org.pathvisio.model.Pathway;
 
 /**
  * This class contains the main method and is responsible for initiating 
@@ -56,7 +56,7 @@ public class GuiMain {
 		}
 		
 		//Setup the application window
-		GmmlVisionWindow window = null;
+		MainWindow window = null;
 		if(debugHandles)	window = Engine.getSleakWindow();
 		else				window = Engine.getWindow();
 		
@@ -68,8 +68,8 @@ public class GuiMain {
 		//Perform exit operations
 		//TODO: implement PropertyChangeListener and fire exit property when closing
 		// make classes themself responsible for closing when exit property is changed
-		GmmlGex.close();
-		GmmlGdb.close();
+		Gex.close();
+		Gdb.close();
 		//Close log stream
 		Engine.log.getStream().close();
 		
@@ -83,13 +83,13 @@ public class GuiMain {
 		//initiate logger
 		try { 
 			Engine.log.setStream(new PrintStream(
-					Engine.getPreferences().getString(GmmlPreferences.PREF_FILES_LOG))); 
+					Engine.getPreferences().getString(Preferences.PREF_FILES_LOG))); 
 		} catch(Exception e) {}
 		Engine.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		GmmlData.setLogger(Engine.log);
+		Pathway.setLogger(Engine.log);
 		
 		//initiate Gene database (to load previously used gdb)
-		GmmlGdb.init();
+		Gdb.init();
 		
 		//load visualizations and plugins
 		loadVisualizations();
@@ -100,7 +100,7 @@ public class GuiMain {
 		//register listeners for static classes
 		registerListeners();
 				
-		//NOTE: ImageRegistry will be initiated in "createContents" of GmmlVisionWindow,
+		//NOTE: ImageRegistry will be initiated in "createContents" of MainWindow,
 		//since the window has to be opened first (need an active Display)
 	}
 	
@@ -109,10 +109,10 @@ public class GuiMain {
 	 */
 	static void createDataDirectories() {
 		String[] dirPrefs = new String[] {
-				GmmlPreferences.PREF_DIR_EXPR,
-				GmmlPreferences.PREF_DIR_GDB,
-				GmmlPreferences.PREF_DIR_PWFILES,
-				GmmlPreferences.PREF_DIR_RDATA,
+				Preferences.PREF_DIR_EXPR,
+				Preferences.PREF_DIR_GDB,
+				Preferences.PREF_DIR_PWFILES,
+				Preferences.PREF_DIR_RDATA,
 		};
 		for(String pref : dirPrefs) {
 			File dir = new File(Engine.getPreferences().getString(pref));
@@ -123,7 +123,7 @@ public class GuiMain {
 			
 	static void registerListeners() {
 		VisualizationManager vmgr = new VisualizationManager();
-		GmmlGex gex = new GmmlGex();
+		Gex gex = new Gex();
 		
 		Engine.addApplicationEventListener(vmgr);
 		Engine.addApplicationEventListener(gex);

@@ -42,7 +42,7 @@ import org.pathvisio.util.Utils;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
-import org.pathvisio.data.GmmlGex;
+import org.pathvisio.data.Gex;
 
 public abstract class PluginManager {
 	static final String PLUGIN_PKG = "visualization.plugins";
@@ -73,7 +73,7 @@ public abstract class PluginManager {
 	}
 	
 	public static Class[] getPlugins() {
-		return GmmlGex.isConnected() ?
+		return Gex.isConnected() ?
 				plugins.toArray(new Class[plugins.size()]) :
 				getGenericPlugins();
 	}

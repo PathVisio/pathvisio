@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
@@ -40,9 +40,9 @@ public class ColorSet {
 	public static final int ID_COLOR_NO_GENE_FOUND = 2;
 	public static final int ID_COLOR_NO_DATA_FOUND = 3;
 	
-	RGB color_no_criteria_met = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_CRIT_MET);
-	RGB color_no_gene_found = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_GENE_FOUND);
-	RGB color_no_data_found = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_NO_DATA_FOUND);
+	RGB color_no_criteria_met = Preferences.getColorProperty(Preferences.PREF_COL_NO_CRIT_MET);
+	RGB color_no_gene_found = Preferences.getColorProperty(Preferences.PREF_COL_NO_GENE_FOUND);
+	RGB color_no_data_found = Preferences.getColorProperty(Preferences.PREF_COL_NO_DATA_FOUND);
 		
 	String name;
 	

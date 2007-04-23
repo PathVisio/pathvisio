@@ -24,11 +24,11 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-public abstract class PathwayElement implements Comparable<PathwayElement>
+public abstract class VPathwayElement implements Comparable<VPathwayElement>
 {	
-	protected Pathway canvas;
+	protected VPathway canvas;
 	
-	PathwayElement(Pathway canvas) {
+	VPathwayElement(VPathway canvas) {
 		this.canvas = canvas;
 		canvas.addObject(this);
 	}
@@ -41,7 +41,7 @@ public abstract class PathwayElement implements Comparable<PathwayElement>
 	protected abstract void draw(PaintEvent e);
 	
 	/**
-	 * Draws the PathwayElement object on the Pathway
+	 * Draws the VPathwayElement object on the VPathway
 	 * it is part of
 	 */
 	public abstract void draw(PaintEvent e, GC buffer);
@@ -63,7 +63,7 @@ public abstract class PathwayElement implements Comparable<PathwayElement>
 	/**
 	 * Get the drawing this object belongs to
 	 */
-	public Pathway getDrawing() {
+	public VPathway getDrawing() {
 		return canvas;
 	}
 	
@@ -176,7 +176,7 @@ public abstract class PathwayElement implements Comparable<PathwayElement>
 	 */
 	// TODO: should really be mMoveBy, using model coords,
 	// because implementations do a lot of conversions anyway
-	// perhaps could even be partially implemented in GmmlDataObject 
+	// perhaps could even be partially implemented in PathwayElement 
 	protected void vMoveBy(double dx, double dy) { }
 	
 	/**
@@ -202,7 +202,7 @@ public abstract class PathwayElement implements Comparable<PathwayElement>
 	protected Rectangle2D.Double getVScaleRectangle() { return new Rectangle2D.Double(); }
 
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_DEFAULT;
+		return VPathway.DRAW_ORDER_DEFAULT;
 	}
 	
 	/**
@@ -213,7 +213,7 @@ public abstract class PathwayElement implements Comparable<PathwayElement>
 	 * @param d
 	 * @see #getDrawingOrder()
 	 */
-	public int compareTo(PathwayElement d)
+	public int compareTo(VPathwayElement d)
 	{
 		// same object? easy...
 		if (d == this)
@@ -228,11 +228,11 @@ public abstract class PathwayElement implements Comparable<PathwayElement>
 		}
 		else if(isSelected() || isHighlighted())
 		{
-			az = Pathway.DRAW_ORDER_SELECTED;
+			az = VPathway.DRAW_ORDER_SELECTED;
 		}
 		else if(d.isSelected() || d.isHighlighted())
 		{
-			bz = Pathway.DRAW_ORDER_SELECTED;
+			bz = VPathway.DRAW_ORDER_SELECTED;
 		}
 		
 		// note, if the drawing order is equal, that doesn't mean the objects are equal

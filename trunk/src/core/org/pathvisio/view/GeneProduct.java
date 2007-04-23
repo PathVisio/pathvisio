@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Region;
 
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.data.DataSources;
-import org.pathvisio.model.GmmlDataObject;
+import org.pathvisio.model.PathwayElement;
 
 /**
  * This class implements a geneproduct and 
@@ -43,17 +43,17 @@ public class GeneProduct extends GraphicsShape
 	// note: not the same as color!
 	RGB fillColor = INITIAL_FILL_COLOR;
 		
-	public GeneProduct (Pathway canvas, GmmlDataObject o) {
+	public GeneProduct (VPathway canvas, PathwayElement o) {
 		super(canvas, o);		
 		setHandleLocation();
 	}
 		
 	public int getDrawingOrder() {
-		return Pathway.DRAW_ORDER_GENEPRODUCT;
+		return VPathway.DRAW_ORDER_GENEPRODUCT;
 	}
 	
 	/**
-	 * @deprecated get this info from GmmlDataObject directly
+	 * @deprecated get this info from PathwayElement directly
 	 */
 	public String getID() 
 	{
@@ -63,10 +63,10 @@ public class GeneProduct extends GraphicsShape
 	}
 		
 	/**
-	 * Looks up the systemcode for this gene in GmmlData.sysName2Code
+	 * Looks up the systemcode for this gene in Pathway.sysName2Code
 	 * @return	The system code or an empty string if the system is not found
 	 * 
-	 * @deprecated use GmmlDataObject.getSystemCode()
+	 * @deprecated use PathwayElement.getSystemCode()
 	 */
 	public String getSystemCode()
 	{

@@ -16,23 +16,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.GmmlGdb;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.gui.Engine.ApplicationEvent;
 import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GmmlData;
-import org.pathvisio.preferences.GmmlPreferenceManager;
-import org.pathvisio.preferences.GmmlPreferences;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.PreferenceDlg;
+import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.view.Pathway;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.Globals;
 
 public class CommonActions 
 {
 	static class UndoAction extends Action
 	{
-		GmmlVisionWindow window;
-		public UndoAction (GmmlVisionWindow w)
+		MainWindow window;
+		public UndoAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Undo@Ctrl+Z");
@@ -52,8 +52,8 @@ public class CommonActions
 	 */
 	static class NewAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public NewAction (GmmlVisionWindow w)
+		MainWindow window;
+		public NewAction (MainWindow w)
 		{
 			window = w;
 			setText ("&New pathway@Ctrl+N");
@@ -77,8 +77,8 @@ public class CommonActions
 	 */
 	static class SvgExportAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public SvgExportAction (GmmlVisionWindow w)
+		MainWindow window;
+		public SvgExportAction (MainWindow w)
 		{
 			window = w;
 			setText ("Export to SVG");
@@ -87,8 +87,8 @@ public class CommonActions
 		}
 		public void run () 
 		{
-			Pathway drawing = Engine.getDrawing();
-			GmmlData gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getDrawing();
+			Pathway gmmlData = Engine.getGmmlData();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
@@ -109,7 +109,7 @@ public class CommonActions
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
-					fd.setFileName(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					fd.setFileName(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
@@ -158,8 +158,8 @@ public class CommonActions
 	 */
 	static class OpenAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public OpenAction (GmmlVisionWindow w)
+		MainWindow window;
+		public OpenAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Open pathway@Ctrl+O");
@@ -170,7 +170,7 @@ public class CommonActions
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
-			String pwpath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES);
+			String pwpath = Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES);
 			fd.setFilterPath(pwpath);
 			fd.setFilterExtensions(new String[] {"*." + Engine.PATHWAY_FILE_EXTENSION, "*.*"});
 			fd.setFilterNames(new String[] {Engine.PATHWAY_FILTER_NAME, "All files (*.*)"});
@@ -188,18 +188,18 @@ public class CommonActions
 	 */
 	static class ImportAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public ImportAction (GmmlVisionWindow w)
+		MainWindow window;
+		public ImportAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Import");
-			setToolTipText ("Import Pathway in GenMAPP format");
+			setToolTipText ("Import VPathway in GenMAPP format");
 		}
 		public void run () 
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 			fd.setText("Open");
-			fd.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+			fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
 			fd.setFilterExtensions(new String[] {"*." + Engine.GENMAPP_FILE_EXTENSION, "*.*"});
 			fd.setFilterNames(new String[] {Engine.GENMAPP_FILTER_NAME, "All files (*.*)"});
 	        String fnMapp = fd.open();
@@ -216,18 +216,18 @@ public class CommonActions
 	 */
 	static class SaveAsAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public SaveAsAction (GmmlVisionWindow w)
+		MainWindow window;
+		public SaveAsAction (MainWindow w)
 		{
 			window = w;
 			setText ("Save pathway &As");
 			setToolTipText ("Save pathway with new file name");
 		}
 		
-		static public void do_run(GmmlVisionWindow window)
+		static public void do_run(MainWindow window)
 		{
-			Pathway drawing = Engine.getDrawing();
-			GmmlData gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getDrawing();
+			Pathway gmmlData = Engine.getGmmlData();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
@@ -241,7 +241,7 @@ public class CommonActions
 					fd.setFileName(xmlFile.getName());
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
-					fd.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
@@ -301,16 +301,16 @@ public class CommonActions
 	 */
 	static class ExportAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public ExportAction (GmmlVisionWindow w)
+		MainWindow window;
+		public ExportAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Export");
-			setToolTipText ("Export Pathway to GenMAPP format");
+			setToolTipText ("Export VPathway to GenMAPP format");
 		}
 		public void run () {
-			Pathway drawing = Engine.getDrawing();
-			GmmlData gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getDrawing();
+			Pathway gmmlData = Engine.getGmmlData();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
@@ -331,7 +331,7 @@ public class CommonActions
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
 				} else {
-					fd.setFileName(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					fd.setFileName(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
@@ -380,8 +380,8 @@ public class CommonActions
 	 */
 	static class CloseAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public CloseAction (GmmlVisionWindow w)
+		MainWindow window;
+		public CloseAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Close pathway@Ctrl+W");
@@ -397,8 +397,8 @@ public class CommonActions
 	 */
 	static class ExitAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public ExitAction (GmmlVisionWindow w)
+		MainWindow window;
+		public ExitAction (MainWindow w)
 		{
 			window = w;
 			setText ("E&xit@Ctrl+X");
@@ -412,15 +412,15 @@ public class CommonActions
 	
 	static class PreferencesAction extends Action
 	{
-		GmmlVisionWindow window;
-		public PreferencesAction (GmmlVisionWindow w)
+		MainWindow window;
+		public PreferencesAction (MainWindow w)
 		{
 			window = w;
 			setText("&Preferences");
 			setToolTipText("Edit preferences");
 		}
 		public void run () {
-			PreferenceManager pg = new GmmlPreferenceManager();
+			PreferenceManager pg = new PreferenceDlg();
 			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
 			pd.setPreferenceStore(Engine.getPreferences());
 			pd.open();
@@ -432,19 +432,19 @@ public class CommonActions
 	 */
 	static class ZoomAction extends Action 
 	{
-		GmmlVisionWindow window;
+		MainWindow window;
 		int pctZoomFactor;
 		
 		/**
 		 * Constructor for this class
-		 * @param w {@link GmmlVisionWindow} window this action belongs to
+		 * @param w {@link MainWindow} window this action belongs to
 		 * @param newPctZoomFactor the zoom factor as percentage of original
 		 */
-		public ZoomAction (GmmlVisionWindow w, int newPctZoomFactor)
+		public ZoomAction (MainWindow w, int newPctZoomFactor)
 		{
 			window = w;
 			pctZoomFactor = newPctZoomFactor;
-			if(pctZoomFactor == GmmlVisionWindow.ZOOM_TO_FIT) 
+			if(pctZoomFactor == MainWindow.ZOOM_TO_FIT) 
 			{
 				setText ("Zoom to fit");
 				setToolTipText("Zoom mapp to fit window");
@@ -456,11 +456,11 @@ public class CommonActions
 			}
 		}
 		public void run () {
-			Pathway drawing = Engine.getDrawing();
+			VPathway drawing = Engine.getDrawing();
 			if (drawing != null)
 			{
 				double newPctZoomFactor = pctZoomFactor;
-				if(pctZoomFactor == GmmlVisionWindow.ZOOM_TO_FIT) 
+				if(pctZoomFactor == MainWindow.ZOOM_TO_FIT) 
 				{
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
@@ -484,8 +484,8 @@ public class CommonActions
 	 */
 	static class AboutAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public AboutAction (GmmlVisionWindow w)
+		MainWindow window;
+		public AboutAction (MainWindow w)
 		{
 			window = w;
 			setText ("&About");
@@ -502,8 +502,8 @@ public class CommonActions
 	 */
 	static class HelpAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public HelpAction (GmmlVisionWindow w)
+		MainWindow window;
+		public HelpAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Help@F1");
@@ -532,8 +532,8 @@ public class CommonActions
 
 	static class CopyAction extends Action
 	{
-		GmmlVisionWindow window;
-		public CopyAction (GmmlVisionWindow w)
+		MainWindow window;
+		public CopyAction (MainWindow w)
 		{
 			window = w;
 			setText ("Copy@Ctrl+C");
@@ -547,8 +547,8 @@ public class CommonActions
 
 	static class PasteAction extends Action
 	{
-		GmmlVisionWindow window;
-		public PasteAction (GmmlVisionWindow w)
+		MainWindow window;
+		public PasteAction (MainWindow w)
 		{
 			window = w;
 			setText ("Paste@Ctrl+V");
@@ -565,8 +565,8 @@ public class CommonActions
 	 */
 	static class SaveAction extends Action 
 	{
-		GmmlVisionWindow window;
-		public SaveAction (GmmlVisionWindow w)
+		MainWindow window;
+		public SaveAction (MainWindow w)
 		{
 			window = w;
 			setText ("&Save pathway@Ctrl+S");
@@ -575,8 +575,8 @@ public class CommonActions
 		}
 		
 		public void run () {
-			GmmlData gmmlData = Engine.getGmmlData();
-			Pathway drawing = Engine.getDrawing();
+			Pathway gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getDrawing();
 			
 			double usedZoom = drawing.getPctZoom();
 			// Set zoom to 100%

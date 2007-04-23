@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import debug.Logger;
-import debug.StopWatch;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.debug.StopWatch;
 
 
 public abstract class GDBMaker {   	

@@ -20,7 +20,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.zip.*;
 
-import debug.StopWatch;
+import org.pathvisio.debug.StopWatch;
 
 
 public class DerbyGDBMaker extends GDBMaker {

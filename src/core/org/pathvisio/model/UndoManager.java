@@ -14,35 +14,38 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package ensembl2visio;
+package org.pathvisio.model;
 
-import org.pathvisio.debug.StopWatch;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Provides a main for importing data into existing database
- * Used to add metabolomics data
- * 
- * @author martijn
- */
-public class AppendGDB {
+public class UndoManager 
+{
+	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
-	/**
-	 * @param args command line arguments
-	 * 
-	 * Commandline:
-	 * - database directory (=dbname)
-	 * - metabolite table .txt file
-	 * assumes database type is derby (unzipped)
-	 */
-	public static void main(String[] args) 
+	void newAddAction (GmmlDataObject affectedObject)
 	{
-		String dbname = args[0];
-		String file = args[1];
-		
-		DerbyGDBMaker gdbMaker = new DerbyGDBMaker(dbname);
-	    gdbMaker.AddMetabolitesFromTxt(file, dbname); 
-		
-        
+		undoList.clear();		
 	}
-
+	
+	void newChangeAction (GmmlDataObject affectedObject)
+	{
+		UndoAction a = new UndoAction ("Change object", UndoAction.UNDO_CHANGE, affectedObject);
+		undoList.add(a);
+	}
+	
+	void newRemoveAction (GmmlDataObject affectedObject)
+	{
+		undoList.clear();
+	}
+	
+	void undo()
+	{
+		if (undoList.size() > 0)
+		{
+			UndoAction a = undoList.get(undoList.size()-1);
+			a.undo();
+			undoList.remove(a);
+		}
+	}
 }

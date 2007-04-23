@@ -14,35 +14,35 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package ensembl2visio;
+package org.pathvisio.model;
 
-import org.pathvisio.debug.StopWatch;
-
-/**
- * Provides a main for importing data into existing database
- * Used to add metabolomics data
- * 
- * @author martijn
- */
-public class AppendGDB {
-
+public class GmmlEvent 
+{
+	public static final int MODIFIED_GENERAL = 0;
+	public static final int MODIFIED_SHAPE = 1;
+	
 	/**
-	 * @param args command line arguments
-	 * 
-	 * Commandline:
-	 * - database directory (=dbname)
-	 * - metabolite table .txt file
-	 * assumes database type is derby (unzipped)
+	 * Sent to listeners of GmmlData when an object was deleted
 	 */
-	public static void main(String[] args) 
+	public static final int DELETED = 2;
+	
+	/**
+	 * Sent to listeners of GmmlData when a new object was added
+	 */
+	public static final int ADDED = 3;
+	
+	public static final int PROPERTY = 4; // e.g. name change
+	public static final int WINDOW = 5;
+	
+	private GmmlDataObject affectedData;
+	public GmmlDataObject getAffectedData () { return affectedData; }
+	
+	private int type;
+	public int getType() { return type; }
+	
+	public GmmlEvent (GmmlDataObject object, int t)
 	{
-		String dbname = args[0];
-		String file = args[1];
-		
-		DerbyGDBMaker gdbMaker = new DerbyGDBMaker(dbname);
-	    gdbMaker.AddMetabolitesFromTxt(file, dbname); 
-		
-        
+		affectedData = object;
+		type = t;
 	}
-
 }

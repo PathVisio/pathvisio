@@ -16,7 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 
@@ -232,7 +232,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
 			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
-			fd.setHeight((int)Math.ceil(GmmlVision.getDrawing().vFromM(fd.getHeight()) * 15));//TODO: get rid of 15
+			fd.setHeight((int)Math.ceil(Engine.getDrawing().vFromM(fd.getHeight()) * 15));//TODO: get rid of 15
 		}
 		return fd;
 	}
@@ -409,7 +409,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
 				useSamples.add(GmmlGex.getSample(id));
-			} catch(Exception e) { GmmlVision.log.error("Unable to add sample", e); }
+			} catch(Exception e) { Engine.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));
 		fontData = new FontData(xml.getAttributeValue(XML_ATTR_FONTDATA));

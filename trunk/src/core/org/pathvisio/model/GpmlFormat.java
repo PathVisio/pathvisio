@@ -28,7 +28,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.model.GmmlData.Color;
 
 /**
@@ -789,7 +789,7 @@ public class GpmlFormat
     		}
     		catch (Exception e)
     		{
-    			GmmlVision.log.error("while converting color: " +
+    			Engine.log.error("while converting color: " +
     					"Color " + strColor + " is not valid, element color is set to black", e);
     		}
     	}

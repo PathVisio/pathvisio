@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.jdom.Element;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SwtUtils;
@@ -165,7 +165,7 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 			lineColor = ColorConverter.parseColorElement(xml.getChild(XML_ELM_LINECOLOR));
 			drawLine = Boolean.parseBoolean(xml.getAttributeValue(XML_ATTR_DRAWLINE));
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to parse settings for plugin " + NAME, e);
+			Engine.log.error("Unable to parse settings for plugin " + NAME, e);
 		}
 	}
 	

@@ -24,7 +24,7 @@ import java.io.LineNumberReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 public class FileUtils {	
 	/**
@@ -64,7 +64,7 @@ public class FileUtils {
 			for(File f : file.listFiles()) deleteRecursive(f);
 		}
 		boolean deleted = file.delete();
-		GmmlVision.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
+		Engine.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class FileUtils {
 		}
 		catch(IOException e)
 		{
-			GmmlVision.log.error("Unable to determine number of lines in file " + fileName, e);
+			Engine.log.error("Unable to determine number of lines in file " + fileName, e);
 		}
 		return nrLines;
 	}

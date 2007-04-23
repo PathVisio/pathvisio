@@ -16,7 +16,7 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -71,7 +71,7 @@ public class RFunctionLoader {
 	
 	
 	public static void loadFunctions() throws IOException, RException {
-		URL url = GmmlVision.getResourceURL(FUN_DIR);
+		URL url = Engine.getResourceURL(FUN_DIR);
 		
 		String protocol = url.getProtocol();
 		if(protocol.equals("jar")) {
@@ -104,7 +104,7 @@ public class RFunctionLoader {
 	
 	private static void loadFunction(File funFile) {
     	try {
-    		GmmlVision.log.trace("Loading R function: " + funFile);
+    		Engine.log.trace("Loading R function: " + funFile);
     		RCommands.eval("source('" + RCommands.fileToString(funFile) + "')");
     	} catch(RException re) {
     		RController.openError("Unable to load functions in " + funFile.toString(), re);
@@ -313,7 +313,7 @@ public class RFunctionLoader {
 						updateArgGroup(SETS_ARG);
 					} catch(Exception ex) {
 						MessageDialog.openError(e.display.getActiveShell(), "Error", ex.getMessage());
-						GmmlVision.log.error("", ex);
+						Engine.log.error("", ex);
 					}
 				}
 			});
@@ -329,7 +329,7 @@ public class RFunctionLoader {
 						updateArgGroup(SETS_ARG);
 					} catch(Exception ex) {
 						MessageDialog.openError(e.display.getActiveShell(), "Error", ex.getMessage());
-						GmmlVision.log.error("", ex);
+						Engine.log.error("", ex);
 					}
 				}
 			});
@@ -374,7 +374,7 @@ public class RFunctionLoader {
 					dialog.run(true, true, rwp); 
 				} catch(InvocationTargetException ex) {
 					MessageDialog.openError(getShell(), "Unable to export set", ex.getCause().getMessage());
-					GmmlVision.log.error("Unable to export set to R", ex);
+					Engine.log.error("Unable to export set to R", ex);
 					return false;
 				} catch(InterruptedException ie) { return false; }
 				return true;

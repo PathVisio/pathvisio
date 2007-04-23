@@ -17,7 +17,7 @@
 
 package org.pathvisio.R.wizard;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -103,7 +103,7 @@ public class PageStats extends WizardPage {
 		for(String fn : comboFunc.getItems()) {
 			try { 
 				RFunctionLoader.getFunction(fn).initValueComboItems(); 
-			} catch(RException e) { GmmlVision.log.error("Unable to initialize values for function", e); }
+			} catch(RException e) { Engine.log.error("Unable to initialize values for function", e); }
 		}
 	}
 	
@@ -140,7 +140,7 @@ public class PageStats extends WizardPage {
 	}
 	
 	protected void doSetTopToParent(final Control top) {
-		GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+		Engine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				((StackLayout)((Composite)getControl()).getLayout()).topControl = top.getParent();
 				((Composite)getControl()).layout();

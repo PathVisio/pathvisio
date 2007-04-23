@@ -22,7 +22,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.model.GmmlData.Color;
 
 public abstract class ColorConverter
@@ -62,7 +62,7 @@ public abstract class ColorConverter
 		}
 		catch(Exception e)
 		{
-			GmmlVision.log.error("Unable to parse color '" + rgbString + 
+			Engine.log.error("Unable to parse color '" + rgbString + 
 					"'stored in expression database", e);
 			return new RGB(0,0,0);
 		}

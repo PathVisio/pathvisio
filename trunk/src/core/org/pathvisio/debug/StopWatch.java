@@ -16,7 +16,7 @@
 //
 package org.pathvisio.debug;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 public class StopWatch {
 	boolean running;
@@ -40,6 +40,6 @@ public class StopWatch {
 	}
 	
 	public void stopToLog(String msg) {
-		GmmlVision.log.trace(msg + "\t" + stop());
+		Engine.log.trace(msg + "\t" + stop());
 	}
 }

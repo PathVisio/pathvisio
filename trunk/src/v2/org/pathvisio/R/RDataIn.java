@@ -16,8 +16,8 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.sidepanels.TabbedSidePanel;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.TabbedSidePanel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class RDataIn {
 	}
 	
 	public static void displayResults(List<ResultSet> results, String tabName) {		
-		TabbedSidePanel sp = GmmlVision.getWindow().getSidePanel();
+		TabbedSidePanel sp = Engine.getWindow().getSidePanel();
 		
 		StatsResultTable srt = new StatsResultTable(sp.getTabFolder(), SWT.NULL);
 		srt.setResults(results);

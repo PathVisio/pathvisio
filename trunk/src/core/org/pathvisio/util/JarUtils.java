@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.Globals;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.Globals;
 
 public class JarUtils {
 	static final String PREFIX_TMP = Globals.APPLICATION_NAME;
@@ -75,7 +75,7 @@ public class JarUtils {
 	public static List<String> listResources(String path) throws IOException {
 		List<String> resNames = new ArrayList<String>();
 
-		URL url = GmmlVision.class.getClassLoader().getResource(path);
+		URL url = Engine.class.getClassLoader().getResource(path);
 		if(url != null) {
 			if(url.getProtocol().equals("jar")) {
 				JarURLConnection conn = (JarURLConnection)url.openConnection();
@@ -97,8 +97,8 @@ public class JarUtils {
 	 * @return the URL pointing to the resource
 	 */
 	public static URL getResourceURL(String name) {
-		URL url = GmmlVision.class.getClassLoader().getResource(name);
-		if(url == null) GmmlVision.log.error("Couldn't load resource '" + name + "'");
+		URL url = Engine.class.getClassLoader().getResource(name);
+		if(url == null) Engine.log.error("Couldn't load resource '" + name + "'");
 		return url;
 	}
 	
@@ -108,8 +108,8 @@ public class JarUtils {
 	 * @return the URL pointing to the resource
 	 */
 	public static InputStream getResourceInputStream(String name) {
-		InputStream in = GmmlVision.class.getClassLoader().getResourceAsStream(name);
-		if(in == null) GmmlVision.log.error("Couldn't load resource '" + name + "'");
+		InputStream in = Engine.class.getClassLoader().getResourceAsStream(name);
+		if(in == null) Engine.log.error("Couldn't load resource '" + name + "'");
 		return in;
 	}
 }

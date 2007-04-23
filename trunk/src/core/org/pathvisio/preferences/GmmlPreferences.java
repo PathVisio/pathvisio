@@ -24,14 +24,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 
 import org.pathvisio.util.ColorConverter;
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.Graphics;
 
 /**
  * This class contains all user preferences used in this application
  */
 public class GmmlPreferences extends PreferenceStore implements IPropertyChangeListener {
-	private static final File preferenceFile = new File(GmmlVision.getApplicationDir(), ".PathVisio");
+	private static final File preferenceFile = new File(Engine.getApplicationDir(), ".PathVisio");
 	
 	public GmmlPreferences() {
 		this(preferenceFile.toString());
@@ -49,7 +49,7 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	{
 		addPropertyChangeListener(this);
 		
-		setDefault(PREF_FILES_LOG, new File(GmmlVision.getApplicationDir(), ".PathVisioLog").toString());
+		setDefault(PREF_FILES_LOG, new File(Engine.getApplicationDir(), ".PathVisioLog").toString());
 		setDefault(PREF_COL_NO_CRIT_MET, ColorConverter.getRgbString(NO_CRITERIA_MET));
 		setDefault(PREF_COL_NO_GENE_FOUND, ColorConverter.getRgbString(NO_GENE_FOUND));
 		setDefault(PREF_COL_NO_DATA_FOUND, ColorConverter.getRgbString(NO_DATA_FOUND));
@@ -97,24 +97,24 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	 */
 	public static RGB getColorProperty(String name) {
 		return ColorConverter.parseRgbString(
-				GmmlVision.getPreferences().getString(name));
+				Engine.getPreferences().getString(name));
 	}
 	
 	public void propertyChange(PropertyChangeEvent e) {
 		if(e.getProperty().equals(GmmlPreferences.PREF_COL_SELECTED)) { 
 			if(e.getNewValue() instanceof RGB) Graphics.selectColor = (RGB)e.getNewValue();
 			else Graphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
-			GmmlVision.getDrawing().redraw();
+			Engine.getDrawing().redraw();
 		}
 		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_HIGHLIGHTED)) {
 			if(e.getNewValue() instanceof RGB) Graphics.highlightColor = (RGB)e.getNewValue();
 			else Graphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
-			GmmlVision.getDrawing().redraw();
+			Engine.getDrawing().redraw();
 		}
 //		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_AMBIGIOUS_REP)) {
 //			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();
 //			else GmmlGpColor.color_ambigious = ColorConverter.parseRgbString((String)e.getNewValue());
-//			GmmlVision.getDrawing().redraw();
+//			Engine.getDrawing().redraw();
 //		}
 		else if(e.getProperty().startsWith("directories")) {
 			createDataDirectories();
@@ -161,8 +161,8 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	static String DB_ENGINE_GDB = "data.DBConnDerby";
 	
 	// directories
-	static final String DIR_PWFILES = new File(GmmlVision.getDataDir().toString(), "pathways").toString();
-	static final String DIR_GDBFILES = new File(GmmlVision.getDataDir().toString(), "gene databases").toString();
-	static final String DIR_EXPRFILES = new File(GmmlVision.getDataDir().toString(), "expression datasets").toString();
-	static final String DIR_RDATAFILES = new File(GmmlVision.getDataDir().toString(), "R data").toString();
+	static final String DIR_PWFILES = new File(Engine.getDataDir().toString(), "pathways").toString();
+	static final String DIR_GDBFILES = new File(Engine.getDataDir().toString(), "gene databases").toString();
+	static final String DIR_EXPRFILES = new File(Engine.getDataDir().toString(), "expression datasets").toString();
+	static final String DIR_RDATAFILES = new File(Engine.getDataDir().toString(), "R data").toString();
 }

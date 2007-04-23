@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.jdom.Element;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SwtUtils;
 
@@ -80,7 +80,7 @@ public class ColorCriterion extends ColorSetObject {
 			Element ce = xml.getChild(XML_ELM_COLOR);
 			if(ce != null) color = ColorConverter.parseColorElement(ce);
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to load ColorCriterion", e);
+			Engine.log.error("Unable to load ColorCriterion", e);
 		}
 	}
 	

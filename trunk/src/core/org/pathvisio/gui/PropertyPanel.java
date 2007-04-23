@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ import org.pathvisio.model.GmmlData.Color;
  * This class implements the sidepanel where you can edit graphical properties
  * of each object on the pathway.
  */
-public class GmmlPropertyTable extends Composite implements GmmlListener, SelectionListener {
+public class PropertyPanel extends Composite implements GmmlListener, SelectionListener {
 	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
 	TextCellEditor textEditor;
@@ -189,7 +189,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 
 	final static String[] colNames = new String[] {"Property", "Value"};
 				
-	GmmlPropertyTable(Composite parent, int style)
+	PropertyPanel(Composite parent, int style)
 	{
 		super(parent, style);
 		setLayout(new FillLayout());
@@ -209,8 +209,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		cellEditors[1] = cellEditors[0] = textEditor = new TextCellEditor(tableViewer.getTable());
 		colorEditor = new ColorCellEditor(tableViewer.getTable());
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
-		identifierSuggestEditor = new SuggestGdbCellEditor(tableViewer.getTable(), SuggestGdbCellEditor.TYPE_IDENTIFIER);
-		symbolSuggestEditor = new SuggestGdbCellEditor(tableViewer.getTable(), SuggestGdbCellEditor.TYPE_SYMBOL);
+		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
+		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
 		
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
@@ -360,8 +360,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				case DB_ID:
 				case DB_SYMBOL:
 					if(value instanceof String) return (String)value;
-					if(value instanceof GmmlPropertyTable.AutoFillData) 
-						return ((GmmlPropertyTable.AutoFillData)value).getMainValue();
+					if(value instanceof PropertyPanel.AutoFillData) 
+						return ((PropertyPanel.AutoFillData)value).getMainValue();
 					
 			}
 			return null;
@@ -447,8 +447,8 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				value = ColorConverter.fromRGB((RGB)value);
 			case DB_SYMBOL:
 			case DB_ID:
-				if(value instanceof GmmlPropertyTable.AutoFillData) {
-					GmmlPropertyTable.AutoFillData adf = (GmmlPropertyTable.AutoFillData)value;
+				if(value instanceof PropertyPanel.AutoFillData) {
+					PropertyPanel.AutoFillData adf = (PropertyPanel.AutoFillData)value;
 					for(GmmlDataObject o : dataObjects) {
 						if(o.getObjectType() == ObjectType.DATANODE) {
 							adf.fillData(o);
@@ -462,7 +462,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 				o.setProperty(key, value);
 			}
 			tableViewer.refresh();
-			GmmlVision.getDrawing().redrawDirtyRect();
+			Engine.getDrawing().redrawDirtyRect();
 		}
 	};
 	

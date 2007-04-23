@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -37,7 +37,7 @@ import org.pathvisio.data.GmmlGdb.IdCodePair;
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
  */
-public class GmmlBpBrowser extends Composite implements SelectionListener {
+public class BackpagePanel extends Composite implements SelectionListener {
 	/**
 	 * Directory containing HTML files needed to display the backpage information
 	 */
@@ -69,7 +69,7 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	 * @param parent	Parent {@link Composite} for the Browser widget
 	 * @param style		Style for the Browser widget
 	 */
-	public GmmlBpBrowser(Composite parent, int style) {
+	public BackpagePanel(Composite parent, int style) {
 		super(parent, style);
 		
 		initializeHeader(); //Load the header including style information
@@ -255,14 +255,14 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	private void initializeHeader() {
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
-						GmmlVision.getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
+						Engine.getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
 			String line;
 			header = "";
 			while((line = input.readLine()) != null) {
 				header += line.trim();
 			}
 		} catch (Exception e) {
-			GmmlVision.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
+			Engine.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
 		}
 	}
 

@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.data.GmmlGex;
@@ -456,50 +456,50 @@ public class Criterion {
 		{
 			for (int i = 0; i < level; ++i)
 			{
-				GmmlVision.log.trace ("--- ");
+				Engine.log.trace ("--- ");
 			}
 			switch (type)
 			{
 			case Token.TOKEN_AND:
-				GmmlVision.log.trace("AND");
+				Engine.log.trace("AND");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_OR:
-				GmmlVision.log.trace("OR");
+				Engine.log.trace("OR");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_LE:
-				GmmlVision.log.trace("<=");
+				Engine.log.trace("<=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_LT:
-				GmmlVision.log.trace("<");
+				Engine.log.trace("<");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_GT:
-				GmmlVision.log.trace(">");
+				Engine.log.trace(">");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_GE:
-				GmmlVision.log.trace(">=");
+				Engine.log.trace(">=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_EQ:
-				GmmlVision.log.trace("=");
+				Engine.log.trace("=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_ID:
-				GmmlVision.log.trace("ID: " + symbolValue);
+				Engine.log.trace("ID: " + symbolValue);
 				break;
 			case Token.TOKEN_NUMBER:
-				GmmlVision.log.trace("NUMBER: " + numberValue);
+				Engine.log.trace("NUMBER: " + numberValue);
 				break;
 			}
 		}

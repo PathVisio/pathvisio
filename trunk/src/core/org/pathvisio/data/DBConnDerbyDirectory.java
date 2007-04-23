@@ -16,7 +16,7 @@
 //
 package org.pathvisio.data;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.sql.DriverManager;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -31,7 +31,7 @@ public class DBConnDerbyDirectory extends DBConnDerby {
 		try {
 			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
 		} catch(Exception e) {
-			GmmlVision.log.error("Database closed", e);
+			Engine.log.error("Database closed", e);
 		}
 		return dbName;
 	}

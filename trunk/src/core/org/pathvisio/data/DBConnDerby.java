@@ -16,7 +16,7 @@
 //
 package org.pathvisio.data;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,7 +81,7 @@ public class DBConnDerby extends DBConnector {
 		}
 		Connection con = DriverManager.getConnection(url, prop);
 		
-		GmmlVision.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
+		Engine.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
 		
 		lastDbName = dbName;
 		return con;
@@ -97,7 +97,7 @@ public class DBConnDerby extends DBConnector {
 		try {
 			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
 		} catch(Exception e) {
-			GmmlVision.log.error("Database closed", e);
+			Engine.log.error("Database closed", e);
 		}
 		File zipFile = new File(dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt());
 		toZip(zipFile, dbDir);

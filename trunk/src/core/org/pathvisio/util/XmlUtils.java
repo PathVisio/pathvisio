@@ -24,7 +24,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.GmmlGdb.IdCodePair;
 import org.pathvisio.model.MappFormat;
@@ -89,16 +89,16 @@ public class XmlUtils {
 		}
 		
 		public void error(SAXParseException e) { 
-			GmmlVision.log.error("Error while parsing xml document", e);
+			Engine.log.error("Error while parsing xml document", e);
 		}
 		
 		public void fatalError(SAXParseException e) throws SAXParseException { 
-			GmmlVision.log.error("Fatal error while parsing xml document", e);
+			Engine.log.error("Fatal error while parsing xml document", e);
 			throw new SAXParseException("Fatal error, parsing of this document aborted", null);
 		}
 		
 		public void warning(SAXParseException e) { 
-			GmmlVision.log.error("Warning while parsing xml document", e);
+			Engine.log.error("Warning while parsing xml document", e);
 		}
 		
 		public class Gene extends IdCodePair {

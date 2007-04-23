@@ -16,7 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.Graphics;
 
 import java.io.File;
@@ -80,7 +80,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		"This plugin displays one or more images on Gene Product objects and \n" +
 		"colors the image(s) accoring to the expression value for the Gene Product.";
 		
-	static final RGB DEFAULT_TRANSPARENT = GmmlVision.TRANSPARENT_COLOR;
+	static final RGB DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
 		
 	List<URL> imageURLs;
 	
@@ -97,8 +97,8 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {
-				GmmlVision.getResourceURL("images/protein_hi.bmp"),
-				GmmlVision.getResourceURL("images/mRNA_hi.bmp") }));
+				Engine.getResourceURL("images/protein_hi.bmp"),
+				Engine.getResourceURL("images/mRNA_hi.bmp") }));
 	}
 	
 	List<URL> getImageURLs() { 
@@ -165,7 +165,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				URL url = new URL(((Element)o).getText());
 				addImageURL(url);
 			} catch(Exception e) {
-				GmmlVision.log.error("couldn't load image URL for plugin", e);
+				Engine.log.error("couldn't load image URL for plugin", e);
 			}
 		}
 	}
@@ -385,7 +385,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				imageList.refresh();
 			} catch(Exception e) {
 				MessageDialog.openError(getShell(), "Unable to open image file", e.toString());
-				GmmlVision.log.error("Unable to load image", e);
+				Engine.log.error("Unable to load image", e);
 			}
 		}
 		
@@ -555,7 +555,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				URLConnection con = url.openConnection();
 				return con.getInputStream();
 			} catch(IOException e) {
-				GmmlVision.log.error("Unable to open connection to image", e);
+				Engine.log.error("Unable to open connection to image", e);
 			}
 			return null;
 		}
@@ -577,7 +577,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				setURL(new URL(xml.getAttributeValue(XML_ATTR_IMAGE)));
 				setReplaceColor(ColorConverter.parseColorElement(xml.getChild(XML_ATTR_REPLACE)));
 			} catch(Exception e) {
-				GmmlVision.log.error("Unable to load plugin", e);
+				Engine.log.error("Unable to load plugin", e);
 			}
 		}
 		

@@ -16,7 +16,7 @@
 //
 package org.pathvisio.R.wizard;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -186,7 +186,7 @@ public class PageData extends WizardPage {
 				DirectoryDialog fd = new DirectoryDialog(getShell());
 				String pwTxt = pwDir.getText();
 				fd.setFilterPath(pwTxt.equals("") ? 
-						GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES) : pwTxt);
+						Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES) : pwTxt);
 				String dir = fd.open();
 				if(dir != null) pwDir.setText(dir);
 				checkPageComplete();
@@ -204,7 +204,7 @@ public class PageData extends WizardPage {
 			FileDialog fd = new FileDialog(getShell(), 
 					e.widget == exportBrowse ? SWT.SAVE : SWT.OPEN);
 			String expTxt = exportFile.getText();
-			fd.setFilterPath(expTxt.equals("") ? GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA) : expTxt);
+			fd.setFilterPath(expTxt.equals("") ? Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA) : expTxt);
 			String file = fd.open();
 			if(file != null) {
 				if		(e.widget == exportBrowse) 	exportFile.setText(file);
@@ -273,7 +273,7 @@ public class PageData extends WizardPage {
 			String msg = (e instanceof InvocationTargetException) ? e.getCause().getMessage() : e.getMessage();
 			
 			MessageDialog.openError(getShell(), "Error", "Unable to " + action + " data: " + msg);
-			GmmlVision.log.error("Unable to export to R", e);
+			Engine.log.error("Unable to export to R", e);
 			return false;
 		}
 		return true;

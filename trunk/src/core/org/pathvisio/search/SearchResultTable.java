@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.view.Pathway;
 import org.pathvisio.view.PathwayElement;
 import org.pathvisio.view.GeneProduct;
@@ -48,13 +48,13 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	
 	public SearchResultTable(Composite parent, int style) {
 		super(parent, SWT.NULL);
-		GmmlVision.addApplicationEventListener(this);
+		Engine.addApplicationEventListener(this);
 	}
 		
 	public int getNrResults() { return getNrRows(); }
 		
 	public void highlightResults(boolean highlight) {
-		Pathway drawing = GmmlVision.getDrawing();
+		Pathway drawing = Engine.getDrawing();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
@@ -73,7 +73,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 				}
 				drawing.redraw();
 			} catch(Exception ex) { 
-				GmmlVision.log.error("when highlighting genes from search result table", ex);
+				Engine.log.error("when highlighting genes from search result table", ex);
 			}
 		}
 		else drawing.resetHighlight();

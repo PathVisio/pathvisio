@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision.sidepanels;
+package org.pathvisio.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Sash;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.GmmlPreferences;
 
 /**
@@ -89,16 +89,16 @@ public class SidePanel extends Composite {
 					}
 				}
 			});
-			minButton.setImage(GmmlVision.getImageRegistry().get("sidepanel.minimize"));
+			minButton.setImage(Engine.getImageRegistry().get("sidepanel.minimize"));
 			final Button hideButton = new Button(buttonBar, SWT.PUSH);
 			hideButton.setToolTipText("Close this sidepanel (use view menu to open again)");
 			hideButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					hide();
-					GmmlVision.getWindow().showRightPanelAction.setChecked(false);
+					Engine.getWindow().showRightPanelAction.setChecked(false);
 				}
 			});
-			hideButton.setImage(GmmlVision.getImageRegistry().get("sidepanel.hide"));
+			hideButton.setImage(Engine.getImageRegistry().get("sidepanel.hide"));
 			
 			GridData buttonGrid = new GridData();
 			buttonGrid.widthHint = 12;
@@ -137,7 +137,7 @@ public class SidePanel extends Composite {
 	}
 	
 	public void show() {
-		int sidePanelSize = GmmlVision.getPreferences().getInt(GmmlPreferences.PREF_SIDEPANEL_SIZE);
+		int sidePanelSize = Engine.getPreferences().getInt(GmmlPreferences.PREF_SIDEPANEL_SIZE);
 		if(sidePanelSize == 0) sidePanelSize = 10; //Force show if initial size = 0
 		parentSash.setWeights(calculateWeights(sidePanelSize));
 	}

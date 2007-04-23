@@ -58,7 +58,7 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.colorset.ColorSetObject;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 /**
  * This class shows a legend for the currently loaded visualization and color-sets.
@@ -727,7 +727,7 @@ public class GmmlLegend extends ScrolledComposite implements VisualizationListen
 				gd.heightHint = computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 			}
 			layout();
-			switchLabel.setImage(GmmlVision.getImageRegistry().get(
+			switchLabel.setImage(Engine.getImageRegistry().get(
 					expanded ? "tree.expanded" : "tree.collapsed"));
 		}
 		

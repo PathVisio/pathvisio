@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.GmmlPreferences;
 
 /**
@@ -134,9 +134,9 @@ public abstract class DBConnector {
 	protected static void createTables(Connection con) throws Exception {	
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();
-			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { GmmlVision.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Engine.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Engine.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Engine.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
 			
 			sh.execute(
 					"CREATE TABLE					" +
@@ -221,10 +221,10 @@ public abstract class DBConnector {
 		String filterPath = null;
 		switch(getDbType()) {
 		case TYPE_GDB: 
-			filterPath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB);
+			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB);
 			break;
 		case TYPE_GEX:
-			filterPath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR);
+			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) fileDialog.setFilterPath(filterPath);
@@ -247,10 +247,10 @@ public abstract class DBConnector {
 		String filterPath = null;
 		switch(getDbType()) {
 		case TYPE_GDB: 
-			filterPath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB);
+			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_GDB);
 			break;
 		case TYPE_GEX:
-			filterPath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR);
+			filterPath = Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) dirDialog.setFilterPath(filterPath);

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -26,21 +26,23 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.Globals;
+import org.pathvisio.Revision;
 
 /**
  * 
  * A simple dialog box that shows about information
  */
-public class GmmlAboutBox extends Dialog
+public class AboutDlg extends Dialog
 {
 	private static final long serialVersionUID = 1L;
 
-	public GmmlAboutBox(Shell parent) 
+	public AboutDlg(Shell parent) 
 	{
 		super (parent);
 	}
 
-	public GmmlAboutBox(Shell parent, int style) 
+	public AboutDlg(Shell parent, int style) 
 	{
 		super (parent, style);
 	}
@@ -62,7 +64,7 @@ public class GmmlAboutBox extends Dialog
 		lbl.setLayoutData (gd);
 		
 		lbl = new Label (shell, SWT.NULL);
-		lbl.setImage (GmmlVision.getImageRegistry().get("about.logo"));
+		lbl.setImage (Engine.getImageRegistry().get("about.logo"));
 
 		lbl = new Label (shell, SWT.NULL);
 		lbl.setText ("R.M.H. Besseling\nS.P.M.Crijns\nI.Kaashoek\nM.M.Palm\n" +

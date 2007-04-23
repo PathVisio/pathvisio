@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,9 +44,9 @@ import org.pathvisio.data.GmmlGdb;
 import org.pathvisio.model.GmmlDataObject;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.PropertyType;
-import org.pathvisio.gmmlVision.GmmlPropertyTable.AutoFillData;
+import org.pathvisio.gui.PropertyPanel.AutoFillData;
 
-public class SuggestGdbCellEditor extends SuggestCellEditor implements SuggestionProvider, SuggestionListener {
+public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvider, SuggestionListener {
 	public static final int TYPE_IDENTIFIER = 0;
 	public static final int TYPE_SYMBOL = 1;
 	int type;
@@ -55,16 +55,16 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 	public static final int NO_TIMEOUT = 0;
 	public static int query_timeout = 5; //seconds
 	
-	HashMap<String, GmmlPropertyTable.AutoFillData> suggested;
+	HashMap<String, PropertyPanel.AutoFillData> suggested;
 	
 	Button button;
 	
-	SuggestGdbCellEditor(Composite parent, int type) {
+	GdbCellEditor(Composite parent, int type) {
 		super();
 		this.type = type;
 		create(parent); //Set type before creating contol
 		suggestCombo.addSuggetsionListener(this);
-		suggested = new HashMap<String, GmmlPropertyTable.AutoFillData>();
+		suggested = new HashMap<String, PropertyPanel.AutoFillData>();
 	}
 		
 	protected Control createControl(Composite parent) {
@@ -97,7 +97,7 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
             public void focusLost(FocusEvent e) {
             	if(!suggestCombo.isSuggestFocus() &&
             		(button != null && !button.isFocusControl())) { //Also check focus on button
-            		SuggestGdbCellEditor.this.focusLost();
+            		GdbCellEditor.this.focusLost();
             	}
             }
         });
@@ -218,7 +218,7 @@ public class SuggestGdbCellEditor extends SuggestCellEditor implements Suggestio
 				sugg.add(label);
 			}
 		} catch (SQLException e) {
-			GmmlVision.log.error("Unable to query suggestions", e);
+			Engine.log.error("Unable to query suggestions", e);
 		}
 		if(limit > NO_LIMIT && sugg.size() == limit) sugg.add("...results limited to " + limit);
 		return sugg.toArray(new String[sugg.size()]);

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -32,7 +32,7 @@ import org.pathvisio.util.LinAlg.Point;
  * objects on the drawing which are used to 
  * resize them or change their location.
  */
-class GmmlHandle extends GmmlDrawingObject
+class Handle extends PathwayElement
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -55,7 +55,7 @@ class GmmlHandle extends GmmlDrawingObject
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
 	
-	GmmlDrawingObject parent;
+	PathwayElement parent;
 	
 	double mCenterx;
 	double mCentery;
@@ -68,9 +68,9 @@ class GmmlHandle extends GmmlDrawingObject
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
 	 * @param direction	Direction this handle can be moved in (one of DIRECTION_*)
 	 * @param parent	The object this handle belongs to
-	 * @param canvas	The {@link GmmlDrawing} to draw this handle on
+	 * @param canvas	The {@link Pathway} to draw this handle on
 	 */
-	public GmmlHandle(int direction, GmmlDrawingObject parent, GmmlDrawing canvas)
+	public Handle(int direction, PathwayElement parent, Pathway canvas)
 	{
 		super(canvas);		
 		this.direction = direction;
@@ -78,7 +78,7 @@ class GmmlHandle extends GmmlDrawingObject
 	}
 
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_HANDLE;
+		return Pathway.DRAW_ORDER_HANDLE;
 	}
 	
 	/**
@@ -200,7 +200,7 @@ class GmmlHandle extends GmmlDrawingObject
 		
 	/**
 	 * Moves this handle by the specified increments and
-	 * adjusts the {@link GmmlDrawingObject} to the new position
+	 * adjusts the {@link PathwayElement} to the new position
 	 */
 	public void vMoveBy(double vdx, double vdy)
 	{	

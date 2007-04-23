@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -34,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.pathvisio.preferences.GmmlPreferences;
@@ -43,7 +42,7 @@ import org.pathvisio.util.SwtUtils;
 import org.pathvisio.model.GmmlDataObject;
 import org.pathvisio.model.GmmlEvent;
 
-public class GmmlLabel extends GmmlGraphicsShape
+public class Label extends GraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -63,16 +62,16 @@ public class GmmlLabel extends GmmlGraphicsShape
 				
 	/**
 	 * Constructor for this class
-	 * @param canvas - the GmmlDrawing this label will be part of
+	 * @param canvas - the Pathway this label will be part of
 	 */
-	public GmmlLabel(GmmlDrawing canvas, GmmlDataObject o)
+	public Label(Pathway canvas, GmmlDataObject o)
 	{
 		super(canvas, o);
 		setHandleLocation();
 	}
 	
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_LABEL;
+		return Pathway.DRAW_ORDER_LABEL;
 	}
 	
 	public String getLabelText() {
@@ -112,7 +111,7 @@ public class GmmlLabel extends GmmlGraphicsShape
 		textComposite.setLocation(getVCenterX(), getVCenterY() - 10);
 		textComposite.setBackground(background);
 		
-		Label label = new Label(textComposite, SWT.CENTER);
+		org.eclipse.swt.widgets.Label label = new org.eclipse.swt.widgets.Label(textComposite, SWT.CENTER);
 		label.setText("Specify label:");
 		label.setBackground(background);
 		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);

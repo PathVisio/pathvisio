@@ -17,8 +17,8 @@
 package org.pathvisio.visualization.plugins;
 
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGeneProduct;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.Graphics;
 
 import java.util.Collection;
 
@@ -121,8 +121,8 @@ public class LabelPlugin extends VisualizationPlugin {
 		labelSidePanel = new Label(comp, SWT.CENTER);
 	}
 
-	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
-		if(g instanceof GmmlGeneProduct) {
+	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC buffer) {
+		if(g instanceof GeneProduct) {
 			Font f = null;
 			Color fc = null;
 			
@@ -147,7 +147,7 @@ public class LabelPlugin extends VisualizationPlugin {
 			
 			f = SwtUtils.changeFont(f, getFontData(true), e.display);
 		
-			String label = getLabelText((GmmlGeneProduct) g);
+			String label = getLabelText((GeneProduct) g);
 			
 			if(adaptFontSize) {
 				f = SwtUtils.adjustFontSize(f, new Point(area.width, area.height), label, buffer, e.display);
@@ -218,14 +218,14 @@ public class LabelPlugin extends VisualizationPlugin {
 		return fd;
 	}
 	
-	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) {
-		if(g instanceof GmmlGeneProduct) {
+	public Composite visualizeOnToolTip(Composite parent, Graphics g) {
+		if(g instanceof GeneProduct) {
 			Composite comp = new Composite(parent, SWT.NULL);
 			comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			comp.setLayout(new FillLayout());
 			Label label = new Label(comp, SWT.CENTER);
 			label.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			label.setText(getLabelText((GmmlGeneProduct) g));
+			label.setText(getLabelText((GeneProduct) g));
 			return comp;
 		}
 		return null;
@@ -319,9 +319,9 @@ public class LabelPlugin extends VisualizationPlugin {
 	}
 	
 	
-	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) { }
+	public void visualizeOnSidePanel(Collection<Graphics> objects) { }
 	
-	private String getLabelText(GmmlGeneProduct g) {
+	private String getLabelText(GeneProduct g) {
 		switch(style) {
 		case STYLE_ID: 		return g.getGmmlData().getGeneID();
 		case STYLE_SYMBOL:

@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.*;
 import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
 import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
 import org.pathvisio.gmmlVision.sidepanels.TabbedSidePanel;
-import org.pathvisio.graphics.GmmlDrawing;
-import org.pathvisio.graphics.GmmlGeneProduct;
+import org.pathvisio.view.Pathway;
+import org.pathvisio.view.GeneProduct;
 import org.pathvisio.preferences.GmmlPreferenceManager;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.search.PathwaySearchComposite;
@@ -169,7 +169,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		public void run () {
 			GmmlData gmmlData = GmmlVision.getGmmlData();
-			GmmlDrawing drawing = GmmlVision.getDrawing();
+			Pathway drawing = GmmlVision.getDrawing();
 			
 			double usedZoom = drawing.getPctZoom();
 			// Set zoom to 100%
@@ -214,7 +214,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			setToolTipText ("Save pathway with new file name");
 		}
 		public void run () {
-			GmmlDrawing drawing = GmmlVision.getDrawing();
+			Pathway drawing = GmmlVision.getDrawing();
 			GmmlData gmmlData = GmmlVision.getGmmlData();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
@@ -293,7 +293,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			setToolTipText ("Export Pathway to GenMAPP format");
 		}
 		public void run () {
-			GmmlDrawing drawing = GmmlVision.getDrawing();
+			Pathway drawing = GmmlVision.getDrawing();
 			GmmlData gmmlData = GmmlVision.getGmmlData();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
@@ -444,7 +444,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			}
 		}
 		public void run () {
-			GmmlDrawing drawing = GmmlVision.getDrawing();
+			Pathway drawing = GmmlVision.getDrawing();
 			if (drawing != null)
 			{
 				double newPctZoomFactor = pctZoomFactor;
@@ -508,7 +508,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	{
 		if(GmmlVision.isDrawingOpen())
 		{
-			GmmlDrawing drawing = GmmlVision.getDrawing();
+			Pathway drawing = GmmlVision.getDrawing();
 			//Check for neccesary connections
 			if(GmmlGex.isConnected() && GmmlGdb.isConnected())
 			{
@@ -640,7 +640,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public void run () {
 			if(GmmlVision.isDrawingOpen())
 			{
-				GmmlDrawing drawing = GmmlVision.getDrawing();
+				Pathway drawing = GmmlVision.getDrawing();
 				if(isChecked())
 				{
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
@@ -715,7 +715,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		/**
 		 * Constructor for this class
-		 * @param e	type of element this action adds; a {@link GmmlDrawing} field constant
+		 * @param e	type of element this action adds; a {@link Pathway} field constant
 		 */
 		public NewElementAction (int e)
 		{
@@ -725,87 +725,87 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			URL imageURL = null;
 			toolTipText = null;
 			switch(element) {
-			case GmmlDrawing.NEWLINE: 
+			case Pathway.NEWLINE: 
 				toolTipText = "Draw new line";
 				imageURL = GmmlVision.getResourceURL("icons/newline.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLINEARROW:
+			case Pathway.NEWLINEARROW:
 				toolTipText = "Draw new arrow";
 				imageURL = GmmlVision.getResourceURL("icons/newarrow.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLINEDASHED:
+			case Pathway.NEWLINEDASHED:
 				toolTipText = "Draw new dashed line";
 				imageURL = GmmlVision.getResourceURL("icons/newdashedline.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLINEDASHEDARROW:
+			case Pathway.NEWLINEDASHEDARROW:
 				toolTipText = "Draw new dashed arrow";
 				imageURL = GmmlVision.getResourceURL("icons/newdashedarrow.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLABEL:
+			case Pathway.NEWLABEL:
 				toolTipText = "Draw new label";
 				imageURL = GmmlVision.getResourceURL("icons/newlabel.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWARC:
+			case Pathway.NEWARC:
 				toolTipText = "Draw new arc";
 				imageURL = GmmlVision.getResourceURL("icons/newarc.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWBRACE:
+			case Pathway.NEWBRACE:
 				toolTipText = "Draw new brace";
 				imageURL = GmmlVision.getResourceURL("icons/newbrace.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWGENEPRODUCT:
+			case Pathway.NEWGENEPRODUCT:
 				toolTipText = "Draw new geneproduct";
 				imageURL = GmmlVision.getResourceURL("icons/newgeneproduct.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWRECTANGLE:
+			case Pathway.NEWRECTANGLE:
 				imageURL = GmmlVision.getResourceURL("icons/newrectangle.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWOVAL:
+			case Pathway.NEWOVAL:
 				toolTipText = "Draw new oval";
 				imageURL = GmmlVision.getResourceURL("icons/newoval.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWTBAR:
+			case Pathway.NEWTBAR:
 				toolTipText = "Draw new TBar";
 				imageURL = GmmlVision.getResourceURL("icons/newtbar.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWRECEPTORROUND:
+			case Pathway.NEWRECEPTORROUND:
 				toolTipText = "Draw new round receptor";
 				imageURL = GmmlVision.getResourceURL("icons/newreceptorround.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWRECEPTORSQUARE:
+			case Pathway.NEWRECEPTORSQUARE:
 				toolTipText = "Draw new square receptor";
 				imageURL = GmmlVision.getResourceURL("icons/newreceptorsquare.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLIGANDROUND:
+			case Pathway.NEWLIGANDROUND:
 				toolTipText = "Draw new round ligand";
 				imageURL = GmmlVision.getResourceURL("icons/newligandround.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLIGANDSQUARE:
+			case Pathway.NEWLIGANDSQUARE:
 				toolTipText = "Draw new square ligand";
 				imageURL = GmmlVision.getResourceURL("icons/newligandsquare.gif");
 				setChecked(false);
 				break;
-			case GmmlDrawing.NEWLINEMENU:
-				setMenuCreator(new NewItemMenuCreator(GmmlDrawing.NEWLINEMENU));
+			case Pathway.NEWLINEMENU:
+				setMenuCreator(new NewItemMenuCreator(Pathway.NEWLINEMENU));
 				imageURL = GmmlVision.getResourceURL("icons/newlinemenu.gif");
 				toolTipText = "Draw new line or arrow";
 				break;
-			case GmmlDrawing.NEWLINESHAPEMENU:
-				setMenuCreator(new NewItemMenuCreator(GmmlDrawing.NEWLINESHAPEMENU));
+			case Pathway.NEWLINESHAPEMENU:
+				setMenuCreator(new NewItemMenuCreator(Pathway.NEWLINESHAPEMENU));
 				imageURL = GmmlVision.getResourceURL("icons/newlineshapemenu.gif");
 				toolTipText = "Draw new ligand or receptor";
 				break;
@@ -824,7 +824,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			}
 			else
 			{	
-				GmmlVision.getDrawing().setNewGraphics(GmmlDrawing.NEWNONE);
+				GmmlVision.getDrawing().setNewGraphics(Pathway.NEWNONE);
 			}
 		}
 		
@@ -840,8 +840,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		/**
 		 * Constructor for this class
-		 * @param e	type of menu to create; one of {@link GmmlDrawing}.NEWLINEMENU
-		 * , {@link GmmlDrawing}.NEWLINESHAPEMENU
+		 * @param e	type of menu to create; one of {@link Pathway}.NEWLINEMENU
+		 * , {@link Pathway}.NEWLINESHAPEMENU
 		 */
 		public NewItemMenuCreator(int e) 
 		{
@@ -859,17 +859,17 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			menu = new Menu(parent);
 			Vector<Action> actions = new Vector<Action>();
 			switch(element) {
-			case GmmlDrawing.NEWLINEMENU:
-				actions.add(new NewElementAction(GmmlDrawing.NEWLINE));
-				actions.add(new NewElementAction(GmmlDrawing.NEWLINEARROW));
-				actions.add(new NewElementAction(GmmlDrawing.NEWLINEDASHED));
-				actions.add(new NewElementAction(GmmlDrawing.NEWLINEDASHEDARROW));
+			case Pathway.NEWLINEMENU:
+				actions.add(new NewElementAction(Pathway.NEWLINE));
+				actions.add(new NewElementAction(Pathway.NEWLINEARROW));
+				actions.add(new NewElementAction(Pathway.NEWLINEDASHED));
+				actions.add(new NewElementAction(Pathway.NEWLINEDASHEDARROW));
 				break;
-			case GmmlDrawing.NEWLINESHAPEMENU:
-				actions.add(new NewElementAction(GmmlDrawing.NEWLIGANDROUND));
-				actions.add(new NewElementAction(GmmlDrawing.NEWRECEPTORROUND));
-				actions.add(new NewElementAction(GmmlDrawing.NEWLIGANDSQUARE));
-				actions.add(new NewElementAction(GmmlDrawing.NEWRECEPTORSQUARE));
+			case Pathway.NEWLINESHAPEMENU:
+				actions.add(new NewElementAction(Pathway.NEWLIGANDROUND));
+				actions.add(new NewElementAction(Pathway.NEWRECEPTORROUND));
+				actions.add(new NewElementAction(Pathway.NEWLIGANDSQUARE));
+				actions.add(new NewElementAction(Pathway.NEWRECEPTORSQUARE));
 			}
 			
 			for (Action act : actions)
@@ -897,7 +897,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	
 	/**
 	 * Deselects all {@link NewElementAction}s on the toolbar and sets 
-	 * {@link GmmlDrawing}.newGraphics to {@link GmmlDrawing}.NEWNONE
+	 * {@link Pathway}.newGraphics to {@link Pathway}.NEWNONE
 	 */
 	public void deselectNewItemActions()
 	{
@@ -909,7 +909,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		GmmlVision.getDrawing().setNewGraphics(GmmlDrawing.NEWNONE);
+		GmmlVision.getDrawing().setNewGraphics(Pathway.NEWNONE);
 	}
 	
 	// Elements of the coolbar
@@ -948,15 +948,15 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	protected void createEditActionsCI()
 	{
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWGENEPRODUCT));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLABEL));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINEMENU));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWRECTANGLE));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWOVAL));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWARC));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWBRACE));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWTBAR));
-		toolBarManager.add(new NewElementAction(GmmlDrawing.NEWLINESHAPEMENU));
+		toolBarManager.add(new NewElementAction(Pathway.NEWGENEPRODUCT));
+		toolBarManager.add(new NewElementAction(Pathway.NEWLABEL));
+		toolBarManager.add(new NewElementAction(Pathway.NEWLINEMENU));
+		toolBarManager.add(new NewElementAction(Pathway.NEWRECTANGLE));
+		toolBarManager.add(new NewElementAction(Pathway.NEWOVAL));
+		toolBarManager.add(new NewElementAction(Pathway.NEWARC));
+		toolBarManager.add(new NewElementAction(Pathway.NEWBRACE));
+		toolBarManager.add(new NewElementAction(Pathway.NEWTBAR));
+		toolBarManager.add(new NewElementAction(Pathway.NEWLINESHAPEMENU));
 		
 		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
 	}
@@ -1164,15 +1164,15 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			
 	/**
 	 * Creates a new empty drawing canvas
-	 * @return the empty {@link GmmlDrawing}
+	 * @return the empty {@link Pathway}
 	 */
-	public GmmlDrawing createNewDrawing()
+	public Pathway createNewDrawing()
 	{		
-		return new GmmlDrawing(sc, SWT.NO_BACKGROUND);
+		return new Pathway(sc, SWT.NO_BACKGROUND);
 	}
 	
 	public void applicationEvent(ApplicationEvent e) {
-		GmmlDrawing drawing = null;
+		Pathway drawing = null;
 		switch(e.type) {
 		case ApplicationEvent.NEW_PATHWAY:
 			drawing = GmmlVision.getDrawing();

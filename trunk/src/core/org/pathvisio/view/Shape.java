@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -31,15 +31,15 @@ import org.pathvisio.model.GmmlDataObject;
  * This class represents a GMMLShape, which can be a 
  * rectangle or ellips, depending of its type.
  */
-public class GmmlShape extends GmmlGraphicsShape
+public class Shape extends GraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 			
 	/**
 	 * Constructor for this class
-	 * @param canvas - the GmmlDrawing this GmmlShape will be part of
+	 * @param canvas - the Pathway this Shape will be part of
 	 */
-	public GmmlShape(GmmlDrawing canvas, GmmlDataObject o)
+	public Shape(Pathway canvas, GmmlDataObject o)
 	{
 		super(canvas, o);
 		setHandleLocation();
@@ -48,9 +48,9 @@ public class GmmlShape extends GmmlGraphicsShape
 	public int getDrawingOrder() {
 		switch(gdata.getShapeType()) {
 		case BRACE:
-			return GmmlDrawing.DRAW_ORDER_BRACE;
+			return Pathway.DRAW_ORDER_BRACE;
 		default:
-			return GmmlDrawing.DRAW_ORDER_SHAPE;
+			return Pathway.DRAW_ORDER_SHAPE;
 		}
 	}
 	

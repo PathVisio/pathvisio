@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import junit.framework.TestCase;
 
@@ -29,14 +29,14 @@ import org.pathvisio.model.ObjectType;
 
 public class Test extends TestCase {
 	
-	GmmlDrawing drawing;
+	Pathway drawing;
     private Shell shell;
 	
 	public void setUp()
 	{
 		shell = new Shell(Display.getDefault());
         shell.setLayout(new FillLayout());
-        drawing = new GmmlDrawing(shell, SWT.NO_BACKGROUND);
+        drawing = new Pathway(shell, SWT.NO_BACKGROUND);
 	}
 
     protected void tearDown() throws Exception {

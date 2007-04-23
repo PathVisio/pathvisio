@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.BasicStroke;
 import java.awt.Shape;
@@ -42,7 +42,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 /**
  * This class implements and handles a line
  */
-public class GmmlLine extends GmmlGraphics
+public class Line extends Graphics
 {
 
 	private static final long serialVersionUID = 1L;
@@ -51,9 +51,9 @@ public class GmmlLine extends GmmlGraphics
 	
 	/**
 	 * Constructor for this class
-	 * @param canvas - the GmmlDrawing this line will be part of
+	 * @param canvas - the Pathway this line will be part of
 	 */
-	public GmmlLine(GmmlDrawing canvas, GmmlDataObject o)
+	public Line(Pathway canvas, GmmlDataObject o)
 	{
 		super(canvas, o);
 		
@@ -67,7 +67,7 @@ public class GmmlLine extends GmmlGraphics
 	}
 	
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_LINE;
+		return Pathway.DRAW_ORDER_LINE;
 	}
 	
 	protected void swapPoint(VPoint pOld, VPoint pNew) {
@@ -308,9 +308,9 @@ public class GmmlLine extends GmmlGraphics
 				- getVStartXDouble(), getVEndYDouble() - getVStartYDouble());
 	}
 	
-	public GmmlHandle[] getHandles()
+	public Handle[] getHandles()
 	{
-		GmmlHandle[] handles = new GmmlHandle[points.size()];
+		Handle[] handles = new Handle[points.size()];
 		for(int i = 0; i < handles.length; i++) {
 			handles[i] = points.get(i).getHandle();
 		}

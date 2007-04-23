@@ -24,11 +24,11 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import org.pathvisio.graphics.GmmlDrawingObject;
-import org.pathvisio.graphics.GmmlGeneProduct;
-import org.pathvisio.graphics.GmmlSelectionBox;
-import org.pathvisio.graphics.GmmlSelectionBox.SelectionEvent;
-import org.pathvisio.graphics.GmmlSelectionBox.SelectionListener;
+import org.pathvisio.view.PathwayElement;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.SelectionBox.SelectionEvent;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.GmmlGdb;
 import org.pathvisio.data.GmmlGex;
@@ -62,7 +62,7 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 	
 	private Browser bpBrowser;
 	
-	private GmmlGeneProduct geneProduct;
+	private GeneProduct geneProduct;
 	
 	/**
 	 * Constructor for this class
@@ -78,10 +78,10 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 		setGeneText(null);
 		setGexText(null);
 		
-		GmmlSelectionBox.addListener(this);
+		SelectionBox.addListener(this);
 	}
 	
-	public void setGeneProduct(final GmmlGeneProduct gp) 
+	public void setGeneProduct(final GeneProduct gp) 
 	{ 
 		if(geneProduct == gp) return;
 		
@@ -270,9 +270,9 @@ public class GmmlBpBrowser extends Composite implements SelectionListener {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			//Just take the first GeneProduct in the selection
-			for(GmmlDrawingObject o : e.selection) {
-				if(o instanceof GmmlGeneProduct) {
-					if(geneProduct != o) setGeneProduct((GmmlGeneProduct)o);
+			for(PathwayElement o : e.selection) {
+				if(o instanceof GeneProduct) {
+					if(geneProduct != o) setGeneProduct((GeneProduct)o);
 					break; //Selects the first, TODO: use setGmmlDataObjects
 				}
 			}

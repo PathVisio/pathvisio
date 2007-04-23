@@ -17,8 +17,8 @@
 package org.pathvisio.visualization.plugins;
 
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGeneProduct;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.Graphics;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -94,9 +94,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public String getDescription() { return DESCRIPTION; }
 	
 	static final int SPACING = 3;
-	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
-		if(g instanceof GmmlGeneProduct) {
-			GmmlGeneProduct gp = (GmmlGeneProduct) g;
+	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC buffer) {
+		if(g instanceof GeneProduct) {
+			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = GmmlGex.getCachedData();
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
@@ -125,9 +125,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		}
 	}
 	
-	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) {
-		if(g instanceof GmmlGeneProduct) {
-			GmmlGeneProduct gp = (GmmlGeneProduct) g;
+	public Composite visualizeOnToolTip(Composite parent, Graphics g) {
+		if(g instanceof GeneProduct) {
+			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = GmmlGex.getCachedData();
 			
 			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
@@ -383,7 +383,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	}
 	
 	
-	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) { }
+	public void visualizeOnSidePanel(Collection<Graphics> objects) { }
 	public void initSidePanel(Composite parent) { }
 
 	static final String XML_ATTR_FONTDATA = "font";

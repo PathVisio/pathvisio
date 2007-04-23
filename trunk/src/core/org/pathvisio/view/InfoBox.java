@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Point;
 
 import org.pathvisio.model.GmmlDataObject;
 
-public class GmmlInfoBox extends GmmlGraphics {
+public class InfoBox extends Graphics {
 	
 	//Elements not stored in gpml
 	String fontName			= "Times New Roman";
@@ -37,13 +37,13 @@ public class GmmlInfoBox extends GmmlGraphics {
 	int sizeX = 1;
 	int sizeY = 1; //Real size is calculated on first call to draw()
 	
-	public GmmlInfoBox (GmmlDrawing canvas, GmmlDataObject o) {
+	public InfoBox (Pathway canvas, GmmlDataObject o) {
 		super(canvas, o);
 		canvas.setMappInfo(this);	
 	}
 	
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_MAPPINFO;
+		return Pathway.DRAW_ORDER_MAPPINFO;
 	}
 	
 	public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }

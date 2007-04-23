@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Shape;
 import java.util.HashSet;
@@ -25,20 +25,20 @@ import org.eclipse.swt.graphics.GC;
 
 import org.pathvisio.model.GmmlDataObject.MPoint;
 
-public class VPoint extends GmmlDrawingObject {
-	GmmlHandle handle;
-	Set<GmmlLine> lines;
+public class VPoint extends PathwayElement {
+	Handle handle;
+	Set<Line> lines;
 	Set<MPoint> mPoints;
 	
-	VPoint(GmmlDrawing canvas) {
+	VPoint(Pathway canvas) {
 		super(canvas);
 		mPoints = new HashSet<MPoint>();
-		lines = new HashSet<GmmlLine>();
-		handle = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		lines = new HashSet<Line>();
+		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}
 	
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_LINE;
+		return Pathway.DRAW_ORDER_LINE;
 	}
 	
 	protected void addMPoint(MPoint p) {
@@ -49,11 +49,11 @@ public class VPoint extends GmmlDrawingObject {
 		mPoints.remove(p);
 	}
 	
-	protected void addLine(GmmlLine l) {
+	protected void addLine(Line l) {
 		lines.add(l);
 	}
 	
-	protected void removeLine(GmmlLine l) {
+	protected void removeLine(Line l) {
 		lines.remove(l);
 		//Remove this VPoint when it links to no lines no more
 		if(lines.size() == 0) {
@@ -61,9 +61,9 @@ public class VPoint extends GmmlDrawingObject {
 		}
 	}
 	
-	protected Set<GmmlLine> getLines() { return lines; }
+	protected Set<Line> getLines() { return lines; }
 	
-	protected void link(GmmlGraphics g) {
+	protected void link(Graphics g) {
 		if(lines.contains(g)) return; //Prevent linking to self
 		String id = g.getGmmlData().getGraphId();
 		if(id == null) id = g.getGmmlData().setGeneratedGraphId();
@@ -75,7 +75,7 @@ public class VPoint extends GmmlDrawingObject {
 		for(MPoint mp : p.mPoints) {
 			mPoints.add(mp);
 		}
-		for(GmmlLine l : p.lines) {
+		for(Line l : p.lines) {
 			l.swapPoint(p, this);
 			addLine(l);
 		}
@@ -109,7 +109,7 @@ public class VPoint extends GmmlDrawingObject {
 		return null;
 	}
 	
-	protected void adjustToHandle(GmmlHandle h) {
+	protected void adjustToHandle(Handle h) {
 		double mcx = h.mCenterx;
 		double mcy = h.mCentery;
 		for(MPoint p : mPoints) {
@@ -118,12 +118,12 @@ public class VPoint extends GmmlDrawingObject {
 		}
 	}
 	
-	protected GmmlHandle getHandle() {
+	protected Handle getHandle() {
 		return handle;
 	}
 	
-	protected GmmlHandle[] getHandles() {
-		return new GmmlHandle[] { handle };
+	protected Handle[] getHandles() {
+		return new Handle[] { handle };
 	}
 	
 	protected void draw(PaintEvent e) {

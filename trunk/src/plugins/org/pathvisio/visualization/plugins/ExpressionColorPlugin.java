@@ -16,6 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.jdom.Element;
 
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.visualization.Visualization;
@@ -334,5 +335,17 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 		}
 	}
 	
-	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) { return null; }
+	public Composite visualizeOnToolTip(Composite parent, Graphics g) { return null; }
+
+	@Override
+	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC gc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visualizeOnSidePanel(Collection<Graphics> objects) {
+		// TODO Auto-generated method stub
+		
+	}
 }

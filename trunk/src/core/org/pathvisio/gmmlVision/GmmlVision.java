@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.pathvisio.graphics.GmmlDrawing;
+import org.pathvisio.view.Pathway;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.util.Utils;
 import org.pathvisio.data.DBConnector;
@@ -63,7 +63,7 @@ public abstract class GmmlVision {
 	 */
 	
 	static GmmlVisionWindow window;
-	static GmmlDrawing drawing;
+	static Pathway drawing;
 	static GmmlData gmmlData;
 	
 	private static ImageRegistry imageRegistry;
@@ -139,7 +139,7 @@ public abstract class GmmlVision {
 	/**
 	 * Gets the currently open drawing
 	 */
-	public static GmmlDrawing getDrawing() {
+	public static Pathway getDrawing() {
 		return drawing;
 	}
 		
@@ -161,7 +161,7 @@ public abstract class GmmlVision {
 	public static void openPathway(String pwf)
 	{
 		GmmlData _gmmlData = null;
-		GmmlDrawing _drawing = getWindow().createNewDrawing();
+		Pathway _drawing = getWindow().createNewDrawing();
 		
 		// initialize new JDOM gpml representation and read the file
 		try { 

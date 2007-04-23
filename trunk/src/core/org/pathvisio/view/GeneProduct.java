@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -35,7 +35,7 @@ import org.pathvisio.model.GmmlDataObject;
  * This class implements a geneproduct and 
  * provides methods to resize and draw it.
  */
-public class GmmlGeneProduct extends GmmlGraphicsShape
+public class GeneProduct extends GraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 	public static final RGB INITIAL_FILL_COLOR = new RGB(255, 255, 255);
@@ -43,13 +43,13 @@ public class GmmlGeneProduct extends GmmlGraphicsShape
 	// note: not the same as color!
 	RGB fillColor = INITIAL_FILL_COLOR;
 		
-	public GmmlGeneProduct (GmmlDrawing canvas, GmmlDataObject o) {
+	public GeneProduct (Pathway canvas, GmmlDataObject o) {
 		super(canvas, o);		
 		setHandleLocation();
 	}
 		
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_GENEPRODUCT;
+		return Pathway.DRAW_ORDER_GENEPRODUCT;
 	}
 	
 	/**

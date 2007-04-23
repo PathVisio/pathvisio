@@ -17,7 +17,7 @@
 package org.pathvisio.visualization.plugins;
 
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.Graphics;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -582,5 +583,18 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		
 	}
 	
-	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) { return null; }
+	public Composite visualizeOnToolTip(Composite parent, Graphics g) { return null; }
+
+	@Override
+	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC gc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visualizeOnSidePanel(Collection<Graphics> objects) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlDrawing;
+import org.pathvisio.view.Pathway;
 import org.pathvisio.model.GmmlData;
 
 public class SwtUtils {
@@ -139,7 +139,7 @@ public class SwtUtils {
 	static int ii;
 	static int pixratio;
 	public static Font adjustFontSize(Font f, Point toFit, String text, GC gc, Display display) {
-		GmmlDrawing d = GmmlVision.getDrawing();
+		Pathway d = GmmlVision.getDrawing();
 		pixratio = (int)Math.ceil(3 * (d == null ? 1 : d.getZoomFactor()));
 		ii = 3;
 		incrs = new int[3];

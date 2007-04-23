@@ -14,35 +14,22 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package ensembl2visio;
+package org.pathvisio.model;
 
-import org.pathvisio.debug.StopWatch;
+public class ConverterException extends Exception {
 
-/**
- * Provides a main for importing data into existing database
- * Used to add metabolomics data
- * 
- * @author martijn
- */
-public class AppendGDB {
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param args command line arguments
-	 * 
-	 * Commandline:
-	 * - database directory (=dbname)
-	 * - metabolite table .txt file
-	 * assumes database type is derby (unzipped)
-	 */
-	public static void main(String[] args) 
+	ConverterException(String msg)
 	{
-		String dbname = args[0];
-		String file = args[1];
-		
-		DerbyGDBMaker gdbMaker = new DerbyGDBMaker(dbname);
-	    gdbMaker.AddMetabolitesFromTxt(file, dbname); 
-		
-        
+		super(msg);
 	}
+
+	ConverterException(Exception e)
+	{
+		super(e.getClass() + ": " + e.getMessage());
+		setStackTrace(e.getStackTrace());
+	}
+
 
 }

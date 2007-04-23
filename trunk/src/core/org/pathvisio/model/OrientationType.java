@@ -14,35 +14,32 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package ensembl2visio;
+package org.pathvisio.model;
 
-import org.pathvisio.debug.StopWatch;
+import java.util.Arrays;
+import java.util.List;
 
-/**
- * Provides a main for importing data into existing database
- * Used to add metabolomics data
- * 
- * @author martijn
- */
-public class AppendGDB {
+public class OrientationType {
 
-	/**
-	 * @param args command line arguments
-	 * 
-	 * Commandline:
-	 * - database directory (=dbname)
-	 * - metabolite table .txt file
-	 * assumes database type is derby (unzipped)
-	 */
-	public static void main(String[] args) 
+	// warning: don't change these constants. Correct mapping to .MAPP format depends on it.
+	public static final int TOP		= 0;
+	public static final int RIGHT	= 1;
+	public static final int BOTTOM	= 2;
+	public static final int LEFT	= 3;
+
+	// Some mappings to Gpml
+	private static final List orientationMappings = Arrays.asList(new String[] {
+			"top", "right", "bottom", "left"
+	});
+
+	public static int getMapping(String value)
 	{
-		String dbname = args[0];
-		String file = args[1];
-		
-		DerbyGDBMaker gdbMaker = new DerbyGDBMaker(dbname);
-	    gdbMaker.AddMetabolitesFromTxt(file, dbname); 
-		
-        
+		return orientationMappings.indexOf(value);
+	}
+	
+	public static String getMapping(int value)
+	{
+		return (String)orientationMappings.get(value);
 	}
 
 }

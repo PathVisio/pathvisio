@@ -14,35 +14,11 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package ensembl2visio;
+package org.pathvisio.model;
 
-import org.pathvisio.debug.StopWatch;
+import java.util.EventListener;
 
-/**
- * Provides a main for importing data into existing database
- * Used to add metabolomics data
- * 
- * @author martijn
- */
-public class AppendGDB {
-
-	/**
-	 * @param args command line arguments
-	 * 
-	 * Commandline:
-	 * - database directory (=dbname)
-	 * - metabolite table .txt file
-	 * assumes database type is derby (unzipped)
-	 */
-	public static void main(String[] args) 
-	{
-		String dbname = args[0];
-		String file = args[1];
-		
-		DerbyGDBMaker gdbMaker = new DerbyGDBMaker(dbname);
-	    gdbMaker.AddMetabolitesFromTxt(file, dbname); 
-		
-        
-	}
-
+public interface GmmlListener extends EventListener {	
+	public void gmmlObjectModified(GmmlEvent e);
+	
 }

@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.util.TableColumnResizer;
 import org.pathvisio.util.tableviewer.TableData.Row;
@@ -139,7 +139,7 @@ public class PathwayTable extends Composite {
 				File pwFile = new File(pw);
 				if(!pwFile.canRead()) {
 					FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-					fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+					fd.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 					FileInputDialog fid = new FileInputDialog(getShell(), "Specify pathway file", 
 							"Couldn't find pathway file, please specify which pathway to open",
 							pwFile.getAbsolutePath(), null, fd);
@@ -147,9 +147,9 @@ public class PathwayTable extends Composite {
 						pw = fid.getValue();
 					}
 				}
-				GmmlVision.openPathway(pw);
+				Engine.openPathway(pw);
 			} catch(Exception ex) { 
-				GmmlVision.log.error("when trying to open pathway from pathway table", ex);
+				Engine.log.error("when trying to open pathway from pathway table", ex);
 			}
 		}
 	};

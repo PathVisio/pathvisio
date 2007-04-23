@@ -47,7 +47,7 @@ import org.pathvisio.visualization.plugins.VisualizationPlugin;
 import org.pathvisio.data.GmmlGex;
 import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
 import org.pathvisio.data.GmmlGex.ExpressionDataListener;
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.Graphics;
 
 /**
@@ -110,7 +110,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 			plugins.put(c, pr);
 			pluginPlacement.add(pr);
 		} catch(Throwable e) {
-			GmmlVision.log.error("Unable to create instance of plugin " + c, e);
+			Engine.log.error("Unable to create instance of plugin " + c, e);
 		}
 	}
 
@@ -379,7 +379,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 				PluginSet pr = PluginSet.fromXML((Element)o, v);
 				v.setPluginSet(pr.getClass(), pr);
 			} catch(Throwable e) {
-				GmmlVision.log.error("Unable to load plugin", e);
+				Engine.log.error("Unable to load plugin", e);
 			}
 		}		
 		return v;

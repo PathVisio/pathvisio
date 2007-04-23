@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.util.ColorConverter;
@@ -343,7 +343,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			try {
 				useSamples.add(createConfiguredSample((Element)o));
 			} catch(Exception e) {
-				GmmlVision.log.error("Unable to save plugin settings", e);
+				Engine.log.error("Unable to save plugin settings", e);
 			}
 		}	
 	}

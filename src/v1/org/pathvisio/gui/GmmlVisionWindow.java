@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -38,9 +38,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
-import org.pathvisio.gmmlVision.sidepanels.TabbedSidePanel;
+import org.pathvisio.gui.CommonActions;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
+import org.pathvisio.gui.TabbedSidePanel;
 import org.pathvisio.view.Pathway;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.preferences.GmmlPreferenceManager;
@@ -53,6 +54,7 @@ import org.pathvisio.data.*;
 import org.pathvisio.model.*;
 import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
 import org.pathvisio.data.GmmlGex.ExpressionDataListener;
+import org.pathvisio.Globals;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
@@ -65,407 +67,23 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 						ApplicationEventListener, ExpressionDataListener
 {
 	private static final long serialVersionUID = 1L;
-	private static int ZOOM_TO_FIT = -1;
-		
-	/**
-	 * {@link Action} to create a new gpml pathway
-	 */
-	private class NewAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public NewAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&New pathway@Ctrl+N");
-			setToolTipText ("Create new pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(
-					GmmlVision.getResourceURL("icons/new.gif")));
-		}
-		public void run () {
-			if (GmmlVision.gmmlData == null ||
-				MessageDialog.openQuestion(window.getShell(), "Discard changes?",
-						"Warning: This will discard any changes to " +
-						"the current pathway. Are you sure?"))
-			{
-				GmmlVision.newPathway();
-			}
-		}
-	}
-	private NewAction newAction = new NewAction (this);
+	public static int ZOOM_TO_FIT = -1;
 	
-	/**
-	 * {@link Action} to open an gpml pathway
-	 */
-	private class OpenAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public OpenAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&Open pathway@Ctrl+O");
-			setToolTipText ("Open pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/open.gif")));
-		}
-		public void run () 
-		{
-			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
-			fd.setText("Open");
-			String pwpath = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES);
-			fd.setFilterPath(pwpath);
-			fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {GmmlVision.PATHWAY_FILTER_NAME, "All files (*.*)"});
-	        String fnMapp = fd.open();
-	        // Only open pathway if user selected a file
-	        
-	        if(fnMapp != null) { 
-	        	GmmlVision.openPathway(fnMapp); 
-	        }
-		}
-	}
-	private OpenAction openAction = new OpenAction (this);
-	
-	/**
-	 * {@link Action} to open an gpml pathway
-	 */
-	private class ImportAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public ImportAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&Import");
-			setToolTipText ("Import Pathway in GenMAPP format");
-		}
-		public void run () 
-		{
-			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
-			fd.setText("Open");
-			fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
-			fd.setFilterExtensions(new String[] {"*." + GmmlVision.GENMAPP_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {GmmlVision.GENMAPP_FILTER_NAME, "All files (*.*)"});
-	        String fnMapp = fd.open();
-	        // Only open pathway if user selected a file
-	        
-	        if(fnMapp != null) { 
-	        	GmmlVision.openPathway(fnMapp); 
-	        }
-		}
-	}
-	private ImportAction importAction = new ImportAction (this);
-	
-	/**
-	 * {@link Action} to save a gpml pathway
-	 */
-	private class SaveAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public SaveAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&Save pathway@Ctrl+S");
-			setToolTipText ("Save pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/save.gif")));
-		}
-		
-		public void run () {
-			GmmlData gmmlData = GmmlVision.getGmmlData();
-			Pathway drawing = GmmlVision.getDrawing();
-			
-			double usedZoom = drawing.getPctZoom();
-			// Set zoom to 100%
-			drawing.setPctZoom(100);			
-			// Overwrite the existing xml file
-			if (gmmlData.getSourceFile() != null)
-			{
-				try
-				{
-					gmmlData.writeToXml(gmmlData.getSourceFile(), true);
-				}
-				catch (ConverterException e)
-				{
-					String msg = "While writing xml to " 
-							+ gmmlData.getSourceFile().getAbsolutePath();					
-					MessageDialog.openError (window.getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-							"See the error log for details.");
-					GmmlVision.log.error(msg, e);
-				}
-			}
-			else
-			{
-				saveAsAction.run();
-			}
-			// Set zoom back
-			drawing.setPctZoom(usedZoom);
-		}
-	}
-	private SaveAction saveAction = new SaveAction(this);
-	
-	/**
-	 * {@link Action} to save a gpml pathway to a file specified by the user
-	 */
-	private class SaveAsAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public SaveAsAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("Save pathway &As");
-			setToolTipText ("Save pathway with new file name");
-		}
-		public void run () {
-			Pathway drawing = GmmlVision.getDrawing();
-			GmmlData gmmlData = GmmlVision.getGmmlData();
-			// Check if a gpml pathway is loaded
-			if (drawing != null)
-			{
-				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
-				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*." + GmmlVision.PATHWAY_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {GmmlVision.PATHWAY_FILTER_NAME, "All files (*.*)"});
-				
-				File xmlFile = gmmlData.getSourceFile();
-				if(xmlFile != null) {
-					fd.setFileName(xmlFile.getName());
-					fd.setFilterPath(xmlFile.getPath());
-				} else {
-					fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
-				}
-				String fileName = fd.open();
-				// Only proceed if user selected a file
-				
-				if(fileName == null) return;
-				
-				// Append .gpml extension if not already present
-				if(!fileName.endsWith("." + GmmlVision.PATHWAY_FILE_EXTENSION)) 
-					fileName += "." + GmmlVision.PATHWAY_FILE_EXTENSION;
-				
-				File checkFile = new File(fileName);
-				boolean confirmed = true;
-				// If file exists, ask overwrite permission
-				if(checkFile.exists())
-				{
-					confirmed = MessageDialog.openQuestion(window.getShell(),"",
-					"File already exists, overwrite?");
-				}
-				if(confirmed)
-				{
-					double usedZoom = drawing.getPctZoom();
-					// Set zoom to 100%
-					drawing.setPctZoom(100);					
-					// Overwrite the existing xml file
-					try
-					{
-						gmmlData.writeToXml(checkFile, true);
-						// Set zoom back
-						drawing.setPctZoom(usedZoom);
-					}
-					catch (ConverterException e)
-					{
-						String msg = "While writing xml to " 
-							+ checkFile.getAbsolutePath();					
-						MessageDialog.openError (window.getShell(), "Error", 
-								"Error: " + msg + "\n\n" + 
-								"See the error log for details.");
-						GmmlVision.log.error(msg, e);
-					}
-				}
-			}
-			else
-			{
-				MessageDialog.openError (window.getShell(), "Error", 
-					"No gpml file loaded! Open or create a new gpml file first");
-			}			
-		}
-	}
-	private SaveAsAction saveAsAction = new SaveAsAction (this);
-
-	/**
-	 * {@link Action} to save a gpml pathway to a file specified by the user
-	 */
-	private class ExportAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public ExportAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&Export");
-			setToolTipText ("Export Pathway to GenMAPP format");
-		}
-		public void run () {
-			Pathway drawing = GmmlVision.getDrawing();
-			GmmlData gmmlData = GmmlVision.getGmmlData();
-			// Check if a gpml pathway is loaded
-			if (drawing != null)
-			{
-				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
-				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*." + GmmlVision.GENMAPP_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {GmmlVision.GENMAPP_FILTER_NAME, "All files (*.*)"});
-				
-				File xmlFile = gmmlData.getSourceFile();
-				if(xmlFile != null) {
-					String name = xmlFile.getName();
-					if (name.endsWith("." + GmmlVision.PATHWAY_FILE_EXTENSION))
-					{
-						name = name.substring(0, name.length() - 
-							GmmlVision.PATHWAY_FILE_EXTENSION.length()) +
-							GmmlVision.GENMAPP_FILE_EXTENSION;
-					}
-					fd.setFileName(name);
-					fd.setFilterPath(xmlFile.getPath());
-				} else {
-					fd.setFileName(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
-				}
-				String fileName = fd.open();
-				// Only proceed if user selected a file
-				
-				if(fileName == null) return;
-				
-				// Append .mapp extension if not already present
-				if(!fileName.endsWith("." + GmmlVision.GENMAPP_FILE_EXTENSION)) 
-					fileName += "." + GmmlVision.GENMAPP_FILE_EXTENSION;
-				
-				File checkFile = new File(fileName);
-				boolean confirmed = true;
-				// If file exists, ask overwrite permission
-				if(checkFile.exists())
-				{
-					confirmed = MessageDialog.openQuestion(window.getShell(),"",
-					"File already exists, overwrite?");
-				}
-				if(confirmed)
-				{
-					try
-					{
-						gmmlData.writeToMapp(checkFile);
-					}
-					catch (ConverterException e)
-					{
-						String msg = "While writing mapp to " 
-							+ checkFile.getAbsolutePath();					
-						MessageDialog.openError (window.getShell(), "Error", 
-								"Error: " + msg + "\n\n" + 
-								"See the error log for details.");
-						GmmlVision.log.error(msg, e);
-					}
-				}
-			}
-			else
-			{
-				MessageDialog.openError (window.getShell(), "Error", 
-					"No pathway to save! Open or create a new pathway first");
-			}			
-		}
-	}
-	private ExportAction exportAction = new ExportAction (this);
-
-	/**
-	 * {@link Action} to close the gpml pathway (does nothing yet)
-	 */
-	private class CloseAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public CloseAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&Close pathway@Ctrl+W");
-			setToolTipText ("Close this pathway");
-		}
-		public void run () {
-			//TODO: unload drawing, ask to save
-		}
-	}
-	private CloseAction closeAction = new CloseAction(this);
-	
-	/**
-	 * {@link Action} to exit the application
-	 */
-	private class ExitAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public ExitAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("E&xit@Ctrl+X");
-			setToolTipText ("Exit Application");
-		}
-		public void run () {
-			window.close();
-			//TODO: ask to save pathway if content is changed
-		}
-	}
-	private ExitAction exitAction = new ExitAction(this);
-
-	private class PreferencesAction extends Action
-	{
-		GmmlVisionWindow window;
-		public PreferencesAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText("&Preferences");
-			setToolTipText("Edit preferences");
-		}
-		public void run () {
-			PreferenceManager pg = new GmmlPreferenceManager();
-			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
-			pd.setPreferenceStore(GmmlVision.getPreferences());
-			pd.open();
-		}
-	}
-	private PreferencesAction preferencesAction = new PreferencesAction(this);
-
-	/**
-	 * {@link Action} that zooms a mapp to the specified zoomfactor
-	 */
-	private class ZoomAction extends Action 
-	{
-		GmmlVisionWindow window;
-		int pctZoomFactor;
-		
-		/**
-		 * Constructor for this class
-		 * @param w {@link GmmlVisionWindow} window this action belongs to
-		 * @param newPctZoomFactor the zoom factor as percentage of original
-		 */
-		public ZoomAction (GmmlVisionWindow w, int newPctZoomFactor)
-		{
-			window = w;
-			pctZoomFactor = newPctZoomFactor;
-			if(pctZoomFactor == ZOOM_TO_FIT) 
-			{
-				setText ("Zoom to fit");
-				setToolTipText("Zoom mapp to fit window");
-			}
-			else
-			{
-				setText (pctZoomFactor + " %");
-				setToolTipText ("Zoom mapp to " + pctZoomFactor + " %");
-			}
-		}
-		public void run () {
-			Pathway drawing = GmmlVision.getDrawing();
-			if (drawing != null)
-			{
-				double newPctZoomFactor = pctZoomFactor;
-				if(pctZoomFactor == ZOOM_TO_FIT) 
-				{
-					Point shellSize = window.sc.getSize();
-					Point drawingSize = drawing.getSize();
-					newPctZoomFactor = (int)Math.min(
-							drawing.getPctZoom() * (double)shellSize.x / drawingSize.x,
-							drawing.getPctZoom() * (double)shellSize.y / drawingSize.y
-					);
-				} 
-				drawing.setPctZoom(newPctZoomFactor);
-			}
-			else
-			{
-				MessageDialog.openError (window.getShell(), "Error", 
-					"No gpml file loaded! Open or create a new gpml file first");
-			}
-		}
-	}
+	private CommonActions.UndoAction undoAction = new CommonActions.UndoAction(this);	
+	private CommonActions.NewAction newAction = new CommonActions.NewAction (this);
+	private CommonActions.SvgExportAction svgExportAction = new CommonActions.SvgExportAction (this);
+	private CommonActions.OpenAction openAction = new CommonActions.OpenAction (this);	
+	private CommonActions.ImportAction importAction = new CommonActions.ImportAction (this);	
+	private CommonActions.SaveAction saveAction = new CommonActions.SaveAction(this);	
+	private CommonActions.SaveAsAction saveAsAction = new CommonActions.SaveAsAction (this);
+	private CommonActions.ExportAction exportAction = new CommonActions.ExportAction (this);
+	private CommonActions.CloseAction closeAction = new CommonActions.CloseAction(this);	
+	private CommonActions.ExitAction exitAction = new CommonActions.ExitAction(this);
+	private CommonActions.PreferencesAction preferencesAction = new CommonActions.PreferencesAction(this);
+	private CommonActions.AboutAction aboutAction = new CommonActions.AboutAction(this);
+	private CommonActions.CopyAction copyAction = new CommonActions.CopyAction(this);
+	private CommonActions.HelpAction helpAction = new CommonActions.HelpAction(this);	
+	private CommonActions.PasteAction pasteAction = new CommonActions.PasteAction(this);
 	
 	/**
 	 * {@link Action} to select a Gene Database
@@ -488,14 +106,14 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				if(dbName == null) return;
 				
 				GmmlGdb.connect(dbName);
-				setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
+				setStatus("Using Gene Database: '" + Engine.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
 						"Error: " + msg + "\n\n" + 
 						"See the error log for details.");
-				GmmlVision.log.error(msg, e);
+				Engine.log.error(msg, e);
 			}
 		}
 	}
@@ -506,9 +124,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 	 */
 	private void cacheExpressionData()
 	{
-		if(GmmlVision.isDrawingOpen())
+		if(Engine.isDrawingOpen())
 		{
-			Pathway drawing = GmmlVision.getDrawing();
+			Pathway drawing = Engine.getDrawing();
 			//Check for neccesary connections
 			if(GmmlGex.isConnected() && GmmlGdb.isConnected())
 			{
@@ -521,104 +139,12 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 					MessageDialog.openError (getShell(), "Error", 
 							"Error: " + msg + "\n\n" + 
 							"See the error log for details.");
-					GmmlVision.log.error(msg, e);
+					Engine.log.error(msg, e);
 				}
 			}
 		}
 	}	
-	
-	/**
-	 * {@link Action} to open a {@link GmmlAboutBox} window
-	 */
-	private class AboutAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public AboutAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&About");
-			setToolTipText ("About " + Globals.APPLICATION_VERSION_NAME);
-		}
-		public void run () {
-			GmmlAboutBox gmmlAboutBox = new GmmlAboutBox(window.getShell(), SWT.NONE);
-			gmmlAboutBox.open();
-		}
-	}
-	private AboutAction aboutAction = new AboutAction(this);
-	
-	/**
-	 * {@link Action} to open a {@link GmmlAboutBox} window
-	 */
-	private class HelpAction extends Action 
-	{
-		GmmlVisionWindow window;
-		public HelpAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("&Help@F1");
-			setToolTipText ("Opens " + Globals.APPLICATION_VERSION_NAME + " help in your web browser");
-		}
-		public void run () {
-			SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
-					window.getClass(), "openHelp", new Class[] {}, new Object[] {}, null);
-			SimpleRunnableWithProgress.setMonitorInfo("Opening help", IProgressMonitor.UNKNOWN);
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-			try {
-				dialog.run(true, true, rwp);
-			} catch (InvocationTargetException e) {
-				Throwable cause = e.getCause();
-				String msg = cause == null ? null : cause.getMessage();
-				MessageDialog.openError(getShell(), "Unable to open help",
-				"Unable to open web browser" +
-				(msg == null ? "" : ": " + msg) +
-				"\nYou can open the help page manually:\n" +
-				Globals.HELP_URL);
-			} catch (InterruptedException ignore) {}
-			
-
-		}
-	}
-	private HelpAction helpAction = new HelpAction(this);
-	
-	public static void openHelp() throws Exception {
-		BrowserLauncher bl = new BrowserLauncher(null);
-		bl.openURLinBrowser(Globals.HELP_URL);
-	}
-	
-	private class CopyAction extends Action
-	{
-		GmmlVisionWindow window;
-		public CopyAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("Copy@Ctrl+C");
-			setToolTipText ("Copy selected objects to clipboard");
-		}
-		public void run()
-		{
-			GmmlVision.drawing.copyToClipboard();
-		}
-	}
-		
-	private CopyAction copyAction = new CopyAction(this);
-	
-	private class PasteAction extends Action
-	{
-		GmmlVisionWindow window;
-		public PasteAction (GmmlVisionWindow w)
-		{
-			window = w;
-			setText ("Paste@Ctrl+V");
-			setToolTipText ("Paste contents of clipboard");
-		}
-		public void run()
-		{
-			GmmlVision.drawing.pasteFromClipboad();
-		}
-	}
-	
-	private PasteAction pasteAction = new PasteAction(this);
-				
+					
 	/**
 	 * {@link Action} to switch between edit and view mode
 	 */
@@ -630,17 +156,17 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		public SwitchEditModeAction (GmmlVisionWindow w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromURL(GmmlVision.getResourceURL("icons/edit.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/edit.gif")));
 			setToolTipText(ttUnChecked);
 			window = w;
 			
-			GmmlVision.addApplicationEventListener(this);
+			Engine.addApplicationEventListener(this);
 		}
 		
 		public void run () {
-			if(GmmlVision.isDrawingOpen())
+			if(Engine.isDrawingOpen())
 			{
-				Pathway drawing = GmmlVision.getDrawing();
+				Pathway drawing = Engine.getDrawing();
 				if(isChecked())
 				{
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
@@ -676,7 +202,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.type == ApplicationEvent.OPEN_PATHWAY) {
-				GmmlVision.getDrawing().setEditMode(isChecked());
+				Engine.getDrawing().setEditMode(isChecked());
 			}
 			else if(e.type == ApplicationEvent.NEW_PATHWAY) {
 				switchEditMode(true);
@@ -727,86 +253,86 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			switch(element) {
 			case Pathway.NEWLINE: 
 				toolTipText = "Draw new line";
-				imageURL = GmmlVision.getResourceURL("icons/newline.gif");
+				imageURL = Engine.getResourceURL("icons/newline.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLINEARROW:
 				toolTipText = "Draw new arrow";
-				imageURL = GmmlVision.getResourceURL("icons/newarrow.gif");
+				imageURL = Engine.getResourceURL("icons/newarrow.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLINEDASHED:
 				toolTipText = "Draw new dashed line";
-				imageURL = GmmlVision.getResourceURL("icons/newdashedline.gif");
+				imageURL = Engine.getResourceURL("icons/newdashedline.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLINEDASHEDARROW:
 				toolTipText = "Draw new dashed arrow";
-				imageURL = GmmlVision.getResourceURL("icons/newdashedarrow.gif");
+				imageURL = Engine.getResourceURL("icons/newdashedarrow.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLABEL:
 				toolTipText = "Draw new label";
-				imageURL = GmmlVision.getResourceURL("icons/newlabel.gif");
+				imageURL = Engine.getResourceURL("icons/newlabel.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWARC:
 				toolTipText = "Draw new arc";
-				imageURL = GmmlVision.getResourceURL("icons/newarc.gif");
+				imageURL = Engine.getResourceURL("icons/newarc.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWBRACE:
 				toolTipText = "Draw new brace";
-				imageURL = GmmlVision.getResourceURL("icons/newbrace.gif");
+				imageURL = Engine.getResourceURL("icons/newbrace.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWGENEPRODUCT:
 				toolTipText = "Draw new geneproduct";
-				imageURL = GmmlVision.getResourceURL("icons/newgeneproduct.gif");
+				imageURL = Engine.getResourceURL("icons/newgeneproduct.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWRECTANGLE:
-				imageURL = GmmlVision.getResourceURL("icons/newrectangle.gif");
+				imageURL = Engine.getResourceURL("icons/newrectangle.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWOVAL:
 				toolTipText = "Draw new oval";
-				imageURL = GmmlVision.getResourceURL("icons/newoval.gif");
+				imageURL = Engine.getResourceURL("icons/newoval.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWTBAR:
 				toolTipText = "Draw new TBar";
-				imageURL = GmmlVision.getResourceURL("icons/newtbar.gif");
+				imageURL = Engine.getResourceURL("icons/newtbar.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWRECEPTORROUND:
 				toolTipText = "Draw new round receptor";
-				imageURL = GmmlVision.getResourceURL("icons/newreceptorround.gif");
+				imageURL = Engine.getResourceURL("icons/newreceptorround.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWRECEPTORSQUARE:
 				toolTipText = "Draw new square receptor";
-				imageURL = GmmlVision.getResourceURL("icons/newreceptorsquare.gif");
+				imageURL = Engine.getResourceURL("icons/newreceptorsquare.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLIGANDROUND:
 				toolTipText = "Draw new round ligand";
-				imageURL = GmmlVision.getResourceURL("icons/newligandround.gif");
+				imageURL = Engine.getResourceURL("icons/newligandround.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLIGANDSQUARE:
 				toolTipText = "Draw new square ligand";
-				imageURL = GmmlVision.getResourceURL("icons/newligandsquare.gif");
+				imageURL = Engine.getResourceURL("icons/newligandsquare.gif");
 				setChecked(false);
 				break;
 			case Pathway.NEWLINEMENU:
 				setMenuCreator(new NewItemMenuCreator(Pathway.NEWLINEMENU));
-				imageURL = GmmlVision.getResourceURL("icons/newlinemenu.gif");
+				imageURL = Engine.getResourceURL("icons/newlinemenu.gif");
 				toolTipText = "Draw new line or arrow";
 				break;
 			case Pathway.NEWLINESHAPEMENU:
 				setMenuCreator(new NewItemMenuCreator(Pathway.NEWLINESHAPEMENU));
-				imageURL = GmmlVision.getResourceURL("icons/newlineshapemenu.gif");
+				imageURL = Engine.getResourceURL("icons/newlineshapemenu.gif");
 				toolTipText = "Draw new ligand or receptor";
 				break;
 			}
@@ -820,11 +346,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 			{
 				deselectNewItemActions();
 				setChecked(true);
-				GmmlVision.getDrawing().setNewGraphics(element);
+				Engine.getDrawing().setNewGraphics(element);
 			}
 			else
 			{	
-				GmmlVision.getDrawing().setNewGraphics(Pathway.NEWNONE);
+				Engine.getDrawing().setNewGraphics(Pathway.NEWNONE);
 			}
 		}
 		
@@ -909,7 +435,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		GmmlVision.getDrawing().setNewGraphics(Pathway.NEWNONE);
+		Engine.getDrawing().setNewGraphics(Pathway.NEWNONE);
 	}
 	
 	// Elements of the coolbar
@@ -984,7 +510,7 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 							if(zoomText.equals("Zoom to fit"))
 									{ pctZoom = ZOOM_TO_FIT; } else { return; }
 						}
-						new ZoomAction(window, pctZoom).run();
+						new CommonActions.ZoomAction(window, pctZoom).run();
 					}
 					public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
 				});
@@ -1043,13 +569,13 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		MenuManager viewMenu = new MenuManager ("&View");
 		viewMenu.add(showRightPanelAction);
 		MenuManager zoomMenu = new MenuManager("&Zoom");
-		zoomMenu.add(new ZoomAction(this, 50));
-		zoomMenu.add(new ZoomAction(this, 75));
-		zoomMenu.add(new ZoomAction(this, 100));
-		zoomMenu.add(new ZoomAction(this, 125));
-		zoomMenu.add(new ZoomAction(this, 150));
-		zoomMenu.add(new ZoomAction(this, 200));
-		zoomMenu.add(new ZoomAction(this, ZOOM_TO_FIT));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 50));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 75));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 100));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 125));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 150));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 200));
+		zoomMenu.add(new CommonActions.ZoomAction(this, ZOOM_TO_FIT));
 		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
@@ -1082,19 +608,19 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		addStatusLine();
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
-		GmmlVision.addApplicationEventListener(this);
+		Engine.addApplicationEventListener(this);
 		GmmlGex.addListener(this);
 	}
 	
 	public boolean close() {
-		GmmlVision.fireApplicationEvent(
+		Engine.fireApplicationEvent(
 				new ApplicationEvent(this, ApplicationEvent.CLOSE_APPLICATION));
 		return super.close();
 	}
 	
 	public ScrolledComposite sc;
-	public GmmlBpBrowser bpBrowser; //Browser for showing backpage information
-	public GmmlPropertyTable propertyTable;	//Table showing properties of GmmlGraphics objects
+	public BackpagePanel bpBrowser; //Browser for showing backpage information
+	public PropertyPanel propertyTable;	//Table showing properties of GmmlGraphics objects
 	SashForm sashForm; //SashForm containing the drawing area and sidebar
 	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
 	PathwaySearchComposite pwSearchComposite; //Composite that handles pathway searches and displays results
@@ -1107,9 +633,9 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		
 		shell.setText(Globals.APPLICATION_VERSION_NAME);
 		
-		GmmlVisionMain.loadImages(shell.getDisplay());
+		GuiMain.loadImages(shell.getDisplay());
 		
-		shell.setImage(GmmlVision.getImageRegistry().get("shell.icon"));
+		shell.setImage(Engine.getImageRegistry().get("shell.icon"));
 		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
@@ -1122,8 +648,8 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
 		
 		//rightPanel controls
-		bpBrowser = new GmmlBpBrowser(rightPanel.getTabFolder(), SWT.NONE);
-		propertyTable = new GmmlPropertyTable(
+		bpBrowser = new BackpagePanel(rightPanel.getTabFolder(), SWT.NONE);
+		propertyTable = new PropertyPanel(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
 		legend = new GmmlLegend(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL);
@@ -1135,14 +661,14 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		rightPanel.addTab(legend, "Legend");
 		rightPanel.addTab(visPanel, "Visualization");
 		
-		int sidePanelSize = GmmlVision.getPreferences().getInt(GmmlPreferences.PREF_SIDEPANEL_SIZE);
+		int sidePanelSize = Engine.getPreferences().getInt(GmmlPreferences.PREF_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
-		setStatus("Using Gene Database: '" + GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
+		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB) + "'");
 				
 		return parent;
 		
@@ -1175,11 +701,11 @@ public class GmmlVisionWindow extends ApplicationWindow implements
 		Pathway drawing = null;
 		switch(e.type) {
 		case ApplicationEvent.NEW_PATHWAY:
-			drawing = GmmlVision.getDrawing();
+			drawing = Engine.getDrawing();
 			sc.setContent(drawing);
 			break;
 		case ApplicationEvent.OPEN_PATHWAY:
-			drawing = GmmlVision.getDrawing();
+			drawing = Engine.getDrawing();
 			sc.setContent(drawing);
 			if(GmmlGex.isConnected()) cacheExpressionData();
 			break;	

@@ -25,7 +25,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.VisualizationManager;
@@ -161,7 +161,7 @@ public class ColorSet {
 					return gcRgb;
 				}
 			} catch(Exception e) {
-				GmmlVision.log.error("ColorSetObject " + gc + " could not evaluate data: " + e.getMessage());
+				Engine.log.error("ColorSetObject " + gc + " could not evaluate data: " + e.getMessage());
 			}
 		}
 		return rgb;
@@ -203,16 +203,16 @@ public class ColorSet {
 				else if(name.equals(XML_ELM_COLOR_NDF))
 					cs.setColor(ID_COLOR_NO_DATA_FOUND, ColorConverter.parseColorElement(elm));
 			} catch(Exception ex) {
-				GmmlVision.log.error("Unable to parse colorset xml", ex);
+				Engine.log.error("Unable to parse colorset xml", ex);
 			}
 		}
 		return cs;
 	}
 			
 	static void printParseError(String criterion, Exception e) {
-		GmmlVision.log.error("Unable to parse colorset data stored in " +
+		Engine.log.error("Unable to parse colorset data stored in " +
 				"expression database: " + criterion, e);
-		MessageDialog.openWarning(GmmlVision.getWindow().getShell(), 
+		MessageDialog.openWarning(Engine.getWindow().getShell(), 
 					"Warning", "Unable to parse the colorset data in this expression dataset");
 	}
 	

@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.data.ConvertType;
 import org.pathvisio.data.DataSources;
 
@@ -170,7 +170,7 @@ public class MappFormat
     		ce.setStackTrace(cnfe.getStackTrace());
     		throw ce;
     	}
-        GmmlVision.log.debug ("Connection string: " + database);
+        Engine.log.debug ("Connection string: " + database);
 		
 		// Create the connection to the database
         
@@ -180,7 +180,7 @@ public class MappFormat
 	        
 	        Statement s = con.createStatement();
 	        
-	        GmmlVision.log.trace ("READING INFO TABLE");
+	        Engine.log.trace ("READING INFO TABLE");
 	        // first do the INFO table, only one row.
 		    {
 		        ResultSet r = s.executeQuery(sqlInfoSelect);
@@ -192,7 +192,7 @@ public class MappFormat
 		        copyMappInfo(row, data, filename);
 	    	}    
 	
-		    GmmlVision.log.trace ("READING OBJECTS TABLE");
+		    Engine.log.trace ("READING OBJECTS TABLE");
 	        // now do the OBJECTS table, multiple rows
 	        {
 		        ResultSet r = s.executeQuery(sqlObjectsSelect);
@@ -259,7 +259,7 @@ public class MappFormat
     			sObjects.setInt (1, k);
     			for (int j = 1; j < row.length; ++j)
     			{
-    				GmmlVision.log.trace ("[" + (j + 1) + "] " + row[j]);
+    				Engine.log.trace ("[" + (j + 1) + "] " + row[j]);
 //    				System.err.println ("[" + (j + 1) + "] " + row[j]);
     				if (j >= 14 && j < 17)
     				{
@@ -283,7 +283,7 @@ public class MappFormat
 
 			for (int j = 0; j < mappInfo.length; ++j)
 			{
-				GmmlVision.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
+				Engine.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
 				
 				sInfo.setString (j + 1, mappInfo[j]);
 			}    			
@@ -291,13 +291,13 @@ public class MappFormat
             con.close();
             
         } catch (ClassNotFoundException cl_ex) {
-        	GmmlVision.log.error ("-> Could not find the Sun JbdcObdcDriver\n");
+        	Engine.log.error ("-> Could not find the Sun JbdcObdcDriver\n");
         } catch (SQLException ex) {
-        	GmmlVision.log.error ("-> SQLException: "+ex.getMessage());        
+        	Engine.log.error ("-> SQLException: "+ex.getMessage());        
             ex.printStackTrace();
         } catch (IOException e)
         {
-        	GmmlVision.log.error (e.getMessage());
+        	Engine.log.error (e.getMessage());
         }
     }
     
@@ -351,7 +351,7 @@ public class MappFormat
 		*
 		*/
 	
-		GmmlVision.log.trace ("CONVERTING INFO TABLE TO GPML");
+		Engine.log.trace ("CONVERTING INFO TABLE TO GPML");
 		
 		GmmlDataObject o = data.getMappInfo();
 		

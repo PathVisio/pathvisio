@@ -16,7 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 
@@ -213,7 +213,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
 			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
-			fd.setHeight((int)Math.ceil(GmmlVision.getDrawing().vFromM(fd.getHeight()) * 15)); //TODO: get rid of 15
+			fd.setHeight((int)Math.ceil(Engine.getDrawing().vFromM(fd.getHeight()) * 15)); //TODO: get rid of 15
 		}
 		return fd;
 	}
@@ -363,7 +363,7 @@ public class LabelPlugin extends VisualizationPlugin {
 			if(fcElm != null) fontColor = ColorConverter.parseColorElement(fcElm);
 			if(alnStr != null) align = Integer.parseInt(alnStr);
 		} catch(NumberFormatException e) {
-			GmmlVision.log.error("Unable to load configuration for " + NAME, e);
+			Engine.log.error("Unable to load configuration for " + NAME, e);
 		}
 	}
 }

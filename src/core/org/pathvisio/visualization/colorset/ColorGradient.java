@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.TableColumnResizer;
 
@@ -152,7 +152,7 @@ public class ColorGradient extends ColorSetObject {
 		try {
 			rgb = new RGB((int)red, (int)green, (int)blue);
 		} catch (Exception e) { 
-			GmmlVision.log.error("GmmlColorGradient:getColor: " + 
+			Engine.log.error("GmmlColorGradient:getColor: " + 
 					red + "," + green + "," +blue + ", for value " + value, e);
 		}
 		return rgb;

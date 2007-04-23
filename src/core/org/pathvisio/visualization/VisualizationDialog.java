@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.util.TableColumnResizer;
 import org.pathvisio.util.Utils;
 import org.pathvisio.visualization.Visualization.PluginSet;
@@ -473,7 +473,7 @@ public class VisualizationDialog extends ApplicationWindow {
 					pluginTable.refresh();
 				} catch(Throwable e) {
 					MessageDialog.openError(getShell(), "Unable to load plugin", e.toString() + "\n" + e.getMessage());
-					GmmlVision.log.error("Unable to load plugin", e);
+					Engine.log.error("Unable to load plugin", e);
 				}
 			}
 		}
@@ -577,9 +577,9 @@ public class VisualizationDialog extends ApplicationWindow {
 	}
 	
 	class PluginTableLabelProvider implements ITableLabelProvider {
-		final Image checkTrue = GmmlVision.getImageRegistry().get("checkbox.checked");
-		final Image checkFalse = GmmlVision.getImageRegistry().get("checkbox.unchecked");
-		final Image checkUnavailable = GmmlVision.getImageRegistry().get("checkbox.unavailable");
+		final Image checkTrue = Engine.getImageRegistry().get("checkbox.checked");
+		final Image checkFalse = Engine.getImageRegistry().get("checkbox.unchecked");
+		final Image checkUnavailable = Engine.getImageRegistry().get("checkbox.unavailable");
 		
 		public String getColumnText(Object element, int columnIndex) {
 			PluginSet ps = (PluginSet)element;

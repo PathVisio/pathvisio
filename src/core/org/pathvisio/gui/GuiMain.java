@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -36,7 +36,7 @@ import org.pathvisio.model.GmmlData;
  * This class contains the main method and is responsible for initiating 
  * the application by setting up the user interface and creating all necessary objects
  */
-public class GmmlVisionMain {
+public class GuiMain {
 	
 	/**
 	 * Main method which will be carried out when running the program
@@ -51,14 +51,14 @@ public class GmmlVisionMain {
 			}
 			else if(a.equalsIgnoreCase("--UseR") ||
 					a.equalsIgnoreCase("-ur")) {
-				GmmlVision.USE_R = true;
+				Engine.USE_R = true;
 			}
 		}
 		
 		//Setup the application window
 		GmmlVisionWindow window = null;
-		if(debugHandles)	window = GmmlVision.getSleakWindow();
-		else				window = GmmlVision.getWindow();
+		if(debugHandles)	window = Engine.getSleakWindow();
+		else				window = Engine.getWindow();
 		
 		initiate();
 		
@@ -71,7 +71,7 @@ public class GmmlVisionMain {
 		GmmlGex.close();
 		GmmlGdb.close();
 		//Close log stream
-		GmmlVision.log.getStream().close();
+		Engine.log.getStream().close();
 		
 		Display.getCurrent().dispose();
 	}
@@ -82,11 +82,11 @@ public class GmmlVisionMain {
 	public static void initiate() {
 		//initiate logger
 		try { 
-			GmmlVision.log.setStream(new PrintStream(
-					GmmlVision.getPreferences().getString(GmmlPreferences.PREF_FILES_LOG))); 
+			Engine.log.setStream(new PrintStream(
+					Engine.getPreferences().getString(GmmlPreferences.PREF_FILES_LOG))); 
 		} catch(Exception e) {}
-		GmmlVision.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		GmmlData.setLogger(GmmlVision.log);
+		Engine.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+		GmmlData.setLogger(Engine.log);
 		
 		//initiate Gene database (to load previously used gdb)
 		GmmlGdb.init();
@@ -115,7 +115,7 @@ public class GmmlVisionMain {
 				GmmlPreferences.PREF_DIR_RDATA,
 		};
 		for(String pref : dirPrefs) {
-			File dir = new File(GmmlVision.getPreferences().getString(pref));
+			File dir = new File(Engine.getPreferences().getString(pref));
 			if(!dir.exists()) dir.mkdir();
 		}
 	}
@@ -125,8 +125,8 @@ public class GmmlVisionMain {
 		VisualizationManager vmgr = new VisualizationManager();
 		GmmlGex gex = new GmmlGex();
 		
-		GmmlVision.addApplicationEventListener(vmgr);
-		GmmlVision.addApplicationEventListener(gex);
+		Engine.addApplicationEventListener(vmgr);
+		Engine.addApplicationEventListener(gex);
 	}
 	
 	static void loadVisualizations() {
@@ -134,7 +134,7 @@ public class GmmlVisionMain {
 		try {
 			PluginManager.loadPlugins();
 		} catch (Throwable e) {
-			GmmlVision.log.error("When loading visualization plugins", e);
+			Engine.log.error("When loading visualization plugins", e);
 		}
 		
 		VisualizationManager.loadGeneric();
@@ -145,17 +145,17 @@ public class GmmlVisionMain {
 	 */
 	static void loadImages(Display display)
 	{
-		ClassLoader cl = GmmlVisionMain.class.getClassLoader();
+		ClassLoader cl = GuiMain.class.getClassLoader();
 	
 		ImageRegistry imageRegistry = new ImageRegistry(display);
 		
 		// Labels for color by expressiondata (mRNA and Protein)
 		ImageData img = new ImageData(cl.getResourceAsStream("images/mRNA.bmp"));
-		img.transparentPixel = img.palette.getPixel(GmmlVision.TRANSPARENT_COLOR);
+		img.transparentPixel = img.palette.getPixel(Engine.TRANSPARENT_COLOR);
 		imageRegistry.put("data.mRNA",
 				new Image(display, img));
 		img = new ImageData(cl.getResourceAsStream("images/protein.bmp"));
-		img.transparentPixel = img.palette.getPixel(GmmlVision.TRANSPARENT_COLOR);
+		img.transparentPixel = img.palette.getPixel(Engine.TRANSPARENT_COLOR);
 		imageRegistry.put("data.protein",
 				new Image(display, img));
 		imageRegistry.put("sidepanel.minimize",
@@ -176,7 +176,7 @@ public class GmmlVisionMain {
 				ImageDescriptor.createFromURL(cl.getResource("icons/tree_collapsed.gif")));
 		imageRegistry.put("tree.expanded",
 				ImageDescriptor.createFromURL(cl.getResource("icons/tree_expanded.gif")));
-		GmmlVision.setImageRegistry(imageRegistry);
+		Engine.setImageRegistry(imageRegistry);
 	}
 	
 }

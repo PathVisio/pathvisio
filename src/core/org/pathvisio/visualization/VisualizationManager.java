@@ -44,9 +44,9 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -62,7 +62,7 @@ import org.pathvisio.data.GmmlGex.ExpressionDataListener;
 public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener {	
 	static {
 		VisualizationManager vm = new VisualizationManager();
-		GmmlVision.addApplicationEventListener(vm);
+		Engine.addApplicationEventListener(vm);
 		GmmlGex.addListener(vm);
 	}
 	
@@ -160,7 +160,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			out.output(xmlDoc, fw);
 			fw.close();
 		} catch(IOException e) {
-			GmmlVision.log.error("Unable to save visualization settings", e);
+			Engine.log.error("Unable to save visualization settings", e);
 		}
 	}
 	
@@ -174,7 +174,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 				visualizations.add(Visualization.fromXML((Element) o));				
 			}
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to load visualization settinsg", e);
+			Engine.log.error("Unable to load visualization settinsg", e);
 		}
 	}
 	
@@ -204,7 +204,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	}
 	
 	static File getGenericFile() {
-		return new File(GmmlVision.getApplicationDir(), FILENAME_GENERIC);
+		return new File(Engine.getApplicationDir(), FILENAME_GENERIC);
 	}
 	
 	static VisComboItem visComboItem = new VisComboItem("VisualizationCombo");

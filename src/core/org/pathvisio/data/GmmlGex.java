@@ -49,9 +49,9 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorSetManager;
@@ -136,7 +136,7 @@ public class GmmlGex implements ApplicationEventListener {
 			xmlOut.output(xmlDoc, out);
 			out.close();
 		} catch(IOException e) {
-			GmmlVision.log.error("Unable to save visualization settings", e);
+			Engine.log.error("Unable to save visualization settings", e);
 		}
 	}
 	
@@ -186,7 +186,7 @@ public class GmmlGex implements ApplicationEventListener {
 				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
 			}
 		} catch (Exception e) {
-			GmmlVision.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
+			Engine.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
 		}
 	}
 	
@@ -356,7 +356,7 @@ public class GmmlGex implements ApplicationEventListener {
 //					"SELECT id, code, data, idSample FROM expression " +
 //			"WHERE ensId = ?");
 //		} catch(SQLException e) {
-//			GmmlVision.log.error("Unable to prepare statement", e);
+//			Engine.log.error("Unable to prepare statement", e);
 //			return;
 //		}
 
@@ -410,7 +410,7 @@ public class GmmlGex implements ApplicationEventListener {
 						ts.stopToLog("Fetching data for ens id: " + ensId + "\t");
 					} catch (Exception e)
 					{
-						GmmlVision.log.error("while caching expression data: " + e.getMessage(), e);
+						Engine.log.error("while caching expression data: " + e.getMessage(), e);
 					}
 				}
 				
@@ -424,7 +424,7 @@ public class GmmlGex implements ApplicationEventListener {
 		}
 		cacheThread.progress = 100;
 		timer.stopToLog("Caching expression data\t\t\t");
-		GmmlVision.log.trace("> Nr of ids queried:\t" + ids.size());
+		Engine.log.trace("> Nr of ids queried:\t" + ids.size());
 	}
 	
 	/**
@@ -723,12 +723,12 @@ public class GmmlGex implements ApplicationEventListener {
 			try {
 				connect(); //re-connect and use the created expression dataset
 			} catch(Exception e) {
-				GmmlVision.log.error("Exception on connecting expression dataset from import thread", e);
+				Engine.log.error("Exception on connecting expression dataset from import thread", e);
 			}
 			
 		} catch(Exception e) { 
 			page.println("Import aborted due to error: " + e.getMessage());
-			GmmlVision.log.error("Expression data import error", e);
+			Engine.log.error("Expression data import error", e);
 			close(true);
 			error.close();
 		}
@@ -767,7 +767,7 @@ public class GmmlGex implements ApplicationEventListener {
 		try {
 			error = new PrintWriter(new FileWriter("convert_gex_error.txt"));
 		} catch(IOException ex) {
-			GmmlVision.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
+			Engine.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
 		}
 		
 		try {
@@ -864,7 +864,7 @@ public class GmmlGex implements ApplicationEventListener {
 	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return GmmlVision.getDbConnector(DBConnector.TYPE_GEX);
+		return Engine.getDbConnector(DBConnector.TYPE_GEX);
 	}
 	
 	/**
@@ -932,7 +932,7 @@ public class GmmlGex implements ApplicationEventListener {
 				fireExpressionDataEvent(new ExpressionDataEvent(GmmlGex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 				
 			} catch (Exception e) {
-				GmmlVision.log.error("Error while closing connection to expression dataset " + dbName, e);
+				Engine.log.error("Error while closing connection to expression dataset " + dbName, e);
 			}
 			con = null;
 		}
@@ -960,7 +960,7 @@ public class GmmlGex implements ApplicationEventListener {
 			conGmGex = DriverManager.getConnection(
 					database_before + gmGexFile.toString() + database_after, "", "");
 		} catch (Exception e) {
-			GmmlVision.log.error("Error: Unable to open connection go GenMAPP gex " + gmGexFile +
+			Engine.log.error("Error: Unable to open connection go GenMAPP gex " + gmGexFile +
 					": " +e.getMessage(), e);
 		}
 	}
@@ -975,7 +975,7 @@ public class GmmlGex implements ApplicationEventListener {
 				conGmGex.close();
 				conGmGex = null;
 			} catch (Exception e) {
-				GmmlVision.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
+				Engine.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
 			}
 		}
 	}

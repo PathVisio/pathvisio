@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.GmmlVisionWindow;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.GmmlVisionWindow;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.search.SearchMethods.SearchException;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
@@ -257,7 +257,7 @@ public class PathwaySearchComposite extends Composite {
 	
 	private Text createDirText(Composite parent) {
 		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		t.setText(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
+		t.setText(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_PWFILES));
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return t;
 	}
@@ -287,13 +287,13 @@ public class PathwaySearchComposite extends Composite {
 				super.run(monitor);
 			} catch (InterruptedException e) {
 				openMessageDialog("error", e.getMessage());
-				GmmlVision.log.error("Unable to start search", e);
+				Engine.log.error("Unable to start search", e);
 			} catch (InvocationTargetException e) {
 				if(e.getCause() instanceof SearchException)
 					openMessageDialog("", e.getCause().getMessage());
 				else {
 					openMessageDialog("error", "Cause: " + e.getCause().getMessage());
-					GmmlVision.log.error("while searching", e);
+					Engine.log.error("while searching", e);
 				}
 			}
 		}

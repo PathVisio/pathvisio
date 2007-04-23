@@ -16,7 +16,7 @@
 //
 package org.pathvisio.search;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public abstract class SearchMethods {
 		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));
 		
 		//get all pathway files in the folder and subfolders
-		ArrayList<File> pathways = FileUtils.getFiles(folder, GmmlVision.PATHWAY_FILE_EXTENSION, true);
+		ArrayList<File> pathways = FileUtils.getFiles(folder, Engine.PATHWAY_FILE_EXTENSION, true);
 
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pathways) {
@@ -129,7 +129,7 @@ public abstract class SearchMethods {
 		srt.setTableData(srs);
 		
 		//get all pathway files in the folder and subfolders
-		ArrayList<File> pathways = FileUtils.getFiles(folder, GmmlVision.PATHWAY_FILE_EXTENSION, true);
+		ArrayList<File> pathways = FileUtils.getFiles(folder, Engine.PATHWAY_FILE_EXTENSION, true);
 
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pathways) {

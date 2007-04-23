@@ -16,7 +16,7 @@
 //
 package org.pathvisio.view;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -84,7 +84,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	
 	/**
 	 * {@link InfoBox} object that contains information about this pathway,
-	 * currently only used for information in {@link gmmlVision.GmmlPropertyTable}
+	 * currently only used for information in {@link gmmlVision.PropertyPanel}
 	 * (TODO: has to be implemented to behave the same as any Graphics object
 	 * when displayed on the drawing)
 	 */
@@ -299,7 +299,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		{
 			clearSelection();
 		}
-		GmmlVision.getWindow().showLegend(!editMode);	
+		Engine.getWindow().showLegend(!editMode);	
 		redraw();
 	}
 	
@@ -418,7 +418,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			if (newGraphics != NEWNONE)
 			{
 				newObject(new Point(e.x, e.y));
-				GmmlVision.getWindow().deselectNewItemActions();
+				Engine.getWindow().deselectNewItemActions();
 			}
 			else
 			{
@@ -475,7 +475,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				|| image.getBounds().width != getSize().x
 				|| image.getBounds().height != getSize().y)
 		{
-			GmmlVision.log.trace("Creating image of size " + getSize().x + ", " + getSize().y);
+			Engine.log.trace("Creating image of size " + getSize().x + ", " + getSize().y);
 			image = new Image(getDisplay(), getSize().x, getSize().y);
 			setData("double-buffer-image", image);
 		}
@@ -503,7 +503,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 						try {
 							v.visualizeDrawing((Graphics) o, e, buffer);
 						} catch(Exception ex) {
-							GmmlVision.log.error(
+							Engine.log.error(
 									"Unable to apply visualization " + v + " on " + o, ex);
 							ex.printStackTrace();
 						}
@@ -1110,11 +1110,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 		if (result.size() > 0)
 		{
-			GmmlVision.clipboard = result;
+			Engine.clipboard = result;
 		}
 		else
 		{
-			GmmlVision.clipboard = null;
+			Engine.clipboard = null;
 		}
 		
 		//clipboard.dispose();
@@ -1128,7 +1128,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void pasteFromClipboad()
 	{
-		if (GmmlVision.clipboard != null)
+		if (Engine.clipboard != null)
 		{
 			clearSelection();
 			Map<String, String> idmap = new HashMap<String, String>();
@@ -1137,7 +1137,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			/*
 			 * Step 1: generate new unique ids for copied items
 			 */
-			for (GmmlDataObject o : GmmlVision.clipboard)
+			for (GmmlDataObject o : Engine.clipboard)
 			{
 				String id = o.getGraphId();
 				if (id != null) 
@@ -1161,7 +1161,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			/*
 			 * Step 2: do the actual copying 
 			 */
-			for (GmmlDataObject o : GmmlVision.clipboard)
+			for (GmmlDataObject o : Engine.clipboard)
 			{
 				if (o.getObjectType() == ObjectType.MAPPINFO ||
 					o.getObjectType() == ObjectType.INFOBOX)

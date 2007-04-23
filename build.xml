@@ -53,10 +53,10 @@
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
 			<arg line="-n ."/>
 		</exec>
-		<echo file="${src.dir}/core/org/pathvisio/gmmlVision/Revision.java">
-package org.pathvisio.gmmlVision;
+		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
+package org.pathvisio;
 
-class Revision 
+public class Revision 
 {
 	public static final String REVISION = "${subversion_revision}";
 };

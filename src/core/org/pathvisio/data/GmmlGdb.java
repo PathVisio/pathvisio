@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.debug.StopWatch;
 
@@ -75,14 +75,14 @@ public abstract class GmmlGdb {
 	 */
 	public static void init()
 	{
-		String currGdb = GmmlVision.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB);
-		if(!currGdb.equals("") && !GmmlVision.getPreferences().isDefault(GmmlPreferences.PREF_CURR_GDB))
+		String currGdb = Engine.getPreferences().getString(GmmlPreferences.PREF_CURR_GDB);
+		if(!currGdb.equals("") && !Engine.getPreferences().isDefault(GmmlPreferences.PREF_CURR_GDB))
 		{
 			dbName = currGdb;
 			try {
 				connect(null);
 			} catch(Exception e) {
-				setCurrentGdb(GmmlVision.getPreferences().getDefaultString(GmmlPreferences.PREF_CURR_GDB));
+				setCurrentGdb(Engine.getPreferences().getDefaultString(GmmlPreferences.PREF_CURR_GDB));
 			}
 		}
 	}
@@ -93,9 +93,9 @@ public abstract class GmmlGdb {
 	 */
 	public static void setCurrentGdb(String dbNm) {
 		dbName = dbNm;
-		GmmlVision.getPreferences().setValue(GmmlPreferences.PREF_CURR_GDB, dbNm);
-		try { GmmlVision.getPreferences().save(); } 
-		catch(Exception e) { GmmlVision.log.error("Unable to save preferences", e); } 
+		Engine.getPreferences().setValue(GmmlPreferences.PREF_CURR_GDB, dbNm);
+		try { Engine.getPreferences().save(); } 
+		catch(Exception e) { Engine.log.error("Unable to save preferences", e); } 
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public abstract class GmmlGdb {
 	}
 	
 	/**
-	 * Gets the backpage info for the given gene id for display on GmmlBpBrowser
+	 * Gets the backpage info for the given gene id for display on BackpagePanel
 	 * @param id The gene id to get the backpage info for
 	 * @param code systemcode of the gene identifier
 	 * @return String with the backpage info, null if the gene was not found
@@ -193,7 +193,7 @@ public abstract class GmmlGdb {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
 			}
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to get cross references for ensembl gene " +
+			Engine.log.error("Unable to get cross references for ensembl gene " +
 					"'" + ensId + "'", e);
 		}
 		
@@ -232,7 +232,7 @@ public abstract class GmmlGdb {
 				ensIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to get ensembl genes for ensembl gene " +
+			Engine.log.error("Unable to get ensembl genes for ensembl gene " +
 					"'" + ref + "' with systemcode '" + code + "'", e);
 		}
 		
@@ -241,7 +241,7 @@ public abstract class GmmlGdb {
 	}
 	
 	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
-		GmmlVision.log.trace("Fetching cross references");
+		Engine.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -249,7 +249,7 @@ public abstract class GmmlGdb {
 		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
 
-		GmmlVision.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
+		Engine.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
 	}
 	
@@ -310,11 +310,11 @@ public abstract class GmmlGdb {
 				crossIds.add(new IdCodePair(rid, rcode));
 			}
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to get cross references for gene " +
+			Engine.log.error("Unable to get cross references for gene " +
 					"'" + id + ", with systemcode '" + code + "'", e);
 		}
 		
-		GmmlVision.log.trace("\t> getCrossRefs1Query:\t" + timer.stop());
+		Engine.log.trace("\t> getCrossRefs1Query:\t" + timer.stop());
 		return crossIds;
 	}
 	
@@ -366,7 +366,7 @@ public abstract class GmmlGdb {
 	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return GmmlVision.getDbConnector(DBConnector.TYPE_GDB);
+		return Engine.getDbConnector(DBConnector.TYPE_GDB);
 	}
 	
 	/**
@@ -395,7 +395,7 @@ public abstract class GmmlGdb {
 				DBConnector connector = getDBConnector();
 				connector.closeConnection(con);
 			} catch(Exception e) {
-				GmmlVision.log.error("Unable to close database connection", e);
+				Engine.log.error("Unable to close database connection", e);
 			}
 		}
 	}
@@ -413,7 +413,7 @@ public abstract class GmmlGdb {
 	    try {
 	        error = new PrintWriter(new FileWriter("convert_gdb_log.txt"));
 	    } catch(IOException ex) {
-	    	GmmlVision.log.error("Unable to open error file: " + ex.getMessage(), ex);
+	    	Engine.log.error("Unable to open error file: " + ex.getMessage(), ex);
 	    }
 	    
 		error.println ("Info:  Fetching data from gdb");
@@ -671,7 +671,7 @@ public abstract class GmmlGdb {
 	 * @param convertCon	The connection to the database the tables are created in
 	 */
 	public static void createTables(Connection convertCon) {
-		GmmlVision.log.trace("Info:  Creating tables");
+		Engine.log.trace("Info:  Creating tables");
 		
 		try {
 			Statement sh = convertCon.createStatement();
@@ -679,7 +679,7 @@ public abstract class GmmlGdb {
 			sh.execute("DROP TABLE link");
 			sh.execute("DROP TABLE gene");
 		} catch(Exception e) {
-			GmmlVision.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
+			Engine.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
 		}
 		try
 		{
@@ -729,7 +729,7 @@ public abstract class GmmlGdb {
 			
 		} catch (Exception e)
 		{
-			GmmlVision.log.error("while creating gdb tables: " + e.getMessage(), e);
+			Engine.log.error("while creating gdb tables: " + e.getMessage(), e);
 		}
 	}
 	

@@ -25,7 +25,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.preference.StringFieldEditor;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 public class GmmlPreferenceManager extends PreferenceManager {
 	
@@ -75,7 +75,7 @@ public class GmmlPreferenceManager extends PreferenceManager {
 					"Expression datasets:", getFieldEditorParent());
 			addField(d3);
 
-			if(GmmlVision.isUseR()) {
+			if(Engine.isUseR()) {
 				DirectoryFieldEditor d4 = new DirectoryFieldEditor(GmmlPreferences.PREF_DIR_RDATA,
 						"Results from pathway statistics:", getFieldEditorParent());
 				addField(d4);

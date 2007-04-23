@@ -50,8 +50,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.gmmlVision.Globals;
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.Globals;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.GmmlPreferences;
 import org.pathvisio.util.TableColumnResizer;
 
@@ -89,7 +89,7 @@ public class ImportExprDataWizard extends Wizard {
 								importInformation,
 								(ImportPage) getPage("ImportPage")));
 			} catch (Exception e) {
-				GmmlVision.log.error("while running expression data import process: " + e.getMessage(), e);
+				Engine.log.error("while running expression data import process: " + e.getMessage(), e);
 			} // TODO: handle exception
 			ip.setTitle("Import finished");
 			ip.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
@@ -162,7 +162,7 @@ public class ImportExprDataWizard extends Wizard {
 							"*.*" });
 					fileDialog.setFilterNames(new String[] { "Text file",
 							"All files" });
-					fileDialog.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
+					fileDialog.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_EXPR));
 					String file = fileDialog.open();
 					if (file != null) {
 						txtText.setText(file);
@@ -181,7 +181,7 @@ public class ImportExprDataWizard extends Wizard {
 						
 					} catch(Exception ex) {
 						MessageDialog.openError(getShell(), "Error", "Unable to open connection dialog");
-						GmmlVision.log.error("", ex);
+						Engine.log.error("", ex);
 					}
 				}
 			});
@@ -414,7 +414,7 @@ public class ImportExprDataWizard extends Wizard {
 				ti.setText(1, line);
 			}
 		} catch (IOException e) { // TODO: handle IOException
-			GmmlVision.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
+			Engine.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		previewTable.pack();
 	}
@@ -443,7 +443,7 @@ public class ImportExprDataWizard extends Wizard {
 				ti.setText(line.split(ImportInformation.DELIMITER));
 			}
 		} catch (IOException e) { // TODO: handle IOException
-			GmmlVision.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
+			Engine.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		columnTable.pack();
 	}
@@ -576,7 +576,7 @@ public class ImportExprDataWizard extends Wizard {
 			//Close the connection to the previous file if exist
 			if(in != null) {
 				try { in.close(); } catch(Exception e) { 
-					GmmlVision.log.error("on closing file " + this.txtFile + ": " + e.getMessage(), e);
+					Engine.log.error("on closing file " + this.txtFile + ": " + e.getMessage(), e);
 				}
 				in = null;
 			}
@@ -658,7 +658,7 @@ public class ImportExprDataWizard extends Wizard {
 					in.reset();
 				}
 			} catch (Exception e) {
-				GmmlVision.log.error("Error reading file", e);
+				Engine.log.error("Error reading file", e);
 			} // TODO: handle exception
 			return in;
 		}
@@ -711,7 +711,7 @@ public class ImportExprDataWizard extends Wizard {
 					i++; // Go to headerline
 				return in.readLine().split(ImportInformation.DELIMITER);
 			} catch (IOException e) { // TODO: handle IOException
-				GmmlVision.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
+				Engine.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
 				return new String[] {};
 			}
 		}

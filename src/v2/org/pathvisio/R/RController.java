@@ -16,9 +16,9 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
-import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -65,7 +65,7 @@ public class RController implements ApplicationEventListener{
 	public static boolean startR() {
 		//Start R-engine (with progress monitor)
 		try {
-			new ProgressMonitorDialog(GmmlVision.getWindow().getShell()).run(true, true,
+			new ProgressMonitorDialog(Engine.getWindow().getShell()).run(true, true,
 					new IRunnableWithProgress() {
 				public void run(IProgressMonitor m) throws 	InvocationTargetException, 
 				InterruptedException 
@@ -87,7 +87,7 @@ public class RController implements ApplicationEventListener{
 			return false;
 		} finally {
 			//Add a listener to close R on closing PathVisio
-			GmmlVision.addApplicationEventListener(new RController());
+			Engine.addApplicationEventListener(new RController());
 		}
 
 		return true;
@@ -122,11 +122,11 @@ public class RController implements ApplicationEventListener{
 	}
 	
 	private static void extractJRI() throws IOException, UnsatisfiedLinkError, InterruptedException {
-		GmmlVision.log.trace("Loading R");
+		Engine.log.trace("Loading R");
 		
 		String ext = LIB_JRI_FILE.substring(LIB_JRI_FILE.lastIndexOf('.'));
 		String rversion = getRVersion();
-		GmmlVision.log.trace("\tDetected R version " + rversion);
+		Engine.log.trace("\tDetected R version " + rversion);
 		File libFile = null;
 		try {
 			libFile = JarUtils.resourceToNamedTempFile(LIB_JRI_PATH + "/jri-" + 
@@ -136,7 +136,7 @@ public class RController implements ApplicationEventListener{
 					"\nCurrently installed R version: " + rversion + "\n");
 		}
 				
-		GmmlVision.log.trace("\tExtracted library " + libFile.toString());
+		Engine.log.trace("\tExtracted library " + libFile.toString());
 		
 		//Load the library
 		loadJRI(libFile);
@@ -206,10 +206,10 @@ public class RController implements ApplicationEventListener{
 	
 	private static String locateRExec() {
 		final StringBuilder cmd = new StringBuilder();
-		GmmlVision.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+		Engine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String exec = Utils.getOS() == Utils.OS_WINDOWS ? "R.exe" : "R";
-				InputDialog libDialog = new InputDialog(GmmlVision.getWindow().getShell(),
+				InputDialog libDialog = new InputDialog(Engine.getWindow().getShell(),
 						"Unable to find R executable",
 						"Unable to locate " + exec + "\nPlease install R (" + WWW_R + ") " +
 						" or specify location:", "", null);
@@ -243,10 +243,10 @@ public class RController implements ApplicationEventListener{
 //	private static String locateRLib() {
 //		final String CANCEL = "C";
 //		final StringBuilder value = new StringBuilder(CANCEL);
-//		GmmlVision.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+//		Engine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
 //			public void run() {
 //				String libName = System.mapLibraryName("jri");
-//				InputDialog libDialog = new InputDialog(GmmlVision.getWindow().getShell(),
+//				InputDialog libDialog = new InputDialog(Engine.getWindow().getShell(),
 //					"System couldn't find " + libName, "Please specify location of file " + libName, "", null);
 //				if(libDialog.open() == InputDialog.OK) {
 //					value.delete(0, CANCEL.length());
@@ -266,7 +266,7 @@ public class RController implements ApplicationEventListener{
 	private static void installPackage() throws FileNotFoundException, IOException, RException, InterruptedException {
 		File pkgFile = getPackageFile();
 		if(needsPackageUpdate(pkgFile.getName())) {
-			GmmlVision.log.info("R package " + PKG_NAME + " is out of date or not installed yet: installing newest version");
+			Engine.log.info("R package " + PKG_NAME + " is out of date or not installed yet: installing newest version");
 			switch(Utils.getOS()) {
 			case Utils.OS_WINDOWS:
 				String pkgFileName = RCommands.fileToString(pkgFile);
@@ -295,7 +295,7 @@ public class RController implements ApplicationEventListener{
 		}
 		Pattern regex = Pattern.compile(PKG_NAME + "_[0-9].[0-9].[0-9]." + ext);
 		for(String f : dircontent) {
-			GmmlVision.log.trace(f);
+			Engine.log.trace(f);
 			if(regex.matcher(f).find()) {
 				pkgFile =  JarUtils.resourceToNamedTempFile(f, new File(f).getName());
 				if(pkgFile != null) break;
@@ -372,7 +372,7 @@ public class RController implements ApplicationEventListener{
 			while((line = rOut.readLine()) != null) 
 				output = output == null ? line : output + "\n" + line;
 		} catch(IOException e) {
-			GmmlVision.log.error("Unable to read R output", e);
+			Engine.log.error("Unable to read R output", e);
 		}
 		return output;
 	}
@@ -390,14 +390,14 @@ public class RController implements ApplicationEventListener{
 			if(e.getMessage().contains(LIB_R_FILE)) msg = ERR_MSG_NOR;	
 			else msg = ERR_MSG_NOR;
 		}
-		GmmlVision.log.error(ERR_MSG_PRE, e);
+		Engine.log.error(ERR_MSG_PRE, e);
 		openError(msg, e);
 	}
 		
 	public static void openError(final String msg, final Throwable e) {
-		GmmlVision.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+		Engine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openError(GmmlVision.getWindow().getShell(), 
+				MessageDialog.openError(Engine.getWindow().getShell(), 
 						ERR_MSG_PRE, (msg == null ? "" : msg + "\n \n Details:\n") + e.getMessage() + 
 						" (" + e.getClass().getName() + ")");
 			}
@@ -411,7 +411,7 @@ public class RController implements ApplicationEventListener{
 				try { 
 					rOut.close();
 				} catch(Exception ie) { 
-					GmmlVision.log.error("Unable to close R output file", ie);
+					Engine.log.error("Unable to close R output file", ie);
 				}
 			}
 		}

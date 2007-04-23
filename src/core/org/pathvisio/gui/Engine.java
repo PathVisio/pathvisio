@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio.gui;
 
 import java.io.File;
 import java.net.URL;
@@ -40,11 +40,12 @@ import org.pathvisio.model.GmmlData;
 import org.pathvisio.model.GmmlDataObject;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
+import org.pathvisio.Globals;
 
 /**
  * This class contains the essential parts of the program: the window, drawing and gpml data
  */
-public abstract class GmmlVision {
+public abstract class Engine {
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
@@ -131,7 +132,7 @@ public abstract class GmmlVision {
 	 * @return the URL pointing to the resource
 	 */
 	public static URL getResourceURL(String name) {
-		URL url = GmmlVision.class.getClassLoader().getResource(name);
+		URL url = Engine.class.getClassLoader().getResource(name);
 		if(url == null) log.error("Couldn't load resource '" + name + "'");
 		return url;
 	}

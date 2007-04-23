@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gmmlVision;
+package org.pathvisio;
 
 /**
  * This class is mainly intended for globals that differ between v1 and v2!
@@ -24,6 +24,6 @@ package org.pathvisio.gmmlVision;
  */
 public class Globals {
 	public static final String APPLICATION_NAME = "PathVisio";
-	public static final String APPLICATION_VERSION_NAME = "PathVisio 2.0 (experimental)";
-	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help_v2";
+	public static final String APPLICATION_VERSION_NAME = "PathVisio 1.0 release candidate 1";
+	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
 }

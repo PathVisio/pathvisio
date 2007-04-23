@@ -16,7 +16,7 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gmmlVision.GmmlVision;
+import org.pathvisio.gui.Engine;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -127,7 +127,7 @@ public class StatsResultTable extends PathwayTable {
 		saveAsR.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fd = new FileDialog(getShell(), SWT.SAVE);
-				fd.setFilterPath(GmmlVision.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA));
+				fd.setFilterPath(Engine.getPreferences().getString(GmmlPreferences.PREF_DIR_RDATA));
 				String fn = fd.open();
 				if(fn == null) return;
 				try {

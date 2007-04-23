@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.Graphics;
 
 /**
  * This class contains all user preferences used in this application
@@ -102,13 +102,13 @@ public class GmmlPreferences extends PreferenceStore implements IPropertyChangeL
 	
 	public void propertyChange(PropertyChangeEvent e) {
 		if(e.getProperty().equals(GmmlPreferences.PREF_COL_SELECTED)) { 
-			if(e.getNewValue() instanceof RGB) GmmlGraphics.selectColor = (RGB)e.getNewValue();
-			else GmmlGraphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
+			if(e.getNewValue() instanceof RGB) Graphics.selectColor = (RGB)e.getNewValue();
+			else Graphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
 		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_HIGHLIGHTED)) {
-			if(e.getNewValue() instanceof RGB) GmmlGraphics.highlightColor = (RGB)e.getNewValue();
-			else GmmlGraphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
+			if(e.getNewValue() instanceof RGB) Graphics.highlightColor = (RGB)e.getNewValue();
+			else Graphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
 			GmmlVision.getDrawing().redraw();
 		}
 //		else if(e.getProperty().equals(GmmlPreferences.PREF_COL_AMBIGIOUS_REP)) {

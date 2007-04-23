@@ -16,7 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.Graphics;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	
 	public void initSidePanel(Composite parent) { }
 
-	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC buffer) {
+	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		String[] ids = parseIds(gd);
 		if(ids[0] != null) { //This is a shape
@@ -79,7 +79,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		}
 	}
 	
-	void drawLineStart(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
+	void drawLineStart(String id, Graphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
@@ -89,7 +89,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 				e, buffer);
 	}
 	
-	void drawLineEnd(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
+	void drawLineEnd(String id, Graphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		drawRefMark( 
 				id,			
@@ -108,7 +108,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		buffer.setAlpha(origAlpha);
 	}
 	
-	void drawShape(String id, GmmlGraphics g, PaintEvent e, GC buffer) {
+	void drawShape(String id, Graphics g, PaintEvent e, GC buffer) {
 		GmmlDataObject gd = g.getGmmlData();
 		RGB oldRGB = ColorConverter.toRGB(gd.getColor());
 		gd.dontFireEvents(2);
@@ -143,7 +143,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		return ids;
 	}
 		
-	public Composite visualizeOnToolTip(Composite parent, GmmlGraphics g) { return null; }
+	public Composite visualizeOnToolTip(Composite parent, Graphics g) { return null; }
 	
-	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) {	}
+	public void visualizeOnSidePanel(Collection<Graphics> objects) {	}
 }

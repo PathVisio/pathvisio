@@ -48,7 +48,7 @@ import org.pathvisio.data.GmmlGex;
 import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
 import org.pathvisio.data.GmmlGex.ExpressionDataListener;
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.Graphics;
 
 /**
  * Represents a set of configured visualization plugins
@@ -178,27 +178,27 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 	
 	/**
-	 * Draw this visualization to the pathway drawing for the given {@link GmmlGraphics} object.
-	 * @see VisualizationPlugin#visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
-	 * @param g	The {@link GmmlGraphics} object the visualization applies to
+	 * Draw this visualization to the pathway drawing for the given {@link Graphics} object.
+	 * @see VisualizationPlugin#visualizeOnDrawing(Graphics, PaintEvent, GC)
+	 * @param g	The {@link Graphics} object the visualization applies to
 	 * @param e	{@link PaintEvent} containing information about the paint
 	 * @param gc Graphical context on which drawing operations can be performed
 	 */
-	public void visualizeDrawing(GmmlGraphics g, PaintEvent e, GC gc) {
+	public void visualizeDrawing(Graphics g, PaintEvent e, GC gc) {
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, e, gc);
 		}
 	}
 	
 	/**
-	 * Provide an drawing area on the given GmmlGraphics for the given VisualizationPlugin (only
+	 * Provide an drawing area on the given Graphics for the given VisualizationPlugin (only
 	 * when {@link VisualizationPlugin#isUseProvidedArea()})
 	 * @param p the VisualizationPlugin to provide the area for
 	 * @param g the Graphics on which the area is created
 	 * @return An {@link Region} object that contains the area in which the
 	 * VisualizationPlugin can draw its visualization
 	 */
-	public Region provideDrawArea(VisualizationPlugin p, GmmlGraphics g) {
+	public Region provideDrawArea(VisualizationPlugin p, Graphics g) {
 		if(!p.isUseProvidedArea()) 
 			throw new IllegalArgumentException("useProvidedArea set to false for this plug-in");
 		
@@ -252,7 +252,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * in the side-panel to visualize the given pathway elements
 	 * @param objects The pathway elements to visualize
 	 */
-	void visualizeSidePanel(Collection<GmmlGraphics> objects) {
+	void visualizeSidePanel(Collection<Graphics> objects) {
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isSidePanel())
 				pr.getSidePanelPlugin().visualizeOnSidePanel(objects);
@@ -310,7 +310,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 * @return A tool-tip that displays visualizations for the given gene-product 
 	 * by the plug-ins activated on the tool-tip
 	 */
-	public Shell visualizeToolTip(Shell parent, Control control, GmmlGraphics g) {
+	public Shell visualizeToolTip(Shell parent, Control control, Graphics g) {
 		final Shell tip = new Shell(parent, SWT.ON_TOP | SWT.TOOL);  
 		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tip.setLayout(new RowLayout(SWT.VERTICAL));

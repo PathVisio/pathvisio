@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
@@ -28,16 +28,16 @@ import org.pathvisio.model.GmmlListener;
 
 /**
  * This class is a parent class for all graphics
- * that can be added to a GmmlDrawing.
+ * that can be added to a Pathway.
  */
-public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlListener
+public abstract class Graphics extends PathwayElement implements GmmlListener
 {
 	public static RGB selectColor = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_SELECTED);
 	public static RGB highlightColor = GmmlPreferences.getColorProperty(GmmlPreferences.PREF_COL_HIGHLIGHTED);
 	
 	protected GmmlDataObject gdata = null;
 	
-	public GmmlGraphics(GmmlDrawing canvas, GmmlDataObject o) {
+	public Graphics(Pathway canvas, GmmlDataObject o) {
 		super(canvas);
 		o.addListener(this);
 		gdata = o;
@@ -46,7 +46,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	public void select()
 	{
 		super.select();
-		for (GmmlHandle h : getHandles())
+		for (Handle h : getHandles())
 		{
 			h.show();
 		}
@@ -55,7 +55,7 @@ public abstract class GmmlGraphics extends GmmlDrawingObject implements GmmlList
 	public void deselect()
 	{
 		super.deselect();
-		for (GmmlHandle h : getHandles())
+		for (Handle h : getHandles())
 		{
 			h.hide();
 		}

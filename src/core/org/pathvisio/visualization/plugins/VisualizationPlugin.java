@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
 
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
@@ -86,31 +86,31 @@ public abstract class VisualizationPlugin implements Comparable {
 	public abstract String getDescription();
 	
 	/**
-	 * Create a visualization on the pathway drawing for the given {@link GmmlGraphics} object.
+	 * Create a visualization on the pathway drawing for the given {@link Graphics} object.
 	 * This method will only be called when the plugin display options contains {@link VisualizationPlugin#DRAWING}.
-	 * @param g	The {@link GmmlGraphics} object on which the visualization applies
+	 * @param g	The {@link Graphics} object on which the visualization applies
 	 * @param e	{@link PaintEvent} containing information about the paint
 	 * @param gc Graphical context on which drawing operations can be performed
 	 * @see <a href=http://www.eclipse.org/articles/Article-SWT-graphics/SWT_graphics.html>
 	 * Introduction in SWT graphics</a>
 	 */
-	public abstract void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC gc);
+	public abstract void visualizeOnDrawing(Graphics g, PaintEvent e, GC gc);
 	
 	/**
-	 * Create a visualization on the side panel for the given {@link GmmlGraphics} objects
+	 * Create a visualization on the side panel for the given {@link Graphics} objects
 	 * This method will only be called when the plugin display options contains {@link VisualizationPlugin#SIDEPANEL}.
-	 * @param objects List of {@link GmmlGraphics} objects to create the visualization for
+	 * @param objects List of {@link Graphics} objects to create the visualization for
 	 */
-	public abstract void visualizeOnSidePanel(Collection<GmmlGraphics> objects);
+	public abstract void visualizeOnSidePanel(Collection<Graphics> objects);
 	
 	/**
-	 * Create a visualization on the Tool Tip for the given {@link GmmlGraphics} object.
+	 * Create a visualization on the Tool Tip for the given {@link Graphics} object.
 	 * This method will only be called when the plugin display options contains {@link VisualizationPlugin#TOOLTIP}.
 	 * @param parent The parent of the {@link Composite} that will be displayed on the Tool Tip
-	 * @param g The {@link GmmlGraphics} object to create the visualization for
+	 * @param g The {@link Graphics} object to create the visualization for
 	 * @return A {@link Composite} that will be displayed in the Tool Tip
 	 */
-	public abstract Composite visualizeOnToolTip(Composite parent, GmmlGraphics g);
+	public abstract Composite visualizeOnToolTip(Composite parent, Graphics g);
 	
 	/**
 	 * Initialize a Composite for visualization on the side panel
@@ -241,13 +241,13 @@ public abstract class VisualizationPlugin implements Comparable {
 	
 	/**
 	 * Specify whether the parent {@link Visualization} needs to provide an area on the 
-	 * {@link GmmlGraphics} objects.
-	 * When multiple visualization plugins apply visualizations on the same {@link GmmlGraphics}
+	 * {@link Graphics} objects.
+	 * When multiple visualization plugins apply visualizations on the same {@link Graphics}
 	 * object, the available space will be divided over the plugins for which this method is called
 	 * with true as argument.
-	 * The provided area can be obtained by calling {@link Visualization#provideDrawArea(VisualizationPlugin, GmmlGraphics)}
+	 * The provided area can be obtained by calling {@link Visualization#provideDrawArea(VisualizationPlugin, Graphics)}
 	 * @param use	true if this plugin uses the provided area, false if not
-	 * @see Visualization#provideDrawArea(VisualizationPlugin, GmmlGraphics)
+	 * @see Visualization#provideDrawArea(VisualizationPlugin, Graphics)
 	 */
 	protected void setUseProvidedArea(boolean use) {
 		USE_PROVIDED_AREA = use;

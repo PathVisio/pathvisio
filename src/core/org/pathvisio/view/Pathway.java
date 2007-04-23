@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import org.pathvisio.gmmlVision.GmmlVision;
 
@@ -55,11 +55,11 @@ import org.pathvisio.model.GmmlData.Color;
 
 /**
  * This class implements and handles a drawing.
- * GmmlGraphics objects are stored in the drawing and can be 
+ * Graphics objects are stored in the drawing and can be 
  * visualized. The class also provides methods for mouse  and key
  * event handling.
  */
-public class GmmlDrawing extends Canvas implements MouseListener, MouseMoveListener, 
+public class Pathway extends Canvas implements MouseListener, MouseMoveListener, 
 PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListener
 {	
 	private static final long serialVersionUID = 1L;
@@ -69,33 +69,33 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * All objects that are visible on this mapp, including the handles
 	 * but excluding the legend, mappInfo and selectionBox objects
 	 */
-	private ArrayList<GmmlDrawingObject> drawingObjects;
-	public ArrayList<GmmlDrawingObject> getDrawingObjects() { return drawingObjects; }
+	private ArrayList<PathwayElement> drawingObjects;
+	public ArrayList<PathwayElement> getDrawingObjects() { return drawingObjects; }
 	
 	/**
-	 * The {@link GmmlDrawingObject} that is pressed last mouseDown event}
+	 * The {@link PathwayElement} that is pressed last mouseDown event}
 	 */
-	GmmlDrawingObject pressedObject	= null;	
+	PathwayElement pressedObject	= null;	
 	
 	/**
-	 * The {@link GmmlGraphics} that is directly selected since last mouseDown event
+	 * The {@link Graphics} that is directly selected since last mouseDown event
 	 */
-	public GmmlGraphics selectedGraphics = null;
+	public Graphics selectedGraphics = null;
 	
 	/**
-	 * {@link GmmlInfoBox} object that contains information about this pathway,
+	 * {@link InfoBox} object that contains information about this pathway,
 	 * currently only used for information in {@link gmmlVision.GmmlPropertyTable}
-	 * (TODO: has to be implemented to behave the same as any GmmlGraphics object
+	 * (TODO: has to be implemented to behave the same as any Graphics object
 	 * when displayed on the drawing)
 	 */
-	GmmlInfoBox infoBox;
+	InfoBox infoBox;
 	private GmmlData data;
 	public GmmlData getGmmlData()
 	{
 		return data;
 	}
 	
-	GmmlSelectionBox s; 
+	SelectionBox s; 
 		
 	private boolean editMode;
 	/**
@@ -105,29 +105,29 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public boolean isEditMode() { return editMode; }
 	
 	/**
-	 * Map the contents of a single data object to this GmmlDrawing
+	 * Map the contents of a single data object to this Pathway
 	 */	
-	private GmmlGraphics fromGmmlDataObject (GmmlDataObject o)
+	private Graphics fromGmmlDataObject (GmmlDataObject o)
 	{
-		GmmlGraphics result = null;
+		Graphics result = null;
 		switch (o.getObjectType())
 		{
-			case ObjectType.DATANODE: result = new GmmlGeneProduct(this, o); break;
-			case ObjectType.SHAPE: result = new GmmlShape(this, o); break;
-			case ObjectType.LINE: result = new GmmlLine(this, o); break;
+			case ObjectType.DATANODE: result = new GeneProduct(this, o); break;
+			case ObjectType.SHAPE: result = new Shape(this, o); break;
+			case ObjectType.LINE: result = new Line(this, o); break;
 			case ObjectType.MAPPINFO: 
-				GmmlInfoBox mi = new GmmlInfoBox(this, o);
+				InfoBox mi = new InfoBox(this, o);
 				addObject(mi); 
 				setMappInfo(mi);
 				result = mi; 
 				break;				
-			case ObjectType.LABEL: result = new GmmlLabel(this, o); break;					
+			case ObjectType.LABEL: result = new Label(this, o); break;					
 		}
 		return result;
 	}
 	
 	/**
-	 * Maps the contents of a pathway to this GmmlDrawing
+	 * Maps the contents of a pathway to this Pathway
 	 */	
 	public void fromGmmlData(GmmlData _data)
 	{		
@@ -182,13 +182,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 *Constructor for this class
 	 */	
-	public GmmlDrawing(Composite parent, int style)
+	public Pathway(Composite parent, int style)
 	{
 		super (parent, style);
 		
-		drawingObjects	= new ArrayList<GmmlDrawingObject>();
+		drawingObjects	= new ArrayList<PathwayElement>();
 		
-		s = new GmmlSelectionBox(this);
+		s = new SelectionBox(this);
 		
 		addMouseListener(this);
 		addMouseMoveListener(this);
@@ -202,7 +202,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * Sets the MappInfo containing information on the pathway
 	 * @param mappInfo
 	 */
-	public void setMappInfo(GmmlInfoBox mappInfo)
+	public void setMappInfo(InfoBox mappInfo)
 	{
 		this.infoBox = mappInfo;
 		infoBox.getGmmlData().addListener(this);
@@ -211,13 +211,13 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	/**
 	 * Gets the MappInfo containing information on the pathway
 	 */
-	public GmmlInfoBox getMappInfo() { return infoBox; }
+	public InfoBox getMappInfo() { return infoBox; }
 		
 	/**
 	 * Adds an element to the drawing
 	 * @param o the element to add
 	 */
-	public void addObject(GmmlDrawingObject o)
+	public void addObject(PathwayElement o)
 	{
 		if(!drawingObjects.contains(o)) { //Don't add duplicates!
 			drawingObjects.add(o);
@@ -259,11 +259,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public ArrayList<String> getMappIds()
 	{
 		ArrayList<String> mappIds = new ArrayList<String>();
-		for(GmmlDrawingObject o : drawingObjects)
+		for(PathwayElement o : drawingObjects)
 		{
-			if(o instanceof GmmlGeneProduct)
+			if(o instanceof GeneProduct)
 			{
-				mappIds.add(((GmmlGeneProduct)o).getID());
+				mappIds.add(((GeneProduct)o).getID());
 			}
 		}
 		return mappIds;
@@ -278,11 +278,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	public ArrayList<String> getSystemCodes()
 	{
 		ArrayList<String> systemCodes = new ArrayList<String>();
-		for(GmmlDrawingObject o : drawingObjects)
+		for(PathwayElement o : drawingObjects)
 		{
-			if(o instanceof GmmlGeneProduct)
+			if(o instanceof GeneProduct)
 			{
-				systemCodes.add(((GmmlGeneProduct)o).getSystemCode());
+				systemCodes.add(((GeneProduct)o).getSystemCode());
 			}
 		}
 		return systemCodes;
@@ -316,7 +316,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * we prefix all coordinates with either v or m (or V or M). For example:
 	 * 
 	 * mTop = gdata.getMTop();
-	 * vTop = GmmlGeneProduct.getVTop();
+	 * vTop = GeneProduct.getVTop();
 	 * 
 	 * Calculations done on M's and V's should always match.
 	 * The only way to convert is to use the functions
@@ -349,7 +349,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		redraw();
 	}
 
-	public void setPressedObject(GmmlDrawingObject o) {
+	public void setPressedObject(PathwayElement o) {
 		pressedObject = o;
 	}
 	
@@ -371,25 +371,25 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			vPreviousX = ve.x;
 			vPreviousY = ve.y;
 			
-			if (pressedObject instanceof GmmlHandle && altPressed && newGraphics == NEWNONE &&
-					((GmmlHandle)pressedObject).parent instanceof VPoint)
+			if (pressedObject instanceof Handle && altPressed && newGraphics == NEWNONE &&
+					((Handle)pressedObject).parent instanceof VPoint)
 			{
 				resetHighlight();
 				Point2D p2d = new Point2D.Double(ve.x, ve.y);
-				List<GmmlDrawingObject> objects = getObjectsAt (p2d);
+				List<PathwayElement> objects = getObjectsAt (p2d);
 				Collections.sort(objects);
-				GmmlHandle g = (GmmlHandle)pressedObject;
+				Handle g = (Handle)pressedObject;
 				VPoint p = (VPoint)g.parent;
-				GmmlDrawingObject x = null;
-				for (GmmlDrawingObject o : objects)
+				PathwayElement x = null;
+				for (PathwayElement o : objects)
 				{
 					if (o instanceof VPoint && o != p) {
 						x = o;
 						p.link((VPoint)o);
 						break;
-					} else if(o instanceof GmmlGraphics && !(o instanceof GmmlLine)) {
+					} else if(o instanceof Graphics && !(o instanceof Line)) {
 						x = o;
-						p.link((GmmlGraphics)o);
+						p.link((Graphics)o);
 						break;
 					} 
 				}
@@ -399,7 +399,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		}
 	}
 	
-	public void selectObject(GmmlDrawingObject o) {
+	public void selectObject(PathwayElement o) {
 		clearSelection();
 		lastAdded.select();
 		s.addToSelection(lastAdded);
@@ -491,7 +491,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		Collections.sort(drawingObjects);
 		
 		Visualization v = VisualizationManager.getCurrent();
-		for(GmmlDrawingObject o : drawingObjects)
+		for(PathwayElement o : drawingObjects)
 		{
 			if(o.vIntersects(r))
 			{
@@ -499,16 +499,16 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 					o.draw (e, buffer);
 				}
 				
-				if(v != null && o instanceof GmmlGraphics) {
+				if(v != null && o instanceof Graphics) {
 						try {
-							v.visualizeDrawing((GmmlGraphics) o, e, buffer);
+							v.visualizeDrawing((Graphics) o, e, buffer);
 						} catch(Exception ex) {
 							GmmlVision.log.error(
 									"Unable to apply visualization " + v + " on " + o, ex);
 							ex.printStackTrace();
 						}
 				}
-				if(o instanceof GmmlGeneProduct) ((GmmlGeneProduct)o).drawHighlight(e, buffer);
+				if(o instanceof GeneProduct) ((GeneProduct)o).drawHighlight(e, buffer);
 			}
 		}
 		
@@ -516,9 +516,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		buffer.dispose();
 	}
 
-	boolean checkDrawAllowed(GmmlDrawingObject o) {
+	boolean checkDrawAllowed(PathwayElement o) {
 		if(isEditMode()) return true;
-		else return !(	o instanceof GmmlHandle ||
+		else return !(	o instanceof Handle ||
 						(o == s && !isDragging)
 					);
 	}
@@ -528,7 +528,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	private void clearSelection()
 	{
-		for(GmmlDrawingObject o : drawingObjects) o.deselect(); //Deselect all objects
+		for(PathwayElement o : drawingObjects) o.deselect(); //Deselect all objects
 		s.reset();
 	}
 
@@ -571,7 +571,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 */
 	public void resetHighlight() 
 	{
-		for(GmmlDrawingObject o : drawingObjects) o.unhighlight();
+		for(PathwayElement o : drawingObjects) o.unhighlight();
 		redraw();
 	}
 	
@@ -589,9 +589,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if (pressedObject != null)
 		{
 			// if our object is an handle, select also it's parent.
-			if(pressedObject instanceof GmmlHandle)
+			if(pressedObject instanceof Handle)
 			{
-				((GmmlHandle)pressedObject).parent.select();
+				((Handle)pressedObject).parent.select();
 			} else {
 				doClickSelect(p2d);
 			}
@@ -614,15 +614,15 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * 
 	 * if you want to get more than one @see #getObjectsAt(Point2D)
 	 */
-	GmmlDrawingObject getObjectAt(Point2D p2d) {
+	PathwayElement getObjectAt(Point2D p2d) {
 		Collections.sort(drawingObjects);
-		GmmlDrawingObject probj = null;
-		for (GmmlDrawingObject o : drawingObjects)
+		PathwayElement probj = null;
+		for (PathwayElement o : drawingObjects)
 		{
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
+				if (o instanceof Handle && !((Handle)o).isVisible()) 
 					;
 				else 
 					probj = o;
@@ -636,15 +636,15 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * 
 	 * if you only need the top object, @see #getObjectAt(Point2D)
 	 */
-	List<GmmlDrawingObject> getObjectsAt(Point2D p2d) 
+	List<PathwayElement> getObjectsAt(Point2D p2d) 
 	{
-		List<GmmlDrawingObject> result = new ArrayList<GmmlDrawingObject>();
-		for (GmmlDrawingObject o : drawingObjects)
+		List<PathwayElement> result = new ArrayList<PathwayElement>();
+		for (PathwayElement o : drawingObjects)
 		{
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof GmmlHandle && !((GmmlHandle)o).isVisible()) 
+				if (o instanceof Handle && !((Handle)o).isVisible()) 
 					;
 				else 
 					result.add(o);
@@ -657,7 +657,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		//Ctrl pressed, add/remove from selection
 		if(ctrlPressed) 
 		{
-			if(pressedObject instanceof GmmlSelectionBox) {
+			if(pressedObject instanceof SelectionBox) {
 				//Object inside selectionbox clicked, pass to selectionbox
 				s.objectClicked(p2d);
 			}
@@ -672,7 +672,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		{
 			//If pressedobject is not selectionbox:
 			//Clear current selection and select pressed object
-			if(!(pressedObject instanceof GmmlSelectionBox))
+			if(!(pressedObject instanceof SelectionBox))
 			{
 				clearSelection();
 				s.addToSelection(pressedObject);
@@ -719,7 +719,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 
 	/**
 	 * Add a new object to the drawing
-	 * {@see GmmlDrawing#setNewGraphics(int)}
+	 * {@see Pathway#setNewGraphics(int)}
 	 * @param p	The point where the user clicked on the drawing to add a new graphics
 	 */
 	private void newObject(Point ve)
@@ -729,7 +729,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		int my = (int)mFromV((double)ve.y); 
 		
 		GmmlDataObject gdata = null;
-		GmmlHandle h = null;
+		Handle h = null;
 		lastAdded = null; // reset lastAdded class member
 		switch(newGraphics) {
 		case NEWNONE:
@@ -744,7 +744,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LINE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
@@ -757,7 +757,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.ARROW);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
@@ -770,7 +770,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.LINE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
@@ -783,19 +783,19 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.DASHED);
 			gdata.setLineType (LineType.ARROW);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLABEL:
 			gdata = new GmmlDataObject(ObjectType.LABEL);
 			gdata.setMCenterX(mx);
 			gdata.setMCenterY(my);
-			gdata.setMWidth(GmmlLabel.M_INITIAL_WIDTH);
-			gdata.setMHeight(GmmlLabel.M_INITIAL_HEIGHT);
-			gdata.setMFontSize (GmmlLabel.M_INITIAL_FONTSIZE);
+			gdata.setMWidth(Label.M_INITIAL_WIDTH);
+			gdata.setMHeight(Label.M_INITIAL_HEIGHT);
+			gdata.setMFontSize (Label.M_INITIAL_FONTSIZE);
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
-			((GmmlLabel)lastAdded).createTextControl();
+			((Label)lastAdded).createTextControl();
 			h = null;
 			break;
 		case NEWARC:
@@ -808,7 +808,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor(stdRGB);
 			gdata.setRotation (0);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlShape)lastAdded).handleSE;
+			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWBRACE:
@@ -821,7 +821,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setOrientation(OrientationType.RIGHT);
 			gdata.setColor(stdRGB);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlShape)lastAdded).handleSE;
+			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
@@ -835,7 +835,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setColor(stdRGB);
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlGeneProduct)lastAdded).handleSE;
+			h = ((GeneProduct)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWRECTANGLE:
@@ -849,7 +849,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setRotation (0);
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlShape)lastAdded).handleSE;
+			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWOVAL:
@@ -863,7 +863,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setRotation (0);
 			gdata.setGraphId(data.getUniqueId());
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlShape)lastAdded).handleSE;
+			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWTBAR:
@@ -876,7 +876,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.TBAR);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
@@ -889,7 +889,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_ROUND);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
@@ -902,7 +902,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.RECEPTOR_SQUARE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
@@ -915,7 +915,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_ROUND);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
@@ -928,7 +928,7 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 			gdata.setLineStyle (LineStyle.SOLID);
 			gdata.setLineType (LineType.LIGAND_SQUARE);
 			data.add (gdata); // will cause lastAdded to be set
-			h = ((GmmlLine)lastAdded).getEnd().getHandle();
+			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		}
@@ -969,9 +969,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if(v != null && v.usesToolTip()) {
 			Point2D p = new Point2D.Double(e.x, e.y);
 			
-			GmmlDrawingObject o = getObjectAt(p);
-			if(o != null && o instanceof GmmlGraphics) {
-				Shell tip = v.visualizeToolTip(getShell(), this, (GmmlGraphics)o);
+			PathwayElement o = getObjectAt(p);
+			if(o != null && o instanceof Graphics) {
+				Shell tip = v.visualizeToolTip(getShell(), this, (Graphics)o);
 				if(tip == null) return;
 				Point mp = toDisplay(e.x + 15, e.y + 15);
 				tip.setLocation(mp.x, mp.y);
@@ -982,8 +982,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 
 	private void selectGeneProducts() {
 		clearSelection();
-		for(GmmlDrawingObject o : getDrawingObjects()) {
-			if(o instanceof GmmlGeneProduct) s.addToSelection(o);
+		for(PathwayElement o : getDrawingObjects()) {
+			if(o instanceof GeneProduct) s.addToSelection(o);
 		}
 	}
 	
@@ -999,11 +999,11 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	}
 	
 	private void insertPressed() {
-		Set<GmmlDrawingObject> objects = new HashSet<GmmlDrawingObject>();
+		Set<PathwayElement> objects = new HashSet<PathwayElement>();
 		objects.addAll(s.getSelection());
-		for(GmmlDrawingObject o : objects) {
-			if(o instanceof GmmlLine) {
-				GmmlDataObject g = ((GmmlLine)o).getGmmlData();
+		for(PathwayElement o : objects) {
+			if(o instanceof Line) {
+				GmmlDataObject g = ((Line)o).getGmmlData();
 				GmmlDataObject[] gNew = g.splitLine();
 							
 				removeDrawingObject(o); //Remove the old line
@@ -1014,9 +1014,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 				
 				gNew[1].setGraphId(data.getUniqueId());
 				data.add(gNew[0]);
-				GmmlLine l1 = (GmmlLine)lastAdded;
+				Line l1 = (Line)lastAdded;
 				data.add(gNew[1]);
-				GmmlLine l2 = (GmmlLine)lastAdded;				
+				Line l2 = (Line)lastAdded;				
 				
 				l1.getEnd().link(l2.getStart());
 			}
@@ -1039,8 +1039,8 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		if(e.keyCode == SWT.CTRL) ctrlReleased();
 		if(e.keyCode == SWT.ALT) altReleased();
 		if(e.keyCode == SWT.DEL) {
-			ArrayList<GmmlDrawingObject> toRemove = new ArrayList<GmmlDrawingObject>();
-			for(GmmlDrawingObject o : drawingObjects)
+			ArrayList<PathwayElement> toRemove = new ArrayList<PathwayElement>();
+			for(PathwayElement o : drawingObjects)
 			{
 				if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
 				toRemove.add(o);
@@ -1053,9 +1053,9 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
 	 * @param toRemove	The List containing the objects to be removed
 	 */
-	public void removeDrawingObjects(ArrayList<GmmlDrawingObject>toRemove)
+	public void removeDrawingObjects(ArrayList<PathwayElement>toRemove)
 	{
-		for(GmmlDrawingObject o : toRemove)
+		for(PathwayElement o : toRemove)
 		{
 			removeDrawingObject(o);
 			
@@ -1063,12 +1063,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		s.fitToSelection();
 	}
 	
-	public void removeDrawingObject(GmmlDrawingObject toRemove) {
+	public void removeDrawingObject(PathwayElement toRemove) {
 		toRemove.destroy(); //Object will remove itself from the drawing
 		s.removeFromSelection(toRemove); //Remove from selection
 	}
 
-	GmmlGraphics lastAdded = null;
+	Graphics lastAdded = null;
 	
 	public void gmmlObjectModified(GmmlEvent e) {
 		switch (e.getType())
@@ -1100,12 +1100,12 @@ PaintListener, MouseTrackListener, KeyListener, GmmlListener, VisualizationListe
 		//Clipboard clipboard = new Clipboard (this.getDisplay());
 		
 		List<GmmlDataObject> result = new ArrayList<GmmlDataObject>();
-		for (GmmlDrawingObject g : drawingObjects)
+		for (PathwayElement g : drawingObjects)
 		{
-			if (g.isSelected() && g instanceof GmmlGraphics
-					&& !(g instanceof GmmlSelectionBox))
+			if (g.isSelected() && g instanceof Graphics
+					&& !(g instanceof SelectionBox))
 			{
-				result.add(((GmmlGraphics)g).gdata.copy());
+				result.add(((Graphics)g).gdata.copy());
 			}
 		}
 		if (result.size() > 0)

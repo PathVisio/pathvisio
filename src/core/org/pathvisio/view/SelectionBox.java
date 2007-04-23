@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -37,32 +37,32 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 /**
  * This class implements a selectionbox 
  */ 
-public class GmmlSelectionBox extends GmmlGraphicsShape
+public class SelectionBox extends GraphicsShape
 {
 	private static final long serialVersionUID = 1L;
 		
-	private ArrayList<GmmlDrawingObject> selection;
+	private ArrayList<PathwayElement> selection;
 	boolean isSelecting;
 	boolean isVisible;
 		
 	/**
 	 * Constructor for this class
-	 * @param canvas - the GmmlDrawing this selectionbox will be part of
+	 * @param canvas - the Pathway this selectionbox will be part of
 	 */
-	public GmmlSelectionBox(GmmlDrawing canvas)
+	public SelectionBox(Pathway canvas)
 	{
 		// TODO: selectionbox shouldn't need a dataobject...
 		// note, not setting parent of GmmlDataObject here.
 		super(canvas, new GmmlDataObject(ObjectType.SHAPE));
 			
-		selection = new ArrayList<GmmlDrawingObject>();
+		selection = new ArrayList<PathwayElement>();
 	}	
 	
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_SELECTIONBOX;
+		return Pathway.DRAW_ORDER_SELECTIONBOX;
 	}
 	
-	public ArrayList<GmmlDrawingObject> getSelection() {
+	public ArrayList<PathwayElement> getSelection() {
 		return selection;
 	}
 	
@@ -70,10 +70,10 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	 * Add an object to the selection
 	 * @param o
 	 */
-	public void addToSelection(GmmlDrawingObject o) {
+	public void addToSelection(PathwayElement o) {
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
 		if(o instanceof VPoint) {
-			for(GmmlLine l : ((VPoint)o).getLines()) {
+			for(Line l : ((VPoint)o).getLines()) {
 				l.select();
 				doAdd(l);
 			}
@@ -89,7 +89,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		 
 	}
 	
-	private void doAdd(GmmlDrawingObject o) {
+	private void doAdd(PathwayElement o) {
 		if(!selection.contains(o)) selection.add(o);
 	}
 	
@@ -97,7 +97,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	 * Remove an object from the selection
 	 * @param o
 	 */
-	public void removeFromSelection(GmmlDrawingObject o) {
+	public void removeFromSelection(PathwayElement o) {
 		if(o == this) return;
 		selection.remove(o); 
 		o.deselect();
@@ -110,13 +110,13 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	 * @param p
 	 * @return the child object or null if none is present at the given location
 	 */
-	public GmmlDrawingObject getChild(Point2D p) {
+	public PathwayElement getChild(Point2D p) {
 		//First check selection
-		for(GmmlDrawingObject o : selection) {
+		for(PathwayElement o : selection) {
 			if(o.vContains(p)) return o;
 		}
 		//Nothing in selection, check all other objects
-		for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
+		for(PathwayElement o : canvas.getDrawingObjects()) {
 			if(o.vContains(p) && o != this)
 				return o;
 		}
@@ -129,7 +129,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	 * @param p
 	 */
 	public void objectClicked(Point2D p) {
-		GmmlDrawingObject clicked = getChild(p);
+		PathwayElement clicked = getChild(p);
 		if(clicked == null) return; //Nothing clicked
 		if(clicked.isSelected()) 	//Object is selected, remove
 		{
@@ -169,7 +169,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	}
 	
 	private void reset(double vStartX, double vStartY, boolean clearSelection) {
-		for(GmmlDrawingObject o : selection) o.deselect();
+		for(PathwayElement o : selection) o.deselect();
 		if(clearSelection) {
 			selection.clear();
 			fireSelectionEvent(
@@ -203,7 +203,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		isSelecting = false;
 		if(!hasMultipleSelection()) {
 			if(selection.size() == 1) {
-				GmmlDrawingObject passTo = selection.get(0);
+				PathwayElement passTo = selection.get(0);
 				reset();
 				passTo.select();
 			} else {
@@ -223,21 +223,21 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	 */
 	private void setHandleRestriction(boolean restrict) {
 		if(restrict) {
-			handleNE.setDirection(GmmlHandle.DIRECTION_MINXY);
-			handleSW.setDirection(GmmlHandle.DIRECTION_MINXY);
-			handleNW.setDirection(GmmlHandle.DIRECTION_XY);
-			handleSE.setDirection(GmmlHandle.DIRECTION_XY);
+			handleNE.setDirection(Handle.DIRECTION_MINXY);
+			handleSW.setDirection(Handle.DIRECTION_MINXY);
+			handleNW.setDirection(Handle.DIRECTION_XY);
+			handleSE.setDirection(Handle.DIRECTION_XY);
 		} else {
-			for(GmmlHandle h : getHandles()) 
-				h.setDirection(GmmlHandle.DIRECTION_FREE); 
+			for(Handle h : getHandles()) 
+				h.setDirection(Handle.DIRECTION_FREE); 
 		}
 	}
 	
 	public void select() {
 		super.select();
-		for(GmmlDrawingObject o : selection) {
+		for(PathwayElement o : selection) {
 			o.select();
-			for(GmmlHandle h : o.getHandles()) h.hide();
+			for(Handle h : o.getHandles()) h.hide();
 		}
 	}
 	
@@ -250,17 +250,17 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			return;
 		}
 		if(! hasMultipleSelection()) { //Only one object in selection, hide selectionbox
-			GmmlDrawingObject passTo = selection.get(0);
+			PathwayElement passTo = selection.get(0);
 			hide(false);
 			passTo.select();
 			return;
 		}
 
 		Rectangle vr = null;
-		for(GmmlDrawingObject o : selection) {
+		for(PathwayElement o : selection) {
 			if(vr == null) vr = o.getVBounds();
 			else vr.add(o.getVBounds());
-			for(GmmlHandle h : o.getHandles()) h.hide();
+			for(Handle h : o.getHandles()) h.hide();
 		}
 
 		gdata.setMWidth(mFromV(vr.width));
@@ -286,7 +286,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	}
 	
 	public void hide(boolean reset) {
-		for(GmmlHandle h : getHandles()) h.hide();
+		for(Handle h : getHandles()) h.hide();
 		isVisible = false;
 		if(reset) reset();
 	}
@@ -294,9 +294,9 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 	/**
 	 * Gets the corner handle (South east) for start dragging
 	 */
-	public GmmlHandle getCornerHandle() { return handleSE; }
+	public Handle getCornerHandle() { return handleSE; }
 	
-	public void adjustToHandle(GmmlHandle h) {	
+	public void adjustToHandle(Handle h) {	
 		//Store original size and location before adjusting to handle
 		double vWidthOld = getVWidthDouble();
 		double vHeightOld = getVHeightDouble();
@@ -307,8 +307,8 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		if(isSelecting) { //Selecting, so add containing objects to selection
 			Rectangle vr = getVBounds();
 			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.x, vr.y, vr.width, vr.height);
-			for(GmmlDrawingObject o : canvas.getDrawingObjects()) {
-				if((o == this) || (o instanceof GmmlHandle)) continue;
+			for(PathwayElement o : canvas.getDrawingObjects()) {
+				if((o == this) || (o instanceof Handle)) continue;
 				if(o.vIntersects(bounds)) { 
 					addToSelection(o);
 				} else if(o.isSelected()) removeFromSelection(o);
@@ -318,9 +318,9 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			double heightRatio = getVHeightDouble() / vHeightOld;
 			//Scale all selected objects in x and y direction, treat points seperately
 			Set<VPoint> points = new HashSet<VPoint>();
-			for(GmmlDrawingObject o : selection) { 
-				if(o instanceof GmmlLine) {
-					points.addAll(((GmmlLine)o).getPoints());
+			for(PathwayElement o : selection) { 
+				if(o instanceof Line) {
+					points.addAll(((Line)o).getPoints());
 				} else { 
 					Rectangle2D.Double vr = o.getVScaleRectangle();
 					double newObjectWidth = vr.width * widthRatio;
@@ -352,17 +352,17 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); //Will be moved by linking object
 		Set<VPoint> points = new HashSet<VPoint>(); //Will not be moved by linking object
 		
-		for(GmmlDrawingObject o : selection) 
+		for(PathwayElement o : selection) 
 		{
-			if (o instanceof GmmlGraphics)
+			if (o instanceof Graphics)
 			{
-				GmmlDataObject g = ((GmmlGraphics)o).getGmmlData();
-				if(!(o instanceof GmmlLine)) {
+				GmmlDataObject g = ((Graphics)o).getGmmlData();
+				if(!(o instanceof Line)) {
 					o.vMoveBy(vdx, vdy);
 					not.addAll(g.getReferences());
 				}
 				if(g.getObjectType() == ObjectType.LINE) {
-					points.addAll(((GmmlLine)o).getPoints());
+					points.addAll(((Line)o).getPoints());
 				}
 			}
 
@@ -432,12 +432,12 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 		public static final int OBJECT_REMOVED = 1;
 		public static final int SELECTION_CLEARED = 2;
 
-		public GmmlSelectionBox source;
-		public GmmlDrawingObject affectedObject;
+		public SelectionBox source;
+		public PathwayElement affectedObject;
 		public int type;
-		public List<GmmlDrawingObject> selection;
+		public List<PathwayElement> selection;
 
-		public SelectionEvent(GmmlSelectionBox source, int type, GmmlDrawingObject affectedObject) {
+		public SelectionEvent(SelectionBox source, int type, PathwayElement affectedObject) {
 			super(source);
 			this.source = source;
 			this.type = type;
@@ -445,7 +445,7 @@ public class GmmlSelectionBox extends GmmlGraphicsShape
 			this.affectedObject = affectedObject;
 		}
 		
-		public SelectionEvent(GmmlSelectionBox source, int type) {
+		public SelectionEvent(SelectionBox source, int type) {
 			this(source, type, null);
 		}
 	}	

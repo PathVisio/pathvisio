@@ -382,7 +382,7 @@ public class GmmlData implements GmmlListener
 
 			if (validate) validateDocument(doc);
 			
-			// Copy the pathway information to a GmmlDrawing
+			// Copy the pathway information to a Pathway
 			Element root = doc.getRootElement();
 			
 			GpmlFormat.mapElement(root, this); // MappInfo

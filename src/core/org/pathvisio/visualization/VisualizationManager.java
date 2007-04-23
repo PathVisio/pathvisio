@@ -47,9 +47,9 @@ import org.jdom.output.XMLOutputter;
 import org.pathvisio.gmmlVision.GmmlVision;
 import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
 import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
-import org.pathvisio.graphics.GmmlGraphics;
-import org.pathvisio.graphics.GmmlSelectionBox;
-import org.pathvisio.graphics.GmmlSelectionBox.SelectionListener;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.data.GmmlGex;
 import org.pathvisio.data.GmmlGex.ExpressionDataEvent;
 import org.pathvisio.data.GmmlGex.ExpressionDataListener;
@@ -285,14 +285,14 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	static class VisualizationPanel extends ScrolledComposite implements SelectionListener, VisualizationListener {
 		Visualization vis;
 		Composite contents;
-		Set<GmmlGraphics> input;
+		Set<Graphics> input;
 		
 		public VisualizationPanel(Composite parent, int style) {
 			super(parent, style);
 			createContents();
-			GmmlSelectionBox.addListener(this);
+			SelectionBox.addListener(this);
 			VisualizationManager.addListener(this);
-			input = new LinkedHashSet<GmmlGraphics>();
+			input = new LinkedHashSet<Graphics>();
 		}
 		
 		void createContents() {
@@ -318,12 +318,12 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			fillContents();
 		}
 		
-		void addInput(GmmlGraphics g) {
+		void addInput(Graphics g) {
 			input.add(g);
 			refresh();
 		}
 		
-		void removeInput(GmmlGraphics g) {
+		void removeInput(Graphics g) {
 			input.remove(g);
 			refresh();
 		}
@@ -338,17 +338,17 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			layout(true, true);
 		}
 
-		public void drawingEvent(GmmlSelectionBox.SelectionEvent e) {
+		public void drawingEvent(SelectionBox.SelectionEvent e) {
 			switch(e.type) {
-			case GmmlSelectionBox.SelectionEvent.OBJECT_ADDED:
-				if(e.affectedObject instanceof GmmlGraphics) 
-					addInput((GmmlGraphics)e.affectedObject);
+			case SelectionBox.SelectionEvent.OBJECT_ADDED:
+				if(e.affectedObject instanceof Graphics) 
+					addInput((Graphics)e.affectedObject);
 				break;
-			case GmmlSelectionBox.SelectionEvent.OBJECT_REMOVED:
-				if(e.affectedObject instanceof GmmlGraphics) 
-					removeInput((GmmlGraphics)e.affectedObject);
+			case SelectionBox.SelectionEvent.OBJECT_REMOVED:
+				if(e.affectedObject instanceof Graphics) 
+					removeInput((Graphics)e.affectedObject);
 				break;
-			case GmmlSelectionBox.SelectionEvent.SELECTION_CLEARED:
+			case SelectionBox.SelectionEvent.SELECTION_CLEARED:
 				clearInput();
 			}
 		}

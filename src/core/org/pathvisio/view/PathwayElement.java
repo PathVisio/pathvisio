@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -24,11 +24,11 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 
-public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
+public abstract class PathwayElement implements Comparable<PathwayElement>
 {	
-	protected GmmlDrawing canvas;
+	protected Pathway canvas;
 	
-	GmmlDrawingObject(GmmlDrawing canvas) {
+	PathwayElement(Pathway canvas) {
 		this.canvas = canvas;
 		canvas.addObject(this);
 	}
@@ -41,7 +41,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	protected abstract void draw(PaintEvent e);
 	
 	/**
-	 * Draws the GmmlDrawingObject object on the GmmlDrawing
+	 * Draws the PathwayElement object on the Pathway
 	 * it is part of
 	 */
 	public abstract void draw(PaintEvent e, GC buffer);
@@ -63,7 +63,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	/**
 	 * Get the drawing this object belongs to
 	 */
-	public GmmlDrawing getDrawing() {
+	public Pathway getDrawing() {
 		return canvas;
 	}
 	
@@ -102,7 +102,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	}
 
 	/**
-	 * Determines whether a GmmlGraphics object intersects 
+	 * Determines whether a Graphics object intersects 
 	 * the rectangle specified
 	 * @param r - the rectangle to check
 	 * @return True if the object intersects the rectangle, false otherwise
@@ -113,7 +113,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	}
 	
 	/**
-	 * Determines wheter a GmmlGraphics object contains
+	 * Determines wheter a Graphics object contains
 	 * the point specified
 	 * @param point - the point to check
 	 * @return True if the object contains the point, false otherwise
@@ -158,16 +158,16 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	/**
 	 * Transforms this object to fit to the coordinates
 	 * of the given handle
-	 * @param h	The GmmlHandle to adjust to
+	 * @param h	The Handle to adjust to
 	 */
-	protected void adjustToHandle(GmmlHandle h) {}
+	protected void adjustToHandle(Handle h) {}
 
 	/**
 	 * Get all the handles belonging to this object
 	 * @return an array of GmmlHandles, an empty array if the object
 	 * has no handles
 	 */
-	protected GmmlHandle[] getHandles() { return new GmmlHandle[] {}; }
+	protected Handle[] getHandles() { return new Handle[] {}; }
 	
 	/**
 	 * Moves this object by specified increments
@@ -202,7 +202,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	protected Rectangle2D.Double getVScaleRectangle() { return new Rectangle2D.Double(); }
 
 	public int getDrawingOrder() {
-		return GmmlDrawing.DRAW_ORDER_DEFAULT;
+		return Pathway.DRAW_ORDER_DEFAULT;
 	}
 	
 	/**
@@ -213,7 +213,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	 * @param d
 	 * @see #getDrawingOrder()
 	 */
-	public int compareTo(GmmlDrawingObject d)
+	public int compareTo(PathwayElement d)
 	{
 		// same object? easy...
 		if (d == this)
@@ -228,11 +228,11 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 		}
 		else if(isSelected() || isHighlighted())
 		{
-			az = GmmlDrawing.DRAW_ORDER_SELECTED;
+			az = Pathway.DRAW_ORDER_SELECTED;
 		}
 		else if(d.isSelected() || d.isHighlighted())
 		{
-			bz = GmmlDrawing.DRAW_ORDER_SELECTED;
+			bz = Pathway.DRAW_ORDER_SELECTED;
 		}
 		
 		// note, if the drawing order is equal, that doesn't mean the objects are equal
@@ -262,7 +262,7 @@ public abstract class GmmlDrawingObject implements Comparable<GmmlDrawingObject>
 	protected double vFromM(double m) { return canvas.vFromM(m); } 
 	
 	protected void destroyHandles() {
-		for(GmmlHandle h : getHandles()) {
+		for(Handle h : getHandles()) {
 			h.destroy();
 		}
 	}

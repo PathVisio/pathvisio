@@ -64,8 +64,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 
 import org.pathvisio.gmmlVision.GmmlVision;
-import org.pathvisio.graphics.GmmlGeneProduct;
-import org.pathvisio.graphics.GmmlGraphics;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.util.TableColumnResizer;
@@ -91,7 +91,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	
 	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
 	private Canvas sidePanel;
-	private Collection<GmmlGraphics> spGraphics;
+	private Collection<Graphics> spGraphics;
 	
 	public PluginWithColoredSamples(Visualization v) {
 		super(v);
@@ -109,11 +109,11 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}.
 	 * @see VisualizationPlugin#visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
 	 */
-	public void visualizeOnDrawing(GmmlGraphics g, PaintEvent e, GC gc) {
-		if(!(g instanceof GmmlGeneProduct)) return;
+	public void visualizeOnDrawing(Graphics g, PaintEvent e, GC gc) {
+		if(!(g instanceof GeneProduct)) return;
 		if(useSamples.size() == 0) return; //Nothing to draw
 		
-		GmmlGeneProduct gp = (GmmlGeneProduct) g;
+		GeneProduct gp = (GeneProduct) g;
 		
 		Region region = getVisualization().provideDrawArea(this, g);
 		Rectangle area = region.getBounds();
@@ -139,7 +139,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * @param e
 	 * @param gc
 	 */
-	void drawArea(GmmlGeneProduct gp, Rectangle area, PaintEvent e, GC gc) {
+	void drawArea(GeneProduct gp, Rectangle area, PaintEvent e, GC gc) {
 		int nr = useSamples.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
 		int w = area.width / nr;
@@ -206,7 +206,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		area.height -= SIDEPANEL_MARGIN * 2;
 		
 		int nr = 0;
-		for(GmmlGraphics g : spGraphics) if(g instanceof GmmlGeneProduct) nr++;
+		for(Graphics g : spGraphics) if(g instanceof GeneProduct) nr++;
 
 		if(nr == 0) {
 			e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
@@ -214,14 +214,14 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			return;
 		}
 		
-		GmmlGeneProduct[] gps = new GmmlGeneProduct[nr];
+		GeneProduct[] gps = new GeneProduct[nr];
 		int x = 0;
-		for(GmmlGraphics g : spGraphics) 
-			if(g instanceof GmmlGeneProduct) gps[x++] = (GmmlGeneProduct)g;
+		for(Graphics g : spGraphics) 
+			if(g instanceof GeneProduct) gps[x++] = (GeneProduct)g;
 		
 		e.gc.setFont(e.display.getSystemFont());
 		int tw = 0;
-		for(GmmlGeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getGmmlData().getTextLabel()).x);
+		for(GeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getGmmlData().getTextLabel()).x);
 		tw += e.gc.getFontMetrics().getHeight();
 		
 		//Draw sample labels (vertical)
@@ -269,7 +269,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		});
 	}
 	
-	public void visualizeOnSidePanel(Collection<GmmlGraphics> objects) {
+	public void visualizeOnSidePanel(Collection<Graphics> objects) {
 		spGraphics = objects;
 		sidePanel.redraw();
 	}

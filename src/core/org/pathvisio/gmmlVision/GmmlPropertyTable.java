@@ -42,10 +42,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.pathvisio.graphics.GmmlGraphics;
-import org.pathvisio.graphics.GmmlSelectionBox;
-import org.pathvisio.graphics.GmmlSelectionBox.SelectionEvent;
-import org.pathvisio.graphics.GmmlSelectionBox.SelectionListener;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.SelectionBox.SelectionEvent;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SuggestCellEditor;
 import org.pathvisio.util.TableColumnResizer;
@@ -222,7 +222,7 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 		attributes = new ArrayList<PropertyType>();
 		tableViewer.setInput(attributes);
 		
-		GmmlSelectionBox.addListener(this);
+		SelectionBox.addListener(this);
 	}
 	
 	/**
@@ -581,12 +581,12 @@ public class GmmlPropertyTable extends Composite implements GmmlListener, Select
 	public void drawingEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
-			if(e.affectedObject instanceof GmmlGraphics)
-				addGmmlDataObject(((GmmlGraphics)e.affectedObject).getGmmlData());
+			if(e.affectedObject instanceof Graphics)
+				addGmmlDataObject(((Graphics)e.affectedObject).getGmmlData());
 			break;
 		case SelectionEvent.OBJECT_REMOVED:
-			if(e.affectedObject instanceof GmmlGraphics)
-				removeGmmlDataObject(((GmmlGraphics)e.affectedObject).getGmmlData());
+			if(e.affectedObject instanceof Graphics)
+				removeGmmlDataObject(((Graphics)e.affectedObject).getGmmlData());
 			break;
 		case SelectionEvent.SELECTION_CLEARED:
 			 clearGmmlDataObjects();

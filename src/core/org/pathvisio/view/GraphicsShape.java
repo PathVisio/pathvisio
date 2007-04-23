@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.graphics;
+package org.pathvisio.view;
 
 import java.awt.Polygon;
 import java.awt.Shape;
@@ -34,45 +34,45 @@ import org.pathvisio.model.GmmlDataObject.MPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 /**
- * This is an {@link GmmlGraphics} class representing shapelike forms,
+ * This is an {@link Graphics} class representing shapelike forms,
  * and provides implementation for containing 8 handles placed in a 
  * (rotated) rectangle around the shape and a rotation handle
  */
-public abstract class GmmlGraphicsShape extends GmmlGraphics {
+public abstract class GraphicsShape extends Graphics {
 
 	private static final double M_ROTATION_HANDLE_POSITION = 20.0 * 15;
 
 	//Side handles
-	GmmlHandle handleN;
-	GmmlHandle handleE;
-	GmmlHandle handleS;
-	GmmlHandle handleW;
+	Handle handleN;
+	Handle handleE;
+	Handle handleS;
+	Handle handleW;
 	//Corner handles
-	GmmlHandle handleNE;
-	GmmlHandle handleSE;
-	GmmlHandle handleSW;
-	GmmlHandle handleNW;
+	Handle handleNE;
+	Handle handleSE;
+	Handle handleSW;
+	Handle handleNW;
 	//Rotation handle
-	GmmlHandle handleR;
+	Handle handleR;
 		
-	final GmmlHandle[][] handleMatrix; //Used to get opposite handles
+	final Handle[][] handleMatrix; //Used to get opposite handles
 	
-	public GmmlGraphicsShape(GmmlDrawing canvas, GmmlDataObject o) {
+	public GraphicsShape(Pathway canvas, GmmlDataObject o) {
 		super(canvas, o);
 		
-		handleN	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
-		handleE	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
-		handleS	= new GmmlHandle(GmmlHandle.DIRECTION_Y, this, canvas);
-		handleW	= new GmmlHandle(GmmlHandle.DIRECTION_X, this, canvas);
+		handleN	= new Handle(Handle.DIRECTION_Y, this, canvas);
+		handleE	= new Handle(Handle.DIRECTION_X, this, canvas);
+		handleS	= new Handle(Handle.DIRECTION_Y, this, canvas);
+		handleW	= new Handle(Handle.DIRECTION_X, this, canvas);
 				
-		handleNE = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleSE = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleSW = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
-		handleNW = new GmmlHandle(GmmlHandle.DIRECTION_FREE, this, canvas);
+		handleNE = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleSE = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		
-		handleR = new GmmlHandle(GmmlHandle.DIRECTION_ROT, this, canvas);
+		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);
 		
-		handleMatrix = new GmmlHandle[][] {
+		handleMatrix = new Handle[][] {
 				{ handleNW, 	handleNE },
 				{ handleSW, 	handleSE }};
 	}
@@ -115,24 +115,24 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
 	}
 	
-	public GmmlHandle[] getHandles()
+	public Handle[] getHandles()
 	{
-		if( this instanceof GmmlSelectionBox) {
+		if( this instanceof SelectionBox) {
 			// Only corner handles
-			return new GmmlHandle[] {
+			return new Handle[] {
 					handleNE, handleSE,
 					handleSW, handleNW
 			};
 		}
-		if(	this instanceof GmmlGeneProduct || 
-			this instanceof GmmlLabel) {
+		if(	this instanceof GeneProduct || 
+			this instanceof Label) {
 			// No rotation handle for these objects
-			return new GmmlHandle[] {
+			return new Handle[] {
 					handleN, handleNE, handleE, handleSE,
 					handleS, handleSW, handleW,	handleNW,
 			};
 		}
-		return new GmmlHandle[] {
+		return new Handle[] {
 				handleN, handleNE, handleE, handleSE,
 				handleS, handleSW, handleW,	handleNW,
 				handleR
@@ -261,7 +261,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 				getVCenterX(), getVCenterY());
 	}
 	
-	public void adjustToHandle(GmmlHandle h) {
+	public void adjustToHandle(Handle h) {
 		//Rotation
 		if 	(h == handleR) {
 			Point def = mRelativeToCenter(getMHandleLocation(h));
@@ -317,11 +317,11 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * the object becomes negative after adjusting to a handle
 	 * @param h	The handle this object adjusted to
 	 */
-	public void negativeWidth(GmmlHandle h) {
-		if(h.getDirection() == GmmlHandle.DIRECTION_FREE)  {
-			h = getOppositeHandle(h, GmmlHandle.DIRECTION_X);
+	public void negativeWidth(Handle h) {
+		if(h.getDirection() == Handle.DIRECTION_FREE)  {
+			h = getOppositeHandle(h, Handle.DIRECTION_X);
 		} else {
-			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
+			h = getOppositeHandle(h, Handle.DIRECTION_XY);
 		}
 		double mw = -gdata.getMWidth();
 		double msx = gdata.getMLeft() - mw;
@@ -336,11 +336,11 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * the object becomes negative after adjusting to a handle
 	 * @param h	The handle this object adjusted to
 	 */
-	public void negativeHeight(GmmlHandle h) {
-		if(h.getDirection() == GmmlHandle.DIRECTION_FREE)  {
-			h = getOppositeHandle(h, GmmlHandle.DIRECTION_Y);
+	public void negativeHeight(Handle h) {
+		if(h.getDirection() == Handle.DIRECTION_FREE)  {
+			h = getOppositeHandle(h, Handle.DIRECTION_Y);
 		} else {
-			h = getOppositeHandle(h, GmmlHandle.DIRECTION_XY);
+			h = getOppositeHandle(h, Handle.DIRECTION_XY);
 		}
 		double ht = -gdata.getMHeight();
 		double sy = gdata.getMTop() - ht;
@@ -354,7 +354,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * Sets the handles at the correct location;
 	 * @param ignore the position of this handle will not be adjusted
 	 */
-	private void setHandleLocation(GmmlHandle ignore)
+	private void setHandleLocation(Handle ignore)
 	{
 		Point p;
 		p = getMHandleLocation(handleN);
@@ -378,7 +378,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		p = getMHandleLocation(handleR);
 		if(ignore != handleR) handleR.setMLocation(p.x, p.y);
 		
-		for(GmmlHandle h : getHandles()) h.rotation = gdata.getRotation();
+		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
 	}
 	
 	/**
@@ -394,7 +394,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * (in coordinates relative to the canvas)
 	 * @param h
 	 */
-	protected Point getVHandleLocation(GmmlHandle h) 
+	protected Point getVHandleLocation(Handle h) 
 	{
 		Point mp = getMHandleLocation (h);
 		if (mp != null)			
@@ -402,7 +402,7 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 		else return null;
 	}
 
-	protected Point getMHandleLocation(GmmlHandle h) {
+	protected Point getMHandleLocation(Handle h) {
 		if(h == handleN) return mToExternal(0, -gdata.getMHeight()/2);
 		if(h == handleE) return mToExternal(gdata.getMWidth()/2, 0);
 		if(h == handleS) return mToExternal(0,  gdata.getMHeight()/2);
@@ -423,11 +423,11 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 	 * for directions NE, NW, SE, SW, you can constraint the direction, e.g.:
 	 * if direction is X, the opposite of NE will be NW instead of SW
 	 * @param h	The handle to find the opposite for
-	 * @param direction	Constraints on the direction, one of {@link GmmlHandle}#DIRECTION_*.
+	 * @param direction	Constraints on the direction, one of {@link Handle}#DIRECTION_*.
 	 * Will be ignored for N, E, S and W handles
 	 * @return	The opposite handle
 	 */
-	GmmlHandle getOppositeHandle(GmmlHandle h, int direction) {
+	Handle getOppositeHandle(Handle h, int direction) {
 		//Ignore direction for N, E, S and W
 		if(h == handleN) return handleS;
 		if(h == handleE) return handleW;
@@ -436,20 +436,20 @@ public abstract class GmmlGraphicsShape extends GmmlGraphics {
 				
 		int[] pos = handleFromMatrix(h);
 		switch(direction) {
-		case GmmlHandle.DIRECTION_XY:
-		case GmmlHandle.DIRECTION_MINXY:
-		case GmmlHandle.DIRECTION_FREE:
+		case Handle.DIRECTION_XY:
+		case Handle.DIRECTION_MINXY:
+		case Handle.DIRECTION_FREE:
 			return handleMatrix[ Math.abs(pos[0] - 1)][ Math.abs(pos[1] - 1)];
-		case GmmlHandle.DIRECTION_Y:
+		case Handle.DIRECTION_Y:
 			return handleMatrix[ Math.abs(pos[0] - 1)][pos[1]];
-		case GmmlHandle.DIRECTION_X:
+		case Handle.DIRECTION_X:
 			return handleMatrix[ pos[0]][ Math.abs(pos[1] - 1)];
 		default:
 			return null;
 		}
 	}
 	
-	int[] handleFromMatrix(GmmlHandle h) {
+	int[] handleFromMatrix(Handle h) {
 		for(int x = 0; x < 2; x++) {
 			for(int y = 0; y < 2; y++) {
 				if(handleMatrix[x][y] == h) return new int[] {x,y};

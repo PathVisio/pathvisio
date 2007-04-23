@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Label;
 import org.pathvisio.gmmlVision.GmmlVision;
 import org.pathvisio.gmmlVision.GmmlVision.ApplicationEvent;
 import org.pathvisio.gmmlVision.GmmlVision.ApplicationEventListener;
-import org.pathvisio.graphics.GmmlDrawing;
-import org.pathvisio.graphics.GmmlDrawingObject;
-import org.pathvisio.graphics.GmmlGeneProduct;
+import org.pathvisio.view.Pathway;
+import org.pathvisio.view.PathwayElement;
+import org.pathvisio.view.GeneProduct;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData.Row;
 
@@ -54,7 +54,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	public int getNrResults() { return getNrRows(); }
 		
 	public void highlightResults(boolean highlight) {
-		GmmlDrawing drawing = GmmlVision.getDrawing();
+		Pathway drawing = GmmlVision.getDrawing();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
@@ -64,10 +64,10 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 			
 			try {
 				ArrayList idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
-				GmmlGeneProduct gp = null;
-				for(GmmlDrawingObject o : drawing.getDrawingObjects()) {
-					if(o instanceof GmmlGeneProduct) {
-						gp = (GmmlGeneProduct)o;
+				GeneProduct gp = null;
+				for(PathwayElement o : drawing.getDrawingObjects()) {
+					if(o instanceof GeneProduct) {
+						gp = (GeneProduct)o;
 						if(idsFound.contains(gp.getID())) gp.highlight();
 					}
 				}

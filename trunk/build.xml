@@ -7,7 +7,7 @@
 	<property name="build.v2.dir" value="build/v2"/>
 	<property name="build.plugins.dir" value="build/plugins"/>
 
-        <property name="apidoc.dir" value="apidoc"/>
+    <property name="apidoc.dir" value="apidoc"/>
 	<!-- <property name="dist.dir" value="dist"/> -->
 	<property name="webstart.dir" value="webstart"/>
 	<property name="lib.dir" value="lib"/>
@@ -171,24 +171,24 @@ public class Revision
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<javadoc destdir="${apidoc.dir}">
 			<classpath refid="project.v2.class.path"/>
-			<package name="gmmlVision"/>
-			<package name="gmmlVision.sidepanels"/>
-			<package name="graphics"/>
-			<package name="colorSet"/>
-			<package name="util"/>
-			<package name="util.tableviewer"/>
-			<package name="data"/>
-			<package name="search"/>
-			<package name="R"/>
-			<package name="R.wizard"/>
-			<package name="visualization"/>
-			<package name="visualization.colorset"/>
-			<package name="visualization.plugins"/>
-			<package name="preferences"/>
-			<package name="debug"/>
+			<package name="org.pathvisio.gui"/>
+			<package name="org.pathvisio.view"/>
+			<package name="org.pathvisio.model"/>
+			<package name="org.pathvisio.util"/>
+			<package name="org.pathvisio.util.tableviewer"/>
+			<package name="org.pathvisio.data"/>
+			<package name="org.pathvisio.search"/>
+			<package name="org.pathvisio.R"/>
+			<package name="org.pathvisio.R.wizard"/>
+			<package name="org.pathvisio.visualization"/>
+			<package name="org.pathvisio.visualization.colorset"/>
+			<package name="org.pathvisio.visualization.plugins"/>
+			<package name="org.pathvisio.preferences"/>
+			<package name="org.pathvisio.debug"/>
 			<sourcepath>			
 				<pathelement location="${src.dir}/core"/>
 				<pathelement location="${src.dir}/v2"/>
+				<pathelement location="${src.dir}/plugins"/>
 			</sourcepath>
 		</javadoc>		
 	</target>

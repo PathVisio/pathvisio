@@ -29,7 +29,6 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.model.Pathway.Color;
 
 /**
  * class responsible for interaction with Gpml format.
@@ -42,7 +41,7 @@ import org.pathvisio.model.Pathway.Color;
  */
 public class GpmlFormat 
 {
-	static class AttributeInfo
+	private static class AttributeInfo
 	{
 		/**
 		 * xsd validated type. Note that in the current implementation

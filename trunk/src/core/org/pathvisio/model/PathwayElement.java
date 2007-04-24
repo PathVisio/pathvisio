@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.pathvisio.data.DataSources;
-import org.pathvisio.model.Pathway.Color;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 

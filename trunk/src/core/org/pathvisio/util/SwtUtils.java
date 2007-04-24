@@ -81,14 +81,14 @@ public class SwtUtils {
 	 * @param display	the display to assign the color to
 	 * @return	a brand new {@link Color}
 	 */
-	public static Color changeColor(Color cOld, Pathway.Color rgbNew, Display display)
+	public static Color changeColor(Color cOld, org.pathvisio.model.Color rgbNew, Display display)
 	{
 		if(cOld != null && !cOld.isDisposed())
 		{
 			cOld.dispose();
 			cOld = null;
 		}
-		if(rgbNew == null) rgbNew = new Pathway.Color(0,0,0);
+		if(rgbNew == null) rgbNew = new org.pathvisio.model.Color(0,0,0);
 		return new Color(display, ColorConverter.toRGB(rgbNew));
 	}
 	

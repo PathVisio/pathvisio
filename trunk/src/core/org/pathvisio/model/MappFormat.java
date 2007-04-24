@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.data.ConvertType;
 import org.pathvisio.data.DataSources;
 
 /**

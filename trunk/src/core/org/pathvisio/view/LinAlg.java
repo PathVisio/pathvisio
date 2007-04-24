@@ -14,11 +14,17 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.util;
+package org.pathvisio.view;
 
-public class LinAlg {
+/**
+ * Helper class for rotation calculations.
+ *
+ */
+public class LinAlg 
+{
 	
-	public static double angle(Point p1, Point p2) {
+	public static double angle(Point p1, Point p2) 
+	{
 		//Angle:
 		//					p1.p2	
         //cos(angle) = --------------
@@ -30,11 +36,13 @@ public class LinAlg {
 	/**
 	 * negative: ccw positive: cw
 	 */
-	public static double direction(Point p1, Point p2) {
+	public static double direction(Point p1, Point p2) 
+	{
 		return Math.signum(p1.x * p2.y - p1.y * p2.x);
 	}
 	
-	public static double dot(Point v1, Point v2) {
+	public static double dot(Point v1, Point v2) 
+	{
 		double[] d1 = v1.asArray();
 		double[] d2 = v2.asArray();
 		double sum = 0;
@@ -42,7 +50,8 @@ public class LinAlg {
 		return sum;
 	}
 	
-	public static Point project(Point p1, Point p2) {
+	public static Point project(Point p1, Point p2) 
+	{
 		//Projection of p1 on p2:
 		// p1.p2
 		// ----- . p2
@@ -51,19 +60,22 @@ public class LinAlg {
 		return new Point(p2.x * c, p2.y * c);
 	}
 	
-	public static double distance(Point p1, Point p2) {
+	public static double distance(Point p1, Point p2) 
+	{
 		Point dp = p2.subtract(p1);
 		return dp.len();
 	}
 	
-	public static Point rotate(Point p, double angle) {
+	public static Point rotate(Point p, double angle) 
+	{
 		Point pr = new Point(0,0);
 		pr.x = p.x * Math.cos(angle) + p.y * Math.sin(angle);
 		pr.y = -p.x * Math.sin(angle) + p.y * Math.cos(angle);
 		return pr;
 	}
 	
-	public static class Point {
+	public static class Point 
+	{
 		public double x, y;
 		public Point(double x, double y) { this.x = x; this.y = y;	}
 		
@@ -71,11 +83,13 @@ public class LinAlg {
 		
 		public double[] asArray() { return new double[] { x, y }; }
 		
-		public Point norm() {
+		public Point norm() 
+		{
 			double l = len();
 			return new Point(x / l, y / l);
 		}
-		public double len() {
+		public double len() 
+		{
 			return Math.sqrt(dot(this, this));
 		}
 		

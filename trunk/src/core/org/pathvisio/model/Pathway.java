@@ -511,12 +511,4 @@ public class Pathway implements PathwayListener
 		}
 	}
 
-	public static class Color {
-		public int red, green, blue;
-		public Color(int r, int g, int b) {
-			red = r;
-			green = g;
-			blue = b;
-		}
-	}
 }

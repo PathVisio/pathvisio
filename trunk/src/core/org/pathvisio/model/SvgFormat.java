@@ -28,8 +28,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import org.pathvisio.model.Pathway.Color;
-
 public class SvgFormat 
 {
 	static final Namespace nsSVG = Namespace.getNamespace("http://www.w3.org/2000/svg");

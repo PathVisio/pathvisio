@@ -25,9 +25,8 @@ import java.util.Set;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
 
-import org.pathvisio.util.LinAlg;
 import org.pathvisio.util.SwtUtils;
-import org.pathvisio.util.LinAlg.Point;
+import org.pathvisio.view.LinAlg.Point;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayElement.MPoint;

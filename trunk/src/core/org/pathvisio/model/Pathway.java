@@ -296,7 +296,7 @@ public class Pathway implements PathwayListener
 		mappInfo.setWindowHeight(M_INITIAL_BOARD_HEIGHT);
 		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		mappInfo.setVersion(dateString);
-		mappInfo.setMapInfoName("New VPathway");
+		mappInfo.setMapInfoName("New Pathway");
 	}
 
 	/**

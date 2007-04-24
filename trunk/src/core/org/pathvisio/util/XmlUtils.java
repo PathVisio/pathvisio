@@ -67,7 +67,7 @@ public class XmlUtils {
 				String symbol = attributes.getValue("TextLabel");
 				currentGene.setSymbol(symbol);		
 			}
-			else if(localName.equals("VPathway")) {
+			else if(localName.equals("Pathway")) {
 				name = attributes.getValue("Name");
 			}
 			else if(localName.equals("Xref"))

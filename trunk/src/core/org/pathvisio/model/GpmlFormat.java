@@ -78,19 +78,19 @@ public class GpmlFormat
 		// an automated perl script. Don't edit this directly, use the perl script instead.
 		/* START OF AUTO-GENERATED CONTENT */
 		result.put("Comment@Source", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway.Graphics@BoardWidth", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("VPathway.Graphics@BoardHeight", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("VPathway.Graphics@WindowWidth", new AttributeInfo ("gpml:Dimension", "18000", "optional"));
-		result.put("VPathway.Graphics@WindowHeight", new AttributeInfo ("gpml:Dimension", "12000", "optional"));
-		result.put("VPathway@Name", new AttributeInfo ("gpml:NameType", null, "required"));
-		result.put("VPathway@Organism", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Data-Source", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Version", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Author", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Maintainer", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Email", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Copyright", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("VPathway@Last-Modified", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("gpml:Dimension", null, "required"));
+		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("gpml:Dimension", null, "required"));
+		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("gpml:Dimension", "18000", "optional"));
+		result.put("Pathway.Graphics@WindowHeight", new AttributeInfo ("gpml:Dimension", "12000", "optional"));
+		result.put("Pathway@Name", new AttributeInfo ("gpml:NameType", null, "required"));
+		result.put("Pathway@Organism", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Data-Source", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Version", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Author", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Maintainer", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Email", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Copyright", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Pathway@Last-Modified", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("DataNode.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("DataNode.Graphics@Width", new AttributeInfo ("gpml:Dimension", "600", "optional"));
@@ -267,7 +267,7 @@ public class GpmlFormat
 
 		Namespace ns = Namespace.getNamespace("http://genmapp.org/GPML/2007");
 
-		Element root = new Element("VPathway", ns);
+		Element root = new Element("Pathway", ns);
 		doc.setRootElement(root);
 
 		List<Element> elementList = new ArrayList<Element>();
@@ -276,15 +276,15 @@ public class GpmlFormat
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
-				setAttribute("VPathway", "Name", root, o.getMapInfoName());
-				setAttribute("VPathway", "Data-Source", root, "GenMAPP 2.0");
-				setAttribute("VPathway", "Version", root, o.getVersion());
-				setAttribute("VPathway", "Author", root, o.getAuthor());
-				setAttribute("VPathway", "Maintainer", root, o.getMaintainer());
-				setAttribute("VPathway", "Email", root, o.getEmail());
-				setAttribute("VPathway", "Copyright", root, o.getCopyright());
-				setAttribute("VPathway", "Last-Modified", root, o.getLastModified());
-				setAttribute("VPathway", "Organism", root, o.getOrganism());
+				setAttribute("Pathway", "Name", root, o.getMapInfoName());
+				setAttribute("Pathway", "Data-Source", root, "GenMAPP 2.0");
+				setAttribute("Pathway", "Version", root, o.getVersion());
+				setAttribute("Pathway", "Author", root, o.getAuthor());
+				setAttribute("Pathway", "Maintainer", root, o.getMaintainer());
+				setAttribute("Pathway", "Email", root, o.getEmail());
+				setAttribute("Pathway", "Copyright", root, o.getCopyright());
+				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
+				setAttribute("Pathway", "Organism", root, o.getOrganism());
 
 				for (PathwayElement.Comment c : o.getComments())
 				{
@@ -297,10 +297,10 @@ public class GpmlFormat
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
 				
-				setAttribute("VPathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth());
-				setAttribute("VPathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight());
-				setAttribute("VPathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
-				setAttribute("VPathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
+				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth());
+				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight());
+				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
+				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
 			}
 			else
 			{
@@ -686,21 +686,21 @@ public class GpmlFormat
 	
 	private static void mapMappInfoData(PathwayElement o, Element e) throws ConverterException
 	{
-		o.setMapInfoName (getAttribute("VPathway", "Name", e));
-		o.setOrganism (getAttribute("VPathway", "Organism", e));	
-		o.setMapInfoDataSource (getAttribute("VPathway", "Data-Source", e));
-		o.setVersion (getAttribute("VPathway", "Version", e));
-		o.setAuthor (getAttribute("VPathway", "Author", e));
-		o.setMaintainer (getAttribute("VPathway", "Maintainer", e));
-		o.setEmail (getAttribute("VPathway", "Email", e));
-		o.setLastModified (getAttribute("VPathway", "Last-Modified", e));
-		o.setCopyright (getAttribute("VPathway", "Copyright", e));
+		o.setMapInfoName (getAttribute("Pathway", "Name", e));
+		o.setOrganism (getAttribute("Pathway", "Organism", e));	
+		o.setMapInfoDataSource (getAttribute("Pathway", "Data-Source", e));
+		o.setVersion (getAttribute("Pathway", "Version", e));
+		o.setAuthor (getAttribute("Pathway", "Author", e));
+		o.setMaintainer (getAttribute("Pathway", "Maintainer", e));
+		o.setEmail (getAttribute("Pathway", "Email", e));
+		o.setLastModified (getAttribute("Pathway", "Last-Modified", e));
+		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 		
 		Element g = e.getChild("Graphics", e.getNamespace());
-		o.setMBoardWidth (Double.parseDouble(getAttribute("VPathway.Graphics", "BoardWidth", g)));
-		o.setMBoardHeight (Double.parseDouble(getAttribute("VPathway.Graphics", "BoardHeight", g)));
-		o.setWindowWidth (Double.parseDouble(getAttribute("VPathway.Graphics", "WindowWidth", g)));
-		o.setWindowHeight (Double.parseDouble(getAttribute("VPathway.Graphics", "WindowHeight", g)));
+		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
+		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
+		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
+		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
 		
 		for (Object f : e.getChildren("Comment", e.getNamespace()))
 		{

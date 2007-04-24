@@ -384,7 +384,7 @@ public class RDataOut {
 			String tmpVar = RTemp.getNewVar(true);
 			RCommands.assign(tmpVar, geneProducts);
 						
-			String cmd = "VPathway(name = '" + name + 
+			String cmd = "Pathway(name = '" + name + 
 				"',fileName = '" + fileName + 
 				"', geneProducts = " + tmpVar + ")";			
 			long xp =  RCommands.eval(cmd).xp;

@@ -2,11 +2,9 @@ package org.pathvisio.gui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -15,10 +13,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.FileDialog;
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.preferences.PreferenceDlg;
@@ -193,7 +187,7 @@ public class CommonActions
 		{
 			window = w;
 			setText ("&Import");
-			setToolTipText ("Import VPathway in GenMAPP format");
+			setToolTipText ("Import Pathway in GenMAPP format");
 		}
 		public void run () 
 		{
@@ -306,7 +300,7 @@ public class CommonActions
 		{
 			window = w;
 			setText ("&Export");
-			setToolTipText ("Export VPathway to GenMAPP format");
+			setToolTipText ("Export Pathway to GenMAPP format");
 		}
 		public void run () {
 			VPathway drawing = Engine.getDrawing();

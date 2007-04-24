@@ -923,7 +923,7 @@ public class MainWindow extends ApplicationWindow implements
 		dataMenu.add(colorSetManagerAction);
 		dataMenu.add(visualizationDialogAction);
 		if(Engine.USE_R) {
-			MenuManager statsMenu = new MenuManager("&VPathway statistics");
+			MenuManager statsMenu = new MenuManager("&Pathway statistics");
 			dataMenu.add(statsMenu);
 			statsMenu.add(rStatsAction);
 			statsMenu.add(rLoadStatsAction);
@@ -1021,7 +1021,7 @@ public class MainWindow extends ApplicationWindow implements
 		
 		rightPanel.addTab(bpBrowser, "Backpage");
 		rightPanel.addTab(propertyTable, "Properties");
-		rightPanel.addTab(pwSearchComposite, "VPathway Search");
+		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
 		rightPanel.addTab(visPanel, "Visualization");
 		

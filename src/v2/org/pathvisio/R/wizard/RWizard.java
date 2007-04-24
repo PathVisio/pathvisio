@@ -39,7 +39,7 @@ public class RWizard extends Wizard {
 	public RWizard() {
 		super();
 		
-		setWindowTitle("VPathway statistics");
+		setWindowTitle("Pathway statistics");
 		setNeedsProgressMonitor(true);
 	}
 

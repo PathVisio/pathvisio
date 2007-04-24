@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: gmmlVision.GmmlVisionMain
+Main-Class: org.pathvisio.gui.GuiMain
 Class-Path: lib/resources.jar lib/derby.jar lib/R-resources.jar lib/swt-win32.jar lib/swt-linux.jar lib/org.eclipse.core.commands.jar lib/org.eclipse.equinox.common.jar lib/org.eclipse.jface.jar lib/hsqldb.jar lib/jdom.jar lib/JRI.jar lib/BrowserLauncher.jar lib/plugins.jar

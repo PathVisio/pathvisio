@@ -49,9 +49,9 @@ public abstract class Engine {
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
-	public static final String PATHWAY_FILTER_NAME = "PathVisio VPathway (*." + PATHWAY_FILE_EXTENSION + ")";
+	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
-	public static final String GENMAPP_FILTER_NAME = "GenMAPP VPathway (*." + GENMAPP_FILE_EXTENSION + ")";
+	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
 	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
@@ -177,7 +177,7 @@ public abstract class Engine {
 				_gmmlData.readFromXml(new File(pwf), true);
 			}
 		} catch(ConverterException e) {		
-			if (e.getMessage().contains("Cannot find the declaration of element 'VPathway'"))
+			if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 			{
 				MessageDialog.openError(getWindow().getShell(), 
 						"Unable to open Gpml file", 

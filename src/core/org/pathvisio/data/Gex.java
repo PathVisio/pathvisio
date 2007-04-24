@@ -57,7 +57,6 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.GexImportWizard.ImportInformation;
 import org.pathvisio.data.GexImportWizard.ImportPage;
 import org.pathvisio.debug.StopWatch;
 

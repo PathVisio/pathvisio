@@ -37,8 +37,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.util.XmlUtils.PathwayParser;
-import org.pathvisio.util.XmlUtils.PathwayParser.Gene;
+import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.PathwayParser.Gene;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;

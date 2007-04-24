@@ -66,11 +66,13 @@ public class Line extends Graphics
 		}
 	}
 	
-	public int getDrawingOrder() {
+	public int getDrawingOrder() 
+	{
 		return VPathway.DRAW_ORDER_LINE;
 	}
 	
-	protected void swapPoint(VPoint pOld, VPoint pNew) {
+	protected void swapPoint(VPoint pOld, VPoint pNew) 
+	{
 		int i = points.indexOf(pOld);
 		if(i > -1) {
 			points.remove(pOld);

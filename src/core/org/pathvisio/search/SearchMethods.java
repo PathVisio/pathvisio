@@ -30,7 +30,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.pathvisio.search.PathwaySearchComposite.SearchRunnableWithProgress;
 import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.XmlUtils.PathwayParser;
+import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData;
 import org.pathvisio.util.tableviewer.TableData.Row;

@@ -51,7 +51,6 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.model.*;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.Pathway.Color;
 
 /**
  * This class implements and handles a drawing.

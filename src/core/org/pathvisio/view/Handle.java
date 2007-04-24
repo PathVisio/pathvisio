@@ -23,9 +23,7 @@ import java.awt.geom.Rectangle2D;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
-
-import org.pathvisio.util.LinAlg;
-import org.pathvisio.util.LinAlg.Point;
+import org.pathvisio.view.LinAlg.Point;
 
 /**
  * This class implements and handles handles for 

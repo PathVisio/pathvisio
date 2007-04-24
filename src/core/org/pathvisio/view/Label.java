@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import org.pathvisio.preferences.Preferences;
-import org.pathvisio.util.LinAlg;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;

@@ -16,12 +16,7 @@
 //
 package org.pathvisio.gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -51,7 +46,6 @@ import org.pathvisio.util.SuggestCellEditor;
 import org.pathvisio.util.TableColumnResizer;
 import org.pathvisio.data.*;
 import org.pathvisio.model.*;
-import org.pathvisio.model.Pathway.Color;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties

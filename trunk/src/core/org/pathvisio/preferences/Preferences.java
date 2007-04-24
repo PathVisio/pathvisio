@@ -157,8 +157,8 @@ public class Preferences extends PreferenceStore implements IPropertyChangeListe
 	static String CURRENT_GDB = "none";
 
 	//database engine
-	static String DB_ENGINE_EXPR = "data.DBConnDerby";
-	static String DB_ENGINE_GDB = "data.DBConnDerby";
+	static String DB_ENGINE_EXPR = "org.pathvisio.data.DBConnDerby";
+	static String DB_ENGINE_GDB = "org.pathvisio.data.DBConnDerby";
 	
 	// directories
 	static final String DIR_PWFILES = new File(Engine.getDataDir().toString(), "pathways").toString();

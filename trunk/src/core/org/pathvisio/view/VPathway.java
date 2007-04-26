@@ -360,6 +360,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	 */
 	public void mouseMove(MouseEvent ve)
 	{
+		boolean altPressed = (ve.stateMask & SWT.ALT) != 0;
 		// If draggin, drag the pressed object
 		if (pressedObject != null && isDragging)
 		{
@@ -421,7 +422,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 			}
 			else
 			{
-				editObject(new Point(e.x, e.y));
+				editObject(new Point(e.x, e.y), e);
 			}
 		}
 		else
@@ -438,6 +439,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	{
 		if(isDragging)
 		{
+			resetHighlight();
 			if(s.isSelecting()) { //If we were selecting, stop it
 				s.stopSelecting();
 			}
@@ -543,7 +545,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		pressedObject = getObjectAt(p2d);
 		
 		if (pressedObject != null)
-			doClickSelect(p2d);
+			doClickSelect(p2d, e);
 		else
 			startSelecting(p2d);
 	}
@@ -578,7 +580,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	 * Called by MouseDown, when we're in editting mode and we're not adding new objects
 	 * prepares for dragging the object
 	 */
-	private void editObject(Point p)
+	private void editObject(Point p, MouseEvent e)
 	{
 		Point2D p2d = new Point2D.Double(p.x, p.y);
 		
@@ -592,7 +594,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 			{
 				((Handle)pressedObject).parent.select();
 			} else {
-				doClickSelect(p2d);
+				doClickSelect(p2d, e);
 			}
 			
 			// start dragging
@@ -652,8 +654,9 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		return result;
 	}
 	
-	void doClickSelect(Point2D p2d) {
+	void doClickSelect(Point2D p2d, MouseEvent e) {
 		//Ctrl pressed, add/remove from selection
+		boolean ctrlPressed =  (e.stateMask & SWT.CTRL) != 0;
 		if(ctrlPressed) 
 		{
 			if(pressedObject instanceof SelectionBox) {
@@ -986,16 +989,16 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		}
 	}
 	
-	private boolean ctrlPressed;
-	private void ctrlPressed() 	{ ctrlPressed = true; 	}
-	private void ctrlReleased() 	{ ctrlPressed = false; 	}
+//	private boolean ctrlPressed;
+//	private void ctrlPressed() 	{ ctrlPressed = true; 	}
+//	private void ctrlReleased() 	{ ctrlPressed = false; 	}
 
-	private boolean altPressed;
-	private void altPressed() 	{ altPressed = true; 	}
-	private void altReleased() 	{ 
-		resetHighlight();
-		altPressed = false; 	
-	}
+//	private boolean altPressed;
+//	private void altPressed() 	{ altPressed = true; 	}
+//	private void altReleased() 	{ 
+//		resetHighlight();
+//		altPressed = false; 	
+//	}
 	
 	private void insertPressed() {
 		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
@@ -1024,19 +1027,19 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	}
 
 	public void keyPressed(KeyEvent e) { 
-		if(e.keyCode == SWT.CTRL) ctrlPressed();
-		if(e.keyCode == SWT.ALT) altPressed();
+		//if(e.keyCode == SWT.CTRL) ctrlPressed();
+		//if(e.keyCode == SWT.ALT) altPressed();
 		if(e.keyCode == SWT.INSERT) insertPressed();
 		if(e.keyCode == 103) //CTRL-G to select all gene-products
-			if(ctrlPressed) {
+			if((e.stateMask & SWT.CTRL) != 0) {
 				selectGeneProducts();
 				redraw();
 			}
 	}
 
 	public void keyReleased(KeyEvent e) {		
-		if(e.keyCode == SWT.CTRL) ctrlReleased();
-		if(e.keyCode == SWT.ALT) altReleased();
+		//if(e.keyCode == SWT.CTRL) ctrlReleased();
+		//if(e.keyCode == SWT.ALT) altReleased();
 		if(e.keyCode == SWT.DEL) {
 			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
 			for(VPathwayElement o : drawingObjects)

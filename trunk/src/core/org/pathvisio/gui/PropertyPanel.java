@@ -232,9 +232,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	final static String[] linetype_names = {
 			"Line", "Arrow", "TBar", "Receptor", "LigandSquare", 
 			"ReceptorSquare", "LigandRound", "ReceptorRound"}; 
-	final static String[] genetype_names = {
-			"", "unknown", "protein", "rna", "complex" //TODO
-		};
+	final static String[] genetype_names = DataNodeType.getNames();
 	
 	private CellEditor getCellEditor(Object element)
 	{

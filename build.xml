@@ -44,15 +44,18 @@
 		<pathelement location="${build.v2.dir}"/>
 	</path>
 
-	<target name="prepare">
+	<target name="svnversion">
+		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
+			<arg line="-n ."/>
+		</exec>
+	</target>
+	
+	<target name="prepare" depends="svnversion">
 		<mkdir dir="${build.v1.dir}"/>
 		<mkdir dir="${build.v2.dir}"/>
 		<mkdir dir="${build.plugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		
-		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
-			<arg line="-n ."/>
-		</exec>
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
 package org.pathvisio;
 
@@ -169,7 +172,11 @@ public class Revision
 	</target>
 	
 	<target name="docs" depends="prepare" description="generate api-docs">
-		<javadoc destdir="${apidoc.dir}">
+		<tstamp /> <!-- set ${TODAY} -->
+		<javadoc destdir="${apidoc.dir}" 
+			doctitle="PathVisio"
+			header="Revision ${subversion_revision}"
+			footer="Generated ${TODAY}">
 			<classpath refid="project.v2.class.path"/>
 			<package name="org.pathvisio.gui"/>
 			<package name="org.pathvisio.view"/>

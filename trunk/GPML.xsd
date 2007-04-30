@@ -30,7 +30,7 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
-			<xsd:element name="PublicationXref" minOccurs="0" maxOccurs="1">
+			<xsd:element name="PublicationXref" minOccurs="0" maxOccurs="unbounded">
 				<xsd:complexType>
 					<xsd:attribute name="ID" type="xsd:string" use="required"/>
 					<xsd:attribute name="Database" type="xsd:string" use="required"/>
@@ -174,6 +174,7 @@
 			<xsd:enumeration value="Stack"/>
 			<xsd:enumeration value="Box"/>
 			<xsd:enumeration value="Complex"/>
+			<xsd:enumeration value="Variants"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -350,7 +351,7 @@
 			</xsd:sequence>
 
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
-			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
@@ -469,7 +470,7 @@
 
 			</xsd:sequence>
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
-			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
@@ -511,7 +512,7 @@
 			</xsd:sequence>
 			<xsd:attribute name="Href" use="optional" type="xsd:string" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
-			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
@@ -574,7 +575,7 @@
 			</xsd:attribute>
 			
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
-			<xsd:attribute name="GroupId" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 		</xsd:complexType>
@@ -590,8 +591,8 @@
 				<xsd:group ref="gpml:CommentGroup"/>
 				<xsd:group ref="gpml:BiopaxGroup"/>
 			</xsd:sequence>
-			
-			<xsd:attribute name="GroupId" type="xsd:string" use="required"/>
+			<xsd:attribute name="GroupId" type="xsd:ID" use="required"/>
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional"/>
 			<xsd:attribute name="Style" type="gpml:GroupStyleType" default="Stack" />
 		</xsd:complexType>
 	</xsd:element>

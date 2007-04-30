@@ -23,16 +23,16 @@ import java.util.List;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-
-import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.SelectionBox;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.util.Utils;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.VPathwayElement;
+import org.pathvisio.view.SelectionBox.SelectionEvent;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
@@ -120,9 +120,17 @@ public class BackpagePanel extends Composite implements SelectionListener {
 		for(IdCodePair cr : crfs) {
 			String idtxt = cr.getId();
 			String url = getCrossRefLink(cr);
-			if(url != null)
-//				idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
-				idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
+			if(url != null) {
+				int os = Utils.getOS();
+				if(os == Utils.OS_WINDOWS) {
+					//In windows: open in new browser window
+					idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
+				} else {
+					//This doesn't work under ubuntu, so no new windoe there
+					idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
+				}
+				
+			}
 			String dbName = DataSources.sysCode2Name.get(cr.getCode());
 			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getCode()) + "<br>");
 		}

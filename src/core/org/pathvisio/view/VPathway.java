@@ -408,8 +408,6 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	/**
 	 * Handles mouse Pressed input
 	 */
-	//TODO: Variable ctrlPressed is not set to false when editting labels.
-	//		Probably the keyRelease event is not picked up.
 	public void mouseDown(MouseEvent e)
 	{		
 		setFocus();
@@ -988,17 +986,6 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 			if(o instanceof GeneProduct) s.addToSelection(o);
 		}
 	}
-	
-//	private boolean ctrlPressed;
-//	private void ctrlPressed() 	{ ctrlPressed = true; 	}
-//	private void ctrlReleased() 	{ ctrlPressed = false; 	}
-
-//	private boolean altPressed;
-//	private void altPressed() 	{ altPressed = true; 	}
-//	private void altReleased() 	{ 
-//		resetHighlight();
-//		altPressed = false; 	
-//	}
 	
 	private void insertPressed() {
 		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();

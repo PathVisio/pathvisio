@@ -474,7 +474,16 @@
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
+			<!-- Xref is deprecated, to avoid confusion with the Xref tag. Use GenMapp-Xref for pathways converted from GenMAPP -->
+			<!-- Left in here for backwards compatibility -->
 			<xsd:attribute name="Xref" type="xsd:string" use="optional">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">GenMAPP
+						Links</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			
+			<xsd:attribute name="GenMAPP-Xref" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">GenMAPP
 						Links</xsd:documentation>
@@ -516,7 +525,9 @@
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
-			<xsd:attribute name="Xref" type="xsd:string" use="optional">
+
+			<!-- Xref is deprecated, to avoid confusion with the Xref tag. Use GenMapp-Xref for pathways converted from GenMAPP -->
+			<xsd:attribute name="GenMAPP-Xref" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">GenMAPP
 						Links</xsd:documentation>

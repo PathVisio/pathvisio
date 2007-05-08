@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
-
 import org.pathvisio.model.PathwayElement.MPoint;
 
 public class VPoint extends VPathwayElement {

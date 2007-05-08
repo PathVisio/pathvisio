@@ -44,10 +44,9 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
-import org.xml.sax.SAXException;
-
-import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -335,7 +334,7 @@ public class Pathway implements PathwayListener
 					xsdFile + "' could not be found in classpath");
 		}
 	}
-	
+		
 	/**
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved

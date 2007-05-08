@@ -232,7 +232,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
 			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
-			fd.setHeight((int)Math.ceil(Engine.getDrawing().vFromM(fd.getHeight()) * 15));//TODO: get rid of 15
+			fd.setHeight((int)Math.ceil(Engine.getVPathway().vFromM(fd.getHeight()) * 15));//TODO: get rid of 15
 		}
 		return fd;
 	}

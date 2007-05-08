@@ -16,8 +16,6 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gui.Engine;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -53,14 +51,14 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
+import org.pathvisio.R.RCommands.RException;
+import org.pathvisio.R.wizard.RWizard;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.util.JarUtils;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.pathvisio.visualization.colorset.CriterionComposite;
-import org.pathvisio.R.RCommands.RException;
-import org.pathvisio.R.wizard.RWizard;
 
 
 public class RFunctionLoader {

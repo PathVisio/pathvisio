@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -30,17 +31,17 @@ import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.pathvisio.view.VPathway;
-import org.pathvisio.preferences.Preferences;
-import org.pathvisio.util.Utils;
+import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.Sleak;
-import org.pathvisio.Globals;
+import org.pathvisio.model.PathwayExporter;
+import org.pathvisio.preferences.Preferences;
+import org.pathvisio.util.Utils;
+import org.pathvisio.view.VPathway;
 
 /**
  * This class contains the essential parts of the program: the window, drawing and gpml data
@@ -64,8 +65,8 @@ public abstract class Engine {
 	 */
 	
 	static MainWindow window;
-	static VPathway drawing;
-	static Pathway gmmlData;
+	static VPathway vPathway;
+	static Pathway pathway;
 	
 	private static ImageRegistry imageRegistry;
 	private static Preferences preferences;
@@ -140,15 +141,15 @@ public abstract class Engine {
 	/**
 	 * Gets the currently open drawing
 	 */
-	public static VPathway getDrawing() {
-		return drawing;
+	public static VPathway getVPathway() {
+		return vPathway;
 	}
 		
 	/**
 	 * Returns the currently open Pathway
 	 */
-	public static Pathway getGmmlData() {
-		return gmmlData;
+	public static Pathway getPathway() {
+		return pathway;
 	}
 	
 	/**
@@ -200,10 +201,10 @@ public abstract class Engine {
 		
 		if(_gmmlData != null) //Only continue if the data is correctly loaded
 		{
-			drawing = _drawing;
-			gmmlData = _gmmlData;
-			drawing.fromGmmlData(_gmmlData);
-			fireApplicationEvent(new ApplicationEvent(drawing, ApplicationEvent.OPEN_PATHWAY));
+			vPathway = _drawing;
+			pathway = _gmmlData;
+			vPathway.fromGmmlData(_gmmlData);
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.OPEN_PATHWAY));
 		}
 		
 	}
@@ -212,19 +213,40 @@ public abstract class Engine {
 	 * Create a new pathway (drawing + gpml data)
 	 */
 	public static void newPathway() {
-		gmmlData = new Pathway();
-		gmmlData.initMappInfo();
-		drawing = getWindow().createNewDrawing();
-		drawing.fromGmmlData(gmmlData);
-		fireApplicationEvent(new ApplicationEvent(drawing, ApplicationEvent.NEW_PATHWAY));
+		pathway = new Pathway();
+		pathway.initMappInfo();
+		vPathway = getWindow().createNewDrawing();
+		vPathway.fromGmmlData(pathway);
+		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.NEW_PATHWAY));
 	}
 	
 	/**
 	 * Find out whether a drawing is currently open or not
 	 * @return true if a drawing is open, false if not
 	 */
-	public static boolean isDrawingOpen() { return drawing != null; }
-			
+	public static boolean isDrawingOpen() { return vPathway != null; }
+
+
+	private static HashMap<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
+	
+	/**
+	 * Add a {@link PathwayImporterExporter} that handles export of GPML to another file format
+	 * @param export
+	 */
+	public static void addGpmlExporter(PathwayExporter export) {
+		for(String ext : export.getExtensions()) {
+			exporters.put(ext, export);
+		}
+	}
+	
+	public static PathwayExporter getGpmlExporter(String ext) {
+		return exporters.get(ext);
+	}
+	
+	public static HashMap<String, PathwayExporter> getGpmlExporters() {
+		return exporters;
+	}
+	
 	/**
 	 * Get the working directory of this application
 	 */

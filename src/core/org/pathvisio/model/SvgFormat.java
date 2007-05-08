@@ -16,6 +16,9 @@
 //
 package org.pathvisio.model;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,8 +30,10 @@ import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
-public class SvgFormat 
+public class SvgFormat implements PathwayExporter
 {
 	static final Namespace nsSVG = Namespace.getNamespace("http://www.w3.org/2000/svg");
 		
@@ -387,6 +392,38 @@ public class SvgFormat
 			return id;
 		} else {
 			return null;
+		}
+	}
+	
+	private String[] extensions = new String[] { "svg" };
+
+	public String getName() {
+		return "Scalable Vector Graphics (SVG)";
+	}
+	
+	public String[] getExtensions() {
+		return extensions;
+	}
+	
+	public void doExport(File file, Pathway pathway) throws ConverterException {
+		Document doc = SvgFormat.createJdom(pathway);
+		
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("ISO-8859-1");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+		
+		//Open a filewriter
+		try
+		{
+			FileWriter writer = new FileWriter(file);
+			//Send XML code to the filewriter
+			xmlcode.output(doc, writer);
+		}
+		catch (IOException ie)
+		{
+			throw new ConverterException(ie);
 		}
 	}
 }

@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.gui.Engine;
 import org.pathvisio.data.DataSources;
+import org.pathvisio.gui.Engine;
 
 /**
  * The class MappFormat is responsible for all interaction with 
@@ -44,8 +44,8 @@ import org.pathvisio.data.DataSources;
  * @author Martijn, Thomas
  *
  */
-public class MappFormat
-{	
+public class MappFormat implements PathwayImporter, PathwayExporter
+{		
 	private static final String sqlInfoInsert = 
 		"INSERT INTO INFO (Title, MAPP, GeneDB, Version, Author, " +
 		"Maint, Email, Copyright, Modify, Remarks, BoardWidth, BoardHeight, " +
@@ -988,6 +988,28 @@ public class MappFormat
 		for(int i = 0; i < organism_latin_name.length; i++)
 			result.put(organism_short_code[i], organism_latin_name[i]);
 		return result;
+	}
+	
+	private static String[] extensions = new String[] { "mapp" };
+
+	public String getName() {
+		return "GenMAPP";
+	}
+
+	public String[] getExtensions() {
+		return extensions;
+	}
+	
+	public void doExport(File file, Pathway pathway) throws ConverterException {
+		String[] mappInfo = MappFormat.uncopyMappInfo(pathway);
+		List<String[]> mappObjects = MappFormat.uncopyMappObjects(pathway);
+		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);
+	}
+	
+	public void doImport(File file, Pathway pathway) throws ConverterException {
+        String inputString = file.getAbsolutePath();
+
+        MappFormat.readFromMapp (inputString, pathway);
 	}
     
 }

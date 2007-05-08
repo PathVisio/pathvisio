@@ -22,9 +22,8 @@ import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
-
-import org.pathvisio.util.ColorConverter;
 import org.pathvisio.gui.Engine;
+import org.pathvisio.util.ColorConverter;
 import org.pathvisio.view.Graphics;
 
 /**
@@ -104,12 +103,12 @@ public class Preferences extends PreferenceStore implements IPropertyChangeListe
 		if(e.getProperty().equals(Preferences.PREF_COL_SELECTED)) { 
 			if(e.getNewValue() instanceof RGB) Graphics.selectColor = (RGB)e.getNewValue();
 			else Graphics.selectColor = ColorConverter.parseRgbString((String)e.getNewValue());
-			Engine.getDrawing().redraw();
+			Engine.getVPathway().redraw();
 		}
 		else if(e.getProperty().equals(Preferences.PREF_COL_HIGHLIGHTED)) {
 			if(e.getNewValue() instanceof RGB) Graphics.highlightColor = (RGB)e.getNewValue();
 			else Graphics.highlightColor = ColorConverter.parseRgbString((String)e.getNewValue());
-			Engine.getDrawing().redraw();
+			Engine.getVPathway().redraw();
 		}
 //		else if(e.getProperty().equals(Preferences.PREF_COL_AMBIGIOUS_REP)) {
 //			if(e.getNewValue() instanceof RGB) GmmlGpColor.color_ambigious = (RGB)e.getNewValue();

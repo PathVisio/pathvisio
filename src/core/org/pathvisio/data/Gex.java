@@ -48,17 +48,16 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
+import org.pathvisio.data.CachedData.Data;
+import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.data.GexImportWizard.ImportPage;
+import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gui.Engine;
 import org.pathvisio.gui.Engine.ApplicationEvent;
 import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorSetManager;
-import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.GexImportWizard.ImportPage;
-import org.pathvisio.debug.StopWatch;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,

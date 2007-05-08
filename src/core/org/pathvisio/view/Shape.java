@@ -22,10 +22,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
-
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils;
-import org.pathvisio.model.PathwayElement;
 
 /**
  * This class represents a GMMLShape, which can be a 

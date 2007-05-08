@@ -896,18 +896,18 @@ public class PathwayElement implements GraphIdContainer
 		switch (orientation)
 		{
 			case OrientationType.TOP: setRotation(0); break;
-			case OrientationType.LEFT: setRotation(Math.PI/2); break;
+			case OrientationType.LEFT: setRotation(Math.PI*(3.0/2)); break;
 			case OrientationType.BOTTOM: setRotation(Math.PI); break;
-			case OrientationType.RIGHT: setRotation(Math.PI*(3.0/2)); break;
+			case OrientationType.RIGHT: setRotation(Math.PI/2); break;
 		}
 	}
 		
 	public int getOrientation() {
 		double r = rotation / Math.PI;
 		if(r < 1.0/4 || r >= 7.0/4) return OrientationType.TOP;
-		if(r > 1.0/4 && r <= 3.0/4) return OrientationType.LEFT;
+		if(r > 5.0/4 && r <= 7.0/4) return OrientationType.LEFT;
 		if(r > 3.0/4 && r <= 5.0/4) return OrientationType.BOTTOM;
-		if(r > 5.0/4 && r <= 7.0/4) return OrientationType.RIGHT;
+		if(r > 1.0/4 && r <= 3.0/4) return OrientationType.RIGHT;
 		return 0;
 	}
 
@@ -920,6 +920,7 @@ public class PathwayElement implements GraphIdContainer
 			rotation = v;
 			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 		}
+		
 	}
 	
 	// for labels

@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
+import org.pathvisio.gui.Engine;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.visualization.LegendPanel.CollapseGroup.CollapseListener;
 import org.pathvisio.visualization.Visualization.PluginSet;
@@ -58,7 +58,6 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.colorset.ColorSetObject;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
-import org.pathvisio.gui.Engine;
 
 /**
  * This class shows a legend for the currently loaded visualization and color-sets.

@@ -28,15 +28,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
 import org.pathvisio.gui.Engine;
 import org.pathvisio.gui.Engine.ApplicationEvent;
 import org.pathvisio.gui.Engine.ApplicationEventListener;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.GeneProduct;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData.Row;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 
 
 /**
@@ -54,7 +53,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	public int getNrResults() { return getNrRows(); }
 		
 	public void highlightResults(boolean highlight) {
-		VPathway drawing = Engine.getDrawing();
+		VPathway drawing = Engine.getVPathway();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 

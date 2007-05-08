@@ -26,6 +26,22 @@
 		<pathelement location="lib/BrowserLauncher.jar"/>
 		<pathelement location="lib/resources.jar"/>
 		<pathelement location="${build.v1.dir}"/>
+		<pathelement location="lib/batik/batik-awt-util.jar"/>
+		<pathelement location="lib/batik/batik-bridge.jar"/>
+		<pathelement location="lib/batik/batik-css.jar"/>
+		<pathelement location="lib/batik/batik-dom.jar"/>
+		<pathelement location="lib/batik/batik-ext.jar"/>
+		<pathelement location="lib/batik/batik-extension.jar"/>
+		<pathelement location="lib/batik/batik-gvt.jar"/>
+		<pathelement location="lib/batik/batik-parser.jar"/>
+		<pathelement location="lib/batik/batik-script.jar"/>
+		<pathelement location="lib/batik/batik-svg-dom.jar"/>
+		<pathelement location="lib/batik/batik-svggen.jar"/>
+		<pathelement location="lib/batik/batik-transcoder.jar"/>
+		<pathelement location="lib/batik/batik-util.jar"/>
+		<pathelement location="lib/batik/batik-xml.jar"/>
+		<pathelement location="lib/batik/pdf-transcoder.jar"/>
+		<pathelement location="lib/batik/xml-apis.jar"/>
 	</path>
 
 	<path id="project.v2.class.path">
@@ -42,6 +58,22 @@
 		<pathelement location="lib/R-resources.jar"/>
 		<pathelement location="lib/plugins.jar"/>
 		<pathelement location="${build.v2.dir}"/>
+		<pathelement location="lib/batik/batik-awt-util.jar"/>
+		<pathelement location="lib/batik/batik-bridge.jar"/>
+		<pathelement location="lib/batik/batik-css.jar"/>
+		<pathelement location="lib/batik/batik-dom.jar"/>
+		<pathelement location="lib/batik/batik-ext.jar"/>
+		<pathelement location="lib/batik/batik-extension.jar"/>
+		<pathelement location="lib/batik/batik-gvt.jar"/>
+		<pathelement location="lib/batik/batik-parser.jar"/>
+		<pathelement location="lib/batik/batik-script.jar"/>
+		<pathelement location="lib/batik/batik-svg-dom.jar"/>
+		<pathelement location="lib/batik/batik-svggen.jar"/>
+		<pathelement location="lib/batik/batik-transcoder.jar"/>
+		<pathelement location="lib/batik/batik-util.jar"/>
+		<pathelement location="lib/batik/batik-xml.jar"/>
+		<pathelement location="lib/batik/pdf-transcoder.jar"/>
+		<pathelement location="lib/batik/xml-apis.jar"/>
 	</path>
 
 	<target name="svnversion">
@@ -157,7 +189,7 @@ public class Revision
 			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
                 
 		<copy toDir="${webstart.dir}/www" overwrite="true">
-			<fileset dir="${lib.dir}" includes="*.jar"/>
+			<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		</copy>
 		<signjar alias="PathVisio" lazy = "true" 
 			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">

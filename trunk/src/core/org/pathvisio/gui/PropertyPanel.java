@@ -16,7 +16,12 @@
 //
 package org.pathvisio.gui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -36,16 +41,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
+import org.pathvisio.data.DataSources;
+import org.pathvisio.model.Color;
+import org.pathvisio.model.LineType;
+import org.pathvisio.model.MappFormat;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.PropertyClass;
+import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.ShapeType;
+import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.SuggestCellEditor;
+import org.pathvisio.util.TableColumnResizer;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SuggestCellEditor;
-import org.pathvisio.util.TableColumnResizer;
-import org.pathvisio.data.*;
-import org.pathvisio.model.*;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties
@@ -454,7 +467,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				o.setProperty(key, value);
 			}
 			tableViewer.refresh();
-			Engine.getDrawing().redrawDirtyRect();
+			Engine.getVPathway().redrawDirtyRect();
 		}
 	};
 	

@@ -16,17 +16,23 @@
 //
 package org.pathvisio.gui;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
@@ -34,29 +40,26 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
-
-import org.pathvisio.gui.CommonActions;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
-import org.pathvisio.gui.TabbedSidePanel;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.preferences.PreferenceDlg;
-import org.pathvisio.preferences.Preferences;
-import org.pathvisio.search.PathwaySearchComposite;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.visualization.LegendPanel;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.data.*;
-import org.pathvisio.model.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.Globals;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.Globals;
-
-import edu.stanford.ejalbert.BrowserLauncher;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
+import org.pathvisio.preferences.Preferences;
+import org.pathvisio.search.PathwaySearchComposite;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.visualization.LegendPanel;
+import org.pathvisio.visualization.VisualizationManager;
 
 /**
  * This class is the main class in the GPML project. 
@@ -71,7 +74,6 @@ public class MainWindow extends ApplicationWindow implements
 	
 	private CommonActions.UndoAction undoAction = new CommonActions.UndoAction(this);	
 	private CommonActions.NewAction newAction = new CommonActions.NewAction (this);
-	private CommonActions.SvgExportAction svgExportAction = new CommonActions.SvgExportAction (this);
 	private CommonActions.OpenAction openAction = new CommonActions.OpenAction (this);	
 	private CommonActions.ImportAction importAction = new CommonActions.ImportAction (this);	
 	private CommonActions.SaveAction saveAction = new CommonActions.SaveAction(this);	
@@ -126,7 +128,7 @@ public class MainWindow extends ApplicationWindow implements
 	{
 		if(Engine.isDrawingOpen())
 		{
-			VPathway drawing = Engine.getDrawing();
+			VPathway drawing = Engine.getVPathway();
 			//Check for neccesary connections
 			if(Gex.isConnected() && Gdb.isConnected())
 			{
@@ -166,7 +168,7 @@ public class MainWindow extends ApplicationWindow implements
 		public void run () {
 			if(Engine.isDrawingOpen())
 			{
-				VPathway drawing = Engine.getDrawing();
+				VPathway drawing = Engine.getVPathway();
 				if(isChecked())
 				{
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
@@ -202,7 +204,7 @@ public class MainWindow extends ApplicationWindow implements
 
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.type == ApplicationEvent.OPEN_PATHWAY) {
-				Engine.getDrawing().setEditMode(isChecked());
+				Engine.getVPathway().setEditMode(isChecked());
 			}
 			else if(e.type == ApplicationEvent.NEW_PATHWAY) {
 				switchEditMode(true);
@@ -346,11 +348,11 @@ public class MainWindow extends ApplicationWindow implements
 			{
 				deselectNewItemActions();
 				setChecked(true);
-				Engine.getDrawing().setNewGraphics(element);
+				Engine.getVPathway().setNewGraphics(element);
 			}
 			else
 			{	
-				Engine.getDrawing().setNewGraphics(VPathway.NEWNONE);
+				Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
 			}
 		}
 		
@@ -435,7 +437,7 @@ public class MainWindow extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		Engine.getDrawing().setNewGraphics(VPathway.NEWNONE);
+		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
 	}
 	
 	// Elements of the coolbar
@@ -701,11 +703,11 @@ public class MainWindow extends ApplicationWindow implements
 		VPathway drawing = null;
 		switch(e.type) {
 		case ApplicationEvent.NEW_PATHWAY:
-			drawing = Engine.getDrawing();
+			drawing = Engine.getVPathway();
 			sc.setContent(drawing);
 			break;
 		case ApplicationEvent.OPEN_PATHWAY:
-			drawing = Engine.getDrawing();
+			drawing = Engine.getVPathway();
 			sc.setContent(drawing);
 			if(Gex.isConnected()) cacheExpressionData();
 			break;	

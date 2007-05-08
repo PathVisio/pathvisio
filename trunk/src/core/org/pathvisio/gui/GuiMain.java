@@ -24,13 +24,15 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
-
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gex;
+import org.pathvisio.model.ImageExporter;
+import org.pathvisio.model.MappFormat;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.SvgFormat;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.data.Gex;
-import org.pathvisio.model.Pathway;
 
 /**
  * This class contains the main method and is responsible for initiating 
@@ -100,6 +102,8 @@ public class GuiMain {
 		//register listeners for static classes
 		registerListeners();
 				
+		registerExporters();
+		
 		//NOTE: ImageRegistry will be initiated in "createContents" of MainWindow,
 		//since the window has to be opened first (need an active Display)
 	}
@@ -127,6 +131,14 @@ public class GuiMain {
 		
 		Engine.addApplicationEventListener(vmgr);
 		Engine.addApplicationEventListener(gex);
+	}
+	
+	static void registerExporters() {
+		Engine.addGpmlExporter(new MappFormat());
+		Engine.addGpmlExporter(new SvgFormat());
+		Engine.addGpmlExporter(new ImageExporter(ImageExporter.TYPE_PNG));
+		Engine.addGpmlExporter(new ImageExporter(ImageExporter.TYPE_TIFF));
+		Engine.addGpmlExporter(new ImageExporter(ImageExporter.TYPE_PDF));
 	}
 	
 	static void loadVisualizations() {

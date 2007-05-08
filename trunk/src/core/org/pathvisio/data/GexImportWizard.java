@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
 import org.pathvisio.Globals;
 import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.Preferences;

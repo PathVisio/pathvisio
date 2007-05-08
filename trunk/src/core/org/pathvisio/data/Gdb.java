@@ -34,10 +34,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-
+import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gui.Engine;
 import org.pathvisio.preferences.Preferences;
-import org.pathvisio.debug.StopWatch;
 
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,

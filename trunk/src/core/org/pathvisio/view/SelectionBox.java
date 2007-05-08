@@ -28,11 +28,10 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
-
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
  * This class implements a selectionbox 

@@ -139,7 +139,7 @@ public class SwtUtils {
 	static int ii;
 	static int pixratio;
 	public static Font adjustFontSize(Font f, Point toFit, String text, GC gc, Display display) {
-		VPathway d = Engine.getDrawing();
+		VPathway d = Engine.getVPathway();
 		pixratio = (int)Math.ceil(3 * (d == null ? 1 : d.getZoomFactor()));
 		ii = 3;
 		incrs = new int[3];

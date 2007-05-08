@@ -18,6 +18,9 @@ package org.pathvisio.gui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -29,13 +32,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.FileDialog;
+import org.pathvisio.Globals;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.preferences.PreferenceDlg;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.Globals;
 
 public class CommonActions 
 {
@@ -50,9 +54,9 @@ public class CommonActions
 		}
 		public void run() 
 		{
-			if (Engine.gmmlData != null)
+			if (Engine.pathway != null)
 			{
-				Engine.gmmlData.undo();
+				Engine.pathway.undo();
 			}
 		}
 	}
@@ -72,7 +76,7 @@ public class CommonActions
 					Engine.getResourceURL("icons/new.gif")));
 		}
 		public void run () {
-			if (Engine.gmmlData == null ||
+			if (Engine.pathway == null ||
 				MessageDialog.openQuestion(window.getShell(), "Discard changes?",
 						"Warning: This will discard any changes to " +
 						"the current pathway. Are you sure?"))
@@ -97,8 +101,8 @@ public class CommonActions
 		}
 		public void run () 
 		{
-			VPathway drawing = Engine.getDrawing();
-			Pathway gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getVPathway();
+			Pathway gmmlData = Engine.getPathway();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
@@ -236,8 +240,8 @@ public class CommonActions
 		
 		static public void do_run(MainWindow window)
 		{
-			VPathway drawing = Engine.getDrawing();
-			Pathway gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getVPathway();
+			Pathway gmmlData = Engine.getPathway();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
@@ -319,24 +323,49 @@ public class CommonActions
 			setToolTipText ("Export Pathway to GenMAPP format");
 		}
 		public void run () {
-			VPathway drawing = Engine.getDrawing();
-			Pathway gmmlData = Engine.getGmmlData();
+			VPathway drawing = Engine.getVPathway();
+			Pathway gmmlData = Engine.getPathway();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
-				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*." + Engine.GENMAPP_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {Engine.GENMAPP_FILTER_NAME, "All files (*.*)"});
+				fd.setText("Export");
 				
+				class FileType implements Comparable<FileType> {
+					final String name;
+					final String ext;
+					public FileType(String n, String e) { name = n; ext = e; }
+					public int compareTo(FileType o) {
+						return name.compareTo(o.name);
+					}
+				}
+				
+				ArrayList<FileType> fts = new ArrayList<FileType>();
+				HashMap<String, PathwayExporter> exporters = Engine.getGpmlExporters();
+								
+				for(String ext : exporters.keySet()) {
+					fts.add(new FileType(
+								exporters.get(ext).getName() + " (*." + ext + ")",
+								"*." + ext));
+				}
+				Collections.sort(fts);
+				String[] exts = new String[fts.size()];
+				String[] nms = new String[fts.size()];
+				for(int i = 0; i < fts.size(); i++) {
+					FileType ft = fts.get(i);
+					exts[i] = ft.ext;
+					nms[i] = ft.name;
+				}
+				fd.setFilterExtensions(exts);
+				fd.setFilterNames(nms);
+								
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
 					String name = xmlFile.getName();
 					if (name.endsWith("." + Engine.PATHWAY_FILE_EXTENSION))
 					{
 						name = name.substring(0, name.length() - 
-							Engine.PATHWAY_FILE_EXTENSION.length()) +
-							Engine.GENMAPP_FILE_EXTENSION;
+							Engine.PATHWAY_FILE_EXTENSION.length() - 1);
 					}
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
@@ -345,13 +374,19 @@ public class CommonActions
 				}
 				String fileName = fd.open();
 				// Only proceed if user selected a file
-				
 				if(fileName == null) return;
 				
-				// Append .mapp extension if not already present
-				if(!fileName.endsWith("." + Engine.GENMAPP_FILE_EXTENSION)) 
-					fileName += "." + Engine.GENMAPP_FILE_EXTENSION;
+				int dot = fileName.lastIndexOf('.');
+				String ext = Engine.GENMAPP_FILE_EXTENSION;
+				if(dot >= 0) {
+					ext = fileName.substring(dot + 1, fileName.length());
+				}
+				PathwayExporter exporter = Engine.getGpmlExporter(ext);
 				
+				if(exporter == null) 
+					MessageDialog.openError (window.getShell(), "Error", 
+					"No exporter for '" + ext +  "' files");
+								
 				File checkFile = new File(fileName);
 				boolean confirmed = true;
 				// If file exists, ask overwrite permission
@@ -364,11 +399,12 @@ public class CommonActions
 				{
 					try
 					{
-						gmmlData.writeToMapp(checkFile);
+						//gmmlData.writeToMapp(checkFile);
+						exporter.doExport(checkFile, gmmlData);
 					}
 					catch (ConverterException e)
 					{
-						String msg = "While writing mapp to " 
+						String msg = "While exporting to " 
 							+ checkFile.getAbsolutePath();					
 						MessageDialog.openError (window.getShell(), "Error", 
 								"Error: " + msg + "\n\n" + 
@@ -466,7 +502,7 @@ public class CommonActions
 			}
 		}
 		public void run () {
-			VPathway drawing = Engine.getDrawing();
+			VPathway drawing = Engine.getVPathway();
 			if (drawing != null)
 			{
 				double newPctZoomFactor = pctZoomFactor;
@@ -551,7 +587,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.drawing.copyToClipboard();
+			Engine.vPathway.copyToClipboard();
 		}
 	}
 
@@ -566,7 +602,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.drawing.pasteFromClipboad();
+			Engine.vPathway.pasteFromClipboad();
 		}
 	}
 	
@@ -585,8 +621,8 @@ public class CommonActions
 		}
 		
 		public void run () {
-			Pathway gmmlData = Engine.getGmmlData();
-			VPathway drawing = Engine.getDrawing();
+			Pathway gmmlData = Engine.getPathway();
+			VPathway drawing = Engine.getVPathway();
 			
 			double usedZoom = drawing.getPctZoom();
 			// Set zoom to 100%

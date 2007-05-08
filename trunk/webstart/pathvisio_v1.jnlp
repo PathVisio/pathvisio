@@ -19,6 +19,22 @@
 		 <jar href="org.eclipse.equinox.common.jar"/>
 		 <jar href="org.eclipse.jface.jar"/>
 		 <jar href="org.eclipse.equinox.supplement.jar"/>
+		 <jar href="batik/batik-awt-util.jar"/>
+		 <jar href="batik/batik-bridge.jar"/>
+		 <jar href="batik/batik-css.jar"/>
+		 <jar href="batik/batik-dom.jar"/>
+		 <jar href="batik/batik-ext.jar"/>
+		 <jar href="batik/batik-extension.jar"/>
+		 <jar href="batik/batik-gvt.jar"/>
+		 <jar href="batik/batik-parser.jar"/>
+		 <jar href="batik/batik-script.jar"/>
+		 <jar href="batik/batik-svg-dom.jar"/>
+		 <jar href="batik/batik-svggen.jar"/>
+		 <jar href="batik/batik-transcoder.jar"/>
+		 <jar href="batik/batik-util.jar"/>
+		 <jar href="batik/batik-xml.jar"/>
+		 <jar href="batik/pdf-transcoder.jar"/>
+		 <jar href="batik/xml-apis.jar"/>
 	</resources>
 	<resources os="Windows">
 		<jar href="swt-win32.jar"/>

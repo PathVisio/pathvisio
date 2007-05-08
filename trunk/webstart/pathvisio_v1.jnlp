@@ -48,7 +48,7 @@
 		<jar href="swt-mac.jar"/>
 		<nativelib href="swt-mac-lib.jar"/>	
 	</resources>
-	<application-desc main-class="gmmlVision.GmmlVisionMain"/>
+	<application-desc main-class="org.pathvisio.gui.GuiMain"/>
 	<security>
 		 <all-permissions/>
 	</security>

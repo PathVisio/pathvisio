@@ -14,24 +14,17 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.data;
+package org.pathvisio.model;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PropertyType;
-
 import junit.framework.TestCase;
 
-public class Test extends TestCase implements PathwayListener {
+public class Test extends TestCase implements PathwayListener 
+{
 
 	Pathway data;
 	PathwayElement o;

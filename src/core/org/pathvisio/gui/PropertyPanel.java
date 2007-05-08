@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.Color;
+import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.ObjectType;

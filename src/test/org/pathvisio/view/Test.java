@@ -34,21 +34,21 @@ public class Test extends TestCase {
 	
 	public void setUp()
 	{
-		shell = new Shell(Display.getDefault());
-        shell.setLayout(new FillLayout());
-        drawing = new VPathway(shell, SWT.NO_BACKGROUND);
+		//~ shell = new Shell(Display.getDefault());
+        //~ shell.setLayout(new FillLayout());
+        //~ drawing = new VPathway(shell, SWT.NO_BACKGROUND);
 	}
 
     protected void tearDown() throws Exception {
-        shell.dispose();
+        //~ shell.dispose();
     }
     
-	public void testInit()
-	{
-		Pathway data = new Pathway();
-		drawing.fromGmmlData(data);
-		assertEquals (drawing.getGmmlData(), data);
+	//~ public void testInit()
+	//~ {
+		//~ Pathway data = new Pathway();
+		//~ drawing.fromGmmlData(data);
+		//~ assertEquals (drawing.getGmmlData(), data);
 		
-		data.add(new PathwayElement(ObjectType.DATANODE));
-	}
+		//~ data.add(new PathwayElement(ObjectType.DATANODE));
+	//~ }
 }

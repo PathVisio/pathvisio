@@ -21,6 +21,11 @@
 # and validate every step automagically.
 #
 
+#
+# NOTE! convert_a_lot.pl hasn't been updated in a while
+# use "converter_test.pl" instead.
+# 
+
 use warnings;
 use strict;
 

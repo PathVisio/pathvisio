@@ -102,46 +102,46 @@ bugs	lijn kleur bij converteren negeren.	Martijn	1.0 beta	2			done
 editor	"copy/paste of gmml objects, within program"	Martijn	1.0 beta	4	2	2	done	
 help	open help pages on wiki	Thomas	1.0 beta				done	
 database	"try to put db files into a single file (e.g. zip or jar without compression), regenerate in derby format"	Thomas	1.0 beta				done	
-packaging	aankondiging beta (website + mailtje)	All	1.0 beta					
+packaging	aankondiging beta (website + mailtje)	All	1.0 beta				done	
 Packaging	revision nr + version nr in about box	Martijn	1.0 beta	4			done	
 editor	rename gmml to gpml	Martijn	1.0 beta	2	2	2	done	
 editor	rename program to PathVisio	Martijn	1.0 beta	2	2	2	done	
-Packaging	"rename classes org.bigcat.*, gmml -> gpml of weg"	Martijn	1.0	4				
+Packaging	"rename classes org.bigcat.*, gmml -> gpml of weg"	Martijn	1	4			done	
 Packaging	"Copyright notice in all source files, license file"	Martijn	1.0 beta	0	2	2	done	
 Packaging	"twee webstarts, een voor 1.0 en een voor 2.0 met verschillende jars"	Martijn	1.0 beta	8	8	8	done	
-Packaging	"fix jar-signing so only changed jars are signed, saves time in compilation and downloading through webstart"	Martijn	1.0	4				
-editor	link graphrefs en graphids through GUI	Martijn	1.0	8				
-gmml visualization	add graphical representation for all supported GMML objects	Martijn	1.0					
-gmml visualization	add support for Molecular Interaction Maps	Martijn	1.0					
-Packaging	Test webstart in mac	Martijn	1.0	4			done	simply doesn't work!
-help	write help pages on wiki	Thomas	1.0					
-test	"user test: edit mapp, visualize data from tab-delimited text file"	All	1.0					december
-drawing	align to straight angles	Thomas	1.0					van belang voor MIM
-drawing	"undo/redo, quick solution: store entire drawing"	Martijn	1.0	12				
-property editor	adding geneproduct: option to search id in gdb	Thomas	1.0					
-UI	"Check for modification, ask to save when quitting program"	Martijn	1.0	4				
-editor	scroll when moving object out of display	Martijn	1.0	4				
-editor	check if objects are moved out of drawing boundaries and expand if so	Thomas	1.0					
-editor	auto-calculate drawing board size on open	Thomas	1.0					
-shell integration	double click on gmml file opens in GmmlVision	Martijn	1.0	4				
-bug/misfeature	dropdownlist for new line: add normal line without dropdown	Thomas	1.0					
-editor	quick gene insert dialog	Martijn	1.0	8				
-editor	right-click = add segment to line	Martijn	1.0	16			
-Packaging	test & release clickable installer for mac	Martijn	1.0				
-bugs	fix remaining 1.0 bugs	All	1.0				
-optimization	Don't create unneccessary handles		2.0 alpha				
-optimization	link events together at places where you generate a lot of events		2.0 alpha				
-documentation	apidoc documentatie	Thomas	2.0 alpha				
-visualization	Add visualization plugin to add expression value(s) next to genebox	Thomas	2.0 alpha				done
-visualization	Add visualization plugin to color with horizontal bar per multiple annotation	Thomas	2.0 alpha				done
-visualization	Increase icon size to 64x64/128x128	Martijn	2.0 alpha				
-visualization	Find optimal font size for labels (to fit in gene box)	Thomas	2.0 alpha				
-statistics	Gmml from R: create API that can be called from R	Thomas	2.0 alpha				done
-Packaging	R interface afmaken	Thomas	2.0 alpha				
-editor	copy/paste as outside program as gpml fragment	Martijn	later				
-mapp conversion	automatic conversion of GenMAPP mapps to Gmml	Martijn	later				
-packaging	daily build server	Martijn	later				
-documentation	wiki pagina voor developers: how to get started with eclipse + simple objectives	Martijn	later				
+Packaging	"fix jar-signing so only changed jars are signed, saves time in compilation and downloading through webstart"	Martijn	1	4				
+editor	link graphrefs en graphids through GUI	Martijn	1	8			done	
+gmml visualization	add graphical representation for all supported GMML objects	Martijn	1					
+gmml visualization	add support for Molecular Interaction Maps	Martijn	1					
+Packaging	Test webstart in mac	Martijn	1	4			done	simply doesn't work!
+help	write help pages on wiki	Thomas	1				done	
+test	"user test: edit mapp, visualize data from tab-delimited text file"	All	1					december
+drawing	align to straight angles	Thomas	1					van belang voor MIM
+drawing	"undo/redo, quick solution: store entire drawing"	Martijn	1	12				
+property editor	adding geneproduct: option to search id in gdb	Thomas	1				done	
+UI	"Check for modification, ask to save when quitting program"	Martijn	1	4				
+editor	scroll when moving object out of display	Martijn	1	4				
+editor	check if objects are moved out of drawing boundaries and expand if so	Thomas	1					
+editor	auto-calculate drawing board size on open	Thomas	1					
+shell integration	double click on gmml file opens in GmmlVision	Martijn	1	4				
+bug/misfeature	dropdownlist for new line: add normal line without dropdown	Thomas	1					
+editor	quick gene insert dialog	Martijn	1	8				
+editor	right-click = add segment to line	Martijn	1	16			done	uses insert key instead of right-click
+Packaging	test & release clickable installer for mac	Martijn	1					
+bugs	fix remaining 1.0 bugs	All	1					
+optimization	Don't create unneccessary handles		2.0 alpha					
+optimization	link events together at places where you generate a lot of events		2.0 alpha					
+documentation	apidoc documentatie	Thomas	2.0 alpha					
+visualization	Add visualization plugin to add expression value(s) next to genebox	Thomas	2.0 alpha				done	
+visualization	Add visualization plugin to color with horizontal bar per multiple annotation	Thomas	2.0 alpha				done	
+visualization	Increase icon size to 64x64/128x128	Martijn	2.0 alpha				done	
+visualization	Find optimal font size for labels (to fit in gene box)	Thomas	2.0 alpha				done	
+statistics	Gmml from R: create API that can be called from R	Thomas	2.0 alpha				done	
+Packaging	R interface afmaken	Thomas	2.0 alpha				done	
+editor	copy/paste as outside program as gpml fragment	Martijn	later					
+mapp conversion	automatic conversion of GenMAPP mapps to Gmml	Martijn	later					
+packaging	daily build server	Martijn	later				done	
+documentation	wiki pagina voor developers: how to get started with eclipse + simple objectives	Martijn	later				done	
 drawing	align to grid	Thomas	later					
 drawing	align/resize buttons	Thomas	later					
 SNP	Test human SNP database: design feasible method to include SNP data		later					after SNP course
@@ -151,11 +151,11 @@ visualization	"Add visualization plugin to display labels as LATEX, to display f
 gdb	support using multilple gdb's at the same time		later					specify priority for which database to search first
 gdb	remove dependency on ENSEMBL Gene		later					
 editor	"undo/redo, more sophisticated solution: only store objects that are changed"	Martijn	later					
-visualization	export function to html/bmp/pdf		later					
+visualization	export function to html/bmp/pdf		later				done	
 gdb	gene database editor (e.g. To edit 'others' table)		later					first look for generic hsqldb editor
 UI	"Multiple documents: open multiple pathways, by split-window button"		later					
 command line	batch mapping		later					
 command line	get version		later					
 command line	help		later					
 editor	find gene in database		later					
-Gmml format	Incorporate experimental Biopax xsd into project	Martijn	later
+Gmml format	Incorporate experimental Biopax xsd into project	Martijn	later				done

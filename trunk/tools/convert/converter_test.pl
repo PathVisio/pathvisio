@@ -137,7 +137,7 @@ sub convert
 			build
 			"lib/hsqldb.jar"
 			"lib/swt-win32-lib.jar"
-			"lib/resources.jar")), "util.Converter", $fnMapp, $fnOut);
+			"lib/resources.jar")), "org.pathvisio.util.Converter", $fnMapp, $fnOut);
 	print "Exit status ", $? >> 8;
 	if ($?) { print " Error!"; }
 	print "\n";

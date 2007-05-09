@@ -179,7 +179,7 @@ public class Revision
 		</java>
 	</target>
 
-	<target name="webstart" depends="jar,resources-jar" description="Sign jars and upload webstart files">
+	<target name="prepare-webstart" depends="jar,resources-jar" description="sign jars for webstart">
 		<!-- Copy files needed for webstart !-->
 		<copy file="pathvisio_v1.jar" toDir="${webstart.dir}/www"/>
 		<copy file="pathvisio_v2.jar" toDir="${webstart.dir}/www"/>
@@ -197,10 +197,13 @@ public class Revision
 		</signjar>
 		<copy file="${webstart.dir}/pathvisio_v1.jnlp" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio_v2.jnlp" toDir="${webstart.dir}/www"/>
+	</target>
+	
+	<target name="webstart" depends="prepare-webstart" description="Upload webstart files">
                 <!-- Run perl script to upload to server !-->
 		<exec executable="${exec.perl}" dir="${webstart.dir}" failifexecutionfails="true">
 			<arg line="autoftp.pl"/>
-		</exec>	
+		</exec>
 	</target>
 	
 	<target name="docs" depends="prepare" description="generate api-docs">

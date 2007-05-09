@@ -263,7 +263,7 @@ public class Revision
 			<batchtest>
 				<fileset dir="src/test">
 					<include name="**/Test.java"/>
-					<exclude name="**/graphics/Test.java"/>
+					<exclude name="**/view/Test.java"/>
 				</fileset>
 			</batchtest>
 		</junit>

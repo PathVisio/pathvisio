@@ -304,7 +304,7 @@ public class GpmlFormat
 		// the constructor.
 		private final String[] elements = new String[] {
 			"Comment", "Graphics", "DataNode", "Line", "Label",
-			"Shape", "InfoBox", "Legend"
+			"Shape", "Group", "InfoBox", "Legend"
 		};
 		
 		/*
@@ -427,6 +427,7 @@ public class GpmlFormat
 				mapComments(o, e);
 				mapDataNode(o, e);
 				mapGraphId(o, e);
+				mapGroupRef(o, e);
 				break;
 			case ObjectType.LABEL:
 				mapShapeData(o, e, "Label");
@@ -434,11 +435,13 @@ public class GpmlFormat
 				mapLabelData(o, e);
 				mapComments(o, e);
 				mapGraphId(o, e);
+				mapGroupRef(o, e);
 				break;
 			case ObjectType.LINE:
 				mapLineData(o, e);
 				mapColor(o, e);
 				mapComments(o, e);
+				mapGroupRef(o, e);
 				break;
 			case ObjectType.MAPPINFO:
 				mapMappInfoData(o, e);
@@ -449,12 +452,18 @@ public class GpmlFormat
 				mapComments(o, e);
 				mapShapeType(o, e);
 				mapGraphId(o, e);
+				mapGroupRef(o, e);
 				break;
 			case ObjectType.LEGEND:
 				mapSimpleCenter(o, e);
 				break;
 			case ObjectType.INFOBOX:
 				mapSimpleCenter (o, e);
+				break;
+			case ObjectType.GROUP:
+				mapGroupId (o, e);
+				mapGroupRef(o, e);
+				mapGroup (o, e);
 				break;
 			default:
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
@@ -606,6 +615,60 @@ public class GpmlFormat
 			e.setAttribute("GraphId", o.getGraphId());
 		} 
 	}
+	
+	/*AP20070508*/
+	private static void mapGroupId (PathwayElement o, Element e)
+	{
+		String id = e.getAttributeValue("GroupId");
+		if(id == null || id.equals("")) {
+			id = o.getParent().getUniqueId();
+		}
+		o.setGroupId (id);
+	}
+
+	/*AP20070508*/
+	private static void updateGroupId (PathwayElement o, Element e)
+	{
+		String id = o.getGroupId();
+		// id has to be unique!
+		if (id != null && !id.equals(""))
+		{
+			e.setAttribute("GroupId", o.getGroupId());
+		} 
+	}
+	
+	private static void mapGroupRef (PathwayElement o, Element e)
+	{
+		String id = e.getAttributeValue("GroupRef");
+		if(id != null && !id.equals("")) {
+			o.setGroupRef (id);
+		}
+		
+	}
+
+	/*AP20070508*/
+	private static void updateGroupRef (PathwayElement o, Element e)
+	{
+		String id = o.getGroupRef();
+		// id has to be unique!
+		if (id != null && !id.equals(""))
+		{
+			e.setAttribute("GroupRef", o.getGroupRef());
+		} 
+	}
+	
+	private static void mapGroup (PathwayElement o, Element e) throws ConverterException
+	{
+		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
+	}
+	
+	private static void updateGroup (PathwayElement o, Element e) throws ConverterException
+	{
+		GroupStyle gs = o.getGroupStyle();
+		if(gs != null) {
+			setAttribute("Group", "Style", e, GroupStyle.toGpmlName(gs));
+		}
+		}
 	
 	private static void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
@@ -794,7 +857,8 @@ public class GpmlFormat
 				updateDataNode(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "DataNode");
-				updateGraphId(o, e);
+				updateGraphId(o, e);				
+				updateGroupRef(o, e);
 				break;
 			case ObjectType.SHAPE:
 				e = new Element ("Shape", ns);
@@ -804,6 +868,7 @@ public class GpmlFormat
 				updateShapeData(o, e, "Shape");
 				updateShapeType(o, e);
 				updateGraphId(o, e);
+				updateGroupRef(o, e);
 				break;
 			case ObjectType.LINE:
 				e = new Element("Line", ns);
@@ -811,6 +876,7 @@ public class GpmlFormat
 				e.addContent(new Element("Graphics", ns));				
 				updateLineData(o, e);
 				updateColor(o, e);
+				updateGroupRef(o, e);
 				break;
 			case ObjectType.LABEL:
 				e = new Element("Label", ns);
@@ -820,6 +886,7 @@ public class GpmlFormat
 				updateColor(o, e);
 				updateShapeData(o, e, "Label");
 				updateGraphId(o, e);
+				updateGroupRef(o, e);
 				break;
 			case ObjectType.LEGEND:
 				e = new Element ("Legend", ns);
@@ -828,6 +895,12 @@ public class GpmlFormat
 			case ObjectType.INFOBOX:
 				e = new Element ("InfoBox", ns);
 				updateSimpleCenter (o, e);
+				break;
+			case ObjectType.GROUP:
+				e = new Element ("Group", ns);
+				updateGroupId (o, e);
+				updateGroup (o, e);
+				updateGroupRef(o, e);
 				break;
 		}
 		if (e == null)

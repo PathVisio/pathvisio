@@ -88,11 +88,11 @@ public abstract class GraphLink
 			{
 				if (graphId != null)
 				{
-					data.removeGraphId(v);
+					data.removeId(v);
 				}
 				if (v != null)
 				{
-					data.addGraphId(v);
+					data.addId(v);
 				}
 			}
 		}

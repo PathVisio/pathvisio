@@ -93,7 +93,9 @@ public enum PropertyType
 	// other
 	GRAPHID ("GraphId", "GraphId", PropertyClass.STRING), 
 	STARTGRAPHREF ("StartGraphRef", "StartGraphRef", PropertyClass.STRING), 
-	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING);
+	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING),
+	GROUPID ("GroupId", "GroupId", PropertyClass.STRING),
+	GROUPREF ("GroupRef", "GroupRef", PropertyClass.STRING); 
 
 	private String tag, desc;
 	private PropertyClass type;

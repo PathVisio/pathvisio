@@ -141,11 +141,11 @@ public class PathwayElement implements GraphIdContainer
 				{
 					if (graphRef != null)
 					{
-						parent.removeRef(graphRef, this);
+						parent.removeGraphRef(graphRef, this);
 					}
 					if (v != null)
 					{
-						parent.addRef(v, this);
+						parent.addGraphRef(v, this);
 					}
 				}
 				graphRef = v;
@@ -238,12 +238,12 @@ public class PathwayElement implements GraphIdContainer
 				for(MPoint p : mPoints) {
 					if (p.getGraphRef() != null)
 					{
-						parent.removeRef(p.getGraphRef(), p);
+						parent.removeGraphRef(p.getGraphRef(), p);
 					}
 				}
 				if (graphId != null)
 				{
-					parent.removeGraphId(graphId);
+					parent.removeId(graphId);
 				}
 			}			
 			parent = v;
@@ -251,12 +251,12 @@ public class PathwayElement implements GraphIdContainer
 			{
 				for(MPoint p : mPoints) {
 					if(p.getGraphRef() != null) {
-						v.addRef(p.getGraphRef(), p);
+						v.addGraphRef(p.getGraphRef(), p);
 					}
 				}
 				if (graphId != null)
 				{
-					parent.addGraphId(graphId);
+					parent.addId(graphId);
 				}
 			}
 		}
@@ -304,7 +304,8 @@ public class PathwayElement implements GraphIdContainer
 						//PropertyType.XREF,
 						PropertyType.BACKPAGEHEAD,
 						PropertyType.TYPE,
-						PropertyType.GRAPHID
+						PropertyType.GRAPHID,
+						PropertyType.GROUPREF
 				}));
 				break;
 			case ObjectType.SHAPE:
@@ -426,6 +427,8 @@ public class PathwayElement implements GraphIdContainer
 			case GRAPHID: setGraphId ((String)value); break;
 			case STARTGRAPHREF: setStartGraphRef ((String)value); break;
 			case ENDGRAPHREF: setEndGraphRef ((String)value); break;
+			case GROUPID: setGroupId ((String)value); break;
+			case GROUPREF: setGroupRef ((String)value); break;
 			case TRANSPARENT: setTransparent ((Boolean)value); break;
 		}
 	}
@@ -485,6 +488,8 @@ public class PathwayElement implements GraphIdContainer
 			case GRAPHID: result = getGraphId (); break;
 			case STARTGRAPHREF: result = getStartGraphRef (); break;
 			case ENDGRAPHREF: result = getEndGraphRef (); break;
+			case GROUPID: result = getGroupId (); break;
+			case GROUPREF: result = getGroupRef (); break;
 			case TRANSPARENT: result = isTransparent (); break;
 		}
 
@@ -550,6 +555,8 @@ public class PathwayElement implements GraphIdContainer
 		windowWidth = src.windowWidth;
 		xref = src.xref;
 		graphId = src.graphId;	
+		groupId = src.groupId;	
+		groupRef = src.groupRef;	
 		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
 	
@@ -1172,12 +1179,85 @@ public class PathwayElement implements GraphIdContainer
 		}
 	}
 	
+	/*AP20070508*/
+	protected String groupId;
 	protected String graphId;
+	protected String groupRef;
+	protected GroupStyle groupStyle;
 	
 	public String doGetGraphId() {
 		return graphId; 
 	}
 	
+	/*AP20070508*/
+	public String getGroupRef() {
+		return groupRef;
+	}
+	
+	public void setGroupRef(String s) {
+		if (groupRef == null || !groupRef.equals(s))
+		{
+			if (parent != null)
+			{
+				if (groupRef != null)
+				{
+					parent.removeRef(groupRef, this);
+				}
+				//Check: move add before remove??
+				if (s != null)
+				{
+					parent.addRef(s, this);
+				}
+			}
+			groupRef = s;
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+	
+	public String getGroupId() {
+		if (groupId == null)
+		{
+			setGroupId (parent.getUniqueId());
+		}
+		return groupId;
+	}
+	
+	public void setGroupStyle(GroupStyle gs) {
+		groupStyle = gs;
+	}
+
+	public GroupStyle getGroupStyle() {
+		//TODO: handle NULL and default
+		return groupStyle;		
+	}
+	
+	/**
+	 * Set groupId. This id must be any string unique within the Pathway object 
+	 * 
+	 * @see Pathway#getUniqueId()
+	 */
+	public void setGroupId (String w) 
+	{ 
+		if (groupId == null || !groupId.equals(w))
+		{
+			if (parent != null)
+			{
+				if (groupId != null)
+				{
+					parent.removeId(groupId);
+				}
+				//Check: move add before remove??
+				if (w != null)
+				{
+					parent.addId(w);
+				}
+			}
+			groupId = w;
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
+		}
+
+	}
+		
 	public String getGraphId() {
 		return graphId;
 	}

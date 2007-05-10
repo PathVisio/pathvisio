@@ -168,67 +168,97 @@ public class Pathway implements PathwayListener
 		dataObjects.remove(o);		
 		o.setParent(null);
 	}
-	
+
 	/**
 	 * Stores references of line endpoints to other objects
 	 */
 	private HashMap<String, List<GraphRefContainer>> graphRefs = new HashMap<String, List<GraphRefContainer>>();
-	private Set<String> graphIds = new HashSet<String>();
+	private Set<String> ids = new HashSet<String>();
 	
-	public void addRef (String ref, GraphRefContainer target)
+	public void addGraphRef (String id, GraphRefContainer target)
 	{
-		if (graphRefs.containsKey(ref))
+		if (graphRefs.containsKey(id))
 		{
-			List<GraphRefContainer> l = graphRefs.get(ref);
+			List<GraphRefContainer> l = graphRefs.get(id);
 			l.add(target);
 		}
 		else
 		{
 			List<GraphRefContainer> l = new ArrayList<GraphRefContainer>();
 			l.add(target);		
-			graphRefs.put(ref, l);
+			graphRefs.put(id, l);
 		}
 	}
 	
+	private HashMap<String, Set<PathwayElement>> groupRefs = new HashMap<String, Set<PathwayElement>>();
+	
+	public void addRef (String ref, PathwayElement child)
+	{
+		if (groupRefs.containsKey(ref))
+		{
+			Set<PathwayElement> s = groupRefs.get(ref);
+			s.add(child);
+		}
+		else
+		{
+			Set<PathwayElement> s = new HashSet<PathwayElement>();
+			s.add(child);		
+			groupRefs.put(ref, s);
+			
+		}
+	}
+	
+	public void removeRef (String id, PathwayElement child)
+	{
+		if (!groupRefs.containsKey(id)) throw new IllegalArgumentException();
+		
+		groupRefs.get(id).remove(child);
+		if (groupRefs.get(id).size() == 0)
+			groupRefs.remove(id);
+	}
+	
+	
 	/**
 	 * Remove a reference to another Id. 
-	 * @param ref
+	 * @param id
 	 * @param target
 	 */
-	public void removeRef (String ref, GraphRefContainer target)
+	public void removeGraphRef (String id, GraphRefContainer target)
 	{
-		if (!graphRefs.containsKey(ref)) throw new IllegalArgumentException();
+		if (!graphRefs.containsKey(id)) throw new IllegalArgumentException();
 		
-		graphRefs.get(ref).remove(target);
-		if (graphRefs.get(ref).size() == 0)
-			graphRefs.remove(ref);
+		graphRefs.get(id).remove(target);
+		if (graphRefs.get(id).size() == 0)
+			graphRefs.remove(id);
 	}
 	
 	/**
 	 * Registers an id that can subsequently be used for
-	 * referrral. It is tested for uniqueness
+	 * referrral. It is tested for uniqueness.
 	 * @param id
 	 */
-	public void addGraphId (String id)
+	public void addId (String id)
 	{
 		if (id == null)
 		{
 			throw new IllegalArgumentException ("unique id can't be null");
 		}
-		if (graphIds.contains(id))
+		if (ids.contains(id))
 		{
 			throw new IllegalArgumentException ("id '" + id + "' is not unique");
 		}
-		graphIds.add (id);
+	ids.add (id);
 	}
 	
-	public void removeGraphId (String id)
+	public void removeId (String id)
 	{
-		graphIds.remove(id);
+		ids.remove(id);
 	}
 	
+	/*AP20070508*/	
 	/**
 	 * Generate random ids, based on strings of hex digits (0..9 or a..f)
+	 * Ids are unique across both graphIds and groupIds per pathway
 	 * @return an Id unique for this pathway
 	 */
 	public String getUniqueId ()
@@ -238,7 +268,7 @@ public class Pathway implements PathwayListener
 		int mod = 0x600; // 3 hex letters
 		int min = 0xa00; // has to start with a letter
 		// in case this map is getting big, do more hex letters
-		if (graphIds.size() > 1000) 
+		if ((ids.size()) > 1000) 
 		{
 			mod = 0x60000;
 			min = 0xa0000;
@@ -248,7 +278,7 @@ public class Pathway implements PathwayListener
 		{
 			result = Integer.toHexString(Math.abs(rn.nextInt()) % mod + min);
 		}
-		while (graphIds.contains(result));
+		while (ids.contains(result));
 		
 		return result;
 	}

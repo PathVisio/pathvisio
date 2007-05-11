@@ -556,6 +556,7 @@ public class PathwayElement implements GraphIdContainer
 		xref = src.xref;
 		graphId = src.graphId;	
 		groupId = src.groupId;	
+		groupLabel = src.groupLabel;	
 		groupRef = src.groupRef;	
 		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
@@ -1183,13 +1184,13 @@ public class PathwayElement implements GraphIdContainer
 	protected String groupId;
 	protected String graphId;
 	protected String groupRef;
+	protected String groupLabel;
 	protected GroupStyle groupStyle;
 	
 	public String doGetGraphId() {
 		return graphId; 
 	}
-	
-	/*AP20070508*/
+
 	public String getGroupRef() {
 		return groupRef;
 	}
@@ -1220,6 +1221,20 @@ public class PathwayElement implements GraphIdContainer
 			setGroupId (parent.getUniqueId());
 		}
 		return groupId;
+	}
+	
+	public String getGroupLabel() {
+		return groupLabel;
+	}
+	
+	public void setGroupLabel (String v) 
+	{ 
+		if (v == null) throw new IllegalArgumentException();
+		if (groupLabel != v)
+		{
+			groupLabel = v;
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
+		}
 	}
 	
 	public void setGroupStyle(GroupStyle gs) {

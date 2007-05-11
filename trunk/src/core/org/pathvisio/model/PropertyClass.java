@@ -39,4 +39,5 @@ public enum PropertyClass
 	ORGANISM,
 	DB_ID,
 	DB_SYMBOL,
+	BIOPAX,
 }

@@ -408,9 +408,8 @@ public class GpmlFormat
 				mapSimpleCenter (o, e);
 				break;
 			case ObjectType.GROUP:
-				mapGroupId (o, e);
 				mapGroupRef(o, e);
-				mapGroupStyle (o, e);
+				mapGroup (o, e);
 				break;
 			default:
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
@@ -562,29 +561,8 @@ public class GpmlFormat
 			e.setAttribute("GraphId", o.getGraphId());
 		} 
 	}
-	
-	/*AP20070508*/
-	private static void mapGroupId (PathwayElement o, Element e)
-	{
-		String id = e.getAttributeValue("GroupId");
-		if(id == null || id.equals("")) {
-			id = o.getParent().getUniqueId();
-		}
-		o.setGroupId (id);
-	}
-
-	/*AP20070508*/
-	private static void updateGroupId (PathwayElement o, Element e)
-	{
-		String id = o.getGroupId();
-		// id has to be unique!
-		if (id != null && !id.equals(""))
-		{
-			e.setAttribute("GroupId", o.getGroupId());
-		} 
-	}
-	
-	private static void mapGroupRef (PathwayElement o, Element e)
+		
+	private static void mapGroupRef (PathwayElement o, Element e) 
 	{
 		String id = e.getAttributeValue("GroupRef");
 		if(id != null && !id.equals("")) {
@@ -593,29 +571,39 @@ public class GpmlFormat
 		
 	}
 
-	/*AP20070508*/
-	private static void updateGroupRef (PathwayElement o, Element e)
+	private static void updateGroupRef (PathwayElement o, Element e) 
 	{
 		String id = o.getGroupRef();
-		// id has to be unique!
 		if (id != null && !id.equals(""))
 		{
 			e.setAttribute("GroupRef", o.getGroupRef());
 		} 
 	}
 	
-	private static void mapGroupStyle (PathwayElement o, Element e) throws ConverterException
+	private static void mapGroup (PathwayElement o, Element e) throws ConverterException
 	{
+		//ID
+		String id = e.getAttributeValue("GroupId");
+		if(id == null || id.equals("")) 
+			{id = o.getParent().getUniqueId();}
+		o.setGroupId (id);
+		//Style
 		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
+		//Label
+		o.setGroupLabel (getAttribute("Group", "TextLabel", e));
 	}
 	
 	private static void updateGroup (PathwayElement o, Element e) throws ConverterException
 	{
-		GroupStyle gs = o.getGroupStyle();
-		if(gs != null) {
-			setAttribute("Group", "Style", e, GroupStyle.toGpmlName(gs));
-		}
-		}
+		//ID
+		String id = o.getGroupId();
+		if (id != null && !id.equals(""))
+			{e.setAttribute("GroupId", o.getGroupId());}
+		//Style
+		setAttribute("Group", "Style", e, GroupStyle.toGpmlName(o.getGroupStyle()));
+		//Label
+		setAttribute ("Group", "TextLabel", e, o.getGroupLabel());
+	}
 	
 	private static void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
@@ -845,7 +833,6 @@ public class GpmlFormat
 				break;
 			case ObjectType.GROUP:
 				e = new Element ("Group", ns);
-				updateGroupId (o, e);
 				updateGroup (o, e);
 				updateGroupRef(o, e);
 				break;

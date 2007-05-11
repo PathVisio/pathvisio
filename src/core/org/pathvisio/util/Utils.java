@@ -16,11 +16,14 @@
 //
 package org.pathvisio.util;
 
-import org.pathvisio.gui.Engine;
-
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.pathvisio.gui.Engine;
 
 public class Utils {
 	
@@ -176,5 +179,15 @@ public class Utils {
 			if(sc.equals(superClass)) return true;
 		}
 		return false;
+	}
+	
+	public static InputStream stringToInputStream(String str){
+		if(str==null) return null;
+		InputStream in = null;
+		try{
+		in = new java.io.ByteArrayInputStream(str.getBytes("UTF-8"));
+		}catch(Exception ex){
+		}
+		return in;
 	}
 }

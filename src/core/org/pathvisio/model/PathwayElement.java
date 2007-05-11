@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jdom.Element;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -286,7 +287,8 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.BOARDWIDTH,
 						PropertyType.BOARDHEIGHT,
 						PropertyType.WINDOWWIDTH,
-						PropertyType.WINDOWHEIGHT
+						PropertyType.WINDOWHEIGHT,
+						PropertyType.BIOPAX
 				}));
 				break;
 			case ObjectType.DATANODE:
@@ -440,6 +442,8 @@ public class PathwayElement implements GraphIdContainer
 			case GROUPID: setGroupId ((String)value); break;
 			case GROUPREF: setGroupRef ((String)value); break;
 			case TRANSPARENT: setTransparent ((Boolean)value); break;
+			
+			case BIOPAX: setBiopax((List<Element>)value); break;
 		}
 	}
 	
@@ -501,6 +505,8 @@ public class PathwayElement implements GraphIdContainer
 			case GROUPID: result = getGroupId (); break;
 			case GROUPREF: result = getGroupRef (); break;
 			case TRANSPARENT: result = isTransparent (); break;
+			
+			case BIOPAX: result = getBiopax(); break;
 		}
 
 		return result;
@@ -1304,6 +1310,29 @@ public class PathwayElement implements GraphIdContainer
 	public void setEndGraphRef(String ref) {
 		MPoint end = mPoints.get(mPoints.size() - 1);
 		end.setGraphRef(ref);
+	}
+	
+	protected List<Element> biopax;
+	
+	public List<Element> getBiopax() {
+		return biopax;
+	}
+	
+	public void setBiopax(List<Element> bp) {
+		biopax = bp;
+	}
+	
+	protected String biopaxRef;
+	
+	public String getBiopaxRef() {
+		return biopaxRef;
+	}
+	
+	public void setBiopaxRef(String ref) {
+		if(ref != null && !ref.equals(biopaxRef)) {
+			biopaxRef = ref;
+			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
+		}
 	}
 	
 	public PathwayElement[] splitLine() {

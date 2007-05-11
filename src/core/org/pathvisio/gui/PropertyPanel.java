@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.pathvisio.biopax.gui.BiopaxCellEditor;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.Color;
 import org.pathvisio.model.DataNodeType;
@@ -73,6 +74,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	ComboBoxCellEditor comboBoxEditor;
 	SuggestCellEditor identifierSuggestEditor;
 	SuggestCellEditor symbolSuggestEditor;
+	BiopaxCellEditor biopaxEditor;
 	
 	private List<PathwayElement> dataObjects;
 	
@@ -219,6 +221,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
 		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
 		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
+		biopaxEditor = new BiopaxCellEditor(tableViewer.getTable(), "Edit Biopax info");
 		
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
@@ -288,6 +291,8 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				return identifierSuggestEditor;
 			case DB_SYMBOL:
 				return textEditor;
+			case BIOPAX:
+				return biopaxEditor;
 				
 		}
 		return textEditor;
@@ -368,6 +373,8 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 					if(value instanceof String) return (String)value;
 					if(value instanceof PropertyPanel.AutoFillData) 
 						return ((PropertyPanel.AutoFillData)value).getMainValue();
+				case BIOPAX:
+					return value;
 					
 			}
 			return null;

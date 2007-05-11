@@ -160,6 +160,7 @@ public class GpmlFormat
 		result.put("Shape@ObjectType", new AttributeInfo ("gpml:ObjectType", "Annotation", "optional"));
 		result.put("Group@GroupId", new AttributeInfo ("xsd:ID", null, "required"));
 		result.put("Group@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Group@TextLabel", new AttributeInfo("xsd:string", null, "optional"));
 		result.put("Group@Style", new AttributeInfo ("gpml:GroupStyleType", "Stack", "optional"));
 		result.put("InfoBox@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("InfoBox@CenterY", new AttributeInfo ("xsd:float", null, "required"));
@@ -251,7 +252,7 @@ public class GpmlFormat
 		// the constructor.
 		private final String[] elements = new String[] {
 			"Comment", "Graphics", "DataNode", "Line", "Label",
-			"Shape", "Group", "InfoBox", "Legend"
+			"Shape", "Group", "InfoBox", "Legend", "Biopax"
 		};
 		
 		/*
@@ -375,6 +376,7 @@ public class GpmlFormat
 				mapDataNode(o, e);
 				mapGraphId(o, e);
 				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
 				break;
 			case ObjectType.LABEL:
 				mapShapeData(o, e, "Label");
@@ -383,12 +385,14 @@ public class GpmlFormat
 				mapComments(o, e);
 				mapGraphId(o, e);
 				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
 				break;
 			case ObjectType.LINE:
 				mapLineData(o, e);
 				mapColor(o, e);
 				mapComments(o, e);
 				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
 				break;
 			case ObjectType.MAPPINFO:
 				mapMappInfoData(o, e);
@@ -400,6 +404,7 @@ public class GpmlFormat
 				mapShapeType(o, e);
 				mapGraphId(o, e);
 				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
 				break;
 			case ObjectType.LEGEND:
 				mapSimpleCenter(o, e);
@@ -410,6 +415,10 @@ public class GpmlFormat
 			case ObjectType.GROUP:
 				mapGroupRef(o, e);
 				mapGroup (o, e);
+				mapBiopaxRef(o, e);
+				break;
+			case ObjectType.BIOPAX:
+				mapBiopax(o, e);
 				break;
 			default:
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
@@ -778,6 +787,39 @@ public class GpmlFormat
 		}		
 	}
 	
+	private static void mapBiopax(PathwayElement o, Element e) throws ConverterException
+	{
+		//this method clones all children, 
+		//getContent will leave them attached to the parent, which we don't want
+		//We can safely remove them, since the JDOM element isn't used anymore after this method
+		List<Element> bp = e.removeContent();
+		o.setBiopax(bp);
+	}
+	
+	private static void updateBiopax(PathwayElement o, Element e) throws ConverterException
+	{
+		List<Element> bp = o.getBiopax();
+		if(e != null && bp != null) {
+			e.addContent(bp);
+		}
+	}
+	
+	private static void mapBiopaxRef(PathwayElement o, Element e) throws ConverterException
+	{
+		String ref = e.getAttributeValue("BiopaxRef");
+		if(ref != null) {
+			o.setBiopaxRef(ref);
+		}
+	}
+	
+	private static void updateBiopaxRef(PathwayElement o, Element e) throws ConverterException
+	{
+		String ref = o.getBiopaxRef();
+		if(ref != null) {
+			e.setAttribute("BiopaxRef", ref);
+		}
+	}
+	
 	static public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException 
 	{		
 		Element e = null;
@@ -794,6 +836,7 @@ public class GpmlFormat
 				updateShapeData(o, e, "DataNode");
 				updateGraphId(o, e);				
 				updateGroupRef(o, e);
+				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.SHAPE:
 				e = new Element ("Shape", ns);
@@ -804,6 +847,7 @@ public class GpmlFormat
 				updateShapeType(o, e);
 				updateGraphId(o, e);
 				updateGroupRef(o, e);
+				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.LINE:
 				e = new Element("Line", ns);
@@ -812,6 +856,7 @@ public class GpmlFormat
 				updateLineData(o, e);
 				updateColor(o, e);
 				updateGroupRef(o, e);
+				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.LABEL:
 				e = new Element("Label", ns);
@@ -822,6 +867,7 @@ public class GpmlFormat
 				updateShapeData(o, e, "Label");
 				updateGraphId(o, e);
 				updateGroupRef(o, e);
+				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.LEGEND:
 				e = new Element ("Legend", ns);
@@ -835,6 +881,11 @@ public class GpmlFormat
 				e = new Element ("Group", ns);
 				updateGroup (o, e);
 				updateGroupRef(o, e);
+				updateBiopaxRef(o, e);
+				break;
+			case ObjectType.BIOPAX:
+				e = new Element ("Biopax", ns);
+				updateBiopax(o, e);
 				break;
 		}
 		if (e == null)

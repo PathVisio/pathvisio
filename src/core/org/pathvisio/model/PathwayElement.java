@@ -321,7 +321,8 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.SHAPETYPE,
 						PropertyType.ROTATION,
 						PropertyType.TRANSPARENT,
-						PropertyType.GRAPHID
+						PropertyType.GRAPHID,
+						PropertyType.GROUPREF
 				}));
 				break;
 			case ObjectType.LINE:
@@ -337,7 +338,8 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.LINESTYLE,
 						PropertyType.STARTGRAPHREF,
 						PropertyType.ENDGRAPHREF,
-						PropertyType.GRAPHID
+						PropertyType.GRAPHID,
+						PropertyType.GROUPREF
 				}));
 				break;
 			case ObjectType.LABEL:
@@ -355,7 +357,15 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.FONTWEIGHT,
 						PropertyType.FONTSTYLE,
 						PropertyType.FONTSIZE,
-						PropertyType.GRAPHID
+						PropertyType.GRAPHID,
+						PropertyType.GROUPREF
+				}));
+				break;
+			case ObjectType.GROUP:
+				result = ( Arrays.asList(new PropertyType[] {
+						PropertyType.GROUPID,
+						PropertyType.GROUPREF,
+						PropertyType.GROUPLABEL
 				}));
 				break;
 				
@@ -428,6 +438,7 @@ public class PathwayElement implements GraphIdContainer
 			case STARTGRAPHREF: setStartGraphRef ((String)value); break;
 			case ENDGRAPHREF: setEndGraphRef ((String)value); break;
 			case GROUPID: setGroupId ((String)value); break;
+			case GROUPLABEL: setGroupLabel ((String)value); break;
 			case GROUPREF: setGroupRef ((String)value); break;
 			case TRANSPARENT: setTransparent ((Boolean)value); break;
 		}
@@ -489,6 +500,7 @@ public class PathwayElement implements GraphIdContainer
 			case STARTGRAPHREF: result = getStartGraphRef (); break;
 			case ENDGRAPHREF: result = getEndGraphRef (); break;
 			case GROUPID: result = getGroupId (); break;
+			case GROUPLABEL: result = getGroupLabel (); break;
 			case GROUPREF: result = getGroupRef (); break;
 			case TRANSPARENT: result = isTransparent (); break;
 		}

@@ -365,7 +365,7 @@ public class PathwayElement implements GraphIdContainer
 				result = ( Arrays.asList(new PropertyType[] {
 						PropertyType.GROUPID,
 						PropertyType.GROUPREF,
-						PropertyType.GROUPLABEL
+						PropertyType.TEXTLABEL
 				}));
 				break;
 				
@@ -438,7 +438,6 @@ public class PathwayElement implements GraphIdContainer
 			case STARTGRAPHREF: setStartGraphRef ((String)value); break;
 			case ENDGRAPHREF: setEndGraphRef ((String)value); break;
 			case GROUPID: setGroupId ((String)value); break;
-			case GROUPLABEL: setGroupLabel ((String)value); break;
 			case GROUPREF: setGroupRef ((String)value); break;
 			case TRANSPARENT: setTransparent ((Boolean)value); break;
 		}
@@ -500,7 +499,6 @@ public class PathwayElement implements GraphIdContainer
 			case STARTGRAPHREF: result = getStartGraphRef (); break;
 			case ENDGRAPHREF: result = getEndGraphRef (); break;
 			case GROUPID: result = getGroupId (); break;
-			case GROUPLABEL: result = getGroupLabel (); break;
 			case GROUPREF: result = getGroupRef (); break;
 			case TRANSPARENT: result = isTransparent (); break;
 		}
@@ -568,7 +566,6 @@ public class PathwayElement implements GraphIdContainer
 		xref = src.xref;
 		graphId = src.graphId;	
 		groupId = src.groupId;	
-		groupLabel = src.groupLabel;	
 		groupRef = src.groupRef;	
 		fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
 	}
@@ -1196,7 +1193,6 @@ public class PathwayElement implements GraphIdContainer
 	protected String groupId;
 	protected String graphId;
 	protected String groupRef;
-	protected String groupLabel;
 	protected GroupStyle groupStyle;
 	
 	public String doGetGraphId() {
@@ -1234,21 +1230,7 @@ public class PathwayElement implements GraphIdContainer
 		}
 		return groupId;
 	}
-	
-	public String getGroupLabel() {
-		return groupLabel;
-	}
-	
-	public void setGroupLabel (String v) 
-	{ 
-		if (v == null) throw new IllegalArgumentException();
-		if (groupLabel != v)
-		{
-			groupLabel = v;
-			fireObjectModifiedEvent(new PathwayEvent (this, PathwayEvent.MODIFIED_GENERAL));
-		}
-	}
-	
+		
 	public void setGroupStyle(GroupStyle gs) {
 		groupStyle = gs;
 	}

@@ -590,7 +590,7 @@ public class GpmlFormat
 		//Style
 		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
 		//Label
-		o.setGroupLabel (getAttribute("Group", "TextLabel", e));
+		o.setTextLabel (getAttribute("Group", "TextLabel", e));
 	}
 	
 	private static void updateGroup (PathwayElement o, Element e) throws ConverterException
@@ -602,7 +602,7 @@ public class GpmlFormat
 		//Style
 		setAttribute("Group", "Style", e, GroupStyle.toGpmlName(o.getGroupStyle()));
 		//Label
-		setAttribute ("Group", "TextLabel", e, o.getGroupLabel());
+		setAttribute ("Group", "TextLabel", e, o.getTextLabel());
 	}
 	
 	private static void mapDataNode(PathwayElement o, Element e) throws ConverterException

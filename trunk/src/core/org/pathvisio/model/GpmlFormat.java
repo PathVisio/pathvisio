@@ -410,7 +410,7 @@ public class GpmlFormat
 			case ObjectType.GROUP:
 				mapGroupId (o, e);
 				mapGroupRef(o, e);
-				mapGroup (o, e);
+				mapGroupStyle (o, e);
 				break;
 			default:
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
@@ -604,7 +604,7 @@ public class GpmlFormat
 		} 
 	}
 	
-	private static void mapGroup (PathwayElement o, Element e) throws ConverterException
+	private static void mapGroupStyle (PathwayElement o, Element e) throws ConverterException
 	{
 		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
 	}

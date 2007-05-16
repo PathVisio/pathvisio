@@ -1017,13 +1017,20 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		//if(e.keyCode == SWT.CTRL) ctrlPressed();
 		//if(e.keyCode == SWT.ALT) altPressed();
 		if(e.keyCode == SWT.INSERT) insertPressed();
-		if(e.keyCode == 103) //CTRL-G to select all gene-products
+		if((e.character & 'd') !=0) //CTRL-D to select all gene-products
 			if((e.stateMask & SWT.CTRL) != 0) {
 				selectGeneProducts();
 				redraw();
 			}
+		if((e.character & 'g') != 0) //CTRL-G to select all gene-products
+			if((e.stateMask & SWT.CTRL) != 0) {
+				//do group thing
+				createGroup();
+			}
 	}
 
+	
+	
 	public void keyReleased(KeyEvent e) {		
 		//if(e.keyCode == SWT.CTRL) ctrlReleased();
 		//if(e.keyCode == SWT.ALT) altReleased();

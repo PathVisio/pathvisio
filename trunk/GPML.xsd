@@ -165,6 +165,7 @@
 			<xsd:enumeration value="Stack"/>
 			<xsd:enumeration value="Box"/>
 			<xsd:enumeration value="Complex"/>
+			<xsd:enumeration value="None" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -607,7 +608,7 @@
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="GroupId" type="xsd:ID" use="required"/>
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional"/>
-			<xsd:attribute name="Style" type="gpml:GroupStyleType" default="Stack" />
+			<xsd:attribute name="Style" type="gpml:GroupStyleType" default="None" />
 			<xsd:attribute name="TextLabel" type="xsd:string" use="optional" />
 		</xsd:complexType>
 	</xsd:element>

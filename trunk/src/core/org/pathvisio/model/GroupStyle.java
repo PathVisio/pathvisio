@@ -8,7 +8,8 @@ import java.util.Map;
 public enum GroupStyle {
 	STACK("Stack"),
 	COMPLEX("Complex"),
-	BOX("Box");
+	BOX("Box"),
+	NONE("None");
 //	NAMEDSELECTION("NamedSelection"),
 //	METANODE("Metanode");
 	

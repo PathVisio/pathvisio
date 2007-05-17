@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jdom.Element;
+import org.jdom.Document;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -287,8 +287,7 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.BOARDWIDTH,
 						PropertyType.BOARDHEIGHT,
 						PropertyType.WINDOWWIDTH,
-						PropertyType.WINDOWHEIGHT,
-						PropertyType.BIOPAX
+						PropertyType.WINDOWHEIGHT
 				}));
 				break;
 			case ObjectType.DATANODE:
@@ -443,7 +442,7 @@ public class PathwayElement implements GraphIdContainer
 			case GROUPREF: setGroupRef ((String)value); break;
 			case TRANSPARENT: setTransparent ((Boolean)value); break;
 			
-			case BIOPAX: setBiopax((List<Element>)value); break;
+			case BIOPAX: setBiopax((Document)value); break;
 		}
 	}
 	
@@ -1264,7 +1263,7 @@ public class PathwayElement implements GraphIdContainer
 				//Check: move add before remove??
 				if (w != null)
 				{
-					parent.addId(w);
+					parent.addGroupId(w, this);
 				}
 			}
 			groupId = w;
@@ -1312,13 +1311,13 @@ public class PathwayElement implements GraphIdContainer
 		end.setGraphRef(ref);
 	}
 	
-	protected List<Element> biopax;
+	protected Document biopax;
 	
-	public List<Element> getBiopax() {
+	public Document getBiopax() {
 		return biopax;
 	}
 	
-	public void setBiopax(List<Element> bp) {
+	public void setBiopax(Document bp) {
 		biopax = bp;
 	}
 	

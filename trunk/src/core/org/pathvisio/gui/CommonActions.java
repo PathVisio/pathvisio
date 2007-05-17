@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pathvisio.Globals;
+import org.pathvisio.biopax.gui.BiopaxDialog;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
@@ -650,6 +651,23 @@ public class CommonActions
 			}
 			// Set zoom back
 			drawing.setPctZoom(usedZoom);
+		}
+	}
+	
+	static class BiopaxAction extends Action 
+	{
+		MainWindow window;
+		public BiopaxAction (MainWindow w)
+		{
+			window = w;
+			setText ("Edit &BioPAX code");
+			setToolTipText ("Edit BioPAX code");
+		}
+		
+		public void run () {
+			BiopaxDialog d = new BiopaxDialog(window.getShell());
+			d.setBiopax(Engine.getPathway().getBiopax().getBiopax());
+			d.open();
 		}
 	}
 

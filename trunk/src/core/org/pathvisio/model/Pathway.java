@@ -103,6 +103,7 @@ public class Pathway implements PathwayListener
 	
 	private PathwayElement mappInfo = null;
 	private PathwayElement infoBox = null;
+	private PathwayElement biopax = null;
 	
 	/**
 	 * get the one and only MappInfo object.
@@ -127,6 +128,11 @@ public class Pathway implements PathwayListener
 	{
 		return infoBox;
 	}
+	
+	public PathwayElement getBiopax() {
+		return biopax;
+	}
+	
 	/**
 	 * Add a PathwayElement to this Pathway.
 	 * takes care of setting parent and removing from possible previous
@@ -142,6 +148,9 @@ public class Pathway implements PathwayListener
 			throw new IllegalArgumentException("Can't add more mappinfo objects");
 		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
 			throw new IllegalArgumentException("Can't add more infobox objects");
+		if(o.getObjectType() == ObjectType.BIOPAX && biopax != null && o != biopax) {
+			throw new IllegalArgumentException("Can't add more biopax objects");
+		}
 		if (o.getParent() == this) return; // trying to re-add the same object
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
@@ -232,6 +241,8 @@ public class Pathway implements PathwayListener
 			graphRefs.remove(id);
 	}
 	
+	private HashMap<String, PathwayElement> groups = new HashMap<String, PathwayElement>();
+	
 	/**
 	 * Registers an id that can subsequently be used for
 	 * referrral. It is tested for uniqueness.
@@ -248,6 +259,16 @@ public class Pathway implements PathwayListener
 			throw new IllegalArgumentException ("id '" + id + "' is not unique");
 		}
 	ids.add (id);
+	
+	}
+	
+	public void addGroupId(String id, PathwayElement group) {
+		addId(id);
+		groups.put(id, group);
+	}
+	
+	public PathwayElement getGroupById(String id) {
+		return groups.get(id);
 	}
 	
 	public void removeId (String id)
@@ -309,6 +330,8 @@ public class Pathway implements PathwayListener
 		this.add (mappInfo);
 		infoBox = new PathwayElement(ObjectType.INFOBOX);
 		this.add (infoBox);
+		biopax = new PathwayElement(ObjectType.BIOPAX);
+		this.add(biopax);
 	}
 	
 	static final double M_INITIAL_BOARD_WIDTH = 18000;

@@ -21,13 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-
 import org.pathvisio.gui.Engine;
 
 /**
@@ -161,7 +161,7 @@ public class GpmlFormat
 		result.put("Group@GroupId", new AttributeInfo ("xsd:ID", null, "required"));
 		result.put("Group@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Group@TextLabel", new AttributeInfo("xsd:string", null, "optional"));
-		result.put("Group@Style", new AttributeInfo ("gpml:GroupStyleType", "Stack", "optional"));
+		result.put("Group@Style", new AttributeInfo ("gpml:GroupStyleType", "None", "optional"));
 		result.put("InfoBox@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("InfoBox@CenterY", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Legend@CenterX", new AttributeInfo ("xsd:float", null, "required"));
@@ -360,6 +360,10 @@ public class GpmlFormat
 		else if (ot == ObjectType.INFOBOX)
 		{
 			o = p.getInfoBox();
+		} 
+		else if (ot == ObjectType.BIOPAX) 
+		{
+			o = p.getBiopax();
 		}
 		else
 		{
@@ -780,7 +784,7 @@ public class GpmlFormat
 		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
 		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
 		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
-		
+				
 		for (Object f : e.getChildren("Comment", e.getNamespace()))
 		{
 			o.addComment(((Element)f).getText(), getAttribute("Comment", "Source", (Element)f));
@@ -789,18 +793,22 @@ public class GpmlFormat
 	
 	private static void mapBiopax(PathwayElement o, Element e) throws ConverterException
 	{
-		//this method clones all children, 
+		//this method clones all content, 
 		//getContent will leave them attached to the parent, which we don't want
 		//We can safely remove them, since the JDOM element isn't used anymore after this method
-		List<Element> bp = e.removeContent();
+		Document bp = new Document(new Element("RDF", Namespace.getNamespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")));
+		/*
+		 * xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bp="http://www.biopax.org/release/biopax-level2.owl#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+		 */
+		bp.getRootElement().addContent(e.cloneContent());
 		o.setBiopax(bp);
 	}
 	
 	private static void updateBiopax(PathwayElement o, Element e) throws ConverterException
 	{
-		List<Element> bp = o.getBiopax();
+		Document bp = o.getBiopax();
 		if(e != null && bp != null) {
-			e.addContent(bp);
+			e.addContent(bp.getRootElement().cloneContent());
 		}
 	}
 	

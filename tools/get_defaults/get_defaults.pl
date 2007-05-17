@@ -17,7 +17,7 @@ my %group;
 my $twig = XML::Twig->new( twig_handlers => 
 	{ 
 		# handle all attribute tags below an element tag
-		"xsd:element//xsd:attribute" => \&attrib,
+		"xsd:element/xsd:attribute" => \&attrib,
 		
 		# handle all attribute tags below an attributeGroup tag
 		"xsd:attributeGroup/xsd:attribute" => \&groupAttrib,

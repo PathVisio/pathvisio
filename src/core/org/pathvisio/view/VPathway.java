@@ -1012,17 +1012,42 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		}
 		s.addToSelection(lastAdded);
 	}
+	
+	public void createGroup() {
+		//GroupId is created on first getGroupId call
+		PathwayElement group = new PathwayElement(ObjectType.GROUP);
+		data.add(group);
+		
+		group.setTextLabel("new group");
+		group.setGroupStyle(GroupStyle.NONE);
+		
+		String id = group.getGroupId();
+		
+		//Add the selected pathway elements
+		List<Graphics> selection = getSelectedGraphics();
+		
+		for(Graphics g : selection) {
+			PathwayElement pe = g.getGmmlData();
+			String ref = pe.getGroupRef();
+			if(ref == null) {
+				pe.setGroupRef(id);
+			} else if(ref != id) {
+				PathwayElement refGroup = data.getGroupById(ref);
+				refGroup.setGroupRef(id);
+			}
+		}
+	}
 
 	public void keyPressed(KeyEvent e) { 
 		//if(e.keyCode == SWT.CTRL) ctrlPressed();
 		//if(e.keyCode == SWT.ALT) altPressed();
 		if(e.keyCode == SWT.INSERT) insertPressed();
-		if((e.character & 'd') !=0) //CTRL-D to select all gene-products
+		if(e.keyCode == 100) //CTRL-D to select all gene-products
 			if((e.stateMask & SWT.CTRL) != 0) {
 				selectGeneProducts();
 				redraw();
 			}
-		if((e.character & 'g') != 0) //CTRL-G to select all gene-products
+		if(e.keyCode == 103) //CTRL-G to select all gene-products
 			if((e.stateMask & SWT.CTRL) != 0) {
 				//do group thing
 				createGroup();
@@ -1114,6 +1139,23 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		}
 		
 		//clipboard.dispose();
+	}
+	
+	/**
+	 * TODO: document
+	 * @return
+	 */
+	public List<Graphics> getSelectedGraphics() {
+		List<Graphics> result = new ArrayList<Graphics>();
+		for (VPathwayElement g : drawingObjects)
+		{
+			if (g.isSelected() && g instanceof Graphics
+					&& !(g instanceof SelectionBox))
+			{
+				result.add((Graphics)g);
+			}
+		}
+		return result;
 	}
 	
 	/**

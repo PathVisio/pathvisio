@@ -1,9 +1,6 @@
 package org.pathvisio.biopax.gui;
 
-import java.util.List;
-
 import org.biopax.paxtools.model.level2.BioPAXElement;
-import org.biopax.paxtools.model.level2.Model;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -18,22 +15,22 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.jdom.Element;
+import org.jdom.Document;
 import org.pathvisio.biopax.BiopaxManager;
 
 public class BiopaxDialog extends Dialog {
 	BiopaxManager biopax;
 	TableViewer tableViewer;
 	
-	protected BiopaxDialog(Shell shell) {
+	public BiopaxDialog(Shell shell) {
 		super(shell);
 	}
 
-	protected void setBiopax(List<Element> bp) {
+	public void setBiopax(Document bp) {
 		setBiopax(new BiopaxManager(bp));
 	}
 	
-	protected void setBiopax(BiopaxManager bp) {
+	public void setBiopax(BiopaxManager bp) {
 		biopax = bp;
 		update();
 	}
@@ -41,6 +38,7 @@ public class BiopaxDialog extends Dialog {
 	private void update() {
 		if(tableViewer != null) {
 			tableViewer.setInput(biopax);
+			tableViewer.refresh();
 		}
 	}
 	
@@ -50,14 +48,19 @@ public class BiopaxDialog extends Dialog {
 		 
 		 tableViewer = new TableViewer(comp);
 		 Table t = tableViewer.getTable();
+		 t.setHeaderVisible(true);
 		 TableColumn tcElm = new TableColumn(t, SWT.LEFT);
 		 tcElm.setText("Element");
+		 tcElm.setWidth(500);
 		 
 		 tableViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object input) {
-				Model m = (Model)input;
-				if(m == null) return new Object[] {};
-				else return m.getObjects().toArray();
+				BiopaxManager bpm = (BiopaxManager)input;
+				if(bpm != null) {
+					return bpm.getModel().getObjects().toArray();
+				} else {
+					return new Object[] {};
+				}
 			}
 
 			public void dispose() { }
@@ -71,7 +74,7 @@ public class BiopaxDialog extends Dialog {
 			public boolean isLabelProperty(Object value, String property) {
 				return false;
 			}
-			public void removeListener(ILabelProviderListener arg0) { }
+			public void removeListener(ILabelProviderListener l) { }
 			public Image getColumnImage(Object value, int col) { return null; }
 			public String getColumnText(Object value, int col) {
 				BioPAXElement bpe = (BioPAXElement)value;
@@ -82,6 +85,7 @@ public class BiopaxDialog extends Dialog {
 				}
 			}
 		 });
+		 
 		 tableViewer.setInput(biopax);
 		 
 		 return comp;

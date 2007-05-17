@@ -110,7 +110,7 @@ public class Revision
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
-		<javac srcdir="src" 
+		<javac srcdir="src" debug="true"
 			includes="v1/**,core/**"
 			destdir="${build.v1.dir}">
 			<classpath refid="project.v1.class.path"/>
@@ -137,6 +137,7 @@ public class Revision
 			<fileset dir="." includes="images/*"/>
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
+			<fileset dir="." includes="biopax-level2.owl"/>
 		</jar>
 		<jar jarfile="lib/R-resources.jar">
 			<fileset dir="lib" includes="R/**/*"/>

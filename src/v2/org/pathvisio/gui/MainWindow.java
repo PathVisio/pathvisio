@@ -602,8 +602,6 @@ public class MainWindow extends ApplicationWindow implements
 	}
 	private VisualizationDialogAction visualizationDialogAction = new VisualizationDialogAction(this);
 	
-	
-	
 	public static void openHelp() throws Exception {
 		BrowserLauncher bl = new BrowserLauncher(null);
 		bl.openURLinBrowser(Globals.HELP_URL);
@@ -922,6 +920,7 @@ public class MainWindow extends ApplicationWindow implements
 			statsMenu.add(rStatsAction);
 			statsMenu.add(rLoadStatsAction);
 		}
+		dataMenu.add(new CommonActions.BiopaxAction(this));
 		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
 		convertMenu.add(convertGexAction);
 		convertMenu.add(convertGdbAction);

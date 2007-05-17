@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.biopax.paxtools.impl.level2.BioPAXFactoryImpl;
 import org.biopax.paxtools.io.jena.JenaIOHandler;
+import org.biopax.paxtools.model.BioPAXLevel;
+import org.biopax.paxtools.model.level2.BioPAXFactory;
 import org.biopax.paxtools.model.level2.Model;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -22,20 +24,18 @@ public class BiopaxManager {
 	 * Create a Biopax object from the given JDOM element
 	 * @param e The element containing BioPAX code
 	 */
-	public BiopaxManager(List<Element> elm) {
-		if(elm == null) { //Create new model
-			BioPAXFactoryImpl bpf = new BioPAXFactoryImpl();
+	public BiopaxManager(Document doc) {
+		BioPAXFactory bpf = new BioPAXFactoryImpl();
+		if(doc == null) { //Create new model
 			model = bpf.createModel();
 		} else { //Parse jdom
-			Document doc = new Document();
-			doc.addContent(elm);
 			String bpText = new XMLOutputter().outputString(doc);
-			JenaIOHandler ioh = new JenaIOHandler();
+			JenaIOHandler ioh = new JenaIOHandler(bpf, BioPAXLevel.L2);
 			model = ioh.convertFromOWL(Utils.stringToInputStream(bpText));
 		}
 	}
 	
-	public List<Element> getXml() throws ConverterException {
+	public List getXml() throws ConverterException {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JenaIOHandler ioh = new JenaIOHandler();
@@ -46,7 +46,7 @@ public class BiopaxManager {
 			SAXBuilder saxBuilder=new SAXBuilder();
 			Reader stringReader=new StringReader(xml);
 			Document doc = saxBuilder.build(stringReader);
-			return (List<Element>)doc.removeContent();
+			return (List)doc.removeContent();
 		} catch(Exception e) {
 			throw new ConverterException(e);
 		}

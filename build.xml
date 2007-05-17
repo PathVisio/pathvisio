@@ -16,64 +16,17 @@
 	<property name="exec.inno.setup" value="iscc"/>
 	
 	<path id="project.v1.class.path">
-		<pathelement location="lib/swt-linux.jar"/>
-		<pathelement location="lib/jdom.jar"/>
-		<pathelement location="lib/org.eclipse.core.commands.jar"/>
-		<pathelement location="lib/org.eclipse.equinox.common.jar"/>
-		<pathelement location="lib/org.eclipse.jface.jar"/>
-		<pathelement location="lib/derby.jar"/>
-		<pathelement location="lib/junit.jar"/>
-		<pathelement location="lib/BrowserLauncher.jar"/>
-		<pathelement location="lib/resources.jar"/>
 		<pathelement location="${build.v1.dir}"/>
-		<pathelement location="lib/batik/batik-awt-util.jar"/>
-		<pathelement location="lib/batik/batik-bridge.jar"/>
-		<pathelement location="lib/batik/batik-css.jar"/>
-		<pathelement location="lib/batik/batik-dom.jar"/>
-		<pathelement location="lib/batik/batik-ext.jar"/>
-		<pathelement location="lib/batik/batik-extension.jar"/>
-		<pathelement location="lib/batik/batik-gvt.jar"/>
-		<pathelement location="lib/batik/batik-parser.jar"/>
-		<pathelement location="lib/batik/batik-script.jar"/>
-		<pathelement location="lib/batik/batik-svg-dom.jar"/>
-		<pathelement location="lib/batik/batik-svggen.jar"/>
-		<pathelement location="lib/batik/batik-transcoder.jar"/>
-		<pathelement location="lib/batik/batik-util.jar"/>
-		<pathelement location="lib/batik/batik-xml.jar"/>
-		<pathelement location="lib/batik/pdf-transcoder.jar"/>
-		<pathelement location="lib/batik/xml-apis.jar"/>
+		<fileset dir="lib">
+		        <include name="**/*.jar"/>
+		</fileset>
 	</path>
 
 	<path id="project.v2.class.path">
-		<pathelement location="lib/swt-linux.jar"/>
-		<pathelement location="lib/jdom.jar"/>
-		<pathelement location="lib/JRI.jar"/>
-		<pathelement location="lib/org.eclipse.core.commands.jar"/>
-		<pathelement location="lib/org.eclipse.equinox.common.jar"/>
-		<pathelement location="lib/org.eclipse.jface.jar"/>
-		<pathelement location="lib/derby.jar"/>
-		<pathelement location="lib/junit.jar"/>
-		<pathelement location="lib/BrowserLauncher.jar"/>
-		<pathelement location="lib/resources.jar"/>
-		<pathelement location="lib/R-resources.jar"/>
-		<pathelement location="lib/plugins.jar"/>
 		<pathelement location="${build.v2.dir}"/>
-		<pathelement location="lib/batik/batik-awt-util.jar"/>
-		<pathelement location="lib/batik/batik-bridge.jar"/>
-		<pathelement location="lib/batik/batik-css.jar"/>
-		<pathelement location="lib/batik/batik-dom.jar"/>
-		<pathelement location="lib/batik/batik-ext.jar"/>
-		<pathelement location="lib/batik/batik-extension.jar"/>
-		<pathelement location="lib/batik/batik-gvt.jar"/>
-		<pathelement location="lib/batik/batik-parser.jar"/>
-		<pathelement location="lib/batik/batik-script.jar"/>
-		<pathelement location="lib/batik/batik-svg-dom.jar"/>
-		<pathelement location="lib/batik/batik-svggen.jar"/>
-		<pathelement location="lib/batik/batik-transcoder.jar"/>
-		<pathelement location="lib/batik/batik-util.jar"/>
-		<pathelement location="lib/batik/batik-xml.jar"/>
-		<pathelement location="lib/batik/pdf-transcoder.jar"/>
-		<pathelement location="lib/batik/xml-apis.jar"/>
+		<fileset dir="lib">
+		        <include name="**/*.jar"/>
+		</fileset>
 	</path>
 
 	<target name="svnversion">

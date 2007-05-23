@@ -107,7 +107,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * @param r - the rectangle to check
 	 * @return True if the object intersects the rectangle, false otherwise
 	 */
-	protected final boolean vIntersects(Rectangle2D.Double r)
+	protected boolean vIntersects(Rectangle2D.Double r)
 	{
 		return getVOutline().intersects(r);
 	}
@@ -118,7 +118,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * @param point - the point to check
 	 * @return True if the object contains the point, false otherwise
 	 */
-	protected final boolean vContains(Point2D point)
+	protected boolean vContains(Point2D point)
 	{
 		return getVOutline().contains(point);
 	}	

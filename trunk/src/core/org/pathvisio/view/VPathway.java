@@ -121,6 +121,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 				result = mi; 
 				break;				
 			case ObjectType.LABEL: result = new Label(this, o); break;					
+			case ObjectType.GROUP: result = new Group(this, o); break;					
 		}
 		return result;
 	}
@@ -943,7 +944,8 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	}
 	
 
-	public static final int DRAW_ORDER_HANDLE = 0;
+	public static final int DRAW_ORDER_HANDLE = -1;
+	public static final int DRAW_ORDER_GROUP = 0;
 	public static final int DRAW_ORDER_SELECTIONBOX = 1;
 	public static final int DRAW_ORDER_SELECTED = 2;
 	public static final int DRAW_ORDER_GENEPRODUCT = 3;

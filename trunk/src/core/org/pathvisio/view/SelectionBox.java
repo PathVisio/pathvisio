@@ -52,7 +52,12 @@ public class SelectionBox extends GraphicsShape
 	{
 		// TODO: selectionbox shouldn't need a dataobject...
 		// note, not setting parent of PathwayElement here.
-		super(canvas, new PathwayElement(ObjectType.SHAPE));
+		this(canvas, new PathwayElement(ObjectType.SHAPE));
+	}	
+	
+	public SelectionBox(VPathway canvas, PathwayElement pe)
+	{
+		super(canvas, pe);
 			
 		selection = new ArrayList<VPathwayElement>();
 	}	

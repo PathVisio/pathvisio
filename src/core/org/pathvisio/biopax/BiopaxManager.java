@@ -3,7 +3,6 @@ package org.pathvisio.biopax;
 import java.io.ByteArrayOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.List;
 
 import org.biopax.paxtools.impl.level2.BioPAXFactoryImpl;
 import org.biopax.paxtools.io.jena.JenaIOHandler;
@@ -11,9 +10,10 @@ import org.biopax.paxtools.model.BioPAXLevel;
 import org.biopax.paxtools.model.level2.BioPAXFactory;
 import org.biopax.paxtools.model.level2.Model;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.pathvisio.gui.Engine;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.Utils;
 
@@ -29,24 +29,35 @@ public class BiopaxManager {
 		if(doc == null) { //Create new model
 			model = bpf.createModel();
 		} else { //Parse jdom
-			String bpText = new XMLOutputter().outputString(doc);
-			JenaIOHandler ioh = new JenaIOHandler(bpf, BioPAXLevel.L2);
-			model = ioh.convertFromOWL(Utils.stringToInputStream(bpText));
+			String bpText = new XMLOutputter(Format.getPrettyFormat()).outputString(doc);
+			Engine.log.info(bpText);
+			model = modelFromString(bpText);
 		}
 	}
 	
-	public List getXml() throws ConverterException {
+	public Document getDocument() throws ConverterException {
+		try {
+			String xml = getXml();
+			SAXBuilder saxBuilder=new SAXBuilder();
+			Reader stringReader=new StringReader(xml);
+			return saxBuilder.build(stringReader);
+		} catch(Exception e) {
+			throw new ConverterException(e);
+		}
+	}
+		
+	public static Model modelFromString(String xml) {
+		BioPAXFactory bpf = new BioPAXFactoryImpl();
+		JenaIOHandler ioh = new JenaIOHandler(bpf, BioPAXLevel.L2);
+		return ioh.convertFromOWL(Utils.stringToInputStream(xml));
+	}
+	
+	public String getXml() throws ConverterException {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JenaIOHandler ioh = new JenaIOHandler();
 			ioh.convertToOWL(model, out);
-			String biopax = "";
-			String xml = out.toString(biopax);
-			
-			SAXBuilder saxBuilder=new SAXBuilder();
-			Reader stringReader=new StringReader(xml);
-			Document doc = saxBuilder.build(stringReader);
-			return (List)doc.removeContent();
+			return out.toString();
 		} catch(Exception e) {
 			throw new ConverterException(e);
 		}
@@ -54,5 +65,9 @@ public class BiopaxManager {
 	
 	public Model getModel() {
 		return model;
+	}
+	
+	public void setModel(Model m) {
+		model = m;
 	}
 }

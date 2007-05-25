@@ -666,7 +666,7 @@ public class CommonActions
 		
 		public void run () {
 			BiopaxDialog d = new BiopaxDialog(window.getShell());
-			d.setBiopax(Engine.getPathway().getBiopax().getBiopax());
+			d.setPathway(Engine.getPathway());
 			d.open();
 		}
 	}

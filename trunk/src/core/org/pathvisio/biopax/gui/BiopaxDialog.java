@@ -1,93 +1,88 @@
 package org.pathvisio.biopax.gui;
 
-import org.biopax.paxtools.model.level2.BioPAXElement;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.jdom.Document;
+import org.eclipse.swt.widgets.Text;
 import org.pathvisio.biopax.BiopaxManager;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.Pathway;
 
 public class BiopaxDialog extends Dialog {
+	Pathway pathway;
 	BiopaxManager biopax;
-	TableViewer tableViewer;
+	Text text;
 	
 	public BiopaxDialog(Shell shell) {
 		super(shell);
+		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE);
 	}
 
-	public void setBiopax(Document bp) {
-		setBiopax(new BiopaxManager(bp));
-	}
-	
-	public void setBiopax(BiopaxManager bp) {
-		biopax = bp;
+	public void setPathway(Pathway p) {
+		pathway = p;
+		biopax = new BiopaxManager(p.getBiopax().getBiopax());
 		update();
 	}
 	
-	private void update() {
-		if(tableViewer != null) {
-			tableViewer.setInput(biopax);
-			tableViewer.refresh();
+	protected String getBiopaxString() {
+		return text.getText();
+	}
+	
+	public void update() {
+		if(text != null && !text.isDisposed()) {
+			if(biopax != null) {
+				try {
+					text.setText(biopax.getXml());
+				} catch(ConverterException e) {
+					text.setText(e.toString());
+					Engine.log.error("Unable to set BioPAX text", e);
+				}
+			} else {
+				text.setText("");
+			}
 		}
 	}
 	
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID,
+            IDialogConstants.OK_LABEL, true);
+        createButton(parent, IDialogConstants.CANCEL_ID,
+            IDialogConstants.CANCEL_LABEL, false);
+    }
+    
 	protected Control createDialogArea(Composite parent) {
 		 Composite comp = (Composite) super.createDialogArea(parent);
 		 comp.setLayout(new FillLayout());
 		 
-		 tableViewer = new TableViewer(comp);
-		 Table t = tableViewer.getTable();
-		 t.setHeaderVisible(true);
-		 TableColumn tcElm = new TableColumn(t, SWT.LEFT);
-		 tcElm.setText("Element");
-		 tcElm.setWidth(500);
-		 
-		 tableViewer.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object input) {
-				BiopaxManager bpm = (BiopaxManager)input;
-				if(bpm != null) {
-					return bpm.getModel().getObjects().toArray();
-				} else {
-					return new Object[] {};
-				}
-			}
-
-			public void dispose() { }
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {	}
-			 
-		 });
-		 tableViewer.setLabelProvider(new ITableLabelProvider() {
-			public void addListener(ILabelProviderListener l) { }
-			public void dispose() { }
-			public boolean isLabelProperty(Object value, String property) {
-				return false;
-			}
-			public void removeListener(ILabelProviderListener l) { }
-			public Image getColumnImage(Object value, int col) { return null; }
-			public String getColumnText(Object value, int col) {
-				BioPAXElement bpe = (BioPAXElement)value;
-				switch(col) {
-				case 0:
-					return bpe.toString();
-				default: return "";
-				}
-			}
-		 });
-		 
-		 tableViewer.setInput(biopax);
-		 
+		 text = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		 text.setSize(500, 500);
+		 update();		 
 		 return comp;
+	}
+
+	protected void updateBiopax() {
+		biopax.setModel(BiopaxManager.modelFromString(getBiopaxString()));
+	}
+	protected void updatePathway() throws ConverterException {
+		pathway.getBiopax().setBiopax(biopax.getDocument());
+	}
+	
+	protected void okPressed() {
+		try {
+			updateBiopax();
+			updatePathway();
+		} catch(Exception e) {
+			MessageDialog.openError(getShell(), 
+					"Invalid BioPAX code", 
+					"The BioPAX code is invalid:\n" + e.getMessage());
+			return;
+		}
+		super.okPressed();
 	}
 }

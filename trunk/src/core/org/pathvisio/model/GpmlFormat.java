@@ -21,10 +21,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jdom.Attribute;
+import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -41,6 +42,12 @@ import org.pathvisio.gui.Engine;
  */
 public class GpmlFormat 
 {
+	public static final Namespace GPML = Namespace.getNamespace("gpml", "http://genmapp.org/GPML/2007");
+	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+	public static final Namespace BIOPAX = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
+	public static final Namespace OWL = Namespace.getNamespace("owl", "http://www.w3.org/2002/07/owl#");
+	
 	private static class AttributeInfo
 	{
 		/**
@@ -285,7 +292,7 @@ public class GpmlFormat
 	{
 		Document doc = new Document();
 
-		Namespace ns = Namespace.getNamespace("http://genmapp.org/GPML/2007");
+		Namespace ns = GPML;
 
 		Element root = new Element("Pathway", ns);
 		doc.setRootElement(root);
@@ -404,6 +411,7 @@ public class GpmlFormat
 			case ObjectType.SHAPE:
 				mapShapeData(o, e, "Shape");
 				mapShapeColor (o, e);
+				mapColor(o, e);
 				mapComments(o, e);
 				mapShapeType(o, e);
 				mapGraphId(o, e);
@@ -483,38 +491,33 @@ public class GpmlFormat
 		}
 	}
 	
-	private static void mapColor(PathwayElement o, Element e)
+	private static void mapColor(PathwayElement o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	String scol = graphics.getAttributeValue("Color");
+    	String scol = getAttribute(e.getName() + ".Graphics", "Color", graphics);
     	o.setColor (gmmlString2Color(scol));
-    	o.setTransparent(scol == null || scol.equals("Transparent"));
 	}
 
-	private static void mapShapeColor(PathwayElement o, Element e)
+	private static void mapShapeColor(PathwayElement o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	String scol = graphics.getAttributeValue("FillColor");
-    	if (scol != null) 
-    	{
+    	String scol = getAttribute("Shape.Graphics", "FillColor", graphics);
+    	if(scol.equals("Transparent")) {
+    		o.setTransparent (true);
+    	} else {
+    		o.setTransparent (false);
     		o.setFillColor (gmmlString2Color(scol));
     	}
-    	o.setTransparent (scol == null || scol.equals("Transparent"));
-    	scol = graphics.getAttributeValue("Color");
-    	o.setColor (gmmlString2Color(scol));
 	}
 
-	private static void updateColor(PathwayElement o, Element e)
+	private static void updateColor(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) 
 		{
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			if(jdomGraphics != null) 
 			{
-				if (o.isTransparent())
-					jdomGraphics.setAttribute("Color", "Transparent");
-				else
-					jdomGraphics.setAttribute("Color", color2HexBin(o.getColor()));
+				setAttribute(e.getName() + ".Graphics", "Color", jdomGraphics, color2HexBin(o.getColor()));
 			}
 		}
 	}
@@ -529,8 +532,8 @@ public class GpmlFormat
 				if (o.isTransparent())
 					jdomGraphics.setAttribute("FillColor", "Transparent");
 				else
-					jdomGraphics.setAttribute("FillColor", color2HexBin(o.getFillColor()));
-				jdomGraphics.setAttribute("Color", color2HexBin(o.getColor()));			}
+					jdomGraphics.setAttribute("FillColor", color2HexBin(o.getFillColor()));		
+			}			
 		}
 	}
 
@@ -790,17 +793,28 @@ public class GpmlFormat
 			o.addComment(((Element)f).getText(), getAttribute("Comment", "Source", (Element)f));
 		}		
 	}
-	
+		
 	private static void mapBiopax(PathwayElement o, Element e) throws ConverterException
 	{
 		//this method clones all content, 
 		//getContent will leave them attached to the parent, which we don't want
 		//We can safely remove them, since the JDOM element isn't used anymore after this method
-		Document bp = new Document(new Element("RDF", Namespace.getNamespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")));
-		/*
-		 * xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bp="http://www.biopax.org/release/biopax-level2.owl#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-		 */
-		bp.getRootElement().addContent(e.cloneContent());
+		Element root = new Element("RDF", RDF);
+		root.addNamespaceDeclaration(RDFS);
+		root.addNamespaceDeclaration(RDF);
+		root.addNamespaceDeclaration(OWL);
+		root.addNamespaceDeclaration(BIOPAX);
+		root.setAttribute(new Attribute("base", GPML.getURI() + "#", Namespace.XML_NAMESPACE));
+		//Element owl = new Element("Ontology", OWL);
+		//owl.setAttribute(new Attribute("about", "", RDF));
+		//Element imp = new Element("imports", OWL);
+		//imp.setAttribute(new Attribute("resource", BIOPAX.getURI(), RDF));
+		//owl.addContent(imp);
+		//root.addContent(owl);
+		
+		root.addContent(e.cloneContent());
+		Document bp = new Document(root);
+				
 		o.setBiopax(bp);
 	}
 	
@@ -808,7 +822,16 @@ public class GpmlFormat
 	{
 		Document bp = o.getBiopax();
 		if(e != null && bp != null) {
-			e.addContent(bp.getRootElement().cloneContent());
+			List<Content> content = bp.getRootElement().cloneContent();
+			for(Content c : content) {
+				if(c instanceof Element) {
+					if(((Element)c).getNamespace() == BIOPAX) {
+						e.addContent(c);
+					} else {
+						Engine.log.info("Skipped non-biopax element" + c);
+					}
+				}
+			}
 		}
 	}
 	
@@ -851,6 +874,7 @@ public class GpmlFormat
 				updateComments(o, e);
 				e.addContent(new Element("Graphics", ns));
 				updateShapeColor(o, e);
+				updateColor(o, e);
 				updateShapeData(o, e, "Shape");
 				updateShapeType(o, e);
 				updateGraphId(o, e);

@@ -47,7 +47,12 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class Sleak {
+/**
+   Debugging helper. Sleak can check if all SWT resources are properly disposed, to help
+   avoid resource leaks.
+*/
+public class Sleak
+{
 	Display display;
 	Shell shell;
 	List list;

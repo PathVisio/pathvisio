@@ -33,6 +33,9 @@ import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+/**
+   A PathwayExporter for exporting pathways to Scalable Vector Graphics (SVG) format
+*/
 public class SvgFormat implements PathwayExporter
 {
 	static final Namespace nsSVG = Namespace.getNamespace("http://www.w3.org/2000/svg");

@@ -19,8 +19,11 @@ package org.pathvisio.model;
 import java.util.Arrays;
 import java.util.List;
 
-public class ObjectType {
-	 
+/**
+   Possible values for PathwayElement.getObjectType(), such as "DataNode" or "Shape"
+ */   
+public class ObjectType
+{	 
 	//TODO: enum
 	public static final int MIN_VALID = 0; // lowest valid value
 	public static final int SHAPE = 0;

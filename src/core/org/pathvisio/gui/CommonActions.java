@@ -42,6 +42,9 @@ import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
 
+/**
+   This class contains a large number of JFace Actions that are both in V1 and V2.
+*/   
 public class CommonActions 
 {
 	static class UndoAction extends Action

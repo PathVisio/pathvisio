@@ -39,6 +39,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.debug.StopWatch;
 
+/**
+   DBConnector implementation using the Derby driver, with the database in a
+   single, uncompressed zip archive
+*/
 public class DBConnDerby extends DBConnector {
 	static final String DB_FILE_EXT_GDB = "pgdb";
 	static final String DB_FILE_EXT_GEX = "pgex";

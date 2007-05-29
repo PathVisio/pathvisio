@@ -32,7 +32,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gui.Engine;
 
-public class DBConnHsqldb extends DBConnector {
+/**
+   DBConnector implementation using the hsqldb driver
+*/
+public class DBConnHsqldb extends DBConnector
+{
 	static final String DB_FILE_EXT = "properties";
 	static final String[] DB_EXT = new String[] { "*." + DB_FILE_EXT };
 	static final String[] DB_EXT_NAMES = new String[] { "Hsqldb Database" };

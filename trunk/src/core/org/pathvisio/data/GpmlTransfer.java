@@ -30,6 +30,11 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.gui.Engine;
 
+/**
+   Clipboard Transfer Object, for transferring Gpml fragments
+   between applications
+   TODO: unfinished
+ */
 public class GpmlTransfer extends ByteArrayTransfer 
 {
 	private static final String TYPENAME = "gpml";

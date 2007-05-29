@@ -20,8 +20,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+   Handles all data sources recognized by PathVisio (e.g. Ensembl, Unigene, Entrez).
+*/   
 public class DataSources 
 {
+	/**
+	   GenMAPP System Codes
+	*/
     public final static String[] systemCodes = 
 	{ 
 	"D", "F", "G", "I", "L", "M",
@@ -35,6 +41,9 @@ public class DataSources
 	"O", ""
 	};
 
+	/**
+	   Full names of data sources, corresponding to the System Codes in {@link systemCodes}
+	*/
     public final static String[] dataSources = 
 	{
 	"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
@@ -82,6 +91,8 @@ public class DataSources
 		return sn2c;
 	}
 
-	//System names converted to arraylist for easy index lookup
+	/**
+	   System names converted to arraylist for easy index lookup
+	*/
 	public final static List<String> lDataSources = Arrays.asList(dataSources);
 }

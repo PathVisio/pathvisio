@@ -18,7 +18,11 @@ package org.pathvisio.debug;
 
 import org.pathvisio.gui.Engine;
 
-public class StopWatch {
+/**
+   A simple helper class for speed optimizations
+*/
+public class StopWatch
+{
 	boolean running;
 	long start;
 	long last;

@@ -24,6 +24,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.pathvisio.util.FileUtils;
 
+/**
+   Implementation of DBConnector using the Derby Driver,
+   with the database stored as multiple files in a directory
+*/
 public class DBConnDerbyDirectory extends DBConnDerby {	
 	String lastDbName;
 		

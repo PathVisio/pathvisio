@@ -19,6 +19,10 @@ package org.pathvisio.model;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+   Contains possible orientations for a Shape, such as
+   "Top" (0 degrees) or "Right" (90 degrees)
+*/
 public class OrientationType {
 
 	// warning: don't change these constants. Correct mapping to .MAPP format depends on it.

@@ -221,7 +221,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
 		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
 		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
-		biopaxEditor = new BiopaxCellEditor(tableViewer.getTable(), "Edit Biopax info");
+		biopaxEditor = new BiopaxCellEditor(tableViewer.getTable(), "...");
 		
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
@@ -291,7 +291,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				return identifierSuggestEditor;
 			case DB_SYMBOL:
 				return textEditor;
-			case BIOPAX:
+			case BIOPAXREF:
 				return biopaxEditor;
 				
 		}
@@ -373,7 +373,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 					if(value instanceof String) return (String)value;
 					if(value instanceof PropertyPanel.AutoFillData) 
 						return ((PropertyPanel.AutoFillData)value).getMainValue();
-				case BIOPAX:
+				case BIOPAXREF:
 					return value;
 					
 			}

@@ -306,7 +306,8 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.BACKPAGEHEAD,
 						PropertyType.TYPE,
 						PropertyType.GRAPHID,
-						PropertyType.GROUPREF
+						PropertyType.GROUPREF,
+						PropertyType.BIOPAXREF
 				}));
 				break;
 			case ObjectType.SHAPE:
@@ -323,7 +324,8 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.ROTATION,
 						PropertyType.TRANSPARENT,
 						PropertyType.GRAPHID,
-						PropertyType.GROUPREF
+						PropertyType.GROUPREF,
+						PropertyType.BIOPAXREF
 				}));
 				break;
 			case ObjectType.LINE:
@@ -340,7 +342,8 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.STARTGRAPHREF,
 						PropertyType.ENDGRAPHREF,
 						PropertyType.GRAPHID,
-						PropertyType.GROUPREF
+						PropertyType.GROUPREF,
+						PropertyType.BIOPAXREF
 				}));
 				break;
 			case ObjectType.LABEL:
@@ -359,14 +362,16 @@ public class PathwayElement implements GraphIdContainer
 						PropertyType.FONTSTYLE,
 						PropertyType.FONTSIZE,
 						PropertyType.GRAPHID,
-						PropertyType.GROUPREF
+						PropertyType.GROUPREF,
+						PropertyType.BIOPAXREF
 				}));
 				break;
 			case ObjectType.GROUP:
 				result = ( Arrays.asList(new PropertyType[] {
 						PropertyType.GROUPID,
 						PropertyType.GROUPREF,
-						PropertyType.TEXTLABEL
+						PropertyType.TEXTLABEL,
+						PropertyType.BIOPAXREF
 				}));
 				break;
 				
@@ -442,7 +447,7 @@ public class PathwayElement implements GraphIdContainer
 			case GROUPREF: setGroupRef ((String)value); break;
 			case TRANSPARENT: setTransparent ((Boolean)value); break;
 			
-			case BIOPAX: setBiopax((Document)value); break;
+			case BIOPAXREF: setBiopaxRef((String)value); break;
 		}
 	}
 	
@@ -505,7 +510,7 @@ public class PathwayElement implements GraphIdContainer
 			case GROUPREF: result = getGroupRef (); break;
 			case TRANSPARENT: result = isTransparent (); break;
 			
-			case BIOPAX: result = getBiopax(); break;
+			case BIOPAXREF: result = getBiopaxRef(); break;
 		}
 
 		return result;

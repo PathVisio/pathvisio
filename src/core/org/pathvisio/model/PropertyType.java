@@ -96,7 +96,7 @@ public enum PropertyType
 	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING),
 	GROUPID ("GroupId", "GroupId", PropertyClass.STRING),
 	GROUPREF ("GroupRef", "GroupRef", PropertyClass.STRING),
-	BIOPAX( "Biopax", "Biopax", PropertyClass.BIOPAX);
+	BIOPAXREF( "BiopaxRef", "BiopaxRef", PropertyClass.BIOPAXREF);
 
 	private String tag, desc;
 	private PropertyClass type;

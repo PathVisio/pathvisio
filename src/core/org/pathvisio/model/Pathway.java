@@ -133,6 +133,11 @@ public class Pathway implements PathwayListener
 		return biopax;
 	}
 	
+	public void createBiopax() {
+		biopax = new PathwayElement(ObjectType.BIOPAX);
+		this.add(biopax);
+	}
+		
 	/**
 	 * Add a PathwayElement to this Pathway.
 	 * takes care of setting parent and removing from possible previous
@@ -330,8 +335,6 @@ public class Pathway implements PathwayListener
 		this.add (mappInfo);
 		infoBox = new PathwayElement(ObjectType.INFOBOX);
 		this.add (infoBox);
-		biopax = new PathwayElement(ObjectType.BIOPAX);
-		this.add(biopax);
 	}
 	
 	static final double M_INITIAL_BOARD_WIDTH = 18000;
@@ -378,6 +381,9 @@ public class Pathway implements PathwayListener
 			} catch (JDOMException je) {
 				log.error("Document is invalid according to the xml-schema definition!: " + 
 						je.getMessage(), je);
+				XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+				
+				log.error("The invalid XML code:\n" + xmlcode.outputString(doc));
 				throw new ConverterException (je);
 			}
 		} else {

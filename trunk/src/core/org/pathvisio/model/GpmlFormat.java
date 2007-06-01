@@ -29,6 +29,7 @@ import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.filter.Filter;
 import org.pathvisio.gui.Engine;
 
 /**
@@ -825,8 +826,15 @@ public class GpmlFormat
 			List<Content> content = bp.getRootElement().cloneContent();
 			for(Content c : content) {
 				if(c instanceof Element) {
-					if(((Element)c).getNamespace() == BIOPAX) {
+					Element elm = (Element)c;
+					if(elm.getNamespace().equals(BIOPAX)) {
 						e.addContent(c);
+					} else if(elm.getName().equals("RDF") && elm.getNamespace().equals(RDF)) {
+						for(Object ce : elm.getChildren()) {
+							if(((Element)ce).getNamespace().equals(BIOPAX)) {
+								e.addContent((Element)ce);
+							}
+						}
 					} else {
 						Engine.log.info("Skipped non-biopax element" + c);
 					}

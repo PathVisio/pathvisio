@@ -1029,7 +1029,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		List<Graphics> selection = getSelectedGraphics();
 		
 		for(Graphics g : selection) {
-			PathwayElement pe = g.getGmmlData();
+			PathwayElement pe = g.getGmmlData(); 
 			String ref = pe.getGroupRef();
 			if(ref == null) {
 				pe.setGroupRef(id);
@@ -1143,6 +1143,126 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		//clipboard.dispose();
 	}
 	
+	/**
+	 * Aligns selected objects based on user-selected align type
+	 * @param alignType
+	 */
+	public void alignSelected(char alignType)
+	{
+		List<Graphics> selectedGraphics = getSelectedGraphics();
+		
+		int aveC = 0;
+		int minC = 100000;
+		int maxC = 0;
+		
+		if (selectedGraphics.size() > 0){
+			switch (alignType){
+			case 'x': 
+				for(Graphics g : selectedGraphics) {
+					int c = g.getVCenterX();
+					aveC = aveC + c;
+				}
+				aveC = aveC/selectedGraphics.size();
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMCenterX(mFromV(aveC));
+				}
+				break;
+			case 'y': 
+				for(Graphics g : selectedGraphics) {
+					int c = g.getVCenterY();
+					aveC = aveC + c;
+				}
+				aveC = aveC/selectedGraphics.size();
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMCenterY(mFromV(aveC));
+				}
+				break;
+			case 'l': 
+				for(Graphics g : selectedGraphics) {
+					int c = g.getVLeft();
+					if (c < minC){ 
+						minC = c;
+						}
+				}
+				for(Graphics g : selectedGraphics) {	
+					g.getGmmlData().setMLeft(mFromV(minC));
+				}
+				break;
+			case 'r': 
+				for(Graphics g : selectedGraphics) {
+					int c = (g.getVLeft()+g.getVWidth());
+					if (c > maxC){
+						maxC = c;
+					}
+				}
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMCenterX(mFromV(maxC-(g.getVWidth()/2)));
+				}
+				break;
+			case 't': 
+				for(Graphics g : selectedGraphics) {
+					int c = g.getVTop();
+					if (c < minC){
+						minC = c;
+					}
+				}
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMTop(mFromV(minC));
+				}
+				break;
+			case 'b':
+				for(Graphics g : selectedGraphics) {
+					int c = (g.getVTop()+g.getVHeight());
+					if (c > maxC){
+						maxC = c;
+					}
+				}
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMCenterY(mFromV(maxC-(g.getVHeight()/2)));
+				}
+				break;
+			}
+			redrawDirtyRect();
+	}
+	}
+	/**
+	 * Scales selected objects either by max width or max height
+	 * @param alignType
+	 */
+	public void scaleSelected (int alignType){
+		
+		List<Graphics> selectedGraphics = getSelectedGraphics();
+		int maxW = 0;
+		int maxH = 0;
+		
+		if (selectedGraphics.size() > 0){
+			switch (alignType){
+			case 'w':
+				for(Graphics g : selectedGraphics) {
+					int w = (g.getVWidth());
+					if (w > maxW){
+						maxW = w;
+					}
+				}
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMWidth(mFromV(maxW));
+				}
+				break;
+			case 'h':
+				for(Graphics g : selectedGraphics) {
+					int h = (g.getVHeight());
+					if (h > maxH){
+						maxH = h;
+					}
+				}
+				for(Graphics g : selectedGraphics) {
+					g.getGmmlData().setMHeight(mFromV(maxH));
+				}
+				break;
+			}
+			redrawDirtyRect();
+		}
+	}
 	/**
 	 * TODO: document
 	 * @return
@@ -1274,6 +1394,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 			});
 		}
 	}	
+	
 	
 	/** 
 	 * helper method to convert view coordinates to model coordinates 

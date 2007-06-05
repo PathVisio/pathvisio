@@ -86,6 +86,14 @@ public class MainWindow extends ApplicationWindow implements
 	private CommonActions.CopyAction copyAction = new CommonActions.CopyAction(this);
 	private CommonActions.HelpAction helpAction = new CommonActions.HelpAction(this);	
 	private CommonActions.PasteAction pasteAction = new CommonActions.PasteAction(this);
+	private AlignActions.AlignCenterXAction alignCenterXAction = new AlignActions.AlignCenterXAction(this);
+	private AlignActions.AlignCenterYAction alignCenterYAction = new AlignActions.AlignCenterYAction(this);
+	private AlignActions.AlignLeftAction alignLeftAction = new AlignActions.AlignLeftAction(this);
+	private AlignActions.AlignRightAction alignRightAction = new AlignActions.AlignRightAction(this);
+	private AlignActions.AlignTopAction alignTopAction = new AlignActions.AlignTopAction(this);
+	private AlignActions.AlignBottomAction alignBottomAction = new AlignActions.AlignBottomAction(this);
+	private AlignActions.SetCommonWidthAction setCommonWidthAction = new AlignActions.SetCommonWidthAction(this);
+	private AlignActions.SetCommonHeightAction setCommonHeightAction = new AlignActions.SetCommonHeightAction(this);
 	
 	/**
 	 * {@link Action} to select a Gene Database
@@ -174,6 +182,7 @@ public class MainWindow extends ApplicationWindow implements
 					//Switch to edit mode: show edit toolbar, show property table in sidebar
 					drawing.setEditMode(true);
 					showEditActionsCI(true);
+					showAlignActionsCI(true);
 					rightPanel.getTabFolder().setSelection(1);
 				}
 				else
@@ -181,6 +190,7 @@ public class MainWindow extends ApplicationWindow implements
 					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
 					drawing.setEditMode(false);
 					showEditActionsCI(false);
+					showAlignActionsCI(false);
 					rightPanel.getTabFolder().setSelection(0);
 				}
 			}
@@ -440,14 +450,28 @@ public class MainWindow extends ApplicationWindow implements
 		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
 	}
 	
+	public void deselectAlignItemActions()
+	{
+		IContributionItem[] items = alignActionsCI.getToolBarManager().getItems();
+		for(int i = 0; i < items.length; i++)
+		{
+			if(items[i] instanceof ActionContributionItem)
+			{
+				((ActionContributionItem)items[i]).getAction().setChecked(false);
+			}
+		}
+		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
+	}
 	// Elements of the coolbar
 	ToolBarContributionItem commonActionsCI;
 	ToolBarContributionItem editActionsCI;
+	ToolBarContributionItem alignActionsCI;
 	ToolBarContributionItem viewActionsCI;
 	protected CoolBarManager createCoolBarManager(int style)
 	{
 		createCommonActionsCI();
 		createEditActionsCI();
+		createAlignActionsCI();
 		createViewActionsCI();
 		
 		CoolBarManager coolBarManager = new CoolBarManager(style);
@@ -485,9 +509,27 @@ public class MainWindow extends ApplicationWindow implements
 		toolBarManager.add(new NewElementAction(VPathway.NEWBRACE));
 		toolBarManager.add(new NewElementAction(VPathway.NEWTBAR));
 		toolBarManager.add(new NewElementAction(VPathway.NEWLINESHAPEMENU));
-		
+
 		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
 	}
+	
+//	KH 20070514 begin
+	protected void createAlignActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		toolBarManager.add(alignCenterXAction);
+		toolBarManager.add(alignCenterYAction);
+		toolBarManager.add(alignLeftAction);
+		toolBarManager.add(alignRightAction);
+		toolBarManager.add(alignTopAction);
+		toolBarManager.add(alignBottomAction);
+		toolBarManager.add(setCommonWidthAction);
+		toolBarManager.add(setCommonHeightAction);
+	
+		alignActionsCI = new ToolBarContributionItem(toolBarManager, "AlignActions");
+	}
+	
+//	KH end
 	
 	/**
 	 * Creates element of the coolbar containing controls related to viewing a VPathway
@@ -536,6 +578,18 @@ public class MainWindow extends ApplicationWindow implements
 		}
 		else {
 			getCoolBarManager().remove(editActionsCI);
+		}
+//		showVisualizationCI(!show); //Visualizations can show up in edit mode...
+		getCoolBarManager().update(true);
+	}
+	
+	private void showAlignActionsCI(boolean show)
+	{
+		if(show) {
+			getCoolBarManager().insertAfter(editActionsCI.getId(), alignActionsCI);
+		}
+		else {
+			getCoolBarManager().remove(alignActionsCI);
 		}
 //		showVisualizationCI(!show); //Visualizations can show up in edit mode...
 		getCoolBarManager().update(true);

@@ -51,6 +51,7 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.model.*;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.gui.*;
 
 /**
  * This class implements and handles a drawing.
@@ -1152,12 +1153,12 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 		List<Graphics> selectedGraphics = getSelectedGraphics();
 		
 		int aveC = 0;
-		int minC = 100000;
+		int minC = java.lang.Integer.MAX_VALUE;
 		int maxC = 0;
 		
 		if (selectedGraphics.size() > 0){
 			switch (alignType){
-			case 'x': 
+			case AlignActions.CENTERX : 
 				for(Graphics g : selectedGraphics) {
 					int c = g.getVCenterX();
 					aveC = aveC + c;
@@ -1167,7 +1168,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 					g.getGmmlData().setMCenterX(mFromV(aveC));
 				}
 				break;
-			case 'y': 
+			case AlignActions.CENTERY : 
 				for(Graphics g : selectedGraphics) {
 					int c = g.getVCenterY();
 					aveC = aveC + c;
@@ -1177,7 +1178,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 					g.getGmmlData().setMCenterY(mFromV(aveC));
 				}
 				break;
-			case 'l': 
+			case AlignActions.LEFT : 
 				for(Graphics g : selectedGraphics) {
 					int c = g.getVLeft();
 					if (c < minC){ 
@@ -1188,7 +1189,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 					g.getGmmlData().setMLeft(mFromV(minC));
 				}
 				break;
-			case 'r': 
+			case AlignActions.RIGHT : 
 				for(Graphics g : selectedGraphics) {
 					int c = (g.getVLeft()+g.getVWidth());
 					if (c > maxC){
@@ -1199,7 +1200,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 					g.getGmmlData().setMCenterX(mFromV(maxC-(g.getVWidth()/2)));
 				}
 				break;
-			case 't': 
+			case AlignActions.TOP : 
 				for(Graphics g : selectedGraphics) {
 					int c = g.getVTop();
 					if (c < minC){
@@ -1210,7 +1211,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 					g.getGmmlData().setMTop(mFromV(minC));
 				}
 				break;
-			case 'b':
+			case AlignActions.BOTTOM :
 				for(Graphics g : selectedGraphics) {
 					int c = (g.getVTop()+g.getVHeight());
 					if (c > maxC){

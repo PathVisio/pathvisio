@@ -1,9 +1,3 @@
-package org.pathvisio.gui;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-public class AlignActions {
-	
 //	 PathVisio,
 //	 a tool for data visualization and analysis using Biological Pathways
 //	 Copyright 2006-2007 BiGCaT Bioinformatics
@@ -20,6 +14,13 @@ public class AlignActions {
 //	 See the License for the specific language governing permissions and 
 //	 limitations under the License.
 	//
+
+package org.pathvisio.gui;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
+public class AlignActions {
+
 		
 	public static final char CENTERX = 'x';
 	public static final char CENTERY = 'y';

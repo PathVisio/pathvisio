@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Simple Pathway" Data-Source="GenMAPP 2.0" Version="20070529" Author="Martijn van Iersel">
+  <Graphics BoardWidth="18000.0" BoardHeight="12000.0" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <DataNode TextLabel="Enzyme" Type="Unknown" GraphId="a55">
+    <Graphics Color="Transparent" CenterX="4905.0" CenterY="4230.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line>
+    <Graphics Color="Transparent">
+      <Point x="6255.0" y="4770.0" Head="Arrow" />
+      <Point x="3510.0" y="4770.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="Transparent">
+      <Point x="3495.0" y="4590.0" Head="Arrow" />
+      <Point x="6270.0" y="4590.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Compound 2" GraphId="bbd">
+    <Graphics FontSize="150" Color="Transparent" CenterX="7101.0" CenterY="4608.0" Width="1278.0" Height="234.0" />
+  </Label>
+  <Label TextLabel="Compound 1" GraphId="f40">
+    <Graphics FontSize="150" Color="Transparent" CenterX="2496.0" CenterY="4563.0" Width="1278.0" Height="234.0" />
+  </Label>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Sandbox" Data-Source="GenMAPP 2.0" Version="20070420" Author="Thomas Kelder">
+  <Graphics BoardWidth="7000.0" BoardHeight="7000.0" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="bd3">
+    <Graphics Color="Transparent" CenterX="4875.0" CenterY="2040.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="aeb">
+    <Graphics Color="Transparent" CenterX="5850.0" CenterY="765.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="d7c">
+    <Graphics Color="Transparent" CenterX="5175.0" CenterY="2340.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="fc4">
+    <Graphics Color="Transparent" CenterX="4245.0" CenterY="2130.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="b80">
+    <Graphics Color="Transparent" CenterX="3360.0" CenterY="2055.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="b97">
+    <Graphics Color="Transparent" CenterX="3150.0" CenterY="2280.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Gene" Type="Unknown" GraphId="fa8">
+    <Graphics Color="Transparent" CenterX="2430.0" CenterY="750.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line>
+    <Graphics Color="Transparent">
+      <Point x="2880.0" y="795.0" GraphRef="fa8" />
+      <Point x="3300.0" y="2205.0" GraphRef="adb" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="Transparent">
+      <Point x="5730.0" y="825.0" GraphRef="aeb" />
+      <Point x="5160.0" y="2010.0" GraphRef="adb" />
+    </Graphics>
+  </Line>
+  <Shape Type="Oval" GraphId="adb">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="4192.5" CenterY="3562.5" Width="3106.0" Height="3316.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" GraphId="a60">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="4200.0" CenterY="4162.5" Width="2011.0" Height="856.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" GraphId="ca4">
+    <Graphics FillColor="ff00ff" Color="000000" CenterX="4725.0" CenterY="2940.0" Width="1141.0" Height="571.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" GraphId="b9d">
+    <Graphics FillColor="ff8000" Color="000000" CenterX="3615.0" CenterY="2925.0" Width="1141.0" Height="571.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" GraphId="be5">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5328.751335338579" CenterY="2958.1092076540785" Width="754.6213026878445" Height="586.0" Rotation="3.165708192091355" />
+  </Shape>
+  <Shape Type="Arc" GraphId="fd8">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="2673.7513353385793" CenterY="2838.1092076540785" Width="754.6213026878445" Height="586.0" Rotation="3.254333758344334" />
+  </Shape>
+  <Shape Type="Oval" GraphId="a6a">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="4185.0" CenterY="3555.0" Width="481.0" Height="1081.0" Rotation="6.1616158229150875" />
+  </Shape>
+  <Shape Type="Brace" GraphId="e59">
+    <Graphics FillColor="Transparent" Color="804000" CenterX="4185.0" CenterY="4207.5" Width="1771.4360605902777" Height="374.4976261721608" Rotation="3.148617109843849" />
+  </Shape>
+  <Shape Type="Oval" GraphId="ec1">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5835.0" CenterY="3330.0" Width="240.0" Height="1260.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" GraphId="dc1">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="2497.5" CenterY="3412.5" Width="285.0" Height="1215.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" GraphId="c2c">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="4155.0" CenterY="4260.0" Width="1920.0" Height="1350.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" GraphId="b30">
+    <Graphics FillColor="Transparent" Color="ffff00" CenterX="5842.5" CenterY="3982.5" Width="134.0" Height="256.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" GraphId="c30">
+    <Graphics FillColor="Transparent" Color="ffff00" CenterX="2497.5" CenterY="4042.5" Width="134.0" Height="256.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Rectangle" GraphId="bdf">
+    <Graphics FillColor="804000" Color="804000" CenterX="4192.5" CenterY="5265.0" Width="226.0" Height="421.0" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>

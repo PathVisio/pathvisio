@@ -30,14 +30,13 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
-
-import org.pathvisio.preferences.Preferences;
-import org.pathvisio.util.SwtUtils;
+import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.preferences.Preferences;
+import org.pathvisio.util.SwtUtils;
  
 /**
  * This class implements and handles a line
@@ -327,6 +326,48 @@ public class Line extends Graphics
 	
 	public VPoint getEnd() {
 		return points.get(points.size() - 1);
+	}
+	
+	public int getVCenterX() {
+		// TODO Auto-generated method stub
+		double start = gdata.getMStart().getX();
+		double end = gdata.getMEnd().getX();
+		return (int)vFromM(start + (end - start) / 2);
+	}
+	
+	public int getVCenterY() {
+		// TODO Auto-generated method stub
+		double start = gdata.getMStart().getY();
+		double end = gdata.getMEnd().getY();
+		return (int)vFromM(start + (end - start) / 2);
+	}
+	
+	public int getVLeft() {
+		// TODO Auto-generated method stub
+		double start = gdata.getMStart().getX();
+		double end = gdata.getMEnd().getX();
+		return (int)vFromM(Math.min(start, end));
+	}
+	
+	public int getVWidth() {
+		// TODO Auto-generated method stub
+		double start = gdata.getMStart().getX();
+		double end = gdata.getMEnd().getX();
+		return (int)vFromM(Math.abs(start-end));
+	}
+	
+	public int getVHeight() {
+		// TODO Auto-generated method stub
+		double start = gdata.getMStart().getY();
+		double end = gdata.getMEnd().getY();
+		return (int)vFromM(Math.abs(start-end));
+	}	
+	
+	public int getVTop() {
+		// TODO Auto-generated method stub
+		double start = gdata.getMStart().getY();
+		double end = gdata.getMEnd().getY();
+		return (int)vFromM(Math.min(start, end));
 	}
 	
 	protected void vMoveBy(double vdx, double vdy)

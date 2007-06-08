@@ -1,6 +1,6 @@
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
+// Copyright 2006-2007 PathVisio contributors (for a complete list, see CONTRIBUTORS.txt)
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); 
 // you may not use this file except in compliance with the License. 
@@ -68,7 +68,7 @@ public class AboutDlg extends Dialog
 
 		lbl = new Label (shell, SWT.NULL);
 		lbl.setText ("R.M.H. Besseling\nS.P.M.Crijns\nI.Kaashoek\nM.M.Palm\n" +
-				"E.D Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\n\nBiGCaT");
+				"E.D Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nBiGCaT");
 		
 		final Button btnOk = new Button (shell, SWT.PUSH);
 		btnOk.setText ("OK");

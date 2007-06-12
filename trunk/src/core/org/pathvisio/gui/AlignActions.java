@@ -45,7 +45,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.alignSelected(CENTERX);
+				Engine.getVPathway().alignSelected(CENTERX);
 				
 			}
 		}
@@ -63,7 +63,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.alignSelected(CENTERY);
+				Engine.getVPathway().alignSelected(CENTERY);
 				
 			}
 		}
@@ -80,7 +80,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.alignSelected(LEFT);
+				Engine.getVPathway().alignSelected(LEFT);
 				
 			}
 		}
@@ -97,7 +97,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.alignSelected(RIGHT);
+				Engine.getVPathway().alignSelected(RIGHT);
 				
 			}
 		}
@@ -114,7 +114,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.alignSelected(TOP);
+				Engine.getVPathway().alignSelected(TOP);
 				
 			}
 		}
@@ -131,7 +131,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.alignSelected(BOTTOM);
+				Engine.getVPathway().alignSelected(BOTTOM);
 				
 			}
 		}
@@ -148,7 +148,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.scaleSelected(HEIGHT);
+				Engine.getVPathway().scaleSelected(HEIGHT);
 				
 			}
 		}
@@ -165,7 +165,7 @@ public class AlignActions {
 			public void run () 
 			{
 				
-				Engine.vPathway.scaleSelected(WIDTH);
+				Engine.getVPathway().scaleSelected(WIDTH);
 				
 			}
 		}

@@ -6,7 +6,7 @@ lib/org.eclipse.jface.jar
 lib/swt-linux-lib/swt.jar
 lib/org.eclipse.core.commands.jar
 lib/jdom.jar
-build/v1
+build/v2
 lib/derby.jar
 lib/swt-linux-lib.jar
 lib/resources.jar

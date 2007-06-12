@@ -530,7 +530,15 @@ public class MainWindow extends ApplicationWindow implements
 	}
 	
 //	KH end
-	
+
+	/**
+	   Invoked when user tries to close window
+	*/
+	protected boolean canHandleShellCloseEvent()
+	{
+		return Engine.canDiscardPathway();
+	}
+
 	/**
 	 * Creates element of the coolbar containing controls related to viewing a VPathway
 	 */
@@ -687,7 +695,7 @@ public class MainWindow extends ApplicationWindow implements
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
 		
-		shell.setText(Globals.APPLICATION_VERSION_NAME);
+//		shell.setText(Globals.APPLICATION_VERSION_NAME);
 		
 		GuiMain.loadImages(shell.getDisplay());
 		
@@ -725,7 +733,9 @@ public class MainWindow extends ApplicationWindow implements
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
 		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
-				
+
+		Engine.updateTitle();
+		
 		return parent;
 		
 	};

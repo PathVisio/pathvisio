@@ -271,7 +271,9 @@ public class SwtUtils {
 		/**
 		 * Constructor for this class<BR>
 		 * Sets the signature of the method to be called and its argument values
-		 * @param fromClass	the Class to which the method belongs that has to be called
+		 * @param fromClass the Class to which the method belongs that
+		 * has to be called. you can get this with instance.getClass()
+		 * or StaticClass.class
 		 * @param method	the method to be called
 		 * @param parameters	the classes of the method's arguments
 		 * @param args	the argument values to pass to the method

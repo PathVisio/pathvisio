@@ -116,6 +116,7 @@ public class MainWindow extends ApplicationWindow implements
 		 */
 		public NewElementAction (int e)
 		{
+			// TODO: this should be moved to CommonActions, since it is both in v1 and v2
 			element = e;
 		
 			String toolTipText;
@@ -602,12 +603,6 @@ public class MainWindow extends ApplicationWindow implements
 	}
 	private VisualizationDialogAction visualizationDialogAction = new VisualizationDialogAction(this);
 	
-	public static void openHelp() throws Exception {
-		BrowserLauncher bl = new BrowserLauncher(null);
-		bl.openURLinBrowser(Globals.HELP_URL);
-	}
-			
-
 	/**
 	 * {@link Action} to open the pathway statistics wizard
 	 */
@@ -988,8 +983,6 @@ public class MainWindow extends ApplicationWindow implements
 		shell.setSize(800, 600);
 		shell.setLocation(100, 100);
 		
-		shell.setText(Globals.APPLICATION_VERSION_NAME);
-		
 		GuiMain.loadImages(shell.getDisplay());
 		
 		shell.setImage(Engine.getImageRegistry().get("shell.icon"));
@@ -1026,10 +1019,20 @@ public class MainWindow extends ApplicationWindow implements
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
 		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
-				
+
+		Engine.updateTitle();
+		
 		return parent;
 		
 	};
+
+	/**
+	   Invoked when user tries to close window
+	 */
+	protected boolean canHandleShellCloseEvent()
+	{
+		return Engine.canDiscardPathway();
+	}
 	
 	public TabbedSidePanel getSidePanel() { return rightPanel; }
 	

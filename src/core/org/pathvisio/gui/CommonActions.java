@@ -41,9 +41,18 @@ import org.pathvisio.preferences.PreferenceDlg;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
+import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
    This class contains a large number of JFace Actions that are both in V1 and V2.
+
+   These actions just bind keyboard shortcuts, menu items and toolbar
+   icons to actions elsewhere in the program. Therefore these should
+   be a light as possible, delegating functionality to appropriate
+   other classes such as
+   - Engine (for open / save / new / import / export)
+   - PreferenceManager (for preferences)
+   - Engine.getVPathway() (for undo, redo, copy, paste).
 */   
 public class CommonActions 
 {
@@ -58,9 +67,9 @@ public class CommonActions
 		}
 		public void run() 
 		{
-			if (Engine.pathway != null)
+			if (Engine.getPathway() != null)
 			{
-				Engine.pathway.undo();
+				Engine.getPathway().undo();
 			}
 		}
 	}
@@ -79,15 +88,10 @@ public class CommonActions
 			setImageDescriptor(ImageDescriptor.createFromURL(
 					Engine.getResourceURL("icons/new.gif")));
 		}
-		public void run () {
-			if (Engine.pathway == null ||
-				MessageDialog.openQuestion(window.getShell(), "Discard changes?",
-						"Warning: This will discard any changes to " +
-						"the current pathway. Are you sure?"))
-			{
-				Engine.newPathway();
-			}
-		}
+		public void run ()
+		{			
+			Engine.newPathway();
+		}	
 	}
 	
 	/**
@@ -105,6 +109,7 @@ public class CommonActions
 		}
 		public void run () 
 		{
+			//TODO: move to engine, merge with "save"
 			VPathway drawing = Engine.getVPathway();
 			Pathway gmmlData = Engine.getPathway();
 			// Check if a gpml pathway is loaded
@@ -196,7 +201,7 @@ public class CommonActions
 	        // Only open pathway if user selected a file
 	        
 	        if(fnMapp != null) { 
-	        	Engine.openPathway(fnMapp); 
+	        	Engine.openPathway(fnMapp);
 	        }
 		}
 	}
@@ -215,17 +220,20 @@ public class CommonActions
 		}
 		public void run () 
 		{
-			FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
-			fd.setText("Open");
-			fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
-			fd.setFilterExtensions(new String[] {"*." + Engine.GENMAPP_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {Engine.GENMAPP_FILTER_NAME, "All files (*.*)"});
-	        String fnMapp = fd.open();
-	        // Only open pathway if user selected a file
-	        
-	        if(fnMapp != null) { 
-	        	Engine.openPathway(fnMapp); 
-	        }
+			if (Engine.canDiscardPathway())
+			{
+				FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
+				fd.setText("Import");
+				fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
+				fd.setFilterExtensions(new String[] {"*." + Engine.GENMAPP_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {Engine.GENMAPP_FILTER_NAME, "All files (*.*)"});
+				String fnMapp = fd.open();
+				// Only open pathway if user selected a file
+				
+				if(fnMapp != null) { 
+					Engine.openPathway(fnMapp); 
+				}
+			}
 		}
 	}
 
@@ -242,74 +250,9 @@ public class CommonActions
 			setToolTipText ("Save pathway with new file name");
 		}
 		
-		static public void do_run(MainWindow window)
-		{
-			VPathway drawing = Engine.getVPathway();
-			Pathway gmmlData = Engine.getPathway();
-			// Check if a gpml pathway is loaded
-			if (drawing != null)
-			{
-				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
-				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*." + Engine.PATHWAY_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {Engine.PATHWAY_FILTER_NAME, "All files (*.*)"});
-				
-				File xmlFile = gmmlData.getSourceFile();
-				if(xmlFile != null) {
-					fd.setFileName(xmlFile.getName());
-					fd.setFilterPath(xmlFile.getPath());
-				} else {
-					fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
-				}
-				String fileName = fd.open();
-				// Only proceed if user selected a file
-				
-				if(fileName == null) return;
-				
-				// Append .gpml extension if not already present
-				if(!fileName.endsWith("." + Engine.PATHWAY_FILE_EXTENSION)) 
-					fileName += "." + Engine.PATHWAY_FILE_EXTENSION;
-				
-				File checkFile = new File(fileName);
-				boolean confirmed = true;
-				// If file exists, ask overwrite permission
-				if(checkFile.exists())
-				{
-					confirmed = MessageDialog.openQuestion(window.getShell(),"",
-					"File already exists, overwrite?");
-				}
-				if(confirmed)
-				{
-					double usedZoom = drawing.getPctZoom();
-					// Set zoom to 100%
-					drawing.setPctZoom(100);					
-					// Overwrite the existing xml file
-					try
-					{
-						gmmlData.writeToXml(checkFile, true);
-						// Set zoom back
-						drawing.setPctZoom(usedZoom);
-					}
-					catch (ConverterException e)
-					{
-						String msg = "While writing xml to " 
-							+ checkFile.getAbsolutePath();					
-						MessageDialog.openError (window.getShell(), "Error", 
-								"Error: " + msg + "\n\n" + 
-								"See the error log for details.");
-						Engine.log.error(msg, e);
-					}
-				}
-			}
-			else
-			{
-				MessageDialog.openError (window.getShell(), "Error", 
-					"No gpml file loaded! Open or create a new gpml file first");
-			}			
-		}
 		public void run () 
 		{
-			do_run(window);
+			Engine.savePathwayAs();
 		}
 	}
 
@@ -327,6 +270,7 @@ public class CommonActions
 			setToolTipText ("Export Pathway to GenMAPP format");
 		}
 		public void run () {
+			//TODO: move to engine, merge with "save" or "saveAs"
 			VPathway drawing = Engine.getVPathway();
 			Pathway gmmlData = Engine.getPathway();
 			// Check if a gpml pathway is loaded
@@ -437,7 +381,8 @@ public class CommonActions
 			setText ("&Close pathway@Ctrl+W");
 			setToolTipText ("Close this pathway");
 		}
-		public void run () {
+		public void run ()
+		{
 			//TODO: unload drawing, ask to save
 		}
 	}
@@ -454,9 +399,12 @@ public class CommonActions
 			setText ("E&xit@Ctrl+X");
 			setToolTipText ("Exit Application");
 		}
-		public void run () {
-			window.close();
-			//TODO: ask to save pathway if content is changed
+		public void run ()
+		{
+			if (Engine.canDiscardPathway())
+			{
+				window.close();
+			}
 		}
 	}
 	
@@ -546,9 +494,9 @@ public class CommonActions
 			gmmlAboutBox.open();
 		}
 	}
-	
+
 	/**
-	 * {@link Action} to open a {@link AboutDlg} window
+	 * {@link Action} to open a Help window
 	 */
 	static class HelpAction extends Action 
 	{
@@ -559,24 +507,12 @@ public class CommonActions
 			setText ("&Help@F1");
 			setToolTipText ("Opens " + Globals.APPLICATION_VERSION_NAME + " help in your web browser");
 		}
-		public void run () {
-			SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
-					window.getClass(), "openHelp", new Class[] {}, new Object[] {}, null);
-			SimpleRunnableWithProgress.setMonitorInfo("Opening help", IProgressMonitor.UNKNOWN);
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
-			try {
-				dialog.run(true, true, rwp);
-			} catch (InvocationTargetException e) {
-				Throwable cause = e.getCause();
-				String msg = cause == null ? null : cause.getMessage();
-				MessageDialog.openError(window.getShell(), "Unable to open help",
-				"Unable to open web browser" +
-				(msg == null ? "" : ": " + msg) +
-				"\nYou can open the help page manually:\n" +
-				Globals.HELP_URL);
-			} catch (InterruptedException ignore) {}
-			
-
+		public void run ()
+		{
+			Engine.openWebPage(Globals.HELP_URL, "Opening help page in broswer",
+						"Unable to open web browser" +
+						"\nYou can open the help page manually:\n" +
+						Globals.HELP_URL);
 		}
 	}
 
@@ -591,7 +527,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.vPathway.copyToClipboard();
+			Engine.getVPathway().copyToClipboard();
 		}
 	}
 
@@ -606,7 +542,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.vPathway.pasteFromClipboad();
+			Engine.getVPathway().pasteFromClipboad();
 		}
 	}
 	
@@ -624,36 +560,9 @@ public class CommonActions
 			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/save.gif")));
 		}
 		
-		public void run () {
-			Pathway gmmlData = Engine.getPathway();
-			VPathway drawing = Engine.getVPathway();
-			
-			double usedZoom = drawing.getPctZoom();
-			// Set zoom to 100%
-			drawing.setPctZoom(100);			
-			// Overwrite the existing xml file
-			if (gmmlData.getSourceFile() != null)
-			{
-				try
-				{
-					gmmlData.writeToXml(gmmlData.getSourceFile(), true);
-				}
-				catch (ConverterException e)
-				{
-					String msg = "While writing xml to " 
-							+ gmmlData.getSourceFile().getAbsolutePath();					
-					MessageDialog.openError (window.getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-							"See the error log for details.");
-					Engine.log.error(msg, e);
-				}
-			}
-			else
-			{
-				SaveAsAction.do_run(window);
-			}
-			// Set zoom back
-			drawing.setPctZoom(usedZoom);
+		public void run ()
+		{
+			Engine.savePathway();
 		}
 	}
 	
@@ -673,5 +582,4 @@ public class CommonActions
 			d.open();
 		}
 	}
-
 }

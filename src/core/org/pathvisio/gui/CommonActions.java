@@ -18,6 +18,7 @@ package org.pathvisio.gui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.FileDialog;
@@ -576,10 +578,12 @@ public class CommonActions
 			setToolTipText ("Edit BioPAX code");
 		}
 		
-		public void run () {
+		public void run ()
+		{
 			BiopaxDialog d = new BiopaxDialog(window.getShell());
 			d.setPathway(Engine.getPathway());
 			d.open();
 		}
 	}
+
 }

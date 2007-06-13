@@ -60,6 +60,27 @@ import org.xml.sax.SAXException;
 */
 public class Pathway implements PathwayListener
 {
+
+	/**
+	   "changed" tracks if the Pathway has been changed since the file
+	   was opened or last saved. New pathways start changed.
+	 */
+	private boolean changed = true;
+	public boolean hasChanged() { return changed; }
+	/**
+	   clearChangedFlag should be called after when the current
+	   pathway is known to be the same as the one on disk. This
+	   happens when you just opened it, or when you just saved it.
+	*/
+	private void clearChangedFlag() { changed = false; }
+	/**
+	   To be called after each edit operation
+	*/
+	private void markChanged()
+	{
+		changed = true;
+	}
+	
 	/**
 	 * Logger to which all logging will be performed
 	 */
@@ -516,8 +537,14 @@ public class Pathway implements PathwayListener
 	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
 	public void addListener(PathwayListener v) { listeners.add(v); }
 	public void removeListener(PathwayListener v) { listeners.remove(v); }
+	
+    /**
+	   Firing the ObjectModifiedEvent has the side effect of
+	   marking the Pathway as changed.
+	 */
 	public void fireObjectModifiedEvent(PathwayEvent e) 
 	{
+		markChanged();
 		for (PathwayListener g : listeners)
 		{
 			g.gmmlObjectModified(e);

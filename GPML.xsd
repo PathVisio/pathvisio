@@ -11,25 +11,13 @@
 	</xsd:annotation>
 
 
-<!-- Type Definitions -->
+	<!-- Type Definitions -->
 	<xsd:simpleType name="NameType">
 		<xsd:restriction base="xsd:string">
 			<xsd:maxLength value="50" fixed="true"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<!-- allow inclusion of any element from the biopax namespace !-->
-	<xsd:group name="BiopaxGroup">
-		<xsd:sequence>
-			<xsd:element name="PublicationXref" minOccurs="0" maxOccurs="unbounded">
-				<xsd:complexType>
-					<xsd:attribute name="ID" type="xsd:string" use="required"/>
-					<xsd:attribute name="Database" type="xsd:string" use="required"/>
-				</xsd:complexType>
-			</xsd:element>			
-		</xsd:sequence>
-	</xsd:group>
-
 	<xsd:attributeGroup name="FontAttributes">
 		<xsd:attribute name="FontName" default="Arial"
 			type="xsd:string"/>
@@ -189,6 +177,7 @@
 	</xsd:simpleType>
 
 	<!-- One or more comments - bundles GenMAPP notes and GenMAPP remarks together !-->
+	<!-- plus one or more publications !-->
 	<xsd:group name="CommentGroup">
 		<xsd:sequence>
 			<xsd:element name="Comment" minOccurs="0"
@@ -201,6 +190,12 @@
 					</xsd:simpleContent>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="PublicationXref" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="ID" type="xsd:string" use="required"/>
+					<xsd:attribute name="Database" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>			
 		</xsd:sequence>
 	</xsd:group>
 	
@@ -212,7 +207,6 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 				
 				<xsd:element name="Graphics" minOccurs="0" maxOccurs="1">
 					<xsd:complexType>
@@ -329,7 +323,6 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 				
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -389,7 +382,6 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -455,7 +447,6 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -507,7 +498,6 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -553,7 +543,6 @@
 			<xsd:sequence>
 
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -603,7 +592,6 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:group ref="gpml:CommentGroup"/>
-				<xsd:group ref="gpml:BiopaxGroup"/>
 			</xsd:sequence>
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="GroupId" type="xsd:ID" use="required"/>

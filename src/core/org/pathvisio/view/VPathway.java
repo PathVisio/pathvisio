@@ -1234,32 +1234,41 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 	public void scaleSelected (char alignType){
 		
 		List<Graphics> selectedGraphics = getSelectedGraphics();
-		int maxW = 0;
-		int maxH = 0;
-		//double scale = 50.0;
+		double maxW = 0;
+		double maxH = 0;
 		
 		if (selectedGraphics.size() > 0){
 			switch (alignType){
 			case AlignActions.WIDTH:
 				for(Graphics g : selectedGraphics) {
-					int w = (g.getVWidth());
+					Rectangle2D.Double r = g.getVScaleRectangle();
+					double w = r.width;
 					if (w > maxW){
 						maxW = w;
 					}
 				}
 				for(Graphics g : selectedGraphics) {
-					g.getGmmlData().setMWidth(mFromV(maxW));
+					Rectangle2D.Double r = g.getVScaleRectangle();
+					double oldWidth = r.width;
+					r.setRect(r.getX(), r.getY(), maxW, r.getHeight());
+					g.setVScaleRectangle(r);
+					g.vMoveBy((oldWidth - maxW)/2,0);
 				}
 				break;
 			case AlignActions.HEIGHT:
 				for(Graphics g : selectedGraphics) {
-					int h = (g.getVHeight());
+					Rectangle2D.Double r = g.getVScaleRectangle();
+					double h = r.height;
 					if (h > maxH){
 						maxH = h;
 					}
 				}
 				for(Graphics g : selectedGraphics) {
-					g.getGmmlData().setMHeight(mFromV(maxH));
+					Rectangle2D.Double r = g.getVScaleRectangle();
+					double oldHeight = r.height;
+					r.setRect(r.getX(), r.getY(), r.getWidth(), maxH);
+					g.setVScaleRectangle(r);
+					g.vMoveBy(0,(oldHeight - maxH)/2);
 				}
 				break;
 			}

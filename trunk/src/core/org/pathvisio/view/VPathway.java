@@ -1242,7 +1242,7 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 			case AlignActions.WIDTH:
 				for(Graphics g : selectedGraphics) {
 					Rectangle2D.Double r = g.getVScaleRectangle();
-					double w = r.width;
+					double w = Math.abs(r.width);
 					if (w > maxW){
 						maxW = w;
 					}
@@ -1250,15 +1250,22 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 				for(Graphics g : selectedGraphics) {
 					Rectangle2D.Double r = g.getVScaleRectangle();
 					double oldWidth = r.width;
-					r.setRect(r.getX(), r.getY(), maxW, r.getHeight());
-					g.setVScaleRectangle(r);
-					g.vMoveBy((oldWidth - maxW)/2,0);
+					if (oldWidth <0){
+						r.setRect(r.getX(), r.getY(), -(maxW), r.getHeight());
+						g.setVScaleRectangle(r);
+						g.vMoveBy((oldWidth+maxW)/2,0);
+					}
+					else{
+						r.setRect(r.getX(), r.getY(), maxW, r.getHeight());
+						g.setVScaleRectangle(r);
+						g.vMoveBy((oldWidth - maxW)/2,0);
+					}
 				}
 				break;
 			case AlignActions.HEIGHT:
 				for(Graphics g : selectedGraphics) {
 					Rectangle2D.Double r = g.getVScaleRectangle();
-					double h = r.height;
+					double h = Math.abs(r.height);
 					if (h > maxH){
 						maxH = h;
 					}
@@ -1266,9 +1273,16 @@ PaintListener, MouseTrackListener, KeyListener, PathwayListener, VisualizationLi
 				for(Graphics g : selectedGraphics) {
 					Rectangle2D.Double r = g.getVScaleRectangle();
 					double oldHeight = r.height;
+					if (oldHeight < 0){
+						r.setRect(r.getX(), r.getY(), r.getWidth(), -(maxH));
+						g.setVScaleRectangle(r);
+						g.vMoveBy(0,(maxH+oldHeight)/2);
+					}
+					else{
 					r.setRect(r.getX(), r.getY(), r.getWidth(), maxH);
 					g.setVScaleRectangle(r);
 					g.vMoveBy(0,(oldHeight - maxH)/2);
+					}
 				}
 				break;
 			}

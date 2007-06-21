@@ -3,3 +3,4 @@
 * Outputter for xml output
 * Make similarity function more flexible. Right now, if two elts have different tag names, they match 0 because the keys don't match
 * Test with lot's of Biopax content
+* Make Dgpmldiff output entire jdom tree instead of summary

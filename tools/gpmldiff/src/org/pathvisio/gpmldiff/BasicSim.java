@@ -40,12 +40,12 @@ class BasicSim extends SimilarityFunction
 		int score = 0;
 		
 		for (String key : c1.keySet())
+		{
+			if (c2.containsKey (key) && c2.get(key).equals (c1.get(key)))
 			{
-				if (c2.containsKey (key) && c2.get(key).equals (c1.get(key)))
-					{
-						score += 2;
-					}
+				score += 2;
 			}
+		}
 		
 		return (100 * score) / (n1 + n2);
 	}

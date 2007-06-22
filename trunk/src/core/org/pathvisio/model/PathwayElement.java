@@ -262,119 +262,137 @@ public class PathwayElement implements GraphIdContainer
 			}
 		}
 	}
-		
+
+    /**
+	  get all attributes, also the advanced ones
+	*/
 	public List<PropertyType> getAttributes()
 	{
-		List<PropertyType> result = Arrays.asList(new PropertyType[] { 
-				PropertyType.NOTES, 
-				PropertyType.COMMENT
-		});
+		return getAttributes(true);
+	}
+
+	/**
+	 get a list of attributes for this PathwayElement.
+	 @param fAdvanced: if true, return all valid attributes. If false, hide certain "advanced" attributes
+	 that can be set in other ways too.
+	 */
+	public List<PropertyType> getAttributes(boolean fAdvanced)
+	{
+		List<PropertyType> result = new ArrayList<PropertyType>();
+		result.add (PropertyType.NOTES); 
+		result.add (PropertyType.COMMENT);
 		switch (getObjectType())
 		{
-			case ObjectType.MAPPINFO:
-				result = ( Arrays.asList (new PropertyType[] {
-						PropertyType.NOTES, 
-						PropertyType.COMMENT,
-						PropertyType.MAPINFONAME,
-						PropertyType.ORGANISM,
-						PropertyType.DATA_SOURCE,
-						PropertyType.VERSION,
-						PropertyType.AUTHOR,
-						PropertyType.MAINTAINED_BY,
-						PropertyType.EMAIL,
-						PropertyType.LAST_MODIFIED,
-						PropertyType.AVAILABILITY,
-						PropertyType.BOARDWIDTH,
-						PropertyType.BOARDHEIGHT,
-						PropertyType.WINDOWWIDTH,
-						PropertyType.WINDOWHEIGHT
-				}));
-				break;
-			case ObjectType.DATANODE:
-				result = ( Arrays.asList (new PropertyType[] {
-						PropertyType.NOTES,
-						PropertyType.COMMENT,
-						PropertyType.CENTERX,
-						PropertyType.CENTERY,
-						PropertyType.WIDTH,
-						PropertyType.HEIGHT,
-						PropertyType.COLOR,
-						PropertyType.GENEID,
-						PropertyType.SYSTEMCODE,
-						PropertyType.TEXTLABEL,
-						//PropertyType.XREF,
-						PropertyType.BACKPAGEHEAD,
-						PropertyType.TYPE,
-						PropertyType.GRAPHID,
-						PropertyType.GROUPREF,
-						PropertyType.BIOPAXREF
-				}));
-				break;
-			case ObjectType.SHAPE:
-				result = ( Arrays.asList(new PropertyType[] {
-						PropertyType.NOTES,
-						PropertyType.COMMENT,
-						PropertyType.CENTERX,
-						PropertyType.CENTERY,
-						PropertyType.WIDTH,
-						PropertyType.HEIGHT,
-						PropertyType.COLOR,
-						PropertyType.FILLCOLOR,
-						PropertyType.SHAPETYPE,
-						PropertyType.ROTATION,
-						PropertyType.TRANSPARENT,
-						PropertyType.GRAPHID,
-						PropertyType.GROUPREF,
-						PropertyType.BIOPAXREF
-				}));
-				break;
-			case ObjectType.LINE:
-				result = ( Arrays.asList(new PropertyType[] {
-						PropertyType.NOTES,
-						PropertyType.COMMENT,
-						PropertyType.COLOR,
-						PropertyType.STARTX,
-						PropertyType.STARTY,
-						PropertyType.ENDX,
-						PropertyType.ENDY,
-						PropertyType.LINETYPE,
-						PropertyType.LINESTYLE,
-						PropertyType.STARTGRAPHREF,
-						PropertyType.ENDGRAPHREF,
-						PropertyType.GRAPHID,
-						PropertyType.GROUPREF,
-						PropertyType.BIOPAXREF
-				}));
-				break;
-			case ObjectType.LABEL:
-				result = ( Arrays.asList(new PropertyType[] {
-						PropertyType.NOTES,
-						PropertyType.COMMENT,
-						PropertyType.XREF,
-						PropertyType.CENTERX,
-						PropertyType.CENTERY,
-						PropertyType.WIDTH,
-						PropertyType.HEIGHT,
-						PropertyType.COLOR,
-						PropertyType.TEXTLABEL,
-						PropertyType.FONTNAME,
-						PropertyType.FONTWEIGHT,
-						PropertyType.FONTSTYLE,
-						PropertyType.FONTSIZE,
-						PropertyType.GRAPHID,
-						PropertyType.GROUPREF,
-						PropertyType.BIOPAXREF
-				}));
-				break;
-			case ObjectType.GROUP:
-				result = ( Arrays.asList(new PropertyType[] {
-						PropertyType.GROUPID,
-						PropertyType.GROUPREF,
-						PropertyType.TEXTLABEL,
-						PropertyType.BIOPAXREF
-				}));
-				break;
-				
+		case ObjectType.MAPPINFO:				
+			result.add (PropertyType.NOTES);
+			result.add (PropertyType.COMMENT);
+			result.add (PropertyType.MAPINFONAME);
+			result.add (PropertyType.ORGANISM);
+			result.add (PropertyType.DATA_SOURCE);
+			result.add (PropertyType.VERSION);
+			result.add (PropertyType.AUTHOR);
+			result.add (PropertyType.MAINTAINED_BY);
+			result.add (PropertyType.EMAIL);
+			result.add (PropertyType.LAST_MODIFIED);
+			result.add (PropertyType.AVAILABILITY);
+			result.add (PropertyType.BOARDWIDTH);
+			result.add (PropertyType.BOARDHEIGHT);
+			//if (Engine.getPreferences().getBoolean(Preferences.PREF_SHOW_ADVANCED_ATTR))
+			if (fAdvanced)
+			{// these two properties are deprecated and not used in PathVisio itself.
+				result.add (PropertyType.WINDOWWIDTH);
+				result.add (PropertyType.WINDOWHEIGHT);
+			}
+			break;
+		case ObjectType.DATANODE:
+			result.add (PropertyType.NOTES);
+			result.add (PropertyType.COMMENT);
+			result.add (PropertyType.CENTERX);
+			result.add (PropertyType.CENTERY);
+			result.add (PropertyType.WIDTH);
+			result.add (PropertyType.HEIGHT);
+			result.add (PropertyType.COLOR);
+			result.add (PropertyType.GENEID);
+			result.add (PropertyType.SYSTEMCODE);
+			result.add (PropertyType.TEXTLABEL);
+			//PropertyType.XREF,
+			result.add (PropertyType.BACKPAGEHEAD);
+			result.add (PropertyType.TYPE);
+			if (fAdvanced)
+			{
+				result.add (PropertyType.GRAPHID);
+				result.add (PropertyType.GROUPREF);			
+				result.add (PropertyType.BIOPAXREF);
+			}
+			break;
+		case ObjectType.SHAPE:
+			result.add (PropertyType.NOTES);
+			result.add (PropertyType.COMMENT);
+			result.add (PropertyType.CENTERX);
+			result.add (PropertyType.CENTERY);
+			result.add (PropertyType.WIDTH);
+			result.add (PropertyType.HEIGHT);
+			result.add (PropertyType.COLOR);
+			result.add (PropertyType.FILLCOLOR);
+			result.add (PropertyType.SHAPETYPE);
+			result.add (PropertyType.ROTATION);
+			result.add (PropertyType.TRANSPARENT);
+			if (fAdvanced)
+			{
+				result.add (PropertyType.GRAPHID);
+				result.add (PropertyType.GROUPREF);			
+				result.add (PropertyType.BIOPAXREF);
+			}
+			break;
+		case ObjectType.LINE:
+			result.add (PropertyType.NOTES);
+			result.add (PropertyType.COMMENT);
+			result.add (PropertyType.COLOR);
+			result.add (PropertyType.STARTX);
+			result.add (PropertyType.STARTY);
+			result.add (PropertyType.ENDX);
+			result.add (PropertyType.ENDY);
+			result.add (PropertyType.LINETYPE);
+			result.add (PropertyType.LINESTYLE);
+			result.add (PropertyType.STARTGRAPHREF);
+			result.add (PropertyType.ENDGRAPHREF);
+			if (fAdvanced)
+			{
+				result.add (PropertyType.GRAPHID);
+				result.add (PropertyType.GROUPREF);			
+				result.add (PropertyType.BIOPAXREF);
+			}
+			break;
+		case ObjectType.LABEL:
+			result.add (PropertyType.NOTES);
+			result.add (PropertyType.COMMENT);
+			result.add (PropertyType.XREF);
+			result.add (PropertyType.CENTERX);
+			result.add (PropertyType.CENTERY);
+			result.add (PropertyType.WIDTH);
+			result.add (PropertyType.HEIGHT);
+			result.add (PropertyType.COLOR);
+			result.add (PropertyType.TEXTLABEL);
+			result.add (PropertyType.FONTNAME);
+			result.add (PropertyType.FONTWEIGHT);
+			result.add (PropertyType.FONTSTYLE);
+			result.add (PropertyType.FONTSIZE);
+			if (fAdvanced)
+			{
+				result.add (PropertyType.GRAPHID);
+				result.add (PropertyType.GROUPREF);			
+				result.add (PropertyType.BIOPAXREF);
+			}
+			break;
+		case ObjectType.GROUP:
+			if (fAdvanced)
+			{
+				result.add (PropertyType.GROUPID);
+				result.add (PropertyType.GROUPREF);			
+				result.add (PropertyType.BIOPAXREF);
+			}
+			result.add (PropertyType.TEXTLABEL);
+			break;
 		}
 		return result;
 	}

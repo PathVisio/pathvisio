@@ -64,6 +64,7 @@ public class Preferences extends PreferenceStore implements IPropertyChangeListe
 		setDefault(PREF_DIR_GDB, DIR_GDBFILES);
 		setDefault(PREF_DIR_EXPR, DIR_EXPRFILES);
 		setDefault(PREF_DIR_RDATA, DIR_RDATAFILES);
+		setDefault(PREF_SHOW_ADVANCED_ATTR, SHOW_ADVANCED_ATTR);
 		
 		try {
 			load();
@@ -138,7 +139,9 @@ public class Preferences extends PreferenceStore implements IPropertyChangeListe
 	public static final String PREF_CURR_GDB = "currentGdb";
 	public static final String PREF_DB_ENGINE_GDB = "dbengine.gdb";
 	public static final String PREF_DB_ENGINE_EXPR = "dbengine.expr";
-	public static final String PREF_SIDEPANEL_SIZE = "display.sidePanelSize";	
+	public static final String PREF_SIDEPANEL_SIZE = "display.sidePanelSize";
+
+	public static final String PREF_SHOW_ADVANCED_ATTR = "display.showAdvancedAttr";
 	
 	// Defaults
 	//> display
@@ -164,4 +167,6 @@ public class Preferences extends PreferenceStore implements IPropertyChangeListe
 	static final String DIR_GDBFILES = new File(Engine.getDataDir().toString(), "gene databases").toString();
 	static final String DIR_EXPRFILES = new File(Engine.getDataDir().toString(), "expression datasets").toString();
 	static final String DIR_RDATAFILES = new File(Engine.getDataDir().toString(), "R data").toString();
+
+	static final boolean SHOW_ADVANCED_ATTR = false;
 }

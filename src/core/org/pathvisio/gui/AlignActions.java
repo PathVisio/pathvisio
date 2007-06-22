@@ -34,8 +34,8 @@ public class AlignActions {
 	
 		static class AlignCenterXAction extends Action 
 		{
-			MainWindow window;
-			public AlignCenterXAction (MainWindow w)
+			MainWindowBase window;
+			public AlignCenterXAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Align horizontal centers");
@@ -52,8 +52,8 @@ public class AlignActions {
 		
 		static class AlignCenterYAction extends Action 
 		{
-			MainWindow window;
-			public AlignCenterYAction (MainWindow w)
+			MainWindowBase window;
+			public AlignCenterYAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Align vertical centers");
@@ -69,8 +69,8 @@ public class AlignActions {
 		}
 		static class AlignLeftAction extends Action 
 		{
-			MainWindow window;
-			public AlignLeftAction (MainWindow w)
+			MainWindowBase window;
+			public AlignLeftAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Align left edges");
@@ -86,8 +86,8 @@ public class AlignActions {
 		}
 		static class AlignRightAction extends Action 
 		{
-			MainWindow window;
-			public AlignRightAction (MainWindow w)
+			MainWindowBase window;
+			public AlignRightAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Align right edges");
@@ -103,8 +103,8 @@ public class AlignActions {
 		}
 		static class AlignTopAction extends Action 
 		{
-			MainWindow window;
-			public AlignTopAction (MainWindow w)
+			MainWindowBase window;
+			public AlignTopAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Align top edges");
@@ -120,8 +120,8 @@ public class AlignActions {
 		}
 		static class AlignBottomAction extends Action 
 		{
-			MainWindow window;
-			public AlignBottomAction (MainWindow w)
+			MainWindowBase window;
+			public AlignBottomAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Align bottom edges");
@@ -137,8 +137,8 @@ public class AlignActions {
 		}
 		static class SetCommonHeightAction extends Action 
 		{
-			MainWindow window;
-			public SetCommonHeightAction (MainWindow w)
+			MainWindowBase window;
+			public SetCommonHeightAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Set common height");
@@ -154,8 +154,8 @@ public class AlignActions {
 		}
 		static class SetCommonWidthAction extends Action 
 		{
-			MainWindow window;
-			public SetCommonWidthAction (MainWindow w)
+			MainWindowBase window;
+			public SetCommonWidthAction (MainWindowBase w)
 			{
 				window = w;
 				setToolTipText ("Set common width");

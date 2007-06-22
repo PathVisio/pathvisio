@@ -354,10 +354,10 @@ public class PathwayElement implements GraphIdContainer
 			result.add (PropertyType.ENDY);
 			result.add (PropertyType.LINETYPE);
 			result.add (PropertyType.LINESTYLE);
-			result.add (PropertyType.STARTGRAPHREF);
-			result.add (PropertyType.ENDGRAPHREF);
 			if (fAdvanced)
 			{
+				result.add (PropertyType.STARTGRAPHREF);
+				result.add (PropertyType.ENDGRAPHREF);
 				result.add (PropertyType.GRAPHID);
 				result.add (PropertyType.GROUPREF);			
 				result.add (PropertyType.BIOPAXREF);

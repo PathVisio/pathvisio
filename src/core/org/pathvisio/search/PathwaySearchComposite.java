@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.MainWindow;
+import org.pathvisio.gui.MainWindowBase;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.search.SearchMethods.SearchException;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
@@ -50,11 +50,11 @@ public class PathwaySearchComposite extends Composite {
 
 	HashMap<String, SearchOptionComposite> searchControls;
 	
-	MainWindow gmmlVision;
+	MainWindowBase window;
 	
-	public PathwaySearchComposite(Composite parent, int style, MainWindow gmmlVision) {
+	public PathwaySearchComposite(Composite parent, int style, MainWindowBase window) {
 		super(parent, style);
-		this.gmmlVision = gmmlVision;
+		this.window = window;
 				
 		setLayout(new GridLayout());
 		initSearchComposite();

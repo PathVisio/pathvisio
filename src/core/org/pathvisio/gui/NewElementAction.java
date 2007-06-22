@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.*;
 import org.pathvisio.view.VPathway;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IContributionItem;
 
 /**
  * {@link Action} to add a new element to the gpml pathway

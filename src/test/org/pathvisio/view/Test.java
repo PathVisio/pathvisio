@@ -18,19 +18,19 @@ package org.pathvisio.view;
 
 import junit.framework.TestCase;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+//import org.eclipse.swt.SWT;
+//import org.eclipse.swt.layout.FillLayout;
+//import org.eclipse.swt.widgets.Display;
+//import org.eclipse.swt.widgets.Shell;
 
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ObjectType;
+//import org.pathvisio.model.Pathway;
+//import org.pathvisio.model.PathwayElement;
+//import org.pathvisio.model.ObjectType;
 
 public class Test extends TestCase {
 	
 	VPathway drawing;
-    private Shell shell;
+//    private Shell shell;
 	
 	public void setUp()
 	{

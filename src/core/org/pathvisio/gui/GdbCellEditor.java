@@ -42,7 +42,6 @@ import org.pathvisio.util.SuggestCombo.SuggestionProvider;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.gui.PropertyPanel.AutoFillData;
 

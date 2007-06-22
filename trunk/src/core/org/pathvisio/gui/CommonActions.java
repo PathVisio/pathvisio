@@ -17,25 +17,19 @@
 package org.pathvisio.gui;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import edu.stanford.ejalbert.BrowserLauncher;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pathvisio.Globals;
 import org.pathvisio.biopax.gui.BiopaxDialog;
@@ -46,7 +40,6 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.preferences.PreferenceDlg;
 import org.pathvisio.preferences.Preferences;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
 
 /**
@@ -64,8 +57,8 @@ public class CommonActions
 {
 	static class UndoAction extends Action
 	{
-		MainWindow window;
-		public UndoAction (MainWindow w)
+		MainWindowBase window;
+		public UndoAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&Undo@Ctrl+Z");
@@ -85,8 +78,8 @@ public class CommonActions
 	 */
 	static class NewAction extends Action 
 	{
-		MainWindow window;
-		public NewAction (MainWindow w)
+		MainWindowBase window;
+		public NewAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&New pathway@Ctrl+N");
@@ -105,8 +98,8 @@ public class CommonActions
 	 */
 	static class SvgExportAction extends Action 
 	{
-		MainWindow window;
-		public SvgExportAction (MainWindow w)
+		MainWindowBase window;
+		public SvgExportAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("Export to SVG");
@@ -187,8 +180,8 @@ public class CommonActions
 	 */
 	static class OpenAction extends Action 
 	{
-		MainWindow window;
-		public OpenAction (MainWindow w)
+		MainWindowBase window;
+		public OpenAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&Open pathway@Ctrl+O");
@@ -217,8 +210,8 @@ public class CommonActions
 	 */
 	static class ImportAction extends Action 
 	{
-		MainWindow window;
-		public ImportAction (MainWindow w)
+		MainWindowBase window;
+		public ImportAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&Import");
@@ -248,8 +241,8 @@ public class CommonActions
 	 */
 	static class SaveAsAction extends Action 
 	{
-		MainWindow window;
-		public SaveAsAction (MainWindow w)
+		MainWindowBase window;
+		public SaveAsAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("Save pathway &As");
@@ -268,8 +261,8 @@ public class CommonActions
 	 */
 	static class ExportAction extends Action 
 	{
-		MainWindow window;
-		public ExportAction (MainWindow w)
+		MainWindowBase window;
+		public ExportAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&Export");
@@ -380,8 +373,8 @@ public class CommonActions
 	 */
 	static class ExitAction extends Action 
 	{
-		MainWindow window;
-		public ExitAction (MainWindow w)
+		MainWindowBase window;
+		public ExitAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("E&xit@Ctrl+X");
@@ -398,8 +391,8 @@ public class CommonActions
 	
 	static class PreferencesAction extends Action
 	{
-		MainWindow window;
-		public PreferencesAction (MainWindow w)
+		MainWindowBase window;
+		public PreferencesAction (MainWindowBase w)
 		{
 			window = w;
 			setText("&Preferences");
@@ -418,19 +411,19 @@ public class CommonActions
 	 */
 	static class ZoomAction extends Action 
 	{
-		MainWindow window;
+		MainWindowBase window;
 		int pctZoomFactor;
 		
 		/**
 		 * Constructor for this class
-		 * @param w {@link MainWindow} window this action belongs to
+		 * @param w {@link MainWindowBase} window this action belongs to
 		 * @param newPctZoomFactor the zoom factor as percentage of original
 		 */
-		public ZoomAction (MainWindow w, int newPctZoomFactor)
+		public ZoomAction (MainWindowBase w, int newPctZoomFactor)
 		{
 			window = w;
 			pctZoomFactor = newPctZoomFactor;
-			if(pctZoomFactor == MainWindow.ZOOM_TO_FIT) 
+			if(pctZoomFactor == MainWindowBase.ZOOM_TO_FIT) 
 			{
 				setText ("Zoom to fit");
 				setToolTipText("Zoom mapp to fit window");
@@ -446,7 +439,7 @@ public class CommonActions
 			if (drawing != null)
 			{
 				double newPctZoomFactor = pctZoomFactor;
-				if(pctZoomFactor == MainWindow.ZOOM_TO_FIT) 
+				if(pctZoomFactor == MainWindowBase.ZOOM_TO_FIT) 
 				{
 					Point shellSize = window.sc.getSize();
 					Point drawingSize = drawing.getSize();
@@ -470,8 +463,8 @@ public class CommonActions
 	 */
 	static class AboutAction extends Action 
 	{
-		MainWindow window;
-		public AboutAction (MainWindow w)
+		MainWindowBase window;
+		public AboutAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&About");
@@ -488,8 +481,8 @@ public class CommonActions
 	 */
 	static class HelpAction extends Action 
 	{
-		MainWindow window;
-		public HelpAction (MainWindow w)
+		MainWindowBase window;
+		public HelpAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&Help@F1");
@@ -506,8 +499,8 @@ public class CommonActions
 
 	static class CopyAction extends Action
 	{
-		MainWindow window;
-		public CopyAction (MainWindow w)
+		MainWindowBase window;
+		public CopyAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("Copy@Ctrl+C");
@@ -521,8 +514,8 @@ public class CommonActions
 
 	static class PasteAction extends Action
 	{
-		MainWindow window;
-		public PasteAction (MainWindow w)
+		MainWindowBase window;
+		public PasteAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("Paste@Ctrl+V");
@@ -539,8 +532,8 @@ public class CommonActions
 	 */
 	static class SaveAction extends Action 
 	{
-		MainWindow window;
-		public SaveAction (MainWindow w)
+		MainWindowBase window;
+		public SaveAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("&Save pathway@Ctrl+S");
@@ -556,8 +549,8 @@ public class CommonActions
 	
 	static class BiopaxAction extends Action 
 	{
-		MainWindow window;
-		public BiopaxAction (MainWindow w)
+		MainWindowBase window;
+		public BiopaxAction (MainWindowBase w)
 		{
 			window = w;
 			setText ("Edit &BioPAX code");
@@ -579,8 +572,8 @@ public class CommonActions
 	{
 		final String ttChecked = "Exit edit mode";
 		final String ttUnChecked = "Switch to edit mode to edit the pathway content";
-		MainWindow window;
-		public SwitchEditModeAction (MainWindow w)
+		MainWindowBase window;
+		public SwitchEditModeAction (MainWindowBase w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
 			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/edit.gif")));

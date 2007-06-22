@@ -17,16 +17,9 @@
 package org.pathvisio.gui;
 
 import java.io.File;
-import java.net.URL;
-import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
@@ -35,21 +28,15 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.Globals;
 import org.pathvisio.R.RController;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
@@ -60,12 +47,13 @@ import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
+import org.pathvisio.gui.BackpagePanel;
+import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.GuiMain;
+import org.pathvisio.gui.PropertyPanel;
+import org.pathvisio.gui.TabbedSidePanel;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.search.PathwaySearchComposite;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.LegendPanel;
 import org.pathvisio.visualization.VisualizationDialog;
 import org.pathvisio.visualization.VisualizationManager;
@@ -75,89 +63,8 @@ import org.pathvisio.visualization.VisualizationManager;
  * It acts as a container for pathwaydrawings and facilitates
  * loading, creating and saving drawings to and from GPML.
  */
-public class MainWindow extends ApplicationWindow implements 
-						ApplicationEventListener, ExpressionDataListener
+public class MainWindow extends MainWindowBase
 {
-	private static final long serialVersionUID = 1L;
-	static int ZOOM_TO_FIT = -1;
-		
-	private CommonActions.UndoAction undoAction = new CommonActions.UndoAction(this);	
-	private CommonActions.NewAction newAction = new CommonActions.NewAction (this);
-	private CommonActions.OpenAction openAction = new CommonActions.OpenAction (this);	
-	private CommonActions.ImportAction importAction = new CommonActions.ImportAction (this);	
-	private CommonActions.SaveAction saveAction = new CommonActions.SaveAction(this);	
-	private CommonActions.SaveAsAction saveAsAction = new CommonActions.SaveAsAction (this);
-	private CommonActions.ExportAction exportAction = new CommonActions.ExportAction (this);
-	private CommonActions.ExitAction exitAction = new CommonActions.ExitAction(this);
-	private CommonActions.PreferencesAction preferencesAction = new CommonActions.PreferencesAction(this);
-	private CommonActions.AboutAction aboutAction = new CommonActions.AboutAction(this);
-	private CommonActions.CopyAction copyAction = new CommonActions.CopyAction(this);
-	private CommonActions.HelpAction helpAction = new CommonActions.HelpAction(this);	
-	private CommonActions.PasteAction pasteAction = new CommonActions.PasteAction(this);
-	private CommonActions.SwitchEditModeAction switchEditModeAction = new CommonActions.SwitchEditModeAction(this);
-	public ShowRightPanelAction showRightPanelAction = new ShowRightPanelAction(this);
-	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
-	private AlignActions.AlignCenterXAction alignCenterXAction = new AlignActions.AlignCenterXAction(this);
-	private AlignActions.AlignCenterYAction alignCenterYAction = new AlignActions.AlignCenterYAction(this);
-	private AlignActions.AlignLeftAction alignLeftAction = new AlignActions.AlignLeftAction(this);
-	private AlignActions.AlignRightAction alignRightAction = new AlignActions.AlignRightAction(this);
-	private AlignActions.AlignTopAction alignTopAction = new AlignActions.AlignTopAction(this);
-	private AlignActions.AlignBottomAction alignBottomAction = new AlignActions.AlignBottomAction(this);
-	private AlignActions.SetCommonWidthAction setCommonWidthAction = new AlignActions.SetCommonWidthAction(this);
-	private AlignActions.SetCommonHeightAction setCommonHeightAction = new AlignActions.SetCommonHeightAction(this);
-
-	/**
-	 * {@link Action} to select a Gene Database
-	 */
-	private class SelectGdbAction extends Action
-	{
-		MainWindow window;
-		public SelectGdbAction(MainWindow w)
-		{
-			window = w;
-			setText("Select &Gene Database");
-			setToolTipText("Select Gene Database");
-		}
-		
-		public void run () {			
-			try {
-				DBConnector dbcon = Gdb.getDBConnector();
-				String dbName = dbcon.openChooseDbDialog(getShell());
-				
-				if(dbName == null) return;
-				
-				Gdb.connect(dbName);
-				setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
-				cacheExpressionData();
-			} catch(Exception e) {
-				String msg = "Failed to open Gene Database; " + e.getMessage();
-				MessageDialog.openError (window.getShell(), "Error", 
-						"Error: " + msg + "\n\n" + 
-						"See the error log for details.");
-				Engine.log.error(msg, e);
-			}
-		}
-	}
-
-	/**
-	 * {@link Action} to show or hide the right sidepanel
-	 */
-	public class ShowRightPanelAction extends Action
-	{
-		MainWindow window;
-		public ShowRightPanelAction (MainWindow w)
-		{
-			super("Show &information panel", IAction.AS_CHECK_BOX);
-			window = w;
-			setChecked(true);
-		}
-		
-		public void run() {
-			if(isChecked()) rightPanel.show();
-			else rightPanel.hide();
-		}
-	}
-
 	/**
 	 * {@link Action} to select an expression dataset
 	 */
@@ -190,49 +97,6 @@ public class MainWindow extends ApplicationWindow implements
 	}
 	private SelectGexAction selectGexAction = new SelectGexAction(this);
 	
-	/**
-	 * Loads expression data for all {@link GeneProduct}s in the loaded pathway
-	 */
-	private void cacheExpressionData()
-	{
-		if(Engine.isDrawingOpen())
-		{
-			VPathway drawing = Engine.getVPathway();
-			//Check for neccesary connections
-			if(Gex.isConnected() && Gdb.isConnected())
-			{
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				try {
-					dialog.run(true, true, Gex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
-					drawing.redraw();
-				} catch(Exception e) {
-					String msg = "while caching expression data: " + e.getMessage();					
-					MessageDialog.openError (getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-							"See the error log for details.");
-					Engine.log.error(msg, e);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Deselects all {@link NewElementAction}s on the toolbar and sets 
-	 * {@link VPathway}.newGraphics to {@link VPathway}.NEWNONE
-	 */
-	public void deselectNewItemActions()
-	{
-		IContributionItem[] items = editActionsCI.getToolBarManager().getItems();
-		for(int i = 0; i < items.length; i++)
-		{
-			if(items[i] instanceof ActionContributionItem)
-			{
-				((ActionContributionItem)items[i]).getAction().setChecked(false);
-			}
-		}
-		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
-	}
-
 
 	/**
 	 * {@link Action} that opens an {@link GexImportWizard} that guides the user
@@ -480,111 +344,8 @@ public class MainWindow extends ApplicationWindow implements
 			}
 		}
 	}
-	private RLoadStatsAction rLoadStatsAction = new RLoadStatsAction(this);		
-
-	public void deselectAlignItemActions()
-	{
-		IContributionItem[] items = alignActionsCI.getToolBarManager().getItems();
-		for(int i = 0; i < items.length; i++)
-		{
-			if(items[i] instanceof ActionContributionItem)
-			{
-				((ActionContributionItem)items[i]).getAction().setChecked(false);
-			}
-		}
-		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
-	}
+	private RLoadStatsAction rLoadStatsAction = new RLoadStatsAction(this);
 	
-	// Elements of the coolbar
-	ToolBarContributionItem commonActionsCI;
-	ToolBarContributionItem editActionsCI;
-	ToolBarContributionItem alignActionsCI;
-	ToolBarContributionItem visualizationCI;
-	ToolBarContributionItem viewActionsCI;
-	protected CoolBarManager createCoolBarManager(int style)
-	{
-		createCommonActionsCI();
-		createEditActionsCI();
-		createAlignActionsCI();
-		createViewActionsCI();
-		createVisualizationCI();
-		
-		CoolBarManager coolBarManager = new CoolBarManager(style);
-		coolBarManager.setLockLayout(true);
-		
-		coolBarManager.add(commonActionsCI);
-		coolBarManager.add(viewActionsCI);
-		coolBarManager.add(visualizationCI);
-		return coolBarManager;
-	}
-	
-	/**
-	 * Creates element of the coolbar containing common actions as new, save etc.
-	 */
-	protected void createCommonActionsCI()
-	{
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-		toolBarManager.add(newAction);
-		toolBarManager.add(openAction);
-		toolBarManager.add(saveAction);
-		commonActionsCI = new ToolBarContributionItem(toolBarManager, "CommonActions");
-	}
-
-	/**
-	 * Creates element of the coolbar only shown in edit mode (new element actions)
-	 */
-	protected void createEditActionsCI()
-	{
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
-		toolBarManager.add(new NewElementAction(VPathway.NEWGENEPRODUCT));
-		toolBarManager.add(new NewElementAction(VPathway.NEWLABEL));
-		toolBarManager.add(new NewElementAction(VPathway.NEWLINEMENU));
-		toolBarManager.add(new NewElementAction(VPathway.NEWRECTANGLE));
-		toolBarManager.add(new NewElementAction(VPathway.NEWOVAL));
-		toolBarManager.add(new NewElementAction(VPathway.NEWARC));
-		toolBarManager.add(new NewElementAction(VPathway.NEWBRACE));
-		toolBarManager.add(new NewElementAction(VPathway.NEWTBAR));
-		toolBarManager.add(new NewElementAction(VPathway.NEWLINESHAPEMENU));
-
-		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
-	}
-	
-	/**
-	 * Creates element of the coolbar containing controls related to viewing a pathway
-	 */
-	protected void createViewActionsCI()
-	{
-		final MainWindow window = this;
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-		//Add zoomCombo
-		toolBarManager.add(new ControlContribution("ZoomCombo") {
-			protected Control createControl(Composite parent) {
-				final Combo zoomCombo = new Combo(parent, SWT.DROP_DOWN);
-				zoomCombo.setItems(new String[] { "200%", "100%", "75%", "50%", "Zoom to fit" });
-				zoomCombo.setText("100%");
-				zoomCombo.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						int pctZoom = 100;
-						String zoomText = zoomCombo.getText().replace("%", "");
-						try {
-							pctZoom = Integer.parseInt(zoomText);
-						} catch (Exception ex) { 
-							if(zoomText.equals("Zoom to fit"))
-									{ pctZoom = ZOOM_TO_FIT; } else { return; }
-						}
-						new CommonActions.ZoomAction(window, pctZoom).run();
-					}
-					public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
-				});
-				return zoomCombo;
-			}
-		});
-		//Add swich to editmode
-		toolBarManager.add(switchEditModeAction);
-		
-		viewActionsCI =  new ToolBarContributionItem(toolBarManager, "SwitchActions");
-	}
-		
 	/**
 	 * Creates element of the coolbar containing controls related to visualizations
 	 */
@@ -596,37 +357,6 @@ public class MainWindow extends ApplicationWindow implements
 		visualizationCI = new ToolBarContributionItem(toolBarManager, "ColorSetActions");
 	}
 	
-	/**
-	 * Shows or hides the editActionsCI
-	 * @param show	true/false for either show or hide
-	 */
-	public void showEditActionsCI(boolean show)
-	{
-		if(show) {
-			getCoolBarManager().insertAfter(viewActionsCI.getId(), editActionsCI);
-		}
-		else {
-			getCoolBarManager().remove(editActionsCI);
-		}
-//		showVisualizationCI(!show); //Visualizations can show up in edit mode...
-		getCoolBarManager().update(true);
-	}
-
-	/**
-	   Shows or hides the alignActionsCI.
-	   @param show	true/false for either show or hide
-	*/
-	public void showAlignActionsCI(boolean show)
-	{
-		if(show) {
-			getCoolBarManager().insertAfter(editActionsCI.getId(), alignActionsCI);
-		}
-		else {
-			getCoolBarManager().remove(alignActionsCI);
-		}
-//		showVisualizationCI(!show); //Visualizations can show up in edit mode...
-		getCoolBarManager().update(true);
-	}
 
 	/**
 	 * Shows or hides the visualizationCI
@@ -708,53 +438,35 @@ public class MainWindow extends ApplicationWindow implements
 		menuManager.add(helpMenu);
 		return menuManager;
 	}
-	
-	public MainWindow()
-	{
-		this(null);
-	}
-	
-	private MenuManager menuManager = null;
-	/**
-	 * can be accessed by plugins etc. 
-	 * to add menu items and even complete menus.
-	 * 
-	 * (plugin API)
-	 */
-	public MenuManager getMenuManager()
-	{
-		return menuManager;
-	}
-	/**
-	 *Constructor for the MainWindow class
-	 *Initializes new MainWindow and sets properties for frame
-	 */
-	public MainWindow(Shell shell)
-	{
-		super(shell);
-		
-		addMenuBar();
-		addStatusLine();
-		addCoolBar(SWT.FLAT | SWT.LEFT);
-		
-		Engine.addApplicationEventListener(this);
-		Gex.addListener(this);
-	}
-	
-	public boolean close() {
-		Engine.fireApplicationEvent(
-				new ApplicationEvent(this, ApplicationEvent.CLOSE_APPLICATION));
-		return super.close();
-	}
-	
-	public ScrolledComposite sc;
-	public BackpagePanel bpBrowser; //Browser for showing backpage information
-	public PropertyPanel propertyTable;	//Table showing properties of Graphics objects
-	SashForm sashForm; //SashForm containing the drawing area and sidebar
-	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
-	PathwaySearchComposite pwSearchComposite; //Composite that handles pathway searches and displays results
-	LegendPanel legend; //Legend to display colorset information
 
+	ToolBarContributionItem visualizationCI;
+
+	/**
+	 * overrides craeteCoolBarManager in MainWindowBase.
+	 * this one also creates a visualizationCI. 
+	 */
+	protected CoolBarManager createCoolBarManager(int style)
+	{
+		createCommonActionsCI();
+		createEditActionsCI();
+		createAlignActionsCI();
+		createViewActionsCI();
+		createVisualizationCI();
+		
+		CoolBarManager coolBarManager = new CoolBarManager(style);
+		coolBarManager.setLockLayout(true);
+		
+		coolBarManager.add(commonActionsCI);
+		coolBarManager.add(viewActionsCI);
+		
+		coolBarManager.add(visualizationCI);
+		
+		return coolBarManager;
+	}
+	
+	/**
+	 * Create and initialize widgets on the main window.
+	 */
 	protected Control createContents(Composite parent)
 	{		
 		Shell shell = parent.getShell();
@@ -800,91 +512,28 @@ public class MainWindow extends ApplicationWindow implements
 
 		Engine.updateTitle();
 		
-		return parent;
-		
+		return parent;		
 	};
-
-	public TabbedSidePanel getSidePanel() { return rightPanel; }
 	
-	public LegendPanel getLegend() { return legend; }
-	
-	public void showLegend(boolean show) {	
-		if(show && Gex.isConnected()) {
-			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
-			rightPanel.unhideTab("Legend", 0);
-			rightPanel.selectTab("Legend");
-		}
-		
-		else rightPanel.hideTab("Legend");
+	public MainWindow()
+	{
+		this(null);
 	}
-			
+	
 	/**
-	 * Creates a new empty drawing canvas
-	 * @return the empty {@link VPathway}
+	 *Constructor for the MainWindow class
+	 *Initializes new MainWindow and sets properties for frame
 	 */
-	public VPathway createNewDrawing()
-	{		
-		return new VPathway(sc, SWT.NO_BACKGROUND);
-	}
-	
-	public void applicationEvent(ApplicationEvent e) {
-		VPathway drawing = null;
-		switch(e.type) {
-		case ApplicationEvent.NEW_PATHWAY:
-			drawing = Engine.getVPathway();
-			sc.setContent(drawing);
-			break;
-		case ApplicationEvent.OPEN_PATHWAY:
-			drawing = Engine.getVPathway();
-			sc.setContent(drawing);
-			if(Gex.isConnected()) cacheExpressionData();
-			break;	
-		}
+	public MainWindow(Shell shell)
+	{
+		super(shell);
+		
+		addMenuBar();
+		addStatusLine();
+		addCoolBar(SWT.FLAT | SWT.LEFT);
+		
+		Engine.addApplicationEventListener(this);
+		Gex.addListener(this);
 	}
 
-	public void expressionDataEvent(ExpressionDataEvent e) {
-		switch(e.type) {
-		case ExpressionDataEvent.CONNECTION_CLOSED:
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					showLegend(false);
-				}
-			});
-			break;
-		case ExpressionDataEvent.CONNECTION_OPENED:
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					cacheExpressionData();
-					showLegend(true);
-				}
-			});
-			break;
-		}
-	}
-
-	//	KH 20070514 begin
-	protected void createAlignActionsCI()
-	{
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-		toolBarManager.add(alignCenterXAction);
-		toolBarManager.add(alignCenterYAction);
-		toolBarManager.add(alignLeftAction);
-		toolBarManager.add(alignRightAction);
-		toolBarManager.add(alignTopAction);
-		toolBarManager.add(alignBottomAction);
-		toolBarManager.add(setCommonWidthAction);
-		toolBarManager.add(setCommonHeightAction);
-	
-		alignActionsCI = new ToolBarContributionItem(toolBarManager, "AlignActions");
-	}
-	
-//	KH end
-	/**
-	   Invoked when user tries to close window
-	*/
-	protected boolean canHandleShellCloseEvent()
-	{
-		return Engine.canDiscardPathway();
-	}
-	
 } // end of class

@@ -54,7 +54,7 @@ public class GpmlTransfer extends ByteArrayTransfer
 		if (!(data instanceof List)) { return; } // wrong type of data
 		
 		byte[] result = null;
-		List<PathwayElement> clipboard = (List<PathwayElement>)data;
+		List<PathwayElement> clipboard = (List<PathwayElement>)(data);
 		Document doc = new Document();
 		Namespace ns = Namespace.getNamespace("http://www.w3.org/2000/svg");
 

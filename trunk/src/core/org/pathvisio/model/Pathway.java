@@ -59,8 +59,7 @@ import org.xml.sax.SAXException;
 * one object of the type INFOBOX.
 */
 public class Pathway implements PathwayListener
-{
-
+{	
 	/**
 	   "changed" tracks if the Pathway has been changed since the file
 	   was opened or last saved. New pathways start changed.

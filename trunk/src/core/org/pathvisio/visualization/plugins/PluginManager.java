@@ -45,7 +45,7 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.data.Gex;
 
 public abstract class PluginManager {
-	static final String PLUGIN_PKG = "visualization.plugins";
+	static final String PLUGIN_PKG = "org.pathvisio.visualization.plugins";
 	static final String PKG_DIR = PLUGIN_PKG.replace('.', '/');
 	static final String FILE_ADD_PLUGINS = "visplugins.xml";
 	static final String XML_ELEMENT = "additional-plugins";

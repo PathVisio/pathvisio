@@ -541,8 +541,10 @@ public abstract class Engine {
 		double usedZoom = vPathway.getPctZoom();
 		// Set zoom to 100%
 		vPathway.setPctZoom(100);			
-		// Overwrite the existing xml file
-		if (pathway.getSourceFile() != null)
+		
+        // Overwrite the existing xml file.
+		// If the target file is read-only, let the user select a new pathway
+		if (pathway.getSourceFile() != null && pathway.getSourceFile().canWrite())
 		{
 			try
 			{

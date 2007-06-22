@@ -23,19 +23,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import edu.stanford.ejalbert.BrowserLauncher;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pathvisio.Globals;
 import org.pathvisio.biopax.gui.BiopaxDialog;
+import org.pathvisio.gui.Engine.ApplicationEvent;
+import org.pathvisio.gui.Engine.ApplicationEventListener;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
@@ -43,7 +48,6 @@ import org.pathvisio.preferences.PreferenceDlg;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
    This class contains a large number of JFace Actions that are both in V1 and V2.
@@ -372,24 +376,6 @@ public class CommonActions
 	}
 
 	/**
-	 * {@link Action} to close the gpml pathway (does nothing yet)
-	 */
-	static class CloseAction extends Action 
-	{
-		MainWindow window;
-		public CloseAction (MainWindow w)
-		{
-			window = w;
-			setText ("&Close pathway@Ctrl+W");
-			setToolTipText ("Close this pathway");
-		}
-		public void run ()
-		{
-			//TODO: unload drawing, ask to save
-		}
-	}
-
-	/**
 	 * {@link Action} to exit the application
 	 */
 	static class ExitAction extends Action 
@@ -586,4 +572,82 @@ public class CommonActions
 		}
 	}
 
+	/**
+	 * {@link Action} to switch between edit and view mode
+	 */
+	static class SwitchEditModeAction extends Action implements ApplicationEventListener
+	{
+		final String ttChecked = "Exit edit mode";
+		final String ttUnChecked = "Switch to edit mode to edit the pathway content";
+		MainWindow window;
+		public SwitchEditModeAction (MainWindow w)
+		{
+			super("&Edit mode", IAction.AS_CHECK_BOX);
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/edit.gif")));
+			setToolTipText(ttUnChecked);
+			window = w;
+			
+			Engine.addApplicationEventListener(this);
+		}
+		
+		public void run ()
+		{
+			if(Engine.isDrawingOpen())
+			{
+				VPathway drawing = Engine.getVPathway();
+				Pathway pathway = Engine.getPathway();
+				if(isChecked())
+				{
+					// give a warning that this can't be edited.
+					if (pathway.getSourceFile() != null && !pathway.getSourceFile().canWrite())
+					{
+						MessageDialog.openWarning(
+							window.getShell(), "Read-only Warning",
+							"You're trying to edit a Read-only file.\n" +
+							"When you want to save your changes, you have to save to a different file.");
+					}
+					//Switch to edit mode: show edit toolbar, show property table in sidebar
+					drawing.setEditMode(true);
+					window.showEditActionsCI(true);
+					window.showAlignActionsCI(true);
+					window.rightPanel.getTabFolder().setSelection(1);
+				}
+				else
+				{
+					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
+					drawing.setEditMode(false);
+					window.showEditActionsCI(false);
+					window.showAlignActionsCI(false);
+					window.rightPanel.getTabFolder().setSelection(0);
+				}
+			}
+			else //No gpml pathway loaded, deselect action and do nothing
+			{
+				setChecked(false);
+			}
+			window.getCoolBarManager().update(true);
+		}
+		
+		public void setChecked(boolean check) {
+			super.setChecked(check);
+			setToolTipText(check ? ttChecked : ttUnChecked);
+		}
+		
+		public void switchEditMode(boolean edit) {
+			setChecked(edit);
+			run();
+			
+		}
+
+		public void applicationEvent(ApplicationEvent e) {
+			if(e.type == ApplicationEvent.OPEN_PATHWAY) {
+				Engine.getVPathway().setEditMode(isChecked());
+			}
+			else if(e.type == ApplicationEvent.NEW_PATHWAY) {
+				switchEditMode(true);
+			}
+		}
+	}
+
 }
+

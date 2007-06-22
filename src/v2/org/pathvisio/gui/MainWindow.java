@@ -70,8 +70,6 @@ import org.pathvisio.visualization.LegendPanel;
 import org.pathvisio.visualization.VisualizationDialog;
 import org.pathvisio.visualization.VisualizationManager;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-
 /**
  * This class is the main class in the GPML project. 
  * It acts as a container for pathwaydrawings and facilitates
@@ -90,17 +88,23 @@ public class MainWindow extends ApplicationWindow implements
 	private CommonActions.SaveAction saveAction = new CommonActions.SaveAction(this);	
 	private CommonActions.SaveAsAction saveAsAction = new CommonActions.SaveAsAction (this);
 	private CommonActions.ExportAction exportAction = new CommonActions.ExportAction (this);
-	private CommonActions.CloseAction closeAction = new CommonActions.CloseAction(this);	
 	private CommonActions.ExitAction exitAction = new CommonActions.ExitAction(this);
 	private CommonActions.PreferencesAction preferencesAction = new CommonActions.PreferencesAction(this);
 	private CommonActions.AboutAction aboutAction = new CommonActions.AboutAction(this);
 	private CommonActions.CopyAction copyAction = new CommonActions.CopyAction(this);
 	private CommonActions.HelpAction helpAction = new CommonActions.HelpAction(this);	
 	private CommonActions.PasteAction pasteAction = new CommonActions.PasteAction(this);
-	
-	private SwitchEditModeAction switchEditModeAction = new SwitchEditModeAction(this);
+	private CommonActions.SwitchEditModeAction switchEditModeAction = new CommonActions.SwitchEditModeAction(this);
 	public ShowRightPanelAction showRightPanelAction = new ShowRightPanelAction(this);
 	private SelectGdbAction selectGdbAction = new SelectGdbAction(this);
+	private AlignActions.AlignCenterXAction alignCenterXAction = new AlignActions.AlignCenterXAction(this);
+	private AlignActions.AlignCenterYAction alignCenterYAction = new AlignActions.AlignCenterYAction(this);
+	private AlignActions.AlignLeftAction alignLeftAction = new AlignActions.AlignLeftAction(this);
+	private AlignActions.AlignRightAction alignRightAction = new AlignActions.AlignRightAction(this);
+	private AlignActions.AlignTopAction alignTopAction = new AlignActions.AlignTopAction(this);
+	private AlignActions.AlignBottomAction alignBottomAction = new AlignActions.AlignBottomAction(this);
+	private AlignActions.SetCommonWidthAction setCommonWidthAction = new AlignActions.SetCommonWidthAction(this);
+	private AlignActions.SetCommonHeightAction setCommonHeightAction = new AlignActions.SetCommonHeightAction(this);
 
 	/**
 	 * {@link Action} to select a Gene Database
@@ -131,71 +135,6 @@ public class MainWindow extends ApplicationWindow implements
 						"Error: " + msg + "\n\n" + 
 						"See the error log for details.");
 				Engine.log.error(msg, e);
-			}
-		}
-	}
-	
-	/**
-	 * {@link Action} to switch between edit and view mode
-	 */
-	private class SwitchEditModeAction extends Action implements ApplicationEventListener
-	{
-		final String ttChecked = "Exit edit mode";
-		final String ttUnChecked = "Switch to edit mode to edit the pathway content";
-		MainWindow window;
-		public SwitchEditModeAction (MainWindow w)
-		{
-			super("&Edit mode", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/edit.gif")));
-			setToolTipText(ttUnChecked);
-			window = w;
-			
-			Engine.addApplicationEventListener(this);
-		}
-		
-		public void run () {
-			if(Engine.isDrawingOpen())
-			{
-				VPathway drawing = Engine.getVPathway();
-				if(isChecked())
-				{
-					//Switch to edit mode: show edit toolbar, show property table in sidebar
-					drawing.setEditMode(true);
-					showEditActionsCI(true);
-					rightPanel.getTabFolder().setSelection(1);
-				}
-				else
-				{
-					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
-					drawing.setEditMode(false);
-					showEditActionsCI(false);
-					rightPanel.getTabFolder().setSelection(0);
-				}
-			}
-			else //No gpml pathway loaded, deselect action and do nothing
-			{
-				setChecked(false);
-			}
-			getCoolBarManager().update(true);
-		}
-		
-		public void setChecked(boolean check) {
-			super.setChecked(check);
-			setToolTipText(check ? ttChecked : ttUnChecked);
-		}
-		
-		public void switchEditMode(boolean edit) {
-			setChecked(edit);
-			run();
-			
-		}
-
-		public void applicationEvent(ApplicationEvent e) {
-			if(e.type == ApplicationEvent.OPEN_PATHWAY) {
-				Engine.getVPathway().setEditMode(isChecked());
-			}
-			else if(e.type == ApplicationEvent.NEW_PATHWAY) {
-				switchEditMode(true);
 			}
 		}
 	}
@@ -276,7 +215,24 @@ public class MainWindow extends ApplicationWindow implements
 			}
 		}
 	}
-	
+
+	/**
+	 * Deselects all {@link NewElementAction}s on the toolbar and sets 
+	 * {@link VPathway}.newGraphics to {@link VPathway}.NEWNONE
+	 */
+	public void deselectNewItemActions()
+	{
+		IContributionItem[] items = editActionsCI.getToolBarManager().getItems();
+		for(int i = 0; i < items.length; i++)
+		{
+			if(items[i] instanceof ActionContributionItem)
+			{
+				((ActionContributionItem)items[i]).getAction().setChecked(false);
+			}
+		}
+		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
+	}
+
 
 	/**
 	 * {@link Action} that opens an {@link GexImportWizard} that guides the user
@@ -525,16 +481,31 @@ public class MainWindow extends ApplicationWindow implements
 		}
 	}
 	private RLoadStatsAction rLoadStatsAction = new RLoadStatsAction(this);		
+
+	public void deselectAlignItemActions()
+	{
+		IContributionItem[] items = alignActionsCI.getToolBarManager().getItems();
+		for(int i = 0; i < items.length; i++)
+		{
+			if(items[i] instanceof ActionContributionItem)
+			{
+				((ActionContributionItem)items[i]).getAction().setChecked(false);
+			}
+		}
+		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
+	}
 	
 	// Elements of the coolbar
 	ToolBarContributionItem commonActionsCI;
 	ToolBarContributionItem editActionsCI;
+	ToolBarContributionItem alignActionsCI;
 	ToolBarContributionItem visualizationCI;
 	ToolBarContributionItem viewActionsCI;
 	protected CoolBarManager createCoolBarManager(int style)
 	{
 		createCommonActionsCI();
 		createEditActionsCI();
+		createAlignActionsCI();
 		createViewActionsCI();
 		createVisualizationCI();
 		
@@ -559,23 +530,6 @@ public class MainWindow extends ApplicationWindow implements
 		commonActionsCI = new ToolBarContributionItem(toolBarManager, "CommonActions");
 	}
 
-		/**
-	 * Deselects all NewElementActions on the toolbar and sets 
-	 * VPathway.newGraphics to VPathway.NEWNONE
-	 */
-	public void deselectNewItemActions()
-	{
-		IContributionItem[] items = editActionsCI.getToolBarManager().getItems();
-		for(int i = 0; i < items.length; i++)
-		{
-			if(items[i] instanceof ActionContributionItem)
-			{
-				((ActionContributionItem)items[i]).getAction().setChecked(false);
-			}
-		}
-		Engine.getVPathway().setNewGraphics(VPathway.NEWNONE);
-	}
-
 	/**
 	 * Creates element of the coolbar only shown in edit mode (new element actions)
 	 */
@@ -591,7 +545,7 @@ public class MainWindow extends ApplicationWindow implements
 		toolBarManager.add(new NewElementAction(VPathway.NEWBRACE));
 		toolBarManager.add(new NewElementAction(VPathway.NEWTBAR));
 		toolBarManager.add(new NewElementAction(VPathway.NEWLINESHAPEMENU));
-		
+
 		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
 	}
 	
@@ -646,7 +600,7 @@ public class MainWindow extends ApplicationWindow implements
 	 * Shows or hides the editActionsCI
 	 * @param show	true/false for either show or hide
 	 */
-	private void showEditActionsCI(boolean show)
+	public void showEditActionsCI(boolean show)
 	{
 		if(show) {
 			getCoolBarManager().insertAfter(viewActionsCI.getId(), editActionsCI);
@@ -657,12 +611,28 @@ public class MainWindow extends ApplicationWindow implements
 //		showVisualizationCI(!show); //Visualizations can show up in edit mode...
 		getCoolBarManager().update(true);
 	}
-	
+
+	/**
+	   Shows or hides the alignActionsCI.
+	   @param show	true/false for either show or hide
+	*/
+	public void showAlignActionsCI(boolean show)
+	{
+		if(show) {
+			getCoolBarManager().insertAfter(editActionsCI.getId(), alignActionsCI);
+		}
+		else {
+			getCoolBarManager().remove(alignActionsCI);
+		}
+//		showVisualizationCI(!show); //Visualizations can show up in edit mode...
+		getCoolBarManager().update(true);
+	}
+
 	/**
 	 * Shows or hides the visualizationCI
 	 * @param show	true/false for either show or hide
 	 */
-	private void showVisualizationCI(boolean show) {
+	public void showVisualizationCI(boolean show) {
 		if(show) {
 			getCoolBarManager().insertAfter(viewActionsCI.getId(), visualizationCI);
 		} else {
@@ -686,7 +656,6 @@ public class MainWindow extends ApplicationWindow implements
 		fileMenu.add(openAction);
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
-		//fileMenu.add(closeAction);
 		fileMenu.add(new Separator());
 		fileMenu.add(importAction);
 		fileMenu.add(exportAction);
@@ -757,8 +726,8 @@ public class MainWindow extends ApplicationWindow implements
 		return menuManager;
 	}
 	/**
-	 *Constructor for the Engine class
-	 *Initializes new Engine and sets properties for frame
+	 *Constructor for the MainWindow class
+	 *Initializes new MainWindow and sets properties for frame
 	 */
 	public MainWindow(Shell shell)
 	{
@@ -785,6 +754,7 @@ public class MainWindow extends ApplicationWindow implements
 	TabbedSidePanel rightPanel; //side panel containing backbage browser and property editor
 	PathwaySearchComposite pwSearchComposite; //Composite that handles pathway searches and displays results
 	LegendPanel legend; //Legend to display colorset information
+
 	protected Control createContents(Composite parent)
 	{		
 		Shell shell = parent.getShell();
@@ -834,21 +804,13 @@ public class MainWindow extends ApplicationWindow implements
 		
 	};
 
-	/**
-	   Invoked when user tries to close window
-	 */
-	protected boolean canHandleShellCloseEvent()
-	{
-		return Engine.canDiscardPathway();
-	}
-	
 	public TabbedSidePanel getSidePanel() { return rightPanel; }
 	
 	public LegendPanel getLegend() { return legend; }
 	
 	public void showLegend(boolean show) {	
 		if(show && Gex.isConnected()) {
-			if(rightPanel.isVisible("Legend")) return; //Legend already visible
+			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
 			rightPanel.unhideTab("Legend", 0);
 			rightPanel.selectTab("Legend");
 		}
@@ -899,4 +861,30 @@ public class MainWindow extends ApplicationWindow implements
 			break;
 		}
 	}
+
+	//	KH 20070514 begin
+	protected void createAlignActionsCI()
+	{
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		toolBarManager.add(alignCenterXAction);
+		toolBarManager.add(alignCenterYAction);
+		toolBarManager.add(alignLeftAction);
+		toolBarManager.add(alignRightAction);
+		toolBarManager.add(alignTopAction);
+		toolBarManager.add(alignBottomAction);
+		toolBarManager.add(setCommonWidthAction);
+		toolBarManager.add(setCommonHeightAction);
+	
+		alignActionsCI = new ToolBarContributionItem(toolBarManager, "AlignActions");
+	}
+	
+//	KH end
+	/**
+	   Invoked when user tries to close window
+	*/
+	protected boolean canHandleShellCloseEvent()
+	{
+		return Engine.canDiscardPathway();
+	}
+	
 } // end of class

@@ -26,4 +26,5 @@ public class Globals {
 	public static final String APPLICATION_NAME = "PathVisio";
 	public static final String APPLICATION_VERSION_NAME = "PathVisio 2.0 (experimental)";
 	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help_v2";
+	public static final boolean fUseExperimentalFeatures = true;
 }

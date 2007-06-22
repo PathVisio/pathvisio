@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -93,7 +94,11 @@ public class PreferenceDlg extends PreferenceManager {
 					"Initial side panel size (percent of window size):", getFieldEditorParent());
 			f.setValidRange(0, 100);
 			addField(f);
-			
+
+			BooleanFieldEditor f2 =	new BooleanFieldEditor (
+				Preferences.PREF_SHOW_ADVANCED_ATTR,									   
+				"Show advanced attributes (e.g. references):", getFieldEditorParent());
+			addField (f2);
 		}
 	}
 	private class ColorsPage extends FieldEditorPreferencePage {

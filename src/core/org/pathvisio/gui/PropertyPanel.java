@@ -61,6 +61,7 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.preferences.Preferences;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties
@@ -163,7 +164,9 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		HashMap<PropertyType, Integer> master = new HashMap<PropertyType, Integer>();
 		for (PathwayElement o : dataObjects)
 		{
-			for (PropertyType attr : o.getAttributes())
+			// get attributes. Only get advanced attributes if the preferences say so.
+			for (PropertyType attr : o.getAttributes(
+					 Engine.getPreferences().getBoolean(Preferences.PREF_SHOW_ADVANCED_ATTR)))
 			{
 				if (master.containsKey(attr))
 				{

@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view;
 
-import org.pathvisio.gui.Engine;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -51,7 +50,7 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.model.*;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.gui.*;
+import org.pathvisio.gui.swt.*;
 
 /**
  * This class implements and handles a drawing.

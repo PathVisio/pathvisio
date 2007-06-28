@@ -15,16 +15,19 @@
 // limitations under the License.
 //
 
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
-import java.util.*;
 import java.net.URL;
+import java.util.Vector;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.swt.widgets.*;
-import org.pathvisio.view.VPathway;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.pathvisio.gui.swt.MainWindow;
+import org.pathvisio.view.VPathway;
 
 /**
  * {@link Action} to add a new element to the gpml pathway

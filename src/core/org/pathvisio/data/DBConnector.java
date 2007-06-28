@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.preferences.swt.Preferences;
 
 /**
  * This class provides the connection for the databases (annotation and expression database) used

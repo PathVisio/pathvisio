@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.visualization.LegendPanel.CollapseGroup.CollapseListener;
 import org.pathvisio.visualization.Visualization.PluginSet;

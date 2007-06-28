@@ -18,7 +18,7 @@ package org.pathvisio.util;
 
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 import org.pathvisio.model.Color;
 
 public abstract class ColorConverter

@@ -44,9 +44,9 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.Engine.ApplicationEvent;
+import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionListener;

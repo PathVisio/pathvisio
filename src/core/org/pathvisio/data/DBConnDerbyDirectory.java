@@ -16,7 +16,7 @@
 //
 package org.pathvisio.data;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 import java.sql.DriverManager;
 import org.eclipse.swt.widgets.DirectoryDialog;

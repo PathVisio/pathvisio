@@ -39,9 +39,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.MainWindowBase;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.MainWindowBase;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.search.SearchMethods.SearchException;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.data.DataSources;

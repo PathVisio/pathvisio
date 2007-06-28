@@ -28,7 +28,7 @@ import org.jdom.output.XMLOutputter;
 
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 /**
    Clipboard Transfer Object, for transferring Gpml fragments

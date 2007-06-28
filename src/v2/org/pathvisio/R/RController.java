@@ -16,9 +16,9 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.Engine.ApplicationEvent;
+import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
 
 import java.io.BufferedReader;
 import java.io.File;

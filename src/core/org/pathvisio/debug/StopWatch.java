@@ -16,7 +16,7 @@
 //
 package org.pathvisio.debug;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 /**
    A simple helper class for speed optimizations

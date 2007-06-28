@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -27,13 +27,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.data.Gex;
-import org.pathvisio.gui.BackpagePanel;
-import org.pathvisio.gui.CommonActions;
-import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.GuiMain;
-import org.pathvisio.gui.PropertyPanel;
-import org.pathvisio.gui.TabbedSidePanel;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.gui.swt.BackpagePanel;
+import org.pathvisio.gui.swt.CommonActions;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.GuiMain;
+import org.pathvisio.gui.swt.MainWindowBase;
+import org.pathvisio.gui.swt.PropertyPanel;
+import org.pathvisio.gui.swt.TabbedSidePanel;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.visualization.LegendPanel;
 

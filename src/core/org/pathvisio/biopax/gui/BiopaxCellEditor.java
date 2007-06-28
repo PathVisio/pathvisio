@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.pathvisio.biopax.BiopaxManager;
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 public class BiopaxCellEditor extends DialogCellEditor {	
 	public BiopaxCellEditor(Composite parent, String label) {

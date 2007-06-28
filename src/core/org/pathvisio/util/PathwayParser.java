@@ -24,7 +24,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.model.MappFormat;

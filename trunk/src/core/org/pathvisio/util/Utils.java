@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 public class Utils {
 	

@@ -30,7 +30,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.filter.Filter;
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 /**
  * class responsible for interaction with Gpml format.

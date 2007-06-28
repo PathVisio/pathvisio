@@ -19,7 +19,7 @@ package org.pathvisio.view;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;

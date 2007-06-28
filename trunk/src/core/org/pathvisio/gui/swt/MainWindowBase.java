@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -32,7 +32,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -42,14 +41,13 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.gui.swt.Engine.ApplicationEvent;
+import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.LegendPanel;
-import org.pathvisio.visualization.VisualizationManager;
 
 /**
  * MainWindowBase is an abstract and incomplete Main Window that contains some

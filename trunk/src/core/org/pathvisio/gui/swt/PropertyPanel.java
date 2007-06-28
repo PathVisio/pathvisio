@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +54,7 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SuggestCellEditor;
 import org.pathvisio.util.TableColumnResizer;
@@ -61,7 +62,6 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.preferences.Preferences;
 
 /**
  * This class implements the sidepanel where you can edit graphical properties

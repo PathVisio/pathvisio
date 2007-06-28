@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 import org.pathvisio.Globals;
 
 public class JarUtils {

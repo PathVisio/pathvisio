@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -25,27 +25,28 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
+import org.pathvisio.gui.swt.MainWindow;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayExporter;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;

@@ -14,13 +14,12 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -33,13 +32,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pathvisio.Globals;
 import org.pathvisio.biopax.gui.BiopaxDialog;
-import org.pathvisio.gui.Engine.ApplicationEvent;
-import org.pathvisio.gui.Engine.ApplicationEventListener;
+import org.pathvisio.gui.swt.Engine.ApplicationEvent;
+import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
-import org.pathvisio.preferences.PreferenceDlg;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.preferences.swt.PreferenceDlg;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.view.VPathway;
 
 /**

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.data.DataSources;
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 /**
  * The class MappFormat is responsible for all interaction with 

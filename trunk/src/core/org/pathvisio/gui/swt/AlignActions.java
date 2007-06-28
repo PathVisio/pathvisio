@@ -15,7 +15,7 @@
 //	 limitations under the License.
 	//
 
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;

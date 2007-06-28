@@ -16,8 +16,8 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.TabbedSidePanel;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.TabbedSidePanel;
 
 import java.io.File;
 import java.util.ArrayList;

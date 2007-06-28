@@ -25,8 +25,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 
-import org.pathvisio.gui.Engine;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;

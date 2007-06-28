@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import java.io.File;
 
@@ -47,11 +47,11 @@ import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.gui.BackpagePanel;
-import org.pathvisio.gui.Engine;
-import org.pathvisio.gui.GuiMain;
-import org.pathvisio.gui.PropertyPanel;
-import org.pathvisio.gui.TabbedSidePanel;
+import org.pathvisio.gui.swt.BackpagePanel;
+import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.GuiMain;
+import org.pathvisio.gui.swt.PropertyPanel;
+import org.pathvisio.gui.swt.TabbedSidePanel;
 import org.pathvisio.preferences.Preferences;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.visualization.LegendPanel;

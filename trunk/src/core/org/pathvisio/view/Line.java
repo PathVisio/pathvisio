@@ -35,7 +35,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.util.SwtUtils;
  
 /**

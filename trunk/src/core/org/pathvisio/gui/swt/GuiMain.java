@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.gui.swt;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -26,11 +26,12 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
+import org.pathvisio.gui.swt.MainWindow;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.SvgFormat;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.preferences.swt.Preferences;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
 

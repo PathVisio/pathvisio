@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.preferences;
+package org.pathvisio.preferences.swt;
 
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -26,7 +26,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.preference.StringFieldEditor;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 public class PreferenceDlg extends PreferenceManager {
 	

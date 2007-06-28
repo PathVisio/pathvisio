@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.data.Gex;

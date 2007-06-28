@@ -17,7 +17,7 @@
 
 package org.pathvisio.R.wizard;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

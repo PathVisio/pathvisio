@@ -16,7 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gui.Engine;
+import org.pathvisio.gui.swt.Engine;
 import org.pathvisio.view.Graphics;
 
 import java.io.File;

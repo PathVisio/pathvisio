@@ -16,10 +16,12 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
@@ -155,7 +157,7 @@ class Handle extends VPathwayElement
 	{
 		if(!isVisible) return;
 		
-		Shape outline = getVOutline();
+		Shape fillShape = getFillShape();
 		
 		if(direction == DIRECTION_ROT) {
 			g.setColor(Color.GREEN);
@@ -163,11 +165,11 @@ class Handle extends VPathwayElement
 			g.setColor(Color.YELLOW);
 		}
 		
-		g.fill(outline);
+		g.fill(fillShape);
 		
 		g.setColor(Color.BLACK);
 		
-		g.draw(outline);		
+		g.draw(fillShape);		
 	}
 		
 	/**
@@ -209,6 +211,10 @@ class Handle extends VPathwayElement
 	}
 			
 	public Shape getVOutline() {
+		return defaultStroke.createStrokedShape(getFillShape());
+	}
+	
+	private Shape getFillShape() {
 		Shape s = null;
 		switch(direction) {
 		case DIRECTION_ROT:
@@ -222,7 +228,7 @@ class Handle extends VPathwayElement
 		}
 		return s;
 	}
-		
+	
 	public String toString() { 
 		return 	"Handle with parent: " + parent.toString() +
 		" and direction " + direction; 

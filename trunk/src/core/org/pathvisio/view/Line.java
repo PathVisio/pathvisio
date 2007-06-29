@@ -23,6 +23,7 @@ import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -153,6 +154,10 @@ public class Line extends Graphics
 	}
 	
 	private void paintArrowHead(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {			
+		g2d.fill(getArrowHead(g2d, xs, ys, xe, ye, w, h));
+	}
+	
+	private Shape getArrowHead(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
 		double angle = getAngle(xs, ys, xe, ye);
 		int[] xpoints = new int[] { (int)xe, (int)(xe - w), (int)(xe - w) };
 		int[] ypoints = new int[] { (int)ye, (int)(ye - h), (int)(ye + h) };
@@ -160,22 +165,28 @@ public class Line extends Graphics
 		Polygon arrow = new Polygon(xpoints, ypoints, 3);
 		AffineTransform f = new AffineTransform();
 		f.rotate(-angle, xe, ye);
-		Shape rotArrow = f.createTransformedShape(arrow);
-		g2d.fill(rotArrow);
+		return f.createTransformedShape(arrow);
 	}
 	
 	private void paintTBar(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
+		g2d.fill(getTBar(g2d, xs, ys, xe, ye, w, h));
+	}
+	
+	private Shape getTBar(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
 		double angle = getAngle(xs, ys, xe, ye);
 	
 		Rectangle2D bar = new Rectangle2D.Double(xe - w, ye - h/2, w, h);
 		AffineTransform f = new AffineTransform();
 		f.rotate(-angle, xe, ye);
-		Shape rotBar = f.createTransformedShape(bar);
-		g2d.fill(rotBar);
+		return f.createTransformedShape(bar);
 	}
 	
 	private void paintLRound(Graphics2D g2d, double xe, double ye, double d) {	
-		g2d.fillOval ((int)(xe - d/2), (int)(ye - d/2), (int)d, (int)d);
+		g2d.fill(getLRound(g2d, xe, ye, d));
+	}
+	
+	private Shape getLRound(Graphics2D g2d, double xe, double ye, double d) {	
+		return new Ellipse2D.Double(xe - d/2, ye - d/2, d, d);
 	}
 	
 	private void paintRRound(Graphics2D g2d, double xs, double ys, double xe, double ye, double d) {
@@ -245,6 +256,8 @@ public class Line extends Graphics
 		g2d.draw(rotBar);
 	}
 	
+//	TODO: create the real outline, by creating a shape that
+//  represents the whole line...use getArrow() etc.
 	protected Shape getVOutline()
 	{
 		//TODO: bigger than necessary, just to include the arrowhead / shape at the end

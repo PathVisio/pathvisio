@@ -461,35 +461,7 @@ public class MainWindow extends MainWindowBase
 		return coolBarManager;
 	}
 	
-	/**
-	 * Create and initialize widgets on the main window.
-	 */
-	protected Control createContents(Composite parent)
-	{		
-		Shell shell = parent.getShell();
-		shell.setSize(800, 600);
-		shell.setLocation(100, 100);
-		
-		GuiMain.loadImages(shell.getDisplay());
-		
-		shell.setImage(SwtEngine.getImageRegistry().get("shell.icon"));
-		
-		Composite viewComposite = new Composite(parent, SWT.NULL);
-		viewComposite.setLayout(new FillLayout());
-		
-		sashForm = new SashForm(viewComposite, SWT.HORIZONTAL);
-		
-		sc = new ScrolledComposite (sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		sc.setFocus();
-		
-		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
-		
-		//rightPanel controls
-		bpBrowser = new BackpagePanel(rightPanel.getTabFolder(), SWT.NONE);
-		propertyTable = new PropertyPanel(
-				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
-		legend = new LegendPanel(rightPanel.getTabFolder(), SWT.V_SCROLL | SWT.H_SCROLL);
+	protected void addPanelTabs() {
 		Composite visPanel = VisualizationManager.createSidePanel(rightPanel.getTabFolder());
 		
 		rightPanel.addTab(bpBrowser, "Backpage");
@@ -497,20 +469,7 @@ public class MainWindow extends MainWindowBase
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
 		rightPanel.addTab(visPanel, "Visualization");
-		
-		int sidePanelSize = GlobalPreference.getValueInt(SwtPreference.SWT_SIDEPANEL_SIZE);
-		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
-		showRightPanelAction.setChecked(sidePanelSize > 0);
-		
-		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
-		rightPanel.hideTab("Legend"); //hide legend on startup
-		
-		setStatus("Using Gene Database: '" + SwtPreference.SWT_CURR_GDB.getValue() + "'");
-
-		SwtEngine.updateTitle();
-		
-		return parent;		
-	};
+	}
 	
 	public MainWindow()
 	{

@@ -18,6 +18,7 @@ package org.pathvisio.view;
 
 import java.awt.Polygon;
 import java.awt.Shape;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Set;
@@ -458,7 +459,10 @@ public abstract class GraphicsShape extends Graphics {
 	 */
 	protected Shape getVOutline()
 	{
-		return defaultStroke.createStrokedShape(getFillShape());
+		Shape fill = getFillShape();
+		Area outline = new Area(fill);
+		outline.add(new Area(defaultStroke.createStrokedShape(fill)));
+		return outline;
 	}
 	
 	private Shape getFillShape() {

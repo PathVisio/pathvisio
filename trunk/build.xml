@@ -168,24 +168,37 @@ public class Revision
 			header="Revision ${subversion_revision}"
 			footer="Generated ${TODAY}">
 			<classpath refid="project.v2.class.path"/>
-			<package name="org.pathvisio.gui"/>
-			<package name="org.pathvisio.view"/>
-			<package name="org.pathvisio.model"/>
-			<package name="org.pathvisio.util"/>
-			<package name="org.pathvisio.util.tableviewer"/>
-			<package name="org.pathvisio.data"/>
-			<package name="org.pathvisio.search"/>
+			<package name="org.pathvisio"/>
 			<package name="org.pathvisio.R"/>
 			<package name="org.pathvisio.R.wizard"/>
+			<package name="org.pathvisio.biopax"/>
+			<package name="org.pathvisio.biopax.gui"/>
+			<package name="org.pathvisio.data"/>
+			<package name="org.pathvisio.debug"/>
+			<package name="org.pathvisio.gui"/>
+			<package name="org.pathvisio.gui.swing"/>
+			<package name="org.pathvisio.gui.swing.propertypanel"/>
+			<package name="org.pathvisio.gui.swt"/>
+			<package name="org.pathvisio.gui.swt.awt"/>
+			<package name="org.pathvisio.model"/>
+			<package name="org.pathvisio.preferences"/>
+			<package name="org.pathvisio.preferences.swing"/>
+			<package name="org.pathvisio.preferences.swt"/>
+			<package name="org.pathvisio.search"/>
+			<package name="org.pathvisio.util"/>
+			<package name="org.pathvisio.util.tableviewer"/>
+			<package name="org.pathvisio.view"/>
+			<package name="org.pathvisio.view.swing"/>
+			<package name="org.pathvisio.view.swt"/>
 			<package name="org.pathvisio.visualization"/>
 			<package name="org.pathvisio.visualization.colorset"/>
 			<package name="org.pathvisio.visualization.plugins"/>
-			<package name="org.pathvisio.preferences"/>
-			<package name="org.pathvisio.debug"/>
 			<sourcepath>			
 				<pathelement location="${src.dir}/core"/>
-				<pathelement location="${src.dir}/v2"/>
 				<pathelement location="${src.dir}/plugins"/>
+				<pathelement location="${src.dir}/swing"/>
+				<pathelement location="${src.dir}/swt"/>
+				<pathelement location="${src.dir}/v2"/>
 			</sourcepath>
 		</javadoc>		
 	</target>

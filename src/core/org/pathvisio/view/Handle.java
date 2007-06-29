@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
@@ -211,7 +212,10 @@ class Handle extends VPathwayElement
 	}
 			
 	public Shape getVOutline() {
-		return defaultStroke.createStrokedShape(getFillShape());
+		Shape fill = getFillShape();
+		Area outline = new Area(fill);
+		outline.add(new Area(defaultStroke.createStrokedShape(fill)));
+		return outline;
 	}
 	
 	private Shape getFillShape() {

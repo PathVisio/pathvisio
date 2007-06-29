@@ -72,8 +72,7 @@ public class Revision
 
 	<target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
 		<javac srcdir="." 
-               includes="src/v2/**,src/core/**,src/swt/**"
-			   excludes="core/org/pathvisio/view/VPathwayOld.java"
+               includes="src/v2/**,src/core/**,src/swt/**,src/swing/**"
 			   
                destdir="${build.v2.dir}">
           <classpath refid="project.v2.class.path"/>

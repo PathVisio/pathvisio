@@ -1,6 +1,5 @@
 package org.pathvisio.view.swing;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,7 +13,6 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 

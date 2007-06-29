@@ -20,13 +20,12 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
 {	
-	protected Stroke defaultStroke = new BasicStroke();
+	protected BasicStroke defaultStroke = new BasicStroke();
 	
 	protected VPathway canvas;
 	
@@ -194,7 +193,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	/**
 	 * Get the rectangular boundary of this object
 	 */
-	protected final Rectangle getVBounds()
+	protected Rectangle getVBounds()
 	{
 		return getVOutline().getBounds();
 	}

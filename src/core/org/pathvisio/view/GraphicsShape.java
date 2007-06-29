@@ -17,6 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -463,6 +464,15 @@ public abstract class GraphicsShape extends Graphics {
 		Area outline = new Area(fill);
 		outline.add(new Area(defaultStroke.createStrokedShape(fill)));
 		return outline;
+	}
+	
+	protected Rectangle getVBounds() {
+		//Override VPathwayElement, because getVOutline is too slow
+		Rectangle b = getFillShape().getBounds();
+		float sw = defaultStroke.getLineWidth();
+		b.x -= sw; b.y -= sw;
+		b.width += sw; b.height += sw;
+		return b;
 	}
 	
 	private Shape getFillShape() {

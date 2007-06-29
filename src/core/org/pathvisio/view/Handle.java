@@ -16,12 +16,10 @@
 //
 package org.pathvisio.view;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -218,16 +216,25 @@ class Handle extends VPathwayElement
 		return outline;
 	}
 	
+	protected Rectangle getVBounds() {
+		//Override VPathwayElement, because getVOutline is too slow
+		return getFillShape((int)defaultStroke.getLineWidth()).getBounds();
+	}
+	
 	private Shape getFillShape() {
+		return getFillShape(0);
+	}
+	
+	private Shape getFillShape(int sw) {
 		Shape s = null;
 		switch(direction) {
 		case DIRECTION_ROT:
-			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
-					WIDTH, HEIGHT);
+			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2 - sw, getVCenterY() - HEIGHT/2 - sw, 
+					WIDTH + sw, HEIGHT + sw);
 			break;
 		default:
-			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
-					WIDTH, HEIGHT);
+			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2 - sw, getVCenterY() - HEIGHT/2 - sw, 
+					WIDTH + sw, HEIGHT + sw);
 			break;
 		}
 		return s;

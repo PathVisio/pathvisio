@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
@@ -133,26 +132,17 @@ public class Engine {
 	public static void savePathway(File toFile) throws ConverterException {
 		pathway.writeToXml(toFile, true);
 	}
-	
-	private static void createVPathway(Pathway p) {
-		vPathway.fromGmmlData(pathway);
-		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
-	}
-		
+			
 	/**
 	 * Create a new pathway and view (Pathay and VPathway)
 	 */
 	public static void newPathway() {
 		pathway = new Pathway();
 		pathway.initMappInfo();
-		
+
 		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.PATHWAY_NEW));
 	}
-	
-	public static void newVPathway(Pathway pathway) {
-		vPathway.fromGmmlData(pathway);
-	}
-	
+		
 	/**
 	 * Find out whether a drawing is currently open or not
 	 * @return true if a drawing is open, false if not
@@ -243,22 +233,5 @@ public class Engine {
 	
 	public interface ApplicationEventListener {
 		public void applicationEvent(ApplicationEvent e);
-	}
-	
-	public static class ApplicationEvent extends EventObject {
-		private static final long serialVersionUID = 1L;
-		public static final int PATHWAY_OPENED = 1;
-		public static final int PATHWAY_NEW = 2;
-		public static final int APPLICATION_CLOSE = 3;
-		public static final int VPATHWAY_CREATED = 4;
-
-		public Object source;
-		public int type;
-		
-		public ApplicationEvent(Object source, int type) {
-			super(source);
-			this.source = source;
-			this.type = type;
-		}
 	}
 }

@@ -29,9 +29,9 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
-import org.pathvisio.Engine.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.gui.BiopaxDialog;
 import org.pathvisio.model.ConverterException;
@@ -614,10 +614,10 @@ public class CommonActions
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
-			if(e.type == ApplicationEvent.PATHWAY_OPENED) {
+			if(e.type == ApplicationEvent.VPATHWAY_OPENED) {
 				Engine.getActiveVPathway().setEditMode(isChecked());
 			}
-			else if(e.type == ApplicationEvent.PATHWAY_NEW) {
+			else if(e.type == ApplicationEvent.VPATHWAY_NEW) {
 				switchEditMode(true);
 			}
 		}

@@ -126,10 +126,11 @@ public class Engine {
 		if(_pathway != null) //Only continue if the data is correctly loaded
 		{
 			pathway = _pathway;
+			fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
 			if(wrapper != null) {
 				createVPathway(_pathway, wrapper);
+				fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
 			}
-			fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
 		}
 		
 	}
@@ -162,10 +163,12 @@ public class Engine {
 		pathway = new Pathway();
 		pathway.initMappInfo();
 		
+		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_NEW));
+		
 		if(wrapper != null) {
 			newVPathway(pathway, wrapper);
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_NEW));
 		}
-		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.PATHWAY_NEW));
 	}
 	
 	public static void newVPathway(Pathway pathway, VPathwayWrapper wrapper) {

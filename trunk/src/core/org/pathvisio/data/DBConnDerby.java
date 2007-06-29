@@ -16,8 +16,6 @@
 //
 package org.pathvisio.data;
 
-import org.pathvisio.gui.swt.Engine;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,9 +33,9 @@ import java.util.zip.ZipOutputStream;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.pathvisio.util.FileUtils;
+import org.pathvisio.Engine;
 import org.pathvisio.debug.StopWatch;
+import org.pathvisio.util.FileUtils;
 
 /**
    DBConnector implementation using the Derby driver, with the database in a

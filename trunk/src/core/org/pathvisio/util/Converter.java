@@ -24,9 +24,9 @@ package org.pathvisio.util;
 
 import java.io.File;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.debug.Logger;
 
 /**
  * @author Thomas Kelder (t.a.j.kelder@student.tue.nl)

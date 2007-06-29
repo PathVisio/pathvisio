@@ -32,8 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.jdom.Element;
-
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SwtUtils;
 
@@ -78,7 +77,7 @@ public class ColorCriterion extends ColorSetObject {
 			criterion = new Criterion();
 			criterion.setExpression(expression);
 			Element ce = xml.getChild(XML_ELM_COLOR);
-			if(ce != null) color = ColorConverter.parseColorElement(ce);
+			if(ce != null) color = SwtUtils.color2rgb(ColorConverter.parseColorElement(ce));
 		} catch(Exception e) {
 			Engine.log.error("Unable to load ColorCriterion", e);
 		}
@@ -88,7 +87,7 @@ public class ColorCriterion extends ColorSetObject {
 	static final String XML_ATTR_EXPRESSION = "expression";
 	public Element toXML() {
 		Element elm = super.toXML();
-		Element ce = ColorConverter.createColorElement(XML_ELM_COLOR, getColor());
+		Element ce = ColorConverter.createColorElement(XML_ELM_COLOR, SwtUtils.rgb2color(getColor()));
 		elm.addContent(ce);
 		elm.setAttribute(XML_ATTR_EXPRESSION, criterion.getExpression());
 		

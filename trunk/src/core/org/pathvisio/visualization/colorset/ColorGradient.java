@@ -45,9 +45,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
-
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.SwtUtils;
 import org.pathvisio.util.TableColumnResizer;
 
 /**
@@ -215,7 +215,7 @@ public class ColorGradient extends ColorSetObject {
 		
 		public ColorValuePair(Element xml) {
 			Object o = xml.getChildren(XML_ELM_COLOR).get(0);
-			color = ColorConverter.parseColorElement((Element)o);
+			color = SwtUtils.color2rgb(ColorConverter.parseColorElement((Element)o));
 			value = Double.parseDouble(xml.getAttributeValue(XML_ATTR_VALUE));
 		}
 		
@@ -239,7 +239,7 @@ public class ColorGradient extends ColorSetObject {
 		public Element toXML() {
 			Element elm = new Element(XML_ELEMENT);
 			elm.setAttribute(XML_ATTR_VALUE, Double.toString(value));
-			elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR, color));
+			elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR, SwtUtils.rgb2color(color)));
 			return elm;
 		}
 	}

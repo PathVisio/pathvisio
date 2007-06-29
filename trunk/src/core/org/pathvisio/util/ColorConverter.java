@@ -16,10 +16,11 @@
 //
 package org.pathvisio.util;
 
+import java.awt.Color;
+
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.model.Color;
+import org.pathvisio.Engine;
 
 public abstract class ColorConverter
 {		    
@@ -33,8 +34,12 @@ public abstract class ColorConverter
 		return rgb.red + "," + rgb.green + "," + rgb.blue;
 	}
 	
+	public static String getRgbString(java.awt.Color c) {
+		return c.getRed() + "," + c.getGreen() + "," + c.getBlue();
+	}
+	
 	public static RGB toRGB(Color c) {
-		return new RGB(c.red, c.green, c.blue);
+		return new RGB(c.getRed(), c.getGreen(), c.getBlue());
 	}
 	
 	public static Color fromRGB(RGB rgb) {
@@ -64,24 +69,40 @@ public abstract class ColorConverter
 		}
 	}
 	    
+	public static java.awt.Color parseColorString(String colorString)
+	{
+		String[] s = colorString.split(",");
+		try 
+		{
+			return new java.awt.Color(
+					Integer.parseInt(s[0]), 
+					Integer.parseInt(s[1]), 
+					Integer.parseInt(s[2]));
+		}
+		catch(Exception e)
+		{
+			throw new IllegalArgumentException("Unable to parse color from '" + colorString + "'", e);
+		}
+	}
+	    
     final static String XML_ELEMENT_COLOR = "color";
 	final static String XML_COLOR_R = "red";
 	final static String XML_COLOR_G = "green";
 	final static String XML_COLOR_B = "blue";
-    public static Element createColorElement(String name, RGB rgb) {
+    public static Element createColorElement(String name, Color rgb) {
     	Element elm = new Element(XML_ELEMENT_COLOR);
     	elm.setName(name);
-    	elm.setAttribute(XML_COLOR_R, Integer.toString(rgb.red));
-    	elm.setAttribute(XML_COLOR_G, Integer.toString(rgb.green));
-    	elm.setAttribute(XML_COLOR_B, Integer.toString(rgb.blue));
+    	elm.setAttribute(XML_COLOR_R, Integer.toString(rgb.getRed()));
+    	elm.setAttribute(XML_COLOR_G, Integer.toString(rgb.getGreen()));
+    	elm.setAttribute(XML_COLOR_B, Integer.toString(rgb.getBlue()));
     	
     	return elm;
     }
     
-    public static RGB parseColorElement(Element xml) {
+    public static Color parseColorElement(Element xml) {
     	int r = Integer.parseInt(xml.getAttributeValue(XML_COLOR_R));
     	int g = Integer.parseInt(xml.getAttributeValue(XML_COLOR_G));
     	int b = Integer.parseInt(xml.getAttributeValue(XML_COLOR_B));
-    	return new RGB(r,g,b);
+    	return new Color(r,g,b);
     }
 }

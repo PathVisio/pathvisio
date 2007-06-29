@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swt;
 
+import java.util.prefs.Preferences;
+
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -26,15 +28,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;
-import org.pathvisio.gui.swt.BackpagePanel;
-import org.pathvisio.gui.swt.CommonActions;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.gui.swt.GuiMain;
-import org.pathvisio.gui.swt.MainWindowBase;
-import org.pathvisio.gui.swt.PropertyPanel;
-import org.pathvisio.gui.swt.TabbedSidePanel;
-import org.pathvisio.preferences.swt.Preferences;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.visualization.LegendPanel;
 
@@ -139,7 +136,7 @@ public class MainWindow extends MainWindowBase
 		
 		GuiMain.loadImages(shell.getDisplay());
 		
-		shell.setImage(Engine.getImageRegistry().get("shell.icon"));
+		shell.setImage(SwtEngine.getImageRegistry().get("shell.icon"));
 		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
@@ -163,16 +160,16 @@ public class MainWindow extends MainWindowBase
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
 		
-		int sidePanelSize = Engine.getPreferences().getInt(Preferences.PREF_SIDEPANEL_SIZE);
+		int sidePanelSize = GlobalPreference.getValueInt(SwtPreference.SWT_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
-		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
+		setStatus("Using Gene Database: '" + SwtPreference.SWT_CURR_GDB.getValue() + "'");
 
-		Engine.updateTitle();
+		SwtEngine.updateTitle();
 		
 		return parent;		
 	};

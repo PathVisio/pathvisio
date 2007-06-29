@@ -63,18 +63,20 @@ public class Revision
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
-		<javac srcdir="src" debug="true"
-			includes="v1/**,core/**"
+		<javac srcdir="." debug="true"
+			includes="src/v1/**,src/core/**,swing/**"
 			destdir="${build.v1.dir}">
 			<classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>
 
 	<target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
-		<javac srcdir="src" 
-                    includes="v2/**,core/**"
-                    destdir="${build.v2.dir}">
-                    <classpath refid="project.v2.class.path"/>
+		<javac srcdir="." 
+               includes="src/v2/**,src/core/**,swing/**"
+			   excludes="core/org/pathvisio/view/VPathwayOld.java"
+			   
+               destdir="${build.v2.dir}">
+          <classpath refid="project.v2.class.path"/>
 		</javac>
 		<javac srcdir="src" 
                     includes="plugins/**"

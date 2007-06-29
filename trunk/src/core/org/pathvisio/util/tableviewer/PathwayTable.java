@@ -38,12 +38,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.preferences.swt.Preferences;
+import org.pathvisio.Engine;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.TableColumnResizer;
-import org.pathvisio.util.tableviewer.TableData.Row;
 import org.pathvisio.util.SwtUtils.FileInputDialog;
+import org.pathvisio.util.tableviewer.TableData.Row;
 
 
 /**
@@ -139,7 +139,7 @@ public class PathwayTable extends Composite {
 				File pwFile = new File(pw);
 				if(!pwFile.canRead()) {
 					FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-					fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
+					fd.setFilterPath(SwtPreference.SWT_DIR_PWFILES.getValue());
 					FileInputDialog fid = new FileInputDialog(getShell(), "Specify pathway file", 
 							"Couldn't find pathway file, please specify which pathway to open",
 							pwFile.getAbsolutePath(), null, fd);
@@ -147,7 +147,7 @@ public class PathwayTable extends Composite {
 						pw = fid.getValue();
 					}
 				}
-				Engine.openPathway(pw);
+				SwtEngine.openPathway(pw);
 			} catch(Exception ex) { 
 				Engine.log.error("when trying to open pathway from pathway table", ex);
 			}

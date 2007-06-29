@@ -16,10 +16,6 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.gui.swt.Engine.ApplicationEvent;
-import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,12 +33,15 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.Rengine;
-
+import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEvent;
+import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.R.RCommands.RException;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.JarUtils;
 import org.pathvisio.util.Utils;
-import org.pathvisio.R.RCommands.RException;
+import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.Rengine;
 
 public class RController implements ApplicationEventListener{	
 	private static Rengine re;
@@ -65,7 +64,7 @@ public class RController implements ApplicationEventListener{
 	public static boolean startR() {
 		//Start R-engine (with progress monitor)
 		try {
-			new ProgressMonitorDialog(Engine.getWindow().getShell()).run(true, true,
+			new ProgressMonitorDialog(SwtEngine.getWindow().getShell()).run(true, true,
 					new IRunnableWithProgress() {
 				public void run(IProgressMonitor m) throws 	InvocationTargetException, 
 				InterruptedException 
@@ -206,10 +205,10 @@ public class RController implements ApplicationEventListener{
 	
 	private static String locateRExec() {
 		final StringBuilder cmd = new StringBuilder();
-		Engine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+		SwtEngine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String exec = Utils.getOS() == Utils.OS_WINDOWS ? "R.exe" : "R";
-				InputDialog libDialog = new InputDialog(Engine.getWindow().getShell(),
+				InputDialog libDialog = new InputDialog(SwtEngine.getWindow().getShell(),
 						"Unable to find R executable",
 						"Unable to locate " + exec + "\nPlease install R (" + WWW_R + ") " +
 						" or specify location:", "", null);
@@ -395,9 +394,9 @@ public class RController implements ApplicationEventListener{
 	}
 		
 	public static void openError(final String msg, final Throwable e) {
-		Engine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+		SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openError(Engine.getWindow().getShell(), 
+				MessageDialog.openError(SwtEngine.getWindow().getShell(), 
 						ERR_MSG_PRE, (msg == null ? "" : msg + "\n \n Details:\n") + e.getMessage() + 
 						" (" + e.getClass().getName() + ")");
 			}
@@ -405,7 +404,7 @@ public class RController implements ApplicationEventListener{
 	}
 		
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.CLOSE_APPLICATION) {
+		if(e.type == ApplicationEvent.APPLICATION_CLOSE) {
 			endR(); //End the R process
 			if(rOut != null) { //Close the R output file
 				try { 

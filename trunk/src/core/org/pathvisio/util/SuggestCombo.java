@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
 import org.pathvisio.util.SuggestCombo.SuggestionProvider.SuggestThread;
 
 public class SuggestCombo extends Composite {

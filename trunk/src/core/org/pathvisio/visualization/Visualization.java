@@ -38,17 +38,16 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
-
+import org.pathvisio.Engine;
+import org.pathvisio.data.Gex;
+import org.pathvisio.data.Gex.ExpressionDataEvent;
+import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.util.Utils;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.plugins.PluginManager;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
-import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gex.ExpressionDataEvent;
-import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.view.Graphics;
 
 /**
  * Represents a set of configured visualization plugins

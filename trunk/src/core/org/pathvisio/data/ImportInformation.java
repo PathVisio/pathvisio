@@ -21,7 +21,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.Engine;
 
 /**
  * This class contains the information needed to start importing a delimited

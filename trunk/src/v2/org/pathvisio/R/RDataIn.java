@@ -16,9 +16,6 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.gui.swt.TabbedSidePanel;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +25,12 @@ import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-
-import org.pathvisio.util.tableviewer.PathwayTable;
-import org.pathvisio.util.tableviewer.TableData;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.gui.swt.TabbedSidePanel;
+import org.pathvisio.util.tableviewer.PathwayTable;
+import org.pathvisio.util.tableviewer.TableData;
 
 public class RDataIn {
 	RObjectContainer inFileObjects;
@@ -99,7 +97,7 @@ public class RDataIn {
 	}
 	
 	public static void displayResults(List<ResultSet> results, String tabName) {		
-		TabbedSidePanel sp = Engine.getWindow().getSidePanel();
+		TabbedSidePanel sp = SwtEngine.getWindow().getSidePanel();
 		
 		StatsResultTable srt = new StatsResultTable(sp.getTabFolder(), SWT.NULL);
 		srt.setResults(results);

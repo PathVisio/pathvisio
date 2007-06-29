@@ -16,7 +16,9 @@
 //
 package org.pathvisio.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public enum LineType 
@@ -57,5 +59,16 @@ public enum LineType
 	static LineType getByGpmlName(String value)
 	{
 		return gpmlMapping.get (value);
+	}
+	
+	static public String[] getNames()
+	{
+		List<String> result = new ArrayList<String>();		
+		for (LineType l : LineType.values())
+		{
+			result.add("" + l.gpmlName);
+		}
+		String [] resultArray = new String [result.size()];
+		return result.toArray(resultArray);
 	}
 }

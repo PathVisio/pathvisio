@@ -20,8 +20,8 @@ import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.pathvisio.Engine;
 import org.pathvisio.biopax.BiopaxManager;
-import org.pathvisio.gui.swt.Engine;
 
 public class BiopaxCellEditor extends DialogCellEditor {	
 	public BiopaxCellEditor(Composite parent, String label) {
@@ -35,7 +35,7 @@ public class BiopaxCellEditor extends DialogCellEditor {
 	}
 
 	protected Object openDialogBox(Control cellEditorWindow) {
-		BiopaxManager bpm = new BiopaxManager(Engine.getPathway().getBiopax().getBiopax());
+		BiopaxManager bpm = new BiopaxManager(Engine.getActivePathway().getBiopax().getBiopax());
 		BiopaxRefDialog d = new BiopaxRefDialog(cellEditorWindow.getShell(), bpm, (String)getValue());
 		d.open();
 		return d.getRef();

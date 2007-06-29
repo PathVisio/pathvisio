@@ -30,8 +30,9 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.gui.swt.SwtEngine;
 
 public class JarUtils {
 	static final String PREFIX_TMP = Globals.APPLICATION_NAME;
@@ -75,7 +76,7 @@ public class JarUtils {
 	public static List<String> listResources(String path) throws IOException {
 		List<String> resNames = new ArrayList<String>();
 
-		URL url = Engine.class.getClassLoader().getResource(path);
+		URL url = SwtEngine.class.getClassLoader().getResource(path);
 		if(url != null) {
 			if(url.getProtocol().equals("jar")) {
 				JarURLConnection conn = (JarURLConnection)url.openConnection();
@@ -97,7 +98,7 @@ public class JarUtils {
 	 * @return the URL pointing to the resource
 	 */
 	public static URL getResourceURL(String name) {
-		URL url = Engine.class.getClassLoader().getResource(name);
+		URL url = SwtEngine.class.getClassLoader().getResource(name);
 		if(url == null) Engine.log.error("Couldn't load resource '" + name + "'");
 		return url;
 	}
@@ -108,7 +109,7 @@ public class JarUtils {
 	 * @return the URL pointing to the resource
 	 */
 	public static InputStream getResourceInputStream(String name) {
-		InputStream in = Engine.class.getClassLoader().getResourceAsStream(name);
+		InputStream in = SwtEngine.class.getClassLoader().getResourceAsStream(name);
 		if(in == null) Engine.log.error("Couldn't load resource '" + name + "'");
 		return in;
 	}

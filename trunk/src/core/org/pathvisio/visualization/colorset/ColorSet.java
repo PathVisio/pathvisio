@@ -24,10 +24,11 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.preferences.swt.Preferences;
+import org.pathvisio.Engine;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 
@@ -40,9 +41,9 @@ public class ColorSet {
 	public static final int ID_COLOR_NO_GENE_FOUND = 2;
 	public static final int ID_COLOR_NO_DATA_FOUND = 3;
 	
-	RGB color_no_criteria_met = Preferences.getColorProperty(Preferences.PREF_COL_NO_CRIT_MET);
-	RGB color_no_gene_found = Preferences.getColorProperty(Preferences.PREF_COL_NO_GENE_FOUND);
-	RGB color_no_data_found = Preferences.getColorProperty(Preferences.PREF_COL_NO_DATA_FOUND);
+	RGB color_no_criteria_met = SwtUtils.color2rgb(GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_CRIT_MET));
+	RGB color_no_gene_found = SwtUtils.color2rgb(GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_GENE_FOUND));
+	RGB color_no_data_found = SwtUtils.color2rgb(GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_DATA_FOUND));
 		
 	String name;
 	
@@ -177,9 +178,9 @@ public class ColorSet {
 		Element elm = new Element(XML_ELEMENT);
 		elm.setAttribute(XML_ATTR_NAME, name);
 		
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NCM, color_no_criteria_met));
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NGF, color_no_gene_found));
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NDF, color_no_data_found));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NCM, SwtUtils.rgb2color(color_no_criteria_met)));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NGF, SwtUtils.rgb2color(color_no_gene_found)));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NDF, SwtUtils.rgb2color(color_no_data_found)));
 		
 		for(ColorSetObject cso : colorSetObjects)
 			elm.addContent(cso.toXML());
@@ -197,11 +198,11 @@ public class ColorSet {
 				else if(name.equals(ColorCriterion.XML_ELEMENT_NAME))
 					cs.addObject(new ColorCriterion(cs, elm));
 				else if(name.equals(XML_ELM_COLOR_NCM))
-					cs.setColor(ID_COLOR_NO_CRITERIA_MET, ColorConverter.parseColorElement(elm));
+					cs.setColor(ID_COLOR_NO_CRITERIA_MET, SwtUtils.color2rgb(ColorConverter.parseColorElement(elm)));
 				else if(name.equals(XML_ELM_COLOR_NGF))
-					cs.setColor(ID_COLOR_NO_GENE_FOUND, ColorConverter.parseColorElement(elm));
+					cs.setColor(ID_COLOR_NO_GENE_FOUND, SwtUtils.color2rgb(ColorConverter.parseColorElement(elm)));
 				else if(name.equals(XML_ELM_COLOR_NDF))
-					cs.setColor(ID_COLOR_NO_DATA_FOUND, ColorConverter.parseColorElement(elm));
+					cs.setColor(ID_COLOR_NO_DATA_FOUND, SwtUtils.color2rgb(ColorConverter.parseColorElement(elm)));
 			} catch(Exception ex) {
 				Engine.log.error("Unable to parse colorset xml", ex);
 			}
@@ -212,7 +213,7 @@ public class ColorSet {
 	static void printParseError(String criterion, Exception e) {
 		Engine.log.error("Unable to parse colorset data stored in " +
 				"expression database: " + criterion, e);
-		MessageDialog.openWarning(Engine.getWindow().getShell(), 
+		MessageDialog.openWarning(SwtEngine.getWindow().getShell(), 
 					"Warning", "Unable to parse the colorset data in this expression dataset");
 	}
 	

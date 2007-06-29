@@ -18,16 +18,14 @@ package org.pathvisio.util;
 
 import java.util.ArrayList;
 
+import org.pathvisio.Engine;
+import org.pathvisio.data.DataSources;
+import org.pathvisio.data.Gdb.IdCodePair;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.data.DataSources;
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.model.MappFormat;
 
 /**
  * This sax handler can be used to quickly parse pathway information from

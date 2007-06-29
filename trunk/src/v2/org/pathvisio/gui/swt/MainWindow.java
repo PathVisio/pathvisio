@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.Engine;
 import org.pathvisio.R.RController;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
@@ -47,12 +48,8 @@ import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.gui.swt.BackpagePanel;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.gui.swt.GuiMain;
-import org.pathvisio.gui.swt.PropertyPanel;
-import org.pathvisio.gui.swt.TabbedSidePanel;
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.visualization.LegendPanel;
 import org.pathvisio.visualization.VisualizationDialog;
@@ -331,7 +328,7 @@ public class MainWindow extends MainWindowBase
 		
 		public void run() {
 			FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-			fd.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_RDATA));
+			fd.setFilterPath(SwtPreference.SWT_DIR_RDATA.getValue());
 			fd.setFilterNames(new String[] {"R data file"});
 			fd.setFilterExtensions(new String[] {"*.*"});
 			File file = new File(fd.open());
@@ -416,7 +413,7 @@ public class MainWindow extends MainWindowBase
 		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);
 		dataMenu.add(visualizationDialogAction);
-		if(Engine.USE_R) {
+		if(SwtEngine.USE_R) {
 			MenuManager statsMenu = new MenuManager("&Pathway statistics");
 			dataMenu.add(statsMenu);
 			statsMenu.add(rStatsAction);
@@ -475,7 +472,7 @@ public class MainWindow extends MainWindowBase
 		
 		GuiMain.loadImages(shell.getDisplay());
 		
-		shell.setImage(Engine.getImageRegistry().get("shell.icon"));
+		shell.setImage(SwtEngine.getImageRegistry().get("shell.icon"));
 		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
@@ -501,16 +498,16 @@ public class MainWindow extends MainWindowBase
 		rightPanel.addTab(legend, "Legend");
 		rightPanel.addTab(visPanel, "Visualization");
 		
-		int sidePanelSize = Engine.getPreferences().getInt(Preferences.PREF_SIDEPANEL_SIZE);
+		int sidePanelSize = GlobalPreference.getValueInt(SwtPreference.SWT_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
-		setStatus("Using Gene Database: '" + Engine.getPreferences().getString(Preferences.PREF_CURR_GDB) + "'");
+		setStatus("Using Gene Database: '" + SwtPreference.SWT_CURR_GDB.getValue() + "'");
 
-		Engine.updateTitle();
+		SwtEngine.updateTitle();
 		
 		return parent;		
 	};

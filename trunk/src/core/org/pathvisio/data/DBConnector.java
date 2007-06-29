@@ -24,9 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.preferences.swt.Preferences;
+import org.pathvisio.Engine;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
 /**
  * This class provides the connection for the databases (annotation and expression database) used
@@ -221,10 +220,10 @@ public abstract class DBConnector {
 		String filterPath = null;
 		switch(getDbType()) {
 		case TYPE_GDB: 
-			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_GDB);
+			filterPath = SwtPreference.SWT_DIR_GDB.getValue();
 			break;
 		case TYPE_GEX:
-			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_EXPR);
+			filterPath = SwtPreference.SWT_DIR_EXPR.getValue();
 			break;
 		}
 		if(filterPath != null) fileDialog.setFilterPath(filterPath);
@@ -247,10 +246,10 @@ public abstract class DBConnector {
 		String filterPath = null;
 		switch(getDbType()) {
 		case TYPE_GDB: 
-			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_GDB);
+			filterPath = SwtPreference.SWT_DIR_GDB.getValue();
 			break;
 		case TYPE_GEX:
-			filterPath = Engine.getPreferences().getString(Preferences.PREF_DIR_EXPR);
+			filterPath = SwtPreference.SWT_DIR_EXPR.getValue();
 			break;
 		}
 		if(filterPath != null) dirDialog.setFilterPath(filterPath);

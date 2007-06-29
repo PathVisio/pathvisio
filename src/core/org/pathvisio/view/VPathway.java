@@ -487,26 +487,47 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 */
 	public void mouseDoubleClick(MouseEvent e) {	}
 
-	public void draw(Graphics2D g2d) {
-		draw(g2d, null);
+	public void draw (Graphics2D g2d)
+	{
+		draw (g2d, null, true);
+	}
+
+	public void draw (Graphics2D g2d, Rectangle area)
+	{
+		draw (g2d, area, true);
 	}
 	
 	/**
-	 * Paints all components in the drawing.
-	 * This method is called automatically in the 
-	 * painting process
+	 Paints all components in the drawing.
+	 This method is called automatically in the 
+	 painting process
+
+	 @param g2d Graphics2D object the pathway should be drawn onto
+	 @param area area that should be updated, null if you want to update the entire pathway
+	 @param erase true if the background should be erased
 	 */
-	public void draw (Graphics2D g2d, Rectangle area)
+	public void draw (Graphics2D g2d, Rectangle area, boolean erase)
 	{		
-		if(area == null) {
+		if(area == null)
+		{
 			area = g2d.getClipBounds();
+			if (area == null)
+			{
+				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+				int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+				area = new Rectangle (0, 0, width, height);
+			}
 		}
 		
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		if (erase)
+		{
+			g2d.setColor(java.awt.Color.WHITE);
+			g2d.fillRect(area.x, area.y, area.width, area.height);
+		}
 		
-		g2d.setColor(java.awt.Color.WHITE);
-		g2d.fillRect(area.x, area.y, area.width, area.height);
 		g2d.setColor(java.awt.Color.BLACK);
 		Collections.sort(drawingObjects);
 		

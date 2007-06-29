@@ -48,9 +48,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.pathvisio.Engine;
 import org.pathvisio.Globals;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.preferences.swt.Preferences;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.TableColumnResizer;
 
 /**
@@ -160,7 +160,7 @@ public class GexImportWizard extends Wizard {
 							"*.*" });
 					fileDialog.setFilterNames(new String[] { "Text file",
 							"All files" });
-					fileDialog.setFilterPath(Engine.getPreferences().getString(Preferences.PREF_DIR_EXPR));
+					fileDialog.setFilterPath(SwtPreference.SWT_DIR_EXPR.getValue());
 					String file = fileDialog.open();
 					if (file != null) {
 						txtText.setText(file);

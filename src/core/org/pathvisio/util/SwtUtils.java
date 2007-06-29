@@ -16,6 +16,10 @@
 //
 package org.pathvisio.util;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DirectColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -33,6 +37,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Transform;
@@ -43,10 +48,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.view.VPathway;
+import org.pathvisio.Engine;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.view.VPathway;
 
 public class SwtUtils {
 
@@ -74,6 +79,14 @@ public class SwtUtils {
 		return new Color(display, rgbNew);
 	}
 	
+	public static RGB color2rgb(java.awt.Color c) {
+		return new RGB(c.getRed(), c.getGreen(), c.getBlue());
+	}
+	
+	public static java.awt.Color rgb2color(RGB rgb) {
+		return new java.awt.Color(rgb.red, rgb.green, rgb.blue);
+	}
+	
 	/**
 	 * Change the given {@link Color}; this method disposes the old color for you
 	 * @param cOld	the old {@link Color}
@@ -81,14 +94,14 @@ public class SwtUtils {
 	 * @param display	the display to assign the color to
 	 * @return	a brand new {@link Color}
 	 */
-	public static Color changeColor(Color cOld, org.pathvisio.model.Color rgbNew, Display display)
+	public static Color changeColor(Color cOld, java.awt.Color rgbNew, Display display)
 	{
 		if(cOld != null && !cOld.isDisposed())
 		{
 			cOld.dispose();
 			cOld = null;
 		}
-		if(rgbNew == null) rgbNew = new org.pathvisio.model.Color(0,0,0);
+		if(rgbNew == null) rgbNew = new java.awt.Color(0,0,0);
 		return new Color(display, ColorConverter.toRGB(rgbNew));
 	}
 	
@@ -117,6 +130,59 @@ public class SwtUtils {
 		return iNew != null ? new Image(display, iNew) : null;
 	}
 	
+	  public static ImageData convertImageToSWT(BufferedImage bufferedImage) {
+		    if (bufferedImage.getColorModel() instanceof DirectColorModel) {
+		      DirectColorModel colorModel = (DirectColorModel) bufferedImage
+		          .getColorModel();
+		      PaletteData palette = new PaletteData(colorModel.getRedMask(),
+		          colorModel.getGreenMask(), colorModel.getBlueMask());
+		      ImageData data = new ImageData(bufferedImage.getWidth(),
+		          bufferedImage.getHeight(), colorModel.getPixelSize(),
+		          palette);
+		      WritableRaster raster = bufferedImage.getRaster();
+		      int[] pixelArray = new int[4];
+		      for (int y = 0; y < data.height; y++) {
+		        for (int x = 0; x < data.width; x++) {
+		          raster.getPixel(x, y, pixelArray);
+		          int pixel = palette.getPixel(new RGB(pixelArray[0],
+		              pixelArray[1], pixelArray[2]));
+		          data.setPixel(x, y, pixel);
+		        }
+		      }
+		      return data;
+		    } else if (bufferedImage.getColorModel() instanceof IndexColorModel) {
+		      IndexColorModel colorModel = (IndexColorModel) bufferedImage
+		          .getColorModel();
+		      int size = colorModel.getMapSize();
+		      byte[] reds = new byte[size];
+		      byte[] greens = new byte[size];
+		      byte[] blues = new byte[size];
+		      colorModel.getReds(reds);
+		      colorModel.getGreens(greens);
+		      colorModel.getBlues(blues);
+		      RGB[] rgbs = new RGB[size];
+		      for (int i = 0; i < rgbs.length; i++) {
+		        rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF,
+		            blues[i] & 0xFF);
+		      }
+		      PaletteData palette = new PaletteData(rgbs);
+		      ImageData data = new ImageData(bufferedImage.getWidth(),
+		          bufferedImage.getHeight(), colorModel.getPixelSize(),
+		          palette);
+		      data.transparentPixel = colorModel.getTransparentPixel();
+		      WritableRaster raster = bufferedImage.getRaster();
+		      int[] pixelArray = new int[1];
+		      for (int y = 0; y < data.height; y++) {
+		        for (int x = 0; x < data.width; x++) {
+		          raster.getPixel(x, y, pixelArray);
+		          data.setPixel(x, y, pixelArray[0]);
+		        }
+		      }
+		      return data;
+		    }
+		    return null;
+		  }
+	  
 	public static void setCompositeAndChildrenEnabled(Composite comp, boolean enable) {
 		comp.setEnabled(enable);
 		for(Control c : comp.getChildren()) {
@@ -139,7 +205,7 @@ public class SwtUtils {
 	static int ii;
 	static int pixratio;
 	public static Font adjustFontSize(Font f, Point toFit, String text, GC gc, Display display) {
-		VPathway d = Engine.getVPathway();
+		VPathway d = Engine.getActiveVPathway();
 		pixratio = (int)Math.ceil(3 * (d == null ? 1 : d.getZoomFactor()));
 		ii = 3;
 		incrs = new int[3];
@@ -194,6 +260,20 @@ public class SwtUtils {
 		//System.err.println("pix: " + pix);
 		//System.err.println("point: " + (double)pix/pixratio);
 		return pix / pixratio; 
+	}
+	
+	public static FontData awtFont2FontData(java.awt.Font f) {
+		int style = SWT.NORMAL;
+		if(f.isBold()) style |= SWT.BOLD;
+		if(f.isItalic()) style |= SWT.ITALIC;
+		return new FontData(f.getName(), f.getSize(), style);
+	}
+	
+	public static java.awt.Font fontData2awtFont(FontData fd) {
+		int style = java.awt.Font.PLAIN;
+		if((fd.style & SWT.BOLD) != 0) style |= java.awt.Font.BOLD;
+		if((fd.style & SWT.ITALIC) != 0) style |= java.awt.Font.ITALIC;
+		return new java.awt.Font(fd.getName(), fd.getHeight(), style);		
 	}
 	
 	static Font setFontSize(int size, Font f, GC gc, Display display) {
@@ -378,7 +458,7 @@ public class SwtUtils {
 
 			runException = null;
 			if(runAsSyncExec) {//Invoke in syncExec, method may access widgets from this thread
-				Engine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+				SwtEngine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						runException = doInvoke();
 					}
@@ -420,7 +500,7 @@ public class SwtUtils {
 		 * @param w
 		 */
 		public static void monitorWorked(final int w) {
-			Engine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+			SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if(monitor != null) monitor.worked(w);
 				}
@@ -433,7 +513,7 @@ public class SwtUtils {
 		 * @see IProgressMonitor#setTaskName(String)
 		 */
 		public static void monitorSetTaskName(final String taskName) {
-			Engine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+			SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if(monitor != null) monitor.setTaskName(taskName);
 				}
@@ -447,9 +527,9 @@ public class SwtUtils {
 		 * @see MessageDialog#openInformation(org.eclipse.swt.widgets.Shell, String, String)
 		 */
 		public void openMessageDialog(final String title, final String msg) {
-			Engine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+			SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					MessageDialog.openInformation(Engine.getWindow().getShell(), title, msg);
+					MessageDialog.openInformation(SwtEngine.getWindow().getShell(), title, msg);
 				}
 			});
 		}

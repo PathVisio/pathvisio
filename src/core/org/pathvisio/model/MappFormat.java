@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
-import org.pathvisio.gui.swt.Engine;
 
 /**
  * The class MappFormat is responsible for all interaction with 

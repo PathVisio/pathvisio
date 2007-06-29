@@ -36,13 +36,13 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
+import org.pathvisio.data.Gex;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.Utils;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
-import org.pathvisio.data.Gex;
 
 public abstract class PluginManager {
 	static final String PLUGIN_PKG = "org.pathvisio.visualization.plugins";
@@ -156,7 +156,7 @@ public abstract class PluginManager {
 	
 	static Document getAdditionalXML() {
 		if(addDoc == null) {
-			File f = new File(Engine.getApplicationDir(), FILE_ADD_PLUGINS);
+			File f = new File(SwtEngine.getApplicationDir(), FILE_ADD_PLUGINS);
 			if(!f.exists()) {
 				return createXML();
 			} else {
@@ -226,7 +226,7 @@ public abstract class PluginManager {
 	static void saveXML(Document doc) {
 		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 		try {
-			FileWriter fw = new FileWriter(new File(Engine.getApplicationDir(), FILE_ADD_PLUGINS));
+			FileWriter fw = new FileWriter(new File(SwtEngine.getApplicationDir(), FILE_ADD_PLUGINS));
 			out.output(doc, fw);
 			fw.close();
 		} catch(IOException e) {

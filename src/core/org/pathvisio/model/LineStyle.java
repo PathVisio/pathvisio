@@ -16,7 +16,14 @@
 //
 package org.pathvisio.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LineStyle {
 	public static final int SOLID = 0;
 	public static final int DASHED = 1;
+	
+	public static String[] getNames() {
+		return new String[] {"Solid", "Dashed"};
+	}
 }

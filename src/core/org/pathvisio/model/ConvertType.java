@@ -16,6 +16,7 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Color;
 import java.math.BigDecimal;
 
 public class ConvertType
@@ -102,7 +103,7 @@ public class ConvertType
     		return "-1";
     	else
     	{
-	    	int c = ((int)rgb.red) + ((int)rgb.green << 8) + ((int)rgb.blue << 16);
+	    	int c = (rgb.getRed()) + (rgb.getGreen() << 8) + (rgb.getBlue() << 16);
 	    	return "" + c;
     	}
     }

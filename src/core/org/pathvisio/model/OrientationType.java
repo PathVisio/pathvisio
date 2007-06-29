@@ -46,4 +46,7 @@ public class OrientationType {
 		return (String)orientationMappings.get(value);
 	}
 
+	public static String[] getNames() {
+		return new String[] {"Top", "Right", "Bottom", "Left"};
+	}
 }

@@ -16,10 +16,6 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.Graphics;
-
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
@@ -45,10 +41,12 @@ import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.jdom.Element;
-
+import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.SwtUtils;
 import org.pathvisio.util.Utils;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.Visualization.PluginSet;
 
@@ -213,7 +211,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
 			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
-			fd.setHeight((int)Math.ceil(Engine.getVPathway().vFromM(fd.getHeight()) * 15)); //TODO: get rid of 15
+			fd.setHeight((int)Math.ceil(Engine.getActiveVPathway().vFromM(fd.getHeight()) * 15)); //TODO: get rid of 15
 		}
 		return fd;
 	}
@@ -340,7 +338,7 @@ public class LabelPlugin extends VisualizationPlugin {
 		elm.setAttribute(XML_ATTR_STYLE, Integer.toString(style));
 		elm.setAttribute(XML_ATTR_ADAPT_FONT, Boolean.toString(adaptFontSize));
 		elm.setAttribute(XML_ATTR_FONTDATA, getFontData().toString());
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_FONTCOLOR, getFontColor()));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_FONTCOLOR, SwtUtils.rgb2color(getFontColor())));
 		elm.setAttribute(XML_ATTR_OVERLAY, Boolean.toString(getOverlay()));
 		elm.setAttribute(XML_ATTR_ALIGN, Integer.toString(getAlignment()));
 		return elm;
@@ -360,7 +358,7 @@ public class LabelPlugin extends VisualizationPlugin {
 			if(adaptStr != null) adaptFontSize = Boolean.parseBoolean(adaptStr);
 			if(fontStr != null) fontData = new FontData(fontStr);
 			if(ovrStr != null) setOverlay(Boolean.parseBoolean(ovrStr));
-			if(fcElm != null) fontColor = ColorConverter.parseColorElement(fcElm);
+			if(fcElm != null) fontColor = SwtUtils.color2rgb(ColorConverter.parseColorElement(fcElm));
 			if(alnStr != null) align = Integer.parseInt(alnStr);
 		} catch(NumberFormatException e) {
 			Engine.log.error("Unable to load configuration for " + NAME, e);

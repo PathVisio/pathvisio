@@ -16,8 +16,6 @@
 //
 package org.pathvisio.R.wizard;
 
-import org.pathvisio.gui.swt.Engine;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
@@ -39,13 +37,13 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.pathvisio.preferences.Preferences;
+import org.pathvisio.Engine;
 import org.pathvisio.R.RCommands;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RDataOut;
 import org.pathvisio.R.RCommands.RInterruptedException;
 import org.pathvisio.data.Gex;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
 public class PageData extends WizardPage {
 	RDataOut rDataOut;
@@ -186,7 +184,7 @@ public class PageData extends WizardPage {
 				DirectoryDialog fd = new DirectoryDialog(getShell());
 				String pwTxt = pwDir.getText();
 				fd.setFilterPath(pwTxt.equals("") ? 
-						Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES) : pwTxt);
+						SwtPreference.SWT_DIR_PWFILES.getValue() : pwTxt);
 				String dir = fd.open();
 				if(dir != null) pwDir.setText(dir);
 				checkPageComplete();
@@ -204,7 +202,7 @@ public class PageData extends WizardPage {
 			FileDialog fd = new FileDialog(getShell(), 
 					e.widget == exportBrowse ? SWT.SAVE : SWT.OPEN);
 			String expTxt = exportFile.getText();
-			fd.setFilterPath(expTxt.equals("") ? Engine.getPreferences().getString(Preferences.PREF_DIR_RDATA) : expTxt);
+			fd.setFilterPath(expTxt.equals("") ? SwtPreference.SWT_DIR_RDATA.getValue() : expTxt);
 			String file = fd.open();
 			if(file != null) {
 				if		(e.widget == exportBrowse) 	exportFile.setText(file);

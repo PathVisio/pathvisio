@@ -28,9 +28,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.gui.swt.Engine.ApplicationEvent;
-import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
+import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEvent;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData.Row;
 import org.pathvisio.view.GeneProduct;
@@ -53,7 +53,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	public int getNrResults() { return getNrRows(); }
 		
 	public void highlightResults(boolean highlight) {
-		VPathway drawing = Engine.getVPathway();
+		VPathway drawing = Engine.getActiveVPathway();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
@@ -102,7 +102,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.OPEN_PATHWAY)
+		if(e.type == ApplicationEvent.PATHWAY_OPENED)
 				highlightResults(highlightButton.getSelection());
 	}
 }	

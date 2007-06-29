@@ -25,10 +25,11 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
+import org.pathvisio.Engine;
+import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.SwtEngine;
 
 /**
    Clipboard Transfer Object, for transferring Gpml fragments

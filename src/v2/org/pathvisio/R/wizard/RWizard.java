@@ -25,12 +25,11 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.Engine;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
+import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
 
 
 public class RWizard extends Wizard {

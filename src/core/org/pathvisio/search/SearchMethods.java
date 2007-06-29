@@ -16,7 +16,7 @@
 //
 package org.pathvisio.search;
 
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.gui.swt.SwtEngine;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,18 +24,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
+import org.pathvisio.Engine;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.search.PathwaySearchComposite.SearchRunnableWithProgress;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData;
 import org.pathvisio.util.tableviewer.TableData.Row;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.data.Gdb.IdCodePair;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public abstract class SearchMethods {	
 	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";

@@ -16,8 +16,6 @@
 //
 package org.pathvisio.R;
 
-import org.pathvisio.gui.swt.Engine;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
@@ -29,17 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.RVector;
-import org.rosuda.JRI.Rengine;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.util.PathwayParser;
-import org.pathvisio.util.PathwayParser.Gene;
-import org.pathvisio.visualization.colorset.Criterion;
+import org.pathvisio.Engine;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
 import org.pathvisio.R.RCommands.RTemp;
@@ -48,6 +36,17 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.util.FileUtils;
+import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.PathwayParser.Gene;
+import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.visualization.colorset.Criterion;
+import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RVector;
+import org.rosuda.JRI.Rengine;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public class RDataOut {
 	List<File> pwFiles;
@@ -113,7 +112,7 @@ public class RDataOut {
 	public void doExport() throws RException, InvocationTargetException, InterruptedException {
 		Rengine re = RController.getR();
 		
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(Engine.getWindow().getShell());
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(SwtEngine.getWindow().getShell());
 		SimpleRunnableWithProgress rwp = null;
 		try {
 			if(exportData) {

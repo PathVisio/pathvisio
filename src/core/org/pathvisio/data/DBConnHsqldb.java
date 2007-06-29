@@ -28,9 +28,8 @@ import java.util.Properties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-
+import org.pathvisio.Engine;
 import org.pathvisio.debug.StopWatch;
-import org.pathvisio.gui.swt.Engine;
 
 /**
    DBConnector implementation using the hsqldb driver

@@ -16,12 +16,11 @@
 //
 package org.pathvisio.data;
 
-import org.pathvisio.gui.swt.Engine;
-
 import java.sql.DriverManager;
+
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
-
+import org.pathvisio.Engine;
 import org.pathvisio.util.FileUtils;
 
 /**

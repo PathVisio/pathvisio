@@ -16,9 +16,6 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.view.Graphics;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,15 +61,16 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.jdom.Element;
-
-import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SwtUtils;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.SwtUtils;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.visualization.Visualization;
+import org.pathvisio.visualization.colorset.ColorSet;
 
 public class ExpressionImagePlugin extends PluginWithColoredSamples {
 	static final String NAME = "Colored image";
@@ -80,7 +78,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		"This plugin displays one or more images on Gene Product objects and \n" +
 		"colors the image(s) accoring to the expression value for the Gene Product.";
 		
-	static final RGB DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
+	static final RGB DEFAULT_TRANSPARENT = SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR);
 		
 	List<URL> imageURLs;
 	
@@ -568,14 +566,14 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 			xml.setAttribute(XML_ATTR_ASPECT, Boolean.toString(getMaintainAspect()));
 			xml.setAttribute(XML_ATTR_TOLERANCE, Integer.toString(getTolerance()));
 			xml.setAttribute(XML_ATTR_IMAGE, getURL().toString());
-			xml.addContent(ColorConverter.createColorElement(XML_ATTR_REPLACE, getReplaceColor()));
+			xml.addContent(ColorConverter.createColorElement(XML_ATTR_REPLACE, SwtUtils.rgb2color(getReplaceColor())));
 		}
 		protected void loadAttributes(Element xml) {
 			try {
 				setMaintainAspect(Boolean.parseBoolean(xml.getAttributeValue(XML_ATTR_ASPECT)));
 				setTolerance(Integer.parseInt(xml.getAttributeValue(XML_ATTR_TOLERANCE)));
 				setURL(new URL(xml.getAttributeValue(XML_ATTR_IMAGE)));
-				setReplaceColor(ColorConverter.parseColorElement(xml.getChild(XML_ATTR_REPLACE)));
+				setReplaceColor(SwtUtils.color2rgb(ColorConverter.parseColorElement(xml.getChild(XML_ATTR_REPLACE))));
 			} catch(Exception e) {
 				Engine.log.error("Unable to load plugin", e);
 			}

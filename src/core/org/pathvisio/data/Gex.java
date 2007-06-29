@@ -48,13 +48,13 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEvent;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.GexImportWizard.ImportPage;
 import org.pathvisio.debug.StopWatch;
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.gui.swt.Engine.ApplicationEvent;
-import org.pathvisio.gui.swt.Engine.ApplicationEventListener;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorSetManager;
@@ -980,7 +980,7 @@ public class Gex implements ApplicationEventListener {
 	
 	public void applicationEvent(ApplicationEvent e) {
 		switch(e.type) {
-		case ApplicationEvent.CLOSE_APPLICATION:
+		case ApplicationEvent.APPLICATION_CLOSE:
 			if(isConnected()) close();
 		}
 	}

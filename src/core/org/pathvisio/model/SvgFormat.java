@@ -16,6 +16,7 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -256,7 +257,7 @@ public class SvgFormat implements PathwayExporter
 	}
 	
 	static String rgb2String(Color rgb) {
-		return "rgb(" + rgb.red + "," + rgb.green + "," + rgb.blue + ")";
+		return "rgb(" + rgb.getRed() + "," + rgb.getGreen() + "," + rgb.getBlue() + ")";
 	}
 	
 	static int toPixel(double coordinate) {

@@ -16,10 +16,6 @@
 //
 package org.pathvisio.visualization.plugins;
 
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.Graphics;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -53,15 +49,17 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.jdom.Element;
-
-import org.pathvisio.util.SwtUtils;
-import org.pathvisio.visualization.Visualization;
+import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.util.SwtUtils;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.visualization.Visualization;
 
 /**
  * Provides label for Gene Product
@@ -232,7 +230,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		FontData fd = fontData == null ? DEFAULT_FONTDATA : fontData;
 		if(adjustZoom) {
 			fd = new FontData(fd.getName(), fd.getHeight(), fd.getStyle());
-			fd.setHeight((int)Math.ceil(Engine.getVPathway().vFromM(fd.getHeight()) * 15));//TODO: get rid of 15
+			fd.setHeight((int)Math.ceil(Engine.getActiveVPathway().vFromM(fd.getHeight()) * 15));//TODO: get rid of 15
 		}
 		return fd;
 	}

@@ -43,18 +43,17 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.jdom.Element;
-
-import org.pathvisio.gui.swt.Engine;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SwtUtils;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.SwtUtils;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.visualization.Visualization;
+import org.pathvisio.visualization.colorset.ColorSet;
 
 public class ExpressionColorPlugin extends PluginWithColoredSamples {
 	final String NAME = "Color by expression";
@@ -157,12 +156,12 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 	
 	protected void saveAttributes(Element xml) {
 		xml.setAttribute(XML_ATTR_DRAWLINE, Boolean.toString(drawLine));
-		xml.addContent(ColorConverter.createColorElement(XML_ELM_LINECOLOR, getLineColor()));
+		xml.addContent(ColorConverter.createColorElement(XML_ELM_LINECOLOR, SwtUtils.rgb2color(getLineColor())));
 	}
 		
 	protected void loadAttributes(Element xml) {
 		try {
-			lineColor = ColorConverter.parseColorElement(xml.getChild(XML_ELM_LINECOLOR));
+			lineColor = SwtUtils.color2rgb(ColorConverter.parseColorElement(xml.getChild(XML_ELM_LINECOLOR)));
 			drawLine = Boolean.parseBoolean(xml.getAttributeValue(XML_ATTR_DRAWLINE));
 		} catch(Exception e) {
 			Engine.log.error("Unable to parse settings for plugin " + NAME, e);

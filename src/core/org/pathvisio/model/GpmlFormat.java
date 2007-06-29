@@ -16,6 +16,8 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,8 +31,7 @@ import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.filter.Filter;
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
 
 /**
  * class responsible for interaction with Gpml format.
@@ -41,7 +42,7 @@ import org.pathvisio.gui.swt.Engine;
  * @author Martijn
  *
  */
-public class GpmlFormat 
+public class GpmlFormat implements PathwayImporter, PathwayExporter
 {
 	public static final Namespace GPML = Namespace.getNamespace("http://genmapp.org/GPML/2007");
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
@@ -972,9 +973,9 @@ public class GpmlFormat
 	 */
 	public static String color2HexBin(Color color)
 	{
-		String red = padding(Integer.toBinaryString(color.red), 8, '0');
-		String green = padding(Integer.toBinaryString(color.green), 8, '0');
-		String blue = padding(Integer.toBinaryString(color.blue), 8, '0');
+		String red = padding(Integer.toBinaryString(color.getRed()), 8, '0');
+		String green = padding(Integer.toBinaryString(color.getGreen()), 8, '0');
+		String blue = padding(Integer.toBinaryString(color.getBlue()), 8, '0');
 		String hexBinary = Integer.toHexString(Integer.valueOf(red + green + blue, 2));
 		return padding(hexBinary, 6, '0');
 	}
@@ -1020,4 +1021,20 @@ public class GpmlFormat
 			"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
 			"White", "Yellow", "Transparent"
 		});
+
+	public void doImport(File file, Pathway pathway) throws ConverterException {
+		pathway.readFromXml(file, true);
+}
+	public void doExport(File file, Pathway pathway) throws ConverterException {
+		pathway.writeToXml(file, true);
+	}
+	
+	public String[] getExtensions() {
+		return new String[] { "gpml", "xml" };
+	}
+
+	public String getName() {
+		return "GPML file";
+	}
+
 }

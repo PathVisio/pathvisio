@@ -24,7 +24,7 @@ import java.io.LineNumberReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
 
 public class FileUtils {	
 	/**

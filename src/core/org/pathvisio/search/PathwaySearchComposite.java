@@ -38,13 +38,13 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.pathvisio.gui.swt.Engine;
+import org.pathvisio.Engine;
+import org.pathvisio.data.DataSources;
 import org.pathvisio.gui.swt.MainWindowBase;
-import org.pathvisio.preferences.swt.Preferences;
+import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.SearchMethods.SearchException;
 import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.data.DataSources;
 
 public class PathwaySearchComposite extends Composite {
 
@@ -257,7 +257,7 @@ public class PathwaySearchComposite extends Composite {
 	
 	private Text createDirText(Composite parent) {
 		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		t.setText(Engine.getPreferences().getString(Preferences.PREF_DIR_PWFILES));
+		t.setText(SwtPreference.SWT_DIR_PWFILES.getValue());
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return t;
 	}

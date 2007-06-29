@@ -16,14 +16,18 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
 {	
+	protected Stroke defaultStroke = new BasicStroke();
+	
 	protected VPathway canvas;
 	
 	VPathwayElement(VPathway canvas) {
@@ -42,6 +46,9 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		
 		Graphics2D g = (Graphics2D)g2d.create();
 				
+		//Prevent element from drawing outside its bounds
+		g.setClip(getVBounds());
+		g.setStroke(defaultStroke);
 		//Perform the drawing
 		doDraw(g);
 		

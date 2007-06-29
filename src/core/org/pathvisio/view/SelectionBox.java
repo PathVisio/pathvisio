@@ -385,10 +385,11 @@ public class SelectionBox extends GraphicsShape
 	public void doDraw(Graphics2D g)
 	{
 		if(isVisible) {
-			g.setStroke(new BasicStroke(1, 
+			int sw = 1;
+			g.setStroke(new BasicStroke(sw, 
 					BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 
 					1, new float[] {1, 2}, 0));
-			g.drawRect(getVLeft(), getVTop(), getVWidth(), getVHeight());
+			g.drawRect(getVLeft(), getVTop(), getVWidth() - sw, getVHeight() - sw);
 		}
 	}
 		

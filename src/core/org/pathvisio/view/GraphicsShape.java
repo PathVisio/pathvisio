@@ -458,6 +458,10 @@ public abstract class GraphicsShape extends Graphics {
 	 */
 	protected Shape getVOutline()
 	{
+		return defaultStroke.createStrokedShape(getFillShape());
+	}
+	
+	private Shape getFillShape() {
 		int[] x = new int[4];
 		int[] y = new int[4];
 		
@@ -473,7 +477,7 @@ public abstract class GraphicsShape extends Graphics {
 		Polygon pol = new Polygon(x, y, 4);
 		return pol;
 	}
-			
+	
 	public void gmmlObjectModified(PathwayEvent e) {		
 		markDirty(); // mark everything dirty
 		setHandleLocation();

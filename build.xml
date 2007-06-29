@@ -122,14 +122,14 @@ public class Revision
     </target>
 
 	<target name="run-v1" depends="compile-v1">
-		<java classname="gmmlVision.GmmlVisionMain" fork="true">
+		<java classname="org.pathvisio.gui.swt.GuiMain" fork="true">
 			<classpath refid="project.v1.class.path"/>
 			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>
 	</target>
 
 	<target name="run-v2" depends="compile-v2">
-		<java classname="gmmlVision.GmmlVisionMain" fork="true">
+		<java classname="org.pathvisio.gui.swt.GuiMain" fork="true">
 			<classpath refid="project.v2.class.path"/>
 			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>

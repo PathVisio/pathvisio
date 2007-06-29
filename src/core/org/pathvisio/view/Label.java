@@ -120,13 +120,18 @@ public class Label extends GraphicsShape
 //		textComposite.pack();
 //	}
 	
-	Dimension computeTextSize(Graphics2D g) {
+	protected Rectangle2D getTextBounds(Graphics2D g) {
 		Rectangle2D tb = null;
 		if(g != null) {
 			 tb = g.getFontMetrics().getStringBounds(getVAttributedString().getIterator(), 0, gdata.getTextLabel().length(), g);
 		} else { //No graphics context, we can only guess...
-			tb = new Rectangle2D.Double(0, 0, getVWidthDouble(), getVHeightDouble()); 
+			tb = new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble()); 
 		}
+		return tb;
+	}
+	
+	protected Dimension computeTextSize(Graphics2D g) {
+		Rectangle2D tb = getTextBounds(g);
 		return new Dimension((int)tb.getWidth(), (int)tb.getHeight());
 	}
 	
@@ -204,12 +209,8 @@ public class Label extends GraphicsShape
 	protected Shape getVOutline()
 	{
 		Rectangle bounds = super.getVOutline().getBounds();
-		Dimension mq = computeTextSize(g2d);
-		double vqx = mq.getWidth();
-		double vqy = mq.getHeight();
-		
-		LinAlg.Point c = getVCenter();
-		bounds.add(new Rectangle2D.Double(c.x - vqx / 2, c.y - vqy / 2, vqx, vqy));
+		Rectangle2D tb = getTextBounds(g2d);
+		bounds.add(tb);
 
 		return bounds;
 	}

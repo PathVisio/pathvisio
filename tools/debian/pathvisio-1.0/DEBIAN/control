@@ -1,0 +1,8 @@
+Package: pathvisio
+Version: 1.0-1
+Section: base
+Priority: optional
+Architecture: all
+Depends: mozilla | firefox, sun-java5-bin | sun-java6-bin
+Maintainer: BiGCaT Bioinformatics <m.vaniersel@bigcat.unimaas.nl>
+Description: PathVisio, a tool for data visualization and analysis using Biological Pathways

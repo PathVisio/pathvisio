@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=PathVisio
+Comment=PathVisio
+Exec=PathVisio
+Icon=pathvisio.png
+Terminal=0
+Type=Application
+Encoding=UTF-8
+Categories=Application;Science;

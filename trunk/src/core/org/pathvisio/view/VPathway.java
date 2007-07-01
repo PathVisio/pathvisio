@@ -165,8 +165,8 @@ public class VPathway implements PathwayListener, VisualizationListener
 		{
 			fromGmmlDataObject (o);
 		}
-		int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
-		int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+		int width = getVWidth();
+		int height = getVHeight();
 		if (parent != null)
 		{
 			parent.setVSize(width, height);
@@ -366,8 +366,8 @@ public class VPathway implements PathwayListener, VisualizationListener
 			);
 		}
 		zoomFactor = pctZoomFactor / 100.0 / 15.0;
-		int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
-		int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+		int width = getVWidth();
+		int height = getVHeight();
 		if (parent != null)
 		{
 			parent.setVSize(width, height); 				
@@ -513,9 +513,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 			area = g2d.getClipBounds();
 			if (area == null)
 			{
-				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
-				int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
-				area = new Rectangle (0, 0, width, height);
+				area = new Rectangle (0, 0, getVWidth(), getVHeight());
 			}
 		}
 		
@@ -1495,5 +1493,21 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 * helper method to convert view coordinates to model coordinates 
 	 * */
 	public double vFromM(double m) { return m * zoomFactor; }
+
+	/**
+	   Get width of entire Pathway view (taking into account zoom)
+	 */
+	public int getVWidth()
+	{
+		return (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+	}
+	
+	/**
+	   Get height of entire Pathway view (taking into account zoom)
+	 */
+	public int getVHeight()
+	{
+		return (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+	}
 	
 } // end of class

@@ -16,74 +16,59 @@
 //
 package org.pathvisio.gpmldiff;
 
-import org.jdom.*;
 import java.util.*;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PropertyType;
 
 /**
    A single element in a pathway, which can be a line, shape, datanode, etc.
 */
 class PwyElt
 {
-	Element elt;
+	PathwayElement elt;
+	public PathwayElement getElement () { return elt; }
+	
 	Map<String, String> contents = new HashMap<String, String>();
 	
 	public Map<String, String> getContents() { return contents; }
 	
-	PwyElt(Element _elt)
+	PwyElt(PathwayElement _elt)
 	{
 		assert (_elt != null);
 		elt = _elt;
 		
-		copyContents(elt, "");
+		copyContents();
 	}
 
-	/**
-	   Recursive function that copies all attributes and children of an element
-	   to a list of strings.
-	*/
-	private void copyContents(Element elt, String base)
+	private void copyContents()
 	{
-		String newb = base + "/" + elt.getName();
-				
-		// copy text value, if there is one
-		String txt = elt.getTextTrim();
-		if (txt.length() > 0)
+		for (PropertyType prop : elt.getAttributes(true))
 		{
-			contents.put (newb + ".text()", txt);
-		}
-		// copy attributes
-		for (Attribute a : (List<Attribute>)elt.getAttributes())
-		{
-			contents.put (newb + "." + a.getName(), a.getValue());
-		}
-		// recursively copy children
-		for (Element child : (List<Element>)elt.getChildren())
-		{
-			copyContents (child, newb);
+			String attr = prop.tag();
+			String val = "" + elt.getProperty (prop);
+			contents.put (attr, val);
 		}
 	}
-		
+			
 	String summary()
 	{
-		String result = "[" + elt.getName();
+		String result = "[" + elt.getObjectType();
 		String tmp;
-		if ((tmp = elt.getAttributeValue("TextLabel")) != null) result += ",lbl=" + tmp;
-		if ((tmp = elt.getAttributeValue("ObjectType")) != null) result += ",ot=" + tmp;
-		for (Element g : (List<Element>)elt.getChildren("Graphics", elt.getNamespace()))
-		{
-			if ((tmp = g.getAttributeValue("Width")) != null) result += ",w=" + tmp;
-			if ((tmp = g.getAttributeValue("Height")) != null) result += ",h=" + tmp;
-			
-			int i = 0;
-			for (Element p : (List<Element>)g.getChildren("Point", elt.getNamespace()))
-			{
-				i++;
-				result += ",x" + i + "=" + p.getAttributeValue("x");
-				result += ",y" + i + "=" + p.getAttributeValue("y");
-			}
-		}
-		if ((tmp = elt.getAttributeValue("CenterX")) != null) result += ",cx=" + tmp;
-		if ((tmp = elt.getAttributeValue("CenterY")) != null) result += ",cy=" + tmp;
+		List<PropertyType> props = elt.getAttributes(true);
+		if (props.contains(PropertyType.TEXTLABEL))
+			result += ",lbl=" + elt.getProperty(PropertyType.TEXTLABEL);
+		if (props.contains(PropertyType.WIDTH))
+			result += ",w=" + elt.getProperty(PropertyType.WIDTH);
+		if (props.contains(PropertyType.HEIGHT))
+			result += ",h=" + elt.getProperty(PropertyType.HEIGHT);
+		if (props.contains(PropertyType.CENTERX))
+			result += ",cx=" + elt.getProperty(PropertyType.CENTERX);
+		if (props.contains(PropertyType.CENTERY))
+			result += ",cy=" + elt.getProperty(PropertyType.CENTERY);
+		if (props.contains(PropertyType.STARTX))
+			result += ",x1=" + elt.getProperty(PropertyType.STARTX);
+		if (props.contains(PropertyType.STARTY))
+			result += ",y1=" + elt.getProperty(PropertyType.STARTY);		
 		result += "]";
 		return result;
 	}
@@ -98,7 +83,7 @@ class PwyElt
 			{
 				if (!contents.get(key).equals(other.contents.get(key)))
 				{
-					outputter.modify (this, key, contents.get(key), other.contents.get(key));
+					outputter.modify (this, other, key, contents.get(key), other.contents.get(key));
 				}
 			}
 		}			

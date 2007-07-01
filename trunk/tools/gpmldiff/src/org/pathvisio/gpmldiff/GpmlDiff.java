@@ -17,6 +17,7 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.*;
+import org.pathvisio.debug.Logger;
 
 /**
    Class containing main method
@@ -45,7 +46,7 @@ class GpmlDiff
 		}
 		if (error != null)
 		{
-			System.out.println(error);
+			Logger.log.error (error);
 			printUsage();
 		}
 		return error == null;
@@ -71,12 +72,19 @@ class GpmlDiff
 	*/
     public static void main(String argv[])
 	{
+		try
+		{
+			Logger.log.setStream (new PrintStream("log.txt"));
+		}
+		catch (IOException e) {}
 		if (parseCliOptions(argv))
 		{
 			PwyDoc doc1 = PwyDoc.read (fileOld);
 			PwyDoc doc2 = PwyDoc.read (fileNew);
 			SearchNode result = doc1.findCorrespondence (doc2, new BasicSim(), new BasicCost());
-			DiffOutputter out = new DgpmlOutputter();
+// 			DiffOutputter out = new DgpmlOutputter();
+
+			DiffOutputter out = new SvgOutputter(doc1, doc2);
 			doc1.writeResult (result, doc2, out);
 			try
 			{

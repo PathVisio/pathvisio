@@ -71,5 +71,9 @@ public class Logger
 	}
 	public void fatal (String msg) { if (fatalEnabled) s.println ("Fatal: " + msg); }
 	
-	
+
+	/**
+	   Global application logger
+	 */
+	public static final Logger log = new Logger();
 }

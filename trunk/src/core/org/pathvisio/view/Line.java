@@ -88,33 +88,35 @@ public class Line extends Graphics
 			points.add(i, pNew);
 		}
 	}
-			
+
 	public void doDraw(Graphics2D g)
 	{
-		Color c = gdata.getColor();
+		Color c;
+		Line2D l = getVLine();
+		Point2D start = l.getP1();
+		Point2D end = l.getP2();
+		
 		if(isSelected()) {
 			c = selectColor;
-		} else if (isHighlighted()) {
-			c = highlightColor;
+		} else {
+			c = gdata.getColor(); 
 		}
 		g.setColor(c);
-				
+
 		int ls = gdata.getLineStyle();
 		if (ls == LineStyle.SOLID) {
 			g.setStroke(new BasicStroke());
 		}
 		else if (ls == LineStyle.DASHED) { 
-			g.setStroke(new BasicStroke(1, 
-									BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 
-									10, new float[] {4, 4}, 0));
+			g.setStroke	(new BasicStroke (
+				  1, 
+				  BasicStroke.CAP_SQUARE,
+				  BasicStroke.JOIN_MITER, 
+				  10, new float[] {4, 4}, 0));
 		}			
 
-		Line2D l = getVLine();
-		Point2D start = l.getP1();
-		Point2D end = l.getP2();
-		
 		g.draw(l);
-		
+
 		double xs = start.getX();
 		double ys = start.getY();
 		double xe = end.getX();
@@ -142,7 +144,16 @@ public class Line extends Graphics
 				paintLigand(g, xs, ys, xe, ye, vFromM(LIGANDWIDTH), vFromM(LIGANDHEIGHT));
 			}
 			break;
-	}
+		}
+		
+		if (isHighlighted())
+		{
+			Color hc = getHighlightColor();
+			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
+			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
+			g.draw(l);
+		}
+
 	}
 	
 	private double getAngle(double xs, double ys, double xe, double ye) {

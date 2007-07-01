@@ -51,8 +51,12 @@ public class Engine {
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
 	public static final Color TRANSPARENT_COLOR = new Color(255, 0, 255);
-	
-	public final static Logger log = new Logger();
+
+	/**
+	   The global application logger
+	   @deprecated. Preferably use Logger.log directly instead.
+	 */
+	public final static Logger log = Logger.log;
 			
 	/**
 	 * Get the {@link URL} for the resource stored in a jar file in the classpath

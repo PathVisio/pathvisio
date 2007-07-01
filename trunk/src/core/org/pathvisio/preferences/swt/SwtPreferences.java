@@ -141,13 +141,7 @@ public class SwtPreferences extends PreferenceStore implements PreferenceCollect
 				Graphics.selectColor = ColorConverter.parseColorString((String)e.getNewValue());
 			Engine.getActiveVPathway().redraw();
 		}
-		else if(e.getProperty().equals(GlobalPreference.COLOR_HIGHLIGHTED.name())) {
-			//if(e.getNewValue() instanceof RGB) Graphics.highlightColor = (RGB)e.getNewValue();
-			//else 
-				Graphics.highlightColor = ColorConverter.parseColorString((String)e.getNewValue());
-				Engine.getActiveVPathway().redraw();
-		}
-		else if(e.getProperty().startsWith("directories")) {
+		if(e.getProperty().startsWith("directories")) {
 			createDataDirectories();
 		}
 	}

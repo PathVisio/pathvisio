@@ -32,10 +32,7 @@ import org.pathvisio.preferences.GlobalPreference;
  * that can be added to a VPathway.
  */
 public abstract class Graphics extends VPathwayElement implements PathwayListener
-{
-	public static Color selectColor = GlobalPreference.getValueColor(GlobalPreference.COLOR_SELECTED);
-	public static Color highlightColor = GlobalPreference.getValueColor(GlobalPreference.COLOR_HIGHLIGHTED);
-	
+{	
 	protected PathwayElement gdata = null;
 	
 	public Graphics(VPathway canvas, PathwayElement o) {

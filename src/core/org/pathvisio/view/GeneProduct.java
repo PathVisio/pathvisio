@@ -114,10 +114,12 @@ public class GeneProduct extends GraphicsShape
 	
 	public void drawHighlight(Graphics2D g)
 	{
-		if(isHighlighted()) {
-			int os = 1;
-			g.setColor(highlightColor);
-			g.drawRect(getVLeft() - os, getVTop() - os, getVWidth() + 2*os, getVHeight() + 2*os);
+		if(isHighlighted())
+		{
+			Color hc = getHighlightColor();
+			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
+			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
+			g.drawRect(getVLeft(), getVTop(), getVWidth(), getVHeight());
 		}
 	}
 }

@@ -81,18 +81,6 @@ public class Pathway implements PathwayListener
 	}
 	
 	/**
-	 * Logger to which all logging will be performed
-	 */
-	private static Logger log = new Logger();
-	
-	/**
-	 * Set the logger to which all logging will be performed
-	 */
-	public static void setLogger(Logger l) {	
-		log = l;
-	}
-	
-	/**
 	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
 	 * NOTE: maybe it is better to adapt gpml to store cordinates as pixels and
 	 * divide the GenMAPP cordinates by this factor on conversion
@@ -393,21 +381,21 @@ public class Pathway implements PathwayListener
 				so.output(doc);
 				// If no errors occur, the file is valid according to the gpml xml schema definition
 				//TODO: open dialog to report error
-				log.info("Document is valid according to the xml schema definition '" + 
+				Logger.log.info("Document is valid according to the xml schema definition '" + 
 						xsdFile.toString() + "'");
 			} catch (SAXException se) {
-				log.error("Could not parse the xml-schema definition", se);
+				Logger.log.error("Could not parse the xml-schema definition", se);
 				throw new ConverterException (se);
 			} catch (JDOMException je) {
-				log.error("Document is invalid according to the xml-schema definition!: " + 
+				Logger.log.error("Document is invalid according to the xml-schema definition!: " + 
 						je.getMessage(), je);
 				XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
 				
-				log.error("The invalid XML code:\n" + xmlcode.outputString(doc));
+				Logger.log.error("The invalid XML code:\n" + xmlcode.outputString(doc));
 				throw new ConverterException (je);
 			}
 		} else {
-			log.error("Document is not validated because the xml schema definition '" + 
+			Logger.log.error("Document is not validated because the xml schema definition '" + 
 					xsdFile + "' could not be found in classpath");
 			throw new ConverterException ("Document is not validated because the xml schema definition '" + 
 					xsdFile + "' could not be found in classpath");
@@ -450,7 +438,7 @@ public class Pathway implements PathwayListener
 	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
 		// Start XML processing
-		log.info("Start reading the XML file: " + file);
+		Logger.log.info("Start reading the XML file: " + file);
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 		try

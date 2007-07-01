@@ -1,6 +1,19 @@
+IMPORTANT
+
+* Brace as Shape -> Highlighing of Brace is now merely a rectangle
+
 * consistent naming: this vs other, doc1 vs doc2 ---> old vs new
+
+* old and new headers in svg output (including filenames)
+
+* Make similarity function more flexible. There must be a minimum
+  similarity. Can two different object types match? Should there be a
+  priority score per Attribute?
+
+LATER
+
 * add timing code
-* Outputter for xml output
-* Make similarity function more flexible. Right now, if two elts have different tag names, they match 0 because the keys don't match
-* Test with lot's of Biopax content
-* Make Dgpmldiff output entire jdom tree instead of summary
+
+* Test with lot's of Biopax content (or maybe just ignore biopax content?)
+
+* Patch tool using Dgpml input, with adjustable fuzz factor

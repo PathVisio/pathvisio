@@ -18,7 +18,10 @@ package org.pathvisio.view;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
+import java.awt.Rectangle;
+import java.awt.BasicStroke;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 import org.pathvisio.model.PathwayElement;
 
 /**
@@ -47,16 +50,15 @@ public class Shape extends GraphicsShape
 			return VPathway.DRAW_ORDER_SHAPE;
 		}
 	}
-	
+
 	public void doDraw(Graphics2D g)
 	{					
 		Color fillcolor = gdata.getFillColor();
 		Color linecolor = gdata.getColor();
-		if(isSelected()) {
+		if(isSelected())
+		{
 			linecolor = selectColor;
-		} else if (isHighlighted()) {
-			linecolor = highlightColor;
-		}
+		} 
 		
 		int x = getVLeft();
 		int y = getVTop();
@@ -66,8 +68,19 @@ public class Shape extends GraphicsShape
 		int cy = getVCenterY();
 						
 		g.rotate(gdata.getRotation(), cx, cy);
+
+		java.awt.Shape shape = null;
+		switch(gdata.getShapeType())
+		{
+		case OVAL: shape = new Ellipse2D.Double (x, y, w, h); break;
+		case ARC: shape = new Arc2D.Double (x, y, w, h, 0, -180, Arc2D.OPEN); break;
+ 		case BRACE:
+		case RECTANGLE:
+		default: shape = new Rectangle (x, y, w, h);
+		}
 		
-		switch(gdata.getShapeType()) {
+		switch(gdata.getShapeType())
+		{
 		case OVAL:
 			if(!gdata.isTransparent()) {
 				g.setColor(fillcolor);
@@ -97,6 +110,14 @@ public class Shape extends GraphicsShape
 			g.setColor(linecolor);
 			g.drawRect(x, y, w, h);
 			break;
+		}
+
+		if (isHighlighted())
+		{
+			Color hc = getHighlightColor();
+			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
+			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
+			g.draw (shape);
 		}
 	}	
 }

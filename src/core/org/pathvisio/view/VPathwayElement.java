@@ -20,8 +20,11 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+
+import org.pathvisio.preferences.GlobalPreference;
 
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
 {	
@@ -29,17 +32,21 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	
 	protected VPathway canvas;
 	
-	VPathwayElement(VPathway canvas) {
+	VPathwayElement(VPathway canvas)
+	{
 		this.canvas = canvas;
 		canvas.addObject(this);
 	}
 	
-	private boolean isHighlighted;
+	public static Color selectColor = GlobalPreference.getValueColor(GlobalPreference.COLOR_SELECTED);
+	public static final float HIGHLIGHT_STROKE_WIDTH = 5.0f;
+
 	private Rectangle oldrect = null;
 	
 	private boolean isSelected;
 		
-	public final void draw(Graphics2D g2d) {
+	public final void draw(Graphics2D g2d)
+	{
 		//Create a copy to ensure that the state of this Graphics2D will be intact
 		//see: http://java.sun.com/docs/books/tutorial/uiswing/painting/concepts2.html
 		
@@ -74,7 +81,8 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	/**
 	 * Get the drawing this object belongs to
 	 */
-	public VPathway getDrawing() {
+	public VPathway getDrawing()
+	{
 		return canvas;
 	}
 	
@@ -87,21 +95,43 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		if(isHighlighted)
 		{
 			isHighlighted = false;
+			highlightColor = null;
+			markDirty();
+		}
+	}
+
+	private Color highlightColor;
+	public Color getHighlightColor()
+	{
+		return highlightColor;
+	}
+	
+	private boolean isHighlighted;
+
+	/**
+	 Besides setting isHighlighted, this accomplishes this:
+	 - marking the area dirty, so the object has a chance to redraw itself in highlighted state
+
+	 @param c this will highlight in a particular color. See
+	 highlight() without parameter if you just want to highlight with
+	 the default color
+	 */
+	public void highlight(Color c)
+	{
+		if(!(isHighlighted && highlightColor == c))
+		{
+			isHighlighted = true;
+			highlightColor = c;
 			markDirty();
 		}
 	}
 
 	/**
-	 * Besides setting isHighlighted, this accomplishes this:
-	 * - marking the area dirty, so the object has a chance to redraw itself in highlighted state
+	   highlight this element with the default highlight color
 	 */
 	public void highlight()
 	{
-		if(!isHighlighted)
-		{
-			isHighlighted = true;
-			markDirty();
-		}
+		highlight (GlobalPreference.getValueColor(GlobalPreference.COLOR_HIGHLIGHTED));
 	}
 	
 	/**

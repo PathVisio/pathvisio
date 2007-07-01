@@ -19,6 +19,9 @@ package org.pathvisio.gpmldiff;
 import java.io.*;
 import org.jdom.*;
 import org.jdom.output.*;
+import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.debug.Logger;
 
 /**
    Naive implementation of Outputter.
@@ -26,14 +29,17 @@ import org.jdom.output.*;
 class DgpmlOutputter extends DiffOutputter
 {
 	Document doc = null;
+	OutputStream out;
 	
-	DgpmlOutputter(File f)
+	DgpmlOutputter(File f) throws IOException
 	{
-		//TODO: open file
+		this();
+		out = new FileOutputStream(f);
 	}
 	
 	DgpmlOutputter()
 	{
+		out = System.out;
 		doc = new Document();
 		doc.setRootElement (new Element("Delta"));
 	}
@@ -44,6 +50,7 @@ class DgpmlOutputter extends DiffOutputter
 		Format f = xmlcode.getFormat();
 		f.setEncoding("ISO-8859-1");
 		f.setTextMode(Format.TextMode.PRESERVE);
+		f.setLineSeparator(System.getProperty("line.separator"));
 		xmlcode.setFormat(f);
 		
 		//Open a filewriter
@@ -54,21 +61,36 @@ class DgpmlOutputter extends DiffOutputter
 	public void insert(PwyElt newElt)
 	{
 		Element e = (new Element("Insert"));
-		e.setText (newElt.summary());
+		try
+		{
+			Element f = GpmlFormat.createJdomElement(newElt.getElement(), GpmlFormat.GPML);
+			e.addContent (f);
+		}
+		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
 		doc.getRootElement().addContent(e);
 	}
 
 	public void delete(PwyElt oldElt)
 	{
 		Element e = (new Element("Delete"));
-		e.setText (oldElt.summary());
+		try
+		{
+			Element f = GpmlFormat.createJdomElement(oldElt.getElement(), GpmlFormat.GPML);
+			e.addContent (f);
+		}
+		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
 		doc.getRootElement().addContent(e);
 	}
 
-	public void modify(PwyElt newElt, String path, String oldVal, String newVal)
+	public void modify(PwyElt oldElt, PwyElt newElt, String path, String oldVal, String newVal)
 	{
 		Element e = (new Element("Modify"));
-		e.setText (newElt.summary());
+		try
+		{
+			Element f = GpmlFormat.createJdomElement(oldElt.getElement(), GpmlFormat.GPML);
+			e.addContent (f);
+		}
+		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
 		e.setAttribute("path", path);
 		e.setAttribute("old", oldVal);
 		e.setAttribute("new", newVal);

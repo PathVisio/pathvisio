@@ -85,14 +85,14 @@ public class GuiMain {
 	/**
 	 * Initiates some objects used by the program
 	 */
-	public static void initiate() {
+	public static void initiate()
+	{
 		//initiate logger
 		try { 
 			GlobalPreference.FILE_LOG.setDefault(new File(SwtEngine.getApplicationDir(), ".PathVisioLog").toString());
 			Engine.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
 		} catch(Exception e) {}
 		Engine.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		Pathway.setLogger(Engine.log);
 		
 		//load the preferences
 		loadPreferences();

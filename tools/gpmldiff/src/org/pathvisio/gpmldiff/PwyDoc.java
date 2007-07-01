@@ -17,16 +17,27 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.*;
-import org.jdom.*;
-import org.jdom.input.SAXBuilder;
 import java.util.*;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ConverterException;
 
 /**
-   Contains an entire Pathway Document
+   Wrapper for org.pathvisio.model.Pathway that adds some extra
+   functionality for gpmldiff
 */   
 class PwyDoc
 {
-	private Document doc;
+	Pathway pwy;
+
+	/**
+	   return the wrapped Pathway.
+	 */
+	Pathway getPathway()
+	{
+		return pwy;
+	}
+	
 	private	List<PwyElt> elts = new ArrayList<PwyElt>();
 
 	/**
@@ -36,24 +47,20 @@ class PwyDoc
 		
 	/**
 	   Construct a new PwyDoc from a certain file
-	   Returns null if there is a JDOM or IO exception
+	   Returns null if there is an  IO exception
 	   TODO: We may want to pass on the exception?
 	*/
 	static public PwyDoc read(File f)
 	{
-		PwyDoc result = null;
+		PwyDoc result = new PwyDoc();
+		result.pwy = new Pathway();
 		try
 		{
-			SAXBuilder saxb = new SAXBuilder();		
-			result = new PwyDoc();
-			result.doc = saxb.build (f);
+			result.pwy.readFromXml (f, false);
 		}
-		catch (JDOMException e) { e.printStackTrace(); return null; }
-		catch (IOException e) { return null; }
-				
-		Element root = result.doc.getRootElement();
-		// turn all first-level elements into a PwyElt 
-		for (Element e : (List<Element>)root.getChildren())
+		catch (ConverterException e) { return null; }
+		
+		for (PathwayElement e : result.pwy.getDataObjects())
 		{
 			result.elts.add (new PwyElt (e));
 		}

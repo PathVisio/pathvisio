@@ -24,47 +24,65 @@ import java.awt.AlphaComposite;
 import org.w3c.dom.Document;
 import org.w3c.dom.DOMImplementation;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.ConverterException;
 
 class SvgMain
 {
-	public void paint (Graphics2D g2d)
-	{
-		g2d.setPaint (Color.red);
-		g2d.fill (new Rectangle (10, 10, 100, 100));
-	}
-	
 	static public void main (String argv[]) throws IOException, ConverterException
 	{
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		String svgNS = "http://www.w3.org/2000/svg";
 		Document document = domImpl.createDocument (svgNS, "svg", null);
-		SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-
-//		SvgMain svgMain = new SvgMain();
-//		svgMain.paint(svgGenerator);
-
+		
 		Pathway pwy[] = {new Pathway(), new Pathway()};
 		
-		pwy[0].readFromXml (new File ("testcases/Simple1.1.gpml"), false);
-		pwy[1].readFromXml (new File ("testcases/Simple1.2.gpml"), false);
-
+// 		pwy[0].readFromXml (new File ("testcases/Simple1.1.gpml"), false);
+// 		pwy[1].readFromXml (new File ("testcases/Simple1.2.gpml"), false);
+ 		pwy[0].readFromXml (new File ("testcases/sandbox070524.gpml"), false);
+ 		pwy[1].readFromXml (new File ("testcases/sandbox070522_5.gpml"), false);
 		
 		VPathway vpwy[] = {new VPathway(null), new VPathway(null)};
-
+		
+		int[] width = new int[2];
+		int[] height = new int[2];
 		for (int i = 0; i < 2; ++i)
 		{
 			vpwy[i].fromGmmlData(pwy[i]);
+// 			vpwy[i].setPctZoom (50);
+			width[i] = vpwy[i].getVWidth();
+			height[i] = vpwy[i].getVHeight();
 		}
+
+		int maxh = height[0] > height[1] ? height[0] : height[1];		
+		int maxw = width[0] > width[1] ? width[0] : width[1];
+
+		int j = 0;
+		for (VPathwayElement e : vpwy[0].getDrawingObjects())
+		{
+			if (e instanceof org.pathvisio.view.Graphics)
+			{
+				switch (j % 5)
+				{
+				case 0: e.highlight (Color.GREEN); break;
+				case 1: e.highlight (Color.BLUE); break;
+				case 2: e.highlight (Color.YELLOW); break;
+				case 3: e.highlight (Color.RED); break;
+				case 4: break; // no highlight
+				default: assert (false);
+				}
+				j++;
+			}
+		}
+
 		
-		vpwy[0].draw (svgGenerator, null, false);
- 		AlphaComposite ac = AlphaComposite.getInstance (AlphaComposite.SRC_OVER, 1.0f);
- 		svgGenerator.setComposite (ac);
-		svgGenerator.setColor (new Color (0.0f, 1.0f, 1.0f, 0.5f));
-		svgGenerator.fillRect (0,0,500,500);
-	// 	svgGenerator.translate (10, 10);
-// 		vpwy[1].draw (svgGenerator, null, false);
+ 		SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+		svgGenerator.setSVGCanvasSize (new Dimension (maxw * 2, maxh));
+
+		vpwy[0].draw (svgGenerator, null, true);
+ 		svgGenerator.translate (maxw, 0);
+ 		vpwy[1].draw (svgGenerator, null, true);
 		
 		boolean useCSS = true;
 		Writer out = new OutputStreamWriter (System.out, "UTF-8");

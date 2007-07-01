@@ -45,7 +45,7 @@ abstract class DiffOutputter
 	   @param oldVal is the old value of that tag / attribute
 	   @param newVal is the new value of that tag / attribute
 	 */
-	abstract public void modify(PwyElt newElt, String path, String oldVal, String newVal);
+	abstract public void modify(PwyElt oldElt, PwyElt newElt, String path, String oldVal, String newVal);
 
 	/**
 	   Write all pending output to file or flush output buffers,

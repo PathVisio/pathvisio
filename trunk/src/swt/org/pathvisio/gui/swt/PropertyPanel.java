@@ -60,8 +60,9 @@ import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SuggestCellEditor;
-import org.pathvisio.util.TableColumnResizer;
+import org.pathvisio.util.swt.SuggestCellEditor;
+import org.pathvisio.util.swt.SwtUtils;
+import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
@@ -359,7 +360,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 					return (((LineType)value).ordinal());
 				case COLOR:
 					if(value instanceof Color)
-						value = ColorConverter.toRGB((Color)value);
+						value = SwtUtils.color2rgb((Color)value);
 					return (RGB)value;
 				case ORIENTATION:
 				case LINESTYLE:
@@ -462,7 +463,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				value = genetype_names[(Integer)value];
 				break;
 			case COLOR:
-				value = ColorConverter.fromRGB((RGB)value);
+				value = SwtUtils.rgb2color((RGB)value);
 			case DB_SYMBOL:
 			case DB_ID:
 				if(value instanceof PropertyPanel.AutoFillData) {
@@ -566,7 +567,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 								}
 								case COLOR:
 									if(value instanceof Color) {
-										return ColorConverter.toRGB((Color)value).toString();
+										return SwtUtils.color2rgb((Color)value).toString();
 									}
 								default:
 									return value.toString();

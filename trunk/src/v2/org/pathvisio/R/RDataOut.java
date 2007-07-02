@@ -40,7 +40,7 @@ import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.Gene;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RVector;

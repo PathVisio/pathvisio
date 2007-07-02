@@ -24,7 +24,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -241,14 +241,14 @@ public class Engine {
 		return importers;
 	}
 	
-	public static DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		DBConnector connector = null;
+	public static DBConnectorSwt getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		DBConnectorSwt connector = null;
 		String className = null;
 		switch(type) {
-		case DBConnector.TYPE_GDB:
+		case DBConnectorSwt.TYPE_GDB:
 			className = SwtPreference.SWT_DB_ENGINE_GDB.getValue();
 			break;
-		case DBConnector.TYPE_GEX:
+		case DBConnectorSwt.TYPE_GEX:
 			className = SwtPreference.SWT_DB_ENGINE_GDB.getValue();
 			break;
 		}
@@ -256,8 +256,8 @@ public class Engine {
 		
 		Class dbc = Class.forName(className);
 		
-		if(Utils.isSubClass(dbc, DBConnector.class)) {
-			connector = (DBConnector)dbc.newInstance();
+		if(Utils.isSubClass(dbc, DBConnectorSwt.class)) {
+			connector = (DBConnectorSwt)dbc.newInstance();
 			connector.setDbType(type);
 		}
 	

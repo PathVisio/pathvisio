@@ -26,15 +26,10 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
@@ -42,16 +37,15 @@ import org.pathvisio.R.RController;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.wizard.RWizard;
-import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
+import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.data.GexSwt.ProgressWizardDialog;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
-import org.pathvisio.search.PathwaySearchComposite;
-import org.pathvisio.visualization.LegendPanel;
 import org.pathvisio.visualization.VisualizationDialog;
 import org.pathvisio.visualization.VisualizationManager;
 
@@ -77,7 +71,7 @@ public class MainWindow extends MainWindowBase
 		
 		public void run () {
 			try {
-				DBConnector dbcon = Gex.getDBConnector();
+				DBConnectorSwt dbcon = GexSwt.getDBConnector();
 				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
@@ -117,132 +111,12 @@ public class MainWindow extends MainWindowBase
 						"select gene database before creating a new expression dataset");
 				return;
 			}
-			WizardDialog dialog = new WizardDialog(getShell(), new GexImportWizard());
+			ProgressWizardDialog dialog = new ProgressWizardDialog(getShell(), new GexImportWizard());
 			dialog.setBlockOnOpen(true);
 			dialog.open();
 		}
 	}
 	private CreateGexAction createGexAction = new CreateGexAction(this);
-	
-	/**
-	 *{@link Action} to start conversion of a GenMAPP gex to an expression database in
-	 * pgex format
-	 */
-	private class ConvertGexAction extends Action
-	{
-		MainWindow window;
-		public ConvertGexAction(MainWindow w)
-		{
-			window = w;
-			setText("&Gex to PathVisio");
-			setToolTipText("Convert from GenMAPP 2 Gex to PathVisio Expression Data");
-		}
-		
-		public void run () {
-			File gexFile = null;
-			File gmGexFile = null;
-			
-			// Initialize filedialog to open GenMAPP gex
-			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-			fileDialog.setText("Select Expression Dataset to convert");
-			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Expression Datasets");
-			fileDialog.setFilterExtensions(new String[] {"*.gex","*.*"});
-			fileDialog.setFilterNames(new String[] {"Expression Dataset (*.gex)","All files (*.*)"});
-			String file = fileDialog.open();
-			// Only proceed if user selected a file
-			if(file == null) return;
-			gmGexFile = new File(file);
-			
-			String dbName = null;
-			try {
-				DBConnector dbcon = Gex.getDBConnector();
-				dbName = dbcon.openNewDbDialog(getShell(), 
-						gmGexFile.getName().replace(".gex", ".properties"));
-			} catch(Exception e) {
-				String msg = "Failed to get database connector" + e.getMessage();
-				MessageDialog.openError (window.getShell(), "Error", 
-						"Error: " + msg + "\n\n" + 
-						"See the error log for details.");
-				Engine.log.error(msg, e);
-			}
-			
-			// Only proceed if user selected a file
-			if(dbName != null) {
-				Gex.setDbName(dbName);
-				Gex.setGmGexFile(gmGexFile);
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				try {
-					dialog.run(true, true, Gex.convertRunnable);
-				} catch(Exception e) {
-					String msg = "While converting GenMAPP GEX: " + e.getMessage();
-					MessageDialog.openError (window.getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-							"See the error log for details.");
-					Engine.log.error(msg, e);
-				}
-				
-			}
-		}
-	}
-	private ConvertGexAction convertGexAction = new ConvertGexAction(this);
-	
-	/**
-	 * {@link Action} to start conversion of a GenMAPP Gene database to a gene database 
-	 * in hsqldb format
-	 */
-	private class ConvertGdbAction extends Action
-	{
-		MainWindow window;
-		public ConvertGdbAction(MainWindow w)
-		{
-			window = w;
-			setText("&Gdb to PathVisio");
-			setToolTipText("Convert from GenMAPP 2 Gene database to PathVisio Gene database");
-		}
-		
-		public void run () {
-			String dbName = null;
-			File gmGdbFile = null;
-			// Initialize filedialog to open GenMAPP gdb
-			FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
-			fileDialog.setText("Select Gene database to convert");
-			fileDialog.setFilterPath("C:\\GenMAPP 2 Data\\Gene Databases");
-			fileDialog.setFilterExtensions(new String[] {"*.gdb","*.*"});
-			fileDialog.setFilterNames(new String[] {"Gene database (*.gdb)","All files (*.*)"});
-			String file = fileDialog.open();
-			// Only proceed if user selected a file
-			if(file == null) return;
-			gmGdbFile = new File(file);
-
-			try {
-				DBConnector dbcon = Gex.getDBConnector();
-				dbName = dbcon.openNewDbDialog(getShell(), 
-						gmGdbFile.getName().replace(".gdb", ".properties"));
-			} catch(Exception e) {
-				MessageDialog.openError(getShell(), 
-						"Error", "Unable to create database connector, " +
-						"see error log for details");
-				Engine.log.error("Unable to create database connector", e);	
-			}
-			
-			// Only proceed if user selected a database name
-			if(dbName != null) {
-				Gdb.setConvertGdbName(dbName);
-				Gdb.setConvertGmGdbFile(gmGdbFile);
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				try {
-					dialog.run(true, true, Gdb.getConvertRunnable());
-				} catch(Exception e) {
-					String msg = "While converting GenMAPP gene database: "+ e.getMessage();
-					MessageDialog.openError (window.getShell(), "Error", 
-							"Error: " + msg + "\n\n" + 
-					"See the error log for details.");
-					Engine.log.error(msg, e);
-				}
-			}
-		}
-	}
-	private ConvertGdbAction convertGdbAction = new ConvertGdbAction(this);
 	
 	/**
 	 * {@link Action} to open the {@link ColorSetWindow}
@@ -420,10 +294,6 @@ public class MainWindow extends MainWindowBase
 			statsMenu.add(rLoadStatsAction);
 		}
 		dataMenu.add(new CommonActions.BiopaxAction(this));
-		MenuManager convertMenu = new MenuManager("&Convert from GenMAPP 2");
-		convertMenu.add(convertGexAction);
-		convertMenu.add(convertGdbAction);
-		dataMenu.add(convertMenu);
 		
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);

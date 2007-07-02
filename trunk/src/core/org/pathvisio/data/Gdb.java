@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gui.swt.SwtEngine;
@@ -366,8 +364,8 @@ public abstract class Gdb {
 		}
 	}
 	
-	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getDbConnector(DBConnector.TYPE_GDB);
+	public static DBConnectorSwt getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return Engine.getDbConnector(DBConnectorSwt.TYPE_GDB);
 	}
 	
 	/**
@@ -379,7 +377,7 @@ public abstract class Gdb {
 	{
 		if(dbName == null) dbName = getDbName();
 		
-		DBConnector connector = getDBConnector();
+		DBConnectorSwt connector = getDBConnector();
 		con = connector.createConnection(dbName);
 		con.setReadOnly(true);
 //		Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
@@ -393,7 +391,7 @@ public abstract class Gdb {
 	{
 		if(con != null) {
 			try {
-				DBConnector connector = getDBConnector();
+				DBConnectorSwt connector = getDBConnector();
 				connector.closeConnection(con);
 			} catch(Exception e) {
 				Engine.log.error("Unable to close database connection", e);
@@ -422,7 +420,7 @@ public abstract class Gdb {
 		{
 			close();
 			
-			DBConnector connector = null;
+			DBConnectorSwt connector = null;
 			Connection convertCon = null;
 			Connection conGdb = null;
 			
@@ -440,7 +438,7 @@ public abstract class Gdb {
 			
 			//Create hsqldb gdb
 			connector = getDBConnector();
-			convertCon = connector.createConnection(dbName, DBConnector.PROP_RECREATE);
+			convertCon = connector.createConnection(dbName, DBConnectorSwt.PROP_RECREATE);
 			
 			// Fetch size of database to convert (for progress monitor)
 			Statement s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -639,32 +637,6 @@ public abstract class Gdb {
 			isInterrupted = true;
 		}
 	}
-	
-	/**
-	 * Gets the {@link IRunnableWithProgress} for starting the {@link ConvertThread} 
-	 * and monitor the progress of the conversion
-	 */
-	public static IRunnableWithProgress getConvertRunnable() { return convertRunnable; }
-	
-	private static IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {		
-		public void run(IProgressMonitor monitor) {
-			monitor.beginTask("Converting Gene Database",100);
-			convertThread = new ConvertThread();
-			convertThread.start();
-			int prevProgress = 0;
-			while(convertThread.progress < 100) {
-				if(monitor.isCanceled()) {
-					convertThread.interrupt();
-					break;
-				}
-				if(prevProgress < (int)convertThread.progress) {
-					monitor.worked((int)convertThread.progress - prevProgress);
-					prevProgress = (int)convertThread.progress;
-				}
-			}
-			monitor.done();
-		}
-	};
 	
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes in the database the given

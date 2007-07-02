@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
-import org.pathvisio.util.TableColumnResizer;
-import org.pathvisio.util.SwtUtils.FileInputDialog;
+import org.pathvisio.util.swt.TableColumnResizer;
+import org.pathvisio.util.swt.SwtUtils.FileInputDialog;
 import org.pathvisio.util.tableviewer.TableData.Row;
 
 

@@ -25,11 +25,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -41,10 +39,13 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.data.GexSwt.ProgressKeeperDialog;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
@@ -107,7 +108,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 		public void run () {			
 			try {
-				DBConnector dbcon = Gdb.getDBConnector();
+				DBConnectorSwt dbcon = SwtEngine.getSwtDbConnector(DBConnector.TYPE_GDB);
 				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
@@ -171,9 +172,9 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			//Check for neccesary connections
 			if(Gex.isConnected() && Gdb.isConnected())
 			{
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {
-					dialog.run(true, true, Gex.createCacheRunnable(drawing.getMappIds(), drawing.getSystemCodes()));
+					dialog.run(true, true, new GexSwt.CacheProgressKeeper(drawing.getMappIds(), drawing.getSystemCodes()));
 					drawing.redraw();
 				} catch(Exception e) {
 					String msg = "while caching expression data: " + e.getMessage();					

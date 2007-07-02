@@ -26,53 +26,59 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayEvent;
+import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
-public class VPathwaySwing extends JComponent implements VPathwayWrapper, MouseMotionListener, MouseListener, KeyListener {
+public class VPathwaySwing extends JPanel implements VPathwayWrapper,
+		MouseMotionListener, MouseListener, KeyListener, VPathwayListener {
 	VPathway child;
+
 	JScrollPane container;
-	
+
 	public VPathwaySwing(JScrollPane parent) {
 		super();
-		if(parent == null) throw new IllegalArgumentException("parent is null");
+		if (parent == null)
+			throw new IllegalArgumentException("parent is null");
 		this.container = parent;
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
 	}
-	
+
 	public void setChild(VPathway c) {
 		child = c;
+		child.addVPathwayListener(this);
 	}
-	
+
 	public Rectangle getVBounds() {
 		return getBounds();
 	}
 
 	public Dimension getVSize() {
-		System.out.println(getPreferredSize());
 		return getPreferredSize();
 	}
 
 	public Dimension getViewportSize() {
-		if(container instanceof JScrollPane) {
-			return ((JScrollPane)container).getViewport().getExtentSize();
+		if (container instanceof JScrollPane) {
+			return ((JScrollPane) container).getViewport().getExtentSize();
 		}
 		return getSize();
 	}
-	
+
 	public void redraw() {
 		repaint();
 	}
 
 	protected void paintComponent(Graphics g) {
-		child.draw((Graphics2D)g);
+		child.draw((Graphics2D) g);
 	}
-	
+
 	public void redraw(Rectangle r) {
 		repaint(r);
 	}
@@ -89,16 +95,16 @@ public class VPathwaySwing extends JComponent implements VPathwayWrapper, MouseM
 	}
 
 	public void mouseClicked(MouseEvent arg0) {
-		//TODO: find out how to handle this one
+		// TODO: find out how to handle this one
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		child.mouseEnter(new SwingMouseEvent(e));		
+		child.mouseEnter(new SwingMouseEvent(e));
 	}
 
 	public void mouseExited(MouseEvent e) {
 		child.mouseExit(new SwingMouseEvent(e));
-		
+
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -134,7 +140,16 @@ public class VPathwaySwing extends JComponent implements VPathwayWrapper, MouseM
 
 	public VPathway createVPathway() {
 		setChild(new VPathway(this));
-		container.setViewportView(this);
 		return child;
 	}
+
+	public void vPathwayEvent(VPathwayEvent e) {
+		if(e.getType() == VPathwayEvent.MODEL_LOADED) {
+			if(e.getSource() == child) {
+				container.setViewportView(this);
+				revalidate();
+			}
+		}
+	}
+
 }

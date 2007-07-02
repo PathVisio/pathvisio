@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -41,8 +40,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -53,9 +50,9 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.GexImportWizard.ImportPage;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.util.FileUtils;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
@@ -66,7 +63,7 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
  */
 public class Gex implements ApplicationEventListener {
 	public static final String XML_ELEMENT = "expression-data-visualizations";
-	static final int COMPAT_VERSION = 1;
+	public static final int COMPAT_VERSION = 1;
 	
 	private static Connection con;
 	
@@ -342,23 +339,12 @@ public class Gex implements ApplicationEventListener {
 	 * @param code	Systemcodes of the gene identifiers
 	 * (typically all genes in a pathway)
 	 */
-	private static void cacheData(ArrayList<String> ids, ArrayList<String> codes)
+	protected static void cacheData(ArrayList<String> ids, ArrayList<String> codes, ProgressKeeper p)
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();
 		timer.start();
-		
-//		PreparedStatement pstData = null;
-//		try {
-//			pstData = con.prepareStatement(
-//					"SELECT id, code, data, idSample FROM expression " +
-//			"WHERE ensId = ?");
-//		} catch(SQLException e) {
-//			Engine.log.error("Unable to prepare statement", e);
-//			return;
-//		}
-
-		
+			
 		for(int i = 0; i < ids.size(); i++)
 		{
 			String id = ids.get(i);
@@ -385,8 +371,6 @@ public class Gex implements ApplicationEventListener {
 					try {
 						ts.start();
 						
-//						pstData.setString(1, ensId);
-//						ResultSet r = pstData.executeQuery();
 						ResultSet r = con.createStatement().executeQuery(
 								"SELECT id, code, data, idSample, groupId FROM expression " +
 								" WHERE ensId = '" + ensId + "'");
@@ -414,163 +398,18 @@ public class Gex implements ApplicationEventListener {
 				
 				tt.stopToLog(id + ", " + code + ": adding data to cache\t\t");
 			}			
-			if(cacheThread.isInterrupted) //Check if the process is interrupted
+			if(p.isCancelled()) //Check if the process is interrupted
 			{
 				return;
 			}
-			cacheThread.progress += 100.0 / ids.size(); //Update the progress
+			p.worked(p.getTotalWork() / ids.size()); //Update the progress
 		}
-		cacheThread.progress = 100;
+		p.finished();
 		timer.stopToLog("Caching expression data\t\t\t");
 		Engine.log.trace("> Nr of ids queried:\t" + ids.size());
 	}
-	
-	/**
-	 * {@link CacheThread} to facilitate caching of Expression data of genes in a pathway in a
-	 * seperate {@link Thread}
-	 */
-	private static CacheThread cacheThread;
-	/**
-	 * This class is a {@link Thread} that is responsible for calling {@link #cacheData(ArrayList<String>, ArrayList<String>)}
-	 * and keeping the progress of its progress
-	 */
-	private static class CacheThread extends Thread
-	{
-		volatile double progress;
-		volatile boolean isInterrupted;
-		ArrayList<String> ids;
-		ArrayList<String> codes;
-		/**
-		 * Constructor for this class
-		 * @param ids	the gene ids that need to be passed on to {@link cacheData()}
-		 * @param codes	The systemcodes of the gene identifiers
-		 */
-		public CacheThread(ArrayList<String> ids, ArrayList<String> codes) 
-		{
-			this.ids = ids;
-			this.codes = codes;
-		}
 		
-		public void run()
-		{
-			progress = 0;
-			isInterrupted = false;
-			cacheData(ids, codes);
-		}
-		
-		public void interrupt()
-		{
-			isInterrupted = true;
-		}
-	}
-	
-	/**
-	 * Creates an {@link IRunnableWithProgress} responsible for starting the 
-	 * CacheThread and keeping track of the progress of this thread
-	 * @param mappIds	the gene ids to pass on to cacheData(ArrayList<String>, ArrayList<String>)
-	 * @param codes		the systemcodes of the gene identifiers
-	 */
-	public static IRunnableWithProgress createCacheRunnable(
-			final ArrayList<String> mappIds, 
-			final ArrayList<String> codes )
-	{
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-			throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("Caching expression data",100);
-				cacheThread = new CacheThread(mappIds, codes);
-				cacheThread.start();
-				int prevProgress = 0;
-				while(cacheThread.progress < 100) {
-					if(monitor.isCanceled()) {
-						cacheThread.interrupt();
-						break;
-					}
-					if(prevProgress < (int)cacheThread.progress) {
-						monitor.worked((int)cacheThread.progress - prevProgress);
-						prevProgress = (int)cacheThread.progress;
-					}
-				}
-				monitor.done();
-			}
-		};
-	}
-	
-	private static ConvertThread convertThread;
-	/**
-	 * This class is a {@link Thread} that converts a GenMAPP Expression dataset and keeps the progress
-	 * of the conversion
-	 */
-	private static class ConvertThread extends Thread
-	{
-		volatile double progress;
-		volatile boolean isInterrupted;
-		public ConvertThread() 
-		{
-			isInterrupted = false;
-		}
-		
-		public void run()
-		{
-			progress = 0;
-			convertGex();
-		}
-		
-		public void interrupt()
-		{
-			isInterrupted = true;
-		}
-	}
-	
-	/**
-	 * This {@link IRunnableWithProgress} starts the ConvertThread
-	 * and monitors the progress of the conversion
-	 */
-	public static IRunnableWithProgress convertRunnable = new IRunnableWithProgress() {
-		public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
-			monitor.beginTask("Converting Gene Expression Dataset",100);
-			convertThread = new ConvertThread();
-			convertThread.start();
-			int prevProgress = 0;
-			while(convertThread.progress < 100) {
-				if(monitor.isCanceled()) {
-					convertThread.interrupt();
-					break;
-				}
-				if(prevProgress < (int)convertThread.progress) {
-					monitor.worked((int)convertThread.progress - prevProgress);
-					prevProgress = (int)convertThread.progress;
-				}
-			}
-			monitor.done();
-		}
-	};
-	
-	/**
-	 * This {@link IRunnableWithProgress} is responsible for running the import expression data
-	 * process and monitor the progress
-	 * See Gex.importFromTxt
-	 */
-	public static class ImportRunnableWithProgress implements IRunnableWithProgress {
-		static final int totalWork = (int)1E6;
-		ImportInformation info;
-		ImportPage page;
-		
-		public ImportRunnableWithProgress(ImportInformation info, ImportPage page) {
-			super();
-			this.info = info;
-			this.page = page;
-		}
-		
-		public void run(final IProgressMonitor monitor) 
-		throws InvocationTargetException, InterruptedException {
-			monitor.beginTask("Importing expression data", totalWork);
-			importFromTxt(info, page, monitor);
-					
-			monitor.done();
-		}
-	}
+
 	
 	/**
 	 * Imports expression data from a text file and saves it to an hsqldb expression database
@@ -581,10 +420,10 @@ public class Gex implements ApplicationEventListener {
 	 * @param monitor	{@link IProgressMonitor} that reports the progress of the process and enables
 	 * the user to cancel
 	 */
-	private static void importFromTxt(ImportInformation info, ImportPage page, IProgressMonitor monitor)
+	protected static void importFromTxt(ImportInformation info, ProgressKeeper p)
 	{
-		int importWork = (int)(ImportRunnableWithProgress.totalWork * 0.8);
-		int finalizeWork = (int)(ImportRunnableWithProgress.totalWork * 0.2);
+		int importWork = (int)(p.getTotalWork() * 0.8);
+		int finalizeWork = (int)(p.getTotalWork() * 0.2);
 		
 //		Open a connection to the error file
 		String errorFile = info.dbName + ".ex.txt";
@@ -595,20 +434,20 @@ public class Gex implements ApplicationEventListener {
 			ef.getParentFile().mkdirs();
 			error = new PrintStream(errorFile);
 		} catch(IOException ex) {
-			page.println("Error: could not open exception file: " + ex.getMessage());
+			p.report("Error: could not open exception file: " + ex.getMessage());
 			error = System.out;
 		}
 		
 		StopWatch timer = new StopWatch();
 		try 
 		{
-			page.println("\nCreating expression dataset");
+			p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
 			connect(info.dbName, true, false);
 			
-			page.println("Importing data");
-			page.println("> Processing headers");
+			p.report("Importing data");
+			p.report("> Processing headers");
 			
 			timer.start();
 			
@@ -625,7 +464,7 @@ public class Gex implements ApplicationEventListener {
 			int sampleId = 0;
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++) {
-				if(monitor.isCanceled()) { close(true); error.close(); return; } //User pressed cancel
+				if(p.isCancelled()) { close(true); error.close(); return; } //User pressed cancel
 				if(i != info.idColumn && i != info.codeColumn) { //skip the gene and systemcode column
 					try {
 						pstmt.setInt(1, sampleId++);
@@ -641,7 +480,7 @@ public class Gex implements ApplicationEventListener {
 				}
 			}
 			
-			page.println("> Processing lines");
+			p.report("> Processing lines");
 			
 			//Check ids and add expression data
 			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
@@ -656,7 +495,7 @@ public class Gex implements ApplicationEventListener {
 			int worked = importWork / nrLines;
 			while((line = in.readLine()) != null) 
 			{
-				if(monitor.isCanceled()) { close(); error.close(); return; } //User pressed cancel
+				if(p.isCancelled()) { close(); error.close(); return; } //User pressed cancel
 				String[] data = line.split(ImportInformation.DELIMITER, headers.length);
 				n++;
 				if(n == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
@@ -666,7 +505,7 @@ public class Gex implements ApplicationEventListener {
 							errors);
 					continue;
 				}
-				monitor.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
+				p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
 				//Check id and add data
 				String id = data[info.idColumn].trim();
 				String code = data[info.codeColumn].trim();
@@ -703,17 +542,17 @@ public class Gex implements ApplicationEventListener {
 					}
 					if(success) added++;
 				}
-				monitor.worked(worked);
+				p.worked(worked);
 			}
-			page.println(added + " genes were added succesfully to the expression dataset");
+			p.report(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
-				page.println(errors + " exceptions occured, see file '" + errorFile + "' for details");
+				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
 			} else {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
-			monitor.setTaskName("Closing database connection");
+			p.setTaskName("Closing database connection");
 			close(true);
-			monitor.worked(finalizeWork);
+			p.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
@@ -724,8 +563,9 @@ public class Gex implements ApplicationEventListener {
 				Engine.log.error("Exception on connecting expression dataset from import thread", e);
 			}
 			
+			p.finished();
 		} catch(Exception e) { 
-			page.println("Import aborted due to error: " + e.getMessage());
+			p.report("Import aborted due to error: " + e.getMessage());
 			Engine.log.error("Expression data import error", e);
 			close(true);
 			error.close();
@@ -758,7 +598,7 @@ public class Gex implements ApplicationEventListener {
 	 * in Hsqldb format as used by this program.
 	 * <BR><BR>This method reports all errors occured during the conversion to a file named 'convert_gex_error.txt'
 	 */
-	public static void convertGex()
+	public static void convertGex(ProgressKeeper p)
 	{
 		//Open a connection to the error file
 		PrintWriter error = null;
@@ -804,7 +644,7 @@ public class Gex implements ApplicationEventListener {
 			String id = "";
 			String code = "";
 			while(r.next()) { //Process all rows of the expression data
-				if(convertThread.isInterrupted) //Check if the user cancelled the conversion
+				if(p.isCancelled()) //Check if the user cancelled the conversion
 				{
 					closeGmGex();
 					close();
@@ -845,7 +685,7 @@ public class Gex implements ApplicationEventListener {
 				nq++;
 				if(nq % 1000 == 0) //Commit every 1000 queries
 					con.commit();
-				convertThread.progress += 100.0/nrRows; //Report progress
+				p.worked(p.getTotalWork()/nrRows); //Report progress
 			}
 			con.commit();	
 		} catch(Exception e) {
@@ -858,11 +698,11 @@ public class Gex implements ApplicationEventListener {
 		
 //		setGexReadOnly(true);
 		
-		convertThread.progress = 100;
+		p.finished();
 	}
 	
-	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getDbConnector(DBConnector.TYPE_GEX);
+	public static DBConnectorSwt getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return Engine.getDbConnector(DBConnectorSwt.TYPE_GEX);
 	}
 	
 	/**
@@ -876,7 +716,7 @@ public class Gex implements ApplicationEventListener {
 		
 		if(dbName != null) setDbName(dbName);
 		
-		DBConnector connector = getDBConnector();
+		DBConnectorSwt connector = getDBConnector();
 		
 		if(create) {
 			con = connector.createNewDatabase(getDbName());
@@ -918,7 +758,7 @@ public class Gex implements ApplicationEventListener {
 			{
 				saveXML();
 				
-				DBConnector connector = getDBConnector();
+				DBConnectorSwt connector = getDBConnector();
 				if(finalize) {
 					connector.compact(con);
 					connector.createIndices(con);

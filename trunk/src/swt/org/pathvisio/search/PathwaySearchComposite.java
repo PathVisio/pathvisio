@@ -41,10 +41,9 @@ import org.eclipse.swt.widgets.Text;
 import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.gui.swt.MainWindowBase;
-import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.SearchMethods.SearchException;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 
 public class PathwaySearchComposite extends Composite {
 

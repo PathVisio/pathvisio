@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.util;
+package org.pathvisio.util.swt;
 
 import java.util.ArrayList;
 
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.util.SuggestCombo.SuggestionProvider.SuggestThread;
+import org.pathvisio.util.swt.SuggestCombo.SuggestionProvider.SuggestThread;
 
 public class SuggestCombo extends Composite {
 	protected boolean ignoreModify;

@@ -32,13 +32,15 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.preferences.PreferenceCollection;
 import org.pathvisio.preferences.swt.SwtPreferences;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swt.VPathwaySwtAwt;
@@ -342,6 +344,14 @@ public class SwtEngine {
 		imageRegistry = _imageRegistry;
 	}
 			
+	public static DBConnectorSwt getSwtDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		DBConnector dbc = Engine.getDbConnector(type);
+		if(dbc instanceof DBConnectorSwt) {
+			return (DBConnectorSwt)dbc;
+		} else {
+			throw new IllegalArgumentException("Not an SWT database connector");
+		}
+	}
 	/**
 	 * Get the working directory of this application
 	 */

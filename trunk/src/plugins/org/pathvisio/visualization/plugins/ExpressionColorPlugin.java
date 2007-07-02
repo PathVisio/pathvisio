@@ -48,7 +48,7 @@ import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
 import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SwtUtils;
+import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.colorset.ColorSet;

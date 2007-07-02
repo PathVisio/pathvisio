@@ -172,6 +172,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 			parent.setVSize(width, height);
 		}
 		data.fireObjectModifiedEvent(new PathwayEvent(null, PathwayEvent.MODIFIED_GENERAL));
+		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
 		data.addListener(this);
 	}
 

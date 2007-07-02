@@ -29,7 +29,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 
 
 public class RWizard extends Wizard {

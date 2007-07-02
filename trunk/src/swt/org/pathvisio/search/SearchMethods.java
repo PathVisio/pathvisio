@@ -16,8 +16,6 @@
 //
 package org.pathvisio.search;
 
-import org.pathvisio.gui.swt.SwtEngine;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

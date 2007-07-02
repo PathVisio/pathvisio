@@ -56,7 +56,7 @@ import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.wizard.RWizard;
 import org.pathvisio.util.JarUtils;
 import org.pathvisio.util.Utils;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.pathvisio.visualization.colorset.CriterionComposite;
 

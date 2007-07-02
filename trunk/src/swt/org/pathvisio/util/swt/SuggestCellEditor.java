@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.util;
+package org.pathvisio.util.swt;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.events.FocusAdapter;
@@ -23,7 +23,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.pathvisio.util.SuggestCombo.SuggestionProvider;
+import org.pathvisio.util.swt.SuggestCombo.SuggestionProvider;
 
 public abstract class SuggestCellEditor extends CellEditor {
 	protected SuggestCombo suggestCombo;

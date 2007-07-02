@@ -29,12 +29,11 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
-import org.pathvisio.model.Pathway;
 import org.pathvisio.model.SvgFormat;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
-import org.pathvisio.util.SwtUtils;
+import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
 

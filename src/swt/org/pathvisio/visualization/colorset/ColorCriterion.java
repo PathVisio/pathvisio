@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SwtUtils;
+import org.pathvisio.util.swt.SwtUtils;
 
 public class ColorCriterion extends ColorSetObject {	
 	public static final String XML_ELEMENT_NAME = "ColorCriterion";

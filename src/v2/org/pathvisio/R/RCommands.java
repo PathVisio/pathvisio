@@ -25,12 +25,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.pathvisio.R.RDataOut.RObject;
+import org.pathvisio.util.Utils;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
-
-import org.pathvisio.util.Utils;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.R.RDataOut.RObject;
 
 /**
  * This class contains static wrappers for commands to be evaluated in R

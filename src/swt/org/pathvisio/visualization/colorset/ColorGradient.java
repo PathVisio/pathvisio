@@ -48,8 +48,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.SwtUtils;
-import org.pathvisio.util.TableColumnResizer;
+import org.pathvisio.util.swt.SwtUtils;
+import org.pathvisio.util.swt.TableColumnResizer;
 
 /**
  * This class represent a color gradient used for data visualization

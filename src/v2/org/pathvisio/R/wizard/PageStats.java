@@ -40,7 +40,7 @@ import org.pathvisio.R.RFunctionLoader;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RFunctionLoader.RFunction;
 import org.pathvisio.gui.swt.SwtEngine;
-import org.pathvisio.util.SwtUtils.SimpleRunnableWithProgress;
+import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 
 public class PageStats extends WizardPage {
 	String resultVar;

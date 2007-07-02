@@ -18,57 +18,24 @@ package org.pathvisio.util;
 
 import java.awt.Color;
 
-import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
-import org.pathvisio.Engine;
 
 public abstract class ColorConverter
-{		    
-    /**
-	 * Creates a string representing a {@link RGB} object which is parsable by {@link #parseRgbString(String)}
-	 * @param rgb the {@link RGB} object to create a string from
-	 * @return the string representing the {@link RGB} object
-	 */
-	public static String getRgbString(RGB rgb)
-	{
-		return rgb.red + "," + rgb.green + "," + rgb.blue;
-	}
-	
-	public static String getRgbString(java.awt.Color c) {
+{		
+	/**
+	 * Returns a string representing a {@link Color} object.
+	 * @param c The {@link Color} to be converted to a string
+	 * @return a string representing the {@link Color} c
+	 */	
+	public static String getRgbString(Color c) {
 		return c.getRed() + "," + c.getGreen() + "," + c.getBlue();
 	}
-	
-	public static RGB toRGB(Color c) {
-		return new RGB(c.getRed(), c.getGreen(), c.getBlue());
-	}
-	
-	public static Color fromRGB(RGB rgb) {
-		return new Color(rgb.red, rgb.green, rgb.blue);
-	}
-	
+		
 	/**
-	 * Parses a string representing a {@link RGB} object created with {@link #getRgbString(RGB)}
+	 * Parses a string representing a {@link Color} object created with {@link #getRgbString(Color)}
 	 * @param rgbString the string to be parsed
-	 * @return the {@link RGB} object this string represented
-	 */
-	public static RGB parseRgbString(String rgbString)
-	{
-		String[] s = rgbString.split(",");
-		try 
-		{
-			return new RGB(
-					Integer.parseInt(s[0]), 
-					Integer.parseInt(s[1]), 
-					Integer.parseInt(s[2]));
-		}
-		catch(Exception e)
-		{
-			Engine.log.error("Unable to parse color '" + rgbString + 
-					"'stored in expression database", e);
-			return new RGB(0,0,0);
-		}
-	}
-	    
+	 * @return the {@link Color} object this string represented
+	 */	    
 	public static java.awt.Color parseColorString(String colorString)
 	{
 		String[] s = colorString.split(",");

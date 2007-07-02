@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.util;
+package org.pathvisio.util.swt;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DirectColorModel;
@@ -102,7 +102,7 @@ public class SwtUtils {
 			cOld = null;
 		}
 		if(rgbNew == null) rgbNew = new java.awt.Color(0,0,0);
-		return new Color(display, ColorConverter.toRGB(rgbNew));
+		return new Color(display, color2rgb(rgbNew));
 	}
 	
 	/**

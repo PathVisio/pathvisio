@@ -40,10 +40,10 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
-import org.pathvisio.util.SuggestCellEditor;
-import org.pathvisio.util.SuggestCombo;
-import org.pathvisio.util.SuggestCombo.SuggestionListener;
-import org.pathvisio.util.SuggestCombo.SuggestionProvider;
+import org.pathvisio.util.swt.SuggestCellEditor;
+import org.pathvisio.util.swt.SuggestCombo;
+import org.pathvisio.util.swt.SuggestCombo.SuggestionListener;
+import org.pathvisio.util.swt.SuggestCombo.SuggestionProvider;
 
 public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvider, SuggestionListener {
 	public static final int TYPE_IDENTIFIER = 0;

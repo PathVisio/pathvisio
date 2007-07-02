@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
@@ -460,36 +461,28 @@ public abstract class GraphicsShape extends Graphics {
 	 */
 	protected Shape getVOutline()
 	{
-		Shape fill = getFillShape();
-		Area outline = new Area(fill);
-		outline.add(new Area(defaultStroke.createStrokedShape(fill)));
-		return outline;
+		return getShape();
+	}
+		
+	protected Shape getShape() {
+		return getFillShape(defaultStroke.getLineWidth());
+	}
+	protected Shape getFillShape() {
+		return getFillShape(0);
 	}
 	
-	public Rectangle getVBounds() {
-		//Override VPathwayElement, because getVOutline is too slow
-		Rectangle b = getFillShape().getBounds();
-		float sw = defaultStroke.getLineWidth();
-		//b.x -= sw; b.y -= sw;
-		b.width += sw; b.height += sw;
-		return b;
-	}
-	
-	private Shape getFillShape() {
-		int[] x = new int[4];
-		int[] y = new int[4];
-		
-		int[] p = getVHandleLocation(handleNE).asIntArray();
-		x[0] = p[0]; y[0] = p[1];
-		p = getVHandleLocation(handleSE).asIntArray();
-		x[1] = p[0]; y[1] = p[1];
-		p = getVHandleLocation(handleSW).asIntArray();
-		x[2] = p[0]; y[2] = p[1];
-		p = getVHandleLocation(handleNW).asIntArray();
-		x[3] = p[0]; y[3] = p[1];
-		
-		Polygon pol = new Polygon(x, y, 4);
-		return pol;
+	protected Shape getFillShape(float sw) {
+		int x = getVLeft();
+		int y = getVTop();
+		int w = getVWidth();
+		int h = getVHeight();
+		int cx = getVCenterX();
+		int cy = getVCenterY();
+
+		Shape s = new Rectangle2D.Double(x, y, w + sw, h + sw);
+		AffineTransform t = new AffineTransform();
+		t.rotate(gdata.getRotation(), cx, cy);
+		return s;
 	}
 	
 	public void gmmlObjectModified(PathwayEvent e) {		

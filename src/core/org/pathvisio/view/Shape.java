@@ -16,12 +16,15 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.BasicStroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+
 import org.pathvisio.model.PathwayElement;
 
 /**
@@ -59,59 +62,23 @@ public class Shape extends GraphicsShape
 		{
 			linecolor = selectColor;
 		} 
-		
-		int x = getVLeft();
-		int y = getVTop();
-		int w = getVWidth();
-		int h = getVHeight();
-		int cx = getVCenterX();
-		int cy = getVCenterY();
-						
-		g.rotate(gdata.getRotation(), cx, cy);
 
-		java.awt.Shape shape = null;
-		switch(gdata.getShapeType())
-		{
-		case OVAL: shape = new Ellipse2D.Double (x, y, w, h); break;
-		case ARC: shape = new Arc2D.Double (x, y, w, h, 0, -180, Arc2D.OPEN); break;
- 		case BRACE:
-		case RECTANGLE:
-		default: shape = new Rectangle (x, y, w, h);
-		}
+		java.awt.Shape shape = getFillShape();
+		
+		g.setColor(linecolor);
+		g.draw(shape);
 		
 		switch(gdata.getShapeType())
 		{
+		case RECTANGLE:
 		case OVAL:
 			if(!gdata.isTransparent()) {
 				g.setColor(fillcolor);
-				g.fillOval(x, y, w, h);
+				g.fill(shape);
 			}
-			g.setColor(linecolor);
-			g.drawOval(x, y, w, h);
-			break;
-		case ARC:
-			g.setColor(linecolor);
-			g.drawArc(x, y, w, h, 0, -180);
-			break;
-		case BRACE:
-			g.setColor(linecolor);
-			g.drawLine (cx + h/2, cy, cx + w/2 - h/2, cy); //line on the right
-			g.drawLine (cx - h/2, cy, cx - w/2 + h/2, cy); //line on the left
-			g.drawArc (cx - w/2, cy, h, h, -180, -90); //arc on the left
-			g.drawArc (cx - h, cy - h,	h, h, -90, 90); //left arc in the middle
-			g.drawArc (cx, cy - h, h, h, -90, -90); //right arc in the middle
-			g.drawArc (cx + w/2 - h, cy, h, h, 0, 90); //arc on the right
-			break;
-		default:
-			if(!gdata.isTransparent()) {
-				g.setColor(fillcolor);
-				g.fillRect(x, y, w, h);
-			}
-			g.setColor(linecolor);
-			g.drawRect(x, y, w, h);
 			break;
 		}
-
+		
 		if (isHighlighted())
 		{
 			Color hc = getHighlightColor();
@@ -120,4 +87,41 @@ public class Shape extends GraphicsShape
 			g.draw (shape);
 		}
 	}	
+	
+	protected java.awt.Shape getFillShape(float sw) {
+		int x = getVLeft();
+		int y = getVTop();
+		int w = getVWidth() + (int)sw;
+		int h = getVHeight() + (int)sw;
+		int cx = getVCenterX();
+		int cy = getVCenterY();
+		
+		java.awt.Shape s = null;
+		
+		switch(gdata.getShapeType()) {
+		case OVAL:
+			s = new Ellipse2D.Double(x, y, w, h);
+			break;
+		case ARC:;
+			s = new Arc2D.Double (x, y, w, h, 0, -180, Arc2D.OPEN);
+			break;
+		case BRACE:
+			GeneralPath p = new GeneralPath();
+            p.moveTo(x, y + h);
+            p.quadTo(x, y + h/2, x + h/2, y + h/2);
+            p.lineTo(cx - h/2, y + h/2);
+            p.quadTo(cx, y + h/2, cx, y);
+            p.quadTo(cx, y + h/2, cx + h/2, y + h/2);
+            p.lineTo(x + w - h/2, y + h/2);
+            p.quadTo(x + w, y + h/2, x + w, y + h);
+            s = p;
+			break;
+		default:
+			s = new Rectangle(x, y, w, h);
+			break;
+		}
+		AffineTransform t = new AffineTransform();
+		t.rotate(gdata.getRotation(), cx, cy);
+		return t.createTransformedShape(s);
+	}
 }

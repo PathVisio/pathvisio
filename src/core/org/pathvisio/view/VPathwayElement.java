@@ -223,7 +223,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	/**
 	 * Get the rectangular boundary of this object
 	 */
-	protected Rectangle getVBounds()
+	public Rectangle getVBounds()
 	{
 		return getVOutline().getBounds();
 	}

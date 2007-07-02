@@ -73,17 +73,19 @@ class PwyElt
 		return result;
 	}
 
-	void writeModifications (PwyElt other, DiffOutputter outputter)
+	/**
+	   Show detailed modifications compared to another elt
+	   call on oldElt.
+	 */
+	void writeModifications (PwyElt newElt, DiffOutputter outputter)
 	{
-		//TODO: insertions / deletions
-				
 		for (String key : contents.keySet())
 		{
-			if (other.contents.containsKey(key))
+			if (newElt.contents.containsKey(key))
 			{
-				if (!contents.get(key).equals(other.contents.get(key)))
+				if (!contents.get(key).equals(newElt.contents.get(key)))
 				{
-					outputter.modify (this, other, key, contents.get(key), other.contents.get(key));
+					outputter.modify (this, newElt, key, contents.get(key), newElt.contents.get(key));
 				}
 			}
 		}			

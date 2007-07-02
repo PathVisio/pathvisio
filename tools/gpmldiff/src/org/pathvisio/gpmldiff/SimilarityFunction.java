@@ -21,5 +21,5 @@ package org.pathvisio.gpmldiff;
 */
 abstract class SimilarityFunction
 {
-	abstract public int getSimScore (PwyElt e1, PwyElt e2);
+	abstract public int getSimScore (PwyElt oldElt, PwyElt newElt);
 }

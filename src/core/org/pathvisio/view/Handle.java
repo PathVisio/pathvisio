@@ -218,7 +218,7 @@ class Handle extends VPathwayElement
 		return b;
 	}
 	
-	protected Rectangle getVBounds() {
+	public Rectangle getVBounds() {
 		//Override VPathwayElement, because getVOutline is too slow
 		return getFillShape((int)defaultStroke.getLineWidth()).getBounds();
 	}

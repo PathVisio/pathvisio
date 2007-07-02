@@ -466,7 +466,7 @@ public abstract class GraphicsShape extends Graphics {
 		return outline;
 	}
 	
-	protected Rectangle getVBounds() {
+	public Rectangle getVBounds() {
 		//Override VPathwayElement, because getVOutline is too slow
 		Rectangle b = getFillShape().getBounds();
 		float sw = defaultStroke.getLineWidth();

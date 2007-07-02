@@ -24,8 +24,8 @@ import org.pathvisio.debug.Logger;
 */
 class GpmlDiff
 {
-	static File fileOld = null;
-	static File fileNew = null;
+	static File oldFile = null;
+	static File newFile = null;
 	
 	/**
 	   Parse Command-line Options
@@ -36,13 +36,13 @@ class GpmlDiff
 		if (argv.length != 2) error = "Two parameters expected";
 		if (error == null)
 		{
-			fileOld = new File(argv[0]);
-			if (!fileOld.exists()) error = argv[0] + ": File not found";
+			oldFile = new File(argv[0]);
+			if (!oldFile.exists()) error = argv[0] + ": File not found";
 		}
 		if (error == null)
 		{
-			fileNew = new File(argv[1]);
-			if (!fileNew.exists()) error = argv[1] + ": File not found";
+			newFile = new File(argv[1]);
+			if (!newFile.exists()) error = argv[1] + ": File not found";
 		}
 		if (error != null)
 		{
@@ -79,13 +79,15 @@ class GpmlDiff
 		catch (IOException e) {}
 		if (parseCliOptions(argv))
 		{
-			PwyDoc doc1 = PwyDoc.read (fileOld);
-			PwyDoc doc2 = PwyDoc.read (fileNew);
-			SearchNode result = doc1.findCorrespondence (doc2, new BasicSim(), new BasicCost());
-// 			DiffOutputter out = new DgpmlOutputter();
+			PwyDoc oldDoc = PwyDoc.read (oldFile);
+			PwyDoc newDoc = PwyDoc.read (newFile);
+			SearchNode result = oldDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
 
-			DiffOutputter out = new SvgOutputter(doc1, doc2);
-			doc1.writeResult (result, doc2, out);
+//			DiffOutputter out = new BasicOutputter();
+// 			DiffOutputter out = new DgpmlOutputter();
+ 			DiffOutputter out = new SvgOutputter(oldDoc, newDoc);
+			
+			oldDoc.writeResult (result, newDoc, out);
 			try
 			{
 				out.flush();

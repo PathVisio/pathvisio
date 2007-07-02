@@ -18,6 +18,10 @@ package org.pathvisio.gpmldiff;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Font;
+import java.awt.geom.Rectangle2D;
+import java.awt.font.TextLayout;
 import java.io.*;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -32,10 +36,17 @@ import org.w3c.dom.Document;
 
 class SvgOutputter extends DiffOutputter
 {
-	OutputStream out;
-	PwyDoc oldPwy;
-	PwyDoc newPwy;
+	private OutputStream out;
+	private PwyDoc oldPwy;
+	private PwyDoc newPwy;
+	
+	private static final int PWY_OLD = 0;
+	private static final int PWY_NEW = 1;
 	VPathway vpwy[] = {new VPathway(null), new VPathway(null)};
+	SVGGraphics2D svgGenerator;
+	
+	private static final int HEADER_HIGHT = 32;
+	int deltax = 0;
 	
 	SvgOutputter(PwyDoc _oldPwy, PwyDoc _newPwy, File f) throws IOException
 	{
@@ -49,34 +60,53 @@ class SvgOutputter extends DiffOutputter
 		oldPwy = _oldPwy;
 		newPwy = _newPwy;
 
-		vpwy[0].fromGmmlData (oldPwy.getPathway());
-		vpwy[1].fromGmmlData (newPwy.getPathway());
-	}
+		vpwy[PWY_OLD].fromGmmlData (oldPwy.getPathway());
+		vpwy[PWY_NEW].fromGmmlData (newPwy.getPathway());
 
-	public void flush() throws IOException
-	{
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		String svgNS = "http://www.w3.org/2000/svg";
 		Document document = domImpl.createDocument (svgNS, "svg", null);
 
 		int[] width = new int[2];
 		int[] height = new int[2];
+
 		for (int i = 0; i < 2; ++i)
 		{
- 			vpwy[i].setPctZoom (50);
+//  			vpwy[i].setPctZoom (50);
 			width[i] = vpwy[i].getVWidth();
 			height[i] = vpwy[i].getVHeight();
 		}
 
-		int maxh = height[0] > height[1] ? height[0] : height[1];		
-		int maxw = width[0] > width[1] ? width[0] : width[1];
+		
+		int maxh = height[PWY_OLD] > height[PWY_NEW] ? height[PWY_OLD] : height[PWY_NEW];
+		int maxw = width[PWY_OLD] > width[PWY_NEW] ? width[PWY_OLD] : width[PWY_NEW];
 
-		SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-		svgGenerator.setSVGCanvasSize (new Dimension (width[0] + width[1], maxh));
+		deltax = width[0];
+		svgGenerator = new SVGGraphics2D(document);
+		svgGenerator.setSVGCanvasSize (new Dimension (width[0] + width[1], maxh + HEADER_HIGHT));
 
-		vpwy[0].draw (svgGenerator, null, true);
- 		svgGenerator.translate (width[0], 0);
- 		vpwy[1].draw (svgGenerator, null, true);
+		// titles
+		svgGenerator.setFont(new Font(null, Font.PLAIN, 16));
+		TextLayout tl = new TextLayout(
+			"OLD: " + oldPwy.getSourceFile().getName(),
+			svgGenerator.getFont(), svgGenerator.getFontRenderContext());
+		Rectangle2D tb = tl.getBounds();
+		tl.draw (svgGenerator, (float)((width[PWY_OLD] - tb.getWidth()) / 2), (float)tb.getHeight());
+		tl = new TextLayout(
+			"NEW: " + newPwy.getSourceFile().getName(),
+			svgGenerator.getFont(), svgGenerator.getFontRenderContext());
+		tb = tl.getBounds();
+		tl.draw (svgGenerator, (float)(width[PWY_OLD] + (width[PWY_OLD] - tb.getWidth()) / 2), (float)tb.getHeight());
+
+	}
+
+	public void flush() throws IOException
+	{		
+		// pwy's themselves		
+ 		svgGenerator.translate (0, HEADER_HIGHT);
+		vpwy[PWY_OLD].draw (svgGenerator, null, false);
+ 		svgGenerator.translate (deltax, 0);
+ 		vpwy[PWY_NEW].draw (svgGenerator, null, false);
 		
 		boolean useCSS = true;
 		Writer out = new OutputStreamWriter (System.out, "UTF-8");
@@ -86,26 +116,36 @@ class SvgOutputter extends DiffOutputter
 	
 	public void insert(PwyElt newElt)
 	{
-		VPathwayElement velt = findElt (newElt, vpwy[0]);
+		VPathwayElement velt = findElt (newElt, vpwy[PWY_NEW]);
 		assert (velt != null);
 		velt.highlight (Color.GREEN);
 	}
 
 	public void delete(PwyElt oldElt)
 	{
-		VPathwayElement velt = findElt (oldElt, vpwy[1]);
+		VPathwayElement velt = findElt (oldElt, vpwy[PWY_OLD]);
 		assert (velt != null);
 		velt.highlight (Color.RED);
 	}
 
 	public void modify(PwyElt oldElt, PwyElt newElt, String path, String oldVal, String newVal)
 	{
-		VPathwayElement velt = findElt (oldElt, vpwy[0]);
+		VPathwayElement velt = findElt (oldElt, vpwy[PWY_OLD]);
 		assert (velt != null);
 		velt.highlight (Color.YELLOW);
-		velt = findElt (newElt, vpwy[1]);
+		Rectangle r1 = velt.getVBounds();
+		
+		velt = findElt (newElt, vpwy[PWY_NEW]);
 		assert (velt != null);
 		velt.highlight (Color.YELLOW);
+		Rectangle r2 = velt.getVBounds();
+
+		svgGenerator.setColor (Color.YELLOW);
+		svgGenerator.drawLine (
+			(int)(r1.getX() + r1.getWidth() / 2),
+			(int)(r1.getY() + r1.getHeight() / 2 + HEADER_HIGHT),
+			(int)(r2.getX() + r2.getWidth() / 2) + deltax,
+			(int)(r2.getY() + r2.getHeight() / 2) + HEADER_HIGHT);
 	}
 
 	/**

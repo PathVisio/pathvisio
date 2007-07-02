@@ -33,31 +33,31 @@ class SearchNode
 		return parent;
 	}
 	
-	PwyElt elt1; // corresponding elt in doc1
+	PwyElt oldElt; // corresponding elt in old doc
 
-	public PwyElt getElt1()
+	public PwyElt getOldElt()
 	{
-		return elt1;
+		return oldElt;
 	}
 	
-	PwyElt elt2; // corresponding elt in doc2
+	PwyElt newElt; // corresponding elt in new doc
 
-	public PwyElt getElt2()
+	public PwyElt getNewElt()
 	{
-		return elt2;
+		return newElt;
 	}
 	
 	/**
 	   Create a new SearchNode.
 	   note: parent may be null.
 	*/
-	public SearchNode(SearchNode _parent, PwyElt _e1, PwyElt _e2, float _cost)
+	public SearchNode(SearchNode _parent, PwyElt _oldElt, PwyElt _newElt, float _cost)
 	{
 		cost = _cost;
 		parent = _parent;
-		elt1 = _e1;
-		elt2 = _e2;
-		assert (elt1 != null);
-		assert (elt2 != null);
+		oldElt = _oldElt;
+		newElt = _newElt;
+		assert (oldElt != null);
+		assert (newElt != null);
 	}
 }

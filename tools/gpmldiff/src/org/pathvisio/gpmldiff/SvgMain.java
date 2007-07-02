@@ -30,6 +30,9 @@ import org.pathvisio.model.ConverterException;
 
 class SvgMain
 {
+	static final int OLD = 0;
+	static final int NEW = 1;
+
 	static public void main (String argv[]) throws IOException, ConverterException
 	{
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
@@ -38,10 +41,10 @@ class SvgMain
 		
 		Pathway pwy[] = {new Pathway(), new Pathway()};
 		
-// 		pwy[0].readFromXml (new File ("testcases/Simple1.1.gpml"), false);
-// 		pwy[1].readFromXml (new File ("testcases/Simple1.2.gpml"), false);
- 		pwy[0].readFromXml (new File ("testcases/sandbox070524.gpml"), false);
- 		pwy[1].readFromXml (new File ("testcases/sandbox070522_5.gpml"), false);
+// 		pwy[OLD].readFromXml (new File ("testcases/Simple1.1.gpml"), false);
+// 		pwy[NEW].readFromXml (new File ("testcases/Simple1.2.gpml"), false);
+ 		pwy[OLD].readFromXml (new File ("testcases/sandbox070524.gpml"), false);
+ 		pwy[NEW].readFromXml (new File ("testcases/sandbox070522_5.gpml"), false);
 		
 		VPathway vpwy[] = {new VPathway(null), new VPathway(null)};
 		
@@ -55,11 +58,11 @@ class SvgMain
 			height[i] = vpwy[i].getVHeight();
 		}
 
-		int maxh = height[0] > height[1] ? height[0] : height[1];		
-		int maxw = width[0] > width[1] ? width[0] : width[1];
+		int maxh = height[OLD] > height[NEW] ? height[OLD] : height[NEW];		
+		int maxw = width[OLD] > width[NEW] ? width[OLD] : width[NEW];
 
 		int j = 0;
-		for (VPathwayElement e : vpwy[0].getDrawingObjects())
+		for (VPathwayElement e : vpwy[OLD].getDrawingObjects())
 		{
 			if (e instanceof org.pathvisio.view.Graphics)
 			{
@@ -80,9 +83,9 @@ class SvgMain
  		SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
 		svgGenerator.setSVGCanvasSize (new Dimension (maxw * 2, maxh));
 
-		vpwy[0].draw (svgGenerator, null, true);
+		vpwy[OLD].draw (svgGenerator, null, true);
  		svgGenerator.translate (maxw, 0);
- 		vpwy[1].draw (svgGenerator, null, true);
+ 		vpwy[NEW].draw (svgGenerator, null, true);
 		
 		boolean useCSS = true;
 		Writer out = new OutputStreamWriter (System.out, "UTF-8");

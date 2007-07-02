@@ -271,8 +271,8 @@ public class SwtUtils {
 	
 	public static java.awt.Font fontData2awtFont(FontData fd) {
 		int style = java.awt.Font.PLAIN;
-		if((fd.style & SWT.BOLD) != 0) style |= java.awt.Font.BOLD;
-		if((fd.style & SWT.ITALIC) != 0) style |= java.awt.Font.ITALIC;
+		if((fd.getStyle() & SWT.BOLD) != 0) style |= java.awt.Font.BOLD;
+		if((fd.getStyle() & SWT.ITALIC) != 0) style |= java.awt.Font.ITALIC;
 		return new java.awt.Font(fd.getName(), fd.getHeight(), style);		
 	}
 	

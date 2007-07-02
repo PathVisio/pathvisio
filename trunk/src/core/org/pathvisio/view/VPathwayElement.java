@@ -53,7 +53,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		Graphics2D g = (Graphics2D)g2d.create();
 				
 		//Prevent element from drawing outside its bounds
-		g.setClip(getVBounds());
+		g.clip(getVBounds());
 		g.setStroke(defaultStroke);
 		//Perform the drawing
 		doDraw(g);

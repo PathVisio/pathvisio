@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view.swing;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -76,8 +77,6 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	protected void paintComponent(Graphics g) {
-		Dimension vps = getViewportSize();
-		g.setClip(new Rectangle(0, 0, vps.width, vps.height));
 		child.draw((Graphics2D) g);
 	}
 
@@ -149,7 +148,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		if(e.getType() == VPathwayEvent.MODEL_LOADED) {
 			if(e.getSource() == child) {
 				container.setViewportView(this);
-				revalidate();
+				container.getViewport().setBackground(Color.GRAY);
+				container.revalidate();
 			}
 		}
 	}

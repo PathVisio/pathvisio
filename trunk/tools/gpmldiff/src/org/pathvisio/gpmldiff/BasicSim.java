@@ -27,26 +27,26 @@ class BasicSim extends SimilarityFunction
 	/**
 	   returns a score between 0 and 100, 100 if both elements are completely similar
 	*/
-	public int getSimScore (PwyElt e1, PwyElt e2)
+	public int getSimScore (PwyElt oldE, PwyElt newE)
 	{
-		Map<String, String> c1 = e1.getContents();
-		Map<String, String> c2 = e2.getContents();
+		Map<String, String> oldC = oldE.getContents();
+		Map<String, String> newC = newE.getContents();
 
-		int n1 = c1.size();
-		int n2 = c2.size();
+		int oldN = oldC.size();
+		int newN = newC.size();
 
-		if (n1 + n2 == 0) return 0; // div by 0 prevention
+		if (oldN + newN == 0) return 0; // div by 0 prevention
 		
 		int score = 0;
 		
-		for (String key : c1.keySet())
+		for (String key : oldC.keySet())
 		{
-			if (c2.containsKey (key) && c2.get(key).equals (c1.get(key)))
+			if (newC.containsKey (key) && newC.get(key).equals (oldC.get(key)))
 			{
 				score += 2;
 			}
 		}
 		
-		return (100 * score) / (n1 + n2);
+		return (100 * score) / (oldN + newN);
 	}
 }

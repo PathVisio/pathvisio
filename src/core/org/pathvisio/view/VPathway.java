@@ -527,6 +527,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 			g2d.fillRect(area.x, area.y, area.width, area.height);
 		}
 		
+		g2d.clip(area);
 		g2d.setColor(java.awt.Color.BLACK);
 		Collections.sort(drawingObjects);
 		

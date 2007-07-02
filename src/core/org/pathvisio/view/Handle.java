@@ -210,10 +210,12 @@ class Handle extends VPathwayElement
 	}
 			
 	public Shape getVOutline() {
-		Shape fill = getFillShape();
-		Area outline = new Area(fill);
-		outline.add(new Area(defaultStroke.createStrokedShape(fill)));
-		return outline;
+		//Override VPathwayElement, because getVOutline is too slow
+		Rectangle b = getFillShape().getBounds();
+		float sw = defaultStroke.getLineWidth();
+		//b.x -= sw; b.y -= sw;
+		b.width += sw; b.height += sw;
+		return b;
 	}
 	
 	protected Rectangle getVBounds() {

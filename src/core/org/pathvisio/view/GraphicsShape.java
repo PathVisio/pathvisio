@@ -470,7 +470,7 @@ public abstract class GraphicsShape extends Graphics {
 		//Override VPathwayElement, because getVOutline is too slow
 		Rectangle b = getFillShape().getBounds();
 		float sw = defaultStroke.getLineWidth();
-		b.x -= sw; b.y -= sw;
+		//b.x -= sw; b.y -= sw;
 		b.width += sw; b.height += sw;
 		return b;
 	}

@@ -76,6 +76,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	protected void paintComponent(Graphics g) {
+		Dimension vps = getViewportSize();
+		g.setClip(new Rectangle(0, 0, vps.width, vps.height));
 		child.draw((Graphics2D) g);
 	}
 

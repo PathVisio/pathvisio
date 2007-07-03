@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -31,6 +32,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swt.AlignActions;
@@ -118,6 +122,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 		
 		s = new SelectionBox(this);
 		
+		registerKeyboardActions();
 		VisualizationManager.addListener(this);
 	}
 	
@@ -1028,6 +1033,13 @@ public class VPathway implements PathwayListener, VisualizationListener
 		}
 	}
 	
+	private void selectAll() {
+		clearSelection();
+		for(VPathwayElement o : getDrawingObjects()) {
+			s.addToSelection(o);
+		}
+	}
+	
 	private void insertPressed() {
 		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
 		objects.addAll(s.getSelection());
@@ -1080,33 +1092,53 @@ public class VPathway implements PathwayListener, VisualizationListener
 	}
 
 	public void keyPressed(KeyEvent e) { 
-		if(e.isKey(KeyEvent.INSERT)) insertPressed();
-		if(e.isKey('d') && e.isKeyDown(KeyEvent.M_CTRL)) //CTRL-D to select all gene-products 
-		{
-			selectGeneProducts();
-			redraw();
+		//Use registerKeyboardActions
+	}
+	
+	private void registerKeyboardActions() {
+		
+		if(parent != null) {
+			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D,
+					java.awt.Event.CTRL_MASK),
+					new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					selectGeneProducts();
+					redraw();
+				}
+			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
+			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G,
+					java.awt.Event.CTRL_MASK),
+					new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					createGroup();
+				}
+			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
+			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A,
+					java.awt.Event.CTRL_MASK),
+					new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					selectAll();
+					redraw();
+				}
+			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
+			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0),
+					new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
+					for(VPathwayElement o : drawingObjects)
+					{
+						if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
+						toRemove.add(o);
+					}
+					removeDrawingObjects(toRemove);	
+				}
+			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
 		}
-//		System.out.println(e.getKeyCode());
-//		System.out.println("is g? " + e.isKey('g'));
-//		System.out.println("is CTRL down? " + e.isKeyDown(KeyEvent.CTRL));
-		if(e.isKey('g') && e.isKeyDown(KeyEvent.M_CTRL)) //CTRL-G to select all gene-products
-		{
-			createGroup();
-		}
+                
 	}
 
-	
-	
 	public void keyReleased(KeyEvent e) {		
-		if(e.isKey(KeyEvent.DEL)) {
-			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
-			for(VPathwayElement o : drawingObjects)
-			{
-				if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
-				toRemove.add(o);
-			}
-			removeDrawingObjects(toRemove);
-		}
+		//use registerKeyboardActions
 	}
 	
 	/**

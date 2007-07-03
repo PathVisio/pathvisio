@@ -19,6 +19,9 @@ package org.pathvisio.view;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
 public abstract interface VPathwayWrapper {		
 	public void redraw();
 	public void redraw(Rectangle r);
@@ -29,4 +32,8 @@ public abstract interface VPathwayWrapper {
 	public Dimension getViewportSize();
 	
 	public VPathway createVPathway();
+	
+	public static final int WHEN_FOCUSED = 0;
+	public static final int WHEN_WINDOW_FOCUSED = 1;
+	public void registerKeyboardAction(KeyStroke k, Action a, int when);
 }

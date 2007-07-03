@@ -108,11 +108,9 @@ public class Shape extends GraphicsShape
 		case BRACE:
 			GeneralPath p = new GeneralPath();
             p.moveTo(x, y + h);
-            p.quadTo(x, y + h/2, x + h/2, y + h/2);
-            p.lineTo(cx - h/2, y + h/2);
+            p.quadTo(x, y + h/2, x + w/4, y + h/2);
             p.quadTo(cx, y + h/2, cx, y);
-            p.quadTo(cx, y + h/2, cx + h/2, y + h/2);
-            p.lineTo(x + w - h/2, y + h/2);
+            p.quadTo(cx, y + h/2, cx + w/4, y + h/2);
             p.quadTo(x + w, y + h/2, x + w, y + h);
             s = p;
 			break;

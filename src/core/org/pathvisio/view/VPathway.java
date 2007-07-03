@@ -1483,7 +1483,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 	private List<VPathwayListener> removeListeners = new ArrayList<VPathwayListener>();
 	
 	public void addVPathwayListener(VPathwayListener l) {
-		listeners.add(l);
+		if(!listeners.contains(l)) listeners.add(l);
 	}
 	
 	public void removeVPathwayListener(VPathwayListener l) {

@@ -28,7 +28,9 @@ public enum GlobalPreference implements Preference {
 	COLOR_NO_GENE_FOUND(Color.WHITE),
 	COLOR_NO_DATA_FOUND(new Color(100, 100, 100)),
 	COLOR_SELECTED(Color.RED),
-	COLOR_HIGHLIGHTED(Color.GREEN);
+	COLOR_HIGHLIGHTED(Color.GREEN),
+	
+	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false));
 	
 	GlobalPreference(String defaultValue) {
 		this.defaultValue = defaultValue;

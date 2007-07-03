@@ -126,6 +126,7 @@ public class MainPanel extends JPanel {
 		tb.addSeparator();
 		
 		tb.addSeparator();
+			
 		tb.add(new JLabel("Zoom:", JLabel.LEFT));
 		JComboBox combo = new JComboBox(new Object[] { 
 				new ZoomAction(VPathway.ZOOM_TO_FIT),
@@ -137,7 +138,9 @@ public class MainPanel extends JPanel {
 				new ZoomAction(150),
 				new ZoomAction(200)
 		} );
+		combo.setMaximumSize(combo.getPreferredSize());
 		combo.setEditable(true);
+		combo.setSelectedIndex(5); //100%
 		combo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox combo = (JComboBox)e.getSource();
@@ -156,6 +159,7 @@ public class MainPanel extends JPanel {
 			}
 		});
 		tb.add(combo);
+		
 		tb.addSeparator();
 		
 		tb.add(new NewElementAction(VPathway.NEWGENEPRODUCT));
@@ -183,6 +187,7 @@ public class MainPanel extends JPanel {
 		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(VPathway.NEWRECEPTORSQUARE)));
 		lineShapeButton.setRunFirstItem(true);
 		tb.add(lineShapeButton);
+		
 	}
 	
 	public JMenuBar getMenuBar() {
@@ -195,6 +200,10 @@ public class MainPanel extends JPanel {
 
 	public JScrollPane getScrollPane() {
 		return pathwayScrollPane;
+	}
+	
+	public JSplitPane getSplitPane() {
+		return splitPane;
 	}
 }
 

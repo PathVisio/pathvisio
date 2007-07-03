@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing.propertypanel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
@@ -81,6 +83,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			TypedProperty value = getAggregateProperty(pt, elements);
 			properties.add(value);
 		}
+		Collections.sort(properties);
 		return properties;
 	}
 	
@@ -90,11 +93,12 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		for(PathwayElement e : elements) {
 			if(properties == null) {
 				properties = new ArrayList<PropertyType>();
-				properties.addAll(e.getAttributes());
+				properties.addAll(e.getAttributes(GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)));
 				continue;
 			}
 			remove.clear();
-			List<PropertyType> attributes = e.getAttributes();
+			List<PropertyType> attributes = e.getAttributes(
+					GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES));
 			for(PropertyType p : properties) {
 				if(!attributes.contains(p)) {
 					remove.add(p);
@@ -102,7 +106,8 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			}
 			properties.removeAll(remove);
 		}
-		return properties == null ? new ArrayList<PropertyType>() : properties;
+		if(properties == null) properties = new ArrayList<PropertyType>();
+		return properties;
 	}
 	
 	TypedProperty getAggregateProperty(PropertyType key, Collection<PathwayElement> elements) {
@@ -173,7 +178,6 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	public TableCellRenderer getCellRenderer(int row, int column) {
 		if(column != 0) {
 			TypedProperty tp = getPropertyAt(row);
-			System.out.println("Getting cell renderer" + tp);
 			if(tp != null) return tp.getCellRenderer();
 		}
 		return null;

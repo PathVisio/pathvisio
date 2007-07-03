@@ -16,11 +16,14 @@
 //
 package org.pathvisio.view.swt;
 
-import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 import org.eclipse.swt.widgets.Display;
 import org.pathvisio.view.swing.VPathwaySwing;
@@ -41,6 +44,7 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseEntered(final MouseEvent e) {
+		requestFocus();
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseEntered(e);
@@ -108,6 +112,18 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseMoved(e);
+			}
+		});
+	}
+	
+	public void registerKeyboardAction(KeyStroke k, final Action a) {
+		super.registerKeyboardAction(k, new AbstractAction() {
+			public void actionPerformed(final ActionEvent e) {
+				display.syncExec(new Runnable() {
+					public void run() {
+						a.actionPerformed(e);
+					}
+				});
 			}
 		});
 	}

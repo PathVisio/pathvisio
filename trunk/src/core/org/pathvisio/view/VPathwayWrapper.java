@@ -33,7 +33,5 @@ public abstract interface VPathwayWrapper {
 	
 	public VPathway createVPathway();
 	
-	public static final int WHEN_FOCUSED = 0;
-	public static final int WHEN_WINDOW_FOCUSED = 1;
-	public void registerKeyboardAction(KeyStroke k, Action a, int when);
+	public void registerKeyboardAction(KeyStroke k, Action a);
 }

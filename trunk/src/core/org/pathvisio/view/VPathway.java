@@ -1095,34 +1095,35 @@ public class VPathway implements PathwayListener, VisualizationListener
 		//Use registerKeyboardActions
 	}
 	
+	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D,
+			java.awt.Event.CTRL_MASK);
+	public static final KeyStroke KEY_GROUP = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G,
+			java.awt.Event.CTRL_MASK);
+	public static final KeyStroke KEY_SELECT_ALL = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A,
+			java.awt.Event.CTRL_MASK);
+	public static final KeyStroke KEY_DELETE = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0);
+	//TODO: remove Swing dependency, create enum with keymappings and implement mappings to SWT and Swing
 	private void registerKeyboardActions() {
 		
 		if(parent != null) {
-			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D,
-					java.awt.Event.CTRL_MASK),
-					new AbstractAction() {
+			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					selectGeneProducts();
 					redraw();
 				}
-			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
-			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G,
-					java.awt.Event.CTRL_MASK),
-					new AbstractAction() {
+			});
+			parent.registerKeyboardAction(KEY_GROUP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					createGroup();
 				}
-			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
-			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A,
-					java.awt.Event.CTRL_MASK),
-					new AbstractAction() {
+			});
+			parent.registerKeyboardAction(KEY_SELECT_ALL, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					selectAll();
 					redraw();
 				}
-			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
-			parent.registerKeyboardAction(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0),
-					new AbstractAction() {
+			});
+			parent.registerKeyboardAction(KEY_DELETE,new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
 					for(VPathwayElement o : drawingObjects)
@@ -1132,7 +1133,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 					}
 					removeDrawingObjects(toRemove);	
 				}
-			}, VPathwayWrapper.WHEN_WINDOW_FOCUSED);
+			});
 		}
                 
 	}

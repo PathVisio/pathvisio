@@ -210,17 +210,11 @@ class Handle extends VPathwayElement
 	}
 			
 	public Shape getVOutline() {
-		//Override VPathwayElement, because getVOutline is too slow
-		Rectangle b = getFillShape().getBounds();
-		float sw = defaultStroke.getLineWidth();
-		//b.x -= sw; b.y -= sw;
-		b.width += sw; b.height += sw;
-		return b;
+		return getFillShape((int)Math.ceil(defaultStroke.getLineWidth())).getBounds();
 	}
 	
 	public Rectangle getVBounds() {
-		//Override VPathwayElement, because getVOutline is too slow
-		return getFillShape((int)defaultStroke.getLineWidth()).getBounds();
+		return getVOutline().getBounds();
 	}
 	
 	private Shape getFillShape() {
@@ -231,11 +225,11 @@ class Handle extends VPathwayElement
 		Shape s = null;
 		switch(direction) {
 		case DIRECTION_ROT:
-			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2 - sw, getVCenterY() - HEIGHT/2 - sw, 
+			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
 			break;
 		default:
-			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2 - sw, getVCenterY() - HEIGHT/2 - sw, 
+			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
 			break;
 		}

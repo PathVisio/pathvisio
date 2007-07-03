@@ -27,10 +27,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -50,6 +52,9 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
+		
+		setFocusable(true);
+		setRequestFocusEnabled(true);
 	}
 
 	public void setChild(VPathway c) {
@@ -117,13 +122,13 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void keyPressed(KeyEvent e) {
-		child.keyPressed(new SwingKeyEvent(e));
 		System.out.println("Key pressed........!");
+		child.keyPressed(new SwingKeyEvent(e));
 	}
 
 	public void keyReleased(KeyEvent e) {
-		child.keyReleased(new SwingKeyEvent(e));
 		System.out.println("Key released......!");
+		child.keyReleased(new SwingKeyEvent(e));
 	}
 
 	public void keyTyped(KeyEvent e) {
@@ -139,6 +144,16 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		child.mouseMove(new SwingMouseEvent(e));
 	}
 
+	public void registerKeyboardAction(KeyStroke k, Action a, int when) {
+		switch(when) {
+		case VPathwayWrapper.WHEN_FOCUSED:
+			when = JComponent.WHEN_FOCUSED; break;
+		case WHEN_WINDOW_FOCUSED:
+			when = WHEN_IN_FOCUSED_WINDOW; break;
+		}
+		super.registerKeyboardAction(a, k, when);	
+	}
+	
 	public VPathway createVPathway() {
 		setChild(new VPathway(this));
 		return child;

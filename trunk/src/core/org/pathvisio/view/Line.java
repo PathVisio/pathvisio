@@ -20,10 +20,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -33,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.pathvisio.model.LineStyle;
+import org.pathvisio.model.LineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -92,9 +96,6 @@ public class Line extends Graphics
 	public void doDraw(Graphics2D g)
 	{
 		Color c;
-		Line2D l = getVLine();
-		Point2D start = l.getP1();
-		Point2D end = l.getP2();
 		
 		if(isSelected()) {
 			c = selectColor;
@@ -115,45 +116,76 @@ public class Line extends Graphics
 				  10, new float[] {4, 4}, 0));
 		}			
 
+		Line2D l = getVLine();
+		Shape h = getVHead(l, gdata.getLineType());
 		g.draw(l);
-
-		double xs = start.getX();
-		double ys = start.getY();
-		double xe = end.getX();
-		double ye = end.getY();
-		
-		switch (gdata.getLineType()) {
-			case ARROW:				
-				paintArrowHead(g, xs, ys, xe, ye, vFromM(ARROWWIDTH), vFromM(ARROWHEIGHT));
-				break;
-			case TBAR:	
-				paintTBar(g, xs, ys, xe, ye, vFromM(TBARWIDTH), vFromM(TBARHEIGHT));
-				break;
-			case LIGAND_ROUND:	
-				paintLRound(g, xe, ye, vFromM(LRDIAM));
-				break;
-			case RECEPTOR_ROUND:
-				paintRRound(g, xs, ys, xe, ye, vFromM(RRDIAM));
-				break;
-			case RECEPTOR: //TODO: implement receptor
-			case RECEPTOR_SQUARE:
-				paintReceptor(g, xs, ys, xe, ye, vFromM(RECEPWIDTH), vFromM(RECEPHEIGHT));
-				break;
-			case LIGAND_SQUARE:
-			{
-				paintLigand(g, xs, ys, xe, ye, vFromM(LIGANDWIDTH), vFromM(LIGANDHEIGHT));
-			}
-			break;
-		}
-		
+		drawHead(g, h, gdata.getLineType());
 		if (isHighlighted())
 		{
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
 			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
 			g.draw(l);
+			if(h != null) g.draw(h);
 		}
 
+	}
+	
+	private void drawHead(Graphics2D g, Shape head, LineType type) {
+		if(head != null) {
+			g.setStroke(new BasicStroke());
+			switch(type) {
+			case ARROW:
+			case LIGAND_ROUND:
+			case LIGAND_SQUARE:
+				g.fill(head);
+			case RECEPTOR:
+			case RECEPTOR_ROUND:
+			case RECEPTOR_SQUARE:
+			case TBAR:
+				g.draw(head);
+			}
+		}
+	}
+	
+	protected Shape getVHead(Line2D l, LineType type) {
+		Point2D start = l.getP1();
+		Point2D end = l.getP2();
+		
+		double xs = start.getX();
+		double ys = start.getY();
+		double xe = end.getX();
+		double ye = end.getY();
+		
+		Shape h = null;
+		switch (type) {
+			case ARROW:				
+				h = getArrowHead(xs, ys, xe, ye, vFromM(ARROWWIDTH), vFromM(ARROWHEIGHT));
+				break;
+			case TBAR:	
+				h = getTBar(xs, ys, xe, ye, vFromM(TBARWIDTH), vFromM(TBARHEIGHT));
+				break;
+			case LIGAND_ROUND:	
+				h = getLRound(xe, ye, vFromM(LRDIAM));
+				break;
+			case RECEPTOR_ROUND:
+				h = getRRound(xs, ys, xe, ye, vFromM(RRDIAM));
+				break;
+			case RECEPTOR: //TODO: implement receptor
+			case RECEPTOR_SQUARE:
+				h = getReceptor(xs, ys, xe, ye, vFromM(RECEPWIDTH), vFromM(RECEPHEIGHT));
+				break;
+			case LIGAND_SQUARE:
+				h = getLigand(xs, ys, xe, ye, vFromM(LIGANDWIDTH), vFromM(LIGANDHEIGHT));
+				break;
+		}
+				
+		if(h != null) {
+			AffineTransform f = new AffineTransform();
+			f.rotate(-getAngle(xs, ys, xe, ye), xe, ye);
+			h = f.createTransformedShape(h);
+		}
+		return h;
 	}
 	
 	private double getAngle(double xs, double ys, double xe, double ye) {
@@ -164,118 +196,54 @@ public class Line extends Graphics
 		return LinAlg.angle(new LinAlg.Point(ps.getX(), ps.getY()), new LinAlg.Point(pe.getX(), pe.getY()));
 	}
 	
-	private void paintArrowHead(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {			
-		g2d.fill(getArrowHead(g2d, xs, ys, xe, ye, w, h));
-	}
-	
-	private Shape getArrowHead(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
-		double angle = getAngle(xs, ys, xe, ye);
+	private Shape getArrowHead(double xs, double ys, double xe, double ye, double w, double h) {
 		int[] xpoints = new int[] { (int)xe, (int)(xe - w), (int)(xe - w) };
 		int[] ypoints = new int[] { (int)ye, (int)(ye - h), (int)(ye + h) };
 		
-		Polygon arrow = new Polygon(xpoints, ypoints, 3);
-		AffineTransform f = new AffineTransform();
-		f.rotate(-angle, xe, ye);
-		return f.createTransformedShape(arrow);
+		return new Polygon(xpoints, ypoints, 3);
 	}
 	
-	private void paintTBar(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
-		g2d.fill(getTBar(g2d, xs, ys, xe, ye, w, h));
+	private Shape getTBar(double xs, double ys, double xe, double ye, double w, double h) {
+		return new Rectangle2D.Double(xe - w, ye - h/2, w, h);
 	}
-	
-	private Shape getTBar(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
-		double angle = getAngle(xs, ys, xe, ye);
-	
-		Rectangle2D bar = new Rectangle2D.Double(xe - w, ye - h/2, w, h);
-		AffineTransform f = new AffineTransform();
-		f.rotate(-angle, xe, ye);
-		return f.createTransformedShape(bar);
-	}
-	
-	private void paintLRound(Graphics2D g2d, double xe, double ye, double d) {	
-		g2d.fill(getLRound(g2d, xe, ye, d));
-	}
-	
-	private Shape getLRound(Graphics2D g2d, double xe, double ye, double d) {	
+		
+	private Shape getLRound(double xe, double ye, double d) {	
 		return new Ellipse2D.Double(xe - d/2, ye - d/2, d, d);
 	}
-	
-	private void paintRRound(Graphics2D g2d, double xs, double ys, double xe, double ye, double d) {
-		double angle = getAngle(xs, ys, xe, ye);
-		AffineTransform f = new AffineTransform();
-		f.rotate(-angle, xe, ye);
 		
-		Rectangle2D hideRect = new Rectangle2D.Double(xe - d/2, ye - 2, d/2 + 1, 4);
-		Shape hide = f.createTransformedShape(hideRect);
+	private Shape getRRound(double xs, double ys, double xe, double ye, double d) {
+		return new Arc2D.Double((int)xe, (int)(ye - d/2), d, d, 90, 180, Arc2D.OPEN);
+	}
 		
-		Arc2D arc = new Arc2D.Double((int)(xe - d/2), (int)(ye - d/2), d, d, 90, 180, Arc2D.OPEN);
-		Shape rotArc = f.createTransformedShape(arc);
-		
-		//Hide top of line
-		Color cOld = g2d.getColor();
-		g2d.setColor(Color.WHITE);
-		g2d.fill(hide);
-		g2d.setColor(cOld);
-		g2d.draw(rotArc);		
+	private Shape getReceptor(double xs, double ys, double xe, double ye, double w, double h) {					
+		GeneralPath rec = new GeneralPath();
+		rec.moveTo((int)(xe + w), (int)(ye + h/2));
+		rec.lineTo((int)xe, (int)(ye + h/2));
+		rec.lineTo((int)xe, (int)(ye - h/2));
+		rec.lineTo((int)(xe + w), (int)(ye - h/2));
+		return rec;
 	}
 	
-	private void paintReceptor(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {					
-		/* Path2D Only in Java 1.6....
-		Path2D rec = new Path2D.Double();
-		rec.moveTo(xe + w, ye + h/2);
-		rec.lineTo(xe, ye + h/2);
-		rec.lineTo(xe, ye - h/2);
-		rec.lineTo(xe + w, ye - h/2);
-		AffineTransform f = new AffineTransform();
-		f.rotate(-angle, xe, ye);
-		Shape rotRec = f.createTransformedShape(rec);
-		g2d.draw(rotRec);
-		*/
-		
-		double angle = getAngle(xs, ys, xe, ye);
-		AffineTransform f = new AffineTransform();
-		f.rotate(-angle, xe, ye);
-		
-		Rectangle2D hideRect = new Rectangle2D.Double(xe - w, ye - 2, w + 1, 4);
-		Shape hide = f.createTransformedShape(hideRect);
-		
-		//Hide top of line
-		Color cOld = g2d.getColor();
-		g2d.setColor(Color.WHITE);
-		g2d.fill(hide);
-		g2d.setColor(cOld);
-		
-		Shape l = new Line2D.Double(xe, ye + h/2, xe - w, ye + h/2);
-		Shape r = f.createTransformedShape(l);
-		g2d.draw(r);
-		l = new Line2D.Double(xe - w, ye + h/2, xe - w, ye - h/2);
-		r = f.createTransformedShape(l);
-		g2d.draw(r);
-		l = new Line2D.Double(xe - w, ye - h/2, xe, ye - h/2);
-		r = f.createTransformedShape(l);
-		g2d.draw(r);
-	}
-	
-	private void paintLigand(Graphics2D g2d, double xs, double ys, double xe, double ye, double w, double h) {
-		double angle = getAngle(xs, ys, xe, ye);
-	
-		Rectangle2D bar = new Rectangle2D.Double(xe - w, ye - h/2, w, h);
-		AffineTransform f = new AffineTransform();
-		f.rotate(-angle, xe, ye);
-		Shape rotBar = f.createTransformedShape(bar);
-		g2d.fill(rotBar);
-		g2d.draw(rotBar);
+	private Shape getLigand(double xs, double ys, double xe, double ye, double w, double h) {
+		return new Rectangle2D.Double(xe - w, ye - h/2, w, h);
 	}
 	
 //	TODO: create the real outline, by creating a shape that
 //  represents the whole line...use getArrow() etc.
 	protected Shape getVOutline()
 	{
-		//TODO: bigger than necessary, just to include the arrowhead / shape at the end
-		BasicStroke stroke = new BasicStroke(20);
-		Shape outline = stroke.createStrokedShape(getVLine());
-		return outline;
-	}	
+		Line2D l = getVLine();
+		Shape h = getVHead(l, gdata.getLineType());
+		//Wider stroke for line, for 'fuzzy' matching
+		Shape ls = new BasicStroke(5).createStrokedShape(l);
+		if(h == null) {
+			return ls;
+		} else {
+			Area line = new Area(ls);
+			line.add(new Area(h));
+			return line;
+		}
+	}
 	
 //	/**
 //	 * If the line type is arrow, this method draws the arrowhead

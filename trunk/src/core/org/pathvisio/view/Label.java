@@ -124,6 +124,7 @@ public class Label extends GraphicsShape
 		Rectangle2D tb = null;
 		if(g != null) {
 			 tb = g.getFontMetrics().getStringBounds(getVAttributedString().getIterator(), 0, gdata.getTextLabel().length(), g);
+			 tb.setRect(getVLeftDouble(), getVTopDouble(), tb.getWidth(), tb.getHeight() + g.getFontMetrics().getDescent());
 		} else { //No graphics context, we can only guess...
 			tb = new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble()); 
 		}
@@ -208,11 +209,8 @@ public class Label extends GraphicsShape
 	 */
 	protected Shape getVOutline()
 	{
-		Rectangle bounds = super.getVOutline().getBounds();
 		Rectangle2D tb = getTextBounds(g2d);
-		bounds.add(tb);
-
-		return bounds;
+		return tb;
 	}
 	
 }

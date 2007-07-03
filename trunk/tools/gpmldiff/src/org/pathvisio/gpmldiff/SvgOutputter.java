@@ -105,6 +105,7 @@ class SvgOutputter extends DiffOutputter
 		// pwy's themselves		
  		svgGenerator.translate (0, HEADER_HIGHT);
 		vpwy[PWY_OLD].draw (svgGenerator, null, false);
+		svgGenerator.setClip (null); // reset clipping
  		svgGenerator.translate (deltax, 0);
  		vpwy[PWY_NEW].draw (svgGenerator, null, false);
 		

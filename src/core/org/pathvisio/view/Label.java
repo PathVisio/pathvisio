@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 
@@ -123,12 +124,16 @@ public class Label extends GraphicsShape
 	protected Rectangle2D getTextBounds(Graphics2D g) {
 		Rectangle2D tb = null;
 		if(g != null) {
-			 tb = g.getFontMetrics().getStringBounds(getVAttributedString().getIterator(), 0, gdata.getTextLabel().length(), g);
-			 tb.setRect(getVLeftDouble(), getVTopDouble(), tb.getWidth(), tb.getHeight() + g.getFontMetrics().getDescent());
+			 tb = g.getFontMetrics(getVFont()).getStringBounds(getLabelText(), g);
+			 tb.setRect(getVLeftDouble() + tb.getX(), getVTopDouble() + tb.getY(), tb.getWidth(), tb.getHeight());
 		} else { //No graphics context, we can only guess...
-			tb = new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble()); 
+			tb = getBoxBounds();
 		}
 		return tb;
+	}
+	
+	protected Rectangle2D getBoxBounds() {
+		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
 	}
 	
 	protected Dimension computeTextSize(Graphics2D g) {
@@ -184,7 +189,7 @@ public class Label extends GraphicsShape
 		Font f = getVFont();
 		g.setFont(f);
 		
-		Rectangle area = getVOutline().getBounds();
+		Rectangle area = getBoxBounds().getBounds();
 		
 		String label = gdata.getTextLabel();
 		AttributedString ats = getVAttributedString();
@@ -209,7 +214,9 @@ public class Label extends GraphicsShape
 	 */
 	protected Shape getVOutline()
 	{
+		Rectangle2D bb = getBoxBounds();
 		Rectangle2D tb = getTextBounds(g2d);
+		tb.add(bb);
 		return tb;
 	}
 	

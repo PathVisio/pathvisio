@@ -28,7 +28,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -144,14 +143,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		child.mouseMove(new SwingMouseEvent(e));
 	}
 
-	public void registerKeyboardAction(KeyStroke k, Action a, int when) {
-		switch(when) {
-		case VPathwayWrapper.WHEN_FOCUSED:
-			when = JComponent.WHEN_FOCUSED; break;
-		case WHEN_WINDOW_FOCUSED:
-			when = WHEN_IN_FOCUSED_WINDOW; break;
-		}
-		super.registerKeyboardAction(a, k, when);	
+	public void registerKeyboardAction(KeyStroke k, Action a) {
+		super.registerKeyboardAction(a, k, WHEN_IN_FOCUSED_WINDOW);
 	}
 	
 	public VPathway createVPathway() {

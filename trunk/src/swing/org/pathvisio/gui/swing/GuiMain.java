@@ -17,6 +17,7 @@
 package org.pathvisio.gui.swing;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.view.swing.VPathwaySwing;
@@ -34,7 +35,6 @@ public class GuiMain {
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.setSize(800, 600);
-		
 //		try {
 //		    UIManager.setLookAndFeel(
 //		        UIManager.getSystemLookAndFeelClassName());
@@ -44,6 +44,7 @@ public class GuiMain {
 		
 		//Display the window.
 		frame.setVisible(true);
+		mainPanel.getSplitPane().setDividerLocation(0.8);
 		Engine.newPathway(new VPathwaySwing(mainPanel.getScrollPane()));
 		Engine.getActiveVPathway().setEditMode(true);
 	}

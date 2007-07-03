@@ -284,16 +284,15 @@ public abstract class CommonActions {
 		
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getActiveVPathway();
-			vp.addVPathwayListener(this);
 			if(vp != null) {
+				vp.addVPathwayListener(this);
 				vp.setNewGraphics(element);
 			}
 		}
 
 		public void vPathwayEvent(VPathwayEvent e) {
 			if(e.getType() == VPathwayEvent.NEW_ELEMENT_ADDED) {
-				e.getVPathway().setNewGraphics(VPathway.NEWNONE);
-				e.getVPathway().removeVPathwayListener(this);	
+				e.getVPathway().setNewGraphics(VPathway.NEWNONE);	
 			}
 		}
 	}

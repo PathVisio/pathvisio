@@ -18,9 +18,10 @@ package org.pathvisio.gui.swing.propertypanel;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -47,8 +48,9 @@ import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.ShapeType;
 
-public class TypedProperty {	
+public class TypedProperty implements Comparable {	
 	Collection<PathwayElement> elements;
 	Object value;
 	PropertyType type;
@@ -69,6 +71,10 @@ public class TypedProperty {
 		this.different = different;
 	}
 
+	public int compareTo(Object o) {
+		return type.compareTo(((TypedProperty)o).getType());
+	}
+	
 	public void setValue(Object value) {
 		this.value = value;
 		if(value != null) {
@@ -111,6 +117,9 @@ public class TypedProperty {
 		case DOUBLE:
 			return doubleRenderer;
 		case FONT:
+			return fontRenderer;
+		case SHAPETYPE:
+			return shapeTypeRenderer;
 		case GENETYPE: //TODO
 		}
 		return null;
@@ -136,6 +145,10 @@ public class TypedProperty {
 			return angleEditor;
 		case DOUBLE:
 			return doubleEditor;
+		case FONT:
+			return fontEditor;
+		case SHAPETYPE:
+			return shapeTypeEditor;
 		default:
 			return null;
 		}
@@ -267,6 +280,8 @@ public class TypedProperty {
 	private static CheckBoxRenderer checkboxRenderer = new CheckBoxRenderer();
 	private static ComboRenderer orientationRenderer = new ComboRenderer(OrientationType.getNames());
 	private static ComboRenderer organismRenderer = new ComboRenderer(MappFormat.organism_latin_name);
+	private static FontRenderer fontRenderer = new FontRenderer();
+	private static ComboRenderer shapeTypeRenderer = new ComboRenderer(ShapeType.getNames(), ShapeType.values());
 	
 	private static ColorEditor colorEditor = new ColorEditor();
 	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);
@@ -277,7 +292,9 @@ public class TypedProperty {
 	private static ComboEditor organismEditor = new ComboEditor(MappFormat.organism_latin_name, false);
 	private static AngleEditor angleEditor = new AngleEditor();
 	private static DoubleEditor doubleEditor = new DoubleEditor();
-	
+	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment
+			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
+	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getNames(), true);
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
 		protected void setValue(Object value) {
 			super.setValue( (Double)(value) * 180.0 / Math.PI );
@@ -327,6 +344,16 @@ public class TypedProperty {
 				value = value2label.get(value);
 			}
 			setSelectedItem(value);
+			return this;
+		}
+	}
+	
+	private static class FontRenderer extends JLabel implements TableCellRenderer {
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			String fn = (String)value;
+			Font f = getFont();
+			setFont(new Font(fn, f.getStyle(), f.getSize()));
+			setText(fn);
 			return this;
 		}
 	}

@@ -97,7 +97,7 @@ public class PreferenceDlg extends PreferenceManager {
 			addField(f);
 			
 			BooleanFieldEditor f2 =	new BooleanFieldEditor (
-					SwtPreference.SWT_SHOW_ADVANCED_ATTR.name(),									   
+					GlobalPreference.SHOW_ADVANCED_ATTRIBUTES.name(),									   
 					"Show advanced attributes (e.g. references):", getFieldEditorParent());
 				addField (f2);
 		}

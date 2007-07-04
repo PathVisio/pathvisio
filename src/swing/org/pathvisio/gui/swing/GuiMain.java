@@ -17,10 +17,13 @@
 package org.pathvisio.gui.swing;
 
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.view.swing.VPathwaySwing;
+import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayEvent;
+import org.pathvisio.view.VPathwayListener;
 
 public class GuiMain {
 
@@ -45,7 +48,7 @@ public class GuiMain {
 		//Display the window.
 		frame.setVisible(true);
 		mainPanel.getSplitPane().setDividerLocation(0.8);
-		Engine.newPathway(new VPathwaySwing(mainPanel.getScrollPane()));
+		SwingEngine.newPathway();
 		Engine.getActiveVPathway().setEditMode(true);
 	}
 

@@ -491,7 +491,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 	/**
 	 * Handles mouse entered input
 	 */
-	public void mouseDoubleClick(MouseEvent e) {	}
+	public void mouseDoubleClick(MouseEvent e) {
+		VPathwayElement o = getObjectAt(e.getLocation());
+		if(o != null) {
+			fireVPathwayEvent(new VPathwayEvent(this, o, VPathwayEvent.ELEMENT_DOUBLE_CLICKED));
+		}
+	}
 
 	public void draw (Graphics2D g2d)
 	{
@@ -984,7 +989,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 		vPreviousX = ve.x;
 		vPreviousY = ve.y;
 		
-		fireVPathwayEvent(new VPathwayEvent(this, lastAdded, VPathwayEvent.NEW_ELEMENT_ADDED));
+		fireVPathwayEvent(new VPathwayEvent(this, lastAdded, VPathwayEvent.ELEMENT_ADDED));
 	}
 	
 
@@ -1361,8 +1366,9 @@ public class VPathway implements PathwayListener, VisualizationListener
 			redrawDirtyRect();
 		}
 	}
+	
 	/**
-	 * TODO: document
+	 * Get all elements of the class Graphics that are currently selected
 	 * @return
 	 */
 	public List<Graphics> getSelectedGraphics() {

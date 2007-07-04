@@ -93,7 +93,8 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		for(PathwayElement e : elements) {
 			if(properties == null) {
 				properties = new ArrayList<PropertyType>();
-				properties.addAll(e.getAttributes(GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)));
+				List<PropertyType> attr = e.getAttributes(GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES));
+				properties.addAll(attr);
 				continue;
 			}
 			remove.clear();

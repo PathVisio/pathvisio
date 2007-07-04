@@ -186,16 +186,11 @@ public class Engine {
 		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_NEW));
 		
 		if(wrapper != null) {
-			newVPathway(pathway, wrapper);
+			createVPathway(pathway, wrapper);
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_NEW));
 		}
 	}
-	
-	public static void newVPathway(Pathway pathway, VPathwayWrapper wrapper) {
-		vPathway = wrapper.createVPathway();
-		vPathway.fromGmmlData(pathway);
-	}
-	
+
 	/**
 	 * Find out whether a drawing is currently open or not
 	 * @return true if a drawing is open, false if not

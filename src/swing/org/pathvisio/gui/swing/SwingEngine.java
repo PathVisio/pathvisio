@@ -17,11 +17,15 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
+import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.view.VPathwayWrapper;
+import org.pathvisio.view.swing.VPathwaySwing;
 
 public class SwingEngine {
 	private static MainPanel mainPanel;
@@ -55,5 +59,17 @@ public class SwingEngine {
 					message + "\n" + e.getClass() + e.getMessage());
 			Engine.log.error("Unable to open Gpml file", e);
 		}
+	}
+		
+	private static VPathwayWrapper createWrapper() {
+		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
+	}
+	
+	public static void importPathway(File f) throws ConverterException {
+		Engine.importPathway(f, createWrapper());
+	}
+	
+	public static void newPathway() {
+		Engine.newPathway(createWrapper());
 	}
 }

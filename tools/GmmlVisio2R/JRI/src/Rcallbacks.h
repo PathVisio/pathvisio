@@ -9,6 +9,7 @@
 int  Re_ReadConsole(char *prompt, unsigned char *buf, int len, int addtohistory);
 void Re_Busy(int which);
 void Re_WriteConsole(char *buf, int len);
+void Re_WriteConsoleEx(char *buf, int len, int oType);
 void Re_ResetConsole();
 void Re_FlushConsole();
 void Re_ClearerrConsole();

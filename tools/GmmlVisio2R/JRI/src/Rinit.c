@@ -113,7 +113,12 @@ int initR(int argc, char **argv) {
     /* ptr_R_CleanUp = Re_CleanUp; */
     ptr_R_ShowMessage = Re_ShowMessage;
     ptr_R_ReadConsole = Re_ReadConsole;
+#if (R_VERSION >=R_Version(2,5,0))
+    ptr_R_WriteConsole = NULL;
+    ptr_R_WriteConsoleEx = Re_WriteConsoleEx;
+#else
     ptr_R_WriteConsole = Re_WriteConsole;
+#endif
     ptr_R_ResetConsole = Re_ResetConsole;
     ptr_R_FlushConsole = Re_FlushConsole;
     ptr_R_ClearerrConsole = Re_ClearerrConsole;
@@ -136,6 +141,13 @@ int initR(int argc, char **argv) {
     return 0;
 }
 
+void initRinside() {
+#if (R_VERSION >= R_Version(2,3,0))
+    /* disable stack checking, because threads will thow it off */
+    R_CStackLimit = (uintptr_t) -1;
+#endif
+}
+
 #else
 
 /*-------------------------------------------------------------------*
@@ -146,6 +158,7 @@ int initR(int argc, char **argv) {
 #include <windows.h>
 #include <winreg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "Rversion.h"
 #if R_VERSION < R_Version(2,1,0)
 #include <config.h>
@@ -157,8 +170,8 @@ int initR(int argc, char **argv) {
 
 #if (R_VERSION >= R_Version(2,3,0))
 /* according to fixed/config.h Windows has uintptr_t, my windows hasn't */
-#if !defined(HAVE_UINTPTR_T) && !defined(uintptr_t)
-typedef unsigned long uintptr_t;
+#if !defined(HAVE_UINTPTR_T) && !defined(uintptr_t) && !defined(_STDINT_H)
+typedef unsigned uintptr_t;
 #endif
 extern uintptr_t R_CStackLimit; /* C stack limit */
 extern uintptr_t R_CStackStart; /* Initial stack address */
@@ -279,7 +292,12 @@ int initR(int argc, char **argv)
     if (*p == '/' || *p == '\\') *p = '\0';
     Rp->home = RUser;
     Rp->ReadConsole = Re_ReadConsole;
+#if R_VERSION >= R_Version(2,5,0)
+    Rp->WriteConsole = NULL;
+    Rp->WriteConsoleEx = Re_WriteConsoleEx;
+#else
     Rp->WriteConsole = Re_WriteConsole;
+#endif
 
 #if R_VERSION >= R_Version(2,1,0)
     Rp->Busy = Re_Busy;
@@ -324,4 +342,13 @@ int initR(int argc, char **argv)
 
     return 0;
 }
+
+void initRinside() {
+#if (R_VERSION >= R_Version(2,3,0))
+    /* disable stack checking, because threads will thow it off */
+    R_CStackLimit = (uintptr_t) -1;
 #endif
+}
+
+#endif
+

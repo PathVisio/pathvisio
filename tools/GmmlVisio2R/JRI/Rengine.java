@@ -1,19 +1,3 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
 package org.rosuda.JRI;
 
 import java.lang.*;
@@ -37,7 +21,6 @@ public class Rengine extends Thread {
             System.exit(1);
         }
     }*/
-       
     /**
      * Initiates an R generic vector (aka list) with given length l
      * @param l	the length of the generic vector to initiate
@@ -57,10 +40,12 @@ public class Rengine extends Thread {
      * end of modifications
      */
 
+    static Thread mainRThread = null;
+
 	/**	API version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match. This should be done using {@link #versionCheck}
 		@return version number as <code>long</code> in the form <code>0xMMmm</code> */
     public static long getVersion() {
-        return 0x0106;
+        return 0x0108;
     }
 
     /** check API version of this class and the native binary. This is usually a good idea to ensure consistency.
@@ -83,6 +68,22 @@ public class Rengine extends Thread {
     /** return the current main R engine instance. Since there can be only one true R instance at a time, this is also the only instance. This may not be true for future versions, though.
 	@return current instance of the R engine or <code>null</code> if no R engine was started yet. */
     public static Rengine getMainEngine() { return mainEngine; }
+
+    /* public static Thread getMainRThread() { return mainRThread; } */
+
+    /** returns <code>true</code> if the current thread is the main R thread, <code>false</code> otherwise
+	@since JRI 0.4
+     */
+    public static boolean inMainRThread() {
+	return (mainRThread != null && mainRThread.equals(Thread.currentThread()));
+    }
+
+    boolean standAlone = true;
+
+    /** returns <code>true</code> if this engine was started as a stand-alone Java application or <code>false</code> if this engine was hooked into an existing R instance
+	@since JRI 0.4
+    */
+    public boolean isStandAlone() { return standAlone; }
 
     boolean died, alive, runLoop, loopRunning;
     /** arguments used to initialize R, set by the constructor */
@@ -107,8 +108,27 @@ public class Rengine extends Thread {
         this.args=args;
         callback=initialCallbacks;
         mainEngine=this;
+	mainRThread=this;
         start();
         while (!alive && !died) yield();
+    }
+
+    /** create a new engine by hooking into an existing, initialized R instance which is calling this constructor. Currently JRI won't influence this R instance other than disabling stack checks (i.e. no callbacks can be registered etc.). It is *not* the designated constructor and it should be used *only* from withing rJava.
+	@since JRI 0.4
+     */
+    public Rengine() {
+	super();
+	Rsync=new Mutex();
+	died=false;
+	alive=true;
+	runLoop=false;
+	loopRunning=true;
+	standAlone=false;
+	args=new String[] { "--zero-init"};
+	callback=null;
+	mainEngine=this;
+	mainRThread=Thread.currentThread();
+	rniSetupR(args);
     }
 
     /** RNI: setup R with supplied parameters (should <b>not</b> be used directly!).
@@ -117,6 +137,18 @@ public class Rengine extends Thread {
      */
     native int rniSetupR(String[] args);
     
+    /** RNI: setup IPC with RJava. This method is used by rJava to pass the IPC information to the JRI engine for synchronization
+	@since experimental, not in the public API!
+     */
+    public native int rniSetupRJava(int _in, int _out);
+
+    /** RNI: lock rJava to allow callbacks - this interrupts R event loop until @link{rniRJavaUnlock} is called.
+	@return 0 = lock failed, 1 = locked via IPC (you must use rniRJavaUnlock subsequently), 2 = rJava is already locked */
+    public native int rniRJavaLock();
+
+    /** RNI: unlock rJava - resumes R event loop. Please note that unlocking without a previously successful lock may cause fatal errors, because it may release a lock issued by another thread which may not have finished yet. */
+    public native int rniRJavaUnlock();
+
     synchronized int setupR() {
         return setupR(null);
     }
@@ -226,11 +258,30 @@ public class Rengine extends Thread {
 		@return <code>true</code> if <code>cName</code> inherits from class <code>cName</code> (see <code>inherits</code> in R) */ 
 	public synchronized native boolean rniInherits(long exp, String cName);
 
+    /** RNI: create a dotted-pair list (LISTSXP or LANGSXP)
+	@param head CAR
+	@param tail CDR (must be a reference to LISTSXP or 0)
+	@param tag TAG
+	@param lang if <code>true</code> then LANGSXP is created, otherwise LISTSXP.
+	@return reference to the newly created LISTSXP/LANGSXP
+	@since API 1.7, JRI 0.3-7
+*/
+    public synchronized native long rniCons(long head, long tail, long tag, boolean lang);
+
     /** RNI: create a dotted-pair list (LISTSXP)
 	@param head CAR
 	@param tail CDR (must be a reference to LISTSXP or 0)
-	@return reference to the newly created LISTSXP */
-    public synchronized native long rniCons(long head, long tail);
+	@return reference to the newly created LISTSXP
+    */
+    public long rniCons(long head, long tail) { return rniCons(head, tail, 0, false); }
+    /** RNI: create a dotted-pair language list (LANGSXP)
+	@param head CAR
+	@param tail CDR (must be a reference to LANGSXP or 0)
+	@return reference to the newly created LANGSXP
+	@since API 1.7, JRI 0.3-7
+    */
+    public long rniLCons(long head, long tail) { return rniCons(head, tail, 0, true); }
+
     /** RNI: get CAR of a dotted-pair list (LISTSXP)
 	@param exp reference to the list
 	@return reference to CAR of the list (head) */
@@ -262,6 +313,12 @@ public class Rengine extends Thread {
 		@param sym symbol name
 		@return reference to SYMSXP referencing the symbol */
 	public synchronized native long rniInstallSymbol(String sym);
+
+	/** RNI: print.<p><i>Note:</i> May NOT be called inside any WriteConsole callback as it would cause an infinite loop.
+		@since API 1.8, JRI 0.4
+		@param s string to print (as-is)
+		@param oType output type (see R for exact references, but 0 should be regular output and 1 error/warning) */
+	public synchronized native void rniPrint(String s, int oType);
 
 	//--- was API 1.4 but it only caused portability problems, so we got rid of it
     //public static native void rniSetEnv(String key, String val);
@@ -322,9 +379,9 @@ public class Rengine extends Thread {
 
     /** JRI: R_WriteConsole call-back from R
 	@param text text to disply */
-    public void jriWriteConsole(String text)
+    public void jriWriteConsole(String text, int oType)
     {
-        if (callback!=null) callback.rWriteConsole(this, text);
+        if (callback!=null) callback.rWriteConsole(this, text, oType);
     }
 
     /** JRI: R_Busy call-back from R
@@ -346,7 +403,7 @@ public class Rengine extends Thread {
         String s=(callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
         if (!Rsync.safeLock()) {
             String es="\n>>JRI Warning: jriReadConsole detected a possible deadlock ["+Rsync+"]["+Thread.currentThread()+"]. Proceeding without lock, but this is inherently unsafe.\n";
-            jriWriteConsole(es);
+            jriWriteConsole(es, 1);
             System.err.print(es);
         }
 		if (DEBUG>1)
@@ -544,6 +601,10 @@ public class Rengine extends Thread {
 		@since JRI 0.3
         */
     public void assign(String sym, REXP r) {
+	if (r.Xt == REXP.XT_NONE) {
+	    rniAssign(sym, r.xp, 0);
+	    return;
+	}
     	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
     		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
     		long x1 = rniPutIntArray(cont);
@@ -607,5 +668,28 @@ public class Rengine extends Thread {
 		*/
 	public void assign(String sym, String[] val) {
         assign(sym,new REXP(val));
+    }
+
+    /** creates a <code>jobjRef</code> reference in R via rJava.<br><b>Important:</b> rJava must be loaded and intialized in R (e.g. via <code>eval("{library(rJava);.jinit()}",false)</code>, otherwise this will fail. Requires rJava 0.4-13 or higher!
+	@param o object to push
+	@return Pure REXP reference of the newly created <code>jobjRef</code> object or <code>null</code> upon failure. It will have the type <code>XT_NONE</code> such that it can be used in @link{assign(String, REXP)}.
+	@since JRI 0.3-7
+    */
+    public REXP createRJavaRef(Object o) {
+	if (o == null) return null;
+	String klass = o.getClass().getName();
+	long l = rniEval(
+			 rniLCons(
+				  rniInstallSymbol(".jmkref"),
+				  rniLCons(
+					   rniJavaToXref(o),
+					   rniLCons(
+						    rniPutString(klass), 0
+						    )
+					   )
+				  )
+			 , 0);
+	if (l == 0) return null;
+	return new REXP(this, l, false);	
     }
 }

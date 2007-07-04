@@ -1,19 +1,3 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
 package org.rosuda.JRI;
 
 // JRclient library - client interface to Rserve, see http://www.rosuda.org/Rserve/
@@ -27,7 +11,7 @@ import java.util.*;
     attribute. The parser code of REXP converts such constructs directly into
     the RFactor objects and defines an own XT_FACTOR type 
     
-    @version $Id: RFactor.java,v 1.2 2006/05/31 01:23:41 urbaneks Exp $
+    @version $Id: RFactor.java 2720 2007-03-15 17:35:42Z urbanek $
 */    
 public class RFactor extends Object {
     /** IDs (content: Integer) each entry corresponds to a case, ID specifies the category */

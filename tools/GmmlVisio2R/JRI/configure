@@ -274,7 +274,7 @@ PACKAGE_STRING='JRI 0.3'
 PACKAGE_BUGREPORT='simon.urbanek@r-project.org'
 
 ac_unique_file="src/jri.h"
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os R_HOME R_SHARE_DIR R_DOC_DIR R_INCLUDE_DIR CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP EGREP JAVA_PROG JAVAC JAVAH JAR JAVA_HOME JAVA_LD_PATH JAVA_LIBS JAVA_INC JNILD JNISO JNIPREFIX CPICF RINC RLD DEFFLAGS LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os R_HOME R_SHARE_DIR R_DOC_DIR R_INCLUDE_DIR CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP EGREP JAVA_PROG JAVAC JAVAH JAR JAVA_HOME JAVA_LD_PATH JAVA_LIBS JAVA_INC JAVA_CFLAGS JNILD JNISO JNIPREFIX CPICF RINC RLD DEFFLAGS LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -3148,6 +3148,7 @@ fi
 
 
 JAVA_INC="-I${JNI_H}"
+: ${JAVA_CFLAGS=-D_REENTRANT}
 
 # Sun's JDK needs jni_md.h in in addition to jni.h and unfortunately it's stored somewhere else ...
 # this should be become more general at some point - so far we're checking linux and solaris only
@@ -3181,7 +3182,7 @@ if test ${jac_found_md} = yes; then break; fi
 done
 
 LIBS="${LIBS} ${JAVA_LIBS}"
-CFLAGS="${CFLAGS} ${JAVA_INC}"
+CFLAGS="${CFLAGS} ${JAVA_CFLAGS} ${JAVA_INC}"
 
 echo "$as_me:$LINENO: checking whether JNI programs can be compiled" >&5
 echo $ECHO_N "checking whether JNI programs can be compiled... $ECHO_C" >&6
@@ -3448,6 +3449,7 @@ fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
 
 CFLAGS=${origCFLAGS}
+
 
 
 
@@ -4116,6 +4118,7 @@ s,@JAVA_HOME@,$JAVA_HOME,;t t
 s,@JAVA_LD_PATH@,$JAVA_LD_PATH,;t t
 s,@JAVA_LIBS@,$JAVA_LIBS,;t t
 s,@JAVA_INC@,$JAVA_INC,;t t
+s,@JAVA_CFLAGS@,$JAVA_CFLAGS,;t t
 s,@JNILD@,$JNILD,;t t
 s,@JNISO@,$JNISO,;t t
 s,@JNIPREFIX@,$JNIPREFIX,;t t
@@ -4614,3 +4617,4 @@ if test "$no_create" != yes; then
   # would make configure fail if this is the last instruction.
   $ac_cs_success || { (exit 1); exit 1; }
 fi
+

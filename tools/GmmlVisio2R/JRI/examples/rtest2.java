@@ -1,19 +1,3 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
 import java.io.*;
 
 import java.awt.*;
@@ -22,6 +6,7 @@ import javax.swing.*;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
+import org.rosuda.JRI.RConsoleOutputStream;
 
 class TextConsole2 implements RMainLoopCallbacks
 {
@@ -36,7 +21,7 @@ class TextConsole2 implements RMainLoopCallbacks
         f.show();
     }
 
-    public void rWriteConsole(Rengine re, String text) {
+    public void rWriteConsole(Rengine re, String text, int oType) {
         textarea.append(text);
     }
     
@@ -84,13 +69,16 @@ public class rtest2 {
         System.out.println("Press <Enter> to continue (time to attach the debugger if necessary)");
         try { System.in.read(); } catch(Exception e) {};
         System.out.println("Creating Rengine (with arguments)");
-	Rengine re=new Rengine(args, true, new TextConsole2());
+		Rengine re=new Rengine(args, true, new TextConsole2());
         System.out.println("Rengine created, waiting for R");
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
             return;
         }
-	
-	System.out.println("Letting go; use main loop from now on");
+		System.out.println("re-routing stdout/err into R console");
+		System.setOut(new PrintStream(new RConsoleOutputStream(re, 0)));
+		System.setErr(new PrintStream(new RConsoleOutputStream(re, 1)));
+		
+		System.out.println("Letting go; use main loop from now on");
     }
 }

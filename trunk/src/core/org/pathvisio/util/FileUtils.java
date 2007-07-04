@@ -16,12 +16,18 @@
 //
 package org.pathvisio.util;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.pathvisio.Engine;
@@ -100,5 +106,35 @@ public class FileUtils {
 		int dot = fname.lastIndexOf('.');
 		if(dot > 0) fname = fname.substring(0, dot);
 		return fname;
+	}
+	
+	/**
+	 * Downloads a remote file given by an URL to the given local file
+	 * @param url The URL that specifies the location of the file to download
+	 * @param toFile The local file to which the remote file will be downloaded
+	 * @throws IOException
+	 */
+	public static void downloadFile(URL url, File toFile) throws IOException {
+		OutputStream out = null;
+		URLConnection conn = null;
+		InputStream  in = null;
+		out = new BufferedOutputStream(
+				new FileOutputStream(toFile));
+		conn = url.openConnection();
+		in = conn.getInputStream();
+		byte[] buffer = new byte[1024];
+		int numRead;
+		long numWritten = 0;
+		while ((numRead = in.read(buffer)) != -1) {
+			out.write(buffer, 0, numRead);
+			numWritten += numRead;
+		}
+
+		if (in != null) {
+			in.close();
+		}
+		if (out != null) {
+			out.close();
+		}
 	}
 }

@@ -16,11 +16,17 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.awt.Container;
+import java.awt.Frame;
+
 import javax.swing.JApplet;
 
 public class AppletMain extends JApplet {
+	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
 		super.init();
+		String url = getParameter(PAR_PATHWAY_URL);
+		
 		GuiInit.init();
 		MainPanel mainPanel = SwingEngine.getApplicationPanel();
 		add(mainPanel);

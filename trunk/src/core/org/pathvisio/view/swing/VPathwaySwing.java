@@ -99,8 +99,10 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		setVSize(new Dimension(w, h));
 	}
 
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO: find out how to handle this one
+	public void mouseClicked(MouseEvent e) {
+		if(e.getClickCount() == 2) {
+			child.mouseDoubleClick(new SwingMouseEvent(e));
+		}
 	}
 
 	public void mouseEntered(MouseEvent e) {

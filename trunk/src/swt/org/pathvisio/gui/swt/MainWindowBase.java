@@ -462,7 +462,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		case VPathwayEvent.EDIT_MODE_ON:
 			showLegend(false);
 			break;
-		case VPathwayEvent.NEW_ELEMENT_ADDED:
+		case VPathwayEvent.ELEMENT_ADDED:
 			deselectNewItemActions();
 			break;
 		}

@@ -17,28 +17,30 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.Engine;
-import org.pathvisio.gui.swt.MainWindow;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.PathwayImporter;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.swing.VPathwaySwing;
 
 public abstract class CommonActions {
 	private static URL IMG_SAVE = Engine.getResourceURL("icons/save.gif");
@@ -74,12 +76,26 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class SaveAction extends AbstractAction {
-		public SaveAction() {
+	static class SaveLocalAction extends AbstractAction {
+		public SaveLocalAction() {
+			super("Save", new ImageIcon(IMG_SAVE));
+			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
+			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	static class SaveToServerAction extends AbstractAction {
+		public SaveToServerAction() {
 			super("Save", new ImageIcon(IMG_SAVE));
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway");
 			putValue(Action.LONG_DESCRIPTION, "Save the pathway");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -145,7 +161,7 @@ public abstract class CommonActions {
 						int totalWork = 1000;
 						ProgressMonitor m = new ProgressMonitor(component, "Loading pathway", "Please wait while the pathway is being loaded", 0, 1000);
 						m.setProgress(10);
-						Engine.importPathway(jfc.getSelectedFile(), new VPathwaySwing(mainPanel.getScrollPane()));
+						SwingEngine.importPathway(jfc.getSelectedFile());
 						m.setProgress((int)(totalWork*2/3));
 						Engine.getActiveVPathway().setEditMode(true);
 						m.setProgress(totalWork);
@@ -196,7 +212,7 @@ public abstract class CommonActions {
 			Engine.getActiveVPathway().pasteFromClipboad();
 		}
 	}
-	
+		
 	static class NewElementAction extends AbstractAction implements VPathwayListener {
 		int element;
 		public NewElementAction(int type) {
@@ -291,7 +307,7 @@ public abstract class CommonActions {
 		}
 
 		public void vPathwayEvent(VPathwayEvent e) {
-			if(e.getType() == VPathwayEvent.NEW_ELEMENT_ADDED) {
+			if(e.getType() == VPathwayEvent.ELEMENT_ADDED) {
 				e.getVPathway().setNewGraphics(VPathway.NEWNONE);	
 			}
 		}

@@ -15,33 +15,18 @@
 #ifdef Win32
 #include <R_ext/RStartup.h>
 #else
-/* from Defn.h */
-extern Rboolean R_Interactive;   /* TRUE during interactive use*/
-
-extern FILE*    R_Consolefile;   /* Console output file */
-extern FILE*    R_Outputfile;   /* Output file */
-extern char*    R_TempDir;   /* Name of per-session dir */
-
-/* from src/unix/devUI.h */
-
-extern void (*ptr_R_Suicide)(char *);
-extern void (*ptr_R_ShowMessage)();
-extern int  (*ptr_R_ReadConsole)(char *, unsigned char *, int, int);
-extern void (*ptr_R_WriteConsole)(char *, int);
-extern void (*ptr_R_ResetConsole)();
-extern void (*ptr_R_FlushConsole)();
-extern void (*ptr_R_ClearerrConsole)();
-extern void (*ptr_R_Busy)(int);
-/* extern void (*ptr_R_CleanUp)(SA_TYPE, int, int); */
-extern int  (*ptr_R_ShowFiles)(int, char **, char **, char *, Rboolean, char *);
-extern int  (*ptr_R_ChooseFile)(int, char *, int);
-extern void (*ptr_R_loadhistory)(SEXP, SEXP, SEXP, SEXP);
-extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
+/* from Defn.h (do we still need it? Re_CleanUp is commented out ...)
+   extern Rboolean R_Interactive; */
 #endif
 
+#if R_VERSION < R_Version(2,6,0)
 #ifndef checkArity
 #define checkArity               Rf_checkArity
 #endif
+#else
+#define checkArity(X,Y)
+#endif
+
 #ifndef errorcall
 #define errorcall                Rf_errorcall
 #endif
@@ -129,22 +114,28 @@ void Re_Busy(int which)
     jri_checkExceptions(lenv, 1);
 }
 
-void Re_WriteConsole(char *buf, int len)
+void Re_WriteConsoleEx(char *buf, int len, int oType)
 {
     JNIEnv *lenv=checkEnvironment();
     jri_checkExceptions(lenv, 1);
     {
       jstring s=(*lenv)->NewStringUTF(lenv, buf);
-      jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
+      jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;I)V");
       jri_checkExceptions(lenv, 0);
 #ifdef JRI_DEBUG
       printf("jriWriteConsole mid=%x\n", mid);
 #endif
       if (!mid) return;
-      (*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+      (*lenv)->CallVoidMethod(lenv, engineObj, mid, s, oType);
       jri_checkExceptions(lenv, 1);
       (*lenv)->DeleteLocalRef(lenv, s);
     }
+}
+
+/* old-style WriteConsole (for old R versions only) */
+void Re_WriteConsole(char *buf, int len)
+{
+    Re_WriteConsoleEx(buf, len, 0);
 }
 
 /* Indicate that input is coming from the console */
@@ -161,7 +152,7 @@ void Re_FlushConsole()
       jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriFlushConsole", "()V");
       jri_checkExceptions(lenv, 0);
 #ifdef JRI_DEBUG
-      printf("jriWriteconsole mid=%x\n", mid);
+      printf("jriFlushConsole mid=%x\n", mid);
 #endif
       if (!mid) return;
       (*lenv)->CallVoidMethod(lenv, engineObj, mid);
@@ -265,13 +256,13 @@ void Re_loadhistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 	{
 		SEXP sfile;
-		char *p;
+		const char *p;
 
 		checkArity(op, args);
 		sfile = CAR(args);
 		if (!isString(sfile) || LENGTH(sfile) < 1)
 			errorcall(call, "invalid file argument");
-		p = R_ExpandFileName(CHAR(STRING_ELT(sfile, 0)));
+		p = R_ExpandFileName((char*)CHAR(STRING_ELT(sfile, 0)));
 		if(strlen(p) > PATH_MAX - 1)
 			errorcall(call, "file argument is too long");
 		s=(*lenv)->NewStringUTF(lenv, p);
@@ -299,7 +290,7 @@ void Re_savehistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 	{
 		SEXP sfile;
-		char *p;
+		const char *p;
 		
 		checkArity(op, args);
 		sfile = CAR(args);

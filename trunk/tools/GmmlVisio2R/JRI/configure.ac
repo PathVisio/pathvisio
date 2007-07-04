@@ -174,6 +174,7 @@ AC_CHECK_FILE(${JAVA_HOME}/include/jni.h,
 ])
 
 JAVA_INC="-I${JNI_H}"
+: ${JAVA_CFLAGS=-D_REENTRANT}
 
 # Sun's JDK needs jni_md.h in in addition to jni.h and unfortunately it's stored somewhere else ...
 # this should be become more general at some point - so far we're checking linux and solaris only
@@ -186,7 +187,7 @@ if test ${jac_found_md} = yes; then break; fi
 done
 
 LIBS="${LIBS} ${JAVA_LIBS}"
-CFLAGS="${CFLAGS} ${JAVA_INC}"
+CFLAGS="${CFLAGS} ${JAVA_CFLAGS} ${JAVA_INC}"
 
 AC_MSG_CHECKING([whether JNI programs can be compiled])
 AC_LINK_IFELSE([
@@ -281,6 +282,7 @@ AC_SUBST(JAVA_PROG)
 AC_SUBST(JAVA_LD_PATH)
 AC_SUBST(JAVA_LIBS)
 AC_SUBST(JAVA_INC)
+AC_SUBST(JAVA_CFLAGS)
 AC_SUBST(JAVAC)
 AC_SUBST(JAVAH)
 AC_SUBST(JAR)

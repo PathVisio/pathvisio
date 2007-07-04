@@ -3,7 +3,16 @@
 
 #include "jri.h"
 #include "org_rosuda_JRI_Rengine.h"
+#include "rjava.h"
+#include <Rversion.h>
 #include <R_ext/Parse.h>
+
+/* the # of arguments to R_ParseVector changed since R 2.5.0 */
+#if R_VERSION < R_Version(2,5,0)
+#define RS_ParseVector R_ParseVector
+#else
+#define RS_ParseVector(A,B,C) R_ParseVector(A,B,C,R_NilValue)
+#endif
 
 #include "Rcallbacks.h"
 #include "Rinit.h"
@@ -94,6 +103,12 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
               argv[argc]=0;
           }
       }
+
+      if (argc==2 && !strcmp(argv[1],"--zero-init")) {/* special case for direct embedding (exp!) */
+	initRinside();
+	return 0;
+      }
+      
       initRes=initR(argc, argv);
       /* we don't release the argv in case R still needs it later (even if it shouldn't), but it's not really a significant leak */
       
@@ -110,7 +125,7 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniParse
 #ifdef JRI_DEBUG
       printf("parsing \"%s\"\n", CHAR(STRING_ELT(cv,0)));
 #endif
-      pstr=R_ParseVector(cv, parts, &ps);
+      pstr=RS_ParseVector(cv, parts, &ps);
 #ifdef JRI_DEBUG
       printf("parse status=%d, result=%x, type=%d\n", ps, (int) pstr, (pstr!=0)?TYPEOF(pstr):0);
 #endif
@@ -178,7 +193,8 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniJavaToXref
 (JNIEnv *env, jobject this, jobject o)
 {
   /* this is pretty much from Rglue.c of rJava */
-	return SEXP2L(R_MakeExternalPtr(o, R_NilValue, R_NilValue));
+  jobject go = (*env)->NewGlobalRef(env, o);
+  return SEXP2L(R_MakeExternalPtr(go, R_NilValue, R_NilValue));
 }
 
 JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetString
@@ -331,9 +347,16 @@ JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniInherits
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCons
-(JNIEnv *env, jobject this, jlong head, jlong tail)
+(JNIEnv *env, jobject this, jlong head, jlong tail, jlong tag, jboolean lang)
 {
-    return SEXP2L(CONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail)));
+  SEXP l;
+  if (lang)
+    l = LCONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail));
+  else
+    l = CONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail));
+  
+  if (tag) SET_TAG(l, L2SEXP(tag));
+  return SEXP2L(l);
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCAR
@@ -471,6 +494,36 @@ JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetEnv
 }
 
 #endif
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupRJava
+(JNIEnv *env, jobject this, jint _in, jint _out) {
+  RJava_setup(_in, _out);
+  return 0;
+}
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniRJavaLock
+(JNIEnv *env, jobject this) {
+  return RJava_request_lock();
+}
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniRJavaUnlock
+(JNIEnv *env, jobject this) {
+  return RJava_clear_lock();
+}
+
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniPrint
+(JNIEnv *env, jobject this, jstring s, jint oType) {
+  if (s) {
+    const char *c = (*env)->GetStringUTFChars(env, s, 0);
+    if (c) {
+      if (oType)
+	REprintf("%s", c);
+      else
+	Rprintf("%s", c);
+    }
+    (*env)->ReleaseStringUTFChars(env, s, c);
+  }
+}
 
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
 (JNIEnv *env, jobject this, jint flag) {

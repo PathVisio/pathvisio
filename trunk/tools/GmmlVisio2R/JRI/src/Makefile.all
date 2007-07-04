@@ -17,13 +17,16 @@ org_rosuda_JRI_Rengine.h: org/rosuda/JRI/Rengine.class
 	$(JAVAH) -d . -classpath . org.rosuda.JRI.Rengine
 
 Rcallbacks.o: Rcallbacks.c Rcallbacks.h globals.h
-	$(CC) -c -o $@ Rcallbacks.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
+	$(CC) -c -o $@ $< $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
 Rinit.o: Rinit.c Rinit.h Rcallbacks.h
-	$(CC) -c -o $@ Rinit.c $(CFLAGS) $(CPICF) $(RINC)
+	$(CC) -c -o $@ $< $(CFLAGS) $(CPICF) $(RINC)
 
 globals.o: globals.c globals.h
-	$(CC) -c -o $@ globals.c $(CFLAGS) $(CPICF) $(JAVAINC)
+	$(CC) -c -o $@ $< $(CFLAGS) $(CPICF) $(JAVAINC)
+
+rjava.o: rjava.c rjava.h
+	$(CC) -c -o $@ $< $(CFLAGS) $(CPICF) $(JAVAINC)
 
 Rengine.o: Rengine.c org_rosuda_JRI_Rengine.h globals.h Rcallbacks.h Rinit.h
 	$(CC) -c -o $@ Rengine.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
@@ -31,7 +34,7 @@ Rengine.o: Rengine.c org_rosuda_JRI_Rengine.h globals.h Rcallbacks.h Rinit.h
 jri.o: jri.c
 	$(CC) -c -o $@ jri.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
-$(JNIPREFIX)jri$(JNISO): Rengine.o jri.o Rcallbacks.o Rinit.o globals.o $(JRIDEPS)
+$(JNIPREFIX)jri$(JNISO): Rengine.o jri.o Rcallbacks.o Rinit.o globals.o rjava.o $(JRIDEPS)
 	$(CC) -o $@ $^ $(LDFLAGS) $(JNILD) $(RLD)
 
 win32/libjvm.dll.a:

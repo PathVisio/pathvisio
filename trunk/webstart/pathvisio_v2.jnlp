@@ -51,7 +51,7 @@
 		<jar href="swt-mac-lib/swt.jar"/>
 		<nativelib href="swt-mac-lib.jar"/>	
 	</resources>
-	<application-desc main-class="org.pathvisio.gui.GuiMain">
+	<application-desc main-class="org.pathvisio.gui.swt.GuiMain">
 		<argument>-ur</argument>
 	</application-desc>
 	<security>

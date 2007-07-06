@@ -432,7 +432,7 @@ public class RController implements ApplicationEventListener{
 	//Error messages
 	static final String WWW_R = "http://www.r-project.org";
 	static final String ERR_NO_JRI_VERSION = 
-		"Your version of R is not supported, pleases install an updated version of R (" + WWW_R + ")"; 
+		"Your version of R is not supported, please install an updated version of R (" + WWW_R + ")"; 
 	static final String ERR_MSG_PRE = "Problems when starting R-interface";
 	static final String ERR_MSG_NOR_LINUX = 
 		" and that environment variable LD_LIBRARY_PATH " +

@@ -184,7 +184,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	 */
 	public void visualizeDrawing(Graphics g, Graphics2D g2d) {
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
-			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, g2d);
+			if(pr.isDrawing()) pr.getDrawingPlugin().visualizeOnDrawing(g, (Graphics2D)g2d.create());
 		}
 	}
 	
@@ -217,6 +217,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		int w = bounds.width / nrRes;
 		bounds.x += w * index;
 		bounds.width = w;
+		bounds.height -= 1;
 		
 		Area barea = new Area(bounds);
 		area.intersect(barea);

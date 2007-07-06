@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
@@ -153,6 +153,28 @@ public class Engine {
 			}
 		}
 		
+	}
+	
+	public static File openPathway(URL url) throws ConverterException {
+		return openPathway(url, null);
+	}
+	
+	public static File openPathway(URL url, VPathwayWrapper w) throws ConverterException {
+		String protocol = url.getProtocol();
+		File f = null;
+		if(protocol.equals("file")) {
+			f = new File(url.getFile());
+			openPathway(f, w);
+		} else {
+			try {
+				f = File.createTempFile("urlPathway", ".gpml");
+				FileUtils.downloadFile(url, f);
+				openPathway(f.toString());
+			} catch(Exception e) {
+				throw new ConverterException(e);
+			}
+		}
+		return f;
 	}
 	
 	public static void savePathway() throws ConverterException {

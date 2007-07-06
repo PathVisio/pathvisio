@@ -21,14 +21,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
@@ -36,9 +33,7 @@ import javax.swing.filechooser.FileFilter;
 import org.pathvisio.Engine;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.PathwayImporter;
-import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 
@@ -158,6 +153,7 @@ public abstract class CommonActions {
 				int status = jfc.showDialog(component, "Import");
 				if(status == JFileChooser.APPROVE_OPTION) {
 					try {
+						
 						int totalWork = 1000;
 						ProgressMonitor m = new ProgressMonitor(component, "Loading pathway", "Please wait while the pathway is being loaded", 0, 1000);
 						m.setProgress(10);

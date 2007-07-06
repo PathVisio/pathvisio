@@ -29,10 +29,12 @@ public class ApplicationEvent extends EventObject {
 
 	public Object source;
 	public int type;
+	public boolean doit;
 	
 	public ApplicationEvent(Object source, int type) {
 		super(source);
 		this.source = source;
 		this.type = type;
+		doit = true;
 	}
 }

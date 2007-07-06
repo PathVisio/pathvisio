@@ -394,9 +394,12 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	}
 		
 	public boolean close() {
-		Engine.fireApplicationEvent(
-				new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE));
-		return super.close();
+		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
+		Engine.fireApplicationEvent(e);
+		if(e.doit) {
+			return super.close();
+		}
+		return false;
 	}
 	
 	VPathwaySwingComposite swingPathwayComposite;

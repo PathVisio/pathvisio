@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.Engine;
 
 /**

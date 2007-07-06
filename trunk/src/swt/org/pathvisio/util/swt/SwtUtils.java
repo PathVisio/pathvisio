@@ -80,6 +80,7 @@ public class SwtUtils {
 	}
 	
 	public static RGB color2rgb(java.awt.Color c) {
+		if(c == null) c = java.awt.Color.BLACK;
 		return new RGB(c.getRed(), c.getGreen(), c.getBlue());
 	}
 	

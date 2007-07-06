@@ -16,11 +16,8 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Set;

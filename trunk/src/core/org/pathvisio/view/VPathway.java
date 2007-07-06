@@ -547,12 +547,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			if(o.vIntersects(area))
 			{
 				if(checkDrawAllowed(o)) {
-					o.draw (g2d);
+					o.draw ((Graphics2D)g2d.create());
 				}
 				
 				if(v != null && o instanceof Graphics) {
 						try {
-							v.visualizeDrawing((Graphics) o, g2d);
+							v.visualizeDrawing((Graphics) o, (Graphics2D)g2d.create());
 						} catch(Exception ex) {
 							Engine.log.error(
 									"Unable to apply visualization " + v + " on " + o, ex);

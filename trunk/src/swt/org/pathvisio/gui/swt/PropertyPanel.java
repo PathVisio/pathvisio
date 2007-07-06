@@ -58,8 +58,6 @@ import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
-import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.swt.SuggestCellEditor;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;

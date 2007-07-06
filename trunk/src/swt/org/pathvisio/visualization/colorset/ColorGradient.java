@@ -390,7 +390,7 @@ public class ColorGradient extends ColorSetObject {
 				public Object getValue(Object element, String property) {
 					ColorValuePair cvp = (ColorValuePair)element;
 					if(property.equals(tableColumns[0])) {
-						return cvp.getColor();
+						return SwtUtils.color2rgb(cvp.getColor());
 					} else {
 						return Double.toString(cvp.getValue());
 					}

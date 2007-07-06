@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view.swing;
 
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 public class SwingMouseEvent extends org.pathvisio.view.MouseEvent {

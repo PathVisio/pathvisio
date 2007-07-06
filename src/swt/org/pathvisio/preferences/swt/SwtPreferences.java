@@ -30,8 +30,6 @@ import org.pathvisio.preferences.PreferenceCollection;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.view.Graphics;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 /**
  * This class contains all user preferences used in this application
  */

@@ -60,12 +60,12 @@ public class DataNodeDialog extends PathwayElementDialog {
 		parent.add(dbLabel);	parent.add(dbCombo);
 		
 		symText.getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(DocumentEvent e) {
-				System.out.println("Text changed");
+			public void changedUpdate(DocumentEvent e) { setText();	}
+			public void insertUpdate(DocumentEvent e) {	setText(); }
+			public void removeUpdate(DocumentEvent e) { setText(); }
+			private void setText() {
 				getInput().setTextLabel(symText.getText());
 			}
-			public void insertUpdate(DocumentEvent e) {	}
-			public void removeUpdate(DocumentEvent e) {	}
 		});
 	}
 }

@@ -16,19 +16,30 @@
 //
 package org.pathvisio.gui.swing;
 
-import java.awt.Container;
-import java.awt.Frame;
-
 import javax.swing.JApplet;
 
+import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
+import org.pathvisio.wikipathways.WikiPathways;
+
 public class AppletMain extends JApplet {
+	private static WikiPathways wiki;
+	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
 		super.init();
-		String url = getParameter(PAR_PATHWAY_URL);
 		
 		GuiInit.init();
-		MainPanel mainPanel = SwingEngine.getApplicationPanel();
+	
+		MainPanel mainPanel = SwingEngine.getApplicationPanel();		
+		parseArguments();
+		
+		try { 
+			wiki.openPathwayURL();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		add(mainPanel);
 	}
 	
@@ -38,7 +49,25 @@ public class AppletMain extends JApplet {
 	}
 	
 	public void stop() {
-		// TODO Auto-generated method stub
-		super.stop();
+		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
+		Engine.fireApplicationEvent(e);
+		if(e.doit) {
+			super.stop();
+		}
+	}
+	
+	void parseArguments() {
+		String pwURL = getParameter("pathwayUrl");
+		String pwName = getParameter("pwName");
+		String rpcUrl = getParameter("rpcUrl");
+		String pwSpecies = getParameter("pwSpecies");
+		String user = getParameter("user");
+		boolean pwNew = Boolean.parseBoolean(getParameter("new"));
+		wiki = new WikiPathways();
+		wiki.setUser(user);
+		wiki.setPwName(pwName);
+		wiki.setPwSpecies(pwSpecies);
+		wiki.setPwURL(pwURL);
+		wiki.setRpcURL(rpcUrl);
 	}
 }

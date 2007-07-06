@@ -18,12 +18,7 @@ package org.pathvisio.gui.swing;
 
 import javax.swing.JFrame;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayEvent;
-import org.pathvisio.view.VPathwayListener;
 
 public class GuiMain {
 

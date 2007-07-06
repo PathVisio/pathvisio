@@ -33,8 +33,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.Utils;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 public class BiopaxManager {
 	Model model;
 	

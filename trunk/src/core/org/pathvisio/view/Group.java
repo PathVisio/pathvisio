@@ -41,12 +41,12 @@ public class Group extends Graphics {
 	 */
 	protected boolean vContains(Point2D point) {
 		for (VPathwayElement vpe : canvas.getDrawingObjects()) {
-			if (vpe != this && vpe.vContains(point)) {
+			if (!(vpe instanceof Group)  && vpe.vContains(point)) {
 				if (vpe instanceof Graphics) {
 					PathwayElement pe = ((Graphics) vpe).getGmmlData();
 					String ref = pe.getGroupRef();
 					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
-						System.out.println("TRUE!");
+						//System.out.println("TRUE!");
 						return true;
 					}
 				}
@@ -58,12 +58,12 @@ public class Group extends Graphics {
 	@Override
 	protected boolean vIntersects(Rectangle2D r) {
 		for (VPathwayElement vpe : canvas.getDrawingObjects()) {
-			if (vpe != this && vpe.vIntersects(r)) {
+			if (!(vpe instanceof Group) && vpe.vIntersects(r)) {
 				if (vpe instanceof Graphics) {
 					PathwayElement pe = ((Graphics) vpe).getGmmlData();
 					String ref = pe.getGroupRef();
 					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
-						System.out.println("TRUE INTERSECTS!");
+						//System.out.println("TRUE INTERSECTS!");
 						return true;
 					}
 				}

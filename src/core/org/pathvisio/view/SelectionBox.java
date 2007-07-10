@@ -312,7 +312,7 @@ public class SelectionBox extends GraphicsShape
 			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.x, vr.y, vr.width, vr.height);
 			for(VPathwayElement o : canvas.getDrawingObjects()) {
 				if((o == this) || (o instanceof Handle)) continue;
-				if(o.vIntersects(bounds)) { 
+				if(o.vIntersects(bounds) && !(o instanceof Group)) { 
 					addToSelection(o);
 				} else if(o.isSelected()) removeFromSelection(o);
 			}

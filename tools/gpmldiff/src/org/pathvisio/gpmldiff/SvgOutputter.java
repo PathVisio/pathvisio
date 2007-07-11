@@ -88,7 +88,7 @@ class SvgOutputter extends DiffOutputter
 
 		for (int i = 0; i < 2; ++i)
 		{
-//  			vpwy[i].setPctZoom (50);
+  			vpwy[i].setPctZoom (70);
 			width[i] = vpwy[i].getVWidth();
 			height[i] = vpwy[i].getVHeight();
 		}

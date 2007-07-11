@@ -16,6 +16,8 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -195,7 +197,16 @@ public class Label extends GraphicsShape
 		
 		Rectangle2D tb = g.getFontMetrics().getStringBounds(ats.getIterator(), 0, label.length(), g);
 		g.drawString(ats.getIterator(), area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2), 
-					area.y + (int)(area.height / 2) + (int)(tb.getHeight() / 2));		
+					area.y + (int)(area.height / 2) + (int)(tb.getHeight() / 2));
+
+		if(isHighlighted())
+		{
+			Color hc = getHighlightColor();
+			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
+			g.setStroke (new BasicStroke());
+			g.fillRect(getVLeft(), getVTop(), getVWidth(), getVHeight());
+		}
+
 	}
 		
 //	public void gmmlObjectModified(PathwayEvent e) {

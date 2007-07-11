@@ -39,14 +39,30 @@ abstract class DiffOutputter
 	abstract public void delete(PwyElt oldElt);
 
 	/**
-	   Modification of an element that is present in both documents.
-	   @param path is an XPath-like expression that points to the
-	   subelement or attribute that was modified.
-	   @param oldVal is the old value of that tag / attribute
-	   @param newVal is the new value of that tag / attribute
+	   A single modified attribute of an element that is present in
+	   both documents.  This is always called after a modifyStart and
+	   before a modifyEnd event.
+	   @param attr is the name of the attribute that was modified
+	   @param oldVal is the old value of that attribute
+	   @param newVal is the new value of that attribute
 	 */
-	abstract public void modify(PwyElt oldElt, PwyElt newElt, String path, String oldVal, String newVal);
+	abstract public void modifyAttr(String attr, String oldVal, String newVal);
 
+	/**
+	   Start of a list of modifications to an element that is present
+	   in both documents. Will be followed by one or more modifyItem()
+	   events, and finally by a modifyEnd() event.
+
+	   modifyStart is guaranteed to be called only if one or more
+	   attributes have changed.
+	 */
+	abstract public void modifyStart(PwyElt oldElt, PwyElt newElt);
+
+	/**
+	   Called to indicate the end of a list of modified attributes.
+	 */
+	abstract public void modifyEnd();
+	
 	/**
 	   Write all pending output to file or flush output buffers,
 	   depending on the actual implementation of this

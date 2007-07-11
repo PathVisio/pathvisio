@@ -79,15 +79,27 @@ class PwyElt
 	 */
 	void writeModifications (PwyElt newElt, DiffOutputter outputter)
 	{
+		boolean opened = false; // indicates if modifyStart has been
+								// sent already for current PwyElt.
 		for (String key : contents.keySet())
 		{
 			if (newElt.contents.containsKey(key))
 			{
 				if (!contents.get(key).equals(newElt.contents.get(key)))
 				{
-					outputter.modify (this, newElt, key, contents.get(key), newElt.contents.get(key));
+					if (!opened)
+					{
+						outputter.modifyStart (this, newElt);
+						opened = true;
+					}
+					outputter.modifyAttr (key, contents.get(key), newElt.contents.get(key));
 				}
 			}
-		}			
+		}
+		if (opened)
+		{
+			outputter.modifyEnd();
+			opened = false;
+		}				
 	}
 }

@@ -82,18 +82,40 @@ class DgpmlOutputter extends DiffOutputter
 		doc.getRootElement().addContent(e);
 	}
 
-	public void modify(PwyElt oldElt, PwyElt newElt, String path, String oldVal, String newVal)
+	PwyElt curOldElt = null;
+	PwyElt curNewElt = null;
+	Element curModifyElement = null;
+	
+	public void modifyStart (PwyElt oldElt, PwyElt newElt)
 	{
-		Element e = (new Element("Modify"));
+		curOldElt = oldElt;
+		curNewElt = newElt;
+		
+		curModifyElement = (new Element("Modify"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(oldElt.getElement(), GpmlFormat.GPML);
-			e.addContent (f);
+			Element f = GpmlFormat.createJdomElement(curOldElt.getElement(), GpmlFormat.GPML);
+			curModifyElement.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
-		e.setAttribute("path", path);
+	}
+
+	public void modifyEnd ()
+	{
+		doc.getRootElement().addContent(curModifyElement);
+		curOldElt = null;
+		curNewElt = null;
+	}
+
+	public void modifyAttr (String attr, String oldVal, String newVal)
+	{
+		assert (curOldElt != null);
+		assert (curNewElt != null);
+		
+		Element e = new Element ("Change");
+		e.setAttribute("attr", attr);
 		e.setAttribute("old", oldVal);
 		e.setAttribute("new", newVal);
-		doc.getRootElement().addContent(e);
+		curModifyElement.addContent (e);
 	}
 }

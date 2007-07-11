@@ -65,6 +65,7 @@ class GpmlDiff
 			"\n" +
 			"Finds the difference between the two files\n"
 			);
+		System.exit(1);
 	}
 	
 	/**

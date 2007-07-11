@@ -94,11 +94,15 @@ class PwyDoc
 			PwyElt maxNewElt = null;
 			for (PwyElt newElt : newDoc.getElts())
 			{
-				int score = simFun.getSimScore (oldElt, newElt);
-				if (score > maxScore)
+				// if it's the first node, or if the newElt is not yet in the searchpath
+				if (currentNode == null || !currentNode.ancestryHasElt (newElt))
 				{
-					maxNewElt = newElt;
-					maxScore = score;
+					int score = simFun.getSimScore (oldElt, newElt);
+					if (score > maxScore)
+					{
+						maxNewElt = newElt;
+						maxScore = score;
+					}
 				}
 			}
 

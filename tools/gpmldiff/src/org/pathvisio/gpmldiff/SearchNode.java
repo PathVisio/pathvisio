@@ -16,6 +16,9 @@
 //
 package org.pathvisio.gpmldiff;
 
+import java.util.Set;
+import java.util.HashSet;
+
 /**
    A search node, important part of the Dijkstra algorithm
 */
@@ -23,7 +26,10 @@ class SearchNode
 {
 	float cost;
 	SearchNode parent;
-
+	
+	// pwy elts in use by parent search path, both old and new
+	Set<PwyElt> parentSet = new HashSet<PwyElt>(); 
+	
 	/**
 	   return the Parent of this SearchNode, which corresponds to the
 	   state of the Search engine when this node was opened
@@ -46,6 +52,15 @@ class SearchNode
 	{
 		return newElt;
 	}
+
+	/**
+	   Determine if a certain pwy elt is already in the ancestry of this Search Node.
+	   (old or new doesn't matter, as these sets never overlap)
+	 */
+	public boolean ancestryHasElt(PwyElt elt)
+	{
+		return parentSet.contains (elt);
+	}
 	
 	/**
 	   Create a new SearchNode.
@@ -59,5 +74,11 @@ class SearchNode
 		newElt = _newElt;
 		assert (oldElt != null);
 		assert (newElt != null);
+		if (parent != null)
+		{
+			parentSet = parent.parentSet;
+		}
+		parentSet.add (oldElt);
+		parentSet.add (newElt);
 	}
 }

@@ -50,9 +50,28 @@ class BasicOutputter extends DiffOutputter
 		output.println ("delete: " + oldElt.summary());
 	}
 
-	public void modify(PwyElt oldElt, PwyElt newElt, String path, String oldVal, String newVal)
+	PwyElt curOldElt = null;
+	PwyElt curNewElt = null;
+	
+	public void modifyStart (PwyElt oldElt, PwyElt newElt)
 	{
-		output.println ("modify: " + newElt.summary() + "[" + path + ": '" + oldVal + "' -> '" + newVal + "']");
+		curOldElt = oldElt;
+		curNewElt = newElt;
 	}
+
+	public void modifyEnd ()
+	{
+		curOldElt = null;
+		curNewElt = null;
+	}
+	
+	public void modifyAttr(String attr, String oldVal, String newVal)
+	{
+		assert (curOldElt != null);
+		assert (curNewElt != null);
+		output.println ("modify: " + curNewElt.summary() + "[" + attr + ": '" + oldVal + "' -> '" + newVal + "']");
+	}
+
+	
 
 }

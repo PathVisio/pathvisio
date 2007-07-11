@@ -1,0 +1,3530 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1900"
+   height="1000"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44"
+   sodipodi:docname="2panel.svg"
+   sodipodi:docbase="/home/martijn/Desktop"
+   version="1.0">
+  <metadata
+     id="metadata484">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="953"
+     inkscape:window-width="1280"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="0.62421053"
+     inkscape:cx="950"
+     inkscape:cy="500"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:current-layer="svg2"
+     width="1900px"
+     height="1000px" />
+  <defs
+     id="defs4">
+    <marker
+       id="TBar1361723986"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect3387"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1235989797"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3384"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1380102850"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3381"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow2015180387"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3378"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1984704194"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3375"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow-352462381"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3372"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar-165269338"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect3369"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar-169904644"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect3366"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow132365693"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3363"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow-10761122"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3360"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar-390406668"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect3357"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1265157402"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3354"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1324334423"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3351"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow62714031"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3348"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar1971838456"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect3345"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar580205614"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect3342"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow60885219"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3333"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow721586060"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3330"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow-53124074"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3324"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow823957523"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path3321"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow75245951"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path7"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow-67812853"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path10"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow2082688902"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path13"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow644338245"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path16"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1363435172"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path19"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1998649550"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path22"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow784114454"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path25"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar785198695"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect28"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar642983867"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect31"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1236636521"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path34"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow-169000324"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path37"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1261921839"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path40"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar15097300"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect43"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow783202523"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path46"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow709445870"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path49"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar695565542"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect52"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="TBar1379194996"
+       viewBox="0 0 1 15"
+       orient="auto"
+       refX="1"
+       refY="8"
+       markerWidth="2"
+       markerHeight="20">
+      <rect
+         x="1"
+         y="1"
+         width="1"
+         height="15"
+         id="rect55"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow1303632219"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path58"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow695950402"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path61"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow-59679114"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path64"
+         style="fill:black;stroke:black" />
+    </marker>
+    <marker
+       id="Arrow651308251"
+       viewBox="0 0 10 10"
+       orient="auto"
+       refX="10"
+       refY="5"
+       markerWidth="10"
+       markerHeight="10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 0,0 z "
+         id="path67"
+         style="fill:black;stroke:black" />
+    </marker>
+  </defs>
+  <line
+     x1="76.727005"
+     y1="156.57715"
+     x2="542.72699"
+     y2="156.57715"
+     id="line69"
+     style="stroke:black" />
+  <line
+     x1="76.727005"
+     y1="143.57715"
+     x2="542.72699"
+     y2="143.57715"
+     id="line71"
+     style="stroke:black" />
+  <line
+     x1="272.72702"
+     y1="136.57715"
+     x2="192.72701"
+     y2="196.57715"
+     id="line73"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="272.72702"
+     y1="173.57715"
+     x2="202.72701"
+     y2="196.57715"
+     id="line75"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="272.72702"
+     y1="196.57715"
+     x2="102.72701"
+     y2="196.57715"
+     id="line77"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="102.72701"
+     y1="196.57715"
+     x2="89.727005"
+     y2="203.57715"
+     id="line79"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="89.727005"
+     y1="206.57715"
+     x2="89.727005"
+     y2="236.57715"
+     id="line81"
+     style="stroke:black;marker-end:url(#Arrow75245951);stroke-dasharray:5, 2" />
+  <line
+     x1="312.72702"
+     y1="286.57715"
+     x2="346.72702"
+     y2="313.57715"
+     id="line83"
+     style="stroke:black;marker-end:url(#Arrow-67812853);stroke-dasharray:5, 2" />
+  <line
+     x1="399.72702"
+     y1="313.57715"
+     x2="466.72702"
+     y2="276.57715"
+     id="line85"
+     style="stroke:black;marker-end:url(#Arrow2082688902);stroke-dasharray:5, 2" />
+  <line
+     x1="466.72702"
+     y1="353.57715"
+     x2="516.72699"
+     y2="383.57715"
+     id="line87"
+     style="stroke:black;marker-end:url(#Arrow644338245)" />
+  <line
+     x1="652.72699"
+     y1="386.57715"
+     x2="672.72699"
+     y2="386.57715"
+     id="line89"
+     style="stroke:black;marker-end:url(#Arrow1363435172)" />
+  <line
+     x1="776.72699"
+     y1="386.57715"
+     x2="799.72699"
+     y2="386.57715"
+     id="line91"
+     style="stroke:black;marker-end:url(#Arrow1998649550)" />
+  <line
+     x1="319.72702"
+     y1="383.57715"
+     x2="289.72702"
+     y2="403.57715"
+     id="line93"
+     style="stroke:black;marker-end:url(#Arrow784114454);stroke-dasharray:5, 2" />
+  <line
+     x1="292.72702"
+     y1="449.57715"
+     x2="339.72702"
+     y2="473.57715"
+     id="line95"
+     style="stroke:black;marker-end:url(#TBar785198695)" />
+  <line
+     x1="376.72702"
+     y1="383.57715"
+     x2="376.72702"
+     y2="459.57715"
+     id="line97"
+     style="stroke:black;marker-end:url(#TBar642983867)" />
+  <line
+     x1="389.72702"
+     y1="386.57715"
+     x2="456.72702"
+     y2="426.57715"
+     id="line99"
+     style="stroke:black;marker-end:url(#Arrow1236636521);stroke-dasharray:5, 2" />
+  <line
+     x1="376.72702"
+     y1="509.57715"
+     x2="376.72702"
+     y2="539.57715"
+     id="line101"
+     style="stroke:black;marker-end:url(#Arrow-169000324)" />
+  <line
+     x1="376.72702"
+     y1="523.57715"
+     x2="376.72702"
+     y2="493.57715"
+     id="line103"
+     style="stroke:black;marker-end:url(#Arrow1261921839)" />
+  <line
+     x1="469.72702"
+     y1="516.57715"
+     x2="389.72702"
+     y2="516.57715"
+     id="line105"
+     style="stroke:black;marker-end:url(#TBar15097300)" />
+  <line
+     x1="469.72702"
+     y1="516.57715"
+     x2="482.72702"
+     y2="503.57715"
+     id="line107"
+     style="stroke:black" />
+  <line
+     x1="482.72702"
+     y1="503.57715"
+     x2="482.72702"
+     y2="459.57715"
+     id="line109"
+     style="stroke:black" />
+  <line
+     x1="226.72701"
+     y1="523.57715"
+     x2="339.72702"
+     y2="493.57715"
+     id="line111"
+     style="stroke:black;marker-end:url(#Arrow783202523);stroke-dasharray:5, 2" />
+  <line
+     x1="462.72702"
+     y1="616.57715"
+     x2="466.72702"
+     y2="626.57715"
+     id="line113"
+     style="stroke:black;marker-end:url(#Arrow709445870)" />
+  <line
+     x1="456.72702"
+     y1="603.57715"
+     x2="462.72702"
+     y2="589.57715"
+     id="line115"
+     style="stroke:black" />
+  <line
+     x1="462.72702"
+     y1="589.57715"
+     x2="472.72702"
+     y2="583.57715"
+     id="line117"
+     style="stroke:black" />
+  <line
+     x1="109.72701"
+     y1="683.57715"
+     x2="452.72702"
+     y2="683.57715"
+     id="line119"
+     style="stroke:black" />
+  <line
+     x1="109.72701"
+     y1="693.57715"
+     x2="446.72702"
+     y2="693.57715"
+     id="line121"
+     style="stroke:black" />
+  <line
+     x1="289.72702"
+     y1="649.57715"
+     x2="289.72702"
+     y2="726.57715"
+     id="line123"
+     style="stroke:black" />
+  <line
+     x1="289.72702"
+     y1="726.57715"
+     x2="306.72702"
+     y2="743.57715"
+     id="line125"
+     style="stroke:black" />
+  <line
+     x1="306.72702"
+     y1="743.57715"
+     x2="336.72702"
+     y2="743.57715"
+     id="line127"
+     style="stroke:black;marker-end:url(#TBar695565542)" />
+  <line
+     x1="346.72702"
+     y1="726.57715"
+     x2="346.72702"
+     y2="779.57715"
+     id="line129"
+     style="stroke:black;marker-end:url(#TBar1379194996)" />
+  <line
+     x1="506.72702"
+     y1="646.57715"
+     x2="586.72699"
+     y2="726.57715"
+     id="line131"
+     style="stroke:black;marker-end:url(#Arrow1303632219)" />
+  <line
+     x1="452.72702"
+     y1="683.57715"
+     x2="502.72702"
+     y2="733.57715"
+     id="line133"
+     style="stroke:black" />
+  <line
+     x1="446.72702"
+     y1="693.57715"
+     x2="496.72702"
+     y2="743.57715"
+     id="line135"
+     style="stroke:black" />
+  <line
+     x1="589.72699"
+     y1="663.57715"
+     x2="579.72699"
+     y2="646.57715"
+     id="line137"
+     style="stroke:black;marker-end:url(#Arrow695950402)" />
+  <line
+     x1="589.72699"
+     y1="663.57715"
+     x2="602.72699"
+     y2="669.57715"
+     id="line139"
+     style="stroke:black" />
+  <line
+     x1="602.72699"
+     y1="669.57715"
+     x2="649.72699"
+     y2="669.57715"
+     id="line141"
+     style="stroke:black" />
+  <line
+     x1="662.72699"
+     y1="753.57715"
+     x2="689.72699"
+     y2="779.57715"
+     id="line143"
+     style="stroke:black;marker-end:url(#Arrow-59679114)" />
+  <line
+     x1="449.72702"
+     y1="176.57715"
+     x2="379.72702"
+     y2="316.57715"
+     id="line145"
+     style="stroke:black;marker-end:url(#Arrow651308251);stroke-dasharray:5, 2" />
+  <g
+     transform="translate(376.727,619.5772)"
+     id="g147">
+    <g
+       transform="scale(-1,-1)"
+       id="g149">
+      <path
+         d="M -86.5,0 C -86.5,23.748244 -47.772631,43 5.2964225e-15,43 C 47.772631,43 86.5,23.748244 86.5,0"
+         id="path151"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(482.727,579.5772)"
+     id="g153">
+    <g
+       id="g155">
+      <ellipse
+         cx="0"
+         cy="0"
+         rx="10"
+         ry="10"
+         id="ellipse157"
+         sodipodi:cx="0"
+         sodipodi:cy="0"
+         sodipodi:rx="10"
+         sodipodi:ry="10"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(732.727,153.5772)"
+     id="g159">
+    <g
+       id="g161">
+      <rect
+         x="-180"
+         y="-60"
+         width="360"
+         height="120"
+         id="rect163"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(462.727,353.5772)"
+     id="g165">
+    <g
+       transform="matrix(0,-1,1,0,0,0)"
+       id="g167">
+      <path
+         d="M -33,4 C -33,1.3333333 -31.666667,0 -29,0 L -4,0 C -1.3333333,0 0,-1.3333333 0,-4 C 0,-1.3333333 1.3333333,0 4,0 L 29,0 C 31.666667,0 33,1.3333333 33,4"
+         id="path169"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(649.727,386.5772)"
+     id="g171">
+    <g
+       transform="matrix(0,-1,1,0,0,0)"
+       id="g173">
+      <path
+         d="M -26.5,4 C -26.5,1.3333333 -25.166667,0 -22.5,0 L -4,0 C -1.3333333,0 0,-1.3333333 0,-4 C 0,-1.3333333 1.3333333,0 4,0 L 22.5,0 C 25.166667,0 26.5,1.3333333 26.5,4"
+         id="path175"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(659.727,669.5772)"
+     id="g177">
+    <g
+       transform="matrix(0,1,-1,0,0,0)"
+       id="g179">
+      <path
+         d="M -23,4 C -23,1.3333333 -21.666667,0 -19,0 L -4,0 C -1.3333333,0 0,-1.3333333 0,-4 C 0,-1.3333333 1.3333333,0 4,0 L 19,0 C 21.666667,0 23,1.3333333 23,4"
+         id="path181"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <text
+     x="846.72699"
+     y="398.57715"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text183"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:navy;font-family:Arial">Apoptosis</text>
+  <text
+     x="482.72702"
+     y="275.57715"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text185"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:navy;font-family:Arial">Cytoskeleton</text>
+  <text
+     x="486.72702"
+     y="646.57715"
+     font-size="10pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text187"
+     style="font-size:12.5px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Phosphorylated</text>
+  <text
+     x="546.72699"
+     y="646.57715"
+     font-size="10pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text189"
+     style="font-size:12.5px;font-weight:bold;text-anchor:middle;fill:black;font-family:Symbol">B</text>
+  <text
+     x="579.72699"
+     y="646.57715"
+     font-size="10pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text191"
+     style="font-size:12.5px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">-Catenin</text>
+  <text
+     x="482.72702"
+     y="591.57715"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text193"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">P</text>
+  <text
+     x="139.72701"
+     y="725.57715"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text195"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Nucleus</text>
+  <text
+     x="219.72701"
+     y="792.57715"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text197"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Transcriptional Activation</text>
+  <text
+     x="629.72699"
+     y="762.57715"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text199"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">-Catenin</text>
+  <text
+     x="599.72699"
+     y="762.57715"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text201"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Symbol">B</text>
+  <text
+     x="732.72699"
+     y="628.57715"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text203"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Recruitment to Unknown</text>
+  <text
+     x="732.72699"
+     y="642.57715"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text205"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Ubiquitin Conjugating Enzyme</text>
+  <text
+     x="622.72699"
+     y="748.57715"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text207"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Ubiquitin Tagged</text>
+  <text
+     x="772.72699"
+     y="805.57715"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text209"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:navy;font-family:Arial">26S Proteasome Degredation</text>
+  <text
+     x="722.72699"
+     y="118.57714"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text211"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Frizzled Ligands</text>
+  <rect
+     x="326.72702"
+     y="703.57715"
+     width="86"
+     height="20"
+     id="rect213"
+     style="fill:white;stroke:black" />
+  <text
+     x="369.72702"
+     y="723.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text215"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">TCF-1/LEF</text>
+  <rect
+     x="436.72702"
+     y="139.57715"
+     width="60"
+     height="20"
+     id="rect217"
+     style="fill:white;stroke:black" />
+  <text
+     x="466.72702"
+     y="159.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text219"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">LDLR</text>
+  <rect
+     x="559.72699"
+     y="123.57714"
+     width="60"
+     height="20"
+     id="rect221"
+     style="fill:white;stroke:black" />
+  <text
+     x="589.72699"
+     y="143.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text223"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT1</text>
+  <rect
+     x="559.72699"
+     y="143.57715"
+     width="60"
+     height="20"
+     id="rect225"
+     style="fill:white;stroke:black" />
+  <text
+     x="589.72699"
+     y="163.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text227"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT2</text>
+  <rect
+     x="559.72699"
+     y="163.57715"
+     width="60"
+     height="20"
+     id="rect229"
+     style="fill:white;stroke:black" />
+  <text
+     x="589.72699"
+     y="183.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text231"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT2B</text>
+  <rect
+     x="559.72699"
+     y="183.57715"
+     width="60"
+     height="20"
+     id="rect233"
+     style="fill:white;stroke:black" />
+  <text
+     x="589.72699"
+     y="203.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text235"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT3</text>
+  <rect
+     x="646.72699"
+     y="123.57714"
+     width="60"
+     height="20"
+     id="rect237"
+     style="fill:white;stroke:black" />
+  <text
+     x="676.72699"
+     y="143.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text239"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT3A</text>
+  <rect
+     x="646.72699"
+     y="143.57715"
+     width="60"
+     height="20"
+     id="rect241"
+     style="fill:white;stroke:black" />
+  <text
+     x="676.72699"
+     y="163.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text243"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT4</text>
+  <rect
+     x="646.72699"
+     y="163.57715"
+     width="60"
+     height="20"
+     id="rect245"
+     style="fill:white;stroke:black" />
+  <text
+     x="676.72699"
+     y="183.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text247"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT5A</text>
+  <rect
+     x="646.72699"
+     y="183.57715"
+     width="60"
+     height="20"
+     id="rect249"
+     style="fill:white;stroke:black" />
+  <text
+     x="676.72699"
+     y="203.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text251"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT5B</text>
+  <rect
+     x="732.72699"
+     y="123.57714"
+     width="60"
+     height="20"
+     id="rect253"
+     style="fill:white;stroke:black" />
+  <text
+     x="762.72699"
+     y="143.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text255"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT6</text>
+  <rect
+     x="732.72699"
+     y="143.57715"
+     width="60"
+     height="20"
+     id="rect257"
+     style="fill:white;stroke:black" />
+  <text
+     x="762.72699"
+     y="163.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text259"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT7A</text>
+  <rect
+     x="732.72699"
+     y="163.57715"
+     width="60"
+     height="20"
+     id="rect261"
+     style="fill:white;stroke:black" />
+  <text
+     x="762.72699"
+     y="183.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text263"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT7B</text>
+  <rect
+     x="732.72699"
+     y="183.57715"
+     width="60"
+     height="20"
+     id="rect265"
+     style="fill:white;stroke:black" />
+  <text
+     x="762.72699"
+     y="203.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text267"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT10A</text>
+  <rect
+     x="819.72699"
+     y="123.57714"
+     width="60"
+     height="20"
+     id="rect269"
+     style="fill:white;stroke:black" />
+  <text
+     x="849.72699"
+     y="143.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text271"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT10B</text>
+  <rect
+     x="819.72699"
+     y="143.57715"
+     width="60"
+     height="20"
+     id="rect273"
+     style="fill:white;stroke:black" />
+  <text
+     x="849.72699"
+     y="163.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text275"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT11</text>
+  <rect
+     x="819.72699"
+     y="163.57715"
+     width="60"
+     height="20"
+     id="rect277"
+     style="fill:white;stroke:black" />
+  <text
+     x="849.72699"
+     y="183.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text279"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT16</text>
+  <rect
+     x="819.72699"
+     y="183.57715"
+     width="60"
+     height="20"
+     id="rect281"
+     style="fill:white;stroke:black" />
+  <text
+     x="849.72699"
+     y="203.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text283"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT16</text>
+  <rect
+     x="282.72702"
+     y="83.577141"
+     width="60"
+     height="20"
+     id="rect285"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="103.57714"
+     font-size="10pt"
+     dy="-3.75"
+     id="text287"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD1</text>
+  <rect
+     x="282.72702"
+     y="103.57714"
+     width="60"
+     height="20"
+     id="rect289"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="123.57714"
+     font-size="10pt"
+     dy="-3.75"
+     id="text291"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD2</text>
+  <rect
+     x="282.72702"
+     y="263.57715"
+     width="60"
+     height="20"
+     id="rect293"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="283.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text295"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD10</text>
+  <rect
+     x="282.72702"
+     y="243.57715"
+     width="60"
+     height="20"
+     id="rect297"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="263.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text299"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD9</text>
+  <rect
+     x="282.72702"
+     y="223.57715"
+     width="60"
+     height="20"
+     id="rect301"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="243.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text303"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD8</text>
+  <rect
+     x="282.72702"
+     y="203.57715"
+     width="60"
+     height="20"
+     id="rect305"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="223.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text307"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD7</text>
+  <rect
+     x="282.72702"
+     y="183.57715"
+     width="60"
+     height="20"
+     id="rect309"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="203.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text311"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD6</text>
+  <rect
+     x="282.72702"
+     y="163.57715"
+     width="60"
+     height="20"
+     id="rect313"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="183.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text315"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD5</text>
+  <rect
+     x="282.72702"
+     y="143.57715"
+     width="60"
+     height="20"
+     id="rect317"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="163.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text319"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">SFRP4</text>
+  <rect
+     x="282.72702"
+     y="123.57714"
+     width="60"
+     height="20"
+     id="rect321"
+     style="fill:white;stroke:black" />
+  <text
+     x="312.72702"
+     y="143.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text323"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD3</text>
+  <rect
+     x="676.72699"
+     y="366.57715"
+     width="60"
+     height="20"
+     id="rect325"
+     style="fill:white;stroke:black" />
+  <text
+     x="706.72699"
+     y="386.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text327"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">MAPK9</text>
+  <rect
+     x="676.72699"
+     y="386.57715"
+     width="60"
+     height="20"
+     id="rect329"
+     style="fill:white;stroke:black" />
+  <text
+     x="706.72699"
+     y="406.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text331"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">MAPK10</text>
+  <rect
+     x="536.72699"
+     y="366.57715"
+     width="60"
+     height="20"
+     id="rect333"
+     style="fill:white;stroke:black" />
+  <text
+     x="566.72699"
+     y="386.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text335"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">RHOA</text>
+  <rect
+     x="536.72699"
+     y="386.57715"
+     width="60"
+     height="20"
+     id="rect337"
+     style="fill:white;stroke:black" />
+  <text
+     x="566.72699"
+     y="406.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text339"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">RAC1</text>
+  <rect
+     x="339.72702"
+     y="319.57715"
+     width="60"
+     height="20"
+     id="rect341"
+     style="fill:white;stroke:black" />
+  <text
+     x="369.72702"
+     y="339.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text343"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">DVL1</text>
+  <rect
+     x="339.72702"
+     y="339.57715"
+     width="60"
+     height="20"
+     id="rect345"
+     style="fill:white;stroke:black" />
+  <text
+     x="369.72702"
+     y="359.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text347"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">DVL2</text>
+  <rect
+     x="339.72702"
+     y="359.57715"
+     width="60"
+     height="20"
+     id="rect349"
+     style="fill:white;stroke:black" />
+  <text
+     x="369.72702"
+     y="379.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text351"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">DVL3</text>
+  <rect
+     x="59.727009"
+     y="259.57715"
+     width="60"
+     height="20"
+     id="rect353"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="279.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text355"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCB1</text>
+  <rect
+     x="59.727009"
+     y="279.57715"
+     width="60"
+     height="20"
+     id="rect357"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="299.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text359"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCG</text>
+  <rect
+     x="59.727009"
+     y="299.57715"
+     width="60"
+     height="20"
+     id="rect361"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="319.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text363"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCD</text>
+  <rect
+     x="59.727009"
+     y="319.57715"
+     width="60"
+     height="20"
+     id="rect365"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="339.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text367"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCE</text>
+  <rect
+     x="59.727009"
+     y="339.57715"
+     width="60"
+     height="20"
+     id="rect369"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="359.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text371"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCI</text>
+  <rect
+     x="59.727009"
+     y="359.57715"
+     width="60"
+     height="20"
+     id="rect373"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="379.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text375"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCH</text>
+  <rect
+     x="59.727009"
+     y="379.57715"
+     width="60"
+     height="20"
+     id="rect377"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="399.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text379"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKD1</text>
+  <rect
+     x="59.727009"
+     y="399.57715"
+     width="60"
+     height="20"
+     id="rect381"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="419.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text383"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCQ</text>
+  <rect
+     x="59.727009"
+     y="419.57715"
+     width="60"
+     height="20"
+     id="rect385"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="439.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text387"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCZ</text>
+  <rect
+     x="216.72701"
+     y="406.57715"
+     width="66"
+     height="20"
+     id="rect389"
+     style="fill:white;stroke:black" />
+  <text
+     x="249.72701"
+     y="426.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text391"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PPP2R5E</text>
+  <rect
+     x="216.72701"
+     y="426.57715"
+     width="66"
+     height="20"
+     id="rect393"
+     style="fill:white;stroke:black" />
+  <text
+     x="249.72701"
+     y="446.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text395"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PPP2R5C</text>
+  <rect
+     x="452.72702"
+     y="436.57715"
+     width="60"
+     height="20"
+     id="rect397"
+     style="fill:white;stroke:black" />
+  <text
+     x="482.72702"
+     y="456.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text399"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FRAT1</text>
+  <rect
+     x="346.72702"
+     y="469.57715"
+     width="60"
+     height="20"
+     id="rect401"
+     style="fill:white;stroke:black" />
+  <text
+     x="376.72702"
+     y="489.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text403"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">AXIN1</text>
+  <rect
+     x="169.72701"
+     y="526.57715"
+     width="60"
+     height="20"
+     id="rect405"
+     style="fill:white;stroke:black" />
+  <text
+     x="199.72701"
+     y="546.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text407"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CSNK1E</text>
+  <rect
+     x="346.72702"
+     y="543.57715"
+     width="60"
+     height="20"
+     id="rect409"
+     style="fill:white;stroke:black" />
+  <text
+     x="376.72702"
+     y="563.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text411"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">GSK3B</text>
+  <rect
+     x="346.72702"
+     y="563.57715"
+     width="60"
+     height="20"
+     id="rect413"
+     style="fill:white;stroke:black" />
+  <text
+     x="376.72702"
+     y="583.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text415"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">APC</text>
+  <rect
+     x="259.72699"
+     y="626.57715"
+     width="60"
+     height="20"
+     id="rect417"
+     style="fill:white;stroke:black" />
+  <text
+     x="289.72702"
+     y="646.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text419"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CTNNB1</text>
+  <rect
+     x="686.72699"
+     y="649.57715"
+     width="73"
+     height="20"
+     id="rect421"
+     style="fill:white;stroke:black" />
+  <text
+     x="722.72699"
+     y="669.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text423"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FBXW2</text>
+  <rect
+     x="686.72699"
+     y="669.57715"
+     width="73"
+     height="20"
+     id="rect425"
+     style="fill:white;stroke:black" />
+  <text
+     x="722.72699"
+     y="689.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text427"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PAFAH1B1</text>
+  <rect
+     x="319.72702"
+     y="793.57715"
+     width="60"
+     height="20"
+     id="rect429"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="813.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text431"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">MYC</text>
+  <rect
+     x="319.72702"
+     y="813.57715"
+     width="60"
+     height="20"
+     id="rect433"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="833.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text435"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CCND1</text>
+  <rect
+     x="319.72702"
+     y="833.57715"
+     width="60"
+     height="20"
+     id="rect437"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="853.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text439"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CCND2</text>
+  <rect
+     x="319.72702"
+     y="853.57715"
+     width="60"
+     height="20"
+     id="rect441"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="873.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text443"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CCND3</text>
+  <rect
+     x="319.72702"
+     y="873.57715"
+     width="60"
+     height="20"
+     id="rect445"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="893.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text447"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FOSL1</text>
+  <rect
+     x="319.72702"
+     y="893.57715"
+     width="60"
+     height="20"
+     id="rect449"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="913.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text451"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">JUN</text>
+  <rect
+     x="319.72702"
+     y="913.57715"
+     width="60"
+     height="20"
+     id="rect453"
+     style="fill:white;stroke:black" />
+  <text
+     x="349.72702"
+     y="933.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text455"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PLAU</text>
+  <rect
+     x="59.727009"
+     y="239.57715"
+     width="60"
+     height="20"
+     id="rect457"
+     style="fill:white;stroke:black" />
+  <text
+     x="89.727005"
+     y="259.57715"
+     font-size="10pt"
+     dy="-3.75"
+     id="text459"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCA</text>
+  <text
+     x="16.727007"
+     y="13.577147"
+     font-size="12.0"
+     id="text461"
+     style="font-size:12px;font-family:times new roman">
+    <tspan
+       x="16.727007"
+       dy="15"
+       font-weight="bold"
+       id="tspan463"
+       style="font-weight:bold">Name:</tspan>
+    <tspan
+       id="tspan465">Wnt Signaling Pathway</tspan>
+    <tspan
+       x="16.727007"
+       dy="15"
+       font-weight="bold"
+       id="tspan467"
+       style="font-weight:bold">Email:</tspan>
+    <tspan
+       id="tspan469">mdl2003@columbia.edu</tspan>
+    <tspan
+       x="16.727007"
+       dy="15"
+       font-weight="bold"
+       id="tspan471"
+       style="font-weight:bold">Availability:</tspan>
+    <tspan
+       id="tspan473">2000, Gladstone Institutes</tspan>
+    <tspan
+       x="16.727007"
+       dy="15"
+       font-weight="bold"
+       id="tspan475"
+       style="font-weight:bold">Last modified:</tspan>
+    <tspan
+       id="tspan477">3/1/02</tspan>
+    <tspan
+       x="16.727007"
+       dy="15"
+       font-weight="bold"
+       id="tspan479"
+       style="font-weight:bold">Organism:</tspan>
+    <tspan
+       id="tspan481">Homo sapiens</tspan>
+  </text>
+  <line
+     x1="1038.2646"
+     y1="155.96364"
+     x2="1504.2646"
+     y2="155.96364"
+     id="line3389"
+     style="stroke:black" />
+  <line
+     x1="1038.2646"
+     y1="142.96364"
+     x2="1504.2646"
+     y2="142.96364"
+     id="line3391"
+     style="stroke:black" />
+  <line
+     x1="1234.2646"
+     y1="135.96364"
+     x2="1154.2646"
+     y2="195.96364"
+     id="line3393"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="1234.2646"
+     y1="172.96364"
+     x2="1164.2646"
+     y2="195.96364"
+     id="line3395"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="1234.2646"
+     y1="195.96364"
+     x2="1064.2646"
+     y2="195.96364"
+     id="line3397"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="1064.2646"
+     y1="195.96364"
+     x2="1051.2646"
+     y2="202.96364"
+     id="line3399"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="1051.2646"
+     y1="205.96364"
+     x2="1051.2646"
+     y2="235.96364"
+     id="line3401"
+     style="stroke:black;marker-end:url(#Arrow823957523);stroke-dasharray:5, 2" />
+  <line
+     x1="1273.2646"
+     y1="267.96365"
+     x2="1308.2646"
+     y2="312.96365"
+     id="line3403"
+     style="stroke:black;marker-end:url(#Arrow-53124074);stroke-dasharray:5, 2" />
+  <line
+     x1="1361.2646"
+     y1="312.96365"
+     x2="1428.2646"
+     y2="275.96365"
+     id="line3405"
+     style="stroke:black;marker-end:url(#Arrow695950402);stroke-dasharray:5, 2" />
+  <line
+     x1="1428.2646"
+     y1="352.96365"
+     x2="1478.2646"
+     y2="382.96365"
+     id="line3407"
+     style="stroke:black;marker-end:url(#Arrow721586060)" />
+  <line
+     x1="1614.2646"
+     y1="385.96365"
+     x2="1634.2646"
+     y2="385.96365"
+     id="line3409"
+     style="stroke:black;marker-end:url(#Arrow60885219)" />
+  <line
+     x1="1738.2646"
+     y1="385.96365"
+     x2="1761.2646"
+     y2="385.96365"
+     id="line3411"
+     style="stroke:black;marker-end:url(#Arrow-59679114)" />
+  <line
+     x1="1281.2646"
+     y1="382.96365"
+     x2="1251.2646"
+     y2="402.96365"
+     id="line3413"
+     style="stroke:black;marker-end:url(#Arrow651308251);stroke-dasharray:5, 2" />
+  <line
+     x1="1254.2646"
+     y1="448.96365"
+     x2="1301.2646"
+     y2="472.96365"
+     id="line3415"
+     style="stroke:black;marker-end:url(#TBar580205614)" />
+  <line
+     x1="1338.2646"
+     y1="382.96365"
+     x2="1338.2646"
+     y2="458.96365"
+     id="line3417"
+     style="stroke:black;marker-end:url(#TBar1971838456)" />
+  <line
+     x1="1351.2646"
+     y1="385.96365"
+     x2="1440.2646"
+     y2="440.96365"
+     id="line3419"
+     style="stroke:black;marker-end:url(#Arrow62714031);stroke-dasharray:5, 2" />
+  <line
+     x1="1338.2646"
+     y1="508.96365"
+     x2="1338.2646"
+     y2="538.96362"
+     id="line3421"
+     style="stroke:black;marker-end:url(#Arrow1324334423)" />
+  <line
+     x1="1338.2646"
+     y1="522.96362"
+     x2="1338.2646"
+     y2="492.96365"
+     id="line3423"
+     style="stroke:black;marker-end:url(#Arrow1265157402)" />
+  <line
+     x1="1431.2646"
+     y1="515.96362"
+     x2="1351.2646"
+     y2="515.96362"
+     id="line3425"
+     style="stroke:black;marker-end:url(#TBar-390406668)" />
+  <line
+     x1="1431.2646"
+     y1="515.96362"
+     x2="1444.2646"
+     y2="502.96365"
+     id="line3427"
+     style="stroke:black" />
+  <line
+     x1="1444.2646"
+     y1="502.96365"
+     x2="1444.2646"
+     y2="477.96365"
+     id="line3429"
+     style="stroke:black" />
+  <line
+     x1="1188.2646"
+     y1="522.96362"
+     x2="1301.2646"
+     y2="492.96365"
+     id="line3431"
+     style="stroke:black;marker-end:url(#Arrow-10761122);stroke-dasharray:5, 2" />
+  <line
+     x1="1424.2646"
+     y1="615.96362"
+     x2="1428.2646"
+     y2="625.96362"
+     id="line3433"
+     style="stroke:black;marker-end:url(#Arrow132365693)" />
+  <line
+     x1="1418.2646"
+     y1="602.96362"
+     x2="1424.2646"
+     y2="588.96362"
+     id="line3435"
+     style="stroke:black" />
+  <line
+     x1="1424.2646"
+     y1="588.96362"
+     x2="1434.2646"
+     y2="582.96362"
+     id="line3437"
+     style="stroke:black" />
+  <line
+     x1="1071.2646"
+     y1="682.96362"
+     x2="1414.2646"
+     y2="682.96362"
+     id="line3439"
+     style="stroke:black" />
+  <line
+     x1="1071.2646"
+     y1="692.96362"
+     x2="1408.2646"
+     y2="692.96362"
+     id="line3441"
+     style="stroke:black" />
+  <line
+     x1="1251.2646"
+     y1="648.96356"
+     x2="1251.2646"
+     y2="725.96362"
+     id="line3443"
+     style="stroke:black" />
+  <line
+     x1="1251.2646"
+     y1="725.96362"
+     x2="1268.2646"
+     y2="742.96362"
+     id="line3445"
+     style="stroke:black" />
+  <line
+     x1="1268.2646"
+     y1="742.96362"
+     x2="1298.2646"
+     y2="742.96362"
+     id="line3447"
+     style="stroke:black;marker-end:url(#TBar-169904644)" />
+  <line
+     x1="1308.2646"
+     y1="725.96362"
+     x2="1308.2646"
+     y2="778.96362"
+     id="line3449"
+     style="stroke:black;marker-end:url(#TBar-165269338)" />
+  <line
+     x1="1468.2646"
+     y1="645.96356"
+     x2="1548.2646"
+     y2="725.96362"
+     id="line3451"
+     style="stroke:black;marker-end:url(#Arrow-352462381)" />
+  <line
+     x1="1414.2646"
+     y1="682.96362"
+     x2="1464.2646"
+     y2="732.96362"
+     id="line3453"
+     style="stroke:black" />
+  <line
+     x1="1408.2646"
+     y1="692.96362"
+     x2="1458.2646"
+     y2="742.96362"
+     id="line3455"
+     style="stroke:black" />
+  <line
+     x1="1551.2646"
+     y1="662.96356"
+     x2="1541.2646"
+     y2="645.96356"
+     id="line3457"
+     style="stroke:black;marker-end:url(#Arrow1984704194)" />
+  <line
+     x1="1551.2646"
+     y1="662.96356"
+     x2="1564.2646"
+     y2="668.96362"
+     id="line3459"
+     style="stroke:black" />
+  <line
+     x1="1564.2646"
+     y1="668.96362"
+     x2="1611.2646"
+     y2="668.96362"
+     id="line3461"
+     style="stroke:black" />
+  <line
+     x1="1624.2646"
+     y1="752.96362"
+     x2="1651.2646"
+     y2="778.96362"
+     id="line3463"
+     style="stroke:black;marker-end:url(#Arrow2015180387)" />
+  <line
+     x1="1411.2646"
+     y1="175.96364"
+     x2="1341.2646"
+     y2="315.96365"
+     id="line3465"
+     style="stroke:black;marker-end:url(#Arrow1380102850);stroke-dasharray:5, 2" />
+  <line
+     x1="1476.2646"
+     y1="422.96365"
+     x2="1514.2646"
+     y2="488.96365"
+     id="line3467"
+     style="stroke:black;marker-end:url(#Arrow1235989797);stroke-dasharray:5, 2" />
+  <line
+     x1="1368.2646"
+     y1="380.96365"
+     x2="1476.2646"
+     y2="422.96365"
+     id="line3469"
+     style="stroke:black;stroke-dasharray:5, 2" />
+  <line
+     x1="1503.2646"
+     y1="519.96362"
+     x2="1403.2646"
+     y2="577.96362"
+     id="line3471"
+     style="stroke:black;marker-end:url(#TBar1361723986)" />
+  <g
+     transform="translate(1338.265,618.9636)"
+     id="g3473">
+    <g
+       transform="scale(-1,-1)"
+       id="g3475">
+      <path
+         d="M -86.5,0 C -86.5,23.748244 -47.772631,43 5.2964225e-15,43 C 47.772631,43 86.5,23.748244 86.5,0"
+         id="path3477"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(1444.265,578.9636)"
+     id="g3479">
+    <g
+       id="g3481">
+      <ellipse
+         cx="0"
+         cy="0"
+         rx="10"
+         ry="10"
+         id="ellipse3483"
+         sodipodi:cx="0"
+         sodipodi:cy="0"
+         sodipodi:rx="10"
+         sodipodi:ry="10"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(1695.265,162.9636)"
+     id="g3485">
+    <g
+       id="g3487">
+      <rect
+         x="-180"
+         y="-71.5"
+         width="360"
+         height="143"
+         id="rect3489"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(1424.265,352.9636)"
+     id="g3491">
+    <g
+       transform="matrix(0,-1,1,0,0,0)"
+       id="g3493">
+      <path
+         d="M -33,4 C -33,1.3333333 -31.666667,0 -29,0 L -4,0 C -1.3333333,0 0,-1.3333333 0,-4 C 0,-1.3333333 1.3333333,0 4,0 L 29,0 C 31.666667,0 33,1.3333333 33,4"
+         id="path3495"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(1611.265,385.9636)"
+     id="g3497">
+    <g
+       transform="matrix(0,-1,1,0,0,0)"
+       id="g3499">
+      <path
+         d="M -26.5,4 C -26.5,1.3333333 -25.166667,0 -22.5,0 L -4,0 C -1.3333333,0 0,-1.3333333 0,-4 C 0,-1.3333333 1.3333333,0 4,0 L 22.5,0 C 25.166667,0 26.5,1.3333333 26.5,4"
+         id="path3501"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <g
+     transform="translate(1621.265,668.9634)"
+     id="g3503">
+    <g
+       transform="matrix(0,1,-1,0,0,0)"
+       id="g3505">
+      <path
+         d="M -23,4 C -23,1.3333333 -21.666667,0 -19,0 L -4,0 C -1.3333333,0 0,-1.3333333 0,-4 C 0,-1.3333333 1.3333333,0 4,0 L 19,0 C 21.666667,0 23,1.3333333 23,4"
+         id="path3507"
+         style="fill:none;stroke:black" />
+    </g>
+  </g>
+  <text
+     x="1808.2646"
+     y="397.96365"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text3509"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:navy;font-family:Arial">Apoptosis</text>
+  <text
+     x="1444.2646"
+     y="274.96365"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text3511"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:navy;font-family:Arial">Cytoskeleton</text>
+  <text
+     x="1448.2646"
+     y="645.96356"
+     font-size="10pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3513"
+     style="font-size:12.5px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Phosphorylated</text>
+  <text
+     x="1508.2646"
+     y="645.96356"
+     font-size="10pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3515"
+     style="font-size:12.5px;font-weight:bold;text-anchor:middle;fill:black;font-family:Symbol">B</text>
+  <text
+     x="1541.2646"
+     y="645.96356"
+     font-size="10pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3517"
+     style="font-size:12.5px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">-Catenin</text>
+  <text
+     x="1444.2646"
+     y="590.96362"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text3519"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">P</text>
+  <text
+     x="1101.2646"
+     y="724.96362"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text3521"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Nucleus</text>
+  <text
+     x="1181.2646"
+     y="791.96362"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3523"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Transcriptional Activation</text>
+  <text
+     x="1591.2646"
+     y="761.96362"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3525"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">-Catenin</text>
+  <text
+     x="1561.2646"
+     y="761.96362"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3527"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Symbol">B</text>
+  <text
+     x="1691.2646"
+     y="627.96362"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3529"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Recruitment to</text>
+  <text
+     x="1715.2646"
+     y="643.96356"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3531"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Ubiquitin Conjugating Enzyme Xyz</text>
+  <text
+     x="1584.2646"
+     y="747.96362"
+     font-size="9pt"
+     dy="-3.75"
+     font-weight="bold"
+     id="text3533"
+     style="font-size:11.25px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Ubiquitin Tagged</text>
+  <text
+     x="1734.2646"
+     y="804.96362"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text3535"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:navy;font-family:Arial">26S Proteasome Degredation</text>
+  <text
+     x="1684.2646"
+     y="117.96364"
+     font-size="12pt"
+     dy="-5"
+     font-weight="bold"
+     id="text3537"
+     style="font-size:15px;font-weight:bold;text-anchor:middle;fill:black;font-family:Arial">Frizzled Ligands</text>
+  <rect
+     x="1288.2646"
+     y="702.96362"
+     width="86"
+     height="20"
+     id="rect3539"
+     style="fill:white;stroke:black" />
+  <text
+     x="1331.2646"
+     y="722.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3541"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">TCF-1/LEF</text>
+  <rect
+     x="1398.2646"
+     y="138.96364"
+     width="60"
+     height="20"
+     id="rect3543"
+     style="fill:white;stroke:black" />
+  <text
+     x="1428.2646"
+     y="158.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3545"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">LDLR</text>
+  <rect
+     x="1521.2646"
+     y="122.96364"
+     width="60"
+     height="20"
+     id="rect3547"
+     style="fill:white;stroke:black" />
+  <text
+     x="1551.2646"
+     y="142.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3549"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT1</text>
+  <rect
+     x="1521.2646"
+     y="142.96364"
+     width="60"
+     height="20"
+     id="rect3551"
+     style="fill:white;stroke:black" />
+  <text
+     x="1551.2646"
+     y="162.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3553"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT2</text>
+  <rect
+     x="1521.2646"
+     y="162.96364"
+     width="60"
+     height="20"
+     id="rect3555"
+     style="fill:white;stroke:black" />
+  <text
+     x="1551.2646"
+     y="182.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3557"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT2B</text>
+  <rect
+     x="1521.2646"
+     y="182.96364"
+     width="60"
+     height="20"
+     id="rect3559"
+     style="fill:white;stroke:black" />
+  <text
+     x="1551.2646"
+     y="202.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3561"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT3</text>
+  <rect
+     x="1608.2646"
+     y="122.96364"
+     width="60"
+     height="20"
+     id="rect3563"
+     style="fill:white;stroke:black" />
+  <text
+     x="1638.2646"
+     y="142.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3565"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT3A</text>
+  <rect
+     x="1608.2646"
+     y="142.96364"
+     width="60"
+     height="20"
+     id="rect3567"
+     style="fill:white;stroke:black" />
+  <text
+     x="1638.2646"
+     y="162.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3569"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT4</text>
+  <rect
+     x="1608.2646"
+     y="162.96364"
+     width="60"
+     height="20"
+     id="rect3571"
+     style="fill:white;stroke:black" />
+  <text
+     x="1638.2646"
+     y="182.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3573"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT5A</text>
+  <rect
+     x="1608.2646"
+     y="182.96364"
+     width="60"
+     height="20"
+     id="rect3575"
+     style="fill:white;stroke:black" />
+  <text
+     x="1638.2646"
+     y="202.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3577"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT5B</text>
+  <rect
+     x="1694.2646"
+     y="122.96364"
+     width="60"
+     height="20"
+     id="rect3579"
+     style="fill:white;stroke:black" />
+  <text
+     x="1724.2646"
+     y="142.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3581"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT6</text>
+  <rect
+     x="1694.2646"
+     y="142.96364"
+     width="60"
+     height="20"
+     id="rect3583"
+     style="fill:white;stroke:black" />
+  <text
+     x="1724.2646"
+     y="162.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3585"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT7A</text>
+  <rect
+     x="1694.2646"
+     y="162.96364"
+     width="60"
+     height="20"
+     id="rect3587"
+     style="fill:white;stroke:black" />
+  <text
+     x="1724.2646"
+     y="182.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3589"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT7B</text>
+  <rect
+     x="1694.2646"
+     y="182.96364"
+     width="60"
+     height="20"
+     id="rect3591"
+     style="fill:white;stroke:black" />
+  <text
+     x="1724.2646"
+     y="202.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3593"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT10A</text>
+  <rect
+     x="1781.2646"
+     y="122.96364"
+     width="60"
+     height="20"
+     id="rect3595"
+     style="fill:white;stroke:black" />
+  <text
+     x="1811.2646"
+     y="142.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3597"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT10B</text>
+  <rect
+     x="1781.2646"
+     y="142.96364"
+     width="60"
+     height="20"
+     id="rect3599"
+     style="fill:white;stroke:black" />
+  <text
+     x="1811.2646"
+     y="162.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3601"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT11</text>
+  <rect
+     x="1781.2646"
+     y="162.96364"
+     width="60"
+     height="20"
+     id="rect3603"
+     style="fill:white;stroke:black" />
+  <text
+     x="1811.2646"
+     y="182.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3605"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT16</text>
+  <rect
+     x="1781.2646"
+     y="182.96364"
+     width="60"
+     height="20"
+     id="rect3607"
+     style="fill:white;stroke:black" />
+  <text
+     x="1811.2646"
+     y="202.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3609"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT16</text>
+  <rect
+     x="1244.2646"
+     y="82.963638"
+     width="60"
+     height="20"
+     id="rect3611"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="102.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3613"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD1</text>
+  <rect
+     x="1244.2646"
+     y="102.96364"
+     width="60"
+     height="20"
+     id="rect3615"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="122.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3617"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD2</text>
+  <rect
+     x="1244.2646"
+     y="242.96364"
+     width="60"
+     height="20"
+     id="rect3619"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="262.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3621"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD9</text>
+  <rect
+     x="1244.2646"
+     y="222.96364"
+     width="60"
+     height="20"
+     id="rect3623"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="242.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3625"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD8</text>
+  <rect
+     x="1244.2646"
+     y="202.96364"
+     width="60"
+     height="20"
+     id="rect3627"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="222.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3629"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD7</text>
+  <rect
+     x="1244.2646"
+     y="182.96364"
+     width="60"
+     height="20"
+     id="rect3631"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="202.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3633"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD6</text>
+  <rect
+     x="1244.2646"
+     y="162.96364"
+     width="60"
+     height="20"
+     id="rect3635"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="182.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3637"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD5</text>
+  <rect
+     x="1244.2646"
+     y="142.96364"
+     width="60"
+     height="20"
+     id="rect3639"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="162.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3641"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">SFRP4</text>
+  <rect
+     x="1244.2646"
+     y="122.96364"
+     width="60"
+     height="20"
+     id="rect3643"
+     style="fill:white;stroke:black" />
+  <text
+     x="1274.2646"
+     y="142.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3645"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FZD3</text>
+  <rect
+     x="1638.2646"
+     y="365.96365"
+     width="60"
+     height="20"
+     id="rect3647"
+     style="fill:white;stroke:black" />
+  <text
+     x="1668.2646"
+     y="385.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3649"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">MAPK9</text>
+  <rect
+     x="1638.2646"
+     y="385.96365"
+     width="60"
+     height="20"
+     id="rect3651"
+     style="fill:white;stroke:black" />
+  <text
+     x="1668.2646"
+     y="405.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3653"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">MAPK10</text>
+  <rect
+     x="1498.2646"
+     y="365.96365"
+     width="60"
+     height="20"
+     id="rect3655"
+     style="fill:white;stroke:black" />
+  <text
+     x="1528.2646"
+     y="385.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3657"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">RHOA</text>
+  <rect
+     x="1498.2646"
+     y="385.96365"
+     width="60"
+     height="20"
+     id="rect3659"
+     style="fill:white;stroke:black" />
+  <text
+     x="1528.2646"
+     y="405.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3661"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">RAC1</text>
+  <rect
+     x="1301.2646"
+     y="318.96365"
+     width="60"
+     height="20"
+     id="rect3663"
+     style="fill:white;stroke:black" />
+  <text
+     x="1331.2646"
+     y="338.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3665"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">DVL1</text>
+  <rect
+     x="1301.2646"
+     y="338.96365"
+     width="60"
+     height="20"
+     id="rect3667"
+     style="fill:white;stroke:black" />
+  <text
+     x="1331.2646"
+     y="358.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3669"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">DVL2</text>
+  <rect
+     x="1301.2646"
+     y="358.96365"
+     width="60"
+     height="20"
+     id="rect3671"
+     style="fill:white;stroke:black" />
+  <text
+     x="1331.2646"
+     y="378.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3673"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">DVL3</text>
+  <rect
+     x="1021.2647"
+     y="258.96365"
+     width="60"
+     height="20"
+     id="rect3675"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="278.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3677"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCB1</text>
+  <rect
+     x="1021.2647"
+     y="278.96365"
+     width="60"
+     height="20"
+     id="rect3679"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="298.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3681"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCG</text>
+  <rect
+     x="1021.2647"
+     y="298.96365"
+     width="60"
+     height="20"
+     id="rect3683"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="318.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3685"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCD</text>
+  <rect
+     x="1021.2647"
+     y="318.96365"
+     width="60"
+     height="20"
+     id="rect3687"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="338.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3689"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCE</text>
+  <rect
+     x="1021.2647"
+     y="338.96365"
+     width="60"
+     height="20"
+     id="rect3691"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="358.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3693"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCI</text>
+  <rect
+     x="1021.2647"
+     y="358.96365"
+     width="60"
+     height="20"
+     id="rect3695"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="378.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3697"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCH</text>
+  <rect
+     x="1021.2647"
+     y="378.96365"
+     width="60"
+     height="20"
+     id="rect3699"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="398.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3701"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKD1</text>
+  <rect
+     x="1021.2647"
+     y="398.96365"
+     width="60"
+     height="20"
+     id="rect3703"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="418.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3705"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCQ</text>
+  <rect
+     x="1021.2647"
+     y="418.96365"
+     width="60"
+     height="20"
+     id="rect3707"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="438.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3709"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCZ</text>
+  <rect
+     x="1178.2646"
+     y="405.96365"
+     width="66"
+     height="20"
+     id="rect3711"
+     style="fill:white;stroke:black" />
+  <text
+     x="1211.2646"
+     y="425.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3713"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PPP2R5E</text>
+  <rect
+     x="1178.2646"
+     y="425.96365"
+     width="66"
+     height="20"
+     id="rect3715"
+     style="fill:white;stroke:black" />
+  <text
+     x="1211.2646"
+     y="445.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3717"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PPP2R5C</text>
+  <rect
+     x="1415.2646"
+     y="449.96365"
+     width="60"
+     height="20"
+     id="rect3719"
+     style="fill:white;stroke:black" />
+  <text
+     x="1445.2646"
+     y="469.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3721"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FRAT1</text>
+  <rect
+     x="1308.2646"
+     y="468.96365"
+     width="60"
+     height="20"
+     id="rect3723"
+     style="fill:white;stroke:black" />
+  <text
+     x="1338.2646"
+     y="488.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3725"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">AXIN1</text>
+  <rect
+     x="1131.2646"
+     y="525.96362"
+     width="60"
+     height="20"
+     id="rect3727"
+     style="fill:white;stroke:black" />
+  <text
+     x="1161.2646"
+     y="545.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3729"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CSNK1E</text>
+  <rect
+     x="1308.2646"
+     y="542.96362"
+     width="60"
+     height="20"
+     id="rect3731"
+     style="fill:white;stroke:black" />
+  <text
+     x="1338.2646"
+     y="562.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3733"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">GSK3B</text>
+  <rect
+     x="1308.2646"
+     y="562.96362"
+     width="60"
+     height="20"
+     id="rect3735"
+     style="fill:white;stroke:black" />
+  <text
+     x="1338.2646"
+     y="582.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3737"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">APC</text>
+  <rect
+     x="1221.2646"
+     y="625.96362"
+     width="60"
+     height="20"
+     id="rect3739"
+     style="fill:white;stroke:black" />
+  <text
+     x="1251.2646"
+     y="645.96356"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3741"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CTNNB1</text>
+  <rect
+     x="1648.2646"
+     y="648.96356"
+     width="73"
+     height="20"
+     id="rect3743"
+     style="fill:white;stroke:black" />
+  <text
+     x="1684.2646"
+     y="668.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3745"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FBXW2</text>
+  <rect
+     x="1648.2646"
+     y="668.96362"
+     width="73"
+     height="20"
+     id="rect3747"
+     style="fill:white;stroke:black" />
+  <text
+     x="1684.2646"
+     y="688.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3749"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PAFAH1B1</text>
+  <rect
+     x="1281.2646"
+     y="792.96362"
+     width="60"
+     height="20"
+     id="rect3751"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="812.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3753"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">MYC</text>
+  <rect
+     x="1281.2646"
+     y="812.96362"
+     width="60"
+     height="20"
+     id="rect3755"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="832.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3757"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CCND1</text>
+  <rect
+     x="1281.2646"
+     y="832.96362"
+     width="60"
+     height="20"
+     id="rect3759"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="852.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3761"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CCND2</text>
+  <rect
+     x="1281.2646"
+     y="852.96362"
+     width="60"
+     height="20"
+     id="rect3763"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="872.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3765"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">CCND3</text>
+  <rect
+     x="1281.2646"
+     y="872.96362"
+     width="60"
+     height="20"
+     id="rect3767"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="892.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3769"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">FOSL1</text>
+  <rect
+     x="1281.2646"
+     y="892.96362"
+     width="60"
+     height="20"
+     id="rect3771"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="912.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3773"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">JUN</text>
+  <rect
+     x="1281.2646"
+     y="912.96362"
+     width="60"
+     height="20"
+     id="rect3775"
+     style="fill:white;stroke:black" />
+  <text
+     x="1311.2646"
+     y="932.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3777"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PLAU</text>
+  <rect
+     x="1021.2647"
+     y="238.96364"
+     width="60"
+     height="20"
+     id="rect3779"
+     style="fill:white;stroke:black" />
+  <text
+     x="1051.2646"
+     y="258.96365"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3781"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">PRKCA</text>
+  <rect
+     x="1521.2646"
+     y="202.96364"
+     width="60"
+     height="20"
+     id="rect3783"
+     style="fill:white;stroke:black" />
+  <text
+     x="1551.2646"
+     y="222.96364"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3785"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">WNT17</text>
+  <rect
+     x="1479.2646"
+     y="492.96365"
+     width="60"
+     height="20"
+     id="rect3787"
+     style="fill:white;stroke:black" />
+  <text
+     x="1509.2646"
+     y="512.96362"
+     font-size="10pt"
+     dy="-3.75"
+     id="text3789"
+     style="font-size:12.5px;text-anchor:middle;fill:black;font-family:Arial">GRAT1</text>
+  <text
+     x="978.26465"
+     y="12.963642"
+     font-size="12.0"
+     id="text3791"
+     style="font-size:12px;font-family:times new roman"><tspan
+   x="978.26465"
+   dy="15"
+   font-weight="bold"
+   id="tspan3793"
+   style="font-weight:bold">Name:</tspan>
+Wnt Signaling Pathway<tspan
+   x="978.26465"
+   dy="15"
+   font-weight="bold"
+   id="tspan3797"
+   style="font-weight:bold">Email:</tspan>
+mdl2003@columbia.edu<tspan
+   x="978.26465"
+   dy="15"
+   font-weight="bold"
+   id="tspan3801"
+   style="font-weight:bold">Availability:</tspan>
+2000, Gladstone Institutes<tspan
+   x="978.26465"
+   dy="15"
+   font-weight="bold"
+   id="tspan3805"
+   style="font-weight:bold">Last modified:</tspan>
+4/18/07<tspan
+   x="978.26465"
+   dy="15"
+   font-weight="bold"
+   id="tspan3809"
+   style="font-weight:bold">Organism:</tspan>
+Homo sapiens</text>
+  <rect
+     style="opacity:0.5;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect4070"
+     width="360.53989"
+     height="120.70248"
+     x="551.26654"
+     y="93.038315" />
+  <rect
+     style="opacity:0.5;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:10.82714176;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect5203"
+     width="359.71274"
+     height="141.82124"
+     x="1514.1648"
+     y="91.10054" />
+  <rect
+     style="opacity:0.5;fill:yellow;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect5205"
+     width="54.864769"
+     height="17.243206"
+     x="454.07758"
+     y="437.11877" />
+  <path
+     style="opacity:0.5;fill:yellow;fill-rule:evenodd;stroke:yellow;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 389.80742,387.74048 C 455.64514,425.36204 455.64514,425.36204 455.64514,425.36204"
+     id="path5207" />
+  <path
+     style="opacity:0.5;fill:yellow;fill-rule:evenodd;stroke:yellow;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 309.86161,285.84877 C 346.86377,313.9443 346.86377,313.9443 346.86377,313.9443"
+     id="path8602"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="opacity:0.5;fill:yellow;fill-rule:evenodd;stroke:yellow;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 1273.588,268.34809 C 1308.1947,312.62292 1273.851,268.65464 1308.5305,312.40616"
+     id="path8604"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="opacity:0.5;fill:yellow;fill-rule:evenodd;stroke:yellow;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 1350.7246,386.17291 C 1416.5851,423.81727 1439.4763,441.04431 1439.4763,441.04431"
+     id="path8606"
+     sodipodi:nodetypes="cc" />
+  <rect
+     style="opacity:0.5;fill:red;fill-opacity:1;fill-rule:nonzero;stroke:red;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect8608"
+     width="54.864769"
+     height="17.243206"
+     x="284.55573"
+     y="264.81522" />
+  <rect
+     style="opacity:0.5;fill:yellow;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:10.2203064;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect9741"
+     width="130.03027"
+     height="7.5996728"
+     x="20.815533"
+     y="65.467056" />
+  <rect
+     style="opacity:0.5;fill:yellow;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:10.36135483;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect9743"
+     width="136.17137"
+     height="7.4586248"
+     x="981.2616"
+     y="64.672707" />
+  <rect
+     style="opacity:0.5;fill:blue;fill-opacity:1;fill-rule:nonzero;stroke:blue;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect9745"
+     width="54.864769"
+     height="17.243206"
+     x="1522.1395"
+     y="203.56424" />
+  <rect
+     style="opacity:0.5;fill:blue;fill-opacity:1;fill-rule:nonzero;stroke:blue;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect10878"
+     width="54.864769"
+     height="17.243206"
+     x="1481.3055"
+     y="494.11374" />
+  <path
+     style="opacity:0.5;fill:blue;fill-opacity:1;fill-rule:evenodd;stroke:blue;stroke-width:9.99028969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 1366.984,379.49197 C 1443.3615,408.36019 1468.0707,421.31495 1477.7329,423.37932"
+     id="path10880"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="opacity:0.5;fill:blue;fill-opacity:1;fill-rule:evenodd;stroke:blue;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 1475.1541,421.93292 C 1501.7349,466.94202 1508.1677,482.46219 1512.4818,487.73495"
+     id="path13147"
+     sodipodi:nodetypes="cc" />
+  <path
+     style="opacity:0.5;fill:blue;fill-opacity:1;fill-rule:evenodd;stroke:blue;stroke-width:12.08923626;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 1505.9622,516.59738 C 1429.5387,563.49024 1405.0773,573.20868 1395.294,581.53502"
+     id="path13149"
+     sodipodi:nodetypes="cc"
+     inkscape:transform-center-x="-12.096322" />
+  <rect
+     style="opacity:0.5;fill:yellow;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:15.20246029;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect14282"
+     width="181.58749"
+     height="12.040746"
+     x="645.23956"
+     y="622.35803" />
+  <rect
+     style="opacity:0.5;fill:yellow;fill-opacity:1;fill-rule:nonzero;stroke:yellow;stroke-width:16.09765625;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect14284"
+     width="219.95575"
+     height="11.145551"
+     x="1602.1448"
+     y="622.8056" />
+  <rect
+     style="opacity:1;fill:#7d7d7d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect14286"
+     width="18.846397"
+     height="1000.4327"
+     x="939.18164"
+     y="-0.43262941" />
+</svg>

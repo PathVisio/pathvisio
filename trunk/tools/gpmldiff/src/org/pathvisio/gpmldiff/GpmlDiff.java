@@ -47,6 +47,7 @@ class GpmlDiff
 		if (error != null)
 		{
 			Logger.log.error (error);
+			System.out.println (error);
 			printUsage();
 		}
 		return error == null;

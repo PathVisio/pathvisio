@@ -30,6 +30,7 @@ import org.pathvisio.model.PathwayElement;
 /**
  * This class implements a geneproduct and 
  * provides methods to resize and draw it.
+ * //TODO: rename this class to DataNode
  */
 public class GeneProduct extends GraphicsShape
 {
@@ -82,24 +83,25 @@ public class GeneProduct extends GraphicsShape
 
 	public void doDraw(Graphics2D g)
 	{
-		//Color
+		Rectangle area = new Rectangle(
+				getVLeft(), getVTop(), getVWidth(), getVHeight());
+		
+		//White background
+		g.setPaint (Color.WHITE);
+		g.fill(area);
+		
+		//Rectangular Outline
+		g.setStroke(new BasicStroke());
 		if(isSelected()) {
 			g.setColor(selectColor);
 		} else {
 			g.setColor(gdata.getColor());
 		}
-		
-		//Gene box
-		g.setStroke(new BasicStroke());
-		
-		Rectangle area = new Rectangle(
-				getVLeft(), getVTop(), getVWidth(), getVHeight());
-		
 		g.draw(area);
 		
 		//Label
 		//Don't draw label outside gene box
-		g.setClip ( area.x - 1, area.y - 1, area.width + 1, area.height + 1);
+		g.clip (new Rectangle (area.x - 1, area.y - 1, area.width + 1, area.height + 1));
 	
 		g.setFont(new Font(gdata.getFontName(), getVFontStyle(), getVFontSize()));
 		

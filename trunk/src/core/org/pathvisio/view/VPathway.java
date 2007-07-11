@@ -661,8 +661,8 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 * 
 	 * if you want to get more than one @see #getObjectsAt(Point2D)
 	 */
-	VPathwayElement getObjectAt(Point2D p2d) {
-		System.out.println(p2d);
+	VPathwayElement getObjectAt(Point2D p2d)
+	{
 		Collections.sort(drawingObjects);
 		VPathwayElement probj = null;
 		for (VPathwayElement o : drawingObjects)

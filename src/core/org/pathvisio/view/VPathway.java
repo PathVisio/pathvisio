@@ -55,38 +55,41 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
 /**
- * This class implements and handles a drawing.
- * Graphics objects are stored in the drawing and can be 
- * visualized. The class also provides methods for mouse  and key
- * event handling.
+ * This class implements and handles a drawing. Graphics objects are stored in
+ * the drawing and can be visualized. The class also provides methods for mouse
+ * and key event handling.
  */
 public class VPathway implements PathwayListener, VisualizationListener
-{	
+{
 	private static final long serialVersionUID = 1L;
+
 	static final double M_PASTE_OFFSET = 10 * 15;
+
 	public static final double ZOOM_TO_FIT = -1;
-	
+
 	private VPathwayWrapper parent; // may be null
-	
+
 	/**
-	 * All objects that are visible on this mapp, including the handles
-	 * but excluding the legend, mappInfo and selectionBox objects
+	 * All objects that are visible on this mapp, including the handles but
+	 * excluding the legend, mappInfo and selectionBox objects
 	 */
 	private ArrayList<VPathwayElement> drawingObjects;
-	public ArrayList<VPathwayElement> getDrawingObjects() { 
-		return drawingObjects; 
+
+	public ArrayList<VPathwayElement> getDrawingObjects()
+	{
+		return drawingObjects;
 	}
-	
+
 	/**
 	 * The {@link VPathwayElement} that is pressed last mouseDown event}
 	 */
-	VPathwayElement pressedObject	= null;	
-	
+	VPathwayElement pressedObject = null;
+
 	/**
 	 * The {@link Graphics} that is directly selected since last mouseDown event
 	 */
 	public Graphics selectedGraphics = null;
-	
+
 	/**
 	 * {@link InfoBox} object that contains information about this pathway,
 	 * currently only used for information in {@link gmmlVision.PropertyPanel}
@@ -94,81 +97,100 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 * when displayed on the drawing)
 	 */
 	InfoBox infoBox;
+
 	private Pathway data;
-	
+
 	public Pathway getGmmlData()
 	{
 		return data;
 	}
-	
-	SelectionBox s; 
-		
+
+	SelectionBox s;
+
 	private boolean editMode;
+
 	/**
 	 * Checks if this drawing is in edit mode
+	 * 
 	 * @return false if in edit mode, true if not
 	 */
-	public boolean isEditMode() { return editMode; }
-	
+	public boolean isEditMode()
+	{
+		return editMode;
+	}
+
 	/**
-	 Constructor for this class.
-	 @param parent Optional gui-specific wrapper for this VPathway
-	 */	
+	 * Constructor for this class.
+	 * 
+	 * @param parent
+	 *            Optional gui-specific wrapper for this VPathway
+	 */
 	public VPathway(VPathwayWrapper parent)
 	{
 		this.parent = parent;
-		
-		drawingObjects	= new ArrayList<VPathwayElement>();
-		
+
+		drawingObjects = new ArrayList<VPathwayElement>();
+
 		s = new SelectionBox(this);
-		
+
 		registerKeyboardActions();
 		VisualizationManager.addListener(this);
 	}
-	
+
 	public void redraw()
 	{
-		if (parent != null) parent.redraw();
+		if (parent != null)
+			parent.redraw();
 	}
-	
+
 	public VPathwayWrapper getWrapper()
 	{
 		return parent;
 	}
-	
+
 	/**
 	 * Map the contents of a single data object to this VPathway
-	 */	
-	private Graphics fromGmmlDataObject (PathwayElement o)
+	 */
+	private Graphics fromGmmlDataObject(PathwayElement o)
 	{
 		Graphics result = null;
 		switch (o.getObjectType())
 		{
-			case ObjectType.DATANODE: result = new GeneProduct(this, o); break;
-			case ObjectType.SHAPE: result = new Shape(this, o); break;
-			case ObjectType.LINE: result = new Line(this, o); break;
-			case ObjectType.MAPPINFO: 
-				InfoBox mi = new InfoBox(this, o);
-				addObject(mi); 
-				setMappInfo(mi);
-				result = mi; 
-				break;				
-			case ObjectType.LABEL: result = new Label(this, o); break;					
-			case ObjectType.GROUP: result = new Group(this, o); break;					
+		case ObjectType.DATANODE:
+			result = new GeneProduct(this, o);
+			break;
+		case ObjectType.SHAPE:
+			result = new Shape(this, o);
+			break;
+		case ObjectType.LINE:
+			result = new Line(this, o);
+			break;
+		case ObjectType.MAPPINFO:
+			InfoBox mi = new InfoBox(this, o);
+			addObject(mi);
+			setMappInfo(mi);
+			result = mi;
+			break;
+		case ObjectType.LABEL:
+			result = new Label(this, o);
+			break;
+		case ObjectType.GROUP:
+			result = new Group(this, o);
+			break;
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Maps the contents of a pathway to this VPathway
-	 */	
+	 */
 	public void fromGmmlData(Pathway _data)
-	{		
+	{
 		data = _data;
-			
+
 		for (PathwayElement o : data.getDataObjects())
 		{
-			fromGmmlDataObject (o);
+			fromGmmlDataObject(o);
 		}
 		int width = getVWidth();
 		int height = getVHeight();
@@ -176,47 +198,61 @@ public class VPathway implements PathwayListener, VisualizationListener
 		{
 			parent.setVSize(width, height);
 		}
-		data.fireObjectModifiedEvent(new PathwayEvent(null, PathwayEvent.MODIFIED_GENERAL));
+		data.fireObjectModifiedEvent(new PathwayEvent(null,
+				PathwayEvent.MODIFIED_GENERAL));
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
 		data.addListener(this);
 	}
 
 	private int newGraphics = NEWNONE;
+
 	/**
-	 * Method to set the new graphics type that has to be added next time the user clicks on the
-	 * drawing. 
-	 * @param type One of the NEWXX fields of this class, where XX stands for the type of graphics to draw
+	 * Method to set the new graphics type that has to be added next time the
+	 * user clicks on the drawing.
+	 * 
+	 * @param type
+	 *            One of the NEWXX fields of this class, where XX stands for the
+	 *            type of graphics to draw
 	 */
-	public void setNewGraphics(int type) { newGraphics = type; }
-	
+	public void setNewGraphics(int type)
+	{
+		newGraphics = type;
+	}
+
 	private Rectangle dirtyRect = null;
+
 	/**
-	 * Adds object boundaries to the 'dirty rectangle', which marks the area that needs to be redrawn
+	 * Adds object boundaries to the 'dirty rectangle', which marks the area
+	 * that needs to be redrawn
 	 */
 	public void addDirtyRect(Rectangle r)
 	{
-		if(r == null) { //In case r is null, add whole drawing
-			if (parent != null) { r = parent.getVBounds(); }
+		if (r == null)
+		{ // In case r is null, add whole drawing
+			if (parent != null)
+			{
+				r = parent.getVBounds();
+			}
 		}
-		if(dirtyRect == null)
+		if (dirtyRect == null)
 			dirtyRect = r;
 		else
-			dirtyRect.add(r);	
+			dirtyRect.add(r);
 	}
-	
+
 	/**
-	 * Redraw parts marked dirty
-	 * reset dirty rect afterwards
+	 * Redraw parts marked dirty reset dirty rect afterwards
 	 */
 	public void redrawDirtyRect()
 	{
 		if (dirtyRect != null && parent != null)
-			parent.redraw (dirtyRect);
+			parent.redraw(dirtyRect);
 		dirtyRect = null;
 	}
-			
+
 	/**
 	 * Sets the MappInfo containing information on the pathway
+	 * 
 	 * @param mappInfo
 	 */
 	public void setMappInfo(InfoBox mappInfo)
@@ -228,166 +264,193 @@ public class VPathway implements PathwayListener, VisualizationListener
 	/**
 	 * Gets the MappInfo containing information on the pathway
 	 */
-	public InfoBox getMappInfo() { return infoBox; }
-		
+	public InfoBox getMappInfo()
+	{
+		return infoBox;
+	}
+
 	/**
 	 * Adds an element to the drawing
-	 * @param o the element to add
+	 * 
+	 * @param o
+	 *            the element to add
 	 */
 	public void addObject(VPathwayElement o)
 	{
-		if(!drawingObjects.contains(o)) { //Don't add duplicates!
+		if (!drawingObjects.contains(o))
+		{ // Don't add duplicates!
 			drawingObjects.add(o);
 		}
-		
+
 	}
 
 	HashMap<MPoint, VPoint> pointsMtoV = new HashMap<MPoint, VPoint>();
-	protected VPoint getPoint(MPoint mPoint) {
+
+	protected VPoint getPoint(MPoint mPoint)
+	{
 		VPoint p = pointsMtoV.get(mPoint);
-		if(p == null) {
+		if (p == null)
+		{
 			p = newPoint(mPoint);
 		}
 		return p;
 	}
-	
-	
-	private VPoint newPoint(MPoint mPoint) {
+
+	private VPoint newPoint(MPoint mPoint)
+	{
 		VPoint p = null;
-		for(MPoint ep : mPoint.getEqualPoints()) {
+		for (MPoint ep : mPoint.getEqualPoints())
+		{
 			p = pointsMtoV.get(ep);
-			if(p != null) {
+			if (p != null)
+			{
 				p.addMPoint(mPoint);
 				pointsMtoV.put(mPoint, p);
 				break;
 			}
 		}
-		if(p == null) p = new VPoint(this);
+		if (p == null)
+			p = new VPoint(this);
 		p.addMPoint(mPoint);
 		pointsMtoV.put(mPoint, p);
 		return p;
 	}
-	
+
 	/**
 	 * Get the gene identifiers of all genes in this pathway
-	 * @return	List containing an identifier for every gene on the mapp
+	 * 
+	 * @return List containing an identifier for every gene on the mapp
 	 * @deprecated get this info from Pathway directly
 	 */
 	public ArrayList<String> getMappIds()
 	{
 		ArrayList<String> mappIds = new ArrayList<String>();
-		for(VPathwayElement o : drawingObjects)
+		for (VPathwayElement o : drawingObjects)
 		{
-			if(o instanceof GeneProduct)
+			if (o instanceof GeneProduct)
 			{
-				mappIds.add(((GeneProduct)o).getID());
+				mappIds.add(((GeneProduct) o).getID());
 			}
 		}
 		return mappIds;
 	}
-	
+
 	/**
 	 * Get the systemcodes of all genes in this pathway
-	 * @return	List containing a systemcode for every gene on the mapp
+	 * 
+	 * @return List containing a systemcode for every gene on the mapp
 	 * 
 	 * @deprecated get this info from Pathway directly
 	 */
 	public ArrayList<String> getSystemCodes()
 	{
 		ArrayList<String> systemCodes = new ArrayList<String>();
-		for(VPathwayElement o : drawingObjects)
+		for (VPathwayElement o : drawingObjects)
 		{
-			if(o instanceof GeneProduct)
+			if (o instanceof GeneProduct)
 			{
-				systemCodes.add(((GeneProduct)o).getSystemCode());
+				systemCodes.add(((GeneProduct) o).getSystemCode());
 			}
 		}
 		return systemCodes;
 	}
-	
+
 	/**
 	 * Set this drawing to editmode
-	 * @param editMode	true if editmode has to be enabled, false if disabled (view mode)
+	 * 
+	 * @param editMode
+	 *            true if editmode has to be enabled, false if disabled (view
+	 *            mode)
 	 */
 	public void setEditMode(boolean editMode)
 	{
 		this.editMode = editMode;
-		if(!editMode)
+		if (!editMode)
 		{
 			clearSelection();
 		}
 
 		redraw();
-		int type = editMode ? VPathwayEvent.EDIT_MODE_ON : VPathwayEvent.EDIT_MODE_OFF;
+		int type = editMode ? VPathwayEvent.EDIT_MODE_ON
+				: VPathwayEvent.EDIT_MODE_OFF;
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.EDIT_MODE_OFF));
 	}
-	
-	private double zoomFactor = 1.0/15.0;
+
+	private double zoomFactor = 1.0 / 15.0;
+
 	/**
-	 * Get the current zoomfactor used. 
-	 * 1/15 means 100%, 15 gpml unit = 1 pixel
+	 * Get the current zoomfactor used. 1/15 means 100%, 15 gpml unit = 1 pixel
 	 * 2/15 means 200%, 7.5 gpml unit = 1 pixel
 	 * 
-	 * The 15/1 ratio is there because of 
-	 * the Visual Basic legacy of GenMAPP
+	 * The 15/1 ratio is there because of the Visual Basic legacy of GenMAPP
 	 * 
-	 * To distinguish between model coordinates and view coordinates,
-	 * we prefix all coordinates with either v or m (or V or M). For example:
+	 * To distinguish between model coordinates and view coordinates, we prefix
+	 * all coordinates with either v or m (or V or M). For example:
 	 * 
-	 * mTop = gdata.getMTop();
-	 * vTop = GeneProduct.getVTop();
+	 * mTop = gdata.getMTop(); vTop = GeneProduct.getVTop();
 	 * 
-	 * Calculations done on M's and V's should always match.
-	 * The only way to convert is to use the functions
-	 * mFromV and vFromM.
+	 * Calculations done on M's and V's should always match. The only way to
+	 * convert is to use the functions mFromV and vFromM.
 	 * 
-	 * Correct: mRight = mLeft + mWidth;
-	 * Wrong: mLeft += vDx; 
-	 * Fixed: mLeft += mFromV(vDx);
+	 * Correct: mRight = mLeft + mWidth; Wrong: mLeft += vDx; Fixed: mLeft +=
+	 * mFromV(vDx);
 	 * 
-	 * @return	the current zoomfactor
+	 * @return the current zoomfactor
 	 */
-	public double getZoomFactor() { return zoomFactor; }
+	public double getZoomFactor()
+	{
+		return zoomFactor;
+	}
 
 	/**
 	 * same as getZoomFactor, but in %
+	 * 
 	 * @return
 	 */
-	public double getPctZoom() { return zoomFactor * 100 * 15.0; }
+	public double getPctZoom()
+	{
+		return zoomFactor * 100 * 15.0;
+	}
 
 	/**
 	 * Sets the drawings zoom in percent
-	 * @param pctZoomFactor zoomfactor in percent, or ZOOM_TO_FIT to fit the
-	 * zoomfactor to the drawing's viewport
+	 * 
+	 * @param pctZoomFactor
+	 *            zoomfactor in percent, or ZOOM_TO_FIT to fit the zoomfactor to
+	 *            the drawing's viewport
 	 */
 	public void setPctZoom(double pctZoomFactor)
 	{
-		if(pctZoomFactor == ZOOM_TO_FIT) 
+		if (pctZoomFactor == ZOOM_TO_FIT)
 		{
 			Dimension drawingSize = getWrapper().getVSize();
 			Dimension viewportSize = getWrapper().getViewportSize();
-			pctZoomFactor = (int)Math.min(
-					getPctZoom() * (double)viewportSize.width / drawingSize.width,
-					getPctZoom() * (double)viewportSize.height / drawingSize.height
-			);
+			pctZoomFactor = (int) Math.min(getPctZoom()
+					* (double) viewportSize.width / drawingSize.width,
+					getPctZoom() * (double) viewportSize.height
+							/ drawingSize.height);
 		}
 		zoomFactor = pctZoomFactor / 100.0 / 15.0;
 		int width = getVWidth();
 		int height = getVHeight();
 		if (parent != null)
 		{
-			parent.setVSize(width, height); 				
+			parent.setVSize(width, height);
 			redraw();
 		}
 	}
 
-	public void setPressedObject(VPathwayElement o) {
+	public void setPressedObject(VPathwayElement o)
+	{
 		pressedObject = o;
 	}
-	
+
 	int vPreviousX;
+
 	int vPreviousY;
+
 	boolean isDragging;
+
 	/**
 	 * handles mouse movement
 	 */
@@ -400,85 +463,89 @@ public class VPathway implements PathwayListener, VisualizationListener
 			double vdx = ve.getX() - vPreviousX;
 			double vdy = ve.getY() - vPreviousY;
 			pressedObject.vMoveBy(vdx, vdy);
-				
+
 			vPreviousX = ve.getX();
 			vPreviousY = ve.getY();
-			
-			if (pressedObject instanceof Handle && altPressed && newGraphics == NEWNONE &&
-					((Handle)pressedObject).parent instanceof VPoint)
+
+			if (pressedObject instanceof Handle && altPressed
+					&& newGraphics == NEWNONE
+					&& ((Handle) pressedObject).parent instanceof VPoint)
 			{
 				resetHighlight();
 				Point2D p2d = new Point2D.Double(ve.getX(), ve.getY());
-				List<VPathwayElement> objects = getObjectsAt (p2d);
+				List<VPathwayElement> objects = getObjectsAt(p2d);
 				Collections.sort(objects);
-				Handle g = (Handle)pressedObject;
-				VPoint p = (VPoint)g.parent;
+				Handle g = (Handle) pressedObject;
+				VPoint p = (VPoint) g.parent;
 				VPathwayElement x = null;
 				for (VPathwayElement o : objects)
 				{
-					if (o instanceof VPoint && o != p) {
+					if (o instanceof VPoint && o != p)
+					{
 						x = o;
-						p.link((VPoint)o);
+						p.link((VPoint) o);
 						break;
-					} else if(o instanceof Graphics && !(o instanceof Line)) {
+					} else if (o instanceof Graphics && !(o instanceof Line))
+					{
 						x = o;
-						p.link((Graphics)o);
+						p.link((Graphics) o);
 						break;
-					} 
+					}
 				}
-				if(x != null) x.highlight();
+				if (x != null)
+					x.highlight();
 			}
 			redrawDirtyRect();
 		}
 	}
-	
-	public void selectObject(VPathwayElement o) {
+
+	public void selectObject(VPathwayElement o)
+	{
 		clearSelection();
 		lastAdded.select();
 		s.addToSelection(lastAdded);
 	}
-	
+
 	/**
 	 * Handles mouse Pressed input
 	 */
 	public void mouseDown(MouseEvent e)
-	{		
-		//setFocus();
+	{
+		// setFocus();
 		if (editMode)
 		{
 			if (newGraphics != NEWNONE)
 			{
 				newObject(new Point(e.getX(), e.getY()));
-				//SwtEngine.getWindow().deselectNewItemActions();
-			}
-			else
+				// SwtEngine.getWindow().deselectNewItemActions();
+			} else
 			{
 				editObject(new Point(e.getX(), e.getY()), e);
 			}
-		}
-		else
+		} else
 		{
 			mouseDownViewMode(e);
 		}
 
 	}
-		
+
 	/**
 	 * Handles mouse Released input
 	 */
 	public void mouseUp(MouseEvent e)
 	{
-		if(isDragging)
+		if (isDragging)
 		{
 			resetHighlight();
-			if(s.isSelecting()) { //If we were selecting, stop it
+			if (s.isSelecting())
+			{ // If we were selecting, stop it
 				s.stopSelecting();
 			}
 			// check if we placed a new object by clicking or dragging
 			// if it was a click, give object the initial size.
-			else if (newObject != null && 
-					Math.abs(newObjectDragStart.x - e.getX()) <= MIN_DRAG_LENGTH &&
-					Math.abs(newObjectDragStart.y - e.getY()) <= MIN_DRAG_LENGTH)
+			else if (newObject != null
+					&& Math.abs(newObjectDragStart.x - e.getX()) <= MIN_DRAG_LENGTH
+					&& Math.abs(newObjectDragStart.y - e.getY()) <= MIN_DRAG_LENGTH)
 			{
 				newObject.setInitialSize();
 			}
@@ -487,87 +554,101 @@ public class VPathway implements PathwayListener, VisualizationListener
 		}
 		isDragging = false;
 	}
-	
+
 	/**
 	 * Handles mouse entered input
 	 */
-	public void mouseDoubleClick(MouseEvent e) {
+	public void mouseDoubleClick(MouseEvent e)
+	{
 		VPathwayElement o = getObjectAt(e.getLocation());
-		if(o != null) {
-			fireVPathwayEvent(new VPathwayEvent(this, o, VPathwayEvent.ELEMENT_DOUBLE_CLICKED));
+		if (o != null)
+		{
+			fireVPathwayEvent(new VPathwayEvent(this, o,
+					VPathwayEvent.ELEMENT_DOUBLE_CLICKED));
 		}
 	}
 
-	public void draw (Graphics2D g2d)
+	public void draw(Graphics2D g2d)
 	{
-		draw (g2d, null, true);
+		draw(g2d, null, true);
 	}
 
-	public void draw (Graphics2D g2d, Rectangle area)
+	public void draw(Graphics2D g2d, Rectangle area)
 	{
-		draw (g2d, area, true);
+		draw(g2d, area, true);
 	}
-	
+
 	/**
-	 Paints all components in the drawing.
-	 This method is called automatically in the 
-	 painting process
-
-	 @param g2d Graphics2D object the pathway should be drawn onto
-	 @param area area that should be updated, null if you want to update the entire pathway
-	 @param erase true if the background should be erased
+	 * Paints all components in the drawing. This method is called automatically
+	 * in the painting process
+	 * 
+	 * @param g2d
+	 *            Graphics2D object the pathway should be drawn onto
+	 * @param area
+	 *            area that should be updated, null if you want to update the
+	 *            entire pathway
+	 * @param erase
+	 *            true if the background should be erased
 	 */
-	public void draw (Graphics2D g2d, Rectangle area, boolean erase)
-	{		
-		if(area == null)
+	public void draw(Graphics2D g2d, Rectangle area, boolean erase)
+	{
+		if (area == null)
 		{
 			area = g2d.getClipBounds();
 			if (area == null)
 			{
-				area = new Rectangle (0, 0, getVWidth(), getVHeight());
+				area = new Rectangle(0, 0, getVWidth(), getVHeight());
 			}
 		}
-		
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		if (erase)
 		{
 			g2d.setColor(java.awt.Color.WHITE);
 			g2d.fillRect(area.x, area.y, area.width, area.height);
 		}
-		
+
 		g2d.clip(area);
 		g2d.setColor(java.awt.Color.BLACK);
 		Collections.sort(drawingObjects);
-		
+
 		Visualization v = VisualizationManager.getCurrent();
-		for(VPathwayElement o : drawingObjects)
+		for (VPathwayElement o : drawingObjects)
 		{
-			if(o.vIntersects(area))
+			if (o.vIntersects(area))
 			{
-				if(checkDrawAllowed(o)) {
-					o.draw ((Graphics2D)g2d.create());
+				if (checkDrawAllowed(o))
+				{
+					o.draw((Graphics2D) g2d.create());
 				}
-				
-				if(v != null && o instanceof Graphics) {
-						try {
-							v.visualizeDrawing((Graphics) o, (Graphics2D)g2d.create());
-						} catch(Exception ex) {
-							Engine.log.error(
-									"Unable to apply visualization " + v + " on " + o, ex);
-							ex.printStackTrace();
-						}
+
+				if (v != null && o instanceof Graphics)
+				{
+					try
+					{
+						v.visualizeDrawing((Graphics) o, (Graphics2D) g2d
+								.create());
+					} catch (Exception ex)
+					{
+						Engine.log.error("Unable to apply visualization " + v
+								+ " on " + o, ex);
+						ex.printStackTrace();
+					}
 				}
 			}
 		}
 	}
 
-	boolean checkDrawAllowed(VPathwayElement o) {
-		if(isEditMode()) return true;
-		else return !(	o instanceof Handle ||
-						(o == s && !isDragging)
-					);
+	boolean checkDrawAllowed(VPathwayElement o)
+	{
+		if (isEditMode())
+			return true;
+		else
+			return !(o instanceof Handle || (o == s && !isDragging));
 	}
 
 	/**
@@ -575,91 +656,99 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 */
 	private void clearSelection()
 	{
-		for(VPathwayElement o : drawingObjects) o.deselect(); //Deselect all objects
+		for (VPathwayElement o : drawingObjects)
+			o.deselect(); // Deselect all objects
 		s.reset();
 	}
 
 	/**
-	 * Handles event when on mouseDown in case the drawing is in view mode
-	 * (does nothing yet)
-	 * @param e	the mouse event to handle
+	 * Handles event when on mouseDown in case the drawing is in view mode (does
+	 * nothing yet)
+	 * 
+	 * @param e
+	 *            the mouse event to handle
 	 */
-	private void mouseDownViewMode(MouseEvent e) 
+	private void mouseDownViewMode(MouseEvent e)
 	{
 		Point2D p2d = new Point2D.Double(e.getX(), e.getY());
 
 		pressedObject = getObjectAt(p2d);
-		
+
 		if (pressedObject != null)
 			doClickSelect(p2d, e);
 		else
 			startSelecting(p2d);
 	}
-	
+
 	/**
-	 * Initializes selection, resetting the selectionbox
-	 * and then setting it to the position specified
-	 * @param vp - the point to start with the selection
+	 * Initializes selection, resetting the selectionbox and then setting it to
+	 * the position specified
+	 * 
+	 * @param vp -
+	 *            the point to start with the selection
 	 */
 	private void startSelecting(Point2D vp)
 	{
-		vPreviousX = (int)vp.getX();
-		vPreviousY = (int)vp.getY();
+		vPreviousX = (int) vp.getX();
+		vPreviousY = (int) vp.getY();
 		isDragging = true;
-		
+
 		clearSelection();
 		s.reset(vp.getX(), vp.getY());
 		s.startSelecting();
 		pressedObject = s.getCornerHandle();
 	}
-		
+
 	/**
 	 * Resets highlighting, unhighlights all GmmlDrawingObjects
 	 */
-	public void resetHighlight() 
+	public void resetHighlight()
 	{
-		for(VPathwayElement o : drawingObjects) o.unhighlight();
+		for (VPathwayElement o : drawingObjects)
+			o.unhighlight();
 		redraw();
 	}
-	
+
 	/**
-	 * Called by MouseDown, when we're in editting mode and we're not adding new objects
-	 * prepares for dragging the object
+	 * Called by MouseDown, when we're in editting mode and we're not adding new
+	 * objects prepares for dragging the object
 	 */
 	private void editObject(Point p, MouseEvent e)
 	{
 		Point2D p2d = new Point2D.Double(p.x, p.y);
-		
+
 		pressedObject = getObjectAt(p2d);
-		
+
 		// if we clicked on an object
 		if (pressedObject != null)
 		{
 			// if our object is an handle, select also it's parent.
-			if(pressedObject instanceof Handle)
+			if (pressedObject instanceof Handle)
 			{
-				((Handle)pressedObject).parent.select();
-			} else {
+				((Handle) pressedObject).parent.select();
+			} else
+			{
 				doClickSelect(p2d, e);
 			}
-			
+
 			// start dragging
 			vPreviousX = p.x;
 			vPreviousY = p.y;
-			
-			isDragging = true;		
-		}
-		else
+
+			isDragging = true;
+		} else
 		{
-			// start dragging selectionbox	
+			// start dragging selectionbox
 			startSelecting(p2d);
-		}		
+		}
 	}
 
 	/**
 	 * Find the object at a particular location on the drawing
 	 * 
-	 * if you want to get more than one @see #getObjectsAt(Point2D)
+	 * if you want to get more than one
+	 * 
+	 * @see #getObjectsAt(Point2D)
 	 */
 	VPathwayElement getObjectAt(Point2D p2d)
 	{
@@ -670,21 +759,23 @@ public class VPathway implements PathwayListener, VisualizationListener
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof Handle && !((Handle)o).isVisible()) 
+				if (o instanceof Handle && !((Handle) o).isVisible())
 					;
-				else 
+				else
 					probj = o;
 			}
 		}
 		return probj;
 	}
-	
+
 	/**
 	 * Find all objects at a particular location on the drawing
 	 * 
-	 * if you only need the top object, @see #getObjectAt(Point2D)
+	 * if you only need the top object,
+	 * 
+	 * @see #getObjectAt(Point2D)
 	 */
-	List<VPathwayElement> getObjectsAt(Point2D p2d) 
+	List<VPathwayElement> getObjectsAt(Point2D p2d)
 	{
 		List<VPathwayElement> result = new ArrayList<VPathwayElement>();
 		for (VPathwayElement o : drawingObjects)
@@ -692,95 +783,124 @@ public class VPathway implements PathwayListener, VisualizationListener
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof Handle && !((Handle)o).isVisible()) 
+				if (o instanceof Handle && !((Handle) o).isVisible())
 					;
-				else 
+				else
 					result.add(o);
 			}
 		}
 		return result;
 	}
-	
-	void doClickSelect(Point2D p2d, MouseEvent e) {
-		//Ctrl pressed, add/remove from selection
-		boolean ctrlPressed =  e.isKeyDown(MouseEvent.M_CTRL);
-		if(ctrlPressed) 
+
+	void doClickSelect(Point2D p2d, MouseEvent e)
+	{
+		// Ctrl pressed, add/remove from selection
+		boolean ctrlPressed = e.isKeyDown(MouseEvent.M_CTRL);
+		if (ctrlPressed)
 		{
-			if(pressedObject instanceof SelectionBox) {
-				//Object inside selectionbox clicked, pass to selectionbox
+			if (pressedObject instanceof SelectionBox)
+			{
+				// Object inside selectionbox clicked, pass to selectionbox
 				s.objectClicked(p2d);
-			}
-			else if(pressedObject.isSelected()) { //Already in selection: remove
+			} else if (pressedObject.isSelected())
+			{ // Already in selection:
+				// remove
 				s.removeFromSelection(pressedObject);
-			} else {
-				s.addToSelection(pressedObject); //Not in selection: add
+			} else
+			{
+				s.addToSelection(pressedObject); // Not in selection: add
 			}
-			pressedObject = null; //Disable dragging
-		} 
-		else //Ctrl not pressed
+			pressedObject = null; // Disable dragging
+		} else
+		// Ctrl not pressed
 		{
-			//If pressedobject is not selectionbox:
-			//Clear current selection and select pressed object
-			if(!(pressedObject instanceof SelectionBox))
+			// If pressedobject is not selectionbox:
+			// Clear current selection and select pressed object
+			if (!(pressedObject instanceof SelectionBox))
 			{
 				clearSelection();
 				s.addToSelection(pressedObject);
-			} else { //Check if clicked object inside selectionbox
-				if(s.getChild(p2d) == null) clearSelection();
+			} else
+			{ // Check if clicked object inside selectionbox
+				if (s.getChild(p2d) == null)
+					clearSelection();
 			}
 		}
 		redrawDirtyRect();
 	}
-	
+
 	public static final int NEWNONE = -1;
+
 	public static final int NEWLINE = 0;
+
 	public static final int NEWLABEL = 1;
+
 	public static final int NEWARC = 2;
+
 	public static final int NEWBRACE = 3;
+
 	public static final int NEWGENEPRODUCT = 4;
+
 	public static final int NEWLINEDASHED = 5;
+
 	public static final int NEWLINEARROW = 6;
+
 	public static final int NEWLINEDASHEDARROW = 7;
+
 	public static final int NEWRECTANGLE = 8;
+
 	public static final int NEWOVAL = 9;
+
 	public static final int NEWTBAR = 10;
+
 	public static final int NEWRECEPTORROUND = 11;
+
 	public static final int NEWLIGANDROUND = 12;
+
 	public static final int NEWRECEPTORSQUARE = 13;
+
 	public static final int NEWLIGANDSQUARE = 14;
+
 	public static final int NEWLINEMENU = 15;
+
 	public static final int NEWLINESHAPEMENU = 16;
+
 	public static final Color stdRGB = new Color(0, 0, 0);
 
 	/**
-	 * pathvisio distinguishes between placing objects with a click
-	 * or with a drag. If you don't move the cursor in between the mousedown
-	 * and mouseup event, the object is placed with a default initial size.
+	 * pathvisio distinguishes between placing objects with a click or with a
+	 * drag. If you don't move the cursor in between the mousedown and mouseup
+	 * event, the object is placed with a default initial size.
 	 * 
-	 * newObjectDragStart is used to determine the mousemovement during the click.
+	 * newObjectDragStart is used to determine the mousemovement during the
+	 * click.
 	 */
 	private Point newObjectDragStart;
-	
+
 	/** newly placed object, is set to null again when mouse button is released */
 	private PathwayElement newObject = null;
+
 	/** minimum drag length for it to be considered a drag and not a click */
 	private static final int MIN_DRAG_LENGTH = 3;
 
 	/**
-	 * Add a new object to the drawing
-	 * {@see VPathway#setNewGraphics(int)}
-	 * @param p	The point where the user clicked on the drawing to add a new graphics
+	 * Add a new object to the drawing {@see VPathway#setNewGraphics(int)}
+	 * 
+	 * @param p
+	 *            The point where the user clicked on the drawing to add a new
+	 *            graphics
 	 */
 	private void newObject(Point ve)
 	{
 		newObjectDragStart = ve;
-		int mx = (int)mFromV((double)ve.x);
-		int my = (int)mFromV((double)ve.y); 
-		
+		int mx = (int) mFromV((double) ve.x);
+		int my = (int) mFromV((double) ve.y);
+
 		PathwayElement gdata = null;
 		Handle h = null;
 		lastAdded = null; // reset lastAdded class member
-		switch(newGraphics) {
+		switch (newGraphics)
+		{
 		case NEWNONE:
 			return;
 		case NEWLINE:
@@ -788,12 +908,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.LINE);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.LINE);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEARROW:
@@ -801,12 +921,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.ARROW);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.ARROW);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEDASHED:
@@ -814,12 +934,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.DASHED);
-			gdata.setLineType (LineType.LINE);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.DASHED);
+			gdata.setLineType(LineType.LINE);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLINEDASHEDARROW:
@@ -827,12 +947,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.DASHED);
-			gdata.setLineType (LineType.ARROW);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.DASHED);
+			gdata.setLineType(LineType.ARROW);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLABEL:
@@ -841,36 +961,36 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMCenterY(my);
 			gdata.setMWidth(Label.M_INITIAL_WIDTH);
 			gdata.setMHeight(Label.M_INITIAL_HEIGHT);
-			gdata.setMFontSize (Label.M_INITIAL_FONTSIZE);
+			gdata.setMFontSize(Label.M_INITIAL_FONTSIZE);
 			gdata.setGraphId(data.getUniqueId());
 			gdata.setTextLabel("Label");
-			data.add (gdata); // will cause lastAdded to be set
+			data.add(gdata); // will cause lastAdded to be set
 			h = null;
 			break;
 		case NEWARC:
 			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.ARC);
-			gdata.setMCenterX (mx);
-			gdata.setMCenterY (my);
+			gdata.setMCenterX(mx);
+			gdata.setMCenterY(my);
 			gdata.setMWidth(1);
 			gdata.setMHeight(1);
 			gdata.setColor(stdRGB);
-			gdata.setRotation (0);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Shape)lastAdded).handleSE;
+			gdata.setRotation(0);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Shape) lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWBRACE:
 			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.BRACE);
-			gdata.setMCenterX (mx);
-			gdata.setMCenterY (my);
+			gdata.setMCenterX(mx);
+			gdata.setMCenterY(my);
 			gdata.setMWidth(1);
 			gdata.setMHeight(1);
 			gdata.setOrientation(OrientationType.RIGHT);
 			gdata.setColor(stdRGB);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Shape)lastAdded).handleSE;
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Shape) lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWGENEPRODUCT:
@@ -883,36 +1003,36 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setXref("");
 			gdata.setColor(stdRGB);
 			gdata.setGraphId(data.getUniqueId());
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((GeneProduct)lastAdded).handleSE;
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((GeneProduct) lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWRECTANGLE:
 			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.RECTANGLE);
-			gdata.setMCenterX (mx);
-			gdata.setMCenterY (my);
+			gdata.setMCenterX(mx);
+			gdata.setMCenterY(my);
 			gdata.setMWidth(1);
 			gdata.setMHeight(1);
 			gdata.setColor(stdRGB);
-			gdata.setRotation (0);
+			gdata.setRotation(0);
 			gdata.setGraphId(data.getUniqueId());
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Shape)lastAdded).handleSE;
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Shape) lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWOVAL:
 			gdata = new PathwayElement(ObjectType.SHAPE);
 			gdata.setShapeType(ShapeType.OVAL);
-			gdata.setMCenterX (mx);
-			gdata.setMCenterY (my);
+			gdata.setMCenterX(mx);
+			gdata.setMCenterY(my);
 			gdata.setMWidth(1);
 			gdata.setMHeight(1);
 			gdata.setColor(stdRGB);
-			gdata.setRotation (0);
+			gdata.setRotation(0);
 			gdata.setGraphId(data.getUniqueId());
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Shape)lastAdded).handleSE;
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Shape) lastAdded).handleSE;
 			isDragging = true;
 			break;
 		case NEWTBAR:
@@ -920,12 +1040,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.TBAR);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.TBAR);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWRECEPTORROUND:
@@ -933,12 +1053,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.RECEPTOR_ROUND);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.RECEPTOR_ROUND);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWRECEPTORSQUARE:
@@ -946,12 +1066,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.RECEPTOR_SQUARE);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.RECEPTOR_SQUARE);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLIGANDROUND:
@@ -959,12 +1079,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.LIGAND_ROUND);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.LIGAND_ROUND);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		case NEWLIGANDSQUARE:
@@ -972,393 +1092,551 @@ public class VPathway implements PathwayListener, VisualizationListener
 			gdata.setMStartX(mx);
 			gdata.setMStartY(my);
 			gdata.setMEndX(mx);
-			gdata.setMEndY(my);	
-			gdata.setColor (stdRGB);
-			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.LIGAND_SQUARE);
-			data.add (gdata); // will cause lastAdded to be set
-			h = ((Line)lastAdded).getEnd().getHandle();
+			gdata.setMEndY(my);
+			gdata.setColor(stdRGB);
+			gdata.setLineStyle(LineStyle.SOLID);
+			gdata.setLineType(LineType.LIGAND_SQUARE);
+			data.add(gdata); // will cause lastAdded to be set
+			h = ((Line) lastAdded).getEnd().getHandle();
 			isDragging = true;
 			break;
 		}
-		
+
 		newObject = gdata;
 		selectObject(lastAdded);
 		pressedObject = h;
-		
+
 		vPreviousX = ve.x;
 		vPreviousY = ve.y;
-		
-		fireVPathwayEvent(new VPathwayEvent(this, lastAdded, VPathwayEvent.ELEMENT_ADDED));
+
+		fireVPathwayEvent(new VPathwayEvent(this, lastAdded,
+				VPathwayEvent.ELEMENT_ADDED));
 	}
-	
 
 	public static final int DRAW_ORDER_HANDLE = -1;
-	public static final int DRAW_ORDER_GROUP = 0;
-	public static final int DRAW_ORDER_SELECTIONBOX = 1;
-	public static final int DRAW_ORDER_SELECTED = 2;
-	public static final int DRAW_ORDER_GENEPRODUCT = 3;
-	public static final int DRAW_ORDER_LABEL = 4;
-	public static final int DRAW_ORDER_ARC = 5;
-	public static final int DRAW_ORDER_BRACE = 6;
-	public static final int DRAW_ORDER_SHAPE = 7;
-	public static final int DRAW_ORDER_LINE = 8;
-	public static final int DRAW_ORDER_LINESHAPE = 9;
-	public static final int DRAW_ORDER_MAPPINFO = 10;
-	public static final int DRAW_ORDER_DEFAULT = 11;
-	
-	public void mouseEnter(MouseEvent e) {}
 
-	public void mouseExit(MouseEvent e) {}
-	
+	public static final int DRAW_ORDER_GROUP = 0;
+
+	public static final int DRAW_ORDER_SELECTIONBOX = 1;
+
+	public static final int DRAW_ORDER_SELECTED = 2;
+
+	public static final int DRAW_ORDER_GENEPRODUCT = 3;
+
+	public static final int DRAW_ORDER_LABEL = 4;
+
+	public static final int DRAW_ORDER_ARC = 5;
+
+	public static final int DRAW_ORDER_BRACE = 6;
+
+	public static final int DRAW_ORDER_SHAPE = 7;
+
+	public static final int DRAW_ORDER_LINE = 8;
+
+	public static final int DRAW_ORDER_LINESHAPE = 9;
+
+	public static final int DRAW_ORDER_MAPPINFO = 10;
+
+	public static final int DRAW_ORDER_DEFAULT = 11;
+
+	public void mouseEnter(MouseEvent e)
+	{
+	}
+
+	public void mouseExit(MouseEvent e)
+	{
+	}
+
 	/**
-	 * Responsible for drawing a tooltip displaying expression data when 
+	 * Responsible for drawing a tooltip displaying expression data when
 	 * hovering over a geneproduct
 	 */
-	public void mouseHover(MouseEvent e) {
+	public void mouseHover(MouseEvent e)
+	{
 		Visualization v = VisualizationManager.getCurrent();
-		if(v != null && v.usesToolTip()) {
+		if (v != null && v.usesToolTip())
+		{
 			Point2D p = new Point2D.Double(e.getX(), e.getY());
-			
+
 			VPathwayElement o = getObjectAt(p);
-			if(o != null && o instanceof Graphics) {
-//				Shell tip = v.visualizeToolTip(getShell(), this, (Graphics)o);
-//				if(tip == null) return;
-//				Point mp = toDisplay(e.x + 15, e.y + 15);
-//				tip.setLocation(mp.x, mp.y);
-//	            tip.setVisible(true);
+			if (o != null && o instanceof Graphics)
+			{
+				// Shell tip = v.visualizeToolTip(getShell(), this,
+				// (Graphics)o);
+				// if(tip == null) return;
+				// Point mp = toDisplay(e.x + 15, e.y + 15);
+				// tip.setLocation(mp.x, mp.y);
+				// tip.setVisible(true);
 			}
 		}
 	}
 
-	private void selectGeneProducts() {
+	private void selectGeneProducts()
+	{
 		clearSelection();
-		for(VPathwayElement o : getDrawingObjects()) {
-			if(o instanceof GeneProduct) s.addToSelection(o);
+		for (VPathwayElement o : getDrawingObjects())
+		{
+			if (o instanceof GeneProduct)
+				s.addToSelection(o);
 		}
 	}
-	
-	private void selectAll() {
+
+	private void selectAll()
+	{
 		clearSelection();
-		for(VPathwayElement o : getDrawingObjects()) {
+		for (VPathwayElement o : getDrawingObjects())
+		{
 			s.addToSelection(o);
 		}
 	}
-	
-	private void insertPressed() {
+
+	private void insertPressed()
+	{
 		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
 		objects.addAll(s.getSelection());
-		for(VPathwayElement o : objects) {
-			if(o instanceof Line) {
-				PathwayElement g = ((Line)o).getGmmlData();
+		for (VPathwayElement o : objects)
+		{
+			if (o instanceof Line)
+			{
+				PathwayElement g = ((Line) o).getGmmlData();
 				PathwayElement[] gNew = g.splitLine();
-							
-				removeDrawingObject(o); //Remove the old line
-				
-				//Clear refs on middle point (which is new)
+
+				removeDrawingObject(o); // Remove the old line
+
+				// Clear refs on middle point (which is new)
 				gNew[0].getMEnd().setGraphRef(null);
 				gNew[1].getMStart().setGraphRef(null);
-				
+
 				gNew[1].setGraphId(data.getUniqueId());
 				data.add(gNew[0]);
-				Line l1 = (Line)lastAdded;
+				Line l1 = (Line) lastAdded;
 				data.add(gNew[1]);
-				Line l2 = (Line)lastAdded;				
-				
+				Line l2 = (Line) lastAdded;
+
 				l1.getEnd().link(l2.getStart());
 			}
 		}
 		s.addToSelection(lastAdded);
 	}
-	
-	public void createGroup() {
-		//GroupId is created on first getGroupId call
-		PathwayElement group = new PathwayElement(ObjectType.GROUP);
-		data.add(group);
-		
-		group.setTextLabel("new group");
-		group.setGroupStyle(GroupStyle.NONE);
-		
-		String id = group.getGroupId();
-		
-		//Add the selected pathway elements
+
+	public void toggleGroup()
+	{
+		Boolean Grouped = true;
+
+		// Check Group status of current selection
+		String topRef = null;
 		List<Graphics> selection = getSelectedGraphics();
-		
-		for(Graphics g : selection) {
-			PathwayElement pe = g.getGmmlData(); 
+		for (Graphics g : selection)
+		{
+			PathwayElement pe = g.getGmmlData();
 			String ref = pe.getGroupRef();
-			if(ref == null) {
-				pe.setGroupRef(id);
-			} else if(ref != id) {
-				PathwayElement refGroup = data.getGroupById(ref);
-				refGroup.setGroupRef(id);
+			String id = pe.getGroupId(); // use to exclude Group Elements
+			// from status check
+			if (ref == null && id == null)
+			{
+				// selection includes an ungrouped element; therefore, currently
+				// Ungrouped
+				Grouped = false;
+				break;
+			} else if (id == null)
+			{
+				String checkRef = ref;
+				while (checkRef != null)
+				{
+					// set ref to highest-level, non-null group reference
+					ref = checkRef;
+					PathwayElement refGroup = data.getGroupById(checkRef);
+					checkRef = refGroup.getGroupRef();
+				}
+
+				if (topRef == null) // first loop through selection
+				{
+					topRef = ref;
+				}
+
+				if (ref != topRef)
+				{
+					// selection includes elements in distinct, non-nested
+					// groups; therefore, currently Ungrouped
+					Grouped = false;
+					break;
+				}
+
+				topRef = ref; // set previous selection reference for next
+				// loop
 			}
+		}
+
+		// Group or Ungroup based on current Group status
+		if (Grouped && topRef != null)
+		{
+			// Ungroup all elements asociated with topRef
+			for (VPathwayElement vpe : this.getDrawingObjects())
+			{
+				if (vpe instanceof Graphics)
+				{
+					PathwayElement pe = ((Graphics) vpe).getGmmlData();
+					String ref = pe.getGroupRef();
+
+					// remove all references to highest-level group
+					if (ref == topRef) // includes Group Elements
+					{
+						pe.setGroupRef(null);
+					}
+				}
+			}
+			// remove highest-level groupId
+			PathwayElement topIdGroup = data.getGroupById(topRef);
+			topIdGroup.setGroupId(null);
+
+		} else
+		{
+			// GroupId is created on first getGroupId call
+			PathwayElement group = new PathwayElement(ObjectType.GROUP);
+			data.add(group);
+
+			group.setTextLabel("new group");
+			group.setGroupStyle(GroupStyle.NONE);
+
+			String id = group.createGroupId();
+
+			for (Graphics g : selection)
+			{
+				PathwayElement pe = g.getGmmlData();
+				String ref = pe.getGroupRef();
+				if (ref == null)
+				{
+					pe.setGroupRef(id);
+				} else
+				{
+					PathwayElement refGroup = data.getGroupById(ref);
+					refGroup.setGroupRef(id);
+				}
+			}
+
 		}
 	}
 
-	public void keyPressed(KeyEvent e) { 
-		//Use registerKeyboardActions
+	public void keyPressed(KeyEvent e)
+	{
+		// Use registerKeyboardActions
 	}
-	
-	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D,
-			java.awt.Event.CTRL_MASK);
-	public static final KeyStroke KEY_GROUP = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G,
-			java.awt.Event.CTRL_MASK);
-	public static final KeyStroke KEY_SELECT_ALL = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A,
-			java.awt.Event.CTRL_MASK);
-	public static final KeyStroke KEY_DELETE = KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0);
-	//TODO: remove Swing dependency, create enum with keymappings and implement mappings to SWT and Swing
-	private void registerKeyboardActions() {
-		
-		if(parent != null) {
-			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					selectGeneProducts();
-					redraw();
+
+	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke
+			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
+					java.awt.Event.CTRL_MASK);
+
+	public static final KeyStroke KEY_GROUP = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_G, java.awt.Event.CTRL_MASK);
+
+	public static final KeyStroke KEY_SELECT_ALL = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_A, java.awt.Event.CTRL_MASK);
+
+	public static final KeyStroke KEY_DELETE = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_DELETE, 0);
+
+	// TODO: remove Swing dependency, create enum with keymappings and implement
+	// mappings to SWT and Swing
+	private void registerKeyboardActions()
+	{
+
+		if (parent != null)
+		{
+			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
+					new AbstractAction()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+							selectGeneProducts();
+							redraw();
+						}
+					});
+			parent.registerKeyboardAction(KEY_GROUP, new AbstractAction()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					toggleGroup();
 				}
 			});
-			parent.registerKeyboardAction(KEY_GROUP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					createGroup();
-				}
-			});
-			parent.registerKeyboardAction(KEY_SELECT_ALL, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
+			parent.registerKeyboardAction(KEY_SELECT_ALL, new AbstractAction()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
 					selectAll();
 					redraw();
 				}
 			});
-			parent.registerKeyboardAction(KEY_DELETE,new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
+			parent.registerKeyboardAction(KEY_DELETE, new AbstractAction()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
 					ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
-					for(VPathwayElement o : drawingObjects)
+					for (VPathwayElement o : drawingObjects)
 					{
-						if(!o.isSelected() || o == s || o == infoBox) continue; //Object not selected, skip
+						if (!o.isSelected() || o == s || o == infoBox)
+							continue; // Object not selected, skip
 						toRemove.add(o);
 					}
-					removeDrawingObjects(toRemove);	
+					removeDrawingObjects(toRemove);
 				}
 			});
 		}
-                
+
 	}
 
-	public void keyReleased(KeyEvent e) {		
-		//use registerKeyboardActions
+	public void keyReleased(KeyEvent e)
+	{
+		// use registerKeyboardActions
 	}
-	
+
 	/**
 	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
-	 * @param toRemove	The List containing the objects to be removed
+	 * 
+	 * @param toRemove
+	 *            The List containing the objects to be removed
 	 */
-	public void removeDrawingObjects(ArrayList<VPathwayElement>toRemove)
+	public void removeDrawingObjects(ArrayList<VPathwayElement> toRemove)
 	{
-		for(VPathwayElement o : toRemove)
+		for (VPathwayElement o : toRemove)
 		{
 			removeDrawingObject(o);
-			
+
 		}
 		s.fitToSelection();
 	}
-	
-	public void removeDrawingObject(VPathwayElement toRemove) {
-		toRemove.destroy(); //Object will remove itself from the drawing
-		s.removeFromSelection(toRemove); //Remove from selection
+
+	public void removeDrawingObject(VPathwayElement toRemove)
+	{
+		toRemove.destroy(); // Object will remove itself from the drawing
+		s.removeFromSelection(toRemove); // Remove from selection
 	}
 
 	Graphics lastAdded = null;
-	
-	public void gmmlObjectModified(PathwayEvent e) {
+
+	public void gmmlObjectModified(PathwayEvent e)
+	{
 		switch (e.getType())
 		{
-			case PathwayEvent.DELETED:
-				// TODO: affected object should be removed
-				addDirtyRect(null); // mark everything dirty
-				break;
-			case PathwayEvent.ADDED:
-				lastAdded = fromGmmlDataObject(e.getAffectedData());
-				addDirtyRect(null); // mark everything dirty
-				break;
-			case PathwayEvent.WINDOW:
-				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
-				int height = (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
-				if (parent != null)
-				{
-					parent.setVSize(width, height);
-				}
-				break;
+		case PathwayEvent.DELETED:
+			// TODO: affected object should be removed
+			addDirtyRect(null); // mark everything dirty
+			break;
+		case PathwayEvent.ADDED:
+			lastAdded = fromGmmlDataObject(e.getAffectedData());
+			addDirtyRect(null); // mark everything dirty
+			break;
+		case PathwayEvent.WINDOW:
+			int width = (int) vFromM(infoBox.getGmmlData().getMBoardWidth());
+			int height = (int) vFromM(infoBox.getGmmlData().getMBoardHeight());
+			if (parent != null)
+			{
+				parent.setVSize(width, height);
+			}
+			break;
 		}
 		redrawDirtyRect();
 	}
-		
+
 	/**
-	 * Makes a copy of all GmmlDataObjects in current selection,
-	 * and puts them in the global clipboard.
-	 *
+	 * Makes a copy of all GmmlDataObjects in current selection, and puts them
+	 * in the global clipboard.
+	 * 
 	 */
 	public void copyToClipboard()
 	{
-		//Clipboard clipboard = new Clipboard (this.getDisplay());
-		
+		// Clipboard clipboard = new Clipboard (this.getDisplay());
+
 		List<PathwayElement> result = new ArrayList<PathwayElement>();
 		for (VPathwayElement g : drawingObjects)
 		{
 			if (g.isSelected() && g instanceof Graphics
 					&& !(g instanceof SelectionBox))
 			{
-				result.add(((Graphics)g).gdata.copy());
+				result.add(((Graphics) g).gdata.copy());
 			}
 		}
 		if (result.size() > 0)
 		{
 			Engine.clipboard = result;
-		}
-		else
+		} else
 		{
 			Engine.clipboard = null;
 		}
-		
-		//clipboard.dispose();
+
+		// clipboard.dispose();
 	}
-	
+
 	/**
 	 * Aligns selected objects based on user-selected align type
+	 * 
 	 * @param alignType
 	 */
 	public void alignSelected(char alignType)
 	{
 		List<Graphics> selectedGraphics = getSelectedGraphics();
-		
+
 		int aveC = 0;
 		int minC = java.lang.Integer.MAX_VALUE;
 		int maxC = 0;
-		
-		if (selectedGraphics.size() > 0){
-			switch (alignType){
-			case AlignActions.CENTERX : 
-				for(Graphics g : selectedGraphics) {
+
+		if (selectedGraphics.size() > 0)
+		{
+			switch (alignType)
+			{
+			case AlignActions.CENTERX:
+				for (Graphics g : selectedGraphics)
+				{
 					int c = g.getVCenterX();
 					aveC = aveC + c;
 				}
-				aveC = aveC/selectedGraphics.size();
-				for(Graphics g : selectedGraphics) {
+				aveC = aveC / selectedGraphics.size();
+				for (Graphics g : selectedGraphics)
+				{
 					g.vMoveBy(aveC - g.getVCenterX(), 0);
 				}
 				break;
-			case AlignActions.CENTERY : 
-				for(Graphics g : selectedGraphics) {
+			case AlignActions.CENTERY:
+				for (Graphics g : selectedGraphics)
+				{
 					int c = g.getVCenterY();
 					aveC = aveC + c;
 				}
-				aveC = aveC/selectedGraphics.size();
-				for(Graphics g : selectedGraphics) {
-					g.vMoveBy(0, aveC-g.getVCenterY());
+				aveC = aveC / selectedGraphics.size();
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(0, aveC - g.getVCenterY());
 				}
 				break;
-			case AlignActions.LEFT :
-				for(Graphics g : selectedGraphics) {
+			case AlignActions.LEFT:
+				for (Graphics g : selectedGraphics)
+				{
 					int c = g.getVLeft();
-					if (c < minC){ 
+					if (c < minC)
+					{
 						minC = c;
-						}
+					}
 				}
-				for(Graphics g : selectedGraphics) {	
-					g.vMoveBy(minC - g.getVLeft(),0);
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(minC - g.getVLeft(), 0);
 				}
 				break;
-			case AlignActions.RIGHT : 
-				for(Graphics g : selectedGraphics) {
-					int c = (g.getVLeft()+g.getVWidth());
-					if (c > maxC){
+			case AlignActions.RIGHT:
+				for (Graphics g : selectedGraphics)
+				{
+					int c = (g.getVLeft() + g.getVWidth());
+					if (c > maxC)
+					{
 						maxC = c;
-					}	
+					}
 				}
-				for(Graphics g : selectedGraphics) {
-					g.vMoveBy(maxC - (g.getVLeft()+g.getVWidth()),0);
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(maxC - (g.getVLeft() + g.getVWidth()), 0);
 				}
 				break;
-			case AlignActions.TOP : 
-				for(Graphics g : selectedGraphics) {
+			case AlignActions.TOP:
+				for (Graphics g : selectedGraphics)
+				{
 					int c = g.getVTop();
-					if (c < minC){
+					if (c < minC)
+					{
 						minC = c;
 					}
 				}
-				for(Graphics g : selectedGraphics) {
-					g.vMoveBy(0,minC - g.getVTop());
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(0, minC - g.getVTop());
 				}
 				break;
-			case AlignActions.BOTTOM :
-				for(Graphics g : selectedGraphics) {
-					int c = (g.getVTop()+g.getVHeight());
-					if (c > maxC){
+			case AlignActions.BOTTOM:
+				for (Graphics g : selectedGraphics)
+				{
+					int c = (g.getVTop() + g.getVHeight());
+					if (c > maxC)
+					{
 						maxC = c;
 					}
 				}
-				for(Graphics g : selectedGraphics) {
-					g.getGmmlData().setMCenterY(mFromV(maxC-(g.getVHeight()/2)));
-					g.vMoveBy(0,maxC - (g.getVTop()+g.getVHeight()));
+				for (Graphics g : selectedGraphics)
+				{
+					g.getGmmlData().setMCenterY(
+							mFromV(maxC - (g.getVHeight() / 2)));
+					g.vMoveBy(0, maxC - (g.getVTop() + g.getVHeight()));
 				}
 				break;
 			}
 			redrawDirtyRect();
+		}
 	}
-	}
+
 	/**
 	 * Scales selected objects either by max width or max height
+	 * 
 	 * @param alignType
 	 */
-	public void scaleSelected (char alignType){
-		
+	public void scaleSelected(char alignType)
+	{
+
 		List<Graphics> selectedGraphics = getSelectedGraphics();
 		double maxW = 0;
 		double maxH = 0;
-		
-		if (selectedGraphics.size() > 0){
-			switch (alignType){
+
+		if (selectedGraphics.size() > 0)
+		{
+			switch (alignType)
+			{
 			case AlignActions.WIDTH:
-				for(Graphics g : selectedGraphics) {
+				for (Graphics g : selectedGraphics)
+				{
 					Rectangle2D r = g.getVScaleRectangle();
 					double w = Math.abs(r.getWidth());
-					if (w > maxW){
+					if (w > maxW)
+					{
 						maxW = w;
 					}
 				}
-				for(Graphics g : selectedGraphics) {
+				for (Graphics g : selectedGraphics)
+				{
 					Rectangle2D r = g.getVScaleRectangle();
 					double oldWidth = r.getWidth();
-					if (oldWidth <0){
+					if (oldWidth < 0)
+					{
 						r.setRect(r.getX(), r.getY(), -(maxW), r.getHeight());
 						g.setVScaleRectangle(r);
-						g.vMoveBy((oldWidth+maxW)/2,0);
-					}
-					else{
+						g.vMoveBy((oldWidth + maxW) / 2, 0);
+					} else
+					{
 						r.setRect(r.getX(), r.getY(), maxW, r.getHeight());
 						g.setVScaleRectangle(r);
-						g.vMoveBy((oldWidth - maxW)/2,0);
+						g.vMoveBy((oldWidth - maxW) / 2, 0);
 					}
 				}
 				break;
 			case AlignActions.HEIGHT:
-				for(Graphics g : selectedGraphics) {
+				for (Graphics g : selectedGraphics)
+				{
 					Rectangle2D r = g.getVScaleRectangle();
 					double h = Math.abs(r.getHeight());
-					if (h > maxH){
+					if (h > maxH)
+					{
 						maxH = h;
 					}
 				}
-				for(Graphics g : selectedGraphics) {
+				for (Graphics g : selectedGraphics)
+				{
 					Rectangle2D r = g.getVScaleRectangle();
 					double oldHeight = r.getHeight();
-					if (oldHeight < 0){
+					if (oldHeight < 0)
+					{
 						r.setRect(r.getX(), r.getY(), r.getWidth(), -(maxH));
 						g.setVScaleRectangle(r);
-						g.vMoveBy(0,(maxH+oldHeight)/2);
-					}
-					else{
-					r.setRect(r.getX(), r.getY(), r.getWidth(), maxH);
-					g.setVScaleRectangle(r);
-					g.vMoveBy(0,(oldHeight - maxH)/2);
+						g.vMoveBy(0, (maxH + oldHeight) / 2);
+					} else
+					{
+						r.setRect(r.getX(), r.getY(), r.getWidth(), maxH);
+						g.setVScaleRectangle(r);
+						g.vMoveBy(0, (oldHeight - maxH) / 2);
 					}
 				}
 				break;
@@ -1366,29 +1644,30 @@ public class VPathway implements PathwayListener, VisualizationListener
 			redrawDirtyRect();
 		}
 	}
-	
+
 	/**
 	 * Get all elements of the class Graphics that are currently selected
+	 * 
 	 * @return
 	 */
-	public List<Graphics> getSelectedGraphics() {
+	public List<Graphics> getSelectedGraphics()
+	{
 		List<Graphics> result = new ArrayList<Graphics>();
 		for (VPathwayElement g : drawingObjects)
 		{
 			if (g.isSelected() && g instanceof Graphics
 					&& !(g instanceof SelectionBox))
 			{
-				result.add((Graphics)g);
+				result.add((Graphics) g);
 			}
 		}
 		return result;
 	}
-	
+
 	/**
-	 * If global clipboard contains GmmlDataObjects,
-	 * makes another copy of these objects, and pastes them in. 
-	 * The clipboard contents will be moved 10 pixels souteast,
-	 * so they won't exactly overlap with the original.
+	 * If global clipboard contains GmmlDataObjects, makes another copy of these
+	 * objects, and pastes them in. The clipboard contents will be moved 10
+	 * pixels souteast, so they won't exactly overlap with the original.
 	 */
 	public void pasteFromClipboad()
 	{
@@ -1397,44 +1676,44 @@ public class VPathway implements PathwayListener, VisualizationListener
 			clearSelection();
 			Map<String, String> idmap = new HashMap<String, String>();
 			Set<String> newids = new HashSet<String>();
-			
+
 			/*
 			 * Step 1: generate new unique ids for copied items
 			 */
 			for (PathwayElement o : Engine.clipboard)
 			{
 				String id = o.getGraphId();
-				if (id != null) 
+				if (id != null)
 				{
 					String x;
 					do
 					{
-						/* generate a unique id.
-						 * at the same time, check that it is not 
-						 * equal to one of the unique ids
-						 * that we generated since the start of this
-						 * method
-						 */ 
+						/*
+						 * generate a unique id. at the same time, check that it
+						 * is not equal to one of the unique ids that we
+						 * generated since the start of this method
+						 */
 						x = data.getUniqueId();
 					} while (newids.contains(x));
-					newids.add(x); // make sure we don't generate this one again
-					
+					newids.add(x); // make sure we don't generate this one
+					// again
+
 					idmap.put(id, x);
 				}
 			}
 			/*
-			 * Step 2: do the actual copying 
+			 * Step 2: do the actual copying
 			 */
 			for (PathwayElement o : Engine.clipboard)
 			{
-				if (o.getObjectType() == ObjectType.MAPPINFO ||
-					o.getObjectType() == ObjectType.INFOBOX)
+				if (o.getObjectType() == ObjectType.MAPPINFO
+						|| o.getObjectType() == ObjectType.INFOBOX)
 				{
 					// these object types we skip,
 					// because they have to be unique in a pathway
 					continue;
 				}
-				
+
 				lastAdded = null;
 				o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
 				o.setMStartY(o.getMStartY() + M_PASTE_OFFSET);
@@ -1442,43 +1721,40 @@ public class VPathway implements PathwayListener, VisualizationListener
 				o.setMEndY(o.getMEndY() + M_PASTE_OFFSET);
 				o.setMLeft(o.getMLeft() + M_PASTE_OFFSET);
 				o.setMTop(o.getMTop() + M_PASTE_OFFSET);
-				// make another copy to preserve clipboard contents for next paste
+				// make another copy to preserve clipboard contents for next
+				// paste
 				PathwayElement p = o.copy();
-				
+
 				// set new unique id
 				if (p.getGraphId() != null)
-				{					
-					p.setGraphId(idmap.get(p.getGraphId()));					
+				{
+					p.setGraphId(idmap.get(p.getGraphId()));
 				}
 				// update graphref
-				String y = p.getStartGraphRef(); 
+				String y = p.getStartGraphRef();
 				if (y != null)
 				{
-					//TODO: mapping graphrefs to newly created id's 
+					// TODO: mapping graphrefs to newly created id's
 					// doesn't work properly yet
-				/*	if (idmap.containsKey(y))
-					{
-						p.setStartGraphRef(idmap.get(y));
-					}
-					else
-					{*/
-						p.setStartGraphRef(null);
-					//}				
+					/*
+					 * if (idmap.containsKey(y)) {
+					 * p.setStartGraphRef(idmap.get(y)); } else {
+					 */
+					p.setStartGraphRef(null);
+					// }
 				}
-				y = p.getEndGraphRef(); 
+				y = p.getEndGraphRef();
 				if (y != null)
 				{
-				/*	if (idmap.containsKey(y))
-					{
-						p.setEndGraphRef(idmap.get(y));
-					}
-					else
-					{*/
-						p.setEndGraphRef(null);
-				//	}				
+					/*
+					 * if (idmap.containsKey(y)) {
+					 * p.setEndGraphRef(idmap.get(y)); } else {
+					 */
+					p.setEndGraphRef(null);
+					// }
 				}
-				
-				data.add (p); // causes lastAdded to be set
+
+				data.add(p); // causes lastAdded to be set
 				lastAdded.select();
 				s.addToSelection(lastAdded);
 			}
@@ -1486,69 +1762,83 @@ public class VPathway implements PathwayListener, VisualizationListener
 	}
 
 	private List<VPathwayListener> listeners = new ArrayList<VPathwayListener>();
+
 	private List<VPathwayListener> removeListeners = new ArrayList<VPathwayListener>();
-	
-	public void addVPathwayListener(VPathwayListener l) {
-		if(!listeners.contains(l)) listeners.add(l);
+
+	public void addVPathwayListener(VPathwayListener l)
+	{
+		if (!listeners.contains(l))
+			listeners.add(l);
 	}
-	
-	public void removeVPathwayListener(VPathwayListener l) {
+
+	public void removeVPathwayListener(VPathwayListener l)
+	{
 		removeListeners.add(l);
 	}
-	
-	private void cleanupListeners() {
-		//Do not remove immediately, to prevent ConcurrentModificationException
-		//when the listener removes itself
+
+	private void cleanupListeners()
+	{
+		// Do not remove immediately, to prevent ConcurrentModificationException
+		// when the listener removes itself
 		listeners.removeAll(removeListeners);
 		removeListeners.clear();
 	}
-	
-	protected void fireVPathwayEvent(VPathwayEvent e) {
+
+	protected void fireVPathwayEvent(VPathwayEvent e)
+	{
 		cleanupListeners();
-		for(VPathwayListener l : listeners) {
+		for (VPathwayListener l : listeners)
+		{
 			l.vPathwayEvent(e);
 		}
 	}
-	
-	public void visualizationEvent(VisualizationEvent e) {
-		switch(e.type) {
-		case(VisualizationEvent.COLORSET_MODIFIED):
-		case(VisualizationEvent.VISUALIZATION_SELECTED):
-		case(VisualizationEvent.VISUALIZATION_MODIFIED):
-		case(VisualizationEvent.PLUGIN_MODIFIED):
-			//getDisplay().syncExec(new Runnable() {
-			//	public void run() {
-					redraw();
-			//	}
-			//});
-		}
-	}	
-	
-	
-	/** 
-	 * helper method to convert view coordinates to model coordinates 
-	 * */
-	public double mFromV(double v) { return v / zoomFactor; }
 
-	/** 
-	 * helper method to convert view coordinates to model coordinates 
-	 * */
-	public double vFromM(double m) { return m * zoomFactor; }
+	public void visualizationEvent(VisualizationEvent e)
+	{
+		switch (e.type)
+		{
+		case (VisualizationEvent.COLORSET_MODIFIED):
+		case (VisualizationEvent.VISUALIZATION_SELECTED):
+		case (VisualizationEvent.VISUALIZATION_MODIFIED):
+		case (VisualizationEvent.PLUGIN_MODIFIED):
+			// getDisplay().syncExec(new Runnable() {
+			// public void run() {
+			redraw();
+			// }
+			// });
+		}
+	}
 
 	/**
-	   Get width of entire Pathway view (taking into account zoom)
+	 * helper method to convert view coordinates to model coordinates
+	 */
+	public double mFromV(double v)
+	{
+		return v / zoomFactor;
+	}
+
+	/**
+	 * helper method to convert view coordinates to model coordinates
+	 */
+	public double vFromM(double m)
+	{
+		return m * zoomFactor;
+	}
+
+	/**
+	 * Get width of entire Pathway view (taking into account zoom)
 	 */
 	public int getVWidth()
 	{
-		return (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+		return (int) vFromM(infoBox.getGmmlData().getMBoardWidth());
 	}
-	
+
 	/**
-	   Get height of entire Pathway view (taking into account zoom)
+	 * Get height of entire Pathway view (taking into account zoom)
 	 */
 	public int getVHeight()
 	{
-		return (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+		return (int) vFromM(infoBox.getGmmlData().getMBoardHeight());
 	}
-	
+
 } // end of class

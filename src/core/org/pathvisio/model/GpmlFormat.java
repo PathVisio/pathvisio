@@ -614,9 +614,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	private static void updateGroup (PathwayElement o, Element e) throws ConverterException
 	{
 		//ID
-		String id = o.getGroupId();
+		String id = o.createGroupId();
 		if (id != null && !id.equals(""))
-			{e.setAttribute("GroupId", o.getGroupId());}
+			{e.setAttribute("GroupId", o.createGroupId());}
 		//Style
 		setAttribute("Group", "Style", e, GroupStyle.toGpmlName(o.getGroupStyle()));
 		//Label

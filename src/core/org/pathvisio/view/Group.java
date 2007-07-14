@@ -46,7 +46,7 @@ public class Group extends Graphics {
 					PathwayElement pe = ((Graphics) vpe).getGmmlData();
 					String ref = pe.getGroupRef();
 					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
-						//System.out.println("TRUE!");
+						//System.out.println("Contains: "+ref);
 						return true;
 					}
 				}
@@ -63,7 +63,7 @@ public class Group extends Graphics {
 					PathwayElement pe = ((Graphics) vpe).getGmmlData();
 					String ref = pe.getGroupRef();
 					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
-						//System.out.println("TRUE INTERSECTS!");
+						//System.out.println("Intersects: "+ref);
 						return true;
 					}
 				}

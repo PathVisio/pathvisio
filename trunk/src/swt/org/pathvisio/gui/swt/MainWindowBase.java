@@ -92,6 +92,12 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	protected AlignActions.AlignBottomAction alignBottomAction = new AlignActions.AlignBottomAction(this);
 	protected AlignActions.SetCommonWidthAction setCommonWidthAction = new AlignActions.SetCommonWidthAction(this);
 	protected AlignActions.SetCommonHeightAction setCommonHeightAction = new AlignActions.SetCommonHeightAction(this);
+	protected StackActions.StackCenterXAction stackCenterXAction = new StackActions.StackCenterXAction(this);
+	protected StackActions.StackCenterYAction stackCenterYAction = new StackActions.StackCenterYAction(this);
+	protected StackActions.StackLeftAction stackLeftAction = new StackActions.StackLeftAction(this);
+	protected StackActions.StackRightAction stackRightAction = new StackActions.StackRightAction(this);
+	protected StackActions.StackTopAction stackTopAction = new StackActions.StackTopAction(this);
+	protected StackActions.StackBottomAction stackBottomAction = new StackActions.StackBottomAction(this);
 
 	/**
 	 * {@link Action} to select a Gene Database
@@ -324,6 +330,13 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		toolBarManager.add(alignBottomAction);
 		toolBarManager.add(setCommonWidthAction);
 		toolBarManager.add(setCommonHeightAction);
+		toolBarManager.add(stackCenterXAction);
+		toolBarManager.add(stackCenterYAction);
+		toolBarManager.add(stackLeftAction);
+		toolBarManager.add(stackRightAction);
+		toolBarManager.add(stackTopAction);
+		toolBarManager.add(stackBottomAction);
+
 	
 		alignActionsCI = new ToolBarContributionItem(toolBarManager, "AlignActions");
 	}

@@ -27,6 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swt.AlignActions;
+import org.pathvisio.gui.swt.StackActions;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -1475,94 +1477,171 @@ public class VPathway implements PathwayListener, VisualizationListener
 	{
 		List<Graphics> selectedGraphics = getSelectedGraphics();
 
-		int aveC = 0;
-		int minC = java.lang.Integer.MAX_VALUE;
-		int maxC = 0;
-
 		if (selectedGraphics.size() > 0)
 		{
 			switch (alignType)
 			{
-			case AlignActions.CENTERX:
-				for (Graphics g : selectedGraphics)
-				{
-					int c = g.getVCenterX();
-					aveC = aveC + c;
-				}
-				aveC = aveC / selectedGraphics.size();
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(aveC - g.getVCenterX(), 0);
+			case StackActions.CENTERX:
+				Collections.sort(selectedGraphics, new YComparator());								
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							selectedGraphics.get(i-1).getVCenterX() - selectedGraphics.get(i).getVCenterX(), 
+							0);
+				}		
+				break;
+			case StackActions.CENTERY:
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							0, 
+							selectedGraphics.get(i-1).getVCenterY() - selectedGraphics.get(i).getVCenterY()
+							);
 				}
 				break;
-			case AlignActions.CENTERY:
-				for (Graphics g : selectedGraphics)
-				{
-					int c = g.getVCenterY();
-					aveC = aveC + c;
-				}
-				aveC = aveC / selectedGraphics.size();
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(0, aveC - g.getVCenterY());
+			case StackActions.LEFT:
+				Collections.sort(selectedGraphics, new YComparator());								
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX()  - 
+							selectedGraphics.get(i-1).getVWidth() /2 +
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							0);
+				}		
+				break;
+			case StackActions.RIGHT:
+				Collections.sort(selectedGraphics, new YComparator());								
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX()  + 
+							selectedGraphics.get(i-1).getVWidth() /2 -
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							0);
+				}		
+				break;
+			case StackActions.TOP:
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							0, 
+							(selectedGraphics.get(i-1).getVCenterY() - 
+							selectedGraphics.get(i-1).getVHeight() /2 +
+							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+							);
 				}
 				break;
-			case AlignActions.LEFT:
-				for (Graphics g : selectedGraphics)
-				{
-					int c = g.getVLeft();
-					if (c < minC)
-					{
-						minC = c;
-					}
-				}
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(minC - g.getVLeft(), 0);
+			case StackActions.BOTTOM:
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							0, 
+							(selectedGraphics.get(i-1).getVCenterY() + 
+							selectedGraphics.get(i-1).getVHeight() /2 -
+							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+							);
 				}
 				break;
-			case AlignActions.RIGHT:
-				for (Graphics g : selectedGraphics)
-				{
-					int c = (g.getVLeft() + g.getVWidth());
-					if (c > maxC)
-					{
-						maxC = c;
-					}
-				}
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(maxC - (g.getVLeft() + g.getVWidth()), 0);
+			}
+			redrawDirtyRect();
+		}
+	}
+
+	/**
+	 * Stacks selected objects based on user-selected stack type
+	 * 
+	 * @param stackType
+	 */
+	public void stackSelected(char stackType)
+	{
+		List<Graphics> selectedGraphics = getSelectedGraphics();
+
+		if (selectedGraphics.size() > 0)
+		{
+			switch (stackType)
+			{
+			case StackActions.CENTERX:
+				Collections.sort(selectedGraphics, new YComparator());								
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							selectedGraphics.get(i-1).getVCenterX() - selectedGraphics.get(i).getVCenterX(), 
+							(selectedGraphics.get(i-1).getVCenterY() + 
+							selectedGraphics.get(i-1).getVHeight() /2 +
+							selectedGraphics.get(i).getVHeight() /2) - selectedGraphics.get(i).getVCenterY()
+							);
+				}		
+				break;
+			case StackActions.CENTERY:
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX() + 
+							selectedGraphics.get(i-1).getVWidth() /2 +
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							selectedGraphics.get(i-1).getVCenterY() - selectedGraphics.get(i).getVCenterY()
+							);
 				}
 				break;
-			case AlignActions.TOP:
-				for (Graphics g : selectedGraphics)
-				{
-					int c = g.getVTop();
-					if (c < minC)
-					{
-						minC = c;
-					}
-				}
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(0, minC - g.getVTop());
+			case StackActions.LEFT:
+				Collections.sort(selectedGraphics, new YComparator());								
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX()  - 
+							selectedGraphics.get(i-1).getVWidth() /2 +
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							(selectedGraphics.get(i-1).getVCenterY() + 
+							selectedGraphics.get(i-1).getVHeight() /2 +
+							selectedGraphics.get(i).getVHeight() /2) - selectedGraphics.get(i).getVCenterY()
+							);
+				}		
+				break;
+			case StackActions.RIGHT:
+				Collections.sort(selectedGraphics, new YComparator());								
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX()  + 
+							selectedGraphics.get(i-1).getVWidth() /2 -
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							(selectedGraphics.get(i-1).getVCenterY() + 
+							selectedGraphics.get(i-1).getVHeight() /2 +
+							selectedGraphics.get(i).getVHeight() /2) - selectedGraphics.get(i).getVCenterY()
+							);
+				}		
+				break;
+			case StackActions.TOP:
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX() + 
+							selectedGraphics.get(i-1).getVWidth() /2 +
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							(selectedGraphics.get(i-1).getVCenterY() - 
+							selectedGraphics.get(i-1).getVHeight() /2 +
+							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+							);
 				}
 				break;
-			case AlignActions.BOTTOM:
-				for (Graphics g : selectedGraphics)
-				{
-					int c = (g.getVTop() + g.getVHeight());
-					if (c > maxC)
-					{
-						maxC = c;
-					}
-				}
-				for (Graphics g : selectedGraphics)
-				{
-					g.getGmmlData().setMCenterY(
-							mFromV(maxC - (g.getVHeight() / 2)));
-					g.vMoveBy(0, maxC - (g.getVTop() + g.getVHeight()));
+			case StackActions.BOTTOM:
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{				
+					selectedGraphics.get(i).vMoveBy(
+							(selectedGraphics.get(i-1).getVCenterX() + 
+							selectedGraphics.get(i-1).getVWidth() /2 +
+							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
+							(selectedGraphics.get(i-1).getVCenterY() + 
+							selectedGraphics.get(i-1).getVHeight() /2 -
+							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+							);
 				}
 				break;
 			}
@@ -1840,5 +1919,30 @@ public class VPathway implements PathwayListener, VisualizationListener
 	{
 		return (int) vFromM(infoBox.getGmmlData().getMBoardHeight());
 	}
+	
+	//AP20070716
+	public class YComparator implements Comparator<Graphics> {
+		public int compare(Graphics g1, Graphics g2) {
+			if (g1.getVCenterY() == g2.getVCenterY())
+				return 0;
+			else if (g1.getVCenterY() < g2.getVCenterY())
+				return -1;
+			else
+
+				return 1;
+		}
+	}
+	public class XComparator implements Comparator<Graphics> {
+		public int compare(Graphics g1, Graphics g2) {
+			if (g1.getVCenterX() == g2.getVCenterX())
+				return 0;
+			else if (g1.getVCenterX() < g2.getVCenterX())
+				return -1;
+			else
+
+				return 1;
+		}
+	}
+	
 
 } // end of class

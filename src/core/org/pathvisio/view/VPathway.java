@@ -1481,72 +1481,61 @@ public class VPathway implements PathwayListener, VisualizationListener
 		{
 			switch (alignType)
 			{
-			case StackActions.CENTERX:
-			{
-				Collections.sort(selectedGraphics, new YComparator());
-				PathwayElement elt = selectedGraphics.get(0).getGmmlData();			
-				double yco = elt.getMTop() + elt.getMHeight();			   
+			case AlignActions.CENTERX:
+				Collections.sort(selectedGraphics, new YComparator());		   
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{
-					elt = selectedGraphics.get(1).getGmmlData();
-					elt.setMTop (yco);
-					yco += elt.getMHeight();
+					selectedGraphics.get(i).getGmmlData().setMCenterX(
+							selectedGraphics.get(i-1).getGmmlData().getMCenterX()						
+							);
 				}		
 				break;
-			}
-			case StackActions.CENTERY:
+			case AlignActions.CENTERY:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							0, 
-							selectedGraphics.get(i-1).getVCenterY() - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMCenterY(
+							selectedGraphics.get(i-1).getGmmlData().getMCenterY()						
 							);
 				}
 				break;
-			case StackActions.LEFT:
+			case AlignActions.LEFT:
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX()  - 
-							selectedGraphics.get(i-1).getVWidth() /2 +
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							0);
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft()						
+							);
 				}		
 				break;
-			case StackActions.RIGHT:
+			case AlignActions.RIGHT:
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX()  + 
-							selectedGraphics.get(i-1).getVWidth() /2 -
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							0);
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft() +
+							selectedGraphics.get(i-1).getGmmlData().getMWidth()	-
+							selectedGraphics.get(i).getGmmlData().getMWidth()							
+							);
 				}		
 				break;
-			case StackActions.TOP:
+			case AlignActions.TOP:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							0, 
-							(selectedGraphics.get(i-1).getVCenterY() - 
-							selectedGraphics.get(i-1).getVHeight() /2 +
-							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop()						
 							);
 				}
 				break;
-			case StackActions.BOTTOM:
+			case AlignActions.BOTTOM:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							0, 
-							(selectedGraphics.get(i-1).getVCenterY() + 
-							selectedGraphics.get(i-1).getVHeight() /2 -
-							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop() +
+							selectedGraphics.get(i-1).getGmmlData().getMHeight() -
+							selectedGraphics.get(i).getGmmlData().getMHeight()						
 							);
 				}
 				break;
@@ -1569,14 +1558,15 @@ public class VPathway implements PathwayListener, VisualizationListener
 			switch (stackType)
 			{
 			case StackActions.CENTERX:
-				Collections.sort(selectedGraphics, new YComparator());								
+				Collections.sort(selectedGraphics, new YComparator());		   
 				for (int i=1; i<selectedGraphics.size(); i++)
-				{				
-					selectedGraphics.get(i).vMoveBy(
-							selectedGraphics.get(i-1).getVCenterX() - selectedGraphics.get(i).getVCenterX(), 
-							(selectedGraphics.get(i-1).getVCenterY() + 
-							selectedGraphics.get(i-1).getVHeight() /2 +
-							selectedGraphics.get(i).getVHeight() /2) - selectedGraphics.get(i).getVCenterY()
+				{
+					selectedGraphics.get(i).getGmmlData().setMCenterX(
+							selectedGraphics.get(i-1).getGmmlData().getMCenterX()						
+							);
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop() +
+							selectedGraphics.get(i-1).getGmmlData().getMHeight()						
 							);
 				}		
 				break;
@@ -1584,11 +1574,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX() + 
-							selectedGraphics.get(i-1).getVWidth() /2 +
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							selectedGraphics.get(i-1).getVCenterY() - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMCenterY(
+							selectedGraphics.get(i-1).getGmmlData().getMCenterY()						
+							);
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft() +
+							selectedGraphics.get(i-1).getGmmlData().getMWidth()						
 							);
 				}
 				break;
@@ -1596,13 +1587,12 @@ public class VPathway implements PathwayListener, VisualizationListener
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX()  - 
-							selectedGraphics.get(i-1).getVWidth() /2 +
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							(selectedGraphics.get(i-1).getVCenterY() + 
-							selectedGraphics.get(i-1).getVHeight() /2 +
-							selectedGraphics.get(i).getVHeight() /2) - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft()						
+							);
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop() +
+							selectedGraphics.get(i-1).getGmmlData().getMHeight()						
 							);
 				}		
 				break;
@@ -1610,27 +1600,28 @@ public class VPathway implements PathwayListener, VisualizationListener
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX()  + 
-							selectedGraphics.get(i-1).getVWidth() /2 -
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							(selectedGraphics.get(i-1).getVCenterY() + 
-							selectedGraphics.get(i-1).getVHeight() /2 +
-							selectedGraphics.get(i).getVHeight() /2) - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft() +
+							selectedGraphics.get(i-1).getGmmlData().getMWidth()	-
+							selectedGraphics.get(i).getGmmlData().getMWidth()							
 							);
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop() +
+							selectedGraphics.get(i-1).getGmmlData().getMHeight()						
+							);
+
 				}		
 				break;
 			case StackActions.TOP:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX() + 
-							selectedGraphics.get(i-1).getVWidth() /2 +
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							(selectedGraphics.get(i-1).getVCenterY() - 
-							selectedGraphics.get(i-1).getVHeight() /2 +
-							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop()						
+							);
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft() +
+							selectedGraphics.get(i-1).getGmmlData().getMWidth()						
 							);
 				}
 				break;
@@ -1638,13 +1629,14 @@ public class VPathway implements PathwayListener, VisualizationListener
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
-					selectedGraphics.get(i).vMoveBy(
-							(selectedGraphics.get(i-1).getVCenterX() + 
-							selectedGraphics.get(i-1).getVWidth() /2 +
-							selectedGraphics.get(i).getVWidth() /2) - selectedGraphics.get(i).getVCenterX(), 
-							(selectedGraphics.get(i-1).getVCenterY() + 
-							selectedGraphics.get(i-1).getVHeight() /2 -
-							selectedGraphics.get(i).getVHeight() /2)  - selectedGraphics.get(i).getVCenterY()
+					selectedGraphics.get(i).getGmmlData().setMTop(
+							selectedGraphics.get(i-1).getGmmlData().getMTop() +
+							selectedGraphics.get(i-1).getGmmlData().getMHeight() -
+							selectedGraphics.get(i).getGmmlData().getMHeight()						
+							);
+					selectedGraphics.get(i).getGmmlData().setMLeft(
+							selectedGraphics.get(i-1).getGmmlData().getMLeft() +
+							selectedGraphics.get(i-1).getGmmlData().getMWidth()						
 							);
 				}
 				break;

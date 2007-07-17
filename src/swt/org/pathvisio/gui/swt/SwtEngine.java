@@ -307,14 +307,22 @@ public class SwtEngine {
 						"Please note that the Gpml format has changed as of March 2007. " +
 						"The standard pathway set can be re-downloaded from http://pathvisio.org " +
 						"Non-standard pathways need to be recreated or upgraded. " +
-						"Please contact the authors at martijn.vaniersel@bigcat.unimaas.nl if you need help with this.\n" +
+						"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
 						"\nSee error log for details");
 					Engine.log.error("Unable to open Gpml file", e);
 				}
 				else
 				{
-					MessageDialog.openError(getWindow().getShell(), 
-											"Unable to open Gpml file", e.getClass() + e.getMessage());
+					//TODO: refactor these error messages,
+					// so it's not redundant with SwingEngine.
+					MessageDialog.openError(
+						getWindow().getShell(), 
+						"Unable to open Gpml file",
+						"Unable to open Gpml file\n\n" +
+						"Check that the file you're trying to open really is a "+
+						"Pathway in the Gpml format. If the problem persists, please contact " +
+						"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
+						"file you're trying to open and the error log.");
 					Engine.log.error("Unable to open Gpml file", e);
 				}
 			}

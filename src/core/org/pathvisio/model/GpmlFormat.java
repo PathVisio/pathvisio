@@ -691,7 +691,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
-    	String rotation = graphics.getAttributeValue("Rotation");
+    	String rotation = getAttribute("Shape.Graphics", "Rotation", graphics);
     	double result;
     	if (rotation.equals("Top"))
     	{

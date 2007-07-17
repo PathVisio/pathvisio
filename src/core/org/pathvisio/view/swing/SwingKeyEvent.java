@@ -24,7 +24,6 @@ public class SwingKeyEvent extends org.pathvisio.view.KeyEvent {
 	public SwingKeyEvent(KeyEvent e) {
 		super(e.getSource(), convertKeyCode(e), convertType(e), e.getModifiers());
 		awtEvent = e;
-		System.out.println(getKeyCode());
 	}
 	
 	protected static int convertKeyCode(KeyEvent e) {

@@ -23,6 +23,7 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
@@ -49,7 +50,7 @@ public class SwingEngine {
 					"Please note that the Gpml format has changed as of March 2007. " +
 					"The standard pathway set can be re-downloaded from http://pathvisio.org " +
 					"Non-standard pathways need to be recreated or upgraded. " +
-					"Please contact the authors at martijn.vaniersel@bigcat.unimaas.nl if you need help with this.\n" +
+					"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
 					"\nSee error log for details");
 			Engine.log.error("Unable to open Gpml file", e);
 		}

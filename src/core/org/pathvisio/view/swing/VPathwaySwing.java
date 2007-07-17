@@ -123,12 +123,10 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void keyPressed(KeyEvent e) {
-		System.out.println("Key pressed........!");
 		child.keyPressed(new SwingKeyEvent(e));
 	}
 
 	public void keyReleased(KeyEvent e) {
-		System.out.println("Key released......!");
 		child.keyReleased(new SwingKeyEvent(e));
 	}
 

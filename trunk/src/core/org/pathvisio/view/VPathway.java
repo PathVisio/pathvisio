@@ -1482,14 +1482,18 @@ public class VPathway implements PathwayListener, VisualizationListener
 			switch (alignType)
 			{
 			case StackActions.CENTERX:
-				Collections.sort(selectedGraphics, new YComparator());								
+			{
+				Collections.sort(selectedGraphics, new YComparator());
+				PathwayElement elt = selectedGraphics.get(0).getGmmlData();			
+				double yco = elt.getMTop() + elt.getMHeight();			   
 				for (int i=1; i<selectedGraphics.size(); i++)
-				{				
-					selectedGraphics.get(i).vMoveBy(
-							selectedGraphics.get(i-1).getVCenterX() - selectedGraphics.get(i).getVCenterX(), 
-							0);
+				{
+					elt = selectedGraphics.get(1).getGmmlData();
+					elt.setMTop (yco);
+					yco += elt.getMHeight();
 				}		
 				break;
+			}
 			case StackActions.CENTERY:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)

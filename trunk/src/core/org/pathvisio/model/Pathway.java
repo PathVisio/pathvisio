@@ -271,7 +271,7 @@ public class Pathway implements PathwayListener
 		{
 			throw new IllegalArgumentException ("id '" + id + "' is not unique");
 		}
-	ids.add (id);
+		ids.add (id);
 	
 	}
 	
@@ -470,6 +470,10 @@ public class Pathway implements PathwayListener
 			throw new ConverterException (e);
 		}
 		catch(IOException e)
+		{
+			throw new ConverterException (e);
+		}
+		catch(NullPointerException e)
 		{
 			throw new ConverterException (e);
 		}

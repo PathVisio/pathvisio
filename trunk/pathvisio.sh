@@ -9,7 +9,7 @@ BASE_URL=
 # Set USE_EXPERIMENTAL to 1 if you want to run with Data visualizatoin and R mode
 USE_EXPERIMENTAL=0
 
-while getopts ":gerd" options; do
+while getopts ":gerds" options; do
 	case $options in
 		g )
 			RUN_MODE=DIRECT
@@ -19,22 +19,26 @@ while getopts ":gerd" options; do
 		e )
 			USE_EXPERIMENTAL=1
 			;;
-		r )
-			RUN_MODE=WEBSTART
-			MAIN_CLASS=
-			BASE_URL=http://ftp2.bigcat.unimaas.nl/~martijn.vaniersel/pathvisio/daily/webstart
+		s )
+			USE_EXPERIMENTAL=0
 			;;
-		d )
+		r )
 			RUN_MODE=WEBSTART
 			MAIN_CLASS=
 			BASE_URL=http://blog.bigcat.unimaas.nl/~gmmlvisio
 			;;
+		d )
+			RUN_MODE=WEBSTART
+			MAIN_CLASS=
+			BASE_URL=http://ftp2.bigcat.unimaas.nl/~martijn.vaniersel/pathvisio/daily/webstart
+			;;
 		\? )
-			echo "Usage: `basename $0` [-g|-r|-d] [-e] [-?]"
+			echo "Usage: `basename $0` [-g|-r|-d] [-e|-s] [-?]"
 			echo "  -g : Use swing instead of swt"
 			echo "  -r : Use webstart, latest stable release"
 			echo "  -d : Use webstart, daily build"
 			echo "  -e : Turn on experimental features (Data visualization, statistics)"
+			echo "  -s : Turn off experimental features (default)"
 			echo "  -? : show this help message"
 			exit;
 			;;

@@ -18,6 +18,9 @@ package org.pathvisio.model;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,13 +28,25 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.ValidatorHandler;
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.jdom.input.JDOMParseException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.SAXOutputter;
+import org.jdom.output.XMLOutputter;
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
+import org.xml.sax.SAXException;
 
 /**
  * class responsible for interaction with Gpml format.
@@ -49,6 +64,11 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	public static final Namespace BIOPAX = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
 	public static final Namespace OWL = Namespace.getNamespace("owl", "http://www.w3.org/2002/07/owl#");
+
+	/**
+	 * name of resource containing the gpml schema definition
+	 */
+	final private static String xsdFile = "GPML.xsd";
 	
 	private static class AttributeInfo
 	{
@@ -348,8 +368,18 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		
 		return doc;
 	}
-	
-	public static void mapElement(Element e, Pathway p) throws ConverterException
+
+	/**
+	   Fill out a single PathwayElement based on a piece of Jdom tree. Used also by Patch utility
+	 */
+	public static void mapElement(PathwayElement o, Element e) throws ConverterException
+	{
+	}
+
+	/**
+	   Read a piece of Jdom tree, create a PathwayElement based on that and add it to the Pathway.
+	 */
+	private static void mapElement(Element e, Pathway p) throws ConverterException
 	{
 		String tag = e.getName();
 		int ot = ObjectType.getTagMapping(tag);
@@ -379,7 +409,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			o = new PathwayElement(ot);
 			p.add (o);
 		}
-		
+
+		mapElement (o, e);
 		switch (o.getObjectType())
 		{
 			case ObjectType.DATANODE:
@@ -1035,6 +1066,120 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 
 	public String getName() {
 		return "GPML file";
+	}
+	
+	/**
+	 * Writes the JDOM document to the file specified
+	 * @param file	the file to which the JDOM document should be saved
+	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error, 
+	 * 		or the xsd is not in the classpath, an exception will be thrown. 
+	 */
+	static public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException 
+	{
+		Document doc = createJdom(pwy);
+		
+		//Validate the JDOM document
+		if (validate) validateDocument(doc);
+		//			Get the XML code
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("ISO-8859-1");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+		
+		//Open a filewriter
+		try
+		{
+			FileWriter writer = new FileWriter(file);
+			//Send XML code to the filewriter
+			xmlcode.output(doc, writer);
+		}
+		catch (IOException ie)
+		{
+			throw new ConverterException(ie);
+		}
+	}
+	
+	static public void readFromXml(Pathway pwy, File file, boolean validate) throws ConverterException
+	{
+		// Start XML processing
+		Logger.log.info("Start reading the XML file: " + file);
+		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
+		// try to read the file; if an error occurs, catch the exception and print feedback
+		try
+		{
+			// build JDOM tree
+			Document doc = builder.build(file);
+
+			if (validate) validateDocument(doc);
+			
+			// Copy the pathway information to a VPathway
+			Element root = doc.getRootElement();
+			
+			mapElement(root, pwy); // MappInfo
+			
+			// Iterate over direct children of the root element
+			for (Object e : root.getChildren())
+			{
+				mapElement((Element)e, pwy);
+			}			
+		}
+		catch(JDOMParseException pe) 
+		{
+			 throw new ConverterException (pe);
+		}
+		catch(JDOMException e)
+		{
+			throw new ConverterException (e);
+		}
+		catch(IOException e)
+		{
+			throw new ConverterException (e);
+		}
+		catch(NullPointerException e)
+		{
+			throw new ConverterException (e);
+		}
+	}
+
+	/**
+	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
+	 * @param doc the document to validate
+	 */
+	public static void validateDocument(Document doc) throws ConverterException
+	{	
+		ClassLoader cl = Pathway.class.getClassLoader();
+		InputStream is = cl.getResourceAsStream(xsdFile);
+		if(is != null) {	
+			Schema schema;
+			try {
+				SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				StreamSource ss = new StreamSource (is);
+				schema = factory.newSchema(ss);
+				ValidatorHandler vh =  schema.newValidatorHandler();
+				SAXOutputter so = new SAXOutputter(vh);
+				so.output(doc);
+				// If no errors occur, the file is valid according to the gpml xml schema definition
+				//TODO: open dialog to report error
+				Logger.log.info("Document is valid according to the xml schema definition '" + 
+						xsdFile.toString() + "'");
+			} catch (SAXException se) {
+				Logger.log.error("Could not parse the xml-schema definition", se);
+				throw new ConverterException (se);
+			} catch (JDOMException je) {
+				Logger.log.error("Document is invalid according to the xml-schema definition!: " + 
+						je.getMessage(), je);
+				XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+				
+				Logger.log.error("The invalid XML code:\n" + xmlcode.outputString(doc));
+				throw new ConverterException (je);
+			}
+		} else {
+			Logger.log.error("Document is not validated because the xml schema definition '" + 
+					xsdFile + "' could not be found in classpath");
+			throw new ConverterException ("Document is not validated because the xml schema definition '" + 
+					xsdFile + "' could not be found in classpath");
+		}
 	}
 
 }

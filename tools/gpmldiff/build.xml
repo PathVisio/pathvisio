@@ -81,8 +81,9 @@
 		
 	<target name="test" depends="compile">
 		<javac srcdir="src"
-					includes="**"
-					destdir="${build.dir}">
+			   includes="**"
+			   destdir="${build.dir}"
+			   debug="true">
 					<classpath refid="project.class.path"/>
 		</javac>
 		<junit printsummary="on" haltonfailure="true" fork="true">

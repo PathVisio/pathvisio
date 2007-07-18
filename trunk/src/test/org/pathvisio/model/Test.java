@@ -157,17 +157,21 @@ public class Test extends TestCase implements PathwayListener
 	public void testRefUniq()
 	{
 		// test for uniqueness
-		o.setGraphId("1");
-
+		o.setGraphId("123");
+		
 		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
 		data.add (o2);
+		assertSame (o.getParent(), o2.getParent());
+		assertEquals ("Setting graphId on first element", o.getGraphId(), "123");
 		try
-		{			
+		{
+			o2.setGraphId("123");
 			// try setting the same id again
-			o2.setGraphId("1");
 			fail("shouldn't be able to set the same id twice");
 		}
-		catch (IllegalArgumentException e) {}
+		catch (IllegalArgumentException e)
+		{
+		}
 		
 		// test random id
 		String x = data.getUniqueId();
@@ -282,13 +286,13 @@ public class Test extends TestCase implements PathwayListener
 		assertTrue (data.getDataObjects().contains(mi));
 		assertNotNull (mi);
 
-		try
-		{
-			mi = new PathwayElement(ObjectType.MAPPINFO);
-			data.add (mi);
-			fail("data should already have a MAPPINFO and shouldn't accept more");
-		}
-		catch (IllegalArgumentException e) {}
+		// test that adding a new mappinfo object replaces the old one.
+		PathwayElement mi2 = new PathwayElement(ObjectType.MAPPINFO);
+		data.add (mi2); 
+		assertSame ("MappInfo should be replaced", data.getMappInfo(), mi2); 
+		assertNotSame ("Old MappInfo should be gone", data.getMappInfo(), mi);
+		assertNull ("Old MappInfo should not have a parent anymore", mi.getParent());
+		assertSame ("New MappInfo should now have a parent", mi2.getParent(), data);
 		
 		mi = data.getMappInfo();
 		try
@@ -312,13 +316,12 @@ public class Test extends TestCase implements PathwayListener
 		assertNotNull (ib);
 		assertEquals (ib.getObjectType(), ObjectType.INFOBOX); 
 
-		try
-		{
-			ib = new PathwayElement(ObjectType.INFOBOX);
-			data.add (ib);
-			fail("data should already have a MAPPINFO and shouldn't accept more");
-		}
-		catch (IllegalArgumentException e) {}
+		PathwayElement ib2 = new PathwayElement(ObjectType.INFOBOX);
+		data.add (ib2);
+		assertSame ("Infobox should be replaced", data.getInfoBox(), ib2); 
+		assertNotSame ("Old Infobox should be gone", data.getInfoBox(), ib);
+		assertNull ("Old Infobox should not have a parent anymore", ib.getParent());
+		assertSame ("New Infobox should now have a parent", ib2.getParent(), data);
 		
 		ib = data.getMappInfo();
 		try

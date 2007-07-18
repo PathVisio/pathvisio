@@ -17,9 +17,6 @@
 package org.pathvisio.model;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,25 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.ValidatorHandler;
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.JDOMParseException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.SAXOutputter;
-import org.jdom.output.XMLOutputter;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
-import org.xml.sax.SAXException;
-
 
 /**
 * This class is the model for pathway data. It is responsible for
@@ -88,12 +67,7 @@ public class Pathway implements PathwayListener
 	 * @deprecated
 	 */
 	final public static int OLD_GMMLZOOM = 15;
-	
-	/**
-	 * name of resource containing the gpml schema definition
-	 */
-	final private static String xsdFile = "GPML.xsd";
-	
+		
 	/**
 	 * List of contained dataObjects
 	 */
@@ -115,8 +89,6 @@ public class Pathway implements PathwayListener
 	
 	/**
 	 * get the one and only MappInfo object.
-	 * There is no setter, a MappInfo object is automatically
-	 * created in the constructor.
 	 * 
 	 * @return a PathwayElement with ObjectType set to mappinfo.
 	 */
@@ -126,9 +98,17 @@ public class Pathway implements PathwayListener
 	}
 
 	/**
+	   overwrite current mappInfo
+	 */
+	public void setMappInfo(PathwayElement value)
+	{
+		assert (value != null);
+		assert (value.getObjectType() == ObjectType.MAPPINFO);
+		mappInfo = value;
+	}
+	
+	/**
 	 * get the one and only InfoBox object.
-	 * There is no setter, a MappInfo object is automatically
-	 * created in the constructor.
 	 * 
 	 * @return a PathwayElement with ObjectType set to mappinfo.
 	 */
@@ -136,16 +116,30 @@ public class Pathway implements PathwayListener
 	{
 		return infoBox;
 	}
-	
-	public PathwayElement getBiopax() {
+
+	public void setInfoBox(PathwayElement value)
+	{
+		assert (value != null);
+		assert (value.getObjectType() == ObjectType.INFOBOX);
+	    infoBox = value;
+	}
+
+
+	/**
+	   note: may return null.
+	 */
+	public PathwayElement getBiopax()
+	{
 		return biopax;
 	}
 	
-	public void createBiopax() {
+	public void createBiopax()
+	{
 		biopax = new PathwayElement(ObjectType.BIOPAX);
 		this.add(biopax);
 	}
-		
+
+
 	/**
 	 * Add a PathwayElement to this Pathway.
 	 * takes care of setting parent and removing from possible previous
@@ -157,12 +151,27 @@ public class Pathway implements PathwayListener
 	 */
 	public void add (PathwayElement o)
 	{
-		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
-			throw new IllegalArgumentException("Can't add more mappinfo objects");
-		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
-			throw new IllegalArgumentException("Can't add more infobox objects");
-		if(o.getObjectType() == ObjectType.BIOPAX && biopax != null && o != biopax) {
-			throw new IllegalArgumentException("Can't add more biopax objects");
+		assert (o != null);
+		// There can be only one mappInfo object, so if we're trying to add it, remove the old one.
+		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo && mappInfo != null)
+		{
+			replaceUnique (mappInfo, o);
+			mappInfo = o;
+			return;
+		}
+		// There can be only one InfoBox object, so if we're trying to add it, remove the old one.
+		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox && infoBox != null)
+		{
+			replaceUnique (infoBox, o);
+			infoBox = o;
+			return;
+		}
+		// There can be zero or one Biopax object, so if we're trying to add it, remove the old one.
+		if(o.getObjectType() == ObjectType.BIOPAX && biopax != null && o != biopax)
+		{
+			replaceUnique (biopax, o);
+			biopax = o;
+			return;
 		}
 		if (o.getParent() == this) return; // trying to re-add the same object
 		if (o.getParent() != null) { o.getParent().remove(o); }
@@ -170,6 +179,24 @@ public class Pathway implements PathwayListener
 		o.addListener(this);
 		o.setParent(this);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
+	}
+
+	/**
+	   called for biopax, infobox and mappInfo upon addition.
+	 */
+	private void replaceUnique (PathwayElement oldElt, PathwayElement newElt)
+	{
+		assert (oldElt.getParent() == this);
+		assert (oldElt.getObjectType() == newElt.getObjectType());
+		assert (newElt.getParent() == null);
+		assert (oldElt != newElt);
+		fireObjectModifiedEvent (new PathwayEvent (oldElt, PathwayEvent.DELETED));
+		oldElt.removeListener (this);
+		dataObjects.remove(oldElt);
+		oldElt.setParent (null);
+		newElt.addListener (this);
+		newElt.setParent (this);
+		fireObjectModifiedEvent(new PathwayEvent(newElt, PathwayEvent.ADDED));		
 	}
 	
 	/**
@@ -181,6 +208,7 @@ public class Pathway implements PathwayListener
 	 */
 	public void remove (PathwayElement o)
 	{
+		assert (o.getParent() == this); // can only remove direct child objects
 		if (o.getObjectType() == ObjectType.MAPPINFO)
 			throw new IllegalArgumentException("Can't remove mappinfo object!");
 		if (o.getObjectType() == ObjectType.INFOBOX)
@@ -361,46 +389,6 @@ public class Pathway implements PathwayListener
 		mappInfo.setVersion(dateString);
 		mappInfo.setMapInfoName("New Pathway");
 	}
-
-	/**
-	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
-	 * @param doc the document to validate
-	 */
-	public static void validateDocument(Document doc) throws ConverterException
-	{	
-		ClassLoader cl = Pathway.class.getClassLoader();
-		InputStream is = cl.getResourceAsStream(xsdFile);
-		if(is != null) {	
-			Schema schema;
-			try {
-				SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				StreamSource ss = new StreamSource (is);
-				schema = factory.newSchema(ss);
-				ValidatorHandler vh =  schema.newValidatorHandler();
-				SAXOutputter so = new SAXOutputter(vh);
-				so.output(doc);
-				// If no errors occur, the file is valid according to the gpml xml schema definition
-				//TODO: open dialog to report error
-				Logger.log.info("Document is valid according to the xml schema definition '" + 
-						xsdFile.toString() + "'");
-			} catch (SAXException se) {
-				Logger.log.error("Could not parse the xml-schema definition", se);
-				throw new ConverterException (se);
-			} catch (JDOMException je) {
-				Logger.log.error("Document is invalid according to the xml-schema definition!: " + 
-						je.getMessage(), je);
-				XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-				
-				Logger.log.error("The invalid XML code:\n" + xmlcode.outputString(doc));
-				throw new ConverterException (je);
-			}
-		} else {
-			Logger.log.error("Document is not validated because the xml schema definition '" + 
-					xsdFile + "' could not be found in classpath");
-			throw new ConverterException ("Document is not validated because the xml schema definition '" + 
-					xsdFile + "' could not be found in classpath");
-		}
-	}
 		
 	/**
 	 * Writes the JDOM document to the file specified
@@ -410,75 +398,19 @@ public class Pathway implements PathwayListener
 	 */
 	public void writeToXml(File file, boolean validate) throws ConverterException 
 	{
-		Document doc = GpmlFormat.createJdom(this);
-		
-		//Validate the JDOM document
-		if (validate) validateDocument(doc);
-		//			Get the XML code
-		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-		Format f = xmlcode.getFormat();
-		f.setEncoding("ISO-8859-1");
-		f.setTextMode(Format.TextMode.PRESERVE);
-		xmlcode.setFormat(f);
-		
-		//Open a filewriter
-		try
-		{
-			FileWriter writer = new FileWriter(file);
-			//Send XML code to the filewriter
-			xmlcode.output(doc, writer);
-			setSourceFile (file);
-		}
-		catch (IOException ie)
-		{
-			throw new ConverterException(ie);
-		}
+		GpmlFormat.writeToXml (this, file, validate);
+
+		setSourceFile (file);
+
 	}
-	
+
 	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
-		// Start XML processing
-		Logger.log.info("Start reading the XML file: " + file);
-		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
-		// try to read the file; if an error occurs, catch the exception and print feedback
-		try
-		{
-			// build JDOM tree
-			Document doc = builder.build(file);
+		GpmlFormat.readFromXml (this, file, validate);
 
-			if (validate) validateDocument(doc);
-			
-			// Copy the pathway information to a VPathway
-			Element root = doc.getRootElement();
-			
-			GpmlFormat.mapElement(root, this); // MappInfo
-			
-			// Iterate over direct children of the root element
-			Iterator it = root.getChildren().iterator();
-			while (it.hasNext()) {
-				GpmlFormat.mapElement((Element)it.next(), this);
-			}
-			
-			setSourceFile (file);
-		}
-		catch(JDOMParseException pe) 
-		{
-			 throw new ConverterException (pe);
-		}
-		catch(JDOMException e)
-		{
-			throw new ConverterException (e);
-		}
-		catch(IOException e)
-		{
-			throw new ConverterException (e);
-		}
-		catch(NullPointerException e)
-		{
-			throw new ConverterException (e);
-		}
+		setSourceFile (file);
 	}
-	
+		
 	public void readFromMapp (File file) throws ConverterException
 	{
         String inputString = file.getAbsolutePath();
@@ -499,32 +431,9 @@ public class Pathway implements PathwayListener
 
 	public void writeToSvg (File file) throws ConverterException
 	{
-		Document doc = SvgFormat.createJdom(this);
-		
-		//Validate the JDOM document
-//		if (validate) validateDocument(doc);
-		//			Get the XML code
-		
-		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-		Format f = xmlcode.getFormat();
-		f.setEncoding("ISO-8859-1");
-		f.setTextMode(Format.TextMode.PRESERVE);
-		xmlcode.setFormat(f);
-		
-		//Open a filewriter
-		try
-		{
-			FileWriter writer = new FileWriter(file);
-			//Send XML code to the filewriter
-			xmlcode.output(doc, writer);
-			setSourceFile (file);
-		}
-		catch (IOException ie)
-		{
-			throw new ConverterException(ie);
-		}
+		SvgFormat.writeToSvg (this, file);
 	}
-
+	
 	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
 	public void addListener(PathwayListener v) { listeners.add(v); }
 	public void removeListener(PathwayListener v) { listeners.remove(v); }

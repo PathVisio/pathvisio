@@ -430,4 +430,31 @@ public class SvgFormat implements PathwayExporter
 			throw new ConverterException(ie);
 		}
 	}
+
+	static public void writeToSvg (Pathway pwy, File file) throws ConverterException
+	{
+		Document doc = SvgFormat.createJdom(pwy);
+		
+		//Validate the JDOM document
+//		if (validate) validateDocument(doc);
+		//			Get the XML code
+		
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("ISO-8859-1");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+		
+		//Open a filewriter
+		try
+		{
+			FileWriter writer = new FileWriter(file);
+			//Send XML code to the filewriter
+			xmlcode.output(doc, writer);
+		}
+		catch (IOException ie)
+		{
+			throw new ConverterException(ie);
+		}
+	}
 }

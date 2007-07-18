@@ -32,6 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.R.RController;
 import org.pathvisio.R.RDataIn;
@@ -46,6 +47,10 @@ import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.data.GexSwt.ProgressWizardDialog;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.VPathwayElement;
+import org.pathvisio.view.VPathwayEvent;
+import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationDialog;
 import org.pathvisio.visualization.VisualizationManager;
 
@@ -339,6 +344,17 @@ public class MainWindow extends MainWindowBase
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
 		rightPanel.addTab(visPanel, "Visualization");
+	}
+	
+	public void vPathwayEvent(VPathwayEvent e) {
+		super.vPathwayEvent(e);
+		if(e.getType() == VPathwayEvent.ELEMENT_DRAWN) {
+			Visualization v = VisualizationManager.getCurrent();
+			VPathwayElement elm = e.getAffectedElement();
+			if(v != null && elm instanceof Graphics) {
+				v.visualizeDrawing((Graphics)elm, e.getGraphics2D());
+			}
+		}
 	}
 	
 	public MainWindow()

@@ -40,7 +40,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -416,9 +415,7 @@ public class Gex implements ApplicationEventListener {
 	 * Imports expression data from a text file and saves it to an hsqldb expression database
 	 * @param info		{@link GexImportWizard.ImportInformation} object that contains the 
 	 * information needed to import the data
-	 * @param page		{@link GexImportWizard.ImportPage} that reports information and errors
-	 * during the import process
-	 * @param monitor	{@link IProgressMonitor} that reports the progress of the process and enables
+	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
 	 * the user to cancel
 	 */
 	protected static void importFromTxt(ImportInformation info, ProgressKeeper p)

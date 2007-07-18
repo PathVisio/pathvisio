@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Graphics2D;
 import java.util.EventObject;
 
 public class VPathwayEvent extends EventObject {
@@ -24,9 +25,11 @@ public class VPathwayEvent extends EventObject {
 	public static final int EDIT_MODE_OFF = 2;
 	public static final int MODEL_LOADED = 3;
 	public static final int ELEMENT_DOUBLE_CLICKED = 4;
+	public static final int ELEMENT_DRAWN = 5;
 	
 	int type;
 	VPathwayElement affectedElement;
+	Graphics2D g2d;
 	
 	public VPathwayEvent(VPathway source, int type) {
 		super(source);
@@ -38,12 +41,22 @@ public class VPathwayEvent extends EventObject {
 		this.affectedElement = affectedElement;
 	}
 	
+	public VPathwayEvent(VPathway source, VPathwayElement affectedElement, Graphics2D g2d, int type) {
+		this(source, type);
+		this.affectedElement = affectedElement;
+		this.g2d = g2d;
+	}
+	
 	public VPathwayElement getAffectedElement() {
 		return affectedElement;
 	}
 	
 	public int getType() {
 		return type;
+	}
+	
+	public Graphics2D getGraphics2D() {
+		return g2d;
 	}
 	
 	public VPathway getVPathway() {

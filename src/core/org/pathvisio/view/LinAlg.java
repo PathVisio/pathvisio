@@ -23,6 +23,14 @@ package org.pathvisio.view;
 public class LinAlg 
 {
 	
+	/**
+	 * Determines angle between two vectors defined by p1 and p2 
+	 * Both vectors start at 0.0
+	 * 
+	 * @param p1 start point of vector
+	 * @param p2 end point of vector
+	 * @return angle in radians
+	 */
 	public static double angle(Point p1, Point p2) 
 	{
 		//Angle:

@@ -26,6 +26,13 @@ import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement;
 
+/**
+ * //TODO: view.InfoBox corresponds in some ways to 
+ * model.PathwayElement(ObjectType.MAPPINFO) and in some ways to 
+ * model.PathwayElement(ObjectType.INFOBOX). 
+ * This confusion is rooted in inconsistencies in GPML. 
+ * This should be cleaned up one day.
+ */
 public class InfoBox extends Graphics {
 	static final int V_SPACING = 5;
 	static final int H_SPACING = 10;

@@ -49,7 +49,7 @@ class Patch
 			if (e.getName().equals("Modify"))
 			{
 				Modification mod = new Modifcation();
-				GpmlFormat.
+				GpmlFormat.mapElement (e)
 			}
 		}
 	}

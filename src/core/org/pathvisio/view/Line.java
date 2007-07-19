@@ -181,18 +181,10 @@ public class Line extends Graphics
 				
 		if(h != null) {
 			AffineTransform f = new AffineTransform();
-			f.rotate(-getAngle(xs, ys, xe, ye), xe, ye);
+			f.rotate(Math.atan2 (ye - ys, xe - xs), xe, ye);
 			h = f.createTransformedShape(h);
 		}
 		return h;
-	}
-	
-	private double getAngle(double xs, double ys, double xe, double ye) {
-		if(xs == xe && ys == ye) return 0; //Unable to determine direction
-		Point2D ps = new Point2D.Double(xe - xs, ye - ys);
-		Point2D pe = new Point2D.Double(1, 0);
-		
-		return LinAlg.angle(new LinAlg.Point(ps.getX(), ps.getY()), new LinAlg.Point(pe.getX(), pe.getY()));
 	}
 	
 	private Shape getArrowHead(double xs, double ys, double xe, double ye, double w, double h) {

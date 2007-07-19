@@ -96,16 +96,6 @@ public class Pathway implements PathwayListener
 	{
 		return mappInfo;
 	}
-
-	/**
-	   overwrite current mappInfo
-	 */
-	public void setMappInfo(PathwayElement value)
-	{
-		assert (value != null);
-		assert (value.getObjectType() == ObjectType.MAPPINFO);
-		mappInfo = value;
-	}
 	
 	/**
 	 * get the one and only InfoBox object.
@@ -116,14 +106,6 @@ public class Pathway implements PathwayListener
 	{
 		return infoBox;
 	}
-
-	public void setInfoBox(PathwayElement value)
-	{
-		assert (value != null);
-		assert (value.getObjectType() == ObjectType.INFOBOX);
-	    infoBox = value;
-	}
-
 
 	/**
 	   note: may return null.
@@ -138,7 +120,6 @@ public class Pathway implements PathwayListener
 		biopax = new PathwayElement(ObjectType.BIOPAX);
 		this.add(biopax);
 	}
-
 
 	/**
 	 * Add a PathwayElement to this Pathway.
@@ -196,6 +177,7 @@ public class Pathway implements PathwayListener
 		oldElt.setParent (null);
 		newElt.addListener (this);
 		newElt.setParent (this);
+		dataObjects.add(newElt);
 		fireObjectModifiedEvent(new PathwayEvent(newElt, PathwayEvent.ADDED));		
 	}
 	

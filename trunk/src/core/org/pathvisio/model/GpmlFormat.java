@@ -370,16 +370,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	}
 
 	/**
-	   Fill out a single PathwayElement based on a piece of Jdom tree. Used also by Patch utility
+	   Create a single PathwayElement based on a piece of Jdom tree. Used also by Patch utility
 	 */
-	public static void mapElement(PathwayElement o, Element e) throws ConverterException
-	{
-	}
-
-	/**
-	   Read a piece of Jdom tree, create a PathwayElement based on that and add it to the Pathway.
-	 */
-	private static void mapElement(Element e, Pathway p) throws ConverterException
+	public static PathwayElement mapElement(Element e) throws ConverterException
 	{
 		String tag = e.getName();
 		int ot = ObjectType.getTagMapping(tag);
@@ -388,29 +381,11 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			// do nothing. This could be caused by
 			// tags <comment> or <graphics> that appear
 			// as subtags of <pathway>
-			return;
+			return null;
 		}
 		
-		PathwayElement o;
-		if (ot == ObjectType.MAPPINFO)
-		{
-			o = p.getMappInfo();
-		}
-		else if (ot == ObjectType.INFOBOX)
-		{
-			o = p.getInfoBox();
-		} 
-		else if (ot == ObjectType.BIOPAX) 
-		{
-			o = p.getBiopax();
-		}
-		else
-		{
-			o = new PathwayElement(ot);
-			p.add (o);
-		}
+		PathwayElement o = new PathwayElement(ot);
 
-		mapElement (o, e);
 		switch (o.getObjectType())
 		{
 			case ObjectType.DATANODE:
@@ -467,6 +442,19 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				break;
 			default:
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
+		}
+		return o;
+	}
+
+	/**
+	   Read a piece of Jdom tree, create a PathwayElement based on that and add it to the Pathway.
+	 */
+	private static void mapElement(Element e, Pathway p) throws ConverterException
+	{
+		PathwayElement o = mapElement (e);
+		if (o != null)
+		{
+			p.add (o);
 		}
 	}
 	
@@ -1053,11 +1041,14 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			"White", "Yellow", "Transparent"
 		});
 
-	public void doImport(File file, Pathway pathway) throws ConverterException {
-		pathway.readFromXml(file, true);
-}
-	public void doExport(File file, Pathway pathway) throws ConverterException {
-		pathway.writeToXml(file, true);
+	public void doImport(File file, Pathway pathway) throws ConverterException
+	{
+		readFromXml(pathway, file, true);
+	}
+
+	public void doExport(File file, Pathway pathway) throws ConverterException
+	{
+		writeToXml(pathway, file, true);
 	}
 	
 	public String[] getExtensions() {

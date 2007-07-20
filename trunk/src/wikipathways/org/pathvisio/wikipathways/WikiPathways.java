@@ -20,11 +20,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -51,6 +56,7 @@ import org.xml.sax.SAXException;
 
 public class WikiPathways implements ApplicationEventListener {
 	public static String SITE_NAME = "WikiPathways.org";
+	
 	HashMap<String, String> cookie;
 	String rpcURL;
 	String pwName;
@@ -67,7 +73,7 @@ public class WikiPathways implements ApplicationEventListener {
 		cookie = new HashMap<String, String>();
 		Engine.addApplicationEventListener(this);
 	}
-
+	
 	public String getPwName() {
 		return pwName;
 	}
@@ -96,10 +102,22 @@ public class WikiPathways implements ApplicationEventListener {
 		return rpcURL;
 	}
 
+	public void setRpcURL(String rpcURL) {
+		this.rpcURL = rpcURL;
+	}
+
 	public String getUser() {
 		return user;
 	}
 
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public void addCookie(String key, String value) {
+		cookie.put(key, value);
+	}
+	
 	public void openPathwayURL() throws MalformedURLException, ConverterException {
 		localFile = SwingEngine.openPathway(new URL(pwURL));
 		Engine.getActiveVPathway().setEditMode(true);
@@ -124,14 +142,6 @@ public class WikiPathways implements ApplicationEventListener {
 		return localFile;
 	}
 	
-	public void setRpcURL(String rpcURL) {
-		this.rpcURL = rpcURL;
-	}
-	
-	public void setUser(String user) {
-		this.user = user;
-	}
-		
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
 		//TODO: check if changed
 		if(ovrChanged || Engine.getActivePathway().hasChanged()) {

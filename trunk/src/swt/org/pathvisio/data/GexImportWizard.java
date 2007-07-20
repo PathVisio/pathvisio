@@ -172,7 +172,7 @@ public class GexImportWizard extends Wizard {
 			gexButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					try {
-						DBConnectorSwt dbcon = Gex.getDBConnector();
+						DBConnectorSwt dbcon = (DBConnectorSwt)Gex.getDBConnector();
 						String dbName = dbcon.openNewDbDialog(getShell(), gexText.getText());
 						if(dbName != null) gexText.setText(dbName);
 						

@@ -16,6 +16,13 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.net.CookieHandler;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.JApplet;
 
 import org.pathvisio.ApplicationEvent;
@@ -23,6 +30,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class AppletMain extends JApplet {
@@ -59,18 +67,40 @@ public class AppletMain extends JApplet {
 		}
 	}
 	
+	void loadCookies() {
+		CookieHandler handler = CookieHandler.getDefault();
+		if (handler != null)    {
+			URL url = getDocumentBase();
+			try {
+				Map<String, List<String>> headers = handler.get(url.toURI(), new HashMap<String, List<String>>());
+				List<String> values = headers.get("Cookie");
+				for (Iterator<String> iter=values.iterator(); iter.hasNext();) {
+					String v = iter.next();
+					String[] vstr = v.split("=");
+					if(vstr.length == 2) {
+						wiki.addCookie(vstr[0].trim(), vstr[1].trim());
+					}
+				}
+			} catch(Exception e) {
+				Engine.log.error("Unable to load cookies", e);
+			}
+			
+		}
+//		JSObject myBrowser = (JSObject) JSObject.getWindow(this);
+//	        JSObject myDocument =  (JSObject) myBrowser.getMember("document");
+//	        String cookie = (String)myDocument.getMember("cookie");
+//	        String[] cstr = cookie.split(";");
+//	        for(String c : cstr) {
+//	        	String[] vstr = c.split("=");
+//	        	if(vstr.length == 2) {
+//	        		wiki.addCookie(vstr[0].trim(), vstr[1].trim());
+//	        	}
+//	        }
+	}
+	
 	void parseArguments() {
-		String pwURL = getParameter("pathwayUrl");
-		String pwName = getParameter("pwName");
-		String rpcUrl = getParameter("rpcUrl");
-		String pwSpecies = getParameter("pwSpecies");
-		String user = getParameter("user");
-		boolean pwNew = Boolean.parseBoolean(getParameter("new"));
-		wiki = new WikiPathways();
-		wiki.setUser(user);
-		wiki.setPwName(pwName);
-		wiki.setPwSpecies(pwSpecies);
-		wiki.setPwURL(pwURL);
-		wiki.setRpcURL(rpcUrl);
+		for(Parameter p : Parameter.values()) {
+			p.setValue(getParameter(p.getName()));
+		}
 	}
 }

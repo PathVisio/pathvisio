@@ -6,10 +6,12 @@
 	<property name="build.v1.dir" value="build/v1"/>
 	<property name="build.v2.dir" value="build/v2"/>
 	<property name="build.plugins.dir" value="build/plugins"/>
-
+	<property name="build.wikipathways.dir" value="build/wikipathways"/>
+	
     <property name="apidoc.dir" value="apidoc"/>
 	<!-- <property name="dist.dir" value="dist"/> -->
 	<property name="webstart.dir" value="webstart"/>
+	<property name="wikipathway.dir" value="wikipathways"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="exec.perl" value="perl"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
@@ -28,6 +30,13 @@
 		        <include name="**/*.jar"/>
 		</fileset>
 	</path>
+	
+	<path id="project.wikipathways.class.path">
+		<pathelement location="${build.wikipathways.dir}"/>
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
 
 	<target name="svnversion">
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
@@ -39,6 +48,7 @@
 		<mkdir dir="${build.v1.dir}"/>
 		<mkdir dir="${build.v2.dir}"/>
 		<mkdir dir="${build.plugins.dir}"/>
+		<mkdir dir="${build.wikipathways.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
@@ -57,6 +67,7 @@ public class Revision
 		<delete dir="${build.v2.dir}"/>
 		<delete dir="${build.core.dir}"/>
 		<delete dir="${build.plugins.dir}"/>
+		<delete dir="${build.wikipathways.dir}"/>
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
@@ -84,6 +95,31 @@ public class Revision
 		</javac>
 	</target>
 
+	<target name="compile-wikipathways" depends="prepare, resources-jar" description="Compile wikipathways version">
+		<!-- Include packages					Exceptions
+			src/swing
+				org.pathvisio.gui.swing.* 		(!MainPanel)
+				com.mammothsoftware.frwk.ddb
+			src/core
+				org.pathvisio
+				org.pathvisio.data 				(only DataSources)
+				org.pathvisio.data.debug
+				org.pathvisio.model
+				org.pathvisio.preferences
+				org.pathvisio.util
+				org.pathvisio.view
+				org.pathvisio.view.swing
+			src/wikipathways
+				org.pathvisio.gui.wikipathways
+				org.pathvisio.wikipathways
+		-->
+		<javac srcdir="src"
+			includes="core/**,wikipathways/**,swing/**"
+			destdir="${build.wikipathways.dir}">
+			<classpath refid="project.wikipathways.class.path"/>
+		</javac>
+	</target>
+	
 	<target name="resources-jar" depends="prepare" description="Generates jar with resources">
 		<jar jarfile="lib/resources.jar">
 			<fileset dir="." includes="backpage/*"/>
@@ -120,6 +156,15 @@ public class Revision
 		</jar>
     </target>
 
+	<target name="jar-wikipathways" depends="compile-wikipathways" description="Generate wikipathways jar file">
+		<jar jarfile="wikipathways.jar">
+			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
+            <manifest>
+                <attribute name="Class-Path" value="jdom.jar apache/commons-codec-1.3.jar apache/commons-httpclient-3.0.1.jar apache/commons-logging-1.1.jar apache/ws-commons-util-1.0.1.jar apache/xmlrpc-client-3.0.jar apache/xmlrpc-common-3.0.jar"/>
+            </manifest>
+		</jar>
+	</target>
+	
 	<target name="run-v1" depends="compile-v1">
 		<java classname="org.pathvisio.gui.swt.GuiMain" fork="true">
 			<classpath refid="project.v1.class.path"/>
@@ -133,7 +178,7 @@ public class Revision
 			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>
 	</target>
-
+	
 	<target name="prepare-webstart" depends="jar,resources-jar" description="sign jars for webstart">
 		<!-- Copy files needed for webstart !-->
 		<copy file="pathvisio_v1.jar" toDir="${webstart.dir}/www"/>
@@ -160,7 +205,14 @@ public class Revision
 			<arg line="autoftp.pl"/>
 		</exec>
 	</target>
-	
+
+	<target name="wikipathways" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
+		<copy file="wikipathways.jar" toDir="${wikipathway.dir}/applet"/>
+		<copy toDir="${webstart.dir}/www" overwrite="true">
+			<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		</copy>
+	</target>
+			
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<tstamp /> <!-- set ${TODAY} -->
 		<javadoc destdir="${apidoc.dir}" 

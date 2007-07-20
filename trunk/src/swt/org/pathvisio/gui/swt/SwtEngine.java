@@ -37,8 +37,6 @@ import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.preferences.PreferenceCollection;
-import org.pathvisio.preferences.swt.SwtPreferences;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
@@ -62,7 +60,6 @@ public class SwtEngine {
 	private static MainWindow window;
 	
 	private static ImageRegistry imageRegistry;
-	private static PreferenceCollection preferences;
 	
 	private static File DIR_APPLICATION;
 	private static File DIR_DATA;
@@ -327,14 +324,6 @@ public class SwtEngine {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Get the {@link SwtPreferences} containing the user preferences
-	 */
-	public static PreferenceCollection getPreferences() { 
-		if(preferences == null) preferences = new SwtPreferences();
-		return preferences; 
 	}
 	
 	/**

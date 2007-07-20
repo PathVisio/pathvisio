@@ -18,21 +18,22 @@ package org.pathvisio;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.data.DBConnector;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceCollection;
 import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.Utils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
@@ -81,6 +82,26 @@ public class Engine {
 	 */
 	public static Pathway getActivePathway() {
 		return pathway;
+	}
+	
+	static PreferenceCollection preferences;
+	
+	public static void savePreferences() {
+		if(preferences != null) {
+			try {
+				preferences.save();
+			} catch(IOException e) {
+				log.error("Unable to save preferences", e);
+			}
+		}
+	}
+	
+	public static void setPreferenceCollection(PreferenceCollection pc) {
+		preferences = pc;
+	}
+	
+	public static PreferenceCollection getPreferenceCollection() {
+		return preferences;
 	}
 	
 	/**
@@ -258,23 +279,23 @@ public class Engine {
 		return importers;
 	}
 	
-	public static DBConnectorSwt getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		DBConnectorSwt connector = null;
+	public static DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		DBConnector connector = null;
 		String className = null;
 		switch(type) {
-		case DBConnectorSwt.TYPE_GDB:
-			className = SwtPreference.SWT_DB_ENGINE_GDB.getValue();
+		case DBConnector.TYPE_GDB:
+			className = GlobalPreference.DB_ENGINE_GDB.getValue();
 			break;
-		case DBConnectorSwt.TYPE_GEX:
-			className = SwtPreference.SWT_DB_ENGINE_GDB.getValue();
+		case DBConnector.TYPE_GEX:
+			className = GlobalPreference.DB_ENGINE_GEX.getValue();
 			break;
 		}
 		if(className == null) return null;
 		
 		Class dbc = Class.forName(className);
-		
-		if(Utils.isSubClass(dbc, DBConnectorSwt.class)) {
-			connector = (DBConnectorSwt)dbc.newInstance();
+		Object o = dbc.newInstance();
+		if(o instanceof DBConnector) {
+			connector = (DBConnector)dbc.newInstance();
 			connector.setDbType(type);
 		}
 	

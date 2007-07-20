@@ -63,7 +63,6 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
  */
 public class Gex implements ApplicationEventListener {
 	public static final String XML_ELEMENT = "expression-data-visualizations";
-	public static final int COMPAT_VERSION = 1;
 	
 	private static Connection con;
 	
@@ -699,8 +698,8 @@ public class Gex implements ApplicationEventListener {
 		p.finished();
 	}
 	
-	public static DBConnectorSwt getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getDbConnector(DBConnectorSwt.TYPE_GEX);
+	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return Engine.getDbConnector(DBConnector.TYPE_GEX);
 	}
 	
 	/**
@@ -714,7 +713,7 @@ public class Gex implements ApplicationEventListener {
 		
 		if(dbName != null) setDbName(dbName);
 		
-		DBConnectorSwt connector = getDBConnector();
+		DBConnector connector = getDBConnector();
 		
 		if(create) {
 			con = connector.createNewDatabase(getDbName());
@@ -756,7 +755,7 @@ public class Gex implements ApplicationEventListener {
 			{
 				saveXML();
 				
-				DBConnectorSwt connector = getDBConnector();
+				DBConnector connector = getDBConnector();
 				if(finalize) {
 					connector.compact(con);
 					connector.createIndices(con);

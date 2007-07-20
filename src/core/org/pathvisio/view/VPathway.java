@@ -38,8 +38,6 @@ import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
-import org.pathvisio.gui.swt.AlignActions;
-import org.pathvisio.gui.swt.StackActions;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -51,17 +49,13 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
-import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
  * the drawing and can be visualized. The class also provides methods for mouse
  * and key event handling.
  */
-public class VPathway implements PathwayListener, VisualizationListener
+public class VPathway implements PathwayListener
 {	
 	private static final long serialVersionUID = 1L;
 	static final double M_PASTE_OFFSET = 10 * 15;
@@ -132,7 +126,6 @@ public class VPathway implements PathwayListener, VisualizationListener
 		s = new SelectionBox(this);
 		
 		registerKeyboardActions();
-		VisualizationManager.addListener(this);
 	}
 	
 	public void redraw()
@@ -1095,30 +1088,31 @@ public class VPathway implements PathwayListener, VisualizationListener
 	public void mouseExit(MouseEvent e)
 	{
 	}
-	
-	/**
-	 * Responsible for drawing a tooltip displaying expression data when 
-	 * hovering over a geneproduct
-	 */
-	public void mouseHover(MouseEvent e)
-	{
-		Visualization v = VisualizationManager.getCurrent();
-		if (v != null && v.usesToolTip())
-		{
-			Point2D p = new Point2D.Double(e.getX(), e.getY());
-			
-			VPathwayElement o = getObjectAt(p);
-			if (o != null && o instanceof Graphics)
-			{
-				// Shell tip = v.visualizeToolTip(getShell(), this,
-				// (Graphics)o);
-//				if(tip == null) return;
-//				Point mp = toDisplay(e.x + 15, e.y + 15);
-//				tip.setLocation(mp.x, mp.y);
-//	            tip.setVisible(true);
-			}
-		}
-	}
+
+	//TODO: fix tooltips
+//	/**
+//	 * Responsible for drawing a tooltip displaying expression data when 
+//	 * hovering over a geneproduct
+//	 */
+//	public void mouseHover(MouseEvent e)
+//	{
+//		Visualization v = VisualizationManager.getCurrent();
+//		if (v != null && v.usesToolTip())
+//		{
+//			Point2D p = new Point2D.Double(e.getX(), e.getY());
+//			
+//			VPathwayElement o = getObjectAt(p);
+//			if (o != null && o instanceof Graphics)
+//			{
+//				// Shell tip = v.visualizeToolTip(getShell(), this,
+//				// (Graphics)o);
+////				if(tip == null) return;
+////				Point mp = toDisplay(e.x + 15, e.y + 15);
+////				tip.setLocation(mp.x, mp.y);
+////	            tip.setVisible(true);
+//			}
+//		}
+//	}
 
 	private void selectGeneProducts()
 	{
@@ -1419,7 +1413,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 * 
 	 * @param alignType
 	 */
-	public void alignSelected(char alignType)
+	public void alignSelected(AlignType alignType)
 	{
 		List<Graphics> selectedGraphics = getSelectedGraphics();
 		
@@ -1427,7 +1421,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 		{
 			switch (alignType)
 			{
-			case AlignActions.CENTERX : 
+			case CENTERX : 
 				Collections.sort(selectedGraphics, new YComparator());		   
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{
@@ -1436,7 +1430,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 				}
 				break;
-			case AlignActions.CENTERY : 
+			case CENTERY : 
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1445,7 +1439,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 				}
 				break;
-			case AlignActions.LEFT :
+			case LEFT :
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1454,7 +1448,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 						}
 				break;
-			case AlignActions.RIGHT : 
+			case RIGHT : 
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1465,7 +1459,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 					}	
 				break;
-			case AlignActions.TOP:
+			case TOP:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1474,7 +1468,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 				}
 				break;
-			case AlignActions.BOTTOM:
+			case BOTTOM:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1484,6 +1478,10 @@ public class VPathway implements PathwayListener, VisualizationListener
 							selectedGraphics.get(i).getGmmlData().getMHeight()						
 							);
 				}
+				break;
+			case WIDTH:
+			case HEIGHT:
+				scaleSelected(alignType);
 				break;
 					}
 			redrawDirtyRect();
@@ -1495,7 +1493,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 * 
 	 * @param stackType
 	 */
-	public void stackSelected(char stackType)
+	public void stackSelected(StackType stackType)
 	{
 		List<Graphics> selectedGraphics = getSelectedGraphics();
 
@@ -1503,7 +1501,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 		{
 			switch (stackType)
 			{
-			case StackActions.CENTERX:
+			case CENTERX:
 				Collections.sort(selectedGraphics, new YComparator());		   
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{
@@ -1516,7 +1514,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 				}		
 				break;
-			case StackActions.CENTERY:
+			case CENTERY:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1529,7 +1527,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 					}
 				break;
-			case StackActions.LEFT:
+			case LEFT:
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1542,7 +1540,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 				}
 				break;
-			case StackActions.RIGHT:
+			case RIGHT:
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1558,7 +1556,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 
 				}
 				break;
-			case StackActions.TOP:
+			case TOP:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1571,7 +1569,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 							);
 			}
 				break;
-			case StackActions.BOTTOM:
+			case BOTTOM:
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1595,7 +1593,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 	 * 
 	 * @param alignType
 	 */
-	public void scaleSelected(char alignType)
+	public void scaleSelected(AlignType alignType)
 	{
 		
 		List<Graphics> selectedGraphics = getSelectedGraphics();
@@ -1606,7 +1604,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 		{
 			switch (alignType)
 			{
-			case AlignActions.WIDTH:
+			case WIDTH:
 				for (Graphics g : selectedGraphics)
 				{
 					Rectangle2D r = g.getVScaleRectangle();
@@ -1633,7 +1631,7 @@ public class VPathway implements PathwayListener, VisualizationListener
 					}
 				}
 				break;
-			case AlignActions.HEIGHT:
+			case HEIGHT:
 				for (Graphics g : selectedGraphics)
 				{
 					Rectangle2D r = g.getVScaleRectangle();
@@ -1811,23 +1809,6 @@ public class VPathway implements PathwayListener, VisualizationListener
 			l.vPathwayEvent(e);
 		}
 	}
-	
-	public void visualizationEvent(VisualizationEvent e)
-	{
-		switch (e.type)
-		{
-		case(VisualizationEvent.COLORSET_MODIFIED):
-		case(VisualizationEvent.VISUALIZATION_SELECTED):
-		case(VisualizationEvent.VISUALIZATION_MODIFIED):
-		case(VisualizationEvent.PLUGIN_MODIFIED):
-			//getDisplay().syncExec(new Runnable() {
-			//	public void run() {
-					redraw();
-			//	}
-			//});
-		}
-	}	
-	
 	
 	/** 
 	 * helper method to convert view coordinates to model coordinates 

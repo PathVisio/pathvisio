@@ -44,6 +44,7 @@ import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.plugins.PluginManager;
@@ -402,6 +403,15 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		switch(e.type) {
 		case VisualizationEvent.PLUGIN_ADDED: 
 			refreshPluginClasses();
+			break;
+		case(VisualizationEvent.COLORSET_MODIFIED):
+		case(VisualizationEvent.VISUALIZATION_SELECTED):
+		case(VisualizationEvent.VISUALIZATION_MODIFIED):
+		case(VisualizationEvent.PLUGIN_MODIFIED):
+			VPathway p = Engine.getActiveVPathway();
+			if(p != null) {
+				p.redraw();
+			}
 			break;
 		}
 	}

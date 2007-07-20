@@ -133,10 +133,10 @@ public class PreferenceDlg extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			StringFieldEditor f1 = new StringFieldEditor(SwtPreference.SWT_DB_ENGINE_GDB.name(),
+			StringFieldEditor f1 = new StringFieldEditor(GlobalPreference.DB_ENGINE_GDB.name(),
 					"Database connector class for gene database:", getFieldEditorParent());
 			addField(f1);
-			StringFieldEditor f2 = new StringFieldEditor(SwtPreference.SWT_DB_ENGINE_EXPR.name(),
+			StringFieldEditor f2 = new StringFieldEditor(GlobalPreference.DB_ENGINE_GEX.name(),
 					"Database connector class for expression dataset:", getFieldEditorParent());
 			addField(f2);
 		}

@@ -150,9 +150,6 @@ public class SwtPreferences extends PreferenceStore implements PreferenceCollect
 		SWT_DIR_EXPR(new File(SwtEngine.getDataDir().toString(), "expression datasets").toString()),
 		SWT_DIR_RDATA(new File(SwtEngine.getDataDir().toString(), "R data").toString()),
 
-		SWT_CURR_GDB("none"),
-		SWT_DB_ENGINE_GDB("org.pathvisio.data.DBConnDerby"),
-		SWT_DB_ENGINE_EXPR("org.pathvisio.data.DBConnDerby"),
 		SWT_SIDEPANEL_SIZE("30");
 		
 		SwtPreference(String defaultValue) {

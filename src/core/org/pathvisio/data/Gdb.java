@@ -34,9 +34,7 @@ import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.StopWatch;
-import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
@@ -74,14 +72,14 @@ public abstract class Gdb {
 	 */
 	public static void init()
 	{
-		String currGdb = SwtPreference.SWT_CURR_GDB.getValue();
-		if(!currGdb.equals("") && !GlobalPreference.isDefault(SwtPreference.SWT_CURR_GDB))
+		String currGdb = GlobalPreference.DB_GDB_CURRENT.getValue();
+		if(!currGdb.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
 		{
 			dbName = currGdb;
 			try {
 				connect(null);
 			} catch(Exception e) {
-				setCurrentGdb(SwtPreference.SWT_CURR_GDB.getDefault());
+				setCurrentGdb(GlobalPreference.DB_GDB_CURRENT.getDefault());
 			}
 		}
 	}
@@ -92,9 +90,7 @@ public abstract class Gdb {
 	 */
 	public static void setCurrentGdb(String dbNm) {
 		dbName = dbNm; 
-		SwtPreference.SWT_CURR_GDB.setValue(dbNm);
-		try { SwtEngine.getPreferences().save(); } 
-		catch(Exception e) { Engine.log.error("Unable to save preferences", e); } 
+		GlobalPreference.DB_GDB_CURRENT.setValue(dbNm);
 	}
 	
 	/**
@@ -364,8 +360,8 @@ public abstract class Gdb {
 		}
 	}
 	
-	public static DBConnectorSwt getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getDbConnector(DBConnectorSwt.TYPE_GDB);
+	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return Engine.getDbConnector(DBConnector.TYPE_GDB);
 	}
 	
 	/**
@@ -377,7 +373,7 @@ public abstract class Gdb {
 	{
 		if(dbName == null) dbName = getDbName();
 		
-		DBConnectorSwt connector = getDBConnector();
+		DBConnector connector = getDBConnector();
 		con = connector.createConnection(dbName);
 		con.setReadOnly(true);
 //		Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
@@ -391,7 +387,7 @@ public abstract class Gdb {
 	{
 		if(con != null) {
 			try {
-				DBConnectorSwt connector = getDBConnector();
+				DBConnector connector = getDBConnector();
 				connector.closeConnection(con);
 			} catch(Exception e) {
 				Engine.log.error("Unable to close database connection", e);
@@ -420,7 +416,7 @@ public abstract class Gdb {
 		{
 			close();
 			
-			DBConnectorSwt connector = null;
+			DBConnector connector = null;
 			Connection convertCon = null;
 			Connection conGdb = null;
 			
@@ -438,7 +434,7 @@ public abstract class Gdb {
 			
 			//Create hsqldb gdb
 			connector = getDBConnector();
-			convertCon = connector.createConnection(dbName, DBConnectorSwt.PROP_RECREATE);
+			convertCon = connector.createConnection(dbName, DBConnector.PROP_RECREATE);
 			
 			// Fetch size of database to convert (for progress monitor)
 			Statement s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

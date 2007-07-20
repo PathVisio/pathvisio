@@ -50,7 +50,9 @@ import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.PathwaySearchComposite;
+import org.pathvisio.view.AlignType;
 import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -84,20 +86,20 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	protected CommonActions.SwitchEditModeAction switchEditModeAction = new CommonActions.SwitchEditModeAction(this);
 	public ShowRightPanelAction showRightPanelAction = new ShowRightPanelAction(this);
 	protected SelectGdbAction selectGdbAction = new SelectGdbAction(this);
-	protected AlignActions.AlignCenterXAction alignCenterXAction = new AlignActions.AlignCenterXAction(this);
-	protected AlignActions.AlignCenterYAction alignCenterYAction = new AlignActions.AlignCenterYAction(this);
-	protected AlignActions.AlignLeftAction alignLeftAction = new AlignActions.AlignLeftAction(this);
-	protected AlignActions.AlignRightAction alignRightAction = new AlignActions.AlignRightAction(this);
-	protected AlignActions.AlignTopAction alignTopAction = new AlignActions.AlignTopAction(this);
-	protected AlignActions.AlignBottomAction alignBottomAction = new AlignActions.AlignBottomAction(this);
-	protected AlignActions.SetCommonWidthAction setCommonWidthAction = new AlignActions.SetCommonWidthAction(this);
-	protected AlignActions.SetCommonHeightAction setCommonHeightAction = new AlignActions.SetCommonHeightAction(this);
-	protected StackActions.StackCenterXAction stackCenterXAction = new StackActions.StackCenterXAction(this);
-	protected StackActions.StackCenterYAction stackCenterYAction = new StackActions.StackCenterYAction(this);
-	protected StackActions.StackLeftAction stackLeftAction = new StackActions.StackLeftAction(this);
-	protected StackActions.StackRightAction stackRightAction = new StackActions.StackRightAction(this);
-	protected StackActions.StackTopAction stackTopAction = new StackActions.StackTopAction(this);
-	protected StackActions.StackBottomAction stackBottomAction = new StackActions.StackBottomAction(this);
+	protected AlignActions alignCenterXAction = new AlignActions(AlignType.CENTERX, this);
+	protected AlignActions alignCenterYAction = new AlignActions(AlignType.CENTERY, this);
+	protected AlignActions alignLeftAction = new AlignActions(AlignType.LEFT, this);
+	protected AlignActions alignRightAction = new AlignActions(AlignType.RIGHT, this);
+	protected AlignActions alignTopAction = new AlignActions(AlignType.TOP, this);
+	protected AlignActions alignBottomAction = new AlignActions(AlignType.BOTTOM, this);
+	protected AlignActions setCommonWidthAction = new AlignActions(AlignType.WIDTH, this);
+	protected AlignActions setCommonHeightAction = new AlignActions(AlignType.HEIGHT, this);
+	protected StackActions stackCenterXAction = new StackActions(StackType.CENTERX, this);
+	protected StackActions stackCenterYAction = new StackActions(StackType.CENTERY, this);
+	protected StackActions stackLeftAction = new StackActions(StackType.LEFT, this);
+	protected StackActions stackRightAction = new StackActions(StackType.RIGHT, this);
+	protected StackActions stackTopAction = new StackActions(StackType.TOP, this);
+	protected StackActions stackBottomAction = new StackActions(StackType.BOTTOM, this);
 
 	/**
 	 * {@link Action} to select a Gene Database
@@ -120,7 +122,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				if(dbName == null) return;
 				
 				Gdb.connect(dbName);
-				setStatus("Using Gene Database: '" + SwtPreference.SWT_CURR_GDB + "'");
+				setStatus("Using Gene Database: '" + GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
 				cacheExpressionData();
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
@@ -375,7 +377,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
 		
-		setStatus("Using Gene Database: '" + SwtPreference.SWT_CURR_GDB.getValue() + "'");
+		setStatus("Using Gene Database: '" + GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
 
 		SwtEngine.updateTitle();
 		

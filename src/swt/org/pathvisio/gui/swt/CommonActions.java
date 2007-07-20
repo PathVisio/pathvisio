@@ -393,7 +393,7 @@ public class CommonActions
 		public void run () {
 			PreferenceManager pg = new PreferenceDlg();
 			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
-			pd.setPreferenceStore((SwtPreferences)SwtEngine.getPreferences());
+			pd.setPreferenceStore((SwtPreferences)Engine.getPreferenceCollection());
 			pd.open();
 		}
 	}

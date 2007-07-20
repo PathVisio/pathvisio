@@ -32,6 +32,7 @@ import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.SvgFormat;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
+import org.pathvisio.preferences.swt.SwtPreferences;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
@@ -159,7 +160,7 @@ public class GuiMain {
 	}
 	
 	static void loadPreferences() {
-		SwtEngine.getPreferences();
+		Engine.setPreferenceCollection(new SwtPreferences());
 	}
 	
 	/**

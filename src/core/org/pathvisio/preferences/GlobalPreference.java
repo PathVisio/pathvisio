@@ -18,6 +18,7 @@ package org.pathvisio.preferences;
 
 import java.awt.Color;
 
+import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 
 public enum GlobalPreference implements Preference {
@@ -30,7 +31,12 @@ public enum GlobalPreference implements Preference {
 	COLOR_SELECTED(Color.RED),
 	COLOR_HIGHLIGHTED(Color.GREEN),
 	
+	DB_ENGINE_GDB("org.pathvisio.data.DBConnDerby"),
+	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),
+	DB_GDB_CURRENT("none"),
+	
 	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false));
+	
 	
 	GlobalPreference(String defaultValue) {
 		this.defaultValue = defaultValue;
@@ -53,6 +59,7 @@ public enum GlobalPreference implements Preference {
 	
 	public void setValue(String newValue) {
 		value = newValue;
+		Engine.savePreferences();
 	}
 	
 	public String getValue() {

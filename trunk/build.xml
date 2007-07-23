@@ -49,8 +49,9 @@
 		<mkdir dir="${build.v1.dir}"/>
 		<mkdir dir="${build.v2.dir}"/>
 		<mkdir dir="${build.plugins.dir}"/>
-		<mkdir dir="${build.wikipathways.applet.dir}"/>
+		<mkdir dir="${build.wikipathways.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
+		<mkdir dir="${wikipathways.applet.dir}"/>
 		
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
 package org.pathvisio;

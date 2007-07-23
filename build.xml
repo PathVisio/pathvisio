@@ -12,6 +12,7 @@
 	<!-- <property name="dist.dir" value="dist"/> -->
 	<property name="webstart.dir" value="webstart"/>
 	<property name="wikipathways.dir" value="wikipathways"/>
+	<property name="wikipathways.applet.dir" value="${wikipathways.dir}/applet"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="exec.perl" value="perl"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
@@ -48,7 +49,7 @@
 		<mkdir dir="${build.v1.dir}"/>
 		<mkdir dir="${build.v2.dir}"/>
 		<mkdir dir="${build.plugins.dir}"/>
-		<mkdir dir="${build.wikipathways.dir}"/>
+		<mkdir dir="${build.wikipathways.applet.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
@@ -71,7 +72,7 @@ public class Revision
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
-		<delete dir="${wikipathways.dir}/applet"/>
+		<delete dir="${wikipathways.applet.dir}"/>
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
@@ -218,7 +219,7 @@ public class Revision
 
 	<target name="wikipathways" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
 		<copy file="wikipathways.jar" toDir="${wikipathways.dir}/applet"/>
-		<copy toDir="${wikipathways.dir}/applet">
+		<copy toDir="${wikipathways.applet.dir}">
 			<fileset dir="${lib.dir}">
 				<include name="apache/*.jar"/>
 				<include name="jdom.jar"/>
@@ -227,11 +228,11 @@ public class Revision
 		</copy>
 		<signjar alias="PathVisio" lazy = "true" 
 			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
-			<fileset dir="${wikipathways.dir}/applet" includes="**/*.jar"/>
+			<fileset dir="${wikipathways.applet.dir}" includes="**/*.jar"/>
 		</signjar>
 		<!-- copy to /var/www/wikipathways -->
 		<copy toDir="/var/www/wikipathways/wpi/applet">
-			<fileset dir="${wikipathways.dir}/applet" includes="**/*.*" />
+			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />
 		</copy>
 		<!-- todo: copy scripts and bin too -->
 	</target>

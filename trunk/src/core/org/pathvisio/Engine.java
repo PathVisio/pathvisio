@@ -190,7 +190,7 @@ public class Engine {
 			try {
 				f = File.createTempFile("urlPathway", ".gpml");
 				FileUtils.downloadFile(url, f);
-				openPathway(f.toString());
+				openPathway(f.toString(), w);
 			} catch(Exception e) {
 				throw new ConverterException(e);
 			}

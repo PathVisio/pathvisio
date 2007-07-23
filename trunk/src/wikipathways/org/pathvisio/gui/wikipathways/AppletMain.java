@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.event.ActionEvent;
 import java.net.CookieHandler;
 import java.net.URL;
 import java.util.HashMap;
@@ -23,9 +24,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JApplet;
+import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.MainPanel;
@@ -33,60 +40,94 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
 
-public class AppletMain extends JApplet {
+public class AppletMain extends JApplet {	
+	private static final long serialVersionUID = 1L;
+
 	private static WikiPathways wiki;
 	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
+		Engine.log.trace("init applet");
 		super.init();
 		
 		GuiInit.init();
 	
-		MainPanel mainPanel = SwingEngine.getApplicationPanel();		
-		parseArguments();
+		MainPanel mainPanel = SwingEngine.getApplicationPanel();
 		
-		try { 
-			wiki.openPathwayURL();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		Action saveAction = new ExitAction(true);
+		Action discardAction = new ExitAction(false);
+		
+		JToolBar tb = mainPanel.getToolBar();
+		
+		tb.setLayout(new BoxLayout(tb,BoxLayout.LINE_AXIS));		
+		tb.add(Box.createHorizontalGlue());		
+		tb.addSeparator();		
+		tb.add(saveAction);
+		tb.add(discardAction);
+		
+		wiki = new WikiPathways(new SwingUserInterfaceHandler(this));
+		parseArguments();
+		loadCookies();
 		
 		add(mainPanel);
+		
+		try { 
+			wiki.init(SwingEngine.createWrapper());
+		} catch(Exception e) {
+			Engine.log.error("Unable to load pathway", e);
+			JOptionPane.showMessageDialog(
+					this, e.getClass() + ": " + e.getMessage(), "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void start() {
+		Engine.log.trace("start applet");
 		// TODO Auto-generated method stub
 		super.start();
 	}
 	
 	public void stop() {
-		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
+		Engine.log.trace("stop applet");
+		// TODO Auto-generated method stub
+		super.stop();
+	}
+
+	public void destroy() {
+		Engine.log.trace("destroy applet");
+/*		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
 		Engine.fireApplicationEvent(e);
 		if(e.doit) {
-			super.stop();
-		}
+			super.destroy();
+		}*/
 	}
 	
 	void loadCookies() {
-		CookieHandler handler = CookieHandler.getDefault();
-		if (handler != null)    {
-			URL url = getDocumentBase();
-			try {
+		System.out.println("Loading cookies");
+
+		//wikipathwaysUserName=Thomas; wikipathwaysUserID=2; wikipathwaysToken=d8fa40c604ac290a5e2f65830279f518; wikipathways_session=6e153458660cf2cc888d37ec0e6f164b
+		
+		try {
+			CookieHandler handler = CookieHandler.getDefault();
+			if (handler != null)    {
+				URL url = getDocumentBase();
 				Map<String, List<String>> headers = handler.get(url.toURI(), new HashMap<String, List<String>>());
 				List<String> values = headers.get("Cookie");
 				for (Iterator<String> iter=values.iterator(); iter.hasNext();) {
-					String v = iter.next();
-					String[] vstr = v.split("=");
-					if(vstr.length == 2) {
-						wiki.addCookie(vstr[0].trim(), vstr[1].trim());
+					String c = iter.next();
+					String[] cvalues = c.split(";");
+					for(String cv : cvalues) {
+						String[] keyvalue = cv.split("=");
+						if(keyvalue.length == 2) {
+							System.out.println("COOKIE: " + keyvalue[0] + " | " + keyvalue[1]);
+							wiki.addCookie(keyvalue[0].trim(), keyvalue[1].trim());
+						}
 					}
 				}
-			} catch(Exception e) {
-				Engine.log.error("Unable to load cookies", e);
 			}
-			
+		} catch(Exception e) {
+			Engine.log.error("Unable to load cookies", e);
 		}
-//		JSObject myBrowser = (JSObject) JSObject.getWindow(this);
+//			JSObject myBrowser = (JSObject) JSObject.getWindow(this);
 //	        JSObject myDocument =  (JSObject) myBrowser.getMember("document");
 //	        String cookie = (String)myDocument.getMember("cookie");
 //	        String[] cstr = cookie.split(";");
@@ -101,6 +142,23 @@ public class AppletMain extends JApplet {
 	void parseArguments() {
 		for(Parameter p : Parameter.values()) {
 			p.setValue(getParameter(p.getName()));
+		}
+	}
+	
+	class ExitAction extends AbstractAction {
+		boolean doSave;
+		public ExitAction(boolean save) {
+			super("Finish", new ImageIcon(save ? Engine.getResourceURL("icons/apply.gif") : Engine.getResourceURL("icons/cancel.gif")));
+			String descr = doSave ? "Save pathway and close editor" : "Discard pathway and close editor";
+			putValue(Action.SHORT_DESCRIPTION, descr);
+		}
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("DEBUG: exit pressed, " + doSave);
+			boolean saved = true;
+			if(doSave) {
+				saved = wiki.saveUI();
+			}
+			if(saved) getAppletContext().showDocument(getDocumentBase(), "_parent");
 		}
 	}
 }

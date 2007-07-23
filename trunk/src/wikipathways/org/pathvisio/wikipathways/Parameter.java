@@ -2,11 +2,11 @@ package org.pathvisio.wikipathways;
 
 public enum Parameter {
 	PW_NAME("pwName"),
-	PW_URL("pathwayUrl", false),
+	PW_URL("pwUrl", false),
 	PW_SPECIES("pwSpecies"),
-	PW_NEW("new", "false"),
+	PW_NEW("new", null),
 	USER("user"),
-	RPC_URL("prcUrl"),
+	RPC_URL("rpcUrl"),
 	;
 	
 	String name;

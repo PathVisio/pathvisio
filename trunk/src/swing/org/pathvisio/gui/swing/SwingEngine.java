@@ -62,7 +62,7 @@ public class SwingEngine {
 		}
 	}
 		
-	private static VPathwayWrapper createWrapper() {
+	public static VPathwayWrapper createWrapper() {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
 	

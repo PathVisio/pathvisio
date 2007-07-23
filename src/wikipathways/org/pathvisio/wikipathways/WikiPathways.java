@@ -20,18 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.net.CookieHandler;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JOptionPane;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.xmlrpc.XmlRpcException;
@@ -48,87 +40,74 @@ import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayWrapper;
 import org.xml.sax.SAXException;
-
 
 public class WikiPathways implements ApplicationEventListener {
 	public static String SITE_NAME = "WikiPathways.org";
 	
+	UserInterfaceHandler uiHandler;
 	HashMap<String, String> cookie;
-	String rpcURL;
-	String pwName;
-	String pwSpecies;
-	String pwURL;
-	String user;
-	boolean isNew;
 	
 	File localFile;
 	
 	boolean ovrChanged;
 	
-	public WikiPathways() {
+	public WikiPathways(UserInterfaceHandler uiHandler) {
+		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
 		Engine.addApplicationEventListener(this);
 	}
+		
+	public void init(VPathwayWrapper wrapper) throws Exception {
+		for(Parameter p : Parameter.values()) {
+			//Check for required
+			assert !p.isRequired() || p.getValue() != null : 
+				"Missing required argument '" + p.name() + "'";
+		}
+		
+		if(isNew()) { //Create new pathway
+			Engine.newPathway(wrapper);
+		} else { //Download and open the pathway
+			Engine.openPathway(new URL(getPwURL()), wrapper);
+		}
+		
+		//TODO: notify user about this and hide edit actions
+		Engine.getActiveVPathway().setEditMode(isReadOnly());
+	}
 	
 	public String getPwName() {
-		return pwName;
-	}
-
-	public void setPwName(String pwName) {
-		this.pwName = pwName;
+		return Parameter.PW_NAME.getValue();
 	}
 
 	public String getPwSpecies() {
-		return pwSpecies;
-	}
-
-	public void setPwSpecies(String pwSpecies) {
-		this.pwSpecies = pwSpecies;
+		return Parameter.PW_SPECIES.getValue();
 	}
 
 	public String getPwURL() {
-		return pwURL;
-	}
-
-	public void setPwURL(String pwURL) {
-		this.pwURL = pwURL;
+		return Parameter.PW_URL.getValue();
 	}
 
 	public String getRpcURL() {
-		return rpcURL;
-	}
-
-	public void setRpcURL(String rpcURL) {
-		this.rpcURL = rpcURL;
+		return Parameter.RPC_URL.getValue();
 	}
 
 	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
+		return Parameter.USER.getValue();
 	}
 
 	public void addCookie(String key, String value) {
 		cookie.put(key, value);
 	}
-	
-	public void openPathwayURL() throws MalformedURLException, ConverterException {
-		localFile = SwingEngine.openPathway(new URL(pwURL));
-		Engine.getActiveVPathway().setEditMode(true);
-	}
-	
-	protected void setNew(boolean isNew) {
-		this.isNew = isNew;
-	}
-	
+			
 	public boolean isNew() {
-		return isNew;
+		return Parameter.PW_NEW.getValue() != null;
+	}
+	
+	public boolean isReadOnly() {
+		return getUser() != null;
 	}
 	
 	protected File getLocalFile() { 
@@ -142,6 +121,23 @@ public class WikiPathways implements ApplicationEventListener {
 		return localFile;
 	}
 	
+	public boolean saveUI() {
+		VPathway vPathway = Engine.getActiveVPathway();
+		if(vPathway == null || vPathway.getGmmlData().hasChanged()) {
+			String description = uiHandler.askInput("Specify description", "Give a description of your changes");
+			try {
+				int id = uiHandler.startProgress();
+				saveToWiki(description);
+				uiHandler.stopProgress(id);
+				return true;
+			} catch (Exception e) {
+				Engine.log.error("Unable to save pathway", e);
+				uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
+			}
+		}
+		return false;
+	}
+	
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
 		//TODO: check if changed
 		if(ovrChanged || Engine.getActivePathway().hasChanged()) {
@@ -150,7 +146,7 @@ public class WikiPathways implements ApplicationEventListener {
 			//Save current pathway to local file
 			Engine.savePathway(gpmlFile);
 			saveToWiki(description, gpmlFile);
-			ovrChanged = false; //Save successfull, don't save next time
+			ovrChanged = false; //Save successful, don't save next time
 		} else {
 			Engine.log.trace("No changes made, ignoring save");
 			//Do nothing, no changes made
@@ -159,7 +155,7 @@ public class WikiPathways implements ApplicationEventListener {
 	
 	protected void saveToWiki(String description, File gpmlFile) throws XmlRpcException, IOException {	
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setServerURL(new URL(rpcURL));
+		config.setServerURL(new URL(getRpcURL()));
 	
 		XmlRpcClient client = new XmlRpcClient();
 		XmlRpcCookieTransportFactory ctf = new XmlRpcCookieTransportFactory(client);
@@ -177,7 +173,7 @@ public class WikiPathways implements ApplicationEventListener {
 		byte[] data = new byte[(int)raf.length()];
 		raf.readFully(data);
 		byte[] data64 = Base64.encodeBase64(data);
-		Object[] params = new Object[]{ pwName, pwSpecies, description, data64 };
+		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data64 };
 				
 		client.execute("WikiPathways.updatePathway", params);
 	}
@@ -187,12 +183,12 @@ public class WikiPathways implements ApplicationEventListener {
 		switch(e.type) {
 		case ApplicationEvent.APPLICATION_CLOSE:
 			VPathway vPathway = Engine.getActiveVPathway();
-			if(vPathway.getGmmlData().hasChanged()) {
-				int status = JOptionPane.showConfirmDialog(SwingEngine.getApplicationPanel(), 
-						"Do you want to save the changes to " + pwName + " on " + SITE_NAME + "?"); 
-				if(status == JOptionPane.OK_OPTION) {
-			//TODO		saveUI();
-				} else if(status == JOptionPane.CANCEL_OPTION) {
+			if(vPathway == null || vPathway.getGmmlData().hasChanged()) {
+				int status  = uiHandler.askCancellableQuestion("", 
+						"Do you want to save the changes to " + getPwName() + " on " + SITE_NAME + "?");
+				if(status == UserInterfaceHandler.Q_TRUE) {
+					saveUI();
+				} else if(status == UserInterfaceHandler.Q_CANCEL) {
 					e.doit = false;
 				}
 			} else {

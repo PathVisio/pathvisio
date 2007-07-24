@@ -81,7 +81,7 @@ MYCLASSPATH2=$MYCLASSPATHBASE:build/v2
 
 if [ $RUN_MODE = "DIRECT" ]; then
 	if [ $USE_EXPERIMENTAL = "0" ]; then
-		jdb -classpath $MYCLASSPATH1 -Djava.library.path="/usr/lib/firefox:./lib/swt-linux-lib" $MAIN_CLASS
+		java -classpath $MYCLASSPATH1 -Djava.library.path="/usr/lib/firefox:./lib/swt-linux-lib" $MAIN_CLASS
 	elif [ $USE_EXPERIMENTAL = "1" ]; then
 		java -classpath $MYCLASSPATH2 -Djava.library.path="/usr/lib/firefox:./lib/swt-linux-lib" $MAIN_CLASS -ur
 	fi	

@@ -23,7 +23,6 @@ import org.jdom.*;
 import org.jdom.input.*;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 
@@ -40,7 +39,7 @@ class Patch
 	{
 		boolean isDeletion; // true when this is a deletion, false when this is a modification
 		public PathwayElement oldElt;
-		List<Change> changes = new ArrayList (); // only used when isDeletion == false
+		List<Change> changes = new ArrayList<Change> (); // only used when isDeletion == false
 
 		public PathwayElement getNewElt()
 		{
@@ -157,7 +156,7 @@ class Patch
 				// apply modification to oldElt
 				PathwayElement newElt = mod.getNewElt();
 				// and add it to the pwy.
-				newPwy.add (mod.oldElt);
+				newPwy.add (newElt);
 			}
 			current = current.getParent();
 		}

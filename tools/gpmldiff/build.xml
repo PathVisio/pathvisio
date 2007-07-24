@@ -79,7 +79,7 @@
 		</javadoc>		
 	</target>
 		
-	<target name="test" depends="compile">
+	<target name="test" depends="compile-soft">
 		<javac srcdir="src"
 			   includes="**"
 			   destdir="${build.dir}"

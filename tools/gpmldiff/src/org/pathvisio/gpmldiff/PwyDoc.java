@@ -89,6 +89,22 @@ class PwyDoc
 		result.src = f;
 		return result;
 	}
+	
+	// make default constructor private
+	private PwyDoc()
+	{
+	}
+	
+	public PwyDoc (Pathway _pwy)
+	{
+		assert (_pwy != null);
+		pwy = _pwy;
+		
+		for (PathwayElement e : pwy.getDataObjects())
+		{
+			add (e);
+		}
+	}
 		
 	/**
 	   Finds correspondence set with the lowest cost using Dijkstra's algorithm

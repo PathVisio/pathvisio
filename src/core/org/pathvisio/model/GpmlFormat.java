@@ -18,8 +18,11 @@ package org.pathvisio.model;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -369,10 +372,16 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		return doc;
 	}
 
+	public static PathwayElement mapElement(Element e) throws ConverterException
+	{
+		return mapElement (e, null);
+	}
+	
 	/**
 	   Create a single PathwayElement based on a piece of Jdom tree. Used also by Patch utility
+	   Pathway p may be null
 	 */
-	public static PathwayElement mapElement(Element e) throws ConverterException
+	public static PathwayElement mapElement(Element e, Pathway p) throws ConverterException
 	{
 		String tag = e.getName();
 		int ot = ObjectType.getTagMapping(tag);
@@ -385,6 +394,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		}
 		
 		PathwayElement o = new PathwayElement(ot);
+		if (p != null)
+		{
+			p.add (o);
+		}
 
 		switch (o.getObjectType())
 		{
@@ -444,18 +457,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
 		}
 		return o;
-	}
-
-	/**
-	   Read a piece of Jdom tree, create a PathwayElement based on that and add it to the Pathway.
-	 */
-	private static void mapElement(Element e, Pathway p) throws ConverterException
-	{
-		PathwayElement o = mapElement (e);
-		if (o != null)
-		{
-			p.add (o);
-		}
 	}
 	
 	private static void mapLineData(PathwayElement o, Element e) throws ConverterException
@@ -583,7 +584,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	private static void mapGraphId (PathwayElement o, Element e)
 	{
 		String id = e.getAttributeValue("GraphId");
-		if(id == null || id.equals("")) {
+		if((id == null || id.equals("")) && o.getParent() != null) {
 			id = o.getParent().getUniqueId();
 		}
 		o.setGraphId (id);
@@ -621,7 +622,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	{
 		//ID
 		String id = e.getAttributeValue("GroupId");
-		if(id == null || id.equals("")) 
+		if((id == null || id.equals("")) && o.getParent() != null) 
 			{id = o.getParent().getUniqueId();}
 		o.setGroupId (id);
 		//Style
@@ -1093,14 +1094,28 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	
 	static public void readFromXml(Pathway pwy, File file, boolean validate) throws ConverterException
 	{
+		FileReader inf;
+		try	
+		{
+			inf = new FileReader (file);
+		}
+		catch (FileNotFoundException e)
+		{
+			throw new ConverterException (e);
+		}
+		readFromXml (pwy, inf, validate);
+	}
+	
+	static public void readFromXml(Pathway pwy, Reader in, boolean validate) throws ConverterException
+	{
 		// Start XML processing
-		Logger.log.info("Start reading the XML file: " + file);
+
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 		try
 		{
 			// build JDOM tree
-			Document doc = builder.build(file);
+			Document doc = builder.build(in);
 
 			if (validate) validateDocument(doc);
 			

@@ -17,6 +17,7 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.IOException;
+import org.pathvisio.model.PathwayElement;
 
 /**
    abstract base class for Diff Ouputters. Designed to handle a couple
@@ -30,13 +31,13 @@ abstract class DiffOutputter
 	   Event to signify insertion of a new PathwayElement that was not
 	   present in the old document
 	*/
-	abstract public void insert(PwyElt newElt);
+	abstract public void insert(PathwayElement newElt);
 
 	/**
 	   Event to signify deletion of an element that was present in the
 	   old document
 	*/
-	abstract public void delete(PwyElt oldElt);
+	abstract public void delete(PathwayElement oldElt);
 
 	/**
 	   A single modified attribute of an element that is present in
@@ -56,7 +57,7 @@ abstract class DiffOutputter
 	   modifyStart is guaranteed to be called only if one or more
 	   attributes have changed.
 	 */
-	abstract public void modifyStart(PwyElt oldElt, PwyElt newElt);
+	abstract public void modifyStart(PathwayElement oldElt, PathwayElement newElt);
 
 	/**
 	   Called to indicate the end of a list of modified attributes.

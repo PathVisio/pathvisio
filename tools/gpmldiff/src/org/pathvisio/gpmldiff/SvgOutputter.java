@@ -183,14 +183,14 @@ class SvgOutputter extends DiffOutputter
 
 	}
 	
-	public void insert(PwyElt newElt)
+	public void insert(PathwayElement newElt)
 	{
 		VPathwayElement velt = findElt (newElt, vpwy[PWY_NEW]);
 		assert (velt != null);
 		velt.highlight (Color.GREEN);
 	}
 
-	public void delete(PwyElt oldElt)
+	public void delete(PathwayElement oldElt)
 	{
 		VPathwayElement velt = findElt (oldElt, vpwy[PWY_OLD]);
 		assert (velt != null);
@@ -229,11 +229,11 @@ class SvgOutputter extends DiffOutputter
 		}
 	}
 
-	PwyElt curOldElt = null;
-	PwyElt curNewElt = null;
+	PathwayElement curOldElt = null;
+	PathwayElement curNewElt = null;
 	String curHint;
 	
-	public void modifyStart (PwyElt oldElt, PwyElt newElt)
+	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
 		curNewElt = newElt;
@@ -273,11 +273,10 @@ class SvgOutputter extends DiffOutputter
 	}
 
 	/**
-	   helper to find a VPathwayElt that corresponds to a certain PwyElt
+	   helper to find a VPathwayElt that corresponds to a certain PathwayElement
 	*/
-	private VPathwayElement findElt (PwyElt elt, VPathway vpwy)
+	private VPathwayElement findElt (PathwayElement target, VPathway vpwy)
 	{
-		PathwayElement target = elt.getElement();
 		for (VPathwayElement velt : vpwy.getDrawingObjects())
 		{
 			if (velt instanceof Graphics)

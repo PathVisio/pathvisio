@@ -38,8 +38,8 @@ class PatchMain
 	}
 
 	static File oldFile;
-	int fuzz;
-	boolean reverse;
+	static int fuzz;
+	static boolean reverse;
 	
 	static boolean parseCliOptions (String argv[])
 	{
@@ -67,23 +67,23 @@ class PatchMain
 		Logger.log.setStream (System.err);
 		if (parseCliOptions(argv))
 		{
-			Pathway oldPwy = new Pathway();
+			PwyDoc oldPwy = PwyDoc.read (oldFile);
+			assert (oldPwy != null);
+
+			Patch patch = new Patch();
 			try
 			{
-				oldPwy.readFromXml (oldFile, true);
+				patch.readFromStream (System.in); // read diff from STDIN
+				if (reverse)
+				{
+					patch.reverse();
+				}
+				patch.applyTo (oldPwy, fuzz);
 			}
-			catch (ConverterException e)
+			catch (Exception e)
 			{
-				Logger.log.error ("Converter exception", e);
-				System.exit(1);
+				Logger.log.error ("Exception occured while processing patch", e);
 			}
-			Patch patch = new Patch();
-			patch.readFromStream (System.in); // read diff from STDIN
-			if (reverse)
-			{
-				patch.reverse();
-			}
-			patch.applyTo (oldPwy, fuzz);
 		}
 	}
 }

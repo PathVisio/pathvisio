@@ -21,36 +21,11 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 
 /**
-   A single element in a pathway, which can be a line, shape, datanode, etc.
+   Utility class for pathway element methods related to gpmldiff.
 */
 class PwyElt
-{
-	PathwayElement elt;
-	public PathwayElement getElement () { return elt; }
-	
-	Map<String, String> contents = new HashMap<String, String>();
-	
-	public Map<String, String> getContents() { return contents; }
-	
-	PwyElt(PathwayElement _elt)
-	{
-		assert (_elt != null);
-		elt = _elt;
-		
-		copyContents();
-	}
-
-	private void copyContents()
-	{
-		for (PropertyType prop : elt.getAttributes(true))
-		{
-			String attr = prop.tag();
-			String val = "" + elt.getProperty (prop);
-			contents.put (attr, val);
-		}
-	}
-			
-	String summary()
+{			
+	static String summary(PathwayElement elt)
 	{
 		String result = "[" + elt.getObjectType();
 		String tmp;
@@ -73,26 +48,41 @@ class PwyElt
 		return result;
 	}
 
+	static Map<String, String> getContents(PathwayElement elt)
+	{
+		Map<String, String> result = new HashMap<String, String>();
+
+		for (PropertyType prop : elt.getAttributes(true))
+		{
+			String attr = prop.tag();
+			String val = "" + elt.getProperty (prop);
+			result.put (attr, val);
+		}
+		return result;
+	}
 	/**
 	   Show detailed modifications compared to another elt
 	   call on oldElt.
 	 */
-	void writeModifications (PwyElt newElt, DiffOutputter outputter)
+	static void writeModifications (PathwayElement oldElt, PathwayElement newElt, DiffOutputter outputter)
 	{
+		Map<String, String> oldContents = getContents (oldElt);
+		Map<String, String> newContents = getContents (newElt);
+				
 		boolean opened = false; // indicates if modifyStart has been
 								// sent already for current PwyElt.
-		for (String key : contents.keySet())
+		for (String key : oldContents.keySet())
 		{
-			if (newElt.contents.containsKey(key))
+			if (newContents.containsKey(key))
 			{
-				if (!contents.get(key).equals(newElt.contents.get(key)))
+				if (!oldContents.get(key).equals(newContents.get(key)))
 				{
 					if (!opened)
 					{
-						outputter.modifyStart (this, newElt);
+						outputter.modifyStart (oldElt, newElt);
 						opened = true;
 					}
-					outputter.modifyAttr (key, contents.get(key), newElt.contents.get(key));
+					outputter.modifyAttr (key, oldContents.get(key), newContents.get(key));
 				}
 			}
 		}
@@ -100,6 +90,6 @@ class PwyElt
 		{
 			outputter.modifyEnd();
 			opened = false;
-		}				
+		}				 
 	}
 }

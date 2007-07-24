@@ -18,8 +18,6 @@ package org.pathvisio.gpmldiff;
 
 import java.io.*;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.ConverterException;
 
 /**
    Dgpml patch utility, main function

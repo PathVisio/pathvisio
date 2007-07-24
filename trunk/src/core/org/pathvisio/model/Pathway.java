@@ -17,15 +17,17 @@
 package org.pathvisio.model;
 
 import java.io.File;
+import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 /**
@@ -386,10 +388,17 @@ public class Pathway implements PathwayListener
 
 	}
 
+	public void readFromXml(Reader in, boolean validate) throws ConverterException
+	{
+		GpmlFormat.readFromXml (this, in, validate);
+		setSourceFile (null);
+	}
+
 	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
+		Logger.log.info("Start reading the XML file: " + file);
+		
 		GpmlFormat.readFromXml (this, file, validate);
-
 		setSourceFile (file);
 	}
 		

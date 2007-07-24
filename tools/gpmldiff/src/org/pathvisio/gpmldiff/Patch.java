@@ -17,14 +17,17 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.*;
+import org.pathvisio.debug.Logger;
+
 import org.jdom.*;
 import org.jdom.input.*;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.ShapeType;
 
 class Patch
 {
@@ -47,7 +50,22 @@ class Patch
 			PathwayElement result = oldElt.copy();
 			for (Change ch : changes)
 			{
-				result.setProperty(PropertyType.getByTag(ch.attr), ch.newValue);
+				PropertyType pt = PropertyType.getByTag(ch.attr);
+				switch (pt.type())
+				{
+				case STRING: 
+					result.setProperty(pt, ch.newValue);
+					break;
+				case DOUBLE:
+					result.setProperty(pt, Double.parseDouble (ch.newValue));
+					break;
+				case SHAPETYPE:
+					result.setProperty(pt, ShapeType.fromGpmlName(ch.newValue));
+					break;							
+				default:
+					Logger.log.error (ch.attr + " not supported");
+					assert (false);
+				}
 			}
 			return result;
 		}
@@ -61,7 +79,7 @@ class Patch
 	// in the old Pwy, they just need to be added afterwards.
 	private List<PathwayElement> insertions = new ArrayList <PathwayElement>();
 	
-	public void readFromStream (InputStream in) throws JDOMException, IOException, ConverterException
+	public void readFromReader (Reader in) throws JDOMException, IOException, ConverterException
 	{
 		SAXBuilder builder = new SAXBuilder ();
 		Document doc = builder.build (in);
@@ -143,7 +161,8 @@ class Patch
 		while (current != null)
 		{
 			// check for modification
-			ModDel mod = modifications.get (current.newElt);
+			ModDel mod = modifications.get (current.oldElt);
+			assert (mod != null);
 			// is this a deletion or a modification?)
 			if (mod.isDeletion)
 			{

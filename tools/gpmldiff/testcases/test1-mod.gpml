@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="New Pathway" Data-Source="GenMAPP 2.0" Version="20070724">
+  <Graphics BoardWidth="18000.0" BoardHeight="12000.0" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <Line>
+    <Graphics Color="000000">
+      <Point x="1740.0" y="990.0" Head="Arrow" />
+      <Point x="2970.0" y="1605.0" />
+    </Graphics>
+  </Line>
+  <Shape Type="Oval" GraphId="bd1">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="3907.5" CenterY="2197.5" Width="1246.0" Height="1246.0" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

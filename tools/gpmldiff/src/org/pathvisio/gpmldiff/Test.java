@@ -34,7 +34,7 @@ public class Test extends TestCase
 	
 	/**
 	 * TestDiffOutputter is a diff outputter that 
-	 * tests if all the events are received in the right 
+	 * tests if all diff events are received in the right 
 	 * order and in the right number.
 	 */
 	class TestDiffOutputter extends DiffOutputter
@@ -317,5 +317,90 @@ public class Test extends TestCase
 		out.checkCounts (0, 0, 3, 2); // check that there is one deletion
 	}
 
-
+	public void testPatchModification()
+	{
+		Reader reader = new StringReader (
+				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+				"<Delta>\n" +
+				"  <Modify>\n" +
+				"    <Shape xmlns=\"http://genmapp.org/GPML/2007\" Type=\"Rectangle\" GraphId=\"bd1\">\n" +
+				"      <Graphics FillColor=\"Transparent\" Color=\"000000\" CenterX=\"3907.5\" CenterY=\"2197.5\" Width=\"1246.0\" Height=\"1246.0\" Rotation=\"0.0\" />\n" +
+				"    </Shape>\n" +
+				"    <Change attr=\"ShapeType\" old=\"RECTANGLE\" new=\"OVAL\" />\n" +
+				"  </Modify>\n" +
+				"  <Modify>\n" +
+				"    <Line xmlns=\"http://genmapp.org/GPML/2007\">\n" +
+				"      <Graphics Color=\"000000\">\n" +
+				"        <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" +
+				"        <Point x=\"2430.0\" y=\"2310.0\" />\n" +
+				"      </Graphics>\n" +
+				"    </Line>\n" +
+				"    <Change attr=\"EndX\" old=\"2430.0\" new=\"2970.0\" />\n" +
+				"    <Change attr=\"EndY\" old=\"2310.0\" new=\"1605.0\" />\n" +
+				"  </Modify>\n" +
+				"</Delta>\n");
+		Patch patch = new Patch();
+		try
+		{
+			patch.readFromReader (reader);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail ("Unexpected exception");
+		}
+		patch.applyTo (originalDoc, 0);
+	}
+	
+	public void testPatchInsertion()
+	{
+		Reader reader = new StringReader (
+				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+				"<Delta>\n" +
+				"  <Insert>\n" +
+				"    <Shape xmlns=\"http://genmapp.org/GPML/2007\" Type=\"Brace\" GraphId=\"cd6\">\n" +
+				"      <Graphics FillColor=\"Transparent\" Color=\"000000\" CenterX=\"1582.5\" CenterY=\"2640.0\" Width=\"1231.0\" Height=\"823.9999999999999\" Rotation=\"1.5707963267948966\" />\n" +
+				"    </Shape>\n" +
+				"  </Insert>\n" +
+				"</Delta>\n"
+				);
+		Patch patch = new Patch();
+		try
+		{
+			patch.readFromReader (reader);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail ("Unexpected exception");
+		}
+		patch.applyTo (originalDoc, 0);
+	}
+	
+	public void testPatchDeletion()
+	{
+		Reader reader = new StringReader (
+				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+				"<Delta>\n" +
+				"  <Delete>\n" +
+				"    <Shape xmlns=\"http://genmapp.org/GPML/2007\" Type=\"Rectangle\" GraphId=\"bd1\">\n" +
+				"      <Graphics FillColor=\"Transparent\" Color=\"000000\" CenterX=\"3907.5\" CenterY=\"2197.5\" Width=\"1246.0\" Height=\"1246.0\" Rotation=\"0.0\" />\n" +
+				"    </Shape>\n" +
+				"  </Delete>\n" +
+				"</Delta>\n"
+				);
+		Patch patch = new Patch();
+		try
+		{
+			patch.readFromReader (reader);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail ("Unexpected exception");
+		}
+		patch.applyTo (originalDoc, 0);
+	}
+				
+				
 }

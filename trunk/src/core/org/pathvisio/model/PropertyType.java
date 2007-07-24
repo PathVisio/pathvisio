@@ -24,6 +24,9 @@
 
 package org.pathvisio.model;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  *
  * @author Martijn
@@ -133,5 +136,23 @@ public enum PropertyType
 	public boolean hidden()
 	{
 		return hidden;
-	}	
+	}
+
+	public static PropertyType getByTag(String value)
+	{
+		return tagMapping.get (value);
+	}
+
+	static private Map<String, PropertyType> tagMapping = initTagMapping();
+
+	static private Map<String, PropertyType> initTagMapping()
+	{
+		Map<String, PropertyType> result = new HashMap<String, PropertyType>();
+		for (PropertyType o : PropertyType.values())
+		{
+			result.put (o.tag(), o);
+		}
+		return result;
+	}
+
 }

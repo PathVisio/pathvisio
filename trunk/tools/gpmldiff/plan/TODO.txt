@@ -13,9 +13,6 @@ HIGH PRIORITY
 * BUG: Line matching wrong when comparing Ach_synth.gpml version 2 and
   3. Need to score based on movement distance.
 
-* BUG: Array out of bounds exception when comparing some pathways,
-  e.g. Hs_Wnt... vs Hs_Wnt_modified or Ach_synth v3 vs v4.
-
 * Yellow color not very visible, maybe use different color?
 
 * Better hinting: CenterX, CenterY changed should be Position changed.

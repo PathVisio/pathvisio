@@ -18,6 +18,7 @@
 package org.pathvisio.gpmldiff;
 
 import java.util.*;
+import org.pathvisio.model.PathwayElement;
 
 /**
    Basic Similarity function
@@ -27,10 +28,10 @@ class BasicSim extends SimilarityFunction
 	/**
 	   returns a score between 0 and 100, 100 if both elements are completely similar
 	*/
-	public int getSimScore (PwyElt oldE, PwyElt newE)
+	public int getSimScore (PathwayElement oldE, PathwayElement newE)
 	{
-		Map<String, String> oldC = oldE.getContents();
-		Map<String, String> newC = newE.getContents();
+		Map<String, String> oldC = PwyElt.getContents(oldE);
+		Map<String, String> newC = PwyElt.getContents(newE);
 
 		int oldN = oldC.size();
 		int newN = newC.size();

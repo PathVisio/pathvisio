@@ -28,4 +28,4 @@ build:\
 ../../lib/swt-linux-lib/swt.jar:\
 ../../lib/swt-linux-lib.jar
 
-java -cp $MYCLASSPATH org.pathvisio.gpmldiff.PatchMain $1 $2
+java -ea -cp $MYCLASSPATH org.pathvisio.gpmldiff.PatchMain $1 $2

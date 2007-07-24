@@ -20,6 +20,7 @@ import java.io.*;
 import org.jdom.*;
 import org.jdom.output.*;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.debug.Logger;
 
@@ -58,35 +59,35 @@ class DgpmlOutputter extends DiffOutputter
 		xmlcode.output(doc, writer);
 	}
 
-	public void insert(PwyElt newElt)
+	public void insert(PathwayElement newElt)
 	{
 		Element e = (new Element("Insert"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(newElt.getElement(), GpmlFormat.GPML);
+			Element f = GpmlFormat.createJdomElement(newElt, GpmlFormat.GPML);
 			e.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
 		doc.getRootElement().addContent(e);
 	}
 
-	public void delete(PwyElt oldElt)
+	public void delete(PathwayElement oldElt)
 	{
 		Element e = (new Element("Delete"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(oldElt.getElement(), GpmlFormat.GPML);
+			Element f = GpmlFormat.createJdomElement(oldElt, GpmlFormat.GPML);
 			e.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
 		doc.getRootElement().addContent(e);
 	}
 
-	PwyElt curOldElt = null;
-	PwyElt curNewElt = null;
+	PathwayElement curOldElt = null;
+	PathwayElement curNewElt = null;
 	Element curModifyElement = null;
 	
-	public void modifyStart (PwyElt oldElt, PwyElt newElt)
+	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
 		curNewElt = newElt;
@@ -94,7 +95,7 @@ class DgpmlOutputter extends DiffOutputter
 		curModifyElement = (new Element("Modify"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(curOldElt.getElement(), GpmlFormat.GPML);
+			Element f = GpmlFormat.createJdomElement(curOldElt, GpmlFormat.GPML);
 			curModifyElement.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }

@@ -18,6 +18,7 @@ package org.pathvisio.gpmldiff;
 
 import java.util.Set;
 import java.util.HashSet;
+import org.pathvisio.model.PathwayElement;
 
 /**
    A search node, important part of the Dijkstra algorithm
@@ -28,7 +29,7 @@ class SearchNode
 	SearchNode parent;
 	
 	// pwy elts in use by parent search path, both old and new
-	Set<PwyElt> parentSet = new HashSet<PwyElt>(); 
+	Set<PathwayElement> parentSet = new HashSet<PathwayElement>(); 
 	
 	/**
 	   return the Parent of this SearchNode, which corresponds to the
@@ -39,16 +40,16 @@ class SearchNode
 		return parent;
 	}
 	
-	PwyElt oldElt; // corresponding elt in old doc
+	PathwayElement oldElt; // corresponding elt in old doc
 
-	public PwyElt getOldElt()
+	public PathwayElement getOldElt()
 	{
 		return oldElt;
 	}
 	
-	PwyElt newElt; // corresponding elt in new doc
+	PathwayElement newElt; // corresponding elt in new doc
 
-	public PwyElt getNewElt()
+	public PathwayElement getNewElt()
 	{
 		return newElt;
 	}
@@ -57,16 +58,17 @@ class SearchNode
 	   Determine if a certain pwy elt is already in the ancestry of this Search Node.
 	   (old or new doesn't matter, as these sets never overlap)
 	 */
-	public boolean ancestryHasElt(PwyElt elt)
+	public boolean ancestryHasElt(PathwayElement elt)
 	{
 		return parentSet.contains (elt);
 	}
 	
 	/**
 	   Create a new SearchNode.
-	   note: parent may be null.
+	   note: parent may be null for the first SearchNode.
+	   This will mark oldElt and newElt so they can be added only once.
 	*/
-	public SearchNode(SearchNode _parent, PwyElt _oldElt, PwyElt _newElt, float _cost)
+	public SearchNode(SearchNode _parent, PathwayElement _oldElt, PathwayElement _newElt, float _cost)
 	{
 		cost = _cost;
 		parent = _parent;
@@ -78,6 +80,8 @@ class SearchNode
 		{
 			parentSet = parent.parentSet;
 		}
+		assert (!parentSet.contains(oldElt));
+		assert (!parentSet.contains(newElt));
 		parentSet.add (oldElt);
 		parentSet.add (newElt);
 	}

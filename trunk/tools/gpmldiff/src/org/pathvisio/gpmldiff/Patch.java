@@ -16,40 +16,99 @@
 //
 package org.pathvisio.gpmldiff;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
 import org.jdom.*;
 import org.jdom.input.*;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PropertyType;
 
 class Patch
 {
-	private enum ModifcationType
+	private class Change
 	{
-		INSERTION,
-			DELETION,
-			MODIFCATION
-	}
-	
-	private class Modification
-	{
-		public ModifcationType type; 
-		public PathwayElement oldElt;
-		public PathwayElement newElt;
 		public String attr;
 		public String oldValue;
 		public String newValue;
 	}
+
+	private class ModDel
+	{
+		boolean isDeletion; // true when this is a deletion, false when this is a modification
+		public PathwayElement oldElt;
+		List<Change> changes = new ArrayList (); // only used when isDeletion == false
+
+		public PathwayElement getNewElt()
+		{
+			if (isDeletion) throw new IllegalArgumentException();
+			PathwayElement result = oldElt.copy();
+			for (Change ch : changes)
+			{
+				result.setProperty(PropertyType.getByTag(ch.attr), ch.newValue);
+			}
+			return result;
+		}
+	}
+
+	// store deletions and modifications together,
+	// because they should both be looked up in the old Pwy
+	private Map <PathwayElement, ModDel> modifications = new HashMap <PathwayElement, ModDel>();
+
+	// store insertions separately, as they don't need to be looked up
+	// in the old Pwy, they just need to be added afterwards.
+	private List<PathwayElement> insertions = new ArrayList <PathwayElement>();
 	
-	void readFromStream (InputStream in)
+	public void readFromStream (InputStream in) throws JDOMException, IOException, ConverterException
 	{
 		SAXBuilder builder = new SAXBuilder ();
 		Document doc = builder.build (in);
 
-		for (Element e : doc.getRootElement().getChildren())
+		for (Object o : doc.getRootElement().getChildren())
 		{
+			Element e = ((Element)o);
 			if (e.getName().equals("Modify"))
 			{
-				Modification mod = new Modifcation();
-				GpmlFormat.mapElement (e)
+				ModDel mod = new ModDel();
+				mod.isDeletion = false;
+					
+				for (Object p : ((Element)e).getChildren())
+				{
+					Element f = ((Element)p);
+					if (!f.getName().equals("Change"))
+					{
+						mod.oldElt = GpmlFormat.mapElement(f);
+					}
+					else
+					{
+						Change chg = new Change();
+						chg.attr = f.getAttributeValue("attr");
+						chg.oldValue = f.getAttributeValue("old");
+						chg.newValue = f.getAttributeValue("new");
+						mod.changes.add(chg);
+					}
+				}
+				modifications.put (mod.oldElt, mod);
+			}
+			else if (e.getName().equals("Insert"))
+			{
+				PathwayElement ins = GpmlFormat.mapElement ((Element)e.getChildren().get(0));
+				insertions.add (ins);
+			}
+			else if (e.getName().equals("Delete"))
+			{
+				ModDel mod = new ModDel();
+				mod.isDeletion = true;
+				mod.changes = null;
+				mod.oldElt = GpmlFormat.mapElement ((Element)e.getChildren().get(0));
+				modifications.put (mod.oldElt, mod);
+			}
+			else
+			{
+				assert (false); // no other options
 			}
 		}
 	}
@@ -58,7 +117,80 @@ class Patch
 	{
 	}
 
-	void applyTo (Pathway oldPwy, int fuzz)
+	public void applyTo (PwyDoc oldPwy, int fuzz)
 	{
+		SearchNode current = null;
+		SimilarityFunction simFun = new BasicSim();
+		CostFunction costFun = new BasicCost();
+
+		PwyDoc newPwy = oldPwy;
+
+		// scan modifications / deletions for correspondence
+		for (ModDel mod : modifications.values())
+		{
+			current = findCorrespondence (current, oldPwy, mod.oldElt, simFun, costFun);
+		}
+
+		// now remove deletions
+		
+		// insertions are easy, just add them
+		for (PathwayElement ins : insertions)
+		{
+			newPwy.add (ins);
+		}
+		
+	    // now modifications and deletions:
+		// Start back from current
+		while (current != null)
+		{
+			// check for modification
+			ModDel mod = modifications.get (current.newElt);
+			// is this a deletion or a modification?)
+			if (mod.isDeletion)
+			{
+				// mod goes to /dev/null
+				newPwy.remove (mod.oldElt);
+			}
+			else				
+			{
+				//TODO: we have a problem here, modification should take in-place
+				// apply modification to oldElt
+				PathwayElement newElt = mod.getNewElt();
+				// and add it to the pwy.
+				newPwy.add (mod.oldElt);
+			}
+			current = current.getParent();
+		}
+	}
+
+	/**
+	   This is very similar to PwyDoc.SearchCorrespondence, only
+	   it doesn't compare two pathways: it compares elements mentioned in the dgpml with pathways.
+	 */
+	private SearchNode findCorrespondence(SearchNode currentNode, PwyDoc oldDoc, PathwayElement newElt, SimilarityFunction simFun, CostFunction costFun)
+	{		
+		int maxScore = 0;
+		PathwayElement maxOldElt = null;
+		for (PathwayElement oldElt : oldDoc.getElts())
+		{
+			// if it's the first node, or if the newElt is not yet in the searchpath
+			if (currentNode == null || !currentNode.ancestryHasElt (newElt))
+			{
+				int score = simFun.getSimScore (oldElt, newElt);
+				if (score > maxScore)
+				{
+					maxOldElt = oldElt;
+					maxScore = score;
+				}
+			}
+		}
+
+		if (maxOldElt != null && maxScore > 70)
+		{
+			// add pairing to search tree.
+			SearchNode newNode = new SearchNode (currentNode, newElt, maxOldElt, 0);
+			currentNode = newNode;
+		}
+		return currentNode;
 	}
 }

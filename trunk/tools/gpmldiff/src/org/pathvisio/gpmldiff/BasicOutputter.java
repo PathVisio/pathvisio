@@ -17,6 +17,7 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.*;
+import org.pathvisio.model.PathwayElement;
 
 /**
    Naive implementation of Outputter.
@@ -40,20 +41,20 @@ class BasicOutputter extends DiffOutputter
 	{
 	}
 
-	public void insert(PwyElt newElt)
+	public void insert(PathwayElement newElt)
 	{
-		output.println ("insert: " + newElt.summary());
+		output.println ("insert: " + PwyElt.summary(newElt));
 	}
 
-	public void delete(PwyElt oldElt)
+	public void delete(PathwayElement oldElt)
 	{
-		output.println ("delete: " + oldElt.summary());
+		output.println ("delete: " + PwyElt.summary(oldElt));
 	}
 
-	PwyElt curOldElt = null;
-	PwyElt curNewElt = null;
+	PathwayElement curOldElt = null;
+	PathwayElement curNewElt = null;
 	
-	public void modifyStart (PwyElt oldElt, PwyElt newElt)
+	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
 		curNewElt = newElt;
@@ -69,7 +70,7 @@ class BasicOutputter extends DiffOutputter
 	{
 		assert (curOldElt != null);
 		assert (curNewElt != null);
-		output.println ("modify: " + curNewElt.summary() + "[" + attr + ": '" + oldVal + "' -> '" + newVal + "']");
+		output.println ("modify: " + PwyElt.summary(curNewElt) + "[" + attr + ": '" + oldVal + "' -> '" + newVal + "']");
 	}
 
 	

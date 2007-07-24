@@ -18,6 +18,7 @@ package org.pathvisio.gpmldiff;
 
 import java.io.*;
 import org.pathvisio.debug.Logger;
+import java.util.Arrays;
 
 /**
    Class containing main method
@@ -26,23 +27,49 @@ class GpmlDiff
 {
 	static File oldFile = null;
 	static File newFile = null;
-	
+	static String outputType = "svg";
+	static final String[] outputTypes = {"svg", "dgpml", "basic"};
+
 	/**
 	   Parse Command-line Options
 	*/
 	static boolean parseCliOptions(String argv[])
 	{
+		int pos = 0;
 		String error = null;
-		if (argv.length != 2) error = "Two parameters expected";
+		if (pos >= argv.length) error = "Expected -o or old pathway file";
+		if (argv[pos].equals ("-o"))
+		{
+			pos++;
+			if (pos >= argv.length) error = "Expected -o or old pathway file";
+			if (error == null)
+			{				
+				outputType = argv[pos];
+				if (!Arrays.asList(outputTypes).contains (outputType))
+				{
+					error = "Outputtype " + outputType + " is not allowed";
+				}
+				if (error == null)
+				{
+					pos++;
+					if (pos >= argv.length) error = "expected old pathway file";
+				}
+			}
+		}			
 		if (error == null)
 		{
-			oldFile = new File(argv[0]);
-			if (!oldFile.exists()) error = argv[0] + ": File not found";
+			oldFile = new File(argv[pos]);
+			if (!oldFile.exists()) error = argv[pos] + ": File not found";
 		}
 		if (error == null)
 		{
-			newFile = new File(argv[1]);
-			if (!newFile.exists()) error = argv[1] + ": File not found";
+			pos++;
+			if (pos >= argv.length) error = "expected new pathway file";
+		}
+		if (error == null)
+		{
+			newFile = new File(argv[pos]);
+			if (!newFile.exists()) error = argv[pos] + ": File not found";
 		}
 		if (error != null)
 		{
@@ -59,10 +86,12 @@ class GpmlDiff
 	static void printUsage()
 	{
 		System.out.print (
-			"Gpmldiff\n" +
+			"GpmlDiff\n" +
 			"\n" +
 			"Usage:\n" +
-			"  Gpmldiff old.gpml new.gpml\n" +
+			"  gpmldiff [-o svg|dgpml] old.gpml new.gpml\n" +
+			"  -o: output format. Choose svg for the visual output or dgpml for the\n" +
+            "      gpmldiff patch format\n" +
 			"\n" +
 			"Finds the difference between the two files\n"
 			);
@@ -85,10 +114,25 @@ class GpmlDiff
 			PwyDoc newDoc = PwyDoc.read (newFile);
 			SearchNode result = oldDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
 
-//			DiffOutputter out = new BasicOutputter();
-// 			DiffOutputter out = new DgpmlOutputter();
- 			DiffOutputter out = new SvgOutputter(oldDoc, newDoc);
-			
+			DiffOutputter out = null;
+			if (outputType.equals ("basic"))
+			{
+				out = new BasicOutputter();
+			}
+			else if (outputType.equals ("dgpml"))
+			{
+				out = new DgpmlOutputter();
+			}
+			else if (outputType.equals ("svg"))
+			{				
+				out = new SvgOutputter(oldDoc, newDoc);
+			}
+			else
+			{
+				System.out.println ("Unknown ouput-type " + outputType);
+				System.exit (1);
+			}
+			assert (out != null);
 			oldDoc.writeResult (result, newDoc, out);
 			try
 			{

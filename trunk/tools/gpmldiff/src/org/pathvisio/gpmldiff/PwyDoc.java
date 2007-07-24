@@ -21,6 +21,7 @@ import java.util.*;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.debug.Logger;
 
 /**
    Wrapper for org.pathvisio.model.Pathway that adds some extra
@@ -44,12 +45,22 @@ class PwyDoc
 		return src;
 	}
 	
-	private	List<PwyElt> elts = new ArrayList<PwyElt>();
+	private	List<PathwayElement> elts = new ArrayList<PathwayElement>();
 
+	public void add (PathwayElement value)
+	{
+		elts.add (value);
+	}
+
+	public void remove (PathwayElement value)
+	{
+		elts.remove (value);
+	}
+	
 	/**
 	   Return a list of all PwyElts contained in this documents
 	*/
-	public List<PwyElt> getElts() { return elts; }
+	public List<PathwayElement> getElts() { return elts; }
 		
 	/**
 	   Construct a new PwyDoc from a certain file
@@ -64,11 +75,15 @@ class PwyDoc
 		{
 			result.pwy.readFromXml (f, false);
 		}
-		catch (ConverterException e) { return null; }
+		catch (ConverterException e)
+		{
+			Logger.log.error ("Converter exception", e);
+			return null;
+		}
 		
 		for (PathwayElement e : result.pwy.getDataObjects())
 		{
-			result.elts.add (new PwyElt (e));
+			result.add (e);
 		}
 		
 		result.src = f;
@@ -88,11 +103,11 @@ class PwyDoc
 	{
 		SearchNode currentNode = null;
 				
-		for (PwyElt oldElt : elts)
+		for (PathwayElement oldElt : elts)
 		{						
 			int maxScore = 0;
-			PwyElt maxNewElt = null;
-			for (PwyElt newElt : newDoc.getElts())
+			PathwayElement maxNewElt = null;
+			for (PathwayElement newElt : newDoc.getElts())
 			{
 				// if it's the first node, or if the newElt is not yet in the searchpath
 				if (currentNode == null || !currentNode.ancestryHasElt (newElt))
@@ -128,20 +143,20 @@ class PwyDoc
 	*/
 	void writeResult (SearchNode result, PwyDoc newPwy, DiffOutputter out)
 	{
-		Set<PwyElt> bothOld = new HashSet<PwyElt>();
-		Set<PwyElt> bothNew = new HashSet<PwyElt>();
+		Set<PathwayElement> bothOld = new HashSet<PathwayElement>();
+		Set<PathwayElement> bothNew = new HashSet<PathwayElement>();
 				
 		SearchNode current = result;
 		while (current != null)
 		{
 			// check for modification
-			current.getOldElt().writeModifications(current.getNewElt(), out);
+			PwyElt.writeModifications(current.getOldElt(), current.getNewElt(), out);
 			bothOld.add (current.getOldElt());
 			bothNew.add (current.getNewElt());
 			current = current.getParent();
 		}
 
-		for (PwyElt oldElt : elts)
+		for (PathwayElement oldElt : elts)
 		{
 			// if the oldElt doesn't have a corresponding newElt...
 			if (!bothOld.contains(oldElt))
@@ -151,12 +166,12 @@ class PwyDoc
 			}
 		}
 
-		for (PwyElt newElt : newPwy.elts)
+		for (PathwayElement newElt : newPwy.elts)
 		{
 			// if the newElt doesn't have a corresponding oldElt
 			if (!bothNew.contains(newElt))
 			{
-				// then we have an insertion
+				// then we have an insertioncurrent.getOldElt()
 				out.insert (newElt);
 			}
 		}

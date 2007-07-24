@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Delta>
+  <Delete>
+    <Shape xmlns="http://genmapp.org/GPML/2007" Type="Rectangle" GraphId="bd1">
+      <Graphics FillColor="Transparent" Color="000000" CenterX="3907.5" CenterY="2197.5" Width="1246.0" Height="1246.0" Rotation="0.0" />
+    </Shape>
+  </Delete>
+</Delta>

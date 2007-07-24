@@ -71,7 +71,7 @@ class PatchMain
 			Patch patch = new Patch();
 			try
 			{
-				patch.readFromStream (System.in); // read diff from STDIN
+				patch.readFromReader (new InputStreamReader (System.in)); // read diff from STDIN
 				if (reverse)
 				{
 					patch.reverse();

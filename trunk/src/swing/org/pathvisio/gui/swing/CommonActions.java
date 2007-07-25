@@ -33,6 +33,8 @@ import javax.swing.filechooser.FileFilter;
 import org.pathvisio.Engine;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.PathwayImporter;
+import org.pathvisio.view.AlignType;
+import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -308,4 +310,34 @@ public abstract class CommonActions {
 			}
 		}
 	}
+	
+	static class StackAction extends AbstractAction {
+		StackType type;
+		
+		public StackAction(StackType t) {
+			super(t.getLabel(), new ImageIcon(Engine.getResourceURL(t.getIcon())));
+			putValue(Action.SHORT_DESCRIPTION, t.getDescription());
+			type = t;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getActiveVPathway();
+			if(vp != null) vp.stackSelected(type);
+		}
+	}
+	
+	static class AlignAction extends AbstractAction {
+		AlignType type;
+
+		public AlignAction(AlignType t) {
+			super(t.getLabel(), new ImageIcon(Engine.getResourceURL(t.getIcon())));
+			putValue(Action.SHORT_DESCRIPTION, t.getDescription());
+			type = t;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getActiveVPathway();
+			if(vp != null) vp.alignSelected(type);
+		}
+	}	
 }

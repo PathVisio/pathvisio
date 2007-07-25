@@ -41,6 +41,8 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.xml.sax.SAXException;
@@ -62,20 +64,20 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 		
 	public void init(VPathwayWrapper wrapper) throws Exception {
-		for(Parameter p : Parameter.values()) {
-			//Check for required
-			assert !p.isRequired() || p.getValue() != null : 
-				"Missing required argument '" + p.name() + "'";
-		}
-		
-		if(isNew()) { //Create new pathway
-			Engine.newPathway(wrapper);
-		} else { //Download and open the pathway
-			Engine.openPathway(new URL(getPwURL()), wrapper);
-		}
-		
-		//TODO: notify user about this and hide edit actions
-		Engine.getActiveVPathway().setEditMode(isReadOnly());
+			for(Parameter p : Parameter.values()) {
+				//Check for required
+				assert !p.isRequired() || p.getValue() != null : 
+					"Missing required argument '" + p.name() + "'";
+			}
+
+			if(isNew()) { //Create new pathway
+				Engine.newPathway(wrapper);
+			} else { //Download and open the pathway
+				Engine.openPathway(new URL(getPwURL()), wrapper);
+			}
+
+			//TODO: notify user about this and hide edit actions
+			Engine.getActiveVPathway().setEditMode(isReadOnly());
 	}
 	
 	public String getPwName() {
@@ -120,20 +122,25 @@ public class WikiPathways implements ApplicationEventListener {
 		}
 		return localFile;
 	}
-	
+		
 	public boolean saveUI() {
 		VPathway vPathway = Engine.getActiveVPathway();
-		if(vPathway == null || vPathway.getGmmlData().hasChanged()) {
-			String description = uiHandler.askInput("Specify description", "Give a description of your changes");
-			try {
-				int id = uiHandler.startProgress();
-				saveToWiki(description);
-				uiHandler.stopProgress(id);
-				return true;
-			} catch (Exception e) {
-				Engine.log.error("Unable to save pathway", e);
-				uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
-			}
+		if(vPathway != null && vPathway.getGmmlData().hasChanged()) {
+			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
+			RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
+				public Boolean excecuteCode() {
+					try {
+						saveToWiki(description);
+						return true;
+					} catch (Exception e) {
+						Engine.log.error("Unable to save pathway", e);
+						uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
+					}
+					return false;
+				}
+			};
+			uiHandler.runWithProgress(r, "Saving pathway", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+			return r.get();
 		}
 		return false;
 	}

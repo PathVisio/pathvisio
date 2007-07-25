@@ -136,7 +136,7 @@ public class SidePanel extends Composite {
 	}
 	
 	public void show() {
-		int sidePanelSize = GlobalPreference.getValueInt(SwtPreference.SWT_SIDEPANEL_SIZE);
+		int sidePanelSize = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		if(sidePanelSize == 0) sidePanelSize = 10; //Force show if initial size = 0
 		parentSash.setWeights(calculateWeights(sidePanelSize));
 	}

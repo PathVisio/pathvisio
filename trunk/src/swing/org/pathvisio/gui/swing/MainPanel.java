@@ -18,7 +18,6 @@ package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,6 +52,7 @@ import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.StackType;
@@ -111,7 +111,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane, BorderLayout.CENTER);
 	}
-
+	
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu pathwayMenu = new JMenu("Pathway");
 		pathwayMenu.add(new SaveLocalAction());

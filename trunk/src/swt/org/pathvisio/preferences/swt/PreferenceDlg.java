@@ -91,7 +91,7 @@ public class PreferenceDlg extends PreferenceManager {
 		}
 		
 		protected void createFieldEditors() {
-			IntegerFieldEditor f = new IntegerFieldEditor(SwtPreference.SWT_SIDEPANEL_SIZE.name(),
+			IntegerFieldEditor f = new IntegerFieldEditor(GlobalPreference.GUI_SIDEPANEL_SIZE.name(),
 					"Initial side panel size (percent of window size):", getFieldEditorParent());
 			f.setValidRange(0, 100);
 			addField(f);

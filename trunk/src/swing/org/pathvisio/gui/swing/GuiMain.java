@@ -19,6 +19,7 @@ package org.pathvisio.gui.swing;
 import javax.swing.JFrame;
 
 import org.pathvisio.Engine;
+import org.pathvisio.preferences.GlobalPreference;
 
 public class GuiMain {
 
@@ -42,7 +43,11 @@ public class GuiMain {
 		
 		//Display the window.
 		frame.setVisible(true);
-		mainPanel.getSplitPane().setDividerLocation(0.8);
+
+		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		double spSize = (100 - spPercent) / 100.0;
+		mainPanel.getSplitPane().setDividerLocation(spSize);
+		
 		SwingEngine.newPathway();
 		Engine.getActiveVPathway().setEditMode(true);
 	}

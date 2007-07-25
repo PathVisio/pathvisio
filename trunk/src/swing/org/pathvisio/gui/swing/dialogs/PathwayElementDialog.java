@@ -32,8 +32,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.view.VPathway;
 
 public abstract class PathwayElementDialog extends JDialog implements ActionListener {
 	static final String OK = "Ok";
@@ -104,6 +106,8 @@ public abstract class PathwayElementDialog extends JDialog implements ActionList
 	protected abstract void createDialogContents(Container parent);
 	
 	protected void okPressed() {
+		VPathway p = Engine.getActiveVPathway();
+		if(p != null) p.redraw();
 		setVisible(false);
 	}
 	

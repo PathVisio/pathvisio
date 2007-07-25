@@ -39,7 +39,11 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorDerbyServer;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -62,24 +66,32 @@ public class WikiPathways implements ApplicationEventListener {
 		cookie = new HashMap<String, String>();
 		Engine.addApplicationEventListener(this);
 	}
-		
+
 	public void init(VPathwayWrapper wrapper) throws Exception {
-			for(Parameter p : Parameter.values()) {
-				//Check for required
-				assert !p.isRequired() || p.getValue() != null : 
-					"Missing required argument '" + p.name() + "'";
-			}
+		WikiPathwaysEngine.init();
+		
+		for(Parameter p : Parameter.values()) {
+			//Check for required
+			assert !p.isRequired() || p.getValue() != null : 
+				"Missing required argument '" + p.name() + "'";
+		}
 
-			if(isNew()) { //Create new pathway
-				Engine.newPathway(wrapper);
-			} else { //Download and open the pathway
-				Engine.openPathway(new URL(getPwURL()), wrapper);
-			}
+		if(isNew()) { //Create new pathway
+			Engine.newPathway(wrapper);
+		} else { //Download and open the pathway
+			Engine.openPathway(new URL(getPwURL()), wrapper);
+		}
 
-			//TODO: notify user about this and hide edit actions
-			Engine.getActiveVPathway().setEditMode(isReadOnly());
+		//TODO: notify user about this and hide edit actions
+		Engine.getActiveVPathway().setEditMode(isReadOnly());
+		
+		//Connect to the gene database
+		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
+		Engine.setDBConnector(connector, DBConnector.TYPE_GDB);
+		
+		//Gdb.connect(getPwSpecies());
 	}
-	
+
 	public String getPwName() {
 		return Parameter.PW_NAME.getValue();
 	}
@@ -127,20 +139,22 @@ public class WikiPathways implements ApplicationEventListener {
 		VPathway vPathway = Engine.getActiveVPathway();
 		if(vPathway != null && vPathway.getGmmlData().hasChanged()) {
 			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
-			RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
-				public Boolean excecuteCode() {
-					try {
-						saveToWiki(description);
-						return true;
-					} catch (Exception e) {
-						Engine.log.error("Unable to save pathway", e);
-						uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
+			if(description != null) {
+				RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
+					public Boolean excecuteCode() {
+						try {
+							saveToWiki(description);
+							return true;
+						} catch (Exception e) {
+							Engine.log.error("Unable to save pathway", e);
+							uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
+						}
+						return false;
 					}
-					return false;
-				}
-			};
-			uiHandler.runWithProgress(r, "Saving pathway", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
-			return r.get();
+				};
+				uiHandler.runWithProgress(r, "Saving pathway", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+				return r.get();
+			}
 		}
 		return false;
 	}
@@ -187,6 +201,7 @@ public class WikiPathways implements ApplicationEventListener {
 
 	
 	public void applicationEvent(ApplicationEvent e) {
+		/*
 		switch(e.type) {
 		case ApplicationEvent.APPLICATION_CLOSE:
 			VPathway vPathway = Engine.getActiveVPathway();
@@ -202,6 +217,7 @@ public class WikiPathways implements ApplicationEventListener {
 				//Silently close
 			}
 		}
+		*/
 	}
 
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {

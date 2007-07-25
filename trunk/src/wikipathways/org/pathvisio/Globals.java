@@ -24,8 +24,8 @@ package org.pathvisio;
  */
 public class Globals {
 	public static final String APPLICATION_NAME = "PathVisio";
-	public static final String APPLICATION_VERSION_NAME = "PathVisio - WikiPathways";
+	public static final String APPLICATION_VERSION_NAME = "PathVisio.WikiPathways";
 	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
 	// for inclusion in certain error messages.
-	public static final String DEVELOPER_EMAIL = "thomas.kelder@bigcat.unimaas.nl"; 
+	public static final String DEVELOPER_EMAIL = "thomas.kelder@bigcat.unimaas.nl";
 }

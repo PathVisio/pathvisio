@@ -26,8 +26,6 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JOptionPane;
@@ -37,47 +35,51 @@ import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.wikipathways.Parameter;
+import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class AppletMain extends JApplet {	
 	private static final long serialVersionUID = 1L;
 
 	private static WikiPathways wiki;
-	
+
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
 		Engine.log.trace("init applet");
-		super.init();
-		
-		GuiInit.init();
-	
-		MainPanel mainPanel = SwingEngine.getApplicationPanel();
-		
-		Action saveAction = new ExitAction(true);
-		Action discardAction = new ExitAction(false);
-		
-		JToolBar tb = mainPanel.getToolBar();
-		
-		tb.setLayout(new BoxLayout(tb,BoxLayout.LINE_AXIS));		
-		tb.add(Box.createHorizontalGlue());		
-		tb.addSeparator();		
-		tb.add(saveAction);
-		tb.add(discardAction);
-		
-		wiki = new WikiPathways(new SwingUserInterfaceHandler(this));
-		parseArguments();
-		loadCookies();
-		
-		add(mainPanel);
-		
-		try { 
-			wiki.init(SwingEngine.createWrapper());
-		} catch(Exception e) {
-			Engine.log.error("Unable to load pathway", e);
-			JOptionPane.showMessageDialog(
-					this, e.getClass() + ": " + e.getMessage(), "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
-		}
+		final UserInterfaceHandler uiHandler = new SwingUserInterfaceHandler(JOptionPane.getFrameForComponent(this));
+		final MainPanel mainPanel = SwingEngine.getApplicationPanel();
+		RunnableWithProgress r = new RunnableWithProgress() {
+			public Object excecuteCode() {
+				GuiInit.init();
+								
+				Action saveAction = new ExitAction(true);
+				Action discardAction = new ExitAction(false);
+				
+				JToolBar tb = mainPanel.getToolBar();
+					
+				tb.addSeparator();		
+				tb.add(saveAction);
+				tb.add(discardAction);
+				
+				wiki = new WikiPathways(uiHandler);
+				parseArguments();
+				loadCookies();
+								
+				try { 
+					wiki.init(SwingEngine.createWrapper());
+				} catch(Exception e) {
+					Engine.log.error("Unable to load pathway", e);
+					JOptionPane.showMessageDialog(
+							AppletMain.this, e.getClass() + ": " + e.getMessage(), "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
+				};
+				return null;
+			}
+		};
+		uiHandler.runWithProgress(r, "Loading pathway", ProgressKeeper.PROGRESS_UNKNOWN, false, false);
+		getContentPane().add(mainPanel);
 	}
 	
 	public void start() {
@@ -149,6 +151,7 @@ public class AppletMain extends JApplet {
 		boolean doSave;
 		public ExitAction(boolean save) {
 			super("Finish", new ImageIcon(save ? Engine.getResourceURL("icons/apply.gif") : Engine.getResourceURL("icons/cancel.gif")));
+			this.doSave = save;
 			String descr = doSave ? "Save pathway and close editor" : "Discard pathway and close editor";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 		}

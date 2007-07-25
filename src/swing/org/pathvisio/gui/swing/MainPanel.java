@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,7 +53,9 @@ import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -82,7 +85,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		toolBar = new JToolBar();
 		addToolBarActions(toolBar);
 
-		add(toolBar, BorderLayout.NORTH);
+		add(toolBar, BorderLayout.PAGE_START);
 		// menuBar will be added by container (JFrame or JApplet)
 
 		pathwayScrollPane = new JScrollPane();
@@ -120,6 +123,27 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		editMenu.add(new CopyAction());
 		editMenu.add(new PasteAction());
 
+		JMenu selectionMenu = new JMenu("Selection");
+		JMenu alignMenu = new JMenu("Align");
+		JMenu stackMenu = new JMenu("Stack");
+		
+		alignMenu.add(new CommonActions.AlignAction(AlignType.CENTERX));
+		alignMenu.add(new CommonActions.AlignAction(AlignType.CENTERY));
+		alignMenu.add(new CommonActions.AlignAction(AlignType.LEFT));
+		alignMenu.add(new CommonActions.AlignAction(AlignType.RIGHT));
+		alignMenu.add(new CommonActions.AlignAction(AlignType.TOP));
+		alignMenu.add(new CommonActions.AlignAction(AlignType.WIDTH));
+		alignMenu.add(new CommonActions.AlignAction(AlignType.HEIGHT));
+		stackMenu.add(new CommonActions.StackAction(StackType.CENTERX));
+		stackMenu.add(new CommonActions.StackAction(StackType.CENTERY));
+		stackMenu.add(new CommonActions.StackAction(StackType.LEFT));
+		stackMenu.add(new CommonActions.StackAction(StackType.RIGHT));
+		stackMenu.add(new CommonActions.StackAction(StackType.TOP));
+		stackMenu.add(new CommonActions.StackAction(StackType.BOTTOM));
+		
+		selectionMenu.add(alignMenu);
+		selectionMenu.add(stackMenu);
+		
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
 		viewMenu.add(zoomMenu);
@@ -134,10 +158,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		mb.add(pathwayMenu);
 		mb.add(editMenu);
+		mb.add(selectionMenu);
 		mb.add(viewMenu);
 	}
 
 	protected void addToolBarActions(JToolBar tb) {
+		tb.setLayout(new WrapLayout(1, 1));
+		
 		tb.add(new SaveLocalAction());
 		tb.add(new SaveToServerAction());
 		tb.add(new ImportAction(this));
@@ -213,7 +240,22 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				VPathway.NEWRECEPTORSQUARE)));
 		lineShapeButton.setRunFirstItem(true);
 		tb.add(lineShapeButton);
-
+		
+		tb.addSeparator();
+		
+		tb.add(new CommonActions.AlignAction(AlignType.CENTERX));
+		tb.add(new CommonActions.AlignAction(AlignType.CENTERY));
+		tb.add(new CommonActions.AlignAction(AlignType.LEFT));
+		tb.add(new CommonActions.AlignAction(AlignType.RIGHT));
+		tb.add(new CommonActions.AlignAction(AlignType.TOP));
+		tb.add(new CommonActions.AlignAction(AlignType.WIDTH));
+		tb.add(new CommonActions.AlignAction(AlignType.HEIGHT));
+		tb.add(new CommonActions.StackAction(StackType.CENTERX));
+		tb.add(new CommonActions.StackAction(StackType.CENTERY));
+		tb.add(new CommonActions.StackAction(StackType.LEFT));
+		tb.add(new CommonActions.StackAction(StackType.RIGHT));
+		tb.add(new CommonActions.StackAction(StackType.TOP));
+		tb.add(new CommonActions.StackAction(StackType.BOTTOM));
 	}
 
 	public JMenuBar getMenuBar() {

@@ -279,8 +279,14 @@ public class Engine {
 		return importers;
 	}
 	
+	private static HashMap<Integer, DBConnector> connectors = new HashMap<Integer, DBConnector>();
+	
 	public static DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		DBConnector connector = null;
+		//Try to get the DBConnector from the hashmap first
+		DBConnector connector = connectors.get(type);
+		if(connector != null) return connector;
+		
+		//Else load it from the preferences
 		String className = null;
 		switch(type) {
 		case DBConnector.TYPE_GDB:
@@ -298,10 +304,20 @@ public class Engine {
 			connector = (DBConnector)dbc.newInstance();
 			connector.setDbType(type);
 		}
-	
+		
 		return connector;
 	}
-		
+	
+	/**
+	 * Set the DBConnector for the given database type. 
+	 * Overrides seting in GlobalPreference.DB_ENGINE_*
+	 * @param connector
+	 * @param type
+	 */
+	public static void setDBConnector(DBConnector connector, int type) {
+		connectors.put(type, connector);
+	}
+	
 	private static List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
 	
 	/**

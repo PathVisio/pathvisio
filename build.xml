@@ -163,7 +163,7 @@ public class Revision
 		<jar jarfile="wikipathways.jar">
 			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
             <manifest>
-                <attribute name="Class-Path" value="jdom.jar resources.jar swing-worker-1.1.jar apache/commons-codec-1.3.jar apache/commons-httpclient-3.0.1.jar apache/commons-logging-1.1.jar apache/ws-commons-util-1.0.1.jar apache/xmlrpc-client-3.0.jar apache/xmlrpc-common-3.0.jar"/>
+                <attribute name="Class-Path" value="jdom.jar resources.jar derbyclient.jar swing-worker-1.1.jar apache/commons-codec-1.3.jar apache/commons-httpclient-3.0.1.jar apache/commons-logging-1.1.jar apache/ws-commons-util-1.0.1.jar apache/xmlrpc-client-3.0.jar apache/xmlrpc-common-3.0.jar"/>
             </manifest>
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
@@ -225,6 +225,7 @@ public class Revision
 				<include name="apache/*.jar"/>
 				<include name="jdom.jar"/>
 				<include name="swing-worker-1.1.jar"/>
+				<include name="derbyclient.jar"/>
 			</fileset>
 			
 		</copy>

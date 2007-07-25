@@ -31,10 +31,12 @@ import javax.swing.JApplet;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.wikipathways.Parameter;
@@ -45,14 +47,15 @@ public class AppletMain extends JApplet {
 	private static final long serialVersionUID = 1L;
 
 	private static WikiPathways wiki;
-
+	private static MainPanel mainPanel;
+	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
 		Engine.log.trace("init applet");
 		final UserInterfaceHandler uiHandler = new SwingUserInterfaceHandler(JOptionPane.getFrameForComponent(this));
-		final MainPanel mainPanel = SwingEngine.getApplicationPanel();
+		mainPanel = SwingEngine.getApplicationPanel();
 		RunnableWithProgress r = new RunnableWithProgress() {
-			public Object excecuteCode() {
+			public Object excecuteCode() {				
 				GuiInit.init();
 								
 				Action saveAction = new ExitAction(true);
@@ -82,10 +85,19 @@ public class AppletMain extends JApplet {
 		getContentPane().add(mainPanel);
 	}
 	
+	boolean splitPaneSet = false;
 	public void start() {
 		Engine.log.trace("start applet");
-		// TODO Auto-generated method stub
-		super.start();
+		
+		//Not the most elegant solution, but can't set splitpane in init()
+		//if statement because start() can be called multiple times
+		if(!splitPaneSet) {
+			int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+			double spSize = (100 - spPercent) / 100.0;
+			mainPanel.getSplitPane().setDividerLocation(spSize);
+			splitPaneSet = true;
+		}
+
 	}
 	
 	public void stop() {
@@ -96,11 +108,11 @@ public class AppletMain extends JApplet {
 
 	public void destroy() {
 		Engine.log.trace("destroy applet");
-/*		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
+		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
 		Engine.fireApplicationEvent(e);
 		if(e.doit) {
 			super.destroy();
-		}*/
+		}
 	}
 	
 	void loadCookies() {

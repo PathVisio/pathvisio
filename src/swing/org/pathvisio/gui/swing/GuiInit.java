@@ -16,13 +16,21 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.io.PrintStream;
+
 import org.pathvisio.Engine;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.preferences.GlobalPreference;
 
 public class GuiInit {
 	public static void init() {
 		initImporters();
 		initExporters();
+		try {
+			Engine.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
+		} catch(Exception e) {}
+		Engine.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+		
 	}
 	
 	private static void initImporters() {

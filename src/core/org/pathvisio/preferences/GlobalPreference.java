@@ -35,8 +35,11 @@ public enum GlobalPreference implements Preference {
 	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),
 	DB_GDB_CURRENT("none"),
 	
-	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false));
+	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false)),
 	
+	GUI_SIDEPANEL_SIZE("30"),
+	
+	;
 	
 	GlobalPreference(String defaultValue) {
 		this.defaultValue = defaultValue;

@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.PrintStream;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -25,10 +26,11 @@ import javax.swing.JOptionPane;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-public class SwingEngine {
+public class SwingEngine {	
 	private static MainPanel mainPanel;
 	
 	public static MainPanel getApplicationPanel() {

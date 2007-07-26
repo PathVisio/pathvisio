@@ -7,7 +7,7 @@ import org.pathvisio.preferences.GlobalPreference;
 
 public class WikiPathwaysEngine {
 	public static void init() throws Exception {
-		GlobalPreference.FILE_LOG.setDefault(getApplicationDir() + ".log");
+		GlobalPreference.FILE_LOG.setDefault(new File(getApplicationDir(), ".wikipathwaysLog").toString());
 	}
 		
 	private static File DIR_APPLICATION;

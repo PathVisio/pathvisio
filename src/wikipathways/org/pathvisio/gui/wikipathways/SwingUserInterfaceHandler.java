@@ -1,10 +1,13 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.Component;
+import java.util.concurrent.Callable;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -17,10 +20,33 @@ public class SwingUserInterfaceHandler implements UserInterfaceHandler {
 		this.parent = parent;
 	}
 	
-	public int askCancellableQuestion(String title, String message) {
-		int status = JOptionPane.showConfirmDialog(parent, message, title, 
-				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-		switch(status) {
+	private abstract class RunnableValue <T> implements Runnable {
+		T value;
+		public T get() { return value; }
+		public void set(T value) { this.value = value; }
+	}
+	
+	private void invoke(Runnable r) {
+		try {
+			if(SwingUtilities.isEventDispatchThread()) {
+				r.run();
+			} else {
+				SwingUtilities.invokeAndWait(r);
+			}
+		} catch(Exception e) {
+			Engine.log.error("Unable to invoke runnable", e);
+		}
+	}
+	public int askCancellableQuestion(final String title, final String message) {
+		RunnableValue<Integer> r = new RunnableValue<Integer>() {
+			public void run() {
+				int status = JOptionPane.showConfirmDialog(parent, message, title, 
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				set(status);
+			}
+		};
+		invoke(r);
+		switch(r.get()) {
 		case JOptionPane.YES_OPTION:
 			return Q_TRUE;
 		case JOptionPane.NO_OPTION:
@@ -31,8 +57,14 @@ public class SwingUserInterfaceHandler implements UserInterfaceHandler {
 		return Q_FALSE;
 	}
 
-	public String askInput(String title, String message) {
-		return JOptionPane.showInputDialog(parent, message, title);
+	public String askInput(final String title, final String message) {
+		RunnableValue<String> r = new RunnableValue<String>() {
+			public void run() {
+				set(JOptionPane.showInputDialog(parent, message, title));
+			}
+		};
+		invoke(r);
+		return r.get();
 	}
 
 	public boolean askQuestion(String title, String message) {

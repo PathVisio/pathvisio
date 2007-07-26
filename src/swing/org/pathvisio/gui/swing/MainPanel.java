@@ -30,6 +30,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -37,6 +38,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.table.TableCellEditor;
@@ -59,11 +61,15 @@ import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
+import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.SelectionBox.SelectionEvent;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
@@ -76,10 +82,14 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	private JScrollPane pathwayScrollPane;
 
-	private JScrollPane sidebarScrollPane;
+	private JScrollPane propertiesScrollPane;
+	
+	private JTabbedPane sidebarTabbedPane;
 
 	private JTable propertyTable;
 
+	private BackpagePane backpagePane;
+	
 	public MainPanel() {
 		setLayout(new BorderLayout());
 
@@ -107,11 +117,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				return e == null ? super.getCellEditor(row, column) : e;
 			}
 		};
-
-		sidebarScrollPane = new JScrollPane(propertyTable);
-
+		
+		propertiesScrollPane = new JScrollPane(propertyTable);
+		
+		backpagePane = new BackpagePane();
+		
+		sidebarTabbedPane = new JTabbedPane();
+		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
+		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
+		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				pathwayScrollPane, sidebarScrollPane);
+				pathwayScrollPane, sidebarTabbedPane);
 		splitPane.setResizeWeight(1);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane, BorderLayout.CENTER);
@@ -354,10 +370,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			break;
 		}
 	}
-
+	
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-			((VPathway)e.getSource()).addVPathwayListener(this);
+		switch(e.type) {
+		case ApplicationEvent.VPATHWAY_CREATED:
+			VPathway vp = (VPathway)e.getSource();
+			vp.addVPathwayListener(this);
+			break;
 		}
 	}
 }

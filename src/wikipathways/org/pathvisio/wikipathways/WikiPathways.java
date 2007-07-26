@@ -90,7 +90,7 @@ public class WikiPathways implements ApplicationEventListener {
 		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
 		Engine.setDBConnector(connector, DBConnector.TYPE_GDB);
 		
-		//Gdb.connect(getPwSpecies());
+		Gdb.connect(getPwSpecies());
 	}
 
 	public String getPwName() {

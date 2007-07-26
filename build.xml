@@ -168,7 +168,7 @@ public class Revision
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
 		<jar jarfile="${wikipathways.dir}/applet/resources.jar">
-			<!--<fileset dir="." includes="backpage/*"/>-->
+			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>
 			<!--<fileset dir="." includes="images/*"/>-->
 			<fileset dir="." includes="GPML.xsd"/>

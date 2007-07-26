@@ -16,9 +16,11 @@
 //
 package org.pathvisio.data;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -35,6 +37,7 @@ import java.util.regex.Pattern;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.util.Utils;
 
 /**
  * This class handles everything related to the Gene Database. It contains the database connection,
@@ -42,6 +45,10 @@ import org.pathvisio.preferences.GlobalPreference;
  * to hsqldb format
  */
 public abstract class Gdb {	
+	static {
+		initializeHeader();
+	}
+	
 	private static final int COMPAT_VERSION = 1;
 	
 	/**
@@ -139,6 +146,154 @@ public abstract class Gdb {
 			timer.stopToLog("> getBpInfo");
 			return result;
 		} catch(Exception e) { return null;	} //Gene not found
+	}
+	
+	public static String getBackpageHTML(String id, String code, String bpHead) {
+		String text = backpagePanelHeader == null ? "" : backpagePanelHeader;
+		if( id == null || code == null) return text;
+		
+		if (bpHead == null) bpHead = "";
+		text += "<H1>Gene information</H1><P>";
+		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
+		String bpInfo = Gdb.getBpInfo(id, code);
+		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
+
+		text += getCrossRefText(id, code);
+
+		return text + "</body></html>";
+	}
+
+	private static String getCrossRefText(String id, String code) {
+		List<IdCodePair> crfs = Gdb.getCrossRefs(id, code);
+		if(crfs.size() == 0) return "";
+		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
+		for(IdCodePair cr : crfs) {
+			String idtxt = cr.getId();
+			String url = getCrossRefLink(cr);
+			if(url != null) {
+				int os = Utils.getOS();
+				if(os == Utils.OS_WINDOWS) {
+					//In windows: open in new browser window
+					idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
+				} else {
+					//This doesn't work under ubuntu, so no new windoe there
+					idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
+				}
+				
+			}
+			String dbName = DataSources.sysCode2Name.get(cr.getCode());
+			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getCode()) + "<br>");
+		}
+		return crt.toString();
+	}
+	
+	private static String getCrossRefLink(IdCodePair idc) {
+		String c = idc.getCode();
+		String id = idc.getId();
+		if(c.equalsIgnoreCase("En"))
+			return "http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q=" + id;
+		if(c.equalsIgnoreCase("P"))
+			return "http://www.expasy.org/uniprot/" + id;
+		if(c.equalsIgnoreCase("Q")) {
+			String pre = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?";
+			if(id.startsWith("NM")) {
+				return pre + "db=Nucleotide&cmd=Search&term=" + id;
+			} else {
+				return pre + "db=Protein&cmd=search&term=" + id;
+			}
+		}
+		if(c.equalsIgnoreCase("T"))
+			return "http://godatabase.org/cgi-bin/go.cgi?view=details&search_constraint=terms&depth=0&query=" + id;
+		if(c.equalsIgnoreCase("I"))
+			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
+		if(c.equalsIgnoreCase("Pd"))
+			return "http://bip.weizmann.ac.il/oca-bin/ocashort?id=" + id;
+		if(c.equalsIgnoreCase("X"))
+			return "http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id=" + id;
+		if(c.equalsIgnoreCase("Em"))
+			return "http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id=" + id;
+		if(c.equalsIgnoreCase("L"))
+			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids=" + id;
+		if(c.equalsIgnoreCase("H"))
+			return "http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id=" + id;
+		if(c.equalsIgnoreCase("I"))
+			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
+		if(c.equalsIgnoreCase("M"))
+			return "http://www.informatics.jax.org/searches/accession_report.cgi?id=" + id;
+		if(c.equalsIgnoreCase("Om"))
+			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?" + id;
+		if(c.equalsIgnoreCase("Pf"))
+			return "http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?" + id;
+		if(c.equalsIgnoreCase("R"))
+			return "http://rgd.mcw.edu/generalSearch/RgdSearch.jsp?quickSearch=1&searchKeyword=" + id;
+		if(c.equalsIgnoreCase("D"))
+			return "http://db.yeastgenome.org/cgi-bin/locus.pl?locus=" + id;
+		if(c.equalsIgnoreCase("S"))
+			return "http://www.expasy.org/uniprot/" + id;
+		if(c.equalsIgnoreCase("U")) {
+			String [] org_nr = id.split("\\.");
+			if(org_nr.length == 2) {
+				return "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=" + 
+				org_nr[0] + "&CID=" + org_nr[1];
+			}
+			else {
+				return null;
+			}
+		}
+		if (c.equalsIgnoreCase("Nw"))
+		{
+			return "http://nugowiki.org/index.php/" + id;
+		}
+		if (c.equalsIgnoreCase("Ca"))
+		{
+			return "http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=" + id;
+		}
+		if (c.equalsIgnoreCase("Cp"))
+		{
+			return "http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=" + id;
+		}
+		if (c.equalsIgnoreCase("Ce"))
+		{
+			return "http://www.ebi.ac.uk/chebi/searchId=CHEBI:" + id;
+		}
+		if (c.equalsIgnoreCase("Ch"))
+		{
+			return "http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD=" + id + ".txt";
+		}
+		if (c.equalsIgnoreCase("Ck"))
+		{
+			return "http://www.genome.jp/dbget-bin/www_bget?cpd:" + id;
+		}
+		return null;
+	}
+	
+	/**
+	 * Directory containing HTML files needed to display the backpage information
+	 */
+	final static String BPDIR = "backpage";
+	/**
+	 * Header file, containing style information
+	 */
+	final static String HEADERFILE = "header.html";
+	
+	static String backpagePanelHeader;
+	
+	/**
+	 * Reads the header of the HTML content displayed in the browser. This header is displayed in the
+	 * file specified in the {@link HEADERFILE} field
+	 */
+	private static void initializeHeader() {
+		try {
+			BufferedReader input = new BufferedReader(new InputStreamReader(
+						Engine.getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
+			String line;
+			backpagePanelHeader = "";
+			while((line = input.readLine()) != null) {
+				backpagePanelHeader += line.trim();
+			}
+		} catch (Exception e) {
+			Engine.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
+		}
 	}
 	
 	/**

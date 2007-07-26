@@ -16,6 +16,7 @@
 //
 package org.pathvisio.wikipathways;
 
+import java.beans.DesignMode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +84,7 @@ public class WikiPathways implements ApplicationEventListener {
 		}
 
 		//TODO: notify user about this and hide edit actions
-		Engine.getActiveVPathway().setEditMode(isReadOnly());
+		Engine.getActiveVPathway().setEditMode(!isReadOnly());
 		
 		//Connect to the gene database
 		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
@@ -121,7 +122,7 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 	
 	public boolean isReadOnly() {
-		return getUser() != null;
+		return getUser() == null;
 	}
 	
 	protected File getLocalFile() { 
@@ -137,8 +138,13 @@ public class WikiPathways implements ApplicationEventListener {
 		
 	public boolean saveUI() {
 		VPathway vPathway = Engine.getActiveVPathway();
+		if(isReadOnly()) {
+			uiHandler.showError("Unable to save the pathway", "Unable to save the pathway, you are not logged in");
+			return false;
+		}
 		if(vPathway != null && vPathway.getGmmlData().hasChanged()) {
 			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
+			Engine.log.trace("Save description: " + description);
 			if(description != null) {
 				RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
 					public Boolean excecuteCode() {

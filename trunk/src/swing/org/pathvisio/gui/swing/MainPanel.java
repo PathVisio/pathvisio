@@ -17,12 +17,18 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -52,7 +58,6 @@ import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.StackType;
@@ -165,18 +170,18 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected void addToolBarActions(JToolBar tb) {
 		tb.setLayout(new WrapLayout(1, 1));
 		
-		tb.add(new SaveLocalAction());
-		tb.add(new SaveToServerAction());
-		tb.add(new ImportAction(this));
-		tb.add(new ExportAction());
+		addToToolbar(new SaveLocalAction());
+		addToToolbar(new SaveToServerAction(), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new ImportAction(this));
+		addToToolbar(new ExportAction());
 		tb.addSeparator();
-		tb.add(new CopyAction());
-		tb.add(new PasteAction());
-		tb.addSeparator();
-
+		addToToolbar(new CopyAction(), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new PasteAction(), TB_GROUP_HIDE_ON_EDIT);
 		tb.addSeparator();
 
-		tb.add(new JLabel("Zoom:", JLabel.LEFT));
+		tb.addSeparator();
+
+		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
 		JComboBox combo = new JComboBox(new Object[] {
 				new ZoomAction(VPathway.ZOOM_TO_FIT), new ZoomAction(10),
 				new ZoomAction(25), new ZoomAction(50), new ZoomAction(75),
@@ -201,12 +206,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				}
 			}
 		});
-		tb.add(combo);
+		addToToolbar(combo);
 
 		tb.addSeparator();
 
-		tb.add(new NewElementAction(VPathway.NEWGENEPRODUCT));
-		tb.add(new NewElementAction(VPathway.NEWLABEL));
+		addToToolbar(new NewElementAction(VPathway.NEWGENEPRODUCT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new NewElementAction(VPathway.NEWLABEL), TB_GROUP_HIDE_ON_EDIT);
 		// New line menu
 		DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine
 				.getResourceURL("icons/newlinemenu.gif")));
@@ -219,13 +224,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		lineButton.addComponent(new JMenuItem(new NewElementAction(
 				VPathway.NEWLINEDASHEDARROW)));
 		lineButton.setRunFirstItem(true);
-		tb.add(lineButton);
+		addToToolbar(lineButton, TB_GROUP_HIDE_ON_EDIT);
 
-		tb.add(new NewElementAction(VPathway.NEWRECTANGLE));
-		tb.add(new NewElementAction(VPathway.NEWOVAL));
-		tb.add(new NewElementAction(VPathway.NEWARC));
-		tb.add(new NewElementAction(VPathway.NEWBRACE));
-		tb.add(new NewElementAction(VPathway.NEWTBAR));
+		addToToolbar(new NewElementAction(VPathway.NEWRECTANGLE), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new NewElementAction(VPathway.NEWOVAL), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new NewElementAction(VPathway.NEWARC), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new NewElementAction(VPathway.NEWBRACE), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new NewElementAction(VPathway.NEWTBAR), TB_GROUP_HIDE_ON_EDIT);
 
 		// New lineshape menu
 		DropDownButton lineShapeButton = new DropDownButton(new ImageIcon(
@@ -239,25 +244,65 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(
 				VPathway.NEWRECEPTORSQUARE)));
 		lineShapeButton.setRunFirstItem(true);
-		tb.add(lineShapeButton);
+		addToToolbar(lineShapeButton, TB_GROUP_HIDE_ON_EDIT);
 		
 		tb.addSeparator();
 		
-		tb.add(new CommonActions.AlignAction(AlignType.CENTERX));
-		tb.add(new CommonActions.AlignAction(AlignType.CENTERY));
-		tb.add(new CommonActions.AlignAction(AlignType.LEFT));
-		tb.add(new CommonActions.AlignAction(AlignType.RIGHT));
-		tb.add(new CommonActions.AlignAction(AlignType.TOP));
-		tb.add(new CommonActions.AlignAction(AlignType.WIDTH));
-		tb.add(new CommonActions.AlignAction(AlignType.HEIGHT));
-		tb.add(new CommonActions.StackAction(StackType.CENTERX));
-		tb.add(new CommonActions.StackAction(StackType.CENTERY));
-		tb.add(new CommonActions.StackAction(StackType.LEFT));
-		tb.add(new CommonActions.StackAction(StackType.RIGHT));
-		tb.add(new CommonActions.StackAction(StackType.TOP));
-		tb.add(new CommonActions.StackAction(StackType.BOTTOM));
+		addToToolbar(new CommonActions.AlignAction(AlignType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.AlignAction(AlignType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.AlignAction(AlignType.LEFT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.AlignAction(AlignType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.AlignAction(AlignType.TOP), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.AlignAction(AlignType.WIDTH), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.AlignAction(AlignType.HEIGHT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.StackAction(StackType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.StackAction(StackType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.StackAction(StackType.LEFT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.StackAction(StackType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.StackAction(StackType.TOP), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new CommonActions.StackAction(StackType.BOTTOM), TB_GROUP_HIDE_ON_EDIT);
 	}
 
+	public static final String TB_GROUP_HIDE_ON_EDIT = "edit";
+	
+	HashMap<String, List<Component>> toolbarGroups = new HashMap<String, List<Component>>();
+	
+	public void addToToolbar(Component c, String group) {
+		JToolBar tb = getToolBar();
+		tb.add(c);
+		addToToolbarGroup(c, group);
+	}
+		
+	public void addToToolbar(Component c) {
+		addToToolbar(c, null);
+	}
+	
+	public JButton addToToolbar(Action a, String group) {
+		JButton b = getToolBar().add(a);
+		addToToolbarGroup(b, group);
+		return b;
+	}
+	
+	public JButton addToToolbar(Action a) {
+		return addToToolbar(a, null);
+	}
+	
+	private void addToToolbarGroup(Component c, String group) {
+		if(group != null) {
+			List<Component> gb = toolbarGroups.get(group);
+			if(gb == null) {
+				toolbarGroups.put(group, gb = new ArrayList<Component>());
+			}
+			gb.add(c);
+		}
+	}
+	
+	public List<Component> getToolbarGroup(String group) {
+		List<Component> tbg = toolbarGroups.get(group);
+		if(tbg == null) tbg = new ArrayList<Component>();
+		return tbg;
+	}
+	
 	public JMenuBar getMenuBar() {
 		return menuBar;
 	}
@@ -285,7 +330,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	}
 
 	public void vPathwayEvent(VPathwayEvent e) {
-		if(e.getType() == VPathwayEvent.ELEMENT_DOUBLE_CLICKED) {
+		switch(e.getType()) {
+		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
 			if(e.getAffectedElement() instanceof Graphics) {
 				PathwayElement p = ((Graphics)e.getAffectedElement()).getGmmlData();
 				PathwayElementDialog pd = null;
@@ -295,6 +341,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				}
 				if(pd != null) pd.setVisible(true);
 			}
+			break;
+		case VPathwayEvent.EDIT_MODE_ON:
+			for(Component b : getToolbarGroup(TB_GROUP_HIDE_ON_EDIT)) {
+				b.setEnabled(true);
+			}
+			break;
+		case VPathwayEvent.EDIT_MODE_OFF:
+			for(Component b : getToolbarGroup(TB_GROUP_HIDE_ON_EDIT)) {
+				b.setEnabled(false);
+			}
+			break;
 		}
 	}
 

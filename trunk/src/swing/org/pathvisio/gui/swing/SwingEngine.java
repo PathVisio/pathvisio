@@ -34,8 +34,18 @@ public class SwingEngine {
 	private static MainPanel mainPanel;
 	
 	public static MainPanel getApplicationPanel() {
-		if(mainPanel == null) mainPanel = new MainPanel();
+		return getApplicationPanel(false);
+	}
+	
+	public static MainPanel getApplicationPanel(boolean forceNew) {
+		if(forceNew || !hasApplicationPanel()) {
+			mainPanel = new MainPanel();
+		}
 		return mainPanel;
+	}
+	
+	public static boolean hasApplicationPanel() {
+		return mainPanel != null;
 	}
 	
 	public static String MSG_UNABLE_IMPORT = "Unable to import GPML file.";

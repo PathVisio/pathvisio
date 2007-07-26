@@ -5,7 +5,7 @@ public enum Parameter {
 	PW_URL("pwUrl", false),
 	PW_SPECIES("pwSpecies"),
 	PW_NEW("new", null),
-	USER("user"),
+	USER("user", null),
 	RPC_URL("rpcUrl"),
 	;
 	
@@ -31,6 +31,10 @@ public enum Parameter {
 		return defaultValue;
 	}
 	
+	private void restoreDefault() {
+		value = null;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -48,6 +52,12 @@ public enum Parameter {
 			return defaultValue;
 		} else {
 			return value;
+		}
+	}
+	
+	public static void restoreDefaults() {
+		for(Parameter p : values()) {
+			p.restoreDefault();
 		}
 	}
 }

@@ -362,7 +362,7 @@ public class VPathway implements PathwayListener
 		redraw();
 		int type = editMode ? VPathwayEvent.EDIT_MODE_ON
 				: VPathwayEvent.EDIT_MODE_OFF;
-		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.EDIT_MODE_OFF));
+		fireVPathwayEvent(new VPathwayEvent(this, type));
 	}
 	
 	private double zoomFactor = 1.0/15.0;

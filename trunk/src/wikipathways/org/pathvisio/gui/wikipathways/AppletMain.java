@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.net.CookieHandler;
 import java.net.URL;
@@ -29,7 +30,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.ApplicationEvent;
@@ -40,6 +40,7 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
+import org.pathvisio.view.swing.VPathwaySwing;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;

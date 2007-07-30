@@ -2,9 +2,11 @@
 
 HIGH PRIORITY
 
-* Patch tool using Dgpml input, with adjustable fuzz factor
+* Test with Sjoerd's modifications
 
-* Pathway.equals
+* BUG: Labels too big (don't scale with zoom factor?)
+
+* Patch tool using Dgpml input, with adjustable fuzz factor
 
 * Make similarity function more flexible. There must be a minimum
   similarity. Can two different object types match? Should there be a
@@ -17,7 +19,10 @@ HIGH PRIORITY
 
 * Better hinting: CenterX, CenterY changed should be Position changed.
 
+
 LOW PRIORITY
+
+* Pathway.equals
 
 * add timing code
 
@@ -45,7 +50,7 @@ Original estimates are between parenthesis, followed by current estimate
    status: IN PROGRESS
  
  * Integration into wikipathways.org.
-   start : (Jul 2) Jul 23
+   start : (Jul 2) Jul 30
    status : NOT STARTED
 
  * User testing and performance optimization

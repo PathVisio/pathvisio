@@ -19,6 +19,7 @@ package org.pathvisio.gpmldiff;
 import java.util.*;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.ObjectType;
 
 /**
    Utility class for pathway element methods related to gpmldiff.
@@ -27,7 +28,7 @@ class PwyElt
 {			
 	static String summary(PathwayElement elt)
 	{
-		String result = "[" + elt.getObjectType();
+		String result = "[" + ObjectType.getTagMapping (elt.getObjectType());
 		String tmp;
 		List<PropertyType> props = elt.getAttributes(true);
 		if (props.contains(PropertyType.TEXTLABEL))

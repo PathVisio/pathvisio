@@ -38,7 +38,7 @@ class GpmlDiff
 		int pos = 0;
 		String error = null;
 		if (pos >= argv.length) error = "Expected -o or old pathway file";
-		if (argv[pos].equals ("-o"))
+		if (error == null && argv[pos].equals ("-o"))
 		{
 			pos++;
 			if (pos >= argv.length) error = "Expected -o or old pathway file";
@@ -88,12 +88,12 @@ class GpmlDiff
 		System.out.print (
 			"GpmlDiff\n" +
 			"\n" +
+			"Finds the difference between two Pathways in gpml format\n" +
+			"\n" +
 			"Usage:\n" +
 			"  gpmldiff [-o svg|dgpml] old.gpml new.gpml\n" +
 			"  -o: output format. Choose svg for the visual output or dgpml for the\n" +
-            "      gpmldiff patch format\n" +
-			"\n" +
-			"Finds the difference between the two files\n"
+            "      gpmldiff patch format\n"
 			);
 		System.exit(1);
 	}
@@ -103,16 +103,18 @@ class GpmlDiff
 	*/
     public static void main(String argv[])
 	{
-		try
-		{
-			Logger.log.setStream (new PrintStream("log.txt"));
-		}
-		catch (IOException e) {}
+//		try
+//		{
+//			Logger.log.setStream (new PrintStream("log.txt"));
+//		}
+//		catch (IOException e) {}
+		Logger.log.setStream (System.err);
+		Logger.log.setLogLevel (true, true, true, true, true, true);
 		if (parseCliOptions(argv))
 		{
 			PwyDoc oldDoc = PwyDoc.read (oldFile);
 			PwyDoc newDoc = PwyDoc.read (newFile);
-			SearchNode result = oldDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
+			SearchNode result = oldDoc.findCorrespondence (newDoc, new BetterSim(), new BasicCost());
 
 			DiffOutputter out = null;
 			if (outputType.equals ("basic"))

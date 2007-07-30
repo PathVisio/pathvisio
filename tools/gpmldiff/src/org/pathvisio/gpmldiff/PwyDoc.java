@@ -136,8 +136,10 @@ class PwyDoc
 					}
 				}
 			}
+			
+			Logger.log.trace (PwyElt.summary (oldElt) + "/" + PwyElt.summary (maxNewElt) + "/" + maxScore);
 
-			if (maxNewElt != null && maxScore > 70)
+			if (maxNewElt != null && maxScore > 49)
 			{
 				// add pairing to search tree.
 				SearchNode newNode = new SearchNode (currentNode, oldElt, maxNewElt, 0);
@@ -177,6 +179,7 @@ class PwyDoc
 			// if the oldElt doesn't have a corresponding newElt...
 			if (!bothOld.contains(oldElt))
 			{
+				assert (oldElt != null);
 				// then we have a deletion
 				out.delete (oldElt);
 			}

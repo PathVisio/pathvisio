@@ -31,6 +31,8 @@ import java.text.AttributedString;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Collections;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -42,16 +44,21 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.debug.Logger;
 
 class SvgOutputter extends DiffOutputter
 {
 	// graphics parameters
-	private static final int BALOON_Y_SPACER = 20;
-	private static final int CENTER_MARGIN = 120;
+	private static final int BALOON_COLS = 3;
+	private static final int BALOON_Y_SPACER = 10;
+	private static final int CENTER_MARGIN = 400;
 	private static final int BALOON_MARGIN = 5;
-	private static final int HEADER_HIGHT = 32;
-	private static final int BALOON_FONT_SIZE = 7;
+	private static final int BALOON_WIDTH = (CENTER_MARGIN / BALOON_COLS) - BALOON_MARGIN;
+	private static final int HEADER_HEIGHT = 32;
+	private static final int BALOON_FONT_SIZE = 6;
 	private static final int HEADER_FONT_SIZE = 16;
+	private static final int PCT_ZOOM = 70;
 	
 	private OutputStream out;
 	private PwyDoc oldPwy;
@@ -88,7 +95,7 @@ class SvgOutputter extends DiffOutputter
 
 		for (int i = 0; i < 2; ++i)
 		{
-  			vpwy[i].setPctZoom (70);
+  			vpwy[i].setPctZoom (PCT_ZOOM);
 			width[i] = vpwy[i].getVWidth();
 			height[i] = vpwy[i].getVHeight();
 		}
@@ -99,7 +106,7 @@ class SvgOutputter extends DiffOutputter
 
 		deltax = width[0];
 		svgGenerator = new SVGGraphics2D(document);
-		svgGenerator.setSVGCanvasSize (new Dimension (width[0] + width[1] + CENTER_MARGIN, maxh + HEADER_HIGHT));
+		svgGenerator.setSVGCanvasSize (new Dimension (width[0] + width[1] + CENTER_MARGIN, maxh + HEADER_HEIGHT));
 
 		// titles
 		svgGenerator.setFont(new Font(null, Font.PLAIN, HEADER_FONT_SIZE));
@@ -126,10 +133,12 @@ class SvgOutputter extends DiffOutputter
 		
 		// mod hints
 		svgGenerator.setFont(new Font(null, Font.PLAIN, HEADER_FONT_SIZE));
-		int ypos = HEADER_HIGHT;
+		int col = 0;
+		int[] ypos = new int[BALOON_COLS];
+		for (int i = 0; i < BALOON_COLS; i++) ypos[i] = HEADER_HEIGHT;
 		for (ModData m : modifications)
 		{
-			int xpos = deltax;
+			int xpos = deltax + (BALOON_MARGIN + BALOON_WIDTH) * col;
 			FontRenderContext frc = svgGenerator.getFontRenderContext();
 
 			AttributedCharacterIterator styledText =
@@ -139,23 +148,24 @@ class SvgOutputter extends DiffOutputter
 			
 			LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, frc);
 
-			int top = ypos;
+			int top = ypos[col];
 			while (measurer.getPosition() < m.hint.length()) {
 				
-				TextLayout layout = measurer.nextLayout(CENTER_MARGIN - 2 * BALOON_MARGIN);
+				TextLayout layout = measurer.nextLayout(BALOON_WIDTH - 2 * BALOON_MARGIN);
 				
-				ypos += (layout.getAscent());				
-				layout.draw(svgGenerator, xpos + BALOON_MARGIN, ypos);
-				ypos += layout.getDescent() + layout.getLeading();
+				ypos[col] += (layout.getAscent());				
+				layout.draw(svgGenerator, xpos + BALOON_MARGIN, ypos[col]);
+				ypos[col] += layout.getDescent() + layout.getLeading();
 			}
-			int bot = ypos;			
+			int bot = ypos[col];
 			m.midy = top + (bot - top) / 2;
-			ypos += BALOON_Y_SPACER;
+			ypos[col] += BALOON_Y_SPACER;
+			col = (++col) % BALOON_COLS;
 
 			svgGenerator.draw (
 				new RoundRectangle2D.Double (
 					xpos, top,
-					CENTER_MARGIN, bot - top,
+					BALOON_WIDTH, bot - top,
 					BALOON_MARGIN, BALOON_MARGIN));			
 		}
 		
@@ -171,7 +181,7 @@ class SvgOutputter extends DiffOutputter
 		}
 		
 		// pwy's themselves		
- 		svgGenerator.translate (0, HEADER_HIGHT);
+ 		svgGenerator.translate (0, HEADER_HEIGHT);
 		vpwy[PWY_OLD].draw (svgGenerator, null, false);
 		svgGenerator.setClip (null); // reset clipping
  		svgGenerator.translate (deltax + CENTER_MARGIN, 0);
@@ -180,21 +190,28 @@ class SvgOutputter extends DiffOutputter
 		boolean useCSS = true;
 		Writer out = new OutputStreamWriter (System.out, "UTF-8");
 		svgGenerator.stream (out, useCSS);
-
 	}
 	
 	public void insert(PathwayElement newElt)
 	{
 		VPathwayElement velt = findElt (newElt, vpwy[PWY_NEW]);
-		assert (velt != null);
-		velt.highlight (Color.GREEN);
+ 		//assert (velt != null || newElt.getObjectType () == ObjectType.INFOBOX);
+		if (velt == null)
+		{
+			Logger.log.warn (PwyElt.summary(newElt) + " doesn't have a corresponding view element");
+		}
+		if (velt != null) velt.highlight (Color.GREEN);
 	}
 
 	public void delete(PathwayElement oldElt)
 	{
 		VPathwayElement velt = findElt (oldElt, vpwy[PWY_OLD]);
-		assert (velt != null);
-		velt.highlight (Color.RED);
+ 		//assert (velt != null || oldElt.getObjectType () == ObjectType.INFOBOX);
+		if (velt == null)
+		{
+			Logger.log.warn (PwyElt.summary(oldElt) + " doesn't have a corresponding view element");
+		}
+		if (velt != null) velt.highlight (Color.RED);
 	}
 
 
@@ -231,13 +248,13 @@ class SvgOutputter extends DiffOutputter
 
 	PathwayElement curOldElt = null;
 	PathwayElement curNewElt = null;
-	String curHint;
+	Set<String> curHint = null;
 	
 	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
 		curNewElt = newElt;
-		curHint = "";
+		curHint = new HashSet<String>();
 	}
 
 	public void modifyEnd ()
@@ -252,13 +269,21 @@ class SvgOutputter extends DiffOutputter
 		velt.highlight (Color.YELLOW);
 		Rectangle r2 = velt.getVBounds();
 
+		String completeHint = "";
+		for (String hint : curHint)
+		{
+			completeHint += hint;
+			completeHint += ", ";
+		}
+		completeHint += "changed";
+		
 		modifications.add (
 			new ModData (
 				(int)(r1.getX() + r1.getWidth() / 2),
-				(int)(r1.getY() + r1.getHeight() / 2) + HEADER_HIGHT,
+				(int)(r1.getY() + r1.getHeight() / 2) + HEADER_HEIGHT,
 				(int)(r2.getX() + r2.getWidth() / 2) + deltax + CENTER_MARGIN,
-				(int)(r2.getY() + r2.getHeight() / 2) + HEADER_HIGHT,
-				curHint)
+				(int)(r2.getY() + r2.getHeight() / 2) + HEADER_HEIGHT,
+				completeHint)
 			);
 		
 		curOldElt = null;
@@ -269,7 +294,26 @@ class SvgOutputter extends DiffOutputter
 	
 	public void modifyAttr(String attr, String oldVal, String newVal)
 	{
-		curHint += attr + " changed. ";
+		if (attr.equalsIgnoreCase("centerx") || 
+			attr.equalsIgnoreCase("centery") ||
+			attr.equalsIgnoreCase("endx") ||
+			attr.equalsIgnoreCase("endy") ||
+			attr.equalsIgnoreCase("startx") ||
+			attr.equalsIgnoreCase("starty"))
+		{
+			curHint.add ("position");
+		}
+		else if (
+			attr.equalsIgnoreCase("width") ||
+			attr.equalsIgnoreCase("height")
+			)
+		{
+			curHint.add ("size");
+		}
+		else
+		{
+			curHint.add (attr);
+		}
 	}
 
 	/**

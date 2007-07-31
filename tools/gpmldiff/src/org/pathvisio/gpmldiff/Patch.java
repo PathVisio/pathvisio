@@ -65,7 +65,8 @@ class Patch
 					result.setProperty(pt, Double.parseDouble (ch.newValue));
 					break;
 				case SHAPETYPE:
-					result.setProperty(pt, ShapeType.fromGpmlName(ch.newValue));
+					// setProperty expects to get ordinal value for this Shape
+					result.setProperty(pt, ShapeType.valueOf(ch.newValue).ordinal());
 					break;							
 				default:
 					Logger.log.error (ch.attr + " not supported");

@@ -36,6 +36,7 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
@@ -93,7 +94,7 @@ public class RDataOut {
 	public RDataOut(File pathways, boolean recursive) {
 		this();
 		//Get the pathway files
-		pwFiles = FileUtils.getFiles(pathways, Engine.PATHWAY_FILE_EXTENSION, recursive);
+		pwFiles = FileUtils.getFiles(pathways, Engine.getCurrent().PATHWAY_FILE_EXTENSION, recursive);
 	}
 	
 	public List<File> getPathwayFiles() { return pwFiles; }
@@ -112,7 +113,7 @@ public class RDataOut {
 	public void doExport() throws RException, InvocationTargetException, InterruptedException {
 		Rengine re = RController.getR();
 		
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(SwtEngine.getWindow().getShell());
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(SwtEngine.getCurrent().getWindow().getShell());
 		SimpleRunnableWithProgress rwp = null;
 		try {
 			if(exportData) {
@@ -154,7 +155,7 @@ public class RDataOut {
 			
 		checkValid();
 		
-		pwFiles = FileUtils.getFiles(pwDir, Engine.PATHWAY_FILE_EXTENSION, true);
+		pwFiles = FileUtils.getFiles(pwDir, Engine.getCurrent().PATHWAY_FILE_EXTENSION, true);
 
 		if(pwFiles.size() == 0) throw new Exception("No pathway files (*.gpml) found in " + pwDir);
 		
@@ -170,7 +171,7 @@ public class RDataOut {
 
 			PathwayParser p = new PathwayParser(xmlReader);
 			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
-				Engine.log.error("Couldn't read " + f, e); 
+				Logger.log.error("Couldn't read " + f, e); 
 				continue; 
 			}
 			
@@ -531,7 +532,7 @@ public class RDataOut {
 						try {
 							value[0] = Double.parseDouble(data[i][j]);
 						} catch(Exception e) {
-							Engine.log.error("Unable to parse double when converting data to R: " + data[i][j] + ", value set to NaN");
+							Logger.log.error("Unable to parse double when converting data to R: " + data[i][j] + ", value set to NaN");
 							value[0] = Double.NaN;
 						}
 						e_ref = re.rniPutDoubleArray(value);

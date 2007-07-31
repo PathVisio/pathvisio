@@ -18,12 +18,12 @@ package org.pathvisio.model;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,11 +31,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
+
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Document;
@@ -47,7 +49,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.xml.sax.SAXException;
 
@@ -857,7 +858,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 							}
 						}
 					} else {
-						Engine.log.info("Skipped non-biopax element" + c);
+						Logger.log.info("Skipped non-biopax element" + c);
 					}
 				}
 			}
@@ -980,7 +981,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     		}
     		catch (Exception e)
     		{
-    			Engine.log.error("while converting color: " +
+    			Logger.log.error("while converting color: " +
     					"Color " + strColor + " is not valid, element color is set to black", e);
     		}
     	}

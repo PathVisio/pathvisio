@@ -16,15 +16,10 @@
 //
 package org.pathvisio.data;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.Engine;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
 /**

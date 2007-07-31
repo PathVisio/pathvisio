@@ -52,86 +52,86 @@ public class NewElementAction extends Action
 		switch(element) {
 		case VPathway.NEWLINE: 
 			toolTipText = "Draw new line";
-			imageURL = Engine.getResourceURL("icons/newline.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newline.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLINEARROW:
 			toolTipText = "Draw new arrow";
-			imageURL = Engine.getResourceURL("icons/newarrow.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newarrow.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLINEDASHED:
 			toolTipText = "Draw new dashed line";
-			imageURL = Engine.getResourceURL("icons/newdashedline.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newdashedline.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLINEDASHEDARROW:
 			toolTipText = "Draw new dashed arrow";
-			imageURL = Engine.getResourceURL("icons/newdashedarrow.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newdashedarrow.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLABEL:
 			toolTipText = "Draw new label";
-			imageURL = Engine.getResourceURL("icons/newlabel.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newlabel.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWARC:
 			toolTipText = "Draw new arc";
-			imageURL = Engine.getResourceURL("icons/newarc.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newarc.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWBRACE:
 			toolTipText = "Draw new brace";
-			imageURL = Engine.getResourceURL("icons/newbrace.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newbrace.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWGENEPRODUCT:
 			toolTipText = "Draw new geneproduct";
-			imageURL = Engine.getResourceURL("icons/newgeneproduct.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newgeneproduct.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWRECTANGLE:
-			imageURL = Engine.getResourceURL("icons/newrectangle.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newrectangle.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWOVAL:
 			toolTipText = "Draw new oval";
-			imageURL = Engine.getResourceURL("icons/newoval.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newoval.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWTBAR:
 			toolTipText = "Draw new TBar";
-			imageURL = Engine.getResourceURL("icons/newtbar.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newtbar.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWRECEPTORROUND:
 			toolTipText = "Draw new round receptor";
-			imageURL = Engine.getResourceURL("icons/newreceptorround.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorround.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWRECEPTORSQUARE:
 			toolTipText = "Draw new square receptor";
-			imageURL = Engine.getResourceURL("icons/newreceptorsquare.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorsquare.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLIGANDROUND:
 			toolTipText = "Draw new round ligand";
-			imageURL = Engine.getResourceURL("icons/newligandround.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newligandround.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLIGANDSQUARE:
 			toolTipText = "Draw new square ligand";
-			imageURL = Engine.getResourceURL("icons/newligandsquare.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newligandsquare.gif");
 			setChecked(false);
 			break;
 		case VPathway.NEWLINEMENU:
 			setMenuCreator(new NewItemMenuCreator(VPathway.NEWLINEMENU));
-			imageURL = Engine.getResourceURL("icons/newlinemenu.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newlinemenu.gif");
 			toolTipText = "Draw new line or arrow";
 			break;
 		case VPathway.NEWLINESHAPEMENU:
 			setMenuCreator(new NewItemMenuCreator(VPathway.NEWLINESHAPEMENU));
-			imageURL = Engine.getResourceURL("icons/newlineshapemenu.gif");
+			imageURL = Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif");
 			toolTipText = "Draw new ligand or receptor";
 			break;
 		}
@@ -143,13 +143,13 @@ public class NewElementAction extends Action
 	public void run () {
 		if(isChecked())
 		{
-			SwtEngine.getWindow().deselectNewItemActions();
+			SwtEngine.getCurrent().getWindow().deselectNewItemActions();
 			setChecked(true);
-			Engine.getActiveVPathway().setNewGraphics(element);
+			Engine.getCurrent().getActiveVPathway().setNewGraphics(element);
 		}
 		else
 		{	
-			Engine.getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
+			Engine.getCurrent().getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
 		}
 	}
 

@@ -25,10 +25,10 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.Engine;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 
 
@@ -65,10 +65,10 @@ public class RWizard extends Wizard {
 		} catch(InvocationTargetException e) {
 			if(e.getCause() instanceof InterruptedException) return true;
 			MessageDialog.openError(getShell(), "Error while applying function", e.getCause().getMessage());
-			Engine.log.error("Unable to perform pathway statistics", e);
+			Logger.log.error("Unable to perform pathway statistics", e);
 		} catch(RException re) {
 			MessageDialog.openError(getShell(), "Error while loading results", re.getMessage());
-			Engine.log.error("Unable to perform pathway statistics", re);
+			Logger.log.error("Unable to perform pathway statistics", re);
 		} catch(InterruptedException ie) {
 			return true; //Closes the wizard (needed because R process is killed (at least in linux)
 		} catch(Exception e) {

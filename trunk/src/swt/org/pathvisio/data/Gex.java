@@ -50,6 +50,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
@@ -130,7 +131,7 @@ public class Gex implements ApplicationEventListener {
 			xmlOut.output(xmlDoc, out);
 			out.close();
 		} catch(IOException e) {
-			Engine.log.error("Unable to save visualization settings", e);
+			Logger.log.error("Unable to save visualization settings", e);
 		}
 	}
 	
@@ -180,7 +181,7 @@ public class Gex implements ApplicationEventListener {
 				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
 			}
 		} catch (Exception e) {
-			Engine.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
+			Logger.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
 		}
 	}
 	
@@ -391,7 +392,7 @@ public class Gex implements ApplicationEventListener {
 						ts.stopToLog("Fetching data for ens id: " + ensId + "\t");
 					} catch (Exception e)
 					{
-						Engine.log.error("while caching expression data: " + e.getMessage(), e);
+						Logger.log.error("while caching expression data: " + e.getMessage(), e);
 					}
 				}
 				
@@ -405,7 +406,7 @@ public class Gex implements ApplicationEventListener {
 		}
 		p.finished();
 		timer.stopToLog("Caching expression data\t\t\t");
-		Engine.log.trace("> Nr of ids queried:\t" + ids.size());
+		Logger.log.trace("> Nr of ids queried:\t" + ids.size());
 	}
 		
 
@@ -557,13 +558,13 @@ public class Gex implements ApplicationEventListener {
 			try {
 				connect(); //re-connect and use the created expression dataset
 			} catch(Exception e) {
-				Engine.log.error("Exception on connecting expression dataset from import thread", e);
+				Logger.log.error("Exception on connecting expression dataset from import thread", e);
 			}
 			
 			p.finished();
 		} catch(Exception e) { 
 			p.report("Import aborted due to error: " + e.getMessage());
-			Engine.log.error("Expression data import error", e);
+			Logger.log.error("Expression data import error", e);
 			close(true);
 			error.close();
 		}
@@ -602,7 +603,7 @@ public class Gex implements ApplicationEventListener {
 		try {
 			error = new PrintWriter(new FileWriter("convert_gex_error.txt"));
 		} catch(IOException ex) {
-			Engine.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
+			Logger.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
 		}
 		
 		try {
@@ -699,7 +700,7 @@ public class Gex implements ApplicationEventListener {
 	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getDbConnector(DBConnector.TYPE_GEX);
+		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
 	}
 	
 	/**
@@ -767,7 +768,7 @@ public class Gex implements ApplicationEventListener {
 				fireExpressionDataEvent(new ExpressionDataEvent(Gex.class, ExpressionDataEvent.CONNECTION_CLOSED));
 				
 			} catch (Exception e) {
-				Engine.log.error("Error while closing connection to expression dataset " + dbName, e);
+				Logger.log.error("Error while closing connection to expression dataset " + dbName, e);
 			}
 			con = null;
 		}
@@ -795,7 +796,7 @@ public class Gex implements ApplicationEventListener {
 			conGmGex = DriverManager.getConnection(
 					database_before + gmGexFile.toString() + database_after, "", "");
 		} catch (Exception e) {
-			Engine.log.error("Error: Unable to open connection go GenMAPP gex " + gmGexFile +
+			Logger.log.error("Error: Unable to open connection go GenMAPP gex " + gmGexFile +
 					": " +e.getMessage(), e);
 		}
 	}
@@ -810,7 +811,7 @@ public class Gex implements ApplicationEventListener {
 				conGmGex.close();
 				conGmGex = null;
 			} catch (Exception e) {
-				Engine.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
+				Logger.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
 			}
 		}
 	}

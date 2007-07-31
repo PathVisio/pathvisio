@@ -38,8 +38,8 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
 public class Engine {
-	private static Pathway pathway;
-	private static VPathway vPathway;
+	private Pathway pathway;
+	private VPathway vPathway;
 		
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
@@ -47,85 +47,99 @@ public class Engine {
 	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
-	
+		
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
 	public static final Color TRANSPARENT_COLOR = new Color(255, 0, 255);
-
+	
+	private static Engine currentEngine;
+	
 	/**
-	   The global application logger
-	   @deprecated. Preferably use Logger.log directly instead.
+	 * Get the current instance of Engine
+	 * @return
 	 */
-	public final static Logger log = Logger.log;
-			
+	public static Engine getCurrent() {
+		if(currentEngine == null) currentEngine = new Engine();
+		return currentEngine;
+	}
+	
+	/**
+	 * Set the current Engine
+	 * Any previous Engine will be lost
+	 * @param e
+	 */
+	public static void setCurrent(Engine e) {
+		currentEngine = e;
+	}
+	
 	/**
 	 * Get the {@link URL} for the resource stored in a jar file in the classpath
 	 * @param name	the filename of the resource
 	 * @return the URL pointing to the resource
 	 */
-	public static URL getResourceURL(String name) {
+	public URL getResourceURL(String name) {
 		URL url = Engine.class.getClassLoader().getResource(name);
-		if(url == null) log.error("Couldn't load resource '" + name + "'");
+		if(url == null) Logger.log.error("Couldn't load resource '" + name + "'");
 		return url;
 	}
 	
 	/**
 	 * Gets the currently open drawing
 	 */
-	public static VPathway getActiveVPathway() {
+	public VPathway getActiveVPathway() {
 		return vPathway;
 	}
 
 	/**
 	 * Returns the currently open Pathway
 	 */
-	public static Pathway getActivePathway() {
+	public Pathway getActivePathway() {
 		return pathway;
 	}
 	
-	static PreferenceCollection preferences;
+	PreferenceCollection preferences;
 	
-	public static void savePreferences() {
+	public void savePreferences() {
 		if(preferences != null) {
 			try {
 				preferences.save();
 			} catch(IOException e) {
-				log.error("Unable to save preferences", e);
+				Logger.log.error("Unable to save preferences", e);
 			}
 		}
 	}
 	
-	public static void setPreferenceCollection(PreferenceCollection pc) {
+	public void setPreferenceCollection(PreferenceCollection pc) {
 		preferences = pc;
 	}
 	
-	public static PreferenceCollection getPreferenceCollection() {
+	public PreferenceCollection getPreferenceCollection() {
 		return preferences;
 	}
 	
 	/**
 	 * application global clipboard.
 	 */
-	public static List<PathwayElement> clipboard = null;
+	public List<PathwayElement> clipboard = null;
 
-	public static void openPathway(String fileName) throws ConverterException {
+	public void openPathway(String fileName) throws ConverterException {
 		openPathway(new File(fileName));
 	}
 	
-	public static void openPathway(File pathwayFile) throws ConverterException {
+	public void openPathway(File pathwayFile) throws ConverterException {
 		openPathway(pathwayFile, null);
 	}
 	
-	public static void importPathway(File file) throws ConverterException {
+	public void importPathway(File file) throws ConverterException {
 		importPathway(file, null);
 	}
 	
-	public static void importPathway(File file, VPathwayWrapper wrapper) throws ConverterException {
+	public void importPathway(File file, VPathwayWrapper wrapper) throws ConverterException {
 		String fileName = file.toString();
 		
 		int dot = fileName.lastIndexOf('.');
-		String ext = Engine.PATHWAY_FILE_EXTENSION; //
+		String ext = Engine.getCurrent().PATHWAY_FILE_EXTENSION; //
 		if(dot >= 0) {
 			ext = fileName.substring(dot + 1, fileName.length());
 		}
@@ -142,14 +156,14 @@ public class Engine {
 		}
 	}
 	
-	public static void openPathway(String fileName, VPathwayWrapper wrapper) throws ConverterException {
+	public void openPathway(String fileName, VPathwayWrapper wrapper) throws ConverterException {
 		openPathway(new File(fileName), wrapper);
 	}
 	
 	/**
 	 * Open a pathway from a gpml file
 	 */
-	public static void openPathway(File pathwayFile, VPathwayWrapper wrapper) throws ConverterException
+	public void openPathway(File pathwayFile, VPathwayWrapper wrapper) throws ConverterException
 	{
 		Pathway _pathway = null;		
 		String pwf = pathwayFile.toString();
@@ -176,11 +190,11 @@ public class Engine {
 		
 	}
 	
-	public static File openPathway(URL url) throws ConverterException {
+	public File openPathway(URL url) throws ConverterException {
 		return openPathway(url, null);
 	}
 	
-	public static File openPathway(URL url, VPathwayWrapper w) throws ConverterException {
+	public File openPathway(URL url, VPathwayWrapper w) throws ConverterException {
 		String protocol = url.getProtocol();
 		File f = null;
 		if(protocol.equals("file")) {
@@ -197,16 +211,12 @@ public class Engine {
 		}
 		return f;
 	}
-	
-	public static void savePathway() throws ConverterException {
-		savePathway(pathway.getSourceFile());
-	}
-	
-	public static void savePathway(File toFile) throws ConverterException {
+		
+	public void savePathway(File toFile) throws ConverterException {
 		pathway.writeToXml(toFile, true);
 	}
 	
-	private static void createVPathway(Pathway p, VPathwayWrapper wrapper) {
+	private void createVPathway(Pathway p, VPathwayWrapper wrapper) {
 		vPathway = wrapper.createVPathway();
 		vPathway.fromGmmlData(pathway);
 		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
@@ -215,14 +225,14 @@ public class Engine {
 	/**
 	 * Create a new pathway
 	 */
-	public static void newPathway() {
+	public void newPathway() {
 		newPathway(null);
 	}
 	
 	/**
 	 * Create a new pathway and view (Pathay and VPathway)
 	 */
-	public static void newPathway(VPathwayWrapper wrapper) {
+	public void newPathway(VPathwayWrapper wrapper) {
 		pathway = new Pathway();
 		pathway.initMappInfo();
 		
@@ -238,16 +248,16 @@ public class Engine {
 	 * Find out whether a drawing is currently open or not
 	 * @return true if a drawing is open, false if not
 	 */
-	public static boolean isDrawingOpen() { return vPathway != null; }
+	public boolean isDrawingOpen() { return vPathway != null; }
 
 
-	private static HashMap<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
-	private static HashMap<String, PathwayImporter> importers = new HashMap<String, PathwayImporter>();
+	private HashMap<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
+	private HashMap<String, PathwayImporter> importers = new HashMap<String, PathwayImporter>();
 	/**
 	 * Add a {@link PathwayExporter} that handles export of GPML to another file format
 	 * @param export
 	 */
-	public static void addPathwayExporter(PathwayExporter export) {
+	public void addPathwayExporter(PathwayExporter export) {
 		for(String ext : export.getExtensions()) {
 			exporters.put(ext, export);
 		}
@@ -257,31 +267,31 @@ public class Engine {
 	 * Add a {@link PathwayImporter} that handles imoprt of GPML to another file format
 	 * @param export
 	 */
-	public static void addPathwayImporter(PathwayImporter importer) {
+	public void addPathwayImporter(PathwayImporter importer) {
 		for(String ext : importer.getExtensions()) {
 			importers.put(ext, importer);
 		}
 	}
 	
-	public static PathwayExporter getPathwayExporter(String ext) {
+	public PathwayExporter getPathwayExporter(String ext) {
 		return exporters.get(ext);
 	}
 
-	public static PathwayImporter getPathwayImporter(String ext) {
+	public PathwayImporter getPathwayImporter(String ext) {
 		return importers.get(ext);
 	}
 	
-	public static HashMap<String, PathwayExporter> getPathwayExporters() {
+	public HashMap<String, PathwayExporter> getPathwayExporters() {
 		return exporters;
 	}
 		
-	public static HashMap<String, PathwayImporter> getPathwayImporters() {
+	public HashMap<String, PathwayImporter> getPathwayImporters() {
 		return importers;
 	}
 	
-	private static HashMap<Integer, DBConnector> connectors = new HashMap<Integer, DBConnector>();
+	private HashMap<Integer, DBConnector> connectors = new HashMap<Integer, DBConnector>();
 	
-	public static DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		//Try to get the DBConnector from the hashmap first
 		DBConnector connector = connectors.get(type);
 		if(connector != null) return connector;
@@ -314,18 +324,18 @@ public class Engine {
 	 * @param connector
 	 * @param type
 	 */
-	public static void setDBConnector(DBConnector connector, int type) {
+	public void setDBConnector(DBConnector connector, int type) {
 		connectors.put(type, connector);
 	}
 	
-	private static List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
+	private List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
 	
 	/**
 	 * Add an {@link ApplicationEventListener}, that will be notified if a
 	 * property changes that has an effect throughout the program (e.g. opening a pathway)
 	 * @param l The {@link ApplicationEventListener} to add
 	 */
-	public static void addApplicationEventListener(ApplicationEventListener l) {
+	public void addApplicationEventListener(ApplicationEventListener l) {
 		applicationEventListeners.add(l);
 	}
 	
@@ -334,7 +344,7 @@ public class Engine {
 	 * to this class
 	 * @param e
 	 */
-	public static void fireApplicationEvent(ApplicationEvent e) {
+	public void fireApplicationEvent(ApplicationEvent e) {
 		for(ApplicationEventListener l : applicationEventListeners) l.applicationEvent(e);
 	}
 	

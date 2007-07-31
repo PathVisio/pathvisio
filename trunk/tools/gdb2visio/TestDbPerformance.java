@@ -105,7 +105,7 @@ public class TestDbPerformance extends ApplicationWindow {
 		if(tdb.testThread != null) {
 			tdb.testThread.interrupt();
 		}
-		Display.getCurrent().dispose();
+		Display.Engine.getCurrent().dispose();
 	}
 	
 	public void invertStartButtonLabel() {

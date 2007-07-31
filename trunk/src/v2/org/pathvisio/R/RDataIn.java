@@ -97,7 +97,7 @@ public class RDataIn {
 	}
 	
 	public static void displayResults(List<ResultSet> results, String tabName) {		
-		TabbedSidePanel sp = SwtEngine.getWindow().getSidePanel();
+		TabbedSidePanel sp = SwtEngine.getCurrent().getWindow().getSidePanel();
 		
 		StatsResultTable srt = new StatsResultTable(sp.getTabFolder(), SWT.NULL);
 		srt.setResults(results);

@@ -19,12 +19,15 @@ package org.pathvisio.gui.swt;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -32,7 +35,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
  */
-public class BackpagePanel extends Composite implements SelectionListener {
+public class BackpagePanel extends Composite implements SelectionListener, ApplicationEventListener {
 	private String text = "";
 	
 	private Browser bpBrowser;
@@ -51,7 +54,9 @@ public class BackpagePanel extends Composite implements SelectionListener {
 		bpBrowser = new Browser(this, style); //Set the Browser widget
 		refresh();
 		
-		SelectionBox.addListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		if(vp != null) vp.addSelectionListener(this);
 	}
 	
 	private void setText(String text) {
@@ -103,7 +108,7 @@ public class BackpagePanel extends Composite implements SelectionListener {
 		});
 	}
 
-	public void drawingEvent(SelectionEvent e) {
+	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			//Just take the first GeneProduct in the selection
@@ -119,6 +124,13 @@ public class BackpagePanel extends Composite implements SelectionListener {
 		case SelectionEvent.SELECTION_CLEARED:
 			setGeneProduct(null);
 			break;
+		}
+	}
+
+	public void applicationEvent(ApplicationEvent e) {
+		switch(e.type) {
+		case ApplicationEvent.VPATHWAY_CREATED:
+			((VPathway)e.getSource()).addSelectionListener(this);
 		}
 	}
 }

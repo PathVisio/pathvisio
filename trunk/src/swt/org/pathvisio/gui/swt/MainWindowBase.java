@@ -46,9 +46,9 @@ import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.data.GexSwt.ProgressKeeperDialog;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.GeneProduct;
@@ -116,7 +116,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 		public void run () {			
 			try {
-				DBConnectorSwt dbcon = SwtEngine.getSwtDbConnector(DBConnector.TYPE_GDB);
+				DBConnectorSwt dbcon = SwtEngine.getCurrent().getSwtDbConnector(DBConnector.TYPE_GDB);
 				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
@@ -129,7 +129,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				MessageDialog.openError (window.getShell(), "Error", 
 						"Error: " + msg + "\n\n" + 
 						"See the error log for details.");
-				Engine.log.error(msg, e);
+				Logger.log.error(msg, e);
 			}
 		}
 	}
@@ -147,7 +147,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		Engine.getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
+		Engine.getCurrent().getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
 	}
 	
 	/**
@@ -174,9 +174,9 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	 */
 	private void cacheExpressionData()
 	{
-		if(Engine.isDrawingOpen())
+		if(Engine.getCurrent().isDrawingOpen())
 		{
-			VPathway drawing = Engine.getActiveVPathway();
+			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			//Check for neccesary connections
 			if(Gex.isConnected() && Gdb.isConnected())
 			{
@@ -189,7 +189,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 					MessageDialog.openError (getShell(), "Error", 
 							"Error: " + msg + "\n\n" + 
 							"See the error log for details.");
-					Engine.log.error(msg, e);
+					Logger.log.error(msg, e);
 				}
 			}
 		}
@@ -209,7 +209,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		Engine.getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
+		Engine.getCurrent().getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
 	}
 
 	// Elements of the coolbar
@@ -350,7 +350,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 		GuiMain.loadImages(shell.getDisplay());
 		
-		shell.setImage(SwtEngine.getImageRegistry().get("shell.icon"));
+		shell.setImage(SwtEngine.getCurrent().getImageRegistry().get("shell.icon"));
 		
 		Composite viewComposite = new Composite(parent, SWT.NULL);
 		viewComposite.setLayout(new FillLayout());
@@ -379,7 +379,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 		setStatus("Using Gene Database: '" + GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
 
-		SwtEngine.updateTitle();
+		SwtEngine.getCurrent().updateTitle();
 		
 		return parent;
 	}
@@ -393,7 +393,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	*/
 	protected boolean canHandleShellCloseEvent()
 	{
-		return SwtEngine.canDiscardPathway();
+		return SwtEngine.getCurrent().canDiscardPathway();
 	}
 	
 	protected MenuManager menuManager = null;
@@ -410,7 +410,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 	public boolean close() {
 		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
-		Engine.fireApplicationEvent(e);
+		Engine.getCurrent().fireApplicationEvent(e);
 		if(e.doit) {
 			return super.close();
 		}
@@ -448,7 +448,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		switch(e.type) {
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:
-			Engine.getActiveVPathway().addVPathwayListener(this);
+			Engine.getCurrent().getActiveVPathway().addVPathwayListener(this);
 		}
 	}
 

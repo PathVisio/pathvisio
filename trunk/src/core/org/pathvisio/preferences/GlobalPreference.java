@@ -62,7 +62,7 @@ public enum GlobalPreference implements Preference {
 	
 	public void setValue(String newValue) {
 		value = newValue;
-		Engine.savePreferences();
+		Engine.getCurrent().savePreferences();
 	}
 	
 	public String getValue() {

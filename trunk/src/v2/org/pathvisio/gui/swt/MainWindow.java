@@ -32,7 +32,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.R.RController;
 import org.pathvisio.R.RDataIn;
@@ -46,6 +45,7 @@ import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.data.GexSwt.ProgressWizardDialog;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathwayElement;
@@ -87,7 +87,7 @@ public class MainWindow extends MainWindowBase
 				MessageDialog.openError (window.getShell(), "Error", 
 						"Error: " + msg + "\n\n" + 
 						"See the error log for details.");
-				Engine.log.error(msg, e);
+				Logger.log.error(msg, e);
 			}		
 		}
 	}
@@ -135,7 +135,7 @@ public class MainWindow extends MainWindowBase
 			setText("&Color Set manager");
 			setToolTipText("Create and edit color sets");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getResourceURL("icons/colorset.gif")));
+					Engine.getCurrent().getResourceURL("icons/colorset.gif")));
 			Gex.addListener(this);
 			setEnabled(false);
 		}
@@ -164,7 +164,7 @@ public class MainWindow extends MainWindowBase
 			setText("&Visualizations");
 			setToolTipText("Create and edit visualizations");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getResourceURL("icons/visualizations.gif")));
+					Engine.getCurrent().getResourceURL("icons/visualizations.gif")));
 		}
 		public void run () {
 			VisualizationDialog d = new VisualizationDialog(getShell());
@@ -292,7 +292,7 @@ public class MainWindow extends MainWindowBase
 		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);
 		dataMenu.add(visualizationDialogAction);
-		if(SwtEngine.USE_R) {
+		if(SwtEngine.getCurrent().USE_R) {
 			MenuManager statsMenu = new MenuManager("&Pathway statistics");
 			dataMenu.add(statsMenu);
 			statsMenu.add(rStatsAction);
@@ -374,7 +374,7 @@ public class MainWindow extends MainWindowBase
 		addStatusLine();
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
-		Engine.addApplicationEventListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
 		Gex.addListener(this);
 	}
 

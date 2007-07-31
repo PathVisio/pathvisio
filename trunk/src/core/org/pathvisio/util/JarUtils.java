@@ -32,6 +32,7 @@ import java.util.jar.JarFile;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.debug.Logger;
 
 public class JarUtils {
 	static final String PREFIX_TMP = Globals.APPLICATION_NAME;
@@ -98,7 +99,7 @@ public class JarUtils {
 	 */
 	public static URL getResourceURL(String name) {
 		URL url = Engine.class.getClassLoader().getResource(name);
-		if(url == null) Engine.log.error("Couldn't load resource '" + name + "'");
+		if(url == null) Logger.log.error("Couldn't load resource '" + name + "'");
 		return url;
 	}
 	
@@ -109,7 +110,7 @@ public class JarUtils {
 	 */
 	public static InputStream getResourceInputStream(String name) {
 		InputStream in = Engine.class.getClassLoader().getResourceAsStream(name);
-		if(in == null) Engine.log.error("Couldn't load resource '" + name + "'");
+		if(in == null) Logger.log.error("Couldn't load resource '" + name + "'");
 		return in;
 	}
 }

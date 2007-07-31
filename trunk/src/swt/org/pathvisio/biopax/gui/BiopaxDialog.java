@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.Engine;
 import org.pathvisio.biopax.BiopaxManager;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 
@@ -57,7 +57,7 @@ public class BiopaxDialog extends Dialog {
 					text.setText(biopax.getXml());
 				} catch(ConverterException e) {
 					text.setText(e.toString());
-					Engine.log.error("Unable to set BioPAX text", e);
+					Logger.log.error("Unable to set BioPAX text", e);
 				}
 			} else {
 				text.setText("");

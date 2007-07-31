@@ -16,8 +16,9 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
 import org.pathvisio.model.PathwayElement;
 
 /**

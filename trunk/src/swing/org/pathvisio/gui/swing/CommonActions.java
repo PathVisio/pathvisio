@@ -40,11 +40,11 @@ import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 
 public abstract class CommonActions {
-	private static URL IMG_SAVE = Engine.getResourceURL("icons/save.gif");
-	private static URL IMG_IMPORT = Engine.getResourceURL("icons/import.gif");
-	private static URL IMG_EXPORT = Engine.getResourceURL("icons/export.gif");
-	private static URL IMG_COPY= Engine.getResourceURL("icons/copy.gif");
-	private static URL IMG_PASTE = Engine.getResourceURL("icons/paste.gif");
+	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
+	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
+	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
+	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
+	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	
 	public static class ZoomAction extends AbstractAction {
 		Component parent;
@@ -59,7 +59,7 @@ public abstract class CommonActions {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vPathway = Engine.getActiveVPathway();
+			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 			if(vPathway != null) {
 				vPathway.setPctZoom(zoomFactor);
 			}
@@ -120,7 +120,7 @@ public abstract class CommonActions {
 				jfc.setDialogTitle("Import pathway");
 				jfc.setDialogType(JFileChooser.OPEN_DIALOG);
 				
-				for(final PathwayImporter imp : Engine.getPathwayImporters().values()) {
+				for(final PathwayImporter imp : Engine.getCurrent().getPathwayImporters().values()) {
 					FileFilter ff = new FileFilter() {
 						public boolean accept(File f) {
 							if(f.isDirectory()) return true;
@@ -159,12 +159,12 @@ public abstract class CommonActions {
 						int totalWork = 1000;
 						ProgressMonitor m = new ProgressMonitor(component, "Loading pathway", "Please wait while the pathway is being loaded", 0, 1000);
 						m.setProgress(10);
-						SwingEngine.importPathway(jfc.getSelectedFile());
+						SwingEngine.getCurrent().importPathway(jfc.getSelectedFile());
 						m.setProgress((int)(totalWork*2/3));
-						Engine.getActiveVPathway().setEditMode(true);
+						Engine.getCurrent().getActiveVPathway().setEditMode(true);
 						m.setProgress(totalWork);
 					} catch(ConverterException ex) {
-						SwingEngine.handleConverterException(SwingEngine.MSG_UNABLE_IMPORT, component, ex);
+						SwingEngine.getCurrent().handleConverterException(SwingEngine.MSG_UNABLE_IMPORT, component, ex);
 					}
 				}
 		}
@@ -193,7 +193,7 @@ public abstract class CommonActions {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Engine.getActiveVPathway().copyToClipboard();
+			Engine.getCurrent().getActiveVPathway().copyToClipboard();
 		}		
 	}
 	
@@ -207,7 +207,7 @@ public abstract class CommonActions {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Engine.getActiveVPathway().pasteFromClipboad();
+			Engine.getCurrent().getActiveVPathway().pasteFromClipboad();
 		}
 	}
 		
@@ -222,70 +222,70 @@ public abstract class CommonActions {
 			switch(element) {
 			case VPathway.NEWLINE: 
 				descr = "Draw new line";
-				imageURL = Engine.getResourceURL("icons/newline.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newline.gif");
 				break;
 			case VPathway.NEWLINEARROW:
 				descr = "Draw new arrow";
-				imageURL = Engine.getResourceURL("icons/newarrow.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newarrow.gif");
 				break;
 			case VPathway.NEWLINEDASHED:
 				descr = "Draw new dashed line";
-				imageURL = Engine.getResourceURL("icons/newdashedline.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newdashedline.gif");
 				break;
 			case VPathway.NEWLINEDASHEDARROW:
 				descr = "Draw new dashed arrow";
-				imageURL = Engine.getResourceURL("icons/newdashedarrow.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newdashedarrow.gif");
 				break;
 			case VPathway.NEWLABEL:
 				descr = "Draw new label";
-				imageURL = Engine.getResourceURL("icons/newlabel.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newlabel.gif");
 				break;
 			case VPathway.NEWARC:
 				descr = "Draw new arc";
-				imageURL = Engine.getResourceURL("icons/newarc.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newarc.gif");
 				break;
 			case VPathway.NEWBRACE:
 				descr = "Draw new brace";
-				imageURL = Engine.getResourceURL("icons/newbrace.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newbrace.gif");
 				break;
 			case VPathway.NEWGENEPRODUCT:
 				descr = "Draw new data node";
-				imageURL = Engine.getResourceURL("icons/newgeneproduct.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newgeneproduct.gif");
 				break;
 			case VPathway.NEWRECTANGLE:
 				descr = "Draw new rectangle";
-				imageURL = Engine.getResourceURL("icons/newrectangle.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newrectangle.gif");
 				break;
 			case VPathway.NEWOVAL:
 				descr = "Draw new oval";
-				imageURL = Engine.getResourceURL("icons/newoval.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newoval.gif");
 				break;
 			case VPathway.NEWTBAR:
 				descr = "Draw new TBar";
-				imageURL = Engine.getResourceURL("icons/newtbar.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newtbar.gif");
 				break;
 			case VPathway.NEWRECEPTORROUND:
 				descr = "Draw new round receptor";
-				imageURL = Engine.getResourceURL("icons/newreceptorround.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorround.gif");
 				break;
 			case VPathway.NEWRECEPTORSQUARE:
 				descr = "Draw new square receptor";
-				imageURL = Engine.getResourceURL("icons/newreceptorsquare.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorsquare.gif");
 				break;
 			case VPathway.NEWLIGANDROUND:
 				descr = "Draw new round ligand";
-				imageURL = Engine.getResourceURL("icons/newligandround.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newligandround.gif");
 				break;
 			case VPathway.NEWLIGANDSQUARE:
 				descr = "Draw new square ligand";
-				imageURL = Engine.getResourceURL("icons/newligandsquare.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newligandsquare.gif");
 				break;
 			case VPathway.NEWLINEMENU:
-				imageURL = Engine.getResourceURL("icons/newlinemenu.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newlinemenu.gif");
 				descr = "Draw new line or arrow";
 				break;
 			case VPathway.NEWLINESHAPEMENU:
-				imageURL = Engine.getResourceURL("icons/newlineshapemenu.gif");
+				imageURL = Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif");
 				descr = "Draw new ligand or receptor";
 				break;
 			}
@@ -297,7 +297,7 @@ public abstract class CommonActions {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getActiveVPathway();
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) {
 				vp.addVPathwayListener(this);
 				vp.setNewGraphics(element);
@@ -315,13 +315,13 @@ public abstract class CommonActions {
 		StackType type;
 		
 		public StackAction(StackType t) {
-			super(t.getLabel(), new ImageIcon(Engine.getResourceURL(t.getIcon())));
+			super(t.getLabel(), new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
 			putValue(Action.SHORT_DESCRIPTION, t.getDescription());
 			type = t;
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getActiveVPathway();
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) vp.stackSelected(type);
 		}
 	}
@@ -330,13 +330,13 @@ public abstract class CommonActions {
 		AlignType type;
 
 		public AlignAction(AlignType t) {
-			super(t.getLabel(), new ImageIcon(Engine.getResourceURL(t.getIcon())));
+			super(t.getLabel(), new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
 			putValue(Action.SHORT_DESCRIPTION, t.getDescription());
 			type = t;
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getActiveVPathway();
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) vp.alignSelected(type);
 		}
 	}	

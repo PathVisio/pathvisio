@@ -34,7 +34,7 @@ import org.pathvisio.util.ProgressKeeper;
 public class GexSwt {
 	
 	public static DBConnectorSwt getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return SwtEngine.getSwtDbConnector(DBConnectorSwt.TYPE_GEX);
+		return SwtEngine.getCurrent().getSwtDbConnector(DBConnectorSwt.TYPE_GEX);
 	}
 	
 	public static class ProgressWizardDialog extends WizardDialog {

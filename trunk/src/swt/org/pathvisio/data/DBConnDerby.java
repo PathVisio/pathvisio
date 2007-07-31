@@ -33,7 +33,7 @@ import java.util.zip.ZipOutputStream;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.util.FileUtils;
 
@@ -83,7 +83,7 @@ public class DBConnDerby extends DBConnectorSwt {
 		}
 		Connection con = DriverManager.getConnection(url, prop);
 		
-		Engine.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
+		Logger.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
 		
 		lastDbName = dbName;
 		return con;
@@ -99,7 +99,7 @@ public class DBConnDerby extends DBConnectorSwt {
 		try {
 			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
 		} catch(Exception e) {
-			Engine.log.error("Database closed", e);
+			Logger.log.error("Database closed", e);
 		}
 		File zipFile = new File(dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt());
 		toZip(zipFile, dbDir);

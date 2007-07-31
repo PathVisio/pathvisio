@@ -35,7 +35,7 @@ public class BiopaxCellEditor extends DialogCellEditor {
 	}
 
 	protected Object openDialogBox(Control cellEditorWindow) {
-		BiopaxManager bpm = new BiopaxManager(Engine.getActivePathway().getBiopax().getBiopax());
+		BiopaxManager bpm = new BiopaxManager(Engine.getCurrent().getActivePathway().getBiopax().getBiopax());
 		BiopaxRefDialog d = new BiopaxRefDialog(cellEditorWindow.getShell(), bpm, (String)getValue());
 		d.open();
 		return d.getRef();

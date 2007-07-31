@@ -25,7 +25,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
 
@@ -66,7 +66,7 @@ public class GpmlTransfer extends ByteArrayTransfer
 			}
 			catch (Exception e)
 			{
-				Engine.log.error ("Converter exception", e);
+				Logger.log.error ("Converter exception", e);
 			}
 
 			XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
@@ -82,7 +82,7 @@ public class GpmlTransfer extends ByteArrayTransfer
 			}
 			catch (Exception e)
 			{
-				Engine.log.error ("Error?!?!", e);
+				Logger.log.error ("Error?!?!", e);
 			}
 		}
 		super.javaToNative(result, transferData);

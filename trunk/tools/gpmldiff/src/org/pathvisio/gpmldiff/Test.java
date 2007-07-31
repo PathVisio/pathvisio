@@ -19,11 +19,12 @@ package org.pathvisio.gpmldiff;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.PathwayElement;
 
 import junit.framework.TestCase;
+
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 /**
    Unit tests for package GpmlDiff
 */

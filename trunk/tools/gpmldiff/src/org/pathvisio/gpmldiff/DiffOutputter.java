@@ -17,6 +17,7 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.IOException;
+
 import org.pathvisio.model.PathwayElement;
 
 /**

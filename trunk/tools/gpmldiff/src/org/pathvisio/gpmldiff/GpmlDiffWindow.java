@@ -16,15 +16,25 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.*;
-import org.pathvisio.gui.swing.*;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.view.swing.VPathwaySwing;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.CommonActions;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.swing.VPathwaySwing;
 
 class GpmlDiffWindow extends JFrame
 {

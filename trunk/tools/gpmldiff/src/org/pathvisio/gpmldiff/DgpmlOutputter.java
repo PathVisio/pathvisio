@@ -16,13 +16,20 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.io.*;
-import org.jdom.*;
-import org.jdom.output.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.debug.Logger;
 
 /**
    Naive implementation of Outputter.

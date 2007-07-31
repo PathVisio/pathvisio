@@ -728,7 +728,7 @@ public class LegendPanel extends ScrolledComposite implements VisualizationListe
 				gd.heightHint = computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 			}
 			layout();
-			switchLabel.setImage(SwtEngine.getImageRegistry().get(
+			switchLabel.setImage(SwtEngine.getCurrent().getImageRegistry().get(
 					expanded ? "tree.expanded" : "tree.collapsed"));
 		}
 		

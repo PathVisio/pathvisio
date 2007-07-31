@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.view.VPathway;
@@ -206,7 +207,7 @@ public class SwtUtils {
 	static int ii;
 	static int pixratio;
 	public static Font adjustFontSize(Font f, Point toFit, String text, GC gc, Display display) {
-		VPathway d = Engine.getActiveVPathway();
+		VPathway d = Engine.getCurrent().getActiveVPathway();
 		pixratio = (int)Math.ceil(3 * (d == null ? 1 : d.getZoomFactor()));
 		ii = 3;
 		incrs = new int[3];
@@ -451,7 +452,7 @@ public class SwtUtils {
 			
 			if(args == null || doMethod == null) {
 				InterruptedException ex = new InterruptedException("missing method or arguments, see error log for details");
-				Engine.log.error("unable to invoke " + doMethod, ex);
+				Logger.log.error("unable to invoke " + doMethod, ex);
 				throw ex;
 			}
 					
@@ -459,7 +460,7 @@ public class SwtUtils {
 
 			runException = null;
 			if(runAsSyncExec) {//Invoke in syncExec, method may access widgets from this thread
-				SwtEngine.getWindow().getShell().getDisplay().syncExec(new Runnable() {
+				SwtEngine.getCurrent().getWindow().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						runException = doInvoke();
 					}
@@ -501,7 +502,7 @@ public class SwtUtils {
 		 * @param w
 		 */
 		public static void monitorWorked(final int w) {
-			SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+			SwtEngine.getCurrent().getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if(monitor != null) monitor.worked(w);
 				}
@@ -514,7 +515,7 @@ public class SwtUtils {
 		 * @see IProgressMonitor#setTaskName(String)
 		 */
 		public static void monitorSetTaskName(final String taskName) {
-			SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+			SwtEngine.getCurrent().getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if(monitor != null) monitor.setTaskName(taskName);
 				}
@@ -528,9 +529,9 @@ public class SwtUtils {
 		 * @see MessageDialog#openInformation(org.eclipse.swt.widgets.Shell, String, String)
 		 */
 		public void openMessageDialog(final String title, final String msg) {
-			SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+			SwtEngine.getCurrent().getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					MessageDialog.openInformation(SwtEngine.getWindow().getShell(), title, msg);
+					MessageDialog.openInformation(SwtEngine.getCurrent().getWindow().getShell(), title, msg);
 				}
 			});
 		}

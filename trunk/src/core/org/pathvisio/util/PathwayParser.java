@@ -18,9 +18,9 @@ package org.pathvisio.util;
 
 import java.util.ArrayList;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.debug.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -92,18 +92,18 @@ public class PathwayParser extends DefaultHandler
 	
 	public void error(SAXParseException e) 
 	{ 
-		Engine.log.error("Error while parsing xml document", e);
+		Logger.log.error("Error while parsing xml document", e);
 	}
 	
 	public void fatalError(SAXParseException e) throws SAXParseException 
 	{ 
-		Engine.log.error("Fatal error while parsing xml document", e);
+		Logger.log.error("Fatal error while parsing xml document", e);
 		throw new SAXParseException("Fatal error, parsing of this document aborted", null);
 	}
 	
 	public void warning(SAXParseException e) 
 	{ 
-		Engine.log.error("Warning while parsing xml document", e);
+		Logger.log.error("Warning while parsing xml document", e);
 	}
 	
 	public class Gene extends IdCodePair 

@@ -34,9 +34,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
-import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.data.Gdb;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
@@ -217,7 +217,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 				sugg.add(label);
 			}
 		} catch (SQLException e) {
-			Engine.log.error("Unable to query suggestions", e);
+			Logger.log.error("Unable to query suggestions", e);
 		}
 		if(limit > NO_LIMIT && sugg.size() == limit) sugg.add("...results limited to " + limit);
 		return sugg.toArray(new String[sugg.size()]);

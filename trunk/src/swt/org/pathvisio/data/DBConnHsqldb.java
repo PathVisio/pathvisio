@@ -28,7 +28,7 @@ import java.util.Properties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 
 /**
@@ -63,7 +63,7 @@ public class DBConnHsqldb extends DBConnectorSwt
 		StopWatch timer = new StopWatch();
 		timer.start();
 		Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + dbName, prop);
-		Engine.log.info("Connecting with hsqldb to " + dbName + ":\t" + timer.stop());
+		Logger.log.info("Connecting with hsqldb to " + dbName + ":\t" + timer.stop());
 		return con;
 	}
 
@@ -103,7 +103,7 @@ public class DBConnHsqldb extends DBConnectorSwt
 			prop.setProperty("hsqldb.files_readonly", Boolean.toString(readonly));
 			prop.store(new FileOutputStream(propertyFile), "HSQL Database Engine");
 			} catch (Exception e) {
-				Engine.log.error("Unable to set database properties to readonly", e);
+				Logger.log.error("Unable to set database properties to readonly", e);
 			}
 	}
 

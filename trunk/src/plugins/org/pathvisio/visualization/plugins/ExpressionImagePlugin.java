@@ -72,6 +72,7 @@ import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.view.Graphics;
@@ -84,7 +85,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		"This plugin displays one or more images on Gene Product objects and \n" +
 		"colors the image(s) accoring to the expression value for the Gene Product.";
 		
-	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
+	static final Color DEFAULT_TRANSPARENT = Engine.getCurrent().TRANSPARENT_COLOR;
 		
 	List<URL> imageURLs;
 	
@@ -101,8 +102,8 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {
-				Engine.getResourceURL("images/protein_hi.bmp"),
-				Engine.getResourceURL("images/mRNA_hi.bmp") }));
+				Engine.getCurrent().getResourceURL("images/protein_hi.bmp"),
+				Engine.getCurrent().getResourceURL("images/mRNA_hi.bmp") }));
 	}
 	
 	List<URL> getImageURLs() { 
@@ -163,7 +164,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				URL url = new URL(((Element)o).getText());
 				addImageURL(url);
 			} catch(Exception e) {
-				Engine.log.error("couldn't load image URL for plugin", e);
+				Logger.log.error("couldn't load image URL for plugin", e);
 			}
 		}
 	}
@@ -383,7 +384,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				imageList.refresh();
 			} catch(Exception e) {
 				MessageDialog.openError(getShell(), "Unable to open image file", e.toString());
-				Engine.log.error("Unable to load image", e);
+				Logger.log.error("Unable to load image", e);
 			}
 		}
 		
@@ -466,7 +467,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				try {
 					cacheImage = ImageIO.read(imageURL);
 				} catch(IOException e) {
-					Engine.log.error("Unable to load image", e);
+					Logger.log.error("Unable to load image", e);
 					return null;
 				}
 			}
@@ -541,7 +542,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				URLConnection con = url.openConnection();
 				return con.getInputStream();
 			} catch(IOException e) {
-				Engine.log.error("Unable to open connection to image", e);
+				Logger.log.error("Unable to open connection to image", e);
 			}
 			return null;
 		}
@@ -563,7 +564,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 				setURL(new URL(xml.getAttributeValue(XML_ATTR_IMAGE)));
 				setReplaceColor(ColorConverter.parseColorElement(xml.getChild(XML_ATTR_REPLACE)));
 			} catch(Exception e) {
-				Engine.log.error("Unable to load plugin", e);
+				Logger.log.error("Unable to load plugin", e);
 			}
 		}
 		

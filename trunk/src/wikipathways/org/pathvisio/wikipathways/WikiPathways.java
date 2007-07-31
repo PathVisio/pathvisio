@@ -16,7 +16,6 @@
 //
 package org.pathvisio.wikipathways;
 
-import java.beans.DesignMode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,11 +39,11 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.Gdb;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -65,7 +64,7 @@ public class WikiPathways implements ApplicationEventListener {
 	public WikiPathways(UserInterfaceHandler uiHandler) {
 		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
-		Engine.addApplicationEventListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
 	}
 
 	public void init(VPathwayWrapper wrapper) throws Exception {
@@ -78,17 +77,19 @@ public class WikiPathways implements ApplicationEventListener {
 		}
 
 		if(isNew()) { //Create new pathway
-			Engine.newPathway(wrapper);
+			Logger.log.trace("WIKIPATHWAYS INIT: new pathway");
+			Engine.getCurrent().newPathway(wrapper);
 		} else { //Download and open the pathway
-			Engine.openPathway(new URL(getPwURL()), wrapper);
+			Logger.log.trace("WIKIPATHWAYS INIT: open pathway");
+			Engine.getCurrent().openPathway(new URL(getPwURL()), wrapper);
 		}
 
 		//TODO: notify user about this and hide edit actions
-		Engine.getActiveVPathway().setEditMode(!isReadOnly());
+		Engine.getCurrent().getActiveVPathway().setEditMode(!isReadOnly());
 		
 		//Connect to the gene database
 		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
-		Engine.setDBConnector(connector, DBConnector.TYPE_GDB);
+		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
 		
 		Gdb.connect(getPwSpecies());
 	}
@@ -137,14 +138,14 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 		
 	public boolean saveUI() {
-		VPathway vPathway = Engine.getActiveVPathway();
+		VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 		if(isReadOnly()) {
 			uiHandler.showError("Unable to save the pathway", "Unable to save the pathway, you are not logged in");
 			return false;
 		}
 		if(vPathway != null && vPathway.getGmmlData().hasChanged()) {
 			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
-			Engine.log.trace("Save description: " + description);
+			Logger.log.trace("Save description: " + description);
 			if(description != null) {
 				RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
 					public Boolean excecuteCode() {
@@ -152,7 +153,7 @@ public class WikiPathways implements ApplicationEventListener {
 							saveToWiki(description);
 							return true;
 						} catch (Exception e) {
-							Engine.log.error("Unable to save pathway", e);
+							Logger.log.error("Unable to save pathway", e);
 							uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
 						}
 						return false;
@@ -167,15 +168,15 @@ public class WikiPathways implements ApplicationEventListener {
 	
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
 		//TODO: check if changed
-		if(ovrChanged || Engine.getActivePathway().hasChanged()) {
+		if(ovrChanged || Engine.getCurrent().getActivePathway().hasChanged()) {
 			ovrChanged = true; //In case we get an error, save changes next time
 			File gpmlFile = getLocalFile();
 			//Save current pathway to local file
-			Engine.savePathway(gpmlFile);
+			Engine.getCurrent().savePathway(gpmlFile);
 			saveToWiki(description, gpmlFile);
 			ovrChanged = false; //Save successful, don't save next time
 		} else {
-			Engine.log.trace("No changes made, ignoring save");
+			Logger.log.trace("No changes made, ignoring save");
 			//Do nothing, no changes made
 		}
 	}
@@ -189,7 +190,7 @@ public class WikiPathways implements ApplicationEventListener {
 	
 		XmlRpcCookieHttpTransport ct = (XmlRpcCookieHttpTransport)ctf.getTransport();
 		for(String key : cookie.keySet()) {
-			Engine.log.trace("Setting cookie: " + key + "=" + cookie.get(key));
+			Logger.log.trace("Setting cookie: " + key + "=" + cookie.get(key));
 			ct.addCookie(key, cookie.get(key));
 		}
 		
@@ -210,7 +211,7 @@ public class WikiPathways implements ApplicationEventListener {
 		/*
 		switch(e.type) {
 		case ApplicationEvent.APPLICATION_CLOSE:
-			VPathway vPathway = Engine.getActiveVPathway();
+			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 			if(vPathway == null || vPathway.getGmmlData().hasChanged()) {
 				int status  = uiHandler.askCancellableQuestion("", 
 						"Do you want to save the changes to " + getPwName() + " on " + SITE_NAME + "?");

@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.tableviewer.PathwayTable;
 import org.pathvisio.util.tableviewer.TableData.Row;
 import org.pathvisio.view.GeneProduct;
@@ -47,13 +48,13 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	
 	public SearchResultTable(Composite parent, int style) {
 		super(parent, SWT.NULL);
-		Engine.addApplicationEventListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
 	}
 		
 	public int getNrResults() { return getNrRows(); }
 		
 	public void highlightResults(boolean highlight) {
-		VPathway drawing = Engine.getActiveVPathway();
+		VPathway drawing = Engine.getCurrent().getActiveVPathway();
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
@@ -72,7 +73,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 				}
 				drawing.redraw();
 			} catch(Exception ex) { 
-				Engine.log.error("when highlighting genes from search result table", ex);
+				Logger.log.error("when highlighting genes from search result table", ex);
 			}
 		}
 		else drawing.resetHighlight();

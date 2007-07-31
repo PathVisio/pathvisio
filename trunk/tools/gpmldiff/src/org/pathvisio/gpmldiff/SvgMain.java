@@ -16,17 +16,21 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.awt.*;
-import java.io.*;
-import org.apache.batik.svggen.SVGGraphics2D;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import org.apache.batik.dom.GenericDOMImplementation;
-import java.awt.AlphaComposite;
-import org.w3c.dom.Document;
-import org.w3c.dom.DOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.ConverterException;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 class SvgMain
 {

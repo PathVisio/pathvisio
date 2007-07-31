@@ -17,7 +17,8 @@
 
 package org.pathvisio.gpmldiff;
 
-import java.util.*;
+import java.util.Map;
+
 import org.pathvisio.model.PathwayElement;
 
 /**

@@ -19,6 +19,7 @@ package org.pathvisio.gui.swing;
 import java.io.PrintStream;
 
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.preferences.GlobalPreference;
 
@@ -27,17 +28,17 @@ public class GuiInit {
 		initImporters();
 		initExporters();
 		try {
-			Engine.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
+			Logger.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
 		} catch(Exception e) {}
-		Engine.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		
 	}
 	
 	private static void initImporters() {
-		Engine.addPathwayImporter(new GpmlFormat());
+		Engine.getCurrent().addPathwayImporter(new GpmlFormat());
 	}
 	
 	private static void initExporters() {
-		Engine.addPathwayExporter(new GpmlFormat());
+		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
 	}
 }

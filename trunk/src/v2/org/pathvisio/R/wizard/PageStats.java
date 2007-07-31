@@ -34,11 +34,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.Engine;
 import org.pathvisio.R.RController;
 import org.pathvisio.R.RFunctionLoader;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RFunctionLoader.RFunction;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 
@@ -102,7 +102,7 @@ public class PageStats extends WizardPage {
 		for(String fn : comboFunc.getItems()) {
 			try { 
 				RFunctionLoader.getFunction(fn).initValueComboItems(); 
-			} catch(RException e) { Engine.log.error("Unable to initialize values for function", e); }
+			} catch(RException e) { Logger.log.error("Unable to initialize values for function", e); }
 		}
 	}
 	
@@ -139,7 +139,7 @@ public class PageStats extends WizardPage {
 	}
 	
 	protected void doSetTopToParent(final Control top) {
-		SwtEngine.getWindow().getShell().getDisplay().asyncExec(new Runnable() {
+		SwtEngine.getCurrent().getWindow().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				((StackLayout)((Composite)getControl()).getLayout()).topControl = top.getParent();
 				((Composite)getControl()).layout();

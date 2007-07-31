@@ -20,7 +20,7 @@ import java.sql.DriverManager;
 
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.FileUtils;
 
 /**
@@ -34,7 +34,7 @@ public class DBConnDerbyDirectory extends DBConnDerby {
 		try {
 			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
 		} catch(Exception e) {
-			Engine.log.error("Database closed", e);
+			Logger.log.error("Database closed", e);
 		}
 		return dbName;
 	}

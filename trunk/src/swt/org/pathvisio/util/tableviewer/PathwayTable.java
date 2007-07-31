@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.TableColumnResizer;
@@ -147,9 +147,9 @@ public class PathwayTable extends Composite {
 						pw = fid.getValue();
 					}
 				}
-				SwtEngine.openPathway(pw);
+				SwtEngine.getCurrent().openPathway(pw);
 			} catch(Exception ex) { 
-				Engine.log.error("when trying to open pathway from pathway table", ex);
+				Logger.log.error("when trying to open pathway from pathway table", ex);
 			}
 		}
 	};

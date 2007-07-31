@@ -30,7 +30,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -61,15 +60,11 @@ import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
-import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
 
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
@@ -93,7 +88,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public MainPanel() {
 		setLayout(new BorderLayout());
 
-		Engine.addApplicationEventListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
 		
 		menuBar = new JMenuBar();
 		addMenuActions(menuBar);
@@ -229,7 +224,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		addToToolbar(new NewElementAction(VPathway.NEWGENEPRODUCT), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new NewElementAction(VPathway.NEWLABEL), TB_GROUP_HIDE_ON_EDIT);
 		// New line menu
-		DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine
+		DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
 				.getResourceURL("icons/newlinemenu.gif")));
 		lineButton.addComponent(new JMenuItem(new NewElementAction(
 				VPathway.NEWLINE)));
@@ -250,7 +245,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		// New lineshape menu
 		DropDownButton lineShapeButton = new DropDownButton(new ImageIcon(
-				Engine.getResourceURL("icons/newlineshapemenu.gif")));
+				Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif")));
 		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(
 				VPathway.NEWLIGANDROUND)));
 		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(

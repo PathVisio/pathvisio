@@ -24,8 +24,8 @@
 
 package org.pathvisio.model;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *

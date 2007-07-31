@@ -28,18 +28,22 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
-public class PathwayTableModel extends AbstractTableModel implements SelectionListener, PathwayListener {
+public class PathwayTableModel extends AbstractTableModel implements SelectionListener, 
+									PathwayListener, 
+									ApplicationEventListener {
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
 	
 	Collection<PathwayElement> input;
@@ -48,7 +52,10 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	public PathwayTableModel() {
 		input = new HashSet<PathwayElement>();
 		properties = new ArrayList<TypedProperty>();
-		SelectionBox.addListener(this);
+		
+		Engine.getCurrent().addApplicationEventListener(this);
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		if(vp != null) vp.addSelectionListener(this);
 	}
 	
 	private void clearInput() {
@@ -148,7 +155,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			TypedProperty p = getPropertyAt(rowIndex);
 			p.setValue(aValue);
 		}
-		Engine.getActiveVPathway().redrawDirtyRect();
+		Engine.getCurrent().getActiveVPathway().redrawDirtyRect();
 	}
 	
 	public String getColumnName(int column) {
@@ -160,7 +167,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		return columnIndex == 1;
 	}
 		
-	public void drawingEvent(SelectionEvent e) {
+	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			if(e.affectedObject instanceof Graphics)
@@ -194,5 +201,11 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	
 	public void gmmlObjectModified(PathwayEvent e) {
 		refresh();
+	}
+
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+			((VPathway)e.source).addSelectionListener(this);
+		}
 	}
 }

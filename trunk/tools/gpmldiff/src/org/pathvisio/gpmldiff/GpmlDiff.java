@@ -16,9 +16,11 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.io.*;
-import org.pathvisio.debug.Logger;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+
+import org.pathvisio.debug.Logger;
 
 /**
    Class containing main method

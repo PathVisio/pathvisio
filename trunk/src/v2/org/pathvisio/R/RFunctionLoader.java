@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Text;
 import org.pathvisio.Engine;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.wizard.RWizard;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.JarUtils;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
@@ -69,7 +70,7 @@ public class RFunctionLoader {
 	
 	
 	public static void loadFunctions() throws IOException, RException {
-		URL url = Engine.getResourceURL(FUN_DIR);
+		URL url = Engine.getCurrent().getResourceURL(FUN_DIR);
 		
 		String protocol = url.getProtocol();
 		if(protocol.equals("jar")) {
@@ -102,7 +103,7 @@ public class RFunctionLoader {
 	
 	private static void loadFunction(File funFile) {
     	try {
-    		Engine.log.trace("Loading R function: " + funFile);
+    		Logger.log.trace("Loading R function: " + funFile);
     		RCommands.eval("source('" + RCommands.fileToString(funFile) + "')");
     	} catch(RException re) {
     		RController.openError("Unable to load functions in " + funFile.toString(), re);
@@ -311,7 +312,7 @@ public class RFunctionLoader {
 						updateArgGroup(SETS_ARG);
 					} catch(Exception ex) {
 						MessageDialog.openError(e.display.getActiveShell(), "Error", ex.getMessage());
-						Engine.log.error("", ex);
+						Logger.log.error("", ex);
 					}
 				}
 			});
@@ -327,7 +328,7 @@ public class RFunctionLoader {
 						updateArgGroup(SETS_ARG);
 					} catch(Exception ex) {
 						MessageDialog.openError(e.display.getActiveShell(), "Error", ex.getMessage());
-						Engine.log.error("", ex);
+						Logger.log.error("", ex);
 					}
 				}
 			});
@@ -372,7 +373,7 @@ public class RFunctionLoader {
 					dialog.run(true, true, rwp); 
 				} catch(InvocationTargetException ex) {
 					MessageDialog.openError(getShell(), "Unable to export set", ex.getCause().getMessage());
-					Engine.log.error("Unable to export set to R", ex);
+					Logger.log.error("Unable to export set to R", ex);
 					return false;
 				} catch(InterruptedException ie) { return false; }
 				return true;

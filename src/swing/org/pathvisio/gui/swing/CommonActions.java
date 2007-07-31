@@ -46,7 +46,7 @@ public abstract class CommonActions {
 	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
 	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	
-	public static class ZoomAction extends AbstractAction {
+	static class ZoomAction extends AbstractAction {
 		Component parent;
 		double zoomFactor;
 		

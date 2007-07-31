@@ -82,7 +82,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		repaint();
 	}
 
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics g)
+	{
 		child.draw((Graphics2D) g);
 	}
 

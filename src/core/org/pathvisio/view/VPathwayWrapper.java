@@ -22,7 +22,8 @@ import java.awt.Rectangle;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-public abstract interface VPathwayWrapper {		
+public abstract interface VPathwayWrapper
+{		
 	public void redraw();
 	public void redraw(Rectangle r);
 	public void setVSize(Dimension size);

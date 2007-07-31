@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 
 /**
  * This class contains the information needed to start importing a delimited
@@ -42,7 +42,7 @@ public class ImportInformation {
 		//Close the connection to the previous file if exist
 		if(in != null) {
 			try { in.close(); } catch(Exception e) { 
-				Engine.log.error("on closing file " + this.txtFile + ": " + e.getMessage(), e);
+				Logger.log.error("on closing file " + this.txtFile + ": " + e.getMessage(), e);
 			}
 			in = null;
 		}
@@ -124,7 +124,7 @@ public class ImportInformation {
 				in.reset();
 			}
 		} catch (Exception e) {
-			Engine.log.error("Error reading file", e);
+			Logger.log.error("Error reading file", e);
 		} // TODO: handle exception
 		return in;
 	}
@@ -177,7 +177,7 @@ public class ImportInformation {
 				i++; // Go to headerline
 			return in.readLine().split(ImportInformation.DELIMITER);
 		} catch (IOException e) { // TODO: handle IOException
-			Engine.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
+			Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
 			return new String[] {};
 		}
 	}

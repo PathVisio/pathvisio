@@ -16,7 +16,6 @@
 //
 package org.pathvisio.debug;
 
-import org.pathvisio.Engine;
 
 /**
    A simple helper class for speed optimizations
@@ -44,6 +43,6 @@ public class StopWatch
 	}
 	
 	public void stopToLog(String msg) {
-		Engine.log.trace(msg + "\t" + stop());
+		Logger.log.trace(msg + "\t" + stop());
 	}
 }

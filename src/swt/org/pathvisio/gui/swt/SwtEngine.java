@@ -34,6 +34,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -57,18 +58,24 @@ public class SwtEngine {
 	 * and handle gpml related actions
 	 */
 	
-	private static MainWindow window;
+	private MainWindow window;
 	
-	private static ImageRegistry imageRegistry;
+	private ImageRegistry imageRegistry;
 	
-	private static File DIR_APPLICATION;
-	private static File DIR_DATA;
-	static boolean USE_R;
+	private File DIR_APPLICATION;
+	private File DIR_DATA;
+	boolean USE_R;
 		
+	private static SwtEngine current;
+	public static SwtEngine getCurrent() {
+		if(current == null) current = new SwtEngine();
+		return current;
+	}
+	
 	/**
 	 * Get the {@link ApplicationWindow}, the UI of the program
 	 */
-	public static MainWindow getWindow() {
+	public MainWindow getWindow() {
 		if(window == null) window = new MainWindow();
 		return window;
 	}
@@ -79,17 +86,17 @@ public class SwtEngine {
 	   whenever the filename of the current document has changed,
 	   or the change status has changed.
 	*/
-	public static void updateTitle()
+	public void updateTitle()
 	{
-		if (Engine.getActivePathway() == null)
+		if (Engine.getCurrent().getActivePathway() == null)
 		{
 			window.getShell().setText(Globals.APPLICATION_VERSION_NAME);
 		}
 		else
 		{
 			// get filename, or (New Pathway) if current pathway hasn't been opened yet
-			String fname = (Engine.getActivePathway().getSourceFile() == null) ? "(New Pathway)" :
-				Engine.getActivePathway().getSourceFile().getName();
+			String fname = (Engine.getCurrent().getActivePathway().getSourceFile() == null) ? "(New Pathway)" :
+				Engine.getCurrent().getActivePathway().getSourceFile().getName();
 			window.getShell().setText(
 				"*" + fname + " - " +
 				Globals.APPLICATION_VERSION_NAME
@@ -103,7 +110,7 @@ public class SwtEngine {
 	 * (to check for undisposed widgets)
 	 * @return The {@link MainWindow} monitored by Sleak.java
 	 */
-	public static MainWindow getSleakWindow() {
+	public MainWindow getSleakWindow() {
 		//<DEBUG to find undisposed system resources>
 		DeviceData data = new DeviceData();
 		data.tracking = true;
@@ -117,7 +124,7 @@ public class SwtEngine {
 		//</DEBUG>
 	}
 	
-	private static VPathwayWrapper createWrapper() {
+	private VPathwayWrapper createWrapper() {
 		if(window != null) {
 //			return new VPathwaySwtAwt(window.sc, SWT.NO_BACKGROUND);
 			return new VPathwaySwtAwt(window.swingPathwayComposite.getScrollPane(), window.getShell().getDisplay());
@@ -125,10 +132,10 @@ public class SwtEngine {
 		return null;
 	}
 		
-	public static void newPathway() {
+	public void newPathway() {
 		if(canDiscardPathway()) {
 			VPathwayWrapper w = createWrapper();
-			Engine.newPathway(w);
+			Engine.getCurrent().newPathway(w);
 			updateTitle();
 		}
 	}
@@ -138,10 +145,10 @@ public class SwtEngine {
 	   Then the pathways is saved to that file.
 	   returns false if the action was cancelled by the user
 	 */
-	public static boolean savePathwayAs()
+	public boolean savePathwayAs()
 	{
-		Pathway pathway = Engine.getActivePathway();
-		VPathway vPathway = Engine.getActiveVPathway();
+		Pathway pathway = Engine.getCurrent().getActivePathway();
+		VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 		
 		// Check if a gpml pathway is loaded
 		if (pathway != null)
@@ -183,7 +190,7 @@ public class SwtEngine {
 				// Overwrite the existing xml file
 				try
 				{
-					Engine.savePathway(checkFile);
+					Engine.getCurrent().savePathway(checkFile);
 					updateTitle();
 					// Set zoom back
 					vPathway.setPctZoom(usedZoom);
@@ -195,7 +202,7 @@ public class SwtEngine {
 					MessageDialog.openError (window.getShell(), "Error", 
 											 "Error: " + msg + "\n\n" + 
 											 "See the error log for details.");
-					Engine.log.error(msg, e);
+					Logger.log.error(msg, e);
 				}
 			}
 		}
@@ -216,11 +223,11 @@ public class SwtEngine {
 	   
 	   TODO: Currently always asks, even if there were no changes since last save.
 	 */
-	static public boolean canDiscardPathway()
+	public boolean canDiscardPathway()
 	{
-		Pathway pathway = Engine.getActivePathway();
-		// checking not necessary if there is no pathway.
-		if (pathway == null) return true;
+		Pathway pathway = Engine.getCurrent().getActivePathway();
+		// checking not necessary if there is no pathway or if pathway is not changed.
+		if (pathway == null || !pathway.hasChanged()) return true;
 		String[] opts =
 		{
 			IDialogConstants.YES_LABEL,
@@ -255,7 +262,7 @@ public class SwtEngine {
 	   if it takes a long time.  Shows an error message and returns
 	   false if it somehow failed to open the web page.
 	*/
-	public static boolean openWebPage(String url, String progressMsg, String errMsg) {
+	public boolean openWebPage(String url, String progressMsg, String errMsg) {
 		Shell shell = getWindow().getShell();
 		if(shell == null || shell.isDisposed()) return false;
 		
@@ -277,7 +284,7 @@ public class SwtEngine {
 		} catch (InterruptedException ignore) { return false; }
 	}
 	
-	public static void doOpenWebPage(String url) throws BrowserLaunchingInitializingException, BrowserLaunchingExecutionException, UnsupportedOperatingSystemException {
+	public void doOpenWebPage(String url) throws BrowserLaunchingInitializingException, BrowserLaunchingExecutionException, UnsupportedOperatingSystemException {
 		BrowserLauncher bl = new BrowserLauncher(null);
 		bl.openURLinBrowser(url);
 	}
@@ -286,13 +293,13 @@ public class SwtEngine {
 	 Open a pathway from a gpml file
 	 Asks the user if the old pathway should be discarded, if necessary
 	 */
-	public static void openPathway(String pwf)
+	public void openPathway(String pwf)
 	{
 		if (canDiscardPathway())
 		{
 			try { 
 				VPathwayWrapper w = createWrapper();
-				Engine.openPathway(pwf, w);
+				Engine.getCurrent().openPathway(pwf, w);
 				updateTitle();
 			} catch(ConverterException e) {		
 				if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
@@ -306,12 +313,12 @@ public class SwtEngine {
 						"Non-standard pathways need to be recreated or upgraded. " +
 						"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
 						"\nSee error log for details");
-					Engine.log.error("Unable to open Gpml file", e);
+					Logger.log.error("Unable to open Gpml file", e);
 				}
 				else
 				{
 					//TODO: refactor these error messages,
-					// so it's not redundant with SwingEngine.
+					// so it's not redundant with SwingEngine
 					MessageDialog.openError(
 						getWindow().getShell(), 
 						"Unable to open Gpml file",
@@ -320,7 +327,7 @@ public class SwtEngine {
 						"Pathway in the Gpml format. If the problem persists, please contact " +
 						"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
 						"file you're trying to open and the error log.");
-					Engine.log.error("Unable to open Gpml file", e);
+					Logger.log.error("Unable to open Gpml file", e);
 				}
 			}
 		}
@@ -329,7 +336,7 @@ public class SwtEngine {
 	/**
 	 * Get the {@link ImageRegistry} containing commonly used images
 	 */
-	public static ImageRegistry getImageRegistry() { 
+	public ImageRegistry getImageRegistry() { 
 		if(imageRegistry == null) imageRegistry = new ImageRegistry();
 		return imageRegistry; 
 	}
@@ -337,12 +344,12 @@ public class SwtEngine {
 	/**
 	 * Set the {@link ImageRegistry} containing commonly used images
 	 */
-	public static void setImageRegistry(ImageRegistry _imageRegistry) {
+	public void setImageRegistry(ImageRegistry _imageRegistry) {
 		imageRegistry = _imageRegistry;
 	}
 			
-	public static DBConnectorSwt getSwtDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		DBConnector dbc = Engine.getDbConnector(type);
+	public DBConnectorSwt getSwtDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		DBConnector dbc = Engine.getCurrent().getDbConnector(type);
 		if(dbc instanceof DBConnectorSwt) {
 			return (DBConnectorSwt)dbc;
 		} else {
@@ -352,7 +359,7 @@ public class SwtEngine {
 	/**
 	 * Get the working directory of this application
 	 */
-	public static File getApplicationDir() {
+	public File getApplicationDir() {
 		if(DIR_APPLICATION == null) {
 			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + Globals.APPLICATION_NAME);
 			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
@@ -360,7 +367,7 @@ public class SwtEngine {
 		return DIR_APPLICATION;
 	}
 		
-	public static File getDataDir() {
+	public File getDataDir() {
 		if(DIR_DATA == null) {
 			DIR_DATA = new File(System.getProperty("user.home"), Globals.APPLICATION_NAME + "-Data");
 			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
@@ -368,7 +375,7 @@ public class SwtEngine {
 		return DIR_DATA;
 	}
 			
-	public static boolean isUseR() { return USE_R; }
+	public boolean isUseR() { return USE_R; }
 	
 	/**
 	   save the current pathway
@@ -377,10 +384,10 @@ public class SwtEngine {
 	   Calls savePathwayAs if the filename of the current pathway is unknown,
 	   so that the user can set a location for this pathway
 	*/
-		public static boolean savePathway()
+		public boolean savePathway()
 		{
-			Pathway pathway = Engine.getActivePathway();
-			VPathway vPathway = Engine.getActiveVPathway();
+			Pathway pathway = Engine.getCurrent().getActivePathway();
+			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 			
 			boolean result = true;
 			
@@ -394,7 +401,7 @@ public class SwtEngine {
 			{
 				try
 				{
-					Engine.savePathway();
+					Engine.getCurrent().savePathway(pathway.getSourceFile());
 				}
 				catch (ConverterException e)
 				{
@@ -403,7 +410,7 @@ public class SwtEngine {
 					MessageDialog.openError (window.getShell(), "Error", 
 											 "Error: " + msg + "\n\n" + 
 											 "See the error log for details.");
-					Engine.log.error(msg, e);
+					Logger.log.error(msg, e);
 				}
 			}
 			else

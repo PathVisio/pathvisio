@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.jdom.Element;
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.SwtUtils;
@@ -197,7 +198,7 @@ public class LabelPlugin extends VisualizationPlugin {
 	Font getFont(boolean adjustZoom) {
 		Font f = font == null ? DEFAULT_FONT : font;
 		if(adjustZoom) {
-			int fs = (int)Math.ceil(Engine.getActiveVPathway().vFromM(f.getSize()) * 15);
+			int fs = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
 			f = new Font(f.getName(), f.getStyle(), f.getSize());
 		}
 		return f;
@@ -356,7 +357,7 @@ public class LabelPlugin extends VisualizationPlugin {
 			if(fcElm != null) fontColor = ColorConverter.parseColorElement(fcElm);
 			if(alnStr != null) align = Integer.parseInt(alnStr);
 		} catch(NumberFormatException e) {
-			Engine.log.error("Unable to load configuration for " + NAME, e);
+			Logger.log.error("Unable to load configuration for " + NAME, e);
 		}
 	}
 }

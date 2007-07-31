@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.Utils;
@@ -285,14 +286,14 @@ public abstract class Gdb {
 	private static void initializeHeader() {
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
-						Engine.getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
+						Engine.getCurrent().getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
 			String line;
 			backpagePanelHeader = "";
 			while((line = input.readLine()) != null) {
 				backpagePanelHeader += line.trim();
 			}
 		} catch (Exception e) {
-			Engine.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
+			Logger.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
 		}
 	}
 	
@@ -343,7 +344,7 @@ public abstract class Gdb {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
 			}
 		} catch(Exception e) {
-			Engine.log.error("Unable to get cross references for ensembl gene " +
+			Logger.log.error("Unable to get cross references for ensembl gene " +
 					"'" + ensId + "'", e);
 		}
 		
@@ -382,7 +383,7 @@ public abstract class Gdb {
 				ensIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {
-			Engine.log.error("Unable to get ensembl genes for ensembl gene " +
+			Logger.log.error("Unable to get ensembl genes for ensembl gene " +
 					"'" + ref + "' with systemcode '" + code + "'", e);
 		}
 		
@@ -391,7 +392,7 @@ public abstract class Gdb {
 	}
 	
 	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
-		Engine.log.trace("Fetching cross references");
+		Logger.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -399,7 +400,7 @@ public abstract class Gdb {
 		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
 
-		Engine.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
+		Logger.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
 	}
 	
@@ -460,11 +461,11 @@ public abstract class Gdb {
 				crossIds.add(new IdCodePair(rid, rcode));
 			}
 		} catch(Exception e) {
-			Engine.log.error("Unable to get cross references for gene " +
+			Logger.log.error("Unable to get cross references for gene " +
 					"'" + id + ", with systemcode '" + code + "'", e);
 		}
 		
-		Engine.log.trace("\t> getCrossRefs1Query:\t" + timer.stop());
+		Logger.log.trace("\t> getCrossRefs1Query:\t" + timer.stop());
 		return crossIds;
 	}
 	
@@ -516,7 +517,7 @@ public abstract class Gdb {
 	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getDbConnector(DBConnector.TYPE_GDB);
+		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
 	}
 	
 	/**
@@ -545,7 +546,7 @@ public abstract class Gdb {
 				DBConnector connector = getDBConnector();
 				connector.closeConnection(con);
 			} catch(Exception e) {
-				Engine.log.error("Unable to close database connection", e);
+				Logger.log.error("Unable to close database connection", e);
 			}
 		}
 	}
@@ -563,7 +564,7 @@ public abstract class Gdb {
 	    try {
 	        error = new PrintWriter(new FileWriter("convert_gdb_log.txt"));
 	    } catch(IOException ex) {
-	    	Engine.log.error("Unable to open error file: " + ex.getMessage(), ex);
+	    	Logger.log.error("Unable to open error file: " + ex.getMessage(), ex);
 	    }
 	    
 		error.println ("Info:  Fetching data from gdb");
@@ -795,7 +796,7 @@ public abstract class Gdb {
 	 * @param convertCon	The connection to the database the tables are created in
 	 */
 	public static void createTables(Connection convertCon) {
-		Engine.log.trace("Info:  Creating tables");
+		Logger.log.trace("Info:  Creating tables");
 		
 		try {
 			Statement sh = convertCon.createStatement();
@@ -803,7 +804,7 @@ public abstract class Gdb {
 			sh.execute("DROP TABLE link");
 			sh.execute("DROP TABLE gene");
 		} catch(Exception e) {
-			Engine.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
+			Logger.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
 		}
 		try
 		{
@@ -853,7 +854,7 @@ public abstract class Gdb {
 			
 		} catch (Exception e)
 		{
-			Engine.log.error("while creating gdb tables: " + e.getMessage(), e);
+			Logger.log.error("while creating gdb tables: " + e.getMessage(), e);
 		}
 	}
 	

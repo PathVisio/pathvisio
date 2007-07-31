@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 
 public abstract class AbstractDBConnector implements DBConnector {
 	public static final int COMPAT_VERSION = 1;
@@ -41,9 +41,9 @@ public abstract class AbstractDBConnector implements DBConnector {
 	public void createTables(Connection con) throws Exception {	
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();
-			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Engine.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Engine.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Engine.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
 			
 			sh.execute(
 					"CREATE TABLE					" +

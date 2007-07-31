@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
+import org.pathvisio.debug.Logger;
 
 /**
  * The class MappFormat is responsible for all interaction with 
@@ -169,7 +169,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     		ce.setStackTrace(cnfe.getStackTrace());
     		throw ce;
     	}
-        Engine.log.debug ("Connection string: " + database);
+        Logger.log.debug ("Connection string: " + database);
 		
 		// Create the connection to the database
         
@@ -179,7 +179,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	        
 	        Statement s = con.createStatement();
 	        
-	        Engine.log.trace ("READING INFO TABLE");
+	        Logger.log.trace ("READING INFO TABLE");
 	        // first do the INFO table, only one row.
 		    {
 		        ResultSet r = s.executeQuery(sqlInfoSelect);
@@ -191,7 +191,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		        copyMappInfo(row, data, filename);
 	    	}    
 	
-		    Engine.log.trace ("READING OBJECTS TABLE");
+		    Logger.log.trace ("READING OBJECTS TABLE");
 	        // now do the OBJECTS table, multiple rows
 	        {
 		        ResultSet r = s.executeQuery(sqlObjectsSelect);
@@ -258,7 +258,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     			sObjects.setInt (1, k);
     			for (int j = 1; j < row.length; ++j)
     			{
-    				Engine.log.trace ("[" + (j + 1) + "] " + row[j]);
+    				Logger.log.trace ("[" + (j + 1) + "] " + row[j]);
 //    				System.err.println ("[" + (j + 1) + "] " + row[j]);
     				if (j >= 14 && j < 17)
     				{
@@ -282,7 +282,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
 			for (int j = 0; j < mappInfo.length; ++j)
 			{
-				Engine.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
+				Logger.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
 				
 				sInfo.setString (j + 1, mappInfo[j]);
 			}    			
@@ -290,13 +290,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
             con.close();
             
         } catch (ClassNotFoundException cl_ex) {
-        	Engine.log.error ("-> Could not find the Sun JbdcObdcDriver\n");
+        	Logger.log.error ("-> Could not find the Sun JbdcObdcDriver\n");
         } catch (SQLException ex) {
-        	Engine.log.error ("-> SQLException: "+ex.getMessage());        
+        	Logger.log.error ("-> SQLException: "+ex.getMessage());        
             ex.printStackTrace();
         } catch (IOException e)
         {
-        	Engine.log.error (e.getMessage());
+        	Logger.log.error (e.getMessage());
         }
     }
     
@@ -350,7 +350,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		*
 		*/
 	
-		Engine.log.trace ("CONVERTING INFO TABLE TO GPML");
+		Logger.log.trace ("CONVERTING INFO TABLE TO GPML");
 		
 		PathwayElement o = data.getMappInfo();
 		

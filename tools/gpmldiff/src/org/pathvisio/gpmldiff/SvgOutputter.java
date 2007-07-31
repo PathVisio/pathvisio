@@ -18,34 +18,36 @@ package org.pathvisio.gpmldiff;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Font;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.font.TextLayout;
+import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.io.*;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Pathway;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.debug.Logger;
 
 class SvgOutputter extends DiffOutputter
 {

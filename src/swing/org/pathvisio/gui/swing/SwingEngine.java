@@ -18,33 +18,38 @@ package org.pathvisio.gui.swing;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.PrintStream;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 public class SwingEngine {	
 	private static MainPanel mainPanel;
 	
-	public static MainPanel getApplicationPanel() {
+	private static SwingEngine current;
+	public static SwingEngine getCurrent() {
+		if(current == null) current = new SwingEngine();
+		return current;
+	}
+	
+	public MainPanel getApplicationPanel() {
 		return getApplicationPanel(false);
 	}
 	
-	public static MainPanel getApplicationPanel(boolean forceNew) {
+	public MainPanel getApplicationPanel(boolean forceNew) {
 		if(forceNew || !hasApplicationPanel()) {
 			mainPanel = new MainPanel();
 		}
 		return mainPanel;
 	}
 	
-	public static boolean hasApplicationPanel() {
+	public boolean hasApplicationPanel() {
 		return mainPanel != null;
 	}
 	
@@ -53,7 +58,7 @@ public class SwingEngine {
 	public static String MSG_UNABLE_SAVE = "Unable to save GPML file.";
 	public static String MSG_UNABLE_OPEN = "Unable to open GPML file.";
 	
-	public static void handleConverterException(String message, Component c, ConverterException e) {
+	public void handleConverterException(String message, Component c, ConverterException e) {
 		if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 		{
 			JOptionPane.showMessageDialog(c,
@@ -64,29 +69,29 @@ public class SwingEngine {
 					"Non-standard pathways need to be recreated or upgraded. " +
 					"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
 					"\nSee error log for details");
-			Engine.log.error("Unable to open Gpml file", e);
+			Logger.log.error("Unable to open Gpml file", e);
 		}
 		else
 		{
 			JOptionPane.showMessageDialog(c,
 					message + "\n" + e.getClass() + e.getMessage());
-			Engine.log.error("Unable to open Gpml file", e);
+			Logger.log.error("Unable to open Gpml file", e);
 		}
 	}
 		
-	public static VPathwayWrapper createWrapper() {
+	public VPathwayWrapper createWrapper() {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
 	
-	public static File openPathway(URL url) throws ConverterException {
-		return Engine.openPathway(url, createWrapper());
+	public File openPathway(URL url) throws ConverterException {
+		return Engine.getCurrent().openPathway(url, createWrapper());
 	}
 	
-	public static void importPathway(File f) throws ConverterException {
-		Engine.importPathway(f, createWrapper());
+	public void importPathway(File f) throws ConverterException {
+		Engine.getCurrent().importPathway(f, createWrapper());
 	}
 	
-	public static void newPathway() {
-		Engine.newPathway(createWrapper());
+	public void newPathway() {
+		Engine.getCurrent().newPathway(createWrapper());
 	}
 }

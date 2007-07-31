@@ -16,7 +16,9 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStreamReader;
+
 import org.pathvisio.debug.Logger;
 
 /**

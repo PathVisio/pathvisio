@@ -34,6 +34,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.gui.BiopaxDialog;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
@@ -58,9 +59,9 @@ public class CommonActions
 		}
 		public void run() 
 		{
-			if (Engine.getActivePathway() != null)
+			if (Engine.getCurrent().getActivePathway() != null)
 			{
-				Engine.getActivePathway().undo();
+				Engine.getCurrent().getActivePathway().undo();
 			}
 		}
 	}
@@ -77,11 +78,11 @@ public class CommonActions
 			setText ("&New pathway@Ctrl+N");
 			setToolTipText ("Create new pathway");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getResourceURL("icons/new.gif")));
+					Engine.getCurrent().getResourceURL("icons/new.gif")));
 		}
 		public void run ()
 		{			
-			SwtEngine.newPathway();
+			SwtEngine.getCurrent().newPathway();
 		}	
 	}
 	
@@ -101,24 +102,24 @@ public class CommonActions
 		public void run () 
 		{
 			//TODO: move to engine, merge with "save"
-			VPathway drawing = Engine.getActiveVPathway();
-			Pathway gmmlData = Engine.getActivePathway();
+			VPathway drawing = Engine.getCurrent().getActiveVPathway();
+			Pathway gmmlData = Engine.getCurrent().getActivePathway();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*." + Engine.SVG_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {Engine.SVG_FILTER_NAME, "All files (*.*)"});
+				fd.setFilterExtensions(new String[] {"*." + Engine.getCurrent().SVG_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {Engine.getCurrent().SVG_FILTER_NAME, "All files (*.*)"});
 				
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
 					String name = xmlFile.getName();
-					if (name.endsWith("." + Engine.PATHWAY_FILE_EXTENSION))
+					if (name.endsWith("." + Engine.getCurrent().PATHWAY_FILE_EXTENSION))
 					{
 						name = name.substring(0, name.length() - 
-							Engine.PATHWAY_FILE_EXTENSION.length()) +
-							Engine.SVG_FILE_EXTENSION;
+							Engine.getCurrent().PATHWAY_FILE_EXTENSION.length()) +
+							Engine.getCurrent().SVG_FILE_EXTENSION;
 					}
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
@@ -131,8 +132,8 @@ public class CommonActions
 				if(fileName == null) return;
 				
 				// Append .svg extension if not already present
-				if(!fileName.endsWith("." + Engine.SVG_FILE_EXTENSION)) 
-					fileName += "." + Engine.SVG_FILE_EXTENSION;
+				if(!fileName.endsWith("." + Engine.getCurrent().SVG_FILE_EXTENSION)) 
+					fileName += "." + Engine.getCurrent().SVG_FILE_EXTENSION;
 				
 				File checkFile = new File(fileName);
 				boolean confirmed = true;
@@ -155,7 +156,7 @@ public class CommonActions
 						MessageDialog.openError (window.getShell(), "Error", 
 								"Error: " + msg + "\n\n" + 
 								"See the error log for details.");
-						Engine.log.error(msg, e);
+						Logger.log.error(msg, e);
 					}
 				}
 			}
@@ -178,7 +179,7 @@ public class CommonActions
 			window = w;
 			setText ("&Open pathway@Ctrl+O");
 			setToolTipText ("Open pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/open.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("icons/open.gif")));
 		}
 		public void run () 
 		{
@@ -186,13 +187,13 @@ public class CommonActions
 			fd.setText("Open");
 			String pwpath = SwtPreference.SWT_DIR_PWFILES.getValue();
 			fd.setFilterPath(pwpath);
-			fd.setFilterExtensions(new String[] {"*." + Engine.PATHWAY_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {Engine.PATHWAY_FILTER_NAME, "All files (*.*)"});
+			fd.setFilterExtensions(new String[] {"*." + Engine.getCurrent().PATHWAY_FILE_EXTENSION, "*.*"});
+			fd.setFilterNames(new String[] {Engine.getCurrent().PATHWAY_FILTER_NAME, "All files (*.*)"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
 	        
 	        if(fnMapp != null) { 
-	        	SwtEngine.openPathway(fnMapp); 
+	        	SwtEngine.getCurrent().openPathway(fnMapp); 
 	        }
 		}
 	}
@@ -211,18 +212,18 @@ public class CommonActions
 		}
 		public void run () 
 		{
-			if(SwtEngine.canDiscardPathway())
+			if(SwtEngine.getCurrent().canDiscardPathway())
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 				fd.setText("Open");
 				fd.setFilterPath(SwtPreference.SWT_DIR_PWFILES.getValue());
-				fd.setFilterExtensions(new String[] {"*." + Engine.GENMAPP_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {Engine.GENMAPP_FILTER_NAME, "All files (*.*)"});
+				fd.setFilterExtensions(new String[] {"*." + Engine.getCurrent().GENMAPP_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {Engine.getCurrent().GENMAPP_FILTER_NAME, "All files (*.*)"});
 	        	String fnMapp = fd.open();
 	        	// Only open pathway if user selected a file
 	        	
 	        	if(fnMapp != null) { 
-	        		SwtEngine.openPathway(fnMapp); 
+	        		SwtEngine.getCurrent().openPathway(fnMapp); 
 	        	}
 	        }
 		}
@@ -243,7 +244,7 @@ public class CommonActions
 		
 		public void run () 
 		{
-			SwtEngine.savePathwayAs();
+			SwtEngine.getCurrent().savePathwayAs();
 		}
 	}
 
@@ -262,8 +263,8 @@ public class CommonActions
 		}
 		public void run () {
 			//TODO: move to engine, merge with "save" or "saveAs"
-			VPathway drawing = Engine.getActiveVPathway();
-			Pathway gmmlData = Engine.getActivePathway();
+			VPathway drawing = Engine.getCurrent().getActiveVPathway();
+			Pathway gmmlData = Engine.getCurrent().getActivePathway();
 			// Check if a gpml pathway is loaded
 			if (drawing != null)
 			{
@@ -280,7 +281,7 @@ public class CommonActions
 				}
 				
 				ArrayList<FileType> fts = new ArrayList<FileType>();
-				HashMap<String, PathwayExporter> exporters = Engine.getPathwayExporters();
+				HashMap<String, PathwayExporter> exporters = Engine.getCurrent().getPathwayExporters();
 								
 				for(String ext : exporters.keySet()) {
 					fts.add(new FileType(
@@ -301,10 +302,10 @@ public class CommonActions
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
 					String name = xmlFile.getName();
-					if (name.endsWith("." + Engine.PATHWAY_FILE_EXTENSION))
+					if (name.endsWith("." + Engine.getCurrent().PATHWAY_FILE_EXTENSION))
 					{
 						name = name.substring(0, name.length() - 
-							Engine.PATHWAY_FILE_EXTENSION.length() - 1);
+							Engine.getCurrent().PATHWAY_FILE_EXTENSION.length() - 1);
 					}
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
@@ -316,11 +317,11 @@ public class CommonActions
 				if(fileName == null) return;
 				
 				int dot = fileName.lastIndexOf('.');
-				String ext = Engine.GENMAPP_FILE_EXTENSION;
+				String ext = Engine.getCurrent().GENMAPP_FILE_EXTENSION;
 				if(dot >= 0) {
 					ext = fileName.substring(dot + 1, fileName.length());
 				}
-				PathwayExporter exporter = Engine.getPathwayExporter(ext);
+				PathwayExporter exporter = Engine.getCurrent().getPathwayExporter(ext);
 				
 				if(exporter == null) 
 					MessageDialog.openError (window.getShell(), "Error", 
@@ -348,7 +349,7 @@ public class CommonActions
 						MessageDialog.openError (window.getShell(), "Error", 
 								"Error: " + msg + "\n\n" + 
 								"See the error log for details.");
-						Engine.log.error(msg, e);
+						Logger.log.error(msg, e);
 					}
 				}
 			}
@@ -374,7 +375,7 @@ public class CommonActions
 		}
 		public void run () 
 		{
-			if (SwtEngine.canDiscardPathway())
+			if (SwtEngine.getCurrent().canDiscardPathway())
 			{
 				window.close();
 			}
@@ -393,7 +394,7 @@ public class CommonActions
 		public void run () {
 			PreferenceManager pg = new PreferenceDlg();
 			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
-			pd.setPreferenceStore((SwtPreferences)Engine.getPreferenceCollection());
+			pd.setPreferenceStore((SwtPreferences)Engine.getCurrent().getPreferenceCollection());
 			pd.open();
 		}
 	}
@@ -427,7 +428,7 @@ public class CommonActions
 			}
 		}
 		public void run () {
-			VPathway drawing = Engine.getActiveVPathway();
+			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			if (drawing != null)
 			{
 				drawing.setPctZoom(pctZoomFactor);
@@ -472,7 +473,7 @@ public class CommonActions
 		}
 		public void run ()
 		{
-			SwtEngine.openWebPage(Globals.HELP_URL, "Opening help page in broswer",
+			SwtEngine.getCurrent().openWebPage(Globals.HELP_URL, "Opening help page in broswer",
 						"Unable to open web browser" +
 						"\nYou can open the help page manually:\n" +
 						Globals.HELP_URL);
@@ -490,7 +491,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.getActiveVPathway().copyToClipboard();
+			Engine.getCurrent().getActiveVPathway().copyToClipboard();
 		}
 	}
 
@@ -505,7 +506,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.getActiveVPathway().pasteFromClipboad();
+			Engine.getCurrent().getActiveVPathway().pasteFromClipboad();
 		}
 	}
 	
@@ -520,12 +521,12 @@ public class CommonActions
 			window = w;
 			setText ("&Save pathway@Ctrl+S");
 			setToolTipText ("Save pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/save.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("icons/save.gif")));
 		}
 		
 		public void run ()
 		{
-			SwtEngine.savePathway();
+			SwtEngine.getCurrent().savePathway();
 		}
 	}
 	
@@ -541,7 +542,7 @@ public class CommonActions
 		
 		public void run () {
 			BiopaxDialog d = new BiopaxDialog(window.getShell());
-			d.setPathway(Engine.getActivePathway());
+			d.setPathway(Engine.getCurrent().getActivePathway());
 			d.open();
 		}
 	}
@@ -557,19 +558,19 @@ public class CommonActions
 		public SwitchEditModeAction (MainWindowBase w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL("icons/edit.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("icons/edit.gif")));
 			setToolTipText(ttUnChecked);
 			window = w;
 			
-			Engine.addApplicationEventListener(this);
+			Engine.getCurrent().addApplicationEventListener(this);
 		}
 
 		public void run ()
 		{
-			if(Engine.isDrawingOpen())
+			if(Engine.getCurrent().isDrawingOpen())
 			{
-				VPathway drawing = Engine.getActiveVPathway();
-				Pathway pathway = Engine.getActivePathway();
+				VPathway drawing = Engine.getCurrent().getActiveVPathway();
+				Pathway pathway = Engine.getCurrent().getActivePathway();
 				if(isChecked())
 				{
 					// give a warning that this can't be edited.
@@ -615,7 +616,7 @@ public class CommonActions
 
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.type == ApplicationEvent.VPATHWAY_OPENED) {
-				Engine.getActiveVPathway().setEditMode(isChecked());
+				Engine.getCurrent().getActiveVPathway().setEditMode(isChecked());
 			}
 			else if(e.type == ApplicationEvent.VPATHWAY_NEW) {
 				switchEditMode(true);

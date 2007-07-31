@@ -77,7 +77,7 @@ public class PreferenceDlg extends PreferenceManager {
 					"Expression datasets:", getFieldEditorParent());
 			addField(d3);
 
-			if(SwtEngine.isUseR()) {
+			if(SwtEngine.getCurrent().isUseR()) {
 				DirectoryFieldEditor d4 = new DirectoryFieldEditor(SwtPreference.SWT_DIR_RDATA.name(),
 						"Results from pathway statistics:", getFieldEditorParent());
 				addField(d4);

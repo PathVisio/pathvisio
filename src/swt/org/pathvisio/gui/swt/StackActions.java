@@ -29,10 +29,10 @@ public class StackActions extends Action {
 		window = w;
 		type = t;
 		setToolTipText (type.getDescription());
-		setImageDescriptor(ImageDescriptor.createFromURL(Engine.getResourceURL(type.getIcon())));
+		setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL(type.getIcon())));
 	}
 	
 	public void run () {
-		Engine.getActiveVPathway().stackSelected(type);
+		Engine.getCurrent().getActiveVPathway().stackSelected(type);
 	}
 }

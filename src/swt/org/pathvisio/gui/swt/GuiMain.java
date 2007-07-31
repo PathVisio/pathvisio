@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.pathvisio.Engine;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.SvgFormat;
@@ -48,7 +49,7 @@ public class GuiMain {
 	 * Main method which will be carried out when running the program
 	 */
 	public static void main(String[] args)
-	{
+	{		
 		boolean debugHandles = false;
 		for(String a : args) {
 			if(		a.equalsIgnoreCase("--MonitorHandles") ||
@@ -57,14 +58,14 @@ public class GuiMain {
 			}
 			else if(a.equalsIgnoreCase("--UseR") ||
 					a.equalsIgnoreCase("-ur")) {
-				SwtEngine.USE_R = true;
+				SwtEngine.getCurrent().USE_R = true;
 			}
 		}
 		
 		//Setup the application window
 		MainWindow window = null;
-		if(debugHandles)	window = SwtEngine.getSleakWindow();
-		else				window = SwtEngine.getWindow();
+		if(debugHandles)	window = SwtEngine.getCurrent().getSleakWindow();
+		else				window = SwtEngine.getCurrent().getWindow();
 		
 		initiate();
 		
@@ -77,7 +78,7 @@ public class GuiMain {
 		Gex.close();
 		Gdb.close();
 		//Close log stream
-		Engine.log.getStream().close();
+		Logger.log.getStream().close();
 		
 		Display.getCurrent().dispose();
 	}
@@ -89,10 +90,10 @@ public class GuiMain {
 	{
 		//initiate logger
 		try { 
-			GlobalPreference.FILE_LOG.setDefault(new File(SwtEngine.getApplicationDir(), ".PathVisioLog").toString());
-			Engine.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
+			GlobalPreference.FILE_LOG.setDefault(new File(SwtEngine.getCurrent().getApplicationDir(), ".PathVisioLog").toString());
+			Logger.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
 		} catch(Exception e) {}
-		Engine.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		
 		//load the preferences
 		loadPreferences();
@@ -136,16 +137,16 @@ public class GuiMain {
 		VisualizationManager vmgr = new VisualizationManager();
 		Gex gex = new Gex();
 		
-		Engine.addApplicationEventListener(vmgr);
-		Engine.addApplicationEventListener(gex);
+		Engine.getCurrent().addApplicationEventListener(vmgr);
+		Engine.getCurrent().addApplicationEventListener(gex);
 	}
 	
 	static void registerExporters() {
-		Engine.addPathwayExporter(new MappFormat());
-		Engine.addPathwayExporter(new SvgFormat());
-		Engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PNG));
-		Engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_TIFF));
-		Engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PDF));
+		Engine.getCurrent().addPathwayExporter(new MappFormat());
+		Engine.getCurrent().addPathwayExporter(new SvgFormat());
+		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PNG));
+		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_TIFF));
+		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PDF));
 	}
 	
 	static void loadVisualizations() {
@@ -153,14 +154,14 @@ public class GuiMain {
 		try {
 			PluginManager.loadPlugins();
 		} catch (Throwable e) {
-			Engine.log.error("When loading visualization plugins", e);
+			Logger.log.error("When loading visualization plugins", e);
 		}
 		
 		VisualizationManager.loadGeneric();
 	}
 	
 	static void loadPreferences() {
-		Engine.setPreferenceCollection(new SwtPreferences());
+		Engine.getCurrent().setPreferenceCollection(new SwtPreferences());
 	}
 	
 	/**
@@ -174,11 +175,11 @@ public class GuiMain {
 		
 		// Labels for color by expressiondata (mRNA and Protein)
 		ImageData img = new ImageData(cl.getResourceAsStream("images/mRNA.bmp"));
-		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR));
+		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.getCurrent().TRANSPARENT_COLOR));
 		imageRegistry.put("data.mRNA",
 				new Image(display, img));
 		img = new ImageData(cl.getResourceAsStream("images/protein.bmp"));
-		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR));
+		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.getCurrent().TRANSPARENT_COLOR));
 		imageRegistry.put("data.protein",
 				new Image(display, img));
 		imageRegistry.put("sidepanel.minimize",
@@ -199,7 +200,7 @@ public class GuiMain {
 				ImageDescriptor.createFromURL(cl.getResource("icons/tree_collapsed.gif")));
 		imageRegistry.put("tree.expanded",
 				ImageDescriptor.createFromURL(cl.getResource("icons/tree_expanded.gif")));
-		SwtEngine.setImageRegistry(imageRegistry);
+		SwtEngine.getCurrent().setImageRegistry(imageRegistry);
 	}
 	
 }

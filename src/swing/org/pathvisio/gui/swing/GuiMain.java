@@ -30,7 +30,7 @@ public class GuiMain {
 		JFrame frame = new JFrame("PathVisio...swing it baby!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		MainPanel mainPanel = SwingEngine.getApplicationPanel();
+		MainPanel mainPanel = SwingEngine.getCurrent().getApplicationPanel();
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.setSize(800, 600);
@@ -38,7 +38,7 @@ public class GuiMain {
 //		    UIManager.setLookAndFeel(
 //		        UIManager.getSystemLookAndFeelClassName());
 //		} catch (Exception ex) {
-//			Engine.log.error("Unable to load native look and feel", ex);
+//			Logger.log.error("Unable to load native look and feel", ex);
 //		}
 		
 		//Display the window.
@@ -48,8 +48,8 @@ public class GuiMain {
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
 		
-		SwingEngine.newPathway();
-		Engine.getActiveVPathway().setEditMode(true);
+		SwingEngine.getCurrent().newPathway();
+		Engine.getCurrent().getActiveVPathway().setEditMode(true);
 	}
 
 	public static void main(String[] args) {

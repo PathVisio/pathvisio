@@ -106,7 +106,7 @@ public abstract class PathwayElementDialog extends JDialog implements ActionList
 	protected abstract void createDialogContents(Container parent);
 	
 	protected void okPressed() {
-		VPathway p = Engine.getActiveVPathway();
+		VPathway p = Engine.getCurrent().getActiveVPathway();
 		if(p != null) p.redraw();
 		setVisible(false);
 	}

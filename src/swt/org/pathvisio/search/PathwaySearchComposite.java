@@ -38,8 +38,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.MainWindowBase;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.search.SearchMethods.SearchException;
@@ -286,13 +286,13 @@ public class PathwaySearchComposite extends Composite {
 				super.run(monitor);
 			} catch (InterruptedException e) {
 				openMessageDialog("error", e.getMessage());
-				Engine.log.error("Unable to start search", e);
+				Logger.log.error("Unable to start search", e);
 			} catch (InvocationTargetException e) {
 				if(e.getCause() instanceof SearchException)
 					openMessageDialog("", e.getCause().getMessage());
 				else {
 					openMessageDialog("error", "Cause: " + e.getCause().getMessage());
-					Engine.log.error("while searching", e);
+					Logger.log.error("while searching", e);
 				}
 			}
 		}

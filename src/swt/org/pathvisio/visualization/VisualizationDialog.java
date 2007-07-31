@@ -63,8 +63,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.TableColumnResizer;
@@ -473,7 +473,7 @@ public class VisualizationDialog extends ApplicationWindow {
 					pluginTable.refresh();
 				} catch(Throwable e) {
 					MessageDialog.openError(getShell(), "Unable to load plugin", e.toString() + "\n" + e.getMessage());
-					Engine.log.error("Unable to load plugin", e);
+					Logger.log.error("Unable to load plugin", e);
 				}
 			}
 		}
@@ -577,9 +577,9 @@ public class VisualizationDialog extends ApplicationWindow {
 	}
 	
 	class PluginTableLabelProvider implements ITableLabelProvider {
-		final Image checkTrue = SwtEngine.getImageRegistry().get("checkbox.checked");
-		final Image checkFalse = SwtEngine.getImageRegistry().get("checkbox.unchecked");
-		final Image checkUnavailable = SwtEngine.getImageRegistry().get("checkbox.unavailable");
+		final Image checkTrue = SwtEngine.getCurrent().getImageRegistry().get("checkbox.checked");
+		final Image checkFalse = SwtEngine.getCurrent().getImageRegistry().get("checkbox.unchecked");
+		final Image checkUnavailable = SwtEngine.getCurrent().getImageRegistry().get("checkbox.unavailable");
 		
 		public String getColumnText(Object element, int columnIndex) {
 			PluginSet ps = (PluginSet)element;

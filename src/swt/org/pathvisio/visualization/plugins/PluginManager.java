@@ -36,8 +36,8 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.Utils;
 import org.pathvisio.visualization.Visualization;
@@ -91,7 +91,7 @@ public abstract class PluginManager {
 			return getInstance(pluginClass, null).isGeneric();
 		} catch(Throwable e) { 
 			e.printStackTrace();
-			Engine.log.error("Unable to determine if plugin is generic", e);
+			Logger.log.error("Unable to determine if plugin is generic", e);
 			return false; 
 		}
 	}
@@ -110,22 +110,22 @@ public abstract class PluginManager {
 			VisualizationPlugin p = getInstance(pluginClass, null);
 			return p.getName();
 		} catch(Throwable e) {
-			Engine.log.error("Unable to get plugin name for " + pluginClass, e);
+			Logger.log.error("Unable to get plugin name for " + pluginClass, e);
 			return pluginClass.getName();
 		}
 	}
 
 	public static void loadPlugins() throws Throwable {	
-		Engine.log.trace("> Loading visualization plugins");
+		Logger.log.trace("> Loading visualization plugins");
 		Enumeration<URL> resources = 
 			SwtEngine.class.getClassLoader().getResources(".");
         while (resources.hasMoreElements()) {
         	URL url = resources.nextElement();
-        	Engine.log.trace("visualization.plugins package found in: " + url);
+        	Logger.log.trace("visualization.plugins package found in: " + url);
         	try {
         		loadPlugin(url);
         	} catch(Throwable e) {
-        		Engine.log.error("Error when loading plugins from " + url, e);
+        		Logger.log.error("Error when loading plugins from " + url, e);
         	}
         }
         loadAdditional();
@@ -151,12 +151,12 @@ public abstract class PluginManager {
     			loadFromJar(url);
     		else loadFromDir(url);
     	}
-		else Engine.log.error("Unable to load additional plugin", new Exception("Unsupported URL protocol"));
+		else Logger.log.error("Unable to load additional plugin", new Exception("Unsupported URL protocol"));
 	}
 	
 	static Document getAdditionalXML() {
 		if(addDoc == null) {
-			File f = new File(SwtEngine.getApplicationDir(), FILE_ADD_PLUGINS);
+			File f = new File(SwtEngine.getCurrent().getApplicationDir(), FILE_ADD_PLUGINS);
 			if(!f.exists()) {
 				return createXML();
 			} else {
@@ -165,7 +165,7 @@ public abstract class PluginManager {
 					Document doc = parser.build(f);
 					return doc;
 				} catch(Exception e) {
-					Engine.log.error("Unable to load additional plugins file", e);
+					Logger.log.error("Unable to load additional plugins file", e);
 					return createXML();
 				}
 			}
@@ -188,7 +188,7 @@ public abstract class PluginManager {
 				url = new URL(((Element)o).getAttributeValue(XML_ATTR_URL));
 				loadPlugin(new File(url.getFile()));
 			} catch(Throwable ex) {
-				Engine.log.error("Unable to load additional plugin", ex);
+				Logger.log.error("Unable to load additional plugin", ex);
 				if(url != null) removeAdditional(url);
 			}
 		}
@@ -226,11 +226,11 @@ public abstract class PluginManager {
 	static void saveXML(Document doc) {
 		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 		try {
-			FileWriter fw = new FileWriter(new File(SwtEngine.getApplicationDir(), FILE_ADD_PLUGINS));
+			FileWriter fw = new FileWriter(new File(SwtEngine.getCurrent().getApplicationDir(), FILE_ADD_PLUGINS));
 			out.output(doc, fw);
 			fw.close();
 		} catch(IOException e) {
-			Engine.log.error("Unable to save additional plugins", e);
+			Logger.log.error("Unable to save additional plugins", e);
 		}
 	}
 	
@@ -243,7 +243,7 @@ public abstract class PluginManager {
 	}
 	
 	static void loadFromDir(URL url) throws Throwable {
-		Engine.log.trace("\tLoading from directory " + url);
+		Logger.log.trace("\tLoading from directory " + url);
 		File directory = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
 		if (directory.exists()) {
            processFile(directory, directory.toString());
@@ -265,7 +265,7 @@ public abstract class PluginManager {
 		}
 	}
 	static void loadFromJar(URL url) throws Throwable {
-		Engine.log.trace("\tLoading from jar connection " + url);
+		Logger.log.trace("\tLoading from jar connection " + url);
 		JarFile f = null;
 		if(url.getProtocol().equals("jar")) {
 			JarURLConnection conn = (JarURLConnection)url.openConnection();
@@ -278,11 +278,11 @@ public abstract class PluginManager {
 		
 	static void loadFromJar(JarFile jfile) throws Throwable {
 		Throwable error = null;
-		Engine.log.trace("\tLoading from jar file " + jfile);
+		Logger.log.trace("\tLoading from jar file " + jfile);
 		Enumeration e = jfile.entries();
 		while (e.hasMoreElements()) {
 			ZipEntry entry = (ZipEntry)e.nextElement();
-			Engine.log.trace("Checking " + entry);
+			Logger.log.trace("Checking " + entry);
 			String entryname = entry.getName();
 			if(entryname.endsWith(".class")) {
 				try {
@@ -290,7 +290,7 @@ public abstract class PluginManager {
 					Class pluginClass = Class.forName(cn);
 					addPlugin(pluginClass);
 				} catch(Throwable ex) {
-					Engine.log.error("Unable to load plugin", ex);
+					Logger.log.error("Unable to load plugin", ex);
 					error = ex;
 				}
 			}
@@ -303,16 +303,16 @@ public abstract class PluginManager {
 	}
 	
 	static void addPlugin(Class c) {
-		Engine.log.trace("\t\tTrying to add " + c);
+		Logger.log.trace("\t\tTrying to add " + c);
 		if(isPlugin(c)) {
-			Engine.log.trace("\t\t\t!> Adding " + c);
+			Logger.log.trace("\t\t\t!> Adding " + c);
 			plugins.add(c);
 		}
 	}
 	
 	static boolean isPlugin(Class c) {
 		if(Modifier.isAbstract(c.getModifiers())) {
-			Engine.log.trace("\t\t> Class " + c + " is not a visualization plugin (is abstract)");
+			Logger.log.trace("\t\t> Class " + c + " is not a visualization plugin (is abstract)");
 			return false;
 		}
 		return Utils.isSubClass(c, VisualizationPlugin.class);

@@ -2,16 +2,19 @@ package org.pathvisio.gui.swing;
 
 import javax.swing.JEditorPane;
 
+import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
-public class BackpagePane extends JEditorPane implements SelectionListener {
+public class BackpagePane extends JEditorPane implements SelectionListener, ApplicationEventListener {
 	PathwayElement input;
 	
 	public BackpagePane() {
@@ -19,7 +22,10 @@ public class BackpagePane extends JEditorPane implements SelectionListener {
 		setEditable(false);
 		setContentType("text/html");
 		
-		SelectionBox.addListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		if(vp != null) vp.addSelectionListener(this);
+		
 	}
 
 	public void setInput(final PathwayElement e) {
@@ -40,7 +46,7 @@ public class BackpagePane extends JEditorPane implements SelectionListener {
 		}
 	}
 
-	public void drawingEvent(SelectionEvent e) {
+	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			//Just take the first DataNode in the selection
@@ -56,6 +62,12 @@ public class BackpagePane extends JEditorPane implements SelectionListener {
 		case SelectionEvent.SELECTION_CLEARED:
 			setInput(null);
 			break;
+		}
+	}
+
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+			((VPathway)e.source).addSelectionListener(this);
 		}
 	}
 }

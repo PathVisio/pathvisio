@@ -57,6 +57,7 @@ import org.pathvisio.data.Gex;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
@@ -233,7 +234,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	Font getFont(boolean adjustZoom) {
 		Font f = font == null ? DEFAULT_FONT : font;
 		if(adjustZoom) {
-			int size = (int)Math.ceil(Engine.getActiveVPathway().vFromM(f.getSize()) * 15);
+			int size = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
 			f = new Font(f.getName(), size, f.getStyle());
 		}
 		return f;
@@ -419,7 +420,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
 				useSamples.add(Gex.getSample(id));
-			} catch(Exception e) { Engine.log.error("Unable to add sample", e); }
+			} catch(Exception e) { Logger.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));
 		setFontData(new FontData(xml.getAttributeValue(XML_ATTR_FONTDATA)));

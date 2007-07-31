@@ -31,7 +31,9 @@ import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -155,9 +157,13 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	public void vPathwayEvent(VPathwayEvent e) {
 		if(e.getType() == VPathwayEvent.MODEL_LOADED) {
 			if(e.getSource() == child) {
-				container.setViewportView(this);
-				container.getViewport().setBackground(Color.GRAY);
-				container.revalidate();
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						container.setViewportView(VPathwaySwing.this);
+						container.getViewport().setBackground(Color.GRAY);
+						container.revalidate();						
+					}
+				});
 			}
 		}
 	}

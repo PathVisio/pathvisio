@@ -16,24 +16,13 @@
 //
 package org.pathvisio.gui.swt;
 
-import java.util.prefs.Preferences;
-
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
-import org.pathvisio.search.PathwaySearchComposite;
-import org.pathvisio.visualization.LegendPanel;
 
 /**
  * This class is the main class in the GPML project. 
@@ -59,7 +48,7 @@ public class MainWindow extends MainWindowBase
 		addStatusLine();
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
-		Engine.addApplicationEventListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
 		Gex.addListener(this);
 	}
 	

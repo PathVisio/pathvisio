@@ -349,7 +349,7 @@ public class PathwayElement implements GraphIdContainer
 			result.add(PropertyType.BOARDWIDTH);
 			result.add(PropertyType.BOARDHEIGHT);
 			// if
-			// (Engine.getPreferences().getBoolean(Preferences.PREF_SHOW_ADVANCED_ATTR))
+			// (Engine.getCurrent().getPreferences().getBoolean(Preferences.PREF_SHOW_ADVANCED_ATTR))
 			if (fAdvanced)
 			{// these two properties are deprecated and not used in PathVisio
 				// itself.

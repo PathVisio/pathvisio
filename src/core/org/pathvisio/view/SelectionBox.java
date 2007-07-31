@@ -395,35 +395,31 @@ public class SelectionBox extends GraphicsShape
 		
 	public void adjustToZoom(double factor) { fitToSelection(); }
 	
-	static List<SelectionListener> listeners;
-
-	private static List<SelectionListener> getListeners() {
-		if(listeners == null)
-			listeners = new ArrayList<SelectionListener>();
-		return listeners;
+	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
+	
+	public void addListener(SelectionListener l) {
+		if(!listeners.contains(l)) {
+			listeners.add(l);
+		}
 	}
 	
-	/**
-	 * Add a {@link SelectionListener}, that will be notified if a selection event occurs
-	 * @param l The {@link SelectionListener} to add
-	 */
-	public static void addListener(SelectionListener l) {
-		getListeners().add(l);
+	public void removeListener(SelectionListener l) {
+		listeners.remove(l);
 	}
-
+	
 	/**
 	 * Fire a {@link SelectionEvent} to notify all {@link SelectionListener}s registered
 	 * to this class
 	 * @param e
 	 */
-	public static void fireSelectionEvent(SelectionEvent e) {
-		for(SelectionListener l : getListeners()) {
-			l.drawingEvent(e);
+	public void fireSelectionEvent(SelectionEvent e) {
+		for(SelectionListener l : listeners) {
+			l.selectionEvent(e);
 		}
 	}
 
 	public interface SelectionListener {
-		public void drawingEvent(SelectionEvent e);
+		public void selectionEvent(SelectionEvent e);
 	}
 
 	public static class SelectionEvent extends EventObject {

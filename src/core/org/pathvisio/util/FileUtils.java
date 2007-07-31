@@ -30,7 +30,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 
 public class FileUtils {	
 	/**
@@ -70,7 +70,7 @@ public class FileUtils {
 			for(File f : file.listFiles()) deleteRecursive(f);
 		}
 		boolean deleted = file.delete();
-		Engine.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
+		Logger.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class FileUtils {
 		}
 		catch(IOException e)
 		{
-			Engine.log.error("Unable to determine number of lines in file " + fileName, e);
+			Logger.log.error("Unable to determine number of lines in file " + fileName, e);
 		}
 		return nrLines;
 	}

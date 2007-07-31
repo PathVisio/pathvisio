@@ -19,9 +19,9 @@ package org.pathvisio.visualization.colorset;
 import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
-import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
 
@@ -455,50 +455,50 @@ public class Criterion {
 		{
 			for (int i = 0; i < level; ++i)
 			{
-				Engine.log.trace ("--- ");
+				Logger.log.trace ("--- ");
 			}
 			switch (type)
 			{
 			case Token.TOKEN_AND:
-				Engine.log.trace("AND");
+				Logger.log.trace("AND");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_OR:
-				Engine.log.trace("OR");
+				Logger.log.trace("OR");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_LE:
-				Engine.log.trace("<=");
+				Logger.log.trace("<=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_LT:
-				Engine.log.trace("<");
+				Logger.log.trace("<");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_GT:
-				Engine.log.trace(">");
+				Logger.log.trace(">");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_GE:
-				Engine.log.trace(">=");
+				Logger.log.trace(">=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_EQ:
-				Engine.log.trace("=");
+				Logger.log.trace("=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case Token.TOKEN_ID:
-				Engine.log.trace("ID: " + symbolValue);
+				Logger.log.trace("ID: " + symbolValue);
 				break;
 			case Token.TOKEN_NUMBER:
-				Engine.log.trace("NUMBER: " + numberValue);
+				Logger.log.trace("NUMBER: " + numberValue);
 				break;
 			}
 		}

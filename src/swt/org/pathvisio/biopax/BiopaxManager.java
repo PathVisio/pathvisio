@@ -29,7 +29,7 @@ import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.Utils;
 
@@ -46,7 +46,7 @@ public class BiopaxManager {
 			model = bpf.createModel();
 		} else { //Parse jdom
 			String bpText = new XMLOutputter(Format.getPrettyFormat()).outputString(doc);
-			Engine.log.info(bpText);
+			Logger.log.info(bpText);
 			model = modelFromString(bpText);
 		}
 	}

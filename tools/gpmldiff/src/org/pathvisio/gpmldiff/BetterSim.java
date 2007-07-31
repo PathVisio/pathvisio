@@ -16,11 +16,10 @@
 //
 package org.pathvisio.gpmldiff;
 
+import java.util.List;
+
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PropertyType;
-import org.pathvisio.debug.Logger;
-import java.util.*;
 
 class BetterSim extends SimilarityFunction
 {

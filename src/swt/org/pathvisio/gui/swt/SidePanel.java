@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Sash;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
 /**
  * This class can be extended to create a sidepanel with minimize button
@@ -88,16 +87,16 @@ public class SidePanel extends Composite {
 					}
 				}
 			});
-			minButton.setImage(SwtEngine.getImageRegistry().get("sidepanel.minimize"));
+			minButton.setImage(SwtEngine.getCurrent().getImageRegistry().get("sidepanel.minimize"));
 			final Button hideButton = new Button(buttonBar, SWT.PUSH);
 			hideButton.setToolTipText("Close this sidepanel (use view menu to open again)");
 			hideButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					hide();
-					SwtEngine.getWindow().showRightPanelAction.setChecked(false);
+					SwtEngine.getCurrent().getWindow().showRightPanelAction.setChecked(false);
 				}
 			});
-			hideButton.setImage(SwtEngine.getImageRegistry().get("sidepanel.hide"));
+			hideButton.setImage(SwtEngine.getCurrent().getImageRegistry().get("sidepanel.hide"));
 			
 			GridData buttonGrid = new GridData();
 			buttonGrid.widthHint = 12;

@@ -42,7 +42,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.gui.BiopaxCellEditor;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.DataNodeType;
@@ -62,7 +64,7 @@ import org.pathvisio.util.swt.SuggestCellEditor;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -70,7 +72,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
  * This class implements the sidepanel where you can edit graphical properties
  * of each object on the pathway.
  */
-public class PropertyPanel extends Composite implements PathwayListener, SelectionListener {
+public class PropertyPanel extends Composite implements PathwayListener, SelectionListener, ApplicationEventListener {
 	public TableViewer tableViewer;
 	CellEditor[] cellEditors = new CellEditor[2];
 	TextCellEditor textEditor;
@@ -89,7 +91,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		public boolean equals(Object o) { return false; }
 		public String toString() { return "different values"; }
 	};
-
+	
 	/**
 	 * Add a {@link PathwayElement} to the list of objects of which 
 	 * the properties are displayed
@@ -239,7 +241,9 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		attributes = new ArrayList<PropertyType>();
 		tableViewer.setInput(attributes);
 		
-		SelectionBox.addListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		if(vp != null) vp.addSelectionListener(this);
 	}
 	
 	/**
@@ -479,7 +483,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				o.setProperty(key, value);
 			}
 			tableViewer.refresh();
-			Engine.getActiveVPathway().redrawDirtyRect();
+			Engine.getCurrent().getActiveVPathway().redrawDirtyRect();
 		}
 	};
 	
@@ -595,7 +599,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 //		abstract CellEditor getCellEditor()
 //	}
 	
-	public void drawingEvent(SelectionEvent e) {
+	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			if(e.affectedObject instanceof Graphics)
@@ -650,6 +654,12 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		}
 		
 		protected void guessData(PathwayElement o) {
+		}
+	}
+
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+			((VPathway)e.getSource()).addSelectionListener(this);
 		}
 	}
 }

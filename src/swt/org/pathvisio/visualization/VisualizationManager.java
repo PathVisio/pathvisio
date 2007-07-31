@@ -49,9 +49,11 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
 /**
@@ -62,7 +64,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener {	
 	static {
 		VisualizationManager vm = new VisualizationManager();
-		Engine.addApplicationEventListener(vm);
+		Engine.getCurrent().addApplicationEventListener(vm);
 		Gex.addListener(vm);
 	}
 	
@@ -160,7 +162,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			out.output(xmlDoc, fw);
 			fw.close();
 		} catch(IOException e) {
-			Engine.log.error("Unable to save visualization settings", e);
+			Logger.log.error("Unable to save visualization settings", e);
 		}
 	}
 	
@@ -174,7 +176,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 				visualizations.add(Visualization.fromXML((Element) o));				
 			}
 		} catch(Exception e) {
-			Engine.log.error("Unable to load visualization settinsg", e);
+			Logger.log.error("Unable to load visualization settinsg", e);
 		}
 	}
 	
@@ -204,7 +206,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	}
 	
 	static File getGenericFile() {
-		return new File(SwtEngine.getApplicationDir(), FILENAME_GENERIC);
+		return new File(SwtEngine.getCurrent().getApplicationDir(), FILENAME_GENERIC);
 	}
 	
 	static VisComboItem visComboItem = new VisComboItem("VisualizationCombo");
@@ -282,7 +284,9 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		}
 	}
 	
-	static class VisualizationPanel extends ScrolledComposite implements SelectionListener, VisualizationListener {
+	static class VisualizationPanel extends ScrolledComposite implements SelectionListener, 
+									VisualizationListener, 
+									ApplicationEventListener {
 		Visualization vis;
 		Composite contents;
 		Set<Graphics> input;
@@ -290,7 +294,13 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		public VisualizationPanel(Composite parent, int style) {
 			super(parent, style);
 			createContents();
-			SelectionBox.addListener(this);
+			
+			Engine.getCurrent().addApplicationEventListener(this);
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) {
+				vp.addSelectionListener(this);
+			}
+			
 			VisualizationManager.addListener(this);
 			input = new LinkedHashSet<Graphics>();
 		}
@@ -338,7 +348,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			layout(true, true);
 		}
 
-		public void drawingEvent(SelectionBox.SelectionEvent e) {
+		public void selectionEvent(SelectionBox.SelectionEvent e) {
 			switch(e.type) {
 			case SelectionBox.SelectionEvent.OBJECT_ADDED:
 				if(e.affectedObject instanceof Graphics) 
@@ -361,6 +371,12 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 				fillContents();
 			}
 			
+		}
+
+		public void applicationEvent(ApplicationEvent e) {
+			if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+				((VPathway)e.source).addSelectionListener(this);
+			}
 		}		
 	}
 	

@@ -42,6 +42,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
@@ -110,7 +111,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 			plugins.put(c, pr);
 			pluginPlacement.add(pr);
 		} catch(Throwable e) {
-			Engine.log.error("Unable to create instance of plugin " + c, e);
+			Logger.log.error("Unable to create instance of plugin " + c, e);
 		}
 	}
 
@@ -380,7 +381,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 				PluginSet pr = PluginSet.fromXML((Element)o, v);
 				v.setPluginSet(pr.getClass(), pr);
 			} catch(Throwable e) {
-				Engine.log.error("Unable to load plugin", e);
+				Logger.log.error("Unable to load plugin", e);
 			}
 		}		
 		return v;
@@ -408,7 +409,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		case(VisualizationEvent.VISUALIZATION_SELECTED):
 		case(VisualizationEvent.VISUALIZATION_MODIFIED):
 		case(VisualizationEvent.PLUGIN_MODIFIED):
-			VPathway p = Engine.getActiveVPathway();
+			VPathway p = Engine.getCurrent().getActiveVPathway();
 			if(p != null) {
 				p.redraw();
 			}

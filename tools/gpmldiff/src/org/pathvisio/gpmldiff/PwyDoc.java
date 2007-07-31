@@ -16,12 +16,16 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.pathvisio.debug.Logger;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.debug.Logger;
 
 /**
    Wrapper for org.pathvisio.model.Pathway that adds some extra

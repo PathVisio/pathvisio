@@ -1,13 +1,12 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.Component;
-import java.util.concurrent.Callable;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -34,7 +33,7 @@ public class SwingUserInterfaceHandler implements UserInterfaceHandler {
 				SwingUtilities.invokeAndWait(r);
 			}
 		} catch(Exception e) {
-			Engine.log.error("Unable to invoke runnable", e);
+			Logger.log.error("Unable to invoke runnable", e);
 		}
 	}
 	public int askCancellableQuestion(final String title, final String message) {

@@ -16,10 +16,13 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.ObjectType;
 
 /**
    Utility class for pathway element methods related to gpmldiff.

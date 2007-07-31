@@ -62,11 +62,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
-import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.GeneProduct;
@@ -341,7 +341,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 			try {
 				useSamples.add(createConfiguredSample((Element)o));
 			} catch(Exception e) {
-				Engine.log.error("Unable to save plugin settings", e);
+				Logger.log.error("Unable to save plugin settings", e);
 			}
 		}	
 	}

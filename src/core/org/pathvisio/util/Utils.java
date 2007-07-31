@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 
 public class Utils {
 	
@@ -146,7 +146,7 @@ public class Utils {
 			ResultSet r = con.createStatement().executeQuery("SELECT version FROM info");
 			if(r.next()) check = r.getInt("version") == compat_version;
 		} catch (Exception e) {
-			Engine.log.error("Database compatibility version number could not be read", e);
+			Logger.log.error("Database compatibility version number could not be read", e);
 		}
 		if(check) return;
 		throw new Exception("Incompatible version of database schema");
@@ -175,7 +175,7 @@ public class Utils {
 	public static boolean isSubClass(Class c, Class superClass) {
 		Class sc = c;
 		while((sc = sc.getSuperclass()) != null) {
-			Engine.log.trace("\t\t>" + c + " with superclass: " + superClass);
+			Logger.log.trace("\t\t>" + c + " with superclass: " + superClass);
 			if(sc.equals(superClass)) return true;
 		}
 		return false;

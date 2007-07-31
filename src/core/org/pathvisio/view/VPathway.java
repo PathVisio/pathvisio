@@ -49,6 +49,7 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
@@ -99,7 +100,7 @@ public class VPathway implements PathwayListener
 	}
 	
 	SelectionBox s; 
-		
+			
 	private boolean editMode;
 	/**
 	 * Checks if this drawing is in edit mode
@@ -189,8 +190,8 @@ public class VPathway implements PathwayListener
 		{
 			parent.setVSize(width, height);
 		}
-		data.fireObjectModifiedEvent(new PathwayEvent(null,
-				PathwayEvent.MODIFIED_GENERAL));
+//		data.fireObjectModifiedEvent(new PathwayEvent(null,
+//				PathwayEvent.MODIFIED_GENERAL));
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
 		data.addListener(this);
 	}
@@ -502,7 +503,7 @@ public class VPathway implements PathwayListener
 			if (newGraphics != NEWNONE)
 			{
 				newObject(new Point(e.getX(), e.getY()));
-				//SwtEngine.getWindow().deselectNewItemActions();
+				//SwtEngine.getCurrent().getWindow().deselectNewItemActions();
 			} else
 			{
 				editObject(new Point(e.getX(), e.getY()), e);
@@ -1096,7 +1097,7 @@ public class VPathway implements PathwayListener
 //	 */
 //	public void mouseHover(MouseEvent e)
 //	{
-//		Visualization v = VisualizationManager.getCurrent();
+//		Visualization v = VisualizationManager.getCurrent().;
 //		if (v != null && v.usesToolTip())
 //		{
 //			Point2D p = new Point2D.Double(e.getX(), e.getY());
@@ -1399,10 +1400,10 @@ public class VPathway implements PathwayListener
 		}
 		if (result.size() > 0)
 		{
-			Engine.clipboard = result;
+			Engine.getCurrent().clipboard = result;
 		} else
 		{
-			Engine.clipboard = null;
+			Engine.getCurrent().clipboard = null;
 		}
 		
 		//clipboard.dispose();
@@ -1689,7 +1690,7 @@ public class VPathway implements PathwayListener
 	 */
 	public void pasteFromClipboad()
 	{
-		if (Engine.clipboard != null)
+		if (Engine.getCurrent().clipboard != null)
 		{
 			clearSelection();
 			Map<String, String> idmap = new HashMap<String, String>();
@@ -1698,7 +1699,7 @@ public class VPathway implements PathwayListener
 			/*
 			 * Step 1: generate new unique ids for copied items
 			 */
-			for (PathwayElement o : Engine.clipboard)
+			for (PathwayElement o : Engine.getCurrent().clipboard)
 			{
 				String id = o.getGraphId();
 				if (id != null) 
@@ -1722,7 +1723,7 @@ public class VPathway implements PathwayListener
 			/*
 			 * Step 2: do the actual copying 
 			 */
-			for (PathwayElement o : Engine.clipboard)
+			for (PathwayElement o : Engine.getCurrent().clipboard)
 			{
 				if (o.getObjectType() == ObjectType.MAPPINFO
 						|| o.getObjectType() == ObjectType.INFOBOX)
@@ -1793,6 +1794,22 @@ public class VPathway implements PathwayListener
 		removeListeners.add(l);
 	}
 	
+	/**
+	 * Adds a {@link SelectionListener} to the SelectionBox of this VPathway
+	 * @param l The SelectionListener to add
+	 */
+	public void addSelectionListener(SelectionListener l) {
+		s.addListener(l);
+	}
+	
+	/**
+	 * Removes a {@link SelectionListener} from the SelectionBox of this VPathway
+	 * @param l The SelectionListener to remove
+	 */
+	public void removeSelectionListener(SelectionListener l) {
+		s.removeListener(l);
+	}
+	
 	private void cleanupListeners()
 	{
 		//Do not remove immediately, to prevent ConcurrentModificationException
@@ -1809,7 +1826,7 @@ public class VPathway implements PathwayListener
 			l.vPathwayEvent(e);
 		}
 	}
-	
+		
 	/** 
 	 * helper method to convert view coordinates to model coordinates 
 	 */

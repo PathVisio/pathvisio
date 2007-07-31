@@ -40,7 +40,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 * one object of the type INFOBOX.
 */
 public class Pathway implements PathwayListener
-{	
+{		
 	/**
 	   "changed" tracks if the Pathway has been changed since the file
 	   was opened or last saved. New pathways start changed.
@@ -392,6 +392,7 @@ public class Pathway implements PathwayListener
 	{
 		GpmlFormat.readFromXml (this, in, validate);
 		setSourceFile (null);
+		clearChangedFlag();
 	}
 
 	public void readFromXml(File file, boolean validate) throws ConverterException
@@ -400,6 +401,7 @@ public class Pathway implements PathwayListener
 		
 		GpmlFormat.readFromXml (this, file, validate);
 		setSourceFile (file);
+		clearChangedFlag();
 	}
 		
 	public void readFromMapp (File file) throws ConverterException
@@ -409,6 +411,7 @@ public class Pathway implements PathwayListener
         MappFormat.readFromMapp (inputString, this);
         
         setSourceFile (file);
+        clearChangedFlag();
 	}
 	
 	public void writeToMapp (File file) throws ConverterException
@@ -485,6 +488,7 @@ public class Pathway implements PathwayListener
 				undoManager.newRemoveAction(e.getAffectedData());
 				break;
 		}
+		markChanged();
 	}
 
 }

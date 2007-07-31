@@ -48,8 +48,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.TableColumnResizer;
 
@@ -86,7 +86,7 @@ public class GexImportWizard extends Wizard {
 						new GexSwt.ImportProgressKeeper(
 								(ImportPage) getPage("ImportPage"), importInformation));
 			} catch (Exception e) {
-				Engine.log.error("while running expression data import process: " + e.getMessage(), e);
+				Logger.log.error("while running expression data import process: " + e.getMessage(), e);
 			} // TODO: handle exception
 			ip.setTitle("Import finished");
 			ip.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
@@ -178,7 +178,7 @@ public class GexImportWizard extends Wizard {
 						
 					} catch(Exception ex) {
 						MessageDialog.openError(getShell(), "Error", "Unable to open connection dialog");
-						Engine.log.error("", ex);
+						Logger.log.error("", ex);
 					}
 				}
 			});
@@ -411,7 +411,7 @@ public class GexImportWizard extends Wizard {
 				ti.setText(1, line);
 			}
 		} catch (IOException e) { // TODO: handle IOException
-			Engine.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
+			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		previewTable.pack();
 	}
@@ -440,7 +440,7 @@ public class GexImportWizard extends Wizard {
 				ti.setText(line.split(ImportInformation.DELIMITER));
 			}
 		} catch (IOException e) { // TODO: handle IOException
-			Engine.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
+			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		columnTable.pack();
 	}

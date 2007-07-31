@@ -16,10 +16,13 @@
 //
 package org.pathvisio.gpmldiff;
 
+
+
+import java.io.IOException;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -28,7 +31,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.model.ConverterException;
@@ -47,9 +49,12 @@ class GpmlDiffWindow extends JFrame
 	private static final int PWY_OLD = 0;
 	private static final int PWY_NEW = 1;
 
-	private VPathwaySwing[] wrapper = new VPathwaySwing[2];
-	private VPathway[] view = new VPathway[2];
+	private VPathwaySwing[] wrapper = { null, null };
+	private VPathway[] view = { null, null };
+	private PwyDoc[] doc = { null, null };
 
+	double zoomFactor = 100;
+	
 	private class LoadPwyAction extends AbstractAction
 	{
 		private int pwyType;
@@ -75,15 +80,35 @@ class GpmlDiffWindow extends JFrame
 			if (status == JFileChooser.APPROVE_OPTION)
 			{
 				Pathway pwy = new Pathway();
-				try
-				{
-					pwy.readFromXml(jfc.getSelectedFile(), true);
+				//try
+				//{
+					doc[pwyType] = PwyDoc.read (jfc.getSelectedFile());
+					assert (doc[pwyType] != null);
 					
 					wrapper[pwyType] = new VPathwaySwing(pwyPane[pwyType]);
 
 					view[pwyType] = wrapper[pwyType].createVPathway();
-					view[pwyType].fromGmmlData(pwy);
-				}
+					view[pwyType].fromGmmlData(doc[pwyType].getPathway());
+					view[pwyType].setPctZoom (zoomFactor);
+					
+					if (view[PWY_OLD] != null && view[PWY_NEW] != null)
+					{
+						SearchNode result = doc[PWY_OLD].findCorrespondence (doc[PWY_NEW], new BetterSim(), new BasicCost());
+						PanelOutputter outputter = new PanelOutputter(view[PWY_OLD], view[PWY_NEW]);
+						doc[PWY_OLD].writeResult (result, doc[PWY_NEW], outputter);
+						try
+						{
+							outputter.flush();
+						}
+						catch (IOException ex) { ex.printStackTrace(); }
+
+						// merge models of the two pathways
+						pwyPane[0].getHorizontalScrollBar().setModel(
+							pwyPane[1].getHorizontalScrollBar().getModel());
+						pwyPane[0].getVerticalScrollBar().setModel(
+							pwyPane[1].getVerticalScrollBar().getModel());
+					}
+					/*}
 				
 				catch (ConverterException ce)
 				{
@@ -93,7 +118,7 @@ class GpmlDiffWindow extends JFrame
 						"Please check that the file you opened is a valid Gpml file.",
 						"Open Error", JOptionPane.ERROR_MESSAGE);
 					Logger.log.error ("Error opening gpml", ce);
-				}
+					}*/
 			}
 		}
 	}
@@ -125,7 +150,43 @@ class GpmlDiffWindow extends JFrame
 		{
 		}
 	}
-	
+
+	private class ZoomAction extends AbstractAction
+	{
+		double actionZoomFactor;
+		
+		public ZoomAction(double zf)
+		{
+			actionZoomFactor = zf;
+			String descr = "Set zoom to " + (int)zf + "%";
+			putValue(Action.NAME, toString());
+			putValue(Action.SHORT_DESCRIPTION, descr);
+			putValue(Action.LONG_DESCRIPTION, descr);
+		}
+		
+		public void actionPerformed(ActionEvent e)
+		{
+			zoomFactor = actionZoomFactor;
+			if(view[0] != null)
+			{			   
+				view[0].setPctZoom(zoomFactor);
+			}
+			if(view[1] != null)
+			{
+				view[1].setPctZoom(zoomFactor);
+			}
+		}
+		
+		public String toString()
+		{
+			if(actionZoomFactor == VPathway.ZOOM_TO_FIT)
+			{
+				return "Fit to window";
+			}
+			return (int)actionZoomFactor + "%";
+		}
+	}
+
 	void addMenuActions()
 	{
 		JMenu filemenu = new JMenu ("File");
@@ -134,12 +195,12 @@ class GpmlDiffWindow extends JFrame
 		filemenu.add (new CloseAction(this));
 
 		JMenu viewmenu = new JMenu ("View");
-		viewmenu.add (new CommonActions.ZoomAction(VPathway.ZOOM_TO_FIT));
-		viewmenu.add (new CommonActions.ZoomAction(30));
-		viewmenu.add (new CommonActions.ZoomAction(50));
-		viewmenu.add (new CommonActions.ZoomAction(75));
-		viewmenu.add (new CommonActions.ZoomAction(100));
-		viewmenu.add (new CommonActions.ZoomAction(120));
+		viewmenu.add (new ZoomAction(VPathway.ZOOM_TO_FIT));
+		viewmenu.add (new ZoomAction(30));
+		viewmenu.add (new ZoomAction(50));
+		viewmenu.add (new ZoomAction(75));
+		viewmenu.add (new ZoomAction(100));
+		viewmenu.add (new ZoomAction(120));
 		viewmenu.addSeparator();
 		viewmenu.add (new CenterAction());
 		
@@ -153,7 +214,7 @@ class GpmlDiffWindow extends JFrame
 
 		setSize (WINDOW_WIDTH, WINDOW_HEIGHT);
 		Container contents = getContentPane();
-		contents.setLayout (new BorderLayout());
+		contents.setLayout (new GridLayout(1,2));
 		setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 		
 		menubar = new JMenuBar();
@@ -165,8 +226,9 @@ class GpmlDiffWindow extends JFrame
 			pwyPane[i] = new JScrollPane();
 		}
 
-		contents.add (pwyPane[PWY_OLD], BorderLayout.WEST);
-		contents.add (pwyPane[PWY_NEW], BorderLayout.EAST);
+		contents.add (pwyPane[PWY_OLD]);
+		contents.add (pwyPane[PWY_NEW]);
+		validate();
 	}
 
 }

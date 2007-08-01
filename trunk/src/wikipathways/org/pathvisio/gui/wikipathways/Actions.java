@@ -23,7 +23,7 @@ public class Actions {
 		}
 	}
 	
-	class ExitAction extends WikiAction {
+	static class ExitAction extends WikiAction {
 		boolean doSave;
 		public ExitAction(AppletMain a, WikiPathways w, boolean save) {
 			super(a, w, "Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("icons/apply.gif") : Engine.getCurrent().getResourceURL("icons/cancel.gif")));

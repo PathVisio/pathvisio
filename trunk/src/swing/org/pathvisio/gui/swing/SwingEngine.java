@@ -30,12 +30,16 @@ import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 public class SwingEngine {	
-	private static MainPanel mainPanel;
+	private MainPanel mainPanel;
 	
 	private static SwingEngine current;
 	public static SwingEngine getCurrent() {
 		if(current == null) current = new SwingEngine();
 		return current;
+	}
+	
+	public static void setCurrent(SwingEngine engine) {
+		current = engine;
 	}
 	
 	public MainPanel getApplicationPanel() {

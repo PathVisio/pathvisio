@@ -16,7 +16,9 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.net.CookieHandler;
 import java.net.URL;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.ApplicationEvent;
@@ -53,18 +56,25 @@ public class AppletMain extends JApplet {
 	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
+		for(Component c : getContentPane().getComponents()) {
+			System.out.println("COMPONENT: " + c);
+		}
+		SwingEngine.setCurrent(new SwingEngine());
+		Engine.setCurrent(new Engine());
+		
+		System.out.println("Engines: " + Engine.getCurrent().hashCode() + " | " + SwingEngine.getCurrent().hashCode());
 		System.out.println("INIT CALLED....");
 		Logger.log.trace("INIT CALLED....");
 				
 		uiHandler = new SwingUserInterfaceHandler(JOptionPane.getFrameForComponent(this));
 		
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
+//		try {
+//			SwingUtilities.invokeAndWait(new Runnable() {
+//				public void run() {
 					mainPanel = SwingEngine.getCurrent().getApplicationPanel();
-					
-					Action saveAction = new ExitAction(true);
-					Action discardAction = new ExitAction(false);
+					System.out.println("MainPanel: " + mainPanel.hashCode());
+					Action saveAction = new Actions.ExitAction(this, wiki, true);
+					Action discardAction = new Actions.ExitAction(this, wiki, false);
 					
 					mainPanel.getToolBar().addSeparator();
 					mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
@@ -72,12 +82,12 @@ public class AppletMain extends JApplet {
 
 					getContentPane().add(mainPanel);
 					mainPanel.setVisible(true);
-				}
-			});
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//				}
+//			});
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		System.out.println("INIT ENDED....");
 		Logger.log.trace("INIT ENDED....");
 	}
@@ -93,15 +103,16 @@ public class AppletMain extends JApplet {
 				wiki = new WikiPathways(uiHandler);
 				parseArguments();
 				loadCookies();
-									
-				try { 
+								
+				try {
 					wiki.init(SwingEngine.getCurrent().createWrapper());
 				} catch(Exception e) {
 					Logger.log.error("Unable to load pathway", e);
 					JOptionPane.showMessageDialog(
 							AppletMain.this, e.getClass() + ": " + e.getMessage(), "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 				};
-															
+				System.out.println("VPathway: " + Engine.getCurrent().getActiveVPathway());
+				System.out.println(Engine.getCurrent() + " | " + SwingEngine.getCurrent());
 				return null;
 			}
 		};
@@ -142,6 +153,14 @@ public class AppletMain extends JApplet {
 		}
 		System.out.println("DESTROY ENDED....");
 		Logger.log.trace("DESTROY ENDED....");
+	}
+	
+	public void endWithMessage(String msg) {
+		JLabel label = new JLabel(msg, JLabel.CENTER);
+		getContentPane().add(label);
+		getContentPane().validate();
+		
+		getAppletContext().showDocument(getDocumentBase(), "_parent");
 	}
 	
 	void loadCookies() {
@@ -188,31 +207,6 @@ public class AppletMain extends JApplet {
 	void parseArguments() {
 		for(Parameter p : Parameter.values()) {
 			p.setValue(getParameter(p.getName()));
-		}
-	}
-	
-	class ExitAction extends AbstractAction {
-		boolean doSave;
-		public ExitAction(boolean save) {
-			super("Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("icons/apply.gif") : Engine.getCurrent().getResourceURL("icons/cancel.gif")));
-			doSave = save;
-			String descr = doSave ? "Save pathway and close editor" : "Discard pathway and close editor";
-			putValue(Action.SHORT_DESCRIPTION, descr);
-		}
-		public void actionPerformed(ActionEvent e) {
-			System.out.println("DEBUG: exit pressed, " + doSave);
-			boolean saved = true;
-			if(doSave) {
-				saved = wiki.saveUI();
-			}
-			if(saved) {
-				getContentPane().remove(mainPanel);
-				JLabel label = new JLabel("Please wait while you'll be redirected to the pathway page", JLabel.CENTER);
-				getContentPane().add(label);
-				getContentPane().validate();
-				
-				getAppletContext().showDocument(getDocumentBase(), "_parent");
-			}
 		}
 	}
 }

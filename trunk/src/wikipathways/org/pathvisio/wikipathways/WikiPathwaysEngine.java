@@ -19,11 +19,24 @@ package org.pathvisio.wikipathways;
 import java.io.File;
 
 import org.pathvisio.Globals;
+import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
 
 public class WikiPathwaysEngine {
 	public static void init() throws Exception {
 		GlobalPreference.FILE_LOG.setDefault(new File(getApplicationDir(), ".wikipathwaysLog").toString());
+		
+		PropertyType.CENTERX.setHidden(true);
+		PropertyType.CENTERY.setHidden(true);
+		PropertyType.ENDX.setHidden(true);
+		PropertyType.ENDY.setHidden(true);
+		PropertyType.HEIGHT.setHidden(true);
+		PropertyType.LAST_MODIFIED.setHidden(true);
+		PropertyType.ORGANISM.setHidden(true);
+		PropertyType.ROTATION.setHidden(true);
+		PropertyType.STARTX.setHidden(true);
+		PropertyType.STARTY.setHidden(true);
+		PropertyType.WIDTH.setHidden(true);
 	}
 		
 	private static File DIR_APPLICATION;

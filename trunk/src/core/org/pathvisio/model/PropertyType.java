@@ -133,11 +133,17 @@ public enum PropertyType
 		return type;
 	}	
 
-	public boolean hidden()
+	public boolean isHidden()
 	{
+		System.out.println("Is hidden? " + this + ", " + hidden);
 		return hidden;
 	}
 
+	public void setHidden(boolean hide) {
+		System.out.println("hiding " + this);
+		hidden = hide;
+	}
+	
 	public static PropertyType getByTag(String value)
 	{
 		return tagMapping.get (value);

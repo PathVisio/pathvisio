@@ -52,11 +52,11 @@ import org.pathvisio.gui.swing.CommonActions.ImportAction;
 import org.pathvisio.gui.swing.CommonActions.NewElementAction;
 import org.pathvisio.gui.swing.CommonActions.PasteAction;
 import org.pathvisio.gui.swing.CommonActions.SaveLocalAction;
-import org.pathvisio.gui.swing.CommonActions.SaveToServerAction;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.DataNodeDialog;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
+import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
@@ -131,7 +131,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu pathwayMenu = new JMenu("Pathway");
 		pathwayMenu.add(new SaveLocalAction());
-		pathwayMenu.add(new SaveToServerAction());
 		pathwayMenu.add(new ImportAction(this));
 		pathwayMenu.add(new ExportAction());
 
@@ -182,7 +181,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		tb.setLayout(new WrapLayout(1, 1));
 		
 		addToToolbar(new SaveLocalAction());
-		addToToolbar(new SaveToServerAction(), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new ImportAction(this));
 		addToToolbar(new ExportAction());
 		tb.addSeparator();

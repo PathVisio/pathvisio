@@ -17,21 +17,16 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.net.CookieHandler;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.ApplicationEvent;

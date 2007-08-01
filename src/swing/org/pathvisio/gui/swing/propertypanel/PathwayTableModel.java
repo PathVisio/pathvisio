@@ -63,24 +63,43 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			e.removeListener(this);
 		}
 		input.clear();
-		refresh();
+		refresh(true);
 	}
 	
 	private void removeInput(PathwayElement pwElm) {
 		input.remove(pwElm);
 		pwElm.removeListener(this);
-		refresh();
+		refresh(true);
 	}
 	
 	private void addInput(PathwayElement pwElm) {
 		input.add(pwElm);
 		pwElm.addListener(this);
-		refresh();
+		refresh(true);
+	}
+	
+	protected void refresh(boolean recreate) {
+		if(recreate) {
+			properties = generateProperties(input);
+		} else {
+			refreshPropertyValues();
+		}
+		fireTableDataChanged();
 	}
 	
 	protected void refresh() {
-		properties = generateProperties(input);
-		fireTableDataChanged();
+		refresh(false);
+	}
+	
+	protected void refreshPropertyValues() {
+		for(TypedProperty p : properties) {
+			Object value = getAggregateValue(p.getType(), input);
+			if(value instanceof TypedProperty) {
+				p.setHasDifferentValues(true);
+			} else {
+				p.setValue(value, false);
+			}
+		}
 	}
 	
 	protected List<TypedProperty> generateProperties(Collection<PathwayElement> elements) {
@@ -102,13 +121,12 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 				properties = new ArrayList<PropertyType>();
 				List<PropertyType> attr = e.getAttributes(GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES));
 				properties.addAll(attr);
-				continue;
 			}
 			remove.clear();
 			List<PropertyType> attributes = e.getAttributes(
 					GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES));
 			for(PropertyType p : properties) {
-				if(!attributes.contains(p)) {
+				if(!attributes.contains(p) || p.isHidden()) {
 					remove.add(p);
 				}
 			}
@@ -118,7 +136,14 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		return properties;
 	}
 	
-	TypedProperty getAggregateProperty(PropertyType key, Collection<PathwayElement> elements) {
+	/**
+	 * Gets the aggregated value of the property of the given pathway element.
+	 * If te values are different, this method returns an object of class TypedProperty
+	 * @param key
+	 * @param elements
+	 * @return
+	 */
+	Object getAggregateValue(PropertyType key, Collection<PathwayElement> elements) {
 		Object value = null;
 		boolean first = true;
 		for(PathwayElement e : elements) {
@@ -129,6 +154,12 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			value = o;
 			first = false;
 		}
+		return value;
+	}
+	
+	TypedProperty getAggregateProperty(PropertyType key, Collection<PathwayElement> elements) {
+		Object value = getAggregateValue(key, elements);
+		if(value instanceof TypedProperty) return (TypedProperty)value;
 		return new TypedProperty(elements, value, key);
 	}
 		

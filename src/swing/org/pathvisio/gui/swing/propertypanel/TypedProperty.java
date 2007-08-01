@@ -76,8 +76,12 @@ public class TypedProperty implements Comparable {
 	}
 	
 	public void setValue(Object value) {
+		setValue(value, true);
+	}
+	
+	public void setValue(Object value, boolean setElement) {
 		this.value = value;
-		if(value != null) {
+		if(value != null && setElement) {
 			for(PathwayElement e : elements) {
 				e.setProperty(type, value);
 			}
@@ -227,7 +231,6 @@ public class TypedProperty implements Comparable {
 	private static class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 		Color currentColor;
 		JButton button;
-		JColorChooser colorChooser;
 		JDialog dialog;
 		protected static final String EDIT = "edit";
 
@@ -236,26 +239,15 @@ public class TypedProperty implements Comparable {
 			button.setActionCommand("edit");
 			button.addActionListener(this);
 			button.setBorderPainted(false);
-
-			colorChooser = new JColorChooser();
-			dialog = JColorChooser.createDialog(button,
-					"Pick a Color",
-					true,  //modal
-					colorChooser,
-					this,  //OK button handler
-					null); //no CANCEL button handler
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (EDIT.equals(e.getActionCommand())) {
 				button.setBackground(currentColor);
-				colorChooser.setColor(currentColor);
-				dialog.setVisible(true);
 
-				fireEditingStopped(); //Make the renderer reappear.
-
-			} else {
-				currentColor = colorChooser.getColor();
+				Color newColor = JColorChooser.showDialog(button, "Choose a color", currentColor);
+				if(newColor != null) currentColor = newColor;
+				fireEditingStopped(); //Make the renderer reappear
 			}
 		}
 

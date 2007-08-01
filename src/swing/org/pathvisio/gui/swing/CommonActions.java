@@ -87,20 +87,6 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class SaveToServerAction extends AbstractAction {
-		public SaveToServerAction() {
-			super("Save", new ImageIcon(IMG_SAVE));
-			putValue(Action.SHORT_DESCRIPTION, "Save the pathway");
-			putValue(Action.LONG_DESCRIPTION, "Save the pathway");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
 	static class ImportAction extends AbstractAction {
 		MainPanel mainPanel;
 		

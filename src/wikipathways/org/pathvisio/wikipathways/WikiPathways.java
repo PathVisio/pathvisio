@@ -39,21 +39,21 @@ import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.xml.sax.SAXException;
 
-public class WikiPathways implements ApplicationEventListener {
-	public static String SITE_NAME = "WikiPathways.org";
-	
+public class WikiPathways implements ApplicationEventListener {	
 	UserInterfaceHandler uiHandler;
 	HashMap<String, String> cookie;
 	
@@ -208,23 +208,22 @@ public class WikiPathways implements ApplicationEventListener {
 
 	
 	public void applicationEvent(ApplicationEvent e) {
-		/*
+		Pathway p = (Pathway)e.source;
 		switch(e.type) {
-		case ApplicationEvent.APPLICATION_CLOSE:
-			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
-			if(vPathway == null || vPathway.getGmmlData().hasChanged()) {
-				int status  = uiHandler.askCancellableQuestion("", 
-						"Do you want to save the changes to " + getPwName() + " on " + SITE_NAME + "?");
-				if(status == UserInterfaceHandler.Q_TRUE) {
-					saveUI();
-				} else if(status == UserInterfaceHandler.Q_CANCEL) {
-					e.doit = false;
-				}
-			} else {
-				//Silently close
+		case ApplicationEvent.PATHWAY_NEW:
+			p.getMappInfo().setOrganism(getPwSpecies());
+		case ApplicationEvent.PATHWAY_OPENED:
+			//Force species name to be te same as on wikipathways
+			String impSpecies = p.getMappInfo().getOrganism();
+			if(!impSpecies.equals(impSpecies = getPwSpecies())) {
+				uiHandler.showError("Invalid species",
+						"The species of the pathway you imported differs from the" +
+						"species for this " + Globals.SERVER_NAME + " pathway.\n" +
+						"It will be changed from '" + impSpecies + "' to " + getPwSpecies());
+				p.getMappInfo().setOrganism(impSpecies);
 			}
+			break;
 		}
-		*/
 	}
 
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {

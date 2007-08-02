@@ -31,9 +31,9 @@ public class SwingProgressKeeper extends ProgressKeeper {
 		}
 	}
 	
-	public void report(String name) {
-		super.setTaskName(name);
-		progressBar.setString(name);
+	public void report(String message) {
+		super.report(message);
+		progressBar.setString(message);
 	}
 	
 	public void worked(int w) {

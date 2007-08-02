@@ -247,9 +247,15 @@ public class Engine {
 	/**
 	 * Find out whether a drawing is currently open or not
 	 * @return true if a drawing is open, false if not
+	 * @deprecated use {@link #hasVPathway}
 	 */
 	public boolean isDrawingOpen() { return vPathway != null; }
-
+	
+	/**
+	 * Find out whether a VPathway is currently available or not
+	 * @return true if a VPathway is currently available, false if not
+	 */
+	public boolean hasVPathway() { return vPathway != null; }
 
 	private HashMap<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
 	private HashMap<String, PathwayImporter> importers = new HashMap<String, PathwayImporter>();

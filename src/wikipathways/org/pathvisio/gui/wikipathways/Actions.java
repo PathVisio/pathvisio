@@ -58,8 +58,12 @@ public class Actions {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			try {
+				wiki.saveUI();
+			} catch(Exception ex) {
+				Logger.log.error("Unable to save pathway", ex);
+				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 }

@@ -81,8 +81,14 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 	}
 
 	public void progressFinished(ProgressEvent e) {
-		if(e.getType() == ProgressEvent.FINISHED) {
+		switch(e.getType()) {
+		case ProgressEvent.FINISHED:
 			setVisible(false);
+		case ProgressEvent.TASK_NAME_CHANGED:
+			setTitle(keeper.getTaskName());	
+		case ProgressEvent.REPORT:
+			String task = keeper.getTaskName();
+			setTitle(task == null ? keeper.getReport() : task + " - " + keeper.getReport());
 		}
 	}
 }

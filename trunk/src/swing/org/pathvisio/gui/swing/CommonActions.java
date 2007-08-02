@@ -27,7 +27,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
-import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.Engine;
@@ -41,6 +40,7 @@ import org.pathvisio.view.VPathwayListener;
 
 public abstract class CommonActions {
 	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
+	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
 	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
 	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
 	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
@@ -73,8 +73,20 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class SaveLocalAction extends AbstractAction {
-		public SaveLocalAction() {
+	static class SaveAsAction extends AbstractAction {
+		public SaveAsAction() {
+			super("Save as", new ImageIcon(IMG_SAVEAS));
+			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
+			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			SwingEngine.getCurrent().savePathwayAs();
+		}
+	}
+	
+	static class SaveAction extends AbstractAction {
+		public SaveAction() {
 			super("Save", new ImageIcon(IMG_SAVE));
 			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
 			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
@@ -82,8 +94,7 @@ public abstract class CommonActions {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+			SwingEngine.getCurrent().savePathway();
 		}
 	}
 	
@@ -137,21 +148,13 @@ public abstract class CommonActions {
 					};
 					jfc.addChoosableFileFilter(ff);
 				}
-				
+
 				int status = jfc.showDialog(component, "Import");
 				if(status == JFileChooser.APPROVE_OPTION) {
-					try {
-						
-						int totalWork = 1000;
-						ProgressMonitor m = new ProgressMonitor(component, "Loading pathway", "Please wait while the pathway is being loaded", 0, 1000);
-						m.setProgress(10);
-						SwingEngine.getCurrent().importPathway(jfc.getSelectedFile());
-						m.setProgress((int)(totalWork*2/3));
-						Engine.getCurrent().getActiveVPathway().setEditMode(true);
-						m.setProgress(totalWork);
-					} catch(ConverterException ex) {
-						SwingEngine.getCurrent().handleConverterException(SwingEngine.MSG_UNABLE_IMPORT, component, ex);
-					}
+					boolean editMode = Engine.getCurrent().hasVPathway() ? 
+					Engine.getCurrent().getActiveVPathway().isEditMode() : false;
+					SwingEngine.getCurrent().importPathway(jfc.getSelectedFile());
+					Engine.getCurrent().getActiveVPathway().setEditMode(editMode);
 				}
 		}
 	}

@@ -183,17 +183,12 @@ public class SwtEngine {
 													   "File already exists, overwrite?");
 			}
 			if(confirmed)
-			{
-				double usedZoom = vPathway.getPctZoom();
-				// Set zoom to 100%
-				vPathway.setPctZoom(100);					
+			{				
 				// Overwrite the existing xml file
 				try
 				{
 					Engine.getCurrent().savePathway(checkFile);
 					updateTitle();
-					// Set zoom back
-					vPathway.setPctZoom(usedZoom);
 				}
 				catch (ConverterException e)
 				{
@@ -387,14 +382,9 @@ public class SwtEngine {
 		public boolean savePathway()
 		{
 			Pathway pathway = Engine.getCurrent().getActivePathway();
-			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 			
 			boolean result = true;
-			
-			double usedZoom = vPathway.getPctZoom();
-			// Set zoom to 100%
-			vPathway.setPctZoom(100);			
-			
+							
 	        // Overwrite the existing xml file.
 			// If the target file is read-only, let the user select a new pathway
 			if (pathway.getSourceFile() != null && pathway.getSourceFile().canWrite())
@@ -417,8 +407,6 @@ public class SwtEngine {
 			{
 				result = savePathwayAs();
 			}
-			// Set zoom back
-			vPathway.setPctZoom(usedZoom);
 
 			return result;
 		}

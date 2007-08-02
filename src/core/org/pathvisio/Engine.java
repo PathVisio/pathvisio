@@ -217,8 +217,13 @@ public class Engine {
 	}
 	
 	private void createVPathway(Pathway p, VPathwayWrapper wrapper) {
+		double zoom = 100;
+		if(hasVPathway()) zoom = getActiveVPathway().getPctZoom();
+		
 		vPathway = wrapper.createVPathway();
 		vPathway.fromGmmlData(pathway);
+		
+		vPathway.setPctZoom(zoom);
 		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
 	}
 	
@@ -239,7 +244,7 @@ public class Engine {
 		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_NEW));
 		
 		if(wrapper != null) {
-			createVPathway(pathway, wrapper);
+			createVPathway(pathway, wrapper);	
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_NEW));
 		}
 	}

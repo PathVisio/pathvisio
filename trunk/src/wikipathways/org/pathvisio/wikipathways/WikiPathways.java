@@ -148,7 +148,11 @@ public class WikiPathways implements ApplicationEventListener {
 			uiHandler.showError("Unable to save the pathway", "Unable to save the pathway, you are not logged in");
 			return false;
 		}
-		if(vPathway != null && vPathway.getGmmlData().hasChanged()) {
+		if(!vPathway.getGmmlData().hasChanged()) {
+			uiHandler.showInfo("Save pathway", "You didn't make any changes to the pathway");
+			return true;
+		}
+		if(vPathway != null) {
 			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
 			Logger.log.trace("Save description: " + description);
 			if(description != null) {

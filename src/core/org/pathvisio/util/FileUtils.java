@@ -121,6 +121,7 @@ public class FileUtils {
 		out = new BufferedOutputStream(
 				new FileOutputStream(toFile));
 		conn = url.openConnection();
+		conn.setUseCaches(false);
 		in = conn.getInputStream();
 		byte[] buffer = new byte[1024];
 		int numRead;

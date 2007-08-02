@@ -46,6 +46,7 @@ import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -67,7 +68,7 @@ public class WikiPathways implements ApplicationEventListener {
 		Engine.getCurrent().addApplicationEventListener(this);
 	}
 
-	public void init(VPathwayWrapper wrapper) throws Exception {
+	public void init(VPathwayWrapper wrapper, ProgressKeeper progress) throws Exception {
 		WikiPathwaysEngine.init();
 		
 		for(Parameter p : Parameter.values()) {
@@ -76,6 +77,8 @@ public class WikiPathways implements ApplicationEventListener {
 				"Missing required argument '" + p.name() + "'";
 		}
 
+		progress.setTaskName("Loading pathway...");
+		
 		if(isNew()) { //Create new pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: new pathway");
 			Engine.getCurrent().newPathway(wrapper);
@@ -86,6 +89,8 @@ public class WikiPathways implements ApplicationEventListener {
 
 		//TODO: notify user about this and hide edit actions
 		Engine.getCurrent().getActiveVPathway().setEditMode(!isReadOnly());
+		
+		progress.setTaskName("Connecting to database...");
 		
 		//Connect to the gene database
 		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
@@ -208,18 +213,22 @@ public class WikiPathways implements ApplicationEventListener {
 
 	
 	public void applicationEvent(ApplicationEvent e) {
-		Pathway p = (Pathway)e.source;
+		Pathway p = null;
 		switch(e.type) {
 		case ApplicationEvent.PATHWAY_NEW:
+			p = (Pathway)e.source;
 			p.getMappInfo().setOrganism(getPwSpecies());
 		case ApplicationEvent.PATHWAY_OPENED:
+			p = (Pathway)e.source;
 			//Force species name to be te same as on wikipathways
 			String impSpecies = p.getMappInfo().getOrganism();
-			if(!impSpecies.equals(impSpecies = getPwSpecies())) {
+			Organism impOrg = Organism.fromLatinName(impSpecies);
+			Organism wikiOrg = Organism.fromShortName(getPwSpecies());
+			if(!impOrg.equals(wikiOrg)) {
 				uiHandler.showError("Invalid species",
 						"The species of the pathway you imported differs from the" +
-						"species for this " + Globals.SERVER_NAME + " pathway.\n" +
-						"It will be changed from '" + impSpecies + "' to " + getPwSpecies());
+						" species for the " + Globals.SERVER_NAME + " pathway you are editing.\n" +
+						"It will be changed from '" + impSpecies + "' to '" + getPwSpecies() + "'");
 				p.getMappInfo().setOrganism(impSpecies);
 			}
 			break;

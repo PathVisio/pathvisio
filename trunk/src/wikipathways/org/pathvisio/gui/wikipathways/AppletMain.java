@@ -51,9 +51,6 @@ public class AppletMain extends JApplet {
 	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
-		for(Component c : getContentPane().getComponents()) {
-			System.out.println("COMPONENT: " + c);
-		}
 		SwingEngine.setCurrent(new SwingEngine());
 		Engine.setCurrent(new Engine());
 		
@@ -63,13 +60,13 @@ public class AppletMain extends JApplet {
 				
 		uiHandler = new SwingUserInterfaceHandler(JOptionPane.getFrameForComponent(this));
 		
-//		try {
-//			SwingUtilities.invokeAndWait(new Runnable() {
-//				public void run() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
 					mainPanel = SwingEngine.getCurrent().getApplicationPanel();
 					System.out.println("MainPanel: " + mainPanel.hashCode());
-					Action saveAction = new Actions.ExitAction(this, wiki, true);
-					Action discardAction = new Actions.ExitAction(this, wiki, false);
+					Action saveAction = new Actions.ExitAction(AppletMain.this, wiki, true);
+					Action discardAction = new Actions.ExitAction(AppletMain.this, wiki, false);
 					
 					mainPanel.getToolBar().addSeparator();
 					mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
@@ -77,12 +74,12 @@ public class AppletMain extends JApplet {
 
 					getContentPane().add(mainPanel);
 					mainPanel.setVisible(true);
-//				}
-//			});
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+				}
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("INIT ENDED....");
 		Logger.log.trace("INIT ENDED....");
 	}
@@ -100,14 +97,12 @@ public class AppletMain extends JApplet {
 				loadCookies();
 								
 				try {
-					wiki.init(SwingEngine.getCurrent().createWrapper());
+					wiki.init(SwingEngine.getCurrent().createWrapper(), getProgressKeeper());
 				} catch(Exception e) {
-					Logger.log.error("Unable to load pathway", e);
+					Logger.log.error("Error while starting editor", e);
 					JOptionPane.showMessageDialog(
 							AppletMain.this, e.getClass() + ": " + e.getMessage(), "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 				};
-				System.out.println("VPathway: " + Engine.getCurrent().getActiveVPathway());
-				System.out.println(Engine.getCurrent() + " | " + SwingEngine.getCurrent());
 				return null;
 			}
 		};
@@ -116,10 +111,9 @@ public class AppletMain extends JApplet {
 				public void run() {
 					int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 					double spSize = (100 - spPercent) / 100.0;
-					System.out.println(spSize);
 					mainPanel.getSplitPane().setDividerLocation(spSize);
 					
-					uiHandler.runWithProgress(r, "Loading pathway", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+					uiHandler.runWithProgress(r, "Starting editor", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
 				}
 			});
 		} catch (Exception e) {

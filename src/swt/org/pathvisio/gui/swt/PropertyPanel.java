@@ -52,6 +52,7 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
@@ -290,7 +291,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				comboBoxEditor.setItems(boolean_names);
 				return comboBoxEditor;
 			case ORGANISM:
-				comboBoxEditor.setItems(MappFormat.organism_latin_name);
+				comboBoxEditor.setItems(Organism.latinNamesArray());
 				return comboBoxEditor;
 			case GENETYPE:
 				comboBoxEditor.setItems(genetype_names);
@@ -345,7 +346,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				case INTEGER: 
 					return value.toString();
 				case ORGANISM:
-					return Arrays.asList(MappFormat.organism_latin_name).indexOf((String)value);
+					return Organism.latinNames().indexOf((String)value);
 				case GENETYPE:
 					return Arrays.asList(genetype_names).indexOf((String)value);
 				case STRING:
@@ -458,7 +459,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				break;
 			case ORGANISM:
 				if((Integer)value == -1) return; //Nothing selected
-				value = MappFormat.organism_latin_name[(Integer)value];
+				value = Organism.latinNames().get((Integer)value);
 				break;
 			case GENETYPE:
 				if((Integer)value == -1) return; //Nothing selected

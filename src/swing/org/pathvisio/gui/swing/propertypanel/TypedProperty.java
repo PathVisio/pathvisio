@@ -45,6 +45,7 @@ import org.pathvisio.data.DataSources;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MappFormat;
+import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
@@ -271,7 +272,7 @@ public class TypedProperty implements Comparable {
 	private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSources.dataSources);
 	private static CheckBoxRenderer checkboxRenderer = new CheckBoxRenderer();
 	private static ComboRenderer orientationRenderer = new ComboRenderer(OrientationType.getNames());
-	private static ComboRenderer organismRenderer = new ComboRenderer(MappFormat.organism_latin_name);
+	private static ComboRenderer organismRenderer = new ComboRenderer(Organism.latinNames().toArray());
 	private static FontRenderer fontRenderer = new FontRenderer();
 	private static ComboRenderer shapeTypeRenderer = new ComboRenderer(ShapeType.getNames(), ShapeType.values());
 	
@@ -281,7 +282,7 @@ public class TypedProperty implements Comparable {
 	private static ComboEditor datasourceEditor = new ComboEditor(DataSources.dataSources, false);
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);
-	private static ComboEditor organismEditor = new ComboEditor(MappFormat.organism_latin_name, false);
+	private static ComboEditor organismEditor = new ComboEditor(Organism.latinNames().toArray(), false);
 	private static AngleEditor angleEditor = new AngleEditor();
 	private static DoubleEditor doubleEditor = new DoubleEditor();
 	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment

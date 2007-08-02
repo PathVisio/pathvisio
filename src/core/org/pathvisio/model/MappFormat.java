@@ -69,38 +69,17 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
 		"Color, Label, Head, Remarks, Image, Links, Notes " +
 		"FROM OBJECTS";
-
-	public static final String[] organism_latin_name = {
-		"",
-		"Mus musculus",
-		"Homo sapiens",
-		"Rattus norvegicus",
-		"Bos taurus",
-		"Caenorhabditis elegans",
-		"Gallus gallus",
-		"Danio rero",
-		"Drosophila melanogaster",
-		"Canis familiaris",
-		"Xenopus tropicalis",
-		"Arabidopsis thaliana"
-
-	};
-
-	static final String[] organism_short_code = {
-		"___",
-		"Mm_", 
-		"Hs_", 
-		"Rn_", 
-		"Bt_", 
-		"Ce_", 
-		"Gg_", 
-		"Dr_", 
-		"Dm_", 
-		"Cf_", 
-		"Xt_", 
-		"At_", 				
-	};
-
+	
+	/**
+	 * @deprecated Use {@link Organism} emun instead
+	 */
+	public static final String[] organism_latin_name = Organism.latinNamesArray();
+	
+	/**
+	 * @deprecated Use {@link Organism} enum instead
+	 */
+	static final String[] organism_short_code = Organism.codes();
+	
     private static String database_after = ";DriverID=22;READONLY=true";
     private static String database_before =
             "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
@@ -371,11 +350,12 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]));
 		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]));
 		
-		// guess organism based on first three characters of filename
-		String short_code = new File (filename).getName().substring(0, 3);
-		if (code2organism.containsKey(short_code))
+		// guess organism based on first two characters of filename
+		String short_code = new File (filename).getName().substring(0, 2);
+		Organism org = Organism.fromCode(short_code);
+		if (org != null)
 		{		
-			o.setOrganism(code2organism.get(short_code));
+			o.setOrganism(org.latinName());
 		}
 	}
        
@@ -979,6 +959,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     
 	/**
 	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
+	 * @deprecated Use {@link Organism#fromLatinName(String)} instead
 	 */
 	private static final HashMap<String,String> code2organism = initOrganism2code();
 

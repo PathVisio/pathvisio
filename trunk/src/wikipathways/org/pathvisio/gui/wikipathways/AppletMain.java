@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.ApplicationEvent;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GuiInit;
@@ -149,14 +150,21 @@ public class AppletMain extends JApplet {
 		getContentPane().add(label);
 		getContentPane().validate();
 		
-		getAppletContext().showDocument(getDocumentBase(), "_parent");
+		URL url = getDocumentBase();
+	        try {
+			url = new URL("javascript:window.location.reload();");
+		} catch(Exception ex) {
+			Logger.log.error("Unable to create javascript url", ex);
+		}
+		getAppletContext().showDocument(url, "_top");
+
 	}
-	
+
 	void loadCookies() {
 		Logger.log.trace("Loading cookies");
 
 		//wikipathwaysUserName=Thomas; wikipathwaysUserID=2; wikipathwaysToken=d8fa40c604ac290a5e2f65830279f518; wikipathways_session=6e153458660cf2cc888d37ec0e6f164b
-		
+
 		try {
 			CookieHandler handler = CookieHandler.getDefault();
 			if (handler != null)    {
@@ -181,18 +189,18 @@ public class AppletMain extends JApplet {
 		} catch(Exception e) {
 			Logger.log.error("Unable to load cookies", e);
 		}
-//			JSObject myBrowser = (JSObject) JSObject.getWindow(this);
-//	        JSObject myDocument =  (JSObject) myBrowser.getMember("document");
-//	        String cookie = (String)myDocument.getMember("cookie");
-//	        String[] cstr = cookie.split(";");
-//	        for(String c : cstr) {
-//	        	String[] vstr = c.split("=");
-//	        	if(vstr.length == 2) {
-//	        		wiki.addCookie(vstr[0].trim(), vstr[1].trim());
-//	        	}
-//	        }
+		//			JSObject myBrowser = (JSObject) JSObject.getWindow(this);
+		//	        JSObject myDocument =  (JSObject) myBrowser.getMember("document");
+		//	        String cookie = (String)myDocument.getMember("cookie");
+		//	        String[] cstr = cookie.split(";");
+		//	        for(String c : cstr) {
+		//	        	String[] vstr = c.split("=");
+		//	        	if(vstr.length == 2) {
+		//	        		wiki.addCookie(vstr[0].trim(), vstr[1].trim());
+		//	        	}
+		//	        }
 	}
-	
+
 	void parseArguments() {
 		for(Parameter p : Parameter.values()) {
 			p.setValue(getParameter(p.getName()));

@@ -24,6 +24,7 @@ public class ProgressKeeper {
 	public static final int PROGRESS_UNKNOWN = -1;
 	volatile String taskName;
 	volatile boolean cancelled;
+	volatile String report;
 	
 	int total;
 	int progress;
@@ -42,7 +43,10 @@ public class ProgressKeeper {
 	
 	public void setTaskName(String name) {
 		taskName = name;
+		fireProgressEvent(ProgressEvent.TASK_NAME_CHANGED);
 	}
+	
+	public String getTaskName() { return taskName; }
 	
 	public void finished() {
 		progress = total;
@@ -66,9 +70,12 @@ public class ProgressKeeper {
 	}
 	
 	public void report(String message) {
-		//To be implemented by subclasses if needed
+		report = message;
+		fireProgressEvent(ProgressEvent.REPORT);
 	}
-		
+	
+	public String getReport() { return report; }
+	
 	void fireProgressEvent(int type) {
 		for(ProgressListener l : listeners)
 			l.progressFinished(new ProgressEvent(this, type));
@@ -82,6 +89,8 @@ public class ProgressKeeper {
 	
 	public class ProgressEvent extends EventObject {
 		public static final int FINISHED = 0;
+		public static final int TASK_NAME_CHANGED = 1;
+		public static final int REPORT = 2;
 		
 		private int type;
 		public ProgressEvent(ProgressKeeper source, int type) {

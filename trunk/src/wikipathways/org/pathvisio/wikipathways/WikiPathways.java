@@ -77,7 +77,7 @@ public class WikiPathways implements ApplicationEventListener {
 				"Missing required argument '" + p.name() + "'";
 		}
 
-		progress.setTaskName("Loading pathway...");
+		progress.report("Loading pathway...");
 		
 		if(isNew()) { //Create new pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: new pathway");
@@ -89,8 +89,13 @@ public class WikiPathways implements ApplicationEventListener {
 
 		//TODO: notify user about this and hide edit actions
 		Engine.getCurrent().getActiveVPathway().setEditMode(!isReadOnly());
+		if(isReadOnly()) {
+			uiHandler.showInfo("Read-only", 
+					"You are not logged in to " + Globals.SERVER_NAME +
+					" so the pathway will be opened in read-only mode");
+		}
 		
-		progress.setTaskName("Connecting to database...");
+		progress.report("Connecting to database...");
 		
 		//Connect to the gene database
 		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);

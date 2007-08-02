@@ -195,7 +195,9 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 	
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return columnIndex == 1;
+		return columnIndex == 1 &&
+				Engine.getCurrent().hasVPathway() && 
+				Engine.getCurrent().getActiveVPathway().isEditMode();
 	}
 		
 	public void selectionEvent(SelectionEvent e) {

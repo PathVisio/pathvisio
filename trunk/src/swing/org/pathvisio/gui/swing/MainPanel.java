@@ -328,6 +328,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		return splitPane;
 	}
 	
+	public BackpagePane getBackpagePane() {
+		return backpagePane;
+	}
+	
 	private Frame findParentFrame() {
 		Container c = this;
 		while (c != null) {

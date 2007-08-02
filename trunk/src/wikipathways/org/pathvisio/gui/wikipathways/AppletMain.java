@@ -16,7 +16,6 @@
 //
 package org.pathvisio.gui.wikipathways;
 
-import java.awt.Component;
 import java.net.CookieHandler;
 import java.net.URL;
 import java.util.HashMap;
@@ -28,9 +27,10 @@ import javax.swing.JApplet;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.ApplicationEvent;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GuiInit;
@@ -72,6 +72,14 @@ public class AppletMain extends JApplet {
 					mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
 					mainPanel.addToToolbar(discardAction);
 
+					mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
+						public void hyperlinkUpdate(HyperlinkEvent e) {
+							if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+								getAppletContext().showDocument(e.getURL(), "_blank");
+							}
+						}
+					});
+					
 					getContentPane().add(mainPanel);
 					mainPanel.setVisible(true);
 				}

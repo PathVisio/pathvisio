@@ -125,7 +125,7 @@ public class SwingEngine {
 	public boolean savePathwayAs() {
 		//Open file dialog
 		JFileChooser jfc = new JFileChooser();
-		jfc.setAcceptAllFileFilterUsed(false);
+		jfc.setAcceptAllFileFilterUsed(true);
 		jfc.setDialogTitle("Save pathway");
 		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
 		jfc.addChoosableFileFilter(new FileFilter() {
@@ -142,7 +142,7 @@ public class SwingEngine {
 			}
 			
 		});
-		int status = jfc.showDialog(null, "Import");
+		int status = jfc.showDialog(null, "Save");
 		if(status == JFileChooser.APPROVE_OPTION) {
 			File toFile = jfc.getSelectedFile();
 			try {

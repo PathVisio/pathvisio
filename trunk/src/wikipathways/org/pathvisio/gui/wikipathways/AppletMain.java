@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.Component;
 import java.net.CookieHandler;
 import java.net.URL;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class AppletMain extends JApplet {
 					mainPanel.getToolBar().addSeparator();
 					mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
 					mainPanel.addToToolbar(discardAction);
-
+			
 					mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
 						public void hyperlinkUpdate(HyperlinkEvent e) {
 							if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

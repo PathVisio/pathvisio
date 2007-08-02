@@ -55,17 +55,16 @@ public class AppletMain extends JApplet {
 		SwingEngine.setCurrent(new SwingEngine());
 		Engine.setCurrent(new Engine());
 		
-		System.out.println("Engines: " + Engine.getCurrent().hashCode() + " | " + SwingEngine.getCurrent().hashCode());
 		System.out.println("INIT CALLED....");
 		Logger.log.trace("INIT CALLED....");
 				
 		uiHandler = new SwingUserInterfaceHandler(JOptionPane.getFrameForComponent(this));
+		wiki = new WikiPathways(uiHandler);
 		
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					mainPanel = SwingEngine.getCurrent().getApplicationPanel();
-					System.out.println("MainPanel: " + mainPanel.hashCode());
 					Action saveAction = new Actions.ExitAction(AppletMain.this, wiki, true);
 					Action discardAction = new Actions.ExitAction(AppletMain.this, wiki, false);
 					
@@ -93,7 +92,6 @@ public class AppletMain extends JApplet {
 			public Object excecuteCode() {				
 				GuiInit.init();
 												
-				wiki = new WikiPathways(uiHandler);
 				parseArguments();
 				loadCookies();
 								

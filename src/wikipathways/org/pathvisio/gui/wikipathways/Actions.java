@@ -6,10 +6,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class Actions {
@@ -32,10 +34,14 @@ public class Actions {
 			putValue(Action.SHORT_DESCRIPTION, descr);
 		}
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("DEBUG: exit pressed, " + doSave);
 			boolean saved = true;
-			if(doSave) {
-				saved = wiki.saveUI();
+			try {
+				if(doSave) {
+					saved = wiki.saveUI();
+				}
+			} catch(Exception ex) {
+				Logger.log.error("Unable to save pathway", ex);
+				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if(saved) {
 				applet.endWithMessage("Please wait while you'll be redirected to the pathway page");

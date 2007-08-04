@@ -485,6 +485,39 @@ public class VPathway implements PathwayListener
 		}
 	}
 	
+	/**
+	 * Handles movement of objects with the arrow keys
+	 * @param ks
+	 */
+	public void keyMove(KeyStroke ks)
+	{
+		int smallIncrement = 2;
+		
+		List<Graphics> selectedGraphics = getSelectedGraphics();
+		if (selectedGraphics.size() >0){
+			if (ks.equals(KEY_MOVELEFT)){
+				for (Graphics g : selectedGraphics){
+				g.vMoveBy(-smallIncrement, 0);
+				}
+			}
+			else if (ks.equals(KEY_MOVERIGHT)){
+				for (Graphics g : selectedGraphics){
+				g.vMoveBy(smallIncrement, 0);
+				}
+			}
+			else if (ks.equals(KEY_MOVEUP)){
+				for (Graphics g : selectedGraphics){
+			    g.vMoveBy(0, -smallIncrement);
+				}
+			}
+			else if (ks.equals(KEY_MOVEDOWN)){
+				for (Graphics g : selectedGraphics){
+				g.vMoveBy(0, smallIncrement);
+				}
+			}
+			redrawDirtyRect();
+		}
+	}
 	public void selectObject(VPathwayElement o)
 	{
 		clearSelection();
@@ -1271,13 +1304,25 @@ public class VPathway implements PathwayListener
 		
 	public static final KeyStroke KEY_GROUP = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_G, java.awt.Event.CTRL_MASK);
-
+	
 	public static final KeyStroke KEY_SELECT_ALL = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_A, java.awt.Event.CTRL_MASK);
 
 	public static final KeyStroke KEY_DELETE = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_DELETE, 0);
-
+	
+	public static final KeyStroke KEY_MOVERIGHT = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_RIGHT, java.awt.Event.CTRL_MASK);
+	
+	public static final KeyStroke KEY_MOVELEFT = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_LEFT, java.awt.Event.CTRL_MASK);
+	
+	public static final KeyStroke KEY_MOVEUP = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_UP, java.awt.Event.CTRL_MASK);
+	
+	public static final KeyStroke KEY_MOVEDOWN = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_DOWN, java.awt.Event.CTRL_MASK);
+	
 	// TODO: remove Swing dependency, create enum with keymappings and implement
 	// mappings to SWT and Swing
 	private void registerKeyboardActions()
@@ -1323,6 +1368,34 @@ public class VPathway implements PathwayListener
 					removeDrawingObjects(toRemove);	
 				}
 			});
+			parent.registerKeyboardAction(KEY_MOVELEFT, new AbstractAction()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+						keyMove(KEY_MOVELEFT);
+						}
+					});
+			parent.registerKeyboardAction(KEY_MOVERIGHT, new AbstractAction()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+						keyMove(KEY_MOVERIGHT);
+						}
+					});
+			parent.registerKeyboardAction(KEY_MOVEUP, new AbstractAction()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+						keyMove(KEY_MOVEUP);
+						}
+					});
+			parent.registerKeyboardAction(KEY_MOVEDOWN, new AbstractAction()
+					{
+						public void actionPerformed(ActionEvent e)
+						{
+						keyMove(KEY_MOVEDOWN);
+						}
+					});
 		}
                 
 	}
@@ -1663,6 +1736,7 @@ public class VPathway implements PathwayListener
 			redrawDirtyRect();
 		}
 	}
+	
 	
 	/**
 	 * Get all elements of the class Graphics that are currently selected

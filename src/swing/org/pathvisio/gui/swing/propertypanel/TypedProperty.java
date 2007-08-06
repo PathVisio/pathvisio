@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -42,9 +43,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.data.DataSources;
+import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.PathwayElement;
@@ -154,9 +155,18 @@ public class TypedProperty implements Comparable {
 			return fontEditor;
 		case SHAPETYPE:
 			return shapeTypeEditor;
+		case COMMENTS:
+			commentsEditor.setInput(this);
+			return commentsEditor;
 		default:
 			return null;
 		}
+	}
+	
+	private PathwayElement getFirstElement() {
+		PathwayElement first;
+		for(first = (PathwayElement)elements.iterator().next();;) break;
+		return first;
 	}
 	
 	private static class DoubleEditor extends DefaultCellEditor {
@@ -229,6 +239,53 @@ public class TypedProperty implements Comparable {
 		}
 	}
 	
+	private static class CommentsEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+		JButton button;
+		PathwayElement currentElement;
+		TypedProperty property;
+		
+		protected static final String EDIT = "edit";
+
+		public CommentsEditor() {
+			button = new JButton();
+			button.setText("View/edit comments");
+			button.setActionCommand("edit");
+			button.addActionListener(this);
+		}
+
+		public void setInput(TypedProperty p) {
+			property = p;
+			if(p.elements.size() > 1) {
+				button.setEnabled(false);
+			} else {
+				button.setEnabled(true);
+			}
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if (EDIT.equals(e.getActionCommand()) && property != null) {
+				currentElement = property.getFirstElement();
+				if(currentElement != null) {
+					PathwayElementDialog d = PathwayElementDialog.getInstance(currentElement);
+					d.selectPathwayElementPanel(PathwayElementDialog.TAB_COMMENTS);
+					d.setVisible(true);
+				}
+			}
+		}
+
+		public Object getCellEditorValue() {
+			return currentElement.getComments();
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+				Object value,
+				boolean isSelected,
+				int row,
+				int column) {
+			return button;
+		}
+	}
+	
 	private static class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 		Color currentColor;
 		JButton button;
@@ -293,6 +350,7 @@ public class TypedProperty implements Comparable {
 			super.setValue( (Double)(value) * 180.0 / Math.PI );
 		}
 	};
+	private static CommentsEditor commentsEditor = new CommentsEditor();
 	
 	private static DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
 		protected void setValue(Object value) {

@@ -73,16 +73,16 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(ADD)) {
-			input.addComment("Type you comment here", "");
+			getInput().addComment("Type you comment here", "");
 		} else if(e.getActionCommand().equals(REMOVE)) {
 			int row = commentsTable.getSelectedRow();
-			if(row > -1) input.removeComment(tableModel.comments.get(row));
+			if(row > -1) getInput().removeComment(tableModel.comments.get(row));
 		}
 		refresh();
 	}
 	
 	public void refresh() {
-		tableModel.setComments(input.getComments());	
+		tableModel.setComments(getInput().getComments());	
 	}
 	
 	class CommentsTableModel extends AbstractTableModel {

@@ -545,7 +545,9 @@ public class VPathway implements PathwayListener
 		{
 			mouseDownViewMode(e);
 		}
-
+		if(pressedObject != null) {
+			fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e, VPathwayEvent.ELEMENT_CLICKED_DOWN));
+		}
 	}
 		
 	/**
@@ -572,8 +574,8 @@ public class VPathway implements PathwayListener
 			redrawDirtyRect();
 		}
 		isDragging = false;
-		if(e.getButton() == MouseEvent.BUTTON3 && pressedObject != null) {
-			fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e, VPathwayEvent.ELEMENT_RIGHT_CLICKED));
+		if(pressedObject != null) {
+			fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e, VPathwayEvent.ELEMENT_CLICKED_UP));
 		}
 	}
 	

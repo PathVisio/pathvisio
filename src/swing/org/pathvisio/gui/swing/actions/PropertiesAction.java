@@ -40,13 +40,8 @@ public class PropertiesAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		if(element instanceof Graphics) {
 			PathwayElement p = ((Graphics)element).getGmmlData();
-			PathwayElementDialog pd = null;
-			switch(p.getObjectType()) {
-			case ObjectType.DATANODE:
-				pd = new DataNodeDialog(p, null, null);
-			}
+			PathwayElementDialog pd = PathwayElementDialog.getInstance(p, null, null);
 			if(pd != null) pd.setVisible(true);
 		}
 	}
-
 }

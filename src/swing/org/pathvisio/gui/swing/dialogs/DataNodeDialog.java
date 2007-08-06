@@ -42,6 +42,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	JComboBox dbCombo;
 			
 	public void refresh() {
+		super.refresh();
 		symText.setText(getInput().getTextLabel());
 		idText.setText(getInput().getGeneID());
 		dbCombo.setSelectedItem(getInput().getDataSource());

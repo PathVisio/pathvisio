@@ -26,7 +26,8 @@ public class VPathwayEvent extends EventObject {
 	public static final int MODEL_LOADED = 3;
 	public static final int ELEMENT_DOUBLE_CLICKED = 4;
 	public static final int ELEMENT_DRAWN = 5;
-	public static final int ELEMENT_RIGHT_CLICKED = 6;
+	public static final int ELEMENT_CLICKED_UP = 6;
+	public static final int ELEMENT_CLICKED_DOWN = 7;
 	
 	int type;
 	VPathwayElement affectedElement;

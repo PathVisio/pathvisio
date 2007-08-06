@@ -22,9 +22,9 @@ import javax.swing.JTabbedPane;
 import org.pathvisio.model.PathwayElement;
 
 public abstract class PathwayElementPanel extends JPanel {
-	PathwayElement input;
+	private PathwayElement input;
 	JTabbedPane dialogPane;
-	
+		
 	protected PathwayElement getInput() {
 		return input;
 	}

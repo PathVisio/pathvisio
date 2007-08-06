@@ -47,6 +47,12 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 	static final String OK = "Ok";
 	static final String CANCEL = "Cancel";
 	
+	public static final String TAB_COMMENTS = "Comments";
+	
+	public static PathwayElementDialog getInstance(PathwayElement e) {
+		return getInstance(e, null, null);
+	}
+	
 	public static PathwayElementDialog getInstance(PathwayElement e, Frame frame, Component locationComp) {
 		switch(e.getObjectType()) {
 		case ObjectType.DATANODE:
@@ -57,14 +63,14 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 	}
 	
 	PathwayElement input;
-	JTabbedPane dialogPane;
-	private List<PathwayElementPanel> panels;
+	private JTabbedPane dialogPane;
+	private HashMap<String, PathwayElementPanel> panels;
 	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
 		
 	public PathwayElementDialog(PathwayElement e, Frame frame, String title, Component locationComp) {
-		super(frame, "DataNode properties", true);
+		super(frame, "Element properties", true);
 		
-		panels = new ArrayList<PathwayElementPanel>();
+		panels = new HashMap<String, PathwayElementPanel>();
 		
 		JButton cancelButton = new JButton(CANCEL);
 		cancelButton.addActionListener(this);
@@ -75,7 +81,7 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 		getRootPane().setDefaultButton(setButton);
 		
 		dialogPane = new JTabbedPane();
-		createTabs(dialogPane);
+		createTabs();
 		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -105,11 +111,10 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 	}
 	
 	protected void refresh() {
-		for(PathwayElementPanel p : panels) {
+		for(PathwayElementPanel p : panels.values()) {
 			p.setInput(input);
 		}
 	}
-	
 	
 	protected void storeState() {
 		PathwayElement e = getInput();
@@ -125,16 +130,36 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 		}
 	}
 	
-	private void createTabs(JTabbedPane parent) {
-		addPathwayElementPanel(parent, new CommentPanel());
-		addCustomTabs(parent);
+	private void createTabs() {
+		addPathwayElementPanel(TAB_COMMENTS, new CommentPanel());
+		addCustomTabs(dialogPane);
 	}
 		
-	protected void addPathwayElementPanel(JTabbedPane parent, PathwayElementPanel p) {
-		parent.add("Comments", p);
-		panels.add(p);
+	protected void addPathwayElementPanel(String tabLabel, PathwayElementPanel p) {
+		dialogPane.add(tabLabel, p);
+		panels.put(tabLabel, p);
 	}
 	
+	protected void removePathwayElementPanel(String tabLabel) {
+		PathwayElementPanel panel = panels.get(tabLabel);
+		if(panel != null) {
+			dialogPane.remove(panel);
+			panels.remove(panel);
+		}
+	}
+	
+	public void selectPathwayElementPanel(String tabLabel) {
+		PathwayElementPanel panel = panels.get(tabLabel);
+		if(panel != null) {
+			dialogPane.setSelectedComponent(panel);
+		}
+	}
+	
+	/**
+	 * Override in subclass and use 
+	 * {@link #addPathwayElementPanel(String, PathwayElementPanel)} to add custom panels
+	 * @param parent
+	 */
 	protected void addCustomTabs(JTabbedPane parent) {
 		//To be implemented by subclasses
 	}

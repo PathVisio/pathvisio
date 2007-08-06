@@ -27,14 +27,8 @@ import org.pathvisio.view.VPathwayElement;
 public class PathwayElementMenu extends JPopupMenu {
 	VPathwayElement element;
 	
-	private PathwayElementMenu(VPathwayElement e) {
+	public PathwayElementMenu(VPathwayElement e) {
 		element = e;
 		add(new PropertiesAction(e));
-		Rectangle b = e.getVBounds();
-	}
-	
-	public static PathwayElementMenu getInstance(VPathwayElement e) {
-		if(e instanceof Handle) e = ((Handle)e).getParent();
-		return new PathwayElementMenu(e);
 	}
 }

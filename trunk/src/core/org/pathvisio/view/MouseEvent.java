@@ -40,14 +40,16 @@ public abstract class MouseEvent extends InputEvent {
 	private int clickCount;
 	private int x; //x relative to source
 	private int y; //y relative to source
+	private boolean isPopupTrigger;
 	
-	public MouseEvent(Object source, int type, int button, int x, int y, int clickCount, int modifier) {
+	public MouseEvent(Object source, int type, int button, int x, int y, int clickCount, int modifier, boolean isPopupTrigger) {
 		super(source, modifier);
 		this.x = x;
 		this.y = y;
 		this.type = type;
 		this.button = button;
 		this.clickCount = clickCount;
+		this.isPopupTrigger = isPopupTrigger;
 	}
 	
 	//public abstract Point getLocationOnScreen();
@@ -74,6 +76,10 @@ public abstract class MouseEvent extends InputEvent {
 	
 	public Point getLocation() {
 		return new Point(x, y);
+	}
+	
+	public boolean isPopupTrigger() {
+		return isPopupTrigger;
 	}
 	
 	/*

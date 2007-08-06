@@ -24,10 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColorCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -39,6 +41,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -47,10 +51,10 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.gui.BiopaxCellEditor;
 import org.pathvisio.data.DataSources;
+import org.pathvisio.gui.swt.dialogs.CommentsDialog;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
@@ -60,6 +64,7 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.swt.SuggestCellEditor;
 import org.pathvisio.util.swt.SwtUtils;
@@ -82,6 +87,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	SuggestCellEditor identifierSuggestEditor;
 	SuggestCellEditor symbolSuggestEditor;
 	BiopaxCellEditor biopaxEditor;
+	DialogCellEditor commentsEditor;
 	
 	private List<PathwayElement> dataObjects;
 	
@@ -231,6 +237,18 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
 		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
 		biopaxEditor = new BiopaxCellEditor(tableViewer.getTable(), "...");
+		//Temporary table editor for comments, will be removed when right-click menu is implemented
+		commentsEditor = new DialogCellEditor(tableViewer.getTable()) {
+			protected Object openDialogBox(Control cellEditorWindow) {
+				if(dataObjects.size() == 1) {
+					PathwayElement e = dataObjects.get(0);
+					CommentsDialog d = new CommentsDialog(cellEditorWindow.getShell(), e);
+					d.open();
+					return e.getComments();
+				}
+				return getValue();
+			}
+		};
 		
 		tableViewer.setCellEditors(cellEditors);
 		tableViewer.setColumnProperties(colNames);
@@ -302,7 +320,8 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				return textEditor;
 			case BIOPAXREF:
 				return biopaxEditor;
-				
+			case COMMENTS:
+				return commentsEditor;
 		}
 		return textEditor;
 	}
@@ -383,6 +402,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 					if(value instanceof PropertyPanel.AutoFillData) 
 						return ((PropertyPanel.AutoFillData)value).getMainValue();
 				case BIOPAXREF:
+				case COMMENTS:
 					return value;
 					
 			}

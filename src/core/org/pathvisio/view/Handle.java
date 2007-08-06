@@ -30,7 +30,7 @@ import org.pathvisio.view.LinAlg.Point;
  * objects on the drawing which are used to 
  * resize them or change their location.
  */
-class Handle extends VPathwayElement
+public class Handle extends VPathwayElement
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -75,6 +75,10 @@ class Handle extends VPathwayElement
 		this.parent = parent;
 	}
 
+	public VPathwayElement getParent() {
+		return parent;
+	}
+	
 	public int getDrawingOrder() {
 		return VPathway.DRAW_ORDER_HANDLE;
 	}

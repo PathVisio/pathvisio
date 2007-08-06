@@ -32,7 +32,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.CommonActions;
+import org.pathvisio.gui.swing.actions.CommonActions;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.view.VPathway;

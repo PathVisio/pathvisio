@@ -572,6 +572,9 @@ public class VPathway implements PathwayListener
 			redrawDirtyRect();
 		}
 		isDragging = false;
+		if(e.getButton() == MouseEvent.BUTTON3 && pressedObject != null) {
+			fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e, VPathwayEvent.ELEMENT_RIGHT_CLICKED));
+		}
 	}
 	
 	/**

@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -34,37 +35,43 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.gui.swing.CommonActions.CopyAction;
-import org.pathvisio.gui.swing.CommonActions.ExportAction;
-import org.pathvisio.gui.swing.CommonActions.ImportAction;
-import org.pathvisio.gui.swing.CommonActions.NewElementAction;
-import org.pathvisio.gui.swing.CommonActions.PasteAction;
-import org.pathvisio.gui.swing.CommonActions.SaveAction;
-import org.pathvisio.gui.swing.CommonActions.SaveAsAction;
-import org.pathvisio.gui.swing.CommonActions.ZoomAction;
+import org.pathvisio.gui.swing.actions.CommonActions.AlignAction;
+import org.pathvisio.gui.swing.actions.CommonActions.CopyAction;
+import org.pathvisio.gui.swing.actions.CommonActions.ImportAction;
+import org.pathvisio.gui.swing.actions.CommonActions.NewElementAction;
+import org.pathvisio.gui.swing.actions.CommonActions.PasteAction;
+import org.pathvisio.gui.swing.actions.CommonActions.SaveAction;
+import org.pathvisio.gui.swing.actions.CommonActions.SaveAsAction;
+import org.pathvisio.gui.swing.actions.CommonActions.StackAction;
+import org.pathvisio.gui.swing.actions.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.DataNodeDialog;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
+import org.pathvisio.gui.swing.menus.PathwayElementMenu;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.MouseEvent;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.swing.VPathwaySwing;
 
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
@@ -143,19 +150,19 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		JMenu alignMenu = new JMenu("Align");
 		JMenu stackMenu = new JMenu("Stack");
 		
-		alignMenu.add(new CommonActions.AlignAction(AlignType.CENTERX));
-		alignMenu.add(new CommonActions.AlignAction(AlignType.CENTERY));
-		alignMenu.add(new CommonActions.AlignAction(AlignType.LEFT));
-		alignMenu.add(new CommonActions.AlignAction(AlignType.RIGHT));
-		alignMenu.add(new CommonActions.AlignAction(AlignType.TOP));
-		alignMenu.add(new CommonActions.AlignAction(AlignType.WIDTH));
-		alignMenu.add(new CommonActions.AlignAction(AlignType.HEIGHT));
-		stackMenu.add(new CommonActions.StackAction(StackType.CENTERX));
-		stackMenu.add(new CommonActions.StackAction(StackType.CENTERY));
-		stackMenu.add(new CommonActions.StackAction(StackType.LEFT));
-		stackMenu.add(new CommonActions.StackAction(StackType.RIGHT));
-		stackMenu.add(new CommonActions.StackAction(StackType.TOP));
-		stackMenu.add(new CommonActions.StackAction(StackType.BOTTOM));
+		alignMenu.add(new AlignAction(AlignType.CENTERX));
+		alignMenu.add(new AlignAction(AlignType.CENTERY));
+		alignMenu.add(new AlignAction(AlignType.LEFT));
+		alignMenu.add(new AlignAction(AlignType.RIGHT));
+		alignMenu.add(new AlignAction(AlignType.TOP));
+		alignMenu.add(new AlignAction(AlignType.WIDTH));
+		alignMenu.add(new AlignAction(AlignType.HEIGHT));
+		stackMenu.add(new StackAction(StackType.CENTERX));
+		stackMenu.add(new StackAction(StackType.CENTERY));
+		stackMenu.add(new StackAction(StackType.LEFT));
+		stackMenu.add(new StackAction(StackType.RIGHT));
+		stackMenu.add(new StackAction(StackType.TOP));
+		stackMenu.add(new StackAction(StackType.BOTTOM));
 		
 		selectionMenu.add(alignMenu);
 		selectionMenu.add(stackMenu);
@@ -259,19 +266,19 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		tb.addSeparator();
 		
-		addToToolbar(new CommonActions.AlignAction(AlignType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.AlignAction(AlignType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.AlignAction(AlignType.LEFT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.AlignAction(AlignType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.AlignAction(AlignType.TOP), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.AlignAction(AlignType.WIDTH), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.AlignAction(AlignType.HEIGHT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.StackAction(StackType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.StackAction(StackType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.StackAction(StackType.LEFT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.StackAction(StackType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.StackAction(StackType.TOP), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new CommonActions.StackAction(StackType.BOTTOM), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.LEFT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.TOP), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.WIDTH), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new AlignAction(AlignType.HEIGHT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new StackAction(StackType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new StackAction(StackType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new StackAction(StackType.LEFT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new StackAction(StackType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new StackAction(StackType.TOP), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(new StackAction(StackType.BOTTOM), TB_GROUP_HIDE_ON_EDIT);
 	}
 
 	public static final String TB_GROUP_HIDE_ON_EDIT = "edit";
@@ -334,29 +341,26 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		return backpagePane;
 	}
 	
-	private Frame findParentFrame() {
-		Container c = this;
-		while (c != null) {
-			if (c instanceof Frame)
-				return (Frame) c;
-			c = c.getParent();
-		}
-		return (Frame) null;
-	}
-
 	public void vPathwayEvent(VPathwayEvent e) {
 		switch(e.getType()) {
 		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
 			if(e.getAffectedElement() instanceof Graphics) {
 				PathwayElement p = ((Graphics)e.getAffectedElement()).getGmmlData();
-				PathwayElementDialog pd = null;
-				switch(p.getObjectType()) {
-				case ObjectType.DATANODE:
-					pd = new DataNodeDialog(p, findParentFrame(), this);
+				if(p != null) {
+					PathwayElementDialog.getInstance(p, 
+							JOptionPane.getFrameForComponent(this), this).setVisible(true);
 				}
-				if(pd != null) pd.setVisible(true);
 			}
 			break;
+		case VPathwayEvent.ELEMENT_RIGHT_CLICKED:
+//			PathwayElementMenu m = PathwayElementMenu.getInstance(e.getAffectedElement());
+//			MouseEvent me = e.getMouseEvent();
+//			VPathwaySwing vps = (VPathwaySwing)e.getAffectedElement().getDrawing().getWrapper();
+//			Point location = me.getLocation();
+//			SwingUtilities.convertPointToScreen(location, vps);
+//			m.setLocation(location);
+//			m.setVisible(true);
+//			break;
 		case VPathwayEvent.EDIT_MODE_ON:
 			for(Component b : getToolbarGroup(TB_GROUP_HIDE_ON_EDIT)) {
 				b.setEnabled(true);

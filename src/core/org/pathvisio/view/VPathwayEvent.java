@@ -26,10 +26,12 @@ public class VPathwayEvent extends EventObject {
 	public static final int MODEL_LOADED = 3;
 	public static final int ELEMENT_DOUBLE_CLICKED = 4;
 	public static final int ELEMENT_DRAWN = 5;
+	public static final int ELEMENT_RIGHT_CLICKED = 6;
 	
 	int type;
 	VPathwayElement affectedElement;
 	Graphics2D g2d;
+	MouseEvent mouseEvent;
 	
 	public VPathwayEvent(VPathway source, int type) {
 		super(source);
@@ -42,9 +44,17 @@ public class VPathwayEvent extends EventObject {
 	}
 	
 	public VPathwayEvent(VPathway source, VPathwayElement affectedElement, Graphics2D g2d, int type) {
-		this(source, type);
-		this.affectedElement = affectedElement;
+		this(source, affectedElement, type);
 		this.g2d = g2d;
+	}
+	
+	public VPathwayEvent(VPathway source, VPathwayElement affectedElement, MouseEvent e, int type) {
+		this(source, affectedElement, type);
+		mouseEvent = e;
+	}
+	
+	public MouseEvent getMouseEvent() {
+		return mouseEvent;
 	}
 	
 	public VPathwayElement getAffectedElement() {

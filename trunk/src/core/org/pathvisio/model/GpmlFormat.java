@@ -342,8 +342,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				for (PathwayElement.Comment c : o.getComments())
 				{
 					Element f = new Element ("Comment", ns);
-					f.setText (c.comment);
-					setAttribute("Comment", "Source", f, c.source);
+					f.setText (c.getComment());
+					setAttribute("Comment", "Source", f, c.getSource());
 					root.addContent(f);
 				}				
 				
@@ -575,8 +575,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			for (PathwayElement.Comment c : o.getComments())
 			{
 				Element f = new Element ("Comment", e.getNamespace());
-				f.setText (c.comment);
-				setAttribute("Comment", "Source", f, c.source);
+				f.setText (c.getComment());
+				setAttribute("Comment", "Source", f, c.getSource());
 				e.addContent(f);
 			}
 		}

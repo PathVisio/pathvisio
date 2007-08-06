@@ -34,8 +34,7 @@ import java.util.Map;
 public enum PropertyType 
 {
 	// all
-	NOTES ("Notes", "Notes", PropertyClass.STRING),
-	COMMENT ("Comment", "Comment", PropertyClass.STRING),
+	COMMENTS ("Comments", "Comments", PropertyClass.COMMENTS),
 
 	// line, shape, brace, geneproduct, label
 	COLOR ("Color", "Color", PropertyClass.COLOR),
@@ -135,12 +134,10 @@ public enum PropertyType
 
 	public boolean isHidden()
 	{
-		System.out.println("Is hidden? " + this + ", " + hidden);
 		return hidden;
 	}
 
 	public void setHidden(boolean hide) {
-		System.out.println("hiding " + this);
 		hidden = hide;
 	}
 	

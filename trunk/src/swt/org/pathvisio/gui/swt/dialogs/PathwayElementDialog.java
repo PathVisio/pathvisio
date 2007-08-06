@@ -14,31 +14,31 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package org.pathvisio.gui.swt.dialogs;
 
-package org.pathvisio.model;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.model.PathwayElement;
 
-/**
- * The properties in {@link PropertyType} define properties of different classes,
- * all the possible classes are defined here.
- */
-public enum PropertyClass 
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER, 
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
-	BIOPAXREF,
-	COMMENTS,
+public abstract class PathwayElementDialog extends Dialog {
+	PathwayElement input;
+	
+	public PathwayElementDialog(Shell parent, PathwayElement e) {
+		super(parent);
+		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE);
+		input = e;
+	}
+	
+	protected final PathwayElement getInput() {
+		return input;
+	}
+	
+	
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, Dialog.OK, "Ok", true);
+	}
+	
+	protected abstract void refresh();
 }

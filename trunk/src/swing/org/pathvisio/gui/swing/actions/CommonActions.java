@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui.swing;
+package org.pathvisio.gui.swing.actions;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,8 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.Engine;
-import org.pathvisio.model.ConverterException;
+import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.StackType;
@@ -46,7 +47,7 @@ public abstract class CommonActions {
 	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
 	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	
-	static class ZoomAction extends AbstractAction {
+	public static class ZoomAction extends AbstractAction {
 		Component parent;
 		double zoomFactor;
 		
@@ -73,7 +74,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class SaveAsAction extends AbstractAction {
+	public static class SaveAsAction extends AbstractAction {
 		public SaveAsAction() {
 			super("Save as", new ImageIcon(IMG_SAVEAS));
 			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
@@ -85,7 +86,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class SaveAction extends AbstractAction {
+	public static class SaveAction extends AbstractAction {
 		public SaveAction() {
 			super("Save", new ImageIcon(IMG_SAVE));
 			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
@@ -98,7 +99,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class ImportAction extends AbstractAction {
+	public static class ImportAction extends AbstractAction {
 		MainPanel mainPanel;
 		
 		public ImportAction(MainPanel parent) {
@@ -159,7 +160,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class ExportAction extends AbstractAction {
+	public static class ExportAction extends AbstractAction {
 		public ExportAction() {
 			super("Export", new ImageIcon(IMG_EXPORT));
 			putValue(Action.SHORT_DESCRIPTION, "Export pathway");
@@ -172,7 +173,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class CopyAction extends AbstractAction {
+	public static class CopyAction extends AbstractAction {
 		public CopyAction() {
 			super("Copy", new ImageIcon(IMG_COPY));
 			String descr = "Copy selected pathway objects to clipboard";
@@ -186,7 +187,7 @@ public abstract class CommonActions {
 		}		
 	}
 	
-	static class PasteAction extends AbstractAction {
+	public static class PasteAction extends AbstractAction {
 		public PasteAction() {
 			super("Paste", new ImageIcon(IMG_PASTE));
 			String descr = "Paste pathway elements from clipboard";
@@ -200,7 +201,7 @@ public abstract class CommonActions {
 		}
 	}
 		
-	static class NewElementAction extends AbstractAction implements VPathwayListener {
+	public static class NewElementAction extends AbstractAction implements VPathwayListener {
 		int element;
 		public NewElementAction(int type) {
 			super();
@@ -300,7 +301,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class StackAction extends AbstractAction {
+	public static class StackAction extends AbstractAction {
 		StackType type;
 		
 		public StackAction(StackType t) {
@@ -315,7 +316,7 @@ public abstract class CommonActions {
 		}
 	}
 	
-	static class AlignAction extends AbstractAction {
+	public static class AlignAction extends AbstractAction {
 		AlignType type;
 
 		public AlignAction(AlignType t) {

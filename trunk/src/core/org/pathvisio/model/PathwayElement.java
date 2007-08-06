@@ -59,9 +59,33 @@ public class PathwayElement implements GraphIdContainer
 			return super.clone();
 		}
 
-		public String source;
-
-		public String comment;
+		private String source;
+		private String comment;
+		
+		public String getSource() { return source; }
+		public String getComment() { return comment; }
+		
+		public void setSource(String s) {
+			if(s != null && !source.equals(s)) {
+				source = s;
+				changed();
+			}
+		}
+		
+		public void setComment(String c) {
+			if(c != null && !comment.equals(c)) {
+				comment = c;
+				changed();
+			}
+		}
+		
+		private void changed() {
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
+		}
+		
+		public String toString() {
+			return comment + " (" + source + ")";
+		}
 	}
 
 	public class MPoint implements Cloneable, GraphIdContainer,
@@ -330,13 +354,10 @@ public class PathwayElement implements GraphIdContainer
 	public List<PropertyType> getAttributes(boolean fAdvanced)
 	{
 		List<PropertyType> result = new ArrayList<PropertyType>();
-		result.add(PropertyType.NOTES);
-		result.add(PropertyType.COMMENT);
 		switch (getObjectType())
 		{
 		case ObjectType.MAPPINFO:
-			result.add(PropertyType.NOTES);
-			result.add(PropertyType.COMMENT);
+			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.MAPINFONAME);
 			result.add(PropertyType.ORGANISM);
 			result.add(PropertyType.DATA_SOURCE);
@@ -358,8 +379,7 @@ public class PathwayElement implements GraphIdContainer
 			}
 			break;
 		case ObjectType.DATANODE:
-			result.add(PropertyType.NOTES);
-			result.add(PropertyType.COMMENT);
+			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.CENTERX);
 			result.add(PropertyType.CENTERY);
 			result.add(PropertyType.WIDTH);
@@ -379,8 +399,7 @@ public class PathwayElement implements GraphIdContainer
 			}
 			break;
 		case ObjectType.SHAPE:
-			result.add(PropertyType.NOTES);
-			result.add(PropertyType.COMMENT);
+			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.CENTERX);
 			result.add(PropertyType.CENTERY);
 			result.add(PropertyType.WIDTH);
@@ -398,8 +417,7 @@ public class PathwayElement implements GraphIdContainer
 			}
 			break;
 		case ObjectType.LINE:
-			result.add(PropertyType.NOTES);
-			result.add(PropertyType.COMMENT);
+			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.COLOR);
 			result.add(PropertyType.STARTX);
 			result.add(PropertyType.STARTY);
@@ -417,8 +435,7 @@ public class PathwayElement implements GraphIdContainer
 			}
 			break;
 		case ObjectType.LABEL:
-			result.add(PropertyType.NOTES);
-			result.add(PropertyType.COMMENT);
+			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.XREF);
 			result.add(PropertyType.CENTERX);
 			result.add(PropertyType.CENTERY);
@@ -463,8 +480,8 @@ public class PathwayElement implements GraphIdContainer
 	{
 		switch (key)
 		{
-		case COMMENT:
-			setComment((String) value);
+		case COMMENTS:
+			setComments((List<Comment>) value);
 			break;
 		case COLOR:
 			setColor((Color) value);
@@ -618,8 +635,8 @@ public class PathwayElement implements GraphIdContainer
 		Object result = null;
 		switch (x)
 		{
-		case COMMENT:
-			result = getComment();
+		case COMMENTS:
+			result = getComments();
 			break;
 		case COLOR:
 			result = getColor();
@@ -1064,6 +1081,11 @@ public class PathwayElement implements GraphIdContainer
 		comments.add(new Comment(comment, source));
 		fireObjectModifiedEvent(new PathwayEvent(this,
 				PathwayEvent.MODIFIED_GENERAL));
+	}
+	
+	public void removeComment(Comment comment) {
+		comments.remove(comment);
+		fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	/**

@@ -14,31 +14,25 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package org.pathvisio.gui.swing.panels;
 
-package org.pathvisio.model;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
-/**
- * The properties in {@link PropertyType} define properties of different classes,
- * all the possible classes are defined here.
- */
-public enum PropertyClass 
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER, 
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
-	BIOPAXREF,
-	COMMENTS,
+import org.pathvisio.model.PathwayElement;
+
+public abstract class PathwayElementPanel extends JPanel {
+	PathwayElement input;
+	JTabbedPane dialogPane;
+	
+	protected PathwayElement getInput() {
+		return input;
+	}
+	
+	public void setInput(PathwayElement e) {
+		input = e;
+		refresh();
+	}
+	
+	public abstract void refresh();
 }

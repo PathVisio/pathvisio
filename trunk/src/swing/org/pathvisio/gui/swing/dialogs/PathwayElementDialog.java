@@ -23,7 +23,9 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -31,34 +33,39 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import org.pathvisio.Engine;
+import org.pathvisio.gui.swing.panels.CommentPanel;
+import org.pathvisio.gui.swing.panels.PathwayElementPanel;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.view.VPathway;
 
-public abstract class PathwayElementDialog extends JDialog implements ActionListener {
+public class PathwayElementDialog extends JDialog implements ActionListener {
 	static final String OK = "Ok";
 	static final String CANCEL = "Cancel";
 	
+	public static PathwayElementDialog getInstance(PathwayElement e, Frame frame, Component locationComp) {
+		switch(e.getObjectType()) {
+		case ObjectType.DATANODE:
+			return new DataNodeDialog(e, frame, locationComp);
+		default:
+			return new PathwayElementDialog(e, frame, "Properties", locationComp);
+		}
+	}
+	
 	PathwayElement input;
-	JPanel dialogPane;
-	
-	protected PathwayElement getInput() {
-		return input;
-	}
-	
-	public void setInput(PathwayElement e) {
-		input = e;
-		storeState();
-		refresh();
-	}
-	
-	protected abstract void refresh();
-	
+	JTabbedPane dialogPane;
+	private List<PathwayElementPanel> panels;
+	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
+		
 	public PathwayElementDialog(PathwayElement e, Frame frame, String title, Component locationComp) {
 		super(frame, "DataNode properties", true);
-
+		
+		panels = new ArrayList<PathwayElementPanel>();
+		
 		JButton cancelButton = new JButton(CANCEL);
 		cancelButton.addActionListener(this);
 
@@ -67,8 +74,8 @@ public abstract class PathwayElementDialog extends JDialog implements ActionList
 		setButton.addActionListener(this);
 		getRootPane().setDefaultButton(setButton);
 		
-		dialogPane = new JPanel();
-		createDialogContents(dialogPane);
+		dialogPane = new JTabbedPane();
+		createTabs(dialogPane);
 		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -87,7 +94,22 @@ public abstract class PathwayElementDialog extends JDialog implements ActionList
 		setInput(e);
 		}
 
-	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
+	protected PathwayElement getInput() {
+		return input;
+	}
+	
+	public void setInput(PathwayElement e) {
+		input = e;
+		storeState();
+		refresh();
+	}
+	
+	protected void refresh() {
+		for(PathwayElementPanel p : panels) {
+			p.setInput(input);
+		}
+	}
+	
 	
 	protected void storeState() {
 		PathwayElement e = getInput();
@@ -103,7 +125,19 @@ public abstract class PathwayElementDialog extends JDialog implements ActionList
 		}
 	}
 	
-	protected abstract void createDialogContents(Container parent);
+	private void createTabs(JTabbedPane parent) {
+		addPathwayElementPanel(parent, new CommentPanel());
+		addCustomTabs(parent);
+	}
+		
+	protected void addPathwayElementPanel(JTabbedPane parent, PathwayElementPanel p) {
+		parent.add("Comments", p);
+		panels.add(p);
+	}
+	
+	protected void addCustomTabs(JTabbedPane parent) {
+		//To be implemented by subclasses
+	}
 	
 	protected void okPressed() {
 		VPathway p = Engine.getCurrent().getActiveVPathway();

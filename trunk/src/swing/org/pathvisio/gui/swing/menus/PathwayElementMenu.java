@@ -14,31 +14,27 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package org.pathvisio.gui.swing.menus;
 
-package org.pathvisio.model;
+import java.awt.Rectangle;
 
-/**
- * The properties in {@link PropertyType} define properties of different classes,
- * all the possible classes are defined here.
- */
-public enum PropertyClass 
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER, 
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
-	BIOPAXREF,
-	COMMENTS,
+import javax.swing.JPopupMenu;
+
+import org.pathvisio.gui.swing.actions.PropertiesAction;
+import org.pathvisio.view.Handle;
+import org.pathvisio.view.VPathwayElement;
+
+public class PathwayElementMenu extends JPopupMenu {
+	VPathwayElement element;
+	
+	private PathwayElementMenu(VPathwayElement e) {
+		element = e;
+		add(new PropertiesAction(e));
+		Rectangle b = e.getVBounds();
+	}
+	
+	public static PathwayElementMenu getInstance(VPathwayElement e) {
+		if(e instanceof Handle) e = ((Handle)e).getParent();
+		return new PathwayElementMenu(e);
+	}
 }

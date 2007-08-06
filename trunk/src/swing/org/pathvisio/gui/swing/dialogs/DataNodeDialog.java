@@ -17,12 +17,14 @@
 package org.pathvisio.gui.swing.dialogs;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Frame;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -46,8 +48,9 @@ public class DataNodeDialog extends PathwayElementDialog {
 		pack();
 	}
 	
-	protected void createDialogContents(Container parent) {
-		parent.setLayout(new GridLayout(3, 2));
+	protected void addCustomTabs(JTabbedPane parent) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
 		JLabel symLabel = new JLabel("Symbol");
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
@@ -55,10 +58,23 @@ public class DataNodeDialog extends PathwayElementDialog {
 		idText = new JTextField();
 		dbCombo = new JComboBox(DataSources.dataSources);
 		
-		parent.add(symLabel);	parent.add(symText);
-		parent.add(idLabel);	parent.add(idText);
-		parent.add(dbLabel);	parent.add(dbCombo);
-		
+		GridBagConstraints c = new GridBagConstraints();
+		c.ipadx = c.ipady = 5;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		panel.add(symLabel, c);
+		c.gridy = 1;
+		panel.add(idLabel, c);
+		c.gridy = 2;
+		panel.add(dbLabel, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		panel.add(symText, c);
+		c.gridy = 1;
+		panel.add(idText, c);
+		c.gridy = 2;
+		panel.add(dbCombo, c);
+
 		symText.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) { setText();	}
 			public void insertUpdate(DocumentEvent e) {	setText(); }
@@ -67,5 +83,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 				getInput().setTextLabel(symText.getText());
 			}
 		});
+		
+		parent.add("Annotation", panel);
+		parent.setSelectedComponent(panel);
 	}
 }

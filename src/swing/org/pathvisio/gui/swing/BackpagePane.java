@@ -16,8 +16,6 @@
 //
 package org.pathvisio.gui.swing;
 
-import java.util.Vector;
-
 import javax.swing.JEditorPane;
 
 import org.pathvisio.ApplicationEvent;
@@ -34,9 +32,8 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 
 public class BackpagePane extends JEditorPane implements SelectionListener, ApplicationEventListener {
 	PathwayElement input;
-	int maxThreads = 5;
-	ThreadGroup threads;
-	Vector<Thread> runningThreads = new Vector<Thread>();
+	final static int maxThreads = 5;
+	volatile ThreadGroup threads;
 	volatile PathwayElement lastSelected;
 	
 	public BackpagePane() {
@@ -48,57 +45,38 @@ public class BackpagePane extends JEditorPane implements SelectionListener, Appl
 		VPathway vp = Engine.getCurrent().getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 		
-		threads = new ThreadGroup("backpage-queries");
-		
+		threads = new ThreadGroup("backpage-queries");		
 	}
 
 	public void setInput(final PathwayElement e) {
-		if(e == null) {
+		//System.err.println("===== SetInput Called ==== " + e);
+		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			setText(Gdb.getBackpageHTML(null, null, null));
 		} else if(input != e) {
-			System.err.println("Setting input " + e);
+			//System.err.println("\tSetting input " + e + " using " + threads);
 			//First check if the number of running threads is not too high
 			//(may happen when many SelectionEvent follow very fast)
-			if(runningThreads.size() < maxThreads) {
-				System.err.println("Query in thread " + e);
-				input = e;
-				if(e.getObjectType() == ObjectType.DATANODE) {
-					Thread t = new Thread() {
-						public void run() {
-							System.err.println("++++++++++++++");
-							System.err.println("Adding thread " + this);
-							runningThreads.add(this);
-							setText(Gdb.getBackpageHTML(
-									e.getGeneID(), 
-									e.getSystemCode(), 
-									e.getBackpageHead()));
-							System.err.println("Removing thread " + this);
-							System.err.println("++++++++++++++");
-							runningThreads.remove(this);
-							check();
-						}
-					};
-					t.setPriority(Thread.MIN_PRIORITY);
-					t.start();
-					lastSelected = null;
-				}				
+			//System.err.println("\tNr of threads: " + threads.activeCount());
+			if(threads.activeCount() < maxThreads) {
+					input = e;
+					QueryThread qt = new QueryThread(e);
+					qt.start();
+					lastSelected = null;		
 			} else {
-				System.err.println("Queue lastSelected " + e);
+				//System.err.println("\tQueue lastSelected " + e);
 				//When we're on our maximum, remember this element
 				//and ignore it when a new one is selected
 				lastSelected = e;
 			}
-			System.err.println("--------------");
 		}
 	}
 
 	private void check() {
-		System.err.println("=====CHECK===");
+		//System.err.println("===== Check Called === " + lastSelected);
 		if(lastSelected != null) {
-			System.err.println("From checked " + lastSelected);
+			//System.err.println("From checked " + lastSelected);
 			setInput(lastSelected);
 		}
-		System.err.println("==============");
 	}
 	
 	public void selectionEvent(SelectionEvent e) {
@@ -123,6 +101,23 @@ public class BackpagePane extends JEditorPane implements SelectionListener, Appl
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
 			((VPathway)e.source).addSelectionListener(this);
+		}
+	}
+	
+	class QueryThread extends Thread {
+		PathwayElement e;
+		QueryThread(PathwayElement e) {
+			super(threads, e.getGeneID() + e.hashCode());
+			this.e = e;
+		}
+		public void run() {
+			//System.err.println("+++++ Thread " + this + " started +++++");
+			setText(Gdb.getBackpageHTML(
+					e.getGeneID(), 
+					e.getSystemCode(), 
+					e.getBackpageHead()));
+			check();
+			//System.err.println("+++++ Thread " + this + " ended +++++");
 		}
 	}
 }

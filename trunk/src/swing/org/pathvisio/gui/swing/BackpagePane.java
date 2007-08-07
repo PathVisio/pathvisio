@@ -35,6 +35,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 public class BackpagePane extends JEditorPane implements SelectionListener, ApplicationEventListener {
 	PathwayElement input;
 	int maxThreads = 5;
+	ThreadGroup threads;
 	Vector<Thread> runningThreads = new Vector<Thread>();
 	volatile PathwayElement lastSelected;
 	
@@ -46,6 +47,8 @@ public class BackpagePane extends JEditorPane implements SelectionListener, Appl
 		Engine.getCurrent().addApplicationEventListener(this);
 		VPathway vp = Engine.getCurrent().getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
+		
+		threads = new ThreadGroup("backpage-queries");
 		
 	}
 

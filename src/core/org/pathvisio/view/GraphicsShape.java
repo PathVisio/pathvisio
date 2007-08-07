@@ -112,13 +112,6 @@ public abstract class GraphicsShape extends Graphics {
 	
 	public Handle[] getHandles()
 	{
-		if( this instanceof SelectionBox) {
-			// Only corner handles
-			return new Handle[] {
-					handleNE, handleSE,
-					handleSW, handleNW
-			};
-		}
 		if(	this instanceof GeneProduct || 
 			this instanceof Label) {
 			// No rotation handle for these objects
@@ -255,12 +248,14 @@ public abstract class GraphicsShape extends Graphics {
 //		SwtUtils.rotateGC(gc, tr, (float)Math.toDegrees(gdata.getRotation()), 
 //				getVCenterX(), getVCenterY());
 //	}
-	
-	public void adjustToHandle(Handle h) {
+
+
+	public void adjustToHandle(Handle h, double vnewx, double vnewy)
+	{
 		//Rotation
 		if 	(h == handleR) {
 			Point def = mRelativeToCenter(getMHandleLocation(h));
-			Point cur = mRelativeToCenter(new Point(h.mCenterx, h.mCentery));
+			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));
 			
 			setRotation(gdata.getRotation() + LinAlg.angle(def, cur));
 			
@@ -268,7 +263,7 @@ public abstract class GraphicsShape extends Graphics {
 		}
 					
 		// Transformation
-		Point mih = mToInternal(new Point(h.mCenterx, h.mCentery));
+		Point mih = mToInternal(new Point(mFromV(vnewx), mFromV(vnewy)));
 		
 		double mdx = 0;
 		double mdy = 0;
@@ -291,13 +286,17 @@ public abstract class GraphicsShape extends Graphics {
 			mdx = -(mih.x + gdata.getMWidth()/2);
 			mdw = -mdx;
 		};
+
+		double newmw = gdata.getMWidth() + mdx;
+		double newmh = gdata.getMHeight() + mdy;
+
+		Point mnc = mCalcNewCenter (newmw, newmh);
 		
-		Point mnc = mCalcNewCenter(gdata.getMWidth() + mdw, gdata.getMHeight() + mdh);
 //		gdata.dontFireEvents(1);
-		gdata.setMHeight(gdata.getMHeight() + mdy);
-		gdata.setMWidth(gdata.getMWidth() + mdx);
-		setMCenter(mnc);		
-	
+		gdata.setMWidth(newmw);
+		gdata.setMHeight(newmh);
+		setMCenter (mnc);
+						  
 		//In case object had zero width, switch handles
 		if(gdata.getMWidth() < 0) {
 			negativeWidth(h);
@@ -349,55 +348,34 @@ public abstract class GraphicsShape extends Graphics {
 	 * Sets the handles at the correct location;
 	 * @param ignore the position of this handle will not be adjusted
 	 */
-	private void setHandleLocation(Handle ignore)
+	protected void setHandleLocation()
 	{
 		Point p;
 		p = getMHandleLocation(handleN);
-		if(ignore != handleN) handleN.setMLocation(p.x, p.y);
+		handleN.setMLocation(p.x, p.y);
 		p = getMHandleLocation(handleE);
-		if(ignore != handleE) handleE.setMLocation(p.x, p.y);
+		handleE.setMLocation(p.x, p.y);
 		p = getMHandleLocation(handleS);
-		if(ignore != handleS) handleS.setMLocation(p.x, p.y);
+		handleS.setMLocation(p.x, p.y);
 		p = getMHandleLocation(handleW);
-		if(ignore != handleW) handleW.setMLocation(p.x, p.y);
+		handleW.setMLocation(p.x, p.y);
 		
 		p = getMHandleLocation(handleNE);
-		if(ignore != handleNE) handleNE.setMLocation(p.x, p.y);
+		handleNE.setMLocation(p.x, p.y);
 		p = getMHandleLocation(handleSE);
-		if(ignore != handleSE) handleSE.setMLocation(p.x, p.y);
+		handleSE.setMLocation(p.x, p.y);
 		p = getMHandleLocation(handleSW);
-		if(ignore != handleSW) handleSW.setMLocation(p.x, p.y);
+		handleSW.setMLocation(p.x, p.y);
 		p = getMHandleLocation(handleNW);
-		if(ignore != handleNW) handleNW.setMLocation(p.x, p.y);
+		handleNW.setMLocation(p.x, p.y);
 
 		p = getMHandleLocation(handleR);
-		if(ignore != handleR) handleR.setMLocation(p.x, p.y);
+		handleR.setMLocation(p.x, p.y);
 		
 		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
 	}
-	
-	/**
-	 * Sets the handles at the correct location
-	 */
-	public void setHandleLocation()
-	{
-		setHandleLocation(null);
-	}
-	
-	/**
-	 * Get the default location of the given handle 
-	 * (in coordinates relative to the canvas)
-	 * @param h
-	 */
-	protected Point getVHandleLocation(Handle h) 
-	{
-		Point mp = getMHandleLocation (h);
-		if (mp != null)			
-			return new Point (vFromM(mp.x), vFromM(mp.y));
-		else return null;
-	}
-
-	protected Point getMHandleLocation(Handle h) {
+		
+	private Point getMHandleLocation(Handle h) {
 		if(h == handleN) return mToExternal(0, -gdata.getMHeight()/2);
 		if(h == handleE) return mToExternal(gdata.getMWidth()/2, 0);
 		if(h == handleS) return mToExternal(0,  gdata.getMHeight()/2);
@@ -422,7 +400,7 @@ public abstract class GraphicsShape extends Graphics {
 	 * Will be ignored for N, E, S and W handles
 	 * @return	The opposite handle
 	 */
-	Handle getOppositeHandle(Handle h, int direction) {
+	private Handle getOppositeHandle(Handle h, int direction) {
 		//Ignore direction for N, E, S and W
 		if(h == handleN) return handleS;
 		if(h == handleE) return handleW;
@@ -444,7 +422,7 @@ public abstract class GraphicsShape extends Graphics {
 		}
 	}
 	
-	int[] handleFromMatrix(Handle h) {
+	private int[] handleFromMatrix(Handle h) {
 		for(int x = 0; x < 2; x++) {
 			for(int y = 0; y < 2; y++) {
 				if(handleMatrix[x][y] == h) return new int[] {x,y};

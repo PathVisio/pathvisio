@@ -107,10 +107,12 @@ public class VPoint extends VPathwayElement {
 		return null;
 	}
 	
-	protected void adjustToHandle(Handle h) {
-		double mcx = h.mCenterx;
-		double mcy = h.mCentery;
-		for(MPoint p : mPoints) {
+	protected void adjustToHandle(Handle h, double vnewx, double vnewy)
+	{
+		double mcx = mFromV (vnewx);
+		double mcy = mFromV (vnewy);
+		for(MPoint p : mPoints)
+		{
 			p.setX(mcx);
 			p.setY(mcy);
 		}

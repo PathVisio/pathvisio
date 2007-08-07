@@ -49,7 +49,7 @@ public class LinAlg
 		return Math.signum(p1.x * p2.y - p1.y * p2.x);
 	}
 	
-	public static double dot(Point v1, Point v2) 
+	private static double dot(Point v1, Point v2) 
 	{
 		double[] d1 = v1.asArray();
 		double[] d2 = v2.asArray();
@@ -57,13 +57,36 @@ public class LinAlg
 		for(int i = 0; i < Math.min(d1.length, d2.length); i++) sum += d1[i]*d2[i];
 		return sum;
 	}
+
+	/**
+	   Projection of point q on a line through p with direction vector v
+
+	   If p is 0,0, it's the same as the two-argument function with the same name.
+	 */
+	public static Point project (Point p, Point q, Point v)
+	{
+		Point q2 = new Point (q.x - p.x, q.y - p.y);
+		double vlen = dot (v, v);
+		if (vlen == 0)
+		{
+			return p;
+		}
+		else
+		{
+			double c = dot (q2, v) / dot (v, v);
+			return new Point (p.x + v.x * c, p.y + v.y * c);
+		}
+	}
 	
+	/**
+	  Projection of p1 on p2:
+	  
+	   p1.p2
+	   ----- . p2
+	   p2.p2
+	*/
 	public static Point project(Point p1, Point p2) 
 	{
-		//Projection of p1 on p2:
-		// p1.p2
-		// ----- . p2
-		// p2.p2
 		double c = dot(p1, p2) / dot(p2, p2);
 		return new Point(p2.x * c, p2.y * c);
 	}

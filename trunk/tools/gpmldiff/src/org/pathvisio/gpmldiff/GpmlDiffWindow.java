@@ -16,29 +16,20 @@
 //
 package org.pathvisio.gpmldiff;
 
-
-
+import java.io.File;
 import java.io.IOException;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.actions.CommonActions;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayEvent;
+import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-class GpmlDiffWindow extends JFrame
+class GpmlDiffWindow extends JFrame implements VPathwayListener
 {
 	private static final int WINDOW_WIDTH = 1000;
 	private static final int WINDOW_HEIGHT = 500;
@@ -46,14 +37,65 @@ class GpmlDiffWindow extends JFrame
 	private JScrollPane[] pwyPane = new JScrollPane[2];
 	private JMenuBar menubar;
 
-	private static final int PWY_OLD = 0;
-	private static final int PWY_NEW = 1;
+	public static final int PWY_OLD = 0;
+	public static final int PWY_NEW = 1;
 
 	private VPathwaySwing[] wrapper = { null, null };
 	private VPathway[] view = { null, null };
 	private PwyDoc[] doc = { null, null };
 
+	private PanelOutputter outputter = null;
+
 	double zoomFactor = 100;
+	JPanel centerPanel = null;
+	
+
+	public void setFile (int pwyType, File f)
+	{
+		Pathway pwy = new Pathway();
+		doc[pwyType] = PwyDoc.read (f);
+		assert (doc[pwyType] != null);
+					
+		wrapper[pwyType] = new VPathwaySwing(pwyPane[pwyType]);
+
+		view[pwyType] = wrapper[pwyType].createVPathway();
+		view[pwyType].addVPathwayListener(this);
+		view[pwyType].setSelectionEnabled (false);
+		view[pwyType].fromGmmlData(doc[pwyType].getPathway());
+		view[pwyType].setPctZoom (zoomFactor);
+
+		outputter = null; // invalidate putative remaining outputter
+		
+		if (view[PWY_OLD] != null && view[PWY_NEW] != null)
+		{
+			SearchNode result = doc[PWY_OLD].findCorrespondence (doc[PWY_NEW], new BetterSim(), new BasicCost());
+			outputter = new PanelOutputter(view[PWY_OLD], view[PWY_NEW]);
+			doc[PWY_OLD].writeResult (result, doc[PWY_NEW], outputter);
+			try
+			{
+				outputter.flush();
+			}
+			catch (IOException ex) { ex.printStackTrace(); }
+
+			// merge models of the two pathways
+			// TODO: find solution for inequal sized pathways.
+			pwyPane[0].getHorizontalScrollBar().setModel(
+				pwyPane[1].getHorizontalScrollBar().getModel());
+			pwyPane[0].getVerticalScrollBar().setModel(
+				pwyPane[1].getVerticalScrollBar().getModel());
+		}
+				
+		/*catch (ConverterException ce)
+		  {
+		  JOptionPane.showMessageDialog (
+		  parent,
+		  "Exception while opening gpml file.\n" +
+		  "Please check that the file you opened is a valid Gpml file.",
+		  "Open Error", JOptionPane.ERROR_MESSAGE);
+		  Logger.log.error ("Error opening gpml", ce);
+		  }*/
+		
+	}
 	
 	private class LoadPwyAction extends AbstractAction
 	{
@@ -79,46 +121,7 @@ class GpmlDiffWindow extends JFrame
 			int status = jfc.showDialog (parent, "Load");
 			if (status == JFileChooser.APPROVE_OPTION)
 			{
-				Pathway pwy = new Pathway();
-				//try
-				//{
-					doc[pwyType] = PwyDoc.read (jfc.getSelectedFile());
-					assert (doc[pwyType] != null);
-					
-					wrapper[pwyType] = new VPathwaySwing(pwyPane[pwyType]);
-
-					view[pwyType] = wrapper[pwyType].createVPathway();
-					view[pwyType].fromGmmlData(doc[pwyType].getPathway());
-					view[pwyType].setPctZoom (zoomFactor);
-					
-					if (view[PWY_OLD] != null && view[PWY_NEW] != null)
-					{
-						SearchNode result = doc[PWY_OLD].findCorrespondence (doc[PWY_NEW], new BetterSim(), new BasicCost());
-						PanelOutputter outputter = new PanelOutputter(view[PWY_OLD], view[PWY_NEW]);
-						doc[PWY_OLD].writeResult (result, doc[PWY_NEW], outputter);
-						try
-						{
-							outputter.flush();
-						}
-						catch (IOException ex) { ex.printStackTrace(); }
-
-						// merge models of the two pathways
-						pwyPane[0].getHorizontalScrollBar().setModel(
-							pwyPane[1].getHorizontalScrollBar().getModel());
-						pwyPane[0].getVerticalScrollBar().setModel(
-							pwyPane[1].getVerticalScrollBar().getModel());
-					}
-					/*}
-				
-				catch (ConverterException ce)
-				{
-					JOptionPane.showMessageDialog (
-						parent,
-						"Exception while opening gpml file.\n" +
-						"Please check that the file you opened is a valid Gpml file.",
-						"Open Error", JOptionPane.ERROR_MESSAGE);
-					Logger.log.error ("Error opening gpml", ce);
-					}*/
+				setFile (pwyType, jfc.getSelectedFile());
 			}
 		}
 	}
@@ -214,7 +217,7 @@ class GpmlDiffWindow extends JFrame
 
 		setSize (WINDOW_WIDTH, WINDOW_HEIGHT);
 		Container contents = getContentPane();
-		contents.setLayout (new GridLayout(1,2));
+		contents.setLayout (new BoxLayout(contents, BoxLayout.X_AXIS));
 		setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 		
 		menubar = new JMenuBar();
@@ -226,9 +229,38 @@ class GpmlDiffWindow extends JFrame
 			pwyPane[i] = new JScrollPane();
 		}
 
+		centerPanel = new JPanel();
+		
 		contents.add (pwyPane[PWY_OLD]);
+		pwyPane[PWY_OLD].setPreferredSize (new Dimension (400, 300));
+		contents.add (centerPanel);
+		centerPanel.setPreferredSize (new Dimension (200, 300));
+		centerPanel.setMinimumSize (new Dimension (200, 300));
 		contents.add (pwyPane[PWY_NEW]);
+		pwyPane[PWY_NEW].setPreferredSize (new Dimension (400, 300));
 		validate();
 	}
 
+	public void vPathwayEvent (VPathwayEvent e)
+	{
+		if (e.getType() == VPathwayEvent.ELEMENT_CLICKED_DOWN)
+		{
+			if (e.getSource() == view[PWY_OLD])
+			{
+				System.out.println ("Element clicked in old pathway");
+			}
+			else if (e.getSource() == view[PWY_NEW])
+			{
+				System.out.println ("Element clicked in new pathway");
+			}
+			if (outputter != null)
+			{
+				PanelOutputter.ModData mod = outputter.modsByElt.get (e.getAffectedElement());
+				if (mod != null)
+				{
+					System.out.println ("Modifiied! " + mod.hint);
+				}
+			}		
+		}
+	}
 }

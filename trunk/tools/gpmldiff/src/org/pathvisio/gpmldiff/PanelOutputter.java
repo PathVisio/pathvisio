@@ -68,11 +68,11 @@ class PanelOutputter extends DiffOutputter
 		if (velt != null) velt.highlight (Color.RED);
 	}
 
-		/**
+	/**
 	   private data about a modification,
 	   for displaying hints in the middle.
 	 */
-	private class ModData implements Comparable<ModData>
+	public class ModData implements Comparable<ModData>
 	{
 		int midy;
 		String hint;
@@ -118,7 +118,7 @@ class PanelOutputter extends DiffOutputter
 		return null;
 	}
 
-		PathwayElement curOldElt = null;
+	PathwayElement curOldElt = null;
 	PathwayElement curNewElt = null;
 	Set<String> curHint = null;
 	
@@ -135,15 +135,15 @@ class PanelOutputter extends DiffOutputter
 	
 	public void modifyEnd ()
 	{
-		VPathwayElement velt = findElt (curOldElt, vpwy[PWY_OLD]);
-		assert (velt != null);
-		velt.highlight (Color.YELLOW);
-		Rectangle r1 = velt.getVBounds();
+		VPathwayElement veltOld = findElt (curOldElt, vpwy[PWY_OLD]);
+		assert (veltOld != null);
+		veltOld.highlight (Color.YELLOW);
+		Rectangle r1 = veltOld.getVBounds();
 		
-		velt = findElt (curNewElt, vpwy[PWY_NEW]);
-		assert (velt != null);
-		velt.highlight (Color.YELLOW);
-		Rectangle r2 = velt.getVBounds();
+		VPathwayElement veltNew = findElt (curNewElt, vpwy[PWY_NEW]);
+		assert (veltNew != null);
+		veltNew.highlight (Color.YELLOW);
+		Rectangle r2 = veltNew.getVBounds();
 
 		String completeHint = "";
 		for (String hint : curHint)
@@ -152,21 +152,26 @@ class PanelOutputter extends DiffOutputter
 			completeHint += ", ";
 		}
 		completeHint += "changed";
-		
-		modifications.add (
-			new ModData (
+
+		ModData mod = new ModData (
 				(int)(r1.getX() + r1.getWidth() / 2),
 				(int)(r1.getY() + r1.getHeight() / 2),
 				(int)(r2.getX() + r2.getWidth() / 2),
 				(int)(r2.getY() + r2.getHeight() / 2),
-				completeHint)
-			);
+				completeHint);
+
+		modifications.add (mod);
+		modsByElt.put (veltOld, mod);
+		modsByElt.put (veltNew, mod);
 		
 		curOldElt = null;
 		curNewElt = null;
 	}
 
 	private List <ModData> modifications = new ArrayList<ModData>();
+
+	// TODO: accessors
+	public Map <VPathwayElement, ModData> modsByElt = new HashMap<VPathwayElement, ModData>();
 	
 	public void modifyAttr(String attr, String oldVal, String newVal)
 	{

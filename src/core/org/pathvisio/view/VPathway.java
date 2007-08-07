@@ -64,6 +64,21 @@ public class VPathway implements PathwayListener
 	private static final long serialVersionUID = 1L;
 	static final double M_PASTE_OFFSET = 10 * 15;
 	public static final double ZOOM_TO_FIT = -1;
+
+	private boolean selectionEnabled = true;
+
+	/**
+	   Returns true if the selection capability of this VPathway is enabled
+	 */
+	public boolean getSelectionEnabled() { return selectionEnabled; }
+
+	/**
+	   You can disable the selection capability of this VPathway by
+	   passing false.  This is not used within Pathvisio, but it is
+	   meant for embedding VPathway in other applications, where
+	   selections may not be needed.
+	 */
+	public void setSelectionEnabled(boolean value) { selectionEnabled = value; }
 	
 	private VPathwayWrapper parent; // may be null
 	
@@ -710,6 +725,8 @@ public class VPathway implements PathwayListener
 	 */
 	private void startSelecting(Point2D vp)
 	{
+		if (!selectionEnabled) return;
+		
 		vPreviousX = (int)vp.getX();
 		vPreviousY = (int)vp.getY();
 		isDragging = true;
@@ -815,6 +832,8 @@ public class VPathway implements PathwayListener
 	
 	void doClickSelect(Point2D p2d, MouseEvent e)
 	{
+		if (!selectionEnabled) return;
+
 		//Ctrl pressed, add/remove from selection
 		boolean ctrlPressed =  e.isKeyDown(MouseEvent.M_CTRL);
 		if(ctrlPressed) 

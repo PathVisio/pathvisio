@@ -16,11 +16,29 @@
 //
 package org.pathvisio.gpmldiff;
 
+import java.io.File;
+
 class GpmlDiffGui
 {
 	public static void main (String[] argv)
-	{
+	{		
 		GpmlDiffWindow window = new GpmlDiffWindow();
+		if (argv.length > 0)
+		{
+			File f = new File (argv[0]);
+			if (f.exists())
+			{				
+				window.setFile(GpmlDiffWindow.PWY_OLD, f);
+				if (argv.length > 1)
+				{
+					f = new File (argv[1]);
+					if (f.exists())
+					{
+						window.setFile (GpmlDiffWindow.PWY_NEW, f);
+					}
+				}
+			}
+		}
 		window.setVisible (true);
 	}
 }

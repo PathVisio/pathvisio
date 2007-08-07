@@ -89,13 +89,6 @@ public class AppletMain extends JApplet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("INIT ENDED....");
-		Logger.log.trace("INIT ENDED....");
-	}
-		
-	public void start() {
-		System.out.println("START CALLED....");
-		Logger.log.trace("START CALLED....");
 		
 		final RunnableWithProgress r = new RunnableWithProgress() {
 			public Object excecuteCode() {				
@@ -127,7 +120,15 @@ public class AppletMain extends JApplet {
 		} catch (Exception e) {
 			Logger.log.error("Unable to start applet", e);
 		}
-				
+		
+		System.out.println("INIT ENDED....");
+		Logger.log.trace("INIT ENDED....");
+	}
+		
+	public void start() {
+		System.out.println("START CALLED....");
+		Logger.log.trace("START CALLED....");
+						
 		System.out.println("START ENDED....");
 		Logger.log.trace("START ENDED....");
 	}

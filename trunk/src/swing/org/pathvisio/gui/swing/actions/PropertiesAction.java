@@ -32,7 +32,7 @@ public class PropertiesAction extends AbstractAction {
 	VPathwayElement element;
 	
 	public PropertiesAction(VPathwayElement e) {
-		super("properties");
+		super("Properties");
 		putValue(AbstractAction.SHORT_DESCRIPTION, "View this element's properties");
 		element = e;
 	}

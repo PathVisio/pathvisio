@@ -504,7 +504,11 @@ public class PathwayElement implements GraphIdContainer
 			setFillColor((Color) value);
 			break;
 		case SHAPETYPE:
-			setShapeType(ShapeType.values()[(Integer) value]);
+			if(value instanceof ShapeType) {
+				setShapeType((ShapeType)value);
+			} else {
+				setShapeType(ShapeType.values()[(Integer) value]);
+			}
 			break;
 		case ROTATION:
 			setRotation((Double) value);
@@ -523,7 +527,11 @@ public class PathwayElement implements GraphIdContainer
 			setMEndY((Double) value);
 			break;
 		case LINETYPE:
-			setLineType(LineType.values()[(Integer) value]);
+			if(value instanceof LineType) {
+				setLineType((LineType)value);
+			} else {
+				setLineType(LineType.values()[(Integer) value]);
+			}
 			break;
 		case LINESTYLE:
 			setLineStyle((Integer) value);

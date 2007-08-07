@@ -59,6 +59,7 @@ import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
@@ -335,7 +336,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void vPathwayEvent(VPathwayEvent e) {
 		switch(e.getType()) {
 		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
-			if(e.getAffectedElement() instanceof Graphics) {
+			if(e.getAffectedElement() instanceof Graphics && 
+					!(e.getAffectedElement() instanceof SelectionBox)) {
 				PathwayElement p = ((Graphics)e.getAffectedElement()).getGmmlData();
 				if(p != null) {
 					PathwayElementDialog.getInstance(p, 

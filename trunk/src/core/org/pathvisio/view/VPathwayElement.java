@@ -198,10 +198,10 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 
 	/**
 	 * Transforms this object to fit to the coordinates
-	 * of the given handle
+	 * passed on by the given handle
 	 * @param h	The Handle to adjust to
 	 */
-	protected void adjustToHandle(Handle h) {}
+	protected void adjustToHandle(Handle h, double vx, double vy) {}
 
 	/**
 	 * Get all the handles belonging to this object
@@ -215,10 +215,9 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * @param dx - the value of x-increment
 	 * @param dy - the value of y-increment
 	 */
-	// TODO: should really be mMoveBy, using model coords,
-	// because implementations do a lot of conversions anyway
-	// perhaps could even be partially implemented in PathwayElement 
-	protected void vMoveBy(double dx, double dy) { }
+	protected void vMoveBy(double vdx, double vdy)
+	{
+	}
 	
 	/**
 	 * Get the rectangular boundary of this object

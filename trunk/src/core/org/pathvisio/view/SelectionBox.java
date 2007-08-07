@@ -33,66 +33,97 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
- * This class implements a selectionbox 
+ This class implements a selectionbox
+
+ A selectionbox has two states: 1: while dragging (being created) and 2: when surrounding a selected area
+ in Case 1, the handles can move freely, in case 2, they move in such a way that the aspect ratio is always maintained.
+ 
+ It only stores the view coordinates, not the model coordinates.
+ Therefore it is important to call adjustToZoom when the zoom pct has changed, so the view coordinates can be recalculated.
  */ 
-public class SelectionBox extends GraphicsShape
+public class SelectionBox extends VPathwayElement
 {
+	//Corner handles
+	Handle handleNE;
+	Handle handleSE;
+	Handle handleSW;
+	Handle handleNW;
+
+	double vTop, vLeft, vWidth, vHeight;
+
 	private static final long serialVersionUID = 1L;
 		
 	private ArrayList<VPathwayElement> selection;
 	boolean isSelecting;
 	boolean isVisible;
-		
-	/**
-	 * Constructor for this class
-	 * @param canvas - the VPathway this selectionbox will be part of
-	 */
+
+	public Handle[] getHandles()
+	{
+		return new Handle[]
+		{
+			handleNE, handleSE,
+			handleSW, handleNW
+		};
+	}
+	
 	public SelectionBox(VPathway canvas)
 	{
-		// TODO: selectionbox shouldn't need a dataobject...
-		// note, not setting parent of PathwayElement here.
-		this(canvas, new PathwayElement(ObjectType.SHAPE));
-	}	
-	
-	public SelectionBox(VPathway canvas, PathwayElement pe)
-	{
-		super(canvas, pe);
+		super(canvas);
 			
 		selection = new ArrayList<VPathwayElement>();
+
+		handleNE = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleSE = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}	
 	
-	public int getDrawingOrder() {
+	public int getDrawingOrder()
+	{
 		return VPathway.DRAW_ORDER_SELECTIONBOX;
 	}
 	
-	public ArrayList<VPathwayElement> getSelection() {
+	public ArrayList<VPathwayElement> getSelection()
+	{
 		return selection;
+	}
+
+	public Rectangle getVOutline()
+	{
+		return new Rectangle ((int)vLeft, (int)vTop, (int)vWidth, (int)vHeight);
 	}
 	
 	/**
 	 * Add an object to the selection
 	 * @param o
 	 */
-	public void addToSelection(VPathwayElement o) {
+	public void addToSelection(VPathwayElement o)
+	{
 		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
-		if(o instanceof VPoint) {
-			for(Line l : ((VPoint)o).getLines()) {
+		if(o instanceof VPoint)
+		{
+			for(Line l : ((VPoint)o).getLines())
+			{
 				l.select();
 				doAdd(l);
 			}
-		} else {
+		}
+		else
+		{
 			o.select();
 			doAdd(o);
 		}
 		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_ADDED, o));
 		if(isSelecting) return; //All we have to do if user is dragging selectionbox
-		if(hasMultipleSelection()) { 
+		if(hasMultipleSelection())
+		{ 
 			stopSelecting(); //show and fit to SelectionBox if performed after dragging
 		}
 		 
 	}
 	
-	private void doAdd(VPathwayElement o) {
+	private void doAdd(VPathwayElement o)
+	{
 		if(!selection.contains(o)) selection.add(o);
 	}
 	
@@ -153,7 +184,8 @@ public class SelectionBox extends GraphicsShape
 	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
 	 * to upperleft corner
 	 */
-	public void reset() { 
+	public void reset()
+	{ 
 		reset(0, 0, true);
 	}
 	
@@ -179,10 +211,10 @@ public class SelectionBox extends GraphicsShape
 					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED));
 		}
 		
-		gdata.setMLeft(mFromV(vStartX));
-		gdata.setMTop(mFromV(vStartY));
-		gdata.setMWidth(0);
-		gdata.setMHeight(0);
+		vLeft = vStartX;
+		vTop = vStartY;
+		vWidth = 0;
+		vHeight = 0;
 	}
 
 	/**
@@ -236,14 +268,28 @@ public class SelectionBox extends GraphicsShape
 		}
 	}
 	
-	public void select() {
+	public void select()
+	{
 		super.select();
+		for (Handle h : getHandles())
+		{
+			h.show();
+		}
 		for(VPathwayElement o : selection) {
 			o.select();
 			for(Handle h : o.getHandles()) h.hide();
 		}
 	}
-	
+
+	public void deselect()
+	{
+		super.deselect();
+		for (Handle h : getHandles())
+		{
+			h.hide();
+		}
+	}
+
 	/**
 	 * Fit the size of this object to the selected objects
 	 */
@@ -266,11 +312,22 @@ public class SelectionBox extends GraphicsShape
 			for(Handle h : o.getHandles()) h.hide();
 		}
 
-		gdata.setMWidth(mFromV(vr.width));
-		gdata.setMHeight(mFromV(vr.height));
-		gdata.setMLeft(mFromV(vr.x));
-		gdata.setMTop(mFromV(vr.y));
-		setHandleLocation();		
+		vWidth = vr.width;
+		vHeight = vr.height;
+		vLeft = vr.x;
+		vTop = vr.y;
+		setHandleLocation();
+	}
+
+	/**
+	 * Sets the handles at the correct location;
+	 */
+	protected void setHandleLocation()
+	{
+		handleNE.setMLocation(mFromV(vLeft + vWidth), mFromV(vTop));
+		handleSE.setMLocation(mFromV(vLeft + vWidth), mFromV(vTop + vHeight));
+		handleSW.setMLocation(mFromV(vLeft), mFromV(vTop + vHeight));
+		handleNW.setMLocation(mFromV(vLeft), mFromV(vTop));
 	}
 			
 	/**
@@ -297,59 +354,160 @@ public class SelectionBox extends GraphicsShape
 	/**
 	 * Gets the corner handle (South east) for start dragging
 	 */
-	public Handle getCornerHandle() { return handleSE; }
+	public Handle getCornerHandle()
+	{
+		return handleSE;
+	}
 	
-	public void adjustToHandle(Handle h) {	
+	public void adjustToHandle(Handle h, double vnewx, double vnewy)
+	{
 		//Store original size and location before adjusting to handle
-		double vWidthOld = getVWidthDouble();
-		double vHeightOld = getVHeightDouble();
-		double vCenterXOld = getVCenterXDouble();
-		double vCenterYOld = getVCenterYDouble();
+		double vWidthOld = vWidth;
+		double vHeightOld = vHeight;
+		double vLeftOld = vLeft;
+		double vTopOld = vTop;
+
+		double vdx = 0;
+		double vdy = 0;
+		double vdw = 0;
+		double vdh = 0;
+		if (h == handleNE || h == handleNW)
+		{
+			vdy = vnewy - vTop;
+			vdh = -vdy;
+		}
+		if (h == handleSE || h == handleSW)
+		{
+			vdy = 0;
+			vdh = vnewy - (vTop + vHeight);
+		}
+		if (h == handleSE || h == handleNE)
+		{
+			vdx = 0;
+			vdw = vnewx - (vLeft + vWidth);			
+		}
+		if (h == handleSW || h == handleNW)
+		{
+			vdx = vnewx - vLeft;
+			vdw = -vdx;
+		}
+
+		markDirty();
+
+		vWidth += vdw;
+		vHeight += vdh;
+		vLeft += vdx;
+		vTop += vdy;
+
+		if(vWidth < 0)
+		{
+			negativeWidth(h);
+		}
+		if(vHeight < 0)
+		{
+			negativeHeight(h);
+		}
+
+		markDirty();
+		setHandleLocation();
 		
-		super.adjustToHandle(h);
-		if(isSelecting) { //Selecting, so add containing objects to selection
+		if(isSelecting)
+		{   //Selecting, so add containing objects to selection
 			Rectangle vr = getVBounds();
 			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.x, vr.y, vr.width, vr.height);
-			for(VPathwayElement o : canvas.getDrawingObjects()) {
+			for(VPathwayElement o : canvas.getDrawingObjects())
+			{
 				if((o == this) || (o instanceof Handle)) continue;
-				if(o.vIntersects(bounds) && !(o instanceof Group)) { 
+				if(o.vIntersects(bounds) && !(o instanceof Group))
+				{ 
 					addToSelection(o);
 				} else if(o.isSelected()) removeFromSelection(o);
 			}
-		} else { //Resizing, so resize child objects too
-			double widthRatio = getVWidthDouble() / vWidthOld;
-			double heightRatio = getVHeightDouble() / vHeightOld;
+		}
+		else
+		{
+			//Resizing, so resize child objects too
+			double widthRatio = vWidth / vWidthOld;
+			double heightRatio = vHeight / vHeightOld;
 			//Scale all selected objects in x and y direction, treat points seperately
 			Set<VPoint> points = new HashSet<VPoint>();
-			for(VPathwayElement o : selection) { 
-				if(o instanceof Line) {
+			for(VPathwayElement o : selection)
+			{ 
+				if(o instanceof Line)
+				{
 					points.addAll(((Line)o).getPoints());
-				} else { 
+				}
+				else
+				{ 
 					Rectangle2D vr = o.getVScaleRectangle();
 					double newObjectWidth = vr.getWidth() * widthRatio;
 					double newObjectHeight = vr.getHeight() * heightRatio;
-					double objectFromCenterX = (vr.getX() - vCenterXOld) * widthRatio;
-					double objectFromCenterY = (vr.getY() - vCenterYOld) * heightRatio;
-					o.setVScaleRectangle(new Rectangle2D.Double(
-							getVCenterXDouble() + objectFromCenterX, 
-							getVCenterYDouble() + objectFromCenterY, 
-							newObjectWidth, 
-							newObjectHeight));
+					double objectFromCenterX = (vr.getX() - (vLeftOld + vWidthOld / 2)) * widthRatio;
+					double objectFromCenterY = (vr.getY() - (vTopOld + vHeightOld / 2)) * heightRatio;
+ 					o.setVScaleRectangle(
+ 						new Rectangle2D.Double(
+ 							(vLeft + vWidth / 2) + objectFromCenterX, 
+ 							(vTop + vHeight / 2) + objectFromCenterY, 
+ 							newObjectWidth, 
+ 							newObjectHeight));
 				}
 			}
 			for(VPoint p : points) {
-				double dx = (p.getVX() - vCenterXOld) * widthRatio;
-				double dy = (p.getVY() - vCenterYOld) * heightRatio;
-				p.setVLocation(getVCenterXDouble() + dx, getVCenterYDouble() + dy);
+				double dx = (p.getVX() - (vLeftOld + vWidthOld / 2)) * widthRatio;
+				double dy = (p.getVY() - (vTopOld + vHeightOld / 2)) * heightRatio;
+				p.setVLocation(vLeft + vWidth / 2 + dx, vTop + vHeight / 2 + dy);
 			}
 		}
 	}
-	
+
+	/**
+	 * This method implements actions performed when the width of
+	 * the object becomes negative after adjusting to a handle
+	 * @param h	The handle this object adjusted to
+	 */
+	public void negativeWidth(Handle h)
+	{
+		Handle opposite = null;
+		if(h == handleNE) opposite = handleNW;
+		else if(h == handleSE) opposite = handleSW;
+		else if(h == handleSW) opposite = handleSE;
+		else if(h == handleNW) opposite = handleNE;
+		assert (opposite != null);
+		
+		double vw = -vWidth;
+		double vsx = vLeft - vw;
+		vWidth = vw;
+		vLeft = vsx;
+		canvas.setPressedObject(opposite);
+	}
+
+	/**
+	 * This method implements actions performed when the height of
+	 * the object becomes negative after adjusting to a handle
+	 * @param h	The handle this object adjusted to
+	 */
+	public void negativeHeight(Handle h)
+	{
+		Handle opposite = null;
+		if(h == handleNE) opposite = handleSE;
+		else if(h == handleSE) opposite = handleNE;
+		else if(h == handleSW) opposite = handleNW;
+		else if(h == handleNW) opposite = handleSW;
+		assert (opposite != null);
+		
+		double ht = -vHeight;
+		double sy = vTop - ht;
+		vHeight = ht;
+		vTop = sy;
+		canvas.setPressedObject(opposite);
+	}
+
 	public void vMoveBy(double vdx, double vdy) 
 	{
-
-		gdata.setMLeft(gdata.getMLeft() + mFromV(vdx)); 
-		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
+		vLeft += vdx;
+		vTop += vdy;
+		setHandleLocation();
+		markDirty();
 
 		//Move selected object and their references
 		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); //Will be moved by linking object
@@ -371,25 +529,29 @@ public class SelectionBox extends GraphicsShape
 
 		}
 		
-		for(GraphRefContainer ref : not) {
-			if(ref instanceof MPoint) {
+		for(GraphRefContainer ref : not)
+		{
+			if(ref instanceof MPoint)
+			{
 				points.remove(canvas.getPoint((MPoint)ref));
 			}
 		}
 			
-		for(VPoint p : points) {
+		for(VPoint p : points)
+		{
 			p.vMoveBy(vdx, vdy);
 		}
 	}
 	
 	public void doDraw(Graphics2D g)
 	{
-		if(isVisible) {
+		if(isVisible)
+		{
 			int sw = 1;
 			g.setStroke(new BasicStroke(sw, 
 					BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 
 					1, new float[] {1, 2}, 0));
-			g.drawRect(getVLeft(), getVTop(), getVWidth() - sw, getVHeight() - sw);
+			g.drawRect((int)vLeft, (int)vTop, (int)vWidth - sw, (int)vHeight - sw);
 		}
 	}
 		
@@ -397,13 +559,16 @@ public class SelectionBox extends GraphicsShape
 	
 	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
 	
-	public void addListener(SelectionListener l) {
-		if(!listeners.contains(l)) {
+	public void addListener(SelectionListener l)
+	{
+		if(!listeners.contains(l))
+		{
 			listeners.add(l);
 		}
 	}
 	
-	public void removeListener(SelectionListener l) {
+	public void removeListener(SelectionListener l)
+	{
 		listeners.remove(l);
 	}
 	
@@ -412,17 +577,21 @@ public class SelectionBox extends GraphicsShape
 	 * to this class
 	 * @param e
 	 */
-	public void fireSelectionEvent(SelectionEvent e) {
-		for(SelectionListener l : listeners) {
+	public void fireSelectionEvent(SelectionEvent e)
+	{
+		for(SelectionListener l : listeners)
+		{
 			l.selectionEvent(e);
 		}
 	}
 
-	public interface SelectionListener {
+	public interface SelectionListener
+	{
 		public void selectionEvent(SelectionEvent e);
 	}
 
-	public static class SelectionEvent extends EventObject {
+	public static class SelectionEvent extends EventObject
+	{
 		private static final long serialVersionUID = 1L;
 		public static final int OBJECT_ADDED = 0;
 		public static final int OBJECT_REMOVED = 1;
@@ -433,7 +602,8 @@ public class SelectionBox extends GraphicsShape
 		public int type;
 		public List<VPathwayElement> selection;
 
-		public SelectionEvent(SelectionBox source, int type, VPathwayElement affectedObject) {
+		public SelectionEvent(SelectionBox source, int type, VPathwayElement affectedObject)
+		{
 			super(source);
 			this.source = source;
 			this.type = type;
@@ -441,7 +611,8 @@ public class SelectionBox extends GraphicsShape
 			this.affectedObject = affectedObject;
 		}
 		
-		public SelectionEvent(SelectionBox source, int type) {
+		public SelectionEvent(SelectionBox source, int type)
+		{
 			this(source, type, null);
 		}
 	}	

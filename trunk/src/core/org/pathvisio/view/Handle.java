@@ -175,40 +175,50 @@ public class Handle extends VPathwayElement
 	}
 		
 	/**
-	 * Moves this handle by the specified increments and
-	 * adjusts the {@link VPathwayElement} to the new position
+	   Note: don't use Handle.vMoveBy, use vMoveTo instead.
+	   it's impossible to handle snap-to-grid correctly if you only have the delta information.
 	 */
 	public void vMoveBy(double vdx, double vdy)
-	{	
+	{
+		assert (false);
+		// You shouldn't call vMoveBy on a handle! use vMoveTo instead
+	}
+	
+	/**
+	   Called when a mouse event forces the handle to move.
+	   Note: this doesn't cause the handle itself to move,
+	   rather, it passes the information to the underlying object.
+	 */
+	public void vMoveTo (double vnx, double vny)
+	{
 		markDirty();
 
 		if(direction != DIRECTION_FREE && direction != DIRECTION_ROT) {
 			Point v = new Point(0,0);
-			double xtraRot = 0;
-			if		(direction == DIRECTION_X) {
-				v = new Point(1,0);
+			Rectangle b = parent.getVBounds();
+			Point base = new Point (b.x + b.width / 2, b.y + b.height / 2);
+			if (direction == DIRECTION_X)
+			{
+				v = new Point (1, 0);
 			}
-			else if	(direction == DIRECTION_Y) {
-				v = new Point(0,1);
+			else if	(direction == DIRECTION_Y)
+			{
+				v = new Point (0, 1);
 			}
-			else if (direction == DIRECTION_XY) {
-				Rectangle b = parent.getVBounds();
-				v = new Point(b.width + 1, b.height + 1);
+			else if (direction == DIRECTION_XY)
+			{
+				v = new Point (b.width, b.height);
 			}
-			else if (direction == DIRECTION_MINXY) {
-				xtraRot = Math.PI/2;
-				Rectangle b = parent.getVBounds();
-				v = new Point(b.height + 1, b.width + 1);
+			else if (direction == DIRECTION_MINXY)
+			{
+				v = new Point (b.height, -b.width);
 			}
-			Point yr = LinAlg.rotate(v, -rotation + xtraRot);
-			Point prj = LinAlg.project(new Point(vdx, vdy), yr);
-			vdx = prj.x; vdy= prj.y;
+			Point yr = LinAlg.rotate(v, -rotation);
+			Point prj = LinAlg.project(base, new Point(vnx, vny), yr);
+			vnx = prj.x; vny = prj.y;
 		}
-		
-		mCenterx += mFromV(vdx);
-		mCentery += mFromV(vdy);
-		
-		parent.adjustToHandle(this);
+
+		parent.adjustToHandle(this, vnx, vny);
 		markDirty();
 	}
 			

@@ -451,7 +451,14 @@ public class VPathway implements PathwayListener
 		{
 			double vdx = ve.getX() - vPreviousX;
 			double vdy = ve.getY() - vPreviousY;
-			pressedObject.vMoveBy(vdx, vdy);
+			if (pressedObject instanceof Handle)
+			{
+				((Handle)(pressedObject)).vMoveTo(ve.getX(), ve.getY());
+			}
+			else
+			{
+				pressedObject.vMoveBy(vdx, vdy);
+			}
 				
 			vPreviousX = ve.getX();
 			vPreviousY = ve.getY();

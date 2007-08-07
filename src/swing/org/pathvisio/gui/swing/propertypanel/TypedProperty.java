@@ -240,6 +240,7 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class CommentsEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+		static final String BUTTON_LABEL = "View/edit comments";
 		JButton button;
 		PathwayElement currentElement;
 		TypedProperty property;
@@ -248,27 +249,32 @@ public class TypedProperty implements Comparable {
 
 		public CommentsEditor() {
 			button = new JButton();
-			button.setText("View/edit comments");
+			button.setText(BUTTON_LABEL);
 			button.setActionCommand("edit");
 			button.addActionListener(this);
 		}
 
 		public void setInput(TypedProperty p) {
 			property = p;
-			if(p.elements.size() > 1) {
-				button.setEnabled(false);
-			} else {
-				button.setEnabled(true);
-			}
+			button.setText("");
+			if(!mayEdit()) fireEditingCanceled();
+			button.setText(BUTTON_LABEL);
 		}
 		
+		boolean mayEdit() { return property.elements.size() == 1; }
+		
 		public void actionPerformed(ActionEvent e) {
+			if(!mayEdit()) {
+				fireEditingCanceled();
+				return;
+			}
 			if (EDIT.equals(e.getActionCommand()) && property != null) {
 				currentElement = property.getFirstElement();
 				if(currentElement != null) {
 					PathwayElementDialog d = PathwayElementDialog.getInstance(currentElement);
 					d.selectPathwayElementPanel(PathwayElementDialog.TAB_COMMENTS);
 					d.setVisible(true);
+					fireEditingCanceled(); //Value is directly saved in dialog
 				}
 			}
 		}

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
@@ -50,6 +51,8 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+
+import com.hp.hpl.jena.iri.impl.GroupAction;
 
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
@@ -84,7 +87,7 @@ public class VPathway implements PathwayListener
 	 * The {@link Graphics} that is directly selected since last mouseDown event
 	 */
 	public Graphics selectedGraphics = null;
-	
+		
 	/**
 	 * {@link InfoBox} object that contains information about this pathway,
 	 * currently only used for information in {@link gmmlVision.PropertyPanel}
@@ -1153,23 +1156,36 @@ public class VPathway implements PathwayListener
 //		}
 //	}
 
-	private void selectGeneProducts()
-	{
+	/**
+	 * Select all objects of the given class
+	 * @param c The class of the objects to be selected
+	 */
+	void selectObjects(Class c) {
 		clearSelection();
-		for (VPathwayElement o : getDrawingObjects())
-		{
-			if (o instanceof GeneProduct)
-				s.addToSelection(o);
+		for(VPathwayElement vpe : getDrawingObjects()) {
+			if(c.isInstance(vpe)) {
+				s.addToSelection(vpe);
+			}
 		}
+		redrawDirtyRect();
 	}
 	
-	private void selectAll()
+	/**
+	 * Select all gene products (datanodes) on the pathway
+	 *@deprecated use {@link #selectObjects(Class)} instead
+	 */
+	private void selectGeneProducts() {
+		selectObjects(GeneProduct.class);
+	}
+	
+	void selectAll()
 	{
 		clearSelection();
 		for (VPathwayElement o : getDrawingObjects())
 		{
 			s.addToSelection(o);
 		}
+		redrawDirtyRect();
 	}
 	
 	private void insertPressed()
@@ -1201,13 +1217,12 @@ public class VPathway implements PathwayListener
 		s.addToSelection(lastAdded);
 	}
 	
-	public void toggleGroup()
+	public void toggleGroup(List<Graphics> selection)
 	{
-		Boolean Grouped = true;
+		boolean grouped = true;
 
 		// Check Group status of current selection
 		String topRef = null;
-		List<Graphics> selection = getSelectedGraphics();
 		for (Graphics g : selection)
 		{
 			PathwayElement pe = g.getGmmlData();
@@ -1218,7 +1233,7 @@ public class VPathway implements PathwayListener
 			{
 				// selection includes an ungrouped element; therefore, currently
 				// Ungrouped
-				Grouped = false;
+				grouped = false;
 				break;
 			} else if (id == null)
 			{
@@ -1240,7 +1255,7 @@ public class VPathway implements PathwayListener
 				{
 					// selection includes elements in distinct, non-nested
 					// groups; therefore, currently Ungrouped
-					Grouped = false;
+					grouped = false;
 					break;
 				}
 
@@ -1250,7 +1265,7 @@ public class VPathway implements PathwayListener
 		}
 
 		// Group or Ungroup based on current Group status
-		if (Grouped && topRef != null)
+		if (grouped && topRef != null)
 		{
 			// Ungroup all elements asociated with topRef
 			for (VPathwayElement vpe : this.getDrawingObjects())
@@ -1327,52 +1342,25 @@ public class VPathway implements PathwayListener
 	
 	public static final KeyStroke KEY_MOVEDOWN = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_DOWN, java.awt.Event.CTRL_MASK);
+		
+	public ViewActions getViewActions() {
+		return viewActions;
+	}
 	
-	// TODO: remove Swing dependency, create enum with keymappings and implement
-	// mappings to SWT and Swing
+	/**
+	 * Several {@link Action}s related to the view
+	 */
+	private ViewActions viewActions;
+	
 	private void registerKeyboardActions()
 	{
-
+		viewActions = new ViewActions(this);
 		if (parent != null)
 		{
-			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
-					new AbstractAction()
-					{
-						public void actionPerformed(ActionEvent e)
-						{
-					selectGeneProducts();
-					redraw();
-				}
-			});
-			parent.registerKeyboardAction(KEY_GROUP, new AbstractAction()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					toggleGroup();
-				}
-			});
-			parent.registerKeyboardAction(KEY_SELECT_ALL, new AbstractAction()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					selectAll();
-					redraw();
-				}
-			});
-			parent.registerKeyboardAction(KEY_DELETE, new AbstractAction()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
-					for(VPathwayElement o : drawingObjects)
-					{
-						if (!o.isSelected() || o == s || o == infoBox)
-							continue; // Object not selected, skip
-						toRemove.add(o);
-					}
-					removeDrawingObjects(toRemove);	
-				}
-			});
+			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES, viewActions.selectDataNodes);
+			parent.registerKeyboardAction(KEY_GROUP, viewActions.toggleGroup);
+			parent.registerKeyboardAction(KEY_SELECT_ALL, viewActions.selectAll);
+			parent.registerKeyboardAction(KEY_DELETE, viewActions.delete);
 			parent.registerKeyboardAction(KEY_MOVELEFT, new AbstractAction()
 					{
 						public void actionPerformed(ActionEvent e)
@@ -1402,7 +1390,6 @@ public class VPathway implements PathwayListener
 						}
 					});
 		}
-                
 	}
 
 	public void keyReleased(KeyEvent e)

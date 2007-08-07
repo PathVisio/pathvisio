@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.util.Vector;
+
 import javax.swing.JEditorPane;
 
 import org.pathvisio.ApplicationEvent;
@@ -32,6 +34,9 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 
 public class BackpagePane extends JEditorPane implements SelectionListener, ApplicationEventListener {
 	PathwayElement input;
+	int maxThreads = 5;
+	Vector<Thread> runningThreads = new Vector<Thread>();
+	volatile PathwayElement lastSelected;
 	
 	public BackpagePane() {
 		super();
@@ -48,20 +53,51 @@ public class BackpagePane extends JEditorPane implements SelectionListener, Appl
 		if(e == null) {
 			setText(Gdb.getBackpageHTML(null, null, null));
 		} else if(input != e) {
-			input = e;
-			if(e.getObjectType() == ObjectType.DATANODE) {
-				new Thread() {
-					public void run() {
-						setText(Gdb.getBackpageHTML(
-								e.getGeneID(), 
-								e.getSystemCode(), 
-								e.getBackpageHead()));
-					}
-				}.start();
+			System.err.println("Setting input " + e);
+			//First check if the number of running threads is not too high
+			//(may happen when many SelectionEvent follow very fast)
+			if(runningThreads.size() < maxThreads) {
+				System.err.println("Query in thread " + e);
+				input = e;
+				if(e.getObjectType() == ObjectType.DATANODE) {
+					Thread t = new Thread() {
+						public void run() {
+							System.err.println("++++++++++++++");
+							System.err.println("Adding thread " + this);
+							runningThreads.add(this);
+							setText(Gdb.getBackpageHTML(
+									e.getGeneID(), 
+									e.getSystemCode(), 
+									e.getBackpageHead()));
+							System.err.println("Removing thread " + this);
+							System.err.println("++++++++++++++");
+							runningThreads.remove(this);
+							check();
+						}
+					};
+					t.setPriority(Thread.MIN_PRIORITY);
+					t.start();
+					lastSelected = null;
+				}				
+			} else {
+				System.err.println("Queue lastSelected " + e);
+				//When we're on our maximum, remember this element
+				//and ignore it when a new one is selected
+				lastSelected = e;
 			}
+			System.err.println("--------------");
 		}
 	}
 
+	private void check() {
+		System.err.println("=====CHECK===");
+		if(lastSelected != null) {
+			System.err.println("From checked " + lastSelected);
+			setInput(lastSelected);
+		}
+		System.err.println("==============");
+	}
+	
 	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:

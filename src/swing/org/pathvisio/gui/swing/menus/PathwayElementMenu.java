@@ -16,19 +16,34 @@
 //
 package org.pathvisio.gui.swing.menus;
 
-import java.awt.Rectangle;
+import java.util.Collection;
+import java.util.Collections;
 
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
 import org.pathvisio.gui.swing.actions.PropertiesAction;
-import org.pathvisio.view.Handle;
 import org.pathvisio.view.VPathwayElement;
 
-public class PathwayElementMenu extends JPopupMenu {
+public class PathwayElementMenu extends JPopupMenu {		
 	VPathwayElement element;
 	
 	public PathwayElementMenu(VPathwayElement e) {
+		this(e, new Action[] { new PropertiesAction(e) });
+	}
+	
+	public PathwayElementMenu(VPathwayElement e, Action[] actions) {
 		element = e;
-		add(new PropertiesAction(e));
+		for(Action a : actions) {
+			if(a != null) {
+				add(a);
+			} else {
+				addSeparator();
+			}
+		}
+	}
+	
+	public PathwayElementMenu(VPathwayElement e, Collection<Action> actions) {
+		this(e, actions.toArray(new Action[actions.size()]));
 	}
 }

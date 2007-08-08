@@ -19,8 +19,10 @@ package org.pathvisio.gui.swing.propertypanel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
@@ -47,120 +49,90 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
 	
 	Collection<PathwayElement> input;
-	List<TypedProperty> properties;
+	HashMap<PropertyType, TypedProperty> propertyValues;
+	List<TypedProperty> shownProperties;
 	
 	public PathwayTableModel() {
 		input = new HashSet<PathwayElement>();
-		properties = new ArrayList<TypedProperty>();
+		propertyValues = new HashMap<PropertyType, TypedProperty>();
+		shownProperties = new ArrayList<TypedProperty>();
 		
 		Engine.getCurrent().addApplicationEventListener(this);
 		VPathway vp = Engine.getCurrent().getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 	}
 	
-	private void clearInput() {
+	private void reset() {
 		for(PathwayElement e : input) {
+			//System.err.println("Removed " + e);
 			e.removeListener(this);
 		}
+		propertyValues.clear();
+		shownProperties.clear();
 		input.clear();
 		refresh(true);
 	}
 	
 	private void removeInput(PathwayElement pwElm) {
+		//System.err.println("Input removed");
 		input.remove(pwElm);
+		updatePropertyCounts(pwElm, true);
 		pwElm.removeListener(this);
 		refresh(true);
 	}
 	
 	private void addInput(PathwayElement pwElm) {
+		//System.err.println("Input added");
 		input.add(pwElm);
+		updatePropertyCounts(pwElm, false);
 		pwElm.addListener(this);
 		refresh(true);
 	}
 	
-	protected void refresh(boolean recreate) {
-		if(recreate) {
-			properties = generateProperties(input);
-		} else {
-			refreshPropertyValues();
+	protected void refresh() { refresh(false); }
+	
+	protected void refresh(boolean propertyCount) {
+		if(propertyCount) {
+			updateShownProperties();
 		}
+		refreshPropertyValues();
 		fireTableDataChanged();
 	}
+		
+	protected void updatePropertyCounts(PathwayElement e, boolean remove) {
+		boolean advanced = GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
+		for(PropertyType p : e.getAttributes(advanced)) {
+			if(p.isHidden()) continue;
+			
+			TypedProperty tp = propertyValues.get(p);
+			if(tp == null) {
+				propertyValues.put(p, tp = new TypedProperty(p));
+			}
+			if(remove) {
+				tp.removeElement(e);
+			} else {
+				tp.addElement(e);
+			}
+		}
+	}
 	
-	protected void refresh() {
-		refresh(false);
+	protected void updateShownProperties() {
+		for(TypedProperty tp : propertyValues.values()) {
+			boolean shown = shownProperties.contains(tp);
+			if(tp.elementCount() == input.size()) {
+				//System.err.println("\tadding " + tp + " from shown");
+				if(!shown) shownProperties.add(tp);
+			} else {
+				//System.err.println("\tremoveing " + tp + " from shown");
+				shownProperties.remove(tp);
+			}
+		}
 	}
 	
 	protected void refreshPropertyValues() {
-		for(TypedProperty p : properties) {
-			Object value = getAggregateValue(p.getType(), input);
-			if(value instanceof TypedProperty) {
-				p.setHasDifferentValues(true);
-			} else {
-				p.setValue(value, false);
-			}
+		for(TypedProperty p : shownProperties) {
+			p.refreshValue();
 		}
-	}
-	
-	protected List<TypedProperty> generateProperties(Collection<PathwayElement> elements) {
-		List<TypedProperty> properties = new ArrayList<TypedProperty>();
-		List<PropertyType> propTypes = getProperties(elements);
-		for(PropertyType pt : propTypes) {
-			TypedProperty value = getAggregateProperty(pt, elements);
-			properties.add(value);
-		}
-		Collections.sort(properties);
-		return properties;
-	}
-	
-	protected List<PropertyType> getProperties(Collection<PathwayElement> elements) {
-		ArrayList<PropertyType> properties = null;
-		ArrayList<PropertyType> remove = new ArrayList<PropertyType>();
-		for(PathwayElement e : elements) {
-			if(properties == null) {
-				properties = new ArrayList<PropertyType>();
-				List<PropertyType> attr = e.getAttributes(GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES));
-				properties.addAll(attr);
-			}
-			remove.clear();
-			List<PropertyType> attributes = e.getAttributes(
-					GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES));
-			for(PropertyType p : properties) {
-				if(!attributes.contains(p) || p.isHidden()) {
-					remove.add(p);
-				}
-			}
-			properties.removeAll(remove);
-		}
-		if(properties == null) properties = new ArrayList<PropertyType>();
-		return properties;
-	}
-	
-	/**
-	 * Gets the aggregated value of the property of the given pathway element.
-	 * If te values are different, this method returns an object of class TypedProperty
-	 * @param key
-	 * @param elements
-	 * @return
-	 */
-	Object getAggregateValue(PropertyType key, Collection<PathwayElement> elements) {
-		Object value = null;
-		boolean first = true;
-		for(PathwayElement e : elements) {
-			Object o = e.getProperty(key);
-			if(!first && (o == null || !o.equals(value))) {
-				return new TypedProperty(elements, key);
-			}
-			value = o;
-			first = false;
-		}
-		return value;
-	}
-	
-	TypedProperty getAggregateProperty(PropertyType key, Collection<PathwayElement> elements) {
-		Object value = getAggregateValue(key, elements);
-		if(value instanceof TypedProperty) return (TypedProperty)value;
-		return new TypedProperty(elements, value, key);
 	}
 		
 	public int getColumnCount() {
@@ -168,11 +140,11 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 
 	public int getRowCount() {
-		return properties.size();
+		return shownProperties.size();
 	}
 
 	public TypedProperty getPropertyAt(int row) {
-		return properties.get(row);
+		return shownProperties.get(row);
 	}
 	
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -203,15 +175,18 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
+			//System.err.println("OBJECT ADDED");
 			if(e.affectedObject instanceof Graphics)
 				addInput(((Graphics)e.affectedObject).getGmmlData());
 			break;
 		case SelectionEvent.OBJECT_REMOVED:
+			//System.err.println("OBJECT REMOVED");
 			if(e.affectedObject instanceof Graphics)
 				removeInput(((Graphics)e.affectedObject).getGmmlData());
 			break;
 		case SelectionEvent.SELECTION_CLEARED:
-			 clearInput();
+			//System.err.println("CLEARED");
+			 reset();
 			break;
 		}		
 	}

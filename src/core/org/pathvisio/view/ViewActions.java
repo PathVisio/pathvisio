@@ -100,7 +100,7 @@ public class ViewActions {
 			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
 			for(VPathwayElement o : vPathway.getDrawingObjects())
 			{
-				if (!o.isSelected() || o == vPathway.s || o == vPathway.infoBox)
+				if (!o.isSelected() || o == vPathway.selection || o == vPathway.infoBox)
 					continue; // Object not selected, skip
 				toRemove.add(o);
 			}

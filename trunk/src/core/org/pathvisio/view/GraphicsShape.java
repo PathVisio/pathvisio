@@ -49,10 +49,9 @@ public abstract class GraphicsShape extends Graphics {
 	Handle handleNW;
 	//Rotation handle
 	Handle handleR;
-		
-	final Handle[][] handleMatrix; //Used to get opposite handles
-	
-	public GraphicsShape(VPathway canvas, PathwayElement o) {
+			
+	public GraphicsShape(VPathway canvas, PathwayElement o)
+	{
 		super(canvas, o);
 		
 		handleN	= new Handle(Handle.DIRECTION_Y, this, canvas);
@@ -65,11 +64,7 @@ public abstract class GraphicsShape extends Graphics {
 		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		
-		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);
-		
-		handleMatrix = new Handle[][] {
-				{ handleNW, 	handleNE },
-				{ handleSW, 	handleSE }};
+		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);		
 	}
 	
 	
@@ -102,25 +97,30 @@ public abstract class GraphicsShape extends Graphics {
 		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
 	}
 
-	public void setVScaleRectangle(Rectangle2D r) {
+	public void setVScaleRectangle(Rectangle2D r)
+	{
 		setVShape(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 	}
 	
-	protected Rectangle2D getVScaleRectangle() {
+	protected Rectangle2D getVScaleRectangle()
+	{
 		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
 	}
 	
 	public Handle[] getHandles()
 	{
 		if(	this instanceof GeneProduct || 
-			this instanceof Label) {
+			this instanceof Label)
+		{
 			// No rotation handle for these objects
-			return new Handle[] {
+			return new Handle[]
+			{
 					handleN, handleNE, handleE, handleSE,
 					handleS, handleSW, handleW,	handleNW,
 			};
 		}
-		return new Handle[] {
+		return new Handle[]
+		{
 				handleN, handleNE, handleE, handleSE,
 				handleS, handleSW, handleW,	handleNW,
 				handleR
@@ -132,21 +132,11 @@ public abstract class GraphicsShape extends Graphics {
 	 * (origin in center and axis direction rotated with this objects rotation
 	 * @param MPoint p
 	 */
-	private Point mToInternal(Point p) {
+	private Point mToInternal(Point p)
+	{
 		Point pt = mRelativeToCenter(p);
 		Point pr = LinAlg.rotate(pt, gdata.getRotation());
 		return pr;
-	}
-
-	/**
-	 * Translate the given point to external coordinate system (of the
-	 * drawing canvas)
-	 * @param MPoint p
-	 */
-	private Point mToExternal(Point p) {
-		Point pr = LinAlg.rotate(p, -gdata.getRotation());
-		Point pt = mRelativeToCanvas(pr);
-		return pt;
 	}
 
 	/**
@@ -155,8 +145,13 @@ public abstract class GraphicsShape extends Graphics {
 	 * @param x
 	 * @param y
 	 */
-	private Point mToExternal(double x, double y) {
-		return mToExternal(new Point(x, y));
+	private Point mToExternal(double x, double y)
+	{
+		Point p = new Point(x, y);
+		Point pr = LinAlg.rotate(p, -gdata.getRotation());
+		pr.x += gdata.getMCenterX();
+		pr.y += gdata.getMCenterY();
+		return pr;
 	}
 
 	/**
@@ -164,185 +159,117 @@ public abstract class GraphicsShape extends Graphics {
 	 * to this object's center
 	 * @param p
 	 */
-	private Point mRelativeToCenter(Point p) {
-		return p.subtract(getMCenter());
-	}
-
-	/**
-	 * Get the coordinates of the given point relative
-	 * to the canvas' origin
-	 * @param p
-	 */
-	private Point vRelativeToCanvas(Point p) {
-		return p.add(getVCenter());
-	}
-
-	private Point mRelativeToCanvas(Point p) {
-		return p.add(getMCenter());
+	private Point mRelativeToCenter(Point p)
+	{
+		return p.subtract(new Point(gdata.getMCenterX(), gdata.getMCenterY()));
 	}
 
 	/**
 	 * Get the center point of this object
 	 */
-	public Point getVCenter() {
-		return new Point(getVCenterX(), getVCenterY());
-	}
-
-	/**
-	 * Get the center point of this object
-	 */
-	public Point getMCenter() {
+	private Point getMCenter()
+	{
 		return new Point(gdata.getMCenterX(), gdata.getMCenterY());
-	}
-
-	/**
-	 * Set the center point of this object
-	 * @param cn
-	 */
-	public void setMCenter(Point mcn) {
-//		gdata.dontFireEvents(1);
-		gdata.setMCenterX(mcn.x);
-		gdata.setMCenterY(mcn.y);
-	}
-
-	public void setVCenter(Point vcn) {
-//		gdata.dontFireEvents(1);
-		gdata.setMCenterX(mFromV(vcn.x));
-		gdata.setMCenterY(mFromV(vcn.y));
-	}
-
-	/**
-	 * Calculate a new center point given the new width and height, in a
-	 * way that the center moves over the rotated axis of this object
-	 * @param mWidthNew
-	 * @param mHeightNew
-	 */
-	public Point mCalcNewCenter(double mWidthNew, double mHeightNew) {
-		Point mcn = new Point((mWidthNew - gdata.getMWidth())/2, (mHeightNew - gdata.getMHeight())/2);
-		Point mcr = LinAlg.rotate(mcn, -gdata.getRotation());
-		return mRelativeToCanvas(mcr);
-	}
-
-	public Point vCalcNewCenter(double vWidthNew, double vHeightNew) {
-		Point vcn = new Point((vWidthNew - getVWidth())/2, (vHeightNew - getVHeight())/2);
-		Point vcr = LinAlg.rotate(vcn, -gdata.getRotation());
-		return vRelativeToCanvas(vcr);
 	}
 
 	/**
 	 * Set the rotation of this object
 	 * @param angle angle of rotation in radians
 	 */
-	public void setRotation(double angle) {
+	public void setRotation(double angle)
+	{
 		if(angle < 0) gdata.setRotation(angle + Math.PI*2);
 		else if(angle > Math.PI*2) gdata.setRotation (angle - Math.PI*2);
 		else gdata.setRotation(angle);
 	}
 	
-//	/**
-//	 * Rotates the {@link GC} around the objects center
-//	 * @param gc	the {@link GC} to rotate
-//	 * @param tr	a {@link Transform} that can be used for rotation
-//	 */
-//	protected void rotateGC(GC gc, Transform tr) {		
-//		SwtUtils.rotateGC(gc, tr, (float)Math.toDegrees(gdata.getRotation()), 
-//				getVCenterX(), getVCenterY());
-//	}
-
-
 	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
 		//Rotation
-		if 	(h == handleR) {
-			Point def = mRelativeToCenter(getMHandleLocation(h));
-			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));
-			
-			setRotation(gdata.getRotation() + LinAlg.angle(def, cur));
-			
+		if 	(h == handleR)
+		{
+			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));			
+			setRotation (Math.atan2(cur.y, cur.x));				
 			return;
 		}
 					
 		// Transformation
-		Point mih = mToInternal(new Point(mFromV(vnewx), mFromV(vnewy)));
+		Point iPos = mToInternal(new Point(mFromV(vnewx), mFromV(vnewy)));
 		
-		double mdx = 0;
-		double mdy = 0;
-		double mdw = 0;
-		double mdh = 0;
-			
-		if	(h == handleN || h == handleNE || h == handleNW) {
-			mdy = -(mih.y + gdata.getMHeight()/2);
-			mdh = -mdy;
+		double idx = 0;
+		double idy = 0;
+		double idw = 0;
+		double idh = 0;
+		double halfh = gdata.getMHeight () / 2;
+		double halfw = gdata.getMWidth () / 2;
+
+		if	(h == handleN || h == handleNE || h == handleNW)
+		{
+			idh = -(iPos.y + halfh);
+			idy = -idh / 2;
 		}
-		if	(h == handleS || h == handleSE || h == handleSW ) {
-			mdy = mih.y - gdata.getMHeight()/2;
-			mdh = mdy;
+		if	(h == handleS || h == handleSE || h == handleSW )
+		{
+			idh = (iPos.y - halfh);
+			idy = idh / 2;
 		}
 		if	(h == handleE || h == handleNE || h == handleSE) {
-			mdx = mih.x - gdata.getMWidth()/2;
-			mdw = mdx;
+			idw = (iPos.x - halfw);
+			idx = idw / 2;
 		}
 		if	(h == handleW || h == handleNW || h== handleSW) {
-			mdx = -(mih.x + gdata.getMWidth()/2);
-			mdw = -mdx;
+			idw = -(iPos.x + halfw);
+			idx = -idw / 2;
 		};
 
-		double newmw = gdata.getMWidth() + mdx;
-		double newmh = gdata.getMHeight() + mdy;
+		double neww = gdata.getMWidth() + idw;
+		double newh = gdata.getMHeight() + idh;
 
-		Point mnc = mCalcNewCenter (newmw, newmh);
-		
-//		gdata.dontFireEvents(1);
-		gdata.setMWidth(newmw);
-		gdata.setMHeight(newmh);
-		setMCenter (mnc);
+		//In case object had negative width, switch handles
+		if(neww < 0)
+		{
+			setHorizontalOppositeHandle(h);
+			neww = -neww;
+		}
+		if(newh < 0)
+		{
+			setVerticalOppositeHandle(h);
+			newh = -newh;			
+		}
+
+		gdata.setMWidth(neww);
+		gdata.setMHeight(newh);		
+		Point vcr = LinAlg.rotate(new Point (idx, idy), -gdata.getRotation());
+		gdata.setMCenterX (gdata.getMCenterX() + vcr.x);
+		gdata.setMCenterY (gdata.getMCenterY() + vcr.y);
 						  
-		//In case object had zero width, switch handles
-		if(gdata.getMWidth() < 0) {
-			negativeWidth(h);
-		}
-		if(gdata.getMHeight() < 0) {
-			negativeHeight(h);
-		}
 	}
-	
-	/**
-	 * This method implements actions performed when the width of
-	 * the object becomes negative after adjusting to a handle
-	 * @param h	The handle this object adjusted to
-	 */
-	public void negativeWidth(Handle h) {
-		if(h.getDirection() == Handle.DIRECTION_FREE)  {
-			h = getOppositeHandle(h, Handle.DIRECTION_X);
-		} else {
-			h = getOppositeHandle(h, Handle.DIRECTION_XY);
-		}
-		double mw = -gdata.getMWidth();
-		double msx = gdata.getMLeft() - mw;
-//		gdata.dontFireEvents(1);
-		gdata.setMWidth (mw);
-		gdata.setMLeft(msx);
-		canvas.setPressedObject(h);
+
+	private void setHorizontalOppositeHandle(Handle h)
+	{
+		Handle opposite = null;
+		if(h == handleE) opposite = handleW;
+		else if(h == handleW) opposite = handleE;
+		else if(h == handleNE) opposite = handleNW;
+		else if(h == handleSE) opposite = handleSW;
+		else if(h == handleNW) opposite = handleNE;
+		else if(h == handleSW) opposite = handleSE;
+		else opposite = h;
+		canvas.setPressedObject(opposite);
 	}
-	
-	/**
-	 * This method implements actions performed when the height of
-	 * the object becomes negative after adjusting to a handle
-	 * @param h	The handle this object adjusted to
-	 */
-	public void negativeHeight(Handle h) {
-		if(h.getDirection() == Handle.DIRECTION_FREE)  {
-			h = getOppositeHandle(h, Handle.DIRECTION_Y);
-		} else {
-			h = getOppositeHandle(h, Handle.DIRECTION_XY);
-		}
-		double ht = -gdata.getMHeight();
-		double sy = gdata.getMTop() - ht;
-//		gdata.dontFireEvents(1);
-		gdata.setMHeight(ht);
-		gdata.setMTop(sy);
-		canvas.setPressedObject(h);
-	}
+
+	private void setVerticalOppositeHandle(Handle h)
+	{
+		Handle opposite = null;
+		if(h == handleN) opposite = handleS;
+		else if(h == handleS) opposite = handleN;
+		else if(h == handleNE) opposite = handleSE;
+		else if(h == handleSE) opposite = handleNE;
+		else if(h == handleNW) opposite = handleSW;
+		else if(h == handleSW) opposite = handleNW;
+		else opposite = h;
+		canvas.setPressedObject(opposite);
+	}									   
 	
 	/**
 	 * Sets the handles at the correct location;
@@ -351,84 +278,28 @@ public abstract class GraphicsShape extends Graphics {
 	protected void setHandleLocation()
 	{
 		Point p;
-		p = getMHandleLocation(handleN);
+		p = mToExternal(0, -gdata.getMHeight()/2);
 		handleN.setMLocation(p.x, p.y);
-		p = getMHandleLocation(handleE);
+		p = mToExternal(gdata.getMWidth()/2, 0);
 		handleE.setMLocation(p.x, p.y);
-		p = getMHandleLocation(handleS);
+		p = mToExternal(0,  gdata.getMHeight()/2);
 		handleS.setMLocation(p.x, p.y);
-		p = getMHandleLocation(handleW);
+		p = mToExternal(-gdata.getMWidth()/2, 0);
 		handleW.setMLocation(p.x, p.y);
 		
-		p = getMHandleLocation(handleNE);
+		p = mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
 		handleNE.setMLocation(p.x, p.y);
-		p = getMHandleLocation(handleSE);
+		p = mToExternal(gdata.getMWidth()/2, gdata.getMHeight()/2);
 		handleSE.setMLocation(p.x, p.y);
-		p = getMHandleLocation(handleSW);
+		p = mToExternal(-gdata.getMWidth()/2, gdata.getMHeight()/2);
 		handleSW.setMLocation(p.x, p.y);
-		p = getMHandleLocation(handleNW);
+		p = mToExternal(-gdata.getMWidth()/2, -gdata.getMHeight()/2);
 		handleNW.setMLocation(p.x, p.y);
 
-		p = getMHandleLocation(handleR);
+		p = mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
 		handleR.setMLocation(p.x, p.y);
 		
 		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
-	}
-		
-	private Point getMHandleLocation(Handle h) {
-		if(h == handleN) return mToExternal(0, -gdata.getMHeight()/2);
-		if(h == handleE) return mToExternal(gdata.getMWidth()/2, 0);
-		if(h == handleS) return mToExternal(0,  gdata.getMHeight()/2);
-		if(h == handleW) return mToExternal(-gdata.getMWidth()/2, 0);
-		
-		if(h == handleNE) return mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
-		if(h == handleSE) return mToExternal(gdata.getMWidth()/2, gdata.getMHeight()/2);
-		if(h == handleSW) return mToExternal(-gdata.getMWidth()/2, gdata.getMHeight()/2);
-		if(h == handleNW) return mToExternal(-gdata.getMWidth()/2, -gdata.getMHeight()/2);
-
-		if(h == handleR) return mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
-		return null;
-	}
-	
-	/**
-	 * Gets the handle opposite to the given handle.
-	 * For directions N, E, S and W this is always their complement,
-	 * for directions NE, NW, SE, SW, you can constraint the direction, e.g.:
-	 * if direction is X, the opposite of NE will be NW instead of SW
-	 * @param h	The handle to find the opposite for
-	 * @param direction	Constraints on the direction, one of {@link Handle}#DIRECTION_*.
-	 * Will be ignored for N, E, S and W handles
-	 * @return	The opposite handle
-	 */
-	private Handle getOppositeHandle(Handle h, int direction) {
-		//Ignore direction for N, E, S and W
-		if(h == handleN) return handleS;
-		if(h == handleE) return handleW;
-		if(h == handleS) return handleN;
-		if(h == handleW) return handleE;
-				
-		int[] pos = handleFromMatrix(h);
-		switch(direction) {
-		case Handle.DIRECTION_XY:
-		case Handle.DIRECTION_MINXY:
-		case Handle.DIRECTION_FREE:
-			return handleMatrix[ Math.abs(pos[0] - 1)][ Math.abs(pos[1] - 1)];
-		case Handle.DIRECTION_Y:
-			return handleMatrix[ Math.abs(pos[0] - 1)][pos[1]];
-		case Handle.DIRECTION_X:
-			return handleMatrix[ pos[0]][ Math.abs(pos[1] - 1)];
-		default:
-			return null;
-		}
-	}
-	
-	private int[] handleFromMatrix(Handle h) {
-		for(int x = 0; x < 2; x++) {
-			for(int y = 0; y < 2; y++) {
-				if(handleMatrix[x][y] == h) return new int[] {x,y};
-			}
-		}
-		return null;
 	}
 	
 	/**
@@ -439,10 +310,13 @@ public abstract class GraphicsShape extends Graphics {
 		return getShape();
 	}
 		
-	protected Shape getShape() {
+	protected Shape getShape()
+	{
 		return getFillShape(defaultStroke.getLineWidth());
 	}
-	protected Shape getFillShape() {
+	
+	protected Shape getFillShape()
+	{
 		return getFillShape(0);
 	}
 	
@@ -460,7 +334,8 @@ public abstract class GraphicsShape extends Graphics {
 		return s;
 	}
 	
-	public void gmmlObjectModified(PathwayEvent e) {		
+	public void gmmlObjectModified(PathwayEvent e)
+	{
 		markDirty(); // mark everything dirty
 		setHandleLocation();
 	}

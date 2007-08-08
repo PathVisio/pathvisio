@@ -90,6 +90,19 @@ public class VPathway implements PathwayListener
 	{
 		return drawingObjects; 
 	}
+
+	/**
+	   Count how many of the drawingObjects are handles	   
+	 */
+	private int getHandleCount()
+	{
+		int result = 0;
+		for (VPathwayElement o : drawingObjects)
+		{
+			if (o instanceof Handle) result++;
+		}
+		return result;
+	}
 	
 	/**
 	 * The {@link VPathwayElement} that is pressed last mouseDown event}
@@ -637,7 +650,7 @@ public class VPathway implements PathwayListener
 	 *            true if the background should be erased
 	 */
 	public void draw (Graphics2D g2d, Rectangle area, boolean erase)
-	{		
+	{
 		if(area == null)
 		{
 			area = g2d.getClipBounds();

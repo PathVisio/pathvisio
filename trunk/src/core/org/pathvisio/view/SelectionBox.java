@@ -204,11 +204,14 @@ public class SelectionBox extends VPathwayElement
 	}
 	
 	private void reset(double vStartX, double vStartY, boolean clearSelection) {
-		for(VPathwayElement o : selection) o.deselect();
 		if(clearSelection) {
+			for(VPathwayElement o : selection) o.deselect();
+			boolean hadObjects = selection.size() > 0;
 			selection.clear();
-			fireSelectionEvent(
+			if(hadObjects) {
+				fireSelectionEvent(
 					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED));
+			}
 		}
 		
 		vLeft = vStartX;

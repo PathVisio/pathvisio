@@ -52,8 +52,6 @@ import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
-import com.hp.hpl.jena.iri.impl.GroupAction;
-
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
  * the drawing and can be visualized. The class also provides methods for mouse
@@ -117,7 +115,7 @@ public class VPathway implements PathwayListener
 		return data;
 	}
 	
-	SelectionBox s; 
+	SelectionBox selection; 
 			
 	private boolean editMode;
 	/**
@@ -142,7 +140,7 @@ public class VPathway implements PathwayListener
 		
 		drawingObjects	= new ArrayList<VPathwayElement>();
 		
-		s = new SelectionBox(this);
+		selection = new SelectionBox(this);
 		
 		registerKeyboardActions();
 	}
@@ -546,8 +544,7 @@ public class VPathway implements PathwayListener
 	public void selectObject(VPathwayElement o)
 	{
 		clearSelection();
-		lastAdded.select();
-		s.addToSelection(lastAdded);
+		selection.addToSelection(lastAdded);
 	}
 	
 	/**
@@ -583,9 +580,9 @@ public class VPathway implements PathwayListener
 		if(isDragging)
 		{
 			resetHighlight();
-			if (s.isSelecting())
+			if (selection.isSelecting())
 			{ // If we were selecting, stop it
-				s.stopSelecting();
+				selection.stopSelecting();
 			}
 			// check if we placed a new object by clicking or dragging
 			// if it was a click, give object the initial size.
@@ -684,17 +681,24 @@ public class VPathway implements PathwayListener
 		if (isEditMode())
 			return true;
 		else
-			return !(o instanceof Handle || (o == s && !isDragging));
+			return !(o instanceof Handle || (o == selection && !isDragging));
 	}
 
 	/**
-	 * deselect all elements on the drawing
+	 * deselect all elements on the drawing and resets the selectionbox.
+	 * Equivalent to {@link #clearSelection(0, 0)}
 	 */
-	private void clearSelection()
-	{
-		for (VPathwayElement o : drawingObjects)
-			o.deselect(); // Deselect all objects
-		s.reset();
+	private void clearSelection() {
+		clearSelection(0, 0);
+	}
+	
+	/**
+	 * deselect all elements on the drawing and resets the selectionbox to the given coordinates
+	 * Equivalent to {@link SelectionBox#reset(double, double))}
+	 */
+	private void clearSelection(double x, double y) {
+		for(VPathwayElement e : drawingObjects) e.deselect();
+		selection.reset(x, y);
 	}
 
 	/**
@@ -731,10 +735,9 @@ public class VPathway implements PathwayListener
 		vPreviousY = (int)vp.getY();
 		isDragging = true;
 		
-		clearSelection();
-		s.reset(vp.getX(), vp.getY());
-		s.startSelecting();
-		pressedObject = s.getCornerHandle();
+		clearSelection(vp.getX(), vp.getY());
+		selection.startSelecting();
+		pressedObject = selection.getCornerHandle();
 	}
 		
 	/**
@@ -841,14 +844,14 @@ public class VPathway implements PathwayListener
 			if (pressedObject instanceof SelectionBox)
 			{
 				//Object inside selectionbox clicked, pass to selectionbox
-				s.objectClicked(p2d);
+				selection.objectClicked(p2d);
 			} else if (pressedObject.isSelected())
 			{ // Already in selection:
 				// remove
-				s.removeFromSelection(pressedObject);
+				selection.removeFromSelection(pressedObject);
 			} else
 			{
-				s.addToSelection(pressedObject); //Not in selection: add
+				selection.addToSelection(pressedObject); //Not in selection: add
 			}
 			pressedObject = null; //Disable dragging
 		} else
@@ -859,10 +862,10 @@ public class VPathway implements PathwayListener
 			if(!(pressedObject instanceof SelectionBox))
 			{
 				clearSelection();
-				s.addToSelection(pressedObject);
+				selection.addToSelection(pressedObject);
 			} else
 			{ // Check if clicked object inside selectionbox
-				if (s.getChild(p2d) == null)
+				if (selection.getChild(p2d) == null)
 					clearSelection();
 			}
 		}
@@ -1190,7 +1193,7 @@ public class VPathway implements PathwayListener
 		clearSelection();
 		for(VPathwayElement vpe : getDrawingObjects()) {
 			if(c.isInstance(vpe)) {
-				s.addToSelection(vpe);
+				selection.addToSelection(vpe);
 			}
 		}
 		redrawDirtyRect();
@@ -1209,7 +1212,7 @@ public class VPathway implements PathwayListener
 		clearSelection();
 		for (VPathwayElement o : getDrawingObjects())
 		{
-			s.addToSelection(o);
+			selection.addToSelection(o);
 		}
 		redrawDirtyRect();
 	}
@@ -1217,7 +1220,7 @@ public class VPathway implements PathwayListener
 	private void insertPressed()
 	{
 		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
-		objects.addAll(s.getSelection());
+		objects.addAll(selection.getSelection());
 		for (VPathwayElement o : objects)
 		{
 			if (o instanceof Line)
@@ -1240,7 +1243,7 @@ public class VPathway implements PathwayListener
 				l1.getEnd().link(l2.getStart());
 			}
 		}
-		s.addToSelection(lastAdded);
+		selection.addToSelection(lastAdded);
 	}
 	
 	public void toggleGroup(List<Graphics> selection)
@@ -1436,13 +1439,13 @@ public class VPathway implements PathwayListener
 			removeDrawingObject(o);
 			
 		}
-		s.fitToSelection();
+		selection.fitToSelection();
 	}
 	
 	public void removeDrawingObject(VPathwayElement toRemove)
 	{
 		toRemove.destroy(); //Object will remove itself from the drawing
-		s.removeFromSelection(toRemove); //Remove from selection
+		selection.removeFromSelection(toRemove); //Remove from selection
 	}
 
 	Graphics lastAdded = null;
@@ -1867,7 +1870,7 @@ public class VPathway implements PathwayListener
 				
 				data.add (p); // causes lastAdded to be set
 				lastAdded.select();
-				s.addToSelection(lastAdded);
+				selection.addToSelection(lastAdded);
 			}
 		}
 	}
@@ -1891,7 +1894,7 @@ public class VPathway implements PathwayListener
 	 * @param l The SelectionListener to add
 	 */
 	public void addSelectionListener(SelectionListener l) {
-		s.addListener(l);
+		selection.addListener(l);
 	}
 	
 	/**
@@ -1899,7 +1902,7 @@ public class VPathway implements PathwayListener
 	 * @param l The SelectionListener to remove
 	 */
 	public void removeSelectionListener(SelectionListener l) {
-		s.removeListener(l);
+		selection.removeListener(l);
 	}
 	
 	private void cleanupListeners()

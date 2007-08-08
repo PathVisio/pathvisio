@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -58,21 +58,38 @@ public class TypedProperty implements Comparable {
 	PropertyType type;
 	boolean different;
 
-	public TypedProperty(Collection<PathwayElement> elements, PropertyType type) {
-		this(elements, null, type, true);
-	}
-	
-	public TypedProperty(Collection<PathwayElement> elements, Object value, PropertyType type) {
-		this(elements, value, type, false);
-	}
-	
-	private TypedProperty(Collection<PathwayElement> elements, Object value, PropertyType type, boolean different) {
-		this.elements = elements;
-		this.value = value;
+	public TypedProperty(PropertyType type) {
 		this.type = type;
-		this.different = different;
+		elements = new HashSet<PathwayElement>();
 	}
-
+	
+	public void addElement(PathwayElement e) {
+		boolean added = elements.add(e);
+		refreshValue();
+		//System.err.println("\t\tadding....." + added);
+	}
+	
+	public void removeElement(PathwayElement e) {
+		boolean removed = elements.remove(e);
+		refreshValue();
+		//System.err.println("\t\removing....." + removed);
+	}
+	
+	public void refreshValue() {
+		boolean first = true;
+		for(PathwayElement e : elements) {
+			Object o = e.getProperty(type);
+			if(!first && (o == null || !o.equals(value))) {
+				setHasDifferentValues(true);
+				return;
+			}
+			value = o;
+			first = false;
+		}
+	}
+	
+	public int elementCount() { return elements.size(); }
+	
 	public int compareTo(Object o) {
 		return type.compareTo(((TypedProperty)o).getType());
 	}
@@ -426,7 +443,7 @@ public class TypedProperty implements Comparable {
 
 		public Component getTableCellRendererComponent(
 				JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
-			Color newColor = (Color)color;
+			Color newColor = color != null ? (Color)color : Color.WHITE;
 			setBackground(newColor);
 			if (isBordered) {
 				if (isSelected) {

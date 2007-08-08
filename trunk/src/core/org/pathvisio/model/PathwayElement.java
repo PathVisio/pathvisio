@@ -1960,7 +1960,7 @@ public class PathwayElement implements GraphIdContainer
 
 	public void addListener(PathwayListener v)
 	{
-		listeners.add(v);
+		if(!listeners.contains(v)) listeners.add(v);
 	}
 
 	public void removeListener(PathwayListener v)

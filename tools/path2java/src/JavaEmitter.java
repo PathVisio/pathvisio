@@ -57,8 +57,8 @@ class JavaEmitter implements Emitter
 
 	private void printAbsolutePoint (Point2D p)
 	{
-		double x = p.getX() + offX;
-		double y = p.getY() + offY;
+		double x = p.getX() - offX;
+		double y = p.getY() - offY;
 
 		if (fRound)
 		{

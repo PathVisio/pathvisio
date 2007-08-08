@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<project name="Path2Java" default="compile" basedir=".">	
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+    <path id="project.class.path">
+		<pathelement location="${build.dir}"/>
+		<fileset dir="../../lib">
+		        <include name="junit.jar"/>
+		</fileset>
+	</path>
+
+	<target name="prepare">
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<target name="clean" description="Remove all generated files.">
+		<delete dir="${build.dir}"/>
+		<delete dir="${apidoc.dir}"/>
+	</target>
+	
+	<target name="compile" depends="prepare" description="Compile all sources">
+		<javac srcdir="${src.dir}" debug="true"	destdir="${build.dir}">
+			<classpath refid="project.class.path"/>
+		</javac>
+	</target>
+	
+</project>

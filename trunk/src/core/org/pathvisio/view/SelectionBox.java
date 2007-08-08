@@ -114,12 +114,7 @@ public class SelectionBox extends VPathwayElement
 			doAdd(o);
 		}
 		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_ADDED, o));
-		if(isSelecting) return; //All we have to do if user is dragging selectionbox
-		if(hasMultipleSelection())
-		{ 
-			stopSelecting(); //show and fit to SelectionBox if performed after dragging
-		}
-		 
+		if(isSelecting) return; //All we have to do if user is dragging selectionbox		 
 	}
 	
 	private void doAdd(VPathwayElement o)

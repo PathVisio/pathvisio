@@ -852,6 +852,7 @@ public class VPathway implements PathwayListener
 			} else
 			{
 				selection.addToSelection(pressedObject); //Not in selection: add
+				selection.stopSelecting();
 			}
 			pressedObject = null; //Disable dragging
 		} else

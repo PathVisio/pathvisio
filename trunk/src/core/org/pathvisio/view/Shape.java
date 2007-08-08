@@ -26,6 +26,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a 
@@ -87,7 +88,8 @@ public class Shape extends GraphicsShape
 			g.draw (shape);
 		}
 	}	
-	
+
+		
 	protected java.awt.Shape getFillShape(float sw) {
 		int x = getVLeft();
 		int y = getVTop();
@@ -113,6 +115,36 @@ public class Shape extends GraphicsShape
             p.quadTo(cx, y + h/2, cx + w/4, y + h/2);
             p.quadTo(x + w, y + h/2, x + w, y + h);
             s = p;
+			break;
+		case PENTAGON:
+			s = ShapeRegistry.getShape ("Pentagon", x, y, w, h);
+			break;
+		case HEXAGON:
+			s = ShapeRegistry.getShape ("Hexagon", x, y, w, h);
+			break;
+		case TRIANGLE:
+			s = ShapeRegistry.getShape ("Triangle", x, y, w, h);
+			break;
+		case CELLA:
+			s = ShapeRegistry.getShape ("CellA", x, y, w, h);
+			break;
+		case ORGANA:
+			s = ShapeRegistry.getShape ("OrganA", x, y, w, h);
+			break;
+		case ORGANB:
+			s = ShapeRegistry.getShape ("OrganB", x, y, w, h);
+			break;
+		case ORGANC:
+			s = ShapeRegistry.getShape ("OrganC", x, y, w, h);
+			break;
+		case RIBOSOME:
+			s = ShapeRegistry.getShape ("Ribosome", x, y, w, h);
+			break;
+		case PROTEINB:
+			s = ShapeRegistry.getShape ("ProteinB", x, y, w, h);
+			break;
+		case VESICLE:
+			s = ShapeRegistry.getShape ("Vesicle", x, y, w, h);
 			break;
 		default:
 			s = new Rectangle(x, y, w, h);

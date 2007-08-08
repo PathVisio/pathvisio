@@ -88,8 +88,8 @@ class Main extends JPanel
 				Shape sh = em.getShape();
 			    Rectangle r = sh.getBounds();
 				AffineTransform x = AffineTransform.getTranslateInstance (-r.x + xco, -r.y + yco);
-				sh = x.createTransformedShape (sh);
-				target.draw (sh);
+				Shape sh2 = x.createTransformedShape (sh);
+				target.draw (sh2);
 				xco += r.width;
 			}
 			catch (PathParseException e)
@@ -140,6 +140,7 @@ class Main extends JPanel
 			Rectangle r = sh.getBounds();
 			JavaEmitter em2 = new JavaEmitter (new PrintWriter (System.out), null);
 			em2.setOffset (r.x, r.y);
+			em2.setFormat ("%.2ff");
 			p = new Parser(pathString, em2);
 			p.parse ();
 		}
@@ -172,7 +173,7 @@ class Main extends JPanel
 	{
 		if (argv.length > 0)
 		{
-			Main m = new Main();
+			Main m = new Main();			
 			m.printPath(argv[0]);
 		}
 		else

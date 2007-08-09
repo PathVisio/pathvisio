@@ -352,6 +352,7 @@ public class Test extends TestCase implements PathwayListener
 		PathwayElement mi;
 
 		mi = data.getMappInfo();
+		assertTrue ("Mi shouldn't be null", mi != null);
 		try
 		{
 			data.writeToXml(tmp, false);

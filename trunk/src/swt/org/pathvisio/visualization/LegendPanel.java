@@ -16,8 +16,6 @@
 //
 package org.pathvisio.visualization;
 
-import static org.pathvisio.visualization.LegendPanel.FONT;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;

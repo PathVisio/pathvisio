@@ -26,7 +26,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a 

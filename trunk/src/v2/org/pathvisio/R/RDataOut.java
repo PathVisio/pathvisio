@@ -94,7 +94,7 @@ public class RDataOut {
 	public RDataOut(File pathways, boolean recursive) {
 		this();
 		//Get the pathway files
-		pwFiles = FileUtils.getFiles(pathways, Engine.getCurrent().PATHWAY_FILE_EXTENSION, recursive);
+		pwFiles = FileUtils.getFiles(pathways, Engine.PATHWAY_FILE_EXTENSION, recursive);
 	}
 	
 	public List<File> getPathwayFiles() { return pwFiles; }
@@ -155,7 +155,7 @@ public class RDataOut {
 			
 		checkValid();
 		
-		pwFiles = FileUtils.getFiles(pwDir, Engine.getCurrent().PATHWAY_FILE_EXTENSION, true);
+		pwFiles = FileUtils.getFiles(pwDir, Engine.PATHWAY_FILE_EXTENSION, true);
 
 		if(pwFiles.size() == 0) throw new Exception("No pathway files (*.gpml) found in " + pwDir);
 		

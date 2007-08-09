@@ -175,11 +175,11 @@ public class GuiMain {
 		
 		// Labels for color by expressiondata (mRNA and Protein)
 		ImageData img = new ImageData(cl.getResourceAsStream("images/mRNA.bmp"));
-		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.getCurrent().TRANSPARENT_COLOR));
+		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR));
 		imageRegistry.put("data.mRNA",
 				new Image(display, img));
 		img = new ImageData(cl.getResourceAsStream("images/protein.bmp"));
-		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.getCurrent().TRANSPARENT_COLOR));
+		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR));
 		imageRegistry.put("data.protein",
 				new Image(display, img));
 		imageRegistry.put("sidepanel.minimize",

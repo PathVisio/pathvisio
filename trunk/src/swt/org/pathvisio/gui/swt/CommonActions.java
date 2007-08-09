@@ -109,17 +109,17 @@ public class CommonActions
 			{
 				FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 				fd.setText("Save");
-				fd.setFilterExtensions(new String[] {"*." + Engine.getCurrent().SVG_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {Engine.getCurrent().SVG_FILTER_NAME, "All files (*.*)"});
+				fd.setFilterExtensions(new String[] {"*." + Engine.SVG_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {Engine.SVG_FILTER_NAME, "All files (*.*)"});
 				
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
 					String name = xmlFile.getName();
-					if (name.endsWith("." + Engine.getCurrent().PATHWAY_FILE_EXTENSION))
+					if (name.endsWith("." + Engine.PATHWAY_FILE_EXTENSION))
 					{
 						name = name.substring(0, name.length() - 
-							Engine.getCurrent().PATHWAY_FILE_EXTENSION.length()) +
-							Engine.getCurrent().SVG_FILE_EXTENSION;
+							Engine.PATHWAY_FILE_EXTENSION.length()) +
+							Engine.SVG_FILE_EXTENSION;
 					}
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
@@ -132,8 +132,8 @@ public class CommonActions
 				if(fileName == null) return;
 				
 				// Append .svg extension if not already present
-				if(!fileName.endsWith("." + Engine.getCurrent().SVG_FILE_EXTENSION)) 
-					fileName += "." + Engine.getCurrent().SVG_FILE_EXTENSION;
+				if(!fileName.endsWith("." + Engine.SVG_FILE_EXTENSION)) 
+					fileName += "." + Engine.SVG_FILE_EXTENSION;
 				
 				File checkFile = new File(fileName);
 				boolean confirmed = true;
@@ -187,8 +187,8 @@ public class CommonActions
 			fd.setText("Open");
 			String pwpath = SwtPreference.SWT_DIR_PWFILES.getValue();
 			fd.setFilterPath(pwpath);
-			fd.setFilterExtensions(new String[] {"*." + Engine.getCurrent().PATHWAY_FILE_EXTENSION, "*.*"});
-			fd.setFilterNames(new String[] {Engine.getCurrent().PATHWAY_FILTER_NAME, "All files (*.*)"});
+			fd.setFilterExtensions(new String[] {"*." + Engine.PATHWAY_FILE_EXTENSION, "*.*"});
+			fd.setFilterNames(new String[] {Engine.PATHWAY_FILTER_NAME, "All files (*.*)"});
 	        String fnMapp = fd.open();
 	        // Only open pathway if user selected a file
 	        
@@ -217,8 +217,8 @@ public class CommonActions
 				FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 				fd.setText("Open");
 				fd.setFilterPath(SwtPreference.SWT_DIR_PWFILES.getValue());
-				fd.setFilterExtensions(new String[] {"*." + Engine.getCurrent().GENMAPP_FILE_EXTENSION, "*.*"});
-				fd.setFilterNames(new String[] {Engine.getCurrent().GENMAPP_FILTER_NAME, "All files (*.*)"});
+				fd.setFilterExtensions(new String[] {"*." + Engine.GENMAPP_FILE_EXTENSION, "*.*"});
+				fd.setFilterNames(new String[] {Engine.GENMAPP_FILTER_NAME, "All files (*.*)"});
 	        	String fnMapp = fd.open();
 	        	// Only open pathway if user selected a file
 	        	
@@ -302,10 +302,10 @@ public class CommonActions
 				File xmlFile = gmmlData.getSourceFile();
 				if(xmlFile != null) {
 					String name = xmlFile.getName();
-					if (name.endsWith("." + Engine.getCurrent().PATHWAY_FILE_EXTENSION))
+					if (name.endsWith("." + Engine.PATHWAY_FILE_EXTENSION))
 					{
 						name = name.substring(0, name.length() - 
-							Engine.getCurrent().PATHWAY_FILE_EXTENSION.length() - 1);
+							Engine.PATHWAY_FILE_EXTENSION.length() - 1);
 					}
 					fd.setFileName(name);
 					fd.setFilterPath(xmlFile.getPath());
@@ -317,7 +317,7 @@ public class CommonActions
 				if(fileName == null) return;
 				
 				int dot = fileName.lastIndexOf('.');
-				String ext = Engine.getCurrent().GENMAPP_FILE_EXTENSION;
+				String ext = Engine.GENMAPP_FILE_EXTENSION;
 				if(dot >= 0) {
 					ext = fileName.substring(dot + 1, fileName.length());
 				}

@@ -642,7 +642,7 @@ public class PathwayElement implements GraphIdContainer
 			break;
 
 		case BIOPAXREF:
-			setBiopaxRef((String) value);
+			setBiopaxRefs((List<String>) value);
 			break;
 		}
 	}
@@ -797,7 +797,7 @@ public class PathwayElement implements GraphIdContainer
 			break;
 
 		case BIOPAXREF:
-			result = getBiopaxRef();
+			result = getBiopaxRefs();
 			break;
 		}
 
@@ -1905,23 +1905,42 @@ public class PathwayElement implements GraphIdContainer
 		biopax = bp;
 	}
 
-	protected String biopaxRef;
+	protected List<String> biopaxRefs = new ArrayList<String>();
 
-	public String getBiopaxRef()
+	public List<String> getBiopaxRefs()
 	{
-		return biopaxRef;
+		return biopaxRefs;
 	}
 
-	public void setBiopaxRef(String ref)
+	public void setBiopaxRefs(List<String> refs) {
+		if(refs != null && !biopaxRefs.equals(refs)) {
+			biopaxRefs = refs;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+	
+	public void addBiopaxRef(String ref)
 	{
-		if (ref != null && !ref.equals(biopaxRef))
+		if (ref != null && !biopaxRefs.contains(ref))
 		{
-			biopaxRef = ref;
+			biopaxRefs.add(ref);
 			fireObjectModifiedEvent(new PathwayEvent(this,
 					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
+	public void removeBiopaxRef(String ref) 
+	{
+		if(ref != null) {
+			boolean changed = biopaxRefs.remove(ref);
+			if(changed) {
+				fireObjectModifiedEvent(new PathwayEvent(this,
+						PathwayEvent.MODIFIED_GENERAL));
+			}
+		}
+	}
+	
 	public PathwayElement[] splitLine()
 	{
 		double centerX = (getMStartX() + getMEndX()) / 2;

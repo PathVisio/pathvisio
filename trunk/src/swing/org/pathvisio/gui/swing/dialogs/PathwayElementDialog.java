@@ -23,9 +23,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -37,17 +35,16 @@ import javax.swing.JTabbedPane;
 
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.panels.CommentPanel;
+import org.pathvisio.gui.swing.panels.LitReferencePanel;
 import org.pathvisio.gui.swing.panels.PathwayElementPanel;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.view.VPathway;
 
-public class PathwayElementDialog extends JDialog implements ActionListener {
-	static final String OK = "Ok";
-	static final String CANCEL = "Cancel";
-	
+public class PathwayElementDialog extends OkCancelDialog {
 	public static final String TAB_COMMENTS = "Comments";
+	public static final String TAB_LITERATURE = "Literature";
 	
 	public static PathwayElementDialog getInstance(PathwayElement e) {
 		return getInstance(e, null, null);
@@ -68,38 +65,18 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
 		
 	public PathwayElementDialog(PathwayElement e, Frame frame, String title, Component locationComp) {
-		super(frame, "Element properties", true);
+		super(frame, "Element properties", locationComp, true);
 		
 		panels = new HashMap<String, PathwayElementPanel>();
-		
-		JButton cancelButton = new JButton(CANCEL);
-		cancelButton.addActionListener(this);
-
-		final JButton setButton = new JButton(OK);
-		setButton.setActionCommand(OK);
-		setButton.addActionListener(this);
-		getRootPane().setDefaultButton(setButton);
-		
-		dialogPane = new JTabbedPane();
 		createTabs();
-		
-		JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		buttonPane.add(Box.createHorizontalGlue());
-		buttonPane.add(cancelButton);
-		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-		buttonPane.add(setButton);
-
-		Container contentPane = getContentPane();
-		contentPane.add(dialogPane, BorderLayout.CENTER);
-		contentPane.add(buttonPane, BorderLayout.PAGE_END);
-		pack();
-		setLocationRelativeTo(locationComp);
-		
 		setInput(e);
-		}
+	}
 
+	protected Component createDialogPane() {
+		dialogPane = new JTabbedPane();
+		return dialogPane;
+	}
+	
 	protected PathwayElement getInput() {
 		return input;
 	}
@@ -132,6 +109,7 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 	
 	private void createTabs() {
 		addPathwayElementPanel(TAB_COMMENTS, new CommentPanel());
+		addPathwayElementPanel(TAB_LITERATURE, new LitReferencePanel());
 		addCustomTabs(dialogPane);
 	}
 		
@@ -173,14 +151,5 @@ public class PathwayElementDialog extends JDialog implements ActionListener {
 	protected void cancelPressed() {
 		restoreState();
 		setVisible(false);
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		if (OK.equals(e.getActionCommand())) {
-			okPressed();
-		}
-		if(CANCEL.equals(e.getActionCommand())) {
-			cancelPressed();
-		}
 	}
 }

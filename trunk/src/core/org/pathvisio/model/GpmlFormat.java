@@ -284,7 +284,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		// correctly ordered list of tag names, which are loaded into the hashmap in
 		// the constructor.
 		private final String[] elements = new String[] {
-			"Comment", "Graphics", "DataNode", "Line", "Label",
+			"Comment", "BiopaxRef", "Graphics", "DataNode", "Line", "Label",
 			"Shape", "Group", "InfoBox", "Legend", "Biopax"
 		};
 		
@@ -449,6 +449,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			case ObjectType.GROUP:
 				mapGroupRef(o, e);
 				mapGroup (o, e);
+				mapComments(o, e);
 				mapBiopaxRef(o, e);
 				break;
 			case ObjectType.BIOPAX:
@@ -867,17 +868,22 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	
 	private static void mapBiopaxRef(PathwayElement o, Element e) throws ConverterException
 	{
-		String ref = e.getAttributeValue("BiopaxRef");
-		if(ref != null) {
-			o.setBiopaxRef(ref);
-		}
+		for (Object f : e.getChildren("BiopaxRef", e.getNamespace()))
+		{
+			o.addBiopaxRef(((Element)f).getText());
+		}  
 	}
 	
 	private static void updateBiopaxRef(PathwayElement o, Element e) throws ConverterException
 	{
-		String ref = o.getBiopaxRef();
-		if(ref != null) {
-			e.setAttribute("BiopaxRef", ref);
+		if(e != null) 
+		{
+			for (String ref : o.getBiopaxRefs())
+			{
+				Element f = new Element ("BiopaxRef", e.getNamespace());
+				f.setText (ref);
+				e.addContent(f);
+			}
 		}
 	}
 	
@@ -890,6 +896,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			case ObjectType.DATANODE:
 				e = new Element("DataNode", ns);
 				updateComments(o, e);
+				updateBiopaxRef(o, e);
 				e.addContent(new Element("Graphics", ns));			
 				e.addContent(new Element("Xref", ns));			
 				updateDataNode(o, e);
@@ -897,11 +904,11 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				updateShapeData(o, e, "DataNode");
 				updateGraphId(o, e);				
 				updateGroupRef(o, e);
-				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.SHAPE:
 				e = new Element ("Shape", ns);
 				updateComments(o, e);
+				updateBiopaxRef(o, e);
 				e.addContent(new Element("Graphics", ns));
 				updateShapeColor(o, e);
 				updateColor(o, e);
@@ -909,27 +916,26 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				updateShapeType(o, e);
 				updateGraphId(o, e);
 				updateGroupRef(o, e);
-				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.LINE:
 				e = new Element("Line", ns);
 				updateComments(o, e);
+				updateBiopaxRef(o, e);
 				e.addContent(new Element("Graphics", ns));				
 				updateLineData(o, e);
 				updateColor(o, e);
 				updateGroupRef(o, e);
-				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.LABEL:
 				e = new Element("Label", ns);
 				updateComments(o, e);			
+				updateBiopaxRef(o, e);
 				e.addContent(new Element("Graphics", ns));					
 				updateLabelData(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "Label");
 				updateGraphId(o, e);
 				updateGroupRef(o, e);
-				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.LEGEND:
 				e = new Element ("Legend", ns);
@@ -943,6 +949,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				e = new Element ("Group", ns);
 				updateGroup (o, e);
 				updateGroupRef(o, e);
+				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				break;
 			case ObjectType.BIOPAX:

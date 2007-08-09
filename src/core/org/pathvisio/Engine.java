@@ -139,7 +139,7 @@ public class Engine {
 		String fileName = file.toString();
 		
 		int dot = fileName.lastIndexOf('.');
-		String ext = Engine.getCurrent().PATHWAY_FILE_EXTENSION; //
+		String ext = Engine.PATHWAY_FILE_EXTENSION; //
 		if(dot >= 0) {
 			ext = fileName.substring(dot + 1, fileName.length());
 		}

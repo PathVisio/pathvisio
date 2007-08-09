@@ -123,10 +123,6 @@ public class Engine {
 	 */
 	public List<PathwayElement> clipboard = null;
 
-	public void openPathway(String fileName) throws ConverterException {
-		openPathway(new File(fileName));
-	}
-	
 	public void openPathway(File pathwayFile) throws ConverterException {
 		openPathway(pathwayFile, null);
 	}
@@ -155,11 +151,7 @@ public class Engine {
 			createVPathway(pathway, wrapper);
 		}
 	}
-	
-	public void openPathway(String fileName, VPathwayWrapper wrapper) throws ConverterException {
-		openPathway(new File(fileName), wrapper);
-	}
-	
+		
 	/**
 	 * Open a pathway from a gpml file
 	 */
@@ -170,7 +162,7 @@ public class Engine {
 		
 		// initialize new JDOM gpml representation and read the file
 		_pathway = new Pathway();
-		if (pwf.endsWith(".mapp"))
+		if (pwf.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
 		{
 			_pathway.readFromMapp(new File(pwf));
 		}
@@ -202,9 +194,9 @@ public class Engine {
 			openPathway(f, w);
 		} else {
 			try {
-				f = File.createTempFile("urlPathway", ".gpml");
+				f = File.createTempFile("urlPathway", "." + Engine.PATHWAY_FILE_EXTENSION);
 				FileUtils.downloadFile(url, f);
-				openPathway(f.toString(), w);
+				openPathway(f, w);
 			} catch(Exception e) {
 				throw new ConverterException(e);
 			}

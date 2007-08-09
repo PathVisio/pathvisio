@@ -160,7 +160,15 @@ public class SwtEngine {
 			
 			File xmlFile = pathway.getSourceFile();
 			if(xmlFile != null) {
-				fd.setFileName(xmlFile.getName());
+				String fName = xmlFile.getName();
+				System.out.println (fName);
+				if (fName.endsWith ("." + Engine.GENMAPP_FILE_EXTENSION))
+				{
+					fName = fName.substring(0,
+							fName.length() - Engine.GENMAPP_FILE_EXTENSION.length() - 1);
+					System.out.println (fName);
+				}
+				fd.setFileName(fName);
 				fd.setFilterPath(xmlFile.getPath());
 			} else {
 					fd.setFilterPath(SwtPreference.SWT_DIR_PWFILES.getValue());
@@ -294,9 +302,11 @@ public class SwtEngine {
 		{
 			try { 
 				VPathwayWrapper w = createWrapper();
-				Engine.getCurrent().openPathway(pwf, w);
+				Engine.getCurrent().openPathway(new File(pwf), w);
 				updateTitle();
-			} catch(ConverterException e) {		
+			} 
+			catch(ConverterException e) 
+			{		
 				if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 				{
 					MessageDialog.openError(getWindow().getShell(), 
@@ -309,6 +319,17 @@ public class SwtEngine {
 						"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
 						"\nSee error log for details");
 					Logger.log.error("Unable to open Gpml file", e);
+				}
+				else if (pwf.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
+				{
+					MessageDialog.openError(getWindow().getShell(), 
+						"Unable to open Mapp file", 
+						"Unable to open Mapp file.\n\n" +					
+						"Check that the file you're trying to open really is a "+
+						"Pathway in the GenMAPP .mapp format. If the problem persists, please contact " +
+						"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
+						"file you're trying to open and the error log.");
+						Logger.log.error("Unable to open Gpml file", e);						
 				}
 				else
 				{

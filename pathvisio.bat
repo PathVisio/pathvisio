@@ -1,3 +1,4 @@
-SET MY_CLASS_PATH="lib/JRI.jar";"lib/org.eclipse.equinox.common.jar";"lib/org.eclipse.equinox.supplement.jar";"lib/org.eclipse.jface.jar";"lib/swt-win32.jar";"lib/org.eclipse.core.commands.jar";"lib/jdom.jar";build;"lib/hsqldb.jar";"lib/swt-win32-lib.jar";"lib/resources.jar"
+SET MY_CLASS_PATH="lib/JRI.jar";"lib/org.eclipse.equinox.common.jar";"lib/org.eclipse.equinox.supplement.jar";"lib/org.eclipse.jface.jar";"lib/swt-win32-lib/swt.jar";"lib/org.eclipse.core.commands.jar";"lib/jdom.jar";build/v2;"lib/hsqldb.jar";"lib/swt-win32-lib.jar";"lib/resources.jar";"lib/batik/batik-awt-util.jar";"lib/batik/batik-ext.jar";"lib/batik/batik-script.jar";"lib/batik/batik-util.jar";"lib/batik/batik-dom.jar";"lib/batik/xml-apis.jar";"lib/batik/batik-xml.jar";"lib/batik/batik-extension.jar";"lib/batik/pdf-transcoder.jar";"lib/batik/batik-css.jar";"lib/batik/batik-transcoder.jar";"lib/batik/batik-svg-dom.jar";"lib/batik/batik-parser.jar";"lib/batik/batik-svggen.jar";"lib/batik/batik-bridge.jar";"lib/batik/batik-gvt.jar"
 
-java -cp %MY_CLASS_PATH% gmmlVision.GmmlVisionMain
+
+java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain

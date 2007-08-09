@@ -17,6 +17,7 @@
 // $Id: MappToGmml.java,v 1.5 2005/10/21 12:33:27 gontran Exp $
 package org.pathvisio.model;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -433,7 +434,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 							unmapShapeType(o, row);
 							break;
 						case CELLA:
-						case PROTEINB:
+						case RIBOSOME:
 						case ORGANA:
 						case ORGANB:
 						case ORGANC:
@@ -441,8 +442,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 							break;
 						case PENTAGON: //TODO: incorrect separation
 						case HEXAGON:
-						case RIBOSOME:
 						case TRIANGLE:
+						case PROTEINB:
 						case VESICLE:							
 							unmapComplexShapeType(o, row);
 					}
@@ -576,20 +577,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	mappObject[colCenterY] = "" + o.getMStartY();
     	mappObject[colSecondX] = "" + o.getMEndX();
     	mappObject[colSecondY] = "" + o.getMEndY();
-    	unmapColor (o, mappObject);    	
+		mappObject[colColor] = toMappColor(o.getColor(), false);    	
     }
-
-	private static void mapColor(PathwayElement o, String[] mappObject)
-	{
-        int i = Integer.parseInt(mappObject[colColor]);
-        o.setTransparent(i < 0);
-		o.setColor(ConvertType.fromMappColor(mappObject[colColor]));	
-	}
-
-	private static void unmapColor(PathwayElement o, String[] mappObject)
-	{
-		mappObject[colColor] = ConvertType.toMappColor(o.getColor(), o.isTransparent());	
-	}
 
 	private static Map<String,LineType> mappLineTypes = initMappLineTypes();
 	
@@ -624,7 +613,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         o.setMStartY(Double.parseDouble(mappObject[colCenterY]));
         o.setMEndX(Double.parseDouble(mappObject[colSecondX]));
         o.setMEndY(Double.parseDouble(mappObject[colSecondY]));
-        mapColor(o, mappObject);        
+		o.setColor(fromMappColor(mappObject[colColor]));	
         return o;
 	}
     
@@ -683,7 +672,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	mappObject[colType] = "Brace";    	
     	mappObject[colRotation] = "" + o.getOrientation();    	
     	unmapShape (o, mappObject);
-    	unmapColor (o, mappObject);
+		mappObject[colColor] = toMappColor(o.getColor(), false);
     }
 
     private static PathwayElement mapBraceType(String[] mappObject) throws ConverterException
@@ -691,7 +680,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
     	o.setShapeType (ShapeType.BRACE);
     	mapShape(o, mappObject);
-    	mapColor(o, mappObject);
+    	o.setColor(fromMappColor(mappObject[colColor]));
+    	o.setTransparent (true);
     	o.setOrientation((int)Double.parseDouble(mappObject[colRotation]));
         return o;          
     }
@@ -784,7 +774,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	PathwayElement o = new PathwayElement(ObjectType.LABEL);
 
     	mapShape(o, mappObject);
-    	mapColor(o, mappObject);
+		o.setColor(fromMappColor(mappObject[colColor]));	
         
     	o.setTextLabel(mappObject[colLabel]);
         
@@ -821,7 +811,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	mappObject[colLabel] = o.getTextLabel();
     	
     	unmapShape(o, mappObject);
-    	unmapColor(o, mappObject);
+		mappObject[colColor] = toMappColor(o.getColor(), false);
     	
     	mappObject[colID] = o.getFontName();
     	mappObject[colSecondX] = "" + (o.getMFontSize() / 15.0);
@@ -855,11 +845,12 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         o.setTransparent(i < 0);
         if (shapeType == ShapeType.ARC)
         {
-        	o.setColor(ConvertType.fromMappColor(mappObject[colColor]));
+        	o.setColor(fromMappColor(mappObject[colColor]));
+        	o.setTransparent (true);
         }
         else
         {
-        	o.setFillColor(ConvertType.fromMappColor(mappObject[colColor]));
+        	o.setFillColor(fromMappColor(mappObject[colColor]));
         }        
 		
         mapRotation (o, mappObject);        
@@ -879,11 +870,11 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		// line color is discarded for oval and rect
     	if (shapeType == ShapeType.ARC)
     	{
-    		mappObject[colColor] = ConvertType.toMappColor(o.getColor(), o.isTransparent());	
+    		mappObject[colColor] = toMappColor(o.getColor(), false);	
     	}
     	else
     	{
-    		mappObject[colColor] = ConvertType.toMappColor(o.getFillColor(), o.isTransparent());
+    		mappObject[colColor] = toMappColor(o.getFillColor(), o.isTransparent());
     	}
 		unmapRotation (o, mappObject);    	
     }
@@ -892,7 +883,32 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     {
     	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
-        mapShape (o, mappObject);
+        mapCenter (o, mappObject);
+        
+        switch (o.shapeType)
+        {
+        case CELLA:
+        	o.setRotation (-1.308997);
+        	o.setMWidth(1500);
+        	o.setMHeight(375);
+        	break;
+        case RIBOSOME:
+        	o.setMWidth (600);
+        	o.setMHeight (600);
+        	break;
+        case ORGANA:
+        	o.setMWidth (500);
+        	o.setMHeight (2000);
+        	break;        	
+        case ORGANB:
+        	o.setMWidth (500);
+        	o.setMHeight (2000);
+        	break;        	
+        case ORGANC:
+        	o.setMWidth (600);
+        	o.setMHeight (600);
+        	break;
+        }
         return o;        
     }
 
@@ -932,7 +948,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     		o.setShapeType(ShapeType.fromMappName(mappObject[colType]));            
     	}
         
-    	mapShape (o, mappObject);
+    	mapCenter(o, mappObject);
+    	double size = Double.parseDouble(mappObject[colWidth]);
+    	o.setMWidth(size);
+    	o.setMHeight(size);
         mapRotation (o, mappObject);
         return o;
     }
@@ -953,7 +972,17 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			mappObject[colSecondY] = "6";  			
 		}
     	
-    	unmapShape (o, mappObject);
+    	unmapCenter (o, mappObject);
+    	double size = o.getMWidth();
+    	mappObject[colWidth] = "" + size;
+    	if (shapeType == ShapeType.PROTEINB)
+    	{
+    		mappObject[colHeight] = "0";
+    	}
+    	else
+    	{
+    		mappObject[colHeight] = "400";	
+    	}
         unmapRotation (o, mappObject);
     }
     
@@ -992,5 +1021,29 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
         MappFormat.readFromMapp (inputString, pathway);
 	}
+
+    private static Color fromMappColor(String s)
+    {
+    	
+    	int i = Integer.parseInt(s);
+    	
+    	Color result = new Color(
+    			i & 0xFF,
+    			(i & 0xFF00) >> 8,
+    			(i & 0xFF0000) >> 16
+    	);
+    	
+    	return result;
+    }
     
+    private static String toMappColor(Color rgb, boolean fTransparent)
+    {
+    	if (fTransparent)
+    		return "-1";
+    	else
+    	{
+	    	int c = (rgb.getRed()) + (rgb.getGreen() << 8) + (rgb.getBlue() << 16);
+	    	return "" + c;
+    	}
+    }
 }

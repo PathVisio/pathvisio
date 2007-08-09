@@ -277,6 +277,15 @@ public class PathwayElement implements GraphIdContainer
 			throw new IllegalArgumentException("Trying to set objectType to "
 					+ ot);
 		}
+		/* set default value for transparancy */
+		if (ot == ObjectType.LINE || ot == ObjectType.LABEL)
+		{
+			fTransparent = false;
+		}
+		else
+		{
+			fTransparent = true;
+		}
 		objectType = ot;
 	}
 
@@ -881,23 +890,6 @@ public class PathwayElement implements GraphIdContainer
 	public int getObjectType()
 	{
 		return objectType;
-	}
-
-	/**
-	 * in the future, change of objecttype won't be possible at all. Objecttype
-	 * should be set through constructor
-	 * 
-	 * @deprecated
-	 * @param v
-	 */
-	public void setObjectType(int v)
-	{
-		if (objectType != v)
-		{
-			objectType = v;
-			fireObjectModifiedEvent(new PathwayEvent(this,
-					PathwayEvent.MODIFIED_GENERAL));
-		}
 	}
 
 	// only for lines:

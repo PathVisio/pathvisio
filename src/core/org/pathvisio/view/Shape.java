@@ -69,9 +69,16 @@ public class Shape extends GraphicsShape
 		g.draw(shape);
 		
 		switch(gdata.getShapeType())
-		{
-		case RECTANGLE:
-		case OVAL:
+		{		
+		case ARC:
+		case BRACE:
+			// don't fill arcs or braces
+			// TODO: this exception should disappear in the future,
+			// when we've made sure all pathways on wikipathways have
+			// transparent arcs and braces
+			break;			
+		default:
+			// fill the rest
 			if(!gdata.isTransparent()) {
 				g.setColor(fillcolor);
 				g.fill(shape);

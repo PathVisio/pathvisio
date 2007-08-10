@@ -13,17 +13,18 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.pathvisio.model.PathwayElement;
-
 public abstract class OkCancelDialog extends JDialog implements ActionListener {
-	static final String OK = "Ok";
-	static final String CANCEL = "Cancel";
-		
-	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal) {
-		super(frame, title, modal);
-		
+	public static final String OK = "Ok";
+	public static final String CANCEL = "Cancel";
+	
+	private String exitCode = CANCEL;
+	
+	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal, boolean cancellable) {
+		super((frame == null && locationComp != null) ? JOptionPane.getFrameForComponent(locationComp) : frame, 
+				title, modal);
 		JButton cancelButton = new JButton(CANCEL);
 		cancelButton.addActionListener(this);
 
@@ -31,15 +32,17 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		setButton.setActionCommand(OK);
 		setButton.addActionListener(this);
 		getRootPane().setDefaultButton(setButton);
-		
-		Component dialogPane = createDialogPane();
 
+		Component dialogPane = createDialogPane();
+		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		buttonPane.add(Box.createHorizontalGlue());
-		buttonPane.add(cancelButton);
-		buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+		if(cancellable) {
+			buttonPane.add(cancelButton);
+			buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
+		}
 		buttonPane.add(setButton);
 
 		Container contentPane = getContentPane();
@@ -48,14 +51,24 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		pack();
 		setLocationRelativeTo(locationComp);
 	}
+	
+	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal) {
+		this(frame, title, locationComp, modal, true);
+	}
 
 	protected abstract Component createDialogPane();
 	
+	public String getExitCode() {
+		return exitCode;
+	}
+	
 	protected void okPressed() {
+		exitCode = OK;
 		setVisible(false);
 	}
 	
 	protected void cancelPressed() {
+		exitCode = CANCEL;
 		setVisible(false);
 	}
 	

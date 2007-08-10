@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
 
 import org.pathvisio.model.PathwayElement.Comment;
 
@@ -46,9 +45,9 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 		setLayout(new BorderLayout(5, 5));
 		
 		commentsTable = new JTable();
-		commentsTable.setMinimumSize(new Dimension(40, 40));
 		commentsTable.setBorder(BorderFactory.createCompoundBorder());
 		commentsTable.setRowHeight(20);
+		commentsTable.setMinimumSize(new Dimension(200, 200));
 		JPanel buttonPanel = new JPanel();
 		JButton add = new JButton(ADD);
 		add.setActionCommand(ADD);

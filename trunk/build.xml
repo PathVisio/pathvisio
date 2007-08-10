@@ -302,7 +302,7 @@ public class Revision
 	</target> -->
 		
 	<target name="test" depends="compile-v2">
-		<javac srcdir="src" 
+		<javac srcdir="src" debug="true" 
 					includes="test/**"
 					destdir="${build.v2.dir}">
 					<classpath refid="project.v2.class.path"/>

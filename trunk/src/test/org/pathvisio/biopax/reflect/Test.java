@@ -1,12 +1,31 @@
 package org.pathvisio.biopax.reflect;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.jdom.Element;
+import org.pathvisio.biopax.BiopaxElementManager;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
 
 public class Test extends TestCase {
+	Pathway data;
+	PathwayElement o;
+	List<PathwayEvent> received;
+	PathwayElement l;
+	
+	public void setUp()
+	{
+		data = new Pathway();
+		o = new PathwayElement(ObjectType.DATANODE);
+		data.add (o);
+	}
+	
 	public void testProperties() {
 		PublicationXRef xref = new PublicationXRef("test");
 		
@@ -35,29 +54,48 @@ public class Test extends TestCase {
 			fail("Succeeded to add an invalid property");
 		} catch(IllegalArgumentException e) { }
 	}
-	
-	public void testFromXML() {
-		//Valid element
-		Element xml = new Element("PublicationXRef", Namespaces.BIOPAX);
-		xml.setAttribute("id", "testid", Namespaces.RDF);
-		Element prop = new Element("TITLE", Namespaces.BIOPAX);
-		prop.setAttribute("datatype", PropertyType.TITLE.datatype, Namespaces.RDF);
-		prop.setText("a title");
-		xml.addContent(prop);
 		
+	public void testReadWrite() {
+		//Add to datanode
+		BiopaxElementManager biopax = new BiopaxElementManager(o);
+		PublicationXRef xrefObject = new PublicationXRef(biopax.getUniqueID());
+		//Add one title and two authors
+		xrefObject.setTitle("title");
+		xrefObject.addAuthor("author1");
+		xrefObject.addAuthor("author2");
+		
+		biopax.addElementReference(xrefObject);
+		
+		//Add to pathway
+		biopax = new BiopaxElementManager(data.getMappInfo());
+		PublicationXRef xrefPathway = new PublicationXRef(biopax.getUniqueID());
+		//Add one title and two authors
+		xrefPathway.setTitle("title");
+		xrefPathway.addAuthor("author1");
+		xrefPathway.addAuthor("author2");
+		
+		biopax.addElementReference(xrefPathway);
+		
+		//Write
 		try {
-			BiopaxElement.fromXML(xml);
-		} catch(Exception e) {
-			e.printStackTrace();
-			fail("Failed to create BiopaxElement from valid XML: " + e.getMessage());
+			data.writeToXml(new File("testData/test-biopax.xml"), true);
+		} catch(ConverterException e) {
+			fail("Unable to write a pathway with PublicationXRef: " + e.toString());
 		}
 		
-		//Invalid element
-		prop.setName("doesntexist");
-		prop.removeAttribute("datatype", Namespaces.RDF);
+		//Read
+		Pathway newData = new Pathway();
 		try {
-			BiopaxElement.fromXML(xml);
-			fail("Succeeded to create BiopaxElement from invalid XML");
-		} catch(Exception e) {	}
+			newData.readFromXml(new File("testData/test-biopax.xml"), true);
+		} catch(ConverterException e) {
+			fail("Unable to read a pathway with PublicationXRef: " + e.toString());
+		}
+		
+		biopax = new BiopaxElementManager(newData.getMappInfo());
+		List<PublicationXRef> references = biopax.getPublicationXRefs();
+		//There has to be one reference
+		assertTrue("One literature reference, has " + references.size(), references.size() == 1);
+		//With two authors
+		assertTrue("Two authors", references.get(0).getAuthors().size() == 2);
 	}
 }

@@ -30,12 +30,20 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.Engine;
+import org.pathvisio.biopax.BiopaxElementManager;
+import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
+import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.view.AlignType;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 
@@ -329,5 +337,86 @@ public abstract class CommonActions {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) vp.alignSelected(type);
 		}
-	}	
+	}
+	
+	private static abstract class PathwayElementDialogAction extends AbstractAction {
+		VPathwayElement element;
+		Component parent;
+		
+		public PathwayElementDialogAction(Component parent, VPathwayElement e) {
+			this.parent = parent;
+			element = e;
+			//If the element is an empty selectionbox,
+			//the an empty space on the drawing is clicked
+			//Set element to mappinfo so the pathway properties
+			//will show up
+			if(element instanceof SelectionBox) {
+				SelectionBox s = (SelectionBox)element;
+				if(s.getSelection().size() == 0) {
+					element = element.getDrawing().getMappInfo();
+				}
+			}
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if(element instanceof Graphics) {
+				PathwayElement p = ((Graphics)element).getGmmlData();
+				PathwayElementDialog pd = PathwayElementDialog.getInstance(p, null, parent);
+				if(pd != null) {
+					pd.selectPathwayElementPanel(getSelectedPanel());
+					pd.setVisible(true);
+				}
+			}
+		}
+		
+		protected abstract String getSelectedPanel();
+	}
+	public static class AddLiteratureAction extends PathwayElementDialogAction {
+		public AddLiteratureAction(Component parent, VPathwayElement e) {
+			super(parent, e);
+			putValue(Action.NAME, "Add literature reference");
+			putValue(Action.SHORT_DESCRIPTION, "Add a literature reference to this element");
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if(element instanceof Graphics) {
+				BiopaxElementManager m = new BiopaxElementManager(((Graphics)element).getGmmlData());
+				PublicationXRef xref = new PublicationXRef(m.getUniqueID());
+				
+				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, parent);
+				d.setVisible(true);
+				if(d.getExitCode().equals(PublicationXRefDialog.OK)) {
+					m.addElementReference(xref);		
+				}
+			}
+		}
+		
+		protected String getSelectedPanel() {
+			return null;
+		}
+	}
+	
+	public static class EditLiteratureAction extends PathwayElementDialogAction {
+		public EditLiteratureAction(Component parent, VPathwayElement e) {
+			super(parent, e);
+			putValue(Action.NAME, "Edit literature references");
+			putValue(Action.SHORT_DESCRIPTION, "Edit the literature references of this element");
+		}
+		
+		protected String getSelectedPanel() {
+			return PathwayElementDialog.TAB_LITERATURE;
+		}
+	}
+	
+	public static class PropertiesAction extends PathwayElementDialogAction {
+		public PropertiesAction(Component parent, VPathwayElement e) {
+			super(parent, e);
+			putValue(Action.NAME, "Properties");
+			putValue(Action.SHORT_DESCRIPTION, "View this element's properties");
+		}
+		
+		protected String getSelectedPanel() {
+			return PathwayElementDialog.TAB_COMMENTS;
+		}
+	}
 }

@@ -20,6 +20,8 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -61,7 +63,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.ipadx = c.ipady = 5;
-		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		c.weightx = 0;
 		panel.add(symLabel, c);
 		c.gridy = 1;
 		panel.add(idLabel, c);
@@ -70,6 +73,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		c.gridx = 1;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1;
 		panel.add(symText, c);
 		c.gridy = 1;
 		panel.add(idText, c);
@@ -85,7 +89,23 @@ public class DataNodeDialog extends PathwayElementDialog {
 			}
 		});
 		
+		idText.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) { setText();	}
+			public void insertUpdate(DocumentEvent e) {	setText(); }
+			public void removeUpdate(DocumentEvent e) { setText(); }
+			private void setText() {
+				getInput().setGeneID(idText.getText());
+			}
+		});
+		
+		dbCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				getInput().setDataSource(dbCombo.getSelectedItem().toString());
+			}
+		});
+		
 		parent.add("Annotation", panel);
 		parent.setSelectedComponent(panel);
 	}
+
 }

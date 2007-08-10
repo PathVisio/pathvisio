@@ -46,6 +46,15 @@ public class BiopaxElement extends Element {
 		} else {
 			properties.add(p);
 		}
+		addContent(p);
+	}
+	
+	public void removeProperty(BiopaxProperty p) {
+		BiopaxProperty existing = properties.get(properties.indexOf(p));
+		if(existing != null) {
+			properties.remove(p);
+			removeContent(p);
+		}
 	}
 	
 	private int getFirstPropertyIndex(String name) {

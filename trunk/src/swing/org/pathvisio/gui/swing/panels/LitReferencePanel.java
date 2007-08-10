@@ -3,10 +3,11 @@ package org.pathvisio.gui.swing.panels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -16,6 +17,7 @@ import javax.swing.JScrollPane;
 
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.PathwayElement;
 
 public class LitReferencePanel extends PathwayElementPanel implements ActionListener {
@@ -34,7 +36,13 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		
 		references = new JList();
 		references.setBorder(BorderFactory.createTitledBorder("References"));
-		
+		references.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount() == 2) {
+					editPressed();
+				}
+			}
+		});
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.PAGE_AXIS));
 		
@@ -74,21 +82,29 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	}
 	
 	private void editPressed() {
-		// TODO Auto-generated method stub
-		
+		PublicationXRef xref = (PublicationXRef)references.getSelectedValue();
+		if(xref != null) {
+			PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this, false);
+			d.setVisible(true);
+		}
+		refresh();
 	}
 
 	private void removePressed() {
 		for(Object o : references.getSelectedValues()) {
 			biopax.removeElementReference((PublicationXRef)o);
 		}
-		
+		refresh();
 	}
 
 	private void addPressed() {
 		PublicationXRef xref = new PublicationXRef(biopax.getUniqueID());
-		//TODO: dialog to fill in information
-		biopax.addElementReference(xref);
-		refresh();
+		
+		PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this);
+		d.setVisible(true);
+		if(d.getExitCode().equals(PublicationXRefDialog.OK)) {
+			biopax.addElementReference(xref);
+			refresh();			
+		}
 	}
 }

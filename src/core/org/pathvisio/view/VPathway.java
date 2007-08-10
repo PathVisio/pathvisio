@@ -201,14 +201,27 @@ public class VPathway implements PathwayListener
 		}
 		return result;
 	}
-	
+
+	/**
+	   used by undo manager.
+	 */
+	void replacePathway (Pathway originalState)
+	{
+		drawingObjects	= new ArrayList<VPathwayElement>();
+		selection = new SelectionBox(this);
+		pressedObject = null;
+		selectedGraphics = null;
+		data = null;
+		fromGmmlData (originalState);
+	}
+
+
 	/**
 	 * Maps the contents of a pathway to this VPathway
 	 */	
 	public void fromGmmlData(Pathway _data)
 	{		
 		data = _data;
-			
 		for (PathwayElement o : data.getDataObjects())
 		{
 			fromGmmlDataObject (o);
@@ -462,6 +475,35 @@ public class VPathway implements PathwayListener
 	{
 		pressedObject = o;
 	}
+
+	/**
+	   @arg p2d point where mouse is at
+	 */
+	private void linkPointToObject (Point2D p2d, Handle g)
+	{
+		undoManager.newAction ("Link point to object");
+		resetHighlight();
+		List<VPathwayElement> objects = getObjectsAt (p2d);
+		Collections.sort(objects);
+		VPoint p = (VPoint)g.parent;
+		VPathwayElement x = null;
+		for (VPathwayElement o : objects)
+		{
+			if (o instanceof VPoint && o != p)
+			{
+				x = o;
+				p.link((VPoint)o);
+				break;
+			} else if (o instanceof Graphics && !(o instanceof Line))
+			{
+				x = o;
+				p.link((Graphics)o);
+				break;
+			} 
+		}
+		if (x != null)
+			x.highlight();		
+	}
 	
 	int vPreviousX;
 	int vPreviousY;
@@ -493,29 +535,7 @@ public class VPathway implements PathwayListener
 					&& newGraphics == NEWNONE
 					&& ((Handle) pressedObject).parent instanceof VPoint)
 			{
-				resetHighlight();
-				Point2D p2d = new Point2D.Double(ve.getX(), ve.getY());
-				List<VPathwayElement> objects = getObjectsAt (p2d);
-				Collections.sort(objects);
-				Handle g = (Handle)pressedObject;
-				VPoint p = (VPoint)g.parent;
-				VPathwayElement x = null;
-				for (VPathwayElement o : objects)
-				{
-					if (o instanceof VPoint && o != p)
-					{
-						x = o;
-						p.link((VPoint)o);
-						break;
-					} else if (o instanceof Graphics && !(o instanceof Line))
-					{
-						x = o;
-						p.link((Graphics)o);
-						break;
-					} 
-				}
-				if (x != null)
-					x.highlight();
+				linkPointToObject (new Point2D.Double(ve.getX(), ve.getY()), (Handle)pressedObject);
 			}
 			redrawDirtyRect();
 		}
@@ -571,7 +591,7 @@ public class VPathway implements PathwayListener
 			if (newGraphics != NEWNONE)
 			{
 				newObject(new Point(e.getX(), e.getY()));
-				//SwtEngine.getCurrent().getWindow().deselectNewItemActions();
+				//SwtGui.getCurrent().getWindow().deselectNewItemActions();
 			} else
 			{
 				editObject(new Point(e.getX(), e.getY()), e);
@@ -789,8 +809,10 @@ public class VPathway implements PathwayListener
 			vPreviousX = p.x;
 			vPreviousY = p.y;
 			
-			isDragging = true;		
-		} else
+			isDragging = true;
+			undoManager.newAction ("Dragging");
+		}
+		else
 		{
 			// start dragging selectionbox	
 			startSelecting(p2d);
@@ -930,6 +952,7 @@ public class VPathway implements PathwayListener
 	 */
 	private void newObject(Point ve)
 	{
+		undoManager.newAction ("New Object");
 		newObjectDragStart = ve;
 		int mx = (int)mFromV((double)ve.x);
 		int my = (int)mFromV((double)ve.y); 
@@ -1405,36 +1428,36 @@ public class VPathway implements PathwayListener
 			parent.registerKeyboardAction(KEY_SELECT_ALL, viewActions.selectAll);
 			parent.registerKeyboardAction(KEY_DELETE, viewActions.delete);
 			parent.registerKeyboardAction(KEY_MOVELEFT, new AbstractAction()
-					{
-						public void actionPerformed(ActionEvent e)
-						{
-						keyMove(KEY_MOVELEFT);
-						}
-					});
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					keyMove(KEY_MOVELEFT);
+				}
+			});
 			parent.registerKeyboardAction(KEY_MOVERIGHT, new AbstractAction()
-					{
-						public void actionPerformed(ActionEvent e)
-						{
-						keyMove(KEY_MOVERIGHT);
-						}
-					});
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					keyMove(KEY_MOVERIGHT);
+				}
+			});
 			parent.registerKeyboardAction(KEY_MOVEUP, new AbstractAction()
-					{
-						public void actionPerformed(ActionEvent e)
-						{
-						keyMove(KEY_MOVEUP);
-						}
-					});
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					keyMove(KEY_MOVEUP);
+				}
+			});
 			parent.registerKeyboardAction(KEY_MOVEDOWN, new AbstractAction()
-					{
-						public void actionPerformed(ActionEvent e)
-						{
-						keyMove(KEY_MOVEDOWN);
-						}
-					});
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					keyMove(KEY_MOVEDOWN);
+				}
+			});
 		}
 	}
-
+	
 	public void keyReleased(KeyEvent e)
 	{
 		//use registerKeyboardActions
@@ -1450,8 +1473,7 @@ public class VPathway implements PathwayListener
 	{
 		for(VPathwayElement o : toRemove)
 		{
-			removeDrawingObject(o);
-			
+			removeDrawingObject(o);			
 		}
 		selection.fitToSelection();
 	}
@@ -1969,28 +1991,36 @@ public class VPathway implements PathwayListener
 	}
 	
 	//AP20070716
-	public class YComparator implements Comparator<Graphics> {
-		public int compare(Graphics g1, Graphics g2) {
+	public class YComparator implements Comparator<Graphics>
+	{
+		public int compare(Graphics g1, Graphics g2)
+		{
 			if (g1.getVCenterY() == g2.getVCenterY())
 				return 0;
 			else if (g1.getVCenterY() < g2.getVCenterY())
 				return -1;
 			else
-
 				return 1;
 		}
 	}
-	public class XComparator implements Comparator<Graphics> {
-		public int compare(Graphics g1, Graphics g2) {
+	
+	public class XComparator implements Comparator<Graphics>
+	{
+		public int compare(Graphics g1, Graphics g2)
+		{
 			if (g1.getVCenterX() == g2.getVCenterX())
 				return 0;
 			else if (g1.getVCenterX() < g2.getVCenterX())
 				return -1;
 			else
-
 				return 1;
 		}
 	}
-	
 
-} // end of class
+	UndoManager undoManager = new UndoManager();
+	
+	public void undo()
+	{
+		undoManager.undo();
+	}
+}

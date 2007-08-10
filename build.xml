@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="PathVisio" default="compile-v2" basedir=".">
+<project name="PathVisio" default="all" basedir=".">
 	
 	<property name="src.dir" value="src"/>
         
@@ -67,7 +67,6 @@ public class Revision
 	<target name="clean" description="Remove all generated files.">
 		<delete dir="${build.v1.dir}"/>
 		<delete dir="${build.v2.dir}"/>
-		<delete dir="${build.core.dir}"/>
 		<delete dir="${build.plugins.dir}"/>
 		<delete dir="${build.wikipathways.dir}"/>
 		<delete dir="${build.test.dir}"/>
@@ -77,26 +76,28 @@ public class Revision
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
-		<javac srcdir="."
-			includes="src/v1/**,src/core/**,src/swt/**"
+		<javac debug="true" srcdir="."
+			includes="src/v1/**,src/core/**,src/swt/**,src/swing/**"
 			destdir="${build.v1.dir}">
 			<classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>
 
 	<target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
-		<javac srcdir="." 
+		<javac debug="true" srcdir="." 
                includes="src/v2/**,src/core/**,src/swt/**,src/swing/**"
 			   
                destdir="${build.v2.dir}">
           <classpath refid="project.v2.class.path"/>
 		</javac>
-		<javac srcdir="src" 
+		<javac debug="true" srcdir="src" 
                     includes="plugins/**"
                     destdir="${build.plugins.dir}">
                     <classpath refid="project.v2.class.path"/>
 		</javac>
 	</target>
+
+	<target name="all" depends="compile-v1,compile-v2,compile-wikipathways" description="Compile all versions of this project" />
 
 	<target name="compile-wikipathways" depends="prepare, resources-jar" description="Compile wikipathways version">
 		<!-- Include packages					Exceptions

@@ -14,38 +14,33 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.model;
+package org.pathvisio.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.pathvisio.Engine;
+import org.pathvisio.model.Pathway;
 
 public class UndoManager 
 {
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
-	void newAddAction (PathwayElement affectedObject)
+	void newAction (String desc)
 	{
-		undoList.clear();		
+		Pathway pwy = Engine.getCurrent().getActivePathway();
+		UndoAction x = new UndoAction (desc, (Pathway)pwy.clone());
+		undoList.add (x);
 	}
-	
-	void newChangeAction (PathwayElement affectedObject)
-	{
-		UndoAction a = new UndoAction ("Change object", UndoAction.UNDO_CHANGE, affectedObject);
-		undoList.add(a);
-	}
-	
-	void newRemoveAction (PathwayElement affectedObject)
-	{
-		undoList.clear();
-	}
-	
+		
 	void undo()
 	{
 		if (undoList.size() > 0)
 		{
 			UndoAction a = undoList.get(undoList.size()-1);
+			System.out.println ("Undoing " + a.getMessage());
 			a.undo();
 			undoList.remove(a);
+			System.out.println (undoList.size() + " remaining");
 		}
 	}
 }

@@ -59,9 +59,9 @@ public class CommonActions
 		}
 		public void run() 
 		{
-			if (Engine.getCurrent().getActivePathway() != null)
+			if (Engine.getCurrent().getActiveVPathway() != null)
 			{
-				Engine.getCurrent().getActivePathway().undo();
+				Engine.getCurrent().getActiveVPathway().undo();
 			}
 		}
 	}

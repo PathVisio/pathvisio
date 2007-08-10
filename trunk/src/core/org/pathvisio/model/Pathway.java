@@ -462,33 +462,26 @@ public class Pathway implements PathwayListener
 		return systemCodes;
 	}
 	
-	UndoManager undoManager = new UndoManager();
-	
-	public void undo()
-	{
-		undoManager.undo();
-	}
-
 	/**
 	 * register undo actions,
 	 * disabled for the moment.
 	 */
 	public void gmmlObjectModified(PathwayEvent e) 
 	{
-		switch (e.getType())
-		{
-			case PathwayEvent.MODIFIED_GENERAL:
-			case PathwayEvent.MODIFIED_SHAPE:
-				undoManager.newChangeAction(e.getAffectedData());
-				break;
-			case PathwayEvent.ADDED:
-				undoManager.newAddAction(e.getAffectedData());
-				break;
-			case PathwayEvent.DELETED:
-				undoManager.newRemoveAction(e.getAffectedData());
-				break;
-		}
 		markChanged();
+	}
+
+	public Pathway clone()
+	{
+		Pathway result = new Pathway();
+		int i = 0;
+		for (PathwayElement pe : dataObjects)
+		{
+			result.add (pe.copy());
+			i++;
+		}
+		System.out.println (i + " objects copied");
+		return result;
 	}
 
 }

@@ -150,9 +150,11 @@ public class Pathway implements PathwayListener
 			return;
 		}
 		// There can be zero or one Biopax object, so if we're trying to add it, remove the old one.
-		if(o.getObjectType() == ObjectType.BIOPAX && biopax != null && o != biopax)
+		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax)
 		{
-			replaceUnique (biopax, o);
+			if(biopax != null) {
+				replaceUnique (biopax, o);
+			}
 			biopax = o;
 			return;
 		}

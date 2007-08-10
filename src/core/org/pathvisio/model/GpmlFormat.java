@@ -339,13 +339,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
 				setAttribute("Pathway", "Organism", root, o.getOrganism());
 
-				for (PathwayElement.Comment c : o.getComments())
-				{
-					Element f = new Element ("Comment", ns);
-					f.setText (c.getComment());
-					setAttribute("Comment", "Source", f, c.getSource());
-					root.addContent(f);
-				}				
+				updateComments(o, root);
+				updateBiopax(o, root);
+				updateBiopaxRef(o, root);
 				
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
@@ -429,6 +425,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				break;
 			case ObjectType.MAPPINFO:
 				mapMappInfoData(o, e);
+				mapBiopaxRef(o, e);
+				mapComments(o, e);
 				break;
 			case ObjectType.SHAPE:
 				mapShapeData(o, e, "Shape");

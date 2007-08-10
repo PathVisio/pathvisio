@@ -24,13 +24,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 

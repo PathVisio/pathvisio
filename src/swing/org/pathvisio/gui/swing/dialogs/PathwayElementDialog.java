@@ -16,21 +16,11 @@
 //
 package org.pathvisio.gui.swing.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.pathvisio.Engine;
@@ -54,8 +44,10 @@ public class PathwayElementDialog extends OkCancelDialog {
 		switch(e.getObjectType()) {
 		case ObjectType.DATANODE:
 			return new DataNodeDialog(e, frame, locationComp);
+		case ObjectType.INFOBOX:
+			return new PathwayElementDialog(e.getParent().getMappInfo(), frame, "Pathway properties", locationComp);
 		default:
-			return new PathwayElementDialog(e, frame, "Properties", locationComp);
+			return new PathwayElementDialog(e, frame, "Element properties", locationComp);
 		}
 	}
 	
@@ -65,11 +57,13 @@ public class PathwayElementDialog extends OkCancelDialog {
 	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
 		
 	public PathwayElementDialog(PathwayElement e, Frame frame, String title, Component locationComp) {
-		super(frame, "Element properties", locationComp, true);
+		super(frame, title, locationComp, true);
 		
 		panels = new HashMap<String, PathwayElementPanel>();
 		createTabs();
 		setInput(e);
+		setMinimumSize(new Dimension(200, 200));
+		pack();
 	}
 
 	protected Component createDialogPane() {

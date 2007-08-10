@@ -5,7 +5,9 @@ import java.awt.Component;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
-import org.pathvisio.gui.swing.actions.PropertiesAction;
+import org.pathvisio.gui.swing.actions.CommonActions.AddLiteratureAction;
+import org.pathvisio.gui.swing.actions.CommonActions.EditLiteratureAction;
+import org.pathvisio.gui.swing.actions.CommonActions.PropertiesAction;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.MouseEvent;
 import org.pathvisio.view.VPathway;
@@ -19,7 +21,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	private static JPopupMenu getMenuInstance(VPathwayElement e) {
 		if(e instanceof Handle) e = ((Handle)e).getParent();
 		VPathway vp = e.getDrawing();
-		
+		VPathwaySwing component = (VPathwaySwing)vp.getWrapper();
 		JPopupMenu menu = new JPopupMenu();
 		ViewActions vActions = vp.getViewActions();
 		menu.add(vActions.delete);
@@ -29,9 +31,13 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		selectMenu.add(vActions.selectDataNodes);
 		menu.add(selectMenu);
 		menu.addSeparator();
-		menu.add(new PropertiesAction(e));
+		JMenu litMenu = new JMenu("Literature");
+		litMenu.add(new AddLiteratureAction(component, e));
+		litMenu.add(new EditLiteratureAction(component, e));
+		menu.add(litMenu);
+		menu.addSeparator();
+		menu.add(new PropertiesAction(component,e));
 
-		
 		return menu;
 	}
 	

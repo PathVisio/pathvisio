@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp codebase="http://www.wikipathways.org/wpi/bin/" href="pathvisio_wikipathways.jnlp">
+	<information>
+		 <title>PathVisio 1.0</title>
+		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
+		 <homepage href="index.html"/>
+		 <icon href="bigcateye.gif"/>
+		 <offline-allowed/>
+	</information>
+	<resources>
+		 <j2se version="1.5+"/>
+		 <jar href="pathvisio_v1.jar"/>
+		 <jar href="resources.jar"/>
+		<!-- <jar href="hsqldb.jar"/> -->
+		 <jar href="derby.jar"/>
+		 <jar href="BrowserLauncher.jar"/>
+		 <jar href="jdom.jar"/>
+		 <jar href="org.eclipse.core.commands.jar"/>
+		 <jar href="org.eclipse.equinox.common.jar"/>
+		 <jar href="org.eclipse.jface.jar"/>
+		 <jar href="org.eclipse.equinox.supplement.jar"/>
+		 <jar href="apache/commons-codec-1.3.jar"/>
+		 <jar href="apache/commons-httpclient-3.0.1.jar"/>
+		 <jar href="apache/commons-logging-1.1.jar"/>
+		 <jar href="apache/ws-commons-util-1.0.1.jar"/>
+		 <jar href="apache/xmlrpc-client-3.0.jar"/>
+		 <jar href="apache/xmlrpc-common-3.0.jar"/>
+		 <jar href="batik/batik-awt-util.jar"/>
+		 <jar href="batik/batik-bridge.jar"/>
+		 <jar href="batik/batik-css.jar"/>
+		 <jar href="batik/batik-dom.jar"/>
+		 <jar href="batik/batik-ext.jar"/>
+		 <jar href="batik/batik-extension.jar"/>
+		 <jar href="batik/batik-gvt.jar"/>
+		 <jar href="batik/batik-parser.jar"/>
+		 <jar href="batik/batik-script.jar"/>
+		 <jar href="batik/batik-svg-dom.jar"/>
+		 <jar href="batik/batik-svggen.jar"/>
+		 <jar href="batik/batik-transcoder.jar"/>
+		 <jar href="batik/batik-util.jar"/>
+		 <jar href="batik/batik-xml.jar"/>
+		 <jar href="batik/pdf-transcoder.jar"/>
+		 <jar href="batik/xml-apis.jar"/>
+	</resources>
+	<resources os="Windows">
+		<jar href="swt-win32.jar"/>
+		<nativelib href="swt-win32-lib.jar"/>	
+	</resources>
+	<resources os="Linux">
+		<jar href="swt-linux.jar"/>
+		<nativelib href="swt-linux-lib.jar"/>	
+	</resources>
+	<resources os="Mac OS X">
+		<jar href="swt-mac.jar"/>
+		<nativelib href="swt-mac-lib.jar"/>	
+	</resources>
+	<application-desc main-class="org.wikipathways.core.WikiPathways">
+		<!--ARG-->
+	</application-desc>
+	<security>
+		 <all-permissions/>
+	</security>
+</jnlp>

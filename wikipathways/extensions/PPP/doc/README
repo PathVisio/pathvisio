@@ -1,0 +1,123 @@
+
+Welcome to the Mediawiki-extension for protecting pages.
+
+PageProtectionPlus   was   built    on   the   base   called
+PageProtection created by Fabian  Schmitt. If you were using
+PageProtection and you  are interested why this  is a branch
+and what are the differences please see the file WHY_BRANCH.
+
+== How it works ==
+
+This  is a  cryptographic  engine used  to protect  articles
+and/or articles'  sections of MediaWiki. It  uses public-key
+cryptography  combined  with symmetric-key  cryptography  to
+achieve good  safety/time factor. In odrer  to work properly
+it  needs  RSA  key  pairs  present  in  PEM  files  on  the
+application server, which handles encryption and decryption.
+
+=== When you edit a page ===
+
+It encrypts  sections of  text in  the articles  just before
+they are  put in to  the database. To recognize  parts which
+should be encrypted  it looks for XML  tag called 'protect'.
+Whenever it finds the opening  tag it performs encryption of
+the text up to the closing tag.
+
+=== When you read a page ===
+
+It  seeks for  'protect' XML  tags and  extracts information
+enclosed  within them.  It  then checks  whether  a user  is
+allowed to read a certain part of  a text. If that is so, it
+runs decryption  engine and replaces cryptograms  with plain
+texts. To decrypt  a cryptogram (an encrypted  text in other
+words) it  needs a valid RSA  key pair present in  the keys'
+heap - a directory containing PEM files.
+
+== Tags ==
+
+This extension  allows protecting  single areas  by spanning
+them  with   <protect>-tags.  The   tag  has   the  ollowing
+parameters:
+
+users: Comma-separated list of  usernames who are allowed to
+read and edit the area.
+
+groups: Comma-separated  lsit of groupnames who  are allowed
+to read and edit the area.
+
+show: Defines,  what to do  when user  has no access  to the
+area.
+
+Possible Values: warning:   Error-message with list of permissions
+                    none:   Nothing is displayed
+                   crypt:   Encrpyted text is shown
+                    page:   Page in "errorpage" is displayed.
+                    text:   Protected text is displayed (the
+                            section is marked as readonly).
+
+errorpage: Page to be shown when show=page is set. 
+
+cipher:   Defines  cipher   to  be   used  for   encryption.
+Valid   ciphers  can   be   found   on  specialpage   called
+Special:PageProtectionCipherSuite
+
+You  can put  'rsa' string  as  a value,  which will  enable
+encryption of the whole text with the RSA public key without
+symmetric cipher  in the middle  layer. It is  powerful, but
+very very slow (and not recommended for larger pages).
+
+The text between the opening and closing 'protect'-tags will
+be hidden for  users not in the specified  lists. Members of
+'sysop' always have access.
+
+Example:
+  <protect users="admin1,admin2" groups="sysop">
+  Database-Settings
+  ;Server
+  : localhost
+  ...
+  </protect>
+
+== Why there is a directory for keys, not a one file? ==
+
+It allows you  to generate new RSA key and  still be able to
+read pages  encrypted by one  of the keys used  before. Keys
+are identified  by their fingerprints, so  filenames doesn't
+matter.
+
+There are two exceptions, where the names have matter.
+
+*  One   is  the  name   'default.pem'  (or  other   set  in
+$wgPEMfile).  The file  named like  that should  contain the
+default key used for encryption.  If you'll change its name,
+the routine find it in other file and use it when decrypting
+pages previously encrypted using it. However, a new key pair
+will  be generated  for encryption  and placed  in the  file
+saved under that name.
+
+* Second exception  is the name 'lite.pem' (or  other set in
+$wgPEMlite_file). The  file named  like that  should contain
+the  default key  used  for encryption  by  using so  called
+'Pure-RSA' method.  If you'll  change its name,  the routine
+use it to decrypt pages  previously encrypted with it, but a
+new key pair  will be generated for  Pure-RSA encryption and
+placed in the file saved  under the name 'lite.pem' or other
+set in $wgPEMlite_file.
+
+== Am I able to decrypt pages from PageProtection ==
+
+Yes,  the  PageProtectionPlus  can decrypt  pages  encrypted
+using PageProtection.
+
+== Am I able to encrypt pages using RSA ==
+
+Yes. Pure-RSA  is supported, but  you won't be able  to read
+the  pages encrypted  in that  way under  PageProtection (in
+case of downgrade, reinstall).
+
+
+Copyright (C) 2006, 2007 Pawel Wilk (pw@gnu.org)
+Portions Copyright (C) 2006 Fabian Schmitt (fs@u4m.de)
+
+@version 2.0b
+

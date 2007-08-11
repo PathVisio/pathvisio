@@ -1,0 +1,83 @@
+
+== Headers ==
+
+=== Compatibility header ===
+
+We can  see that  the text in  database was  encrypted using
+pure-RSA  without  any  marks,   we  know  that  because  of
+'protect' tags. We  run compatible driver to  decrypt it. In
+fact it  is not  some external piece  of code,  just calling
+Cipher::Decipher with correct parameters set to handle RSA.
+
+=== Native headers ===
+
+When we see '--- BEGIN KEY:  ' we should pass all message to
+the Encryption::decrypt()  for decryption.  Header structure
+contains  a  comma-separated  parameters'  list  within  two
+marks, an  encrypted key, and  the ending mark. It  looks as
+follows:
+
+--- BEGIN KEY: key_encryption_algorithm ,
+	       key_encrypton_identifier ,
+	       txt_encryption_algorithm ,
+	       txt_encryption_mode ,
+	       txt_encryption_key_size ,
+	       txt_encryption_iv_size ---
+
+BASE64  encoded  &  RSA-encrypted   symmetric  key  with  IV
+attached to it & with a few random bytes (salt - why not?:)
+
+--- END KEY ---
+
+BASE64 encoded & symmetrically encrypted text body
+
+
+Where:
+
+* key_encryption_algorithm	is a name of asymmetric algorightm used to encryt the key (e.g.: rsa)
+* key_encrypton_identifier	is an asymmetric key identifier (ID of a public key used to encrypt data)
+* txt_encryption_algorithm	is a name of symmetric algorightm used to encrypt text (e.g.: blowfish)
+* txt_encryption_mode		is a name of an encryption mode for text (only cbc is supported)
+* txt_encryption_key_size	is a size of a key (in bytes) used to encrypt a text
+* txt_encryption_iv_size	is a size of an initial vector (in bytes) used to encrypt a text
+
+And the example header looks like that:
+
+--- BEGIN KEY: RSA,3f29d838,RIJNDAEL-256,CBC,32,32 ---
+rGnwssOE9CGdINDYCDjFYI7AYW5uwOkYUSSq/5TsCrwU3Gccj19XKKIg4v/ZRMKvzkRgyTyTo9hH
+mkbFWPtsTzYnLpkLifuFA2Sv9mmWopsYdoN1Zzgy58vtqGJRh0TG
+--- END KEY ---
+
+
+There is one exception, where we encrypt the text using pure-symmetric cipher, the header fields have
+the following meanings:
+
+* no_key_encryption_mark	is a mark that tells, that no symmetric key is in use (it is: NULL)
+* key_encrypton_identifier	is an asymmetric key identifier (ID of a public key used to encrypt data)
+* txt_encryption_algorithm	is a name of asymmetric algorightm used to encrypt text (e.g.: RSA)
+* txt_encryption_mode		(reserved for mode if one will be available in some future engine)
+* txt_encryption_key_size	is a size of a key (in bits) used to encrypt a text
+* txt_encryption_iv_size	(reserved)
+
+And the example header looks like that (using just RSA key):
+
+--- BEGIN KEY: NULL,3f29d838,RSA,,1024,0 ---
+--- END KEY ---
+
+
+=== GnuPG headers (future) ===
+
+It  is   a  development  line  to   made  PageProtectionPlus
+GPG-compatible. We can then forget  about engines and so on.
+In  the  future,  when  we  see GnuPG  header,  we  can  run
+Encryption::GPG().
+
+=== CryptoParser class ===
+
+The  CryptoParser class  handles  getting  and creating  the
+header. Parameters in the header's headline should be trated
+as case insensitive, because the  case may be changed during
+parsing process.  Parameters are  trimmed while  parsing, so
+the  white-characters are  removed from  both sides  of each
+parameter.
+

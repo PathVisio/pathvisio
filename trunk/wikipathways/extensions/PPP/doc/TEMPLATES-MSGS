@@ -1,0 +1,140 @@
+encoding: UTF-8
+
+This file tells what to do if you would like to customize warnings
+to be set up as a templates. For each language there are sections
+what to do in the internationalisation file, and the HTML code for
+templates to put into the wiki using web browser.
+
+* Using wiki templates for warninig messages.
+
+ If you want to make your warning messages (that the some 'area cannot be
+ displayed/edited due to protection') more fancy, you can use templates
+ instead of static messages. Go to the file PageProtection.i18n.php
+ in the PageProtection installation directory and find the section, which
+ corresponds to the language you would like to create fancy messages for.
+ You can back up the modified file before editing.
+
+ For example you can set up 'ProtectedSite' and 'ProtectedSiteEditing'
+ to be templates like that:
+
+$wgPageProtectionMessages['en'] = array(
+	'ProtectedTitle'	=> 'Page is protected',
+	'ProtectedSite'		=> '{{ProtectedSite_en}}',
+	'ProtectedSiteEditing'	=> '{{ProtectedSiteEditing_en}}',
+);
+
+ Then, using web browser you can edit the wiki page called
+ Template:ProtectedSite_en and put there the content:
+
+---------------------
+
+<div style="background-color: #ffefcf; padding: 1em; margin: 10px; border: 1px silver dashed; font-size: 92%; text-align: center;">
+
+'''Unfortunately, this section is [[{{SITENAME}}:Page Protection|protected]] and you cannot read nor edit it!'''<br/>
+
+<div style="font-size:x-small; text-align: left;">
+* allowed users: {{{USERS}}}
+* allowed groups: {{{GROUPS}}}
+</div>
+</div>
+
+---------------------
+
+ Then, using web browser you can edit the wiki page called
+ Template:ProtectedSiteEditing_en and put there the content:
+
+---------------------
+
+<div style="background-color: #ffefcf; padding: 1em; margin: 10px; border: 1px silver dashed; font-size: 92%; text-align: center;">
+
+'''Unfortunately, this section is [[{{SITENAME}}:Page Protection|protected]] and you cannot edit it!'''<br/>
+
+<div style="font-size:x-small; text-align: left;">
+* allowed users: {{{USERS}}}
+* allowed groups: {{{GROUPS}}}
+</div>
+</div>
+
+---------------------
+
+ Voila! Note three special variables are used in the templates:
+ {{SITENAME}}, {{USERS}} and {{GROUPS}}
+
+ When the template is activated you'll see a wiki link to the 'Page Protection' page.
+ Feel free to create it, and put there all the information your users may need.
+ Also you should concider to disable editing by unprivileged users for this template
+ pages using built-in, standard way.
+
+
+===================================================================
+Language: ENGLISH
+===================================================================
+
+=== file PageProtection.i18n.php:
+
+$wgPageProtectionMessages['en'] = array(
+	'ProtectedTitle'	=> 'Page is protected',
+	'ProtectedSite'		=> '{{ProtectedSite_en}}',
+	'ProtectedSiteEditing'	=> '{{ProtectedSiteEditing_en}}',
+);
+
+=== template Template:ProtectedSite_en:
+
+<div style="background-color: #ffefcf; padding: 1em; margin: 10px; border: 1px silver dashed; font-size: 92%; text-align: center;">
+
+'''Unfortunately, this section is [[{{SITENAME}}:Page Protection|protected]] and you cannot read nor edit it!'''<br/>
+
+<div style="font-size:x-small; text-align: left;">
+* allowed users: {{{USERS}}}
+* allowed groups: {{{GROUPS}}}
+</div>
+</div>
+
+=== template Template:ProtectedSiteEdit_en:
+
+<div style="background-color: #ffefcf; padding: 1em; margin: 10px; border: 1px silver dashed; font-size: 92%; text-align: center;">
+
+'''Unfortunately, this section is [[{{SITENAME}}:Page Protection|protected]] and you cannot edit it!'''<br/>
+
+<div style="font-size:x-small; text-align: left;">
+* allowed users: {{{USERS}}}
+* allowed groups: {{{GROUPS}}}
+</div>
+</div>
+
+===================================================================
+Language: POLISH
+===================================================================
+
+=== file PageProtection.i18n.php:
+
+$wgPageProtectionMessages['pl'] = array(
+	'ProtectedTitle'	=> 'Strona jest zabezpieczona',
+	'ProtectedSite'		=> '{{ProtectedSite_pl}}',
+	'ProtectedSiteEditing'	=> '{{ProtectedSiteEditing_pl}}',
+);
+
+=== template Template:ProtectedSite_pl:
+
+<div style="background-color: #ffefcf; padding: 1em; margin: 10px; border: 1px silver dashed; font-size: 92%; text-align: center;">
+
+'''Niestety ta sekcja została [[{{SITENAME}}:Strony zabezpieczone|zabezpieczona]] i nie możesz jej oglądać ani redagować!'''<br/>
+
+<div style="font-size:x-small; text-align: left;">
+* uprawnieni użytkownicy: {{{USERS}}}
+* uprawnione grupy: {{{GROUPS}}}
+</div>
+</div>
+
+=== template Template:ProtectedSiteEdit_pl:
+
+<div style="background-color: #ffefcf; padding: 1em; margin: 10px; border: 1px silver dashed; font-size: 92%; text-align: center;">
+
+'''Niestety ta sekcja została [[{{SITENAME}}:Strony zabezpieczone|zabezpieczona]] i nie możesz jej redagować!'''<br/>
+
+<div style="font-size:x-small; text-align: left;">
+* uprawnieni użytkownicy: {{{USERS}}}
+* uprawnione grupy: {{{GROUPS}}}
+</div>
+</div>
+

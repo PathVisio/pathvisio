@@ -1,0 +1,41 @@
+2.1b
+ - added parser-fix from Mike Dillon (HTML comments are possible now)
+ - fixed error internationalisation at engines' error reporting section
+2.0b
+ - beta published
+1.5
+ - Major code reorganization: new classes CipherSuite, Cipher, KeyHeap, CryptoParser
+ - Added per-page symmetric key + RSA (saves time)
+ - Added multiple crypto-engines support in CipherSuite
+ - Added libmcrypt support and PEAR's Crypt/Blowfish support to the engines
+ - Added special page PageProtectionCipherSuite containing the list of ciphers
+ - Added strong random function for generating keys, integers and octets
+ - Added tag 'cipher' which allows editor to choose symmetric cipher
+ - Prepared for PHP5 and MediaWiki 1.8.x
+ - Branch PageProtectionPlus was created
+1.4-2
+ - Working with MediaWiki 1.8.0
+ - Working with PHP5
+ - Added internationalisation support
+ - Added template examples for warning messages
+ - Moved PEM pathname variable to LocalSettings.php
+1.4
+ - Working with PHP4
+1.3
+ - Parameter show="none" did not work
+ - Minor bugfixes in code and installation-manual
+1.2
+ - Redesign of internal structure (more classes)
+ - Added value "text" to parameter "show" that allows marking sections as
+readonly.
+ - Disabled editing of sections as this adds currently unfixable security holes.
+
+1.1
+ - PEM-file for storing PEM-data now is automatically created
+ - Bugfix
+1.0
+ - Texts are stored RSA-encrypted in database
+ - When saving articles, the current user is automatically added
+     to the permitted users.
+ - Added parameter show=[warning, none, crypt, page] and parameter
+             errorpage

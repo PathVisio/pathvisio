@@ -1,0 +1,219 @@
+== Requirements ==
+
+Required parts have 3 different types:
+
+* PHP packages		- these you should install into your MediWiki tree
+* PHP extensions	- to enable these you should install extension and/or recompile your PHP
+* system libraries	- these are wanted by some PHP's functionalities to work and should
+			  be installed from tarball or system package if there is a way (rpm, deb)
+
+=== Always required ===
+
+You always need PEAR and PEAR/Crypt_RSA.
+
+*  Crypt_RSA PHP package	http://pear.php.net/package/Crypt_RSA
+*  Pear-Base PHP package	http://pear.php.net/package/PEAR
+
+Additionaly, you'll need one of these:
+
+*  GMP system library		http://www.swox.com/gmp/
+*  bin_int PHP package/ext.	http//pecl.php.net/package/big_int
+*  bcmath PHP extension		(PHP compiled using --with-bcmath or bcmath module enabled in php.ini)
+
+My favorite is GMP.
+You may also want to use big_int - easy to install
+and you may set it up in 3 ways: as a package, as an extension module,
+or as built-in when recompiling PHP.
+
+Try to avoid bcmath.
+
+=== Extension functions (optional) ===
+
+Some  (older) MediaWiki  installations  need the  additional
+file called ExtensionFunctions.php for  the special pages to
+be properly registered. If you will experience some troubles
+just:
+
+1. go to http://svn.wikimedia.org/viewvc/mediawiki/trunk/extensions/ExtensionFunctions.php?revision=15706
+2. save the contents as extensions/ExtensionFunctions.php
+3. put include_once('extensions/ExtensionFunctions.php'); into yout LocalSettings.php
+
+=== Symmetric engines ===
+
+You  can   choose  between   symmetric  engines.   At  least
+one  engine  should  be  installed  For  now,  you  can  use
+Crypt_Blowfish and mcrypt.
+
+* mcrypt system library		http://mcrypt.sourceforge.net/
+* Crypt_Blowfish		http://pear.php.net/package/Crypt_Blowfish (version 1.1.0RC1 or higher!)
+
+You can install both.
+
+The  most  powerful  for   now  is  mcrypt,  which  provides
+many  popular  symmetric  encryption  algorithms.  It  needs
+libmcrypt  to be  installed in  system and  needs PHP  to be
+compiled  using  --with-mcrypt (or  if  it  is possible  the
+mcrypt  PHP  extenstion  to  be  activated  in  php.ini  and
+extension module to be installed). If you'll decide to build
+libmcrypt from sources, make sure  you do it with the option
+--disable-posix-threads
+
+Blowfish is  easy to  install on non  package-based systems,
+because you won't  have to recompile anything.  All you have
+to  do  is  to  unpack Crypt_Blowfish  into  your  MediaWiki
+directory tree. Bad  news is that it provides -  as the name
+says - only one algorithm.
+
+
+=== Example preinstallation ===
+
+Assuming that MediaWiki  resides on /usr/share/mediawiki and
+you  are not  installing  anything from  system package  but
+compiling.
+
+* PEAR package downloaded and unpacked to /usr/share/mediawiki
+* Crypt_RSA package downloaded and unpacked to /usr/share/mediawiki
+* Crypt_Blowfish package downloaded and unpacked to /usr/share/mediawiki
+* libgmp downloaded and installed in /usr/local using: make install
+* libmcrypt downloaded and installed in /usr/local using: make install
+* PHP 5 compiled using ./configure --with-mysql --with-gmp --with-mcrypt
+
+Assuming that MediaWiki  resides on /usr/share/mediawiki and
+you are installing everything from system packages.
+
+* PEAR package downloaded and unpacked to /usr/share/mediawiki
+* Crypt_RSA package downloaded and unpacked to /usr/share/mediawiki
+* Crypt_Blowfish package downloaded and unpacked to /usr/share/mediawiki
+* libgmp system package downloaded and installed using package manager (rpm or deb)
+* libmcrypt system package downloaded and installed using package manager (rpm or deb)
+* PHP 5 installed from package
+* gmp PHP extension installed from package and activated in php.ini
+* mcrypt PHP extension installed from package and activated in php.ini
+* mysql PHP extension installed from package and activated in php.ini
+
+
+== Installation ==
+
+Make sure all required libraries and PHP extensions are installed.
+
+Copy all files from this package to extensions/PPP
+and add the following to LocalSettings.php:
+
+################################################################
+# PageProtection extension
+
+$wgCachePages	= false;
+$wgCacheEpoch	= 'date +%Y%m%d%H%M%S';
+$wgPEMsize	= 1024;			//default key size
+$wgPEMlite_size	= 512;			//lite key size
+$wgPEMdir	= '/var/run/PPP-keys';	//storage for keys
+$wgPEMfile	= 'default.pem';	//default key's filename
+$wgPEMlite_file	= 'lite.pem';		//lite key's filename
+
+$wgPEMold	= 'private.pem'; 	//old key's pathname (optional)
+					//if you've been using PageProtection
+# activate PageProtection extension
+require_once('extensions/PPP/PageProtectionPlus.php');
+
+#
+################################################################
+
+Variables are setting the following parameters:
+
+* $wgPEMsize sets the size for the default RSA key
+* $wgPEMlite_size sets the size for the RSA key used in Pure-RSA mode
+* $wgPEMdir sets the directory for storing RSA keys
+* $wgPEMfile is the filename for the default key (used for encryption)
+* $wgPEMlite_file is the filename for the 'lite' key (used for encryption in Pure-RSA mode)
+* $wgPEMold is an optional pathname of a file containing the key used in PageProtection
+
+When started for the first time, the extension will create a
+new PEM-file in the $wgPEMdir  directory. You should set the
+correct path to it in  LocalSettings.php and make sure, that
+the webserver has  the write access to  the directory, where
+the files  will reside.  Alternatively, you can  create your
+own  PEM-file  and save  it  there  under  the name  set  in
+$wgPEMfile.
+
+If   you  have   been  using   PageProtection  before,   the
+PageProtectionPlus  will   try  to   import  your   old  key
+($wgPEMold)  by  copying  it into  the  directory  mentioned
+above.
+
+== Fixing the bug in Crypt_RSA ==
+
+If you would like to use RSA keys that are 512bits or bigger
+and your version  of Crypt_RSA is less than  1.2.0b you have
+to do a little hack (according to Bug #7252).
+
+Go to the line 235 of file RSA/KeyPair.php and replace:
+    $len |= ord($in[$pos++]);		/* BAD */
+
+with the:
+
+    $len |= ord($str[$pos++]);		/* OK */
+
+== Key generation ==
+
+ PageProtectionPlus needs at least one RSA-key.
+ Here are the ways to create RSA keys:
+
+ Remember: Always create a directory for storing keys before
+ you'll use the extension!
+
+ One approach  is to  let the web  server write  the default
+ key  in  the  specified directory  ($wgPEMdir),  and  leave
+ $wgPEMfile to be set to 'default.pem'. The directory should
+ be placed outside the  MediaWiki tree, or better, somewhere
+ outside the  default scope  of the Web  server. If  this is
+ impossible try to give it some unpredictible name.
+
+ Second  approach is  to create  directory and  generate the
+ default file by hand Make sure the web server has access to
+ that file.
+
+ There is also another approach, combining these two, use it
+ especially  when  you  are  uprading  from  PageProtection.
+ Create  the  directory  for  keys,  give  the  Web  service
+ permission to  write there, edit  one page and  encrypt it,
+ and then take the write  permission for directory and files
+ away. Example  (assuming your web-server runs  under GID of
+ group called 'http':
+
+ su -
+ mkdir /var/run/PPP-keys
+ chown root:http /var/run/PPP-keys chmod 0770 /var/run/PPP-keys
+
+ [edit one page using the browser]
+
+ chmod 0750 /var/run/PPP-keys
+ chmod 0640 /var/run/PPP-keys/*
+
+ If  your PHP  is not  allowed  to read  files outside  some
+ directories change the pathname according to your needs. If
+ you don't  have root-access  to the host  you have  to make
+ sure that there is no way to read keys using the HTTP.
+
+== Directory Structure ==
+/mw
+  |- index.php
+  |- PEAR.php
+  |- PEAR/
+  |    | ...
+  |- Crypt
+  |    | ...
+  |    |- RSA
+  |    |- Blowfish
+  |
+  |- extensions
+  |    |-  PPP
+  |    |     |- PageProtectionPlus.php
+  |   ...
+ ...
+
+== Post-installation (optional) ==
+
+It is very ok to review the README file before further reading.
+ 
+ See also: TEMPLATES-MSGS
+

@@ -10,43 +10,43 @@
 	<resources>
 		 <j2se version="1.5+"/>
 		 <jar href="pathvisio_v1.jar"/>
-		 <jar href="resources.jar"/>
-		 <jar href="hsqldb.jar"/>
-		 <jar href="derby.jar"/>
-		 <jar href="BrowserLauncher.jar"/>
-		 <jar href="jdom.jar"/>
-		 <jar href="org.eclipse.core.commands.jar"/>
-		 <jar href="org.eclipse.equinox.common.jar"/>
-		 <jar href="org.eclipse.jface.jar"/>
-		 <jar href="org.eclipse.equinox.supplement.jar"/>
-		 <jar href="batik/batik-awt-util.jar"/>
-		 <jar href="batik/batik-bridge.jar"/>
-		 <jar href="batik/batik-css.jar"/>
-		 <jar href="batik/batik-dom.jar"/>
-		 <jar href="batik/batik-ext.jar"/>
-		 <jar href="batik/batik-extension.jar"/>
-		 <jar href="batik/batik-gvt.jar"/>
-		 <jar href="batik/batik-parser.jar"/>
-		 <jar href="batik/batik-script.jar"/>
-		 <jar href="batik/batik-svg-dom.jar"/>
-		 <jar href="batik/batik-svggen.jar"/>
-		 <jar href="batik/batik-transcoder.jar"/>
-		 <jar href="batik/batik-util.jar"/>
-		 <jar href="batik/batik-xml.jar"/>
-		 <jar href="batik/pdf-transcoder.jar"/>
-		 <jar href="batik/xml-apis.jar"/>
+		 <jar href="lib/resources.jar"/>
+		 <jar href="lib/hsqldb.jar"/>
+		 <jar href="lib/derby.jar"/>
+		 <jar href="lib/BrowserLauncher.jar"/>
+		 <jar href="lib/jdom.jar"/>
+		 <jar href="lib/org.eclipse.core.commands.jar"/>
+		 <jar href="lib/org.eclipse.equinox.common.jar"/>
+		 <jar href="lib/org.eclipse.jface.jar"/>
+		 <jar href="lib/org.eclipse.equinox.supplement.jar"/>
+		 <jar href="lib/batik/batik-awt-util.jar"/>
+		 <jar href="lib/batik/batik-bridge.jar"/>
+		 <jar href="lib/batik/batik-css.jar"/>
+		 <jar href="lib/batik/batik-dom.jar"/>
+		 <jar href="lib/batik/batik-ext.jar"/>
+		 <jar href="lib/batik/batik-extension.jar"/>
+		 <jar href="lib/batik/batik-gvt.jar"/>
+		 <jar href="lib/batik/batik-parser.jar"/>
+		 <jar href="lib/batik/batik-script.jar"/>
+		 <jar href="lib/batik/batik-svg-dom.jar"/>
+		 <jar href="lib/batik/batik-svggen.jar"/>
+		 <jar href="lib/batik/batik-transcoder.jar"/>
+		 <jar href="lib/batik/batik-util.jar"/>
+		 <jar href="lib/batik/batik-xml.jar"/>
+		 <jar href="lib/batik/pdf-transcoder.jar"/>
+		 <jar href="lib/batik/xml-apis.jar"/>
 	</resources>
 	<resources os="Windows">
-		<jar href="swt-win32-lib/swt.jar"/>
-		<nativelib href="swt-win32-lib.jar"/>	
+		<jar href="lib/swt-win32-lib/swt.jar"/>
+		<nativelib href="lib/swt-win32-lib.jar"/>	
 	</resources>
 	<resources os="Linux">
-		<jar href="swt-linux-lib/swt.jar"/>
-		<nativelib href="swt-linux-lib.jar"/>	
+		<jar href="lib/swt-linux-lib/swt.jar"/>
+		<nativelib href="lib/swt-linux-lib.jar"/>	
 	</resources>
 	<resources os="Mac OS X">
-		<jar href="swt-mac-lib/swt.jar"/>
-		<nativelib href="swt-mac-lib.jar"/>	
+		<jar href="lib/swt-mac-lib/swt.jar"/>
+		<nativelib href="lib/swt-mac-lib.jar"/>	
 	</resources>
 	<application-desc main-class="org.pathvisio.gui.swt.GuiMain"/>
 	<security>

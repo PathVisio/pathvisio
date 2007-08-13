@@ -18,6 +18,7 @@ package org.pathvisio.gui.swt;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -78,6 +79,11 @@ public class SwtEngine {
 	public MainWindow getWindow() {
 		if(window == null) window = new MainWindow();
 		return window;
+	}
+	
+
+	public void setWindow(MainWindow w) {
+		window = w;
 	}
 	
 	/**
@@ -292,6 +298,64 @@ public class SwtEngine {
 		bl.openURLinBrowser(url);
 	}
 	
+	private void handleOpenException(String pwFile, ConverterException e) {
+		if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
+		{
+			MessageDialog.openError(getWindow().getShell(), 
+				"Unable to open Gpml file", 
+				"Unable to open Gpml file.\n\n" +
+				"The most likely cause for this error is that you are trying to open an old Gpml file. " +
+				"Please note that the Gpml format has changed as of March 2007. " +
+				"The standard pathway set can be re-downloaded from http://pathvisio.org " +
+				"Non-standard pathways need to be recreated or upgraded. " +
+				"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
+				"\nSee error log for details");
+			Logger.log.error("Unable to open Gpml file", e);
+		}
+		else if (pwFile.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
+		{
+			MessageDialog.openError(getWindow().getShell(), 
+				"Unable to open Mapp file", 
+				"Unable to open Mapp file.\n\n" +					
+				"Check that the file you're trying to open really is a "+
+				"Pathway in the GenMAPP .mapp format. If the problem persists, please contact " +
+				"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
+				"file you're trying to open and the error log.");
+				Logger.log.error("Unable to open Gpml file", e);						
+		}
+		else
+		{
+			//TODO: refactor these error messages,
+			// so it's not redundant with SwingEngine
+			MessageDialog.openError(
+				getWindow().getShell(), 
+				"Unable to open Gpml file",
+				"Unable to open Gpml file\n\n" +
+				"Check that the file you're trying to open really is a "+
+				"Pathway in the Gpml format. If the problem persists, please contact " +
+				"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
+				"file you're trying to open and the error log.");
+			Logger.log.error("Unable to open Gpml file", e);
+		}
+	}
+	
+	public File openPathway(URL url) {
+		File local = null;
+		if (canDiscardPathway())
+		{
+			try { 
+				VPathwayWrapper w = createWrapper();
+				Engine.getCurrent().openPathway(url, w);
+				updateTitle();
+			} 
+			catch(ConverterException e) 
+			{		
+				handleOpenException(url.toString(), e);
+			}
+		}
+		return local;
+	}
+	
 	/**
 	 Open a pathway from a gpml file
 	 Asks the user if the old pathway should be discarded, if necessary
@@ -307,44 +371,7 @@ public class SwtEngine {
 			} 
 			catch(ConverterException e) 
 			{		
-				if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
-				{
-					MessageDialog.openError(getWindow().getShell(), 
-						"Unable to open Gpml file", 
-						"Unable to open Gpml file.\n\n" +
-						"The most likely cause for this error is that you are trying to open an old Gpml file. " +
-						"Please note that the Gpml format has changed as of March 2007. " +
-						"The standard pathway set can be re-downloaded from http://pathvisio.org " +
-						"Non-standard pathways need to be recreated or upgraded. " +
-						"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
-						"\nSee error log for details");
-					Logger.log.error("Unable to open Gpml file", e);
-				}
-				else if (pwf.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
-				{
-					MessageDialog.openError(getWindow().getShell(), 
-						"Unable to open Mapp file", 
-						"Unable to open Mapp file.\n\n" +					
-						"Check that the file you're trying to open really is a "+
-						"Pathway in the GenMAPP .mapp format. If the problem persists, please contact " +
-						"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
-						"file you're trying to open and the error log.");
-						Logger.log.error("Unable to open Gpml file", e);						
-				}
-				else
-				{
-					//TODO: refactor these error messages,
-					// so it's not redundant with SwingEngine
-					MessageDialog.openError(
-						getWindow().getShell(), 
-						"Unable to open Gpml file",
-						"Unable to open Gpml file\n\n" +
-						"Check that the file you're trying to open really is a "+
-						"Pathway in the Gpml format. If the problem persists, please contact " +
-						"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
-						"file you're trying to open and the error log.");
-					Logger.log.error("Unable to open Gpml file", e);
-				}
+				handleOpenException(pwf, e);
 			}
 		}
 	}

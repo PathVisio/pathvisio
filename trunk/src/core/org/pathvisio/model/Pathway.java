@@ -199,9 +199,13 @@ public class Pathway implements PathwayListener
 			throw new IllegalArgumentException("Can't remove mappinfo object!");
 		if (o.getObjectType() == ObjectType.INFOBOX)
 			throw new IllegalArgumentException("Can't remove infobox object!");
-		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.removeListener(this);
-		dataObjects.remove(o);		
+		dataObjects.remove(o);
+		List<GraphRefContainer> references = getReferringObjects(o.getGraphId());
+		for(GraphRefContainer refc : references) {
+			refc.setGraphRef(null);
+		}
+		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.setParent(null);
 	}
 
@@ -336,7 +340,13 @@ public class Pathway implements PathwayListener
 	 */
 	public List<GraphRefContainer> getReferringObjects (String id)
 	{
-		return graphRefs.get(id);
+		List<GraphRefContainer> refs = graphRefs.get(id);
+		if(refs != null) {
+			refs = new ArrayList<GraphRefContainer>(refs);
+		} else {
+			refs = new ArrayList<GraphRefContainer>();
+		}
+		return refs;
 	}
 	
 	private File sourceFile = null;

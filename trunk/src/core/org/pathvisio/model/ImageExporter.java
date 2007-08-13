@@ -16,24 +16,30 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStream;
+import java.io.Writer;
 
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.output.DOMOutputter;
+import org.pathvisio.view.VPathway;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 public class ImageExporter implements PathwayExporter {
 	public static final int TYPE_PNG = 0;
 	public static final int TYPE_TIFF = 1;
 	public static final int TYPE_PDF = 2;
+	public static final int TYPE_SVG = 3;
 	
 	private int type;
 	private String[] extensions;
@@ -57,6 +63,8 @@ public class ImageExporter implements PathwayExporter {
 			return "tiff";
 		case TYPE_PDF:
 			return "pdf";
+		case TYPE_SVG:
+			return "svg";
 		default:
 			return null;
 		}
@@ -70,17 +78,40 @@ public class ImageExporter implements PathwayExporter {
 			return "TIFF";
 		case TYPE_PDF:
 			return "PDF";
+		case TYPE_SVG:
+			return "SVG";
 		default:
 			return null;
 		}
 		
 	}
 	
-	public void doExport(File file, Pathway pathway) throws ConverterException {
-		Document svg = SvgFormat.createJdom(pathway);
+	public void doExport(File file, Pathway pathway) throws ConverterException {		
+		VPathway vPathway = new VPathway(null);
+		vPathway.fromGmmlData(pathway);
+		
+		double width = vPathway.getVWidth();
+		double height = vPathway.getVHeight();
+		
+		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
+		
+		SVGGraphics2D svgG2d = new SVGGraphics2D(svg);
+		svgG2d.setSVGCanvasSize(new Dimension((int)width, (int)height));
+		vPathway.draw(svgG2d);
 		
 		Transcoder t = null;
 		switch(type) {
+		case TYPE_SVG:
+			try {
+				Writer out = new FileWriter(file);			
+				svgG2d.stream(out, true);
+				out.flush();
+				out.close();
+			} catch(Exception e) {
+				throw new ConverterException(e);
+			}
+			return;
 		case TYPE_PNG:
 			t = new PNGTranscoder();
 			break;
@@ -99,7 +130,7 @@ public class ImageExporter implements PathwayExporter {
 		t.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, java.awt.Color.WHITE);
 
 		try {
-			TranscoderInput input = new TranscoderInput(convertToDOM(svg));
+			TranscoderInput input = new TranscoderInput(svg);
 
 			// Create the transcoder output.
 			OutputStream ostream = new FileOutputStream(file);
@@ -119,10 +150,4 @@ public class ImageExporter implements PathwayExporter {
 	public void noExporterException() throws ConverterException {
 		throw new ConverterException("No exporter for this image format");
 	}
-
-	public org.w3c.dom.Document convertToDOM(org.jdom.Document jdomDoc) throws JDOMException {
-		DOMOutputter outputter = new DOMOutputter();
-		return outputter.output(jdomDoc);
-	}
-
 }

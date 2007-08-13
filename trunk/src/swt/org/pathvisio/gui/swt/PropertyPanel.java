@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.biopax.gui.BiopaxCellEditor;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.gui.swt.dialogs.CommentsDialog;
 import org.pathvisio.model.DataNodeType;
@@ -83,7 +82,6 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	ComboBoxCellEditor comboBoxEditor;
 	SuggestCellEditor identifierSuggestEditor;
 	SuggestCellEditor symbolSuggestEditor;
-	BiopaxCellEditor biopaxEditor;
 	DialogCellEditor commentsEditor;
 	
 	private List<PathwayElement> dataObjects;
@@ -233,7 +231,6 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
 		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
 		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
-		biopaxEditor = new BiopaxCellEditor(tableViewer.getTable(), "...");
 		//Temporary table editor for comments, will be removed when right-click menu is implemented
 		commentsEditor = new DialogCellEditor(tableViewer.getTable()) {
 			protected Object openDialogBox(Control cellEditorWindow) {
@@ -315,8 +312,6 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				return identifierSuggestEditor;
 			case DB_SYMBOL:
 				return textEditor;
-			case BIOPAXREF:
-				return biopaxEditor;
 			case COMMENTS:
 				return commentsEditor;
 		}

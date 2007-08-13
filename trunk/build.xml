@@ -12,11 +12,20 @@
 	<!-- <property name="dist.dir" value="dist"/> -->
 	<property name="webstart.dir" value="webstart"/>
 	<property name="wikipathways.dir" value="wikipathways"/>
-	<property name="wikipathways.applet.dir" value="${wikipathways.dir}/applet"/>
+	<property name="wikipathways.www.dir" value="build/wikipathways-www"/>
+	<property name="wikipathways.bin.dir" value="${wikipathways.www.dir}/wpi/bin"/>
+	<property name="wikipathways.webstart.dir" value="${wikipathways.bin.dir}"/>
+	<property name="wikipathways.applet.dir" value="${wikipathways.www.dir}/wpi/applet"/>
+	<property name="wikipathways.dest" value="/var/www/wikipathways"/>
+	<property name="wikipathways.bin.dest" value="${wikipathways.dest}/wpi/bin"/>
+	<property name="wikipathways.webstart.dest" value="${wikipathways.bin.dest}"/>
+	<property name="wikipathways.applet.dest" value="${wikipathways.dest}/wpi/applet"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="exec.perl" value="perl"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="exec.inno.setup" value="iscc"/>
+	
+	<property name="jar.class.path" value="lib/resources.jar lib/derby.jar lib/R-resources.jar lib/swt-win32-lib/swt.jar lib/swt-linux-lib/swt.jar lib/org.eclipse.core.commands.jar lib/org.eclipse.equinox.common.jar lib/org.eclipse.jface.jar lib/hsqldb.jar lib/jdom.jar lib/JRI.jar lib/BrowserLauncher.jar lib/plugins.jar lib/batik/batik-awt-util.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar"/>
 	
 	<path id="project.v1.class.path">
 		<pathelement location="${build.v1.dir}"/>
@@ -51,6 +60,9 @@
 		<mkdir dir="${build.plugins.dir}"/>
 		<mkdir dir="${build.wikipathways.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
+		<mkdir dir="${wikipathways.www.dir}"/>
+		<mkdir dir="${wikipathways.bin.dir}"/>
+		<mkdir dir="${wikipathways.webstart.dir}"/>
 		<mkdir dir="${wikipathways.applet.dir}"/>
 		
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
@@ -61,7 +73,9 @@ public class Revision
 	public static final String REVISION = "${subversion_revision}";
 };
 </echo>
-		
+	<exec executable="${exec.perl}" failifexecutionfails="true" output="classpath.sh">
+		<arg line="-e '$cp = &quot;.&quot;; foreach(@ARGV) { $cp .= &quot;:$_&quot;; } print &quot;export PATHVISIO_CP=\&quot;$cp\&quot;\n&quot;' ${jar.class.path}"/>
+	</exec>
 	</target>
 	
 	<target name="clean" description="Remove all generated files.">
@@ -72,12 +86,12 @@ public class Revision
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
-		<delete dir="${wikipathways.applet.dir}"/>
+		<delete dir="${wikipathways.www.dir}"/>
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
 		<javac debug="true" srcdir="."
-			includes="src/v1/**,src/core/**,src/swt/**,src/swing/**"
+			includes="src/v1/**,src/core/**,src/swt/**,src/swing/**,src/wikipathways-swt/**"
 			destdir="${build.v1.dir}">
 			<classpath refid="project.v1.class.path"/>
 		</javac>
@@ -149,10 +163,25 @@ public class Revision
 	</target>
 	
 	<target name="jar" depends="compile-v1,compile-v2" description="Generates executable jar file">
-		<jar jarfile="pathvisio_v2.jar" manifest="src/MANIFEST.MF">
+		<jar jarfile="pathvisio_v2.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.gui.GuiMain"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
+			</manifest>
 			<fileset dir="${build.v2.dir}" includes="**/*.class"/>			
 		</jar>
-		<jar jarfile="pathvisio_v1.jar" manifest="src/MANIFEST.MF">
+		<jar jarfile="pathvisio_v1.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.gui.GuiMain"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
+			</manifest>
+			<fileset dir="${build.v1.dir}" includes="**/*.class"/>			
+		</jar>
+		<jar jarfile="pathvisio_converter.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.util.Converter"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
+			</manifest>
 			<fileset dir="${build.v1.dir}" includes="**/*.class"/>			
 		</jar>
 		<jar jarfile="lib/plugins.jar">
@@ -164,11 +193,11 @@ public class Revision
 		<jar jarfile="wikipathways.jar">
 			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
             <manifest>
-                <attribute name="Class-Path" value="jdom.jar resources.jar derbyclient.jar swing-worker-1.1.jar apache/commons-codec-1.3.jar apache/commons-httpclient-3.0.1.jar apache/commons-logging-1.1.jar apache/ws-commons-util-1.0.1.jar apache/xmlrpc-client-3.0.jar apache/xmlrpc-common-3.0.jar"/>
+            	<attribute name="Class-Path" value="${jar.class.path}"/>
             </manifest>
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
-		<jar jarfile="${wikipathways.dir}/applet/resources.jar">
+		<jar jarfile="${wikipathways.applet.dir}/resources.jar">
 			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>
 			<!--<fileset dir="." includes="images/*"/>-->
@@ -197,14 +226,13 @@ public class Revision
 		<copy file="pathvisio_v1.jar" toDir="${webstart.dir}/www"/>
 		<copy file="pathvisio_v2.jar" toDir="${webstart.dir}/www"/>
 		<signjar jar="pathvisio_v1.jar" lazy="true" 
-			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
 		<signjar jar="pathvisio_v2.jar" lazy="true" 
-			alias="PathVisio" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
-                
-		<copy toDir="${webstart.dir}/www" overwrite="true">
+			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+		<copy toDir="${webstart.dir}/www/lib">
 			<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		</copy>
-		<signjar alias="PathVisio" lazy = "true" 
+		<signjar alias="PV" lazy = "true" 
 			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
 			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
 		</signjar>
@@ -219,28 +247,46 @@ public class Revision
 		</exec>
 	</target>
 
-	<target name="wikipathways" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
-		<copy file="wikipathways.jar" toDir="${wikipathways.dir}/applet"/>
+	<target name="wikipathways-swt" depends="prepare-webstart" description="Create resources for the wikipathways swt editor">
+		<!-- Copy webstart files -->
+		<copy toDir="${wikipathways.webstart.dir}" >
+			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
+		</copy>
+		<!-- copy to /var/www/wikipathways -->
+		<copy toDir="${wikipathways.webstart.dest}">
+			<fileset dir="${wikipathways.webstart.dir}" includes="**/*.*" />
+		</copy>
+	</target>
+	
+	<target name="wikipathways-applet" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
+		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy toDir="${wikipathways.applet.dir}">
 			<fileset dir="${lib.dir}">
 				<include name="apache/*.jar"/>
 				<include name="jdom.jar"/>
 				<include name="swing-worker-1.1.jar"/>
 				<include name="derbyclient.jar"/>
-			</fileset>
-			
+			</fileset>	
 		</copy>
-		<signjar alias="PathVisio" lazy = "true" 
+		<signjar alias="PV" lazy = "true" 
 			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
 			<fileset dir="${wikipathways.applet.dir}" includes="**/*.jar"/>
 		</signjar>
 		<!-- copy to /var/www/wikipathways -->
-		<copy toDir="/var/www/wikipathways/wpi/applet">
+		<copy toDir="${wikipathways.applet.dest}">
 			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />
 		</copy>
-		<!-- todo: copy scripts and bin too -->
 	</target>
 
+	<target name="wikipathways-all" depends="wikipathways-swt, wikipathways-applet">
+		<!-- Copy converter jar -->
+		<copy toDir="${wikipathways.bin.dest}">
+			<fileset dir=".">
+				<include name="pathvisio_converter.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<tstamp /> <!-- set ${TODAY} -->
 		<javadoc destdir="${apidoc.dir}" 

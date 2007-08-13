@@ -131,7 +131,7 @@ public class Test extends TestCase implements PathwayListener
 	 */
 	public void testRef()
 	{	
-		assertNull ("query non-existing list of ref", data.getReferringObjects("abcde"));
+		assertTrue ("query non-existing list of ref", data.getReferringObjects("abcde").size() == 0);
 		
 		// create link
 		o.setGraphId("1");
@@ -139,7 +139,7 @@ public class Test extends TestCase implements PathwayListener
 		assertTrue ("reference created", data.getReferringObjects("1").contains(l.getMStart()));
 		
 		l.setStartGraphRef("2");
-		assertNull ("reference removed", data.getReferringObjects("1"));
+		assertTrue ("reference removed", data.getReferringObjects("1").size() == 0);
 		
 		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
 		data.add (o2);

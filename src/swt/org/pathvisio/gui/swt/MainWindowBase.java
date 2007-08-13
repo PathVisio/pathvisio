@@ -480,9 +480,11 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		switch(e.getType()) {
 		case VPathwayEvent.EDIT_MODE_OFF:
 			showLegend(true);
+			showEditActionsCI(false);
 			break;
 		case VPathwayEvent.EDIT_MODE_ON:
 			showLegend(false);
+			showEditActionsCI(true);
 			break;
 		case VPathwayEvent.ELEMENT_ADDED:
 			deselectNewItemActions();

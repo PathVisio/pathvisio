@@ -298,7 +298,7 @@ public class MainWindow extends MainWindowBase
 			statsMenu.add(rStatsAction);
 			statsMenu.add(rLoadStatsAction);
 		}
-		dataMenu.add(new CommonActions.BiopaxAction(this));
+//		dataMenu.add(new CommonActions.BiopaxAction(this));
 		
 		MenuManager helpMenu = new MenuManager ("&Help");
 		helpMenu.add(aboutAction);

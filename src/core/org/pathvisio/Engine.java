@@ -127,11 +127,28 @@ public class Engine {
 		openPathway(pathwayFile, null);
 	}
 	
+	public void exportPathway(File file) throws ConverterException {
+		Logger.log.trace("Exporting pathway to " + file);
+		String fileName = file.toString();
+
+		int dot = fileName.lastIndexOf('.');
+		String ext = null;
+		if(dot >= 0) {
+			ext = fileName.substring(dot + 1, fileName.length());
+		}
+		PathwayExporter exporter = getPathwayExporter(ext);
+
+		if(exporter == null) throw new ConverterException( "No exporter for '" + ext +  "' files" );
+
+		exporter.doExport(file, pathway);	
+	}
+	
 	public void importPathway(File file) throws ConverterException {
 		importPathway(file, null);
 	}
 	
 	public void importPathway(File file, VPathwayWrapper wrapper) throws ConverterException {
+		Logger.log.trace("Importing pathway from " + file);
 		String fileName = file.toString();
 		
 		int dot = fileName.lastIndexOf('.');

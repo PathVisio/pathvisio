@@ -33,7 +33,6 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.biopax.gui.BiopaxDialog;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -530,22 +529,22 @@ public class CommonActions
 		}
 	}
 	
-	static class BiopaxAction extends Action 
-	{
-		MainWindowBase window;
-		public BiopaxAction (MainWindowBase w)
-		{
-			window = w;
-			setText ("Edit &BioPAX code");
-			setToolTipText ("Edit BioPAX code");
-		}
-		
-		public void run () {
-			BiopaxDialog d = new BiopaxDialog(window.getShell());
-			d.setPathway(Engine.getCurrent().getActivePathway());
-			d.open();
-		}
-	}
+//	static class BiopaxAction extends Action 
+//	{
+//		MainWindowBase window;
+//		public BiopaxAction (MainWindowBase w)
+//		{
+//			window = w;
+//			setText ("Edit &BioPAX code");
+//			setToolTipText ("Edit BioPAX code");
+//		}
+//		
+//		public void run () {
+//			BiopaxDialog d = new BiopaxDialog(window.getShell());
+//			d.setPathway(Engine.getCurrent().getActivePathway());
+//			d.open();
+//		}
+//	}
 	
 	/**
 	 * {@link Action} to switch between edit and view mode

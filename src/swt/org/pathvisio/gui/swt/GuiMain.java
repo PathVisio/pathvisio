@@ -143,7 +143,7 @@ public class GuiMain {
 	
 	static void registerExporters() {
 		Engine.getCurrent().addPathwayExporter(new MappFormat());
-		Engine.getCurrent().addPathwayExporter(new SvgFormat());
+		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_SVG));
 		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PNG));
 		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_TIFF));
 		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PDF));

@@ -62,8 +62,10 @@ public class VPathway implements PathwayListener
 	private static final long serialVersionUID = 1L;
 	static final double M_PASTE_OFFSET = 10 * 15;
 	public static final double ZOOM_TO_FIT = -1;
+	static final int SMALL_INCREMENT = 2;
 
 	private boolean selectionEnabled = true;
+	private Pathway temporaryCopy = null;
 
 	/**
 	   Returns true if the selection capability of this VPathway is enabled
@@ -517,6 +519,10 @@ public class VPathway implements PathwayListener
 		// If draggin, drag the pressed object
 		if (pressedObject != null && isDragging)
 		{
+			if (dragUndoState == DRAG_UNDO_CHANGE_START)
+			{
+				dragUndoState = DRAG_UNDO_CHANGED;
+			}
 			double vdx = ve.getX() - vPreviousX;
 			double vdy = ve.getY() - vPreviousY;
 			if (pressedObject instanceof Handle)
@@ -547,33 +553,44 @@ public class VPathway implements PathwayListener
 	 */
 	public void keyMove(KeyStroke ks)
 	{
-		int smallIncrement = 2;
-		
 		List<Graphics> selectedGraphics = getSelectedGraphics();
-		if (selectedGraphics.size() >0){
-			if (ks.equals(KEY_MOVELEFT)){
-				for (Graphics g : selectedGraphics){
-				g.vMoveBy(-smallIncrement, 0);
+		if (selectedGraphics.size() > 0)
+		{
+			if (ks.equals(KEY_MOVELEFT))
+			{
+				undoManager.newAction ("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(-SMALL_INCREMENT, 0);
 				}
 			}
-			else if (ks.equals(KEY_MOVERIGHT)){
-				for (Graphics g : selectedGraphics){
-				g.vMoveBy(smallIncrement, 0);
+			else if (ks.equals(KEY_MOVERIGHT))
+			{
+				undoManager.newAction ("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(SMALL_INCREMENT, 0);
 				}
 			}
-			else if (ks.equals(KEY_MOVEUP)){
-				for (Graphics g : selectedGraphics){
-			    g.vMoveBy(0, -smallIncrement);
+			else if (ks.equals(KEY_MOVEUP))
+			{
+				undoManager.newAction ("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(0, -SMALL_INCREMENT);
 				}
 			}
-			else if (ks.equals(KEY_MOVEDOWN)){
-				for (Graphics g : selectedGraphics){
-				g.vMoveBy(0, smallIncrement);
+			else if (ks.equals(KEY_MOVEDOWN))			{
+				undoManager.newAction ("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(0, SMALL_INCREMENT);
 				}
 			}
 			redrawDirtyRect();
 		}
 	}
+
 	public void selectObject(VPathwayElement o)
 	{
 		clearSelection();
@@ -584,7 +601,9 @@ public class VPathway implements PathwayListener
 	 * Handles mouse Pressed input
 	 */
 	public void mouseDown(MouseEvent e)
-	{		
+	{
+		vDragStart = new Point (e.getX(), e.getY());
+		temporaryCopy = (Pathway)data.clone();
 		//setFocus();
 		if (editMode)
 		{
@@ -612,6 +631,26 @@ public class VPathway implements PathwayListener
 	{
 		if(isDragging)
 		{
+			if (dragUndoState == DRAG_UNDO_CHANGED)
+			{
+				assert (temporaryCopy != null);
+				// further specify the type of undo event,
+				// depending on the type of object being dragged
+				String message = "Drag Object";
+				if (pressedObject instanceof Handle)
+				{
+					if (((Handle)pressedObject).getDirection() == Handle.DIRECTION_ROT)
+					{
+						message = "Rotate Object";
+					}
+					else
+					{
+						message = "Resize Object";
+					}
+				}
+				undoManager.newAction (new UndoAction (message, temporaryCopy));
+				temporaryCopy = null;
+			}
 			resetHighlight();
 			if (selection.isSelecting())
 			{ // If we were selecting, stop it
@@ -620,8 +659,8 @@ public class VPathway implements PathwayListener
 			// check if we placed a new object by clicking or dragging
 			// if it was a click, give object the initial size.
 			else if (newObject != null
-					&& Math.abs(newObjectDragStart.x - e.getX()) <= MIN_DRAG_LENGTH
-					&& Math.abs(newObjectDragStart.y - e.getY()) <= MIN_DRAG_LENGTH)
+					&& Math.abs(vDragStart.x - e.getX()) <= MIN_DRAG_LENGTH
+					&& Math.abs(vDragStart.y - e.getY()) <= MIN_DRAG_LENGTH)
 			{
 				newObject.setInitialSize();
 			}
@@ -629,6 +668,7 @@ public class VPathway implements PathwayListener
 			redrawDirtyRect();
 		}
 		isDragging = false;
+		dragUndoState = DRAG_UNDO_NOT_RECORDING;
 		if(pressedObject != null) {
 			fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e, VPathwayEvent.ELEMENT_CLICKED_UP));
 		}
@@ -767,7 +807,8 @@ public class VPathway implements PathwayListener
 		vPreviousX = (int)vp.getX();
 		vPreviousY = (int)vp.getY();
 		isDragging = true;
-		
+		dragUndoState = DRAG_UNDO_NOT_RECORDING;
+
 		clearSelection(vp.getX(), vp.getY());
 		selection.startSelecting();
 		pressedObject = selection.getCornerHandle();
@@ -810,7 +851,7 @@ public class VPathway implements PathwayListener
 			vPreviousY = p.y;
 			
 			isDragging = true;
-			undoManager.newAction ("Dragging");
+			dragUndoState = DRAG_UNDO_CHANGE_START;
 		}
 		else
 		{
@@ -933,10 +974,27 @@ public class VPathway implements PathwayListener
 	 * drag. If you don't move the cursor in between the mousedown and mouseup
 	 * event, the object is placed with a default initial size.
 	 * 
-	 * newObjectDragStart is used to determine the mousemovement during the
+	 * vDragStart is used to determine the mousemovement during the
 	 * click.
 	 */
-	private Point newObjectDragStart;
+	private Point vDragStart;
+
+	/**
+	   dragUndoState determines what should be done when you release the mouse
+	   button after dragging an object.
+	   
+	   if it is DRAG_UNDO_NOT_RECORDING, it's not necessary to record an event. This is
+	   the case when we were dragging a  selection rectangle, or a new object
+	   (in which case the change event was already recorded)
+
+	   in other cases, it is set to DRAG_UNDO_CHANGE_START at the start of the drag.
+	   If additional move events occur, the state is changed to DRAG_UNDO_CHANGED.
+	   The latter will lead to recording of the undo event.
+	 */
+	static final int DRAG_UNDO_NOT_RECORDING = 0;
+	static final int DRAG_UNDO_CHANGE_START = 1;
+	static final int DRAG_UNDO_CHANGED = 2;
+	int dragUndoState = DRAG_UNDO_NOT_RECORDING;
 	
 	/** newly placed object, is set to null again when mouse button is released */
 	private PathwayElement newObject = null;
@@ -953,7 +1011,6 @@ public class VPathway implements PathwayListener
 	private void newObject(Point ve)
 	{
 		undoManager.newAction ("New Object");
-		newObjectDragStart = ve;
 		int mx = (int)mFromV((double)ve.x);
 		int my = (int)mFromV((double)ve.y); 
 		
@@ -976,6 +1033,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWLINEARROW:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -989,6 +1047,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWLINEDASHED:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1002,6 +1061,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWLINEDASHEDARROW:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1015,6 +1075,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWLABEL:
 			gdata = new PathwayElement(ObjectType.LABEL);
@@ -1040,6 +1101,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWBRACE:
 			gdata = new PathwayElement(ObjectType.SHAPE);
@@ -1053,6 +1115,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWGENEPRODUCT:
 			gdata = new PathwayElement(ObjectType.DATANODE);
@@ -1067,6 +1130,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((GeneProduct)lastAdded).handleSE;
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWRECTANGLE:
 			gdata = new PathwayElement(ObjectType.SHAPE);
@@ -1081,6 +1145,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWOVAL:
 			gdata = new PathwayElement(ObjectType.SHAPE);
@@ -1095,6 +1160,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Shape)lastAdded).handleSE;
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWTBAR:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1108,6 +1174,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWRECEPTORROUND:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1121,6 +1188,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWRECEPTORSQUARE:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1134,6 +1202,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWLIGANDROUND:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1147,6 +1216,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		case NEWLIGANDSQUARE:
 			gdata = new PathwayElement(ObjectType.LINE);
@@ -1160,6 +1230,7 @@ public class VPathway implements PathwayListener
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;						
 			break;
 		}
 		
@@ -1545,7 +1616,7 @@ public class VPathway implements PathwayListener
 	 * @param alignType
 	 */
 	public void alignSelected(AlignType alignType)
-	{
+	{		
 		List<Graphics> selectedGraphics = getSelectedGraphics();
 		
 		if (selectedGraphics.size() > 0)
@@ -1553,71 +1624,77 @@ public class VPathway implements PathwayListener
 			switch (alignType)
 			{
 			case CENTERX : 
+				undoManager.newAction ("Align horizontally on center");
 				Collections.sort(selectedGraphics, new YComparator());		   
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{
 					selectedGraphics.get(i).getGmmlData().setMCenterX(
-							selectedGraphics.get(i-1).getGmmlData().getMCenterX()						
-							);
+						selectedGraphics.get(i-1).getGmmlData().getMCenterX()						
+						);
 				}
 				break;
 			case CENTERY : 
+				undoManager.newAction ("Align vertically on center");
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
 					selectedGraphics.get(i).getGmmlData().setMCenterY(
-							selectedGraphics.get(i-1).getGmmlData().getMCenterY()						
-							);
+						selectedGraphics.get(i-1).getGmmlData().getMCenterY()						
+						);
 				}
 				break;
 			case LEFT :
+				undoManager.newAction ("Align on left side");
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
 					selectedGraphics.get(i).getGmmlData().setMLeft(
-							selectedGraphics.get(i-1).getGmmlData().getMLeft()						
-							);
-						}
+						selectedGraphics.get(i-1).getGmmlData().getMLeft()						
+						);
+				}
 				break;
 			case RIGHT : 
+				undoManager.newAction ("Align on right side");
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
 					selectedGraphics.get(i).getGmmlData().setMLeft(
-							selectedGraphics.get(i-1).getGmmlData().getMLeft() +
-							selectedGraphics.get(i-1).getGmmlData().getMWidth()	-
-							selectedGraphics.get(i).getGmmlData().getMWidth()							
-							);
-					}	
+						selectedGraphics.get(i-1).getGmmlData().getMLeft() +
+						selectedGraphics.get(i-1).getGmmlData().getMWidth()	-
+						selectedGraphics.get(i).getGmmlData().getMWidth()							
+						);
+				}	
 				break;
 			case TOP:
+				undoManager.newAction ("Align on top side");
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
 					selectedGraphics.get(i).getGmmlData().setMTop(
-							selectedGraphics.get(i-1).getGmmlData().getMTop()						
-							);
+						selectedGraphics.get(i-1).getGmmlData().getMTop()						
+						);
 				}
 				break;
 			case BOTTOM:
+				undoManager.newAction ("Align on bottom side");
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
 					selectedGraphics.get(i).getGmmlData().setMTop(
-							selectedGraphics.get(i-1).getGmmlData().getMTop() +
-							selectedGraphics.get(i-1).getGmmlData().getMHeight() -
-							selectedGraphics.get(i).getGmmlData().getMHeight()						
-							);
+						selectedGraphics.get(i-1).getGmmlData().getMTop() +
+						selectedGraphics.get(i-1).getGmmlData().getMHeight() -
+						selectedGraphics.get(i).getGmmlData().getMHeight()						
+						);
 				}
 				break;
 			case WIDTH:
 			case HEIGHT:
 				scaleSelected(alignType);
 				break;
-					}
+			}
 			redrawDirtyRect();
-				}
-				}
+		}
+	}
 
 	/**
 	 * Stacks selected objects based on user-selected stack type
@@ -1633,6 +1710,7 @@ public class VPathway implements PathwayListener
 			switch (stackType)
 			{
 			case CENTERX:
+				undoManager.newAction ("Stack Center Horizontally");
 				Collections.sort(selectedGraphics, new YComparator());		   
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{
@@ -1646,6 +1724,7 @@ public class VPathway implements PathwayListener
 				}		
 				break;
 			case CENTERY:
+				undoManager.newAction ("Stack Center Vertically");
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1659,6 +1738,7 @@ public class VPathway implements PathwayListener
 					}
 				break;
 			case LEFT:
+				undoManager.newAction ("Stack Left");
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1672,6 +1752,7 @@ public class VPathway implements PathwayListener
 				}
 				break;
 			case RIGHT:
+				undoManager.newAction ("Stack Right");
 				Collections.sort(selectedGraphics, new YComparator());								
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1688,6 +1769,7 @@ public class VPathway implements PathwayListener
 				}
 				break;
 			case TOP:
+				undoManager.newAction ("Stack Top");
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1701,6 +1783,7 @@ public class VPathway implements PathwayListener
 			}
 				break;
 			case BOTTOM:
+				undoManager.newAction ("Stack Bottom");
 				Collections.sort(selectedGraphics, new XComparator());			
 				for (int i=1; i<selectedGraphics.size(); i++)
 				{				
@@ -1823,6 +1906,7 @@ public class VPathway implements PathwayListener
 	{
 		if (Engine.getCurrent().clipboard != null)
 		{
+			undoManager.newAction ("Paste");
 			clearSelection();
 			Map<String, String> idmap = new HashMap<String, String>();
 			Set<String> newids = new HashSet<String>();
@@ -2018,6 +2102,14 @@ public class VPathway implements PathwayListener
 	}
 
 	UndoManager undoManager = new UndoManager();
+
+	/**
+	   returns undoManager owned by this instance of VPathway.
+	 */
+	public UndoManager getUndoManager()
+	{
+		return undoManager;
+	}
 	
 	public void undo()
 	{

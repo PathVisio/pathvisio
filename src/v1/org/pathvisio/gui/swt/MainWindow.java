@@ -69,6 +69,8 @@ public class MainWindow extends MainWindowBase
 		fileMenu.add(new Separator());
 		fileMenu.add(exitAction);
 		MenuManager editMenu = new MenuManager ("&Edit");
+		editMenu.add(undoAction);
+		editMenu.add(new Separator());
 		editMenu.add(copyAction);
 		editMenu.add(pasteAction);
 		editMenu.add(new Separator());

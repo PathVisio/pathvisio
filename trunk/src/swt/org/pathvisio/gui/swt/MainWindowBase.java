@@ -56,6 +56,8 @@ import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.UndoManagerListener;
+import org.pathvisio.view.UndoManagerEvent;
 import org.pathvisio.visualization.LegendPanel;
 
 /**
@@ -65,7 +67,8 @@ import org.pathvisio.visualization.LegendPanel;
  * a constructor, and override createCoolBarManager and createMenuManager.
  */
 public abstract class MainWindowBase extends ApplicationWindow implements 
-	ApplicationEventListener, ExpressionDataListener, VPathwayListener
+	ApplicationEventListener, ExpressionDataListener, VPathwayListener, UndoManagerListener
+															   
 {
 	private static final long serialVersionUID = 1L;
 	static int ZOOM_TO_FIT = -1;
@@ -449,6 +452,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:
 			Engine.getCurrent().getActiveVPathway().addVPathwayListener(this);
+			Engine.getCurrent().getActiveVPathway().getUndoManager().addListener(this);
 		}
 	}
 
@@ -485,10 +489,15 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			break;
 		}
 	}
+
+	public void undoManagerEvent (UndoManagerEvent e)
+	{
+		System.out.println ("Undo Manager event received! " + e.getMessage());
+		undoAction.setText ("&Undo: " + e.getMessage() + "@Ctrl+Z");
+	}
 	
 	public MainWindowBase(Shell shell)
 	{
 		super(shell);
 	}
-
 }

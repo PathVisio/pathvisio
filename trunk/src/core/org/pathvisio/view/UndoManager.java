@@ -25,13 +25,34 @@ public class UndoManager
 {
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
+	void newAction (UndoAction act)
+	{		
+		undoList.add (act);
+		fireUndoManagerEvent (new UndoManagerEvent (act.getMessage()));
+	}
+
 	void newAction (String desc)
 	{
 		Pathway pwy = Engine.getCurrent().getActivePathway();
 		UndoAction x = new UndoAction (desc, (Pathway)pwy.clone());
 		undoList.add (x);
+		fireUndoManagerEvent (new UndoManagerEvent (x.getMessage()));
 	}
-		
+
+	public String getTopMessage()
+	{
+		String result;
+		if (undoList.size() == 0)
+		{
+			result = "Can't undo";
+		}
+		else
+		{
+			result = undoList.get(undoList.size() - 1).getMessage();
+		}
+		return result;
+	}
+	
 	void undo()
 	{
 		if (undoList.size() > 0)
@@ -41,6 +62,26 @@ public class UndoManager
 			a.undo();
 			undoList.remove(a);
 			System.out.println (undoList.size() + " remaining");
+			fireUndoManagerEvent (new UndoManagerEvent (getTopMessage()));			
+		}
+	}
+
+	private List <UndoManagerListener> listeners =
+		new ArrayList <UndoManagerListener>();
+
+	public void addListener (UndoManagerListener v) { listeners.add(v); }
+	public void removeListener (UndoManagerListener v) { listeners.remove(v); }
+
+	/**
+	   This is called whenever a new item is added to the Undo Manager,
+	   or when an undo action takes place.
+	   mainly intended for the menu item to update itself.
+	 */
+	void fireUndoManagerEvent (UndoManagerEvent e)
+	{
+		for (UndoManagerListener g : listeners)
+		{
+			g.undoManagerEvent (e);
 		}
 	}
 }

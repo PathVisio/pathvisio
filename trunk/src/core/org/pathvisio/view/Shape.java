@@ -108,19 +108,16 @@ public class Shape extends GraphicsShape
 		
 		switch(gdata.getShapeType()) {
 		case OVAL:
-			s = new Ellipse2D.Double(x, y, w, h);
+			s = ShapeRegistry.getShape ("Oval", x, y, w, h);
 			break;
-		case ARC:;
-			s = new Arc2D.Double (x, y, w, h, 0, -180, Arc2D.OPEN);
+		case ARC:
+			s = ShapeRegistry.getShape ("Arc", x, y, w, h);
 			break;
 		case BRACE:
-			GeneralPath p = new GeneralPath();
-            p.moveTo(x, y + h);
-            p.quadTo(x, y + h/2, x + w/4, y + h/2);
-            p.quadTo(cx, y + h/2, cx, y);
-            p.quadTo(cx, y + h/2, cx + w/4, y + h/2);
-            p.quadTo(x + w, y + h/2, x + w, y + h);
-            s = p;
+			s = ShapeRegistry.getShape ("Brace", x, y, w, h);
+			break;
+		case RECTANGLE:
+			s = ShapeRegistry.getShape ("Rectangle", x, y, w, h);
 			break;
 		case PENTAGON:
 			s = ShapeRegistry.getShape ("Pentagon", x, y, w, h);
@@ -153,7 +150,7 @@ public class Shape extends GraphicsShape
 			s = ShapeRegistry.getShape ("Vesicle", x, y, w, h);
 			break;
 		default:
-			s = new Rectangle(x, y, w, h);
+			s = ShapeRegistry.getShape ("Default", x, y, w, h);
 			break;
 		}
 		AffineTransform t = new AffineTransform();

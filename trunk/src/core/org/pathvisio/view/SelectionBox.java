@@ -397,14 +397,18 @@ public class SelectionBox extends VPathwayElement
 		vLeft += vdx;
 		vTop += vdy;
 
+		Handle opposite = h;
 		if(vWidth < 0)
 		{
-			negativeWidth(h);
+			opposite = getHorizontalOpposite(opposite);
+			negativeWidth();
 		}
 		if(vHeight < 0)
 		{
-			negativeHeight(h);
+			opposite = getVerticalOpposite(opposite);
+			negativeHeight();
 		}
+		if (opposite != h) canvas.setPressedObject(opposite);
 
 		markDirty();
 		setHandleLocation();
@@ -458,12 +462,7 @@ public class SelectionBox extends VPathwayElement
 		}
 	}
 
-	/**
-	 * This method implements actions performed when the width of
-	 * the object becomes negative after adjusting to a handle
-	 * @param h	The handle this object adjusted to
-	 */
-	public void negativeWidth(Handle h)
+	private Handle getHorizontalOpposite(Handle h)
 	{
 		Handle opposite = null;
 		if(h == handleNE) opposite = handleNW;
@@ -471,20 +470,10 @@ public class SelectionBox extends VPathwayElement
 		else if(h == handleSW) opposite = handleSE;
 		else if(h == handleNW) opposite = handleNE;
 		assert (opposite != null);
-		
-		double vw = -vWidth;
-		double vsx = vLeft - vw;
-		vWidth = vw;
-		vLeft = vsx;
-		canvas.setPressedObject(opposite);
+		return opposite;
 	}
 
-	/**
-	 * This method implements actions performed when the height of
-	 * the object becomes negative after adjusting to a handle
-	 * @param h	The handle this object adjusted to
-	 */
-	public void negativeHeight(Handle h)
+	private Handle getVerticalOpposite(Handle h)
 	{
 		Handle opposite = null;
 		if(h == handleNE) opposite = handleSE;
@@ -492,12 +481,33 @@ public class SelectionBox extends VPathwayElement
 		else if(h == handleSW) opposite = handleNW;
 		else if(h == handleNW) opposite = handleSW;
 		assert (opposite != null);
-		
+		return opposite;
+	}
+	
+	/**
+	 * This method implements actions performed when the width of
+	 * the object becomes negative after adjusting to a handle
+	 * @param h	The handle this object adjusted to
+	 */
+	public void negativeWidth()
+	{
+		double vw = -vWidth;
+		double vsx = vLeft - vw;
+		vWidth = vw;
+		vLeft = vsx;
+	}
+
+	/**
+	 * This method implements actions performed when the height of
+	 * the object becomes negative after adjusting to a handle
+	 * @param h	The handle this object adjusted to
+	 */
+	public void negativeHeight()
+	{		
 		double ht = -vHeight;
 		double sy = vTop - ht;
 		vHeight = ht;
 		vTop = sy;
-		canvas.setPressedObject(opposite);
 	}
 
 	public void vMoveBy(double vdx, double vdy) 

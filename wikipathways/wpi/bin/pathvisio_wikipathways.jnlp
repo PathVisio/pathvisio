@@ -9,7 +9,7 @@
 	</information>
 	<resources>
 		 <j2se version="1.5+"/>
-		 <jar href="pathvisio_v1.jar"/>
+		 <jar href="wikipathways-swt.jar"/>
 		 <jar href="lib/resources.jar"/>
 		 <jar href="lib/hsqldb.jar"/>
 		 <jar href="lib/derby.jar"/>

@@ -34,7 +34,8 @@ public class MainWindowWikipathways extends MainWindow {
 					boolean doit = MessageDialog.openQuestion(SwtEngine.getCurrent().getWindow().getShell(), "Save pathway?", 
 							"Do you want to save the changes to " + wiki.getPwName() + " on " + Globals.SERVER_NAME + "?");
 					if(doit) {
-						wiki.saveUI();
+						boolean saved = wiki.saveUI();
+						wiki.getUserInterfaceHandler().showDocument(WebstartMain.getDocumentBase(), "_this");
 					}
 					
 				}

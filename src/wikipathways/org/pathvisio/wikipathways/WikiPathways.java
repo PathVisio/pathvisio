@@ -54,10 +54,10 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.wikipathways.Actions;
-import org.pathvisio.gui.wikipathways.AppletMain;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.view.VPathway;
@@ -210,6 +210,10 @@ public class WikiPathways implements ApplicationEventListener {
 		return localFile;
 	}
 		
+	public UserInterfaceHandler getUserInterfaceHandler() {
+		return uiHandler;
+	}
+	
 	public boolean saveUI() {
 		VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 		if(isReadOnly()) {
@@ -231,7 +235,8 @@ public class WikiPathways implements ApplicationEventListener {
 							return true;
 						} catch (Exception e) {
 							Logger.log.error("Unable to save pathway", e);
-							uiHandler.showError("Unable to save pathway", e.getClass() + ": " + e.getMessage());
+							uiHandler.showError("Unable to save pathway", e.getClass() + 
+									"\n See error log (" + GlobalPreference.FILE_LOG.getValue() + ") for details");
 						}
 						return false;
 					}

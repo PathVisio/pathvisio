@@ -147,7 +147,7 @@ public class WebstartMain {
 		main.createAndShowGui();
 	}
 	
-	private URL getDocumentBase() {
+	static URL getDocumentBase() {
 		try {
 			BasicService bs = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
 			return bs.getCodeBase();

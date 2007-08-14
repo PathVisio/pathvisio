@@ -20,10 +20,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Action;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.xmlrpc.XmlRpcException;
@@ -45,6 +52,9 @@ import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.gui.wikipathways.Actions;
+import org.pathvisio.gui.wikipathways.AppletMain;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
@@ -68,8 +78,14 @@ public class WikiPathways implements ApplicationEventListener {
 		Engine.getCurrent().addApplicationEventListener(this);
 	}
 
-	public void init(VPathwayWrapper wrapper, ProgressKeeper progress) throws Exception {
+	public void setUiHandler(UserInterfaceHandler uih) {
+		uiHandler = uih;
+	}
+	
+	public void init(VPathwayWrapper wrapper, ProgressKeeper progress, URL base) throws Exception {
 		WikiPathwaysEngine.init();
+		
+		loadCookies(base);
 		
 		for(Parameter p : Parameter.values()) {
 			//Check for required
@@ -104,6 +120,23 @@ public class WikiPathways implements ApplicationEventListener {
 		Gdb.connect(getPwSpecies());
 	}
 
+	public void prepareMainPanel(MainPanel mainPanel) {
+		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
+		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
+		
+		mainPanel.getToolBar().addSeparator();
+		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
+		mainPanel.addToToolbar(discardAction);
+
+		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+					uiHandler.showDocument(e.getURL(), "_blank");
+				}
+			}
+		});	
+	}
+	
 	public String getPwName() {
 		return Parameter.PW_NAME.getValue();
 	}
@@ -128,6 +161,34 @@ public class WikiPathways implements ApplicationEventListener {
 		cookie.put(key, value);
 	}
 			
+	public void loadCookies(URL url) {
+		Logger.log.trace("Loading cookies");
+
+		try {
+			CookieHandler handler = CookieHandler.getDefault();
+			if (handler != null)    {
+				Map<String, List<String>> headers = handler.get(url.toURI(), new HashMap<String, List<String>>());
+				if(headers == null) {
+					Logger.log.error("Unable to load cookies: headers null");
+					return;
+				}
+				List<String> values = headers.get("Cookie");
+				for (String c : values) {
+					String[] cvalues = c.split(";");
+					for(String cv : cvalues) {
+						String[] keyvalue = cv.split("=");
+						if(keyvalue.length == 2) {
+							Logger.log.trace("COOKIE: " + keyvalue[0] + " | " + keyvalue[1]);
+							addCookie(keyvalue[0].trim(), keyvalue[1].trim());
+						}
+					}
+				}
+			}
+		} catch(Exception e) {
+			Logger.log.error("Unable to load cookies", e);
+		}
+	}
+	
 	public boolean isNew() {
 		return Parameter.PW_NEW.getValue() != null;
 	}

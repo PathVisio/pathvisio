@@ -17,29 +17,33 @@
 package org.pathvisio.gui.swing;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
-import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 
 public class GuiMain {
-
-	private static void createAndShowGUI() {
+	private String[] args;
+	private JFrame frame;
+	private MainPanel mainPanel;
+	
+	protected void createAndShowGUI() {
 		GuiInit.init();
 		
 		//Create and set up the window.
-		JFrame frame = new JFrame("PathVisio...swing it baby!");
+		frame = new JFrame("PathVisio...swing it baby!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		MainPanel mainPanel = SwingEngine.getCurrent().getApplicationPanel();
+		mainPanel = SwingEngine.getCurrent().getApplicationPanel();
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.setSize(800, 600);
-//		try {
-//		    UIManager.setLookAndFeel(
-//		        UIManager.getSystemLookAndFeelClassName());
-//		} catch (Exception ex) {
-//			Logger.log.error("Unable to load native look and feel", ex);
-//		}
+		try {
+		    UIManager.setLookAndFeel(
+		        UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ex) {
+			Logger.log.error("Unable to load native look and feel", ex);
+		}
 		
 		//Display the window.
 		frame.setVisible(true);
@@ -47,15 +51,24 @@ public class GuiMain {
 		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
-		
-		SwingEngine.getCurrent().newPathway();
-		Engine.getCurrent().getActiveVPathway().setEditMode(true);
 	}
 
+	public JFrame getFrame() { return frame; }
+	
+	public MainPanel getMainPanel() { return mainPanel; }
+	
+	public String[] getArgs() { return args; }
+	
+	public void setArgs(String[] args) {
+		this.args = args;
+	}
+	
 	public static void main(String[] args) {
+		final GuiMain gui = new GuiMain();
+		gui.args = args;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				createAndShowGUI();
+				gui.createAndShowGUI();
 			}
 		});
 	}

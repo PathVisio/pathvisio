@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -30,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.data.GexImportWizard.ImportPage;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.swt.SwtProgressKeeper;
 
 public class GexSwt {
 	
@@ -55,51 +55,6 @@ public class GexSwt {
 				progress = (ProgressKeeper)runnable;
 			}
 			super.run(fork, cancellable, runnable);
-		}
-	}
-	
-	public static class ProgressKeeperDialog extends ProgressMonitorDialog {
-		ProgressKeeper progress;
-		
-		public ProgressKeeperDialog(Shell shell) {
-			super(shell);
-		}
-
-		public void run(boolean fork, boolean cancellable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			if(runnable instanceof ProgressKeeper) progress = (ProgressKeeper)runnable;
-			super.run(fork, cancellable, runnable);
-		}
-		
-		protected void cancelPressed() {
-			if(progress != null) progress.cancel();
-			super.cancelPressed();
-		}
-	}
-	
-	private static abstract class SwtProgressKeeper extends ProgressKeeper implements IRunnableWithProgress {
-		IProgressMonitor monitor;
-		
-		public SwtProgressKeeper(int totalWork) {
-			super(totalWork);
-		}
-		
-		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-			this.monitor = monitor;
-		}
-		
-		public void worked(int w) {
-			super.worked(w);
-			monitor.worked(w);
-		}
-		
-		public void setTaskName(String name) {
-			super.setTaskName(name);
-			monitor.setTaskName(name);
-		}
-		
-		public void finished() {
-			super.finished();
-			monitor.done();
 		}
 	}
 	

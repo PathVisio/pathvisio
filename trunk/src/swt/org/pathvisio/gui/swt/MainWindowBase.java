@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
@@ -45,19 +46,19 @@ import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.data.GexSwt.ProgressKeeperDialog;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.search.PathwaySearchComposite;
+import org.pathvisio.util.swt.ProgressKeeperDialog;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.StackType;
+import org.pathvisio.view.UndoManagerEvent;
+import org.pathvisio.view.UndoManagerListener;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.UndoManagerListener;
-import org.pathvisio.view.UndoManagerEvent;
 import org.pathvisio.visualization.LegendPanel;
 
 /**
@@ -479,19 +480,40 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	public void vPathwayEvent(VPathwayEvent e) {
 		switch(e.getType()) {
 		case VPathwayEvent.EDIT_MODE_OFF:
-			showLegend(true);
-			showEditActionsCI(false);
+			threadSave(new Runnable() {
+				public void run() {
+					showLegend(true);
+					showEditActionsCI(false);
+				}
+			});
 			break;
 		case VPathwayEvent.EDIT_MODE_ON:
-			showLegend(false);
-			showEditActionsCI(true);
+			threadSave(new Runnable() {
+				public void run() {
+					showLegend(false);
+					showEditActionsCI(true);
+				}
+			});
 			break;
 		case VPathwayEvent.ELEMENT_ADDED:
-			deselectNewItemActions();
+			threadSave(new Runnable() {
+				public void run() {
+					deselectNewItemActions();
+				}
+			});
 			break;
 		}
 	}
-
+	
+	protected void threadSave(Runnable r) {
+		Display d = getShell() == null ? Display.getDefault() : getShell().getDisplay();
+		if(Thread.currentThread() == d.getThread()) {
+			r.run();
+		} else {
+			d.syncExec(r);
+		}
+	}
+	
 	public void undoManagerEvent (UndoManagerEvent e)
 	{
 		System.out.println ("Undo Manager event received! " + e.getMessage());

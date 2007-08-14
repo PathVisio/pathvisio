@@ -16,20 +16,9 @@
 //
 package org.pathvisio.gui.wikipathways;
 
-import java.awt.Component;
-import java.net.CookieHandler;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.Action;
 import javax.swing.JApplet;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
@@ -59,27 +48,14 @@ public class AppletMain extends JApplet {
 		System.out.println("INIT CALLED....");
 		Logger.log.trace("INIT CALLED....");
 				
-		uiHandler = new SwingUserInterfaceHandler(JOptionPane.getFrameForComponent(this));
+		uiHandler = new AppletUserInterfaceHandler(this);
 		wiki = new WikiPathways(uiHandler);
 		
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					mainPanel = SwingEngine.getCurrent().getApplicationPanel();
-					Action saveAction = new Actions.ExitAction(AppletMain.this, wiki, true);
-					Action discardAction = new Actions.ExitAction(AppletMain.this, wiki, false);
-					
-					mainPanel.getToolBar().addSeparator();
-					mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
-					mainPanel.addToToolbar(discardAction);
-			
-					mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
-						public void hyperlinkUpdate(HyperlinkEvent e) {
-							if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-								getAppletContext().showDocument(e.getURL(), "_blank");
-							}
-						}
-					});
+					wiki.prepareMainPanel(mainPanel);
 					
 					getContentPane().add(mainPanel);
 					mainPanel.setVisible(true);
@@ -95,10 +71,10 @@ public class AppletMain extends JApplet {
 				GuiInit.init();
 												
 				parseArguments();
-				loadCookies();
 								
 				try {
-					wiki.init(SwingEngine.getCurrent().createWrapper(), getProgressKeeper());
+					wiki.init(SwingEngine.getCurrent().createWrapper(), 
+							getProgressKeeper(), getDocumentBase());
 				} catch(Exception e) {
 					Logger.log.error("Error while starting editor", e);
 					JOptionPane.showMessageDialog(
@@ -153,62 +129,6 @@ public class AppletMain extends JApplet {
 		Logger.log.trace("DESTROY ENDED....");
 	}
 	
-	public void endWithMessage(String msg) {
-		JLabel label = new JLabel(msg, JLabel.CENTER);
-		getContentPane().add(label);
-		getContentPane().validate();
-		
-		URL url = getDocumentBase();
-	        try {
-			url = new URL("javascript:window.location.reload();");
-		} catch(Exception ex) {
-			Logger.log.error("Unable to create javascript url", ex);
-		}
-		getAppletContext().showDocument(url, "_top");
-
-	}
-
-	void loadCookies() {
-		Logger.log.trace("Loading cookies");
-
-		//wikipathwaysUserName=Thomas; wikipathwaysUserID=2; wikipathwaysToken=d8fa40c604ac290a5e2f65830279f518; wikipathways_session=6e153458660cf2cc888d37ec0e6f164b
-
-		try {
-			CookieHandler handler = CookieHandler.getDefault();
-			if (handler != null)    {
-				URL url = getDocumentBase();
-				Map<String, List<String>> headers = handler.get(url.toURI(), new HashMap<String, List<String>>());
-				if(headers == null) {
-					Logger.log.error("Unable to load cookies: headers null");
-					return;
-				}
-				List<String> values = headers.get("Cookie");
-				for (String c : values) {
-					String[] cvalues = c.split(";");
-					for(String cv : cvalues) {
-						String[] keyvalue = cv.split("=");
-						if(keyvalue.length == 2) {
-							Logger.log.trace("COOKIE: " + keyvalue[0] + " | " + keyvalue[1]);
-							wiki.addCookie(keyvalue[0].trim(), keyvalue[1].trim());
-						}
-					}
-				}
-			}
-		} catch(Exception e) {
-			Logger.log.error("Unable to load cookies", e);
-		}
-		//			JSObject myBrowser = (JSObject) JSObject.getWindow(this);
-		//	        JSObject myDocument =  (JSObject) myBrowser.getMember("document");
-		//	        String cookie = (String)myDocument.getMember("cookie");
-		//	        String[] cstr = cookie.split(";");
-		//	        for(String c : cstr) {
-		//	        	String[] vstr = c.split("=");
-		//	        	if(vstr.length == 2) {
-		//	        		wiki.addCookie(vstr[0].trim(), vstr[1].trim());
-		//	        	}
-		//	        }
-	}
-
 	void parseArguments() {
 		for(Parameter p : Parameter.values()) {
 			p.setValue(getParameter(p.getName()));

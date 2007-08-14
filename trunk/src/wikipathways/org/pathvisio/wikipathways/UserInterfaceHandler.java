@@ -16,6 +16,8 @@
 //
 package org.pathvisio.wikipathways;
 
+import java.net.URL;
+
 import org.pathvisio.util.RunnableWithProgress;
 
 public interface UserInterfaceHandler {		
@@ -30,4 +32,6 @@ public interface UserInterfaceHandler {
 	public int askCancellableQuestion(String title, String message);
 	
 	public void runWithProgress(RunnableWithProgress runnable, String title, int totalWork, boolean canCancel, boolean modal);
+	public void showExitMessage(String string);
+	public void showDocument(URL url, String target);
 }

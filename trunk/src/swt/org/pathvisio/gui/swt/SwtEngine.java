@@ -73,6 +73,11 @@ public class SwtEngine {
 		return current;
 	}
 	
+
+	public static void setCurrent(SwtEngine engine) {
+		current = engine;
+	}
+	
 	/**
 	 * Get the {@link ApplicationWindow}, the UI of the program
 	 */
@@ -130,7 +135,7 @@ public class SwtEngine {
 		//</DEBUG>
 	}
 	
-	private VPathwayWrapper createWrapper() {
+	public VPathwayWrapper createWrapper() {
 		if(window != null) {
 //			return new VPathwaySwtAwt(window.sc, SWT.NO_BACKGROUND);
 			return new VPathwaySwtAwt(window.swingPathwayComposite.getScrollPane(), window.getShell().getDisplay());
@@ -458,4 +463,5 @@ public class SwtEngine {
 
 			return result;
 		}
+
 }

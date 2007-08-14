@@ -18,6 +18,8 @@ package org.pathvisio.gui.wikipathways;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -63,6 +65,11 @@ public class Actions {
 			}
 			if(saved) {
 				uiHandler.showExitMessage("Please wait while you'll be redirected to the pathway page");
+				try {
+					uiHandler.showDocument(new URL("javascript:window.location.reload();"), "_top");
+				} catch (MalformedURLException ex) {
+					Logger.log.error("Unable to refresh pathway page", ex);
+				}
 			}
 		}
 	}

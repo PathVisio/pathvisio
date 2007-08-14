@@ -1,7 +1,6 @@
 package org.pathvisio.wikipathways.swt;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -35,15 +34,12 @@ public class MainWindowWikipathways extends MainWindow {
 		if(p != null && p.hasChanged()) {
 			Display.getCurrent().syncExec(new Runnable() {
 				public void run() {
-					boolean doit = MessageDialog.openQuestion(SwtEngine.getCurrent().getWindow().getShell(), "Save pathway?", 
+					boolean doit = MessageDialog.openQuestion(getShell(), "Save pathway?", 
 							"Do you want to save the changes to " + wiki.getPwName() + " on " + Globals.SERVER_NAME + "?");
 					if(doit) {
 						boolean saved = wiki.saveUI();
-						try {
-							wiki.getUserInterfaceHandler().showDocument(new URL("javascript:window.location.reload();"), "_top");
-						} catch (MalformedURLException ex) {
-							Logger.log.error("Unable to refresh pathway page", ex);
-						}
+						MessageDialog.openInformation(getShell(), "Pathway saved", "The pathway is saved to " + Globals.SERVER_NAME + 
+							".\n Refresh the pathway page in your browser by pressing F5");
 					}
 					
 				}

@@ -115,7 +115,7 @@ public abstract class GraphLink
 		
 		List<GraphRefContainer> reflist = gd.getReferringObjects(gid.getGraphId());
 		
-		if (!gid.getGraphId().equals("")) 
+		if (gid.getGraphId() != null && gid.getGraphId().equals("")) 
 		{
 			// get all referring points as a hashset, so
 			// that a line that refers to the same object twice

@@ -28,23 +28,25 @@ import javax.swing.KeyStroke;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class Actions {
-	static abstract class WikiAction extends AbstractAction {
-		AppletMain applet;
+	public static abstract class WikiAction extends AbstractAction {
+		UserInterfaceHandler uiHandler;
 		WikiPathways wiki;
-		public WikiAction(AppletMain a, WikiPathways w, String name, ImageIcon icon) {
+		public WikiAction(UserInterfaceHandler uih, WikiPathways w, String name, ImageIcon icon) {
 			super(name, icon);
-			applet = a;
+			uiHandler = uih;
 			wiki = w;
 		}
 	}
 	
-	static class ExitAction extends WikiAction {
+	public static class ExitAction extends WikiAction {
 		boolean doSave;
-		public ExitAction(AppletMain a, WikiPathways w, boolean save) {
-			super(a, w, "Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("icons/apply.gif") : Engine.getCurrent().getResourceURL("icons/cancel.gif")));
+	
+		public ExitAction(UserInterfaceHandler h, WikiPathways w, boolean save) {
+			super(h, w, "Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("icons/apply.gif") : Engine.getCurrent().getResourceURL("icons/cancel.gif")));
 			doSave = save;
 			String descr = doSave ? "Save pathway and close editor" : "Discard pathway and close editor";
 			putValue(Action.SHORT_DESCRIPTION, descr);
@@ -60,15 +62,15 @@ public class Actions {
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if(saved) {
-				applet.endWithMessage("Please wait while you'll be redirected to the pathway page");
+				uiHandler.showExitMessage("Please wait while you'll be redirected to the pathway page");
 			}
 		}
 	}
 	
 	
-	static class SaveToServerAction extends WikiAction {
-		public SaveToServerAction(AppletMain a, WikiPathways w) {
-			super(a, w, "Save to ", new ImageIcon(Engine.getCurrent().getResourceURL("icons/save.gif")));
+	public static class SaveToServerAction extends WikiAction {
+		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w) {
+			super(h, w, "Save to ", new ImageIcon(Engine.getCurrent().getResourceURL("icons/save.gif")));
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway to " + Globals.SERVER_NAME);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 		}

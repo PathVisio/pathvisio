@@ -7,6 +7,7 @@
 	<property name="build.v2.dir" value="build/v2"/>
 	<property name="build.plugins.dir" value="build/plugins"/>
 	<property name="build.wikipathways.dir" value="build/wikipathways"/>
+	<property name="build.wikipathways.swt.dir" value="build/wikipathways-swt"/>
 	
     <property name="apidoc.dir" value="apidoc"/>
 	<!-- <property name="dist.dir" value="dist"/> -->
@@ -59,12 +60,12 @@
 		<mkdir dir="${build.v2.dir}"/>
 		<mkdir dir="${build.plugins.dir}"/>
 		<mkdir dir="${build.wikipathways.dir}"/>
+		<mkdir dir="${build.wikipathways.swt.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		<mkdir dir="${wikipathways.www.dir}"/>
 		<mkdir dir="${wikipathways.bin.dir}"/>
 		<mkdir dir="${wikipathways.webstart.dir}"/>
 		<mkdir dir="${wikipathways.applet.dir}"/>
-		
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
 package org.pathvisio;
 
@@ -90,15 +91,15 @@ public class Revision
 	</target>
 	
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
-		<javac debug="true" srcdir="."
-			includes="src/v1/**,src/core/**,src/swt/**,src/swing/**,src/wikipathways-swt/**"
+		<javac srcdir="."
+			includes="src/v1/**,src/core/**,src/swt/**,src/swing/**"
 			destdir="${build.v1.dir}">
 			<classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>
 
 	<target name="compile-v2" depends="prepare,resources-jar" description="Compile all sources">
-		<javac debug="true" srcdir="." 
+		<javac srcdir="." 
                includes="src/v2/**,src/core/**,src/swt/**,src/swing/**"
 			   
                destdir="${build.v2.dir}">
@@ -131,10 +132,18 @@ public class Revision
 				org.pathvisio.gui.wikipathways
 				org.pathvisio.wikipathways
 		-->
+		<!-- compile applet -->
 		<javac srcdir="src" debug="true"
 			includes="core/**,wikipathways/**,swing/**"
 			destdir="${build.wikipathways.dir}">
 			<classpath refid="project.wikipathways.class.path"/>
+		</javac>
+		<!-- compile swt webstart version -->
+		<javac srcdir="."
+			includes="src/wikipathways/**,src/wikipathways-swt/**,src/v1/**,src/core/**,src/swt/**,src/swing/**"
+			excludes="src/v1/org/pathvisio/Globals.java"
+			destdir="${build.wikipathways.swt.dir}">
+			<classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>
 	
@@ -205,6 +214,10 @@ public class Revision
 			<!--<fileset dir="." includes="MAPPTmpl.gtp"/>-->
 			<!--<fileset dir="." includes="biopax-level2.owl"/>-->
 		</jar>
+		
+		<jar jarfile="wikipathways-swt.jar">
+			<fileset dir="${build.wikipathways.swt.dir}" includes="**/*.class"/>
+		</jar>
 	</target>
 	
 	<target name="run-v1" depends="compile-v1">
@@ -248,6 +261,9 @@ public class Revision
 	</target>
 
 	<target name="wikipathways-swt" depends="prepare-webstart" description="Create resources for the wikipathways swt editor">
+		<signjar jar="wikipathways-swt.jar" lazy="true" 
+			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+		<copy toDir="${wikipathways.webstart.dir}" file="wikipathways-swt.jar"/>
 		<!-- Copy webstart files -->
 		<copy toDir="${wikipathways.webstart.dir}" >
 			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>

@@ -409,8 +409,7 @@ public class Pathway implements PathwayListener
 
 	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
-		Logger.log.info("Start reading the XML file: " + file);
-		
+		Logger.log.info("Start reading the XML file: " + file);	  
 		GpmlFormat.readFromXml (this, file, validate);
 		setSourceFile (file);
 		clearChangedFlag();

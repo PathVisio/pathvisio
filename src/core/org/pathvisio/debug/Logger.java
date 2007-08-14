@@ -42,6 +42,14 @@ public class Logger
 		
 	public PrintStream getStream () { return s; }	
 	public void setStream (PrintStream _s) { s = _s; }
+
+	StopWatch logTimer;
+
+	public Logger()
+	{
+		logTimer = new StopWatch();
+		logTimer.start();
+	}
 	
 	/** 
 		get/set log level to a certain level. The higher the level, the
@@ -58,10 +66,36 @@ public class Logger
 		errorEnabled = error;
 		fatalEnabled = fatal;
 	}
-		
-	public void trace (String msg) { if (traceEnabled) s.println ("Trace: " + msg); }
-	public void debug (String msg) { if (debugEnabled) s.println ("Debug: " + msg); }
-	public void info  (String msg) { if (infoEnabled) s.println ("Info:  " + msg); }
+
+	private static final String FORMAT_STRING = "[%10.3f] ";
+	
+	public void trace (String msg)
+	{
+		if (traceEnabled)
+		{
+			s.printf (FORMAT_STRING , logTimer.look() / 1000.0f);
+			s.println ("Trace: " + msg);
+		}
+	}
+	
+	public void debug (String msg)
+	{
+		if (debugEnabled)
+		{
+			s.printf (FORMAT_STRING , logTimer.look() / 1000.0f);
+			s.println ("Debug: " + msg);
+		}
+	}
+	
+	public void info  (String msg)
+	{
+		if (infoEnabled)
+		{
+			s.printf (FORMAT_STRING , logTimer.look() / 1000.0f);
+			s.println ("Info:  " + msg);
+		}
+	}
+
 	public void warn  (String msg) { if (warnEnabled) s.println ("Warn:  " + msg); }
 	public void error (String msg) { if (errorEnabled) s.println ("Error: " + msg); }
 	public void error (String msg, Throwable e) 

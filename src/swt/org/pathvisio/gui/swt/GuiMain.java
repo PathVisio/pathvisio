@@ -49,7 +49,7 @@ public class GuiMain {
 	 * Main method which will be carried out when running the program
 	 */
 	public static void main(String[] args)
-	{		
+	{
 		boolean debugHandles = false;
 		for(String a : args) {
 			if(		a.equalsIgnoreCase("--MonitorHandles") ||
@@ -70,7 +70,10 @@ public class GuiMain {
 		initiate();
 		
 		window.setBlockOnOpen(true);
+
+		Logger.log.trace ("Open window");
 		window.open();
+		Logger.log.trace ("Window closed");
 		
 		//Perform exit operations
 		//TODO: implement PropertyChangeListener and fire exit property when closing
@@ -94,15 +97,18 @@ public class GuiMain {
 			Logger.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
 		} catch(Exception e) {}
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		
+
+		Logger.log.trace ("Log initialized");
 		//load the preferences
 		loadPreferences();
+		Logger.log.trace ("Preferences loaded");
 		
 		//initiate Gene database (to load previously used gdb)
 		Gdb.init();
 		
 		//load visualizations and plugins
 		loadVisualizations();
+		Logger.log.trace ("Plugins loaded");
 		
 		//create data directories if they don't exist yet
 		createDataDirectories();

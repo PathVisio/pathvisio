@@ -42,8 +42,24 @@ import org.pathvisio.debug.Logger;
  * .mapp files (GenMapp pathway format). Here is also codified all the
  * assumptions about the .mapp format.
  * 
- * @author Martijn, Thomas
+ * 
+ * Certain aspects of the Mapp <-> GPML conversion are getting quite hairy,
+ * as there are certain inconsistencies within GenMAPP. We intend to isolate
+ * all these inconsistencies just within this class, so they don't propagate
+ * to the rest of PathVisio.
+ * 
+ * For example:
+ * 
+ * Color: The "Color" column in the Objects table sometimes corresponds to 
+ * fillColor (for Rect and Oval) and sometimes to LineColor (for Label, Line,
+ * Arc, Brace, etc.). This gets confusing especially for Arc and Brace, because
+ * they all get mapped to ObjectType.Shape. For those objects that can have
+ * a fill color, the value of the color column can be -1, which indicates
+ * transparency.
  *
+ * Size: certain objects (i.e. Polygons) always maintain equal width and height.
+ * other objects always have a fixed size and even a fixed rotation in the case
+ * of CELLB.
  */
 public class MappFormat implements PathwayImporter, PathwayExporter
 {		

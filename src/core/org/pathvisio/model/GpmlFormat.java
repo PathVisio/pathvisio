@@ -1099,7 +1099,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	}
 	
 	static public void readFromXml(Pathway pwy, File file, boolean validate) throws ConverterException
-	{
+	{		
 		FileReader inf;
 		try	
 		{
@@ -1115,19 +1115,22 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	static public void readFromXml(Pathway pwy, Reader in, boolean validate) throws ConverterException
 	{
 		// Start XML processing
-
+		
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 		try
 		{
+			Logger.log.trace ("Build JDOM tree");
 			// build JDOM tree
 			Document doc = builder.build(in);
 
+			Logger.log.trace ("Start Validation");
 			if (validate) validateDocument(doc);
 			
 			// Copy the pathway information to a VPathway
 			Element root = doc.getRootElement();
 			
+			Logger.log.trace ("Copy map elements");
 			mapElement(root, pwy); // MappInfo
 			
 			// Iterate over direct children of the root element
@@ -1135,6 +1138,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			{
 				mapElement((Element)e, pwy);
 			}			
+			Logger.log.trace ("End copying map elements");
 		}
 		catch(JDOMParseException pe) 
 		{

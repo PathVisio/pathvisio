@@ -51,7 +51,7 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.SelectionBox.SelectionListener;
-
+import org.pathvisio.debug.Logger;
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
  * the drawing and can be visualized. The class also provides methods for mouse
@@ -222,7 +222,9 @@ public class VPathway implements PathwayListener
 	 * Maps the contents of a pathway to this VPathway
 	 */	
 	public void fromGmmlData(Pathway _data)
-	{		
+	{
+		Logger.log.trace ("Create view structure");
+
 		data = _data;
 		for (PathwayElement o : data.getDataObjects())
 		{
@@ -238,6 +240,7 @@ public class VPathway implements PathwayListener
 //				PathwayEvent.MODIFIED_GENERAL));
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
 		data.addListener(this);
+		Logger.log.trace ("Done creating view structure");
 	}
 
 	private int newGraphics = NEWNONE;

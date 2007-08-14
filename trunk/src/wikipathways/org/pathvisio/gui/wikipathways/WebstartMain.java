@@ -45,7 +45,7 @@ public class WebstartMain extends GuiMain {
 	}
 
 	private void initWiki() {
-		uiHandler = new SwingUserInterfaceHandler(getFrame());
+		uiHandler = new WebstartUserInterfaceHandler(getFrame());
 		wiki = new WikiPathways(uiHandler);
 		wiki.prepareMainPanel(getMainPanel());
 

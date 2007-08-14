@@ -26,8 +26,8 @@
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="exec.inno.setup" value="iscc"/>
 	
-	<property name="jar.class.path" value="lib/resources.jar lib/derby.jar lib/R-resources.jar lib/swt-win32-lib/swt.jar lib/swt-linux-lib/swt.jar lib/org.eclipse.core.commands.jar lib/org.eclipse.equinox.common.jar lib/org.eclipse.jface.jar lib/hsqldb.jar lib/jdom.jar lib/JRI.jar lib/BrowserLauncher.jar lib/plugins.jar lib/batik/batik-awt-util.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar"/>
-	
+	<property name="wikipathways.class.path" value="lib/jdom.jar lib/resources.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/apache/commons-codec-1.3.jar lib/apache/commons-httpclient-3.0.1.jar lib/apache/commons-logging-1.1.jar lib/apache/ws-commons-util-1.0.1.jar lib/apache/xmlrpc-client-3.0.jar lib/apache/xmlrpc-common-3.0.jar"/>
+	<property name="jar.class.path" value="${wikipathways.class.path} lib/derby.jar lib/R-resources.jar lib/swt-win32-lib/swt.jar lib/swt-linux-lib/swt.jar lib/org.eclipse.core.commands.jar lib/org.eclipse.equinox.common.jar lib/org.eclipse.jface.jar lib/hsqldb.jar lib/JRI.jar lib/BrowserLauncher.jar lib/plugins.jar lib/batik/batik-awt-util.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar"/>
 	<path id="project.v1.class.path">
 		<pathelement location="${build.v1.dir}"/>
 		<fileset dir="lib">
@@ -133,7 +133,7 @@ public class Revision
 				org.pathvisio.wikipathways
 		-->
 		<!-- compile applet -->
-		<javac srcdir="src" 
+		<javac srcdir="src"
 			includes="core/**,wikipathways/**,swing/**"
 			destdir="${build.wikipathways.dir}">
 			<classpath refid="project.wikipathways.class.path"/>
@@ -202,11 +202,11 @@ public class Revision
 		<jar jarfile="wikipathways.jar">
 			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
             <manifest>
-            	<attribute name="Class-Path" value="${jar.class.path}"/>
+            	 <attribute name="Class-Path" value="${wikipathways.class.path}"/>
             </manifest>
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
-		<jar jarfile="${wikipathways.applet.dir}/resources.jar">
+		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar">
 			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>
 			<!--<fileset dir="." includes="images/*"/>-->
@@ -276,7 +276,7 @@ public class Revision
 	
 	<target name="wikipathways-applet" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
 		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
-		<copy toDir="${wikipathways.applet.dir}">
+		<copy toDir="${wikipathways.applet.dir}/lib">
 			<fileset dir="${lib.dir}">
 				<include name="apache/*.jar"/>
 				<include name="jdom.jar"/>

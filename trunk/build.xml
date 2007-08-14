@@ -65,7 +65,7 @@
 		<mkdir dir="${wikipathways.www.dir}"/>
 		<mkdir dir="${wikipathways.bin.dir}"/>
 		<mkdir dir="${wikipathways.webstart.dir}"/>
-		<mkdir dir="${wikipathways.applet.dir}"/>
+		<mkdir dir="${wikipathways.applet.dir}/lib"/>
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
 package org.pathvisio;
 

@@ -17,11 +17,7 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.Component;
-import java.net.URL;
 
-import javax.jnlp.BasicService;
-import javax.jnlp.ServiceManager;
-import javax.jnlp.UnavailableServiceException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -32,7 +28,7 @@ import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 
-public class SwingUserInterfaceHandler implements UserInterfaceHandler {
+public abstract class SwingUserInterfaceHandler implements UserInterfaceHandler {
 	Component parent;
 	
 	public SwingUserInterfaceHandler(Component parent) {
@@ -119,15 +115,5 @@ public class SwingUserInterfaceHandler implements UserInterfaceHandler {
 	
 	public void showExitMessage(String string) {
 		showInfo("Exit", string);
-	}
-	
-	public void showDocument(URL url, String target) {
-		try {
-			BasicService bs = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
-			bs.showDocument(url);
-		} catch (UnavailableServiceException e) {
-			Logger.log.error("Unable to get javax.jnlp.BasicService, are you not using webstart?");
-			showError("Error", "Show Document not yet implemented");
-		} 
 	}
 }

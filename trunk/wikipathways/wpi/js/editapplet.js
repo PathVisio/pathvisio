@@ -52,7 +52,7 @@ function doApplet(idImg, idApplet, keys, values) {
 	
 	new Resizeable(idImg, {bottom: 10, right: 10, left: 0, top: 0});
 
-	ao.preload( idApplet );
+	ao.load( idApplet );
 }
 
 //Manually (doesn't work well, applet is started twice on firefox

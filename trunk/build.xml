@@ -133,13 +133,13 @@ public class Revision
 				org.pathvisio.wikipathways
 		-->
 		<!-- compile applet -->
-		<javac srcdir="src" debug="true"
+		<javac srcdir="src" 
 			includes="core/**,wikipathways/**,swing/**"
 			destdir="${build.wikipathways.dir}">
 			<classpath refid="project.wikipathways.class.path"/>
 		</javac>
 		<!-- compile swt webstart version -->
-		<javac srcdir="."
+		<javac srcdir="." debug="true"
 			includes="src/wikipathways/**,src/wikipathways-swt/**,src/v1/**,src/core/**,src/swt/**,src/swing/**"
 			excludes="src/v1/org/pathvisio/Globals.java"
 			destdir="${build.wikipathways.swt.dir}">

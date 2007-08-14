@@ -51,7 +51,6 @@ public class WebstartMain {
 						e.printStackTrace();
 					}
 				}
-				
 				initWiki();
 			}
 		};
@@ -141,6 +140,7 @@ public class WebstartMain {
 	}
 	
 	public static void main(String[] args) {
+		System.out.println("args: " + args.length);
 		GuiMain.initiate();
 		WebstartMain main = new WebstartMain();
 		main.args = args;

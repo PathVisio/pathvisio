@@ -89,8 +89,10 @@ public class WikiPathways implements ApplicationEventListener {
 		
 		for(Parameter p : Parameter.values()) {
 			//Check for required
-			assert !p.isRequired() || p.getValue() != null : 
-				"Missing required argument '" + p.name() + "'";
+			if(p.isRequired()) {
+				assert p.getValue() != null : 
+					"Missing required argument '" + p.name() + "'";
+			}	
 		}
 
 		progress.report("Loading pathway...");

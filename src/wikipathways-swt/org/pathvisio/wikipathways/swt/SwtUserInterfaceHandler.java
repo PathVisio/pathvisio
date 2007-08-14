@@ -1,5 +1,6 @@
 package org.pathvisio.wikipathways.swt;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import javax.jnlp.BasicService;
@@ -64,7 +65,10 @@ public class SwtUserInterfaceHandler implements UserInterfaceHandler {
 				try {
 					dialog.run(true, canCancel, progress);
 				} catch(Exception e) {
-					showError("Error while running task", e.toString() + ": " + e.getMessage());
+					Logger.log.error("Error while running task", e);
+					Throwable t = e;
+					if(e instanceof InvocationTargetException) t = ((InvocationTargetException)e).getCause();
+					showError("Error while running task", t.toString() + ": " + t.getMessage());
 				}
 			}
 		});

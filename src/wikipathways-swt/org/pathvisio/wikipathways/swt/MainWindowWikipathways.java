@@ -7,6 +7,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.gui.swt.MainWindow;
 import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class MainWindowWikipathways extends MainWindow {
@@ -26,7 +27,8 @@ public class MainWindowWikipathways extends MainWindow {
 	}
 	
 	protected boolean canHandleShellCloseEvent() {
-		if(Engine.getCurrent().getActivePathway().hasChanged()) {
+		Pathway p = Engine.getCurrent().getActivePathway();
+		if(p != null && p.hasChanged()) {
 			Display.getCurrent().syncExec(new Runnable() {
 				public void run() {
 					boolean doit = MessageDialog.openQuestion(SwtEngine.getCurrent().getWindow().getShell(), "Save pathway?", 

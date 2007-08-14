@@ -405,7 +405,7 @@ class Pathway {
 
 		$basePath = dirname(realpath(__FILE__));
 		$imgFile = $basePath . '/tmp/' . $imgName;
-		$cmd = "java -jar $basePath/bin/pathvisio_convert.jar $gpmlFile $imgFile 2>&1";
+		$cmd = "java -jar bin/pathvisio_converter.jar $gpmlFile $imgFile 2>&1";
 		wfDebug($cmd);
 		exec($cmd, $output, $status);
 		

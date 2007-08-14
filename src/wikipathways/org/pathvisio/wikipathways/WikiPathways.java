@@ -295,13 +295,14 @@ public class WikiPathways implements ApplicationEventListener {
 		case ApplicationEvent.PATHWAY_NEW:
 			p = (Pathway)e.source;
 			p.getMappInfo().setOrganism(getPwSpecies());
+			break;
 		case ApplicationEvent.PATHWAY_OPENED:
 			p = (Pathway)e.source;
 			//Force species name to be te same as on wikipathways
 			String impSpecies = p.getMappInfo().getOrganism();
 			Organism impOrg = Organism.fromLatinName(impSpecies);
 			Organism wikiOrg = Organism.fromShortName(getPwSpecies());
-			if(!impOrg.equals(wikiOrg)) {
+			if(!wikiOrg.equals(impOrg)) {
 				uiHandler.showError("Invalid species",
 						"The species of the pathway you imported differs from the" +
 						" species for the " + Globals.SERVER_NAME + " pathway you are editing.\n" +

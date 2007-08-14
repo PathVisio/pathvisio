@@ -260,7 +260,7 @@ public class Revision
 		</exec>
 	</target>
 
-	<target name="wikipathways-swt" depends="prepare-webstart" description="Create resources for the wikipathways swt editor">
+	<target name="wikipathways-swt" depends="prepare-webstart, jar-wikipathways" description="Create resources for the wikipathways swt editor">
 		<signjar jar="wikipathways-swt.jar" lazy="true" 
 			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
 		<copy toDir="${wikipathways.webstart.dir}" file="wikipathways-swt.jar"/>

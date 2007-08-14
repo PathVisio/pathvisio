@@ -31,6 +31,10 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		selectMenu.add(vActions.selectDataNodes);
 		menu.add(selectMenu);
 		menu.addSeparator();
+		JMenu groupMenu = new JMenu("Group");
+		groupMenu.add(vActions.toggleGroup);
+		menu.add(groupMenu);
+		menu.addSeparator();
 		JMenu litMenu = new JMenu("Literature");
 		litMenu.add(new AddLiteratureAction(component, e));
 		litMenu.add(new EditLiteratureAction(component, e));

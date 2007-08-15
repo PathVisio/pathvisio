@@ -26,12 +26,11 @@ import java.io.File;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.SvgFormat;
 
 /**
  * @author Thomas Kelder (t.a.j.kelder@student.tue.nl)
@@ -68,10 +67,10 @@ public class Converter {
     	engine.addPathwayImporter(new GpmlFormat());
     	engine.addPathwayImporter(new MappFormat());
 		engine.addPathwayExporter(new MappFormat());
-		engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_SVG));
-		engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PNG));
-		engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_TIFF));
-		engine.addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PDF));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
     	
         File inputFile = null;
         File outputFile = null;

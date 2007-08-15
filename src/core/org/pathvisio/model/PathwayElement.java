@@ -472,6 +472,14 @@ public class PathwayElement implements GraphIdContainer
 			}
 			result.add(PropertyType.TEXTLABEL);
 			break;
+		case ObjectType.INFOBOX:
+			result.add(PropertyType.CENTERX);
+			result.add(PropertyType.CENTERY);
+			break;
+		case ObjectType.LEGEND:
+			result.add(PropertyType.CENTERX);
+			result.add(PropertyType.CENTERY);
+			break;
 		}
 		return result;
 	}

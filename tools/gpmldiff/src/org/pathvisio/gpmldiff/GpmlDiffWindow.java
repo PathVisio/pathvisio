@@ -49,7 +49,8 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 	double zoomFactor = 100;
 	JPanel centerPanel = null;
 	
-
+	GlassPane glassPane;
+	
 	public void setFile (int pwyType, File f)
 	{
 		Pathway pwy = new Pathway();
@@ -219,6 +220,12 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 		Container contents = getContentPane();
 		contents.setLayout (new BoxLayout(contents, BoxLayout.X_AXIS));
 		setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+
+		glassPane = new GlassPane(this);
+		setGlassPane (glassPane);
+		glassPane.setVisible(true);
+		Toolkit.getDefaultToolkit().addAWTEventListener(
+			glassPane, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
 		
 		menubar = new JMenuBar();
 		addMenuActions ();
@@ -229,13 +236,8 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 			pwyPane[i] = new JScrollPane();
 		}
 
-		centerPanel = new JPanel();
-		
 		contents.add (pwyPane[PWY_OLD]);
 		pwyPane[PWY_OLD].setPreferredSize (new Dimension (400, 300));
-		contents.add (centerPanel);
-		centerPanel.setPreferredSize (new Dimension (200, 300));
-		centerPanel.setMinimumSize (new Dimension (200, 300));
 		contents.add (pwyPane[PWY_NEW]);
 		pwyPane[PWY_NEW].setPreferredSize (new Dimension (400, 300));
 		validate();
@@ -245,7 +247,7 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 	{
 		if (e.getType() == VPathwayEvent.ELEMENT_CLICKED_DOWN)
 		{
-			if (e.getSource() == view[PWY_OLD])
+/*			if (e.getSource() == view[PWY_OLD])
 			{
 				System.out.println ("Element clicked in old pathway");
 			}
@@ -253,12 +255,16 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 			{
 				System.out.println ("Element clicked in new pathway");
 			}
-			if (outputter != null)
+*/			if (outputter != null)
 			{
 				PanelOutputter.ModData mod = outputter.modsByElt.get (e.getAffectedElement());
 				if (mod != null)
 				{
-					System.out.println ("Modifiied! " + mod.hint);
+					glassPane.setHint (mod.hints, 0, 0, 0, 0);
+				}
+				else
+				{
+					glassPane.showHint (false);
 				}
 			}		
 		}

@@ -30,8 +30,10 @@ class GpmlDiff
 	static File oldFile = null;
 	static File newFile = null;
 	static String outputType = "svg";
-	static final String[] outputTypes = {"svg", "dgpml", "basic"};
-
+	static final String[] outputTypes = {"svg", "dgpml", "basic", "table"};
+	static String simFunType = "better";
+	static final String[] simFunTypes = {"basic", "better"};
+	
 	/**
 	   Parse Command-line Options
 	*/
@@ -39,25 +41,46 @@ class GpmlDiff
 	{
 		int pos = 0;
 		String error = null;
-		if (pos >= argv.length) error = "Expected -o or old pathway file";
-		if (error == null && argv[pos].equals ("-o"))
+		if (pos >= argv.length) error = "Expected option or old pathway file";
+		while (error == null && (argv[pos].equals ("-o") || argv[pos].equals ("-s")))
 		{
-			pos++;
-			if (pos >= argv.length) error = "Expected -o or old pathway file";
-			if (error == null)
-			{				
-				outputType = argv[pos];
-				if (!Arrays.asList(outputTypes).contains (outputType))
-				{
-					error = "Outputtype " + outputType + " is not allowed";
-				}
+			if (argv[pos].equals ("-o"))
+			{
+				pos++;
+				if (pos >= argv.length) error = "Expected output type after -o";
 				if (error == null)
-				{
-					pos++;
-					if (pos >= argv.length) error = "expected old pathway file";
+				{				
+					outputType = argv[pos];
+					if (!Arrays.asList(outputTypes).contains (outputType))
+					{
+						error = "Outputtype " + outputType + " is not allowed";
+					}
+					if (error == null)
+					{
+						pos++;
+						if (pos >= argv.length) error = "Expected option or old pathway file";
+					}
 				}
 			}
-		}			
+			else if (argv[pos].equals ("-s"))
+			{
+				pos++;
+				if (pos >= argv.length) error = "Expected simfun type after -s";
+				if (error == null)
+				{				
+					simFunType = argv[pos];
+					if (!Arrays.asList(simFunTypes).contains (simFunType))
+					{
+						error = "SimFunType " + simFunType + " is not allowed";
+					}
+					if (error == null)
+					{
+						pos++;
+						if (pos >= argv.length) error = "Expected option or old pathway file";
+					}
+				}
+			}
+		}
 		if (error == null)
 		{
 			oldFile = new File(argv[pos]);
@@ -116,33 +139,51 @@ class GpmlDiff
 		{
 			PwyDoc oldDoc = PwyDoc.read (oldFile);
 			PwyDoc newDoc = PwyDoc.read (newFile);
-			SearchNode result = oldDoc.findCorrespondence (newDoc, new BetterSim(), new BasicCost());
 
-			DiffOutputter out = null;
-			if (outputType.equals ("basic"))
+			SimilarityFunction simFun;
+			if (simFunType.equals ("basic"))
 			{
-				out = new BasicOutputter();
-			}
-			else if (outputType.equals ("dgpml"))
-			{
-				out = new DgpmlOutputter();
-			}
-			else if (outputType.equals ("svg"))
-			{				
-				out = new SvgOutputter(oldDoc, newDoc);
+				simFun = new BasicSim();
 			}
 			else
 			{
-				System.out.println ("Unknown ouput-type " + outputType);
-				System.exit (1);
+				simFun = new BetterSim();
 			}
-			assert (out != null);
-			oldDoc.writeResult (result, newDoc, out);
-			try
+				
+			if (outputType.equals ("table"))
 			{
-				out.flush();
+				PwyDoc.printSimTable (oldDoc, newDoc, simFun);
 			}
-			catch (IOException e) { e.printStackTrace(); }
+			else
+			{
+				SearchNode result = oldDoc.findCorrespondence (newDoc, simFun, new BasicCost());
+				
+				DiffOutputter out = null;
+				if (outputType.equals ("basic"))
+				{
+					out = new BasicOutputter();
+				}
+				else if (outputType.equals ("dgpml"))
+				{
+					out = new DgpmlOutputter();
+				}
+				else if (outputType.equals ("svg"))
+				{				
+					out = new SvgOutputter(oldDoc, newDoc);
+				}
+				else
+				{
+					System.out.println ("Unknown ouput-type " + outputType);
+					System.exit (1);
+				}
+				assert (out != null);
+				oldDoc.writeResult (result, newDoc, out);
+				try
+				{
+					out.flush();
+				}
+				catch (IOException e) { e.printStackTrace(); }
+			}
 		}
 	}
 }

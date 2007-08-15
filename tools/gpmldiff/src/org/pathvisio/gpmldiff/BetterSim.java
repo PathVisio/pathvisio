@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.ObjectType;
 
 class BetterSim extends SimilarityFunction
 {
@@ -40,6 +41,26 @@ class BetterSim extends SimilarityFunction
 		int possibleScore = 0;
 		int actualScore = 0;
 
+		
+		{
+			int max;
+			if (oldOt == ObjectType.LEGEND || oldOt == ObjectType.INFOBOX)
+			{
+				max = 80;
+			}
+			else
+			{
+				max = 20;
+			}
+			int score = 0;
+			if (oldOt == newOt)
+			{
+				score = max;
+			}
+			possibleScore += max;
+			actualScore += score;
+		}
+		
 		for (PropertyType newProp : newProps)
 		{
 			if (oldProps.contains(newProp))
@@ -54,7 +75,7 @@ class BetterSim extends SimilarityFunction
 				{
 					case GRAPHID:
 					case GROUPID:
-						max = 80;
+						max = 600 / oldN;
 						if (oo == null ? no == null : oo.equals (no))
 						{
 							score = max;
@@ -66,15 +87,15 @@ class BetterSim extends SimilarityFunction
 					case ENDY:
 					case STARTX:		
 					case STARTY:
-						max = 10;
+						max = 100 / oldN;
 						double delta = (Double)oo - (Double)no;
 						if (delta < 0.5)
 						{
-							score = 10;
+							score = max;
 						}
 						else if (delta >= 0.5 && delta < 512)
 						{
-							score = 9 - (int)(Math.log10 (delta) / Math.log10 (2));
+							score = ((9 - (int)(Math.log10 (delta) / Math.log10 (2))) * max) / 10;
 						}
 						else
 						{
@@ -82,7 +103,7 @@ class BetterSim extends SimilarityFunction
 						}							
 						break;
 					default:
-						max = 10;
+						max = 100 / oldN;
 						if (oo == null ? no == null : oo.equals (no))
 						{
 							score = max;

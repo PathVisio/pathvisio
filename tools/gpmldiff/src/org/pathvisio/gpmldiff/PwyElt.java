@@ -49,6 +49,16 @@ class PwyElt
 			result += ",x1=" + elt.getProperty(PropertyType.STARTX);
 		if (props.contains(PropertyType.STARTY))
 			result += ",y1=" + elt.getProperty(PropertyType.STARTY);		
+		if (props.contains(PropertyType.ENDX))
+			result += ",x2=" + elt.getProperty(PropertyType.ENDX);
+		if (props.contains(PropertyType.ENDY))
+			result += ",y2=" + elt.getProperty(PropertyType.ENDY);		
+		if (props.contains(PropertyType.GRAPHID))
+			result += ",id=" + elt.getProperty(PropertyType.GRAPHID);
+		if (props.contains(PropertyType.MAPINFONAME))
+			result += ",name=" + elt.getProperty(PropertyType.MAPINFONAME);
+		if (props.contains(PropertyType.AUTHOR))
+			result += ",author=" + elt.getProperty(PropertyType.AUTHOR);
 		result += "]";
 		return result;
 	}

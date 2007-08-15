@@ -64,6 +64,7 @@ public class PubMedQuery extends DefaultHandler {
 		}
 		else if (PUBDATE.equalsIgnoreCase(parsingName)) {
 //			System.out.println("Parsing pubdate: " + value);
+			if(value.length() >= 4) value = value.substring(0, 4);
 			result.setYear(value);
 		}
 		else if (SOURCE.equalsIgnoreCase(parsingName)) {

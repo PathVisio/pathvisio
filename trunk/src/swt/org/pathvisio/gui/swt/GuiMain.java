@@ -28,9 +28,9 @@ import org.pathvisio.Engine;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
-import org.pathvisio.model.SvgFormat;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.swt.SwtPreferences;
@@ -149,10 +149,10 @@ public class GuiMain {
 	
 	static void registerExporters() {
 		Engine.getCurrent().addPathwayExporter(new MappFormat());
-		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_SVG));
-		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PNG));
-		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_TIFF));
-		Engine.getCurrent().addPathwayExporter(new ImageExporter(ImageExporter.TYPE_PDF));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
 	}
 	
 	static void loadVisualizations() {

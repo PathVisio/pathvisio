@@ -60,6 +60,5 @@ public class WikiPathwaysEngine {
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_SVG));
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_TIFF));
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PDF));
-		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, WikiPathwaysExporter.TYPE_MAPP));
 	}
 }

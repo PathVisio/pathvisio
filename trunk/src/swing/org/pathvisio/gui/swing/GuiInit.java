@@ -20,7 +20,7 @@ import java.io.PrintStream;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
 
 public class GuiInit {
@@ -35,10 +35,10 @@ public class GuiInit {
 	}
 	
 	private static void initImporters() {
-		Engine.getCurrent().addPathwayImporter(new GpmlFormat());
+		Engine.getCurrent().addPathwayImporter(new MappFormat());
 	}
 	
 	private static void initExporters() {
-		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
+		Engine.getCurrent().addPathwayExporter(new MappFormat());
 	}
 }

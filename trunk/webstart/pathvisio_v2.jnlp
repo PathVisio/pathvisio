@@ -38,6 +38,8 @@
 		 <jar href="lib/batik/batik-xml.jar"/>
 		 <jar href="lib/batik/pdf-transcoder.jar"/>
 		 <jar href="lib/batik/xml-apis.jar"/>
+		 <jar href="lib/batik/xml-apis-ext.jar"/>
+	     <jar href="lib/batik/batik-anim.jar"/>
 	</resources>
 	<resources os="Windows">
 		<jar href="lib/swt-win32-lib/swt.jar"/>

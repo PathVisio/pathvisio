@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.net.URL;
+
 import javax.swing.JApplet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -32,6 +34,7 @@ import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
+import org.pathvisio.wikipathways.WikiPathwaysEngine;
 
 public class AppletMain extends JApplet {	
 	private static final long serialVersionUID = 1L;
@@ -69,8 +72,14 @@ public class AppletMain extends JApplet {
 		final RunnableWithProgress r = new RunnableWithProgress() {
 			public Object excecuteCode() {				
 				GuiInit.init();
-												
 				parseArguments();
+
+				try {
+					WikiPathwaysEngine.registerXmlRpcExporters(
+							new URL(wiki.getRpcURL()), Engine.getCurrent());							
+				} catch(Exception e) {
+					Logger.log.error("Unable to register xml-rpc exporters", e);
+				}
 								
 				try {
 					wiki.init(SwingEngine.getCurrent().createWrapper(), 

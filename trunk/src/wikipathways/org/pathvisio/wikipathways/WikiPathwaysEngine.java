@@ -17,8 +17,11 @@
 package org.pathvisio.wikipathways;
 
 import java.io.File;
+import java.net.URL;
 
+import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
 
@@ -49,5 +52,14 @@ public class WikiPathwaysEngine {
 			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
 		}
 		return DIR_APPLICATION;
+	}
+	
+	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {
+		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PDF));
+		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PNG));
+		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_SVG));
+		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_TIFF));
+		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PDF));
+		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, WikiPathwaysExporter.TYPE_MAPP));
 	}
 }

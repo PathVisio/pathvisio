@@ -19,16 +19,23 @@ package org.pathvisio.gui.swing;
 import java.awt.Component;
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayExporter;
+import org.pathvisio.model.PathwayImporter;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
@@ -74,14 +81,14 @@ public class SwingEngine {
 					"Please note that the Gpml format has changed as of March 2007. " +
 					"The standard pathway set can be re-downloaded from http://pathvisio.org " +
 					"Non-standard pathways need to be recreated or upgraded. " +
-					"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
-					"\nSee error log for details", "Error", JOptionPane.ERROR_MESSAGE);
-			Logger.log.error("Unable to open Gpml file", e);
+					"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n"
+					, "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.log.error("Converter exception", e);
 		}
 		else
 		{
 			JOptionPane.showMessageDialog(c,
-					message + "\n" + e.getClass() + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					message + "\nSee error log for details\n" + e.getClass(), "Error", JOptionPane.ERROR_MESSAGE);
 			Logger.log.error("Converter exception", e);
 		}
 	}
@@ -90,24 +97,128 @@ public class SwingEngine {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
 	
-	public void openPathway(URL url) {
+	public boolean openPathway(URL url) {
 		try {
 			Engine.getCurrent().openPathway(url, createWrapper());
+			return true;
 		} catch(ConverterException e) {
 			handleConverterException(e.getMessage(), null, e);
+			return false;
 		}
 	}
 	
-	public void importPathway(File f) {
+	public boolean importPathway(final File f) {
+		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+				"Importing pathway", pk, false, true);
+				
+		SwingWorker sw = new SwingWorker() {
+			protected Object doInBackground() throws Exception {
+				try {
+					Engine eng = Engine.getCurrent();
+					boolean editMode = eng.hasVPathway() ? eng.getActiveVPathway().isEditMode() : false;
+					eng.importPathway(f, createWrapper());
+					eng.getActiveVPathway().setEditMode(editMode);
+					return true;
+				} catch(ConverterException e) {
+					handleConverterException(e.getMessage(), null, e);
+					return false;
+				} finally {
+					pk.finished();
+				}
+			}
+		};
+		
+		sw.execute();
+		d.setVisible(true);
 		try {
-			Engine.getCurrent().importPathway(f, createWrapper());
-		} catch(ConverterException e) {
-			handleConverterException(e.getMessage(), null, e);
+			return (Boolean)sw.get();
+		} catch (Exception e) {
+			Logger.log.error("Unable to import pathway", e);
+			return false;
 		}
+
 	}
 	
 	public void newPathway() {
 		Engine.getCurrent().newPathway(createWrapper());
+	}
+
+	public boolean exportPathway() {
+		//Open file dialog
+		JFileChooser jfc = new JFileChooser();
+		jfc.setAcceptAllFileFilterUsed(false);
+		jfc.setDialogTitle("Export pathway");
+		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+
+		for(final PathwayExporter exp : Engine.getCurrent().getPathwayExporters().values()) {
+			jfc.addChoosableFileFilter(new ImporterExporterFileFilter(exp));
+		}
+
+		int status = jfc.showDialog(getApplicationPanel(), "Export");
+		if(status == JFileChooser.APPROVE_OPTION) {	
+			File f = jfc.getSelectedFile();
+			ImporterExporterFileFilter ff = (ImporterExporterFileFilter)jfc.getFileFilter();
+			if(!f.toString().toUpperCase().endsWith(ff.getDefaultExtension().toUpperCase())) {
+				f = new File(f.toString() + "." + ff.getDefaultExtension());
+			}
+			return SwingEngine.getCurrent().exportPathway(f);
+
+		}
+		return false;
+	}
+	
+	public boolean exportPathway(final File f) {
+		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+				"Exporting pathway", pk, false, true);
+				
+		SwingWorker sw = new SwingWorker() {
+			protected Object doInBackground() throws Exception {
+				try {
+					Engine.getCurrent().exportPathway(f);
+					return true;
+				} catch(ConverterException e) {
+					handleConverterException(e.getMessage(), null, e);
+					return false;
+				} finally {
+					pk.finished();
+				}
+			}
+		};
+		
+		sw.execute();
+		d.setVisible(true);
+		try {
+			return (Boolean)sw.get();
+		} catch (Exception e) {
+			Logger.log.error("Unable to export pathway", e);
+			return false;
+		}
+	}
+
+	public boolean importPathway() {
+		//Open file dialog
+		JFileChooser jfc = new JFileChooser();
+		jfc.setAcceptAllFileFilterUsed(false);
+		jfc.setDialogTitle("Import pathway");
+		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+
+		for(final PathwayImporter imp : Engine.getCurrent().getPathwayImporters().values()) {
+			jfc.addChoosableFileFilter(new ImporterExporterFileFilter(imp));
+		}
+
+		int status = jfc.showDialog(getApplicationPanel(), "Import");
+		if(status == JFileChooser.APPROVE_OPTION) {	
+			File f = jfc.getSelectedFile();
+			ImporterExporterFileFilter ff = (ImporterExporterFileFilter)jfc.getFileFilter();
+			if(!f.toString().toUpperCase().endsWith(ff.getDefaultExtension().toUpperCase())) {
+				f = new File(f.toString() + "." + ff.getDefaultExtension());
+			}
+			return SwingEngine.getCurrent().importPathway(f);
+
+		}
+		return false;
 	}
 
 	public boolean mayOverwrite(File f) {
@@ -119,7 +230,7 @@ public class SwingEngine {
 		}
 		return allow;
 	}
-	
+
 	public boolean savePathwayAs() {
 		//Open file dialog
 		JFileChooser jfc = new JFileChooser();

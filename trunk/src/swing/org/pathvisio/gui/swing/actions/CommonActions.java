@@ -108,63 +108,15 @@ public abstract class CommonActions {
 	}
 	
 	public static class ImportAction extends AbstractAction {
-		MainPanel mainPanel;
-		
-		public ImportAction(MainPanel parent) {
+		public ImportAction() {
 			super("Import", new ImageIcon(IMG_IMPORT));
-			mainPanel = parent;
 			putValue(Action.SHORT_DESCRIPTION, "Import pathway");
 			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-				final Component component = (Component)e.getSource();
-				//Open file dialog
-				JFileChooser jfc = new JFileChooser();
-				jfc.setAcceptAllFileFilterUsed(false);
-				jfc.setDialogTitle("Import pathway");
-				jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-				
-				for(final PathwayImporter imp : Engine.getCurrent().getPathwayImporters().values()) {
-					FileFilter ff = new FileFilter() {
-						public boolean accept(File f) {
-							if(f.isDirectory()) return true;
-							
-							String fn = f.toString();
-							int i = fn.lastIndexOf('.');
-							if(i > 0) {
-								String ext = fn.substring(i + 1);
-								for(String impExt : imp.getExtensions()) {
-									if(impExt.equalsIgnoreCase(ext)) {
-										return true;
-									}
-								}
-							}
-							return false;
-						}
-
-						public String getDescription() {
-							StringBuilder exts = new StringBuilder();
-							for(String e : imp.getExtensions()) {
-								exts.append(".");
-								exts.append(e);
-								exts.append(", ");
-							}
-							String str = exts.substring(0, exts.length() - 2);
-							return imp.getName() + " (" + str + ")";
-						}
-					};
-					jfc.addChoosableFileFilter(ff);
-				}
-
-				int status = jfc.showDialog(component, "Import");
-				if(status == JFileChooser.APPROVE_OPTION) {
-					boolean editMode = Engine.getCurrent().hasVPathway() ? 
-					Engine.getCurrent().getActiveVPathway().isEditMode() : false;
-					SwingEngine.getCurrent().importPathway(jfc.getSelectedFile());
-					Engine.getCurrent().getActiveVPathway().setEditMode(editMode);
-				}
+				SwingEngine.getCurrent().importPathway();
 		}
 	}
 	
@@ -177,7 +129,7 @@ public abstract class CommonActions {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			//TODO
+			SwingEngine.getCurrent().exportPathway();
 		}
 	}
 	

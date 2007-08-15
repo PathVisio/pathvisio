@@ -38,6 +38,8 @@ public class WebstartMain {
 		SwtEngine.setCurrent(new SwtEngine());
 		Engine.setCurrent(new Engine());
 		
+		GuiMain.initiate();
+		
 		wiki = new WikiPathways(uiHandler);
 		window = new MainWindowWikipathways(wiki);
 		SwtEngine.getCurrent().setWindow(window);
@@ -141,7 +143,6 @@ public class WebstartMain {
 	
 	public static void main(String[] args) {
 		System.out.println("args: " + args.length);
-		GuiMain.initiate();
 		WebstartMain main = new WebstartMain();
 		main.args = args;
 		main.createAndShowGui();

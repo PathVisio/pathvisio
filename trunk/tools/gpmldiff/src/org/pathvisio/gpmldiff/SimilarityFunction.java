@@ -21,6 +21,6 @@ import org.pathvisio.model.PathwayElement;
    abstract base class for implementations of similarity functions
 */
 abstract class SimilarityFunction
-{
+{	
 	abstract public int getSimScore (PathwayElement oldElt, PathwayElement newElt);
 }

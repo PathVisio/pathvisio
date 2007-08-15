@@ -174,7 +174,7 @@ public class Test extends TestCase
 			fail ("No ConverterException expected");
 		}
 		newDoc = new PwyDoc (pwy);
-		SearchNode result = originalDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
+		SearchNode result = originalDoc.findCorrespondence (newDoc, new BetterSim(), new BasicCost());
 		TestDiffOutputter out = new TestDiffOutputter();
 		originalDoc.writeResult (result, newDoc, out);
 		try
@@ -185,7 +185,7 @@ public class Test extends TestCase
 		{
 			fail ("No exception expected");
 		}
-		out.checkCounts (0, 1, 0, 0); // check that there is one deletion
+		out.checkCounts (0, 1, 0, 0); // check that there is one insertion
 	}
 
 	public void testDiffUnchanged()
@@ -219,7 +219,7 @@ public class Test extends TestCase
 			fail ("No ConverterException expected");
 		}
 		newDoc = new PwyDoc (pwy);
-		SearchNode result = originalDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
+		SearchNode result = originalDoc.findCorrespondence (newDoc, new BetterSim(), new BasicCost());
 		TestDiffOutputter out = new TestDiffOutputter();
 		originalDoc.writeResult (result, newDoc, out);
 		try
@@ -230,7 +230,7 @@ public class Test extends TestCase
 		{
 			fail ("No exception expected");
 		}
-		out.checkCounts (0, 0, 0, 0); // check that there is one deletion
+		out.checkCounts (1, 0, 0, 0); // check that there is one deletion
 	}
 
 	public void testDiffDeletion()
@@ -260,7 +260,7 @@ public class Test extends TestCase
 			fail ("No ConverterException expected");
 		}
 		newDoc = new PwyDoc (pwy);
-		SearchNode result = originalDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
+		SearchNode result = originalDoc.findCorrespondence (newDoc, new BetterSim(), new BasicCost());
 		TestDiffOutputter out = new TestDiffOutputter();
 		originalDoc.writeResult (result, newDoc, out);
 		try
@@ -304,7 +304,7 @@ public class Test extends TestCase
 			fail ("No ConverterException expected");
 		}
 		newDoc = new PwyDoc (pwy);
-		SearchNode result = originalDoc.findCorrespondence (newDoc, new BasicSim(), new BasicCost());
+		SearchNode result = originalDoc.findCorrespondence (newDoc, new BetterSim(), new BasicCost());
 		TestDiffOutputter out = new TestDiffOutputter();
 		originalDoc.writeResult (result, newDoc, out);
 		try
@@ -315,7 +315,8 @@ public class Test extends TestCase
 		{
 			fail ("No exception expected");
 		}
-		out.checkCounts (0, 0, 3, 2); // check that there is one deletion
+		out.checkCounts (0, 0, 3, 2);
+        // check that that there are three modifications spread over two elements
 	}
 
 	public void testPatchModification()

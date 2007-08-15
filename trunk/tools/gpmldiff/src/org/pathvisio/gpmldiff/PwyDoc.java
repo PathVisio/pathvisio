@@ -17,11 +17,13 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.util.Map;
+import java.util.HashMap;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -109,7 +111,57 @@ class PwyDoc
 			add (e);
 		}
 	}
+
+	/**
+	   Calculates a table with similarity scores.
+	*/
+	static public Map <PathwayElement, Map <PathwayElement, Integer>> getSimTable (PwyDoc oldDoc, PwyDoc newDoc, SimilarityFunction simFun)		
+	{
+		Map <PathwayElement, Map <PathwayElement, Integer>> result =
+			new HashMap <PathwayElement, Map <PathwayElement, Integer>>();
 		
+		for (PathwayElement oldElt : oldDoc.getElts())
+		{
+			Map <PathwayElement, Integer> row = new HashMap <PathwayElement, Integer>();
+			
+			for (PathwayElement newElt : newDoc.getElts())
+			{
+				row.put (newElt, simFun.getSimScore(oldElt, newElt));
+			}
+			result.put (oldElt, row);
+		}
+
+		return result;
+	}
+
+	static public void printSimTable (PwyDoc oldDoc, PwyDoc newDoc, SimilarityFunction simFun)
+	{
+		PrintStream out = System.out;
+
+		// empty corner cell
+		out.print ("\t"); 
+		// column headers
+		for (PathwayElement newElt : newDoc.getElts())
+		{			
+			out.print(PwyElt.summary(newElt));
+			out.print("\t");
+		}
+		out.println();
+		for (PathwayElement oldElt : oldDoc.getElts())
+		{
+			// row header.
+			out.print (PwyElt.summary (oldElt));
+			out.print ("\t");
+			// row data
+			for (PathwayElement newElt : newDoc.getElts())
+			{
+				out.print (simFun.getSimScore(oldElt, newElt));
+				out.print ("\t");
+			}
+			out.println();
+		}		
+	}
+	
 	/**
 	   Finds correspondence set with the lowest cost using Dijkstra's algorithm
 	   //TODO: currently not using Dijkstra's algorithm but ad-hoc.

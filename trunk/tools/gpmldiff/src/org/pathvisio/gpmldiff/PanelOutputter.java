@@ -75,19 +75,19 @@ class PanelOutputter extends DiffOutputter
 	public class ModData implements Comparable<ModData>
 	{
 		int midy;
-		String hint;
+		Map <String, String> hints;
 		int x1;
 		int y1;
 		int x2;
 		int y2;
 
-		ModData (int x1, int y1, int x2, int y2, String hint)
+		ModData (int x1, int y1, int x2, int y2, Map<String, String> hints)
 		{
 			this.x1 = x1;
 			this.y1 = y1;
 			this.x2 = x2;
 			this.y2 = y2;
-			this.hint = hint;
+			this.hints = hints;
 		}
 
 		/**
@@ -120,13 +120,13 @@ class PanelOutputter extends DiffOutputter
 
 	PathwayElement curOldElt = null;
 	PathwayElement curNewElt = null;
-	Set<String> curHint = null;
+	Map<String, String> curHint = null;
 	
 	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
 		curNewElt = newElt;
-		curHint = new HashSet<String>();
+		curHint = new HashMap<String, String>();
 	}
 
 	public void flush() throws IOException
@@ -145,20 +145,12 @@ class PanelOutputter extends DiffOutputter
 		veltNew.highlight (Color.YELLOW);
 		Rectangle r2 = veltNew.getVBounds();
 
-		String completeHint = "";
-		for (String hint : curHint)
-		{
-			completeHint += hint;
-			completeHint += ", ";
-		}
-		completeHint += "changed";
-
 		ModData mod = new ModData (
 				(int)(r1.getX() + r1.getWidth() / 2),
 				(int)(r1.getY() + r1.getHeight() / 2),
 				(int)(r2.getX() + r2.getWidth() / 2),
 				(int)(r2.getY() + r2.getHeight() / 2),
-				completeHint);
+				curHint);
 
 		modifications.add (mod);
 		modsByElt.put (veltOld, mod);
@@ -176,24 +168,50 @@ class PanelOutputter extends DiffOutputter
 	public void modifyAttr(String attr, String oldVal, String newVal)
 	{
 		if (attr.equalsIgnoreCase("centerx") || 
-			attr.equalsIgnoreCase("centery") ||
+			attr.equalsIgnoreCase("centery"))
+		{
+			String temp =
+				curOldElt.getMCenterX() + ", " +
+				curOldElt.getMCenterY() + " -> " +
+				curNewElt.getMCenterX() + ", " +
+				curNewElt.getMCenterY();
+			curHint.put ("Center", temp);
+		}
+		else if (
 			attr.equalsIgnoreCase("endx") ||
 			attr.equalsIgnoreCase("endy") ||
 			attr.equalsIgnoreCase("startx") ||
 			attr.equalsIgnoreCase("starty"))
 		{
-			curHint.add ("position");
+			String temp = 
+				curOldElt.getMStartX() + ", " +
+				curOldElt.getMStartY() + " -> " +
+				curNewElt.getMStartX() + ", " +
+				curNewElt.getMStartY() + " " +
+				curOldElt.getMEndX() + ", " +
+				curOldElt.getMEndY() + " -> " +
+				curNewElt.getMEndX() + ", " +
+				curNewElt.getMEndY();
+			curHint.put ("Position", temp);
 		}
 		else if (
 			attr.equalsIgnoreCase("width") ||
 			attr.equalsIgnoreCase("height")
 			)
 		{
-			curHint.add ("size");
+			String temp =
+				curOldElt.getMWidth() + ", " +
+				curOldElt.getMHeight() + "-> " +
+				curNewElt.getMWidth() + ", " +
+				curNewElt.getMHeight();
+			curHint.put ("Size", temp);
 		}
 		else
 		{
-			curHint.add (attr);
+			curHint.put (
+				attr,
+				" \"" + oldVal + "\" -> \"" + newVal + "\""
+				);
 		}
 	}
 

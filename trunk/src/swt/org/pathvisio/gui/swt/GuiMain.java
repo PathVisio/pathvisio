@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.pathvisio.Engine;
+import org.pathvisio.Revision;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.debug.Logger;
@@ -98,6 +99,15 @@ public class GuiMain {
 		} catch(Exception e) {}
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 
+		Logger.log.info ("Revision: " + Revision.REVISION);
+		Logger.log.info ("Java version: " +
+						 System.getProperty ("java.version") + ", " +
+						 System.getProperty ("java.vendor"));
+		Logger.log.info ("Java home: " + System.getProperty ("java.home"));
+		Logger.log.info ("OS: " + System.getProperty ("os.name") +
+						 System.getProperty ("os.version") + System.getProperty ("os.arch"));
+		Logger.log.info ("Username: " + System.getProperty ("user.name"));
+		
 		Logger.log.trace ("Log initialized");
 		//load the preferences
 		loadPreferences();

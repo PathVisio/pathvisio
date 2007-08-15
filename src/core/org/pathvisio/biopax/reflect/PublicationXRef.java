@@ -115,14 +115,18 @@ public class PublicationXRef extends BiopaxElement {
 	}
 	
 	public String getAuthorString() {
-		String authors = "";
-		for(String a : getAuthors()) {
-			authors += a + AUTHOR_SEP + " ";
+		return createAuthorString(getAuthors());
+	}
+	
+	public static String createAuthorString(List<String> authors) {
+		String as = "";
+		for(String a : authors) {
+			as += a + AUTHOR_SEP + " ";
 		}
-		if(authors.length() > 0) {
-			authors = authors.substring(0, authors.length() - AUTHOR_SEP.length() - 1);
+		if(as.length() > 0) {
+			as = as.substring(0, as.length() - AUTHOR_SEP.length() - 1);
 		}
-		return authors;
+		return as;
 	}
 	
 	public String toString() {

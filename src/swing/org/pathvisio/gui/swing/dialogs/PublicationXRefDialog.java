@@ -5,10 +5,13 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -22,7 +25,13 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.data.PubMedQuery;
+import org.pathvisio.data.PubMedResult;
+import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
+import org.pathvisio.util.ProgressKeeper;
 
 public class PublicationXRefDialog extends OkCancelDialog {
 	final static String ADD = "Add";
@@ -32,6 +41,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	final static String SOURCE = "Source";
 	final static String YEAR = "Year";
 	final static String AUTHORS = "Authors (separate with " + PublicationXRef.AUTHOR_SEP + ")";
+	final static String QUERY = "Query PubMed";
 	
 	PublicationXRef input;
 	JTextField pmId;
@@ -71,6 +81,41 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		input.setYear(year.getText());
 		input.setAuthors(authors.getText());
 		super.okPressed();
+	}
+	
+	protected void queryPressed() {
+		final PubMedQuery pmq = new PubMedQuery(pmId.getText());
+		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		ProgressDialog d = new ProgressDialog(
+				JOptionPane.getFrameForComponent(this), 
+				"Querying PubMed", pk, true, true);
+				
+		SwingWorker sw = new SwingWorker() {
+			protected Object doInBackground() throws Exception {
+				pmq.execute();
+				pk.finished();
+				return null;
+			}
+		};
+		
+		sw.execute();
+		
+		d.setVisible(true);
+		
+		PubMedResult pmr = pmq.getResult();
+		if(pmr != null) {
+			title.setText(pmr.getTitle());
+			year.setText(pmr.getYear());
+			source.setText(pmr.getSource());
+			authors.setText(PublicationXRef.createAuthorString(pmr.getAuthors()));
+		}
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		if(QUERY.equals(e.getActionCommand())) {
+			queryPressed();
+		}
+		super.actionPerformed(e);
 	}
 	
 	protected Component createDialogPane() {
@@ -118,6 +163,10 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		
 		authors = new JTextPane(doc);
 		
+		JButton query = new JButton(QUERY);
+		query.addActionListener(this);
+		query.setToolTipText("Query publication information from PubMed");
+		
 		GridBagConstraints c = new GridBagConstraints();
 		c.ipadx = c.ipady = 5;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -126,9 +175,10 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		c.weightx = 0;
 		contents.add(lbl_pmId, c);
 		contents.add(lbl_title, c);
-		contents.add(lbl_source, c);
 		contents.add(lbl_year, c);
+		contents.add(lbl_source, c);
 		contents.add(lbl_authors, c);
+				
 		c.gridx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
@@ -139,6 +189,10 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		c.fill = GridBagConstraints.BOTH;
 		c.weighty = 1;
 		contents.add(new JScrollPane(authors), c);
+		
+		c.gridx = 2;
+		c.fill = GridBagConstraints.NONE;
+		contents.add(query);
 		
 		return contents;
 	}

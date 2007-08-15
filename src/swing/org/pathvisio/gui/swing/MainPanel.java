@@ -144,17 +144,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		alignMenu.add(new AlignAction(AlignType.CENTERX));
 		alignMenu.add(new AlignAction(AlignType.CENTERY));
-		alignMenu.add(new AlignAction(AlignType.LEFT));
-		alignMenu.add(new AlignAction(AlignType.RIGHT));
-		alignMenu.add(new AlignAction(AlignType.TOP));
+//		alignMenu.add(new AlignAction(AlignType.LEFT));
+//		alignMenu.add(new AlignAction(AlignType.RIGHT));
+//		alignMenu.add(new AlignAction(AlignType.TOP));
 		alignMenu.add(new AlignAction(AlignType.WIDTH));
 		alignMenu.add(new AlignAction(AlignType.HEIGHT));
 		stackMenu.add(new StackAction(StackType.CENTERX));
 		stackMenu.add(new StackAction(StackType.CENTERY));
-		stackMenu.add(new StackAction(StackType.LEFT));
-		stackMenu.add(new StackAction(StackType.RIGHT));
-		stackMenu.add(new StackAction(StackType.TOP));
-		stackMenu.add(new StackAction(StackType.BOTTOM));
+//		stackMenu.add(new StackAction(StackType.LEFT));
+//		stackMenu.add(new StackAction(StackType.RIGHT));
+//		stackMenu.add(new StackAction(StackType.TOP));
+//		stackMenu.add(new StackAction(StackType.BOTTOM));
 		
 		selectionMenu.add(alignMenu);
 		selectionMenu.add(stackMenu);

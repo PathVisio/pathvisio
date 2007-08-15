@@ -46,6 +46,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.gui.swing.actions.CommonActions.AlignAction;
 import org.pathvisio.gui.swing.actions.CommonActions.CopyAction;
+import org.pathvisio.gui.swing.actions.CommonActions.ExportAction;
 import org.pathvisio.gui.swing.actions.CommonActions.ImportAction;
 import org.pathvisio.gui.swing.actions.CommonActions.NewElementAction;
 import org.pathvisio.gui.swing.actions.CommonActions.PasteAction;
@@ -130,8 +131,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		JMenu pathwayMenu = new JMenu("Pathway");
 		pathwayMenu.add(new SaveAction());
 		pathwayMenu.add(new SaveAsAction());
-		pathwayMenu.add(new ImportAction(this));
-		//pathwayMenu.add(new ExportAction()); //TODO: implement
+		pathwayMenu.add(new ImportAction());
+		pathwayMenu.add(new ExportAction());
 
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.add(new CopyAction());
@@ -181,8 +182,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		addToToolbar(new SaveAction());
 		addToToolbar(new SaveAsAction());
-		addToToolbar(new ImportAction(this));
-		//addToToolbar(new ExportAction()); //TODO: implement
+		addToToolbar(new ImportAction());
+		addToToolbar(new ExportAction());
 		tb.addSeparator();
 		addToToolbar(new CopyAction(), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new PasteAction(), TB_GROUP_HIDE_ON_EDIT);

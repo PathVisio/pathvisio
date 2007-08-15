@@ -35,6 +35,8 @@
 		 <jar href="lib/batik/batik-util.jar"/>
 		 <jar href="lib/batik/batik-xml.jar"/>
 		 <jar href="lib/batik/pdf-transcoder.jar"/>
+         <jar href="lib/batik/xml-apis-ext.jar"/>
+	     <jar href="lib/batik/batik-anim.jar"/>
 		 <jar href="lib/batik/xml-apis.jar"/>
 		 <jar href="lib/apache/commons-codec-1.3.jar"/>
 		 <jar href="lib/apache/commons-httpclient-3.0.1.jar"/>

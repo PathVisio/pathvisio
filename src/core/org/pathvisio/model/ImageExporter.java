@@ -36,15 +36,15 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
 public class ImageExporter implements PathwayExporter {
-	public static final int TYPE_PNG = 0;
-	public static final int TYPE_TIFF = 1;
-	public static final int TYPE_PDF = 2;
-	public static final int TYPE_SVG = 3;
+	public static final String TYPE_PNG = "png";
+	public static final String TYPE_TIFF = "tiff";
+	public static final String TYPE_PDF = "pdf";
+	public static final String TYPE_SVG = "svg";
 	
-	private int type;
+	private String type;
 	private String[] extensions;
 	
-	public ImageExporter(int type) {
+	public ImageExporter(String type) {
 		this.type = type;
 	}
 	
@@ -56,34 +56,11 @@ public class ImageExporter implements PathwayExporter {
 	}
 	
 	public String getDefaultExtension() {
-		switch(type) {
-		case TYPE_PNG:
-			return "png";
-		case TYPE_TIFF:
-			return "tiff";
-		case TYPE_PDF:
-			return "pdf";
-		case TYPE_SVG:
-			return "svg";
-		default:
-			return null;
-		}
+		return type;
 	}
 
 	public String getName() {
-		switch(type) {
-		case TYPE_PNG:
-			return "PNG";
-		case TYPE_TIFF:
-			return "TIFF";
-		case TYPE_PDF:
-			return "PDF";
-		case TYPE_SVG:
-			return "SVG";
-		default:
-			return null;
-		}
-		
+		return type.toUpperCase();
 	}
 	
 	public void doExport(File file, Pathway pathway) throws ConverterException {		
@@ -99,10 +76,8 @@ public class ImageExporter implements PathwayExporter {
 		SVGGraphics2D svgG2d = new SVGGraphics2D(svg);
 		svgG2d.setSVGCanvasSize(new Dimension((int)width, (int)height));
 		vPathway.draw(svgG2d);
-		
 		Transcoder t = null;
-		switch(type) {
-		case TYPE_SVG:
+		if			(type.equals(TYPE_SVG)) {
 			try {
 				Writer out = new FileWriter(file);			
 				svgG2d.stream(out, true);
@@ -112,13 +87,12 @@ public class ImageExporter implements PathwayExporter {
 				throw new ConverterException(e);
 			}
 			return;
-		case TYPE_PNG:
+		} else if	(type.equals(TYPE_PNG)) {
 			t = new PNGTranscoder();
-			break;
-		case TYPE_TIFF:
+		} else if	(type.equals(TYPE_TIFF)) {
 			t = new TIFFTranscoder();
-			break;
-		case TYPE_PDF: try {
+		} else if	(type.equals(TYPE_PDF)) {
+			try {
                  Class pdfClass = Class.forName("org.apache.fop.svg.PDFTranscoder");
                  t = (Transcoder)pdfClass.newInstance();
              } catch(Exception e) {
@@ -127,6 +101,7 @@ public class ImageExporter implements PathwayExporter {
 		}
 		if(t == null) noExporterException();
 
+		svgG2d.getRoot(svg.getDocumentElement());
 		t.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, java.awt.Color.WHITE);
 
 		try {

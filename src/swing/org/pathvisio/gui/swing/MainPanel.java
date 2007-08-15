@@ -260,17 +260,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		addToToolbar(new AlignAction(AlignType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new AlignAction(AlignType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new AlignAction(AlignType.LEFT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new AlignAction(AlignType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new AlignAction(AlignType.TOP), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new AlignAction(AlignType.LEFT), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new AlignAction(AlignType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new AlignAction(AlignType.TOP), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new AlignAction(AlignType.WIDTH), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new AlignAction(AlignType.HEIGHT), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new StackAction(StackType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
 		addToToolbar(new StackAction(StackType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new StackAction(StackType.LEFT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new StackAction(StackType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new StackAction(StackType.TOP), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new StackAction(StackType.BOTTOM), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new StackAction(StackType.LEFT), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new StackAction(StackType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new StackAction(StackType.TOP), TB_GROUP_HIDE_ON_EDIT);
+//		addToToolbar(new StackAction(StackType.BOTTOM), TB_GROUP_HIDE_ON_EDIT);
 	}
 
 	public static final String TB_GROUP_HIDE_ON_EDIT = "edit";

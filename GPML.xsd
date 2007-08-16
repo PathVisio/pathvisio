@@ -429,6 +429,7 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 
 		</xsd:complexType>

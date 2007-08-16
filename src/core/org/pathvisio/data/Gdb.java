@@ -529,11 +529,13 @@ public abstract class Gdb {
 	{
 		if(dbName == null) dbName = getDbName();
 		
+		Logger.log.trace("Opening connection to Gene Database " + dbName);
 		DBConnector connector = getDBConnector();
 		con = connector.createConnection(dbName);
 		con.setReadOnly(true);
 //		Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
 		setCurrentGdb(dbName);
+		Logger.log.trace("Current Gene Database: " + dbName);
 	}
 	
 	/**

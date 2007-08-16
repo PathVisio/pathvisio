@@ -83,6 +83,7 @@ public class ViewActions {
 			} else if(groups == 1) {
 				putValue(Action.NAME, "Ungroup");
 			} else {
+				putValue(Action.NAME, "Group");
 				setEnabled(false);
 			}
 		}		

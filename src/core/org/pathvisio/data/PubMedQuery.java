@@ -46,34 +46,37 @@ public class PubMedQuery extends DefaultHandler {
 	String parsingId;
 	String parsingName;
 	String parsingElement;
+	String parsingValue;
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		parsingElement = localName;
 		parsingName = attributes.getValue(NAME);
+		parsingValue = "";
 	}
 	
 	public void characters(char[] ch, int start, int length) throws SAXException {		
-		String value = new String(ch, start, length).trim();
-		if(value.length() == 0) return;
-		
+		parsingValue += new String(ch, start, length).trim();
+	}
+	
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if(parsingElement == ID) {
-			parsingId = value;
+			parsingId = parsingValue;
 		}
 		if		(TITLE.equalsIgnoreCase(parsingName)) {
 //			System.out.println("Parsing title: " + value);
-			result.setTitle(value);
+			result.setTitle(parsingValue);
 		}
 		else if (PUBDATE.equalsIgnoreCase(parsingName)) {
 //			System.out.println("Parsing pubdate: " + value);
-			if(value.length() >= 4) value = value.substring(0, 4);
-			result.setYear(value);
+			if(parsingValue.length() >= 4) parsingValue = parsingValue.substring(0, 4);
+			result.setYear(parsingValue);
 		}
 		else if (SOURCE.equalsIgnoreCase(parsingName)) {
 //			System.out.println("Parsing source: " + value);
-			result.setSource(value);
+			result.setSource(parsingValue);
 		}
 		else if (AUTHOR.equalsIgnoreCase(parsingName)) {
 //			System.out.println("Parsing author: " + value);
-			result.addAuthor(value);
+			result.addAuthor(parsingValue);
 		}
 	}
 	

@@ -49,7 +49,7 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		contentPane.add(dialogPane, BorderLayout.CENTER);
 		contentPane.add(buttonPane, BorderLayout.PAGE_END);
 		pack();
-		setLocationRelativeTo(locationComp);
+		setLocationRelativeTo(null); //Center on screen
 	}
 	
 	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal) {

@@ -808,12 +808,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
 		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
 		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
-		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
-				
-		for (Object f : e.getChildren("Comment", e.getNamespace()))
-		{
-			o.addComment(((Element)f).getText(), getAttribute("Comment", "Source", (Element)f));
-		}		
+		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));	
 	}
 		
 	private static void mapBiopax(PathwayElement o, Element e) throws ConverterException

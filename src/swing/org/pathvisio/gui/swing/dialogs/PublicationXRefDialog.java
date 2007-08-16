@@ -148,6 +148,8 @@ public class PublicationXRefDialog extends OkCancelDialog {
 				return authors.replaceAll(PublicationXRef.AUTHOR_SEP + " ", PublicationXRef.AUTHOR_SEP + "\n");
 			}
 			void highlight(StyledDocument doc) {
+				SimpleAttributeSet clean = new SimpleAttributeSet();
+				doc.setCharacterAttributes(0, doc.getLength(), clean, true);
 				SimpleAttributeSet sep = new SimpleAttributeSet();
 				sep.addAttribute(StyleConstants.ColorConstants.Foreground, Color.RED);
 				sep.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);

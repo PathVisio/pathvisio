@@ -1,6 +1,8 @@
 package org.pathvisio.gui.swing.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -11,9 +13,12 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
@@ -28,21 +33,46 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	BiopaxElementManager biopax;
 	List<PublicationXRef> xrefs;
 	
-	JList references;
+	JTable refTable;
+	DefaultTableModel references;
 	
 	public LitReferencePanel() {
 		setLayout(new BorderLayout(5, 5));
 		xrefs = new ArrayList<PublicationXRef>();
 		
-		references = new JList();
-		references.setBorder(BorderFactory.createTitledBorder("References"));
-		references.addMouseListener(new MouseAdapter() {
+		references = new DefaultTableModel() {
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		final WrapCellRenderer cr = new WrapCellRenderer();
+		refTable = new JTable(references) {
+			public TableCellRenderer getCellRenderer(int row, int column) {
+				return cr;
+			}
+		};
+		
+		refTable.setTableHeader(null);
+		refTable.setIntercellSpacing(new Dimension(0, 5));
+
+		//Table doesn't adjust to border
+		//See bug: 4222732 at bugs.sun.com
+		//refTable.setBorder(BorderFactory.createTitledBorder("References"));
+		//Workaround, create a JPanel with border, add table to JPanel
+		JPanel tablePanel = new JPanel();
+		tablePanel.setLayout(new BorderLayout());
+		tablePanel.add(new JScrollPane(refTable), BorderLayout.CENTER);
+		tablePanel.setBorder(BorderFactory.createTitledBorder("References"));
+		refTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount() == 2) {
 					editPressed();
 				}
 			}
 		});
+
+		
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.PAGE_AXIS));
 		
@@ -55,7 +85,8 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		buttons.add(add);
 		buttons.add(remove);
 		buttons.add(edit);
-		add(new JScrollPane(references), BorderLayout.CENTER);
+
+		add(tablePanel, BorderLayout.CENTER);
 		add(buttons, BorderLayout.LINE_END);
 	}
 	
@@ -68,7 +99,11 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	
 	public void refresh() {
 		xrefs = biopax.getPublicationXRefs();
-		references.setListData(xrefs.toArray());
+		Object[][] data = new Object[xrefs.size()][1];
+		for(int i = 0; i < xrefs.size(); i++) {
+			data[i][0] = xrefs.get(i);
+		}
+		references.setDataVector(data, new Object[] { "" });
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -82,16 +117,20 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	}
 	
 	private void editPressed() {
-		PublicationXRef xref = (PublicationXRef)references.getSelectedValue();
-		if(xref != null) {
-			PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this, false);
-			d.setVisible(true);
+		int r = refTable.getSelectedRow();
+		if(r > -1) {
+			PublicationXRef xref = (PublicationXRef)references.getValueAt(r, 0);
+			if(xref != null) {
+				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this, false);
+				d.setVisible(true);
+			}
+			refresh();
 		}
-		refresh();
 	}
 
 	private void removePressed() {
-		for(Object o : references.getSelectedValues()) {
+		for(int r : refTable.getSelectedRows()) {
+			Object o = references.getValueAt(r, 0);
 			biopax.removeElementReference((PublicationXRef)o);
 		}
 		refresh();
@@ -107,4 +146,23 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			refresh();			
 		}
 	}
+	
+	class WrapCellRenderer extends JTextArea implements TableCellRenderer {
+	     public WrapCellRenderer() {
+	       setLineWrap(true);
+	       setWrapStyleWord(true);
+	    }
+	 
+	   public Component getTableCellRendererComponent(JTable table, Object
+	           value, boolean isSelected, boolean hasFocus, int row, int column) {
+	       setText(value == null ? "" : value.toString());
+	       setSize(table.getColumnModel().getColumn(column).getWidth(),
+	               getPreferredSize().height);
+	       if (table.getRowHeight(row) != getPreferredSize().height) {
+	               table.setRowHeight(row, getPreferredSize().height + table.getIntercellSpacing().height);
+	       }
+	       setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+	       return this;
+	   }
+	} 
 }

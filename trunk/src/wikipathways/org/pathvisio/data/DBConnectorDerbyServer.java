@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import javax.naming.OperationNotSupportedException;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 
 public class DBConnectorDerbyServer extends AbstractDBConnector {
@@ -45,7 +46,9 @@ public class DBConnectorDerbyServer extends AbstractDBConnector {
 		timer.start();
 		
 		String url = "jdbc:derby://" + host + ":" + port + "/" + dbName;
+		Logger.log.trace("Connecting to database: " + url);
 		Connection con = DriverManager.getConnection(url);
+		Logger.log.trace("Connected");
 		return con;
 	}
 

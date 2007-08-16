@@ -99,7 +99,7 @@ public class PublicationXRef extends BiopaxElement {
 		clearAuthors();
 		String[] authors = parseAuthorString(authorString);
 		for(String a : authors) {
-			addAuthor(a);
+			addAuthor(a.trim());
 		}
 	}
 		
@@ -134,7 +134,7 @@ public class PublicationXRef extends BiopaxElement {
 		String pmid = getPubmedId();
 		String authors = getAuthorString();
 		return 	(title != null && title.length() > 0 ? title + "; " : "") + 
-				(pmid != null && pmid.length() > 0 ? authors + "; ": "") + 
-				(authors != null && authors.length() > 0 ? " pmid=" + pmid : "");
+				(authors != null && authors.length() > 0 ? authors + "; ": "") + 
+				(pmid != null && pmid.length() > 0 ? " pmid=" + pmid : "");
 	}
 }

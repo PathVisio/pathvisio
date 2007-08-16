@@ -1250,8 +1250,8 @@ public class VPathway implements PathwayListener
 	
 	public static final int DRAW_ORDER_HANDLE = -1;
 
-	public static final int DRAW_ORDER_GROUP = 0;
-	public static final int DRAW_ORDER_SELECTIONBOX = 1;
+	public static final int DRAW_ORDER_SELECTIONBOX = 0;
+	public static final int DRAW_ORDER_GROUP = 1;
 	public static final int DRAW_ORDER_SELECTED = 2;
 	public static final int DRAW_ORDER_GENEPRODUCT = 3;
 	public static final int DRAW_ORDER_LABEL = 4;
@@ -1307,6 +1307,7 @@ public class VPathway implements PathwayListener
 				selection.addToSelection(vpe);
 			}
 		}
+		selection.fitToSelection();
 		redrawDirtyRect();
 	}
 	
@@ -1325,6 +1326,7 @@ public class VPathway implements PathwayListener
 		{
 			selection.addToSelection(o);
 		}
+		selection.fitToSelection();
 		redrawDirtyRect();
 	}
 	
@@ -1391,7 +1393,7 @@ public class VPathway implements PathwayListener
 					topRef = ref;
 				}
 
-				if (ref != topRef)
+				if (!ref.equals(topRef))
 				{
 					// selection includes elements in distinct, non-nested
 					// groups; therefore, currently Ungrouped
@@ -1416,7 +1418,7 @@ public class VPathway implements PathwayListener
 					String ref = pe.getGroupRef();
 
 					// remove all references to highest-level group
-					if (ref == topRef) // includes Group Elements
+					if (topRef.equals(ref)) // includes Group Elements
 					{
 						pe.setGroupRef(null);
 					}
@@ -1696,6 +1698,7 @@ public class VPathway implements PathwayListener
 				scaleSelected(alignType);
 				break;
 			}
+			selection.fitToSelection();
 			redrawDirtyRect();
 		}
 	}
@@ -1803,6 +1806,7 @@ public class VPathway implements PathwayListener
 				}
 				break;
 			}
+			selection.fitToSelection();
 			redrawDirtyRect();
 	}
 	}

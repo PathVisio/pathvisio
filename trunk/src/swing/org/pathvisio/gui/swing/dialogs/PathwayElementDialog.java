@@ -62,8 +62,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 		panels = new HashMap<String, PathwayElementPanel>();
 		createTabs();
 		setInput(e);
-		setMinimumSize(new Dimension(200, 200));
-		pack();
+		setSize(450, 300);
 	}
 
 	protected Component createDialogPane() {

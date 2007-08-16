@@ -55,6 +55,7 @@ import org.pathvisio.gui.swing.actions.CommonActions.SaveAsAction;
 import org.pathvisio.gui.swing.actions.CommonActions.StackAction;
 import org.pathvisio.gui.swing.actions.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
+import org.pathvisio.gui.swing.dnd.FileImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
@@ -86,7 +87,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	public MainPanel() {
 		setLayout(new BorderLayout());
-
+		setTransferHandler(new FileImportHandler());
 		Engine.getCurrent().addApplicationEventListener(this);
 		
 		menuBar = new JMenuBar();

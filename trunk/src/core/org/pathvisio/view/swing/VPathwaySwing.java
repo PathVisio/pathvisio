@@ -21,11 +21,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JPanel;
@@ -33,13 +38,15 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.pathvisio.gui.swing.dnd.FileImportHandler;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
-		MouseMotionListener, MouseListener, KeyListener, VPathwayListener {
+		MouseMotionListener, MouseListener, KeyListener, VPathwayListener, ClipboardOwner {
 	VPathway child;
 
 	JScrollPane container;
@@ -55,6 +62,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		
 		setFocusable(true);
 		setRequestFocusEnabled(true);
+		setTransferHandler(new FileImportHandler());
 	}
 
 	public void setChild(VPathway c) {
@@ -168,4 +176,12 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		}
 	}
 
+	public void copyToClipboard(List<PathwayElement> result) {
+		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clip.setContents(new PathwayTransferable(result), this);
+	}
+
+	public void lostOwnership(Clipboard clipboard, Transferable contents) {
+		System.out.println("Lost ownership");
+	}
 }

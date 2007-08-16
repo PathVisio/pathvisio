@@ -1610,6 +1610,7 @@ public class VPathway implements PathwayListener
 			Engine.getCurrent().clipboard = null;
 		}
 		
+		getWrapper().copyToClipboard(result);
 		//clipboard.dispose();
 	}
 	

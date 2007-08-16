@@ -97,14 +97,37 @@ public class SwingEngine {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
 	
-	public boolean openPathway(URL url) {
+	public boolean processTask(SwingProgressKeeper pk, ProgressDialog d, SwingWorker sw) {
+		sw.execute();
+		d.setVisible(true);
 		try {
-			Engine.getCurrent().openPathway(url, createWrapper());
-			return true;
-		} catch(ConverterException e) {
-			handleConverterException(e.getMessage(), null, e);
+			return (Boolean)sw.get();
+		} catch (Exception e) {
+			Logger.log.error("Unable to perform task: " + pk.getTaskName(), e);
 			return false;
 		}
+	}
+	
+	public boolean openPathway(final URL url) {		
+		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+				"Opening pathway", pk, false, true);
+				
+		SwingWorker sw = new SwingWorker() {
+			protected Object doInBackground() throws Exception {
+				try {
+					Engine.getCurrent().openPathway(url, createWrapper());
+					return true;
+				} catch(ConverterException e) {
+					handleConverterException(e.getMessage(), null, e);
+					return false;
+				} finally {
+					pk.finished();
+				}
+			}
+		};
+		
+		return processTask(pk, d, sw);
 	}
 	
 	public boolean importPathway(final File f) {
@@ -129,14 +152,7 @@ public class SwingEngine {
 			}
 		};
 		
-		sw.execute();
-		d.setVisible(true);
-		try {
-			return (Boolean)sw.get();
-		} catch (Exception e) {
-			Logger.log.error("Unable to import pathway", e);
-			return false;
-		}
+	return processTask(pk, d, sw);
 
 	}
 	
@@ -187,14 +203,7 @@ public class SwingEngine {
 			}
 		};
 		
-		sw.execute();
-		d.setVisible(true);
-		try {
-			return (Boolean)sw.get();
-		} catch (Exception e) {
-			Logger.log.error("Unable to export pathway", e);
-			return false;
-		}
+		return processTask(pk, d, sw);
 	}
 
 	public boolean importPathway() {

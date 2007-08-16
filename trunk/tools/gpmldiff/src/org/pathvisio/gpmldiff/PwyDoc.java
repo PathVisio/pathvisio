@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Comparator;
+import java.util.Collections;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -115,20 +117,20 @@ class PwyDoc
 	/**
 	   Calculates a table with similarity scores.
 	*/
-	static public Map <PathwayElement, Map <PathwayElement, Integer>> getSimTable (PwyDoc oldDoc, PwyDoc newDoc, SimilarityFunction simFun)		
+	static public Map2D <PathwayElement, PathwayElement, Integer> getSimTable (PwyDoc oldDoc, PwyDoc newDoc, SimilarityFunction simFun)		
 	{
-		Map <PathwayElement, Map <PathwayElement, Integer>> result =
-			new HashMap <PathwayElement, Map <PathwayElement, Integer>>();
-		
+		Map2D <PathwayElement, PathwayElement, Integer> result =
+			new Map2D <PathwayElement, PathwayElement, Integer>(
+				oldDoc.getElts(),
+				newDoc.getElts()
+				);
+
 		for (PathwayElement oldElt : oldDoc.getElts())
 		{
-			Map <PathwayElement, Integer> row = new HashMap <PathwayElement, Integer>();
-			
 			for (PathwayElement newElt : newDoc.getElts())
 			{
-				row.put (newElt, simFun.getSimScore(oldElt, newElt));
+				result.set (oldElt, newElt, simFun.getSimScore(oldElt, newElt));
 			}
-			result.put (oldElt, row);
 		}
 
 		return result;
@@ -162,10 +164,29 @@ class PwyDoc
 		}		
 	}
 	
+	class MaxScoreComparator implements Comparator<PathwayElement>
+	{
+		Map <PathwayElement, Integer> scores;
+		
+		public MaxScoreComparator (Map<PathwayElement, Integer> scores)
+		{
+			this.scores = scores;
+		}
+
+		public int compare (PathwayElement a, PathwayElement b)
+		{
+			return scores.get (b) - scores.get(a);
+		}
+	}
+	
 	/**
-	   Finds correspondence set with the lowest cost using Dijkstra's algorithm
-	   //TODO: currently not using Dijkstra's algorithm but ad-hoc.
-	   
+	   Finds correspondence set with the lowest cost 
+
+	   Originally I planned to use Dijkstra's algorithm as described
+	   in the xmldiff whitepaper, but it turned out not to be
+	   necessary, and a simple ad-hoc algorithm suffices (and is
+	   probably faster)
+
 	   Call this on the OLD doc
 	   @param newDoc the New doc
 	   @param simFun similarity function
@@ -173,15 +194,64 @@ class PwyDoc
 	*/
 	SearchNode findCorrespondence(PwyDoc newDoc, SimilarityFunction simFun, CostFunction costFun)
 	{
-		SearchNode currentNode = null;
-				
+		/*
+		   Compare each old element with each new element and store
+		   this in a scoring matrix.
+		 */
+		Map2D<PathwayElement, PathwayElement, Integer> scoreMatrix =
+			getSimTable (this, newDoc, simFun);
+
+		/*
+		  We're going to calculate the maximum score for each row in
+		  the table and store the results in this Map.
+		 */		
+		Map <PathwayElement, Integer> maxScores =
+			new HashMap<PathwayElement, Integer>();
+		
 		for (PathwayElement oldElt : elts)
 		{						
 			int maxScore = 0;
 			PathwayElement maxNewElt = null;
 			for (PathwayElement newElt : newDoc.getElts())
 			{
-				// if it's the first node, or if the newElt is not yet in the searchpath
+				int score = scoreMatrix.get (oldElt, newElt);
+				if (score > maxScore)
+				{
+					maxScore = score;
+				}				
+			}
+			maxScores.put (oldElt, maxScore);
+		}
+
+		/*
+		  Now sort the elements descending by their maximum score.
+		  The reasoning is that if the maximum score is high
+		  (e.g. 100), this means that there is really no doubt that
+		  they go together, so we want to get those done first and
+		  then leave the doubtful ones last.
+
+		  That way we prevent that a doubtful pair gets mixed up with
+		  a perfect matching pair.
+		 */
+		Collections.sort (elts, new MaxScoreComparator (maxScores));
+
+		/*
+		  The results are recorded in a linear tree of SearchNodes.
+		  This is perhaps a strange way to record the results, but it
+		  works and it will make it easier to switch to a different
+		  algorithm in the future without modifying the rest of the
+		  project.
+		 */
+		SearchNode currentNode = null;
+		
+		for (PathwayElement oldElt : elts)
+		{
+			int maxScore = 0;
+			PathwayElement maxNewElt = null;
+			for (PathwayElement newElt : newDoc.getElts())
+			{
+				// if it's the first node, or if the newElt is not yet
+				// in the searchpath
 				if (currentNode == null || !currentNode.ancestryHasElt (newElt))
 				{
 					int score = simFun.getSimScore (oldElt, newElt);
@@ -192,20 +262,18 @@ class PwyDoc
 					}
 				}
 			}
-			
-			Logger.log.trace (PwyElt.summary (oldElt) + "/" + PwyElt.summary (maxNewElt) + "/" + maxScore);
-
-			if (maxNewElt != null && maxScore > 49)
+			// we have a cut-off at 60. Below this, an element is
+			// considered to be deleted from the new Pathway
+			if (maxNewElt != null && maxScore >= 60)
 			{
-				// add pairing to search tree.
+				// add this pairing to the search tree.
 				SearchNode newNode = new SearchNode (currentNode, oldElt, maxNewElt, 0);
 				currentNode = newNode;
 			}
-
 		}
 		return currentNode;
 	}
-		
+
 	/**
 	   Output the Diff after the best correspondence has been
 	   calculated.  call this on the OLD doc.
@@ -246,7 +314,7 @@ class PwyDoc
 			// if the newElt doesn't have a corresponding oldElt
 			if (!bothNew.contains(newElt))
 			{
-				// then we have an insertioncurrent.getOldElt()
+				// then we have an insertion
 				out.insert (newElt);
 			}
 		}

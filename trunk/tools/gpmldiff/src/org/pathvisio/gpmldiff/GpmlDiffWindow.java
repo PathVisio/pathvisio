@@ -178,6 +178,7 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 			if(view[1] != null)
 			{
 				view[1].setPctZoom(zoomFactor);
+				glassPane.setPctZoom (view[1].getPctZoom());
 			}
 		}
 		
@@ -240,6 +241,9 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 		pwyPane[PWY_OLD].setPreferredSize (new Dimension (400, 300));
 		contents.add (pwyPane[PWY_NEW]);
 		pwyPane[PWY_NEW].setPreferredSize (new Dimension (400, 300));
+		
+		glassPane.setViewPorts (pwyPane[0].getViewport(), pwyPane[1].getViewport());
+		
 		validate();
 	}
 
@@ -247,24 +251,16 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 	{
 		if (e.getType() == VPathwayEvent.ELEMENT_CLICKED_DOWN)
 		{
-/*			if (e.getSource() == view[PWY_OLD])
-			{
-				System.out.println ("Element clicked in old pathway");
-			}
-			else if (e.getSource() == view[PWY_NEW])
-			{
-				System.out.println ("Element clicked in new pathway");
-			}
-*/			if (outputter != null)
+			if (outputter != null)
 			{
 				PanelOutputter.ModData mod = outputter.modsByElt.get (e.getAffectedElement());
 				if (mod != null)
 				{
-					glassPane.setHint (mod.hints, 0, 0, 0, 0);
+					glassPane.setHint (mod.hints, mod.x1, mod.y1, mod.x2, mod.y2);
 				}
 				else
 				{
-					glassPane.showHint (false);
+					glassPane.clearHint ();
 				}
 			}		
 		}

@@ -146,10 +146,10 @@ class PanelOutputter extends DiffOutputter
 		Rectangle r2 = veltNew.getVBounds();
 
 		ModData mod = new ModData (
-				(int)(r1.getX() + r1.getWidth() / 2),
-				(int)(r1.getY() + r1.getHeight() / 2),
-				(int)(r2.getX() + r2.getWidth() / 2),
-				(int)(r2.getY() + r2.getHeight() / 2),
+			(int)vpwy[PWY_OLD].mFromV(r1.getX() + r1.getWidth() / 2),
+			(int)vpwy[PWY_OLD].mFromV(r1.getY() + r1.getHeight() / 2),
+			(int)vpwy[PWY_NEW].mFromV(r2.getX() + r2.getWidth() / 2),
+			(int)vpwy[PWY_NEW].mFromV(r2.getY() + r2.getHeight() / 2),
 				curHint);
 
 		modifications.add (mod);

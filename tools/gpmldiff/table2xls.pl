@@ -67,7 +67,7 @@ while ($_ = <STDIN>)
 		{
 			$format = $header_format;
 		}
-		elsif ($field >= 50)
+		elsif ($field >= 60)
 		{
 			$format = $data_format2;
 		}

@@ -73,20 +73,76 @@ class BetterSim extends SimilarityFunction
 				
 				switch (newProp) 
 				{
-					case GRAPHID:
-					case GROUPID:
+				case GRAPHID:
+				case GROUPID:
 						max = 600 / oldN;
 						if (oo == null ? no == null : oo.equals (no))
 						{
 							score = max;
 						}
 						break;
-					case CENTERX:
-					case CENTERY:
-					case ENDX:
-					case ENDY:
-					case STARTX:		
-					case STARTY:
+				case STARTX:
+				case ENDX:
+					// disregard x coords, we do the calculations for y coords.
+					break;
+				case STARTY:
+				{					
+					max = 300 / oldN;
+					double dx = newE.getMStartX() - oldE.getMStartX();
+					double dy = newE.getMStartY() - oldE.getMStartY();					
+					double dist = Math.sqrt (dx * dx + dy * dy);
+					if (dist < 1)
+					{
+						score = max;
+					}
+					else if (dist < 10)
+					{
+						score = max * 3 / 4;
+					}
+					else if (dist < 100)
+					{
+						score = max / 2;
+					}
+					else if (dist < 1000)
+					{
+						score = max / 4;
+					}
+					else
+					{
+						score = 0;
+					}
+				}
+					break;
+				case ENDY:
+				{
+					max = 300 / oldN;
+					double dx = newE.getMEndX() - oldE.getMEndX();
+					double dy = newE.getMEndY() - oldE.getMEndY();					
+					double dist = Math.sqrt (dx * dx + dy * dy);
+					if (dist < 1)
+					{
+						score = max;
+					}
+					else if (dist < 10)
+					{
+						score = max * 3 / 4;
+					}
+					else if (dist < 100)
+					{
+						score = max / 2;
+					}
+					else if (dist < 1000)
+					{
+						score = max / 4;
+					}
+					else
+					{
+						score = 0;
+					}
+				}
+					break;
+				case CENTERX:
+				case CENTERY:
 						max = 100 / oldN;
 						double delta = (Double)oo - (Double)no;
 						if (delta < 0.5)
@@ -103,7 +159,14 @@ class BetterSim extends SimilarityFunction
 						}							
 						break;
 					default:
-						max = 100 / oldN;
+						if (oo != null && no != null)
+						{
+							max = 100 / oldN;
+						}
+						else
+						{
+							max = 50 / oldN;
+						}
 						if (oo == null ? no == null : oo.equals (no))
 						{
 							score = max;

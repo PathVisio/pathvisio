@@ -26,11 +26,14 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.BasicStroke;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.font.*;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.geom.GeneralPath;
 import java.text.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +42,8 @@ import java.util.Map;
 import javax.swing.*;
 
 /**
+ * Derived from:
+ * 
  * GlassPane tutorial
  * "A well-behaved GlassPane"
  * http://weblogs.java.net/blog/alexfromsun/
@@ -55,15 +60,28 @@ import javax.swing.*;
 class GlassPane extends JPanel implements AWTEventListener
 {
     private final JFrame frame;
-    private Point point = new Point();
+    private Point mousePos = new Point();
 
 	// baloon margin is both the horizontal and vertical margin.
 	private static final int BALOON_SPACING = 50;
 	private static final int BALOON_MARGIN = 20;
 	private static final Color BALOON_PAINT = Color.YELLOW;
 	private static final int HINT_FONT_SIZE = 11;
+	private static final float WAYPOINT_OFFSET = 200;
+
+	private double zoomFactor = 1.0;
+
 	
 	private boolean alignTop = true;
+
+	void setPctZoom (double value)
+	{
+		zoomFactor = value / 100;
+		if (showHint)
+		{
+			repaint();
+		}
+	}
 	
     public GlassPane(JFrame frame)
 	{
@@ -88,15 +106,58 @@ class GlassPane extends JPanel implements AWTEventListener
 		y1 = _y1;
 		x2 = _x2;
 		y2 = _y2;
-		showHint (true);
+		showHint = true;
+		repaint();
+	}
+
+	private int baloonWidth = 0;
+	private int baloonHeight = 0;
+
+	JViewport oldView;
+	JViewport newView;
+
+	void setViewPorts (JViewport o, JViewport n)
+	{
+		oldView = o;
+		newView = n;
 	}
 
 	/**
+	   Note: don't call getHintShape() before setting baloonwidth and
+	   baloonheight to meaningful values
+	*/
+	private Shape getHintShape()
+	{
+		Point pos = getHintPos();
+		Shape bg = new RoundRectangle2D.Double( 
+			pos.getX(), pos.getY(),
+			baloonWidth, baloonHeight,
+			BALOON_MARGIN, BALOON_MARGIN
+			);
+		return bg;
+	}
+
+	
+	/**
+	   Note: don't call getHintPos() before setting baloonwidth and
+	   baloonheight to meaningful values
+	*/
+	private Point getHintPos()
+	{
+		int xpos = (int)((getSize().getWidth() - baloonWidth) / 2);
+		int ypos = alignTop ? BALOON_SPACING : (int)(getSize().getHeight() - baloonHeight - BALOON_SPACING);
+		return new Point (xpos, ypos);
+	}
+	
+	/**
 	   enable showing of hint.
 	 */
-	void showHint(boolean value)
+	void clearHint()
 	{
-		showHint = value;
+		hint = null;
+		baloonWidth = 0;
+		baloonHeight = 0;
+		showHint = false;
 		repaint();
 	}
 	
@@ -137,26 +198,16 @@ class GlassPane extends JPanel implements AWTEventListener
 			int width = (int)(b0.getWidth() + b1.getWidth());
 			if (width > maxTextWidth) { maxTextWidth = width; }
 		}
-		int baloonWidth = maxTextWidth + 2 * BALOON_MARGIN;
-		int baloonHeight = ypos + 2 * BALOON_MARGIN;
+		baloonWidth = maxTextWidth + 2 * BALOON_MARGIN;
+		baloonHeight = ypos + 2 * BALOON_MARGIN;
 
 		// figure out coordinates that are not in the way of the mouse.
-		int xpos = (int)((getSize().getWidth() - baloonWidth) / 2);
-		ypos = alignTop ? BALOON_SPACING : (int)(getSize().getHeight() - baloonHeight - BALOON_SPACING);
-
-		Shape bg = new RoundRectangle2D.Double (
-				xpos, ypos,
-				baloonWidth, baloonHeight,
-				BALOON_MARGIN, BALOON_MARGIN);
-		if (point != null && bg.contains(point))
+		Shape bg = getHintShape();
+		if (mousePos != null && bg.contains(mousePos))
 		{
 			// toggle alignTop and calculate new shape
 			alignTop = !alignTop;
-			ypos = alignTop ? BALOON_SPACING : (int)(getSize().getHeight() - baloonHeight - BALOON_SPACING);
-			bg = new RoundRectangle2D.Double (
-				xpos, ypos,
-				baloonWidth, baloonHeight,
-				BALOON_MARGIN, BALOON_MARGIN);
+			bg = getHintShape();
 		}
 
 		g2.setPaint (BALOON_PAINT);
@@ -164,28 +215,84 @@ class GlassPane extends JPanel implements AWTEventListener
 		g2.setColor (Color.BLACK);
 		g2.draw (bg);
 
+		Point hintPos = getHintPos();
 		// then do actual drawing
 		for (Map.Entry<TextLayout, Point> entry : layouts.entrySet())
 		{
-			Point p = entry.getValue();
+			Point textPos = entry.getValue();
 			TextLayout l = entry.getKey();
-			l.draw(g2, (float)(xpos + BALOON_MARGIN + p.getX()), (float)(ypos + p.getY() + BALOON_MARGIN));
+			l.draw(
+				g2,
+				(float)(hintPos.getX() + textPos.getX() + BALOON_MARGIN),
+				(float)(hintPos.getY() + textPos.getY() + BALOON_MARGIN));
 		}
 
+		// draw lines
+
+		
+		Point p = relativeToView (x1, y1, oldView);
+		GeneralPath path = new GeneralPath ();
+		Point s = new Point (
+			(int)(hintPos.getX()),
+			(int)(hintPos.getY() + baloonHeight / 2)
+			);
+		path.moveTo ((float)s.getX(), (float)s.getY());
+		path.curveTo (
+			(float)(s.getX() - WAYPOINT_OFFSET),
+			(float)(s.getY()),
+			(float)(p.getX() + WAYPOINT_OFFSET),
+			(float)p.getY(),
+			(float)p.getX(),
+			(float)p.getY()
+			);
+		p = relativeToView (x2, y2, newView);
+		s = new Point (
+			(int)(hintPos.getX() + baloonWidth),
+			(int)(hintPos.getY() + baloonHeight / 2)
+			);
+		path.moveTo ((float)s.getX(), (float)s.getY());
+		path.curveTo (
+			(float)s.getX() + WAYPOINT_OFFSET,
+			(float)s.getY(),
+			(float)p.getX() - WAYPOINT_OFFSET,
+			(float)p.getY(),
+			(float)p.getX(),
+			(float)p.getY());
+			
+		g2.setStroke (new BasicStroke (5));
+		g2.setColor (Color.YELLOW);
+		g2.draw (path);
+		
 		g2.dispose();
     }
 
-    public void eventDispatched(AWTEvent event) {
-        if (event instanceof MouseEvent) {
+	Point relativeToView (double x, double y, JViewport view)
+	{
+		Point p = view.getLocationOnScreen();
+		Point p2 = getLocationOnScreen();
+		Point p3 = view.getViewPosition();
+		int rx = (int)(p.getX() - p2.getX() - p3.getX() + (x * zoomFactor / 15.0));
+		int ry = (int)(p.getY() - p2.getY() - p3.getY() + (y * zoomFactor / 15.0));
+		return new Point (rx, ry);
+	}
+	
+    public void eventDispatched(AWTEvent event)
+	{
+        if (event instanceof MouseEvent)
+		{
             MouseEvent me = (MouseEvent) event;
-            if (!SwingUtilities.isDescendingFrom(me.getComponent(), frame)) {
+            if (!SwingUtilities.isDescendingFrom(me.getComponent(), frame))
+			{
                 return;
             }
-            if (me.getID() == MouseEvent.MOUSE_EXITED && me.getComponent() == frame) {
-                point = null;
-            } else {
+            if (me.getID() == MouseEvent.MOUSE_EXITED && me.getComponent() == frame)
+			{
+                mousePos = null;
+            }
+			else
+			{
                 MouseEvent converted = SwingUtilities.convertMouseEvent(me.getComponent(), me, frame.getGlassPane());
-                point = converted.getPoint();
+                mousePos = converted.getPoint();
 			}
             repaint();
         }
@@ -198,10 +305,12 @@ class GlassPane extends JPanel implements AWTEventListener
      * otherwise we return false to respect the cursors
      * for the underneath components
      */
-    public boolean contains(int x, int y) {
+    public boolean contains(int x, int y)
+	{
         if (getMouseListeners().length == 0 && getMouseMotionListeners().length == 0
                 && getMouseWheelListeners().length == 0
-                && getCursor() == Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)) {
+                && getCursor() == Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+		{
             return false;
         }
         return super.contains(x, y);

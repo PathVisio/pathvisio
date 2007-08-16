@@ -6,6 +6,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.List;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
@@ -22,16 +23,17 @@ public class PathwayTransferable implements Transferable {
 	
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 		XMLOutputter xmlout = new XMLOutputter(Format.getPrettyFormat());
-		String xml = "";
+		Element root = new Element("PathwayElementList");
+		Document doc = new Document(root);
 		for(PathwayElement e : elements) {
 			try {
 				Element xmle = GpmlFormat.createJdomElement(e, GpmlFormat.GPML);
-				xml += xmlout.outputString(xmle) + "\n";
+				root.addContent(xmle);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
 		}
-		return xml;
+		return xmlout.outputString(doc);
 	}
 
 	public DataFlavor[] getTransferDataFlavors() {

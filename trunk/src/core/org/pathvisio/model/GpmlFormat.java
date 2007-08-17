@@ -340,7 +340,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				setAttribute("Pathway", "Organism", root, o.getOrganism());
 
 				updateComments(o, root);
-				updateBiopax(o, root);
 				updateBiopaxRef(o, root);
 				
 				Element graphics = new Element("Graphics", ns);

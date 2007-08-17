@@ -48,6 +48,7 @@ public class PubMedQuery extends DefaultHandler {
 	String parsingElement;
 	String parsingValue;
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+//		System.out.println("New element: " + localName + ", " + attributes.getValue(NAME));
 		parsingElement = localName;
 		parsingName = attributes.getValue(NAME);
 		parsingValue = "";
@@ -55,9 +56,11 @@ public class PubMedQuery extends DefaultHandler {
 	
 	public void characters(char[] ch, int start, int length) throws SAXException {		
 		parsingValue += new String(ch, start, length).trim();
+//		System.out.println("characters: " + new String(ch, start, length).trim());
 	}
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
+//		System.out.println("End element: " + localName);
 		if(parsingElement == ID) {
 			parsingId = parsingValue;
 		}
@@ -75,9 +78,11 @@ public class PubMedQuery extends DefaultHandler {
 			result.setSource(parsingValue);
 		}
 		else if (AUTHOR.equalsIgnoreCase(parsingName)) {
-//			System.out.println("Parsing author: " + value);
+//			System.out.println("Parsed author: " + parsingValue);
 			result.addAuthor(parsingValue);
 		}
+		parsingElement = "";
+		parsingName = "";
 	}
 	
 	static final String ITEM = "Item";

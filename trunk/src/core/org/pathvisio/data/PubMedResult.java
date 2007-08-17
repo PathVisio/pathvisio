@@ -47,7 +47,9 @@ public class PubMedResult {
 	}
 	
 	void addAuthor(String author) {
-		authors.add(author);
+		if(!authors.contains(author)) {
+			authors.add(author);
+		}
 	}
 	
 }

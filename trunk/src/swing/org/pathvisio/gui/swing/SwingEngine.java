@@ -185,25 +185,28 @@ public class SwingEngine {
 	}
 	
 	public boolean exportPathway(final File f) {
-		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
-				"Exporting pathway", pk, false, true);
-				
-		SwingWorker sw = new SwingWorker() {
-			protected Object doInBackground() throws Exception {
-				try {
-					Engine.getCurrent().exportPathway(f);
-					return true;
-				} catch(ConverterException e) {
-					handleConverterException(e.getMessage(), null, e);
-					return false;
-				} finally {
-					pk.finished();
+		if(mayOverwrite(f)) {
+			final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+					"Exporting pathway", pk, false, true);
+
+			SwingWorker sw = new SwingWorker() {
+				protected Object doInBackground() throws Exception {
+					try {
+						Engine.getCurrent().exportPathway(f);
+						return true;
+					} catch(ConverterException e) {
+						handleConverterException(e.getMessage(), null, e);
+						return false;
+					} finally {
+						pk.finished();
+					}
 				}
-			}
-		};
-		
-		return processTask(pk, d, sw);
+			};
+
+			return processTask(pk, d, sw);
+		}
+		return false;
 	}
 
 	public boolean importPathway() {

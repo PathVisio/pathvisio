@@ -12,7 +12,7 @@ wget -O /var/www/wikipathways/sitemap.xml http://www.wikipathways.org/wpi/sitema
 
 # Set the correct permissions for sitemap.xml
 echo "Setting permissions of sitemap.xml to 777"
-chmod 777 /var/www/wikipathwayssitemap.xml
+chmod 777 /var/www/wikipathways/sitemap.xml
 
 # Restore permissions
 echo "Restoring permissions of createSiteMap.php"

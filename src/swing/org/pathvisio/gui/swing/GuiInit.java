@@ -20,6 +20,7 @@ import java.io.PrintStream;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
 
@@ -29,16 +30,21 @@ public class GuiInit {
 		initExporters();
 		try {
 			Logger.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
-		} catch(Exception e) {}
+		} catch(Exception e) {
+			System.err.println("Unable to set log stream to " + GlobalPreference.FILE_LOG.getValue());
+			e.printStackTrace();
+		}
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		
 	}
 	
 	private static void initImporters() {
 		Engine.getCurrent().addPathwayImporter(new MappFormat());
+		Engine.getCurrent().addPathwayImporter(new GpmlFormat());
 	}
 	
 	private static void initExporters() {
 		Engine.getCurrent().addPathwayExporter(new MappFormat());
+		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
 	}
 }

@@ -145,7 +145,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 				highlight((StyledDocument)fb.getDocument());
 			}
 			String replaceSeparators(String authors) {
-				return authors.replaceAll(PublicationXRef.AUTHOR_SEP + " ", PublicationXRef.AUTHOR_SEP + "\n");
+				return authors.replaceAll(PublicationXRef.AUTHOR_SEP, PublicationXRef.AUTHOR_SEP + "\n");
 			}
 			void highlight(StyledDocument doc) {
 				SimpleAttributeSet clean = new SimpleAttributeSet();

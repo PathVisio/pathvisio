@@ -47,6 +47,7 @@ public class AppletMain extends JApplet {
 	public void init() {
 		SwingEngine.setCurrent(new SwingEngine());
 		Engine.setCurrent(new Engine());
+		GuiInit.init();
 		
 		System.out.println("INIT CALLED....");
 		Logger.log.trace("INIT CALLED....");
@@ -71,7 +72,6 @@ public class AppletMain extends JApplet {
 		
 		final RunnableWithProgress r = new RunnableWithProgress() {
 			public Object excecuteCode() {				
-				GuiInit.init();
 				parseArguments();
 
 				try {

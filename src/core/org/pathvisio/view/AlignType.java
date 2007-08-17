@@ -23,7 +23,7 @@ public enum AlignType {
 	RIGHT("Right", "Align right edges", "icons/alignright.gif"),
 	TOP("Top", "Align top edges", "icons/aligntop.gif"),
 	BOTTOM("Bottom", "Align bottom edges", "icons/alignbottom.gif"),
-	WIDTH("Width", "Set common width", "icons/sizeheight.gif"),
+	WIDTH("Width", "Set common width", "icons/sizewidth.gif"),
 	HEIGHT("Height", "Set common height", "icons/sizeheight.gif"),
 	;
 	

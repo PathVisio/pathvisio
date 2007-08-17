@@ -18,20 +18,49 @@ package org.pathvisio.gpmldiff;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
+import java.io.File;
+import org.pathvisio.util.FileUtils;
+import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 
 public class AppletMain extends JApplet
 {
-	String oldPwy, newPwy;
+	GpmlDiffWindow panel;
+	
+	void openUrl(int pwyType, String param)
+	{
+		try
+		{
+			URL url = new URL (param);
+		
+			String protocol = url.getProtocol();
+			File f = null;
+			if(protocol.equals("file"))
+			{
+				f = new File(url.getFile());
+				panel.setFile (pwyType, f);
+			}
+			else
+			{
+				f = File.createTempFile("urlPathway", "." + Engine.PATHWAY_FILE_EXTENSION);
+				FileUtils.downloadFile(url, f);
+				panel.setFile (pwyType, f);
+			}
+		}
+		catch(Exception e)
+		{
+			Logger.log.error ("Exception While downloading url: " + param, e);
+		}		
+	}
 	
 	public void init()
 	{
-		Container contentPane = getContentPane();
-		contentPane.setLayout (new FlowLayout());
-		oldPwy = getParameter ("old");
-		newPwy = getParameter ("new");
-		JLabel friendlyLabel = new JLabel (oldPwy + " " + newPwy);
-		contentPane.add (friendlyLabel);
+		panel = new GpmlDiffWindow(this);
+		setContentPane (panel);
 
+		openUrl (GpmlDiffWindow.PWY_OLD, getParameter ("old"));
+		openUrl (GpmlDiffWindow.PWY_NEW, getParameter ("new"));
 	}
 	
 }

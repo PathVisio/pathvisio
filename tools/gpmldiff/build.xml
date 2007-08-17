@@ -5,15 +5,19 @@
 	<property name="build.dir" value="build"/>
 
     <property name="apidoc.dir" value="apidoc"/>
-	
+	<property name="lib.dir" value="../../lib"/>
+	<property name="diffview.applet.dir" value="applet"/>
+	<property name="diffview.applet.dest" value="/home/martijn/www/wikipathways"/>
+	<property name="applet.class.path" value="lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar"/>
 	<path id="project.class.path">
 		<pathelement location="${build.dir}"/>
-		<fileset dir="../../lib">
+		<fileset dir="${lib.dir}">
 		        <include name="**/*.jar"/>
 		</fileset>
 	</path>
 
 	<target name="prepare">
+	    <mkdir dir="${diffview.applet.dir}"/>
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>	
 	</target>
@@ -21,6 +25,35 @@
 	<target name="clean" description="Remove all generated files.">
 		<delete dir="${build.dir}"/>
 		<delete dir="${apidoc.dir}"/>
+	    <delete dir="${diffview.applet.dir}"/>
+	</target>
+
+	<target name="applet" depends="compile" description="Generate applet jar file">
+		<jar jarfile="diffview.jar">
+			<fileset dir="${build.dir}" includes="**/*.class"/>
+			<fileset dir="." includes="../../GPML.xsd"/>
+            <manifest>
+            	 <attribute name="Class-Path" value="${applet.class.path}"/>
+            </manifest>
+		</jar>
+
+	    <mkdir dir="${diffview.applet.dir}/lib"/>
+		<copy file="diffview.jar" toDir="${diffview.applet.dir}"/>
+		<copy toDir="${diffview.applet.dir}/lib">
+			<fileset dir="${lib.dir}">
+				<include name="jdom.jar"/>
+				<include name="swing-worker-1.1.jar"/>
+				<include name="derbyclient.jar"/>
+			</fileset>
+		</copy>
+		<signjar alias="PV" lazy = "true" 
+			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
+			<fileset dir="${diffview.applet.dir}" includes="**/*.jar"/>
+		</signjar>
+		<!-- copy to /var/www/wikipathways -->
+		<copy toDir="${diffview.applet.dest}">
+			<fileset dir="${diffview.applet.dir}" includes="**/*.*" />
+		</copy>
 	</target>
 	
 	<target name="compile-soft" depends="prepare" description="Compile only modified sources">
@@ -35,18 +68,20 @@
 			   debug="true">
 		  <classpath refid="project.class.path"/>
 		</javac>
-		<javac srcdir="../../src/v2"
-			   includes="**"
+		
+		<javac srcdir="../../src/v1"
+			   includes="Globals.java"
 			   destdir="${build.dir}"
 			   debug="true">
 		  <classpath refid="project.class.path"/>
 		</javac>
+<!--
 		<javac srcdir="../../src/swt"
 			   includes="**"
 			   destdir="${build.dir}"
 			   debug="true">
 		  <classpath refid="project.class.path"/>
-		</javac>
+		</javac> !-->
 		<javac srcdir="../../src/swing"
 			   includes="**"
 			   destdir="${build.dir}"
@@ -58,7 +93,7 @@
 	<target name="compile" depends="prepare" description="Compile all sources">
 		<javac srcdir="../../src/"
 			    debug="true"
-			   includes="core/**,v2/**,swing/**,swt/**"
+			   includes="core/**,swing/**,v1/**/Globals.java"
 			   destdir="${build.dir}">
 		  <classpath refid="project.class.path"/>
 		</javac>

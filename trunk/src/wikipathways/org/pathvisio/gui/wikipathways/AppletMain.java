@@ -87,7 +87,7 @@ public class AppletMain extends JApplet {
 				} catch(Exception e) {
 					Logger.log.error("Error while starting editor", e);
 					JOptionPane.showMessageDialog(
-							AppletMain.this, e.getClass() + ": " + e.getMessage(), "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
+							AppletMain.this, e.getClass() + ": See error logg for details", "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 				};
 				return null;
 			}

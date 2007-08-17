@@ -17,28 +17,37 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.File;
+import javax.swing.*;
 
 class GpmlDiffGui
 {
+	private static final int WINDOW_WIDTH = 1000;
+	private static final int WINDOW_HEIGHT = 500;
+
 	public static void main (String[] argv)
-	{		
-		GpmlDiffWindow window = new GpmlDiffWindow();
+	{
+		JFrame window = new JFrame();
+		GpmlDiffWindow panel = new GpmlDiffWindow(window);
+		panel.addFileActions();
 		if (argv.length > 0)
 		{
 			File f = new File (argv[0]);
 			if (f.exists())
 			{				
-				window.setFile(GpmlDiffWindow.PWY_OLD, f);
+				panel.setFile(GpmlDiffWindow.PWY_OLD, f);
 				if (argv.length > 1)
 				{
 					f = new File (argv[1]);
 					if (f.exists())
 					{
-						window.setFile (GpmlDiffWindow.PWY_NEW, f);
+						panel.setFile (GpmlDiffWindow.PWY_NEW, f);
 					}
 				}
 			}
 		}
+		window.setSize (WINDOW_WIDTH, WINDOW_HEIGHT);
+		window.setContentPane(panel);
+		window.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 		window.setVisible (true);
 	}
 }

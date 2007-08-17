@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gpmldiff;
 
+import java.awt.Dimension;
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -59,7 +60,7 @@ import javax.swing.*;
  */
 class GlassPane extends JPanel implements AWTEventListener
 {
-    private final JFrame frame;
+    private final JPanel frame;
     private Point mousePos = new Point();
 
 	// baloon margin is both the horizontal and vertical margin.
@@ -83,7 +84,7 @@ class GlassPane extends JPanel implements AWTEventListener
 		}
 	}
 	
-    public GlassPane(JFrame frame)
+    public GlassPane(JPanel frame)
 	{
         super(null);
         this.frame = frame;
@@ -229,7 +230,12 @@ class GlassPane extends JPanel implements AWTEventListener
 
 		// draw lines
 
+		Shape oldClip = g2.getClip();
 		
+		g2.setStroke (new BasicStroke (5));
+		g2.setColor (Color.YELLOW);
+
+		clipView (g2, oldView);
 		Point p = relativeToView (x1, y1, oldView);
 		GeneralPath path = new GeneralPath ();
 		Point s = new Point (
@@ -245,7 +251,12 @@ class GlassPane extends JPanel implements AWTEventListener
 			(float)p.getX(),
 			(float)p.getY()
 			);
+		g2.draw (path);
+
+		g2.setClip(oldClip);
+		clipView (g2, newView);
 		p = relativeToView (x2, y2, newView);
+		path = new GeneralPath ();
 		s = new Point (
 			(int)(hintPos.getX() + baloonWidth),
 			(int)(hintPos.getY() + baloonHeight / 2)
@@ -259,8 +270,6 @@ class GlassPane extends JPanel implements AWTEventListener
 			(float)p.getX(),
 			(float)p.getY());
 			
-		g2.setStroke (new BasicStroke (5));
-		g2.setColor (Color.YELLOW);
 		g2.draw (path);
 		
 		g2.dispose();
@@ -268,12 +277,42 @@ class GlassPane extends JPanel implements AWTEventListener
 
 	Point relativeToView (double x, double y, JViewport view)
 	{
+		// TODO: same can be achieved simple with SwingUtilities.convertRectangle
 		Point p = view.getLocationOnScreen();
 		Point p2 = getLocationOnScreen();
 		Point p3 = view.getViewPosition();
 		int rx = (int)(p.getX() - p2.getX() - p3.getX() + (x * zoomFactor / 15.0));
 		int ry = (int)(p.getY() - p2.getY() - p3.getY() + (y * zoomFactor / 15.0));
 		return new Point (rx, ry);
+	}
+
+	void clipView (Graphics2D g2d, JViewport view)
+	{
+		Point p = view.getLocationOnScreen();
+		Dimension d = view.getSize();
+		Point p2 = getLocationOnScreen();
+		// TODO: same can be achieved simple with SwingUtilities.convertPoint
+		g2d.setClip (
+			(int)(p.getX() - p2.getX()),
+			(int)(p.getY() - p2.getY()),
+			(int)(d.getWidth()),
+			(int)(d.getHeight())
+			);
+	}
+
+	/**
+	   Test if the mouse touches last known shape location, and
+	   repaints if so.
+	 */
+	private void testMouseCursor()
+	{
+		Shape bg = getHintShape();
+		if (mousePos != null && bg.contains(mousePos))
+		{
+			// toggle alignTop
+			alignTop = !alignTop;
+			repaint();
+		}
 	}
 	
     public void eventDispatched(AWTEvent event)
@@ -291,10 +330,10 @@ class GlassPane extends JPanel implements AWTEventListener
             }
 			else
 			{
-                MouseEvent converted = SwingUtilities.convertMouseEvent(me.getComponent(), me, frame.getGlassPane());
+                MouseEvent converted = SwingUtilities.convertMouseEvent(me.getComponent(), me, this);
                 mousePos = converted.getPoint();
+				testMouseCursor();
 			}
-            repaint();
         }
     }
 

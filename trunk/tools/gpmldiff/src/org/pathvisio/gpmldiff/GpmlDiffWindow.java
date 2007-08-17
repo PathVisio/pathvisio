@@ -19,7 +19,7 @@ package org.pathvisio.gpmldiff;
 import java.io.File;
 import java.io.IOException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import javax.swing.*;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -28,15 +28,14 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.swing.VPathwaySwing;
+import org.pathvisio.gui.swing.WrapLayout;
 
-class GpmlDiffWindow extends JFrame implements VPathwayListener
+class GpmlDiffWindow extends JPanel implements VPathwayListener
 {
-	private static final int WINDOW_WIDTH = 1000;
-	private static final int WINDOW_HEIGHT = 500;
 
 	private JScrollPane[] pwyPane = new JScrollPane[2];
-	private JMenuBar menubar;
-
+	private JToolBar toolbar = null;
+	
 	public static final int PWY_OLD = 0;
 	public static final int PWY_NEW = 1;
 
@@ -101,9 +100,9 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 	private class LoadPwyAction extends AbstractAction
 	{
 		private int pwyType;
-		private JFrame parent;
+		private JPanel parent;
 		
-		public LoadPwyAction (JFrame window, int value)
+		public LoadPwyAction (JPanel window, int value)
 		{
 			super ("Load " + ((value == PWY_OLD) ? "old" : "new")  + " pathway");
 			String s = (value == PWY_OLD) ? "old" : "new";
@@ -126,11 +125,11 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 			}
 		}
 	}
-
+/*
 	class CloseAction extends AbstractAction
 	{
-		JFrame parent;
-		public CloseAction(JFrame _parent)
+		JPanel parent;
+		public CloseAction(JPanel _parent)
 		{
 			super("Close");
 			parent = _parent;
@@ -142,7 +141,7 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 			System.exit(0);
 		}
 	}
-
+*/
 	class CenterAction extends AbstractAction
 	{
 		public CenterAction()
@@ -192,54 +191,90 @@ class GpmlDiffWindow extends JFrame implements VPathwayListener
 		}
 	}
 
-	void addMenuActions()
-	{
-		JMenu filemenu = new JMenu ("File");
-		filemenu.add (new LoadPwyAction(this, PWY_OLD));
-		filemenu.add (new LoadPwyAction(this, PWY_NEW));
-		filemenu.add (new CloseAction(this));
+	void addToolbarActions()
+	{		
+		toolbar.setLayout (new WrapLayout (1, 1));
 
-		JMenu viewmenu = new JMenu ("View");
-		viewmenu.add (new ZoomAction(VPathway.ZOOM_TO_FIT));
-		viewmenu.add (new ZoomAction(30));
-		viewmenu.add (new ZoomAction(50));
-		viewmenu.add (new ZoomAction(75));
-		viewmenu.add (new ZoomAction(100));
-		viewmenu.add (new ZoomAction(120));
-		viewmenu.addSeparator();
-		viewmenu.add (new CenterAction());
-		
-		menubar.add (filemenu);
-		menubar.add (viewmenu);					  
+		toolbar.add(new JLabel("Zoom:", JLabel.LEFT));
+		JComboBox combo = new JComboBox(new Object[] {
+				new ZoomAction(VPathway.ZOOM_TO_FIT),
+				new ZoomAction(20),
+				new ZoomAction(30),
+				new ZoomAction(50),
+				new ZoomAction(75),
+				new ZoomAction(100),
+				new ZoomAction(120),
+				new ZoomAction(150) });
+		combo.setMaximumSize(combo.getPreferredSize());
+		combo.setEditable(true);
+		combo.setSelectedIndex(5); // 100%
+		combo.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				JComboBox combo = (JComboBox) e.getSource();
+				Object s = combo.getSelectedItem();
+				if (s instanceof ZoomAction)
+				{
+					((ZoomAction) s).actionPerformed(e);
+				}
+				else if (s instanceof String)
+				{
+					String zs = (String) s;
+					try
+					{
+						double zf = Double.parseDouble(zs);
+						new ZoomAction(zf).actionPerformed(e);
+					}
+					catch (Exception ex)
+					{
+						// Ignore bad input
+					}
+				}
+			}
+		});
+		toolbar.add (combo);
+
+
+//		toolbar.addSeparator();
+//		toolbar.add (new CenterAction());
+	}
+
+
+	void addFileActions()
+	{
+		toolbar.addSeparator();
+		toolbar.add (new LoadPwyAction(this, PWY_OLD));
+		toolbar.add (new LoadPwyAction(this, PWY_NEW));
 	}
 	
-	GpmlDiffWindow ()
+	GpmlDiffWindow (RootPaneContainer parent)
 	{
-		super ();
+		setLayout (new BorderLayout ());
 
-		setSize (WINDOW_WIDTH, WINDOW_HEIGHT);
-		Container contents = getContentPane();
-		contents.setLayout (new BoxLayout(contents, BoxLayout.X_AXIS));
-		setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		JPanel subpanel = new JPanel();
+ 		subpanel.setLayout (new BoxLayout(subpanel, BoxLayout.X_AXIS));
+		add (subpanel, BorderLayout.CENTER);
+		
+		toolbar = new JToolBar();
+		addToolbarActions();
+		add(toolbar, BorderLayout.PAGE_START);
 
 		glassPane = new GlassPane(this);
-		setGlassPane (glassPane);
+		parent.setGlassPane (glassPane);
 		glassPane.setVisible(true);
 		Toolkit.getDefaultToolkit().addAWTEventListener(
 			glassPane, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
 		
-		menubar = new JMenuBar();
-		addMenuActions ();
-		setJMenuBar (menubar);
 
 		for (int i = 0; i < 2; ++i)
 		{
 			pwyPane[i] = new JScrollPane();
 		}
 
-		contents.add (pwyPane[PWY_OLD]);
+		subpanel.add (pwyPane[PWY_OLD]);
 		pwyPane[PWY_OLD].setPreferredSize (new Dimension (400, 300));
-		contents.add (pwyPane[PWY_NEW]);
+		subpanel.add (pwyPane[PWY_NEW]);
 		pwyPane[PWY_NEW].setPreferredSize (new Dimension (400, 300));
 		
 		glassPane.setViewPorts (pwyPane[0].getViewport(), pwyPane[1].getViewport());

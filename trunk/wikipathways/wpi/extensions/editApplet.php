@@ -44,6 +44,15 @@ function createJsArray($array) {
 	return substr($jsa, 0, strlen($jsa) - 2) . ')';
 }
 
+function increase_version($old) {
+	//echo("increasing version: $old\n");
+	$numbers = explode('.', $old);
+	$last = hexdec($numbers[count($numbers) - 1]);
+	$numbers[count($numbers) - 1] = dechex(++$last);
+	//echo("increased to: " . implode('.', $numbers));
+	return implode('.', $numbers);
+}
+
 function makeAppletFunctionCall($pathway, $idReplace, $idClick, $new) {
 	global $wgUser;
 	if($new) {
@@ -52,12 +61,52 @@ function makeAppletFunctionCall($pathway, $idReplace, $idClick, $new) {
 		$pwUrl = $pathway->getFileURL(FILETYPE_GPML);
 	}
 
+	//Read cache jars and update version
+	$jardir = '/var/www/wikipathways/wpi/applet';
+	$cache_archive = explode(' ', file_get_contents("$jardir/cache_archive"));
+	$version_file = explode("\n", file_get_contents('/var/www/wikipathways/wpi/applet/cache_version'));
+	$cache_version = array();
+	if($version_file) {
+		foreach($version_file as $ver) {
+			$jarver = explode("|", $ver);
+			if($jarver && count($jarver) == 3) {
+				$cache_version[$jarver[0]] = array('ver'=>$jarver[1], 'mod'=>$jarver[2]);
+			}
+		}
+	}
+	foreach($cache_archive as $jar) {
+		$mod = filemtime("$jardir/$jar");
+		if($ver = $cache_version[$jar]) {
+			if($ver['mod'] < $mod) {
+				$realversion = increase_version($ver['ver']);
+			} else {
+				$realversion = $ver['ver'];
+			}
+		} else {
+			$realversion = '0.0.0.0';
+		}
+		$cache_version[$jar] = array('ver'=>$realversion, 'mod'=>$mod);
+		$archive_string .= $jar . ', ';
+		$version_string .= $realversion . ', ';
+	}
+	$version_string = substr($version_string, 0, -2);
+	$archive_string = substr($archive_string, 0, -2);
+
+	//Write new cache version file
+	foreach(array_keys($cache_version) as $jar) {
+		$out .= $jar . '|' . $cache_version[$jar]['ver'] . '|' . $cache_version[$jar]['mod'] . "\n";
+	}
+	writefile("$jardir/cache_version", $out);
+
 	$args = array(
 		'rpcUrl' => "http://" . $_SERVER['HTTP_HOST'] . "/wpi/wpi_rpc.php",
 		'pwName' =>     $pathway->name(),
 		'pwSpecies' => $pathway->species(),
-		'pwUrl' => $pwUrl
+		'pwUrl' => $pwUrl,
+		'cache_archive' => $archive_string,
+		'cache_version' => $version_string
 	);
+
 	if($wgUser && $wgUser->isLoggedIn()) {
 		$args = array_merge($args, array('user' => $wgUser->getRealName()));
 	}

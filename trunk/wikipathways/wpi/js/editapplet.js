@@ -12,12 +12,12 @@ function doApplet(idImg, idApplet, keys, values) {
 	image.style.height = initial_applet_width;
 	//Clear all existing content
 	image.innerHTML = '';
-	image.setAttribute('class', 'thumbinner');
+	setClass(image, 'thumbinner');
 
 	//First create a new div for the applet and add it to the idImg
 	appletDiv = document.createElement('div');
 	appletDiv.id = idApplet;
-	appletDiv.setAttribute('class', 'internal');
+	setClass(appletDiv, 'internal');
 	appletDiv.style.width = '100%';
 	appletDiv.style.height = '95%';
 	appletDiv.style.clear = 'both';
@@ -31,7 +31,7 @@ function doApplet(idImg, idApplet, keys, values) {
 
 	//Create resize hint
 	resize = document.createElement('div');
-	resize.innerHTML = '<img src="/skins/common/images/resize.png';
+	resize.innerHTML = '<img src="/skins/common/images/resize.png"/>';
 	resize.style.position = 'absolute';
 	resize.style.bottom = '0';
 	resize.style.right = '0';
@@ -53,6 +53,11 @@ function doApplet(idImg, idApplet, keys, values) {
 	new Resizeable(idImg, {bottom: 10, right: 10, left: 0, top: 0});
 
 	ao.load( idApplet );
+}
+
+function setClass(elm, cname) {
+	elm.setAttribute('class', cname);
+	elm.setAttribute('className', cname);
 }
 
 //Manually (doesn't work well, applet is started twice on firefox

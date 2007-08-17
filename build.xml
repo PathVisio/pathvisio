@@ -201,9 +201,9 @@ public class Revision
 	<target name="jar-wikipathways" depends="compile-wikipathways" description="Generate wikipathways jar file">
 		<jar jarfile="wikipathways.jar">
 			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
-            <manifest>
+            <!--<manifest>
             	 <attribute name="Class-Path" value="${wikipathways.class.path}"/>
-            </manifest>
+            </manifest>-->
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
 		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar">
@@ -211,10 +211,9 @@ public class Revision
 			<fileset dir="." includes="icons/*"/>
 			<!--<fileset dir="." includes="images/*"/>-->
 			<fileset dir="." includes="GPML.xsd"/>
-			<!--<fileset dir="." includes="MAPPTmpl.gtp"/>-->
+			<fileset dir="." includes="MAPPTmpl.gtp"/>
 			<!--<fileset dir="." includes="biopax-level2.owl"/>-->
-		</jar>
-		
+		</jar>		
 		<jar jarfile="wikipathways-swt.jar">
 			<fileset dir="${build.wikipathways.swt.dir}" includes="**/*.class"/>
 		</jar>
@@ -292,6 +291,7 @@ public class Revision
 		<copy toDir="${wikipathways.applet.dest}">
 			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />
 		</copy>
+		<echo file="${wikipathways.applet.dest}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
 	</target>
 
 	<target name="wikipathways-all" depends="wikipathways-swt, wikipathways-applet">

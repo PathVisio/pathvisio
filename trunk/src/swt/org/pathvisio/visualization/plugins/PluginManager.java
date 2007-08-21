@@ -118,7 +118,7 @@ public abstract class PluginManager {
 	public static void loadPlugins() throws Throwable {	
 		Logger.log.trace("> Loading visualization plugins");
 		Enumeration<URL> resources = 
-			SwtEngine.class.getClassLoader().getResources(".");
+			SwtEngine.class.getClassLoader().getResources("org/pathvisio/visualization/plugins");
         while (resources.hasMoreElements()) {
         	URL url = resources.nextElement();
         	Logger.log.trace("visualization.plugins package found in: " + url);

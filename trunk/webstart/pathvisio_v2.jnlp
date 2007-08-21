@@ -9,7 +9,7 @@
 	</information>
 	<resources>
 		 <j2se version="1.5+"/>
-		 <jar href="lib/pathvisio_v2.jar"/>
+		 <jar href="pathvisio_v2.jar"/>
 		 <jar href="lib/resources.jar"/>
 		 <jar href="lib/plugins.jar"/>
 		 <jar href="lib/R-resources.jar"/>

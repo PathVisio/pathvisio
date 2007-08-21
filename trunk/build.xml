@@ -93,7 +93,8 @@ public class Revision
 	<target name="compile-v1" depends="prepare,resources-jar" description="Compile all sources">
 		<javac srcdir="."
 			includes="src/v1/**,src/core/**,src/swt/**,src/swing/**"
-			destdir="${build.v1.dir}">
+			destdir="${build.v1.dir}"
+			   debug="true">
 			<classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>

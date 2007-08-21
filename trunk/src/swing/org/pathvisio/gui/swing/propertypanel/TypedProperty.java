@@ -354,7 +354,7 @@ public class TypedProperty implements Comparable {
 	private static ComboRenderer orientationRenderer = new ComboRenderer(OrientationType.getNames());
 	private static ComboRenderer organismRenderer = new ComboRenderer(Organism.latinNames().toArray());
 	private static FontRenderer fontRenderer = new FontRenderer();
-	private static ComboRenderer shapeTypeRenderer = new ComboRenderer(ShapeType.getNames(), ShapeType.values());
+	private static ComboRenderer shapeTypeRenderer = new ComboRenderer(ShapeType.getNames(), ShapeType.getValues());
 	
 	private static ColorEditor colorEditor = new ColorEditor();
 	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);

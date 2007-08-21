@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Test of MIM Shapes" Data-Source="GenMAPP 2.0" Version="20070821" Author="Martijn van Iersel">
+  <Graphics BoardWidth="5827.393890352942" BoardHeight="4401.249201532171" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <Line>
+    <Graphics Color="000000">
+      <Point x="131.61284252033923" y="2819.6116559649186" Head="mim-binding" />
+      <Point x="2214.6761141872375" y="1354.5219185433282" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="385.64494882117964" y="3055.9164523232384" Head="mim-conversion" />
+      <Point x="2468.708220488079" y="1590.8267149016472" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="639.6770551220209" y="3292.221248681557" Head="mim-stimulation" />
+      <Point x="2722.740326788919" y="1827.1315112599675" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="893.7091614228615" y="3528.5260450398778" Head="mim-necessary-stimulation" />
+      <Point x="2976.7724330897595" y="2063.4363076182904" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="1147.741267723704" y="3764.830841398199" Head="mim-catalysis" />
+      <Point x="3230.8045393905977" y="2299.7411039766125" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="1401.7733740245444" y="4001.13563775652" Head="mim-cleavage" />
+      <Point x="3484.83664569144" y="2536.0459003349347" />
+    </Graphics>
+  </Line>
+  <Shape Type="mim-phosphorylated" GraphId="f62">
+    <Graphics FillColor="000000" Color="000000" CenterX="5147.630809411766" CenterY="1567.3115039215688" Width="300.0" Height="300.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="mim-degradation" GraphId="c35">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5147.630809411766" CenterY="2106.393621568626" Width="300.0" Height="300.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="mim-interaction" GraphId="fd2">
+    <Graphics FillColor="000000" Color="000000" CenterX="5147.630809411766" CenterY="2610.3182098039224" Width="300.0" Height="300.0" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

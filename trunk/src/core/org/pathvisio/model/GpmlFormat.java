@@ -486,7 +486,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	String type = getAttribute("Line.Graphics.Point", "Head", p1);
     	
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
-    	o.setLineType (LineType.getByGpmlName(type));
+    	o.setLineType (LineType.fromName(type));
 	}
 	
 	private static void updateLineData(PathwayElement o, Element e) throws ConverterException

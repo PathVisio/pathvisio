@@ -120,7 +120,6 @@ public class Line extends Graphics
 			g.draw(l);
 			if (h != null) g.draw(h.getShape());
 		}
-
 	}
 	
 	private void drawHead(Graphics2D g, ArrowShape head, Color c)
@@ -133,6 +132,8 @@ public class Line extends Graphics
 			case ArrowShape.OPEN:
 				g.setPaint (Color.WHITE);
 				g.fill (head.getShape());				
+				g.setColor (c);
+				g.draw (head.getShape());
 				break;
 			case ArrowShape.CLOSED:
 				g.setPaint (c);
@@ -157,36 +158,7 @@ public class Line extends Graphics
 		double xe = end.getX();
 		double ye = end.getY();
 
-		ArrowShape h = null;
-		switch (type) {
-			case ARROW:				
-				//h = getArrowHead(xs, ys, xe, ye, vFromM(ARROWWIDTH), vFromM(ARROWHEIGHT));
-				h = ShapeRegistry.getArrow ("Arrow");
-				break;
-			case TBAR:	
-				//h = getTBar(xs, ys, xe, ye, vFromM(TBARWIDTH), vFromM(TBARHEIGHT));
-				h = ShapeRegistry.getArrow ("TBar");
-				break;
-			case LIGAND_ROUND:	
-				//h = getLRound(xe, ye, vFromM(LRDIAM));
-				h = ShapeRegistry.getArrow ("LigandRound");
-				break;
-			case RECEPTOR_ROUND:
-				//h = getRRound(xs, ys, xe, ye, vFromM(RRDIAM));
-				h = ShapeRegistry.getArrow ("ReceptorRound");
-				break;
-			case RECEPTOR: //TODO: implement receptor
-				h = ShapeRegistry.getArrow ("Receptor");
-				break;
-			case RECEPTOR_SQUARE:
-				//h = getReceptor(xs, ys, xe, ye, vFromM(RECEPWIDTH), vFromM(RECEPHEIGHT));
-				h = ShapeRegistry.getArrow ("ReceptorSquare");
-				break;
-			case LIGAND_SQUARE:
-				//h = getLigand(xs, ys, xe, ye, vFromM(LIGANDWIDTH), vFromM(LIGANDHEIGHT));
-				h = ShapeRegistry.getArrow ("LigandSquare");			   				
-				break;
-		}
+		ArrowShape h = ShapeRegistry.getArrow (type.getName());
 				
 		if(h != null)
 		{

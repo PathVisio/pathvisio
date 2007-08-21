@@ -57,7 +57,9 @@ public class ShapeType
 	private String name;
 	private String mappName;
 
-	// integer value always equals the index of this item in the values array.
+	// integer value always equals the index of this item in the
+	// values array.
+	// Warning: may be removed in the future
 	private int value;
 	
 	/**
@@ -182,5 +184,9 @@ public class ShapeType
 		return values.toArray(new ShapeType[0]);
 	}
 
+	public String toString()
+	{
+		return name;
+	}
 }
 

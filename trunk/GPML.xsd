@@ -396,8 +396,8 @@
 									<!-- Note: technically points in the middle can have a head,
 									but this will be ignored for most types.
 									!-->
-									<xsd:attribute name="Head" default="Line">
-										<xsd:simpleType>
+									<xsd:attribute name="Head" default="Line" type="xsd:string">
+<!--							        <xsd:simpleType>
 											<xsd:restriction base="xsd:string">
 												<xsd:enumeration value="Line"/>
 												<xsd:enumeration value="Arrow"/>
@@ -409,6 +409,7 @@
 												<xsd:enumeration value="TBar"/>
 											</xsd:restriction>
 										</xsd:simpleType>
+										!-->
 									</xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
@@ -557,7 +558,8 @@
 
 			</xsd:sequence>
 
-			<xsd:attribute name="Type" use="required">
+			<xsd:attribute name="Type" use="required" type="xsd:string">
+			<!--
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Rectangle"/>
@@ -576,6 +578,7 @@
 						<xsd:enumeration value="CellA"/>
 					</xsd:restriction>
 				</xsd:simpleType>
+				!-->
 			</xsd:attribute>
 			
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />

@@ -612,7 +612,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		Map<String,LineType> result = new HashMap<String,LineType>();
 		result.put ("DottedLine", LineType.LINE);
 		result.put ("DottedArrow", LineType.ARROW);
-		for (LineType l : LineType.values())
+		for (LineType l : LineType.getValues())
 		{
 			result.put (l.getMappName(), l);
 		}

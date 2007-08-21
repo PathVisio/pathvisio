@@ -28,17 +28,28 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("Pentagon", getRegularPolygon (5, 10, 10) );
 		ShapeRegistry.registerShape ("Hexagon", getRegularPolygon (6, 10, 10) );
 		ShapeRegistry.registerShape ("Triangle", getRegularPolygon (3, 10, 10) );
-		ShapeRegistry.registerShape ("OrganA", getPluggableShape (ShapeType.ORGANA));
-		ShapeRegistry.registerShape ("OrganB", getPluggableShape (ShapeType.ORGANB));
-		ShapeRegistry.registerShape ("OrganC", getPluggableShape (ShapeType.ORGANC));
-		ShapeRegistry.registerShape ("CellA", getPluggableShape (ShapeType.CELLA));
-		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (ShapeType.RIBOSOME));
-		ShapeRegistry.registerShape ("ProteinB", getPluggableShape (ShapeType.PROTEINB));
+		ShapeRegistry.registerShape ("OrganA", getPluggableShape (ORGANA));
+		ShapeRegistry.registerShape ("OrganB", getPluggableShape (ORGANB));
+		ShapeRegistry.registerShape ("OrganC", getPluggableShape (ORGANC));
+		ShapeRegistry.registerShape ("CellA", getPluggableShape (CELLA));
+		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (RIBOSOME));
+		ShapeRegistry.registerShape ("ProteinB", getPluggableShape (PROTEINB));
         //TODO: Vesicle Shape not correct yet.
-        //ShapeRegistry.registerShape ("Vesicle", getPluggableShape (ShapeType.VESICLE));
+        //ShapeRegistry.registerShape ("Vesicle", getPluggableShape (VESICLE));
 		
 	}
 
+	/**
+	   these constants are internal, only for the switch statement below.
+	   There is no relation with the constants defined in ShapeType.
+	 */
+	private static final int ORGANA = 0;
+	private static final int ORGANB = 1;
+	private static final int ORGANC = 2;
+	private static final int CELLA = 3;
+	private static final int RIBOSOME = 4;
+	private static final int PROTEINB = 5;
+	private static final int VESICLE = 6;
 
 	/**
 	   Internal, 
@@ -46,7 +57,7 @@ class GenMAPPShapes
 	   The shapes are constructed as a general path with arbitrary size
 	   and then resized to fit w and h parameters.
 	 */
-	static private java.awt.Shape getPluggableShape (ShapeType st)
+	static private java.awt.Shape getPluggableShape (int st)
 	{
 		GeneralPath path = new GeneralPath();
 		switch (st)

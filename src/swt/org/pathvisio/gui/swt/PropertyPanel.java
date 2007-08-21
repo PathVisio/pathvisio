@@ -369,7 +369,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				case BOOLEAN:
 					return ((Boolean)value) ? 1 : 0;
 				case SHAPETYPE:
-					return (((ShapeType)value).ordinal());
+					return (((ShapeType)value).getOrdinal());
 				case LINETYPE:
 					return (((LineType)value).ordinal());
 				case COLOR:

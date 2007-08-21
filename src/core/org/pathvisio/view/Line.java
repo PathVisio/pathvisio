@@ -45,18 +45,7 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * This class implements and handles a line
  */
 public class Line extends Graphics
-{
-	private static final int ARROWHEIGHT = 65;
-	private static final int ARROWWIDTH = 140;
-	private static final int TBARHEIGHT = 225;
-	private static final int TBARWIDTH = 15;
-	private static final int LRDIAM = 175;
-	private static final int RRDIAM = LRDIAM + 50;
-	private static final int LIGANDWIDTH = 125;
-	private static final int LIGANDHEIGHT = 175;
-	private static final int RECEPWIDTH = LIGANDWIDTH + 30;
-	private static final int RECEPHEIGHT = LIGANDHEIGHT + 30;
-	
+{	
 	private static final long serialVersionUID = 1L;
 	
 	private List<VPoint> points;
@@ -96,9 +85,12 @@ public class Line extends Graphics
 	{
 		Color c;
 		
-		if(isSelected()) {
+		if(isSelected())
+		{
 			c = selectColor;
-		} else {
+		}
+		else
+		{
 			c = gdata.getColor(); 
 		}
 		g.setColor(c);
@@ -107,7 +99,8 @@ public class Line extends Graphics
 		if (ls == LineStyle.SOLID) {
 			g.setStroke(new BasicStroke());
 		}
-		else if (ls == LineStyle.DASHED) { 
+		else if (ls == LineStyle.DASHED)
+		{ 
 			g.setStroke	(new BasicStroke (
 				  1, 
 				  BasicStroke.CAP_SQUARE,
@@ -116,38 +109,46 @@ public class Line extends Graphics
 		}			
 
 		Line2D l = getVLine();
-		Shape h = getVHead(l, gdata.getLineType());
+		ArrowShape h = getVHead(l, gdata.getLineType());
 		g.draw(l);
-		drawHead(g, h, gdata.getLineType());
+		drawHead(g, h, c);
 		if (isHighlighted())
 		{
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
 			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
 			g.draw(l);
-			if(h != null) g.draw(h);
+			if (h != null) g.draw(h.getShape());
 		}
 
 	}
 	
-	private void drawHead(Graphics2D g, Shape head, LineType type) {
-		if(head != null) {
+	private void drawHead(Graphics2D g, ArrowShape head, Color c)
+	{
+		if(head != null)
+		{
 			g.setStroke(new BasicStroke());
-			switch(type) {
-			case ARROW:
-			case LIGAND_ROUND:
-			case LIGAND_SQUARE:
-				g.fill(head);
-			case RECEPTOR:
-			case RECEPTOR_ROUND:
-			case RECEPTOR_SQUARE:
-			case TBAR:
-				g.draw(head);
+			switch (head.getFillType())
+			{
+			case ArrowShape.OPEN:
+				g.setPaint (Color.WHITE);
+				g.fill (head.getShape());				
+				break;
+			case ArrowShape.CLOSED:
+				g.setPaint (c);
+				g.fill (head.getShape());				
+				break;
+			case ArrowShape.WIRE:
+				g.setColor (c);
+				g.draw (head.getShape());
+				break;
+			default:
+				assert (false);
 			}
 		}
 	}
 	
-	protected Shape getVHead(Line2D l, LineType type) {
+	protected ArrowShape getVHead(Line2D l, LineType type) {
 		Point2D start = l.getP1();
 		Point2D end = l.getP2();
 		
@@ -155,38 +156,52 @@ public class Line extends Graphics
 		double ys = start.getY();
 		double xe = end.getX();
 		double ye = end.getY();
-		
-		Shape h = null;
+
+		ArrowShape h = null;
 		switch (type) {
 			case ARROW:				
-				h = getArrowHead(xs, ys, xe, ye, vFromM(ARROWWIDTH), vFromM(ARROWHEIGHT));
+				//h = getArrowHead(xs, ys, xe, ye, vFromM(ARROWWIDTH), vFromM(ARROWHEIGHT));
+				h = ShapeRegistry.getArrow ("Arrow");
 				break;
 			case TBAR:	
-				h = getTBar(xs, ys, xe, ye, vFromM(TBARWIDTH), vFromM(TBARHEIGHT));
+				//h = getTBar(xs, ys, xe, ye, vFromM(TBARWIDTH), vFromM(TBARHEIGHT));
+				h = ShapeRegistry.getArrow ("TBar");
 				break;
 			case LIGAND_ROUND:	
-				h = getLRound(xe, ye, vFromM(LRDIAM));
+				//h = getLRound(xe, ye, vFromM(LRDIAM));
+				h = ShapeRegistry.getArrow ("LigandRound");
 				break;
 			case RECEPTOR_ROUND:
-				h = getRRound(xs, ys, xe, ye, vFromM(RRDIAM));
+				//h = getRRound(xs, ys, xe, ye, vFromM(RRDIAM));
+				h = ShapeRegistry.getArrow ("ReceptorRound");
 				break;
 			case RECEPTOR: //TODO: implement receptor
+				h = ShapeRegistry.getArrow ("Receptor");
+				break;
 			case RECEPTOR_SQUARE:
-				h = getReceptor(xs, ys, xe, ye, vFromM(RECEPWIDTH), vFromM(RECEPHEIGHT));
+				//h = getReceptor(xs, ys, xe, ye, vFromM(RECEPWIDTH), vFromM(RECEPHEIGHT));
+				h = ShapeRegistry.getArrow ("ReceptorSquare");
 				break;
 			case LIGAND_SQUARE:
-				h = getLigand(xs, ys, xe, ye, vFromM(LIGANDWIDTH), vFromM(LIGANDHEIGHT));
+				//h = getLigand(xs, ys, xe, ye, vFromM(LIGANDWIDTH), vFromM(LIGANDHEIGHT));
+				h = ShapeRegistry.getArrow ("LigandSquare");			   				
 				break;
 		}
 				
-		if(h != null) {
+		if(h != null)
+		{
 			AffineTransform f = new AffineTransform();
+			double scaleFactor = vFromM (1.0);
 			f.rotate(Math.atan2 (ye - ys, xe - xs), xe, ye);
-			h = f.createTransformedShape(h);
+			f.translate (xe, ye);
+			f.scale (scaleFactor, scaleFactor);		   
+			Shape sh = f.createTransformedShape(h.getShape());
+			h = new ArrowShape (sh, h.getFillType());
 		}
 		return h;
 	}
-	
+
+	/*
 	private Shape getArrowHead(double xs, double ys, double xe, double ye, double w, double h) {
 		int[] xpoints = new int[] { (int)xe, (int)(xe - w), (int)(xe - w) };
 		int[] ypoints = new int[] { (int)ye, (int)(ye - h), (int)(ye + h) };
@@ -218,20 +233,21 @@ public class Line extends Graphics
 	private Shape getLigand(double xs, double ys, double xe, double ye, double w, double h) {
 		return new Rectangle2D.Double(xe - w, ye - h/2, w, h);
 	}
+	*/
 	
 //	TODO: create the real outline, by creating a shape that
 //  represents the whole line...use getArrow() etc.
 	protected Shape getVOutline()
 	{
 		Line2D l = getVLine();
-		Shape h = getVHead(l, gdata.getLineType());
+		ArrowShape h = getVHead(l, gdata.getLineType());
 		//Wider stroke for line, for 'fuzzy' matching
 		Shape ls = new BasicStroke(5).createStrokedShape(l);
 		if(h == null) {
 			return ls;
 		} else {
 			Area line = new Area(ls);
-			line.add(new Area(h));
+			line.add(new Area(h.getShape()));
 			return line;
 		}
 	}
@@ -327,43 +343,43 @@ public class Line extends Graphics
 		return points.get(points.size() - 1);
 	}
 	
-	public int getVCenterX() {
-		// TODO Auto-generated method stub
+	public int getVCenterX()
+	{
 		double start = gdata.getMStart().getX();
 		double end = gdata.getMEnd().getX();
 		return (int)vFromM(start + (end - start) / 2);
 	}
 	
-	public int getVCenterY() {
-		// TODO Auto-generated method stub
+	public int getVCenterY()
+	{
 		double start = gdata.getMStart().getY();
 		double end = gdata.getMEnd().getY();
 		return (int)vFromM(start + (end - start) / 2);
 	}
 	
-	public int getVLeft() {
-		// TODO Auto-generated method stub
+	public int getVLeft()
+	{
 		double start = gdata.getMStart().getX();
 		double end = gdata.getMEnd().getX();
 		return (int)vFromM(Math.min(start, end));
 	}
 	
-	public int getVWidth() {
-		// TODO Auto-generated method stub
+	public int getVWidth()
+	{
 		double start = gdata.getMStart().getX();
 		double end = gdata.getMEnd().getX();
 		return (int)vFromM(Math.abs(start-end));
 	}
 	
-	public int getVHeight() {
-		// TODO Auto-generated method stub
+	public int getVHeight()
+	{
 		double start = gdata.getMStart().getY();
 		double end = gdata.getMEnd().getY();
 		return (int)vFromM(Math.abs(start-end));
 	}	
 	
-	public int getVTop() {
-		// TODO Auto-generated method stub
+	public int getVTop()
+	{
 		double start = gdata.getMStart().getY();
 		double end = gdata.getMEnd().getY();
 		return (int)vFromM(Math.min(start, end));

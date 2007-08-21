@@ -439,32 +439,38 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					unmapLegendType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.SHAPE:
-					
+				case ObjectType.SHAPE:					
 					unmapNotesAndComments (o, row);
-					switch (o.getShapeType())
+					ShapeType s = o.getShapeType();
+					if (s == ShapeType.BRACE)
 					{
-						case BRACE:
-							unmapBraceType(o, row);
-							break;
-						case OVAL:
-						case ARC:
-						case RECTANGLE:					
-							unmapShapeType(o, row);
-							break;
-						case CELLA:
-						case RIBOSOME:
-						case ORGANA:
-						case ORGANB:
-						case ORGANC:
-							unmapFixedShapeType(o, row);
-							break;
-						case PENTAGON: //TODO: incorrect separation
-						case HEXAGON:
-						case TRIANGLE:
-						case PROTEINB:
-						case VESICLE:							
-							unmapComplexShapeType(o, row);
+						unmapBraceType(o, row);
+					}
+					else if (s == ShapeType.OVAL ||
+							 s == ShapeType.ARC ||
+							 s == ShapeType.RECTANGLE)
+					{
+						unmapShapeType(o, row);
+					}
+					else if (s == ShapeType.CELLA ||
+							 s == ShapeType.RIBOSOME ||
+							 s == ShapeType.ORGANA ||
+							 s == ShapeType.ORGANB ||
+							 s == ShapeType.ORGANC)
+					{
+						unmapFixedShapeType(o, row);
+					}
+					else if (s == ShapeType.PENTAGON ||
+							 s == ShapeType.HEXAGON ||
+							 s == ShapeType.TRIANGLE ||
+							 s == ShapeType.PROTEINB ||
+							 s == ShapeType.VESICLE)
+					{
+						unmapComplexShapeType(o, row);
+					}
+					else
+					{
+						throw new ConverterException ("This Pathway uses Shapes not supported by GenMAPP");
 					}
 					result.add(row);
 					break;
@@ -879,7 +885,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapShapeType (PathwayElement o, String[] mappObject)
     {    	
     	ShapeType shapeType = o.getShapeType();
-    	mappObject[colType] = ShapeType.toMappName(shapeType);
+    	mappObject[colType] = shapeType.getMappName();
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		unmapShape_half (o, mappObject);
     	else
@@ -904,29 +910,31 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
         mapCenter (o, mappObject);
         
-        switch (o.shapeType)
-        {
-        case CELLA:
+        if (o.shapeType == ShapeType.CELLA)
+		{
         	o.setRotation (-1.308997);
         	o.setMWidth(1500);
         	o.setMHeight(375);
-        	break;
-        case RIBOSOME:
+        }
+		else if (o.shapeType == ShapeType.RIBOSOME)
+		{
         	o.setMWidth (600);
         	o.setMHeight (600);
-        	break;
-        case ORGANA:
+		}
+		else if (o.shapeType == ShapeType.ORGANA)
+		{			
         	o.setMWidth (500);
         	o.setMHeight (2000);
-        	break;        	
-        case ORGANB:
+		}
+		else if (o.shapeType == ShapeType.ORGANB)
+		{
         	o.setMWidth (500);
         	o.setMHeight (2000);
-        	break;        	
-        case ORGANC:
+		}
+		else if (o.shapeType == ShapeType.ORGANC)
+		{
         	o.setMWidth (600);
         	o.setMHeight (600);
-        	break;
         }
         return o;        
     }
@@ -934,7 +942,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapFixedShapeType (PathwayElement o, String[] mappObject)
     {    	
     	ShapeType shapeType = o.getShapeType();
-    	mappObject[colType] = ShapeType.toMappName(shapeType);
+    	mappObject[colType] = shapeType.getMappName();
     	
     	if (shapeType == ShapeType.CELLA)
     	{
@@ -978,7 +986,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapComplexShapeType (PathwayElement o, String[] mappObject)
     {   
     	ShapeType shapeType = o.getShapeType();
-    	mappObject[colType] = ShapeType.toMappName(shapeType);
+    	mappObject[colType] = shapeType.getMappName();
  		
     	if (shapeType == ShapeType.TRIANGLE)
     	{

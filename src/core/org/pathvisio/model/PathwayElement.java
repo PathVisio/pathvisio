@@ -531,10 +531,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setFillColor((Color) value);
 			break;
 		case SHAPETYPE:
-			if(value instanceof ShapeType) {
+			if(value instanceof ShapeType)
+			{
 				setShapeType((ShapeType)value);
-			} else {
-				setShapeType(ShapeType.values()[(Integer) value]);
+			}
+			else
+			{
+				setShapeType(ShapeType.fromOrdinal ((Integer) value));
 			}
 			break;
 		case ROTATION:

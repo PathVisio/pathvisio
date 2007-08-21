@@ -24,41 +24,80 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import org.pathvisio.debug.Logger;
 
+/**
+   The Shape registry stores all arrow heads and shapes
+
+   at this moment the shape registry initializes itself,
+   by calling  registerShape() on BasicShapes, GenMAPPShapes and MIMShapes.
+ */
+
 class ShapeRegistry
 {
-	private static Map <String, Shape> registry = new HashMap <String, Shape>();
-
 	private static Shape defaultShape = null;
+	private static ArrowShape defaultArrow = null;
+
+	private static Map <String, Shape> shapeMap = new HashMap <String, Shape>();
+	private static Map <String, ArrowShape> arrowMap = new HashMap <String, ArrowShape>();
 
 	static
 	{
 		GeneralPath temp = new GeneralPath();
-		temp.moveTo (0,0);
-		temp.lineTo (10,0);
-		temp.lineTo (10,10);
-		temp.lineTo (0,10);
+		temp.moveTo (-5,-5);
+		temp.lineTo (5,-5);
+		temp.lineTo (5,5);
+		temp.lineTo (-5,5);
 		temp.closePath ();
-		temp.moveTo (2,2);
-		temp.lineTo (8,8);
-		temp.moveTo (2,8);
-		temp.lineTo (8,2);		
+		temp.moveTo (-3,-3);
+		temp.lineTo (3,3);
+		temp.moveTo (-3,3);
+		temp.lineTo (3,-3);		
 		defaultShape = temp;
-
+		defaultArrow = new ArrowShape (temp, ArrowShape.CLOSED);
+		
 		BasicShapes.registerShapes();
 		GenMAPPShapes.registerShapes();
+		MIMShapes.registerShapes();
 	}
-	
-	/**
+
+     /**
 	   Add a shape to the registry.
 	 */
-	public static void registerShape (String key, Shape sh)
+	static public void registerShape (String key, Shape sh)
 	{
-		registry.put (key, sh);
+		shapeMap.put (key, sh);
 	}
-	
+
+	static public void registerArrow (String key, Shape sh, int fillType)
+	{
+		arrowMap.put (key, new ArrowShape (sh, fillType));
+	}
+
+	/**
+	   Returns a named arrow head. The shape is normalized so that it
+	   fits with a line that goes along the positive x-axis.  The tip
+	   of the arrow head is in 0,0.
+	 */
+	public static ArrowShape getArrow(String name)
+	{
+		ArrowShape sh = arrowMap.get (name);
+		if (sh == null)
+		{
+			sh = defaultArrow;
+		}
+		return sh;
+		// TODO: here we return a reference to the object on the
+		// registry itself we should really return a clone, although
+		// in practice this is not a problem since we do a affine
+		// transform immediately after.
+	}
+
+	/**
+	   Returns a named shape, scaled in such a way that it has a
+	   bounding rect equal to x, y, w, h.
+	 */
 	public static Shape getShape (String name, double x, double y, double w, double h)
 	{
-		Shape sh = registry.get (name);
+		Shape sh = shapeMap.get (name);
 		if (sh == null)
 		{
 			sh = defaultShape;

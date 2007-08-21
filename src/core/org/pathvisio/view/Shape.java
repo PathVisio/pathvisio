@@ -24,12 +24,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement;
 
 /**
  * This class represents a GMMLShape, which can be a 
  * rectangle or ellips, depending of its type.
+ * //TODO: rename this class to something other than Shape,
+ * because it is confusing with java.awt.Shape
  */
 public class Shape extends GraphicsShape
 {
@@ -45,11 +47,14 @@ public class Shape extends GraphicsShape
 		setHandleLocation();
 	}
 		
-	public int getNaturalOrder() {
-		switch(gdata.getShapeType()) {
-		case BRACE:
+	public int getNaturalOrder()
+	{
+		if (gdata.getShapeType() == ShapeType.BRACE)
+		{		
 			return VPathway.DRAW_ORDER_BRACE;
-		default:
+		}
+		else
+		{
 			return VPathway.DRAW_ORDER_SHAPE;
 		}
 	}
@@ -64,28 +69,28 @@ public class Shape extends GraphicsShape
 		} 
 
 		java.awt.Shape shape = getFillShape();
-		
-		g.setColor(linecolor);
-		g.draw(shape);
-		
-		switch(gdata.getShapeType())
-		{		
-		case ARC:
-		case BRACE:
+
+		if (gdata.getShapeType() == ShapeType.BRACE ||
+			gdata.getShapeType() == ShapeType.ARC)
+		{
 			// don't fill arcs or braces
 			// TODO: this exception should disappear in the future,
 			// when we've made sure all pathways on wikipathways have
 			// transparent arcs and braces
-			break;			
-		default:
+		}
+		else
+		{
 			// fill the rest
-			if(!gdata.isTransparent()) {
+			if(!gdata.isTransparent())
+			{
 				g.setColor(fillcolor);
 				g.fill(shape);
 			}
-			break;
 		}
-		
+
+		g.setColor(linecolor);
+		g.draw(shape);
+
 		if (isHighlighted())
 		{
 			Color hc = getHighlightColor();
@@ -105,54 +110,11 @@ public class Shape extends GraphicsShape
 		int cy = getVCenterY();
 		
 		java.awt.Shape s = null;
+
+		s = ShapeRegistry.getShape (
+			gdata.getShapeType().getName(),
+			x, y, w, h);
 		
-		switch(gdata.getShapeType()) {
-		case OVAL:
-			s = ShapeRegistry.getShape ("Oval", x, y, w, h);
-			break;
-		case ARC:
-			s = ShapeRegistry.getShape ("Arc", x, y, w, h);
-			break;
-		case BRACE:
-			s = ShapeRegistry.getShape ("Brace", x, y, w, h);
-			break;
-		case RECTANGLE:
-			s = ShapeRegistry.getShape ("Rectangle", x, y, w, h);
-			break;
-		case PENTAGON:
-			s = ShapeRegistry.getShape ("Pentagon", x, y, w, h);
-			break;
-		case HEXAGON:
-			s = ShapeRegistry.getShape ("Hexagon", x, y, w, h);
-			break;
-		case TRIANGLE:
-			s = ShapeRegistry.getShape ("Triangle", x, y, w, h);
-			break;
-		case CELLA:
-			s = ShapeRegistry.getShape ("CellA", x, y, w, h);
-			break;
-		case ORGANA:
-			s = ShapeRegistry.getShape ("OrganA", x, y, w, h);
-			break;
-		case ORGANB:
-			s = ShapeRegistry.getShape ("OrganB", x, y, w, h);
-			break;
-		case ORGANC:
-			s = ShapeRegistry.getShape ("OrganC", x, y, w, h);
-			break;
-		case RIBOSOME:
-			s = ShapeRegistry.getShape ("Ribosome", x, y, w, h);
-			break;
-		case PROTEINB:
-			s = ShapeRegistry.getShape ("ProteinB", x, y, w, h);
-			break;
-		case VESICLE:
-			s = ShapeRegistry.getShape ("Vesicle", x, y, w, h);
-			break;
-		default:
-			s = ShapeRegistry.getShape ("Default", x, y, w, h);
-			break;
-		}
 		AffineTransform t = new AffineTransform();
 		t.rotate(gdata.getRotation(), cx, cy);
 		return t.createTransformedShape(s);

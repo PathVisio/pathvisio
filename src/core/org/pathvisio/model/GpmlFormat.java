@@ -742,7 +742,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	{
 		if(e != null) 
 		{
-			e.setAttribute("Type", ShapeType.toGpmlName(o.getShapeType()));
+			e.setAttribute("Type", o.getShapeType().getName());
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			if(jdomGraphics !=null) 
 			{

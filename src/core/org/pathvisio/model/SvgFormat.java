@@ -201,37 +201,38 @@ public class SvgFormat implements PathwayExporter
 		rot.setAttribute("transform", "rotate(" + r + ")");
 		Element e = null;	
 		
-		switch (o.getShapeType())
+		if (o.getShapeType() == ShapeType.OVAL)
 		{
-			case OVAL:
-				e = new Element("ellipse", nsSVG);
-				e.setAttribute("cx", "0");
-				e.setAttribute("cy", "0");
-				e.setAttribute("rx", "" + toPixel(o.getMWidth()/2));
-				e.setAttribute("ry", "" + toPixel(o.getMHeight()/2));
-				break;
-			case ARC:
-				e = new Element("path", nsSVG);
-				e.setAttribute("d", "M " + -w/2 + " 0 " + " a " + w/2 + " " + h/2 + " 0 0 0 " + w + " 0");
-				break;
-			case BRACE:
-				e = new Element("path", nsSVG);
-				e.setAttribute(
-						"d", "M " + -w/2 + " " + h/2 + " q 0 " + -h/2 + " " + h/2 + " " + -h/2 + " " +
-						"L " + -h/2 + " 0 " +
-						"Q 0 0 0 " + -h/2 + " " +
-						"Q 0 0 " + h/2 + " 0 " + 
-						"L " + (w/2 - h/2) + " 0 " +
-						"q " + h/2 + " 0 " + h/2 + " " + h/2
+			e = new Element("ellipse", nsSVG);
+			e.setAttribute("cx", "0");
+			e.setAttribute("cy", "0");
+			e.setAttribute("rx", "" + toPixel(o.getMWidth()/2));
+			e.setAttribute("ry", "" + toPixel(o.getMHeight()/2));
+		}
+		else if (o.getShapeType() == ShapeType.ARC)
+		{
+			e = new Element("path", nsSVG);
+			e.setAttribute("d", "M " + -w/2 + " 0 " + " a " + w/2 + " " + h/2 + " 0 0 0 " + w + " 0");
+		}
+		else if (o.getShapeType() == ShapeType.BRACE)
+		{
+			e = new Element("path", nsSVG);
+			e.setAttribute(
+				"d", "M " + -w/2 + " " + h/2 + " q 0 " + -h/2 + " " + h/2 + " " + -h/2 + " " +
+				"L " + -h/2 + " 0 " +
+				"Q 0 0 0 " + -h/2 + " " +
+				"Q 0 0 " + h/2 + " 0 " + 
+				"L " + (w/2 - h/2) + " 0 " +
+				"q " + h/2 + " 0 " + h/2 + " " + h/2
 				);
-				break;
-			default:
+		}
+		else
+		{
 				e = new Element("rect", nsSVG);
 				e.setAttribute("x", "" + -w/2);
 				e.setAttribute("y", "" + -h/2);
 				e.setAttribute("width", "" + toPixel(o.getMWidth()));
 				e.setAttribute("height", "" + toPixel(o.getMHeight()));
-				break;
 		}
 		mapColor(e, o);
 		rot.addContent(e);

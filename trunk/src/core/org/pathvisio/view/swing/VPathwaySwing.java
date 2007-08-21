@@ -103,6 +103,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		setMaximumSize(size);
 		setMinimumSize(size);
 		setPreferredSize(size);
+//		validate();
 	}
 
 	public void setVSize(int w, int h) {

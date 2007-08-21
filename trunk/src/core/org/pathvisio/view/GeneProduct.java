@@ -45,7 +45,7 @@ public class GeneProduct extends GraphicsShape
 		setHandleLocation();
 	}
 		
-	public int getDrawingOrder() {
+	public int getNaturalOrder() {
 		return VPathway.DRAW_ORDER_GENEPRODUCT;
 	}
 	

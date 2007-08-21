@@ -318,8 +318,9 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		mappInfo[icolNotes] = mi.findComment("GenMAPP notes");
 		mappInfo[icolRemarks] = mi.findComment("GenMAPP remarks");		
 		
-		mappInfo[icolBoardWidth] = "" + mi.getMBoardWidth();
-		mappInfo[icolBoardHeight] = "" + mi.getMBoardHeight();
+		double[] size = mi.getMBoardSize();
+		mappInfo[icolBoardWidth] = "" + size[0];
+		mappInfo[icolBoardHeight] = "" + size[1];
 		mappInfo[icolWindowWidth] = "" + mi.getWindowWidth();
 		mappInfo[icolWindowHeight] = "" + mi.getWindowHeight();
 		
@@ -362,8 +363,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		o.addComment(row[icolNotes], "GenMAPP notes");
 		o.addComment(row[icolRemarks], "GenMAPP remarks");
 
-		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]));
-		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]));
+		//Board size will be calculated
+//		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]));
+//		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]));
+		
 		o.setWindowWidth(Double.parseDouble(row[icolWindowWidth]));
 		o.setWindowHeight(Double.parseDouble(row[icolWindowHeight]));
 		

@@ -325,7 +325,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 
 		List<Element> elementList = new ArrayList<Element>();
     	
-		for (PathwayElement o : data.getDataObjects())
+		List<PathwayElement> pathwayElements = data.getDataObjects();
+		Collections.sort(pathwayElements);
+		for (PathwayElement o : pathwayElements)
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
@@ -345,8 +347,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
 				
-				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" + o.getMBoardWidth());
-				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + o.getMBoardHeight());
+				double[] size = o.getMBoardSize();
+				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" +size[0]);
+				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + size[1]);
 				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
 				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
 			}
@@ -804,8 +807,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 		
 		Element g = e.getChild("Graphics", e.getNamespace());
-		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
-		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
+		
+		//Board size will be calculated
+//		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
+//		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
 		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
 		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));	
 	}

@@ -78,7 +78,7 @@ public class Line extends Graphics
 		}
 	}
 	
-	public int getDrawingOrder() 
+	public int getNaturalOrder() 
 	{
 		return VPathway.DRAW_ORDER_LINE;
 	}

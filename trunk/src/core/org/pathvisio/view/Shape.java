@@ -45,7 +45,7 @@ public class Shape extends GraphicsShape
 		setHandleLocation();
 	}
 		
-	public int getDrawingOrder() {
+	public int getNaturalOrder() {
 		switch(gdata.getShapeType()) {
 		case BRACE:
 			return VPathway.DRAW_ORDER_BRACE;

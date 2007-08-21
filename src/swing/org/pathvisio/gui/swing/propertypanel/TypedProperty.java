@@ -347,7 +347,7 @@ public class TypedProperty implements Comparable {
 	}
 
 	private static ColorRenderer colorRenderer = new ColorRenderer();
-	private static ComboRenderer lineTypeRenderer = new ComboRenderer(LineType.getNames(), LineType.values());
+	private static ComboRenderer lineTypeRenderer = new ComboRenderer(LineType.getNames(), LineType.getValues());
 	private static ComboRenderer lineStyleRenderer = new ComboRenderer(LineStyle.getNames());
 	private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSources.dataSources);
 	private static CheckBoxRenderer checkboxRenderer = new CheckBoxRenderer();

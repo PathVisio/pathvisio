@@ -560,7 +560,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			if(value instanceof LineType) {
 				setLineType((LineType)value);
 			} else {
-				setLineType(LineType.values()[(Integer) value]);
+				setLineType(LineType.fromOrdinal ((Integer) value));
 			}
 			break;
 		case LINESTYLE:

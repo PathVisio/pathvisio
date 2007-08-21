@@ -51,9 +51,20 @@ class ShapeRegistry
 		temp.lineTo (3,3);
 		temp.moveTo (-3,3);
 		temp.lineTo (3,-3);		
+		defaultArrow = new ArrowShape (temp, ArrowShape.OPEN);
+
+		temp = new GeneralPath();
+		temp.moveTo (0,0);
+		temp.lineTo (10,0);
+		temp.lineTo (10,10);
+		temp.lineTo (0,10);
+		temp.closePath ();
+		temp.moveTo (2,2);
+		temp.lineTo (8,8);
+		temp.moveTo (2,8);
+		temp.lineTo (8,2);
 		defaultShape = temp;
-		defaultArrow = new ArrowShape (temp, ArrowShape.CLOSED);
-		
+
 		BasicShapes.registerShapes();
 		GenMAPPShapes.registerShapes();
 		MIMShapes.registerShapes();

@@ -289,8 +289,8 @@ public class SvgFormat implements PathwayExporter
 		if(markers.contains(id)) return id;
 		
 		String c = rgb2String(color);
-		switch(type) {
-		case ARROW:
+		if (type == LineType.ARROW)
+		{
 			marker = new Element("marker", nsSVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 10");
@@ -304,8 +304,9 @@ public class SvgFormat implements PathwayExporter
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", c);
 			marker.addContent(e);
-			break;
-		case TBAR:
+		}
+		else if (type == LineType.TBAR)
+		{
 			marker = new Element("marker", nsSVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 1 15");
@@ -314,7 +315,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "8");
 			marker.setAttribute("markerWidth", "2");
 			marker.setAttribute("markerHeight", "20");
-			e = new Element("rect", nsSVG);
+			Element e = new Element("rect", nsSVG);
 			e.setAttribute("x", "1");
 			e.setAttribute("y", "1");
 			e.setAttribute("width", "1");
@@ -322,8 +323,9 @@ public class SvgFormat implements PathwayExporter
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", c);
 			marker.addContent(e);
-			break;
-		case LIGAND_ROUND:
+		}
+		else if (type == LineType.LIGAND_ROUND)
+		{
 			marker = new Element("marker", nsSVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 10");
@@ -332,7 +334,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "5");
 			marker.setAttribute("markerWidth", "10");
 			marker.setAttribute("markerHeight", "10");
-			e = new Element("ellipse", nsSVG);
+			Element e = new Element("ellipse", nsSVG);
 			e.setAttribute("cx", "5");
 			e.setAttribute("cy", "5");
 			e.setAttribute("rx", "5");
@@ -340,8 +342,9 @@ public class SvgFormat implements PathwayExporter
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", c);
 			marker.addContent(e);
-			break;
-		case RECEPTOR_ROUND:
+		}
+		else if (type == LineType.RECEPTOR_ROUND)
+		{
 			marker = new Element("marker", nsSVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 10");
@@ -350,13 +353,14 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "5");
 			marker.setAttribute("markerWidth", "15");
 			marker.setAttribute("markerHeight", "15");
-			e = new Element("path", nsSVG);
+			Element e = new Element("path", nsSVG);
 			e.setAttribute("d", "M 10 0 A 5 5 0 0 0 10 10");
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", "none");
 			marker.addContent(e);
-			break;
-		case RECEPTOR_SQUARE:
+		}
+		else if (type == LineType.RECEPTOR_SQUARE)
+		{
 			marker = new Element("marker", nsSVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 15");
@@ -365,13 +369,14 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "7.5");
 			marker.setAttribute("markerWidth", "15");
 			marker.setAttribute("markerHeight", "15");
-			e = new Element("path", nsSVG);
+			Element e = new Element("path", nsSVG);
 			e.setAttribute("d", "M 10 0 L 0 0  L 0 15 L 10 15");
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", "none");
 			marker.addContent(e);
-			break;
-		case LIGAND_SQUARE:
+		}
+		else if (type == LineType.LIGAND_SQUARE)
+		{
 			marker = new Element("marker", nsSVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 15");
@@ -380,7 +385,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "7.5");
 			marker.setAttribute("markerWidth", "10");
 			marker.setAttribute("markerHeight", "10");
-			e = new Element("rect", nsSVG);
+			Element e = new Element("rect", nsSVG);
 			e.setAttribute("x", "1");
 			e.setAttribute("y", "1");
 			e.setAttribute("width", "10");
@@ -388,7 +393,6 @@ public class SvgFormat implements PathwayExporter
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", c);
 			marker.addContent(e);
-			break;
 		}
 		
 		if(marker != null) {

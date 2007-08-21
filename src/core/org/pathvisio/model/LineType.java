@@ -20,55 +20,131 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.pathvisio.view.MIMShapes;
 
-public enum LineType 
+public class LineType 
 {
-	LINE ("Line", "Line"),
-	ARROW ("Arrow", "Arrow"),
-	TBAR ("TBar", "TBar"),
-	RECEPTOR ("Receptor", "Receptor"),
-	LIGAND_SQUARE ("LigandSq", "LigandSquare"),
-	RECEPTOR_SQUARE ("ReceptorSq", "ReceptorSquare"),
-	LIGAND_ROUND ("LigandRd", "LigandRound"),
-	RECEPTOR_ROUND ("ReceptorRd", "ReceptorRound");
-	
-	private LineType (String _mappName, String _gpmlName)
+	private static final Map<String, LineType> mappMappings = new HashMap<String, LineType>();
+	private static final Map<String, LineType> nameMappings = new HashMap<String, LineType>();
+	private static final List<LineType> values = new ArrayList<LineType>();
+
+	public static final LineType LINE = new LineType("Line", "Line");
+	public static final LineType ARROW = new LineType("Arrow", "Arrow");
+	public static final LineType TBAR = new LineType("TBar", "TBar");
+	public static final LineType RECEPTOR = new LineType("Receptor", "Receptor");
+	public static final LineType LIGAND_SQUARE = new LineType("LigandSquare","LigandSq");
+	public static final LineType RECEPTOR_SQUARE = new LineType("ReceptorSquare", "ReceptorSq");
+	public static final LineType LIGAND_ROUND = new LineType("LigandRound", "LigandRd");
+	public static final LineType RECEPTOR_ROUND = new LineType("ReceptorRound", "ReceptorRd");
+
+	static
 	{
-		mappName = _mappName; 
-		gpmlName = _gpmlName;
+		//TODO: we do this for now to make sure that this is
+		//initialized at the right time, before the combobox requests
+		//the list of names.
+		MIMShapes.registerLineTypes();
+	}
+
+	/**
+	   mappName may be null for new shapes that don't have a .mapp
+	   equivalent.
+	 */
+	private LineType (String name, String mappName)
+	{
+		if (name == null) { throw new NullPointerException(); }
+		
+		this.mappName = mappName; 
+		this.name = name;
+
+		if (mappName != null)
+		{
+			mappMappings.put (mappName, this);
+		}
+		nameMappings.put (name, this);
+
+		// assign an integer value
+		value = values.size();
+		// and add it tot hte array list.
+		values.add (this);
+	}
+
+	/**
+	   Create an object and add it to the list.
+
+	   For extending the enum.
+	 */
+	public static LineType create (String name, String mappName)
+	{
+		if (nameMappings.containsKey (name))
+		{
+			return nameMappings.get (name);
+		}
+		else
+		{
+			return new LineType (name, mappName);
+		}
 	}
 	
 	private String mappName;
-	private String gpmlName;
+	private String name;
+
+	private int value;
 	
-	String getMappName() { return mappName; }
-	String getGpmlName() { return gpmlName; }
+	public String getMappName() { return mappName; }
 	
-	static private Map<String, LineType> gpmlMapping = initGpmlMapping();
+	/** @deprecated, use getName instead. */
+	public String getGpmlName() { return getName(); }
 	
-	static private Map<String, LineType> initGpmlMapping()
+	public String getName() { return name; }
+
+	/**
+	   @deprecated
+	 */
+	static LineType fromGpmlName(String value)
 	{
-		Map<String, LineType> result = new HashMap<String, LineType>();
-		for (LineType l : LineType.values())
+		return fromName (value);
+	}
+
+	static LineType fromName(String value)
+	{
+		return nameMappings.get (value);
+	}
+
+	/**
+	   The ordinal value of this. Not guaranteed to be the same between
+	   application runs, only to be used for temporary lookup such as
+	   in comboboxes.
+	   If you need something that is stable, use the name instead.
+
+	   //TODO: we should make change comboboxes so they don't need
+	   integer values anymore
+	   and get rid of this.
+	 */
+	public int getOrdinal () { return value; }
+
+	public static LineType fromOrdinal (int value)
+	{
+		return values.get (value);
+	}
+
+	static public String[] getNames()
+	{
+		String[] result = new String [values.size()];
+
+		for (int i = 0; i < values.size(); ++i)
 		{
-			result.put (l.getGpmlName(), l);
+			result[i] = values.get(i).getName();
 		}
 		return result;
 	}
-	
-	static LineType getByGpmlName(String value)
+
+	static public LineType[] getValues()
 	{
-		return gpmlMapping.get (value);
+		return values.toArray (new LineType[0]);
 	}
-	
-	static public String[] getNames()
+
+	public String toString()
 	{
-		List<String> result = new ArrayList<String>();		
-		for (LineType l : LineType.values())
-		{
-			result.add("" + l.gpmlName);
-		}
-		String [] resultArray = new String [result.size()];
-		return result.toArray(resultArray);
+		return name;
 	}
 }

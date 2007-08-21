@@ -371,7 +371,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				case SHAPETYPE:
 					return (((ShapeType)value).getOrdinal());
 				case LINETYPE:
-					return (((LineType)value).ordinal());
+					return (((LineType)value).getOrdinal());
 				case COLOR:
 					if(value instanceof Color)
 						value = SwtUtils.color2rgb((Color)value);

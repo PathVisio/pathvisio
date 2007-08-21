@@ -19,7 +19,9 @@ package org.pathvisio.view;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Ellipse2D;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.LineType;
 
 public class MIMShapes
 {
@@ -28,6 +30,12 @@ public class MIMShapes
 		ShapeRegistry.registerShape ("mim-phosphorylated", getPluggableShape (MIM_PHOSPHORYLATED));
 		ShapeRegistry.registerShape ("mim-degradation", getPluggableShape (MIM_DEGRADATION));
 		ShapeRegistry.registerShape ("mim-interaction", getPluggableShape (MIM_INTERACTION));
+		ShapeRegistry.registerArrow ("mim-necessary-stimulation", getMIMNecessary(), ArrowShape.OPEN);
+		ShapeRegistry.registerArrow ("mim-binding", getMIMBinding(), ArrowShape.CLOSED);
+		ShapeRegistry.registerArrow ("mim-conversion", getMIMConversion(), ArrowShape.CLOSED);		
+		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.OPEN);
+		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.OPEN);		
+		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.WIRE);
 	}
 
 	public static void registerShapeTypes()
@@ -37,10 +45,88 @@ public class MIMShapes
 		ShapeType.create ("mim-interaction", null);
 	}
 
+	public static void registerLineTypes()
+	{
+		LineType.create ("mim-necessary-stimulation", null);
+		LineType.create ("mim-binding", null);
+		LineType.create ("mim-conversion", null);
+		LineType.create ("mim-stimulation", null);
+		LineType.create ("mim-catalysis", null);
+		LineType.create ("mim-cleavage", null);
+	}
+
 	private static final int MIM_PHOSPHORYLATED = 0;
 	private static final int MIM_DEGRADATION = 1;
 	private static final int MIM_INTERACTION = 2;
+
+	static final int CLEAVAGE_FIRST = 100;
+	static final int CLEAVAGE_SECOND = 500;
+
+	static private java.awt.Shape getMIMCleavage ()
+	{
+		GeneralPath path = new GeneralPath();
+		path.moveTo (0, 0);
+		path.lineTo (-CLEAVAGE_FIRST, -CLEAVAGE_FIRST);
+		path.lineTo (CLEAVAGE_SECOND, -CLEAVAGE_FIRST);
+		return path;
+	}
+
+	static final int CATALISYS_DIAM = 175;
 	
+	static private java.awt.Shape getMIMCatalysis ()
+	{
+		return new Ellipse2D.Double	(
+			-CATALISYS_DIAM / 2, -CATALISYS_DIAM / 2,
+			CATALISYS_DIAM, CATALISYS_DIAM);
+	}
+
+	private static final int ARROWHEIGHT = 65;
+	private static final int ARROWWIDTH = 140;
+	private static final int ARROW_NECESSARY_CROSSBAR = 200;
+	
+	static private java.awt.Shape getMIMStimulation ()
+	{
+		GeneralPath path = new GeneralPath();
+		path.moveTo (0, 0);
+		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
+		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
+		path.closePath();
+		return path;
+	}
+
+	static private java.awt.Shape getMIMBinding ()
+	{
+		GeneralPath path = new GeneralPath();
+		path.moveTo (0, 0);
+		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
+		path.lineTo (-ARROWWIDTH / 2, 0);
+		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
+		path.closePath();
+		return path;
+	}
+
+	static private java.awt.Shape getMIMConversion ()
+	{
+		GeneralPath path = new GeneralPath();
+		path.moveTo (0, 0);
+		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
+		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
+		path.closePath();
+		return path;
+	}
+
+	static private java.awt.Shape getMIMNecessary ()
+	{
+		GeneralPath path = new GeneralPath();
+		path.moveTo (0, 0);
+		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
+		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
+		path.closePath();
+		path.moveTo (-ARROW_NECESSARY_CROSSBAR, -ARROWHEIGHT);
+		path.lineTo (-ARROW_NECESSARY_CROSSBAR, ARROWHEIGHT);
+		return path;
+	}
+
 	/**
 	   Internal, 
 	   Only for general shape types that can be described as a path.

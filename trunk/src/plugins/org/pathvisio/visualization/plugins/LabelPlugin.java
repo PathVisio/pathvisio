@@ -17,6 +17,7 @@
 package org.pathvisio.visualization.plugins;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -24,6 +25,8 @@ import java.awt.Shape;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+
+import javax.swing.JLabel;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -207,15 +210,10 @@ public class LabelPlugin extends VisualizationPlugin {
 		return f;
 	}
 	
-	public Composite visualizeOnToolTip(Composite parent, Graphics g) {
+	public Component visualizeOnToolTip(Graphics g) {
 		if(g instanceof GeneProduct) {
-			Composite comp = new Composite(parent, SWT.NULL);
-			comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			comp.setLayout(new FillLayout());
-			Label label = new Label(comp, SWT.CENTER);
-			label.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			label.setText(getLabelText((GeneProduct) g));
-			return comp;
+			JLabel label = new JLabel(getLabelText((GeneProduct) g));
+			return label;
 		}
 		return null;
 	}

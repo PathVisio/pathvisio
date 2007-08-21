@@ -513,6 +513,7 @@ public class VPathway implements PathwayListener
 	int vPreviousX;
 	int vPreviousY;
 	boolean isDragging;
+	
 	/**
 	 * handles mouse movement
 	 */
@@ -547,6 +548,45 @@ public class VPathway implements PathwayListener
 				linkPointToObject (new Point2D.Double(ve.getX(), ve.getY()), (Handle)pressedObject);
 			}
 			redrawDirtyRect();
+		}
+		//Reset hover timer
+		if(hoverTimer != null) hoverTimer.interrupt();
+		hoverTimer = new HoverTimer();
+		hoverTimer.start(ve);
+	}
+	HoverTimer hoverTimer;
+	
+	class HoverTimer extends Thread {
+		volatile long timer = 0;
+		MouseEvent ve;
+		volatile boolean interrupted;
+				
+		public synchronized void start(MouseEvent ve) {
+			this.ve = ve;
+			super.start();
+		}
+		
+		public void run() {
+			timer = System.currentTimeMillis();
+			while(System.currentTimeMillis() - timer < 500) {
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) { 
+					return;
+				}
+				if(isInterrupted()) {
+					return;
+				}
+			}
+			doHover();
+		};
+		
+		void doHover() {
+				fireVPathwayEvent(new VPathwayEvent(
+						VPathway.this,
+						getObjectsAt(ve.getLocation()),
+						ve,
+						VPathwayEvent.ELEMENT_HOVER));
 		}
 	}
 	
@@ -870,7 +910,7 @@ public class VPathway implements PathwayListener
 	 * 
 	 * @see #getObjectsAt(Point2D)
 	 */
-	VPathwayElement getObjectAt(Point2D p2d)
+	public VPathwayElement getObjectAt(Point2D p2d)
 	{
 		Collections.sort(drawingObjects);
 		VPathwayElement probj = null;
@@ -895,7 +935,7 @@ public class VPathway implements PathwayListener
 	 * 
 	 * @see #getObjectAt(Point2D)
 	 */
-	List<VPathwayElement> getObjectsAt(Point2D p2d) 
+	public List<VPathwayElement> getObjectsAt(Point2D p2d) 
 	{
 		List<VPathwayElement> result = new ArrayList<VPathwayElement>();
 		for (VPathwayElement o : drawingObjects)
@@ -1270,31 +1310,6 @@ public class VPathway implements PathwayListener
 	public void mouseExit(MouseEvent e)
 	{
 	}
-
-	//TODO: fix tooltips
-//	/**
-//	 * Responsible for drawing a tooltip displaying expression data when 
-//	 * hovering over a geneproduct
-//	 */
-//	public void mouseHover(MouseEvent e)
-//	{
-//		Visualization v = VisualizationManager.getCurrent().;
-//		if (v != null && v.usesToolTip())
-//		{
-//			Point2D p = new Point2D.Double(e.getX(), e.getY());
-//			
-//			VPathwayElement o = getObjectAt(p);
-//			if (o != null && o instanceof Graphics)
-//			{
-//				// Shell tip = v.visualizeToolTip(getShell(), this,
-//				// (Graphics)o);
-////				if(tip == null) return;
-////				Point mp = toDisplay(e.x + 15, e.y + 15);
-////				tip.setLocation(mp.x, mp.y);
-////	            tip.setVisible(true);
-//			}
-//		}
-//	}
 
 	/**
 	 * Select all objects of the given class

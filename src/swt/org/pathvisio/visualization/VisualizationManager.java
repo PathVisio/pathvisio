@@ -16,14 +16,18 @@
 //
 package org.pathvisio.visualization;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventObject;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JToolTip;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ControlContribution;
@@ -51,17 +55,21 @@ import org.pathvisio.data.Gex.ExpressionDataEvent;
 import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.view.swing.ToolTipProvider;
+import org.pathvisio.view.swing.VPathwaySwing;
 
 /**
  * Manages visualizations
  * @author thomas
  *
  */
-public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener {	
+public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener, ToolTipProvider {	
 	static {
 		VisualizationManager vm = new VisualizationManager();
 		Engine.getCurrent().addApplicationEventListener(vm);
@@ -375,7 +383,8 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-				((VPathway)e.source).addSelectionListener(this);
+				VPathway vp = (VPathway)e.source;
+				vp.addSelectionListener(this);
 			}
 		}		
 	}
@@ -383,7 +392,12 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.type == ApplicationEvent.APPLICATION_CLOSE) {
 			saveGeneric();
-		}		
+		} else if (e.type == ApplicationEvent.VPATHWAY_CREATED) {
+			VPathway vp = (VPathway)e.source;
+			if(vp.getWrapper() instanceof VPathwaySwing) {
+				((VPathwaySwing)vp.getWrapper()).addToolTipProvider(this);
+			}
+		}
 	}
 	
 	static List<VisualizationListener> listeners;
@@ -442,4 +456,22 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			removeNonGeneric();
 		}
 	}
+
+	public Component createToolTipComponent(JToolTip parent, Collection<VPathwayElement> elements) {
+		if(getCurrent() == null) return null; //No tooltip if no visualization
+		
+		GeneProduct gp = null;
+		for(VPathwayElement elm : elements) {
+			if(elm instanceof GeneProduct) {
+				gp = (GeneProduct)elm;
+				break;
+			}
+		}
+		
+		if(gp == null) return null; //Only tooltip for gene product
+		
+		return getCurrent().createToolTipComponent(gp);
+	}
+	
+
 }

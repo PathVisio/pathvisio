@@ -16,6 +16,7 @@
 //
 package org.pathvisio.visualization;
 
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -25,6 +26,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
@@ -304,52 +308,67 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		return false;
 	}
 	
-	/**
-	 * Create a tool-tip for the given pathway element
-	 * @param parent The parent shell
-	 * @param control The control on which the tool-tip is created
-	 * @param g The pathway element to create the tool-tip for
-	 * @return A tool-tip that displays visualizations for the given gene-product 
-	 * by the plug-ins activated on the tool-tip
-	 */
-	public Shell visualizeToolTip(Shell parent, Control control, Graphics g) {
-		final Shell tip = new Shell(parent, SWT.ON_TOP | SWT.TOOL);  
-		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		tip.setLayout(new RowLayout(SWT.VERTICAL));
-		
-		Listener hideListener = new Listener() {
-			public void handleEvent(Event event) {
-	 			switch (event.type) {
-	 			case SWT.MouseDown:
-	 			case SWT.MouseExit:
-	 			case SWT.MouseMove:
-	 			case SWT.FocusOut:
-	 				tip.dispose();
-	 			}
-			}
-		};
-		
-		tip.addListener(SWT.MouseDown, hideListener);
-		tip.addListener(SWT.MouseExit, hideListener);
-		control.addListener(SWT.MouseMove, hideListener);
-		parent.addShellListener(new ShellAdapter() {
-			public void shellClosed(ShellEvent e) {
-				tip.dispose();	
-			}
-			public void shellDeactivated(ShellEvent e) {
-				tip.dispose();
-			}
-		});
-				
+//	/**
+//	 * Create a tool-tip for the given pathway element
+//	 * @param parent The parent shell
+//	 * @param control The control on which the tool-tip is created
+//	 * @param g The pathway element to create the tool-tip for
+//	 * @return A tool-tip that displays visualizations for the given gene-product 
+//	 * by the plug-ins activated on the tool-tip
+//	 */
+//	public Shell visualizeToolTip(Shell parent, Control control, Graphics g) {
+//		final Shell tip = new Shell(parent, SWT.ON_TOP | SWT.TOOL);  
+//		tip.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+//		tip.setLayout(new RowLayout(SWT.VERTICAL));
+//		
+//		Listener hideListener = new Listener() {
+//			public void handleEvent(Event event) {
+//	 			switch (event.type) {
+//	 			case SWT.MouseDown:
+//	 			case SWT.MouseExit:
+//	 			case SWT.MouseMove:
+//	 			case SWT.FocusOut:
+//	 				tip.dispose();
+//	 			}
+//			}
+//		};
+//		
+//		tip.addListener(SWT.MouseDown, hideListener);
+//		tip.addListener(SWT.MouseExit, hideListener);
+//		control.addListener(SWT.MouseMove, hideListener);
+//		parent.addShellListener(new ShellAdapter() {
+//			public void shellClosed(ShellEvent e) {
+//				tip.dispose();	
+//			}
+//			public void shellDeactivated(ShellEvent e) {
+//				tip.dispose();
+//			}
+//		});
+//				
+//		boolean hasOne = false;
+//		for(PluginSet pr : getPluginSetsDrawingOrder()) {
+//			if(pr.isToolTip()) {
+//				Composite ttc = pr.getToolTipPlugin().visualizeOnToolTip(tip, g);
+//				if(ttc != null) hasOne = true;
+//			}
+//		}
+//		tip.pack();
+//		return hasOne ? tip : null;
+//	}
+	
+	public Component createToolTipComponent(Graphics g) {
 		boolean hasOne = false;
+		JPanel panel = new JPanel();
 		for(PluginSet pr : getPluginSetsDrawingOrder()) {
 			if(pr.isToolTip()) {
-				Composite ttc = pr.getToolTipPlugin().visualizeOnToolTip(tip, g);
-				if(ttc != null) hasOne = true;
+				Component c = pr.getToolTipPlugin().visualizeOnToolTip(g);
+				if(c != null) {
+					panel.add(c);
+					hasOne = true;
+				}
 			}
 		}
-		tip.pack();
-		return hasOne ? tip : null;
+		return hasOne ? panel : null;
 	}
 	
 	/**

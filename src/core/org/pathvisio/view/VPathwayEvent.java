@@ -17,7 +17,9 @@
 package org.pathvisio.view;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.List;
 
 public class VPathwayEvent extends EventObject {
 	public static final int ELEMENT_ADDED = 0;
@@ -28,9 +30,10 @@ public class VPathwayEvent extends EventObject {
 	public static final int ELEMENT_DRAWN = 5;
 	public static final int ELEMENT_CLICKED_UP = 6;
 	public static final int ELEMENT_CLICKED_DOWN = 7;
+	public static final int ELEMENT_HOVER = 8;
 	
 	int type;
-	VPathwayElement affectedElement;
+	List<VPathwayElement> affectedElements;
 	Graphics2D g2d;
 	MouseEvent mouseEvent;
 	
@@ -39,9 +42,16 @@ public class VPathwayEvent extends EventObject {
 		this.type = type;
 	}
 	
+	public VPathwayEvent(VPathway source, List<VPathwayElement> affectedElements, int type) {
+		this(source, type);
+		this.affectedElements = affectedElements;
+	}
+	
 	public VPathwayEvent(VPathway source, VPathwayElement affectedElement, int type) {
 		this(source, type);
-		this.affectedElement = affectedElement;
+		List<VPathwayElement> afe = new ArrayList<VPathwayElement>();
+		afe.add(affectedElement);
+		this.affectedElements = afe;
 	}
 	
 	public VPathwayEvent(VPathway source, VPathwayElement affectedElement, Graphics2D g2d, int type) {
@@ -54,12 +64,21 @@ public class VPathwayEvent extends EventObject {
 		mouseEvent = e;
 	}
 	
+	public VPathwayEvent(VPathway source, List<VPathwayElement> affectedElements, MouseEvent e, int type) {
+		this(source, affectedElements, type);
+		mouseEvent = e;
+	}
+	
 	public MouseEvent getMouseEvent() {
 		return mouseEvent;
 	}
 	
 	public VPathwayElement getAffectedElement() {
-		return affectedElement;
+		return affectedElements.get(0);
+	}
+	
+	public List<VPathwayElement> getAffectedElements() {
+		return affectedElements;
 	}
 	
 	public int getType() {

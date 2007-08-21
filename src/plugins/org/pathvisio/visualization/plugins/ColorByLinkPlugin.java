@@ -17,6 +17,7 @@
 package org.pathvisio.visualization.plugins;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.HashMap;
@@ -134,7 +135,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 		return ids;
 	}
 		
-	public Composite visualizeOnToolTip(Composite parent, Graphics g) { return null; }
+	public Component visualizeOnToolTip(Graphics g) { return null; }
 	
 	public void visualizeOnSidePanel(Collection<Graphics> objects) {	}
 }

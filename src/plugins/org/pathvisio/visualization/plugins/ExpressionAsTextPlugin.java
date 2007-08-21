@@ -16,9 +16,12 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
@@ -26,6 +29,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -128,7 +135,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		}
 	}
 	
-	public Composite visualizeOnToolTip(Composite parent, Graphics g) {
+	public Component visualizeOnToolTip(Graphics g) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = Gex.getCachedData();
@@ -138,20 +145,20 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			if(!cache.hasData(idc)|| useSamples.size() == 0) {
 				return null;
 			}
-						
-			Group group = new Group(parent, SWT.NULL);
-			group.setLayout(new GridLayout(2, false));
-			group.setText("Expression data");
 			
+			JPanel panel = new JPanel();
+			panel.setBorder(BorderFactory.createTitledBorder("Expression data"));
+			panel.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridy = -1;
 			for(Sample s : useSamples) {
-				Label labelL = new Label(group, SWT.NULL);
-				labelL.setText(getLabelLeftText(s));
-				Label labelR = new Label(group, SWT.NULL);
-				labelR.setText(getLabelRightText(s, idc, cache));
+				gbc.gridy++;
+				gbc.gridx = 0;
+				panel.add(new JLabel(getLabelLeftText(s)), gbc);
+				gbc.gridx = 1;
+				panel.add(new JLabel(getLabelRightText(s, idc, cache)), gbc);
 			}
-			SwtUtils.setCompositeAndChildrenBackground(group, 
-					group.getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-			return group;
+			return panel;
 		} else return null;
 	}
 	

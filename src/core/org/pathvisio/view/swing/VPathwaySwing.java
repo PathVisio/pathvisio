@@ -17,9 +17,11 @@
 package org.pathvisio.view.swing;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -27,20 +29,29 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Action;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolTip;
+import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.gui.swing.dnd.FileImportHandler;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
@@ -164,7 +175,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void vPathwayEvent(VPathwayEvent e) {
-		if(e.getType() == VPathwayEvent.MODEL_LOADED) {
+		switch(e.getType()) {
+		case VPathwayEvent.MODEL_LOADED:
 			if(e.getSource() == child) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
@@ -174,6 +186,10 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 					}
 				});
 			}
+			break;
+		case VPathwayEvent.ELEMENT_HOVER:
+			showToolTip(e);
+			break;
 		}
 	}
 
@@ -184,5 +200,45 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
 		System.out.println("Lost ownership");
+	}
+	
+	Set<ToolTipProvider> toolTipProviders = new HashSet<ToolTipProvider>();
+	
+	public void addToolTipProvider(ToolTipProvider p) {
+		toolTipProviders.add(p);
+	}
+	
+	public void showToolTip(VPathwayEvent e) {
+		if(toolTipProviders.size() == 0) return;
+		
+		List<VPathwayElement> elements = e.getAffectedElements();
+		if(elements.size() > 0) {
+			PathwayToolTip tip = new PathwayToolTip(elements);
+			
+			if(tip.getComponentCount() == 0) return;
+			
+			final JWindow w = new JWindow();
+
+			w.addMouseListener(new MouseAdapter() {
+				public void mouseExited(MouseEvent e) {
+					w.dispose();
+				}
+			});
+			w.add(tip);
+			w.pack();
+			Point p = e.getMouseEvent().getLocation();
+			SwingUtilities.convertPointToScreen(p, this);
+			w.setLocation(p);
+			w.setVisible(true);
+		}
+	}
+	
+	class PathwayToolTip extends JToolTip {
+		public PathwayToolTip(List<VPathwayElement> elements) {
+			for(ToolTipProvider p : toolTipProviders) {
+				Component c = p.createToolTipComponent(this, elements);
+				if(c != null) add(c);
+			}
+		}
 	}
 }

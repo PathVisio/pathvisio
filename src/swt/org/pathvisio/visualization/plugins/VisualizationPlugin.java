@@ -16,6 +16,7 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.util.Collection;
 
@@ -103,14 +104,16 @@ public abstract class VisualizationPlugin implements Comparable {
 	 */
 	public abstract void visualizeOnSidePanel(Collection<Graphics> objects);
 	
-	/**
-	 * Create a visualization on the Tool Tip for the given {@link Graphics} object.
-	 * This method will only be called when the plugin display options contains {@link VisualizationPlugin#TOOLTIP}.
-	 * @param parent The parent of the {@link Composite} that will be displayed on the Tool Tip
-	 * @param g The {@link Graphics} object to create the visualization for
-	 * @return A {@link Composite} that will be displayed in the Tool Tip
-	 */
-	public abstract Composite visualizeOnToolTip(Composite parent, Graphics g);
+//	/**
+//	 * Create a visualization on the Tool Tip for the given {@link Graphics} object.
+//	 * This method will only be called when the plugin display options contains {@link VisualizationPlugin#TOOLTIP}.
+//	 * @param parent The parent of the {@link Composite} that will be displayed on the Tool Tip
+//	 * @param g The {@link Graphics} object to create the visualization for
+//	 * @return A {@link Composite} that will be displayed in the Tool Tip
+//	 */
+//	public abstract Composite visualizeOnToolTip(Composite parent, Graphics g);
+	
+	public abstract Component visualizeOnToolTip(Graphics g);
 	
 	/**
 	 * Initialize a Composite for visualization on the side panel

@@ -106,7 +106,7 @@ public class Group extends Graphics {
 	}
 	
 	@Override
-	public int getDrawingOrder() {
+	public int getNaturalOrder() {
 
 		return VPathway.DRAW_ORDER_GROUP;
 	}

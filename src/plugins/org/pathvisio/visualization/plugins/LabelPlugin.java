@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
@@ -160,9 +161,11 @@ public class LabelPlugin extends VisualizationPlugin {
 			case ALIGN_CENTER:
 				area.x += (int)(area.width / 2) - (int)(textSize.getWidth()/ 2);
 			}
-			g2d.drawString (label, 
-					area.x,
-					area.y + (int)(area.height / 2) - (int)(textSize.getHeight()/ 2));
+		
+			TextLayout tl = new TextLayout(label, g2d.getFont(), g2d.getFontRenderContext());
+			Rectangle2D tb = tl.getBounds();
+			tl.draw(g2d, 	area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2), 
+						area.y + (int)(area.height / 2) + (int)(tb.getHeight() / 2));			
 		}
 	}
 	

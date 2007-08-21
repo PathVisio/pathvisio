@@ -37,6 +37,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		super(canvas);
 		o.addListener(this);
 		gdata = o;
+		gdata.addListener(canvas);
 	}
 	
 	public void select()
@@ -60,6 +61,13 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 	public PathwayElement getGmmlData() {
 		return gdata;
 	}
+	
+	public final int getDrawingOrder() {
+		int zorder = gdata.getZOrder();
+		return getNaturalOrder() + (zorder <<= 32); 
+	}
+	
+	protected abstract int getNaturalOrder();
 	
 //	public List getAttributes() { return gdata.getAttributes() ;}
 	boolean listen = true;

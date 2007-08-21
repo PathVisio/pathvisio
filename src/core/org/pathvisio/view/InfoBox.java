@@ -50,7 +50,7 @@ public class InfoBox extends Graphics {
 		canvas.setMappInfo(this);	
 	}
 	
-	public int getDrawingOrder() {
+	public int getNaturalOrder() {
 		return VPathway.DRAW_ORDER_MAPPINFO;
 	}
 	

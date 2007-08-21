@@ -163,6 +163,7 @@ public class Pathway implements PathwayListener
 		dataObjects.add(o);
 		o.addListener(this);
 		o.setParent(this);
+		o.setZOrder(dataObjects.size() + 1);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
 
@@ -349,6 +350,26 @@ public class Pathway implements PathwayListener
 		return refs;
 	}
 	
+	protected double[] calculateMBoardSize() {
+		double mw = 0;
+		double mh = 0;
+		
+		for(PathwayElement e : dataObjects) {
+			switch(e.getObjectType()) {
+			case ObjectType.LINE:
+				mw = Math.max(mw, Math.max(e.getMStartX(), e.getMEndX()));
+				mh = Math.max(mh, Math.max(e.getMStartY(), e.getMEndY()));
+				break;
+			default:
+				mw = Math.max(mw, e.getMLeft() + e.getMWidth());
+				mh = Math.max(mh, e.getMTop() + e.getMHeight());
+				break;
+			}
+		}
+		
+		return new double[] { mw + 0.1 * mw, mh + 0.1 * mh };
+	}
+	
 	private File sourceFile = null;
 	
 	/**
@@ -377,8 +398,9 @@ public class Pathway implements PathwayListener
 	 */	
 	public void initMappInfo()
 	{
-		mappInfo.setMBoardWidth(M_INITIAL_BOARD_WIDTH);
-		mappInfo.setMBoardHeight(M_INITIAL_BOARD_HEIGHT);
+		//Will be calculated
+//		mappInfo.setMBoardWidth(M_INITIAL_BOARD_WIDTH);
+//		mappInfo.setMBoardHeight(M_INITIAL_BOARD_HEIGHT);
 		mappInfo.setWindowWidth(M_INITIAL_BOARD_WIDTH);
 		mappInfo.setWindowHeight(M_INITIAL_BOARD_HEIGHT);
 		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());

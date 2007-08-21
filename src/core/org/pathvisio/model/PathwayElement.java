@@ -17,6 +17,7 @@
 package org.pathvisio.model;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
  * @author Martijn
  * 
  */
-public class PathwayElement implements GraphIdContainer
+public class PathwayElement implements GraphIdContainer, Comparable<PathwayElement>
 {
 
 	public class Comment implements Cloneable
@@ -289,6 +290,15 @@ public class PathwayElement implements GraphIdContainer
 		objectType = ot;
 	}
 
+	int zOrder;
+	
+	public int getZOrder() {
+		return zOrder;
+	}
+	
+	public void setZOrder(int z) {
+		zOrder = z;
+	}
 	/**
 	 * Parent of this object: may be null (for example, when object is in
 	 * clipboard)
@@ -773,10 +783,10 @@ public class PathwayElement implements GraphIdContainer
 			result = getCopyright();
 			break;
 		case BOARDWIDTH:
-			result = getMBoardWidth();
+			result = getMBoardSize()[0];
 			break;
 		case BOARDHEIGHT:
-			result = getMBoardHeight();
+			result = getMBoardSize()[1];
 			break;
 		case WINDOWWIDTH:
 			result = getWindowWidth();
@@ -1679,15 +1689,32 @@ public class PathwayElement implements GraphIdContainer
 					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
-
-	// TODO: rename to DrawingWidth/height
+	
+	/**
+	 * Calculates the drawing size on basis of the location and size of the
+	 * containing pathway elements
+	 * @return The drawing size
+	 */
+	public double[] getMBoardSize() {
+		return parent.calculateMBoardSize();
+	}
+	
+	/**
+	 * @deprecated use {@link #getMBoardSize()} instead
+	 */
 	protected double mBoardWidth;
 
+	/**
+	 * @deprecated use {@link #getMBoardSize()} instead
+	 */
 	public double getMBoardWidth()
 	{
-		return mBoardWidth;
+		return getMBoardSize()[0];
 	}
 
+	/**
+	 * @deprecated drawing size will be calculated on basis of the containing pathway elements
+	 */
 	public void setMBoardWidth(double v)
 	{
 		if (mBoardWidth != v)
@@ -1697,13 +1724,22 @@ public class PathwayElement implements GraphIdContainer
 		}
 	}
 
+	/**
+	 * @deprecated use {@link #getMBoardSize()} instead
+	 */
 	protected double mBoardHeight;
 
+	/**
+	 * @deprecated use {@link #getMBoardSize()} instead
+	 */
 	public double getMBoardHeight()
 	{
-		return mBoardHeight;
+		return getMBoardSize()[1];
 	}
 
+	/**
+	 * @deprecated drawing size will be calculated on basis of the containing pathway elements
+	 */
 	public void setMBoardHeight(double v)
 	{
 		if (mBoardHeight != v)
@@ -2041,5 +2077,9 @@ public class PathwayElement implements GraphIdContainer
 	public Pathway getGmmlData()
 	{
 		return parent;
+	}
+
+	public int compareTo(PathwayElement o) {
+		return getZOrder() - o.getZOrder();
 	}
 }

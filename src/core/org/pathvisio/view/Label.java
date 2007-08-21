@@ -57,7 +57,7 @@ public class Label extends GraphicsShape
 		setHandleLocation();
 	}
 	
-	public int getDrawingOrder() {
+	public int getNaturalOrder() {
 		return VPathway.DRAW_ORDER_LABEL;
 	}
 	

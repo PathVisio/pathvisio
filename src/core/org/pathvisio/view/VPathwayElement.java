@@ -263,34 +263,43 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		if (d == this)
 			return 0;
 		
-		int az, bz;
-		az = getDrawingOrder();
-		bz = d.getDrawingOrder();
+		int a, b, an, bn, az, bz;
+		a = getDrawingOrder();
+		b = d.getDrawingOrder();
+		//Natural order in first bits
+		an = a & 0xFF00;
+		bn = b & 0xFF00;
+		//z-order in last bits
+		az = a & 0x00FF;
+		bz = b & 0x00FF;
 		
 		if(isSelected() && d.isSelected()) {
 			; //objects are both selected, keep original sort order
 		}
 		else if(isSelected() || isHighlighted())
 		{
-			az = VPathway.DRAW_ORDER_SELECTED;
+			an = VPathway.DRAW_ORDER_SELECTED;
 		}
 		else if(d.isSelected() || d.isHighlighted())
 		{
-			bz = VPathway.DRAW_ORDER_SELECTED;
+			bn = VPathway.DRAW_ORDER_SELECTED;
 		}
 		
 		// note, if the drawing order is equal, that doesn't mean the objects are equal
 		// the construct with hashcodes give objects a defined sort order, even if their
-		// drawing orders are equal.		
-		if (az == bz)
+		// drawing orders are equal.
+		// The z-ordering takes care of the order of objects of the same type
+		// note that the when the z-order is higher, the object is drawn later and should be
+		// sorted below. Therefore the bz and az are switched.
+		if (an == bn)
 		{
-			az = hashCode();
-			bz = d.hashCode();		
+			an = bz;
+			bn = az;		
 		}
 		// there is still a remote possibility that although the objects are not the same,
 		// the hashcode is the same. Even still, we shouldn't return 0.
-		if (az != bz) 
-			return bz - az; 
+		if (an != bn) 
+			return bn - an; 
 		else
 			return -1;
 	}

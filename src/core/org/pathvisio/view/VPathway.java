@@ -39,6 +39,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -51,7 +52,6 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.debug.Logger;
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
  * the drawing and can be visualized. The class also provides methods for mouse
@@ -151,7 +151,7 @@ public class VPathway implements PathwayListener
 	 */	
 	public VPathway(VPathwayWrapper parent)
 	{
-		this.parent = parent;
+		this.parent = parent == null ? new VPathwayWrapperBase() : parent;
 		
 		drawingObjects	= new ArrayList<VPathwayElement>();
 		
@@ -1248,21 +1248,21 @@ public class VPathway implements PathwayListener
 				VPathwayEvent.ELEMENT_ADDED));
 	}
 	
-	public static final int DRAW_ORDER_HANDLE = -1;
+	public static final int DRAW_ORDER_HANDLE = 		0x0000;
 
-	public static final int DRAW_ORDER_SELECTIONBOX = 0;
-	public static final int DRAW_ORDER_GROUP = 1;
-	public static final int DRAW_ORDER_SELECTED = 2;
-	public static final int DRAW_ORDER_GENEPRODUCT = 3;
-	public static final int DRAW_ORDER_LABEL = 4;
-	public static final int DRAW_ORDER_ARC = 5;
-	public static final int DRAW_ORDER_BRACE = 6;
-	public static final int DRAW_ORDER_SHAPE = 7;
-	public static final int DRAW_ORDER_LINE = 8;
-	public static final int DRAW_ORDER_LINESHAPE = 9;
-	public static final int DRAW_ORDER_MAPPINFO = 10;
-	public static final int DRAW_ORDER_DEFAULT = 11;
-	
+	public static final int DRAW_ORDER_SELECTIONBOX =	0x1000;
+	public static final int DRAW_ORDER_GROUP = 			0x2000;
+	public static final int DRAW_ORDER_SELECTED = 		0x3000;
+	public static final int DRAW_ORDER_GENEPRODUCT = 	0x4000;
+	public static final int DRAW_ORDER_LABEL = 			0x5000;
+	public static final int DRAW_ORDER_ARC = 			0x6000;
+	public static final int DRAW_ORDER_BRACE = 			0x7000;
+	public static final int DRAW_ORDER_SHAPE = 			0x8000;
+	public static final int DRAW_ORDER_LINE = 			0x9000;
+	public static final int DRAW_ORDER_LINESHAPE = 		0xA000;
+	public static final int DRAW_ORDER_MAPPINFO = 		0xB000;
+	public static final int DRAW_ORDER_DEFAULT = 		0xC000;
+		
 	public void mouseEnter(MouseEvent e)
 	{
 	}
@@ -1566,6 +1566,9 @@ public class VPathway implements PathwayListener
 	{
 		switch (e.getType())
 		{
+			case PathwayEvent.MODIFIED_GENERAL:
+				checkBoardSize(e.getAffectedData());
+				break;
 			case PathwayEvent.DELETED:
 				// TODO: affected object should be removed
 				addDirtyRect(null); // mark everything dirty
@@ -1586,6 +1589,31 @@ public class VPathway implements PathwayListener
 		redrawDirtyRect();
 	}
 		
+	private void checkBoardSize(PathwayElement elm) {
+		double increase = mFromV(25);
+		Dimension size = parent.getVSize();
+		double mw = vFromM(size.width);
+		double mh = vFromM(size.height);
+		
+		double mx = mw;
+		double my = mh;
+		
+		switch(elm.getObjectType()) {
+		case ObjectType.LINE:
+			mx = Math.max(elm.getMEndX(), elm.getMStartX());
+			my = Math.max(elm.getMEndY(), elm.getMStartY());
+			break;
+		default:
+			mx = elm.getMLeft() + elm.getMWidth();
+			my = elm.getMTop() + elm.getMHeight();
+			break;
+		}
+		
+		if(mw < mx) mw = mx + increase;
+		if(mh < my) mh = my + increase;
+		parent.setVSize(new Dimension((int)vFromM(mw), (int)vFromM(mh)));
+	}
+
 	/**
 	 * Makes a copy of all GmmlDataObjects in current selection, and puts them
 	 * in the global clipboard.
@@ -2071,7 +2099,7 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVWidth()
 	{
-		return (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
+		return (int)parent.getViewportSize().width;
 	}
 	
 	/**
@@ -2079,7 +2107,7 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVHeight()
 	{
-		return (int)vFromM(infoBox.getGmmlData().getMBoardHeight());
+		return (int)parent.getViewportSize().height;
 	}
 	
 	//AP20070716

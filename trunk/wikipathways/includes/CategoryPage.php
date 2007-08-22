@@ -312,14 +312,73 @@ class CategoryViewer {
 	 * @return string
 	 * @private
 	 */
-	function columnList( $articles, $articles_start_char ) {
+	
+        function columnList( $articles, $articles_start_char ) {
+                // divide list into three equal chunks
+                $chunk = (int) (count ( $articles ) / 3);
+
+                // get and display header
+                $r = '<table width="100%"><tr valign="top">';
+
+                $prev_start_char = 'none';
+
+                // loop through the chunks
+                for($startChunk = 0, $endChunk = $chunk, $chunkIndex = 0;
+                        $chunkIndex < 3;
+                        $chunkIndex++, $startChunk = $endChunk, $endChunk += $chunk + 1)
+                {
+                        $r .= "<td>\n";
+                        $atColumnTop = true;
+
+                        // output all articles in category
+                        for ($index = $startChunk ;
+                                $index < $endChunk && $index < count($articles);
+                                $index++ )
+                        {
+                                // check for change of starting letter or begining of chunk
+                                if ( ($index == $startChunk) ||
+                                         ($articles_start_char[$index] != $articles_start_char[$index - 1]) )
+
+                                {
+                                        if( $atColumnTop ) {
+                                                $atColumnTop = false;
+                                        } else {
+                                                $r .= "</ul>\n";
+                                        }
+                                        $cont_msg = "";
+                                        if ( $articles_start_char[$index] == $prev_start_char )
+                                                $cont_msg = wfMsgHtml('listingcontinuesabbrev');
+                                        $r .= "<h3>" . htmlspecialchars( $articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
+                                        $prev_start_char = $articles_start_char[$index];
+                                }
+
+                                $r .= "<li>{$articles[$index]}</li>";
+                        }
+                        if( !$atColumnTop ) {
+                                $r .= "</ul>\n";
+                        }
+                        $r .= "</td>\n";
+
+
+                }
+                $r .= '</tr></table>';
+                return $r;
+        }
+                                                                                                                                                          
+        /** AP20070821
+         * Format a list of articles chunked in a three-column
+         * list, ordered vertically, WITHOUT HEADERS.
+         *
+         * @param array $articles
+         * @return string
+         * @private
+         */
+	function columnListSimple( $articles) {
 		// divide list into three equal chunks
 		$chunk = (int) (count ( $articles ) / 3);
 
 		// get and display header
 		$r = '<table width="100%"><tr valign="top">';
-
-		$prev_start_char = 'none';
 
 		// loop through the chunks
 		for($startChunk = 0, $endChunk = $chunk, $chunkIndex = 0;
@@ -334,24 +393,13 @@ class CategoryViewer {
 				$index < $endChunk && $index < count($articles);
 				$index++ )
 			{
-				// check for change of starting letter or begining of chunk
-				if ( ($index == $startChunk) ||
-					 ($articles_start_char[$index] != $articles_start_char[$index - 1]) )
-
-				{
-					if( $atColumnTop ) {
-						$atColumnTop = false;
-					} else {
-						$r .= "</ul>\n";
-					}
-					$cont_msg = "";
-					if ( $articles_start_char[$index] == $prev_start_char )
-						$cont_msg = wfMsgHtml('listingcontinuesabbrev');
-					$r .= "<h3>" . htmlspecialchars( $articles_start_char[$index] ) . "$cont_msg</h3>\n<ul>";
-					$prev_start_char = $articles_start_char[$index];
-				}
-
-				$r .= "<li>{$articles[$index]}</li>";
+                               if( $atColumnTop ) {
+	                               $atColumnTop = false;
+                                } else {
+                                       $r .= "</ul>\n";
+                                }
+				$r .= "<ul>";
+ 				$r .= "<li>{$articles[$index]}</li>";
 			}
 			if( !$atColumnTop ) {
 				$r .= "</ul>\n";

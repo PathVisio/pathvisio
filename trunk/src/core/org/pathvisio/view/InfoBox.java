@@ -112,7 +112,13 @@ public class InfoBox extends Graphics {
 	protected Shape getVOutline() {
 		int vLeft = (int)vFromM(gdata.getMLeft());
 		int vTop = (int)vFromM(gdata.getMTop());
-		return new Rectangle(vLeft, vTop, sizeX, sizeY);
+		int vW = sizeX;
+		int vH = sizeY;
+		if(vW == 1 && vH == 1) {
+			vW = 50;
+			vH = 50;
+		}
+		return new Rectangle(vLeft, vTop, vW, vH);
 	}
 
 }

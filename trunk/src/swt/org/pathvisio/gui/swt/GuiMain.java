@@ -16,15 +16,25 @@
 //
 package org.pathvisio.gui.swt;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
@@ -39,6 +49,8 @@ import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * This class contains the main method and is responsible for initiating 
@@ -62,11 +74,13 @@ public class GuiMain {
 				SwtEngine.getCurrent().USE_R = true;
 			}
 		}
-		
+				
 		//Setup the application window
 		MainWindow window = null;
 		if(debugHandles)	window = SwtEngine.getCurrent().getSleakWindow();
 		else				window = SwtEngine.getCurrent().getWindow();
+		
+		checkUpdates();
 		
 		initiate();
 		
@@ -85,6 +99,49 @@ public class GuiMain {
 		Logger.log.getStream().close();
 		
 		Display.getCurrent().dispose();
+	}
+	
+	/**
+	 * Checks for available updates and shows message if any available
+	 */
+	public static void checkUpdates() {
+		try {
+			URL versionUrl = new URL("http://blog.bigcat.unimaas.nl/~gmmlvisio/latestversion");
+			URLConnection conn = versionUrl.openConnection();
+			conn.setUseCaches(false);
+			conn.setConnectTimeout(750);
+			InputStream in = (InputStream)conn.getInputStream();
+			BufferedReader bin = new BufferedReader(new InputStreamReader(in));
+
+			String theirString = bin.readLine();
+			String thisString = Revision.REVISION;
+			int thisVersion = -1;
+			int theirVersion = -1;
+			Pattern p = Pattern.compile("^[0-9]+");
+			Matcher m = p.matcher(theirString);
+			if(m.find()) {
+				theirVersion = Integer.parseInt(theirString.substring(m.start(), m.end()));
+			}
+			m = p.matcher(thisString);
+			if(m.find()) {
+				thisVersion = Integer.parseInt(thisString.substring(m.start(), m.end()));
+			}
+			if(theirVersion == -1 || thisVersion == -1) {
+				Logger.log.error("Invalid version number\n\tThis: " + thisString + 
+						"\n\tTheirs: " + theirString);				
+			} else {
+				if(theirVersion > thisVersion) {
+					MessageDialog.openInformation(new Shell(),
+							
+			"New version available",
+			"There is a new version of " + Globals.APPLICATION_NAME + " avaliable.\n" +
+			"Please visit http://pathvisio.org to download the newest version"
+					);
+				}
+			}
+		} catch(Exception e) {
+			Logger.log.error("Unable to check application version", e);
+		}
 	}
 	
 	/**

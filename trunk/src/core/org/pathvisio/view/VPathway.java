@@ -38,7 +38,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
@@ -188,12 +187,12 @@ public class VPathway implements PathwayListener
 		case ObjectType.LINE:
 			result = new Line(this, o);
 			break;
-			case ObjectType.MAPPINFO: 
-				InfoBox mi = new InfoBox(this, o);
-				addObject(mi); 
-				setMappInfo(mi);
-				result = mi; 
-				break;				
+		case ObjectType.MAPPINFO: 
+			InfoBox mi = new InfoBox(this, o);
+			addObject(mi); 
+			setMappInfo(mi);
+			result = mi; 
+			break;				
 		case ObjectType.LABEL:
 			result = new Label(this, o);
 			break;
@@ -321,6 +320,24 @@ public class VPathway implements PathwayListener
 		
 	}
 
+	/**
+	 * Gets the view representation {@link Graphics} 
+	 * of the given model element {@link PathwayElement}
+	 * @param e
+	 * @return the {@link Graphics} representing the given {@link PathwayElement}
+	 * or <code>null</code> if no view is available
+	 */
+	public Graphics getPathwayElementView(PathwayElement e) {
+		//TODO: store Graphics in a hashmap to improve speed
+		for(VPathwayElement ve : drawingObjects) {
+			if(ve instanceof Graphics) {
+				Graphics ge = (Graphics)ve;
+				if(ge.getGmmlData() == e) return ge;
+			}
+		}
+		return null;
+	}
+	
 	HashMap<MPoint, VPoint> pointsMtoV = new HashMap<MPoint, VPoint>();
 
 	protected VPoint getPoint(MPoint mPoint)
@@ -1585,12 +1602,15 @@ public class VPathway implements PathwayListener
 				checkBoardSize(e.getAffectedData());
 				break;
 			case PathwayEvent.DELETED:
-				// TODO: affected object should be removed
-				addDirtyRect(null); // mark everything dirty
+				Graphics deleted = getPathwayElementView(e.getAffectedData());
+				if(deleted != null) {
+					deleted.markDirty();
+					removeDrawingObject(deleted);
+				}
 				break;
 			case PathwayEvent.ADDED:
 				lastAdded = fromGmmlDataObject(e.getAffectedData());
-				addDirtyRect(null); // mark everything dirty
+				lastAdded.markDirty();
 				break;
 			case PathwayEvent.WINDOW:
 				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
@@ -1977,13 +1997,13 @@ public class VPathway implements PathwayListener
 		 */
 		for (PathwayElement o : elements)
 		{
-			if (o.getObjectType() == ObjectType.MAPPINFO
-					|| o.getObjectType() == ObjectType.INFOBOX)
-			{
-				// these object types we skip,
-				// because they have to be unique in a pathway
-				continue;
-			}
+//			if (o.getObjectType() == ObjectType.MAPPINFO
+//					|| o.getObjectType() == ObjectType.INFOBOX)
+//			{
+//				// these object types we skip,
+//				// because they have to be unique in a pathway
+//				continue;
+//			}
 			
 			lastAdded = null;
 			o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
@@ -2007,22 +2027,21 @@ public class VPathway implements PathwayListener
 			{
 				//TODO: mapping graphrefs to newly created id's 
 				// doesn't work properly yet
-				/*
-				 * if (idmap.containsKey(y)) {
-				 * p.setStartGraphRef(idmap.get(y)); } else {
-				 */
+				// TK: Seems to work just fine...
+				if (idmap.containsKey(y)) {
+				 	p.setStartGraphRef(idmap.get(y)); 
+				} else {
 					p.setStartGraphRef(null);
-				//}				
+				}				
 			}
 			y = p.getEndGraphRef(); 
 			if (y != null)
 			{
-				/*
-				 * if (idmap.containsKey(y)) {
-				 * p.setEndGraphRef(idmap.get(y)); } else {
-				 */
+				 if (idmap.containsKey(y)) {
+					 p.setEndGraphRef(idmap.get(y)); 
+				 } else {
 					p.setEndGraphRef(null);
-			//	}				
+				 }				
 			}
 			
 			data.add (p); // causes lastAdded to be set

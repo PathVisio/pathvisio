@@ -516,5 +516,4 @@ public class Pathway implements PathwayListener
 		System.out.println (i + " objects copied");
 		return result;
 	}
-
 }

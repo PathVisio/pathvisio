@@ -1607,8 +1607,8 @@ public class VPathway implements PathwayListener
 	private void checkBoardSize(PathwayElement elm) {
 		double increase = mFromV(25);
 		Dimension size = parent.getVSize();
-		double mw = vFromM(size.width);
-		double mh = vFromM(size.height);
+		double mw = mFromV(size.width);
+		double mh = mFromV(size.height);
 		
 		double mx = mw;
 		double my = mh;
@@ -1624,9 +1624,11 @@ public class VPathway implements PathwayListener
 			break;
 		}
 		
-		if(mw < mx) mw = mx + increase;
-		if(mh < my) mh = my + increase;
-		parent.setVSize(new Dimension((int)vFromM(mw), (int)vFromM(mh)));
+		if(mw < mx || mh < my) {
+			if(mw < mx) mw = mx + increase;
+			if(mh < my) mh = my + increase;
+			parent.setVSize(new Dimension((int)vFromM(mw), (int)vFromM(mh)));	
+		}
 	}
 
 	/**
@@ -1636,8 +1638,6 @@ public class VPathway implements PathwayListener
 	 */
 	public void copyToClipboard()
 	{
-		//Clipboard clipboard = new Clipboard (this.getDisplay());
-		
 		List<PathwayElement> result = new ArrayList<PathwayElement>();
 		for (VPathwayElement g : drawingObjects)
 		{
@@ -1649,14 +1649,8 @@ public class VPathway implements PathwayListener
 		}
 		if (result.size() > 0)
 		{
-			Engine.getCurrent().clipboard = result;
-		} else
-		{
-			Engine.getCurrent().clipboard = null;
+			getWrapper().copyToClipboard(getGmmlData(), result);
 		}
-		
-		getWrapper().copyToClipboard(result);
-		//clipboard.dispose();
 	}
 	
 	/**
@@ -1948,104 +1942,95 @@ public class VPathway implements PathwayListener
 		return result;
 	}
 	
-	/**
-	 * If global clipboard contains GmmlDataObjects, makes another copy of these
-	 * objects, and pastes them in. The clipboard contents will be moved 10
-	 * pixels souteast, so they won't exactly overlap with the original.
-	 */
-	public void pasteFromClipboad()
-	{
-		if (Engine.getCurrent().clipboard != null)
+	public void paste(List<PathwayElement> elements) {
+		undoManager.newAction ("Paste");
+		clearSelection();
+		Map<String, String> idmap = new HashMap<String, String>();
+		Set<String> newids = new HashSet<String>();
+		
+		/*
+		 * Step 1: generate new unique ids for copied items
+		 */
+		for (PathwayElement o : elements)
 		{
-			undoManager.newAction ("Paste");
-			clearSelection();
-			Map<String, String> idmap = new HashMap<String, String>();
-			Set<String> newids = new HashSet<String>();
-			
-			/*
-			 * Step 1: generate new unique ids for copied items
-			 */
-			for (PathwayElement o : Engine.getCurrent().clipboard)
+			String id = o.getGraphId();
+			if (id != null) 
 			{
-				String id = o.getGraphId();
-				if (id != null) 
-				{
-					String x;
-					do
-					{
-						/*
-						 * generate a unique id. at the same time, check that it
-						 * is not equal to one of the unique ids that we
-						 * generated since the start of this method
-						 */ 
-						x = data.getUniqueId();
-					} while (newids.contains(x));
-					newids.add(x); // make sure we don't generate this one
-					// again
-					
-					idmap.put(id, x);
-				}
-			}
-			/*
-			 * Step 2: do the actual copying 
-			 */
-			for (PathwayElement o : Engine.getCurrent().clipboard)
-			{
-				if (o.getObjectType() == ObjectType.MAPPINFO
-						|| o.getObjectType() == ObjectType.INFOBOX)
-				{
-					// these object types we skip,
-					// because they have to be unique in a pathway
-					continue;
-				}
-				
-				lastAdded = null;
-				o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
-				o.setMStartY(o.getMStartY() + M_PASTE_OFFSET);
-				o.setMEndX(o.getMEndX() + M_PASTE_OFFSET);
-				o.setMEndY(o.getMEndY() + M_PASTE_OFFSET);
-				o.setMLeft(o.getMLeft() + M_PASTE_OFFSET);
-				o.setMTop(o.getMTop() + M_PASTE_OFFSET);
-				// make another copy to preserve clipboard contents for next
-				// paste
-				PathwayElement p = o.copy();
-				
-				// set new unique id
-				if (p.getGraphId() != null)
-				{					
-					p.setGraphId(idmap.get(p.getGraphId()));					
-				}
-				// update graphref
-				String y = p.getStartGraphRef(); 
-				if (y != null)
-				{
-					//TODO: mapping graphrefs to newly created id's 
-					// doesn't work properly yet
-					/*
-					 * if (idmap.containsKey(y)) {
-					 * p.setStartGraphRef(idmap.get(y)); } else {
-					 */
-						p.setStartGraphRef(null);
-					//}				
-				}
-				y = p.getEndGraphRef(); 
-				if (y != null)
+				String x;
+				do
 				{
 					/*
-					 * if (idmap.containsKey(y)) {
-					 * p.setEndGraphRef(idmap.get(y)); } else {
-					 */
-						p.setEndGraphRef(null);
-				//	}				
-				}
+					 * generate a unique id. at the same time, check that it
+					 * is not equal to one of the unique ids that we
+					 * generated since the start of this method
+					 */ 
+					x = data.getUniqueId();
+				} while (newids.contains(x));
+				newids.add(x); // make sure we don't generate this one
+				// again
 				
-				data.add (p); // causes lastAdded to be set
-				lastAdded.select();
-				selection.addToSelection(lastAdded);
+				idmap.put(id, x);
 			}
 		}
+		/*
+		 * Step 2: do the actual copying 
+		 */
+		for (PathwayElement o : elements)
+		{
+			if (o.getObjectType() == ObjectType.MAPPINFO
+					|| o.getObjectType() == ObjectType.INFOBOX)
+			{
+				// these object types we skip,
+				// because they have to be unique in a pathway
+				continue;
+			}
+			
+			lastAdded = null;
+			o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
+			o.setMStartY(o.getMStartY() + M_PASTE_OFFSET);
+			o.setMEndX(o.getMEndX() + M_PASTE_OFFSET);
+			o.setMEndY(o.getMEndY() + M_PASTE_OFFSET);
+			o.setMLeft(o.getMLeft() + M_PASTE_OFFSET);
+			o.setMTop(o.getMTop() + M_PASTE_OFFSET);
+			// make another copy to preserve clipboard contents for next
+			// paste
+			PathwayElement p = o.copy();
+			
+			// set new unique id
+			if (p.getGraphId() != null)
+			{					
+				p.setGraphId(idmap.get(p.getGraphId()));					
+			}
+			// update graphref
+			String y = p.getStartGraphRef(); 
+			if (y != null)
+			{
+				//TODO: mapping graphrefs to newly created id's 
+				// doesn't work properly yet
+				/*
+				 * if (idmap.containsKey(y)) {
+				 * p.setStartGraphRef(idmap.get(y)); } else {
+				 */
+					p.setStartGraphRef(null);
+				//}				
+			}
+			y = p.getEndGraphRef(); 
+			if (y != null)
+			{
+				/*
+				 * if (idmap.containsKey(y)) {
+				 * p.setEndGraphRef(idmap.get(y)); } else {
+				 */
+					p.setEndGraphRef(null);
+			//	}				
+			}
+			
+			data.add (p); // causes lastAdded to be set
+			lastAdded.select();
+			selection.addToSelection(lastAdded);
+		}
 	}
-
+	
 	private List<VPathwayListener> listeners = new ArrayList<VPathwayListener>();
 	private List<VPathwayListener> removeListeners = new ArrayList<VPathwayListener>();
 	

@@ -117,11 +117,6 @@ public class Engine {
 	public PreferenceCollection getPreferenceCollection() {
 		return preferences;
 	}
-	
-	/**
-	 * application global clipboard.
-	 */
-	public List<PathwayElement> clipboard = null;
 
 	public void openPathway(File pathwayFile) throws ConverterException {
 		openPathway(pathwayFile, null);

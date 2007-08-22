@@ -17,14 +17,13 @@
 package org.pathvisio.view;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 public abstract interface VPathwayWrapper
@@ -40,5 +39,6 @@ public abstract interface VPathwayWrapper
 	public VPathway createVPathway();
 	
 	public void registerKeyboardAction(KeyStroke k, Action a);
-	public void copyToClipboard(List<PathwayElement> result);
+	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements);
+	public void pasteFromClipboard();
 }

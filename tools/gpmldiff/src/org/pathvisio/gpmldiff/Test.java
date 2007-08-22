@@ -138,7 +138,8 @@ public class Test extends TestCase
 		}
 		originalDoc = new PwyDoc (originalPwy);
 	}
-	
+
+ 
 	public void testDiffInsertion()
 	{
 		// read test file
@@ -187,7 +188,7 @@ public class Test extends TestCase
 		}
 		out.checkCounts (0, 1, 0, 0); // check that there is one insertion
 	}
-
+	
 	public void testDiffUnchanged()
 	{
 		// read test file
@@ -230,7 +231,7 @@ public class Test extends TestCase
 		{
 			fail ("No exception expected");
 		}
-		out.checkCounts (1, 0, 0, 0); // check that there is one deletion
+		out.checkCounts (0, 0, 0, 0); // check that there is one deletion
 	}
 
 	public void testDiffDeletion()
@@ -328,7 +329,7 @@ public class Test extends TestCase
 				"    <Shape xmlns=\"http://genmapp.org/GPML/2007\" Type=\"Rectangle\" GraphId=\"bd1\">\n" +
 				"      <Graphics FillColor=\"Transparent\" Color=\"000000\" CenterX=\"3907.5\" CenterY=\"2197.5\" Width=\"1246.0\" Height=\"1246.0\" Rotation=\"0.0\" />\n" +
 				"    </Shape>\n" +
-				"    <Change attr=\"ShapeType\" old=\"RECTANGLE\" new=\"OVAL\" />\n" +
+				"    <Change attr=\"ShapeType\" old=\"Rectangle\" new=\"Oval\" />\n" +
 				"  </Modify>\n" +
 				"  <Modify>\n" +
 				"    <Line xmlns=\"http://genmapp.org/GPML/2007\">\n" +

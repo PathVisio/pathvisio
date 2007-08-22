@@ -88,6 +88,11 @@ class PwyElt
 								// sent already for current PwyElt.
 		for (String key : oldContents.keySet())
 		{
+			if (key.equals ("BoardWidth") || key.equals ("BoardHeight"))
+			{
+				// ignore board width and height
+				continue;
+			}
 			if (newContents.containsKey(key))
 			{
 				if (!oldContents.get(key).equals(newContents.get(key)))

@@ -65,8 +65,8 @@ class Patch
 					result.setProperty(pt, Double.parseDouble (ch.newValue));
 					break;
 				case SHAPETYPE:
-					// setProperty expects to get ordinal value for this Shape
-					result.setProperty(pt, ShapeType.valueOf(ch.newValue).ordinal());
+					// setProperty expects to get ShapeType for this Shape.
+					result.setProperty(pt, ShapeType.fromName(ch.newValue));
 					break;							
 				default:
 					Logger.log.error (ch.attr + " not supported");

@@ -23,9 +23,12 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+import java.awt.geom.RoundRectangle2D;
 
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.GlobalPreference;
 
 /**
  * This class implements a geneproduct and 
@@ -83,8 +86,15 @@ public class GeneProduct extends GraphicsShape
 
 	public void doDraw(Graphics2D g)
 	{
-		Rectangle area = new Rectangle(
-				getVLeft(), getVTop(), getVWidth(), getVHeight());
+		RectangularShape area = new Rectangle2D.Double(
+			getVLeft(), getVTop(), getVWidth(), getVHeight());
+		boolean rounded = GlobalPreference.getValueBoolean(GlobalPreference.DATANODES_ROUNDED);
+		if(rounded) {
+			double r = Math.max(area.getWidth(), area.getHeight()) * 0.2;
+			area = new RoundRectangle2D.Double(area.getX(), area.getY(), 
+					area.getWidth(), area.getHeight(), 
+					r, r);
+		}
 		
 		//White background
 		g.setPaint (Color.WHITE);
@@ -101,15 +111,15 @@ public class GeneProduct extends GraphicsShape
 		
 		//Label
 		//Don't draw label outside gene box
-		g.clip (new Rectangle (area.x - 1, area.y - 1, area.width + 1, area.height + 1));
+		g.clip (new Rectangle2D.Double (area.getX() - 1, area.getY() - 1, area.getWidth() + 1, area.getHeight()+ 1));
 	
 		g.setFont(new Font(gdata.getFontName(), getVFontStyle(), getVFontSize()));
 		
 		String label = gdata.getTextLabel();
 		TextLayout tl = new TextLayout(label, g.getFont(), g.getFontRenderContext());
 		Rectangle2D tb = tl.getBounds();
-		tl.draw(g, 	area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2), 
-					area.y + (int)(area.height / 2) + (int)(tb.getHeight() / 2));
+		tl.draw(g, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2), 
+					(int)area.getY() + (int)(area.getHeight() / 2) + (int)(tb.getHeight() / 2));
 		
 		drawHighlight(g);
 	}

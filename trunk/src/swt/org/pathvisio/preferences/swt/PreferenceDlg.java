@@ -90,12 +90,17 @@ public class PreferenceDlg extends PreferenceManager {
 			super("Display", GRID);
 		}
 		
-		protected void createFieldEditors() {
+		protected void createFieldEditors() {		
 			IntegerFieldEditor f = new IntegerFieldEditor(GlobalPreference.GUI_SIDEPANEL_SIZE.name(),
 					"Initial side panel size (percent of window size):", getFieldEditorParent());
 			f.setValidRange(0, 100);
 			addField(f);
 			
+			BooleanFieldEditor fround = new BooleanFieldEditor (
+					GlobalPreference.DATANODES_ROUNDED.name(),
+					"Use rounded rectangles for data nodes:", getFieldEditorParent());
+				addField(fround);
+				
 			BooleanFieldEditor f2 =	new BooleanFieldEditor (
 					GlobalPreference.SHOW_ADVANCED_ATTRIBUTES.name(),									   
 					"Show advanced attributes (e.g. references):", getFieldEditorParent());

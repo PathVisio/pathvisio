@@ -7,11 +7,12 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 public class VPathwayWrapperBase implements VPathwayWrapper {
 
-	public void copyToClipboard(List<PathwayElement> result) {
+	public void copyToClipboard(Pathway source, List<PathwayElement> result) {
 		
 	}
 
@@ -49,6 +50,10 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 
 	public void setVSize(int w, int h) {
 		
+	}
+
+	public void pasteFromClipboard() {
+	
 	}
 
 }

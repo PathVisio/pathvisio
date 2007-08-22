@@ -22,7 +22,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 
 public enum GlobalPreference implements Preference {
-	
 	FILE_LOG(""), //TODO
 	
 	COLOR_NO_CRIT_MET(new Color(200, 200, 200)),
@@ -30,6 +29,8 @@ public enum GlobalPreference implements Preference {
 	COLOR_NO_DATA_FOUND(new Color(100, 100, 100)),
 	COLOR_SELECTED(Color.RED),
 	COLOR_HIGHLIGHTED(Color.GREEN),
+	
+	DATANODES_ROUNDED(Boolean.toString(false)),
 	
 	DB_ENGINE_GDB("org.pathvisio.data.DBConnDerby"),
 	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),

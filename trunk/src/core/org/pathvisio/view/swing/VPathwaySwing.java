@@ -33,22 +33,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.Action;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolTip;
 import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 
-import org.pathvisio.gui.swing.dnd.FileImportHandler;
+import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -73,7 +72,6 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		
 		setFocusable(true);
 		setRequestFocusEnabled(true);
-		setTransferHandler(new FileImportHandler());
 	}
 
 	public void setChild(VPathway c) {
@@ -81,6 +79,10 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		child.addVPathwayListener(this);
 	}
 
+	public VPathway getChild() {
+		return child;
+	}
+	
 	public Rectangle getVBounds() {
 		return getBounds();
 	}
@@ -178,6 +180,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		switch(e.getType()) {
 		case VPathwayEvent.MODEL_LOADED:
 			if(e.getSource() == child) {
+				setTransferHandler(new PathwayImportHandler(child.getGmmlData()));
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						container.setViewportView(VPathwaySwing.this);
@@ -193,13 +196,18 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		}
 	}
 
-	public void copyToClipboard(List<PathwayElement> result) {
+	public void pasteFromClipboard() {
 		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clip.setContents(new PathwayTransferable(result), this);
+		TransferHandler handler = getTransferHandler();
+		handler.importData(this, clip.getContents(this));
+	}
+	
+	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements) {
+		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clip.setContents(new PathwayTransferable(source, copyElements), this);
 	}
 
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
-		System.out.println("Lost ownership");
 	}
 	
 	Set<ToolTipProvider> toolTipProviders = new HashSet<ToolTipProvider>();
@@ -241,4 +249,5 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 			}
 		}
 	}
+
 }

@@ -73,6 +73,12 @@ class BetterSim extends SimilarityFunction
 				
 				switch (newProp) 
 				{
+				case BOARDWIDTH:
+				case BOARDHEIGHT:
+					max = 100 / oldN;
+					score = max;
+					// since these two are calculated dynamically, ignore them.
+					break;
 				case GRAPHID:
 				case GROUPID:
 						max = 600 / oldN;

@@ -54,7 +54,7 @@ $wgDPL2MaxResultCount = 50;
 # Max length to format a list of articles chunked by letter as bullet list
 # if list is bigger, columnar format user (same as cutoff arg for
 # CategoryPage::formatList())
-$wgDPL2CategoryStyleListCutoff = 6;
+$wgDPL2CategoryStyleListCutoff = 0;
 
 # Allow unlimited categories in the Query
 $wgDPL2AllowUnlimitedCategories = true;
@@ -1019,7 +1019,7 @@ function DynamicPageList2( $input, $params, &$parser ) {
 		if ($bShowNamespace)
 			//Adapted from Title::getPrefixedText()
             $sTitleText = str_replace( '_', ' ', $title->prefix($sTitleText) );
-		//AP20070710
+		//AP20070710 - Produce short pathway title when species is specified
 		$titleText = $wgContLang->convert( $sTitleText);
 		$pick = 'Human';
 		if (isset($_GET["browse"])){
@@ -1365,7 +1365,7 @@ class DPL2 {
 	
 	//slightly different from CategoryViewer::formatList() (no need to instantiate a CategoryViewer object)
 	function formatCategoryList($iStart, $iCount) {
-		global $wgDPL2CategoryStyleListCutoff;
+		global $wgDPL2CategoryStyleListCutoff, $pick;
 		
 		for($i = $iStart; $i < $iStart + $iCount; $i++) {
 			$aArticles[] = $this->mArticles[$i]->mLink;
@@ -1373,7 +1373,12 @@ class DPL2 {
 		}
 		require_once ('CategoryPage.php');
 		if ( count ( $aArticles ) > $wgDPL2CategoryStyleListCutoff ) {
-			return CategoryViewer::columnList( $aArticles, $aArticles_start_char );
+			//AP20070821
+			if ($pick == 'All Species'){
+				return CategoryViewer::columnList( $aArticles, $aArticles_start_char );
+			} else {
+				return CategoryViewer::columnListSimple( $aArticles );
+			}
 		} elseif ( count($aArticles) > 0) {
 			// for short lists of articles in categories.
 			return CategoryViewer::shortList( $aArticles, $aArticles_start_char );

@@ -157,7 +157,7 @@ public abstract class CommonActions {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Engine.getCurrent().getActiveVPathway().pasteFromClipboad();
+			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
 		}
 	}
 		

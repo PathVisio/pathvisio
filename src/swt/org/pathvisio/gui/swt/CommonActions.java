@@ -505,7 +505,7 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.getCurrent().getActiveVPathway().pasteFromClipboad();
+			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
 		}
 	}
 	

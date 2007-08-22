@@ -2031,6 +2031,10 @@ public class VPathway implements PathwayListener
 		}
 	}
 	
+	public void pasteFromClipboard() {
+		parent.pasteFromClipboard();
+	}
+		
 	private List<VPathwayListener> listeners = new ArrayList<VPathwayListener>();
 	private List<VPathwayListener> removeListeners = new ArrayList<VPathwayListener>();
 	

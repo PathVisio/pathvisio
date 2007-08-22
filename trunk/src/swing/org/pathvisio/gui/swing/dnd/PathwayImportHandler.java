@@ -29,10 +29,8 @@ public class PathwayImportHandler extends TransferHandler {
 	public static final DataFlavor urlFlavor = new DataFlavor(String.class, "text/uri");
 	
 	Set<DataFlavor> supportedFlavors;
-	Pathway pathway;
 	
-	public PathwayImportHandler(Pathway p) {
-		pathway = p;
+	public PathwayImportHandler() {
 		supportedFlavors = new HashSet<DataFlavor>();
 		supportedFlavors.add(PathwayTransferable.gpmlDataFlavor);
 		supportedFlavors.add(urlFlavor);

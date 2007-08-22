@@ -72,6 +72,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		
 		setFocusable(true);
 		setRequestFocusEnabled(true);
+		setTransferHandler(new PathwayImportHandler());
 	}
 
 	public void setChild(VPathway c) {
@@ -180,7 +181,6 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		switch(e.getType()) {
 		case VPathwayEvent.MODEL_LOADED:
 			if(e.getSource() == child) {
-				setTransferHandler(new PathwayImportHandler(child.getGmmlData()));
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						container.setViewportView(VPathwaySwing.this);

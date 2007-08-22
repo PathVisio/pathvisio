@@ -159,6 +159,10 @@ public class Pathway implements PathwayListener
 			return;
 		}
 		if (o.getParent() == this) return; // trying to re-add the same object
+		forceAddObject(o);
+	}
+
+	private void forceAddObject(PathwayElement o) {
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
 		o.addListener(this);
@@ -166,7 +170,7 @@ public class Pathway implements PathwayListener
 		o.setZOrder(dataObjects.size() + 1);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
-
+	
 	/**
 	   called for biopax, infobox and mappInfo upon addition.
 	 */
@@ -176,14 +180,8 @@ public class Pathway implements PathwayListener
 		assert (oldElt.getObjectType() == newElt.getObjectType());
 		assert (newElt.getParent() == null);
 		assert (oldElt != newElt);
-		fireObjectModifiedEvent (new PathwayEvent (oldElt, PathwayEvent.DELETED));
-		oldElt.removeListener (this);
-		dataObjects.remove(oldElt);
-		oldElt.setParent (null);
-		newElt.addListener (this);
-		newElt.setParent (this);
-		dataObjects.add(newElt);
-		fireObjectModifiedEvent(new PathwayEvent(newElt, PathwayEvent.ADDED));		
+		forceRemove(oldElt);
+		forceAddObject(newElt);	
 	}
 	
 	/**
@@ -200,6 +198,17 @@ public class Pathway implements PathwayListener
 			throw new IllegalArgumentException("Can't remove mappinfo object!");
 		if (o.getObjectType() == ObjectType.INFOBOX)
 			throw new IllegalArgumentException("Can't remove infobox object!");
+		forceRemove(o);
+	}
+
+	/**
+	 * removes object, regardless whether the object may be removed or not
+	 * sets parent of object to null
+	 * fires PathwayEvent.DELETED event <i>before</i> removal of the object
+	 *  
+	 * @param o the object to remove
+	 */
+	private void forceRemove(PathwayElement o) {
 		o.removeListener(this);
 		dataObjects.remove(o);
 		List<GraphRefContainer> references = getReferringObjects(o.getGraphId());
@@ -209,7 +218,7 @@ public class Pathway implements PathwayListener
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.setParent(null);
 	}
-
+	
 	/**
 	 * Stores references of line endpoints to other objects
 	 */

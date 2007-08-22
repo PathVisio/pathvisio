@@ -271,8 +271,38 @@ class Pathway {
 		return Title::newFromText($this->species() . ':' . $this->name(), NS_PATHWAY);
 	}
 	
+	/**
+	 * Returns a list of species
+	 */
 	public static function getAvailableSpecies() {
 		return array_keys(Pathway::$spName2Code);
+	}
+
+	/**
+	 * Returns a list of categories, excluding species
+	 */
+	public static function getAvailableCategories() {
+		$arrayCat = array();
+      	        $NScat = NS_CATEGORY;
+                $dbr = wfGetDB( DB_SLAVE );
+                $categorylinks = $dbr->tableName( 'categorylinks' );
+                $implicit_groupby = $dbr->implicitGroupby() ? '1' : 'cl_to';
+                $sqlCat= "SELECT 'Categories' as type,
+                                {$NScat} as namespace,
+                                cl_to as title,
+                                $implicit_groupby as value,
+                                COUNT(*) as count
+                           FROM $categorylinks
+                           GROUP BY 1,2,3,4";
+                $res = $dbr->query($sqlCat, get_class($this) . '::getAvailableSpecies');
+                while ($obj =  $dbr->fetchObject( $res ) ) {
+                        $cat = $obj->title;
+			array_push($arrayCat, $cat);
+		}
+		
+		$arraySpecies = Pathway::getAvailableSpecies();		
+		$arrayCat = array_diff($arrayCat, $arraySpecies);
+		return $arrayCat;
 	}
 	
 	private static function nameFromTitle($title) {

@@ -40,7 +40,9 @@ public class PathwayTransferable implements Transferable {
 		//Always add biopax information
 		//TODO: Only when referred to
 		PathwayElement biopax = pathway.getBiopax();
-		if(biopax != null) pnew.add(biopax);
+		if(biopax != null) {
+			pnew.add(biopax.copy());
+		}
 
 		Set<String> ids = new HashSet<String>();
 		boolean infoFound = false;

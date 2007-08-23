@@ -40,6 +40,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	
 	CommentsTableModel tableModel;
 	JTable commentsTable;
+	JPanel buttonPanel;
 	
 	public CommentPanel() {
 		setLayout(new BorderLayout(5, 5));
@@ -48,7 +49,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 		commentsTable.setBorder(BorderFactory.createCompoundBorder());
 		commentsTable.setRowHeight(20);
 		commentsTable.setMinimumSize(new Dimension(200, 200));
-		JPanel buttonPanel = new JPanel();
+		buttonPanel = new JPanel();
 		JButton add = new JButton(ADD);
 		add.setActionCommand(ADD);
 		add.addActionListener(this);
@@ -68,8 +69,15 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 		
 		tableModel = new CommentsTableModel();
 		commentsTable.setModel(tableModel);
+		
+
 	}
 
+	public void setReadOnly(boolean readonly) {
+		super.setReadOnly(readonly);
+		setChildrenEnabled(buttonPanel, !readonly);
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(ADD)) {
 			getInput().addComment("Type you comment here", "");
@@ -122,7 +130,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 		}
 		
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return true;
+			return !readonly;
 		}
 	}
 }

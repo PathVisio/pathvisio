@@ -36,8 +36,9 @@ public class WebstartMain extends GuiMain {
 	UserInterfaceHandler uiHandler;
 	
 	protected void createAndShowGUI() {
-		SwingEngine.setCurrent(new SwingEngine());
-		Engine.setCurrent(new Engine());
+		Engine engine = new Engine();
+		Engine.setCurrent(engine);
+		SwingEngine.setCurrent(new SwingEngine(engine));
 		
 		super.createAndShowGUI();
 		
@@ -51,7 +52,7 @@ public class WebstartMain extends GuiMain {
 
 				
 		final RunnableWithProgress r = new RunnableWithProgress() {
-			public Object excecuteCode() {				
+			public Object excecuteCode() {
 				parseCommandLine(getArgs());
 								
 				try {
@@ -68,7 +69,7 @@ public class WebstartMain extends GuiMain {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {					
-					uiHandler.runWithProgress(r, "Starting editor", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+					uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
 				}
 			});
 		} catch (Exception e) {

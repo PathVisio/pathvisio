@@ -88,10 +88,11 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
 		ProgressDialog d = new ProgressDialog(
 				JOptionPane.getFrameForComponent(this), 
-				"Querying PubMed", pk, true, true);
+				"", pk, true, true);
 				
 		SwingWorker sw = new SwingWorker() {
 			protected Object doInBackground() throws Exception {
+				pk.setTaskName("Querying PubMed");
 				pmq.execute();
 				pk.finished();
 				return null;

@@ -142,8 +142,10 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 	protected void destroy() {
 		super.destroy();
 		gdata.removeListener(canvas);
-		Pathway parent = gdata.getParent();
-		if(parent != null) parent.remove(gdata);
+		
+		//View should not remove its model
+//		Pathway parent = gdata.getParent();
+//		if(parent != null) parent.remove(gdata);
 	}
 	
 }

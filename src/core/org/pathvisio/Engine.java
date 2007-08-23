@@ -28,7 +28,6 @@ import org.pathvisio.data.DBConnector;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.GlobalPreference;
@@ -352,6 +351,10 @@ public class Engine {
 	 */
 	public void addApplicationEventListener(ApplicationEventListener l) {
 		applicationEventListeners.add(l);
+	}
+	
+	public void removeApplicationEventListener(ApplicationEventListener l) {
+		applicationEventListeners.remove(l);
 	}
 	
 	/**

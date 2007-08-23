@@ -84,6 +84,12 @@ public class DropDownButton extends JButton implements ActionListener {
 		setBorder(null);
 	}
 	
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		mainButton.setEnabled(enabled);
+		arrowButton.setEnabled(enabled);
+	}
+	
 	public void updateUI() {
 		super.updateUI();
 		setBorder(null);

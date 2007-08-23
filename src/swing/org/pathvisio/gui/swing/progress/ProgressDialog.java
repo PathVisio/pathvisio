@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
@@ -35,6 +36,8 @@ import org.pathvisio.util.ProgressKeeper.ProgressListener;
 public class ProgressDialog extends JDialog implements ActionListener, ProgressListener {
 	private final String CANCEL = "Cancel";
 	
+	JLabel task;
+	JLabel report;
 	SwingProgressKeeper keeper;
 	JPanel dialogPane;
 
@@ -43,12 +46,19 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
+		task = new JLabel();
+		report = new JLabel();
+
 		keeper = progressKeeper;
 		keeper.addListener(this);
 		
 		dialogPane = new JPanel();
-		dialogPane.setLayout(new GridLayout());
+		dialogPane.setLayout(new GridLayout(3, 1));
 		dialogPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		task.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+		report.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+		dialogPane.add(task);
+		dialogPane.add(report);
 		dialogPane.add(keeper.getJProgressBar());
 				
 		Container contentPane = getContentPane();
@@ -85,10 +95,13 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		case ProgressEvent.FINISHED:
 			setVisible(false);
 		case ProgressEvent.TASK_NAME_CHANGED:
-			setTitle(keeper.getTaskName());	
+			task.setText(keeper.getTaskName());
+			pack();
+			break;
 		case ProgressEvent.REPORT:
-			String task = keeper.getTaskName();
-			setTitle(task == null ? keeper.getReport() : task + " - " + keeper.getReport());
+			report.setText(keeper.getReport());
+			pack();
+			break;
 		}
 	}
 }

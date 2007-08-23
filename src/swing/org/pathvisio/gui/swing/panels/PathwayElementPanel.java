@@ -16,6 +16,9 @@
 //
 package org.pathvisio.gui.swing.panels;
 
+import java.awt.Component;
+
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -24,7 +27,12 @@ import org.pathvisio.model.PathwayElement;
 public abstract class PathwayElementPanel extends JPanel {
 	private PathwayElement input;
 	JTabbedPane dialogPane;
-		
+	boolean readonly;
+	
+	public void setReadOnly(boolean readonly) {
+		this.readonly = readonly;
+	}
+	
 	protected PathwayElement getInput() {
 		return input;
 	}
@@ -35,4 +43,13 @@ public abstract class PathwayElementPanel extends JPanel {
 	}
 	
 	public abstract void refresh();
+	
+	public final void setChildrenEnabled(JComponent c, boolean enabled) {
+		for(Component child : c.getComponents()) {
+			child.setEnabled(enabled);
+			if(child instanceof JComponent) {
+				setChildrenEnabled((JComponent)child, enabled);
+			}
+		}
+	}
 }

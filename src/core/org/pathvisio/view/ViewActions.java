@@ -28,6 +28,16 @@ public class ViewActions {
 		delete = new DeleteAction();
 	}
 	
+	private abstract class EnableOnSelectAction extends AbstractAction implements SelectionListener {
+		public EnableOnSelectAction() {
+			vPathway.addSelectionListener(this);
+		}
+		
+		public void selectionEvent(SelectionEvent e) {
+			setEnabled(vPathway.getSelectedGraphics().size() > 0);
+		}
+	}
+	
 	private class SelectClassAction extends AbstractAction {
 		Class c;
 		public SelectClassAction(String name, Class c) {
@@ -47,12 +57,12 @@ public class ViewActions {
 			vPathway.selectAll();
 		}
 	}
-	
-	private class GroupAction extends AbstractAction implements SelectionListener {
+		
+	private class GroupAction extends EnableOnSelectAction implements SelectionListener {
 		public GroupAction() {
-			super("Group");
+			super();
+			putValue(NAME, "Group");
 			setLabel();
-			vPathway.addSelectionListener(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -66,6 +76,7 @@ public class ViewActions {
 			case SelectionEvent.SELECTION_CLEARED:
 				setLabel();
 			}
+			super.selectionEvent(e);
 		}
 		
 		private void setLabel() {
@@ -89,12 +100,12 @@ public class ViewActions {
 		}		
 	}
 	
-	private class DeleteAction extends AbstractAction implements SelectionListener {
+	private class DeleteAction extends EnableOnSelectAction implements SelectionListener {
 		public DeleteAction() {
-			super("Delete");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+			super();
+			putValue(NAME, "Delete");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_DELETE, 0));
-			vPathway.addSelectionListener(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -105,11 +116,7 @@ public class ViewActions {
 					continue; // Object not selected, skip
 				toRemove.add(o);
 			}
-			vPathway.removeDrawingObjects(toRemove);	
-		}
-		
-		public void selectionEvent(SelectionEvent e) {
-			setEnabled(vPathway.getSelectedGraphics().size() > 0);
+			vPathway.removeDrawingObjects(toRemove, true);
 		}
 	}
 }

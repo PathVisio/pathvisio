@@ -36,18 +36,18 @@ public class PathwayElementDialog extends OkCancelDialog {
 	public static final String TAB_COMMENTS = "Comments";
 	public static final String TAB_LITERATURE = "Literature";
 	
-	public static PathwayElementDialog getInstance(PathwayElement e) {
-		return getInstance(e, null, null);
+	public static PathwayElementDialog getInstance(PathwayElement e, boolean readonly) {
+		return getInstance(e, readonly, null, null);
 	}
 	
-	public static PathwayElementDialog getInstance(PathwayElement e, Frame frame, Component locationComp) {
+	public static PathwayElementDialog getInstance(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		switch(e.getObjectType()) {
 		case ObjectType.DATANODE:
-			return new DataNodeDialog(e, frame, locationComp);
+			return new DataNodeDialog(e, readonly, frame, locationComp);
 		case ObjectType.INFOBOX:
-			return new PathwayElementDialog(e.getParent().getMappInfo(), frame, "Pathway properties", locationComp);
+			return new PathwayElementDialog(e.getParent().getMappInfo(), readonly, frame, "Pathway properties", locationComp);
 		default:
-			return new PathwayElementDialog(e, frame, "Element properties", locationComp);
+			return new PathwayElementDialog(e, readonly, frame, "Element properties", locationComp);
 		}
 	}
 	
@@ -56,9 +56,11 @@ public class PathwayElementDialog extends OkCancelDialog {
 	private HashMap<String, PathwayElementPanel> panels;
 	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
 		
-	public PathwayElementDialog(PathwayElement e, Frame frame, String title, Component locationComp) {
+	protected boolean readonly;
+	
+	public PathwayElementDialog(PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
 		super(frame, title, locationComp, true);
-		
+		this.readonly = readonly;
 		panels = new HashMap<String, PathwayElementPanel>();
 		createTabs();
 		setInput(e);
@@ -107,6 +109,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	}
 		
 	protected void addPathwayElementPanel(String tabLabel, PathwayElementPanel p) {
+		p.setReadOnly(readonly);
 		dialogPane.add(tabLabel, p);
 		panels.put(tabLabel, p);
 	}

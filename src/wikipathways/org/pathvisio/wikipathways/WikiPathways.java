@@ -83,6 +83,8 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 	
 	public void init(VPathwayWrapper wrapper, ProgressKeeper progress, URL base) throws Exception {
+		progress.setTaskName("Starting editor");
+		
 		WikiPathwaysEngine.init();
 		
 		loadCookies(base);
@@ -127,7 +129,7 @@ public class WikiPathways implements ApplicationEventListener {
 		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
 		
 		mainPanel.getToolBar().addSeparator();
-		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_HIDE_ON_EDIT);
+		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
 		mainPanel.addToToolbar(discardAction);
 
 		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
@@ -230,6 +232,7 @@ public class WikiPathways implements ApplicationEventListener {
 			if(description != null) {
 				RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
 					public Boolean excecuteCode() {
+						getProgressKeeper().setTaskName("Saving pathway");
 						try {
 							saveToWiki(description);
 							return true;
@@ -241,7 +244,7 @@ public class WikiPathways implements ApplicationEventListener {
 						return false;
 					}
 				};
-				uiHandler.runWithProgress(r, "Saving pathway", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+				uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
 				return r.get();
 			}
 		}

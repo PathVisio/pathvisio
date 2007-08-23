@@ -1362,34 +1362,34 @@ public class VPathway implements PathwayListener
 		redrawDirtyRect();
 	}
 	
-	private void insertPressed()
-	{
-		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
-		objects.addAll(selection.getSelection());
-		for (VPathwayElement o : objects)
-		{
-			if (o instanceof Line)
-			{
-				PathwayElement g = ((Line)o).getGmmlData();
-				PathwayElement[] gNew = g.splitLine();
-							
-				removeDrawingObject(o); //Remove the old line
-				
-				//Clear refs on middle point (which is new)
-				gNew[0].getMEnd().setGraphRef(null);
-				gNew[1].getMStart().setGraphRef(null);
-				
-				gNew[1].setGraphId(data.getUniqueId());
-				data.add(gNew[0]);
-				Line l1 = (Line)lastAdded;
-				data.add(gNew[1]);
-				Line l2 = (Line)lastAdded;				
-				
-				l1.getEnd().link(l2.getStart());
-			}
-		}
-		selection.addToSelection(lastAdded);
-	}
+//	private void insertPressed()
+//	{
+//		Set<VPathwayElement> objects = new HashSet<VPathwayElement>();
+//		objects.addAll(selection.getSelection());
+//		for (VPathwayElement o : objects)
+//		{
+//			if (o instanceof Line)
+//			{
+//				PathwayElement g = ((Line)o).getGmmlData();
+//				PathwayElement[] gNew = g.splitLine();
+//							
+//				removeDrawingObject(o); //Remove the old line
+//				
+//				//Clear refs on middle point (which is new)
+//				gNew[0].getMEnd().setGraphRef(null);
+//				gNew[1].getMStart().setGraphRef(null);
+//				
+//				gNew[1].setGraphId(data.getUniqueId());
+//				data.add(gNew[0]);
+//				Line l1 = (Line)lastAdded;
+//				data.add(gNew[1]);
+//				Line l2 = (Line)lastAdded;				
+//				
+//				l1.getEnd().link(l2.getStart());
+//			}
+//		}
+//		selection.addToSelection(lastAdded);
+//	}
 	
 	public void toggleGroup(List<Graphics> selection)
 	{
@@ -1572,24 +1572,43 @@ public class VPathway implements PathwayListener
 	}
 	
 	/**
-	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
+	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing<BR>
+	 * Does not remove the model representation!
 	 * 
 	 * @param toRemove
 	 *            The List containing the objects to be removed
 	 */
-	public void removeDrawingObjects(ArrayList<VPathwayElement>toRemove)
+	public void removeDrawingObjects(ArrayList<VPathwayElement>toRemove) {
+		removeDrawingObjects(toRemove, false);
+	}
+	
+	/**
+	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
+	 * 
+	 * @param toRemove
+	 *            The List containing the objects to be removed
+	 * @param removeFromModel
+	 * 			Whether to remove the model representation or not
+	 */
+	public void removeDrawingObjects(ArrayList<VPathwayElement>toRemove, boolean removeFromModel)
 	{
 		for(VPathwayElement o : toRemove)
 		{
-			removeDrawingObject(o);			
+			removeDrawingObject(o, removeFromModel);			
 		}
 		selection.fitToSelection();
 	}
 	
-	public void removeDrawingObject(VPathwayElement toRemove)
+	public void removeDrawingObject(VPathwayElement toRemove, boolean removeFromModel)
 	{
 		toRemove.destroy(); //Object will remove itself from the drawing
+		if(removeFromModel) {
+			if(toRemove instanceof Graphics) {
+				data.remove(((Graphics)toRemove).getGmmlData());
+			}
+		}
 		selection.removeFromSelection(toRemove); //Remove from selection
+		redrawDirtyRect();
 	}
 
 	Graphics lastAdded = null;
@@ -1605,12 +1624,12 @@ public class VPathway implements PathwayListener
 				Graphics deleted = getPathwayElementView(e.getAffectedData());
 				if(deleted != null) {
 					deleted.markDirty();
-					removeDrawingObject(deleted);
+					removeDrawingObject(deleted, false);
 				}
 				break;
 			case PathwayEvent.ADDED:
 				lastAdded = fromGmmlDataObject(e.getAffectedData());
-				lastAdded.markDirty();
+				if(lastAdded != null) lastAdded.markDirty();
 				break;
 			case PathwayEvent.WINDOW:
 				int width = (int)vFromM(infoBox.getGmmlData().getMBoardWidth());
@@ -1997,13 +2016,17 @@ public class VPathway implements PathwayListener
 		 */
 		for (PathwayElement o : elements)
 		{
-//			if (o.getObjectType() == ObjectType.MAPPINFO
-//					|| o.getObjectType() == ObjectType.INFOBOX)
-//			{
-//				// these object types we skip,
-//				// because they have to be unique in a pathway
-//				continue;
-//			}
+			if (o.getObjectType() == ObjectType.INFOBOX)
+			{
+				// these object types we skip,
+				// because they have to be unique in a pathway
+				continue;
+			}
+			
+			if (o.getObjectType() == ObjectType.BIOPAX) {
+				//Merge the copied biopax elements with existing
+				data.mergeBiopax(o);
+			}
 			
 			lastAdded = null;
 			o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
@@ -2043,7 +2066,7 @@ public class VPathway implements PathwayListener
 					p.setEndGraphRef(null);
 				 }				
 			}
-			
+			System.out.println("Adding " + p);
 			data.add (p); // causes lastAdded to be set
 			lastAdded.select();
 			selection.addToSelection(lastAdded);

@@ -910,6 +910,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
+		if(src.biopax != null) {
+			System.out.println("Copying " + biopax);
+			biopax = (Document)src.biopax.clone();			
+		}
 		fireObjectModifiedEvent(new PathwayEvent(this,
 				PathwayEvent.MODIFIED_GENERAL));
 	}

@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -38,30 +40,21 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.gui.swing.actions.CommonActions.AlignAction;
-import org.pathvisio.gui.swing.actions.CommonActions.CopyAction;
-import org.pathvisio.gui.swing.actions.CommonActions.ExportAction;
-import org.pathvisio.gui.swing.actions.CommonActions.ImportAction;
-import org.pathvisio.gui.swing.actions.CommonActions.NewElementAction;
-import org.pathvisio.gui.swing.actions.CommonActions.PasteAction;
-import org.pathvisio.gui.swing.actions.CommonActions.SaveAction;
-import org.pathvisio.gui.swing.actions.CommonActions.SaveAsAction;
-import org.pathvisio.gui.swing.actions.CommonActions.StackAction;
+import org.pathvisio.gui.swing.actions.CommonActions;
 import org.pathvisio.gui.swing.actions.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
-import org.pathvisio.view.StackType;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -85,10 +78,14 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	private BackpagePane backpagePane;
 	
+	private CommonActions actions;
+		
 	public MainPanel() {
 		setLayout(new BorderLayout());
 		setTransferHandler(new PathwayImportHandler());
 		Engine.getCurrent().addApplicationEventListener(this);
+		
+		actions = SwingEngine.getCurrent().getActions();
 		
 		menuBar = new JMenuBar();
 		addMenuActions(menuBar);
@@ -126,36 +123,36 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		splitPane.setResizeWeight(1);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane, BorderLayout.CENTER);
+		
+		Action[] keyStrokeActions = new Action[] {
+				actions.copyAction,
+				actions.pasteAction,
+		};
+		InputMap im = getInputMap();
+		ActionMap am = getActionMap();
+		for(Action a : keyStrokeActions) {
+			im.put((KeyStroke)a.getValue(Action.ACCELERATOR_KEY), a.getValue(Action.NAME));
+			am.put(a.getValue(Action.NAME), a);
+		}
 	}
 	
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu pathwayMenu = new JMenu("Pathway");
-		pathwayMenu.add(new SaveAction());
-		pathwayMenu.add(new SaveAsAction());
-		pathwayMenu.add(new ImportAction());
-		pathwayMenu.add(new ExportAction());
+		pathwayMenu.add(actions.saveAction);
+		pathwayMenu.add(actions.saveAsAction);
+		pathwayMenu.add(actions.importAction);
+		pathwayMenu.add(actions.exportAction);
 
 		JMenu editMenu = new JMenu("Edit");
-		editMenu.add(new CopyAction());
-		editMenu.add(new PasteAction());
+		editMenu.add(actions.copyAction);
+		editMenu.add(actions.pasteAction);
 
 		JMenu selectionMenu = new JMenu("Selection");
 		JMenu alignMenu = new JMenu("Align");
 		JMenu stackMenu = new JMenu("Stack");
 		
-		alignMenu.add(new AlignAction(AlignType.CENTERX));
-		alignMenu.add(new AlignAction(AlignType.CENTERY));
-//		alignMenu.add(new AlignAction(AlignType.LEFT));
-//		alignMenu.add(new AlignAction(AlignType.RIGHT));
-//		alignMenu.add(new AlignAction(AlignType.TOP));
-		alignMenu.add(new AlignAction(AlignType.WIDTH));
-		alignMenu.add(new AlignAction(AlignType.HEIGHT));
-		stackMenu.add(new StackAction(StackType.CENTERX));
-		stackMenu.add(new StackAction(StackType.CENTERY));
-//		stackMenu.add(new StackAction(StackType.LEFT));
-//		stackMenu.add(new StackAction(StackType.RIGHT));
-//		stackMenu.add(new StackAction(StackType.TOP));
-//		stackMenu.add(new StackAction(StackType.BOTTOM));
+		for(Action a : actions.alignActions) alignMenu.add(a);
+		for(Action a : actions.stackActions) stackMenu.add(a);
 		
 		selectionMenu.add(alignMenu);
 		selectionMenu.add(stackMenu);
@@ -163,14 +160,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
 		viewMenu.add(zoomMenu);
-		zoomMenu.add(new ZoomAction(VPathway.ZOOM_TO_FIT));
-		zoomMenu.add(new ZoomAction(10));
-		zoomMenu.add(new ZoomAction(25));
-		zoomMenu.add(new ZoomAction(50));
-		zoomMenu.add(new ZoomAction(75));
-		zoomMenu.add(new ZoomAction(100));
-		zoomMenu.add(new ZoomAction(150));
-		zoomMenu.add(new ZoomAction(200));
+		for(Action a : actions.zoomActions) zoomMenu.add(a);
 
 		mb.add(pathwayMenu);
 		mb.add(editMenu);
@@ -181,22 +171,20 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected void addToolBarActions(JToolBar tb) {
 		tb.setLayout(new WrapLayout(1, 1));
 		
-		addToToolbar(new SaveAction());
-		addToToolbar(new SaveAsAction());
-		addToToolbar(new ImportAction());
-		addToToolbar(new ExportAction());
+		addToToolbar(actions.saveAction);
+		addToToolbar(actions.saveAsAction);
+		addToToolbar(actions.importAction);
+		addToToolbar(actions.exportAction);
 		tb.addSeparator();
-		addToToolbar(new CopyAction(), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new PasteAction(), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(actions.copyAction);
+		addToToolbar(actions.pasteAction);
+		
 		tb.addSeparator();
 
 		tb.addSeparator();
 
 		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
-		JComboBox combo = new JComboBox(new Object[] {
-				new ZoomAction(VPathway.ZOOM_TO_FIT), new ZoomAction(10),
-				new ZoomAction(25), new ZoomAction(50), new ZoomAction(75),
-				new ZoomAction(100), new ZoomAction(150), new ZoomAction(200) });
+		JComboBox combo = new JComboBox(actions.zoomActions);
 		combo.setMaximumSize(combo.getPreferredSize());
 		combo.setEditable(true);
 		combo.setSelectedIndex(5); // 100%
@@ -210,73 +198,44 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						new ZoomAction(zf).actionPerformed(e);
+						ZoomAction za = new ZoomAction(zf);
+						za.setEnabled(true);
+						za.actionPerformed(e);
 					} catch (Exception ex) {
 						// Ignore bad input
 					}
 				}
 			}
 		});
-		addToToolbar(combo);
+		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
 
 		tb.addSeparator();
 
-		addToToolbar(new NewElementAction(VPathway.NEWGENEPRODUCT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new NewElementAction(VPathway.NEWLABEL), TB_GROUP_HIDE_ON_EDIT);
-		// New line menu
-		DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
-				.getResourceURL("icons/newlinemenu.gif")));
-		lineButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWLINE)));
-		lineButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWLINEARROW)));
-		lineButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWLINEDASHED)));
-		lineButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWLINEDASHEDARROW)));
-		lineButton.setRunFirstItem(true);
-		addToToolbar(lineButton, TB_GROUP_HIDE_ON_EDIT);
-
-		addToToolbar(new NewElementAction(VPathway.NEWRECTANGLE), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new NewElementAction(VPathway.NEWOVAL), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new NewElementAction(VPathway.NEWARC), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new NewElementAction(VPathway.NEWBRACE), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new NewElementAction(VPathway.NEWTBAR), TB_GROUP_HIDE_ON_EDIT);
-
-		// New lineshape menu
-		DropDownButton lineShapeButton = new DropDownButton(new ImageIcon(
-				Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif")));
-		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWLIGANDROUND)));
-		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWRECEPTORROUND)));
-		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWLIGANDSQUARE)));
-		lineShapeButton.addComponent(new JMenuItem(new NewElementAction(
-				VPathway.NEWRECEPTORSQUARE)));
-		lineShapeButton.setRunFirstItem(true);
-		addToToolbar(lineShapeButton, TB_GROUP_HIDE_ON_EDIT);
-		
+		for(Action[] aa : actions.newElementActions) {
+			if(aa.length == 1) {
+				addToToolbar(aa[0]);
+			} else { //This is the line sub-menu
+				DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
+						.getResourceURL("icons/newlinemenu.gif")));
+				for(Action a : aa) {
+					lineButton.addComponent(new JMenuItem(a));
+				}
+				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+				lineButton.setEnabled(false);
+			}
+		}
+				
 		tb.addSeparator();
 		
-		addToToolbar(new AlignAction(AlignType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new AlignAction(AlignType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new AlignAction(AlignType.LEFT), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new AlignAction(AlignType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new AlignAction(AlignType.TOP), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new AlignAction(AlignType.WIDTH), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new AlignAction(AlignType.HEIGHT), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new StackAction(StackType.CENTERX), TB_GROUP_HIDE_ON_EDIT);
-		addToToolbar(new StackAction(StackType.CENTERY), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new StackAction(StackType.LEFT), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new StackAction(StackType.RIGHT), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new StackAction(StackType.TOP), TB_GROUP_HIDE_ON_EDIT);
-//		addToToolbar(new StackAction(StackType.BOTTOM), TB_GROUP_HIDE_ON_EDIT);
+		addToToolbar(actions.alignActions);
+		addToToolbar(actions.stackActions);
 	}
 
-	public static final String TB_GROUP_HIDE_ON_EDIT = "edit";
+	public static final String TB_GROUP_SHOW_IF_EDITMODE = "edit";
+	public static final String TB_GROUP_SHOW_IF_VPATHWAY = "vpathway";
 	
 	HashMap<String, List<Component>> toolbarGroups = new HashMap<String, List<Component>>();
+	
 	
 	public void addToToolbar(Component c, String group) {
 		JToolBar tb = getToolBar();
@@ -288,6 +247,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		addToToolbar(c, null);
 	}
 	
+	public void addToToolbar(Action[] actions) {
+		for(Action a : actions) {
+			addToToolbar(a);
+		}
+	}
+
 	public JButton addToToolbar(Action a, String group) {
 		JButton b = getToolBar().add(a);
 		addToToolbarGroup(b, group);
@@ -335,23 +300,24 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	}
 	
 	public void vPathwayEvent(VPathwayEvent e) {
+		VPathway vp = (VPathway)e.getSource();
 		switch(e.getType()) {
 		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
 			if(e.getAffectedElement() instanceof Graphics && 
 					!(e.getAffectedElement() instanceof SelectionBox)) {
 				PathwayElement p = ((Graphics)e.getAffectedElement()).getGmmlData();
 				if(p != null) {
-					PathwayElementDialog.getInstance(p, null, this).setVisible(true);
+					PathwayElementDialog.getInstance(p, !vp.isEditMode(), null, this).setVisible(true);
 				}
 			}
 			break;
 		case VPathwayEvent.EDIT_MODE_ON:
-			for(Component b : getToolbarGroup(TB_GROUP_HIDE_ON_EDIT)) {
+			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_EDITMODE)) {
 				b.setEnabled(true);
 			}
 			break;
 		case VPathwayEvent.EDIT_MODE_OFF:
-			for(Component b : getToolbarGroup(TB_GROUP_HIDE_ON_EDIT)) {
+			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_EDITMODE)) {
 				b.setEnabled(false);
 			}
 			break;
@@ -364,6 +330,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			VPathway vp = (VPathway)e.getSource();
 			vp.addVPathwayListener(this);
 			vp.addVPathwayListener(new PathwayElementMenuListener());
+			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_VPATHWAY)) {
+				b.setEnabled(true);
+			}
 			break;
 		}
 	}

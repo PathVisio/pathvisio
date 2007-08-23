@@ -19,7 +19,6 @@ package org.pathvisio.gui.swing;
 import java.awt.Component;
 import java.io.File;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -29,6 +28,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.actions.CommonActions;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.ConverterException;
@@ -43,13 +43,24 @@ public class SwingEngine {
 	private MainPanel mainPanel;
 	
 	private static SwingEngine current;
+	
+	private CommonActions actions;
+	
+	public SwingEngine(Engine engine) {
+		actions = new CommonActions(engine);
+	}
+	
 	public static SwingEngine getCurrent() {
-		if(current == null) current = new SwingEngine();
+		if(current == null) current = new SwingEngine(Engine.getCurrent());
 		return current;
 	}
 	
 	public static void setCurrent(SwingEngine engine) {
 		current = engine;
+	}
+	
+	public CommonActions getActions() {
+		return actions;
 	}
 	
 	public MainPanel getApplicationPanel() {
@@ -111,10 +122,11 @@ public class SwingEngine {
 	public boolean openPathway(final URL url) {		
 		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
-				"Opening pathway", pk, false, true);
+				"", pk, false, true);
 				
 		SwingWorker sw = new SwingWorker() {
 			protected Object doInBackground() throws Exception {
+				pk.setTaskName("Opening pathway");
 				try {
 					Engine.getCurrent().openPathway(url, createWrapper());
 					return true;
@@ -133,10 +145,11 @@ public class SwingEngine {
 	public boolean importPathway(final File f) {
 		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
-				"Importing pathway", pk, false, true);
+				"", pk, false, true);
 				
 		SwingWorker sw = new SwingWorker() {
 			protected Object doInBackground() throws Exception {
+				pk.setTaskName("Importing pathway");
 				try {
 					Engine eng = Engine.getCurrent();
 					boolean editMode = eng.hasVPathway() ? eng.getActiveVPathway().isEditMode() : false;
@@ -188,11 +201,12 @@ public class SwingEngine {
 		if(mayOverwrite(f)) {
 			final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
 			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
-					"Exporting pathway", pk, false, true);
+					"", pk, false, true);
 
 			SwingWorker sw = new SwingWorker() {
 				protected Object doInBackground() throws Exception {
 					try {
+						pk.setTaskName("Exporting pathway");
 						Engine.getCurrent().exportPathway(f);
 						return true;
 					} catch(ConverterException e) {

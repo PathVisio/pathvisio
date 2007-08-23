@@ -109,16 +109,22 @@ public class Line extends Graphics
 		}			
 
 		Line2D l = getVLine();
-		ArrowShape h = getVHead(l, gdata.getLineType());
+		Point2D start = l.getP1();
+		Point2D end = l.getP2();
+		
+		ArrowShape he = getVHead(start, end, gdata.getEndLineType());
+		ArrowShape hs = getVHead(end, start, gdata.getStartLineType());
 		g.draw(l);
-		drawHead(g, h, c);
+		drawHead(g, he, c);
+		drawHead(g, hs, c);
 		if (isHighlighted())
 		{
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
 			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
 			g.draw(l);
-			if (h != null) g.draw(h.getShape());
+			if (he != null) g.draw(he.getShape());
+			if (hs != null) g.draw(hs.getShape());
 		}
 	}
 	
@@ -148,15 +154,17 @@ public class Line extends Graphics
 			}
 		}
 	}
-	
-	protected ArrowShape getVHead(Line2D l, LineType type) {
-		Point2D start = l.getP1();
-		Point2D end = l.getP2();
-		
-		double xs = start.getX();
-		double ys = start.getY();
-		double xe = end.getX();
-		double ye = end.getY();
+
+	/**
+	   Will return the arrowhead suitable for an arrow pointing from
+	   p1 to p2 (so the tip of the arrowhead will be at p2)
+	 */
+	protected ArrowShape getVHead(Point2D p1, Point2D p2, LineType type)
+	{
+		double xs = p1.getX();
+		double ys = p1.getY();
+		double xe = p2.getX();
+		double ye = p2.getY();
 
 		ArrowShape h = ShapeRegistry.getArrow (type.getName());
 				
@@ -212,16 +220,23 @@ public class Line extends Graphics
 	protected Shape getVOutline()
 	{
 		Line2D l = getVLine();
-		ArrowShape h = getVHead(l, gdata.getLineType());
+		Point2D start = l.getP1();
+		Point2D end = l.getP2();
+		
+		//TODO: take start arrowHead into account too.
 		//Wider stroke for line, for 'fuzzy' matching
-		Shape ls = new BasicStroke(5).createStrokedShape(l);
-		if(h == null) {
-			return ls;
-		} else {
-			Area line = new Area(ls);
-			line.add(new Area(h.getShape()));
-			return line;
+		Area line = new Area (new BasicStroke(5).createStrokedShape(l));
+		ArrowShape he = getVHead(start, end, gdata.getEndLineType());
+		if(he != null)
+		{
+			line.add(new Area(he.getShape()));
 		}
+		ArrowShape hs = getVHead(end, start, gdata.getStartLineType());
+		if(hs != null)
+		{
+			line.add(new Area(hs.getShape()));
+		}
+		return line;
 	}
 	
 //	/**

@@ -25,9 +25,11 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedString;
 
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.OutlineType;
 
 public class Label extends GraphicsShape
 {
@@ -36,7 +38,8 @@ public class Label extends GraphicsShape
 	public static final int M_INITIAL_FONTSIZE = 10 * 15;
 	public static final int M_INITIAL_WIDTH = 80 * 15;
 	public static final int M_INITIAL_HEIGHT = 20 * 15;
-		
+	public static final double M_ARCSIZE = 225;
+	
 	double getFontSize()
 	{
 		return gdata.getMFontSize() * canvas.getZoomFactor();
@@ -128,13 +131,14 @@ public class Label extends GraphicsShape
 			 tb = g.getFontMetrics(getVFont()).getStringBounds(getLabelText(), g);
 			 tb.setRect(getVLeftDouble() + tb.getX(), getVTopDouble() + tb.getY(), tb.getWidth(), tb.getHeight());
 		} else { //No graphics context, we can only guess...
-			tb = getBoxBounds();
+			tb = getBoxBounds(defaultStroke.getLineWidth());
 		}
 		return tb;
 	}
 	
-	protected Rectangle2D getBoxBounds() {
-		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
+	protected Rectangle2D getBoxBounds(float sw)
+	{
+		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble() + sw, getVHeightDouble() + sw);
 	}
 	
 	protected Dimension computeTextSize(Graphics2D g) {
@@ -190,8 +194,30 @@ public class Label extends GraphicsShape
 		Font f = getVFont();
 		g.setFont(f);
 		
-		Rectangle area = getBoxBounds().getBounds();
-		
+		Rectangle area = getBoxBounds(defaultStroke.getLineWidth()).getBounds();
+
+		Shape outline = null;
+		switch (gdata.getOutline())
+		{
+		case RECTANGLE:
+			outline = new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
+			break;
+		case ROUNDED_RECTANGLE:
+			outline = new RoundRectangle2D.Double(
+				getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble(),
+				vFromM (M_ARCSIZE), vFromM (M_ARCSIZE));
+			break;
+		case NONE:
+			outline = null;
+			break;
+		}
+		if (outline != null)
+		{
+			g.draw (outline);
+		}
+
+		// don't draw label outside box
+		g.clip (new Rectangle (area.x - 1, area.y - 1, area.width + 1, area.height + 1));
 		String label = gdata.getTextLabel();
 		AttributedString ats = getVAttributedString();
 		
@@ -224,7 +250,7 @@ public class Label extends GraphicsShape
 	 */
 	protected Shape getVOutline()
 	{
-		Rectangle2D bb = getBoxBounds();
+		Rectangle2D bb = getBoxBounds(defaultStroke.getLineWidth());
 		Rectangle2D tb = getTextBounds(g2d);
 		tb.add(bb);
 		return tb;

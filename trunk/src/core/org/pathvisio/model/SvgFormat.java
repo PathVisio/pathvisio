@@ -160,7 +160,7 @@ public class SvgFormat implements PathwayExporter
 			e.setAttribute("stroke-dasharray", "5,2");
 		}
 		
-		LineType type = o.getLineType();
+		LineType type = o.getEndLineType();
 		String id = getColordMarker(type, o.getColor(), markers, defs);
 		if(type != LineType.LINE) {
 			e.setAttribute("marker-end", "url(#" + id + ")");

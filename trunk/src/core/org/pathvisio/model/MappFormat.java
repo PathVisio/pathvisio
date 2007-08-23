@@ -592,7 +592,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapLineType (PathwayElement o, String[] mappObject)
     {   	
     	int lineStyle = o.getLineStyle();
-		LineType lineType = o.getLineType();
+		LineType lineType = o.getEndLineType();
 		String style = lineType.getMappName();
 		if (lineStyle == LineStyle.DASHED && (lineType == LineType.ARROW || lineType == LineType.LINE))
 			style = "Dotted" + style;
@@ -633,7 +633,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     		o.setLineStyle(LineStyle.SOLID);
     	}
     	    	
-    	o.setLineType(mappLineTypes.get(type));		
+    	o.setEndLineType(mappLineTypes.get(type));		
         o.setMStartX(Double.parseDouble(mappObject[colCenterX]));       
         o.setMStartY(Double.parseDouble(mappObject[colCenterY]));
         o.setMEndX(Double.parseDouble(mappObject[colSecondX]));

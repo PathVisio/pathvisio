@@ -1089,7 +1089,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.LINE);
+			gdata.setEndLineType (LineType.LINE);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1103,7 +1103,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.ARROW);
+			gdata.setEndLineType (LineType.ARROW);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1117,7 +1117,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.DASHED);
-			gdata.setLineType (LineType.LINE);
+			gdata.setEndLineType (LineType.LINE);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1131,7 +1131,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.DASHED);
-			gdata.setLineType (LineType.ARROW);
+			gdata.setEndLineType (LineType.ARROW);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1230,7 +1230,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.TBAR);
+			gdata.setEndLineType (LineType.TBAR);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1244,7 +1244,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.RECEPTOR_ROUND);
+			gdata.setEndLineType (LineType.RECEPTOR_ROUND);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1258,7 +1258,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.RECEPTOR_SQUARE);
+			gdata.setEndLineType (LineType.RECEPTOR_SQUARE);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1272,7 +1272,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.LIGAND_ROUND);
+			gdata.setEndLineType (LineType.LIGAND_ROUND);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;
@@ -1286,7 +1286,7 @@ public class VPathway implements PathwayListener
 			gdata.setMEndY(my);	
 			gdata.setColor (stdRGB);
 			gdata.setLineStyle (LineStyle.SOLID);
-			gdata.setLineType (LineType.LIGAND_SQUARE);
+			gdata.setEndLineType (LineType.LIGAND_SQUARE);
 			data.add (gdata); // will cause lastAdded to be set
 			h = ((Line)lastAdded).getEnd().getHandle();
 			isDragging = true;

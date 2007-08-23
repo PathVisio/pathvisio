@@ -144,6 +144,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Point@Head", new AttributeInfo ("xsd:string", "Line", "optional"));
+		result.put("Line.Graphics.Point@ArrowHead", new AttributeInfo ("xsd:string", "Line", "optional"));
 		result.put("Line.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
 		result.put("Line@Style", new AttributeInfo ("xsd:string", "Solid", "optional"));
 		result.put("Label.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
@@ -163,6 +164,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		result.put("Label@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Label@Xref", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Label@GenMAPP-Xref", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("Label@Outline", new AttributeInfo ("xsd:string", "None", "optional"));
 		result.put("Link.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Link.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Link.Graphics@Width", new AttributeInfo ("gpml:Dimension", null, "required"));
@@ -191,6 +193,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		result.put("Shape@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Shape@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Shape@ObjectType", new AttributeInfo ("gpml:ObjectType", "Annotation", "optional"));
+		result.put("Shape@Style", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
 		result.put("Group@GroupId", new AttributeInfo ("xsd:ID", null, "required"));
 		result.put("Group@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Group@TextLabel", new AttributeInfo("xsd:string", null, "optional"));
@@ -483,10 +486,23 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	o.setEndGraphRef (ref2);
 
     	String style = getAttribute("Line", "Style", e);
-    	String type = getAttribute("Line.Graphics.Point", "Head", p1);
-    	
+
+		String type1 = getAttribute("Line.Graphics.Point", "ArrowHead", p1);		
+		/**
+		   read deprecated Head attribute for backwards compatibility.
+		   If an arrowhead attribute is present on the other point,
+		   it overrides this one.
+		 */
+		String type2 = getAttribute("Line.Graphics.Point", "Head", p1);		
+		if (p2.getAttributeValue("ArrowHead") != null)
+		{
+			type2 = getAttribute("Line.Graphics.Point", "ArrowHead", p2);
+		}
+		
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
-    	o.setLineType (LineType.fromName(type));
+		System.out.println (type1 + " " + type2);
+		o.setStartLineType (LineType.fromName(type1));
+    	o.setEndLineType (LineType.fromName(type2));
 	}
 	
 	private static void updateLineData(PathwayElement o, Element e) throws ConverterException
@@ -499,7 +515,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			jdomGraphics.addContent(p1);
 			setAttribute("Line.Graphics.Point", "x", p1, Double.toString(o.getMStartX()));
 			setAttribute("Line.Graphics.Point", "y", p1, Double.toString(o.getMStartY()));
-			setAttribute("Line.Graphics.Point", "Head", p1, o.getLineType().getGpmlName());
+			setAttribute("Line.Graphics.Point", "ArrowHead", p1, o.getStartLineType().getName());
 			if (o.getStartGraphRef() != null && !o.getStartGraphRef().equals(""))
 			{
 				setAttribute("Line.Graphics.Point", "GraphRef", p1, o.getStartGraphRef());
@@ -508,6 +524,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			jdomGraphics.addContent(p2);
 			setAttribute("Line.Graphics.Point", "x", p2, Double.toString(o.getMEndX()));
 			setAttribute("Line.Graphics.Point", "y", p2, Double.toString(o.getMEndY()));
+			setAttribute("Line.Graphics.Point", "ArrowHead", p2, o.getEndLineType().getName());
 			if (o.getEndGraphRef() != null && !o.getEndGraphRef().equals(""))
 			{
 				setAttribute("Line.Graphics.Point", "GraphRef", p2, o.getEndGraphRef());
@@ -711,6 +728,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	private static void mapShapeType(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
+		String style = getAttribute ("Shape", "Style", e);
+    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
     	String rotation = getAttribute("Shape.Graphics", "Rotation", graphics);
@@ -738,11 +757,13 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	o.setRotation (result); 
 	}
 	
-	private static void updateShapeType(PathwayElement o, Element e)
+	private static void updateShapeType(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) 
 		{
 			e.setAttribute("Type", o.getShapeType().getName());
+			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
+
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			if(jdomGraphics !=null) 
 			{
@@ -773,6 +794,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	String xref = getAttribute("Label", "Xref", e);
     	if (xref == null) xref = "";
     	o.setXref(xref);
+    	String outline = getAttribute("Label", "Outline", e);
+		o.setOutline (OutlineType.fromTag (outline));
 	}
 	
 	private static void updateLabelData(PathwayElement o, Element e) throws ConverterException
@@ -781,6 +804,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		{
 			setAttribute("Label", "TextLabel", e, o.getTextLabel());
 			setAttribute("Label", "Xref", e, o.getXref() == null ? "" : o.getXref());
+			setAttribute("Label", "Outline", e, o.getOutline().getTag());
 			Element graphics = e.getChild("Graphics", e.getNamespace());
 			if(graphics !=null) 
 			{

@@ -26,6 +26,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.LineStyle;
 
 /**
  * This class represents a GMMLShape, which can be a 
@@ -89,6 +90,20 @@ public class Shape extends GraphicsShape
 		}
 
 		g.setColor(linecolor);
+		int ls = gdata.getLineStyle();
+		if (ls == LineStyle.SOLID)
+		{
+			g.setStroke(new BasicStroke());
+		}
+		else if (ls == LineStyle.DASHED)
+		{ 
+			g.setStroke	(new BasicStroke (
+				  1, 
+				  BasicStroke.CAP_SQUARE,
+				  BasicStroke.JOIN_MITER, 
+				  10, new float[] {4, 4}, 0));
+		}
+		
 		g.draw(shape);
 
 		if (isHighlighted())

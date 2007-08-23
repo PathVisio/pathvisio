@@ -335,7 +335,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
 				setAttribute("Pathway", "Name", root, o.getMapInfoName());
-				setAttribute("Pathway", "Data-Source", root, "GenMAPP 2.0");
+				setAttribute("Pathway", "Data-Source", root, o.getMapInfoDataSource());
 				setAttribute("Pathway", "Version", root, o.getVersion());
 				setAttribute("Pathway", "Author", root, o.getAuthor());
 				setAttribute("Pathway", "Maintainer", root, o.getMaintainer());

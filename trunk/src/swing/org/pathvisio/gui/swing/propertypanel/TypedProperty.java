@@ -288,7 +288,7 @@ public class TypedProperty implements Comparable {
 			if (EDIT.equals(e.getActionCommand()) && property != null) {
 				currentElement = property.getFirstElement();
 				if(currentElement != null) {
-					PathwayElementDialog d = PathwayElementDialog.getInstance(currentElement, null, this.button);
+					PathwayElementDialog d = PathwayElementDialog.getInstance(currentElement, false, null, this.button);
 					d.selectPathwayElementPanel(PathwayElementDialog.TAB_COMMENTS);
 					d.setVisible(true);
 					fireEditingCanceled(); //Value is directly saved in dialog

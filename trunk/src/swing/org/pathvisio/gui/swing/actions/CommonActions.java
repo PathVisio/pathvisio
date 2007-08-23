@@ -19,25 +19,25 @@ package org.pathvisio.gui.swing.actions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
-import javax.swing.filechooser.FileFilter;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
-import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
@@ -46,8 +46,10 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.SelectionBox.SelectionEvent;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 
-public abstract class CommonActions {
+public class CommonActions implements ApplicationEventListener, VPathwayListener, SelectionListener {
 	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
 	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
 	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
@@ -55,11 +57,178 @@ public abstract class CommonActions {
 	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
 	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	
+	public static final String GROUP_ENABLE_EDITMODE = "editmode";
+	public static final String GROUP_ENABLE_VPATHWAY_LOADED = "vpathway";
+	public static final String GROUP_ENABLE_WHEN_SELECTION = "selection";
+	
+	Engine engine;
+	
+	public CommonActions(Engine e) {
+		engine = e;
+		e.addApplicationEventListener(this);
+		registerToGroup(saveAction, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(saveAsAction, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(importAction, GROUP_ENABLE_EDITMODE);
+		registerToGroup(exportAction, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(copyAction, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(pasteAction, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(pasteAction, GROUP_ENABLE_EDITMODE);
+		registerToGroup(zoomActions, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(alignActions, GROUP_ENABLE_EDITMODE);
+		registerToGroup(alignActions, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(stackActions, GROUP_ENABLE_EDITMODE);
+		registerToGroup(stackActions, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(newElementActions, GROUP_ENABLE_EDITMODE);
+		registerToGroup(newElementActions, GROUP_ENABLE_VPATHWAY_LOADED);
+		setGroupEnabled(false, GROUP_ENABLE_VPATHWAY_LOADED);
+		setGroupEnabled(false, GROUP_ENABLE_EDITMODE);
+		setGroupEnabled(false, GROUP_ENABLE_WHEN_SELECTION);
+	}
+	
+	HashMap<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
+	
+	public void registerToGroup(Action a, String group) {
+		List<Action> actions = actionGroups.get(group);
+		if(actions == null) {
+			actionGroups.put(group, actions = new ArrayList<Action>());
+		}
+		if(!actions.contains(a)) actions.add(a);
+	}
+	
+	public void registerToGroup(Action[] actions, String group) {
+		for(Action a : actions) registerToGroup(a, group);
+	}
+	
+	public void registerToGroup(Action[][] actions, String group) {
+		for(Action[] aa : actions) {
+			for(Action a : aa) registerToGroup(a, group);
+		}
+	}
+	
+	public void setGroupEnabled(boolean enabled, String group) {
+		List<Action> actions = actionGroups.get(group);
+		if(actions != null) {
+			for(Action a : actions) a.setEnabled(enabled);
+		}
+	}
+	
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+			VPathway vp = (VPathway)e.getSource();
+			vp.addSelectionListener(this);
+			vp.addVPathwayListener(this);
+			setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
+			setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
+			setGroupEnabled(vp.isEditMode(), GROUP_ENABLE_EDITMODE);
+		}
+	}
+
+	public void vPathwayEvent(VPathwayEvent e) {
+		VPathway vp = (VPathway)e.getSource();
+		if			(e.getType() == VPathwayEvent.EDIT_MODE_OFF) {
+			setGroupEnabled(false, GROUP_ENABLE_EDITMODE);
+		} else if 	(e.getType() == VPathwayEvent.EDIT_MODE_ON) {
+			setGroupEnabled(true, GROUP_ENABLE_EDITMODE);
+			setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
+		}
+	}
+
+	public void selectionEvent(SelectionEvent e) {
+		boolean enabled = ((SelectionBox)e.getSource()).getDrawing().getSelectedGraphics().size() > 0;
+		setGroupEnabled(enabled, GROUP_ENABLE_WHEN_SELECTION);
+	}
+	
+	public final Action saveAction = new SaveAction();
+	public final Action saveAsAction = new SaveAsAction();
+	public final Action importAction = new ImportAction();
+	public final Action exportAction = new ExportAction();
+	
+	public final Action copyAction = new CopyAction();
+	public final Action pasteAction = new PasteAction();
+
+	public final Action[] zoomActions = new Action[] {
+			new ZoomAction(VPathway.ZOOM_TO_FIT),
+			new ZoomAction(10),
+			new ZoomAction(25),
+			new ZoomAction(50),
+			new ZoomAction(75),
+			new ZoomAction(100),
+			new ZoomAction(150),
+			new ZoomAction(200)
+	};
+	
+	public final Action[] alignActions = new Action[] {
+			new AlignAction(AlignType.CENTERX),
+			new AlignAction(AlignType.CENTERY),
+			new AlignAction(AlignType.LEFT),
+			new AlignAction(AlignType.RIGHT),
+			new AlignAction(AlignType.TOP),
+			new AlignAction(AlignType.WIDTH),
+			new AlignAction(AlignType.HEIGHT),
+	};
+	
+	public final Action[] stackActions = new Action[] {
+			new StackAction(StackType.CENTERX),
+			new StackAction(StackType.CENTERY),
+			new StackAction(StackType.LEFT),
+			new StackAction(StackType.RIGHT),
+			new StackAction(StackType.TOP),
+			new StackAction(StackType.BOTTOM)
+	};
+	
+	public final Action[][] newElementActions = new Action[][] {
+			new Action[] { new NewElementAction(VPathway.NEWGENEPRODUCT) 	},
+			new Action[] { new NewElementAction(VPathway.NEWLABEL)			},
+			new Action[] { 	new NewElementAction(VPathway.NEWLINE),
+							new NewElementAction(VPathway.NEWLINEARROW),
+							new NewElementAction(VPathway.NEWLINEDASHED),
+							new NewElementAction(VPathway.NEWLINEDASHEDARROW)
+																			},
+			new Action[] { new NewElementAction(VPathway.NEWRECTANGLE) },
+			new Action[] { new NewElementAction(VPathway.NEWOVAL) },
+			new Action[] { new NewElementAction(VPathway.NEWARC) },
+			new Action[] { new NewElementAction(VPathway.NEWBRACE) },
+			new Action[] { new NewElementAction(VPathway.NEWTBAR) },
+	};
+			
+	public static class PasteAction extends AbstractAction {
+		public PasteAction() {
+			super();
+			putValue(NAME, "Paste");
+			putValue(SMALL_ICON, new ImageIcon(IMG_PASTE));
+			String descr = "Paste pathway elements from clipboard";
+			putValue(Action.SHORT_DESCRIPTION, descr);
+			putValue(Action.LONG_DESCRIPTION, descr);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl V"));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
+		}
+	}
+	
+	public static class CopyAction extends AbstractAction {
+		public CopyAction() {
+			super();
+			putValue(NAME, "Copy");
+			putValue(SMALL_ICON, new ImageIcon(IMG_COPY));
+			String descr = "Copy selected pathway objects to clipboard";
+			putValue(Action.SHORT_DESCRIPTION, descr);
+			putValue(Action.LONG_DESCRIPTION, descr);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl C"));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			Engine.getCurrent().getActiveVPathway().copyToClipboard();
+		}		
+	}
+	
 	public static class ZoomAction extends AbstractAction {
 		Component parent;
 		double zoomFactor;
 		
 		public ZoomAction(double zf) {
+			super();
 			zoomFactor = zf;
 			String descr = "Set zoom to " + (int)zf + "%";
 			putValue(Action.NAME, toString());
@@ -84,7 +253,9 @@ public abstract class CommonActions {
 	
 	public static class SaveAsAction extends AbstractAction {
 		public SaveAsAction() {
-			super("Save as", new ImageIcon(IMG_SAVEAS));
+			super();
+			putValue(Action.NAME, "Save as");
+			putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVEAS));
 			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
 			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
 		}
@@ -96,7 +267,9 @@ public abstract class CommonActions {
 	
 	public static class SaveAction extends AbstractAction {
 		public SaveAction() {
-			super("Save", new ImageIcon(IMG_SAVE));
+			super();
+			putValue(Action.NAME, "Save");
+			putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVE));
 			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
 			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
@@ -109,7 +282,9 @@ public abstract class CommonActions {
 	
 	public static class ImportAction extends AbstractAction {
 		public ImportAction() {
-			super("Import", new ImageIcon(IMG_IMPORT));
+			super();
+			putValue(NAME, "Import");
+			putValue(SMALL_ICON, new ImageIcon(IMG_IMPORT));
 			putValue(Action.SHORT_DESCRIPTION, "Import pathway");
 			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
@@ -122,7 +297,9 @@ public abstract class CommonActions {
 	
 	public static class ExportAction extends AbstractAction {
 		public ExportAction() {
-			super("Export", new ImageIcon(IMG_EXPORT));
+			super();
+			putValue(NAME, "Export");
+			putValue(SMALL_ICON, new ImageIcon(IMG_EXPORT));
 			putValue(Action.SHORT_DESCRIPTION, "Export pathway");
 			putValue(Action.LONG_DESCRIPTION, "Export the pathway to various file formats");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
@@ -132,35 +309,7 @@ public abstract class CommonActions {
 			SwingEngine.getCurrent().exportPathway();
 		}
 	}
-	
-	public static class CopyAction extends AbstractAction {
-		public CopyAction() {
-			super("Copy", new ImageIcon(IMG_COPY));
-			String descr = "Copy selected pathway objects to clipboard";
-			putValue(Action.SHORT_DESCRIPTION, descr);
-			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			Engine.getCurrent().getActiveVPathway().copyToClipboard();
-		}		
-	}
-	
-	public static class PasteAction extends AbstractAction {
-		public PasteAction() {
-			super("Paste", new ImageIcon(IMG_PASTE));
-			String descr = "Paste pathway elements from clipboard";
-			putValue(Action.SHORT_DESCRIPTION, descr);
-			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
-		}
-	}
-		
+			
 	public static class NewElementAction extends AbstractAction implements VPathwayListener {
 		int element;
 		public NewElementAction(int type) {
@@ -253,7 +402,7 @@ public abstract class CommonActions {
 				vp.setNewGraphics(element);
 			}
 		}
-
+		
 		public void vPathwayEvent(VPathwayEvent e) {
 			if(e.getType() == VPathwayEvent.ELEMENT_ADDED) {
 				e.getVPathway().setNewGraphics(VPathway.NEWNONE);	
@@ -265,8 +414,10 @@ public abstract class CommonActions {
 		StackType type;
 		
 		public StackAction(StackType t) {
-			super(t.getLabel(), new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
-			putValue(Action.SHORT_DESCRIPTION, t.getDescription());
+			super();
+			putValue(NAME, t.getLabel());
+			putValue(SMALL_ICON, new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
+			putValue(SHORT_DESCRIPTION, t.getDescription());
 			type = t;
 		}
 		
@@ -280,8 +431,10 @@ public abstract class CommonActions {
 		AlignType type;
 
 		public AlignAction(AlignType t) {
-			super(t.getLabel(), new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
-			putValue(Action.SHORT_DESCRIPTION, t.getDescription());
+			super();
+			putValue(NAME, t.getLabel());
+			putValue(SMALL_ICON, new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
+			putValue(SHORT_DESCRIPTION, t.getDescription());
 			type = t;
 		}
 
@@ -296,6 +449,7 @@ public abstract class CommonActions {
 		Component parent;
 		
 		public PathwayElementDialogAction(Component parent, VPathwayElement e) {
+			super();
 			this.parent = parent;
 			element = e;
 			//If the element is an empty selectionbox,
@@ -313,21 +467,24 @@ public abstract class CommonActions {
 		public void actionPerformed(ActionEvent e) {
 			if(element instanceof Graphics) {
 				PathwayElement p = ((Graphics)element).getGmmlData();
-				PathwayElementDialog pd = PathwayElementDialog.getInstance(p, null, parent);
+				PathwayElementDialog pd = PathwayElementDialog.getInstance(
+						p, !element.getDrawing().isEditMode(), null, parent);
 				if(pd != null) {
 					pd.selectPathwayElementPanel(getSelectedPanel());
 					pd.setVisible(true);
 				}
 			}
 		}
-		
+				
 		protected abstract String getSelectedPanel();
 	}
+	
 	public static class AddLiteratureAction extends PathwayElementDialogAction {
 		public AddLiteratureAction(Component parent, VPathwayElement e) {
 			super(parent, e);
 			putValue(Action.NAME, "Add literature reference");
 			putValue(Action.SHORT_DESCRIPTION, "Add a literature reference to this element");
+			setEnabled(e.getDrawing().isEditMode());
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -353,6 +510,7 @@ public abstract class CommonActions {
 			super(parent, e);
 			putValue(Action.NAME, "Edit literature references");
 			putValue(Action.SHORT_DESCRIPTION, "Edit the literature references of this element");
+			setEnabled(e.getDrawing().isEditMode());
 		}
 		
 		protected String getSelectedPanel() {

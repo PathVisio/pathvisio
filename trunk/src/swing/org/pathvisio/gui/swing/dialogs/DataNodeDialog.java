@@ -35,8 +35,8 @@ import org.pathvisio.data.DataSources;
 import org.pathvisio.model.PathwayElement;
 
 public class DataNodeDialog extends PathwayElementDialog {
-	public DataNodeDialog(PathwayElement e, Frame frame, Component locationComp) {
-		super(e, frame, "DataNode properties", locationComp);
+	public DataNodeDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
+		super(e, readonly, frame, "DataNode properties", locationComp);
 	}
 
 	JTextField symText;
@@ -103,6 +103,10 @@ public class DataNodeDialog extends PathwayElementDialog {
 				getInput().setDataSource(dbCombo.getSelectedItem().toString());
 			}
 		});
+		
+		symText.setEnabled(!readonly);
+		idText.setEnabled(!readonly);
+		dbCombo.setEnabled(!readonly);
 		
 		parent.add("Annotation", panel);
 		parent.setSelectedComponent(panel);

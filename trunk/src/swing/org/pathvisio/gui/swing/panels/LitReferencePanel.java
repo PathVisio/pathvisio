@@ -35,6 +35,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	
 	JTable refTable;
 	DefaultTableModel references;
+	JPanel buttons;
 	
 	public LitReferencePanel() {
 		setLayout(new BorderLayout(5, 5));
@@ -73,7 +74,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		});
 
 		
-		JPanel buttons = new JPanel();
+		buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.PAGE_AXIS));
 		
 		JButton add = new JButton(ADD);
@@ -88,6 +89,11 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 		add(tablePanel, BorderLayout.CENTER);
 		add(buttons, BorderLayout.LINE_END);
+	}
+	
+	public void setReadOnly(boolean readonly) {
+		super.setReadOnly(readonly);
+		setChildrenEnabled(buttons, !readonly);
 	}
 	
 	public void setInput(PathwayElement e) {

@@ -5,6 +5,7 @@ import java.awt.Component;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
+import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.actions.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.actions.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.actions.CommonActions.PropertiesAction;

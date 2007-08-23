@@ -45,8 +45,9 @@ public class AppletMain extends JApplet {
 	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
 	public void init() {
-		SwingEngine.setCurrent(new SwingEngine());
-		Engine.setCurrent(new Engine());
+		Engine engine = new Engine();
+		Engine.setCurrent(engine);
+		SwingEngine.setCurrent(new SwingEngine(engine));
 		GuiInit.init();
 		
 		System.out.println("INIT CALLED....");
@@ -99,7 +100,7 @@ public class AppletMain extends JApplet {
 					double spSize = (100 - spPercent) / 100.0;
 					mainPanel.getSplitPane().setDividerLocation(spSize);
 					
-					uiHandler.runWithProgress(r, "Starting editor", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+					uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
 				}
 			});
 		} catch (Exception e) {

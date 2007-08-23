@@ -36,6 +36,7 @@ import org.pathvisio.model.PathwayElement;
 public class InfoBox extends Graphics {
 	static final int V_SPACING = 5;
 	static final int H_SPACING = 10;
+	static final int INITIAL_SIZE = 200;
 	
 	//Elements not stored in gpml
 	String fontName			= "Times New Roman";
@@ -115,8 +116,8 @@ public class InfoBox extends Graphics {
 		int vW = sizeX;
 		int vH = sizeY;
 		if(vW == 1 && vH == 1) {
-			vW = 50;
-			vH = 50;
+			vW = INITIAL_SIZE;
+			vH = INITIAL_SIZE;
 		}
 		return new Rectangle(vLeft, vTop, vW, vH);
 	}

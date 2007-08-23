@@ -152,9 +152,9 @@ public class Pathway implements PathwayListener
 			return;
 		}
 		// There can be zero or one Biopax object, so if we're trying to add it, remove the old one.
-		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax)
+		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax && biopax != null)
 		{
-			if(biopax != null) replaceUnique (biopax, o);
+			replaceUnique (biopax, o);
 			biopax = o;
 			return;
 		}
@@ -221,18 +221,17 @@ public class Pathway implements PathwayListener
 	}
 	
 	public void mergeBiopax(PathwayElement bpnew) {
-		System.out.println("merging biopax");
 		if(bpnew == null) return;
 		
-		Document dnew = bpnew.getBiopax();
+		Document dNew = bpnew.getBiopax();
 		Document dOld = biopax.getBiopax();
 		
 		if(dOld == null) {
-			biopax.setBiopax(dnew);
+			biopax.setBiopax(dNew);
 			return;
 		}
 		
-		if(dnew == null) {
+		if(dNew == null) {
 			return; //Nothing to merge
 		}
 		
@@ -247,7 +246,7 @@ public class Pathway implements PathwayListener
 		}
 		
 		//Replace existing elements with the new one, or add if none exist yet
-		for(Object o : dnew.getRootElement().getContent()) {
+		for(Object o : dNew.getRootElement().getContent()) {
 			if(o instanceof Element) {
 				Element eNew = (Element)o;
 				String id = eNew.getAttributeValue("id", GpmlFormat.RDF);
@@ -255,8 +254,7 @@ public class Pathway implements PathwayListener
 				if(eOld != null) { //If an elements with the same id exist, remove it
 					dOld.getRootElement().removeContent(eOld);
 				}
-				System.out.println("adding biopax " + o);
-				dOld.getRootElement().addContent(eNew);
+				dOld.getRootElement().addContent((Element)eNew.clone());
 			}
 		}
 	}

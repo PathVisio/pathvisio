@@ -910,6 +910,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
+		biopaxRefs = (List<String>)((ArrayList)src.biopaxRefs).clone();
 		if(src.biopax != null) {
 			System.out.println("Copying " + biopax);
 			biopax = (Document)src.biopax.clone();			
@@ -1915,7 +1916,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public GroupStyle getGroupStyle()
 	{
-		// TODO: handle NULL and default
+		if(groupStyle == null) {
+			groupStyle = GroupStyle.NONE;
+		}
 		return groupStyle;
 	}
 

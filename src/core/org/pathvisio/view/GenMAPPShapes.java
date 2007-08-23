@@ -33,9 +33,8 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("OrganC", getPluggableShape (ORGANC));
 		ShapeRegistry.registerShape ("CellA", getPluggableShape (CELLA));
 		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (RIBOSOME));
-		ShapeRegistry.registerShape ("ProteinB", getPluggableShape (PROTEINB));
-        //TODO: Vesicle Shape not correct yet.
-        //ShapeRegistry.registerShape ("Vesicle", getPluggableShape (VESICLE));
+		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (PROTEINB));
+        ShapeRegistry.registerShape ("Vesicle", getPluggableShape (VESICLE));
 		
 	}
 
@@ -85,17 +84,17 @@ class GenMAPPShapes
 			path.closePath();
 			break;
 		case ORGANC:
-			path.moveTo (45, 23);
-			path.curveTo (45, 34, 36, 43, 24, 43);
-			path.curveTo (13, 43, 3, 34, 3, 23);
-			path.curveTo (3, 12, 13, 3, 24, 3);
-			path.curveTo (36, 3, 45, 12, 45, 23);
+			path.moveTo (105.00f, 0.44f);
+			path.curveTo (47.56f, 0.44f, 0.34f, 44.59f, 0.34f, 99.38f);
+			path.curveTo (0.34f, 154.16f, 47.56f, 198.28f, 105.00f, 198.28f);
+			path.curveTo (162.44f, 198.28f, 209.66f, 154.16f, 209.66f, 99.38f);
+			path.curveTo (209.66f, 44.59f, 162.44f, 0.44f, 105.00f, 0.44f);
 			path.closePath();
-			path.moveTo (48, 23);
-			path.curveTo (48, 36, 37, 46, 24, 46);
-			path.curveTo (11, 46, 1, 36, 1, 23);
-			path.curveTo (1, 11, 11, 0, 24, 0);
-			path.curveTo (37, 0, 48, 11, 48, 23);
+			path.moveTo (105.00f, 15.44f);
+			path.curveTo (154.80f, 15.44f, 194.66f, 53.22f, 194.66f, 99.38f);
+			path.curveTo (194.66f, 145.53f, 154.80f, 183.28f, 105.00f, 183.28f);
+			path.curveTo (55.20f, 183.28f, 15.34f, 145.53f, 15.34f, 99.38f);
+			path.curveTo (15.34f, 53.22f, 55.20f, 15.44f, 105.00f, 15.44f);
 			path.closePath();
 			break;
 		case ORGANB:
@@ -166,17 +165,11 @@ class GenMAPPShapes
 			path.closePath();
 			break;
 		case VESICLE:
-			path.moveTo (15, 281);
-			path.curveTo (6, 254, 0, 199, 0, 156);
-			path.curveTo (0, 113, 6, 49, 15, 21);
-			path.curveTo (15, 12, 26, 1, 38, 1);
-			path.curveTo (49, 1, 60, 11, 60, 23);
-			path.curveTo (59, 36, 50, 46, 32, 44);
-			path.curveTo (23, 71, 23, 102, 23, 144);
-			path.curveTo (23, 188, 23, 227, 32, 254);
-			path.curveTo (50, 254, 60, 265, 60, 278);
-			path.curveTo (60, 290, 46, 300, 36, 300);
-			path.curveTo (27, 300, 15, 289, 15, 281);
+			path.moveTo (33, 30);
+			path.curveTo (33, 46, 26, 60, 17, 60);
+			path.curveTo (8, 60, 0, 46, 0, 30);
+			path.curveTo (0, 14, 8, 0, 17, 0);
+			path.curveTo (26, 0, 33, 14, 33, 30);
 			path.closePath();
 			break;
 		}

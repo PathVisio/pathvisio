@@ -33,6 +33,7 @@ public enum PropertyClass
 	ORIENTATION,
 	SHAPETYPE,
 	LINETYPE,
+	OUTLINETYPE,
 	GENETYPE,
 	FONT,
 	ANGLE,

@@ -61,6 +61,7 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.OutlineType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.swt.SuggestCellEditor;
 import org.pathvisio.util.swt.SwtUtils;
@@ -270,6 +271,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	final static String[] boolean_names = {"false", "true"};
 	final static String[] shape_names = ShapeType.getNames();
 	final static String[] linetype_names = LineType.getNames(); 
+	final static String[] outlinetype_names = OutlineType.getTags(); 
 	final static String[] genetype_names = DataNodeType.getNames();
 	
 	private CellEditor getCellEditor(Object element)
@@ -286,6 +288,9 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			case COLOR: 	return colorEditor;
 			case LINETYPE:
 				comboBoxEditor.setItems(linetype_names);
+				return comboBoxEditor;
+			case OUTLINETYPE:
+				comboBoxEditor.setItems(outlinetype_names);
 				return comboBoxEditor;
 			case SHAPETYPE:
 				comboBoxEditor.setItems(shape_names);
@@ -372,6 +377,8 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 					return (((ShapeType)value).getOrdinal());
 				case LINETYPE:
 					return (((LineType)value).getOrdinal());
+			    case OUTLINETYPE:
+					return (((OutlineType)value).ordinal());
 				case COLOR:
 					if(value instanceof Color)
 						value = SwtUtils.color2rgb((Color)value);
@@ -556,6 +563,13 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 								{
 									if (value instanceof Integer)
 										return linetype_names[(Integer)(value)];
+									else
+										return value.toString();
+								}
+								case OUTLINETYPE:
+								{
+									if (value instanceof Integer)
+										return outlinetype_names[(Integer)(value)];
 									else
 										return value.toString();
 								}

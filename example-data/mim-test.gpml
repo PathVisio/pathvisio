@@ -1,50 +1,134 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Test of MIM Shapes" Data-Source="GenMAPP 2.0" Version="20070821" Author="Martijn van Iersel">
-  <Graphics BoardWidth="5827.393890352942" BoardHeight="4401.249201532171" WindowWidth="18000.0" WindowHeight="12000.0" />
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Test of New Drawing Capabilities" Data-Source="GenMAPP 2.0" Version="20070821" Author="Martijn van Iersel">
+  <Graphics BoardWidth="11121.0" BoardHeight="8844.0" WindowWidth="18000.0" WindowHeight="12000.0" />
   <Line>
-    <Graphics Color="000000">
-      <Point x="131.61284252033923" y="2819.6116559649186" Head="mim-binding" />
-      <Point x="2214.6761141872375" y="1354.5219185433282" />
+    <Graphics Color="a52a2a">
+      <Point x="131.61284252033923" y="2819.6116559649186" />
+      <Point x="2214.6761141872375" y="1354.5219185433282" ArrowHead="mim-necessary-stimulation" />
     </Graphics>
   </Line>
   <Line>
-    <Graphics Color="000000">
-      <Point x="385.64494882117964" y="3055.9164523232384" Head="mim-conversion" />
-      <Point x="2468.708220488079" y="1590.8267149016472" />
+    <Graphics Color="a52a2a">
+      <Point x="385.64494882117964" y="3055.9164523232384" />
+      <Point x="2468.708220488079" y="1590.8267149016472" ArrowHead="mim-binding" />
     </Graphics>
   </Line>
   <Line>
-    <Graphics Color="000000">
-      <Point x="639.6770551220209" y="3292.221248681557" Head="mim-stimulation" />
-      <Point x="2722.740326788919" y="1827.1315112599675" />
+    <Graphics Color="a52a2a">
+      <Point x="639.6770551220209" y="3292.221248681557" />
+      <Point x="2722.740326788919" y="1827.1315112599675" ArrowHead="mim-conversion" />
     </Graphics>
   </Line>
   <Line>
-    <Graphics Color="000000">
-      <Point x="893.7091614228615" y="3528.5260450398778" Head="mim-necessary-stimulation" />
-      <Point x="2976.7724330897595" y="2063.4363076182904" />
+    <Graphics Color="a52a2a">
+      <Point x="893.7091614228615" y="3528.5260450398778" />
+      <Point x="2976.7724330897595" y="2063.4363076182904" ArrowHead="mim-stimulation" />
     </Graphics>
   </Line>
   <Line>
-    <Graphics Color="000000">
-      <Point x="1147.741267723704" y="3764.830841398199" Head="mim-catalysis" />
-      <Point x="3230.8045393905977" y="2299.7411039766125" />
+    <Graphics Color="a52a2a">
+      <Point x="1147.741267723704" y="3764.830841398199" />
+      <Point x="3230.8045393905977" y="2299.7411039766125" ArrowHead="mim-catalysis" />
     </Graphics>
   </Line>
   <Line>
-    <Graphics Color="000000">
-      <Point x="1401.7733740245444" y="4001.13563775652" Head="mim-cleavage" />
-      <Point x="3484.83664569144" y="2536.0459003349347" />
+    <Graphics Color="a52a2a">
+      <Point x="1401.7733740245444" y="4001.13563775652" />
+      <Point x="3484.83664569144" y="2536.0459003349347" ArrowHead="mim-cleavage" />
     </Graphics>
   </Line>
+  <Line>
+    <Graphics Color="0000ff">
+      <Point x="6930.0" y="1560.0" ArrowHead="TBar" />
+      <Point x="9015.0" y="1560.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="0000ff">
+      <Point x="6952.5" y="1920.0" ArrowHead="Arrow" />
+      <Point x="9037.5" y="1920.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="0000ff">
+      <Point x="6967.5" y="2265.0" ArrowHead="Receptor" />
+      <Point x="9052.5" y="2265.0" ArrowHead="mim-stimulation" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="New MIM Shapes" GraphId="b6c">
+    <Graphics FontSize="150" Color="000000" CenterX="5235.0" CenterY="735.0" Width="1200.0" Height="300.0" />
+  </Label>
+  <Label TextLabel="Double-ended arrows" GraphId="d15">
+    <Graphics FontSize="150" Color="000000" CenterX="8167.5" CenterY="1020.0" Width="1545.0" Height="390.0" />
+  </Label>
+  <Label TextLabel="GenMAPP Shapes" GraphId="b3a">
+    <Graphics FontSize="150" Color="000000" CenterX="8130.0" CenterY="3300.0" Width="1590.0" Height="420.0" />
+  </Label>
+  <Label TextLabel="Stroked Shapes" GraphId="ff6">
+    <Graphics FontSize="150" Color="000000" CenterX="1530.0" CenterY="5115.0" Width="1200.0" Height="300.0" />
+  </Label>
+  <Label TextLabel="Outlined Labels" GraphId="e16">
+    <Graphics FontSize="150" Color="000000" CenterX="4710.0" CenterY="5070.0" Width="1200.0" Height="300.0" />
+  </Label>
+  <Label TextLabel="Label" Outline="Rectangle" GraphId="e1b">
+    <Graphics FontSize="150" Color="0000ff" CenterX="4620.0" CenterY="6105.0" Width="1200.0" Height="300.0" />
+  </Label>
+  <Label TextLabel="Label" Outline="RoundedRectangle" GraphId="d83">
+    <Graphics FontSize="150" Color="0000ff" CenterX="4635.0" CenterY="6540.0" Width="1200.0" Height="300.0" />
+  </Label>
+  <Label TextLabel="New MIM Arrows" GraphId="ce4">
+    <Graphics FontSize="150" Color="000000" CenterX="2175.0" CenterY="750.0" Width="1200.0" Height="300.0" />
+  </Label>
   <Shape Type="mim-phosphorylated" GraphId="f62">
-    <Graphics FillColor="000000" Color="000000" CenterX="5147.630809411766" CenterY="1567.3115039215688" Width="300.0" Height="300.0" Rotation="0.0" />
+    <Graphics FillColor="0000ff" Color="0000ff" CenterX="5147.630809411766" CenterY="1567.3115039215688" Width="300.0" Height="300.0" Rotation="0.0" />
   </Shape>
   <Shape Type="mim-degradation" GraphId="c35">
-    <Graphics FillColor="Transparent" Color="000000" CenterX="5147.630809411766" CenterY="2106.393621568626" Width="300.0" Height="300.0" Rotation="0.0" />
+    <Graphics FillColor="Transparent" Color="0000ff" CenterX="5147.630809411766" CenterY="2106.393621568626" Width="300.0" Height="300.0" Rotation="0.0" />
   </Shape>
   <Shape Type="mim-interaction" GraphId="fd2">
-    <Graphics FillColor="000000" Color="000000" CenterX="5147.630809411766" CenterY="2610.3182098039224" Width="300.0" Height="300.0" Rotation="0.0" />
+    <Graphics FillColor="0000ff" Color="0000ff" CenterX="5147.630809411766" CenterY="2610.3182098039224" Width="300.0" Height="300.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="CellA" GraphId="f2d">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="6862.5" CenterY="4620.0" Width="795.0" Height="780.0" Rotation="6.059161660141663" />
+  </Shape>
+  <Shape Type="Ribosome" GraphId="d13">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="8205.0" CenterY="4582.5" Width="780.0" Height="765.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="OrganB" GraphId="ad1">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="6645.0" CenterY="5737.5" Width="240.0" Height="945.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="OrganC" GraphId="b8d">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="7792.5" CenterY="5797.5" Width="945.0" Height="885.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="ProteinComplex" GraphId="b41">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="9495.0" CenterY="4747.5" Width="1230.0" Height="1125.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Triangle" GraphId="a0e">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="6705.0" CenterY="6945.0" Width="450.0" Height="450.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Pentagon" GraphId="a62">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="8100.0" CenterY="6870.0" Width="450.0" Height="450.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Hexagon" GraphId="f0a">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="9315.0" CenterY="6945.0" Width="450.0" Height="450.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Brace" GraphId="a97">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="8194.350971764574" CenterY="3900.7310885541065" Width="2730.683561546268" Height="421.6975774071261" Rotation="0.020850468770784822" />
+  </Shape>
+  <Shape Type="Rectangle" Style="Broken" GraphId="c75">
+    <Graphics FillColor="ffc0cb" Color="008400" CenterX="1185.0" CenterY="6202.5" Width="660.0" Height="675.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Broken" GraphId="c4f">
+    <Graphics FillColor="ffc0cb" Color="008400" CenterX="2385.0" CenterY="7605.0" Width="870.0" Height="870.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" Style="Broken" GraphId="b96">
+    <Graphics FillColor="ffc0cb" Color="008400" CenterX="1170.0" CenterY="7080.0" Width="690.0" Height="750.0" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Brace" Style="Broken" GraphId="cec">
+    <Graphics FillColor="ffc0cb" Color="008400" CenterX="2366.25" CenterY="6210.0" Width="990.0" Height="727.4999999999999" Rotation="1.5707963267948966" />
+  </Shape>
+  <Shape Type="Vesicle" GraphId="b54">
+    <Graphics FillColor="ffff00" Color="a020f0" CenterX="9358.918813502036" CenterY="5944.736555738844" Width="375.5" Height="666.395223777243" Rotation="0.5881374653134391" />
   </Shape>
   <InfoBox CenterX="0.0" CenterY="0.0" />
 </Pathway>

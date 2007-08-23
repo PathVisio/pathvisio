@@ -111,6 +111,13 @@
 		</xsd:union>
 	</xsd:simpleType>
 
+	<xsd:simpleType name="StyleType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Solid"/>
+			<xsd:enumeration value="Broken"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
 	<!-- use Dimension for width and height, they can't be nagative !-->
 	<xsd:simpleType name="Dimension">
 		<xsd:restriction base="xsd:float">
@@ -396,8 +403,24 @@
 									<!-- Note: technically points in the middle can have a head,
 									but this will be ignored for most types.
 									!-->
-									<xsd:attribute name="Head" default="Line" type="xsd:string">
-<!--							        <xsd:simpleType>
+									<xsd:attribute name="ArrowHead" default="Line" type="xsd:string" />
+
+									<!-- the "Head" attribute is
+									deprecated! Use the ArrowHead
+									attribute instead.  Due to a
+									stupid bug in PathVisio, the head
+									attribute was stored on the wrong
+									point.  To remain backwards
+									compatible, a head attribute read
+									from the first point is stored on
+									the second point.  !-->
+
+									<xsd:attribute name="Head" default="Line" type="xsd:string" />
+<!--
+				Head Type is no longer restricted.
+				However, if you care about compatibility with GenMAPP
+				you should only use the shapes below
+
 											<xsd:restriction base="xsd:string">
 												<xsd:enumeration value="Line"/>
 												<xsd:enumeration value="Arrow"/>
@@ -408,9 +431,7 @@
 												<xsd:enumeration value="LigandSquare"/>
 												<xsd:enumeration value="TBar"/>
 											</xsd:restriction>
-										</xsd:simpleType>
 										!-->
-									</xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>
@@ -421,14 +442,7 @@
 
 			</xsd:sequence>
 
-			<xsd:attribute name="Style" default="Solid">
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Solid"/>
-						<xsd:enumeration value="Broken"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid"/>
 
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
@@ -466,6 +480,16 @@
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
+
+			<xsd:attribute name="Outline" default="None">
+			    <xsd:simpleType>
+				    <xsd:restriction base="xsd:string">
+					    <xsd:enumeration value="None"/>
+						<xsd:enumeration value="Rectangle"/>
+						<xsd:enumeration value="RoundedRectangle"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 			<!-- Xref is deprecated, to avoid confusion with the Xref tag. Use GenMapp-Xref for pathways converted from GenMAPP -->
@@ -560,6 +584,9 @@
 
 			<xsd:attribute name="Type" use="required" type="xsd:string">
 			<!--
+				Shape Type is no longer restricted.
+				However, if you care about compatibility with GenMAPP
+				you should only use the shapes below
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Rectangle"/>
@@ -585,6 +612,7 @@
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
+			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid"/>
 
 		</xsd:complexType>
 

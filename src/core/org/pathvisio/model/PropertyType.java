@@ -57,7 +57,10 @@ public enum PropertyType
 	ENDX ("EndX", "End X", PropertyClass.DOUBLE), 
 	ENDY ("EndY", "End Y", PropertyClass.DOUBLE),
 			
-	LINETYPE ("LineType", "Line Type", PropertyClass.LINETYPE), 
+	ENDLINETYPE ("EndLineType", "End Line Type", PropertyClass.LINETYPE), 
+	STARTLINETYPE ("StartLineType", "Start Line Type", PropertyClass.LINETYPE), 
+
+	// line and shape
 	LINESTYLE ("LineStyle", "Line Style", PropertyClass.LINESTYLE),
 			
 	// brace
@@ -76,6 +79,7 @@ public enum PropertyType
 	FONTWEIGHT ("FontWeight", "Bold", PropertyClass.BOOLEAN), 
 	FONTSTYLE ("FontStyle", "Italic", PropertyClass.BOOLEAN), 
 	FONTSIZE ("FontSize", "Font Size", PropertyClass.DOUBLE),
+	OUTLINE ("Outline", "Outline", PropertyClass.OUTLINETYPE),
 
 	// mappinfo
 	MAPINFONAME ("MapInfoName", "Map Info Name", PropertyClass.STRING),

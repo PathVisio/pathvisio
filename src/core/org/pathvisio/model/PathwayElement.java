@@ -428,6 +428,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.SHAPETYPE);
 			result.add(PropertyType.ROTATION);
 			result.add(PropertyType.TRANSPARENT);
+			result.add(PropertyType.LINESTYLE);
 			if (fAdvanced)
 			{
 				result.add(PropertyType.GRAPHID);
@@ -442,7 +443,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.STARTY);
 			result.add(PropertyType.ENDX);
 			result.add(PropertyType.ENDY);
-			result.add(PropertyType.LINETYPE);
+			result.add(PropertyType.STARTLINETYPE);
+			result.add(PropertyType.ENDLINETYPE);
 			result.add(PropertyType.LINESTYLE);
 			if (fAdvanced)
 			{
@@ -466,6 +468,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.FONTWEIGHT);
 			result.add(PropertyType.FONTSTYLE);
 			result.add(PropertyType.FONTSIZE);
+			result.add(PropertyType.OUTLINE);
 			if (fAdvanced)
 			{
 				result.add(PropertyType.GRAPHID);
@@ -556,13 +559,24 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ENDY:
 			setMEndY((Double) value);
 			break;
-		case LINETYPE:
-			if(value instanceof LineType) {
-				setLineType((LineType)value);
-			} else {
-				setLineType(LineType.fromOrdinal ((Integer) value));
-			}
+		case ENDLINETYPE:
+			if(value instanceof LineType)
+				setEndLineType((LineType)value);
+			else
+				setEndLineType(LineType.fromOrdinal ((Integer) value));
 			break;
+		case STARTLINETYPE:
+			if(value instanceof LineType)
+				setStartLineType((LineType)value);
+			else
+				setStartLineType(LineType.fromOrdinal ((Integer) value));
+			break;
+		case OUTLINE:
+			if(value instanceof OutlineType)
+				setOutline((OutlineType)value);
+			else
+				setOutline(OutlineType.values()[(Integer) value]);
+		    break;
 		case LINESTYLE:
 			setLineStyle((Integer) value);
 			break;
@@ -715,8 +729,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ENDY:
 			result = getMEndY();
 			break;
-		case LINETYPE:
-			result = getLineType();
+		case ENDLINETYPE:
+			result = getEndLineType();
+			break;
+		case STARTLINETYPE:
+			result = getStartLineType();
+			break;
+		case OUTLINE:
+			result = getOutline();
 			break;
 		case LINESTYLE:
 			result = getLineStyle();
@@ -858,7 +878,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		textLabel = src.textLabel;
 		lastModified = src.lastModified;
 		lineStyle = src.lineStyle;
-		lineType = src.lineType;
+		startLineType = src.startLineType;
+		endLineType = src.endLineType;
+		outline = src.outline;
 		maintainer = src.maintainer;
 		mapInfoDataSource = src.mapInfoDataSource;
 		mapInfoName = src.mapInfoName;
@@ -1000,22 +1022,34 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	/** @deprecated Line Type should be stored as head, for start and end */
-	// TODO: no alternative yet
-	protected LineType lineType = LineType.LINE;
+	protected LineType endLineType = LineType.LINE;
+	protected LineType startLineType = LineType.LINE;
 
-	/** @deprecated Line Type should be stored as head, for start and end */
-	public LineType getLineType()
+	public LineType getStartLineType()
 	{
-		return lineType;
+		return startLineType;
 	}
 
-	/** @deprecated Line Type should be stored as head, for start and end */
-	public void setLineType(LineType value)
+	public LineType getEndLineType()
 	{
-		if (lineType != value)
+		return endLineType;
+	}
+
+	public void setStartLineType(LineType value)
+	{
+		if (startLineType != value)
 		{
-			lineType = value;
+			startLineType = value;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+
+	public void setEndLineType(LineType value)
+	{
+		if (endLineType != value)
+		{
+			endLineType = value;
 			fireObjectModifiedEvent(new PathwayEvent(this,
 					PathwayEvent.MODIFIED_GENERAL));
 		}
@@ -1591,6 +1625,21 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
+	protected OutlineType outline = OutlineType.NONE;
+	public void setOutline (OutlineType v)
+	{
+		if (outline != v)
+		{
+			outline = v;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+	public OutlineType getOutline()
+	{
+		return outline;
+	}
+	
 	protected String version = null;
 
 	public String getVersion()

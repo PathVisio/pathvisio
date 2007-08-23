@@ -45,10 +45,15 @@ public class PathwayTransferable implements Transferable {
 		}
 
 		Set<String> ids = new HashSet<String>();
+		Set<String> groupIds = new HashSet<String>();
+		
 		boolean infoFound = false;
 		for(PathwayElement e : elements) {
 			if(e.getGraphId() != null) {
 				ids.add(e.getGraphId());
+			}
+			if(e.getGroupRef() != null) {
+				groupIds.add(e.getGroupRef());
 			}
 			if(e.getObjectType() == ObjectType.MAPPINFO) {
 				infoFound = true;

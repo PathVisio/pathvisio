@@ -1961,7 +1961,6 @@ public class VPathway implements PathwayListener
 		}
 	}
 	
-	
 	/**
 	 * Get all elements of the class Graphics that are currently selected
 	 * 
@@ -1981,35 +1980,42 @@ public class VPathway implements PathwayListener
 		return result;
 	}
 	
+	private void generatePasteId(String oldId, Map<String, String> idmap, Set<String> newids) {
+		if (oldId != null) 
+		{
+			String x;
+			do
+			{
+				/*
+				 * generate a unique id. at the same time, check that it
+				 * is not equal to one of the unique ids that we
+				 * generated since the start of this method
+				 */ 
+				x = data.getUniqueId();
+			} while (newids.contains(x));
+			newids.add(x); // make sure we don't generate this one
+			// again
+			
+			idmap.put(oldId, x);
+		}
+	}
+	
+	
 	public void paste(List<PathwayElement> elements) {
 		undoManager.newAction ("Paste");
 		clearSelection();
 		Map<String, String> idmap = new HashMap<String, String>();
 		Set<String> newids = new HashSet<String>();
-		
+	
 		/*
 		 * Step 1: generate new unique ids for copied items
 		 */
 		for (PathwayElement o : elements)
 		{
 			String id = o.getGraphId();
-			if (id != null) 
-			{
-				String x;
-				do
-				{
-					/*
-					 * generate a unique id. at the same time, check that it
-					 * is not equal to one of the unique ids that we
-					 * generated since the start of this method
-					 */ 
-					x = data.getUniqueId();
-				} while (newids.contains(x));
-				newids.add(x); // make sure we don't generate this one
-				// again
-				
-				idmap.put(id, x);
-			}
+			String groupId = o.getGroupId();
+			generatePasteId(id, idmap, newids);
+			generatePasteId(groupId, idmap, newids);
 		}
 		/*
 		 * Step 2: do the actual copying 
@@ -2026,6 +2032,7 @@ public class VPathway implements PathwayListener
 			if (o.getObjectType() == ObjectType.BIOPAX) {
 				//Merge the copied biopax elements with existing
 				data.mergeBiopax(o);
+				continue;
 			}
 			
 			lastAdded = null;
@@ -2042,7 +2049,12 @@ public class VPathway implements PathwayListener
 			// set new unique id
 			if (p.getGraphId() != null)
 			{					
-				p.setGraphId(idmap.get(p.getGraphId()));					
+				p.setGraphId(idmap.get(p.getGraphId()));
+			}
+			// set new group id
+			String gid = p.getGroupId();
+			if(gid != null) {
+				p.setGroupId(idmap.get(gid));
 			}
 			// update graphref
 			String y = p.getStartGraphRef(); 
@@ -2066,7 +2078,15 @@ public class VPathway implements PathwayListener
 					p.setEndGraphRef(null);
 				 }				
 			}
-			System.out.println("Adding " + p);
+			// update groupref
+			String groupRef = p.getGroupRef();
+			if(groupRef != null) {
+				if(idmap.containsKey(groupRef)) {
+					p.setGroupRef(idmap.get(groupRef));
+				} else {
+					p.setGroupRef(null);
+				}
+			}
 			data.add (p); // causes lastAdded to be set
 			lastAdded.select();
 			selection.addToSelection(lastAdded);

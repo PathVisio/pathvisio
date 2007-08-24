@@ -1047,6 +1047,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         String inputString = file.getAbsolutePath();
 
         MappFormat.readFromMapp (inputString, pathway);
+        pathway.setSourceFile(null); //Don't save back to mapp file
 	}
 
     private static Color fromMappColor(String s)

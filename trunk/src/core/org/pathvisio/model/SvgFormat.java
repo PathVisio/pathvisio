@@ -36,6 +36,7 @@ import org.jdom.output.XMLOutputter;
 
 /**
    A PathwayExporter for exporting pathways to Scalable Vector Graphics (SVG) format
+   @deprecated Use {@link BatikImageExporter} with type {@link ImageExporter#TYPE_SVG} instead
 */
 public class SvgFormat implements PathwayExporter
 {

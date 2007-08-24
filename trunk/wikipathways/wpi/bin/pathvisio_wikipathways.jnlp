@@ -47,15 +47,12 @@
 	</resources>
 	<resources os="Windows">
 		<jar href="lib/swt-win32-lib/swt.jar"/>
-		<nativelib href="lib/swt-win32-lib.jar"/>	
 	</resources>
 	<resources os="Linux">
 		<jar href="lib/swt-linux-lib/swt.jar"/>
-		<nativelib href="lib/swt-linux-lib.jar"/>	
 	</resources>
 	<resources os="Mac OS X">
 		<jar href="lib/swt-mac-lib/swt.jar"/>
-		<nativelib href="lib/swt-mac-lib.jar"/>	
 	</resources>
 	<application-desc main-class="org.pathvisio.wikipathways.swt.WebstartMain">
 		<!--ARG-->

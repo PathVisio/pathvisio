@@ -1764,9 +1764,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	protected double mBoardWidth;
 
-	/**
-	 * @deprecated use {@link #getMBoardSize()} instead
-	 */
 	public double getMBoardWidth()
 	{
 		return getMBoardSize()[0];
@@ -1789,9 +1786,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	protected double mBoardHeight;
 
-	/**
-	 * @deprecated use {@link #getMBoardSize()} instead
-	 */
 	public double getMBoardHeight()
 	{
 		return getMBoardSize()[1];

@@ -242,7 +242,7 @@ public class SvgFormat implements PathwayExporter
 	
 	static void mapColor(Element e, PathwayElement o) {
 		e.setAttribute("stroke", rgb2String(o.getColor()));
-		if(o.isTransparent() && o.getObjectType() != ObjectType.DATANODE) {
+		if(o.isTransparent() || o.getObjectType() != ObjectType.DATANODE) {
 			e.setAttribute("fill", "none");
 		} else {
 			e.setAttribute("fill", rgb2String(o.getFillColor()));

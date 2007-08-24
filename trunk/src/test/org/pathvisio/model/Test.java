@@ -156,16 +156,22 @@ public class Test extends TestCase implements PathwayListener
 	 */
 	public void testRefUniq()
 	{
+		String src = "123123";
+		String s1 = src.substring (3, 6);
+		String s2 = src.substring (0, 3);
+		assertFalse ("s1 should not be the same reference as s2", s1 == s2);
+		assertTrue ("s1 should be equal to s2", s1.equals (s2));
+		
 		// test for uniqueness
-		o.setGraphId("123");
+		o.setGraphId(s1);
 		
 		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
 		data.add (o2);
 		assertSame (o.getParent(), o2.getParent());
 		assertEquals ("Setting graphId on first element", o.getGraphId(), "123");
 		try
-		{
-			o2.setGraphId("123");
+		{			
+			o2.setGraphId(s2);
 			// try setting the same id again
 			fail("shouldn't be able to set the same id twice");
 		}

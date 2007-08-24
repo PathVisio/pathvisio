@@ -44,7 +44,7 @@ import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swt.VPathwaySwtAwt;
-
+import org.pathvisio.ApplicationEvent;
 import edu.stanford.ejalbert.BrowserLauncher;
 import edu.stanford.ejalbert.exception.BrowserLaunchingExecutionException;
 import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
@@ -53,7 +53,8 @@ import edu.stanford.ejalbert.exception.UnsupportedOperatingSystemException;
 /**
  * This class contains the essential parts of the program: the window, drawing and gpml data
  */
-public class SwtEngine {
+public class SwtEngine implements Pathway.StatusFlagListener, Engine.ApplicationEventListener
+{
 	/**
 	 * {@link Pathway} object containing JDOM representation of the gpml pathway 
 	 * and handle gpml related actions
@@ -76,6 +77,24 @@ public class SwtEngine {
 
 	public static void setCurrent(SwtEngine engine) {
 		current = engine;
+	}
+
+	SwtEngine()
+	{
+		Engine.getCurrent().addApplicationEventListener(this);
+	}
+
+	public void applicationEvent (ApplicationEvent e)
+	{
+		/**
+		   register ourselves as listener if there is a new pathway.
+		 */
+		if (e.type == ApplicationEvent.PATHWAY_OPENED ||
+			e.type == ApplicationEvent.PATHWAY_NEW)
+		{
+			Engine.getCurrent().getActivePathway().addStatusFlagListener (this);
+			//TODO: listener is never unregistered
+		}
 	}
 	
 	/**
@@ -105,14 +124,23 @@ public class SwtEngine {
 		}
 		else
 		{
+			boolean changeStatus = Engine.getCurrent().getActivePathway().hasChanged();
 			// get filename, or (New Pathway) if current pathway hasn't been opened yet
 			String fname = (Engine.getCurrent().getActivePathway().getSourceFile() == null) ? "(New Pathway)" :
 				Engine.getCurrent().getActivePathway().getSourceFile().getName();
 			window.getShell().setText(
-				"*" + fname + " - " +
+				(changeStatus ? "*" : "") + fname + " - " +
 				Globals.APPLICATION_VERSION_NAME
 				);
 		}
+	}
+
+	/**
+	   Called by Pathway in case the status flag has changed.
+	 */
+	public void statusFlagChanged(Pathway.StatusFlagEvent e)
+	{
+		updateTitle();
 	}
 	
 	/**
@@ -240,7 +268,7 @@ public class SwtEngine {
 	public boolean canDiscardPathway()
 	{
 		Pathway pathway = Engine.getCurrent().getActivePathway();
-		// checking not necessary if there is no pathway or if pathway is not changed.
+        // checking not necessary if there is no pathway or if pathway is not changed.
 		if (pathway == null || !pathway.hasChanged()) return true;
 		String[] opts =
 		{

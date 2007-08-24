@@ -21,12 +21,12 @@ import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -43,24 +43,39 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 */
 public class Pathway implements PathwayListener
 {		
-	/**
-	   "changed" tracks if the Pathway has been changed since the file
-	   was opened or last saved. New pathways start changed.
-	 */
 	private boolean changed = true;
+	/**
+	   The "changed" flag tracks if the Pathway has been changed since
+	   the file was opened or last saved. New pathways start changed.
+	 */
 	public boolean hasChanged() { return changed; }
+	
 	/**
 	   clearChangedFlag should be called after when the current
 	   pathway is known to be the same as the one on disk. This
 	   happens when you just opened it, or when you just saved it.
 	*/
-	private void clearChangedFlag() { changed = false; }
+	private void clearChangedFlag()
+	{
+		if (changed)
+		{
+			changed = false;
+			fireStatusFlagEvent (new StatusFlagEvent (changed));
+			System.out.println ("Changed flag is cleared");
+		}		
+	}
+	
 	/**
 	   To be called after each edit operation
 	*/
 	private void markChanged()
 	{
-		changed = true;
+		if (!changed)
+		{
+			changed = true;
+			fireStatusFlagEvent (new StatusFlagEvent (changed));
+			System.out.println ("Changed flag is set");
+		}
 	}
 	
 	/**
@@ -170,6 +185,11 @@ public class Pathway implements PathwayListener
 		o.setParent(this);
 		o.setZOrder(dataObjects.size() + 1);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
+	}
+
+	public void gmmlObjectModified (PathwayEvent e)
+	{
+		markChanged();
 	}
 	
 	/**
@@ -466,7 +486,7 @@ public class Pathway implements PathwayListener
 	public void writeToXml(File file, boolean validate) throws ConverterException 
 	{
 		GpmlFormat.writeToXml (this, file, validate);
-
+		clearChangedFlag();
 		setSourceFile (file);
 
 	}
@@ -509,10 +529,42 @@ public class Pathway implements PathwayListener
 	{
 		SvgFormat.writeToSvg (this, file);
 	}
+
+	public interface StatusFlagListener extends EventListener
+	{	
+		public void statusFlagChanged (StatusFlagEvent e);	
+	}
+
+	public static class StatusFlagEvent
+	{
+		private boolean newStatus;
+		StatusFlagEvent (boolean newStatus) { this.newStatus = newStatus; }
+	}
+
+	private List<StatusFlagListener> statusFlagListeners = new ArrayList<StatusFlagListener>();
+
+	public void addStatusFlagListener (StatusFlagListener v)
+	{
+		if (!statusFlagListeners.contains(v)) statusFlagListeners.add(v);
+	}
+
+	public void removeStatusFlagListener (StatusFlagListener v)
+	{
+		statusFlagListeners.remove(v);
+	}
 	
+	public void fireStatusFlagEvent(StatusFlagEvent e) 
+	{
+		for (StatusFlagListener g : statusFlagListeners)
+		{
+			g.statusFlagChanged (e);
+		}
+	}
+
 	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
-	
-	public void addListener(PathwayListener v) { 
+
+	public void addListener(PathwayListener v)
+	{ 
 		if(!listeners.contains(v)) listeners.add(v); 
 	}
 	
@@ -548,15 +600,6 @@ public class Pathway implements PathwayListener
 		return systemCodes;
 	}
 	
-	/**
-	 * register undo actions,
-	 * disabled for the moment.
-	 */
-	public void gmmlObjectModified(PathwayEvent e) 
-	{
-		markChanged();
-	}
-
 	public Pathway clone()
 	{
 		Pathway result = new Pathway();

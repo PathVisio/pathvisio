@@ -282,11 +282,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		/* set default value for transparancy */
 		if (ot == ObjectType.LINE || ot == ObjectType.LABEL)
 		{
-			fTransparent = false;
+			setTransparent (false);
 		}
 		else
 		{
-			fTransparent = true;
+			setTransparent (true);
 		}
 		objectType = ot;
 	}
@@ -871,7 +871,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		fontName = src.fontName;
 		mFontSize = src.mFontSize;
 		fStrikethru = src.fStrikethru;
-		fTransparent = src.fTransparent;
 		fUnderline = src.fUnderline;
 		setGeneID = src.setGeneID;
 		dataNodeType = src.dataNodeType;
@@ -1081,9 +1080,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/**
-	 * fillcolor can't be null!
+	   a fillcolor of null is equivalent to transparent.
 	 */
-	protected Color fillColor = new Color(0, 0, 0);
+	protected Color fillColor = null;
 
 	public Color getFillColor()
 	{
@@ -1092,8 +1091,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setFillColor(Color v)
 	{
-		if (v == null)
-			throw new IllegalArgumentException();
 		if (fillColor != v)
 		{
 			fillColor = v;
@@ -1102,18 +1099,23 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	protected boolean fTransparent = true;
-
+	/**
+	   checks if fill color is equal to null.
+	 */
 	public boolean isTransparent()
 	{
-		return fTransparent;
+		return fillColor == null;
 	}
 
+	/**
+	   sets fillColor to null if true,
+	   sets fillColor to white if false
+	 */
 	public void setTransparent(boolean v)
 	{
-		if (fTransparent != v)
+		if (isTransparent() != v)
 		{
-			fTransparent = v;
+			fillColor = (v ? null : Color.WHITE);
 			fireObjectModifiedEvent(new PathwayEvent(this,
 					PathwayEvent.MODIFIED_GENERAL));
 		}

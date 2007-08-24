@@ -19,6 +19,10 @@ package org.pathvisio.gui.swt;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -39,9 +43,10 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayExporter;
+import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swt.VPathwaySwtAwt;
 import org.pathvisio.ApplicationEvent;
@@ -179,6 +184,147 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		}
 	}
 	
+	static class FileType implements Comparable<FileType> {
+		final String name;
+		final String ext;
+		public FileType(String n, String e) { 
+			name = n;
+			ext = e; 
+		}
+		public String getNameString() {
+			return name + " (*." + ext + ")";
+		}
+		public int compareTo(FileType o) {
+			return name.compareTo(o.name);
+		}
+	}
+	
+	private static void setExporterFileFilters(FileDialog fd) {
+		HashMap<String, PathwayExporter> exporters = Engine.getCurrent().getPathwayExporters();
+		ArrayList<FileType> fts = new ArrayList<FileType>();
+		for(String ext : exporters.keySet()) {
+			fts.add(new FileType(exporters.get(ext).getName(), ext));
+		}
+		setFileFilters(fd, fts);
+	}
+	
+	private static void setImporterFileFilters(FileDialog fd) {
+		HashMap<String, PathwayImporter> importers = Engine.getCurrent().getPathwayImporters();
+		ArrayList<FileType> fts = new ArrayList<FileType>();
+		for(String ext : importers.keySet()) {
+			fts.add(new FileType(importers.get(ext).getName(), ext));
+		}
+		setFileFilters(fd, fts);
+	}
+	
+	private static void setFileFilters(FileDialog fd, List<FileType> fileTypes) {
+		Collections.sort(fileTypes);
+		String[] exts = new String[fileTypes.size()];
+		String[] nms = new String[fileTypes.size()];
+		for(int i = 0; i < fileTypes.size(); i++) {
+			FileType ft = fileTypes.get(i);
+			exts[i] = "*." + ft.ext;
+			nms[i] = ft.getNameString();
+		}
+		fd.setFilterExtensions(exts);
+		fd.setFilterNames(nms);
+	}
+	
+	public boolean importPathway() {
+		boolean imported = false;
+		FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
+		fd.setText("Open");
+
+		setImporterFileFilters(fd);
+		
+        String fileName = fd.open();
+        if(fileName != null) {
+    		if (canDiscardPathway())
+    		{
+    			try { 
+    				VPathwayWrapper w = createWrapper();
+    				Engine.getCurrent().importPathway(new File(fileName), w);
+    				imported = true;
+    	        	if(window.editOnOpen()) {
+    	        		Engine.getCurrent().getActiveVPathway().setEditMode(true);
+    	        	}
+    			} 
+    			catch(ConverterException e) 
+    			{		
+    				handleImportException(fileName, e);
+    			}
+    			updateTitle();
+    		}
+        }
+		
+		return imported;
+	}
+	
+	public boolean exportPathway() {
+		Pathway gmmlData = Engine.getCurrent().getActivePathway();
+		// Check if a pathway is loaded
+		if (checkPathwayLoaded())
+		{
+			FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+			fd.setText("Export");
+					
+			setExporterFileFilters(fd);
+							
+			File xmlFile = gmmlData.getSourceFile();
+			if(xmlFile != null) {
+				String name = xmlFile.getName();
+				//Remove gpml extension
+				if (name.endsWith("." + Engine.PATHWAY_FILE_EXTENSION))
+				{
+					name = name.substring(0, name.length() - 
+						Engine.PATHWAY_FILE_EXTENSION.length() - 1);
+				}
+				fd.setFileName(name);
+				fd.setFilterPath(xmlFile.getPath());
+			}
+			String fileName = fd.open();
+			// Only proceed if user selected a file
+			if(fileName == null) return false;
+			
+			int dot = fileName.lastIndexOf('.');
+			String ext = "";
+			if(dot >= 0) {
+				ext = fileName.substring(dot + 1, fileName.length());
+			}
+			PathwayExporter exporter = Engine.getCurrent().getPathwayExporter(ext);
+			
+			if(exporter == null) {
+				String error = "No exporter for '" + ext +  "' files";
+				if(ext.equals("")) {
+					error = "No file extension specified";
+				}
+				MessageDialog.openError (window.getShell(), "Error", 
+				error);
+			}
+			
+			File f = new File(fileName);
+			if(canOverwite(f))
+			{
+				try
+				{
+					exporter.doExport(f, gmmlData);
+					return true;
+				}
+				catch (ConverterException e)
+				{
+					String msg = "While exporting to " 
+						+ f.getAbsolutePath();					
+					MessageDialog.openError (window.getShell(), "Error", 
+							"Error: " + msg + "\n\n" + 
+							"See the error log for details.");
+					Logger.log.error(msg, e);
+				}
+			}
+		}
+
+		return false;
+	}
+	
 	/**
 	   Opens a file dialog and lets user select a file.
 	   Then the pathways is saved to that file.
@@ -187,10 +333,9 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	public boolean savePathwayAs()
 	{
 		Pathway pathway = Engine.getCurrent().getActivePathway();
-		VPathway vPathway = Engine.getCurrent().getActiveVPathway();
 		
 		// Check if a gpml pathway is loaded
-		if (pathway != null)
+		if (checkPathwayLoaded())
 		{
 			FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
 			fd.setText("Save");
@@ -200,13 +345,6 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 			File xmlFile = pathway.getSourceFile();
 			if(xmlFile != null) {
 				String fName = xmlFile.getName();
-				System.out.println (fName);
-				if (fName.endsWith ("." + Engine.GENMAPP_FILE_EXTENSION))
-				{
-					fName = fName.substring(0,
-							fName.length() - Engine.GENMAPP_FILE_EXTENSION.length() - 1);
-					System.out.println (fName);
-				}
 				fd.setFileName(fName);
 				fd.setFilterPath(xmlFile.getPath());
 			} else {
@@ -221,41 +359,58 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 			if(!fileName.endsWith("." + Engine.PATHWAY_FILE_EXTENSION)) 
 				fileName += "." + Engine.PATHWAY_FILE_EXTENSION;
 			
-			File checkFile = new File(fileName);
-			boolean confirmed = true;
-			// If file exists, ask overwrite permission
-			if(checkFile.exists())
-			{
-				confirmed = MessageDialog.openQuestion(window.getShell(),"",
-													   "File already exists, overwrite?");
-			}
-			if(confirmed)
+			File f = new File(fileName);
+			if(canOverwite(f))
 			{				
 				// Overwrite the existing xml file
 				try
 				{
-					Engine.getCurrent().savePathway(checkFile);
+					Engine.getCurrent().savePathway(f);
 					updateTitle();
 				}
 				catch (ConverterException e)
 				{
 					String msg = "While writing xml to " 
-						+ checkFile.getAbsolutePath();					
+						+ f.getAbsolutePath();					
 					MessageDialog.openError (window.getShell(), "Error", 
 											 "Error: " + msg + "\n\n" + 
 											 "See the error log for details.");
 					Logger.log.error(msg, e);
 				}
 			}
-		}
-		else
-		{
-			MessageDialog.openError (window.getShell(), "Error", 
-									 "No gpml file loaded! Open or create a new gpml file first");
-		}			
+		}		
 		return true;
 	}
 
+	/**
+	 * Asks user if the file may be overwritten if it exists.
+	 * @param f
+	 * @return
+	 */
+	public boolean canOverwite(File f) {
+		boolean confirmed = true;
+		// If file exists, ask overwrite permission
+		if(f.exists())
+		{
+			confirmed = MessageDialog.openQuestion(window.getShell(),"",
+												   "File already exists, overwrite?");
+		}
+		return confirmed;
+	}
+	
+	/**
+	 * Checks if a pathway is currently loaded, and notifies the user if not
+	 * @return
+	 */
+	public boolean checkPathwayLoaded() {
+		boolean loaded = Engine.getCurrent().getActivePathway() != null;
+		if(!loaded) {
+			MessageDialog.openError (window.getShell(), "Error", 
+			"No gpml file loaded! Open or create a new gpml file first");
+		}
+		return loaded;
+	}
+	
 	/**
 	   Checks if the current pathway has changes, and if so, pops up a dialog
 	   offering to save.
@@ -309,7 +464,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		if(shell == null || shell.isDisposed()) return false;
 		
 		SimpleRunnableWithProgress rwp = new SimpleRunnableWithProgress(
-				Engine.class, "doOpenWebPage", new Class[] { String.class }, new Object[] { url }, null);
+				SwtEngine.class, "doOpenWebPage", new Class[] { String.class }, new Object[] { url }, this);
 		SimpleRunnableWithProgress.setMonitorInfo(progressMsg, IProgressMonitor.UNKNOWN);
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
@@ -322,6 +477,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 			"Unable to open web browser" +
 			(msg == null ? "" : ": " + msg) +
 			"\n" + errMsg);
+			Logger.log.error("Unable to open web browser", e);
 			return false;
 		} catch (InterruptedException ignore) { return false; }
 	}
@@ -329,6 +485,19 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	public void doOpenWebPage(String url) throws BrowserLaunchingInitializingException, BrowserLaunchingExecutionException, UnsupportedOperatingSystemException {
 		BrowserLauncher bl = new BrowserLauncher(null);
 		bl.openURLinBrowser(url);
+	}
+	
+	private void handleImportException(String pwFile, ConverterException e) {
+		if (pwFile.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
+		{
+			MessageDialog.openError(getWindow().getShell(), 
+				"Unable to import pathway", 
+				"Unable to import pathway from " + pwFile + ".\n\n" +					
+				"If the problem persists, please contact " +
+				"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
+				"file you're trying to open and the error log.");
+				Logger.log.error("Unable to import pathway", e);						
+		}
 	}
 	
 	private void handleOpenException(String pwFile, ConverterException e) {
@@ -344,18 +513,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 				"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n" +
 				"\nSee error log for details");
 			Logger.log.error("Unable to open Gpml file", e);
-		}
-		else if (pwFile.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
-		{
-			MessageDialog.openError(getWindow().getShell(), 
-				"Unable to open Mapp file", 
-				"Unable to open Mapp file.\n\n" +					
-				"Check that the file you're trying to open really is a "+
-				"Pathway in the GenMAPP .mapp format. If the problem persists, please contact " +
-				"the developers at " + Globals.DEVELOPER_EMAIL + ". Please include the " +
-				"file you're trying to open and the error log.");
-				Logger.log.error("Unable to open Gpml file", e);						
-		}
+		} 
 		else
 		{
 			//TODO: refactor these error messages,
@@ -378,7 +536,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		{
 			try { 
 				VPathwayWrapper w = createWrapper();
-				Engine.getCurrent().openPathway(url, w);
+				local = Engine.getCurrent().openPathway(url, w);
 				updateTitle();
 			} 
 			catch(ConverterException e) 
@@ -389,24 +547,47 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		return local;
 	}
 	
+	public boolean openPathway() {
+		boolean opened = false;
+		FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
+		fd.setText("Open");
+		String pwpath = SwtPreference.SWT_DIR_PWFILES.getValue();
+		fd.setFilterPath(pwpath);
+		fd.setFilterExtensions(new String[] {"*." + Engine.PATHWAY_FILE_EXTENSION, "*.*"});
+		fd.setFilterNames(new String[] {Engine.PATHWAY_FILTER_NAME, "All files (*.*)"});
+        String fnMapp = fd.open();
+        // Only open pathway if user selected a file
+        
+        if(fnMapp != null) { 
+        	opened = openPathway(fnMapp);
+        	if(opened && window.editOnOpen()) {
+        		Engine.getCurrent().getActiveVPathway().setEditMode(true);
+        	}
+        }
+        return opened;
+	}
+	
 	/**
 	 Open a pathway from a gpml file
 	 Asks the user if the old pathway should be discarded, if necessary
 	 */
-	public void openPathway(String pwf)
+	public boolean openPathway(String pwf)
 	{
+		boolean opened = false;
 		if (canDiscardPathway())
 		{
 			try { 
 				VPathwayWrapper w = createWrapper();
 				Engine.getCurrent().openPathway(new File(pwf), w);
-				updateTitle();
+				opened = true;
 			} 
 			catch(ConverterException e) 
 			{		
 				handleOpenException(pwf, e);
 			}
+			updateTitle();
 		}
+		return opened;
 	}
 	
 	/**
@@ -463,6 +644,8 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		public boolean savePathway()
 		{
 			Pathway pathway = Engine.getCurrent().getActivePathway();
+			
+			if(!checkPathwayLoaded()) return false;
 			
 			boolean result = true;
 							

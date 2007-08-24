@@ -56,9 +56,9 @@ MYCLASSPATH2=$PATHVISIO_CP:build/v2
 
 if [ $RUN_MODE = "DIRECT" ]; then
 	if [ $USE_EXPERIMENTAL = "0" ]; then
-		java -classpath $MYCLASSPATH1 -Djava.library.path="/usr/lib/firefox:./lib/swt-linux-lib" $MAIN_CLASS
+		java -classpath $MYCLASSPATH1 $MAIN_CLASS
 	elif [ $USE_EXPERIMENTAL = "1" ]; then
-		java -classpath $MYCLASSPATH2 -Djava.library.path="/usr/lib/firefox:./lib/swt-linux-lib" $MAIN_CLASS -ur
+		java -classpath $MYCLASSPATH2 $MAIN_CLASS -ur
 	fi	
 elif [ $RUN_MODE = "WEBSTART" ]; then
 	if [ $USE_EXPERIMENTAL = "0" ]; then

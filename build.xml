@@ -161,15 +161,6 @@ public class Revision
 			<fileset dir="lib" includes="R/**/*"/>
 			<fileset dir="lib" includes="JRI-lib/*"/>
 		</jar>
-		<jar jarfile="lib/swt-win32-lib.jar">
-			<fileset dir="lib/swt-win32-lib" includes="*.dll"/>
-		</jar>
-		<jar jarfile="lib/swt-linux-lib.jar">
-			<fileset dir="lib/swt-linux-lib" includes="*.so"/>
-		</jar>
-		<jar jarfile="lib/swt-mac-lib.jar">
-			<fileset dir="lib/swt-mac-lib" includes="*.jnilib"/>
-		</jar>
 	</target>
 	
 	<target name="jar" depends="compile-v1,compile-v2" description="Generates executable jar file">
@@ -223,14 +214,12 @@ public class Revision
 	<target name="run-v1" depends="compile-v1">
 		<java classname="org.pathvisio.gui.swt.GuiMain" fork="true">
 			<classpath refid="project.v1.class.path"/>
-			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>
 	</target>
 
 	<target name="run-v2" depends="compile-v2">
 		<java classname="org.pathvisio.gui.swt.GuiMain" fork="true">
 			<classpath refid="project.v2.class.path"/>
-			<jvmarg value='-Djava.library.path=lib/swt-linux-lib'/>
 		</java>
 	</target>
 	

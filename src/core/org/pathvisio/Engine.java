@@ -173,24 +173,15 @@ public class Engine {
 		
 		// initialize new JDOM gpml representation and read the file
 		_pathway = new Pathway();
-		if (pwf.endsWith("." + Engine.GENMAPP_FILE_EXTENSION))
-		{
-			_pathway.readFromMapp(new File(pwf));
-		}
-		else
-		{
-			_pathway.readFromXml(new File(pwf), true);
-		}
-		if(_pathway != null) //Only continue if the data is correctly loaded
-		{
-			pathway = _pathway;
-			fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
-			if(wrapper != null) {
-				createVPathway(_pathway, wrapper);
-				fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
-			}
-		}
-		
+		_pathway.readFromXml(new File(pwf), true);
+		//Only set the pathway field after the data is loaded
+		//(Exception thrown on error, this part will not be reached)
+		pathway = _pathway;
+		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
+		if(wrapper != null) {
+			createVPathway(_pathway, wrapper);
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
+		}		
 	}
 	
 	public File openPathway(URL url) throws ConverterException {

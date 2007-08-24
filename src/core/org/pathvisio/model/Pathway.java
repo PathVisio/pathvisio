@@ -446,7 +446,7 @@ public class Pathway implements PathwayListener
 	 * @return current xml file
 	 */
 	public File getSourceFile () { return sourceFile; }
-	private void setSourceFile (File file) { sourceFile = file; }
+	public void setSourceFile (File file) { sourceFile = file; }
 
 	/**
 	 * Contructor for this class, creates a new gpml document
@@ -505,29 +505,22 @@ public class Pathway implements PathwayListener
 		setSourceFile (file);
 		clearChangedFlag();
 	}
-		
+	
 	public void readFromMapp (File file) throws ConverterException
 	{
-        String inputString = file.getAbsolutePath();
-
-        MappFormat.readFromMapp (inputString, this);
-        
-        setSourceFile (file);
-        clearChangedFlag();
+        new MappFormat().doImport(file, this);
 	}
 	
 	public void writeToMapp (File file) throws ConverterException
 	{
-		String[] mappInfo = MappFormat.uncopyMappInfo (this);
-		List<String[]> mappObjects = MappFormat.uncopyMappObjects (this);
-		
-		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);
-		setSourceFile (file);
+		new MappFormat().doExport(file, this);
 	}
 
 	public void writeToSvg (File file) throws ConverterException
 	{
-		SvgFormat.writeToSvg (this, file);
+		//Use Batik instead of SvgFormat
+		//SvgFormat.writeToSvg (this, file);
+		new BatikImageExporter(ImageExporter.TYPE_SVG).doExport(file, this);
 	}
 
 	public interface StatusFlagListener extends EventListener

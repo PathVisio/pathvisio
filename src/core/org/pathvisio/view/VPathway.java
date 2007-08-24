@@ -2174,7 +2174,7 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVWidth()
 	{
-		return (int)parent.getViewportSize().width;
+		return data == null ? 0 : (int)vFromM(data.getMappInfo().getMBoardWidth());
 	}
 	
 	/**
@@ -2182,7 +2182,7 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVHeight()
 	{
-		return (int)parent.getViewportSize().height;
+		return data == null ? 0 : (int)vFromM(data.getMappInfo().getMBoardHeight());
 	}
 	
 	//AP20070716

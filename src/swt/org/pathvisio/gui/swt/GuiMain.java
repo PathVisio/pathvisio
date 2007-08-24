@@ -108,7 +108,7 @@ public class GuiMain {
 			URL versionUrl = new URL("http://blog.bigcat.unimaas.nl/~gmmlvisio/latestversion");
 			URLConnection conn = versionUrl.openConnection();
 			conn.setUseCaches(false);
-			conn.setConnectTimeout(750);
+			conn.setReadTimeout(500); //Don't wait too long if we're not connected to the internet
 			InputStream in = (InputStream)conn.getInputStream();
 			BufferedReader bin = new BufferedReader(new InputStreamReader(in));
 
@@ -183,6 +183,7 @@ public class GuiMain {
 		registerListeners();
 				
 		registerExporters();
+		registerImporters();
 		
 		//NOTE: ImageRegistry will be initiated in "createContents" of MainWindow,
 		//since the window has to be opened first (need an active Display)
@@ -219,6 +220,10 @@ public class GuiMain {
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
+	}
+	
+	static void registerImporters() {
+		Engine.getCurrent().addPathwayImporter(new MappFormat());
 	}
 	
 	static void loadVisualizations() {

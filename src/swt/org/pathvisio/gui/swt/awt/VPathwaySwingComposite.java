@@ -39,8 +39,6 @@ public class VPathwaySwingComposite extends EmbeddedSwingComposite {
 		scrollPane.getVerticalScrollBar().setUnitIncrement(incr);
 		scrollPane.getHorizontalScrollBar().setUnitIncrement(incr);
 		
-		scrollPane.getInputMap().remove(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0));
-		scrollPane.getHorizontalScrollBar().getInputMap().remove(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0));
 		return scrollPane;
 	}
 	

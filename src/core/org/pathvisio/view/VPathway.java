@@ -229,12 +229,11 @@ public class VPathway implements PathwayListener
 		{
 			fromGmmlDataObject (o);
 		}
-		int width = getVWidth();
-		int height = getVHeight();
-		if (parent != null)
-		{
-			parent.setVSize(width, height);
-		}
+		double[] calcSize = data.getMappInfo().getMBoardSize();
+		int width = (int)vFromM(calcSize[0]);
+		int height = (int)vFromM(calcSize[1]);
+		parent.setVSize(width, height);
+
 //		data.fireObjectModifiedEvent(new PathwayEvent(null,
 //				PathwayEvent.MODIFIED_GENERAL));
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
@@ -1497,15 +1496,6 @@ public class VPathway implements PathwayListener
 	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke
 			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
 			java.awt.Event.CTRL_MASK);
-		
-	public static final KeyStroke KEY_GROUP = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_G, java.awt.Event.CTRL_MASK);
-	
-	public static final KeyStroke KEY_SELECT_ALL = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_A, java.awt.Event.CTRL_MASK);
-
-	public static final KeyStroke KEY_DELETE = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_DELETE, 0);
 	
 	public static final KeyStroke KEY_MOVERIGHT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_RIGHT, java.awt.Event.CTRL_MASK);
@@ -1535,46 +1525,54 @@ public class VPathway implements PathwayListener
 	 */
 	private ViewActions viewActions;
 	
+	//Convenience method to register an action that has an accelerator key
+	private void registerKeyboardAction(Action a) {
+		KeyStroke key = (KeyStroke)a.getValue(Action.ACCELERATOR_KEY);
+		if(key == null) throw new RuntimeException("Action " + a + " must have value ACCELERATOR_KEY set");
+		parent.registerKeyboardAction(key, a);
+	}
+
 	private void registerKeyboardActions()
 	{
 		viewActions = new ViewActions(this);
-		if (parent != null)
+
+		registerKeyboardAction(viewActions.copy);
+		registerKeyboardAction(viewActions.paste);
+		parent.registerKeyboardAction(KEY_SELECT_DATA_NODES, viewActions.selectDataNodes);
+		registerKeyboardAction(viewActions.toggleGroup);
+		registerKeyboardAction(viewActions.selectAll);
+		registerKeyboardAction(viewActions.delete);
+
+		parent.registerKeyboardAction(KEY_MOVELEFT, new AbstractAction()
 		{
-			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES, viewActions.selectDataNodes);
-			parent.registerKeyboardAction(KEY_GROUP, viewActions.toggleGroup);
-			parent.registerKeyboardAction(KEY_SELECT_ALL, viewActions.selectAll);
-			parent.registerKeyboardAction(KEY_DELETE, viewActions.delete);
-			parent.registerKeyboardAction(KEY_MOVELEFT, new AbstractAction()
+			public void actionPerformed(ActionEvent e)
 			{
-				public void actionPerformed(ActionEvent e)
-				{
-					keyMove(KEY_MOVELEFT);
-				}
-			});
-			parent.registerKeyboardAction(KEY_MOVERIGHT, new AbstractAction()
+				keyMove(KEY_MOVELEFT);
+			}
+		});
+		parent.registerKeyboardAction(KEY_MOVERIGHT, new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent e)
 			{
-				public void actionPerformed(ActionEvent e)
-				{
-					keyMove(KEY_MOVERIGHT);
-				}
-			});
-			parent.registerKeyboardAction(KEY_MOVEUP, new AbstractAction()
+				keyMove(KEY_MOVERIGHT);
+			}
+		});
+		parent.registerKeyboardAction(KEY_MOVEUP, new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent e)
 			{
-				public void actionPerformed(ActionEvent e)
-				{
-					keyMove(KEY_MOVEUP);
-				}
-			});
-			parent.registerKeyboardAction(KEY_MOVEDOWN, new AbstractAction()
+				keyMove(KEY_MOVEUP);
+			}
+		});
+		parent.registerKeyboardAction(KEY_MOVEDOWN, new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent e)
 			{
-				public void actionPerformed(ActionEvent e)
-				{
-					keyMove(KEY_MOVEDOWN);
-				}
-			});
-		}
+				keyMove(KEY_MOVEDOWN);
+			}
+		});
 	}
-	
+
 	public void keyReleased(KeyEvent e)
 	{
 		//use registerKeyboardActions

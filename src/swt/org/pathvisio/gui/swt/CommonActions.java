@@ -494,7 +494,7 @@ public class CommonActions
 		public CopyAction (MainWindowBase w)
 		{
 			window = w;
-			setText ("Copy@Ctrl+C");
+			setText ("Copy"); //No keybinding, this will conflict with other widgets
 			setToolTipText ("Copy selected objects to clipboard");
 		}
 		public void run()
@@ -509,7 +509,7 @@ public class CommonActions
 		public PasteAction (MainWindowBase w)
 		{
 			window = w;
-			setText ("Paste@Ctrl+V");
+			setText ("Paste"); //No keybinding, this will conflict with other widgets
 			setToolTipText ("Paste contents of clipboard");
 		}
 		public void run()

@@ -44,14 +44,14 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.ViewActions;
+import org.pathvisio.view.ViewActions.CopyAction;
+import org.pathvisio.view.ViewActions.PasteAction;
 
 public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
 	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
 	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
 	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
-	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
-	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
@@ -134,39 +134,6 @@ public class CommonActions implements ApplicationEventListener {
 		e.addApplicationEventListener(this);
 	}
 					
-	public static class PasteAction extends AbstractAction {
-		public PasteAction() {
-			super();
-			putValue(NAME, "Paste");
-			putValue(SMALL_ICON, new ImageIcon(IMG_PASTE));
-			String descr = "Paste pathway elements from clipboard";
-			putValue(Action.SHORT_DESCRIPTION, descr);
-			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl V"));
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			if(!isEnabled()) return; //Don't perform action if not enabled
-			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
-		}
-	}
-	
-	public static class CopyAction extends AbstractAction {
-		public CopyAction() {
-			super();
-			putValue(NAME, "Copy");
-			putValue(SMALL_ICON, new ImageIcon(IMG_COPY));
-			String descr = "Copy selected pathway objects to clipboard";
-			putValue(Action.SHORT_DESCRIPTION, descr);
-			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl C"));
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			Engine.getCurrent().getActiveVPathway().copyToClipboard();
-		}		
-	}
-	
 	public static class ZoomAction extends AbstractAction {
 		Component parent;
 		double zoomFactor;

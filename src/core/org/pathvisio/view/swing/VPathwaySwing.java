@@ -117,7 +117,6 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		setMaximumSize(size);
 		setMinimumSize(size);
 		setPreferredSize(size);
-//		validate();
 	}
 
 	public void setVSize(int w, int h) {
@@ -169,7 +168,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 
 	public void registerKeyboardAction(KeyStroke k, Action a) {
 		super.registerKeyboardAction(a, k, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-		super.registerKeyboardAction(a, k, WHEN_IN_FOCUSED_WINDOW);
+		//super.registerKeyboardAction(a, k, WHEN_IN_FOCUSED_WINDOW);
 	}
 	
 	public VPathway createVPathway() {
@@ -185,7 +184,10 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 					public void run() {
 						container.setViewportView(VPathwaySwing.this);
 						container.getViewport().setBackground(Color.GRAY);
-						container.revalidate();						
+						double[] mSize = child.getGmmlData().getMappInfo().getMBoardSize();
+						int w = (int)child.vFromM(mSize[0]);
+						int h = (int)child.vFromM(mSize[1]);
+						setVSize(w, h);
 					}
 				});
 			}

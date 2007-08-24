@@ -79,10 +79,9 @@ public class GuiMain {
 		MainWindow window = null;
 		if(debugHandles)	window = SwtEngine.getCurrent().getSleakWindow();
 		else				window = SwtEngine.getCurrent().getWindow();
-		
-		checkUpdates();
-		
+				
 		initiate();
+		checkUpdates();
 		
 		window.setBlockOnOpen(true);
 

@@ -500,7 +500,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		}
 		
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
-		System.out.println (type1 + " " + type2);
 		o.setStartLineType (LineType.fromName(type1));
     	o.setEndLineType (LineType.fromName(type2));
 	}

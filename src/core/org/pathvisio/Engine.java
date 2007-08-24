@@ -215,7 +215,8 @@ public class Engine {
 		return f;
 	}
 		
-	public void savePathway(File toFile) throws ConverterException {
+	public void savePathway(File toFile) throws ConverterException
+	{
 		pathway.writeToXml(toFile, true);
 	}
 	

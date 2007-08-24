@@ -332,7 +332,12 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			}
 			
 			cellEditors[1] = getCellEditor(element);
-			return true;
+			
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) {
+				return vp.isEditMode();
+			}
+			return false;
 		}
 
 		/**

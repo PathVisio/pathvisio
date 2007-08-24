@@ -82,6 +82,7 @@ public class CommonActions
 		public void run ()
 		{			
 			SwtEngine.getCurrent().newPathway();
+			Engine.getCurrent().getActiveVPathway().setEditMode(true);
 		}	
 	}
 	
@@ -173,6 +174,8 @@ public class CommonActions
 	static class OpenAction extends Action 
 	{
 		MainWindowBase window;
+		boolean editOnOpen;
+		
 		public OpenAction (MainWindowBase w)
 		{
 			window = w;
@@ -192,7 +195,10 @@ public class CommonActions
 	        // Only open pathway if user selected a file
 	        
 	        if(fnMapp != null) { 
-	        	SwtEngine.getCurrent().openPathway(fnMapp); 
+	        	SwtEngine.getCurrent().openPathway(fnMapp);
+	        	if(window.editOnOpen()) {
+	        		Engine.getCurrent().getActiveVPathway().setEditMode(true);
+	        	}
 	        }
 		}
 	}
@@ -223,6 +229,9 @@ public class CommonActions
 	        	
 	        	if(fnMapp != null) { 
 	        		SwtEngine.getCurrent().openPathway(fnMapp); 
+	        		if(window.editOnOpen()) {
+		        		Engine.getCurrent().getActiveVPathway().setEditMode(true);
+		        	}
 	        	}
 	        }
 		}
@@ -505,7 +514,13 @@ public class CommonActions
 		}
 		public void run()
 		{
-			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp.isEditMode()) {
+				Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
+			} else {
+				MessageDialog.openError(window.getShell(), 
+						"Unable to paste", "You can't paste in read-only mode");
+			}
 		}
 	}
 	

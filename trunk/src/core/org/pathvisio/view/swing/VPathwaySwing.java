@@ -157,7 +157,6 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 
 	public void keyTyped(KeyEvent e) {
 		// TODO: find out how to handle this one
-		System.out.println("Key types.....!");
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -169,6 +168,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void registerKeyboardAction(KeyStroke k, Action a) {
+		super.registerKeyboardAction(a, k, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		super.registerKeyboardAction(a, k, WHEN_IN_FOCUSED_WINDOW);
 	}
 	

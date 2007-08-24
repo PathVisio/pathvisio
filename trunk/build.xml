@@ -234,7 +234,7 @@ public class Revision
 		</java>
 	</target>
 	
-	<target name="prepare-webstart" depends="jar,resources-jar" description="sign jars for webstart">
+	<target name="prepare-webstart" depends="jar,resources-jar" description="prepares webstart">
 		<mkdir dir="${webstart.dir}/www"/>
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>

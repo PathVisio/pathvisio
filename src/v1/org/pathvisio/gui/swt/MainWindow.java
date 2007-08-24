@@ -122,5 +122,9 @@ public class MainWindow extends MainWindowBase
 		rightPanel.addTab(pwSearchComposite, "Pathway Search");
 		rightPanel.addTab(legend, "Legend");
 	}
+
+	public boolean editOnOpen() {
+		return true; //Force edit mode on open pathways
+	}
 	
 } // end of class

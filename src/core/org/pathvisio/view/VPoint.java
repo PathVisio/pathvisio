@@ -136,8 +136,9 @@ public class VPoint extends VPathwayElement {
 
 	protected void destroy() {
 		//Check if we can legally destroy this point
-		if(lines.size() > 0) 
-			throw new RuntimeException("VPoint cannot be destroyed: still linked to " + lines);
+		//TK: Disable this for now, until we implemented poly-lines
+//		if(lines.size() > 0) 
+//			throw new RuntimeException("VPoint cannot be destroyed: still linked to " + lines);
 
 		super.destroy();
 	}

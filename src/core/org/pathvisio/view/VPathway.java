@@ -514,7 +514,9 @@ public class VPathway implements PathwayListener
 			if (o instanceof VPoint && o != p)
 			{
 				x = o;
-				p.link((VPoint)o);
+				//TK: don't link points with each other
+				//this can be removed when we implemented poly lines
+//				p.link((VPoint)o);
 				break;
 			} else if (o instanceof Graphics && !(o instanceof Line))
 			{
@@ -1516,7 +1518,14 @@ public class VPathway implements PathwayListener
 	
 	public static final KeyStroke KEY_MOVEDOWN = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_DOWN, java.awt.Event.CTRL_MASK);
-		
+	
+	/**
+	 * Get the view actions, a class where several actions related to the
+	 * view are stored (delete, select) and where other actions can be
+	 * registered to a group (e.g. a group that will be disabled when edit-mode is turned
+	 * off)
+	 * @return an instance of the {@link ViewActions} class
+	 */
 	public ViewActions getViewActions() {
 		return viewActions;
 	}
@@ -2094,7 +2103,9 @@ public class VPathway implements PathwayListener
 	}
 	
 	public void pasteFromClipboard() {
-		parent.pasteFromClipboard();
+		if(isEditMode()) { //Only paste in edit mode
+			parent.pasteFromClipboard();
+		}
 	}
 		
 	private List<VPathwayListener> listeners = new ArrayList<VPathwayListener>();

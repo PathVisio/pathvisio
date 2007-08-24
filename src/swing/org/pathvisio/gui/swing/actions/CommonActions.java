@@ -20,9 +20,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -46,10 +43,9 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.view.ViewActions;
 
-public class CommonActions implements ApplicationEventListener, VPathwayListener, SelectionListener {
+public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
 	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
 	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
@@ -57,85 +53,28 @@ public class CommonActions implements ApplicationEventListener, VPathwayListener
 	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
 	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	
-	public static final String GROUP_ENABLE_EDITMODE = "editmode";
-	public static final String GROUP_ENABLE_VPATHWAY_LOADED = "vpathway";
-	public static final String GROUP_ENABLE_WHEN_SELECTION = "selection";
-	
-	Engine engine;
-	
-	public CommonActions(Engine e) {
-		engine = e;
-		e.addApplicationEventListener(this);
-		registerToGroup(saveAction, GROUP_ENABLE_VPATHWAY_LOADED);
-		registerToGroup(saveAsAction, GROUP_ENABLE_VPATHWAY_LOADED);
-		registerToGroup(importAction, GROUP_ENABLE_EDITMODE);
-		registerToGroup(exportAction, GROUP_ENABLE_VPATHWAY_LOADED);
-		registerToGroup(copyAction, GROUP_ENABLE_WHEN_SELECTION);
-		registerToGroup(pasteAction, GROUP_ENABLE_VPATHWAY_LOADED);
-		registerToGroup(pasteAction, GROUP_ENABLE_EDITMODE);
-		registerToGroup(zoomActions, GROUP_ENABLE_VPATHWAY_LOADED);
-		registerToGroup(alignActions, GROUP_ENABLE_EDITMODE);
-		registerToGroup(alignActions, GROUP_ENABLE_WHEN_SELECTION);
-		registerToGroup(stackActions, GROUP_ENABLE_EDITMODE);
-		registerToGroup(stackActions, GROUP_ENABLE_WHEN_SELECTION);
-		registerToGroup(newElementActions, GROUP_ENABLE_EDITMODE);
-		registerToGroup(newElementActions, GROUP_ENABLE_VPATHWAY_LOADED);
-		setGroupEnabled(false, GROUP_ENABLE_VPATHWAY_LOADED);
-		setGroupEnabled(false, GROUP_ENABLE_EDITMODE);
-		setGroupEnabled(false, GROUP_ENABLE_WHEN_SELECTION);
-	}
-	
-	HashMap<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
-	
-	public void registerToGroup(Action a, String group) {
-		List<Action> actions = actionGroups.get(group);
-		if(actions == null) {
-			actionGroups.put(group, actions = new ArrayList<Action>());
-		}
-		if(!actions.contains(a)) actions.add(a);
-	}
-	
-	public void registerToGroup(Action[] actions, String group) {
-		for(Action a : actions) registerToGroup(a, group);
-	}
-	
-	public void registerToGroup(Action[][] actions, String group) {
-		for(Action[] aa : actions) {
-			for(Action a : aa) registerToGroup(a, group);
-		}
-	}
-	
-	public void setGroupEnabled(boolean enabled, String group) {
-		List<Action> actions = actionGroups.get(group);
-		if(actions != null) {
-			for(Action a : actions) a.setEnabled(enabled);
-		}
-	}
-	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-			VPathway vp = (VPathway)e.getSource();
-			vp.addSelectionListener(this);
-			vp.addVPathwayListener(this);
-			setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
-			setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
-			setGroupEnabled(vp.isEditMode(), GROUP_ENABLE_EDITMODE);
+			ViewActions va = ((VPathway)e.source).getViewActions();
+			va.registerToGroup(saveAction, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.registerToGroup(saveAsAction,	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.registerToGroup(importAction, 	ViewActions.GROUP_ENABLE_EDITMODE);
+			va.registerToGroup(exportAction, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.registerToGroup(copyAction, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
+			va.registerToGroup(pasteAction, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.registerToGroup(pasteAction, 	ViewActions.GROUP_ENABLE_EDITMODE);
+			va.registerToGroup(zoomActions, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.registerToGroup(alignActions, 	ViewActions.GROUP_ENABLE_EDITMODE);
+			va.registerToGroup(alignActions, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
+			va.registerToGroup(stackActions, 	ViewActions.GROUP_ENABLE_EDITMODE);
+			va.registerToGroup(stackActions, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
+			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_EDITMODE);
+			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			
+			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_EDITMODE);
+			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_WHEN_SELECTION);
 		}
-	}
-
-	public void vPathwayEvent(VPathwayEvent e) {
-		VPathway vp = (VPathway)e.getSource();
-		if			(e.getType() == VPathwayEvent.EDIT_MODE_OFF) {
-			setGroupEnabled(false, GROUP_ENABLE_EDITMODE);
-		} else if 	(e.getType() == VPathwayEvent.EDIT_MODE_ON) {
-			setGroupEnabled(true, GROUP_ENABLE_EDITMODE);
-			setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
-		}
-	}
-
-	public void selectionEvent(SelectionEvent e) {
-		boolean enabled = ((SelectionBox)e.getSource()).getDrawing().getSelectedGraphics().size() > 0;
-		setGroupEnabled(enabled, GROUP_ENABLE_WHEN_SELECTION);
 	}
 	
 	public final Action saveAction = new SaveAction();
@@ -190,7 +129,11 @@ public class CommonActions implements ApplicationEventListener, VPathwayListener
 			new Action[] { new NewElementAction(VPathway.NEWBRACE) },
 			new Action[] { new NewElementAction(VPathway.NEWTBAR) },
 	};
-			
+	
+	public CommonActions(Engine e) {
+		e.addApplicationEventListener(this);
+	}
+					
 	public static class PasteAction extends AbstractAction {
 		public PasteAction() {
 			super();
@@ -203,6 +146,7 @@ public class CommonActions implements ApplicationEventListener, VPathwayListener
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			if(!isEnabled()) return; //Don't perform action if not enabled
 			Engine.getCurrent().getActiveVPathway().pasteFromClipboard();
 		}
 	}

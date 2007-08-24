@@ -18,6 +18,7 @@ package org.pathvisio.gui.swt.awt;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -31,6 +32,15 @@ public class VPathwaySwingComposite extends EmbeddedSwingComposite {
 	
 	protected JComponent createSwingComponent() {
 		scrollPane = new JScrollPane();
+		scrollPane.setAutoscrolls(true);
+		
+		//increase the scrollspeed when scrolling with wheel
+		int incr = 30;
+		scrollPane.getVerticalScrollBar().setUnitIncrement(incr);
+		scrollPane.getHorizontalScrollBar().setUnitIncrement(incr);
+		
+		scrollPane.getInputMap().remove(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0));
+		scrollPane.getHorizontalScrollBar().getInputMap().remove(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0));
 		return scrollPane;
 	}
 	

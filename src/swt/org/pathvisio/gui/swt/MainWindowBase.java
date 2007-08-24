@@ -282,10 +282,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				});
 				return zoomCombo;
 			}
-		});
-		//Add swich to editmode
-		toolBarManager.add(switchEditModeAction);
-		
+		});		
 		viewActionsCI =  new ToolBarContributionItem(toolBarManager, "SwitchActions");
 	}
 		
@@ -320,6 +317,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 //		showVisualizationCI(!show); //Visualizations can show up in edit mode...
 		getCoolBarManager().update(true);
 	}
+	
+	public abstract boolean editOnOpen();
 	
 	//	KH 20070514 begin
 	/**

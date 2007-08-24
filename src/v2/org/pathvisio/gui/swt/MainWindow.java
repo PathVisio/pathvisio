@@ -222,6 +222,12 @@ public class MainWindow extends MainWindowBase
 	}
 	private RLoadStatsAction rLoadStatsAction = new RLoadStatsAction(this);
 	
+	protected void createViewActionsCI() {
+		super.createViewActionsCI();
+		//Add swich to editmode
+		viewActionsCI.getToolBarManager().add(switchEditModeAction);
+	}
+	
 	/**
 	 * Creates element of the coolbar containing controls related to visualizations
 	 */
@@ -376,6 +382,10 @@ public class MainWindow extends MainWindowBase
 		
 		Engine.getCurrent().addApplicationEventListener(this);
 		Gex.addListener(this);
+	}
+
+	public boolean editOnOpen() {
+		return false; //Don't force edit mode on open pathway
 	}
 
 } // end of class

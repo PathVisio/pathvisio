@@ -210,17 +210,18 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		public Set<MPoint> getEqualPoints()
 		{
 			Set<MPoint> links = new HashSet<MPoint>();
-			for (PathwayElement o : parent.getDataObjects())
-			{
-				if (o != PathwayElement.this && o.objectType == ObjectType.LINE)
-				{
-					for (MPoint p : o.getMPoints())
-					{
-						if (x == p.x && y == p.y)
-							links.add(p);
-					}
-				}
-			}
+			//TK: disable this for now, until we implemented poly-lines
+//			for (PathwayElement o : parent.getDataObjects())
+//			{
+//				if (o != PathwayElement.this && o.objectType == ObjectType.LINE)
+//				{
+//					for (MPoint p : o.getMPoints())
+//					{
+//						if (x == p.x && y == p.y)
+//							links.add(p);
+//					}
+//				}
+//			}
 			links.add(this); // equal to itself
 			return links;
 		}

@@ -1,32 +1,39 @@
 package org.pathvisio.view;
 
+import java.awt.Event;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
 public class ViewActions implements VPathwayListener, SelectionListener {
-	VPathway vPathway;
-
+	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
+	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
+	
 	public static final String GROUP_ENABLE_EDITMODE = "editmode";
 	public static final String GROUP_ENABLE_VPATHWAY_LOADED = "vpathway";
 	public static final String GROUP_ENABLE_WHEN_SELECTION = "selection";
+
+	VPathway vPathway;
 	
 	public final SelectClassAction selectDataNodes;
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
 	public final DeleteAction delete;
-	
+	public final CopyAction copy;
+	public final PasteAction paste;
+
 	Engine engine;
 	
 	public ViewActions(VPathway vp) {
@@ -41,6 +48,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
 		delete = new DeleteAction();
+		copy = new CopyAction();
+		paste = new PasteAction();
 		
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -48,6 +57,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(toggleGroup, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(delete, GROUP_ENABLE_EDITMODE);
 		registerToGroup(delete, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(copy, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
 		
 		setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
 		setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
@@ -79,7 +91,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		if(actions != null) {
 			
 			for(Action a : actions) {
-				System.out.println("Setting action " + a + " to " + enabled);
 				a.setEnabled(enabled);
 			}
 		}
@@ -123,6 +134,40 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 //		}
 //	}
 	
+	public static class CopyAction extends AbstractAction {			
+		public CopyAction() {
+			super();
+			putValue(NAME, "Copy");
+			putValue(SMALL_ICON, new ImageIcon(IMG_COPY));
+			String descr = "Copy selected pathway objects to clipboard";
+			putValue(Action.SHORT_DESCRIPTION, descr);
+			putValue(Action.LONG_DESCRIPTION, descr);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl C"));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) vp.copyToClipboard();
+		}		
+	}
+	
+	public static class PasteAction extends AbstractAction {
+		public PasteAction() {
+			super();
+			putValue(NAME, "Paste");
+			putValue(SMALL_ICON, new ImageIcon(IMG_PASTE));
+			String descr = "Paste pathway elements from clipboard";
+			putValue(Action.SHORT_DESCRIPTION, descr);
+			putValue(Action.LONG_DESCRIPTION, descr);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl V"));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(isEnabled() && vp != null) vp.pasteFromClipboard();
+		}
+	}
+
 	private class SelectClassAction extends AbstractAction {
 		Class c;
 		public SelectClassAction(String name, Class c) {
@@ -137,6 +182,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	private class SelectAllAction extends AbstractAction {
 		public SelectAllAction() {
 			super("Select all");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl A"));
 		}
 		public void actionPerformed(ActionEvent e) {
 			vPathway.selectAll();
@@ -147,6 +193,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public GroupAction() {
 			super();
 			putValue(NAME, "Group");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl G"));
 			setLabel();
 		}
 

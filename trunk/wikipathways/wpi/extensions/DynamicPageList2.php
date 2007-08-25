@@ -54,7 +54,7 @@ $wgDPL2MaxResultCount = 50;
 # Max length to format a list of articles chunked by letter as bullet list
 # if list is bigger, columnar format user (same as cutoff arg for
 # CategoryPage::formatList())
-$wgDPL2CategoryStyleListCutoff = 0;
+$wgDPL2CategoryStyleListCutoff = 6;
 
 # Allow unlimited categories in the Query
 $wgDPL2AllowUnlimitedCategories = true;
@@ -1380,8 +1380,13 @@ class DPL2 {
 				return CategoryViewer::columnListSimple( $aArticles );
 			}
 		} elseif ( count($aArticles) > 0) {
+			//AP20070822
 			// for short lists of articles in categories.
-			return CategoryViewer::shortList( $aArticles, $aArticles_start_char );
+			if ($pick == 'All Species'){
+                                return CategoryViewer::shortList( $aArticles, $aArticles_start_char );
+                        } else {
+                                return CategoryViewer::shortListSimple( $aArticles );
+                        }
 		}
 		return '';
 	}

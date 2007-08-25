@@ -71,7 +71,6 @@ import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.view.swt.SWTGraphics2D;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
@@ -193,68 +192,68 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * @param e
 	 */
 	void drawSidePanel(PaintEvent e) {
-		if(spGraphics == null) return;
-		
-		org.eclipse.swt.graphics.Rectangle area = sidePanel.getClientArea();
-		area.x += SIDEPANEL_MARGIN;
-		area.y += SIDEPANEL_MARGIN;
-		area.width -= SIDEPANEL_MARGIN * 2;
-		area.height -= SIDEPANEL_MARGIN * 2;
-		
-		int nr = 0;
-		for(Graphics g : spGraphics) if(g instanceof GeneProduct) nr++;
-
-		if(nr == 0) {
-			e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
-			e.gc.fillRectangle(sidePanel.getClientArea());
-			return;
-		}
-		
-		GeneProduct[] gps = new GeneProduct[nr];
-		int x = 0;
-		for(Graphics g : spGraphics) 
-			if(g instanceof GeneProduct) gps[x++] = (GeneProduct)g;
-		
-		e.gc.setFont(e.display.getSystemFont());
-		int tw = 0;
-		for(GeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getGmmlData().getTextLabel()).x);
-		tw += e.gc.getFontMetrics().getHeight();
-		
-		//Draw sample labels (vertical)
-		int lw = 0;
-		for(ConfiguredSample s : useSamples) lw = Math.max(lw, e.gc.textExtent(s.getName()).x);
-		
-		
-		Rectangle larea = new Rectangle(area.x + tw, area.y, area.width - tw, lw);
-
-		Transform t = new Transform(e.display);
-		int ns = useSamples.size();
-		
-		for(int i = 0; i < ns; i++) {
-			int tx = larea.x + i * (larea.width / ns) + larea.width / (2*ns);
-			int ty = larea.y;
-			t.translate(tx, ty);
-			t.rotate(90);
-			e.gc.setTransform(t);
-			e.gc.drawText(useSamples.get(i).getName(), 0, 0);
-			t.rotate(-90);
-			t.translate(-tx, -ty);
-			e.gc.setTransform(t);
-		}
-		t.dispose();
-		
-		area.y += lw;
-		area.height -= lw;
-		int h = area.height / nr;
-		for(int i = 0; i < nr; i++) {
-			int y = area.y + i*h;
-			e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
-			e.gc.drawText(gps[i].getGmmlData().getTextLabel(), area.x, y + h / 2 - e.gc.getFontMetrics().getHeight() / 2);
-			Rectangle r = new Rectangle(area.x + tw, y, area.width - tw, h - SIDEPANEL_SPACING);
-			SWTGraphics2D g2d = new SWTGraphics2D(e.gc, e.display);
-			drawArea(gps[i], r, g2d);
-			g2d.dispose();
-		}
+//		if(spGraphics == null) return;
+//		
+//		org.eclipse.swt.graphics.Rectangle area = sidePanel.getClientArea();
+//		area.x += SIDEPANEL_MARGIN;
+//		area.y += SIDEPANEL_MARGIN;
+//		area.width -= SIDEPANEL_MARGIN * 2;
+//		area.height -= SIDEPANEL_MARGIN * 2;
+//		
+//		int nr = 0;
+//		for(Graphics g : spGraphics) if(g instanceof GeneProduct) nr++;
+//
+//		if(nr == 0) {
+//			e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
+//			e.gc.fillRectangle(sidePanel.getClientArea());
+//			return;
+//		}
+//		
+//		GeneProduct[] gps = new GeneProduct[nr];
+//		int x = 0;
+//		for(Graphics g : spGraphics) 
+//			if(g instanceof GeneProduct) gps[x++] = (GeneProduct)g;
+//		
+//		e.gc.setFont(e.display.getSystemFont());
+//		int tw = 0;
+//		for(GeneProduct g : gps) tw = Math.max(tw, e.gc.textExtent(g.getGmmlData().getTextLabel()).x);
+//		tw += e.gc.getFontMetrics().getHeight();
+//		
+//		//Draw sample labels (vertical)
+//		int lw = 0;
+//		for(ConfiguredSample s : useSamples) lw = Math.max(lw, e.gc.textExtent(s.getName()).x);
+//		
+//		
+//		Rectangle larea = new Rectangle(area.x + tw, area.y, area.width - tw, lw);
+//
+//		Transform t = new Transform(e.display);
+//		int ns = useSamples.size();
+//		
+//		for(int i = 0; i < ns; i++) {
+//			int tx = larea.x + i * (larea.width / ns) + larea.width / (2*ns);
+//			int ty = larea.y;
+//			t.translate(tx, ty);
+//			t.rotate(90);
+//			e.gc.setTransform(t);
+//			e.gc.drawText(useSamples.get(i).getName(), 0, 0);
+//			t.rotate(-90);
+//			t.translate(-tx, -ty);
+//			e.gc.setTransform(t);
+//		}
+//		t.dispose();
+//		
+//		area.y += lw;
+//		area.height -= lw;
+//		int h = area.height / nr;
+//		for(int i = 0; i < nr; i++) {
+//			int y = area.y + i*h;
+//			e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
+//			e.gc.drawText(gps[i].getGmmlData().getTextLabel(), area.x, y + h / 2 - e.gc.getFontMetrics().getHeight() / 2);
+//			Rectangle r = new Rectangle(area.x + tw, y, area.width - tw, h - SIDEPANEL_SPACING);
+//			SWTGraphics2D g2d = new SWTGraphics2D(e.gc, e.display);
+//			drawArea(gps[i], r, g2d);
+//			g2d.dispose();
+//		}
 	}
 	
 	public void initSidePanel(Composite parent) { 

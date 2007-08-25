@@ -26,6 +26,8 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -35,12 +37,14 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
  */
-public class BackpagePanel extends Composite implements SelectionListener, ApplicationEventListener {
+public class BackpagePanel extends Composite implements SelectionListener, ApplicationEventListener, PathwayListener {
 	private String text = "";
 	
 	private Browser bpBrowser;
 	
 	private GeneProduct geneProduct;
+	private String currId;
+	private String currCode;
 	
 	/**
 	 * Constructor for this class
@@ -70,10 +74,6 @@ public class BackpagePanel extends Composite implements SelectionListener, Appli
 		
 		Thread fetchThread = new Thread() {
 			public void run() {
-				geneProduct = gp;
-				if(gp == null) {
-					setText(Gdb.getBackpageHTML(null, null, null));
-				} else {
 				// Get the backpage text
 				PathwayElement e = gp.getGmmlData();
 				String text = Gdb.getBackpageHTML(
@@ -90,11 +90,21 @@ public class BackpagePanel extends Composite implements SelectionListener, Appli
 				}
 				setText(text);
 				}
-			}
 		};
 		
-		//Run in seperate thread so that this method can return
-		fetchThread.start();
+		if(gp == null) {//Remove the listener from the old gene product		
+			geneProduct.getGmmlData().removeListener(this);
+		}
+		geneProduct = gp;
+		if(geneProduct == null) {
+			setText(Gdb.getBackpageHTML(null, null, null));
+		} else {
+			currCode = geneProduct.getGmmlData().getSystemCode();
+			currId = geneProduct.getGmmlData().getGeneID();
+			geneProduct.getGmmlData().addListener(this);
+			//Run in seperate thread so that this method can return
+			fetchThread.start();
+		}
 	}
 			
 	/**
@@ -131,6 +141,17 @@ public class BackpagePanel extends Composite implements SelectionListener, Appli
 		switch(e.type) {
 		case ApplicationEvent.VPATHWAY_CREATED:
 			((VPathway)e.getSource()).addSelectionListener(this);
+		}
+	}
+
+	public void gmmlObjectModified(PathwayEvent e) {
+		//Only refresh if id or code has changed
+		PathwayElement elm = e.getAffectedData();
+		if(!currId.equals(elm.getGeneID()) || 
+				!currCode.equals(elm.getSystemCode())) {			
+			refresh();
+			currId = elm.getGeneID();
+			currCode = elm.getSystemCode();
 		}
 	}
 }

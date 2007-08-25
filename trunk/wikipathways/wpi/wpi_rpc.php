@@ -66,9 +66,9 @@ function convertPathway($gpmlData64, $fileType) {
 	global $xmlrpcerruser;
 	
 	$gpmlData = base64_decode($gpmlData64);
-	$gpmlFile = tempnam(WPI_TMP_PATH, "convert");
+	$gpmlFile = tempnam(WPI_TMP_PATH, "gpml");
 	writeFile($gpmlFile, $gpmlData);
-	$imgFile = tempnam(WPI_TMP_PATH, "convert") . ".$fileType";
+	$imgFile = tempnam(WPI_TMP_PATH, $fileType) . ".$fileType";
 	$cmd = "java -jar bin/pathvisio_converter.jar $gpmlFile $imgFile 2>&1";
 	wfDebug($cmd);
 	exec($cmd, $output, $status);

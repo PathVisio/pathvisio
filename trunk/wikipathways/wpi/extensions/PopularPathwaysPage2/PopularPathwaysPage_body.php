@@ -36,7 +36,7 @@ class PopularPathwaysPage extends SpecialPage
 class PPQueryPage extends QueryPage {
 
 	function getName() {
-		return "PopularPathways";
+		return "PopularPathwaysPage";
 	}
 
 	function isExpensive() {

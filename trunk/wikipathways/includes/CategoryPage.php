@@ -435,6 +435,23 @@ class CategoryViewer {
 		return $r;
 	}
 
+        /** AP20070822
+         * Format a list of articles in a bullet list, WITHOUT HEADERS.
+         * @param array $articles
+         * @return string
+         * @private
+         */
+        function shortListSimple( $articles ) {
+                $r = '<ul><li>'.$articles[0].'</li>';
+                for ($index = 1; $index < count($articles); $index++ )
+                {
+                        $r .= "<li>{$articles[$index]}</li>";
+                }
+                $r .= '</ul>';
+                return $r;
+        }
+
+
 	/**
 	 * @param Title  $title
 	 * @param string $first

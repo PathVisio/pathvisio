@@ -3,7 +3,7 @@
 if (!defined('MEDIAWIKI')) {
         echo <<<EOT
 To install PopularPathwaysPage, put the following line in LocalSettings.php:
-require_once( "$IP/extensions/PopularPathwayPage/PopularPathwayPage.php" );
+require_once( "$IP/extensions/PopularPathwayPage2/PopularPathwayPage.php" );
 EOT;
         exit( 1 );
 }

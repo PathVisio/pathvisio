@@ -3,7 +3,7 @@
 if (!defined('MEDIAWIKI')) {
         echo <<<EOT
 To install BrowsePathwaysPage, put the following line in LocalSettings.php:
-require_once( "$IP/extensions/BrowsePathwayPage/BrowsePathwayPage.php" );
+require_once( "$IP/extensions/BrowsePathwayPage2/BrowsePathwayPage.php" );
 EOT;
         exit( 1 );
 }

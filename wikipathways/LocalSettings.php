@@ -168,7 +168,7 @@ $wgContentNamespaces += array(NS_PATHWAY, NS_PATHWAY_TALK, NS_GPML, NS_GPML_TALK
 
 ##Debug
 $wgDebugLogFile = '/var/www/wikipathways/wpi/tmp/wikipathwaysdebug.txt';
-$wgProfiling = true; //Set to true for debugging info
+//$wgProfiling = true; //Set to true for debugging info
 
 ##Extensions
 require_once('extensions/analytics.php'); //Google Analytics support
@@ -181,7 +181,7 @@ require_once('wpi/extensions/pathwayInfo.php');
 require_once('wpi/extensions/imageSize.php');
 require_once('wpi/extensions/magicWords.php');
 require_once('wpi/extensions/Categories.php');
-require_once('wpi/extensions/PopularPathwaysPage/PopularPathwaysPage.php');
+require_once('wpi/extensions/PopularPathwaysPage2/PopularPathwaysPage.php');
 require_once('wpi/extensions/MostEditedPathwaysPage/MostEditedPathwaysPage.php');
 require_once('wpi/extensions/NewPathwaysPage/NewPathwaysPage.php');
 require_once('wpi/extensions/CreatePathwayPage/CreatePathwayPage.php');
@@ -194,6 +194,7 @@ require_once('wpi/extensions/LabeledSectionTransclusion/lsth.php');
 require_once('wpi/extensions/googleSearch.php');
 require_once('wpi/extensions/button.php');
 require_once('wpi/extensions/pathwayThumb.php');
+require_once('wpi/extensions/BrowsePathwaysPage2/BrowsePathwaysPage.php');
 require_once('wpi/extensions/editApplet.php');
 require_once('wpi/extensions/listPathways.php');
 require_once('wpi/extensions/movePathway.php');

@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,37 +16,54 @@ public class TestIndex {
 	static final String[] queries = new String[] {
 //		"SELECT * FROM attribute", 
 		"SELECT datanode.id, datanode.code, attribute.attrValue FROM datanode " +
-		"	LEFT JOIN attribute ON datanode.id = attribute.id AND datanode.code = attribute.code " +
-		"		WHERE attrName = 'Symbol' AND attrValue LIKE 'TNF%'",
+		"LEFT JOIN attribute ON datanode.id = attribute.id AND datanode.code = attribute.code " +
+		"WHERE attrName = 'Symbol' AND attrValue LIKE 'TNF%'",
 		
-		"SELECT attrValue FROM attribute WHERE attrName = 'Symbol' AND id = 'ENSG00000159958' AND code = 'En'"
+		"SELECT attrValue FROM attribute WHERE attrName = 'Symbol' AND id = 'ENSG00000159958' AND code = 'En'",
+		
+		"SELECT datanode.id, datanode.code, attribute.attrValue FROM datanode " +
+		"LEFT JOIN attribute ON datanode.id = attribute.id AND datanode.code = attribute.code " +
+		"WHERE attrName = 'Symbol' AND attrValue = 'hsa-mir-122a'"
 	};
 	
 	static final String path = "E:\\Documents and Settings\\Thomas\\My Documents\\PathVisio data\\gene databases\\";
-
-	static final String[] databases = new String[] {
-		path + "Hs_Derby_20070817b_control.pgdb",
-		path + "Hs_Derby_20070817b_combined.pgdb",
-		path + "Hs_Derby_20070817b_combined.pgdb",
-		path + "Hs_Derby_20070817b_mixed.pgdb",
-		path + "Hs_Derby_20070817b_separate.pgdb"
-	};
 	
 	public static void main(String[] args) {
 		Logger log = new Logger();
-		log.setLogLevel(true, true, false, true, true, true);
+		log.setLogLevel(false, false, false, false, true, true);
 		
 		log.setStream(System.err);
+		PrintStream out = System.err;
 		
+		String[][] result = new String[queries.length][args.length];
+		int j = 0;
 		for(String db : args) {
 			try {
 				TestIndex test = new TestIndex(db, log);
-				test.doTest();
+				long[] t = test.doTest();
+				for(int q = 0; q < t.length; q++) {
+					result[q][j] = Long.toString(t[q]);
+				}
 				log.trace("Finished!");
+				j++;
 			} catch (Exception e) {
 				log.error("Unable to test database " + db, e);
 			}
 		}
+
+//		out.print("\t");
+//		for(int i = 0; i < args.length; i++) {
+//			out.print(args[i] + "\t");
+//		}
+//		out.print("\n");
+		for(int q = 0; q < result.length; q ++) {
+//			out.print(queries[q] + "\t");
+			for(int i = 0; i < result[q].length; i++) {
+				out.print(result[q][i] + "\t");
+			}
+			out.print("\n");
+		}
+		out.close();
 	}
 	
 	String database;
@@ -65,7 +83,9 @@ public class TestIndex {
 		conn = DriverManager.getConnection(url);
 	}
 	
-	void doTest() throws SQLException {
+	long[] doTest() throws SQLException {
+		long[] result = new long[queries.length];
+		int q = 0;
 		StopWatch timer = new StopWatch();
 		
 		Statement s = conn.createStatement();
@@ -77,10 +97,13 @@ public class TestIndex {
 			while(r.next()) {
 				for(int i = 1; i <= nc; i++) log.info("\t\t" + r.getString(i));
 			}
-			log.trace("\t" + timer.stop() + "\tQUERY: '" + query + "'");
+			long t = timer.stop();
+			result[q++] = t;
+			log.trace("\t" + t + "\tQUERY: '" + query + "'");
 		}
 		conn.close();
 		clearCache();
+		return result;
 	}
 	
 	void clearCache() {

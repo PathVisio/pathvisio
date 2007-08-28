@@ -53,14 +53,14 @@ public class AppletMain extends JApplet {
 		System.out.println("INIT CALLED....");
 		Logger.log.trace("INIT CALLED....");
 				
+		parseArguments();
 		uiHandler = new AppletUserInterfaceHandler(this);
 		wiki = new WikiPathways(uiHandler);
 		
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					mainPanel = SwingEngine.getCurrent().getApplicationPanel();
-					wiki.prepareMainPanel(mainPanel);
+					mainPanel = wiki.prepareMainPanel();
 					
 					getContentPane().add(mainPanel);
 					mainPanel.setVisible(true);
@@ -73,7 +73,6 @@ public class AppletMain extends JApplet {
 		
 		final RunnableWithProgress r = new RunnableWithProgress() {
 			public Object excecuteCode() {				
-				parseArguments();
 
 				try {
 					WikiPathwaysEngine.registerXmlRpcExporters(

@@ -22,7 +22,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -80,7 +82,53 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	private CommonActions actions;
 		
-	public MainPanel() {
+
+	/**
+	 * A HashMap containing the default actions that will be added
+	 * to the toolbar/menu. Set values to false to prevent actions
+	 * from being added
+	 */
+	public static Set<Action> getDefaultActions(CommonActions actions) {
+		Set<Action> da = new HashSet<Action>();
+		da.add(actions.saveAction);
+		da.add(actions.saveAsAction);
+		da.add(actions.importAction);
+		da.add(actions.exportAction);
+
+		da.add(actions.copyAction);
+		da.add(actions.pasteAction);
+
+		
+		for(Action a : actions.alignActions) da.add(a);
+		for(Action a : actions.stackActions) da.add(a);
+		for(Action a : actions.zoomActions) da.add(a);
+		
+		for(Action[] aa : actions.newElementActions) {
+			if(aa.length == 1) {
+				da.add(aa[0]);
+			} else { //This is the line sub-menu
+				for(Action a : aa) {
+					da.add(a);
+				}
+			}
+		}
+		
+		return da;
+	}
+	
+	Set<Action> allowActions;
+	
+	private boolean mayAddAction(Action a) {
+		if(allowActions != null && !allowActions.contains(a)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public MainPanel(Set<Action> allowActions) {
+		this.allowActions = allowActions;
+		
 		setLayout(new BorderLayout());
 		setTransferHandler(new PathwayImportHandler());
 		Engine.getCurrent().addApplicationEventListener(this);
@@ -136,23 +184,27 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		}
 	}
 	
+	public MainPanel() {
+		this(null);
+	}
+	
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu pathwayMenu = new JMenu("Pathway");
-		pathwayMenu.add(actions.saveAction);
-		pathwayMenu.add(actions.saveAsAction);
-		pathwayMenu.add(actions.importAction);
-		pathwayMenu.add(actions.exportAction);
+		addToMenu(actions.saveAction, pathwayMenu);
+		addToMenu(actions.saveAsAction, pathwayMenu);
+		addToMenu(actions.importAction, pathwayMenu);
+		addToMenu(actions.exportAction, pathwayMenu);
 
 		JMenu editMenu = new JMenu("Edit");
-		editMenu.add(actions.copyAction);
-		editMenu.add(actions.pasteAction);
+		addToMenu(actions.copyAction, editMenu);
+		addToMenu(actions.pasteAction, editMenu);
 
 		JMenu selectionMenu = new JMenu("Selection");
 		JMenu alignMenu = new JMenu("Align");
 		JMenu stackMenu = new JMenu("Stack");
 		
-		for(Action a : actions.alignActions) alignMenu.add(a);
-		for(Action a : actions.stackActions) stackMenu.add(a);
+		for(Action a : actions.alignActions) addToMenu(a, alignMenu);
+		for(Action a : actions.stackActions) addToMenu(a, stackMenu);
 		
 		selectionMenu.add(alignMenu);
 		selectionMenu.add(stackMenu);
@@ -160,7 +212,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
 		viewMenu.add(zoomMenu);
-		for(Action a : actions.zoomActions) zoomMenu.add(a);
+		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
 		mb.add(pathwayMenu);
 		mb.add(editMenu);
@@ -236,7 +288,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	HashMap<String, List<Component>> toolbarGroups = new HashMap<String, List<Component>>();
 	
-	
 	public void addToToolbar(Component c, String group) {
 		JToolBar tb = getToolBar();
 		tb.add(c);
@@ -254,9 +305,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	}
 
 	public JButton addToToolbar(Action a, String group) {
-		JButton b = getToolBar().add(a);
-		addToToolbarGroup(b, group);
-		return b;
+		if(mayAddAction(a)) {
+			JButton b = getToolBar().add(a);
+			addToToolbarGroup(b, group);
+			return b;
+		}
+		return null;
 	}
 	
 	public JButton addToToolbar(Action a) {
@@ -270,6 +324,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				toolbarGroups.put(group, gb = new ArrayList<Component>());
 			}
 			gb.add(c);
+		}
+	}
+	
+	public void addToMenu(Action a, JMenu parent) {
+		if(mayAddAction(a)) {
+			parent.add(a);
 		}
 	}
 	

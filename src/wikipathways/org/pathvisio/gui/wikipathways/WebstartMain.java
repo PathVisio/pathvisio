@@ -40,7 +40,7 @@ public class WebstartMain extends GuiMain {
 		Engine.setCurrent(engine);
 		SwingEngine.setCurrent(new SwingEngine(engine));
 		
-		super.createAndShowGUI();
+		super.createAndShowGUI(mainPanel);
 		
 		initWiki();
 	}
@@ -48,7 +48,7 @@ public class WebstartMain extends GuiMain {
 	private void initWiki() {
 		uiHandler = new WebstartUserInterfaceHandler(getFrame());
 		wiki = new WikiPathways(uiHandler);
-		wiki.prepareMainPanel(getMainPanel());
+		mainPanel = wiki.prepareMainPanel();
 
 				
 		final RunnableWithProgress r = new RunnableWithProgress() {

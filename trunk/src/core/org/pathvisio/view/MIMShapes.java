@@ -1,5 +1,4 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
+// PathVisio,// a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -25,7 +24,7 @@ import org.pathvisio.model.LineType;
 
 public class MIMShapes
 {
-	static void registerShapes()
+	public static void registerShapes()
 	{
 		ShapeRegistry.registerShape ("mim-phosphorylated", getPluggableShape (MIM_PHOSPHORYLATED));
 		ShapeRegistry.registerShape ("mim-degradation", getPluggableShape (MIM_DEGRADATION));
@@ -36,17 +35,11 @@ public class MIMShapes
 		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.OPEN);
 		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.OPEN);		
 		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.WIRE);
-	}
 
-	public static void registerShapeTypes()
-	{
 		ShapeType.create ("mim-phosphorylated", null);
 		ShapeType.create ("mim-degradation", null);
 		ShapeType.create ("mim-interaction", null);
-	}
-
-	public static void registerLineTypes()
-	{
+		
 		LineType.create ("mim-necessary-stimulation", null);
 		LineType.create ("mim-binding", null);
 		LineType.create ("mim-conversion", null);

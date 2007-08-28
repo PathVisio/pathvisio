@@ -126,9 +126,16 @@ public class Shape extends GraphicsShape
 		
 		java.awt.Shape s = null;
 
-		s = ShapeRegistry.getShape (
+		if (gdata.getShapeType() == null)
+		{
+			s = ShapeRegistry.getShape ("Default", x, y, w, h);
+		}
+		else
+		{
+			s = ShapeRegistry.getShape (
 			gdata.getShapeType().getName(),
 			x, y, w, h);
+		}
 		
 		AffineTransform t = new AffineTransform();
 		t.rotate(gdata.getRotation(), cx, cy);

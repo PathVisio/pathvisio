@@ -17,6 +17,7 @@
 package org.pathvisio.preferences.swt;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -116,14 +117,31 @@ public class PreferenceDlg extends PreferenceManager {
 			addField(f);
 			
 			BooleanFieldEditor fround = new BooleanFieldEditor (
-					GlobalPreference.DATANODES_ROUNDED.name(),
-					"Use rounded rectangles for data nodes:", getFieldEditorParent());
-				addField(fround);
-				
+				GlobalPreference.DATANODES_ROUNDED.name(),
+				"Use rounded rectangles for data nodes", getFieldEditorParent());
+			addField(fround);
+			
+			BooleanFieldEditor fsnap = new BooleanFieldEditor (
+				GlobalPreference.SNAP_TO_ANGLE.name(),
+				"Snap to angle when moving line handles", getFieldEditorParent());
+			addField(fsnap);
+			
+			IntegerFieldEditor fsnapstep = new IntegerFieldEditor (
+				GlobalPreference.SNAP_TO_ANGLE_STEP.name(),
+				"Distance between snap-steps in degrees:", getFieldEditorParent());
+			f.setValidRange(1, 90);
+			addField (fsnapstep);
+
+			BooleanFieldEditor fmim = new BooleanFieldEditor (
+				GlobalPreference.MIM_SUPPORT.name(),
+				"Load support for molecular interaction maps (MIM) at program start", getFieldEditorParent());
+			addField(fmim);
+
 			BooleanFieldEditor f2 =	new BooleanFieldEditor (
-					GlobalPreference.SHOW_ADVANCED_ATTRIBUTES.name(),									   
-					"Show advanced attributes (e.g. references):", getFieldEditorParent());
-				addField (f2);
+				GlobalPreference.SHOW_ADVANCED_ATTRIBUTES.name(),									   
+				"Show advanced attributes (e.g. references)", getFieldEditorParent());
+			addField (f2);
+			
 		}
 	}
 	private class ColorsPage extends FieldEditorPreferencePage {

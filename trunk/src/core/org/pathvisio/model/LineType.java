@@ -37,14 +37,6 @@ public class LineType
 	public static final LineType LIGAND_ROUND = new LineType("LigandRound", "LigandRd");
 	public static final LineType RECEPTOR_ROUND = new LineType("ReceptorRound", "ReceptorRd");
 
-	static
-	{
-		//TODO: we do this for now to make sure that this is
-		//initialized at the right time, before the combobox requests
-		//the list of names.
-		MIMShapes.registerLineTypes();
-	}
-
 	/**
 	   mappName may be null for new shapes that don't have a .mapp
 	   equivalent.

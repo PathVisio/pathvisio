@@ -269,8 +269,10 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	final static String[] orientation_names = OrientationType.getNames();
 	final static String[] linestyle_names = LineStyle.getNames();
 	final static String[] boolean_names = {"false", "true"};
-	final static String[] shape_names = ShapeType.getNames();
-	final static String[] linetype_names = LineType.getNames(); 
+	// shapetype is dynamic: can be changed with preferences
+	private String[] shape_names = null;
+    // linetypes is dynamic: can be changed with preferences
+    private String[] linetype_names = null; 
 	final static String[] outlinetype_names = OutlineType.getTags(); 
 	final static String[] genetype_names = DataNodeType.getNames();
 	
@@ -287,12 +289,14 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			case INTEGER: 	return textEditor;
 			case COLOR: 	return colorEditor;
 			case LINETYPE:
+				linetype_names = LineType.getNames();
 				comboBoxEditor.setItems(linetype_names);
 				return comboBoxEditor;
 			case OUTLINETYPE:
 				comboBoxEditor.setItems(outlinetype_names);
 				return comboBoxEditor;
 			case SHAPETYPE:
+				shape_names = ShapeType.getNames();
 				comboBoxEditor.setItems(shape_names);
 				return comboBoxEditor;
 			case DATASOURCE:			
@@ -566,6 +570,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 								}
 								case LINETYPE:
 								{
+									assert (linetype_names != null);
 									if (value instanceof Integer)
 										return linetype_names[(Integer)(value)];
 									else
@@ -594,6 +599,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 								}
 								case SHAPETYPE:
 								{
+									assert (shape_names != null);
 									if (value instanceof Integer)
 										return shape_names[(Integer)(value)];
 									else

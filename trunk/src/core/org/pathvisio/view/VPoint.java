@@ -20,8 +20,9 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.util.HashSet;
 import java.util.Set;
-
+import org.pathvisio.view.LinAlg.Point;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.preferences.GlobalPreference;
 
 public class VPoint extends VPathwayElement {
 	Handle handle;
@@ -111,6 +112,38 @@ public class VPoint extends VPathwayElement {
 	{
 		double mcx = mFromV (vnewx);
 		double mcy = mFromV (vnewy);
+
+		if (GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANGLE))
+		{
+			// get global preference and convert to radians.
+			double lineSnapStep = GlobalPreference.getValueInt(
+				GlobalPreference.SNAP_TO_ANGLE_STEP) * Math.PI / 180;
+			Line first = lines.iterator().next();
+			VPoint p1 = first.getStart();
+			VPoint p2 = first.getEnd();
+			double basex, basey;
+			// base is the static point the line rotates about.
+			// it is equal to the OTHER point, the one we're not moving.
+			if (p1 == this)
+			{
+				basex = p2.getMPoint().getX();
+				basey = p2.getMPoint().getY();
+			}
+			else
+			{
+				basex = p1.getMPoint().getX();
+				basey = p1.getMPoint().getY();
+			}
+			// calculate rotation and round it off
+			double rotation = Math.atan2(basey - mcy, basex - mcx);
+			rotation = Math.round (rotation / lineSnapStep) * lineSnapStep; 
+			// project point mcx, mcy on a line with the desired angle.
+			Point yr = new Point (Math.cos (rotation), Math.sin (rotation));
+			Point prj = LinAlg.project(new Point (basex, basey), new Point(mcx, mcy), yr);
+			mcx = prj.x;
+			mcy = prj.y;
+		}
+		
 		for(MPoint p : mPoints)
 		{
 			p.setX(mcx);

@@ -166,8 +166,20 @@ public class Line extends Graphics
 		double xe = p2.getX();
 		double ye = p2.getY();
 
-		ArrowShape h = ShapeRegistry.getArrow (type.getName());
-				
+		ArrowShape h;
+		if (type == null)
+		{
+			h = ShapeRegistry.getArrow ("Default");
+		}
+		else if (type.getName().equals ("Line"))
+		{
+			h = null;
+		}
+		else
+		{			
+			h = ShapeRegistry.getArrow (type.getName());
+		}
+		
 		if(h != null)
 		{
 			AffineTransform f = new AffineTransform();

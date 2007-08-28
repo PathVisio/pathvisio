@@ -30,14 +30,17 @@ public enum GlobalPreference implements Preference {
 	COLOR_SELECTED(Color.RED),
 	COLOR_HIGHLIGHTED(Color.GREEN),
 	
-	DATANODES_ROUNDED(Boolean.toString(false)),
+	DATANODES_ROUNDED(Boolean.toString(false)),	
 	
 	DB_ENGINE_GDB("org.pathvisio.data.DBConnDerby"),
 	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),
 	DB_GDB_CURRENT("none"),
 	
 	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false)),
-	
+	MIM_SUPPORT(Boolean.toString(false)),
+	SNAP_TO_ANGLE (Boolean.toString(false)),
+	SNAP_TO_ANGLE_STEP ("15"),
+
 	GUI_SIDEPANEL_SIZE("30"),
 	
 	;

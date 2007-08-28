@@ -45,14 +45,6 @@ public class ShapeType
 	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP
 	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
 	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");
-
-	static
-	{
-		//TODO: we do this for now to make sure that this is
-		//initialized at the right time, before the combobox requests
-		//the list of names.
-		MIMShapes.registerShapeTypes();
-	}
 	
 	private String name;
 	private String mappName;

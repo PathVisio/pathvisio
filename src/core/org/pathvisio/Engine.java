@@ -109,7 +109,8 @@ public class Engine {
 		}
 	}
 	
-	public void setPreferenceCollection(PreferenceCollection pc) {
+	public void setPreferenceCollection(PreferenceCollection pc)
+	{
 		preferences = pc;
 	}
 	

@@ -49,7 +49,7 @@ import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
-
+import org.pathvisio.view.MIMShapes;
 import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
@@ -167,6 +167,13 @@ public class GuiMain {
 		Logger.log.trace ("Log initialized");
 		//load the preferences
 		loadPreferences();
+
+		// preferences loaded, now we can register mim shapes
+		if (GlobalPreference.getValueBoolean (GlobalPreference.MIM_SUPPORT))
+		{
+			MIMShapes.registerShapes();
+		}
+
 		Logger.log.trace ("Preferences loaded");
 		
 		//initiate Gene database (to load previously used gdb)

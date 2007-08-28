@@ -42,15 +42,15 @@ class ShapeRegistry
 	static
 	{
 		GeneralPath temp = new GeneralPath();
-		temp.moveTo (-5,-5);
-		temp.lineTo (5,-5);
-		temp.lineTo (5,5);
-		temp.lineTo (-5,5);
+		temp.moveTo (-50,-50);
+		temp.lineTo (50,-50);
+		temp.lineTo (50,50);
+		temp.lineTo (-50,50);
 		temp.closePath ();
-		temp.moveTo (-3,-3);
-		temp.lineTo (3,3);
-		temp.moveTo (-3,3);
-		temp.lineTo (3,-3);		
+		temp.moveTo (-30,-30);
+		temp.lineTo (30,30);
+		temp.moveTo (-30,30);
+		temp.lineTo (30,-30);		
 		defaultArrow = new ArrowShape (temp, ArrowShape.OPEN);
 
 		temp = new GeneralPath();
@@ -67,7 +67,6 @@ class ShapeRegistry
 
 		BasicShapes.registerShapes();
 		GenMAPPShapes.registerShapes();
-		MIMShapes.registerShapes();
 	}
 
      /**

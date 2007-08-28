@@ -153,23 +153,29 @@ public class Pathway implements PathwayListener
 	{
 		assert (o != null);
 		// There can be only one mappInfo object, so if we're trying to add it, remove the old one.
-		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo && mappInfo != null)
+		if (o.getObjectType() == ObjectType.MAPPINFO && o != mappInfo)
 		{
-			replaceUnique (mappInfo, o);
+			if(mappInfo != null) {
+				replaceUnique (mappInfo, o);
+			}
 			mappInfo = o;
 			return;
 		}
 		// There can be only one InfoBox object, so if we're trying to add it, remove the old one.
-		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox && infoBox != null)
+		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
 		{
-			replaceUnique (infoBox, o);
+			if(infoBox != null) {
+				replaceUnique (infoBox, o);
+			}
 			infoBox = o;
 			return;
 		}
 		// There can be zero or one Biopax object, so if we're trying to add it, remove the old one.
-		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax && biopax != null)
+		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax)
 		{
-			replaceUnique (biopax, o);
+			if(biopax != null) {
+				replaceUnique (biopax, o);
+			}
 			biopax = o;
 			return;
 		}
@@ -179,7 +185,6 @@ public class Pathway implements PathwayListener
 	
 	private void forceAddObject(PathwayElement o) {
 		if (o.getParent() != null) { o.getParent().remove(o); }
-		if(o.getObjectType() == ObjectType.BIOPAX) System.out.println("BIOPAX ADDED TO PAHYWAY");
 		dataObjects.add(o);
 		o.addListener(this);
 		o.setParent(this);

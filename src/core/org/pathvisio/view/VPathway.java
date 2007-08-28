@@ -143,7 +143,7 @@ public class VPathway implements PathwayListener
 
 	SelectionBox selection;
 
-	private boolean editMode;
+	private boolean editMode = true;
 
 	/**
 	 * Checks if this drawing is in edit mode
@@ -686,7 +686,7 @@ public class VPathway implements PathwayListener
 	public void selectObject(VPathwayElement o)
 	{
 		clearSelection();
-		selection.addToSelection(lastAdded);
+		selection.addToSelection(o);
 	}
 
 	/**

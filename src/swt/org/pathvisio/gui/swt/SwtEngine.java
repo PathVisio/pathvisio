@@ -64,6 +64,34 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	 * {@link Pathway} object containing JDOM representation of the gpml pathway 
 	 * and handle gpml related actions
 	 */
+
+	/**
+	   returns the pathway dir preference
+	   if there is no override done with setPathwayDir
+	 */
+	public String getPathwayDir()
+	{
+		String result = null;
+		if (pathwayDir == null)
+		{
+			result = SwtPreference.SWT_DIR_PWFILES.getValue();
+		}
+	    else
+		{
+			result = pathwayDir;
+		}
+		System.out.println ("Using dir " + result);
+		return result;
+	}
+
+	/**
+	   Override the pathway dir preference for the duration of this run.
+	 */
+	public void  setPathwayDir(String value)
+	{
+		pathwayDir = value;
+	}
+	private String pathwayDir = null;
 	
 	private MainWindow window;
 	
@@ -234,6 +262,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		boolean imported = false;
 		FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 		fd.setText("Open");
+		fd.setFilterPath(getPathwayDir());
 
 		setImporterFileFilters(fd);
 		
@@ -253,6 +282,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
     			{		
     				handleImportException(fileName, e);
     			}
+				setPathwayDir (new File (fileName).getAbsoluteFile().getParent());
     			updateTitle();
     		}
         }
@@ -308,6 +338,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 				try
 				{
 					exporter.doExport(f, gmmlData);
+					setPathwayDir(f.getAbsoluteFile().getParent());
 					return true;
 				}
 				catch (ConverterException e)
@@ -347,8 +378,10 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 				String fName = xmlFile.getName();
 				fd.setFileName(fName);
 				fd.setFilterPath(xmlFile.getPath());
-			} else {
-					fd.setFilterPath(SwtPreference.SWT_DIR_PWFILES.getValue());
+			}
+			else
+			{
+				fd.setFilterPath(getPathwayDir());
 			}
 			String fileName = fd.open();
 			// Only proceed if user selected a file
@@ -367,6 +400,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 				{
 					Engine.getCurrent().savePathway(f);
 					updateTitle();
+					setPathwayDir(f.getAbsoluteFile().getParent());
 				}
 				catch (ConverterException e)
 				{
@@ -551,7 +585,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		boolean opened = false;
 		FileDialog fd = new FileDialog(window.getShell(), SWT.OPEN);
 		fd.setText("Open");
-		String pwpath = SwtPreference.SWT_DIR_PWFILES.getValue();
+		String pwpath = getPathwayDir();
 		fd.setFilterPath(pwpath);
 		fd.setFilterExtensions(new String[] {"*." + Engine.PATHWAY_FILE_EXTENSION, "*.*"});
 		fd.setFilterNames(new String[] {Engine.PATHWAY_FILTER_NAME, "All files (*.*)"});
@@ -563,6 +597,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
         	if(opened && window.editOnOpen()) {
         		Engine.getCurrent().getActiveVPathway().setEditMode(true);
         	}
+			setPathwayDir(new File(fnMapp).getAbsoluteFile().getParent());
         }
         return opened;
 	}

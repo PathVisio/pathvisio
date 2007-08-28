@@ -139,15 +139,16 @@ public class PathwayTable extends Composite {
 				File pwFile = new File(pw);
 				if(!pwFile.canRead()) {
 					FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
-					fd.setFilterPath(SwtPreference.SWT_DIR_PWFILES.getValue());
+					fd.setFilterPath(SwtEngine.getCurrent().getPathwayDir());
 					FileInputDialog fid = new FileInputDialog(getShell(), "Specify pathway file", 
 							"Couldn't find pathway file, please specify which pathway to open",
 							pwFile.getAbsolutePath(), null, fd);
 					if(fid.open() == FileInputDialog.OK) {
 						pw = fid.getValue();
 					}
+					SwtEngine.getCurrent().setPathwayDir(fd.getFilterPath());
 				}
-				SwtEngine.getCurrent().openPathway(pw);
+				SwtEngine.getCurrent().openPathway(pw);				
 			} catch(Exception ex) { 
 				Logger.log.error("when trying to open pathway from pathway table", ex);
 			}

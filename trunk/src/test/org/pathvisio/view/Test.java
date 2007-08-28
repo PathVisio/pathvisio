@@ -16,11 +16,17 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -58,6 +64,45 @@ public class Test extends TestCase {
 		
 		//~ data.add(new PathwayElement(ObjectType.DATANODE));
 	//~ }
+    
+    public void testCopyPaste() {
+    	Pathway pSource = new Pathway();
+    	VPathway vpSource = SwingEngine.getCurrent().createWrapper().createVPathway();
+    	vpSource.fromGmmlData(pSource);
+    	
+    	Pathway pTarget = new Pathway();
+    	VPathway vpTarget = SwingEngine.getCurrent().createWrapper().createVPathway();
+    	vpTarget.fromGmmlData(pTarget);
+    	
+    	//Test copying regular elements
+    	PathwayElement p1 = new PathwayElement(ObjectType.DATANODE);
+    	p1.setGeneID("1234");
+    	pSource.add(p1);
+    	vpSource.addObject(new GeneProduct(vpSource, p1));
+    	vpSource.selectObject(vpSource.getPathwayElementView(p1));
+    	vpSource.copyToClipboard();
+    	    	
+    	vpTarget.pasteFromClipboard();	
+    	
+    	PathwayElement pasted = null;
+    	for(PathwayElement e : pTarget.getDataObjects()) {
+    		if("1234".equals(e.getGeneID())) {
+    			pasted = e;
+    		}
+    	}
+    	assertNotNull(pasted);
+    	
+    	//Now copy mappinfo
+    	PathwayElement info = pSource.getMappInfo();
+    	info.setMapInfoName("test pathway");
+    	vpSource.selectObject(vpSource.getPathwayElementView(info));
+    	vpSource.copyToClipboard();
+    	
+    	vpTarget.pasteFromClipboard();
+    	
+    	//test if mappinfo has been pasted to the target pathway
+    	assertTrue("test pathway".equals(pTarget.getMappInfo().getMapInfoName()));
+    }
     
     public void testDrawingOrder() {
     	Pathway p = new Pathway();

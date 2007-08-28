@@ -116,11 +116,12 @@ public class GeneProduct extends GraphicsShape
 		g.setFont(new Font(gdata.getFontName(), getVFontStyle(), getVFontSize()));
 		
 		String label = gdata.getTextLabel();
-		TextLayout tl = new TextLayout(label, g.getFont(), g.getFontRenderContext());
-		Rectangle2D tb = tl.getBounds();
-		tl.draw(g, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2), 
+		if(label.length() > 0) {
+			TextLayout tl = new TextLayout(label, g.getFont(), g.getFontRenderContext());
+			Rectangle2D tb = tl.getBounds();
+			tl.draw(g, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2), 
 					(int)area.getY() + (int)(area.getHeight() / 2) + (int)(tb.getHeight() / 2));
-		
+		}
 		drawHighlight(g);
 	}
 	

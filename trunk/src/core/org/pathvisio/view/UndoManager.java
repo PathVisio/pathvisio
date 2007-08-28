@@ -34,9 +34,11 @@ public class UndoManager
 	void newAction (String desc)
 	{
 		Pathway pwy = Engine.getCurrent().getActivePathway();
-		UndoAction x = new UndoAction (desc, (Pathway)pwy.clone());
-		undoList.add (x);
-		fireUndoManagerEvent (new UndoManagerEvent (x.getMessage()));
+		if(pwy != null) {
+			UndoAction x = new UndoAction (desc, (Pathway)pwy.clone());
+			undoList.add (x);
+			fireUndoManagerEvent (new UndoManagerEvent (x.getMessage()));
+		}
 	}
 
 	public String getTopMessage()

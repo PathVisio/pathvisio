@@ -363,18 +363,22 @@ public class Pathway implements PathwayListener
 	
 	}
 	
+	public void removeId (String id)
+	{
+		ids.remove(id);
+	}
+
 	public void addGroupId(String id, PathwayElement group) {
 		addId(id);
 		groups.put(id, group);
 	}
 	
-	public PathwayElement getGroupById(String id) {
-		return groups.get(id);
+	public void removeGroupId(String id) {
+		groups.remove(id);
 	}
 	
-	public void removeId (String id)
-	{
-		ids.remove(id);
+	public PathwayElement getGroupById(String id) {
+		return groups.get(id);
 	}
 	
 	/*AP20070508*/	

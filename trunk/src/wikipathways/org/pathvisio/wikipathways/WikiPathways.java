@@ -27,6 +27,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.event.HyperlinkEvent;
@@ -53,6 +54,8 @@ import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.actions.CommonActions;
 import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
@@ -124,11 +127,20 @@ public class WikiPathways implements ApplicationEventListener {
 		Gdb.connect(getPwSpecies());
 	}
 
-	public void prepareMainPanel(MainPanel mainPanel) {
+	public MainPanel prepareMainPanel() {
+		CommonActions actions = SwingEngine.getCurrent().getActions();
+		Set<Action> allow = MainPanel.getDefaultActions(actions);
+		
+		//Disable some actions
+		if(!isNew()) allow.remove(actions.importAction);
+		
+		MainPanel mainPanel = new MainPanel(allow);
+		
 		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
 		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
 		
 		mainPanel.getToolBar().addSeparator();
+		
 		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
 		mainPanel.addToToolbar(discardAction);
 
@@ -139,6 +151,9 @@ public class WikiPathways implements ApplicationEventListener {
 				}
 			}
 		});	
+		
+		SwingEngine.getCurrent().setApplicationPanel(mainPanel);
+		return mainPanel;
 	}
 	
 	public String getPwName() {

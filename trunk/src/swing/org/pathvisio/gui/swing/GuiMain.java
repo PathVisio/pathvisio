@@ -25,16 +25,15 @@ import org.pathvisio.preferences.GlobalPreference;
 public class GuiMain {
 	private String[] args;
 	private JFrame frame;
-	private MainPanel mainPanel;
+	protected MainPanel mainPanel;
 	
-	protected void createAndShowGUI() {
+	protected void createAndShowGUI(MainPanel mainPanel) {
 		GuiInit.init();
 		
 		//Create and set up the window.
 		frame = new JFrame("PathVisio...swing it baby!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		mainPanel = SwingEngine.getCurrent().getApplicationPanel();
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.setSize(800, 600);
@@ -68,7 +67,7 @@ public class GuiMain {
 		gui.args = args;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				gui.createAndShowGUI();
+				gui.createAndShowGUI(SwingEngine.getCurrent().getApplicationPanel());
 			}
 		});
 	}

@@ -74,6 +74,10 @@ public class SwingEngine {
 		return mainPanel;
 	}
 	
+	public void setApplicationPanel(MainPanel mp) {
+		mainPanel = mp;
+	}
+	
 	public boolean hasApplicationPanel() {
 		return mainPanel != null;
 	}

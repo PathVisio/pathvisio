@@ -164,6 +164,12 @@ public abstract class Gdb {
 		return text + "</body></html>";
 	}
 
+	private static BackpageTextProvider backpageTextProvider = new BackpageTextProvider();
+	
+	public static BackpageTextProvider getBackpageTextProvider() {
+		return backpageTextProvider;
+	}
+	
 	private static String getCrossRefText(String id, String code) {
 		List<IdCodePair> crfs = Gdb.getCrossRefs(id, code);
 		if(crfs.size() == 0) return "";

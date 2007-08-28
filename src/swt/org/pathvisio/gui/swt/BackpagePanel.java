@@ -19,32 +19,14 @@ package org.pathvisio.gui.swt;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.BackpageListener;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
 
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
  */
-public class BackpagePanel extends Composite implements SelectionListener, ApplicationEventListener, PathwayListener {
-	private String text = "";
-	
+public class BackpagePanel extends Composite implements BackpageListener {
 	private Browser bpBrowser;
-	
-	private GeneProduct geneProduct;
-	private String currId;
-	private String currCode;
 	
 	/**
 	 * Constructor for this class
@@ -56,61 +38,10 @@ public class BackpagePanel extends Composite implements SelectionListener, Appli
 
 		setLayout(new FillLayout());
 		bpBrowser = new Browser(this, style); //Set the Browser widget
-		refresh();
-		
-		Engine.getCurrent().addApplicationEventListener(this);
-		VPathway vp = Engine.getCurrent().getActiveVPathway();
-		if(vp != null) vp.addSelectionListener(this);
+		Gdb.getBackpageTextProvider().addListener(this);
 	}
 	
-	private void setText(String text) {
-		this.text = text;
-		refresh();
-	}
-	
-	public void setGeneProduct(final GeneProduct gp) 
-	{ 
-		if(geneProduct == gp) return;
-		
-		Thread fetchThread = new Thread() {
-			public void run() {
-				// Get the backpage text
-				PathwayElement e = gp.getGmmlData();
-				String text = Gdb.getBackpageHTML(
-						e.getGeneID(), 
-						e.getSystemCode(), 
-						e.getBackpageHead());
-				//Short hack because Gex is not in core package
-				if(Gex.isConnected()) {
-					text = text.substring(0, text.length() - "</body></html>".length());
-					text += "<H1>Expression data</H1><P>";
-					String gexText = Gex.getDataString(new IdCodePair(e.getGeneID(), e.getSystemCode()));
-					text += gexText == null ? "<I>No expression data found</I>" : gexText;
-					text += "</body></html>";
-				}
-				setText(text);
-				}
-		};
-		
-		if(gp == null) {//Remove the listener from the old gene product		
-			geneProduct.getGmmlData().removeListener(this);
-		}
-		geneProduct = gp;
-		if(geneProduct == null) {
-			setText(Gdb.getBackpageHTML(null, null, null));
-		} else {
-			currCode = geneProduct.getGmmlData().getSystemCode();
-			currId = geneProduct.getGmmlData().getGeneID();
-			geneProduct.getGmmlData().addListener(this);
-			//Run in seperate thread so that this method can return
-			fetchThread.start();
-		}
-	}
-			
-	/**
-	 * Refreshes the text displayed in the browser
-	 */
-	public void refresh() {
+	private void setText(final String text) {
 		getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				bpBrowser.setText(text);	
@@ -118,40 +49,7 @@ public class BackpagePanel extends Composite implements SelectionListener, Appli
 		});
 	}
 
-	public void selectionEvent(SelectionEvent e) {
-		switch(e.type) {
-		case SelectionEvent.OBJECT_ADDED:
-			//Just take the first GeneProduct in the selection
-			for(VPathwayElement o : e.selection) {
-				if(o instanceof GeneProduct) {
-					if(geneProduct != o) setGeneProduct((GeneProduct)o);
-					break; //Selects the first, TODO: use setGmmlDataObjects
-				}
-			}
-			break;
-		case SelectionEvent.OBJECT_REMOVED:
-			if(e.selection.size() != 0) break;
-		case SelectionEvent.SELECTION_CLEARED:
-			setGeneProduct(null);
-			break;
-		}
-	}
-
-	public void applicationEvent(ApplicationEvent e) {
-		switch(e.type) {
-		case ApplicationEvent.VPATHWAY_CREATED:
-			((VPathway)e.getSource()).addSelectionListener(this);
-		}
-	}
-
-	public void gmmlObjectModified(PathwayEvent e) {
-		//Only refresh if id or code has changed
-		PathwayElement elm = e.getAffectedData();
-		if(!currId.equals(elm.getGeneID()) || 
-				!currCode.equals(elm.getSystemCode())) {			
-			refresh();
-			currId = elm.getGeneID();
-			currCode = elm.getSystemCode();
-		}
+	public void textChanged(String oldText, String newText) {
+		setText(newText);
 	}
 }

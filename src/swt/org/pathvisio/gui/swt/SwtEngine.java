@@ -207,7 +207,8 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	public void newPathway() {
 		if(canDiscardPathway()) {
 			VPathwayWrapper w = createWrapper();
-			Engine.getCurrent().newPathway(w);
+			Engine.getCurrent().setWrapper (w);
+			Engine.getCurrent().newPathway();
 			updateTitle();
 		}
 	}
@@ -272,7 +273,8 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
     		{
     			try { 
     				VPathwayWrapper w = createWrapper();
-    				Engine.getCurrent().importPathway(new File(fileName), w);
+					Engine.getCurrent().setWrapper (w);
+    				Engine.getCurrent().importPathway(new File(fileName));
     				imported = true;
     	        	if(window.editOnOpen()) {
     	        		Engine.getCurrent().getActiveVPathway().setEditMode(true);
@@ -570,7 +572,8 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		{
 			try { 
 				VPathwayWrapper w = createWrapper();
-				local = Engine.getCurrent().openPathway(url, w);
+				Engine.getCurrent().setWrapper (w);
+				local = Engine.getCurrent().openPathway(url);
 				updateTitle();
 			} 
 			catch(ConverterException e) 
@@ -613,7 +616,8 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		{
 			try { 
 				VPathwayWrapper w = createWrapper();
-				Engine.getCurrent().openPathway(new File(pwf), w);
+				Engine.getCurrent().setWrapper (w);
+				Engine.getCurrent().openPathway(new File(pwf));
 				opened = true;
 			} 
 			catch(ConverterException e) 

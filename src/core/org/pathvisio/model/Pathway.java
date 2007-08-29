@@ -61,7 +61,7 @@ public class Pathway implements PathwayListener
 		{
 			changed = false;
 			fireStatusFlagEvent (new StatusFlagEvent (changed));
-			System.out.println ("Changed flag is cleared");
+			//System.out.println ("Changed flag is cleared");
 		}		
 	}
 	
@@ -74,7 +74,7 @@ public class Pathway implements PathwayListener
 		{
 			changed = true;
 			fireStatusFlagEvent (new StatusFlagEvent (changed));
-			System.out.println ("Changed flag is set");
+			//System.out.println ("Changed flag is set");
 		}
 	}
 	
@@ -605,13 +605,23 @@ public class Pathway implements PathwayListener
 	public Pathway clone()
 	{
 		Pathway result = new Pathway();
-		int i = 0;
 		for (PathwayElement pe : dataObjects)
 		{
 			result.add (pe.copy());
-			i++;
 		}
-		System.out.println (i + " objects copied");
+		return result;
+	}
+
+	public String summary()
+	{
+		String result = "    " + toString() + "\n    with Objects:";
+		for (PathwayElement pe : dataObjects)
+		{
+			String code = pe.toString();
+			code = code.substring (code.lastIndexOf ('@'), code.length() - 1);
+			result += "\n      " + code + " " +
+				ObjectType.getTagMapping(pe.getObjectType()) + " " + pe.getParent();
+		}
 		return result;
 	}
 }

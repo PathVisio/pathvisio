@@ -132,7 +132,8 @@ public class SwingEngine {
 			protected Object doInBackground() throws Exception {
 				pk.setTaskName("Opening pathway");
 				try {
-					Engine.getCurrent().openPathway(url, createWrapper());
+					Engine.getCurrent().setWrapper (createWrapper());
+					Engine.getCurrent().openPathway(url);
 					return true;
 				} catch(ConverterException e) {
 					handleConverterException(e.getMessage(), null, e);
@@ -157,7 +158,8 @@ public class SwingEngine {
 				try {
 					Engine eng = Engine.getCurrent();
 					boolean editMode = eng.hasVPathway() ? eng.getActiveVPathway().isEditMode() : false;
-					eng.importPathway(f, createWrapper());
+					eng.setWrapper (createWrapper());
+					eng.importPathway(f);
 					eng.getActiveVPathway().setEditMode(editMode);
 					return true;
 				} catch(ConverterException e) {
@@ -174,7 +176,8 @@ public class SwingEngine {
 	}
 	
 	public void newPathway() {
-		Engine.getCurrent().newPathway(createWrapper());
+		Engine.getCurrent().setWrapper (createWrapper());
+		Engine.getCurrent().newPathway();
 	}
 
 	public boolean exportPathway() {

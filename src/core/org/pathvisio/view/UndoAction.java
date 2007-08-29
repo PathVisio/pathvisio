@@ -35,9 +35,20 @@ public class UndoAction
 	{
 		return message;	
 	}
+
+	void printSummary()
+	{
+		System.out.printf ("'%20s'\n", message);
+		System.out.print ("" + originalState.summary());		
+	}
 	
 	public void undo()
 	{
-		Engine.getCurrent().getActiveVPathway().replacePathway (originalState);
+		/*
+		UndoManager um = Engine.getCurrent().getActiveVPathway().getUndoManager();
+		Engine.getCurrent().createVPathway (originalState);
+		Engine.getCurrent().getActiveVPathway().setUndoManager(um);
+		*/
+		Engine.getCurrent().replacePathway (originalState);
 	}
 }

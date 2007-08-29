@@ -21,8 +21,11 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.pathvisio.util.swt.SuggestCombo.SuggestionProvider;
 
 public abstract class SuggestCellEditor extends CellEditor {
@@ -42,6 +45,12 @@ public abstract class SuggestCellEditor extends CellEditor {
 		setKeyListeners();
 		setFocusListeners();
 
+		((Text)suggestCombo.getControl()).addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
+				valueChanged(true, true);
+			}
+		});
+
 		return suggestCombo;
 	}
 
@@ -56,15 +65,31 @@ public abstract class SuggestCellEditor extends CellEditor {
 	protected void setFocusListeners() {
         suggestCombo.getControl().addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e) {
-            	if(!suggestCombo.isSuggestFocus()) {
-            		SuggestCellEditor.this.focusLost();
-            	}
+            	if(isFocusLost()) SuggestCellEditor.this.focusLost();
             }
         });
 	}
+	
+	public void activate() {
+		suggestCombo.setVisible(true);
+		super.activate();
+	}
+	
+	public void deactivate() {
+		System.out.println("Deactivate");
+		suggestCombo.setVisible(false);
+		fireApplyEditorValue();
+		super.deactivate();
+	}
+	
+	protected boolean isFocusLost() {
+		return !suggestCombo.isFocusControl();
+	}
+	
 	public abstract SuggestionProvider getSuggestionProvider();
 		
 	protected Object doGetValue() {
+		System.out.println("Getting value!");
 		return suggestCombo.getText();
 	}
 	
@@ -72,7 +97,7 @@ public abstract class SuggestCellEditor extends CellEditor {
 		suggestCombo.setText(value == null ? "" : value.toString());
 	}
 
-	protected void doSetFocus() {}
-
-
+	protected void doSetFocus() {
+		suggestCombo.getControl().setFocus();
+	}
 }

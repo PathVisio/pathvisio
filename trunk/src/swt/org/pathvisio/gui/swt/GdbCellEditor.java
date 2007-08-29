@@ -91,15 +91,9 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 		}
 	}
 	
-	protected void setFocusListeners() {
-        suggestCombo.getControl().addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-            	if(!suggestCombo.isSuggestFocus() &&
-            		(button != null && !button.isFocusControl())) { //Also check focus on button
-            		GdbCellEditor.this.focusLost();
-            	}
-            }
-        });
+	protected boolean isFocusLost() {
+		return super.isFocusLost() &&
+				(button != null && !button.isFocusControl());
 	}
 	
     private class CellLayout extends Layout {
@@ -138,21 +132,19 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
     	}
 				
 	}
-	
+	    
 	public SuggestionProvider getSuggestionProvider() {
 		return this;
 	}
 
 	public void suggestionSelected(String suggestion) {
-		suggestCombo.setText(suggestion);
-		fireApplyEditorValue();
 	}
 	
 	protected Object doGetValue() {
 		String text = suggestCombo.getText();
 		AutoFillData suggestion = suggested.get(text);
 		if(suggestion == null) {
-			suggested.put(text, suggestion = new GdbAutoFillData(getMainPropertyType(), text));
+			suggestion = new GdbAutoFillData(getMainPropertyType(), text);
 		}
 		return suggestion;
 	}
@@ -232,7 +224,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			return 100;
 		}
 	}
-
+	
 	class GdbAutoFillData extends AutoFillData {
 		public GdbAutoFillData(PropertyType mainProperty, String mainValue) {
 			super(mainProperty, mainValue);

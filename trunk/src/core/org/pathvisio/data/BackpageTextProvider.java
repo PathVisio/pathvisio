@@ -35,9 +35,9 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 
 public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener {
 	PathwayElement input;
-	final static int maxThreads = 5;
+	final static int maxThreads = 2;
 	volatile ThreadGroup threads;
-	volatile PathwayElement lastSelected;
+	volatile Thread lastThread;
 	
 	public BackpageTextProvider() {		
 		Engine.getCurrent().addApplicationEventListener(this);
@@ -70,22 +70,17 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		if(threads.activeCount() < maxThreads) {
 				QueryThread qt = new QueryThread(input);
 				qt.start();
-				lastSelected = null;		
+				lastThread = qt;		
 		} else {
-			//System.err.println("\tQueue lastSelected " + e);
+			System.err.println("\tQueue lastSelected " + input);
 			//When we're on our maximum, remember this element
 			//and ignore it when a new one is selected
-			lastSelected = input;
 		}
 
 	}
 	
-	private void check() {
-		//System.err.println("===== Check Called === " + lastSelected);
-		if(lastSelected != null) {
-			//System.err.println("From checked " + lastSelected);
-			setInput(lastSelected);
-		}
+	private void check(PathwayElement e) {
+
 	}
 	
 	public void selectionEvent(SelectionEvent e) {
@@ -136,12 +131,24 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 		public void run() {
 			//System.err.println("+++++ Thread " + this + " started +++++");
-			setText(Gdb.getBackpageHTML(
+			performTask();
+			if(this.equals(lastThread) && input != e) {
+				while(threads.activeCount() >= maxThreads) {
+					try {
+						wait(5);
+					} catch (InterruptedException e1) {
+						//ignore
+					}
+				}
+				doQuery();
+			}
+		}
+		void performTask() {
+			String txt = Gdb.getBackpageHTML(
 					e.getGeneID(), 
 					e.getSystemCode(), 
-					e.getBackpageHead()));
-			check();
-			//System.err.println("+++++ Thread " + this + " ended +++++");
+					e.getBackpageHead());
+			if(input == e) setText(txt);
 		}
 	}
 	

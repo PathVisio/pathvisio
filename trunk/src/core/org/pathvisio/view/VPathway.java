@@ -218,16 +218,18 @@ public class VPathway implements PathwayListener
 	/**
 	 * used by undo manager.
 	 */
-	void replacePathway(Pathway originalState)
+	
+	public void replacePathway(Pathway originalState)
 	{
 		drawingObjects = new ArrayList<VPathwayElement>();
 		selection = new SelectionBox(this);
 		pressedObject = null;
 		selectedGraphics = null;
 		data = null;
+		pointsMtoV = new HashMap<MPoint, VPoint>();
 		fromGmmlData(originalState);
 	}
-
+	
 	/**
 	 * Maps the contents of a pathway to this VPathway
 	 */
@@ -522,7 +524,10 @@ public class VPathway implements PathwayListener
 	 */
 	private void linkPointToObject(Point2D p2d, Handle g)
 	{
-		undoManager.newAction("Link point to object");
+		if (dragUndoState == DRAG_UNDO_CHANGE_START)
+		{
+			dragUndoState = DRAG_UNDO_CHANGED;
+		}
 		resetHighlight();
 		List<VPathwayElement> objects = getObjectsAt(p2d);
 		Collections.sort(objects);
@@ -537,7 +542,8 @@ public class VPathway implements PathwayListener
 				// this can be removed when we implemented poly lines
 				// p.link((VPoint)o);
 				break;
-			} else if (o instanceof Graphics && !(o instanceof Line))
+			}
+			else if (o instanceof Graphics && !(o instanceof Line))
 			{
 				x = o;
 				p.link((Graphics) o);
@@ -2369,6 +2375,15 @@ public class VPathway implements PathwayListener
 		return undoManager;
 	}
 
+	/*
+	   To be called only by undo.
+	 */
+	/*
+	public void setUndoManager(UndoManager value)
+	{
+		undoManager = value;
+	}
+	*/
 	public void undo()
 	{
 		undoManager.undo();

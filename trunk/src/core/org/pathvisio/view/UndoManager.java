@@ -60,10 +60,8 @@ public class UndoManager
 		if (undoList.size() > 0)
 		{
 			UndoAction a = undoList.get(undoList.size()-1);
-			System.out.println ("Undoing " + a.getMessage());
 			a.undo();
 			undoList.remove(a);
-			System.out.println (undoList.size() + " remaining");
 			fireUndoManagerEvent (new UndoManagerEvent (getTopMessage()));			
 		}
 	}
@@ -80,10 +78,26 @@ public class UndoManager
 	   mainly intended for the menu item to update itself.
 	 */
 	void fireUndoManagerEvent (UndoManagerEvent e)
-	{
+	{		
+		//printSummary();
 		for (UndoManagerListener g : listeners)
 		{
 			g.undoManagerEvent (e);
 		}
+	}
+
+	private void printSummary()
+	{
+		System.out.println ("===============================");
+		System.out.println (undoList.size() + " remaining");
+		for (int i = undoList.size() - 1; i >= 0; --i)
+		{
+			System.out.printf ("%3d: ", i);
+			undoList.get(i).printSummary();
+			System.out.println ();
+		}
+		System.out.println ("Current pathway");
+		System.out.print (Engine.getCurrent().getActivePathway().summary());
+		System.out.println();
 	}
 }

@@ -81,7 +81,7 @@ public class VPoint extends VPathwayElement {
 		p.lines.clear();
 		p.destroy();
 	}
-	
+
 	protected double getVX() { return vFromM(getMPoint().getX()); }
 	protected double getVY() { return vFromM(getMPoint().getY()); }
 	

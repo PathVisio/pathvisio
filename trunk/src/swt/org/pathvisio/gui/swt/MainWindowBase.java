@@ -503,7 +503,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			break;
 		}
 	}
-	
+
+	//TODO: should be safe, not save.
 	protected void threadSave(Runnable r) {
 		Display d = getShell() == null ? Display.getDefault() : getShell().getDisplay();
 		if(Thread.currentThread() == d.getThread()) {
@@ -515,7 +516,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	
 	public void undoManagerEvent (UndoManagerEvent e)
 	{
-		System.out.println ("Undo Manager event received! " + e.getMessage());
+		//System.out.println ("Undo Manager event received! " + e.getMessage());
 		undoAction.setText ("&Undo: " + e.getMessage() + "@Ctrl+Z");
 	}
 	

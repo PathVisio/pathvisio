@@ -104,10 +104,12 @@ public class WikiPathways implements ApplicationEventListener {
 		
 		if(isNew()) { //Create new pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: new pathway");
-			Engine.getCurrent().newPathway(wrapper);
+			Engine.getCurrent().setWrapper(wrapper);
+			Engine.getCurrent().newPathway();
 		} else { //Download and open the pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: open pathway");
-			Engine.getCurrent().openPathway(new URL(getPwURL()), wrapper);
+			Engine.getCurrent().setWrapper(wrapper);
+			Engine.getCurrent().openPathway(new URL(getPwURL()));
 		}
 
 		//TODO: notify user about this and hide edit actions

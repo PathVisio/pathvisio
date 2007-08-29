@@ -37,9 +37,13 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
 public class Engine {
-	private Pathway pathway;
-	private VPathway vPathway;
-		
+	private VPathway vPathway; // may be null
+	//TODO: standalone below is a hack to make Converter work
+	private Pathway standalone = null; // only used when vPathway is null
+	private VPathwayWrapper wrapper; // may also be null in case you
+									 // don't need to interact with
+									 // the pathway.
+	
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
@@ -71,6 +75,15 @@ public class Engine {
 	public static void setCurrent(Engine e) {
 		currentEngine = e;
 	}
+
+	/**
+	   Set this to the toolkit-specific wrapper before opening or
+	   creating a new pathway otherwise Engine can't create a vPathway.
+	 */
+	public void setWrapper (VPathwayWrapper value)
+	{
+		wrapper = value;
+	}
 	
 	/**
 	 * Get the {@link URL} for the resource stored in a jar file in the classpath
@@ -93,8 +106,16 @@ public class Engine {
 	/**
 	 * Returns the currently open Pathway
 	 */
-	public Pathway getActivePathway() {
-		return pathway;
+	public Pathway getActivePathway()
+	{
+		if (vPathway == null)
+		{
+			return standalone;
+		}
+		else
+		{
+			return vPathway.getGmmlData();
+		}
 	}
 	
 	PreferenceCollection preferences;
@@ -118,10 +139,6 @@ public class Engine {
 		return preferences;
 	}
 
-	public void openPathway(File pathwayFile) throws ConverterException {
-		openPathway(pathwayFile, null);
-	}
-	
 	public void exportPathway(File file) throws ConverterException {
 		Logger.log.trace("Exporting pathway to " + file);
 		String fileName = file.toString();
@@ -135,14 +152,11 @@ public class Engine {
 
 		if(exporter == null) throw new ConverterException( "No exporter for '" + ext +  "' files" );
 
-		exporter.doExport(file, pathway);	
+		exporter.doExport(file, getActivePathway());	
 	}
 	
-	public void importPathway(File file) throws ConverterException {
-		importPathway(file, null);
-	}
-	
-	public void importPathway(File file, VPathwayWrapper wrapper) throws ConverterException {
+	public void importPathway(File file) throws ConverterException
+	{
 		Logger.log.trace("Importing pathway from " + file);
 		String fileName = file.toString();
 		
@@ -157,17 +171,18 @@ public class Engine {
 		
 		Pathway _pathway = new Pathway();
 		importer.doImport(file, _pathway);
-		pathway = _pathway;
-		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
-		if(wrapper != null) {
-			createVPathway(pathway, wrapper);
+		createVPathway(_pathway);
+		fireApplicationEvent(new ApplicationEvent(_pathway, ApplicationEvent.PATHWAY_OPENED));
+		if (vPathway != null)
+		{
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
 		}
 	}
 		
 	/**
 	 * Open a pathway from a gpml file
 	 */
-	public void openPathway(File pathwayFile, VPathwayWrapper wrapper) throws ConverterException
+	public void openPathway(File pathwayFile) throws ConverterException
 	{
 		Pathway _pathway = null;		
 		String pwf = pathwayFile.toString();
@@ -177,29 +192,25 @@ public class Engine {
 		_pathway.readFromXml(new File(pwf), true);
 		//Only set the pathway field after the data is loaded
 		//(Exception thrown on error, this part will not be reached)
-		pathway = _pathway;
-		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
-		if(wrapper != null) {
-			createVPathway(_pathway, wrapper);
+		createVPathway(_pathway);
+		fireApplicationEvent(new ApplicationEvent(_pathway, ApplicationEvent.PATHWAY_OPENED));
+		if (vPathway != null)
+		{
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
-		}		
+		}
 	}
 	
 	public File openPathway(URL url) throws ConverterException {
-		return openPathway(url, null);
-	}
-	
-	public File openPathway(URL url, VPathwayWrapper w) throws ConverterException {
 		String protocol = url.getProtocol();
 		File f = null;
 		if(protocol.equals("file")) {
 			f = new File(url.getFile());
-			openPathway(f, w);
+			openPathway(f);
 		} else {
 			try {
 				f = File.createTempFile("urlPathway", "." + Engine.PATHWAY_FILE_EXTENSION);
 				FileUtils.downloadFile(url, f);
-				openPathway(f, w);
+				openPathway(f);
 			} catch(Exception e) {
 				throw new ConverterException(e);
 			}
@@ -209,38 +220,52 @@ public class Engine {
 		
 	public void savePathway(File toFile) throws ConverterException
 	{
-		pathway.writeToXml(toFile, true);
+		getActivePathway().writeToXml(toFile, true);
 	}
-	
-	private void createVPathway(Pathway p, VPathwayWrapper wrapper) {
-		double zoom = 100;
-		if(hasVPathway()) zoom = getActiveVPathway().getPctZoom();
-		
-		vPathway = wrapper.createVPathway();
-		vPathway.fromGmmlData(pathway);
-		
-		vPathway.setPctZoom(zoom);
-		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
-	}
-	
+
 	/**
-	 * Create a new pathway
+	   Try to make a vpathway,
+	   replacing pathway with a new one.
 	 */
-	public void newPathway() {
-		newPathway(null);
+	public void createVPathway(Pathway p)
+	{
+		if (wrapper == null)
+		{
+			standalone = p;
+		}
+		else
+		{
+			double zoom = 100;
+			if(hasVPathway()) zoom = getActiveVPathway().getPctZoom();
+			
+			vPathway = wrapper.createVPathway();
+			vPathway.fromGmmlData(p);
+			
+			vPathway.setPctZoom(zoom);
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
+		}
+	}
+
+	/**
+	   used by undo manager
+	 */
+	public void replacePathway (Pathway p)
+	{
+		vPathway.replacePathway (p);		
+		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
 	}
 	
 	/**
 	 * Create a new pathway and view (Pathay and VPathway)
 	 */
-	public void newPathway(VPathwayWrapper wrapper) {
-		pathway = new Pathway();
+	public void newPathway() {
+		Pathway pathway = new Pathway();
 		pathway.initMappInfo();
 		
+		createVPathway(pathway);	
 		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_NEW));
-		
-		if(wrapper != null) {
-			createVPathway(pathway, wrapper);	
+		if (vPathway != null)
+		{
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_NEW));
 		}
 	}

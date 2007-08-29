@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Text;
 import org.pathvisio.util.swt.SuggestCombo.SuggestionProvider.SuggestThread;
 
 public class SuggestCombo extends Composite {
-	protected boolean ignoreModify;
+	protected boolean ignoreModifyEvent;
 	protected boolean ignoreFocusOut;
 
 	private SuggestThread currThread;
@@ -64,8 +64,8 @@ public class SuggestCombo extends Composite {
 		return suggestionProvider; 
 	}
 	
-	public boolean isFocusControl() {		
-		return 	text.isVisible() && text.isFocusControl() ||
+	public boolean isFocusControl() {
+		return 	text.isFocusControl() ||
 				isSuggestFocus();
 	}
 	
@@ -96,37 +96,35 @@ public class SuggestCombo extends Composite {
 			public void handleEvent(Event e) {
 				switch(e.type) {
 				case SWT.Modify:
-					if(!ignoreModify) {
+					if(!ignoreModifyEvent) {
 						startSuggesting();
 						currThread.setText(text.getText());
 					} else {
-//						hideSuggestions();
-						ignoreModify = false;
+						ignoreModifyEvent = false;
 					}
 					break;
 				case SWT.KeyDown:
 					if(e.keyCode == SWT.ARROW_DOWN) {
 						if(suggestShell.isVisible()) {
+							ignoreFocusLostEvent = true;
 							suggestList.select(0);
 							suggestList.setFocus();
+							ignoreFocusLostEvent = false;
 						}
 					}
 					break;
-				case SWT.FocusOut:
-					if(!ignoreFocusOut) {
-						//Check if focus is on suggestShell/suggestList
-						if(!isSuggestFocus()) stopSuggesting();
-					}
+				case SWT.DefaultSelection:
+					stopSuggesting();
 					break;
-				}
+				} 
 			}
 		};
 		
 		text.addListener(SWT.Modify, textListener);
 		text.addListener(SWT.KeyDown, textListener);
-		text.addListener(SWT.FocusOut, textListener);
+		text.addListener(SWT.DefaultSelection, textListener);
 
-		suggestShell = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP);
+		suggestShell = new Shell(getShell(), SWT.TOOL);
 		suggestShell.setLayout(new FillLayout());
 		suggestList = new List(suggestShell, SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 		
@@ -134,6 +132,7 @@ public class SuggestCombo extends Composite {
 			public void handleEvent(Event e) {
 				switch(e.type) {
 				case SWT.KeyDown:
+					System.err.println(e.keyCode);
 					if(e.keyCode != 13) break; //TODO:find proper SWT constant for return key
 				case SWT.DefaultSelection:
 				case SWT.MouseDown:
@@ -142,7 +141,7 @@ public class SuggestCombo extends Composite {
 						suggestionSelected(suggestList.getSelection()[0]);
 					break;
 				case SWT.FocusOut:
-					if(!ignoreFocusOut) {
+					if(!ignoreFocusLostEvent) {
 						stopSuggesting();
 					}
 				}
@@ -151,18 +150,21 @@ public class SuggestCombo extends Composite {
 		suggestList.addListener(SWT.KeyDown, listListener);
 		suggestList.addListener(SWT.DefaultSelection, listListener);
 		suggestList.addListener(SWT.MouseDown, listListener);
-		suggestList.addListener(SWT.FocusOut, listListener);
 		
 		getShell().addShellListener(new ShellAdapter() {
 			public void shellDeactivated(ShellEvent e) {
+				if(!ignoreFocusLostEvent) {
+					stopSuggesting();
+				}
+			}
+		});
+		
+		suggestShell.addShellListener(new ShellAdapter() {
+			public void shellDeactivated(ShellEvent arg0) {
 				stopSuggesting();
 			}
 		});
-		suggestShell.addShellListener(new ShellAdapter() {
-			public void shellActivated(ShellEvent arg0) {
-				showSuggestions();
-			}
-		});
+		
 		// DisposeListener, in case user closes PathVisio while suggestShell is still active
 		suggestShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -172,7 +174,9 @@ public class SuggestCombo extends Composite {
 	}
 	
 	public void setVisible(boolean visible) {
-		stopSuggesting();
+		if(!visible) {
+			stopSuggesting();
+		}
 		super.setVisible(visible);
 	}
 	
@@ -181,18 +185,18 @@ public class SuggestCombo extends Composite {
 		suggestShell.dispose();
 	}
 	
-	void startSuggesting() {		
+	void startSuggesting() {
 		if(!suggestShell.isVisible()) {
 			initSuggestShell();
 		}
-		if(!isSuggesting()) {
+		if(!isSuggesting()) { //Start new suggest thread if not yet done so
 			currThread = new SuggestThread(text.getText(), this);
 			currThread.start();
 		}
 	}
 	
 	void stopSuggesting() {
-		doHideSuggestions();
+		hideSuggestions();
 		if(currThread != null) {
 			currThread.interrupt();
 		}
@@ -254,32 +258,38 @@ public class SuggestCombo extends Composite {
 	}
 	
 	void doHideSuggestions() {
-		if(!suggestShell.isDisposed()) 
-			suggestShell.setVisible(false);
+		if(!suggestShell.isDisposed()) {
+			if(suggestShell.isVisible()) {
+				suggestShell.setVisible(false);
+			}
+		}
 	}
 	
+	boolean ignoreFocusLostEvent;
+	
 	void showSuggestions() {
+		if(suggestShell.isVisible()) return; //Don't show if it's already visible
+		
+		ignoreFocusLostEvent = true;
 		boolean restoreFocus = text.isFocusControl();
 		if(isFocusControl() && suggestList.getItemCount() > 0) {
 			suggestShell.setVisible(true);
 			
 			if(restoreFocus) {
 				ignoreFocusOut = true;
-				text.setFocus();
+				text.forceFocus();
 				ignoreFocusOut = false;
-			}
-			
-		} else {
-			doHideSuggestions();
+			}	
 		}
+		ignoreFocusLostEvent = false;
 	}
 	
-	void suggestionSelected(String suggestion) {
-		ignoreModify = true;
-		text.setText(suggestion);
-		doHideSuggestions();
+	void suggestionSelected(final String suggestion) {
+		ignoreModifyEvent = true;
+		text.setText(suggestion);			
+		hideSuggestions();
 		for(SuggestionListener l : listeners) {
-			ignoreModify = true;
+			ignoreModifyEvent = true;
 			l.suggestionSelected(suggestion);
 		}
 	}
@@ -326,7 +336,6 @@ public class SuggestCombo extends Composite {
 				while(!isInterrupted()) {
 					if(textChange) {
 						if(doSuggestThread != null) doSuggestThread.interrupt();
-						suggestCombo.hideSuggestions();
 						if(!text.equals("")) {
 							doSuggestThread = new Thread() {
 								public void run() {
@@ -335,8 +344,6 @@ public class SuggestCombo extends Composite {
 								}
 							};
 							doSuggestThread.start();
-						} else {
-							suggestCombo.hideSuggestions();
 						}
 						textChange = false;
 					} else {						

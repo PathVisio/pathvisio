@@ -81,8 +81,10 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	TextCellEditor textEditor;
 	ColorCellEditor colorEditor;
 	ComboBoxCellEditor comboBoxEditor;
-	SuggestCellEditor identifierSuggestEditor;
-	SuggestCellEditor symbolSuggestEditor;
+	//Disable suggest cell editors for now, can't get them to work
+	//on both linux and windows
+//	SuggestCellEditor identifierSuggestEditor;
+//	SuggestCellEditor symbolSuggestEditor;
 	DialogCellEditor commentsEditor;
 	
 	private List<PathwayElement> dataObjects;
@@ -230,8 +232,8 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		cellEditors[1] = cellEditors[0] = textEditor = new TextCellEditor(tableViewer.getTable());
 		colorEditor = new ColorCellEditor(tableViewer.getTable());
 		comboBoxEditor = new ComboBoxCellEditor(tableViewer.getTable(), new String[] {""});
-		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
-		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
+//		identifierSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_IDENTIFIER);
+//		symbolSuggestEditor = new GdbCellEditor(tableViewer.getTable(), GdbCellEditor.TYPE_SYMBOL);
 		//Temporary table editor for comments, will be removed when right-click menu is implemented
 		commentsEditor = new DialogCellEditor(tableViewer.getTable()) {
 			protected Object openDialogBox(Control cellEditorWindow) {
@@ -318,7 +320,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				comboBoxEditor.setItems(genetype_names);
 				return comboBoxEditor;
 			case DB_ID:
-				return identifierSuggestEditor;
+				return textEditor;
 			case DB_SYMBOL:
 				return textEditor;
 			case COMMENTS:

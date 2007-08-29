@@ -227,6 +227,26 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		return getVOutline().getBounds();
 	}
 	
+	public double getVLeftRot(){
+		return this.getVBounds().getMinX();
+	}
+	
+	public void setVLeft(){
+		System.out.println("This is in VPathwayElement");
+	}
+	
+	public double getVTopRot(){
+		return this.getVBounds().getMinY();
+	}
+	
+	public double getVWidthRot(){
+		return (this.getVBounds().getMaxX() - this.getVBounds().getMinX());
+	}
+	
+	public double getVHeightRot(){
+		return (this.getVBounds().getMaxY() - this.getVBounds().getMinY());
+	}
+	
 	/**
 	 * Get the outline of this element. The outline is used to check 
 	 * whether a point is contained in this element or not

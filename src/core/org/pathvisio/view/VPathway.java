@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
@@ -51,6 +49,7 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.view.ViewActions.KeyMoveAction;
 
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
@@ -645,43 +644,44 @@ public class VPathway implements PathwayListener
 	 * 
 	 * @param ks
 	 */
-	public void keyMove(KeyStroke ks)
+	public void moveByKey(KeyStroke ks, int increment)
 	{
 		List<Graphics> selectedGraphics = getSelectedGraphics();
-		if (selectedGraphics.size() > 0)
-		{
-			if (ks.equals(KEY_MOVELEFT))
+			
+		if (selectedGraphics.size() > 0){
+		
+		switch (ks.getKeyCode()){
+		case 37:
+			undoManager.newAction ("Move object");
+			for (Graphics g : selectedGraphics)
 			{
-				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(-SMALL_INCREMENT, 0);
-				}
-			} else if (ks.equals(KEY_MOVERIGHT))
-			{
-				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(SMALL_INCREMENT, 0);
-				}
-			} else if (ks.equals(KEY_MOVEUP))
-			{
-				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(0, -SMALL_INCREMENT);
-				}
-			} else if (ks.equals(KEY_MOVEDOWN))
-			{
-				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(0, SMALL_INCREMENT);
-				}
+				g.vMoveBy(-increment, 0);
 			}
-			redrawDirtyRect();
+		break;
+		case 39:
+			undoManager.newAction ("Move object");
+			for (Graphics g : selectedGraphics)
+			{
+				g.vMoveBy(increment, 0);
+			}
+		break;
+		case 38:
+			undoManager.newAction ("Move object");
+			for (Graphics g : selectedGraphics)
+			{
+				g.vMoveBy(0, -increment);
+			}
+		break;
+		case 40: 	
+			undoManager.newAction ("Move object");
+			for (Graphics g : selectedGraphics)
+			{
+				g.vMoveBy(0, increment);
+			}
+			}
+			}
+		redrawDirtyRect();
 		}
-	}
 
 	public void selectObject(VPathwayElement o)
 	{
@@ -1590,16 +1590,28 @@ public class VPathway implements PathwayListener
 					java.awt.Event.CTRL_MASK);
 
 	public static final KeyStroke KEY_MOVERIGHT = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_RIGHT, java.awt.Event.CTRL_MASK);
+			java.awt.event.KeyEvent.VK_RIGHT, 0);
 
 	public static final KeyStroke KEY_MOVELEFT = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_LEFT, java.awt.Event.CTRL_MASK);
+			java.awt.event.KeyEvent.VK_LEFT, 0);
 
 	public static final KeyStroke KEY_MOVEUP = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_UP, java.awt.Event.CTRL_MASK);
+			java.awt.event.KeyEvent.VK_UP, 0);
+	
+	public static final KeyStroke KEY_MOVEDOWN = KeyStroke. getKeyStroke(
+			java.awt.event.KeyEvent.VK_DOWN, 0);
+	
+	public static final KeyStroke KEY_MOVERIGHT_SHIFT = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_RIGHT, java.awt.Event.SHIFT_MASK);
 
-	public static final KeyStroke KEY_MOVEDOWN = KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_DOWN, java.awt.Event.CTRL_MASK);
+	public static final KeyStroke KEY_MOVELEFT_SHIFT = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_LEFT, java.awt.Event.SHIFT_MASK);
+	
+	public static final KeyStroke KEY_MOVEUP_SHIFT = KeyStroke.getKeyStroke(
+			java.awt.event.KeyEvent.VK_UP, java.awt.Event.SHIFT_MASK);
+	
+	public static final KeyStroke KEY_MOVEDOWN_SHIFT = KeyStroke. getKeyStroke(
+			java.awt.event.KeyEvent.VK_DOWN, java.awt.Event.SHIFT_MASK);
 
 	/**
 	 * Get the view actions, a class where several actions related to the view
@@ -1640,34 +1652,14 @@ public class VPathway implements PathwayListener
 		registerKeyboardAction(viewActions.selectAll);
 		registerKeyboardAction(viewActions.delete);
 
-		parent.registerKeyboardAction(KEY_MOVELEFT, new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				keyMove(KEY_MOVELEFT);
-			}
-		});
-		parent.registerKeyboardAction(KEY_MOVERIGHT, new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				keyMove(KEY_MOVERIGHT);
-			}
-		});
-		parent.registerKeyboardAction(KEY_MOVEUP, new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				keyMove(KEY_MOVEUP);
-			}
-		});
-		parent.registerKeyboardAction(KEY_MOVEDOWN, new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				keyMove(KEY_MOVEDOWN);
-			}
-		});
+		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(KEY_MOVERIGHT));
+		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(KEY_MOVERIGHT_SHIFT));
+		parent.registerKeyboardAction(KEY_MOVELEFT, new KeyMoveAction(KEY_MOVELEFT));
+		parent.registerKeyboardAction(KEY_MOVELEFT_SHIFT, new KeyMoveAction(KEY_MOVELEFT_SHIFT));
+		parent.registerKeyboardAction(KEY_MOVEUP, new KeyMoveAction(KEY_MOVEUP));
+		parent.registerKeyboardAction(KEY_MOVEUP_SHIFT, new KeyMoveAction(KEY_MOVEUP_SHIFT));
+		parent.registerKeyboardAction(KEY_MOVEDOWN, new KeyMoveAction(KEY_MOVEDOWN));
+		parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(KEY_MOVEDOWN_SHIFT));
 	}
 
 	public void keyReleased(KeyEvent e)
@@ -1826,29 +1818,28 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new YComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					selectedGraphics.get(i).getGmmlData().setMCenterX(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMCenterX());
+					selectedGraphics.get(i).vMoveBy((selectedGraphics.get(0).getVLeftRot()+
+							0.5*(selectedGraphics.get(0).getVWidthRot()))-(selectedGraphics.get(i).getVLeftRot()+
+									0.5*(selectedGraphics.get(i).getVWidthRot())), 0);
 				}
 				break;
-			case CENTERY:
-				undoManager.newAction("Align vertically on center");
-				Collections.sort(selectedGraphics, new XComparator());
-				for (int i = 1; i < selectedGraphics.size(); i++)
-				{
-					selectedGraphics.get(i).getGmmlData().setMCenterY(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMCenterY());
+			case CENTERY : 
+				undoManager.newAction ("Align vertically on center");
+				Collections.sort(selectedGraphics, new XComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{	
+					selectedGraphics.get(i).vMoveBy(0, (selectedGraphics.get(0).getVTopRot()+
+							0.5*(selectedGraphics.get(0).getVHeightRot()))-(selectedGraphics.get(i).getVTopRot()+
+									0.5*(selectedGraphics.get(i).getVHeightRot())));
 				}
 				break;
-			case LEFT:
-				undoManager.newAction("Align on left side");
+			case LEFT :
+				undoManager.newAction ("Align on left side");
 				Collections.sort(selectedGraphics, new YComparator());
-				for (int i = 1; i < selectedGraphics.size(); i++)
-				{
-					selectedGraphics.get(i).getGmmlData().setMLeft(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMLeft());
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{	
+					selectedGraphics.get(i).vMoveBy((selectedGraphics.get(0).getVLeftRot())
+							-(selectedGraphics.get(i).getVLeftRot()),0);			
 				}
 				break;
 			case RIGHT:
@@ -1856,37 +1847,31 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new YComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					selectedGraphics.get(i).getGmmlData().setMLeft(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMLeft()
-									+ selectedGraphics.get(i - 1).getGmmlData()
-											.getMWidth()
-									- selectedGraphics.get(i).getGmmlData()
-											.getMWidth());
-				}
+					selectedGraphics.get(i).vMoveBy((selectedGraphics.get(0).getVLeftRot()
+							+selectedGraphics.get(0).getVWidthRot())
+							-(selectedGraphics.get(i).getVLeftRot()
+									+selectedGraphics.get(i).getVWidthRot()),0);
+				}	
 				break;
 			case TOP:
-				undoManager.newAction("Align on top side");
-				Collections.sort(selectedGraphics, new XComparator());
-				for (int i = 1; i < selectedGraphics.size(); i++)
-				{
-					selectedGraphics.get(i).getGmmlData()
-							.setMTop(
-									selectedGraphics.get(i - 1).getGmmlData()
-											.getMTop());
+				undoManager.newAction ("Align on top side");
+				Collections.sort(selectedGraphics, new YComparator());			
+				for (int i=1; i<selectedGraphics.size(); i++)
+				{	
+					selectedGraphics.get(i).vMoveBy(0,(selectedGraphics.get(0).getVTopRot())
+							-(selectedGraphics.get(i).getVTopRot()));			
 				}
 				break;
 			case BOTTOM:
 				undoManager.newAction("Align on bottom side");
-				Collections.sort(selectedGraphics, new XComparator());
+				Collections.sort(selectedGraphics, new YComparator());
+				Collections.reverse(selectedGraphics);
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					selectedGraphics.get(i).getGmmlData().setMTop(
-							selectedGraphics.get(i - 1).getGmmlData().getMTop()
-									+ selectedGraphics.get(i - 1).getGmmlData()
-											.getMHeight()
-									- selectedGraphics.get(i).getGmmlData()
-											.getMHeight());
+					selectedGraphics.get(i).vMoveBy(0,(selectedGraphics.get(0).getVTopRot()
+							+selectedGraphics.get(0).getVHeightRot())
+							-(selectedGraphics.get(i).getVTopRot()
+									+selectedGraphics.get(i).getVHeightRot()));
 				}
 				break;
 			case WIDTH:
@@ -1917,13 +1902,22 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new YComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					selectedGraphics.get(i).getGmmlData().setMCenterX(
+					System.out.println("centerx");
+					
+					selectedGraphics.get(i).vMoveBy((selectedGraphics.get(i-1).getVLeftRot()
+							+(0.5*selectedGraphics.get(i-1).getVWidthRot()))-(selectedGraphics.get(i).getVLeftRot()
+							+(0.5*selectedGraphics.get(i).getVWidthRot())), 0);
+					
+					selectedGraphics.get(i).vMoveBy(0, (selectedGraphics.get(i-1).getVTopRot()
+							+(selectedGraphics.get(i-1).getVHeightRot()))-(selectedGraphics.get(i).getVTopRot()));
+					
+					/*selectedGraphics.get(i).getGmmlData().setMCenterX(
 							selectedGraphics.get(i - 1).getGmmlData()
 									.getMCenterX());
 					selectedGraphics.get(i).getGmmlData().setMTop(
 							selectedGraphics.get(i - 1).getGmmlData().getMTop()
 									+ selectedGraphics.get(i - 1).getGmmlData()
-											.getMHeight());
+											.getMHeight());*/
 				}
 				break;
 			case CENTERY:
@@ -1931,6 +1925,15 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new XComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
+					System.out.println("centery");
+					
+					selectedGraphics.get(i).vMoveBy((selectedGraphics.get(i-1).getVLeftRot()
+							+(selectedGraphics.get(i-1).getVWidthRot()))-(selectedGraphics.get(i).getVLeftRot()), 0);
+					
+					selectedGraphics.get(i).vMoveBy(0, (selectedGraphics.get(i-1).getVTopRot()+(0.5*selectedGraphics.get(i-1).getVWidthRot()))
+							-(selectedGraphics.get(i).getVTopRot()+(0.5*selectedGraphics.get(i-1).getVWidthRot())));
+					
+					/*
 					selectedGraphics.get(i).getGmmlData().setMCenterY(
 							selectedGraphics.get(i - 1).getGmmlData()
 									.getMCenterY());
@@ -1938,7 +1941,7 @@ public class VPathway implements PathwayListener
 							selectedGraphics.get(i - 1).getGmmlData()
 									.getMLeft()
 									+ selectedGraphics.get(i - 1).getGmmlData()
-											.getMWidth());
+											.getMWidth());*/
 				}
 				break;
 			case LEFT:
@@ -2304,7 +2307,7 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * helper method to convert view coordinates to model coordinates
+	 * helper method to convert model coordinates to view coordinates
 	 */
 	public double vFromM(double m)
 	{

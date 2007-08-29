@@ -112,7 +112,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		current = engine;
 	}
 
-	SwtEngine()
+	public SwtEngine()
 	{
 		Engine.getCurrent().addApplicationEventListener(this);
 	}

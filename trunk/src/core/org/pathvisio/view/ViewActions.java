@@ -41,6 +41,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public static final String GROUP_ENABLE_VPATHWAY_LOADED = "vpathway";
 	public static final String GROUP_ENABLE_WHEN_SELECTION = "selection";
 
+	static final int SMALL_INCREMENT = 2;
+	static final int LARGE_INCREMENT = 20;
+	
 	VPathway vPathway;
 	
 	public final SelectClassAction selectDataNodes;
@@ -49,6 +52,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final DeleteAction delete;
 	public final CopyAction copy;
 	public final PasteAction paste;
+	public final KeyMoveAction keyMove;
 
 	Engine engine;
 	
@@ -66,6 +70,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		delete = new DeleteAction();
 		copy = new CopyAction();
 		paste = new PasteAction();
+		keyMove = new KeyMoveAction(null);
 		
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -76,6 +81,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(copy, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
+		registerToGroup(keyMove, ViewActions.GROUP_ENABLE_EDITMODE);
 		
 		setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
 		setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
@@ -181,6 +187,27 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(isEnabled() && vp != null) vp.pasteFromClipboard();
+		}
+	}
+	
+	public static class KeyMoveAction extends AbstractAction {
+		KeyStroke key;
+
+		public KeyMoveAction(KeyStroke key) {
+		this.key = key; 
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+
+		int moveIncrement = 0;
+		
+		if ((e.getModifiers() &
+				ActionEvent.SHIFT_MASK) != 0)
+		{ moveIncrement = LARGE_INCREMENT;}
+		else {moveIncrement = SMALL_INCREMENT;}
+		
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		vp.moveByKey(key, moveIncrement);
 		}
 	}
 

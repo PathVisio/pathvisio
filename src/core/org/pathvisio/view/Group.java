@@ -45,8 +45,10 @@ public class Group extends Graphics {
 				if (vpe instanceof Graphics) {
 					PathwayElement pe = ((Graphics) vpe).getGmmlData();
 					String ref = pe.getGroupRef();
+//					String ref2 = getGmmlData().getGroupId();
+//					System.out.println("pe: "+pe+" ref: "+ref+" ref2: "+ref2);
 					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
-						//System.out.println("Contains: "+ref);
+//						System.out.println("Contains: "+ref);
 						return true;
 					}
 				}

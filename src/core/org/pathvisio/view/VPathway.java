@@ -1047,9 +1047,8 @@ public class VPathway implements PathwayListener
 			{
 				selection.addToSelection(pressedObject); // Not in selection:
 															// add
-				selection.stopSelecting();
 			}
-			pressedObject = null; // Disable dragging
+			pressedObject = selection; // Set dragging to selectionbox
 		} else
 		// Ctrl not pressed
 		{
@@ -1428,14 +1427,15 @@ public class VPathway implements PathwayListener
 	void selectObjects(Class c)
 	{
 		clearSelection();
+		selection.startSelecting();
 		for (VPathwayElement vpe : getDrawingObjects())
 		{
-			if (c.isInstance(vpe))
+			if (c == null || c.isInstance(vpe))
 			{
 				selection.addToSelection(vpe);
 			}
 		}
-		selection.fitToSelection();
+		selection.stopSelecting();
 		redrawDirtyRect();
 	}
 
@@ -1451,13 +1451,7 @@ public class VPathway implements PathwayListener
 
 	void selectAll()
 	{
-		clearSelection();
-		for (VPathwayElement o : getDrawingObjects())
-		{
-			selection.addToSelection(o);
-		}
-		selection.fitToSelection();
-		redrawDirtyRect();
+		selectObjects(null);
 	}
 
 	// private void insertPressed()

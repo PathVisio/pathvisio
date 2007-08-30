@@ -19,14 +19,11 @@ package org.pathvisio.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import org.pathvisio.model.ShapeType;
-import org.pathvisio.model.PathwayElement;
+
 import org.pathvisio.model.LineStyle;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a 
@@ -69,7 +66,7 @@ public class Shape extends GraphicsShape
 			linecolor = selectColor;
 		} 
 
-		java.awt.Shape shape = getFillShape();
+		java.awt.Shape shape = getShape(true, false);
 
 		if (gdata.getShapeType() == ShapeType.BRACE ||
 			gdata.getShapeType() == ShapeType.ARC)
@@ -115,15 +112,14 @@ public class Shape extends GraphicsShape
 		}
 	}	
 
-		
-	protected java.awt.Shape getFillShape(float sw) {
-		int x = getVLeft();
-		int y = getVTop();
-		int w = getVWidth() + (int)sw;
-		int h = getVHeight() + (int)sw;
-		int cx = getVCenterX();
-		int cy = getVCenterY();
-		
+	protected java.awt.Shape getShape(boolean rotate, float sw) {
+		double x = getVLeft();
+		double y = getVTop();
+		double w = getVWidth() + (int)sw;
+		double h = getVHeight() + (int)sw;
+		double cx = getVCenterX();
+		double cy = getVCenterY();
+
 		java.awt.Shape s = null;
 
 		if (gdata.getShapeType() == null)
@@ -133,12 +129,15 @@ public class Shape extends GraphicsShape
 		else
 		{
 			s = ShapeRegistry.getShape (
-			gdata.getShapeType().getName(),
-			x, y, w, h);
+					gdata.getShapeType().getName(),
+					x, y, w, h);
 		}
-		
-		AffineTransform t = new AffineTransform();
-		t.rotate(gdata.getRotation(), cx, cy);
-		return t.createTransformedShape(s);
+
+		if(rotate) {
+			AffineTransform t = new AffineTransform();
+			t.rotate(gdata.getRotation(), cx, cy);
+			s = t.createTransformedShape(s);
+		}
+		return s;
 	}
 }

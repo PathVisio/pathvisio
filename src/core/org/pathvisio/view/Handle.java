@@ -195,8 +195,8 @@ public class Handle extends VPathwayElement
 
 		if(direction != DIRECTION_FREE && direction != DIRECTION_ROT) {
 			Point v = new Point(0,0);
-			Rectangle b = parent.getVBounds();
-			Point base = new Point (b.x + b.width / 2, b.y + b.height / 2);
+			Rectangle2D b = parent.getVBounds();
+			Point base = new Point (b.getCenterX(), b.getCenterY());
 			if (direction == DIRECTION_X)
 			{
 				v = new Point (1, 0);
@@ -207,11 +207,11 @@ public class Handle extends VPathwayElement
 			}
 			else if (direction == DIRECTION_XY)
 			{
-				v = new Point (b.width, b.height);
+				v = new Point (b.getWidth(), b.getHeight());
 			}
 			else if (direction == DIRECTION_MINXY)
 			{
-				v = new Point (b.height, -b.width);
+				v = new Point (b.getHeight(), -b.getWidth());
 			}
 			Point yr = LinAlg.rotate(v, -rotation);
 			Point prj = LinAlg.project(base, new Point(vnx, vny), yr);

@@ -595,55 +595,62 @@ public class VPathway implements PathwayListener
 			}
 			redrawDirtyRect();
 		}
-		// Reset hover timer
-		if (hoverTimer != null)
-			hoverTimer.interrupt();
-		hoverTimer = new HoverTimer();
-		hoverTimer.start(ve);
+//		// Reset hover timer
+//		if (hoverTimer == null) {
+//			hoverTimer = new HoverTimer();
+//			hoverTimer.start();
+//		}
+//		hoverTimer.reset(ve);
 	}
 
-	HoverTimer hoverTimer;
-
-	class HoverTimer extends Thread
-	{
-		volatile long timer = 0;
-
-		MouseEvent ve;
-
-		volatile boolean interrupted;
-
-		public synchronized void start(MouseEvent ve)
-		{
-			this.ve = ve;
-			super.start();
-		}
-
-		public void run()
-		{
-			timer = System.currentTimeMillis();
-			while (System.currentTimeMillis() - timer < 500)
-			{
-				try
-				{
-					Thread.sleep(5);
-				} catch (InterruptedException e)
-				{
-					return;
-				}
-				if (isInterrupted())
-				{
-					return;
-				}
-			}
-			doHover();
-		};
-
-		void doHover()
-		{
-			fireVPathwayEvent(new VPathwayEvent(VPathway.this, getObjectsAt(ve
-					.getLocation()), ve, VPathwayEvent.ELEMENT_HOVER));
-		}
-	}
+	// Disable for 1.0 release (no tooltips needed)
+	// TODO: stop this thread on closing VPathway
+	// TODO: convert pathway elements to Component and get
+	// tooltips for free!
+//	HoverTimer hoverTimer;
+//
+//	class HoverTimer extends Thread
+//	{
+//		volatile long timer = 0;
+//
+//		MouseEvent ve;
+//
+//		volatile boolean interrupted;
+//		volatile boolean hovered;
+//		
+//		public synchronized void reset(MouseEvent ve) {
+//			this.ve = ve;
+//			timer = System.currentTimeMillis();
+//			hovered = false;
+//		}
+//
+//		public void run()
+//		{
+//			timer = System.currentTimeMillis();
+//			while (!isInterrupted())
+//			{
+//				try
+//				{
+//					Thread.sleep(5);
+//				} catch (InterruptedException e)
+//				{
+//					return;
+//				}
+//				if(System.currentTimeMillis() - timer > 750) {
+//					doHover();
+//				}
+//			}
+//		};
+//
+//		void doHover()
+//		{
+//			if(!hovered) {
+//				fireVPathwayEvent(new VPathwayEvent(VPathway.this, getObjectsAt(ve
+//						.getLocation()), ve, VPathwayEvent.ELEMENT_HOVER));
+//				hovered = true;
+//			}
+//		}
+//	}
 
 	/**
 	 * Handles movement of objects with the arrow keys

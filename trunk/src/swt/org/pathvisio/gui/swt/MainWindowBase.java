@@ -27,13 +27,11 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -61,7 +59,6 @@ import org.pathvisio.view.UndoManagerListener;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.swing.VPathwaySwing;
 import org.pathvisio.visualization.LegendPanel;
 
 /**
@@ -266,7 +263,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		//Add zoomCombo
 		toolBarManager.add(new ControlContribution("ZoomCombo") {
 			protected Control createControl(Composite parent) {
-				final Combo zoomCombo = new Combo(parent, SWT.DROP_DOWN);
+				final CCombo zoomCombo = new CCombo(parent, SWT.DROP_DOWN);
 				zoomCombo.setItems(new String[] { "200%", "100%", "75%", "50%", "Zoom to fit" });
 				zoomCombo.setText("100%");
 				zoomCombo.addSelectionListener(new SelectionAdapter() {
@@ -283,14 +280,6 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 					}
 					public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
 				});
-				//Focus may be on combo (text), but not on dropdown button!
-//				zoomCombo.addFocusListener(new FocusAdapter() {
-//					public void focusGained(FocusEvent e) {
-//						System.out.println("Setting focus to pathway" );
-//						swingPathwayComposite.forceFocus();
-//						
-//					}
-//				});
 				return zoomCombo;
 			}
 		});		

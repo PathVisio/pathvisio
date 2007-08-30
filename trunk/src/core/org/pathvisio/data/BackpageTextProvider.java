@@ -35,7 +35,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 
 public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener {
 	PathwayElement input;
-	final static int maxThreads = 2;
+	final static int maxThreads = 1;
 	volatile ThreadGroup threads;
 	volatile Thread lastThread;
 	
@@ -72,14 +72,10 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 				qt.start();
 				lastThread = qt;		
 		} else {
-			System.err.println("\tQueue lastSelected " + input);
+//			System.err.println("\tQueue lastSelected " + input);
 			//When we're on our maximum, remember this element
 			//and ignore it when a new one is selected
 		}
-
-	}
-	
-	private void check(PathwayElement e) {
 
 	}
 	
@@ -130,13 +126,13 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.e = e;
 		}
 		public void run() {
-			//System.err.println("+++++ Thread " + this + " started +++++");
+//			System.err.println("+++++ Thread " + this + " started +++++");
 			performTask();
 			if(this.equals(lastThread) && input != e) {
-				while(threads.activeCount() >= maxThreads && this.equals(lastThread)) {
-						yield();
-				}
-				doQuery();
+//				System.err.println("Updating");
+				e = input;
+				performTask();
+				lastThread = null;
 			}
 		}
 		void performTask() {

@@ -67,21 +67,13 @@ public abstract class GraphicsShape extends Graphics {
 		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);		
 	}
 	
-	
-	/**
-	 * Adjust model to changes in the shape, 
-	 * and at the same time calculates the new position 
-	 * in gpml coordinates (so without zoom factor)
-	 */
-	private void setVShape(double vleft, double vtop, double vwidth, double vheight) 
-	{
-//		gdata.dontFireEvents(3);
-		gdata.setMWidth(mFromV(vwidth));
-		gdata.setMHeight(mFromV(vheight));
-		gdata.setMLeft(mFromV(vleft));
-		gdata.setMTop(mFromV(vtop));
+	protected void setVScaleRectangle(Rectangle2D r) {
+		gdata.setMWidth(mFromV(r.getWidth()));
+		gdata.setMHeight(mFromV(r.getHeight()));
+		gdata.setMLeft(mFromV(r.getX()));
+		gdata.setMTop(mFromV(r.getY()));
 	}
-	
+		
 	protected void vMoveBy(double vdx, double vdy)
 	{
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
@@ -96,17 +88,7 @@ public abstract class GraphicsShape extends Graphics {
 		}
 		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
 	}
-
-	public void setVScaleRectangle(Rectangle2D r)
-	{
-		setVShape(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-	}
-	
-	protected Rectangle2D getVScaleRectangle()
-	{
-		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
-	}
-	
+		
 	public Handle[] getHandles()
 	{
 		if(	this instanceof GeneProduct || 
@@ -162,14 +144,6 @@ public abstract class GraphicsShape extends Graphics {
 	private Point mRelativeToCenter(Point p)
 	{
 		return p.subtract(new Point(gdata.getMCenterX(), gdata.getMCenterY()));
-	}
-
-	/**
-	 * Get the center point of this object
-	 */
-	private Point getMCenter()
-	{
-		return new Point(gdata.getMCenterX(), gdata.getMCenterY());
 	}
 
 	/**
@@ -302,35 +276,51 @@ public abstract class GraphicsShape extends Graphics {
 		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
 	}
 	
-	/**
-	 * Creates a shape of the outline of this object
-	 */
 	protected Shape getVOutline()
 	{
-		return getShape();
+		//Include rotation and stroke
+		return getShape(true, true);
 	}
 		
-	protected Shape getShape()
-	{
-		return getFillShape(defaultStroke.getLineWidth());
+	protected Shape getVShape(boolean rotate) {
+		return getShape(rotate, false); //Get the shape without border
 	}
 	
-	protected Shape getFillShape()
+	/**
+	 * Returns the shape that should be drawn
+	 * @parameter rotate whether to take into account rotation or not
+	 * @parameter stroke whether to include the stroke or not
+	 * @return
+	 */
+	protected Shape getShape(boolean rotate, boolean stroke)
 	{
-		return getFillShape(0);
+		if(stroke) {
+			return getShape(rotate, defaultStroke.getLineWidth());			
+		} else {
+			return getShape(rotate, 0);
+		}
 	}
 	
-	protected Shape getFillShape(float sw) {
-		int x = getVLeft();
-		int y = getVTop();
-		int w = getVWidth();
-		int h = getVHeight();
-		int cx = getVCenterX();
-		int cy = getVCenterY();
+	/**
+	 * Returns the shape that should be drawn
+	 * @parameter rotate whether to take into account rotation or not
+	 * @parameter sw the width of the stroke to include
+	 * @return
+	 */
+	protected Shape getShape(boolean rotate, float sw) {
+		double x = getVLeft();
+		double y = getVTop();
+		double w = getVWidth();
+		double h = getVHeight();
+		double cx = getVCenterX();
+		double cy = getVCenterY();
 
 		Shape s = new Rectangle2D.Double(x, y, w + sw, h + sw);
-		AffineTransform t = new AffineTransform();
-		t.rotate(gdata.getRotation(), cx, cy);
+		if(rotate) {
+			AffineTransform t = new AffineTransform();
+			t.rotate(gdata.getRotation(), cx, cy);
+			s = t.createTransformedShape(s);
+		}
 		return s;
 	}
 	

@@ -31,6 +31,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -71,8 +72,8 @@ public class CommonActions implements ApplicationEventListener {
 			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_EDITMODE);
 			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			
-			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
-			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_EDITMODE);
+			va.setGroupEnabled(true, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.setGroupEnabled(((VPathway)e.source).isEditMode(), ViewActions.GROUP_ENABLE_EDITMODE);
 			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_WHEN_SELECTION);
 		}
 	}
@@ -218,6 +219,11 @@ public class CommonActions implements ApplicationEventListener {
 		
 		public void actionPerformed(ActionEvent e) {
 			SwingEngine.getCurrent().exportPathway();
+		}
+		
+		public void setEnabled(boolean newValue) {
+			Logger.log.error(this + " setenabled " + newValue, new Exception());
+			super.setEnabled(newValue);
 		}
 	}
 			

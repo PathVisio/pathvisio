@@ -157,27 +157,30 @@ public class Pathway implements PathwayListener
 		{
 			if(mappInfo != null) {
 				replaceUnique (mappInfo, o);
+				mappInfo = o;
+				return;
 			}
 			mappInfo = o;
-			return;
 		}
 		// There can be only one InfoBox object, so if we're trying to add it, remove the old one.
 		if (o.getObjectType() == ObjectType.INFOBOX && o != infoBox)
 		{
 			if(infoBox != null) {
 				replaceUnique (infoBox, o);
+				infoBox = o;
+				return;
 			}
 			infoBox = o;
-			return;
 		}
 		// There can be zero or one Biopax object, so if we're trying to add it, remove the old one.
 		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax)
 		{
 			if(biopax != null) {
 				replaceUnique (biopax, o);
+				biopax = o;
+				return;
 			}
 			biopax = o;
-			return;
 		}
 		if (o.getParent() == this) return; // trying to re-add the same object
 		forceAddObject(o);

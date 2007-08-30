@@ -17,10 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.Font;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -61,18 +58,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		}
 	}
 	
-	/**
-	 * @deprecated use {@link #getPathwayElement()} instead
-	 */
 	public PathwayElement getGmmlData() {
-		return gdata;
-	}
-	
-	/**
-	 * Gets the model representation (PathwayElement) of this class
-	 * @return
-	 */
-	public PathwayElement getPathwayElement() {
 		return gdata;
 	}
 	
@@ -83,6 +69,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 	
 	protected abstract int getNaturalOrder();
 	
+//	public List getAttributes() { return gdata.getAttributes() ;}
 	boolean listen = true;
 	public void gmmlObjectModified(PathwayEvent e) {	
 		if(listen) markDirty(); // mark everything dirty
@@ -92,94 +79,48 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		return new Area(getVBounds());
 	}
 	
+	
 	/**
 	 * Get the x-coordinate of the center point of this object
 	 * adjusted to the current zoom factor
 
-	 * @return the center x-coordinate
+	 * @return the center x-coordinate as integer
 	 */
-	public double getVCenterX() { return vFromM(gdata.getMCenterX()); }
+	public int getVCenterX() { return (int)(vFromM(gdata.getMCenterX())); }
 	
 	/**
 	 * Get the y-coordinate of the center point of this object
 	 * adjusted to the current zoom factor
 	 * 
-	 * @return the center y-coordinate
+	 * @return the center y-coordinate as integer
 	 */
-	public double getVCenterY() { return vFromM(gdata.getMCenterY()); }
+	public int getVCenterY() { return (int)(vFromM(gdata.getMCenterY())); }
 
-	/**
-	 * Get the x-coordinate of the left side of this object
-	 * adjusted to the current zoom factor, but not taking into
-	 * account rotation
-	 * @note if you want the left side of the rotated object's boundary, 
-	 * use {@link #getVShape(true)}.getX();
-	 * @return
-	 */
-	public double getVLeft() { return vFromM(gdata.getMLeft()); }
+	public int getVLeft() { return (int)(vFromM(gdata.getMLeft())); }
+	public int getVWidth() { return (int)(vFromM(gdata.getMWidth()));  }
+	public int getVTop() { return (int)(vFromM(gdata.getMTop())); }
+	public int getVHeight() { return (int)(vFromM(gdata.getMHeight())); }
 	
 	/**
-	 * Get the width of this object
-	 * adjusted to the current zoom factor, but not taking into
-	 * account rotation
-	 * @note if you want the width of the rotated object's boundary, 
-	 * use {@link #getVShape(true)}.getWidth();
-	 * @return
-	 */
-	public double getVWidth() { return vFromM(gdata.getMWidth());  }
-	
-	/**
-	 * Get the y-coordinate of the top side of this object
-	 * adjusted to the current zoom factor, but not taking into
-	 * account rotation
-	 * @note if you want the top side of the rotated object's boundary, 
-	 * use {@link #getVShape(true)}.getY();
-	 * @return
-	 */
-	public double getVTop() { return vFromM(gdata.getMTop()); }
-	
-	/**
-	 * Get the height of this object
-	 * adjusted to the current zoom factor, but not taking into
-	 * account rotation
-	 * @note if you want the height of the rotated object's boundary, 
-	 * use {@link #getVShape(true)}.getY();
-	 * @return
-	 */
-	public double getVHeight() { return vFromM(gdata.getMHeight()); }
+	 * Get the x-coordinate of the center point of this object
+	 * adjusted to the current zoom factor
 
-	/**
-	 * Get the direct view to model translation of this shape
-	 * @param rotate Whether to take into account rotation or not
-	 * @return
+	 * @return the center x-coordinate as double
 	 */
-	abstract protected Shape getVShape(boolean rotate);
+	public double getVCenterXDouble() { return vFromM(gdata.getMCenterX()); }
 	
 	/**
-	 * Get the rectangle that represents the bounds of the shape's
-	 * direct translation from model to view, without taking into
-	 * account rotation.
-	 * Default implementation is equivalent to <code>getVShape(false).getBounds2D();</code>
+	 * Get the y-coordinate of the center point of this object
+	 * adjusted to the current zoom factor
+	 * 
+	 * @return the center y-coordinate as double
 	 */
-	protected Rectangle2D getVScaleRectangle() {
-		return getVShape(false).getBounds2D();
-	}
-		
-	/**
-	 * Scales the object to the given rectangle, by taking into account
-	 * the rotation (given rectangle will be rotated back before scaling)
-	 * @param r
-	 */
-	protected abstract void setVScaleRectangle(Rectangle2D r);
-	
-	/**
-	 * Default implementation returns the rotated shape.
-	 * Subclasses may override (e.g. to include the stroke)
-	 * @see {@link VPathwayElement#getVOutline()}
-	 */
-	protected Shape getVOutline() {
-		return getVShape(true);
-	}
+	public double getVCenterYDouble() { return vFromM(gdata.getMCenterY()); }
+
+	public double getVLeftDouble() { return vFromM(gdata.getMLeft()); }
+	public double getVWidthDouble() { return vFromM(gdata.getMWidth());  }
+	public double getVTopDouble() { return vFromM(gdata.getMTop()); }
+	public double getVHeightDouble() { return vFromM(gdata.getMHeight()); }
 	
 	/**
 	 * Returns the fontstyle to create a java.awt.Font

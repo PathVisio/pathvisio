@@ -303,17 +303,17 @@ public class SelectionBox extends VPathwayElement
 			return;
 		}
 
-		Rectangle2D vr = null;
+		Rectangle vr = null;
 		for(VPathwayElement o : selection) {
 			if(vr == null) vr = o.getVBounds();
 			else vr.add(o.getVBounds());
 			for(Handle h : o.getHandles()) h.hide();
 		}
 
-		vWidth = vr.getWidth();
-		vHeight = vr.getHeight();
-		vLeft = vr.getX();
-		vTop = vr.getY();
+		vWidth = vr.width;
+		vHeight = vr.height;
+		vLeft = vr.x;
+		vTop = vr.y;
 		setHandleLocation();
 	}
 
@@ -415,8 +415,8 @@ public class SelectionBox extends VPathwayElement
 		
 		if(isSelecting)
 		{   //Selecting, so add containing objects to selection
-			Rectangle2D vr = getVBounds();
-			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.getX(), vr.getY(), vr.getWidth(), vr.getHeight());
+			Rectangle vr = getVBounds();
+			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.x, vr.y, vr.width, vr.height);
 			for(VPathwayElement o : canvas.getDrawingObjects())
 			{
 				if((o == this) || (o instanceof Handle)) continue;

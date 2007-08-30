@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -40,7 +41,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	public static Color selectColor = GlobalPreference.getValueColor(GlobalPreference.COLOR_SELECTED);
 	public static final float HIGHLIGHT_STROKE_WIDTH = 5.0f;
 
-	private Rectangle2D oldrect = null;
+	private Rectangle oldrect = null;
 	
 	private boolean isSelected;
 		
@@ -72,7 +73,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		{
 			canvas.addDirtyRect(oldrect);
 		}
-		Rectangle2D newrect = getVBounds();
+		Rectangle newrect = getVBounds();
 		canvas.addDirtyRect(newrect);
 		oldrect = newrect;
 	}
@@ -219,25 +220,40 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	}
 	
 	/**
-	 * Gets the rectangular bounds of this object
-	 * This method is equivalent to {@link #getVOutline()}.getBounds2D()
-	 * @return
+	 * Get the rectangular boundary of this object
 	 */
-	public Rectangle2D getVBounds()
+	public Rectangle getVBounds()
 	{
-		return getVOutline().getBounds2D();
+		return getVOutline().getBounds();
+	}
+	
+	public double getVLeftRot(){
+		return this.getVBounds().getMinX();
+	}
+	
+	public void setVLeft(){
+		System.out.println("This is in VPathwayElement");
+	}
+	
+	public double getVTopRot(){
+		return this.getVBounds().getMinY();
+	}
+	
+	public double getVWidthRot(){
+		return (this.getVBounds().getMaxX() - this.getVBounds().getMinX());
+	}
+	
+	public double getVHeightRot(){
+		return (this.getVBounds().getMaxY() - this.getVBounds().getMinY());
 	}
 	
 	/**
 	 * Get the outline of this element. The outline is used to check 
-	 * whether a point is contained in this element or not and includes the stroke
-	 * and takes into account rotation.
-	 * Because it includes the stroke, it is not a direct model to view mapping of
-	 * the model outline!
+	 * whether a point is contained in this element or not
 	 * @return the outline of this element
 	 */
 	abstract protected Shape getVOutline();
-	
+
 	/**
 	 * Scales the object to the given rectangle
 	 * @param r

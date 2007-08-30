@@ -49,8 +49,9 @@ public class SelectionBox extends VPathwayElement
 	Handle handleSW;
 	Handle handleNW;
 
-	double vTop, vLeft, vWidth, vHeight;
-
+//	double vTop, vLeft, vWidth, vHeight;
+	double mTop, mLeft, mWidth, mHeight;
+	
 	private static final long serialVersionUID = 1L;
 		
 	private ArrayList<VPathwayElement> selection;
@@ -88,9 +89,9 @@ public class SelectionBox extends VPathwayElement
 		return selection;
 	}
 
-	public Rectangle getVOutline()
+	public Rectangle2D getVOutline()
 	{
-		return new Rectangle ((int)vLeft, (int)vTop, (int)vWidth, (int)vHeight);
+		return new Rectangle2D.Double (vFromM(mLeft), vFromM(mTop), vFromM(mWidth), vFromM(mHeight));
 	}
 	
 	/**
@@ -113,8 +114,9 @@ public class SelectionBox extends VPathwayElement
 			o.select();
 			doAdd(o);
 		}
+		if(!isSelecting) fitToSelection();
+		
 		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_ADDED, o));
-		if(isSelecting) return; //All we have to do if user is dragging selectionbox		 
 	}
 	
 	private void doAdd(VPathwayElement o)
@@ -130,10 +132,11 @@ public class SelectionBox extends VPathwayElement
 		if(o == this) return;
 		selection.remove(o); 
 		o.deselect();
-		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_REMOVED, o));
 		if(!isSelecting) fitToSelection();
+		
+		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_REMOVED, o));
 	}
-	
+		
 	/**
 	 * Get the child object at the given coordinates (relative to canvas)
 	 * @param p
@@ -209,10 +212,10 @@ public class SelectionBox extends VPathwayElement
 			}
 		}
 		
-		vLeft = vStartX;
-		vTop = vStartY;
-		vWidth = 0;
-		vHeight = 0;
+		mLeft = mFromV(vStartX);
+		mTop = mFromV(vStartY);
+		mWidth = 0;
+		mHeight = 0;
 	}
 
 	/**
@@ -225,7 +228,6 @@ public class SelectionBox extends VPathwayElement
 	 */
 	public void startSelecting() {
 		isSelecting = true;
-		setHandleRestriction(false);
 		show();
 	}
 	
@@ -234,38 +236,11 @@ public class SelectionBox extends VPathwayElement
 	 */
 	public void stopSelecting() {
 		isSelecting = false;
-		if(!hasMultipleSelection()) {
-			if(selection.size() == 1) {
-				VPathwayElement passTo = selection.get(0);
-				reset();
-				passTo.select();
-			} else {
-				reset();
-			}
-		} else {
-			select();
-			fitToSelection();
-			setHandleRestriction(true);
-		}
+		fitToSelection();
+		deselect();
+		hide(false);
 	}
-	
-	/**
-	 * Sets movement direction restriction for this object's handles
-	 * @param restrict if true, handle movement is restricted in XY direction,
-	 * else handles can move freely
-	 */
-	private void setHandleRestriction(boolean restrict) {
-		if(restrict) {
-			handleNE.setDirection(Handle.DIRECTION_MINXY);
-			handleSW.setDirection(Handle.DIRECTION_MINXY);
-			handleNW.setDirection(Handle.DIRECTION_XY);
-			handleSE.setDirection(Handle.DIRECTION_XY);
-		} else {
-			for(Handle h : getHandles()) 
-				h.setDirection(Handle.DIRECTION_FREE); 
-		}
-	}
-	
+		
 	public void select()
 	{
 		super.select();
@@ -298,7 +273,6 @@ public class SelectionBox extends VPathwayElement
 		}
 		if(! hasMultipleSelection()) { //Only one object in selection, hide selectionbox
 			VPathwayElement passTo = selection.get(0);
-			hide(false);
 			passTo.select();
 			return;
 		}
@@ -307,25 +281,23 @@ public class SelectionBox extends VPathwayElement
 		for(VPathwayElement o : selection) {
 			if(vr == null) vr = o.getVBounds();
 			else vr.add(o.getVBounds());
-			for(Handle h : o.getHandles()) h.hide();
 		}
 
-		vWidth = vr.getWidth();
-		vHeight = vr.getHeight();
-		vLeft = vr.getX();
-		vTop = vr.getY();
-		setHandleLocation();
+		mWidth = mFromV(vr.getWidth());
+		mHeight = mFromV(vr.getHeight());
+		mLeft = mFromV(vr.getX());
+		mTop = mFromV(vr.getY());
 	}
-
+	
 	/**
 	 * Sets the handles at the correct location;
 	 */
 	protected void setHandleLocation()
 	{
-		handleNE.setMLocation(mFromV(vLeft + vWidth), mFromV(vTop));
-		handleSE.setMLocation(mFromV(vLeft + vWidth), mFromV(vTop + vHeight));
-		handleSW.setMLocation(mFromV(vLeft), mFromV(vTop + vHeight));
-		handleNW.setMLocation(mFromV(vLeft), mFromV(vTop));
+		handleNE.setMLocation(mLeft + mWidth, mTop);
+		handleSE.setMLocation(mLeft + mWidth, mTop + mHeight);
+		handleSW.setMLocation(mLeft, mTop + mHeight);
+		handleNW.setMLocation(mLeft, mTop);
 	}
 			
 	/**
@@ -359,51 +331,48 @@ public class SelectionBox extends VPathwayElement
 	
 	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
-		//Store original size and location before adjusting to handle
-		double vWidthOld = vWidth;
-		double vHeightOld = vHeight;
-		double vLeftOld = vLeft;
-		double vTopOld = vTop;
-
-		double vdx = 0;
-		double vdy = 0;
-		double vdw = 0;
-		double vdh = 0;
+		double mnewx = mFromV(vnewx);
+		double mnewy = mFromV(vnewy);
+		double mdx = 0;
+		double mdy = 0;
+		double mdw = 0;
+		double mdh = 0;
+		
 		if (h == handleNE || h == handleNW)
 		{
-			vdy = vnewy - vTop;
-			vdh = -vdy;
+			mdy = mnewy - mTop;
+			mdh = -mdy;
 		}
 		if (h == handleSE || h == handleSW)
 		{
-			vdy = 0;
-			vdh = vnewy - (vTop + vHeight);
+			mdy = 0;
+			mdh = mnewy - (mTop + mHeight);
 		}
 		if (h == handleSE || h == handleNE)
 		{
-			vdx = 0;
-			vdw = vnewx - (vLeft + vWidth);			
+			mdx = 0;
+			mdw = mnewx - (mLeft + mWidth);			
 		}
 		if (h == handleSW || h == handleNW)
 		{
-			vdx = vnewx - vLeft;
-			vdw = -vdx;
+			mdx = mnewx - mLeft;
+			mdw = -mdx;
 		}
 
 		markDirty();
 
-		vWidth += vdw;
-		vHeight += vdh;
-		vLeft += vdx;
-		vTop += vdy;
+		mWidth += mdw;
+		mHeight += mdh;
+		mLeft += mdx;
+		mTop += mdy;
 
 		Handle opposite = h;
-		if(vWidth < 0)
+		if(mWidth < 0)
 		{
 			opposite = getHorizontalOpposite(opposite);
 			negativeWidth();
 		}
-		if(vHeight < 0)
+		if(mHeight < 0)
 		{
 			opposite = getVerticalOpposite(opposite);
 			negativeHeight();
@@ -424,40 +393,6 @@ public class SelectionBox extends VPathwayElement
 				{ 
 					addToSelection(o);
 				} else if(o.isSelected()) removeFromSelection(o);
-			}
-		}
-		else
-		{
-			//Resizing, so resize child objects too
-			double widthRatio = vWidth / vWidthOld;
-			double heightRatio = vHeight / vHeightOld;
-			//Scale all selected objects in x and y direction, treat points seperately
-			Set<VPoint> points = new HashSet<VPoint>();
-			for(VPathwayElement o : selection)
-			{ 
-				if(o instanceof Line)
-				{
-					points.addAll(((Line)o).getPoints());
-				}
-				else
-				{ 
-					Rectangle2D vr = o.getVScaleRectangle();
-					double newObjectWidth = vr.getWidth() * widthRatio;
-					double newObjectHeight = vr.getHeight() * heightRatio;
-					double objectFromCenterX = (vr.getX() - (vLeftOld + vWidthOld / 2)) * widthRatio;
-					double objectFromCenterY = (vr.getY() - (vTopOld + vHeightOld / 2)) * heightRatio;
- 					o.setVScaleRectangle(
- 						new Rectangle2D.Double(
- 							(vLeft + vWidth / 2) + objectFromCenterX, 
- 							(vTop + vHeight / 2) + objectFromCenterY, 
- 							newObjectWidth, 
- 							newObjectHeight));
-				}
-			}
-			for(VPoint p : points) {
-				double dx = (p.getVX() - (vLeftOld + vWidthOld / 2)) * widthRatio;
-				double dy = (p.getVY() - (vTopOld + vHeightOld / 2)) * heightRatio;
-				p.setVLocation(vLeft + vWidth / 2 + dx, vTop + vHeight / 2 + dy);
 			}
 		}
 	}
@@ -491,10 +426,10 @@ public class SelectionBox extends VPathwayElement
 	 */
 	public void negativeWidth()
 	{
-		double vw = -vWidth;
-		double vsx = vLeft - vw;
-		vWidth = vw;
-		vLeft = vsx;
+		double mw = -mWidth;
+		double msx = mLeft - mw;
+		mWidth = mw;
+		mLeft = msx;
 	}
 
 	/**
@@ -504,16 +439,16 @@ public class SelectionBox extends VPathwayElement
 	 */
 	public void negativeHeight()
 	{		
-		double ht = -vHeight;
-		double sy = vTop - ht;
-		vHeight = ht;
-		vTop = sy;
+		double ht = -mHeight;
+		double sy = mTop - ht;
+		mHeight = ht;
+		mTop = sy;
 	}
 
 	public void vMoveBy(double vdx, double vdy) 
 	{
-		vLeft += vdx;
-		vTop += vdy;
+		mLeft += mFromV(vdx);
+		mTop += mFromV(vdy);
 		setHandleLocation();
 		markDirty();
 
@@ -559,12 +494,12 @@ public class SelectionBox extends VPathwayElement
 			g.setStroke(new BasicStroke(sw, 
 					BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 
 					1, new float[] {1, 2}, 0));
-			g.drawRect((int)vLeft, (int)vTop, (int)vWidth - sw, (int)vHeight - sw);
+			Rectangle2D rect = getVBounds();
+			g.drawRect((int)rect.getX(), (int)rect.getY(), 
+					(int)rect.getWidth() - sw, (int)rect.getHeight() - sw);
 		}
 	}
-		
-	public void adjustToZoom(double factor) { fitToSelection(); }
-	
+			
 	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
 	
 	public void addListener(SelectionListener l)

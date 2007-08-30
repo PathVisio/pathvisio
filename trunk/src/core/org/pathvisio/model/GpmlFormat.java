@@ -910,7 +910,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	static public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException 
 	{		
 		Element e = null;
-		
 		switch (o.getObjectType())
 		{
 			case ObjectType.DATANODE:

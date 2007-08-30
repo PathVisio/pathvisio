@@ -136,10 +136,13 @@ public class WikiPathways implements ApplicationEventListener {
 		//Disable some actions
 		if(!isNew()) allow.remove(actions.importAction);
 		
-		MainPanel mainPanel = new MainPanel(allow);
-		
 		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
 		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
+		
+		allow.add(saveAction);
+		allow.add(discardAction);
+		
+		MainPanel mainPanel = new MainPanel(allow);
 		
 		mainPanel.getToolBar().addSeparator();
 		

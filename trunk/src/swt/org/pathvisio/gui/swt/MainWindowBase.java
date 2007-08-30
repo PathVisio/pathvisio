@@ -28,6 +28,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -59,6 +61,7 @@ import org.pathvisio.view.UndoManagerListener;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.swing.VPathwaySwing;
 import org.pathvisio.visualization.LegendPanel;
 
 /**
@@ -280,6 +283,14 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 					}
 					public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
 				});
+				//Focus may be on combo (text), but not on dropdown button!
+//				zoomCombo.addFocusListener(new FocusAdapter() {
+//					public void focusGained(FocusEvent e) {
+//						System.out.println("Setting focus to pathway" );
+//						swingPathwayComposite.forceFocus();
+//						
+//					}
+//				});
 				return zoomCombo;
 			}
 		});		
@@ -329,18 +340,18 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		toolBarManager.add(alignCenterXAction);
 		toolBarManager.add(alignCenterYAction);
-		//toolBarManager.add(alignLeftAction);
-		//toolBarManager.add(alignRightAction);
-		//toolBarManager.add(alignTopAction);
-		//toolBarManager.add(alignBottomAction);
+		toolBarManager.add(alignLeftAction);
+		toolBarManager.add(alignRightAction);
+		toolBarManager.add(alignTopAction);
+		toolBarManager.add(alignBottomAction);
 		toolBarManager.add(setCommonWidthAction);
 		toolBarManager.add(setCommonHeightAction);
 		toolBarManager.add(stackCenterXAction);
 		toolBarManager.add(stackCenterYAction);
-		//toolBarManager.add(stackLeftAction);
-		//toolBarManager.add(stackRightAction);
-		//toolBarManager.add(stackTopAction);
-		//toolBarManager.add(stackBottomAction);
+		toolBarManager.add(stackLeftAction);
+		toolBarManager.add(stackRightAction);
+		toolBarManager.add(stackTopAction);
+		toolBarManager.add(stackBottomAction);
 
 	
 		alignActionsCI = new ToolBarContributionItem(toolBarManager, "AlignActions");

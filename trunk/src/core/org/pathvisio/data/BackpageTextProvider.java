@@ -133,12 +133,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			//System.err.println("+++++ Thread " + this + " started +++++");
 			performTask();
 			if(this.equals(lastThread) && input != e) {
-				while(threads.activeCount() >= maxThreads) {
-					try {
-						wait(5);
-					} catch (InterruptedException e1) {
-						//ignore
-					}
+				while(threads.activeCount() >= maxThreads && this.equals(lastThread)) {
+						yield();
 				}
 				doQuery();
 			}

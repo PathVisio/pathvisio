@@ -287,6 +287,10 @@ public class SwingEngine {
 		int status = jfc.showDialog(null, "Save");
 		if(status == JFileChooser.APPROVE_OPTION) {
 			File toFile = jfc.getSelectedFile();
+			String fn = toFile.toString();
+			if(!fn.toLowerCase().endsWith(Engine.PATHWAY_FILE_EXTENSION)) {
+				toFile = new File(fn + "." + Engine.PATHWAY_FILE_EXTENSION);
+			}
 			try {
 				if(mayOverwrite(toFile)) {
 					Engine.getCurrent().savePathway(toFile);

@@ -92,20 +92,7 @@ public class Test extends TestCase {
 		
 		biopax.addElementReference(xrefPathway);
 		
-		//Write
-		try {
-			data.writeToXml(new File("testData/test-biopax.xml"), true);
-		} catch(ConverterException e) {
-			fail("Unable to write a pathway with PublicationXRef: " + e.toString());
-		}
-		
-		//Read
-		Pathway newData = new Pathway();
-		try {
-			newData.readFromXml(new File("testData/test-biopax.xml"), true);
-		} catch(ConverterException e) {
-			fail("Unable to read a pathway with PublicationXRef: " + e.toString());
-		}
+		Pathway newData = readWrite(data);
 		
 		biopax = new BiopaxElementManager(newData.getMappInfo());
 		List<PublicationXRef> references = biopax.getPublicationXRefs();
@@ -113,5 +100,43 @@ public class Test extends TestCase {
 		assertTrue("One literature reference, has " + references.size(), references.size() == 1);
 		//With two authors
 		assertTrue("Two authors", references.get(0).getAuthors().size() == 2);
+		
+		//Test added 30-08, because of bug where biopax was lost after
+		//saving/loading/saving sequence
+		//Add another reference to Pathway
+		xrefPathway = new PublicationXRef(biopax.getUniqueID());
+		//Add one title and one author
+		xrefPathway.setTitle("title3");
+		xrefPathway.addAuthor("author3");
+		
+		biopax.addElementReference(xrefPathway);
+		
+		newData = readWrite(newData);
+		
+		biopax = new BiopaxElementManager(newData.getMappInfo());
+		references = biopax.getPublicationXRefs();
+		//There have to be two references now
+		assertTrue("Two literature references, has " + references.size(), references.size() == 2);
+		//With one author
+		assertTrue("One author", references.get(1).getAuthors().size() == 1);
+		
+	}
+	
+	public Pathway readWrite(Pathway data) {
+		//Write
+		try {
+			data.writeToXml(new File("testData/test-biopax.xml"), true);
+		} catch(ConverterException e) {
+			fail("Unable to write a pathway: " + e.toString());
+		}
+		
+		//Read
+		Pathway newData = new Pathway();
+		try {
+			newData.readFromXml(new File("testData/test-biopax.xml"), true);
+		} catch(ConverterException e) {
+			fail("Unable to read a pathway: " + e.toString());
+		}
+		return newData;
 	}
 }

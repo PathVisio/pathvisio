@@ -132,8 +132,7 @@ public class GeneProduct extends GraphicsShape
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
 			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
-			Rectangle2D r = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
-			g.draw(r);
+			g.drawRect(getVLeft(), getVTop(), getVWidth(), getVHeight());
 		}
 	}
 }

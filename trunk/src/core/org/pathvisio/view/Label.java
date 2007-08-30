@@ -129,16 +129,16 @@ public class Label extends GraphicsShape
 		Rectangle2D tb = null;
 		if(g != null) {
 			 tb = g.getFontMetrics(getVFont()).getStringBounds(getLabelText(), g);
-			 tb.setRect(getVLeft() + tb.getX(), getVTop() + tb.getY(), tb.getWidth(), tb.getHeight());
+			 tb.setRect(getVLeftDouble() + tb.getX(), getVTopDouble() + tb.getY(), tb.getWidth(), tb.getHeight());
 		} else { //No graphics context, we can only guess...
-			tb = getBoxBounds(true);
+			tb = getBoxBounds(defaultStroke.getLineWidth());
 		}
 		return tb;
 	}
 	
-	protected Rectangle2D getBoxBounds(boolean stroke)
+	protected Rectangle2D getBoxBounds(float sw)
 	{
-		return getVShape(stroke).getBounds2D();
+		return new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble() + sw, getVHeightDouble() + sw);
 	}
 	
 	protected Dimension computeTextSize(Graphics2D g) {
@@ -194,17 +194,17 @@ public class Label extends GraphicsShape
 		Font f = getVFont();
 		g.setFont(f);
 		
-		Rectangle area = getBoxBounds(true).getBounds();
+		Rectangle area = getBoxBounds(defaultStroke.getLineWidth()).getBounds();
 
 		Shape outline = null;
 		switch (gdata.getOutline())
 		{
 		case RECTANGLE:
-			outline = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
+			outline = new Rectangle2D.Double(getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble());
 			break;
 		case ROUNDED_RECTANGLE:
 			outline = new RoundRectangle2D.Double(
-				getVLeft(), getVTop(), getVWidth(), getVHeight(),
+				getVLeftDouble(), getVTopDouble(), getVWidthDouble(), getVHeightDouble(),
 				vFromM (M_ARCSIZE), vFromM (M_ARCSIZE));
 			break;
 		case NONE:
@@ -230,8 +230,7 @@ public class Label extends GraphicsShape
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
 			g.setStroke (new BasicStroke());
-			Rectangle2D r = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
-			g.fill(r);
+			g.fillRect(getVLeft(), getVTop(), getVWidth(), getVHeight());
 		}
 
 	}
@@ -251,9 +250,10 @@ public class Label extends GraphicsShape
 	 */
 	protected Shape getVOutline()
 	{
-		Rectangle2D bb = getBoxBounds(true);
+		Rectangle2D bb = getBoxBounds(defaultStroke.getLineWidth());
 		Rectangle2D tb = getTextBounds(g2d);
 		tb.add(bb);
 		return tb;
 	}
+	
 }

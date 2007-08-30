@@ -128,13 +128,4 @@ public class Group extends Graphics {
 		return rect;
 	}
 
-	protected Shape getVShape(boolean rotate) {
-		// TODO Auto-generated method stub
-		return new Rectangle();
-	}
-	
-	protected void setVScaleRectangle(Rectangle2D r) {
-		// TODO Auto-generated method stub
-		
-	}
 }

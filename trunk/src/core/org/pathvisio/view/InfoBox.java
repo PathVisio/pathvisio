@@ -110,20 +110,17 @@ public class InfoBox extends Graphics {
 		sizeY = shift;
 	}
 
-	protected Shape getVShape(boolean rotate) {
-		double vLeft = vFromM(gdata.getMLeft());
-		double vTop = vFromM(gdata.getMTop());
-		double vW = sizeX;
-		double vH = sizeY;
+	protected Shape getVOutline() {
+		int vLeft = (int)vFromM(gdata.getMLeft());
+		int vTop = (int)vFromM(gdata.getMTop());
+		int vW = sizeX;
+		int vH = sizeY;
 		if(vW == 1 && vH == 1) {
 			vW = INITIAL_SIZE;
 			vH = INITIAL_SIZE;
 		}
-		return new Rectangle2D.Double(vLeft, vTop, vW, vH);
+		return new Rectangle(vLeft, vTop, vW, vH);
 	}
-	
-	protected void setVScaleRectangle(Rectangle2D r) {
-		//Do nothing, can't resize infobox
-	}
+
 }
  

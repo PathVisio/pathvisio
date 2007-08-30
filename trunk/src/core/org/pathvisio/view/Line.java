@@ -313,9 +313,14 @@ public class Line extends Graphics
 		getStart().setVLocation(vx1, vy1);
 		getEnd().setVLocation(vx2, vy2);
 	}
-		
-	protected void setVScaleRectangle(Rectangle2D r) {
+
+	public void setVScaleRectangle(Rectangle2D r) {
 		setVLine(r.getX(), r.getY(), r.getX() + r.getWidth(), r.getY() + r.getHeight());
+	}
+	
+	protected Rectangle2D getVScaleRectangle() {
+		return new Rectangle2D.Double(getVStartXDouble(), getVStartYDouble(), getVEndXDouble()
+				- getVStartXDouble(), getVEndYDouble() - getVStartYDouble());
 	}
 	
 	public Handle[] getHandles()
@@ -337,50 +342,46 @@ public class Line extends Graphics
 		return points.get(points.size() - 1);
 	}
 	
-	public double getVCenterX()
+	public int getVCenterX()
 	{
 		double start = gdata.getMStart().getX();
 		double end = gdata.getMEnd().getX();
-		return vFromM(start + (end - start) / 2);
+		return (int)vFromM(start + (end - start) / 2);
 	}
 	
-	public double getVCenterY()
+	public int getVCenterY()
 	{
 		double start = gdata.getMStart().getY();
 		double end = gdata.getMEnd().getY();
-		return vFromM(start + (end - start) / 2);
+		return (int)vFromM(start + (end - start) / 2);
 	}
 	
-	public double getVLeft()
+	public int getVLeft()
 	{
 		double start = gdata.getMStart().getX();
 		double end = gdata.getMEnd().getX();
-		return vFromM(Math.min(start, end));
+		return (int)vFromM(Math.min(start, end));
 	}
 	
-	public double getVWidth()
+	public int getVWidth()
 	{
 		double start = gdata.getMStart().getX();
 		double end = gdata.getMEnd().getX();
-		return vFromM(Math.abs(start-end));
+		return (int)vFromM(Math.abs(start-end));
 	}
 	
-	public double getVHeight()
+	public int getVHeight()
 	{
 		double start = gdata.getMStart().getY();
 		double end = gdata.getMEnd().getY();
-		return vFromM(Math.abs(start-end));
+		return (int)vFromM(Math.abs(start-end));
 	}	
 	
-	public double getVTop()
+	public int getVTop()
 	{
 		double start = gdata.getMStart().getY();
 		double end = gdata.getMEnd().getY();
-		return vFromM(Math.min(start, end));
-	}
-	
-	protected Shape getVShape(boolean rotate) {
-		return new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
+		return (int)vFromM(Math.min(start, end));
 	}
 	
 	protected void vMoveBy(double vdx, double vdy)
@@ -424,31 +425,14 @@ public class Line extends Graphics
 		}
 	}
 	
-	/**
-	 * Returns the x-coordinate of the start point of this line, adjusted to the
-	 * current zoom factor
-	 * @return
-	 */
-	protected double getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
-	
-	/**
-	 * Returns the y-coordinate of the start point of this line, adjusted to the
-	 * current zoom factor
-	 * @return
-	 */
-	protected double getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
-	
-	/**
-	 * Returns the x-coordinate of the end point of this line, adjusted to the
-	 * current zoom factor
-	 * @return
-	 */
-	protected double getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
-	
-	/**
-	 * Returns the y-coordinate of the end point of this line, adjusted to the
-	 * current zoom factor
-	 * @return
-	 */
-	protected double getVEndY() { return (int)(vFromM(gdata.getMEndY())); }
+	protected int getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
+	protected int getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
+	protected int getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
+	protected int getVEndY() { return (int)(vFromM(gdata.getMEndY())); }
+
+	protected double getVStartXDouble() { return vFromM(gdata.getMStartX()); }
+	protected double getVStartYDouble() { return vFromM(gdata.getMStartY()); }
+	protected double getVEndXDouble() { return vFromM(gdata.getMEndX()); }
+	protected double getVEndYDouble() { return vFromM(gdata.getMEndY()); }
+
 }

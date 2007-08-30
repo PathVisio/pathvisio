@@ -329,18 +329,18 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		toolBarManager.add(alignCenterXAction);
 		toolBarManager.add(alignCenterYAction);
-		toolBarManager.add(alignLeftAction);
-		toolBarManager.add(alignRightAction);
-		toolBarManager.add(alignTopAction);
-		toolBarManager.add(alignBottomAction);
+		//toolBarManager.add(alignLeftAction);
+		//toolBarManager.add(alignRightAction);
+		//toolBarManager.add(alignTopAction);
+		//toolBarManager.add(alignBottomAction);
 		toolBarManager.add(setCommonWidthAction);
 		toolBarManager.add(setCommonHeightAction);
 		toolBarManager.add(stackCenterXAction);
 		toolBarManager.add(stackCenterYAction);
-		toolBarManager.add(stackLeftAction);
-		toolBarManager.add(stackRightAction);
-		toolBarManager.add(stackTopAction);
-		toolBarManager.add(stackBottomAction);
+		//toolBarManager.add(stackLeftAction);
+		//toolBarManager.add(stackRightAction);
+		//toolBarManager.add(stackTopAction);
+		//toolBarManager.add(stackBottomAction);
 
 	
 		alignActionsCI = new ToolBarContributionItem(toolBarManager, "AlignActions");

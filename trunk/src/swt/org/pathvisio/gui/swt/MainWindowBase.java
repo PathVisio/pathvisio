@@ -483,6 +483,9 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				public void run() {
 					showLegend(true);
 					showEditActionsCI(false);
+					showAlignActionsCI(false);
+					// show backpage table in sidebar
+					rightPanel.getTabFolder().setSelection(0);
 				}
 			});
 			break;
@@ -491,6 +494,9 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				public void run() {
 					showLegend(false);
 					showEditActionsCI(true);
+					showAlignActionsCI(true);
+					// show property table in sidebar
+					rightPanel.getTabFolder().setSelection(1);
 				}
 			});
 			break;

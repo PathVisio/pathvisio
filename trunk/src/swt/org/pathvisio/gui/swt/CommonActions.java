@@ -388,19 +388,15 @@ public class CommonActions
 								"You're trying to edit a Read-only file.\n" +
 						"When you want to save your changes, you have to save to a different file.");
 					}
-					//Switch to edit mode: show edit toolbar, show property table in sidebar
+					//Switch to edit mode:
+					// this results in an event that causes UI to change automatically
 					drawing.setEditMode(true);
-					window.showEditActionsCI(true);
-					window.showAlignActionsCI(true);
-					window.rightPanel.getTabFolder().setSelection(1);
 				}
 				else
 				{
 					//Switch to view mode: hide edit toolbar, show backpage browser in sidebar
+					// this results in an event that causes UI to change automatically
 					drawing.setEditMode(false);
-					window.showEditActionsCI(false);
-					window.showAlignActionsCI(false);
-					window.rightPanel.getTabFolder().setSelection(0);
 				}
 			}
 			else //No gpml pathway loaded, deselect action and do nothing

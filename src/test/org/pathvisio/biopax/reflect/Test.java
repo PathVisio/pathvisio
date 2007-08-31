@@ -117,8 +117,9 @@ public class Test extends TestCase {
 		references = biopax.getPublicationXRefs();
 		//There have to be two references now
 		assertTrue("Two literature references, has " + references.size(), references.size() == 2);
-		//With one author
-		assertTrue("One author", references.get(1).getAuthors().size() == 1);
+		//Where the one we last added has one author
+		PublicationXRef xref = (PublicationXRef)biopax.getElementById(xrefPathway.getId());
+		assertTrue("One author", xref.getAuthors().size() == 1);
 		
 	}
 	

@@ -126,7 +126,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	/**
 	 * Clear the list of objects of which the properties are displayed
 	 */
-	public void clearGmmlDataObjects() {
+	private void clearGmmlDataObjects() {
 		for(PathwayElement o : dataObjects) o.removeListener(this);
 		dataObjects.clear();
 		refresh();
@@ -510,6 +510,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				}
 				break;
 			}
+			Engine.getCurrent().getActiveVPathway().getUndoManager().newAction ("Change " + key + " property");
 			for(PathwayElement o : dataObjects) {
 				o.setProperty(key, value);
 			}

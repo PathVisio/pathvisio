@@ -217,10 +217,10 @@ public class VPathway implements PathwayListener
 
 	/**
 	 * used by undo manager.
-	 */
-	
+	 */	
 	public void replacePathway(Pathway originalState)
 	{
+		clearSelection();
 		drawingObjects = new ArrayList<VPathwayElement>();
 		selection = new SelectionBox(this);
 		pressedObject = null;

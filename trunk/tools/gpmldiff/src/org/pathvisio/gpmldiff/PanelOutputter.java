@@ -18,6 +18,7 @@ package org.pathvisio.gpmldiff;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathwayElement;
@@ -138,12 +139,12 @@ class PanelOutputter extends DiffOutputter
 		VPathwayElement veltOld = findElt (curOldElt, vpwy[PWY_OLD]);
 		assert (veltOld != null);
 		veltOld.highlight (Color.YELLOW);
-		Rectangle r1 = veltOld.getVBounds();
+		Rectangle2D r1 = veltOld.getVBounds();
 		
 		VPathwayElement veltNew = findElt (curNewElt, vpwy[PWY_NEW]);
 		assert (veltNew != null);
 		veltNew.highlight (Color.YELLOW);
-		Rectangle r2 = veltNew.getVBounds();
+		Rectangle2D r2 = veltNew.getVBounds();
 
 		ModData mod = new ModData (
 			(int)vpwy[PWY_OLD].mFromV(r1.getX() + r1.getWidth() / 2),

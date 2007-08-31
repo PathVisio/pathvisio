@@ -48,7 +48,8 @@ class PathwayInfo {
 	private $parser;
 	private $pathway;
 	private $gpml;
-	
+	private $pubXRefs;
+
 	function __construct($parser, $pathway) {
 		$this->parser = $parser;
 		$this->pathway = $pathway;
@@ -69,6 +70,93 @@ class PathwayInfo {
 		return $output;
 	}
 	
+	function findPublicationXRefs() {
+		$this->pubXRefs = array();
+		
+		$this->loadGpml();
+		$gpml = $this->gpml;
+
+		//Format literature references
+		if(!$gpml->Biopax) return;
+
+		$bpChildren = $gpml->Biopax[0]->children('bp', true);
+		$xrefs = $bpChildren->PublicationXRef;
+
+		foreach($xrefs as $xref) {
+			//Get the rdf:id attribute
+			$attr = $xref->attributes('rdf', true);
+			$id = $attr['id'] ? $attr['id'] : $i++;
+			$this->pubXRefs[(string)$id] = $xref;
+		}
+	}
+
+	function literature() {
+		$this->loadGpml();
+		$this->findPublicationXRefs();
+		$gpml = $this->gpml;
+
+		if(!$gpml->Biopax) return "";
+
+		//Format literature references
+		$out = "<biblio>";
+		foreach(array_keys($this->pubXRefs) as $id) {
+			$xref = $this->pubXRefs[$id];
+
+			$authors = $title = $source = $year = '';
+
+			if((string)$xref->ID && (strtolower($xref->DB) == 'pubmed')) {
+				//We have a pubmed id, use biblio extension
+				$out .= "#$id $xref pmid=" . $xref->ID . "\n";
+			} else {
+				//Format the citation ourselves
+				//Authors, title, source, year
+				foreach($xref->AUTHORS as $a) {
+					$authors .= "$a, ";
+				}
+
+				if($authors) $authors = substr($authors, 0, -2) . "; ";
+				if($xref->TITLE) $title = $xref->TITLE . "; ";
+				if($xref->SOURCE) $source = $xref->SOURCE;
+				if($xref->YEAR) $year = ", " . $xref->YEAR;
+				$out .= "#$id $authors$title$source$year\n";
+			}
+		}
+		$out .= "</biblio>";
+
+		//Create list with pathway elements that refer to literature
+		//Go over BiopaxRefs in pathway element
+		$refList = $this->reflist($gpml);
+
+		//Go over BiopaxRefs in children
+		foreach($gpml->children() as $child) {
+			$refList .= $this->reflist($child);
+		}
+		if($out) {
+			$out = "<B>References</B><BR>\n$out\n<BR>";
+		}
+		if($refList) {
+			$refList = "<B>Elements literature references</B><BR>\n$refList\n<BR>";
+		}
+		return $out . $refList;
+	}
+
+	function reflist($elm) {
+		$cite = "<cite>";
+		foreach($elm->BiopaxRef as $ref) {
+			$ref = (string)$ref;
+			if($this->pubXRefs[$ref]) { //Only refs that are PublicationXRefs
+				$cite .= "$ref, ";
+			}
+		}
+		if(!($cite == "<cite>")) {
+			$cite = substr($cite, 0, -2) . "</cite>";
+			$label = $elm['TextLabel'];
+			if($label) $label = " <I>($label)</I>) ";
+			$cite = "\n* " . $elm->getName() . $label . " $cite";
+			return $cite;
+		}
+	}
+
 	function datanodes() {
 		$this->loadGpml();
 					$table = <<<TABLE
@@ -100,8 +188,10 @@ TABLE;
 	}
 	
 	private function loadGpml() {
-		$gpmlFile = $this->pathway->getFileLocation(FILETYPE_GPML);
-		$this->gpml = simplexml_load_file($gpmlFile);
+		if(!$this->gpml) {
+			$gpmlFile = $this->pathway->getFileLocation(FILETYPE_GPML);
+			$this->gpml = simplexml_load_file($gpmlFile);
+		}
 	}
 }
 

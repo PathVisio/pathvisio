@@ -108,9 +108,7 @@ public class MainWindow extends MainWindowBase
 		createAlignActionsCI();
 		createViewActionsCI();
 		
-		CoolBarManager coolBarManager = new CoolBarManager(style);
-		coolBarManager.setLockLayout(true);
-		
+		CoolBarManager coolBarManager = new CoolBarManager(style);		
 		coolBarManager.add(commonActionsCI);
 		coolBarManager.add(viewActionsCI);
 		return coolBarManager;

@@ -67,6 +67,7 @@ import org.pathvisio.visualization.LegendPanel;
  * without having too much duplicate code. Descendants should at least provide
  * a constructor, and override createCoolBarManager and createMenuManager.
  */
+//TODO: we mix coolbar and toolbar in this class. Evaluate and select one of the two for our needs.
 public abstract class MainWindowBase extends ApplicationWindow implements 
 	ApplicationEventListener, ExpressionDataListener, VPathwayListener, UndoManagerListener
 															   
@@ -300,6 +301,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		}
 //		showVisualizationCI(!show); //Visualizations can show up in edit mode...
 		getCoolBarManager().update(true);
+		getShell().layout();
 	}
 
 	/**
@@ -316,6 +318,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		}
 //		showVisualizationCI(!show); //Visualizations can show up in edit mode...
 		getCoolBarManager().update(true);
+		//getContents().redraw();
+		getShell().layout();
 	}
 	
 	public abstract boolean editOnOpen();
@@ -383,7 +387,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		setStatus("Using Gene Database: '" + GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
 
 		SwtEngine.getCurrent().updateTitle();
-		
+
+		getCoolBarManager().setLockLayout(true);
 		return parent;
 	}
 	
@@ -522,7 +527,6 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	
 	public void undoManagerEvent (UndoManagerEvent e)
 	{
-		//System.out.println ("Undo Manager event received! " + e.getMessage());
 		undoAction.setText ("&Undo: " + e.getMessage() + "@Ctrl+Z");
 	}
 	

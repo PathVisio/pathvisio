@@ -128,6 +128,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		requestFocus();
 		child.mouseEnter(new SwingMouseEvent(e));
 	}
 
@@ -137,6 +138,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void mousePressed(MouseEvent e) {
+		requestFocus();
 		child.mouseDown(new SwingMouseEvent(e));
 	}
 

@@ -142,8 +142,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public void selectionEvent(SelectionEvent e) {
 		VPathway vp = ((SelectionBox)e.getSource()).getDrawing();
 		boolean enabled = vp.getSelectedGraphics().size() > 0;
-		setGroupEnabled(enabled, GROUP_ENABLE_WHEN_SELECTION);
 		setGroupEnabled(vp.isEditMode(), GROUP_ENABLE_EDITMODE);
+		setGroupEnabled(enabled, GROUP_ENABLE_WHEN_SELECTION);
 	}
 	
 //	private abstract class EnableOnSelectAction extends AbstractAction implements SelectionListener {

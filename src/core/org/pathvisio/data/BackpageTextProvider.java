@@ -16,7 +16,6 @@
 //
 package org.pathvisio.data;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,14 +54,19 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		if(input != null) input.removeListener(this);
 		
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
+			input = null;
 			setText(Gdb.getBackpageHTML(null, null, null));
 		} else {
 			input = e;
+			input.addListener(this);
 			doQuery();
 		}
 	}
 
 	private void doQuery() {
+		currId = input.getGeneID();
+		currCode = input.getSystemCode();
+		
 		//System.err.println("\tSetting input " + e + " using " + threads);
 		//First check if the number of running threads is not too high
 		//(may happen when many SelectionEvent follow very fast)
@@ -86,7 +90,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			for(int i = e.selection.size() - 1; i > -1; i--) {
 				VPathwayElement o = e.selection.get(i);
 				if(o instanceof GeneProduct) {
-					setInput(((GeneProduct)o).getGmmlData());
+					setInput(((GeneProduct)o).getPathwayElement());
 					break; //Selects the last, TODO: use setGmmlDataObjects
 				}
 			}
@@ -105,15 +109,18 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 	}
 	
+	String currId;
+	String currCode;
+	
 	public void gmmlObjectModified(PathwayEvent e) {
 		PathwayElement pe = e.getAffectedData();
 		if(input != null) {
-			String oId = input.getGeneID();
 			String nId = pe.getGeneID();
 			String nC = input.getSystemCode();
-			String oC = input.getSystemCode();
-			if(	oId != null && !oId.equals(nId) ||
-				oC != null && !oC.equals(nC)) {
+			System.out.println("old: " + currId + ", " + currCode);
+			System.out.println("new: " + nId + ", " + nC);
+			if(	currId != null && !currId.equals(nId) ||
+					currCode != null && !currCode.equals(nC)) {
 				doQuery();
 			}				
 		}
@@ -134,6 +141,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 				performTask();
 				lastThread = null;
 			}
+//			System.err.println("+++++ Thread " + this + " ended +++++");
 		}
 		void performTask() {
 			String txt = Gdb.getBackpageHTML(

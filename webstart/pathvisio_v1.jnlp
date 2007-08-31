@@ -11,14 +11,12 @@
 		 <j2se version="1.5+"/>
 		 <jar href="pathvisio_v1.jar"/>
 		 <jar href="lib/resources.jar"/>
-		 <jar href="lib/hsqldb.jar"/>
 		 <jar href="lib/derby.jar"/>
 		 <jar href="lib/BrowserLauncher.jar"/>
 		 <jar href="lib/jdom.jar"/>
 		 <jar href="lib/org.eclipse.core.commands.jar"/>
 		 <jar href="lib/org.eclipse.equinox.common.jar"/>
 		 <jar href="lib/org.eclipse.jface.jar"/>
-		 <jar href="lib/org.eclipse.equinox.supplement.jar"/>
 		 <jar href="lib/batik/batik-awt-util.jar"/>
 		 <jar href="lib/batik/batik-bridge.jar"/>
 		 <jar href="lib/batik/batik-css.jar"/>

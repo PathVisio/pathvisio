@@ -264,12 +264,12 @@ class SvgOutputter extends DiffOutputter
 		VPathwayElement velt = findElt (curOldElt, vpwy[PWY_OLD]);
 		assert (velt != null);
 		velt.highlight (Color.YELLOW);
-		Rectangle r1 = velt.getVBounds();
+		Rectangle2D r1 = velt.getVBounds();
 		
 		velt = findElt (curNewElt, vpwy[PWY_NEW]);
 		assert (velt != null);
 		velt.highlight (Color.YELLOW);
-		Rectangle r2 = velt.getVBounds();
+		Rectangle2D r2 = velt.getVBounds();
 
 		String completeHint = "";
 		for (String hint : curHint)

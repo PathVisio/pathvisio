@@ -114,7 +114,7 @@ public class PublicationXRef extends BiopaxElement {
 		clearAuthors();
 		String[] authors = parseAuthorString(authorString);
 		for(String a : authors) {
-			addAuthor(a.trim());
+			if(a != null && a.length() > 0) addAuthor(a.trim());
 		}
 	}
 		

@@ -25,13 +25,31 @@ public class UndoManager
 {
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
-	void newAction (UndoAction act)
+	/**
+	   Insert a new action into the Undo Queue based on an UndoAction
+	   object that already contains a copy of the original state of
+	   the pathway. This way you can actually record the action after
+	   the pathway has already modified, useful for collapsing
+	   multiple drag events into one action.
+	   
+	   @param act: UndoAction containing pre-recorded pathway state
+	   and description of the action.
+	 */
+	public void newAction (UndoAction act)
 	{		
 		undoList.add (act);
 		fireUndoManagerEvent (new UndoManagerEvent (act.getMessage()));
 	}
 
-	void newAction (String desc)
+	/**
+	   Insert a new action into the Undo Queue. This method
+	   will make a copy of the current state of the pathway, so call
+	   this method before the action actually takes place.
+	   
+	   @param desc: description of the change, for display in the edit
+	   menu.
+	 */
+	public void newAction (String desc)
 	{
 		Pathway pwy = Engine.getCurrent().getActivePathway();
 		if(pwy != null) {

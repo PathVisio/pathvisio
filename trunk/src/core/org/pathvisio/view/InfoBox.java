@@ -88,12 +88,20 @@ public class InfoBox extends Graphics {
 				{"Last modified: ", gdata.getLastModified()},
 				{"Organism: ", gdata.getOrganism()},
 				{"Data Source: ", gdata.getDataSource()}};
+
+
 		int shift = 0;
 		int vLeft = (int)vFromM(gdata.getMLeft());
 		int vTop = (int)vFromM(gdata.getMTop());
+
+		boolean drawnCorrectly = false;
+		
+		int newSizeX = sizeX;
+		int newSizeY = sizeY;
 		
 		FontRenderContext frc = g.getFontRenderContext();
-		for(String[] s : text) {
+		for(String[] s : text)
+		{
 			if(s[1] == null || s[1].equals("")) continue; //Skip empty labels
 			TextLayout tl0 = new TextLayout(s[0], fb, frc);
 			TextLayout tl1 = new TextLayout(s[1], f, frc);
@@ -103,11 +111,26 @@ public class InfoBox extends Graphics {
 			g.setFont(fb);
 			tl0.draw(g, vLeft, vTop + shift);
 			g.setFont(f);
+			
 			tl1.draw(g, vLeft + (int)b0.getWidth() + H_SPACING, vTop + shift);
 			
-			sizeX = Math.max(sizeX, (int)b0.getWidth() + (int)b1.getWidth() + H_SPACING);
+			// add 10 for safety
+			newSizeX = Math.max(
+				newSizeX,
+				(int)b0.getWidth() + (int)b1.getWidth() + H_SPACING + 10);
 		}
-		sizeY = shift;
+		newSizeY = shift + 10; // add 10 for safety
+		
+		// if the size was incorrect, mark dirty and draw again.
+		// note: we can't draw again right away because the clip rect
+		// is set to a too small region.
+		if (newSizeX != sizeX || newSizeY != sizeY)
+		{
+			sizeX = newSizeX;
+			sizeY = newSizeY;
+			markDirty();
+			canvas.redrawDirtyRect();
+		}
 	}
 
 	protected Shape getVShape(boolean rotate) {

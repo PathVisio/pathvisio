@@ -58,6 +58,10 @@ public class BiopaxElementManager {
 		}
 	}
 	
+	public BiopaxElement getElementById(String id) {
+		return biopax.get(id);
+	}
+	
 	public List<BiopaxElement> getReferences() {
 		List<String> refs = pwElement.getBiopaxRefs();
 		List<BiopaxElement> bpElements = new ArrayList<BiopaxElement>();

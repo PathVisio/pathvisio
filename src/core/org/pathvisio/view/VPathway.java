@@ -217,7 +217,7 @@ public class VPathway implements PathwayListener
 
 	/**
 	 * used by undo manager.
-	 */	
+	 */
 	public void replacePathway(Pathway originalState)
 	{
 		clearSelection();
@@ -229,7 +229,7 @@ public class VPathway implements PathwayListener
 		pointsMtoV = new HashMap<MPoint, VPoint>();
 		fromGmmlData(originalState);
 	}
-	
+
 	/**
 	 * Maps the contents of a pathway to this VPathway
 	 */
@@ -289,8 +289,9 @@ public class VPathway implements PathwayListener
 		else
 			dirtyRect.add(r);
 	}
-	
-	public void addDirtyRect(Rectangle2D r) {
+
+	public void addDirtyRect(Rectangle2D r)
+	{
 		addDirtyRect(r.getBounds());
 	}
 
@@ -312,7 +313,7 @@ public class VPathway implements PathwayListener
 	public void setMappInfo(InfoBox mappInfo)
 	{
 		this.infoBox = mappInfo;
-		infoBox.getGmmlData().addListener(this);
+		infoBox.getPathwayElement().addListener(this);
 	}
 
 	/**
@@ -355,7 +356,7 @@ public class VPathway implements PathwayListener
 			if (ve instanceof Graphics)
 			{
 				Graphics ge = (Graphics) ve;
-				if (ge.getGmmlData() == e)
+				if (ge.getPathwayElement() == e)
 					return ge;
 			}
 		}
@@ -546,8 +547,7 @@ public class VPathway implements PathwayListener
 				// this can be removed when we implemented poly lines
 				// p.link((VPoint)o);
 				break;
-			}
-			else if (o instanceof Graphics && !(o instanceof Line))
+			} else if (o instanceof Graphics && !(o instanceof Line))
 			{
 				x = o;
 				p.link((Graphics) o);
@@ -599,62 +599,62 @@ public class VPathway implements PathwayListener
 			}
 			redrawDirtyRect();
 		}
-//		// Reset hover timer
-//		if (hoverTimer == null) {
-//			hoverTimer = new HoverTimer();
-//			hoverTimer.start();
-//		}
-//		hoverTimer.reset(ve);
+		// // Reset hover timer
+		// if (hoverTimer == null) {
+		// hoverTimer = new HoverTimer();
+		// hoverTimer.start();
+		// }
+		// hoverTimer.reset(ve);
 	}
-	
+
 	// Disable for 1.0 release (no tooltips needed)
 	// TODO: stop this thread on closing VPathway
 	// TODO: convert pathway elements to Component and get
 	// tooltips for free!
-//	HoverTimer hoverTimer;
-//
-//	class HoverTimer extends Thread
-//	{
-//		volatile long timer = 0;
-//
-//		MouseEvent ve;
-//
-//		volatile boolean interrupted;
-//		volatile boolean hovered;
-//		
-//		public synchronized void reset(MouseEvent ve) {
-//			this.ve = ve;
-//			timer = System.currentTimeMillis();
-//			hovered = false;
-//		}
-//
-//		public void run()
-//		{
-//			timer = System.currentTimeMillis();
-//			while (!isInterrupted())
-//			{
-//				try
-//				{
-//					Thread.sleep(5);
-//				} catch (InterruptedException e)
-//				{
-//					return;
-//				}
-//				if(System.currentTimeMillis() - timer > 750) {
-//					doHover();
-//				}
-//			}
-//		};
-//
-//		void doHover()
-//		{
-//			if(!hovered) {
-//				fireVPathwayEvent(new VPathwayEvent(VPathway.this, getObjectsAt(ve
-//						.getLocation()), ve, VPathwayEvent.ELEMENT_HOVER));
-//				hovered = true;
-//			}
-//		}
-//	}
+	// HoverTimer hoverTimer;
+	//
+	// class HoverTimer extends Thread
+	// {
+	// volatile long timer = 0;
+	//
+	// MouseEvent ve;
+	//
+	// volatile boolean interrupted;
+	// volatile boolean hovered;
+	//		
+	// public synchronized void reset(MouseEvent ve) {
+	// this.ve = ve;
+	// timer = System.currentTimeMillis();
+	// hovered = false;
+	// }
+	//
+	// public void run()
+	// {
+	// timer = System.currentTimeMillis();
+	// while (!isInterrupted())
+	// {
+	// try
+	// {
+	// Thread.sleep(5);
+	// } catch (InterruptedException e)
+	// {
+	// return;
+	// }
+	// if(System.currentTimeMillis() - timer > 750) {
+	// doHover();
+	// }
+	// }
+	// };
+	//
+	// void doHover()
+	// {
+	// if(!hovered) {
+	// fireVPathwayEvent(new VPathwayEvent(VPathway.this, getObjectsAt(ve
+	// .getLocation()), ve, VPathwayEvent.ELEMENT_HOVER));
+	// hovered = true;
+	// }
+	// }
+	// }
 
 	/**
 	 * Handles movement of objects with the arrow keys
@@ -664,41 +664,43 @@ public class VPathway implements PathwayListener
 	public void moveByKey(KeyStroke ks, int increment)
 	{
 		List<Graphics> selectedGraphics = getSelectedGraphics();
-			
-		if (selectedGraphics.size() > 0){
-		
-		switch (ks.getKeyCode()){
-		case 37:
-			undoManager.newAction ("Move object");
-			for (Graphics g : selectedGraphics)
+
+		if (selectedGraphics.size() > 0)
+		{
+
+			switch (ks.getKeyCode())
 			{
-				g.vMoveBy(-increment, 0);
+			case 37:
+				undoManager.newAction("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(-increment, 0);
+				}
+				break;
+			case 39:
+				undoManager.newAction("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(increment, 0);
+				}
+				break;
+			case 38:
+				undoManager.newAction("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(0, -increment);
+				}
+				break;
+			case 40:
+				undoManager.newAction("Move object");
+				for (Graphics g : selectedGraphics)
+				{
+					g.vMoveBy(0, increment);
+				}
 			}
-		break;
-		case 39:
-			undoManager.newAction ("Move object");
-			for (Graphics g : selectedGraphics)
-			{
-				g.vMoveBy(increment, 0);
-			}
-		break;
-		case 38:
-			undoManager.newAction ("Move object");
-			for (Graphics g : selectedGraphics)
-			{
-				g.vMoveBy(0, -increment);
-			}
-		break;
-		case 40: 	
-			undoManager.newAction ("Move object");
-			for (Graphics g : selectedGraphics)
-			{
-				g.vMoveBy(0, increment);
-			}
-			}
-			}
-		redrawDirtyRect();
 		}
+		redrawDirtyRect();
+	}
 
 	public void selectObject(VPathwayElement o)
 	{
@@ -1046,7 +1048,7 @@ public class VPathway implements PathwayListener
 			} else
 			{
 				selection.addToSelection(pressedObject); // Not in selection:
-															// add
+				// add
 			}
 			pressedObject = selection; // Set dragging to selectionbox
 		} else
@@ -1491,7 +1493,7 @@ public class VPathway implements PathwayListener
 		String topRef = null;
 		for (Graphics g : selection)
 		{
-			PathwayElement pe = g.getGmmlData();
+			PathwayElement pe = g.getPathwayElement();
 			String ref = pe.getGroupRef();
 			String id = pe.getGroupId(); // use to exclude Group Elements
 			// from status check
@@ -1511,8 +1513,8 @@ public class VPathway implements PathwayListener
 					PathwayElement refGroup = data.getGroupById(checkRef);
 					checkRef = refGroup.getGroupRef();
 				}
-
-				if (topRef == null) // first loop through selection
+				// first loop through selection
+				if (topRef == null)
 				{
 					topRef = ref;
 				}
@@ -1524,32 +1526,45 @@ public class VPathway implements PathwayListener
 					grouped = false;
 					break;
 				}
-
-				topRef = ref; // set previous selection reference for next
-				// loop
+				// set previous selection reference for next loop
+				topRef = ref;
 			}
 		}
 
 		// Group or Ungroup based on current Group status
 		if (grouped && topRef != null)
 		{
+			VPathwayElement topVPE = null;
 			// Ungroup all elements asociated with topRef
 			for (VPathwayElement vpe : this.getDrawingObjects())
 			{
 				if (vpe instanceof Graphics)
 				{
-					PathwayElement pe = ((Graphics) vpe).getGmmlData();
-					String ref = pe.getGroupRef();
+					PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 
 					// remove all references to highest-level group
-					if (topRef.equals(ref)) // includes Group Elements
+					// from children datanodes and children groups
+					if (topRef.equals(pe.getGroupRef()))
 					{
 						pe.setGroupRef(null);
 					}
+
+					// remove highest-level group itself
+					if (vpe instanceof Group)
+					{
+						if (topRef.equals(pe.getGroupId()))
+						{
+							// Cannot remove object within getDrawingObjects()
+							// loop, so just save vpe of highest-level group for
+							// deletion below
+							topVPE = vpe;			
+						}
+					}
 				}
 			}
-			// remove highest-level groupId
-			PathwayElement topIdGroup = data.getGroupById(topRef);
+			// remove highest-level group
+			this.removeDrawingObject(topVPE, true);
+			// clear id from hash map
 			data.removeGroupId(topRef);
 
 		} else
@@ -1568,13 +1583,19 @@ public class VPathway implements PathwayListener
 			for (Graphics g : selection)
 			{
 				Double left, top;
-				PathwayElement pe = g.getGmmlData();
-				
+				PathwayElement pe = g.getPathwayElement();
+
 				left = pe.getMLeft();
 				top = pe.getMTop();
-				if ( left < minLeft) { minLeft = left;} 
-				if ( top < minTop) { minTop = top;} 
-				
+				if (left < minLeft)
+				{
+					minLeft = left;
+				}
+				if (top < minTop)
+				{
+					minTop = top;
+				}
+
 				String ref = pe.getGroupRef();
 				if (ref == null)
 				{
@@ -1585,7 +1606,8 @@ public class VPathway implements PathwayListener
 					refGroup.setGroupRef(id);
 				}
 			}
-			
+			// Parent group should not reference self
+			group.setGroupRef(null);
 			group.setMLeft(minLeft);
 			group.setMTop(minTop);
 		}
@@ -1608,20 +1630,20 @@ public class VPathway implements PathwayListener
 
 	public static final KeyStroke KEY_MOVEUP = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_UP, 0);
-	
-	public static final KeyStroke KEY_MOVEDOWN = KeyStroke. getKeyStroke(
+
+	public static final KeyStroke KEY_MOVEDOWN = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_DOWN, 0);
-	
+
 	public static final KeyStroke KEY_MOVERIGHT_SHIFT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_RIGHT, java.awt.Event.SHIFT_MASK);
 
 	public static final KeyStroke KEY_MOVELEFT_SHIFT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_LEFT, java.awt.Event.SHIFT_MASK);
-	
+
 	public static final KeyStroke KEY_MOVEUP_SHIFT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_UP, java.awt.Event.SHIFT_MASK);
-	
-	public static final KeyStroke KEY_MOVEDOWN_SHIFT = KeyStroke. getKeyStroke(
+
+	public static final KeyStroke KEY_MOVEDOWN_SHIFT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_DOWN, java.awt.Event.SHIFT_MASK);
 
 	/**
@@ -1663,14 +1685,23 @@ public class VPathway implements PathwayListener
 		registerKeyboardAction(viewActions.selectAll);
 		registerKeyboardAction(viewActions.delete);
 
-		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(KEY_MOVERIGHT));
-		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(KEY_MOVERIGHT_SHIFT));
-		parent.registerKeyboardAction(KEY_MOVELEFT, new KeyMoveAction(KEY_MOVELEFT));
-		parent.registerKeyboardAction(KEY_MOVELEFT_SHIFT, new KeyMoveAction(KEY_MOVELEFT_SHIFT));
-		parent.registerKeyboardAction(KEY_MOVEUP, new KeyMoveAction(KEY_MOVEUP));
-		parent.registerKeyboardAction(KEY_MOVEUP_SHIFT, new KeyMoveAction(KEY_MOVEUP_SHIFT));
-		parent.registerKeyboardAction(KEY_MOVEDOWN, new KeyMoveAction(KEY_MOVEDOWN));
-		parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(KEY_MOVEDOWN_SHIFT));
+		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
+				KEY_MOVERIGHT));
+		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(
+				KEY_MOVERIGHT_SHIFT));
+		parent.registerKeyboardAction(KEY_MOVELEFT, new KeyMoveAction(
+				KEY_MOVELEFT));
+		parent.registerKeyboardAction(KEY_MOVELEFT_SHIFT, new KeyMoveAction(
+				KEY_MOVELEFT_SHIFT));
+		parent
+				.registerKeyboardAction(KEY_MOVEUP, new KeyMoveAction(
+						KEY_MOVEUP));
+		parent.registerKeyboardAction(KEY_MOVEUP_SHIFT, new KeyMoveAction(
+				KEY_MOVEUP_SHIFT));
+		parent.registerKeyboardAction(KEY_MOVEDOWN, new KeyMoveAction(
+				KEY_MOVEDOWN));
+		parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(
+				KEY_MOVEDOWN_SHIFT));
 	}
 
 	public void keyReleased(KeyEvent e)
@@ -1716,7 +1747,7 @@ public class VPathway implements PathwayListener
 		{
 			if (toRemove instanceof Graphics)
 			{
-				data.remove(((Graphics) toRemove).getGmmlData());
+				data.remove(((Graphics) toRemove).getPathwayElement());
 			}
 		}
 		selection.removeFromSelection(toRemove); // Remove from selection
@@ -1746,8 +1777,10 @@ public class VPathway implements PathwayListener
 				lastAdded.markDirty();
 			break;
 		case PathwayEvent.WINDOW:
-			int width = (int) vFromM(infoBox.getGmmlData().getMBoardWidth());
-			int height = (int) vFromM(infoBox.getGmmlData().getMBoardHeight());
+			int width = (int) vFromM(infoBox.getPathwayElement()
+					.getMBoardWidth());
+			int height = (int) vFromM(infoBox.getPathwayElement()
+					.getMBoardHeight());
 			if (parent != null)
 			{
 				parent.setVSize(width, height);
@@ -1822,94 +1855,106 @@ public class VPathway implements PathwayListener
 
 		if (selectedGraphics.size() > 0)
 		{
-			Rectangle2D vBoundsFirst; //The bounds of the model to view translated shape
-			
+			Rectangle2D vBoundsFirst; // The bounds of the model to view
+			// translated shape
+
 			switch (alignType)
 			{
 			case CENTERX:
 				undoManager.newAction("Align horizontally on center");
 				Collections.sort(selectedGraphics, new YComparator());
-				
-				vBoundsFirst = selectedGraphics.get(0).getVShape(true).getBounds2D();
+
+				vBoundsFirst = selectedGraphics.get(0).getVShape(true)
+						.getBounds2D();
 
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					Graphics g= selectedGraphics.get(i);
+					Graphics g = selectedGraphics.get(i);
 					Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-					
-					selectedGraphics.get(i).vMoveBy(
-							vBoundsFirst.getCenterX() - vBounds.getCenterX(), 0);
+
+					selectedGraphics.get(i)
+							.vMoveBy(
+									vBoundsFirst.getCenterX()
+											- vBounds.getCenterX(), 0);
 				}
 				break;
-			case CENTERY : 
-				undoManager.newAction ("Align vertically on center");
-				Collections.sort(selectedGraphics, new XComparator());		
-				
-				vBoundsFirst = selectedGraphics.get(0).getVShape(true).getBounds2D();
-				
-				for (int i=1; i<selectedGraphics.size(); i++)
-				{	
-					Graphics g= selectedGraphics.get(i);
+			case CENTERY:
+				undoManager.newAction("Align vertically on center");
+				Collections.sort(selectedGraphics, new XComparator());
+
+				vBoundsFirst = selectedGraphics.get(0).getVShape(true)
+						.getBounds2D();
+
+				for (int i = 1; i < selectedGraphics.size(); i++)
+				{
+					Graphics g = selectedGraphics.get(i);
 					Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-					
-					selectedGraphics.get(i).vMoveBy(0, vBoundsFirst.getCenterY() - vBounds.getCenterY());
+
+					selectedGraphics.get(i).vMoveBy(0,
+							vBoundsFirst.getCenterY() - vBounds.getCenterY());
 				}
 				break;
-			case LEFT :
-				undoManager.newAction ("Align on left side");
+			case LEFT:
+				undoManager.newAction("Align on left side");
 				Collections.sort(selectedGraphics, new YComparator());
-				
-				vBoundsFirst = selectedGraphics.get(0).getVShape(true).getBounds2D();
-				
-				for (int i=1; i<selectedGraphics.size(); i++)
-				{	
-					Graphics g= selectedGraphics.get(i);
+
+				vBoundsFirst = selectedGraphics.get(0).getVShape(true)
+						.getBounds2D();
+
+				for (int i = 1; i < selectedGraphics.size(); i++)
+				{
+					Graphics g = selectedGraphics.get(i);
 					Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-					
-					selectedGraphics.get(i).vMoveBy(vBoundsFirst.getX() - vBounds.getX(),0);			
+
+					selectedGraphics.get(i).vMoveBy(
+							vBoundsFirst.getX() - vBounds.getX(), 0);
 				}
 				break;
 			case RIGHT:
 				undoManager.newAction("Align on right side");
 				Collections.sort(selectedGraphics, new YComparator());
-				
-				vBoundsFirst = selectedGraphics.get(0).getVShape(true).getBounds2D();
-				
+
+				vBoundsFirst = selectedGraphics.get(0).getVShape(true)
+						.getBounds2D();
+
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					Graphics g= selectedGraphics.get(i);
+					Graphics g = selectedGraphics.get(i);
 					Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-					
+
 					selectedGraphics.get(i).vMoveBy(
 							vBoundsFirst.getMaxX() - vBounds.getMaxX(), 0);
-				}	
+				}
 				break;
 			case TOP:
-				undoManager.newAction ("Align on top side");
-				Collections.sort(selectedGraphics, new YComparator());	
-				
-				vBoundsFirst = selectedGraphics.get(0).getVShape(true).getBounds2D();
-				
-				for (int i=1; i<selectedGraphics.size(); i++)
-				{	
-					Graphics g= selectedGraphics.get(i);
+				undoManager.newAction("Align on top side");
+				Collections.sort(selectedGraphics, new YComparator());
+
+				vBoundsFirst = selectedGraphics.get(0).getVShape(true)
+						.getBounds2D();
+
+				for (int i = 1; i < selectedGraphics.size(); i++)
+				{
+					Graphics g = selectedGraphics.get(i);
 					Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-					
-					selectedGraphics.get(i).vMoveBy(0, vBoundsFirst.getY() - vBounds.getY());			
+
+					selectedGraphics.get(i).vMoveBy(0,
+							vBoundsFirst.getY() - vBounds.getY());
 				}
 				break;
 			case BOTTOM:
 				undoManager.newAction("Align on bottom side");
 				Collections.sort(selectedGraphics, new YComparator());
 				Collections.reverse(selectedGraphics);
-				
-				vBoundsFirst = selectedGraphics.get(0).getVShape(true).getBounds2D();
-				
+
+				vBoundsFirst = selectedGraphics.get(0).getVShape(true)
+						.getBounds2D();
+
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					Graphics g= selectedGraphics.get(i);
+					Graphics g = selectedGraphics.get(i);
 					Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-					
+
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsFirst.getMaxY() - vBounds.getMaxY());
 				}
@@ -1941,57 +1986,66 @@ public class VPathway implements PathwayListener
 				undoManager.newAction("Stack Center Vertically");
 				Collections.sort(selectedGraphics, new YComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
-				{				
-					//Get the current and previous graphics objects
+				{
+					// Get the current and previous graphics objects
 					Graphics eCurr = selectedGraphics.get(i);
 					Graphics ePrev = selectedGraphics.get(i - 1);
-					
-					//Get the bounds of the model to view translated shapes
-					Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
-					Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
-										
-					eCurr.vMoveBy(
-							vBoundsPrev.getCenterX() - vBoundsCurr.getCenterX(), 0);
-					
-					eCurr.vMoveBy(0, vBoundsPrev.getMaxY() - vBoundsCurr.getY());
-					
-					/*selectedGraphics.get(i).getGmmlData().setMCenterX(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMCenterX());
-					selectedGraphics.get(i).getGmmlData().setMTop(
-							selectedGraphics.get(i - 1).getGmmlData().getMTop()
-									+ selectedGraphics.get(i - 1).getGmmlData()
-											.getMHeight());*/
+
+					// Get the bounds of the model to view translated shapes
+					Rectangle2D vBoundsPrev = ePrev.getVShape(true)
+							.getBounds2D();
+					Rectangle2D vBoundsCurr = eCurr.getVShape(true)
+							.getBounds2D();
+
+					eCurr.vMoveBy(vBoundsPrev.getCenterX()
+							- vBoundsCurr.getCenterX(), 0);
+
+					eCurr
+							.vMoveBy(0, vBoundsPrev.getMaxY()
+									- vBoundsCurr.getY());
+
+					/*
+					 * selectedGraphics.get(i).getGmmlData().setMCenterX(
+					 * selectedGraphics.get(i - 1).getGmmlData()
+					 * .getMCenterX());
+					 * selectedGraphics.get(i).getGmmlData().setMTop(
+					 * selectedGraphics.get(i - 1).getGmmlData().getMTop() +
+					 * selectedGraphics.get(i - 1).getGmmlData() .getMHeight());
+					 */
 				}
 				break;
 			case CENTERY:
 				undoManager.newAction("Stack Center Horizontally");
 				Collections.sort(selectedGraphics, new XComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
-				{					
-					//Get the current and previous graphics objects
+				{
+					// Get the current and previous graphics objects
 					Graphics eCurr = selectedGraphics.get(i);
 					Graphics ePrev = selectedGraphics.get(i - 1);
-					
-					//Get the bounds of the model to view translated shapes
-					Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
-					Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
-					
+
+					// Get the bounds of the model to view translated shapes
+					Rectangle2D vBoundsPrev = ePrev.getVShape(true)
+							.getBounds2D();
+					Rectangle2D vBoundsCurr = eCurr.getVShape(true)
+							.getBounds2D();
+
 					selectedGraphics.get(i).vMoveBy(
 							vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 0);
-					
-					selectedGraphics.get(i).vMoveBy(0,
-							vBoundsPrev.getCenterY() - vBoundsCurr.getCenterY());
-					
+
+					selectedGraphics.get(i)
+							.vMoveBy(
+									0,
+									vBoundsPrev.getCenterY()
+											- vBoundsCurr.getCenterY());
+
 					/*
-					selectedGraphics.get(i).getGmmlData().setMCenterY(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMCenterY());
-					selectedGraphics.get(i).getGmmlData().setMLeft(
-							selectedGraphics.get(i - 1).getGmmlData()
-									.getMLeft()
-									+ selectedGraphics.get(i - 1).getGmmlData()
-											.getMWidth());*/
+					 * selectedGraphics.get(i).getGmmlData().setMCenterY(
+					 * selectedGraphics.get(i - 1).getGmmlData()
+					 * .getMCenterY());
+					 * selectedGraphics.get(i).getGmmlData().setMLeft(
+					 * selectedGraphics.get(i - 1).getGmmlData() .getMLeft() +
+					 * selectedGraphics.get(i - 1).getGmmlData() .getMWidth());
+					 */
 				}
 				break;
 			case LEFT:
@@ -1999,26 +2053,29 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new YComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					//Get the current and previous graphics objects
+					// Get the current and previous graphics objects
 					Graphics eCurr = selectedGraphics.get(i);
 					Graphics ePrev = selectedGraphics.get(i - 1);
-					
-					//Get the bounds of the model to view translated shapes
-					Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
-					Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
-					
-					eCurr.vMoveBy(
-							vBoundsPrev.getX() - vBoundsCurr.getX(), 0);
-					
-					eCurr.vMoveBy(0, vBoundsPrev.getMaxY() - vBoundsCurr.getY());
-					
-//					selectedGraphics.get(i).getGmmlData().setMLeft(
-//							selectedGraphics.get(i - 1).getGmmlData()
-//									.getMLeft());
-//					selectedGraphics.get(i).getGmmlData().setMTop(
-//							selectedGraphics.get(i - 1).getGmmlData().getMTop()
-//									+ selectedGraphics.get(i - 1).getGmmlData()
-//											.getMHeight());
+
+					// Get the bounds of the model to view translated shapes
+					Rectangle2D vBoundsPrev = ePrev.getVShape(true)
+							.getBounds2D();
+					Rectangle2D vBoundsCurr = eCurr.getVShape(true)
+							.getBounds2D();
+
+					eCurr.vMoveBy(vBoundsPrev.getX() - vBoundsCurr.getX(), 0);
+
+					eCurr
+							.vMoveBy(0, vBoundsPrev.getMaxY()
+									- vBoundsCurr.getY());
+
+					// selectedGraphics.get(i).getGmmlData().setMLeft(
+					// selectedGraphics.get(i - 1).getGmmlData()
+					// .getMLeft());
+					// selectedGraphics.get(i).getGmmlData().setMTop(
+					// selectedGraphics.get(i - 1).getGmmlData().getMTop()
+					// + selectedGraphics.get(i - 1).getGmmlData()
+					// .getMHeight());
 				}
 				break;
 			case RIGHT:
@@ -2026,30 +2083,34 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new YComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					//Get the current and previous graphics objects
+					// Get the current and previous graphics objects
 					Graphics eCurr = selectedGraphics.get(i);
 					Graphics ePrev = selectedGraphics.get(i - 1);
-					
-					//Get the bounds of the model to view translated shapes
-					Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
-					Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
-					
+
+					// Get the bounds of the model to view translated shapes
+					Rectangle2D vBoundsPrev = ePrev.getVShape(true)
+							.getBounds2D();
+					Rectangle2D vBoundsCurr = eCurr.getVShape(true)
+							.getBounds2D();
+
 					eCurr.vMoveBy(
 							vBoundsPrev.getMaxX() - vBoundsCurr.getMaxX(), 0);
-					
-					eCurr.vMoveBy(0, vBoundsPrev.getMaxY() - vBoundsCurr.getY());
-					
-//					selectedGraphics.get(i).getGmmlData().setMLeft(
-//							selectedGraphics.get(i - 1).getGmmlData()
-//									.getMLeft()
-//									+ selectedGraphics.get(i - 1).getGmmlData()
-//											.getMWidth()
-//									- selectedGraphics.get(i).getGmmlData()
-//											.getMWidth());
-//					selectedGraphics.get(i).getGmmlData().setMTop(
-//							selectedGraphics.get(i - 1).getGmmlData().getMTop()
-//									+ selectedGraphics.get(i - 1).getGmmlData()
-//											.getMHeight());
+
+					eCurr
+							.vMoveBy(0, vBoundsPrev.getMaxY()
+									- vBoundsCurr.getY());
+
+					// selectedGraphics.get(i).getGmmlData().setMLeft(
+					// selectedGraphics.get(i - 1).getGmmlData()
+					// .getMLeft()
+					// + selectedGraphics.get(i - 1).getGmmlData()
+					// .getMWidth()
+					// - selectedGraphics.get(i).getGmmlData()
+					// .getMWidth());
+					// selectedGraphics.get(i).getGmmlData().setMTop(
+					// selectedGraphics.get(i - 1).getGmmlData().getMTop()
+					// + selectedGraphics.get(i - 1).getGmmlData()
+					// .getMHeight());
 
 				}
 				break;
@@ -2058,29 +2119,31 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new XComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					//Get the current and previous graphics objects
+					// Get the current and previous graphics objects
 					Graphics eCurr = selectedGraphics.get(i);
 					Graphics ePrev = selectedGraphics.get(i - 1);
-					
-					//Get the bounds of the model to view translated shapes
-					Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
-					Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
-					
+
+					// Get the bounds of the model to view translated shapes
+					Rectangle2D vBoundsPrev = ePrev.getVShape(true)
+							.getBounds2D();
+					Rectangle2D vBoundsCurr = eCurr.getVShape(true)
+							.getBounds2D();
+
 					selectedGraphics.get(i).vMoveBy(
 							vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 0);
-					
+
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsPrev.getY() - vBoundsCurr.getY());
-					
-//					selectedGraphics.get(i).getGmmlData()
-//							.setMTop(
-//									selectedGraphics.get(i - 1).getGmmlData()
-//											.getMTop());
-//					selectedGraphics.get(i).getGmmlData().setMLeft(
-//							selectedGraphics.get(i - 1).getGmmlData()
-//									.getMLeft()
-//									+ selectedGraphics.get(i - 1).getGmmlData()
-//											.getMWidth());
+
+					// selectedGraphics.get(i).getGmmlData()
+					// .setMTop(
+					// selectedGraphics.get(i - 1).getGmmlData()
+					// .getMTop());
+					// selectedGraphics.get(i).getGmmlData().setMLeft(
+					// selectedGraphics.get(i - 1).getGmmlData()
+					// .getMLeft()
+					// + selectedGraphics.get(i - 1).getGmmlData()
+					// .getMWidth());
 				}
 				break;
 			case BOTTOM:
@@ -2088,31 +2151,33 @@ public class VPathway implements PathwayListener
 				Collections.sort(selectedGraphics, new XComparator());
 				for (int i = 1; i < selectedGraphics.size(); i++)
 				{
-					//Get the current and previous graphics objects
+					// Get the current and previous graphics objects
 					Graphics eCurr = selectedGraphics.get(i);
 					Graphics ePrev = selectedGraphics.get(i - 1);
-					
-					//Get the bounds of the model to view translated shapes
-					Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
-					Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
-					
+
+					// Get the bounds of the model to view translated shapes
+					Rectangle2D vBoundsPrev = ePrev.getVShape(true)
+							.getBounds2D();
+					Rectangle2D vBoundsCurr = eCurr.getVShape(true)
+							.getBounds2D();
+
 					selectedGraphics.get(i).vMoveBy(
 							vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 0);
-					
+
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
-					
-//					selectedGraphics.get(i).getGmmlData().setMTop(
-//							selectedGraphics.get(i - 1).getGmmlData().getMTop()
-//									+ selectedGraphics.get(i - 1).getGmmlData()
-//											.getMHeight()
-//									- selectedGraphics.get(i).getGmmlData()
-//											.getMHeight());
-//					selectedGraphics.get(i).getGmmlData().setMLeft(
-//							selectedGraphics.get(i - 1).getGmmlData()
-//									.getMLeft()
-//									+ selectedGraphics.get(i - 1).getGmmlData()
-//											.getMWidth());
+
+					// selectedGraphics.get(i).getGmmlData().setMTop(
+					// selectedGraphics.get(i - 1).getGmmlData().getMTop()
+					// + selectedGraphics.get(i - 1).getGmmlData()
+					// .getMHeight()
+					// - selectedGraphics.get(i).getGmmlData()
+					// .getMHeight());
+					// selectedGraphics.get(i).getGmmlData().setMLeft(
+					// selectedGraphics.get(i - 1).getGmmlData()
+					// .getMLeft()
+					// + selectedGraphics.get(i - 1).getGmmlData()
+					// .getMWidth());
 				}
 				break;
 			}
@@ -2136,7 +2201,7 @@ public class VPathway implements PathwayListener
 		if (selectedGraphics.size() > 0)
 		{
 			Graphics gMax = null;
-			
+
 			switch (alignType)
 			{
 			case WIDTH:
@@ -2152,8 +2217,9 @@ public class VPathway implements PathwayListener
 				}
 				for (Graphics g : selectedGraphics)
 				{
-					if(g == gMax) continue;
-					
+					if (g == gMax)
+						continue;
+
 					Rectangle2D r = g.getVShape(true).getBounds2D();
 					double oldWidth = r.getWidth();
 					if (oldWidth < 0)
@@ -2182,8 +2248,9 @@ public class VPathway implements PathwayListener
 				}
 				for (Graphics g : selectedGraphics)
 				{
-					if(g == gMax) continue;
-					
+					if (g == gMax)
+						continue;
+
 					Rectangle2D r = g.getVShape(true).getBounds2D();
 					double oldHeight = r.getHeight();
 					if (oldHeight < 0)
@@ -2482,14 +2549,11 @@ public class VPathway implements PathwayListener
 	}
 
 	/*
-	   To be called only by undo.
+	 * To be called only by undo.
 	 */
 	/*
-	public void setUndoManager(UndoManager value)
-	{
-		undoManager = value;
-	}
-	*/
+	 * public void setUndoManager(UndoManager value) { undoManager = value; }
+	 */
 	public void undo()
 	{
 		undoManager.undo();

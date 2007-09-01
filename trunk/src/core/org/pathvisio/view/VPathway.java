@@ -1485,56 +1485,75 @@ public class VPathway implements PathwayListener
 	// selection.addToSelection(lastAdded);
 	// }
 
+	/**
+	 * Responds to ctrl-G. First checks for current status of selection with
+	 * respect to grouping. If selection is already grouped (members of the same
+	 * parent group), then the highest-level (parent) group is removed along
+	 * with all references to the group. If the selection is not a uniform
+	 * group, then a new group is created and each member or groups of members
+	 * is set to reference the new group.
+	 * 
+	 * @param selection
+	 */
 	public void toggleGroup(List<Graphics> selection)
 	{
-		boolean grouped = true;
-
-		// Check Group status of current selection
+		boolean selectionGrouped = true;
 		String topRef = null;
+
+		/** 
+		 * Check group status of current selection
+		 */
 		for (Graphics g : selection)
 		{
 			PathwayElement pe = g.getPathwayElement();
 			String ref = pe.getGroupRef();
-			String id = pe.getGroupId(); // use to exclude Group Elements
-			// from status check
-			if (ref == null && id == null)
+			String id = pe.getGroupId();
+			// If not a group
+			if (id == null && selectionGrouped)
 			{
-				// selection includes an ungrouped element; therefore, currently
-				// Ungrouped
-				grouped = false;
-				break;
-			} else if (id == null)
-			{
-				String checkRef = ref;
-				while (checkRef != null)
+				// and not a member of a group
+				if (ref == null)
 				{
-					// set ref to highest-level, non-null group reference
-					ref = checkRef;
-					PathwayElement refGroup = data.getGroupById(checkRef);
-					checkRef = refGroup.getGroupRef();
+					// then selection needs to be grouped
+					selectionGrouped = false;
 				}
-				// first loop through selection
-				if (topRef == null)
+				// and is a member of a group
+				else
 				{
-					topRef = ref;
-				}
+					// Identify highest-level, non-null group reference
+					String checkRef = ref;
+					while (checkRef != null)
+					{
+						ref = checkRef;
+						PathwayElement refGroup = data.getGroupById(checkRef);
+						checkRef = refGroup.getGroupRef();
+					}
+					// Set first identified highest-level group ref
+					if (topRef == null)
+					{
+						topRef = ref;
+					}
 
-				if (!ref.equals(topRef))
-				{
-					// selection includes elements in distinct, non-nested
-					// groups; therefore, currently Ungrouped
-					grouped = false;
-					break;
+					// Check other identified refs against first identified
+					// If not equal
+					if (!ref.equals(topRef))
+					{
+						// then selection includes elements in distinct,
+						// non-nested groups; therefore, currently Ungrouped
+						selectionGrouped = false;
+					}
 				}
-				// set previous selection reference for next loop
-				topRef = ref;
 			}
 		}
 
-		// Group or Ungroup based on current Group status
-		if (grouped && topRef != null)
+		/**
+		 * Group or ungroup based on current group status
+		 */
+		// If selection is already grouped, then ungroup.
+		if (selectionGrouped)
 		{
 			VPathwayElement topVPE = null;
+			
 			// Ungroup all elements asociated with topRef
 			for (VPathwayElement vpe : this.getDrawingObjects())
 			{
@@ -1543,7 +1562,7 @@ public class VPathway implements PathwayListener
 					PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 
 					// remove all references to highest-level group
-					// from children datanodes and children groups
+					// from children datanodes and nested groups
 					if (topRef.equals(pe.getGroupRef()))
 					{
 						pe.setGroupRef(null);
@@ -1556,35 +1575,39 @@ public class VPathway implements PathwayListener
 						{
 							// Cannot remove object within getDrawingObjects()
 							// loop, so just save vpe of highest-level group for
-							// deletion below
-							topVPE = vpe;			
+							// deletion later (see below)
+							topVPE = vpe;
 						}
 					}
 				}
 			}
+			
 			// remove highest-level group
 			this.removeDrawingObject(topVPE, true);
+			
 			// clear id from hash map
 			data.removeGroupId(topRef);
 
-		} else
+		} 
+		// If selection is not grouped, then group.
+		else
 		{
-			// GroupId is created on first getGroupId call
 			PathwayElement group = new PathwayElement(ObjectType.GROUP);
 			data.add(group);
-
 			group.setTextLabel("new group");
 			group.setGroupStyle(GroupStyle.NONE);
-
 			String id = group.createGroupId();
+			
 			Double minLeft = Double.MAX_VALUE;
 			Double minTop = Double.MAX_VALUE;
 
 			for (Graphics g : selection)
 			{
-				Double left, top;
 				PathwayElement pe = g.getPathwayElement();
-
+				String ref = pe.getGroupRef();
+				
+				// Collect group boundaries
+				Double left, top;
 				left = pe.getMLeft();
 				top = pe.getMTop();
 				if (left < minLeft)
@@ -1596,16 +1619,13 @@ public class VPathway implements PathwayListener
 					minTop = top;
 				}
 
-				String ref = pe.getGroupRef();
+				// If not a member of a group, then set group ref
 				if (ref == null)
 				{
 					pe.setGroupRef(id);
-				} else
-				{
-					PathwayElement refGroup = data.getGroupById(ref);
-					refGroup.setGroupRef(id);
-				}
+				} 
 			}
+			
 			// Parent group should not reference self
 			group.setGroupRef(null);
 			group.setMLeft(minLeft);

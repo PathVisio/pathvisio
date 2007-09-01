@@ -43,11 +43,11 @@ public class Group extends Graphics {
 		for (VPathwayElement vpe : canvas.getDrawingObjects()) {
 			if (!(vpe instanceof Group)  && vpe.vContains(point)) {
 				if (vpe instanceof Graphics) {
-					PathwayElement pe = ((Graphics) vpe).getGmmlData();
+					PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 					String ref = pe.getGroupRef();
 //					String ref2 = getGmmlData().getGroupId();
 //					System.out.println("pe: "+pe+" ref: "+ref+" ref2: "+ref2);
-					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
+					if (ref != null && ref.equals(getPathwayElement().getGroupId())) {
 //						System.out.println("Contains: "+ref);
 						return true;
 					}
@@ -62,9 +62,9 @@ public class Group extends Graphics {
 		for (VPathwayElement vpe : canvas.getDrawingObjects()) {
 			if (!(vpe instanceof Group) && vpe.vIntersects(r)) {
 				if (vpe instanceof Graphics) {
-					PathwayElement pe = ((Graphics) vpe).getGmmlData();
+					PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 					String ref = pe.getGroupRef();
-					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
+					if (ref != null && ref.equals(getPathwayElement().getGroupId())) {
 						//System.out.println("Intersects: "+ref);
 						return true;
 					}
@@ -80,9 +80,9 @@ public class Group extends Graphics {
 			if (vpe != this) {
 				if (vpe instanceof Graphics) {
 					Graphics vpeg = (Graphics) vpe;
-					PathwayElement pe =  vpeg.getGmmlData();
+					PathwayElement pe =  vpeg.getPathwayElement();
 					String ref = pe.getGroupRef();
-					if (ref != null && ref.equals(getGmmlData().getGroupId())) {
+					if (ref != null && ref.equals(getPathwayElement().getGroupId())) {
 						gg.add(vpeg);					
 					}
 				}

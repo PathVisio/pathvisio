@@ -259,7 +259,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			int unGrouped = 0;
 			for(Graphics g : vPathway.getSelectedGraphics()) {
 				if(g instanceof Group) groups++;
-				if(g.getGmmlData().getGroupRef() == null) {
+				if(g.getPathwayElement().getGroupRef() == null) {
 					unGrouped++;
 				}
 			}

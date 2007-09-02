@@ -25,6 +25,7 @@ public class UndoManager
 {
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
+	static final int MAX_UNDO_SIZE = 25;
 	/**
 	   Insert a new action into the Undo Queue based on an UndoAction
 	   object that already contains a copy of the original state of
@@ -38,7 +39,11 @@ public class UndoManager
 	public void newAction (UndoAction act)
 	{		
 		undoList.add (act);
-		fireUndoManagerEvent (new UndoManagerEvent (act.getMessage()));
+		if (undoList.size() > MAX_UNDO_SIZE)
+		{
+			undoList.remove(0);
+		}
+		fireUndoManagerEvent (new UndoManagerEvent (getTopMessage()));
 	}
 
 	/**
@@ -54,8 +59,7 @@ public class UndoManager
 		Pathway pwy = Engine.getCurrent().getActivePathway();
 		if(pwy != null) {
 			UndoAction x = new UndoAction (desc, (Pathway)pwy.clone());
-			undoList.add (x);
-			fireUndoManagerEvent (new UndoManagerEvent (x.getMessage()));
+			newAction (x);
 		}
 	}
 
@@ -104,6 +108,9 @@ public class UndoManager
 		}
 	}
 
+	/**
+	   debugging helper function
+	 */
 	private void printSummary()
 	{
 		System.out.println ("===============================");

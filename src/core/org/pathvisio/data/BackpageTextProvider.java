@@ -117,8 +117,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		if(input != null) {
 			String nId = pe.getGeneID();
 			String nC = input.getSystemCode();
-			System.out.println("old: " + currId + ", " + currCode);
-			System.out.println("new: " + nId + ", " + nC);
+//			System.out.println("old: " + currId + ", " + currCode);
+//			System.out.println("new: " + nId + ", " + nC);
 			if(	currId != null && !currId.equals(nId) ||
 					currCode != null && !currCode.equals(nC)) {
 				doQuery();

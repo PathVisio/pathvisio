@@ -56,7 +56,7 @@ import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
-		MouseMotionListener, MouseListener, KeyListener, VPathwayListener, ClipboardOwner {
+		MouseMotionListener, MouseListener, KeyListener, VPathwayListener {
 	VPathway child;
 
 	JScrollPane container;
@@ -204,12 +204,13 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		handler.importData(this, clip.getContents(this));
 	}
 	
+	List<PathwayElement> lastCopied;
+	
 	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements) {
 		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clip.setContents(new PathwayTransferable(source, copyElements), this);
-	}
-
-	public void lostOwnership(Clipboard clipboard, Transferable contents) {
+		clip.setContents(new PathwayTransferable(source, copyElements), 
+				(PathwayImportHandler)getTransferHandler());
+		((PathwayImportHandler)getTransferHandler()).obtainedOwnership();
 	}
 	
 	Set<ToolTipProvider> toolTipProviders = new HashSet<ToolTipProvider>();

@@ -2333,13 +2333,17 @@ public class VPathway implements PathwayListener
 		}
 	}
 
-	public void paste(List<PathwayElement> elements)
+	public void paste(List<PathwayElement> elements) {
+		paste(elements, 0);
+	}
+	
+	public void paste(List<PathwayElement> elements, int shift)
 	{
 		undoManager.newAction("Paste");
 		clearSelection();
 		Map<String, String> idmap = new HashMap<String, String>();
 		Set<String> newids = new HashSet<String>();
-
+	
 		/*
 		 * Step 1: generate new unique ids for copied items
 		 */
@@ -2370,12 +2374,13 @@ public class VPathway implements PathwayListener
 			}
 
 			lastAdded = null;
-			o.setMStartX(o.getMStartX() + M_PASTE_OFFSET);
-			o.setMStartY(o.getMStartY() + M_PASTE_OFFSET);
-			o.setMEndX(o.getMEndX() + M_PASTE_OFFSET);
-			o.setMEndY(o.getMEndY() + M_PASTE_OFFSET);
-			o.setMLeft(o.getMLeft() + M_PASTE_OFFSET);
-			o.setMTop(o.getMTop() + M_PASTE_OFFSET);
+			o.setMStartX(o.getMStartX() + shift * M_PASTE_OFFSET);
+			o.setMStartY(o.getMStartY() + shift * M_PASTE_OFFSET);
+			o.setMEndX(o.getMEndX() + shift * M_PASTE_OFFSET);
+			o.setMEndY(o.getMEndY() + shift * M_PASTE_OFFSET);
+			o.setMLeft(o.getMLeft() + shift * M_PASTE_OFFSET);
+			o.setMTop(o.getMTop() + shift * M_PASTE_OFFSET);
+			
 			// make another copy to preserve clipboard contents for next
 			// paste
 			PathwayElement p = o.copy();

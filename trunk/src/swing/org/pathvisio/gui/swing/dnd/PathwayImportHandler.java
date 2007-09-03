@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing.dnd;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -41,8 +43,11 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.swing.PathwayTransferable;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-public class PathwayImportHandler extends TransferHandler {
+public class PathwayImportHandler extends TransferHandler implements ClipboardOwner {
 	public static final DataFlavor urlFlavor = new DataFlavor(String.class, "text/uri");
+	
+	static final int NOT_OWNER = -1;
+	int timesPasted; //Keeps track of how many times the same data is pasted
 	
 	Set<DataFlavor> supportedFlavors;
 	
@@ -100,7 +105,10 @@ public class PathwayImportHandler extends TransferHandler {
 				}
 			}
 		}
-		((VPathwaySwing)comp).getChild().paste(elements);
+		int shift = 0;
+		if(timesPasted != NOT_OWNER) shift = ++timesPasted;
+		
+		((VPathwaySwing)comp).getChild().paste(elements, shift);
 		return false;
 	}
 
@@ -108,5 +116,13 @@ public class PathwayImportHandler extends TransferHandler {
 			URL url = new URL((String)t.getTransferData(urlFlavor));
 			SwingEngine.getCurrent().openPathway(url);
 			return true;
+	}
+
+	public void lostOwnership(Clipboard clipboard, Transferable contents) {
+		timesPasted = NOT_OWNER;
+	}
+	
+	public void obtainedOwnership() {
+		timesPasted = 0;
 	}
 }

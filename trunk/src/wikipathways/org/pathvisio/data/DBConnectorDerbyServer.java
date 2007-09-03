@@ -26,10 +26,20 @@ import javax.naming.OperationNotSupportedException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 
+/**
+ * Database connector that connects to a Derby database server
+ * @author thomas
+ *
+ */
 public class DBConnectorDerbyServer extends AbstractDBConnector {
 	String host;
 	int port;
 	
+	/**
+	 * Create a new database connector for the given hostname and port
+	 * @param host	The host on which the database resides
+	 * @param port	The port to create the connection on
+	 */
 	public DBConnectorDerbyServer(String host, int port) {
 		this.host = host;
 		this.port = port;

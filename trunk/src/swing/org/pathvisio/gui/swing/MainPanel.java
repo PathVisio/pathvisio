@@ -82,52 +82,20 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	private CommonActions actions;
 		
-
-	/**
-	 * A HashMap containing the default actions that will be added
-	 * to the toolbar/menu. Set values to false to prevent actions
-	 * from being added
-	 */
-	public static Set<Action> getDefaultActions(CommonActions actions) {
-		Set<Action> da = new HashSet<Action>();
-		da.add(actions.saveAction);
-		da.add(actions.saveAsAction);
-		da.add(actions.importAction);
-		da.add(actions.exportAction);
-
-		da.add(actions.copyAction);
-		da.add(actions.pasteAction);
-
-		
-		for(Action a : actions.alignActions) da.add(a);
-		for(Action a : actions.stackActions) da.add(a);
-		for(Action a : actions.zoomActions) da.add(a);
-		
-		for(Action[] aa : actions.newElementActions) {
-			if(aa.length == 1) {
-				da.add(aa[0]);
-			} else { //This is the line sub-menu
-				for(Action a : aa) {
-					da.add(a);
-				}
-			}
-		}
-		
-		return da;
-	}
-	
-	Set<Action> allowActions;
+	Set<Action> hideActions;
 	
 	private boolean mayAddAction(Action a) {
-		if(allowActions != null && !allowActions.contains(a)) {
-			return false;
-		} else {
-			return true;
-		}
+		return hideActions == null || !hideActions.contains(a);
 	}
 	
-	public MainPanel(Set<Action> allowActions) {
-		this.allowActions = allowActions;
+	/**
+	 * Constructor for this class. Creates the main panel of this application, containing
+	 * the main GUI elements (menubar, toolbar, sidepanel, drawing pane). Actions that should
+	 * not be added to the menubar and toolbar should be specified in the hideActions parameter
+	 * @param hideActions The {@link Actions} that should not be added to the toolbar and menubar
+	 */
+	public MainPanel(Set<Action> hideActions) {
+		this.hideActions = hideActions;
 		
 		setLayout(new BorderLayout());
 		setTransferHandler(new PathwayImportHandler());
@@ -184,6 +152,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		}
 	}
 	
+	/**
+	 * Constructor for this class. Creates the main panel of this application, containing
+	 * the main GUI elements (menubar, toolbar, sidepanel, drawing pane).
+	 */
 	public MainPanel() {
 		this(null);
 	}
@@ -196,6 +168,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		addToMenu(actions.exportAction, pathwayMenu);
 
 		JMenu editMenu = new JMenu("Edit");
+		addToMenu(actions.undoAction, editMenu);
 		addToMenu(actions.copyAction, editMenu);
 		addToMenu(actions.pasteAction, editMenu);
 
@@ -233,6 +206,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		tb.addSeparator();
 
+		addToToolbar(actions.undoAction);
+		
 		tb.addSeparator();
 
 		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));

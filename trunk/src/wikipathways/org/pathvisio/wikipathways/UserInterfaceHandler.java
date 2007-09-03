@@ -20,6 +20,12 @@ import java.net.URL;
 
 import org.pathvisio.util.RunnableWithProgress;
 
+/**
+ * Interface that specifies methods related to user interface tasks. This interface may be used by classes where it is
+ * not desirable to couple them tightly to a UI library (e.g. SWT or Swing), but where user interaction
+ * is needed.
+ * @author thomas
+ */
 public interface UserInterfaceHandler {		
 	public static final int Q_CANCEL = -1;
 	public static final int Q_TRUE = 0;

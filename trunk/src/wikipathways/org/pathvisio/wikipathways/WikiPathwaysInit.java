@@ -21,12 +21,17 @@ import java.net.URL;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
 
-public class WikiPathwaysEngine {
-	public static void init() throws Exception {
+/**
+ * Static utility class that contains a collection of global methods for {@link WikiPathways}.
+ * @author thomas
+ */
+public class WikiPathwaysInit {
+	static void init() throws Exception {
 		GlobalPreference.FILE_LOG.setDefault(new File(getApplicationDir(), ".wikipathwaysLog").toString());
 		
 		PropertyType.CENTERX.setHidden(true);
@@ -39,10 +44,11 @@ public class WikiPathwaysEngine {
 		PropertyType.ROTATION.setHidden(true);
 		PropertyType.STARTX.setHidden(true);
 		PropertyType.STARTY.setHidden(true);
-		PropertyType.WIDTH.setHidden(true);
+		PropertyType.WIDTH.setHidden(true);				
 	}
 		
 	private static File DIR_APPLICATION;
+	
 	/**
 	 * Get the working directory of this application
 	 */

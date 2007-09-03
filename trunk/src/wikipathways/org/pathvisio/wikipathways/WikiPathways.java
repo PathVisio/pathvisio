@@ -25,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +68,10 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 import org.xml.sax.SAXException;
 
+/**
+ * Class that handles all WikiPathways related work.
+ * @author thomas
+ */
 public class WikiPathways implements ApplicationEventListener {	
 	UserInterfaceHandler uiHandler;
 	HashMap<String, String> cookie;
@@ -88,7 +93,7 @@ public class WikiPathways implements ApplicationEventListener {
 	public void init(VPathwayWrapper wrapper, ProgressKeeper progress, URL base) throws Exception {
 		progress.setTaskName("Starting editor");
 		
-		WikiPathwaysEngine.init();
+		WikiPathwaysInit.init();
 		
 		loadCookies(base);
 		
@@ -100,6 +105,8 @@ public class WikiPathways implements ApplicationEventListener {
 			}	
 		}
 
+		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), Engine.getCurrent());
+		
 		progress.report("Loading pathway...");
 		
 		if(isNew()) { //Create new pathway
@@ -131,18 +138,15 @@ public class WikiPathways implements ApplicationEventListener {
 
 	public MainPanel prepareMainPanel() {
 		CommonActions actions = SwingEngine.getCurrent().getActions();
-		Set<Action> allow = MainPanel.getDefaultActions(actions);
+		Set<Action> hide = new HashSet<Action>();
 		
 		//Disable some actions
-		if(!isNew()) allow.remove(actions.importAction);
+		if(!isNew()) hide.add(actions.importAction);
 		
 		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
 		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
-		
-		allow.add(saveAction);
-		allow.add(discardAction);
-		
-		MainPanel mainPanel = new MainPanel(allow);
+				
+		MainPanel mainPanel = new MainPanel(hide);
 		
 		mainPanel.getToolBar().addSeparator();
 		

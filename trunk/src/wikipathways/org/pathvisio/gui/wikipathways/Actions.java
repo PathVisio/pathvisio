@@ -33,6 +33,10 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
+/**
+ * A collection of actions related to WikiPathways
+ * @author thomas
+ */
 public class Actions {
 	public static abstract class WikiAction extends AbstractAction {
 		UserInterfaceHandler uiHandler;
@@ -44,6 +48,10 @@ public class Actions {
 		}
 	}
 	
+	/**
+	 * Exits the editor, either with or without saving the current pathway to WikiPathways
+	 * @author thomas
+	 */
 	public static class ExitAction extends WikiAction {
 		boolean doSave;
 	

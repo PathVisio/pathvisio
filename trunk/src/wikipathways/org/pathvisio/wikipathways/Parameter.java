@@ -16,6 +16,11 @@
 //
 package org.pathvisio.wikipathways;
 
+/**
+ * Input parameter for the WikiPathways editor. Non-defaults need to be
+ * set before calling {@link WikiPathways#init(org.pathvisio.view.VPathwayWrapper, org.pathvisio.util.ProgressKeeper, java.net.URL)}.
+ * @author thomas
+ */
 public enum Parameter {
 	PW_NAME("pwName"),
 	PW_URL("pwUrl", false),

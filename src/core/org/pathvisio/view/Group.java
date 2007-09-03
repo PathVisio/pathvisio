@@ -37,14 +37,11 @@ public class Group extends Graphics
 	}
 
 	/**
-	 * Determines whether any member of the highest-level group object related
-	 * to the current group object contains the point specified
+	 * Generates current id-ref pairs from all current groups
 	 * 
-	 * @param point -
-	 *            the point to check
-	 * @return True if the object contains the point, false otherwise
+	 * @return HashMap<String, String>
 	 */
-	protected boolean vContains(Point2D point)
+	protected HashMap<String, String> getIdRefPairs()
 	{
 		// idRefPairs<id, ref>
 		HashMap<String, String> idRefPairs = new HashMap<String, String>();
@@ -62,6 +59,17 @@ public class Group extends Graphics
 			}
 		}
 
+		return idRefPairs;
+	}
+
+	/**
+	 * Generates list of group references nested under this group
+	 * 
+	 * @return ArrayList<String>
+	 */
+	protected ArrayList<String> getRefList()
+	{
+		HashMap<String, String> idRefPairs = this.getIdRefPairs();
 		ArrayList<String> refList = new ArrayList<String>();
 		String thisId = this.getPathwayElement().getGroupId();
 		refList.add(thisId);
@@ -85,6 +93,20 @@ public class Group extends Graphics
 				idRefPairs.remove(refList.get(i));
 			}
 		}
+		return refList;
+	}
+
+	/**
+	 * Determines whether any member of the highest-level group object related
+	 * to the current group object contains the point specified
+	 * 
+	 * @param point -
+	 *            the point to check
+	 * @return True if the object contains the point, false otherwise
+	 */
+	protected boolean vContains(Point2D point)
+	{
+		ArrayList<String> refList = this.getRefList();
 
 		// return true if group object is referenced by selection
 		for (VPathwayElement vpe : canvas.getDrawingObjects())
@@ -94,11 +116,12 @@ public class Group extends Graphics
 			{
 				PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 				String ref = pe.getGroupRef();
-//				System.out.println("pe: " + pe + " ref: " + ref + " refList: "
-//						+ refList.toString());
+				// System.out.println("pe: " + pe + " ref: " + ref + " refList:
+				// "
+				// + refList.toString());
 				if (ref != null && refList.contains(ref))
 				{
-//					System.out.println(ref + " contains point");
+					// System.out.println(ref + " contains point");
 					return true;
 				}
 			}
@@ -109,6 +132,9 @@ public class Group extends Graphics
 	@Override
 	protected boolean vIntersects(Rectangle2D r)
 	{
+		ArrayList<String> refList = this.getRefList();
+
+		// return true if group object is referenced by selection
 		for (VPathwayElement vpe : canvas.getDrawingObjects())
 		{
 			if (vpe instanceof Graphics && !(vpe instanceof Group)
@@ -116,34 +142,35 @@ public class Group extends Graphics
 			{
 				PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 				String ref = pe.getGroupRef();
-				if (ref != null && ref.equals(getPathwayElement().getGroupId()))
+				if (ref != null && refList.contains(ref))
 				{
-//					System.out.println(ref+" intersects point");
+					// System.out.println(ref + " intersects point");
 					return true;
 				}
-
 			}
 		}
 		return false;
 	}
 
+	/**
+	 * Returns graphics for members of a group, including nested members
+	 * 
+	 * @return ArrayList<Graphics>
+	 */
 	public ArrayList<Graphics> getGroupGraphics()
 	{
 		ArrayList<Graphics> gg = new ArrayList<Graphics>();
+		// return true if group object is referenced by selection
 		for (VPathwayElement vpe : canvas.getDrawingObjects())
 		{
-			if (vpe != this)
+			if (vpe instanceof Graphics && vpe != this)
 			{
-				if (vpe instanceof Graphics)
+				Graphics vpeg = (Graphics) vpe;
+				PathwayElement pe = vpeg.getPathwayElement();
+				String ref = pe.getGroupRef();
+				if (ref != null && ref.equals(getPathwayElement().getGroupId()))
 				{
-					Graphics vpeg = (Graphics) vpe;
-					PathwayElement pe = vpeg.getPathwayElement();
-					String ref = pe.getGroupRef();
-					if (ref != null
-							&& ref.equals(getPathwayElement().getGroupId()))
-					{
-						gg.add(vpeg);
-					}
+					gg.add(vpeg);
 				}
 			}
 		}
@@ -155,6 +182,7 @@ public class Group extends Graphics
 	{
 		for (Graphics g : getGroupGraphics())
 		{
+			System.out.println("g: " + g);
 			g.select();
 		}
 		super.select();
@@ -167,7 +195,7 @@ public class Group extends Graphics
 		{
 			g.vMoveBy(dx, dy);
 		}
-		// super.vMoveBy(dx, dy);
+		//super.vMoveBy(dx, dy);
 	}
 
 	@Override

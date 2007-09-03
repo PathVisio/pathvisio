@@ -45,15 +45,17 @@ public class BatikImageExporter extends ImageExporter {
 		VPathway vPathway = new VPathway(null);
 		vPathway.fromGmmlData(pathway);
 		
-		double width = vPathway.getVWidth();
-		double height = vPathway.getVHeight();
-		
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
 		
 		SVGGraphics2D svgG2d = new SVGGraphics2D(svg);
-		svgG2d.setSVGCanvasSize(new Dimension((int)width, (int)height));
 		vPathway.draw(svgG2d);
+
+		//Force recalculation of size after drawing once, this allows size of text
+		//to be calculated correctly
+		Dimension size = vPathway.calculateVSize();
+		svgG2d.setSVGCanvasSize(size);
+				
 		Transcoder t = null;
 		if			(getType().equals(TYPE_SVG)) {
 			try {

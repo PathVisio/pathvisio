@@ -41,6 +41,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		o.addListener(this);
 		gdata = o;
 		gdata.addListener(canvas);
+		canvas.checkBoardSize(gdata);
 	}
 	
 	public void select()

@@ -27,7 +27,8 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 public class VPathwayWrapperBase implements VPathwayWrapper {
-
+	Dimension vSize = new Dimension();
+	
 	public void copyToClipboard(Pathway source, List<PathwayElement> result) {
 		
 	}
@@ -37,15 +38,15 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 	}
 
 	public Rectangle getVBounds() {
-		return new Rectangle();
+		return new Rectangle(0, 0, vSize.width, vSize.height);
 	}
 
 	public Dimension getVSize() {
-		return new Dimension();
+		return vSize;
 	}
 
 	public Dimension getViewportSize() {
-		return new Dimension();
+		return vSize;
 	}
 
 	public void redraw() {
@@ -61,11 +62,12 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 	}
 
 	public void setVSize(Dimension size) {
-		
+		vSize = size;
 	}
 
 	public void setVSize(int w, int h) {
-		
+		vSize.width = w;
+		vSize.height = h;
 	}
 
 	public void pasteFromClipboard() {

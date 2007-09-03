@@ -201,8 +201,6 @@ public class VPathway implements PathwayListener
 			break;
 		case ObjectType.MAPPINFO:
 			InfoBox mi = new InfoBox(this, o);
-			addObject(mi);
-			setMappInfo(mi);
 			result = mi;
 			break;
 		case ObjectType.LABEL:
@@ -336,7 +334,6 @@ public class VPathway implements PathwayListener
 		{ // Don't add duplicates!
 			drawingObjects.add(o);
 		}
-
 	}
 
 	/**
@@ -833,7 +830,6 @@ public class VPathway implements PathwayListener
 				area = new Rectangle(0, 0, getVWidth(), getVHeight());
 			}
 		}
-
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -1794,8 +1790,9 @@ public class VPathway implements PathwayListener
 			break;
 		case PathwayEvent.ADDED:
 			lastAdded = fromGmmlDataObject(e.getAffectedData());
-			if (lastAdded != null)
+			if (lastAdded != null) {
 				lastAdded.markDirty();
+			}
 			break;
 		case PathwayEvent.WINDOW:
 			int width = (int) vFromM(infoBox.getPathwayElement()
@@ -1811,8 +1808,26 @@ public class VPathway implements PathwayListener
 		redrawDirtyRect();
 	}
 
-	private void checkBoardSize(PathwayElement elm)
+	/**
+	 * Calculate the board size. Calls {@link VPathwayElement#getVBounds()} for every
+	 * element and adds all results together to obtain the board size
+	 */
+	public Dimension calculateVSize() {
+		Rectangle2D bounds = new Rectangle2D.Double();
+		for(VPathwayElement e : drawingObjects) {
+			bounds.add(e.getVBounds());
+		}
+		return new Dimension((int)bounds.getWidth() + 10, (int)bounds.getHeight() + 10);
+	}
+		
+	/**
+	 * Checks whether the board size is still large enough for the given {@link PathwayElement}
+	 * and increases the size if not
+	 * @param elm The element to check the board size for
+	 */
+	void checkBoardSize(PathwayElement elm)
 	{
+		System.out.println("Checking board size");
 		double increase = mFromV(25);
 		Dimension size = parent.getVSize();
 		double mw = mFromV(size.width);
@@ -1826,6 +1841,10 @@ public class VPathway implements PathwayListener
 		case ObjectType.LINE:
 			mx = Math.max(elm.getMEndX(), elm.getMStartX());
 			my = Math.max(elm.getMEndY(), elm.getMStartY());
+			break;
+		case ObjectType.MAPPINFO:
+			mx = elm.getMLeft() + mFromV(200); //Initial size for mappinfo (has zero size in model);
+			my = elm.getMTop() + mFromV(200);
 			break;
 		default:
 			mx = elm.getMLeft() + elm.getMWidth();
@@ -2524,8 +2543,9 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVWidth()
 	{
-		return data == null ? 0 : (int) vFromM(data.getMappInfo()
-				.getMBoardWidth());
+//		return data == null ? 0 : (int) vFromM(data.getMappInfo()
+//				.getMBoardWidth());
+		return parent.getVSize().width;
 	}
 
 	/**
@@ -2533,8 +2553,9 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVHeight()
 	{
-		return data == null ? 0 : (int) vFromM(data.getMappInfo()
-				.getMBoardHeight());
+//		return data == null ? 0 : (int) vFromM(data.getMappInfo()
+//				.getMBoardHeight());
+		return parent.getVSize().height;
 	}
 
 	// AP20070716

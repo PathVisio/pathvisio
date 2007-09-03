@@ -182,7 +182,6 @@ public class Group extends Graphics
 	{
 		for (Graphics g : getGroupGraphics())
 		{
-			System.out.println("g: " + g);
 			g.select();
 		}
 		super.select();

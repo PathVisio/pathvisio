@@ -191,10 +191,18 @@ public class Pathway implements PathwayListener
 		dataObjects.add(o);
 		o.addListener(this);
 		o.setParent(this);
-		o.setZOrder(dataObjects.size() + 1);
+		o.setZOrder(getMaxZOrder() + 1);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
 
+	public int getMaxZOrder() {
+		int zmax = 0;
+		for(PathwayElement e : dataObjects) {
+			if(e.getZOrder() > zmax) zmax = e.getZOrder();
+		}
+		return zmax;
+	}
+	
 	public void gmmlObjectModified (PathwayEvent e)
 	{
 		markChanged();

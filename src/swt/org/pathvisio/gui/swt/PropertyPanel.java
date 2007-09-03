@@ -55,15 +55,14 @@ import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
+import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
-import org.pathvisio.model.OutlineType;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.util.swt.SuggestCellEditor;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.Graphics;
@@ -92,10 +91,16 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	private List<PropertyType> attributes;
 	
 	final static int TYPES_DIFF = ObjectType.MIN_VALID -1;
-	final static Object VALUE_DIFF = new Object() {
-		public boolean equals(Object o) { return false; }
-		public String toString() { return "different values"; }
-	};
+	final static Object VALUE_DIFF = new Different();
+	
+	private static class Different {
+		public boolean equals(Object obj) {
+			return obj instanceof Different;
+		}
+		public String toString() {
+			return "Different values";
+		}
+	}
 	
 	/**
 	 * Add a {@link PathwayElement} to the list of objects of which 
@@ -355,68 +360,71 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		{
 			PropertyType key = (PropertyType)element;
 			Object value = getAggregateValue(key);
-			if(value == VALUE_DIFF) {
-				return VALUE_DIFF.toString();
-			}
 			switch(key.type())
 			{
 				case ANGLE:
-				{
-					Double x = Math.round((Double)(value) * 1800.0 / Math.PI) / 10.0;
-					return x.toString();
-				}
+					if(value instanceof Double)
+						value = Math.round((Double)(value) * 1800.0 / Math.PI) / 10.0;
+					break;
 				case DOUBLE:
-				{
-					Double x = Math.round((Double)(value) * 100.0) / 100.0;
-					return x.toString();
-				}
-				case INTEGER: 
-					return value.toString();
+					if(value instanceof Double)
+						value = Math.round((Double)(value) * 100.0) / 100.0;
+					break;
 				case ORGANISM:
-					return Organism.latinNames().indexOf((String)value);
+					return Organism.latinNames().indexOf(value.toString());
 				case GENETYPE:
-					return Arrays.asList(genetype_names).indexOf((String)value);
-				case STRING:
-				case FONT:
-					return value == null ? "" : (String)value;
+					return Arrays.asList(genetype_names).indexOf(value.toString());
 				case DATASOURCE:
-					return DataSources.lDataSources.indexOf((String)value);				
+					return DataSources.lDataSources.indexOf(value.toString());				
 				// for all combobox types:
 				case BOOLEAN:
-					return ((Boolean)value) ? 1 : 0;
+					if(value instanceof Boolean)
+						return ((Boolean)value) ? 1 : 0;
+					else
+						return 0;
 				case SHAPETYPE:
-					return (((ShapeType)value).getOrdinal());
+					if(value instanceof ShapeType)
+						return (((ShapeType)value).getOrdinal());
+					else
+						return 0;
 				case LINETYPE:
-					return (((LineType)value).getOrdinal());
+					if(value instanceof LineType)
+						return (((LineType)value).getOrdinal());
+					else
+						return 0;
 			    case OUTLINETYPE:
-					return (((OutlineType)value).ordinal());
+			    	if(value instanceof OutlineType)
+			    		return (((OutlineType)value).ordinal());
+					else
+						return 0;
 				case COLOR:
 					if(value instanceof Color)
 						value = SwtUtils.color2rgb((Color)value);
-					return (RGB)value;
+					if(value instanceof RGB)
+						return (RGB)value;
+					else
+						return new RGB(0, 0, 0);//ColorEditor can't handle string
+					
 				case ORIENTATION:
 				case LINESTYLE:
-				{
-//					try 
-//					{
+					if(value instanceof Integer)
 						return (Integer)value;
-//					}
-//					catch (ClassCastException e)
-//					{
-//						MessageDialog.openWarning(getShell(), "warning", "Can't cast " + value + " to Integer!");
-//					}
-				}
+					else
+						return 0;
 				case DB_ID:
 				case DB_SYMBOL:
-					if(value instanceof String) return (String)value;
 					if(value instanceof PropertyPanel.AutoFillData) 
 						return ((PropertyPanel.AutoFillData)value).getMainValue();
+					break;
 				case BIOPAXREF:
 				case COMMENTS:
 					return value;
-					
 			}
-			return null;
+			//We can get here because:
+			// - the property type is a string
+			// - the property type is not recognised, safest is to return a string
+			// - the values were different, return the 'different values' string
+			return value == null ? "" : value.toString();
 		}
 		
 		public void modify(Object element, String property, Object value) {

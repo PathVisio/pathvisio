@@ -36,6 +36,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseClicked(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseClicked(e);
@@ -44,6 +46,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseEntered(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		requestFocus();
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -53,6 +57,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseExited(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseExited(e);
@@ -61,6 +67,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mousePressed(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mousePressed(e);
@@ -69,6 +77,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseReleased(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseReleased(e);
@@ -77,6 +87,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void keyPressed(final KeyEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.keyPressed(e);
@@ -85,6 +97,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void keyReleased(final KeyEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.keyReleased(e);
@@ -93,6 +107,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void keyTyped(final KeyEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.keyTyped(e);
@@ -101,6 +117,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseDragged(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseDragged(e);
@@ -109,11 +127,17 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	}
 
 	public void mouseMoved(final MouseEvent e) {
+		if(isDisposed()) return;
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				VPathwaySwtAwt.super.mouseMoved(e);
 			}
 		});
+	}
+	
+	public boolean isDisposed() {
+		return display == null || display.isDisposed();
 	}
 	
 	public void registerKeyboardAction(KeyStroke k, final Action a) {

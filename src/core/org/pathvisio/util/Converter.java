@@ -67,6 +67,7 @@ public class Converter {
     	engine.addPathwayImporter(new GpmlFormat());
     	engine.addPathwayImporter(new MappFormat());
 		engine.addPathwayExporter(new MappFormat());
+    	engine.addPathwayExporter(new GpmlFormat());
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));

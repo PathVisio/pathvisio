@@ -289,6 +289,9 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 			bn = VPathway.DRAW_ORDER_SELECTED;
 		}
 		
+//		System.out.println(this + ": " + a + ", " + an + ", " + az);
+//		System.out.println(d + ": " + b + ", " + bn + ", " + bz);
+		
 		// note, if the drawing order is equal, that doesn't mean the objects are equal
 		// the construct with hashcodes give objects a defined sort order, even if their
 		// drawing orders are equal.

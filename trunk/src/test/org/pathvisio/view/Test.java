@@ -150,7 +150,7 @@ public class Test extends TestCase {
     	
     	VPathwayElement hs2 = gs2.getHandles()[0];
     	
-    	//Test natrual / z order
+    	//Test natural / z order
     	Collections.sort(elements);    	    	
     	checkDrawingOrder(new VPathwayElement[] { gs1, gs2, gs3, gd1, hs2 }, elements);
     	
@@ -163,7 +163,6 @@ public class Test extends TestCase {
     	gs2.deselect();
     	Collections.sort(elements);
     	checkDrawingOrder(new VPathwayElement[] { gs1, gs2, gs3, gd1, hs2 }, elements);
-    	
     }
     
     public void checkDrawingOrder(VPathwayElement[] order, List<VPathwayElement> elements) {

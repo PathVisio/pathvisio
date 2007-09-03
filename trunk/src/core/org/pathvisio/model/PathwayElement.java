@@ -617,7 +617,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case FONTSIZE:
 			setMFontSize((Double) value);
 			break;
-
 		case MAPINFONAME:
 			setMapInfoName((String) value);
 			break;
@@ -1587,13 +1586,29 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return mapInfoName;
 	}
 
+	/* 
+	 * maximum length of pathway title. GenMAPP MAPP format imposes this limit,
+	 * so we have it too to be backwards compatible.
+	 */
+	public static final int MAP_TITLE_MAX_LEN = 50;
+	
 	public void setMapInfoName(String v)
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
+			
 		if (mapInfoName != v)
 		{
-			mapInfoName = v;
+			if (v.length() > MAP_TITLE_MAX_LEN)
+			{
+				// TODO: ideally we throw illegal argument exception here, passing an error to the user.
+				// right now it is just silently truncated.
+				mapInfoName = v.substring (0, MAP_TITLE_MAX_LEN);
+			}
+			else
+			{
+				mapInfoName = v;
+			}
 			fireObjectModifiedEvent(new PathwayEvent(this,
 					PathwayEvent.MODIFIED_GENERAL));
 		}

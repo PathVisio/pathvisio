@@ -33,57 +33,60 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
- This class implements a selectionbox
-
- A selectionbox has two states: 1: while dragging (being created) and 2: when surrounding a selected area
- in Case 1, the handles can move freely, in case 2, they move in such a way that the aspect ratio is always maintained.
- 
- It only stores the view coordinates, not the model coordinates.
- Therefore it is important to call adjustToZoom when the zoom pct has changed, so the view coordinates can be recalculated.
- */ 
+ * This class implements a selectionbox
+ * 
+ * A selectionbox has two states: 1: while dragging (being created) and 2: when
+ * surrounding a selected area in Case 1, the handles can move freely, in case
+ * 2, they move in such a way that the aspect ratio is always maintained.
+ * 
+ * It only stores the view coordinates, not the model coordinates. Therefore it
+ * is important to call adjustToZoom when the zoom pct has changed, so the view
+ * coordinates can be recalculated.
+ */
 public class SelectionBox extends VPathwayElement
 {
-	//Corner handles
+	// Corner handles
 	Handle handleNE;
+
 	Handle handleSE;
+
 	Handle handleSW;
+
 	Handle handleNW;
 
-//	double vTop, vLeft, vWidth, vHeight;
+	// double vTop, vLeft, vWidth, vHeight;
 	double mTop, mLeft, mWidth, mHeight;
-	
+
 	private static final long serialVersionUID = 1L;
-		
+
 	private ArrayList<VPathwayElement> selection;
+
 	boolean isSelecting;
+
 	boolean isVisible;
 
 	public Handle[] getHandles()
 	{
-		return new Handle[]
-		{
-			handleNE, handleSE,
-			handleSW, handleNW
-		};
+		return new Handle[] { handleNE, handleSE, handleSW, handleNW };
 	}
-	
+
 	public SelectionBox(VPathway canvas)
 	{
 		super(canvas);
-			
+
 		selection = new ArrayList<VPathwayElement>();
 
 		handleNE = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleSE = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
-	}	
-	
+	}
+
 	public int getDrawingOrder()
 	{
 		return VPathway.DRAW_ORDER_SELECTIONBOX;
 	}
-	
+
 	public ArrayList<VPathwayElement> getSelection()
 	{
 		return selection;
@@ -91,127 +94,156 @@ public class SelectionBox extends VPathwayElement
 
 	public Rectangle2D getVOutline()
 	{
-		return new Rectangle2D.Double (vFromM(mLeft), vFromM(mTop), vFromM(mWidth), vFromM(mHeight));
+		return new Rectangle2D.Double(vFromM(mLeft), vFromM(mTop),
+				vFromM(mWidth), vFromM(mHeight));
 	}
-	
+
 	/**
 	 * Add an object to the selection
+	 * 
 	 * @param o
 	 */
 	public void addToSelection(VPathwayElement o)
 	{
-		if(o == this || selection.contains(o)) return; //Is selectionbox or already in selection
-		if(o instanceof VPoint)
+		if (o == this || selection.contains(o))
+			return; // Is selectionbox or already in selection
+		if (o instanceof VPoint)
 		{
-			for(Line l : ((VPoint)o).getLines())
+			for (Line l : ((VPoint) o).getLines())
 			{
 				l.select();
 				doAdd(l);
 			}
-		}
-		else
+		} else
 		{
 			o.select();
 			doAdd(o);
 		}
-		if(!isSelecting) fitToSelection();
-		
-		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_ADDED, o));
+		if (!isSelecting)
+			fitToSelection();
+
+		fireSelectionEvent(new SelectionEvent(this,
+				SelectionEvent.OBJECT_ADDED, o));
 	}
-	
+
 	private void doAdd(VPathwayElement o)
 	{
-		if(!selection.contains(o)) selection.add(o);
+		if (!selection.contains(o))
+			selection.add(o);
 	}
-	
+
 	/**
 	 * Remove an object from the selection
+	 * 
 	 * @param o
 	 */
-	public void removeFromSelection(VPathwayElement o) {
-		if(o == this) return;
-		selection.remove(o); 
+	public void removeFromSelection(VPathwayElement o)
+	{
+		if (o == this)
+			return;
+		selection.remove(o);
 		o.deselect();
-		if(!isSelecting) fitToSelection();
-		
-		fireSelectionEvent(new SelectionEvent(this, SelectionEvent.OBJECT_REMOVED, o));
+		if (!isSelecting)
+			fitToSelection();
+
+		fireSelectionEvent(new SelectionEvent(this,
+				SelectionEvent.OBJECT_REMOVED, o));
 	}
-		
+
 	/**
 	 * Get the child object at the given coordinates (relative to canvas)
+	 * 
 	 * @param p
 	 * @return the child object or null if none is present at the given location
 	 */
-	public VPathwayElement getChild(Point2D p) {
-		//First check selection
-		for(VPathwayElement o : selection) {
-			if(o.vContains(p)) return o;
-		}
-		//Nothing in selection, check all other objects
-		for(VPathwayElement o : canvas.getDrawingObjects()) {
-			if(o.vContains(p) && o != this)
+	public VPathwayElement getChild(Point2D p)
+	{
+		// First check selection
+		for (VPathwayElement o : selection)
+		{
+			if (o.vContains(p))
 				return o;
 		}
-		return null; //Nothing found
+		// Nothing in selection, check all other objects
+		for (VPathwayElement o : canvas.getDrawingObjects())
+		{
+			if (o.vContains(p) && o != this)
+				return o;
+		}
+		return null; // Nothing found
 	}
-	
+
 	/**
-	 * Removes or adds the object (if exists) at the given coordinates from the selection,
-	 * depending on its selection-state
+	 * Removes or adds the object (if exists) at the given coordinates from the
+	 * selection, depending on its selection-state
+	 * 
 	 * @param p
 	 */
-	public void objectClicked(Point2D p) {
+	public void objectClicked(Point2D p)
+	{
 		VPathwayElement clicked = getChild(p);
-		if(clicked == null) return; //Nothing clicked
-		if(clicked.isSelected()) 	//Object is selected, remove
+		if (clicked == null)
+			return; // Nothing clicked
+		if (clicked.isSelected()) // Object is selected, remove
 		{
 			removeFromSelection(clicked);
-		} 
-		else 						//Object is not selected, add
+		} else
+		// Object is not selected, add
 		{
 			addToSelection(clicked);
 		}
 	}
-	
+
 	/**
-	 * Returns true if the selectionbox has multiple objects in its selection, false otherwise
+	 * Returns true if the selectionbox has multiple objects in its selection,
+	 * false otherwise
 	 */
-	public boolean hasMultipleSelection() { return selection.size() > 1 ? true : false; }
-	
+	public boolean hasMultipleSelection()
+	{
+		return selection.size() > 1 ? true : false;
+	}
+
 	/**
-	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
-	 * to upperleft corner
+	 * Resets the selectionbox (unselect selected objects, clear selection,
+	 * reset rectangle to upperleft corner
 	 */
 	public void reset()
-	{ 
+	{
 		reset(0, 0, true);
 	}
-	
-	
+
 	/**
-	 * Resets the selectionbox (unselect selected objects, clear selection, reset rectangle
-	 * to upperleft corner
-	 * @param clearSelection if true the selection is cleared
+	 * Resets the selectionbox (unselect selected objects, clear selection,
+	 * reset rectangle to upperleft corner
+	 * 
+	 * @param clearSelection
+	 *            if true the selection is cleared
 	 */
-	public void reset(boolean clearSelection) { 
+	public void reset(boolean clearSelection)
+	{
 		reset(0, 0, clearSelection);
 	}
-	
-	public void reset(double vStartX, double vStartY) {
+
+	public void reset(double vStartX, double vStartY)
+	{
 		reset(vStartX, vStartY, true);
 	}
-	
-	private void reset(double vStartX, double vStartY, boolean clearSelection) {
-		if(clearSelection) {
-			for(VPathwayElement o : selection) o.deselect();
+
+	private void reset(double vStartX, double vStartY, boolean clearSelection)
+	{
+		if (clearSelection)
+		{
+			for (VPathwayElement o : selection)
+				o.deselect();
 			boolean hadObjects = selection.size() > 0;
 			selection.clear();
-			if(hadObjects) {
-				fireSelectionEvent(
-					new SelectionEvent(this, SelectionEvent.SELECTION_CLEARED));
+			if (hadObjects)
+			{
+				fireSelectionEvent(new SelectionEvent(this,
+						SelectionEvent.SELECTION_CLEARED));
 			}
 		}
-		
+
 		mLeft = mFromV(vStartX);
 		mTop = mFromV(vStartY);
 		mWidth = 0;
@@ -219,28 +251,34 @@ public class SelectionBox extends VPathwayElement
 	}
 
 	/**
-	 * Returns true if this selectionbox is in selecting state (selects containing objects when resized)
+	 * Returns true if this selectionbox is in selecting state (selects
+	 * containing objects when resized)
 	 */
-	public boolean isSelecting() { return isSelecting; }
-	
+	public boolean isSelecting()
+	{
+		return isSelecting;
+	}
+
 	/**
 	 * Start selecting
 	 */
-	public void startSelecting() {
+	public void startSelecting()
+	{
 		isSelecting = true;
 		show();
 	}
-	
+
 	/**
 	 * Stop selecting
 	 */
-	public void stopSelecting() {
+	public void stopSelecting()
+	{
 		isSelecting = false;
 		fitToSelection();
 		deselect();
 		hide(false);
 	}
-		
+
 	public void select()
 	{
 		super.select();
@@ -248,9 +286,11 @@ public class SelectionBox extends VPathwayElement
 		{
 			h.show();
 		}
-		for(VPathwayElement o : selection) {
+		for (VPathwayElement o : selection)
+		{
 			o.select();
-			for(Handle h : o.getHandles()) h.hide();
+			for (Handle h : o.getHandles())
+				h.hide();
 		}
 	}
 
@@ -266,21 +306,27 @@ public class SelectionBox extends VPathwayElement
 	/**
 	 * Fit the size of this object to the selected objects
 	 */
-	public void fitToSelection() {
-		if(selection.size() == 0) { //No objects in selection
-			hide(); 
+	public void fitToSelection()
+	{
+		if (selection.size() == 0)
+		{ // No objects in selection
+			hide();
 			return;
 		}
-		if(! hasMultipleSelection()) { //Only one object in selection, hide selectionbox
+		if (!hasMultipleSelection())
+		{ // Only one object in selection, hide selectionbox
 			VPathwayElement passTo = selection.get(0);
 			passTo.select();
 			return;
 		}
 
 		Rectangle2D vr = null;
-		for(VPathwayElement o : selection) {
-			if(vr == null) vr = o.getVBounds();
-			else vr.add(o.getVBounds());
+		for (VPathwayElement o : selection)
+		{
+			if (vr == null)
+				vr = o.getVBounds();
+			else
+				vr.add(o.getVBounds());
 		}
 
 		mWidth = mFromV(vr.getWidth());
@@ -288,7 +334,7 @@ public class SelectionBox extends VPathwayElement
 		mLeft = mFromV(vr.getX());
 		mTop = mFromV(vr.getY());
 	}
-	
+
 	/**
 	 * Sets the handles at the correct location;
 	 */
@@ -299,28 +345,33 @@ public class SelectionBox extends VPathwayElement
 		handleSW.setMLocation(mLeft, mTop + mHeight);
 		handleNW.setMLocation(mLeft, mTop);
 	}
-			
+
 	/**
 	 * Show the selectionbox
 	 */
-	public void show() { 
-		isVisible = true; 
+	public void show()
+	{
+		isVisible = true;
 		markDirty();
 	}
-	
+
 	/**
 	 * Hide the selectionbox
 	 */
-	public void hide() {
+	public void hide()
+	{
 		hide(true);
 	}
-	
-	public void hide(boolean reset) {
-		for(Handle h : getHandles()) h.hide();
+
+	public void hide(boolean reset)
+	{
+		for (Handle h : getHandles())
+			h.hide();
 		isVisible = false;
-		if(reset) reset();
+		if (reset)
+			reset();
 	}
-	
+
 	/**
 	 * Gets the corner handle (South east) for start dragging
 	 */
@@ -328,7 +379,7 @@ public class SelectionBox extends VPathwayElement
 	{
 		return handleSE;
 	}
-	
+
 	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
 		double mnewx = mFromV(vnewx);
@@ -337,7 +388,7 @@ public class SelectionBox extends VPathwayElement
 		double mdy = 0;
 		double mdw = 0;
 		double mdh = 0;
-		
+
 		if (h == handleNE || h == handleNW)
 		{
 			mdy = mnewy - mTop;
@@ -351,7 +402,7 @@ public class SelectionBox extends VPathwayElement
 		if (h == handleSE || h == handleNE)
 		{
 			mdx = 0;
-			mdw = mnewx - (mLeft + mWidth);			
+			mdw = mnewx - (mLeft + mWidth);
 		}
 		if (h == handleSW || h == handleNW)
 		{
@@ -367,32 +418,62 @@ public class SelectionBox extends VPathwayElement
 		mTop += mdy;
 
 		Handle opposite = h;
-		if(mWidth < 0)
+		if (mWidth < 0)
 		{
 			opposite = getHorizontalOpposite(opposite);
 			negativeWidth();
 		}
-		if(mHeight < 0)
+		if (mHeight < 0)
 		{
 			opposite = getVerticalOpposite(opposite);
 			negativeHeight();
 		}
-		if (opposite != h) canvas.setPressedObject(opposite);
+		if (opposite != h)
+			canvas.setPressedObject(opposite);
 
 		markDirty();
 		setHandleLocation();
-		
-		if(isSelecting)
-		{   //Selecting, so add containing objects to selection
+
+		if (isSelecting)
+		{ // Selecting, so add containing objects to selection
 			Rectangle2D vr = getVBounds();
-			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.getX(), vr.getY(), vr.getWidth(), vr.getHeight());
-			for(VPathwayElement o : canvas.getDrawingObjects())
+			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.getX(), vr
+					.getY(), vr.getWidth(), vr.getHeight());
+			for (VPathwayElement o : canvas.getDrawingObjects())
 			{
-				if((o == this) || (o instanceof Handle)) continue;
-				if(o.vIntersects(bounds) && !(o instanceof Group))
-				{ 
+				if ((o == this) || (o instanceof Handle))
+					continue;
+				if (o.vIntersects(bounds) && !(o instanceof Group))
+				{
 					addToSelection(o);
-				} else if(o.isSelected()) removeFromSelection(o);
+
+				} else if (o.isSelected())
+					removeFromSelection(o);
+
+				// Special case when selecting groups
+				if (o.vIntersects(bounds) && (o instanceof Group))
+				{
+					// Need to remove members of group first, to avoid duplicate
+					// selection and resulting funky move behavior
+					for (VPathwayElement vpe : canvas.getDrawingObjects())
+					{
+						if (vpe instanceof Graphics && !(vpe instanceof Group))
+						{
+							PathwayElement pe = ((Graphics) vpe)
+									.getPathwayElement();
+							String ref = pe.getGroupRef();
+							if (ref != null
+									&& ref.equals(((Group) o)
+											.getPathwayElement().getGroupId())
+									&& vpe.isSelected())
+							{
+								removeFromSelection(vpe);
+							}
+						}
+					}
+					addToSelection(o);
+					// fitToSelection();
+				}
 			}
 		}
 	}
@@ -400,10 +481,14 @@ public class SelectionBox extends VPathwayElement
 	private Handle getHorizontalOpposite(Handle h)
 	{
 		Handle opposite = null;
-		if(h == handleNE) opposite = handleNW;
-		else if(h == handleSE) opposite = handleSW;
-		else if(h == handleSW) opposite = handleSE;
-		else if(h == handleNW) opposite = handleNE;
+		if (h == handleNE)
+			opposite = handleNW;
+		else if (h == handleSE)
+			opposite = handleSW;
+		else if (h == handleSW)
+			opposite = handleSE;
+		else if (h == handleNW)
+			opposite = handleNE;
 		assert (opposite != null);
 		return opposite;
 	}
@@ -411,18 +496,24 @@ public class SelectionBox extends VPathwayElement
 	private Handle getVerticalOpposite(Handle h)
 	{
 		Handle opposite = null;
-		if(h == handleNE) opposite = handleSE;
-		else if(h == handleSE) opposite = handleNE;
-		else if(h == handleSW) opposite = handleNW;
-		else if(h == handleNW) opposite = handleSW;
+		if (h == handleNE)
+			opposite = handleSE;
+		else if (h == handleSE)
+			opposite = handleNE;
+		else if (h == handleSW)
+			opposite = handleNW;
+		else if (h == handleNW)
+			opposite = handleSW;
 		assert (opposite != null);
 		return opposite;
 	}
-	
+
 	/**
-	 * This method implements actions performed when the width of
-	 * the object becomes negative after adjusting to a handle
-	 * @param h	The handle this object adjusted to
+	 * This method implements actions performed when the width of the object
+	 * becomes negative after adjusting to a handle
+	 * 
+	 * @param h
+	 *            The handle this object adjusted to
 	 */
 	public void negativeWidth()
 	{
@@ -433,96 +524,107 @@ public class SelectionBox extends VPathwayElement
 	}
 
 	/**
-	 * This method implements actions performed when the height of
-	 * the object becomes negative after adjusting to a handle
-	 * @param h	The handle this object adjusted to
+	 * This method implements actions performed when the height of the object
+	 * becomes negative after adjusting to a handle
+	 * 
+	 * @param h
+	 *            The handle this object adjusted to
 	 */
 	public void negativeHeight()
-	{		
+	{
 		double ht = -mHeight;
 		double sy = mTop - ht;
 		mHeight = ht;
 		mTop = sy;
 	}
 
-	public void vMoveBy(double vdx, double vdy) 
+	public void vMoveBy(double vdx, double vdy)
 	{
 		mLeft += mFromV(vdx);
 		mTop += mFromV(vdy);
 		setHandleLocation();
 		markDirty();
 
-		//Move selected object and their references
-		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); //Will be moved by linking object
-		Set<VPoint> points = new HashSet<VPoint>(); //Will not be moved by linking object
-		
-		for(VPathwayElement o : selection) 
+		// Move selected object and their references
+		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); // Will
+		// be
+		// moved
+		// by
+		// linking
+		// object
+		Set<VPoint> points = new HashSet<VPoint>(); // Will not be moved by
+		// linking object
+
+		for (VPathwayElement o : selection)
 		{
 			if (o instanceof Graphics)
 			{
-				PathwayElement g = ((Graphics)o).getGmmlData();
-				if(!(o instanceof Line)) {
+				PathwayElement g = ((Graphics) o).getGmmlData();
+				if (!(o instanceof Line))
+				{
 					o.vMoveBy(vdx, vdy);
 					not.addAll(g.getReferences());
 				}
-				if(g.getObjectType() == ObjectType.LINE) {
-					points.addAll(((Line)o).getPoints());
+				if (g.getObjectType() == ObjectType.LINE)
+				{
+					points.addAll(((Line) o).getPoints());
 				}
 			}
 
 		}
-		
-		for(GraphRefContainer ref : not)
+
+		for (GraphRefContainer ref : not)
 		{
-			if(ref instanceof MPoint)
+			if (ref instanceof MPoint)
 			{
-				points.remove(canvas.getPoint((MPoint)ref));
+				points.remove(canvas.getPoint((MPoint) ref));
 			}
 		}
-			
-		for(VPoint p : points)
+
+		for (VPoint p : points)
 		{
 			p.vMoveBy(vdx, vdy);
 		}
 	}
-	
+
 	public void doDraw(Graphics2D g)
 	{
-		if(isVisible)
+		if (isVisible)
 		{
 			int sw = 1;
-			g.setStroke(new BasicStroke(sw, 
-					BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 
-					1, new float[] {1, 2}, 0));
+			g.setStroke(new BasicStroke(sw, BasicStroke.CAP_SQUARE,
+					BasicStroke.JOIN_MITER, 1, new float[] { 1, 2 }, 0));
 			Rectangle2D rect = getVBounds();
-			g.drawRect((int)rect.getX(), (int)rect.getY(), 
-					(int)rect.getWidth() - sw, (int)rect.getHeight() - sw);
+			g.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect
+					.getWidth()
+					- sw, (int) rect.getHeight() - sw);
 		}
 	}
-			
+
 	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
-	
+
 	public void addListener(SelectionListener l)
 	{
-		if(!listeners.contains(l))
+		if (!listeners.contains(l))
 		{
 			listeners.add(l);
 		}
 	}
-	
+
 	public void removeListener(SelectionListener l)
 	{
 		listeners.remove(l);
 	}
-	
+
 	/**
-	 * Fire a {@link SelectionEvent} to notify all {@link SelectionListener}s registered
-	 * to this class
+	 * Fire a {@link SelectionEvent} to notify all {@link SelectionListener}s
+	 * registered to this class
+	 * 
 	 * @param e
 	 */
 	public void fireSelectionEvent(SelectionEvent e)
 	{
-		for(SelectionListener l : listeners)
+		for (SelectionListener l : listeners)
 		{
 			l.selectionEvent(e);
 		}
@@ -536,16 +638,23 @@ public class SelectionBox extends VPathwayElement
 	public static class SelectionEvent extends EventObject
 	{
 		private static final long serialVersionUID = 1L;
+
 		public static final int OBJECT_ADDED = 0;
+
 		public static final int OBJECT_REMOVED = 1;
+
 		public static final int SELECTION_CLEARED = 2;
 
 		public SelectionBox source;
+
 		public VPathwayElement affectedObject;
+
 		public int type;
+
 		public List<VPathwayElement> selection;
 
-		public SelectionEvent(SelectionBox source, int type, VPathwayElement affectedObject)
+		public SelectionEvent(SelectionBox source, int type,
+				VPathwayElement affectedObject)
 		{
 			super(source);
 			this.source = source;
@@ -553,11 +662,11 @@ public class SelectionBox extends VPathwayElement
 			this.selection = source.selection;
 			this.affectedObject = affectedObject;
 		}
-		
+
 		public SelectionEvent(SelectionBox source, int type)
 		{
 			this(source, type, null);
 		}
-	}	
-	
+	}
+
 }

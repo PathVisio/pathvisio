@@ -187,6 +187,12 @@ sub magic_cmp
 			$a = 0;
 			$b = 0;
 		}
+		elsif ($col =~ /^(BoardWidth|BoardHeight)$/)
+		{
+			#ignore boardwidth, height as it is recalculated dynamically by pathvisio.
+			$a = 0;
+			$b = 0;
+		}
 	
 		#defaults for empties:
 		if ($col =~ /^(SecondX|SecondY|Width|Height|Rotation)$/)

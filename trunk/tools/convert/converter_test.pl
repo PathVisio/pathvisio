@@ -21,13 +21,6 @@
 # and validate every step automagically.
 #
 
-#
-# Please note that some part of the converter is
-# sensitive to the digital symbol. Please convert
-# pathways on a computer with the digital symbol set 
-# to "." (american)
-#
-
 use warnings;
 use strict;
 
@@ -125,7 +118,7 @@ sub convert
 		
 	print " in: $fnMapp\n";
 	print "out: $fnOut\n";
-	system ("java", "-cp", 
+	system ("java", "-cp",
 		join (";", qw(
 			"lib/JRI.jar"
 			"lib/org.eclipse.equinox.common.jar"
@@ -135,9 +128,25 @@ sub convert
 			"lib/org.eclipse.core.commands.jar"
 			"lib/jdom.jar"
 			build
-			"lib/hsqldb.jar"
 			"lib/swt-win32-lib.jar"
-			"lib/resources.jar")), "org.pathvisio.util.Converter", $fnMapp, $fnOut);
+			"lib/resources.jar"
+			"lib/batik/batik-awt-util.jar"
+			"lib/batik/batik-ext.jar"
+			"lib/batik/batik-script.jar"
+			"lib/batik/batik-util.jar"
+			"lib/batik/batik-dom.jar"
+			"lib/batik/xml-apis.jar"
+			"lib/batik/batik-xml.jar"
+			"lib/batik/batik-extension.jar"
+			"lib/batik/pdf-transcoder.jar"
+			"lib/batik/batik-css.jar"
+			"lib/batik/batik-transcoder.jar"
+			"lib/batik/batik-svg-dom.jar"
+			"lib/batik/batik-parser.jar"
+			"lib/batik/batik-svggen.jar"
+			"lib/batik/batik-bridge.jar"
+			"lib/batik/batik-gvt.jar"
+			)), "org.pathvisio.util.Converter", $fnMapp, $fnOut);
 	print "Exit status ", $? >> 8;
 	if ($?) { print " Error!"; }
 	print "\n";
@@ -237,7 +246,7 @@ for my $fnIn (@list)
 
 	my $fnOut = $fnIn; 
 	$fnOut =~ s/(.mapp$)/.gpml/i;	
-	$fnOut =~ s/$dirMapps/$dirGpml/i;
+	$fnOut =~ s/\Q$dirMapps\E/$dirGpml/i;
 
 	my $targetDir = $fnOut;
 	$targetDir =~ s#[^/]*$##; #remove part after last slash

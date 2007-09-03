@@ -256,11 +256,18 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     			{
     				Logger.log.trace ("[" + (j + 1) + "] " + row[j]);
 //    				System.err.println ("[" + (j + 1) + "] " + row[j]);
-    				if (j >= 14 && j < 17)
+    				if (j >= colRemarks && j <= colLinks)
     				{
     					if (row[j] != null && row[j].equals("")) row[j] = null;
     					sObjects.setObject(j + 1, row[j], Types.LONGVARCHAR);
     					// bug workaround, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4401822
+    				}
+    				else if (j >= colCenterX && j <= colRotation)
+    				{
+    					//NOTE: by using setDouble, we prevent period <-> comma digit symbol issues.
+    					//NOTE: could be optimized, now we convert 
+    					// double to string and back to double again. but at least this works.
+    					sObjects.setDouble (j + 1, Double.parseDouble(row[j]));
     				}
     				else
     				{
@@ -280,7 +287,14 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			{
 				Logger.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
 				
-				sInfo.setString (j + 1, mappInfo[j]);
+				if (j >= icolBoardWidth && j <= icolWindowHeight)
+				{
+					sInfo.setDouble (j + 1, Double.parseDouble (mappInfo[j]));
+				}
+				else
+				{
+					sInfo.setString (j + 1, mappInfo[j]);
+				}
 			}    			
 			sInfo.executeUpdate();
             con.close();
@@ -866,8 +880,6 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	else
     		mapShape (o, mappObject);
 		
-        int i = Integer.parseInt(mappObject[colColor]);
-        o.setTransparent(i < 0);
         if (shapeType == ShapeType.ARC)
         {
         	o.setColor(fromMappColor(mappObject[colColor]));
@@ -875,7 +887,15 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         }
         else
         {
-        	o.setFillColor(fromMappColor(mappObject[colColor]));
+            int i = Integer.parseInt(mappObject[colColor]);
+            if (i < 0)
+            {
+            	o.setTransparent(true); // automatically sets fillColor to null
+            }
+            else
+            {
+            	o.setFillColor(fromMappColor(mappObject[colColor]));
+            }
         }        
 		
         mapRotation (o, mappObject);        

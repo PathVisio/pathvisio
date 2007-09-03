@@ -21,7 +21,6 @@ import java.awt.Component;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
-import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.actions.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.actions.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.actions.CommonActions.PropertiesAction;
@@ -36,7 +35,19 @@ import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.ViewActions;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-public class PathwayElementMenuListener implements VPathwayListener {    
+/**
+ * Implementation of {@link VPathwayListener} that handles righ-click events to 
+ * show a popup menu when a {@link VPathwayElement} is clicked.
+ * @author thomas
+ *
+ */
+public class PathwayElementMenuListener implements VPathwayListener {
+	/**
+	 * Get an instance of a {@link JPopupMenu} for a given {@link VPathwayElement}
+	 * @param e The {@link VPathwayElement} to create the popup menu for. If e is an instance of
+	 * {@link Handle}, the menu is based on the parent element.
+	 * @return The {@link JPopupMenu} for the given pathway element
+	 */
 	private static JPopupMenu getMenuInstance(VPathwayElement e) {
 		if(e instanceof Handle) e = ((Handle)e).getParent();
 		

@@ -48,6 +48,7 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
+import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
@@ -143,6 +144,8 @@ public class TypedProperty implements Comparable {
 			return fontRenderer;
 		case SHAPETYPE:
 			return shapeTypeRenderer;
+		case OUTLINETYPE:
+			return outlineTypeRenderer;
 		case GENETYPE: //TODO
 		}
 		return null;
@@ -175,6 +178,8 @@ public class TypedProperty implements Comparable {
 		case COMMENTS:
 			commentsEditor.setInput(this);
 			return commentsEditor;
+		case OUTLINETYPE:
+			return outlineTypeEditor;
 		default:
 			return null;
 		}
@@ -355,10 +360,12 @@ public class TypedProperty implements Comparable {
 	private static ComboRenderer organismRenderer = new ComboRenderer(Organism.latinNames().toArray());
 	private static FontRenderer fontRenderer = new FontRenderer();
 	private static ComboRenderer shapeTypeRenderer = new ComboRenderer(ShapeType.getNames(), ShapeType.getValues());
+	private static ComboRenderer outlineTypeRenderer = new ComboRenderer(OutlineType.getTags(), OutlineType.values());
 	
 	private static ColorEditor colorEditor = new ColorEditor();
 	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);
 	private static ComboEditor lineStyleEditor = new ComboEditor(LineStyle.getNames(), true);
+	private static ComboEditor outlineTypeEditor = new ComboEditor(OutlineType.getTags(), true);
 	private static ComboEditor datasourceEditor = new ComboEditor(DataSources.dataSources, false);
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);

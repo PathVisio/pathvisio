@@ -23,6 +23,8 @@ import org.pathvisio.model.Pathway;
 
 public class UndoManager 
 {
+	public static final String CANT_UNDO = "Can't undo";
+	
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
 	static final int MAX_UNDO_SIZE = 25;
@@ -68,7 +70,7 @@ public class UndoManager
 		String result;
 		if (undoList.size() == 0)
 		{
-			result = "Can't undo";
+			result = CANT_UNDO;
 		}
 		else
 		{

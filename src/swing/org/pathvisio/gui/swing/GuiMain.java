@@ -22,11 +22,22 @@ import javax.swing.UIManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 
+/**
+ * Main class for the Swing GUI. This class creates and shows the GUI.
+ * Subclasses may override {@link #createAndShowGUI(MainPanel)} to perform custom
+ * actions before showing the GUI.
+ * @author thomas
+ *
+ */
 public class GuiMain {
 	private String[] args;
 	private JFrame frame;
 	protected MainPanel mainPanel;
 	
+	/**
+	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
+	 * @param mainPanel The main panel to show in the frame
+	 */
 	protected void createAndShowGUI(MainPanel mainPanel) {
 		GuiInit.init();
 		

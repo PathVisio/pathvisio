@@ -31,7 +31,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -47,7 +46,15 @@ import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.ViewActions;
 import org.pathvisio.view.ViewActions.CopyAction;
 import org.pathvisio.view.ViewActions.PasteAction;
+import org.pathvisio.view.ViewActions.UndoAction;
 
+/**
+ * A collection of {@link Action}s that may be used throughout the program (e.g. in
+ * toolbars, menubars and right-click menu). These actions are registered to the proper
+ * group in {@ViewActions} when a new {@link VPathway} is created.
+ * @author thomas
+ * @see {@link ViewActions}
+ */
 public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
 	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
@@ -85,6 +92,8 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public final Action copyAction = new CopyAction();
 	public final Action pasteAction = new PasteAction();
+	
+	public final Action undoAction = new UndoAction();
 
 	public final Action[] zoomActions = new Action[] {
 			new ZoomAction(VPathway.ZOOM_TO_FIT),
@@ -222,7 +231,6 @@ public class CommonActions implements ApplicationEventListener {
 		}
 		
 		public void setEnabled(boolean newValue) {
-			Logger.log.error(this + " setenabled " + newValue, new Exception());
 			super.setEnabled(newValue);
 		}
 	}

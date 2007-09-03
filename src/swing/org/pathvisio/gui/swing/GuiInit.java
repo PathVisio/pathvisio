@@ -24,7 +24,16 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
 
+/**
+ * Static utility class for user interface initialization. The {@link #init()} method
+ * should be called before starting the GUI.
+ * @author thomas
+ */
 public class GuiInit {
+	/**
+	 * Performs initiation needed by the user interface. This method register the importers/exporters
+	 * and sets the log. This method is called from {@link GuiMain#createAndShowGUI(MainPanel)}
+	 */
 	public static void init() {
 		initImporters();
 		initExporters();

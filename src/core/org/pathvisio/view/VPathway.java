@@ -1827,7 +1827,6 @@ public class VPathway implements PathwayListener
 	 */
 	void checkBoardSize(PathwayElement elm)
 	{
-		System.out.println("Checking board size");
 		double increase = mFromV(25);
 		Dimension size = parent.getVSize();
 		double mw = mFromV(size.width);

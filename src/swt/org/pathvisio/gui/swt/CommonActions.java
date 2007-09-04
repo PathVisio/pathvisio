@@ -16,11 +16,6 @@
 //
 package org.pathvisio.gui.swt;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,18 +23,16 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.preferences.swt.PreferenceDlg;
 import org.pathvisio.preferences.swt.SwtPreferences;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.view.UndoManager;
+import org.pathvisio.view.UndoManagerEvent;
+import org.pathvisio.view.UndoManagerListener;
 import org.pathvisio.view.VPathway;
 
 /**
@@ -47,7 +40,7 @@ import org.pathvisio.view.VPathway;
 */   
 public class CommonActions
 {
-	static class UndoAction extends Action
+	static class UndoAction extends Action implements ApplicationEventListener, UndoManagerListener
 	{
 		MainWindowBase window;
 		public UndoAction (MainWindowBase w)
@@ -55,12 +48,29 @@ public class CommonActions
 			window = w;
 			setText ("&Undo@Ctrl+Z");
 			setToolTipText ("Undo last action");
+			setImageDescriptor(ImageDescriptor.createFromURL(
+					Engine.getCurrent().getResourceURL("icons/undo.gif")));
+			setEnabled(false);
+			Engine.getCurrent().addApplicationEventListener(this);
 		}
 		public void run() 
 		{
 			if (Engine.getCurrent().getActiveVPathway() != null)
 			{
 				Engine.getCurrent().getActiveVPathway().undo();
+			}
+		}
+		
+		public void undoManagerEvent(UndoManagerEvent e) {
+			String msg = e.getMessage();
+			setToolTipText("Undo: " + msg);
+			setEnabled(!msg.equals(UndoManager.CANT_UNDO));
+		}
+
+		public void applicationEvent(ApplicationEvent e) {
+			if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+				((VPathway)e.source).getUndoManager().addListener(this);
+				setEnabled(false);
 			}
 		}
 	}

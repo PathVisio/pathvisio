@@ -200,7 +200,8 @@ public class Label extends GraphicsShape
 		switch (gdata.getOutline())
 		{
 		case RECTANGLE:
-			outline = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
+			double lw = defaultStroke.getLineWidth();
+			outline = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth() - lw, getVHeight() - lw);
 			break;
 		case ROUNDED_RECTANGLE:
 			outline = new RoundRectangle2D.Double(

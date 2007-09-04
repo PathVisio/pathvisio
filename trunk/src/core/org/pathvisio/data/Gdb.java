@@ -50,7 +50,9 @@ public abstract class Gdb {
 		initializeHeader();
 	}
 	
-	private static final int COMPAT_VERSION = 1;
+	private static String table_DataNode = "datanode";
+	
+	private static final int COMPAT_VERSION = 2; //Preferred schema version
 	
 	/**
 	 * The {@link Connection} to the Gene Database
@@ -139,11 +141,10 @@ public abstract class Gdb {
 		
 		try {
 			Statement s = con.createStatement();
-			ResultSet r = s.executeQuery("SELECT backpageText FROM gene " +
-					"WHERE id = '" + id + "' AND code = '" + code + "'");
+			ResultSet r = s.executeQuery("SELECT backpageText FROM " + table_DataNode +
+					" WHERE id = '" + id + "' AND code = '" + code + "'");
 			r.next();
 			String result = r.getString(1);
-			
 			timer.stopToLog("> getBpInfo");
 			return result;
 		} catch(Exception e) { return null;	} //Gene not found
@@ -313,7 +314,7 @@ public abstract class Gdb {
 	{
 		try {
 			ResultSet r = con.createStatement().executeQuery(
-					"SELECT COUNT(*) FROM gene WHERE " +
+					"SELECT COUNT(*) FROM " + table_DataNode + " WHERE " +
 					"id = '" + id + "' AND code = '" + code +"'"
 			);
 			r.next();
@@ -539,9 +540,25 @@ public abstract class Gdb {
 		DBConnector connector = getDBConnector();
 		con = connector.createConnection(dbName);
 		con.setReadOnly(true);
-//		Utils.checkDbVersion(con, COMPAT_VERSION); NOT FOR NOW
+		checkSchemaVersion();
 		setCurrentGdb(dbName);
 		Logger.log.trace("Current Gene Database: " + dbName);
+	}
+	
+	private static void checkSchemaVersion() {
+		int version = 0;
+		try {
+			ResultSet r = con.createStatement().executeQuery("SELECT schemaversion FROM info");
+			if(r.next()) version = r.getInt(1);
+		} catch (Exception e) {
+			//Ignore, older db's don't even have schema version
+		}
+		if(version < COMPAT_VERSION) {
+			//Datanode table name is 'gene'
+			table_DataNode = "gene";
+		} else {
+			table_DataNode = "datanode";
+		}
 	}
 	
 	/**
@@ -565,6 +582,7 @@ public abstract class Gdb {
 	 * @param gmGdbFile		The file containing the GenMAPP Gene Database to be converted
 	 * @param dbName		The file where the new Gene Database has to be stored (the .properties
 	 * file of the database)
+	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
 	 */
 	public static void convertGdb(File gmGdbFile, String dbName) {
 
@@ -756,6 +774,7 @@ public abstract class Gdb {
 	/**
 	 * {@link ConvertThread} for conversion of the GenMAPP Gene Database
 	 * @see {@link convertGdb}
+	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
 	 */
 	private static ConvertThread convertThread;
 	
@@ -763,11 +782,13 @@ public abstract class Gdb {
 	private static String convertDbName;
 	/**
 	 * Set the GenMAPP Gene database file to convert from
+	 *@deprecated Conversion of GenMAPP Gene Databases is not supported anymore
 	 * @param file
 	 */
 	public static void setConvertGmGdbFile(File file) { convertGmGdbFile = file; }
 	/**
 	 * Set the Gene database name to convert to
+	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
 	 * @param name
 	 */
 	public static void setConvertGdbName(String name) { convertDbName = name; }
@@ -775,6 +796,7 @@ public abstract class Gdb {
 	/**
 	 * This class is a {@link Thread} that converts a GenMAPP Gene Database and keeps the progress
 	 * of the conversion
+	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
 	 */
 	public static class ConvertThread extends Thread
 	{
@@ -802,6 +824,7 @@ public abstract class Gdb {
 	 * Excecutes several SQL statements to create the tables and indexes in the database the given
 	 * connection is connected to
 	 * @param convertCon	The connection to the database the tables are created in
+	 * @deprecated Use AP's scripts to create GDB!
 	 */
 	public static void createTables(Connection convertCon) {
 		Logger.log.trace("Info:  Creating tables");

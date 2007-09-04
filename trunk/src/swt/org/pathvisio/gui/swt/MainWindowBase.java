@@ -232,6 +232,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		toolBarManager.add(newAction);
 		toolBarManager.add(openAction);
 		toolBarManager.add(saveAction);
+		toolBarManager.add(undoAction);
 		commonActionsCI = new ToolBarContributionItem(toolBarManager, "CommonActions");
 	}
 

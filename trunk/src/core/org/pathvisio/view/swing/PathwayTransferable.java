@@ -1,33 +1,42 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
+//PathVisio,
+//a tool for data visualization and analysis using Biological Pathways
+//Copyright 2006-2007 BiGCaT Bioinformatics
+
+//Licensed under the Apache License, Version 2.0 (the "License"); 
+//you may not use this file except in compliance with the License. 
+//You may obtain a copy of the License at 
+
+//http://www.apache.org/licenses/LICENSE-2.0 
+
+//Unless required by applicable law or agreed to in writing, software 
+//distributed under the License is distributed on an "AS IS" BASIS, 
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+//See the License for the specific language governing permissions and 
+//limitations under the License.
+
 package org.pathvisio.view.swing;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JComponent;
 
 import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -35,12 +44,13 @@ import org.pathvisio.model.PathwayElement;
 
 public class PathwayTransferable implements Transferable {
 	public static final String INFO_DATASOURCE = "COPIED";
-	
+
 	public static final DataFlavor gpmlDataFlavor = new DataFlavor(String.class, "text/xml");
-	
+	public static final DataFlavor urlFlavor = new DataFlavor(String.class, "text/uri");
+
 	List<PathwayElement> elements;
 	Pathway pathway;
-	
+
 	public PathwayTransferable(Pathway source, List<PathwayElement> elements) {
 		this.elements = elements;
 		this.pathway = source;
@@ -52,7 +62,7 @@ public class PathwayTransferable implements Transferable {
 		XMLOutputter xmlout = new XMLOutputter(Format.getPrettyFormat());
 
 		Pathway pnew = new Pathway();
-		
+
 		//Always add biopax information
 		//TODO: Only when referred to
 		PathwayElement biopax = pathway.getBiopax();
@@ -62,7 +72,7 @@ public class PathwayTransferable implements Transferable {
 
 		Set<String> ids = new HashSet<String>();
 		Set<String> groupIds = new HashSet<String>();
-		
+
 		boolean infoFound = false;
 		for(PathwayElement e : elements) {
 			if(e.getGraphId() != null) {
@@ -75,7 +85,7 @@ public class PathwayTransferable implements Transferable {
 				infoFound = true;
 			}
 		}
-		
+
 		for(PathwayElement e : elements) {
 			//Check for valid graphRef (with respect to other copied elements)
 			PathwayElement enew = e.copy();
@@ -87,14 +97,14 @@ public class PathwayTransferable implements Transferable {
 			}
 			pnew.add(enew);
 		}
-		
+
 		//If no mappinfo, create a dummy one that we can recognize lateron
 		if(!infoFound) {
 			PathwayElement info = new PathwayElement(ObjectType.MAPPINFO);
 			info.setMapInfoDataSource(INFO_DATASOURCE);
 			pnew.add(info);
 		}
-		
+
 		if(gpmlDataFlavor.equals(flavor)) {
 			try {
 				Document doc = GpmlFormat.createJdom(pnew);
@@ -103,7 +113,7 @@ public class PathwayTransferable implements Transferable {
 				Logger.log.error("Unable to copy to clipboard", e);
 			}
 		}
-		
+
 		return out;
 	}
 
@@ -113,5 +123,55 @@ public class PathwayTransferable implements Transferable {
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return gpmlDataFlavor.equals(flavor);
+	}
+
+	public static Pathway pathwayFromTransferable(Transferable t) throws ConverterException, MalformedURLException, UnsupportedFlavorException, IOException {
+		DataFlavor preferred = null;
+		for(DataFlavor df : t.getTransferDataFlavors()) {
+			if(PathwayTransferable.gpmlDataFlavor.equals(df)) {
+				preferred = df;
+				break;
+			}
+			//Only choose this if there is no better option
+			if(urlFlavor.equals(df)) {
+				preferred = df; //Continue to check for better option
+			}
+		}
+		
+		Pathway pnew = new Pathway();
+		if(preferred.equals(PathwayTransferable.gpmlDataFlavor)) {
+			String xml = (String)t.getTransferData(PathwayTransferable.gpmlDataFlavor);
+			GpmlFormat.readFromXml(pnew, new StringReader(xml), true);
+
+			List<PathwayElement> elements = new ArrayList<PathwayElement>();
+			for(PathwayElement elm : pnew.getDataObjects()) {
+				if(elm.getObjectType() != ObjectType.MAPPINFO) {
+					elements.add(elm);
+				} else {
+					//Only add mappinfo if it's not generated by the transferable
+					String source = elm.getMapInfoDataSource();
+					if(!PathwayTransferable.INFO_DATASOURCE.equals(source)) {
+						elements.add(elm);
+					}
+				}
+			}
+		} else if(preferred.equals(urlFlavor)) {
+			URL url = new URL((String)t.getTransferData(urlFlavor));
+			if("file".equals(url.getProtocol())) {
+				File file = new File(url.getFile());
+				pnew.readFromXml(file, true);
+			} else {
+				pnew = null; //No file url, unable to import pathway
+			}
+		}
+		return pnew;
+	}
+
+
+
+	private boolean importUrl(JComponent comp, Transferable t) throws MalformedURLException, UnsupportedFlavorException, IOException {
+		URL url = new URL((String)t.getTransferData(urlFlavor));
+		SwingEngine.getCurrent().openPathway(url);
+		return true;
 	}
 }

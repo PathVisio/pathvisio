@@ -31,7 +31,7 @@ import org.pathvisio.debug.Logger;
    by calling  registerShape() on BasicShapes, GenMAPPShapes and MIMShapes.
  */
 
-class ShapeRegistry
+public class ShapeRegistry
 {
 	private static Shape defaultShape = null;
 	private static ArrowShape defaultArrow = null;

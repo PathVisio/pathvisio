@@ -38,14 +38,14 @@ public class ArrowShape
 	public static final int CLOSED = 1;
 	public static final int WIRE = 2;
 	
-	ArrowShape (Shape shape, int fillType)
+	public ArrowShape (Shape shape, int fillType)
 	{
 		this.shape = shape;
 		this.fillType = fillType;
 	}
 	
-	int getFillType () { return fillType; }
-	Shape getShape() { return shape; }
+	public int getFillType () { return fillType; }
+	public Shape getShape() { return shape; }
 	
 	Shape shape;
 	int fillType;

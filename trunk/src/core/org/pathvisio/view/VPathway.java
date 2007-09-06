@@ -827,7 +827,8 @@ public class VPathway implements PathwayListener
 			area = g2d.getClipBounds();
 			if (area == null)
 			{
-				area = new Rectangle(0, 0, getVWidth(), getVHeight());
+				Dimension size = parent.getViewportSize(); //Draw the visible area
+				area = new Rectangle(0, 0, size.width, size.height);
 			}
 		}
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -2542,9 +2543,8 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVWidth()
 	{
-//		return data == null ? 0 : (int) vFromM(data.getMappInfo()
-//				.getMBoardWidth());
-		return parent.getVSize().width;
+		return data == null ? 0 : (int) vFromM(data.getMappInfo()
+				.getMBoardWidth());
 	}
 
 	/**
@@ -2552,9 +2552,8 @@ public class VPathway implements PathwayListener
 	 */
 	public int getVHeight()
 	{
-//		return data == null ? 0 : (int) vFromM(data.getMappInfo()
-//				.getMBoardHeight());
-		return parent.getVSize().height;
+		return data == null ? 0 : (int) vFromM(data.getMappInfo()
+				.getMBoardHeight());
 	}
 
 	// AP20070716

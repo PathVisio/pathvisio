@@ -79,9 +79,7 @@ public class CommonActions implements ApplicationEventListener {
 			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_EDITMODE);
 			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			
-			va.setGroupEnabled(true, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
-			va.setGroupEnabled(((VPathway)e.source).isEditMode(), ViewActions.GROUP_ENABLE_EDITMODE);
-			va.setGroupEnabled(false, ViewActions.GROUP_ENABLE_WHEN_SELECTION);
+			va.resetGroupStates();
 		}
 	}
 	

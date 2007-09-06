@@ -112,9 +112,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(keyMove, ViewActions.GROUP_ENABLE_EDITMODE);
 		
-		setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
-		setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
-		setGroupEnabled(vp.isEditMode(), GROUP_ENABLE_EDITMODE);
+		resetGroupStates();
 	}
 	
 	HashMap<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
@@ -157,7 +155,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 * @param enabled Whether the actions in the group should be enabled or not
 	 * @param group The group to enable/disable (one of the GROUP* constants)
 	 */
-	public void setGroupEnabled(boolean enabled, String group) {
+	private void setGroupEnabled(boolean enabled, String group) {
 		List<Action> actions = actionGroups.get(group);
 		if(actions != null) {
 			
@@ -165,6 +163,17 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				a.setEnabled(enabled);
 			}
 		}
+	}
+	
+	/**
+	 * Resets the group state for the registered actions to this VPathway state
+	 * e.g. GROUP_ENABLE_EDITMODE will be enabled when the pathway is in edit mode,
+	 * and disabled when not.
+	 */
+	public void resetGroupStates() {
+		setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
+		setGroupEnabled(vPathway.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
+		setGroupEnabled(vPathway.isEditMode(), GROUP_ENABLE_EDITMODE);
 	}
 	
 //	public void applicationEvent(ApplicationEvent e) {

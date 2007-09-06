@@ -220,7 +220,11 @@ public class VPathway implements PathwayListener
 	{
 		clearSelection();
 		drawingObjects = new ArrayList<VPathwayElement>();
+		List<SelectionListener> selectionListeners = selection.getListeners();
 		selection = new SelectionBox(this);
+		for(SelectionListener l : selectionListeners) {
+			selection.addListener(l);
+		}
 		pressedObject = null;
 		selectedGraphics = null;
 		data = null;

@@ -616,6 +616,10 @@ public class SelectionBox extends VPathwayElement
 		listeners.remove(l);
 	}
 
+	public List<SelectionListener> getListeners() {
+		return listeners;
+	}
+	
 	/**
 	 * Fire a {@link SelectionEvent} to notify all {@link SelectionListener}s
 	 * registered to this class

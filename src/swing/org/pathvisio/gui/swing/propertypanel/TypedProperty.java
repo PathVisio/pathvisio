@@ -42,6 +42,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.Engine;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.LineStyle;
@@ -102,6 +103,8 @@ public class TypedProperty implements Comparable {
 	public void setValue(Object value, boolean setElement) {
 		this.value = value;
 		if(value != null && setElement) {
+			Engine.getCurrent().getActiveVPathway().getUndoManager().newAction (
+					"Change " + type + " property");
 			for(PathwayElement e : elements) {
 				e.setProperty(type, value);
 			}

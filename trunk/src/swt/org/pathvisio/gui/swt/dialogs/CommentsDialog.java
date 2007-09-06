@@ -64,7 +64,7 @@ public class CommentsDialog extends PathwayElementDialog {
 		g.heightHint = 200;
 		tableComp.setLayoutData(g);
 		
-		Table t = new Table(tableComp, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+		Table t = new Table(tableComp, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI | SWT.WRAP);
 		t.setHeaderVisible(true);
 		TableColumn tc1 = new TableColumn(t, SWT.NONE);
 		TableColumn tc2 = new TableColumn(t, SWT.NONE);

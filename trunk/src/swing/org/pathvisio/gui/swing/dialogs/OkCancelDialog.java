@@ -37,6 +37,7 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 	public static final String CANCEL = "Cancel";
 	
 	private String exitCode = CANCEL;
+	JButton setButton;
 	
 	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal, boolean cancellable) {
 		super((frame == null && locationComp != null) ? JOptionPane.getFrameForComponent(locationComp) : frame, 
@@ -44,7 +45,7 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		JButton cancelButton = new JButton(CANCEL);
 		cancelButton.addActionListener(this);
 
-		final JButton setButton = new JButton(OK);
+		setButton = new JButton(OK);
 		setButton.setActionCommand(OK);
 		setButton.addActionListener(this);
 		getRootPane().setDefaultButton(setButton);
@@ -79,6 +80,9 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 	}
 	
 	protected void okPressed() {
+		setButton.requestFocus(); //Fix for bug #228
+								 //Request focus to allow possible open celleditors 
+								 //in this dialog to apply the current value
 		exitCode = OK;
 		setVisible(false);
 	}

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<project name="Downloader" default="jar" basedir=".">
+	<property name="src.dir" value="src"/>
+	        
+	<property name="build.dir" value="build"/>
+	<property name="tmp.dir" value="tmp"/>
+	<property name="pathvisio.dir" value="../../"/>
+	<property name="pathvisio.jar" value="${pathvisio.dir}/pathvisio_v1.jar"/>
+	
+	<path id="class.path">
+		<pathelement location="${build.dir}"/>
+		<pathelement location="${pathvisio.jar}"/>
+	</path>
+			
+	<target name="prepare">
+			<mkdir dir="${build.dir}"/>
+			<mkdir dir="${tmp.dir}"/>
+	</target>
+		
+	<target name="clean" description="Remove all generated files.">
+			<delete dir="${build.dir}"/>
+			<delete dir="${tmp.dir}"/>	
+	</target>
+	
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="true">
+			<classpath refid="class.path"/>
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile" description="Generate jar file">
+			<unjar dest="${tmp.dir}" src="${pathvisio.jar}" />
+			<jar jarfile="downloader.jar">
+				<fileset dir="${build.dir}" includes="**/*.class"/>
+				<fileset dir="${tmp.dir}" includes="org/pathvisio/gui/swing/dialogs/OkCancelDialog.class"/>
+				<manifest>
+					<attribute name="Main-Class" value="org.pathvisio.data.downloader.DownloaderMain"/>
+				</manifest>
+			</jar>
+			<signjar jar="downloader.jar" lazy="true" 
+				alias="PV" storepass="PathVisio" keystore="${pathvisio.dir}/lib/visioKeyStore"/>
+	</target>
+</project>

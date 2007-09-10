@@ -54,7 +54,7 @@ public class GuiMain {
 		} catch (Exception ex) {
 			Logger.log.error("Unable to load native look and feel", ex);
 		}
-		
+		frame.pack();
 		//Display the window.
 		frame.setVisible(true);
 

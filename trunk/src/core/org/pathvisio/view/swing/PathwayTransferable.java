@@ -29,13 +29,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JComponent;
-
 import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ObjectType;
@@ -45,8 +43,12 @@ import org.pathvisio.model.PathwayElement;
 public class PathwayTransferable implements Transferable {
 	public static final String INFO_DATASOURCE = "COPIED";
 
+	/**
+	 * DataFlavor used for transfering raw GPML code. Mimetype is 'text/xml'.
+	 * Note that the equals method of DataFlavor only checks for the main mimetype ('text'),
+	 * so returns true for any DataFlavor that stores text, not only xml.
+	 */
 	public static final DataFlavor gpmlDataFlavor = new DataFlavor(String.class, "text/xml");
-	public static final DataFlavor urlFlavor = new DataFlavor(String.class, "text/uri");
 
 	List<PathwayElement> elements;
 	Pathway pathway;
@@ -105,42 +107,76 @@ public class PathwayTransferable implements Transferable {
 			pnew.add(info);
 		}
 
-		if(gpmlDataFlavor.equals(flavor)) {
-			try {
-				Document doc = GpmlFormat.createJdom(pnew);
-				out = xmlout.outputString(doc);
-			} catch(Exception e) {
-				Logger.log.error("Unable to copy to clipboard", e);
-			}
+		try {
+			Document doc = GpmlFormat.createJdom(pnew);
+			out = xmlout.outputString(doc);
+		} catch(Exception e) {
+			Logger.log.error("Unable to copy to clipboard", e);
 		}
 
 		return out;
 	}
 
 	public DataFlavor[] getTransferDataFlavors() {
-		return new DataFlavor[] { gpmlDataFlavor };
+		return new DataFlavor[] { DataFlavor.stringFlavor };
 	}
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return gpmlDataFlavor.equals(flavor);
 	}
-
-	public static Pathway pathwayFromTransferable(Transferable t) throws ConverterException, MalformedURLException, UnsupportedFlavorException, IOException {
-		DataFlavor preferred = null;
+	
+	public static URL getFileURL(Transferable t) throws UnsupportedFlavorException, IOException {
 		for(DataFlavor df : t.getTransferDataFlavors()) {
-			if(PathwayTransferable.gpmlDataFlavor.equals(df)) {
-				preferred = df;
-				break;
+			if(DataFlavor.javaFileListFlavor.equals(df)) {
+				//Return the first element of the file list
+				return ((List<File>)t.getTransferData(df)).get(0).toURL();
 			}
-			//Only choose this if there is no better option
-			if(urlFlavor.equals(df)) {
-				preferred = df; //Continue to check for better option
+			//Gnome fix:
+			//Check for text/uri-list mime type, an uri list separated by \n
+			if(String.class.equals(df.getRepresentationClass())) {
+				if("uri-list".equalsIgnoreCase(df.getSubType())) {
+					String uriList = (String)t.getTransferData(df);
+					return new URL(uriList.substring(0, uriList.indexOf("\n") -1));
+				}
 			}
 		}
-		
+		return null;
+	}
+	
+	public static String getXml(Transferable t) throws UnsupportedFlavorException, IOException {
+		for(DataFlavor df : t.getTransferDataFlavors()) {
+			if(DataFlavor.stringFlavor.equals(df)) {
+				 //Make sure this is not the gnome's uri-list
+				if(!"uri-list".equalsIgnoreCase(df.getSubType())) {
+					return (String)t.getTransferData(df);
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Creates a pathway from the data in the provided {@link Transferable}.
+	 * @param t
+	 * @return
+	 * @throws ConverterException
+	 * @throws MalformedURLException
+	 * @throws UnsupportedFlavorException
+	 * @throws IOException
+	 */
+	public static Pathway pathwayFromTransferable(Transferable t) throws ConverterException, MalformedURLException, UnsupportedFlavorException, IOException {
 		Pathway pnew = new Pathway();
-		if(preferred.equals(PathwayTransferable.gpmlDataFlavor)) {
-			String xml = (String)t.getTransferData(PathwayTransferable.gpmlDataFlavor);
+		
+		URL url = getFileURL(t);
+		if(url != null) {
+			File f = new File(url.getFile());
+			File file = new File(url.getFile());
+			pnew.readFromXml(file, true);
+			return pnew;
+		}
+		
+		String xml = getXml(t);
+		if(xml != null) {
 			GpmlFormat.readFromXml(pnew, new StringReader(xml), true);
 
 			List<PathwayElement> elements = new ArrayList<PathwayElement>();
@@ -155,23 +191,32 @@ public class PathwayTransferable implements Transferable {
 					}
 				}
 			}
-		} else if(preferred.equals(urlFlavor)) {
-			URL url = new URL((String)t.getTransferData(urlFlavor));
-			if("file".equals(url.getProtocol())) {
-				File file = new File(url.getFile());
-				pnew.readFromXml(file, true);
-			} else {
-				pnew = null; //No file url, unable to import pathway
-			}
 		}
-		return pnew;
+		return null;
 	}
 
 
-
-	private boolean importUrl(JComponent comp, Transferable t) throws MalformedURLException, UnsupportedFlavorException, IOException {
-		URL url = new URL((String)t.getTransferData(urlFlavor));
-		SwingEngine.getCurrent().openPathway(url);
-		return true;
+	/**
+	 * Opens a new pathway from the data in the {@link Transferable}, using the provided {@link Engine}.
+	 * If the {@link Transferable} contains a link to a file, the pathway in this file will be opened. 
+	 * If the {@link Transferable} contains gpml code, a new pathway will be created, and the gpml will be
+	 * loaded into this pathway.
+	 * @param t
+	 * @param engine
+	 * @throws IOException 
+	 * @throws UnsupportedFlavorException 
+	 * @throws ConverterException 
+	 */
+	public static void openPathwayFromTransferable(Transferable t, Engine engine) throws UnsupportedFlavorException, IOException, ConverterException {
+		URL url = getFileURL(t);
+		if(url != null) {
+			engine.openPathway(url);
+		}
+		
+		String xml = getXml(t);
+		if(xml != null) {
+			engine.newPathway();
+			engine.getActivePathway().readFromXml(new StringReader(xml), true);
+		}
 	}
 }

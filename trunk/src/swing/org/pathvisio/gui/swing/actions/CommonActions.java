@@ -107,9 +107,9 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action[] alignActions = new Action[] {
 			new AlignAction(AlignType.CENTERX),
 			new AlignAction(AlignType.CENTERY),
-			new AlignAction(AlignType.LEFT),
-			new AlignAction(AlignType.RIGHT),
-			new AlignAction(AlignType.TOP),
+//			new AlignAction(AlignType.LEFT),
+//			new AlignAction(AlignType.RIGHT),
+//			new AlignAction(AlignType.TOP),
 			new AlignAction(AlignType.WIDTH),
 			new AlignAction(AlignType.HEIGHT),
 	};
@@ -117,10 +117,10 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action[] stackActions = new Action[] {
 			new StackAction(StackType.CENTERX),
 			new StackAction(StackType.CENTERY),
-			new StackAction(StackType.LEFT),
-			new StackAction(StackType.RIGHT),
-			new StackAction(StackType.TOP),
-			new StackAction(StackType.BOTTOM)
+//			new StackAction(StackType.LEFT),
+//			new StackAction(StackType.RIGHT),
+//			new StackAction(StackType.TOP),
+//			new StackAction(StackType.BOTTOM)
 	};
 	
 	public final Action[][] newElementActions = new Action[][] {

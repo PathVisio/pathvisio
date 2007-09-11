@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 # extract the license header from a file that has it:
 head -n 16 ../../src/core/org/pathvisio/Engine.java > license.txt

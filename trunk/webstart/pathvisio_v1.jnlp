@@ -49,4 +49,8 @@
 	<security>
 		 <all-permissions/>
 	</security>
+	<shortcut>
+		<desktop/>
+		<menu submenu="PathVisio"/>
+	</shortcut>
 </jnlp>

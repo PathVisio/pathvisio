@@ -157,7 +157,7 @@ public class SwingEngine {
 				pk.setTaskName("Importing pathway");
 				try {
 					Engine eng = Engine.getCurrent();
-					boolean editMode = eng.hasVPathway() ? eng.getActiveVPathway().isEditMode() : false;
+					boolean editMode = eng.hasVPathway() ? eng.getActiveVPathway().isEditMode() : true;
 					eng.setWrapper (createWrapper());
 					eng.importPathway(f);
 					eng.getActiveVPathway().setEditMode(editMode);

@@ -63,7 +63,7 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 
 	public boolean importData(JComponent comp, Transferable t) {
 		try {			
-			String xml = PathwayTransferable.getXml(t);
+			String xml = PathwayTransferable.getText(t);
 			if(xml != null) {
 				Logger.log.trace("Importing from xml: " + xml);
 				importGpml(comp, xml);

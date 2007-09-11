@@ -387,13 +387,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.EMAIL);
 			result.add(PropertyType.LAST_MODIFIED);
 			result.add(PropertyType.AVAILABILITY);
-			result.add(PropertyType.BOARDWIDTH);
-			result.add(PropertyType.BOARDHEIGHT);
 			// if
 			// (Engine.getCurrent().getPreferences().getBoolean(Preferences.PREF_SHOW_ADVANCED_ATTR))
 			if (fAdvanced)
 			{// these two properties are deprecated and not used in PathVisio
 				// itself.
+				result.add(PropertyType.BOARDWIDTH);
+				result.add(PropertyType.BOARDHEIGHT);
 				result.add(PropertyType.WINDOWWIDTH);
 				result.add(PropertyType.WINDOWHEIGHT);
 			}

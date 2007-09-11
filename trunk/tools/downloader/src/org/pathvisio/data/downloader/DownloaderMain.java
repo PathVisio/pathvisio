@@ -135,7 +135,11 @@ public class DownloaderMain {
 			Properties props =new Properties();
 			File appDir = new File(System.getProperty("user.home") + File.separator +  ".PathVisio");
 			File propFile = new File(appDir, ".PathVisio");
-			props.load(new FileInputStream(propFile));
+			try {
+				props.load(new FileInputStream(propFile));
+			} catch(Exception e) {
+				System.err.println("Unable to read properties file: " + propFile);
+			}
 			
 			String propType = args[1];
 			String propValue = props.getProperty(propType);

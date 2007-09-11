@@ -6,6 +6,10 @@
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
 		 <offline-allowed/>
+		<shortcut>
+			<desktop/>
+			<menu submenu="PathVisio"/>
+		</shortcut>	
 	</information>
 	<resources>
 		 <j2se version="1.5+"/>
@@ -49,8 +53,4 @@
 	<security>
 		 <all-permissions/>
 	</security>
-	<shortcut>
-		<desktop/>
-		<menu submenu="PathVisio"/>
-	</shortcut>
 </jnlp>

@@ -73,8 +73,8 @@ public class Revision
 {
 	public static final String REVISION = "${subversion_revision}";
 };
-</echo>
-	<exec executable="${exec.perl}" failifexecutionfails="true" output="classpath.sh">
+	</echo>
+	<exec executable="${exec.perl}" failifexecutionfails="false" output="classpath.sh">
 		<arg line="-e '$cp = &quot;.&quot;; foreach(@ARGV) { $cp .= &quot;:$_&quot;; } print &quot;export PATHVISIO_CP=\&quot;$cp\&quot;\n&quot;' ${jar.class.path}"/>
 	</exec>
 	</target>

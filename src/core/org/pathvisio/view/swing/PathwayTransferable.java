@@ -125,7 +125,19 @@ public class PathwayTransferable implements Transferable {
 		return gpmlDataFlavor.equals(flavor);
 	}
 	
+	/**
+	 * Gets the file url from the transferable if available.
+	 * If the transferable contains a file list, the url of the first
+	 * file in that list is returned.
+	 * @param t
+	 * @return The {@link URL} of the file, or null if no file is available
+	 * @throws UnsupportedFlavorException
+	 * @throws IOException
+	 */
 	public static URL getFileURL(Transferable t) throws UnsupportedFlavorException, IOException {
+		//Find out if there is a javaFileListFlavor, since that's the preferred type
+		DataFlavor fallback = null;
+		
 		for(DataFlavor df : t.getTransferDataFlavors()) {
 			if(DataFlavor.javaFileListFlavor.equals(df)) {
 				//Return the first element of the file list
@@ -135,15 +147,32 @@ public class PathwayTransferable implements Transferable {
 			//Check for text/uri-list mime type, an uri list separated by \n
 			if(String.class.equals(df.getRepresentationClass())) {
 				if("uri-list".equalsIgnoreCase(df.getSubType())) {
-					String uriList = (String)t.getTransferData(df);
-					return new URL(uriList.substring(0, uriList.indexOf("\n") -1));
+					fallback = df;
 				}
+			}
+		}
+		if(fallback != null) {
+			String uriList = (String)t.getTransferData(fallback);
+			//Try if this is really an URL (needed, because in windows
+			//raw text also gets the 'text/uri-list' mimetype (why???)
+			try {
+				return new URL(uriList.substring(0, uriList.indexOf("\n") -1));
+			} catch(MalformedURLException e) {
+				//Not an url after all...
 			}
 		}
 		return null;
 	}
 	
-	public static String getXml(Transferable t) throws UnsupportedFlavorException, IOException {
+	/**
+	 * Get the text in the transferable if available. There is no guarantee that the
+	 * text is xml code!
+	 * @param t
+	 * @return
+	 * @throws UnsupportedFlavorException
+	 * @throws IOException
+	 */
+	public static String getText(Transferable t) throws UnsupportedFlavorException, IOException {
 		for(DataFlavor df : t.getTransferDataFlavors()) {
 			if(DataFlavor.stringFlavor.equals(df)) {
 				 //Make sure this is not the gnome's uri-list
@@ -166,16 +195,8 @@ public class PathwayTransferable implements Transferable {
 	 */
 	public static Pathway pathwayFromTransferable(Transferable t) throws ConverterException, MalformedURLException, UnsupportedFlavorException, IOException {
 		Pathway pnew = new Pathway();
-		
-		URL url = getFileURL(t);
-		if(url != null) {
-			File f = new File(url.getFile());
-			File file = new File(url.getFile());
-			pnew.readFromXml(file, true);
-			return pnew;
-		}
-		
-		String xml = getXml(t);
+			
+		String xml = getText(t);
 		if(xml != null) {
 			GpmlFormat.readFromXml(pnew, new StringReader(xml), true);
 
@@ -191,6 +212,14 @@ public class PathwayTransferable implements Transferable {
 					}
 				}
 			}
+			return pnew;
+		}
+		
+		URL url = getFileURL(t);
+		if(url != null) {
+			File file = new File(url.getFile());
+			pnew.readFromXml(file, true);
+			return pnew;
 		}
 		return null;
 	}
@@ -213,7 +242,7 @@ public class PathwayTransferable implements Transferable {
 			engine.openPathway(url);
 		}
 		
-		String xml = getXml(t);
+		String xml = getText(t);
 		if(xml != null) {
 			engine.newPathway();
 			engine.getActivePathway().readFromXml(new StringReader(xml), true);

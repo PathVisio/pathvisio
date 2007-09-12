@@ -356,7 +356,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 					continue; // Object not selected, skip
 				toRemove.add(o);
 			}
-			vPathway.removeDrawingObjects(toRemove, true);
+			if (toRemove.size() > 0)
+			{
+				vPathway.getUndoManager().newAction("Delete element(s)");
+				vPathway.removeDrawingObjects(toRemove, true);
+			}
 		}
 	}
 	

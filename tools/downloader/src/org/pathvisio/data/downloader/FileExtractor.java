@@ -16,11 +16,13 @@
 //
 package org.pathvisio.data.downloader;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -121,18 +123,15 @@ public class FileExtractor {
 	}
 		
 	private void extractZip(File file, File unzipDir) throws IOException {
+		int step = 1000;
+		
 		ZipFile zipFile = new ZipFile(file);
 		
-		setTotalWork(zipFile.size());
+		setTotalWork(zipFile.size() * step);
 		int progress = 0;
 		
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();	
-		while(entries.hasMoreElements()) {
-			if(isCancelled()) {
-				finished();
-				return;
-			}
-			
+		while(entries.hasMoreElements()) {			
 			ZipEntry zipEntry = entries.nextElement();
 			
 			setNote(zipEntry.getName());
@@ -144,16 +143,25 @@ public class FileExtractor {
 			}
 			f.getParentFile().mkdirs(); // create the parent directories
 			
-			if(mayWrite(f)) {
-				InputStream is = zipFile.getInputStream(zipEntry); // get the input stream
-				FileOutputStream fos = new java.io.FileOutputStream(f);
+			if(mayWrite(f)) {				
+				long total = zipEntry.getSize();
+				int subWork = 0;
+				InputStream is = new BufferedInputStream(
+							zipFile.getInputStream(zipEntry)); // get the input stream
+				OutputStream fos = new BufferedOutputStream(new java.io.FileOutputStream(f));
 				while (is.available() > 0) {
+					if(isCancelled()) {
+						finished();
+						return;
+					}
+					
+					setProgress((int)(progress * step + (++subWork)*((double)step/total)));
 					fos.write(is.read());
 				}
 				fos.close();
 				is.close();
 			}
-			setProgress(++progress);
+			setProgress(++progress * step);
 		}
 		finished();
 	}

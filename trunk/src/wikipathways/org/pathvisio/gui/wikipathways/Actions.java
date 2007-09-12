@@ -74,7 +74,11 @@ public class Actions {
 			if(saved) {
 				uiHandler.showExitMessage("Please wait while you'll be redirected to the pathway page");
 				try {
-					uiHandler.showDocument(new URL("javascript:window.location.reload();"), "_top");
+					if(wiki.isNew()) {
+						uiHandler.showDocument(new URL(wiki.getPwURL()), "_top");
+					} else {
+						uiHandler.showDocument(new URL("javascript:window.location.reload();"), "_top");
+					}
 				} catch (MalformedURLException ex) {
 					Logger.log.error("Unable to refresh pathway page", ex);
 				}

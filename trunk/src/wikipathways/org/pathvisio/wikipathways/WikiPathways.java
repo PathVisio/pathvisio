@@ -321,7 +321,8 @@ public class WikiPathways implements ApplicationEventListener {
 		switch(e.type) {
 		case ApplicationEvent.PATHWAY_NEW:
 			p = (Pathway)e.source;
-			p.getMappInfo().setOrganism(getPwSpecies());
+			p.getMappInfo().setOrganism(Organism.fromShortName(getPwSpecies()).latinName());
+			p.getMappInfo().setMapInfoName(getPwName());
 			break;
 		case ApplicationEvent.PATHWAY_OPENED:
 			p = (Pathway)e.source;
@@ -333,13 +334,13 @@ public class WikiPathways implements ApplicationEventListener {
 				uiHandler.showError("Invalid species",
 						"The species of the pathway you imported differs from the" +
 						" species for the " + Globals.SERVER_NAME + " pathway you are editing.\n" +
-						"It will be changed from '" + impSpecies + "' to '" + getPwSpecies() + "'");
-				p.getMappInfo().setOrganism(impSpecies);
+						"It will be changed from '" + impSpecies + "' to '" + wikiOrg.latinName() + "'");
+				p.getMappInfo().setOrganism(wikiOrg.latinName());
 			}
 			break;
 		}
 	}
-
+	
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {
 		private final XmlRpcCookieHttpTransport TRANSPORT;
 

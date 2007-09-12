@@ -9,9 +9,17 @@ class CreatePathwayPage extends SpecialPage
         }
 
         function execute( $par ) {
-                global $wgRequest, $wgOut, $wpiScriptURL;
+                global $wgRequest, $wgOut, $wpiScriptURL, $wgUser;
                 $this->setHeaders();
 
+		if(!$wgUser || !$wgUser->isLoggedIn()) {
+			$wgOut->addWikiText(
+			"== Not logged in ==\n
+			You're not logged in. To create a new pathway, please [http://" . $_SERVER['HTTP_HOST'] . 
+			"/index.php?title=Special:Userlogin&returnto=Special:CreatePathwayPage log in] or 
+			create an account first!");
+			return;
+		}
 		if($_GET['action'] == 'new') { //Submit button pressed
 			$this->startEditor($_GET['pwName'], $_GET['pwSpecies']);
 		} else {

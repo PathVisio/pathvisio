@@ -52,7 +52,7 @@ function updatePathway($pwName, $pwSpecies, $description, $gpmlData64) {
 		$pathway->updatePathway($gpmlData, $description);
 	} catch(Exception $e) {
 		wfDebug("XML-RPC ERROR: $e");
-		$resp = new xmlrpcresp(0, $xmlrpcerruser, $e->getMessage());
+		$resp = new xmlrpcresp(0, $xmlrpcerruser, $e);
 	}
 	ob_clean(); //Clean the output buffer, so nothing is printed before the xml response
 	return $resp;

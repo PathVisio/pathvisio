@@ -141,7 +141,10 @@ public class DownloaderMain {
 				System.err.println("Unable to read properties file: " + propFile);
 			}
 			
-			String propType = args[1];
+			String propType = "";
+			if(args.length > 1) {
+				 propType = args[1];
+			}
 			String propValue = props.getProperty(propType);
 			
 			//Default values are not taken from SwtPreferences, since that depends on Engine,

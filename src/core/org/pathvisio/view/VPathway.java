@@ -572,7 +572,8 @@ public class VPathway implements PathwayListener
 	{
 		boolean altPressed = ve.isKeyDown(MouseEvent.M_ALT);
 		// If draggin, drag the pressed object
-		if (pressedObject != null && isDragging)
+		// And only when the right button isn't clicked
+		if (pressedObject != null && isDragging && !ve.isKeyDown(java.awt.event.MouseEvent.BUTTON3_DOWN_MASK))
 		{
 			if (dragUndoState == DRAG_UNDO_CHANGE_START)
 			{
@@ -1034,9 +1035,9 @@ public class VPathway implements PathwayListener
 		if (!selectionEnabled)
 			return;
 
-		// Ctrl pressed, add/remove from selection
-		boolean ctrlPressed = e.isKeyDown(MouseEvent.M_CTRL);
-		if (ctrlPressed)
+		// Shift pressed, add/remove from selection
+		boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT);
+		if (modifierPressed)
 		{
 			if (pressedObject instanceof SelectionBox)
 			{

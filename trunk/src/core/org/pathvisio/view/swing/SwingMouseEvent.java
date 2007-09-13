@@ -23,7 +23,7 @@ public class SwingMouseEvent extends org.pathvisio.view.MouseEvent {
 	
 	public SwingMouseEvent(MouseEvent e) {
 		super(e.getSource(), convertType(e), e.getButton(), 
-				e.getX(), e.getY(), e.getClickCount(), e.getModifiers(), e.isPopupTrigger());
+				e.getX(), e.getY(), e.getClickCount(), e.getModifiersEx(), e.isPopupTrigger());
 		awtEvent = e;
 	}
 

@@ -33,7 +33,7 @@ import javax.swing.ProgressMonitor;
 public class FileExtractor {
 	ProgressMonitor progress;
 	
-	private FileExtractor() {
+	private FileExtractor(boolean overwrite) {
 		this(null);
 	}
 	
@@ -121,7 +121,7 @@ public class FileExtractor {
 	public static void extractFile(File f, File toPath) throws FileNotFoundException, IOException {
 		extractFile(f, toPath, null);
 	}
-		
+	
 	private void extractZip(File file, File unzipDir) throws IOException {
 		int step = 1000;
 		
@@ -131,7 +131,11 @@ public class FileExtractor {
 		int progress = 0;
 		
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();	
-		while(entries.hasMoreElements()) {			
+		while(entries.hasMoreElements()) {		
+			if(isCancelled()) {
+				finished();
+				return;
+			}
 			ZipEntry zipEntry = entries.nextElement();
 			
 			setNote(zipEntry.getName());

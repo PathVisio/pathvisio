@@ -128,9 +128,15 @@ public class DownloaderMain {
 	public static void main(String[] args) {
 		//args[0], the url to download from
 		//args[1], the file type
+		//args[2], optional flag to force default directory
 		try {
 			URL url = new URL(args[0]);
 			String toFile = new File(url.getFile()).getName();
+			
+			boolean force = false;
+			if(args.length > 2) { //The force parameter is specified
+				force = "true".equals(args[2]);
+			}
 			
 			Properties props =new Properties();
 			File appDir = new File(System.getProperty("user.home") + File.separator +  ".PathVisio");
@@ -164,7 +170,9 @@ public class DownloaderMain {
 		
 			File toDir = new File(propValue);
 			
-			toDir = getOutputPath(toDir);
+			if(!force) {
+				toDir = getOutputPath(toDir);
+			}
 			
 			if(toDir == null) System.exit(0);
 			if(!toDir.exists()) {

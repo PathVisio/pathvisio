@@ -15,15 +15,17 @@ test procedure: perform all these steps before a webstart release, and after mak
 # create a new pathway. 
 # draw two geneproducts and a line between them. draw a circle and a tbar.
 # link the two geneproducts with the line by using alt+click
-# select everything, copy and paste
-# select two gene products and change their color property to blue
+# select everything by dragging. copy and paste
+# select two gene products with shift-click and change their color property to blue
 # select a circle, make its rim red and center yellow.
 # change the shape type from circle to rect
 # delete an object
 # zoom to 200%
 # zoom to fit
-# save to a temporary location. Export to a .mapp
+# undo until the pathway is emtpy and do the last steps agin
+# save to a temporary location. Export to a .mapp. 
 # Open the just created mapp in GenMAPP.
+# Export to .svg. Export to .png. Check that both files can be opened
 # Open the online help.
 # Open the about box. Check if the revision nr. is correct
 

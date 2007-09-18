@@ -1,9 +1,6 @@
 <?php
 
-$dir = getcwd();
-chdir("../"); //Ugly, but we need to change to the MediaWiki install dir to include these files, otherwise we'll get an error
-require_once('wpi.php');
-chdir($dir);
+require_once("Maintenance.php");
 
 $exts = array('.JPG', '.jpg'); //in case SQL server is case sensitive
 

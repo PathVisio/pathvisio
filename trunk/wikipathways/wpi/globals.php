@@ -30,4 +30,8 @@ define("JS_SRC_EDITAPPLET", "/wpi/js/editapplet.js");
 define("JS_SRC_RESIZE", "/wpi/js/resize.js");
 define("JS_SRC_PROTOTYPE", "/wpi/js/prototype.js");
 define("JS_SRC_APPLETOBJECT", "/wpi/js/appletobject.js");
+
+//Users
+define("USER_MAINT_BOT", "MaintBot"); //User account for maintenance scripts
+
 ?>

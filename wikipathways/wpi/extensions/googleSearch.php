@@ -27,6 +27,18 @@ function renderGoogleCoop($input) {
         
         $output='
 <!-- Google Search Result Snippet Begins -->
+  <div id="results_011541552088579423722:rset6ep3k64"></div>
+  <script type="text/javascript">
+    var googleSearchIframeName = "results_011541552088579423722:rset6ep3k64";
+    var googleSearchFormName = "searchbox_011541552088579423722:rset6ep3k64";
+    var googleSearchFrameWidth = 600;
+    var googleSearchFrameborder = 0;
+    var googleSearchDomain = "www.google.com";
+    var googleSearchPath = "/cse";
+  </script>
+  <script type="text/javascript" src="http://www.google.com/afsonline/show_afs_search.js"></script>
+<!-- Google Search Result Snippet Ends -->
+<!-- Google Search Result Snippet Begins
   <div id="results_002915365922082279465:6qd0wwvwtwu"></div>
   <script type="text/javascript">
     var googleSearchIframeName = "results_002915365922082279465:6qd0wwvwtwu";
@@ -37,7 +49,7 @@ function renderGoogleCoop($input) {
     var googleSearchPath = "/cse";	 
   </script>
   <script type="text/javascript" src="http://www.google.com/afsonline/show_afs_search.js"></script>
-<!-- Google Search Result Snippet Ends -->
+Google Search Result Snippet Ends -->
                                         ';//google code end here
 
         return $output;

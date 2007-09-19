@@ -209,16 +209,26 @@ class WikiPathwaysTemplate extends QuickTemplate {
 	<div id="p-search" class="portlet">
 		<h5><label for="searchInput">search</label></h5>
 		<div id="googleSearch" class="pBody">
-			<!-- Google CSE Search Box Begins -->
+<!-- Google CSE Search Box Begins -->
+  <form id="searchbox_011541552088579423722:rset6ep3k64" action="http://www.wikipathways.org/index.php/WikiPathways:GoogleSearch">
+    <input type="hidden" name="cx" value="011541552088579423722:rset6ep3k64" />
+    <input type="hidden" name="cof" value="FORID:11" />
+    <input type="hidden" name="filter" value="0" /> <!--set filter=0 to disable omitting similiar hits-->
+    <input name="q" type="text" size="15%" />
+    <input type="submit" name="sa" value="Search" />
+</form>
+<script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=searchbox_011541552088579423722:rset6ep3k64"></script>
+<!-- Google CSE Search Box Ends -->
+			<!-- Google CSE Search Box Begins
 		  <form id="searchbox_002915365922082279465:6qd0wwvwtwu" action="http://www.wikipathways.org/index.php/WikiPathways:GoogleSearch"><div>
 		    <input type="hidden" name="cx" value="002915365922082279465:6qd0wwvwtwu" />
 		    <input type="hidden" name="cof" value="FORID:11" />
-	    	    <input type="hidden" name="filter" value="0" /> <!--set filter=0 to disable omitting similiar hits-->
+	    	    <input type="hidden" name="filter" value="0" />
 		    <input name="q" type="text" size="15%"/>
 		    <input type="submit" name="sa" value="Search" />
 		  </div></form>
 		  <script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=searchbox_002915365922082279465%3A6qd0wwvwtwu"></script>
-<!-- Google CSE Search Box Ends -->
+Google CSE Search Box Ends -->
 		</div>
 	</div>
 	<div class="portlet" id="p-tb">

@@ -85,7 +85,7 @@ class BrowsePathwaysPage extends SpecialPage {
 		$picked;
                 $category_picked;
                 $all = 'All Species';
-                $none = 'None';
+                $none = 'Uncategorized';
                 $pick = $_GET["browse"];
 		if (!isset($pick)){
                         $pick = 'Human';
@@ -117,20 +117,21 @@ class BrowsePathwaysPage extends SpecialPage {
 		$pickedCat;
 		$category_pickedCat;
                 $allCat = 'All Categories';
-                $noneCat = 'None';
+                $noneCat = 'Uncategorized';
                 $pickCat = $_GET["browseCat"];
                 if (!isset($pickCat)){
                         $pickCat = $allCat;
                 }
 		if ($pickCat == $allCat){
 			$pickedCat = '';
-                        $arrCat = Pathway::getAvailableCategories();
-                        asort($arrCat);
-                        foreach ($arrCat as $cat) {
-                                $pickedCat .=  $cat."|";
-                        }
-                        $pickedCat[strlen($pickedCat)-1] = ' ';
-			$category_pickedCat = $categoryCat.$pickedCat;
+                        // $arrCat = Pathway::getAvailableCategories();
+                        // asort($arrCat);
+                        // foreach ($arrCat as $cat) {
+                        //         $pickedCat .=  $cat."|";
+                        // }
+                        // $pickedCat[strlen($pickedCat)-1] = ' ';
+			//$category_pickedCat = $categoryCat.$pickedCat;
+			$category_pickedCat = '';
 		} else if ($pickCat == $none){
 			$categoryCat = 'notcategory=';
                         $arrCat = Pathway::getAvailableCategories();
@@ -205,7 +206,7 @@ function namespaceForm ( $namespace = NS_PATHWAY, $pick, $pickCat ) {
 		asort($arr);
 		$selected = $pick;
 		$all = 'All Species';
-		$none = 'None';
+		$none = 'Uncategorized';
 
                 foreach ($arr as $index) {
                         if ($index == $selected) {
@@ -240,7 +241,7 @@ function namespaceForm ( $namespace = NS_PATHWAY, $pick, $pickCat ) {
 		asort($arrCat);
 		$selectedCat = $pickCat;
 		$allCat = 'All Categories';
-		$noneCat = 'None';
+		$noneCat = 'Uncategorized';
 	
 		foreach ($arrCat as $cat){	
 		       if ($cat == $selectedCat) {

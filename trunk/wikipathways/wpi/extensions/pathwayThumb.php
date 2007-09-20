@@ -16,6 +16,7 @@ function wfPathwayThumb_Magic( &$magicWords, $langCode ) {
 }
 
 function renderPathwayImage( &$parser, $pwTitle, $width = 0, $align = '', $caption = '', $href = '', $tooltip = '', $id='pwthumb') {      
+	global $wgUser;
       try {
                 $pathway = Pathway::newFromTitle($pwTitle);
                 $img = new Image($pathway->getFileTitle(FILETYPE_IMG));
@@ -33,6 +34,14 @@ function renderPathwayImage( &$parser, $pwTitle, $width = 0, $align = '', $capti
                 $caption = html_entity_decode($caption);        //This can be quite dangerous (injection),
                                                                 //we would rather parse wikitext, let me know if
                                                                 //you know a way to do that (TK)
+		//AP20070918
+		if (!$wgUser->isLoggedIn()){
+			$pathwayURL = $pathway->getTitleObject()->getPrefixedURL();
+			$caption = "<span style=\"font-size:1.5em\">
+				<a href=\"http://wikipathways.org/index.php?title=Special:Userlogin&returnto=$pathwayURL\">Log in
+				</a> to Edit Pathway</span>";	
+			$caption = html_entity_decode($caption);
+		}
                 $output = makeThumbLinkObj($pathway, $caption, $href, $tooltip, $align, $id, $width);
 
         } catch(Exception $e) {

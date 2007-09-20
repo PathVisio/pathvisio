@@ -1,2 +1,2 @@
 #!/bin/sh
-dpkg-deb --build pathvisio-1.0
+dpkg-deb --build nbx-pathvisio-1.0

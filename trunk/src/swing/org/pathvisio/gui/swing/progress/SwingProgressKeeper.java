@@ -23,6 +23,13 @@ import org.pathvisio.util.ProgressKeeper;
 public class SwingProgressKeeper extends ProgressKeeper {
 	JProgressBar progressBar;
 	
+	public SwingProgressKeeper(ProgressKeeper base) {
+		this(base.getTotalWork());
+		for(ProgressListener l : base.getListeners()) {
+			addListener(l);
+		}
+	}
+	
 	public SwingProgressKeeper(int totalWork) {
 		super(totalWork);
 		progressBar = new JProgressBar(0, totalWork < 1 ? 1 : totalWork);

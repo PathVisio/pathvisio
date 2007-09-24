@@ -69,10 +69,14 @@ import org.pathvisio.view.VPathwayWrapper;
 import org.xml.sax.SAXException;
 
 /**
- * Class that handles all WikiPathways related work.
+ * Base class that handles WikiPathways related actions for the pathway editor applet
  * @author thomas
+ *
  */
-public class WikiPathways implements ApplicationEventListener {	
+public class WikiPathways implements ApplicationEventListener {		
+	public static final String COMMENT_DESCRIPTION = "WikiPathways-description";
+	public static final String COMMENT_CATEGORY = "WikiPathways-category";
+	
 	UserInterfaceHandler uiHandler;
 	HashMap<String, String> cookie;
 	
@@ -83,17 +87,19 @@ public class WikiPathways implements ApplicationEventListener {
 	public WikiPathways(UserInterfaceHandler uiHandler) {
 		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
+		
 		Engine.getCurrent().addApplicationEventListener(this);
 	}
-
+	
 	public void setUiHandler(UserInterfaceHandler uih) {
 		uiHandler = uih;
 	}
-	
-	public void init(VPathwayWrapper wrapper, ProgressKeeper progress, URL base) throws Exception {
+		
+	public void init(ProgressKeeper progress, URL base) throws Exception {
 		progress.setTaskName("Starting editor");
 		
 		WikiPathwaysInit.init();
+		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), Engine.getCurrent());
 		
 		loadCookies(base);
 		
@@ -104,23 +110,19 @@ public class WikiPathways implements ApplicationEventListener {
 					"Missing required argument '" + p.name() + "'";
 			}	
 		}
-
-		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), Engine.getCurrent());
 		
 		progress.report("Loading pathway...");
 		
 		if(isNew()) { //Create new pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: new pathway");
-			Engine.getCurrent().setWrapper(wrapper);
 			Engine.getCurrent().newPathway();
 		} else { //Download and open the pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: open pathway");
-			Engine.getCurrent().setWrapper(wrapper);
 			Engine.getCurrent().openPathway(new URL(getPwURL()));
 		}
-
-		//TODO: notify user about this and hide edit actions
-		Engine.getCurrent().getActiveVPathway().setEditMode(!isReadOnly());
+		
+		initVPathway();
+		
 		if(isReadOnly()) {
 			uiHandler.showInfo("Read-only", 
 					"You are not logged in to " + Globals.SERVER_NAME +
@@ -135,34 +137,19 @@ public class WikiPathways implements ApplicationEventListener {
 		
 		Gdb.connect(getPwSpecies());
 	}
-
-	public MainPanel prepareMainPanel() {
-		CommonActions actions = SwingEngine.getCurrent().getActions();
-		Set<Action> hide = new HashSet<Action>();
-		
-		//Disable some actions
-		if(!isNew()) hide.add(actions.importAction);
-		
-		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
-		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
-				
-		MainPanel mainPanel = new MainPanel(hide);
-		
-		mainPanel.getToolBar().addSeparator();
-		
-		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
-		mainPanel.addToToolbar(discardAction);
-
-		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-					uiHandler.showDocument(e.getURL(), "_blank");
-				}
-			}
-		});	
-		
-		SwingEngine.getCurrent().setApplicationPanel(mainPanel);
-		return mainPanel;
+	
+	public void initVPathway() {
+		Engine e = Engine.getCurrent();
+		Pathway p = e.getActivePathway();
+		VPathway vp = e.getActiveVPathway();
+		if(p != null && vp == null) {
+			Logger.log.trace("Create VPathway");
+			e.createVPathway(p);
+		}
+		vp = e.getActiveVPathway();
+		if(vp != null) {
+			vp.setEditMode(!isReadOnly());
+		}
 	}
 	
 	public String getPwName() {
@@ -239,18 +226,14 @@ public class WikiPathways implements ApplicationEventListener {
 	public UserInterfaceHandler getUserInterfaceHandler() {
 		return uiHandler;
 	}
-	
+		
 	public boolean saveUI() {
-		VPathway vPathway = Engine.getCurrent().getActiveVPathway();
-		if(isReadOnly()) {
-			uiHandler.showError("Unable to save the pathway", "Unable to save the pathway, you are not logged in");
-			return false;
-		}
-		if(!vPathway.getGmmlData().hasChanged()) {
-			uiHandler.showInfo("Save pathway", "You didn't make any changes to the pathway");
+		Pathway pathway = Engine.getCurrent().getActivePathway();
+		if(!pathway.hasChanged()) {
+			uiHandler.showInfo("Save pathway", "You didn't make any changes");
 			return true;
 		}
-		if(vPathway != null) {
+		if(pathway != null) {
 			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
 			Logger.log.trace("Save description: " + description);
 			if(description != null) {
@@ -315,32 +298,6 @@ public class WikiPathways implements ApplicationEventListener {
 		client.execute("WikiPathways.updatePathway", params);
 	}
 
-	
-	public void applicationEvent(ApplicationEvent e) {
-		Pathway p = null;
-		switch(e.type) {
-		case ApplicationEvent.PATHWAY_NEW:
-			p = (Pathway)e.source;
-			p.getMappInfo().setOrganism(Organism.fromShortName(getPwSpecies()).latinName());
-			p.getMappInfo().setMapInfoName(getPwName());
-			break;
-		case ApplicationEvent.PATHWAY_OPENED:
-			p = (Pathway)e.source;
-			//Force species name to be te same as on wikipathways
-			String impSpecies = p.getMappInfo().getOrganism();
-			Organism impOrg = Organism.fromLatinName(impSpecies);
-			Organism wikiOrg = Organism.fromShortName(getPwSpecies());
-			if(!wikiOrg.equals(impOrg)) {
-				uiHandler.showError("Invalid species",
-						"The species of the pathway you imported differs from the" +
-						" species for the " + Globals.SERVER_NAME + " pathway you are editing.\n" +
-						"It will be changed from '" + impSpecies + "' to '" + wikiOrg.latinName() + "'");
-				p.getMappInfo().setOrganism(wikiOrg.latinName());
-			}
-			break;
-		}
-	}
-	
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {
 		private final XmlRpcCookieHttpTransport TRANSPORT;
 
@@ -418,6 +375,60 @@ public class WikiPathways implements ApplicationEventListener {
 
 		protected void writeRequest(ReqWriter pWriter) throws IOException, XmlRpcException, SAXException {
 	        pWriter.write(conn.getOutputStream());
+		}
+	}
+	
+	public MainPanel prepareMainPanel() {
+		CommonActions actions = SwingEngine.getCurrent().getActions();
+		Set<Action> hide = new HashSet<Action>();
+		
+		//Disable some actions
+		if(!isNew()) hide.add(actions.importAction);
+		
+		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
+		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
+				
+		MainPanel mainPanel = new MainPanel(hide);
+		
+		mainPanel.getToolBar().addSeparator();
+		
+		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
+		mainPanel.addToToolbar(discardAction);
+
+		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+					uiHandler.showDocument(e.getURL(), "_blank");
+				}
+			}
+		});	
+		
+		SwingEngine.getCurrent().setApplicationPanel(mainPanel);
+		return mainPanel;
+	}
+	
+	public void applicationEvent(ApplicationEvent e) {
+		Pathway p = null;
+		switch(e.type) {
+		case ApplicationEvent.PATHWAY_NEW:
+			p = (Pathway)e.source;
+			p.getMappInfo().setOrganism(Organism.fromShortName(getPwSpecies()).latinName());
+			p.getMappInfo().setMapInfoName(getPwName());
+			break;
+		case ApplicationEvent.PATHWAY_OPENED:
+			p = (Pathway)e.source;
+			//Force species name to be te same as on wikipathways
+			String impSpecies = p.getMappInfo().getOrganism();
+			Organism impOrg = Organism.fromLatinName(impSpecies);
+			Organism wikiOrg = Organism.fromShortName(getPwSpecies());
+			if(!wikiOrg.equals(impOrg)) {
+				uiHandler.showError("Invalid species",
+						"The species of the pathway you imported differs from the" +
+						" species for the " + Globals.SERVER_NAME + " pathway you are editing.\n" +
+						"It will be changed from '" + impSpecies + "' to '" + wikiOrg.latinName() + "'");
+				p.getMappInfo().setOrganism(wikiOrg.latinName());
+			}
+			break;
 		}
 	}
 }

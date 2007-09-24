@@ -35,6 +35,10 @@ public abstract class SwingUserInterfaceHandler implements UserInterfaceHandler 
 		this.parent = parent;
 	}
 	
+	public Component getParent() {
+		return parent;
+	}
+	
 	private abstract class RunnableValue <T> implements Runnable {
 		T value;
 		public T get() { return value; }
@@ -55,7 +59,7 @@ public abstract class SwingUserInterfaceHandler implements UserInterfaceHandler 
 	public int askCancellableQuestion(final String title, final String message) {
 		RunnableValue<Integer> r = new RunnableValue<Integer>() {
 			public void run() {
-				int status = JOptionPane.showConfirmDialog(parent, message, title, 
+				int status = JOptionPane.showConfirmDialog(getParent(), message, title, 
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				set(status);
 			}
@@ -75,7 +79,7 @@ public abstract class SwingUserInterfaceHandler implements UserInterfaceHandler 
 	public String askInput(final String title, final String message) {
 		RunnableValue<String> r = new RunnableValue<String>() {
 			public void run() {
-				set(JOptionPane.showInputDialog(parent, message, title));
+				set(JOptionPane.showInputDialog(getParent(), message, title));
 			}
 		};
 		invoke(r);
@@ -83,21 +87,21 @@ public abstract class SwingUserInterfaceHandler implements UserInterfaceHandler 
 	}
 
 	public boolean askQuestion(String title, String message) {
-		int status = JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION);
+		int status = JOptionPane.showConfirmDialog(getParent(), message, title, JOptionPane.YES_NO_OPTION);
 		return status == JOptionPane.YES_OPTION;
 	}
 
 	public void showError(String title, String message) {
-		JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	public void showInfo(String title, String message) {
-		JOptionPane.showMessageDialog(parent, message, title, JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 		
 	public void runWithProgress(final RunnableWithProgress runnable, String title, int totalWork, boolean canCancel, boolean modal) {
-		SwingProgressKeeper pk = new SwingProgressKeeper(totalWork);
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(parent), title, pk, canCancel, modal);
+		SwingProgressKeeper pk = new SwingProgressKeeper(runnable.getProgressKeeper());
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getParent()), title, pk, canCancel, modal);
 				
 		runnable.setProgressKeeper(pk);
 		SwingWorker sw = new SwingWorker() {

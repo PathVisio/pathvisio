@@ -16,92 +16,54 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.BorderLayout;
 import java.net.URL;
 
-import javax.swing.JApplet;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.wikipathways.Parameter;
-import org.pathvisio.wikipathways.UserInterfaceHandler;
-import org.pathvisio.wikipathways.WikiPathways;
-import org.pathvisio.wikipathways.WikiPathwaysInit;
 
-public class AppletMain extends JApplet {	
+public class AppletMain extends PathwayPageApplet {	
 	private static final long serialVersionUID = 1L;
 
-	private WikiPathways wiki;
 	private MainPanel mainPanel;
-	private UserInterfaceHandler uiHandler;
 	
 	public static final String PAR_PATHWAY_URL = "pathway.url";
-	public void init() {
-		Engine engine = new Engine();
-		Engine.setCurrent(engine);
-		SwingEngine.setCurrent(new SwingEngine(engine));
-		GuiInit.init();
-		
-		System.out.println("INIT CALLED....");
-		Logger.log.trace("INIT CALLED....");
-				
-		parseArguments();
-		uiHandler = new AppletUserInterfaceHandler(this);
-		wiki = new WikiPathways(uiHandler);
-		
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					mainPanel = wiki.prepareMainPanel();
-					
-					getContentPane().add(mainPanel);
-					mainPanel.setVisible(true);
-				}
-			});
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		final RunnableWithProgress r = new RunnableWithProgress() {
-			public Object excecuteCode() {								
-				try {
-					wiki.init(SwingEngine.getCurrent().createWrapper(), 
-							getProgressKeeper(), getDocumentBase());
-				} catch(Exception e) {
-					Logger.log.error("Error while starting editor", e);
-					JOptionPane.showMessageDialog(
-							AppletMain.this, e.getClass() + ": See error logg for details", "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
-				};
-				return null;
-			}
-		};
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
-					double spSize = (100 - spPercent) / 100.0;
-					mainPanel.getSplitPane().setDividerLocation(spSize);
-					
-					uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
-				}
-			});
-		} catch (Exception e) {
-			Logger.log.error("Unable to start applet", e);
-		}
-		
-		System.out.println("INIT ENDED....");
-		Logger.log.trace("INIT ENDED....");
+	
+	protected void createToolbar() {
+		// Don't create toolbar, already in mainpanel
 	}
+	
+	protected void doInitWiki(ProgressKeeper pk, URL base) throws Exception {
+		Logger.log.trace("AppletMain:doInitWiki");
+		SwingUtilities.invokeAndWait(new Runnable() {
+			public void run() {
+				mainPanel = wiki.prepareMainPanel();				
+			}
+		});
 		
+		Engine.getCurrent().setWrapper(SwingEngine.getCurrent().createWrapper());
+		Logger.log.trace("calling:doInitWiki");
+		super.doInitWiki(pk, base);
+	}
+	
+	public void createGui() {		
+					
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
+		mainPanel.setVisible(true);
+		
+		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		double spSize = (100 - spPercent) / 100.0;
+		mainPanel.getSplitPane().setDividerLocation(spSize);
+	}
+	
 	public void start() {
 		System.out.println("START CALLED....");
 		Logger.log.trace("START CALLED....");

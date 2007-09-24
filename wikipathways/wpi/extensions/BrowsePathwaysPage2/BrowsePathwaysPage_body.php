@@ -7,7 +7,7 @@
 /** AP20070419
  * Added wpi.php to access Pathway class and getAvailableSpecies()
  */
-require_once('/var/www/wikipathways/wpi/wpi.php');
+require_once('wpi/wpi.php');
 
 /**
  * Entry point : initialise variables and call subfunctions.
@@ -42,9 +42,9 @@ function wfSpecialBrowsePathwaysPage( $par=NULL, $specialPage ) {
 /** AP20070419	
  *	$namespace = $wgRequest->getInt( 'namespace' );
  *	
- *	Set $namespace to equal 100 (Pathway)
+ *	Set $namespace to NS_PATHWAY
  */
-	$namespace = 100;
+	$namespace = NS_PATHWAY;
 
 	$namespaces = $wgContLang->getNamespaces();
 

@@ -14,16 +14,8 @@ class MostEditedPathwaysPage extends SpecialPage
                 
                 $this->setHeaders();
 
-                list( $limit, $offset ) = wfCheckLimits();
-				
-				//Most revisioned pathway images
-				$wgOut->addWikiText("== Pathways Changed  ==");
-				$ppp = new PathwayQueryPage(NS_GPML);
-
-				$ppp->doQuery( $offset, $limit );
-				
+                list( $limit, $offset ) = wfCheckLimits();				
 				//Most edited pathway articles
-				$wgOut->addWikiText("== Descriptions & Bibliographies Changed ==");
 				$ppp = new PathwayQueryPage(NS_PATHWAY);
 
 				$ppp->doQuery( $offset, $limit );
@@ -101,61 +93,4 @@ class PathwayQueryPage extends QueryPage {
 		return wfSpecialList($plink, $text);
 	}
 }
-
-class MEGPMLQueryPage extends QueryPage {
-
-	function getName() {
-		return "MostEditedPathwaysPage";
-	}
-
-	function isExpensive() {
-		# page_counter is not indexed
-		return true;
-	}
-	function isSyndicated() { return false; }
-
-	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
-		list( $revision, $page ) = $dbr->tableNamesN( 'oldimage', 'page' );
-		return
-			"
-			SELECT
-				'Mostrevisions' as type,
-				page_namespace as namespace,
-				page_title as title,
-				COUNT(*) as value
-			FROM oldimage
-			JOIN page ON page_title = oi_name
-			WHERE page_title LIKE '%.gpml'
-			AND page_title NOT LIKE '%Sandbox%'
-			GROUP BY 1,2,3
-			";
-	}
-
-	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
-		
-		try {
-
-		$pathway = Pathway::newFromFileTitle($result->title);
-		
-/** AP20070502 */
-		$title = $pathway->getTitleObject();
-		$plink = $skin->makeKnownLinkObj( $title, htmlspecialchars( $wgContLang->convert( $title->getBaseText() ) ) );
-
-		$text = $wgContLang->convert("$result->value revisions");
-
-		/* No link to history for now, later on link to our own pathway history
-		$nl = wfMsgExt( 'nrevisions', array( 'parsemag', 'escape'),
-			$wgLang->formatNum( $result->value ) );
-		$nlink = $skin->makeKnownLinkObj( $nt, $nl, 'action=history' );
-		*/
-		
-		return wfSpecialList($plink, $text);
-		} catch(Exception $e) {
-			return '';
-		}
-	}
-}
-
 ?>

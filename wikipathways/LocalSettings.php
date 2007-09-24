@@ -153,18 +153,18 @@ $wgSVGConverters['inkscape'] = '$path/inkscape -z -b white -w $width -f $input -
 ##$wgCheckFileExtensions = false;
 
 ##Pathway namespace
-define("NS_PATHWAY", 100);
-define("NS_PATHWAY_TALK", 101);
+define("NS_PATHWAY", 102); //NS_PATHWAY is same as NS_GPML since refactoring
+define("NS_PATHWAY_TALK", 103);
 define("NS_GPML", 102);
 define("NS_GPML_TALK", 103);
 
 $wgExtraNamespaces =
 	array(	NS_PATHWAY => "Pathway", NS_PATHWAY_TALK => "Pathway_Talk",
-			NS_GPML => "GPML", NS_GPML_TALK => "GPML_Talk");
+			100 => "Pw_Old", 101 => "Pw_Old_Talk"); //Old namespace
 $wgNamespacesToBeSearchedDefault += 
 	array( 	NS_PATHWAY => true, NS_PATHWAY_TALK => true,
-			NS_GPML => true, NS_GPML_TALK => false);
-$wgContentNamespaces += array(NS_PATHWAY, NS_PATHWAY_TALK, NS_GPML, NS_GPML_TALK);
+			100 => false, 100 => false); //Old namespace
+$wgContentNamespaces += array(NS_PATHWAY, NS_PATHWAY_TALK);
 
 ##Debug
 $wgDebugLogFile = '/var/www/wikipathways/wpi/tmp/wikipathwaysdebug.txt';
@@ -180,13 +180,11 @@ require_once('wpi/extensions/siteStats.php');
 require_once('wpi/extensions/pathwayInfo.php');
 require_once('wpi/extensions/imageSize.php');
 require_once('wpi/extensions/magicWords.php');
-require_once('wpi/extensions/Categories.php');
 require_once('wpi/extensions/PopularPathwaysPage2/PopularPathwaysPage.php');
 require_once('wpi/extensions/MostEditedPathwaysPage/MostEditedPathwaysPage.php');
 require_once('wpi/extensions/NewPathwaysPage/NewPathwaysPage.php');
 require_once('wpi/extensions/CreatePathwayPage/CreatePathwayPage.php');
 require_once('wpi/extensions/pathwayHistory.php');
-require_once('wpi/extensions/watchPathways.php');
 require_once('wpi/extensions/DynamicPageList2.php');
 require_once('wpi/extensions/LabeledSectionTransclusion/compat.php');
 require_once('wpi/extensions/LabeledSectionTransclusion/lst.php');
@@ -199,6 +197,7 @@ require_once('wpi/extensions/editApplet.php');
 require_once('wpi/extensions/listPathways.php');
 require_once('wpi/extensions/movePathway.php');
 require_once('wpi/batchDownload.php');
+require_once('wpi/PathwayPage.php');
 
 /* Biblio extension
 Isbndb account: thomas.kelder@bigcat.unimaas.nl / BigC0w~wiki

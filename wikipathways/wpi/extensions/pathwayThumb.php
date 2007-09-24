@@ -17,6 +17,7 @@ function wfPathwayThumb_Magic( &$magicWords, $langCode ) {
 
 function renderPathwayImage( &$parser, $pwTitle, $width = 0, $align = '', $caption = '', $href = '', $tooltip = '', $id='pwthumb') {      
 	global $wgUser;
+	$parser->disableCache();
       try {
                 $pathway = Pathway::newFromTitle($pwTitle);
                 $img = new Image($pathway->getFileTitle(FILETYPE_IMG));
@@ -30,18 +31,30 @@ function renderPathwayImage( &$parser, $pwTitle, $width = 0, $align = '', $capti
                         default:
                                 if(!$href) $href = $pathway->getFullURL();
                 }
-
-                $caption = html_entity_decode($caption);        //This can be quite dangerous (injection),
+		
+		$pathwayURL = $pathway->getTitleObject()->getPrefixedURL();
+		switch($caption) {
+			case 'edit':
+			//AP20070918
+			if (!$wgUser->isLoggedIn()){
+				$href = SITE_URL . "/index.php?title=Special:Userlogin&returnto=$pathwayURL";
+				$label = "Log in to edit pathway";
+			} else {
+				$href = "javascript:;";
+				$label = "Edit pathway";
+			}
+			$caption = "<a href='$href' title='$label' id='edit' ". 
+				"class='button'><span>$label</span></a>";
+			break;
+			case 'view':
+				$caption = $pathway->name() . " (" . $pathway->species() . ")";
+			break;
+			default:
+			$caption = html_entity_decode($caption);        //This can be quite dangerous (injection),
                                                                 //we would rather parse wikitext, let me know if
                                                                 //you know a way to do that (TK)
-		//AP20070918
-		if (!$wgUser->isLoggedIn()){
-			$pathwayURL = $pathway->getTitleObject()->getPrefixedURL();
-			$caption = "<span style=\"font-size:1.5em\">
-				<a href=\"http://wikipathways.org/index.php?title=Special:Userlogin&returnto=$pathwayURL\">Log in
-				</a> to Edit Pathway</span>";	
-			$caption = html_entity_decode($caption);
 		}
+
                 $output = makeThumbLinkObj($pathway, $caption, $href, $tooltip, $align, $id, $width);
 
         } catch(Exception $e) {

@@ -59,7 +59,4 @@ function readCategories($file) {
 	}
 	return $categories;
 }
-?>uire_once('wpi.php');
-chdir($dir);
-
-set_time_limit(0);
+?>

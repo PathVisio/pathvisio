@@ -4,33 +4,20 @@ $wgExtensionFunctions[] = "wfButton";
 
 function wfButton() {
     global $wgParser;
-    $wgParser->setHook( "button", "renderButton" );
+    $wgParser->setHook( "fancyButton", "renderButton" );
 }
 
 function renderButton( $input, $argv, &$parser ) {
-    $href = attr('href', $argv['href']);
-	$src = attr('src', $argv['image']);
-	$width = attr('width', $argv['width']);
-	$height = attr('height', $argv['height']);
-
-	$mOver = jsSetAttr('onmouseOver', 'src', $argv['mouseoverimg']);
-	$mOut = jsSetAttr('onmouseOut', 'src', $argv['mouseoutimg']);
-	$mDown = jsSetAttr('onmouseDown', 'src', $argv['mousedownimg']);
-
-	$output = "<a $href><img $src $width $height $mOver $mOut $mDown></a>";
-    return $output;
+	$parser->disableCache();
+	$href = attr('href', $argv['href']);
+	$style = attr('style', $argv['style']);
+	$title = attr('title', $argv['title']);
+	$id = attr('id', $argv['id']);
+	$output = "<a $href $style $title $id class='button'><span>$input</span></a>";
+	return $output;
 }
 
 function attr($name, $value) {
 	return $value ? "$name='$value'" : "";
 }
-
-function jsSetAttr($name, $attr, $value) {
-	if($value) {
-		return "$name=\"this.setAttribute('$attr','$value');\"";
-	} else {
-		return '';
-	}
-}
-
 ?>

@@ -15,7 +15,7 @@ class CreatePathwayPage extends SpecialPage
 		if(!$wgUser || !$wgUser->isLoggedIn()) {
 			$wgOut->addWikiText(
 			"== Not logged in ==\n
-			You're not logged in. To create a new pathway, please [http://" . $_SERVER['HTTP_HOST'] . 
+			You're not logged in. To create a new pathway, please [" . SITE_URL . 
 			"/index.php?title=Special:Userlogin&returnto=Special:CreatePathwayPage log in] or 
 			create an account first!");
 			return;
@@ -64,7 +64,7 @@ class CreatePathwayPage extends SpecialPage
 		$html .= '</select>';
 		$html = tag('table', $html);
 		$html .= tag('input', "", array('type'=>'submit', 'value'=>'Create pathway'));
-		$html = tag('form', $html, array('action'=>"http://" . $_SERVER['HTTP_HOST'] . '/index.php/Special:CreatePathwayPage', 'method'=>'get'));
+		$html = tag('form', $html, array('action'=> SITE_URL . '/index.php/Special:CreatePathwayPage', 'method'=>'get'));
 		$wgOut->addHTML($html);
 	}
 

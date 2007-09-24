@@ -1,15 +1,16 @@
 var label_maximize = '<img src="/skins/common/images/magnify-clip.png" id="maximize"/>';
 var label_minimize = '<img src="/skins/common/images/magnify-clip.png" id="minimize"/>';
-var initial_applet_width = '500px';
 
 //Uses appletobject.js
-function doApplet(idImg, idApplet, keys, values) {
+function doApplet(idImg, idApplet, basePath, main, width, height, keys, values) {
 	var image = document.getElementById(idImg);
 	
-	var w = getParentWidth(image);
+	if(!width || width <= 0) {
+		width = getParentWidth(image);
+	}
 
-	image.style.width = w + 'px';
-	image.style.height = initial_applet_width;
+	image.style.width = width + 'px';
+	image.style.height = height;
 	//Clear all existing content
 	image.innerHTML = '';
 	setClass(image, 'thumbinner');
@@ -38,10 +39,10 @@ function doApplet(idImg, idApplet, keys, values) {
 	image.appendChild(resize);
 	image.appendChild(maximize);
 
-	var ao = new AppletObject(	'org.pathvisio.gui.wikipathways.AppletMain',
-				['/wpi/applet/wikipathways.jar'],
+	var ao = new AppletObject(	main,
+				[basePath + '/wikipathways.jar'],
 				'100%', '100%', '1.5.0', 'false',
-				'/wpi/applet',
+				basePath,
 				[],
 				AppletObjects.TAG_OBJECT );
 	if(keys != null && values != null) {
@@ -165,40 +166,3 @@ function getViewportHeight() {
 		return self.innerHeight;
 };
 /** END COPIED **/
-
-
-function createObjectElement(id, keys, values) {
-	var tag = '<object classid="java:org.pathvisio.gui.wikipathways.AppletMain.class"'
-		+ ' TYPE="application/x-java-applet"'
-		+ ' ARCHIVE="wikipathways.jar"'
-		+ ' CODEBASE="/wpi/applet"'
-		+ ' WIDTH="100%"'
-		+ ' HEIGHT="100%"'
-		+ ' STANDBY="Loading applet..."'
-		+ ' >';
-	if(keys != null && values != null) {
-		for(var i = 0; i < keys.length; i++) {
-			tag += '<param  name="' + keys[i]  + '" ' + 
-				'value="' + values[i] + '" />';
-		}
-	}
-	tag += '</object>';
-		return tag;
-}
-
-function createAppletElement(id, keys, values) {
-	var tag = '<applet code="org.pathvisio.gui.wikipathways.AppletMain"'
-		+ 'ARCHIVE="wikipathways.jar"'
-		+ 'CODEBASE="/wpi/applet"'
-		+ 'WIDTH="100%"'
-		+ '"HEIGHT="100%"'
-		+ '>';
-	if(keys != null && values != null) {
-		for(var i = 0; i < keys.length; i++) {
-			tag += '<param  name="' + keys[i]  + '" ' + 
-				'value="' + values[i] + '" />';
-		}
-	}
-	tag += '</applet>';
-		return tag;
-}

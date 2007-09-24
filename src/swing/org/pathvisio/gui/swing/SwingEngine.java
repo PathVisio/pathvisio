@@ -17,11 +17,13 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.io.File;
 import java.net.URL;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.swingworker.SwingWorker;
@@ -75,6 +77,10 @@ public class SwingEngine {
 	}
 	
 	public void setApplicationPanel(MainPanel mp) {
+		if(mainPanel != null) {
+			Container parent = mainPanel.getParent();
+			if(parent != null) parent.remove(mainPanel);
+		}
 		mainPanel = mp;
 	}
 	

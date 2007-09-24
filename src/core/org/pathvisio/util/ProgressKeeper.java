@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
+import org.pathvisio.debug.Logger;
+
 public class ProgressKeeper {
 	public static final int PROGRESS_UNKNOWN = -1;
 	volatile String taskName;
@@ -53,6 +55,10 @@ public class ProgressKeeper {
 		fireProgressEvent(ProgressEvent.FINISHED);
 	}
 	
+	public boolean isFinished() {
+		return progress == total;
+	}
+	
 	public void cancel() {
 		cancelled = true;
 	}
@@ -78,13 +84,17 @@ public class ProgressKeeper {
 	
 	void fireProgressEvent(int type) {
 		for(ProgressListener l : listeners)
-			l.progressFinished(new ProgressEvent(this, type));
+			l.progressEvent(new ProgressEvent(this, type));
 	}
 	
 	List<ProgressListener> listeners = new ArrayList<ProgressListener>();
 	
 	public void addListener(ProgressListener l) {
 		if(!listeners.contains(l)) listeners.add(l);
+	}
+	
+	public List<ProgressListener> getListeners() {
+		return listeners;
 	}
 	
 	public class ProgressEvent extends EventObject {
@@ -102,6 +112,6 @@ public class ProgressKeeper {
 	}
 	
 	public interface ProgressListener {
-		public void progressFinished(ProgressEvent e);
+		public void progressEvent(ProgressEvent e);
 	}
 }

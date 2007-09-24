@@ -90,7 +90,7 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		}
 	}
 
-	public void progressFinished(ProgressEvent e) {
+	public void progressEvent(ProgressEvent e) {
 		switch(e.getType()) {
 		case ProgressEvent.FINISHED:
 			setVisible(false);

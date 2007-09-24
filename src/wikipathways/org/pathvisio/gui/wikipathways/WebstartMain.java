@@ -56,8 +56,8 @@ public class WebstartMain extends GuiMain {
 				parseCommandLine(getArgs());
 								
 				try {
-					wiki.init(SwingEngine.getCurrent().createWrapper(), 
-							getProgressKeeper(), new URL("http://www.wikipathways.org"));
+					Engine.getCurrent().setWrapper(SwingEngine.getCurrent().createWrapper());
+					wiki.init(getProgressKeeper(), new URL("http://www.wikipathways.org"));
 				} catch(Exception e) {
 					Logger.log.error("Error while starting editor", e);
 					JOptionPane.showMessageDialog(

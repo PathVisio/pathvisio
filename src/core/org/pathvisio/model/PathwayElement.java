@@ -49,7 +49,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public class Comment implements Cloneable
 	{
-		Comment(String _comment, String _source)
+		public Comment(String _comment, String _source)
 		{
 			source = _source;
 			comment = _comment;
@@ -1149,7 +1149,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void addComment(String comment, String source)
 	{
-		comments.add(new Comment(comment, source));
+		addComment(new Comment(comment, source));
+	}
+	
+	public void addComment(Comment comment) {
+		comments.add(comment);
 		fireObjectModifiedEvent(new PathwayEvent(this,
 				PathwayEvent.MODIFIED_GENERAL));
 	}

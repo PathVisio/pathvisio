@@ -53,8 +53,15 @@ public class PathwayTransferable implements Transferable {
 	List<PathwayElement> elements;
 	Pathway pathway;
 
+	public PathwayTransferable(List<PathwayElement> elements) {
+		this(null, elements);
+	}
+	
 	public PathwayTransferable(Pathway source, List<PathwayElement> elements) {
 		this.elements = elements;
+		if(source == null) {
+			source = new Pathway();
+		}
 		this.pathway = source;
 	}
 

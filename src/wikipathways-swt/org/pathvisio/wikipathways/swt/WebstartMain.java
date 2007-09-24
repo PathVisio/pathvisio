@@ -90,8 +90,8 @@ public class WebstartMain {
 				parseCommandLine(args);
 								
 				try {
-					wiki.init(SwtEngine.getCurrent().createWrapper(), 
-							getProgressKeeper(), getDocumentBase());
+					Engine.getCurrent().setWrapper(SwtEngine.getCurrent().createWrapper());
+					wiki.init(getProgressKeeper(), getDocumentBase());
 				} catch(Exception e) {
 					Logger.log.error("Error while starting editor", e);
 					uiHandler.showError("Error while initializing editor", e.getClass() + ": " + e.getMessage());

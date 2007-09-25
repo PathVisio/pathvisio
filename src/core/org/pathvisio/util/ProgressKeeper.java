@@ -24,6 +24,7 @@ import org.pathvisio.debug.Logger;
 
 public class ProgressKeeper {
 	public static final int PROGRESS_UNKNOWN = -1;
+	public static final int PROGRESS_FINISHED = -2;
 	volatile String taskName;
 	volatile boolean cancelled;
 	volatile String report;
@@ -36,7 +37,13 @@ public class ProgressKeeper {
 	}
 	
 	public void worked(int w) {
-		progress += w;
+		if(!isFinished()) {			
+			progress += w;
+			if(progress >= total) {
+				progress = total; //to trigger event
+				finished();
+			}
+		}
 	}
 	
 	public final void worked(double d) {
@@ -51,12 +58,14 @@ public class ProgressKeeper {
 	public String getTaskName() { return taskName; }
 	
 	public void finished() {
-		progress = total;
-		fireProgressEvent(ProgressEvent.FINISHED);
+		if(!isFinished()) { //Only fire event once
+			progress = PROGRESS_FINISHED;
+			fireProgressEvent(ProgressEvent.FINISHED);
+		}
 	}
 	
 	public boolean isFinished() {
-		return progress == total;
+		return progress == PROGRESS_FINISHED;
 	}
 	
 	public void cancel() {

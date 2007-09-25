@@ -148,8 +148,29 @@ public class PublicationXRef extends BiopaxElement {
 		String title = getTitle();
 		String pmid = getPubmedId();
 		String authors = getAuthorString();
-		return 	(title != null && title.length() > 0 ? title + "; " : "") + 
-				(authors != null && authors.length() > 0 ? authors + "; ": "") + 
-				(pmid != null && pmid.length() > 0 ? " pmid=" + pmid : "");
+		String source = getSource();
+		String year = getYear();
+		if(title != null && title.length() > 0) {
+			title += "; "; 
+		} else {
+			title = "";
+		}
+		if(authors != null && authors.length() > 0) {
+			authors = "<B>" + authors + "</B>; ";
+		} else {
+			authors = "";
+		}
+		if(source != null && source.length() > 0) {
+			source = "<I>" + source + "</I>; ";
+		}
+		if(year != null && year.length() > 0) {
+			year += "; ";
+		}
+		if(pmid != null && pmid.length() > 0) {
+			pmid = "<I>pmid=" + pmid + "</I>";
+		} else {
+			pmid = "";
+		}
+		return 	title + authors + source + year + pmid;
 	}
 }

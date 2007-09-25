@@ -106,8 +106,8 @@ public class PublicationXRefDialog extends OkCancelDialog {
 				JOptionPane.getFrameForComponent(this), 
 				"", pk, true, true);
 				
-		SwingWorker sw = new SwingWorker() {
-			protected Object doInBackground() throws Exception {
+		SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+			protected Void doInBackground() throws Exception {
 				pk.setTaskName("Querying PubMed");
 				pmq.execute();
 				pk.finished();

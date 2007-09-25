@@ -72,7 +72,7 @@ public class Actions {
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if(saved) {
-				uiHandler.showExitMessage("Please wait while you'll be redirected to the pathway page");
+				uiHandler.showExitMessage("Please wait...the page will be reloaded");
 				try {
 					if(wiki.isNew()) {
 						uiHandler.showDocument(new URL(wiki.getPwURL()), "_top");

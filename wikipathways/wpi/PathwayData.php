@@ -90,12 +90,14 @@ class PathwayData {
 		//Format literature references
 		if(!$gpml->Biopax) return;
 
-		$bpChildren = $gpml->Biopax[0]->children('bp', true);
+		$bpChildren = $gpml->Biopax[0]->children("http://www.biopax.org/release/biopax-level2.owl#");
+		//$bpChildren = $gpml->Biopax[0]->children('bp', true); //only for version >=5.2
 		$xrefs = $bpChildren->PublicationXRef;
 
 		foreach($xrefs as $xref) {
 			//Get the rdf:id attribute
-			$attr = $xref->attributes('rdf', true);
+			$attr = $xref->attributes("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+			//$attr = $xref->attributes('rdf', true); //only for version >=5.2
 			$id = $attr['id'] ? $attr['id'] : $i++;
 			$this->pubXRefs[(string)$id] = $xref;
 		}

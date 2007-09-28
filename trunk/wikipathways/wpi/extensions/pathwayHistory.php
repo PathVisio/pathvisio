@@ -87,6 +87,7 @@ function historyLine($pathway, $row, $cur = false) {
 				$pathway->getTitleObject()->getPartialURL() .
 				"&oldId={$rev->getId()}";
 	
+	$revert = "";
 	if($wgUser->getID() != 0 && $wgTitle && $wgTitle->userCanEdit()) {
 		$revert = $cur ? "" : "(<A href=$revUrl>revert</A>), ";
 	}

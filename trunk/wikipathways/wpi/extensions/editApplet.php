@@ -131,6 +131,8 @@ class EditApplet {
 				}
 			}
 		}
+		$archive_string = "";
+		$version_string = "";
 		foreach($cache_archive as $jar) {
 			$mod = filemtime("$jardir/$jar");
 			if($ver = $cache_version[$jar]) {
@@ -150,6 +152,7 @@ class EditApplet {
 		$archive_string = substr($archive_string, 0, -2);
 
 		//Write new cache version file
+		$out = "";
 		foreach(array_keys($cache_version) as $jar) {
 			$out .= $jar . '|' . $cache_version[$jar]['ver'] . '|' . $cache_version[$jar]['mod'] . "\n";
 		}

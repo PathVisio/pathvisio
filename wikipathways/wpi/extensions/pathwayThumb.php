@@ -37,13 +37,13 @@ function renderPathwayImage( &$parser, $pwTitle, $width = 0, $align = '', $capti
 			case 'edit':
 			//AP20070918
 			if (!$wgUser->isLoggedIn()){
-				$href = SITE_URL . "/index.php?title=Special:Userlogin&returnto=$pathwayURL";
+				$hrefbtn = SITE_URL . "/index.php?title=Special:Userlogin&returnto=$pathwayURL";
 				$label = "Log in to edit pathway";
 			} else {
-				$href = "javascript:;";
+				$hrefbtn = "javascript:;";
 				$label = "Edit pathway";
 			}
-			$caption = "<a href='$href' title='$label' id='edit' ". 
+			$caption = "<a href='$hrefbtn' title='$label' id='edit' ". 
 				"class='button'><span>$label</span></a>";
 			break;
 			case 'view':

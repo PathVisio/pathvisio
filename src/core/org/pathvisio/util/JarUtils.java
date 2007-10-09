@@ -31,11 +31,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 
-public class JarUtils {
-	static final String PREFIX_TMP = Globals.APPLICATION_NAME;
+public class JarUtils
+{
+	static final String PREFIX_TMP = "PVJAR";
 	
 	public static File resourceToTempFile(String name) throws FileNotFoundException, IOException {
 		File tmp = File.createTempFile(PREFIX_TMP, null, null);

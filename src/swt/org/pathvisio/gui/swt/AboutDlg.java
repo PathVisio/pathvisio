@@ -67,8 +67,8 @@ public class AboutDlg extends Dialog
 		lbl.setImage (SwtEngine.getCurrent().getImageRegistry().get("about.logo"));
 
 		lbl = new Label (shell, SWT.NULL);
-		lbl.setText ("R.M.H. Besseling\nS.P.M.Crijns\nI.Kaashoek\nM.M.Palm\n" +
-				"E.D Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nBiGCaT");
+		lbl.setText ("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
+				"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nBiGCaT");
 		
 		final Button btnOk = new Button (shell, SWT.PUSH);
 		btnOk.setText ("OK");

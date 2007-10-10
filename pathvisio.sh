@@ -51,8 +51,8 @@ source classpath.sh;
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib/atlas:/usr/lib/firefox
 export MOZILLA_FIVE_HOME=/usr/lib/firefox
 
-MYCLASSPATH1=$PATHVISIO_CP:build/v1
-MYCLASSPATH2=$PATHVISIO_CP:build/v2
+MYCLASSPATH1=$PATHVISIO_CP:build/v1:build/core
+MYCLASSPATH2=$PATHVISIO_CP:build/v2:build/core
 
 if [ $RUN_MODE = "DIRECT" ]; then
 	if [ $USE_EXPERIMENTAL = "0" ]; then

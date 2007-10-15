@@ -1,71 +1,0 @@
-
-src/org/pathvisio/gpmldiff/BasicOutputter.java,383
-class BasicOutputter 8,98
-	PrintStream output BasicOutputter.output11,144
-	BasicOutputter(BasicOutputter.BasicOutputter13,174
-	BasicOutputter(BasicOutputter.BasicOutputter18,226
-	public void flush(BasicOutputter.flush23,274
-	public void insert(BasicOutputter.insert27,302
-	public void delete(BasicOutputter.delete32,394
-	public void modify(BasicOutputter.modify37,486
-
-src/org/pathvisio/gpmldiff/SearchNode.java,408
-class SearchNodeBasicOutputter.SearchNode6,99
-	float cost;SearchNode.cost8,118
-	SearchNode parent;SearchNode.parent9,131
-	public SearchNode getParent SearchNode.getParent15,285
-	PwyElt elt1;SearchNode.elt120,342
-	public PwyElt getElt1(SearchNode.getElt122,386
-	PwyElt elt2;SearchNode.elt227,434
-	public PwyElt getElt2(SearchNode.getElt229,478
-	public SearchNode(SearchNode.SearchNode38,594
-
-src/org/pathvisio/gpmldiff/PwyDoc.java,343
-class PwyDocSearchNode.PwyDoc11,174
-		private Document doc;PwyDoc.doc13,189
-		private	List<PwyElt> elts PwyDoc.elts14,213
-		public List<PwyElt> getElts(PwyDoc.getElts19,342
-		static public PwyDoc read(PwyDoc.read26,555
-		SearchNode findCorrespondence(PwyDoc.findCorrespondence50,1186
-		void writeResult PwyDoc.writeResult79,1881
-
-src/org/pathvisio/gpmldiff/BasicSim.java,90
-class BasicSim PwyDoc.BasicSim8,90
-	public int getSimScore BasicSim.getSimScore13,226
-
-src/org/pathvisio/gpmldiff/SimilarityFunction.java,68
-abstract class SimilarityFunctionBasicSim.SimilarityFunction6,107
-
-src/org/pathvisio/gpmldiff/DiffOutputter.java,67
-abstract class DiffOutputterSimilarityFunction.DiffOutputter6,83
-
-src/org/pathvisio/gpmldiff/Test.java,103
-class TestDiffOutputter.Test6,75
-	void testPwy(Test.testPwy8,88
-	void testElt(Test.testElt14,134
-
-src/org/pathvisio/gpmldiff/GpmlDiff.java,293
-class GpmlDiffTest.GpmlDiff8,94
-	static File fileOld GpmlDiff.fileOld10,111
-	static File fileNew GpmlDiff.fileNew11,140
-	static boolean parseCliOptions(GpmlDiff.parseCliOptions16,211
-	static void printUsage(GpmlDiff.printUsage41,751
-    public static void main(GpmlDiff.main56,980
-
-src/org/pathvisio/gpmldiff/PwyElt.java,427
-class PwyEltGpmlDiff.PwyElt9,157
-	Element elt;PwyElt.elt11,172
-	Map<PwyElt.Map12,186
-	Map<String, String> contents PwyElt.contents12,186
-	public Map<PwyElt.Map14,251
-	public Map<String, String> getContents(PwyElt.getContents14,251
-	PwyElt(PwyElt.PwyElt16,316
-	private void copyContents(PwyElt.copyContents24,413
-	String summary(PwyElt.summary43,852
-	void writeModifications PwyElt.writeModifications68,1764
-
-src/org/pathvisio/gpmldiff/BasicCost.java,39
-class BasicCost PwyElt.BasicCost6,86
-
-src/org/pathvisio/gpmldiff/CostFunction.java,56
-abstract class CostFunctionBasicCost.CostFunction6,86

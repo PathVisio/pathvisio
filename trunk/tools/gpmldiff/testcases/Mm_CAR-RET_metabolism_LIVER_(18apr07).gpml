@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="CAR-RET metabolism, LIVER" Data-Source="GenMAPP 2.0" Version="20061219" Author="Susan Coort" Maintainer="Susan Coort" Email="susan.coort@bigcat.unimaas.nl" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="21073.0" BoardHeight="9701.0" WindowWidth="19320.0" WindowHeight="10671.0" />
+  <DataNode TextLabel="Bcmo1" Type="GeneProduct" GraphId="b1e">
+    <Graphics Color="000000" CenterX="10250.0" CenterY="2450.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_067461" />
+  </DataNode>
+  <DataNode TextLabel="Lrat" Type="GeneProduct" GraphId="a78">
+    <Graphics Color="000000" CenterX="3450.0" CenterY="3400.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_076113" />
+  </DataNode>
+  <DataNode TextLabel="Retsat" Type="GeneProduct" GraphId="ac6">
+    <Graphics Color="000000" CenterX="5000.0" CenterY="4500.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q64FW2" />
+  </DataNode>
+  <DataNode TextLabel="Adh1" Type="GeneProduct" BackpageHead="Adh1" GraphId="e54">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="3650.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_031435" />
+  </DataNode>
+  <DataNode TextLabel="Adh5" Type="GeneProduct" BackpageHead="Adh5" GraphId="d10">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="3950.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="P28474" />
+  </DataNode>
+  <DataNode TextLabel="Adh4" Type="GeneProduct" BackpageHead="Adh4" GraphId="e32">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="4250.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_036126" />
+  </DataNode>
+  <DataNode TextLabel="Rdh7" Type="GeneProduct" BackpageHead="Rdh7" GraphId="d2b">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="5050.0" Width="1200.0" Height="300.0" />
+    <Xref Database="MGI" ID="MGI:1860517" />
+  </DataNode>
+  <DataNode TextLabel="Rbp1" Type="GeneProduct" BackpageHead="RBP1" GraphId="d2c">
+    <Graphics Color="000000" CenterX="5300.0" CenterY="7200.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_035384" />
+  </DataNode>
+  <DataNode TextLabel="Rbp2" Type="GeneProduct" BackpageHead="RBP2" GraphId="a42">
+    <Graphics Color="000000" CenterX="5300.0" CenterY="7500.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_033060" />
+  </DataNode>
+  <DataNode TextLabel="Rbp7" Type="GeneProduct" GraphId="d82">
+    <Graphics Color="000000" CenterX="5300.0" CenterY="8100.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q540P4" />
+  </DataNode>
+  <DataNode TextLabel="Rbp4" Type="GeneProduct" BackpageHead="Rbp4" GraphId="d0a">
+    <Graphics Color="000000" CenterX="5300.0" CenterY="7800.0" Width="1200.0" Height="300.0" />
+    <Xref Database="MGI" ID="MGI:97879" />
+  </DataNode>
+  <DataNode TextLabel="Crabp1" Type="GeneProduct" BackpageHead="Crabp1" GraphId="f3d">
+    <Graphics Color="000000" CenterX="15050.0" CenterY="7100.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_038524" />
+  </DataNode>
+  <DataNode TextLabel="Scarb1" Type="GeneProduct" GraphId="fc6">
+    <Graphics Color="000000" CenterX="7250.0" CenterY="850.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_058021" />
+  </DataNode>
+  <DataNode TextLabel="Bcdo2" Type="GeneProduct" BackpageHead="Bcdo2" GraphId="ace">
+    <Graphics Color="000000" CenterX="12500.0" CenterY="850.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q99NF1" />
+  </DataNode>
+  <DataNode TextLabel="ARAT" Type="GeneProduct" GraphId="b6c">
+    <Graphics Color="000000" CenterX="3450.0" CenterY="3100.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Aldh1a1" Type="GeneProduct" GraphId="c22">
+    <Graphics Color="000000" CenterX="12450.0" CenterY="3300.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="P24549" />
+  </DataNode>
+  <DataNode TextLabel="Aldh1a2" Type="GeneProduct" GraphId="a04">
+    <Graphics Color="000000" CenterX="12450.0" CenterY="3600.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q62148" />
+  </DataNode>
+  <DataNode TextLabel="Raldh3" Type="GeneProduct" GraphId="d17">
+    <Graphics Color="000000" CenterX="5900.0" CenterY="9550.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q9JHW9" />
+  </DataNode>
+  <DataNode TextLabel="Aldh8a1" Type="GeneProduct" GraphId="e29">
+    <Graphics Color="000000" CenterX="12450.0" CenterY="3900.0" Width="1200.0" Height="300.0" />
+    <Xref Database="MGI" ID="MGI:2653900" />
+  </DataNode>
+  <DataNode TextLabel="Cyp26a1" Type="GeneProduct" GraphId="c0c">
+    <Graphics Color="000000" CenterX="17600.0" CenterY="5950.0" Width="1111.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="O55127" />
+  </DataNode>
+  <DataNode TextLabel="Rdh7" Type="GeneProduct" BackpageHead="Rdh7" GraphId="a81">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="4550.0" Width="1200.0" Height="300.0" />
+    <Xref Database="MGI" ID="MGI:1860517" />
+  </DataNode>
+  <DataNode TextLabel="Rdh16" Type="GeneProduct" GraphId="c8d">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="5350.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="O54909" />
+  </DataNode>
+  <DataNode TextLabel="Aldh1a1" Type="GeneProduct" GraphId="b43">
+    <Graphics Color="000000" CenterX="12450.0" CenterY="5650.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="P24549" />
+  </DataNode>
+  <DataNode TextLabel="Aldh1a2" Type="GeneProduct" GraphId="b06">
+    <Graphics Color="000000" CenterX="12450.0" CenterY="5950.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q62148" />
+  </DataNode>
+  <DataNode TextLabel="Aldh8a1" Type="GeneProduct" GraphId="eec">
+    <Graphics Color="000000" CenterX="12450.0" CenterY="6250.0" Width="1200.0" Height="300.0" />
+    <Xref Database="MGI" ID="MGI:2653900" />
+  </DataNode>
+  <DataNode TextLabel="Rdh5" Type="GeneProduct" BackpageHead="Rdh5" GraphId="f96">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="5650.0" Width="1200.0" Height="300.0" />
+    <Xref Database="RefSeq" ID="NP_598767" />
+  </DataNode>
+  <DataNode TextLabel="Dhrs3" Type="GeneProduct" BackpageHead="Dhrs3" GraphId="a98">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="3050.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="O88876" />
+  </DataNode>
+  <DataNode TextLabel="Rdh11" Type="GeneProduct" GraphId="b20">
+    <Graphics Color="000000" CenterX="8050.0" CenterY="3350.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="Q9QYF1" />
+  </DataNode>
+  <DataNode TextLabel="Crabp2" Type="GeneProduct" BackpageHead="Crabp2" GraphId="b94">
+    <Graphics Color="000000" CenterX="15050.0" CenterY="7400.0" Width="1200.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="P22935" />
+  </DataNode>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="7800.0" y="850.0" Head="Arrow" />
+      <Point x="9500.0" y="850.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="10250.0" y="1050.0" />
+      <Point x="10250.0" y="2250.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="10250.0" y="2500.0" Head="Arrow" />
+      <Point x="10250.0" y="3400.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="13000.0" y="850.0" Head="Arrow" />
+      <Point x="13900.0" y="850.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics Color="000000">
+      <Point x="14950.0" y="1000.0" Head="Arrow" />
+      <Point x="14950.0" y="3200.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="11300.0" y="4850.0" Head="Arrow" />
+      <Point x="13900.0" y="4850.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="11300.0" y="5950.0" Head="Arrow" />
+      <Point x="13900.0" y="5950.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="5850.0" y="3800.0" Head="Arrow" />
+      <Point x="5850.0" y="4600.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="5000.0" y="3800.0" />
+      <Point x="5000.0" y="4400.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="5000.0" y="4550.0" Head="Arrow" />
+      <Point x="5000.0" y="5800.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="5850.0" y="850.0" />
+      <Point x="6650.0" y="850.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="10950.0" y="850.0" />
+      <Point x="11900.0" y="850.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="16600.0" y="4700.0" Head="Arrow" />
+      <Point x="18500.0" y="2550.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="16600.0" y="5050.0" Head="Arrow" />
+      <Point x="18800.0" y="7000.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="9250.0" y="3400.0" Head="Arrow" />
+      <Point x="6750.0" y="3400.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="6800.0" y="3650.0" Head="Arrow" />
+      <Point x="9350.0" y="3650.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="2250.0" y="3650.0" Head="Arrow" />
+      <Point x="4600.0" y="3650.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="4600.0" y="3450.0" Head="Arrow" />
+      <Point x="2300.0" y="3450.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="6800.0" y="5000.0" Head="Arrow" />
+      <Point x="9300.0" y="5000.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="9250.0" y="4800.0" Head="Arrow" />
+      <Point x="6750.0" y="4800.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="6750.0" y="6150.0" Head="Arrow" />
+      <Point x="9250.0" y="6150.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="9250.0" y="5950.0" Head="Arrow" />
+      <Point x="6650.0" y="5950.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics Color="000000">
+      <Point x="11000.0" y="3600.0" Head="Arrow" />
+      <Point x="14000.0" y="3600.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="dietary CAR" GraphId="a1c">
+    <Graphics FontSize="150" Color="000000" CenterX="5000.0" CenterY="850.0" Width="1130.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="all-trans ROL" GraphId="d8b">
+    <Graphics FontSize="150" Color="000000" CenterX="5400.0" CenterY="3550.0" Width="1220.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="9-cis ROL" GraphId="ba1">
+    <Graphics FontSize="150" Color="000000" CenterX="5700.0" CenterY="4850.0" Width="950.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="13,14 dehydro ROL" GraphId="dba">
+    <Graphics FontSize="150" Color="000000" CenterX="5400.0" CenterY="6000.0" Width="1760.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="retinyl ester" GraphId="ba7">
+    <Graphics FontSize="150" Color="000000" CenterX="1500.0" CenterY="3550.0" Width="1100.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="beta-carotene" GraphId="e7d">
+    <Graphics FontSize="150" Color="000000" CenterX="10250.0" CenterY="850.0" Width="1265.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="beta-10'-apocarotenal" GraphId="e3f">
+    <Graphics FontSize="150" Color="000000" CenterX="15050.0" CenterY="850.0" Width="1925.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="all-trans RAL" GraphId="d67">
+    <Graphics FontSize="150" Color="000000" CenterX="10250.0" CenterY="3550.0" Width="1205.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="9-cis RAL" GraphId="f4c">
+    <Graphics FontSize="150" Color="000000" CenterX="10250.0" CenterY="4850.0" Width="935.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="13,14 dehydro RAL" GraphId="dc8">
+    <Graphics FontSize="150" Color="000000" CenterX="10250.0" CenterY="6000.0" Width="1745.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="all-trans RA" GraphId="ab3">
+    <Graphics FontSize="150" Color="000000" CenterX="15000.0" CenterY="3550.0" Width="1100.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="9-cis RA" GraphId="bbd">
+    <Graphics FontSize="150" Color="000000" CenterX="15000.0" CenterY="4850.0" Width="830.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="13,14 dehydro RA" GraphId="fde">
+    <Graphics FontSize="150" Color="000000" CenterX="15000.0" CenterY="5950.0" Width="1640.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="?" GraphId="f57">
+    <Graphics FontSize="150" Color="000000" CenterX="15350.0" CenterY="2050.0" Width="185.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="?" GraphId="d4e">
+    <Graphics FontSize="150" Color="000000" CenterX="6100.0" CenterY="4100.0" Width="185.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="5" GraphId="b4e">
+    <Graphics FontSize="150" Color="0000ff" CenterX="6400.0" CenterY="4600.0" Width="185.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="5" GraphId="acf">
+    <Graphics FontSize="150" Color="0000ff" CenterX="10700.0" CenterY="4500.0" Width="185.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="1,2,3" GraphId="d95">
+    <Graphics FontSize="150" Color="0000ff" CenterX="10850.0" CenterY="3250.0" Width="515.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="1,2,3,4,6" GraphId="fb7">
+    <Graphics FontSize="150" Color="0000ff" CenterX="6050.0" CenterY="3250.0" Width="845.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="7,8,9" GraphId="b50">
+    <Graphics FontSize="150" Color="0000ff" CenterX="15750.0" CenterY="3200.0" Width="515.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="ROL=retinol; RAL=retinaldehyde; RA=retinoic acid" GraphId="a07">
+    <Graphics FontSize="150" Color="000000" CenterX="2400.0" CenterY="8750.0" Width="4445.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="ROL-binding proteins" GraphId="f31">
+    <Graphics FontSize="150" Color="000000" CenterX="5350.0" CenterY="6800.0" Width="1895.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="RA-binding proteins" GraphId="c64">
+    <Graphics FontSize="150" Color="000000" CenterX="15150.0" CenterY="6800.0" Width="1775.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="Label" GraphId="f3f">
+    <Graphics FontSize="150" Color="000000" CenterX="19950.0" CenterY="1500.0" Width="545.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="Nucleus" GraphId="a4b">
+    <Graphics FontSize="150" Color="000000" CenterX="18650.0" CenterY="3300.0" Width="785.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="RA-receptors" GraphId="d24">
+    <Graphics FontSize="150" Color="000000" CenterX="18700.0" CenterY="2350.0" Width="1220.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="all-trans-4-oxo dehydro RA" GraphId="c8e">
+    <Graphics FontSize="150" Color="000000" CenterX="19100.0" CenterY="7650.0" Width="2390.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="CYP26 Gene family" GraphId="e51">
+    <Graphics FontSize="150" Color="000000" CenterX="18300.0" CenterY="5600.0" Width="1790.0" Height="240.0" />
+  </Label>
+  <Label TextLabel="all-trans-4-oxo RA" GraphId="f0d">
+    <Graphics FontSize="150" Color="000000" CenterX="19000.0" CenterY="7350.0" Width="1640.0" Height="240.0" />
+  </Label>
+  <Shape Type="Brace" GraphId="b03">
+    <Graphics FillColor="000000" Color="000000" CenterX="5300.0" CenterY="6550.0" Width="1700.0" Height="130.0" Rotation="3.141592653589793" />
+  </Shape>
+  <Shape Type="Brace" GraphId="fe1">
+    <Graphics FillColor="000000" Color="000000" CenterX="15050.0" CenterY="6550.0" Width="1700.0" Height="130.0" Rotation="3.141592653589793" />
+  </Shape>
+  <Shape Type="Brace" GraphId="b7d">
+    <Graphics FillColor="000000" Color="000000" CenterX="16250.0" CenterY="4900.0" Width="2984.0" Height="130.0" Rotation="4.71238898038469" />
+  </Shape>
+  <Shape Type="Oval" GraphId="e4a">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="18700.0" CenterY="2700.0" Width="2686.0" Height="1786.0" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Legend CenterX="0.0" CenterY="1701.0" />
+</Pathway>
+

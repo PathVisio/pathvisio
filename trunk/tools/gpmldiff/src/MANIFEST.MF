@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: org.pathvisio.gpmldiff.GpmlDiff
-Class-Path: lib/jdom.jar

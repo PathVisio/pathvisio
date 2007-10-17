@@ -405,7 +405,7 @@ public class RController implements ApplicationEventListener{
 	}
 		
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.APPLICATION_CLOSE) {
+		if(e.getType() == ApplicationEvent.APPLICATION_CLOSE) {
 			endR(); //End the R process
 			if(rOut != null) { //Close the R output file
 				try { 

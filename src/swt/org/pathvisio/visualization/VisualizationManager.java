@@ -382,18 +382,18 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
-			if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-				VPathway vp = (VPathway)e.source;
+			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+				VPathway vp = (VPathway)e.getSource();
 				vp.addSelectionListener(this);
 			}
 		}		
 	}
 	
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.APPLICATION_CLOSE) {
+		if(e.getType() == ApplicationEvent.APPLICATION_CLOSE) {
 			saveGeneric();
-		} else if (e.type == ApplicationEvent.VPATHWAY_CREATED) {
-			VPathway vp = (VPathway)e.source;
+		} else if (e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+			VPathway vp = (VPathway)e.getSource();
 			if(vp.getWrapper() instanceof VPathwaySwing) {
 				((VPathwaySwing)vp.getWrapper()).addToolTipProvider(this);
 			}

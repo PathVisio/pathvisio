@@ -360,7 +360,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	}
 	
 	public void applicationEvent(ApplicationEvent e) {
-		switch(e.type) {
+		switch(e.getType()) {
 		case ApplicationEvent.VPATHWAY_CREATED:
 			VPathway vp = (VPathway)e.getSource();
 			vp.addVPathwayListener(this);

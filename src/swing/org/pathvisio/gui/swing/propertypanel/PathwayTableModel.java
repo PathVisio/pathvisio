@@ -210,8 +210,8 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-			((VPathway)e.source).addSelectionListener(this);
+		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+			((VPathway)e.getSource()).addSelectionListener(this);
 		}
 	}
 }

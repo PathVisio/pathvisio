@@ -62,8 +62,8 @@ public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
 	
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-			ViewActions va = ((VPathway)e.source).getViewActions();
+		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+			ViewActions va = ((VPathway)e.getSource()).getViewActions();
 			va.registerToGroup(saveAction, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			va.registerToGroup(saveAsAction,	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			va.registerToGroup(importAction, 	ViewActions.GROUP_ENABLE_EDITMODE);

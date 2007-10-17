@@ -540,9 +540,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	  <mkdir dir="${ogretest.dir}/build"/>
 	  <copy toDir="${ogretest.dir}/src">
 		<fileset dir="${src.dir}/core"/>
-		<fileset dir="${src.dir}/test">
-		  <exclude name="org/pathvisio/view/Test.java"/>
-		</fileset>
+		<fileset dir="${src.dir}/test"/>
 	  </copy>
 	  <copy toDir="${ogretest.dir}/build">
 		<fileset dir="." includes="GPML.xsd"/>

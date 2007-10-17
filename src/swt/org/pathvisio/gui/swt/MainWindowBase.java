@@ -127,8 +127,6 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				if(dbName == null) return;
 				
 				Gdb.connect(dbName);
-				setStatus("Using Gene Database: '" + GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
-				cacheExpressionData();
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
@@ -384,8 +382,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 		rightPanel.getTabFolder().setSelection(0); //select backpage browser tab
 		rightPanel.hideTab("Legend"); //hide legend on startup
-		
-		setStatus("Using Gene Database: '" + GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
+
+		updateStatusBar();
 
 		SwtEngine.getCurrent().updateTitle();
 
@@ -420,10 +418,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	public boolean close() {
 		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
 		Engine.getCurrent().fireApplicationEvent(e);
-		if(e.doit) {
-			return super.close();
-		}
-		return false;
+		return super.close();
 	}
 	
 	VPathwaySwingComposite swingPathwayComposite;
@@ -449,16 +444,20 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	}
 					
 	public void applicationEvent(ApplicationEvent e) {
-		switch(e.type) {
+		switch(e.getType())
+		{
 		case ApplicationEvent.PATHWAY_OPENED:
 			if(Gex.isConnected()) cacheExpressionData();
 			break;
-		}
-		switch(e.type) {
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:
 			Engine.getCurrent().getActiveVPathway().addVPathwayListener(this);
 			Engine.getCurrent().getActiveVPathway().getUndoManager().addListener(this);
+			break;
+		case ApplicationEvent.GDB_CONNECTED:
+			updateStatusBar();
+			cacheExpressionData();
+			break;
 		}
 	}
 
@@ -480,6 +479,15 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			});
 			break;
 		}
+	}
+
+	/**
+	   Update the status bar with information on the current Gene Database.
+	 */
+	private void updateStatusBar()
+	{
+		setStatus("Using Gene Database: '" +
+				  GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
 	}
 	
 	public void vPathwayEvent(VPathwayEvent e) {

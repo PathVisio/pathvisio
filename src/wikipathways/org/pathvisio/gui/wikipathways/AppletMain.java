@@ -85,9 +85,7 @@ public class AppletMain extends PathwayPageApplet {
 		Logger.log.trace("DESTROY CALLED....");
 		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
 		Engine.getCurrent().fireApplicationEvent(e);
-		if(e.doit) {
-			super.destroy();
-		}
+		super.destroy();
 		System.out.println("DESTROY ENDED....");
 		Logger.log.trace("DESTROY ENDED....");
 	}

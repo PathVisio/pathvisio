@@ -103,7 +103,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.PATHWAY_OPENED) {
+		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) {
 			highlightButton.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					highlightResults(highlightButton.getSelection());	

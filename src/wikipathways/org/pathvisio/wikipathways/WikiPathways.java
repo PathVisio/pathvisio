@@ -409,14 +409,14 @@ public class WikiPathways implements ApplicationEventListener {
 	
 	public void applicationEvent(ApplicationEvent e) {
 		Pathway p = null;
-		switch(e.type) {
+		switch(e.getType()) {
 		case ApplicationEvent.PATHWAY_NEW:
-			p = (Pathway)e.source;
+			p = (Pathway)e.getSource();
 			p.getMappInfo().setOrganism(Organism.fromShortName(getPwSpecies()).latinName());
 			p.getMappInfo().setMapInfoName(getPwName());
 			break;
 		case ApplicationEvent.PATHWAY_OPENED:
-			p = (Pathway)e.source;
+			p = (Pathway)e.getSource();
 			//Force species name to be te same as on wikipathways
 			String impSpecies = p.getMappInfo().getOrganism();
 			Organism impOrg = Organism.fromLatinName(impSpecies);

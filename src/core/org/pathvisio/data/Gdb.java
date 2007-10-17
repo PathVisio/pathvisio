@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.preferences.GlobalPreference;
@@ -98,9 +99,12 @@ public abstract class Gdb {
 	 * Sets the Gene Database that is currently in use
 	 * @param dbNm	The name of the gene database
 	 */
-	public static void setCurrentGdb(String dbNm) {
+	private static void setCurrentGdb(String dbNm) {
 		dbName = dbNm; 
 		GlobalPreference.DB_GDB_CURRENT.setValue(dbNm);
+		ApplicationEvent e =
+			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
+		Engine.getCurrent().fireApplicationEvent (e);
 	}
 	
 	/**

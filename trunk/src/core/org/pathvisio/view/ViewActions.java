@@ -392,8 +392,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
-			if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-				((VPathway)e.source).getUndoManager().addListener(this);
+			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+				((VPathway)e.getSource()).getUndoManager().addListener(this);
 			}
 		}
 	}

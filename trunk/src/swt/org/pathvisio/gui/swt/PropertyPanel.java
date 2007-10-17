@@ -707,7 +707,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
 			((VPathway)e.getSource()).addSelectionListener(this);
 		}
 	}

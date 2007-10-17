@@ -817,7 +817,7 @@ public class Gex implements ApplicationEventListener {
 	}
 	
 	public void applicationEvent(ApplicationEvent e) {
-		switch(e.type) {
+		switch(e.getType()) {
 		case ApplicationEvent.APPLICATION_CLOSE:
 			if(isConnected()) close();
 		}

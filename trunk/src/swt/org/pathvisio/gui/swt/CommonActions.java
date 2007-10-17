@@ -68,8 +68,8 @@ public class CommonActions
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
-			if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-				((VPathway)e.source).getUndoManager().addListener(this);
+			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+				((VPathway)e.getSource()).getUndoManager().addListener(this);
 				setEnabled(false);
 			}
 		}
@@ -428,10 +428,10 @@ public class CommonActions
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
-			if(e.type == ApplicationEvent.VPATHWAY_OPENED) {
+			if(e.getType() == ApplicationEvent.VPATHWAY_OPENED) {
 				Engine.getCurrent().getActiveVPathway().setEditMode(isChecked());
 			}
-			else if(e.type == ApplicationEvent.VPATHWAY_NEW) {
+			else if(e.getType() == ApplicationEvent.VPATHWAY_NEW) {
 				switchEditMode(true);
 			}
 		}

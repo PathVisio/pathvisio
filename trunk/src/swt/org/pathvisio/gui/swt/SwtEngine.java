@@ -122,8 +122,8 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		/**
 		   register ourselves as listener if there is a new pathway.
 		 */
-		if (e.type == ApplicationEvent.PATHWAY_OPENED ||
-			e.type == ApplicationEvent.PATHWAY_NEW)
+		if (e.getType() == ApplicationEvent.PATHWAY_OPENED ||
+			e.getType() == ApplicationEvent.PATHWAY_NEW)
 		{
 			Engine.getCurrent().getActivePathway().addStatusFlagListener (this);
 			//TODO: listener is never unregistered

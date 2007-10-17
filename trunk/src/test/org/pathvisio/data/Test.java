@@ -17,8 +17,11 @@
 package org.pathvisio.data;
 
 import junit.framework.TestCase;
+import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine.ApplicationEventListener;
 
-public class Test extends TestCase {
+public class Test extends TestCase implements ApplicationEventListener
+{
 
 	public void testPubMedQuery() {
 		String id = "17588266";
@@ -33,4 +36,25 @@ public class Test extends TestCase {
 		assertTrue(pmr.getId().equals(id));
 		assertTrue("GenMAPP 2: new features and resources for pathway analysis.".equals(pmr.getTitle()));
 	}
+
+	boolean eventReceived = false;
+
+	public void applicationEvent (ApplicationEvent e)
+	{
+		if (e.getType() == ApplicationEvent.GDB_CONNECTED)
+		{
+			eventReceived = true;
+		}
+	}
+	public void testGdbConnect()
+	{
+		//TODO: create test pgdb
+		// suitable for mapping Hs_Apoptosis genes.
+		
+		// Gdb.connect ("test.pgdb");
+
+		// assertTrue (eventReceived);
+		// test reception of event...
+	}
+	
 }

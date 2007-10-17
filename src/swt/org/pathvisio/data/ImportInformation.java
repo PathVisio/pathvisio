@@ -82,7 +82,7 @@ public class ImportInformation {
 	 * Delimiter used to seperate columns in the text file containing expression data
 	 * TODO: let the user specify a delimiter
 	 */
-	static final String DELIMITER = "\t";
+	String DELIMITER = "\t";
 
 	/**
 	 * Column numbers (first column is 0) of the columns of which the data should not be treated
@@ -175,11 +175,31 @@ public class ImportInformation {
 			int i = 0;
 			while (i < headerRow - 1 && in.readLine() != null)
 				i++; // Go to headerline
-			return in.readLine().split(ImportInformation.DELIMITER);
+			return in.readLine().split(getDelimiter());
 		} catch (IOException e) { // TODO: handle IOException
 			Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
 			return new String[] {};
 		}
+	}
+
+	/**Returns the string that is used as the delimiter for reading the input data.
+	 * This string is used to separate columns in the input data.
+	 * The returned string can be any length, but during normal use it is typically 1 or 2 characters
+	 * long.
+	 */
+	
+	public String getDelimiter() {
+		return DELIMITER;
+		}
+	
+	/** Set the delimiter string. This string is used to separate columns in the input data. 
+	 * The delimiter string can be set to any length, but during normal use it is typically
+	 * 1 or 2 characters long
+	 */
+	
+	public void setDelimiter(String target) {
+	DELIMITER=target;	
+		
 	}
 
 }

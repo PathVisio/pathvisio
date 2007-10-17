@@ -272,6 +272,65 @@ public class GexImportWizard extends Wizard {
 			startSpinner.setMinimum(1);
 			startSpinner.setSelection(importInformation.firstDataRow);
 
+			//Add widgets to give control over the delimiter
+			
+			Group delimiterWidgets = new Group(composite, SWT.SHADOW_ETCHED_IN);
+			GridData delimiterGrid = new GridData(GridData.FILL);
+			delimiterWidgets.setLayoutData(delimiterGrid);
+			delimiterWidgets.setLayout(new FillLayout());
+			delimiterWidgets.setText("Select delimiter");
+			
+			Button checkTabs = new Button(delimiterWidgets,SWT.RADIO);
+			checkTabs.setText("Tabs");
+			checkTabs.setLocation(0,0);
+			checkTabs.setSize(100,20);
+			
+			Button checkComma = new Button(delimiterWidgets,SWT.RADIO);
+			checkComma.setText("Commas");
+			checkComma.setLocation(0,0);
+			checkComma.setSize(100,20);
+			
+			Button checkSemicolon = new Button(delimiterWidgets,SWT.RADIO);
+			checkSemicolon.setText("Semicolons");
+			checkSemicolon.setLocation(0,0);
+			checkSemicolon.setSize(100,20);
+			
+			Button checkSpaces = new Button(delimiterWidgets,SWT.RADIO);
+			checkSpaces.setText("Spaces");
+			checkSpaces.setLocation(0,0);
+			checkSpaces.setSize(100,20);
+			
+			checkTabs.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+				importInformation.setDelimiter("\t");
+												}
+				});
+			
+			checkComma.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+				importInformation.setDelimiter(",");
+								
+				}
+				});
+			
+			checkSemicolon.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+				importInformation.setDelimiter(";");
+								
+				}
+				});
+			
+			checkSpaces.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+				importInformation.setDelimiter(" ");
+								
+				}
+				});
+			
+			//End of delimiter selection widgets
+			
+			
+			
 			Group tableGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
 			GridData groupGrid = new GridData(GridData.FILL_BOTH);
 			groupGrid.horizontalSpan = 2;
@@ -437,7 +496,7 @@ public class GexImportWizard extends Wizard {
 			int j = 1;
 			while ((line = in.readLine()) != null && j++ < n) {
 				TableItem ti = new TableItem(columnTable, SWT.NULL);
-				ti.setText(line.split(ImportInformation.DELIMITER));
+				ti.setText(line.split(importInformation.getDelimiter()));
 			}
 		} catch (IOException e) { // TODO: handle IOException
 			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);

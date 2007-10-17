@@ -494,7 +494,7 @@ public class Gex implements ApplicationEventListener {
 			while((line = in.readLine()) != null) 
 			{
 				if(p.isCancelled()) { close(); error.close(); return; } //User pressed cancel
-				String[] data = line.split(ImportInformation.DELIMITER, headers.length);
+				String[] data = line.split(info.getDelimiter(), headers.length);
 				n++;
 				if(n == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
 				if(data.length < headers.length) {

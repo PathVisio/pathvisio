@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 import java.io.File;
+import java.io.FileNotFoundException;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
@@ -51,7 +52,10 @@ public class AppletMain extends JApplet
 		catch(Exception e)
 		{
 			Logger.log.error ("Exception While downloading url: " + param, e);
-		}		
+			JOptionPane.showMessageDialog (
+				this, "Error opening " + (pwyType == GpmlDiffWindow.PWY_OLD ? "old" : "new")
+				+ " pathway named\n" + e.getMessage(), "Open pathway error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void init()
@@ -59,8 +63,28 @@ public class AppletMain extends JApplet
 		panel = new GpmlDiffWindow(this);
 		setContentPane (panel);
 
-		openUrl (GpmlDiffWindow.PWY_OLD, getParameter ("old"));
-		openUrl (GpmlDiffWindow.PWY_NEW, getParameter ("new"));
+		String fnOld = getParameter ("old");
+		if (fnOld != null)
+		{					
+			openUrl (GpmlDiffWindow.PWY_OLD, getParameter ("old"));
+		}
+		else
+		{
+			JOptionPane.showMessageDialog (
+				this, "Missing 'old' parameter\nI won't be able to compare pathways", "Initialization error", JOptionPane.ERROR_MESSAGE);
+			Logger.log.error ("Old parameter was missing");
+		}
+		String fnNew = getParameter ("new");
+		if (fnNew != null)
+		{		  
+			openUrl (GpmlDiffWindow.PWY_NEW, getParameter ("new"));
+		}
+		else
+		{
+			JOptionPane.showMessageDialog (
+				this, "Missing 'new' parameter\nI won't be able to compare pathways", "Initialization error", JOptionPane.ERROR_MESSAGE);
+			Logger.log.error ("New parameter was missing");
+		}
 	}
 	
 }

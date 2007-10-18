@@ -27,6 +27,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -256,6 +258,8 @@ public class GexImportWizard extends Wizard {
 		
 		Spinner startSpinner;
 		Spinner headerSpinner;
+		Button checkOther;
+		Text otherText;
 		public void createControl(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NULL);
 			composite.setLayout(new GridLayout(2, false));
@@ -272,7 +276,7 @@ public class GexImportWizard extends Wizard {
 			startSpinner.setMinimum(1);
 			startSpinner.setSelection(importInformation.firstDataRow);
 
-			//Add widgets to give control over the delimiter
+			//Widgets to give control over the delimiter
 			
 			Group delimiterWidgets = new Group(composite, SWT.SHADOW_ETCHED_IN);
 			GridData delimiterGrid = new GridData(GridData.FILL);
@@ -284,7 +288,8 @@ public class GexImportWizard extends Wizard {
 			checkTabs.setText("Tabs");
 			checkTabs.setLocation(0,0);
 			checkTabs.setSize(100,20);
-			
+			checkTabs.setSelection(true);
+						
 			Button checkComma = new Button(delimiterWidgets,SWT.RADIO);
 			checkComma.setText("Commas");
 			checkComma.setLocation(0,0);
@@ -300,37 +305,73 @@ public class GexImportWizard extends Wizard {
 			checkSpaces.setLocation(0,0);
 			checkSpaces.setSize(100,20);
 			
+			checkOther = new Button(delimiterWidgets,SWT.RADIO);
+			checkOther.setText("Other:");
+			checkOther.setLocation(0,0);
+			checkOther.setSize(100,20);
+			otherText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+			otherText.setLayoutData(new GridData(GridData.FILL));
+			otherText.setEditable(false);
+			
+			//Listeners for the 'select delimiter' buttons 		
 			checkTabs.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-				importInformation.setDelimiter("\t");
-												}
-				});
+					importInformation.setDelimiter("\t");
+					otherText.setEditable(false);
+					setPageComplete(true);
+				
+				}
+			});
 			
 			checkComma.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-				importInformation.setDelimiter(",");
+					importInformation.setDelimiter(",");
+					otherText.setEditable(false);
+					setPageComplete(true);
 								
 				}
-				});
+			});
 			
 			checkSemicolon.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-				importInformation.setDelimiter(";");
+					importInformation.setDelimiter(";");
+					otherText.setEditable(false);
+					setPageComplete(true);
 								
 				}
-				});
+			});
 			
 			checkSpaces.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-				importInformation.setDelimiter(" ");
+					importInformation.setDelimiter(" ");
+					otherText.setEditable(false);
+					setPageComplete(true);
 								
 				}
-				});
+			});
 			
-			//End of delimiter selection widgets
+
+			checkOther.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+				otherText.setEditable(true);
+				setPageComplete(false);
+						
+				}
+			});
 			
+			//Listener to check if the 'other' text box is empty or not
+			otherText.addKeyListener(new KeyAdapter() {
+				public void keyReleased(KeyEvent e){
+					if (otherText.getText()!=""){
+						setPageComplete(true);
+					}
+					else {
+						setPageComplete(false);
+					}
+				}
+			});
 			
-			
+						
 			Group tableGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
 			GridData groupGrid = new GridData(GridData.FILL_BOTH);
 			groupGrid.horizontalSpan = 2;
@@ -355,11 +396,19 @@ public class GexImportWizard extends Wizard {
 		}
 
 		public IWizardPage getNextPage() {
+			
+			//If 'other' is selected change the delimiter
+			if ((otherText.getText()!="")&&(checkOther.getSelection())){
+				String other = otherText.getText();
+				importInformation.setDelimiter(other);
+			}
+			
 			importInformation.headerRow = headerSpinner.getSelection();
 			importInformation.firstDataRow = startSpinner.getSelection();
 			setColumnTableContent(columnTable);
 			setColumnControlsContent();
 			return super.getNextPage();
+			
 		}
 	}
 

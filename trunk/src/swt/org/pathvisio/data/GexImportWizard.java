@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.TableColumnResizer;
 
@@ -61,10 +62,11 @@ import org.pathvisio.util.swt.TableColumnResizer;
  */
 public class GexImportWizard extends Wizard {
 	ImportInformation importInformation;
-
+	ImportPage importPage = new ImportPage();
+	
 	public GexImportWizard() {
 		importInformation = new ImportInformation();
-
+				
 		setWindowTitle("Create an expression dataset");
 		setNeedsProgressMonitor(true);
 	}
@@ -73,7 +75,7 @@ public class GexImportWizard extends Wizard {
 		addPage(new FilePage());
 		addPage(new HeaderPage());
 		addPage(new ColumnPage());
-		addPage(new ImportPage());
+		addPage(importPage);
 	}
 
 	boolean importFinished;
@@ -153,6 +155,53 @@ public class GexImportWizard extends Wizard {
 			Button gexButton = new Button(composite, SWT.PUSH);
 			gexButton.setText("Browse");
 
+			//Add widget and listener for selecting the Gene Database
+			
+			Label gdbLabel = new Label(composite, SWT.FLAT);
+			gdbLabel.setText("Specify location of the gene database");
+			gdbLabel.setLayoutData(labelGrid);
+
+			final Text gdbText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+			gdbText.setText(Gdb.getDbName());
+			gdbText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			Button gdbButton = new Button(composite, SWT.PUSH);
+			gdbButton.setText("Browse");
+			
+			gdbButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+				
+					fileDialog.setText("Select gene database");
+					fileDialog.setFilterExtensions(
+						new String[] { "*.pgdb", "*.*" });
+					fileDialog.setFilterNames(new String[]
+					{ "Gene Database",
+					  "All files" });
+					fileDialog.setFilterPath(SwtPreference.SWT_DIR_GDB.getValue());
+					String file = fileDialog.open();
+					if (file != null)
+					{
+						gdbText.setText(file);
+					}
+					
+					try
+					{
+						//Connect to the new database
+						Gdb.connect(file);
+					}
+					catch(Exception ex)
+					{
+						MessageDialog.openError(getShell(), "Error", "Unable to open gene database");
+						Logger.log.error ("Unable to open gene database", ex);
+					}
+					
+					//Refresh the text on the last page to reflect the new gene database
+					importPage.refreshProgressText();
+				}
+				
+			});
+			
+			//End gene database widget
+			
 			txtButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					fileDialog
@@ -349,7 +398,6 @@ public class GexImportWizard extends Wizard {
 								
 				}
 			});
-			
 
 			checkOther.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -370,7 +418,6 @@ public class GexImportWizard extends Wizard {
 					}
 				}
 			});
-			
 						
 			Group tableGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
 			GridData groupGrid = new GridData(GridData.FILL_BOTH);
@@ -398,7 +445,8 @@ public class GexImportWizard extends Wizard {
 		public IWizardPage getNextPage() {
 			
 			//If 'other' is selected change the delimiter
-			if ((otherText.getText()!="")&&(checkOther.getSelection())){
+			if ((otherText.getText() != "") && (checkOther.getSelection()))
+			{
 				String other = otherText.getText();
 				importInformation.setDelimiter(other);
 			}
@@ -565,7 +613,6 @@ public class GexImportWizard extends Wizard {
 			setTitle("Create expression dataset");
 			setDescription("Press finish button to create the expression dataset");
 			setPageComplete(true);
-
 		}
 
 		public void createControl(Composite parent) {
@@ -574,16 +621,21 @@ public class GexImportWizard extends Wizard {
 
 			progressText = new Text(composite, SWT.READ_ONLY | SWT.BORDER
 					| SWT.WRAP);
+			refreshProgressText();
+			setControl(composite);
+		}
+		
+		public void refreshProgressText()
+		{
 			progressText.setText("Ready to import data" + Text.DELIMITER);
 			progressText.append("> Using gene database: "
 					+ Gdb.getDbName()
 					+ Text.DELIMITER);
 			progressText
-					.append("> If this is not the correct gene database, close this window"
-							+ " and change the gene database in the menu 'data' -> 'choose gene database'\n");
-			setControl(composite);
+			.append("> If this is not the correct gene database, close this window"
+					+ " and change the gene database in the menu 'data' -> 'choose gene database'\n");		
 		}
-
+				
 		public void println(String text) {
 			appendProgressText(text, true);
 		}

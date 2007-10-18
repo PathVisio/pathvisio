@@ -434,7 +434,7 @@ public class GexImportWizard extends Wizard {
 			columnTable = new Table(tableGroup, SWT.SINGLE | SWT.BORDER);
 			columnTable.setLinesVisible(true);
 			columnTable.setHeaderVisible(true);
-			columnTable.addControlListener(new TableColumnResizer(columnTable, tableGroup));
+			// columnTable.addControlListener(new TableColumnResizer(columnTable, tableGroup));
 
 			composite.pack();
 			setControl(composite);
@@ -486,6 +486,7 @@ public class GexImportWizard extends Wizard {
 		for (String colName : importInformation.getColNames()) {
 			TableColumn tc = new TableColumn(columnTable, SWT.NONE);
 			tc.setText(colName);
+			tc.pack();
 		}
 		try {
 			int n = 50; // nr of lines to include in the preview

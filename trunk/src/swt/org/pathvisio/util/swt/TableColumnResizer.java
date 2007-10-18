@@ -59,19 +59,26 @@ public class TableColumnResizer extends ControlAdapter {
 			widths[i] = cols[i].getWidth();
 	}
 	
+	/** 
+	 * Sets the relative weights of the columns. The new array weights contains for all
+	 * columns the percentage of the length of the total table width. When intWeights is set
+	 * to 'null', all resizable columns will be given the same weight. When intWeights is
+	 * given as a array, e.g. {1 5}, the first column will be given weight 1/6 and the second 5/6. 	
+	*/
 	public void setWeights(int[] intWeights) {
-		if(intWeights == null) {
+		if(intWeights == null) {  // column table
 			weights = new double[cols.length];
-			int resizable = 0;
+			int resizable = 0; // number of columns that are resizable
 			for(TableColumn c : cols) resizable += c.getResizable() ? 1 : 0;
 			for(int i = 0; i < weights.length; i++) weights[i] = 1.0 / resizable;
-		} else {
+		} else { // preview table
 			int sum = 0;
 			for(int i : intWeights) sum += i;
 			weights = new double[intWeights.length];
 			for(int i = 0; i < intWeights.length; i++) weights[i] = (double)intWeights[i] / sum;
 		}
 	}
+	
 	public TableColumnResizer(Table table, Composite parent) {
 		this(table, parent, null);
 	}

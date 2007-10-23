@@ -25,6 +25,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -439,7 +440,7 @@ public class GexImportWizard extends Wizard {
 			tableGroup.setLayoutData(groupGrid);
 			tableGroup.setLayout(new FillLayout());
 			tableGroup.setText("Preview of file to import");
-
+			
 			previewTable = new Table(tableGroup, SWT.SINGLE | SWT.BORDER);
 			previewTable.setLinesVisible(true);
 			previewTable.setHeaderVisible(true);
@@ -593,7 +594,9 @@ public class GexImportWizard extends Wizard {
 			tableGroup.setLayout(new FillLayout());
 			tableGroup.setText("Preview of file to import");
 
-			columnTable = new Table(tableGroup, SWT.SINGLE | SWT.BORDER);
+			ScrolledComposite sc = new ScrolledComposite (tableGroup, SWT.H_SCROLL | SWT.V_SCROLL);
+			columnTable = new Table(sc, SWT.SINGLE | SWT.BORDER);
+			sc.setContent (columnTable);
 			columnTable.setLinesVisible(true);
 			columnTable.setHeaderVisible(true);
 			// columnTable.addControlListener(new TableColumnResizer(columnTable, tableGroup));

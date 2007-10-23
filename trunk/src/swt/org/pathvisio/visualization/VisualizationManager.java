@@ -425,7 +425,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	 * Fire a {@link VisualizationEvent} to notify all {@link VisualizationListener}s registered
 	 * to this class
 	 */
-	public void fireVisualizationEvent(VisualizationEvent e) {
+	public static void fireVisualizationEvent(VisualizationEvent e) {
 		for(VisualizationListener l : listeners) {
 			l.visualizationEvent(e);
 		}

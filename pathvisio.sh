@@ -9,7 +9,7 @@ BASE_URL=
 # Set USE_EXPERIMENTAL to 1 if you want to run with Data visualizatoin and R mode
 USE_EXPERIMENTAL=0
 
-while getopts ":gerds" options; do
+while getopts ":gerdsj" options; do
 	case $options in
 		g )
 			RUN_MODE=DIRECT
@@ -32,13 +32,19 @@ while getopts ":gerds" options; do
 			MAIN_CLASS=
 			BASE_URL=http://ftp2.bigcat.unimaas.nl/~martijn.vaniersel/pathvisio/daily/webstart
 			;;
+		j )
+			RUN_MODE=JAR
+			MAIN_CLASS=
+			BASE_URL=
+			;;
 		\? )
-			echo "Usage: `basename $0` [-g|-r|-d] [-e|-s] [-?]"
+			echo "Usage: `basename $0` [-g|-r|-d|-j] [-e|-s] [-?]"
 			echo "  -g : Use swing instead of swt"
 			echo "  -r : Use webstart, latest stable release"
 			echo "  -d : Use webstart, daily build"
 			echo "  -e : Turn on experimental features (Data visualization, statistics)"
 			echo "  -s : Turn off experimental features (default)"
+			echo "  -j : Use jar"
 			echo "  -? : show this help message"
 			exit;
 			;;
@@ -66,4 +72,10 @@ elif [ $RUN_MODE = "WEBSTART" ]; then
 	elif [ $USE_EXPERIMENTAL = "1" ]; then
 		javaws "$BASE_URL/pathvisio_v2.jnlp" -ur
 	fi
+elif [ $RUN_MODE = "JAR" ]; then
+	if [ $USE_EXPERIMENTAL = "0" ]; then
+		java -jar pathvisio_v1.jar
+	elif [ $USE_EXPERIMENTAL = "1" ]; then
+		java -jar pathvisio_v2.jar
+	fi	
 fi

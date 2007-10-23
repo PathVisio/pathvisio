@@ -122,8 +122,9 @@ public class GexImportWizard extends Wizard {
 		public FilePage() {
 			super("FilePage");
 			setTitle("File locations");
-			setDescription("Specify the locations of the file containing the expression data "
-					+ "and where to store the expression dataset");
+			setDescription("Specify the locations of the file containing the expression data"
+					+ ", where to store the expression dataset\n" 
+					+ " and change the gene database if required.");
 			setPageComplete(false);
 		}
 
@@ -137,8 +138,7 @@ public class GexImportWizard extends Wizard {
 			labelGrid.horizontalSpan = 2;
 
 			Label txtLabel = new Label(composite, SWT.FLAT);
-			txtLabel
-					.setText("Specify location of text file containing expression data");
+			txtLabel.setText("Specify location of text file containing expression data");
 			txtLabel.setLayoutData(labelGrid);
 
 			final Text txtText = new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -205,7 +205,7 @@ public class GexImportWizard extends Wizard {
 			txtButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					fileDialog
-							.setText("Select tab delimited text file containing expression data");
+							.setText("Select text file containing expression data");
 					fileDialog.setFilterExtensions(new String[] { "*.txt",
 							"*.*" });
 					fileDialog.setFilterNames(new String[] { "Text file",
@@ -280,7 +280,7 @@ public class GexImportWizard extends Wizard {
 		 */
 		private void setDbName(String name) {
 			importInformation.dbName = name;
-			setMessage("Expression dataset location: " + name);
+			setMessage("Expression dataset location: " + name + ".");
 			gexFileComplete = true;
 		}
 
@@ -300,8 +300,9 @@ public class GexImportWizard extends Wizard {
 
 		public HeaderPage() {
 			super("HeaderPage");
-			setTitle("Header information");
-			setDescription("Specify the line with the column headers and from where the data starts");
+			setTitle("Header information and delimiter");
+			setDescription("Specify the line with the column headers and from where the data starts, "+"\n"
+					+"then select the column delimiter used in your dataset.");
 			setPageComplete(true);
 		}
 		
@@ -475,7 +476,7 @@ public class GexImportWizard extends Wizard {
 			super("ColumnPage");
 			setTitle("Column information");
 			setDescription("Specify which columns contain the gene information and "
-					+ "which columns should not be treated as numeric data");
+					+ "which columns should not be treated as numeric data.");
 			setPageComplete(true);
 		}
 
@@ -573,7 +574,7 @@ public class GexImportWizard extends Wizard {
 	}
 
 	/**
-	 * Sets teh content of the given columnTable (previews how the data will be divided in columns)
+	 * Sets the content of the given columnTable (previews how the data will be divided in columns)
 	 * @param columnTable
 	 */
 	public void setColumnTableContent(Table columnTable) {
@@ -611,7 +612,7 @@ public class GexImportWizard extends Wizard {
 		public ImportPage() {
 			super("ImportPage");
 			setTitle("Create expression dataset");
-			setDescription("Press finish button to create the expression dataset");
+			setDescription("Press finish button to create the expression dataset.");
 			setPageComplete(true);
 		}
 
@@ -628,12 +629,7 @@ public class GexImportWizard extends Wizard {
 		public void refreshProgressText()
 		{
 			progressText.setText("Ready to import data" + Text.DELIMITER);
-			progressText.append("> Using gene database: "
-					+ Gdb.getDbName()
-					+ Text.DELIMITER);
-			progressText
-			.append("> If this is not the correct gene database, close this window"
-					+ " and change the gene database in the menu 'data' -> 'choose gene database'\n");		
+			
 		}
 				
 		public void println(String text) {

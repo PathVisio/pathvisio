@@ -29,7 +29,7 @@ import org.jdom.Element;
 import java.awt.Color;
 
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 
 /**
  * This class represent any object that can be present in a colorset

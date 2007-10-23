@@ -42,7 +42,7 @@ import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.Utils;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 
 public abstract class PluginManager {
 	//static final String PLUGIN_PKG = "org.pathvisio.visualization.plugins";

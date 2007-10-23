@@ -35,7 +35,7 @@ import org.jdom.Element;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 
 /**
  * The VisualizationPlugin class can be extended to create a visualization plugin for

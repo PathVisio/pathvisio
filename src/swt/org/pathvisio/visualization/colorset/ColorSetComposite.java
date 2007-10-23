@@ -69,7 +69,7 @@ import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.colorset.ColorCriterion.ColorCriterionComposite;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorGradientComposite;
@@ -586,7 +586,6 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 		}
 		return data;
 	}
-
 
 	public void visualizationEvent(VisualizationEvent e) {
 		switch(e.type) {

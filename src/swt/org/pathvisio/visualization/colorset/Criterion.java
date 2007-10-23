@@ -23,7 +23,7 @@ import org.pathvisio.data.Gex;
 import org.pathvisio.data.Gex.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 
 public class Criterion {
 	static final String displaySample = "|Displayed sample|";

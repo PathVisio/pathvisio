@@ -50,10 +50,9 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
-import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.plugins.PluginManager;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
+import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
 /**
  * Represents a set of configured visualization plugins

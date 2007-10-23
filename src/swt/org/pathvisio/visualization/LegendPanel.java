@@ -49,7 +49,7 @@ import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.LegendPanel.CollapseGroup.CollapseListener;
 import org.pathvisio.visualization.Visualization.PluginSet;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.colorset.ColorCriterion;
 import org.pathvisio.visualization.colorset.ColorGradient;

@@ -16,6 +16,7 @@
 //
 package org.pathvisio.data;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +56,10 @@ import org.pathvisio.debug.StopWatch;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -66,7 +70,7 @@ public class Gex implements ApplicationEventListener {
 	public static final String XML_ELEMENT = "expression-data-visualizations";
 	
 	private static Connection con;
-	
+			
 	public static CachedData cachedData;
 	
 	/**
@@ -491,6 +495,12 @@ public class Gex implements ApplicationEventListener {
 			int n = info.firstDataRow - 1;
 			int added = 0;
 			int worked = importWork / nrLines;
+			
+			boolean maximumNotSet = true;
+			boolean minimumNotSet = true;
+			double maximum = 1; // Dummy value
+			double minimum = 1; // Dummy value
+
 			while((line = in.readLine()) != null) 
 			{
 				if(p.isCancelled()) { close(); error.close(); return; } //User pressed cancel
@@ -530,6 +540,25 @@ public class Gex implements ApplicationEventListener {
 									&& (data[col] == null || data[col].equals(""))) {
 								data[col] = "NaN";
 							}
+							
+							//Determine maximum and minimum values.
+							
+							double dNumber = new Double(data[col]).doubleValue();
+							if(maximumNotSet || dNumber>maximum)
+							{
+								maximum=dNumber;
+								maximumNotSet=false;
+							}
+							
+							if(minimumNotSet || dNumber<minimum)
+							{
+								minimum=dNumber;
+								minimumNotSet=false;
+							}
+							
+							//End of determining maximum and minimum values. After the data has been read, 
+							//maximum and minimum will have their correct values.
+							
 							try {
 								pstmt.setString(1,id);
 								pstmt.setString(2,code);
@@ -549,6 +578,13 @@ public class Gex implements ApplicationEventListener {
 				}
 				p.worked(worked);
 			}
+			
+			//Data is read and written to the database
+			
+			//Writing maximum and minimum to ImportInformation
+			info.setMaximum(maximum);
+			info.setMinimum(minimum);
+					
 			p.report(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
 				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");

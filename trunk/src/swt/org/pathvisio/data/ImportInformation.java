@@ -60,6 +60,17 @@ public class ImportInformation {
 	 */
 	public String dbName;
 
+	private double maximum;
+	private double minimum;
+	
+	/** get/set maximum double value in this dataset */
+	public double getMaximum() { return maximum; }
+	public void setMaximum(double setpoint) { maximum = setpoint; }
+	
+	/** get/set minimum double value in this dataset */
+	public double getMinimum() { return minimum; }
+	public void setMinimum(double setpoint) { minimum = setpoint; }
+	
 	/**
 	 * linenumber (first line is 1) of the line where the data begins
 	 */
@@ -91,9 +102,8 @@ public class ImportInformation {
 	
 	/**
 	 * Delimiter used to seperate columns in the text file containing expression data
-	 * TODO: let the user specify a delimiter
 	 */
-	String DELIMITER = "\t";
+	private String DELIMITER = "\t";
 
 	/**
 	 * Column numbers (first column is 0) of the columns of which the data should not be treated

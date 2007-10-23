@@ -117,9 +117,10 @@ public class ImportInformation {
 			if (in == null) {
 				in = new BufferedReader(new FileReader(txtFile));
 				// changed readahead from 10000 to 50000
+				// 22.10.2007: changed readahead from 50000 to 500000
 				// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4616869
-				// TODO: this may still fail for long lines (more than 50000 bytes in 50 lines) 
-				in.mark(50000);
+				// TODO: this may still fail for long lines (more than 500000 bytes in 50 lines) 
+				in.mark(500000);
 			} else {
 				in.reset();
 			}

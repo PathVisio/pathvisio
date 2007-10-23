@@ -309,6 +309,7 @@ public class GexImportWizard extends Wizard {
 		Spinner startSpinner;
 		Spinner headerSpinner;
 		Button checkOther;
+		Button headerButton;
 		Text otherText;
 		public void createControl(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NULL);
@@ -319,6 +320,17 @@ public class GexImportWizard extends Wizard {
 			headerSpinner = new Spinner(composite, SWT.BORDER);
 			headerSpinner.setMinimum(1);
 			headerSpinner.setSelection(importInformation.headerRow);
+
+			// button to check when there is no header in the data
+			Label noheaderLabel = new Label(composite, SWT.FLAT);
+			noheaderLabel.setText("Or choose 'no header': ");
+			headerButton = new Button(composite, SWT.CHECK);
+			headerButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if(headerButton.getSelection() == true) headerSpinner.setEnabled(false);
+					if(headerButton.getSelection() == false) headerSpinner.setEnabled(true);
+				}
+			});
 
 			Label startLabel = new Label(composite, SWT.FLAT);
 			startLabel.setText("Data starts at line: ");
@@ -454,6 +466,7 @@ public class GexImportWizard extends Wizard {
 			
 			importInformation.headerRow = headerSpinner.getSelection();
 			importInformation.firstDataRow = startSpinner.getSelection();
+			importInformation.setNoHeader(headerButton.getSelection());
 			setColumnTableContent(columnTable);
 			setColumnControlsContent();
 			return super.getNextPage();

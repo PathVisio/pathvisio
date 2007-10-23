@@ -40,6 +40,8 @@ while( $row = $dbr->fetchRow( $res )) {
 function transferToGpml($title, $description) {
 	global $doit, $wgLoadBalancer;
 	
+	$description = htmlentities($description);
+	
 	$pathway = Pathway::newFromTitle($title);
 	$title = $pathway->getFileTitle(FILETYPE_GPML);
 	$article = new Article($title);

@@ -4,6 +4,8 @@ require_once('wpi/wpi.php');
 $wgExtensionFunctions[] = 'wfEditApplet';
 $wgHooks['LanguageGetMagic'][]  = 'wfEditApplet_Magic';
 
+$loaderAdded = false; //Set to true if loader is added in a previous call
+
 function wfEditApplet() {
 	global $wgParser;
 	$wgParser->setFunctionHook( "editApplet", "createApplet" );
@@ -25,7 +27,7 @@ function wfEditApplet_Magic( &$magicWords, $langCode ) {
  * @parameter $pwTitle The title of the pathway to be edited (Species:Pathwayname)
 */
 function createApplet( &$parser, $idClick = 'direct', $idReplace = 'pwThumb', $new = false, $pwTitle = '', $type = 'editor', $width = 0, $height = '500px' ) {
-	global $wgUser;
+	global $wgUser, $wgScriptPath, $loaderAdded;
 	
 	//Check user rights
 	if( !$wgUser->isLoggedIn()) {
@@ -59,6 +61,21 @@ function createApplet( &$parser, $idClick = 'direct', $idReplace = 'pwThumb', $n
 		}
 		$editApplet = new EditApplet($pathway, $main, $idReplace, $idClick, $new, $width, $height, $param);
 		$appletCode = $editApplet->makeAppletFunctionCall();
+		$jardir = $wgScriptPath . '/wpi/applet';
+		
+		if(!$loaderAdded) {
+			$cache = $editApplet->getCacheParameters();
+			$archive_string = $cache["archive"];
+			$version_string = $cache["version"];
+			$appletCode .= <<<PRELOAD
+
+<applet code="org.pathvisio.wikipathways.Preloader.class" width="1" height="1" archive="{$jardir}/preloader.jar" codebase="{$jardir}">
+	<param name="cache_archive" value="{$archive_string}"/>
+	<param name="cache_version" value="{$version_string}"/>
+</applet>
+PRELOAD;
+			$loaderAdded = true;
+		}
 		$output = scriptTag('', JS_SRC_APPLETOBJECT) . scriptTag('', JS_SRC_PROTOTYPE) . scriptTag('', JS_SRC_RESIZE) . scriptTag('', JS_SRC_EDITAPPLET) . $appletCode;
 	} catch(Exception $e) {
 		return "Error: $e";
@@ -110,14 +127,13 @@ class EditApplet {
 		$this->param = $param;
 	}
 
-	function makeAppletObjectCall() {
-		global $wgUser, $wgScriptPath;
-		if($this->isNew) {
-			$pwUrl = $this->pathway->getTitleObject()->getFullURL();
-		} else {
-			$pwUrl = $this->pathway->getFileURL(FILETYPE_GPML);
+	private $version_string = false;
+	private	$archive_string = false;
+	
+	function getCacheParameters() {
+		if($this->version_string && $this->archive_string) {
+			return array("version"=>$this->version_string, "archive"=>$this->archive_string);
 		}
-
 		//Read cache jars and update version
 		$jardir = WPI_SCRIPT_PATH . '/applet';
 		$cache_archive = explode(' ', file_get_contents("$jardir/cache_archive"));
@@ -131,8 +147,8 @@ class EditApplet {
 				}
 			}
 		}
-		$archive_string = "";
-		$version_string = "";
+		$this->archive_string = "";
+		$this->version_string = "";
 		foreach($cache_archive as $jar) {
 			$mod = filemtime("$jardir/$jar");
 			if($ver = $cache_version[$jar]) {
@@ -145,11 +161,11 @@ class EditApplet {
 				$realversion = '0.0.0.0';
 			}
 			$cache_version[$jar] = array('ver'=>$realversion, 'mod'=>$mod);
-			$archive_string .= $jar . ', ';
-			$version_string .= $realversion . ', ';
+			$this->archive_string .= $jar . ', ';
+			$this->version_string .= $realversion . ', ';
 		}
-		$version_string = substr($version_string, 0, -2);
-		$archive_string = substr($archive_string, 0, -2);
+		$this->version_string = substr($this->version_string, 0, -2);
+		$this->archive_string = substr($this->archive_string, 0, -2);
 
 		//Write new cache version file
 		$out = "";
@@ -157,7 +173,21 @@ class EditApplet {
 			$out .= $jar . '|' . $cache_version[$jar]['ver'] . '|' . $cache_version[$jar]['mod'] . "\n";
 		}
 		writefile("$jardir/cache_version", $out);
+		return array("archive"=>$this->archive_string, "version"=>$this->version_string);
+	}
+	
+	function makeAppletObjectCall() {
+		global $wgUser, $wgScriptPath;
+		if($this->isNew) {
+			$pwUrl = $this->pathway->getTitleObject()->getFullURL();
+		} else {
+			$pwUrl = $this->pathway->getFileURL(FILETYPE_GPML);
+		}
 
+		$cache = $this->getCacheParameters();
+		$archive_string = $cache["archive"];
+		$version_string = $cache["version"];
+		
 		$args = array(
 			'rpcUrl' => WPI_URL . "/wpi_rpc.php",
 			'pwName' =>     $this->pathway->name(),
@@ -165,6 +195,7 @@ class EditApplet {
 			'pwUrl' => $pwUrl,
 			'cache_archive' => $archive_string,
 			'cache_version' => $version_string
+		
 		);
 
 		if($wgUser && $wgUser->isLoggedIn()) {

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.eclipse.swt.widgets.TableColumn;
 import org.pathvisio.debug.Logger;
 
 /**
@@ -88,6 +89,11 @@ public class ImportInformation {
 	 * Column number (first column is 0) of the column containing the systemcode
 	 */
 	int codeColumn;
+ 	
+ 	/** 
+ 	 * True if there is no header in the data	
+ 	*/
+ 	private boolean noHeader;
 	
 	/**
 	 * Boolean which can be set to false if there is no column for the system code is available
@@ -121,6 +127,8 @@ public class ImportInformation {
 		headerRow = 1;
 		idColumn = 0;
 		codeColumn = 1;
+		noHeader = false;
+
 	}
 
 	/**
@@ -188,21 +196,79 @@ public class ImportInformation {
 
 	/**
 	 * Reads the column names from the text file containing the expression data at the
-	 * header row specified by the user
+	 * header row specified by the user. Multiple header rows can also be read. When no header
+	 * row is present, a header row is created manually.
 	 * @return the column names
 	 */
+	
+		
 	public String[] getColNames() {
-		try {
-			BufferedReader in = getBufferedReader();
-			int i = 0;
-			while (i < headerRow - 1 && in.readLine() != null)
-				i++; // Go to headerline
-			return in.readLine().split(getDelimiter());
-		} catch (IOException e) { // TODO: handle IOException
-			Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
-			return new String[] {};
+		if(getNoHeader() == true) {
+			try {
+				BufferedReader in = getBufferedReader();
+				String[] firstLine = in.readLine().split(getDelimiter());
+				int j = 1; // Number of the column
+				String[] newColNames = new String[firstLine.length]; // Array with manually set column names
+				for (String col : firstLine) {
+					col = "Column " + j;
+					newColNames[j-1] = col; // New column name
+					j++;
+				}
+				return newColNames;
+				
+			} catch (IOException e) { // TODO: handle IOException
+				Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
+				return new String[] {};
+			}
+		}
+		
+		else {
+			try {
+				BufferedReader in = getBufferedReader();
+				String[] line = in.readLine().split(getDelimiter()); // Read the first line
+				int nrCol = line.length; // Number of columns
+				// Initiate headerline as line with no characters
+				String[] headerLine = new String[nrCol];
+				for(int i = 0; i < nrCol; i++) headerLine[i] = "";
+				
+				int i = 0;
+				while (i < firstDataRow - 1) { // Read headerlines till the first data row
+					for(int j = 0; j < line.length; j++){  // Represents columns
+						// All header rows are added
+						if(i >= headerRow - 1) headerLine[j] = headerLine[j] + " " + line[j];
+					}
+					line = in.readLine().split(getDelimiter());
+					i++;
+				}
+				return headerLine;
+			}
+
+			catch (IOException e) { // TODO: handle IOException
+				Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
+				return new String[] {};
+			}
 		}
 	}
+	
+	/**
+	 * Returns the boolean value which indicates whether a header is present or not
+	 * @return value of noHeader (true or false)
+	 */
+	
+	public boolean getNoHeader() {
+		return noHeader;
+	}
+	
+	/**
+	 * Sets the value of noHeader, taken from the target as specified where the method is used.
+	 * noHeader can be set true or false
+	 * @param target
+	 */
+	 	
+	public void setNoHeader(boolean target) {
+		noHeader = target;
+	}
+	
 
 	/**Returns the string that is used as the delimiter for reading the input data.
 	 * This string is used to separate columns in the input data.
@@ -210,18 +276,19 @@ public class ImportInformation {
 	 * long.
 	 */
 	
-	public String getDelimiter() {
+	public String getDelimiter() 
+	{
 		return DELIMITER;
-		}
+	}
 	
 	/** Set the delimiter string. This string is used to separate columns in the input data. 
 	 * The delimiter string can be set to any length, but during normal use it is typically
 	 * 1 or 2 characters long
 	 */
 	
-	public void setDelimiter(String target) {
-	DELIMITER=target;	
-		
+	public void setDelimiter(String target) 
+	{
+		DELIMITER=target;
 	}
 
 }

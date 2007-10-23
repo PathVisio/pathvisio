@@ -506,7 +506,14 @@ public class Gex implements ApplicationEventListener {
 				p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
 				//Check id and add data
 				String id = data[info.idColumn].trim();
-				String code = data[info.codeColumn].trim();
+				
+				String code;
+				if (info.syscodeColumn) {
+					code = data[info.codeColumn].trim();
+				}
+				else {
+					code = info.syscode;
+				}
 				ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found

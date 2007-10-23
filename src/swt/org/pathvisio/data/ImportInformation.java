@@ -77,7 +77,18 @@ public class ImportInformation {
 	 * Column number (first column is 0) of the column containing the systemcode
 	 */
 	int codeColumn;
-
+	
+	/**
+	 * Boolean which can be set to false if there is no column for the system code is available
+	 * in the dataset. */
+	boolean syscodeColumn = true;
+	
+	/**
+	 * String containing the system code that has been set by the user in gexImportWizard 
+	 * (if no system code column is available).
+	 */
+	String syscode = "";
+	
 	/**
 	 * Delimiter used to seperate columns in the text file containing expression data
 	 * TODO: let the user specify a delimiter

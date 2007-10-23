@@ -464,7 +464,11 @@ public class GexImportWizard extends Wizard {
 	Table columnTable;
 	List columnList;
 	Combo codeCombo;
+	Button codeRadio;
 	Combo idCombo;
+	Button syscodeRadio;
+	Combo syscodeCombo;
+	
 
 	/**
 	 * This is the wizard page to specify column information, e.g. which
@@ -483,16 +487,33 @@ public class GexImportWizard extends Wizard {
 		public void createControl(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NULL);
 			composite.setLayout(new GridLayout(1, false));
-
+						
+			
 			Label idLabel = new Label(composite, SWT.FLAT);
 			idLabel.setText("Select column with gene identifiers");
 			idCombo = new Combo(composite, SWT.READ_ONLY);
 			idCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
-			Label sysLabel = new Label(composite, SWT.FLAT);
-			sysLabel.setText("Select column with Systemcode");
+			codeRadio = new Button(composite,SWT.RADIO);
+			codeRadio.setSelection(true);
+			codeRadio.setText("Select column with System Code");
 			codeCombo = new Combo(composite, SWT.READ_ONLY);
 			codeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+						
+			/*Create a new String array with the full names of the dataSources
+			 * and add the system codes between parentheses for use in the syscodeCombo.
+			 * The last element of the string with system codes is an empty string,
+			 * therefore length-1 is used*/
+			String[] sysCode = new String[DataSources.dataSources.length-1];
+			for (int i=0; i<(DataSources.dataSources.length-1); i++) {
+				sysCode[i]=DataSources.dataSources[i]+" ("+DataSources.systemCodes[i]+")";
+			}
+						
+			syscodeRadio = new Button(composite,SWT.RADIO);
+			syscodeRadio.setText("Select System Code for whole dataset if no System Code colomn is availabe in the dataset");
+			syscodeCombo = new Combo(composite, SWT.READ_ONLY);
+			syscodeCombo.setItems(sysCode);
+			syscodeCombo.setEnabled(false);
 			
 			Label columnLabel = new Label(composite, SWT.FLAT | SWT.WRAP);
 			columnLabel
@@ -515,12 +536,42 @@ public class GexImportWizard extends Wizard {
 					importInformation.idColumn = idCombo.getSelectionIndex();
 				}
 			});
-			codeCombo.addSelectionListener(new SelectionAdapter() {
+			
+			codeRadio.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					importInformation.codeColumn = codeCombo
-							.getSelectionIndex();
+					codeCombo.setEnabled(true);
+					syscodeCombo.setEnabled(false);
+					importInformation.syscodeColumn=true;
+				
 				}
 			});
+			
+			codeCombo.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (codeRadio.getSelection()){
+						importInformation.codeColumn = codeCombo
+							.getSelectionIndex();
+					}
+				}
+			});
+			
+			syscodeRadio.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					syscodeCombo.setEnabled(true);
+					codeCombo.setEnabled(false);
+					importInformation.syscodeColumn=false;
+				
+				}
+			});
+			
+			syscodeCombo.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (syscodeRadio.getSelection()){
+						importInformation.syscode = DataSources.systemCodes[syscodeCombo.getSelectionIndex()];
+					}
+				}
+			});
+			
 
 			Group tableGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
 			GridData tableGrid = new GridData(GridData.FILL_BOTH);

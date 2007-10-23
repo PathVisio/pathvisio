@@ -328,34 +328,34 @@ public class GexImportWizard extends Wizard {
 
 			//Widgets to give control over the delimiter
 			
-			Group delimiterWidgets = new Group(composite, SWT.SHADOW_ETCHED_IN);
-			GridData delimiterGrid = new GridData(GridData.FILL);
-			delimiterWidgets.setLayoutData(delimiterGrid);
-			delimiterWidgets.setLayout(new FillLayout());
-			delimiterWidgets.setText("Select delimiter");
+			Label delimiterLabel = new Label(composite,SWT.FLAT);
+			delimiterLabel.setText("Select the delimiter: \n");
 			
-			Button checkTabs = new Button(delimiterWidgets,SWT.RADIO);
+			Label legeLabel = new Label(composite,SWT.FLAT);
+			legeLabel.setText(" ");
+						
+			Button checkTabs = new Button(composite,SWT.RADIO);
 			checkTabs.setText("Tabs");
 			checkTabs.setLocation(0,0);
 			checkTabs.setSize(100,20);
 			checkTabs.setSelection(true);
 						
-			Button checkComma = new Button(delimiterWidgets,SWT.RADIO);
+			Button checkComma = new Button(composite,SWT.RADIO);
 			checkComma.setText("Commas");
 			checkComma.setLocation(0,0);
 			checkComma.setSize(100,20);
 			
-			Button checkSemicolon = new Button(delimiterWidgets,SWT.RADIO);
+			Button checkSemicolon = new Button(composite,SWT.RADIO);
 			checkSemicolon.setText("Semicolons");
 			checkSemicolon.setLocation(0,0);
 			checkSemicolon.setSize(100,20);
 			
-			Button checkSpaces = new Button(delimiterWidgets,SWT.RADIO);
+			Button checkSpaces = new Button(composite,SWT.RADIO);
 			checkSpaces.setText("Spaces");
 			checkSpaces.setLocation(0,0);
 			checkSpaces.setSize(100,20);
 			
-			checkOther = new Button(delimiterWidgets,SWT.RADIO);
+			checkOther = new Button(composite,SWT.RADIO);
 			checkOther.setText("Other:");
 			checkOther.setLocation(0,0);
 			checkOther.setSize(100,20);

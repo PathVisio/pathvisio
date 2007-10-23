@@ -30,7 +30,7 @@ import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationEvent;
 
 /**
  * This class represents a colorset, a set of criteria that can be evaluated and 

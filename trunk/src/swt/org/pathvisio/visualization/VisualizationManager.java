@@ -22,7 +22,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EventObject;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,9 +64,17 @@ import org.pathvisio.view.swing.ToolTipProvider;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 /**
- * Manages visualizations
- * @author thomas
+ * Manages visualizations.
  *
+ * There is always one and exactly one global VisualizationManger present.
+ * This can be obtained with getCurrent()
+ *
+ * The VisualizationManger maintains a list of Visualizations that can be
+ * obtained with getVisualizations(). 
+ *
+ * The VisualizationManager is also responsible for saving / loading the configuration
+ * for generic visualizations, owning the visualization sidePanel and
+ * owning the Visualizations drop-down box.
  */
 public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener, ToolTipProvider {	
 	static {
@@ -76,71 +83,120 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		Gex.addListener(vm);
 	}
 	
+	/**
+	   Interface for objects that want to listen to VisualizationEvents
+	*/
+	public interface VisualizationListener {
+		public void visualizationEvent(VisualizationEvent e);
+	}
+
+	/**
+	   name of the top-level xml element
+	 */
 	public static final String XML_ELEMENT = "visualizations";
 		
-	static final String FILENAME_GENERIC = "visualizations.xml";
+	private static final String FILENAME_GENERIC = "visualizations.xml";
 	
-	static final int CURRENT_NONE = -1;
+	private static final int CURRENT_NONE = -1;
 	
-	static List<Visualization> visualizations = new ArrayList<Visualization>();
-	static int current = -1;
+	/**
+	   List of all available Visualizations
+	 */
+	private static List<Visualization> visualizations = new ArrayList<Visualization>();
+	private static int current = -1;
 		
+	/**
+	   Obtain the currently active visualization. This is the visualization shown
+	   in the open pathway.
+	 */
 	public static Visualization getCurrent() {
 		if(current < 0 || current >= visualizations.size()) return null;
 		return visualizations.get(current);
 	}
-	
+
+	/**
+	   Set which visualization will be active, by index
+	 */
 	public static void setCurrent(int index) {
 		current = index;
 		fireVisualizationEvent(
 				new VisualizationEvent(null, VisualizationEvent.VISUALIZATION_SELECTED));
 	}
-	
+
+	/**
+	   Set which visualization will be active, by Object	   
+	 */
 	public static void setCurrent(Visualization v) {
 		int index = getVisualizations().indexOf(v);
 		if(index > -1) setCurrent(index);
 	}
-	
+
+	/**
+	   get a List of all visualizations
+	 */
 	public static List<Visualization> getVisualizations() {
 		return visualizations;
 	}
-	
+
+	/**
+	   Get a List of all visualizations that are generic, i. e. do not
+	   depend on data being loaded
+	 */
 	public static List<Visualization> getGeneric() {
 		List<Visualization> generic = new ArrayList<Visualization>();
 		for(Visualization v : visualizations) if(v.isGeneric()) generic.add(v);
 		return generic;
 	}
-	
+
+	/**
+	   Get a list of visualizations that is not generic, i.e. depends
+	   on data being loaded.
+	*/
 	public static List<Visualization> getNonGeneric() {
 		List<Visualization> nongeneric = new ArrayList<Visualization>();
 		for(Visualization v : visualizations) if(!v.isGeneric()) nongeneric.add(v);
 		return nongeneric;
 	}
-	
+
+	/**
+	   get a list of names of all visualizations as an array.
+	 */
 	public static String[] getNames() {
 		String[] names = new String[visualizations.size()];
 		for(int i = 0; i < names.length; i++) 
 			names[i] = visualizations.get(i).getName();
 		return names;
 	}
-	
+
+	/**
+	   add a new visualization
+	 */
 	public static void addVisualization(Visualization v) {
 		visualizations.add(v);
 		fireVisualizationEvent(
 				new VisualizationEvent(null, VisualizationEvent.VISUALIZATION_ADDED));
 	}
-	
+
+	/**
+	   remove a visualization (by index)
+	 */
 	public static void removeVisualization(int index) {
 		if(index < 0 || index >= visualizations.size()) return; //Ignore wrong index
 		visualizations.remove(index);
 		fireVisualizationEvent(
 				new VisualizationEvent(null, VisualizationEvent.VISUALIZATION_REMOVED));
 	}
-	
+
+	/**
+	   remove a visualization (by object)
+	 */
 	public static void removeVisualization(Visualization v) {
 		removeVisualization(visualizations.indexOf(v));
 	}
-	
+
+	/**
+	   get a new name for a visualization, that is guaranteed to be unique
+	 */
 	public static String getNewName() {
 		String prefix = "visualization";
 		int i = 1;
@@ -148,13 +204,19 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		while(nameExists(name)) name = prefix + "-" + i++;
 		return name;
 	}
-	
+
+	/**
+	   check if a name already exists.
+	 */
 	public static boolean nameExists(String name) {
 		for(Visualization v : visualizations) 
 			if(v.getName().equalsIgnoreCase(name)) return true;
 		return false;
 	}
-	
+
+	/**
+	   save configuration for all generic visualizatons.
+	 */
 	public void saveGeneric() {
 		Document xmlDoc = new Document();
 		Element root = new Element(XML_ELEMENT);
@@ -173,7 +235,10 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			Logger.log.error("Unable to save visualization settings", e);
 		}
 	}
-	
+
+	/**
+	   load configuration for generic visualizations
+	 */
 	public static void loadGeneric() {
 		if(!getGenericFile().exists()) return; //No generic visualizations saved yet
 		SAXBuilder parser = new SAXBuilder();
@@ -187,7 +252,11 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			Logger.log.error("Unable to load visualization settinsg", e);
 		}
 	}
-	
+
+	/**
+	   create a new jdom Element that represents the configuration for
+	   all non-generic visualizations.
+	 */
 	public static Element getNonGenericXML() {
 		Element xml = new Element(XML_ELEMENT);
 		
@@ -195,7 +264,10 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		
 		return xml;
 	}
-	
+
+	/**
+	   use a jdom Element to initialize the VisualizationManger
+	 */
 	public static void loadNonGenericXML(Element xml) {		
 		if(xml == null) return;
 		
@@ -204,36 +276,66 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			if(!visualizations.contains(vis)) addVisualization(vis);				
 		}
 	}
-	
-	static void removeNonGeneric() {
+
+	/**
+	   Remove all non-generic visualizations, in response to unloading
+	   expression data
+	 */
+	private static void removeNonGeneric() {
 		List<Visualization> toRemove = new ArrayList<Visualization>();
 		for(Visualization v : getVisualizations()) {
 			if(!v.isGeneric()) toRemove.add(v);
 		}
 		for(Visualization v : toRemove) removeVisualization(v);
 	}
-	
-	static File getGenericFile() {
+
+	/**
+	   obtain the File that stores the generic visualizations. 
+	 */
+	private static File getGenericFile() {
 		return new File(SwtEngine.getCurrent().getApplicationDir(), FILENAME_GENERIC);
 	}
 	
-	static VisComboItem visComboItem = new VisComboItem("VisualizationCombo");
+	/**
+	   The one and only visualization combobox.
+	 */
+	private static VisComboItem visComboItem = new VisComboItem("VisualizationCombo");
+
+	/**
+	   Obtain the one and only visualization combobox.
+	 */
 	public static ContributionItem getComboItem() {
 		return visComboItem;
 	}
-	
-	static VisualizationPanel sidePanel;
-		
+
+	/**
+	   The one and only visualization sidePanel
+	 */
+	private static VisualizationPanel sidePanel;
+
+	/**
+	   get the one and only visualization sidePanel.
+	 */
 	public static Composite getSidePanel() {
 		return sidePanel;
 	}
+
+	/**
+	   initialize the visualization sidePanel
+	 */
 	public static Composite createSidePanel(Composite parent) {
 		if(sidePanel != null && !sidePanel.isDisposed()) sidePanel.dispose();
 		sidePanel = new VisualizationPanel(parent, SWT.NULL);
 		return sidePanel;
 	}
-	
-	static class VisComboItem extends ControlContribution implements VisualizationListener {
+
+	/**
+	   represents a drop-down list with all visualizations.
+	   It refreshes itself automatically in response to visualization events.
+	 */
+	private static class VisComboItem extends ControlContribution
+		implements VisualizationListener
+	{
 		final String NONE = "no visualization";
 		Combo visCombo;
 		
@@ -292,102 +394,6 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		}
 	}
 	
-	static class VisualizationPanel extends ScrolledComposite implements SelectionListener, 
-									VisualizationListener, 
-									ApplicationEventListener {
-		Visualization vis;
-		Composite contents;
-		Set<Graphics> input;
-		
-		public VisualizationPanel(Composite parent, int style) {
-			super(parent, style);
-			createContents();
-			
-			Engine.getCurrent().addApplicationEventListener(this);
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
-			if(vp != null) {
-				vp.addSelectionListener(this);
-			}
-			
-			VisualizationManager.addListener(this);
-			input = new LinkedHashSet<Graphics>();
-		}
-		
-		void createContents() {
-			contents = new Composite(this, SWT.NULL);
-			contents.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			setContent(contents);
-			setExpandHorizontal(true);
-			setExpandVertical(true);
-			contents.setLayout(new FillLayout());
-			setMinSize(contents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		}
-		
-		void fillContents() {
-			if(vis != null) {
-				vis.disposeSidePanel();
-				vis.createSideSidePanel(contents);
-			}
-		}
-		
-		public void setVisualization(Visualization v) {
-			if(vis != null) vis.disposeSidePanel();
-			vis = v;
-			fillContents();
-		}
-		
-		void addInput(Graphics g) {
-			input.add(g);
-			refresh();
-		}
-		
-		void removeInput(Graphics g) {
-			input.remove(g);
-			refresh();
-		}
-		
-		void clearInput() {
-			input.clear();
-			refresh();
-		}
-		
-		void refresh() {
-			if(vis != null) vis.visualizeSidePanel(input);
-			layout(true, true);
-		}
-
-		public void selectionEvent(SelectionBox.SelectionEvent e) {
-			switch(e.type) {
-			case SelectionBox.SelectionEvent.OBJECT_ADDED:
-				if(e.affectedObject instanceof Graphics) 
-					addInput((Graphics)e.affectedObject);
-				break;
-			case SelectionBox.SelectionEvent.OBJECT_REMOVED:
-				if(e.affectedObject instanceof Graphics) 
-					removeInput((Graphics)e.affectedObject);
-				break;
-			case SelectionBox.SelectionEvent.SELECTION_CLEARED:
-				clearInput();
-			}
-		}
-
-		public void visualizationEvent(VisualizationEvent e) {
-			switch(e.type) {
-			case VisualizationEvent.VISUALIZATION_SELECTED:
-				setVisualization(getCurrent());
-			case VisualizationEvent.PLUGIN_SIDEPANEL_ACTIVATED:
-				fillContents();
-			}
-			
-		}
-
-		public void applicationEvent(ApplicationEvent e) {
-			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
-				VPathway vp = (VPathway)e.getSource();
-				vp.addSelectionListener(this);
-			}
-		}		
-	}
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.APPLICATION_CLOSE) {
@@ -399,13 +405,15 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 			}
 		}
 	}
-	
-	static List<VisualizationListener> listeners;
 
 	/**
-	 * Add a {@link ExpressionDataListener}, that will be notified if an
+	   List of listeners
+	 */
+	private static List<VisualizationListener> listeners;
+
+	/**
+	 * Add a {@link VisualizationListener}, that will be notified if an
 	 * event related to visualizations occurs
-	 * @param l The {@link ExpressionDataListener} to add
 	 */
 	public static void addListener(VisualizationListener l) {
 		if(listeners == null)
@@ -416,38 +424,10 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	/**
 	 * Fire a {@link VisualizationEvent} to notify all {@link VisualizationListener}s registered
 	 * to this class
-	 * @param e
 	 */
-	public static void fireVisualizationEvent(VisualizationEvent e) {
+	public void fireVisualizationEvent(VisualizationEvent e) {
 		for(VisualizationListener l : listeners) {
 			l.visualizationEvent(e);
-		}
-	}
-
-	public interface VisualizationListener {
-		public void visualizationEvent(VisualizationEvent e);
-	}
-
-	public static class VisualizationEvent extends EventObject {
-		private static final long serialVersionUID = 1L;
-		public static final int COLORSET_ADDED = 0;
-		public static final int COLORSET_REMOVED = 1;
-		public static final int COLORSET_MODIFIED = 2;
-		public static final int VISUALIZATION_ADDED = 3;
-		public static final int VISUALIZATION_REMOVED = 4;
-		public static final int VISUALIZATION_MODIFIED = 5;
-		public static final int VISUALIZATION_SELECTED = 6;
-		public static final int PLUGIN_MODIFIED = 7;
-		public static final int PLUGIN_ADDED = 8;
-		public static final int PLUGIN_SIDEPANEL_ACTIVATED = 9;
-
-		public Object source;
-		public int type;
-
-		public VisualizationEvent(Object source, int type) {
-			super(source == null ? VisualizationManager.class : source);
-			this.source = source;
-			this.type = type;
 		}
 	}
 
@@ -471,7 +451,6 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		if(gp == null) return null; //Only tooltip for gene product
 		
 		return getCurrent().createToolTipComponent(gp);
-	}
-	
+	}	
 
 }

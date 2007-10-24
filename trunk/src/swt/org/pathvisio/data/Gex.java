@@ -522,7 +522,7 @@ public class Gex implements ApplicationEventListener {
 					code = data[info.codeColumn].trim();
 				}
 				else {
-					code = info.syscode;
+					code = info.getSyscode();
 				}
 				ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
 				

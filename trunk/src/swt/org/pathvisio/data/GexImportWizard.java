@@ -555,7 +555,7 @@ public class GexImportWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					codeCombo.setEnabled(true);
 					syscodeCombo.setEnabled(false);
-					importInformation.syscodeColumn=true;
+					importInformation.setSyscodeColumn(true);
 				
 				}
 			});
@@ -573,7 +573,7 @@ public class GexImportWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					syscodeCombo.setEnabled(true);
 					codeCombo.setEnabled(false);
-					importInformation.syscodeColumn=false;
+					importInformation.setSyscodeColumn(false);
 				
 				}
 			});
@@ -581,7 +581,7 @@ public class GexImportWizard extends Wizard {
 			syscodeCombo.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (syscodeRadio.getSelection()){
-						importInformation.syscode = DataSources.systemCodes[syscodeCombo.getSelectionIndex()];
+						importInformation.setSyscode(DataSources.systemCodes[syscodeCombo.getSelectionIndex()]);
 					}
 				}
 			});

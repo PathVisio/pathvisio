@@ -200,8 +200,6 @@ public class ImportInformation {
 	 * row is present, a header row is created manually.
 	 * @return the column names
 	 */
-	
-		
 	public String[] getColNames() {
 		if(getNoHeader() == true) {
 			try {
@@ -253,8 +251,7 @@ public class ImportInformation {
 	/**
 	 * Returns the boolean value which indicates whether a header is present or not
 	 * @return value of noHeader (true or false)
-	 */
-	
+	 */	
 	public boolean getNoHeader() {
 		return noHeader;
 	}
@@ -263,21 +260,49 @@ public class ImportInformation {
 	 * Sets the value of noHeader, taken from the target as specified where the method is used.
 	 * noHeader can be set true or false
 	 * @param target
-	 */
-	 	
+	 */	 	
 	public void setNoHeader(boolean target) {
 		noHeader = target;
 	}
 	
-
+	/**
+	 * Returns the boolean value set by the user which indicates whether a column 
+	 * system code column is present or not.
+	 */
+	public boolean getSyscodeColumn() {
+		return syscodeColumn;
+	}
+	
+	/**
+	 * Sets the boolean value syscodeColumn to 'system code present' or 'system code 
+	 * not present' in data. 
+	 */
+	public void setSyscodeColumn(boolean target) {
+		syscodeColumn = target;
+	}
+	
+	/**
+	 * Returns the system code (String) selected from DataSources.systemCodes.
+	 */
+	public String getSyscode()
+	{
+		return syscode;
+	}
+	
+	/**
+	 * Sets the system code (String) to a value from DataSources.systemCodes.
+	 */
+	public void setSyscode(String target) {
+		syscode = target;
+	}
+	
+	
 	/**Returns the string that is used as the delimiter for reading the input data.
 	 * This string is used to separate columns in the input data.
 	 * The returned string can be any length, but during normal use it is typically 1 or 2 characters
 	 * long.
 	 */
-	
-	public String getDelimiter() 
-	{
+	public String getDelimiter() {
 		return DELIMITER;
 	}
 	
@@ -285,9 +310,7 @@ public class ImportInformation {
 	 * The delimiter string can be set to any length, but during normal use it is typically
 	 * 1 or 2 characters long
 	 */
-	
-	public void setDelimiter(String target) 
-	{
+	public void setDelimiter(String target) {
 		DELIMITER=target;
 	}
 

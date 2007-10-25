@@ -27,7 +27,11 @@ function getPathwayInfo( &$parser, $pathway, $type ) {
 	try {
 		$pathway = Pathway::newFromTitle($pathway);
 		$info = new PathwayInfo($parser, $pathway);
-		return $info->$type();
+		if(method_exists($info, $type)) {
+			return $info->$type();
+		} else {
+			throw new Exception("method PathwayInfo->$type doesn't exist");
+		}
 	} catch(Exception $e) {
 		return "Error: $e";
 	}

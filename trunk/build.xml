@@ -310,14 +310,19 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	</target>
 
 	<target name="jar-wikipathways" depends="compile-wikipathways" description="Generate wikipathways jar file">
-		<jar jarfile="wikipathways.jar">
-			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
+		<jar jarfile="wikipathways.jar" index="true">
+			<fileset dir="${build.wikipathways.dir}" includes="**/*.class">
+				<exclude name="org/pathvisio/wikipathways/Preloader.class"/>
+			</fileset>
             <!--<manifest>
             	 <attribute name="Class-Path" value="${wikipathways.class.path}"/>
             </manifest>-->
 		</jar>
+		<jar jarfile="preloader.jar" index="true">
+			<fileset dir="${build.wikipathways.dir}" includes="org/pathvisio/wikipathways/Preloader.class"/>
+		</jar>
 		<!-- different resources.jar, only with minimal data -->
-		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar">
+		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar" index="true">
 			<fileset dir="." includes="backpage/*"/>
 			<fileset dir="." includes="icons/*"/>
 			<!--<fileset dir="." includes="images/*"/>-->
@@ -426,6 +431,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	
 	<target name="wikipathways-applet" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
 		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
+		<copy file="preloader.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy toDir="${wikipathways.applet.dir}/lib">
 			<fileset dir="${lib.dir}">
 				<include name="apache/*.jar"/>
@@ -440,7 +446,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</signjar>
 		<!-- copy to /var/www/wikipathways -->
 		<copy toDir="${wikipathways.applet.dest}">
-			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />
+			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />			
 		</copy>
 		<!-- Copy converter jar -->
 		<copy toDir="${wikipathways.bin.dest}">

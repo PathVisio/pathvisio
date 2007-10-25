@@ -343,6 +343,16 @@ public class Pathway implements PathwayListener
 			groupRefs.remove(id);
 	}
 	
+	/**
+	 * Get the pathway elements that are part of the given group
+	 * @param id The id of the group
+	 * @return The set of pathway elements part of the group
+	 */
+	public Set<PathwayElement> getGroupElements(String id) {
+		Set<PathwayElement> result = groupRefs.get(id);
+		//Return an empty set if the group is empty
+		return result == null ? new HashSet<PathwayElement>() : result;
+	}
 	
 	/**
 	 * Remove a reference to another Id. 

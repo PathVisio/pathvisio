@@ -204,6 +204,10 @@ function toGlobalLink($localLink) {
 }
 
 function writeFile($filename, $data) {
+	$dir = dirname($filename);
+	if(!file_exists($dir)) {
+		mkdir(dirname($filename), 0777, true); //Make sure the directory exists
+	}
 	$handle = fopen($filename, 'w');
 	if(!$handle) {
 		throw new Exception ("Couldn't open file $filename");

@@ -47,6 +47,9 @@ public class PathwayPageApplet extends JApplet {
 	public final void init() {
 		//Check if other applets are present that already have an instance
 		//of WikiPathways
+		
+		Logger.log.trace("INIT CALLED....");
+
 		WikiPathways owiki = findExistingWikiPathways();
 		if(owiki != null) {
 			wiki = owiki;
@@ -64,9 +67,6 @@ public class PathwayPageApplet extends JApplet {
 			GuiInit.init();
 		}
 		
-		System.out.println("INIT CALLED....");
-		Logger.log.trace("INIT CALLED....");
-
 		parseArguments();
 
 		//Init with progress monitor
@@ -103,13 +103,18 @@ public class PathwayPageApplet extends JApplet {
 	}
 	
 	protected final WikiPathways findExistingWikiPathways() {
+		Logger.log.trace("Finding other pathway applets");
 		Enumeration<Applet> applets = getAppletContext().getApplets();
+		Logger.log.trace("Start iteration...");
 		while(applets.hasMoreElements()) {
 			Applet a = applets.nextElement();
+			Logger.log.trace("Processing " + a);
 			if(a instanceof PathwayPageApplet) {
+				Logger.log.trace("Returning " + a);
 				return ((PathwayPageApplet)a).wiki;
 			}
 		}
+		Logger.log.trace("No other pathway applets found, returning null");
 		return null; //Nothing found
 	}
 	

@@ -347,8 +347,8 @@
 			</xsd:sequence>
 			
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
-			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
+            <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+            <xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
@@ -389,64 +389,76 @@
 
 			<xsd:sequence>
 
-				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup" />
 
-				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+				<xsd:element name="Graphics" minOccurs="1"
+					maxOccurs="1">
 					<xsd:complexType>
 						<xsd:sequence>
-							<xsd:element name="Point" minOccurs="2" maxOccurs="2">
+							<xsd:element name="Point" minOccurs="2"
+								maxOccurs="2">
 								<xsd:complexType>
-									<xsd:attribute name="x" type="xsd:float" use="required"/>
-									<xsd:attribute name="y" type="xsd:float" use="required"/>
-									<xsd:attribute name="GraphRef"  type="xsd:IDREF" use="optional" />					
-									<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+									<xsd:attribute name="x"
+										type="xsd:float" use="required" />
+									<xsd:attribute name="y"
+										type="xsd:float" use="required" />
+									<xsd:attribute name="GraphRef"
+										type="xsd:IDREF" use="optional" />
+									<xsd:attribute name="GraphId"
+										type="xsd:ID" use="optional" />
 									<!-- Note: technically points in the middle can have a head,
-									but this will be ignored for most types.
-									!-->
-									<xsd:attribute name="ArrowHead" default="Line" type="xsd:string" />
+										but this will be ignored for most types.
+										!-->
+									<xsd:attribute name="ArrowHead"
+										default="Line" type="xsd:string" />
 
 									<!-- the "Head" attribute is
-									deprecated! Use the ArrowHead
-									attribute instead.  Due to a
-									stupid bug in PathVisio, the head
-									attribute was stored on the wrong
-									point.  To remain backwards
-									compatible, a head attribute read
-									from the first point is stored on
-									the second point.  !-->
+										deprecated! Use the ArrowHead
+										attribute instead.  Due to a
+										stupid bug in PathVisio, the head
+										attribute was stored on the wrong
+										point.  To remain backwards
+										compatible, a head attribute read
+										from the first point is stored on
+										the second point.  !-->
 
-									<xsd:attribute name="Head" default="Line" type="xsd:string" />
-<!--
-				Head Type is no longer restricted.
-				However, if you care about compatibility with GenMAPP
-				you should only use the shapes below
-
-											<xsd:restriction base="xsd:string">
-												<xsd:enumeration value="Line"/>
-												<xsd:enumeration value="Arrow"/>
-												<xsd:enumeration value="Receptor"/>
-												<xsd:enumeration value="ReceptorRound"/>
-												<xsd:enumeration value="ReceptorSquare"/>
-												<xsd:enumeration value="LigandRound"/>
-												<xsd:enumeration value="LigandSquare"/>
-												<xsd:enumeration value="TBar"/>
-											</xsd:restriction>
+									<xsd:attribute name="Head"
+										default="Line" type="xsd:string" />
+									<!--
+										Head Type is no longer restricted.
+										However, if you care about compatibility with GenMAPP
+										you should only use the shapes below
+										
+										<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="Line"/>
+										<xsd:enumeration value="Arrow"/>
+										<xsd:enumeration value="Receptor"/>
+										<xsd:enumeration value="ReceptorRound"/>
+										<xsd:enumeration value="ReceptorSquare"/>
+										<xsd:enumeration value="LigandRound"/>
+										<xsd:enumeration value="LigandSquare"/>
+										<xsd:enumeration value="TBar"/>
+										</xsd:restriction>
 										!-->
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>
-						<xsd:attribute name="Color" type="gpml:ColorType"
-							default="Black"/>
+						<xsd:attribute name="Color"
+							type="gpml:ColorType" default="Black" />
 					</xsd:complexType>
 				</xsd:element>
 
 			</xsd:sequence>
 
-			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid"/>
+			<xsd:attribute name="Style" type="gpml:StyleType"
+				default="Solid" />
 
-			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="BiopaxRef" type="xsd:string"
+				use="optional" />
 
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 		</xsd:complexType>
 
 	</xsd:element>
@@ -624,13 +636,18 @@
 	<xsd:element name="Group">	
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup" />
 			</xsd:sequence>
-			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="GroupId" type="xsd:ID" use="required"/>
-			<xsd:attribute name="GroupRef" type="xsd:string" use="optional"/>
-			<xsd:attribute name="Style" type="gpml:GroupStyleType" default="None" />
-			<xsd:attribute name="TextLabel" type="xsd:string" use="optional" />
+			<xsd:attribute name="BiopaxRef" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="GroupId" type="xsd:string" use="required" />
+			<xsd:attribute name="GroupRef" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="Style" type="gpml:GroupStyleType"
+				default="None" />
+			<xsd:attribute name="TextLabel" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 		</xsd:complexType>
 	</xsd:element>
 

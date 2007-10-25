@@ -584,7 +584,13 @@ public class Gex implements ApplicationEventListener {
 			//Writing maximum and minimum to ImportInformation
 			info.setMaximum(maximum);
 			info.setMinimum(minimum);
-					
+			
+
+			//Creating a default color set for the visualizations.
+			createDefaultColorSet(minimum,maximum);
+			
+			
+			
 			p.report(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
 				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
@@ -618,6 +624,27 @@ public class Gex implements ApplicationEventListener {
 		out.println(message);
 		nrError++;
 		return nrError;
+	}
+	
+	public static void createDefaultColorSet(double minimum, double maximum){
+		Color green= new Color(0,1,0);
+		Color red = new Color(1,0,0);
+		Color yellow = new Color(1,1,0);
+		ColorSet colorSet = new ColorSet("Default");
+		ColorGradient gradient=new ColorGradient(colorSet,"Default");
+		
+		ColorValuePair low = gradient.new ColorValuePair(green,minimum);
+		ColorValuePair middle = gradient.new ColorValuePair(red,(minimum+maximum)/2);
+		ColorValuePair high = gradient.new ColorValuePair(yellow,maximum);
+		
+		gradient.addColorValuePair(low);
+		gradient.addColorValuePair(middle);
+		gradient.addColorValuePair(high);
+		
+		colorSet.addObject(gradient);
+		
+		ColorSetManager.addColorSet(colorSet);
+		
 	}
 	/**
 	 * {@link Connection} to the GenMAPP Expression Dataset

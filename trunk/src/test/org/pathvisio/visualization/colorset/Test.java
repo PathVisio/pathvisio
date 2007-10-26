@@ -20,4 +20,9 @@ import junit.framework.TestCase;
 
 public class Test extends TestCase 
 {
+	public void testColorSet()
+	{
+		ColorSet cs = new ColorSet("Default");
+		assertEquals (cs.getName(), "Default");
+	}
 }

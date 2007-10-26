@@ -20,4 +20,9 @@ import junit.framework.TestCase;
 
 public class Test extends TestCase 
 {
+	public void testVisualization()
+	{
+		Visualization v = new Visualization("Test");
+		assertEquals (v.getName(), "Test");
+	}
 }

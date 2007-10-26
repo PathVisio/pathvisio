@@ -97,8 +97,8 @@ public abstract class ColorSetObject {
 	}
 
 	protected void fireModifiedEvent() {
-		VisualizationManager.fireVisualizationEvent(
-				new VisualizationEvent(this, VisualizationEvent.COLORSET_MODIFIED));
+		ColorSetManager.fireColorSetEvent(
+				new ColorSetEvent (this, ColorSetEvent.COLORSET_MODIFIED));
 	}
 	
 	abstract String getXmlElementName();

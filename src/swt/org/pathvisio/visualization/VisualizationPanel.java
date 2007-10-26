@@ -64,6 +64,10 @@ import org.pathvisio.view.swing.ToolTipProvider;
 import org.pathvisio.view.swing.VPathwaySwing;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
+/**
+   Side Panel in the main window that can be used by Visualization Plugins to
+   show more detailed information.
+ */
 class VisualizationPanel extends ScrolledComposite implements SelectionListener, 
 												   VisualizationListener, 
 												   ApplicationEventListener {
@@ -144,7 +148,8 @@ class VisualizationPanel extends ScrolledComposite implements SelectionListener,
 	}
 
 	public void visualizationEvent(VisualizationEvent e) {
-		switch(e.type) {
+		switch(e.getType())
+		{
 		case VisualizationEvent.VISUALIZATION_SELECTED:
 			setVisualization(VisualizationManager.getCurrent());
 		case VisualizationEvent.PLUGIN_SIDEPANEL_ACTIVATED:

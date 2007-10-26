@@ -68,13 +68,11 @@ import org.eclipse.swt.widgets.Text;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationEvent;
-import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.colorset.ColorCriterion.ColorCriterionComposite;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorGradientComposite;
+import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
 
-public class ColorSetComposite extends Composite implements VisualizationListener {
+public class ColorSetComposite extends Composite implements ColorSetListener {
 	final int colorLabelSize = 15;
 	ColorSet colorSet;
 	
@@ -91,7 +89,7 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 	public ColorSetComposite(Composite parent, int style) {
 		super(parent, style);
 		createContents();
-		VisualizationManager.addListener(this);
+		ColorSetManager.addListener(this);
 	}
 	
 	public void dispose() {
@@ -587,11 +585,13 @@ public class ColorSetComposite extends Composite implements VisualizationListene
 		return data;
 	}
 
-	public void visualizationEvent(VisualizationEvent e) {
-		switch(e.type) {
-		case(VisualizationEvent.COLORSET_MODIFIED):
+	public void colorSetEvent (ColorSetEvent e) {
+		switch(e.getType())
+		{
+		case(ColorSetEvent.COLORSET_MODIFIED):
 			if(objectsTable != null && !objectsTable.getTable().isDisposed())
 				objectsTable.refresh();
+			break;
 		}
 		
 	}

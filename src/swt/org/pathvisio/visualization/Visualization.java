@@ -51,6 +51,9 @@ import org.pathvisio.util.Utils;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.plugins.PluginManager;
+import org.pathvisio.visualization.colorset.ColorSetEvent;
+import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
@@ -58,7 +61,11 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
  * Represents a set of configured visualization plugins
  * @author thomas
  */
-public class Visualization implements ExpressionDataListener, VisualizationListener {
+public class Visualization implements
+						   ExpressionDataListener,
+						   VisualizationListener,
+						   ColorSetListener
+{
 	public static final String XML_ELEMENT = "visualization";
 	public static final String XML_ATTR_NAME = "name";
 	
@@ -78,6 +85,7 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 		this.name = name;
 		Gex.addListener(this);
 		VisualizationManager.addListener(this);
+		ColorSetManager.addListener(this);
 	}
 	
 	/**
@@ -419,14 +427,28 @@ public class Visualization implements ExpressionDataListener, VisualizationListe
 	}
 
 	public void visualizationEvent(VisualizationEvent e) {
-		switch(e.type) {
+		switch(e.getType()) {
 		case VisualizationEvent.PLUGIN_ADDED: 
 			refreshPluginClasses();
 			break;
-		case(VisualizationEvent.COLORSET_MODIFIED):
 		case(VisualizationEvent.VISUALIZATION_SELECTED):
 		case(VisualizationEvent.VISUALIZATION_MODIFIED):
 		case(VisualizationEvent.PLUGIN_MODIFIED):
+			//TODO: this event should be caught by the pathway or engine...
+			VPathway p = Engine.getCurrent().getActiveVPathway();
+			if(p != null) {
+				p.redraw();
+			}
+			break;
+		}
+	}
+
+	public void colorSetEvent(ColorSetEvent e)
+	{
+		switch(e.getType())
+		{
+			//TODO: this event should be caught by the pathway or engine...
+		case(ColorSetEvent.COLORSET_MODIFIED):
 			VPathway p = Engine.getCurrent().getActiveVPathway();
 			if(p != null) {
 				p.redraw();

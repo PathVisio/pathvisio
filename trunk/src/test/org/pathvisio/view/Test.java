@@ -16,11 +16,11 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
+//import java.awt.Toolkit;
+//import java.awt.datatransfer.Clipboard;
+//import java.awt.datatransfer.DataFlavor;
+//import java.awt.datatransfer.UnsupportedFlavorException;
+//import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,7 +130,7 @@ public class Test extends TestCase {
     	List<VPathwayElement> elements = vp.getDrawingObjects();
     	for(VPathwayElement e : elements) {
     		if(e instanceof Graphics) {
-    			PathwayElement pe = ((Graphics)e).getGmmlData();
+    			PathwayElement pe = ((Graphics)e).getPathwayElement();
     			if			(pe == d1) {
     				gd1 = e;
     			} else if 	(pe == s1) {

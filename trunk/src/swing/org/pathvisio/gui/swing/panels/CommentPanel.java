@@ -35,6 +35,8 @@ import javax.swing.table.AbstractTableModel;
 import org.pathvisio.model.PathwayElement.Comment;
 
 public class CommentPanel extends PathwayElementPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
+
 	protected static final String ADD = "Add comment";
 	protected static final String REMOVE = "Remove comment";
 	
@@ -93,6 +95,8 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	}
 	
 	class CommentsTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
+		
 		List<Comment> comments = new ArrayList<Comment>();
 		void setComments(List<Comment> input) {
 			if(input == null) input = new ArrayList<Comment>();

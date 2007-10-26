@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Display;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 public class VPathwaySwtAwt extends VPathwaySwing {
+	private static final long serialVersionUID = 1L;
+
 	Display display;
 	public VPathwaySwtAwt(JScrollPane parent, Display display) {
 		super(parent);
@@ -142,6 +144,8 @@ public class VPathwaySwtAwt extends VPathwaySwing {
 	
 	public void registerKeyboardAction(KeyStroke k, final Action a) {
 		super.registerKeyboardAction(k, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(final ActionEvent e) {
 				display.syncExec(new Runnable() {
 					public void run() {

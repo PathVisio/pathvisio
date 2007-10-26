@@ -51,6 +51,7 @@ import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.PathwayElement;
 
 public class LitReferencePanel extends PathwayElementPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	static final String ADD = "Add";
 	static final String REMOVE = "Remove";
 	static final String EDIT = "Edit";
@@ -67,6 +68,8 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		xrefs = new ArrayList<PublicationXRef>();
 
 		references = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
@@ -198,10 +201,13 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	//http://forum.java.sun.com/thread.jspa?threadID=753164&messageID=4305668
 	//(TK)
 	static class WrapRenderer extends JEditorPane	implements TableCellRenderer {
+		private static final long serialVersionUID = 1L;
+		
 		protected final DefaultTableCellRenderer adaptee =
 			new DefaultTableCellRenderer();
 		/** map from table to map of rows to map of column heights */
-		private final Map cellSizes = new HashMap();
+		private final Map<JTable, Map<Integer, Map<Integer, Integer>>> cellSizes = 
+			new HashMap<JTable, Map<Integer, Map<Integer, Integer>>>();
 
 		public WrapRenderer() {
 //			setLineWrap(true);
@@ -213,7 +219,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		public Component getTableCellRendererComponent(//
 				JTable table, Object obj, boolean isSelected,
 				boolean hasFocus, int row, int column) {
-			// set the colours, etc. using the standard for that platform
+			// set the colors, etc. using the standard for that platform
 			adaptee.getTableCellRendererComponent(table, obj,
 					isSelected, hasFocus, row, column);
 			setForeground(adaptee.getForeground());
@@ -236,13 +242,15 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 		protected void addSize(JTable table, int row, int column,
 				int height) {
-			Map rows = (Map) cellSizes.get(table);
+			Map<Integer, Map<Integer, Integer>> rows = 
+				(Map<Integer, Map<Integer, Integer>>) cellSizes.get(table);
 			if (rows == null) {
-				cellSizes.put(table, rows = new HashMap());
+				cellSizes.put(table, rows = new HashMap<Integer, Map<Integer, Integer>>());
 			}
-			Map rowheights = (Map) rows.get(new Integer(row));
+			Map<Integer, Integer> rowheights = 
+				(Map<Integer, Integer>) rows.get(new Integer(row));
 			if (rowheights == null) {
-				rows.put(new Integer(row), rowheights = new HashMap());
+				rows.put(new Integer(row), rowheights = new HashMap<Integer, Integer>());
 			}
 			rowheights.put(new Integer(column), new Integer(height));
 		}
@@ -268,9 +276,9 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		}
 
 		private int findMaximumRowSize(JTable table, int row) {
-			Map rows = (Map) cellSizes.get(table);
+			Map<Integer, Map<Integer, Integer>> rows = (Map<Integer, Map<Integer, Integer>>) cellSizes.get(table);
 			if (rows == null) return 0;
-			Map rowheights = (Map) rows.get(new Integer(row));
+			Map<Integer, Integer> rowheights = (Map<Integer, Integer>) rows.get(new Integer(row));
 			if (rowheights == null) return 0;
 			int maximum_height = 0;
 			for (Iterator it = rowheights.entrySet().iterator();

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PublicationXRef extends BiopaxElement {
+	private static final long serialVersionUID = 1L;
+
 	public PublicationXRef() {
 		super();
 		setName("PublicationXRef");

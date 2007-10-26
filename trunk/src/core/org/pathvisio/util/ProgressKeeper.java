@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-import org.pathvisio.debug.Logger;
-
 public class ProgressKeeper {
 	public static final int PROGRESS_UNKNOWN = -1;
 	public static final int PROGRESS_FINISHED = -2;
@@ -107,6 +105,8 @@ public class ProgressKeeper {
 	}
 	
 	public class ProgressEvent extends EventObject {
+		private static final long serialVersionUID = 1L;
+
 		public static final int FINISHED = 0;
 		public static final int TASK_NAME_CHANGED = 1;
 		public static final int REPORT = 2;

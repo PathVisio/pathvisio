@@ -22,19 +22,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JToolTip;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -55,11 +51,8 @@ import org.pathvisio.data.Gex.ExpressionDataListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.swing.ToolTipProvider;
 import org.pathvisio.view.swing.VPathwaySwing;
 
@@ -96,8 +89,6 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	public static final String XML_ELEMENT = "visualizations";
 		
 	private static final String FILENAME_GENERIC = "visualizations.xml";
-	
-	private static final int CURRENT_NONE = -1;
 	
 	/**
 	   List of all available Visualizations

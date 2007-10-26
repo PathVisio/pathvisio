@@ -113,6 +113,7 @@ public class UndoManager
 	/**
 	   debugging helper function
 	 */
+	@SuppressWarnings("unused")
 	private void printSummary()
 	{
 		System.out.println ("===============================");

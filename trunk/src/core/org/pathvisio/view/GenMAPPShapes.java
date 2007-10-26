@@ -16,10 +16,7 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import org.pathvisio.model.ShapeType;
 
 class GenMAPPShapes
 {

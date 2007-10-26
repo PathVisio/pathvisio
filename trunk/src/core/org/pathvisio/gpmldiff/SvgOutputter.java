@@ -19,7 +19,6 @@ package org.pathvisio.gpmldiff;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
@@ -58,11 +57,11 @@ class SvgOutputter extends DiffOutputter
 	private static final int BALOON_MARGIN = 5;
 	private static final int BALOON_WIDTH = (CENTER_MARGIN / BALOON_COLS) - BALOON_MARGIN;
 	private static final int HEADER_HEIGHT = 32;
-	private static final int BALOON_FONT_SIZE = 6;
+	//private static final int BALOON_FONT_SIZE = 6;
 	private static final int HEADER_FONT_SIZE = 16;
 	private static final int PCT_ZOOM = 70;
 	
-	private OutputStream out;
+	private OutputStream out; //TODO: use this for output
 	private PwyDoc oldPwy;
 	private PwyDoc newPwy;
 	
@@ -104,7 +103,7 @@ class SvgOutputter extends DiffOutputter
 
 		
 		int maxh = height[PWY_OLD] > height[PWY_NEW] ? height[PWY_OLD] : height[PWY_NEW];
-		int maxw = width[PWY_OLD] > width[PWY_NEW] ? width[PWY_OLD] : width[PWY_NEW];
+		//int maxw = width[PWY_OLD] > width[PWY_NEW] ? width[PWY_OLD] : width[PWY_NEW];
 
 		deltax = width[0];
 		svgGenerator = new SVGGraphics2D(document);
@@ -328,7 +327,7 @@ class SvgOutputter extends DiffOutputter
 			if (velt instanceof Graphics)
 			{
 				Graphics g = (Graphics)velt;
-				if (g.getGmmlData() == target)
+				if (g.getPathwayElement() == target)
 				{
 					return velt;
 				}

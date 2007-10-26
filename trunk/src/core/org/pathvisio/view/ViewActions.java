@@ -219,7 +219,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 //		}
 //	}
 	
-	public static class CopyAction extends AbstractAction {			
+	public static class CopyAction extends AbstractAction {	
+		private static final long serialVersionUID = 1L;
+
 		public CopyAction() {
 			super();
 			putValue(NAME, "Copy");
@@ -237,6 +239,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 	
 	public static class PasteAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		public PasteAction() {
 			super();
 			putValue(NAME, "Paste");
@@ -254,6 +258,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 	
 	public static class KeyMoveAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		KeyStroke key;
 
 		public KeyMoveAction(KeyStroke key) {
@@ -275,6 +281,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	private class SelectClassAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		Class c;
 		public SelectClassAction(String name, Class c) {
 			super("Select all " + name + " objects");
@@ -286,6 +294,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 	
 	private class SelectAllAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		public SelectAllAction() {
 			super("Select all");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl A"));
@@ -296,6 +306,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 		
 	private class GroupAction extends AbstractAction implements SelectionListener {
+		private static final long serialVersionUID = 1L;
+
 		public GroupAction() {
 			super();
 			putValue(NAME, "Group");
@@ -339,6 +351,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 	
 	private class DeleteAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+		
 		public DeleteAction() {
 			super();
 			putValue(NAME, "Delete");
@@ -365,6 +379,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 	
 	public static class UndoAction extends AbstractAction implements UndoManagerListener, ApplicationEventListener {
+		private static final long serialVersionUID = 1L;
+
 		public UndoAction() {
 			super();
 			putValue(NAME, "Undo");

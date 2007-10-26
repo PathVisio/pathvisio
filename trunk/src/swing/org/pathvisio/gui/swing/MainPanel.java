@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,6 +63,8 @@ import org.pathvisio.view.VPathwayListener;
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 public class MainPanel extends JPanel implements VPathwayListener, ApplicationEventListener {
+	private static final long serialVersionUID = 1L;
+
 	private JSplitPane splitPane;
 
 	private JMenuBar menuBar;
@@ -115,6 +116,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		final PathwayTableModel model = new PathwayTableModel();
 		propertyTable = new JTable(model) {
+			private static final long serialVersionUID = 1L;
+
 			public TableCellRenderer getCellRenderer(int row, int column) {
 				TableCellRenderer r = model.getCellRenderer(row, column);
 				return r == null ? super.getCellRenderer(row, column) : r;
@@ -340,7 +343,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
 			if(e.getAffectedElement() instanceof Graphics && 
 					!(e.getAffectedElement() instanceof SelectionBox)) {
-				PathwayElement p = ((Graphics)e.getAffectedElement()).getGmmlData();
+				PathwayElement p = ((Graphics)e.getAffectedElement()).getPathwayElement();
 				if(p != null) {
 					PathwayElementDialog.getInstance(p, !vp.isEditMode(), null, this).setVisible(true);
 				}

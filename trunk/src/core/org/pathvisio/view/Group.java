@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 public class Group extends Graphics

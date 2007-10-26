@@ -54,7 +54,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 
-public class TypedProperty implements Comparable {	
+public class TypedProperty implements Comparable<TypedProperty> {	
 	Collection<PathwayElement> elements;
 	Object value;
 	PropertyType type;
@@ -66,15 +66,13 @@ public class TypedProperty implements Comparable {
 	}
 	
 	public void addElement(PathwayElement e) {
-		boolean added = elements.add(e);
-		refreshValue();
-		//System.err.println("\t\tadding....." + added);
+		elements.add(e);
+		refreshValue();		
 	}
 	
 	public void removeElement(PathwayElement e) {
-		boolean removed = elements.remove(e);
+		elements.remove(e);
 		refreshValue();
-		//System.err.println("\t\removing....." + removed);
 	}
 	
 	public void refreshValue() {
@@ -92,8 +90,9 @@ public class TypedProperty implements Comparable {
 	
 	public int elementCount() { return elements.size(); }
 	
-	public int compareTo(Object o) {
-		return type.compareTo(((TypedProperty)o).getType());
+	public int compareTo(TypedProperty o) 
+	{
+		return type.compareTo(o.getType());
 	}
 	
 	public void setValue(Object value) {
@@ -195,6 +194,7 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class DoubleEditor extends DefaultCellEditor {
+		private static final long serialVersionUID = 1L;
 		public DoubleEditor() {
 			super(new JTextField());
 		}
@@ -211,6 +211,8 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class AngleEditor extends DefaultCellEditor {
+		private static final long serialVersionUID = 1L;
+		
 		public AngleEditor() {
 			super(new JTextField());
 		}
@@ -232,7 +234,9 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class ComboEditor extends DefaultCellEditor {
-		HashMap label2value;
+		private static final long serialVersionUID = 1L;
+		
+		HashMap<Object, Object> label2value;
 		boolean useIndex;
 		
 		public ComboEditor(Object[] labels, boolean useIndex) {
@@ -246,7 +250,7 @@ public class TypedProperty implements Comparable {
 				if(labels.length != values.length) {
 					throw new IllegalArgumentException("Number of labels doesn't equal number of values");
 				}
-				label2value = new HashMap();
+				label2value = new HashMap<Object, Object>();
 				for(int i = 0; i < labels.length; i++) {
 					label2value.put(labels[i], values[i]);
 				}
@@ -265,6 +269,8 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class CommentsEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+		private static final long serialVersionUID = 1L;
+
 		static final String BUTTON_LABEL = "View/edit comments";
 		JButton button;
 		PathwayElement currentElement;
@@ -318,6 +324,8 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+		private static final long serialVersionUID = 1L;
+
 		Color currentColor;
 		JButton button;
 		JDialog dialog;
@@ -379,6 +387,8 @@ public class TypedProperty implements Comparable {
 			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
 	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getNames(), true);
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
+		private static final long serialVersionUID = 1L;
+
 		protected void setValue(Object value) {
 			super.setValue( (Double)(value) * 180.0 / Math.PI );
 		}
@@ -386,6 +396,8 @@ public class TypedProperty implements Comparable {
 	private static CommentsEditor commentsEditor = new CommentsEditor();
 	
 	private static DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
+		private static final long serialVersionUID = 1L;
+
 		protected void setValue(Object value) {
 			double d = (Double)value;
 			super.setValue(d);
@@ -393,6 +405,8 @@ public class TypedProperty implements Comparable {
 	};
 	
 	private static DefaultTableCellRenderer differentRenderer = new DefaultTableCellRenderer() {
+		private static final long serialVersionUID = 1L;
+
 		protected void setValue(Object value) {
 			value = "Different values";
 			super.setValue(value);
@@ -400,6 +414,8 @@ public class TypedProperty implements Comparable {
 	};
 
 	private static class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			setSelected((Boolean)value);
 			return this;
@@ -407,7 +423,9 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class ComboRenderer extends JComboBox implements TableCellRenderer {
-		HashMap value2label;
+		private static final long serialVersionUID = 1L;
+
+		HashMap<Object, Object> value2label;
 		public ComboRenderer(Object[] values) {
 			super(values);
 		}
@@ -417,7 +435,7 @@ public class TypedProperty implements Comparable {
 			if(labels.length != values.length) {
 				throw new IllegalArgumentException("Number of labels doesn't equal number of values");
 			}
-			value2label = new HashMap();
+			value2label = new HashMap<Object, Object>();
 			for(int i = 0; i < labels.length; i++) {
 				value2label.put(values[i], labels[i]);
 			}
@@ -433,6 +451,8 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class FontRenderer extends JLabel implements TableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			String fn = (String)value;
 			Font f = getFont();
@@ -443,6 +463,8 @@ public class TypedProperty implements Comparable {
 	}
 	
 	private static class ColorRenderer extends JLabel implements TableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
 		Border unselectedBorder = null;
 		Border selectedBorder = null;
 		boolean isBordered = true;

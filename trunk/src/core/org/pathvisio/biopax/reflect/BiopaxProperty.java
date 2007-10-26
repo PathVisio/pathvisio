@@ -16,12 +16,11 @@
 //
 package org.pathvisio.biopax.reflect;
 
-import org.jdom.Attribute;
 import org.jdom.Element;
-import org.jdom.Namespace;
-import org.pathvisio.model.GpmlFormat;
 
 public class BiopaxProperty extends Element {	
+	private static final long serialVersionUID = 1L;
+
 	public static final int UNBOUND = -1;
 	
 	protected int maxCardinality;

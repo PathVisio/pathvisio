@@ -143,6 +143,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 					
 	public static class ZoomAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		Component parent;
 		double zoomFactor;
 		
@@ -171,6 +173,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class SaveAsAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		public SaveAsAction() {
 			super();
 			putValue(Action.NAME, "Save as");
@@ -185,6 +189,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class SaveAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		public SaveAction() {
 			super();
 			putValue(Action.NAME, "Save");
@@ -200,6 +206,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class ImportAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		public ImportAction() {
 			super();
 			putValue(NAME, "Import");
@@ -215,6 +223,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class ExportAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		public ExportAction() {
 			super();
 			putValue(NAME, "Export");
@@ -234,6 +244,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 			
 	public static class NewElementAction extends AbstractAction implements VPathwayListener {
+		private static final long serialVersionUID = 1L;
+
 		int element;
 		public NewElementAction(int type) {
 			super();
@@ -334,6 +346,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class StackAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		StackType type;
 		
 		public StackAction(StackType t) {
@@ -351,6 +365,7 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class AlignAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
 		AlignType type;
 
 		public AlignAction(AlignType t) {
@@ -389,7 +404,7 @@ public class CommonActions implements ApplicationEventListener {
 		
 		public void actionPerformed(ActionEvent e) {
 			if(element instanceof Graphics) {
-				PathwayElement p = ((Graphics)element).getGmmlData();
+				PathwayElement p = ((Graphics)element).getPathwayElement();
 				PathwayElementDialog pd = PathwayElementDialog.getInstance(
 						p, !element.getDrawing().isEditMode(), null, parent);
 				if(pd != null) {
@@ -403,6 +418,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class AddLiteratureAction extends PathwayElementDialogAction {
+		private static final long serialVersionUID = 1L;
+
 		public AddLiteratureAction(Component parent, VPathwayElement e) {
 			super(parent, e);
 			putValue(Action.NAME, "Add literature reference");
@@ -412,7 +429,7 @@ public class CommonActions implements ApplicationEventListener {
 		
 		public void actionPerformed(ActionEvent e) {
 			if(element instanceof Graphics) {
-				BiopaxElementManager m = new BiopaxElementManager(((Graphics)element).getGmmlData());
+				BiopaxElementManager m = new BiopaxElementManager(((Graphics)element).getPathwayElement());
 				PublicationXRef xref = new PublicationXRef(m.getUniqueID());
 				
 				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, parent);
@@ -429,6 +446,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class EditLiteratureAction extends PathwayElementDialogAction {
+		private static final long serialVersionUID = 1L;
+
 		public EditLiteratureAction(Component parent, VPathwayElement e) {
 			super(parent, e);
 			putValue(Action.NAME, "Edit literature references");
@@ -442,6 +461,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class PropertiesAction extends PathwayElementDialogAction {
+		private static final long serialVersionUID = 1L;
+
 		public PropertiesAction(Component parent, VPathwayElement e) {
 			super(parent, e);
 			putValue(Action.NAME, "Properties");

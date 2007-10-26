@@ -211,7 +211,6 @@ class PwyDoc
 		for (PathwayElement oldElt : elts)
 		{						
 			int maxScore = 0;
-			PathwayElement maxNewElt = null;
 			for (PathwayElement newElt : newDoc.getElts())
 			{
 				int score = scoreMatrix.get (oldElt, newElt);

@@ -27,20 +27,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.data.Gex;

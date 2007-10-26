@@ -58,17 +58,17 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 		if(drawing == null) return; //No drawing open
 		
 		if(highlight) { 
-			Row sr = (Row) //Get selected searchresult
+			Row sr = (Row) //Get selected search result
 			((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
 			if(sr == null) return; //Nothing selected
 			
 			try {
-				ArrayList idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
+				ArrayList<String> idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
 				GeneProduct gp = null;
 				for(VPathwayElement o : drawing.getDrawingObjects()) {
 					if(o instanceof GeneProduct) {
 						gp = (GeneProduct)o;
-						if(idsFound.contains(gp.getID())) gp.highlight();
+						if(idsFound.contains(gp.getPathwayElement().getGeneID())) gp.highlight();
 					}
 				}
 				drawing.redraw();

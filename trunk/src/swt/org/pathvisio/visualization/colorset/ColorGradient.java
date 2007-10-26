@@ -279,7 +279,7 @@ public class ColorGradient extends ColorSetObject {
 			Composite nameComp = createNameComposite(this);
 			nameComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
-			Composite buttonComp = createButtonComp(this);
+			createButtonComp(this);
 
 			Composite tableComp = createColorTable(this);
 			tableComp.setLayoutData(new GridData(GridData.FILL_BOTH));

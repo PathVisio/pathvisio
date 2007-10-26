@@ -36,6 +36,7 @@ import javax.swing.border.CompoundBorder;
  * Copyright 2005 Mammoth Software LLC
  */
 public class RolloverButton extends JButton {
+	private static final long serialVersionUID = 1L;
 	
 	public RolloverButton() {
 		init();

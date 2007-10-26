@@ -17,16 +17,15 @@
 package org.pathvisio.gpmldiff;
 
 import javax.swing.*;
-import java.awt.*;
 import java.net.URL;
 import java.io.File;
-import java.io.FileNotFoundException;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 
 public class AppletMain extends JApplet
 {
+	private static final long serialVersionUID = 1L;
 	GpmlDiffWindow panel;
 	
 	void openUrl(int pwyType, String param)

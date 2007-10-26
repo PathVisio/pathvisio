@@ -20,10 +20,10 @@ import java.util.EventObject;
 
 /**
    Event fired in response to changes to the visualization model, such
-   as the addition / modification of a plugin, changes to
-   visualization settings or addintion / removal of a visualization.
+   as the addition / modification of a plug-in, changes to
+   visualization settings or addition / removal of a visualization.
 
-   This enables ui elements to keep up-to-date
+   This enables UI elements to keep up-to-date
    with visualizations while the user adjusts them.
  */
 public class VisualizationEvent extends EventObject

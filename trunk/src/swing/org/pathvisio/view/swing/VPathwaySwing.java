@@ -25,8 +25,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -57,6 +55,8 @@ import org.pathvisio.view.VPathwayWrapper;
 
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		MouseMotionListener, MouseListener, KeyListener, VPathwayListener {
+	private static final long serialVersionUID = 1L;
+
 	VPathway child;
 
 	JScrollPane container;
@@ -245,6 +245,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 	
 	class PathwayToolTip extends JToolTip {
+		private static final long serialVersionUID = 1L;
+
 		public PathwayToolTip(List<VPathwayElement> elements) {
 			for(ToolTipProvider p : toolTipProviders) {
 				Component c = p.createToolTipComponent(this, elements);

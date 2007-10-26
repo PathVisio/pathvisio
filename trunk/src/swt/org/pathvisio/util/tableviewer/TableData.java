@@ -87,7 +87,7 @@ public class TableData {
 			if(c != null) c.setNumeric(value);
 		}
 		
-		public void setCell(String name, ArrayList value) {
+		public void setCell(String name, ArrayList<String> value) {
 			Cell c = cells.get(colByName(name));
 			if(c != null) c.setArray(value);
 		}
@@ -133,7 +133,7 @@ public class TableData {
 				
 		private String textValue;
 		private double numValue;
-		private ArrayList arrayValue;
+		private ArrayList<String> arrayValue;
 		
 		private int type;
 		
@@ -160,7 +160,7 @@ public class TableData {
 		}
 		
 		public double getNumeric() { return numValue; }
-		public ArrayList getArray() { return arrayValue; }
+		public ArrayList<String> getArray() { return arrayValue; }
 		
 		public void setText(String value) {
 			setType(TYPE_TEXT);
@@ -170,7 +170,7 @@ public class TableData {
 			setType(TYPE_NUM);
 			numValue = value; 
 		}
-		public void setArray(ArrayList value) { 
+		public void setArray(ArrayList<String> value) { 
 			setType(TYPE_ARRAYLIST);
 			arrayValue = value; 
 		}

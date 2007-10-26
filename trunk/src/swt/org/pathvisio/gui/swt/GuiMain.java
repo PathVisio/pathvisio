@@ -50,7 +50,6 @@ import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
 import org.pathvisio.view.MIMShapes;
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * This class contains the main method and is responsible for initiating 

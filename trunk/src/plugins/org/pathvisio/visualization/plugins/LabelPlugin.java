@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.jdom.Element;
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Utils;
@@ -204,7 +203,7 @@ public class LabelPlugin extends VisualizationPlugin {
 	Font getFont(boolean adjustZoom) {
 		Font f = font == null ? DEFAULT_FONT : font;
 		if(adjustZoom) {
-			int fs = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
+			//int fs = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
 			f = new Font(f.getName(), f.getStyle(), f.getSize());
 		}
 		return f;
@@ -310,9 +309,9 @@ public class LabelPlugin extends VisualizationPlugin {
 	
 	private String getLabelText(GeneProduct g) {
 		switch(style) {
-		case STYLE_ID: 		return g.getGmmlData().getGeneID();
+		case STYLE_ID: 		return g.getPathwayElement().getGeneID();
 		case STYLE_SYMBOL:
-		default:			return g.getGmmlData().getTextLabel();
+		default:			return g.getPathwayElement().getTextLabel();
 		}
 	}
 

@@ -34,6 +34,8 @@ import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 
 public class ProgressDialog extends JDialog implements ActionListener, ProgressListener {
+	private static final long serialVersionUID = 1L;
+
 	private final String CANCEL = "Cancel";
 	
 	JLabel task;

@@ -19,6 +19,8 @@ package org.pathvisio.view.swing;
 import java.awt.event.MouseEvent;
 
 public class SwingMouseEvent extends org.pathvisio.view.MouseEvent {
+	private static final long serialVersionUID = 1L;
+
 	MouseEvent awtEvent;
 	
 	public SwingMouseEvent(MouseEvent e) {

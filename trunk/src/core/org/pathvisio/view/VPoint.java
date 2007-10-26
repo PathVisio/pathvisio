@@ -64,8 +64,8 @@ public class VPoint extends VPathwayElement {
 	
 	protected void link(Graphics g) {
 		if(lines.contains(g)) return; //Prevent linking to self
-		String id = g.getGmmlData().getGraphId();
-		if(id == null) id = g.getGmmlData().setGeneratedGraphId();
+		String id = g.getPathwayElement().getGraphId();
+		if(id == null) id = g.getPathwayElement().setGeneratedGraphId();
 		for(MPoint p : mPoints) p.setGraphRef(id);
 	}
 	

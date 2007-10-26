@@ -97,7 +97,7 @@ public class GpmlTransfer extends ByteArrayTransfer
 				 return null;
 
 			 //TODO
-			 String x = "" + buffer;
+			 //String x = "" + buffer;
 			 Object result = null;
 			 return result;
 		}

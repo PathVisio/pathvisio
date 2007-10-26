@@ -18,7 +18,6 @@ package org.pathvisio.gui.swt.awt;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 
 import org.eclipse.swt.widgets.Composite;
 

@@ -36,7 +36,7 @@ class BetterSim extends SimilarityFunction
 		List<PropertyType> newProps = newE.getAttributes(true);
 
 		int oldN = oldProps.size();
-		int newN = newProps.size();
+		//int newN = newProps.size();
 
 		int possibleScore = 0;
 		int actualScore = 0;

@@ -17,7 +17,6 @@
 package org.pathvisio.model;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -909,7 +908,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
-		biopaxRefs = (List<String>)((ArrayList)src.biopaxRefs).clone();
+		biopaxRefs = (List<String>)((ArrayList<String>)src.biopaxRefs).clone();
 		if(src.biopax != null) {
 			System.out.println("Copying " + biopax);
 			biopax = (Document)src.biopax.clone();			

@@ -28,6 +28,8 @@ import org.pathvisio.data.Gdb;
  *
  */
 public class BackpagePane extends JEditorPane implements BackpageListener {	
+	private static final long serialVersionUID = 1L;
+
 	public BackpagePane() {
 		super();
 		setEditable(false);

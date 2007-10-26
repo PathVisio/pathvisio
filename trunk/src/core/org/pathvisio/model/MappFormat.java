@@ -524,7 +524,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		// Create the GenMAPP --> GPML mappings list for use in the switch
 		// statement
 
-		List typeslist = Arrays.asList(new String[] { 
+		List<String> typeslist = Arrays.asList(new String[] { 
 				"Arrow", "DottedArrow", "DottedLine", "Line",
 				"Brace", "Gene", "InfoBox", "Label", "Legend", "Oval",
 				"Rectangle", "TBar", "Receptor", "LigandSq",  "ReceptorSq",
@@ -1033,20 +1033,6 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         unmapRotation (o, mappObject);
     }
     
-	/**
-	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
-	 * @deprecated Use {@link Organism#fromLatinName(String)} instead
-	 */
-	private static final HashMap<String,String> code2organism = initOrganism2code();
-
-	private static HashMap<String, String> initOrganism2code()
-	{
-		HashMap<String, String> result = new HashMap<String,String>();
-		for(int i = 0; i < organism_latin_name.length; i++)
-			result.put(organism_short_code[i], organism_latin_name[i]);
-		return result;
-	}
-	
 	private static String[] extensions = new String[] { "mapp" };
 
 	public String getName() {

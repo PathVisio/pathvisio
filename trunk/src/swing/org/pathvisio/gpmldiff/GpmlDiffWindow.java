@@ -21,9 +21,6 @@ import java.io.IOException;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Pathway;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
@@ -32,7 +29,8 @@ import org.pathvisio.gui.swing.WrapLayout;
 
 class GpmlDiffWindow extends JPanel implements VPathwayListener
 {
-
+	private static final long serialVersionUID = 1L;
+	
 	private JScrollPane[] pwyPane = new JScrollPane[2];
 	private JToolBar toolbar = null;
 	
@@ -52,7 +50,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	
 	public void setFile (int pwyType, File f)
 	{
-		Pathway pwy = new Pathway();
+		//Pathway pwy = new Pathway();
 		doc[pwyType] = PwyDoc.read (f);
 		assert (doc[pwyType] != null);
 					
@@ -99,6 +97,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	
 	private class LoadPwyAction extends AbstractAction
 	{
+		private static final long serialVersionUID = 1L;
 		private int pwyType;
 		private JPanel parent;
 		
@@ -144,6 +143,8 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 */
 	class CenterAction extends AbstractAction
 	{
+		private static final long serialVersionUID = 1L;
+
 		public CenterAction()
 		{
 			super ("Center");
@@ -156,6 +157,8 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 
 	private class ZoomAction extends AbstractAction
 	{
+		private static final long serialVersionUID = 1L;
+
 		double actionZoomFactor;
 		
 		public ZoomAction(double zf)

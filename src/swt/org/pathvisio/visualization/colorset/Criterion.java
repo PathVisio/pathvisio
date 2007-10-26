@@ -32,7 +32,7 @@ public class Criterion {
 		
 	private Exception parseException;
 	
-	CriterionComposite configComp;
+	RuleComposite configComp;
 		
 	public String getExpression() {  
 		return expression == null ? "" : expression; 
@@ -116,13 +116,13 @@ public class Criterion {
 		symTab.clear();
 	}
 		
-	public CriterionComposite getConfigComposite() {
+	public RuleComposite getConfigComposite() {
 		return configComp;
 	}
 	
-	public CriterionComposite createConfigComposite(Composite parent) {
+	public RuleComposite createConfigComposite(Composite parent) {
 		if(configComp != null && !configComp.isDisposed()) return configComp;
-		configComp = new CriterionComposite(parent, this);
+		configComp = new RuleComposite(parent, this);
 		return configComp;
 	}
 	

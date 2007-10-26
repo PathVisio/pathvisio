@@ -51,7 +51,7 @@ import org.pathvisio.visualization.LegendPanel.CollapseGroup.CollapseListener;
 import org.pathvisio.visualization.Visualization.PluginSet;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
-import org.pathvisio.visualization.colorset.ColorCriterion;
+import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorSet;
@@ -392,7 +392,7 @@ public class LegendPanel
 	}
 	
 	/**
-	 * This class shows the legend for all {@link ColorCriterion} in a color-set as well as
+	 * This class shows the legend for all {@link ColorRule} in a color-set as well as
 	 * the 'special colors' ({@link ColorSet#COLOR_NO_GENE_FOUND}, {@link COLORSET#COLOR_NO_DATA_FOUND},
 	 * {@link ColorSet#COLOR_NO_CRITERIA_MET})
 	 * @author Thomas
@@ -452,8 +452,8 @@ public class LegendPanel
 			//Draw CLabel for every criterion
 			for(ColorSetObject co : colorSet.getObjects())
 			{
-				if(!(co instanceof ColorCriterion)) continue; //skip objects other than criretia
-				ColorCriterion cc = (ColorCriterion)co;
+				if(!(co instanceof ColorRule)) continue; //skip objects other than criretia
+				ColorRule cc = (ColorRule)co;
 				c = SwtUtils.changeColor(c, cc.getColor(), getDisplay());
 				createCriterionLabel(parent, cc.getName() + "\n(" + cc.getCriterion().getExpression() + ")", c);
 			}

@@ -59,7 +59,7 @@ import org.pathvisio.util.JarUtils;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.visualization.colorset.Criterion;
-import org.pathvisio.visualization.colorset.CriterionComposite;
+import org.pathvisio.visualization.colorset.RuleComposite;
 
 
 public class RFunctionLoader {
@@ -405,7 +405,7 @@ public class RFunctionLoader {
 					}
 				});
 							
-				final CriterionComposite critConf = criterion.createConfigComposite(contents);
+				final RuleComposite critConf = criterion.createConfigComposite(contents);
 				GridData critGrid = new GridData(GridData.FILL_BOTH);
 				critGrid.horizontalSpan = 2;
 				critConf.setLayoutData(critGrid);

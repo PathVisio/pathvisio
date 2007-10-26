@@ -34,15 +34,30 @@ import org.pathvisio.util.ColorConverter;
  * This class represents a colorset, a set of criteria that can be evaluated and 
  * results in a color given a collection of data
  */
-public class ColorSet {	
+public class ColorSet 
+{	
+	/** constant to access the special fallback color, 
+	 * for when none of the criteria are met. */
 	public static final int ID_COLOR_NO_CRITERIA_MET = 1;
+	/**
+	 * constant to access the special fallback color,
+	 * for when this gene could not be found in the gene database
+	 */
 	public static final int ID_COLOR_NO_GENE_FOUND = 2;
+	/**
+	 * constant to access the special fallback color,
+	 * for when the gene could be found in the gene database,
+	 * but no data is available for this gene in the dataset.
+	 */
 	public static final int ID_COLOR_NO_DATA_FOUND = 3;
 	
 	Color color_no_criteria_met = GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_CRIT_MET);
 	Color color_no_gene_found = GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_GENE_FOUND);
 	Color color_no_data_found = GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_DATA_FOUND);
 		
+	/**
+	 * A user can give each colorset a name
+	 */
 	String name;
 	
 	public List<ColorSetObject> colorSetObjects;
@@ -79,6 +94,11 @@ public class ColorSet {
 		fireModifiedEvent();
 	}
 	
+	/**
+	 * Get one of the special case colors.
+	 * @param id one of the ColorSet.ID_XXX constants
+	 * @return
+	 */
 	public Color getColor(int id) {
 		switch(id) {
 		case ID_COLOR_NO_CRITERIA_MET:
@@ -101,41 +121,24 @@ public class ColorSet {
 		fireModifiedEvent();
 	}
 	
-	public void removeObject(ColorSetObject o) {
+	/**
+	 * Remove a ColorSetObject from this ColorSet.
+	 * @param o
+	 */
+	public void removeObject(ColorSetObject o) 
+	{
 		colorSetObjects.remove(o);
 		fireModifiedEvent();
 	}
 	
-	public List<ColorSetObject> getObjects() {
+	/**
+	 * Obtain all ColorSetObjects (Rules / Gradients) in this ColorSet.
+	 */
+	public List<ColorSetObject> getObjects() 
+	{
 		return colorSetObjects;
 	}
 	
-	/**
-	 * Checks whether this color-set contains one or more color gradients
-	 * (instances of class {@link ColorGradient}
-	 * @return true if one or more of the objects of this color-set is an instance of
-	 * {@link ColorGradient}
-	 */
-	public boolean hasColorGradient() {
-		for(ColorSetObject o : colorSetObjects) {
-			if(o instanceof ColorGradient) return true;
-		}
-		return false;
-	}
-
-	public boolean nameExists(String name) {
-		for(ColorSetObject o : colorSetObjects) 
-			if(o.getName().equalsIgnoreCase(name)) return true;
-		return false;
-	}
-	
-	public String getNewName(String prefix) {
-		int i = 1;
-		String name = prefix;
-		while(nameExists(name)) name = prefix + "-" + i++;
-		return name;
-	}
-		
 	/**
 	 * Get the color for the given expression data by evaluating all colorset objects
 	 * @param data		the expression data to get the color for
@@ -193,8 +196,8 @@ public class ColorSet {
 				String name = elm.getName();
 				if(name.equals(ColorGradient.XML_ELEMENT_NAME))
 					cs.addObject(new ColorGradient(cs, elm));
-				else if(name.equals(ColorCriterion.XML_ELEMENT_NAME))
-					cs.addObject(new ColorCriterion(cs, elm));
+				else if(name.equals(ColorRule.XML_ELEMENT_NAME))
+					cs.addObject(new ColorRule(cs, elm));
 				else if(name.equals(XML_ELM_COLOR_NCM))
 					cs.setColor(ID_COLOR_NO_CRITERIA_MET, ColorConverter.parseColorElement(elm));
 				else if(name.equals(XML_ELM_COLOR_NGF))

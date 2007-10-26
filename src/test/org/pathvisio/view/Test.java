@@ -26,83 +26,58 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
-//import org.eclipse.swt.SWT;
-//import org.eclipse.swt.layout.FillLayout;
-//import org.eclipse.swt.widgets.Display;
-//import org.eclipse.swt.widgets.Shell;
-
-//import org.pathvisio.model.Pathway;
-//import org.pathvisio.model.PathwayElement;
-//import org.pathvisio.model.ObjectType;
 
 public class Test extends TestCase {
 	
 	VPathway drawing;
-//    private Shell shell;
 	
 	public void setUp()
 	{
-		//~ shell = new Shell(Display.getDefault());
-        //~ shell.setLayout(new FillLayout());
-        //~ drawing = new VPathway(shell, SWT.NO_BACKGROUND);
+        //drawing = new VPathway();
 	}
-
-    protected void tearDown() throws Exception {
-        //~ shell.dispose();
-    }
-    
-	//~ public void testInit()
-	//~ {
-		//~ Pathway data = new Pathway();
-		//~ drawing.fromGmmlData(data);
-		//~ assertEquals (drawing.getGmmlData(), data);
-		
-		//~ data.add(new PathwayElement(ObjectType.DATANODE));
-	//~ }
-    
-    public void testCopyPaste() {
-    	Pathway pSource = new Pathway();
-    	VPathway vpSource = SwingEngine.getCurrent().createWrapper().createVPathway();
-    	vpSource.fromGmmlData(pSource);
+        
+//     public void testCopyPaste() {
+//     	Pathway pSource = new Pathway();
+//     	VPathway vpSource = SwingEngine.getCurrent().createWrapper().createVPathway();
+//     	vpSource.fromGmmlData(pSource);
     	
-    	Pathway pTarget = new Pathway();
-    	VPathway vpTarget = SwingEngine.getCurrent().createWrapper().createVPathway();
-    	vpTarget.fromGmmlData(pTarget);
+//     	Pathway pTarget = new Pathway();
+//     	VPathway vpTarget = SwingEngine.getCurrent().createWrapper().createVPathway();
+//     	vpTarget.fromGmmlData(pTarget);
     	
-    	//Test copying regular elements
-    	PathwayElement p1 = new PathwayElement(ObjectType.DATANODE);
-    	p1.setGeneID("1234");
-    	pSource.add(p1);
-    	vpSource.addObject(new GeneProduct(vpSource, p1));
-    	vpSource.selectObject(vpSource.getPathwayElementView(p1));
-    	vpSource.copyToClipboard();
+//     	//Test copying regular elements
+//     	PathwayElement p1 = new PathwayElement(ObjectType.DATANODE);
+//     	p1.setGeneID("1234");
+//     	pSource.add(p1);
+//     	vpSource.addObject(new GeneProduct(vpSource, p1));
+//     	vpSource.selectObject(vpSource.getPathwayElementView(p1));
+//     	vpSource.copyToClipboard();
     	    	
-    	vpTarget.pasteFromClipboard();	
+//     	vpTarget.pasteFromClipboard();	
     	
-    	PathwayElement pasted = null;
-    	for(PathwayElement e : pTarget.getDataObjects()) {
-    		if("1234".equals(e.getGeneID())) {
-    			pasted = e;
-    		}
-    	}
-    	assertNotNull(pasted);
+//     	PathwayElement pasted = null;
+//     	for(PathwayElement e : pTarget.getDataObjects()) {
+//     		if("1234".equals(e.getGeneID())) {
+//     			pasted = e;
+//     		}
+//     	}
+//     	assertNotNull(pasted);
     	
-    	//Now copy mappinfo
-    	PathwayElement info = pSource.getMappInfo();
-    	info.setMapInfoName("test pathway");
-    	vpSource.selectObject(vpSource.getPathwayElementView(info));
-    	vpSource.copyToClipboard();
+//     	//Now copy mappinfo
+//     	PathwayElement info = pSource.getMappInfo();
+//     	info.setMapInfoName("test pathway");
+//     	vpSource.selectObject(vpSource.getPathwayElementView(info));
+//     	vpSource.copyToClipboard();
     	
-    	vpTarget.pasteFromClipboard();
+//     	vpTarget.pasteFromClipboard();
     	
-    	//test if mappinfo has been pasted to the target pathway
-    	assertTrue("test pathway".equals(pTarget.getMappInfo().getMapInfoName()));
-    }
+//     	//test if mappinfo has been pasted to the target pathway
+//     	assertTrue("test pathway".equals(pTarget.getMappInfo().getMapInfoName()));
+//     }
     
     public void testDrawingOrder() {
     	Pathway p = new Pathway();

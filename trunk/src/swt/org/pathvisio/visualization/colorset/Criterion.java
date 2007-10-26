@@ -129,9 +129,10 @@ public class Criterion {
 	}
 	
 	void fireModifiedEvent() {
-		VisualizationManager.fireVisualizationEvent(
-				new VisualizationEvent(this, VisualizationEvent.COLORSET_MODIFIED));
+		ColorSetManager.fireColorSetEvent(
+				new ColorSetEvent(this, ColorSetEvent.COLORSET_MODIFIED));
 	}
+	
 	//Boolean expression parser by Martijn
 	String input;
 	int charNr;

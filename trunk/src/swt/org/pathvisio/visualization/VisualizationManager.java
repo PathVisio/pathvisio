@@ -120,7 +120,9 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	public static void setCurrent(int index) {
 		current = index;
 		fireVisualizationEvent(
-				new VisualizationEvent(null, VisualizationEvent.VISUALIZATION_SELECTED));
+				new VisualizationEvent(
+					VisualizationManager.class,
+					VisualizationEvent.VISUALIZATION_SELECTED));
 	}
 
 	/**
@@ -174,7 +176,9 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	public static void addVisualization(Visualization v) {
 		visualizations.add(v);
 		fireVisualizationEvent(
-				new VisualizationEvent(null, VisualizationEvent.VISUALIZATION_ADDED));
+				new VisualizationEvent(
+					VisualizationManager.class,
+					VisualizationEvent.VISUALIZATION_ADDED));
 	}
 
 	/**
@@ -184,7 +188,9 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		if(index < 0 || index >= visualizations.size()) return; //Ignore wrong index
 		visualizations.remove(index);
 		fireVisualizationEvent(
-				new VisualizationEvent(null, VisualizationEvent.VISUALIZATION_REMOVED));
+				new VisualizationEvent(
+					VisualizationManager.class,
+					VisualizationEvent.VISUALIZATION_REMOVED));
 	}
 
 	/**
@@ -380,7 +386,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		}
 
 		public void visualizationEvent(VisualizationEvent e) {
-			switch(e.type) {
+			switch(e.getType()) {
 			case(VisualizationEvent.VISUALIZATION_ADDED):
 			case(VisualizationEvent.VISUALIZATION_REMOVED):
 			case(VisualizationEvent.VISUALIZATION_MODIFIED):
@@ -415,10 +421,18 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	 * Add a {@link VisualizationListener}, that will be notified if an
 	 * event related to visualizations occurs
 	 */
-	public static void addListener(VisualizationListener l) {
+	public static void addListener(VisualizationListener l)
+	{
 		if(listeners == null)
 			listeners = new ArrayList<VisualizationListener>();
 		listeners.add(l);
+	}
+
+	public static void removeListener (VisualizationListener l)
+	{
+		if (listeners == null)
+			return;
+		listeners.remove (l);
 	}
 
 	/**

@@ -52,11 +52,13 @@ import org.pathvisio.visualization.Visualization.PluginSet;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.colorset.ColorCriterion;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorSetEvent;
 import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
 import org.pathvisio.visualization.colorset.ColorSetObject;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.VisualizationPlugin;
 
 /**
@@ -64,7 +66,9 @@ import org.pathvisio.visualization.plugins.VisualizationPlugin;
  * @author Thomas
  *
  */
-public class LegendPanel extends ScrolledComposite implements VisualizationListener {
+public class LegendPanel
+	extends ScrolledComposite implements VisualizationListener, ColorSetListener
+{
 	static final String FONT = "arial narrow";
 	static final int FONTSIZE = 8;
 
@@ -88,6 +92,7 @@ public class LegendPanel extends ScrolledComposite implements VisualizationListe
 		createContents();
 		rebuildContent();
 		VisualizationManager.addListener(this);
+		ColorSetManager.addListener(this);
 	}
 
 	/**
@@ -612,18 +617,30 @@ public class LegendPanel extends ScrolledComposite implements VisualizationListe
 		}
 	}
 
-	public void visualizationEvent(final VisualizationEvent e) {
+	public void colorSetEvent (final ColorSetEvent e)
+	{
 		getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				switch(e.type) {
-				case VisualizationEvent.COLORSET_ADDED:
-				case VisualizationEvent.COLORSET_REMOVED:
+				switch(e.getType()) {
+				case ColorSetEvent.COLORSET_ADDED:
+				case ColorSetEvent.COLORSET_REMOVED:
 					rebuildContent();
 					break;
 				default:
 					refreshContent();
 				}
 			}
+		});
+	}
+	
+	public void visualizationEvent(final VisualizationEvent e)
+	{
+		getDisplay().asyncExec(new Runnable()
+		{
+			public void run()
+			{
+				refreshContent();
+			}			
 		});
 	}
 

@@ -35,6 +35,8 @@ import org.pathvisio.data.DataSources;
 import org.pathvisio.model.PathwayElement;
 
 public class DataNodeDialog extends PathwayElementDialog {
+	private static final long serialVersionUID = 1L;
+	
 	public DataNodeDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(e, readonly, frame, "DataNode properties", locationComp);
 	}

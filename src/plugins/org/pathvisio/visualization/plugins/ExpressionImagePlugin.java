@@ -86,7 +86,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 		"This plugin displays one or more images on Gene Product objects and \n" +
 		"colors the image(s) accoring to the expression value for the Gene Product.";
 		
-	static final Color DEFAULT_TRANSPARENT = Engine.getCurrent().TRANSPARENT_COLOR;
+	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
 		
 	List<URL> imageURLs;
 	

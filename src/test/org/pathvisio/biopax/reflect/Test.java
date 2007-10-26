@@ -21,7 +21,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.jdom.Element;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;

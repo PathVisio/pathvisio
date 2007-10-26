@@ -652,11 +652,11 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			if(e.affectedObject instanceof Graphics)
-				addGmmlDataObject(((Graphics)e.affectedObject).getGmmlData());
+				addGmmlDataObject(((Graphics)e.affectedObject).getPathwayElement());
 			break;
 		case SelectionEvent.OBJECT_REMOVED:
 			if(e.affectedObject instanceof Graphics)
-				removeGmmlDataObject(((Graphics)e.affectedObject).getGmmlData());
+				removeGmmlDataObject(((Graphics)e.affectedObject).getPathwayElement());
 			break;
 		case SelectionEvent.SELECTION_CLEARED:
 			 clearGmmlDataObjects();

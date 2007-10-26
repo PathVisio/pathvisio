@@ -29,8 +29,6 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ColorConverter;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationEvent;
 
 /**
  * This class represents a colorset, a set of criteria that can be evaluated and 
@@ -151,11 +149,11 @@ public class ColorSet {
 		if(value == null || value.equals(Double.NaN)) return color_no_data_found;
 		
 		Color rgb = color_no_criteria_met; //The color to return
-		Iterator it = colorSetObjects.iterator();
-		//Evaluate all colorset objects, return when a valid color is found
+		Iterator<ColorSetObject> it = colorSetObjects.iterator();
+		//Evaluate all ColorSet objects, return when a valid color is found
 		while(it.hasNext())
 		{
-			ColorSetObject gc = (ColorSetObject)it.next();
+			ColorSetObject gc = it.next();
 			try{ 
 				Color gcRgb = gc.getColor(data, sampleId);
 				if(gcRgb != null) {

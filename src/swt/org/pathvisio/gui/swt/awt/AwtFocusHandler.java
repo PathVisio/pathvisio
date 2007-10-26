@@ -210,7 +210,7 @@ class AwtFocusHandler implements FocusListener, ContainerListener,
     // Returns true if any popup has been hidden
     private boolean hidePopups() {
         boolean result = false;
-        List popups = new ArrayList();
+        List popups = new ArrayList<Component>();
         assert EventQueue.isDispatchThread();    // On AWT event thread
         
         // Look for popups inside the frame's component hierarchy. 

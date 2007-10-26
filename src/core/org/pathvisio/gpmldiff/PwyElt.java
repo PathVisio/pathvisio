@@ -33,7 +33,6 @@ class PwyElt
 	{
 		if (elt == null) return "null"; // TODO, why is this necessary?
 		String result = "[" + ObjectType.getTagMapping (elt.getObjectType());
-		String tmp;
 		List<PropertyType> props = elt.getAttributes(true);
 		if (props.contains(PropertyType.TEXTLABEL))
 			result += ",lbl=" + elt.getProperty(PropertyType.TEXTLABEL);

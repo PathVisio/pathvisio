@@ -16,52 +16,20 @@
 //
 package org.pathvisio.visualization;
 
-import java.awt.Component;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.swing.JToolTip;
-
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gex.ExpressionDataEvent;
-import org.pathvisio.data.Gex.ExpressionDataListener;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swt.SwtEngine;
-import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.view.swing.ToolTipProvider;
-import org.pathvisio.view.swing.VPathwaySwing;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
 /**

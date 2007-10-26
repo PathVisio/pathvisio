@@ -49,7 +49,7 @@ class AwtDialogListener implements AWTEventListener, ComponentListener {
     
     // modalDialogs should be accessed only from the AWT thread, so no
     // synchronization is needed. 
-    private final List modalDialogs = new ArrayList();
+    private final List modalDialogs = new ArrayList<Dialog>();
     private final Display display;
     
     /**

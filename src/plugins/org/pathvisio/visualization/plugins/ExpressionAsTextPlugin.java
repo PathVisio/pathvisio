@@ -106,8 +106,8 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = Gex.getCachedData();
 			
-			String id = gp.getGmmlData().getXref();
-			String db = DataSources.sysName2Code.get(gp.getGmmlData().getDataSource());
+			String id = gp.getPathwayElement().getXref();
+			String db = DataSources.sysName2Code.get(gp.getPathwayElement().getDataSource());
 			IdCodePair idc = new IdCodePair(id, db);
 			
 			if(cache == null || !cache.hasData(idc)|| useSamples.size() == 0) {
@@ -140,7 +140,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = Gex.getCachedData();
 			
-			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
+			IdCodePair idc = new IdCodePair(
+					gp.getPathwayElement().getGeneID(), 
+					gp.getSystemCode());
 			
 			if(!cache.hasData(idc)|| useSamples.size() == 0) {
 				return null;

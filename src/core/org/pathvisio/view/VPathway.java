@@ -102,20 +102,6 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * Count how many of the drawingObjects are handles
-	 */
-	private int getHandleCount()
-	{
-		int result = 0;
-		for (VPathwayElement o : drawingObjects)
-		{
-			if (o instanceof Handle)
-				result++;
-		}
-		return result;
-	}
-
-	/**
 	 * The {@link VPathwayElement} that is pressed last mouseDown event}
 	 */
 	VPathwayElement pressedObject = null;
@@ -1441,16 +1427,6 @@ public class VPathway implements PathwayListener
 		}
 		selection.stopSelecting();
 		redrawDirtyRect();
-	}
-
-	/**
-	 * Select all gene products (datanodes) on the pathway
-	 * 
-	 * @deprecated use {@link #selectObjects(Class)} instead
-	 */
-	private void selectGeneProducts()
-	{
-		selectObjects(GeneProduct.class);
 	}
 
 	void selectAll()

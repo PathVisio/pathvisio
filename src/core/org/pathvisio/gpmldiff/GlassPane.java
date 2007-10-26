@@ -23,22 +23,16 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
-import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.BasicStroke;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.font.*;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.geom.GeneralPath;
-import java.text.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 
@@ -60,6 +54,8 @@ import javax.swing.*;
  */
 class GlassPane extends JPanel implements AWTEventListener
 {
+	private static final long serialVersionUID = 1L;
+
     private final JPanel frame;
     private Point mousePos = new Point();
 
@@ -173,7 +169,6 @@ class GlassPane extends JPanel implements AWTEventListener
 		FontRenderContext frc = g2.getFontRenderContext();
 
 		// first determine size.
-		int textHeight = 0;
 		int maxTextWidth = 0;
 
 		Font f = new Font("SansSerif", Font.PLAIN, HINT_FONT_SIZE);

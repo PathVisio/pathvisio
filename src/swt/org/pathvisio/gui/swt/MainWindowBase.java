@@ -177,10 +177,10 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	 */
 	private void cacheExpressionData()
 	{
-		if(Engine.getCurrent().isDrawingOpen())
+		if(Engine.getCurrent().hasVPathway())
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
-			//Check for neccesary connections
+			//Check for necessary connections
 			if(Gex.isConnected() && Gdb.isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());

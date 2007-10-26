@@ -26,6 +26,8 @@ import org.jdom.Element;
 import org.pathvisio.model.GpmlFormat;
 
 public class BiopaxElement extends Element {
+	private static final long serialVersionUID = 1L;
+	
 	private Set<PropertyType> validProperties;
 	private List<BiopaxProperty> properties;
 	

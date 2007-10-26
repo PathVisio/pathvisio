@@ -48,7 +48,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -118,7 +117,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		
 		drawArea(gp, area, g2d);
 		
-		Color c = gp.getGmmlData().getColor();
+		Color c = gp.getPathwayElement().getColor();
 		g2d.setColor(c);
 		g2d.draw(area);
 		
@@ -144,11 +143,11 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 					area.y,
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
-			IdCodePair idc = new IdCodePair(gp.getID(), gp.getSystemCode());
+			IdCodePair idc = new IdCodePair(gp.getPathwayElement().getGeneID(), gp.getSystemCode());
 			CachedData cache = Gex.getCachedData();
 			if(cache == null) continue;
 			
-			if(s.getColorSet() == null) continue; //No colorset for this sample
+			if(s.getColorSet() == null) continue; //No ColorSet for this sample
 			if(cache.hasData(idc)) 
 				drawSample(s, idc, r, g2d);
 			else 

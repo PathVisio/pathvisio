@@ -44,6 +44,8 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 public class PathwayTableModel extends AbstractTableModel implements SelectionListener, 
 									PathwayListener, 
 									ApplicationEventListener {
+	private static final long serialVersionUID = 1L;
+
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
 	
 	Collection<PathwayElement> input;
@@ -175,12 +177,12 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		case SelectionEvent.OBJECT_ADDED:
 			//System.err.println("OBJECT ADDED");
 			if(e.affectedObject instanceof Graphics)
-				addInput(((Graphics)e.affectedObject).getGmmlData());
+				addInput(((Graphics)e.affectedObject).getPathwayElement());
 			break;
 		case SelectionEvent.OBJECT_REMOVED:
 			//System.err.println("OBJECT REMOVED");
 			if(e.affectedObject instanceof Graphics)
-				removeInput(((Graphics)e.affectedObject).getGmmlData());
+				removeInput(((Graphics)e.affectedObject).getPathwayElement());
 			break;
 		case SelectionEvent.SELECTION_CLEARED:
 			//System.err.println("CLEARED");

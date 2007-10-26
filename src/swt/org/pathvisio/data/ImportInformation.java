@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.eclipse.swt.widgets.TableColumn;
 import org.pathvisio.debug.Logger;
 
 /**

@@ -1043,7 +1043,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	return s;
     }
     
-	public static final List rgbMappings = Arrays.asList(new double[][] {
+	public static final List<double[]> rgbMappings = Arrays.asList(new double[][] {
 			{0, 1, 1},		// aqua 
 			{0, 0, 0},	 	// black
 			{0, 0, 1}, 		// blue

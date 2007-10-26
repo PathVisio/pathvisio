@@ -18,7 +18,6 @@ package org.pathvisio.view;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -559,7 +558,7 @@ public class SelectionBox extends VPathwayElement
 		{
 			if (o instanceof Graphics)
 			{
-				PathwayElement g = ((Graphics) o).getGmmlData();
+				PathwayElement g = ((Graphics) o).getPathwayElement();
 				if (!(o instanceof Line))
 				{
 					o.vMoveBy(vdx, vdy);

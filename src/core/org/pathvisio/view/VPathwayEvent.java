@@ -22,6 +22,8 @@ import java.util.EventObject;
 import java.util.List;
 
 public class VPathwayEvent extends EventObject {
+	private static final long serialVersionUID = 1L;
+
 	public static final int ELEMENT_ADDED = 0;
 	public static final int EDIT_MODE_ON = 1;
 	public static final int EDIT_MODE_OFF = 2;

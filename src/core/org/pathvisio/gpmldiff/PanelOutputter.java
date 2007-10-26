@@ -17,7 +17,6 @@
 package org.pathvisio.gpmldiff;
 
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.Graphics;
@@ -110,7 +109,7 @@ class PanelOutputter extends DiffOutputter
 			if (velt instanceof Graphics)
 			{
 				Graphics g = (Graphics)velt;
-				if (g.getGmmlData() == target)
+				if (g.getPathwayElement() == target)
 				{
 					return velt;
 				}

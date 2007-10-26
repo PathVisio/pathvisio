@@ -60,7 +60,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	public void initSidePanel(Composite parent) { }
 
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
-		PathwayElement gd = g.getGmmlData();
+		PathwayElement gd = g.getPathwayElement();
 		String[] ids = parseIds(gd);
 		if(ids[0] != null) { //This is a shape
 			drawShape(ids[0], g, g2d);
@@ -75,7 +75,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	}
 	
 	void drawLineStart(String id, Graphics g, Graphics2D g2d) {
-		PathwayElement gd = g.getGmmlData();
+		PathwayElement gd = g.getPathwayElement();
 		drawRefMark( 
 				id,			
 				// TODO: this should be in visual coords
@@ -85,7 +85,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	}
 	
 	void drawLineEnd(String id, Graphics g, Graphics2D g2d) {
-		PathwayElement gd = g.getGmmlData();
+		PathwayElement gd = g.getPathwayElement();
 		drawRefMark( 
 				id,			
 				// TODO: this should be in visual coords
@@ -101,7 +101,7 @@ public class ColorByLinkPlugin extends VisualizationPlugin {
 	}
 	
 	void drawShape(String id, Graphics g, Graphics2D g2d) {
-		PathwayElement gd = g.getGmmlData();
+		PathwayElement gd = g.getPathwayElement();
 		Color oldRGB = gd.getColor();
 		gd.dontFireEvents(2);
 		gd.setColor(getRGB(id));

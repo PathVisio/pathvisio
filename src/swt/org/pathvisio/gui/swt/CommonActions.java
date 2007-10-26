@@ -384,7 +384,7 @@ public class CommonActions
 
 		public void run ()
 		{
-			if(Engine.getCurrent().isDrawingOpen())
+			if(Engine.getCurrent().hasVPathway())
 			{
 				VPathway drawing = Engine.getCurrent().getActiveVPathway();
 				Pathway pathway = Engine.getCurrent().getActivePathway();

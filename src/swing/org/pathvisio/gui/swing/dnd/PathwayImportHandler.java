@@ -23,7 +23,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +31,6 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
@@ -42,7 +40,9 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.swing.PathwayTransferable;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-public class PathwayImportHandler extends TransferHandler implements ClipboardOwner {	
+public class PathwayImportHandler extends TransferHandler implements ClipboardOwner {
+	
+	private static final long serialVersionUID = 1L;
 	static final int NOT_OWNER = -1;
 	int timesPasted; //Keeps track of how many times the same data is pasted
 	

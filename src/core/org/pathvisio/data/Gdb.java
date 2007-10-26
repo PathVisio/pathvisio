@@ -484,7 +484,7 @@ public abstract class Gdb {
 	 * Class to store an id/code combination, which represents
 	 * an unique gene product
 	 */
-	public static class IdCodePair implements Comparable {
+	public static class IdCodePair implements Comparable<IdCodePair> {
 		String id;
 		String code;
 		
@@ -512,8 +512,8 @@ public abstract class Gdb {
 			return idc.getId().equals(getId()) && idc.getCode().equals(getCode());
 		}
 
-		public int compareTo(Object o) {
-			IdCodePair idc = (IdCodePair)o;
+		public int compareTo (IdCodePair idc) 
+		{
 			return getName().compareTo(idc.getName());
 		}
 		

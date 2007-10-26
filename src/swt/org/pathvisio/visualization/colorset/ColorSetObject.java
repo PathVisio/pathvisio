@@ -28,9 +28,6 @@ import org.eclipse.swt.widgets.Text;
 import org.jdom.Element;
 import java.awt.Color;
 
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationEvent;
-
 /**
  * This class represent any object that can be present in a colorset
  * e.g. a gradient or boolean expression.

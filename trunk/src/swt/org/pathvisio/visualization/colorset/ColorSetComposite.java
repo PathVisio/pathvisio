@@ -68,10 +68,14 @@ import org.eclipse.swt.widgets.Text;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
-import org.pathvisio.visualization.colorset.ColorCriterion.ColorCriterionComposite;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorGradientComposite;
+import org.pathvisio.visualization.colorset.ColorGradientComposite;
 import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
 
+/**
+ * ColorSetComposite is one of the two tabs of the visualization dialog.
+ * This tab is responsible for letting the user customize colorsets,
+ * gradients and rules 
+ */
 public class ColorSetComposite extends Composite implements ColorSetListener {
 	final int colorLabelSize = 15;
 	ColorSet colorSet;
@@ -191,10 +195,10 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 					images.put(element, img);
 					return img;
 				}
-				if(element instanceof ColorCriterion) {
+				if(element instanceof ColorRule) {
 					disposeImage(img);
 					img = new Image(null, createColorImage(
-							SwtUtils.color2rgb(((ColorCriterion)element).getColor())));
+							SwtUtils.color2rgb(((ColorRule)element).getColor())));
 					images.put(element, img);
 					return img;
 				}
@@ -308,6 +312,7 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		ColorSetManager.newColorSet(null);
 		refreshCombo();
 		colorSetCombo.select(ColorSetManager.getColorSets().size() - 1);
+		addColorSetObject(); 
 	}
 	
 	void removeColorSet() {
@@ -315,9 +320,10 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		refreshCombo();
 	}
 	
-	void addColorSetObject() {
+	void addColorSetObject()
+	{
 		final int NEW_GRADIENT = 10;
-		final int NEW_EXPRESSION = 11;
+		final int NEW_RULE = 11;
 		Dialog dialog = new Dialog(getShell()) {
 			int newObject = NEW_GRADIENT;
 			public int open() {
@@ -331,12 +337,12 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 				final Button gradient = new Button(contents, SWT.RADIO);
 				gradient.setText("Color by gradient");
 				final Button expression = new Button(contents, SWT.RADIO);
-				expression.setText("Color by boolean expression");
+				expression.setText("Color by rule");
 				
 				SelectionListener lst = new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						if(e.widget == gradient) newObject =  NEW_GRADIENT;
-						else newObject = NEW_EXPRESSION;
+						else newObject = NEW_RULE;
 					}
 				};
 				
@@ -352,10 +358,10 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		ColorSetObject newCso = null;
 		switch(type) {
 		case NEW_GRADIENT:
-			newCso = new ColorGradient(colorSet, colorSet.getNewName("New gradient"));
+			newCso = new ColorGradient(colorSet);
 			break;
-		case NEW_EXPRESSION:
-			newCso = new ColorCriterion(colorSet, colorSet.getNewName("New expression"));
+		case NEW_RULE:
+			newCso = new ColorRule(colorSet);
 			break;
 		}
 		if(newCso != null) {
@@ -492,7 +498,7 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		StackLayout stack;
 		ColorSetObject input;
 		ColorGradientComposite gradientComp;
-		ColorCriterionComposite criterionComp;
+		ColorRuleComposite criterionComp;
 		Composite nothing;
 		
 		public ObjectSettingsComposite(Composite parent, int style) {
@@ -507,7 +513,7 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		
 		public boolean save() {
 			if(input instanceof ColorGradient) return gradientComp.save();
-			else if (input instanceof ColorCriterion) return criterionComp.save();
+			else if (input instanceof ColorRule) return criterionComp.save();
 			else return true;
 		}
 		
@@ -532,7 +538,7 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 			//Gradient
 			gradientComp = new ColorGradientComposite(this, SWT.NULL);
 			//Criterion
-			criterionComp = new ColorCriterionComposite(this, SWT.NULL);
+			criterionComp = new ColorRuleComposite(this, SWT.NULL);
 			//Nothing
 			new Composite(this, SWT.NULL);
 		}		

@@ -33,13 +33,13 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.pathvisio.data.Gex;
 
-public class CriterionComposite extends Composite {
+public class RuleComposite extends Composite {
 	ErrorArea errorArea;
 	Criterion criterion;
 	List symbolList;
 	Text exprText;
 	
-	public CriterionComposite(Composite parent, Criterion criterion) {
+	public RuleComposite(Composite parent, Criterion criterion) {
 		super(parent, SWT.NULL);
 		this.criterion = criterion;
 		createContents();

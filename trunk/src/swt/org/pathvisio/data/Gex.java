@@ -627,11 +627,11 @@ public class Gex implements ApplicationEventListener {
 	}
 	
 	public static void createDefaultColorSet(double minimum, double maximum){
-		Color green= new Color(0,1,0);
-		Color red = new Color(1,0,0);
-		Color yellow = new Color(1,1,0);
+		Color green= new Color(0,255,0);
+		Color red = new Color(255,0,0);
+		Color yellow = new Color(255,255,0);
 		ColorSet colorSet = new ColorSet("Default");
-		ColorGradient gradient=new ColorGradient(colorSet,"Default");
+		ColorGradient gradient = new ColorGradient(colorSet);
 		
 		ColorValuePair low = gradient.new ColorValuePair(green,minimum);
 		ColorValuePair middle = gradient.new ColorValuePair(red,(minimum+maximum)/2);

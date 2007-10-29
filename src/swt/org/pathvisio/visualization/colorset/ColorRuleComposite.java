@@ -30,20 +30,20 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.pathvisio.util.swt.SwtUtils;
 
-class ColorRuleComposite extends ConfigComposite 
+class ColorRuleComposite extends ColorSetObjectComposite 
 {
-	final int colorLabelSize = 15;
-	RuleComposite critComp;
-	Text exprText;
-	CLabel colorLabel;
-	org.eclipse.swt.graphics.Color color;
+	private final int colorLabelSize = 15;
+	private RuleComposite critComp;
+	private Text exprText;
+	private CLabel colorLabel;
+	private org.eclipse.swt.graphics.Color color;
 	
 	public ColorRuleComposite(Composite parent, int style) {
 		super(parent, style);
 	}
 	
-	void refresh() {
-		super.refresh();
+	protected void refresh()
+	{
 		critComp.refresh();
 		changeColorLabel(getInput() == null ? null : SwtUtils.color2rgb(getInput().getColor()));
 	}
@@ -51,16 +51,7 @@ class ColorRuleComposite extends ConfigComposite
 	ColorRule getInput() {
 		return (ColorRule)input;
 	}
-	
-//		public boolean save() {
-//			if(input != null) try {
-//				critComp.saveToCriterion();
-//			} catch(Exception e) {
-//				return false;
-//			}
-//			return true;
-//		}
-		
+			
 	public void setInput(ColorSetObject o) {
 		super.setInput(o);
 		if(o == null) critComp.setInput(null);
@@ -68,13 +59,13 @@ class ColorRuleComposite extends ConfigComposite
 		refresh();
 	}
 	
-	RGB askColor() {
+	private RGB askColor() {
 		ColorDialog dg = new ColorDialog(getShell());
 		dg.setRGB(SwtUtils.color2rgb(getInput().getColor()));
 		return dg.open();
 	}
 	
-	void changeColor(RGB rgb) {
+	private void changeColor(RGB rgb) {
 		if(rgb != null) {
 			ColorRule c = getInput();
 			if(c != null) c.setColor(SwtUtils.rgb2color(rgb));
@@ -82,18 +73,16 @@ class ColorRuleComposite extends ConfigComposite
 		}
 	}
 	
-	void changeColorLabel(RGB rgb) {
+	private void changeColorLabel(RGB rgb) {
 		if(rgb != null) {
 			color = SwtUtils.changeColor(color, rgb, colorLabel.getDisplay());
 			colorLabel.setBackground(color);
 		}
 	}
 	
-			void createContents() {
+	protected void createContents()
+	{
 		setLayout(new GridLayout());
-		
-		Composite superComp = super.createNameComposite(this);
-		superComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Composite colorComp = createColorComp(this);
 		colorComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -103,7 +92,7 @@ class ColorRuleComposite extends ConfigComposite
 	    critComp.fetchSymbolsFromGex();
 	}
 	
-	Composite createColorComp(Composite parent) {
+	private Composite createColorComp(Composite parent) {
 		Composite colorComp = new Composite(parent, SWT.NULL);
 		colorComp.setLayout(new GridLayout(3, false));
 		

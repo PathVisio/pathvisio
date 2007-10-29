@@ -159,21 +159,21 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	
 	<target name="compile-core" depends="prepare,resources-jar" description="Compile core sources">
 		<javac srcdir="src/core"
-			includes="**"
-			destdir="${build.core.dir}"
+			   includes="**"
+			   destdir="${build.core.dir}"
 			   debug="true"
 			   source="1.5">
-			<classpath refid="project.core.class.path"/>
+		  <classpath refid="project.core.class.path"/>
 		</javac>
 	</target>
 
 	<target name="compile-v1" depends="compile-core" description="Compile swt, v1 and swing sources">
-		<javac srcdir="."
-			includes="src/v1/**,src/swt/**,src/swing/**"
-			destdir="${build.v1.dir}"
+	  <javac srcdir="."
+			   includes="src/v1/**,src/swt/**,src/swing/**"
+			   destdir="${build.v1.dir}"
 			   debug="true"
 			   source="1.5">
-			<classpath refid="project.v1.class.path"/>
+		  <classpath refid="project.v1.class.path"/>
 		</javac>
 	</target>
 
@@ -181,14 +181,16 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<javac srcdir="." 
                includes="src/v2/**,src/swt/**,src/swing/**"			   
                destdir="${build.v2.dir}"
+			   debug="true"
 			   source="1.5">
           <classpath refid="project.v2.class.path"/>
 		</javac>
-		<javac debug="true" srcdir="src" 
-                    includes="plugins/**"
-                    destdir="${build.plugins.dir}"
-					source="1.5">
-                    <classpath refid="project.v2.class.path"/>
+		<javac srcdir="src" 
+               includes="plugins/**"
+               destdir="${build.plugins.dir}"
+			   debug="true"
+			   source="1.5">
+          <classpath refid="project.v2.class.path"/>
 		</javac>
 	</target>
 

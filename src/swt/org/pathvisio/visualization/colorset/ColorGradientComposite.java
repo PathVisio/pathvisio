@@ -45,7 +45,7 @@ import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
-class ColorGradientComposite extends ConfigComposite 
+class ColorGradientComposite extends ColorSetObjectComposite 
 {	
 	static final String[] tableColumns = new String[] {"Color", "Value"};
 	TableViewer colorTable;
@@ -65,6 +65,11 @@ class ColorGradientComposite extends ConfigComposite
 			
 	void addColor() {
 		getInput().addColorValuePair(getInput().new ColorValuePair(Color.RED, 0));
+		refresh();
+	}
+
+	protected void refresh()
+	{
 		colorTable.refresh();
 	}
 	
@@ -72,13 +77,11 @@ class ColorGradientComposite extends ConfigComposite
 		ColorValuePair cvp = (ColorValuePair)
 		((IStructuredSelection)colorTable.getSelection()).getFirstElement();
 		getInput().removeColorValuePair(cvp);
-		colorTable.refresh();
+		refresh();
 	}
 	
-	void createContents() {
+	protected void createContents() {
 		setLayout(new GridLayout());
-		Composite nameComp = createNameComposite(this);
-		nameComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createButtonComp(this);
 
@@ -88,8 +91,7 @@ class ColorGradientComposite extends ConfigComposite
 	
 	Composite createButtonComp(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NULL);
-		comp.setLayout(new RowLayout(SWT.HORIZONTAL));
-		
+		comp.setLayout(new RowLayout(SWT.HORIZONTAL));		
 		
 		final Button addColor = new Button(comp, SWT.PUSH);
 		addColor.setText("Add color");
@@ -207,7 +209,7 @@ class ColorGradientComposite extends ConfigComposite
 				} else {
 					cvp.setValue(Double.parseDouble((String)value));
 				}
-				colorTable.refresh();
+				refresh();
 			}
 		};
 	}

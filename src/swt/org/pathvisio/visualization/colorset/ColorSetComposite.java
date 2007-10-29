@@ -134,6 +134,7 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		colorSetCombo.setItems(ColorSetManager.getColorSetNames());
 		colorSetCombo.layout();
 		colorSetCombo.select(0);
+		colorSetSelected();
 	}
 
 	void createContents() {
@@ -226,16 +227,8 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 					ignore = false;
 					return;
 				}
-				boolean save = true;
-				if(previous != null && colorSet.getObjects().contains(previous))
-					save = objectSettings.save();
-				if(save) {
-					previous = getSelectedObject();
-					objectSettings.setInput(previous);
-				} else {
-					ignore = true;
-					objectsTable.setSelection(new StructuredSelection(previous));
-				}
+				previous = getSelectedObject();
+				objectSettings.setInput(previous);
 			}
 		});
 		
@@ -511,12 +504,6 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		public void setInput(ColorSetObject cso) {
 			input = cso;
 			refresh();
-		}
-		
-		public boolean save() {
-			if(input instanceof ColorGradient) return gradientComp.save();
-			else if (input instanceof ColorRule) return criterionComp.save();
-			else return true;
 		}
 		
 		public void refresh() {

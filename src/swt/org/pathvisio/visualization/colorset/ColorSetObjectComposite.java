@@ -25,52 +25,34 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-abstract class ConfigComposite extends Composite 
+/**
+   abstract base class for Composites that are used
+   to configure ColorSetObjects.
+   Used by the ColorSetComposite
+ */
+abstract class ColorSetObjectComposite extends Composite 
 {
-	final int colorLabelSize = 15;
-	ColorSetObject input;
-	Text nameText;
+	protected ColorSetObject input;
 	
-	public ConfigComposite(Composite parent, int style) {
+	ColorSetObjectComposite(Composite parent, int style)
+	{
 		super(parent, style);
 		createContents();
 	}
-	
-	public void setInput(ColorSetObject input) {
+
+	/**
+	  Set the input, i.e. the ColorSetObject that is going
+	  to get configured by this Composite.
+	 */
+	void setInput(ColorSetObject input)
+	{
 		this.input = input;
-		refresh();
 	}
 	
-	public boolean save() {
-		return true;
-	}
-	
-	void refresh() {
-		String nm = "";
-		if(input != null) nm = input.getName();
-		nameText.setText(nm);
-	}
-			
-	void changeName(String name) {
-		input.setName(name);
-	}
-	
-	abstract void createContents();
-	
-	protected Composite createNameComposite(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NULL);
-		comp.setLayout(new GridLayout(2, false));
-		
-		Label nameLabel = new Label(comp, SWT.CENTER);
-		nameLabel.setText("Name:");
-	
-		nameText = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    nameText.addModifyListener(new ModifyListener() {
-	    	public void modifyText(ModifyEvent e) {
-	    		changeName(nameText.getText());
-	    	}
-	    });
-	    return comp;
-	}
+	abstract protected void createContents();
+
+	/**
+	   refresh this composite, after the model has changed.
+	 */
+	abstract protected void refresh();
 }

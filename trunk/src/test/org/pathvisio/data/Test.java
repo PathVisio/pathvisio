@@ -22,7 +22,7 @@ import org.pathvisio.Engine.ApplicationEventListener;
 
 public class Test extends TestCase implements ApplicationEventListener
 {
-
+	
 	public void testPubMedQuery() {
 		String id = "17588266";
 		PubMedQuery pmq = new PubMedQuery(id);

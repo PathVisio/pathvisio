@@ -87,6 +87,10 @@ public abstract class ColorSetObject {
 		return parent;
 	}
 
+	/**
+	 * let ColorSetManager fire an event to indicate this ColorSet has
+	 * changed. 
+	 */
 	protected void fireModifiedEvent() {
 		ColorSetManager.fireColorSetEvent(
 				new ColorSetEvent (this, ColorSetEvent.COLORSET_MODIFIED));

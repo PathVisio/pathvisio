@@ -17,6 +17,9 @@
 package org.pathvisio.visualization.colorset;
 
 import junit.framework.TestCase;
+import java.util.List;
+import java.awt.Color;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
 public class Test extends TestCase 
 {
@@ -24,5 +27,23 @@ public class Test extends TestCase
 	{
 		ColorSet cs = new ColorSet("Default");
 		assertEquals (cs.getName(), "Default");
+	}
+	
+	
+	public void testGradient()
+	{
+		ColorSet cs = new ColorSet("Test");
+		ColorGradient cg = new ColorGradient (cs);
+		assertEquals (cg.getColorValuePairs().size(), 0);
+		cg.addColorValuePair(
+				cg.new ColorValuePair (
+						new Color (0,0,255), -1.0)
+				);
+		cg.addColorValuePair(
+				cg.new ColorValuePair (
+						new Color (255,0,0), 1.0)
+				);
+		assertEquals (cg.getColorValuePairs().size(), 2);
+		assertEquals (cg.getColor(0.0), new Color (127,0,127));
 	}
 }

@@ -465,18 +465,32 @@ public class Gex implements ApplicationEventListener {
 			" VALUES (?, ?, ?)		  ");
 			int sampleId = 0;
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
-			for(int i = 0; i < headers.length; i++) {
-				if(p.isCancelled()) { close(true); error.close(); return; } //User pressed cancel
-				if(i != info.idColumn && i != info.codeColumn) { //skip the gene and systemcode column
+			for(int i = 0; i < headers.length; i++)
+			{
+				if(p.isCancelled())
+				{
+					//User pressed cancel  
+					close(true);
+					error.close();
+					return;
+				}
+
+				//skip the gene and systemcode column if there is one
+				if(
+					(info.getSyscodeColumn() && i != info.idColumn && i != info.codeColumn) ||
+					(!info.getSyscodeColumn() && i != info.idColumn)
+					)
+				{ 
 					try {
 						pstmt.setInt(1, sampleId++);
 						pstmt.setString(2, headers[i]);
 						pstmt.setInt(3, info.isStringCol(i) ? Types.CHAR : Types.REAL);
 						pstmt.execute();
 						dataCols.add(i);
-					} catch(Error e) { 
+					}
+					catch(Error e) { 
 						errors = reportError(error, "Error in headerline, can't add column " + i + 
-								" due to: " + e.getMessage(), errors);
+							" due to: " + e.getMessage(), errors);
 						
 					}
 				}
@@ -588,9 +602,7 @@ public class Gex implements ApplicationEventListener {
 
 			//Creating a default color set for the visualizations.
 			createDefaultColorSet(minimum,maximum);
-			
-			
-			
+						
 			p.report(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
 				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");

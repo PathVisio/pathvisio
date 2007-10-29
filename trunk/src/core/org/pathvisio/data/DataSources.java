@@ -32,9 +32,9 @@ public class DataSources
 	{ 
 	"D", "F", "G", "I", "L", "M",
 	"Q", "R", "S", "T", "U",
-	"W", "Z", "X", "En", "Em", 
+	"W", "X", "En", "Em", 
 	"H", "Om", "Pd", "Pf", 
-	"Z", "Hs", "H", "C",
+	"Z", "Hs", "C",
 	"Ag", "Il", "Sn", "Ec",
 	"Ca", "Ce", "Cp", "Nw",
 	"Ck", "Ch",
@@ -48,9 +48,9 @@ public class DataSources
 	{
 	"SGD", "FlyBase", "GenBank", "InterPro" ,"Entrez Gene", "MGI",
 	"RefSeq", "RGD", "SwissProt", "GeneOntology", "UniGene",
-	"WormBase", "ZFIN", "Affy", "Ensembl", "EMBL", 
+	"WormBase", "Affy", "Ensembl", "EMBL", 
 	"HUGO", "OMIM", "PDB", "Pfam",
-	"ZFIN", "HsGene", "HUGO", "Cint",
+	"ZFIN", "HsGene", "Cint",
 	"Agilent", "Illumina", "SNP", "Ecoli",
 	"CAS", "ChEBI", "PubChem", "NuGOwiki",
 	"KEGG Compound", "HMDB",

@@ -19,6 +19,8 @@ package org.pathvisio.data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -655,10 +657,134 @@ public class GexImportWizard extends Wizard {
 			for (int i = 0; i < importInformation.firstDataRow - 1; i++)
 				in.readLine(); // Go to line where data starts
 			int j = 1;
+			
+			//"Guess" the system code based on the first 50 lines.
+			
+			//Make regular expressions for matching the gene identifiers with specific gene databases.
+			// (see, http://www.childrens-mercy.org/stats/model/arrayDataManagement.htm ) 
+			
+			Pattern[] patterns = new Pattern[DataSources.systemCodes.length];
+			
+			//sgd
+			patterns[0] = Pattern.compile("S\\d{9}");
+			
+			//flybase
+			
+			patterns[1] = Pattern.compile("FB//w{2}//d{7}");
+			
+			//genbank (http://www.ncbi.nlm.nih.gov/Sequin/acc.html)		
+			patterns[2] = Pattern.compile("(\\w\\d{5})|(\\w{2}\\d{6})|(\\w{3}\\d{5})");
+			
+			//interpro
+			patterns[3] = Pattern.compile("IPR\\d{6}");
+			
+			//entrez gene
+			patterns[4] = Pattern.compile("\\d{3,4}");
+			
+			//MGI
+			patterns[5] = Pattern.compile("MGI://d+");
+					
+			//refseq
+			patterns[6] = Pattern.compile("\\w{2}_\\d+");
+			
+			//RGD
+			patterns[7] = Pattern.compile("RGD:\\d+");
+			
+			//Swiss Prot (http://expasy.org/sprot/userman.html#AC_line)
+			patterns[8] = Pattern.compile("([A-N,R-Z][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9])|([O,P,Q][0-9][A-Z,0-9][A-Z,0-9][A-Z,0-9][0-9])");
+			
+			//gene ontology
+			patterns[9] = Pattern.compile("GO:\\d+");
+			
+			//unigene
+			patterns[10] = Pattern.compile("\\w{2}\\.\\d+");
+			
+			//Wormbase
+			patterns[11] = Pattern.compile("WBGene\\d{8}");
+			
+			//affymetrix
+			patterns[12] = Pattern.compile(".+_at");
+			
+			//Ensemble
+			patterns[13] = Pattern.compile("ENSG\\d{11}");
+			
+			//EMBL
+			
+			patterns[14] = Pattern.compile("\\w{2}\\d{6}");
+			
+			//OMIM (http://www.ncbi.nlm.nih.gov/Omim/omimfaq.html#numbering_system)
+			
+			patterns[16] = Pattern.compile("\\d{6}(\\.\\d{4})?");
+			
+			
+			
+		
+			int[] counts= new int[DataSources.systemCodes.length];
+			for (int i=1;i<DataSources.systemCodes.length;i++)
+			{
+				counts[i]=0;
+			}
+			
+			//make matchers
+			Matcher[] matchers = new Matcher[DataSources.systemCodes.length];
+			
+			
 			while ((line = in.readLine()) != null && j++ < n) {
 				TableItem ti = new TableItem(columnTable, SWT.NULL);
-				ti.setText(line.split(importInformation.getDelimiter()));
+				String[] elements = line.split(importInformation.getDelimiter());	//Get the elements of a row
+				ti.setText(elements);	//Sets the elements in the table
+				
+				for (int i=0;i<elements.length;i++)
+				{
+					//Count all the times that an element matches a gene identifier.
+					
+					for (int k=0;k<DataSources.systemCodes.length;k++)
+					{
+						
+						if (patterns[k]!=null)
+						{
+							//Setup all the matchers
+					matchers[k]=patterns[k].matcher(elements[i]);
+						
+						
+							if (matchers[k].matches())
+							{
+								//Check if it matches, and count how many times it does.
+								counts[k]++;	
+							}
+						}
+					}
+				}				
+				
 			}
+			
+			//Calculate percentages from the counts (length isn't always 50)		
+			double[] percentages = new double[counts.length]; 
+			
+			for (int i=0;i<counts.length;i++)
+			{
+				percentages[i]=(double)counts[i]/(double)j;
+			}
+			
+			//Look for maximum.
+			double max=0;
+			int maxi=0;
+			for(int i=0;i<percentages.length;i++)
+			{
+				//Determine the maximum of the percentages (most hits). 
+				//Sometimes, normal data can match a gene identifier, in which case percentages[i]>1. 
+				//Ignores these gene identifiers.
+				if (percentages[i]>max && percentages[i]<=1){
+					max = percentages[i];
+					maxi=i;
+				}
+				
+			}
+			
+			syscodeCombo.select(maxi);
+			
+			
+			
 		} catch (IOException e) { // TODO: handle IOException
 			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}

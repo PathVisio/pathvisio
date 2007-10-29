@@ -23,12 +23,14 @@ import java.util.zip.*;
 import org.pathvisio.debug.StopWatch;
 
 
-public class DerbyGDBMaker extends GDBMaker {
-	public static String DB_NAME_IN_ZIP = "database";
+public class DerbyGdbMaker extends GdbMaker
+{
+	DerbyGdbMaker (String dbname)
+	{
+		super (dbname);
+	}
 	
-	public DerbyGDBMaker(String dbName) {
-		super(dbName);
-	}   	
+	public static String DB_NAME_IN_ZIP = "database";
 	
 	public void connect(boolean create) throws SQLException, ClassNotFoundException {
 		if(create) {
@@ -38,136 +40,7 @@ public class DerbyGDBMaker extends GDBMaker {
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 		con = DriverManager.getConnection("jdbc:derby:" + getDbName() + (create ? ";create=true" : ""));
 	}
-
-	void AddMetabolitesFromTxt(String file, String dbname) 
-    {
-		StopWatch timer = new StopWatch();    	
-    	
-    	info("Timer started");
-    	timer.start();
-    	try {
-    		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-    		con = DriverManager.getConnection("jdbc:derby:" + dbname);
-        	
-	    	con.setAutoCommit(false);
-			pstGene = con.prepareStatement(
-					"INSERT INTO gene " +
-					"	(id, code," +
-					"	 backpageText)" +
-					"VALUES (?, ?, ?)"
-			);
-			pstLink = con.prepareStatement(
-					"INSERT INTO link " +
-					"	(idLeft, codeLeft," +
-					"	 idRight, codeRight)" +
-					"VALUES (?, ?, ?, ?)"
-			);
-			
-			
-			BufferedReader in = new BufferedReader(new FileReader(file));
-			String l;
-			l = in.readLine(); // skip header row 
-			int codeIndex = -1;
-			int error = 0;
-			int progress = 0;
-			int nCols = 8;
-			String[] cols = new String[nCols];
-	    	// Columns in input:
-			// <
-			while((l = in.readLine()) != null)
-			{
-				progress++;
-				cols = l.split("\t", nCols);
-				
-				String idCas = cols[0]; // CAS no
-				String id;
-				String code;
-				String bpText = "<TABLE border='1'>" +
-    			"<TR><TH>Metabolite:<TH>" + cols[1] +
-    			"<TR><TH>Bruto Formula:<TH>" + cols[3] + 
-    			"</TABLE>";
-
-				code = "Ca"; // CAS
-				id = cols[0];		    	
-				error += addGene(idCas, id, code, bpText);
-				error += addLink(idCas, id, code);
-					
-				if (cols.length > 2 && cols[2].length() > 0)
-				{
-					code = "Ck"; // KEGG compound
-					id = cols[2];		    	
-					error += addGene(idCas, id, code, bpText);
-					error += addLink(idCas, id, code);
-				}
-				
-				if (cols.length > 7 && cols[7].length() > 0)
-				{
-					code = "Nw"; // NuGO wiki
-					id = cols[7];		    	
-					error += addGene(idCas, id, code, bpText);
-					error += addLink(idCas, id, code);
-				}
-				
-				if (cols.length > 5 && cols[5].length() > 0)
-				{
-					code = "Ce"; // ChEBI
-					id = cols[5];		    	
-					error += addGene(idCas, id, code, bpText);
-					error += addLink(idCas, id, code);
-				}
-				
-				if (cols.length > 6 && cols[6].length() > 0)
-				{	
-					code = "Cp"; // PuBCHEM
-					id = cols[6];		    	
-					error += addGene(idCas, id, code, bpText);
-					error += addLink(idCas, id, code);
-				}
-				
-				if (cols.length > 4 && cols[4].length() > 0)
-				{
-					code = "Ch"; // HMDB
-					id = cols[4];		    	
-					error += addGene(idCas, id, code, bpText);
-					error += addLink(idCas, id, code);
-				}
-				
-				if(progress % PROGRESS_INTERVAL == 0) {
-					info("Processed " + progress + " lines");
-					con.commit();
-				}
-			}
-			con.commit();
-					
-			ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM gene");
-			r.next();		
-			info("total ids in gene table: " + r.getString(1));
-			info("total errors (duplicates): " + error);
-			r.close();
-			
-			info("END processing text file");
-			
-			info("Compacting database");
-			compact();
-	    }
-		catch (SQLException e) {
-			e.printStackTrace();
-			System.err.println(e.getNextException().getMessage());
-		}	
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		info("Closing connections");
-				
-    	close();
-    	info("Timer stopped: " + timer.stop());    	
-    }
-	
-	public void connect() throws ClassNotFoundException, SQLException {
-		connect(true);
-	}
-	
+		
 	void removeFiles(File file) {
 		if(!file.exists()) return;
 		

@@ -358,7 +358,9 @@ public class ColorSetComposite extends Composite implements ColorSetListener {
 		ColorSetObject newCso = null;
 		switch(type) {
 		case NEW_GRADIENT:
-			newCso = new ColorGradient(colorSet);
+			ColorGradient newGrad = new ColorGradient(colorSet);
+			newGrad.generateDefault(); // populates with a few default colors
+			newCso = newGrad;
 			break;
 		case NEW_RULE:
 			newCso = new ColorRule(colorSet);

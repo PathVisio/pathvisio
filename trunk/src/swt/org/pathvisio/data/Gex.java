@@ -599,10 +599,6 @@ public class Gex implements ApplicationEventListener {
 			info.setMaximum(maximum);
 			info.setMinimum(minimum);
 			
-
-			//Creating a default color set for the visualizations.
-			createDefaultColorSet(minimum,maximum);
-						
 			p.report(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
 				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
@@ -621,7 +617,11 @@ public class Gex implements ApplicationEventListener {
 			} catch(Exception e) {
 				Logger.log.error("Exception on connecting expression dataset from import thread", e);
 			}
-			
+
+			//Creating a default color set for the visualizations.
+			//this has to be done after re-connecting to the pgex.
+			createDefaultColorSet(minimum,maximum);
+	
 			p.finished();
 		} catch(Exception e) { 
 			p.report("Import aborted due to error: " + e.getMessage());
@@ -629,6 +629,7 @@ public class Gex implements ApplicationEventListener {
 			close(true);
 			error.close();
 		}
+		
 	}
 	
 	private static int reportError(PrintStream out, String message, int nrError) 

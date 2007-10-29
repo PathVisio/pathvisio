@@ -156,7 +156,7 @@ public class ColorSetManager {
 	/**
 	   List of listeners
 	 */
-	private static List<ColorSetListener> listeners;
+	private static List<ColorSetListener> listeners = new ArrayList<ColorSetListener>();
 
 	/**
 	 * Add a {@link ColorSetListener}, that will be notified if an
@@ -176,6 +176,9 @@ public class ColorSetManager {
 		listeners.remove (l);				
 	}
 	
+	/**
+	 * Interface for classes that want to receive a ColorSetEvent
+	 */
 	public static interface ColorSetListener extends EventListener
 	{
 		public void colorSetEvent (ColorSetEvent e);

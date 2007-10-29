@@ -32,20 +32,35 @@ import org.pathvisio.util.ColorConverter;
 public class ColorGradient extends ColorSetObject {
 	public static final String XML_ELEMENT_NAME = "ColorGradient";
 
-	private ArrayList<ColorValuePair> colorValuePairs;
+	private ArrayList<ColorValuePair> colorValuePairs = new ArrayList<ColorValuePair>();
 	
 	/**
 	 * Constructor for this class
 	 * @param parent 		colorset this gradient belongs to
-	 * @param name 			name of the gradient
+	 * This will generate an empty gradient. Call generateDefault() if you
+	 * want to fill the gradient with some default values.
 	 */
 	public ColorGradient(ColorSet parent)
 	{
 		super(parent, "gradient");
 		getColorValuePairs();
 	}
+	
+	/**
+	 * Adds a few default ColorValuePairs to this color gradient:
+	 * -1, red
+	 * 0, yellow
+	 * 1, green
+	 */
+	public void generateDefault()
+	{
+		colorValuePairs.add(new ColorValuePair(new Color(0,255,0), -1));
+		colorValuePairs.add(new ColorValuePair(new Color(255,255,0), 0));
+		colorValuePairs.add(new ColorValuePair(new Color(255,0,0), 1));		
+	}
 		
-	public ColorGradient(ColorSet parent, Element xml) {
+	public ColorGradient(ColorSet parent, Element xml) 
+	{
 		super(parent, xml);
 	}
 	
@@ -54,32 +69,25 @@ public class ColorGradient extends ColorSetObject {
 	 * @return ArrayList containing the ColorValuePairs
 	 */
 	public ArrayList<ColorValuePair> getColorValuePairs() 
-	{ 
-		if(colorValuePairs == null) {//Not initialized yet, use defaults
-			colorValuePairs = new ArrayList<ColorValuePair>();
-			colorValuePairs.add(new ColorValuePair(new Color(0,255,0), -1));
-			colorValuePairs.add(new ColorValuePair(new Color(255,255,0), 0));
-			colorValuePairs.add(new ColorValuePair(new Color(255,0,0), 1));
-		}
+	{
 		return colorValuePairs;
 	}
+	
 	/**
 	 * Add a {@link ColorValuePair} to this gradient
 	 */
 	public void addColorValuePair(ColorValuePair cvp)
 	{
-		if(colorValuePairs == null) { 
-			colorValuePairs = new ArrayList<ColorValuePair>();
-		}
 		colorValuePairs.add(cvp);
 		fireModifiedEvent();
 	}
+	
 	/**
 	 * Remove a {@link ColorValuePair} from this gradient
 	 */
 	public void removeColorValuePair(ColorValuePair cvp)
 	{
-		if(colorValuePairs == null || !colorValuePairs.contains(cvp)) return;
+		if(!colorValuePairs.contains(cvp)) return;
 		colorValuePairs.remove(cvp);
 		fireModifiedEvent();
 	}

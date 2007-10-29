@@ -25,13 +25,15 @@ import java.sql.Statement;
 import java.util.Properties;
 
 
-public class HsqldbGDBMaker extends GDBMaker {
-	
-	public HsqldbGDBMaker(String dbName) {
-		super(dbName);
-	}
+public class HsqldbGdbMaker extends GdbMaker {
 
-    public void connect() throws ClassNotFoundException, SQLException {
+	HsqldbGdbMaker (String dbname)
+	{
+		super (dbname);
+	}
+	
+    public void connect(boolean create) throws ClassNotFoundException, SQLException {
+		//TODO: use create parameter
     	removeOldFiles();
     	Properties prop = new Properties();
     	prop.setProperty("user","sa");
@@ -60,9 +62,10 @@ public class HsqldbGDBMaker extends GDBMaker {
 		super.close();
 	}
 	
-	public void createGDBFromTxt(String file, String dbname) {
-		super.createGDBFromTxt(file, dbname);
-		setPropertyReadOnly(dbname, true);
+	@Override
+	public void postInsert()
+	{
+		setPropertyReadOnly(getDbName(), true);
 	}
 	
 	String getDbName() {
@@ -80,9 +83,5 @@ public class HsqldbGDBMaker extends GDBMaker {
 			error("Unable to set readonly to " + readonly, e);
 		}
     }
-
-	public void connect(boolean create) throws ClassNotFoundException, SQLException {
-		connect();		
-	}
 
 }

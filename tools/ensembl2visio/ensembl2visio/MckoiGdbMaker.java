@@ -22,13 +22,15 @@ import java.sql.Statement;
 import java.util.Properties;
 
 
-public class MckoiGDBMaker extends GDBMaker {
+public class MckoiGdbMaker extends GdbMaker {
 	
-	public MckoiGDBMaker(String dbName) {
+	public MckoiGdbMaker(String dbName)
+	{
 		super(dbName);
 	}
 
-    public void connect() throws ClassNotFoundException, SQLException {
+    public void connect(boolean create) throws ClassNotFoundException, SQLException {
+		//TODO: use create parameter
     	Properties prop = new Properties();
     	prop.setProperty("user","sa");
     	prop.setProperty("password","");
@@ -53,10 +55,5 @@ public class MckoiGDBMaker extends GDBMaker {
 		
 		con.commit(); //Just to be sure...
 	}
-
-	public void connect(boolean create) throws ClassNotFoundException, SQLException {
-		connect();		
-	}
-
 }
 

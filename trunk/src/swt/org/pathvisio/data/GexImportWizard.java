@@ -61,6 +61,10 @@ import org.pathvisio.util.swt.TableColumnResizer;
 public class GexImportWizard extends Wizard {
 	ImportInformation importInformation;
 	ImportPage importPage = new ImportPage();
+	// File name from which data will be imported as chosen by the user at the file page
+	String file;
+	// String array with all the available names of datasources and systemcodes 
+	String[] sysCode;
 	
 	public GexImportWizard() {
 		importInformation = new ImportInformation();
@@ -78,10 +82,8 @@ public class GexImportWizard extends Wizard {
 
 	boolean importFinished;
 
-	public boolean performFinish() {
-		if (!importFinished) {
-			ImportPage ip = (ImportPage) getPage("ImportPage");
-			getContainer().showPage(ip);
+	public boolean performFinish() {//if true is returned: wizard closes
+		if (!importFinished) {			
 			try {
 				// Start import process
 				getContainer().run(true, true,
@@ -90,9 +92,10 @@ public class GexImportWizard extends Wizard {
 			} catch (Exception e) {
 				Logger.log.error("while running expression data import process: " + e.getMessage(), e);
 			} // TODO: handle exception
-			ip.setTitle("Import finished");
-			ip.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
+			
 			importFinished = true;
+			// Show different text on import page when the data has been imported
+			importPage.refreshProgress();
 			return false;
 		}
 		if (importFinished
@@ -191,9 +194,6 @@ public class GexImportWizard extends Wizard {
 						MessageDialog.openError(getShell(), "Error", "Unable to open gene database");
 						Logger.log.error ("Unable to open gene database", ex);
 					}
-					
-					//Refresh the text on the last page to reflect the new gene database
-					importPage.refreshProgressText();
 				}
 				
 			});
@@ -209,7 +209,7 @@ public class GexImportWizard extends Wizard {
 					fileDialog.setFilterNames(new String[] { "Text file",
 							"All files" });
 					fileDialog.setFilterPath(SwtPreference.SWT_DIR_EXPR.getValue());
-					String file = fileDialog.open();
+					file = fileDialog.open();
 					if (file != null) {
 						txtText.setText(file);
 						gexText.setText(file.replace(file.substring(file
@@ -515,7 +515,7 @@ public class GexImportWizard extends Wizard {
 			 * and add the system codes between parentheses for use in the syscodeCombo.
 			 * The last element of the string with system codes is an empty string,
 			 * therefore length-1 is used*/
-			String[] sysCode = new String[DataSources.dataSources.length-1];
+			sysCode = new String[DataSources.dataSources.length-1];
 			for (int i=0; i<(DataSources.dataSources.length-1); i++) {
 				sysCode[i]=DataSources.dataSources[i]+" ("+DataSources.systemCodes[i]+")";
 			}
@@ -810,16 +810,52 @@ public class GexImportWizard extends Wizard {
 
 			progressText = new Text(composite, SWT.READ_ONLY | SWT.BORDER
 					| SWT.WRAP);
-			refreshProgressText();
+			refreshProgress();
 			setControl(composite);
 		}
-		
-		public void refreshProgressText()
+
+		public void refreshProgress()
 		{
-			progressText.setText("Ready to import data" + Text.DELIMITER);
-			
-		}
+			if(!importFinished) { // New data can be read
+				importPage.setTitle("Create expression dataset");
+				importPage.setDescription("Press finish button to create the expression dataset.");				
 				
+				if(file!=null){progressText.setText("Ready to import data from file: '" + file + "'\n" +
+					"\nImported data will be saved at: '" + file.replace(file.substring
+					(file.lastIndexOf(".")), "") + "'\n" +
+					"\nUsed gene database: '" + Gdb.getDbName() + "'\n\n");
+					if(importInformation.getSyscodeColumn()) { // System code can be read from data
+						println("System code will be read from data");
+					}
+					else{ // System code is chosen by the user
+						println("Chosen System Code: " + sysCode[syscodeCombo.getSelectionIndex()]);
+					}
+				}
+			}
+
+			if(importFinished) { // Data has been read
+				importPage.setTitle("Import finished");
+				importPage.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
+				progressText.setText("Data has been imported. \n\n");
+				
+				// Show a list of errors
+				int show = 20; // number of errors that will be showed
+				int nrErrors = importInformation.getNrErrors(); 
+				if(nrErrors<20) { show = nrErrors; }
+				println("Errors (" + show + " of " + nrErrors + " items)");				
+				java.util.List<String> errorList = importInformation.getErrorList();
+				int nrLines = 0; 
+				for(String error : errorList){
+					if(nrLines == 20){ break; } // Maximum number of errors to be showed
+					println(error);
+					nrLines++;
+				}
+				if(nrErrors>0) {
+					println("\nSee errorfile '" + importInformation.dbName + ".ex.txt" + "' for details");
+				}
+			}
+		}			
+		
 		public void println(String text) {
 			appendProgressText(text, true);
 		}
@@ -844,6 +880,8 @@ public class GexImportWizard extends Wizard {
 			// User pressed back, probably to change settings and redo the
 			// importing, so set importFinished to false
 			importFinished = false;
+			// Refresh the text on the last page in case someone already loaded data.
+			importPage.refreshProgress();
 			return super.getPreviousPage();
 		}
 	}

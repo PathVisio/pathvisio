@@ -489,7 +489,7 @@ public class Gex implements ApplicationEventListener {
 						dataCols.add(i);
 					}
 					catch(Error e) { 
-						errors = reportError(error, "Error in headerline, can't add column " + i + 
+						errors = reportError(info, error, "Error in headerline, can't add column " + i + 
 							" due to: " + e.getMessage(), errors);
 						
 					}
@@ -522,7 +522,7 @@ public class Gex implements ApplicationEventListener {
 				n++;
 				if(n == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
 				if(data.length < headers.length) {
-					errors = reportError(error, "Number of columns in line " + n + 
+					errors = reportError(info, error, "Number of columns in line " + n + 
 							"doesn't match number of header columns",
 							errors);
 					continue;
@@ -542,7 +542,7 @@ public class Gex implements ApplicationEventListener {
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
-					errors = reportError(error, "Line " + n + ": " + id + "\t" + code + 
+					errors = reportError(info, error, "Line " + n + ": " + id + "\t" + code + 
 							"\t No Ensembl gene found for this identifier", errors);
 				} else { //Gene maps to an Ensembl id, so add it
 					boolean success = true;
@@ -582,7 +582,7 @@ public class Gex implements ApplicationEventListener {
 								pstmt.setInt(6, added);
 								pstmt.execute();
 							} catch (Exception e) {
-								errors = reportError(error, "Line " + n + ":\t" + line + "\n" + 
+								errors = reportError(info, error, "Line " + n + ":\t" + line + "\n" + 
 										"\tException: " + error, errors);
 								success = false;
 							}
@@ -632,8 +632,9 @@ public class Gex implements ApplicationEventListener {
 		
 	}
 	
-	private static int reportError(PrintStream out, String message, int nrError) 
+	private static int reportError(ImportInformation info, PrintStream out, String message, int nrError) 
 	{
+		info.addError(message);
 		out.println(message);
 		nrError++;
 		return nrError;

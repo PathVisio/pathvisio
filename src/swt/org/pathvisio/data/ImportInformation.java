@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.pathvisio.debug.Logger;
 
@@ -71,6 +73,27 @@ public class ImportInformation {
 	public double getMinimum() { return minimum; }
 	public void setMinimum(double setpoint) { minimum = setpoint; }
 	
+	
+	private List<String> errorList = new ArrayList<String>();
+	private int nrErrors = 0;
+	
+	/** Returns the number of errors made during importing data, for example when no
+	 * Esembl gene is found*/
+	public int getNrErrors() {
+		return nrErrors;	
+	}
+	/** Returns a list of errors made during importing data, the same list as saved
+	 * in the error file (.ex.txt) */
+	public List<String> getErrorList() {
+		return errorList;
+	}
+	/** A error has been reported during importing data. The message is added to 
+	 * the list of errors. */
+	public void addError(String message) {
+		errorList.add(message);
+		nrErrors++;
+	}
+
 	/**
 	 * linenumber (first line is 1) of the line where the data begins
 	 */

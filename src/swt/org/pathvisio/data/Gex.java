@@ -531,8 +531,11 @@ public class Gex implements ApplicationEventListener {
 				//Check id and add data
 				String id = data[info.idColumn].trim();
 				
+				/*Set the system code to the one found in the dataset if there is a system code column,
+				 * otherwise set the system code to the one selected (either by the user or by regular 
+				 * expressions.*/
 				String code;
-				if (info.syscodeColumn) {
+				if (info.getSyscodeColumn()) {
 					code = data[info.codeColumn].trim();
 				}
 				else {

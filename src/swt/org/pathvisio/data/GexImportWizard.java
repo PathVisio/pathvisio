@@ -505,9 +505,11 @@ public class GexImportWizard extends Wizard {
 			idCombo = new Combo(composite, SWT.READ_ONLY);
 			idCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
+			//Radio button to select that a system code column is present.
 			codeRadio = new Button(composite,SWT.RADIO);
 			codeRadio.setSelection(true);
 			codeRadio.setText("Select column with System Code");
+			//Drop down menu to select in which column the system code is present in the data file. 
 			codeCombo = new Combo(composite, SWT.READ_ONLY);
 			codeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 						
@@ -519,9 +521,11 @@ public class GexImportWizard extends Wizard {
 			for (int i=0; i<(DataSources.dataSources.length-1); i++) {
 				sysCode[i]=DataSources.dataSources[i]+" ("+DataSources.systemCodes[i]+")";
 			}
-						
+			
+			//Radio button to select that no system code column is present.
 			syscodeRadio = new Button(composite,SWT.RADIO);
 			syscodeRadio.setText("Select System Code for whole dataset if no System Code colomn is availabe in the dataset");
+			//Drop down menu to select the data source.
 			syscodeCombo = new Combo(composite, SWT.READ_ONLY);
 			syscodeCombo.setItems(sysCode);
 			syscodeCombo.setEnabled(false);
@@ -542,6 +546,8 @@ public class GexImportWizard extends Wizard {
 							.getSelectionIndices());
 				}
 			});
+			
+			
 			idCombo.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					importInformation.idColumn = idCombo.getSelectionIndex();
@@ -660,74 +666,26 @@ public class GexImportWizard extends Wizard {
 			
 			//"Guess" the system code based on the first 50 lines.
 			
-			//Make regular expressions for matching the gene identifiers with specific gene databases.
-			// (see, http://www.childrens-mercy.org/stats/model/arrayDataManagement.htm ) 
-			
+			//Make regular expressions patterns for the gene ID's.
 			Pattern[] patterns = new Pattern[DataSources.systemCodes.length];
+			patterns = getPatterns();
 			
-			//sgd
-			patterns[0] = Pattern.compile("S\\d{9}");
+			//Make regular expressions pattern for the system code. 
+			Pattern syscodepattern;
+			syscodepattern = Pattern.compile("[A-Z][a-z]?");
 			
-			//flybase
-			
-			patterns[1] = Pattern.compile("FB//w{2}//d{7}");
-			
-			//genbank (http://www.ncbi.nlm.nih.gov/Sequin/acc.html)		
-			patterns[2] = Pattern.compile("(\\w\\d{5})|(\\w{2}\\d{6})|(\\w{3}\\d{5})");
-			
-			//interpro
-			patterns[3] = Pattern.compile("IPR\\d{6}");
-			
-			//entrez gene
-			patterns[4] = Pattern.compile("\\d{3,4}");
-			
-			//MGI
-			patterns[5] = Pattern.compile("MGI://d+");
-					
-			//refseq
-			patterns[6] = Pattern.compile("\\w{2}_\\d+");
-			
-			//RGD
-			patterns[7] = Pattern.compile("RGD:\\d+");
-			
-			//Swiss Prot (http://expasy.org/sprot/userman.html#AC_line)
-			patterns[8] = Pattern.compile("([A-N,R-Z][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9])|([O,P,Q][0-9][A-Z,0-9][A-Z,0-9][A-Z,0-9][0-9])");
-			
-			//gene ontology
-			patterns[9] = Pattern.compile("GO:\\d+");
-			
-			//unigene
-			patterns[10] = Pattern.compile("\\w{2}\\.\\d+");
-			
-			//Wormbase
-			patterns[11] = Pattern.compile("WBGene\\d{8}");
-			
-			//affymetrix
-			patterns[12] = Pattern.compile(".+_at");
-			
-			//Ensemble
-			patterns[13] = Pattern.compile("ENSG\\d{11}");
-			
-			//EMBL
-			
-			patterns[14] = Pattern.compile("\\w{2}\\d{6}");
-			
-			//OMIM (http://www.ncbi.nlm.nih.gov/Omim/omimfaq.html#numbering_system)
-			
-			patterns[16] = Pattern.compile("\\d{6}(\\.\\d{4})?");
-			
-			
-			
-		
+			//Make count variables.
 			int[] counts= new int[DataSources.systemCodes.length];
 			for (int i=1;i<DataSources.systemCodes.length;i++)
 			{
 				counts[i]=0;
 			}
+			int syscodecount = 0;
 			
-			//make matchers
+			//Make matchers
 			Matcher[] matchers = new Matcher[DataSources.systemCodes.length];
-			
+			Matcher	syscodematcher;
+						
 			
 			while ((line = in.readLine()) != null && j++ < n) {
 				TableItem ti = new TableItem(columnTable, SWT.NULL);
@@ -737,6 +695,11 @@ public class GexImportWizard extends Wizard {
 				for (int i=0;i<elements.length;i++)
 				{
 					//Count all the times that an element matches a gene identifier.
+					syscodematcher = syscodepattern.matcher(elements[i]);
+					if (syscodematcher.matches()) {
+						syscodecount++;
+					}
+					
 					
 					for (int k=0;k<DataSources.systemCodes.length;k++)
 					{
@@ -757,6 +720,31 @@ public class GexImportWizard extends Wizard {
 				}				
 				
 			}
+			
+			/*Calculate percentage of rows where a system code is found and
+			 * compare with a given percentage*/
+			double checkpercentage = 0.9;
+			double syscodepercentage = (double)syscodecount/(double)j;
+			
+			/*Set the selection to the codeRadio button if a system code is found
+			 * in more than rows than the given percentage, otherwise set the 
+			 * selection to the syscodeRadio button*/
+			if (syscodepercentage >= checkpercentage) {
+				codeRadio.setSelection(true);
+				syscodeRadio.setSelection(false);
+				codeCombo.setEnabled(true);
+				syscodeCombo.setEnabled(false);				
+				importInformation.setSyscodeColumn(true);
+			}
+			else {
+				syscodeRadio.setSelection(true);
+				codeRadio.setSelection(false);
+				syscodeCombo.setEnabled(true);
+				codeCombo.setEnabled(false);				
+				importInformation.setSyscodeColumn(false);
+			}
+			
+			
 			
 			//Calculate percentages from the counts (length isn't always 50)		
 			double[] percentages = new double[counts.length]; 
@@ -781,14 +769,90 @@ public class GexImportWizard extends Wizard {
 				
 			}
 			
+			//Select the right entry in the drop down menu and change the system code in importInformation
 			syscodeCombo.select(maxi);
+			importInformation.setSyscode(DataSources.systemCodes[maxi]);
 			
-			
+						
 			
 		} catch (IOException e) { // TODO: handle IOException
 			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		columnTable.pack();
+	}
+	
+	/**Make patterns of regular expressions for matching the gene identifiers with specific gene databases.
+	 * (see, http://www.childrens-mercy.org/stats/model/arrayDataManagement.htm ) 
+	 */	
+	public Pattern[] getPatterns() {
+		
+		//Not all patterns are tested yet.
+		
+		Pattern[] patterns = new Pattern[DataSources.systemCodes.length];
+		
+		//sgd
+		patterns[0] = Pattern.compile("S\\d{9}");
+		
+		//flybase
+		
+		patterns[1] = Pattern.compile("FB//w{2}//d{7}");
+		
+		//genbank (http://www.ncbi.nlm.nih.gov/Sequin/acc.html)		
+		patterns[2] = Pattern.compile("(\\w\\d{5})|(\\w{2}\\d{6})|(\\w{3}\\d{5})");
+		
+		//interpro
+		patterns[3] = Pattern.compile("IPR\\d{6}");
+		
+		//entrez gene
+		patterns[4] = Pattern.compile("\\d{3,4}");
+		
+		//MGI
+		patterns[5] = Pattern.compile("MGI://d+");
+				
+		//refseq
+		patterns[6] = Pattern.compile("\\w{2}_\\d+");
+		
+		//RGD
+		patterns[7] = Pattern.compile("RGD:\\d+");
+		
+		//Swiss Prot (http://expasy.org/sprot/userman.html#AC_line)
+		patterns[8] = Pattern.compile("([A-N,R-Z][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9])|([O,P,Q][0-9][A-Z,0-9][A-Z,0-9][A-Z,0-9][0-9])");
+		
+		//gene ontology
+		patterns[9] = Pattern.compile("GO:\\d+");
+		
+		//unigene
+		patterns[10] = Pattern.compile("\\w{2}\\.\\d+");
+		
+		//Wormbase
+		patterns[11] = Pattern.compile("WBGene\\d{8}");
+		
+		//affymetrix
+		patterns[12] = Pattern.compile(".+_at");
+		
+		//Ensemble
+		patterns[13] = Pattern.compile("ENSG\\d{11}");
+		
+		//EMBL		
+		patterns[14] = Pattern.compile("\\w{2}\\d{6}");
+		
+		//HUGO
+		//not yet found
+		
+		//OMIM (http://www.ncbi.nlm.nih.gov/Omim/omimfaq.html#numbering_system)		
+		patterns[16] = Pattern.compile("\\d{6}(\\.\\d{4})?");
+		
+		//PDB ( http://www.rcsb.org/robohelp_f/#search_database/query_results.htm )
+		patterns[17] = Pattern.compile("[0-9][a-z,0-9][a-z,0-9][a-z,0-9][a-z,0-9]");
+		
+		//Pfam (http://pfam.sanger.ac.uk/help)
+		patterns[18] = Pattern.compile("(PF\\d{5})|(PB\\d{6})");
+	
+		//Zfin (http://zfin.org/zf_info/dbase/PAPERS/ZFIN_DataModel/sectioniv_1.html)
+		patterns[19] = Pattern.compile("ZDB.+");
+				
+		
+		return patterns;
 	}
 
 	/**

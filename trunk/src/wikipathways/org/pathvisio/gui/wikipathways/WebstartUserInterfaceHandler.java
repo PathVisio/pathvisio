@@ -26,17 +26,22 @@ import javax.jnlp.UnavailableServiceException;
 import org.pathvisio.debug.Logger;
 
 public class WebstartUserInterfaceHandler extends SwingUserInterfaceHandler {
+	BasicService basicService;
 	
-	public WebstartUserInterfaceHandler(Component parent) {
+	public WebstartUserInterfaceHandler(Component parent) throws UnavailableServiceException {
 		super(parent);
+		basicService = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
 	}
 
 	public void showDocument(URL url, String target) {
-		try {
-			BasicService bs = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
-			bs.showDocument(url);
-		} catch (UnavailableServiceException e) {
-			Logger.log.error("Unable to get javax.jnlp.BasicService, are you not using webstart?");
-		} 
+		basicService.showDocument(url);
+	}
+	
+	public void showExitMessage(String string) {
+		//TODO: show exit message
+	}
+	
+	public URL getDocumentBase() {
+		return basicService.getCodeBase();
 	}
 }

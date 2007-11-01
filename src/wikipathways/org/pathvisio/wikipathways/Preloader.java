@@ -20,6 +20,8 @@ import java.applet.Applet;
 
 public class Preloader extends Applet {
 	public void init() {
+		/* Don't preload jars for now (we don't want the certificate
+		 * dialog to popup!
 		System.out.println("== Preloader started ==");
 		//Do nothing, just called to download the jars and start the JVM!
 
@@ -40,6 +42,7 @@ public class Preloader extends Applet {
 		};
 		
 		new PreloaderThread(classes, resources).start();
+		*/
 	}
 	
 	class PreloaderThread extends Thread {

@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pathvisio.Engine;
 import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.preferences.GlobalPreference;
@@ -325,7 +325,7 @@ public abstract class Gdb {
 			return r.getInt(1) > 0 ? true : false;
 		} catch(Exception e) { return false; }
 	}
-	
+		
 //	static PreparedStatement pstEnsId2Refs;
 	/**
 	 * Get all cross references (ids from every system representing 
@@ -335,6 +335,19 @@ public abstract class Gdb {
 	 * (empty if nothing found)
 	 */	
 	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
+		return ensId2Refs(ensId, null);
+	}
+	
+	/**
+	 * Get all cross references (ids from every system representing 
+	 * the same gene as the given id) for a given Ensembl id
+	 * @param ensId		The Ensembl id to get the cross references for
+	 * @param resultCode If specified (not null), limit the results by only taking
+	 * references with database code
+	 * @return			List containing all cross references found for this Ensembl id
+	 * (empty if nothing found)
+	 */	
+	public static ArrayList<IdCodePair> ensId2Refs(String ensId, String resultCode) {
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -348,9 +361,13 @@ public abstract class Gdb {
 //			}
 //			pstEnsId2Refs.setString(1, ensId);
 //			ResultSet r1 = pstEnsId2Refs.executeQuery();
+			String codeLimit = "";
+			if(resultCode != null) {
+				codeLimit = " AND codeRight = '" + resultCode + "'";
+			}
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight, codeRight FROM link " +
-					"WHERE idLeft = '" + ensId + "'");
+					"WHERE idLeft = '" + ensId + "'" + codeLimit);
 			while(r1.next()) {
 				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
 			}
@@ -402,14 +419,35 @@ public abstract class Gdb {
 		return ensIds;
 	}
 	
+	/**
+	 * Get all cross-references for the given id/code pair, restricting the
+	 * result to contain only references from database with the given system
+	 * code
+	 * @param idc The id/code pair to get the cross references for
+	 * @return An {@link ArrayList} containing the cross references, or an empty
+	 * ArrayList when no cross references could be found
+	 */
 	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
+		return getCrossRefs(idc, null);
+	}
+	
+	/**
+	 * Get all cross-references for the given id/code pair, restricting the
+	 * result to contain only references from database with the given system
+	 * code
+	 * @param idc The id/code pair to get the cross references for
+	 * @param resultCode The system code to restrict the results to
+	 * @return An {@link ArrayList} containing the cross references, or an empty
+	 * ArrayList when no cross references could be found
+	 */
+	public static ArrayList<IdCodePair> getCrossRefs(IdCodePair idc, String resultCode) {
 		Logger.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
 		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
 		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
-		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId));
+		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId, resultCode));
 
 		Logger.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;

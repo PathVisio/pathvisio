@@ -1,0 +1,14 @@
+Check out OSGI?
+
+-> being able to register actions / menu / toolbar
+
+Class loader used:
+
+# already present in classpath at startup
+# not present in classpath at startup
+
+Where / how are plugins stored?
+
+# class files in build/plugins
+# jar files in ~/.PathVisio/plugins
+# jar files in /usr/share/pathvisio/plugins

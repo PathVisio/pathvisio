@@ -1,0 +1,11 @@
+Define common event concepts
+
+Where should the Event class be stored?
+Where should the Listener class be stored?
+fireEvent
+addListener/removeListener
+
+events for
+- addition of object to list
+- modification of object in list
+- deletion of object from list

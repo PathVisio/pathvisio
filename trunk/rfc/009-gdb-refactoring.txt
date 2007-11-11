@@ -1,0 +1,2 @@
+-> define interface to make it possible to implement one gdb as two
+

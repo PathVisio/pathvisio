@@ -1,0 +1,6 @@
+We should be able to create 
+arbitrary attribute-value pairs for each element.
+
+Strings?
+Arrays? -> Comma separated list
+Use case: link EC code to many enzymes in KEGG converted pathways.

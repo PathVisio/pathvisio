@@ -30,6 +30,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
+import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
@@ -419,7 +420,6 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public static class AddLiteratureAction extends PathwayElementDialogAction {
 		private static final long serialVersionUID = 1L;
-
 		public AddLiteratureAction(Component parent, VPathwayElement e) {
 			super(parent, e);
 			putValue(Action.NAME, "Add literature reference");
@@ -429,8 +429,10 @@ public class CommonActions implements ApplicationEventListener {
 		
 		public void actionPerformed(ActionEvent e) {
 			if(element instanceof Graphics) {
-				BiopaxElementManager m = new BiopaxElementManager(((Graphics)element).getPathwayElement());
-				PublicationXRef xref = new PublicationXRef(m.getUniqueID());
+				PathwayElement pwElm = ((Graphics)element).getPathwayElement();
+				BiopaxElementManager em = new BiopaxElementManager(pwElm.getParent());
+				BiopaxReferenceManager m = new BiopaxReferenceManager(em, pwElm);
+				PublicationXRef xref = new PublicationXRef();
 				
 				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, parent);
 				d.setVisible(true);

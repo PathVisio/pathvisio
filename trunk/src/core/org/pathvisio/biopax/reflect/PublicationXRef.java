@@ -35,11 +35,6 @@ public class PublicationXRef extends BiopaxElement {
 			});
 	}
 	
-	public PublicationXRef(String id) {
-		this();
-		setId(id);
-	}
-	
 	private String getPropertyValue(PropertyType pt) {
 		BiopaxProperty p = getProperty(pt.name());
 		if(p != null) {

@@ -25,6 +25,7 @@ package org.pathvisio.util;
 import java.io.File;
 
 import org.pathvisio.Engine;
+import org.pathvisio.data.DataNodeListExporter;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
@@ -72,6 +73,7 @@ public class Converter {
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
+		engine.addPathwayExporter(new DataNodeListExporter());
     	
         File inputFile = null;
         File outputFile = null;

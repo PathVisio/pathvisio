@@ -45,6 +45,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.pathvisio.biopax.BiopaxElementManager;
+import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -56,7 +57,9 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	static final String REMOVE = "Remove";
 	static final String EDIT = "Edit";
 
-	BiopaxElementManager biopax;
+	BiopaxReferenceManager refMgr;
+	BiopaxElementManager elmMgr;
+	
 	List<PublicationXRef> xrefs;
 
 	JTable refTable;
@@ -122,13 +125,20 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 	public void setInput(PathwayElement e) {
 		if(e != getInput()) {
-			biopax = new BiopaxElementManager(e);
+			//Create new element manager only if it
+			//doesn't exist yet, or if the pathway has
+			//been changed
+			if(elmMgr == null || 
+					elmMgr.getPathway().equals(e.getParent())) {
+				elmMgr = new BiopaxElementManager(e.getParent());
+			}
+			refMgr = new BiopaxReferenceManager(elmMgr, e);
 		}
 		super.setInput(e);
 	}
 
 	public void refresh() {
-		xrefs = biopax.getPublicationXRefs();
+		xrefs = refMgr.getPublicationXRefs();
 		Object[][] data = new Object[xrefs.size()][1];
 		for(int i = 0; i < xrefs.size(); i++) {
 			data[i][0] = xrefs.get(i);
@@ -169,13 +179,13 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	private void removePressed() {
 		for(int r : refTable.getSelectedRows()) {
 			Object o = references.getValueAt(r, 0);
-			biopax.removeElementReference((PublicationXRef)o);
+			refMgr.removeElementReference((PublicationXRef)o);
 		}
 		refresh();
 	}
 
 	private void addPressed() {
-		PublicationXRef xref = new PublicationXRef(biopax.getUniqueID());
+		PublicationXRef xref = new PublicationXRef();
 
 		final PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this);
 		if(!SwingUtilities.isEventDispatchThread()) {	
@@ -192,7 +202,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			d.setVisible(true);
 		}
 		if(d.getExitCode().equals(PublicationXRefDialog.OK)) {
-			biopax.addElementReference(xref);
+			refMgr.addElementReference(xref);
 			refresh();			
 		}
 	}

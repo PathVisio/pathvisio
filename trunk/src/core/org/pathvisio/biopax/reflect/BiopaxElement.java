@@ -17,8 +17,10 @@
 package org.pathvisio.biopax.reflect;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.jdom.Document;
@@ -36,13 +38,7 @@ public class BiopaxElement extends Element {
 		validProperties = new HashSet<PropertyType>();
 		properties = new ArrayList<BiopaxProperty>();
 	}
-	
-	public BiopaxElement(String name, String id) {
-		this();
-		setName(name);
-		setId(id);
-	}
-	
+		
 	protected void setValidProperties(PropertyType[] valid) {
 		validProperties = new HashSet<PropertyType>();
 		for(PropertyType pt : valid) validProperties.add(pt);
@@ -84,6 +80,11 @@ public class BiopaxElement extends Element {
 		return i;
 	}
 	
+	/**
+	 * Gets all the property objects by name
+	 * @param name
+	 * @return
+	 */
 	public List<BiopaxProperty> getProperties(String name) {
 		List<BiopaxProperty> props = new ArrayList<BiopaxProperty>();
 		for(BiopaxProperty p : properties) {
@@ -133,31 +134,46 @@ public class BiopaxElement extends Element {
 			}
 		}
 	}
-		
-	public Document addToDocument(Document d) {
-		if(d == null) {
-			//Create a biopax document
-			Element root = new Element("RDF", Namespaces.RDF);
-			root.addNamespaceDeclaration(Namespaces.RDFS);
-			root.addNamespaceDeclaration(Namespaces.RDF);
-			root.addNamespaceDeclaration(Namespaces.OWL);
-			root.addNamespaceDeclaration(Namespaces.BIOPAX);
-			d = new Document(root);
-		}
-		
-		//Check if this is a valid biopax document
-		Element root = d.getRootElement();
-		if(!root.getNamespace().equals(Namespaces.RDF)) {
-			throw new IllegalArgumentException("Invalid root element: " + root);
-		}
-		
-		//Add this element to the document
-		d.getRootElement().addContent(this);
-		return d;
-	}
-
+	
 	public void removeFromDocument(Document d) {
 		if(d == null) return;
 		d.getRootElement().removeContent(this);
+	}
+	
+	/**
+	 * Check if this element equals the given element by comparing the properties.
+	 * Properties that are in the ignore collection are not taken into account.
+	 * @param e
+	 * @param ignore
+	 * @return
+	 */
+	public boolean propertyEquals(BiopaxElement e, Collection<PropertyType> ignore) {
+		for(PropertyType p : PropertyType.values()) {
+			//Continue if property is in ignore list
+			if(ignore.contains(p)) continue;
+			
+			//Get the properties for this property type
+			List<BiopaxProperty> pv1 = getProperties(p.name());
+			List<BiopaxProperty> pv2 = e.getProperties(p.name());
+			//Compare the property list by the property values
+			ListIterator<BiopaxProperty> e1 = pv1.listIterator();
+			ListIterator<BiopaxProperty> e2 = pv2.listIterator();
+			while(e1.hasNext() && e2.hasNext()) {
+			    BiopaxProperty o1 = e1.next();
+			    BiopaxProperty o2 = e2.next();
+			    if(o1 == null || o2 == null) {
+			    	if(!(o1 == null && o2 == null)) {
+			    		return false;
+			    	}
+			    } else {
+			    	if(o1.getValue() != null) {
+			    		if(!o1.getValue().equals(o2.getValue())) {
+			    			return false;
+			    		}
+			    	}
+			    }
+			}
+		}
+		return true;
 	}
 }

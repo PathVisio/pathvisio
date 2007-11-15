@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<project name="KeggConverter" default="jar" basedir=".">
+	
+	<property name="src.dir" value="src"/>  
+	<property name="build.dir" value="build/core"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="doc.dir" value="doc"/>
+	<property name="jar.class.path" value="lib/axis.jar"/>
+		
+	<path id="class.path">
+      	<pathelement location="${build.dir}"/>
+		<fileset dir="lib">
+		        <include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="prepare">
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<target name="build-KeggClient">
+		<java classpathref="class.path" classname="org.apache.axis.wsdl.WSDL2Java">
+			<arg value="-p"/>
+			<arg value="keggapi"/>
+			<arg value="http://soap.genome.jp/KEGG.wsdl"/>
+		</java>
+		<exec command="perl -i axisfix.pl keggapi/KEGGBindingStub.java" />
+		<javac srcdir="keggapi" classpathref="class.path" includes="**"/>
+		<jar jarfile="lib/keggapi.jar">
+			<fileset dir="." includes="keggapi/*.class"/>
+		</jar>
+		<javadoc classpathref="class.path" 
+			destdir="${doc.dir}/kegg-api" 
+			doctitle="KEGG API"
+			footer="Generated ${TODAY}">
+			<package name="keggapi"/>
+			<sourcepath>			
+					<pathelement location="."/>
+			</sourcepath>
+		</javadoc>
+	</target>
+	
+	<target name="clean" description="Remove all generated files">
+		<delete dir="${build.dir}"/>
+		<delete dir="keggapi"/>
+	</target>
+	
+	<target name="compile" depends="prepare" description="Compiles the source files">
+		<javac srcdir="src/core"
+			   includes="**"
+			   destdir="${build.core.dir}"
+			   source="1.5">
+		  <classpath refid="project.core.class.path"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Generates executable jar file">
+		<jar jarfile="kegg_converter.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.kegg.KeggApiExample"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
+			</manifest>
+			<fileset dir="${build.dir}" includes="**/*.class"/>			
+		</jar>
+    </target>	
+</project>

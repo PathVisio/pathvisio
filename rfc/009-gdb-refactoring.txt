@@ -1,2 +1,341 @@
--> define interface to make it possible to implement one gdb as two
+RFC: Gene database & Gex API
 
+This RFC is there to solve these problems:
+
+1. The current PathVisio needs an Ensembl identifier for every datanode. 
+This is fine for genes and proteins, but problematic for metabolites. We want to
+move to a system that is more systemcode agnostic.
+
+2. You can load only one gene database per time, however, it would be nice to be able to 
+use a gene database and a metabolite database side by side.
+
+3. The current class interface for accessing Gdb & Gex is not well defined, 
+for the future we should have a stable API.
+
+4. Modeless caching: the data caching on pathway load popup can be improved, 
+a modeless, threaded implementation is preferable.
+
+Roadmap
+=======
+
+Step 1: discuss this RFC
+Step 2: write class structure with (empty) methods, write javadoc
+Step 3: write implementation
+in parallel with
+Step 4: write unit tests
+
+Step 5: mark old functions as deprecated with pointer to new functions
+Step 6: remove deprecated functions one by one. Check that all functionality is covered in new API.
+
+These classes should all be in package org.pathvisio.data
+
+I propose to do a test implementation first in 
+	
+package org.pathvisio.newdata;
+
+and later move it to 
+
+package org.pathvisio.data;
+
+That way the current and future implementations can live side by side
+until we are sure that the new implementation is at least as good as the
+current one.
+
+The unit tests should include speed tests for the old and new system so we
+can prevent performance regressions.
+
+We're going to change the Gdb schema. This will be Gdb schema 3.
+As with the transition from 1 to 2, we need to be able to open 3 and 2 side by side.
+It would be good to have unit tests for this too.
+
+Naming conventions
+==================
+
+System Code <-> Data Source
+
+Data Source is used in G
+System Code is used in GenMAPP.
+
+I propose to use Data Source for the concept in general (i.e. a resource for linking pathway datanodes to expression data), 
+and SystemCode only when you refer to the one or two letter code such as 'En' or 'L'.
+
+Interface
+=========
+
+DataSource.java
+---------------
+/**
+	contains information about a certain DataSource, e.g.
+	
+	Extenisble enum pattern.
+	You can't instantiate this directly, instead you have to use the "getBySystemcode" or "getByFullname" methods.
+	These methods return a predefined DataSource object if it exists, or create a new one if necessary.
+	
+	This way any number of pre-defined DataSources can be used, but plugins can define new ones and you can
+	handle unknown systemcodes that occur in Gpml in the same way as predefined ones.
+	
+	PathVisio should never have to refer to system codes as Strings, except
+	- in low level SQL code dealing with Gdb's, Gex and MAPP's (MAPPFormat.java)
+	- in low level GPML code (GPMLFormat.java)
+*/
+public class DataSource
+{
+	/** turn id into url pointing to info page on the web, e.g. "http://www.ensembl.org/get?id=ENSG..." */
+	public Url getUrl(String id); 
+	
+### TODO: we may want to store patterns in a separate class?	
+	/** regular expression for identifying this type of systemcode, e.g. "ENSG\d+" */
+	public Pattern getPattern();
+	
+	/** returns full name of datasource e.g. "Ensembl". May return null. Also used as identifier in GPML */
+	public String getFullname(); 
+	
+	/** returns GenMAPP SystemCode, e.g. "En". May return null. */
+	public String getSystemCode(); 
+	
+	/** so new system codes can be added easily by plugins. Pattern and url may be null */
+	public static void register(String fullName, String sysCode, String Pattern, String url);
+	
+	/** returns pre-existing DataSource object by system code, if it exists, or creates a new one */
+	public static DataSource getBySystemcode();
+
+	/** returns pre-existing DataSource object by system code, if it exists, or creates a new one */
+	public static DataSource getByFullname();
+	
+	/**
+		get all registered datasoures as a set
+		There is no function to get systemcodes or full names as a list of strings, 
+		because it's hard to guarantee the ordering, which is needed for combobox controls.
+	*/ 
+	static public Set<DataSource> getDataSources()
+	
+}
+	
+IdCodePair.java
+---------------
+### TODO: IdCodePair -> good name? Code does not directly refer to datasource
+public class IdCodePair
+{
+	public DataSource getDataSource()
+	public void setDataSource (DataSource value)
+	
+	public String getId()
+	public void setId (String value)
+	
+	public IdCodePair (String id, DataSource ds)
+	
+	// convenience method
+	public Url getUrl ()
+	{
+		return ds.getUrl(id);
+	}
+}
+
+Gdb.java
+--------
+/**
+	Abstract interface for dealing with any system that can map from one DataSource to another.
+	
+	Implementations include: single (derby) database, aggregate database, etc.
+*/
+abstract class Gdb
+{
+	/**
+	get all cross-references
+	*/
+	List<IdCodePair> getCrossReferences(IdCodePair icp) throws GdbException
+	
+	/**
+	get cross-references in the target datasource
+	(if the target datasource is known the query can usually be optimized)
+	*/
+	List<IdCodePair> getCrossReferences(IdCodePair icp, DataSource targetDs) throws GdbException
+}
+
+GdbException.java
+-----------------
+/**
+	Simple wrapper so using classes don't need to deal with implemenation details
+	of the Gdb. Usually wraps SQLException, ClassNotFoundException, etc.
+*/
+class GdbException
+{
+}
+
+AggregateGdb.java
+-----------------
+/**
+AggregateGdb: multiple simple Gdb's can be bound together
+
+*/
+class AggregateGdb extends Gdb
+{
+	/**
+		constructor, start with empty aggregate
+	*/
+	public AggregateGdb()
+	
+	/**
+		let a SimpleGdb be registered within the aggregate
+	*/
+	public void register (SimpleGdb gdb)
+	
+	@override
+	public List<IdCodePair> getCrossReferences(IdCodePair icp, DataSource targetDs) throws GdbException
+
+	@override
+	public List<IdCodePair> getCrossReferences(IdCodePair icp) throws GdbException
+}
+
+SimpleGdb.java
+--------------
+
+class SimpleGdb extends Gdb
+{
+	/**
+		list all available data sources
+		(package private method, used by aggregateGdb to find the most suited simpleGdb)
+	*/
+	Set<DataSource> getAvailableDataSources ()
+	
+	/**
+		Constructor from file
+	*/
+	SimpleGdb (File file) throws GdbException
+
+	@override
+	List<IdCodePair> getCrossReferences(IdCodePair icp, DataSource targetDs) throws GdbException
+
+	@override
+	List<IdCodePair> getCrossReferences(IdCodePair icp) throws GdbException
+}
+
+Gex.java
+--------
+
+abstract class Gex
+{
+	/**
+		returns all data for this codepair and column, 
+		mapped by code pair as it in in the expression data.
+	*/
+### TODO: return type?
+	Map<IdCodePair, Object> getData (IdCodePair, String sampleColumn)
+}
+
+### TODO: do we need to define data events for mapping newly added genes, caching?
+
+Gene & Gex database structure
+=============================
+
+The meaning of the Gdb Schema will be modified slightly.
+This means that we can bump the schema version no to 3.
+
+We use a "link" identifier in the right column.
+This will be the the ensembl id for genes and proteins, and the chebi id for
+metabolites. However, which precise id is chosen should not matter and should be completely
+invisible to the user. Therefore we can remove the right systemcode column. 
+
+### TODO: What about back pages? What about gene symbols
+
+The Gex schema will no longer require Ensembl as the datasource. Instead we will use
+the data source as it is in the original dataset.
+### TODO: does the Gex schema version need to change or is this backwards compatible?
+
+Use case: Mapping data to genes
+===============================
+
+there are about 100 datanodes in a pathway, using systemcode L (Entrez) and Ce (Chebi)
+there are about 20000 rows in your gex table, using systemcodes X (affymetrix) and Ca (CAS)
+Map the data to the pathway as efficiently as possible.
+
+Step 1: Create a set of system codes used in the data
+
+SELECT systemCode from `data`;
+
+|----|
+| X  |
+| Ca |
+|----|
+
+These are the target systemcodes.
+
+Step 2: for each of the 100 datanodes, get the relevant rows from the gdb
+
+SELECT * FROM (`link` as L1 join `link` as l2)
+WHERE
+	(l1.idRight = l2.idRight) AND
+	(l1.idLeft = ?) AND
+	(l1.codeLeft = ?) AND
+	(l2.codeLeft = ?)
+
+if link table is:
+
+|------|----|-----|
+| 1_at | X  | 001 |
+| 2_at | X  | 001 |
+| 3_at | X  | 002 |
+| 3_at | X  | 003 |
+|  001 | En | 001 |
+|  002 | En | 002 |
+|  003 | En | 003 |
+| 1001 | L  | 001 |
+| 1002 | L  | 002 |
+| 1003 | L  | 003 |
+|------|----|-----|
+
+the result will be:
+
+|---|------|---|------|
+| L | 1001 | X | 1_at |
+| L | 1001 | X | 2_at |
+|---|------|---|------|
+
+AggregateGdb will execute this query for each registered Gdb, and aggregate the results.
+It will use getAvailableDatasources on each subgdb to know which one to use.
+
+Step 3: 
+
+map the data directly using Gex.getData ()
+
+Use case: show all cross-references in a backpage
+=================================================
+
+### TODO
+
+Use case: check that IdCodePair exists in current Gdb during import
+===================================================================
+
+### TODO
+
+Use case: add a gene to a pathway with gex loaded
+=================================================
+
+### TODO: event system for when genes are added to pwy
+
+
+System codes
+============
+
+proposal: define two types of system codes:
+1. Measurement systemcodes: agilent, affymetrix, etc.
+2. Biological systemcodes: uniprot, genbank, ensembl
+
+You can use measurement systemcodes in your data, but not normally in pathways,
+except if you check the "allow measurement systemcodes in pathways" advanced preference.
+
+You can always use biological systemcodes for everything (data or pathways).
+
+We guarantee that you can always map between two biological systemcodes (entrez to ensembl), 
+or between biological systemcodes and measurement systemcodes (affymetrix to ensembl).
+Mapping between two measurement systemcodes (agilent to affymetrix) is not guaranteed to work.
+
+Importing Gex data
+==================
+
+Menu item "create new expression dataset":
+after loading the first expression data, a new item will be added
+"add more expression data to current dataset"
+This way you can have your expression data and your metabolite data, and one can be added after another
+
+potential problems: what if the No of samples is not the same? What if they are in a different order?

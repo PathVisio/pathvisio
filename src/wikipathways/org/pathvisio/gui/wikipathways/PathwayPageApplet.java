@@ -43,6 +43,7 @@ public class PathwayPageApplet extends JApplet {
 	UserInterfaceHandler uiHandler;
 	WikiPathways wiki;
 	boolean isFirstApplet = true;
+	boolean performedInit = false;
 	
 	public final void init() {
 		//Check if other applets are present that already have an instance
@@ -50,6 +51,8 @@ public class PathwayPageApplet extends JApplet {
 		
 		Logger.log.trace("INIT CALLED....");
 
+		if(performedInit) return; //Don't process init twice!
+		
 		WikiPathways owiki = findExistingWikiPathways();
 		if(owiki != null) {
 			wiki = owiki;
@@ -100,6 +103,7 @@ public class PathwayPageApplet extends JApplet {
 		});
 		
 		uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+		performedInit = true;
 	}
 	
 	protected final WikiPathways findExistingWikiPathways() {

@@ -1,0 +1,103 @@
+RFC: New Gene Database Schema
+
+This RFC is there to solve these problems:
+
+1. The current PathVisio needs an Ensembl identifier for every datanode. 
+This is fine for genes and proteins, but problematic for metabolites. We want to
+move to a system that is more systemcode agnostic.
+
+2. Gene Databases can get really big. However, not all mappings need to be stored.
+E.g. mapping from affymetrix to agilent is really a rare thing to do in the
+PathVisio use-case. We should define a way to tell the user which mappings he/she
+can expect to work, and which ones won't.
+
+== Roadmap ==
+
+We're going to change the Gdb schema. This will be Gdb schema 3.
+As with the transition from 1 to 2, we need to be able to open 3 and 2 side by side.
+It would be good to have unit tests for this too.
+
+As this is mostly a cleanup, there is no urgency for the transition.
+
+Gene & Gex database structure
+=============================
+
+The meaning of the Gdb Schema will be modified slightly.
+This means that we can bump the schema version no to 3.
+
+We use a "link" identifier in the right column.
+This will be the the ensembl id for genes and proteins, and the chebi id for
+metabolites. However, which precise id is chosen should not matter and should be completely
+invisible to the user. Therefore we can remove the right systemcode column. 
+
+### TODO: What about back pages? What about gene symbols
+
+The Gex schema will no longer require Ensembl as the datasource. Instead we will use
+the data source as it is in the original dataset.
+
+### TODO: does the Gex schema version need to change or is this backwards compatible?
+
+Use case: Mapping data to genes
+===============================
+
+there are about 100 datanodes in a pathway, using systemcode L (Entrez) and Ce (Chebi)
+there are about 20000 rows in your gex table, using systemcodes X (affymetrix) and Ca (CAS)
+Map the data to the pathway as efficiently as possible.
+
+Step 1: Create a set of system codes used in the data
+
+SELECT systemCode from `data`;
+
+|----|
+| X  |
+| Ca |
+|----|
+
+These are the target systemcodes.
+
+Step 2: for each of the 100 datanodes, get the relevant rows from the gdb
+
+SELECT * FROM (`link` as L1 join `link` as l2)
+WHERE
+	(l1.idRight = l2.idRight) AND
+	(l1.idLeft = ?) AND
+	(l1.codeLeft = ?) AND
+	(l2.codeLeft = ?)
+
+if link table is:
+
+|------|----|-----|
+| 1_at | X  | 001 |
+| 2_at | X  | 001 |
+| 3_at | X  | 002 |
+| 3_at | X  | 003 |
+|  001 | En | 001 |
+|  002 | En | 002 |
+|  003 | En | 003 |
+| 1001 | L  | 001 |
+| 1002 | L  | 002 |
+| 1003 | L  | 003 |
+|------|----|-----|
+
+the result will be:
+
+|---|------|---|------|
+| L | 1001 | X | 1_at |
+| L | 1001 | X | 2_at |
+|---|------|---|------|
+
+System codes
+============
+
+proposal: define two types of system codes:
+1. Measurement systemcodes: agilent, affymetrix, etc.
+2. Biological systemcodes: uniprot, genbank, ensembl
+
+You can use measurement systemcodes in your data, but not normally in pathways,
+except if you check the "allow measurement systemcodes in pathways" advanced preference.
+
+You can always use biological systemcodes for everything (data or pathways).
+
+We guarantee that you can always map between two biological systemcodes (entrez to ensembl), 
+or between biological systemcodes and measurement systemcodes (affymetrix to ensembl).
+Mapping between two measurement systemcodes (agilent to affymetrix) is not guaranteed to work.

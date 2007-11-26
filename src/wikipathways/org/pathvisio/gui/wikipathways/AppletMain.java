@@ -54,45 +54,17 @@ public class AppletMain extends PathwayPageApplet {
 		super.doInitWiki(pk, base);
 	}
 	
-	public void createGui() {		
-					
+	public void createGui() {					
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setVisible(true);
 		
 		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
-	}
-	
-	public void start() {
-		System.out.println("START CALLED....");
-		Logger.log.trace("START CALLED....");
-						
-		System.out.println("START ENDED....");
-		Logger.log.trace("START ENDED....");
-	}
-	
-	public void stop() {
-		System.out.println("STOP CALLED....");
-		Logger.log.trace("STOP CALLED....");
-						
-		System.out.println("STOP ENDED....");
-		Logger.log.trace("STOP ENDED....");
-	}
-
-	public void destroy() {
-		System.out.println("DESTROY CALLED....");
-		Logger.log.trace("DESTROY CALLED....");
-		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
-		Engine.getCurrent().fireApplicationEvent(e);
-		super.destroy();
-		System.out.println("DESTROY ENDED....");
-		Logger.log.trace("DESTROY ENDED....");
-	}
-	
-	void parseArguments() {
-		for(Parameter p : Parameter.values()) {
-			p.setValue(getParameter(p.getName()));
+		
+		Engine engine = Engine.getCurrent();
+		if(engine.getActiveVPathway() == null) {
+			engine.createVPathway(engine.getActivePathway());
 		}
 	}
 }

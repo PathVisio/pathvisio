@@ -65,7 +65,45 @@ Gene1 ----
 The position of these middle segments (marked with +) can be changed by the user. 
 We can store this information using the coordinates of the + points (waypoints).
 
+Often it a given connector can be rendered in two ways:
+
+Gene1 -------------
+                   |
+                   |
+                   v
+                Gene 2
+ 
+ Gene1
+   |
+   |
+   |
+   ------------->   Gene 2
+
+(Even with waypoints this problem can exist)
+
+The proposed solution is to determine the direction of the connectors at the
+start and end-point automatically. This can be done as follows (pseudo-code):
+
+relx = connector.startx - shape.centerx
+rely = connector.starty - shape.centery
+
+if (abs (relx) > abs (rely))
+{
+	if (relx > 0)
+		direction = east
+	else
+		direction = west
+}
+else
+{
+	if (rely > 0)
+		direction = south
+	else
+		direction = north
+}
+
 == Curved connectors ==
+
 Because people can't seem to live without them, we will also add support
 for a curved bend style:
 
@@ -127,12 +165,29 @@ Gene1 ----o--
             ----> Gene 2
 
 == Point coordinates of connectors ==
+
 In the current implementation, line ends are not really linked to an object anchor, but have their own coordinates which need to be updated when moving the object.
 Maybe it would be better to store the coordinate relative to the object when a point is part of a connector. So in this case, the Point.X and Point.Y attributes can have two meanings:
 1. The point has no GraphRef (no connector), the coordinates are relative to the canvas
 2. The point has a GraphRef (connector), the coordinates are relative to the object to which is linked
 
 This way we don't have to update all linked points every time an object is moved. The object then doesn't need to have a notion of linked points, which improves modularity and performance.
+
+The xsd needs to change to handle these relative coordinates. This can be done as follows:
+
+<Point X="1750" Y = "3100" GraphId = "abc"/>
+
+becomes
+
+<Point RelX="50" RelY = "25" GraphId = "abc"/>
+
+Points that do not have a graphId can still use X and Y attributes. Points that do
+have a graphId have to use RelX and RelY. You can either specify X and Y but not GraphId or
+RelX and RelY and GraphId. This will be enforced in GPML.xsd.
+For backwards compatibility, we can support reading X and Y and GraphId,
+but then immediately the relative coordinates are calculated and used for writing.
+
+(I think relative coordinates may also be useful for groups...)
 
 == Changes to the code ==
 TODO

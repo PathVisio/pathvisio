@@ -161,4 +161,9 @@ public class PathwayPageApplet extends JApplet {
 			p.setValue(getParameter(p.getName()));
 		}
 	}
+	
+	@Override
+	public void destroy() {
+		Logger.log.trace("DESTROY CALLED ON " + this);
+	}
 }

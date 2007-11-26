@@ -91,10 +91,10 @@ public class DataSource
 	public static void register(String fullName, String sysCode, String Pattern, String url);
 	
 	/** returns pre-existing DataSource object by system code, if it exists, or creates a new one */
-	public static DataSource getBySystemcode();
+	public static DataSource getBySystemcode(String systemCode);
 
 	/** returns pre-existing DataSource object by system code, if it exists, or creates a new one */
-	public static DataSource getByFullname();
+	public static DataSource getByFullname(String fullName);
 	
 	/**
 		get all registered datasoures as a set
@@ -108,6 +108,7 @@ public class DataSource
 IdCodePair.java
 ---------------
 ### TODO: IdCodePair -> good name? Code does not directly refer to datasource
+### Maybe GDBReference or just Reference is a better name?
 public class IdCodePair
 {
 	public DataSource getDataSource()
@@ -132,6 +133,7 @@ Gdb.java
 	
 	Implementations include: single (derby) database, aggregate database, etc.
 */
+### TODO: Shouldn't this be an interface?
 abstract class Gdb
 {
 	/**
@@ -183,7 +185,6 @@ class AggregateGdb extends Gdb
 
 SimpleGdb.java
 --------------
-
 class SimpleGdb extends Gdb
 {
 	/**
@@ -195,6 +196,9 @@ class SimpleGdb extends Gdb
 	/**
 		Constructor from file
 	*/
+	### TODO: Is file a proper way to point to the database? Some databases might be
+	### on a remote server, or require a different protocol. Maybe it's better to change
+	### file to URL
 	SimpleGdb (File file) throws GdbException
 
 	@override
@@ -211,13 +215,35 @@ abstract class Gex
 {
 	/**
 		returns all data for this codepair and column, 
-		mapped by code pair as it in in the expression data.
+		mapped by code pair as it is in the expression data.
 	*/
-### TODO: return type?
-	Map<IdCodePair, Object> getData (IdCodePair, String sampleColumn)
+### TODO: return type? We need a two-dimensional map, since there are multiple
+### samples in our data row. I propose to use the DataRow object (see below)
+/*
+	A Map is too simple as return type. Our data consists of:
+	- x samples
+	- group number
+*/
+	Map<IdCodePair, DataRow> getData (IdCodePair, String sampleColumn)
+}
+
+/**
+Represents a row of data
+*/
+class DataRow {
+	IdCodePair icp; //The original id/code for this row in the database
+	Map<Sample, Object> columns;
+	
+	public Object getValue(Sample sample) {
+		return columns.get(sample);
+	}
 }
 
 ### TODO: do we need to define data events for mapping newly added genes, caching?
+### To cache newly added genes, Gex needs to listen to the model for newly added DataNodes.
+### We only need a way to make a DataNode redraw itself after caching is done for that node.
+### This needs to be done without the View having notion of Gex and preferably without Gex
+### having notion of the view.
 
 Use case: Mapping data to genes
 ===============================

@@ -31,14 +31,54 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayExporter;
 
+/**
+ * Exporter that writes a pathway as a list
+ * of DataNodes, using their database references
+ * @author thomas
+ */
 public class DataNodeListExporter implements PathwayExporter {
+	/**
+	 * Use this String as argument in {@link #setResultCode(String)}
+	 * to indicate that the exporter has to keep the original database
+	 * code as used in the pathway
+	 */
 	public static final String DB_ORIGINAL = "original"; //Use the id/code as in database
 	private String resultCode = DB_ORIGINAL;
+	private String multiRefSep = ", ";
 	
+	/**
+	 * Set the separator used to separate multiple
+	 * references for a single DataNode on the pathway.
+	 * Default is ", ".
+	 * @param sep
+	 */
+	public void setMultiRefSep(String sep) {
+		multiRefSep = sep;
+	}
+	
+	/**
+	 * Get the separator used to separate multiple
+	 * references for a single DataNode on the pathway.
+	 * Default is ", ".
+	 */
+	public String getMultiRefSep() {
+		return multiRefSep;
+	}
+	
+	/**
+	 * Set the database code to which every datanode
+	 * reference will be mapped to in the output file.
+	 * @see #DB_ORIGINAL
+	 * @param code
+	 */
 	public void setResultCode(String code) {
 		resultCode = code;
 	}
 	
+	/**
+	 * Get the database code to which every datanode
+	 * reference will be mapped to in the output file.
+	 */
 	public String getResultCode() {
 		return resultCode;
 	}
@@ -56,8 +96,7 @@ public class DataNodeListExporter implements PathwayExporter {
 		} catch (FileNotFoundException e) {
 			throw new ConverterException(e);
 		}
-		//print headers
-		out.println("ID\tDatabase");
+		printHeaders(out);
 		for(PathwayElement elm : pathway.getDataObjects()) {
 			if(elm.getObjectType() == ObjectType.DATANODE) {
 				String line = "";
@@ -72,10 +111,10 @@ public class DataNodeListExporter implements PathwayExporter {
 				} else { //Lookup the cross-references for the wanted database code
 					ArrayList<IdCodePair> refs = Gdb.getCrossRefs(new IdCodePair(id, code), resultCode);
 					for(IdCodePair ref : refs) {
-						line += ref.getId() + ", ";
+						line += ref.getId() + multiRefSep;
 					}
-					if(line.length() > 2) { //Remove the last ', '
-						line = line.substring(0, line.length() - 2);
+					if(line.length() > multiRefSep.length()) { //Remove the last ', '
+						line = line.substring(0, line.length() - multiRefSep.length());
 						line += "\t" + DataSources.sysCode2Name.get(resultCode);
 					}
 				}
@@ -84,10 +123,20 @@ public class DataNodeListExporter implements PathwayExporter {
 		}
 		out.close();
 	}
+	
+	/**
+	 * Print the file headers.
+	 * @param out The output stream to print to
+	 */
+	protected void printHeaders(PrintStream out) {
+		//print headers
+		out.println("ID\tDatabase");
+	}
 
 	private boolean checkString(String string) {
 		return string != null && string.length() > 0;
 	}
+	
 	public String[] getExtensions() {
 		return new String[] { "txt" };
 	}

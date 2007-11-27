@@ -85,7 +85,7 @@ public class ColorSetManager {
 	public static void clearColorSets() {
 		colorSets.clear();
 		fireColorSetEvent(
-				new ColorSetEvent (null, ColorSetEvent.COLORSET_REMOVED));
+				new ColorSetEvent (ColorSetManager.class, ColorSetEvent.COLORSET_REMOVED));
 	}
 	
 	public static ColorSet getColorSet(int index) {

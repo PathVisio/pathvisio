@@ -18,8 +18,29 @@ package org.pathvisio.model;
 
 import java.io.File;
 
+/**
+ * Interface for an exporter that writes a pathway to a file
+ * @author thomas
+ *
+ */
 public interface PathwayExporter {
+	/**
+	 * Get the exporter name (to what file type does it export)
+	 * @return
+	 */
 	public String getName();
+	
+	/**
+	 * Get the possible extensions this exporter writes to (e.g. txt)
+	 * @return An array with the possible extensions (without '.')
+	 */
 	public String[] getExtensions();
+	
+	/**
+	 * Export the given pathway to the file
+	 * @param file The file to export to
+	 * @param pathway The pathway to export
+	 * @throws ConverterException
+	 */
 	public void doExport(File file, Pathway pathway) throws ConverterException;
 }

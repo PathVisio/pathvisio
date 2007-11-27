@@ -400,7 +400,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</exec>
 	</target>
 				
-	<target name="wikipathways-dest" depends="jar-wikipathways" description="Build PathVisio for WikiPathways">
+	<target name="wikipathways-dest" depends="jar, jar-wikipathways" description="Build PathVisio for WikiPathways">
 		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy file="preloader.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy toDir="${wikipathways.applet.dir}/lib">

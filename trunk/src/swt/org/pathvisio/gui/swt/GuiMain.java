@@ -37,6 +37,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.data.DataNodeListExporter;
+import org.pathvisio.data.EUGeneExporter;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.debug.Logger;
@@ -228,6 +229,7 @@ public class GuiMain {
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
 		Engine.getCurrent().addPathwayExporter(new DataNodeListExporter());
+		Engine.getCurrent().addPathwayExporter(new EUGeneExporter());
 	}
 	
 	static void registerImporters() {

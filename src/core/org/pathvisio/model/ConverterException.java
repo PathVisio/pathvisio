@@ -27,7 +27,7 @@ public class ConverterException extends Exception {
 
 	public ConverterException(Exception e)
 	{
-		super(e.getClass() + ": " + e.getMessage());
+		super(e.getClass() + ": " + e.getMessage(), e);
 		setStackTrace(e.getStackTrace());
 	}
 

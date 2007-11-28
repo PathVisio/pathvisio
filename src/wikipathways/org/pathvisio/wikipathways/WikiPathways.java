@@ -83,6 +83,9 @@ public class WikiPathways implements ApplicationEventListener {
 	File localFile;
 	
 	boolean ovrChanged;
+	boolean initPerformed;
+	
+	MainPanel mainPanel;
 	
 	public WikiPathways(UserInterfaceHandler uiHandler) {
 		this.uiHandler = uiHandler;
@@ -96,6 +99,8 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 		
 	public void init(ProgressKeeper progress, URL base) throws Exception {
+		initPerformed = true;
+		
 		progress.setTaskName("Starting editor");
 		
 		WikiPathwaysInit.init();
@@ -138,6 +143,9 @@ public class WikiPathways implements ApplicationEventListener {
 		Gdb.connect(getPwSpecies());
 	}
 	
+	public boolean initPerformed() {
+		return initPerformed;
+	}
 	public void initVPathway() {
 		Engine e = Engine.getCurrent();
 		Pathway p = e.getActivePathway();
@@ -378,6 +386,12 @@ public class WikiPathways implements ApplicationEventListener {
 		}
 	}
 	
+	public MainPanel getMainPanel() {
+		if(mainPanel == null) {
+			prepareMainPanel();
+		}
+		return mainPanel;
+	}
 	public MainPanel prepareMainPanel() {
 		CommonActions actions = SwingEngine.getCurrent().getActions();
 		Set<Action> hide = new HashSet<Action>();
@@ -388,7 +402,7 @@ public class WikiPathways implements ApplicationEventListener {
 		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
 		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
 				
-		MainPanel mainPanel = new MainPanel(hide);
+		mainPanel = new MainPanel(hide);
 		
 		mainPanel.getToolBar().addSeparator();
 		

@@ -1,19 +1,19 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
+//PathVisio,
+//a tool for data visualization and analysis using Biological Pathways
+//Copyright 2006-2007 BiGCaT Bioinformatics
+
+//Licensed under the Apache License, Version 2.0 (the "License"); 
+//you may not use this file except in compliance with the License. 
+//You may obtain a copy of the License at 
+
+//http://www.apache.org/licenses/LICENSE-2.0 
+
+//Unless required by applicable law or agreed to in writing, software 
+//distributed under the License is distributed on an "AS IS" BASIS, 
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+//See the License for the specific language governing permissions and 
+//limitations under the License.
+
 package org.pathvisio.gui.wikipathways;
 
 
@@ -43,16 +43,14 @@ public class PathwayPageApplet extends JApplet {
 	UserInterfaceHandler uiHandler;
 	WikiPathways wiki;
 	boolean isFirstApplet = true;
-	boolean performedInit = false;
-	
+
 	public final void init() {
 		//Check if other applets are present that already have an instance
 		//of WikiPathways
-		
-		Logger.log.trace("INIT CALLED....");
 
-		if(performedInit) return; //Don't process init twice!
-		
+		Logger.log.trace(this + ": INIT CALLED....");
+
+		//Check if there are other applets around
 		WikiPathways owiki = findExistingWikiPathways();
 		if(owiki != null) {
 			wiki = owiki;
@@ -62,14 +60,15 @@ public class PathwayPageApplet extends JApplet {
 			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
 			wiki = new WikiPathways(uiHandler);
 		}
-		
+
+		//Onlyl set new engine if this is the first applet
 		if(isFirstApplet) {
 			Engine engine = new Engine();
 			Engine.setCurrent(engine);
 			SwingEngine.setCurrent(new SwingEngine(engine));
 			GuiInit.init();
 		}
-		
+
 		parseArguments();
 
 		//Init with progress monitor
@@ -87,41 +86,49 @@ public class PathwayPageApplet extends JApplet {
 				return null;
 			}
 		};
+		//Perform some actions after the runnable is done
 		r.getProgressKeeper().addListener(new ProgressListener() {
 			public void progressEvent(ProgressEvent e) {
 				if(e.getType() == ProgressEvent.FINISHED) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							Logger.log.trace("Creating GUI");
-							createToolbar();
-							createGui();
-							validate();
-						}
-					});
+					afterInit();
 				}
 			}
 		});
-		
-		uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
-		performedInit = true;
+
+		if(wiki.initPerformed()) {
+			Logger.log.trace(this + ": Init already performed");
+			afterInit();
+		} else {
+			Logger.log.trace(this + ": Performing init in background");
+			uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);			
+		}
 	}
-	
+
+	private void afterInit() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				Logger.log.trace(this + ": Creating GUI");
+				createToolbar();
+				createGui();
+				validate();
+			}
+		});
+	}
+
 	protected final WikiPathways findExistingWikiPathways() {
-		Logger.log.trace("Finding other pathway applets");
+		Logger.log.trace(this + ": Finding other pathway applets");
 		Enumeration<Applet> applets = getAppletContext().getApplets();
-		Logger.log.trace("Start iteration...");
 		while(applets.hasMoreElements()) {
 			Applet a = applets.nextElement();
-			Logger.log.trace("Processing " + a);
 			if(a instanceof PathwayPageApplet) {
-				Logger.log.trace("Returning " + a);
+				Logger.log.trace(this + ":Returning " + a);
 				return ((PathwayPageApplet)a).wiki;
 			}
 		}
-		Logger.log.trace("No other pathway applets found, returning null");
+		Logger.log.trace(this + ": No other pathway applets found, returning null");
 		return null; //Nothing found
 	}
-	
+
 	/**
 	 * In this method the WikiPathways class is initiated, 
 	 * by calling {@link WikiPathways#init(ProgressKeeper, URL)}
@@ -131,23 +138,23 @@ public class PathwayPageApplet extends JApplet {
 	 * @throws Exception
 	 */
 	protected void doInitWiki(ProgressKeeper pk, URL base) throws Exception {
-		Logger.log.trace("PathwayPageApplet:doInitWiki");
+		Logger.log.trace(this + ":doInitWiki");
 		if(isFirstApplet) {
 			wiki.init(pk, base);
 		} else {
-			Logger.log.trace("Adding initVPathway");
+			Logger.log.trace(this + ": calling initVPathway");
 			wiki.initVPathway();
 		}
 	}
-	
+
 	protected void doInit() {
 		//May be implemented by subclasses
 	}
-	
+
 	protected void createGui() {
 		//May be implemented by subclasses
 	}
-		
+
 	protected void createToolbar() {
 		JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
 		toolbar.setFloatable(false);
@@ -155,15 +162,14 @@ public class PathwayPageApplet extends JApplet {
 		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, false));
 		getContentPane().add(toolbar, BorderLayout.WEST);
 	}
-	
+
 	void parseArguments() {
 		for(Parameter p : Parameter.values()) {
 			p.setValue(getParameter(p.getName()));
 		}
 	}
-	
-	@Override
-	public void destroy() {
-		Logger.log.trace("DESTROY CALLED ON " + this);
+
+	public String toString() {
+		return this.getClass() + ": " + getName() + hashCode();
 	}
 }

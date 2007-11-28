@@ -54,7 +54,8 @@ public class AppletMain extends PathwayPageApplet {
 		super.doInitWiki(pk, base);
 	}
 	
-	public void createGui() {					
+	public void createGui() {
+		mainPanel = wiki.getMainPanel();
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setVisible(true);
 		
@@ -66,5 +67,10 @@ public class AppletMain extends PathwayPageApplet {
 		if(engine.getActiveVPathway() == null) {
 			engine.createVPathway(engine.getActivePathway());
 		}
+	}
+	
+	public void destroy() {
+		getContentPane().remove(mainPanel);
+		super.destroy();
 	}
 }

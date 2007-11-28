@@ -229,7 +229,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	}
 
     public static void exportMapp (String filename, 
-    		String[] mappInfo, List<String[]> mappObjects)
+    		String[] mappInfo, List<String[]> mappObjects) throws ConverterException
     {    	
         String database = database_before + filename + ";DriverID=22";
         
@@ -299,14 +299,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			sInfo.executeUpdate();
             con.close();
             
-        } catch (ClassNotFoundException cl_ex) {
-        	Logger.log.error ("-> Could not find the Sun JbdcObdcDriver\n");
-        } catch (SQLException ex) {
-        	Logger.log.error ("-> SQLException: "+ex.getMessage());        
-            ex.printStackTrace();
-        } catch (IOException e)
-        {
-        	Logger.log.error (e.getMessage());
+        } catch (Exception e) {
+        	throw new ConverterException(e);
         }
     }
     

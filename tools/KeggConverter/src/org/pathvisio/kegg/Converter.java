@@ -50,29 +50,55 @@ public class Converter {
 						String enzymeCode = child.getAttributeValue("name");
 						String[] ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
 
-						for(int i=1; i<=ncbi.length; i++ )
-						{
-							String textlabelGPML; // naam van gen i uit online NCBI database
+						if (ncbi.equals("null") == false ){
+							for(int i=0; i<ncbi.length; i++ )
+							{
+								String textlabelGPML = "mieauw"; // naam van gen i uit online NCBI database
+								String colorGPML = child.getAttributeValue("fgcolor");
+								String centerXGPML = child.getAttributeValue("x");
+								String centerYGPML = child.getAttributeValue("y");
+								String widthGPML = child.getAttributeValue("width");
+								String heightGPML = child.getAttributeValue("height");
+
+								Double height = Double.parseDouble(heightGPML);
+								Double centerY = Double.parseDouble(centerYGPML) - i*height;
+
+								PathwayElement element = new PathwayElement(ObjectType.DATANODE);
+								String id = element.getGraphId();
+								element.setTextLabel(textlabelGPML);
+								element.setDataNodeType("Geneproduct");
+//								element.setColor(colorGPML);
+								element.setMCenterX(Double.parseDouble(centerXGPML));
+								element.setMCenterY(centerY);
+								element.setMWidth(Double.parseDouble(widthGPML));
+								element.setMHeight(height);
+								element.setDataSource("Entrez Gene"); 
+								element.setGeneID(ncbi[i]);
+
+								if(element != null) {
+									pathway.add(element);
+								}
+							}
+						}
+						else { 
+							String textlabelGPML = child.getAttributeValue("name");
 							String colorGPML = child.getAttributeValue("fgcolor");
 							String centerXGPML = child.getAttributeValue("x");
 							String centerYGPML = child.getAttributeValue("y");
 							String widthGPML = child.getAttributeValue("width");
 							String heightGPML = child.getAttributeValue("height");
 
-							Double height = Double.parseDouble(heightGPML);
-							Double centerY = Double.parseDouble(centerYGPML) - i*height;
-								
 							PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 							String id = element.getGraphId();
 							element.setTextLabel(textlabelGPML);
 							element.setDataNodeType("Geneproduct");
 //							element.setColor(colorGPML);
 							element.setMCenterX(Double.parseDouble(centerXGPML));
-							element.setMCenterY(centerY);
+							element.setMCenterY(Double.parseDouble(centerYGPML));
 							element.setMWidth(Double.parseDouble(widthGPML));
-							element.setMHeight(height);
+							element.setMHeight(Double.parseDouble(heightGPML));
 							element.setDataSource("Entrez Gene"); 
-							element.setGeneID(ncbi[i]);
+							element.setGeneID("null");
 
 							if(element != null) {
 								pathway.add(element);
@@ -81,7 +107,7 @@ public class Converter {
 					}
 					else if(type.equals("compound"))
 					{
-						String textlabelGPML = ; // naam van metabolite uit online KEGG database
+						String textlabelGPML = "mieauw"; // naam van metabolite uit online KEGG database
 
 						Element graphics = child.getChild("graphics");
 						String colorGPML = child.getAttributeValue("fgcolor");
@@ -99,15 +125,28 @@ public class Converter {
 						element.setMCenterY(Double.parseDouble(centerYGPML));
 						element.setMWidth(Double.parseDouble(widthGPML));
 						element.setMHeight(Double.parseDouble(heightGPML));
-						
+
 						pathway.add(element);
 					}					
 					else if(type.equals("map"))
 					{
-						String textlabelGPML = null; 
+						String textlabelGPML = child.getAttributeValue("name"); 
 						String typeGPML = null;
+						String centerXGPML = child.getAttributeValue("x");
+						String centerYGPML = child.getAttributeValue("y");
+						String widthGPML = child.getAttributeValue("width");
+						String heightGPML = child.getAttributeValue("height");
 						
 						PathwayElement element = new PathwayElement(ObjectType.LABEL);
+						String id = element.getGraphId();
+						element.setMFontSize(150);
+						element.setTextLabel(textlabelGPML);
+						element.setMCenterX(Double.parseDouble(centerXGPML));
+						element.setMCenterY(Double.parseDouble(centerYGPML));
+						element.setMWidth(Double.parseDouble(widthGPML));
+						element.setMHeight(Double.parseDouble(heightGPML));
+						
+						pathway.add(element);
 					}
 				}
 			}	

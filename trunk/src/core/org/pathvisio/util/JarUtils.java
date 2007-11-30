@@ -81,7 +81,7 @@ public class JarUtils
 			if(url.getProtocol().equals("jar")) {
 				JarURLConnection conn = (JarURLConnection)url.openConnection();
 				JarFile jf = conn.getJarFile();
-				Enumeration e = jf.entries();
+				Enumeration<?> e = jf.entries();
 				while(e.hasMoreElements()) {
 					JarEntry je = (JarEntry)e.nextElement();
 					if(!je.isDirectory() && je.getName().startsWith(path))

@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 
-package org.pathvisio.data;
+package org.pathvisio.model;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -24,12 +24,8 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayExporter;
+import org.pathvisio.data.DataSource;
+import org.pathvisio.data.Gdb;
 
 /**
  * Exporter that writes a pathway as a list
@@ -107,15 +103,15 @@ public class DataNodeListExporter implements PathwayExporter {
 				}
 				//Use the original id, if code is already the one asked for
 				if(DB_ORIGINAL.equals(resultCode) || code.equals(resultCode)) {
-					line = id + "\t" + DataSources.sysCode2Name.get(code);
+					line = id + "\t" + DataSource.getBySystemCode(code).getFullName();
 				} else { //Lookup the cross-references for the wanted database code
-					ArrayList<IdCodePair> refs = Gdb.getCrossRefs(new IdCodePair(id, code), resultCode);
-					for(IdCodePair ref : refs) {
+					ArrayList<Xref> refs = Gdb.getCrossRefs(new Xref(id, DataSource.getBySystemCode(code)), resultCode);
+					for(Xref ref : refs) {
 						line += ref.getId() + multiRefSep;
 					}
 					if(line.length() > multiRefSep.length()) { //Remove the last ', '
 						line = line.substring(0, line.length() - multiRefSep.length());
-						line += "\t" + DataSources.sysCode2Name.get(resultCode);
+						line += "\t" + DataSource.getBySystemCode(resultCode).getFullName();
 					}
 				}
 				out.println(line);

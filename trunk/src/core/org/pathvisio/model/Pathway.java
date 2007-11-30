@@ -102,6 +102,26 @@ public class Pathway implements PathwayListener
 		return dataObjects;
 	}
 	
+	/**
+	 * Takes the Xref of all DataNodes in this pathway
+	 * and returns them as a List.
+	 * 
+	 * returns an empty arraylist if there are no datanodes in
+	 * this pathway.
+	 */
+	public List<Xref> getDataNodeXrefs()
+	{
+		List<Xref> result = new ArrayList<Xref>();
+		for (PathwayElement e : dataObjects)
+		{
+			if (e.getObjectType() == ObjectType.DATANODE)
+			{
+				result.add(e.getXref());
+			}
+		}
+		return result;
+	}
+	
 	private PathwayElement mappInfo = null;
 	private PathwayElement infoBox = null;
 	private PathwayElement biopax = null;

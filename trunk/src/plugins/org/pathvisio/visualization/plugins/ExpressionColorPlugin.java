@@ -44,10 +44,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.jdom.Element;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
+import org.pathvisio.data.Sample;
 import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.Gex.Sample;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.Xref;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.view.Graphics;
@@ -75,7 +75,7 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 		drawColoredRectangle(area, cs.getColor(ColorSet.ID_COLOR_NO_DATA_FOUND), g2d);
 	}
 
-	protected void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, Graphics2D g2d) {
+	protected void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
 		ColorSample smp = (ColorSample)s;
 		CachedData cache = Gex.getCachedData();
 		
@@ -96,13 +96,13 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 		}
 	}
 
-	void drawSampleAvg(ConfiguredSample s, IdCodePair idc, CachedData cache, Rectangle area, Graphics2D g2d) {
+	void drawSampleAvg(ConfiguredSample s, Xref idc, CachedData cache, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());
 		drawColoredRectangle(area, rgb, g2d);
 	}
 	
-	void drawSampleBar(ConfiguredSample s, IdCodePair idc, CachedData cache, Rectangle area, Graphics2D g2d) {
+	void drawSampleBar(ConfiguredSample s, Xref idc, CachedData cache, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		List<Data> refdata = cache.getData(idc);
 		int n = refdata.size();

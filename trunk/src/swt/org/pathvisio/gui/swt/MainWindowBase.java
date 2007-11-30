@@ -185,7 +185,12 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {
-					dialog.run(true, true, new GexSwt.CacheProgressKeeper(drawing.getMappIds(), drawing.getSystemCodes()));
+					dialog.run(
+							true, true, 
+							new GexSwt.CacheProgressKeeper(
+									drawing.getPathwayModel().getDataNodeXrefs()
+								)
+					);
 					drawing.redraw();
 				} catch(Exception e) {
 					String msg = "while caching expression data: " + e.getMessage();					

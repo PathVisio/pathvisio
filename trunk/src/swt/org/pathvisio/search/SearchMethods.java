@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.data.Gdb.IdCodePair;
+import org.pathvisio.model.Xref;
 import org.pathvisio.search.PathwaySearchComposite.SearchRunnableWithProgress;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
@@ -48,23 +48,10 @@ public abstract class SearchMethods {
 	 * @param code	System code of the gene identifier
 	 * @param folder	Directory to search (includes sub-directories)
 	 * @param srt	{@link SearchResultTable} to display the results in
-	 * @return string with message to display. if null, no message is displayed
-	 */
-	public static String pathwaysContainingGene(String id, String code, File folder, 
-			SearchResultTable srt) throws SearchException {
-		return pathwaysContainingGene(id, code, folder, srt);
-	}
-	
-	/**
-	 * Search for pathways containing the given gene and display result in given result table
-	 * @param id	Gene identifier to search for
-	 * @param code	System code of the gene identifier
-	 * @param folder	Directory to search (includes sub-directories)
-	 * @param srt	{@link SearchResultTable} to display the results in
 	 * @param runnable	{@link SearchRunnableWithProgress} containing the monitor responsible for
 	 * displaying the progress
 	 */
-	public static void pathwaysContainingGeneID(String id, String code, File folder, 
+	public static void pathwaysContainingGeneID(Xref ref, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) 
 			throws SearchException, SAXException {
 		
@@ -76,7 +63,7 @@ public abstract class SearchMethods {
 
 		srt.setTableData(srs);
 		//Get all cross references
-		List<IdCodePair> refs = Gdb.getCrossRefs(id, code);
+		List<Xref> refs = Gdb.getCrossRefs(ref);
 		if(refs.size() == 0) throw new NoGdbException();
 		
 		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));
@@ -93,7 +80,7 @@ public abstract class SearchMethods {
 			ArrayList<PathwayParser.Gene> genes = parser.getGenes();
 			//Check if one of the given ids is in the pathway
 			for(PathwayParser.Gene gene : genes) {
-				if(refs.contains(new IdCodePair(gene.getId(), gene.getCode()))) {//Gene found, add pathway to search result and break
+				if(refs.contains(gene)) {//Gene found, add pathway to search result and break
 					Row sr = srs.new Row();
 					sr.setCell("pathway", f.getName());
 					sr.setCell("directory", f.getParentFile().getName());

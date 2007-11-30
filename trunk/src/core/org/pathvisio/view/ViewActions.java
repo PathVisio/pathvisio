@@ -283,8 +283,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	private class SelectClassAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		Class c;
-		public SelectClassAction(String name, Class c) {
+		Class<?> c;
+		public SelectClassAction(String name, Class<?> c) {
 			super("Select all " + name + " objects");
 			this.c = c;
 		}

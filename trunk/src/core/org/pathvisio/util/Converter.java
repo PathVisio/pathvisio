@@ -25,11 +25,11 @@ package org.pathvisio.util;
 import java.io.File;
 
 import org.pathvisio.Engine;
-import org.pathvisio.data.DataNodeListExporter;
-import org.pathvisio.data.EUGeneExporter;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.DataNodeListExporter;
+import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;

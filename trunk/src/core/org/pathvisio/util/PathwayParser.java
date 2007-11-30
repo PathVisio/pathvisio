@@ -18,14 +18,14 @@ package org.pathvisio.util;
 
 import java.util.ArrayList;
 
-import org.pathvisio.data.DataSources;
-import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.debug.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+import org.pathvisio.data.DataSource;
+import org.pathvisio.model.Xref;
 
 /**
  * This sax handler can be used to quickly parse pathway information from
@@ -76,12 +76,11 @@ public class PathwayParser extends DefaultHandler
 		{
 			String sysName = attributes.getValue("Database");
 			assert (sysName != null);
-			String code = DataSources.sysName2Code.get(sysName);
-			assert (code != null);
+			DataSource ds = DataSource.getByFullName (sysName);
 			String geneId = attributes.getValue("ID");
 			assert (geneId != null);
 			
-			currentGene.setCode(code);
+			currentGene.setDataSource(ds);
 			currentGene.setId(geneId);
 			
 			if(!genes.contains(currentGene)) //Don't add duplicate genes
@@ -106,7 +105,7 @@ public class PathwayParser extends DefaultHandler
 		Logger.log.error("Warning while parsing xml document", e);
 	}
 	
-	public class Gene extends IdCodePair 
+	public class Gene extends Xref 
 	{
 		String symbol;
 		

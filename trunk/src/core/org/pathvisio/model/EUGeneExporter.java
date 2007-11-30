@@ -1,24 +1,18 @@
-package org.pathvisio.data;
+package org.pathvisio.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.pathvisio.data.DataSource;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayExporter;
 
 
-public class EUGeneExporter implements PathwayExporter {
-	public EUGeneExporter() {
-		createSystemMappings();
-	}
-
+public class EUGeneExporter implements PathwayExporter 
+{
 	public String[] getExtensions() {
 		return new String[] { "pwf" };
 	}
@@ -125,20 +119,13 @@ public class EUGeneExporter implements PathwayExporter {
 			if(systemMappings.containsKey(system)) {
 				return systemMappings.get(system);
 			} else {
-				return DataSources.sysCode2Name.get(system);
+				return DataSource.getBySystemCode(system).getFullName();
 			}
 		}
 	}
 
-	HashMap<String, String> systemMappings;
-	void createSystemMappings() {
-		systemMappings = new HashMap<String, String>();
-		for(int i = 0; i < euGeneSystems.length; i++) {
-			systemMappings.put(genMappSystems[i], euGeneSystems[i]);
-		}
-	}
-
-	static String[] euGeneSystems = new String[]
+	static Map<DataSource, String> systemMappings;
+	static final String[] euGeneSystems = new String[]
 	                                           {
 		"ENSEMBL_GENE_ID",
 		"UNIPROT", 
@@ -150,16 +137,25 @@ public class EUGeneExporter implements PathwayExporter {
 		"PDB_ID", 
 		"SGD_ID" 
 	                                           };
-	static String[] genMappSystems = new String[]
+	static final DataSource[] genMappSystems = new DataSource[]
 	                                            {
-		"En",
-		"S",
-		"L",
-		"U",
-		"X",
-		"Ag",
-		"H",
-		"Pd",
-		"D"
+		DataSource.ENSEMBL,
+		DataSource.SWISSPROT,
+		DataSource.ENTREZ_GENE,
+		DataSource.UNIGENE,
+		DataSource.AFFY,
+		DataSource.AGILENT,
+		DataSource.HUGO,
+		DataSource.PDB,
+		DataSource.SGD
 	                                            };
+	
+	static
+	{
+		systemMappings = new HashMap<DataSource, String>();
+		for(int i = 0; i < euGeneSystems.length; i++) 
+		{
+			systemMappings.put(genMappSystems[i], euGeneSystems[i]);
+		}
+	}
 }

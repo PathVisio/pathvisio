@@ -22,11 +22,13 @@ import java.util.List;
 
 /**
    Handles all data sources recognized by PathVisio (e.g. Ensembl, Unigene, Entrez).
+   @deprecated
 */   
 public class DataSources 
 {
 	/**
 	   GenMAPP System Codes
+	   @deprecated
 	*/
     public final static String[] systemCodes = 
 	{ 
@@ -43,6 +45,7 @@ public class DataSources
 
 	/**
 	   Full names of data sources, corresponding to the System Codes in {@link systemCodes}
+	   @deprecated
 	*/
     public final static String[] dataSources = 
 	{
@@ -59,17 +62,20 @@ public class DataSources
     
 	/**
 	 * {@link HashMap} containing mappings from system name (as used in Gpml) to system code
+	   @deprecated
 	 */
 	public static final HashMap<String,String> sysName2Code = initSysName2Code();
 
 	/**
 	 * {@link HashMap} containing mappings from system code to system name (as used in Gpml)
+	   @deprecated
 	 */
 	public static final HashMap<String,String> sysCode2Name = initSysCode2Name();
 
 	/**
 	 * Initializes the {@link HashMap} containing the mappings between system name (as used in gpml)
 	 * and system code
+	   @deprecated
 	 */
 	private static HashMap<String, String> initSysName2Code()
 	{
@@ -82,6 +88,7 @@ public class DataSources
 	/**
 	 * Initializes the {@link HashMap} containing the mappings between system code and 
 	 * system name (as used in Gpml)
+	   @deprecated
 	 */
 	private static HashMap<String, String> initSysCode2Name()
 	{
@@ -93,6 +100,7 @@ public class DataSources
 
 	/**
 	   System names converted to arraylist for easy index lookup
+	   @deprecated
 	*/
 	public final static List<String> lDataSources = Arrays.asList(dataSources);
 }

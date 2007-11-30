@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
 import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 
 public class Criterion {

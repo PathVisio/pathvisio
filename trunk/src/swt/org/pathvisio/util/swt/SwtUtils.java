@@ -361,8 +361,8 @@ public class SwtUtils {
 		 * @param args	the argument values to pass to the method
 		 * @param instance	an instance of the class to which the method belongs (null for static methods)
 		 */
-		public SimpleRunnableWithProgress(Class fromClass, String method, 
-				Class[] parameters,	Object[] args, Object instance) {
+		public SimpleRunnableWithProgress(Class<?> fromClass, String method, 
+				Class<?>[] parameters,	Object[] args, Object instance) {
 			super();
 			this.args = args;
 			this.instance = instance;
@@ -380,7 +380,7 @@ public class SwtUtils {
 		 * @param method	the method to be called
 		 * @param parameters	the classes of the method's arguments
 		 */
-		public SimpleRunnableWithProgress(Class fromClass, String method, Class[] parameters) {
+		public SimpleRunnableWithProgress(Class<?> fromClass, String method, Class<?>[] parameters) {
 			this(fromClass, method, parameters, null, null);
 		}
 		

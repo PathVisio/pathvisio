@@ -26,6 +26,7 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.Xref;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -55,7 +56,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			input = null;
-			setText(Gdb.getBackpageHTML(null, null, null));
+			setText(Gdb.getBackpageHTML(null, null));
 		} else {
 			input = e;
 			input.addListener(this);
@@ -145,8 +146,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 		void performTask() {
 			String txt = Gdb.getBackpageHTML(
-					e.getGeneID(), 
-					e.getSystemCode(), 
+					new Xref(e.getGeneID(), 
+					e.getDataSource()), 
 					e.getBackpageHead());
 			if(input == e) setText(txt);
 		}

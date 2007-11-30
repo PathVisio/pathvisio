@@ -305,6 +305,7 @@ public class ImportInformation {
 	
 	/**
 	 * Returns the system code (String) selected from DataSources.systemCodes.
+	 * @deprecated use getDataSource instead.
 	 */
 	public String getSyscode()
 	{
@@ -313,11 +314,29 @@ public class ImportInformation {
 	
 	/**
 	 * Sets the system code (String) to a value from DataSources.systemCodes.
+	 * @deprecated use setDataSource instead
 	 */
 	public void setSyscode(String target) {
 		syscode = target;
 	}
 	
+	/**
+	 * Sets the data source to use for all imported identifiers.
+	 * Only meaningful if getSyscodeColumn returns false.
+	 */
+	public void setDataSource(DataSource value)
+	{
+		syscode = value.getSystemCode();
+	}
+	
+	/**
+	 * Gets the data source to use for all imported identifiers.
+	 * Only meaningful if getSyscodeColumn retunrs false.
+	 */
+	public DataSource getDataSource()
+	{
+		return DataSource.getBySystemCode (syscode);
+	}
 	
 	/**Returns the string that is used as the delimiter for reading the input data.
 	 * This string is used to separate columns in the input data.

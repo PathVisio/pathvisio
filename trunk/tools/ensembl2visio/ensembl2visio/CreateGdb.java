@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.List;
 import java.util.ArrayList;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 
 public class CreateGdb

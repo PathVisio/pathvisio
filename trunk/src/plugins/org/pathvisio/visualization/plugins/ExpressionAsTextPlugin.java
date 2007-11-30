@@ -59,12 +59,12 @@ import org.eclipse.swt.widgets.Spinner;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.DataSources;
+import org.pathvisio.data.DataSource;
 import org.pathvisio.data.Gex;
+import org.pathvisio.data.Sample;
 import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.Gex.Sample;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.Xref;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
@@ -106,9 +106,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = Gex.getCachedData();
 			
-			String id = gp.getPathwayElement().getXref();
-			String db = DataSources.sysName2Code.get(gp.getPathwayElement().getDataSource());
-			IdCodePair idc = new IdCodePair(id, db);
+			String id = gp.getPathwayElement().getGeneID();
+			DataSource ds = gp.getPathwayElement().getDataSource();
+			Xref idc = new Xref(id, ds);
 			
 			if(cache == null || !cache.hasData(idc)|| useSamples.size() == 0) {
 				return;
@@ -140,9 +140,9 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 			GeneProduct gp = (GeneProduct) g;
 			CachedData  cache = Gex.getCachedData();
 			
-			IdCodePair idc = new IdCodePair(
+			Xref idc = new Xref(
 					gp.getPathwayElement().getGeneID(), 
-					gp.getSystemCode());
+					gp.getPathwayElement().getDataSource());
 			
 			if(!cache.hasData(idc)|| useSamples.size() == 0) {
 				return null;
@@ -181,11 +181,11 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		return s.getName() + ":";
 	}
 	
-	String getLabelRightText(Sample s, IdCodePair idc, CachedData cache) {
+	String getLabelRightText(Sample s, Xref idc, CachedData cache) {
 		return getDataString(s, idc, cache, SEP);
 	}
 	
-	String getDataString(Sample s, IdCodePair idc, CachedData cache, String multSep) {	
+	String getDataString(Sample s, Xref idc, CachedData cache, String multSep) {	
 		Object str = null;
 		if(cache.hasMultipleData(idc))
 			str = formatData(getSampleStringMult(s, idc, cache, multSep));
@@ -198,7 +198,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		return data.getSampleData(s.getId());
 	}
 	
-	Object getSampleStringMult(Sample s, IdCodePair idc, CachedData cache, String sep) {
+	Object getSampleStringMult(Sample s, Xref idc, CachedData cache, String sep) {
 		if(mean) return cache.getAverageSampleData(idc).get(s.getId());
 		
 		List<Data> refdata = cache.getData(idc);
@@ -265,7 +265,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	}
 	
 	void addUseSamples(IStructuredSelection selection) {
-		Iterator it = selection.iterator();
+		Iterator<?> it = selection.iterator();
 		while(it.hasNext()) {
 			useSamples.add((Sample)it.next());
 		}
@@ -273,7 +273,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	}
 	
 	void removeUseSamples(IStructuredSelection selection) {
-		Iterator it = selection.iterator();
+		Iterator<?> it = selection.iterator();
 		while(it.hasNext()) {
 			useSamples.remove((Sample)it.next());
 		}

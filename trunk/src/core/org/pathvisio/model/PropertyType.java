@@ -69,7 +69,7 @@ public enum PropertyType
 	// gene product
 	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID), //TODO: change tag 
 	SYSTEMCODE ("SystemCode", "Database Name", PropertyClass.DATASOURCE), 
-	XREF ("Xref", "Xref", PropertyClass.STRING), // unused 
+	GENMAPP_XREF ("Xref", "Xref", PropertyClass.STRING), // deprecated, maintained for backward compatibility with GenMAPP. 
 	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
 	TYPE ("Type", "Type", PropertyClass.GENETYPE),
 			

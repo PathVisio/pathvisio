@@ -38,6 +38,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
+import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.Utils;
 
@@ -113,8 +114,8 @@ public abstract class Gdb {
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
 	 */
-	public static String getGeneSymbol(String id, String code) {
-		String bpInfo = getBpInfo(id, code);
+	public static String getGeneSymbol(Xref ref) {
+		String bpInfo = getBpInfo(ref);
 		return bpInfo == null ? null : parseGeneSymbol(bpInfo);
 		
 	}
@@ -139,14 +140,16 @@ public abstract class Gdb {
 	 * @param code systemcode of the gene identifier
 	 * @return String with the backpage info, null if the gene was not found
 	 */
-	public static String getBpInfo(String id, String code) {
+	public static String getBpInfo(Xref ref) {
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
 		try {
 			Statement s = con.createStatement();
-			ResultSet r = s.executeQuery("SELECT backpageText FROM " + table_DataNode +
-					" WHERE id = '" + id + "' AND code = '" + code + "'");
+			ResultSet r = s.executeQuery(
+					"SELECT backpageText FROM " + table_DataNode +
+					" WHERE id = '" + ref.getId() + "' AND code = '" + 
+					ref.getDataSource().getSystemCode() + "'");
 			r.next();
 			String result = r.getString(1);
 			timer.stopToLog("> getBpInfo");
@@ -154,17 +157,17 @@ public abstract class Gdb {
 		} catch(Exception e) { return null;	} //Gene not found
 	}
 	
-	public static String getBackpageHTML(String id, String code, String bpHead) {
+	public static String getBackpageHTML(Xref ref, String bpHead) {
 		String text = backpagePanelHeader == null ? "" : backpagePanelHeader;
-		if( id == null || code == null) return text;
+		if( ref.getId() == null || ref.getDataSource() == null) return text;
 		
 		if (bpHead == null) bpHead = "";
 		text += "<H1>Gene information</H1><P>";
 		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-		String bpInfo = Gdb.getBpInfo(id, code);
+		String bpInfo = Gdb.getBpInfo(ref);
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
-		text += getCrossRefText(id, code);
+		text += getCrossRefText(ref);
 
 		return text + "</body></html>";
 	}
@@ -175,13 +178,14 @@ public abstract class Gdb {
 		return backpageTextProvider;
 	}
 	
-	private static String getCrossRefText(String id, String code) {
-		List<IdCodePair> crfs = Gdb.getCrossRefs(id, code);
+	private static String getCrossRefText(Xref ref) 
+	{
+		List<Xref> crfs = Gdb.getCrossRefs(ref);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
-		for(IdCodePair cr : crfs) {
+		for(Xref cr : crfs) {
 			String idtxt = cr.getId();
-			String url = getCrossRefLink(cr);
+			String url = cr.getUrl();
 			if(url != null) {
 				int os = Utils.getOS();
 				if(os == Utils.OS_WINDOWS) {
@@ -193,92 +197,12 @@ public abstract class Gdb {
 				}
 				
 			}
-			String dbName = DataSources.sysCode2Name.get(cr.getCode());
-			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getCode()) + "<br>");
+			String dbName = cr.getDataSource().getFullName();
+			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
 		}
 		return crt.toString();
 	}
-	
-	private static String getCrossRefLink(IdCodePair idc) {
-		String c = idc.getCode();
-		String id = idc.getId();
-		if(c.equalsIgnoreCase("En"))
-			return "http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q=" + id;
-		if(c.equalsIgnoreCase("P"))
-			return "http://www.expasy.org/uniprot/" + id;
-		if(c.equalsIgnoreCase("Q")) {
-			String pre = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?";
-			if(id.startsWith("NM")) {
-				return pre + "db=Nucleotide&cmd=Search&term=" + id;
-			} else {
-				return pre + "db=Protein&cmd=search&term=" + id;
-			}
-		}
-		if(c.equalsIgnoreCase("T"))
-			return "http://godatabase.org/cgi-bin/go.cgi?view=details&search_constraint=terms&depth=0&query=" + id;
-		if(c.equalsIgnoreCase("I"))
-			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
-		if(c.equalsIgnoreCase("Pd"))
-			return "http://bip.weizmann.ac.il/oca-bin/ocashort?id=" + id;
-		if(c.equalsIgnoreCase("X"))
-			return "http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id=" + id;
-		if(c.equalsIgnoreCase("Em"))
-			return "http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id=" + id;
-		if(c.equalsIgnoreCase("L"))
-			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids=" + id;
-		if(c.equalsIgnoreCase("H"))
-			return "http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id=" + id;
-		if(c.equalsIgnoreCase("I"))
-			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
-		if(c.equalsIgnoreCase("M"))
-			return "http://www.informatics.jax.org/searches/accession_report.cgi?id=" + id;
-		if(c.equalsIgnoreCase("Om"))
-			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?" + id;
-		if(c.equalsIgnoreCase("Pf"))
-			return "http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?" + id;
-		if(c.equalsIgnoreCase("R"))
-			return "http://rgd.mcw.edu/generalSearch/RgdSearch.jsp?quickSearch=1&searchKeyword=" + id;
-		if(c.equalsIgnoreCase("D"))
-			return "http://db.yeastgenome.org/cgi-bin/locus.pl?locus=" + id;
-		if(c.equalsIgnoreCase("S"))
-			return "http://www.expasy.org/uniprot/" + id;
-		if(c.equalsIgnoreCase("U")) {
-			String [] org_nr = id.split("\\.");
-			if(org_nr.length == 2) {
-				return "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=" + 
-				org_nr[0] + "&CID=" + org_nr[1];
-			}
-			else {
-				return null;
-			}
-		}
-		if (c.equalsIgnoreCase("Nw"))
-		{
-			return "http://nugowiki.org/index.php/" + id;
-		}
-		if (c.equalsIgnoreCase("Ca"))
-		{
-			return "http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=" + id;
-		}
-		if (c.equalsIgnoreCase("Cp"))
-		{
-			return "http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=" + id;
-		}
-		if (c.equalsIgnoreCase("Ce"))
-		{
-			return "http://www.ebi.ac.uk/chebi/searchId=CHEBI:" + id;
-		}
-		if (c.equalsIgnoreCase("Ch"))
-		{
-			return "http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD=" + id + ".txt";
-		}
-		if (c.equalsIgnoreCase("Ck"))
-		{
-			return "http://www.genome.jp/dbget-bin/www_bget?cpd:" + id;
-		}
-		return null;
-	}
-	
+		
 	/**
 	 * Directory containing HTML files needed to display the backpage information
 	 */
@@ -306,38 +230,8 @@ public abstract class Gdb {
 		} catch (Exception e) {
 			Logger.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
 		}
-	}
-	
-	/**
-	 * Checks whether the given gene exists in the gene database
-	 * @param id
-	 * @param code
-	 * @return	true if the gene exists, false if not
-	 */
-	public static boolean hasGene(String id, String code)
-	{
-		try {
-			ResultSet r = con.createStatement().executeQuery(
-					"SELECT COUNT(*) FROM " + table_DataNode + " WHERE " +
-					"id = '" + id + "' AND code = '" + code +"'"
-			);
-			r.next();
-			return r.getInt(1) > 0 ? true : false;
-		} catch(Exception e) { return false; }
-	}
-		
-//	static PreparedStatement pstEnsId2Refs;
-	/**
-	 * Get all cross references (ids from every system representing 
-	 * the same gene as the given id) for a given Ensembl id
-	 * @param ensId		The Ensembl id to get the cross references for
-	 * @return			List containing all cross references found for this Ensembl id
-	 * (empty if nothing found)
-	 */	
-	public static ArrayList<IdCodePair> ensId2Refs(String ensId) {
-		return ensId2Refs(ensId, null);
-	}
-	
+	}	
+			
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id
@@ -347,11 +241,11 @@ public abstract class Gdb {
 	 * @return			List containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 */	
-	public static ArrayList<IdCodePair> ensId2Refs(String ensId, String resultCode) {
+	public static ArrayList<Xref> ensId2Refs(String ensId, String resultCode) {
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
-		ArrayList<IdCodePair> crossIds = new ArrayList<IdCodePair>();
+		ArrayList<Xref> crossIds = new ArrayList<Xref>();
 		try {
 //			if(pstEnsId2Refs == null) {
 //				pstEnsId2Refs = getCon().prepareStatement(
@@ -369,7 +263,7 @@ public abstract class Gdb {
 					"SELECT idRight, codeRight FROM link " +
 					"WHERE idLeft = '" + ensId + "'" + codeLimit);
 			while(r1.next()) {
-				crossIds.add(new IdCodePair(r1.getString(1), r1.getString(2)));
+				crossIds.add(new Xref(r1.getString(1), DataSource.getBySystemCode(r1.getString(2))));
 			}
 		} catch(Exception e) {
 			Logger.log.error("Unable to get cross references for ensembl gene " +
@@ -388,7 +282,7 @@ public abstract class Gdb {
 	 * @return		ArrayList containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
 	 */
-	public static ArrayList<String> ref2EnsIds(String ref, String code)
+	public static ArrayList<String> ref2EnsIds(Xref xref)
 	{	
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -406,16 +300,19 @@ public abstract class Gdb {
 //			ResultSet r1 = pstRef2EnsIds.executeQuery();
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idLeft FROM link " +
-					"WHERE idRight = '" + ref + "' AND codeRight = '" + code + "'");
+					"WHERE idRight = '" + xref.getId() + 
+					"' AND codeRight = '" + xref.getDataSource().getSystemCode() + "'");
 			while(r1.next()) {
 				ensIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {
 			Logger.log.error("Unable to get ensembl genes for ensembl gene " +
-					"'" + ref + "' with systemcode '" + code + "'", e);
+					"'" + xref.getId() + "' with systemcode '" + 
+					xref.getDataSource().getSystemCode() + "'", e);
 		}
 		
-		timer.stopToLog("> ref2EnsIds (" + ref + "," + code + ")");
+		timer.stopToLog("> ref2EnsIds (" + xref.getId() + "," + 
+				xref.getDataSource().getSystemCode() + ")");
 		return ensIds;
 	}
 	
@@ -427,7 +324,7 @@ public abstract class Gdb {
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public static List<IdCodePair> getCrossRefs(IdCodePair idc) {
+	public static List<Xref> getCrossRefs(Xref idc) {
 		return getCrossRefs(idc, null);
 	}
 	
@@ -440,131 +337,19 @@ public abstract class Gdb {
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public static ArrayList<IdCodePair> getCrossRefs(IdCodePair idc, String resultCode) {
+	public static ArrayList<Xref> getCrossRefs(Xref idc, String resultCode) {
 		Logger.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
-		ArrayList<IdCodePair> refs = new ArrayList<IdCodePair>();
-		ArrayList<String> ensIds = ref2EnsIds(idc.getId(), idc.getCode());
+		ArrayList<Xref> refs = new ArrayList<Xref>();
+		ArrayList<String> ensIds = ref2EnsIds(idc);
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId, resultCode));
 
 		Logger.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
 	}
-	
-	static boolean SINGLE_QUERY = false;
-	/**
-	 * Get all cross references (ids from every system representing 
-	 * the same gene as the given id) for a given id
-	 * @param id	gene identifier to get the cross references for
-	 * @param code	systemcode of the gene identifier
-	 * @return list of crossrefs
-	 */
-	public static List<IdCodePair> getCrossRefs(String id, String code) {
-		if(SINGLE_QUERY)
-			return getCrossRefs1Query(id, code);
-		else
-			return getCrossRefs(new IdCodePair(id, code));
-	}
-	
-//	static PreparedStatement pstCrossRefs1Query;
-	/**
-	 * Get all cross references (ids from every system representing 
-	 * the same gene as the given id) for a given id (from any system) using a
-	 * single SQL query
-	 * NOTE: Don't use this due to performance reasons. Hsqldb seems to have
-	 * trouble with more complicated select statements like this. Using multiple 
-	 * simple select statements showed to be much faster, so use getCrossRefs instead
-	 * @param id	gene identifier to get the cross references for
-	 * @param code	systemcode of the gene identifier
-	 * @return list of IdCodePair-s
-	 */
-//	Don't use this, multiple simple select queries is faster
-//	Use getCrossRefs instead
-	public static List<IdCodePair> getCrossRefs1Query(String id, String code) {	
-		StopWatch timer = new StopWatch();
-		timer.start();
-		
-		List<IdCodePair> crossIds = new ArrayList<IdCodePair>();
-		try {			
-//			if(pstCrossRefs1Query == null) {
-//				pstCrossRefs1Query = getCon().prepareStatement(
-//						"SELECT idRight, codeRight FROM link " +
-//						"WHERE idLeft IN ( " +
-//						"SELECT idLeft FROM link " +
-//						"WHERE codeRight = ? AND idRight = ? )"
-//				);
-//			}
-//			pstCrossRefs1Query.setString(1, code);
-//			pstCrossRefs1Query.setString(2, id);
-//			ResultSet r1 = pstCrossRefs1Query.executeQuery();
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idRight, codeRight FROM link " +
-					"WHERE idLeft IN ( " +
-					"SELECT idLeft FROM link " +
-					"WHERE codeRight = '" + code + "' AND idRight = '" + id + "' )");
-			while(r1.next()) {
-				String rid = r1.getString(1);
-				String rcode = r1.getString(2);
-				crossIds.add(new IdCodePair(rid, rcode));
-			}
-		} catch(Exception e) {
-			Logger.log.error("Unable to get cross references for gene " +
-					"'" + id + ", with systemcode '" + code + "'", e);
-		}
-		
-		Logger.log.trace("\t> getCrossRefs1Query:\t" + timer.stop());
-		return crossIds;
-	}
-	
-	/**
-	 * Class to store an id/code combination, which represents
-	 * an unique gene product
-	 */
-	public static class IdCodePair implements Comparable<IdCodePair> {
-		String id;
-		String code;
-		
-		public IdCodePair(String id, String code) {
-			this.id = id;
-			this.code = code;
-		}
-		
-		public void setCode (String value) { code = value; }
-		public void setId (String value) { id = value; }
-		
-		public String getCode() { return code; }
-		public String getId() { return id; }
-		
-		public String getName() { return code + ":" + id; }
-		public String toString() { return getName(); }
-		
-		public int hashCode() {
-			return getName().hashCode();
-		}
-		
-		public boolean equals(Object o) {
-			if(!(o instanceof IdCodePair)) return false;
-			IdCodePair idc = (IdCodePair)o;
-			return idc.getId().equals(getId()) && idc.getCode().equals(getCode());
-		}
-
-		public int compareTo (IdCodePair idc) 
-		{
-			return getName().compareTo(idc.getName());
-		}
-		
-		public boolean valid() {
-			return code.length() > 0 && id.length() > 0;
-		}
-
-		public String getDatabaseName() {
-			String name = DataSources.sysCode2Name.get(getCode());
-			return name == null ? getCode() : name;
-		}
-	}
-	
+			
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
 	}

@@ -18,8 +18,14 @@ package org.pathvisio.data;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-public interface DBConnector {
+import org.pathvisio.debug.Logger;
+
+public abstract class DBConnector 
+{
+	public static final int COMPAT_VERSION = 1;
+
 	public static final int PROP_NONE = 0;
 	public static final int PROP_RECREATE = 4;
 	public static final int PROP_FINALIZE = 8;
@@ -42,26 +48,35 @@ public interface DBConnector {
 	 * @param con The connection to be closed
 	 * @throws Exception
 	 */
-	public void closeConnection(Connection con) throws Exception;
+	public void closeConnection(Connection con) throws Exception 
+	{
+		closeConnection(con, PROP_NONE);
+	}
+	
 	/**
 	 * Close the given connection, and optionally finalize it after creation (using {@link #PROP_FINALIZE})
 	 * @param con The connection to be closed
 	 * @param props Close properties (one of {@link #PROP_NONE}, {@link #PROP_FINALIZE} or {@link #PROP_RECREATE})
 	 * @throws Exception
 	 */
-	public void closeConnection(Connection con, int props) throws Exception;
+	public void closeConnection(Connection con, int props) throws Exception 
+	{
+		con.close();
+	}
 	
+	private int dbType;
+
 	/**
 	 * Set the database type (one of {@link #TYPE_GDB} or {@link #TYPE_GEX})
 	 * @param type The type of the database that will be used for this class
 	 */
-	public void setDbType(int type);
+	public void setDbType(int type) { dbType = type; }
 	
 	/**
 	 * Get the database type (one of {@link #TYPE_GDB} or {@link #TYPE_GEX})
 	 * return The type of the database that is used for this class
 	 */
-	public int getDbType();
+	public int getDbType() { return dbType; }
 	
 	/**
 	 * Create a new database with the given name. This includes creating tables.
@@ -70,7 +85,17 @@ public interface DBConnector {
 	 * @throws Exception 
 	 * @throws Exception
 	 */
-	public Connection createNewDatabase(String dbName) throws Exception;
+	public final Connection createNewDatabase(String dbName) throws Exception 
+	{
+		Connection con = createNewDatabaseConnection(dbName);
+		createTables(con);
+		return con;
+	}
+	
+	private Connection createNewDatabaseConnection(String dbName) throws Exception 
+	{
+		return createConnection(dbName, PROP_RECREATE);
+	}
 	
 	/**
 	 * This method is called to finalize the given database after creation
@@ -81,20 +106,75 @@ public interface DBConnector {
 	 * @throws Exception
 	 * @return The name of the finalized database
 	 */
-	public String finalizeNewDatabase(String dbName) throws Exception;
+	public abstract String finalizeNewDatabase(String dbName) throws Exception;
 	
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	public void createTables(Connection con) throws Exception;
+	public void createTables(Connection con) throws Exception 
+	{	
+		con.setReadOnly(false);
+		Statement sh = con.createStatement();
+		try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+		try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+		try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+		
+		sh.execute(
+				"CREATE TABLE					" +
+				"		info							" +
+				"(	  version INTEGER PRIMARY KEY		" +
+				")");
+		sh.execute( //Add compatibility version of GEX
+				"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
+		sh.execute(
+				"CREATE TABLE                    " +
+				"		samples							" +
+				" (   idSample INTEGER PRIMARY KEY,		" +
+				"     name VARCHAR(50),					" +
+				"	  dataType INTEGER					" +
+		" )										");
+		
+		sh.execute(
+				"CREATE TABLE					" +
+				"		expression						" +
+				" (   id VARCHAR(50),					" +
+				"     code VARCHAR(50),					" +
+				"	  ensId VARCHAR(50),				" +
+				"     idSample INTEGER,					" +
+				"     data VARCHAR(50),					" +
+				"	  groupId INTEGER 					" +
+//				"     PRIMARY KEY (id, code, idSample, data)	" +
+				")										");
+}
 	
 	/**
 	 * Creates indices for a newly created expression database.
 	 * @param con The connection to the expression database
 	 * @throws SQLException
 	 */
-	public void createIndices(Connection con) throws SQLException;
+	public void createIndices(Connection con) throws SQLException {
+		con.setReadOnly(false);
+		Statement sh = con.createStatement();
+		sh.execute(
+				"CREATE INDEX i_expression_id " +
+		"ON expression(id)			 ");
+		sh.execute(
+				"CREATE INDEX i_expression_ensId " +
+		"ON expression(ensId)			 ");
+		sh.execute(
+				"CREATE INDEX i_expression_idSample " +
+		"ON expression(idSample)	 ");
+		sh.execute(
+				"CREATE INDEX i_expression_data " +
+		"ON expression(data)	     ");
+		sh.execute(
+				"CREATE INDEX i_expression_code " +
+		"ON expression(code)	 ");
+		sh.execute(
+				"CREATE INDEX i_expression_groupId" +
+		" ON expression(groupId)	");
+	}
 	
 	/**
 	 * This method may be implemented when the database files need to be
@@ -103,5 +183,8 @@ public interface DBConnector {
 	 * @param con A connection to the database
 	 * @throws SQLException
 	 */
-	public void compact(Connection con) throws SQLException;
+	public void compact(Connection con) throws SQLException {
+		//May be implemented by subclasses
+	}
+
 }

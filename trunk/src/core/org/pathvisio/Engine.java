@@ -114,7 +114,7 @@ public class Engine {
 		}
 		else
 		{
-			return vPathway.getGmmlData();
+			return vPathway.getPathwayModel();
 		}
 	}
 	
@@ -340,7 +340,7 @@ public class Engine {
 		}
 		if(className == null) return null;
 		
-		Class dbc = Class.forName(className);
+		Class<?> dbc = Class.forName(className);
 		Object o = dbc.newInstance();
 		if(o instanceof DBConnector) {
 			connector = (DBConnector)dbc.newInstance();

@@ -42,7 +42,7 @@ class PanelOutputter extends DiffOutputter
 		vpwy[PWY_NEW] = _new;
 		for (int i = 0; i < 2; ++i)
 		{
-			pwy[i] = vpwy[i].getGmmlData();
+			pwy[i] = vpwy[i].getPathwayModel();
 		}
 	}
 

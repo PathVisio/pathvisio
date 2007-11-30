@@ -51,7 +51,7 @@ public class Utils {
 	 * @param sep The separator to use
 	 * @return a String representing the list with given seperator and quote (no parentheses)
 	 */
-	public static String collection2String(Collection list, String quote, String sep) {
+	public static String collection2String(Collection<?> list, String quote, String sep) {
 		StringBuilder strb = new StringBuilder();
 		for(Object o : list) {
 			strb.append(quote + o.toString() + quote + sep);
@@ -158,9 +158,9 @@ public class Utils {
 	 * @param ifName the name of the interface
 	 * @return true if the class implements the interface, false if not
 	 */
-	public static boolean implementsInterface(Class c, String ifName) {
-		Class[] interfaces = c.getInterfaces();
-		for(Class i : interfaces) { 
+	public static boolean implementsInterface(Class<?> c, String ifName) {
+		Class<?>[] interfaces = c.getInterfaces();
+		for(Class<?> i : interfaces) { 
 			if(ifName.equals(i.getCanonicalName())) return true; 
 		}
 		return false;
@@ -172,8 +172,8 @@ public class Utils {
 	 * @param superClass the super-class
 	 * @return true if the class is a sub-class of superClass, false if not
 	 */
-	public static boolean isSubClass(Class c, Class superClass) {
-		Class sc = c;
+	public static boolean isSubClass(Class<?> c, Class<?> superClass) {
+		Class<?> sc = c;
 		while((sc = sc.getSuperclass()) != null) {
 			Logger.log.trace("\t\t>" + c + " with superclass: " + superClass);
 			if(sc.equals(superClass)) return true;

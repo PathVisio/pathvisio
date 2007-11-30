@@ -124,7 +124,7 @@ public class TableData {
 	 * This class represents a cell, which can either
 	 * have a numeric or text value
 	 */
-	public class Cell implements Comparable {
+	public class Cell implements Comparable<Cell> {
 		Column col;
 		
 		public static final int TYPE_TEXT = 0;
@@ -175,8 +175,7 @@ public class TableData {
 			arrayValue = value; 
 		}
 				
-		public int compareTo(Object o) {
-			Cell c = (Cell)o;
+		public int compareTo(Cell c) {
 						
 			if(type == c.type) {
 				switch(type) {

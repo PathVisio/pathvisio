@@ -210,7 +210,7 @@ class AwtFocusHandler implements FocusListener, ContainerListener,
     // Returns true if any popup has been hidden
     private boolean hidePopups() {
         boolean result = false;
-        List popups = new ArrayList<Component>();
+        List<Component> popups = new ArrayList<Component>();
         assert EventQueue.isDispatchThread();    // On AWT event thread
         
         // Look for popups inside the frame's component hierarchy. 
@@ -222,7 +222,7 @@ class AwtFocusHandler implements FocusListener, ContainerListener,
         findOwnedPopups(frame, popups);
         
         // System.out.println("Hiding popups, count=" + popups.size());
-        for (Iterator iter = popups.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = popups.iterator(); iter.hasNext();) {
             Component popup = (Component)iter.next();
             if (popup.isVisible()) {
                 result = true;
@@ -232,7 +232,7 @@ class AwtFocusHandler implements FocusListener, ContainerListener,
         return result;
     }
 
-    private void findOwnedPopups(Window window, List popups) {
+    private void findOwnedPopups(Window window, List<Component> popups) {
         assert window != null;
         assert EventQueue.isDispatchThread();    // On AWT event thread
         
@@ -243,7 +243,7 @@ class AwtFocusHandler implements FocusListener, ContainerListener,
         }
     }
 
-    private void findContainedPopups(Container container, List popups) {
+    private void findContainedPopups(Container container, List<Component> popups) {
         assert container != null;
         assert popups != null;
         assert EventQueue.isDispatchThread();    // On AWT event thread

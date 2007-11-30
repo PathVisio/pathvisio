@@ -25,13 +25,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.StopWatch;
 
 /**
    Abstract base class, to be derived for each different database

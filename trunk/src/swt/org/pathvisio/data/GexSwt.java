@@ -17,7 +17,7 @@
 package org.pathvisio.data;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -30,6 +30,7 @@ import org.pathvisio.data.GexImportWizard.ImportPage;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swt.SwtProgressKeeper;
+import org.pathvisio.model.Xref;
 
 public class GexSwt {
 	
@@ -59,19 +60,18 @@ public class GexSwt {
 	}
 	
 	public static class CacheProgressKeeper extends SwtProgressKeeper implements IRunnableWithProgress {
-		ArrayList<String> ids;
-		ArrayList<String> codes;
+		List<Xref> refs;
 		
-		public CacheProgressKeeper(ArrayList<String> ids, ArrayList<String> codes) {
-			super(ids.size());
-			this.ids = ids;
-			this.codes = codes;
+		public CacheProgressKeeper(List<Xref> refs) 
+		{
+			super(refs.size());
+			this.refs = refs;
 		}
 		
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Loading data", getTotalWork());
-			Gex.cacheData(ids, codes, this);
+			Gex.cacheData(refs, this);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class GexSwt {
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Importing data", getTotalWork());
-			Gex.importFromTxt(info, this);
+			GexTxtImporter.importFromTxt(info, this);
 		}
 	}	
 }

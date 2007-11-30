@@ -16,15 +16,15 @@
 //
 package org.pathvisio.data;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -56,6 +56,10 @@ import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.TableColumnResizer;
+import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
+import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**
  * This class is a {@link Wizard} that guides the user trough the process to
@@ -899,6 +903,10 @@ public class GexImportWizard extends Wizard
 
 			if(importFinished) 
 			{ // Data has been read
+
+				//Creating a default color set for the visualizations.
+				//this has to be done after re-connecting to the pgex.
+				createDefaultColorSet(importInformation.getMinimum(), importInformation.getMaximum());
 				importPage.setTitle("Import finished");
 				importPage.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
 				progressText.setText("Data has been imported. \n\n");
@@ -960,4 +968,27 @@ public class GexImportWizard extends Wizard
 			return super.getPreviousPage();
 		}
 	}
+
+	public static void createDefaultColorSet(double minimum, double maximum)
+	{
+		Color green= new Color(0,255,0);
+		Color red = new Color(255,0,0);
+		Color yellow = new Color(255,255,0);
+		ColorSet colorSet = new ColorSet("Default");
+		ColorGradient gradient = new ColorGradient(colorSet);
+		
+		ColorValuePair low = gradient.new ColorValuePair(green,minimum);
+		ColorValuePair middle = gradient.new ColorValuePair(red,(minimum+maximum)/2);
+		ColorValuePair high = gradient.new ColorValuePair(yellow,maximum);
+		
+		gradient.addColorValuePair(low);
+		gradient.addColorValuePair(middle);
+		gradient.addColorValuePair(high);
+		
+		colorSet.addObject(gradient);
+		
+		ColorSetManager.addColorSet(colorSet);
+		
+	}
+
 }

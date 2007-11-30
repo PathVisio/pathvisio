@@ -49,8 +49,6 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
@@ -58,9 +56,7 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
  * to hsqldb format
  */
 public class Gex implements ApplicationEventListener 
-{
-	public static final String XML_ELEMENT = "expression-data-visualizations";
-	
+{	
 	private static Connection con;
 			
 	public static CachedData cachedData;
@@ -86,80 +82,7 @@ public class Gex implements ApplicationEventListener
 	 * (Connection is not reset)
 	 */
 	public static void setDbName(String name) { dbName = name; }
-				
-	public static InputStream getXmlInput() {
-		File xmlFile = new File(dbName + ".xml");
-		try {
-			if(!xmlFile.exists()) xmlFile.createNewFile();
-			InputStream in = new FileInputStream(xmlFile);
-			return in;
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static OutputStream getXmlOutput() {
-		try {
-			File f = new File(dbName + ".xml");
-			OutputStream out = new FileOutputStream(f);
-			return out;
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static void saveXML() {
-		if(!isConnected()) return;
-		
-		OutputStream out = getXmlOutput();
-		
-		Document xmlDoc = new Document();
-		Element root = new Element(XML_ELEMENT);
-		xmlDoc.setRootElement(root);
-		
-		root.addContent(VisualizationManager.getNonGenericXML());
-		root.addContent(ColorSetManager.getXML());
-		
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-		try {
-			xmlOut.output(xmlDoc, out);
-			out.close();
-		} catch(IOException e) {
-			Logger.log.error("Unable to save visualization settings", e);
-		}
-	}
-	
-	public static void loadXML() {
-		Document doc = getXML();
-		Element root = doc.getRootElement();
-		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
-		VisualizationManager.loadNonGenericXML(vis);
-		Element cs = root.getChild(ColorSetManager.XML_ELEMENT);
-		ColorSetManager.fromXML(cs);
-	}
-	
-	public static Document getXML() {
-		InputStream in = Gex.getXmlInput();
-		Document doc;
-		Element root;
-		try {
-			SAXBuilder parser = new SAXBuilder();
-			doc = parser.build(in);
-			in.close();
-			
-			root = doc.getRootElement();
-		} catch(Exception e) {
-			doc = new Document();
-			root = new Element(XML_ELEMENT);
-			doc.setRootElement(root);
-			
-		}
-		
-		return doc;
-	}
-		    
+						    
 	private static HashMap<Integer, Sample> samples;
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
@@ -491,7 +414,8 @@ public class Gex implements ApplicationEventListener
 		} else {
 			con = connector.createConnection(getDbName());
 			setSamples();
-			loadXML();
+			//TODO: move to GexSwt
+			//loadXML();
 		}
 
 		con.setReadOnly( !create );
@@ -524,7 +448,8 @@ public class Gex implements ApplicationEventListener
 		{
 			try
 			{
-				saveXML();
+				//TODO: move to GexSwt
+				//saveXML();
 				
 				DBConnector connector = getDBConnector();
 				if(finalize) {

@@ -31,10 +31,6 @@ import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetManager;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
 public class GexTxtImporter 
 {
@@ -257,10 +253,6 @@ public class GexTxtImporter
 				Logger.log.error("Exception on connecting expression dataset from import thread", e);
 			}
 
-			//Creating a default color set for the visualizations.
-			//this has to be done after re-connecting to the pgex.
-			createDefaultColorSet(minimum,maximum);
-	
 			p.finished();
 		} 
 		catch(Exception e) 
@@ -280,25 +272,5 @@ public class GexTxtImporter
 		return nrError;
 	}
 	
-	public static void createDefaultColorSet(double minimum, double maximum){
-		Color green= new Color(0,255,0);
-		Color red = new Color(255,0,0);
-		Color yellow = new Color(255,255,0);
-		ColorSet colorSet = new ColorSet("Default");
-		ColorGradient gradient = new ColorGradient(colorSet);
-		
-		ColorValuePair low = gradient.new ColorValuePair(green,minimum);
-		ColorValuePair middle = gradient.new ColorValuePair(red,(minimum+maximum)/2);
-		ColorValuePair high = gradient.new ColorValuePair(yellow,maximum);
-		
-		gradient.addColorValuePair(low);
-		gradient.addColorValuePair(middle);
-		gradient.addColorValuePair(high);
-		
-		colorSet.addObject(gradient);
-		
-		ColorSetManager.addColorSet(colorSet);
-		
-	}
 
 }

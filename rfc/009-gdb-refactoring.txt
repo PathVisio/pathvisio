@@ -29,7 +29,7 @@ I propose to do a test implementation first in
 	
 package org.pathvisio.newdata;
 
-and later move it to 
+and later move it to
 
 package org.pathvisio.data;
 
@@ -56,6 +56,17 @@ and SystemCode only when you refer to the one or two letter code such as 'En' or
 Interface
 =========
 
+Package overview documentation:
+
+Gex / Gdb are both interfaces.
+They are implemented by various different RDBMS-specific classes, such as
+DerbyDb, HsqlDb, etc.
+Most of these will implement both the Gex and the Gdb interface together, but
+this is not necessary.
+
+### TODO: how does SimpleGdb relate to different database implementations (Derby, MySQL, etc.) 
+### Do they simply extend it?
+
 DataSource.java
 ---------------
 /**
@@ -77,10 +88,6 @@ public class DataSource
 	/** turn id into url pointing to info page on the web, e.g. "http://www.ensembl.org/get?id=ENSG..." */
 	public Url getUrl(String id); 
 	
-### TODO: we may want to store patterns in a separate class?	
-	/** regular expression for identifying this type of systemcode, e.g. "ENSG\d+" */
-	public Pattern getPattern();
-	
 	/** returns full name of datasource e.g. "Ensembl". May return null. Also used as identifier in GPML */
 	public String getFullname(); 
 	
@@ -91,10 +98,10 @@ public class DataSource
 	public static void register(String fullName, String sysCode, String Pattern, String url);
 	
 	/** returns pre-existing DataSource object by system code, if it exists, or creates a new one */
-	public static DataSource getBySystemcode(String systemCode);
+	public static DataSource getBySystemCode(String systemCode);
 
 	/** returns pre-existing DataSource object by system code, if it exists, or creates a new one */
-	public static DataSource getByFullname(String fullName);
+	public static DataSource getByFullName(String fullName);
 	
 	/**
 		get all registered datasoures as a set
@@ -104,12 +111,59 @@ public class DataSource
 	static public Set<DataSource> getDataSources()
 	
 }
+
+There are always other parameters for each DataSource that should be stored outside DataSource
+e.g. EuGene names.
+(The EuGene exporter should be a plugin, so DataSource can't know about it)
+As an example of how this should be done, I propose to put regex patterns in a separate class
+
+
+/**
+Collection of regular expressions for identifying a type of systemcode, e.g. "ENSG\d+" for Ensembl
+
+This is an example of how you should define meta-data for a DataSource. 
+One important design principle here is that these external data should map to a DataSource object, 
+not a System code, so that system codes are used as little as possible, and it is impossible
+to define information on a DataSource that DataSource doesn't know about.
+*/
+public class DataSourcePatterns
+{
+	/** 
+		get a pattern. Returns null if this pattern was never registered. 
+		This method is private, since it is only needed by guessDataSource.
+		But other datasource extensions may make this method public.
+	*/
+	static private Pattern getPattern (DataSource src)
 	
+	/**
+		Uses all registered patterns to guess which datasource the id belongs to.
+		Returns null if no registered pattern matched.
+		This is a best guess, and does not guarantee to give the right choice
+	*/
+	static public DataSource guessDataSource(String id)
+	
+	/** 
+		To set a pattern for e.g. Ensembl, do:
+		DataSourcePatterns.registerPattern (DataSource.getBySystemCode ("En"), Pattern.compile("ENSG\d+"));
+		Fails with IllegalArgumentException if you try to set a pattern on a null DataSource.
+		Since you can't instantiate DataSource directly, it's impossible to set a Pattern 
+		on a non-registered datasource.
+	*/
+	static public void registerPattern (DataSource src, Pattern p)
+}
+
 IdCodePair.java
 ---------------
 ### TODO: IdCodePair -> good name? Code does not directly refer to datasource
 ### Maybe GDBReference or just Reference is a better name?
-public class IdCodePair
+### I like reference. 
+### That gives me a new idea: XRef, because it is consistent with what it is called inside GPML.
+
+/**
+Pair of DataSource and identifier.
+Points to a particular data item in a particular database.
+*/
+public class XRef
 {
 	public DataSource getDataSource()
 	public void setDataSource (DataSource value)
@@ -117,7 +171,7 @@ public class IdCodePair
 	public String getId()
 	public void setId (String value)
 	
-	public IdCodePair (String id, DataSource ds)
+	public XRef (String id, DataSource ds)
 	
 	// convenience method
 	public Url getUrl ()
@@ -131,10 +185,11 @@ Gdb.java
 /**
 	Abstract interface for dealing with any system that can map from one DataSource to another.
 	
-	Implementations include: single (derby) database, aggregate database, etc.
+	Implemented by: single (derby) database, aggregate database.
+	Possible future implemenatations: xml-rpc, direct ensembl lookup... DAVID lookup... 
+	Implementations of the Gdb interface do not necessarily need to use a relational database directly.
 */
-### TODO: Shouldn't this be an interface?
-abstract class Gdb
+abstract interface Gdb
 {
 	/**
 	get all cross-references
@@ -146,6 +201,10 @@ abstract class Gdb
 	(if the target datasource is known the query can usually be optimized)
 	*/
 	List<IdCodePair> getCrossReferences(IdCodePair icp, DataSource targetDs) throws GdbException
+	
+	
+	/** get a name for this database, e.g. "Hs_Ens_43" */
+	String getGdbName()
 }
 
 GdbException.java
@@ -153,8 +212,11 @@ GdbException.java
 /**
 	Simple wrapper so using classes don't need to deal with implemenation details
 	of the Gdb. Usually wraps SQLException, ClassNotFoundException, etc.
+	
+	Simply use the inherited constructor GdbException(Throwable cause)
+	to wrap an exception.
 */
-class GdbException
+class GdbException extends Exception
 {
 }
 
@@ -162,9 +224,8 @@ AggregateGdb.java
 -----------------
 /**
 AggregateGdb: multiple simple Gdb's can be bound together
-
 */
-class AggregateGdb extends Gdb
+class AggregateGdb implements Gdb
 {
 	/**
 		constructor, start with empty aggregate
@@ -185,8 +246,24 @@ class AggregateGdb extends Gdb
 
 SimpleGdb.java
 --------------
-class SimpleGdb extends Gdb
+/**
+	Simple Gdb is implemented
+	using a JDBC Driver. 
+	It takes a JDBC connection string as constructor argument.
+	Depending on the current preference, 
+
+### TODO: is this similar to the old DBConnector class?
+*/
+class SimpleGdb implements Gdb
 {
+### TODO: which of these DbConnector methods need to be copied?
+	createTables()
+	createNewDatabase()
+	createIndices()
+	compact()
+	
+### TODO: is an isConnected() method necessary, or is that only because Gdb is static in the current PathVisio?
+
 	/**
 		list all available data sources
 		(package private method, used by aggregateGdb to find the most suited simpleGdb)
@@ -196,10 +273,8 @@ class SimpleGdb extends Gdb
 	/**
 		Constructor from file
 	*/
-	### TODO: Is file a proper way to point to the database? Some databases might be
-	### on a remote server, or require a different protocol. Maybe it's better to change
-	### file to URL
-	SimpleGdb (File file) throws GdbException
+
+	SimpleGdb (String connectionString) throws GdbException
 
 	@override
 	List<IdCodePair> getCrossReferences(IdCodePair icp, DataSource targetDs) throws GdbException
@@ -208,10 +283,59 @@ class SimpleGdb extends Gdb
 	List<IdCodePair> getCrossReferences(IdCodePair icp) throws GdbException
 }
 
+
+// This is the current Gex.importFromTxt combined with ImportInformation.
+class GexTxtImport
+{
+	getFile()
+	setFile()
+	getMaximum()
+	getMinimum()
+	
+	List<String> getErrors()
+	
+	getDataSource()
+	setDataSource()
+	getSysCodeColumn()
+	setSysCodeColumn()
+	getIdColumn()
+	setIdColumn()
+	getDelimiter
+	setDelimiter
+	getNoHeader
+	setNoHeader
+	getColNames
+	setStringCols
+	getStringCols
+	getHeaderStart
+	setHeaderStart
+	getHeaderEnd
+	setHeaderEnd
+	getDataStart
+	setDataStart
+	
+	/**
+	read a part, for guessing
+	*/
+	readPart
+	
+	guessDelimiter
+	guessStringCols
+	guessSysCodeColumn
+	guessSysCode
+	guessIdColumn
+	
+	/**
+	perform the actual import. may be cancelled
+	*/
+	void doImport (ProgressKeeper p, Gex gex)
+	{
+	}
+}
+
 Gex.java
 --------
-
-abstract class Gex
+abstract interface Gex
 {
 	/**
 		returns all data for this codepair and column, 
@@ -230,13 +354,26 @@ abstract class Gex
 /**
 Represents a row of data
 */
-class DataRow {
+class DataRow 
+{
 	IdCodePair icp; //The original id/code for this row in the database
 	Map<Sample, Object> columns;
 	
-	public Object getValue(Sample sample) {
+	public Object getValue(Sample sample) 
+	{
 		return columns.get(sample);
 	}
+}
+
+// NOTE: same as current Gex.Sample
+class Sample implements Comparable<Sample>
+{
+	public String getName()
+	public int getDataType()
+	public int getId()
+	public int hashCode();
+	public boolean equals (Object o)
+	public String toString()
 }
 
 ### TODO: do we need to define data events for mapping newly added genes, caching?

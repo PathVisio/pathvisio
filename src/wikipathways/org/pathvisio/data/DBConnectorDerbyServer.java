@@ -31,7 +31,7 @@ import org.pathvisio.debug.StopWatch;
  * @author thomas
  *
  */
-public class DBConnectorDerbyServer extends AbstractDBConnector {
+public class DBConnectorDerbyServer extends DBConnector {
 	String host;
 	int port;
 	

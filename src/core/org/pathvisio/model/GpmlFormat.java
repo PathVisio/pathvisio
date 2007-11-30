@@ -681,8 +681,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			setAttribute ("DataNode", "Type", e, o.getDataNodeType());
 			setAttribute ("DataNode", "BackpageHead", e, o.getBackpageHead());
 			Element xref = e.getChild("Xref", e.getNamespace());
-			setAttribute ("DataNode.Xref", "Database", xref, o.getDataSource().getFullName());
-			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());			
+			setAttribute ("DataNode.Xref", "Database", xref, o.getDataSource() == null ? "" : o.getDataSource().getFullName());
+			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());
 		}
 	}
 

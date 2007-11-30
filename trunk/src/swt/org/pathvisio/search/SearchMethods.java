@@ -63,7 +63,7 @@ public abstract class SearchMethods {
 
 		srt.setTableData(srs);
 		//Get all cross references
-		List<Xref> refs = Gdb.getCrossRefs(ref);
+		List<Xref> refs = Gdb.getCurrentGdb().getCrossRefs(ref);
 		if(refs.size() == 0) throw new NoGdbException();
 		
 		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));

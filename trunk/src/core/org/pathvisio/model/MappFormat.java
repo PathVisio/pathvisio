@@ -86,17 +86,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
 		"Color, Label, Head, Remarks, Image, Links, Notes " +
 		"FROM OBJECTS";
-	
-	/**
-	 * @deprecated Use {@link Organism} emun instead
-	 */
-	public static final String[] organism_latin_name = Organism.latinNamesArray();
-	
-	/**
-	 * @deprecated Use {@link Organism} enum instead
-	 */
-	static final String[] organism_short_code = Organism.codes();
-	
+			
     private static String database_after = ";DriverID=22;READONLY=true";
     private static String database_before =
             "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
@@ -386,22 +376,6 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			o.setOrganism(org.latinName());
 		}
 	}
-       
-	private static String mapBetween (String[] from, String[] to, String value) throws ConverterException
-    {
-    	for(int i=0; i < from.length; i++) 
-		{
-		    if(from[i].equals(value)) 
-		    {
-		    	return to[i];
-		    }		    
-		    else if (i == from.length-1) 
-		    {
-		    	throw new ConverterException ("'" + value + "' is invalid\n");
-		    }
-		}
-    	return null;
-    }
 
 	public static List<String[]> uncopyMappObjects(Pathway data) throws ConverterException
 	{

@@ -51,11 +51,14 @@ public class Xref implements Comparable<Xref> {
 	
 	public boolean equals(Object o) 
 	{
+		if (o == null) return false;
 		if(!(o instanceof Xref)) return false;
-		Xref idc = (Xref)o;
-		return idc.getId().equals(getId()) && idc.getDataSource().equals(getDataSource());
+		Xref ref = (Xref)o;
+		return 
+			(id == null ? ref.id == null : id.equals(ref.id)) && 
+			(ds == null ? ref.ds == null : ds.equals(ref.ds));
 	}
-
+	
 	public int compareTo (Xref idc) 
 	{
 		return getName().compareTo(idc.getName());

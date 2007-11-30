@@ -756,7 +756,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result = getGeneID();
 			break;
 		case SYSTEMCODE:
-			result = getDataSource().getSystemCode();
+			result = getDataSource() == null ? "" : getDataSource().getSystemCode();
 			break;
 		case GENMAPP_XREF:
 			result = getGenMappXref();

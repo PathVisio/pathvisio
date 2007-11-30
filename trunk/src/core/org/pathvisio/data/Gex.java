@@ -17,12 +17,8 @@
 package org.pathvisio.data;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,11 +32,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
@@ -167,7 +158,7 @@ public class Gex implements ApplicationEventListener
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| Gdb.getCon() == null //and to the gene database
+				|| !Gdb.getCurrentGdb().isConnected() //and to the gene database
 		) return noDataFound;
 		
 		List<Data> pwData = cachedData.getData(idc);
@@ -193,8 +184,7 @@ public class Gex implements ApplicationEventListener
 	
 	/**
 	 * Loads expression data for all the given gene ids into memory
-	 * @param ids	Gene ids to cache the expression data for
-	 * @param code	Systemcodes of the gene identifiers
+	 * @param refs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
 	protected static void cacheData(List<Xref> refs, ProgressKeeper p)
@@ -210,7 +200,7 @@ public class Gex implements ApplicationEventListener
 			
 			if(cachedData.hasData(pwIdc)) continue;
 			
-			ArrayList<String> ensIds = Gdb.ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
+			ArrayList<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			
@@ -344,7 +334,7 @@ public class Gex implements ApplicationEventListener
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = Gdb.ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{

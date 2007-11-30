@@ -94,7 +94,7 @@ public class GuiMain {
 		//TODO: implement PropertyChangeListener and fire exit property when closing
 		// make classes themself responsible for closing when exit property is changed
 		Gex.close();
-		Gdb.close();
+		Gdb.getCurrentGdb().close();
 		//Close log stream
 		Logger.log.getStream().close();
 		

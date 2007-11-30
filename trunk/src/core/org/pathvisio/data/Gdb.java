@@ -17,17 +17,9 @@
 package org.pathvisio.data;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +39,23 @@ import org.pathvisio.util.Utils;
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
-public abstract class Gdb {	
-	static {
+public class Gdb 
+{	
+	// private, so you can't instantiate Gdb. Use the connect() method. 
+	private Gdb()
+	{
+	}
+	
+	static 
+	{
 		initializeHeader();
+	}
+	
+	static private Gdb currentGdb = null;
+	
+	static public Gdb getCurrentGdb ()
+	{
+		return currentGdb;
 	}
 	
 	private static String table_DataNode = "datanode";
@@ -59,24 +65,25 @@ public abstract class Gdb {
 	/**
 	 * The {@link Connection} to the Gene Database
 	 */
-	private static Connection con;
+	private Connection con;
 	
 	/**
 	 * Gets the Connection to the Gene Database
+	 * @deprecated Should be private.
 	 */
-	public static Connection getCon() { return con; }
+	public Connection getCon() { return con; }
 	/**
 	 * Check whether a connection to the database exists
 	 * @return	true is a connection exists, false if not
 	 */
-	public static boolean isConnected() { return con != null; }
+	public boolean isConnected() { return con != null; }
 	
-	private static String dbName;
+	private String dbName;
 	/**
 	 * Gets the name of te currently used gene database
 	 * @return the database name as specified in the connection string
 	 */
-	public static String getDbName() { return dbName; }
+	public String getDbName() { return dbName; }
 	
 	/**
 	 * Initiates this class. Checks the properties file for a previously
@@ -87,11 +94,19 @@ public abstract class Gdb {
 		String currGdb = GlobalPreference.DB_GDB_CURRENT.getValue();
 		if(!currGdb.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
 		{
-			dbName = currGdb;
 			try {
-				connect(null);
-			} catch(Exception e) {
-				setCurrentGdb(GlobalPreference.DB_GDB_CURRENT.getDefault());
+				connect(currGdb);
+			} 
+			catch(Exception e) 
+			{
+				Logger.log.error("Setting previous Gdb failed.", e);
+				try {
+					connect(currGdb);
+				} 
+				catch(Exception f) 
+				{
+					Logger.log.error("Setting default Gdb failed.", f);
+				}
 			}
 		}
 	}
@@ -100,12 +115,8 @@ public abstract class Gdb {
 	 * Sets the Gene Database that is currently in use
 	 * @param dbNm	The name of the gene database
 	 */
-	private static void setCurrentGdb(String dbNm) {
-		dbName = dbNm; 
-		GlobalPreference.DB_GDB_CURRENT.setValue(dbNm);
-		ApplicationEvent e =
-			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
-		Engine.getCurrent().fireApplicationEvent (e);
+	private void currentGdbChanged() 
+	{
 	}
 	
 	/**
@@ -114,10 +125,10 @@ public abstract class Gdb {
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
 	 */
-	public static String getGeneSymbol(Xref ref) {
+	public String getGeneSymbol(Xref ref) 
+	{
 		String bpInfo = getBpInfo(ref);
-		return bpInfo == null ? null : parseGeneSymbol(bpInfo);
-		
+		return bpInfo == null ? null : parseGeneSymbol(bpInfo);		
 	}
 	
 	/**
@@ -140,7 +151,7 @@ public abstract class Gdb {
 	 * @param code systemcode of the gene identifier
 	 * @return String with the backpage info, null if the gene was not found
 	 */
-	public static String getBpInfo(Xref ref) {
+	public String getBpInfo(Xref ref) {
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -157,14 +168,14 @@ public abstract class Gdb {
 		} catch(Exception e) { return null;	} //Gene not found
 	}
 	
-	public static String getBackpageHTML(Xref ref, String bpHead) {
+	public String getBackpageHTML(Xref ref, String bpHead) {
 		String text = backpagePanelHeader == null ? "" : backpagePanelHeader;
-		if( ref.getId() == null || ref.getDataSource() == null) return text;
+		if( ref == null || ref.getId() == null || ref.getDataSource() == null) return text;
 		
 		if (bpHead == null) bpHead = "";
 		text += "<H1>Gene information</H1><P>";
 		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-		String bpInfo = Gdb.getBpInfo(ref);
+		String bpInfo = getBpInfo(ref);
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
 		text += getCrossRefText(ref);
@@ -178,9 +189,9 @@ public abstract class Gdb {
 		return backpageTextProvider;
 	}
 	
-	private static String getCrossRefText(Xref ref) 
+	private String getCrossRefText(Xref ref) 
 	{
-		List<Xref> crfs = Gdb.getCrossRefs(ref);
+		List<Xref> crfs = getCrossRefs(ref);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
 		for(Xref cr : crfs) {
@@ -240,8 +251,11 @@ public abstract class Gdb {
 	 * references with database code
 	 * @return			List containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
+	 * 
+	 * @deprecated. Use getCrossRefs instead
 	 */	
-	public static ArrayList<Xref> ensId2Refs(String ensId, String resultCode) {
+	public ArrayList<Xref> ensId2Refs(String ensId, DataSource resultDs) 
+	{
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -256,8 +270,8 @@ public abstract class Gdb {
 //			pstEnsId2Refs.setString(1, ensId);
 //			ResultSet r1 = pstEnsId2Refs.executeQuery();
 			String codeLimit = "";
-			if(resultCode != null) {
-				codeLimit = " AND codeRight = '" + resultCode + "'";
+			if(resultDs != null) {
+				codeLimit = " AND codeRight = '" + resultDs.getSystemCode() + "'";
 			}
 			ResultSet r1 = con.createStatement().executeQuery(
 					"SELECT idRight, codeRight FROM link " +
@@ -281,8 +295,10 @@ public abstract class Gdb {
 	 * @param code	systemcode of the gene identifier
 	 * @return		ArrayList containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
+	 * 
+	 * @deprecated use getCrossRefs instead
 	 */
-	public static ArrayList<String> ref2EnsIds(Xref xref)
+	public ArrayList<String> ref2EnsIds(Xref xref)
 	{	
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -324,7 +340,8 @@ public abstract class Gdb {
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public static List<Xref> getCrossRefs(Xref idc) {
+	public List<Xref> getCrossRefs(Xref idc) 
+	{
 		return getCrossRefs(idc, null);
 	}
 	
@@ -337,14 +354,15 @@ public abstract class Gdb {
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public static ArrayList<Xref> getCrossRefs(Xref idc, String resultCode) {
+	public ArrayList<Xref> getCrossRefs (Xref idc, DataSource resultDs) 
+	{
 		Logger.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
 		ArrayList<Xref> refs = new ArrayList<Xref>();
 		ArrayList<String> ensIds = ref2EnsIds(idc);
-		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId, resultCode));
+		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId, resultDs));
 
 		Logger.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
@@ -361,23 +379,32 @@ public abstract class Gdb {
 	 */
 	public static void connect(String dbName) throws Exception
 	{
-		if(dbName == null) dbName = getDbName();
+		Gdb gdb = new Gdb();
+		if(dbName == null) throw new NullPointerException();
 		
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
 		DBConnector connector = getDBConnector();
-		con = connector.createConnection(dbName);
-		con.setReadOnly(true);
-		checkSchemaVersion();
-		setCurrentGdb(dbName);
+		gdb.con = connector.createConnection(dbName);
+		gdb.con.setReadOnly(true);
+		gdb.checkSchemaVersion();
+		currentGdb = gdb;
+		GlobalPreference.DB_GDB_CURRENT.setValue(dbName);
+		ApplicationEvent e =
+			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
+		Engine.getCurrent().fireApplicationEvent (e);
 		Logger.log.trace("Current Gene Database: " + dbName);
 	}
 	
-	private static void checkSchemaVersion() {
+	private void checkSchemaVersion() 
+	{
 		int version = 0;
-		try {
+		try 
+		{
 			ResultSet r = con.createStatement().executeQuery("SELECT schemaversion FROM info");
 			if(r.next()) version = r.getInt(1);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			//Ignore, older db's don't even have schema version
 		}
 		if(version < COMPAT_VERSION) {
@@ -391,7 +418,7 @@ public abstract class Gdb {
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
 	 */
-	public static void close() 
+	public void close() 
 	{
 		if(con != null) {
 			try {
@@ -402,266 +429,26 @@ public abstract class Gdb {
 			}
 		}
 	}
-		
-	/**
-	 * Converts the given GenMAPP Gene Database to a Gene Database as used in this program
-	 * <BR>This method reports all errors occured during the conversion to a file named 'convert_gdb_log.txt'
-	 * @param gmGdbFile		The file containing the GenMAPP Gene Database to be converted
-	 * @param dbName		The file where the new Gene Database has to be stored (the .properties
-	 * file of the database)
-	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
-	 */
-	public static void convertGdb(File gmGdbFile, String dbName) {
-
-		PrintWriter error = null;
-	    try {
-	        error = new PrintWriter(new FileWriter("convert_gdb_log.txt"));
-	    } catch(IOException ex) {
-	    	Logger.log.error("Unable to open error file: " + ex.getMessage(), ex);
-	    }
-	    
-		error.println ("Info:  Fetching data from gdb");
-		try
-		{
-			close();
 			
-			DBConnector connector = null;
-			Connection convertCon = null;
-			Connection conGdb = null;
-			
-			//Connect to GenMAPP gdb
-			final String database_after = ";DriverID=22;READONLY=true";
-			final String database_before =
-				"jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-			try {
-				Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-				conGdb = DriverManager.getConnection(
-						database_before + gmGdbFile.toString() + database_after, "", "");
-			} catch (Exception e) {
-				error.println("Error: " +e.getMessage());
-			}
-			
-			//Create hsqldb gdb
-			connector = getDBConnector();
-			convertCon = connector.createConnection(dbName, DBConnector.PROP_RECREATE);
-			
-			// Fetch size of database to convert (for progress monitor)
-			Statement s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			ResultSet r = s.executeQuery("SELECT COUNT(*) FROM relations");
-			int nrRelations = 1;
-			if(r.next()) {
-				nrRelations = r.getInt(1);
-				error.println("nrRelations " + nrRelations);
-			}
-			r = s.executeQuery("SELECT COUNT(*) FROM Systems");
-			int nrSystems = 1;
-			if(r.next()) {
-				nrSystems = r.getInt(1);
-				error.println("nrSystems " + nrSystems);
-			}
-			
-			// Create tables
-			createTables(convertCon);
-			
-			// Fill link table
-			s = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			r = s.executeQuery(
-					"SELECT * FROM relations"
-			);
-			PreparedStatement pstmt = convertCon.prepareStatement(
-					"INSERT INTO link				" +
-					"	(idLeft, codeLeft,	 		" + 
-					"	 idRight, codeRight,	 	" +
-					"	bridge)						" +
-			"VALUES	(?, ?, ?, ?, ?)			");
-			
-			while (r.next())
-			{		
-				String codeLeft = r.getString("SystemCode");
-				String codeRight = r.getString("RelatedCode");
-				String tableName = r.getString("Relation");
-				
-				if(codeLeft.equalsIgnoreCase("En")) // Only process link table if idLeft is Ensembl
-					// This may lead to data loss, but because future databases are based solely on
-					// Ensembl this should not be a problem
-				{
-					Statement sFetch = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					ResultSet rFetch = sFetch.executeQuery("SELECT * FROM `" + tableName + "`");
-					
-					error.println ("Debug: working on table " + tableName);
-					while (rFetch.next())
-					{	
-						// Check if the thread is interrupted
-						if(convertThread.isInterrupted) {
-							return;
-						}
-						String idLeft = rFetch.getString ("Primary");
-						String idRight = rFetch.getString ("Related");
-						String bridge = rFetch.getString ("Bridge");
-						
-						pstmt.setString (1, idLeft);
-						pstmt.setString (2, codeLeft);
-						pstmt.setString (3, idRight);
-						pstmt.setString (4, codeRight);
-						pstmt.setString (5, bridge);
-						
-						try
-						{
-							pstmt.execute();
-						}
-						catch (SQLException e)
-						{
-							error.println("Error: " + e.getMessage() + "at " + idLeft + ", " + idRight);
-						}
-					}
-				}
-				// Update progress monitor
-				convertThread.progress += 20.0/nrRelations;
-			}
-			
-			// Fill gene table
-			// Get the table names containing gene information
-			r = s.executeQuery(
-					"SELECT System, SystemCode FROM Systems"
-			);
-			
-			pstmt = convertCon.prepareStatement(
-					"INSERT INTO gene " +
-					"	(id, code," +
-					"	 backpageText)" +
-			"VALUES (?, ?, ?)");
-			
-			// Process every system table
-			while(r.next()) {
-				Statement tms = conGdb.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				String systemTable = r.getString("System");
-				String systemCode = r.getString("SystemCode");
-				error.println ("Debug: working on table " + systemTable);
-				
-				// Check if table exists
-				ResultSet tmr = conGdb.getMetaData().getTables(null, null, systemTable, null);
-				if(tmr.next()) {
-					ResultSet str = tms.executeQuery("SELECT * FROM " + systemTable);
-					while(str.next()) {
-						// Check if the thread is interrupted
-						if(convertThread.isInterrupted) {
-							return;
-						}
-						try {
-							// Column ID is gene id
-							String id = str.getString("ID");
-							// All further columns are backpage text
-							String bpText = "<TABLE border='1'>";
-							ResultSetMetaData strm = str.getMetaData();
-							for(int i = 1; i < strm.getColumnCount(); i++) {
-								try {
-									String colName = strm.getColumnName(i);
-									String colVal = str.getString(colName);
-									bpText = bpText + "<TR><TH>" +
-									colName + "<TH>" + colVal;
-								} catch (SQLException e) {
-									error.println ("Error: " + e.getMessage() + " at: " + bpText);
-								}
-							}
-							bpText = bpText + "</TABLE>";
-							//System.out.println(id + "\t" + systemCode + "\t");
-							pstmt.setString(1, id);
-							pstmt.setString(2, systemCode);
-							pstmt.setString(3, bpText);
-							pstmt.execute();
-						} catch (SQLException e) {
-							error.println ("Error: " + e.getMessage());
-						}
-					}
-				}
-				// Update progress monitor
-				convertThread.progress += 80.0/nrSystems;
-			}
-			
-			//Close connections
-			error.println("Closing connections");
-			Statement sh = convertCon.createStatement();
-			sh.executeQuery("SHUTDOWN COMPACT");
-			sh.close();
-			conGdb.close();
-			connector.closeConnection(convertCon);
-						
-			if(dbName != null)
-			{
-				connect(dbName);
-			}
-			convertThread.progress = 100;
-		}
-		catch (Exception e)
-		{
-			error.println ("Error: " + e.getMessage());
-		}
-	}
-	
-	/**
-	 * {@link ConvertThread} for conversion of the GenMAPP Gene Database
-	 * @see {@link convertGdb}
-	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
-	 */
-	private static ConvertThread convertThread;
-	
-	private static File convertGmGdbFile;
-	private static String convertDbName;
-	/**
-	 * Set the GenMAPP Gene database file to convert from
-	 *@deprecated Conversion of GenMAPP Gene Databases is not supported anymore
-	 * @param file
-	 */
-	public static void setConvertGmGdbFile(File file) { convertGmGdbFile = file; }
-	/**
-	 * Set the Gene database name to convert to
-	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
-	 * @param name
-	 */
-	public static void setConvertGdbName(String name) { convertDbName = name; }
-	
-	/**
-	 * This class is a {@link Thread} that converts a GenMAPP Gene Database and keeps the progress
-	 * of the conversion
-	 * @deprecated Conversion of GenMAPP Gene Databases is not supported anymore
-	 */
-	public static class ConvertThread extends Thread
-	{
-		volatile double progress;
-		volatile boolean isInterrupted;
-		
-		public ConvertThread() 
-		{
-			isInterrupted = false;
-		}
-		
-		public void run()
-		{
-			progress = 0;
-			convertGdb(convertGmGdbFile, convertDbName);
-		}
-		
-		public void interrupt()
-		{
-			isInterrupted = true;
-		}
-	}
-	
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes in the database the given
 	 * connection is connected to
 	 * @param convertCon	The connection to the database the tables are created in
-	 * @deprecated Use AP's scripts to create GDB!
+	 * Note: Official GDB's are created by AP, not with this code.
+	 * This is just here for testing purposes.
 	 */
-	public static void createTables(Connection convertCon) {
+	public void createTables(Connection convertCon) {
 		Logger.log.trace("Info:  Creating tables");
 		
-		try {
+		try 
+		{
 			Statement sh = convertCon.createStatement();
 			sh.execute("DROP TABLE info");
 			sh.execute("DROP TABLE link");
 			sh.execute("DROP TABLE gene");
-		} catch(Exception e) {
+		} 
+		catch(Exception e) 
+		{
 			Logger.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
 		}
 		try
@@ -710,7 +497,8 @@ public abstract class Gdb {
 					" ON gene(code)"
 					);
 			
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			Logger.log.error("while creating gdb tables: " + e.getMessage(), e);
 		}

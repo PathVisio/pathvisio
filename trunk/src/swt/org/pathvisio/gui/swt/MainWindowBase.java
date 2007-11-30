@@ -181,7 +181,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			//Check for necessary connections
-			if(Gex.isConnected() && Gdb.isConnected())
+			if(Gex.isConnected() && Gdb.getCurrentGdb().isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {

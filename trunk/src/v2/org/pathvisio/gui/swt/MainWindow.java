@@ -110,7 +110,7 @@ public class MainWindow extends MainWindowBase
 		}
 		
 		public void run() {
-			if(!Gdb.isConnected())
+			if(!Gdb.getCurrentGdb().isConnected())
 			{
 				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
 						"select gene database before creating a new expression dataset");

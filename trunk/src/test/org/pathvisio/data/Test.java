@@ -16,9 +16,14 @@
 //
 package org.pathvisio.data;
 
+import java.io.File;
+import java.util.List;
 import junit.framework.TestCase;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.Xref;
+import org.pathvisio.model.ConverterException;
 
 public class Test extends TestCase implements ApplicationEventListener
 {
@@ -46,7 +51,8 @@ public class Test extends TestCase implements ApplicationEventListener
 			eventReceived = true;
 		}
 	}
-	
+
+	//TODO: move to org.pathvisio.model.Test
 	public void testDataSource()
 	{
 		DataSource ds = DataSource.ENSEMBL;
@@ -68,6 +74,25 @@ public class Test extends TestCase implements ApplicationEventListener
 		
 		DataSource ds5 = DataSource.getByFullName ("Entrez Gene");
 		assertEquals (ds5, DataSource.ENTREZ_GENE);
+	}
+
+	//TODO: move to tools/tutorialFiles
+	public void testGdbCreate() throws ConverterException, Exception
+	{
+		final String tutorialPwy = "example-data/Hs_Apoptosis.gpml";
+		Pathway pwy = new Pathway();
+		pwy.readFromXml (new File (tutorialPwy), true);
+		List<Xref> refs = pwy.getDataNodeXrefs();
+
+		assertTrue (refs.contains (new Xref ("8717", DataSource.ENTREZ_GENE)));
+		assertTrue (refs.contains (new Xref ("7132", DataSource.ENTREZ_GENE)));
+		assertFalse (refs.contains (new Xref ("1111", DataSource.ENTREZ_GENE)));
+		assertEquals (refs.size(), 94);
+
+		// now look up all cross references in the human Gdb.
+
+		Gdb.connect ("/home/martijn/PathVisio-Data/gene databases/Hs_41_36c.pgdb");
+		
 	}
 	
 	public void testGdbConnect()

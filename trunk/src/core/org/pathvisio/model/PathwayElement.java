@@ -756,7 +756,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result = getGeneID();
 			break;
 		case SYSTEMCODE:
-			result = getDataSource();
+			result = getDataSource().getSystemCode();
 			break;
 		case GENMAPP_XREF:
 			result = getGenMappXref();
@@ -903,8 +903,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			try
 			{
 				comments.add((Comment) c.clone());
-			} catch (CloneNotSupportedException e)
-			{ /* not going to happen */
+			}
+			catch (CloneNotSupportedException e)
+			{
+				assert (false);
+				/* not going to happen */
 			}
 		}
 		version = src.version;
@@ -1208,11 +1211,19 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	protected String genmappxref = null;
 
+	/**
+	   access to the Label/Xref and DataNode/GenMAPPXref attributes
+	   For backwards compatibility with GenMAPP only.
+	 */
 	public String getGenMappXref()
 	{
 		return genmappxref;
 	}
 
+	/**
+	   access to the Label/Xref and DataNode/GenMAPPXref attributes
+	   For backwards compatibility with GenMAPP only.
+	 */
 	public void setGenMappXref(String v)
 	{
 		if (genmappxref != v)
@@ -1312,12 +1323,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public Xref getXref()
 	{
+		//TODO: Store Xref by default, derive setGeneID and dataSource from it.
 		return new Xref (setGeneID, dataSource);
 	}
 	
 	/**
 	 * SystemCode is a one- or two-letter abbreviation of datasource, used in
 	 * the MappFormat but also in databases.
+	 * @deprecated Use getDataSource().getSystemCode() instead.
 	 */
 	public String getSystemCode()
 	{
@@ -2180,6 +2193,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return GraphLink.getReferences(this, parent);
 	}
 
+	/**
+	   @deprecated Use getParent() instead
+	 */
 	public Pathway getGmmlData()
 	{
 		return parent;

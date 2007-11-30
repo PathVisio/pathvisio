@@ -36,8 +36,7 @@ public class EUGeneExporter implements PathwayExporter
 
 		DataSource system; //The annotation system
 
-		ArrayList<String> ids;
-		ArrayList<String> codes; 
+		ArrayList<Xref> refs;
 
 		public EUGenePathway(Pathway p)  {
 			pathway = p;
@@ -50,13 +49,17 @@ public class EUGeneExporter implements PathwayExporter
 			StringBuilder missedGenes = new StringBuilder();
 			euGeneSystem = getEUGeneSystem();
 
-			for(int i = 0; i < ids.size(); i++) {
-				String code = codes.get(i);
-				String id = ids.get(i);
-				if(code.equals(system)) { //Check if gene is of most occuring system
+			for(Xref ref : refs)
+			{
+				DataSource ds = ref.getDataSource();
+				String id = ref.getId();
+				if(ds == system)
+				{ //Check if gene is of most occuring system
 					geneString.append(id + "\n");
-				} else {
-					missedGenes.append(id + "|" + code + "; ");
+				}
+				else
+				{
+					missedGenes.append(id + "|" + ds.getSystemCode() + "; ");
 					log.error("id '" + id + "' differs from pathway annotation system");
 				}
 			}
@@ -76,8 +79,7 @@ public class EUGeneExporter implements PathwayExporter
 		}
 
 		void read() { 
-			ids = new ArrayList<String>();
-			codes = new ArrayList<String>();
+			refs = new ArrayList<Xref>();
 			HashMap<DataSource, Integer> codeCount = new HashMap<DataSource, Integer>();
 
 			for(PathwayElement elm : pathway.getDataObjects()) {
@@ -90,8 +92,7 @@ public class EUGeneExporter implements PathwayExporter
 				{ 
 					continue; //Skip datanodes with incomplete annotation
 				}
-				ids.add(ref.getId()); 
-				codes.add(ds.getSystemCode());
+				refs.add (ref);
 
 				//Increase code count for this code
 				if(codeCount.containsKey(ref.getDataSource())) 

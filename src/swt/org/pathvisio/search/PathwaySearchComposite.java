@@ -221,7 +221,7 @@ public class PathwaySearchComposite extends Composite {
 					public void widgetSelected(SelectionEvent e) {
 						String id = idText.getText();
 						int codeIndex = systemCombo.getSelectionIndex();
-						String code =  codeIndex == -1 ? "" : DataSources.systemCodes[codeIndex];
+						String code = codeIndex == -1 ? "" : DataSources.systemCodes[codeIndex];
 						String folder = dirText.getText();
 						if(id.equals("") || code.equals("") || folder.equals("")) {
 							MessageDialog.openError(getShell(), "error", "please specify id, code and pathway folder"); 
@@ -277,7 +277,7 @@ public class PathwaySearchComposite extends Composite {
 	
 	public class SearchRunnableWithProgress extends SimpleRunnableWithProgress {
 
-		public SearchRunnableWithProgress(String method, Class[] parameters) {
+		public SearchRunnableWithProgress(String method, Class<?>[] parameters) {
 			super(SearchMethods.class, method, parameters);
 		}
 		

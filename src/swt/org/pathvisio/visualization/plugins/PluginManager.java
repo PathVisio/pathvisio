@@ -53,10 +53,10 @@ public abstract class PluginManager {
 	static final String XML_ATTR_URL = "url";
 	
 	static Document addDoc;
-	static final Set<Class> plugins = new LinkedHashSet<Class>();
+	static final Set<Class<?>> plugins = new LinkedHashSet<Class<?>>();
 	
-	public static VisualizationPlugin getInstance(Class pluginClass, Visualization v) throws Throwable {
-		Constructor c = pluginClass.getConstructor(new Class[] { Visualization.class });
+	public static VisualizationPlugin getInstance(Class<?> pluginClass, Visualization v) throws Throwable {
+		Constructor<?> c = pluginClass.getConstructor(new Class<?>[] { Visualization.class });
 		return (VisualizationPlugin)c.newInstance(new Object[] { v });
 	}
 		
@@ -66,27 +66,27 @@ public abstract class PluginManager {
 		if(className == null) throw new IllegalArgumentException(
 				"Element has no '" + VisualizationPlugin.XML_ATTR_CLASS + "' attribute");
 		
-		Class pluginClass = Class.forName(className);
+		Class<?> pluginClass = Class.forName(className);
 		VisualizationPlugin p = getInstance(pluginClass, v);
 		p.loadXML(xml);
 		return p;
 	}
 	
-	public static Class[] getPlugins() {
+	public static Class<?>[] getPlugins() {
 		return Gex.isConnected() ?
 				plugins.toArray(new Class[plugins.size()]) :
 				getGenericPlugins();
 	}
 	
-	public static Class[] getGenericPlugins() {
-		Set<Class> generic = new LinkedHashSet<Class>();
-		for(Class pc : plugins) {
+	public static Class<?>[] getGenericPlugins() {
+		Set<Class<?>> generic = new LinkedHashSet<Class<?>>();
+		for(Class<?> pc : plugins) {
 			if(isGeneric(pc)) generic.add(pc);
 		}
 		return generic.toArray(new Class[generic.size()]);
 	}
 	
-	public static boolean isGeneric(Class pluginClass) {
+	public static boolean isGeneric(Class<?> pluginClass) {
 		try {
 			return getInstance(pluginClass, null).isGeneric();
 		} catch(Throwable e) { 
@@ -99,13 +99,13 @@ public abstract class PluginManager {
 	public static String[] getPluginNames() {
 		String[] names = new String[plugins.size()];
 		int i = 0;
-		for(Class p : plugins) {
+		for(Class<?> p : plugins) {
 			names[i++] = getPluginName(p);
 		}
 		return names;
 	}
 	
-	public static String getPluginName(Class pluginClass) {
+	public static String getPluginName(Class<?> pluginClass) {
 		try {
 			VisualizationPlugin p = getInstance(pluginClass, null);
 			return p.getName();
@@ -279,7 +279,7 @@ public abstract class PluginManager {
 	static void loadFromJar(JarFile jfile) throws Throwable {
 		Throwable error = null;
 		Logger.log.trace("\tLoading from jar file " + jfile);
-		Enumeration e = jfile.entries();
+		Enumeration<?> e = jfile.entries();
 		while (e.hasMoreElements()) {
 			ZipEntry entry = (ZipEntry)e.nextElement();
 			Logger.log.trace("Checking " + entry);
@@ -287,7 +287,7 @@ public abstract class PluginManager {
 			if(entryname.endsWith(".class")) {
 				try {
 					String cn = removeClassExt(entryname.replace('/', '.').replace('$', '.'));
-					Class pluginClass = Class.forName(cn);
+					Class<?> pluginClass = Class.forName(cn);
 					addPlugin(pluginClass);
 				} catch(Throwable ex) {
 					Logger.log.error("Unable to load plugin", ex);
@@ -302,7 +302,7 @@ public abstract class PluginManager {
 		return fn.substring(0, fn.length() - 6);
 	}
 	
-	static void addPlugin(Class c) {
+	static void addPlugin(Class<?> c) {
 		Logger.log.trace("\t\tTrying to add " + c);
 		if(isPlugin(c)) {
 			Logger.log.trace("\t\t\t!> Adding " + c);
@@ -310,7 +310,7 @@ public abstract class PluginManager {
 		}
 	}
 	
-	static boolean isPlugin(Class c) {
+	static boolean isPlugin(Class<?> c) {
 		if(Modifier.isAbstract(c.getModifiers())) {
 			Logger.log.trace("\t\t> Class " + c + " is not a visualization plugin (is abstract)");
 			return false;

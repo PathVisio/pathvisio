@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.data.DataSources;
+import org.pathvisio.data.DataSource;
 import org.pathvisio.debug.Logger;
 
 /**
@@ -722,14 +722,11 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapGeneProductType (PathwayElement o, String[] mappObject) throws ConverterException
     {    	
     	mappObject[colType] = "Gene";
-    	mappObject[colSystemCode] =
-			mapBetween (DataSources.dataSources, DataSources.systemCodes, 
-					o.getDataSource());
-
+    	mappObject[colSystemCode] = o.getDataSource().getSystemCode();
 		mappObject[colHead] = o.getBackpageHead();
 		mappObject[colID] = o.getGeneID();
 		mappObject[colLabel] = o.getTextLabel();
-		mappObject[colLinks] = o.getXref();    	
+		mappObject[colLinks] = o.getGenMappXref();    	
 		unmapShape(o, mappObject);
     }
     
@@ -741,8 +738,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	if (syscode == null) syscode = "";
     	syscode = syscode.trim();
     	
-        o.setDataSource(mapBetween (
-				DataSources.systemCodes, DataSources.dataSources, syscode));  
+        o.setDataSource(DataSource.getBySystemCode(syscode));
 
         o.setBackpageHead(mappObject[colHead]);
         if (mappObject[colID] == null)
@@ -760,7 +756,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         o.setDataNodeType("GeneProduct");
         String xrefv = mappObject[colLinks];
         if (xrefv == null) { xrefv = ""; }
-        o.setXref(xrefv);
+        o.setGenMappXref(xrefv);
         
         mapShape(o, mappObject);
         return o;			
@@ -834,7 +830,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         
         String xrefv = mappObject[colLinks];
         if (xrefv == null) { xrefv = ""; }
-        o.setXref(xrefv);
+        o.setGenMappXref(xrefv);
         return o;
     }
 
@@ -861,7 +857,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	stylechars[0] = (char)style;
     	
     	mappObject[colSystemCode] = new String (stylechars);    	
-		mappObject[colLinks] = o.getXref();    	
+		mappObject[colLinks] = o.getGenMappXref();    	
     }
     
 	private static PathwayElement mapShapeType(String[] mappObject)

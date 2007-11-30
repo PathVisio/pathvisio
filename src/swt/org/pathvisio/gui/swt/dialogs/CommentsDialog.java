@@ -109,7 +109,7 @@ public class CommentsDialog extends PathwayElementDialog {
 	}
 	
 	protected void removePressed() {
-		Iterator it = ((IStructuredSelection)tableViewer.getSelection()).iterator();
+		Iterator<?> it = ((IStructuredSelection)tableViewer.getSelection()).iterator();
 		while(it.hasNext()) {
 			Comment c = (Comment)it.next();
 			input.removeComment(c);

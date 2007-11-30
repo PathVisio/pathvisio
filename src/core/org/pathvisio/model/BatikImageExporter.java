@@ -74,7 +74,7 @@ public class BatikImageExporter extends ImageExporter {
 			t = new TIFFTranscoder();
 		} else if	(getType().equals(TYPE_PDF)) {
 			try {
-                 Class pdfClass = Class.forName("org.apache.fop.svg.PDFTranscoder");
+                 Class<?> pdfClass = Class.forName("org.apache.fop.svg.PDFTranscoder");
                  t = (Transcoder)pdfClass.newInstance();
              } catch(Exception e) {
             	 noExporterException();

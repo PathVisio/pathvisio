@@ -62,7 +62,7 @@ public class Visualization implements
 	public static final String XML_ATTR_NAME = "name";
 	
 	String name;
-	HashMap<Class, PluginSet> plugins;
+	HashMap<Class<?>, PluginSet> plugins;
 	List<PluginSet> pluginPlacement;
 	
 	Composite sidePanel;
@@ -85,9 +85,9 @@ public class Visualization implements
 	 * plugin class
 	 */
 	void initPlugins() {
-		plugins = new HashMap<Class, PluginSet>();
+		plugins = new HashMap<Class<?>, PluginSet>();
 		pluginPlacement = new ArrayList<PluginSet>();
-		for(Class c : PluginManager.getPlugins()) {
+		for(Class<?> c : PluginManager.getPlugins()) {
 			addPluginClass(c);
 		}
 	}
@@ -96,7 +96,7 @@ public class Visualization implements
 	 * Refresh the available subclasses of {@link VisualizationPlugin}.
 	 */
 	void refreshPluginClasses() {
-		for(Class c : PluginManager.getPlugins()) {
+		for(Class<?> c : PluginManager.getPlugins()) {
 			if(!plugins.containsKey(c)) {
 				addPluginClass(c);
 			}
@@ -108,7 +108,7 @@ public class Visualization implements
 	 * visualization plugin classes
 	 * @param c	The class of the visualization plugin to add
 	 */
-	void addPluginClass(Class c) {
+	void addPluginClass(Class<?> c) {
 		try {
 			PluginSet pr = new PluginSet(c, this);
 			plugins.put(c, pr);
@@ -165,7 +165,7 @@ public class Visualization implements
 	/**
 	 * Get the {@link PluginSet} for the given plugin class
 	 */
-	public PluginSet getPluginSet(Class c) {
+	public PluginSet getPluginSet(Class<?> c) {
 		return plugins.get(c);
 	}
 	
@@ -174,7 +174,7 @@ public class Visualization implements
 	 * @param pluginClass	The class to set the given {@link PluginSet} for
 	 * @param ps			The {@link PluginSet} to set
 	 */
-	private void setPluginSet(Class pluginClass, PluginSet ps) {
+	private void setPluginSet(Class<?> pluginClass, PluginSet ps) {
 		pluginPlacement.remove(ps);
 		plugins.put(pluginClass, ps);
 		pluginPlacement.add(ps);
@@ -462,7 +462,7 @@ public class Visualization implements
 		static final int SIDEPANEL = 2;
 		
 		Visualization vis;
-		Class pluginClass;
+		Class<?> pluginClass;
 		VisualizationPlugin[] reps;
 		
 		private PluginSet(Visualization v) {
@@ -476,7 +476,7 @@ public class Visualization implements
 		 * @param v The visualization this plugin-set belongs to
 		 * @throws Throwable
 		 */
-		public PluginSet(Class pluginClass, Visualization v) throws Throwable {
+		public PluginSet(Class<?> pluginClass, Visualization v) throws Throwable {
 			this(v);
 			this.pluginClass = pluginClass;
 			for(int i = 0; i < NR; i++) {
@@ -484,7 +484,7 @@ public class Visualization implements
 			}
 		}
 		
-		void setPluginClass(Class pluginClass) throws Throwable {
+		void setPluginClass(Class<?> pluginClass) throws Throwable {
 			this.pluginClass = pluginClass;
 			for(int i = 0; i < reps.length; i++) {
 				if(reps[i] == null || !pluginClass.isInstance(reps[i]))

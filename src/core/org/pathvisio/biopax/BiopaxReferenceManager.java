@@ -17,18 +17,10 @@
 package org.pathvisio.biopax;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
-import org.jdom.Document;
-import org.jdom.Element;
 import org.pathvisio.biopax.reflect.BiopaxElement;
 import org.pathvisio.biopax.reflect.PublicationXRef;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 /**

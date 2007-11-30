@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -272,7 +271,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		 */
 		protected int findTotalMaximumRowSize(JTable table, int row) {
 			int maximum_height = 0;
-			Enumeration columns = table.getColumnModel().getColumns();
+			Enumeration<?> columns = table.getColumnModel().getColumns();
 			while (columns.hasMoreElements()) {
 				TableColumn tc = (TableColumn) columns.nextElement();
 				TableCellRenderer cellRenderer = tc.getCellRenderer();
@@ -285,16 +284,16 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			return maximum_height + 5;
 		}
 
-		private int findMaximumRowSize(JTable table, int row) {
+		private int findMaximumRowSize(JTable table, int row) 
+		{
 			Map<Integer, Map<Integer, Integer>> rows = (Map<Integer, Map<Integer, Integer>>) cellSizes.get(table);
 			if (rows == null) return 0;
 			Map<Integer, Integer> rowheights = (Map<Integer, Integer>) rows.get(new Integer(row));
 			if (rowheights == null) return 0;
 			int maximum_height = 0;
-			for (Iterator it = rowheights.entrySet().iterator();
-			it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				int cellHeight = ((Integer) entry.getValue()).intValue();
+			for (Map.Entry<Integer, Integer> entry : rowheights.entrySet())
+			{
+				int cellHeight = entry.getValue();
 				maximum_height = Math.max(maximum_height, cellHeight);
 			}
 			return maximum_height;

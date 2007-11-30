@@ -16,17 +16,13 @@
 //
 package org.pathvisio.data;
 
-import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,7 +30,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
@@ -50,23 +45,20 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.Gdb.IdCodePair;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
-import org.pathvisio.util.FileUtils;
+import org.pathvisio.model.Xref;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
-import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
 /**
  * This class handles everything related to the Expression Data. It contains the database connection,
  * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
  * to hsqldb format
  */
-public class Gex implements ApplicationEventListener {
+public class Gex implements ApplicationEventListener 
+{
 	public static final String XML_ELEMENT = "expression-data-visualizations";
 	
 	private static Connection con;
@@ -193,67 +185,6 @@ public class Gex implements ApplicationEventListener {
 		return getSamples().get(id);
 	}
 	
-	/**
-	 * This class represents a record in the Sample table of the Expression database. 
-	 */
-	public static class Sample implements Comparable<Sample>
-	{
-		private int idSample;
-		private String name;
-		private int dataType;
-		
-		/**
-		 * Constructor of this class
-		 * @param idSample	represents the 'idSample' column in the Sample table, an unique identifier
-		 * for this sample
-		 * @param name		represents the 'name' column in the Sample table, the name of the
-		 * sample
-		 * @param dataType	represents the 'dataType' column in the Sample table, the data type of
-		 * the values stored in the column (using the field contsants in {@link java.sql.Types})
-		 */
-		public Sample(int idSample, String name, int dataType)
-		{
-			this.idSample = idSample;
-			this.name = name;
-			this.dataType = dataType;
-		}
-		
-		public String getName() { return name == null ? "" : name; }
-		protected void setName(String nm) { name = nm; }
-		public int getDataType() { return dataType; }
-		protected void setDataType(int type) { dataType = type; }
-		public int getId() { return idSample; }
-		protected void setId(int id) { idSample = id; }
-		/**
-		 * Compares this object to another {@link Sample} object based on the idSample property
-		 * @param o	The {@link Sample} object to compare with
-		 * @return	integer that is zero if the objects are equal, negative if this object has a
-		 * lower idSample, positive if this object has a higher idSample
-		 * @throws ClassCastException
-		 */
-		public int compareTo(Sample o)
-		{
-			return idSample - o.idSample;
-		}
-		
-		public int hashCode() {
-			return idSample;
-		}
-		
-		public boolean equals(Object o) {
-			if(o instanceof Sample) return ((Sample) o).idSample == idSample;
-			return false;
-		}
-		
-		/**
-		 * Returns a readable String representation of this object
-		 */
-		public String toString()
-		{
-			return Integer.toString(idSample);
-		}
-	}
-		
 	public static HashMap<Integer, Sample> getSamples()
 	{
 		if(samples == null) setSamples();
@@ -286,7 +217,7 @@ public class Gex implements ApplicationEventListener {
 		return smps;
 	}
 	
-	public static List<Data> getCachedData(IdCodePair idc)
+	public static List<Data> getCachedData(Xref idc)
 	{
 		if(cachedData != null) {
 			return cachedData.getData(idc);
@@ -302,11 +233,11 @@ public class Gex implements ApplicationEventListener {
 	/**
 	 * Gets all available expression data for the given gene id and returns a string
 	 * containing this data in a HTML table
-	 * @param idc	the {@link IdCodePair} containing the id and code of the geneproduct to look for
+	 * @param idc	the {@link Xref} containing the id and code of the geneproduct to look for
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	public static String getDataString(IdCodePair idc)
+	public static String getDataString(Xref idc)
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -343,21 +274,20 @@ public class Gex implements ApplicationEventListener {
 	 * @param code	Systemcodes of the gene identifiers
 	 * (typically all genes in a pathway)
 	 */
-	protected static void cacheData(ArrayList<String> ids, ArrayList<String> codes, ProgressKeeper p)
+	protected static void cacheData(List<Xref> refs, ProgressKeeper p)
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();
 		timer.start();
 			
-		for(int i = 0; i < ids.size(); i++)
+		for(Xref pwIdc : refs)
 		{
-			String id = ids.get(i);
-			String code = codes.get(i);
-			IdCodePair pwIdc = new IdCodePair(id, code);
+			String id = pwIdc.getId();			
+			String code = pwIdc.getDataSource().getSystemCode();
 			
 			if(cachedData.hasData(pwIdc)) continue;
 			
-			ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Get all Ensembl genes for this id
+			ArrayList<String> ensIds = Gdb.ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			
@@ -382,7 +312,10 @@ public class Gex implements ApplicationEventListener {
 						while(r.next())
 						{
 							int group = r.getInt("groupId");
-							IdCodePair ref = new IdCodePair(r.getString("id"), r.getString("code"));
+							Xref ref = new Xref(
+									r.getString("id"), 
+									DataSource.getBySystemCode(r.getString("code"))
+									);
 							Data data = groupData.get(group);
 							if(data == null) {
 								groupData.put(group, data = new Data(ref, group));
@@ -406,263 +339,13 @@ public class Gex implements ApplicationEventListener {
 			{
 				return;
 			}
-			p.worked(p.getTotalWork() / ids.size()); //Update the progress
+			p.worked(p.getTotalWork() / refs.size()); //Update the progress
 		}
 		p.finished();
 		timer.stopToLog("Caching expression data\t\t\t");
-		Logger.log.trace("> Nr of ids queried:\t" + ids.size());
+		Logger.log.trace("> Nr of ids queried:\t" + refs.size());
 	}
-		
-
-	
-	/**
-	 * Imports expression data from a text file and saves it to an hsqldb expression database
-	 * @param info		{@link GexImportWizard.ImportInformation} object that contains the 
-	 * information needed to import the data
-	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
-	 * the user to cancel
-	 */
-	protected static void importFromTxt(ImportInformation info, ProgressKeeper p)
-	{
-		int importWork = (int)(p.getTotalWork() * 0.8);
-		int finalizeWork = (int)(p.getTotalWork() * 0.2);
-		
-//		Open a connection to the error file
-		String errorFile = info.dbName + ".ex.txt";
-		int errors = 0;
-		PrintStream error = null;
-		try {
-			File ef = new File(errorFile);
-			ef.getParentFile().mkdirs();
-			error = new PrintStream(errorFile);
-		} catch(IOException ex) {
-			p.report("Error: could not open exception file: " + ex.getMessage());
-			error = System.out;
-		}
-		
-		StopWatch timer = new StopWatch();
-		try 
-		{
-			p.report("\nCreating expression dataset");
-						
-			//Create a new expression database (or overwrite existing)
-			connect(info.dbName, true, false);
 			
-			p.report("Importing data");
-			p.report("> Processing headers");
-			
-			timer.start();
-			
-			BufferedReader in = new BufferedReader(new FileReader(info.getTxtFile()));
-			//Get the number of lines in the file (for progress)
-			int nrLines = FileUtils.getNrLines(info.getTxtFile().toString());
-			
-			String[] headers = info.getColNames();
-			//Parse sample names and add to Sample table
-			PreparedStatement pstmt = con.prepareStatement(
-					" INSERT INTO SAMPLES " +
-					"	(idSample, name, dataType)  " +
-			" VALUES (?, ?, ?)		  ");
-			int sampleId = 0;
-			ArrayList<Integer> dataCols = new ArrayList<Integer>();
-			for(int i = 0; i < headers.length; i++)
-			{
-				if(p.isCancelled())
-				{
-					//User pressed cancel  
-					close(true);
-					error.close();
-					return;
-				}
-
-				//skip the gene and systemcode column if there is one
-				if(
-					(info.getSyscodeColumn() && i != info.idColumn && i != info.codeColumn) ||
-					(!info.getSyscodeColumn() && i != info.idColumn)
-					)
-				{ 
-					try {
-						pstmt.setInt(1, sampleId++);
-						pstmt.setString(2, headers[i]);
-						pstmt.setInt(3, info.isStringCol(i) ? Types.CHAR : Types.REAL);
-						pstmt.execute();
-						dataCols.add(i);
-					}
-					catch(Error e) { 
-						errors = reportError(info, error, "Error in headerline, can't add column " + i + 
-							" due to: " + e.getMessage(), errors);
-						
-					}
-				}
-			}
-			
-			p.report("> Processing lines");
-			
-			//Check ids and add expression data
-			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
-			pstmt = con.prepareStatement(
-					"INSERT INTO expression			" +
-					"	(id, code, ensId,			" + 
-					"	 idSample, data, groupId)	" +
-			"VALUES	(?, ?, ?, ?, ?, ?)			");
-			String line = null;
-			int n = info.firstDataRow - 1;
-			int added = 0;
-			int worked = importWork / nrLines;
-			
-			boolean maximumNotSet = true;
-			boolean minimumNotSet = true;
-			double maximum = 1; // Dummy value
-			double minimum = 1; // Dummy value
-
-			while((line = in.readLine()) != null) 
-			{
-				if(p.isCancelled()) { close(); error.close(); return; } //User pressed cancel
-				String[] data = line.split(info.getDelimiter(), headers.length);
-				n++;
-				if(n == info.headerRow) continue; //Don't add header row (very unlikely that this will happen)
-				if(data.length < headers.length) {
-					errors = reportError(info, error, "Number of columns in line " + n + 
-							"doesn't match number of header columns",
-							errors);
-					continue;
-				}
-				p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
-				//Check id and add data
-				String id = data[info.idColumn].trim();
-				
-				/*Set the system code to the one found in the dataset if there is a system code column,
-				 * otherwise set the system code to the one selected (either by the user or by regular 
-				 * expressions.*/
-				String code;
-				if (info.getSyscodeColumn()) {
-					code = data[info.codeColumn].trim();
-				}
-				else {
-					code = info.getSyscode();
-				}
-				ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
-				
-				if(ensIds.size() == 0) //No Ensembl gene found
-				{
-					errors = reportError(info, error, "Line " + n + ": " + id + "\t" + code + 
-							"\t No Ensembl gene found for this identifier", errors);
-				} else { //Gene maps to an Ensembl id, so add it
-					boolean success = true;
-					for( String ensId : ensIds) //For every Ensembl id add the data
-					{
-						for(int col : dataCols)
-						{
-							if(!info.isStringCol(col) 
-									&& (data[col] == null || data[col].equals(""))) {
-								data[col] = "NaN";
-							}
-							
-							//Determine maximum and minimum values.
-							
-							double dNumber = new Double(data[col]).doubleValue();
-							if(maximumNotSet || dNumber>maximum)
-							{
-								maximum=dNumber;
-								maximumNotSet=false;
-							}
-							
-							if(minimumNotSet || dNumber<minimum)
-							{
-								minimum=dNumber;
-								minimumNotSet=false;
-							}
-							
-							//End of determining maximum and minimum values. After the data has been read, 
-							//maximum and minimum will have their correct values.
-							
-							try {
-								pstmt.setString(1,id);
-								pstmt.setString(2,code);
-								pstmt.setString(3, ensId);
-								pstmt.setString(4, Integer.toString(dataCols.indexOf(col)));
-								pstmt.setString(5, data[col]);
-								pstmt.setInt(6, added);
-								pstmt.execute();
-							} catch (Exception e) {
-								errors = reportError(info, error, "Line " + n + ":\t" + line + "\n" + 
-										"\tException: " + error, errors);
-								success = false;
-							}
-						}
-					}
-					if(success) added++;
-				}
-				p.worked(worked);
-			}
-			
-			//Data is read and written to the database
-			
-			//Writing maximum and minimum to ImportInformation
-			info.setMaximum(maximum);
-			info.setMinimum(minimum);
-			
-			p.report(added + " genes were added succesfully to the expression dataset");
-			if(errors > 0) {
-				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
-			} else {
-				new File(errorFile).delete(); // If no errors were found, delete the error file
-			}
-			p.setTaskName("Closing database connection");
-			close(true);
-			p.worked(finalizeWork);
-			
-			error.println("Time to create expression dataset: " + timer.stop());
-			error.close();
-			
-			try {
-				connect(); //re-connect and use the created expression dataset
-			} catch(Exception e) {
-				Logger.log.error("Exception on connecting expression dataset from import thread", e);
-			}
-
-			//Creating a default color set for the visualizations.
-			//this has to be done after re-connecting to the pgex.
-			createDefaultColorSet(minimum,maximum);
-	
-			p.finished();
-		} catch(Exception e) { 
-			p.report("Import aborted due to error: " + e.getMessage());
-			Logger.log.error("Expression data import error", e);
-			close(true);
-			error.close();
-		}
-		
-	}
-	
-	private static int reportError(ImportInformation info, PrintStream out, String message, int nrError) 
-	{
-		info.addError(message);
-		out.println(message);
-		nrError++;
-		return nrError;
-	}
-	
-	public static void createDefaultColorSet(double minimum, double maximum){
-		Color green= new Color(0,255,0);
-		Color red = new Color(255,0,0);
-		Color yellow = new Color(255,255,0);
-		ColorSet colorSet = new ColorSet("Default");
-		ColorGradient gradient = new ColorGradient(colorSet);
-		
-		ColorValuePair low = gradient.new ColorValuePair(green,minimum);
-		ColorValuePair middle = gradient.new ColorValuePair(red,(minimum+maximum)/2);
-		ColorValuePair high = gradient.new ColorValuePair(yellow,maximum);
-		
-		gradient.addColorValuePair(low);
-		gradient.addColorValuePair(middle);
-		gradient.addColorValuePair(high);
-		
-		colorSet.addObject(gradient);
-		
-		ColorSetManager.addColorSet(colorSet);
-		
-	}
 	/**
 	 * {@link Connection} to the GenMAPP Expression Dataset
 	 */
@@ -738,7 +421,7 @@ public class Gex implements ApplicationEventListener {
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = Gdb.ref2EnsIds(id, code); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = Gdb.ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{

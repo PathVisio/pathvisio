@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.data.DataSource;
 import org.pathvisio.data.DataSources;
 import org.pathvisio.model.PathwayElement;
 
@@ -102,7 +103,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		
 		dbCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getInput().setDataSource(dbCombo.getSelectedItem().toString());
+				getInput().setDataSource(DataSource.getByFullName(dbCombo.getSelectedItem().toString()));
 			}
 		});
 		

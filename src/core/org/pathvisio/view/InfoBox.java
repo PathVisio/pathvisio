@@ -86,7 +86,8 @@ public class InfoBox extends Graphics {
 				{"Availability: ", gdata.getCopyright()},
 				{"Last modified: ", gdata.getLastModified()},
 				{"Organism: ", gdata.getOrganism()},
-				{"Data Source: ", gdata.getDataSource()}};
+				{"Data Source: ", gdata.getMapInfoDataSource()}
+			};
 
 
 		int shift = 0;

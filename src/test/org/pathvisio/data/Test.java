@@ -46,6 +46,30 @@ public class Test extends TestCase implements ApplicationEventListener
 			eventReceived = true;
 		}
 	}
+	
+	public void testDataSource()
+	{
+		DataSource ds = DataSource.ENSEMBL;
+		assertEquals (ds.getFullName(), "Ensembl");
+		assertEquals (ds.getSystemCode(), "En");
+		
+		DataSource.register("@@", "ZiZaZo", null, null, null);
+		
+		DataSource ds2 = DataSource.getBySystemCode ("@@");
+		DataSource ds3 = DataSource.getByFullName ("ZiZaZo");
+		assertEquals (ds2, ds3);
+		
+		// assert that you can refer to 
+		// undeclared systemcodes if necessary.
+		assertNotNull (DataSource.getBySystemCode ("##"));
+		
+		DataSource ds4 = DataSource.getBySystemCode ("En");
+		assertEquals (ds, ds4);
+		
+		DataSource ds5 = DataSource.getByFullName ("Entrez Gene");
+		assertEquals (ds5, DataSource.ENTREZ_GENE);
+	}
+	
 	public void testGdbConnect()
 	{
 		//TODO: create test pgdb
@@ -56,5 +80,7 @@ public class Test extends TestCase implements ApplicationEventListener
 		// assertTrue (eventReceived);
 		// test reception of event...
 	}
+	
+	
 	
 }

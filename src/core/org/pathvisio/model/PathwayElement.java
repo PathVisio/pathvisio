@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jdom.Document;
-import org.pathvisio.data.DataSources;
+import org.pathvisio.data.DataSource;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
@@ -457,7 +457,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			break;
 		case ObjectType.LABEL:
 			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.XREF);
+			result.add(PropertyType.GENMAPP_XREF);
 			result.add(PropertyType.CENTERX);
 			result.add(PropertyType.CENTERY);
 			result.add(PropertyType.WIDTH);
@@ -589,10 +589,17 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setGeneID((String) value);
 			break;
 		case SYSTEMCODE:
-			setDataSource((String) value);
+			if (value instanceof DataSource)
+			{
+				setDataSource((DataSource) value);
+			}
+			else
+			{
+				setDataSource(DataSource.getByFullName((String)value));
+			}			
 			break;
-		case XREF:
-			setXref((String) value);
+		case GENMAPP_XREF:
+			setGenMappXref((String) value);
 			break;
 		case BACKPAGEHEAD:
 			setBackpageHead((String) value);
@@ -623,7 +630,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setOrganism((String) value);
 			break;
 		case DATA_SOURCE:
-			setDataSource((String) value);
+			setDataSource((DataSource) value);
 			break;
 		case VERSION:
 			setVersion((String) value);
@@ -751,8 +758,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case SYSTEMCODE:
 			result = getDataSource();
 			break;
-		case XREF:
-			result = getXref();
+		case GENMAPP_XREF:
+			result = getGenMappXref();
 			break;
 		case BACKPAGEHEAD:
 			result = getBackpageHead();
@@ -904,7 +911,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		mWidth = src.mWidth;
 		windowHeight = src.windowHeight;
 		windowWidth = src.windowWidth;
-		xref = src.xref;
+		genmappxref = src.genmappxref;
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
@@ -1199,18 +1206,18 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	protected String xref = null;
+	protected String genmappxref = null;
 
-	public String getXref()
+	public String getGenMappXref()
 	{
-		return xref;
+		return genmappxref;
 	}
 
-	public void setXref(String v)
+	public void setGenMappXref(String v)
 	{
-		if (xref != v)
+		if (genmappxref != v)
 		{
-			xref = v;
+			genmappxref = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
 					PathwayEvent.MODIFIED_GENERAL));
 		}
@@ -1274,14 +1281,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * The pathway datasource
 	 */
-	protected String dataSource = "";
+	protected DataSource dataSource = null;
 
-	public String getDataSource()
+	public DataSource getDataSource()
 	{
 		return dataSource;
 	}
 
-	public void setDataSource(String v)
+	public void setDataSource(DataSource v)
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
@@ -1294,15 +1301,31 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/**
+	 * returns GeneID and datasource combined in an Xref.
+	 * Only meaningful for datanodes.
+	 * 
+	 * Same as 
+	 * new Xref (
+	 * 		pathwayElement.getGeneID(), 
+	 * 		pathwayElement.getDataSource()
+	 * );
+	 */
+	public Xref getXref()
+	{
+		return new Xref (setGeneID, dataSource);
+	}
+	
+	/**
 	 * SystemCode is a one- or two-letter abbreviation of datasource, used in
 	 * the MappFormat but also in databases.
 	 */
 	public String getSystemCode()
 	{
-		String systemCode = "";
-		if (DataSources.sysName2Code.containsKey(dataSource))
-			systemCode = DataSources.sysName2Code.get(dataSource);
-		return systemCode;
+		if (dataSource == null)
+		{
+			return null;
+		}
+		return dataSource.getSystemCode();
 	}
 
 	protected double mCenterx = 0;

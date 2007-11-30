@@ -63,9 +63,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.Xref;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.GeneProduct;
@@ -101,7 +101,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * This method determines the area in the gene-box to use for visualization and calls
 	 * {@link #drawArea(GmmlGeneProduct, Rectangle, PaintEvent, GC)} to draw the samples.
 	 * If you want to visualize the data in the gene-box, implement 
-	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, IdCodePair, Rectangle, PaintEvent, GC)}
+	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Xref, Rectangle, PaintEvent, GC)}
 	 * and
 	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}.
 	 * @see VisualizationPlugin#visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
@@ -125,7 +125,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	
 	/**
 	 * Divides the given area in a rectangle for each sample and calls
-	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, IdCodePair, Rectangle, PaintEvent, GC)}
+	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Xref, Rectangle, PaintEvent, GC)}
 	 * (when data is available) or
 	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}
 	 * (when no data is available).
@@ -143,7 +143,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 					area.y,
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
-			IdCodePair idc = new IdCodePair(gp.getPathwayElement().getGeneID(), gp.getSystemCode());
+			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
 			CachedData cache = Gex.getCachedData();
 			if(cache == null) continue;
 			
@@ -170,14 +170,14 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * Implement this method to perform the drawing operation for a single sample when data is
 	 * present for the gene-product to visualize.
 	 * @see #visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
-	 * @see CachedData#getData(IdCodePair)
+	 * @see CachedData#getData(Xref)
 	 * @param s The sample that will be visualized
 	 * @param idc The id and code of the gene-product
 	 * @param area The area to draw in
 	 * @param e	{@link PaintEvent} containing information about the paint
 	 * @param gc Graphical context on which drawing operations can be performed
 	 */
-	abstract void drawSample(ConfiguredSample s, IdCodePair idc, Rectangle area, Graphics2D g2d);
+	abstract void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d);
 	
 	static final int SIDEPANEL_SPACING = 3;
 	static final int SIDEPANEL_MARGIN = 5;
@@ -186,7 +186,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * This method implements a visualization on the side-panel, which is divided
 	 * in horizontal bars, one for each selected gene-product. In the horizontal bars, the samples
 	 * are visualized by calling {@link #drawArea(GmmlGeneProduct, Rectangle, PaintEvent, GC)}
-	 * @see #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, IdCodePair, Rectangle, PaintEvent, GC)
+	 * @see #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Xref, Rectangle, PaintEvent, GC)
 	 * @see #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)
 	 * @param e
 	 */
@@ -286,7 +286,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * @param selection A selection containing samples to add
 	 */
 	void addUseSamples(IStructuredSelection selection) {
-		Iterator it = selection.iterator();
+		Iterator<?> it = selection.iterator();
 		while(it.hasNext()) {
 			Sample s = (Sample)it.next();
 			if(!useSamples.contains(s)) 
@@ -300,7 +300,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	 * @param selection A selection containing samples to remove
 	 */
 	void removeUseSamples(IStructuredSelection selection) {
-		Iterator it = selection.iterator();
+		Iterator<?> it = selection.iterator();
 		while(it.hasNext()) {
 			useSamples.remove((ConfiguredSample)it.next());
 		}

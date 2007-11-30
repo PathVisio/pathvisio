@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pathvisio.data.Gdb.IdCodePair;
-import org.pathvisio.data.Gex.Sample;
+import org.pathvisio.model.Xref;
+
 
 /**
  * This class represents cached expression data for a pathway.
@@ -36,10 +36,10 @@ import org.pathvisio.data.Gex.Sample;
  */
 public class CachedData {
 	
-	HashMap<IdCodePair, List<Data>> data; //Data objects for gene-products on the pathway
+	HashMap<Xref, List<Data>> data; //Data objects for gene-products on the pathway
 		
 	protected CachedData() {
-		data = new HashMap<IdCodePair, List<Data>>();
+		data = new HashMap<Xref, List<Data>>();
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class CachedData {
 	 * @param pwId The IdCodePair that represents the gene-product
 	 * @return true if data is available for the gene-product, false if not
 	 */
-	public boolean hasData(IdCodePair pwId) {
+	public boolean hasData(Xref pwId) {
 		return data.containsKey(pwId);
 	}
 	
@@ -57,7 +57,7 @@ public class CachedData {
 	 * @param pwId The IdCodePair that represents the gene-product
 	 * @return true if multiple data is available for the gene-product, false if not
 	 */
-	public boolean hasMultipleData(IdCodePair pwId) {
+	public boolean hasMultipleData(Xref pwId) {
 		List<Data> d = data.get(pwId);
 		if(d != null) {
 			return d.size() > 1;
@@ -71,7 +71,7 @@ public class CachedData {
 	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
 	 * @return a list of {@link Data} object containing the cached data, or null when no data is available
 	 */
-	public List<Data> getData(IdCodePair idc) {
+	public List<Data> getData(Xref idc) {
 		return data.get(idc);
 	}
 	
@@ -80,7 +80,7 @@ public class CachedData {
 	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
 	 * @return a {@link Data} instance that contains the cached data
 	 */
-	public Data getSingleData(IdCodePair idc) {
+	public Data getSingleData(Xref idc) {
 		List<Data> dlist = data.get(idc);
 		if(dlist != null && dlist.size() > 0) return dlist.get(0);
 		return null;
@@ -91,7 +91,7 @@ public class CachedData {
 	 * @param idc The IdCodePair that represents the gene-product for which the data has to be added
 	 * @param d The data that has to be added
 	 */
-	protected void addData(IdCodePair idc, Data d) {
+	protected void addData(Xref idc, Data d) {
 		List<Data> dlist = data.get(idc);
 		if(dlist == null) 
 			data.put(idc, dlist = new ArrayList<Data>());
@@ -104,7 +104,7 @@ public class CachedData {
 	 * @return a HashMap where the keys represent the sample ids and the values the averaged data
 	 * @see Data#getSampleData()
 	 */
-	public HashMap<Integer, Object> getAverageSampleData(IdCodePair idc)
+	public HashMap<Integer, Object> getAverageSampleData(Xref idc)
 	{
 		HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
 		List<Data> dlist = data.get(idc);
@@ -161,7 +161,7 @@ public class CachedData {
 	 * @author Thomas
 	 */
 	public static class Data {
-		IdCodePair idc;
+		Xref idc;
 		int group;
 		HashMap<Integer, Object> sampleData;
 		
@@ -170,7 +170,7 @@ public class CachedData {
 		 * @param ref The IdCodePair that represents the reporter
 		 * @param groupId An id that groups the expression data from duplicate reporters
 		 */
-		protected Data(IdCodePair ref, int groupId) {
+		protected Data(Xref ref, int groupId) {
 			idc = ref;
 			group = groupId;
 			sampleData = new HashMap<Integer, Object>();
@@ -180,7 +180,7 @@ public class CachedData {
 		 * Get the reporter this object contains data for
 		 * @return The IdCodePair that represents the reporter this object contains data for
 		 */
-		public IdCodePair getIdCodePair() { return idc; }
+		public Xref getIdCodePair() { return idc; }
 		
 		/**
 		 * Get the group id for this object

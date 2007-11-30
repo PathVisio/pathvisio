@@ -42,7 +42,8 @@ import org.pathvisio.visualization.VisualizationEvent;
  * the visualization of experimental data on GPML pathways
  * @author Thomas
  */
-public abstract class VisualizationPlugin implements Comparable {
+public abstract class VisualizationPlugin implements Comparable <VisualizationPlugin> 
+{
 	public static String XML_ELEMENT = "plugin";
 	public static String XML_ATTR_CLASS = "class";
 	
@@ -350,9 +351,8 @@ public abstract class VisualizationPlugin implements Comparable {
 		}
 	}
 	
-	public int compareTo(Object o) {
-		if(o instanceof VisualizationPlugin)
-			return getName().compareTo(((VisualizationPlugin)o).getName());
-		return -1;
+	public int compareTo(VisualizationPlugin o) 
+	{	
+		return getName().compareTo(o.getName());
 	}
 }

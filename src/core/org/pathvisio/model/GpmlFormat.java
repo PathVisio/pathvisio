@@ -49,6 +49,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
+import org.pathvisio.data.DataSource;
 import org.pathvisio.debug.Logger;
 import org.xml.sax.SAXException;
 
@@ -664,23 +665,23 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	private static void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel    (getAttribute("DataNode", "TextLabel", e));
-		o.setXref         (getAttribute("DataNode", "GenMAPP-Xref", e));
+		o.setGenMappXref         (getAttribute("DataNode", "GenMAPP-Xref", e));
 		o.setDataNodeType (getAttribute("DataNode", "Type", e));
 		o.setBackpageHead (getAttribute("DataNode", "BackpageHead", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setGeneID (getAttribute("DataNode.Xref", "ID", xref));
-		o.setDataSource (getAttribute("DataNode.Xref", "Database", xref));
+		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
 	}
 
 	private static void updateDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) {
 			setAttribute ("DataNode", "TextLabel", e, o.getTextLabel());
-			setAttribute ("DataNode", "GenMAPP-Xref", e, o.getXref());
+			setAttribute ("DataNode", "GenMAPP-Xref", e, o.getGenMappXref());
 			setAttribute ("DataNode", "Type", e, o.getDataNodeType());
 			setAttribute ("DataNode", "BackpageHead", e, o.getBackpageHead());
 			Element xref = e.getChild("Xref", e.getNamespace());
-			setAttribute ("DataNode.Xref", "Database", xref, o.getDataSource());
+			setAttribute ("DataNode.Xref", "Database", xref, o.getDataSource().getFullName());
 			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());			
 		}
 	}
@@ -792,7 +793,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	
     	String xref = getAttribute("Label", "Xref", e);
     	if (xref == null) xref = "";
-    	o.setXref(xref);
+    	o.setGenMappXref(xref);
     	String outline = getAttribute("Label", "Outline", e);
 		o.setOutline (OutlineType.fromTag (outline));
 	}
@@ -802,7 +803,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		if(e != null) 
 		{
 			setAttribute("Label", "TextLabel", e, o.getTextLabel());
-			setAttribute("Label", "Xref", e, o.getXref() == null ? "" : o.getXref());
+			setAttribute("Label", "Xref", e, o.getGenMappXref() == null ? "" : o.getGenMappXref());
 			setAttribute("Label", "Outline", e, o.getOutline().getTag());
 			Element graphics = e.getChild("Graphics", e.getNamespace());
 			if(graphics !=null) 
@@ -1063,7 +1064,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			{0, 0, 0}		// transparent (actually irrelevant)
 		});
 	
-	public static final List colorMappings = Arrays.asList(new String[]{
+	public static final List<String> colorMappings = Arrays.asList(new String[]{
 			"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
 			"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
 			"White", "Yellow", "Transparent"

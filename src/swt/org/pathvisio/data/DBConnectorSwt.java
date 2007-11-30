@@ -27,7 +27,7 @@ import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
  * in PathVisio. Implement the abstract methods when you want to add support for a new database engine.
  * @author Thomas
  */
-public abstract class DBConnectorSwt extends AbstractDBConnector {
+public abstract class DBConnectorSwt extends DBConnector {
 	
 	/**
 	 * This method will be called when the user

@@ -121,7 +121,15 @@ public class VPathway implements PathwayListener
 
 	private Pathway data;
 
+	/**
+	 * @deprecated. use getPathwayModel() instead
+	 */
 	public Pathway getGmmlData()
+	{
+		return data;
+	}
+	
+	public Pathway getPathwayModel()
 	{
 		return data;
 	}
@@ -1253,7 +1261,7 @@ public class VPathway implements PathwayListener
 			gdata.setMWidth(1);
 			gdata.setMHeight(1);
 			gdata.setTextLabel("Gene");
-			gdata.setXref("");
+			gdata.setGenMappXref("");
 			gdata.setColor(stdRGB);
 			gdata.setGraphId(data.getUniqueId());
 			data.add(gdata); // will cause lastAdded to be set
@@ -1414,7 +1422,7 @@ public class VPathway implements PathwayListener
 	 * @param c
 	 *            The class of the objects to be selected
 	 */
-	void selectObjects(Class c)
+	void selectObjects(Class<?> c)
 	{
 		clearSelection();
 		selection.startSelecting();
@@ -1861,7 +1869,7 @@ public class VPathway implements PathwayListener
 		}
 		if (result.size() > 0)
 		{
-			getWrapper().copyToClipboard(getGmmlData(), result);
+			getWrapper().copyToClipboard(getPathwayModel(), result);
 		}
 	}
 

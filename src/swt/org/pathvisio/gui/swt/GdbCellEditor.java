@@ -32,12 +32,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
-import org.pathvisio.data.DataSources;
+import org.pathvisio.data.DataSource;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.Xref;
 import org.pathvisio.util.swt.SuggestCellEditor;
 import org.pathvisio.util.swt.SuggestCombo;
 import org.pathvisio.util.swt.SuggestCombo.SuggestionListener;
@@ -185,7 +186,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 	
 			while(r.next()) {
 				String sysCode = r.getString("code");
-				String sysName = DataSources.sysCode2Name.get(sysCode);
+				String sysName = DataSource.getBySystemCode(sysCode).getFullName();
 				
 				AutoFillData adf = null;
 				switch(type) {
@@ -232,16 +233,16 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			//Fetch info from self
 			String id = getProperty(PropertyType.GENEID);
 			String sysName = getProperty(PropertyType.SYSTEMCODE);
-			
+			Xref ref = new Xref (id, DataSource.getBySystemCode(sysName));
 			//If null, fetch from dataobject
 			if(id == null) id = (String)o.getProperty(PropertyType.GENEID);
 			if(sysName == null) sysName = (String)o.getProperty(PropertyType.SYSTEMCODE);
 			
-			String code = sysName == null ? null : DataSources.sysName2Code.get(sysName);
+			String code = sysName == null ? null : DataSource.getByFullName(sysName).getSystemCode();
 			
 			//Guess symbol
 			if(id != null && code != null) {
-				String symbol = Gdb.getGeneSymbol(id, code);
+				String symbol = Gdb.getGeneSymbol(ref);
 				if(symbol != null) {
 					setProperty(PropertyType.TEXTLABEL, symbol);
 				}

@@ -77,7 +77,7 @@ public class RFunctionLoader {
 			JarURLConnection conn = (JarURLConnection)url.openConnection();
 
 			JarFile jfile = conn.getJarFile();
-			Enumeration e = jfile.entries();
+			Enumeration<?> e = jfile.entries();
 			while (e.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry)e.nextElement();
 				String entryname = entry.getName();

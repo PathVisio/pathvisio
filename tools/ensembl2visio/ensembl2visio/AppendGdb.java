@@ -19,8 +19,6 @@ package ensembl2visio;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.SQLException;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.StopWatch;
 import org.pathvisio.debug.StopWatch;
 
 /**

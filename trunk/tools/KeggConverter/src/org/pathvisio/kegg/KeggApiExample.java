@@ -2,6 +2,7 @@ package org.pathvisio.kegg;
 
 import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
+import keggapi.LinkDBRelation;
 
 /**
  * Example on how to use the KEGG API
@@ -49,6 +50,10 @@ public class KeggApiExample {
 			
 			for(String gene : genes) {
 				System.out.println("\t" + gene);
+				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
+				for(LinkDBRelation ldb : links) {
+					System.out.println("\t\t" + ldb.getEntry_id1() + " links to " + ldb.getEntry_id2());
+				}
 			}
 		}
 	}

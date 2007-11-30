@@ -410,26 +410,6 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * Get the systemcodes of all genes in this pathway
-	 * 
-	 * @return List containing a systemcode for every gene on the mapp
-	 * 
-	 * @deprecated get this info from Pathway directly
-	 */
-	public ArrayList<String> getSystemCodes()
-	{
-		ArrayList<String> systemCodes = new ArrayList<String>();
-		for (VPathwayElement o : drawingObjects)
-		{
-			if (o instanceof GeneProduct)
-			{
-				systemCodes.add(((GeneProduct) o).getSystemCode());
-			}
-		}
-		return systemCodes;
-	}
-
-	/**
 	 * Set this drawing to editmode
 	 * 
 	 * @param editMode

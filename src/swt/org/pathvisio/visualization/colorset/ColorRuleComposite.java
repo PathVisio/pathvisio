@@ -27,14 +27,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 import org.pathvisio.util.swt.SwtUtils;
 
 class ColorRuleComposite extends ColorSetObjectComposite 
 {
 	private final int colorLabelSize = 15;
 	private RuleComposite critComp;
-	private Text exprText;
 	private CLabel colorLabel;
 	private org.eclipse.swt.graphics.Color color;
 	

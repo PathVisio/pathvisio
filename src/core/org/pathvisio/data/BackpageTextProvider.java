@@ -56,7 +56,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			input = null;
-			setText(Gdb.getBackpageHTML(null, null));
+			setText(Gdb.getCurrentGdb().getBackpageHTML(null, null));
 		} else {
 			input = e;
 			input.addListener(this);
@@ -64,9 +64,9 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 	}
 
-	private void doQuery() {
-		currId = input.getGeneID();
-		currCode = input.getSystemCode();
+	private void doQuery() 
+	{
+		currRef = input.getXref();
 		
 		//System.err.println("\tSetting input " + e + " using " + threads);
 		//First check if the number of running threads is not too high
@@ -110,18 +110,14 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 	}
 	
-	String currId;
-	String currCode;
+	Xref currRef;
 	
 	public void gmmlObjectModified(PathwayEvent e) {
 		PathwayElement pe = e.getAffectedData();
 		if(input != null) {
-			String nId = pe.getGeneID();
-			String nC = input.getSystemCode();
-//			System.out.println("old: " + currId + ", " + currCode);
-//			System.out.println("new: " + nId + ", " + nC);
-			if(	currId != null && !currId.equals(nId) ||
-					currCode != null && !currCode.equals(nC)) {
+			Xref nref = new Xref (pe.getGeneID(), input.getDataSource());
+			if(!nref.equals(currRef)) 
+			{
 				doQuery();
 			}				
 		}
@@ -145,7 +141,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 //			System.err.println("+++++ Thread " + this + " ended +++++");
 		}
 		void performTask() {
-			String txt = Gdb.getBackpageHTML(
+			String txt = Gdb.getCurrentGdb().getBackpageHTML(
 					new Xref(e.getGeneID(), 
 					e.getDataSource()), 
 					e.getBackpageHead());

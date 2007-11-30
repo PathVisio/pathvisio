@@ -39,7 +39,7 @@ public class DataNodeListExporter implements PathwayExporter {
 	 * code as used in the pathway
 	 */
 	public static final String DB_ORIGINAL = "original"; //Use the id/code as in database
-	private String resultCode = DB_ORIGINAL;
+	private DataSource resultDs = DataSource.getBySystemCode(DB_ORIGINAL);
 	private String multiRefSep = ", ";
 	
 	/**
@@ -66,23 +66,37 @@ public class DataNodeListExporter implements PathwayExporter {
 	 * reference will be mapped to in the output file.
 	 * @see #DB_ORIGINAL
 	 * @param code
+	 * @deprecated use setResultDataSource();
 	 */
-	public void setResultCode(String code) {
-		resultCode = code;
+	public void setResultCode(String code) 
+	{
+		resultDs = DataSource.getBySystemCode (code);
+	}
+	
+	public void setResultDataSource (DataSource value)
+	{
+		resultDs = value;
 	}
 	
 	/**
 	 * Get the database code to which every datanode
 	 * reference will be mapped to in the output file.
+	 * @deprecated use getResultDataSouce()
 	 */
-	public String getResultCode() {
-		return resultCode;
+	public String getResultCode() 
+	{
+		return resultDs.getSystemCode();
+	}
+	
+	public DataSource getResultDataSource()
+	{
+		return resultDs;
 	}
 	
 	public void doExport(File file, Pathway pathway) throws ConverterException {
-		if(!DB_ORIGINAL.equals(resultCode)) {
+		if(!DB_ORIGINAL.equals(getResultCode())) {
 			//Check gene database connection
-			if(!Gdb.isConnected()) {
+			if(!Gdb.getCurrentGdb().isConnected()) {
 				throw new ConverterException("No gene database loaded");
 			}
 		}
@@ -97,21 +111,21 @@ public class DataNodeListExporter implements PathwayExporter {
 			if(elm.getObjectType() == ObjectType.DATANODE) {
 				String line = "";
 				String id = elm.getGeneID();
-				String code = elm.getSystemCode();
-				if(!checkString(id) || !checkString(code)) {
+				DataSource ds = elm.getDataSource();
+				if(!checkString(id) || ds == null) {
 					continue; //Skip empty id/codes
 				}
 				//Use the original id, if code is already the one asked for
-				if(DB_ORIGINAL.equals(resultCode) || code.equals(resultCode)) {
-					line = id + "\t" + DataSource.getBySystemCode(code).getFullName();
+				if(DB_ORIGINAL.equals(getResultCode()) || ds.equals(resultDs)) {
+					line = id + "\t" + ds.getFullName();
 				} else { //Lookup the cross-references for the wanted database code
-					ArrayList<Xref> refs = Gdb.getCrossRefs(new Xref(id, DataSource.getBySystemCode(code)), resultCode);
+					ArrayList<Xref> refs = Gdb.getCurrentGdb().getCrossRefs(elm.getXref(), resultDs);
 					for(Xref ref : refs) {
 						line += ref.getId() + multiRefSep;
 					}
 					if(line.length() > multiRefSep.length()) { //Remove the last ', '
 						line = line.substring(0, line.length() - multiRefSep.length());
-						line += "\t" + DataSource.getBySystemCode(resultCode).getFullName();
+						line += "\t" + resultDs.getFullName();
 					}
 				}
 				out.println(line);

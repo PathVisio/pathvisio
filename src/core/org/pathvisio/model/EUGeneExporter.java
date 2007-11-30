@@ -34,7 +34,7 @@ public class EUGeneExporter implements PathwayExporter
 		Logger log = Logger.log;
 		Pathway pathway;
 
-		String system; //The annotation system
+		DataSource system; //The annotation system
 
 		ArrayList<String> ids;
 		ArrayList<String> codes; 
@@ -78,30 +78,34 @@ public class EUGeneExporter implements PathwayExporter
 		void read() { 
 			ids = new ArrayList<String>();
 			codes = new ArrayList<String>();
-			HashMap<String, Integer> codeCount = new HashMap<String, Integer>();
+			HashMap<DataSource, Integer> codeCount = new HashMap<DataSource, Integer>();
 
 			for(PathwayElement elm : pathway.getDataObjects()) {
 				if(elm.getObjectType() != ObjectType.DATANODE) {
 					continue; //Skip non-datanodes
 				}
-				String id = elm.getGeneID();
-				String code = elm.getSystemCode();
-				if(id == null || code == null || id.equals("") || code.equals("")) { 
+				Xref ref = elm.getXref();
+				DataSource ds = ref.getDataSource();
+				if(ref == null || ref.getId().equals("") || ref.getDataSource() == null) 
+				{ 
 					continue; //Skip datanodes with incomplete annotation
 				}
-				ids.add(id); 
-				codes.add(code);
+				ids.add(ref.getId()); 
+				codes.add(ds.getSystemCode());
 
 				//Increase code count for this code
-				if(codeCount.containsKey(code)) codeCount.put(code, codeCount.get(code) + 1);
-				else codeCount.put(code, 1);
+				if(codeCount.containsKey(ref.getDataSource())) 
+					codeCount.put(ds, codeCount.get(ds) + 1);
+				else codeCount.put(ds, 1);
 			}
 
 			//Get most occuring systemcode
-			String maxCode = null;
-			for(String code : codeCount.keySet()) {
-				if(maxCode == null || codeCount.get(code) > codeCount.get(maxCode)) {
-					maxCode = code;
+			DataSource maxCode = null;
+			for(DataSource ds : codeCount.keySet()) 
+			{
+				if(maxCode == null || codeCount.get(ds) > codeCount.get(maxCode)) 
+				{
+					maxCode = ds;
 				}
 			}
 			system = maxCode;
@@ -116,10 +120,13 @@ public class EUGeneExporter implements PathwayExporter
 		}
 
 		String getEUGeneSystem() {
-			if(systemMappings.containsKey(system)) {
+			if(systemMappings.containsKey(system)) 
+			{
 				return systemMappings.get(system);
-			} else {
-				return DataSource.getBySystemCode(system).getFullName();
+			} 
+			else 
+			{
+				return system.getFullName();
 			}
 		}
 	}

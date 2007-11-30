@@ -35,8 +35,10 @@ import org.pathvisio.preferences.PreferenceCollection;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
+import org.pathvisio.data.Gdb;
 
-public class Engine {
+public class Engine 
+{	
 	private VPathway vPathway; // may be null
 	//TODO: standalone below is a hack to make Converter work
 	private Pathway standalone = null; // only used when vPathway is null

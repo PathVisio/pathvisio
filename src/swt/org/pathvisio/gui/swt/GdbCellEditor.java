@@ -163,7 +163,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 		
 		List<String> sugg = new ArrayList<String>();
 		try {
-			Statement s = Gdb.getCon().createStatement();
+			Statement s = Gdb.getCurrentGdb().getCon().createStatement();
 			
 			s.setQueryTimeout(query_timeout);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
@@ -242,7 +242,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			
 			//Guess symbol
 			if(id != null && code != null) {
-				String symbol = Gdb.getGeneSymbol(ref);
+				String symbol = Gdb.getCurrentGdb().getGeneSymbol(ref);
 				if(symbol != null) {
 					setProperty(PropertyType.TEXTLABEL, symbol);
 				}

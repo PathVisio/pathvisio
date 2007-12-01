@@ -16,22 +16,22 @@
 //
 package org.pathvisio.data;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import junit.framework.TestCase;
 
-public class DBConnDerbyDirectory extends DataDerbyDirectory implements DBConnectorSwt
+public class TestOnline extends TestCase
 {
-	public String openChooseDbDialog(Shell shell) {
-		DirectoryDialog dd = DBConnectorUtils.createDirectoryDialog(this, shell);
-		return dd.open();
-	}
-
-	public String openNewDbDialog(Shell shell, String defaultName) {
-		DirectoryDialog dd = DBConnectorUtils.createDirectoryDialog(this, shell);
-		if(defaultName != null) dd.setFilterPath(defaultName);
-		return dd.open();
+	public void testPubMedQuery()
+	{
+		String id = "17588266";
+		PubMedQuery pmq = new PubMedQuery(id);
+		try {
+			pmq.execute();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		PubMedResult pmr = pmq.getResult();
+		assertTrue(pmr.getId().equals(id));
+		assertTrue("GenMAPP 2: new features and resources for pathway analysis.".equals(pmr.getTitle()));
 	}
 }

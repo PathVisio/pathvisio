@@ -30,7 +30,7 @@ public class EUGeneExporter implements PathwayExporter
 		}
 	}
 
-	class EUGenePathway {
+	private static class EUGenePathway {
 		Logger log = Logger.log;
 		Pathway pathway;
 

@@ -16,7 +16,6 @@
 //
 package org.pathvisio.model;
 
-import org.pathvisio.data.DataSource;
 
 /**
  * Class to store an id/code combination, which represents

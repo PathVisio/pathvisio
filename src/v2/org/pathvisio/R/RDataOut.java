@@ -32,12 +32,12 @@ import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
 import org.pathvisio.R.RCommands.RTemp;
 import org.pathvisio.R.RCommands.RniException;
-import org.pathvisio.data.DataSource;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
@@ -554,7 +554,7 @@ public class RDataOut {
 			String[] smp_names = new String[data.length];
 			
 			for(int k = 0; k < reporters.length; k++)
-				rep_names[k] = reporters[k].getName();
+				rep_names[k] = reporters[k].toString();
 			
 			for(int k = 0; k < data.length; k++) 
 				smp_names[k] = samples.get(col2Sample[k]).getName();

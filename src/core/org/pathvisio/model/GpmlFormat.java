@@ -49,7 +49,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.data.DataSource;
 import org.pathvisio.debug.Logger;
 import org.xml.sax.SAXException;
 

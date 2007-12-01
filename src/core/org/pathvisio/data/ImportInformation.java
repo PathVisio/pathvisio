@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.DataSource;
 
 /**
  * This class contains the information needed to start importing a delimited

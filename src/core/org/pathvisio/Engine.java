@@ -35,7 +35,6 @@ import org.pathvisio.preferences.PreferenceCollection;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
-import org.pathvisio.data.Gdb;
 
 public class Engine 
 {	

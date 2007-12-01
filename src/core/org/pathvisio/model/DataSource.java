@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 
-package org.pathvisio.data;
+package org.pathvisio.model;
 
 import java.util.Set;
 import java.util.Map;

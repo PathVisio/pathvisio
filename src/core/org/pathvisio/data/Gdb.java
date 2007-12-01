@@ -30,6 +30,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.Utils;
@@ -109,14 +110,6 @@ public class Gdb
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Sets the Gene Database that is currently in use
-	 * @param dbNm	The name of the gene database
-	 */
-	private void currentGdbChanged() 
-	{
 	}
 	
 	/**

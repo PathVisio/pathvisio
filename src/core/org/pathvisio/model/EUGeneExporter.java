@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pathvisio.data.DataSource;
 import org.pathvisio.debug.Logger;
 
 

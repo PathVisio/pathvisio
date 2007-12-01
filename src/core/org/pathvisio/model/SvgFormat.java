@@ -282,7 +282,7 @@ public class SvgFormat implements PathwayExporter
 		return e;
 	}
 	
-	static String getColordMarker(LineType type, Color color, Set markers, Element defs) {
+	static String getColordMarker(LineType type, Color color, Set<String> markers, Element defs) {
 		Element marker = null;
 		String id = type.getGpmlName() + color.toString().hashCode();
 		

@@ -25,7 +25,7 @@ class TutorialFiles
 	public static void main (String[] argv)
 	{
 		
-		final String tutorialPwy = "example-data/Hs_Apoptosis.gpml";
+		final String tutorialPwy = "Hs_Apoptosis.gpml";
 		Pathway pwy = new Pathway();
 		try
 		{
@@ -41,7 +41,7 @@ class TutorialFiles
 
 		assert (refs.contains (new Xref ("8717", DataSource.ENTREZ_GENE)));
 		assert (refs.contains (new Xref ("7132", DataSource.ENTREZ_GENE)));
-		assert (refs.contains (new Xref ("1111", DataSource.ENTREZ_GENE)));
+		assert (!refs.contains (new Xref ("1111", DataSource.ENTREZ_GENE)));
 		assert (refs.size() == 94);
 
 		// now look up all cross references in the human Gdb.

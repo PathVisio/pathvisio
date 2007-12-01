@@ -16,32 +16,13 @@
 //
 package org.pathvisio.data;
 
-import java.io.File;
 import java.util.List;
 import junit.framework.TestCase;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.ConverterException;
 
 public class Test extends TestCase implements ApplicationEventListener
-{
-	
-	public void testPubMedQuery() {
-		String id = "17588266";
-		PubMedQuery pmq = new PubMedQuery(id);
-		try {
-			pmq.execute();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		PubMedResult pmr = pmq.getResult();
-		assertTrue(pmr.getId().equals(id));
-		assertTrue("GenMAPP 2: new features and resources for pathway analysis.".equals(pmr.getTitle()));
-	}
-
+{	
 	boolean eventReceived = false;
 
 	public void applicationEvent (ApplicationEvent e)
@@ -50,36 +31,6 @@ public class Test extends TestCase implements ApplicationEventListener
 		{
 			eventReceived = true;
 		}
-	}
-
-	//TODO: move to org.pathvisio.model.Test
-	public void testDataSource()
-	{
-		DataSource ds = DataSource.ENSEMBL;
-		assertEquals (ds.getFullName(), "Ensembl");
-		assertEquals (ds.getSystemCode(), "En");
-		
-		DataSource.register("@@", "ZiZaZo", null, null, null);
-		
-		DataSource ds2 = DataSource.getBySystemCode ("@@");
-		DataSource ds3 = DataSource.getByFullName ("ZiZaZo");
-		assertEquals (ds2, ds3);
-		
-		// assert that you can refer to 
-		// undeclared systemcodes if necessary.
-		assertNotNull (DataSource.getBySystemCode ("##"));
-		
-		DataSource ds4 = DataSource.getBySystemCode ("En");
-		assertEquals (ds, ds4);
-		
-		DataSource ds5 = DataSource.getByFullName ("Entrez Gene");
-		assertEquals (ds5, DataSource.ENTREZ_GENE);
-	}
-
-	//TODO: move to tools/tutorialFiles
-	public void testGdbCreate() throws ConverterException, Exception
-	{
-		
 	}
 	
 	public void testGdbConnect()

@@ -118,13 +118,12 @@ public class GexSwt
 			root = new Element(XML_ELEMENT);
 			doc.setRootElement(root);
 			
-		}
-		
+		}		
 		return doc;
 	}
 
 	public static DBConnectorSwt getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return SwtEngine.getCurrent().getSwtDbConnector(DBConnectorSwt.TYPE_GEX);
+		return SwtEngine.getCurrent().getSwtDbConnector(DBConnector.TYPE_GEX);
 	}
 	
 	public static class ProgressWizardDialog extends WizardDialog {

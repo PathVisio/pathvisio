@@ -16,7 +16,6 @@
 //
 package org.pathvisio.data;
 
-import java.util.List;
 import junit.framework.TestCase;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;

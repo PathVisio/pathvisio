@@ -31,8 +31,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.data.DataSource;
 import org.pathvisio.data.DataSources;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 
 public class DataNodeDialog extends PathwayElementDialog {

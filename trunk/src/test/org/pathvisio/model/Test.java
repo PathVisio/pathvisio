@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
-import org.pathvisio.data.DataSource;
 
 public class Test extends TestCase implements PathwayListener 
 {

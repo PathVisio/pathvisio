@@ -117,11 +117,11 @@ public class SwingEngine {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
 	
-	public boolean processTask(SwingProgressKeeper pk, ProgressDialog d, SwingWorker sw) {
+	public boolean processTask(SwingProgressKeeper pk, ProgressDialog d, SwingWorker<Boolean, Boolean> sw) {
 		sw.execute();
 		d.setVisible(true);
 		try {
-			return (Boolean)sw.get();
+			return sw.get();
 		} catch (Exception e) {
 			Logger.log.error("Unable to perform task: " + pk.getTaskName(), e);
 			return false;
@@ -133,8 +133,8 @@ public class SwingEngine {
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 				"", pk, false, true);
 				
-		SwingWorker sw = new SwingWorker() {
-			protected Object doInBackground() throws Exception {
+		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
+			protected Boolean doInBackground() throws Exception {
 				pk.setTaskName("Opening pathway");
 				try {
 					Engine.getCurrent().setWrapper (createWrapper());
@@ -157,8 +157,8 @@ public class SwingEngine {
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 				"", pk, false, true);
 				
-		SwingWorker sw = new SwingWorker() {
-			protected Object doInBackground() throws Exception {
+		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean,Boolean>() {
+			protected Boolean doInBackground() throws Exception {
 				pk.setTaskName("Importing pathway");
 				try {
 					Engine eng = Engine.getCurrent();
@@ -215,8 +215,8 @@ public class SwingEngine {
 			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 					"", pk, false, true);
 
-			SwingWorker sw = new SwingWorker() {
-				protected Object doInBackground() throws Exception {
+			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
+				protected Boolean doInBackground() throws Exception {
 					try {
 						pk.setTaskName("Exporting pathway");
 						Engine.getCurrent().exportPathway(f);

@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import org.pathvisio.model.DataSource;
+
 /**
  * Contains regular expression patterns for identifiers
  * Can be used to guess the DataSource of an identifier

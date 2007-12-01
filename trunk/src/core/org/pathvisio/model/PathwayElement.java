@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jdom.Document;
-import org.pathvisio.data.DataSource;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 

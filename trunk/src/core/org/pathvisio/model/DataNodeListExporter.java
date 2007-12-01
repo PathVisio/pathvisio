@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.pathvisio.data.DataSource;
 import org.pathvisio.data.Gdb;
 
 /**

@@ -1,5 +1,5 @@
 == RFC 002: Connectors ==
-This RFC contains a proposal on how to support for more flexible connectors and better
+This RFC contains a proposal on how to add support for more flexible connectors and better
 support for editing Molecular Interaction Maps.
 
 == Object anchors ==
@@ -16,6 +16,10 @@ The object's anchor points will not be stored in GPML. In the code, the view par
 object provides the possible anchor points to the line. We can extend this later to
 support custom anchors, set by the user.
 
+* AP: I think this is clearly a good idea.  When drawing (or cleaning up) pathways, currently, 
+I usually try to place lines at the centers of the four sides anyways.  It is important to
+''not'' explicitly store the anchors, of course, so that the GPML is more generalizable.
+
 == Line anchors ==
 To properly represent mediators of interactions/reactions, we need to be able to
 connect a connector to another connector, e.g.:
@@ -31,6 +35,8 @@ Here we introduce a line anchor, which is similar to the object anchor, except t
 this anchor is stored in GPML. We need to store this, because the anchor will be explicitely
 created by the user as a specific point on the line. The line anchor's coordinates are 1-dimensional
 and range from 0 (start) to 1 (end).
+
+* AP: Would the 1-D anchor coordinate work with all elbow and curved lines types?
 
 == Elbow connectors ==
 To improve the layout of pathways we will support elbow connectors.
@@ -65,7 +71,7 @@ Gene1 ----
 The position of these middle segments (marked with +) can be changed by the user. 
 We can store this information using the coordinates of the + points (waypoints).
 
-Often it a given connector can be rendered in two ways:
+Often, a given connector can be rendered in two ways:
 
 Gene1 -------------
                    |
@@ -81,8 +87,10 @@ Gene1 -------------
 
 (Even with waypoints this problem can exist)
 
-The proposed solution is to determine the direction of the connectors at the
-start and end-point automatically. This can be done as follows (pseudo-code):
+The proposed solution is to calcuate the direction of the connectors at the
+start and end-point automatically. The direction is determined by the partiuclar
+anchor user has chosen to use (east or south anchors were used in the examples
+above). This can be programmatically checked as follows (pseudo-code):
 
 relx = connector.startx - shape.centerx
 rely = connector.starty - shape.centery
@@ -102,6 +110,14 @@ else
 		direction = north
 }
 
+* AP: Nice job catching this subtle problem. I wasn't sure I understood the solution,
+so I added a clarifying sentence above (please double check). As an alternative, I 
+thought you might be able just label the anchors (N,S,E,W) so you could skip the
+explicit calculation, but then I realised that if the shape were rotated, these labels
+would have to be re-calculated anyways, so it doesn't help.
+
+* AP: How would this work for anchors on lines, where there is no shape.center(x or y)?
+
 == Curved connectors ==
 
 Because people can't seem to live without them, we will also add support
@@ -117,6 +133,12 @@ Gene 1  --
 
 This will be similar to the elbow bends, but now the line will curve smoothly
 through the waypoint(s).
+
+AP: I assume this would generate a simple curved line when there are no waypoints?
+We need to make sure we are also supporting this type of line:
+   	     __
+       /    \
+Gene 1        Gene 2
 
 == Changes to GPML ==
 We will introduce the following new attributes and elements:
@@ -146,7 +168,7 @@ Here's an example of the GPML code:
 	<Point GraphRef="a" X="200" Y="200"/>
 	<Point GraphRef="b" X="500" Y="500"/>
 	<Anchor X="0.2" GraphId="d"/>
-	<Waypoint Position="300"/>
+	<Waypoint Position="350"/>
 </Line>
 <Line>
 	<Point GraphRef="c" X="300" Y="100"/>
@@ -155,15 +177,32 @@ Here's an example of the GPML code:
 
 Which will be drawn like this:
 
-       Gene 3
-          |
-          v
-Gene1 ----o--
-            |
-            +
-            |
-            ----> Gene 2
+     Gene 3
+        |
+        v
+Gene1 --o---
+           |
+           +
+           |
+           -----> Gene 2
 
+* AP: I altered the diagram and waypoint position to match better  (the waypoint X was 
+to the right of the anchor, though both were at X=300).
+* AP: Line.Anchor.X should be renamed to Line.Anchor.Position (because it is not an X coordinate)
+* AP: To make sure I understand: In the above GPML example, what would happen if the user were to move 
+the connector start to the South anchor on Gene 1?  Would the anchor on Gene 2 change to north and would
+the waypoint position "350" refer to the Y coord instead of the X?  And what happens to Gene 3.  It's hard to 
+draw, but I presume it would stay in its place (300,100) and an off-grid, sloping line would connect it 
+to the new anchor position (200,300).
+
+Gene 1
+  |
+  o
+  |--------+--------
+  				   |
+  				   \/
+  				 Gene 2
+  				 
 == Point coordinates of connectors ==
 
 In the current implementation, line ends are not really linked to an object anchor, but have their own coordinates which need to be updated when moving the object.
@@ -188,6 +227,11 @@ For backwards compatibility, we can support reading X and Y and GraphId,
 but then immediately the relative coordinates are calculated and used for writing.
 
 (I think relative coordinates may also be useful for groups...)
+
+* AP: Hmm..  Does this affect how GMPL would be read by other programs, like Cytoscape?  
+I worry about the same tag having two different meanings.  I'm not sure the extra parsing
+requirements (which may be relevant to multiple apps in the future) are worth the programmatic 
+updates to line coords (which are relevant only to PathVisio, which we have better control over).
 
 == Changes to the code ==
 TODO

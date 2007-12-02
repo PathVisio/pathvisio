@@ -136,7 +136,7 @@ through the waypoint(s).
 
 AP: I assume this would generate a simple curved line when there are no waypoints?
 We need to make sure we are also supporting this type of line:
-   	     __
+         __
        /    \
 Gene 1        Gene 2
 
@@ -199,9 +199,9 @@ Gene 1
   |
   o
   |--------+--------
-  				   |
-  				   \/
-  				 Gene 2
+                   |
+                   \/
+                 Gene 2
   				 
 == Point coordinates of connectors ==
 

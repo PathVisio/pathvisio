@@ -75,7 +75,7 @@ public class Criterion {
 
 	void setSampleData(HashMap<Integer, Object> data) {
 		// Add current sample values to symTab if they are of type Double
-		HashMap<Integer, Sample> samples = Gex.getSamples();
+		HashMap<Integer, Sample> samples = Gex.getCurrentGex().getSamples();
 		clearSymbols();
 		for(Sample s : samples.values()) {
 			Object value = data.get(s.getId());

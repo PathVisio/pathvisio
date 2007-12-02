@@ -121,7 +121,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 	}
 	
 	protected void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
-		CachedData cache = Gex.getCachedData();
+		CachedData cache = Gex.getCurrentGex().getCachedData();
 		ColorSet cs = s.getColorSet();
 
 		Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());

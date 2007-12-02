@@ -76,7 +76,7 @@ public class PageData extends WizardPage {
 		radioExport = new Button(content, SWT.RADIO);
 		radioExport.setText("Export data to R");
 		//Only available when expression data is loaded
-		radioExport.setEnabled(Gex.isConnected());
+		radioExport.setEnabled(Gex.getCurrentGex().isConnected());
 			
 		radioImport = new Button(content, SWT.RADIO);
 		radioImport.setText("Load previously exported data");

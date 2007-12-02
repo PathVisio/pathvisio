@@ -109,7 +109,7 @@ public class CachedData {
 		HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
 		List<Data> dlist = data.get(idc);
 		if(dlist != null) {
-			HashMap<Integer, Sample> samples = Gex.getSamples();
+			HashMap<Integer, Sample> samples = Gex.getCurrentGex().getSamples();
 			for(int idSample : samples.keySet())
 			{
 				int dataType = samples.get(idSample).getDataType();

@@ -490,7 +490,7 @@ public class RDataOut {
 		
 		List<String> getCodes() throws Exception {
 			List<String> codes = new ArrayList<String>();
-			ResultSet r = Gex.getCon().createStatement().executeQuery(
+			ResultSet r = Gex.getCurrentGex().getCon().createStatement().executeQuery(
 					"SELECT DISTINCT code FROM expression");
 			while(r.next()) codes.add(r.getString("code"));
 			return codes;
@@ -519,7 +519,7 @@ public class RDataOut {
 			//#1 create a long 1-dimensional list -> fill rows first
 			//#2 set dims attribute to c(nrow, ncol)
 			//et voila, we have a matrix
-			HashMap<Integer, Sample> samples = Gex.getSamples();
+			HashMap<Integer, Sample> samples = Gex.getCurrentGex().getSamples();
 			long l_ref = re.rniInitVector(data.length * data[0].length);
 			re.rniProtect(l_ref);
 			
@@ -591,7 +591,7 @@ public class RDataOut {
 		
 		void queryData() throws Exception {			
 			//Get the 'groups'
-			Statement s = Gex.getCon().createStatement(
+			Statement s = Gex.getCurrentGex().getCon().createStatement(
 					ResultSet.TYPE_SCROLL_INSENSITIVE, 
 					ResultSet.CONCUR_READ_ONLY);
 			
@@ -603,14 +603,14 @@ public class RDataOut {
 			int nrow = r.getRow();
 			r.beforeFirst(); //Set the cursor back to the start
 			//Columns:
-			int ncol = Gex.getSamples().size();
+			int ncol = Gex.getCurrentGex().getSamples().size();
 			
 			data = new String[ncol][nrow];
 			reporters = new Xref[nrow];
 			sample2Col = new HashMap<Integer, Integer>();
 			int col = 0;
 			col2Sample = new int[ncol];
-			for(int sid : Gex.getSamples().keySet()) {
+			for(int sid : Gex.getCurrentGex().getSamples().keySet()) {
 				col2Sample[col] = sid;
 				sample2Col.put(sid, col++);
 			}
@@ -619,9 +619,9 @@ public class RDataOut {
 			int progressContribution = (int)((double)totalWorkData / nrow);
 						
 			//Fill data matrix for every 'group'
-			PreparedStatement pst_dta = Gex.getCon().prepareStatement(
+			PreparedStatement pst_dta = Gex.getCurrentGex().getCon().prepareStatement(
 					"SELECT idSample, data FROM expression WHERE groupId = ?");
-			PreparedStatement pst_rep = Gex.getCon().prepareStatement(
+			PreparedStatement pst_rep = Gex.getCurrentGex().getCon().prepareStatement(
 					"SELECT DISTINCT id, code FROM expression WHERE groupid = ?");
 			int i = -1;
 			while(r.next()) {

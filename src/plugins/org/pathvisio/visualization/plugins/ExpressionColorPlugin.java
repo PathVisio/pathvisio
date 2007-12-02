@@ -77,7 +77,7 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 
 	protected void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
 		ColorSample smp = (ColorSample)s;
-		CachedData cache = Gex.getCachedData();
+		CachedData cache = Gex.getCurrentGex().getCachedData();
 		
 		if(cache.hasMultipleData(idc)) {
 			switch(smp.getAmbigiousType()) {

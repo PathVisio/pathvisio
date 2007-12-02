@@ -16,16 +16,8 @@
 //
 package org.pathvisio.data;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
@@ -49,37 +41,46 @@ import org.pathvisio.util.ProgressKeeper;
  */
 public class Gex implements ApplicationEventListener 
 {	
-	private static Connection con;
-			
-	public static CachedData cachedData;
+	// prevent instantiation outside Connect method
+	private Gex()
+	{
+	}
 	
+	private Connection con;
+			
+	private static CachedData cachedData;
+
+	private static Gex currentGex;
+	public static Gex getCurrentGex() { return currentGex; }
+
 	/**
 	 * Get the {@link Connection} to the Expression-data database
+	 * @deprecated Shouldn't be exposed
 	 */
-	public static Connection getCon() { return con; }
+	public Connection getCon() { return con; }
 	/**
 	 * Check whether a connection to the database exists
 	 * @return	true is a connection exists, false if not
 	 */
-	public static boolean isConnected() { return con != null; }
+	public boolean isConnected() { return con != null; }
 	
-	private static String dbName;
+	private String dbName;
 	/**
 	 * Get the database name of the expression data currently loaded
 	 */
-	public static String getDbName() { return dbName; }
+	public String getDbName() { return dbName; }
 	
 	/**
 	 * Set the database name of the expression data currently loaded
 	 * (Connection is not reset)
 	 */
-	public static void setDbName(String name) { dbName = name; }
+	public void setDbName(String name) { dbName = name; }
 						    
-	private static HashMap<Integer, Sample> samples;
+	private HashMap<Integer, Sample> samples;
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
 	 */
-	public static void setSamples()
+	public void setSamples()
 	{		
 		try {
 			ResultSet r = con.createStatement().executeQuery(
@@ -96,21 +97,21 @@ public class Gex implements ApplicationEventListener
 		}
 	}
 	
-	public static Sample getSample(int id) {
+	public Sample getSample(int id) {
 		return getSamples().get(id);
 	}
 	
-	public static HashMap<Integer, Sample> getSamples()
+	public HashMap<Integer, Sample> getSamples()
 	{
 		if(samples == null) setSamples();
 		return samples;
 	}
 	
-	public static List<String> getSampleNames() {
+	public List<String> getSampleNames() {
 		return getSampleNames(-1);
 	}
 	
-	public static List<String> getSampleNames(int dataType) {
+	public List<String> getSampleNames(int dataType) {
 		List<String> names = new ArrayList<String>();
 		List<Sample> sorted = new ArrayList<Sample>(samples.values());
 		Collections.sort(sorted);
@@ -121,7 +122,7 @@ public class Gex implements ApplicationEventListener
 		return names;
 	}
 	
-	public static List<Sample> getSamples(int dataType) {
+	public List<Sample> getSamples(int dataType) {
 		List<Sample> smps = new ArrayList<Sample>();
 		List<Sample> sorted = new ArrayList<Sample>(samples.values());
 		Collections.sort(sorted);
@@ -132,7 +133,7 @@ public class Gex implements ApplicationEventListener
 		return smps;
 	}
 	
-	public static List<Data> getCachedData(Xref idc)
+	public List<Data> getCachedData(Xref idc)
 	{
 		if(cachedData != null) {
 			return cachedData.getData(idc);
@@ -141,7 +142,7 @@ public class Gex implements ApplicationEventListener
 		}
 	}
 	
-	public static CachedData getCachedData() {
+	public CachedData getCachedData() {
 		return cachedData;
 	}
 
@@ -152,7 +153,7 @@ public class Gex implements ApplicationEventListener
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	public static String getDataString(Xref idc)
+	public String getDataString(Xref idc)
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -188,7 +189,7 @@ public class Gex implements ApplicationEventListener
 	 * @param refs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	protected static void cacheData(List<Xref> refs, ProgressKeeper p)
+	protected void cacheData(List<Xref> refs, ProgressKeeper p)
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();
@@ -260,128 +261,6 @@ public class Gex implements ApplicationEventListener
 		Logger.log.trace("> Nr of ids queried:\t" + refs.size());
 	}
 			
-	/**
-	 * {@link Connection} to the GenMAPP Expression Dataset
-	 */
-	private static Connection conGmGex;
-
-	private static File gmGexFile;
-	/**
-	 * Returns the file that contains the GenMAPP Expression Dataset
-	 */
-	public static File getGmGexFile() { return gmGexFile; }
-	/**
-	 * Sets the file that contains the GenMAPP Expression Dataset
-	 */
-	public static void setGmGexFile(File file) { gmGexFile = file; }
-	
-	/**
-	 * Converts the GenMAPP Expression Dataset to a expression database
-	 * in Hsqldb format as used by this program.
-	 * <BR><BR>This method reports all errors occured during the conversion to a file named 'convert_gex_error.txt'
-	 */
-	public static void convertGex(ProgressKeeper p)
-	{
-		//Open a connection to the error file
-		PrintWriter error = null;
-		try {
-			error = new PrintWriter(new FileWriter("convert_gex_error.txt"));
-		} catch(IOException ex) {
-			Logger.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
-		}
-		
-		try {
-			connect(null, true, false); //Connect and delete the old database if exists
-			connectGmGex(gmGexFile); //Connect to the GenMAPP gex
-			
-			con.setAutoCommit(false); //Keep control over when to commit, should increase speed
-			Statement s = conGmGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			
-			PreparedStatement pstmtExpr = con.prepareStatement(
-					"INSERT INTO expression			" +
-					"	(id, code, ensId,			" + 
-					"	 idSample, data)			" +
-			"VALUES	(?, ?, ?, ?, ?)			");
-			
-			ResultSet r = s.executeQuery("SELECT * FROM Expression");
-			r.last();
-			int nrRows = r.getRow(); //Get the number of rows for keeping track of the progress
-			r.beforeFirst(); //Set the cursor back to the start
-			
-			// Fill the Sample table
-			ResultSetMetaData rsmd = r.getMetaData(); 
-			int nCols = rsmd.getColumnCount();
-			for(int i = 4; i < nCols - 1; i++) // Column 4 to 2 before last contain expression data
-			{
-				int dataType = rsmd.getColumnType(i);
-				String sampleName = rsmd.getColumnName(i);
-				// Add new sample
-				con.createStatement().execute("INSERT INTO SAMPLES" +
-						"	(idSample, name, dataType)" + 
-						"VALUES ( " + (i - 4) + ",'" + sampleName + "', " + dataType + " )");
-			}
-			
-			//Fill the Expression table
-			int nq = 0; //The number of queries excecuted
-			String id = "";
-			String code = "";
-			while(r.next()) { //Process all rows of the expression data
-				if(p.isCancelled()) //Check if the user cancelled the conversion
-				{
-					closeGmGex();
-					close();
-					return;
-				}
-				
-				id = r.getString("ID");
-				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
-				
-				if(ensIds.size() == 0) //No Ensembl gene found
-				{
-					error.println(id + "\t" + code + "\t No Ensembl gene found for this identifier");
-				} else { //Gene maps to an Ensembl id, so add it
-					ArrayList<String> data = new ArrayList<String>();
-					for(int i = 4; i < nCols - 1; i++) { // Column 4 to 2 before last contain expression data
-						data.add(r.getString(i));
-					}
-					for( String ensId : ensIds) //For every Ensembl id add the data
-					{
-						int i = 0;
-						for(String str : data)
-						{
-							try {
-								pstmtExpr.setString(1,id);
-								pstmtExpr.setString(2,code);
-								pstmtExpr.setString(3, ensId);
-								pstmtExpr.setInt(4,i);
-								pstmtExpr.setString(5,str);
-								pstmtExpr.execute();
-							} catch (Exception e) {
-								error.println(id + ", " + code + ", " + i + "\t" + e.getMessage());
-							}
-							i++;
-						}
-					}
-				}
-				nq++;
-				if(nq % 1000 == 0) //Commit every 1000 queries
-					con.commit();
-				p.worked(p.getTotalWork()/nrRows); //Report progress
-			}
-			con.commit();	
-		} catch(Exception e) {
-			error.println("Error: " + e.getMessage());
-		}
-		error.println("END");
-		error.close();
-		closeGmGex();
-		close();
-		
-//		setGexReadOnly(true);
-		
-		p.finished();
-	}
 	
 	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
@@ -394,22 +273,23 @@ public class Gex implements ApplicationEventListener
 	 */
 	public static void connect(String dbName, boolean create, boolean fireEvent) throws Exception
 	{
-		close();
+		if (currentGex != null) currentGex.close();
+		currentGex = new Gex();
 		
-		if(dbName != null) setDbName(dbName);
+		if(currentGex.dbName != null) currentGex.setDbName(dbName);
 		
 		DBConnector connector = getDBConnector();
 		
 		if(create) {
-			con = connector.createNewDatabase(getDbName());
+			currentGex.con = connector.createNewGex(currentGex.getDbName());
 		} else {
-			con = connector.createConnection(getDbName());
-			setSamples();
+			currentGex.con = connector.createConnection(currentGex.getDbName());
+			currentGex.setSamples();
 			//TODO: move to GexSwt
 			//loadXML();
 		}
 
-		con.setReadOnly( !create );
+		currentGex.con.setReadOnly( !create );
 		
 		if(fireEvent)
 			fireExpressionDataEvent(new ExpressionDataEvent(Gex.class, ExpressionDataEvent.CONNECTION_OPENED));
@@ -433,7 +313,7 @@ public class Gex implements ApplicationEventListener
 	 * statement before calling {@link Connection#close()}
 	 * @param finalize true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
-	public static void close(boolean finalize)
+	public void close(boolean finalize)
 	{
 		if(con != null)
 		{
@@ -445,7 +325,7 @@ public class Gex implements ApplicationEventListener
 				DBConnector connector = getDBConnector();
 				if(finalize) {
 					connector.compact(con);
-					connector.createIndices(con);
+					connector.createGexIndices(con);
 					String newDb = connector.finalizeNewDatabase(dbName);
 					setDbName(newDb);
 				} else {
@@ -464,43 +344,11 @@ public class Gex implements ApplicationEventListener
 	 * Close the connection excecuting the 'SHUTDOWN' statement 
 	 * before calling {@link Connection#close()}
 	 */
-	public static void close()
+	public void close()
 	{
 		close(false);
 	}
 	
-	/**
-	 * Connect to the GenMAPP Expression Dataset specified by the given file
-	 * @param gmGexFile	File containing the GenMAPP Expression Dataset
-	 */
-	public static void connectGmGex(File gmGexFile) {
-		String database_after = ";DriverID=22;READONLY=true";
-		String database_before =
-			"jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-		try {
-			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-			conGmGex = DriverManager.getConnection(
-					database_before + gmGexFile.toString() + database_after, "", "");
-		} catch (Exception e) {
-			Logger.log.error("Error: Unable to open connection go GenMAPP gex " + gmGexFile +
-					": " +e.getMessage(), e);
-		}
-	}
-	
-	/**
-	 * Close the connection to the GenMAPP Expression Dataset
-	 */
-	public static void closeGmGex() {
-		if(conGmGex != null)
-		{
-			try {
-				conGmGex.close();
-				conGmGex = null;
-			} catch (Exception e) {
-				Logger.log.error("Error while closing connection to GenMAPP gex: " + e.getMessage(), e);
-			}
-		}
-	}
 	
 	public void applicationEvent(ApplicationEvent e) {
 		switch(e.getType()) {
@@ -526,7 +374,7 @@ public class Gex implements ApplicationEventListener
 	 * to this class
 	 * @param e
 	 */
-	public static void fireExpressionDataEvent(ExpressionDataEvent e) {
+	protected static void fireExpressionDataEvent(ExpressionDataEvent e) {
 		for(ExpressionDataListener l : listeners) l.expressionDataEvent(e);
 	}
 	

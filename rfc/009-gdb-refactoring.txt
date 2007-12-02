@@ -121,6 +121,9 @@ As an example of how this should be done, I propose to put regex patterns in a s
 /**
 Collection of regular expressions for identifying a type of systemcode, e.g. "ENSG\d+" for Ensembl
 
+* AP: For species other than human, Ensembl includes a three-letter code for species, e.g., ENSMUSG00000012345
+So, the more generic form of regexp might look like this:  ENS[A-Z]{0,3}G\d{11} 
+
 This is an example of how you should define meta-data for a DataSource. 
 One important design principle here is that these external data should map to a DataSource object, 
 not a System code, so that system codes are used as little as possible, and it is impossible

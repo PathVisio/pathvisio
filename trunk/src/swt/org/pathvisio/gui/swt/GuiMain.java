@@ -93,7 +93,7 @@ public class GuiMain {
 		//Perform exit operations
 		//TODO: implement PropertyChangeListener and fire exit property when closing
 		// make classes themself responsible for closing when exit property is changed
-		Gex.close();
+		Gex.getCurrentGex().close();
 		Gdb.getCurrentGdb().close();
 		//Close log stream
 		Logger.log.getStream().close();
@@ -215,11 +215,10 @@ public class GuiMain {
 	
 			
 	static void registerListeners() {
-		VisualizationManager vmgr = new VisualizationManager();
-		Gex gex = new Gex();
-		
+		VisualizationManager vmgr = new VisualizationManager();		
 		Engine.getCurrent().addApplicationEventListener(vmgr);
-		Engine.getCurrent().addApplicationEventListener(gex);
+		//TODO: this won't work. Gex needs to add itself
+		Engine.getCurrent().addApplicationEventListener(Gex.getCurrentGex());
 	}
 	
 	static void registerExporters() {

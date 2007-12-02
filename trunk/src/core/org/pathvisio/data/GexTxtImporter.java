@@ -78,7 +78,7 @@ public class GexTxtImporter
 			
 			String[] headers = info.getColNames();
 			//Parse sample names and add to Sample table
-			PreparedStatement pstmt = Gex.getCon().prepareStatement(
+			PreparedStatement pstmt = Gex.getCurrentGex().getCon().prepareStatement(
 					" INSERT INTO SAMPLES " +
 					"	(idSample, name, dataType)  " +
 			" VALUES (?, ?, ?)		  ");
@@ -89,7 +89,7 @@ public class GexTxtImporter
 				if(p.isCancelled())
 				{
 					//User pressed cancel  
-					Gex.close(true);
+					Gex.getCurrentGex().close(true);
 					error.close();
 					return;
 				}
@@ -119,7 +119,7 @@ public class GexTxtImporter
 			
 			//Check ids and add expression data
 			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
-			pstmt = Gex.getCon().prepareStatement(
+			pstmt = Gex.getCurrentGex().getCon().prepareStatement(
 					"INSERT INTO expression			" +
 					"	(id, code, ensId,			" + 
 					"	 idSample, data, groupId)	" +
@@ -138,7 +138,7 @@ public class GexTxtImporter
 			{
 				if(p.isCancelled()) 
 				{ 
-					Gex.close(); 
+					Gex.getCurrentGex().close(); 
 					error.close(); 
 					return; 
 				} //User pressed cancel
@@ -240,7 +240,7 @@ public class GexTxtImporter
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
 			p.setTaskName("Closing database connection");
-			Gex.close(true);
+			Gex.getCurrentGex().close(true);
 			p.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
@@ -259,7 +259,7 @@ public class GexTxtImporter
 		{ 
 			p.report("Import aborted due to error: " + e.getMessage());
 			Logger.log.error("Expression data import error", e);
-			Gex.close(true);
+			Gex.getCurrentGex().close(true);
 			error.close();
 		}
 	}

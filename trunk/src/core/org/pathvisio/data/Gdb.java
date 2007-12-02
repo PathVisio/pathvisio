@@ -245,7 +245,7 @@ public class Gdb
 	 * @return			List containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
 	 * 
-	 * @deprecated. Use getCrossRefs instead
+	 * @deprecated Use getCrossRefs instead
 	 */	
 	public ArrayList<Xref> ensId2Refs(String ensId, DataSource resultDs) 
 	{
@@ -361,7 +361,7 @@ public class Gdb
 		return refs;
 	}
 			
-	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
 	}
 	

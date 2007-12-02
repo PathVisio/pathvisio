@@ -144,7 +144,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
-			CachedData cache = Gex.getCachedData();
+			CachedData cache = Gex.getCurrentGex().getCachedData();
 			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) continue; //No ColorSet for this sample
@@ -477,7 +477,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 				return ((Sample)element).getName();
 			}
 		});
-		sampleList.setInput(Gex.getSamples(Types.REAL));
+		sampleList.setInput(Gex.getCurrentGex().getSamples(Types.REAL));
 		
 		Composite buttons = new Composite(samplesGroup, SWT.NULL);
 		buttons.setLayout(new RowLayout(SWT.VERTICAL));
@@ -709,7 +709,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		private final void loadXML(Element xml) throws Exception {
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
 			int csi = Integer.parseInt(xml.getAttributeValue(XML_ATTR_COLORSET));
-			Sample s = Gex.getSamples().get(id);
+			Sample s = Gex.getCurrentGex().getSamples().get(id);
 			setId(id);
 			setName(s.getName());
 			setDataType(s.getDataType());

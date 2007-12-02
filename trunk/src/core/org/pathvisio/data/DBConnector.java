@@ -85,18 +85,13 @@ public abstract class DBConnector
 	 * @throws Exception 
 	 * @throws Exception
 	 */
-	public final Connection createNewDatabase(String dbName) throws Exception 
+	public final Connection createNewGex(String dbName) throws Exception 
 	{
-		Connection con = createNewDatabaseConnection(dbName);
-		createTables(con);
+		Connection con = createConnection(dbName, PROP_RECREATE);
+		createGexTables(con);
 		return con;
 	}
-	
-	private Connection createNewDatabaseConnection(String dbName) throws Exception 
-	{
-		return createConnection(dbName, PROP_RECREATE);
-	}
-	
+		
 	/**
 	 * This method is called to finalize the given database after creation
 	 * (e.g. set read-only, archive files). The database name needs to returned, this
@@ -112,7 +107,7 @@ public abstract class DBConnector
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	public void createTables(Connection con) throws Exception 
+	protected void createGexTables(Connection con) throws Exception 
 	{	
 		con.setReadOnly(false);
 		Statement sh = con.createStatement();
@@ -153,7 +148,7 @@ public abstract class DBConnector
 	 * @param con The connection to the expression database
 	 * @throws SQLException
 	 */
-	public void createIndices(Connection con) throws SQLException {
+	public void createGexIndices(Connection con) throws SQLException {
 		con.setReadOnly(false);
 		Statement sh = con.createStatement();
 		sh.execute(

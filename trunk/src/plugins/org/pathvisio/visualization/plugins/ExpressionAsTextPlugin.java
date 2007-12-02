@@ -104,7 +104,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = Gex.getCachedData();
+			CachedData  cache = Gex.getCurrentGex().getCachedData();
 			
 			String id = gp.getPathwayElement().getGeneID();
 			DataSource ds = gp.getPathwayElement().getDataSource();
@@ -138,7 +138,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 	public Component visualizeOnToolTip(Graphics g) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = Gex.getCachedData();
+			CachedData  cache = Gex.getCurrentGex().getCachedData();
 			
 			Xref idc = new Xref(
 					gp.getPathwayElement().getGeneID(), 
@@ -353,7 +353,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		use.addSelectionChangedListener(slist);
 		samples.addSelectionChangedListener(slist);
 		
-		samples.setInput(Gex.getSamples(-1));
+		samples.setInput(Gex.getCurrentGex().getSamples(-1));
 		use.setInput(useSamples);
 		
 		return sampleComp;
@@ -428,7 +428,7 @@ public class ExpressionAsTextPlugin extends VisualizationPlugin {
 		for(Object o : xml.getChildren(XML_ELM_ID)) {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
-				useSamples.add(Gex.getSample(id));
+				useSamples.add(Gex.getCurrentGex().getSample(id));
 			} catch(Exception e) { Logger.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));

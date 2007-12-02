@@ -51,7 +51,7 @@ public class GexSwt
 
 	public static InputStream getXmlInput()
 	{
-		File xmlFile = new File(Gex.getDbName() + ".xml");
+		File xmlFile = new File(Gex.getCurrentGex().getDbName() + ".xml");
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
 			InputStream in = new FileInputStream(xmlFile);
@@ -64,7 +64,7 @@ public class GexSwt
 	
 	public static OutputStream getXmlOutput() {
 		try {
-			File f = new File(Gex.getDbName() + ".xml");
+			File f = new File(Gex.getCurrentGex().getDbName() + ".xml");
 			OutputStream out = new FileOutputStream(f);
 			return out;
 		} catch(Exception e) {
@@ -74,7 +74,7 @@ public class GexSwt
 	}
 	
 	public static void saveXML() {
-		if(!Gex.isConnected()) return;
+		if(!Gex.getCurrentGex().isConnected()) return;
 		
 		OutputStream out = getXmlOutput();
 		
@@ -159,7 +159,7 @@ public class GexSwt
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Loading data", getTotalWork());
-			Gex.cacheData(refs, this);
+			Gex.getCurrentGex().cacheData(refs, this);
 		}
 	}
 	

@@ -16,9 +16,6 @@
 //
 package org.pathvisio.gui.swt;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +30,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.SimpleGdb;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
@@ -119,7 +116,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 
     public String getLabel(AutoFillData adf) {
     	String iddb = adf.getProperty(PropertyType.GENEID) + " (" +
-    	adf.getProperty(PropertyType.SYSTEMCODE) + ")";
+    	adf.getProperty(PropertyType.DATASOURCE) + ")";
     	switch(type) {
     	case TYPE_IDENTIFIER:
     		return 	iddb;
@@ -165,11 +162,11 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 
 		switch(type) {
 		case TYPE_IDENTIFIER:
-			data = SimpleGdb.getCurrentGdb().getIdSuggestions (text, limit);
+			data = GdbManager.getCurrentGdb().getIdSuggestions (text, limit);
 			break;
 		case TYPE_SYMBOL:
 		default:
-			data = SimpleGdb.getCurrentGdb().getSymbolSuggestions (text, limit);
+			data = GdbManager.getCurrentGdb().getSymbolSuggestions (text, limit);
 			break;
 		}
 		
@@ -181,12 +178,12 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			switch(type) {
 			case TYPE_IDENTIFIER:
 				adf = new GdbAutoFillData(PropertyType.GENEID, item.get(PropertyType.GENEID));
-				adf.setProperty(PropertyType.SYSTEMCODE, item.get(PropertyType.SYSTEMCODE));
+				adf.setProperty(PropertyType.DATASOURCE, item.get(PropertyType.DATASOURCE));
 				break;
 			case TYPE_SYMBOL:
 			default:
 				adf = new GdbAutoFillData(PropertyType.TEXTLABEL, item.get(PropertyType.TEXTLABEL));
-				adf.setProperty(PropertyType.SYSTEMCODE, item.get(PropertyType.SYSTEMCODE));
+				adf.setProperty(PropertyType.DATASOURCE, item.get(PropertyType.DATASOURCE));
 				adf.setProperty(PropertyType.GENEID, item.get(PropertyType.GENEID));
 			}
 			String label = getLabel(adf);
@@ -215,17 +212,17 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 		protected void guessData(PathwayElement o) {
 			//Fetch info from self
 			String id = getProperty(PropertyType.GENEID);
-			String sysName = getProperty(PropertyType.SYSTEMCODE);
+			String sysName = getProperty(PropertyType.DATASOURCE);
 			Xref ref = new Xref (id, DataSource.getBySystemCode(sysName));
 			//If null, fetch from dataobject
 			if(id == null) id = (String)o.getProperty(PropertyType.GENEID);
-			if(sysName == null) sysName = (String)o.getProperty(PropertyType.SYSTEMCODE);
+			if(sysName == null) sysName = (String)o.getProperty(PropertyType.DATASOURCE);
 			
 			String code = sysName == null ? null : DataSource.getByFullName(sysName).getSystemCode();
 			
 			//Guess symbol
 			if(id != null && code != null) {
-				String symbol = SimpleGdb.getCurrentGdb().getGeneSymbol(ref);
+				String symbol = GdbManager.getCurrentGdb().getGeneSymbol(ref);
 				if(symbol != null) {
 					setProperty(PropertyType.TEXTLABEL, symbol);
 				}

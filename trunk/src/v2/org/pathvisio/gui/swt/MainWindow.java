@@ -39,6 +39,7 @@ import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.wizard.RWizard;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
@@ -143,7 +144,7 @@ public class MainWindow extends MainWindowBase
 		}
 		
 		public void run() {
-			if(!SimpleGdb.getCurrentGdb().isConnected())
+			if(!GdbManager.getCurrentGdb().isConnected())
 			{
 				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
 						"select gene database before creating a new expression dataset");

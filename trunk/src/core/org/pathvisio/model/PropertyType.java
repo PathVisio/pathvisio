@@ -67,8 +67,8 @@ public enum PropertyType
 	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION),
 			
 	// gene product
-	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID), //TODO: change tag 
-	SYSTEMCODE ("SystemCode", "Database Name", PropertyClass.DATASOURCE), 
+	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID),  
+	DATASOURCE ("SystemCode", "Database Name", PropertyClass.DATASOURCE), 
 	GENMAPP_XREF ("Xref", "Xref", PropertyClass.STRING), // deprecated, maintained for backward compatibility with GenMAPP. 
 	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
 	TYPE ("Type", "Type", PropertyClass.GENETYPE),
@@ -84,7 +84,7 @@ public enum PropertyType
 	// mappinfo
 	MAPINFONAME ("MapInfoName", "Map Info Name", PropertyClass.STRING),
 	ORGANISM ("Organism", "Organism", PropertyClass.ORGANISM), 
-	DATA_SOURCE ("Data-Source", "Data-Source", PropertyClass.STRING),
+	MAPINFO_DATASOURCE ("Data-Source", "Data-Source", PropertyClass.STRING),
 	VERSION ("Version", "Version", PropertyClass.STRING), 
 	AUTHOR ("Author", "Author", PropertyClass.STRING), 
 	MAINTAINED_BY ("Maintained-By", "Maintainer", PropertyClass.STRING),

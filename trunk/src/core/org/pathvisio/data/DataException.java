@@ -16,24 +16,40 @@
 //
 package org.pathvisio.data;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
-
 /**
- * User-interface functions for hsqldb based databases.
- */
-public class DBConnHsqldb extends DataHsqldb implements DBConnectorSwt
+ * for all exceptions thrown by IGdb or IGex interfaces. 
+	
+	Simple wrapper so using classes don't need to deal with implemenation details
+	of the Gdb/Gex. Usually wraps SQLException, ClassNotFoundException, etc.
+
+	Simply use the inherited constructor DataException(Throwable cause)
+	to wrap an exception.
+*/
+public class DataException extends Exception
 {
-	public String openChooseDbDialog(Shell shell) {
-		FileDialog fd = DBConnectorUtils.createFileDialog(this, shell, SWT.OPEN, DB_EXT, DB_EXT_NAMES);
-		return fd.open();
-	}
+	private static final long serialVersionUID = 1L;
 
-	public String openNewDbDialog(Shell shell, String defaultName) {
-		FileDialog fd = DBConnectorUtils.createFileDialog(this, shell, SWT.SAVE, DB_EXT, DB_EXT_NAMES);
-		if(defaultName != null) fd.setFileName(defaultName);
-		return fd.open();
+	/** See Exception(Throwable) */
+	DataException (Throwable t)
+	{
+		super (t);
 	}
-
+	
+	/** See Exception(String, Throwable) */
+	DataException (String msg, Throwable t)
+	{
+		super (msg, t);
+	}
+	
+	/** See Exception (String) */
+	DataException (String msg)
+	{
+		super (msg);
+	}
+	
+	/** See Exception () */
+	DataException ()
+	{
+		super();
+	}
 }

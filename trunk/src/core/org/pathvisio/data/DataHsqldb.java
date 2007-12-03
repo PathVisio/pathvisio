@@ -37,44 +37,68 @@ public class DataHsqldb extends DBConnector
 	static final String[] DB_EXT = new String[] { "*." + DB_FILE_EXT };
 	static final String[] DB_EXT_NAMES = new String[] { "Hsqldb Database" };
 	
-	public Connection createConnection(String dbName) throws Exception {
+	public Connection createConnection(String dbName) throws DataException 
+	{
 		return createConnection(dbName, PROP_NONE);
 	}
 	
-	public Connection createConnection(String dbName, int props) throws Exception {
-		boolean recreate = (props & PROP_RECREATE) != 0;
-		if(recreate) {
-			File dbFile = dbName2File(dbName);
-			if(dbFile.exists()) dbFile.delete();
+	public Connection createConnection(String dbName, int props) throws DataException 
+	{
+		Connection con;
+		try
+		{
+			boolean recreate = (props & PROP_RECREATE) != 0;
+			if(recreate) {
+				File dbFile = dbName2File(dbName);
+				if(dbFile.exists()) dbFile.delete();
+			}
+			
+			dbName = file2DbName(dbName);
+			
+			Class.forName("org.hsqldb.jdbcDriver");
+			Properties prop = new Properties();
+			prop.setProperty("user","sa");
+			prop.setProperty("password","");
+			prop.setProperty("hsqldb.default_table_type", "cached");
+			prop.setProperty("ifexists", Boolean.toString(!recreate));
+			
+			StopWatch timer = new StopWatch();
+			timer.start();
+			con = DriverManager.getConnection("jdbc:hsqldb:file:" + dbName, prop);
+			Logger.log.info("Connecting with hsqldb to " + dbName + ":\t" + timer.stop());
 		}
-		
-		dbName = file2DbName(dbName);
-		
-		Class.forName("org.hsqldb.jdbcDriver");
-		Properties prop = new Properties();
-		prop.setProperty("user","sa");
-		prop.setProperty("password","");
-		prop.setProperty("hsqldb.default_table_type", "cached");
-		prop.setProperty("ifexists", Boolean.toString(!recreate));
-		
-		StopWatch timer = new StopWatch();
-		timer.start();
-		Connection con = DriverManager.getConnection("jdbc:hsqldb:file:" + dbName, prop);
-		Logger.log.info("Connecting with hsqldb to " + dbName + ":\t" + timer.stop());
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
+		catch (ClassNotFoundException f)
+		{
+			throw new DataException (f);
+		}
+	
 		return con;
 	}
 
-	public void closeConnection(Connection con) throws SQLException {
+	public void closeConnection(Connection con) throws DataException 
+	{	
 		closeConnection(con, PROP_NONE);
 	}
 	
-	public void closeConnection(Connection con, int props) throws SQLException {
-		boolean compact = (props & PROP_FINALIZE) != 0;
-		if(con != null) {
-			Statement sh = con.createStatement();
-			sh.executeQuery("SHUTDOWN" + (compact ? " COMPACT" : ""));
-			sh.close();
-			con.close();
+	public void closeConnection(Connection con, int props) throws DataException 
+	{
+		try
+		{
+			boolean compact = (props & PROP_FINALIZE) != 0;
+			if(con != null) {
+				Statement sh = con.createStatement();
+				sh.executeQuery("SHUTDOWN" + (compact ? " COMPACT" : ""));
+				sh.close();
+				con.close();
+			}
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
 		}
 	}
 	
@@ -105,12 +129,14 @@ public class DataHsqldb extends DBConnector
 	}
 
 	Connection newDbCon;
-	public Connection createNewDatabaseConnection(String dbName) throws Exception {
+	public Connection createNewDatabaseConnection(String dbName) throws DataException 
+	{
 		newDbCon = createConnection(dbName, PROP_RECREATE);
 		return newDbCon;
 	}
 
-	public String finalizeNewDatabase(String dbName) throws Exception {
+	public String finalizeNewDatabase(String dbName) throws DataException 
+	{
 		if(newDbCon != null) closeConnection(newDbCon, PROP_FINALIZE);
 		setPropertyReadOnly(dbName, true);
 		return dbName;

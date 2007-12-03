@@ -20,6 +20,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * user interface functions for single-file Derby databases
+ */
 public class DBConnDerby extends DataDerby implements DBConnectorSwt
 {
 	static final String[] DB_EXTS_GEX = new String[] { "*." + DB_FILE_EXT_GEX, "*.*"};

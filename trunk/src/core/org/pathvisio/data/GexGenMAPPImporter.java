@@ -11,12 +11,19 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.ProgressKeeper;
 
+/**
+ * functions to convert a GenMAPP gex database into
+ * a PathVisio pgex database.
+ * 
+ * This will probably be removed in the future.
+ */
 public class GexGenMAPPImporter 
 {
 	/**
@@ -94,7 +101,7 @@ public class GexGenMAPPImporter
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
+				List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{

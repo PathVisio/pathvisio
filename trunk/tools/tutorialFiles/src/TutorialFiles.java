@@ -58,7 +58,7 @@ class TutorialFiles
 			return;
 		}
 		
-		gdb = SimpleGdb.getCurrentGdb();
+		gdb = GdbManager.getCurrentGdb();
 		for (Xref i : refs)
 		{
 			List<Xref> newRefs = gdb.getCrossRefs(i, DataSource.ENSEMBL);

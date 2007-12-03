@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.debug.Logger;
@@ -94,7 +95,7 @@ public class GuiMain {
 		//TODO: implement PropertyChangeListener and fire exit property when closing
 		// make classes themself responsible for closing when exit property is changed
 		Gex.getCurrentGex().close();
-		SimpleGdb.getCurrentGdb().close();
+		GdbManager.getCurrentGdb().close();
 		//Close log stream
 		Logger.log.getStream().close();
 		
@@ -178,7 +179,7 @@ public class GuiMain {
 		Logger.log.trace ("Preferences loaded");
 		
 		//initiate Gene database (to load previously used gdb)
-		SimpleGdb.init();
+		GdbManager.init();
 		
 		//load visualizations and plugins
 		loadVisualizations();

@@ -40,7 +40,7 @@ import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.Utils;
 
 /**
- * This class handles everything related to the Gene Database. It contains the database connection,
+ * Handles everything for simple, sql-based implementations of a Gene Database. It contains the database connection,
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
@@ -55,14 +55,7 @@ public class SimpleGdb implements IGdb
 	{
 		initializeHeader();
 	}
-	
-	static private SimpleGdb currentGdb = null;
-	
-	static public IGdb getCurrentGdb ()
-	{
-		return currentGdb;
-	}
-	
+		
 	private static String table_DataNode = "datanode";
 	
 	private static final int COMPAT_VERSION = 2; //Preferred schema version
@@ -84,35 +77,8 @@ public class SimpleGdb implements IGdb
 	 * @return the database name as specified in the connection string
 	 */
 	public String getDbName() { return dbName; }
-	
+		
 	/**
-	 * Initiates this class. Checks the properties file for a previously
-	 * used Gene Database and tries to open a connection if found.
-	 */
-	public static void init()
-	{
-		String currGdb = GlobalPreference.DB_GDB_CURRENT.getValue();
-		if(!currGdb.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
-		{
-			try {
-				connect(currGdb);
-			} 
-			catch(Exception e) 
-			{
-				Logger.log.error("Setting previous Gdb failed.", e);
-				try {
-					connect(currGdb);
-				} 
-				catch(Exception f) 
-				{
-					Logger.log.error("Setting default Gdb failed.", f);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * <TABLE border='1'><TR><TH>Gene ID:<TH>g4507224_3p_at<TR><TH>Gene Name:<TH>SRY<TR><TH>Description:<TH>Sex-determining region Y protein (Testis-determining factor). [Source:Uniprot/SWISSPROT;Acc:Q05066]<TR><TH>Secondary id:<TH>g4507224_3p_at<TR><TH>Systemcode:<TH>X<TR><TH>System name:<TH>Affymetrix Probe Set ID<TR><TH>Database name (Ensembl):<TH>Affymx Microarray U133</TABLE>
 	 * @param id The gene id to get the symbol info for
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
@@ -128,7 +94,7 @@ public class SimpleGdb implements IGdb
 	 * @param bpInfo The backpage info (as obtained from {@link #getBpInfo(String, String)})
 	 * @return The parsed gene symbol, or null if no symbol could be found
 	 */
-	public String parseGeneSymbol(String bpInfo) {
+	private String parseGeneSymbol(String bpInfo) {
 		Pattern regex = Pattern.compile("<TH>Gene Name:<TH>(.+?)<TR>");
 		Matcher matcher = regex.matcher(bpInfo);
 		if(matcher.find())
@@ -143,7 +109,7 @@ public class SimpleGdb implements IGdb
 	 * @param code systemcode of the gene identifier
 	 * @return String with the backpage info, null if the gene was not found
 	 */
-	public String getBpInfo(Xref ref) {
+	String getBpInfo(Xref ref) {
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -167,10 +133,11 @@ public class SimpleGdb implements IGdb
 		if (bpHead == null) bpHead = "";
 		text += "<H1>Gene information</H1><P>";
 		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-		String bpInfo = getBpInfo(ref);
+		
+		String  bpInfo = getBpInfo (ref);
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
-		text += getCrossRefText(ref);
+		text += getCrossRefText(ref);		
 
 		return text + "</body></html>";
 	}
@@ -181,7 +148,7 @@ public class SimpleGdb implements IGdb
 		return backpageTextProvider;
 	}
 	
-	private String getCrossRefText(Xref ref) 
+	String getCrossRefText(Xref ref) 
 	{
 		List<Xref> crfs = getCrossRefs(ref);
 		if(crfs.size() == 0) return "";
@@ -215,7 +182,12 @@ public class SimpleGdb implements IGdb
 	 */
 	final static String HEADERFILE = "header.html";
 	
-	static String backpagePanelHeader;
+	private static String backpagePanelHeader;
+	
+	static String getBackpagePanelHeader()
+	{
+		return backpagePanelHeader;
+	}
 	
 	/**
 	 * Reads the header of the HTML content displayed in the browser. This header is displayed in the
@@ -381,7 +353,7 @@ public class SimpleGdb implements IGdb
 		gdb.con = connector.createConnection(dbName);
 		gdb.con.setReadOnly(true);
 		gdb.checkSchemaVersion();
-		currentGdb = gdb;
+		GdbManager.setCurrentGdb (gdb);
 		GlobalPreference.DB_GDB_CURRENT.setValue(dbName);
 		ApplicationEvent e =
 			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
@@ -529,7 +501,7 @@ public class SimpleGdb implements IGdb
 				
 				String symbol = parseGeneSymbol(r.getString("backpageText"));
 				item.put (PropertyType.TEXTLABEL, symbol);
-				item.put (PropertyType.SYSTEMCODE, sysName);
+				item.put (PropertyType.DATASOURCE, sysName);
 				item.put (PropertyType.GENEID, r.getString("id"));
 				
 				result.add(item);
@@ -566,7 +538,7 @@ public class SimpleGdb implements IGdb
 				
 				Map<PropertyType, String> item = new HashMap<PropertyType, String>();
 				item.put (PropertyType.GENEID, r.getString("id"));
-				item.put (PropertyType.SYSTEMCODE, sysName);
+				item.put (PropertyType.DATASOURCE, sysName);
 				result.add (item);
 			}
 		} catch (SQLException e) {

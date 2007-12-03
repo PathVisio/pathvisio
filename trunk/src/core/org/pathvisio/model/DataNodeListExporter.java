@@ -22,8 +22,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.List;
 
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.SimpleGdb;
 
 /**
@@ -95,7 +96,7 @@ public class DataNodeListExporter implements PathwayExporter {
 	public void doExport(File file, Pathway pathway) throws ConverterException {
 		if(!DB_ORIGINAL.equals(getResultCode())) {
 			//Check gene database connection
-			if(!SimpleGdb.getCurrentGdb().isConnected()) {
+			if(!GdbManager.getCurrentGdb().isConnected()) {
 				throw new ConverterException("No gene database loaded");
 			}
 		}
@@ -118,7 +119,7 @@ public class DataNodeListExporter implements PathwayExporter {
 				if(DB_ORIGINAL.equals(getResultCode()) || ds.equals(resultDs)) {
 					line = id + "\t" + ds.getFullName();
 				} else { //Lookup the cross-references for the wanted database code
-					ArrayList<Xref> refs = SimpleGdb.getCurrentGdb().getCrossRefs(elm.getXref(), resultDs);
+					List<Xref> refs = GdbManager.getCurrentGdb().getCrossRefs(elm.getXref(), resultDs);
 					for(Xref ref : refs) {
 						line += ref.getId() + multiRefSep;
 					}

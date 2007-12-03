@@ -25,6 +25,10 @@ import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
 
+/**
+ * Interface for all classes that provide Gdb-like functionality,
+ * such as looking up cross-references and backpage text.
+ */
 public interface IGdb 
 {
 	/**
@@ -53,21 +57,6 @@ public interface IGdb
 	 */
 	public String getGeneSymbol(Xref ref);
 	
-	/**
-	 * Parses the gene symbol from the backpage info
-	 * @param bpInfo The backpage info (as obtained from {@link #getBpInfo(String, String)})
-	 * @return The parsed gene symbol, or null if no symbol could be found
-	 */
-	public String parseGeneSymbol(String bpInfo);
-	
-	/**
-	 * Gets the backpage info for the given gene id for display on BackpagePanel
-	 * @param id The gene id to get the backpage info for
-	 * @param code systemcode of the gene identifier
-	 * @return String with the backpage info, null if the gene was not found
-	 */
-	public String getBpInfo(Xref ref);
-	
 	public String getBackpageHTML(Xref ref, String bpHead);
 	
 	/**
@@ -81,7 +70,7 @@ public interface IGdb
 	 * 
 	 * @deprecated Use getCrossRefs instead
 	 */	
-	public ArrayList<Xref> ensId2Refs(String ensId, DataSource resultDs); 
+	public List<Xref> ensId2Refs(String ensId, DataSource resultDs); 
 
 	/**
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
@@ -92,7 +81,7 @@ public interface IGdb
 	 * 
 	 * @deprecated use getCrossRefs instead
 	 */
-	public ArrayList<String> ref2EnsIds(Xref xref);
+	public List<String> ref2EnsIds(Xref xref);
 
 
 	/**
@@ -114,7 +103,7 @@ public interface IGdb
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public ArrayList<Xref> getCrossRefs (Xref idc, DataSource resultDs); 
+	public List<Xref> getCrossRefs (Xref idc, DataSource resultDs); 
 
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible

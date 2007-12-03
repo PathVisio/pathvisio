@@ -22,7 +22,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
-public class DBConnectorUtils
+/**
+ * Helper functions for classes implementing DbConnectorSwt interface
+ */
+class DBConnectorUtils
 {	
 	/**
 	 * Shortcut for creating a file dialog that has the right default directories for

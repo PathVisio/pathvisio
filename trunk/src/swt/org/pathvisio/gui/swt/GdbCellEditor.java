@@ -22,6 +22,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,7 +33,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.DataSource;
@@ -49,9 +50,6 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 	public static final int TYPE_SYMBOL = 1;
 	int type;
 	
-	public static final int NO_LIMIT = 0;
-	public static final int NO_TIMEOUT = 0;
-	public static int query_timeout = 5; //seconds
 	
 	HashMap<String, PropertyPanel.AutoFillData> suggested;
 	
@@ -158,59 +156,44 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 		}
 	}
 	
-	public String[] getSuggestions(String text, SuggestCombo suggestCombo) {
+	public String[] getSuggestions(String text, SuggestCombo suggestCombo) 
+	{
 		int limit = getLimit();
 		
+		List<Map<PropertyType, String>> data;
 		List<String> sugg = new ArrayList<String>();
-		try {
-			Statement s = Gdb.getCurrentGdb().getCon().createStatement();
-			
-			s.setQueryTimeout(query_timeout);
-			if(limit > NO_LIMIT) s.setMaxRows(limit);
-			
-			String query = "";
+
+		switch(type) {
+		case TYPE_IDENTIFIER:
+			data = SimpleGdb.getCurrentGdb().getIdSuggestions (text, limit);
+			break;
+		case TYPE_SYMBOL:
+		default:
+			data = SimpleGdb.getCurrentGdb().getSymbolSuggestions (text, limit);
+			break;
+		}
+		
+		// copy the data returned from getSymbolSuggestions or getIdSuggestions
+		// into an AutoFillData list expected by the cell editor.
+		for (Map<PropertyType, String> item : data)
+		{
+			AutoFillData adf = null;
 			switch(type) {
 			case TYPE_IDENTIFIER:
-				query =
-						"SELECT id, code FROM gene WHERE " +
-						"id LIKE '" + text + "%'";
+				adf = new GdbAutoFillData(PropertyType.GENEID, item.get(PropertyType.GENEID));
+				adf.setProperty(PropertyType.SYSTEMCODE, item.get(PropertyType.SYSTEMCODE));
 				break;
 			case TYPE_SYMBOL:
 			default:
-				query =
-						"SELECT id, code, backpageText FROM gene WHERE " +
-						"backpageText LIKE '%<TH>Gene Name:<TH>" + text + "%'";
+				adf = new GdbAutoFillData(PropertyType.TEXTLABEL, item.get(PropertyType.TEXTLABEL));
+				adf.setProperty(PropertyType.SYSTEMCODE, item.get(PropertyType.SYSTEMCODE));
+				adf.setProperty(PropertyType.GENEID, item.get(PropertyType.GENEID));
 			}
-			
-			ResultSet r = s.executeQuery(query);
-	
-			while(r.next()) {
-				String sysCode = r.getString("code");
-				String sysName = DataSource.getBySystemCode(sysCode).getFullName();
-				
-				AutoFillData adf = null;
-				switch(type) {
-				case TYPE_IDENTIFIER:
-					adf = new GdbAutoFillData(PropertyType.GENEID, r.getString("id"));
-					adf.setProperty(PropertyType.SYSTEMCODE, sysName);
-					break;
-				case TYPE_SYMBOL:
-				default:
-					String symbol = Gdb.parseGeneSymbol(r.getString("backpageText"));
-					adf = new GdbAutoFillData(PropertyType.TEXTLABEL, symbol);
-					adf.setProperty(PropertyType.SYSTEMCODE, sysName);
-					adf.setProperty(PropertyType.GENEID, r.getString("id"));
-					
-				}
-				
-				String label = getLabel(adf);
-				suggested.put(label, adf);
-				sugg.add(label);
-			}
-		} catch (SQLException e) {
-			Logger.log.error("Unable to query suggestions", e);
+			String label = getLabel(adf);
+			suggested.put(label, adf);
+			sugg.add(label);
 		}
-		if(limit > NO_LIMIT && sugg.size() == limit) sugg.add("...results limited to " + limit);
+			
 		return sugg.toArray(new String[sugg.size()]);
 	}
 
@@ -242,7 +225,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			
 			//Guess symbol
 			if(id != null && code != null) {
-				String symbol = Gdb.getCurrentGdb().getGeneSymbol(ref);
+				String symbol = SimpleGdb.getCurrentGdb().getGeneSymbol(ref);
 				if(symbol != null) {
 					setProperty(PropertyType.TEXTLABEL, symbol);
 				}

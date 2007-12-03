@@ -368,7 +368,9 @@ public class Engine
 	 * property changes that has an effect throughout the program (e.g. opening a pathway)
 	 * @param l The {@link ApplicationEventListener} to add
 	 */
-	public void addApplicationEventListener(ApplicationEventListener l) {
+	public void addApplicationEventListener(ApplicationEventListener l) 
+	{
+		if (l == null) throw new NullPointerException();
 		applicationEventListeners.add(l);
 	}
 	

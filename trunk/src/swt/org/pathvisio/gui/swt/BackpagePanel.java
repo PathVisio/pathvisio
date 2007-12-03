@@ -20,7 +20,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.pathvisio.data.BackpageListener;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked
@@ -38,7 +38,7 @@ public class BackpagePanel extends Composite implements BackpageListener {
 
 		setLayout(new FillLayout());
 		bpBrowser = new Browser(this, style); //Set the Browser widget
-		Gdb.getBackpageTextProvider().addListener(this);
+		SimpleGdb.getBackpageTextProvider().addListener(this);
 	}
 	
 	private void setText(final String text) {

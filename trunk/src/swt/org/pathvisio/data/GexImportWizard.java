@@ -187,7 +187,7 @@ public class GexImportWizard extends Wizard
 			gdbLabel.setLayoutData(labelGrid);
 
 			final Text gdbText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-			gdbText.setText(Gdb.getCurrentGdb().getDbName());
+			gdbText.setText(SimpleGdb.getCurrentGdb().getDbName());
 			gdbText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			Button gdbButton = new Button(composite, SWT.PUSH);
 			gdbButton.setText("Browse");
@@ -214,7 +214,7 @@ public class GexImportWizard extends Wizard
 					try
 					{
 						//Connect to the new database
-						Gdb.connect(file);
+						SimpleGdb.connect(file);
 					}
 					catch(Exception ex)
 					{
@@ -890,7 +890,7 @@ public class GexImportWizard extends Wizard
 						file.replace(
 								file.substring (file.lastIndexOf(".")), "") + 
 						"'\n" +	"\nUsed gene database: '" + 
-						Gdb.getCurrentGdb().getDbName() + "'\n\n");
+						SimpleGdb.getCurrentGdb().getDbName() + "'\n\n");
 					if(importInformation.getSyscodeColumn()) 
 					{ // System code can be read from data
 						println("System code will be read from data");

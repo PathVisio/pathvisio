@@ -36,5 +36,18 @@ test procedure: perform all these steps before a webstart release, and after mak
 
 == PathVisio 2.0 features
 
-# map Griffin Data on Sc_Galactose.gpml
-# ...
+# Import data from example-data/sample_data_1.txt
+# create a new visualization mapping from blue to yellow 
+# open Hs_apoptosis pathway
+# check that the sample data is visible on the pathway.
+
+# select metabolite database hmdb.pgdb
+# select gene database for human
+# create a new pathway
+# create a gene mapped to Entrez gene 3643, and check backpage (INSR)
+# create a metabolite mapped to Cas 56-73-5, and check backpage (Glucose 6P)
+
+# restart PathVisio
+# open the gene expression dataset you just created
+# check that the visualization you just created is available
+# open Hs_Apoptosis again

@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
@@ -94,7 +94,7 @@ public class GuiMain {
 		//TODO: implement PropertyChangeListener and fire exit property when closing
 		// make classes themself responsible for closing when exit property is changed
 		Gex.getCurrentGex().close();
-		Gdb.getCurrentGdb().close();
+		SimpleGdb.getCurrentGdb().close();
 		//Close log stream
 		Logger.log.getStream().close();
 		
@@ -178,7 +178,7 @@ public class GuiMain {
 		Logger.log.trace ("Preferences loaded");
 		
 		//initiate Gene database (to load previously used gdb)
-		Gdb.init();
+		SimpleGdb.init();
 		
 		//load visualizations and plugins
 		loadVisualizations();
@@ -218,7 +218,7 @@ public class GuiMain {
 		VisualizationManager vmgr = new VisualizationManager();		
 		Engine.getCurrent().addApplicationEventListener(vmgr);
 		//TODO: this won't work. Gex needs to add itself
-		Engine.getCurrent().addApplicationEventListener(Gex.getCurrentGex());
+		//Engine.getCurrent().addApplicationEventListener(Gex.getCurrentGex());
 	}
 	
 	static void registerExporters() {

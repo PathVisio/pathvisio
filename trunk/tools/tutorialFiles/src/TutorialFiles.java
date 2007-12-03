@@ -46,10 +46,10 @@ class TutorialFiles
 
 		// now look up all cross references in the human Gdb.
 
-		Gdb gdb;
+		IGdb gdb;
 		try
 		{
-			Gdb.connect ("C:\\Documents and Settings\\martijn\\PathVisio-Data\\gene databases\\Hs_41_36c.pgdb");
+			SimpleGdb.connect ("C:\\Documents and Settings\\martijn\\PathVisio-Data\\gene databases\\Hs_41_36c.pgdb");
 //			Gdb.connect ("/home/martijn/PathVisio-Data/gene databases/Hs_41_36c.pgdb");
 		}
 		catch (Exception e)
@@ -58,7 +58,7 @@ class TutorialFiles
 			return;
 		}
 		
-		gdb = Gdb.getCurrentGdb();
+		gdb = SimpleGdb.getCurrentGdb();
 		for (Xref i : refs)
 		{
 			List<Xref> newRefs = gdb.getCrossRefs(i, DataSource.ENSEMBL);

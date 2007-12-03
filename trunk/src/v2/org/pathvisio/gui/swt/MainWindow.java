@@ -37,8 +37,9 @@ import org.pathvisio.R.RController;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.wizard.RWizard;
+import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
 import org.pathvisio.data.GexSwt;
@@ -93,6 +94,38 @@ public class MainWindow extends MainWindowBase
 	}
 	private SelectGexAction selectGexAction = new SelectGexAction(this);
 	
+	/**
+	 * {@link Action} to select a Gene Database
+	 */
+	private class SelectMetaboliteDbAction extends Action
+	{
+		MainWindowBase window;
+		public SelectMetaboliteDbAction(MainWindowBase w)
+		{
+			window = w;
+			setText("Select &Metabolite Database");
+			setToolTipText("Select Metabolite Database");
+		}
+		
+		public void run () {			
+			try {
+				DBConnectorSwt dbcon = SwtEngine.getCurrent().getSwtDbConnector(DBConnector.TYPE_GDB);
+				String dbName = dbcon.openChooseDbDialog(getShell());
+				
+				if(dbName == null) return;
+				
+				SimpleGdb.connect(dbName);
+			} catch(Exception e) {
+				String msg = "Failed to open Metabolite Database; " + e.getMessage();
+				MessageDialog.openError (window.getShell(), "Error", 
+						"Error: " + msg + "\n\n" + 
+						"See the error log for details.");
+				Logger.log.error(msg, e);
+			}
+		}
+	}
+	private SelectMetaboliteDbAction selectMetaboliteDbAction = 
+		new SelectMetaboliteDbAction(this);
 
 	/**
 	 * {@link Action} that opens an {@link GexImportWizard} that guides the user
@@ -110,7 +143,7 @@ public class MainWindow extends MainWindowBase
 		}
 		
 		public void run() {
-			if(!Gdb.getCurrentGdb().isConnected())
+			if(!SimpleGdb.getCurrentGdb().isConnected())
 			{
 				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
 						"select gene database before creating a new expression dataset");
@@ -294,6 +327,7 @@ public class MainWindow extends MainWindowBase
 		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);
+		dataMenu.add(selectMetaboliteDbAction);
 		dataMenu.add(selectGexAction);
 		dataMenu.add(createGexAction);
 		dataMenu.add(colorSetManagerAction);

@@ -137,7 +137,7 @@ public class Boot {
 		// call static bootstrap method
 		try {
 			// force the use of the MCL even if the system loader could find it
-			Class stage2class = mcl.findAndLinkClass("JRIBootstrap");
+			Class<?> stage2class = mcl.findAndLinkClass("JRIBootstrap");
 			Method m = stage2class.getMethod("bootstrap", new Class[] { String[].class });
 			m.invoke(null, new Object[] { args });
 		} catch (Exception rtx) {

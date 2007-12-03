@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -32,6 +33,10 @@ import org.pathvisio.model.Xref;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
 
+/**
+ * Functions to create a new Gex database
+ * based on a text file.
+ */
 public class GexTxtImporter 
 {
 	/**
@@ -169,7 +174,7 @@ public class GexTxtImporter
 				}
 				Xref ref = new Xref (id, ds);
 				//Find the Ensembl genes for current gene
-				ArrayList<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(ref); 
+				List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(ref); 
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{

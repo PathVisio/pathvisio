@@ -378,7 +378,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.MAPINFONAME);
 			result.add(PropertyType.ORGANISM);
-			result.add(PropertyType.DATA_SOURCE);
+			result.add(PropertyType.MAPINFO_DATASOURCE);
 			result.add(PropertyType.VERSION);
 			result.add(PropertyType.AUTHOR);
 			result.add(PropertyType.MAINTAINED_BY);
@@ -404,7 +404,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.HEIGHT);
 			result.add(PropertyType.COLOR);
 			result.add(PropertyType.GENEID);
-			result.add(PropertyType.SYSTEMCODE);
+			result.add(PropertyType.DATASOURCE);
 			result.add(PropertyType.TEXTLABEL);
 			// PropertyType.XREF,
 			result.add(PropertyType.BACKPAGEHEAD);
@@ -587,7 +587,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case GENEID:
 			setGeneID((String) value);
 			break;
-		case SYSTEMCODE:
+		case DATASOURCE:
 			if (value instanceof DataSource)
 			{
 				setDataSource((DataSource) value);
@@ -628,8 +628,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ORGANISM:
 			setOrganism((String) value);
 			break;
-		case DATA_SOURCE:
-			setDataSource((DataSource) value);
+		case MAPINFO_DATASOURCE:
+			setMapInfoDataSource((String)value);
 			break;
 		case VERSION:
 			setVersion((String) value);
@@ -754,8 +754,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case GENEID:
 			result = getGeneID();
 			break;
-		case SYSTEMCODE:
-			result = getDataSource() == null ? "" : getDataSource().getSystemCode();
+		case DATASOURCE:
+			result = getDataSource();
 			break;
 		case GENMAPP_XREF:
 			result = getGenMappXref();
@@ -789,8 +789,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ORGANISM:
 			result = getOrganism();
 			break;
-		case DATA_SOURCE:
-			result = getDataSource();
+		case MAPINFO_DATASOURCE:
+			result = getMapInfoDataSource();
 			break;
 		case VERSION:
 			result = getVersion();

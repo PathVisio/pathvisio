@@ -55,11 +55,12 @@ public class DataDerby extends DBConnector
 	public static final String DB_NAME_IN_ZIP = "database";
 	String lastDbName;
 	
-	public Connection createConnection(String dbName) throws Exception {
+	public Connection createConnection(String dbName) throws DataException {
 		return createConnection(dbName, PROP_NONE);
 	}
 	
-	public Connection createConnection(String dbName, int props) throws Exception {
+	public Connection createConnection(String dbName, int props) throws DataException 
+	{
 		boolean recreate = (props & PROP_RECREATE) != 0;
 		if(recreate) {
 			File dbFile = new File(dbName);
@@ -67,10 +68,21 @@ public class DataDerby extends DBConnector
 		}
 		
 		Properties sysprop = System.getProperties();
-		sysprop.setProperty("derby.storage.tempDirectory", System.getProperty("java.io.tmpdir"));
-		sysprop.setProperty("derby.stream.error.file", File.createTempFile("derby",".log").toString());
 		
-		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+		try
+		{
+			sysprop.setProperty("derby.storage.tempDirectory", System.getProperty("java.io.tmpdir"));
+			sysprop.setProperty("derby.stream.error.file", File.createTempFile("derby",".log").toString());
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw new DataException (e);
+		}
+		catch (IOException f)
+		{
+			throw new DataException (f);
+		}
 		Properties prop = new Properties();
 		prop.setProperty("create", Boolean.toString(recreate));
 		
@@ -84,7 +96,16 @@ public class DataDerby extends DBConnector
 		} else {
 			url += "jar:(" + dbFile.toString() + ")" + DB_NAME_IN_ZIP;
 		}
-		Connection con = DriverManager.getConnection(url, prop);
+		Connection con;
+		try
+		{
+			con = DriverManager.getConnection(url, prop);
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
+	
 		
 		Logger.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
 		
@@ -92,11 +113,11 @@ public class DataDerby extends DBConnector
 		return con;
 	}
 	
-	public Connection createNewDatabaseConnection(String dbName) throws Exception {
+	public Connection createNewDatabaseConnection(String dbName) throws DataException {
 		return createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
 	}
 	
-	public String finalizeNewDatabase(String dbName) throws Exception {
+	public String finalizeNewDatabase(String dbName) throws DataException {
 		//Transfer db to zip and clear old dbfiles
 		File dbDir = new File(FileUtils.removeExtension(dbName));
 		try {
@@ -113,15 +134,23 @@ public class DataDerby extends DBConnector
 		return zipFile.toString();
 	}
 	
-	public void closeConnection(Connection con) throws SQLException {
+	public void closeConnection(Connection con) throws DataException {
 		closeConnection(con, PROP_NONE);
 	}
 	
-	public void closeConnection(Connection con, int props) throws SQLException {
-		if(con != null) {
-			if(lastDbName != null) 
-				DriverManager.getConnection("jdbc:derby:" + lastDbName + ";shutdown=true");
-			con.close();
+	public void closeConnection(Connection con, int props) throws DataException {
+		if(con != null) 
+		{
+			try
+			{
+				if(lastDbName != null) 
+					DriverManager.getConnection("jdbc:derby:" + lastDbName + ";shutdown=true");
+				con.close();
+			}
+			catch (SQLException e)
+			{
+				throw new DataException (e);
+			}
 		}
 	}
 	

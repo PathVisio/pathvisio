@@ -17,8 +17,8 @@
 package org.pathvisio.data;
 
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.util.FileUtils;
 
 /**
@@ -29,15 +29,15 @@ public class DataDerbyDirectory extends DataDerby
 {	
 	String lastDbName;
 		
-	public String finalizeNewDatabase(String dbName) throws Exception
+	public String finalizeNewDatabase(String dbName) throws DataException
 	{
 		try
 		{
 			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
 		}
-		catch(Exception e)
+		catch(SQLException e)
 		{
-			Logger.log.error("Database closed", e);
+			throw new DataException (e);
 		}
 		return dbName;
 	}	

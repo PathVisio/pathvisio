@@ -41,6 +41,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexSwt;
@@ -181,7 +182,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			//Check for necessary connections
-			if(Gex.getCurrentGex().isConnected() && SimpleGdb.getCurrentGdb().isConnected())
+			if(Gex.getCurrentGex().isConnected() && GdbManager.getCurrentGdb().isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {

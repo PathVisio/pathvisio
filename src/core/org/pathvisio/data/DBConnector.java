@@ -22,6 +22,19 @@ import java.sql.Statement;
 
 import org.pathvisio.debug.Logger;
 
+/**
+ * DBConnector is used by Gex and SimpleGdb
+ * to perform operations
+ * such as creating a new database
+ * or establishing a connection
+ * that are different for Derby, Hsqldb, etc.
+ * 
+ * This class implements only non-ui functionality.
+ * There is a derived class that also includes ui-functionality
+ * 
+ * Most of the methods in here for creating 
+ * a database actually apply to gex only.
+ */
 public abstract class DBConnector 
 {
 	public static final int COMPAT_VERSION = 1;
@@ -39,16 +52,16 @@ public abstract class DBConnector
 	 */
 	public static final int TYPE_GEX = 1;
 
-	public abstract Connection createConnection(String dbName) throws Exception;
+	public abstract Connection createConnection(String dbName) throws DataException;
 
-	public abstract Connection createConnection(String dbName, int props) throws Exception;	
+	public abstract Connection createConnection(String dbName, int props) throws DataException;	
 	
 	/**
 	 * Close the given connection
 	 * @param con The connection to be closed
 	 * @throws Exception
 	 */
-	public void closeConnection(Connection con) throws Exception 
+	public void closeConnection(Connection con) throws DataException 
 	{
 		closeConnection(con, PROP_NONE);
 	}
@@ -59,9 +72,16 @@ public abstract class DBConnector
 	 * @param props Close properties (one of {@link #PROP_NONE}, {@link #PROP_FINALIZE} or {@link #PROP_RECREATE})
 	 * @throws Exception
 	 */
-	public void closeConnection(Connection con, int props) throws Exception 
+	public void closeConnection(Connection con, int props) throws DataException 
 	{
-		con.close();
+		try
+		{
+			con.close();
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 	}
 	
 	private int dbType;
@@ -85,7 +105,7 @@ public abstract class DBConnector
 	 * @throws Exception 
 	 * @throws Exception
 	 */
-	public final Connection createNewGex(String dbName) throws Exception 
+	public final Connection createNewGex(String dbName) throws DataException 
 	{
 		Connection con = createConnection(dbName, PROP_RECREATE);
 		createGexTables(con);
@@ -101,46 +121,53 @@ public abstract class DBConnector
 	 * @throws Exception
 	 * @return The name of the finalized database
 	 */
-	public abstract String finalizeNewDatabase(String dbName) throws Exception;
+	public abstract String finalizeNewDatabase(String dbName) throws DataException;
 	
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	protected void createGexTables(Connection con) throws Exception 
+	protected void createGexTables(Connection con) throws DataException 
 	{	
-		con.setReadOnly(false);
-		Statement sh = con.createStatement();
-		try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-		try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-		try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-		
-		sh.execute(
-				"CREATE TABLE					" +
-				"		info							" +
-				"(	  version INTEGER PRIMARY KEY		" +
-				")");
-		sh.execute( //Add compatibility version of GEX
-				"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
-		sh.execute(
-				"CREATE TABLE                    " +
-				"		samples							" +
-				" (   idSample INTEGER PRIMARY KEY,		" +
-				"     name VARCHAR(50),					" +
-				"	  dataType INTEGER					" +
-		" )										");
-		
-		sh.execute(
-				"CREATE TABLE					" +
-				"		expression						" +
-				" (   id VARCHAR(50),					" +
-				"     code VARCHAR(50),					" +
-				"	  ensId VARCHAR(50),				" +
-				"     idSample INTEGER,					" +
-				"     data VARCHAR(50),					" +
-				"	  groupId INTEGER 					" +
-//				"     PRIMARY KEY (id, code, idSample, data)	" +
-				")										");
+		try
+		{
+			con.setReadOnly(false);
+			Statement sh = con.createStatement();
+			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			
+			sh.execute(
+					"CREATE TABLE					" +
+					"		info							" +
+					"(	  version INTEGER PRIMARY KEY		" +
+					")");
+			sh.execute( //Add compatibility version of GEX
+					"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
+			sh.execute(
+					"CREATE TABLE                    " +
+					"		samples							" +
+					" (   idSample INTEGER PRIMARY KEY,		" +
+					"     name VARCHAR(50),					" +
+					"	  dataType INTEGER					" +
+			" )										");
+			
+			sh.execute(
+					"CREATE TABLE					" +
+					"		expression						" +
+					" (   id VARCHAR(50),					" +
+					"     code VARCHAR(50),					" +
+					"	  ensId VARCHAR(50),				" +
+					"     idSample INTEGER,					" +
+					"     data VARCHAR(50),					" +
+					"	  groupId INTEGER 					" +
+	//				"     PRIMARY KEY (id, code, idSample, data)	" +
+			")										");
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 }
 	
 	/**
@@ -148,27 +175,36 @@ public abstract class DBConnector
 	 * @param con The connection to the expression database
 	 * @throws SQLException
 	 */
-	public void createGexIndices(Connection con) throws SQLException {
-		con.setReadOnly(false);
-		Statement sh = con.createStatement();
-		sh.execute(
-				"CREATE INDEX i_expression_id " +
-		"ON expression(id)			 ");
-		sh.execute(
-				"CREATE INDEX i_expression_ensId " +
-		"ON expression(ensId)			 ");
-		sh.execute(
-				"CREATE INDEX i_expression_idSample " +
-		"ON expression(idSample)	 ");
-		sh.execute(
-				"CREATE INDEX i_expression_data " +
-		"ON expression(data)	     ");
-		sh.execute(
-				"CREATE INDEX i_expression_code " +
-		"ON expression(code)	 ");
-		sh.execute(
-				"CREATE INDEX i_expression_groupId" +
-		" ON expression(groupId)	");
+	public void createGexIndices(Connection con) throws DataException 
+	{
+		try
+		{
+			con.setReadOnly(false);
+			Statement sh = con.createStatement();
+			sh.execute(
+					"CREATE INDEX i_expression_id " +
+			"ON expression(id)			 ");
+			sh.execute(
+					"CREATE INDEX i_expression_ensId " +
+			"ON expression(ensId)			 ");
+			sh.execute(
+					"CREATE INDEX i_expression_idSample " +
+			"ON expression(idSample)	 ");
+			sh.execute(
+					"CREATE INDEX i_expression_data " +
+			"ON expression(data)	     ");
+			sh.execute(
+					"CREATE INDEX i_expression_code " +
+			"ON expression(code)	 ");
+			sh.execute(
+					"CREATE INDEX i_expression_groupId" +
+			" ON expression(groupId)	");
+		}
+		catch (SQLException e)
+		{
+			// wrap up the sql exception
+			throw new DataException (e);
+		}
 	}
 	
 	/**

@@ -19,6 +19,9 @@ package org.pathvisio.data;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * user interface functions for directory-based Derby databases
+ */
 public class DBConnDerbyDirectory extends DataDerbyDirectory implements DBConnectorSwt
 {
 	public String openChooseDbDialog(Shell shell) {

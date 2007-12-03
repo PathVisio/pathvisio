@@ -19,9 +19,10 @@ package org.pathvisio.data;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class provides the connection for the databases (annotation and expression database) used
- * in PathVisio. Implement the abstract methods when you want to add support for a new database engine.
- * @author Thomas
+ * Interface to add user-interface functionality to
+ * DBConnection classes. When a database 
+ * class implements this interface, it can provide
+ * dialogs for opening and creating a database of this type.
  */
 public interface DBConnectorSwt
 {

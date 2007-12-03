@@ -56,7 +56,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			input = null;
-			setText(SimpleGdb.getCurrentGdb().getBackpageHTML(null, null));
+			setText(GdbManager.getCurrentGdb().getBackpageHTML(null, null));
 		} else {
 			input = e;
 			input.addListener(this);
@@ -140,10 +140,11 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			}
 //			System.err.println("+++++ Thread " + this + " ended +++++");
 		}
-		void performTask() {
-			String txt = SimpleGdb.getCurrentGdb().getBackpageHTML(
-					new Xref(e.getGeneID(), 
-					e.getDataSource()), 
+		void performTask() 
+		{
+			Xref ref = new Xref (e.getGeneID(), e.getDataSource());
+			String txt = GdbManager.getCurrentGdb().getBackpageHTML(
+					ref, 
 					e.getBackpageHead());
 			if(input == e) setText(txt);
 		}

@@ -160,7 +160,7 @@ public class Gex implements ApplicationEventListener
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| !SimpleGdb.getCurrentGdb().isConnected() //and to the gene database
+				|| !GdbManager.getCurrentGdb().isConnected() //and to the gene database
 		) return noDataFound;
 		
 		List<Data> pwData = cachedData.getData(idc);
@@ -202,7 +202,7 @@ public class Gex implements ApplicationEventListener
 			
 			if(cachedData.hasData(pwIdc)) continue;
 			
-			ArrayList<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
+			List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			

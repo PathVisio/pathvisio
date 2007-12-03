@@ -9,6 +9,7 @@ import javax.xml.rpc.ServiceException;
 
 import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
+import keggapi.LinkDBRelation;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -53,7 +54,7 @@ public class Converter {
 						if (ncbi.equals("null") == false ){
 							for(int i=0; i<ncbi.length; i++ )
 							{
-								String textlabelGPML = "mieauw"; // naam van gen i uit online NCBI database
+								String textlabelGPML = ncbi[i]; // naam van gen i uit online NCBI database
 								String colorGPML = child.getAttributeValue("fgcolor");
 								String centerXGPML = child.getAttributeValue("x");
 								String centerYGPML = child.getAttributeValue("y");
@@ -72,7 +73,7 @@ public class Converter {
 								element.setMCenterY(centerY);
 								element.setMWidth(Double.parseDouble(widthGPML));
 								element.setMHeight(height);
-								element.setDataSource("Entrez Gene"); 
+								element.setDataSource("Entrez Gene"); // No idea what may be the problem
 								element.setGeneID(ncbi[i]);
 
 								if(element != null) {
@@ -97,7 +98,7 @@ public class Converter {
 							element.setMCenterY(Double.parseDouble(centerYGPML));
 							element.setMWidth(Double.parseDouble(widthGPML));
 							element.setMHeight(Double.parseDouble(heightGPML));
-							element.setDataSource("Entrez Gene"); 
+							element.setDataSource("Entrez Gene"); // No idea what may be the problem
 							element.setGeneID("null");
 
 							if(element != null) {
@@ -136,7 +137,7 @@ public class Converter {
 						String centerYGPML = child.getAttributeValue("y");
 						String widthGPML = child.getAttributeValue("width");
 						String heightGPML = child.getAttributeValue("height");
-						
+
 						PathwayElement element = new PathwayElement(ObjectType.LABEL);
 						String id = element.getGraphId();
 						element.setMFontSize(150);
@@ -145,7 +146,7 @@ public class Converter {
 						element.setMCenterY(Double.parseDouble(centerYGPML));
 						element.setMWidth(Double.parseDouble(widthGPML));
 						element.setMHeight(Double.parseDouble(heightGPML));
-						
+
 						pathway.add(element);
 					}
 				}
@@ -166,7 +167,38 @@ public class Converter {
 		String[] genes = serv.get_genes_by_enzyme(ec, species);
 
 		//KEGG code --> NCBI code
-
-		return new String[] { "test" };
+		String test =  "null";
+		if(genes.length != 0){
+			
+			for(String gene : genes) {
+				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
+				for(LinkDBRelation ldb : links) {
+					test = ldb.getEntry_id2();//moet array zijn? nu wordt er overgeschreven per loop
+				}
+			}
+		}	
+		return new String[] { test };  //mismatch bij test is string[],  wordt hier omgezet van string sting[]? 
 	}
+	
+	public static String[] getCompoundsByEnzyme(String ec) throws ServiceException, RemoteException 
+	{
+		//Setup a connection to KEGG
+		KEGGLocator  locator = new KEGGLocator();
+		KEGGPortType serv;
+		serv = locator.getKEGGPort();
+
+		//Fetch the compounds names
+		String[] compounds = serv.get_compounds_by_enzyme(ec);
+		
+		//Distinguish substrate from product
+			// dependent on outcome get_compounds_by_enzyme  
+		
+		//KEGG code --> chemical name
+			// no direct way @ http://www.genome.jp/kegg/soap/doc/keggapi_javadoc/keggapi/KEGGPortType.html
+			// though via versa is possible
+		
+		return new String[] {};
+	}
+	
 }
+

@@ -1,0 +1,7 @@
+RFC: Standardized Graphical Notation
+
+We should discuss and track graphical notation decisions as they arise.  As a starting document, I propose 
+reviewing the Systems Biology Graphical Notations (SBGN) standards in development.
+
+http://sgbn.org
+http://sbgn.cvs.sourceforge.net/*checkout*/sbgn/documents/specifications/Level1/sbgn-level1.pdf

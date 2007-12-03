@@ -41,7 +41,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.Gex.ExpressionDataEvent;
@@ -126,7 +126,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				
 				if(dbName == null) return;
 				
-				Gdb.connect(dbName);
+				SimpleGdb.connect(dbName);
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
@@ -181,7 +181,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			//Check for necessary connections
-			if(Gex.getCurrentGex().isConnected() && Gdb.getCurrentGdb().isConnected())
+			if(Gex.getCurrentGex().isConnected() && SimpleGdb.getCurrentGdb().isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {

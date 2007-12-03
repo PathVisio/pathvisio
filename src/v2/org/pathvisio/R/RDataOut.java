@@ -32,7 +32,7 @@ import org.pathvisio.R.RCommands.RException;
 import org.pathvisio.R.RCommands.RObjectContainer;
 import org.pathvisio.R.RCommands.RTemp;
 import org.pathvisio.R.RCommands.RniException;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
@@ -308,7 +308,7 @@ public class RDataOut {
 		}
 
 		void addEnsembl(GeneProduct gp, Xref idc) {
-			List<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(idc);
+			List<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(idc);
 			for(String ens : ensIds) {
 				gp.addReference(new Xref(ens, DataSource.ENSEMBL));
 			}
@@ -500,7 +500,7 @@ public class RDataOut {
 			if(rep2ens == null) 
 				rep2ens = new HashMap<Xref, String>();
 			if(!rep2ens.containsKey(rep)) {
-				List<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(rep);
+				List<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(rep);
 				if(ensIds.size() > 0) {
 					StringBuilder cmd = new StringBuilder("c(");
 					for(String ens : ensIds) cmd.append("'En:" + ens + "',");

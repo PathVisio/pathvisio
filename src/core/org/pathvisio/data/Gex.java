@@ -160,7 +160,7 @@ public class Gex implements ApplicationEventListener
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| !Gdb.getCurrentGdb().isConnected() //and to the gene database
+				|| !SimpleGdb.getCurrentGdb().isConnected() //and to the gene database
 		) return noDataFound;
 		
 		List<Data> pwData = cachedData.getData(idc);
@@ -202,7 +202,7 @@ public class Gex implements ApplicationEventListener
 			
 			if(cachedData.hasData(pwIdc)) continue;
 			
-			ArrayList<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
+			ArrayList<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			
@@ -276,14 +276,12 @@ public class Gex implements ApplicationEventListener
 		if (currentGex != null) currentGex.close();
 		currentGex = new Gex();
 		
-		if(currentGex.dbName != null) currentGex.setDbName(dbName);
-		
 		DBConnector connector = getDBConnector();
 		
 		if(create) {
-			currentGex.con = connector.createNewGex(currentGex.getDbName());
+			currentGex.con = connector.createNewGex(dbName);
 		} else {
-			currentGex.con = connector.createConnection(currentGex.getDbName());
+			currentGex.con = connector.createConnection(dbName);
 			currentGex.setSamples();
 			//TODO: move to GexSwt
 			//loadXML();

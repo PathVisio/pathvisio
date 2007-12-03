@@ -19,7 +19,7 @@ package org.pathvisio.gui.swing;
 import javax.swing.JEditorPane;
 
 import org.pathvisio.data.BackpageListener;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows annotation
@@ -34,7 +34,7 @@ public class BackpagePane extends JEditorPane implements BackpageListener {
 		super();
 		setEditable(false);
 		setContentType("text/html");
-		Gdb.getBackpageTextProvider().addListener(this);
+		SimpleGdb.getBackpageTextProvider().addListener(this);
 	}
 
 	public void textChanged(String oldText, String newText) {

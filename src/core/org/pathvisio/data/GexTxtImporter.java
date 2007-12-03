@@ -169,7 +169,7 @@ public class GexTxtImporter
 				}
 				Xref ref = new Xref (id, ds);
 				//Find the Ensembl genes for current gene
-				ArrayList<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(ref); 
+				ArrayList<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(ref); 
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{

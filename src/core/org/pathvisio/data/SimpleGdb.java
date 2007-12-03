@@ -20,9 +20,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +34,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
+import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.Utils;
@@ -40,10 +44,10 @@ import org.pathvisio.util.Utils;
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
-public class Gdb 
+public class SimpleGdb implements IGdb
 {	
 	// private, so you can't instantiate Gdb. Use the connect() method. 
-	private Gdb()
+	private SimpleGdb()
 	{
 	}
 	
@@ -52,9 +56,9 @@ public class Gdb
 		initializeHeader();
 	}
 	
-	static private Gdb currentGdb = null;
+	static private SimpleGdb currentGdb = null;
 	
-	static public Gdb getCurrentGdb ()
+	static public IGdb getCurrentGdb ()
 	{
 		return currentGdb;
 	}
@@ -68,11 +72,6 @@ public class Gdb
 	 */
 	private Connection con;
 	
-	/**
-	 * Gets the Connection to the Gene Database
-	 * @deprecated Should be private.
-	 */
-	public Connection getCon() { return con; }
 	/**
 	 * Check whether a connection to the database exists
 	 * @return	true is a connection exists, false if not
@@ -129,7 +128,7 @@ public class Gdb
 	 * @param bpInfo The backpage info (as obtained from {@link #getBpInfo(String, String)})
 	 * @return The parsed gene symbol, or null if no symbol could be found
 	 */
-	public static String parseGeneSymbol(String bpInfo) {
+	public String parseGeneSymbol(String bpInfo) {
 		Pattern regex = Pattern.compile("<TH>Gene Name:<TH>(.+?)<TR>");
 		Matcher matcher = regex.matcher(bpInfo);
 		if(matcher.find())
@@ -372,8 +371,10 @@ public class Gdb
 	 */
 	public static void connect(String dbName) throws Exception
 	{
-		Gdb gdb = new Gdb();
+		SimpleGdb gdb = new SimpleGdb();
 		if(dbName == null) throw new NullPointerException();
+		
+		gdb.dbName = dbName;
 		
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
 		DBConnector connector = getDBConnector();
@@ -496,5 +497,83 @@ public class Gdb
 			Logger.log.error("while creating gdb tables: " + e.getMessage(), e);
 		}
 	}
+
+	public static final int NO_LIMIT = 0;
+	public static final int NO_TIMEOUT = 0;
+	public static int query_timeout = 5; //seconds
+
+	/**
+	 * Get up to limit suggestions for a symbol autocompletion
+	 */
+	public List<Map<PropertyType, String>> getSymbolSuggestions(String text, int limit) 
+	{		
+		List<Map<PropertyType, String>> result = new ArrayList<Map<PropertyType, String>>();
+		try {
+			Statement s = con.createStatement();
+			
+			s.setQueryTimeout(query_timeout);
+			if(limit > NO_LIMIT) s.setMaxRows(limit);
+			
+			String query =
+						"SELECT id, code, backpageText FROM gene WHERE " +
+						"backpageText LIKE '%<TH>Gene Name:<TH>" + text + "%'";
+			
+			ResultSet r = s.executeQuery(query);
 	
+			while(r.next()) 
+			{
+				String sysCode = r.getString("code");
+				String sysName = DataSource.getBySystemCode(sysCode).getFullName();				
+				
+				Map<PropertyType, String> item = new HashMap<PropertyType, String>();
+				
+				String symbol = parseGeneSymbol(r.getString("backpageText"));
+				item.put (PropertyType.TEXTLABEL, symbol);
+				item.put (PropertyType.SYSTEMCODE, sysName);
+				item.put (PropertyType.GENEID, r.getString("id"));
+				
+				result.add(item);
+			}
+		} catch (SQLException e) {
+			Logger.log.error("Unable to query suggestions", e);
+		}
+		//if(limit > NO_LIMIT && result.size() == limit) sugg.add("...results limited to " + limit);
+		return result;
+	}
+
+	/**
+	 * Get up to limit suggestions for a symbol autocompletion
+	 */
+	public List<Map<PropertyType, String>> getIdSuggestions(String text, int limit) 
+	{		
+		List<Map<PropertyType, String>> result = new ArrayList<Map<PropertyType, String>>();
+		try {
+			Statement s = con.createStatement();
+			
+			s.setQueryTimeout(query_timeout);
+			if(limit > NO_LIMIT) s.setMaxRows(limit);
+			
+			String query = "";
+			query =
+					"SELECT id, code FROM gene WHERE " +
+					"id LIKE '" + text + "%'";
+			
+			ResultSet r = s.executeQuery(query);
+	
+			while(r.next()) {
+				String sysCode = r.getString("code");
+				String sysName = DataSource.getBySystemCode(sysCode).getFullName();
+				
+				Map<PropertyType, String> item = new HashMap<PropertyType, String>();
+				item.put (PropertyType.GENEID, r.getString("id"));
+				item.put (PropertyType.SYSTEMCODE, sysName);
+				result.add (item);
+			}
+		} catch (SQLException e) {
+			Logger.log.error("Unable to query suggestions", e);
+		}
+//		if(limit > NO_LIMIT && sugg.size() == limit) sugg.add("...results limited to " + limit);
+		return result;
+	}
+
 }

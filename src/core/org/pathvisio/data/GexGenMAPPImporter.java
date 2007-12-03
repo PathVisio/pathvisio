@@ -94,7 +94,7 @@ public class GexGenMAPPImporter
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				ArrayList<String> ensIds = Gdb.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
+				ArrayList<String> ensIds = SimpleGdb.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{

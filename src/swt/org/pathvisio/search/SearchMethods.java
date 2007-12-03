@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.Xref;
 import org.pathvisio.search.PathwaySearchComposite.SearchRunnableWithProgress;
 import org.pathvisio.util.FileUtils;
@@ -63,7 +63,7 @@ public abstract class SearchMethods {
 
 		srt.setTableData(srs);
 		//Get all cross references
-		List<Xref> refs = Gdb.getCurrentGdb().getCrossRefs(ref);
+		List<Xref> refs = SimpleGdb.getCurrentGdb().getCrossRefs(ref);
 		if(refs.size() == 0) throw new NoGdbException();
 		
 		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));

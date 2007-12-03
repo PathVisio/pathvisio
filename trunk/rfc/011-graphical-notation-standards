@@ -5,3 +5,6 @@ reviewing the Systems Biology Graphical Notations (SBGN) standards in developmen
 
 http://sgbn.org
 http://sbgn.cvs.sourceforge.net/*checkout*/sbgn/documents/specifications/Level1/sbgn-level1.pdf
+
+This document is relevant to the planned inclusion of small molecules, groups and state information in 
+pathway representations. It is also relevant to MIMs.

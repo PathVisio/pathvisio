@@ -101,7 +101,7 @@ public class GdbManager
 			throw new DataException (e);
 		}
 		
-		SimpleGdb gdb = new SimpleGdb(gdbName, con);
+		SimpleGdb gdb = new SimpleGdb(gdbName, con, DBConnector.PROP_NONE);
 		return gdb;
 	}
 	

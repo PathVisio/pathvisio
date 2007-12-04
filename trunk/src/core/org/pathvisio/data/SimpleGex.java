@@ -17,8 +17,11 @@
 package org.pathvisio.data;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,12 +35,29 @@ import org.pathvisio.model.Xref;
 import org.pathvisio.util.ProgressKeeper;
 
 /**
- * This class handles everything related to the Expression Data. It contains the database connection,
- * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
- * to hsqldb format
+ * Responsible for creating and querying a pgex database.
+ * SimpleGex wraps SQL statements in methods, 
+ * so the rest of the apps don't need to know the
+ * details of the Database schema.
+ * For this, SimpleGex uses the generic JDBC interface.
+ * 
+ * It delegates dealing with the differences between Derby, Hsqldb etc.
+ * to a DBConnector instance. 
+ * You need to pass a correct DBConnector instance at creation of
+ * SimpleGex. 
+ * 
+ * In the PathVisio GUI environment, use GexManager
+ * to create and connect to a centralized Gex. 
+ * This will also automatically
+ * find the right DBConnector from the preferences.
+ *  
+ * In a head-less or test environment, you can bypass GexManager
+ * to create or connect to one or more databases of any type.
  */
 public class SimpleGex
-{		
+{
+	private static final int GEX_COMPAT_VERSION = 1; //Preferred schema version
+	
 	private Connection con;
 	private DBConnector dbConnector;
 			
@@ -85,6 +105,43 @@ public class SimpleGex
 		} catch (Exception e) {
 			Logger.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
 		}
+	}
+	
+	PreparedStatement pstSample;
+	PreparedStatement pstExpr;
+	
+	public void prepare() throws SQLException
+	{
+		pstSample = con.prepareStatement(
+				" INSERT INTO SAMPLES " +
+				"	(idSample, name, dataType)  " +
+		" VALUES (?, ?, ?)		  ");
+		pstExpr = con.prepareStatement(
+				"INSERT INTO expression			" +
+				"	(id, code, ensId,			" + 
+				"	 idSample, data, groupId)	" +
+		"VALUES	(?, ?, ?, ?, ?, ?)			");
+
+	}
+
+	public void addSample(int sampleId, String value, int type) throws SQLException
+	{
+		pstSample.setInt(1, sampleId);
+		pstSample.setString(2, value);
+		pstSample.setInt(3, type);
+		pstSample.execute();
+	}
+	
+	public void addExpr(Xref ref, String link, String idSample, String value, int group)
+		throws SQLException
+	{
+		pstExpr.setString(1, ref.getId());
+		pstExpr.setString(2, ref.getDataSource().getSystemCode());
+		pstExpr.setString(3, link);
+		pstExpr.setString(4, idSample);
+		pstExpr.setString(5, value);
+		pstExpr.setInt(6, group);
+		pstExpr.execute();
 	}
 	
 	public Sample getSample(int id) {
@@ -261,11 +318,11 @@ public class SimpleGex
 		dbConnector = connector;
 		if(create)
 		{
-			con = dbConnector.createNewGex(dbName);
+			con = createNewGex(dbName);
 		} 
 		else 
 		{
-			con = dbConnector.createConnection(dbName);
+			con = dbConnector.createConnection(dbName, DBConnector.PROP_NONE);
 			setSamples();
 		}
 		try
@@ -305,7 +362,7 @@ public class SimpleGex
 				if(finalize) 
 				{
 					dbConnector.compact(con);
-					dbConnector.createGexIndices(con);
+					createGexIndices();
 					String newDb = dbConnector.finalizeNewDatabase(dbName);
 					setDbName(newDb);
 				} 
@@ -331,4 +388,102 @@ public class SimpleGex
 		close(false);
 	}
 
+	/**
+	 * Create a new database with the given name. This includes creating tables.
+	 * @param dbName The name of the database to create
+	 * @return A connection to the newly created database
+	 * @throws Exception 
+	 * @throws Exception
+	 */
+	public final Connection createNewGex(String dbName) throws DataException 
+	{
+		Connection con = dbConnector.createConnection(dbName, DBConnector.PROP_RECREATE);
+		createGexTables();
+		return con;
+	}
+
+	/**
+	 * Excecutes several SQL statements to create the tables and indexes for storing 
+	 * the expression data
+	 */
+	protected void createGexTables() throws DataException 
+	{	
+		try
+		{
+			con.setReadOnly(false);
+			Statement sh = con.createStatement();
+			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			
+			sh.execute(
+					"CREATE TABLE					" +
+					"		info							" +
+					"(	  version INTEGER PRIMARY KEY		" +
+					")");
+			sh.execute( //Add compatibility version of GEX
+					"INSERT INTO info VALUES ( " + GEX_COMPAT_VERSION + ")");
+			sh.execute(
+					"CREATE TABLE                    " +
+					"		samples							" +
+					" (   idSample INTEGER PRIMARY KEY,		" +
+					"     name VARCHAR(50),					" +
+					"	  dataType INTEGER					" +
+			" )										");
+			
+			sh.execute(
+					"CREATE TABLE					" +
+					"		expression						" +
+					" (   id VARCHAR(50),					" +
+					"     code VARCHAR(50),					" +
+					"	  ensId VARCHAR(50),				" +
+					"     idSample INTEGER,					" +
+					"     data VARCHAR(50),					" +
+					"	  groupId INTEGER 					" +
+	//				"     PRIMARY KEY (id, code, idSample, data)	" +
+			")										");
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
+	}
+	
+	/**
+	 * Creates indices for a newly created expression database.
+	 * @param con The connection to the expression database
+	 * @throws SQLException
+	 */
+	public void createGexIndices() throws DataException 
+	{
+		try
+		{
+			con.setReadOnly(false);
+			Statement sh = con.createStatement();
+			sh.execute(
+					"CREATE INDEX i_expression_id " +
+			"ON expression(id)			 ");
+			sh.execute(
+					"CREATE INDEX i_expression_ensId " +
+			"ON expression(ensId)			 ");
+			sh.execute(
+					"CREATE INDEX i_expression_idSample " +
+			"ON expression(idSample)	 ");
+			sh.execute(
+					"CREATE INDEX i_expression_data " +
+			"ON expression(data)	     ");
+			sh.execute(
+					"CREATE INDEX i_expression_code " +
+			"ON expression(code)	 ");
+			sh.execute(
+					"CREATE INDEX i_expression_groupId" +
+			" ON expression(groupId)	");
+		}
+		catch (SQLException e)
+		{
+			// wrap up the sql exception
+			throw new DataException (e);
+		}
+	}
+	
 }

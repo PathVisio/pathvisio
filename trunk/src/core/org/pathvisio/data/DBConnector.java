@@ -18,26 +18,21 @@ package org.pathvisio.data;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.pathvisio.debug.Logger;
 
 /**
- * DBConnector is used by Gex and SimpleGdb
+ * DBConnector is used by SimpleGex and SimpleGdb
  * to perform operations
  * such as creating a new database
  * or establishing a connection
  * that are different for Derby, Hsqldb, etc.
  * 
- * This class implements only non-ui functionality.
+ * This class implements only non-GUI functionality.
  * There is a derived DBConnSwt class that also 
  * includes dialogs to set the parameters
  * for opening / creating.
  */
 public abstract class DBConnector 
 {
-	public static final int COMPAT_VERSION = 1;
-
 	public static final int PROP_NONE = 0;
 	public static final int PROP_RECREATE = 4;
 	public static final int PROP_FINALIZE = 8;
@@ -50,8 +45,6 @@ public abstract class DBConnector
 	 * Type for expression database
 	 */
 	public static final int TYPE_GEX = 1;
-
-	public abstract Connection createConnection(String dbName) throws DataException;
 
 	public abstract Connection createConnection(String dbName, int props) throws DataException;	
 	
@@ -97,19 +90,7 @@ public abstract class DBConnector
 	 */
 	public int getDbType() { return dbType; }
 	
-	/**
-	 * Create a new database with the given name. This includes creating tables.
-	 * @param dbName The name of the database to create
-	 * @return A connection to the newly created database
-	 * @throws Exception 
-	 * @throws Exception
-	 */
-	public final Connection createNewGex(String dbName) throws DataException 
-	{
-		Connection con = createConnection(dbName, PROP_RECREATE);
-		createGexTables(con);
-		return con;
-	}
+
 		
 	/**
 	 * This method is called to finalize the given database after creation
@@ -121,91 +102,7 @@ public abstract class DBConnector
 	 * @return The name of the finalized database
 	 */
 	public abstract String finalizeNewDatabase(String dbName) throws DataException;
-	
-	/**
-	 * Excecutes several SQL statements to create the tables and indexes for storing 
-	 * the expression data
-	 */
-	protected void createGexTables(Connection con) throws DataException 
-	{	
-		try
-		{
-			con.setReadOnly(false);
-			Statement sh = con.createStatement();
-			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			
-			sh.execute(
-					"CREATE TABLE					" +
-					"		info							" +
-					"(	  version INTEGER PRIMARY KEY		" +
-					")");
-			sh.execute( //Add compatibility version of GEX
-					"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
-			sh.execute(
-					"CREATE TABLE                    " +
-					"		samples							" +
-					" (   idSample INTEGER PRIMARY KEY,		" +
-					"     name VARCHAR(50),					" +
-					"	  dataType INTEGER					" +
-			" )										");
-			
-			sh.execute(
-					"CREATE TABLE					" +
-					"		expression						" +
-					" (   id VARCHAR(50),					" +
-					"     code VARCHAR(50),					" +
-					"	  ensId VARCHAR(50),				" +
-					"     idSample INTEGER,					" +
-					"     data VARCHAR(50),					" +
-					"	  groupId INTEGER 					" +
-	//				"     PRIMARY KEY (id, code, idSample, data)	" +
-			")										");
-		}
-		catch (SQLException e)
-		{
-			throw new DataException (e);
-		}
-}
-	
-	/**
-	 * Creates indices for a newly created expression database.
-	 * @param con The connection to the expression database
-	 * @throws SQLException
-	 */
-	public void createGexIndices(Connection con) throws DataException 
-	{
-		try
-		{
-			con.setReadOnly(false);
-			Statement sh = con.createStatement();
-			sh.execute(
-					"CREATE INDEX i_expression_id " +
-			"ON expression(id)			 ");
-			sh.execute(
-					"CREATE INDEX i_expression_ensId " +
-			"ON expression(ensId)			 ");
-			sh.execute(
-					"CREATE INDEX i_expression_idSample " +
-			"ON expression(idSample)	 ");
-			sh.execute(
-					"CREATE INDEX i_expression_data " +
-			"ON expression(data)	     ");
-			sh.execute(
-					"CREATE INDEX i_expression_code " +
-			"ON expression(code)	 ");
-			sh.execute(
-					"CREATE INDEX i_expression_groupId" +
-			" ON expression(groupId)	");
-		}
-		catch (SQLException e)
-		{
-			// wrap up the sql exception
-			throw new DataException (e);
-		}
-	}
-	
+		
 	/**
 	 * This method may be implemented when the database files need to be
 	 * compacted or defragmented after creation of a new database. It will be called
@@ -213,7 +110,8 @@ public abstract class DBConnector
 	 * @param con A connection to the database
 	 * @throws SQLException
 	 */
-	public void compact(Connection con) throws SQLException {
+	public void compact(Connection con) throws DataException
+	{
 		//May be implemented by subclasses
 	}
 	

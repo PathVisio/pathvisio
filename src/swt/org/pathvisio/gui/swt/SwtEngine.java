@@ -453,8 +453,6 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	   This should always be called before you change pathway
 
 	   @return returns false if the user pressed cancel. 
-	   
-	   TODO: Currently always asks, even if there were no changes since last save.
 	 */
 	public boolean canDiscardPathway()
 	{

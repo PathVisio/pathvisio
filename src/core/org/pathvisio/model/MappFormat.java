@@ -724,8 +724,6 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         }
         o.setTextLabel(mappObject[colLabel]);
 
-        // TODO:  for some IDs the type is known, e.g. SwissProt is always a
-		// protein, incorporate this knowledge to assign a type per ID
         o.setDataNodeType("GeneProduct");
         String xrefv = mappObject[colLinks];
         if (xrefv == null) { xrefv = ""; }

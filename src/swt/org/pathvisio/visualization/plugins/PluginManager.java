@@ -36,7 +36,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.util.Utils;
@@ -73,7 +73,7 @@ public abstract class PluginManager {
 	}
 	
 	public static Class<?>[] getPlugins() {
-		return Gex.getCurrentGex().isConnected() ?
+		return GexManager.getCurrentGex().isConnected() ?
 				plugins.toArray(new Class[plugins.size()]) :
 				getGenericPlugins();
 	}

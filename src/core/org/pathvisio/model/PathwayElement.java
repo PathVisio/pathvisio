@@ -1648,9 +1648,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			if (v.length() > MAP_TITLE_MAX_LEN)
 			{
-				// TODO: ideally we throw illegal argument exception here, passing an error to the user.
-				// right now it is just silently truncated.
-				mapInfoName = v.substring (0, MAP_TITLE_MAX_LEN);
+				throw new IllegalArgumentException("Map info name exceeds maximum length of " + MAP_TITLE_MAX_LEN);				
 			}
 			else
 			{

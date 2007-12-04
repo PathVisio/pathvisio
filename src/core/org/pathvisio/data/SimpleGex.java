@@ -18,15 +18,12 @@ package org.pathvisio.data;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -39,19 +36,12 @@ import org.pathvisio.util.ProgressKeeper;
  * several methods to query data and write data and methods to convert a GenMAPP Expression Dataset
  * to hsqldb format
  */
-public class Gex implements ApplicationEventListener 
-{	
-	// prevent instantiation outside Connect method
-	private Gex()
-	{
-	}
-	
+public class SimpleGex
+{		
 	private Connection con;
+	private DBConnector dbConnector;
 			
 	private static CachedData cachedData;
-
-	private static Gex currentGex;
-	public static Gex getCurrentGex() { return currentGex; }
 
 	/**
 	 * Get the {@link Connection} to the Expression-data database
@@ -168,7 +158,7 @@ public class Gex implements ApplicationEventListener
 		if(pwData == null) return noDataFound;
 		
 		for(Data d : pwData){
-			colNames += "<TH>" + d.getIdCodePair().getId();
+			colNames += "<TH>" + d.getXref().getId();
 		}
 		
 		String dataString = "";
@@ -260,51 +250,46 @@ public class Gex implements ApplicationEventListener
 		timer.stopToLog("Caching expression data\t\t\t");
 		Logger.log.trace("> Nr of ids queried:\t" + refs.size());
 	}
-			
-	
-	public static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
-	}
-	
+				
 	/**
 	 * Connects to the Expression database with
 	 * option to remove the old database
 	 * @param 	create true if the old database has to be removed, false for just connecting
 	 */
-	public static void connect(String dbName, boolean create, boolean fireEvent) throws Exception
+	public SimpleGex(String dbName, boolean create, DBConnector connector) throws DataException
 	{
-		if (currentGex != null) currentGex.close();
-		currentGex = new Gex();
-		
-		DBConnector connector = getDBConnector();
-		
-		if(create) {
-			currentGex.con = connector.createNewGex(dbName);
-		} else {
-			currentGex.con = connector.createConnection(dbName);
-			currentGex.setSamples();
-			//TODO: move to GexSwt
-			//loadXML();
+		dbConnector = connector;
+		if(create)
+		{
+			con = dbConnector.createNewGex(dbName);
+		} 
+		else 
+		{
+			con = dbConnector.createConnection(dbName);
+			setSamples();
 		}
-
-		currentGex.con.setReadOnly( !create );
-		
-		if(fireEvent)
-			fireExpressionDataEvent(new ExpressionDataEvent(Gex.class, ExpressionDataEvent.CONNECTION_OPENED));
+		try
+		{
+			con.setReadOnly( !create );
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 	}
 	
 	/**
 	 * Connects to the Expression database 
 	 */
-	public static void connect() throws Exception
-	{
-		connect(null, false, true);
-	}
-	
-	public static void connect(String dbName) throws Exception
-	{
-		connect(dbName, false, true);
-	}
+//	public static void connect() throws Exception
+//	{
+//		connect(null, false, true);
+//	}
+//	
+//	public static void connect(String dbName) throws Exception
+//	{
+//		connect(dbName, false, true);
+//	}
 		
 	/**
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
@@ -316,22 +301,21 @@ public class Gex implements ApplicationEventListener
 		if(con != null)
 		{
 			try
-			{
-				//TODO: move to GexSwt
-				//saveXML();
-				
-				DBConnector connector = getDBConnector();
-				if(finalize) {
-					connector.compact(con);
-					connector.createGexIndices(con);
-					String newDb = connector.finalizeNewDatabase(dbName);
+			{				
+				if(finalize) 
+				{
+					dbConnector.compact(con);
+					dbConnector.createGexIndices(con);
+					String newDb = dbConnector.finalizeNewDatabase(dbName);
 					setDbName(newDb);
-				} else {
-					connector.closeConnection(con);
-				}
-				fireExpressionDataEvent(new ExpressionDataEvent(Gex.class, ExpressionDataEvent.CONNECTION_CLOSED));
-				
-			} catch (Exception e) {
+				} 
+				else 
+				{
+					dbConnector.closeConnection(con);
+				}	
+			} 
+			catch (Exception e) 
+			{
 				Logger.log.error("Error while closing connection to expression dataset " + dbName, e);
 			}
 			con = null;
@@ -346,52 +330,5 @@ public class Gex implements ApplicationEventListener
 	{
 		close(false);
 	}
-	
-	
-	public void applicationEvent(ApplicationEvent e) {
-		switch(e.getType()) {
-		case ApplicationEvent.APPLICATION_CLOSE:
-			if(isConnected()) close();
-		}
-	}
-	
-	static List<ExpressionDataListener> listeners;
-	
-	/**
-	 * Add a {@link ExpressionDataListener}, that will be notified if an
-	 * event related to expression data occurs
-	 * @param l The {@link ExpressionDataListener} to add
-	 */
-	public static void addListener(ExpressionDataListener l) {
-		if(listeners == null) listeners = new ArrayList<ExpressionDataListener>();
-		listeners.add(l);
-	}
-	
-	/**
-	 * Fire a {@link ExpressionDataEvent} to notify all {@link ExpressionDataListener}s registered
-	 * to this class
-	 * @param e
-	 */
-	protected static void fireExpressionDataEvent(ExpressionDataEvent e) {
-		for(ExpressionDataListener l : listeners) l.expressionDataEvent(e);
-	}
-	
-	public interface ExpressionDataListener {
-		public void expressionDataEvent(ExpressionDataEvent e);
-	}
-	
-	public static class ExpressionDataEvent extends EventObject {
-		private static final long serialVersionUID = 1L;
-		public static final int CONNECTION_OPENED = 0;
-		public static final int CONNECTION_CLOSED = 1;
 
-		public Object source;
-		public int type;
-		
-		public ExpressionDataEvent(Object source, int type) {
-			super(source);
-			this.source = source;
-			this.type = type;
-		}
-	}
 }

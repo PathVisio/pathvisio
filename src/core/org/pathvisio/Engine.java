@@ -324,7 +324,8 @@ public class Engine
 	
 	private HashMap<Integer, DBConnector> connectors = new HashMap<Integer, DBConnector>();
 	
-	public DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException 
+	{
 		//Try to get the DBConnector from the hashmap first
 		DBConnector connector = connectors.get(type);
 		if(connector != null) return connector;

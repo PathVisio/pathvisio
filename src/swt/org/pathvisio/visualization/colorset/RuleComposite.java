@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 
 public class RuleComposite extends Composite {
 	ErrorArea errorArea;
@@ -50,8 +50,8 @@ public class RuleComposite extends Composite {
 	}
 	
 	public void fetchSymbolsFromGex() {
-		if(Gex.getCurrentGex().isConnected()) {
-			java.util.List<String> numSmp = Gex.getCurrentGex().getSampleNames(Types.REAL);
+		if(GexManager.getCurrentGex().isConnected()) {
+			java.util.List<String> numSmp = GexManager.getCurrentGex().getSampleNames(Types.REAL);
 			symbolList.setItems(numSmp.toArray(new String[numSmp.size()]));	
 		} else {
 			symbolList.setItems(new String[] {});

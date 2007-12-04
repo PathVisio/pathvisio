@@ -19,7 +19,7 @@ package org.pathvisio.visualization.colorset;
 import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 
@@ -75,7 +75,7 @@ public class Criterion {
 
 	void setSampleData(HashMap<Integer, Object> data) {
 		// Add current sample values to symTab if they are of type Double
-		HashMap<Integer, Sample> samples = Gex.getCurrentGex().getSamples();
+		HashMap<Integer, Sample> samples = GexManager.getCurrentGex().getSamples();
 		clearSymbols();
 		for(Sample s : samples.values()) {
 			Object value = data.get(s.getId());

@@ -16,6 +16,8 @@
 //
 package org.pathvisio.data;
 
+import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 
@@ -32,52 +34,104 @@ public class GdbManager
 {
 	static private DoubleGdb currentGdb = new DoubleGdb();
 	
-	static public IGdb getCurrentGdb ()
+	static public Gdb getCurrentGdb ()
 	{
 		return currentGdb;
 	}
 
 	/**
-	 * Set the global metabolite database
+	 * Set the global metabolite database 
+	 * with the given file- or
+	 * directory name.
+	 * The database type used for the connection
+	 * depends on the value of the DB_ENGINE_GDB value
 	 */
-	public static void setMetaboliteDb(SimpleGdb value)
+	public static void setMetaboliteDb(String dbName) throws DataException
 	{
-		currentGdb.setMetaboliteDb(value);
+		SimpleGdb gdb = connect (dbName);
+		currentGdb.setMetaboliteDb(gdb);
+
+		ApplicationEvent e =
+			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
+		Engine.getCurrent().fireApplicationEvent (e);
+		Logger.log.trace("Current Gene Database: " + dbName);
+	
 	}
 
 	/**
 	 * Set the global gene database
+	 * with the given file- or
+	 * directory name.
+	 * The database type used for the connection
+	 * depends on the value of the DB_ENGINE_GDB value
 	 */
-	public static void setGeneDb(SimpleGdb value)
+	public static void setGeneDb(String dbName) throws DataException
 	{
-		currentGdb.setGeneDb(value);
-	}
+		SimpleGdb gdb = connect (dbName);
+		currentGdb.setGeneDb(gdb);
 
+		ApplicationEvent e =
+			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
+		Engine.getCurrent().fireApplicationEvent (e);
+		Logger.log.trace("Current Gene Database: " + dbName);
+	}
+	
+	/**
+	 * Helper method
+	 * Connect to a database using the 
+	 * DBConnector set in the global preferences.
+	 */
+	private static SimpleGdb connect(String gdbName) throws DataException
+	{
+		DBConnector con;
+		try
+		{
+			con = Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw new DataException (e);
+		}
+		catch (IllegalAccessException e)
+		{
+			throw new DataException (e);
+		}
+		catch (InstantiationException e)
+		{
+			throw new DataException (e);
+		}
+		
+		SimpleGdb gdb = new SimpleGdb(gdbName, con);
+		return gdb;
+	}
+	
 	/**
 	 * Initiates this class. Checks the properties file for a previously
 	 * used Gene Database and tries to open a connection if found.
+	 * If that doesn't work, reverts attempts to use the default value for
+	 * that property.
+	 * 
+	 * Idem for the metabolite database.
 	 */
 	public static void init()
 	{
 		// first do the Gene database
-		SimpleGdb gdb;
 		String gdbName = GlobalPreference.DB_GDB_CURRENT.getValue();
 		if(!gdbName.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
 		{
 			try 
 			{
-				gdb = SimpleGdb.connect(gdbName);
-				setGeneDb(gdb);
+				setGeneDb(gdbName);
 			} 
-			catch(Exception e) 
+			catch(DataException e) 
 			{
 				Logger.log.error("Setting previous Gdb failed.", e);
 				try 
 				{
-					gdb = SimpleGdb.connect(gdbName);
-					setGeneDb(gdb);
+					gdbName = GlobalPreference.DB_GDB_CURRENT.getDefault();
+					setGeneDb(gdbName);
 				} 
-				catch(Exception f) 
+				catch(DataException f) 
 				{
 					Logger.log.error("Setting default Gdb failed.", f);
 				}
@@ -89,16 +143,15 @@ public class GdbManager
 		{
 			try 
 			{
-				gdb = SimpleGdb.connect(gdbName);
-				setMetaboliteDb(gdb);
+				setMetaboliteDb(gdbName);
 			} 
 			catch(Exception e) 
 			{
 				Logger.log.error("Setting previous Metabolite db failed.", e);
 				try 
 				{
-					gdb = SimpleGdb.connect(gdbName);
-					setMetaboliteDb(gdb);
+					gdbName = GlobalPreference.DB_GDB_CURRENT.getDefault();
+					setMetaboliteDb(gdbName);
 				} 
 				catch(Exception f) 
 				{

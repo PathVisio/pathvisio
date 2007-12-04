@@ -42,11 +42,10 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.SimpleGdb;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexSwt;
-import org.pathvisio.data.Gex.ExpressionDataEvent;
-import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.data.GexManager.ExpressionDataListener;
+import org.pathvisio.data.GexManager.ExpressionDataEvent;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.preferences.GlobalPreference;
@@ -127,7 +126,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				
 				if(dbName == null) return;
 				
-				GdbManager.setGeneDb(SimpleGdb.connect(dbName));
+				GdbManager.setGeneDb(dbName);
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
@@ -182,7 +181,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			//Check for necessary connections
-			if(Gex.getCurrentGex().isConnected() && GdbManager.getCurrentGdb().isConnected())
+			if(GexManager.getCurrentGex() != null && GexManager.getCurrentGex().isConnected() && GdbManager.getCurrentGdb().isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {
@@ -440,7 +439,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	public LegendPanel getLegend() { return legend; }
 	
 	public void showLegend(boolean show) {	
-		if(show && Gex.getCurrentGex().isConnected()) {
+		if(show && GexManager.getCurrentGex().isConnected()) {
 			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
 			rightPanel.unhideTab("Legend", 0);
 			rightPanel.selectTab("Legend");
@@ -453,8 +452,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		switch(e.getType())
 		{
 		case ApplicationEvent.PATHWAY_OPENED:
-			if(Gex.getCurrentGex() != null && 
-				Gex.getCurrentGex().isConnected()) cacheExpressionData();
+			if(GexManager.getCurrentGex() != null && 
+					GexManager.getCurrentGex().isConnected()) cacheExpressionData();
 			break;
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:
@@ -500,7 +499,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	public void vPathwayEvent(VPathwayEvent e) {
 		switch(e.getType()) {
 		case VPathwayEvent.EDIT_MODE_OFF:
-			threadSave(new Runnable() {
+			threadSafe(new Runnable() {
 				public void run() {
 					showLegend(true);
 					showEditActionsCI(false);
@@ -511,7 +510,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			});
 			break;
 		case VPathwayEvent.EDIT_MODE_ON:
-			threadSave(new Runnable() {
+			threadSafe(new Runnable() {
 				public void run() {
 					showLegend(false);
 					showEditActionsCI(true);
@@ -522,7 +521,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			});
 			break;
 		case VPathwayEvent.ELEMENT_ADDED:
-			threadSave(new Runnable() {
+			threadSafe(new Runnable() {
 				public void run() {
 					deselectNewItemActions();
 				}
@@ -531,8 +530,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		}
 	}
 
-	//TODO: should be safe, not save.
-	protected void threadSave(Runnable r) {
+	protected void threadSafe(Runnable r) {
 		Display d = getShell() == null ? Display.getDefault() : getShell().getDisplay();
 		if(Thread.currentThread() == d.getThread()) {
 			r.run();

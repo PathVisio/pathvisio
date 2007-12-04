@@ -160,7 +160,6 @@ public class VPoint extends VPathwayElement {
 	}
 	
 	protected void doDraw(Graphics2D g2d) {
-		// TODO Auto-generated method stub
 	}
 
 	protected Shape getVOutline() {

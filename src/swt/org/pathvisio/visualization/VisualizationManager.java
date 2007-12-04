@@ -45,9 +45,9 @@ import org.jdom.output.XMLOutputter;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gex.ExpressionDataEvent;
-import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.GexManager.ExpressionDataEvent;
+import org.pathvisio.data.GexManager.ExpressionDataListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.view.GeneProduct;
@@ -73,7 +73,7 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 	static {
 		VisualizationManager vm = new VisualizationManager();
 		Engine.getCurrent().addApplicationEventListener(vm);
-		Gex.addListener(vm);
+		GexManager.addListener(vm);
 	}
 	
 	/**

@@ -84,9 +84,9 @@ public class CreateGdb
 			System.out.println("No commandline options specified, using in-code setting");
 			String dbname = dbfiles[4];
 			String file = dbname + ".txt";
-//			GdbMaker gdbMaker = new HsqldbGdbMaker(dbname);
-//			GdbMaker gdbMaker = new H2GdbMaker(dbname);
-			GdbMaker gdbMaker = new DerbyGdbMaker(dbname);
+//			gdbMaker = new HsqldbGdbMaker(dbname);
+//			gdbMaker = new H2GdbMaker(dbname);
+			gdbMaker = new DerbyGdbMaker(dbname);
 			createGDBFromTxt (file);
 		} else { //TODO: neat commandline options
 			String txt = args[0];
@@ -109,9 +109,9 @@ public class CreateGdb
     	StopWatch timer = new StopWatch();
     	gdbMaker.info("Timer started");
     	timer.start();
-    	try {
-    	    
-			String dbname = gdbMaker.getDbName();
+    	try 
+    	{
+			//String dbname = gdbMaker.getDbName();
         	gdbMaker.connect(true);
         	
     		gdbMaker.createTables();

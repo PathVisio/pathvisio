@@ -36,8 +36,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.DataNodeListExporter;
@@ -90,11 +91,16 @@ public class GuiMain {
 		window.open();
 		Logger.log.trace ("Window closed");
 		
-		//Perform exit operations
-		//TODO: implement PropertyChangeListener and fire exit property when closing
-		// make classes themself responsible for closing when exit property is changed
-		Gex.getCurrentGex().close();
-		GdbManager.getCurrentGdb().close();
+		GexManager.close();
+		try
+		{
+			GdbManager.getCurrentGdb().close();
+		}
+		catch (DataException e)
+		{
+			Logger.log.error ("Problem during GdbManager.close()", e);
+		}
+		
 		//Close log stream
 		Logger.log.getStream().close();
 		
@@ -217,8 +223,6 @@ public class GuiMain {
 	static void registerListeners() {
 		VisualizationManager vmgr = new VisualizationManager();		
 		Engine.getCurrent().addApplicationEventListener(vmgr);
-		//TODO: this won't work. Gex needs to add itself
-		//Engine.getCurrent().addApplicationEventListener(Gex.getCurrentGex());
 	}
 	
 	static void registerExporters() {

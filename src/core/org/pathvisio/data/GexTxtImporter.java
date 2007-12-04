@@ -26,6 +26,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
@@ -48,6 +49,7 @@ public class GexTxtImporter
 	 */
 	public static void importFromTxt(ImportInformation info, ProgressKeeper p)
 	{
+		SimpleGex result = null;
 		int importWork = (int)(p.getTotalWork() * 0.8);
 		int finalizeWork = (int)(p.getTotalWork() * 0.2);
 		
@@ -70,7 +72,7 @@ public class GexTxtImporter
 			p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
-			Gex.connect(info.dbName, true, false);
+			result = new SimpleGex(info.dbName, true, Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX));
 			
 			p.report("Importing data");
 			p.report("> Processing headers");
@@ -83,7 +85,7 @@ public class GexTxtImporter
 			
 			String[] headers = info.getColNames();
 			//Parse sample names and add to Sample table
-			PreparedStatement pstmt = Gex.getCurrentGex().getCon().prepareStatement(
+			PreparedStatement pstmt = result.getCon().prepareStatement(
 					" INSERT INTO SAMPLES " +
 					"	(idSample, name, dataType)  " +
 			" VALUES (?, ?, ?)		  ");
@@ -94,7 +96,7 @@ public class GexTxtImporter
 				if(p.isCancelled())
 				{
 					//User pressed cancel  
-					Gex.getCurrentGex().close(true);
+					result.close(true);
 					error.close();
 					return;
 				}
@@ -124,7 +126,7 @@ public class GexTxtImporter
 			
 			//Check ids and add expression data
 			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
-			pstmt = Gex.getCurrentGex().getCon().prepareStatement(
+			pstmt = result.getCon().prepareStatement(
 					"INSERT INTO expression			" +
 					"	(id, code, ensId,			" + 
 					"	 idSample, data, groupId)	" +
@@ -143,7 +145,7 @@ public class GexTxtImporter
 			{
 				if(p.isCancelled()) 
 				{ 
-					Gex.getCurrentGex().close(); 
+					result.close(); 
 					error.close(); 
 					return; 
 				} //User pressed cancel
@@ -245,26 +247,20 @@ public class GexTxtImporter
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
 			p.setTaskName("Closing database connection");
-			Gex.getCurrentGex().close(true);
+			result.close(true);
 			p.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
-			try 
-			{
-				Gex.connect(); //re-connect and use the created expression dataset
-			} catch(Exception e) {
-				Logger.log.error("Exception on connecting expression dataset from import thread", e);
-			}
-
+			GexManager.setCurrentGex(result, true);
 			p.finished();
 		} 
 		catch(Exception e) 
 		{ 
 			p.report("Import aborted due to error: " + e.getMessage());
 			Logger.log.error("Expression data import error", e);
-			Gex.getCurrentGex().close(true);
+			result.close(true);
 			error.close();
 		}
 	}

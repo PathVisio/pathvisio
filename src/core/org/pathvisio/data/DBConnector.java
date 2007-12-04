@@ -30,10 +30,9 @@ import org.pathvisio.debug.Logger;
  * that are different for Derby, Hsqldb, etc.
  * 
  * This class implements only non-ui functionality.
- * There is a derived class that also includes ui-functionality
- * 
- * Most of the methods in here for creating 
- * a database actually apply to gex only.
+ * There is a derived DBConnSwt class that also 
+ * includes dialogs to set the parameters
+ * for opening / creating.
  */
 public abstract class DBConnector 
 {
@@ -217,5 +216,6 @@ public abstract class DBConnector
 	public void compact(Connection con) throws SQLException {
 		//May be implemented by subclasses
 	}
+	
 
 }

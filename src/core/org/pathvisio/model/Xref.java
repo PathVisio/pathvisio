@@ -41,7 +41,7 @@ public class Xref implements Comparable<Xref> {
 	 * use Xref.toString
 	 */
 	public String getName() { return toString(); }
-	public String toString() { return ds.getSystemCode() + ":" + id;  }
+	public String toString() { return (ds == null ? "" : ds.getSystemCode()) + ":" + id;  }
 	
 	public int hashCode() 
 	{

@@ -46,12 +46,12 @@ public class VisualizationEvent extends EventObject
 
 	private int type;
 	
-	/** get the type of this event, must be one of the VisualizationEvent.XXX constants */
+	/** get the type of this event, must be one of the VisualizationEvent.XX constants */
 	public int getType () { return type; }
 
 	/**
 	   Create a new VisualizationEvent with the specified event type and source.
-	   EventType must be one of the VisualizatonEvent.XXX constants.
+	   EventType must be one of the VisualizatonEvent.XX constants.
 	   source can not be null.
 	 */
 	public VisualizationEvent(Object source, int type)

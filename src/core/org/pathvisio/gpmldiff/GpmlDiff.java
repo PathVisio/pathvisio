@@ -167,10 +167,6 @@ class GpmlDiff
 				{
 					out = new DgpmlOutputter();
 				}
-				else if (outputType.equals ("svg"))
-				{				
-					out = new SvgOutputter(oldDoc, newDoc);
-				}
 				else
 				{
 					System.out.println ("Unknown ouput-type " + outputType);

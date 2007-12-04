@@ -32,7 +32,7 @@ import org.pathvisio.model.Xref;
  * A CachedData object will contain a list of {@link Data} object for every gene-product on the pathway for 
  * which data is available in the expression dataset
  * @author Thomas
- * @see Gex#cacheData
+ * @see SimpleGex#cacheData
  */
 public class CachedData {
 	
@@ -109,7 +109,7 @@ public class CachedData {
 		HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
 		List<Data> dlist = data.get(idc);
 		if(dlist != null) {
-			HashMap<Integer, Sample> samples = Gex.getCurrentGex().getSamples();
+			HashMap<Integer, Sample> samples = GexManager.getCurrentGex().getSamples();
 			for(int idSample : samples.keySet())
 			{
 				int dataType = samples.get(idSample).getDataType();
@@ -180,7 +180,7 @@ public class CachedData {
 		 * Get the reporter this object contains data for
 		 * @return The IdCodePair that represents the reporter this object contains data for
 		 */
-		public Xref getIdCodePair() { return idc; }
+		public Xref getXref() { return idc; }
 		
 		/**
 		 * Get the group id for this object
@@ -215,7 +215,7 @@ public class CachedData {
 		 * Set the data for the given sample. Data will be parsed to double if possible
 		 * @param sampleId The id of the sample to set the data for
 		 * @param data The {@link String} representation of the data to add
-		 * @see Gex#cacheData
+		 * @see SimpleGex#cacheData
 		 */
 		protected void setSampleData(int sampleId, String data) {
 			Object parsedData = null;

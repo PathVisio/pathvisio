@@ -1197,7 +1197,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				SAXOutputter so = new SAXOutputter(vh);
 				so.output(doc);
 				// If no errors occur, the file is valid according to the gpml xml schema definition
-				//TODO: open dialog to report error
 				Logger.log.info("Document is valid according to the xml schema definition '" + 
 						xsdFile.toString() + "'");
 			} catch (SAXException se) {

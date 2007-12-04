@@ -35,9 +35,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.jdom.Element;
 import org.pathvisio.Engine;
-import org.pathvisio.data.Gex;
-import org.pathvisio.data.Gex.ExpressionDataEvent;
-import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.GexManager.ExpressionDataEvent;
+import org.pathvisio.data.GexManager.ExpressionDataListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.Graphics;
@@ -75,7 +75,7 @@ public class Visualization implements
 	public Visualization(String name) {
 		initPlugins();
 		this.name = name;
-		Gex.addListener(this);
+		GexManager.addListener(this);
 		VisualizationManager.addListener(this);
 		ColorSetManager.addListener(this);
 	}

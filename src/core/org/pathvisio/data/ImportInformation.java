@@ -164,21 +164,20 @@ public class ImportInformation {
 	 * Creates a new one 
 	 * @return
 	 */
-	public BufferedReader getBufferedReader() {
-		try {
-			if (in == null) {
+	public BufferedReader getBufferedReader() throws IOException
+	{
+		if (in == null) 
+		{
 				in = new BufferedReader(new FileReader(txtFile));
-				// changed readahead from 10000 to 50000
-				// 22.10.2007: changed readahead from 50000 to 500000
+				// changed readahead from 10000 to 500000
 				// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4616869
 				// TODO: this may still fail for long lines (more than 500000 bytes in 50 lines) 
 				in.mark(500000);
-			} else {
-				in.reset();
-			}
-		} catch (Exception e) {
-			Logger.log.error("Error reading file", e);
-		} // TODO: handle exception
+		} 
+		else 
+		{
+			in.reset();
+		}
 		return in;
 	}
 
@@ -223,7 +222,8 @@ public class ImportInformation {
 	 * row is present, a header row is created manually.
 	 * @return the column names
 	 */
-	public String[] getColNames() {
+	public String[] getColNames() 
+	{
 		if(getNoHeader() == true) {
 			try {
 				BufferedReader in = getBufferedReader();

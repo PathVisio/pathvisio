@@ -56,7 +56,14 @@ public interface Gdb
 	 * @return The gene symbol, or null if the symbol could not be found
 	 */
 	public String getGeneSymbol(Xref ref);
-	
+
+	/**
+	 * Gets the backpage info for the given gene id for display on BackpagePanel
+	 * @param ref The gene to get the backpage info for
+	 * @return String with the backpage info, null if the gene was not found
+	 */
+	public String getBpInfo(Xref ref);
+
 	public String getBackpageHTML(Xref ref, String bpHead);
 	
 	/**

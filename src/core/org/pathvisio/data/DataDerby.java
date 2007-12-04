@@ -105,7 +105,6 @@ public class DataDerby extends DBConnector
 		{
 			throw new DataException (e);
 		}
-	
 		
 		Logger.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
 		
@@ -154,18 +153,26 @@ public class DataDerby extends DBConnector
 		}
 	}
 	
-	public void compact(Connection con) throws SQLException {
-		con.setAutoCommit(true);
-
-		CallableStatement cs = con.prepareCall
-		("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
-		//Expression table
-		cs.setString(1, "APP");
-		cs.setString(2, "EXPRESSION");
-		cs.setShort(3, (short) 1);
-		cs.execute();
-		
-		con.commit(); //Just to be sure...
+	public void compact(Connection con) throws DataException 
+	{
+		try
+		{
+			con.setAutoCommit(true);
+	
+			CallableStatement cs = con.prepareCall
+			("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
+			//Expression table
+			cs.setString(1, "APP");
+			cs.setString(2, "EXPRESSION");
+			cs.setShort(3, (short) 1);
+			cs.execute();
+			
+			con.commit(); //Just to be sure...
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e); 
+		}
 	}
 		
 	void toZip(File zipFile, File dbDir) {

@@ -19,11 +19,15 @@ import org.pathvisio.model.*;
 import org.pathvisio.data.*;
 import java.util.*;
 import java.io.*;
+import org.pathvisio.debug.StopWatch;
 
 class TutorialFiles
 {
 	public static void main (String[] argv)
 	{
+    	StopWatch timer = new StopWatch();
+    	System.out.println ("Timer started");
+    	timer.start();
 		
 		final String tutorialPwy = "Hs_Apoptosis.gpml";
 		Pathway pwy = new Pathway();
@@ -46,14 +50,12 @@ class TutorialFiles
 
 		// now look up all cross references in the human Gdb.
 
-		Gdb gdb;
+		Gdb sourceGdb;
 		try
 		{
 			//String dbName = "C:\\Documents and Settings\\martijn\\PathVisio-Data\\gene databases\\Hs_41_36c.pgdb";
 			String dbName = "/home/martijn/PathVisio-Data/gene databases/Hs_41_36c.pgdb";
-			gdb = new SimpleGdb (
-				dbName, 
-				new DataDerby());
+			sourceGdb = new SimpleGdb (dbName,	new DataDerby(), DBConnector.PROP_NONE);
 		}
 		catch (Exception e)
 		{
@@ -61,14 +63,35 @@ class TutorialFiles
 			return;
 		}
 		
-		for (Xref i : refs)
+		try
 		{
-			List<Xref> newRefs = gdb.getCrossRefs(i, DataSource.ENSEMBL);
-			
-			for (Xref j : newRefs)
+			int error = 0;
+			SimpleGdb targetGdb = new SimpleGdb("tutorial", new DataDerby(), DBConnector.PROP_NONE);
+			targetGdb.createGdbTables();
+			for (Xref i : refs)
 			{
-				System.out.println(i + "\t" + j);
+				List<Xref> newRefs = sourceGdb.getCrossRefs(i, DataSource.ENSEMBL);
+				
+				for (Xref j : newRefs)
+				{
+					String bpText = sourceGdb.getBpInfo(j);
+					error += targetGdb.addGene(j, bpText);
+					error += targetGdb.addLink(i.getId(), j);
+					System.out.println(i + "\t" + j);
+				}
 			}
+    		targetGdb.commit();
+    		targetGdb.createGdbIndices();
+    		targetGdb.compact();
+    		System.out.println ("total errors (duplicates): " + error);
+    		System.out.println ("total ids in gene table: " + targetGdb.getGeneCount());
+    		targetGdb.close();
+    		System.out.println ("Timer stopped: " + timer.stop());
+    		
+		}
+		catch (DataException e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

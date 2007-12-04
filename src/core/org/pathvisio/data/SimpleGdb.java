@@ -39,25 +39,51 @@ import org.pathvisio.model.Xref;
 import org.pathvisio.util.Utils;
 
 /**
- * Handles everything for simple, sql-based implementations of a Gene Database. It contains the database connection,
- * several methods to query data from the gene database and methods to convert a GenMAPP gene database
- * to hsqldb format
+ * SimpleGdb is the main implementation of the Gdb interface,
+ * for dealing with single SQL-based pgdb's.
+ * It's responsible for creating and querying a single 
+ * pgdb relational database through the JDBC interface.
+ *  
+ * It wraps SQL statements in methods, 
+ * so the rest of the apps don't need to know the
+ * details of the Database schema.
+ * 
+ * It delegates dealing with the differences between 
+ * various RDBMS's (Derby, Hsqldb etc.)
+ * to a DBConnector instance.
+ * A correct DBConnector instance needs to be 
+ * passed to the constructor of SimpleGdb. 
+ * 
+ * In the PathVisio GUI environment, use GdbManager
+ * to create and connect one or two centralized Gdb's. 
+ * This will also automatically
+ * find the right DBConnector from the preferences.
+ *  
+ * In a head-less or test environment, you can bypass GdbManager
+ * and use SimpleGdb directly 
+ * to create or connect to one or more pgdb's of any type.
  */
 public class SimpleGdb implements Gdb
 {		
+	private static final int GDB_COMPAT_VERSION = 2; //Preferred schema version
+
 	static 
 	{
+		// load header resource, a html template for creating back-pages.
 		initializeHeader();
 	}
 		
-	private static String table_DataNode = "datanode";
-	
-	private static final int COMPAT_VERSION = 2; //Preferred schema version
+	// the name of this table is "datanode" starting from
+	// schema v2. 
+	// it is "gene" for older tables.
+	private String table_DataNode = "datanode";
 	
 	/**
 	 * The {@link Connection} to the Gene Database
 	 */
+	// SQL connection
 	private Connection con;
+	// dbConnector, helper class for dealing with RDBMS specifcs.
 	private DBConnector dbConnector;
 	
 	/**
@@ -100,11 +126,11 @@ public class SimpleGdb implements Gdb
 	
 	/**
 	 * Gets the backpage info for the given gene id for display on BackpagePanel
-	 * @param id The gene id to get the backpage info for
-	 * @param code systemcode of the gene identifier
+	 * @param ref The gene to get the backpage info for
 	 * @return String with the backpage info, null if the gene was not found
 	 */
-	String getBpInfo(Xref ref) {
+	public String getBpInfo(Xref ref) 
+	{
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
@@ -332,7 +358,7 @@ public class SimpleGdb implements Gdb
 	 * @param dbName The file containing the Gene Database. 
 	 * @param connector An instance of DBConnector, to determine the type of database (e.g. DataDerby)
 	 */
-	public SimpleGdb(String dbName, DBConnector connector) throws DataException
+	public SimpleGdb(String dbName, DBConnector connector, int props) throws DataException
 	{
 		if(dbName == null) throw new NullPointerException();
 		
@@ -341,7 +367,7 @@ public class SimpleGdb implements Gdb
 		
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
 
-		con = dbConnector.createConnection(dbName);
+		con = dbConnector.createConnection(dbName, props);
 		try
 		{
 			con.setReadOnly(true);
@@ -365,7 +391,7 @@ public class SimpleGdb implements Gdb
 		{
 			//Ignore, older db's don't even have schema version
 		}
-		if(version < COMPAT_VERSION) {
+		if(version < GDB_COMPAT_VERSION) {
 			//Datanode table name is 'gene'
 			table_DataNode = "gene";
 		} else {
@@ -389,12 +415,12 @@ public class SimpleGdb implements Gdb
 	 * Note: Official GDB's are created by AP, not with this code.
 	 * This is just here for testing purposes.
 	 */
-	public void createGdbTables(Connection convertCon) {
+	public void createGdbTables() {
 		Logger.log.trace("Info:  Creating tables");
 		
 		try 
 		{
-			Statement sh = convertCon.createStatement();
+			Statement sh = con.createStatement();
 			sh.execute("DROP TABLE info");
 			sh.execute("DROP TABLE link");
 			sh.execute("DROP TABLE gene");
@@ -405,14 +431,14 @@ public class SimpleGdb implements Gdb
 		}
 		try
 		{
-			Statement sh = convertCon.createStatement();
+			Statement sh = con.createStatement();
 			sh.execute(
 					"CREATE TABLE					" +
 					"		info							" +
 					"(	  version INTEGER PRIMARY KEY		" +
 					")");
 			sh.execute( //Add compatibility version of GDB
-					"INSERT INTO version VALUES ( " + COMPAT_VERSION + ")");
+					"INSERT INTO version VALUES ( " + GDB_COMPAT_VERSION + ")");
 			sh.execute(
 					"CREATE TABLE					" +
 					"		link							" +
@@ -540,18 +566,18 @@ public class SimpleGdb implements Gdb
     /**
      * Add a gene to the gene database
      */
-    int addGene(String ens, String id, String code, String bpText) 
+    public int addGene(Xref ref, String bpText) 
     {
 		try 
 		{
-			pstGene.setString(1, id);
-			pstGene.setString(2, code);
+			pstGene.setString(1, ref.getId());
+			pstGene.setString(2, ref.getDataSource().getSystemCode());
 			pstGene.setString(3, bpText);
 			pstGene.executeUpdate();
 		} 
 		catch (Exception e) 
 		{ 
-			Logger.log.error(ens + "\t" + id + "\t" + code, e);
+			Logger.log.error("" + ref, e);
 			return 1;
 		}
 		return 0;
@@ -560,19 +586,19 @@ public class SimpleGdb implements Gdb
     /**
      * Add a link to the gene database
      */
-    int addLink(String ens, String id, String code) 
+    public int addLink(String link, Xref ref) 
     {
     	try 
     	{
-			pstLink.setString(1, ens);
+			pstLink.setString(1, link);
 			pstLink.setString(2, DataSource.ENSEMBL.getSystemCode());
-			pstLink.setString(3, id);
-			pstLink.setString(4, code);
+			pstLink.setString(3, ref.getId());
+			pstLink.setString(4, ref.getDataSource().getSystemCode());
 			pstLink.executeUpdate();
 		} 
-    	catch (Exception e) 
+    	catch (Exception e)
 		{
-			Logger.log.error(ens + "\t" + id + "\t" + code, e);
+			Logger.log.error(link + "\t" + ref, e);
 			return 1;
 		}
 		return 0;
@@ -583,31 +609,38 @@ public class SimpleGdb implements Gdb
 	   You can call this at any time after creating the tables,
 	   but it is good to do it only after inserting all data.
 	 */
-	public void createGdbIndices(Connection convertCon) throws SQLException 
+	public void createGdbIndices() throws DataException 
 	{
-		Statement sh = convertCon.createStatement();
-		sh.execute(
-				"CREATE INDEX i_codeLeft" +
-				" ON link(codeLeft)"
-		);
-		sh.execute(
-				"CREATE INDEX i_idRight" +
-				" ON link(idRight)"
-		);
-		sh.execute(
-				"CREATE INDEX i_codeRight" +
-				" ON link(codeRight)"
-		);
-		sh.execute(
-				"CREATE INDEX i_code" +
-				" ON gene(code)"
-		);
+		try
+		{
+			Statement sh = con.createStatement();
+			sh.execute(
+					"CREATE INDEX i_codeLeft" +
+					" ON link(codeLeft)"
+			);
+			sh.execute(
+					"CREATE INDEX i_idRight" +
+					" ON link(idRight)"
+			);
+			sh.execute(
+					"CREATE INDEX i_codeRight" +
+					" ON link(codeRight)"
+			);
+			sh.execute(
+					"CREATE INDEX i_code" +
+					" ON gene(code)"
+			);
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 	}
 	
 	/**
 	   prepare for inserting genes and/or links
 	 */
-	void preInsert(Connection con) throws SQLException
+	public void preInsert(Connection con) throws SQLException
 	{
 		con.setAutoCommit(false);
 		pstGene = con.prepareStatement(
@@ -627,9 +660,41 @@ public class SimpleGdb implements Gdb
 	/**
 	   commit inserted data
 	 */
-	void commit() throws SQLException
+	public void commit() throws DataException
 	{
-		con.commit();
+		try
+		{
+			con.commit();
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 	}
-	
+
+	/**
+	   returns number of rows in gene table
+	 */
+	public int getGeneCount() throws DataException
+	{
+		int result = 0;
+		try
+		{
+			ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM gene");
+			r.next();
+			result = r.getInt (1);
+			r.close();
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
+		return result;
+	}
+
+	public void compact() throws DataException
+	{
+		dbConnector.compact(con);
+	}
+
 }

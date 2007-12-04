@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,10 +84,7 @@ public class GexTxtImporter
 			
 			String[] headers = info.getColNames();
 			//Parse sample names and add to Sample table
-			PreparedStatement pstmt = result.getCon().prepareStatement(
-					" INSERT INTO SAMPLES " +
-					"	(idSample, name, dataType)  " +
-			" VALUES (?, ?, ?)		  ");
+			result.prepare();
 			int sampleId = 0;
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++)
@@ -108,10 +104,10 @@ public class GexTxtImporter
 					)
 				{ 
 					try {
-						pstmt.setInt(1, sampleId++);
-						pstmt.setString(2, headers[i]);
-						pstmt.setInt(3, info.isStringCol(i) ? Types.CHAR : Types.REAL);
-						pstmt.execute();
+						result.addSample(
+							sampleId++, 
+							headers[i], 
+							info.isStringCol(i) ? Types.CHAR : Types.REAL);
 						dataCols.add(i);
 					}
 					catch(Error e) { 
@@ -126,11 +122,6 @@ public class GexTxtImporter
 			
 			//Check ids and add expression data
 			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
-			pstmt = result.getCon().prepareStatement(
-					"INSERT INTO expression			" +
-					"	(id, code, ensId,			" + 
-					"	 idSample, data, groupId)	" +
-			"VALUES	(?, ?, ?, ?, ?, ?)			");
 			String line = null;
 			int n = info.firstDataRow - 1;
 			int added = 0;
@@ -213,13 +204,12 @@ public class GexTxtImporter
 							
 							try 
 							{
-								pstmt.setString(1, id);
-								pstmt.setString(2, ds.getSystemCode());
-								pstmt.setString(3, ensId);
-								pstmt.setString(4, Integer.toString(dataCols.indexOf(col)));
-								pstmt.setString(5, data[col]);
-								pstmt.setInt(6, added);
-								pstmt.execute();
+								result.addExpr(
+										ref, 
+										ensId,
+										Integer.toString(dataCols.indexOf(col)),
+										data[col],
+										added);
 							} 
 							catch (Exception e) 
 							{

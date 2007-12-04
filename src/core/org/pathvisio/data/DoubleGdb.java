@@ -145,15 +145,7 @@ public class DoubleGdb implements Gdb
 		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
 	
 		// find first gene database that has non-null bpInfo.
-		String bpInfo = null;
-		for (SimpleGdb child : gdbs)
-		{
-			if (child != null && child.isConnected())
-			{
-				bpInfo = child.getBpInfo(ref);
-				if (bpInfo != null) break;
-			}
-		}		
+		String bpInfo = getBpInfo(ref);		
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
 		// get crossReferences from all registerd gdb's
@@ -289,7 +281,8 @@ public class DoubleGdb implements Gdb
 	 * returns the aggregate of all child results.
 	 */
 	public List<Map<PropertyType, String>> getIdSuggestions(String text,
-			int limit) {
+			int limit) 
+	{
 		List<Map<PropertyType, String>> result = null;
 		
 		for (SimpleGdb child : gdbs)
@@ -309,10 +302,10 @@ public class DoubleGdb implements Gdb
 
 	/**
 	 * returns the aggregate of all child results.
-	 * TODO: doesn't respect limit for aggregate
 	 */
 	public List<Map<PropertyType, String>> getSymbolSuggestions(String text,
-			int limit) {
+			int limit) 
+	{
 		List<Map<PropertyType, String>> result = null;
 		
 		for (SimpleGdb child : gdbs)
@@ -324,7 +317,28 @@ public class DoubleGdb implements Gdb
 				else
 					result.addAll (child.getSymbolSuggestions (text, limit));
 			}
+			// don't need to continue if we already reached limit.
+			if (result.size() >= limit) break;
 		}
 		return result;
+	}
+
+	/**
+	 * return first non-null child result
+	 */
+	public String getBpInfo(Xref ref) 
+	{
+		String result = null;
+		// return the first database with a result.
+		for (SimpleGdb child : gdbs)
+		{
+			if (child != null && child.isConnected())
+			{
+				result = child.getBpInfo(ref);
+				if (result != null) return result;
+			}
+		}
+		// failure
+		return null;
 	}
 }

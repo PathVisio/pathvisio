@@ -2388,9 +2388,6 @@ public class VPathway implements PathwayListener
 			String y = p.getStartGraphRef();
 			if (y != null)
 			{
-				// TODO: mapping graphrefs to newly created id's
-				// doesn't work properly yet
-				// TK: Seems to work just fine...
 				if (idmap.containsKey(y))
 				{
 					p.setStartGraphRef(idmap.get(y));

@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.jdom.Element;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
@@ -77,7 +77,7 @@ public class ExpressionColorPlugin extends PluginWithColoredSamples {
 
 	protected void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
 		ColorSample smp = (ColorSample)s;
-		CachedData cache = Gex.getCurrentGex().getCachedData();
+		CachedData cache = GexManager.getCurrentGex().getCachedData();
 		
 		if(cache.hasMultipleData(idc)) {
 			switch(smp.getAmbigiousType()) {

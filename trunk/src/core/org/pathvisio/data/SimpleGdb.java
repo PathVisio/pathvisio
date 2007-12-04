@@ -19,6 +19,7 @@ package org.pathvisio.data;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,7 +30,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -43,13 +43,8 @@ import org.pathvisio.util.Utils;
  * several methods to query data from the gene database and methods to convert a GenMAPP gene database
  * to hsqldb format
  */
-public class SimpleGdb implements IGdb
-{	
-	// private, so you can't instantiate Gdb. Use the connect() method. 
-	private SimpleGdb()
-	{
-	}
-	
+public class SimpleGdb implements Gdb
+{		
 	static 
 	{
 		initializeHeader();
@@ -63,6 +58,7 @@ public class SimpleGdb implements IGdb
 	 * The {@link Connection} to the Gene Database
 	 */
 	private Connection con;
+	private DBConnector dbConnector;
 	
 	/**
 	 * Check whether a connection to the database exists
@@ -217,7 +213,7 @@ public class SimpleGdb implements IGdb
 	 * 
 	 * @deprecated Use getCrossRefs instead
 	 */	
-	public ArrayList<Xref> ensId2Refs(String ensId, DataSource resultDs) 
+	public List<Xref> ensId2Refs(String ensId, DataSource resultDs) 
 	{
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -261,7 +257,7 @@ public class SimpleGdb implements IGdb
 	 * 
 	 * @deprecated use getCrossRefs instead
 	 */
-	public ArrayList<String> ref2EnsIds(Xref xref)
+	public List<String> ref2EnsIds(Xref xref)
 	{	
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -317,47 +313,44 @@ public class SimpleGdb implements IGdb
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public ArrayList<Xref> getCrossRefs (Xref idc, DataSource resultDs) 
+	public List<Xref> getCrossRefs (Xref idc, DataSource resultDs) 
 	{
 		Logger.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
-		ArrayList<Xref> refs = new ArrayList<Xref>();
-		ArrayList<String> ensIds = ref2EnsIds(idc);
+		List<Xref> refs = new ArrayList<Xref>();
+		List<String> ensIds = ref2EnsIds(idc);
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId, resultDs));
 
 		Logger.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
 	}
-			
-	private static DBConnector getDBConnector() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
-	}
-	
+				
 	/**
-	 * Opens a {@link Connection} to the Gene Database located in the given file
-	 * @param dbName The file containing the Gene Database. This file needs to be the
-	 * .properties file of the Hsqldb database
+	 * Opens a connection to the Gene Database located in the given file
+	 * @param dbName The file containing the Gene Database. 
+	 * @param connector An instance of DBConnector, to determine the type of database (e.g. DataDerby)
 	 */
-	public static SimpleGdb connect(String dbName) throws Exception
+	public SimpleGdb(String dbName, DBConnector connector) throws DataException
 	{
-		SimpleGdb gdb = new SimpleGdb();
 		if(dbName == null) throw new NullPointerException();
 		
-		gdb.dbName = dbName;
+		this.dbName = dbName;
+		this.dbConnector = connector;
 		
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
-		DBConnector connector = getDBConnector();
-		gdb.con = connector.createConnection(dbName);
-		gdb.con.setReadOnly(true);
-		gdb.checkSchemaVersion();
-		ApplicationEvent e =
-			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
-		Engine.getCurrent().fireApplicationEvent (e);
-		Logger.log.trace("Current Gene Database: " + dbName);
-		
-		return gdb;
+
+		con = dbConnector.createConnection(dbName);
+		try
+		{
+			con.setReadOnly(true);
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
+		checkSchemaVersion();
 	}
 	
 	private void checkSchemaVersion() 
@@ -383,16 +376,10 @@ public class SimpleGdb implements IGdb
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
 	 */
-	public void close() 
+	public void close() throws DataException 
 	{
-		if(con != null) {
-			try {
-				DBConnector connector = getDBConnector();
-				connector.closeConnection(con);
-			} catch(Exception e) {
-				Logger.log.error("Unable to close database connection", e);
-			}
-		}
+		if (con == null) throw new DataException("Database connection already closed");
+		dbConnector.closeConnection(con);
 	}
 			
 	/**
@@ -402,7 +389,7 @@ public class SimpleGdb implements IGdb
 	 * Note: Official GDB's are created by AP, not with this code.
 	 * This is just here for testing purposes.
 	 */
-	public void createTables(Connection convertCon) {
+	public void createGdbTables(Connection convertCon) {
 		Logger.log.trace("Info:  Creating tables");
 		
 		try 
@@ -547,4 +534,102 @@ public class SimpleGdb implements IGdb
 		return result;
 	}
 
+    PreparedStatement pstGene;
+    PreparedStatement pstLink;
+
+    /**
+     * Add a gene to the gene database
+     */
+    int addGene(String ens, String id, String code, String bpText) 
+    {
+		try 
+		{
+			pstGene.setString(1, id);
+			pstGene.setString(2, code);
+			pstGene.setString(3, bpText);
+			pstGene.executeUpdate();
+		} 
+		catch (Exception e) 
+		{ 
+			Logger.log.error(ens + "\t" + id + "\t" + code, e);
+			return 1;
+		}
+		return 0;
+    }
+    
+    /**
+     * Add a link to the gene database
+     */
+    int addLink(String ens, String id, String code) 
+    {
+    	try 
+    	{
+			pstLink.setString(1, ens);
+			pstLink.setString(2, DataSource.ENSEMBL.getSystemCode());
+			pstLink.setString(3, id);
+			pstLink.setString(4, code);
+			pstLink.executeUpdate();
+		} 
+    	catch (Exception e) 
+		{
+			Logger.log.error(ens + "\t" + id + "\t" + code, e);
+			return 1;
+		}
+		return 0;
+    }
+    
+	/**
+	   Create indices on the database
+	   You can call this at any time after creating the tables,
+	   but it is good to do it only after inserting all data.
+	 */
+	public void createGdbIndices(Connection convertCon) throws SQLException 
+	{
+		Statement sh = convertCon.createStatement();
+		sh.execute(
+				"CREATE INDEX i_codeLeft" +
+				" ON link(codeLeft)"
+		);
+		sh.execute(
+				"CREATE INDEX i_idRight" +
+				" ON link(idRight)"
+		);
+		sh.execute(
+				"CREATE INDEX i_codeRight" +
+				" ON link(codeRight)"
+		);
+		sh.execute(
+				"CREATE INDEX i_code" +
+				" ON gene(code)"
+		);
+	}
+	
+	/**
+	   prepare for inserting genes and/or links
+	 */
+	void preInsert(Connection con) throws SQLException
+	{
+		con.setAutoCommit(false);
+		pstGene = con.prepareStatement(
+			"INSERT INTO gene " +
+			"	(id, code," +
+			"	 backpageText)" +
+			"VALUES (?, ?, ?)"
+ 		);
+		pstLink = con.prepareStatement(
+			"INSERT INTO link " +
+			"	(idLeft, codeLeft," +
+			"	 idRight, codeRight)" +
+			"VALUES (?, ?, ?, ?)"
+ 		);		
+	}	
+
+	/**
+	   commit inserted data
+	 */
+	void commit() throws SQLException
+	{
+		con.commit();
+	}
+	
 }

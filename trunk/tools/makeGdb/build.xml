@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<project name="ensembl2visio" default="compile" basedir=".">
+<project name="makeGdb" default="compile" basedir=".">
 	
-	<property name="src.dir" value="."/>        
+	<property name="src.dir" value="src"/>
 	<property name="build.dir" value="build"/>
 
     <property name="apidoc.dir" value="apidoc"/>

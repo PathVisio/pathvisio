@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.data.GexSwt;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.visualization.colorset.ColorSetComposite;
 
 /**
@@ -62,7 +62,7 @@ public class VisualizationDialog extends ApplicationWindow
 	
 	public boolean close()
 	{
-		GexSwt.saveXML();
+		GexManager.saveXML();
 		return super.close();
 	}
 

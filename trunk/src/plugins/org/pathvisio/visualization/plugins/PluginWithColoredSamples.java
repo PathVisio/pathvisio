@@ -62,7 +62,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.jdom.Element;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
@@ -88,7 +88,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	
 	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
 	private Canvas sidePanel;
-	private Collection<Graphics> spGraphics;
+	//private Collection<Graphics> spGraphics;
 	
 	public PluginWithColoredSamples(Visualization v) {
 		super(v);
@@ -144,7 +144,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
-			CachedData cache = Gex.getCurrentGex().getCachedData();
+			CachedData cache = GexManager.getCurrentGex().getCachedData();
 			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) continue; //No ColorSet for this sample
@@ -266,7 +266,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 	}
 	
 	public void visualizeOnSidePanel(Collection<Graphics> objects) {
-		spGraphics = objects;
+		//spGraphics = objects;
 		sidePanel.redraw();
 	}
 	
@@ -477,7 +477,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 				return ((Sample)element).getName();
 			}
 		});
-		sampleList.setInput(Gex.getCurrentGex().getSamples(Types.REAL));
+		sampleList.setInput(GexManager.getCurrentGex().getSamples(Types.REAL));
 		
 		Composite buttons = new Composite(samplesGroup, SWT.NULL);
 		buttons.setLayout(new RowLayout(SWT.VERTICAL));
@@ -709,7 +709,7 @@ public abstract class PluginWithColoredSamples extends VisualizationPlugin {
 		private final void loadXML(Element xml) throws Exception {
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
 			int csi = Integer.parseInt(xml.getAttributeValue(XML_ATTR_COLORSET));
-			Sample s = Gex.getCurrentGex().getSamples().get(id);
+			Sample s = GexManager.getCurrentGex().getSamples().get(id);
 			setId(id);
 			setName(s.getName());
 			setDataType(s.getDataType());

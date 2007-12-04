@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
@@ -121,7 +121,7 @@ public class ExpressionImagePlugin extends PluginWithColoredSamples {
 	}
 	
 	protected void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
-		CachedData cache = Gex.getCurrentGex().getCachedData();
+		CachedData cache = GexManager.getCurrentGex().getCachedData();
 		ColorSet cs = s.getColorSet();
 
 		Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());

@@ -247,47 +247,6 @@ public class Line extends Graphics
 		return line;
 	}
 	
-//	/**
-//	 * If the line type is arrow, this method draws the arrowhead
-//	 */
-//	private void drawArrowhead(GC buffer) //TODO! clean up this mess.....
-//	{
-//		double angle = 25.0;
-//		double theta = Math.toRadians(180 - angle);
-//		double[] rot = new double[2];
-//		double[] p = new double[2];
-//		double[] q = new double[2];
-//		double a, b, norm;
-//		
-//		rot[0] = Math.cos(theta);
-//		rot[1] = Math.sin(theta);
-//		
-//		buffer.setLineStyle (SWT.LINE_SOLID);
-//		
-//		double vEndx = getVEndX();
-//		double vEndy = getVEndY();
-//		double vStartx = getVStartX();
-//		double vStarty = getVStartY();
-//		
-//		if(vStartx == vEndx && vStarty == vEndy) return; //Unable to determine direction
-//		
-//		a = vEndx-vStartx;
-//		b = vEndy-vStarty;
-//		norm = 8/(Math.sqrt((a*a)+(b*b)));				
-//		p[0] = ( a*rot[0] + b*rot[1] ) * norm + vEndx;
-//		p[1] = (-a*rot[1] + b*rot[0] ) * norm + vEndy;
-//		q[0] = ( a*rot[0] - b*rot[1] ) * norm + vEndx;
-//		q[1] = ( a*rot[1] + b*rot[0] ) * norm + vEndy;
-//		int[] points = {
-//			(int)vEndx, (int)vEndy,
-//			(int)(p[0]), (int)(p[1]),
-//			(int)(q[0]), (int)(q[1])
-//		};
-//		
-//		buffer.drawPolygon (points);
-//		buffer.fillPolygon (points);
-//	}
-
 	/**
 	 * Constructs the line for the coordinates stored in this class
 	 */

@@ -29,7 +29,7 @@ import org.pathvisio.model.Xref;
  * Interface for all classes that provide Gdb-like functionality,
  * such as looking up cross-references and backpage text.
  */
-public interface IGdb 
+public interface Gdb 
 {
 	/**
 	 * Check whether a connection to the database exists
@@ -107,8 +107,9 @@ public interface IGdb
 
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
+	 * @throws DataException 
 	 */
-	public void close();
+	public void close() throws DataException;
 
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion

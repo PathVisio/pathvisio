@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.TableColumnResizer;
@@ -111,8 +112,10 @@ public class GexImportWizard extends Wizard
 			} 
 			catch (Exception e) 
 			{
+				MessageDialog.openError(getShell(), "Error", "Exception while importing data.\n" + e.getMessage() + "\nSee log for details.");
 				Logger.log.error("while running expression data import process: " + e.getMessage(), e);
-			} // TODO: handle exception
+			} 
+
 			
 			importFinished = true;
 			// Show different text on import page when the data has been imported
@@ -214,9 +217,9 @@ public class GexImportWizard extends Wizard
 					try
 					{
 						//Connect to the new database
-						SimpleGdb.connect(file);
+						GdbManager.setGeneDb(file);
 					}
-					catch(Exception ex)
+					catch(DataException ex)
 					{
 						MessageDialog.openError(getShell(), "Error", "Unable to open gene database");
 						Logger.log.error ("Unable to open gene database", ex);
@@ -252,7 +255,7 @@ public class GexImportWizard extends Wizard
 				{
 					try 
 					{
-						DBConnectorSwt dbcon = (DBConnectorSwt)Gex.getDBConnector();
+						DBConnectorSwt dbcon = SwtEngine.getCurrent().getSwtDbConnector(DBConnector.TYPE_GEX);
 						String dbName = dbcon.openNewDbDialog(getShell(), gexText.getText());
 						if(dbName != null) gexText.setText(dbName);
 					} 
@@ -686,11 +689,13 @@ public class GexImportWizard extends Wizard
 	 */
 	public void setColumnControlsContent() 
 	{
-		columnList.setItems(importInformation.getColNames());
+		String[] colNames = importInformation.getColNames();
+
+		columnList.setItems(colNames);
 		columnList.setSelection(importInformation.getStringCols());
-		idCombo.setItems(importInformation.getColNames());
+		idCombo.setItems(colNames);
 		idCombo.select(importInformation.idColumn);
-		codeCombo.setItems(importInformation.getColNames());
+		codeCombo.setItems(colNames);
 		codeCombo.select(importInformation.codeColumn);
 	}
 
@@ -715,7 +720,8 @@ public class GexImportWizard extends Wizard
 			}
 		} 
 		catch (IOException e) 
-		{ // TODO: handle IOException
+		{ 		
+			MessageDialog.openError(getShell(), "Error", "while generating preview for importing expression data: " + e.getMessage());
 			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		previewTable.pack();
@@ -842,7 +848,8 @@ public class GexImportWizard extends Wizard
 			importInformation.setDataSource(maxds);
 		} 
 		catch (IOException e) 
-		{ // TODO: handle IOException
+		{ 
+			MessageDialog.openError(getShell(), "Error", "while generating preview for importing expression data: " + e.getMessage());			
 			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
 		}
 		columnTable.pack();

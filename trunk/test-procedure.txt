@@ -12,6 +12,7 @@ test procedure: perform all these steps before a webstart release, and after mak
 # Save to a temporary location
 # import Hs_Apoptosis.mapp.
 # Search pathways for occurences of TNF (Gene symbol). Click on one to open it.
+# Search pathways for occurences of Entrez gene 3643 (Gene ID). Click one to open it.
 # create a new pathway. 
 # draw two geneproducts and a line between them. draw a circle and a tbar.
 # link the two geneproducts with the line by using alt+click
@@ -36,7 +37,8 @@ test procedure: perform all these steps before a webstart release, and after mak
 
 == PathVisio 2.0 features
 
-# Import data from example-data/sample_data_1.txt
+# Go to data->create new expression data set
+# go through the wizard to import data from example-data/sample_data_1.txt
 # create a new visualization mapping from blue to yellow 
 # open Hs_apoptosis pathway
 # check that the sample data is visible on the pathway.

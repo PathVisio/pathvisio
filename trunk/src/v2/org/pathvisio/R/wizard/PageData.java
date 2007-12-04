@@ -41,7 +41,7 @@ import org.pathvisio.R.RCommands;
 import org.pathvisio.R.RDataIn;
 import org.pathvisio.R.RDataOut;
 import org.pathvisio.R.RCommands.RInterruptedException;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 
@@ -76,7 +76,7 @@ public class PageData extends WizardPage {
 		radioExport = new Button(content, SWT.RADIO);
 		radioExport.setText("Export data to R");
 		//Only available when expression data is loaded
-		radioExport.setEnabled(Gex.getCurrentGex().isConnected());
+		radioExport.setEnabled(GexManager.getCurrentGex().isConnected());
 			
 		radioImport = new Button(content, SWT.RADIO);
 		radioImport.setText("Load previously exported data");

@@ -19,6 +19,7 @@ package org.pathvisio.data;
 import java.util.List;
 import java.util.Map;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
@@ -43,7 +44,7 @@ import org.pathvisio.preferences.GlobalPreference;
  * If the method returns a list, DoubleGdb joins
  * the result from all connected child databases together.
  */
-public class DoubleGdb implements IGdb
+public class DoubleGdb implements Gdb
 {
 	private static final int GENE_DB = 0;
 	private static final int METABOLITE_DB = 1;
@@ -58,7 +59,14 @@ public class DoubleGdb implements IGdb
 		if (gdb == gdbs[METABOLITE_DB]) return;
 
 		if (gdb == null) throw new NullPointerException();
-		if (gdbs [METABOLITE_DB] != null) gdbs[METABOLITE_DB].close();
+		try
+		{
+			if (gdbs [METABOLITE_DB] != null) gdbs[METABOLITE_DB].close();
+		}
+		catch (DataException e)
+		{
+			Logger.log.error ("Problem closing metabolite database", e);
+		}
 		gdbs [METABOLITE_DB] = gdb;		
 		GlobalPreference.DB_METABDB_CURRENT.setValue(gdb.getDbName());
 	}
@@ -72,7 +80,14 @@ public class DoubleGdb implements IGdb
 		if (gdb == gdbs[GENE_DB]) return;
 		
 		if (gdb == null) throw new NullPointerException();
-		if (gdbs [GENE_DB] != null) gdbs[GENE_DB].close();
+		try
+		{
+			if (gdbs [GENE_DB] != null) gdbs[GENE_DB].close();
+		}
+		catch (DataException e)
+		{
+			Logger.log.error ("Problem closing gene database", e);
+		}
 		gdbs [GENE_DB] = gdb;		
 		GlobalPreference.DB_GDB_CURRENT.setValue(gdb.getDbName());
 	}
@@ -80,7 +95,7 @@ public class DoubleGdb implements IGdb
 	/**
 	 * closes all child databases. 
 	 */
-	public void close() 
+	public void close() throws DataException 
 	{
 		for (SimpleGdb child : gdbs)
 		{
@@ -272,7 +287,6 @@ public class DoubleGdb implements IGdb
 
 	/**
 	 * returns the aggregate of all child results.
-	 * TODO: doesn't respect limit for aggregate
 	 */
 	public List<Map<PropertyType, String>> getIdSuggestions(String text,
 			int limit) {
@@ -287,6 +301,8 @@ public class DoubleGdb implements IGdb
 				else
 					result.addAll (child.getIdSuggestions (text, limit));
 			}
+			// don't need to continue if we already reached limit.
+			if (result.size() >= limit) break; 
 		}
 		return result;
 	}

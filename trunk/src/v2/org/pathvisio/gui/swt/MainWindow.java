@@ -40,12 +40,11 @@ import org.pathvisio.R.wizard.RWizard;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.SimpleGdb;
-import org.pathvisio.data.Gex;
 import org.pathvisio.data.GexImportWizard;
 import org.pathvisio.data.GexSwt;
-import org.pathvisio.data.Gex.ExpressionDataEvent;
-import org.pathvisio.data.Gex.ExpressionDataListener;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.GexManager.ExpressionDataEvent;
+import org.pathvisio.data.GexManager.ExpressionDataListener;
 import org.pathvisio.data.GexSwt.ProgressWizardDialog;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
@@ -76,15 +75,19 @@ public class MainWindow extends MainWindowBase
 			setToolTipText("Select Expression Data");
 		}
 		
-		public void run () {
-			try {
+		public void run () 
+		{
+			try 
+			{
 				DBConnectorSwt dbcon = GexSwt.getDBConnector();
 				String dbName = dbcon.openChooseDbDialog(getShell());
 				
 				if(dbName == null) return;
 				
-				Gex.connect(dbName);
-			} catch(Exception e) {
+				GexManager.setCurrentGex(dbName, false, true);
+			} 
+			catch(Exception e) 
+			{
 				String msg = "Failed to open Expression Dataset" + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
 						"Error: " + msg + "\n\n" + 
@@ -115,7 +118,7 @@ public class MainWindow extends MainWindowBase
 				
 				if(dbName == null) return;
 				
-				GdbManager.setMetaboliteDb(SimpleGdb.connect(dbName));
+				GdbManager.setMetaboliteDb(dbName);
 			} 
 			catch(Exception e) 
 			{
@@ -172,7 +175,7 @@ public class MainWindow extends MainWindowBase
 			setToolTipText("Create and edit color sets");
 			setImageDescriptor(ImageDescriptor.createFromURL(
 					Engine.getCurrent().getResourceURL("icons/colorset.gif")));
-			Gex.addListener(this);
+			GexManager.addListener(this);
 			setEnabled(false);
 		}
 		public void run () {
@@ -418,7 +421,7 @@ public class MainWindow extends MainWindowBase
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
 		Engine.getCurrent().addApplicationEventListener(this);
-		Gex.addListener(this);
+		GexManager.addListener(this);
 	}
 
 	public boolean editOnOpen() {

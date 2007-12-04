@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
@@ -56,14 +57,15 @@ public class GexGenMAPPImporter
 			Logger.log.error("Unable to open error file for gdb conversion: " + ex.getMessage(), ex);
 		}
 		
+		SimpleGex result;
 		try {
-			Gex.connect(null, true, false); //Connect and delete the old database if exists
+			result = new SimpleGex (null, true, Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX));			
 			connectGmGex(gmGexFile); //Connect to the GenMAPP gex
 			
-			Gex.getCurrentGex().getCon().setAutoCommit(false); //Keep control over when to commit, should increase speed
+			result.getCon().setAutoCommit(false); //Keep control over when to commit, should increase speed
 			Statement s = conGmGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			
-			PreparedStatement pstmtExpr = Gex.getCurrentGex().getCon().prepareStatement(
+			PreparedStatement pstmtExpr = result.getCon().prepareStatement(
 					"INSERT INTO expression			" +
 					"	(id, code, ensId,			" + 
 					"	 idSample, data)			" +
@@ -82,7 +84,7 @@ public class GexGenMAPPImporter
 				int dataType = rsmd.getColumnType(i);
 				String sampleName = rsmd.getColumnName(i);
 				// Add new sample
-				Gex.getCurrentGex().getCon().createStatement().execute("INSERT INTO SAMPLES" +
+				result.getCon().createStatement().execute("INSERT INTO SAMPLES" +
 						"	(idSample, name, dataType)" + 
 						"VALUES ( " + (i - 4) + ",'" + sampleName + "', " + dataType + " )");
 			}
@@ -95,7 +97,7 @@ public class GexGenMAPPImporter
 				if(p.isCancelled()) //Check if the user cancelled the conversion
 				{
 					closeGmGex();
-					Gex.getCurrentGex().close();
+					result.close();
 					return;
 				}
 				
@@ -132,18 +134,21 @@ public class GexGenMAPPImporter
 				}
 				nq++;
 				if(nq % 1000 == 0) //Commit every 1000 queries
-					Gex.getCurrentGex().getCon().commit();
+					result.getCon().commit();
 				p.worked(p.getTotalWork()/nrRows); //Report progress
 			}
-			Gex.getCurrentGex().getCon().commit();	
-		} catch(Exception e) {
+			result.getCon().commit();	
+			error.println("END");
+			error.close();
+			closeGmGex();
+			result.getCon().close();
+			
+			GexManager.setCurrentGex (result, true);
+		} 
+		catch(Exception e) 
+		{
 			error.println("Error: " + e.getMessage());
-		}
-		error.println("END");
-		error.close();
-		closeGmGex();
-		Gex.getCurrentGex().close();
-		
+		}		
 //		setGexReadOnly(true);
 		
 		p.finished();

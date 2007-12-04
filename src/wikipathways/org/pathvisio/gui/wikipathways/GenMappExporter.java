@@ -38,6 +38,7 @@ public class GenMappExporter {
 					"Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+		System.exit(0);
 	}
 
 	/**
@@ -51,7 +52,7 @@ public class GenMappExporter {
 		pathway.readFromXml(reader, true);
 
 		//Convert to temp file
-		File mappFile = File.createTempFile(pwName, "mapp");
+		File mappFile = File.createTempFile(pwName, ".mapp");
 		pathway.writeToMapp(mappFile);
 
 		return mappFile;

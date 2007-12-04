@@ -37,7 +37,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.Gex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;

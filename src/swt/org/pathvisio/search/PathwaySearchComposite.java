@@ -38,7 +38,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.data.DataSources;
+import org.pathvisio.model.DataSource;
+import org.pathvisio.model.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.MainWindowBase;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
@@ -189,6 +190,7 @@ public class PathwaySearchComposite extends Composite {
 				pathwaySearchStack.topControl = this;
 			}
 			
+			
 			public Composite createContents(Composite parent) {
 				setLayout(new GridLayout(3, false));
 				
@@ -203,7 +205,8 @@ public class PathwaySearchComposite extends Composite {
 				Label systemLabel = new Label(parent, SWT.CENTER);
 				systemLabel.setText("Id system:");
 				final Combo systemCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY);
-				systemCombo.setItems(DataSources.dataSources);
+				final String[] datasources =  DataSource.getFullNames().toArray(new String[0]);
+				systemCombo.setItems(datasources);
 				systemCombo.setLayoutData(span2cols);
 				
 				Label dirLabel = new Label(parent, SWT.CENTER);
@@ -221,19 +224,20 @@ public class PathwaySearchComposite extends Composite {
 					public void widgetSelected(SelectionEvent e) {
 						String id = idText.getText();
 						int codeIndex = systemCombo.getSelectionIndex();
-						String code = codeIndex == -1 ? "" : DataSources.systemCodes[codeIndex];
+						DataSource ds = codeIndex == -1 ? null : DataSource.getByFullName (datasources[codeIndex]);
+						Xref ref = new Xref (id, ds);
 						String folder = dirText.getText();
-						if(id.equals("") || code.equals("") || folder.equals("")) {
+						if(id.equals("") || ds.equals("") || folder.equals("")) {
 							MessageDialog.openError(getShell(), "error", "please specify id, code and pathway folder"); 
 							return;
 						}
 						
 						SearchRunnableWithProgress srwp = new SearchRunnableWithProgress(
 								"pathwaysContainingGeneID", 
-								new Class[] { String.class, String.class, File.class, 
+								new Class[] { Xref.class, File.class, 
 										SearchResultTable.class, SearchRunnableWithProgress.class });
 						SearchRunnableWithProgress.setMonitorInfo("Searching", (int)SearchMethods.TOTAL_WORK);
-						srwp.setArgs(new Object[] {id, code, new File(folder), searchResultTable, srwp });
+						srwp.setArgs(new Object[] {ref, new File(folder), searchResultTable, srwp });
 						ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 						try { dialog.run(true, true, srwp); } catch(Exception ex) 
 						{ 

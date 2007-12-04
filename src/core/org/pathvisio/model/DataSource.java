@@ -17,6 +17,8 @@
 
 package org.pathvisio.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -116,8 +118,10 @@ public class DataSource
 		this.mainUrl = mainUrl;
 		
 		registry.add (this);
-		bySysCode.put(sysCode, this);
-		byFullName.put(fullName, this);
+		if (sysCode != null)
+			bySysCode.put(sysCode, this);
+		if (fullName != null)
+			byFullName.put(fullName, this);
 	}
 	
 	/** turn id into url pointing to info page on the web, e.g. "http://www.ensembl.org/get?id=ENSG..." */
@@ -279,16 +283,24 @@ public class DataSource
 	
 	/**
 		get all registered datasoures as a set
-		There is no function to get systemcodes or full names as a list of strings, 
-		because it's hard to guarantee the ordering, which is needed for combobox controls.
-		
-		Instead, let the caller create a new temporary List using List.addAll (getDataSources())
 	*/ 
 	static public Set<DataSource> getDataSources()
 	{
 		return registry;
 	}
 	
+	/**
+	 * Get a list of all non-null full names.
+	 * 
+	 * Warning: the ordering of this list is undefined.
+	 * Two subsequent calls may give different results.
+	 */
+	static public List<String> getFullNames()
+	{
+		List<String> result = new ArrayList<String>();
+		result.addAll (byFullName.keySet());
+		return result;
+	}
 	/**
 	 * The string representation of a DataSource is equal to
 	 * it's full name. (e.g. "Ensembl")

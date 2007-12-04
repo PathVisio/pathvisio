@@ -22,6 +22,7 @@ import java.util.Map;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
+import org.pathvisio.preferences.GlobalPreference;
 
 /**
  * Prototype of AggregateGdb.
@@ -59,6 +60,7 @@ public class DoubleGdb implements IGdb
 		if (gdb == null) throw new NullPointerException();
 		if (gdbs [METABOLITE_DB] != null) gdbs[METABOLITE_DB].close();
 		gdbs [METABOLITE_DB] = gdb;		
+		GlobalPreference.DB_METABDB_CURRENT.setValue(gdb.getDbName());
 	}
 
 	/**
@@ -72,6 +74,7 @@ public class DoubleGdb implements IGdb
 		if (gdb == null) throw new NullPointerException();
 		if (gdbs [GENE_DB] != null) gdbs[GENE_DB].close();
 		gdbs [GENE_DB] = gdb;		
+		GlobalPreference.DB_GDB_CURRENT.setValue(gdb.getDbName());
 	}
 
 	/**

@@ -35,6 +35,7 @@ public enum GlobalPreference implements Preference {
 	DB_ENGINE_GDB("org.pathvisio.data.DBConnDerby"),
 	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),
 	DB_GDB_CURRENT("none"),
+	DB_METABDB_CURRENT("none"),
 	
 	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false)),
 	MIM_SUPPORT(Boolean.toString(false)),

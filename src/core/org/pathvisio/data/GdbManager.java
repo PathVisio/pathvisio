@@ -26,43 +26,83 @@ import org.pathvisio.preferences.GlobalPreference;
  * This gene database could be a SimpleGdb, 
  * DoubleGdb or aggregateGdb or otherwise.
  * 
- * TODO: this class is GUI-only. Move to either swt or swing subdir. 
+ * This class is not needed in headless mode. 
  */
 public class GdbManager 
 {
-	static private IGdb currentGdb = null;
+	static private DoubleGdb currentGdb = new DoubleGdb();
 	
 	static public IGdb getCurrentGdb ()
 	{
 		return currentGdb;
 	}
 
-	static void setCurrentGdb(IGdb value)
+	/**
+	 * Set the global metabolite database
+	 */
+	public static void setMetaboliteDb(SimpleGdb value)
 	{
-		currentGdb = value;
+		currentGdb.setMetaboliteDb(value);
 	}
-	
+
+	/**
+	 * Set the global gene database
+	 */
+	public static void setGeneDb(SimpleGdb value)
+	{
+		currentGdb.setGeneDb(value);
+	}
+
 	/**
 	 * Initiates this class. Checks the properties file for a previously
 	 * used Gene Database and tries to open a connection if found.
 	 */
 	public static void init()
 	{
-		String currGdb = GlobalPreference.DB_GDB_CURRENT.getValue();
-		if(!currGdb.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
+		// first do the Gene database
+		SimpleGdb gdb;
+		String gdbName = GlobalPreference.DB_GDB_CURRENT.getValue();
+		if(!gdbName.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
 		{
-			try {
-				SimpleGdb.connect(currGdb);
+			try 
+			{
+				gdb = SimpleGdb.connect(gdbName);
+				setGeneDb(gdb);
 			} 
 			catch(Exception e) 
 			{
 				Logger.log.error("Setting previous Gdb failed.", e);
-				try {
-					SimpleGdb.connect(currGdb);
+				try 
+				{
+					gdb = SimpleGdb.connect(gdbName);
+					setGeneDb(gdb);
 				} 
 				catch(Exception f) 
 				{
 					Logger.log.error("Setting default Gdb failed.", f);
+				}
+			}
+		}
+		// then do the Metabolite database
+		gdbName = GlobalPreference.DB_METABDB_CURRENT.getValue();
+		if(!gdbName.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_METABDB_CURRENT))
+		{
+			try 
+			{
+				gdb = SimpleGdb.connect(gdbName);
+				setMetaboliteDb(gdb);
+			} 
+			catch(Exception e) 
+			{
+				Logger.log.error("Setting previous Metabolite db failed.", e);
+				try 
+				{
+					gdb = SimpleGdb.connect(gdbName);
+					setMetaboliteDb(gdb);
+				} 
+				catch(Exception f) 
+				{
+					Logger.log.error("Setting default Metabolite db failed.", f);
 				}
 			}
 		}

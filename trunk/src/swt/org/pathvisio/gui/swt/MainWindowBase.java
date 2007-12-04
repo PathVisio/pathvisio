@@ -127,7 +127,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				
 				if(dbName == null) return;
 				
-				SimpleGdb.connect(dbName);
+				GdbManager.setGeneDb(SimpleGdb.connect(dbName));
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
@@ -453,7 +453,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		switch(e.getType())
 		{
 		case ApplicationEvent.PATHWAY_OPENED:
-			if(Gex.getCurrentGex().isConnected()) cacheExpressionData();
+			if(Gex.getCurrentGex() != null && 
+				Gex.getCurrentGex().isConnected()) cacheExpressionData();
 			break;
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:
@@ -493,7 +494,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	private void updateStatusBar()
 	{
 		setStatus("Using Gene Database: '" +
-				  GlobalPreference.DB_GDB_CURRENT.getValue() + "'");
+				  GdbManager.getCurrentGdb().getDbName() + "'");
 	}
 	
 	public void vPathwayEvent(VPathwayEvent e) {

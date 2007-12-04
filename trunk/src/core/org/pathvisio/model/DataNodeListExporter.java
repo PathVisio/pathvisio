@@ -25,7 +25,6 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.SimpleGdb;
 
 /**
  * Exporter that writes a pathway as a list

@@ -30,7 +30,6 @@
 */
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class Main {
 
@@ -168,7 +167,7 @@ public class Main {
 		Token (int _type, String _symbolValue) { type = _type; numberValue = 0; symbolValue = _symbolValue; }
 	}
 		
-	HashMap symTab = new HashMap();
+	HashMap<String, Double> symTab = new HashMap<String, Double>();
    
 	void addSymbol(String sym, Double val)
 	{
@@ -182,11 +181,10 @@ public class Main {
    
 	void printSymbols()
 	{
-		System.out.println("Symbols:");        
-		Iterator i = symTab.keySet().iterator();
-		while(i.hasNext()){
-				String key = (String)i.next();
-				System.out.println("    \"" + key + "\" : " + symTab.get(key));
+		System.out.println("Symbols:");
+		for (String key : symTab.keySet())
+		{
+			System.out.println("    \"" + key + "\" : " + symTab.get(key));
 		}
 	}
 

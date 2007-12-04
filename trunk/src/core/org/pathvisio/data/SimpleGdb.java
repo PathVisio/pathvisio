@@ -36,7 +36,6 @@ import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
-import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.Utils;
 
 /**
@@ -341,7 +340,7 @@ public class SimpleGdb implements IGdb
 	 * @param dbName The file containing the Gene Database. This file needs to be the
 	 * .properties file of the Hsqldb database
 	 */
-	public static void connect(String dbName) throws Exception
+	public static SimpleGdb connect(String dbName) throws Exception
 	{
 		SimpleGdb gdb = new SimpleGdb();
 		if(dbName == null) throw new NullPointerException();
@@ -353,12 +352,12 @@ public class SimpleGdb implements IGdb
 		gdb.con = connector.createConnection(dbName);
 		gdb.con.setReadOnly(true);
 		gdb.checkSchemaVersion();
-		GdbManager.setCurrentGdb (gdb);
-		GlobalPreference.DB_GDB_CURRENT.setValue(dbName);
 		ApplicationEvent e =
 			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
 		Engine.getCurrent().fireApplicationEvent (e);
 		Logger.log.trace("Current Gene Database: " + dbName);
+		
+		return gdb;
 	}
 	
 	private void checkSchemaVersion() 

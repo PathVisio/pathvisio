@@ -17,8 +17,10 @@
 package org.pathvisio.data;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.naming.OperationNotSupportedException;
@@ -45,30 +47,51 @@ public class DBConnectorDerbyServer extends DBConnector {
 		this.port = port;
 	}
 	
-	public Connection createConnection(String dbName) throws Exception {
+	public Connection createConnection(String dbName) throws DataException 
+	{
 		Properties sysprop = System.getProperties();
 		sysprop.setProperty("derby.storage.tempDirectory", System.getProperty("java.io.tmpdir"));
-		sysprop.setProperty("derby.stream.error.file", File.createTempFile("derby",".log").toString());
 		
-		Class.forName("org.apache.derby.jdbc.ClientDriver");
-		
+		try
+		{
+			sysprop.setProperty("derby.stream.error.file", File.createTempFile("derby",".log").toString());
+			Class.forName("org.apache.derby.jdbc.ClientDriver");
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw new DataException (e);
+		}
+		catch (IOException f)
+		{
+			throw new DataException (f);
+		}
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
 		String url = "jdbc:derby://" + host + ":" + port + "/" + dbName;
 		Logger.log.trace("Connecting to database: " + url);
-		Connection con = DriverManager.getConnection(url);
+		Connection con;
+		try
+		{
+			con = DriverManager.getConnection(url);
+		}
+		catch (SQLException f)
+		{
+			throw new DataException (f);
+		}
 		Logger.log.trace("Connected");
 		return con;
 	}
 
-	public Connection createConnection(String dbName, int props) throws Exception {
+	public Connection createConnection(String dbName, int props) throws DataException 
+	{
 		return createConnection(dbName);
 	}
 
-	public String finalizeNewDatabase(String dbName) throws Exception {
+	public String finalizeNewDatabase(String dbName) throws DataException 
+	{
 		//Creating database not supported
-		throw new OperationNotSupportedException("Can't create new database on server");
+		throw new DataException (new OperationNotSupportedException("Can't create new database on server"));
 	}
 
 }

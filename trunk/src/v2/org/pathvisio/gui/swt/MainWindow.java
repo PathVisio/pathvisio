@@ -115,8 +115,10 @@ public class MainWindow extends MainWindowBase
 				
 				if(dbName == null) return;
 				
-				SimpleGdb.connect(dbName);
-			} catch(Exception e) {
+				GdbManager.setMetaboliteDb(SimpleGdb.connect(dbName));
+			} 
+			catch(Exception e) 
+			{
 				String msg = "Failed to open Metabolite Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
 						"Error: " + msg + "\n\n" + 

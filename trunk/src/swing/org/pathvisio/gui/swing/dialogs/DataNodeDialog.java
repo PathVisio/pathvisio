@@ -31,7 +31,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.data.DataSources;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 
@@ -62,7 +61,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 		JLabel dbLabel = new JLabel("Database");
 		symText = new JTextField();
 		idText = new JTextField();
-		dbCombo = new JComboBox(DataSources.dataSources);
+		String[] datasources = DataSource.getFullNames().toArray (new String[0]);
+		dbCombo = new JComboBox(datasources);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.ipadx = c.ipady = 5;

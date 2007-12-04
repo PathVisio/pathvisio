@@ -22,9 +22,11 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -43,8 +45,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.Engine;
-import org.pathvisio.data.DataSources;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.Organism;
@@ -131,7 +133,17 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		case LINESTYLE:
 			return lineStyleRenderer;
 		case DATASOURCE:
-			return datasourceRenderer;
+		{
+			// create a fresh list of labels and values.
+			List<DataSource> values = new ArrayList<DataSource>();
+			values.addAll (DataSource.getDataSources());
+			String[] labels = new String[values.size()];
+			for (int i = 0; i < values.size(); ++i)
+			{
+				labels[i] = values.get(i).getFullName();
+			}
+			return new ComboRenderer (labels, values.toArray(new String[0]));
+		}
 		case BOOLEAN:
 			return checkboxRenderer;
 		case ORIENTATION:
@@ -158,7 +170,17 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		case BOOLEAN:
 			return checkboxEditor;
 		case DATASOURCE:
-			return datasourceEditor;
+		{
+			// create a fresh list of labels and values.
+			List<DataSource> values = new ArrayList<DataSource>();
+			values.addAll (DataSource.getDataSources());
+			String[] labels = new String[values.size()];
+			for (int i = 0; i < values.size(); ++i)
+			{
+				labels[i] = values.get(i).getFullName();
+			}
+			return new ComboEditor (labels, values.toArray(new String[0]));
+		}
 		case COLOR:
 			return colorEditor;
 		case LINETYPE:
@@ -365,7 +387,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ColorRenderer colorRenderer = new ColorRenderer();
 	private static ComboRenderer lineTypeRenderer = new ComboRenderer(LineType.getNames(), LineType.getValues());
 	private static ComboRenderer lineStyleRenderer = new ComboRenderer(LineStyle.getNames());
-	private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSources.dataSources);
+	//private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSources.dataSources);
 	private static CheckBoxRenderer checkboxRenderer = new CheckBoxRenderer();
 	private static ComboRenderer orientationRenderer = new ComboRenderer(OrientationType.getNames());
 	private static ComboRenderer organismRenderer = new ComboRenderer(Organism.latinNames().toArray());
@@ -377,7 +399,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);
 	private static ComboEditor lineStyleEditor = new ComboEditor(LineStyle.getNames(), true);
 	private static ComboEditor outlineTypeEditor = new ComboEditor(OutlineType.getTags(), true);
-	private static ComboEditor datasourceEditor = new ComboEditor(DataSources.dataSources, false);
+	//private static ComboEditor datasourceEditor = new ComboEditor(DataSources.dataSources, false);
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);
 	private static ComboEditor organismEditor = new ComboEditor(Organism.latinNames().toArray(), false);

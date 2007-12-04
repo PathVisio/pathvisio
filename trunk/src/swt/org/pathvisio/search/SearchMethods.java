@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.Xref;
 import org.pathvisio.search.PathwaySearchComposite.SearchRunnableWithProgress;
 import org.pathvisio.util.FileUtils;

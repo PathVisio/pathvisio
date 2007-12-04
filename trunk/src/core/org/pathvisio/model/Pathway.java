@@ -624,24 +624,7 @@ public class Pathway implements PathwayListener
 		{
 			g.gmmlObjectModified(e);
 		}
-	}
-	
-	/**
-	 * Get the systemcodes of all genes in this pathway
-	 * @return	a list of systemcodes for every gene on the mapp
-	 */
-	public ArrayList<String> getSystemCodes()
-	{
-		ArrayList<String> systemCodes = new ArrayList<String>();
-		for(PathwayElement o : dataObjects)
-		{
-			if(o.getObjectType() == ObjectType.DATANODE)
-			{
-				systemCodes.add(o.getSystemCode());
-			}
-		}
-		return systemCodes;
-	}
+	}	
 	
 	public Pathway clone()
 	{

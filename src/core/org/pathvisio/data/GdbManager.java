@@ -38,6 +38,17 @@ public class GdbManager
 	{
 		return currentGdb;
 	}
+	
+	/**
+	 * Returns true if there is currently a non-null
+	 * gdb and it isConnected()
+	 */
+	static public boolean isConnected()
+	{
+		return 
+			currentGdb != null &&
+			currentGdb.isConnected();
+	}
 
 	/**
 	 * Set the global metabolite database 

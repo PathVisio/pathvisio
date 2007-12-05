@@ -50,7 +50,7 @@ public class RuleComposite extends Composite {
 	}
 	
 	public void fetchSymbolsFromGex() {
-		if(GexManager.getCurrentGex().isConnected()) {
+		if(GexManager.isConnected()) {
 			java.util.List<String> numSmp = GexManager.getCurrentGex().getSampleNames(Types.REAL);
 			symbolList.setItems(numSmp.toArray(new String[numSmp.size()]));	
 		} else {

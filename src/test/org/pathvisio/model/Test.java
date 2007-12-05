@@ -382,7 +382,7 @@ public class Test extends TestCase implements PathwayListener
 		assertEquals (ds.getFullName(), "Ensembl");
 		assertEquals (ds.getSystemCode(), "En");
 		
-		DataSource.register("@@", "ZiZaZo", null, null, null);
+		DataSource.register("@@", "ZiZaZo", null);
 		
 		DataSource ds2 = DataSource.getBySystemCode ("@@");
 		DataSource ds3 = DataSource.getByFullName ("ZiZaZo");

@@ -52,7 +52,7 @@ import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
-import org.pathvisio.data.Gdb;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
@@ -140,7 +140,7 @@ public class WikiPathways implements ApplicationEventListener {
 		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
 		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
 		
-		Gdb.connect(getPwSpecies());
+		GdbManager.setGeneDb(getPwSpecies());
 	}
 	
 	public boolean initPerformed() {

@@ -21,7 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,8 +106,8 @@ public class SimpleGex
 		}
 	}
 	
-	PreparedStatement pstSample;
-	PreparedStatement pstExpr;
+	PreparedStatement pstSample = null;
+	PreparedStatement pstExpr = null;
 	
 	public void prepare() throws SQLException
 	{
@@ -121,20 +120,28 @@ public class SimpleGex
 				"	(id, code, ensId,			" + 
 				"	 idSample, data, groupId)	" +
 		"VALUES	(?, ?, ?, ?, ?, ?)			");
-
 	}
 
+	/**
+	 * add a Sample to the db.
+	 * Must call preprare() before.
+	 */
 	public void addSample(int sampleId, String value, int type) throws SQLException
 	{
+		assert (pstSample != null);
 		pstSample.setInt(1, sampleId);
 		pstSample.setString(2, value);
 		pstSample.setInt(3, type);
 		pstSample.execute();
 	}
 	
+	/**
+	 * Add an expression row to the db. Must call prepare() before.
+	 */
 	public void addExpr(Xref ref, String link, String idSample, String value, int group)
 		throws SQLException
 	{
+		assert (pstExpr != null);
 		pstExpr.setString(1, ref.getId());
 		pstExpr.setString(2, ref.getDataSource().getSystemCode());
 		pstExpr.setString(3, link);
@@ -207,7 +214,7 @@ public class SimpleGex
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| !GdbManager.getCurrentGdb().isConnected() //and to the gene database
+				|| !GdbManager.isConnected() //and to the gene database
 		) return noDataFound;
 		
 		List<Data> pwData = cachedData.getData(idc);
@@ -318,7 +325,7 @@ public class SimpleGex
 		dbConnector = connector;
 		if(create)
 		{
-			con = createNewGex(dbName);
+			createNewGex(dbName);
 		} 
 		else 
 		{
@@ -351,41 +358,14 @@ public class SimpleGex
 	/**
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
 	 * statement before calling {@link Connection#close()}
-	 * @param finalize true to excecute the 'SHUTDOWN COMPACT' statement, false to just close the connection
 	 */
-	public void close(boolean finalize)
+	public void close() throws DataException
 	{
 		if(con != null)
 		{
-			try
-			{				
-				if(finalize) 
-				{
-					dbConnector.compact(con);
-					createGexIndices();
-					String newDb = dbConnector.finalizeNewDatabase(dbName);
-					setDbName(newDb);
-				} 
-				else 
-				{
-					dbConnector.closeConnection(con);
-				}	
-			} 
-			catch (Exception e) 
-			{
-				Logger.log.error("Error while closing connection to expression dataset " + dbName, e);
-			}
+			dbConnector.closeConnection(con);
 			con = null;
 		}
-	}
-	
-	/**
-	 * Close the connection excecuting the 'SHUTDOWN' statement 
-	 * before calling {@link Connection#close()}
-	 */
-	public void close()
-	{
-		close(false);
 	}
 
 	/**
@@ -395,11 +375,11 @@ public class SimpleGex
 	 * @throws Exception 
 	 * @throws Exception
 	 */
-	public final Connection createNewGex(String dbName) throws DataException 
+	public final void createNewGex(String dbName) throws DataException 
 	{
-		Connection con = dbConnector.createConnection(dbName, DBConnector.PROP_RECREATE);
+		con = dbConnector.createConnection(dbName, DBConnector.PROP_RECREATE);
+		this.dbName = dbName;
 		createGexTables();
-		return con;
 	}
 
 	/**
@@ -482,6 +462,34 @@ public class SimpleGex
 		catch (SQLException e)
 		{
 			// wrap up the sql exception
+			throw new DataException (e);
+		}
+	}
+
+	/**
+	 * Run this after insterting all sample / expression data 
+	 * once, to defragment the db and create indices
+	 */
+	public void finalize() throws DataException
+	{
+		dbConnector.compact(con);
+		createGexIndices();
+		//TODO: why newDb?
+		String newDb = dbConnector.finalizeNewDatabase(dbName);
+		setDbName(newDb);
+	}
+	
+	/**
+	   commit inserted data
+	 */
+	public void commit() throws DataException
+	{
+		try
+		{
+			con.commit();
+		}
+		catch (SQLException e)
+		{
 			throw new DataException (e);
 		}
 	}

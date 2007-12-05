@@ -35,9 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.jdom.Element;
 import org.pathvisio.Engine;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.GexManager.ExpressionDataEvent;
-import org.pathvisio.data.GexManager.ExpressionDataListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.Graphics;
@@ -54,7 +51,6 @@ import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
  * @author thomas
  */
 public class Visualization implements
-						   ExpressionDataListener,
 						   VisualizationListener,
 						   ColorSetListener
 {
@@ -75,7 +71,6 @@ public class Visualization implements
 	public Visualization(String name) {
 		initPlugins();
 		this.name = name;
-		GexManager.addListener(this);
 		VisualizationManager.addListener(this);
 		ColorSetManager.addListener(this);
 	}
@@ -408,14 +403,6 @@ public class Visualization implements
 	public boolean equals(Object o) {
 		if(o instanceof Visualization) return ((Visualization)o).getName().equals(name);
 		return false;
-	}
-
-	public void expressionDataEvent(ExpressionDataEvent e) {
-		switch(e.type) {
-		case ExpressionDataEvent.CONNECTION_OPENED:
-			refreshPluginClasses();
-		}
-		
 	}
 
 	public void visualizationEvent(VisualizationEvent e) {

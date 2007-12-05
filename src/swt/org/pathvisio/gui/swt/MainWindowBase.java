@@ -44,8 +44,8 @@ import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexSwt;
-import org.pathvisio.data.GexManager.ExpressionDataListener;
-import org.pathvisio.data.GexManager.ExpressionDataEvent;
+import org.pathvisio.data.GexManager.GexManagerListener;
+import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.preferences.GlobalPreference;
@@ -69,7 +69,7 @@ import org.pathvisio.visualization.LegendPanel;
  */
 //TODO: we mix coolbar and toolbar in this class. Evaluate and select one of the two for our needs.
 public abstract class MainWindowBase extends ApplicationWindow implements 
-	ApplicationEventListener, ExpressionDataListener, VPathwayListener, UndoManagerListener
+	ApplicationEventListener, GexManagerListener, VPathwayListener, UndoManagerListener
 															   
 {
 	private static final long serialVersionUID = 1L;
@@ -181,7 +181,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			//Check for necessary connections
-			if(GexManager.getCurrentGex() != null && GexManager.getCurrentGex().isConnected() && GdbManager.getCurrentGdb().isConnected())
+			if(GexManager.isConnected() && GdbManager.isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {
@@ -439,7 +439,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	public LegendPanel getLegend() { return legend; }
 	
 	public void showLegend(boolean show) {	
-		if(show && GexManager.getCurrentGex().isConnected()) {
+		if(show && GexManager.isConnected()) 
+		{
 			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
 			rightPanel.unhideTab("Legend", 0);
 			rightPanel.selectTab("Legend");
@@ -452,8 +453,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		switch(e.getType())
 		{
 		case ApplicationEvent.PATHWAY_OPENED:
-			if(GexManager.getCurrentGex() != null && 
-					GexManager.getCurrentGex().isConnected()) cacheExpressionData();
+			if(GexManager.isConnected()) cacheExpressionData();
 			break;
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:
@@ -467,16 +467,18 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		}
 	}
 
-	public void expressionDataEvent(ExpressionDataEvent e) {
-		switch(e.type) {
-		case ExpressionDataEvent.CONNECTION_CLOSED:
+	public void gexManagerEvent(GexManagerEvent e) 
+	{
+		switch(e.getType()) 
+		{
+		case GexManagerEvent.CONNECTION_CLOSED:
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					showLegend(false);
 				}
 			});
 			break;
-		case ExpressionDataEvent.CONNECTION_OPENED:
+		case GexManagerEvent.CONNECTION_OPENED:
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					cacheExpressionData();

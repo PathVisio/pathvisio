@@ -95,7 +95,7 @@ public class DataNodeListExporter implements PathwayExporter {
 	public void doExport(File file, Pathway pathway) throws ConverterException {
 		if(!DB_ORIGINAL.equals(getResultCode())) {
 			//Check gene database connection
-			if(!GdbManager.getCurrentGdb().isConnected()) {
+			if(!GdbManager.isConnected()) {
 				throw new ConverterException("No gene database loaded");
 			}
 		}

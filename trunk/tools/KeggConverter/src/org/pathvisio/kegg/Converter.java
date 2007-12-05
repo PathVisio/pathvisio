@@ -1,7 +1,7 @@
 package org.pathvisio.kegg;
 
+import java.awt.Color;
 import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -13,8 +13,8 @@ import keggapi.LinkDBRelation;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -34,6 +34,14 @@ public class Converter {
 
 			Element rootelement =doc.getRootElement();
 
+			/*
+			Misschien is een andere naam beter,
+			grandChildren zegt niet zoveel, wat stellen de elementen
+			voor (e.g. keggElements?)
+			Je kunt in Eclipse makkelijk de naam van een variabele
+			veranderen door de naam te selecteren en ALT-SHIFT-R
+			in te typen.
+			*/
 			List<Element> grandChildren=rootelement.getChildren();
 
 			Pathway pathway = new Pathway();
@@ -55,20 +63,28 @@ public class Converter {
 							for(int i=0; i<ncbi.length; i++ )
 							{
 								String textlabelGPML = ncbi[i]; // naam van gen i uit online NCBI database
-								String colorGPML = child.getAttributeValue("fgcolor");
+								String colorStringGPML = child.getAttributeValue("fgcolor");
+								
+								//TK: Convert a hexadecimal color into an awt.Color object
+								//Remove the # before converting
+								Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+								
 								String centerXGPML = child.getAttributeValue("x");
 								String centerYGPML = child.getAttributeValue("y");
 								String widthGPML = child.getAttributeValue("width");
 								String heightGPML = child.getAttributeValue("height");
 
-								Double height = Double.parseDouble(heightGPML);
-								Double centerY = Double.parseDouble(centerYGPML) - i*height;
+								//TK: use double instead of the object representation Double
+								//Why do you store height and Y in a temporary variable and
+								//convert X and width directly?
+								double height = Double.parseDouble(heightGPML);
+								double centerY = Double.parseDouble(centerYGPML) - i*height;
 
 								PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 								String id = element.getGraphId();
 								element.setTextLabel(textlabelGPML);
 								element.setDataNodeType("Geneproduct");
-//								element.setColor(colorGPML);
+								element.setColor(colorGPML);
 								element.setMCenterX(Double.parseDouble(centerXGPML));
 								element.setMCenterY(centerY);
 								element.setMWidth(Double.parseDouble(widthGPML));
@@ -82,6 +98,12 @@ public class Converter {
 							}
 						}
 						else { 
+							//TK: Same changes as above apply here...
+							//Here you see the disadvantage of duplicate code,
+							//when you change something, you have to change it
+							//at multiple places in your program.
+							//Could you think of a way to make the logic below only
+							//occur once in your code?
 							String textlabelGPML = child.getAttributeValue("name");
 							String colorGPML = child.getAttributeValue("fgcolor");
 							String centerXGPML = child.getAttributeValue("x");
@@ -109,7 +131,8 @@ public class Converter {
 					else if(type.equals("compound"))
 					{
 						String textlabelGPML = "mieauw"; // naam van metabolite uit online KEGG database
-
+						
+						//TK: And again the same changes, duplicate code
 						Element graphics = child.getChild("graphics");
 						String colorGPML = child.getAttributeValue("fgcolor");
 						String centerXGPML = child.getAttributeValue("x");
@@ -131,6 +154,7 @@ public class Converter {
 					}					
 					else if(type.equals("map"))
 					{
+						//TK: and again....
 						String textlabelGPML = child.getAttributeValue("name"); 
 						String typeGPML = null;
 						String centerXGPML = child.getAttributeValue("x");
@@ -176,7 +200,10 @@ public class Converter {
 					test = ldb.getEntry_id2();//moet array zijn? nu wordt er overgeschreven per loop
 				}
 			}
-		}	
+		}
+		//Dit klopt niet.
+		//Je moet je LinkDBRelation[] omzetten in een String[]
+		//Hint: gebruik een ArrayList, omdat je vantevoren niet weet hoeveel ids je krijgt
 		return new String[] { test };  //mismatch bij test is string[],  wordt hier omgezet van string sting[]? 
 	}
 	

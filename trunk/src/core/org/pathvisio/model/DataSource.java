@@ -63,43 +63,159 @@ public class DataSource
 	private static Map<String, DataSource> byFullName = new HashMap<String, DataSource>();
 	private static Set<DataSource> registry = new HashSet<DataSource>();
 	
-	public static final DataSource SGD = new DataSource ("D", "SGD", null);
-	public static final DataSource FLYBASE = new DataSource ("F", "FlyBase", null);
-	public static final DataSource GENBANK = new DataSource ("G", "GenBank", null);
-	public static final DataSource INTERPRO = new DataSource ("I", "InterPro", null);
-	public static final DataSource ENTREZ_GENE = new DataSource ("L", "Entrez Gene", null);
-	public static final DataSource MGI = new DataSource ("M", "MGI", null);
-	public static final DataSource REFSEQ = new DataSource ("Q", "RefSeq", null);
-	public static final DataSource RGD = new DataSource ("R", "RGD", null);
-	public static final DataSource SWISSPROT = new DataSource ("S", "SwissProt", null);
-	public static final DataSource GENE_ONTOLOGY = new DataSource ("T", "GeneOntology", null);
-	public static final DataSource UNIGENE = new DataSource ("U", "UniGene", null);
-	public static final DataSource WORMBASE = new DataSource ("W", "WormBase", "http://www.wormbase.org");
-	public static final DataSource AFFY = new DataSource ("X", "Affy", null);
-	public static final DataSource ENSEMBL = new DataSource ("En", "Ensembl", "http://www.ensembl.org");
-	public static final DataSource EMBL = new DataSource ("Em", "EMBL", null);
-	public static final DataSource HUGO = new DataSource ("H", "HUGO", null);
-	public static final DataSource OMIM = new DataSource ("Om", "OMIM", null);
-	public static final DataSource PDB = new DataSource ("Pd", "PDB", null);
-	public static final DataSource PFAM = new DataSource ("Pf", "Pfam", null);
-	public static final DataSource ZFIN = new DataSource ("Z", "ZFIN", null);
-	public static final DataSource HSGENE = new DataSource ("Hs", "HsGene", null);
-	public static final DataSource CINT = new DataSource ("C", "Cint", null);
-	public static final DataSource AGILENT = new DataSource ("Ag", "Agilent", null);
-	public static final DataSource ILLUMINA = new DataSource ("Il", "Illumina", null);
-	public static final DataSource SNP = new DataSource ("Sn", "SNP", null);
-	public static final DataSource ECOLI = new DataSource ("Ec", "Ecoli", null);
-	public static final DataSource CAS = new DataSource ("Ca", "CAS", null);
-	public static final DataSource CHEBI = new DataSource ("Ce", "ChEBI", null);
-	public static final DataSource PUBCHEM = new DataSource ("Cp", "PubChem", null);
-	public static final DataSource NUGOWIKI = new DataSource ("Nw", "NuGO wiki", null);
-	public static final DataSource KEGG_COMPOUND = new DataSource ("Ck", "Kegg Compound", null);
-	public static final DataSource HMDB = new DataSource ("Ch", "HMDB", null);
-	public static final DataSource OTHER = new DataSource ("O", "Other", null);
+	public static final DataSource SGD = new DataSource (
+		"D", "SGD", 
+		new PrefixUrlMaker ("http://db.yeastgenome.org/cgi-bin/locus.pl?locus="),
+		null);
+	public static final DataSource FLYBASE = new DataSource (
+		"F", "FlyBase", 
+		null, null);
+	public static final DataSource GENBANK = new DataSource (
+		"G", "GenBank", 
+		null, null);
+	public static final DataSource INTERPRO = new DataSource (
+		"I", "InterPro", 
+		new PrefixUrlMaker ("http://www.ebi.ac.uk/interpro/IEntry?ac="),
+		null);
+	public static final DataSource ENTREZ_GENE = new DataSource (
+		"L", "Entrez Gene", 
+		new PrefixUrlMaker ("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids="),
+		null);
+	public static final DataSource MGI = new DataSource (
+		"M", "MGI", 
+		new PrefixUrlMaker ("http://www.informatics.jax.org/searches/accession_report.cgi?id="),
+		null);
+	public static final DataSource REFSEQ = new DataSource (
+		"Q", "RefSeq", 
+		new UrlMaker() 
+		{ 
+			String pre = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?";
+			public String getUrl (String id)
+			{
+				if(id.startsWith("NM")) 
+				{
+					return pre + "db=Nucleotide&cmd=Search&term=" + id;
+				} 
+				else 
+				{
+					return pre + "db=Protein&cmd=search&term=" + id;
+				}
+			}
+		}
+		, null);
+	public static final DataSource RGD = new DataSource (
+		"R", "RGD", 
+		new PrefixUrlMaker ("http://rgd.mcw.edu/generalSearch/RgdSearch.jsp?quickSearch=1&searchKeyword="), 
+		null);
+	public static final DataSource UNIPROT = new DataSource (
+		"S", "SwissProt", 
+		new PrefixUrlMaker ("http://www.expasy.org/uniprot/"),
+		null);
+	public static final DataSource GENE_ONTOLOGY = new DataSource (
+		"T", "GeneOntology", 
+		new PrefixUrlMaker ("http://godatabase.org/cgi-bin/go.cgi?view=details&search_constraint=terms&depth=0&query="), 
+		null);
+	public static final DataSource UNIGENE = new DataSource (
+		"U", "UniGene", 
+		new UrlMaker () 
+		{
+			public String getUrl(String id)
+			{
+				String [] org_nr = id.split("\\.");
+				if(org_nr.length == 2) {
+					return "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=" + 
+					org_nr[0] + "&CID=" + org_nr[1];
+				}
+				else {
+					return null;
+				}
+			}
+		}, null);
+	public static final DataSource WORMBASE = new DataSource (
+		"W", "WormBase", 
+		new PrefixUrlMaker ("http://www.wormbase.org/db/gene/gene?name="), 
+		"http://www.wormbase.org");
+	public static final DataSource AFFY = new DataSource (
+		"X", "Affy", 
+		new PrefixUrlMaker ("http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id="), 
+		null);
+	public static final DataSource ENSEMBL = new DataSource (
+		"En", "Ensembl", 
+		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q="), 
+		"http://www.ensembl.org");
+	public static final DataSource EMBL = new DataSource (
+		"Em", "EMBL", 
+		new PrefixUrlMaker ("http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id="), 
+		null);
+	public static final DataSource HUGO = new DataSource (
+		"H", "HUGO", 
+		new PrefixUrlMaker ("http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id="),
+		null);
+	public static final DataSource OMIM = new DataSource (
+		"Om", "OMIM", 
+		new PrefixUrlMaker ("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?"),
+		null);
+	public static final DataSource PDB = new DataSource (
+		"Pd", "PDB", 
+		new PrefixUrlMaker ("http://bip.weizmann.ac.il/oca-bin/ocashort?id="),
+		null);
+	public static final DataSource PFAM = new DataSource (
+		"Pf", "Pfam", 
+		new PrefixUrlMaker ("http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?"),
+		null);
+	public static final DataSource ZFIN = new DataSource (
+		"Z", "ZFIN", 
+		null, null);
+	public static final DataSource HSGENE = new DataSource (
+		"Hs", "HsGene", 
+		null, null);
+	public static final DataSource CINT = new DataSource (
+		"C", "Cint", 
+		null, null);
+	public static final DataSource AGILENT = new DataSource (
+		"Ag", "Agilent", 
+		null, null);
+	public static final DataSource ILLUMINA = new DataSource (
+		"Il", "Illumina", 
+		null, null);
+	public static final DataSource SNP = new DataSource (
+		"Sn", "SNP", 
+		null, null);
+	public static final DataSource ECOLI = new DataSource (
+		"Ec", "Ecoli", 
+		null, null);
+	public static final DataSource CAS = new DataSource (
+		"Ca", "CAS", 
+		new PrefixUrlMaker ("http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno="),
+		null);
+	public static final DataSource CHEBI = new DataSource (
+		"Ce", "ChEBI", 
+		new PrefixUrlMaker ("http://www.ebi.ac.uk/chebi/searchId=CHEBI:"),
+		null);
+	public static final DataSource PUBCHEM = new DataSource (
+		"Cp", "PubChem", 
+		new PrefixUrlMaker ("http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid="),
+		null);
+	public static final DataSource NUGOWIKI = new DataSource (
+		"Nw", "NuGO wiki", 
+		new PrefixUrlMaker ("http://nugowiki.org/index.php/"),
+		null);
+	public static final DataSource KEGG_COMPOUND = new DataSource (
+		"Ck", "Kegg Compound", 
+		new PrefixUrlMaker ("http://www.genome.jp/dbget-bin/www_bget?cpd:"),
+		null);
+	public static final DataSource HMDB = new DataSource (
+		"Ch", "HMDB", 
+		new PrefixUrlMaker ("http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD="),
+		null);
+	public static final DataSource OTHER = new DataSource (
+		"O", "Other", 
+		null, null);
 
 	private String sysCode = null;
 	private String fullName = null;
 	private String mainUrl = null;
+	private UrlMaker urlMaker = null;
 	
 	/**
 	 * Constructor is private, so that we don't
@@ -107,11 +223,12 @@ public class DataSource
 	 * That way we can make sure that two DataSources
 	 * pointing to the same datbase are really the same.
 	 */
-	private DataSource (String sysCode, String fullName, String mainUrl)
+	private DataSource (String sysCode, String fullName, UrlMaker urlMaker, String mainUrl)
 	{
 		this.sysCode = sysCode;
 		this.fullName = fullName;
 		this.mainUrl = mainUrl;
+		this.urlMaker = urlMaker;
 		
 		registry.add (this);
 		if (sysCode != null)
@@ -123,86 +240,12 @@ public class DataSource
 	/** turn id into url pointing to info page on the web, e.g. "http://www.ensembl.org/get?id=ENSG..." */
 	public String getUrl(String id)
 	{
-		String c = sysCode;
-		if(c.equalsIgnoreCase("En"))
-			return "http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q=" + id;
-		if(c.equalsIgnoreCase("P"))
-			return "http://www.expasy.org/uniprot/" + id;
-		if(c.equalsIgnoreCase("Q")) {
-			String pre = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?";
-			if(id.startsWith("NM")) {
-				return pre + "db=Nucleotide&cmd=Search&term=" + id;
-			} else {
-				return pre + "db=Protein&cmd=search&term=" + id;
-			}
-		}
-		if(c.equalsIgnoreCase("T"))
-			return "http://godatabase.org/cgi-bin/go.cgi?view=details&search_constraint=terms&depth=0&query=" + id;
-		if(c.equalsIgnoreCase("I"))
-			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
-		if(c.equalsIgnoreCase("Pd"))
-			return "http://bip.weizmann.ac.il/oca-bin/ocashort?id=" + id;
-		if(c.equalsIgnoreCase("X"))
-			return "http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id=" + id;
-		if(c.equalsIgnoreCase("Em"))
-			return "http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id=" + id;
-		if(c.equalsIgnoreCase("L"))
-			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids=" + id;
-		if(c.equalsIgnoreCase("H"))
-			return "http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id=" + id;
-		if(c.equalsIgnoreCase("I"))
-			return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + id;
-		if(c.equalsIgnoreCase("M"))
-			return "http://www.informatics.jax.org/searches/accession_report.cgi?id=" + id;
-		if(c.equalsIgnoreCase("Om"))
-			return "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?" + id;
-		if(c.equalsIgnoreCase("Pf"))
-			return "http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?" + id;
-		if(c.equalsIgnoreCase("R"))
-			return "http://rgd.mcw.edu/generalSearch/RgdSearch.jsp?quickSearch=1&searchKeyword=" + id;
-		if(c.equalsIgnoreCase("D"))
-			return "http://db.yeastgenome.org/cgi-bin/locus.pl?locus=" + id;
-		if(c.equalsIgnoreCase("S"))
-			return "http://www.expasy.org/uniprot/" + id;
-		if(c.equalsIgnoreCase("U")) {
-			String [] org_nr = id.split("\\.");
-			if(org_nr.length == 2) {
-				return "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=" + 
-				org_nr[0] + "&CID=" + org_nr[1];
-			}
-			else {
-				return null;
-			}
-		}
-		if (c.equalsIgnoreCase("Nw"))
-		{
-			return "http://nugowiki.org/index.php/" + id;
-		}
-		if (c.equalsIgnoreCase("Ca"))
-		{
-			return "http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=" + id;
-		}
-		if (c.equalsIgnoreCase("Cp"))
-		{
-			return "http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=" + id;
-		}
-		if (c.equalsIgnoreCase("Ce"))
-		{
-			return "http://www.ebi.ac.uk/chebi/searchId=CHEBI:" + id;
-		}
-		if (c.equalsIgnoreCase("Ch"))
-		{
-			return "http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD=" + id + ".txt";
-		}
-		if (c.equalsIgnoreCase("Ck"))
-		{
-			return "http://www.genome.jp/dbget-bin/www_bget?cpd:" + id;
-		}
-		return null;
-// TODO: use prefix and postfix like this
-//		return uriPrefix + id + uriPostfix;
+		if (urlMaker != null)
+			return urlMaker.getUrl(id); 
+		else 
+			return null;
 	}
-	
+				
 	/** 
 	 * returns full name of datasource e.g. "Ensembl". 
 	 * May return null if only the system code is known. 
@@ -243,11 +286,11 @@ public class DataSource
 	
 	/** 
 	 * so new system codes can be added easily by 
-	 * plugins. Pattern and url may be null 
+	 * plugins. url and urlMaker may be null 
 	 */
-	public static void register(String sysCode, String fullName, String mainUrl)
+	public static void register(String sysCode, String fullName, UrlMaker urlMaker, String mainUrl)
 	{
-		new DataSource (sysCode, fullName, mainUrl);
+		new DataSource (sysCode, fullName, urlMaker, mainUrl);
 	}
 	
 	/** 
@@ -258,7 +301,7 @@ public class DataSource
 	{
 		if (!bySysCode.containsKey(systemCode))
 		{
-			register (systemCode, null, null);
+			register (systemCode, null, null, null);
 		}
 		return bySysCode.get(systemCode);
 	}
@@ -272,7 +315,7 @@ public class DataSource
 	{
 		if (!byFullName.containsKey(fullName))
 		{
-			register (null, fullName, null);
+			register (null, fullName, null, null);
 		}
 		return byFullName.get(fullName);
 	}
@@ -305,4 +348,26 @@ public class DataSource
 	{
 		return fullName;
 	}
+	
+	/** an UrlMaker knows how to turn an id into an Url string */
+	public static abstract class UrlMaker
+	{
+		public abstract String getUrl(String id);
+	}
+	
+	/** Implements most common way an Url is made: add Id to a prefix */ 
+	public static class PrefixUrlMaker extends UrlMaker
+	{
+		String prefix;
+		public PrefixUrlMaker(String prefix)
+		{
+			this.prefix = prefix;
+		}
+		
+		@Override
+		public String getUrl(String id) 
+		{
+			return prefix + id;
+		}
+	}	
 }

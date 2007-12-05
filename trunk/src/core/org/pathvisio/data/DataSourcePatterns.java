@@ -82,7 +82,7 @@ public class DataSourcePatterns
 
 		//Swiss Prot (http://expasy.org/sprot/userman.html#AC_line)
 		patterns.put(
-				DataSource.SWISSPROT, 
+				DataSource.UNIPROT, 
 				Pattern.compile("([A-N,R-][0-9][A-Z][A-Z,0-9][A-Z,0-9][0-9])|([O,P,Q][0-9][A-Z,0-9][A-Z,0-9][A-Z,0-9][0-9])")
 		);
 

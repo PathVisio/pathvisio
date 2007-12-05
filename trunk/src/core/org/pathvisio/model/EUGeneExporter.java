@@ -147,7 +147,7 @@ public class EUGeneExporter implements PathwayExporter
 	static final DataSource[] genMappSystems = new DataSource[]
 	                                            {
 		DataSource.ENSEMBL,
-		DataSource.SWISSPROT,
+		DataSource.UNIPROT,
 		DataSource.ENTREZ_GENE,
 		DataSource.UNIGENE,
 		DataSource.AFFY,

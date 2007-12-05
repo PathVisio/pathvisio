@@ -18,8 +18,12 @@ package org.pathvisio.visualization;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +50,8 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GexManager;
-import org.pathvisio.data.GexManager.ExpressionDataEvent;
-import org.pathvisio.data.GexManager.ExpressionDataListener;
+import org.pathvisio.data.GexManager.GexManagerEvent;
+import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.view.GeneProduct;
@@ -55,6 +59,7 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.swing.ToolTipProvider;
 import org.pathvisio.view.swing.VPathwaySwing;
+import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**
  * Manages visualizations.
@@ -69,7 +74,7 @@ import org.pathvisio.view.swing.VPathwaySwing;
  * for generic visualizations, owning the visualization sidePanel and
  * owning the Visualizations drop-down box.
  */
-public class VisualizationManager implements ApplicationEventListener, ExpressionDataListener, ToolTipProvider {	
+public class VisualizationManager implements ApplicationEventListener, GexManagerListener, ToolTipProvider {	
 	static {
 		VisualizationManager vm = new VisualizationManager();
 		Engine.getCurrent().addApplicationEventListener(vm);
@@ -436,9 +441,24 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		}
 	}
 
-	public void expressionDataEvent(ExpressionDataEvent e) {
-		if(e.type == ExpressionDataEvent.CONNECTION_CLOSED) {
+	public void gexManagerEvent(GexManagerEvent e) 
+	{
+		switch (e.getType())
+		{
+		case GexManagerEvent.CONNECTION_OPENED:
+			// new plugins are available after opening connection. refresh existing visualizations.
+			for(Visualization v : visualizations)
+			{
+				v.refreshPluginClasses();
+			}
+			loadXML();
+			break;		
+		case GexManagerEvent.CONNECTION_CLOSED:
+			//saveXML(); // not necessary? saved on dialog close...
 			removeNonGeneric();
+			break;			
+		default:
+			assert (false); // Shouldn't occur.
 		}
 	}
 
@@ -458,4 +478,79 @@ public class VisualizationManager implements ApplicationEventListener, Expressio
 		return getCurrent().createToolTipComponent(gp);
 	}	
 
+	public static final String ROOT_XML_ELEMENT = "expression-data-visualizations";
+
+	public static InputStream getXmlInput()
+	{
+		File xmlFile = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+		try {
+			if(!xmlFile.exists()) xmlFile.createNewFile();
+			InputStream in = new FileInputStream(xmlFile);
+			return in;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static OutputStream getXmlOutput() {
+		try {
+			File f = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+			OutputStream out = new FileOutputStream(f);
+			return out;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void saveXML() {
+		if(!GexManager.isConnected()) return;
+		
+		OutputStream out = getXmlOutput();
+		
+		Document xmlDoc = new Document();
+		Element root = new Element(ROOT_XML_ELEMENT);
+		xmlDoc.setRootElement(root);
+		
+		root.addContent(VisualizationManager.getNonGenericXML());
+		root.addContent(ColorSetManager.getXML());
+		
+		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		try {
+			xmlOut.output(xmlDoc, out);
+			out.close();
+		} catch(IOException e) {
+			Logger.log.error("Unable to save visualization settings", e);
+		}
+	}
+	
+	public static void loadXML() {
+		Document doc = getXML();
+		Element root = doc.getRootElement();
+		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
+		VisualizationManager.loadNonGenericXML(vis);
+		Element cs = root.getChild(ColorSetManager.XML_ELEMENT);
+		ColorSetManager.fromXML(cs);
+	}
+	
+	public static Document getXML() {
+		InputStream in = getXmlInput();
+		Document doc;
+		Element root;
+		try {
+			SAXBuilder parser = new SAXBuilder();
+			doc = parser.build(in);
+			in.close();
+			
+			root = doc.getRootElement();
+		} catch(Exception e) {
+			doc = new Document();
+			root = new Element(ROOT_XML_ELEMENT);
+			doc.setRootElement(root);
+			
+		}		
+		return doc;
+	}
+	
 }

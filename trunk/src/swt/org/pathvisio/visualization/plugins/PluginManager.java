@@ -73,7 +73,7 @@ public abstract class PluginManager {
 	}
 	
 	public static Class<?>[] getPlugins() {
-		return GexManager.getCurrentGex().isConnected() ?
+		return GexManager.isConnected() ?
 				plugins.toArray(new Class[plugins.size()]) :
 				getGenericPlugins();
 	}

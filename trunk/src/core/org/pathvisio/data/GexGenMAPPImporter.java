@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -65,11 +64,7 @@ public class GexGenMAPPImporter
 			result.getCon().setAutoCommit(false); //Keep control over when to commit, should increase speed
 			Statement s = conGmGex.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			
-			PreparedStatement pstmtExpr = result.getCon().prepareStatement(
-					"INSERT INTO expression			" +
-					"	(id, code, ensId,			" + 
-					"	 idSample, data)			" +
-			"VALUES	(?, ?, ?, ?, ?)			");
+			result.prepare();
 			
 			ResultSet r = s.executeQuery("SELECT * FROM Expression");
 			r.last();
@@ -84,15 +79,14 @@ public class GexGenMAPPImporter
 				int dataType = rsmd.getColumnType(i);
 				String sampleName = rsmd.getColumnName(i);
 				// Add new sample
-				result.getCon().createStatement().execute("INSERT INTO SAMPLES" +
-						"	(idSample, name, dataType)" + 
-						"VALUES ( " + (i - 4) + ",'" + sampleName + "', " + dataType + " )");
+				result.addSample(i - 4, sampleName, dataType);
 			}
 			
 			//Fill the Expression table
 			int nq = 0; //The number of queries excecuted
 			String id = "";
 			String code = "";
+			int row = 0;
 			while(r.next()) { //Process all rows of the expression data
 				if(p.isCancelled()) //Check if the user cancelled the conversion
 				{
@@ -103,47 +97,53 @@ public class GexGenMAPPImporter
 				
 				id = r.getString("ID");
 				code = r.getString("SystemCode");
-				List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(new Xref (id, DataSource.getBySystemCode(code))); //Find the Ensembl genes for current gene
+				Xref ref = new Xref (id, DataSource.getBySystemCode(code));
+				//Find the Ensembl genes for current gene
+				List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(ref);
 				
 				if(ensIds.size() == 0) //No Ensembl gene found
 				{
 					error.println(id + "\t" + code + "\t No Ensembl gene found for this identifier");
-				} else { //Gene maps to an Ensembl id, so add it
+				} 
+				else 
+				{ 
+					//Gene maps to an Ensembl id, so add it
 					ArrayList<String> data = new ArrayList<String>();
-					for(int i = 4; i < nCols - 1; i++) { // Column 4 to 2 before last contain expression data
+					for (int i = 4; i < nCols - 1; i++) 
+					{ 
+						// Column 4 to 2 before last contain expression data
 						data.add(r.getString(i));
 					}
-					for( String ensId : ensIds) //For every Ensembl id add the data
+					for (String ensId : ensIds) 
+					//For every Ensembl id add the data
 					{
 						int i = 0;
 						for(String str : data)
 						{
-							try {
-								pstmtExpr.setString(1,id);
-								pstmtExpr.setString(2,code);
-								pstmtExpr.setString(3, ensId);
-								pstmtExpr.setInt(4,i);
-								pstmtExpr.setString(5,str);
-								pstmtExpr.execute();
-							} catch (Exception e) {
+							try 
+							{
+								result.addExpr (
+									ref, ensId,	"" + i,	str, row);
+							} 
+							catch (Exception e) 
+							{
 								error.println(id + ", " + code + ", " + i + "\t" + e.getMessage());
 							}
 							i++;
 						}
 					}
 				}
+				row++;
 				nq++;
 				if(nq % 1000 == 0) //Commit every 1000 queries
-					result.getCon().commit();
+					result.commit();
 				p.worked(p.getTotalWork()/nrRows); //Report progress
 			}
-			result.getCon().commit();	
+			result.commit();	
 			error.println("END");
 			error.close();
-			closeGmGex();
-			result.getCon().close();
-			
-			GexManager.setCurrentGex (result, true);
+			closeGmGex();			
+			GexManager.setCurrentGex (result);
 		} 
 		catch(Exception e) 
 		{

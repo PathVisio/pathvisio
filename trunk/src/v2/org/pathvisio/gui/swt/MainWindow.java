@@ -43,8 +43,8 @@ import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexImportWizard;
 import org.pathvisio.data.GexSwt;
 import org.pathvisio.data.GexManager;
-import org.pathvisio.data.GexManager.ExpressionDataEvent;
-import org.pathvisio.data.GexManager.ExpressionDataListener;
+import org.pathvisio.data.GexManager.GexManagerEvent;
+import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.data.GexSwt.ProgressWizardDialog;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
@@ -84,7 +84,7 @@ public class MainWindow extends MainWindowBase
 				
 				if(dbName == null) return;
 				
-				GexManager.setCurrentGex(dbName, false, true);
+				GexManager.setCurrentGex(dbName, false);
 			} 
 			catch(Exception e) 
 			{
@@ -149,7 +149,7 @@ public class MainWindow extends MainWindowBase
 		}
 		
 		public void run() {
-			if(!GdbManager.getCurrentGdb().isConnected())
+			if(!GdbManager.isConnected())
 			{
 				MessageDialog.openWarning(getShell(), "Warning", "No gene database selected, " +
 						"select gene database before creating a new expression dataset");
@@ -165,7 +165,7 @@ public class MainWindow extends MainWindowBase
 	/**
 	 * {@link Action} to open the {@link ColorSetWindow}
 	 */
-	private class ColorSetManagerAction extends Action implements ExpressionDataListener
+	private class ColorSetManagerAction extends Action implements GexManagerListener
 	{
 		MainWindow window;
 		public ColorSetManagerAction (MainWindow w)
@@ -183,11 +183,13 @@ public class MainWindow extends MainWindowBase
 			d.setTabItemOnOpen(VisualizationDialog.TABITEM_COLORSETS);
 			d.open();
 		}
-		public void expressionDataEvent(ExpressionDataEvent e) {
-			switch(e.type) {
-			case ExpressionDataEvent.CONNECTION_OPENED:
+		public void gexManagerEvent(GexManagerEvent e) 
+		{
+			switch(e.getType()) 
+			{
+			case GexManagerEvent.CONNECTION_OPENED:
 				setEnabled(true); break;
-			case ExpressionDataEvent.CONNECTION_CLOSED:
+			case GexManagerEvent.CONNECTION_CLOSED:
 				setEnabled(false); break;
 			}	
 		}

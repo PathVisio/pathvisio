@@ -92,7 +92,7 @@ public class GexTxtImporter
 				if(p.isCancelled())
 				{
 					//User pressed cancel  
-					result.close(true);
+					result.close();
 					error.close();
 					return;
 				}
@@ -204,6 +204,7 @@ public class GexTxtImporter
 							
 							try 
 							{
+								//TODO: use autocommit (false) and commit only every 1000 queries or so. 
 								result.addExpr(
 										ref, 
 										ensId,
@@ -237,20 +238,27 @@ public class GexTxtImporter
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
 			p.setTaskName("Closing database connection");
-			result.close(true);
+
+			result.finalize();
+			result.close();
 			p.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
-			GexManager.setCurrentGex(result, true);
+			GexManager.setCurrentGex(result.getDbName(), false);
 			p.finished();
 		} 
 		catch(Exception e) 
 		{ 
 			p.report("Import aborted due to error: " + e.getMessage());
 			Logger.log.error("Expression data import error", e);
-			result.close(true);
+			try
+			{
+				result.close();
+			}
+			catch (DataException f) 
+			{ Logger.log.error ("Exception while aborting database", f); }
 			error.close();
 		}
 	}

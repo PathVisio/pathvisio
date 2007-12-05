@@ -16,42 +16,63 @@
 //
 package org.pathvisio.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.colorset.ColorSetManager;
 
+/**
+ * Manage the centralized SimpleGex
+ * 
+ * Use one of the two setCurrentGex methods
+ * to connect to a new Gex database.
+ * 
+ * Register for GexManagerEvent if you want to be notified
+ * when a Gex is connected or closed.
+ * 
+ */
 public class GexManager 
 {
 	private static SimpleGex currentGex = null; 
 	public static SimpleGex getCurrentGex() { return currentGex; }
 	
-	
-	public static void setCurrentGex (SimpleGex gex, boolean fireEvent)
+	/**
+	 * Returns true if the current gex is initialized
+	 * (non-null), and if it is connected.
+	 * If it returns true it is safe to work with getCurrentGex()
+	 */
+	public static boolean isConnected()
 	{
-		if (currentGex != null) currentGex.close();
-		currentGex = gex;
-		if(fireEvent)
-			fireExpressionDataEvent(new ExpressionDataEvent(SimpleGex.class, ExpressionDataEvent.CONNECTION_OPENED));
-		loadXML();
+		return
+			currentGex != null &&
+			currentGex.isConnected();
 	}
 	
-	public static void setCurrentGex (String dbName, boolean create, boolean fireEvent) throws DataException
+	/**
+	 * Set a premade Gex instance as the current Gex.
+	 * Mostly used for testing, when you want to specify
+	 * the DBConnector used. The other setCurrentGex() is preferred
+	 * for most use cases.
+	 * 
+	 * @param gex a premade Gex instance
+	 */
+	public static void setCurrentGex (SimpleGex gex)
+	{
+		close(); // close old gex.
+		currentGex = gex;
+		fireExpressionDataEvent(new GexManagerEvent(gex, GexManagerEvent.CONNECTION_OPENED));
+	}
+	
+	/**
+	 * Create or connect to a new Gex based on the dbName.
+	 * Uses a DBConnector obtained from the preferences.
+	 * 
+	 * @param dbName name of the database (usually file or directory name)
+	 * @param create true if you want to create / overwrite a database
+	 */
+	public static void setCurrentGex (String dbName, boolean create) throws DataException
 	{
 		DBConnector connector;
 		try
@@ -71,7 +92,7 @@ public class GexManager
 			throw new DataException (e);
 		}
 		SimpleGex gex = new SimpleGex (dbName, create, connector);
-		setCurrentGex (gex, fireEvent);
+		setCurrentGex (gex);
 	}
 	
 	private static DBConnector getDBConnector() throws 
@@ -82,131 +103,78 @@ public class GexManager
 		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
 	}
 
-	
+	/**
+	 * Close the current Gex, if it wasn't already closed.
+	 * Sends a GexManagerEvent around.
+	 */
 	public static void close()
 	{
-		saveXML();
-		currentGex.close(false);
-		fireExpressionDataEvent(new ExpressionDataEvent(SimpleGex.class, ExpressionDataEvent.CONNECTION_CLOSED));	
+		if (currentGex == null) return; // was already closed.
+		fireExpressionDataEvent(new GexManagerEvent(currentGex, GexManagerEvent.CONNECTION_CLOSED));	
+		try
+		{
+			currentGex.close();
+		}
+		catch (DataException e)
+		{			
+			Logger.log.error ("Problem while closing previous gex", e);
+		}
+		currentGex = null; // garbage collection
 	}
 	
 	/**
-	 * Fire a {@link ExpressionDataEvent} to notify all {@link ExpressionDataListener}s registered
+	 * Fire a {@link GexManagerEvent} to notify all {@link GexManagerListener}s registered
 	 * to this class
 	 * @param e
 	 */
-	protected static void fireExpressionDataEvent(ExpressionDataEvent e) 
+	private static void fireExpressionDataEvent(GexManagerEvent e) 
 	{
-		for(ExpressionDataListener l : listeners) l.expressionDataEvent(e);
+		for(GexManagerListener l : listeners) l.gexManagerEvent(e);
 	}
 	
-	public interface ExpressionDataListener 
+	public interface GexManagerListener 
 	{
-		public void expressionDataEvent(ExpressionDataEvent e);
+		public void gexManagerEvent(GexManagerEvent e);
 	}
 	
-	static List<ExpressionDataListener> listeners;
+	static List<GexManagerListener> listeners;
 	
 	/**
-	 * Add a {@link ExpressionDataListener}, that will be notified if an
+	 * Add a {@link GexManagerListener}, that will be notified if an
 	 * event related to expression data occurs
-	 * @param l The {@link ExpressionDataListener} to add
+	 * @param l The {@link GexManagerListener} to add
 	 */
-	public static void addListener(ExpressionDataListener l) 
+	public static void addListener(GexManagerListener l) 
 	{
-		if(listeners == null) listeners = new ArrayList<ExpressionDataListener>();
+		if(listeners == null) listeners = new ArrayList<GexManagerListener>();
 		listeners.add(l);
 	}
 	
-	public static class ExpressionDataEvent extends EventObject 
+	/**
+	 * Events in the centralized Gex.
+	 */
+	public static class GexManagerEvent extends EventObject 
 	{
 		private static final long serialVersionUID = 1L;
+		
+		/** Event passed just after a new Gex is opened */
 		public static final int CONNECTION_OPENED = 0;
+		/** Event passed just before the current Gex is closed */
 		public static final int CONNECTION_CLOSED = 1;
 
-		public Object source;
-		public int type;
+		private int type;
+		/** The type, one of CONNECTION_OPENED or CONNECTION_CLOSED */
+		public int getType() { return type; }
 		
-		public ExpressionDataEvent(Object source, int type) {
+		/**
+		 * @param source the current SimpleGex 
+		 * @param type one of CONNECTION_OPENED or CONNECTION_CLOSED */
+		public GexManagerEvent(Object source, int type) 
+		{
 			super(source);
 			this.source = source;
 			this.type = type;
 		}
-	}
-	
-	public static final String XML_ELEMENT = "expression-data-visualizations";
-
-	public static InputStream getXmlInput()
-	{
-		File xmlFile = new File(currentGex.getDbName() + ".xml");
-		try {
-			if(!xmlFile.exists()) xmlFile.createNewFile();
-			InputStream in = new FileInputStream(xmlFile);
-			return in;
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static OutputStream getXmlOutput() {
-		try {
-			File f = new File(currentGex.getDbName() + ".xml");
-			OutputStream out = new FileOutputStream(f);
-			return out;
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static void saveXML() {
-		if(!currentGex.isConnected()) return;
-		
-		OutputStream out = getXmlOutput();
-		
-		Document xmlDoc = new Document();
-		Element root = new Element(XML_ELEMENT);
-		xmlDoc.setRootElement(root);
-		
-		root.addContent(VisualizationManager.getNonGenericXML());
-		root.addContent(ColorSetManager.getXML());
-		
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-		try {
-			xmlOut.output(xmlDoc, out);
-			out.close();
-		} catch(IOException e) {
-			Logger.log.error("Unable to save visualization settings", e);
-		}
-	}
-	
-	public static void loadXML() {
-		Document doc = getXML();
-		Element root = doc.getRootElement();
-		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
-		VisualizationManager.loadNonGenericXML(vis);
-		Element cs = root.getChild(ColorSetManager.XML_ELEMENT);
-		ColorSetManager.fromXML(cs);
-	}
-	
-	public static Document getXML() {
-		InputStream in = getXmlInput();
-		Document doc;
-		Element root;
-		try {
-			SAXBuilder parser = new SAXBuilder();
-			doc = parser.build(in);
-			in.close();
-			
-			root = doc.getRootElement();
-		} catch(Exception e) {
-			doc = new Document();
-			root = new Element(XML_ELEMENT);
-			doc.setRootElement(root);
-			
-		}		
-		return doc;
 	}
 	
 }

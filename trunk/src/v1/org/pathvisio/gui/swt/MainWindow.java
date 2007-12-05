@@ -22,7 +22,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
-import org.pathvisio.data.Gex;
+import org.pathvisio.data.GexManager;
 
 /**
  * This class is the main class in the GPML project. 
@@ -49,7 +49,7 @@ public class MainWindow extends MainWindowBase
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
 		Engine.getCurrent().addApplicationEventListener(this);
-		Gex.addListener(this);
+		GexManager.addListener(this);
 	}
 	
 	/**

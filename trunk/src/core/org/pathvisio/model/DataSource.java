@@ -63,44 +63,42 @@ public class DataSource
 	private static Map<String, DataSource> byFullName = new HashMap<String, DataSource>();
 	private static Set<DataSource> registry = new HashSet<DataSource>();
 	
-	public static final DataSource SGD = new DataSource ("D", "SGD", null, null, null);
-	public static final DataSource FLYBASE = new DataSource ("F", "FlyBase", null, null, null);
-	public static final DataSource GENBANK = new DataSource ("G", "GenBank", null, null, null);
-	public static final DataSource INTERPRO = new DataSource ("I", "InterPro", null, null, null);
-	public static final DataSource ENTREZ_GENE = new DataSource ("L", "Entrez Gene", null, null, null);
-	public static final DataSource MGI = new DataSource ("M", "MGI", null, null, null);
-	public static final DataSource REFSEQ = new DataSource ("Q", "RefSeq", null, null, null);
-	public static final DataSource RGD = new DataSource ("R", "RGD", null, null, null);
-	public static final DataSource SWISSPROT = new DataSource ("S", "SwissProt", null, null, null);
-	public static final DataSource GENE_ONTOLOGY = new DataSource ("T", "GeneOntology", null, null, null);
-	public static final DataSource UNIGENE = new DataSource ("U", "UniGene", null, null, null);
-	public static final DataSource WORMBASE = new DataSource ("W", "WormBase", null, null, null);
-	public static final DataSource AFFY = new DataSource ("X", "Affy", null, null, null);
-	public static final DataSource ENSEMBL = new DataSource ("En", "Ensembl", "http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q=", "", null);
-	public static final DataSource EMBL = new DataSource ("Em", "EMBL", null, null, null);
-	public static final DataSource HUGO = new DataSource ("H", "HUGO", null, null, null);
-	public static final DataSource OMIM = new DataSource ("Om", "OMIM", null, null, null);
-	public static final DataSource PDB = new DataSource ("Pd", "PDB", null, null, null);
-	public static final DataSource PFAM = new DataSource ("Pf", "Pfam", null, null, null);
-	public static final DataSource ZFIN = new DataSource ("Z", "ZFIN", null, null, null);
-	public static final DataSource HSGENE = new DataSource ("Hs", "HsGene", null, null, null);
-	public static final DataSource CINT = new DataSource ("C", "Cint", null, null, null);
-	public static final DataSource AGILENT = new DataSource ("Ag", "Agilent", null, null, null);
-	public static final DataSource ILLUMINA = new DataSource ("Il", "Illumina", null, null, null);
-	public static final DataSource SNP = new DataSource ("Sn", "SNP", null, null, null);
-	public static final DataSource ECOLI = new DataSource ("Ec", "Ecoli", null, null, null);
-	public static final DataSource CAS = new DataSource ("Ca", "CAS", null, null, null);
-	public static final DataSource CHEBI = new DataSource ("Ce", "ChEBI", null, null, null);
-	public static final DataSource PUBCHEM = new DataSource ("Cp", "PubChem", null, null, null);
-	public static final DataSource NUGOWIKI = new DataSource ("Nw", "NuGO wiki", null, null, null);
-	public static final DataSource KEGG_COMPOUND = new DataSource ("Ck", "Kegg Compound", null, null, null);
-	public static final DataSource HMDB = new DataSource ("Ch", "HMDB", null, null, null);
-	public static final DataSource OTHER = new DataSource ("O", "Other", null, null, null);
+	public static final DataSource SGD = new DataSource ("D", "SGD", null);
+	public static final DataSource FLYBASE = new DataSource ("F", "FlyBase", null);
+	public static final DataSource GENBANK = new DataSource ("G", "GenBank", null);
+	public static final DataSource INTERPRO = new DataSource ("I", "InterPro", null);
+	public static final DataSource ENTREZ_GENE = new DataSource ("L", "Entrez Gene", null);
+	public static final DataSource MGI = new DataSource ("M", "MGI", null);
+	public static final DataSource REFSEQ = new DataSource ("Q", "RefSeq", null);
+	public static final DataSource RGD = new DataSource ("R", "RGD", null);
+	public static final DataSource SWISSPROT = new DataSource ("S", "SwissProt", null);
+	public static final DataSource GENE_ONTOLOGY = new DataSource ("T", "GeneOntology", null);
+	public static final DataSource UNIGENE = new DataSource ("U", "UniGene", null);
+	public static final DataSource WORMBASE = new DataSource ("W", "WormBase", "http://www.wormbase.org");
+	public static final DataSource AFFY = new DataSource ("X", "Affy", null);
+	public static final DataSource ENSEMBL = new DataSource ("En", "Ensembl", "http://www.ensembl.org");
+	public static final DataSource EMBL = new DataSource ("Em", "EMBL", null);
+	public static final DataSource HUGO = new DataSource ("H", "HUGO", null);
+	public static final DataSource OMIM = new DataSource ("Om", "OMIM", null);
+	public static final DataSource PDB = new DataSource ("Pd", "PDB", null);
+	public static final DataSource PFAM = new DataSource ("Pf", "Pfam", null);
+	public static final DataSource ZFIN = new DataSource ("Z", "ZFIN", null);
+	public static final DataSource HSGENE = new DataSource ("Hs", "HsGene", null);
+	public static final DataSource CINT = new DataSource ("C", "Cint", null);
+	public static final DataSource AGILENT = new DataSource ("Ag", "Agilent", null);
+	public static final DataSource ILLUMINA = new DataSource ("Il", "Illumina", null);
+	public static final DataSource SNP = new DataSource ("Sn", "SNP", null);
+	public static final DataSource ECOLI = new DataSource ("Ec", "Ecoli", null);
+	public static final DataSource CAS = new DataSource ("Ca", "CAS", null);
+	public static final DataSource CHEBI = new DataSource ("Ce", "ChEBI", null);
+	public static final DataSource PUBCHEM = new DataSource ("Cp", "PubChem", null);
+	public static final DataSource NUGOWIKI = new DataSource ("Nw", "NuGO wiki", null);
+	public static final DataSource KEGG_COMPOUND = new DataSource ("Ck", "Kegg Compound", null);
+	public static final DataSource HMDB = new DataSource ("Ch", "HMDB", null);
+	public static final DataSource OTHER = new DataSource ("O", "Other", null);
 
 	private String sysCode = null;
 	private String fullName = null;
-	private String uriPrefix = null;
-	private String uriPostfix = null;
 	private String mainUrl = null;
 	
 	/**
@@ -109,12 +107,10 @@ public class DataSource
 	 * That way we can make sure that two DataSources
 	 * pointing to the same datbase are really the same.
 	 */
-	private DataSource (String sysCode, String fullName, String uriPrefix, String uriPostfix, String mainUrl)
+	private DataSource (String sysCode, String fullName, String mainUrl)
 	{
 		this.sysCode = sysCode;
 		this.fullName = fullName;
-		this.uriPrefix = uriPrefix;
-		this.uriPostfix = uriPostfix;
 		this.mainUrl = mainUrl;
 		
 		registry.add (this);
@@ -249,9 +245,9 @@ public class DataSource
 	 * so new system codes can be added easily by 
 	 * plugins. Pattern and url may be null 
 	 */
-	public static void register(String sysCode, String fullName, String prefix, String postfix, String mainUrl)
+	public static void register(String sysCode, String fullName, String mainUrl)
 	{
-		new DataSource (sysCode, fullName, prefix, postfix, mainUrl);
+		new DataSource (sysCode, fullName, mainUrl);
 	}
 	
 	/** 
@@ -262,7 +258,7 @@ public class DataSource
 	{
 		if (!bySysCode.containsKey(systemCode))
 		{
-			register (systemCode, null, null, null, null);
+			register (systemCode, null, null);
 		}
 		return bySysCode.get(systemCode);
 	}
@@ -276,7 +272,7 @@ public class DataSource
 	{
 		if (!byFullName.containsKey(fullName))
 		{
-			register (null, fullName, null, null, null);
+			register (null, fullName, null);
 		}
 		return byFullName.get(fullName);
 	}

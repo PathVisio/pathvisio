@@ -37,7 +37,8 @@ created by the user as a specific point on the line. The line anchor's coordinat
 and range from 0 (start) to 1 (end).
 
 * AP: Would the 1-D anchor coordinate work with all elbow and curved lines types?
-
+* TK:	Yes, if the coordinate would be 0.4, the connector will be placed at 40% of the total lentgh of the path.
+		The exact position will differ if you change from straight to elbow connector, however.
 == Elbow connectors ==
 To improve the layout of pathways we will support elbow connectors.
 The first or last segment always comes in or out of the object either in the x or y direction. 
@@ -140,6 +141,13 @@ We need to make sure we are also supporting this type of line:
        /    \
 Gene 1        Gene 2
 
+TK: It will be represented like this:
+        --+--
+       /     \
+Gene 1       Gene 2
+
+The waypoint will be inserted automatically, and the user can modify its position (see curves in Powerpoint).
+
 == Changes to GPML ==
 We will introduce the following new attributes and elements:
 - Line.Type = [straight, elbow, curved]
@@ -167,7 +175,7 @@ Here's an example of the GPML code:
 <Line Type="elbow">
 	<Point GraphRef="a" X="200" Y="200"/>
 	<Point GraphRef="b" X="500" Y="500"/>
-	<Anchor X="0.2" GraphId="d"/>
+	<Anchor Position="0.2" GraphId="d"/>
 	<Waypoint Position="350"/>
 </Line>
 <Line>
@@ -189,9 +197,19 @@ Gene1 --o---
 * AP: I altered the diagram and waypoint position to match better  (the waypoint X was 
 to the right of the anchor, though both were at X=300).
 * AP: Line.Anchor.X should be renamed to Line.Anchor.Position (because it is not an X coordinate)
+* TK: Good point, I changed it
+
+== GUI behaviour ==
+In this section discuss on GUI behavior as result of user actions (e.g. what would happen if I do this
+or that).
+It will be a real challenge to code the GUI behaviour correctly, but we should be sure that we excactly specified
+how the GUI will respond to these kind of actions before we start coding. So any more comments on this part are welcome.
+
+=== Action: change object anchor ===
 * AP: To make sure I understand: In the above GPML example, what would happen if the user were to move 
 the connector start to the South anchor on Gene 1?  Would the anchor on Gene 2 change to north and would
-the waypoint position "350" refer to the Y coord instead of the X?  And what happens to Gene 3.  It's hard to 
+the waypoint position "350" refer to the Y coord instead of the X?  
+And what happens to Gene 3.  It's hard to 
 draw, but I presume it would stay in its place (300,100) and an off-grid, sloping line would connect it 
 to the new anchor position (200,300).
 
@@ -202,13 +220,78 @@ Gene 1
                    |
                    \/
                  Gene 2
-  				 
+
+* TK: I'm not sure if we should change the anchor on Gene 2 to North, the anchor position of an object
+should be independent of other objects. What I had in mind would rather look like this:
+
+      Gene 3
+         |
+Gene1    |
+  |      |
+  o<------
+  |
+  --------------> Gene 2
+  
+There will be no extra bend anymore, so the waypoint will just dissapear. The connector from Gene 3 
+would just reroute to the new position of the line anchor (depending on the style, in this case it's an 
+elbow connector).
+
+If you want the same end result as in your example, you can move the anchor on Gene 2 to north:
+
+       Gene 3
+          |
+Gene1  -+-|
+  |    v
+  -----o---+---------
+                    |
+                  Gene 2
+
+Note that the connector from Gene 3 reroutes again.
+In this case the waypoint indeed refers to an Y coordinate, in this example it will be 350, but that doesn't have to be. 
+In the proposal, the waypoint positions would be absolute coordinates which are calculated by the view upon changing the connector.
+Maybe it should be relative coordinates that remain the same when you change the number of segments of the
+connector. It could be the relative distance from the first object (so 0.5 would be the center), for example:
+
+waypoint1: 0
+waypoint2: 0
+Gene1 -------------
+                  |
+                  |
+                  v
+               Gene 2
+
+waypoint1: 0,5
+waypoint2: 0
+Gene1 ------
+           |
+           +
+           |
+           ---->Gene 2
+
+waypoint1: 1.2
+waypoint2: 0
+Gene1 -------------------
+                        |
+                        +
+                        |
+                Gene2 <--
+
+waypoint1: 0.5
+waypoint2: 1.2
+Gene1 ----
+         |
+         |
+         +  	Gene2
+         |        |
+         |----+----
+
+
 == Point coordinates of connectors ==
 
 In the current implementation, line ends are not really linked to an object anchor, but have their own coordinates which need to be updated when moving the object.
-Maybe it would be better to store the coordinate relative to the object when a point is part of a connector. So in this case, the Point.X and Point.Y attributes can have two meanings:
-1. The point has no GraphRef (no connector), the coordinates are relative to the canvas
-2. The point has a GraphRef (connector), the coordinates are relative to the object to which is linked
+Maybe it would be better to store the coordinate relative to the object when a point is part of a connector. So in this case, there are two types of coordinates:
+1. The point has no GraphRef (no connector), the coordinates X and Y are used, they are relative to the canvas
+2. The point has a GraphRef (connector), the coordinates RelX and RelY are used, they are relative to the object to which is linked
 
 This way we don't have to update all linked points every time an object is moved. The object then doesn't need to have a notion of linked points, which improves modularity and performance.
 
@@ -233,5 +316,12 @@ I worry about the same tag having two different meanings.  I'm not sure the extr
 requirements (which may be relevant to multiple apps in the future) are worth the programmatic 
 updates to line coords (which are relevant only to PathVisio, which we have better control over).
 
+* TK: I'm sorry, the first lines of this section weren't updated with Martijn's modifications. He introduced the RelX and RelY, 
+attributes. In this case the attributes have unique meanings, they just can't co-exist. Does this solve the problem?
+
 == Changes to the code ==
 TODO
+
+
+
+

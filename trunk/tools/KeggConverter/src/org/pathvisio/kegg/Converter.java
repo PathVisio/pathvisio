@@ -16,6 +16,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.DataSource;
@@ -50,7 +51,8 @@ public class Converter {
 			Pathway pathway = new Pathway();
 
 			for(Element child : keggElements) {
-
+				
+				String name = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
 				if(type != null) {
 					/** types: map, enzyme, compound **/
@@ -67,7 +69,23 @@ public class Converter {
 							{
 								String textlabelGPML = ncbi.get(i); // naam van gen i uit online NCBI database
 								String typeDatanode = "GeneProduct";
-								
+
+
+								//TK: Convert a hexadecimal color into an awt.Color object
+								//Remove the # before converting
+								Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+
+								String centerXGPML = child.getAttributeValue("x");
+								String centerYGPML = child.getAttributeValue("y");
+								String widthGPML = child.getAttributeValue("width");
+								String heightGPML = child.getAttributeValue("height");
+
+								//TK: use double instead of the object representation Double
+								//Why do you store height and Y in a temporary variable and
+								//convert X and width directly?
+								double height = Double.parseDouble(heightGPML);
+								double centerY = Double.parseDouble(centerYGPML) - i*height;
+
 								PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 								String id = element.getGraphId();
 								element.setDataSource(DataSource.ENTREZ_GENE); // No idea what may be the problem
@@ -97,6 +115,11 @@ public class Converter {
 					}
 					else if(type.equals("compound"))
 					{
+
+						String textlabelGPML = "mieauw"; // naam van metabolite uit online KEGG database
+
+						//TK: And again the same changes, duplicate code
+
 						Element graphics = child.getChild("graphics");
 						int i = 0;
 						
@@ -126,6 +149,74 @@ public class Converter {
 						
 						pathway.add(element);
 					}
+					if(child.getName().equals("reaction")){
+						//loopt van substraat naar gen en vervolgens van gen naar product
+						String substrate = child.getChild("substrate").getAttributeValue("name");
+						String product = child.getChild("product").getAttributeValue("name");
+						String reaction= child.getAttributeValue("name");
+						
+						//zoek in in de entries naar de bijbehorende metabolieten of enzymen
+						//pijlen van substraat naar gen
+						for (Element child2 : keggElements) {
+							
+							String substrateX;
+							String substrateY;
+							String geneX;
+							String geneY;
+							
+							if (name.equals("substrate")){
+								substrateX = child2.getAttributeValue("x");
+								substrateY = child2.getAttributeValue("y");	
+							}
+							if (name.equals("reaction")){
+								geneX = child2.getAttributeValue("x");
+								geneY = child2.getAttributeValue("y");
+							}
+							
+							PathwayElement element = new PathwayElement(ObjectType.LINE);
+							element.setColor(Color.BLACK);
+							element.setMStartX(Double.parseDouble(substrateX));
+							element.setMStartY(Double.parseDouble(substrateY));
+							element.setMEndX(Double.parseDouble(geneX));
+							element.setMEndY(Double.parseDouble(geneY));
+							element.setStartGraphRef();
+							element.setEndGraphRef();
+							element.setEndLineType(LineType.ARROW);
+							
+							pathway.add(element);
+						}
+						//pijlen van gen naar product
+						for (Element child3 : keggElements) {
+							
+							String substrateX;
+							String substrateY;
+							String productX;
+							String productY;
+							
+							if (name.equals("reaction")){
+								substrateX = child3.getAttributeValue("x");
+								substrateY = child3.getAttributeValue("y");
+							}
+							if (name.equals("product")){
+								productX = child3.getAttributeValue("x");
+								productY = child3.getAttributeValue("y");
+							}
+							
+							PathwayElement element = new PathwayElement(ObjectType.LINE);
+							element.setColor(Color.BLACK);
+							element.setMStartX(Double.parseDouble(substrateX));
+							element.setMStartY(Double.parseDouble(substrateY));
+							element.setMEndX(Double.parseDouble(productX));
+							element.setMEndY(Double.parseDouble(productY));
+							element.setStartGraphRef();
+							element.setEndGraphRef();
+							element.setEndLineType(LineType.ARROW);
+							
+							pathway.add(element);
+						}
+						
+						
+					}
 				}
 			}	
 		} catch(Exception e) {
@@ -146,7 +237,7 @@ public class Converter {
 		//KEGG code --> NCBI code
 		List <String> result =  new ArrayList <String>();
 		if(genes.length != 0){
-			
+
 			for(String gene : genes) {
 				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
 				for(LinkDBRelation ldb : links) {
@@ -157,7 +248,7 @@ public class Converter {
 		
 		return result;  
 	}
-	
+
 	public static String[] getCompoundsByEnzyme(String ec) throws ServiceException, RemoteException 
 	{
 		//Setup a connection to KEGG
@@ -167,17 +258,17 @@ public class Converter {
 
 		//Fetch the compounds names
 		String[] compounds = serv.get_compounds_by_enzyme(ec);
-		
+
 		//Distinguish substrate from product
-			// dependent on outcome get_compounds_by_enzyme  
-		
+		// dependent on outcome get_compounds_by_enzyme  
+
 		//KEGG code --> chemical name
-			// no direct way @ http://www.genome.jp/kegg/soap/doc/keggapi_javadoc/keggapi/KEGGPortType.html
-			// though via versa is possible
-		
+		// no direct way @ http://www.genome.jp/kegg/soap/doc/keggapi_javadoc/keggapi/KEGGPortType.html
+		// though via versa is possible
+
 		return new String[] {};
 	}
-	
+
 	public static PathwayElement createPathwayElement(Element child, PathwayElement element, int i, String textlabelGPML, String typeDatanode)
 	{
 		//Create new pathway element

@@ -28,25 +28,16 @@ public class Converter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String filename = "examples/map00031.xml";
+		String filename = "examples/map00350.xml";
 		String specie = "hsa";
 
 		SAXBuilder builder  = new SAXBuilder();
 		try {
 			Document doc = builder.build(new File(filename));
 
-			Element rootelement =doc.getRootElement();
-
-			/*
-			Misschien is een andere naam beter,
-			grandChildren zegt niet zoveel, wat stellen de elementen
-			voor (e.g. keggElements?)
-			Je kunt in Eclipse makkelijk de naam van een variabele
-			veranderen door de naam te selecteren en ALT-SHIFT-R
-			in te typen.
-			*/
+			Element rootelement = doc.getRootElement();
 			
-			List<Element> keggElements=rootelement.getChildren();
+			List<Element> keggElements = rootelement.getChildren();
 
 			Pathway pathway = new Pathway();
 
@@ -54,14 +45,12 @@ public class Converter {
 				
 				String name = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
-				String map = child.getAttributeValue("map");
 				Element graphics = child.getChild("graphics");
 				if(type != null && graphics != null) 
 				{
 					/** types: map, enzyme, compound **/
 					if(type.equals("enzyme")) 
-					{
-						
+					{						
 						String enzymeCode = child.getAttributeValue("name");
 						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
 
@@ -205,12 +194,11 @@ public class Converter {
 				}
 			}
 			
-			pathway.writeToXml(new File("/home/martijn/Desktop/keggconv.gpml"), false);
+			pathway.writeToXml(new File("C:/Documents and Settings/s030478/Desktop/keggconv.gpml"), false);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 	
 	public static List <String> getNcbiByEnzyme(String ec, String species) throws ServiceException, RemoteException 
@@ -230,7 +218,7 @@ public class Converter {
 			for(String gene : genes) {
 				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
 				for(LinkDBRelation ldb : links) {
-					result.add(ldb.getEntry_id2());
+					result.add(ldb.getEntry_id2().substring(12));
 				}
 			}
 		}
@@ -283,13 +271,15 @@ public class Converter {
 		String widthGPML = graphics.getAttributeValue("width");
 		String heightGPML = graphics.getAttributeValue("height");
 		
-		double height = Double.parseDouble(heightGPML) * 15;
-		double centerY = (Double.parseDouble(centerYGPML) - (i * height)) * 15;
+		double height = Double.parseDouble(heightGPML);
+		double width = Double.parseDouble(widthGPML);
+		double centerY = Double.parseDouble(centerYGPML) - i*height;
+		double centerX = Double.parseDouble(centerXGPML);
 		
-		element.setMCenterX(Double.parseDouble(centerXGPML) * 15);
-		element.setMCenterY(centerY);
-		element.setMWidth(Double.parseDouble(widthGPML) * 15);
-		element.setMHeight(height);
+		element.setMCenterX(centerX*15);
+		element.setMCenterY(centerY*15);
+		element.setMWidth(width*15);
+		element.setMHeight(height*15);
 		
 		// Set textlabel
 		element.setTextLabel(textlabelGPML);			

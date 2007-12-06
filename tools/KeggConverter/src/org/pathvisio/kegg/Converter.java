@@ -3,6 +3,7 @@ package org.pathvisio.kegg;
 import java.awt.Color;
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.rpc.ServiceException;
@@ -17,6 +18,7 @@ import org.jdom.input.SAXBuilder;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 
 public class Converter {
@@ -42,11 +44,12 @@ public class Converter {
 			veranderen door de naam te selecteren en ALT-SHIFT-R
 			in te typen.
 			*/
-			List<Element> grandChildren=rootelement.getChildren();
+			
+			List<Element> keggElements=rootelement.getChildren();
 
 			Pathway pathway = new Pathway();
 
-			for(Element child : grandChildren) {
+			for(Element child : keggElements) {
 
 				String type = child.getAttributeValue("type");
 				if(type != null) {
@@ -57,40 +60,18 @@ public class Converter {
 						Element graphics = child.getChild("graphics");
 
 						String enzymeCode = child.getAttributeValue("name");
-						String[] ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
+						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
 
 						if (ncbi.equals("null") == false ){
-							for(int i=0; i<ncbi.length; i++ )
+							for(int i=0; i<ncbi.size(); i++ )
 							{
-								String textlabelGPML = ncbi[i]; // naam van gen i uit online NCBI database
-								String colorStringGPML = child.getAttributeValue("fgcolor");
+								String textlabelGPML = ncbi.get(i); // naam van gen i uit online NCBI database
+								String typeDatanode = "GeneProduct";
 								
-								//TK: Convert a hexadecimal color into an awt.Color object
-								//Remove the # before converting
-								Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
-								
-								String centerXGPML = child.getAttributeValue("x");
-								String centerYGPML = child.getAttributeValue("y");
-								String widthGPML = child.getAttributeValue("width");
-								String heightGPML = child.getAttributeValue("height");
-
-								//TK: use double instead of the object representation Double
-								//Why do you store height and Y in a temporary variable and
-								//convert X and width directly?
-								double height = Double.parseDouble(heightGPML);
-								double centerY = Double.parseDouble(centerYGPML) - i*height;
-
 								PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 								String id = element.getGraphId();
-								element.setTextLabel(textlabelGPML);
-								element.setDataNodeType("Geneproduct");
-								element.setColor(colorGPML);
-								element.setMCenterX(Double.parseDouble(centerXGPML));
-								element.setMCenterY(centerY);
-								element.setMWidth(Double.parseDouble(widthGPML));
-								element.setMHeight(height);
-								element.setDataSource("Entrez Gene"); // No idea what may be the problem
-								element.setGeneID(ncbi[i]);
+								element.setDataSource(DataSource.ENTREZ_GENE); // No idea what may be the problem
+								element.setGeneID(ncbi.get(i));
 
 								if(element != null) {
 									pathway.add(element);
@@ -98,31 +79,17 @@ public class Converter {
 							}
 						}
 						else { 
-							//TK: Same changes as above apply here...
-							//Here you see the disadvantage of duplicate code,
-							//when you change something, you have to change it
-							//at multiple places in your program.
-							//Could you think of a way to make the logic below only
-							//occur once in your code?
-							String textlabelGPML = child.getAttributeValue("name");
-							String colorGPML = child.getAttributeValue("fgcolor");
-							String centerXGPML = child.getAttributeValue("x");
-							String centerYGPML = child.getAttributeValue("y");
-							String widthGPML = child.getAttributeValue("width");
-							String heightGPML = child.getAttributeValue("height");
-
+							String textlabelGPML = enzymeCode;
+							int i = 0;
+							
 							PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 							String id = element.getGraphId();
-							element.setTextLabel(textlabelGPML);
-							element.setDataNodeType("Geneproduct");
-//							element.setColor(colorGPML);
-							element.setMCenterX(Double.parseDouble(centerXGPML));
-							element.setMCenterY(Double.parseDouble(centerYGPML));
-							element.setMWidth(Double.parseDouble(widthGPML));
-							element.setMHeight(Double.parseDouble(heightGPML));
-							element.setDataSource("Entrez Gene"); // No idea what may be the problem
+							element.setDataSource(null); // No idea what may be the problem
 							element.setGeneID("null");
 
+							// Fetch pathwayElement 
+							PathwayElement element = getPathwayElement(child, element, i, textlabelGPML, typeDatanode); 
+							
 							if(element != null) {
 								pathway.add(element);
 							}
@@ -130,47 +97,33 @@ public class Converter {
 					}
 					else if(type.equals("compound"))
 					{
-						String textlabelGPML = "mieauw"; // naam van metabolite uit online KEGG database
-						
-						//TK: And again the same changes, duplicate code
 						Element graphics = child.getChild("graphics");
-						String colorGPML = child.getAttributeValue("fgcolor");
-						String centerXGPML = child.getAttributeValue("x");
-						String centerYGPML = child.getAttributeValue("y");
-						String widthGPML = child.getAttributeValue("width");
-						String heightGPML = child.getAttributeValue("height");
-
+						int i = 0;
+						
+						String textlabelGPML = ""; // naam van metabolite uit online KEGG database
+						String typeDatanode = "Metabolite";
+						
 						PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 						String id = element.getGraphId();
-						element.setTextLabel(textlabelGPML);
-						element.setDataNodeType("Metabolite");
-//						element.setColor(colorGPML);
-						element.setMCenterX(Double.parseDouble(centerXGPML));
-						element.setMCenterY(Double.parseDouble(centerYGPML));
-						element.setMWidth(Double.parseDouble(widthGPML));
-						element.setMHeight(Double.parseDouble(heightGPML));
-
+						
+						// PathwayElement erbij halen
+						
 						pathway.add(element);
 					}					
 					else if(type.equals("map"))
 					{
-						//TK: and again....
+						Element graphics = child.getChild("graphics");
+						int i = 0;
+						
 						String textlabelGPML = child.getAttributeValue("name"); 
 						String typeGPML = null;
-						String centerXGPML = child.getAttributeValue("x");
-						String centerYGPML = child.getAttributeValue("y");
-						String widthGPML = child.getAttributeValue("width");
-						String heightGPML = child.getAttributeValue("height");
-
+						
 						PathwayElement element = new PathwayElement(ObjectType.LABEL);
 						String id = element.getGraphId();
 						element.setMFontSize(150);
-						element.setTextLabel(textlabelGPML);
-						element.setMCenterX(Double.parseDouble(centerXGPML));
-						element.setMCenterY(Double.parseDouble(centerYGPML));
-						element.setMWidth(Double.parseDouble(widthGPML));
-						element.setMHeight(Double.parseDouble(heightGPML));
-
+						
+						// PathwayElement erbij halen
+						
 						pathway.add(element);
 					}
 				}
@@ -179,8 +132,8 @@ public class Converter {
 			e.printStackTrace();
 		}
 	}
-
-	public static String[] getNcbiByEnzyme(String ec, String species) throws ServiceException, RemoteException 
+	
+	public static List <String> getNcbiByEnzyme(String ec, String species) throws ServiceException, RemoteException 
 	{
 		//Setup a connection to KEGG
 		KEGGLocator  locator = new KEGGLocator();
@@ -191,20 +144,18 @@ public class Converter {
 		String[] genes = serv.get_genes_by_enzyme(ec, species);
 
 		//KEGG code --> NCBI code
-		String test =  "null";
+		List <String> result =  new ArrayList <String>();
 		if(genes.length != 0){
 			
 			for(String gene : genes) {
 				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
 				for(LinkDBRelation ldb : links) {
-					test = ldb.getEntry_id2();//moet array zijn? nu wordt er overgeschreven per loop
+					result.add(ldb.getEntry_id2());
 				}
 			}
 		}
-		//Dit klopt niet.
-		//Je moet je LinkDBRelation[] omzetten in een String[]
-		//Hint: gebruik een ArrayList, omdat je vantevoren niet weet hoeveel ids je krijgt
-		return new String[] { test };  //mismatch bij test is string[],  wordt hier omgezet van string sting[]? 
+		
+		return result;  
 	}
 	
 	public static String[] getCompoundsByEnzyme(String ec) throws ServiceException, RemoteException 
@@ -226,6 +177,39 @@ public class Converter {
 		
 		return new String[] {};
 	}
+	
+	public static PathwayElement createPathwayElement(Element child, PathwayElement element, int i, String textlabelGPML, String typeDatanode)
+	{
+		//Create new pathway element
+	
+		// Set Color
+		// Convert a hexadecimal color into an awt.Color object
+		// Remove the # before converting
+		String colorStringGPML = child.getAttributeValue("fgcolor");
+		Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+		
+		// Set x, y, width, height 
+		String centerXGPML = child.getAttributeValue("x");
+		String centerYGPML = child.getAttributeValue("y");
+		String widthGPML = child.getAttributeValue("width");
+		String heightGPML = child.getAttributeValue("height");
+		
+		double height = Double.parseDouble(heightGPML);
+		double centerY = Double.parseDouble(centerYGPML) - i*height;
+		
+		element.setMCenterX(Double.parseDouble(centerXGPML));
+		element.setMCenterY(centerY);
+		element.setMWidth(Double.parseDouble(widthGPML));
+		element.setMHeight(height);
+		
+		// Set textlabel
+		element.setTextLabel(textlabelGPML);
+		 
+		element.setDataNodeType(typeDatanode);
+		
+		return element;
+	}
+	
 	
 }
 

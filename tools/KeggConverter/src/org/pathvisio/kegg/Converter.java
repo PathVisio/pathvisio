@@ -55,17 +55,18 @@ public class Converter {
 				String name = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
 				String map = child.getAttributeValue("map");
-				if(type != null) {
+				Element graphics = child.getChild("graphics");
+				if(type != null && graphics != null) 
+				{
 					/** types: map, enzyme, compound **/
-
 					if(type.equals("enzyme")) 
 					{
-						Element graphics = child.getChild("graphics");
-
+						
 						String enzymeCode = child.getAttributeValue("name");
 						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
 
-						if (ncbi.equals("null") == false ){
+						if (ncbi != null)
+						{
 							for(int i=0; i<ncbi.size(); i++ )
 							{
 								String textlabelGPML = ncbi.get(i); // name of gene i from online NCBI database
@@ -103,7 +104,6 @@ public class Converter {
 					}
 					else if(type.equals("compound"))
 					{
-						Element graphics = child.getChild("graphics");
 						int i = 0;
 						
 						String textlabelGPML = child.getAttributeValue("name"); // has to change to metabolite name from online KEGG database
@@ -119,7 +119,6 @@ public class Converter {
 					}					
 					else if(type.equals("map"))
 					{
-						Element graphics = child.getChild("graphics");
 						int i = 0;
 						
 						String textlabelGPML = child.getAttributeValue("name"); 
@@ -146,10 +145,10 @@ public class Converter {
 						//pijlen van substraat naar gen
 						for (Element child2 : keggElements) {
 							
-							String substrateX;
-							String substrateY;
-							String geneX;
-							String geneY;
+							String substrateX = "";
+							String substrateY = "";
+							String geneX = "";
+							String geneY = "";
 							
 							if (name.equals("substrate")){
 								substrateX = child2.getAttributeValue("x");
@@ -166,8 +165,8 @@ public class Converter {
 							element.setMStartY(Double.parseDouble(substrateY));
 							element.setMEndX(Double.parseDouble(geneX));
 							element.setMEndY(Double.parseDouble(geneY));
-							element.setStartGraphRef();
-							element.setEndGraphRef();
+							//element.setStartGraphRef();
+							//element.setEndGraphRef();
 							element.setEndLineType(LineType.ARROW);
 							
 							pathway.add(element);
@@ -175,10 +174,10 @@ public class Converter {
 						//pijlen van gen naar product
 						for (Element child3 : keggElements) {
 							
-							String substrateX;
-							String substrateY;
-							String productX;
-							String productY;
+							String substrateX = "";
+							String substrateY = "";
+							String productX = "";
+							String productY = "";
 							
 							if (name.equals("reaction")){
 								substrateX = child3.getAttributeValue("x");
@@ -195,8 +194,8 @@ public class Converter {
 							element.setMStartY(Double.parseDouble(substrateY));
 							element.setMEndX(Double.parseDouble(productX));
 							element.setMEndY(Double.parseDouble(productY));
-							element.setStartGraphRef();
-							element.setEndGraphRef();
+							//element.setStartGraphRef();
+							//element.setEndGraphRef();
 							element.setEndLineType(LineType.ARROW);
 							
 							pathway.add(element);
@@ -204,10 +203,14 @@ public class Converter {
 					}
 				*/
 				}
-			}	
+			}
+			
+			pathway.writeToXml(new File("/home/martijn/Desktop/keggconv.gpml"), false);
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public static List <String> getNcbiByEnzyme(String ec, String species) throws ServiceException, RemoteException 
@@ -263,7 +266,15 @@ public class Converter {
 		// Convert a hexadecimal color into an awt.Color object
 		// Remove the # before converting
 		String colorStringGPML = graphics.getAttributeValue("fgcolor");
-		Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+		Color colorGPML;
+		if (colorStringGPML != null)
+		{
+			colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+		}
+		else
+		{
+			colorGPML = Color.BLACK;
+		}
 		element.setColor(colorGPML);
 		
 		// Set x, y, width, height 
@@ -272,12 +283,12 @@ public class Converter {
 		String widthGPML = graphics.getAttributeValue("width");
 		String heightGPML = graphics.getAttributeValue("height");
 		
-		double height = Double.parseDouble(heightGPML);
-		double centerY = Double.parseDouble(centerYGPML) - i*height;
+		double height = Double.parseDouble(heightGPML) * 15;
+		double centerY = (Double.parseDouble(centerYGPML) - (i * height)) * 15;
 		
-		element.setMCenterX(Double.parseDouble(centerXGPML));
+		element.setMCenterX(Double.parseDouble(centerXGPML) * 15);
 		element.setMCenterY(centerY);
-		element.setMWidth(Double.parseDouble(widthGPML));
+		element.setMWidth(Double.parseDouble(widthGPML) * 15);
 		element.setMHeight(height);
 		
 		// Set textlabel

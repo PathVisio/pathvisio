@@ -54,6 +54,7 @@ public class Converter {
 				
 				String name = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
+				String map = child.getAttributeValue("map");
 				if(type != null) {
 					/** types: map, enzyme, compound **/
 
@@ -76,7 +77,7 @@ public class Converter {
 								element.setDataNodeType("GeneProduct");
 
 								// Fetch pathwayElement 
-								element = createPathwayElement(child, element, i, textlabelGPML); 							
+								element = createPathwayElement(child, graphics, element, i, textlabelGPML); 							
 								
 								if(element != null) {
 									pathway.add(element);
@@ -93,7 +94,7 @@ public class Converter {
 							element.setGeneID("null");
 
 							// Fetch pathwayElement 
-							element = createPathwayElement(child, element, i, textlabelGPML); 
+							element = createPathwayElement(child, graphics, element, i, textlabelGPML); 
 							
 							if(element != null) {
 								pathway.add(element);
@@ -112,7 +113,7 @@ public class Converter {
 						element.setDataNodeType("Metabolite");
 						
 						// Fetch pathwayElement 
-						element = createPathwayElement(child, element, i, textlabelGPML); 
+						element = createPathwayElement(child, graphics, element, i, textlabelGPML); 
 						
 						pathway.add(element);
 					}					
@@ -129,12 +130,12 @@ public class Converter {
 						element.setMFontSize(150);
 						
 						// Fetch pathwayElement 
-						element = createPathwayElement(child, element, i, textlabelGPML); 
+						element = createPathwayElement(child, graphics, element, i, textlabelGPML); 
 						
 						pathway.add(element);
 					}
 					
-					
+					/*
 					if(child.getName().equals("reaction")){
 						//loopt van substraat naar gen en vervolgens van gen naar product
 						String substrate = child.getChild("substrate").getAttributeValue("name");
@@ -199,10 +200,9 @@ public class Converter {
 							element.setEndLineType(LineType.ARROW);
 							
 							pathway.add(element);
-						}
-						
-						
+						}					
 					}
+				*/
 				}
 			}	
 		} catch(Exception e) {
@@ -255,22 +255,22 @@ public class Converter {
 		return new String[] {};
 	}
 
-	public static PathwayElement createPathwayElement(Element child, PathwayElement element, int i, String textlabelGPML)
+	public static PathwayElement createPathwayElement(Element child, Element graphics, PathwayElement element, int i, String textlabelGPML)
 	{
 		//Create new pathway element
 	
 		// Set Color
 		// Convert a hexadecimal color into an awt.Color object
 		// Remove the # before converting
-		String colorStringGPML = child.getAttributeValue("fgcolor");
+		String colorStringGPML = graphics.getAttributeValue("fgcolor");
 		Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
 		element.setColor(colorGPML);
 		
 		// Set x, y, width, height 
-		String centerXGPML = child.getAttributeValue("x");
-		String centerYGPML = child.getAttributeValue("y");
-		String widthGPML = child.getAttributeValue("width");
-		String heightGPML = child.getAttributeValue("height");
+		String centerXGPML = graphics.getAttributeValue("x");
+		String centerYGPML = graphics.getAttributeValue("y");
+		String widthGPML = graphics.getAttributeValue("width");
+		String heightGPML = graphics.getAttributeValue("height");
 		
 		double height = Double.parseDouble(heightGPML);
 		double centerY = Double.parseDouble(centerYGPML) - i*height;

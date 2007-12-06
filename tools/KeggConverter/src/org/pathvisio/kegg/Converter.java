@@ -67,30 +67,17 @@ public class Converter {
 						if (ncbi.equals("null") == false ){
 							for(int i=0; i<ncbi.size(); i++ )
 							{
-								String textlabelGPML = ncbi.get(i); // naam van gen i uit online NCBI database
-								String typeDatanode = "GeneProduct";
-
-
-								//TK: Convert a hexadecimal color into an awt.Color object
-								//Remove the # before converting
-								Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
-
-								String centerXGPML = child.getAttributeValue("x");
-								String centerYGPML = child.getAttributeValue("y");
-								String widthGPML = child.getAttributeValue("width");
-								String heightGPML = child.getAttributeValue("height");
-
-								//TK: use double instead of the object representation Double
-								//Why do you store height and Y in a temporary variable and
-								//convert X and width directly?
-								double height = Double.parseDouble(heightGPML);
-								double centerY = Double.parseDouble(centerYGPML) - i*height;
-
+								String textlabelGPML = ncbi.get(i); // name of gene i from online NCBI database
+								
 								PathwayElement element = new PathwayElement(ObjectType.DATANODE);
-								String id = element.getGraphId();
-								element.setDataSource(DataSource.ENTREZ_GENE); // No idea what may be the problem
+								String id = element.getGraphId();								
+								element.setDataSource(DataSource.ENTREZ_GENE);
 								element.setGeneID(ncbi.get(i));
+								element.setDataNodeType("GeneProduct");
 
+								// Fetch pathwayElement 
+								element = createPathwayElement(child, element, i, textlabelGPML); 							
+								
 								if(element != null) {
 									pathway.add(element);
 								}
@@ -102,11 +89,11 @@ public class Converter {
 							
 							PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 							String id = element.getGraphId();
-							element.setDataSource(null); // No idea what may be the problem
+							element.setDataSource(null); 
 							element.setGeneID("null");
 
 							// Fetch pathwayElement 
-							PathwayElement element = getPathwayElement(child, element, i, textlabelGPML, typeDatanode); 
+							element = createPathwayElement(child, element, i, textlabelGPML); 
 							
 							if(element != null) {
 								pathway.add(element);
@@ -115,21 +102,17 @@ public class Converter {
 					}
 					else if(type.equals("compound"))
 					{
-
-						String textlabelGPML = "mieauw"; // naam van metabolite uit online KEGG database
-
-						//TK: And again the same changes, duplicate code
-
 						Element graphics = child.getChild("graphics");
 						int i = 0;
 						
-						String textlabelGPML = ""; // naam van metabolite uit online KEGG database
-						String typeDatanode = "Metabolite";
+						String textlabelGPML = child.getAttributeValue("name"); // has to change to metabolite name from online KEGG database
 						
 						PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 						String id = element.getGraphId();
+						element.setDataNodeType("Metabolite");
 						
-						// PathwayElement erbij halen
+						// Fetch pathwayElement 
+						element = createPathwayElement(child, element, i, textlabelGPML); 
 						
 						pathway.add(element);
 					}					
@@ -145,10 +128,13 @@ public class Converter {
 						String id = element.getGraphId();
 						element.setMFontSize(150);
 						
-						// PathwayElement erbij halen
+						// Fetch pathwayElement 
+						element = createPathwayElement(child, element, i, textlabelGPML); 
 						
 						pathway.add(element);
 					}
+					
+					
 					if(child.getName().equals("reaction")){
 						//loopt van substraat naar gen en vervolgens van gen naar product
 						String substrate = child.getChild("substrate").getAttributeValue("name");
@@ -269,7 +255,7 @@ public class Converter {
 		return new String[] {};
 	}
 
-	public static PathwayElement createPathwayElement(Element child, PathwayElement element, int i, String textlabelGPML, String typeDatanode)
+	public static PathwayElement createPathwayElement(Element child, PathwayElement element, int i, String textlabelGPML)
 	{
 		//Create new pathway element
 	
@@ -278,6 +264,7 @@ public class Converter {
 		// Remove the # before converting
 		String colorStringGPML = child.getAttributeValue("fgcolor");
 		Color colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+		element.setColor(colorGPML);
 		
 		// Set x, y, width, height 
 		String centerXGPML = child.getAttributeValue("x");
@@ -294,9 +281,7 @@ public class Converter {
 		element.setMHeight(height);
 		
 		// Set textlabel
-		element.setTextLabel(textlabelGPML);
-		 
-		element.setDataNodeType(typeDatanode);
+		element.setTextLabel(textlabelGPML);			
 		
 		return element;
 	}

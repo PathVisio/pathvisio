@@ -15,11 +15,14 @@ import keggapi.LinkDBRelation;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.model.BatikImageExporter;
+import org.pathvisio.model.DataNodeType;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.LineType;
+import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 
 public class Converter {
@@ -31,6 +34,11 @@ public class Converter {
 		String filename = "examples/map00350.xml";
 		String specie = "hsa";
 
+		//Some progress logging
+		Logger.log.setStream(System.out);
+		Logger.log.setLogLevel(true, true, true, true, true, true);
+		Logger.log.trace("Start converting pathway " + filename);
+		
 		SAXBuilder builder  = new SAXBuilder();
 		try {
 			Document doc = builder.build(new File(filename));
@@ -41,10 +49,15 @@ public class Converter {
 
 			Pathway pathway = new Pathway();
 
+			int progress = 0;
 			for(Element child : keggElements) {
-				
 				String name = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
+				
+				Logger.log.trace(
+						"Processing element " + ++progress + " out of " + 
+						keggElements.size() + ": " + name + ", " + type);
+
 				Element graphics = child.getChild("graphics");
 				if(type != null && graphics != null) 
 				{
@@ -64,7 +77,7 @@ public class Converter {
 								String id = element.getGraphId();								
 								element.setDataSource(DataSource.ENTREZ_GENE);
 								element.setGeneID(ncbi.get(i));
-								element.setDataNodeType("GeneProduct");
+								element.setDataNodeType(DataNodeType.GENEPRODUCT);
 
 								// Fetch pathwayElement 
 								element = createPathwayElement(child, graphics, element, i, textlabelGPML); 							
@@ -80,6 +93,8 @@ public class Converter {
 							
 							PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 							String id = element.getGraphId();
+							//TK: Je hoeft deze niet te setten als ze niet bekend zijn
+							//ze worden automatisch op null of een lege string gezet
 							element.setDataSource(null); 
 							element.setGeneID("null");
 
@@ -99,7 +114,7 @@ public class Converter {
 						
 						PathwayElement element = new PathwayElement(ObjectType.DATANODE);
 						String id = element.getGraphId();
-						element.setDataNodeType("Metabolite");
+						element.setDataNodeType(DataNodeType.METABOLITE);
 						
 						// Fetch pathwayElement 
 						element = createPathwayElement(child, graphics, element, i, textlabelGPML); 
@@ -194,8 +209,13 @@ public class Converter {
 				}
 			}
 			
-			pathway.writeToXml(new File("C:/Documents and Settings/s030478/Desktop/keggconv.gpml"), false);
+			pathway.writeToXml(new File(filename + ".gpml"), false);
 			
+			//Also write to png for more convenient testing:
+			ImageExporter imgExport = new BatikImageExporter(ImageExporter.TYPE_PNG);
+			imgExport.doExport(new File(filename + ".png"), pathway);
+			
+			Logger.log.trace("Finished converting pathway " + filename);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}		
@@ -276,10 +296,12 @@ public class Converter {
 		double centerY = Double.parseDouble(centerYGPML) - i*height;
 		double centerX = Double.parseDouble(centerXGPML);
 		
-		element.setMCenterX(centerX*15);
-		element.setMCenterY(centerY*15);
-		element.setMWidth(width*15);
-		element.setMHeight(height*15);
+		element.setMCenterX(centerX*GpmlFormat.pixel2model);
+		element.setMCenterY(centerY*GpmlFormat.pixel2model);
+		//To prevent strange gene box sized,
+		//try using the default
+		element.setMWidth(width*GpmlFormat.pixel2model);
+		element.setMHeight(height*GpmlFormat.pixel2model);
 		
 		// Set textlabel
 		element.setTextLabel(textlabelGPML);			

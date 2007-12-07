@@ -63,6 +63,15 @@ import org.xml.sax.SAXException;
  */
 public class GpmlFormat implements PathwayImporter, PathwayExporter
 {
+	/**
+	 * The factor that is used to convert pixel coordinates
+	 * to the GPML model coordinates. E.g. if you want to convert the
+	 * width from pixels to GPML model coordinates you use:
+	 * 
+	 * double mWidth = width * pixel2model;
+	 */
+	public static final double pixel2model = 15;
+	
 	public static final Namespace GPML = Namespace.getNamespace("http://genmapp.org/GPML/2007");
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");

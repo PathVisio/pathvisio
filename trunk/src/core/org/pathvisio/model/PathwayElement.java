@@ -1276,6 +1276,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return dataNodeType;
 	}
 
+	public void setDataNodeType(DataNodeType type) {
+		setDataNodeType(type.getGpmlName());
+	}
+	
 	public void setDataNodeType(String v)
 	{
 		if (v == null)

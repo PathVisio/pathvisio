@@ -30,8 +30,7 @@ my $dir = tempdir ( CLEANUP => 1 );
 # these people will be emailed when a problem occurs
 my @emails = (
     'martijn.vaniersel@bigcat.unimaas.nl', 
-    'thomas.kelder@bigcat.unimaas.nl',
-    'apico@gladstone.ucsf.edu'
+#    'thomas.kelder@bigcat.unimaas.nl',
     );
 #~ my @emails = ('martijn.vaniersel@bigcat.unimaas.nl');
 
@@ -229,8 +228,6 @@ eval
 		}
 	);
 
-	chdir ("tools/gpmldiff");
-	
 	# Next step: test gpmldiff shell scripts
 	# if this fails, it means that gpmldiff.sh can't be run.
 	do_step (
@@ -252,8 +249,6 @@ eval
 				or die "gpmldiff -o dgpml failed, $?";
 		}
 	);
-	
-	chdir ("../..");
 
 	# Next step: check that all source files contain a license header.
 	# We tend to forget adding this.
@@ -280,7 +275,8 @@ eval
 # send a general error message, 
 # plus the log of the step that failed, 
 # plus the last 20 entries in the subversion log (so you can see who did it :) )
-if ($@)
+
+#if ($@)
 {
 	my $msg;
 	my $subject;

@@ -23,7 +23,7 @@
 	<property name="wikipathways.webstart.dest" value="${wikipathways.bin.dest}"/>
 	<property name="wikipathways.applet.dest" value="${wikipathways.dest}/wpi/applet"/>
 	<property name="diffview.applet.dir" value="applet"/>
-	<property name="diffview.applet.dest" value="/home/martijn/www/diffview"/>
+	<property name="diffview.applet.dest" value="${wikipathways.applet.dest}"/>
 	<property name="diffview.applet.class.path" value="lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/resources.jar"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="exec.perl" value="perl"/>
@@ -274,7 +274,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</jar>
     </target>
 
-	<target name="applet" depends="compile-v1" description="Generate applet jar file">
+	<target name="diffapplet" depends="compile-v1" description="Generate DiffViewer applet jar file">
 		<jar jarfile="diffview.jar">
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>
 			<fileset dir="${build.v1.dir}" includes="**/*.class"/>			

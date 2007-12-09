@@ -21,6 +21,7 @@ import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
+import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -138,7 +139,7 @@ public class Converter {
 						pathway.add(element);
 					}
 					
-					/*
+					
 					if(child.getName().equals("reaction")){
 						//loopt van substraat naar gen en vervolgens van gen naar product
 						String substrate = child.getChild("substrate").getAttributeValue("name");
@@ -154,13 +155,16 @@ public class Converter {
 							String geneX = "";
 							String geneY = "";
 							
+							
 							if (name.equals("substrate")){
 								substrateX = child2.getAttributeValue("x");
-								substrateY = child2.getAttributeValue("y");	
+								substrateY = child2.getAttributeValue("y");
+								idSubstrate = child.getAttributeValue("id");	
 							}
 							if (name.equals("reaction")){
 								geneX = child2.getAttributeValue("x");
 								geneY = child2.getAttributeValue("y");
+								idGene = child.getAttributeValue("id");
 							}
 							
 							PathwayElement element = new PathwayElement(ObjectType.LINE);
@@ -169,8 +173,8 @@ public class Converter {
 							element.setMStartY(Double.parseDouble(substrateY));
 							element.setMEndX(Double.parseDouble(geneX));
 							element.setMEndY(Double.parseDouble(geneY));
-							//element.setStartGraphRef();
-							//element.setEndGraphRef();
+							element.setStartGraphRef(idSubstrate);
+							element.setEndGraphRef(idGene);
 							element.setEndLineType(LineType.ARROW);
 							
 							pathway.add(element);
@@ -186,10 +190,12 @@ public class Converter {
 							if (name.equals("reaction")){
 								substrateX = child3.getAttributeValue("x");
 								substrateY = child3.getAttributeValue("y");
+								idSubstrate = child.getAttributeValue("id");
 							}
 							if (name.equals("product")){
 								productX = child3.getAttributeValue("x");
 								productY = child3.getAttributeValue("y");
+								idProduct = child.getAttributeValue("id");
 							}
 							
 							PathwayElement element = new PathwayElement(ObjectType.LINE);
@@ -198,14 +204,14 @@ public class Converter {
 							element.setMStartY(Double.parseDouble(substrateY));
 							element.setMEndX(Double.parseDouble(productX));
 							element.setMEndY(Double.parseDouble(productY));
-							//element.setStartGraphRef();
-							//element.setEndGraphRef();
+							element.setStartGraphRef(idSubstrate);
+							element.setEndGraphRef(idProduct);
 							element.setEndLineType(LineType.ARROW);
 							
 							pathway.add(element);
 						}					
 					}
-				*/
+				
 				}
 			}
 			
@@ -285,7 +291,8 @@ public class Converter {
 		}
 		element.setColor(colorGPML);
 		
-		// Set x, y, width, height 
+		// Set x, y, width, height
+		String ID = child.getAttributeValue("id");
 		String centerXGPML = graphics.getAttributeValue("x");
 		String centerYGPML = graphics.getAttributeValue("y");
 		String widthGPML = graphics.getAttributeValue("width");
@@ -302,6 +309,8 @@ public class Converter {
 		//try using the default
 		element.setMWidth(width*GpmlFormat.pixel2model);
 		element.setMHeight(height*GpmlFormat.pixel2model);
+		element.setGraphId(ID);
+		
 		
 		// Set textlabel
 		element.setTextLabel(textlabelGPML);			

@@ -20,6 +20,7 @@ package org.pathvisio.gui.wikipathways;
 import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.net.URL;
+import java.security.AccessControlException;
 import java.util.Enumeration;
 
 import javax.swing.JApplet;
@@ -47,70 +48,94 @@ public class PathwayPageApplet extends JApplet {
 	public final void init() {
 		//Check if other applets are present that already have an instance
 		//of WikiPathways
+		try {
+			Logger.log.trace(this + ": INIT CALLED....");
 
-		Logger.log.trace(this + ": INIT CALLED....");
-
-		//Check if there are other applets around
-		WikiPathways owiki = findExistingWikiPathways();
-		if(owiki != null) {
-			wiki = owiki;
-			uiHandler = owiki.getUserInterfaceHandler();
-			isFirstApplet = false;
-		} else {
-			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
-			wiki = new WikiPathways(uiHandler);
-		}
-
-		//Onlyl set new engine if this is the first applet
-		if(isFirstApplet) {
-			Engine engine = new Engine();
-			Engine.setCurrent(engine);
-			SwingEngine.setCurrent(new SwingEngine(engine));
-			GuiInit.init();
-		}
-
-		parseArguments();
-
-		//Init with progress monitor
-		final RunnableWithProgress<Void> r = new RunnableWithProgress<Void>() {
-			public Void excecuteCode() {
-				try {
-					doInitWiki(getProgressKeeper(), getDocumentBase());
-				} catch(Exception e) {
-					Logger.log.error("Error while starting applet", e);
-					JOptionPane.showMessageDialog(
-							PathwayPageApplet.this, e.getClass() + ": See error logg for details", "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
-				};
-				doInit();
-				getProgressKeeper().finished();
-				return null;
+			//Check if there are other applets around
+			WikiPathways owiki = findExistingWikiPathways();
+			if(owiki != null) {
+				wiki = owiki;
+				uiHandler = owiki.getUserInterfaceHandler();
+				isFirstApplet = false;
+			} else {
+				uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
+				wiki = new WikiPathways(uiHandler);
 			}
-		};
-		//Perform some actions after the runnable is done
-		r.getProgressKeeper().addListener(new ProgressListener() {
-			public void progressEvent(ProgressEvent e) {
-				if(e.getType() == ProgressEvent.FINISHED) {
-					afterInit();
+
+			//Onlyl set new engine if this is the first applet
+			if(isFirstApplet) {
+				Engine engine = new Engine();
+				Engine.setCurrent(engine);
+				SwingEngine.setCurrent(new SwingEngine(engine));
+				GuiInit.init();
+			}
+
+			parseArguments();
+
+			//Init with progress monitor
+			final RunnableWithProgress<Void> r = new RunnableWithProgress<Void>() {
+				public Void excecuteCode() {
+					try {
+						doInitWiki(getProgressKeeper(), getDocumentBase());
+					} catch(AccessControlException ae) {
+						if(isFirstApplet) {
+							onError("You didn't accept the certificate needed to run this applet.\n" +
+									"After restarting the browser, click the edit button and choose" +
+									"\n'Run' in the security dialog that pops up.", 
+							"Security exception");
+						}
+					} catch(Exception e) {
+						Logger.log.error("Error while starting applet", e);
+						JOptionPane.showMessageDialog(
+								PathwayPageApplet.this, e.getClass() + ": See error logg for details", "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
+					};
+					doInit();
+					getProgressKeeper().finished();
+					return null;
 				}
-			}
-		});
+			};
+			//Perform some actions after the runnable is done
+			r.getProgressKeeper().addListener(new ProgressListener() {
+				public void progressEvent(ProgressEvent e) {
+					if(e.getType() == ProgressEvent.FINISHED) {
+						afterInit();
+					}
+				}
+			});
 
-		if(wiki.initPerformed()) {
-			Logger.log.trace(this + ": Init already performed");
-			afterInit();
-		} else {
-			Logger.log.trace(this + ": Performing init in background");
-			uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);			
+			if(wiki.initPerformed()) {
+				Logger.log.trace(this + ": Init already performed");
+				while(wiki.isInit()) {
+					try {
+						Thread.sleep(10);
+					} catch(InterruptedException e) {
+						//ignore
+					}
+				}
+				afterInit();
+			} else {
+				Logger.log.trace(this + ": Performing init in background");
+				uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);			
+			}
+		} catch(Exception e) {
+			onError("Error: " + e.getClass() + ": " + e.getMessage(), "Error");
 		}
+	}
+
+	private void onError(String msg, String title) {
+		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
+		getAppletContext().showDocument(getDocumentBase(), "_self");
 	}
 
 	private void afterInit() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				Logger.log.trace(this + ": Creating GUI");
-				createToolbar();
-				createGui();
-				validate();
+				if(!this.getClass().equals(PathwayPageApplet.class)) {
+					createToolbar();
+					createGui();
+					validate();
+				}
 			}
 		});
 	}

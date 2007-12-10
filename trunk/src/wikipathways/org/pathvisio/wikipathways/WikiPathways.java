@@ -84,6 +84,7 @@ public class WikiPathways implements ApplicationEventListener {
 	
 	boolean ovrChanged;
 	boolean initPerformed;
+	boolean isInit;
 	
 	MainPanel mainPanel;
 	
@@ -99,7 +100,7 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 		
 	public void init(ProgressKeeper progress, URL base) throws Exception {
-		initPerformed = true;
+		isInit = true;
 		
 		progress.setTaskName("Starting editor");
 		
@@ -141,11 +142,18 @@ public class WikiPathways implements ApplicationEventListener {
 		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
 		
 		GdbManager.setGeneDb(getPwSpecies());
+		isInit = false;
+		initPerformed = true;
 	}
 	
 	public boolean initPerformed() {
 		return initPerformed;
 	}
+	
+	public boolean isInit() {
+		return isInit;
+	}
+	
 	public void initVPathway() {
 		Engine e = Engine.getCurrent();
 		Pathway p = e.getActivePathway();

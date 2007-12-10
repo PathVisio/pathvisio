@@ -16,20 +16,26 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JApplet;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
@@ -102,6 +108,80 @@ public class Actions {
 				Logger.log.error("Unable to save pathway", ex);
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
+		}
+	}
+	
+	/**
+	 * Action that switches an applet between fullscreen and embedded mode
+	 * @author thomas
+	 *
+	 */
+	public static class FullScreenAction extends WikiAction {
+		final ImageIcon imgFull = new ImageIcon(
+				Engine.getCurrent().getResourceURL("icons/fullscreen.gif"));
+		final ImageIcon imgRestore = new ImageIcon(
+				Engine.getCurrent().getResourceURL("icons/restorescreen.gif"));
+		final String tooltip_full = "Switch to fullscreen mode";
+		final String tooltip_restore = "Switch to embedded mode";
+		
+		JFrame frame;
+		JApplet applet;
+		
+		public FullScreenAction(UserInterfaceHandler uiHandler, WikiPathways wiki, JApplet applet) {
+			super(uiHandler, wiki, "Fullscreen", null);
+			this.applet = applet;
+			putValue(WikiAction.SMALL_ICON, imgFull);
+			putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
+		}
+				
+		public void actionPerformed(ActionEvent e) {
+			if(frame == null) {
+				toFrame();
+				putValue(WikiAction.SMALL_ICON, imgRestore);
+				putValue(WikiAction.NAME, "Fullscreen");
+				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
+			} else {
+				toApplet();
+				putValue(WikiAction.SMALL_ICON, imgFull);
+				putValue(WikiAction.NAME, "Restore screen");
+				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
+			}
+		}
+		
+		/**
+		 * Creates a new frame and transfers the mainPanel from
+		 * the applet to the frame
+		 */
+		private void toFrame() {
+			final MainPanel mainPanel = wiki.getMainPanel();
+			frame = new JFrame();
+			applet.getContentPane().remove(mainPanel);
+			frame.getContentPane().add(mainPanel);
+			frame.setVisible(true);
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			
+			frame.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent e) {
+					Logger.log.trace("Window closing, switch to applet");
+					frame.getContentPane().remove(mainPanel);
+					applet.getContentPane().add(mainPanel, BorderLayout.CENTER);
+					applet.validate();
+				}
+			});
+			applet.validate();
+		}
+		/**
+		 * Disposes the frame and transfers the mainPanel to the
+		 * applet
+		 */
+		private void toApplet() {
+			MainPanel mainPanel = wiki.getMainPanel();
+			frame.getContentPane().remove(mainPanel);
+			applet.getContentPane().add(mainPanel, BorderLayout.CENTER);
+			frame.setVisible(false);
+			frame.dispose();
+			frame = null;
+			applet.validate();
 		}
 	}
 }

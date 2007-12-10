@@ -17,18 +17,25 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.wikipathways.Actions.WikiAction;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.wikipathways.Parameter;
+
+import com.sun.corba.se.impl.protocol.FullServantCacheLocalCRDImpl;
 
 public class AppletMain extends PathwayPageApplet {	
 	private static final long serialVersionUID = 1L;
@@ -56,6 +63,13 @@ public class AppletMain extends PathwayPageApplet {
 	
 	public void createGui() {
 		mainPanel = wiki.getMainPanel();
+		//Create a maximize button
+		JButton btn = mainPanel.getToolBar().add(
+				new Actions.FullScreenAction(uiHandler, wiki, this));
+			
+		//Dirty hack to place the button before the zoom combo
+		mainPanel.getToolBar().remove(btn);
+		mainPanel.getToolBar().add(btn,  11);
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setVisible(true);
 		

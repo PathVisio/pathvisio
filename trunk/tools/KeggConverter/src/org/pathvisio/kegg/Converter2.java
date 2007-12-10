@@ -26,7 +26,7 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
-public class Converter {
+public class Converter2 {
 
 	/**
 	 * @param args

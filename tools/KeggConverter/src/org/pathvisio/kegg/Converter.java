@@ -68,14 +68,17 @@ public class Converter {
 
 			int progress = 0;
 			for(Element child : keggElements) {
-				String name = child.getAttributeValue("name");
+				String childName = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
 				String reactionName = child.getAttributeValue("reaction");
 				
 				Logger.log.trace(
 						"Processing element " + ++progress + " out of " + 
-						keggElements.size() + ": " + name + ", " + type);
-
+						keggElements.size() + ": " + childName + ", " + type);
+				
+				String elementName = child.getName();
+				System.out.println("element naam = " + elementName);
+				
 				Element graphics = child.getChild("graphics");
 				if(type != null && graphics != null) 
 				{
@@ -152,29 +155,28 @@ public class Converter {
 						
 						pathway.add(element);
 					}
-							
-					// End converting elements
-					// Start converting lines
-					
-					if(child.getName().equals("reaction")){
-						
-//						String substrate = child.getChild("substrate").getAttributeValue("name");
-//						String product = child.getChild("product").getAttributeValue("name");
-						String reaction = child.getAttributeValue("name");	
-						
-						System.out.println("reaction " +reaction+ " found");
-						
-						// Create a list of elements in relations with reaction  
-						List<Element> reactionElements = child.getContent();						
-						for(Element relation : reactionElements) {
-							
-							PathwayElement line = new PathwayElement(ObjectType.LINE);
-							
-							// Fetch pathwayLine 
-							line = createPathwayLine(child, relation, line, reactionName, name, reaction);
-							
-							pathway.add(line);
-						}
+				}			
+				// End converting elements
+				// Start converting lines
+
+				if(type.equals("irreversible")){
+
+//					String substrate = child.getChild("substrate").getAttributeValue("name");
+//					String product = child.getChild("product").getAttributeValue("name");
+					String reaction = child.getAttributeValue("name");	
+
+					System.out.println("reaction " +reaction+ " found");
+
+					// Create a list of elements in relations with reaction  
+					List<Element> reactionElements = child.getContent();						
+					for(Element relation : reactionElements) {
+
+						PathwayElement line = new PathwayElement(ObjectType.LINE);
+
+						// Fetch pathwayLine 
+						line = createPathwayLine(child, relation, line, reactionName, childName, reaction);
+
+						pathway.add(line);
 					}								
 				}
 			}
@@ -283,7 +285,7 @@ public class Converter {
 		return element;
 	}
 	
-	public static PathwayElement createPathwayLine(Element child, Element relation, PathwayElement line, String reactionName, String name, String reaction)
+	public static PathwayElement createPathwayLine(Element child, Element relation, PathwayElement line, String reactionName, String childName, String reaction)
 	{
 		// Create new pathway line
 	
@@ -294,7 +296,7 @@ public class Converter {
 		String endY = "";
 		String endId = "";
 		
-		if (name.equals(relation.getAttribute("name"))){
+		if (childName.equals(relation.getAttribute("name"))){
 			endX = child.getAttributeValue("x");
 			endY = child.getAttributeValue("y");
 			endId = child.getAttributeValue("id");	
@@ -321,12 +323,12 @@ public class Converter {
 		
 //		even niet nodig
 //		line.setEndLineType(LineType.ARROW);
-//		if (name.equals(product)){
+//		if (childName.equals(product)){
 //			endX = child.getAttributeValue("x");
 //			endY = child.getAttributeValue("y");
 //			endId = child.getAttributeValue("id");
 //		
-//			if (reactionName.equals(reaction)){
+//			if (reactionchildName.equals(reaction)){
 //				startX = child.getAttributeValue("x");
 //				startY = child.getAttributeValue("y");
 //				startId = child.getAttributeValue("id");

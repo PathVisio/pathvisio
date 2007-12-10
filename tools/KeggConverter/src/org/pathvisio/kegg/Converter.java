@@ -157,10 +157,12 @@ public class Converter {
 					// Start converting lines
 					
 					if(child.getName().equals("reaction")){
-
+						
 //						String substrate = child.getChild("substrate").getAttributeValue("name");
 //						String product = child.getChild("product").getAttributeValue("name");
-						String reaction = child.getAttributeValue("name");																		
+						String reaction = child.getAttributeValue("name");	
+						
+						System.out.println("reaction " +reaction+ " found");
 						
 						// Create a list of elements in relations with reaction  
 						List<Element> reactionElements = child.getContent();						
@@ -273,7 +275,7 @@ public class Converter {
 		
 		// Set graphID
 		String graphId = child.getAttributeValue("id");
-		element.setGraphId(graphId);
+//		element.setGraphId(graphId);
 				
 		// Set textlabel
 		element.setTextLabel(textlabelGPML);			

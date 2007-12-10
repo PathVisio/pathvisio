@@ -30,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
@@ -137,14 +138,8 @@ public class Actions {
 		public void actionPerformed(ActionEvent e) {
 			if(frame == null) {
 				toFrame();
-				putValue(WikiAction.SMALL_ICON, imgRestore);
-				putValue(WikiAction.NAME, "Fullscreen");
-				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
 			} else {
-				toApplet();
-				putValue(WikiAction.SMALL_ICON, imgFull);
-				putValue(WikiAction.NAME, "Restore screen");
-				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
+				toApplet(true);
 			}
 		}
 		
@@ -155,33 +150,49 @@ public class Actions {
 		private void toFrame() {
 			final MainPanel mainPanel = wiki.getMainPanel();
 			frame = new JFrame();
+			
 			applet.getContentPane().remove(mainPanel);
 			frame.getContentPane().add(mainPanel);
+			
+			putValue(WikiAction.SMALL_ICON, imgRestore);
+			putValue(WikiAction.NAME, "Fullscreen");
+			putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
+			
 			frame.setVisible(true);
 			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			frame.setSize(800, 600);
 			
+			mainPanel.getSplitPane().setDividerLocation(0.7);
+			
 			frame.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
 					Logger.log.trace("Window closing, switch to applet");
-					frame.getContentPane().remove(mainPanel);
-					applet.getContentPane().add(mainPanel, BorderLayout.CENTER);
-					applet.validate();
+					toApplet(false);
 				}
 			});
+			
 			applet.validate();
 		}
 		/**
 		 * Disposes the frame and transfers the mainPanel to the
 		 * applet
 		 */
-		private void toApplet() {
+		private void toApplet(boolean disposeFrame) {
 			MainPanel mainPanel = wiki.getMainPanel();
+			
 			frame.getContentPane().remove(mainPanel);
 			applet.getContentPane().add(mainPanel, BorderLayout.CENTER);
-			frame.setVisible(false);
-			frame.dispose();
+						
+			if(disposeFrame) {
+				frame.setVisible(false);
+				frame.dispose();
+			}
 			frame = null;
+			
+			putValue(WikiAction.SMALL_ICON, imgFull);
+			putValue(WikiAction.NAME, "Restore screen");
+			putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
+			
 			applet.validate();
 		}
 	}

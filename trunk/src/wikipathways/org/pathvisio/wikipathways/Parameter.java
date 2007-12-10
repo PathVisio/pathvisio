@@ -28,7 +28,7 @@ public enum Parameter {
 	PW_NEW("new", null),
 	USER("user", null),
 	RPC_URL("rpcUrl"),
-	CATEGORIES("categories", false), //A comma separated list of categories
+	CATEGORIES("categories", ""), //A comma separated list of categories
 	;
 	
 	String name;

@@ -66,6 +66,7 @@ public class Actions {
 			try {
 				if(doSave) {
 					saved = wiki.saveUI();
+					System.out.println("SAVED: saved");
 				}
 			} catch(Exception ex) {
 				Logger.log.error("Unable to save pathway", ex);

@@ -48,7 +48,7 @@ public class Converter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String filename = "examples/map00350.xml";
+		String filename = "examples/map00031.xml";
 		String specie = "hsa";
 
 		//Some progress logging
@@ -78,6 +78,9 @@ public class Converter {
 				Element graphics = child.getChild("graphics");
 				if(type != null && graphics != null) 
 				{
+					
+					// Start converting elements
+					
 					/** types: map, enzyme, compound **/
 					if(type.equals("enzyme")) 
 					{						
@@ -90,8 +93,7 @@ public class Converter {
 							{
 								String textlabelGPML = ncbi.get(i); // name of gene i from online NCBI database
 								
-								PathwayElement element = new PathwayElement(ObjectType.DATANODE);
-								String id = element.getGraphId();								
+								PathwayElement element = new PathwayElement(ObjectType.DATANODE);														
 								element.setDataSource(DataSource.ENTREZ_GENE);
 								element.setGeneID(ncbi.get(i));
 								element.setDataNodeType(DataNodeType.GENEPRODUCT);
@@ -109,9 +111,6 @@ public class Converter {
 							int i = 0;
 							
 							PathwayElement element = new PathwayElement(ObjectType.DATANODE);
-							String id = element.getGraphId();
-							//TK: Je hoeft deze niet te setten als ze niet bekend zijn
-							//ze worden automatisch op null of een lege string gezet
 							element.setDataSource(null); 
 							element.setGeneID("null");
 
@@ -130,7 +129,6 @@ public class Converter {
 						String textlabelGPML = child.getAttributeValue("name"); // has to change to metabolite name from online KEGG database
 						
 						PathwayElement element = new PathwayElement(ObjectType.DATANODE);
-						String id = element.getGraphId();
 						element.setDataNodeType(DataNodeType.METABOLITE);
 						
 						// Fetch pathwayElement 
@@ -146,7 +144,6 @@ public class Converter {
 						String typeGPML = null;
 						
 						PathwayElement element = new PathwayElement(ObjectType.LABEL);
-						String id = element.getGraphId();
 						element.setMFontSize(150);
 						
 						// Fetch pathwayElement 
@@ -154,7 +151,9 @@ public class Converter {
 						
 						pathway.add(element);
 					}
-					
+							
+					// End converting elements
+					// Start converting lines
 					
 					if(child.getName().equals("reaction")){
 						//loopt van substraat naar gen en vervolgens van gen naar product
@@ -170,7 +169,8 @@ public class Converter {
 							String substrateY = "";
 							String geneX = "";
 							String geneY = "";
-							
+							String idSubstrate = "";
+							String idGene = "";
 							
 							if (name.equals("substrate")){
 								substrateX = child2.getAttributeValue("x");
@@ -202,6 +202,8 @@ public class Converter {
 							String substrateY = "";
 							String productX = "";
 							String productY = "";
+							String idSubstrate = "";
+							String idProduct = "";
 							
 							if (name.equals("reaction")){
 								substrateX = child3.getAttributeValue("x");
@@ -225,18 +227,17 @@ public class Converter {
 							element.setEndLineType(LineType.ARROW);
 							
 							pathway.add(element);
-						}					
-					}
-				
+						}				
+					}								
 				}
 			}
 			
-			pathway.writeToXml(new File(filename + ".gpml"), false);
-			
+			pathway.writeToXml(new File("C:/Documents and Settings/s030478/Desktop/" + filename.substring(9,17) + ".gpml"), false);
+/*			
 			//Also write to png for more convenient testing:
 			ImageExporter imgExport = new BatikImageExporter(ImageExporter.TYPE_PNG);
 			imgExport.doExport(new File(filename + ".png"), pathway);
-			
+*/			
 			Logger.log.trace("Finished converting pathway " + filename);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -308,7 +309,6 @@ public class Converter {
 		element.setColor(colorGPML);
 		
 		// Set x, y, width, height
-		String ID = child.getAttributeValue("id");
 		String centerXGPML = graphics.getAttributeValue("x");
 		String centerYGPML = graphics.getAttributeValue("y");
 		String widthGPML = graphics.getAttributeValue("width");
@@ -325,9 +325,11 @@ public class Converter {
 		//try using the default
 		element.setMWidth(width*GpmlFormat.pixel2model);
 		element.setMHeight(height*GpmlFormat.pixel2model);
-		element.setGraphId(ID);
 		
-		
+		// Set graphID
+		String graphId = child.getAttributeValue("id");
+		element.setGraphId(graphId);
+				
 		// Set textlabel
 		element.setTextLabel(textlabelGPML);			
 		

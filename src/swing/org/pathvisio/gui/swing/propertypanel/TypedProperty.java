@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -46,6 +47,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
+import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -134,15 +136,13 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return lineStyleRenderer;
 		case DATASOURCE:
 		{
-			// create a fresh list of labels and values.
-			List<DataSource> values = new ArrayList<DataSource>();
-			values.addAll (DataSource.getDataSources());
-			String[] labels = new String[values.size()];
-			for (int i = 0; i < values.size(); ++i)
-			{
-				labels[i] = values.get(i).getFullName();
+			if(DataSource.getDataSources().size() > datasourceRenderer.getItemCount()) {
+				datasourceRenderer.updateData(
+						DataSource.getFullNames().toArray(), 
+						DataSource.getDataSources().toArray()
+				);
 			}
-			return new ComboRenderer (labels, values.toArray(new String[0]));
+			return datasourceRenderer;
 		}
 		case BOOLEAN:
 			return checkboxRenderer;
@@ -160,7 +160,8 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return shapeTypeRenderer;
 		case OUTLINETYPE:
 			return outlineTypeRenderer;
-		case GENETYPE: //TODO
+		case GENETYPE:
+			return datanodeTypeRenderer;
 		}
 		return null;
 	}
@@ -171,15 +172,13 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return checkboxEditor;
 		case DATASOURCE:
 		{
-			// create a fresh list of labels and values.
-			List<DataSource> values = new ArrayList<DataSource>();
-			values.addAll (DataSource.getDataSources());
-			String[] labels = new String[values.size()];
-			for (int i = 0; i < values.size(); ++i)
-			{
-				labels[i] = values.get(i).getFullName();
+			if(DataSource.getDataSources().size() > datasourceEditor.getItemCount()) {
+				datasourceEditor.updateData(
+						DataSource.getFullNames().toArray(), 
+						DataSource.getDataSources().toArray()
+				);
 			}
-			return new ComboEditor (labels, values.toArray(new String[0]));
+			return datasourceEditor;
 		}
 		case COLOR:
 			return colorEditor;
@@ -204,6 +203,8 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return commentsEditor;
 		case OUTLINETYPE:
 			return outlineTypeEditor;
+		case GENETYPE:
+			return datanodeTypeEditor;
 		default:
 			return null;
 		}
@@ -260,14 +261,27 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		
 		HashMap<Object, Object> label2value;
 		boolean useIndex;
+		JComboBox combo;
 		
 		public ComboEditor(Object[] labels, boolean useIndex) {
 			super(new JComboBox(labels));
+			combo = (JComboBox)getComponent();
 			this.useIndex = useIndex;
 		}
 
 		public ComboEditor(Object[] labels, Object[] values) {
 			this(labels, false);
+			if(values != null) {
+				updateData(labels, values);
+			}
+		}
+		
+		public int getItemCount() {
+			return label2value.size();
+		}
+		
+		public void updateData(Object[] labels, Object[] values) {
+			combo.setModel(new DefaultComboBoxModel(labels));
 			if(values != null) {
 				if(labels.length != values.length) {
 					throw new IllegalArgumentException("Number of labels doesn't equal number of values");
@@ -387,19 +401,19 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ColorRenderer colorRenderer = new ColorRenderer();
 	private static ComboRenderer lineTypeRenderer = new ComboRenderer(LineType.getNames(), LineType.getValues());
 	private static ComboRenderer lineStyleRenderer = new ComboRenderer(LineStyle.getNames());
-	//private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSources.dataSources);
+	private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSource.getFullNames().toArray(), DataSource.getDataSources().toArray());
 	private static CheckBoxRenderer checkboxRenderer = new CheckBoxRenderer();
 	private static ComboRenderer orientationRenderer = new ComboRenderer(OrientationType.getNames());
 	private static ComboRenderer organismRenderer = new ComboRenderer(Organism.latinNames().toArray());
 	private static FontRenderer fontRenderer = new FontRenderer();
 	private static ComboRenderer shapeTypeRenderer = new ComboRenderer(ShapeType.getNames(), ShapeType.getValues());
 	private static ComboRenderer outlineTypeRenderer = new ComboRenderer(OutlineType.getTags(), OutlineType.values());
-	
+	private static ComboRenderer datanodeTypeRenderer = new ComboRenderer(DataNodeType.getNames());
 	private static ColorEditor colorEditor = new ColorEditor();
 	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);
 	private static ComboEditor lineStyleEditor = new ComboEditor(LineStyle.getNames(), true);
 	private static ComboEditor outlineTypeEditor = new ComboEditor(OutlineType.getTags(), true);
-	//private static ComboEditor datasourceEditor = new ComboEditor(DataSources.dataSources, false);
+	private static ComboEditor datasourceEditor = new ComboEditor(DataSource.getFullNames().toArray(), DataSource.getDataSources().toArray());
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);
 	private static ComboEditor organismEditor = new ComboEditor(Organism.latinNames().toArray(), false);
@@ -407,7 +421,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static DoubleEditor doubleEditor = new DoubleEditor();
 	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
-	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getNames(), true);
+	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getNames(), false);
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
 		private static final long serialVersionUID = 1L;
 
@@ -416,6 +430,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		}
 	};
 	private static CommentsEditor commentsEditor = new CommentsEditor();
+	private static ComboEditor datanodeTypeEditor = new ComboEditor(DataNodeType.getNames(), false);
 	
 	private static DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
 		private static final long serialVersionUID = 1L;
@@ -457,12 +472,22 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			if(labels.length != values.length) {
 				throw new IllegalArgumentException("Number of labels doesn't equal number of values");
 			}
-			value2label = new HashMap<Object, Object>();
-			for(int i = 0; i < labels.length; i++) {
-				value2label.put(values[i], labels[i]);
-			}
+			updateData(labels, values);
 		}
 
+		public void updateData(Object[] labels, Object[] values) {
+			setModel(new DefaultComboBoxModel(labels));
+			if(values != null) {
+				if(labels.length != values.length) {
+					throw new IllegalArgumentException("Number of labels doesn't equal number of values");
+				}
+				value2label = new HashMap<Object, Object>();
+				for(int i = 0; i < labels.length; i++) {
+					value2label.put(values[i], labels[i]);
+				}
+			}
+		}
+		
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			if(value2label != null) {
 				value = value2label.get(value);

@@ -239,7 +239,7 @@ public class WikiPathways implements ApplicationEventListener {
 		Pathway pathway = Engine.getCurrent().getActivePathway();
 		if(!pathway.hasChanged()) {
 			uiHandler.showInfo("Save pathway", "You didn't make any changes");
-			return true;
+			return false;
 		}
 		if(pathway != null) {
 			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
@@ -267,17 +267,16 @@ public class WikiPathways implements ApplicationEventListener {
 	}
 	
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
-		//TODO: check if changed
 		if(ovrChanged || Engine.getCurrent().getActivePathway().hasChanged()) {
-			ovrChanged = true; //In case we get an error, save changes next time
 			File gpmlFile = getLocalFile();
 			//Save current pathway to local file
 			Engine.getCurrent().savePathway(gpmlFile);
+			ovrChanged = true; //In case we get an error, save changes next time
 			saveToWiki(description, gpmlFile);
 			ovrChanged = false; //Save successful, don't save next time
 		} else {
 			Logger.log.trace("No changes made, ignoring save");
-			//Do nothing, no changes made
+			throw new ConverterException("You didn't make any changes");
 		}
 	}
 	

@@ -70,6 +70,7 @@ public class Converter {
 			for(Element child : keggElements) {
 				String name = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
+				String reactionName = child.getAttributeValue("reaction");
 				
 				Logger.log.trace(
 						"Processing element " + ++progress + " out of " + 
@@ -156,78 +157,22 @@ public class Converter {
 					// Start converting lines
 					
 					if(child.getName().equals("reaction")){
-						//loopt van substraat naar gen en vervolgens van gen naar product
-						String substrate = child.getChild("substrate").getAttributeValue("name");
-						String product = child.getChild("product").getAttributeValue("name");
-						String reaction= child.getAttributeValue("name");
+
+//						String substrate = child.getChild("substrate").getAttributeValue("name");
+//						String product = child.getChild("product").getAttributeValue("name");
+						String reaction = child.getAttributeValue("name");																		
 						
-						//zoek in in de entries naar de bijbehorende metabolieten of enzymen
-						//pijlen van substraat naar gen
-						for (Element child2 : keggElements) {
+						// Create a list of elements in relations with reaction  
+						List<Element> reactionElements = child.getContent();						
+						for(Element relation : reactionElements) {
 							
-							String substrateX = "";
-							String substrateY = "";
-							String geneX = "";
-							String geneY = "";
-							String idSubstrate = "";
-							String idGene = "";
+							PathwayElement line = new PathwayElement(ObjectType.LINE);
 							
-							if (name.equals("substrate")){
-								substrateX = child2.getAttributeValue("x");
-								substrateY = child2.getAttributeValue("y");
-								idSubstrate = child.getAttributeValue("id");	
-							}
-							if (name.equals("reaction")){
-								geneX = child2.getAttributeValue("x");
-								geneY = child2.getAttributeValue("y");
-								idGene = child.getAttributeValue("id");
-							}
+							// Fetch pathwayLine 
+							line = createPathwayLine(child, relation, line, reactionName, name, reaction);
 							
-							PathwayElement element = new PathwayElement(ObjectType.LINE);
-							element.setColor(Color.BLACK);
-							element.setMStartX(Double.parseDouble(substrateX));
-							element.setMStartY(Double.parseDouble(substrateY));
-							element.setMEndX(Double.parseDouble(geneX));
-							element.setMEndY(Double.parseDouble(geneY));
-							element.setStartGraphRef(idSubstrate);
-							element.setEndGraphRef(idGene);
-							element.setEndLineType(LineType.ARROW);
-							
-							pathway.add(element);
+							pathway.add(line);
 						}
-						//pijlen van gen naar product
-						for (Element child3 : keggElements) {
-							
-							String substrateX = "";
-							String substrateY = "";
-							String productX = "";
-							String productY = "";
-							String idSubstrate = "";
-							String idProduct = "";
-							
-							if (name.equals("reaction")){
-								substrateX = child3.getAttributeValue("x");
-								substrateY = child3.getAttributeValue("y");
-								idSubstrate = child.getAttributeValue("id");
-							}
-							if (name.equals("product")){
-								productX = child3.getAttributeValue("x");
-								productY = child3.getAttributeValue("y");
-								idProduct = child.getAttributeValue("id");
-							}
-							
-							PathwayElement element = new PathwayElement(ObjectType.LINE);
-							element.setColor(Color.BLACK);
-							element.setMStartX(Double.parseDouble(substrateX));
-							element.setMStartY(Double.parseDouble(substrateY));
-							element.setMEndX(Double.parseDouble(productX));
-							element.setMEndY(Double.parseDouble(productY));
-							element.setStartGraphRef(idSubstrate);
-							element.setEndGraphRef(idProduct);
-							element.setEndLineType(LineType.ARROW);
-							
-							pathway.add(element);
-						}				
 					}								
 				}
 			}
@@ -291,7 +236,7 @@ public class Converter {
 
 	public static PathwayElement createPathwayElement(Element child, Element graphics, PathwayElement element, int i, String textlabelGPML)
 	{
-		//Create new pathway element
+		// Create new pathway element
 	
 		// Set Color
 		// Convert a hexadecimal color into an awt.Color object
@@ -336,6 +281,58 @@ public class Converter {
 		return element;
 	}
 	
+	public static PathwayElement createPathwayLine(Element child, Element relation, PathwayElement line, String reactionName, String name, String reaction)
+	{
+		// Create new pathway line
+	
+		String startX = "";
+		String startY = "";
+		String startId = "";
+		String endX = "";
+		String endY = "";
+		String endId = "";
+		
+		if (name.equals(relation.getAttribute("name"))){
+			endX = child.getAttributeValue("x");
+			endY = child.getAttributeValue("y");
+			endId = child.getAttributeValue("id");	
+			if (reactionName.equals(reaction)){
+				startX = child.getAttributeValue("x");
+				startY = child.getAttributeValue("y");
+				startId = child.getAttributeValue("id");
+			}
+		}							
+			
+		line.setColor(Color.BLACK);
+						
+		// Setting start coordinates
+		line.setMStartX(Double.parseDouble(startX));
+		line.setMStartY(Double.parseDouble(startY));
+		line.setStartGraphRef(startId);
+		
+		// Setting end coordinates
+		line.setMEndX(Double.parseDouble(endX));
+		line.setMEndY(Double.parseDouble(endY));
+		line.setEndGraphRef(endId);
+				
+		return line;
+		
+//		even niet nodig
+//		line.setEndLineType(LineType.ARROW);
+//		if (name.equals(product)){
+//			endX = child.getAttributeValue("x");
+//			endY = child.getAttributeValue("y");
+//			endId = child.getAttributeValue("id");
+//		
+//			if (reactionName.equals(reaction)){
+//				startX = child.getAttributeValue("x");
+//				startY = child.getAttributeValue("y");
+//				startId = child.getAttributeValue("id");
+//			}
+//		}
+			
+		
+	}
 	
 }
 

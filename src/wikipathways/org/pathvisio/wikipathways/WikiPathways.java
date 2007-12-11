@@ -142,6 +142,9 @@ public class WikiPathways implements ApplicationEventListener {
 		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
 		
 		GdbManager.setGeneDb(getPwSpecies());
+		
+		GdbManager.setMetaboliteDb("metabolites");
+		
 		isInit = false;
 		initPerformed = true;
 	}

@@ -41,11 +41,11 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 public class Converter {
-	static HashMap<String, PathwayElement[]> reaction2element = 
-									new HashMap<String, PathwayElement[]>();
+	static HashMap<String, List<PathwayElement>> reaction2element = 
+									new HashMap<String, List<PathwayElement>>();
 									
-	static HashMap<String, PathwayElement[]> compound2element = 
-										new HashMap<String, PathwayElement[]>();
+	static HashMap<String, PathwayElement> compound2element = 
+										new HashMap<String, PathwayElement>();
 										
 	/**
 	 * @param args
@@ -90,14 +90,15 @@ public class Converter {
 					Element graphics = child.getChild("graphics");
 
 					/** types: map, enzyme, compound **/
+					
 					if(type.equals("enzyme") && graphics != null) 
 					{						
 						String enzymeCode = child.getAttributeValue("name");
 						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
 						PathwayElement[] pwElms = new PathwayElement[ncbi.size()];
-						String reaction = child.getAttributeValue("reaction");
+						String[] reactions = child.getAttributeValue("reaction").split(" ");
 						
-						if (ncbi != null)							
+						if (ncbi != null && ncbi.size() > 0)							
 						{
 							for(int i=0; i<ncbi.size(); i++ )
 							{
@@ -113,7 +114,15 @@ public class Converter {
 								pathway.add(element);
 								pwElms[i] = element;
 							}
-							reaction2element.put(reaction, pwElms);
+							for(String reaction : reactions) {
+								List<PathwayElement> genes = reaction2element.get(reaction);
+								if(genes == null) {
+									reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
+								}
+								for(PathwayElement e : pwElms) {
+									genes.add(e);
+								}
+							}
 						}
 						else { 
 							String textlabelGPML = enzymeCode;
@@ -122,24 +131,29 @@ public class Converter {
 							// Fetch pathwayElement
 							PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 								
 
-							element.setDataSource(null); 
-							element.setGeneID("null");
-
 							pathway.add(element);
-							reaction2element.put(reaction, new PathwayElement[] { element });
+							
+							for(String reaction : reactions) {
+								List<PathwayElement> genes = reaction2element.get(reaction);
+								if(genes == null) {
+									reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
+								}
+								genes.add(element);
+							}													
 						}
 					}
 					else if(type.equals("compound"))
 					{						
-						String textlabelGPML = child.getAttributeValue("name"); // has to change to metabolite name from online KEGG database
+						String compoundName = child.getAttributeValue("name"); 
 						int i = 0;
 						
 						// Fetch pathwayElement 
-						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 
+						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, compoundName); 
 						
 						element.setDataNodeType(DataNodeType.METABOLITE);
 
 						pathway.add(element);
+						compound2element.put(compoundName, element);
 					}					
 					else if(type.equals("map"))
 					{
@@ -154,40 +168,63 @@ public class Converter {
 
 						pathway.add(element);
 					}
+					else if(type.equals("ortholog"))
+					{
+						String textlabelGPML = graphics.getAttributeValue("name");
+						int i = 0;
+
+						// Fetch pathwayElement
+						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 								
+
+						pathway.add(element);
+						
+						String[] reactions = child.getAttributeValue("reaction").split(" ");
+						
+						for(String reaction : reactions) {
+							List<PathwayElement> genes = reaction2element.get(reaction);
+							if(genes == null) {
+								reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
+							}
+							genes.add(element);
+						}	
+					}
 				}			
 				// End converting elements
 				// Start converting lines
 
 				else if ("reaction".equals(elementName)){
-//					String substrate = child.getChild("substrate").getAttributeValue("name");
-//					String product = child.getChild("product").getAttributeValue("name");
-					String reaction = child.getAttributeValue("name");	
-					String reactionName = child.getAttributeValue("reaction");
+					String reactionName = child.getAttributeValue("name");
 					
-					System.out.println("reaction " +reaction+ " found");
+					System.out.println("reaction " +reactionName+ " found");
 
 					// Create a list of elements in relations with reaction
-
-					//TK: Je krijg hier een ClassCastException, omdat je list niet alleen objecten
-					//van class Element bevat. Element.getContent() geeft een list terug met Element,
-					//Text of CData (als ik het goed heb). Je moet altijd uitkijken met typecasten
-					//van een list (dus <Element> erachter zetten). Hiermee ga je er vanuit dat je
-					//list alleen maar uit objecten van die class bestaat!
-					//List<Element> reactionElements = child.getContent();
-					//
-					//Een oplossing is om een generieke list te gebruiken (dus zonder de <Element>) en
-					//de individuele objecten te casten nadat je bekeken hebt van welke classe ze zijn.
-					//
-					//Maar dit is waarschijnlijk niet wat je wilt, je wilt alleen de elementen, dus je
-					//kunt beter de volgende methode gebruiken:
 					List<Element> reactionElements = child.getChildren();
+					List<PathwayElement> dataNodes = reaction2element.get(reactionName);
 					
 					for(Element relation : reactionElements) {
-
-						// Fetch pathwayLine 
-						PathwayElement line = createPathwayLine(child, relation);
-
-						pathway.add(line);
+						
+						String compoundName = relation.getAttributeValue("name");
+						PathwayElement start = null;
+						PathwayElement end = null;
+						
+						if (relation.getName().equals("substrate")){
+							PathwayElement substrate = compound2element.get(compoundName);
+							start = substrate;
+							end = dataNodes.get(0);
+						}
+						else if (relation.equals("product")){
+							PathwayElement product = compound2element.get(compoundName);
+							start = dataNodes.get(0);
+							end = product;
+						}
+						
+						if (start!=null && end!=null){
+							// Fetch pathwayLine 
+							PathwayElement line = createPathwayLine(start, end);								
+							pathway.add(line);
+						} else {
+							Logger.log.error("No DataNodes to connect to for reaction " + reactionName + " in " + relation.getName());
+						}
 					}								
 				}
 			}
@@ -297,50 +334,24 @@ public class Converter {
 		return element;
 	}
 
-	public static PathwayElement createPathwayLine(Element reaction, Element relation)
+	public static PathwayElement createPathwayLine(PathwayElement start, PathwayElement end)
 	{
-		// Create new pathway element
+		// Create new pathway line
 		PathwayElement line = new PathwayElement(ObjectType.LINE);
-		
-		String reactionName = reaction.getAttributeValue("name");
-		
-		//TK: dit gaat niet lukken! De lijn heeft geen coordinaten, dus die
-		//moet je uit de pathway elementen halen waarnaar hij linkt!
-		//Daarvoor moet je onthouden welke enzymes of compounds je al toegevoegd hebt
-		//en die aan de hand van de relation of reaction proberen terug te vinden...
-		
-		PathwayElement[] genes = reaction2element.get(reactionName);
-		PathwayElement end = genes[0];
 		
 		line.setColor(Color.BLACK);
 
 		// Setting start coordinates
-		line.setMStartX(Double.parseDouble(startX));
-		line.setMStartY(Double.parseDouble(startY));
-		line.setStartGraphRef(startId);
+		line.setMStartX(start.getMCenterX());
+		line.setMStartY(start.getMCenterY());
+		line.setStartGraphRef(start.getGraphId());
 
 		// Setting end coordinates
-		line.setMEndX(Double.parseDouble(endX));
-		line.setMEndY(Double.parseDouble(endY));
-		line.setEndGraphRef(endId);
+		line.setMEndX(end.getMCenterX());
+		line.setMEndY(end.getMCenterY());
+		line.setEndGraphRef(end.getGraphId());
 
 		return line;
-
-//		even niet nodig
-//		line.setEndLineType(LineType.ARROW);
-//		if (childName.equals(product)){
-//		endX = child.getAttributeValue("x");
-//		endY = child.getAttributeValue("y");
-//		endId = child.getAttributeValue("id");
-
-//		if (reactionchildName.equals(reaction)){
-//		startX = child.getAttributeValue("x");
-//		startY = child.getAttributeValue("y");
-//		startId = child.getAttributeValue("id");
-//		}
-//		}
-
-
 	}
 
 }

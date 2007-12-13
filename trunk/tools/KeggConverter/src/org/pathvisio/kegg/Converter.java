@@ -157,7 +157,7 @@ public class Converter {
 					}					
 					else if(type.equals("map"))
 					{
-						String textlabelGPML = child.getAttributeValue("name"); 
+						String textlabelGPML = graphics.getAttributeValue("name"); 
 						String typeGPML = null;
 						int i = 0;
 						
@@ -176,6 +176,8 @@ public class Converter {
 						// Fetch pathwayElement
 						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 								
 
+						element.setDataNodeType(DataNodeType.UNKOWN);
+						
 						pathway.add(element);
 						
 						String[] reactions = child.getAttributeValue("reaction").split(" ");
@@ -212,7 +214,7 @@ public class Converter {
 							start = substrate;
 							end = dataNodes.get(0);
 						}
-						else if (relation.equals("product")){
+						else {
 							PathwayElement product = compound2element.get(compoundName);
 							start = dataNodes.get(0);
 							end = product;

@@ -46,6 +46,7 @@ public class Converter {
 	/**
 	 * @param args
 	 */
+	
 	public static void main(String[] args) {
 		String filename = "examples/map00031.xml";
 		String specie = "hsa";
@@ -54,7 +55,7 @@ public class Converter {
 		Logger.log.setStream(System.out);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 		Logger.log.trace("Start converting pathway " + filename);
-
+		
 		SAXBuilder builder  = new SAXBuilder();
 		try {
 			Document doc = builder.build(new File(filename));
@@ -67,6 +68,7 @@ public class Converter {
 
 			int progress = 0;
 			for(Element child : keggElements) {
+				String elementName = child.getName();
 				String childName = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
 			
@@ -79,7 +81,6 @@ public class Converter {
 						"Processing element " + ++progress + " out of " + 
 						keggElements.size() + ": " + childName + ", " + type);
 
-				String elementName = child.getName();
 				System.out.println("element naam = " + elementName);
 
 				//TK: Je kunt dit netter doen. Je gaat er nu van uit dat
@@ -98,67 +99,62 @@ public class Converter {
 						String enzymeCode = child.getAttributeValue("name");
 						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
 						PathwayElement[] pwElms = new PathwayElement[ncbi.size()];
-						if (ncbi != null)
+						String reaction = child.getAttributeValue("reaction");
+						
+						if (ncbi != null)							
 						{
 							for(int i=0; i<ncbi.size(); i++ )
 							{
 								String textlabelGPML = ncbi.get(i); // name of gene i from online NCBI database
-
-								PathwayElement element = new PathwayElement(ObjectType.DATANODE);														
+								
+								// Fetch pathwayElement 
+								PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 							
+																						
 								element.setDataSource(DataSource.ENTREZ_GENE);
 								element.setGeneID(ncbi.get(i));
 								element.setDataNodeType(DataNodeType.GENEPRODUCT);
 
-								// Fetch pathwayElement 
-								element = createPathwayElement(child, graphics, element, i, textlabelGPML); 							
-
 								pathway.add(element);
 								pwElms[i] = element;
 							}
-							String reaction = child.getAttributeValue("reaction");
 							reaction2element.put(reaction, pwElms);
 						}
 						else { 
 							String textlabelGPML = enzymeCode;
 							int i = 0;
 
-							PathwayElement element = new PathwayElement(ObjectType.DATANODE);
+							// Fetch pathwayElement
+							PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 								
+
 							element.setDataSource(null); 
 							element.setGeneID("null");
 
-							element = createPathwayElement(child, graphics, element, i, textlabelGPML); 								
-
-							if(element != null) {
-								pathway.add(element);
-							}
+							pathway.add(element);
+							reaction2element.put(reaction, new PathwayElement[] { element });
 						}
 					}
 					else if(type.equals("compound"))
-					{
-						int i = 0;
-
+					{						
 						String textlabelGPML = child.getAttributeValue("name"); // has to change to metabolite name from online KEGG database
-
-						PathwayElement element = new PathwayElement(ObjectType.DATANODE);
-						element.setDataNodeType(DataNodeType.METABOLITE);
-
+						int i = 0;
+						
 						// Fetch pathwayElement 
-						element = createPathwayElement(child, graphics, element, i, textlabelGPML); 
+						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 
+						
+						element.setDataNodeType(DataNodeType.METABOLITE);
 
 						pathway.add(element);
 					}					
 					else if(type.equals("map"))
 					{
-						int i = 0;
-
 						String textlabelGPML = child.getAttributeValue("name"); 
 						String typeGPML = null;
-
-						PathwayElement element = new PathwayElement(ObjectType.LABEL);
-						element.setMFontSize(150);
-
+						int i = 0;
+						
 						// Fetch pathwayElement 
-						element = createPathwayElement(child, graphics, element, i, textlabelGPML); 
+						PathwayElement element = createPathwayElement(child, graphics, ObjectType.LABEL, i, textlabelGPML); 
+
+						element.setMFontSize(150);
 
 						pathway.add(element);
 					}
@@ -260,8 +256,9 @@ public class Converter {
 		return new String[] {};
 	}
 
-	public static PathwayElement createPathwayElement(Element entry, Element graphics, PathwayElement element, int i, String textlabelGPML)
+	public static PathwayElement createPathwayElement(Element entry, Element graphics, int objectType, int i, String textlabelGPML)
 	{
+		PathwayElement element = new PathwayElement(objectType);
 		// Create new pathway element
 
 		// Set Color

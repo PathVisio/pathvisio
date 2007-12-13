@@ -37,7 +37,12 @@ public class LinAlg
 		//					p1.p2	
         //cos(angle) = --------------
         //          	||p1||*||p2||
+
 		double cos = dot(p1,p2) / (p1.len() * p2.len());
+		if(cos>1)
+		{
+			cos=1;
+		}
 		return direction(p1,p2) * Math.acos(cos);
 	}
 		
@@ -46,6 +51,7 @@ public class LinAlg
 	 */
 	public static double direction(Point p1, Point p2) 
 	{
+		
 		return Math.signum(p1.x * p2.y - p1.y * p2.x);
 	}
 	

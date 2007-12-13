@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.rpc.ServiceException;
@@ -32,18 +33,16 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.ImageExporter;
-import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
 public class Converter {
-
+	static HashMap<String, PathwayElement[]> reaction2element = 
+									new HashMap<String, PathwayElement[]>();
 	/**
 	 * @param args
 	 */
@@ -98,7 +97,7 @@ public class Converter {
 					{						
 						String enzymeCode = child.getAttributeValue("name");
 						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
-
+						PathwayElement[] pwElms = new PathwayElement[ncbi.size()];
 						if (ncbi != null)
 						{
 							for(int i=0; i<ncbi.size(); i++ )
@@ -113,10 +112,11 @@ public class Converter {
 								// Fetch pathwayElement 
 								element = createPathwayElement(child, graphics, element, i, textlabelGPML); 							
 
-								if(element != null) {
-									pathway.add(element);
-								}
+								pathway.add(element);
+								pwElms[i] = element;
 							}
+							String reaction = child.getAttributeValue("reaction");
+							reaction2element.put(reaction, pwElms);
 						}
 						else { 
 							String textlabelGPML = enzymeCode;
@@ -196,7 +196,7 @@ public class Converter {
 						PathwayElement line = new PathwayElement(ObjectType.LINE);
 
 						// Fetch pathwayLine 
-						line = createPathwayLine(child, relation, line, reactionName, childName, reaction);
+						line = createPathwayLine(child, relation, line);
 
 						pathway.add(line);
 					}								
@@ -260,7 +260,7 @@ public class Converter {
 		return new String[] {};
 	}
 
-	public static PathwayElement createPathwayElement(Element child, Element graphics, PathwayElement element, int i, String textlabelGPML)
+	public static PathwayElement createPathwayElement(Element entry, Element graphics, PathwayElement element, int i, String textlabelGPML)
 	{
 		// Create new pathway element
 
@@ -298,7 +298,7 @@ public class Converter {
 		element.setMHeight(height*GpmlFormat.pixel2model);
 
 		// Set graphID
-		String graphId = child.getAttributeValue("id");
+		String graphId = entry.getAttributeValue("id");
 //		element.setGraphId(graphId);
 
 		// Set textlabel
@@ -307,32 +307,18 @@ public class Converter {
 		return element;
 	}
 
-	public static PathwayElement createPathwayLine(Element child, Element relation, PathwayElement line, String reactionName, String childName, String reaction)
+	public static PathwayElement createPathwayLine(Element reaction, Element relation, PathwayElement line)
 	{
-		// Create new pathway line
-
-		String startX = "";
-		String startY = "";
-		String startId = "";
-		String endX = "";
-		String endY = "";
-		String endId = "";
-
+		String reactionName = reaction.getAttributeValue("name");
+		
 		//TK: dit gaat niet lukken! De lijn heeft geen coordinaten, dus die
 		//moet je uit de pathway elementen halen waarnaar hij linkt!
 		//Daarvoor moet je onthouden welke enzymes of compounds je al toegevoegd hebt
 		//en die aan de hand van de relation of reaction proberen terug te vinden...
-		if (childName.equals(relation.getAttribute("name"))){
-			endX = child.getAttributeValue("x");
-			endY = child.getAttributeValue("y");
-			endId = child.getAttributeValue("id");	
-			if (reactionName.equals(reaction)){
-				startX = child.getAttributeValue("x");
-				startY = child.getAttributeValue("y");
-				startId = child.getAttributeValue("id");
-			}
-		}							
-
+		
+		PathwayElement[] genes = reaction2element.get(reactionName);
+		PathwayElement end = genes[0];
+		
 		line.setColor(Color.BLACK);
 
 		// Setting start coordinates

@@ -191,7 +191,7 @@ public class Converter {
 				else if ("reaction".equals(elementName)){
 					String reactionName = child.getAttributeValue("name");
 
-					System.out.println("reaction " +reactionName+ " found");
+					System.err.println("reaction " +reactionName+ " found");
 
 					// Create a list of elements in relations with reaction
 					List<Element> reactionElements = child.getChildren();

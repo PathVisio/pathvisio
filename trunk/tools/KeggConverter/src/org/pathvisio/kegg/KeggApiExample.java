@@ -70,6 +70,7 @@ public class KeggApiExample {
 				for(LinkDBRelation ldb : links) {
 					System.out.println("\t\t" + ldb.getEntry_id1() + " links to " + ldb.getEntry_id2());
 				}
+				System.out.println("btit says: " + serv.btit(gene));
 			}
 		}
 	}

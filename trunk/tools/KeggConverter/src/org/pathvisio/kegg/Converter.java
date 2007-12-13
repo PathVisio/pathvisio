@@ -42,15 +42,17 @@ import org.pathvisio.model.PathwayElement;
 
 public class Converter {
 	static HashMap<String, List<PathwayElement>> reaction2element = 
-									new HashMap<String, List<PathwayElement>>();
-									
+		new HashMap<String, List<PathwayElement>>();
+
 	static HashMap<String, PathwayElement> compound2element = 
-										new HashMap<String, PathwayElement>();
-										
+		new HashMap<String, PathwayElement>();
+	static KEGGLocator  locator = new KEGGLocator();
+	static KEGGPortType serv = null;
+
 	/**
 	 * @param args
 	 */
-	
+
 	public static void main(String[] args) {
 		String filename = "examples/map00031.xml";
 		String specie = "hsa";
@@ -59,9 +61,12 @@ public class Converter {
 		Logger.log.setStream(System.out);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 		Logger.log.trace("Start converting pathway " + filename);
-		
+
 		SAXBuilder builder  = new SAXBuilder();
 		try {
+			//Setup a connection to KEGG
+			serv = locator.getKEGGPort();
+
 			Document doc = builder.build(new File(filename));
 
 			Element rootelement = doc.getRootElement();
@@ -75,7 +80,7 @@ public class Converter {
 				String elementName = child.getName();
 				String childName = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
-			
+
 				Logger.log.trace(
 						"Processing element " + ++progress + " out of " + 
 						keggElements.size() + ": " + childName + ", " + type);
@@ -85,43 +90,46 @@ public class Converter {
 				//Trouwens, wil je zeker dat alle elementen zonder graphics overgeslagen worden?
 				if("entry".equals(elementName))
 				{
-					
+
 					// Start converting elements
 					Element graphics = child.getChild("graphics");
 
 					/** types: map, enzyme, compound **/
-					
+
 					if(type.equals("enzyme") && graphics != null) 
 					{						
 						String enzymeCode = child.getAttributeValue("name");
-						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
-						PathwayElement[] pwElms = new PathwayElement[ncbi.size()];
+						String[] genes = getGenes(enzymeCode, specie);
+						List<PathwayElement> pwElms = new ArrayList<PathwayElement>();
 						String[] reactions = child.getAttributeValue("reaction").split(" ");
-						
-						if (ncbi != null && ncbi.size() > 0)							
-						{
-							for(int i=0; i<ncbi.size(); i++ )
-							{
-								String textlabelGPML = ncbi.get(i); // name of gene i from online NCBI database
-								
-								// Fetch pathwayElement 
-								PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 							
-																						
-								element.setDataSource(DataSource.ENTREZ_GENE);
-								element.setGeneID(ncbi.get(i));
-								element.setDataNodeType(DataNodeType.GENEPRODUCT);
 
-								pathway.add(element);
-								pwElms[i] = element;
+
+						if (genes != null && genes.length > 0)							
+						{
+							for(int i = 0; i < genes.length; i++) {
+								String geneId = genes[i];
+								
+								List<String> ncbi = getNcbiByGene(geneId);
+								for(int j=0; j<ncbi.size(); j++ )
+								{
+									// Name of gene j from online NCBI database
+									String textlabelGPML = getGeneSymbol(geneId); 
+								
+									// Fetch pathwayElement 
+									PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 							
+
+									element.setDataSource(DataSource.ENTREZ_GENE);
+									element.setGeneID(ncbi.get(j));
+									element.setDataNodeType(DataNodeType.GENEPRODUCT);
+
+									pathway.add(element);
+									pwElms.add(element);
+								}
 							}
-							for(String reaction : reactions) {
-								List<PathwayElement> genes = reaction2element.get(reaction);
-								if(genes == null) {
-									reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
-								}
-								for(PathwayElement e : pwElms) {
-									genes.add(e);
-								}
+
+							List<PathwayElement> reactionElements = getReactionElements(child);
+							for(PathwayElement e : pwElms) {
+								reactionElements.add(e);
 							}
 						}
 						else { 
@@ -132,24 +140,18 @@ public class Converter {
 							PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 								
 
 							pathway.add(element);
-							
-							for(String reaction : reactions) {
-								List<PathwayElement> genes = reaction2element.get(reaction);
-								if(genes == null) {
-									reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
-								}
-								genes.add(element);
-							}													
+
+							getReactionElements(child).add(element);																		
 						}
 					}
 					else if(type.equals("compound"))
 					{						
 						String compoundName = child.getAttributeValue("name"); 
 						int i = 0;
-						
+
 						// Fetch pathwayElement 
 						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, compoundName); 
-						
+
 						element.setDataNodeType(DataNodeType.METABOLITE);
 
 						pathway.add(element);
@@ -160,7 +162,7 @@ public class Converter {
 						String textlabelGPML = graphics.getAttributeValue("name"); 
 						String typeGPML = null;
 						int i = 0;
-						
+
 						// Fetch pathwayElement 
 						PathwayElement element = createPathwayElement(child, graphics, ObjectType.LABEL, i, textlabelGPML); 
 
@@ -177,18 +179,10 @@ public class Converter {
 						PathwayElement element = createPathwayElement(child, graphics, ObjectType.DATANODE, i, textlabelGPML); 								
 
 						element.setDataNodeType(DataNodeType.UNKOWN);
-						
+
 						pathway.add(element);
-						
-						String[] reactions = child.getAttributeValue("reaction").split(" ");
-						
-						for(String reaction : reactions) {
-							List<PathwayElement> genes = reaction2element.get(reaction);
-							if(genes == null) {
-								reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
-							}
-							genes.add(element);
-						}	
+
+						getReactionElements(child).add(element);				
 					}
 				}			
 				// End converting elements
@@ -196,19 +190,19 @@ public class Converter {
 
 				else if ("reaction".equals(elementName)){
 					String reactionName = child.getAttributeValue("name");
-					
+
 					System.out.println("reaction " +reactionName+ " found");
 
 					// Create a list of elements in relations with reaction
 					List<Element> reactionElements = child.getChildren();
 					List<PathwayElement> dataNodes = reaction2element.get(reactionName);
-					
+
 					for(Element relation : reactionElements) {
-						
+
 						String compoundName = relation.getAttributeValue("name");
 						PathwayElement start = null;
 						PathwayElement end = null;
-						
+
 						if (relation.getName().equals("substrate")){
 							PathwayElement substrate = compound2element.get(compoundName);
 							start = substrate;
@@ -219,7 +213,7 @@ public class Converter {
 							start = dataNodes.get(0);
 							end = product;
 						}
-						
+
 						if (start!=null && end!=null){
 							// Fetch pathwayLine 
 							PathwayElement line = createPathwayLine(start, end);								
@@ -243,26 +237,19 @@ public class Converter {
 		}		
 	}
 
-	public static List <String> getNcbiByEnzyme(String ec, String species) throws ServiceException, RemoteException 
+	public static String[] getGenes(String ec, String species) throws RemoteException 
 	{
-		//Setup a connection to KEGG
-		KEGGLocator  locator = new KEGGLocator();
-		KEGGPortType serv;
-		serv = locator.getKEGGPort();
+		//Fetch the gene IDs
+		return serv.get_genes_by_enzyme(ec, species);		
+	}
 
-		//Fetch the gene names
-		String[] genes = serv.get_genes_by_enzyme(ec, species);
-
+	public static List <String> getNcbiByGene(String gene) throws ServiceException, RemoteException 
+	{
 		//KEGG code --> NCBI code
 		List <String> result =  new ArrayList <String>();
-		if(genes.length != 0){
-
-			for(String gene : genes) {
-				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
-				for(LinkDBRelation ldb : links) {
-					result.add(ldb.getEntry_id2().substring(12));
-				}
-			}
+		LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);
+		for(LinkDBRelation ldb : links) {
+			result.add(ldb.getEntry_id2().substring(12));
 		}
 
 		return result;  
@@ -326,10 +313,6 @@ public class Converter {
 		element.setMWidth(width*GpmlFormat.pixel2model);
 		element.setMHeight(height*GpmlFormat.pixel2model);
 
-		// Set graphID
-		String graphId = entry.getAttributeValue("id");
-//		element.setGraphId(graphId);
-
 		// Set textlabel
 		element.setTextLabel(textlabelGPML);			
 
@@ -340,21 +323,56 @@ public class Converter {
 	{
 		// Create new pathway line
 		PathwayElement line = new PathwayElement(ObjectType.LINE);
-		
+
 		line.setColor(Color.BLACK);
 
 		// Setting start coordinates
 		line.setMStartX(start.getMCenterX());
 		line.setMStartY(start.getMCenterY());
+
+		//TK: Quick hack, GraphId is not automatically generated,
+		//so set one explicitly...FIXME!
+		String startId = start.getGraphId();
+		if(startId == null) {
+			start.setGraphId(start.getParent().getUniqueId());
+		}
 		line.setStartGraphRef(start.getGraphId());
 
 		// Setting end coordinates
 		line.setMEndX(end.getMCenterX());
 		line.setMEndY(end.getMCenterY());
+		//TK: Quick hack, GraphId is not automatically generated,
+		//so set one explicitly...FIXME!
+		String endId = end.getGraphId();
+		if(endId == null) {
+			end.setGraphId(end.getParent().getUniqueId());			
+		}
 		line.setEndGraphRef(end.getGraphId());
 
 		return line;
 	}
 
+	public static List<PathwayElement> getReactionElements(Element entry)
+	{
+		String[] reactions = entry.getAttributeValue("reaction").split(" ");
+
+		List<PathwayElement> genes = new ArrayList <PathwayElement>(); 
+
+		for(String reaction : reactions) {
+			genes = reaction2element.get(reaction);
+			if(genes == null) {
+				reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
+			}			
+		}
+		return genes;
+	}
+
+	public static String getGeneSymbol(String geneId) throws RemoteException
+	{
+		String result = serv.btit(geneId);
+		result = result.split(" ")[1];
+		result = result.substring(0, result.length()-1);
+		return result;
+	}
 }
 

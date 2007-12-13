@@ -43,6 +43,10 @@ import org.pathvisio.model.PathwayElement;
 public class Converter {
 	static HashMap<String, PathwayElement[]> reaction2element = 
 									new HashMap<String, PathwayElement[]>();
+									
+	static HashMap<String, PathwayElement[]> compound2element = 
+										new HashMap<String, PathwayElement[]>();
+										
 	/**
 	 * @param args
 	 */
@@ -72,29 +76,21 @@ public class Converter {
 				String childName = child.getAttributeValue("name");
 				String type = child.getAttributeValue("type");
 			
-				Element graphics = child.getChild("graphics");
-				//TK: Deze kan binnen het tweede if block, als je gecontroleerd
-				//hebt of het daadwerkelijk een reactie is (zie verder commentaar
-				//String reactionName = child.getAttributeValue("reaction");
-
 				Logger.log.trace(
 						"Processing element " + ++progress + " out of " + 
 						keggElements.size() + ": " + childName + ", " + type);
 
 				System.out.println("element naam = " + elementName);
 
-				//TK: Je kunt dit netter doen. Je gaat er nu van uit dat
-				//alle niet-entries geen type en graphics hebben.
-				//Je kunt beter simpelweg gewoon op de naam checken:
 				//Trouwens, wil je zeker dat alle elementen zonder graphics overgeslagen worden?
-				if("entry".equals(elementName) && graphics != null)
-					//if(type != null && graphics != null) 
+				if("entry".equals(elementName))
 				{
 					
 					// Start converting elements
+					Element graphics = child.getChild("graphics");
 
 					/** types: map, enzyme, compound **/
-					if(type.equals("enzyme")) 
+					if(type.equals("enzyme") && graphics != null) 
 					{						
 						String enzymeCode = child.getAttributeValue("name");
 						List <String> ncbi = getNcbiByEnzyme(enzymeCode, specie); //Gencodes --> ID
@@ -162,7 +158,6 @@ public class Converter {
 				// End converting elements
 				// Start converting lines
 
-				//TK: Hier weet je dat het geen entry is, check nu voor reaction / relation ?
 				else if ("reaction".equals(elementName)){
 //					String substrate = child.getChild("substrate").getAttributeValue("name");
 //					String product = child.getChild("product").getAttributeValue("name");
@@ -189,10 +184,8 @@ public class Converter {
 					
 					for(Element relation : reactionElements) {
 
-						PathwayElement line = new PathwayElement(ObjectType.LINE);
-
 						// Fetch pathwayLine 
-						line = createPathwayLine(child, relation, line);
+						PathwayElement line = createPathwayLine(child, relation);
 
 						pathway.add(line);
 					}								
@@ -258,8 +251,8 @@ public class Converter {
 
 	public static PathwayElement createPathwayElement(Element entry, Element graphics, int objectType, int i, String textlabelGPML)
 	{
-		PathwayElement element = new PathwayElement(objectType);
 		// Create new pathway element
+		PathwayElement element = new PathwayElement(objectType);
 
 		// Set Color
 		// Convert a hexadecimal color into an awt.Color object
@@ -304,8 +297,11 @@ public class Converter {
 		return element;
 	}
 
-	public static PathwayElement createPathwayLine(Element reaction, Element relation, PathwayElement line)
+	public static PathwayElement createPathwayLine(Element reaction, Element relation)
 	{
+		// Create new pathway element
+		PathwayElement line = new PathwayElement(ObjectType.LINE);
+		
 		String reactionName = reaction.getAttributeValue("name");
 		
 		//TK: dit gaat niet lukken! De lijn heeft geen coordinaten, dus die

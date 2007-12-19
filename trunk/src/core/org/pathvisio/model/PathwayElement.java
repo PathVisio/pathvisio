@@ -289,15 +289,42 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		objectType = ot;
 	}
 
+	public static final int Z_ORDER_TOP = -1;
+	public static final int Z_ORDER_BOTTOM = -2;
+	public static final int Z_ORDER_UP = -3;
+	public static final int Z_ORDER_DOWN = -4;
+		
 	int zOrder;
 	
 	public int getZOrder() {
 		return zOrder;
 	}
 	
-	public void setZOrder(int z) {
-		zOrder = z;
+	public void setZOrder(OrderType order) {
+		switch(order) {
+		case TOP:
+			setZOrder(parent.getMaxZOrder() + 1);
+			break;
+		case BOTTOM:
+			increaseAllZOrder();
+			setZOrder(0);
+			break;
+		}
 	}
+
+	public void setZOrder(int z) {
+		if(z != zOrder) {
+			zOrder = z;
+			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+	
+	private void increaseAllZOrder() {
+		for(PathwayElement e : parent.getDataObjects()) {
+			e.zOrder++;
+		}
+	}
+	
 	/**
 	 * Parent of this object: may be null (for example, when object is in
 	 * clipboard)

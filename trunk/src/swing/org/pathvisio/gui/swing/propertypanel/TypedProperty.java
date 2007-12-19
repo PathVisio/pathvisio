@@ -22,11 +22,10 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -136,11 +135,17 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return lineStyleRenderer;
 		case DATASOURCE:
 		{
-			if(DataSource.getDataSources().size() > datasourceRenderer.getItemCount()) {
-				datasourceRenderer.updateData(
-						DataSource.getFullNames().toArray(), 
-						DataSource.getDataSources().toArray()
-				);
+			Set<DataSource> dataSources = DataSource.getDataSources();
+			if(dataSources.size() > datasourceRenderer.getItemCount()) {
+				Object[] labels = new Object[dataSources.size()];
+				Object[] values = new Object[dataSources.size()];
+				int i = 0;
+				for(DataSource s : dataSources) {
+					labels[i] = s.getFullName();
+					values[i] = s;
+					i++;
+				}
+				datasourceRenderer.updateData(labels, values);
 			}
 			return datasourceRenderer;
 		}
@@ -172,11 +177,17 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return checkboxEditor;
 		case DATASOURCE:
 		{
-			if(DataSource.getDataSources().size() > datasourceEditor.getItemCount()) {
-				datasourceEditor.updateData(
-						DataSource.getFullNames().toArray(), 
-						DataSource.getDataSources().toArray()
-				);
+			Set<DataSource> dataSources = DataSource.getDataSources();
+			if(dataSources.size() > datasourceEditor.getItemCount()) {
+				Object[] labels = new Object[dataSources.size()];
+				Object[] values = new Object[dataSources.size()];
+				int i = 0;
+				for(DataSource s : dataSources) {
+					labels[i] = s.getFullName();
+					values[i] = s;
+					i++;
+				}
+				datasourceEditor.updateData(labels, values);
 			}
 			return datasourceEditor;
 		}
@@ -401,7 +412,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ColorRenderer colorRenderer = new ColorRenderer();
 	private static ComboRenderer lineTypeRenderer = new ComboRenderer(LineType.getNames(), LineType.getValues());
 	private static ComboRenderer lineStyleRenderer = new ComboRenderer(LineStyle.getNames());
-	private static ComboRenderer datasourceRenderer = new ComboRenderer(DataSource.getFullNames().toArray(), DataSource.getDataSources().toArray());
+	private static ComboRenderer datasourceRenderer = new ComboRenderer(new String[] {}, new String[] {});//data will be added on first use
 	private static CheckBoxRenderer checkboxRenderer = new CheckBoxRenderer();
 	private static ComboRenderer orientationRenderer = new ComboRenderer(OrientationType.getNames());
 	private static ComboRenderer organismRenderer = new ComboRenderer(Organism.latinNames().toArray());
@@ -413,7 +424,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);
 	private static ComboEditor lineStyleEditor = new ComboEditor(LineStyle.getNames(), true);
 	private static ComboEditor outlineTypeEditor = new ComboEditor(OutlineType.getTags(), true);
-	private static ComboEditor datasourceEditor = new ComboEditor(DataSource.getFullNames().toArray(), DataSource.getDataSources().toArray());
+	private static ComboEditor datasourceEditor = new ComboEditor(new String[] {}, new String[] {}); //data will be added on first use
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);
 	private static ComboEditor organismEditor = new ComboEditor(Organism.latinNames().toArray(), false);

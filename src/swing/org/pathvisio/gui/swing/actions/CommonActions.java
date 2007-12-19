@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -35,6 +36,7 @@ import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.model.OrderType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.Graphics;
@@ -137,6 +139,13 @@ public class CommonActions implements ApplicationEventListener {
 			new Action[] { new NewElementAction(VPathway.NEWARC) },
 			new Action[] { new NewElementAction(VPathway.NEWBRACE) },
 			new Action[] { new NewElementAction(VPathway.NEWTBAR) },
+	};
+	
+	public final Action[] orderActions = new Action[] {
+			new OrderAction(OrderType.TOP),
+			//new OrderAction(OrderType.UP), //TODO: implement
+			//new OrderAction(OrderType.DOWN),
+			new OrderAction(OrderType.BOTTOM)
 	};
 	
 	public CommonActions(Engine e) {
@@ -380,6 +389,26 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) vp.alignSelected(type);
+		}
+	}
+	
+	public static class OrderAction extends AbstractAction {
+		OrderType type;
+		
+		public OrderAction(OrderType type) {
+			this.type = type;
+			putValue(NAME, type.getName());
+			putValue(SHORT_DESCRIPTION, type.getDescription());
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) {
+				List<Graphics> selection = vp.getSelectedGraphics();
+				for(Graphics g : selection) {
+					g.getPathwayElement().setZOrder(type);
+				}
+			}
 		}
 	}
 	

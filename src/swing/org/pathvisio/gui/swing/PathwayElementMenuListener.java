@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import java.awt.Component;
 
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
@@ -76,13 +77,18 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			menu.addSeparator();
 		}
 		
+		JMenu orderMenu = new JMenu("Order");
+		for(Action a : SwingEngine.getCurrent().getActions().orderActions) {
+			orderMenu.add(a);
+		}
+		menu.add(orderMenu);
+		
 		JMenu litMenu = new JMenu("Literature");
 		litMenu.add(new AddLiteratureAction(component, e));
 		litMenu.add(new EditLiteratureAction(component, e));
 		menu.add(litMenu);
 		menu.addSeparator();
 		menu.add(new PropertiesAction(component,e));
-
 		return menu;
 	}
 	

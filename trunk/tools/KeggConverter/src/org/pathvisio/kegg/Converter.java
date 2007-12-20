@@ -36,9 +36,12 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.view.LinAlg;
+import org.pathvisio.view.LinAlg.Point;
 
 public class Converter {
 	static HashMap<String, List<PathwayElement>> reaction2element = 
@@ -238,7 +241,7 @@ public class Converter {
 					}					
 				}
 			
-			pathway.writeToXml(new File("C:/Documents and Settings/s030478/Desktop/" + filename.substring(9,17) + ".gpml"), false);
+			pathway.writeToXml(new File("C:/Documents and Settings/s051450/Desktop/" + filename.substring(9,17) + ".gpml"), false);
 			/*			
 			//Also write to png for more convenient testing:
 			ImageExporter imgExport = new BatikImageExporter(ImageExporter.TYPE_PNG);
@@ -334,6 +337,7 @@ public class Converter {
 
 	public static PathwayElement createPathwayLine(PathwayElement start, PathwayElement end)
 	{
+
 		// Create new pathway line
 		PathwayElement line = new PathwayElement(ObjectType.LINE);
 
@@ -352,8 +356,19 @@ public class Converter {
 		line.setStartGraphRef(start.getGraphId());
 
 		// Setting end coordinates
-		line.setMEndX(end.getMCenterX());
-		line.setMEndY(end.getMCenterY());
+		//angle between boxes
+		Point p1 = new Point(end.getMCenterX(),end.getMCenterY());
+		Point p2 = new Point(Math.abs((end.getMCenterX())),start.getMCenterY());
+		
+		double angle = LinAlg.angle(p1,p2);
+		double endX = (end.getMCenterX())-((1-Math.sin(angle))*-25);
+		double endY = (end.getMCenterY())-(Math.sin(angle)*-25);
+		
+		line.setMEndX(endX);
+		line.setMEndY(endY);
+		line.setEndLineType(LineType.ARROW);
+	
+		
 		//TK: Quick hack, GraphId is not automatically generated,
 		//so set one explicitly...FIXME!
 		String endId = end.getGraphId();

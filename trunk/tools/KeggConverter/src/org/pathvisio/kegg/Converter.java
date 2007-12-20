@@ -54,7 +54,7 @@ public class Converter {
 	 */
 
 	public static void main(String[] args) {
-		String filename = "examples/map00031.xml";
+		String filename = "examples/map00230.xml";
 		String specie = "hsa";
 
 		//Some progress logging
@@ -203,28 +203,41 @@ public class Converter {
 						PathwayElement start = null;
 						PathwayElement end = null;
 
-						if (relation.getName().equals("substrate")){
-							PathwayElement substrate = compound2element.get(compoundName);
-							start = substrate;
-							end = dataNodes.get(0);
-						}
-						else {
-							PathwayElement product = compound2element.get(compoundName);
-							start = dataNodes.get(0);
-							end = product;
-						}
+						if (dataNodes != null){
 
+							if (relation.getName().equals("substrate")){
+								PathwayElement substrate = compound2element.get(compoundName);
+								start = substrate;
+								end = dataNodes.get(0);
+							}
+							else {
+								PathwayElement product = compound2element.get(compoundName);
+								start = dataNodes.get(0);
+								end = product;
+							}
+						}
+						else{
+							if (relation.getName().equals("substrate")){
+								PathwayElement substrate = compound2element.get(compoundName);
+								start = substrate;
+							}
+							else {
+								PathwayElement product = compound2element.get(compoundName);
+								end = product;
+							}														
+						}
+						
 						if (start!=null && end!=null){
-							// Fetch pathwayLine 
-							PathwayElement line = createPathwayLine(start, end);								
-							pathway.add(line);
-						} else {
-							Logger.log.error("No DataNodes to connect to for reaction " + reactionName + " in " + relation.getName());
+								// Fetch pathwayLine 
+								PathwayElement line = createPathwayLine(start, end);								
+								pathway.add(line);
+							} else {
+								Logger.log.error("No DataNodes to connect to for reaction " + reactionName + " in " + relation.getName());
+							}																							
 						}
-					}								
+					}					
 				}
-			}
-
+			
 			pathway.writeToXml(new File("C:/Documents and Settings/s030478/Desktop/" + filename.substring(9,17) + ".gpml"), false);
 			/*			
 			//Also write to png for more convenient testing:

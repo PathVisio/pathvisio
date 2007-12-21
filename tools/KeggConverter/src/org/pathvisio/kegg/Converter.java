@@ -206,7 +206,7 @@ public class Converter {
 						PathwayElement start = null;
 						PathwayElement end = null;
 
-						if (dataNodes != null){
+						if (dataNodes != null && dataNodes.size() > 0){
 
 							if (relation.getName().equals("substrate")){
 								PathwayElement substrate = compound2element.get(compoundName);
@@ -241,12 +241,13 @@ public class Converter {
 					}					
 				}
 			
-			pathway.writeToXml(new File("C:/Documents and Settings/s051450/Desktop/" + filename.substring(9,17) + ".gpml"), false);
-			/*			
+			pathway.writeToXml(new File(filename.substring(9,17) + ".gpml"), false);
+			
+			/*
 			//Also write to png for more convenient testing:
 			ImageExporter imgExport = new BatikImageExporter(ImageExporter.TYPE_PNG);
 			imgExport.doExport(new File(filename + ".png"), pathway);
-			 */			
+			*/			
 			Logger.log.trace("Finished converting pathway " + filename);
 		} catch(Exception e) {
 			e.printStackTrace();

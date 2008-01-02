@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.pathvisio.data.BackpageTextProvider;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -36,6 +37,8 @@ import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
+import sun.swing.BakedArrayList;
+
 public class Engine 
 {	
 	private VPathway vPathway; // may be null
@@ -44,7 +47,7 @@ public class Engine
 	private VPathwayWrapper wrapper; // may also be null in case you
 									 // don't need to interact with
 									 // the pathway.
-	
+		
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
@@ -320,6 +323,20 @@ public class Engine
 		
 	public HashMap<String, PathwayImporter> getPathwayImporters() {
 		return importers;
+	}
+	
+	private BackpageTextProvider backpageTextProvider;
+	
+	/**
+	 * Get the backpage text provider for this Engine.
+	 * @return the backpage text provider
+	 * @see BackpageTextProvider
+	 */
+	public BackpageTextProvider getBackpageTextProvider() {
+		if(backpageTextProvider == null) {
+			backpageTextProvider = new BackpageTextProvider(this);
+		}
+		return backpageTextProvider;
 	}
 	
 	private HashMap<Integer, DBConnector> connectors = new HashMap<Integer, DBConnector>();

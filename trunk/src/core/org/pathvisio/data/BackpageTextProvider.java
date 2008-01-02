@@ -33,15 +33,20 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
+/**
+ * This class fetches and distributes the backpage text to all registered
+ * listeners when needed (e.g. a datanode is selected). 
+ * @author thomas
+ */
 public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener {
 	PathwayElement input;
 	final static int maxThreads = 1;
 	volatile ThreadGroup threads;
 	volatile Thread lastThread;
 	
-	public BackpageTextProvider() {		
-		Engine.getCurrent().addApplicationEventListener(this);
-		VPathway vp = Engine.getCurrent().getActiveVPathway();
+	public BackpageTextProvider(Engine engine) {
+		engine.addApplicationEventListener(this);
+		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 		
 		threads = new ThreadGroup("backpage-queries");		

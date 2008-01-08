@@ -92,6 +92,13 @@ public interface Gdb
 
 
 	/**
+	 * Checks whether the given reference exists in the database
+	 * @param xref The reference to check
+	 * @return true if the reference exists, false if not
+	 */
+	public boolean xrefExists(Xref xref);
+	
+	/**
 	 * Get all cross-references for the given id/code pair, restricting the
 	 * result to contain only references from database with the given system
 	 * code
@@ -113,6 +120,16 @@ public interface Gdb
 	public List<Xref> getCrossRefs (Xref idc, DataSource resultDs); 
 
 	/**
+	 * Get a list of cross-references for the given attribute name/value pair. This
+	 * can be used to e.g. get the xref for a gene symbol.
+	 * @param attrName	The attribute name (e.g. 'Symbol')
+	 * @param attrValue	The attribute value (e.g. 'TP53')
+	 * @return A list with the cross-references that have this attribute name/value, or an
+	 * empty list if no cross-references could be found for this attribute name/value.
+	 */
+	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue);
+
+	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
 	 * @throws DataException 
 	 */
@@ -121,11 +138,12 @@ public interface Gdb
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion
 	 */
-	public List<Map<PropertyType, String>> getSymbolSuggestions(String text, int limit);
+	public List<String> getSymbolSuggestions(String text, int limit);
 
+	
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion
 	 */
-	public List<Map<PropertyType, String>> getIdSuggestions(String text, int limit);
+	public List<Xref> getIdSuggestions(String text, int limit);
 
 }

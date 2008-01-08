@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.DataSource;
@@ -156,16 +157,32 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 	{
 		int limit = getLimit();
 		
-		List<Map<PropertyType, String>> data;
+		List<Map<PropertyType, String>> data = new ArrayList<Map<PropertyType, String>>();
 		List<String> sugg = new ArrayList<String>();
 
+		Gdb gdb = GdbManager.getCurrentGdb();
 		switch(type) {
 		case TYPE_IDENTIFIER:
-			data = GdbManager.getCurrentGdb().getIdSuggestions (text, limit);
+			List<Xref> refs = gdb.getIdSuggestions (text, limit);
+			for(Xref r : refs) {
+				Map<PropertyType, String> item = new HashMap<PropertyType, String>();
+				item.put (PropertyType.GENEID, r.getId());
+				item.put (PropertyType.DATASOURCE, r.getDatabaseName());
+				data.add (item);
+			}
 			break;
 		case TYPE_SYMBOL:
 		default:
-			data = GdbManager.getCurrentGdb().getSymbolSuggestions (text, limit);
+			List<String> symbols = gdb.getSymbolSuggestions (text, limit);
+			for(String s : symbols) {
+				List<Xref> xrefs = gdb.getCrossRefsByAttribute("Symbol", s);	
+				for(Xref r : xrefs) {
+					Map<PropertyType, String> item = new HashMap<PropertyType, String>();
+					item.put (PropertyType.GENEID, r.getId());
+					item.put (PropertyType.DATASOURCE, r.getDatabaseName());
+					data.add (item);
+				}
+			}
 			break;
 		}
 		

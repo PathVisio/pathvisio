@@ -1331,8 +1331,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setDataSource(DataSource v)
 	{
-		if (v == null)
-			throw new IllegalArgumentException();
 		if (dataSource != v)
 		{
 			dataSource = v;

@@ -245,7 +245,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			super();
 			putValue(NAME, "Paste");
 			putValue(SMALL_ICON, new ImageIcon(IMG_PASTE));
-			String descr = "Paste pathway elements from clipboard";
+			String descr = "Paste pathway objects from clipboard";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 			putValue(Action.LONG_DESCRIPTION, descr);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl V"));

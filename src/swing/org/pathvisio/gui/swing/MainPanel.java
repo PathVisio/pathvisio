@@ -247,6 +247,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			} else { //This is the line sub-menu
 				DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
 						.getResourceURL("icons/newlinemenu.gif")));
+				lineButton.setToolTipText("Select a line to draw");
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));
 				}

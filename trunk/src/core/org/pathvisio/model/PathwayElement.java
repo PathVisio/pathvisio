@@ -83,7 +83,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 		
 		public String toString() {
-			return comment + " (" + source + ")";
+			String src = "";
+			if(src != null && !"".equals(src)) {
+				src = " (" + source + ")";
+			}
+			return comment + src;
 		}
 	}
 

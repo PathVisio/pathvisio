@@ -44,14 +44,19 @@ import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexSwt;
-import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.data.GexManager.GexManagerEvent;
+import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
+import org.pathvisio.model.DataNodeType;
+import org.pathvisio.model.LineStyle;
+import org.pathvisio.model.LineType;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.util.swt.ProgressKeeperDialog;
 import org.pathvisio.view.AlignType;
+import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.UndoManagerEvent;
@@ -150,7 +155,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		Engine.getCurrent().getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
+		Engine.getCurrent().getActiveVPathway().setNewTemplate(null);
 	}
 	
 	/**
@@ -217,7 +222,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				((ActionContributionItem)items[i]).getAction().setChecked(false);
 			}
 		}
-		Engine.getCurrent().getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
+		Engine.getCurrent().getActiveVPathway().setNewTemplate(null);
 	}
 
 	// Elements of the coolbar
@@ -245,15 +250,25 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	protected void createEditActionsCI()
 	{
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);		
-		toolBarManager.add(new NewElementAction(VPathway.NEWGENEPRODUCT));
-		toolBarManager.add(new NewElementAction(VPathway.NEWLABEL));
-		toolBarManager.add(new NewElementAction(VPathway.NEWLINEMENU));
-		toolBarManager.add(new NewElementAction(VPathway.NEWRECTANGLE));
-		toolBarManager.add(new NewElementAction(VPathway.NEWOVAL));
-		toolBarManager.add(new NewElementAction(VPathway.NEWARC));
-		toolBarManager.add(new NewElementAction(VPathway.NEWBRACE));
-		toolBarManager.add(new NewElementAction(VPathway.NEWTBAR));
-		toolBarManager.add(new NewElementAction(VPathway.NEWLINESHAPEMENU));
+		toolBarManager.add(new NewElementAction(
+				new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT)));
+		toolBarManager.add(new NewElementAction(
+				new DefaultTemplates.DataNodeTemplate(DataNodeType.METABOLITE)));
+		toolBarManager.add(new NewElementAction(new DefaultTemplates.LabelTemplate()));
+		toolBarManager.add(new NewElementAction(NewElementAction.MENULINE));
+		toolBarManager.add(new NewElementAction(
+				new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)));
+		toolBarManager.add(new NewElementAction(
+				new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)));
+		toolBarManager.add(new NewElementAction(
+				new DefaultTemplates.ShapeTemplate(ShapeType.ARC)));
+		toolBarManager.add(new NewElementAction(
+				new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)));
+		toolBarManager.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+				LineStyle.SOLID, LineType.LINE, LineType.TBAR)));
+		toolBarManager.add(new NewElementAction(NewElementAction.MENULINESHAPE));
+		toolBarManager.add(new NewElementAction(new DefaultTemplates.InteractionTemplate()));
+
 
 		editActionsCI = new ToolBarContributionItem(toolBarManager, "EditModeActions");
 	}

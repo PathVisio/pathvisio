@@ -250,21 +250,18 @@ public class VPathway implements PathwayListener
 		Logger.log.trace("Done creating view structure");
 	}
 
-	private int newGraphics = NEWNONE;
-
+	Template newTemplate = null;
+	
 	/**
-	 * Method to set the new graphics type that has to be added next time the
-	 * user clicks on the drawing.
+	 * Method to set the template that provides the new graphics type that has 
+	 * to be added next time the user clicks on the drawing.
 	 * 
-	 * @param type
-	 *            One of the NEWXX fields of this class, where XX stands for the
-	 *            type of graphics to draw
+	 * @param type A template that provides the elements to be added
 	 */
-	public void setNewGraphics(int type)
-	{
-		newGraphics = type;
+	public void setNewTemplate(Template t) {
+		newTemplate = t;
 	}
-
+	
 	private Rectangle dirtyRect = null;
 
 	/**
@@ -567,7 +564,7 @@ public class VPathway implements PathwayListener
 			vPreviousY = ve.getY();
 
 			if (pressedObject instanceof Handle && altPressed
-					&& newGraphics == NEWNONE
+					&& newTemplate == null
 					&& ((Handle) pressedObject).parent instanceof VPoint)
 			{
 				linkPointToObject(new Point2D.Double(ve.getX(), ve.getY()),
@@ -694,7 +691,7 @@ public class VPathway implements PathwayListener
 		// setFocus();
 		if (editMode)
 		{
-			if (newGraphics != NEWNONE)
+			if (newTemplate != null)
 			{
 				newObject(new Point(e.getX(), e.getY()));
 				// SwtGui.getCurrent().getWindow().deselectNewItemActions();
@@ -753,6 +750,7 @@ public class VPathway implements PathwayListener
 				newObject.setInitialSize();
 			}
 			newObject = null;
+			setNewTemplate(null);
 			redrawDirtyRect();
 		}
 		isDragging = false;
@@ -1128,232 +1126,17 @@ public class VPathway implements PathwayListener
 	private void newObject(Point ve)
 	{
 		undoManager.newAction("New Object");
-		int mx = (int) mFromV((double) ve.x);
-		int my = (int) mFromV((double) ve.y);
+		double mx = mFromV((double) ve.x);
+		double my = mFromV((double) ve.y);
 
-		PathwayElement gdata = null;
-		Handle h = null;
-		lastAdded = null; // reset lastAdded class member
-		switch (newGraphics)
-		{
-		case NEWNONE:
-			return;
-		case NEWLINE:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.LINE);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWLINEARROW:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.ARROW);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWLINEDASHED:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.DASHED);
-			gdata.setEndLineType(LineType.LINE);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWLINEDASHEDARROW:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.DASHED);
-			gdata.setEndLineType(LineType.ARROW);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWLABEL:
-			gdata = new PathwayElement(ObjectType.LABEL);
-			gdata.setMCenterX(mx);
-			gdata.setMCenterY(my);
-			gdata.setMWidth(Label.M_INITIAL_WIDTH);
-			gdata.setMHeight(Label.M_INITIAL_HEIGHT);
-			gdata.setMFontSize(Label.M_INITIAL_FONTSIZE);
-			gdata.setGraphId(data.getUniqueId());
-			gdata.setTextLabel("Label");
-			data.add(gdata); // will cause lastAdded to be set
-			h = null;
-			break;
-		case NEWARC:
-			gdata = new PathwayElement(ObjectType.SHAPE);
-			gdata.setShapeType(ShapeType.ARC);
-			gdata.setMCenterX(mx);
-			gdata.setMCenterY(my);
-			gdata.setMWidth(1);
-			gdata.setMHeight(1);
-			gdata.setColor(stdRGB);
-			gdata.setRotation(0);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Shape) lastAdded).handleSE;
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWBRACE:
-			gdata = new PathwayElement(ObjectType.SHAPE);
-			gdata.setShapeType(ShapeType.BRACE);
-			gdata.setMCenterX(mx);
-			gdata.setMCenterY(my);
-			gdata.setMWidth(1);
-			gdata.setMHeight(1);
-			gdata.setOrientation(OrientationType.RIGHT);
-			gdata.setColor(stdRGB);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Shape) lastAdded).handleSE;
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWGENEPRODUCT:
-			gdata = new PathwayElement(ObjectType.DATANODE);
-			gdata.setMCenterX(mx);
-			gdata.setMCenterY(my);
-			gdata.setMWidth(1);
-			gdata.setMHeight(1);
-			gdata.setTextLabel("Gene");
-			gdata.setGenMappXref("");
-			gdata.setColor(stdRGB);
-			gdata.setGraphId(data.getUniqueId());
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((GeneProduct) lastAdded).handleSE;
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWRECTANGLE:
-			gdata = new PathwayElement(ObjectType.SHAPE);
-			gdata.setShapeType(ShapeType.RECTANGLE);
-			gdata.setMCenterX(mx);
-			gdata.setMCenterY(my);
-			gdata.setMWidth(1);
-			gdata.setMHeight(1);
-			gdata.setColor(stdRGB);
-			gdata.setRotation(0);
-			gdata.setGraphId(data.getUniqueId());
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Shape) lastAdded).handleSE;
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWOVAL:
-			gdata = new PathwayElement(ObjectType.SHAPE);
-			gdata.setShapeType(ShapeType.OVAL);
-			gdata.setMCenterX(mx);
-			gdata.setMCenterY(my);
-			gdata.setMWidth(1);
-			gdata.setMHeight(1);
-			gdata.setColor(stdRGB);
-			gdata.setRotation(0);
-			gdata.setGraphId(data.getUniqueId());
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Shape) lastAdded).handleSE;
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWTBAR:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.TBAR);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWRECEPTORROUND:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.RECEPTOR_ROUND);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWRECEPTORSQUARE:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.RECEPTOR_SQUARE);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWLIGANDROUND:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.LIGAND_ROUND);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		case NEWLIGANDSQUARE:
-			gdata = new PathwayElement(ObjectType.LINE);
-			gdata.setMStartX(mx);
-			gdata.setMStartY(my);
-			gdata.setMEndX(mx);
-			gdata.setMEndY(my);
-			gdata.setColor(stdRGB);
-			gdata.setLineStyle(LineStyle.SOLID);
-			gdata.setEndLineType(LineType.LIGAND_SQUARE);
-			data.add(gdata); // will cause lastAdded to be set
-			h = ((Line) lastAdded).getEnd().getHandle();
-			isDragging = true;
-			dragUndoState = DRAG_UNDO_NOT_RECORDING;
-			break;
-		}
-
-		newObject = gdata;
+		PathwayElement[] newObjects = newTemplate.addElements(data, mx, my);
+		newObject = newTemplate.getDragElement(this) == null ? null : newObjects[0];
+		
+		isDragging = true;
+		dragUndoState = DRAG_UNDO_NOT_RECORDING;
+		
 		selectObject(lastAdded);
-		pressedObject = h;
+		pressedObject = newTemplate.getDragElement(this);
 
 		vPreviousX = ve.x;
 		vPreviousY = ve.y;

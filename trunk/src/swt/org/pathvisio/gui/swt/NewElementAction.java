@@ -27,116 +27,56 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.pathvisio.Engine;
-import org.pathvisio.view.VPathway;
+import org.pathvisio.model.LineStyle;
+import org.pathvisio.model.LineType;
+import org.pathvisio.view.DefaultTemplates;
+import org.pathvisio.view.Template;
 
 /**
  * {@link Action} to add a new element to the gpml pathway
  */
 public class NewElementAction extends Action
 {
+	public static final int MENULINE = 1;
+	public static final int MENULINESHAPE = 2;
+	
 	MainWindow window;
-	int element;
 		
+	Template template;
+
+	/**
+	 * Constructor for parent menu's
+	 * @param menu The menu type (one of the MENU* constants)
+	 */
+	public NewElementAction(int menu) {
+		setMenuCreator(new NewItemMenuCreator(menu));
+		String tooltip = "";
+		URL imageURL = null;
+		switch(menu) {
+		case MENULINE:
+			tooltip = "Draw new line or arrow";
+			imageURL = Engine.getCurrent().getResourceURL("icons/newlinemenu.gif");
+			break;
+		case MENULINESHAPE:
+			tooltip = "Draw new ligand or receptor";
+			imageURL = Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif");
+		}
+		setChecked(false);
+		setToolTipText(tooltip);
+		setId("newItemAction");
+		if(imageURL != null) setImageDescriptor(ImageDescriptor.createFromURL(imageURL));
+	}
+	
 	/**
 	 * Constructor for this class
-	 * @param e	type of element this action adds; a {@link VPathway} field constant
+	 * @param template The template to use for drawing the new object
 	 */
-	public NewElementAction (int e)
-	{
-		// TODO: this should be moved to CommonActions, since it is both in v1 and v2
-		element = e;
-		
-		String toolTipText;
-		URL imageURL = null;
-		toolTipText = null;
-		switch(element) {
-		case VPathway.NEWLINE: 
-			toolTipText = "Draw new line";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newline.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLINEARROW:
-			toolTipText = "Draw new arrow";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newarrow.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLINEDASHED:
-			toolTipText = "Draw new dashed line";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newdashedline.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLINEDASHEDARROW:
-			toolTipText = "Draw new dashed arrow";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newdashedarrow.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLABEL:
-			toolTipText = "Draw new label";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newlabel.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWARC:
-			toolTipText = "Draw new arc";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newarc.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWBRACE:
-			toolTipText = "Draw new brace";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newbrace.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWGENEPRODUCT:
-			toolTipText = "Draw new geneproduct";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newgeneproduct.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWRECTANGLE:
-			imageURL = Engine.getCurrent().getResourceURL("icons/newrectangle.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWOVAL:
-			toolTipText = "Draw new oval";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newoval.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWTBAR:
-			toolTipText = "Draw new TBar";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newtbar.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWRECEPTORROUND:
-			toolTipText = "Draw new round receptor";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorround.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWRECEPTORSQUARE:
-			toolTipText = "Draw new square receptor";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorsquare.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLIGANDROUND:
-			toolTipText = "Draw new round ligand";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newligandround.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLIGANDSQUARE:
-			toolTipText = "Draw new square ligand";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newligandsquare.gif");
-			setChecked(false);
-			break;
-		case VPathway.NEWLINEMENU:
-			setMenuCreator(new NewItemMenuCreator(VPathway.NEWLINEMENU));
-			imageURL = Engine.getCurrent().getResourceURL("icons/newlinemenu.gif");
-			toolTipText = "Draw new line or arrow";
-			break;
-		case VPathway.NEWLINESHAPEMENU:
-			setMenuCreator(new NewItemMenuCreator(VPathway.NEWLINESHAPEMENU));
-			imageURL = Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif");
-			toolTipText = "Draw new ligand or receptor";
-			break;
-		}
-		setToolTipText(toolTipText);
+	public NewElementAction(Template template) {
+		this.template = template;
+		setChecked(false);
+		setToolTipText(template.getDescription());
 		setId("newItemAction");
+		URL imageURL = template.getIconLocation();
 		if(imageURL != null) setImageDescriptor(ImageDescriptor.createFromURL(imageURL));
 	}
 				
@@ -145,11 +85,11 @@ public class NewElementAction extends Action
 		{
 			SwtEngine.getCurrent().getWindow().deselectNewItemActions();
 			setChecked(true);
-			Engine.getCurrent().getActiveVPathway().setNewGraphics(element);
+			Engine.getCurrent().getActiveVPathway().setNewTemplate(template);
 		}
 		else
 		{	
-			Engine.getCurrent().getActiveVPathway().setNewGraphics(VPathway.NEWNONE);
+			Engine.getCurrent().getActiveVPathway().setNewTemplate(null);
 		}
 	}
 
@@ -160,16 +100,15 @@ public class NewElementAction extends Action
 	private class NewItemMenuCreator implements IMenuCreator
 	{
 		private Menu menu;
-		int element;
+		int type;
 		
 		/**
 		 * Constructor for this class
-		 * @param e	type of menu to create; one of {@link VPathway}.NEWLINEMENU
-		 * , {@link VPathway}.NEWLINESHAPEMENU
+		 * @param e	type of menu to create; one of the MENU* constants
 		 */
 		public NewItemMenuCreator(int e) 
 		{
-			element = e;
+			type = e;
 		}
 		
 		public Menu getMenu(Menu parent)
@@ -184,19 +123,35 @@ public class NewElementAction extends Action
 			
 			menu = new Menu(parent);
 			Vector<Action> actions = new Vector<Action>();
-			switch(element)
+			switch(type)
 			{
-			case VPathway.NEWLINEMENU:
-				actions.add(new NewElementAction(VPathway.NEWLINE));
-				actions.add(new NewElementAction(VPathway.NEWLINEARROW));
-				actions.add(new NewElementAction(VPathway.NEWLINEDASHED));
-				actions.add(new NewElementAction(VPathway.NEWLINEDASHEDARROW));
+			case MENULINE:
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.SOLID, LineType.LINE, LineType.LINE)
+				));
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+				));
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.DASHED, LineType.LINE, LineType.LINE)
+				));
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.DASHED, LineType.LINE, LineType.ARROW)
+				));
 				break;
-			case VPathway.NEWLINESHAPEMENU:
-				actions.add(new NewElementAction(VPathway.NEWLIGANDROUND));
-				actions.add(new NewElementAction(VPathway.NEWRECEPTORROUND));
-				actions.add(new NewElementAction(VPathway.NEWLIGANDSQUARE));
-				actions.add(new NewElementAction(VPathway.NEWRECEPTORSQUARE));
+			case MENULINESHAPE:
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND)
+				));
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
+				));
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE)
+				));
+				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
+						LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)
+				));
 			}
 			
 			for (Action act : actions)

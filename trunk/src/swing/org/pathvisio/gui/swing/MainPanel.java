@@ -54,6 +54,7 @@ import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
@@ -241,13 +242,24 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		tb.addSeparator();
 
+		String submenu = "line";
+		
 		for(Action[] aa : actions.newElementActions) {
 			if(aa.length == 1) {
 				addToToolbar(aa[0]);
-			} else { //This is the line sub-menu
+			} else { //This is the line/receptor sub-menu
+				String icon = "icons/newlinemenu.gif";
+				String tooltip = "Select a line to draw"; 
+				
+				if(submenu.equals("receptors")) { //Next one is receptors
+					icon = "icons/newlineshapemenu.gif";
+					tooltip = "Select a receptor/ligand to draw";
+				} else {
+					submenu = "receptors";
+				}
 				DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
-						.getResourceURL("icons/newlinemenu.gif")));
-				lineButton.setToolTipText("Select a line to draw");
+						.getResourceURL(icon)));
+				lineButton.setToolTipText(tooltip);
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));
 				}

@@ -36,12 +36,19 @@ import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.gui.swt.NewElementAction;
+import org.pathvisio.model.DataNodeType;
+import org.pathvisio.model.LineStyle;
+import org.pathvisio.model.LineType;
 import org.pathvisio.model.OrderType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.view.AlignType;
+import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.StackType;
+import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
@@ -125,20 +132,64 @@ public class CommonActions implements ApplicationEventListener {
 //			new StackAction(StackType.TOP),
 //			new StackAction(StackType.BOTTOM)
 	};
-	
+		
 	public final Action[][] newElementActions = new Action[][] {
-			new Action[] { new NewElementAction(VPathway.NEWGENEPRODUCT) 	},
-			new Action[] { new NewElementAction(VPathway.NEWLABEL)			},
-			new Action[] { 	new NewElementAction(VPathway.NEWLINE),
-							new NewElementAction(VPathway.NEWLINEARROW),
-							new NewElementAction(VPathway.NEWLINEDASHED),
-							new NewElementAction(VPathway.NEWLINEDASHEDARROW)
-																			},
-			new Action[] { new NewElementAction(VPathway.NEWRECTANGLE) },
-			new Action[] { new NewElementAction(VPathway.NEWOVAL) },
-			new Action[] { new NewElementAction(VPathway.NEWARC) },
-			new Action[] { new NewElementAction(VPathway.NEWBRACE) },
-			new Action[] { new NewElementAction(VPathway.NEWTBAR) },
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT)) 	
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.DataNodeTemplate(DataNodeType.METABOLITE)) 	
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.LabelTemplate())	
+			},
+			new Action[] { 	
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.LINE)
+					),
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+					),
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.DASHED, LineType.LINE, LineType.LINE)
+					),
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+					),
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)) 
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)) 
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.ARC)) 
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)) 
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.TBAR
+					)) 
+			},
+			new Action[] {
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND)
+					),
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
+					),
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.DASHED, LineType.LINE, LineType.LIGAND_SQUARE)
+					),
+					new NewElementAction(new DefaultTemplates.LineTemplate(
+							LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)
+					),
+			},
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.InteractionTemplate()) },
 	};
 	
 	public final Action[] orderActions = new Action[] {
@@ -253,104 +304,24 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 			
-	public static class NewElementAction extends AbstractAction implements VPathwayListener {
+	public static class NewElementAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		int element;
-		public NewElementAction(int type) {
-			super();
-			element = type;
-			
-			String descr = "";
-			URL imageURL = null;
-			switch(element) {
-			case VPathway.NEWLINE: 
-				descr = "Draw new line";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newline.gif");
-				break;
-			case VPathway.NEWLINEARROW:
-				descr = "Draw new arrow";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newarrow.gif");
-				break;
-			case VPathway.NEWLINEDASHED:
-				descr = "Draw new dashed line";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newdashedline.gif");
-				break;
-			case VPathway.NEWLINEDASHEDARROW:
-				descr = "Draw new dashed arrow";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newdashedarrow.gif");
-				break;
-			case VPathway.NEWLABEL:
-				descr = "Draw new label";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newlabel.gif");
-				break;
-			case VPathway.NEWARC:
-				descr = "Draw new arc";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newarc.gif");
-				break;
-			case VPathway.NEWBRACE:
-				descr = "Draw new brace";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newbrace.gif");
-				break;
-			case VPathway.NEWGENEPRODUCT:
-				descr = "Draw new data node";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newgeneproduct.gif");
-				break;
-			case VPathway.NEWRECTANGLE:
-				descr = "Draw new rectangle";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newrectangle.gif");
-				break;
-			case VPathway.NEWOVAL:
-				descr = "Draw new oval";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newoval.gif");
-				break;
-			case VPathway.NEWTBAR:
-				descr = "Draw new TBar";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newtbar.gif");
-				break;
-			case VPathway.NEWRECEPTORROUND:
-				descr = "Draw new round receptor";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorround.gif");
-				break;
-			case VPathway.NEWRECEPTORSQUARE:
-				descr = "Draw new square receptor";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newreceptorsquare.gif");
-				break;
-			case VPathway.NEWLIGANDROUND:
-				descr = "Draw new round ligand";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newligandround.gif");
-				break;
-			case VPathway.NEWLIGANDSQUARE:
-				descr = "Draw new square ligand";
-				imageURL = Engine.getCurrent().getResourceURL("icons/newligandsquare.gif");
-				break;
-			case VPathway.NEWLINEMENU:
-				imageURL = Engine.getCurrent().getResourceURL("icons/newlinemenu.gif");
-				descr = "Draw new line or arrow";
-				break;
-			case VPathway.NEWLINESHAPEMENU:
-				imageURL = Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif");
-				descr = "Draw new ligand or receptor";
-				break;
-			}
-			putValue(Action.SHORT_DESCRIPTION, descr);
-			putValue(Action.LONG_DESCRIPTION, descr);
-			if(imageURL != null) {
-				putValue(Action.SMALL_ICON, new ImageIcon(imageURL));
+		Template template;
+		
+		public NewElementAction(Template template) {
+			this.template = template;
+			putValue(Action.SHORT_DESCRIPTION, template.getDescription());
+			putValue(Action.LONG_DESCRIPTION, template.getDescription());
+			if(template.getIconLocation() != null) {
+				putValue(Action.SMALL_ICON, new ImageIcon(template.getIconLocation()));
 			}
 		}
-		
+			
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) {
-				vp.addVPathwayListener(this);
-				vp.setNewGraphics(element);
-			}
-		}
-		
-		public void vPathwayEvent(VPathwayEvent e) {
-			if(e.getType() == VPathwayEvent.ELEMENT_ADDED) {
-				e.getVPathway().setNewGraphics(VPathway.NEWNONE);	
+				vp.setNewTemplate(template);
 			}
 		}
 	}

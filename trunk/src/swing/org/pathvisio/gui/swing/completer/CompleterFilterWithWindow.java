@@ -57,7 +57,12 @@ public class CompleterFilterWithWindow extends CompleterFilter
 
 	@Override
 	public void replace(FilterBypass filterBypass, int offset, int length, String string, AttributeSet attributeSet) throws BadLocationException
-	{		
+	{
+		if(!isPerformCompletion()) {
+			super.replace(filterBypass, offset, length, string, attributeSet);
+			return;
+		}
+		
 		if (_isAdjusting)
 		{
 			filterBypass.replace(offset, length, string, attributeSet);

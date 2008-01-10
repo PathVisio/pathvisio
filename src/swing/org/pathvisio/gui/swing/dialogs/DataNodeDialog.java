@@ -156,11 +156,11 @@ public class DataNodeDialog extends PathwayElementDialog {
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
 		
-		final JButton fillSymbol = new JButton("Autofill identifier");
+		final JButton fillSymbol = new JButton("Lookup identifier");
 		fillSymbol.setToolTipText(
 				"Fill in the identifier and database " +
 				"fields based on the given symbol");
-		final JButton fillId = new JButton("Autofill symbol");
+		final JButton fillId = new JButton("Lookup symbol");
 		fillSymbol.setToolTipText(
 				"Fill in the symbol and database " +
 				"fields based on the given identifier");

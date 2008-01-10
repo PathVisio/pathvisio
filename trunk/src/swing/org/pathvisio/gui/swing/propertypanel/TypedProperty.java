@@ -432,7 +432,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static DoubleEditor doubleEditor = new DoubleEditor();
 	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
-	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getNames(), false);
+	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getValues(), false);
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
 		private static final long serialVersionUID = 1L;
 

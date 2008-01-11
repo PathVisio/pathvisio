@@ -17,19 +17,26 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 
 import org.pathvisio.gui.swing.actions.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.actions.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.actions.CommonActions.PropertiesAction;
+import org.pathvisio.model.LineType;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.InfoBox;
 import org.pathvisio.view.Line;
 import org.pathvisio.view.MouseEvent;
+import org.pathvisio.view.VAnchor;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
@@ -80,6 +87,32 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		
 		if((e instanceof Line)) {
 			menu.add(vActions.addAnchor);
+		}
+		
+		if((e instanceof VAnchor)) {
+			final VAnchor anchor = ((VAnchor)e);
+			
+			JMenu anchorMenu = new JMenu("Anchor type");
+			ButtonGroup buttons = new ButtonGroup();
+			
+			ActionListener listener = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println(e.getActionCommand());
+					anchor.getMAnchor().setShape(
+							LineType.fromName(e.getActionCommand()));					
+				}
+			};
+			
+			for(LineType lt : LineType.getValues()) {
+				JRadioButtonMenuItem mi = new JRadioButtonMenuItem(lt.getName());
+				mi.setActionCommand(lt.getGpmlName());
+				mi.setSelected(lt.equals(anchor.getMAnchor().getShape()));
+				mi.addActionListener(listener);
+				anchorMenu.add(mi);
+				buttons.add(mi);
+			}
+			
+			menu.add(anchorMenu);
 		}
 		
 		JMenu orderMenu = new JMenu("Order");

@@ -946,7 +946,12 @@ public class VPathway implements PathwayListener
 			// if our object is an handle, select also it's parent.
 			if (pressedObject instanceof Handle)
 			{
-				((Handle) pressedObject).parent.select();
+				VPathwayElement parent = ((Handle) pressedObject).parent;
+				parent.select();
+				//Special treatment for anchor
+				if(parent instanceof VAnchor) {
+					doClickSelect(p2d, e);
+				}
 			} else
 			{
 				doClickSelect(p2d, e);
@@ -1050,7 +1055,12 @@ public class VPathway implements PathwayListener
 			if (!(pressedObject instanceof SelectionBox))
 			{
 				clearSelection();
-				selection.addToSelection(pressedObject);
+				//If the object is a handle, select the parent instead
+				if(pressedObject instanceof Handle) {
+					selection.addToSelection(((Handle)pressedObject).parent);
+				} else {
+					selection.addToSelection(pressedObject);
+				}
 			} else
 			{ // Check if clicked object inside selectionbox
 				if (selection.getChild(p2d) == null)

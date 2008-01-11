@@ -442,6 +442,16 @@
 										!-->
 								</xsd:complexType>
 							</xsd:element>
+							<xsd:element name="Anchor" minOccurs="0" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:attribute name="position"
+										type="xsd:float" use="required" />
+									<xsd:attribute name="GraphId"
+										type="xsd:ID" use="optional" />
+									<xsd:attribute name="Shape"
+										default="ReceptorRound" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
 						</xsd:sequence>
 						<xsd:attribute name="Color"
 							type="gpml:ColorType" default="Black" />

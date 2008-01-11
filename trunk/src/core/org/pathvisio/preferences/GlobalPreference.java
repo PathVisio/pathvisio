@@ -41,6 +41,8 @@ public enum GlobalPreference implements Preference {
 	MIM_SUPPORT(Boolean.toString(false)),
 	SNAP_TO_ANGLE (Boolean.toString(false)),
 	SNAP_TO_ANGLE_STEP ("15"),
+	
+	SNAP_TO_ANCHOR(Boolean.toString(true)),
 
 	GUI_SIDEPANEL_SIZE("30"),
 	

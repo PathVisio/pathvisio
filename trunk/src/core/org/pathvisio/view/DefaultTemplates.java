@@ -10,6 +10,7 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.PathwayElement.MAnchor;
 
 public abstract class DefaultTemplates {
 	
@@ -213,15 +214,63 @@ public abstract class DefaultTemplates {
 		}
 		
 		public String getName() {
-			return "Interaction";
+			return "interaction";
 		}
 		
 		public String getDescription() {
-			return "Draw new interaction (Two genes connected by a line)";
+			return "Draw new " + getName();
 		}
 		
 		public URL getIconLocation() {
-			return  Engine.getCurrent().getResourceURL("icons/newinteraction.gif");
+			return  Engine.getCurrent().getResourceURL("icons/new" + getName().toLowerCase() + ".gif");
+		}
+	}
+	
+	public static class ReactionTemplate extends InteractionTemplate {
+		static final double OFFSET_CATALYST = 50 * 15;
+		PathwayElement lastCatalyst;
+		PathwayElement lastCatLine;
+				
+		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			MIMShapes.registerShapes(); //We need MIM shapes for the anchor
+			
+			super.addElements(p, mx, my);
+			Template dnt = new DataNodeTemplate(DataNodeType.GENEPRODUCT);
+			lastCatalyst = dnt.addElements(p, mx + lastStartNode.getMWidth(), my - OFFSET_CATALYST)[0];
+			lastCatalyst.setInitialSize();
+			lastCatalyst.setTextLabel("Catalyst");
+			
+			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
+			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
+			lastStartNode.setTextLabel("Substrate");
+			lastEndNode.setTextLabel("Product");
+			
+			lastLine.setEndLineType(LineType.ARROW);
+			MAnchor anchor = lastLine.addMAnchor(0.5);
+			anchor.setShape(LineType.create("mim-catalysis", null));
+			String id = anchor.setGeneratedGraphId();
+			
+			//The center of the reaction line
+			double mLineX = lastStartNode.getMCenterX() + Math.abs(lastStartNode.getMCenterX() - 
+					lastEndNode.getMCenterX()) / 2;
+			double mLineY = lastStartNode.getMCenterY() + Math.abs(lastStartNode.getMCenterY() - 
+					lastEndNode.getMCenterY()) / 2;
+			
+			Template lnt = new LineTemplate(LineStyle.SOLID, LineType.LINE, LineType.LINE);
+			lastCatLine = lnt.addElements(p, mx, my)[0];
+			lastCatLine.setMStartX(mLineX);
+			lastCatLine.setMStartY(OFFSET_LINE + lastCatalyst.getMTop() + 
+					lastCatalyst.getMHeight());
+			lastCatLine.setMEndX(mLineX);
+			lastCatLine.setMEndY(mLineY);
+			lastCatLine.setStartGraphRef(lastCatalyst.setGeneratedGraphId());
+			lastCatLine.setEndGraphRef(id);
+			
+			return new PathwayElement[] { lastStartNode, lastEndNode, lastLine, lastCatalyst };
+		}
+		
+		public String getName() {
+			return "reaction";
 		}
 	}
 }

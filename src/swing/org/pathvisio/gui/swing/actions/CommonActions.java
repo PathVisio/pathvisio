@@ -36,7 +36,6 @@ import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
-import org.pathvisio.gui.swt.NewElementAction;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -190,6 +189,8 @@ public class CommonActions implements ApplicationEventListener {
 			},
 			new Action[] { 
 					new NewElementAction(new DefaultTemplates.InteractionTemplate()) },
+			new Action[] { 
+					new NewElementAction(new DefaultTemplates.ReactionTemplate()) },
 	};
 	
 	public final Action[] orderActions = new Action[] {
@@ -304,7 +305,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 			
-	public static class NewElementAction extends AbstractAction {
+	public static class NewElementAction extends AbstractAction implements VPathwayListener {
 		private static final long serialVersionUID = 1L;
 
 		Template template;
@@ -321,7 +322,14 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) {
+				vp.addVPathwayListener(this);
 				vp.setNewTemplate(template);
+			}
+		}
+		
+		public void vPathwayEvent(VPathwayEvent e) {
+			if(e.getType() == VPathwayEvent.ELEMENT_ADDED) {
+				e.getVPathway().setNewTemplate(null);
 			}
 		}
 	}

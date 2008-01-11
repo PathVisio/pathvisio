@@ -38,16 +38,13 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.ViewActions.KeyMoveAction;
 
@@ -69,6 +66,13 @@ public class VPathway implements PathwayListener
 	private boolean selectionEnabled = true;
 
 	private Pathway temporaryCopy = null;
+	
+	/**
+	 * Retuns true if snap to anchors is enabled
+	 */
+	public boolean isSnapToAnchors() {
+		return GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANCHOR);
+	}
 
 	/**
 	 * Returns true if the selection capability of this VPathway is enabled
@@ -256,7 +260,7 @@ public class VPathway implements PathwayListener
 	 * Method to set the template that provides the new graphics type that has 
 	 * to be added next time the user clicks on the drawing.
 	 * 
-	 * @param type A template that provides the elements to be added
+	 * @param shape A template that provides the elements to be added
 	 */
 	public void setNewTemplate(Template t) {
 		newTemplate = t;
@@ -522,7 +526,15 @@ public class VPathway implements PathwayListener
 			} else if (o instanceof Graphics && !(o instanceof Line))
 			{
 				x = o;
-				p.link((Graphics) o);
+				p.link(((Graphics) o).getPathwayElement());
+				break;
+			} else if (o instanceof VAnchor) {
+				VAnchor anchor = (VAnchor)o;
+				x = o;
+				p.link(anchor.getMAnchor());
+				if(isSnapToAnchors()) {
+					p.setVLocation(anchor.getVx(), anchor.getVy());
+				}
 				break;
 			}
 		}
@@ -969,10 +981,15 @@ public class VPathway implements PathwayListener
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof Handle && !((Handle) o).isVisible())
-					;
-				else
+				if (o instanceof Handle) {
+					if(((Handle)o).getParent() instanceof VAnchor) {
+						probj = o; //Also select invisible handle for anchors
+					} else if (((Handle) o).isVisible()) {
+						probj = o; //For the rest, only visible handles
+					}
+				} else {
 					probj = o;
+				}
 			}
 		}
 		return probj;
@@ -1026,7 +1043,7 @@ public class VPathway implements PathwayListener
 			}
 			pressedObject = selection; // Set dragging to selectionbox
 		} else
-		// Ctrl not pressed
+		// Shift not pressed
 		{
 			// If pressedobject is not selectionbox:
 			// Clear current selection and select pressed object
@@ -1153,23 +1170,25 @@ public class VPathway implements PathwayListener
 
 	public static final int DRAW_ORDER_SELECTED = 0x3000;
 
-	public static final int DRAW_ORDER_GENEPRODUCT = 0x4000;
+	public static final int DRAW_ORDER_ANCHOR = 0x4000;
 
-	public static final int DRAW_ORDER_LABEL = 0x5000;
+	public static final int DRAW_ORDER_GENEPRODUCT = 0x5000;
 
-	public static final int DRAW_ORDER_ARC = 0x6000;
+	public static final int DRAW_ORDER_LABEL = 0x6000;
 
-	public static final int DRAW_ORDER_BRACE = 0x7000;
+	public static final int DRAW_ORDER_ARC = 0x7000;
 
-	public static final int DRAW_ORDER_SHAPE = 0x8000;
+	public static final int DRAW_ORDER_BRACE = 0x8000;
+	
+	public static final int DRAW_ORDER_SHAPE = 0x9000;
 
-	public static final int DRAW_ORDER_LINE = 0x9000;
+	public static final int DRAW_ORDER_LINE = 0xA000;
 
-	public static final int DRAW_ORDER_LINESHAPE = 0xA000;
+	public static final int DRAW_ORDER_LINESHAPE = 0xB000;
 
-	public static final int DRAW_ORDER_MAPPINFO = 0xB000;
+	public static final int DRAW_ORDER_MAPPINFO = 0xC000;
 
-	public static final int DRAW_ORDER_DEFAULT = 0xC000;
+	public static final int DRAW_ORDER_DEFAULT = 0xD000;
 
 	public void mouseEnter(MouseEvent e)
 	{
@@ -1454,7 +1473,8 @@ public class VPathway implements PathwayListener
 		registerKeyboardAction(viewActions.selectAll);
 		registerKeyboardAction(viewActions.delete);
 		registerKeyboardAction(viewActions.undo);
-
+		registerKeyboardAction(viewActions.addAnchor);
+		
 		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
 				KEY_MOVERIGHT));
 		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(
@@ -2080,6 +2100,14 @@ public class VPathway implements PathwayListener
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Get all selected elements (includes non-Graphics, e.g. Handles)
+	 * @return
+	 */
+	public List<VPathwayElement> getSelectedPathwayElements() {
+		return selection.getSelection();
 	}
 
 	private void generatePasteId(String oldId, Map<String, String> idmap,

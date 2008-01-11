@@ -50,6 +50,8 @@ import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.PathwayElement.MAnchor;
 import org.xml.sax.SAXException;
 
 /**
@@ -154,6 +156,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Point@Head", new AttributeInfo ("xsd:string", "Line", "optional"));
 		result.put("Line.Graphics.Point@ArrowHead", new AttributeInfo ("xsd:string", "Line", "optional"));
+		result.put("Line.Graphics.Anchor@position", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Line.Graphics.Anchor@Shape", new AttributeInfo ("xsd:string", "LigandRound", "required"));
+		result.put("Line.Graphics.Anchor@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
 		result.put("Line@Style", new AttributeInfo ("xsd:string", "Solid", "optional"));
 		result.put("Label.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
@@ -511,6 +516,18 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
 		o.setStartLineType (LineType.fromName(type1));
     	o.setEndLineType (LineType.fromName(type2));
+    	
+    	//Map anchors
+    	List<Element> anchors = graphics.getChildren("Anchor", e.getNamespace());
+    	for(Element ae : anchors) {
+    		double position = Double.parseDouble(getAttribute("Line.Graphics.Anchor", "position", ae));
+    		MAnchor anchor = o.addMAnchor(position);
+    		mapGraphId(anchor, ae);
+    		String shape = getAttribute("Line.Graphics.Anchor", "Shape", ae);
+    		if(shape != null) {
+    			anchor.setShape(LineType.fromName(shape));
+    		}
+    	}
 	}
 	
 	private static void updateLineData(PathwayElement o, Element e) throws ConverterException
@@ -536,6 +553,14 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			if (o.getEndGraphRef() != null && !o.getEndGraphRef().equals(""))
 			{
 				setAttribute("Line.Graphics.Point", "GraphRef", p2, o.getEndGraphRef());
+			}
+			
+			for(MAnchor anchor : o.getMAnchors()) {
+				Element ae = new Element("Anchor", e.getNamespace());
+				setAttribute("Line.Graphics.Anchor", "position", ae, Double.toString(anchor.getPosition()));
+				setAttribute("Line.Graphics.Anchor", "Shape", ae, anchor.getShape().getName());
+				updateGraphId(anchor, ae);
+				jdomGraphics.addContent(ae);
 			}
 		}
 	}
@@ -608,16 +633,16 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		}
 	}
 	
-	private static void mapGraphId (PathwayElement o, Element e)
+	private static void mapGraphId (GraphIdContainer o, Element e)
 	{
 		String id = e.getAttributeValue("GraphId");
-		if((id == null || id.equals("")) && o.getParent() != null) {
-			id = o.getParent().getUniqueId();
+		if((id == null || id.equals("")) && o.getGmmlData() != null) {
+			id = o.getGmmlData().getUniqueId();
 		}
 		o.setGraphId (id);
 	}
 	
-	private static void updateGraphId (PathwayElement o, Element e)
+	private static void updateGraphId (GraphIdContainer o, Element e)
 	{
 		String id = o.getGraphId();
 		// id has to be unique!

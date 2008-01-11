@@ -29,6 +29,7 @@ import java.util.Set;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
@@ -546,11 +547,7 @@ public class SelectionBox extends VPathwayElement
 
 		// Move selected object and their references
 		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); // Will
-		// be
-		// moved
-		// by
-		// linking
-		// object
+		// be moved by linking object
 		Set<VPoint> points = new HashSet<VPoint>(); // Will not be moved by
 		// linking object
 
@@ -568,6 +565,9 @@ public class SelectionBox extends VPathwayElement
 				{
 					points.addAll(((Line) o).getPoints());
 				}
+			} else if (o instanceof VAnchor) {
+				MAnchor m = ((VAnchor)o).getMAnchor();
+				not.addAll(m.getReferences());
 			}
 
 		}

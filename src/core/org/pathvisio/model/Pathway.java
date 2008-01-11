@@ -103,6 +103,21 @@ public class Pathway implements PathwayListener
 	}
 	
 	/**
+	 * Get a pathway element by it's GraphId
+	 * @param graphId The graphId of the element
+	 * @return The pathway element with the given id, or null when no element was found
+	 */
+	public PathwayElement getElementById(String graphId) {
+		//TODO: dataobject should be stored in a hashmap, with the graphId as key!
+		for(PathwayElement e : dataObjects) {
+			if(graphId.equals(e.getGraphId())) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Takes the Xref of all DataNodes in this pathway
 	 * and returns them as a List.
 	 * 

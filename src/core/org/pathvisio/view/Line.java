@@ -26,8 +26,10 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.pathvisio.model.LineStyle;
@@ -35,6 +37,7 @@ import org.pathvisio.model.LineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
  
 /**
@@ -45,6 +48,7 @@ public class Line extends Graphics
 	private static final long serialVersionUID = 1L;
 	
 	private List<VPoint> points;
+	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
 	
 	/**
 	 * Constructor for this class
@@ -60,6 +64,34 @@ public class Line extends Graphics
 			points.add(vp);
 			vp.addLine(this);
 			vp.setHandleLocation();
+		}
+		setAnchors();
+	}
+	
+	private void setAnchors() {
+		//Check for new anchors
+		List<MAnchor> manchors = gdata.getMAnchors();
+		for(MAnchor ma : manchors) {
+			if(!anchors.containsKey(ma)) {
+				anchors.put(ma, new VAnchor(ma, this));
+			}
+		}
+		//Check for deleted anchors
+		for(MAnchor ma : anchors.keySet()) {
+			if(!manchors.contains(ma)) {
+				anchors.get(ma).destroy();
+			}
+		}
+	}
+	
+	void removeVAnchor(VAnchor va) {
+		anchors.remove(va.getMAnchor());
+		gdata.removeMAnchor(va.getMAnchor());
+	}
+	
+	private void updateAnchorPositions() {
+		for(VAnchor va : anchors.values()) {
+			va.updatePosition();
 		}
 	}
 	
@@ -275,11 +307,11 @@ public class Line extends Graphics
 	
 	public Handle[] getHandles()
 	{
-		Handle[] handles = new Handle[points.size()];
-		for(int i = 0; i < handles.length; i++) {
-			handles[i] = points.get(i).getHandle();
+		ArrayList<Handle> handles = new ArrayList<Handle>();
+		for(VPoint p : points) {
+			handles.add(p.getHandle());
 		}
-		return handles;
+		return handles.toArray(new Handle[handles.size()]);
 	}
 		
 	public List<VPoint> getPoints() { return points; }
@@ -360,6 +392,10 @@ public class Line extends Graphics
 			p.markDirty();
 			p.setHandleLocation();
 		}
+		if(gdata.getMAnchors().size() != anchors.size()) {
+			setAnchors();
+		}
+		updateAnchorPositions();
 	}
 	
 	protected void destroyHandles() { 

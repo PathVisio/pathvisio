@@ -1,19 +1,19 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
+//PathVisio,
+//a tool for data visualization and analysis using Biological Pathways
+//Copyright 2006-2007 BiGCaT Bioinformatics
+
+//Licensed under the Apache License, Version 2.0 (the "License"); 
+//you may not use this file except in compliance with the License. 
+//You may obtain a copy of the License at 
+
+//http://www.apache.org/licenses/LICENSE-2.0 
+
+//Unless required by applicable law or agreed to in writing, software 
+//distributed under the License is distributed on an "AS IS" BASIS, 
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+//See the License for the specific language governing permissions and 
+//limitations under the License.
+
 package org.pathvisio.view;
 
 import java.awt.event.ActionEvent;
@@ -50,19 +50,19 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("icons/copy.gif");
 	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("icons/paste.gif");
 	private static URL IMG_UNDO = Engine.getCurrent().getResourceURL("icons/undo.gif");
-	
+
 	/**
 	 * The group of actions that will be enabled when the VPathway is in edit mode and 
 	 * disabled when not
 	 */
 	public static final String GROUP_ENABLE_EDITMODE = "editmode";
-	
+
 	/**
 	 * The group of actions that will be enabled when a VPathway is loaded and 
 	 * disabled when not
 	 */
 	public static final String GROUP_ENABLE_VPATHWAY_LOADED = "vpathway";
-	
+
 	/**
 	 * The group of actions that will be enabled when the selection isn't empty 
 	 */
@@ -70,9 +70,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 	static final int SMALL_INCREMENT = 2;
 	static final int LARGE_INCREMENT = 20;
-	
+
 	VPathway vPathway;
-	
+
 	public final SelectClassAction selectDataNodes;
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
@@ -81,17 +81,18 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final PasteAction paste;
 	public final KeyMoveAction keyMove;
 	public final UndoAction undo;
+	public final AddAnchorAction addAnchor;
 
 	Engine engine;
-	
+
 	ViewActions(VPathway vp) {
 		vPathway = vp;
-		
+
 		engine = Engine.getCurrent();
 //		engine.addApplicationEventListener(this);
 		vp.addSelectionListener(this);
 		vp.addVPathwayListener(this);
-		
+
 		selectDataNodes = new SelectClassAction("DataNode", GeneProduct.class);
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
@@ -100,7 +101,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		paste = new PasteAction();
 		keyMove = new KeyMoveAction(null);
 		undo = new UndoAction();
-		
+		addAnchor = new AddAnchorAction();
+
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(toggleGroup, GROUP_ENABLE_EDITMODE);
@@ -111,13 +113,14 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(keyMove, ViewActions.GROUP_ENABLE_EDITMODE);
-		
+		registerToGroup(addAnchor, GROUP_ENABLE_WHEN_SELECTION);
+
 		resetGroupStates();
 	}
-	
+
 	HashMap<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
 	HashMap<Action, List<String>> groupActions = new HashMap<Action, List<String>>();
-	
+
 	/**
 	 * Register the given action to a group (one of the GROUP* contants)
 	 * @param a	The action to register
@@ -129,14 +132,14 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			actionGroups.put(group, actions = new ArrayList<Action>());
 		}
 		if(!actions.contains(a)) actions.add(a);
-		
+
 		List<String> groups = groupActions.get(a);
 		if(groups == null) {
 			groupActions.put(a, groups = new ArrayList<String>());
 		}
 		if(!groups.contains(group)) groups.add(group);
 	}
-	
+
 	/**
 	 * Register the given actions to a group (one of the GROUP* constants)
 	 * @param actions The actions to register
@@ -145,7 +148,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public void registerToGroup(Action[] actions, String group) {
 		for(Action a : actions) registerToGroup(a, group);
 	}
-	
+
 	/**
 	 * Register the given actions to a group (one of the GROUP* constants)
 	 * @param actions The actions to register
@@ -156,7 +159,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			for(Action a : aa) registerToGroup(a, group);
 		}
 	}
-		
+
 	/**
 	 * Resets the group state for the registered actions to the VPathway's state
 	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in 
@@ -165,7 +168,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public void resetGroupStates() {
 		resetGroupStates(vPathway);
 	}
-	
+
 	/**
 	 * Resets the group state for the registered actions to the given VPathway's state
 	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in 
@@ -176,8 +179,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		HashMap<String, Boolean> groupState = new HashMap<String, Boolean>();
 		groupState.put(GROUP_ENABLE_VPATHWAY_LOADED, true);
 		groupState.put(GROUP_ENABLE_EDITMODE, vPathway.isEditMode());
-		groupState.put(GROUP_ENABLE_WHEN_SELECTION, vPathway.getSelectedGraphics().size() > 0);
-		
+		groupState.put(GROUP_ENABLE_WHEN_SELECTION, vPathway.getSelectedPathwayElements().size() > 0);
+
 		for(Action a : groupActions.keySet()) {
 			List<String> groups = groupActions.get(a);
 			boolean enable = true;
@@ -187,16 +190,16 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			a.setEnabled(enable);
 		}
 	}
-	
+
 //	public void applicationEvent(ApplicationEvent e) {
-//		if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
-//			VPathway vp = (VPathway)e.getSource();
-//			vp.addSelectionListener(this);
-//			vp.addVPathwayListener(this);
-//			setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
-//			setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
-//			setGroupEnabled(vp.isEditMode(), GROUP_ENABLE_EDITMODE);
-//		}
+//	if(e.type == ApplicationEvent.VPATHWAY_CREATED) {
+//	VPathway vp = (VPathway)e.getSource();
+//	vp.addSelectionListener(this);
+//	vp.addVPathwayListener(this);
+//	setGroupEnabled(true, GROUP_ENABLE_VPATHWAY_LOADED);
+//	setGroupEnabled(vp.getSelectedGraphics().size() > 0, GROUP_ENABLE_WHEN_SELECTION);
+//	setGroupEnabled(vp.isEditMode(), GROUP_ENABLE_EDITMODE);
+//	}
 //	}
 
 	public void vPathwayEvent(VPathwayEvent e) {
@@ -208,17 +211,17 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		VPathway vp = ((SelectionBox)e.getSource()).getDrawing();
 		resetGroupStates(vp);
 	}
-	
+
 //	private abstract class EnableOnSelectAction extends AbstractAction implements SelectionListener {
-//		public EnableOnSelectAction() {
-//			vPathway.addSelectionListener(this);
-//		}
-//		
-//		public void selectionEvent(SelectionEvent e) {
-//			setEnabled(vPathway.getSelectedGraphics().size() > 0);
-//		}
+//	public EnableOnSelectAction() {
+//	vPathway.addSelectionListener(this);
 //	}
-	
+
+//	public void selectionEvent(SelectionEvent e) {
+//	setEnabled(vPathway.getSelectedGraphics().size() > 0);
+//	}
+//	}
+
 	public static class CopyAction extends AbstractAction {	
 		private static final long serialVersionUID = 1L;
 
@@ -237,7 +240,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			if(vp != null) vp.copyToClipboard();
 		}		
 	}
-	
+
 	public static class PasteAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
@@ -256,27 +259,27 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			if(isEnabled() && vp != null) vp.pasteFromClipboard();
 		}
 	}
-	
+
 	public static class KeyMoveAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
 		KeyStroke key;
 
 		public KeyMoveAction(KeyStroke key) {
-		this.key = key; 
+			this.key = key; 
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 
-		int moveIncrement = 0;
-		
-		if ((e.getModifiers() &
-				ActionEvent.SHIFT_MASK) != 0)
-		{ moveIncrement = LARGE_INCREMENT;}
-		else {moveIncrement = SMALL_INCREMENT;}
-		
-		VPathway vp = Engine.getCurrent().getActiveVPathway();
-		vp.moveByKey(key, moveIncrement);
+			int moveIncrement = 0;
+
+			if ((e.getModifiers() &
+					ActionEvent.SHIFT_MASK) != 0)
+			{ moveIncrement = LARGE_INCREMENT;}
+			else {moveIncrement = SMALL_INCREMENT;}
+
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			vp.moveByKey(key, moveIncrement);
 		}
 	}
 
@@ -292,7 +295,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			vPathway.selectObjects(c);
 		}
 	}
-	
+
 	private class SelectAllAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
@@ -304,12 +307,50 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			vPathway.selectAll();
 		}
 	}
-		
+
+	private class AddAnchorAction extends AbstractAction implements SelectionListener {
+		public AddAnchorAction() {
+			vPathway.addSelectionListener(this);
+			putValue(NAME, "Add anchor");
+			putValue(SHORT_DESCRIPTION, "Add an anchor point to the selected line");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl R"));
+			setEnabled(false);
+		}
+
+		public void selectionEvent(SelectionEvent e) {
+			boolean enable= false;
+			for(VPathwayElement ve : e.selection) {
+				if(ve instanceof Line) {
+					enable = true;
+				} else {
+					enable = false;
+					break;
+				}
+			}
+			setEnabled(enable);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			List<Graphics> selection = vPathway.getSelectedGraphics();
+			if(selection.size() > 0) {
+				vPathway.getUndoManager().newAction("Add anchor");
+				for(Graphics g : selection) {
+					if(g instanceof Line) {
+						Line l = (Line)g;
+						l.gdata.addMAnchor(0.5);
+					}
+				}
+				vPathway.redrawDirtyRect();
+			}
+		}
+	}
+
 	private class GroupAction extends AbstractAction implements SelectionListener {
 		private static final long serialVersionUID = 1L;
 
 		public GroupAction() {
 			super();
+			vPathway.addSelectionListener(this);
 			putValue(NAME, "Group");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl G"));
 			setLabel();
@@ -328,7 +369,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				setLabel();
 			}
 		}
-		
+
 		private void setLabel() {
 			int groups = 0;
 			int unGrouped = 0;
@@ -349,20 +390,20 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			}
 		}		
 	}
-	
+
 	private class DeleteAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
-		
+
 		public DeleteAction() {
 			super();
 			putValue(NAME, "Delete");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-			java.awt.event.KeyEvent.VK_DELETE, 0));
+					java.awt.event.KeyEvent.VK_DELETE, 0));
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			if(!isEnabled()) return; //Don't perform action if not enabled
-			
+
 			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
 			for(VPathwayElement o : vPathway.getDrawingObjects())
 			{
@@ -377,7 +418,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			}
 		}
 	}
-	
+
 	public static class UndoAction extends AbstractAction implements UndoManagerListener, ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
 
@@ -386,13 +427,13 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			putValue(NAME, "Undo");
 			putValue(SHORT_DESCRIPTION, "Undo last action");
 			putValue(SMALL_ICON, new ImageIcon(IMG_UNDO));
-			
+
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					java.awt.event.KeyEvent.VK_Z, java.awt.event.KeyEvent.CTRL_DOWN_MASK));
 			Engine.getCurrent().addApplicationEventListener(this);
 			setEnabled(false);
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if (vp != null)

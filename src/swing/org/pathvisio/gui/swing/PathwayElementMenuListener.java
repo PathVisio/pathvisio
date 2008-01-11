@@ -28,6 +28,7 @@ import org.pathvisio.gui.swing.actions.CommonActions.PropertiesAction;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.InfoBox;
+import org.pathvisio.view.Line;
 import org.pathvisio.view.MouseEvent;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -75,6 +76,10 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			groupMenu.add(vActions.toggleGroup);
 			menu.add(groupMenu);
 			menu.addSeparator();
+		}
+		
+		if((e instanceof Line)) {
+			menu.add(vActions.addAnchor);
 		}
 		
 		JMenu orderMenu = new JMenu("Order");

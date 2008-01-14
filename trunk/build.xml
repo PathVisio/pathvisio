@@ -416,8 +416,8 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</copy>
 		<copy toDir="${wikipathways.bin.dir}/lib">
 			<fileset dir="${lib.dir}">
-				<include name="jdom.jar"/>
-			</fileset>	
+				<include name="**/*.*"/>
+			</fileset>
 		</copy>
 		<signjar alias="PV" lazy = "true" 
 			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">

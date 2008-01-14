@@ -11,6 +11,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.preferences.GlobalPreference;
 
 public abstract class DefaultTemplates {
 	
@@ -232,6 +233,8 @@ public abstract class DefaultTemplates {
 		PathwayElement lastCatLine;
 				
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			boolean isMiM = GlobalPreference.getValueBoolean(GlobalPreference.MIM_SUPPORT);
+			
 			MIMShapes.registerShapes(); //We need MIM shapes for the anchor
 			
 			super.addElements(p, mx, my);
@@ -247,7 +250,9 @@ public abstract class DefaultTemplates {
 			
 			lastLine.setEndLineType(LineType.ARROW);
 			MAnchor anchor = lastLine.addMAnchor(0.5);
-			anchor.setShape(LineType.create("mim-catalysis", null));
+			if(isMiM) {
+				anchor.setShape(LineType.create("mim-catalysis", null));
+			}
 			String id = anchor.setGeneratedGraphId();
 			
 			//The center of the reaction line

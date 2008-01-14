@@ -677,6 +677,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		if((id == null || id.equals("")) && o.getParent() != null) 
 			{id = o.getParent().getUniqueId();}
 		o.setGroupId (id);
+		
+		//GraphId
+		mapGraphId(o, e);
+		
 		//Style
 		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
 		//Label
@@ -689,6 +693,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		String id = o.createGroupId();
 		if (id != null && !id.equals(""))
 			{e.setAttribute("GroupId", o.createGroupId());}
+		
+		//GraphId
+		updateGraphId(o, e);
+		
 		//Style
 		setAttribute("Group", "Style", e, GroupStyle.toGpmlName(o.getGroupStyle()));
 		//Label

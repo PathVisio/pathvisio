@@ -25,6 +25,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.view.MIMShapes;
 
 /**
  * Static utility class that contains a collection of global methods for {@link WikiPathways}.
@@ -33,6 +34,9 @@ import org.pathvisio.preferences.GlobalPreference;
 public class WikiPathwaysInit {
 	static void init() throws Exception {
 		GlobalPreference.FILE_LOG.setDefault(new File(getApplicationDir(), ".wikipathwaysLog").toString());
+		
+		GlobalPreference.MIM_SUPPORT.setValue(Boolean.toString(true));
+		MIMShapes.registerShapes();
 		
 		PropertyType.CENTERX.setHidden(true);
 		PropertyType.CENTERY.setHidden(true);

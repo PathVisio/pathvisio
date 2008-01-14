@@ -512,6 +512,8 @@ public class VPathway implements PathwayListener
 		resetHighlight();
 		List<VPathwayElement> objects = getObjectsAt(p2d);
 		Collections.sort(objects);
+		//Reverse to handle objects that are drawn last (on top) first
+		Collections.reverse(objects);
 		VPoint p = (VPoint) g.parent;
 		VPathwayElement x = null;
 		for (VPathwayElement o : objects)

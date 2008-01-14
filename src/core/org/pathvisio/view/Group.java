@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -23,8 +24,12 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement.MPoint;
 
 public class Group extends Graphics
 {
@@ -193,7 +198,15 @@ public class Group extends Graphics
 		{
 			g.vMoveBy(dx, dy);
 		}
-		//super.vMoveBy(dx, dy);
+		//Move graphRefs
+		//GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
+		Set<VPoint> toMove = new HashSet<VPoint>();
+		for(GraphRefContainer ref : gdata.getReferences()) {
+			if(ref instanceof MPoint) {
+				toMove.add(canvas.getPoint((MPoint)ref));
+			}
+		}
+		for(VPoint p : toMove) p.vMoveBy(dx, dy);
 	}
 
 	@Override
@@ -210,6 +223,14 @@ public class Group extends Graphics
 
 	}
 
+	public void highlight(Color c) {
+		super.highlight(c);
+		//Highlight the children
+		for(Graphics g : getGroupGraphics()) {
+			g.highlight();
+		}
+	}
+	
 	@Override
 	protected Shape getVOutline()
 	{

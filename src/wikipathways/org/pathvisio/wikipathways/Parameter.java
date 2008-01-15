@@ -28,7 +28,14 @@ public enum Parameter {
 	PW_NEW("new", null),
 	USER("user", null),
 	RPC_URL("rpcUrl"),
-	CATEGORIES("categories", ""), //A comma separated list of categories
+	/**
+	 * A comma seperated list of categories
+	 */
+	CATEGORIES("categories", ""),
+	/**
+	 * The hostname of the gene database server (default: wikipathways.org)
+	 */
+	GDB_SERVER("gdb_server", "wikipathways.org");
 	;
 	
 	String name;

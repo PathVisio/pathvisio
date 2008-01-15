@@ -43,6 +43,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -2164,6 +2165,14 @@ public class VPathway implements PathwayListener
 			String groupId = o.getGroupId();
 			generatePasteId(id, idmap, newids);
 			generatePasteId(groupId, idmap, newids);
+			
+			//For a line, also process the point ids
+			if(o.getObjectType() == ObjectType.LINE) {
+				for(MPoint mp : o.getMPoints())
+					generatePasteId(mp.getGraphId(), idmap, newids);
+				for(MAnchor ma : o.getMAnchors())
+					generatePasteId(ma.getGraphId(), idmap, newids);
+			}
 		}
 		/*
 		 * Step 2: do the actual copying
@@ -2200,6 +2209,12 @@ public class VPathway implements PathwayListener
 			if (p.getGraphId() != null)
 			{
 				p.setGraphId(idmap.get(p.getGraphId()));
+			}
+			for(MPoint mp : p.getMPoints()) {
+				mp.setGraphId(idmap.get(mp.getGraphId()));
+			}
+			for(MAnchor ma : p.getMAnchors()) {
+				ma.setGraphId(idmap.get(ma.getGraphId()));
 			}
 			// set new group id
 			String gid = p.getGroupId();
@@ -2242,6 +2257,7 @@ public class VPathway implements PathwayListener
 					p.setGroupRef(null);
 				}
 			}
+			
 			data.add(p); // causes lastAdded to be set
 			lastAdded.select();
 			selection.addToSelection(lastAdded);

@@ -138,7 +138,7 @@ public class WikiPathways implements ApplicationEventListener {
 		progress.report("Connecting to database...");
 		
 		//Connect to the gene database
-		DBConnector connector = new DBConnectorDerbyServer("wikipathways.org", 1527);
+		DBConnector connector = new DBConnectorDerbyServer(Parameter.GDB_SERVER.getValue(), 1527);
 		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
 		
 		GdbManager.setGeneDb(getPwSpecies());

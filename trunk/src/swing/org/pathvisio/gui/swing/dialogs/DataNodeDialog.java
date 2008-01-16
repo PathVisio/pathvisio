@@ -64,7 +64,11 @@ public class DataNodeDialog extends PathwayElementDialog {
 		super.refresh();
 		symText.setText(getInput().getTextLabel());
 		idText.setText(getInput().getGeneID());
-		dbCombo.setSelectedItem(getInput().getDataSource());
+		if(input.getDataSource() != null) {
+			dbCombo.setSelectedItem(input.getDataSource());
+		} else {
+			dbCombo.setSelectedIndex(-1);
+		}
 		pack();
 	}
 	

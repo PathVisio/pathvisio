@@ -231,9 +231,9 @@ public class DataSource
 		this.urlMaker = urlMaker;
 		
 		registry.add (this);
-		if (sysCode != null)
+		if (sysCode != null || "".equals(sysCode))
 			bySysCode.put(sysCode, this);
-		if (fullName != null)
+		if (fullName != null || "".equals(fullName));
 			byFullName.put(fullName, this);
 	}
 	

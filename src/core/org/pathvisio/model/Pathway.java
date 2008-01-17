@@ -140,6 +140,7 @@ public class Pathway implements PathwayListener
 	private PathwayElement mappInfo = null;
 	private PathwayElement infoBox = null;
 	private PathwayElement biopax = null;
+	private PathwayElement legend = null;
 	
 	/**
 	 * get the one and only MappInfo object.
@@ -216,6 +217,16 @@ public class Pathway implements PathwayListener
 				return;
 			}
 			biopax = o;
+		}
+		// There can be only one Legend object, so if we're trying to add it, remove the old one.
+		if (o.getObjectType() == ObjectType.LEGEND && o != legend)
+		{
+			if(legend != null) {
+				replaceUnique (legend, o);
+				legend = o;
+				return;
+			}
+			legend = o;
 		}
 		if (o.getParent() == this) return; // trying to re-add the same object
 		forceAddObject(o);

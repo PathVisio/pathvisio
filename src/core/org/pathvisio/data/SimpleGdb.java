@@ -536,7 +536,6 @@ public class SimpleGdb implements Gdb
 	 */
 	public List<String> getSymbolSuggestions(String text, int limit) 
 	{		
-		text = text == null ? text : text.toLowerCase();
 		List<String> result = new ArrayList<String>();
 		try {
 			Statement s = con.createStatement();
@@ -546,7 +545,7 @@ public class SimpleGdb implements Gdb
 			
 			String query =
 						"SELECT attrvalue FROM attribute WHERE " +
-						"attrname = 'Symbol' AND lower(attrvalue) LIKE '" + text + "%'";
+						"attrname = 'Symbol' AND attrvalue LIKE '" + text + "%'";
 			
 			ResultSet r = s.executeQuery(query);
 	

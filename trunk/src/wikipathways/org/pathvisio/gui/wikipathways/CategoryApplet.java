@@ -226,4 +226,8 @@ public class CategoryApplet extends PathwayPageApplet {
 	        return this; 
 	    } 
 	}
+	
+	protected String getDefaultDescription() {
+		return "Modified categories";
+	}
 }

@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import org.biopax.paxtools.model.level2.protein;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GuiInit;
@@ -180,11 +181,21 @@ public class PathwayPageApplet extends JApplet {
 		//May be implemented by subclasses
 	}
 
+	/**
+	 * Get the default description that will be used
+	 * when the changes are saved to the server
+	 * If the return value is null, the user will be prompted
+	 * for a description
+	 */
+	protected String getDefaultDescription() {
+		return null;
+	}
+	
 	protected void createToolbar() {
 		JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
 		toolbar.setFloatable(false);
-		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, true));
-		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, false));
+		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, true, getDefaultDescription()));
+		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, false, getDefaultDescription()));
 		getContentPane().add(toolbar, BorderLayout.WEST);
 	}
 

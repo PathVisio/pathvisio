@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
@@ -61,20 +62,28 @@ public class Actions {
 	 */
 	public static class ExitAction extends WikiAction {
 		boolean doSave;
-	
-		public ExitAction(UserInterfaceHandler h, WikiPathways w, boolean save) {
+		String description;
+		
+		public ExitAction(UserInterfaceHandler h, WikiPathways w, boolean save, String description) {
 			super(h, w, "Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("icons/apply.gif") : Engine.getCurrent().getResourceURL("icons/cancel.gif")));
+			this.description = description;
 			doSave = save;
 			String descr = doSave ? "Save pathway and close editor" : "Discard pathway and close editor";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 		}
 		public void actionPerformed(ActionEvent e) {
 			boolean saved = true;
+			boolean forceSave = doSave;
 			try {
-				if(doSave) {
-					saved = wiki.saveUI();
-					System.out.println("SAVED: saved");
+				if(!doSave && wiki.hasChanged()) {
+					//Let user confirm close without save
+					forceSave = uiHandler.askQuestion(
+							"Save changes?", "Your pathway may have changed. Do you want to save?");
 				}
+				if(forceSave) {
+					saved = wiki.saveUI(description);
+					System.out.println("SAVED: saved");
+				} 
 			} catch(Exception ex) {
 				Logger.log.error("Unable to save pathway", ex);
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -96,15 +105,18 @@ public class Actions {
 	
 	
 	public static class SaveToServerAction extends WikiAction {
-		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w) {
+		String description;
+		
+		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w, String description) {
 			super(h, w, "Save to ", new ImageIcon(Engine.getCurrent().getResourceURL("icons/save.gif")));
+			this.description = description;
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway to " + Globals.SERVER_NAME);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 		}
-
+	
 		public void actionPerformed(ActionEvent e) {
 			try {
-				wiki.saveUI();
+				wiki.saveUI(description);
 			} catch(Exception ex) {
 				Logger.log.error("Unable to save pathway", ex);
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

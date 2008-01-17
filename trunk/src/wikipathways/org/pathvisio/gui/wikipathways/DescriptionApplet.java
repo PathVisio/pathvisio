@@ -89,4 +89,8 @@ public class DescriptionApplet extends PathwayPageApplet {
 			}
 		}
 	}
+	
+	protected String getDefaultDescription() {
+		return "Modified description";
+	}
 }

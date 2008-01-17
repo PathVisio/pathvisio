@@ -213,7 +213,7 @@ public class SwingEngine {
 				selectedFilter = ff;
 			}
 		}
-		jfc.setFileFilter(selectedFilter);
+		if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
 
 		int status = jfc.showDialog(getApplicationPanel(), "Export");
 		if(status == JFileChooser.APPROVE_OPTION) {	
@@ -274,10 +274,10 @@ public class SwingEngine {
 			FileFilter ff = new ImporterExporterFileFilter(imp);
 			jfc.addChoosableFileFilter(ff);
 			if(imp instanceof GpmlFormat) {
-				jfc.setFileFilter(ff);
+				selectedFilter = ff;
 			}
 		}
-		jfc.setFileFilter(selectedFilter);
+		if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
 
 		int status = jfc.showDialog(getApplicationPanel(), "Import");
 		if(status == JFileChooser.APPROVE_OPTION) {	

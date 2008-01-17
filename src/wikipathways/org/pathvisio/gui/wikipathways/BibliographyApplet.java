@@ -32,4 +32,8 @@ public class BibliographyApplet extends PathwayPageApplet {
 		refPanel.setInput(pathway.getMappInfo());
 		content.add(refPanel, BorderLayout.CENTER);
 	}
+	
+	protected String getDefaultDescription() {
+		return "Modified bibliography";
+	}
 }

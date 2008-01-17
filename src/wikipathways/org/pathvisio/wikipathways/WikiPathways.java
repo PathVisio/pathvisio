@@ -186,6 +186,13 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 	}
 	
+	/**
+	 * Returns true when the pathway has changed with respect to the
+	 * last saved wiki version
+	 */
+	public boolean hasChanged() {
+		return remoteChanged || Engine.getCurrent().getActivePathway().hasChanged();
+	}
 	public String getPwName() {
 		return Parameter.PW_NAME.getValue();
 	}
@@ -260,22 +267,25 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	public UserInterfaceHandler getUserInterfaceHandler() {
 		return uiHandler;
 	}
-		
-	public boolean saveUI() {
+	
+	public boolean saveUI(String description) {
 		Pathway pathway = Engine.getCurrent().getActivePathway();
 		if(!remoteChanged && !pathway.hasChanged()) {
 			uiHandler.showInfo("Save pathway", "You didn't make any changes");
 			return false;
 		}
 		if(pathway != null) {
-			final String description = uiHandler.askInput("Specify description", "Give a description of your changes");
+			if(description == null) {
+				description = uiHandler.askInput("Specify description", "Give a description of your changes");
+			}
+			final String finalDescription = description;
 			Logger.log.trace("Save description: " + description);
 			if(description != null) {
 				RunnableWithProgress<Boolean> r = new RunnableWithProgress<Boolean>() {
 					public Boolean excecuteCode() {
 						getProgressKeeper().setTaskName("Saving pathway");
 						try {
-							saveToWiki(description);
+							saveToWiki(finalDescription);
 							return true;
 						} catch (Exception e) {
 							Logger.log.error("Unable to save pathway", e);
@@ -424,8 +434,8 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		//Disable some actions
 		if(!isNew()) hide.add(actions.importAction);
 		
-		Action saveAction = new Actions.ExitAction(uiHandler, this, true);
-		Action discardAction = new Actions.ExitAction(uiHandler, this, false);
+		Action saveAction = new Actions.ExitAction(uiHandler, this, true, null);
+		Action discardAction = new Actions.ExitAction(uiHandler, this, false, null);
 				
 		mainPanel = new MainPanel(hide);
 		

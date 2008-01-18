@@ -19,6 +19,8 @@ package org.pathvisio.gui.wikipathways;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.security.AccessControlException;
 import java.util.Enumeration;
@@ -28,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
-import org.biopax.paxtools.model.level2.protein;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GuiInit;
@@ -47,6 +48,15 @@ public class PathwayPageApplet extends JApplet {
 	boolean isFirstApplet = true;
 
 	public final void init() {
+		//Add a mouse listener that requests focus on clicking
+		//To fix bug 299
+		addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				PathwayPageApplet.this.requestFocus();
+				PathwayPageApplet.this.requestFocusInWindow();
+			}
+		});
+		
 		//Check if other applets are present that already have an instance
 		//of WikiPathways
 		try {

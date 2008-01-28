@@ -456,6 +456,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				{
 					parent.removeId(graphId);
 				}
+				zOrder = parent.getMaxZOrder() + 1;
 			}
 			parent = v;
 			if (v != null)

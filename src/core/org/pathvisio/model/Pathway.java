@@ -237,7 +237,6 @@ public class Pathway implements PathwayListener
 		dataObjects.add(o);
 		o.addListener(this);
 		o.setParent(this);
-		o.setZOrder(getMaxZOrder() + 1);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
 

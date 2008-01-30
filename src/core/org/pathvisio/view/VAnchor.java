@@ -37,8 +37,8 @@ public class VAnchor extends VPathwayElement {
 	private Line line;
 	private Handle handle;
 
-	private double vx = Double.NaN;
-	private double vy = Double.NaN;
+	private double mx = Double.NaN;
+	private double my = Double.NaN;
 	
 	public VAnchor(MAnchor mAnchor, Line parent) {
 		super(parent.getDrawing());
@@ -54,11 +54,11 @@ public class VAnchor extends VPathwayElement {
 	}
 	
 	public double getVx() {
-		return vx;
+		return vFromM(mx);
 	}
 	
 	public double getVy() {
-		return vy;
+		return vFromM(my);
 	}
 	
 	public Handle getHandle() {
@@ -89,8 +89,8 @@ public class VAnchor extends VPathwayElement {
 	}
 	
 	void updatePosition() {
-		double prevX = vx;
-		double prevY = vy;
+		double prevX = mx;
+		double prevY = my;
 		
 		double position = mAnchor.getPosition();
 		double vsx = line.getVStartX();
@@ -101,15 +101,15 @@ public class VAnchor extends VPathwayElement {
 		int dirx = vsx > vex ? -1 : 1;
 		int diry = vsy > vey ? -1 : 1;
 
-		vx = vsx + dirx * Math.abs(vsx - vex) * position;
-		vy = vsy + diry * Math.abs(vsy - vey) * position;
-		handle.setVLocation(vx, vy);
+		mx = mFromV(vsx + dirx * Math.abs(vsx - vex) * position);
+		my = mFromV(vsy + diry * Math.abs(vsy - vey) * position);
+		handle.setMLocation(mx, my);
 		
 		//Move graphRefs
 		if(!Double.isNaN(prevX) && !Double.isNaN(prevY)) {
 			for(GraphRefContainer ref : mAnchor.getReferences()) {
 				if(ref instanceof MPoint) {
-					ref.moveBy(mFromV(vx - prevX), mFromV(vy - prevY));
+					ref.moveBy(mx - prevX, my - prevY);
 				}
 			}
 		}
@@ -139,7 +139,7 @@ public class VAnchor extends VPathwayElement {
 		{
 			AffineTransform f = new AffineTransform();
 			double scaleFactor = vFromM (1.0);
-			f.translate (vx, vy);
+			f.translate (getVx(), getVy());
 			f.scale (scaleFactor, scaleFactor);		   
 			Shape sh = f.createTransformedShape(shape.getShape());
 			shape = new ArrowShape (sh, shape.getFillType());

@@ -137,6 +137,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		} else { //Download and open the pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: open pathway");
 			Engine.getCurrent().openPathway(new URL(getPwURL()));
+			Engine.getCurrent().getActivePathway().setSourceFile(null); //To trigger save as
 		}
 		
 		//Register status flag listener to override changed flag for local saves

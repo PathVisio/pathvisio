@@ -49,6 +49,7 @@ import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.Revision;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
@@ -112,6 +113,8 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		
 		WikiPathwaysInit.init();
 		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), Engine.getCurrent());
+		
+		Logger.log.trace("Code revision: " + Revision.REVISION);
 		
 		loadCookies(base);
 		
@@ -214,6 +217,10 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		return Parameter.USER.getValue();
 	}
 
+	public int getRevision() {
+		return Integer.parseInt(Parameter.REVISION.getValue());
+	}
+	
 	public void addCookie(String key, String value) {
 		cookie.put(key, value);
 	}
@@ -337,7 +344,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		byte[] data = new byte[(int)raf.length()];
 		raf.readFully(data);
 		byte[] data64 = Base64.encodeBase64(data);
-		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data64 };
+		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data64, getRevision() };
 				
 		client.execute("WikiPathways.updatePathway", params);
 	}

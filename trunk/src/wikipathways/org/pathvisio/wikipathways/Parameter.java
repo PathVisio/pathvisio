@@ -35,7 +35,11 @@ public enum Parameter {
 	/**
 	 * The hostname of the gene database server (default: wikipathways.org)
 	 */
-	GDB_SERVER("gdb_server", "wikipathways.org");
+	GDB_SERVER("gdb_server", "wikipathways.org"),
+	/**
+	 * The revision id of the pathway
+	 */
+	REVISION("revision", true),
 	;
 	
 	String name;

@@ -1220,6 +1220,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		{
 			throw new ConverterException (e);
 		}
+		catch(IllegalArgumentException e) {
+			throw new ConverterException (e);
+		}
 	}
 
 	/**

@@ -206,6 +206,9 @@ public class PathwaySearchComposite extends Composite {
 				systemLabel.setText("Id system:");
 				final Combo systemCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY);
 				final String[] datasources =  DataSource.getFullNames().toArray(new String[0]);
+				for(int i = 0; i < datasources.length; i++) {
+					if(datasources[i] == null) datasources[i] = "";
+				}
 				systemCombo.setItems(datasources);
 				systemCombo.setLayoutData(span2cols);
 				

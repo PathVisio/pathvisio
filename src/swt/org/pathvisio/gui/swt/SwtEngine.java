@@ -96,9 +96,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	private MainWindow window;
 	
 	private ImageRegistry imageRegistry;
-	
-	private File DIR_APPLICATION;
-	private File DIR_DATA;
+
 	boolean USE_R;
 		
 	private static SwtEngine current;
@@ -652,21 +650,17 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	}
 	/**
 	 * Get the working directory of this application
+	 * @deprecated use {@link Engine#getCurrent()#getApplicationDir()} instead
 	 */
 	public File getApplicationDir() {
-		if(DIR_APPLICATION == null) {
-			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + Globals.APPLICATION_NAME);
-			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
-		}
-		return DIR_APPLICATION;
+		return Engine.getCurrent().getApplicationDir();
 	}
-		
+	
+	/**
+	 * @deprecated use {@link Engine#getCurrent()#getDataDir()} instead
+	 */
 	public File getDataDir() {
-		if(DIR_DATA == null) {
-			DIR_DATA = new File(System.getProperty("user.home"), Globals.APPLICATION_NAME + "-Data");
-			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
-		}
-		return DIR_DATA;
+		return Engine.getCurrent().getDataDir();
 	}
 			
 	public boolean isUseR() { return USE_R; }

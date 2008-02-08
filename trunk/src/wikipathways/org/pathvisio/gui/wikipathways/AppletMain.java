@@ -67,9 +67,9 @@ public class AppletMain extends PathwayPageApplet {
 		JButton btn = mainPanel.getToolBar().add(
 				new Actions.FullScreenAction(uiHandler, wiki, this));
 			
-		//Dirty hack to place the button before the zoom combo
+		//Dirty hack to place the button before the save/discard button
 		mainPanel.getToolBar().remove(btn);
-		mainPanel.getToolBar().add(btn,  11);
+		mainPanel.getToolBar().add(btn,  mainPanel.getToolBar().getComponentCount() - 2);
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setVisible(true);
 		

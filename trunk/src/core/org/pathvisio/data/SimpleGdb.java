@@ -1,19 +1,19 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2007 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
+//PathVisio,
+//a tool for data visualization and analysis using Biological Pathways
+//Copyright 2006-2007 BiGCaT Bioinformatics
+
+//Licensed under the Apache License, Version 2.0 (the "License"); 
+//you may not use this file except in compliance with the License. 
+//You may obtain a copy of the License at 
+
+//http://www.apache.org/licenses/LICENSE-2.0 
+
+//Unless required by applicable law or agreed to in writing, software 
+//distributed under the License is distributed on an "AS IS" BASIS, 
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+//See the License for the specific language governing permissions and 
+//limitations under the License.
+
 package org.pathvisio.data;
 
 import java.io.BufferedReader;
@@ -24,17 +24,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Formatter;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.Utils;
 
@@ -72,12 +68,12 @@ public class SimpleGdb implements Gdb
 		// load header resource, a html template for creating back-pages.
 		initializeHeader();
 	}
-		
+
 	// the name of this table is "datanode" starting from
 	// schema v2. 
 	// it is "gene" for older tables.
 	private String table_DataNode = "datanode";
-	
+
 	/**
 	 * The {@link Connection} to the Gene Database
 	 */
@@ -85,20 +81,20 @@ public class SimpleGdb implements Gdb
 	private Connection con;
 	// dbConnector, helper class for dealing with RDBMS specifcs.
 	private DBConnector dbConnector;
-	
+
 	/**
 	 * Check whether a connection to the database exists
 	 * @return	true is a connection exists, false if not
 	 */
 	public boolean isConnected() { return con != null; }
-	
+
 	private String dbName;
 	/**
 	 * Gets the name of te currently used gene database
 	 * @return the database name as specified in the connection string
 	 */
 	public String getDbName() { return dbName; }
-		
+
 	/**
 	 * @param id The gene id to get the symbol info for
 	 * @param code systemcode of the gene identifier
@@ -108,13 +104,13 @@ public class SimpleGdb implements Gdb
 	{
 		try {
 			Statement s = con.createStatement();
-			
+
 			String query =
-						"SELECT attrvalue FROM attribute WHERE " +
-						"attrname = 'Symbol' AND id = '" + ref.getId() + "' " +
-						"AND code = '" + ref.getDataSource().getSystemCode() + "'";
+				"SELECT attrvalue FROM attribute WHERE " +
+				"attrname = 'Symbol' AND id = '" + ref.getId() + "' " +
+				"AND code = '" + ref.getDataSource().getSystemCode() + "'";
 			ResultSet r = s.executeQuery(query);
-	
+
 			while(r.next()) 
 			{
 				return r.getString(1);
@@ -124,17 +120,17 @@ public class SimpleGdb implements Gdb
 		}
 		return null;
 	}
-	
+
 	public boolean xrefExists(Xref xref) {
 		try {
 			Statement s = con.createStatement();
-			
+
 			String query =
-						"SELECT id FROM datanode WHERE " +
-						"id = '" + xref.getId() + "' " +
-						"AND code = '" + xref.getDataSource().getSystemCode() + "'";
+				"SELECT id FROM " + table_DataNode + " WHERE " +
+				"id = '" + xref.getId() + "' " +
+				"AND code = '" + xref.getDataSource().getSystemCode() + "'";
 			ResultSet r = s.executeQuery(query);
-	
+
 			while(r.next()) 
 			{
 				return true;
@@ -144,7 +140,7 @@ public class SimpleGdb implements Gdb
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Gets the backpage info for the given gene id for display on BackpagePanel
 	 * @param ref The gene to get the backpage info for
@@ -154,7 +150,7 @@ public class SimpleGdb implements Gdb
 	{
 		StopWatch timer = new StopWatch();
 		timer.start();
-		
+
 		try {
 			Statement s = con.createStatement();
 			ResultSet r = s.executeQuery(
@@ -167,15 +163,15 @@ public class SimpleGdb implements Gdb
 			return result;
 		} catch(Exception e) { return null;	} //Gene not found
 	}
-	
+
 	public String getBackpageHTML(Xref ref, String bpHead) {
 		String text = backpagePanelHeader == null ? "" : backpagePanelHeader;
 		if( ref == null || ref.getId() == null || ref.getDataSource() == null) return text;
-		
+
 		if (bpHead == null) bpHead = "";
 		text += "<H1>Gene information</H1><P>";
 		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-		
+
 		String  bpInfo = getBpInfo (ref);
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
@@ -191,7 +187,7 @@ public class SimpleGdb implements Gdb
 	public static BackpageTextProvider getBackpageTextProvider() {
 		return Engine.getCurrent().getBackpageTextProvider();
 	}
-	
+
 	String getCrossRefText(Xref ref) 
 	{
 		List<Xref> crfs = getCrossRefs(ref);
@@ -209,14 +205,14 @@ public class SimpleGdb implements Gdb
 					//This doesn't work under ubuntu, so no new windoe there
 					idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
 				}
-				
+
 			}
 			String dbName = cr.getDataSource().getFullName();
 			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
 		}
 		return crt.toString();
 	}
-		
+
 	/**
 	 * Directory containing HTML files needed to display the backpage information
 	 */
@@ -225,14 +221,14 @@ public class SimpleGdb implements Gdb
 	 * Header file, containing style information
 	 */
 	final static String HEADERFILE = "header.html";
-	
+
 	private static String backpagePanelHeader;
-	
+
 	static String getBackpagePanelHeader()
 	{
 		return backpagePanelHeader;
 	}
-	
+
 	/**
 	 * Reads the header of the HTML content displayed in the browser. This header is displayed in the
 	 * file specified in the {@link HEADERFILE} field
@@ -240,7 +236,7 @@ public class SimpleGdb implements Gdb
 	private static void initializeHeader() {
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
-						Engine.getCurrent().getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
+					Engine.getCurrent().getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
 			String line;
 			backpagePanelHeader = "";
 			while((line = input.readLine()) != null) {
@@ -250,7 +246,7 @@ public class SimpleGdb implements Gdb
 			Logger.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
 		}
 	}	
-			
+
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id
@@ -266,14 +262,14 @@ public class SimpleGdb implements Gdb
 	{
 		StopWatch timer = new StopWatch();
 		timer.start();
-		
+
 		ArrayList<Xref> crossIds = new ArrayList<Xref>();
 		try {
 //			if(pstEnsId2Refs == null) {
-//				pstEnsId2Refs = getCon().prepareStatement(
-//						"SELECT idRight, codeRight FROM link " +
-//						"WHERE idLeft = ?"
-//				);
+//			pstEnsId2Refs = getCon().prepareStatement(
+//			"SELECT idRight, codeRight FROM link " +
+//			"WHERE idLeft = ?"
+//			);
 //			}
 //			pstEnsId2Refs.setString(1, ensId);
 //			ResultSet r1 = pstEnsId2Refs.executeQuery();
@@ -291,11 +287,11 @@ public class SimpleGdb implements Gdb
 			Logger.log.error("Unable to get cross references for ensembl gene " +
 					"'" + ensId + "'", e);
 		}
-		
+
 		timer.stopToLog("> endId2Refs: (" + ensId + ")");
 		return crossIds;
 	}
-	
+
 //	static PreparedStatement pstRef2EnsIds;
 	/**
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
@@ -310,14 +306,14 @@ public class SimpleGdb implements Gdb
 	{	
 		StopWatch timer = new StopWatch();
 		timer.start();
-		
+
 		ArrayList<String> ensIds = new ArrayList<String>();
 		try {
 //			if(pstRef2EnsIds == null) {
-//				pstRef2EnsIds = getCon().prepareStatement(
-//						"SELECT idLeft FROM link " +
-//						"WHERE idRight = ? AND codeRight = ?"
-//				);
+//			pstRef2EnsIds = getCon().prepareStatement(
+//			"SELECT idLeft FROM link " +
+//			"WHERE idRight = ? AND codeRight = ?"
+//			);
 //			}
 //			pstRef2EnsIds.setString(1, ref);
 //			pstRef2EnsIds.setString(2, code);
@@ -334,12 +330,12 @@ public class SimpleGdb implements Gdb
 					"'" + xref.getId() + "' with systemcode '" + 
 					xref.getDataSource().getSystemCode() + "'", e);
 		}
-		
+
 		timer.stopToLog("> ref2EnsIds (" + xref.getId() + "," + 
 				xref.getDataSource().getSystemCode() + ")");
 		return ensIds;
 	}
-	
+
 	/**
 	 * Get all cross-references for the given id/code pair, restricting the
 	 * result to contain only references from database with the given system
@@ -352,7 +348,7 @@ public class SimpleGdb implements Gdb
 	{
 		return getCrossRefs(idc, null);
 	}
-	
+
 	/**
 	 * Get all cross-references for the given id/code pair, restricting the
 	 * result to contain only references from database with the given system
@@ -367,7 +363,7 @@ public class SimpleGdb implements Gdb
 		Logger.log.trace("Fetching cross references");
 		StopWatch timer = new StopWatch();
 		timer.start();
-		
+
 		List<Xref> refs = new ArrayList<Xref>();
 		List<String> ensIds = ref2EnsIds(idc);
 		for(String ensId : ensIds) refs.addAll(ensId2Refs(ensId, resultDs));
@@ -375,14 +371,20 @@ public class SimpleGdb implements Gdb
 		Logger.log.trace("END Fetching cross references for " + idc + "; time:\t" + timer.stop());
 		return refs;
 	}
-	
+
 	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) {
 		Logger.log.trace("Fetching cross references by attribute: " + attrName + " = " + attrValue);
-		String query = 
-			"SELECT DataNode.id, DataNode.code FROM Datanode " +
-			"LEFT JOIN Attribute ON DataNode.id = Attribute.id AND DataNode.code = Attribute.code " +
-			"WHERE attrName = '" + attrName + "' AND attrValue = '" + attrValue + "'";
-		
+		StringBuilder sb = new StringBuilder();
+		Formatter formatter = new Formatter(sb);
+
+		formatter.format(
+				"SELECT %1$s.%2$s, %1$s.%3$s FROM %1$s " +
+				"LEFT JOIN %4$s ON %4$s.%2$s = %1$s.%2$s AND %4$s.%3$s = %1$s.%3$s " +
+				"WHERE attrName = '%5$s' AND attrValue = '%6$s'",
+				table_DataNode, "id", "code", "Attribute", attrName, attrValue
+		);
+
+		String query = sb.toString();		
 		List<Xref> refs = new ArrayList<Xref>();
 
 		try {
@@ -397,7 +399,7 @@ public class SimpleGdb implements Gdb
 		Logger.log.trace("End fetching cross references by attribute");
 		return refs;
 	}
-	
+
 	/**
 	 * Opens a connection to the Gene Database located in the given file
 	 * @param dbName The file containing the Gene Database. 
@@ -406,10 +408,10 @@ public class SimpleGdb implements Gdb
 	public SimpleGdb(String dbName, DBConnector connector, int props) throws DataException
 	{
 		if(dbName == null) throw new NullPointerException();
-		
+
 		this.dbName = dbName;
 		this.dbConnector = connector;
-		
+
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
 
 		con = dbConnector.createConnection(dbName, props);
@@ -423,7 +425,7 @@ public class SimpleGdb implements Gdb
 		}
 		checkSchemaVersion();
 	}
-	
+
 	private void checkSchemaVersion() 
 	{
 		int version = 0;
@@ -443,7 +445,7 @@ public class SimpleGdb implements Gdb
 			table_DataNode = "datanode";
 		}
 	}
-	
+
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
 	 */
@@ -452,7 +454,7 @@ public class SimpleGdb implements Gdb
 		if (con == null) throw new DataException("Database connection already closed");
 		dbConnector.closeConnection(con);
 	}
-			
+
 	/**
 	 * Excecutes several SQL statements to create the tables and indexes in the database the given
 	 * connection is connected to
@@ -462,7 +464,7 @@ public class SimpleGdb implements Gdb
 	 */
 	public void createGdbTables() {
 		Logger.log.trace("Info:  Creating tables");
-		
+
 		try 
 		{
 			Statement sh = con.createStatement();
@@ -481,7 +483,7 @@ public class SimpleGdb implements Gdb
 					"CREATE TABLE					" +
 					"		info							" +
 					"(	  version INTEGER PRIMARY KEY		" +
-					")");
+			")");
 			sh.execute( //Add compatibility version of GDB
 					"INSERT INTO version VALUES ( " + GDB_COMPAT_VERSION + ")");
 			sh.execute(
@@ -498,15 +500,15 @@ public class SimpleGdb implements Gdb
 			sh.execute(
 					"CREATE INDEX i_codeLeft" +
 					" ON link(codeLeft)"
-					);
+			);
 			sh.execute(
 					"CREATE INDEX i_idRight" +
 					" ON link(idRight)"
-					);
+			);
 			sh.execute(
 					"CREATE INDEX i_codeRight" +
 					" ON link(codeRight)"
-					);
+			);
 			sh.execute(
 					"CREATE TABLE							" +
 					"		gene							" +
@@ -518,8 +520,8 @@ public class SimpleGdb implements Gdb
 			sh.execute(
 					"CREATE INDEX i_code" +
 					" ON gene(code)"
-					);
-			
+			);
+
 		} 
 		catch (Exception e)
 		{
@@ -532,23 +534,39 @@ public class SimpleGdb implements Gdb
 	public static int query_timeout = 5; //seconds
 
 	/**
-	 * Get up to limit suggestions for a symbol autocompletion
+	 * Get up to limit suggestions for a symbol autocompletion. 
+	 * the search will be case insensitive by default
+	 * @param text The text to base the suggestions on
+	 * @param limit The number of results to limit the search to
 	 */
-	public List<String> getSymbolSuggestions(String text, int limit) 
+	public List<String> getSymbolSuggestions(String text, int limit) {
+		return getSymbolSuggestions(text, limit, false);
+	}
+
+	/**
+	 * Get up to limit suggestions for a symbol autocompletion
+	 * @param text The text to base the suggestions on
+	 * @param limit The number of results to limit the search to
+	 * @param caseSensitive if true, the search will be case sensitive
+	 */
+	public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive) 
 	{		
 		List<String> result = new ArrayList<String>();
 		try {
 			Statement s = con.createStatement();
-			
+
 			s.setQueryTimeout(query_timeout);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
-			
-			String query =
-						"SELECT attrvalue FROM attribute WHERE " +
-						"attrname = 'Symbol' AND attrvalue LIKE '" + text + "%'";
-			
+
+			String query = String.format(
+					"SELECT attrvalue FROM attribute WHERE " +
+					"attrname = 'Symbol' AND %s LIKE '%s%%'",
+					caseSensitive ? "attrvalue" : "LOWER(attrvalue)",
+							caseSensitive ? text : text.toLowerCase()
+			);
+
 			ResultSet r = s.executeQuery(query);
-	
+
 			while(r.next()) 
 			{
 				String symbol = r.getString("attrValue");
@@ -561,25 +579,45 @@ public class SimpleGdb implements Gdb
 		return result;
 	}
 
+
 	/**
-	 * Get up to limit suggestions for a symbol autocompletion
+	 * Get up to limit suggestions for a identifier autocompletion. 
+	 * The search will be case insensitive by default
+	 * @param text The text to base the suggestions on
+	 * @param limit The number of results to limit the search to
 	 */
-	public List<Xref> getIdSuggestions(String text, int limit) 
+	public List<Xref> getIdSuggestions(String text, int limit) {
+		return getIdSuggestions(text, limit, false);
+	}
+
+	/**
+	 * Get up to limit suggestions for a identifier autocompletion
+	 * @param text The text to base the suggestions on
+	 * @param limit The number of results to limit the search to
+	 * @param caseSensitive if true, the search will be case sensitive
+	 */
+	public List<Xref> getIdSuggestions(String text, int limit, boolean caseSensitive) 
 	{		
 		List<Xref> result = new ArrayList<Xref>();
 		try {
 			Statement s = con.createStatement();
-			
+
 			s.setQueryTimeout(query_timeout);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
-			
-			String query = "";
-			query =
-					"SELECT id, code FROM datanode WHERE " +
-					"id LIKE '" + text + "%'";
-			
+
+			StringBuilder sb = new StringBuilder();
+			Formatter formatter = new Formatter(sb);
+
+			formatter.format(
+					"SELECT id, code FROM %1$s WHERE " +
+					"%3$s LIKE '%2$s%%'",
+					table_DataNode, caseSensitive ? text : text.toLowerCase(), 
+							caseSensitive ? "id" : "LOWER(id)"
+			);
+
+			String query = sb.toString();
 			ResultSet r = s.executeQuery(query);
-	
+
 			while(r.next()) {
 				String id = r.getString(1);
 				DataSource ds = DataSource.getBySystemCode(r.getString(2));
@@ -593,14 +631,14 @@ public class SimpleGdb implements Gdb
 		return result;
 	}
 
-    PreparedStatement pstGene;
-    PreparedStatement pstLink;
+	PreparedStatement pstGene;
+	PreparedStatement pstLink;
 
-    /**
-     * Add a gene to the gene database
-     */
-    public int addGene(Xref ref, String bpText) 
-    {
+	/**
+	 * Add a gene to the gene database
+	 */
+	public int addGene(Xref ref, String bpText) 
+	{
 		try 
 		{
 			pstGene.setString(1, ref.getId());
@@ -614,29 +652,29 @@ public class SimpleGdb implements Gdb
 			return 1;
 		}
 		return 0;
-    }
-    
-    /**
-     * Add a link to the gene database
-     */
-    public int addLink(String link, Xref ref) 
-    {
-    	try 
-    	{
+	}
+
+	/**
+	 * Add a link to the gene database
+	 */
+	public int addLink(String link, Xref ref) 
+	{
+		try 
+		{
 			pstLink.setString(1, link);
 			pstLink.setString(2, DataSource.ENSEMBL.getSystemCode());
 			pstLink.setString(3, ref.getId());
 			pstLink.setString(4, ref.getDataSource().getSystemCode());
 			pstLink.executeUpdate();
 		} 
-    	catch (Exception e)
+		catch (Exception e)
 		{
 			Logger.log.error(link + "\t" + ref, e);
 			return 1;
 		}
 		return 0;
-    }
-    
+	}
+
 	/**
 	   Create indices on the database
 	   You can call this at any time after creating the tables,
@@ -661,7 +699,7 @@ public class SimpleGdb implements Gdb
 			);
 			sh.execute(
 					"CREATE INDEX i_code" +
-					" ON gene(code)"
+					" ON " + table_DataNode + "(code)"
 			);
 		}
 		catch (SQLException e)
@@ -669,7 +707,7 @@ public class SimpleGdb implements Gdb
 			throw new DataException (e);
 		}
 	}
-	
+
 	/**
 	   prepare for inserting genes and/or links
 	 */
@@ -677,17 +715,17 @@ public class SimpleGdb implements Gdb
 	{
 		con.setAutoCommit(false);
 		pstGene = con.prepareStatement(
-			"INSERT INTO gene " +
-			"	(id, code," +
-			"	 backpageText)" +
-			"VALUES (?, ?, ?)"
- 		);
+				"INSERT INTO " + table_DataNode +
+				"	(id, code," +
+				"	 backpageText)" +
+				"VALUES (?, ?, ?)"
+		);
 		pstLink = con.prepareStatement(
-			"INSERT INTO link " +
-			"	(idLeft, codeLeft," +
-			"	 idRight, codeRight)" +
-			"VALUES (?, ?, ?, ?)"
- 		);		
+				"INSERT INTO link " +
+				"	(idLeft, codeLeft," +
+				"	 idRight, codeRight)" +
+				"VALUES (?, ?, ?, ?)"
+		);		
 	}	
 
 	/**
@@ -713,7 +751,7 @@ public class SimpleGdb implements Gdb
 		int result = 0;
 		try
 		{
-			ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM gene");
+			ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM " + table_DataNode);
 			r.next();
 			result = r.getInt (1);
 			r.close();

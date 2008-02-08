@@ -142,8 +142,7 @@ public interface Gdb
 
 	
 	/**
-	 * Get up to limit suggestions for a symbol autocompletion
+	 * Get up to limit suggestions for a identifier autocompletion
 	 */
 	public List<Xref> getIdSuggestions(String text, int limit);
-
 }

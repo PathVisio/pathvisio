@@ -376,10 +376,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 
 		private void setLabel() {
-			int groups = 0;
 			int unGrouped = 0;
-			for(Graphics g : vPathway.getSelectedGraphics()) {
-				if(g instanceof Group) groups++;
+			List<Graphics> selection = vPathway.getSelectedGraphics();
+			for(Graphics g : selection) {
 				if(g.getPathwayElement().getGroupRef() == null) {
 					unGrouped++;
 				}
@@ -387,11 +386,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			setEnabled(true);
 			if(unGrouped >= 2) {
 				putValue(Action.NAME, "Group");
-			} else if(groups == 1) {
-				putValue(Action.NAME, "Ungroup");
 			} else {
-				putValue(Action.NAME, "Group");
-				setEnabled(false);
+				putValue(Action.NAME, "Ungroup");
 			}
 		}		
 	}

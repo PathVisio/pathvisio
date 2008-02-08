@@ -147,6 +147,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 		void performTask() 
 		{
+			if(e == null) return;
 			Xref ref = new Xref (e.getGeneID(), e.getDataSource());
 			String txt = GdbManager.getCurrentGdb().getBackpageHTML(
 					ref, 

@@ -78,7 +78,6 @@ public class PathwayPageApplet extends JApplet {
 				Engine engine = new Engine();
 				Engine.setCurrent(engine);
 				SwingEngine.setCurrent(new SwingEngine(engine));
-				GuiInit.init();
 			}
 
 			parseArguments();

@@ -20,8 +20,7 @@ import java.io.File;
 import java.net.URL;
 
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
@@ -33,7 +32,10 @@ import org.pathvisio.view.MIMShapes;
  */
 public class WikiPathwaysInit {
 	static void init() throws Exception {
-		GlobalPreference.FILE_LOG.setDefault(new File(getApplicationDir(), ".wikipathwaysLog").toString());
+		GlobalPreference.FILE_LOG.setValue(
+				new File(Engine.getCurrent().getApplicationDir(), ".wikipathwaysLog").toString()
+		);
+		GuiInit.init();
 		
 		GlobalPreference.MIM_SUPPORT.setValue(Boolean.toString(true));
 		MIMShapes.registerShapes();
@@ -49,19 +51,6 @@ public class WikiPathwaysInit {
 		PropertyType.STARTX.setHidden(true);
 		PropertyType.STARTY.setHidden(true);
 		PropertyType.WIDTH.setHidden(true);				
-	}
-		
-	private static File DIR_APPLICATION;
-	
-	/**
-	 * Get the working directory of this application
-	 */
-	public static File getApplicationDir() {
-		if(DIR_APPLICATION == null) {
-			DIR_APPLICATION = new File(System.getProperty("user.home"), "." + Globals.APPLICATION_NAME);
-			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdirs();
-		}
-		return DIR_APPLICATION;
 	}
 	
 	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {

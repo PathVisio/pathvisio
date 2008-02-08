@@ -37,8 +37,6 @@ import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
-import sun.swing.BakedArrayList;
-
 public class Engine 
 {	
 	private VPathway vPathway; // may be null
@@ -80,6 +78,28 @@ public class Engine
 		currentEngine = e;
 	}
 
+	private File DIR_APPLICATION;
+	private File DIR_DATA;
+	
+	/**
+	 * Get the working directory of this application
+	 */
+	public File getApplicationDir() {
+		if(DIR_APPLICATION == null) {
+			DIR_APPLICATION = new File(System.getProperty("user.home"), ".PathVisio");
+			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
+		}
+		return DIR_APPLICATION;
+	}
+		
+	public File getDataDir() {
+		if(DIR_DATA == null) {
+			DIR_DATA = new File(System.getProperty("user.home"), "PathVisio-Data");
+			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
+		}
+		return DIR_DATA;
+	}
+	
 	/**
 	   Set this to the toolkit-specific wrapper before opening or
 	   creating a new pathway otherwise Engine can't create a vPathway.

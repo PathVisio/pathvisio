@@ -16,9 +16,15 @@
 //
 package org.pathvisio.model;
 
+import java.awt.event.InputEvent;
+
+import javax.swing.KeyStroke;
+
 public enum OrderType {
-	TOP("Bring to front", "Bring the element in front of all other elements of the same type"),
-	BOTTOM("Send to back", "Send the element behind all other elements of the same type"),
+	TOP("Bring to front", "Bring the element in front of all other elements of the same type",
+			KeyStroke.getKeyStroke(']', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK)),
+	BOTTOM("Send to back", "Send the element behind all other elements of the same type",
+			KeyStroke.getKeyStroke('[', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK)),
 	//UP("Move up", "Move up"),
 	//DOWN("Move down", "Move down"),
 	
@@ -26,10 +32,12 @@ public enum OrderType {
 	
 	private String description;
 	private String name;
+	private KeyStroke accelerator;
 	
-	private OrderType(String name, String description) {
+	private OrderType(String name, String description, KeyStroke accelerator) {
 		this.name = name;
 		this.description = description;
+		this.accelerator = accelerator;
 	}
 	
 	public String getName() {
@@ -38,5 +46,9 @@ public enum OrderType {
 	
 	public String getDescription() {
 		return description;
+	}
+
+	public Object getAcceleratorKey() {
+		return accelerator;
 	}
 }

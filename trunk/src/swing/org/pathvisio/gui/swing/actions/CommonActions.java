@@ -193,13 +193,6 @@ public class CommonActions implements ApplicationEventListener {
 					new NewElementAction(new DefaultTemplates.ReactionTemplate()) },
 	};
 	
-	public final Action[] orderActions = new Action[] {
-			new OrderAction(OrderType.TOP),
-			//new OrderAction(OrderType.UP), //TODO: implement
-			//new OrderAction(OrderType.DOWN),
-			new OrderAction(OrderType.BOTTOM)
-	};
-	
 	public CommonActions(Engine e) {
 		e.addApplicationEventListener(this);
 	}
@@ -368,26 +361,6 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) vp.alignSelected(type);
-		}
-	}
-	
-	public static class OrderAction extends AbstractAction {
-		OrderType type;
-		
-		public OrderAction(OrderType type) {
-			this.type = type;
-			putValue(NAME, type.getName());
-			putValue(SHORT_DESCRIPTION, type.getDescription());
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
-			if(vp != null) {
-				List<Graphics> selection = vp.getSelectedGraphics();
-				for(Graphics g : selection) {
-					g.getPathwayElement().setZOrder(type);
-				}
-			}
 		}
 	}
 	

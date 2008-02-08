@@ -30,6 +30,7 @@ import javax.swing.KeyStroke;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.model.OrderType;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -82,6 +83,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final KeyMoveAction keyMove;
 	public final UndoAction undo;
 	public final AddAnchorAction addAnchor;
+	public final OrderAction orderSendToBack;
+	public final OrderAction orderBringToFront;
 
 	Engine engine;
 
@@ -102,6 +105,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		keyMove = new KeyMoveAction(null);
 		undo = new UndoAction();
 		addAnchor = new AddAnchorAction();
+		orderSendToBack = new OrderAction(OrderType.BOTTOM);
+		orderBringToFront = new OrderAction(OrderType.TOP);
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -451,6 +456,38 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
 				((VPathway)e.getSource()).getUndoManager().addListener(this);
+			}
+		}
+	}
+	
+	/**
+	 * Action to change the order of the selected object
+	 * @author thomas
+	 */
+	public static class OrderAction extends AbstractAction {
+		OrderType type;
+		
+		/**
+		 * Create an action that changes the order of the selected
+		 * objects
+		 * @param type The order type that specifies in what manner
+		 * the order has to be changed 
+		 */
+		public OrderAction(OrderType type) {
+			this.type = type;
+			putValue(NAME, type.getName());
+			putValue(SHORT_DESCRIPTION, type.getDescription());
+			putValue(ACCELERATOR_KEY, type.getAcceleratorKey());
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) {
+				List<Graphics> selection = vp.getSelectedGraphics();
+				for(Graphics g : selection) {
+					g.getPathwayElement().setZOrder(type);
+				}
+				vp.redraw();
 			}
 		}
 	}

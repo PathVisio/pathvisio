@@ -1,0 +1,4 @@
+#save this file as ~/.wikipathways-id
+username=MartijnVanIersel
+password=******
+server=http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php

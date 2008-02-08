@@ -153,7 +153,7 @@ public class CommonActions implements ApplicationEventListener {
 							LineStyle.DASHED, LineType.LINE, LineType.LINE)
 					),
 					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+							LineStyle.DASHED, LineType.LINE, LineType.ARROW)
 					),
 			},
 			new Action[] { 
@@ -181,7 +181,7 @@ public class CommonActions implements ApplicationEventListener {
 							LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
 					),
 					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.DASHED, LineType.LINE, LineType.LIGAND_SQUARE)
+							LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE)
 					),
 					new NewElementAction(new DefaultTemplates.LineTemplate(
 							LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)

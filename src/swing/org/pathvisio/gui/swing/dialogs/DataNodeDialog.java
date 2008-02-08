@@ -22,10 +22,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,18 +32,23 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.data.DataSourcePatterns;
+import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
+import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.RunnableWithProgress;
 
 
 public class DataNodeDialog extends PathwayElementDialog {
@@ -57,7 +61,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	}
 
 	CompleterQueryTextField symText;
-	JTextField idText;
+	CompleterQueryTextField idText;
 	JComboBox dbCombo;
 			
 	public void refresh() {
@@ -72,78 +76,6 @@ public class DataNodeDialog extends PathwayElementDialog {
 		pack();
 	}
 	
-	/**
-	 * Auto fill all fields based on the given information.
-	 * If an id is provided, it will be used to find the symbol and datasource.
-	 * If a symbol is provided, it will be used to find the id and datasource.
-	 * If id and symbol are provided, the id will be used to update the symbol.
-	 * @param id
-	 * @param symbol
-	 * @param datasource
-	 */
-	private void autoFill(String id, String symbol, DataSource datasource) {
-		Set<Xref> options = new HashSet<Xref>();
-					
-		Gdb gdb = GdbManager.getCurrentGdb();
-		
-		//Try to use filled in identifier first
-		if(!"".equals(id)) {
-			Xref fillXref = null;
-			if(datasource != null) {
-				//Check if the current id/datasource exists
-				fillXref = new Xref(id, datasource);
-				if(gdb.xrefExists(fillXref)) {
-					options.add(fillXref);
-				} else {
-					fillXref = null;
-				}
-			}
-			if(fillXref == null) {
-				//Filled in ref doesn't exist, try to find correct datasource
-				for(DataSource d : DataSource.getDataSources()) {
-					Pattern p = DataSourcePatterns.getPatterns().get(d);
-					if(p != null && p.matcher(id).matches()) {
-						options.add(new Xref(id, d));
-					}
-				}
-			} else {
-				options.add(fillXref);
-			}
-		} else {
-			//Fall back on symbol
-			List<Xref> refs = gdb.getCrossRefsByAttribute("Symbol", symbol);
-			//Filter by datasource if needed
-			if(datasource != null) {
-				for(Xref r : refs) {
-					//Only add if xref has the selected datasource
-					if(datasource.equals(r.getDataSource())) {
-						options.add(r);
-					}
-				}
-			}
-			if(options.size() == 0) { 
-				//If there are no results for the selected datasource, use other results
-				options.addAll(refs);
-			}
-		}
-		
-		//Process the options
-		if(options.size() == 0) {
-			//Notify the user that at least the symbol or id needs to be filled in
-			JOptionPane.showMessageDialog(
-					getRootPane(), 
-					"Could not find any symbols or identifiers based on the available information", 
-					"No matches", JOptionPane.INFORMATION_MESSAGE);
-		} else if(options.size() == 1) {
-			//Only one option, fill in the empty fields
-			applyAutoFill(options.iterator().next());
-		} else {
-			//Multiple options, show dialog and let user choose
-			//TODO
-			applyAutoFill(options.iterator().next());
-		}
-	}
-	
 	private void applyAutoFill(Xref ref) {
 		Gdb gdb = GdbManager.getCurrentGdb();
 		String sym = gdb.getGeneSymbol(ref);
@@ -152,35 +84,111 @@ public class DataNodeDialog extends PathwayElementDialog {
 		dbCombo.setSelectedItem(ref.getDataSource());
 	}
 	
+	/**
+	 * Search for symbols or ids in the synonym databases that match
+	 * the given text
+	 */
+	private void search(final String text) {
+		if(text == null || "".equals(text)) {
+			JOptionPane.showMessageDialog(this, "No search term specified, " +
+					"please type something in the 'Text label' field");
+			return;
+		}
+		
+		final SwingProgressKeeper progress = new SwingProgressKeeper(SwingProgressKeeper.PROGRESS_UNKNOWN);
+		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
+		dialog.setLocationRelativeTo(this);
+		
+		final RunnableWithProgress<List<XrefWithSymbol>> task = new RunnableWithProgress<List<XrefWithSymbol>>() {
+			public List<XrefWithSymbol> excecuteCode() {
+				return doSearch(text, progress);
+			}
+		};
+
+		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
+			protected List<XrefWithSymbol> doInBackground() throws Exception {
+				task.run();
+				task.getProgressKeeper().finished();
+				return task.get();
+			}
+		};
+		sw.execute();
+		dialog.setVisible(true);
+		
+		List<XrefWithSymbol> results = null;
+		try {
+			results = sw.get();
+		} catch (InterruptedException e) {
+			//Ignore, cancel pressed
+		} catch (ExecutionException e) {
+			JOptionPane.showMessageDialog(this, "Error while searching: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.log.error("Error while searching", e);
+		}
+		
+		//Show results to user
+		if(results.size() > 0) {
+			DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
+			resultDialog.setVisible(true);
+			Xref selected = resultDialog.getSelected();
+			if(selected != null) {
+				applyAutoFill(selected);
+			}
+		} else {
+			JOptionPane.showMessageDialog(this, "No results for '" + text + "'");
+		}
+	}
+	
+	private List<XrefWithSymbol> doSearch(String text, ProgressKeeper progress) {
+		Gdb gdb = GdbManager.getCurrentGdb();
+		
+		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+		
+		//Search for ids
+		List<Xref> ids = gdb.getIdSuggestions(text, 1000);
+		for(Xref x : ids) {
+			result.add(new XrefWithSymbol(x, gdb.getGeneSymbol(x)));
+		}
+		//Check cancel
+		if(progress != null && progress.isCancelled()) {
+			return result;
+		}
+		
+		//Search for symbols
+		List<String> symbols = gdb.getSymbolSuggestions(text, 1000);
+		for(String s : symbols) {
+			//Check cancel
+			if(progress != null && progress.isCancelled()) {
+				return result;
+			}
+			for(Xref x : gdb.getCrossRefsByAttribute("Symbol", s)) {
+				XrefWithSymbol xs = new XrefWithSymbol(x, s);
+				if(!result.contains(xs)) result.add(xs);
+			}
+		}
+		progress.finished();
+		return result;
+	}
+	
 	protected void addCustomTabs(JTabbedPane parent) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		
-		JLabel symLabel = new JLabel("Symbol");
+		JLabel symLabel = new JLabel("Text label");
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
 		
-		final JButton fillSymbol = new JButton("Lookup identifier");
-		fillSymbol.setToolTipText(
-				"Fill in the identifier and database " +
-				"fields based on the given symbol");
-		final JButton fillId = new JButton("Lookup symbol");
-		fillSymbol.setToolTipText(
-				"Fill in the symbol and database " +
-				"fields based on the given identifier");
-		fillSymbol.addActionListener(new ActionListener() {
+		final JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				autoFill("", symText.getText(), (DataSource)dbCombo.getSelectedItem());
+				search(symText.getText());			
 			}
 		});
-		fillId.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				autoFill(idText.getText(), "", (DataSource)dbCombo.getSelectedItem());
-			}
-		});
+		searchButton.setToolTipText("Search the synonym database for references, based on the text label");
 		
 		symText = new CompleterQueryTextField(new OptionProvider() {
 			public Object[] provideOptions(String text) {
+				if(text == null) return new Object[0];
+				
 				Gdb gdb = GdbManager.getCurrentGdb();
 				List<String> symbols = gdb.getSymbolSuggestions(text, 100);
 				return symbols.toArray();
@@ -189,6 +197,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 		
 		idText = new CompleterQueryTextField(new OptionProvider() {
 			public Object[] provideOptions(String text) {
+				if(text == null) return new Object[0];
+				
 				Gdb gdb = GdbManager.getCurrentGdb();
 				List<Xref> refs = gdb.getIdSuggestions(text, 100);
 				//Only take identifiers
@@ -199,26 +209,9 @@ public class DataNodeDialog extends PathwayElementDialog {
 				return ids;
 			}
 		}, true);
-		
-		DocumentListener autofillListener = new DocumentListener() {
-			public void refresh() {
-				fillSymbol.setEnabled(symText.getText() != null && !symText.getText().equals(""));
-				fillId.setEnabled(idText.getText() != null && !idText.getText().equals(""));
-			}
-			public void changedUpdate(DocumentEvent e) {
-				refresh();
-			}
-			public void insertUpdate(DocumentEvent e) {
-				refresh();
-			}
-			public void removeUpdate(DocumentEvent e) {
-				refresh();
-			}
-		};
-		
-		symText.getDocument().addDocumentListener(autofillListener);
-		idText.getDocument().addDocumentListener(autofillListener);
-		
+		symText.setCorrectCase(false);
+		idText.setCorrectCase(false);
+
 		dbCombo = new JComboBox(DataSource.getDataSources().toArray());
 		
 		GridBagConstraints c = new GridBagConstraints();
@@ -239,8 +232,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		c.gridx = 2;
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0;
-		panel.add(fillSymbol, c);
-		panel.add(fillId, c);
+		panel.add(searchButton, c);
 
 		symText.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) { setText();	}
@@ -273,5 +265,17 @@ public class DataNodeDialog extends PathwayElementDialog {
 		
 		parent.add("Annotation", panel);
 		parent.setSelectedComponent(panel);
+	}
+	
+	protected class XrefWithSymbol extends Xref {
+		String symbol;
+		public XrefWithSymbol(Xref xref, String symbol) {
+			super(xref.getId(), xref.getDataSource());
+			this.symbol = symbol;
+		}
+		
+		public String getSymbol() {
+			return symbol;
+		}
 	}
 }

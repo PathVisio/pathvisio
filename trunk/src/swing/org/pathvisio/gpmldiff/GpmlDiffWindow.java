@@ -57,6 +57,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 		wrapper[pwyType] = new VPathwaySwing(pwyPane[pwyType]);
 
 		view[pwyType] = wrapper[pwyType].createVPathway();
+		view[pwyType].setEditMode(false);
 		view[pwyType].addVPathwayListener(this);
 		view[pwyType].setSelectionEnabled (false);
 		view[pwyType].fromGmmlData(doc[pwyType].getPathway());
@@ -294,7 +295,18 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 				PanelOutputter.ModData mod = outputter.modsByElt.get (e.getAffectedElement());
 				if (mod != null)
 				{
-					glassPane.setHint (mod.hints, mod.x1, mod.y1, mod.x2, mod.y2);
+					switch (mod.type)
+					{
+					case CHANGED:
+						glassPane.setModifyHint (mod.hints, mod.x1, mod.y1, mod.x2, mod.y2);
+						break;
+					case ADDED:
+						glassPane.setAddHint (mod.hints, mod.x2, mod.y2);
+						break;
+					case REMOVED:
+						glassPane.setRemoveHint (mod.hints, mod.x1, mod.y1);
+						break;
+					}
 				}
 				else
 				{

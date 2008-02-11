@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public abstract class OkCancelDialog extends JDialog implements ActionListener {
 	public static final String OK = "Ok";
@@ -67,6 +68,9 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		contentPane.add(buttonPane, BorderLayout.PAGE_END);
 		pack();
 		setLocationRelativeTo(null); //Center on screen
+		
+		//Make buttons respond to pressing 'Enter'
+		UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
 	}
 	
 	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal) {

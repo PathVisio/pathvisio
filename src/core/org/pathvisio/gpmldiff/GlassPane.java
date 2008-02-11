@@ -54,15 +54,23 @@ import javax.swing.*;
  */
 class GlassPane extends JPanel implements AWTEventListener
 {
+	private static enum Type 
+	{
+		MODIFY,
+		ADD,
+		REMOVE
+	}
+	
 	private static final long serialVersionUID = 1L;
 
     private final JPanel frame;
     private Point mousePos = new Point();
-
+    private Type type;
+    private static Color baloonPaint;
+	
 	// baloon margin is both the horizontal and vertical margin.
 	private static final int BALOON_SPACING = 50;
 	private static final int BALOON_MARGIN = 20;
-	private static final Color BALOON_PAINT = Color.YELLOW;
 	private static final int HINT_FONT_SIZE = 11;
 	private static final float WAYPOINT_OFFSET = 200;
 
@@ -94,16 +102,46 @@ class GlassPane extends JPanel implements AWTEventListener
 	double x1, y1, x2, y2;
 
 	/**
-	   setHint implies showHint (true)
+	   setModifyHint implies showHint (true)
 	 */
-	void setHint(Map <String, String> _hint, double _x1, double _y1, double _x2, double _y2)
+	void setModifyHint(Map <String, String> _hint, double _x1, double _y1, double _x2, double _y2)
 	{
 		hint = _hint;
 		x1 = _x1;
 		y1 = _y1;
 		x2 = _x2;
 		y2 = _y2;
+		baloonPaint = Color.YELLOW;
 		showHint = true;
+		type = Type.MODIFY;
+		repaint();
+	}
+	
+	/**
+	 * implies showHint (true)
+	 */
+	void setRemoveHint(Map <String, String> _hint, double x, double y)
+	{
+		x1 = x;
+		y1 = y;
+		baloonPaint = Color.RED;
+		type = Type.REMOVE;
+		showHint = true;
+		hint = _hint;
+		repaint();
+	}
+
+	/**
+	 * implies showHint (true)
+	 */
+	void setAddHint(Map <String, String> _hint, double x, double y)
+	{
+		x2 = x;
+		y2 = y;
+		baloonPaint = Color.GREEN;
+		type = Type.ADD;
+		showHint = true;
+		hint = _hint;
 		repaint();
 	}
 
@@ -177,7 +215,7 @@ class GlassPane extends JPanel implements AWTEventListener
 		Map <TextLayout, Point> layouts = new HashMap <TextLayout, Point>();
 
 		int ypos = 0;
-		for (Map.Entry<String, String> entry : hint.entrySet())
+		if (hint != null) for (Map.Entry<String, String> entry : hint.entrySet())
 		{
 			TextLayout tl0 = new TextLayout (entry.getKey() + ": ", fb, frc);
 			TextLayout tl1 = new TextLayout (entry.getValue(), f, frc);
@@ -206,7 +244,7 @@ class GlassPane extends JPanel implements AWTEventListener
 			bg = getHintShape();
 		}
 
-		g2.setPaint (BALOON_PAINT);
+		g2.setPaint (baloonPaint);
 		g2.fill (bg);
 		g2.setColor (Color.BLACK);
 		g2.draw (bg);
@@ -228,44 +266,56 @@ class GlassPane extends JPanel implements AWTEventListener
 		Shape oldClip = g2.getClip();
 		
 		g2.setStroke (new BasicStroke (5));
-		g2.setColor (Color.YELLOW);
+		g2.setColor (baloonPaint);
 
 		clipView (g2, oldView);
-		Point p = relativeToView (x1, y1, oldView);
-		GeneralPath path = new GeneralPath ();
-		Point s = new Point (
-			(int)(hintPos.getX()),
-			(int)(hintPos.getY() + baloonHeight / 2)
-			);
-		path.moveTo ((float)s.getX(), (float)s.getY());
-		path.curveTo (
-			(float)(s.getX() - WAYPOINT_OFFSET),
-			(float)(s.getY()),
-			(float)(p.getX() + WAYPOINT_OFFSET),
-			(float)p.getY(),
-			(float)p.getX(),
-			(float)p.getY()
-			);
-		g2.draw (path);
-
+		
+		Point p;
+		Point s;
+		GeneralPath path;
+		
+		if (type != Type.ADD)
+		{
+			p = relativeToView (x1, y1, oldView);
+			path = new GeneralPath ();
+			s = new Point (
+				(int)(hintPos.getX()),
+				(int)(hintPos.getY() + baloonHeight / 2)
+				);
+			path.moveTo ((float)s.getX(), (float)s.getY());
+			path.curveTo (
+				(float)(s.getX() - WAYPOINT_OFFSET),
+				(float)(s.getY()),
+				(float)(p.getX() + WAYPOINT_OFFSET),
+				(float)p.getY(),
+				(float)p.getX(),
+				(float)p.getY()
+				);
+			g2.draw (path);
+		}
+		
 		g2.setClip(oldClip);
 		clipView (g2, newView);
-		p = relativeToView (x2, y2, newView);
-		path = new GeneralPath ();
-		s = new Point (
-			(int)(hintPos.getX() + baloonWidth),
-			(int)(hintPos.getY() + baloonHeight / 2)
-			);
-		path.moveTo ((float)s.getX(), (float)s.getY());
-		path.curveTo (
-			(float)s.getX() + WAYPOINT_OFFSET,
-			(float)s.getY(),
-			(float)p.getX() - WAYPOINT_OFFSET,
-			(float)p.getY(),
-			(float)p.getX(),
-			(float)p.getY());
-			
-		g2.draw (path);
+		
+		if (type != Type.REMOVE)
+		{
+			p = relativeToView (x2, y2, newView);
+			path = new GeneralPath ();
+			s = new Point (
+				(int)(hintPos.getX() + baloonWidth),
+				(int)(hintPos.getY() + baloonHeight / 2)
+				);
+			path.moveTo ((float)s.getX(), (float)s.getY());
+			path.curveTo (
+				(float)s.getX() + WAYPOINT_OFFSET,
+				(float)s.getY(),
+				(float)p.getX() - WAYPOINT_OFFSET,
+				(float)p.getY(),
+				(float)p.getX(),
+				(float)p.getY());
+				
+			g2.draw (path);
+		}
 		
 		g2.dispose();
     }

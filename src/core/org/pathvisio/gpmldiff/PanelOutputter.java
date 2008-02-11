@@ -28,7 +28,7 @@ import java.util.*;
 import java.io.*;
 
 class PanelOutputter extends DiffOutputter
-{
+{	
 	VPathway vpwy[] = new VPathway[2];
 
 	Pathway pwy[] = new Pathway[2];
@@ -54,7 +54,23 @@ class PanelOutputter extends DiffOutputter
 		{
 			Logger.log.warn (PwyElt.summary(newElt) + " doesn't have a corresponding view element");
 		}
-		if (velt != null) velt.highlight (Color.GREEN);
+		else
+		{
+			velt.highlight (Color.GREEN);
+
+			Map <String, String> hint = new HashMap<String, String>();
+			hint.put ("element", "Element added");
+
+			Rectangle2D r = velt.getVBounds();
+			ModData mod = new ModData (
+					0,
+					0,
+					(int)vpwy[PWY_NEW].mFromV(r.getX() + r.getWidth() / 2),
+					(int)vpwy[PWY_NEW].mFromV(r.getY() + r.getHeight() / 2),
+						hint, ModData.ModType.ADDED);
+				modifications.add (mod);
+				modsByElt.put (velt, mod);
+		}
 	}
 
 	public void delete(PathwayElement oldElt)
@@ -65,29 +81,54 @@ class PanelOutputter extends DiffOutputter
 		{
 			Logger.log.warn (PwyElt.summary(oldElt) + " doesn't have a corresponding view element");
 		}
-		if (velt != null) velt.highlight (Color.RED);
+		else
+		{
+			velt.highlight (Color.RED);
+			
+			Map <String, String> hint = new HashMap<String, String>();
+			hint.put ("element", "Element removed");
+			
+			Rectangle2D r = velt.getVBounds();
+			ModData mod = new ModData (
+					(int)vpwy[PWY_NEW].mFromV(r.getX() + r.getWidth() / 2),
+					(int)vpwy[PWY_NEW].mFromV(r.getY() + r.getHeight() / 2),
+					0,
+					0,
+					hint, ModData.ModType.REMOVED);
+			modifications.add (mod);
+			modsByElt.put (velt, mod);
+		}
 	}
 
 	/**
 	   private data about a modification,
 	   for displaying hints in the middle.
 	 */
-	public class ModData implements Comparable<ModData>
+	static public class ModData implements Comparable<ModData>
 	{
+		static public enum ModType
+		{
+			ADDED,
+			REMOVED,
+			CHANGED
+		}
+
 		int midy;
 		Map <String, String> hints;
 		int x1;
 		int y1;
 		int x2;
 		int y2;
+		ModType type;
 
-		ModData (int x1, int y1, int x2, int y2, Map<String, String> hints)
+		ModData (int x1, int y1, int x2, int y2, Map<String, String> hints, ModType type)
 		{
 			this.x1 = x1;
 			this.y1 = y1;
 			this.x2 = x2;
 			this.y2 = y2;
 			this.hints = hints;
+			this.type = type;
 		}
 
 		/**
@@ -150,7 +191,7 @@ class PanelOutputter extends DiffOutputter
 			(int)vpwy[PWY_OLD].mFromV(r1.getY() + r1.getHeight() / 2),
 			(int)vpwy[PWY_NEW].mFromV(r2.getX() + r2.getWidth() / 2),
 			(int)vpwy[PWY_NEW].mFromV(r2.getY() + r2.getHeight() / 2),
-				curHint);
+				curHint, ModData.ModType.CHANGED);
 
 		modifications.add (mod);
 		modsByElt.put (veltOld, mod);

@@ -82,8 +82,9 @@ public class Actions {
 				}
 				if(forceSave) {
 					saved = wiki.saveUI(description);
-					System.out.println("SAVED: saved");
-				} 
+				} else {
+					wiki.setMayExit(true);
+				}
 			} catch(Exception ex) {
 				Logger.log.error("Unable to save pathway", ex);
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

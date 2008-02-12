@@ -25,17 +25,34 @@ sub new
 			id => "",
 		},
 		Label => {
-			
+			centerx => 0,
+			centery => 0,
+			width => 900,
+			height => 300,
+			textlabel => "",
+			color => "Black",
+			fontweight => "Bold", 
+			fontsize => "150",
 		},
 		
 	);
 	
 	my $self = {};
 	
-	for my $key (keys %{$defaults{DataNode}})
+	my $type = $specs{element};
+	
+	if (!exists $defaults{$type})
+	{
+		die "incorrect or unimplemented type: '" .  
+			(defined $type ? $type : "undef") . 
+			"' specified for new PathwayElement";
+	}
+	
+	for my $key (keys %{$defaults{$type}})
 	{
 		$self->{$key} = (exists $specs{$key} ? $specs{$key} : $defaults{DataNode}->{$key});
 	}
+	$self->{element} = $type;
 		
 	bless $self, $class;
 }
@@ -43,6 +60,7 @@ sub new
 sub get_xml_node
 {
 	my $self = shift;
+	if ($self->{element} eq "DataNode")
 	{
 		my $datanode = XML::LibXML::Element->new("DataNode");
 		$datanode->setNamespace ($NS);
@@ -62,6 +80,27 @@ sub get_xml_node
 		$xref->setAttribute ("ID", $self->{id});
 		
 		return $datanode;
+	}
+	elsif ($self->{element} eq "Label")
+	{
+		my $elt = XML::LibXML::Element->new("Label");
+		$elt ->setNamespace ($NS);
+		$elt->setAttribute ("TextLabel", $self->{textlabel});
+		
+		my $graphics = $elt->addNewChild ($NS, "Graphics");
+		$graphics->setAttribute ("Color", $self->{color});
+		$graphics->setAttribute ("CenterX", $self->{centerx});
+		$graphics->setAttribute ("CenterY", $self->{centery});
+		$graphics->setAttribute ("Width", $self->{width});
+		$graphics->setAttribute ("Height", $self->{height});
+		$graphics->setAttribute ("FontWeight", $self->{fontweight});
+		$graphics->setAttribute ("FontSize", $self->{fontsize});
+		
+		return $elt;
+	}
+	else
+	{
+		die "Unknown or unimplemented PathwayElement type";
 	}
 }
 

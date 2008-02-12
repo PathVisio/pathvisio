@@ -19,25 +19,28 @@ use PathwayTools::Pathway;
 use Frontier::Client;
 use MIME::Base64;
 
-=item new PathwayTools::WikiPathways($user, $password, $url)
+=item new PathwayTools::WikiPathways(user => ..., pass => ..., url => ...[, debug => 1])
 
 create a connection and log in to the wikipathways webservice
 
+user
+pass
+url
+debug: if true, print the xmlrpc requests and responses to stdout.
+
 =cut
 
-sub new ($$$)
+sub new
 {
 	my $class = shift;
-	my $user = shift;
-	my $pass = shift;
-	my $url = shift;
+	my $self = { @_ };
 
-	my $self = { user => $user, pass => $pass, url => $url };
-		
-	$self->{server} = Frontier::Client->new('url' => $url);
-	$self->{server}->{debug} = 1;
+	$self->{server} = Frontier::Client->new('url' => $self->{url});
+	
+	$self->{server}->{debug} = $self->{debug};
+	
 	$self->{token} = 
-		$self->{server}->call("WikiPathways.login", $user, $pass);
+		$self->{server}->call("WikiPathways.login", $self->{user}, $self->{pass});
 	
 	bless $self, $class;
 }

@@ -28,6 +28,17 @@ tools/mappdiff
 
 tools/pathwaywiki
 
+tools/perl
+
+	various perl scripts for dealing with pathways,
+	including
+	
+    gpmlbuilder
+	  mappbuilder-like tool to make gpml based on a list of genes
+	
+	webservice_example
+	  example script that makes use of the wikipathways webservice
+	
 tools/php_pathvisio
 	
 	gpml to svg converter in php, written by Andra

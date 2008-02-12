@@ -36,7 +36,9 @@ use PathwayTools::PathwayElement;
 use XML::LibXML;
 use Data::Dumper;
 
+#TODO: redundant with PathwayElement::$NS
 
+my $NS = "http://genmapp.org/GPML/2007";
 my $fnGPML = "/home/martijn/prg/pathvisio-trunk/GPML.xsd";
 
 =item new PathwayTools::Pathway()
@@ -48,7 +50,56 @@ create a new Pathway object.
 sub new
 {
 	my $class = shift;
-	my $self = {};
+	my %specs = @_;
+	
+	my %defaults = 
+	(
+		'name' => "",
+		'datasource' => "PathwayTools.pm",
+		'version' => "20080212",
+		'author' => "",
+		'maintainer' => "",
+		'email' => "",
+		'organism' => "Homo sapiens",
+		'boardwidth' => 10000,
+		'boardheight' => 10000,
+	);
+	
+	my $doc = new XML::LibXML::Document("1.0", "ISO-8859-1");
+	my $self = { 'document' => $doc };
+	
+	for my $key (keys %defaults)
+	{
+		$self->{$key} = (exists $specs{$key} ? $specs{$key} : $defaults{$key});
+	}
+	
+	my $pwy = new XML::LibXML::Element("Pathway");
+	$pwy->setNamespace ($NS);
+	$doc->setDocumentElement ($pwy);
+		
+	$pwy->setAttribute ("Name", $self->{name});
+	$pwy->setAttribute ("Data-Source", $self->{datasource});
+	$pwy->setAttribute ("Version", $self->{version});
+	$pwy->setAttribute ("Author", $self->{author});
+	$pwy->setAttribute ("Maintainer", $self->{maintainer});
+	$pwy->setAttribute ("Email", $self->{email});
+	$pwy->setAttribute ("Organism", $self->{organism});
+	
+	my $infobox = $pwy->addNewChild($NS, "InfoBox");
+	$infobox->setAttribute ("CenterX", 0);
+	$infobox->setAttribute ("CenterY", 0);
+	
+	my $graphics = $pwy->addNewChild($NS, "Graphics");
+	$graphics->setAttribute ("BoardWidth", $self->{boardwidth});
+	$graphics->setAttribute ("BoardHeight", $self->{boardheight});
+	$graphics->setAttribute ("WindowWidth", 10000);
+	$graphics->setAttribute ("WindowHeight", 10000);
+	
+	my $legend = $pwy->addNewChild($NS, "Legend");
+	$legend->setAttribute ("CenterX", 0);
+	$legend->setAttribute ("CenterY", 0);
+	
+			
 	bless $self, $class;
 }
 
@@ -146,31 +197,53 @@ sub validate()
 }
 
 
-=item $pathway->add_data_node (width => ..., height => ..., ...)
+=item $pathway->create_element (element => ..., width => ..., height => ..., ...)
 
-add a datanode to the pathway.
-You may specify the following parameters:
+create a new element with the specified attributes and add it to 
+the pathway.
+
+Some of the parameters you can specify:
 
 centerx, centery, width, height, database, id, type,
 backpage, textlabel, color
+
+The only parameter that is compulsory is element.
 
 See the GPML specification for more details.
 
 =cut
 	
-sub add_data_node
+sub create_element
 {
 	my $self = shift;
 	my %specs = @_;
 	
-	my $data = new PathwayTools::PathwayElement ("PathwayElement", %specs);
+	my $data = new PathwayTools::PathwayElement (%specs);
 	
 	my $root = $self->{document}->documentElement();
-
-	my $datanode = $data->get_xml_node();
+	my $elt = $data->get_xml_node();
+	$root->appendChild ($elt);
 	
-	$root->appendChild ($datanode);
+	return $elt;
+}
 
+
+=item add_element ($pathway_element)
+
+add an element previously created with new PathwayElement() to this pathway
+
+=cut
+
+sub add_element
+{
+	my $self = shift;
+	my $data = shift;
+	
+	my $root = $self->{document}->documentElement();
+	my $elt = $data->get_xml_node();
+	$root->appendChild ($elt);
+	
+	return $elt;		
 }
 
 =item rem_whitespace ($node)

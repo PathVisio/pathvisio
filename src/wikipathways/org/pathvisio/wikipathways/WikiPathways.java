@@ -197,6 +197,29 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	public boolean hasChanged() {
 		return remoteChanged || Engine.getCurrent().getActivePathway().hasChanged();
 	}
+	
+	/**
+	 * Flag to override change flag on check for exit
+	 */
+	private boolean mayExit;
+	
+	/**
+	 * Checks whether an editor may exit.
+	 * @return true when the pathway hasn't changed, or setMayExit() was called with true as argument.
+	 * false when the pathway has changed and the setMayExit() wasn't called;
+	 */
+	public boolean mayExit() {
+		return !hasChanged() || mayExit;
+	}
+		
+	/**
+	 * Override the change flag used by {@link #mayExit()}
+	 * @param mayExit
+	 */
+	public void setMayExit(boolean mayExit) {
+		this.mayExit = mayExit;
+	}
+	
 	public String getPwName() {
 		return Parameter.PW_NAME.getValue();
 	}

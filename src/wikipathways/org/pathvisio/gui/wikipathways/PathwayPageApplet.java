@@ -182,6 +182,10 @@ public class PathwayPageApplet extends JApplet {
 		}
 	}
 
+	public boolean mayExit() {
+		return wiki != null ? wiki.mayExit() : true;
+	}
+	
 	protected void doInit() {
 		//May be implemented by subclasses
 	}

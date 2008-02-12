@@ -366,8 +366,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		RandomAccessFile raf = new RandomAccessFile(gpmlFile, "r");
 		byte[] data = new byte[(int)raf.length()];
 		raf.readFully(data);
-		byte[] data64 = Base64.encodeBase64(data);
-		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data64, getRevision() };
+		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data, getRevision() };
 				
 		client.execute("WikiPathways.updatePathway", params);
 	}

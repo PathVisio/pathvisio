@@ -41,7 +41,7 @@ sub test_adjust_pathway()
 	#~ $pathway->from_file ("/home/martijn/Desktop/test.gpml");
 	#~ my $revision = 0;
 
-	print "Adding datanode to pathway";
+	print "Adding datanode to pathway\n";
 
 	# add a datanode to the pathway
 	$pathway->create_element (

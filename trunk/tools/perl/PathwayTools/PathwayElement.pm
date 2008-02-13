@@ -3,12 +3,51 @@ use strict;
 
 package PathwayTools::PathwayElement;
 
+=head1 NAME
+
+PathwayTools::PathwayElement - An element in a pathway
+
+=head1 DESCRIPTION
+
+=over 3
+
+=cut
+
 my $NS = "http://genmapp.org/GPML/2007";
+
+=item new PathwayTools::PathwayElement (element => ..., ...)
+
+element has to be set to a valid value
+you may provide initial values for other attributes,
+such as width, centerx, textlabel, etc.
+
+=cut
 
 sub new
 {
 	my $class = shift;
 	my %specs = @_;
+
+	my $self = {};
+	bless $self, $class;
+	
+	$self->set_values (%specs);
+	
+	return $self;
+}
+
+=item $pwy_element->set_values(element => ..., ...)
+
+provide new attributes for this element
+replaces all current attributes
+
+=cut
+sub set_values()
+{
+	my $self = shift;
+	my %specs = @_;
+	
+	my $type = $specs{element};
 
 	my %defaults = 
 	(
@@ -36,11 +75,7 @@ sub new
 		},
 		
 	);
-	
-	my $self = {};
-	
-	my $type = $specs{element};
-	
+
 	if (!exists $defaults{$type})
 	{
 		die "incorrect or unimplemented type: '" .  
@@ -50,11 +85,9 @@ sub new
 	
 	for my $key (keys %{$defaults{$type}})
 	{
-		$self->{$key} = (exists $specs{$key} ? $specs{$key} : $defaults{DataNode}->{$key});
+		$self->{$key} = (exists $specs{$key} ? $specs{$key} : $defaults{$type}->{$key});
 	}
 	$self->{element} = $type;
-		
-	bless $self, $class;
 }
 
 sub get_xml_node
@@ -103,5 +136,9 @@ sub get_xml_node
 		die "Unknown or unimplemented PathwayElement type";
 	}
 }
+
+=back
+
+=cut
 
 1;

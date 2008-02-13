@@ -14,6 +14,7 @@ my $geneText;
 my $MARGIN_X = 450;
 my $MARGIN_Y = 600;
 my $DEFAULT_WIDTH = 1200;
+my $DEFAULT_LABEL_WIDTH = 2100;
 my $DEFAULT_HEIGHT = 300;
 my $COLUMN_SPACING = 300;
 my $BOARD_HEIGHT = 12000;
@@ -48,6 +49,7 @@ while (<>)
 				centery => $yco + $DEFAULT_HEIGHT / 2,
 				textlabel => $fields[2],
 				fontweight => "Bold",
+				width => $DEFAULT_LABEL_WIDTH,
 			);
 
 		push @elements, $label;

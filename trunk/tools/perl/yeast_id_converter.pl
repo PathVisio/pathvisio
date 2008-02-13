@@ -12,9 +12,18 @@ use PathwayTools::WikiPathways;
 # as discussed: http://groups.google.com/group/wikipathways-dev/browse_thread/thread/74a50e6dc1269aef/00fd677a1551646b
 #
 
-my $fileset1 = "/home/martijn/PathVisio-Data/pathways/Sc_*/*.gpml";
-my $fileset2 = "/home/martijn/PathVisio-Data/pathways/Sc_*/**/*.gpml";
-my $PATHWAY = "Heme Biosynthesis";
+#~ my $fileset1 = "/home/martijn/PathVisio-Data/pathways/Sc_*/*.gpml";
+#~ my $fileset2 = "/home/martijn/PathVisio-Data/pathways/Sc_*/**/*.gpml";
+
+my @pathways = 
+(
+"Histidine Biosynthesis",
+"Ribosomal Proteins",
+"Isoleucine Degradation",
+"Krebs-TCA Cycle",
+);
+
+#~ my $PATHWAY = "Heme Biosynthesis";
 my $ORGANISM = "Saccharomyces cerevisiae";
 
 # read username, password and url from a config file
@@ -32,6 +41,7 @@ my $wikipathways = new PathwayTools::WikiPathways (
 #~ print join ("\t", qw/FileName TextLabel Xref Database/);
 # for all yeast pathways
 #~ for my $fnGpml (glob ($fileset1), glob ($fileset2))
+for my $PATHWAY (@pathways)
 {
 	my $modified = 0;
 	#~ $fnGpml =~ /pathways(.*)/;
@@ -70,18 +80,25 @@ my $wikipathways = new PathwayTools::WikiPathways (
 	}
 	#save to new location
 	
-	print "Validating pathway\n";
-	$pathway->validate();
 
-	print "Sending pathway\n";
-	# submit the pathway again
-	$wikipathways->update_pathway (
-		$pathway, 
-		$ORGANISM, 
-		$PATHWAY, 
-		$revision, 
-		"yeast id converter"
-	);
+	if ($modified)
+	{
+		print "Validating pathway\n";
+		$pathway->validate();
+		print "Sending pathway\n";
+		# submit the pathway again
+		$wikipathways->update_pathway (
+			$pathway, 
+			$ORGANISM, 
+			$PATHWAY, 
+			$revision, 
+			"yeast id converter"
+		);
+	}
+	else
+	{
+		print "No modifications. skipping\n";
+	}
 
 	
 	print "Done.\n";	

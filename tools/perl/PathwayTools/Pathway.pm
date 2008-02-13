@@ -37,9 +37,8 @@ use XML::LibXML;
 use Data::Dumper;
 
 #TODO: redundant with PathwayElement::$NS
-
 my $NS = "http://genmapp.org/GPML/2007";
-my $fnGPML = "/home/martijn/prg/pathvisio-trunk/GPML.xsd";
+my $fnGPML = "../../GPML.xsd";
 
 =item new PathwayTools::Pathway()
 

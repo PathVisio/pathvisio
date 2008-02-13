@@ -18,6 +18,7 @@ These functions are provided by this module:
 use PathwayTools::Pathway;
 use Frontier::Client;
 use MIME::Base64;
+use Data::Dumper;
 
 =item new PathwayTools::WikiPathways(user => ..., pass => ..., url => ...[, debug => 1])
 
@@ -99,7 +100,9 @@ sub update_pathway($$$$$)
 	my $revision = shift;
 	my $message = shift;
 	
-	my $result = $self->{server}->call ("WikiPathways.updatePathway", 
+	my $result;
+
+	$result = $self->{server}->call ("WikiPathways.updatePathway", 
 		$name, 
 		$species, 
 		$message, 
@@ -107,6 +110,7 @@ sub update_pathway($$$$$)
 		$revision, 
 		{'user' => $self->{user}, 'token' => $self->{token}}
 	);
+
 }
 
 1;

@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 
 import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -48,6 +49,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 		}
 		
 		final JTextArea text = new JTextArea(description.getComment());
+		text.setLineWrap(true);
 		text.setBorder(BorderFactory.createTitledBorder("Description"));
 		text.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -74,7 +76,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 		});
 		
 		Container content = getContentPane();
-		content.add(text, BorderLayout.CENTER);
+		content.add(new JScrollPane(text), BorderLayout.CENTER);
 	}
 	
 	private void descriptionChanged(String newText) {

@@ -399,4 +399,32 @@ public class Test extends TestCase implements PathwayListener
 		assertEquals (ds5, DataSource.ENTREZ_GENE);
 	}
 
+	/**
+	 * Dangling references, pointing to nothing, can occur in theory.
+	 * These should be removed.
+	 */
+	public void testDanglingRef() throws IOException, ConverterException
+	{
+		// create a dangling ref
+		assertEquals (data.fixReferences(), 0);
+
+		l.setStartGraphRef("dangle");		
+		
+		File temp = File.createTempFile ("data.test", ".gpml");
+		temp.deleteOnExit();
+
+		assertEquals (data.fixReferences(), 1);
+		assertEquals (data.fixReferences(), 0);
+		
+		// should still validate
+		try
+		{
+			data.writeToXml(temp, true);
+		}
+		catch (ConverterException e)
+		{
+			e.printStackTrace();
+			fail ("Dangling reference should have been removed");
+		}
+	}
 }

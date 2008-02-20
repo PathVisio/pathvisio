@@ -676,4 +676,53 @@ public class Pathway implements PathwayListener
 		}
 		return result;
 	}
+	
+	/**
+	 * Check for any dangling references, and fix them if found
+	 * This is called just before writing out a pathway.
+	 * 
+	 * This is a fallback solution for problems elsewhere in the
+	 * reference handling code. Theoretically, if the rest of
+	 * the code is bug free, this should always return 0.
+	 * 
+	 * @return number of references fixed. Should be 0 under normal 
+	 * circumstances. 
+	 */
+	public int fixReferences()
+	{
+		int result = 0;
+		Set <String> graphIds = new HashSet <String>();
+		for (PathwayElement pe : dataObjects)
+		{
+			String id = pe.getGraphId();
+			if (id != null)
+			{
+				graphIds.add (id);
+			}
+		}
+		for (PathwayElement pe : dataObjects)
+		{
+			if (pe.getObjectType() == ObjectType.LINE)
+			{
+				String ref = pe.getStartGraphRef();
+				if (ref != null && !graphIds.contains(ref))
+				{
+					pe.setStartGraphRef(null);
+					result++;
+				}
+				
+				ref = pe.getEndGraphRef();
+				if (ref != null && !graphIds.contains(ref))
+				{
+					pe.setEndGraphRef(null);
+					result++;
+				}
+			}
+		}
+		if (result > 0)
+		{
+			Logger.log.warn("Pathway.fixReferences fixed " + result + " reference(s)");
+		}
+		return result;
+	}
 }

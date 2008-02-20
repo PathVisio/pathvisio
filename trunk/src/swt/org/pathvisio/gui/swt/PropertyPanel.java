@@ -312,7 +312,11 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 				//refresh datasource info.
 				//get a fresh list, get the full names and sort alphabetically.
 			{
-				List<String> fullNames = DataSource.getFullNames();
+				List<String> fullNames = new ArrayList<String>();
+				for (String s : DataSource.getFullNames())
+				{
+					if (s != null) { fullNames.add (s); }
+				}
 				Collections.sort(fullNames);
 				datasource_names = fullNames.toArray (new String[0]);
 			}

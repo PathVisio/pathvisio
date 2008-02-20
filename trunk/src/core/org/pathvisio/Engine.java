@@ -244,6 +244,8 @@ public class Engine
 		
 	public void savePathway(File toFile) throws ConverterException
 	{
+		// make sure there are no problems with references.
+		getActivePathway().fixReferences();
 		getActivePathway().writeToXml(toFile, true);
 	}
 

@@ -12,18 +12,6 @@ use PathwayTools::WikiPathways;
 # as discussed: http://groups.google.com/group/wikipathways-dev/browse_thread/thread/74a50e6dc1269aef/00fd677a1551646b
 #
 
-#~ my $fileset1 = "/home/martijn/PathVisio-Data/pathways/Sc_*/*.gpml";
-#~ my $fileset2 = "/home/martijn/PathVisio-Data/pathways/Sc_*/**/*.gpml";
-
-my @pathways = 
-(
-"Histidine Biosynthesis",
-"Ribosomal Proteins",
-"Isoleucine Degradation",
-"Krebs-TCA Cycle",
-);
-
-#~ my $PATHWAY = "Heme Biosynthesis";
 my $ORGANISM = "Saccharomyces cerevisiae";
 
 # read username, password and url from a config file
@@ -38,21 +26,18 @@ my $wikipathways = new PathwayTools::WikiPathways (
 	'url' => $login->{server},
 	'debug' => 0);
 
-#~ print join ("\t", qw/FileName TextLabel Xref Database/);
-# for all yeast pathways
-#~ for my $fnGpml (glob ($fileset1), glob ($fileset2))
-for my $PATHWAY (@pathways)
-{
-	my $modified = 0;
-	#~ $fnGpml =~ /pathways(.*)/;
-	#~ print $1, "\n";
-	
-	#~ #read file
-	
-	#~ my $pathway = new PathwayTools::Pathway();
-	#~ $pathway->from_file ($fnGpml);
+open INFILE, "pathway_content_flatfile.txt" or die $!;
 
-	print "Requesting pathway\n";
+<INFILE>; # skip header line
+
+while (my $line = <INFILE>)
+{
+	my $PATHWAY = (split (/\t/, $line))[0];
+	
+	my $modified = 0;
+
+	print "Requesting pathway $PATHWAY\n";
+
 	# get current version of pathway from wikipathways
 	my $result = $wikipathways->get_pathway_with_revision($ORGANISM, $PATHWAY);
 
@@ -69,8 +54,6 @@ for my $PATHWAY (@pathways)
 		my $database = $xref->getAttribute ("Database");
 		my $id = $xref->getAttribute ("ID");
 		
-		#~ print join ("\t", ($textlabel, $database, $id)), "\n";
-		
 		if ($database eq "SGD" &&
 			$id =~ /Y[A-Z0-9]+/)
 		{
@@ -79,7 +62,6 @@ for my $PATHWAY (@pathways)
 		}
 	}
 	#save to new location
-	
 
 	if ($modified)
 	{
@@ -99,8 +81,8 @@ for my $PATHWAY (@pathways)
 	{
 		print "No modifications. skipping\n";
 	}
-
 	
 	print "Done.\n";	
 }
 	
+close INFILE;

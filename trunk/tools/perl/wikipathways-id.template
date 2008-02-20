@@ -1,4 +1,10 @@
 #save this file as ~/.wikipathways-id
-username=MartijnVanIersel
+#
+# Note: the account MaintBot is usually used for all kinds of maintenance tasks
+# Modifications done by MaintBot will not show up in the user statistics page
+#
+# but any valid username / password combination can be used
+# 
+username=MaintBot
 password=******
 server=http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php

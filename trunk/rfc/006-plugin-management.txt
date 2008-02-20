@@ -12,3 +12,20 @@ Where / how are plugins stored?
 # class files in build/plugins
 # jar files in ~/.PathVisio/plugins
 # jar files in /usr/share/pathvisio/plugins
+
+
+
+To test & extend the plugin system, we can make the following plugins:
+
+* Generic visualization plugin (?)
+* Non-generic visualization plugin (?)
+* plugin that adds Menu item, toolbar item and keyboard shortcut (all run action to show "Hello World" popup dialog)
+* plugin for importing / exporting pathway to a different format (e.g gpml with JAXB)
+* plugin that adds a preference option
+* plugin that adds a smiley Shape
+* plugin that adds a new sidebar pane
+* statistical analysis plugin (z-score)
+* plugin that adds a DataSource (e.g. NuGO wiki)
+* Gdb plugin (e.g. mysql driver)
+
+Maybe also a basic plugin template with a build file and directory layout.

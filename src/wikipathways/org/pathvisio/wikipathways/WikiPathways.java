@@ -34,7 +34,6 @@ import javax.swing.Action;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -59,6 +58,7 @@ import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.actions.CommonActions;
 import org.pathvisio.gui.wikipathways.Actions;
+import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
@@ -92,6 +92,11 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	boolean remoteChanged;
 	boolean initPerformed;
 	boolean isInit;
+	/**
+	 * True when the pathway has never been saved before in this
+	 * applet session
+	 */
+	boolean firstSave = true;
 	
 	MainPanel mainPanel;
 	
@@ -142,7 +147,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 			Engine.getCurrent().openPathway(new URL(getPwURL()));
 			Engine.getCurrent().getActivePathway().setSourceFile(null); //To trigger save as
 		}
-		
+	
 		//Register status flag listener to override changed flag for local saves
 		Engine.getCurrent().getActivePathway().addStatusFlagListener(this);
 		
@@ -154,6 +159,9 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 					" so the pathway will be opened in read-only mode");
 		}
 		
+		//Start the save reminder
+		SaveReminder.startSaveReminder(this, 10);
+
 		progress.report("Connecting to database...");
 		
 		//Connect to the gene database
@@ -163,6 +171,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		GdbManager.setGeneDb(getPwSpecies());
 		
 		GdbManager.setMetaboliteDb("metabolites");
+		
 		
 		isInit = false;
 		initPerformed = true;
@@ -176,6 +185,12 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		return isInit;
 	}
 	
+	private void setRemoteChanged(boolean changed) {
+		if(changed != remoteChanged) {
+			remoteChanged = changed;
+			fireStatusFlagEvent(new StatusFlagEvent(changed));
+		}
+	}
 	public void initVPathway() {
 		Engine e = Engine.getCurrent();
 		Pathway p = e.getActivePathway();
@@ -189,13 +204,18 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 			vp.setEditMode(!isReadOnly());
 		}
 	}
-	
+
 	/**
 	 * Returns true when the pathway has changed with respect to the
 	 * last saved wiki version
 	 */
 	public boolean hasChanged() {
-		return remoteChanged || Engine.getCurrent().getActivePathway().hasChanged();
+		Pathway p = Engine.getCurrent().getActivePathway();
+		if(p != null) {
+			return remoteChanged || p.hasChanged();
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -306,6 +326,9 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 			return false;
 		}
 		if(pathway != null) {
+			if(isNew() && firstSave) { //Automatically fill in description on new pathway
+				description = "New pathway";
+			}
 			if(description == null) {
 				description = uiHandler.askInput("Specify description", "Give a description of your changes");
 			}
@@ -320,8 +343,16 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 							return true;
 						} catch (Exception e) {
 							Logger.log.error("Unable to save pathway", e);
-							uiHandler.showError("Unable to save pathway", e.getClass() + 
-									"\n See error log (" + GlobalPreference.FILE_LOG.getValue() + ") for details");
+							String msg =  e.getClass() + 
+							"\n See error log (" + GlobalPreference.FILE_LOG.getValue() + ") for details";
+							if(e.getMessage().startsWith("Revision out of date")) {
+								msg = 
+									"Revision out of date.\n" +
+									"This could mean somebody else modified the pathway since you downloaded it.\n" +
+									"Please save your changes locally and copy your changes over to\n" +
+									"the newest version.";
+							}
+							uiHandler.showError("Unable to save pathway", msg);
 						}
 						return false;
 					}
@@ -338,9 +369,10 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 			File gpmlFile = getLocalFile();
 			//Save current pathway to local file
 			Engine.getCurrent().savePathway(gpmlFile);
-			remoteChanged = true; //In case we get an error, save changes next time
+			setRemoteChanged(true); //In case we get an error, save changes next time
 			saveToWiki(description, gpmlFile);
-			remoteChanged = false; //Save successful, don't save next time
+			firstSave = false;
+			setRemoteChanged(false); //Save successful, don't save next time
 		} else {
 			Logger.log.trace("No changes made, ignoring save");
 			throw new ConverterException("You didn't make any changes");
@@ -368,7 +400,9 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		raf.readFully(data);
 		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data, getRevision() };
 				
-		client.execute("WikiPathways.updatePathway", params);
+		Object response = client.execute("WikiPathways.updatePathway", params);
+		//Update the revision in case we want to save again
+		Parameter.REVISION.setValue((String)response);
 	}
 
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {
@@ -465,14 +499,14 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		if(!isNew()) hide.add(actions.importAction);
 		
 		Action saveAction = new Actions.ExitAction(uiHandler, this, true, null);
-		Action discardAction = new Actions.ExitAction(uiHandler, this, false, null);
+		Action exitAction = new Actions.ExitAction(uiHandler, this, false, null);
 				
 		mainPanel = new MainPanel(hide);
 		
 		mainPanel.getToolBar().addSeparator();
 		
 		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
-		mainPanel.addToToolbar(discardAction);
+		mainPanel.addToToolbar(exitAction);
 
 		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -514,7 +548,23 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	public void statusFlagChanged(StatusFlagEvent e) {
 		//Set our own flag to true if changes are detected
 		if(e.getNewStatus()) {
-			remoteChanged = true;
+			setRemoteChanged(true);
+		}
+	}
+	
+	private Set<StatusFlagListener> statusFlagListeners = new HashSet<StatusFlagListener>();
+	
+	/**
+	 * Register a statusflag listener to check for changes
+	 * relative to the server version of the pathway
+	 */
+	public void addStatusFlagListener(StatusFlagListener l) {
+		statusFlagListeners.add(l);
+	}
+	
+	private void fireStatusFlagEvent(StatusFlagEvent e) {
+		for(StatusFlagListener l : statusFlagListeners) {
+			l.statusFlagChanged(e);
 		}
 	}
 }

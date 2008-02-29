@@ -173,10 +173,11 @@ Here's an example of the GPML code:
 <DataNode GraphId="b" TextLabel="Gene2"/>
 <DataNode GraphId="c" TextLabel="Gene3"/>
 <Line Type="elbow">
-	<Point GraphRef="a" X="200" Y="200"/>
+	<Point GraphRef="a" relX="1" relY="1"/>
 	<Point GraphRef="b" X="500" Y="500"/>
 	<Anchor Position="0.2" GraphId="d"/>
-	<Waypoint Position="350"/>
+	<Horizontal l="10">
+	<Vertical l="20">
 </Line>
 <Line>
 	<Point GraphRef="c" X="300" Y="100"/>

@@ -40,8 +40,11 @@ import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.OrderType;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.Pathway.StatusFlagEvent;
+import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
@@ -243,9 +246,10 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public static class SaveAction extends AbstractAction {
+	public static class SaveAction extends AbstractAction implements StatusFlagListener, ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
-
+		boolean forceDisabled;
+		
 		public SaveAction() {
 			super();
 			putValue(Action.NAME, "Save");
@@ -253,10 +257,42 @@ public class CommonActions implements ApplicationEventListener {
 			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
 			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+			Engine.getCurrent().addApplicationEventListener(this);
+			Pathway p = Engine.getCurrent().getActivePathway();
+			if(p != null) {
+				p.addStatusFlagListener(this);
+				handleStatus(p.hasChanged());
+			} else {
+				forceDisabled = true;
+				setEnabled(false);
+			}
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			SwingEngine.getCurrent().savePathway();
+		}
+
+		private void handleStatus(boolean status) {
+			forceDisabled = !status;
+			setEnabled(status);
+		}
+		
+		public void statusFlagChanged(StatusFlagEvent e) {
+			handleStatus(e.getNewStatus());
+		}
+		
+		public void setEnabled(boolean enabled) {
+			if(enabled && forceDisabled) {
+				return;
+			}
+			super.setEnabled(enabled);
+		}
+		
+		public void applicationEvent(ApplicationEvent e) {
+			if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
+					e.getType() == ApplicationEvent.PATHWAY_OPENED) {
+				Engine.getCurrent().getActivePathway().addStatusFlagListener(this);
+			}
 		}
 	}
 	

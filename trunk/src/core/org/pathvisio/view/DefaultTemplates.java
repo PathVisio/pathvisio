@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Color;
 import java.net.URL;
 
 import org.pathvisio.Engine;
@@ -30,6 +31,7 @@ import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.preferences.GlobalPreference;
 
 public abstract class DefaultTemplates {
+	final static Color COLOR_METABOLITE = Color.BLUE;
 	
 	static abstract class SingleElementTemplate implements Template {
 		PathwayElement lastAdded;
@@ -141,6 +143,14 @@ public abstract class DefaultTemplates {
 			e.setRotation(0);
 			e.setGraphId(p.getUniqueId());
 			e.setDataNodeType(type);
+			
+			//Default colors for different types
+			switch(type) {
+			case METABOLITE:
+				e.setColor(COLOR_METABOLITE);
+				break;
+			}
+			
 			e.setTextLabel(type.toString());
 			addElement(e, p);
 			return new PathwayElement[] { e };
@@ -260,7 +270,9 @@ public abstract class DefaultTemplates {
 			lastCatalyst.setTextLabel("Catalyst");
 			
 			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
+			lastStartNode.setColor(COLOR_METABOLITE);
 			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
+			lastEndNode.setColor(COLOR_METABOLITE);
 			lastStartNode.setTextLabel("Substrate");
 			lastEndNode.setTextLabel("Product");
 			

@@ -606,7 +606,7 @@ public class Pathway implements PathwayListener
 	public static class StatusFlagEvent
 	{
 		private boolean newStatus;
-		StatusFlagEvent (boolean newStatus) { this.newStatus = newStatus; }
+		public StatusFlagEvent (boolean newStatus) { this.newStatus = newStatus; }
 		public boolean getNewStatus() {
 			return newStatus;
 		}

@@ -219,12 +219,13 @@ public class Label extends GraphicsShape
 		// don't draw label outside box
 		g.clip (new Rectangle (area.x - 1, area.y - 1, area.width + 1, area.height + 1));
 		String label = gdata.getTextLabel();
-		AttributedString ats = getVAttributedString();
-		
-		Rectangle2D tb = g.getFontMetrics().getStringBounds(ats.getIterator(), 0, label.length(), g);
-		g.drawString(ats.getIterator(), area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2), 
-					area.y + (int)(area.height / 2) + (int)(tb.getHeight() / 2));
+		if(label != null && !"".equals(label)) {
+			AttributedString ats = getVAttributedString();
 
+			Rectangle2D tb = g.getFontMetrics().getStringBounds(ats.getIterator(), 0, label.length(), g);
+			g.drawString(ats.getIterator(), area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2), 
+					area.y + (int)(area.height / 2) + (int)(tb.getHeight() / 2));
+		}
 		if(isHighlighted())
 		{
 			Color hc = getHighlightColor();

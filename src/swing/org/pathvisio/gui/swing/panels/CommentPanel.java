@@ -82,7 +82,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(ADD)) {
-			getInput().addComment("Type you comment here", "");
+			getInput().addComment("Type your comment here", "");
 		} else if(e.getActionCommand().equals(REMOVE)) {
 			int row = commentsTable.getSelectedRow();
 			if(row > -1) getInput().removeComment(tableModel.comments.get(row));
@@ -105,7 +105,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 		}
 		
 		public int getColumnCount() {
-			return 2;
+			return 1;
 		}
 		
 		public int getRowCount() {
@@ -114,23 +114,17 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Comment c = comments.get(rowIndex);
-			String value = null;
-			if(c != null) {
-				if(columnIndex == 0) value = c.getSource();
-				else value = c.getComment();
-			}
-			return value;
+			return c.getComment();
 		}
 		
 		public String getColumnName(int column) {
-			return column == 0 ? "Source" : "Comment";
+			return "Comment";
 		}
 		
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			String value = (String)aValue;
 			Comment c = comments.get(rowIndex);
-			if(columnIndex == 0) c.setSource(value);
-			else c.setComment(value);
+			c.setComment(value);
 		}
 		
 		public boolean isCellEditable(int rowIndex, int columnIndex) {

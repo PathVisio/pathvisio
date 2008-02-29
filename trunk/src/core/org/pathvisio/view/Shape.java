@@ -19,7 +19,9 @@ package org.pathvisio.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
@@ -33,6 +35,7 @@ import org.pathvisio.model.ShapeType;
  */
 public class Shape extends GraphicsShape
 {
+	static final int FUZZY_STROKE_WIDTH = 7;
 	private static final long serialVersionUID = 1L;
 			
 	/**
@@ -112,16 +115,28 @@ public class Shape extends GraphicsShape
 		}
 	}	
 
+	protected java.awt.Shape getVOutline() {
+		java.awt.Shape s = getShape(true, FUZZY_STROKE_WIDTH); //fuzzy matching for outline
+		if(!gdata.isTransparent()) {
+			//Also include the filled area when not transparent
+			java.awt.Shape fill = getShape(true, false);
+			Area a = new Area(s);
+			a.add(new Area(fill));
+			s = a;
+		}
+		return s;
+	}
+
 	protected java.awt.Shape getShape(boolean rotate, float sw) {
 		double x = getVLeft();
 		double y = getVTop();
-		double w = getVWidth() + (int)sw;
-		double h = getVHeight() + (int)sw;
+		double w = getVWidth();
+		double h = getVHeight();
 		double cx = getVCenterX();
 		double cy = getVCenterY();
 
 		java.awt.Shape s = null;
-
+		
 		if (gdata.getShapeType() == null)
 		{
 			s = ShapeRegistry.getShape ("Default", x, y, w, h);
@@ -137,6 +152,11 @@ public class Shape extends GraphicsShape
 			AffineTransform t = new AffineTransform();
 			t.rotate(gdata.getRotation(), cx, cy);
 			s = t.createTransformedShape(s);
+		}
+
+		if(sw > 0) {
+			Stroke stroke = new BasicStroke(sw);
+			s = stroke.createStrokedShape(s);
 		}
 		return s;
 	}

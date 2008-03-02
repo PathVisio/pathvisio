@@ -1787,6 +1787,7 @@ public class VPathway implements PathwayListener
 				break;
 			case WIDTH:
 			case HEIGHT:
+				undoManager.newAction("Set common " + (alignType == AlignType.WIDTH ? "width" : "height"));
 				scaleSelected(alignType);
 				break;
 			}

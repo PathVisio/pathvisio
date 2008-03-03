@@ -27,8 +27,10 @@ import org.pathvisio.gui.swing.panels.CommentPanel;
 import org.pathvisio.gui.swing.panels.LitReferencePanel;
 import org.pathvisio.gui.swing.panels.PathwayElementPanel;
 import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.view.UndoAction;
 import org.pathvisio.view.VPathway;
 
 /**
@@ -70,6 +72,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	private JTabbedPane dialogPane;
 	private HashMap<String, PathwayElementPanel> panels;
 	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
+	private Pathway originalPathway; //Used for undo event
 		
 	protected boolean readonly;
 	
@@ -121,6 +124,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	 */
 	protected void storeState() {
 		PathwayElement e = getInput();
+		originalPathway = (Pathway) e.getParent().clone();
 		for(PropertyType t : e.getAttributes()) {
 			state.put(t, e.getProperty(t));
 		}
@@ -184,6 +188,9 @@ public class PathwayElementDialog extends OkCancelDialog {
 	 */
 	protected void okPressed() {
 		VPathway p = Engine.getCurrent().getActiveVPathway();
+		p.getUndoManager().newAction(
+				new UndoAction("Modified element properties", originalPathway)
+		);
 		if(p != null) p.redraw();
 		setVisible(false);
 	}

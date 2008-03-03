@@ -31,12 +31,24 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.view.VPathway;
 
+/**
+ * Dialog that allows you to display and edit properties of a PathwayElement
+ * @author thomas
+ *
+ */
 public class PathwayElementDialog extends OkCancelDialog {
 	private static final long serialVersionUID = 1L;
 
 	public static final String TAB_COMMENTS = "Comments";
 	public static final String TAB_LITERATURE = "Literature";
 	
+	/**
+	 * Create a dialog for the given pathway element.
+	 * @param e The pathway element
+	 * @param readonly Whether the dialog should be read-only or not
+	 * @return An instance of a subclass of PathwayElementDialog (depends on the
+	 * type attribute of the given PathwayElement, e.g. type DATANODE returns a DataNodeDialog
+	 */
 	public static PathwayElementDialog getInstance(PathwayElement e, boolean readonly) {
 		return getInstance(e, readonly, null, null);
 	}
@@ -61,7 +73,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 		
 	protected boolean readonly;
 	
-	public PathwayElementDialog(PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
+	protected PathwayElementDialog(PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
 		super(frame, title, locationComp, true);
 		this.readonly = readonly;
 		panels = new HashMap<String, PathwayElementPanel>();
@@ -75,22 +87,38 @@ public class PathwayElementDialog extends OkCancelDialog {
 		return dialogPane;
 	}
 	
+	/**
+	 * Get the pathway element for this dialog
+	 */
 	protected PathwayElement getInput() {
 		return input;
 	}
 	
+	/**
+	 * Set the pathway element for this dialog
+	 */
 	public void setInput(PathwayElement e) {
 		input = e;
 		storeState();
 		refresh();
 	}
 	
+	/**
+	 * Refresh the GUI components to reflect the current pathway element's properties. This
+	 * method automatically refreshes all registered PathwayElementPanels.
+	 * Subclasses may override this to update their own GUI components that are not added 
+	 * as PathwayElementPanel.
+	 */
 	protected void refresh() {
 		for(PathwayElementPanel p : panels.values()) {
 			p.setInput(input);
 		}
 	}
 	
+	/**
+	 * Store the current state of the pathway element. This is used to cancel
+	 * the modifications made in the dialog.
+	 */
 	protected void storeState() {
 		PathwayElement e = getInput();
 		for(PropertyType t : e.getAttributes()) {
@@ -98,6 +126,10 @@ public class PathwayElementDialog extends OkCancelDialog {
 		}
 	}
 	
+	/**
+	 * Restore the original state of the pathway element. This is called when the
+	 * cancel button is pressed.
+	 */
 	protected void restoreState() {
 		PathwayElement e = getInput();
 		for(PropertyType t : state.keySet()) {
@@ -110,7 +142,12 @@ public class PathwayElementDialog extends OkCancelDialog {
 		addPathwayElementPanel(TAB_LITERATURE, new LitReferencePanel());
 		addCustomTabs(dialogPane);
 	}
-		
+	
+	/**
+	 * 
+	 * @param tabLabel
+	 * @param p
+	 */
 	protected void addPathwayElementPanel(String tabLabel, PathwayElementPanel p) {
 		p.setReadOnly(readonly);
 		dialogPane.add(tabLabel, p);
@@ -134,19 +171,27 @@ public class PathwayElementDialog extends OkCancelDialog {
 	
 	/**
 	 * Override in subclass and use 
-	 * {@link #addPathwayElementPanel(String, PathwayElementPanel)} to add custom panels
+	 * {@link #addPathwayElementPanel(String, PathwayElementPanel)} to add a PathwayElementPanel, or
+	 * use {@link JTabbedPane#add(Component)}.
 	 * @param parent
 	 */
 	protected void addCustomTabs(JTabbedPane parent) {
 		//To be implemented by subclasses
 	}
 	
+	/**
+	 * Called when the OK button is pressed. Will close the dialog amd register an undo event.
+	 */
 	protected void okPressed() {
 		VPathway p = Engine.getCurrent().getActiveVPathway();
 		if(p != null) p.redraw();
 		setVisible(false);
 	}
 	
+	/**
+	 * Called when the Cancel button is pressed. Will close the dialog and revert the
+	 * pathway element to it's original state.
+	 */
 	protected void cancelPressed() {
 		restoreState();
 		setVisible(false);

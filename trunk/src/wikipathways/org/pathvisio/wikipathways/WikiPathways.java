@@ -351,6 +351,22 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 									"This could mean somebody else modified the pathway since you downloaded it.\n" +
 									"Please save your changes locally and copy your changes over to\n" +
 									"the newest version.";
+								if(isNew()) { //If this is a new pathway, give the option to save under different name
+									String newName = getPwName();
+									while(newName != null && getPwName().equals(newName)) {
+										newName = uiHandler.askInput(getPwName() + "-1", 
+												"Somebody else already created a pathway under the same name.\n" +
+												"Please specify a new name for this pathway.");
+									}
+									if(newName != null) {
+										String newUrl = Parameter.PW_URL.getValue().replace(getPwName(), newName);
+										Parameter.PW_NAME.setValue(newName);
+										Parameter.PW_URL.setValue(newUrl);
+										return saveUI(finalDescription);
+									} else {
+										return false;
+									}
+								}
 							}
 							uiHandler.showError("Unable to save pathway", msg);
 						}
@@ -363,7 +379,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 		return false;
 	}
-	
+		
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
 		if(remoteChanged || Engine.getCurrent().getActivePathway().hasChanged()) {
 			File gpmlFile = getLocalFile();

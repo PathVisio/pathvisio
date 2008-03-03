@@ -58,7 +58,7 @@ import org.pathvisio.util.RunnableWithProgress;
 public class DataNodeDialog extends PathwayElementDialog {
 	private static final long serialVersionUID = 1L;
 
-	public DataNodeDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
+	protected DataNodeDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(e, readonly, frame, "DataNode properties", locationComp);
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();

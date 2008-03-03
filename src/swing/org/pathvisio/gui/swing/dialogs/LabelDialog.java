@@ -38,7 +38,7 @@ import org.pathvisio.model.PathwayElement;
 public class LabelDialog extends PathwayElementDialog {
 	JTextField text;
 	
-	public LabelDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
+	protected LabelDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(e, readonly, frame, "Label properties", locationComp);
 		text.requestFocus();
 	}

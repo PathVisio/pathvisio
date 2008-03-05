@@ -223,8 +223,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			public void actionPerformed(ActionEvent e) {
 				JComboBox combo = (JComboBox) e.getSource();
 				Object s = combo.getSelectedItem();
-				if (s instanceof ZoomAction) {
-					((ZoomAction) s).actionPerformed(e);
+				if (s instanceof Action) {
+					((Action) s).actionPerformed(e);
 				} else if (s instanceof String) {
 					String zs = (String) s;
 					try {

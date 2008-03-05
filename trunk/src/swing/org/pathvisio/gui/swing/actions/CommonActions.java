@@ -20,7 +20,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -39,7 +38,6 @@ import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.OrderType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
@@ -106,7 +104,7 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action undoAction = new UndoAction();
 
 	public final Action[] zoomActions = new Action[] {
-			new ZoomAction(VPathway.ZOOM_TO_FIT),
+			new ZoomToFitAction(),
 			new ZoomAction(10),
 			new ZoomAction(25),
 			new ZoomAction(50),
@@ -199,7 +197,35 @@ public class CommonActions implements ApplicationEventListener {
 	public CommonActions(Engine e) {
 		e.addApplicationEventListener(this);
 	}
-					
+
+	public static class ZoomToFitAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
+		Component parent;
+		
+		public ZoomToFitAction() 
+		{
+			super();
+			putValue(Action.NAME, toString());
+			putValue(Action.SHORT_DESCRIPTION, "Make the pathway fit in the window");
+		}
+		
+		public void actionPerformed(ActionEvent e) 
+		{
+			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
+			if(vPathway != null) 
+			{
+				double zoomFactor = vPathway.getFitZoomFactor(); 
+				vPathway.setPctZoom(zoomFactor);
+			}
+		}
+		
+		public String toString()
+		{
+			return "Fit to window";
+		}
+	}
+	
 	public static class ZoomAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
@@ -212,7 +238,6 @@ public class CommonActions implements ApplicationEventListener {
 			String descr = "Set zoom to " + (int)zf + "%";
 			putValue(Action.NAME, toString());
 			putValue(Action.SHORT_DESCRIPTION, descr);
-			putValue(Action.LONG_DESCRIPTION, descr);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -222,10 +247,8 @@ public class CommonActions implements ApplicationEventListener {
 			}
 		}
 		
-		public String toString() {
-			if(zoomFactor == VPathway.ZOOM_TO_FIT) {
-				return "Fit to window";
-			}
+		public String toString()
+		{
 			return (int)zoomFactor + "%";
 		}
 	}

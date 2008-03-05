@@ -227,21 +227,50 @@ public class CommonActions
 		{
 			window = w;
 			pctZoomFactor = newPctZoomFactor;
-			if(pctZoomFactor == MainWindowBase.ZOOM_TO_FIT) 
-			{
-				setText ("Zoom to fit");
-				setToolTipText("Zoom mapp to fit window");
-			}
-			else
-			{
-				setText (pctZoomFactor + " %");
-				setToolTipText ("Zoom mapp to " + pctZoomFactor + " %");
-			}
+			setText (pctZoomFactor + " %");
+			setToolTipText ("Zoom mapp to " + pctZoomFactor + " %");
 		}
-		public void run () {
+
+		public void run () 
+		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			if (drawing != null)
 			{
+				drawing.setPctZoom(pctZoomFactor);
+			}
+			else
+			{
+				MessageDialog.openError (window.getShell(), "Error", 
+					"No gpml file loaded! Open or create a new gpml file first");
+			}
+		}
+	}
+
+	/**
+	 * {@link Action} that zooms a mapp to the specified zoomfactor
+	 */
+	static class ZoomToFitAction extends Action 
+	{
+		MainWindowBase window;
+		
+		/**
+		 * Constructor for this class
+		 * @param w {@link MainWindow} window this action belongs to
+		 * @param newPctZoomFactor the zoom factor as percentage of original
+		 */
+		public ZoomToFitAction (MainWindowBase w)
+		{
+			window = w;
+			setText ("Zoom to fit");
+			setToolTipText("Zoom pathway to fit window");
+		}
+		
+		public void run () 
+		{
+			VPathway drawing = Engine.getCurrent().getActiveVPathway();
+			if (drawing != null)
+			{
+				double pctZoomFactor = drawing.getFitZoomFactor();
 				drawing.setPctZoom(pctZoomFactor);
 			}
 			else

@@ -60,8 +60,6 @@ public class VPathway implements PathwayListener
 
 	static final double M_PASTE_OFFSET = 10 * 15;
 
-	public static final double ZOOM_TO_FIT = -1;
-
 	static final int SMALL_INCREMENT = 2;
 
 	private boolean selectionEnabled = true;
@@ -472,20 +470,11 @@ public class VPathway implements PathwayListener
 	 * Sets the drawings zoom in percent
 	 * 
 	 * @param pctZoomFactor
-	 *            zoomfactor in percent, or ZOOM_TO_FIT to fit the zoomfactor to
-	 *            the drawing's viewport
+	 *            zoomfactor in percent
+	 * @see getFitZoomFactor() for fitting the pathway inside the viewport.
 	 */
 	public void setPctZoom(double pctZoomFactor)
 	{
-		if (pctZoomFactor == ZOOM_TO_FIT)
-		{
-			Dimension drawingSize = getWrapper().getVSize();
-			Dimension viewportSize = getWrapper().getViewportSize();
-			pctZoomFactor = (int) Math.min(getPctZoom()
-					* (double) viewportSize.width / drawingSize.width,
-					getPctZoom() * (double) viewportSize.height
-							/ drawingSize.height);
-		}
 		zoomFactor = pctZoomFactor / 100.0 / 15.0;
 		int width = getVWidth();
 		int height = getVHeight();
@@ -496,6 +485,22 @@ public class VPathway implements PathwayListener
 		}
 	}
 
+	/**
+	 * Calculate the zoom factor that would
+	 * make the pathway fit in the viewport. 
+	 */
+	public double getFitZoomFactor()
+	{
+		double result;
+		Dimension drawingSize = getWrapper().getVSize();
+		Dimension viewportSize = getWrapper().getViewportSize();
+		result = (int) Math.min(getPctZoom()
+				* (double) viewportSize.width / drawingSize.width,
+				getPctZoom() * (double) viewportSize.height
+						/ drawingSize.height);
+		return result;
+	}
+	
 	public void setPressedObject(VPathwayElement o)
 	{
 		pressedObject = o;

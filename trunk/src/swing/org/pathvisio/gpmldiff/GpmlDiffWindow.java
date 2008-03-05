@@ -33,6 +33,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	
 	private JScrollPane[] pwyPane = new JScrollPane[2];
 	private JToolBar toolbar = null;
+	private JComboBox zoomCombo = null;
 	
 	public static final int PWY_OLD = 0;
 	public static final int PWY_NEW = 1;
@@ -50,7 +51,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	
 	public void setFile (int pwyType, File f)
 	{
-		//Pathway pwy = new Pathway();
+		// Pathway pwy = new Pathway();
 		doc[pwyType] = PwyDoc.read (f);
 		assert (doc[pwyType] != null);
 					
@@ -83,17 +84,6 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 			pwyPane[0].getVerticalScrollBar().setModel(
 				pwyPane[1].getVerticalScrollBar().getModel());
 		}
-				
-		/*catch (ConverterException ce)
-		  {
-		  JOptionPane.showMessageDialog (
-		  parent,
-		  "Exception while opening gpml file.\n" +
-		  "Please check that the file you opened is a valid Gpml file.",
-		  "Open Error", JOptionPane.ERROR_MESSAGE);
-		  Logger.log.error ("Error opening gpml", ce);
-		  }*/
-		
 	}
 	
 	private class LoadPwyAction extends AbstractAction
@@ -125,23 +115,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 			}
 		}
 	}
-/*
-	class CloseAction extends AbstractAction
-	{
-		JPanel parent;
-		public CloseAction(JPanel _parent)
-		{
-			super("Close");
-			parent = _parent;
-		}
 
-		public void actionPerformed (ActionEvent e)
-		{
-			parent.dispose();
-			System.exit(0);
-		}
-	}
-*/
 	class CenterAction extends AbstractAction
 	{
 		private static final long serialVersionUID = 1L;
@@ -173,35 +147,80 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 		
 		public void actionPerformed(ActionEvent e)
 		{
-			zoomFactor = actionZoomFactor;
-			if(view[0] != null)
-			{			   
-				view[0].setPctZoom(zoomFactor);
-			}
-			if(view[1] != null)
-			{
-				view[1].setPctZoom(zoomFactor);
-				glassPane.setPctZoom (view[1].getPctZoom());
-			}
-		}
+			setZoomFactor (actionZoomFactor);
+		}		
 		
 		public String toString()
 		{
-			if(actionZoomFactor == VPathway.ZOOM_TO_FIT)
-			{
-				return "Fit to window";
-			}
 			return (int)actionZoomFactor + "%";
 		}
 	}
 
+	private class ZoomToFitAction extends AbstractAction
+	{
+		private static final long serialVersionUID = 1L;
+
+		public ZoomToFitAction()
+		{
+			putValue(Action.NAME, toString());
+			putValue(Action.SHORT_DESCRIPTION, "Fit pathway to window");
+		}
+		
+		public void actionPerformed(ActionEvent e)
+		{
+			zoomToFit();
+		}	
+		
+		public String toString()
+		{
+			return "Fit to window";
+		}
+	}
+
+	/**
+	 * calculate the best zoom factor to fit both pathways,
+	 * then zoom to it.
+	 */
+	void zoomToFit ()
+	{
+		if (view[0] != null)
+		{
+			zoomFactor = view[0].getFitZoomFactor();
+		}
+		if (view[1] != null)
+		{
+			double temp = view[1].getFitZoomFactor();
+			if (view[0] != null && temp < zoomFactor)
+			{
+				zoomFactor = temp;
+			}
+		}
+		zoomCombo.setSelectedItem( (int)zoomFactor + "%");
+	}
+	/**
+	 * Set the zoom factor for both panels at once. 
+	 */
+	void setZoomFactor (double factor)
+	{
+		zoomFactor = factor;
+		if(view[0] != null)
+		{			   
+			view[0].setPctZoom(zoomFactor);
+		}
+		if(view[1] != null)
+		{
+			view[1].setPctZoom(zoomFactor);
+			glassPane.setPctZoom (view[1].getPctZoom());
+		}		
+	}
+	
 	void addToolbarActions()
 	{		
 		toolbar.setLayout (new WrapLayout (1, 1));
 
 		toolbar.add(new JLabel("Zoom:", JLabel.LEFT));
-		JComboBox combo = new JComboBox(new Object[] {
-				new ZoomAction(VPathway.ZOOM_TO_FIT),
+		zoomCombo = new JComboBox(new Object[] {
+				new ZoomToFitAction(),
 				new ZoomAction(20),
 				new ZoomAction(30),
 				new ZoomAction(50),
@@ -209,10 +228,10 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 				new ZoomAction(100),
 				new ZoomAction(120),
 				new ZoomAction(150) });
-		combo.setMaximumSize(combo.getPreferredSize());
-		combo.setEditable(true);
-		combo.setSelectedIndex(5); // 100%
-		combo.addActionListener(new ActionListener()
+		zoomCombo.setMaximumSize(zoomCombo.getPreferredSize());
+		zoomCombo.setEditable(true);
+		zoomCombo.setSelectedIndex(5); // 100%
+		zoomCombo.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -237,11 +256,11 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 				}
 			}
 		});
-		toolbar.add (combo);
+		toolbar.add (zoomCombo);
 
 
-//		toolbar.addSeparator();
-//		toolbar.add (new CenterAction());
+// toolbar.addSeparator();
+// toolbar.add (new CenterAction());
 	}
 
 

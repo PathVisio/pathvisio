@@ -331,7 +331,7 @@ public class MainWindow extends MainWindowBase
 		zoomMenu.add(new CommonActions.ZoomAction(this, 125));
 		zoomMenu.add(new CommonActions.ZoomAction(this, 150));
 		zoomMenu.add(new CommonActions.ZoomAction(this, 200));
-		zoomMenu.add(new CommonActions.ZoomAction(this, ZOOM_TO_FIT));
+		zoomMenu.add(new CommonActions.ZoomToFitAction(this));
 		viewMenu.add(zoomMenu);
 		MenuManager dataMenu = new MenuManager ("&Data");
 		dataMenu.add(selectGdbAction);

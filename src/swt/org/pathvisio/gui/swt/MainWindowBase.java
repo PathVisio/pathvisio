@@ -78,7 +78,6 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 															   
 {
 	private static final long serialVersionUID = 1L;
-	static int ZOOM_TO_FIT = -1;
 		
 	protected CommonActions.UndoAction undoAction = new CommonActions.UndoAction(this);	
 	protected CommonActions.NewAction newAction = new CommonActions.NewAction (this);
@@ -292,11 +291,14 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 						String zoomText = zoomCombo.getText().replace("%", "");
 						try {
 							pctZoom = Integer.parseInt(zoomText);
+							new CommonActions.ZoomAction(window, pctZoom).run();
 						} catch (Exception ex) { 
 							if(zoomText.equals("Zoom to fit"))
-									{ pctZoom = ZOOM_TO_FIT; } else { return; }
+							{ 
+								new CommonActions.ZoomToFitAction(window).run(); 
+							} else { return; }
 						}
-						new CommonActions.ZoomAction(window, pctZoom).run();
+						
 					}
 					public void widgetDefaultSelected(SelectionEvent e) { widgetSelected(e); }
 				});

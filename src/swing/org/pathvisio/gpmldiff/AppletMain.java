@@ -20,7 +20,6 @@ import javax.swing.*;
 import java.net.URL;
 import java.io.File;
 import org.pathvisio.util.FileUtils;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 
@@ -85,7 +84,11 @@ public class AppletMain extends JApplet
 				this, "Missing 'new' parameter\nI won't be able to compare pathways", "Initialization error", JOptionPane.ERROR_MESSAGE);
 			Logger.log.error ("New parameter was missing");
 		}
-		panel.zoomToFit();
 	}
 	
+	public void start()
+	{
+		panel.zoomToFit();
+	}
+
 }

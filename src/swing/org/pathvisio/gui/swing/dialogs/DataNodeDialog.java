@@ -180,7 +180,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		JPanel searchPanel = new JPanel();
 		JPanel fieldPanel = new JPanel();
 		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
-		fieldPanel.setBorder(BorderFactory.createTitledBorder("Manual entry"));
+		fieldPanel.setBorder(BorderFactory.createTitledBorder("Manual entry2"));
 		GridBagConstraints panelConstraints = new GridBagConstraints();
 		panelConstraints.fill = GridBagConstraints.HORIZONTAL;
 		panelConstraints.gridx = 0;

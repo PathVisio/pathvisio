@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gpmldiff;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import javax.swing.*;
 
@@ -27,7 +29,7 @@ class GpmlDiffGui
 	public static void main (String[] argv)
 	{
 		JFrame window = new JFrame();
-		GpmlDiffWindow panel = new GpmlDiffWindow(window);
+		final GpmlDiffWindow panel = new GpmlDiffWindow(window);
 		panel.addFileActions();
 		if (argv.length > 0)
 		{
@@ -48,7 +50,16 @@ class GpmlDiffGui
 		window.setSize (WINDOW_WIDTH, WINDOW_HEIGHT);
 		window.setContentPane(panel);
 		window.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		
+		window.addWindowListener(new WindowAdapter()
+		{
+			public void windowOpened(WindowEvent arg0) 
+			{
+				panel.zoomToFit();
+			}
+		});
 		window.setVisible (true);
-		panel.zoomToFit();
+		
+		
 	}
 }

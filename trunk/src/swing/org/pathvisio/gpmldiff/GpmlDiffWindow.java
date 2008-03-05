@@ -196,7 +196,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 				result = temp;
 			}		
 		}
-		if (result != -1)
+		if (result > 0)
 		{
 			setZoomFactor (result);
 		}

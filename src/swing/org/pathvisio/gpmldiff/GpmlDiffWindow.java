@@ -183,17 +183,22 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	 */
 	void zoomToFit ()
 	{
+		double result = -1;
 		if (view[0] != null)
 		{
-			zoomFactor = view[0].getFitZoomFactor();
+			result = view[0].getFitZoomFactor();
 		}
 		if (view[1] != null)
 		{
 			double temp = view[1].getFitZoomFactor();
-			if (view[0] != null && temp < zoomFactor)
+			if (view[0] != null && temp < result)
 			{
-				zoomFactor = temp;
-			}
+				result = temp;
+			}		
+		}
+		if (result != -1)
+		{
+			setZoomFactor (result);
 		}
 		zoomCombo.setSelectedItem( (int)zoomFactor + "%");
 	}
@@ -237,9 +242,9 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 			{
 				JComboBox combo = (JComboBox) e.getSource();
 				Object s = combo.getSelectedItem();
-				if (s instanceof ZoomAction)
+				if (s instanceof Action)
 				{
-					((ZoomAction) s).actionPerformed(e);
+					((Action) s).actionPerformed(e);
 				}
 				else if (s instanceof String)
 				{
@@ -247,7 +252,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 					try
 					{
 						double zf = Double.parseDouble(zs);
-						new ZoomAction(zf).actionPerformed(e);
+						setZoomFactor(zf);
 					}
 					catch (Exception ex)
 					{

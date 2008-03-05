@@ -29,9 +29,9 @@ import java.awt.BasicStroke;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.font.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.geom.GeneralPath;
+import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -73,6 +73,7 @@ class GlassPane extends JPanel implements AWTEventListener
 	private static final int BALOON_MARGIN = 20;
 	private static final int HINT_FONT_SIZE = 11;
 	private static final float WAYPOINT_OFFSET = 200;
+	private static final int WRAP_WIDTH = 400;
 
 	private double zoomFactor = 1.0;
 
@@ -207,32 +208,45 @@ class GlassPane extends JPanel implements AWTEventListener
 		FontRenderContext frc = g2.getFontRenderContext();
 
 		// first determine size.
-		int maxTextWidth = 0;
+		int currentTextWidth = 0;
 
 		Font f = new Font("SansSerif", Font.PLAIN, HINT_FONT_SIZE);
 		Font fb = new Font("SansSerif", Font.BOLD, HINT_FONT_SIZE);
 
+		// hash to store text layouts for later drawing.
 		Map <TextLayout, Point> layouts = new HashMap <TextLayout, Point>();
 
 		int ypos = 0;
 		if (hint != null) for (Map.Entry<String, String> entry : hint.entrySet())
 		{
+			// show the key as a bold, non-wrapped text.
+			// Only a single TextLayout needed.
 			TextLayout tl0 = new TextLayout (entry.getKey() + ": ", fb, frc);
-			TextLayout tl1 = new TextLayout (entry.getValue(), f, frc);
-			Rectangle2D b0 = tl0.getBounds();
-			Rectangle2D b1 = tl1.getBounds();
-
-			ypos += tl0.getAscent();
-
-			layouts.put (tl0, new Point (0, ypos));
-			layouts.put (tl1, new Point (10 + (int)b0.getWidth(), ypos));
-
-			ypos += tl0.getDescent() + 10 + tl0.getLeading();
-
-			int width = (int)(b0.getWidth() + b1.getWidth());
-			if (width > maxTextWidth) { maxTextWidth = width; }
+			int leftwidth = (int)tl0.getBounds().getWidth();
+			layouts.put (tl0, new Point (0, (int)(ypos + tl0.getAscent())));
+			
+			// show the value as a plain, wrapped text.
+			// multiple TextLayouts are needed.
+			String text = entry.getValue();
+			AttributedString as = new AttributedString (text);
+			as.addAttribute(TextAttribute.FONT, f, 0, text.length());
+			
+			// use LineBreakMeasurer to wrap the text across multiple lines.
+			LineBreakMeasurer lbm = new LineBreakMeasurer (as.getIterator(), frc);
+			
+			while (lbm.getPosition() < text.length())
+			{
+				TextLayout tl = lbm.nextLayout (WRAP_WIDTH);
+				ypos += tl.getAscent();
+				layouts.put (tl, new Point (10 + leftwidth, ypos));
+				ypos += tl.getDescent() + tl.getLeading();
+				int width = leftwidth + (int)tl.getBounds().getWidth();
+				// store maximum width for calculating baloon width later.
+				if (width > currentTextWidth) { currentTextWidth = width; }
+			}
 		}
-		baloonWidth = maxTextWidth + 2 * BALOON_MARGIN;
+
+		baloonWidth = currentTextWidth + 2 * BALOON_MARGIN;
 		baloonHeight = ypos + 2 * BALOON_MARGIN;
 
 		// figure out coordinates that are not in the way of the mouse.
@@ -250,7 +264,7 @@ class GlassPane extends JPanel implements AWTEventListener
 		g2.draw (bg);
 
 		Point hintPos = getHintPos();
-		// then do actual drawing
+		// now start actual drawing of text
 		for (Map.Entry<TextLayout, Point> entry : layouts.entrySet())
 		{
 			Point textPos = entry.getValue();
@@ -262,7 +276,6 @@ class GlassPane extends JPanel implements AWTEventListener
 		}
 
 		// draw lines
-
 		Shape oldClip = g2.getClip();
 		
 		g2.setStroke (new BasicStroke (5));

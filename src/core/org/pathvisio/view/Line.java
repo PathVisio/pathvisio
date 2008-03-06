@@ -413,6 +413,9 @@ public class Line extends Graphics
 		for(MPoint p : gdata.getMPoints()) {
 			canvas.pointsMtoV.remove(p);
 		}
+		for(VAnchor a : anchors.values()) {
+			a.destroy();
+		}
 	}
 	
 	/**

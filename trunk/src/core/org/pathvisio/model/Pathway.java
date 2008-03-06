@@ -462,13 +462,13 @@ public class Pathway implements PathwayListener
 	{
 		String result;
 		Random rn = new Random();
-		int mod = 0x600; // 3 hex letters
-		int min = 0xa00; // has to start with a letter
+		int mod = 0x60000; // 3 hex letters
+		int min = 0xa0000; // has to start with a letter
 		// in case this map is getting big, do more hex letters
-		if ((ids.size()) > 1000) 
+		if ((ids.size()) > 0x10000) 
 		{
-			mod = 0x60000;
-			min = 0xa0000;
+			mod = 0x60000000;
+			min = 0xa0000000;
 		}
 				
 		do

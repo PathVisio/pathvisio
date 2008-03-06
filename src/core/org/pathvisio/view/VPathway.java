@@ -562,14 +562,6 @@ public class VPathway implements PathwayListener
 	public void mouseMove(MouseEvent ve)
 	{
 		boolean altPressed = ve.isKeyDown(MouseEvent.M_ALT);
-		
-		//Check if ctrl is pressed and if so, apply snap to line
-		if(ve.isKeyDown(MouseEvent.M_CTRL)) {
-			GlobalPreference.SNAP_TO_ANGLE.setValue("true");
-		} else {
-			GlobalPreference.SNAP_TO_ANGLE.setValue("false");
-		}
-		
 		// If draggin, drag the pressed object
 		// And only when the right button isn't clicked
 		if (pressedObject != null && isDragging && !ve.isKeyDown(java.awt.event.MouseEvent.BUTTON3_DOWN_MASK))

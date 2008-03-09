@@ -185,8 +185,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 		panelConstraints.fill = GridBagConstraints.HORIZONTAL;
 		panelConstraints.gridx = 0;
 		panelConstraints.weightx = 1;
-		panelConstraints.insets = new Insets(10, 10, 5, 5);
-		panelConstraints.ipady = 30;
+		panelConstraints.insets = new Insets(10, 10, 15, 15);
+		panelConstraints.ipady = 0;
 		panelConstraints.gridy = GridBagConstraints.RELATIVE;
 
 		panel.add(searchPanel, panelConstraints);

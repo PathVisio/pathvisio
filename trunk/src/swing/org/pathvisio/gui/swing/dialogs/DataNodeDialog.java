@@ -183,10 +183,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 		fieldPanel.setBorder(BorderFactory.createTitledBorder("Manual entry"));
 		GridBagConstraints panelConstraints = new GridBagConstraints();
 		panelConstraints.fill = GridBagConstraints.BOTH;
-		panelConstraints.gridx = 0;
-		panelConstraints.weightx = 1;
-		panelConstraints.weighty = 2;
-		panelConstraints.insets = new Insets(10, 10, 5, 5);
+		panelConstraints.weighty = 1;
+		panelConstraints.insets = new Insets(2, 2, 2, 2);
 		panelConstraints.gridy = GridBagConstraints.RELATIVE;
 
 		panel.add(searchPanel, panelConstraints);

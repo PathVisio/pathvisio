@@ -442,6 +442,8 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<copy toDir="${wikipathways.applet.dest}/org/pathvisio/wikipathways" 
 			file="${build.wikipathways.dir}/org/pathvisio/wikipathways/Preloader.class"/>
 		<echo file="${wikipathways.applet.dest}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
+		<!-- Copy GPML.xsd -->
+		<copy toDir="${wikipathways.bin.dest}" file="GPML.xsd"/>
 	</target>
 	
 	<target name="docs" depends="prepare" description="generate api-docs">

@@ -133,10 +133,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
 		backpagePane = new BackpagePane();
+		SearchPane searchPane = new SearchPane();
 		
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
 		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
+		sidebarTabbedPane.addTab ("Search", searchPane); 
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				pathwayScrollPane, sidebarTabbedPane);

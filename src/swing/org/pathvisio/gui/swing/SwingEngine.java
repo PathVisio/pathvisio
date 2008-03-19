@@ -155,6 +155,31 @@ public class SwingEngine {
 		
 		return processTask(pk, d, sw);
 	}
+
+	private boolean openPathway(final File f) 
+	{		
+		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+				"", pk, false, true);
+				
+		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
+			protected Boolean doInBackground() throws Exception {
+				pk.setTaskName("Opening pathway");
+				try {
+					Engine.getCurrent().setWrapper (createWrapper());
+					Engine.getCurrent().openPathway(f);
+					return true;
+				} catch(ConverterException e) {
+					handleConverterException(e.getMessage(), null, e);
+					return false;
+				} finally {
+					pk.finished();
+				}
+			}
+		};
+		
+		return processTask(pk, d, sw);
+	}
 	
 	public boolean importPathway(final File f) {
 		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
@@ -288,6 +313,47 @@ public class SwingEngine {
 			}
 			return SwingEngine.getCurrent().importPathway(f);
 
+		}
+		return false;
+	}
+
+	/**
+	 * Opens a file chooser dialog, and opens the chosen pathway.
+	 * @return true if a pathway was openend, false if the operation was 
+	 * cancelled
+	 */
+	public boolean openPathway() 
+	{
+		//Open file dialog
+		JFileChooser jfc = new JFileChooser();
+		jfc.setAcceptAllFileFilterUsed(false);
+		jfc.setDialogTitle("Import pathway");
+		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+
+		jfc.addChoosableFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				if(f.isDirectory()) return true;
+				String ext = f.toString().substring(f.toString().length() - 4);
+				if(ext.equalsIgnoreCase("xml") || ext.equalsIgnoreCase("gpml")) {
+					return true;
+				}
+				return false;
+			}
+			public String getDescription() {
+				return "GPML files (*.gpml, *.xml)";
+			}
+			
+		});
+
+		//TODO: use constants for extensions
+		int status = jfc.showDialog(getApplicationPanel(), "Open pathway");
+		if(status == JFileChooser.APPROVE_OPTION) {	
+			File f = jfc.getSelectedFile();			
+			if(!(f.toString().toUpperCase().endsWith("GPML") || f.toString().toUpperCase().endsWith("XML"))) 
+			{
+				f = new File(f.toString() + ".gpml");
+			}
+			return openPathway(f);
 		}
 		return false;
 	}

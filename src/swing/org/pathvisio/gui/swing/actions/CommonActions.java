@@ -24,10 +24,14 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
@@ -35,6 +39,7 @@ import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -57,6 +62,10 @@ import org.pathvisio.view.ViewActions;
 import org.pathvisio.view.ViewActions.CopyAction;
 import org.pathvisio.view.ViewActions.PasteAction;
 import org.pathvisio.view.ViewActions.UndoAction;
+
+import edu.stanford.ejalbert.BrowserLauncher;
+import edu.stanford.ejalbert.exception.BrowserLaunchingExecutionException;
+import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 
 /**
  * A collection of {@link Action}s that may be used throughout the program (e.g. in
@@ -97,6 +106,10 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action saveAsAction = new SaveAsAction();
 	public final Action importAction = new ImportAction();
 	public final Action exportAction = new ExportAction();
+	public final Action openAction = new OpenAction();
+	public final Action aboutAction = new AboutAction();
+	public final Action helpAction = new HelpAction();
+	public final Action newAction = new NewAction();
 	
 	public final Action copyAction = new CopyAction();
 	public final Action pasteAction = new PasteAction();
@@ -515,4 +528,105 @@ public class CommonActions implements ApplicationEventListener {
 			return PathwayElementDialog.TAB_COMMENTS;
 		}
 	}
+
+	public static class AboutAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public AboutAction() 
+		{
+			super();
+			putValue(Action.NAME, "About");
+			putValue(Action.SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+			putValue(Action.LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			JFrame aboutDlg = new JFrame();
+			JLabel label = new JLabel();
+			JButton btnOk = new JButton();
+			
+			label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
+				"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nBiGCaT");
+			
+			//TODO
+			//"about.logo"
+
+			btnOk.setText("OK");
+			
+			aboutDlg.add (label);
+			aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);
+			aboutDlg.add (btnOk);
+			
+			aboutDlg.pack();
+			aboutDlg.setVisible(true);
+		}
+	}
+
+	public static class HelpAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public HelpAction() 
+		{
+			super();
+			putValue(Action.NAME, "Help");
+			putValue(Action.SHORT_DESCRIPTION, "Open online help in a browser window");
+			putValue(Action.LONG_DESCRIPTION, "Open online help in a browser window");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			//TODO: wrap in thread
+			String url = Globals.HELP_URL;
+			try
+			{
+				BrowserLauncher bl = new BrowserLauncher(null);
+				bl.openURLinBrowser(url);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public static class OpenAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public OpenAction() 
+		{
+			super();
+			putValue(Action.NAME, "Open");
+			putValue(Action.SHORT_DESCRIPTION, "Open a pathway file");
+			putValue(Action.LONG_DESCRIPTION, "Open a pathway file");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			//TODO
+			SwingEngine.getCurrent().openPathway();
+		}
+	}
+
+	public static class NewAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public NewAction() 
+		{
+			super();
+			putValue(Action.NAME, "New");
+			putValue(Action.SHORT_DESCRIPTION, "Start a new, empty pathway");
+			putValue(Action.LONG_DESCRIPTION, "Start a new, empty pathway");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			SwingEngine.getCurrent().newPathway();
+		}
+	}
+
 }

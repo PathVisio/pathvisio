@@ -165,11 +165,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	}
 	
 	protected void addMenuActions(JMenuBar mb) {
-		JMenu pathwayMenu = new JMenu("Pathway");
-		addToMenu(actions.saveAction, pathwayMenu);
-		addToMenu(actions.saveAsAction, pathwayMenu);
-		addToMenu(actions.importAction, pathwayMenu);
-		addToMenu(actions.exportAction, pathwayMenu);
+		JMenu fileMenu = new JMenu("File");
+		addToMenu(actions.newAction, fileMenu);
+		addToMenu(actions.openAction, fileMenu);
+		addToMenu(actions.saveAction, fileMenu);
+		addToMenu(actions.saveAsAction, fileMenu);
+		addToMenu(actions.importAction, fileMenu);
+		addToMenu(actions.exportAction, fileMenu);
 
 		JMenu editMenu = new JMenu("Edit");
 		addToMenu(actions.undoAction, editMenu);
@@ -191,10 +193,15 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		viewMenu.add(zoomMenu);
 		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
-		mb.add(pathwayMenu);
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.add(actions.aboutAction);
+		helpMenu.add(actions.helpAction);
+		
+		mb.add(fileMenu);
 		mb.add(editMenu);
 		mb.add(selectionMenu);
 		mb.add(viewMenu);
+		mb.add(helpMenu);
 	}
 
 	protected void addToolBarActions(JToolBar tb) {

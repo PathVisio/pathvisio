@@ -17,7 +17,6 @@
 package org.pathvisio.gui.swing.actions;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -45,7 +44,6 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -359,8 +357,12 @@ public class CommonActions implements ApplicationEventListener {
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
 		}
 		
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) 
+		{
+			if (SwingEngine.getCurrent().canDiscardPathway())
+			{
 				SwingEngine.getCurrent().importPathway();
+			}
 		}
 	}
 	
@@ -642,7 +644,10 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			SwingEngine.getCurrent().openPathway();
+			if (SwingEngine.getCurrent().canDiscardPathway())
+			{
+				SwingEngine.getCurrent().openPathway();
+			}
 		}
 	}
 
@@ -661,7 +666,10 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			SwingEngine.getCurrent().newPathway();
+			if (SwingEngine.getCurrent().canDiscardPathway())
+			{
+				SwingEngine.getCurrent().newPathway();
+			}
 		}
 	}
 

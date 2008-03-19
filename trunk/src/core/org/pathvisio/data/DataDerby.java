@@ -55,10 +55,6 @@ public class DataDerby extends DBConnector
 	public static final String DB_NAME_IN_ZIP = "database";
 	String lastDbName;
 	
-	public Connection createConnection(String dbName) throws DataException {
-		return createConnection(dbName, PROP_NONE);
-	}
-	
 	public Connection createConnection(String dbName, int props) throws DataException 
 	{
 		boolean recreate = (props & PROP_RECREATE) != 0;

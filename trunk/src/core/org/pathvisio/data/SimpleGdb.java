@@ -415,15 +415,18 @@ public class SimpleGdb implements Gdb
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
 
 		con = dbConnector.createConnection(dbName, props);
-		try
+		if ((props & DBConnector.PROP_RECREATE) == 0)
 		{
-			con.setReadOnly(true);
+			try
+			{
+				con.setReadOnly(true);
+			}
+			catch (SQLException e)
+			{
+				throw new DataException (e);
+			}
+			checkSchemaVersion();
 		}
-		catch (SQLException e)
-		{
-			throw new DataException (e);
-		}
-		checkSchemaVersion();
 	}
 
 	private void checkSchemaVersion() 
@@ -462,8 +465,9 @@ public class SimpleGdb implements Gdb
 	 * Note: Official GDB's are created by AP, not with this code.
 	 * This is just here for testing purposes.
 	 */
-	public void createGdbTables() {
-		Logger.log.trace("Info:  Creating tables");
+	public void createGdbTables() 
+	{
+		Logger.log.info("Info:  Creating tables");
 
 		try 
 		{
@@ -474,8 +478,9 @@ public class SimpleGdb implements Gdb
 		} 
 		catch(Exception e) 
 		{
-			Logger.log.error("Unable to drop gdb tables: "+e.getMessage(), e);
+			Logger.log.error("Unable to drop gdb tables (ignoring): " + e.getMessage());
 		}
+		
 		try
 		{
 			Statement sh = con.createStatement();
@@ -484,8 +489,10 @@ public class SimpleGdb implements Gdb
 					"		info							" +
 					"(	  version INTEGER PRIMARY KEY		" +
 			")");
+			Logger.log.info("Info table created");
 			sh.execute( //Add compatibility version of GDB
-					"INSERT INTO version VALUES ( " + GDB_COMPAT_VERSION + ")");
+					"INSERT INTO info VALUES ( " + GDB_COMPAT_VERSION + ")");
+			Logger.log.info("Version stored in info");
 			sh.execute(
 					"CREATE TABLE					" +
 					"		link							" +
@@ -496,32 +503,17 @@ public class SimpleGdb implements Gdb
 					"     bridge VARCHAR(50),				" +
 					"     PRIMARY KEY (idLeft, codeLeft,    " +
 					"		idRight, codeRight) 			" +
-			" )										");
+					" )										");
+			Logger.log.info("Link table created");
 			sh.execute(
-					"CREATE INDEX i_codeLeft" +
-					" ON link(codeLeft)"
-			);
-			sh.execute(
-					"CREATE INDEX i_idRight" +
-					" ON link(idRight)"
-			);
-			sh.execute(
-					"CREATE INDEX i_codeRight" +
-					" ON link(codeRight)"
-			);
-			sh.execute(
-					"CREATE TABLE							" +
+					"CREATE TABLE					" +
 					"		gene							" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
-					"     backpageText VARCHAR,				" +
-					"     PRIMARY KEY (id, code)			" +
-			" )										");
-			sh.execute(
-					"CREATE INDEX i_code" +
-					" ON gene(code)"
-			);
-
+					"     backpageText VARCHAR(800),		" +
+					"     PRIMARY KEY (id, code)    		" +
+					" )										");
+			Logger.log.info("Gene table created");
 		} 
 		catch (Exception e)
 		{
@@ -529,6 +521,7 @@ public class SimpleGdb implements Gdb
 		}
 	}
 
+	
 	public static final int NO_LIMIT = 0;
 	public static final int NO_TIMEOUT = 0;
 	public static int query_timeout = 5; //seconds
@@ -631,14 +624,15 @@ public class SimpleGdb implements Gdb
 		return result;
 	}
 
-	PreparedStatement pstGene;
-	PreparedStatement pstLink;
+    PreparedStatement pstGene = null;
+    PreparedStatement pstLink = null;
 
 	/**
 	 * Add a gene to the gene database
 	 */
 	public int addGene(Xref ref, String bpText) 
 	{
+    	if (pstGene == null) throw new NullPointerException();
 		try 
 		{
 			pstGene.setString(1, ref.getId());
@@ -652,15 +646,16 @@ public class SimpleGdb implements Gdb
 			return 1;
 		}
 		return 0;
-	}
-
-	/**
-	 * Add a link to the gene database
-	 */
-	public int addLink(String link, Xref ref) 
-	{
-		try 
-		{
+    }
+    
+    /**
+     * Add a link to the gene database
+     */
+    public int addLink(String link, Xref ref) 
+    {
+    	if (pstLink == null) throw new NullPointerException();
+    	try 
+    	{
 			pstLink.setString(1, link);
 			pstLink.setString(2, DataSource.ENSEMBL.getSystemCode());
 			pstLink.setString(3, ref.getId());
@@ -711,21 +706,28 @@ public class SimpleGdb implements Gdb
 	/**
 	   prepare for inserting genes and/or links
 	 */
-	public void preInsert(Connection con) throws SQLException
+	public void preInsert() throws DataException
 	{
-		con.setAutoCommit(false);
-		pstGene = con.prepareStatement(
-				"INSERT INTO " + table_DataNode +
+		try
+		{
+			con.setAutoCommit(false);
+			pstGene = con.prepareStatement(
+				"INSERT INTO gene " +
 				"	(id, code," +
 				"	 backpageText)" +
 				"VALUES (?, ?, ?)"
-		);
-		pstLink = con.prepareStatement(
+	 		);
+			pstLink = con.prepareStatement(
 				"INSERT INTO link " +
 				"	(idLeft, codeLeft," +
 				"	 idRight, codeRight)" +
 				"VALUES (?, ?, ?, ?)"
-		);		
+	 		);
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 	}	
 
 	/**

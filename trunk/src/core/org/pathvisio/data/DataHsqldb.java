@@ -36,12 +36,7 @@ public class DataHsqldb extends DBConnector
 	static final String DB_FILE_EXT = "properties";
 	static final String[] DB_EXT = new String[] { "*." + DB_FILE_EXT };
 	static final String[] DB_EXT_NAMES = new String[] { "Hsqldb Database" };
-	
-	public Connection createConnection(String dbName) throws DataException 
-	{
-		return createConnection(dbName, PROP_NONE);
-	}
-	
+		
 	public Connection createConnection(String dbName, int props) throws DataException 
 	{
 		Connection con;

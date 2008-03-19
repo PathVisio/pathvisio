@@ -17,7 +17,9 @@
 package org.pathvisio.gui.swing.actions;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
@@ -36,6 +38,7 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -543,7 +546,7 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			JFrame aboutDlg = new JFrame();
+			final JFrame aboutDlg = new JFrame();
 			JLabel label = new JLabel();
 			JButton btnOk = new JButton();
 			
@@ -558,7 +561,26 @@ public class CommonActions implements ApplicationEventListener {
 			aboutDlg.add (label);
 			aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);
 			aboutDlg.add (btnOk);
+			aboutDlg.setLayout (new FlowLayout());
 			
+		    URL imgURL = getClass().getResource("about.logo");
+		    ImageIcon icon = null;
+		    JLabel img;
+		    if (imgURL != null) {
+		        icon = new ImageIcon(imgURL, "PathVisio fancy logo");
+		        img = new JLabel ("", icon, JLabel.CENTER);
+		        aboutDlg.add (img);
+		    } else {
+		        Logger.log.error ("Couldn't find file: about.logo");
+		    }
+		    
+			btnOk.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e)
+				{
+					aboutDlg.setVisible (false);
+					aboutDlg.dispose();
+				}
+			});
 			aboutDlg.pack();
 			aboutDlg.setVisible(true);
 		}

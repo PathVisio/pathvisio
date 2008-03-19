@@ -18,35 +18,34 @@ package org.pathvisio.gui.swing.actions;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
-import org.pathvisio.Revision;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.data.GdbManager;
+import org.pathvisio.data.swing.DBConnectorSwing;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.AboutDlg;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.PreferencesDlg;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -86,7 +85,6 @@ public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
 	private static URL IMG_NEW = Engine.getCurrent().getResourceURL("icons/new.gif");
 	private static URL IMG_OPEN = Engine.getCurrent().getResourceURL("icons/open.gif");
-	private static URL IMG_ABOUT_LOGO = Engine.getCurrent().getResourceURL("images/logo.jpg");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
@@ -126,8 +124,8 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action exitAction = new ExitAction();
 
 	public final Action preferencesAction = new PreferencesAction();
-	public final Action selectGeneDbAction = new SelectGeneDbAction();
-	public final Action selectMetaboliteDbAction = new SelectMetaboliteDbAction();
+	public final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
+	public final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
 	
 	public final Action[] zoomActions = new Action[] {
 			new ZoomToFitAction(),
@@ -546,6 +544,10 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	/**
+	 * Open the about dialog,
+	 * showing a list of authors and the current program version
+	 */
 	public static class AboutAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
@@ -560,46 +562,14 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			final JFrame aboutDlg = new JFrame();
-
-						
-			JLabel versionLabel = new JLabel (Globals.APPLICATION_VERSION_NAME);
-			JLabel revisionLabel = new JLabel (Revision.REVISION);
-			JTextArea label = new JTextArea();
-			label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
-				"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nBiGCaT");
-			label.setBackground(UIManager.getColor("Label.background"));
-			JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));
-			
-			Box box = Box.createHorizontalBox();
-			box.add (iconLbl);	
-			box.add (label);
-			
-			JButton btnOk = new JButton();
-			btnOk.setText("OK");
-			btnOk.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e)
-				{
-					aboutDlg.setVisible (false);
-					aboutDlg.dispose();
-				}
-			});
-			
-			JPanel aboutPanel = new JPanel();
-			aboutPanel.setLayout (new BoxLayout (aboutPanel, BoxLayout.Y_AXIS));
-			aboutPanel.add (versionLabel);
-			aboutPanel.add (revisionLabel);
-			aboutPanel.add (box);
-			aboutPanel.add (btnOk);			
-			
-			aboutDlg.setResizable(false);
-			aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);
-			aboutDlg.add (aboutPanel);
-			aboutDlg.pack();
-			aboutDlg.setVisible(true);
+			AboutDlg.createAndShowGUI();
 		}
 	}
 
+	/**
+	 * Open the online help in a browser window.
+	 * In menu->help->help or F1
+	 */
 	public static class HelpAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
@@ -629,6 +599,10 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	/**
+	 * Open a pathway from disk.
+	 * In menu->file->open
+	 */
 	public static class OpenAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
@@ -651,6 +625,10 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	/**
+	 * Create a new pathway action
+	 * In menu->file->new pathway
+	 */
 	public static class NewAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
@@ -698,44 +676,54 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
-	public static class SelectMetaboliteDbAction extends AbstractAction 
-	{
-		private static final long serialVersionUID = 1L;
-
-		public SelectMetaboliteDbAction() 
-		{
-			super();
-			putValue(NAME, "Select metabolite database");
-			putValue(SHORT_DESCRIPTION, "Select metabolite database");
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			JOptionPane.showMessageDialog(
-					null, "Not implemented", "Not implemented", 
-					JOptionPane.WARNING_MESSAGE);
-		}
-	}
-
+	/**
+	 * Let the user pick a gene or metabolite database.
+	 * Invoked in menu->data->select gene database
+	 */
 	public static class SelectGeneDbAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
 
-		public SelectGeneDbAction() 
+		String dbType;
+		/** 
+		 * type should be "Gene" or "Metabolite"
+		 */
+		public SelectGeneDbAction(String type) 
 		{
 			super();
-			putValue(NAME, "Select Gene Database");
-			putValue(SHORT_DESCRIPTION, "Select Gene Database");
+			dbType = type;
+			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite"));
+			putValue(NAME, "Select " + dbType + " Database");
+			putValue(SHORT_DESCRIPTION, "Select " + dbType + " Database");
 		}
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			JOptionPane.showMessageDialog(
-					null, "Not implemented", "Not implemented", 
-					JOptionPane.WARNING_MESSAGE);		
+			try 
+			{
+				DBConnectorSwing dbcon = SwingEngine.getCurrent().getSwingDbConnector(DBConnector.TYPE_GDB);
+				String dbName = dbcon.openChooseDbDialog();
+				
+				if(dbName == null) return;
+				
+				GdbManager.setGeneDb(dbName);
+			} 
+			catch(Exception ex) 
+			{
+				String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
+				JOptionPane.showMessageDialog(null, 
+						"Error: " + msg + "\n\n" + "See the error log for details.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				Logger.log.error(msg, ex);
+			}
 		}
 	}
 
+	/**
+	 * Show preferences dialog.
+	 * Invoked in menu->edit->preferences
+	 */
 	public static class PreferencesAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
@@ -749,9 +737,7 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			JOptionPane.showMessageDialog(
-					null, "Not implemented", "Not implemented", 
-					JOptionPane.WARNING_MESSAGE);
+			PreferencesDlg.createAndShowGUI();
 		}
 	}
 

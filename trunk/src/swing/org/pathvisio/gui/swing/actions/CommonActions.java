@@ -25,15 +25,22 @@ import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.Revision;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
@@ -42,7 +49,6 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
-import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -67,8 +73,6 @@ import org.pathvisio.view.ViewActions.PasteAction;
 import org.pathvisio.view.ViewActions.UndoAction;
 
 import edu.stanford.ejalbert.BrowserLauncher;
-import edu.stanford.ejalbert.exception.BrowserLaunchingExecutionException;
-import edu.stanford.ejalbert.exception.BrowserLaunchingInitializingException;
 
 /**
  * A collection of {@link Action}s that may be used throughout the program (e.g. in
@@ -82,6 +86,9 @@ public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
 	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
 	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
+	private static URL IMG_NEW = Engine.getCurrent().getResourceURL("icons/new.gif");
+	private static URL IMG_OPEN = Engine.getCurrent().getResourceURL("icons/open.gif");
+	private static URL IMG_ABOUT_LOGO = Engine.getCurrent().getResourceURL("images/logo.jpg");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
@@ -118,7 +125,12 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action pasteAction = new PasteAction();
 	
 	public final Action undoAction = new UndoAction();
+	public final Action exitAction = new ExitAction();
 
+	public final Action preferencesAction = new PreferencesAction();
+	public final Action selectGeneDbAction = new SelectGeneDbAction();
+	public final Action selectMetaboliteDbAction = new SelectMetaboliteDbAction();
+	
 	public final Action[] zoomActions = new Action[] {
 			new ZoomToFitAction(),
 			new ZoomAction(10),
@@ -359,9 +371,9 @@ public class CommonActions implements ApplicationEventListener {
 			super();
 			putValue(NAME, "Export");
 			putValue(SMALL_ICON, new ImageIcon(IMG_EXPORT));
-			putValue(Action.SHORT_DESCRIPTION, "Export pathway");
-			putValue(Action.LONG_DESCRIPTION, "Export the pathway to various file formats");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+			putValue(SHORT_DESCRIPTION, "Export pathway");
+			putValue(LONG_DESCRIPTION, "Export the pathway to various file formats");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -478,8 +490,8 @@ public class CommonActions implements ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
 		public AddLiteratureAction(Component parent, VPathwayElement e) {
 			super(parent, e);
-			putValue(Action.NAME, "Add literature reference");
-			putValue(Action.SHORT_DESCRIPTION, "Add a literature reference to this element");
+			putValue(NAME, "Add literature reference");
+			putValue(SHORT_DESCRIPTION, "Add a literature reference to this element");
 			setEnabled(e.getDrawing().isEditMode());
 		}
 		
@@ -508,8 +520,8 @@ public class CommonActions implements ApplicationEventListener {
 
 		public EditLiteratureAction(Component parent, VPathwayElement e) {
 			super(parent, e);
-			putValue(Action.NAME, "Edit literature references");
-			putValue(Action.SHORT_DESCRIPTION, "Edit the literature references of this element");
+			putValue(NAME, "Edit literature references");
+			putValue(SHORT_DESCRIPTION, "Edit the literature references of this element");
 			setEnabled(e.getDrawing().isEditMode());
 		}
 		
@@ -523,8 +535,8 @@ public class CommonActions implements ApplicationEventListener {
 
 		public PropertiesAction(Component parent, VPathwayElement e) {
 			super(parent, e);
-			putValue(Action.NAME, "Properties");
-			putValue(Action.SHORT_DESCRIPTION, "View this element's properties");
+			putValue(NAME, "Properties");
+			putValue(SHORT_DESCRIPTION, "View this element's properties");
 		}
 		
 		protected String getSelectedPanel() {
@@ -539,41 +551,30 @@ public class CommonActions implements ApplicationEventListener {
 		public AboutAction() 
 		{
 			super();
-			putValue(Action.NAME, "About");
-			putValue(Action.SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
-			putValue(Action.LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+			putValue(NAME, "About");
+			putValue(SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+			putValue(LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
 		}
 
 		public void actionPerformed(ActionEvent e) 
 		{
 			final JFrame aboutDlg = new JFrame();
-			JLabel label = new JLabel();
-			JButton btnOk = new JButton();
-			
+
+						
+			JLabel versionLabel = new JLabel (Globals.APPLICATION_VERSION_NAME);
+			JLabel revisionLabel = new JLabel (Revision.REVISION);
+			JTextArea label = new JTextArea();
 			label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
 				"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nBiGCaT");
+			label.setBackground(UIManager.getColor("Label.background"));
+			JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));
 			
-			//TODO
-			//"about.logo"
-
+			Box box = Box.createHorizontalBox();
+			box.add (iconLbl);	
+			box.add (label);
+			
+			JButton btnOk = new JButton();
 			btnOk.setText("OK");
-			
-			aboutDlg.add (label);
-			aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);
-			aboutDlg.add (btnOk);
-			aboutDlg.setLayout (new FlowLayout());
-			
-		    URL imgURL = getClass().getResource("about.logo");
-		    ImageIcon icon = null;
-		    JLabel img;
-		    if (imgURL != null) {
-		        icon = new ImageIcon(imgURL, "PathVisio fancy logo");
-		        img = new JLabel ("", icon, JLabel.CENTER);
-		        aboutDlg.add (img);
-		    } else {
-		        Logger.log.error ("Couldn't find file: about.logo");
-		    }
-		    
 			btnOk.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e)
 				{
@@ -581,6 +582,17 @@ public class CommonActions implements ApplicationEventListener {
 					aboutDlg.dispose();
 				}
 			});
+			
+			JPanel aboutPanel = new JPanel();
+			aboutPanel.setLayout (new BoxLayout (aboutPanel, BoxLayout.Y_AXIS));
+			aboutPanel.add (versionLabel);
+			aboutPanel.add (revisionLabel);
+			aboutPanel.add (box);
+			aboutPanel.add (btnOk);			
+			
+			aboutDlg.setResizable(false);
+			aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);
+			aboutDlg.add (aboutPanel);
 			aboutDlg.pack();
 			aboutDlg.setVisible(true);
 		}
@@ -593,14 +605,15 @@ public class CommonActions implements ApplicationEventListener {
 		public HelpAction() 
 		{
 			super();
-			putValue(Action.NAME, "Help");
-			putValue(Action.SHORT_DESCRIPTION, "Open online help in a browser window");
-			putValue(Action.LONG_DESCRIPTION, "Open online help in a browser window");
+			putValue(NAME, "Help");
+			putValue(SHORT_DESCRIPTION, "Open online help in a browser window");
+			putValue(LONG_DESCRIPTION, "Open online help in a browser window");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		}
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			//TODO: wrap in thread
+			//TODO: wrap in thread, progress dialog
 			String url = Globals.HELP_URL;
 			try
 			{
@@ -621,14 +634,14 @@ public class CommonActions implements ApplicationEventListener {
 		public OpenAction() 
 		{
 			super();
-			putValue(Action.NAME, "Open");
-			putValue(Action.SHORT_DESCRIPTION, "Open a pathway file");
-			putValue(Action.LONG_DESCRIPTION, "Open a pathway file");
+			putValue(NAME, "Open");
+			putValue(SMALL_ICON, new ImageIcon (IMG_OPEN));
+			putValue(SHORT_DESCRIPTION, "Open a pathway file");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		}
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			//TODO
 			SwingEngine.getCurrent().openPathway();
 		}
 	}
@@ -640,14 +653,97 @@ public class CommonActions implements ApplicationEventListener {
 		public NewAction() 
 		{
 			super();
-			putValue(Action.NAME, "New");
-			putValue(Action.SHORT_DESCRIPTION, "Start a new, empty pathway");
-			putValue(Action.LONG_DESCRIPTION, "Start a new, empty pathway");
+			putValue(NAME, "New");
+			putValue(SMALL_ICON, new ImageIcon(IMG_NEW));
+			putValue(SHORT_DESCRIPTION, "Start a new, empty pathway");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		}
 
 		public void actionPerformed(ActionEvent e) 
 		{
 			SwingEngine.getCurrent().newPathway();
+		}
+	}
+
+	/**
+	 * Exit menu item. Quit the program with System.exit after checking
+	 * for unsaved changes
+	 */
+	public static class ExitAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public ExitAction() 
+		{
+			super();
+			putValue(NAME, "Exit");
+			putValue(SHORT_DESCRIPTION, "Exit pathvisio");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			if (SwingEngine.getCurrent().canDiscardPathway())
+			{
+				System.exit(0);
+			}
+		}
+	}
+
+	public static class SelectMetaboliteDbAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public SelectMetaboliteDbAction() 
+		{
+			super();
+			putValue(NAME, "Select metabolite database");
+			putValue(SHORT_DESCRIPTION, "Select metabolite database");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			JOptionPane.showMessageDialog(
+					null, "Not implemented", "Not implemented", 
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	public static class SelectGeneDbAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public SelectGeneDbAction() 
+		{
+			super();
+			putValue(NAME, "Select Gene Database");
+			putValue(SHORT_DESCRIPTION, "Select Gene Database");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			JOptionPane.showMessageDialog(
+					null, "Not implemented", "Not implemented", 
+					JOptionPane.WARNING_MESSAGE);		
+		}
+	}
+
+	public static class PreferencesAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public PreferencesAction() 
+		{
+			super();
+			putValue(NAME, "Preferences");
+			putValue(SHORT_DESCRIPTION, "Edit preferences");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			JOptionPane.showMessageDialog(
+					null, "Not implemented", "Not implemented", 
+					JOptionPane.WARNING_MESSAGE);
 		}
 	}
 

@@ -28,6 +28,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
@@ -428,5 +430,39 @@ public class SwingEngine {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Call this when the user is about to perform an
+	 * action that could lead to discarding the current pathway.
+	 * (For example when creating a new pathway)
+	 * 
+	 * Checks if there are any unsaved changes, and
+	 * asks the user if they want to save those changes.
+	 * 
+	 * @return true if the user allows discarding the pathway, possibly after saving.
+	 */
+	public boolean canDiscardPathway()
+	{
+		Pathway pathway = Engine.getCurrent().getActivePathway();
+        // checking not necessary if there is no pathway or if pathway is not changed.
+		
+		if (pathway == null || !pathway.hasChanged()) return true;
+		int result = JOptionPane.showConfirmDialog
+			(null, "Save changes?", 
+					"Your pathway has changed. Do you want to save?",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+		if (result == JOptionPane.CANCEL_OPTION) // cancel
+		{
+			return false;
+		}
+		else if (result == JOptionPane.YES_OPTION) // yes
+		{
+			// return false if save is cancelled.
+			return (savePathway());
+		}
+		// yes or no
+		return true;
 	}
 }

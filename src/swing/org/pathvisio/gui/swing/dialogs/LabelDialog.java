@@ -20,11 +20,13 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -36,7 +38,7 @@ import org.pathvisio.model.PathwayElement;
  *
  */
 public class LabelDialog extends PathwayElementDialog {
-	JTextField text;
+	JTextArea text;
 	
 	protected LabelDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(e, readonly, frame, "Label properties", locationComp);
@@ -60,16 +62,19 @@ public class LabelDialog extends PathwayElementDialog {
 		panel.setLayout(new GridBagLayout());
 
 		JLabel label = new JLabel("Text label:");
-		text = new JTextField();
+		text = new JTextArea();
 
 		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.insets = new Insets(5, 0, 5, 5);
 		constraints.gridx = GridBagConstraints.RELATIVE;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 0;
+		constraints.weighty = 0;
 		panel.add(label, constraints);
 
 		constraints.weightx = 1;
-		panel.add(text, constraints);
+		constraints.weighty = 1;
+		panel.add(new JScrollPane(text), constraints);
 
 		text.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {

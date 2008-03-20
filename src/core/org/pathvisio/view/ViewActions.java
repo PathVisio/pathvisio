@@ -314,6 +314,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	private class AddAnchorAction extends AbstractAction implements SelectionListener {
+		private static final long serialVersionUID = 1L;
+
 		public AddAnchorAction() {
 			vPathway.addSelectionListener(this);
 			putValue(NAME, "Add anchor");

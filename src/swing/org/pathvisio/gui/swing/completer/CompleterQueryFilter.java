@@ -33,7 +33,7 @@ import javax.swing.text.BadLocationException;
  */
 public class CompleterQueryFilter extends CompleterFilterWithWindow {
 	OptionProvider optionProvider;
-	SortedSet options = new TreeSet();
+	SortedSet<Object> options = new TreeSet<Object>();
 	HashSet<String> history = new HashSet<String>();
 
 	QueryThread t = new QueryThread();

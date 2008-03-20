@@ -20,12 +20,20 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.JTableHeader;
 
 import org.pathvisio.model.DataSource;
+import org.pathvisio.model.Xref;
+import org.pathvisio.preferences.swing.SwingPreferences.SwingPreference;
+import org.pathvisio.util.swing.SearchMethods;
 
+/**
+ * A side panel which displays search results.
+ */
 public class SearchPane extends JPanel 
 {	
 	private static final long serialVersionUID = 1L;
@@ -102,26 +110,94 @@ public class SearchPane extends JPanel
 		Box box3 = Box.createHorizontalBox();
 		box3.add (new JLabel("Directory to search:"));
 		txtDir = new JTextField();
+		txtDir.setText (SwingPreference.SWING_DIR_PWFILES.getValue());
 		box3.add (txtDir);
 		btnBrowse = new JButton("Browse");
+		btnBrowse.addActionListener(new ActionListener()
+		{
+			public void actionPerformed (ActionEvent ae)
+			{
+				doBrowse();
+			}
+		});
 		box3.add (btnBrowse);
 		searchOptBox.add (box3);
 		btnSearch = new JButton("Search");
 		searchOptBox.add (btnSearch);
+		btnSearch.addActionListener(new ActionListener()
+		{
+			public void actionPerformed (ActionEvent ae)
+			{
+				doSearch();
+			}
+		});
 
 		JPanel resultPanel = new JPanel();
 		resultPanel.setBorder (BorderFactory.createTitledBorder(etch, "Results"));
 		resultPanel.setLayout (new BorderLayout());
 		chkHighlight = new JCheckBox();
 		tblResult = new JTable();
+		tblResult.getTableHeader().setVisible(true);
 		Box box6 = Box.createHorizontalBox();
 		box6.add (chkHighlight);
 		box6.add (new JLabel ("Highlight found genes"));
 		resultPanel.add (box6, BorderLayout.NORTH);
-		resultPanel.add (tblResult, BorderLayout.CENTER);
+		resultPanel.add (new JScrollPane(tblResult), BorderLayout.CENTER);
 		
 		setLayout (new BorderLayout());
 		add (searchOptBox, BorderLayout.NORTH);
 		add (resultPanel, BorderLayout.CENTER);		
 	}
+	
+	/**
+	 * Invoked when you hit the search button
+	 */
+	private void doSearch()
+	{
+		int i = cbSearchBy.getSelectedIndex();
+		try
+		{
+			if (i == 0)
+			{
+				SearchMethods.pathwaysContainingGeneSymbol (
+						txtSymbol.getText(), 
+						new File (txtDir.getText()), 
+						tblResult, 
+						getTopLevelAncestor());
+				
+			}
+			else
+			{
+				SearchMethods.pathwaysContainingGeneID(
+						new Xref (txtId.getName(), DataSource.getByFullName("" + cbSyscode.getSelectedItem())), 
+						new File (txtDir.getText()), 
+						tblResult, 
+						getTopLevelAncestor());
+			}
+		}
+		catch (SearchMethods.SearchException e)
+		{
+			JOptionPane.showMessageDialog(
+					getTopLevelAncestor(), 
+					e.getMessage(), 
+					"Search warning", 
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
+	/**
+	 * Invoked when you hit the browse button
+	 */
+	private void doBrowse()
+	{
+		JFileChooser fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		int result = fc.showDialog(getTopLevelAncestor(), "Select");
+		if (result == JFileChooser.APPROVE_OPTION)
+		{
+			txtDir.setText("" + fc.getSelectedFile());
+		}
+	}
+	
 }

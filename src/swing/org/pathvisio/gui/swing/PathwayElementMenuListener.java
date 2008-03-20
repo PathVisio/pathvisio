@@ -27,9 +27,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import org.pathvisio.gui.swing.actions.CommonActions.AddLiteratureAction;
-import org.pathvisio.gui.swing.actions.CommonActions.EditLiteratureAction;
-import org.pathvisio.gui.swing.actions.CommonActions.PropertiesAction;
+import org.pathvisio.gui.swing.CommonActions.AddLiteratureAction;
+import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
+import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
 import org.pathvisio.model.LineType;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;

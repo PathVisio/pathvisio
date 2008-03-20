@@ -18,11 +18,9 @@ package org.pathvisio.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.GlobalPreference;
 

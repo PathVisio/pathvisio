@@ -56,7 +56,7 @@ import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.gui.swing.actions.CommonActions;
+import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
@@ -507,6 +507,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 		return mainPanel;
 	}
+	
 	public MainPanel prepareMainPanel() {
 		CommonActions actions = SwingEngine.getCurrent().getActions();
 		Set<Action> hide = new HashSet<Action>();

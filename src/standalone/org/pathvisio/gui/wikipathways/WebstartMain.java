@@ -17,14 +17,22 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jnlp.UnavailableServiceException;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.GuiMain;
+import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.gui.swing.MainPanelStandalone;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -53,10 +61,39 @@ public class WebstartMain extends GuiMain {
 		super.createAndShowGUI(mainPanel);
 	}
 
+	public MainPanelStandalone prepareMainPanel(WikiPathways wiki) {
+		CommonActions actions = SwingEngine.getCurrent().getActions();
+		Set<Action> hide = new HashSet<Action>();
+		
+		//Disable some actions
+		if(!wiki.isNew()) hide.add(actions.importAction);
+		
+		Action saveAction = new Actions.ExitAction(uiHandler, wiki, true, null);
+		Action exitAction = new Actions.ExitAction(uiHandler, wiki, false, null);
+				
+		mainPanel = new MainPanelStandalone(hide);
+		
+		mainPanel.getToolBar().addSeparator();
+		
+		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
+		mainPanel.addToToolbar(exitAction);
+
+		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+					uiHandler.showDocument(e.getURL(), "_blank");
+				}
+			}
+		});	
+		
+		SwingEngine.getCurrent().setApplicationPanel(mainPanel);
+		return mainPanel;
+	}
+	
 	private void initWiki() throws UnavailableServiceException {
 		uiHandler = new WebstartUserInterfaceHandler(getFrame());
 		wiki = new WikiPathways(uiHandler);
-		mainPanel = wiki.prepareMainPanel();
+		mainPanel = prepareMainPanel(wiki);
 
 
 		final RunnableWithProgress r = new RunnableWithProgress() {

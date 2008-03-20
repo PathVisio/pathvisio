@@ -28,7 +28,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedString;
 
-import org.apache.batik.css.engine.value.css2.SrcManager;
 import org.pathvisio.model.PathwayElement;
 
 public class Label extends GraphicsShape

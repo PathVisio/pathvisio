@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui.swing.actions;
+package org.pathvisio.gui.swing;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -38,9 +38,6 @@ import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.swing.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.AboutDlg;
-import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.gui.swing.PreferencesDlg;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.DataNodeType;
@@ -66,7 +63,6 @@ import org.pathvisio.view.ViewActions.CopyAction;
 import org.pathvisio.view.ViewActions.PasteAction;
 import org.pathvisio.view.ViewActions.UndoAction;
 
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * A collection of {@link Action}s that may be used throughout the program (e.g. in
@@ -80,8 +76,6 @@ public class CommonActions implements ApplicationEventListener {
 	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
 	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
 	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
-	private static URL IMG_NEW = Engine.getCurrent().getResourceURL("icons/new.gif");
-	private static URL IMG_OPEN = Engine.getCurrent().getResourceURL("icons/open.gif");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
@@ -109,10 +103,7 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action saveAsAction = new SaveAsAction();
 	public final Action importAction = new ImportAction();
 	public final Action exportAction = new ExportAction();
-	public final Action openAction = new OpenAction();
 	public final Action aboutAction = new AboutAction();
-	public final Action helpAction = new HelpAction();
-	public final Action newAction = new NewAction();
 	
 	public final Action copyAction = new CopyAction();
 	public final Action pasteAction = new PasteAction();
@@ -560,91 +551,6 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) 
 		{
 			AboutDlg.createAndShowGUI();
-		}
-	}
-
-	/**
-	 * Open the online help in a browser window.
-	 * In menu->help->help or F1
-	 */
-	public static class HelpAction extends AbstractAction 
-	{
-		private static final long serialVersionUID = 1L;
-
-		public HelpAction() 
-		{
-			super();
-			putValue(NAME, "Help");
-			putValue(SHORT_DESCRIPTION, "Open online help in a browser window");
-			putValue(LONG_DESCRIPTION, "Open online help in a browser window");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			//TODO: wrap in thread, progress dialog
-			String url = Globals.HELP_URL;
-			try
-			{
-				BrowserLauncher bl = new BrowserLauncher(null);
-				bl.openURLinBrowser(url);
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Open a pathway from disk.
-	 * In menu->file->open
-	 */
-	public static class OpenAction extends AbstractAction 
-	{
-		private static final long serialVersionUID = 1L;
-
-		public OpenAction() 
-		{
-			super();
-			putValue(NAME, "Open");
-			putValue(SMALL_ICON, new ImageIcon (IMG_OPEN));
-			putValue(SHORT_DESCRIPTION, "Open a pathway file");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			if (SwingEngine.getCurrent().canDiscardPathway())
-			{
-				SwingEngine.getCurrent().openPathway();
-			}
-		}
-	}
-
-	/**
-	 * Create a new pathway action
-	 * In menu->file->new pathway
-	 */
-	public static class NewAction extends AbstractAction 
-	{
-		private static final long serialVersionUID = 1L;
-
-		public NewAction() 
-		{
-			super();
-			putValue(NAME, "New");
-			putValue(SMALL_ICON, new ImageIcon(IMG_NEW));
-			putValue(SHORT_DESCRIPTION, "Start a new, empty pathway");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			if (SwingEngine.getCurrent().canDiscardPathway())
-			{
-				SwingEngine.getCurrent().newPathway();
-			}
 		}
 	}
 

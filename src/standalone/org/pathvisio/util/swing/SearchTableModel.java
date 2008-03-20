@@ -14,29 +14,35 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui.swing.completer;
+package org.pathvisio.util.swing;
+
 
 /**
- * Text field with auto completion that can be used if the completion
- * options need to be fetched from a database while the user is typing.
- * The options will be fetched in a seperate thread.
- * @author thomas
- *
+ * SearchTableModel defines a specific type of ListWithPropertiesTableModel,
+ * namely one that is meant to store a list of Search results.
  */
-public class CompleterQueryTextField extends CompleterTextField {
+public class SearchTableModel extends 
+	ListWithPropertiesTableModel<SearchTableModel.Column, MatchResult>
+{
 	private static final long serialVersionUID = 1L;
-	CompleterQueryFilter myFilter;
-	
-	public CompleterQueryTextField(OptionProvider optionProvider, 
-			boolean useWindow) {
-		super(new Object[0]);
-		myFilter.setOptionProvider(optionProvider);
-	}
-	
-	protected CompleterFilter getFilter() {
-		if(myFilter == null) {
-			myFilter = new CompleterQueryFilter(this, null);
+
+	/**
+	 * Defines the columns that can be displayed in a SearchTable
+	 */
+	public static enum Column implements PropertyColumn 
+	{
+		PATHWAY_NAME("pathway"),
+		DIRECTORY("directory"),
+		IDS("ids"),
+		NAMES("names");
+		
+		private String title;
+		public String getTitle() { return title; }
+		
+		private Column (String title)
+		{
+			this.title = title;
 		}
-		return myFilter;
 	}
+
 }

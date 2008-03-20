@@ -14,20 +14,17 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio;
 
 /**
- * This class is mainly intended for globals that differ between v1 and v2!
- * 
- * @author martijn.vaniersel
- *
+ * an interface type for objects that can be used to define rows in a table
+ * Use an enum as subclass.
  */
-public class Globals {
-	public static final String APPLICATION_NAME = "PathVisio";
-	public static final String APPLICATION_VERSION_NAME = "PathVisio.WikiPathways";
-	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
-	public static final String SERVER_NAME = "WikiPathways.org";
-	// for inclusion in certain error messages.
-	public static final String DEVELOPER_EMAIL = "thomas.kelder@bigcat.unimaas.nl";
-	public static final boolean IS_APPLET = true;
+package org.pathvisio.util.swing;
+
+public interface PropertyColumn
+{
+	/**
+	 * Get the column header for this property
+	 */
+	public String getTitle();
 }

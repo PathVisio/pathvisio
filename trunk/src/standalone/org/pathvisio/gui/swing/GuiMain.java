@@ -33,13 +33,13 @@ import org.pathvisio.preferences.GlobalPreference;
 public class GuiMain {
 	private String[] args;
 	private JFrame frame;
-	protected MainPanel mainPanel;
+	protected MainPanelStandalone mainPanel;
 	
 	/**
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
 	 */
-	protected void createAndShowGUI(MainPanel mainPanel) {
+	protected void createAndShowGUI(MainPanelStandalone mainPanel) {
 		GuiInit.init();
 		
 		//Create and set up the window.
@@ -79,7 +79,9 @@ public class GuiMain {
 		gui.args = args;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				gui.createAndShowGUI(SwingEngine.getCurrent().getApplicationPanel());
+				MainPanelStandalone mps = new MainPanelStandalone();
+				SwingEngine.getCurrent().setApplicationPanel(mps);
+				gui.createAndShowGUI(mps);
 			}
 		});
 	}

@@ -19,10 +19,8 @@ package org.pathvisio.data;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.pathvisio.model.DataSource;
-import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.Xref;
 
 /**

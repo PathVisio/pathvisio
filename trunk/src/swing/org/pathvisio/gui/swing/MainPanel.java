@@ -33,7 +33,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -48,13 +47,11 @@ import javax.swing.table.TableCellRenderer;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.gui.swing.actions.CommonActions;
-import org.pathvisio.gui.swing.actions.CommonActions.ZoomAction;
+import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
@@ -68,22 +65,20 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	private JSplitPane splitPane;
 
-	private JMenuBar menuBar;
-
 	private JToolBar toolBar;
 
 	private JScrollPane pathwayScrollPane;
 
 	private JScrollPane propertiesScrollPane;
 	
-	private JTabbedPane sidebarTabbedPane;
+	protected JTabbedPane sidebarTabbedPane;
 
 	private JTable propertyTable;
 
 	private BackpagePane backpagePane;
 	
-	private CommonActions actions;
-		
+	protected CommonActions actions;
+	
 	Set<Action> hideActions;
 	
 	private boolean mayAddAction(Action a) {
@@ -105,8 +100,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		actions = SwingEngine.getCurrent().getActions();
 		
-		menuBar = new JMenuBar();
-		addMenuActions(menuBar);
 		toolBar = new JToolBar();
 		addToolBarActions(toolBar);
 
@@ -133,12 +126,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
 		backpagePane = new BackpagePane();
-		SearchPane searchPane = new SearchPane();
 		
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
 		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
-		sidebarTabbedPane.addTab ("Search", searchPane); 
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				pathwayScrollPane, sidebarTabbedPane);
@@ -166,56 +157,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		this(null);
 	}
 	
-	protected void addMenuActions(JMenuBar mb) {
-		JMenu fileMenu = new JMenu("File");
-		addToMenu(actions.newAction, fileMenu);
-		addToMenu(actions.openAction, fileMenu);
-		addToMenu(actions.saveAction, fileMenu);
-		addToMenu(actions.saveAsAction, fileMenu);
-		fileMenu.addSeparator();
-		addToMenu(actions.importAction, fileMenu);
-		addToMenu(actions.exportAction, fileMenu);
-		fileMenu.addSeparator();
-		addToMenu(actions.exitAction, fileMenu);
-		
-		JMenu editMenu = new JMenu("Edit");
-		addToMenu(actions.undoAction, editMenu);
-		addToMenu(actions.copyAction, editMenu);
-		addToMenu(actions.pasteAction, editMenu);
-		editMenu.addSeparator();
-		addToMenu(actions.preferencesAction, editMenu);
-		
-		JMenu selectionMenu = new JMenu("Selection");
-		JMenu alignMenu = new JMenu("Align");
-		JMenu stackMenu = new JMenu("Stack");
-		
-		for(Action a : actions.alignActions) addToMenu(a, alignMenu);
-		for(Action a : actions.stackActions) addToMenu(a, stackMenu);
-		
-		selectionMenu.add(alignMenu);
-		selectionMenu.add(stackMenu);
-		editMenu.add (selectionMenu);
-
-		JMenu dataMenu = new JMenu("Data");
-		addToMenu (actions.selectGeneDbAction, dataMenu);
-		addToMenu (actions.selectMetaboliteDbAction, dataMenu);
-		
-		JMenu viewMenu = new JMenu("View");
-		JMenu zoomMenu = new JMenu("Zoom");
-		viewMenu.add(zoomMenu);
-		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
-
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(actions.aboutAction);
-		helpMenu.add(actions.helpAction);
-		
-		mb.add(fileMenu);
-		mb.add(editMenu);
-		mb.add(dataMenu);
-		mb.add(viewMenu);
-		mb.add(helpMenu);
-	}
-
 	protected void addToolBarActions(JToolBar tb) {
 		tb.setLayout(new WrapLayout(1, 1));
 		
@@ -349,10 +290,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		return tbg;
 	}
 	
-	public JMenuBar getMenuBar() {
-		return menuBar;
-	}
-
 	public JToolBar getToolBar() {
 		return toolBar;
 	}

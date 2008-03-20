@@ -33,6 +33,10 @@ import javax.swing.JPanel;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 
+/**
+ * Similar to the swing progress dialog, but this has the option to 
+ * show a dialog for a task of indeterminate length
+ */
 public class ProgressDialog extends JDialog implements ActionListener, ProgressListener {
 	private static final long serialVersionUID = 1L;
 

@@ -33,6 +33,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+/**
+ * The basis for a dialog with ok / cancel buttons at the bottom
+ * 
+ * The central panel can have arbitrarily complex contents 
+ */
 public abstract class OkCancelDialog extends JDialog implements ActionListener {
 	public static final String OK = "Ok";
 	public static final String CANCEL = "Cancel";

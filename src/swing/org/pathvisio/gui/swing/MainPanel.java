@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -73,6 +74,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	protected JTabbedPane sidebarTabbedPane;
 
+	protected JMenuBar menuBar;
+
 	private JTable propertyTable;
 
 	private BackpagePane backpagePane;
@@ -85,6 +88,54 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		return hideActions == null || !hideActions.contains(a);
 	}
 	
+	protected void addMenuActions(JMenuBar mb) {
+		JMenu fileMenu = new JMenu("File");
+		
+		addToMenu(actions.saveAction, fileMenu);
+		addToMenu(actions.saveAsAction, fileMenu);
+		fileMenu.addSeparator();
+		addToMenu(actions.importAction, fileMenu);
+		addToMenu(actions.exportAction, fileMenu);
+		fileMenu.addSeparator();
+		addToMenu(actions.exitAction, fileMenu);
+		
+		JMenu editMenu = new JMenu("Edit");
+		addToMenu(actions.undoAction, editMenu);
+		addToMenu(actions.copyAction, editMenu);
+		addToMenu(actions.pasteAction, editMenu);
+		editMenu.addSeparator();
+		addToMenu(actions.preferencesAction, editMenu);
+		
+		JMenu selectionMenu = new JMenu("Selection");
+		JMenu alignMenu = new JMenu("Align");
+		JMenu stackMenu = new JMenu("Stack");
+		
+		for(Action a : actions.alignActions) addToMenu(a, alignMenu);
+		for(Action a : actions.stackActions) addToMenu(a, stackMenu);
+		
+		selectionMenu.add(alignMenu);
+		selectionMenu.add(stackMenu);
+		editMenu.add (selectionMenu);
+
+		JMenu dataMenu = new JMenu("Data");
+		addToMenu (actions.selectGeneDbAction, dataMenu);
+		addToMenu (actions.selectMetaboliteDbAction, dataMenu);
+		
+		JMenu viewMenu = new JMenu("View");
+		JMenu zoomMenu = new JMenu("Zoom");
+		viewMenu.add(zoomMenu);
+		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
+
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.add(actions.aboutAction);
+		
+		mb.add(fileMenu);
+		mb.add(editMenu);
+		mb.add(dataMenu);
+		mb.add(viewMenu);
+		mb.add(helpMenu);
+	}
+
 	/**
 	 * Constructor for this class. Creates the main panel of this application, containing
 	 * the main GUI elements (menubar, toolbar, sidepanel, drawing pane). Actions that should
@@ -147,6 +198,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			im.put((KeyStroke)a.getValue(Action.ACCELERATOR_KEY), a.getValue(Action.NAME));
 			am.put(a.getValue(Action.NAME), a);
 		}
+		
+		menuBar = new JMenuBar();
+		addMenuActions(menuBar);
 	}
 	
 	/**
@@ -343,4 +397,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			break;
 		}
 	}
+
+	public JMenuBar getMenuBar() {
+		return menuBar;
+	}
+
+
 }

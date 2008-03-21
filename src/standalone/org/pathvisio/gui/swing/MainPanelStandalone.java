@@ -27,8 +27,9 @@ public class MainPanelStandalone extends MainPanel
 	private static final long serialVersionUID = 1L;
 
 	private StandaloneActions saActions;
-	private JMenuBar menuBar;
+	protected JMenuBar menuBar;
 	
+	@Override
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu fileMenu = new JMenu("File");
 		
@@ -89,16 +90,8 @@ public class MainPanelStandalone extends MainPanel
 	{
 		super(hideActions);
 		
-		menuBar = new JMenuBar();
-		addMenuActions(menuBar);
-
 		SearchPane searchPane = new SearchPane();
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 	}
-
-	public JMenuBar getMenuBar() {
-		return menuBar;
-	}
-
 
 }

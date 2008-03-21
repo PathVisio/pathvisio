@@ -22,30 +22,45 @@ import java.util.Set;
 
 import javax.jnlp.UnavailableServiceException;
 import javax.swing.Action;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions;
-import org.pathvisio.gui.swing.GuiMain;
+import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.MainPanel;
-import org.pathvisio.gui.swing.MainPanelStandalone;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
-import com.sun.media.sound.Toolkit;
-
-public class WebstartMain extends GuiMain {
+public class WebstartMain  {
 	WikiPathways wiki;
 	UserInterfaceHandler uiHandler;
 
+	private String[] args;
+	private JFrame frame;
+	protected MainPanel mainPanel;
+
+	public JFrame getFrame() { return frame; }
+	
+	public MainPanel getMainPanel() { return mainPanel; }
+	
+	public String[] getArgs() { return args; }
+	
+	public void setArgs(String[] args) {
+		this.args = args;
+	}
+				
 	protected void createAndShowGUI() {
 		Engine engine = new Engine();
 		Engine.setCurrent(engine);
@@ -58,10 +73,32 @@ public class WebstartMain extends GuiMain {
 			JOptionPane.showMessageDialog(null, "Unable to launch editor:\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			Logger.log.error("Unable to launch editor", e);
 		}
-		super.createAndShowGUI(mainPanel);
+
+		GuiInit.init();
+		
+		//Create and set up the window.
+		frame = new JFrame(Globals.APPLICATION_NAME);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		frame.add(mainPanel);
+		frame.setJMenuBar(mainPanel.getMenuBar());
+		frame.setSize(800, 600);
+		try {
+		    UIManager.setLookAndFeel(
+		        UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ex) {
+			Logger.log.error("Unable to load native look and feel", ex);
+		}
+		frame.pack();
+		//Display the window.
+		frame.setVisible(true);
+
+		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		double spSize = (100 - spPercent) / 100.0;
+		mainPanel.getSplitPane().setDividerLocation(spSize);
 	}
 
-	public MainPanelStandalone prepareMainPanel(WikiPathways wiki) {
+	public MainPanel prepareMainPanel(WikiPathways wiki) {
 		CommonActions actions = SwingEngine.getCurrent().getActions();
 		Set<Action> hide = new HashSet<Action>();
 		
@@ -71,7 +108,7 @@ public class WebstartMain extends GuiMain {
 		Action saveAction = new Actions.ExitAction(uiHandler, wiki, true, null);
 		Action exitAction = new Actions.ExitAction(uiHandler, wiki, false, null);
 				
-		mainPanel = new MainPanelStandalone(hide);
+		mainPanel = new MainPanel(hide);
 		
 		mainPanel.getToolBar().addSeparator();
 		

@@ -37,7 +37,7 @@ public class LinkChecker {
 		{
 			// load the file
 			File file = new File(filename);
-
+			
 			// load the pathway
 			Pathway pway = new Pathway();
 			boolean validate = true;

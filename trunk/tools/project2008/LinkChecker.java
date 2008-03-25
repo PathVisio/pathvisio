@@ -23,8 +23,7 @@ public class LinkChecker {
 		pway.readFromXml(file, validate);
 		List<PathwayElement> pelts = pway.getDataObjects();
 		for (PathwayElement element:pelts){
-			int objectType;
-			objectType = element.getObjectType();
+			int objectType = element.getObjectType();
 			if (objectType == ObjectType.DATANODE)
 			{
 				String genId;

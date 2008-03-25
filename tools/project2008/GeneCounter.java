@@ -15,9 +15,10 @@ public class GeneCounter {
 	 */
 	public static void main(String[] args) throws ConverterException {
 		// TODO Auto-generated method stub
+		Set s=new HashSet();
 		
-		String namePathway = "Rn_Apoptosis.gpml";
-		File f = new File("D:\\My Documents\\school\\jaar 3\\Semester 2\\project blok 3E\\wikipathways_1206450480\\"+namePathway);
+		String namePathway = "Rn_ACE-Inhibitor_pathway_PharmGKB.gpml";
+		File f = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat\\"+namePathway);
 		System.out.println("file = "+f);
 		
 		Pathway p = new Pathway();
@@ -34,11 +35,11 @@ public class GeneCounter {
 				reference=v.getXref();
 				String name=reference.getName();
 				System.out.println(name);
-				
+				s.add(name);
 				
 			
 			}
-		
+			
 		//List<PathwayElement> types = p.getObjectType();
 		//for (PathwayElement v:types){
 			//PathwayElement.getObjectType();
@@ -48,6 +49,17 @@ public class GeneCounter {
 		//List<PathwayElement> pelts=List p.getDataObjects 
 		
 	}
-
+		s.remove("null:");
+		System.out.println(s);
+		System.out.println(s.size());
+		addToSet(s);
 }
+	public static void addToSet(Set s){
+		Set<Xref> totalS=new HashSet<Xref>();
+		totalS.addAll(s);
+		System.out.println(totalS);
+		System.out.println(totalS.size());
+		
+	}
+	
 }

@@ -17,22 +17,30 @@ public class LinkChecker {
 	 * @throws ConverterException 
 	 */
 	public static void main(String[] args) throws ConverterException {
-		// load the filename; the filename is declaired in the run dialog window
-		String filename = args[0];
-		
-		// load the file
-		File file = new File(filename);
+		List<String> filenames = makeFilenameList();
+		for (String filename:filenames)
+		{
+			// load the file
+			File file = new File(filename);
 
-		// load the pathway
-		Pathway pway = new Pathway();
-		boolean validate = true;
-		pway.readFromXml(file, validate);
+			// load the pathway
+			Pathway pway = new Pathway();
+			boolean validate = true;
+			pway.readFromXml(file, validate);
 		
-		List<Xref> xRefList = makeXrefList(pway);
-		System.out.println("size of the xRefList: "+xRefList.size());
+			List<Xref> xRefList = makeXrefList(pway);
+			System.out.println("size of the xRefList: "+xRefList.size());
+			}
 		}
 	
-	
+	public static List<String> makeFilenameList(){
+		List<String> filenames = new ArrayList();
+		String filename = "C:\\muis data\\Rn_Apoptosis.gpml";
+		filenames.add(filename);
+		filenames.add("C:\\muis data\\Rn_Alanine_and_aspartate_metabolism_KEGG.gpml");
+		
+		return filenames;
+	}
 	
 	
 	public static List<Xref> makeXrefList(Pathway pway){

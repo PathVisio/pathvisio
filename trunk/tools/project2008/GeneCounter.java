@@ -1,4 +1,8 @@
 import java.io.File;
+
+import org.pathvisio.data.DataDerby;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -12,8 +16,9 @@ public class GeneCounter {
 	/**
 	 * @param args
 	 * @throws ConverterException 
+	 * @throws DataException 
 	 */
-	public static void main(String[] args) throws ConverterException {
+	public static void main(String[] args) throws ConverterException, DataException {
 		
 		// Totale aantal bekende genen in Ensemble Database (Ensemble.org)
 		int numberOfGenesEN = 100;
@@ -51,7 +56,10 @@ public class GeneCounter {
 			/*
 			 * Hier moet de functie worden aangeroepen die de referenties omzet naar EN.
 			 */
-		
+			SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT",new DataDerby(),0);
+			//db=getCrossRefs(L:24903);
+			
+			
 			//s in de totale set zetten
 			totalS.addAll(setOfRefPW);
 		}

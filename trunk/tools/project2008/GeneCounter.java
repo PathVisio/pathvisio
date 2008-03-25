@@ -14,17 +14,49 @@ public class GeneCounter {
 	 * @throws ConverterException 
 	 */
 	public static void main(String[] args) throws ConverterException {
-		// TODO Auto-generated method stub
+		
+		Set<String> totalS=new HashSet<String>();
+		
+		/* Hier moet iets van een for-loop komen om de gegevens
+		 * uit de verschillende Pathways te halen.
+		 * */
+		
+		// namen van de Pathways maken/aanroepen
+		String namePathway = "Rn_ACE-Inhibitor_pathway_PharmGKB.gpml";
+		
+		//s berekenen
+		Set<String> setOfRefPW=getRefPW(namePathway);
+		
+		/*
+		 * Hier moet de functie worden aangeroepen die de referenties omzet naar EN.
+		 */
+		
+		//s in de totale set zetten
+		totalS.addAll(setOfRefPW);
+		
+		/* Einde for loop
+		 */
+		
+		// Output: Grootte van de totale set
+		System.out.println(totalS.size());
+		
+}
+	
+	/*
+	 * Deze functie geeft een set van alle referenties van een Pathway.
+	 */
+	public static Set<String> getRefPW(String namePathway) throws ConverterException{
+		
 		Set<String> s=new HashSet<String>();
 		
-		String namePathway = "Rn_ACE-Inhibitor_pathway_PharmGKB.gpml";
 		File f = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat\\"+namePathway);
 		System.out.println("file = "+f);
 		
 		Pathway p = new Pathway();
 		p.readFromXml(f, true);
-		
+				
 		List<PathwayElement> pelts = p.getDataObjects();
+		
 		for (PathwayElement v:pelts){
 			
 			int type;
@@ -34,39 +66,22 @@ public class GeneCounter {
 				Xref reference;
 				reference=v.getXref();
 				String name=reference.getName();
-				System.out.println(name);
+				//System.out.println(name);
 				s.add(name);
 				
 			
 			}
-			
-		//List<PathwayElement> types = p.getObjectType();
-		//for (PathwayElement v:types){
-			//PathwayElement.getObjectType();
+		}
 		
-		
-		
-		//List<PathwayElement> pelts=List p.getDataObjects 
-		
-	}
 		s.remove("null:");
 		System.out.println(s);
 		System.out.println(s.size());
 		
-		Set<String> totS=addToSet(s);
-		System.out.println(totS.size());
-		
-}
-	public static void getRefPW(){
+		return s;
+				
 		
 	}
 	
-	public static Set<String> addToSet(Set<String> s){
-		Set<String> totalS=new HashSet<String>();
-		totalS.addAll(s);
-		System.out.println(totalS);
-		System.out.println(totalS.size());
-		return totalS;
-	}
+	
 	
 }

@@ -29,12 +29,15 @@ public class LinkChecker {
 			{
 				String genId;
 				genId = element.getGeneID();
-				System.out.println(genId);
+				System.out.println("GenID info: genId: "+genId);
 			
 				Xref reference;
 				reference = element.getXref();
 				String name = reference.getName();
-				System.out.println(name);
+				//System.out.println(name);
+				String databasename = reference.getDatabaseName();
+				System.out.println("Xref info: name: "+name+"  databasename: "+databasename);
+				System.out.println(" ");
 				}
 			}
 		}

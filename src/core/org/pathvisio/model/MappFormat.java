@@ -451,7 +451,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					}
 					else
 					{
-						throw new ConverterException ("This Pathway uses Shapes not supported by GenMAPP");
+						Logger.log.warn("This Pathway uses Shapes not supported by GenMAPP");
+						unmapUnknownShapeType (o, row);
 					}
 					result.add(row);
 					break;
@@ -460,6 +461,19 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		}
 				
 		return result;
+	}
+
+	/**
+	 * Unmapp a gpml shape type that is not defined in GenMAPP.
+	 * This will create an oval shape with the same properties
+	 * (rotation, location, size and color)
+	 */
+	private static void unmapUnknownShapeType(PathwayElement o, String[] mappObject) 
+	{
+		mappObject[colType] = ShapeType.OVAL.getMappName();
+		unmapShape_half (o, mappObject);
+		mappObject[colColor] = toMappColor(o.getFillColor(), o.isTransparent());
+		unmapRotation (o, mappObject);
 	}
 
 	private static void unmapNotesAndComments(PathwayElement o, String[] row)

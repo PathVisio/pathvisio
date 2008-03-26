@@ -32,7 +32,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.swing.DBConnectorSwing;
+import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;

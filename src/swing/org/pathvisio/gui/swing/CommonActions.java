@@ -36,7 +36,7 @@ import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.swing.DBConnectorSwing;
+import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -605,7 +605,7 @@ public class CommonActions implements ApplicationEventListener {
 			try 
 			{
 				DBConnectorSwing dbcon = SwingEngine.getCurrent().getSwingDbConnector(DBConnector.TYPE_GDB);
-				String dbName = dbcon.openChooseDbDialog();
+				String dbName = dbcon.openChooseDbDialog(null);
 				
 				if(dbName == null) return;
 				

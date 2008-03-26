@@ -43,35 +43,34 @@ public class LinkChecker {
 		
 		
 		// load the database of the rat species
-		SimpleGdb database = new SimpleGdb("C:\\muis data\\Rn_39_34i\\Rn_39_34i.pgdb", new DataDerby(), 0);
+		SimpleGdb database = new SimpleGdb("C:\\Documents and Settings\\s040772\\PathVisio-Data\\gene databases\\Rn_39_34i.pgdb", new DataDerby(), 0);
 		
-		// create a list containing Strings that represent the filenames of a directory
-		List<String> filenames = makeFilenameList();
+		// enter the directory that contains the pathways
+		File dir = new File("C:\\Documents and Settings\\s040772\\PathVisio-Data\\pathways");
+		// get a list of files (recursive)
+		List<File> filenames = getFileListing(dir);
 		
 		// for each filename create a list containing the Xref's
-		for (String filename:filenames)
+		for (File filename:filenames)
 		{
-			// load the file
-			File file = new File(filename);
-			
 			// load the pathway
 			Pathway pway = new Pathway();
 			boolean validate = true;
-			pway.readFromXml(file, validate);
+			pway.readFromXml(filename, validate);
 		
 			// make a list containing the Xref's 
-			List<Xref> xrefList = makeXrefList(pway);
+		List<Xref> xrefList = makeXrefList(pway);
 			
 			// as a debug tool, show how much Xref's are found in the list
-			System.out.println("size of the XrefList: "+xrefList.size());
+		System.out.println(filename.getName()); 
+		System.out.println("size of the XrefList: "+xrefList.size());
 			
 			
 			// give the precentage of Xrefs the database contains
-			String percentage = calculatePercentage(xrefList, database);
-			System.out.println("percentage found in DB: "+percentage);
-			
-			}
+		String percentage = calculatePercentage(xrefList, database);
+		System.out.println("percentage found in DB: "+percentage);
 		}
+	}
 	
 	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database){
 		// count how much of the Xref's exist in the database
@@ -103,20 +102,35 @@ public class LinkChecker {
 		
 	}
 	
-	
-	public static List<String> makeFilenameList(){
-		// make a list containing strings which represent all the files in a directory. This has to be made beautifull,
-		// 'cuz this way it looks kind of sloppy. ==> Ruben :)
+
+	static public List<File> getFileListing(File path){
+		// make a new list of files
+		List<File> files = new ArrayList<File>();
 		
-		
-		List<String> filenames = new ArrayList();
-		String filename = "C:\\muis data\\Rn_Apoptosis.gpml";
-		filenames.add(filename);
-		filenames.add("C:\\muis data\\Rn_Alanine_and_aspartate_metabolism_KEGG.gpml");
-		
-		return filenames;
+		// get all the files and directories contained in the given path
+	    File[] content = path.listFiles();
+	    
+	    // use a for loop to walk through content
+	    for(File file : content) {
+	    	  if ( file.isDirectory() ) {
+	    		// if the file is a directory use recursion to get the contents of the sub-path
+	    		List<File> subpath = getFileListing(file);
+	    		// add the files contained in this sub-directory to the files list
+		        files.addAll(subpath);
+		      }
+		      else {
+		    	  // only use the file if it has a valid extension
+		    	  if( file.getName().endsWith(".gpml") ) {
+		    	 // add all files in the directory to the list files
+		    	 files.add(file);
+		    	 }
+		    }
+		}
+	    // return all the obtained files
+	    return files;
 	}
-	
+
+
 	
 	public static List<Xref> makeXrefList(Pathway pway){
 		// for every pathway element, check if it is a datanode.

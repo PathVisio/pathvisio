@@ -699,6 +699,14 @@ public class Pathway implements PathwayListener
 			{
 				graphIds.add (id);
 			}
+			for (PathwayElement.MAnchor pp : pe.getMAnchors())
+			{
+				String pid = pp.getGraphId();
+				if (pid != null)
+				{
+					graphIds.add (pid);
+				}
+			}
 		}
 		for (PathwayElement pe : dataObjects)
 		{

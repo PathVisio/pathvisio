@@ -23,10 +23,15 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwing;
+import org.pathvisio.data.GdbManager;
+import org.pathvisio.debug.Logger;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
@@ -38,6 +43,8 @@ public class StandaloneActions
 	public static final Action openAction = new OpenAction();
 	public static final Action helpAction = new HelpAction();
 	public static final Action newAction = new NewAction();
+	public static final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
+	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
 
 	/**
 	 * Open the online help in a browser window.
@@ -123,5 +130,50 @@ public class StandaloneActions
 			}
 		}
 	}
+	
+	/**
+	 * Let the user pick a gene or metabolite database.
+	 * Invoked in menu->data->select gene database
+	 */
+	public static class SelectGeneDbAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		String dbType;
+		/** 
+		 * type should be "Gene" or "Metabolite"
+		 */
+		public SelectGeneDbAction(String type) 
+		{
+			super();
+			dbType = type;
+			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite"));
+			putValue(NAME, "Select " + dbType + " Database");
+			putValue(SHORT_DESCRIPTION, "Select " + dbType + " Database");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			try 
+			{
+				DBConnectorSwing dbcon = SwingEngine.getCurrent().getSwingDbConnector(DBConnector.TYPE_GDB);
+				String dbName = dbcon.openChooseDbDialog(null);
+				
+				if(dbName == null) return;
+				
+				GdbManager.setGeneDb(dbName);
+			} 
+			catch(Exception ex) 
+			{
+				String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
+				JOptionPane.showMessageDialog(null, 
+						"Error: " + msg + "\n\n" + "See the error log for details.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				Logger.log.error(msg, ex);
+			}
+		}
+	}
+	
 
 }

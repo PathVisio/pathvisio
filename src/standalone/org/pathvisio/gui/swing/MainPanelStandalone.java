@@ -26,15 +26,14 @@ public class MainPanelStandalone extends MainPanel
 {
 	private static final long serialVersionUID = 1L;
 
-	private StandaloneActions saActions;
 	protected JMenuBar menuBar;
 	
 	@Override
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu fileMenu = new JMenu("File");
 		
-		addToMenu(saActions.newAction, fileMenu);
-		addToMenu(saActions.openAction, fileMenu);
+		addToMenu(StandaloneActions.newAction, fileMenu);
+		addToMenu(StandaloneActions.openAction, fileMenu);
 		addToMenu(actions.saveAction, fileMenu);
 		addToMenu(actions.saveAsAction, fileMenu);
 		fileMenu.addSeparator();
@@ -62,8 +61,8 @@ public class MainPanelStandalone extends MainPanel
 		editMenu.add (selectionMenu);
 
 		JMenu dataMenu = new JMenu("Data");
-		addToMenu (actions.selectGeneDbAction, dataMenu);
-		addToMenu (actions.selectMetaboliteDbAction, dataMenu);
+		addToMenu (StandaloneActions.selectGeneDbAction, dataMenu);
+		addToMenu (StandaloneActions.selectMetaboliteDbAction, dataMenu);
 		
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
@@ -72,7 +71,7 @@ public class MainPanelStandalone extends MainPanel
 
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.add(actions.aboutAction);
-		helpMenu.add(saActions.helpAction);
+		helpMenu.add(StandaloneActions.helpAction);
 		
 		mb.add(fileMenu);
 		mb.add(editMenu);

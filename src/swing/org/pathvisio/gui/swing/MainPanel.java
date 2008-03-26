@@ -116,10 +116,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		selectionMenu.add(alignMenu);
 		selectionMenu.add(stackMenu);
 		editMenu.add (selectionMenu);
-
-		JMenu dataMenu = new JMenu("Data");
-		addToMenu (actions.selectGeneDbAction, dataMenu);
-		addToMenu (actions.selectMetaboliteDbAction, dataMenu);
 		
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
@@ -131,7 +127,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		mb.add(fileMenu);
 		mb.add(editMenu);
-		mb.add(dataMenu);
 		mb.add(viewMenu);
 		mb.add(helpMenu);
 	}

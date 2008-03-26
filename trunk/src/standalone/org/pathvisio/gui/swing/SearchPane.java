@@ -24,7 +24,6 @@ import java.io.File;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.table.JTableHeader;
 
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;

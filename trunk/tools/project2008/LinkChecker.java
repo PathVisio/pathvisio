@@ -38,37 +38,64 @@ public class LinkChecker {
 	 * @throws DataException 
 	 */
 	public static void main(String[] args) throws ConverterException, DataException {
-		// TODO: load the database and the filenames in a nice way..
+		// enter the directorys that contains the pathways and databases
+		File dbDir = new File("C:\\databases\\");
+		File pwDir = new File("C:\\pathways\\");
 		
+		// get a list of files of databases and pathways
+		String pwExtension = ".gpml";
+		String dbExtension = ".pgdb";
+		List<File> pwFilenames = getFileListing(pwDir, pwExtension);
+		List<File> dbFilenames = getFileListing(dbDir, dbExtension);
 		
+		// Load all databases in List<SimpleGdb> databases,
+		// and load all filenames of the loaded databases
+		// in List<String> databaseFilenames
+		List<SimpleGdb> databases = new ArrayList<SimpleGdb>();
+		List<String> databasesFilenames = new ArrayList<String>();
+		int i = 0;
+		for (File dbFilename: dbFilenames){
+			// load a database and add it to the list
+			SimpleGdb database = new SimpleGdb(dbFilename.getPath(), new DataDerby(), 0);
+			databases.add(i, database);
+			
+			// extract a filename and add it to the list
+			databasesFilenames.add(i, dbFilename.getName());
+			
+			i++;
+			}
 		
-		// load the database of the rat species
-		SimpleGdb database = new SimpleGdb("C:\\Documents and Settings\\s040772\\PathVisio-Data\\gene databases\\Rn_39_34i.pgdb", new DataDerby(), 0);
-		
-		// enter the directory that contains the pathways
-		File dir = new File("C:\\Documents and Settings\\s040772\\PathVisio-Data\\pathways");
-		// get a list of files (recursive)
-		List<File> filenames = getFileListing(dir);
 		
 		// for each filename create a list containing the Xref's
-		for (File filename:filenames)
+		for (File filename:pwFilenames)
 		{
 			// load the pathway
 			Pathway pway = new Pathway();
-			boolean validate = true;
+			boolean validate = false;
 			pway.readFromXml(filename, validate);
 		
 			// make a list containing the Xref's 
-		List<Xref> xrefList = makeXrefList(pway);
+			List<Xref> xrefList = makeXrefList(pway);
 			
 			// as a debug tool, show how much Xref's are found in the list
-		System.out.println(filename.getName()); 
-		System.out.println("size of the XrefList: "+xrefList.size());
+			System.out.println(filename.getName()); 
+			System.out.println("size of the XrefList: "+xrefList.size());
 			
+					
+			// find the database for the pathway
+			i = 0;
+			int index = 0;
+			for (String databaseFilename: databasesFilenames){
+				if (databaseFilename.substring(0,2).equalsIgnoreCase(filename.getName().substring(0,2))){
+					index = i;
+					}
+				i++;
+				
+				}
+			System.out.println(databasesFilenames.get(index));
 			
-			// give the precentage of Xrefs the database contains
-		String percentage = calculatePercentage(xrefList, database);
-		System.out.println("percentage found in DB: "+percentage);
+			String percentage = calculatePercentage(xrefList, databases.get(index));
+			System.out.println("percentage found in DB: "+percentage);
 		}
 	}
 	
@@ -103,7 +130,7 @@ public class LinkChecker {
 	}
 	
 
-	static public List<File> getFileListing(File path){
+	static public List<File> getFileListing(File path, String extension){
 		// make a new list of files
 		List<File> files = new ArrayList<File>();
 		
@@ -114,13 +141,13 @@ public class LinkChecker {
 	    for(File file : content) {
 	    	  if ( file.isDirectory() ) {
 	    		// if the file is a directory use recursion to get the contents of the sub-path
-	    		List<File> subpath = getFileListing(file);
+	    		List<File> subpath = getFileListing(file, extension);
 	    		// add the files contained in this sub-directory to the files list
 		        files.addAll(subpath);
 		      }
 		      else {
 		    	  // only use the file if it has a valid extension
-		    	  if( file.getName().endsWith(".gpml") ) {
+		    	  if( file.getName().endsWith(extension) ) {
 		    	 // add all files in the directory to the list files
 		    	 files.add(file);
 		    	 }

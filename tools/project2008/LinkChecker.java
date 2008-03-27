@@ -55,24 +55,21 @@ public class LinkChecker {
 		String dbExtension = ".pgdb";
 		List<File> pwFilenames = getFileListing(pwDir, pwExtension);
 		List<File> dbFilenames = getFileListing(dbDir, dbExtension);
-		
 		// Load all databases in List<SimpleGdb> databases,
 		// and load all filenames of the loaded databases
 		// in List<String> databaseFilenames
 		List<SimpleGdb> databases          = new ArrayList<SimpleGdb>();
 		List<String>    databasesFilenames = new ArrayList<String>();
 		
-		int i = 0;
 		for (File dbFilename: dbFilenames){
 			
 			// load a database and add it to the list
 			SimpleGdb database = new SimpleGdb(dbFilename.getPath(), new DataDerby(), 0);
-			databases.add(i, database);
+			databases.add(database);
 			
 			// extract a filename and add it to the list
-			databasesFilenames.add(i, dbFilename.getName());
+			databasesFilenames.add(dbFilename.getName());
 			
-			i++;
 			}
 				
 		// create the output file
@@ -104,7 +101,7 @@ public class LinkChecker {
 			// find the good database for the pathway;
 			// the filename of a database must have the same 2 starting letters as
 			// the filename of the pathway
-			i = 0;
+			int i = 0;
 			int index = -1;
 			for (String databaseFilename: databasesFilenames){
 				if (databaseFilename.substring(0,2).equalsIgnoreCase(filename.getName().substring(0,2))){
@@ -126,7 +123,7 @@ public class LinkChecker {
 			else{
 			out.print("<TR><TD>"+filename.getName()+"</TD>");
 			out.println("<TD> db not found </TD></TR>");				
-				}
+			}
 		
 		}
 		
@@ -179,10 +176,8 @@ public class LinkChecker {
 		
 		// create a new List of Files
 		List<File> files = new ArrayList<File>();
-		
 		// get all the files and directories contained in the given path
 	    File[] content = path.listFiles();
-	    
 	    // use a for loop to walk through content
 	    for(File file : content) {
 	    	// if the file is a directory use recursion to get the contents of the sub-path

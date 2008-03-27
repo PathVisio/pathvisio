@@ -20,6 +20,7 @@ import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -39,8 +40,9 @@ public class GeneCounter {
 		// Totale aantal bekende genen in Ensemble Database (Ensemble.org)
 		int numberOfGenesEN = 100;
 		// Set aanmaken voor totale aantal gebruikte genen in WikiPathways
-		Set<String> totalS=new HashSet<String>();
-				
+		Set<Xref> totalS=new HashSet<Xref>();
+		
+		SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT\\Rn_39_34i.pgdb",new DataDerby(),0);		
 		
 
 		
@@ -61,16 +63,12 @@ public class GeneCounter {
 		
 			
 			File fileName=filenames.get(i);
-			System.out.println(fileName);
+			//System.out.println(fileName);
 			
 			//s berekenen
-			Set<String> setOfRefPW=getRefPW(fileName);
+			Set<Xref> setOfRefPW=getRefPW(fileName,db);
 		
-			/*
-			 * Hier moet de functie worden aangeroepen die de referenties omzet naar EN.
-			 */
-			//SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT",new DataDerby(),0);
-			//db=getCrossRefs();
+			
 			
 			
 			//s in de totale set zetten
@@ -82,6 +80,7 @@ public class GeneCounter {
 		// Output: Grootte van de totale set
 		System.out.println(totalS);
 		System.out.println(totalS.size());
+		
 		double usedgenes=totalS.size();
 		usedgenes=usedgenes/numberOfGenesEN;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
@@ -121,17 +120,18 @@ public class GeneCounter {
 	/*
 	 * Deze functie geeft een set van alle referenties van een Pathway.
 	 */
-	public static Set<String> getRefPW(File filename) throws ConverterException{
+	public static Set<Xref> getRefPW(File filename,SimpleGdb db) throws ConverterException{
 		
-		Set<String> s=new HashSet<String>();
+		Set<Xref> s=new HashSet<Xref>();
 		
 		//File f = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat\\"+namePathway);
-		System.out.println("file = "+filename);
+		//System.out.println("file = "+filename);
 		
 		Pathway p = new Pathway();
 		p.readFromXml(filename, true);
 				
 		List<PathwayElement> pelts = p.getDataObjects();
+		
 		
 		for (PathwayElement v:pelts){
 			
@@ -141,17 +141,18 @@ public class GeneCounter {
 			if (type ==1){
 				Xref reference;
 				reference=v.getXref();
-				String name=reference.getName();
-				String id=reference.getId();
-				System.out.println(id);
-				//System.out.println(name);
-				s.add(name);
+				//System.out.println(reference);
+				
+				List<Xref> cRef=db.getCrossRefs(reference,DataSource.ENSEMBL);
+				
+			
+				s.addAll(cRef);
 				
 			
 			}
 		}
 		
-		s.remove("null:");
+		//s.remove("null:");
 		System.out.println(s);
 		System.out.println(s.size());
 		

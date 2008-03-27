@@ -145,7 +145,7 @@ public class LinkChecker {
 		int countTrue = 0;       // counter for the true outcome (a xref is found)
         int countTotal = 0;      // counter for the total of xrefs
 		String percentage;       // string for the outcome
-		double percentagedouble; // double for 
+		double percentagedouble; // double for the actual percentage
 		
 		// check each Xref from the xrefList if it is found in the database
 		for (Xref xref:xrefList)
@@ -156,26 +156,28 @@ public class LinkChecker {
 			
 			countTotal++;
 			}
-		
-
-		
-		// calculate the precentage of found references
+				
+		// calculate the percentage of found references
 		if (countTotal != 0){
 			percentagedouble = 100*countTrue/countTotal;
 			percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
-		}
+			}
 		else{
 			percentage = ("total: 0 (divide by zero) in ");
-		}
-		// create a string with the outcome
-		
+			}
+
+		// return the output
 		return percentage;
-		
-	}
+		}
 	
 
 	static public List<File> getFileListing(File path, String extension){
-		// make a new list of files
+		// in this method, a list of files is constructed. The list contains all the files
+		// with a given extension in a folder and all its subfolders. The property's you
+		// have to enter are path; a File containing the path that has to be searched,
+		// and extension; a String containing the extension where has to be searched for.
+		
+		// create a new List of Files
 		List<File> files = new ArrayList<File>();
 		
 		// get all the files and directories contained in the given path
@@ -183,59 +185,43 @@ public class LinkChecker {
 	    
 	    // use a for loop to walk through content
 	    for(File file : content) {
-	    	  if ( file.isDirectory() ) {
-	    		// if the file is a directory use recursion to get the contents of the sub-path
+	    	// if the file is a directory use recursion to get the contents of the sub-path
+	    	// the files in this sub-path are added to the files list.
+	    	if ( file.isDirectory() ) {
 	    		List<File> subpath = getFileListing(file, extension);
-	    		// add the files contained in this sub-directory to the files list
 		        files.addAll(subpath);
 		      }
-		      else {
-		    	  // only use the file if it has a valid extension
+		    // if the file is not a directory, check the extension. When this is the
+	    	// desired extension, add the file to the list.
+	    	else {
 		    	  if( file.getName().endsWith(extension) ) {
-		    	 // add all files in the directory to the list files
 		    	 files.add(file);
 		    	 }
 		    }
 		}
-	    // return all the obtained files
+	    
+	    // return the list with files
 	    return files;
 	}
 
-
-	
 	public static List<Xref> makeXrefList(Pathway pway){
-		// for every pathway element, check if it is a datanode.
-		// if this is the case, put the xRef data in a list.
+		// In this method a list of Xrefs in made. The list contains all the
+		// Xrefs from a given pathway. The property you have to give
+		// is pway, a Pathway where you want to extract all the Xrefs from
+		
 		List<PathwayElement> pelts = pway.getDataObjects();
 		List<Xref> xRefList = new ArrayList();
+		
 		for (PathwayElement element:pelts){
-			int objectType = element.getObjectType();
-			// check if the objectType is a datanode
-			if (objectType == ObjectType.DATANODE)
+			// check if the objectType is a datanode, and add it to the list
+			if (element.getObjectType() == ObjectType.DATANODE)
 			{
-				// retrieve the reference info
-				Xref reference;
-				reference = element.getXref();
-				
-				// add the reference info to a list
-				xRefList.add(reference);
-				
-				// uncomment to get the name of the pathway element
-				// String name;
-				// name = element.getTextLabel();
-				// System.out.println("GenID info: name: "+name);
-				
-				// uncomment to get the reference info (referenceId and databasename) 
-				// of the pathway element				
-				//String refId = reference.getName();
-				//String databasename = reference.getDatabaseName();
-				//System.out.println("Xref info: referenceID: "+refId+"  databasename: "+databasename);
-				//System.out.println(" ");
-				
+				xRefList.add(element.getXref());
 				}
 			}
-		return xRefList;
 		
+		// return the list
+		return xRefList;
 	}
 	
-	}
+}

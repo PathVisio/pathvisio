@@ -55,13 +55,15 @@ public class GeneCounter {
 		//The number of files that is loaded can be printed. 
 		//System.out.println(filenames.size());
 		
+		List<Set> refPWarray = new ArrayList<Set>();
+		
 		/* Hier moet iets van een for-loop komen om de gegevens
 		 * uit de verschillende Pathways te halen.
 		 * */
 		
 		int i;
 		//for (i=0;i<filenames.size();i++){
-		for (i=0;i<filenames.size();i++){
+		for (i=0;i<5;i++){
 		
 			
 			File fileName=filenames.get(i);
@@ -69,8 +71,8 @@ public class GeneCounter {
 			
 			//s berekenen
 			Set<Xref> setOfRefPW=getRefPW(fileName,db);
-		
 			
+			refPWarray.add(setOfRefPW);
 			
 			
 			//s in de totale set zetten
@@ -78,10 +80,11 @@ public class GeneCounter {
 		}
 		/* Einde for loop
 		 */
-		
+		System.out.println(refPWarray);
+		System.out.println(refPWarray.get(0));
 		// Output: Grootte van de totale set
-		System.out.println(totalS);
-		System.out.println(totalS.size());
+		//System.out.println(totalS);
+		//System.out.println(totalS.size());
 		
 		double usedgenes=totalS.size();
 		usedgenes=usedgenes/numberOfGenesEN;
@@ -134,7 +137,7 @@ public class GeneCounter {
 				
 		List<PathwayElement> pelts = p.getDataObjects();
 		
-		
+				
 		for (PathwayElement v:pelts){
 			
 			int type;
@@ -149,7 +152,7 @@ public class GeneCounter {
 				
 			
 				s.addAll(cRef);
-				
+							
 			
 			}
 		}

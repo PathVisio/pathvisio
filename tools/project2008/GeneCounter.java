@@ -42,28 +42,25 @@ public class GeneCounter {
 		Set<String> totalS=new HashSet<String>();
 				
 		
-		// namen van de Pathways maken. Dit moet uiteindelijk automatisch gedaan worden.
-		List<String> namePathway = new ArrayList<String>();
-		namePathway.add("Rn_ACE-Inhibitor_pathway_PharmGKB.gpml");
-		namePathway.add("Rn_Acetylcholine_Synthesis.gpml");
-		namePathway.add("Rn_Adipogenesis.gpml");
-		namePathway.add("Rn_Alanine_and_aspartate_metabolism_KEGG.gpml");
-		namePathway.add("Rn_Alpha6-Beta4-Integrin_NetPath_1.gpml");
-		namePathway.add("Rn_Androgen-Receptor_NetPath_2.gpml");
-		namePathway.add("Rn_Apoptosis.gpml");
-		namePathway.add("Rn_B_Cell_Receptor_NetPath_12.gpml");
-		namePathway.add("Rn_Biogenic_Amine_Synthesis.gpml");
-		namePathway.add("Rn_Biosynthesis_of_Aldosterone_and_Cortisol.gpml");
-		System.out.println(namePathway);
+
+		
+		// enter the directory that contains the pathways
+		File dir = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat");
+		// get a list of files (recursive)
+		List<File> filenames = getFileListing(dir);
+		//System.out.println(filenames.get(1));
+		System.out.println(filenames.size());
 		
 		/* Hier moet iets van een for-loop komen om de gegevens
 		 * uit de verschillende Pathways te halen.
 		 * */
+		
 		int i;
-		for (i=0;i<namePathway.size();i++){
+		//for (i=0;i<filenames.size();i++){
+		for (i=0;i<5;i++){
 		
 			
-			String fileName=namePathway.get(i);
+			File fileName=filenames.get(i);
 			System.out.println(fileName);
 			
 			//s berekenen
@@ -72,8 +69,8 @@ public class GeneCounter {
 			/*
 			 * Hier moet de functie worden aangeroepen die de referenties omzet naar EN.
 			 */
-			SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT",new DataDerby(),0);
-			//db=getCrossRefs(L:24903);
+			//SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT",new DataDerby(),0);
+			//db=getCrossRefs();
 			
 			
 			//s in de totale set zetten
@@ -89,20 +86,50 @@ public class GeneCounter {
 		usedgenes=usedgenes/numberOfGenesEN;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
 		//
+		
 }
+	
+	
+	static public List<File> getFileListing(File path){
+		// make a new list of files
+		List<File> files = new ArrayList<File>();
+		
+		// get all the files and directories contained in the given path
+	    File[] content = path.listFiles();
+	    
+	    // use a for loop to walk through content
+	    for(File file : content) {
+	    	  if ( file.isDirectory() ) {
+	    		// if the file is a directory use recursion to get the contents of the sub-path
+	    		List<File> subpath = getFileListing(file);
+	    		// add the files contained in this sub-directory to the files list
+		        files.addAll(subpath);
+		      }
+		      else {
+		    	  // only use the file if it has a valid extension
+		    	  if( file.getName().endsWith(".gpml") ) {
+		    	 // add all files in the directory to the list files
+		    	 files.add(file);
+		    	 }
+		    }
+		}
+	    // return all the obtained files
+	    return files;
+	}
+
 	
 	/*
 	 * Deze functie geeft een set van alle referenties van een Pathway.
 	 */
-	public static Set<String> getRefPW(String namePathway) throws ConverterException{
+	public static Set<String> getRefPW(File filename) throws ConverterException{
 		
 		Set<String> s=new HashSet<String>();
 		
-		File f = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat\\"+namePathway);
-		System.out.println("file = "+f);
+		//File f = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat\\"+namePathway);
+		System.out.println("file = "+filename);
 		
 		Pathway p = new Pathway();
-		p.readFromXml(f, true);
+		p.readFromXml(filename, true);
 				
 		List<PathwayElement> pelts = p.getDataObjects();
 		
@@ -115,6 +142,8 @@ public class GeneCounter {
 				Xref reference;
 				reference=v.getXref();
 				String name=reference.getName();
+				String id=reference.getId();
+				System.out.println(id);
 				//System.out.println(name);
 				s.add(name);
 				

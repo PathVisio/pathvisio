@@ -41,9 +41,22 @@ public class LinkChecker {
 	 * @throws DataException 
 	 */
 	public static void main(String[] args) throws ConverterException, DataException {
+		// in the String[] args, 3 arguments are given:
+		// i.e.
+		// "C:\\databases\\"
+		// "C:\\pathways\\"
+		// "C:\\result.html"
+		// 
+		// the first one is the directory that contains the databases
+		// the second one is the directory that contains the pathways
+		// the third one is the filename (note the html extension!) of where the results are stored'
+		//
+		// Good Luck!
+		
+		
 		// enter the directories that contains the pathways and databases
-		File dbDir = new File("C:\\Documents and Settings\\s040772\\PathVisio-Data\\gene databases");
-		File pwDir = new File("C:\\Documents and Settings\\s040772\\PathVisio-Data\\pathways");
+		File dbDir = new File(args[0]);
+		File pwDir = new File(args[1]);
 		
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";
@@ -71,7 +84,7 @@ public class LinkChecker {
 		
 		// for each filename create a list containing the Xref's
 		
-		String outfile="C:\\test\\result.html";
+		String outfile=args[2];
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new FileWriter(outfile));
@@ -86,7 +99,7 @@ public class LinkChecker {
 		{
 			// load the pathway
 			Pathway pway = new Pathway();
-			boolean validate = true;
+			boolean validate = false;
 			pway.readFromXml(filename, validate);
 		
 			// make a list containing the Xref's 
@@ -95,7 +108,7 @@ public class LinkChecker {
 			// as a debug tool, show how much Xref's are found in the list
 			// find the database for the pathway
 			i = 0;
-			int index = 0;
+			int index = -1;
 			for (String databaseFilename: databasesFilenames){
 				if (databaseFilename.substring(0,2).equalsIgnoreCase(filename.getName().substring(0,2))){
 					index = i;
@@ -103,9 +116,16 @@ public class LinkChecker {
 				i++;
 				
 			}				        
+			if (index != -1){
+				out.print("<TR><TD>"+filename.getName()+"</TD>");
+				String percentage = calculatePercentage(xrefList, databases.get(index));
+				out.println("<TD>"+percentage+databasesFilenames.get(index)+")</TD></TR>");
+				}
+			else{
 			out.print("<TR><TD>"+filename.getName()+"</TD>");
-			String percentage = calculatePercentage(xrefList, databases.get(index));
-			out.println("<TD>"+percentage+databasesFilenames.get(index)+")</TD></TR>");
+			out.println("<TD> db not found </TD></TR>");				
+				}
+		
 		}
 		out.print("</TABLE></BODY></HTML>");
 		out.close();
@@ -133,11 +153,17 @@ public class LinkChecker {
 		// calculated the total count. This has to be equal to xrefList.size. It's still here for debug purpose
 		int countTotal = countTrue + countFalse;
 		
+		String percentage;
 		// calculate the precentage of found references
-		double percentagedouble = 100*countTrue/countTotal;
-		
+		if (countTotal != 0){
+			double percentagedouble = 100*countTrue/countTotal;
+			percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
+		}
+		else{
+			percentage = ("total: 0 (divide by zero) in ");
+		}
 		// create a string with the outcome
-		String percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
+		
 		return percentage;
 		
 	}

@@ -37,21 +37,23 @@ public class GeneCounter {
 	 */
 	public static void main(String[] args) throws ConverterException, DataException {
 		
-		// Totale aantal bekende genen in Ensemble Database (Ensemble.org)
-		int numberOfGenesEN = 100;
-		// Set aanmaken voor totale aantal gebruikte genen in WikiPathways
+		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
+		int numberOfGenesEN = 17738;
+		// Make a set to store the genes used in WikiPathways.
 		Set<Xref> totalS=new HashSet<Xref>();
 		
-		SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT\\Rn_39_34i.pgdb",new DataDerby(),0);		
+		// A SimpleGdb Database is used to be able to load the Database downloaded from internet. 
+		//SimpleGdb db=new SimpleGdb("D:\\My Documents\\Tue\\BIGCAT\\Rn_39_34i.pgdb",new DataDerby(),0);		
+		SimpleGdb db=new SimpleGdb("D:\\My Documents\\school\\jaar 3\\Semester 2\\project blok 3E\\Rn_39_34i.pgdb",new DataDerby(),0);		
 		
-
+		// The pathways are stored in the following directoryIn the following directory, the pathways are stored.
+		//File dir = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat");
+		File dir = new File("D:\\My Documents\\school\\jaar 3\\Semester 2\\project blok 3E\\wikipathways_1206450480");
 		
-		// enter the directory that contains the pathways
-		File dir = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat");
-		// get a list of files (recursive)
+		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
 		List<File> filenames = getFileListing(dir);
-		//System.out.println(filenames.get(1));
-		System.out.println(filenames.size());
+		//The number of files that is loaded can be printed. 
+		//System.out.println(filenames.size());
 		
 		/* Hier moet iets van een for-loop komen om de gegevens
 		 * uit de verschillende Pathways te halen.
@@ -59,7 +61,7 @@ public class GeneCounter {
 		
 		int i;
 		//for (i=0;i<filenames.size();i++){
-		for (i=0;i<5;i++){
+		for (i=0;i<filenames.size();i++){
 		
 			
 			File fileName=filenames.get(i);
@@ -153,8 +155,8 @@ public class GeneCounter {
 		}
 		
 		//s.remove("null:");
-		System.out.println(s);
-		System.out.println(s.size());
+		//System.out.println(s);
+		//System.out.println(s.size());
 		
 		return s;
 				

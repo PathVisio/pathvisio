@@ -16,6 +16,9 @@
 //
 // import the things needed to run this java file.
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +41,9 @@ public class LinkChecker {
 	 * @throws DataException 
 	 */
 	public static void main(String[] args) throws ConverterException, DataException {
-		// enter the directorys that contains the pathways and databases
-		File dbDir = new File("C:\\databases\\");
-		File pwDir = new File("C:\\pathways\\");
+		// enter the directories that contains the pathways and databases
+		File dbDir = new File("C:\\Documents and Settings\\s040772\\PathVisio-Data\\gene databases");
+		File pwDir = new File("C:\\Documents and Settings\\s040772\\PathVisio-Data\\pathways");
 		
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";
@@ -67,21 +70,29 @@ public class LinkChecker {
 		
 		
 		// for each filename create a list containing the Xref's
+		
+		String outfile="C:\\test\\result.html";
+		PrintWriter out = null;
+		try {
+			out = new PrintWriter(new FileWriter(outfile));
+		}
+		catch(IOException e){
+			System.out.println("Can't open folder "+outfile);
+			System.exit(0);
+		}
+		out.print("<HTML><BODY><TITLE>LinkChecker.java results</TITLE><TABLE border=\"1\">");
+		out.print("<TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
 		for (File filename:pwFilenames)
 		{
 			// load the pathway
 			Pathway pway = new Pathway();
-			boolean validate = false;
+			boolean validate = true;
 			pway.readFromXml(filename, validate);
 		
 			// make a list containing the Xref's 
 			List<Xref> xrefList = makeXrefList(pway);
 			
 			// as a debug tool, show how much Xref's are found in the list
-			System.out.println(filename.getName()); 
-			System.out.println("size of the XrefList: "+xrefList.size());
-			
-					
 			// find the database for the pathway
 			i = 0;
 			int index = 0;
@@ -91,12 +102,14 @@ public class LinkChecker {
 					}
 				i++;
 				
-				}
-			System.out.println(databasesFilenames.get(index));
-			
+			}				        
+			out.print("<TR><TD>"+filename.getName()+"</TD>");
 			String percentage = calculatePercentage(xrefList, databases.get(index));
-			System.out.println("percentage found in DB: "+percentage);
+			out.println("<TD>"+percentage+databasesFilenames.get(index)+")</TD></TR>");
 		}
+		out.print("</TABLE></BODY></HTML>");
+		out.close();
+		System.out.println("Results are stored in " + outfile);
 	}
 	
 	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database){
@@ -124,7 +137,7 @@ public class LinkChecker {
 		double percentagedouble = 100*countTrue/countTotal;
 		
 		// create a string with the outcome
-		String percentage = countTrue+" of "+countTotal+" found in DB; ("+percentagedouble+"%)";
+		String percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
 		return percentage;
 		
 	}

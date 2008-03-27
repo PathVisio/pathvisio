@@ -31,30 +31,22 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 
-
 public class LinkChecker {
-
-
 	/**
-	 * @param args
-	 * @throws ConverterException 
-	 * @throws DataException 
-	 */
+	* in the String[] args, 3 arguments are given:
+	* in example:
+	* "C:\\databases\\"
+	* "C:\\pathways\\"
+	* "C:\\result.html"
+	* 
+	* the first one is the directory that contains the databases
+	* the second one is the directory that contains the pathways
+	* the third one is the filename (note the html extension!) of where the results are stored'
+	* 	
+	* Good Luck!
+	*/
 	public static void main(String[] args) throws ConverterException, DataException {
-		// in the String[] args, 3 arguments are given:
-		// i.e.
-		// "C:\\databases\\"
-		// "C:\\pathways\\"
-		// "C:\\result.html"
-		// 
-		// the first one is the directory that contains the databases
-		// the second one is the directory that contains the pathways
-		// the third one is the filename (note the html extension!) of where the results are stored'
-		//
-		// Good Luck!
-		
-		
-		// enter the directories that contains the pathways and databases
+		// make Files containing the directories to the pathways and databases
 		File dbDir = new File(args[0]);
 		File pwDir = new File(args[1]);
 		
@@ -67,10 +59,12 @@ public class LinkChecker {
 		// Load all databases in List<SimpleGdb> databases,
 		// and load all filenames of the loaded databases
 		// in List<String> databaseFilenames
-		List<SimpleGdb> databases = new ArrayList<SimpleGdb>();
-		List<String> databasesFilenames = new ArrayList<String>();
+		List<SimpleGdb> databases          = new ArrayList<SimpleGdb>();
+		List<String>    databasesFilenames = new ArrayList<String>();
+		
 		int i = 0;
 		for (File dbFilename: dbFilenames){
+			
 			// load a database and add it to the list
 			SimpleGdb database = new SimpleGdb(dbFilename.getPath(), new DataDerby(), 0);
 			databases.add(i, database);
@@ -80,10 +74,8 @@ public class LinkChecker {
 			
 			i++;
 			}
-		
-		
-		// for each filename create a list containing the Xref's
-		
+				
+		// create the output file
 		String outfile=args[2];
 		PrintWriter out = null;
 		try {
@@ -93,20 +85,25 @@ public class LinkChecker {
 			System.out.println("Can't open folder "+outfile);
 			System.exit(0);
 		}
-		out.print("<HTML><BODY><TITLE>LinkChecker.java results</TITLE><TABLE border=\"1\">");
-		out.print("<TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
+		
+		// print the first lines of the created HTML file
+		String titleOfHTMLPage = "LinkChecker.java results";
+		out.print("<HTML><HEAD><TITLE>"+titleOfHTMLPage+"</TITLE></HEAD><BODY><center><h1>"+titleOfHTMLPage+"</h1><TABLE border=\"1\"><TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
+		
+		// load all pathway files, and give the percentage of found Xrefs in the database.
 		for (File filename:pwFilenames)
 		{
 			// load the pathway
 			Pathway pway = new Pathway();
-			boolean validate = false;
+			boolean validate = false; // set to true if you want to validate the pathway file
 			pway.readFromXml(filename, validate);
 		
 			// make a list containing the Xref's 
 			List<Xref> xrefList = makeXrefList(pway);
 			
-			// as a debug tool, show how much Xref's are found in the list
-			// find the database for the pathway
+			// find the good database for the pathway;
+			// the filename of a database must have the same 2 starting letters as
+			// the filename of the pathway
 			i = 0;
 			int index = -1;
 			for (String databaseFilename: databasesFilenames){
@@ -114,49 +111,57 @@ public class LinkChecker {
 					index = i;
 					}
 				i++;
-				
-			}				        
+			}		
+			
+			// if the database is found, add a row to the table of the html file, 
+			// containing the name of the pathway and the percentage of found
+			// Xref's in the database
 			if (index != -1){
 				out.print("<TR><TD>"+filename.getName()+"</TD>");
 				String percentage = calculatePercentage(xrefList, databases.get(index));
 				out.println("<TD>"+percentage+databasesFilenames.get(index)+")</TD></TR>");
 				}
+			// if the database is not found, add a row to the table of the html file,
+			// containing the name of the pathyway and "db not found"
 			else{
 			out.print("<TR><TD>"+filename.getName()+"</TD>");
 			out.println("<TD> db not found </TD></TR>");				
 				}
 		
 		}
-		out.print("</TABLE></BODY></HTML>");
+		
+		// all pathway rows are added to the table. Now the HTML file has to be closed properly
+		out.print("</TABLE></center></BODY></HTML>");
 		out.close();
 		System.out.println("Results are stored in " + outfile);
 	}
 	
 	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database){
-		// count how much of the Xref's exist in the database
+		// in this method, the percentage of Xref's found in the database is calculated.
+		// the property's you have to enter are xrefList; a list of all the xrefs from
+		// a pathway, and database; a SimpleGdb database that has to be checked if it
+		// contains the Xrefs.
 		
-		// initialize two counters. One for false outcomes, and one for true outcomes
-		int countTrue = 0;
-		int countFalse = 0;
-		for (Xref reference:xrefList)
+		int countTrue = 0;       // counter for the true outcome (a xref is found)
+        int countTotal = 0;      // counter for the total of xrefs
+		String percentage;       // string for the outcome
+		double percentagedouble; // double for 
+		
+		// check each Xref from the xrefList if it is found in the database
+		for (Xref xref:xrefList)
 		{
-			if (database.xrefExists(reference) == true)
-			{
-			countTrue++;
+			if (database.xrefExists(xref) == true){
+				countTrue++;
 				}
-			else
-			{
-			countFalse++;
-				}
+			
+			countTotal++;
 			}
 		
-		// calculated the total count. This has to be equal to xrefList.size. It's still here for debug purpose
-		int countTotal = countTrue + countFalse;
+
 		
-		String percentage;
 		// calculate the precentage of found references
 		if (countTotal != 0){
-			double percentagedouble = 100*countTrue/countTotal;
+			percentagedouble = 100*countTrue/countTotal;
 			percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
 		}
 		else{

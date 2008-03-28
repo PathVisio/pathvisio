@@ -39,6 +39,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
@@ -174,20 +175,18 @@ public class Actions {
 			private void toFrame() {
 				final MainPanel mainPanel = wiki.getMainPanel();
 				frame = new JFrame();
-
+				frame.setTitle("WikiPathways editor - " + wiki.getPwName());
 				applet.getContentPane().remove(mainPanel);
 				frame.getContentPane().add(mainPanel);
 
 				putValue(WikiAction.SMALL_ICON, imgRestore);
-				putValue(WikiAction.NAME, "Fullscreen");
 				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
 
 				frame.setVisible(true);
-				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				frame.setSize(800, 600);
-
-				mainPanel.getSplitPane().setDividerLocation(0.7);
-
+				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				
+				
 				frame.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e) {
 						Logger.log.trace("Window closing, switch to applet");
@@ -195,8 +194,16 @@ public class Actions {
 					}
 				});
 
+				frame.validate();
 				applet.validate();
+				
+				resetDividerLocation();
 			}
+			private void resetDividerLocation() {
+				int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+				wiki.getMainPanel().getSplitPane().setDividerLocation((100 - spPercent) / 100.0);
+			}
+
 			/**
 			 * Disposes the frame and transfers the mainPanel to the
 			 * applet
@@ -214,10 +221,11 @@ public class Actions {
 				frame = null;
 
 				putValue(WikiAction.SMALL_ICON, imgFull);
-				putValue(WikiAction.NAME, "Restore screen");
 				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
 
 				applet.validate();
+				
+				resetDividerLocation();
 			}
 		}
 	}

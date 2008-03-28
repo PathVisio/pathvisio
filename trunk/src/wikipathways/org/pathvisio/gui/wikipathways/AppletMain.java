@@ -67,11 +67,11 @@ public class AppletMain extends PathwayPageApplet {
 		btn.setText("");
 		mainPanel.getToolBar().add(btn,  mainPanel.getToolBar().getComponentCount() - 2);
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
-		mainPanel.setVisible(true);
 		
+		setVisible(true);
+		validate(); //We need to validate before calling setDividerLocation
 		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
-		double spSize = (100 - spPercent) / 100.0;
-		mainPanel.getSplitPane().setDividerLocation(spSize);
+		mainPanel.getSplitPane().setDividerLocation( (100 - spPercent) / 100.0 );
 		
 		Engine engine = Engine.getCurrent();
 		if(engine.getActiveVPathway() == null) {

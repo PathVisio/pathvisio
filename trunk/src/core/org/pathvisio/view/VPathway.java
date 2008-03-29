@@ -1188,17 +1188,17 @@ public class VPathway implements PathwayListener
 
 	public static final int DRAW_ORDER_SELECTED = 0x3000;
 
-	public static final int DRAW_ORDER_ANCHOR = 0x4000;
+	public static final int DRAW_ORDER_GENEPRODUCT = 0x4000;
 
-	public static final int DRAW_ORDER_GENEPRODUCT = 0x5000;
+	public static final int DRAW_ORDER_LABEL = 0x5000;
 
-	public static final int DRAW_ORDER_LABEL = 0x6000;
+	public static final int DRAW_ORDER_ARC = 0x6000;
 
-	public static final int DRAW_ORDER_ARC = 0x7000;
-
-	public static final int DRAW_ORDER_BRACE = 0x8000;
+	public static final int DRAW_ORDER_BRACE = 0x7000;
 	
-	public static final int DRAW_ORDER_SHAPE = 0x9000;
+	public static final int DRAW_ORDER_SHAPE = 0x8000;
+	
+	public static final int DRAW_ORDER_ANCHOR = 0x9000;
 
 	public static final int DRAW_ORDER_LINE = 0xA000;
 

@@ -96,7 +96,7 @@ public class Actions {
 				Logger.log.error("Unable to save pathway", ex);
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			if(saved) {
+			if(saved) {				
 				uiHandler.showExitMessage("Please wait...the page will be reloaded");
 				try {
 					if(wiki.isNew()) {
@@ -176,17 +176,13 @@ public class Actions {
 				final MainPanel mainPanel = wiki.getMainPanel();
 				frame = new JFrame();
 				frame.setTitle("WikiPathways editor - " + wiki.getPwName());
-				applet.getContentPane().remove(mainPanel);
+				applet.getContentPane().repaint();
+				
 				frame.getContentPane().add(mainPanel);
 
 				putValue(WikiAction.SMALL_ICON, imgRestore);
 				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
 
-				frame.setVisible(true);
-				frame.setSize(800, 600);
-				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				
-				
 				frame.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e) {
 						Logger.log.trace("Window closing, switch to applet");
@@ -194,9 +190,10 @@ public class Actions {
 					}
 				});
 
+				frame.setVisible(true);
+				frame.setSize(800, 600);
+				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				frame.validate();
-				applet.validate();
-				
 				resetDividerLocation();
 			}
 			private void resetDividerLocation() {
@@ -224,6 +221,7 @@ public class Actions {
 				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
 
 				applet.validate();
+				applet.repaint();
 				
 				resetDividerLocation();
 			}

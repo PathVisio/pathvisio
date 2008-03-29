@@ -132,6 +132,21 @@ public class PathwayPageApplet extends JApplet {
 		}
 	}
 
+	public void stop() {
+		Logger.log.trace("Applet.stop called, stopping save reminder");
+		if(wiki != null) SaveReminder.stopSaveReminder(wiki);
+	}
+	
+	public void start() {
+		Logger.log.trace("Applet.start called, starting save reminder");
+		if(wiki != null) wiki.startSaveReminder();
+	}
+	
+	public void destroy() {
+		Logger.log.trace("Applet.destroy called, stopping save reminder");
+		if(wiki != null) SaveReminder.stopSaveReminder(wiki);
+	}
+	
 	private void onError(String msg, String title) {
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
 		getAppletContext().showDocument(getDocumentBase(), "_self");

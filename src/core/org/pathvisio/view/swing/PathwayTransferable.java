@@ -33,6 +33,8 @@ import org.jdom.Document;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.pathvisio.Engine;
+import org.pathvisio.biopax.BiopaxElementManager;
+import org.pathvisio.biopax.reflect.BiopaxElement;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
@@ -71,14 +73,7 @@ public class PathwayTransferable implements Transferable {
 		XMLOutputter xmlout = new XMLOutputter(Format.getPrettyFormat());
 
 		Pathway pnew = new Pathway();
-
-		//Always add biopax information
-		//TODO: Only when referred to
-		PathwayElement biopax = pathway.getBiopax();
-		if(biopax != null) {
-			pnew.add(biopax.copy());
-		}
-
+		
 		Set<String> ids = new HashSet<String>();
 		Set<String> groupIds = new HashSet<String>();
 
@@ -107,13 +102,32 @@ public class PathwayTransferable implements Transferable {
 			pnew.add(enew);
 		}
 
+		//Process biopax references
+		//Start by adding all biopax information
+		PathwayElement biopax = pathway.getBiopax();
+		if(biopax != null) {
+			pnew.add(biopax.copy());
+		}
+
+		//Remove unreferenced biopax elements
+		BiopaxElementManager bpm = new BiopaxElementManager(pnew);
+		Set<BiopaxElement> toRemove = new HashSet<BiopaxElement>();
+		for(BiopaxElement bpe : bpm.getElements()) {
+			if(!bpm.hasReferences(bpe)) {
+				toRemove.add(bpe);
+			}
+		}
+		for(BiopaxElement bpe : toRemove) {
+			bpm.removeElement(bpe);
+		}
+		
 		//If no mappinfo, create a dummy one that we can recognize lateron
 		if(!infoFound) {
 			PathwayElement info = new PathwayElement(ObjectType.MAPPINFO);
 			info.setMapInfoDataSource(INFO_DATASOURCE);
 			pnew.add(info);
 		}
-
+		
 		try {
 			Document doc = GpmlFormat.createJdom(pnew);
 			out = xmlout.outputString(doc);

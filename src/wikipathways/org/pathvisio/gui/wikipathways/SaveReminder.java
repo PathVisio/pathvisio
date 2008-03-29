@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,7 +33,7 @@ public class SaveReminder extends Timer {
 	private long interval;
 	WikiPathways wiki;
 	
-	private static SaveReminder reminder;
+	private static Map<WikiPathways, SaveReminder> reminders = new HashMap<WikiPathways, SaveReminder>();
 	
 	/**
 	 * Start the timer that pops up a save reminder at the given interval.
@@ -42,10 +44,22 @@ public class SaveReminder extends Timer {
 	 * @param minutesInterval The interval to remind the user to save (in minutes)
 	 */
 	public static void startSaveReminder(WikiPathways wiki, double minutesInterval) {
+		SaveReminder reminder = reminders.get(wiki);
 		if(reminder == null) {
 			reminder = new SaveReminder(wiki, minutesInterval);
+			reminders.put(wiki, reminder);
 		} else {
 			reminder.setMinutesInterval(minutesInterval);
+		}
+	}
+	
+	/**
+	 * Stops the save reminder for the given wiki
+	 */
+	public static void stopSaveReminder(WikiPathways wiki) {
+		SaveReminder reminder = reminders.get(wiki);
+		if(reminder != null) {
+			reminder.cancel();
 		}
 	}
 	

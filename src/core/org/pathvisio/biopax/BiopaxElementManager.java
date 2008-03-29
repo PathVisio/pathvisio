@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.jdom.Document;
@@ -56,16 +57,25 @@ public class BiopaxElementManager {
 		if(bp != null) {
 			Document d = bp.getBiopax();
 			if(d != null) {
+				Map<BiopaxElement, Element> oldElements = new HashMap<BiopaxElement, Element>();
 				Element root = d.getRootElement();
 				for(Object child : root.getChildren()) {
 					if(child instanceof Element) {
 						try {
 							BiopaxElement bpe = BiopaxElement.fromXML((Element)child);
 							biopax.put(bpe.getId(), bpe);
+							//Remember link between new and old element
+							oldElements.put(bpe, (Element)child);
 						} catch(Exception ex) {
 							Logger.log.error("Biopax element " + child + " ignored", ex);
 						}
 					}
+				}
+				//Remove old instances of the elements, replace with
+				//BiopaxElement instances
+				for(BiopaxElement bpe : oldElements.keySet()) {
+					root.addContent(bpe);
+					root.removeContent(oldElements.get(bpe));
 				}
 			}
 		}
@@ -86,7 +96,8 @@ public class BiopaxElementManager {
 	 */
 	public void removeElement(BiopaxElement e) {
 		Document doc = getDocument();
-		doc.removeContent(e);
+		System.err.println("removed: " + doc.getRootElement().removeContent(e));
+//		doc.getRootElement().removeContent(e);
 		biopax.remove(e.getId());
 	}
 	

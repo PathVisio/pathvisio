@@ -52,6 +52,7 @@ public class AppletUserInterfaceHandler extends SwingUserInterfaceHandler {
 				pa.getContentPane().removeAll();
 				pa.getContentPane().add(label, BorderLayout.CENTER);
 				pa.getContentPane().validate();
+				pa.getContentPane().repaint();
 			}
 		}
 

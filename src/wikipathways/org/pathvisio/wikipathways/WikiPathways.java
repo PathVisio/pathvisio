@@ -160,7 +160,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 		
 		//Start the save reminder
-		SaveReminder.startSaveReminder(this, 10);
+		startSaveReminder();
 
 		progress.report("Connecting to database...");
 		
@@ -175,6 +175,10 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		
 		isInit = false;
 		initPerformed = true;
+	}
+	
+	public void startSaveReminder() {
+		SaveReminder.startSaveReminder(this, 10);
 	}
 	
 	public boolean initPerformed() {
@@ -515,14 +519,14 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		//Disable some actions
 		if(!isNew()) hide.add(actions.importAction);
 		
-		Action saveAction = new Actions.ExitAction(uiHandler, this, true, null);
+		//Action saveAction = new Actions.ExitAction(uiHandler, this, true, null);
 		Action exitAction = new Actions.ExitAction(uiHandler, this, false, null);
 				
 		mainPanel = new MainPanel(hide);
 		
 		mainPanel.getToolBar().addSeparator();
 		
-		mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
+		//mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
 		mainPanel.addToToolbar(exitAction);
 
 		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {

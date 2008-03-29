@@ -305,15 +305,16 @@ public class Pathway implements PathwayListener
 		if(bpnew == null) return;
 		
 		Document dNew = bpnew.getBiopax();
-		Document dOld = biopax.getBiopax();
-		
-		if(dOld == null) {
-			biopax.setBiopax(dNew);
-			return;
-		}
+		Document dOld = biopax == null ? null : biopax.getBiopax();
 		
 		if(dNew == null) {
 			return; //Nothing to merge
+		}
+		
+		if(dOld == null) {
+			createBiopax();
+			biopax.setBiopax(dNew);
+			return;
 		}
 		
 		//Create a map of existing biopax elements with an id

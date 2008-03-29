@@ -55,117 +55,103 @@ public class GeneCounter {
 		//The number of files that is loaded can be printed. 
 		//System.out.println(filenames.size());
 		
+		//refPWarray is a list that contains all genes of all pathways. With this list, the overlap between different pathway can easily be determined. 
 		List<Set> refPWarray = new ArrayList<Set>();
 		
-		/* Hier moet iets van een for-loop komen om de gegevens
-		 * uit de verschillende Pathways te halen.
-		 * */
+		// In the following for-loop the information from all different pathways must be loaded. 
 		
 		int i;
 		//for (i=0;i<filenames.size();i++){
 		for (i=0;i<5;i++){
 		
-			
+			//
 			File fileName=filenames.get(i);
 			//System.out.println(fileName);
 			
-			//s berekenen
+			//The ouput of the method 'getRefPW' is named 'setOfRefPW'
 			Set<Xref> setOfRefPW=getRefPW(fileName,db);
 			
+			//The output of 'setOfRefPW' is added to 'refPWarray'
 			refPWarray.add(setOfRefPW);
-			
-			
-			//s in de totale set zetten
+						
+			//In the set 'totalS', all different sets are added. So one big set is formed with all Xrefs.
 			totalS.addAll(setOfRefPW);
 		}
-		/* Einde for loop
-		 */
-		System.out.println(refPWarray);
-		System.out.println(refPWarray.get(0));
-		// Output: Grootte van de totale set
+		// End for-loop
+		
+		//In 'totalS' all genes that are used in http://www.wikipathways.org are shown. Also the size (the number of used genes) can be shown. 
 		//System.out.println(totalS);
 		//System.out.println(totalS.size());
 		
+		//The percentage of used genes that are used at http://www.wikipathways.org are calculated and given as output. 
 		double usedgenes=totalS.size();
-		usedgenes=usedgenes/numberOfGenesEN;
+		usedgenes=usedgenes/numberOfGenesEN*100;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
-		//
 		
 }
 	
 	
+	//In this method the files that are stored in the file path are being loaded.
 	static public List<File> getFileListing(File path){
-		// make a new list of files
+		// Make a new list of files.
 		List<File> files = new ArrayList<File>();
-		
-		// get all the files and directories contained in the given path
+		// Get all the files and directories contained in the given path.
 	    File[] content = path.listFiles();
 	    
-	    // use a for loop to walk through content
+	    // Use a for loop to go through content.
 	    for(File file : content) {
 	    	  if ( file.isDirectory() ) {
-	    		// if the file is a directory use recursion to get the contents of the sub-path
+	    		// If the file is a directory use recursion to get the contents of the sub-path.
 	    		List<File> subpath = getFileListing(file);
-	    		// add the files contained in this sub-directory to the files list
+	    		// Add the files contained in this sub-directory to the files list.
 		        files.addAll(subpath);
 		      }
 		      else {
-		    	  // only use the file if it has a valid extension
+		    	  // Only use the file if it has a valid extension.
 		    	  if( file.getName().endsWith(".gpml") ) {
-		    	 // add all files in the directory to the list files
+		    	 // Add all files in the directory to the list files.
 		    	 files.add(file);
 		    	 }
 		    }
 		}
-	    // return all the obtained files
+	    // Return all the obtained files.
 	    return files;
 	}
 
 	
-	/*
-	 * Deze functie geeft een set van alle referenties van een Pathway.
-	 */
+	//In this method a set is created that contains all the references in a Pathway.
 	public static Set<Xref> getRefPW(File filename,SimpleGdb db) throws ConverterException{
 		
+		//A new set is created where the Xrefs can be stored. 
 		Set<Xref> s=new HashSet<Xref>();
-		
-		//File f = new File("D:\\My Documents\\Tue\\BIGCAT\\Rat\\"+namePathway);
-		//System.out.println("file = "+filename);
-		
+		//A new pathway is created.
 		Pathway p = new Pathway();
+		//For this pathway the information is loaded. 
 		p.readFromXml(filename, true);
 				
+		//A list is formed that contains the elements stored in the pathway.
 		List<PathwayElement> pelts = p.getDataObjects();
 		
-				
+		//In this for-loop each element of the pathway that represents a Xref is stored in a set. 
 		for (PathwayElement v:pelts){
 			
 			int type;
+			//For each element in the patyway, the object type is returned.
 			type=v.getObjectType();
 			
+			//Only if the object is a DATANODE, the reference must be stored in the list. 
 			if (type ==1){
 				Xref reference;
 				reference=v.getXref();
-				//System.out.println(reference);
-				
+				//Each reference is translated to a reference in the same databank, here: ENSEMBLE
 				List<Xref> cRef=db.getCrossRefs(reference,DataSource.ENSEMBL);
-				
-			
+				//All references are added to a set.				
 				s.addAll(cRef);
-							
-			
 			}
 		}
 		
-		//s.remove("null:");
-		//System.out.println(s);
-		//System.out.println(s.size());
-		
+		//'s' contains all the references as in the databank ENSEMBLE for one pathway. 
 		return s;
-				
-		
+	
 	}
-	
-	
-	
 }

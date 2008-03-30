@@ -46,9 +46,22 @@ public class LinkChecker {
 	* Good Luck!
 	*/
 	public static void main(String[] args) throws ConverterException, DataException {
-		// make Files containing the directories to the pathways and databases
-		File dbDir = new File(args[0]);
-		File pwDir = new File(args[1]);
+		// check if the String[] args is given, and make Files 
+		// containing the directories to the pathways and databases
+		File dbDir = null;
+		File pwDir = null;
+		String outfile = null;
+		
+		try {
+			dbDir = new File(args[0]);
+			pwDir = new File(args[1]);
+			outfile=args[2];
+		}
+		catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("String[] args not given!");
+			System.exit(0);
+		}
+
 		
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";
@@ -73,7 +86,6 @@ public class LinkChecker {
 			}
 				
 		// create the output file
-		String outfile=args[2];
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new FileWriter(outfile));
@@ -175,7 +187,7 @@ public class LinkChecker {
 	public static List<Xref> makeXrefList(Pathway pway){
 		
 		List<PathwayElement> pelts = pway.getDataObjects();
-		List<Xref> xRefList = new ArrayList();
+		List<Xref> xRefList = new ArrayList<Xref>();
 		
 		for (PathwayElement element:pelts){
 			// check if the objectType is a datanode, and add it to the list

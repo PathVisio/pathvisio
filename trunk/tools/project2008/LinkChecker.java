@@ -53,8 +53,8 @@ public class LinkChecker {
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";
 		String dbExtension = ".pgdb";
-		List<File> pwFilenames = getFileListing(pwDir, pwExtension);
-		List<File> dbFilenames = getFileListing(dbDir, dbExtension);
+		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
+		List<File> dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
 		// Load all databases in List<SimpleGdb> databases,
 		// and load all filenames of the loaded databases
 		// in List<String> databaseFilenames
@@ -133,11 +133,12 @@ public class LinkChecker {
 		System.out.println("Results are stored in " + outfile);
 	}
 	
+	/** in this method, the percentage of Xref's found in the database is calculated.
+	*   the property's you have to enter are xrefList; a list of all the xrefs from
+	*   a pathway, and database; a SimpleGdb database that has to be checked if it
+	*   contains the Xrefs.
+	*/
 	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database){
-		// in this method, the percentage of Xref's found in the database is calculated.
-		// the property's you have to enter are xrefList; a list of all the xrefs from
-		// a pathway, and database; a SimpleGdb database that has to be checked if it
-		// contains the Xrefs.
 		
 		int countTrue = 0;       // counter for the true outcome (a xref is found)
         int countTotal = 0;      // counter for the total of xrefs
@@ -167,42 +168,11 @@ public class LinkChecker {
 		return percentage;
 		}
 	
-
-	static public List<File> getFileListing(File path, String extension){
-		// in this method, a list of files is constructed. The list contains all the files
-		// with a given extension in a folder and all its subfolders. The property's you
-		// have to enter are path; a File containing the path that has to be searched,
-		// and extension; a String containing the extension where has to be searched for.
-		
-		// create a new List of Files
-		List<File> files = new ArrayList<File>();
-		// get all the files and directories contained in the given path
-	    File[] content = path.listFiles();
-	    // use a for loop to walk through content
-	    for(File file : content) {
-	    	// if the file is a directory use recursion to get the contents of the sub-path
-	    	// the files in this sub-path are added to the files list.
-	    	if ( file.isDirectory() ) {
-	    		List<File> subpath = getFileListing(file, extension);
-		        files.addAll(subpath);
-		      }
-		    // if the file is not a directory, check the extension. When this is the
-	    	// desired extension, add the file to the list.
-	    	else {
-		    	  if( file.getName().endsWith(extension) ) {
-		    	 files.add(file);
-		    	 }
-		    }
-		}
-	    
-	    // return the list with files
-	    return files;
-	}
-
+	/** In this method a list of Xrefs in made. The list contains all the
+	*   Xrefs from a given pathway. The property you have to give
+	*   is pway, a Pathway where you want to extract all the Xrefs from
+	*/
 	public static List<Xref> makeXrefList(Pathway pway){
-		// In this method a list of Xrefs in made. The list contains all the
-		// Xrefs from a given pathway. The property you have to give
-		// is pway, a Pathway where you want to extract all the Xrefs from
 		
 		List<PathwayElement> pelts = pway.getDataObjects();
 		List<Xref> xRefList = new ArrayList();

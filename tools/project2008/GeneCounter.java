@@ -51,7 +51,8 @@ public class GeneCounter {
 		File dir = new File("D:\\My Documents\\school\\jaar 3\\Semester 2\\project blok 3E\\wikipathways_1206450480");
 		
 		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
-		List<File> filenames = getFileListing(dir);
+		List<File> filenames = FileUtils.getFileListing(dir, ".gpml");
+
 		//The number of files that is loaded can be printed. 
 		//System.out.println(filenames.size());
 		
@@ -91,32 +92,6 @@ public class GeneCounter {
 }
 	
 	
-	//In this method the files that are stored in the file path are being loaded.
-	static public List<File> getFileListing(File path){
-		// Make a new list of files.
-		List<File> files = new ArrayList<File>();
-		// Get all the files and directories contained in the given path.
-	    File[] content = path.listFiles();
-	    
-	    // Use a for loop to go through content.
-	    for(File file : content) {
-	    	  if ( file.isDirectory() ) {
-	    		// If the file is a directory use recursion to get the contents of the sub-path.
-	    		List<File> subpath = getFileListing(file);
-	    		// Add the files contained in this sub-directory to the files list.
-		        files.addAll(subpath);
-		      }
-		      else {
-		    	  // Only use the file if it has a valid extension.
-		    	  if( file.getName().endsWith(".gpml") ) {
-		    	 // Add all files in the directory to the list files.
-		    	 files.add(file);
-		    	 }
-		    }
-		}
-	    // Return all the obtained files.
-	    return files;
-	}
 
 	
 	//In this method a set is created that contains all the references in a Pathway.

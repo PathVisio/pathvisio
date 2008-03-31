@@ -26,6 +26,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.LinAlg.Point;
 
 /**
@@ -162,8 +163,18 @@ public abstract class GraphicsShape extends Graphics {
 		//Rotation
 		if 	(h == handleR)
 		{
-			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));			
-			setRotation (Math.atan2(cur.y, cur.x));				
+			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));
+			
+			double rotation = Math.atan2(cur.y, cur.x);
+			if (GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
+					canvas.isSnapToAngle())
+			{
+				//Snap the rotation angle
+				double snapStep = GlobalPreference.getValueInt(
+						GlobalPreference.SNAP_TO_ANGLE_STEP) * Math.PI / 180;
+				rotation = Math.round (rotation / snapStep) * snapStep;
+			}
+			setRotation (rotation);				
 			return;
 		}
 					

@@ -550,6 +550,19 @@ public class VPathway implements PathwayListener
 			x.highlight();
 	}
 
+	private boolean snapToAngle;
+	
+	/**
+	 * Check whether line movement and rotations should snap 
+	 * to angle.
+	 * @see GlobalPreference#SNAP_TO_ANGLE for the global setting
+	 * @see GlobalPreference#SNAP_TO_ANGLE_STEP for the angle step to be used
+	 * @return
+	 */
+	public boolean isSnapToAngle() {
+		return snapToAngle;
+	}
+
 	int vPreviousX;
 
 	int vPreviousY;
@@ -562,6 +575,8 @@ public class VPathway implements PathwayListener
 	public void mouseMove(MouseEvent ve)
 	{
 		boolean altPressed = ve.isKeyDown(MouseEvent.M_ALT);
+		snapToAngle = ve.isKeyDown(MouseEvent.M_SHIFT);
+		
 		// If draggin, drag the pressed object
 		// And only when the right button isn't clicked
 		if (pressedObject != null && isDragging && !ve.isKeyDown(java.awt.event.MouseEvent.BUTTON3_DOWN_MASK))

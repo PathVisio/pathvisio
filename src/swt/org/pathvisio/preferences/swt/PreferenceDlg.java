@@ -122,7 +122,7 @@ public class PreferenceDlg extends PreferenceManager {
 			
 			BooleanFieldEditor fsnap = new BooleanFieldEditor (
 				GlobalPreference.SNAP_TO_ANGLE.name(),
-				"Snap to angle when moving line handles", getFieldEditorParent());
+				"Snap to angle when moving line and rotation handles", getFieldEditorParent());
 			addField(fsnap);
 			
 			IntegerFieldEditor fsnapstep = new IntegerFieldEditor (

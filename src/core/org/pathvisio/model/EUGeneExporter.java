@@ -126,6 +126,10 @@ public class EUGeneExporter implements PathwayExporter
 			}
 			system = maxCode;
 
+			if(system == null) { //May occur when no identifiers available
+				system = DataSource.ENSEMBL;
+			}
+			
 			if(codeCount.keySet().size() > 1) {
 				log.warn("\tThis pathway contains genes with different SystemCodes; '" +
 						maxCode + "' has the highest occurence and is therefore chosen as PATHWAY_MARKER" +

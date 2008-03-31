@@ -113,7 +113,8 @@ public class VPoint extends VPathwayElement {
 		double mcx = mFromV (vnewx);
 		double mcy = mFromV (vnewy);
 
-		if (GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANGLE))
+		if (GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
+			canvas.isSnapToAngle())
 		{
 			// get global preference and convert to radians.
 			double lineSnapStep = GlobalPreference.getValueInt(

@@ -49,33 +49,25 @@ public class GeneCounter {
 			System.exit(0);
 		}
 
-		
-		
 		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
 		int numberOfGenesEN = 17738;
+		
+		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
+		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
+		
 		// Make a set to store the genes used in WikiPathways.
 		Set<Xref> totalS=new HashSet<Xref>();
 		
 		// A SimpleGdb Database is used to be able to load the Database downloaded from internet. 
 		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
-		
-		// The pathways are stored in the following directoryIn the following directory, the pathways are stored.
-		//File dir = new File(pwDir);
-		
-		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
-		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 
-		//The number of files that is loaded can be printed. 
-		//System.out.println(filenames.size());
 		
 		//refPWarray is a list that contains all genes of all pathways. With this list, the overlap between different pathway can easily be determined. 
 		List<Set> refPWarray = new ArrayList<Set>();
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
-		
-		int i;
 		//for (i=0;i<filenames.size();i++){
-		for (i=0;i<5;i++){
+		for (int i=0;i<10;i++){
 		
 			//
 			File fileName=filenames.get(i);
@@ -92,14 +84,15 @@ public class GeneCounter {
 		}
 		// End for-loop
 		
-		//In 'totalS' all genes that are used in http://www.wikipathways.org are shown. Also the size (the number of used genes) can be shown. 
-		//System.out.println(totalS);
-		//System.out.println(totalS.size());
-		
+	
 		//The percentage of used genes that are used at http://www.wikipathways.org are calculated and given as output. 
 		double usedgenes=totalS.size();
 		usedgenes=usedgenes/numberOfGenesEN*100;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
+		
+		double[][] overlap=getPercentage(refPWarray);
+		
+		
 		
 }
 	
@@ -141,4 +134,71 @@ public class GeneCounter {
 		return s;
 	
 	}
+	
+	public static double[][] getPercentage(List<Set> refPWarray){
+		
+		int numberOfPathways=refPWarray.size();
+		double[][] overlap=new double[numberOfPathways][];
+		int[][] a=getOverlapMatrix(refPWarray);
+		int[] numberOfGenes=getSizeVector(refPWarray);
+		
+		for(int j=0;j<numberOfPathways;j++){
+			overlap[j]=new double[numberOfPathways];
+			for(int k=0;k<numberOfPathways;k++){
+				overlap[j][k]=(double)a[j][k]/(double)numberOfGenes[j]*100.0;
+				
+			}
+			
+			
+		}
+		
+		return overlap;
+		
+	}
+	
+	public static int[][] getOverlapMatrix(List<Set> refPWarray){
+		
+		int numberOfPathways=refPWarray.size();
+		int[][] a=new int[numberOfPathways][];
+		boolean m;
+		
+		for(int j=0;j<numberOfPathways;j++){
+			a[j]=new int[numberOfPathways];
+			
+			//k=j+1; maar ter controle nemen we k=j. Als het goed is komt er dan 100% uit.
+			for(int k=0;k<j+1;k++){
+				
+				System.out.println("("+j+","+k+")");
+												
+				Set<Xref> refSet=refPWarray.get(j);
+				int overeenkomsten=0;
+				for(Xref l:refSet){
+					m=refPWarray.get(k).contains(l);
+					
+					if(m==true){
+						overeenkomsten++;
+					}
+					
+				}
+				System.out.println(overeenkomsten);
+				a[j][k]=overeenkomsten;
+				a[k][j]=overeenkomsten;
+			}
+		}
+			
+		return a;
+	}
+	
+	public static int[] getSizeVector(List<Set> refPWarray){
+		
+		int numberOfPathways=refPWarray.size();
+		int[] numberOfGenes=new int[numberOfPathways];
+		
+		for(int j=0;j<numberOfPathways;j++){
+			numberOfGenes[j]=refPWarray.get(j).size();
+		}
+		
+		return numberOfGenes;
+	}
+	
 }

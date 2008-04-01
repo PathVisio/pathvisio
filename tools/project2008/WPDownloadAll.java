@@ -36,8 +36,18 @@ public class WPDownloadAll
 	 * 	
 	 * Good Luck!
 	 */
-	public static void main(String[] args) throws XmlRpcException, IOException
+	public static void main(String[] args)  throws XmlRpcException, IOException{
+		download(args[0]);
+	}
+	
+	
+	public static void download(String path) throws XmlRpcException, IOException
 	{
+		// given path: path to store the pathway cache
+		
+		
+		
+		
 		// make a new WikiPathwaysClient
 		WikiPathwaysClient wp = new WikiPathwaysClient();
 		
@@ -45,8 +55,8 @@ public class WPDownloadAll
 		// stored in a list
 		List<String> pathwayNames = wp.getPathwayList();
 		
-		// path to store the pathway cache
-		String path = args[0];
+
+
 		
 		// give the extension of a pathway file
 		String pwExtension = ".gpml";

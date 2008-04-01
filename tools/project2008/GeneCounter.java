@@ -37,10 +37,12 @@ public class GeneCounter {
 	 */
 	public static void main(String[] args) throws ConverterException, DataException {
 		
+		String dbDir = null;
+		File pwDir = null;
+		
 		try {
-			dbDir = new File(args[0]);
+			dbDir = new String(args[0]);
 			pwDir = new File(args[1]);
-			//outfile=args[2];
 		}
 		catch(ArrayIndexOutOfBoundsException e) {
 			System.out.println("String[] args not given!");
@@ -58,10 +60,10 @@ public class GeneCounter {
 		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
 		
 		// The pathways are stored in the following directoryIn the following directory, the pathways are stored.
-		File dir = new File("pwDir");
+		//File dir = new File(pwDir);
 		
 		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
-		List<File> filenames = FileUtils.getFileListing(dir, ".gpml");
+		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 
 		//The number of files that is loaded can be printed. 
 		//System.out.println(filenames.size());

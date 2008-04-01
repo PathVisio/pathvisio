@@ -33,8 +33,14 @@ public class WPClientTest
 			//	make a folder for a species when it doesn't exist
 			new File(path + species + "\\").mkdir();
 			
+			// make a 2 letters species code
+			temporary = species.split("_");
+			String code = temporary[0].substring(0,1) + temporary[1].substring(0,1);
+			
+			
+			// download the pathway and give status in console
 			wp.downloadPathway(pathwayNames.get(i), 
-				new File (path + species + "\\" + namePathway + ".gpml"));
+				new File (path + species + "\\" + code + "_" + namePathway + ".gpml"));
 			System.out.println("Downloaded: " + pathwayNames.get(i));
 		}
 	}

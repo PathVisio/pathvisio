@@ -45,9 +45,15 @@ public class WPDownloadAll
 		// stored in a list
 		List<String> pathwayNames = wp.getPathwayList();
 		
-		
 		// path to store the pathway cache
 		String path = args[0];
+		
+		// give the extension of a pathway file
+		String pwExtension = ".gpml";
+		
+		// remove all duplicates
+		pathwayNames = removeDuplicates(pwExtension, path, pathwayNames);
+		
 		
 		// a for loop that downloads all individual pathways
 		for (int i = 0; i < pathwayNames.size(); ++i)
@@ -72,8 +78,32 @@ public class WPDownloadAll
 			
 			// download the pathway and give status in console
 			wp.downloadPathway(pathwayNames.get(i), 
-				new File (pathToDownload + code + "_" + namePathway + ".gpml"));
+				new File (pathToDownload + code + "_" + namePathway + pwExtension));
 			System.out.println("Downloaded file "+i+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
 		}
+	}
+	public static List<String> removeDuplicates(String pwExtension, String path, List<String> pathwayNames){
+		// get a list of files from the cache directory. All the files
+		// that are already in the cache, are removed from the pathwayNames
+		// list, so they won't be downloaded again.
+
+		// get a list of all files inside the cache path
+		File pwDir = new File(path + "\\");
+		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
+		
+		// for each files, reconstruct the pathname file (Species:Pathwayname), and
+		// remove from the pathwaynames list
+		for (File file: pwFilenames){
+			String fullPath = file.getPath(); // i.e. C:\PWCache\Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml 
+			String neededPartOfFilename = fullPath.substring(path.length() + 1); // i.e. Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml
+			String[] temporary = neededPartOfFilename.split("\\\\"); // split at the slash; so i.e. temporary[0]: Homo_sapiens; temporary[1]: Hs_ACE-Inhibitor_pathway_PharmGKB.gpml 
+			String species = temporary[0]; // i.e. species = Homo_sapiens
+			String pathwayName = temporary[1].substring(3, temporary[1].length() - pwExtension.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
+			String pwayname = species+":"+pathwayName; // construct the pathway name: i.e. Homo_sapiens:ACE-Inhibitor_pathway_PharmGKB
+			pathwayNames.remove(pwayname); // remove from pathwayNames
+		}
+		
+		return pathwayNames;
+		
 	}
 }

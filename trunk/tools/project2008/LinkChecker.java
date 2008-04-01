@@ -49,6 +49,8 @@ public class LinkChecker {
 	* Good Luck!
 	*/
 	public static void main(String[] args) throws ConverterException, DataException, XmlRpcException, IOException {
+		boolean online = true; // set to true if connected to the internet
+		
 		// check if the String[] args is given, and make Files 
 		// containing the directories to the pathways and databases
 		File dbDir = null;
@@ -65,8 +67,10 @@ public class LinkChecker {
 			System.exit(0);
 		}
 
-		// download all pathways to the pathway folder
-		WPDownloadAll.download(args[1]);
+		if (online){
+			// download all pathways to the pathway folder
+			WPDownloadAll.download(args[1]);
+		}
 		
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";

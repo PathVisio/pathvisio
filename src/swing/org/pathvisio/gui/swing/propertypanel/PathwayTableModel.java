@@ -18,6 +18,8 @@ package org.pathvisio.gui.swing.propertypanel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -126,6 +128,11 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 				//System.err.println("\tremoveing " + tp + " from shown");
 				shownProperties.remove(tp);
 			}
+			Collections.sort(shownProperties, new Comparator<TypedProperty>() {
+				public int compare(TypedProperty o1, TypedProperty o2) {
+					return o1.getType().desc().compareTo(o2.getType().desc());
+				}
+			});
 		}
 	}
 	

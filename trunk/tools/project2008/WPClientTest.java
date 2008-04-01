@@ -30,7 +30,7 @@ public class WPClientTest
 			String species = temporary[0];
 			String namePathway = temporary[1];
 			
-			//	mapje aanmaken als deze nog niet bestaat;
+			//	make a folder for a species when it doesn't exist
 			new File(path + species + "\\").mkdir();
 			
 			wp.downloadPathway(pathwayNames.get(i), 

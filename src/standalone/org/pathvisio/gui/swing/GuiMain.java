@@ -16,12 +16,19 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
+
+import com.sun.org.apache.xerces.internal.util.URI.MalformedURIException;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -82,6 +89,34 @@ public class GuiMain {
 				MainPanelStandalone mps = new MainPanelStandalone();
 				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.createAndShowGUI(mps);
+				
+				//Parse command line
+				//Only single argument accepted: pathway file / url
+				//Silently ignore more arguments
+				if(gui.args.length >= 1) {
+					String pws = gui.args[0];
+					URL url = null;
+					try {
+						File f = new File(pws);
+						//Assume the argument is a file
+						if(f.exists()) {
+							url = f.toURL();
+						//If it doesn't exist, assume it's an url
+						} else {
+							url = new URL(pws);
+						}
+					} catch(MalformedURLException e) {
+						JOptionPane.showMessageDialog(
+								null, 
+								"Unable to open pathway " + pws, 
+								"Error",
+								JOptionPane.ERROR_MESSAGE
+						);
+					}
+					if(url != null) {
+						SwingEngine.getCurrent().openPathway(url);
+					}
+				}
 			}
 		});
 	}

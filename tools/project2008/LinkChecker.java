@@ -39,7 +39,7 @@ public class LinkChecker {
 	* in the String[] args, 3 arguments are given:
 	* in example:
 	* "C:\\databases\\"
-	* "C:\\pathways\\"
+	* "C:\pathways"
 	* "C:\\result.html"
 	* 
 	* the first one is the directory that contains the databases
@@ -115,7 +115,13 @@ public class LinkChecker {
 			// load the pathway
 			Pathway pway = new Pathway();
 			boolean validate = false; // set to true if you want to validate the pathway file
-			pway.readFromXml(filename, validate);
+			
+			try{
+				pway.readFromXml(filename, validate);
+			}
+			catch(ConverterException e){
+				System.out.println("empty file is found");
+			}
 		
 			// make a list containing the Xref's 
 			List<Xref> xrefList = makeXrefList(pway);
@@ -183,7 +189,7 @@ public class LinkChecker {
 			percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
 			}
 		else{
-			percentage = ("total: 0 (divide by zero) in ");
+			percentage = ("<font color=\"red\"><b>total: 0</b></font> (divide by zero) in ");
 			}
 
 		// return the output

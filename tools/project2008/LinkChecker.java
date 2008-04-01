@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.xmlrpc.XmlRpcException;
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
@@ -40,12 +41,12 @@ public class LinkChecker {
 	* "C:\\result.html"
 	* 
 	* the first one is the directory that contains the databases
-	* the second one is the directory that contains the pathways
+	* the second one is the directory that contains the pathway cache
 	* the third one is the filename (note the html extension!) of where the results are stored'
 	* 	
 	* Good Luck!
 	*/
-	public static void main(String[] args) throws ConverterException, DataException {
+	public static void main(String[] args) throws ConverterException, DataException, XmlRpcException, IOException {
 		// check if the String[] args is given, and make Files 
 		// containing the directories to the pathways and databases
 		File dbDir = null;
@@ -54,7 +55,7 @@ public class LinkChecker {
 		
 		try {
 			dbDir = new File(args[0]);
-			pwDir = new File(args[1]);
+			pwDir = new File(args[1] + "\\");
 			outfile=args[2];
 		}
 		catch(ArrayIndexOutOfBoundsException e) {
@@ -62,6 +63,8 @@ public class LinkChecker {
 			System.exit(0);
 		}
 
+		// download all pathways to the pathway folder
+		WPDownloadAll.download(args[1]);
 		
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";

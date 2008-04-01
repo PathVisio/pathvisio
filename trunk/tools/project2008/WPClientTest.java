@@ -13,10 +13,24 @@ public class WPClientTest
 		
 		List<String> pathwayNames = wp.getPathwayList();
 		
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < pathwayNames.size(); ++i)
 		{
+			// path om files in op te slaan
+			String path = "C:\\WPClient\\";
+			// soort extracten
+			String pathwaynaam = pathwayNames.get(i);
+			String[] temp = pathwaynaam.split(":");
+			String soort = temp[0];
+			
+			// naam extracten
+			String naamPathway = temp[1];
+			
+			//	mapje aanmaken als deze nog niet bestaat;
+			new File(path + soort + "\\").mkdir();
+			
 			wp.downloadPathway(pathwayNames.get(i), 
-				new File ("/home/martijn/Desktop/pw " + i + ".gpml"));
+				new File (path + soort + "\\" + naamPathway + ".gpml"));
+			System.out.println("Downloaded: " + pathwayNames.get(i));
 		}
 	}
 }

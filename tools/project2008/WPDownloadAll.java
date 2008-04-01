@@ -89,7 +89,7 @@ public class WPDownloadAll
 			// download the pathway and give status in console
 			wp.downloadPathway(pathwayNames.get(i), 
 				new File (pathToDownload + code + "_" + namePathway + pwExtension));
-			System.out.println("Downloaded file "+i+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
+			System.out.println("Downloaded file "+(i+1)+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
 		}
 	}
 	public static List<String> removeDuplicates(String pwExtension, String path, List<String> pathwayNames){

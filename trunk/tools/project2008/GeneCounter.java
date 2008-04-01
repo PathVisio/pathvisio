@@ -28,6 +28,10 @@ import org.pathvisio.model.Xref;
 
 import java.util.*;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+
 public class GeneCounter {
 
 	/**
@@ -66,8 +70,8 @@ public class GeneCounter {
 		List<Set> refPWarray = new ArrayList<Set>();
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
-		//for (i=0;i<filenames.size();i++){
-		for (int i=0;i<10;i++){
+		//for (int i=0;i<filenames.size();i++){
+		for (int i=0;i<2;i++){
 		
 			//
 			File fileName=filenames.get(i);
@@ -90,8 +94,15 @@ public class GeneCounter {
 		usedgenes=usedgenes/numberOfGenesEN*100;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
 		
-		double[][] overlap=getPercentage(refPWarray);
+		final double[][] overlap=getPercentage(refPWarray);
 		
+		
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI(overlap);
+            }
+        });
+
 		
 		
 }
@@ -201,4 +212,27 @@ public class GeneCounter {
 		return numberOfGenes;
 	}
 	
+	private static void createAndShowGUI(double[][] overlap) {
+        //Create and set up the window.
+        JFrame frame = new JFrame("Pathway overlap matrix");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Add the ubiquitous "Hello World" label.
+        JLabel label = new JLabel("Hello World");
+        frame.getContentPane().add(label);
+        
+        //JTable table = new JTable();
+        //frame.getContentPane().add(table);
+
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+	
+	
+	
+	
 }
+
+

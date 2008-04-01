@@ -274,6 +274,11 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		boolean useIndex;
 		JComboBox combo;
 		
+		public ComboEditor(boolean editable, Object[] labels, boolean useIndex) {
+			this(labels, useIndex);
+			combo.setEditable(editable);
+		}
+		
 		public ComboEditor(Object[] labels, boolean useIndex) {
 			super(new JComboBox(labels));
 			combo = (JComboBox)getComponent();
@@ -427,7 +432,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ComboEditor datasourceEditor = new ComboEditor(new String[] {}, new String[] {}); //data will be added on first use
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);
-	private static ComboEditor organismEditor = new ComboEditor(Organism.latinNames().toArray(), false);
+	private static ComboEditor organismEditor = new ComboEditor(true, Organism.latinNames().toArray(), false);
 	private static AngleEditor angleEditor = new AngleEditor();
 	private static DoubleEditor doubleEditor = new DoubleEditor();
 	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment

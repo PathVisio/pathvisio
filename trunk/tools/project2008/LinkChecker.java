@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.xmlrpc.XmlRpcException;
@@ -71,6 +73,11 @@ public class LinkChecker {
 		String dbExtension = ".pgdb";
 		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
 		List<File> dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
+		long localdate = dateLastModified(pwFilenames);
+		Date d = new Date(localdate); 
+		DateFormat df = DateFormat.getDateTimeInstance();
+		System.out.println("Date last modified: "+df.format(d)); 
+				
 		// Load all databases in List<SimpleGdb> databases,
 		// and load all filenames of the loaded databases
 		// in List<String> databaseFilenames
@@ -202,6 +209,19 @@ public class LinkChecker {
 		
 		// return the list
 		return xRefList;
+	}
+	
+	public static long dateLastModified(List<File> pathways){
+		// set initial value
+		long lastModified = 0;
+		// walk through all the pathways
+		for (File pathway:pathways){
+			// if pathway is more recent, use this date
+			if (lastModified < pathway.lastModified()){
+				lastModified = pathway.lastModified();
+			}
+		}
+	return lastModified;
 	}
 	
 }

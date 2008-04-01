@@ -30,6 +30,7 @@ public class WPClientTest
 			String species = temporary[0];
 			String namePathway = temporary[1];
 			
+			// construct the download path
 			String pathToDownload = path + "\\" + species + "\\";
 			
 			//	make a folder for a species when it doesn't exist

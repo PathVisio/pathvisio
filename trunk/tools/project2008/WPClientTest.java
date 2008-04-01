@@ -18,7 +18,7 @@ public class WPClientTest
 		
 		
 		// path to store the pathway cache
-		String path = "C:\\WPClient\\";
+		String path = args[0];
 		
 		// a for loop that downloads all individual pathways
 		for (int i = 0; i < pathwayNames.size(); ++i)
@@ -30,8 +30,10 @@ public class WPClientTest
 			String species = temporary[0];
 			String namePathway = temporary[1];
 			
+			String pathToDownload = path + "\\" + species + "\\";
+			
 			//	make a folder for a species when it doesn't exist
-			new File(path + species + "\\").mkdir();
+			new File(pathToDownload).mkdir();
 			
 			// make a 2 letters species code
 			temporary = species.split("_");
@@ -40,7 +42,7 @@ public class WPClientTest
 			
 			// download the pathway and give status in console
 			wp.downloadPathway(pathwayNames.get(i), 
-				new File (path + species + "\\" + code + "_" + namePathway + ".gpml"));
+				new File (pathToDownload + code + "_" + namePathway + ".gpml"));
 			System.out.println("Downloaded: " + pathwayNames.get(i));
 		}
 	}

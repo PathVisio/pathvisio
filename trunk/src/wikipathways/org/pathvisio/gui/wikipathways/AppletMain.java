@@ -72,11 +72,6 @@ public class AppletMain extends PathwayPageApplet {
 		validate(); //We need to validate before calling setDividerLocation
 		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		mainPanel.getSplitPane().setDividerLocation( (100 - spPercent) / 100.0 );
-		
-		Engine engine = Engine.getCurrent();
-		if(engine.getActiveVPathway() == null) {
-			engine.createVPathway(engine.getActivePathway());
-		}
 	}
 	
 	public void destroy() {

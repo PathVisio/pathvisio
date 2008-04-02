@@ -241,12 +241,27 @@ public class Engine
 		}
 		return f;
 	}
-		
+	
+	/**
+	 * Save the pathway
+	 * @param p	The pathway to save
+	 * @param toFile The file to save to
+	 * @throws ConverterException
+	 */
+	public void savePathway(Pathway p, File toFile) throws ConverterException {
+		// make sure there are no problems with references.
+		p.fixReferences();
+		p.writeToXml(toFile, true);
+	}
+	
+	/**
+	 * Save the currently active pathway
+	 * @param toFile	The file to save to
+	 * @throws ConverterException
+	 */
 	public void savePathway(File toFile) throws ConverterException
 	{
-		// make sure there are no problems with references.
-		getActivePathway().fixReferences();
-		getActivePathway().writeToXml(toFile, true);
+		savePathway(getActivePathway(), toFile);
 	}
 
 	/**

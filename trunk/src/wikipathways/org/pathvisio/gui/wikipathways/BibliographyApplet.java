@@ -27,7 +27,7 @@ public class BibliographyApplet extends PathwayPageApplet {
 	protected void createGui() {
 		Container content = getContentPane();
 		
-		Pathway pathway = Engine.getCurrent().getActivePathway();
+		Pathway pathway = wiki.getPathway();
 		LitReferencePanel refPanel = new LitReferencePanel();
 		refPanel.setInput(pathway.getMappInfo());
 		content.add(refPanel, BorderLayout.CENTER);

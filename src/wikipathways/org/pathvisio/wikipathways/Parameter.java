@@ -16,81 +16,160 @@
 //
 package org.pathvisio.wikipathways;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Input parameter for the WikiPathways editor. Non-defaults need to be
+ * Input parameters for the WikiPathways editors. Non-defaults need to be
  * set before calling {@link WikiPathways#init(org.pathvisio.view.VPathwayWrapper, org.pathvisio.util.ProgressKeeper, java.net.URL)}.
  * @author thomas
  */
-public enum Parameter {
-	PW_NAME("pwName"),
-	PW_URL("pwUrl", false),
-	PW_SPECIES("pwSpecies"),
-	PW_NEW("new", null),
-	USER("user", null),
-	RPC_URL("rpcUrl"),
+public class Parameter {
+	public static final String PW_NAME = "pwName";
+	public static final String PW_URL = "pwUrl";
+	public static final String PW_SPECIES = "pwSpecies";
+	public static final String PW_NEW = "new";
+	public static final String USER = "user";
+	public static final String RPC_URL = "rpcUrl";
 	/**
-	 * A comma seperated list of categories
+	 * Parameter value: A comma seperated list of categories
 	 */
-	CATEGORIES("categories", ""),
+	public static final String CATEGORIES = "categories";
 	/**
-	 * The hostname of the gene database server (default: wikipathways.org)
+	 * Parameter value: The hostname of the gene database server (default: wikipathways.org)
 	 */
-	GDB_SERVER("gdb_server", "wikipathways.org"),
+	public static final String GDB_SERVER = "gdb_server";
 	/**
-	 * The revision id of the pathway
+	 * Parameter value: The revision id of the pathway
 	 */
-	REVISION("revision", true),
-	;
+	public static final String REVISION = "revision";
 	
-	String name;
-	String defaultValue;
-	boolean required;
-	String value;
+	private Map<String, ParameterValue> parameters = new HashMap<String, ParameterValue>();
 	
-	private Parameter(String name, boolean isRequired) {
-		this.name = name;
-		required = isRequired;
-	}
-	private Parameter(String name) {
-		this(name, true);
+	/**
+	 * Constructor for the parameter container. Registers default parameters.
+	 */
+	public Parameter() {
+		registerDefaults();
 	}
 	
-	private Parameter(String name, String defaultValue) {
-		this(name, false);
-		this.defaultValue = defaultValue;
+	/**
+	 * Get the names of all available parameters
+	 */
+	public Set<String> getNames() {
+		return parameters.keySet();
 	}
 	
-	public String getDefaultValue() {
-		return defaultValue;
+	/**
+	 * Get the value for a parameter
+	 * @param name The name of the parameter
+	 * @return the value or null if the parameter doesn't exist
+	 */
+	public String getValue(String name) {
+		String value = null;
+		ParameterValue p = parameters.get(name);
+		if(p != null) {
+			value = p.getValue();
+		}
+		return value;
 	}
 	
-	private void restoreDefault() {
-		value = null;
+	/**
+	 * Set the value for a parameter
+	 * @param name the name of the parameter
+	 * @param value the new value
+	 * @return true if the value was set successfully, false if there exists
+	 * no parameter for the given name
+	 */
+	public boolean setValue(String name, String value) {
+		ParameterValue p = parameters.get(name);
+		if(p != null) {
+			p.setValue(value);
+			return true;
+		}
+		return false;
 	}
 	
-	public String getName() {
-		return name;
+	/**
+	 * Check whether a parameter is required.
+	 * @param name the name of the parameter
+	 * @return true if the parameter is required, false if not
+	 */
+	public boolean isRequired(String name) {
+		ParameterValue p = parameters.get(name);
+		if(p != null) {
+			return p.isRequired();
+		}
+		return false;
 	}
 	
-	public boolean isRequired() {
-		return required;
+	private void registerDefaults() {
+		add(PW_NAME, new ParameterValue());
+		add(PW_URL, new ParameterValue(null));
+		add(PW_SPECIES, new ParameterValue());
+		add(PW_NEW, new ParameterValue(null));
+		add(USER, new ParameterValue(null));
+		add(RPC_URL, new ParameterValue());
+		add(CATEGORIES, new ParameterValue(""));
+		add(GDB_SERVER, new ParameterValue("wikipathways.org"));
+		add(REVISION, new ParameterValue());
 	}
 	
-	public void setValue(String value) {
-		this.value = value;
+	private void add(String name, ParameterValue p) {
+		parameters.put(name, p);
 	}
 	
-	public String getValue() {
-		if(value == null && !isRequired()) {
-			return defaultValue;
-		} else {
-			return value;
+	/**
+	 * Restore the default values for the parameters
+	 */
+	public void restoreDefaults() {
+		for(ParameterValue p : parameters.values()) {
+			p.restoreDefault();
 		}
 	}
 	
-	public static void restoreDefaults() {
-		for(Parameter p : values()) {
-			p.restoreDefault();
+	/**
+	 * Container for a parameter value. Takes care of default values.
+	 * @author thomas
+	 *
+	 */
+	private static class ParameterValue {
+		String value;
+		String defaultValue;
+		boolean isRequired;
+		
+		public ParameterValue() {
+			isRequired = true;
+		}
+		
+		public ParameterValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+			isRequired = false;
+		}
+		
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+		
+		private void restoreDefault() {
+			value = null;
+		}
+				
+		public boolean isRequired() {
+			return isRequired;
+		}
+		
+		public void setValue(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			if(value == null && !isRequired()) {
+				return defaultValue;
+			} else {
+				return value;
+			}
 		}
 	}
 }

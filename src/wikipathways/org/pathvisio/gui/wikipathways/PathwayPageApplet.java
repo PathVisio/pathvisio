@@ -32,20 +32,18 @@ import javax.swing.SwingUtilities;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
-import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
+import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class PathwayPageApplet extends JApplet {
 	UserInterfaceHandler uiHandler;
 	WikiPathways wiki;
-	boolean isFirstApplet = true;
 
 	public final void init() {
 		//Add a mouse listener that requests focus on clicking
@@ -62,25 +60,15 @@ public class PathwayPageApplet extends JApplet {
 		try {
 			Logger.log.trace(this + ": INIT CALLED....");
 
-			//Check if there are other applets around
-			WikiPathways owiki = findExistingWikiPathways();
-			if(owiki != null) {
-				wiki = owiki;
-				uiHandler = owiki.getUserInterfaceHandler();
-				isFirstApplet = false;
-			} else {
-				uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
-				wiki = new WikiPathways(uiHandler);
-			}
-
-			//Onlyl set new engine if this is the first applet
-			if(isFirstApplet) {
-				Engine engine = new Engine();
-				Engine.setCurrent(engine);
-				SwingEngine.setCurrent(new SwingEngine(engine));
-			}
-
+			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
+			wiki = new WikiPathways(uiHandler);
+			
 			parseArguments();
+
+			//Only set new engine if this is the first applet
+			Engine engine = new Engine();
+			Engine.setCurrent(engine);
+			SwingEngine.setCurrent(new SwingEngine(engine));
 
 			//Init with progress monitor
 			final RunnableWithProgress<Void> r = new RunnableWithProgress<Void>() {
@@ -88,12 +76,10 @@ public class PathwayPageApplet extends JApplet {
 					try {
 						doInitWiki(getProgressKeeper(), getDocumentBase());
 					} catch(AccessControlException ae) {
-						if(isFirstApplet) {
 							onError("You didn't accept the certificate needed to run this applet.\n" +
 									"After restarting the browser, click the edit button and choose" +
 									"\n'Run' in the security dialog that pops up.", 
 							"Security exception");
-						}
 					} catch(Exception e) {
 						Logger.log.error("Error while starting applet", e);
 						JOptionPane.showMessageDialog(
@@ -165,20 +151,6 @@ public class PathwayPageApplet extends JApplet {
 		});
 	}
 
-	protected final WikiPathways findExistingWikiPathways() {
-		Logger.log.trace(this + ": Finding other pathway applets");
-		Enumeration<Applet> applets = getAppletContext().getApplets();
-		while(applets.hasMoreElements()) {
-			Applet a = applets.nextElement();
-			if(a instanceof PathwayPageApplet) {
-				Logger.log.trace(this + ":Returning " + a);
-				return ((PathwayPageApplet)a).wiki;
-			}
-		}
-		Logger.log.trace(this + ": No other pathway applets found, returning null");
-		return null; //Nothing found
-	}
-
 	/**
 	 * In this method the WikiPathways class is initiated, 
 	 * by calling {@link WikiPathways#init(ProgressKeeper, URL)}
@@ -189,12 +161,7 @@ public class PathwayPageApplet extends JApplet {
 	 */
 	protected void doInitWiki(ProgressKeeper pk, URL base) throws Exception {
 		Logger.log.trace(this + ":doInitWiki");
-		if(isFirstApplet) {
-			wiki.init(pk, base);
-		} else {
-			Logger.log.trace(this + ": calling initVPathway");
-			wiki.initVPathway();
-		}
+		wiki.init(pk, base);
 	}
 
 	public boolean mayExit() {
@@ -228,8 +195,9 @@ public class PathwayPageApplet extends JApplet {
 	}
 
 	void parseArguments() {
-		for(Parameter p : Parameter.values()) {
-			p.setValue(getParameter(p.getName()));
+		Parameter parameters = wiki.getParameters();
+		for(String name : parameters.getNames()) {
+			parameters.setValue(name, getParameter(name));
 		}
 	}
 

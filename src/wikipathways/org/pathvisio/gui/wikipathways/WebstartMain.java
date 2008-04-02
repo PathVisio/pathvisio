@@ -39,7 +39,6 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
-import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
@@ -161,12 +160,11 @@ public class WebstartMain  {
 			if(a.startsWith("-")) {
 				//Try to find the corresponding parameter
 				String parName = a.substring(1);
-				Parameter par = Parameter.valueOf(parName);
-				if(par == null) {
-					Logger.log.error("Invalid commandline parameter '" + parName + "'");
-				} else {
-					par.setValue(args[i+1]);
+				boolean set = wiki.getParameters().setValue(parName, args[i+1]);
+				if(set) {
 					i++; //Skip value
+				} else {
+					Logger.log.error("Invalid commandline parameter '" + parName + "'");					
 				}
 			}
 		}

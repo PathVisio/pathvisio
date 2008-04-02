@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -46,8 +45,6 @@ import javax.swing.event.ListSelectionListener;
 import org.pathvisio.Engine;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
@@ -57,7 +54,7 @@ public class CategoryApplet extends PathwayPageApplet {
 	PathwayElement mappInfo;
 	
 	protected void createGui() {
-		Pathway pathway = Engine.getCurrent().getActivePathway();
+		Pathway pathway = wiki.getPathway();
 		mappInfo = pathway.getMappInfo();
 		
 		findCategories();
@@ -95,7 +92,8 @@ public class CategoryApplet extends PathwayPageApplet {
 	void findCategories() {
 		categories = new HashMap<String, Category>();
 		
-		String[] cats = Parameter.CATEGORIES.getValue().split(",");
+		String[] cats = wiki.getParameters().getValue(
+				Parameter.CATEGORIES).split(",");
 		for(String cname : cats) {
 			cname = cname.trim();
 			Category c = new Category(cname, mappInfo);

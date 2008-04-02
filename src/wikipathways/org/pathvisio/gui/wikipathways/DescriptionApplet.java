@@ -38,7 +38,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 	boolean noupdate = false;
 	
 	protected void createGui() {
-		Pathway pathway = Engine.getCurrent().getActivePathway();
+		Pathway pathway = wiki.getPathway();
 		findDescription(pathway);
 		PathwayElement mappInfo = pathway.getMappInfo();
 		

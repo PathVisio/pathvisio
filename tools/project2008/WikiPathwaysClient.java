@@ -20,7 +20,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,22 +86,24 @@ public class WikiPathwaysClient
 		return result;
 	}
 
-//	public List<String> getRecentChanges (String cutoff) throws XmlRpcException
-//	{		
-//		Object[] params = new Object[] { cutoff };
-//
-//		beforeRequest();
-//		Object response = client.execute ("WikiPathways.getRecentChanges", params);
-//		afterRequest();
-//		
-//		Object[] objs = (Object[])response;
-//		List<String> result = new ArrayList<String>(); 
-//		for (Object o : objs)
-//		{
-//			result.add ("" + o);
-//		}
-//		return result;
-//	}
+	public List<String> getRecentChanges (Date cutoff) throws XmlRpcException
+	{		
+		// turn Date into expected timestamp format:
+		String timestamp = new SimpleDateFormat ("yyyyMMddHHmmss").format(cutoff);
+		Object[] params = new Object[] { timestamp };
+		
+		beforeRequest();
+		Object response = client.execute ("WikiPathways.getRecentChanges", params);
+		afterRequest();
+		
+		Object[] objs = (Object[])response;
+		List<String> result = new ArrayList<String>(); 
+		for (Object o : objs)
+		{
+			result.add ("" + o);
+		}
+		return result;
+	}
 
 	static private long lastRequest = 0;
 	

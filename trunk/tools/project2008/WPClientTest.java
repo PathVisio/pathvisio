@@ -16,6 +16,9 @@
 //
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.xmlrpc.XmlRpcException;
@@ -27,6 +30,17 @@ public class WPClientTest
 	{
 		// make a new WikiPathwaysClient
 		WikiPathwaysClient wp = new WikiPathwaysClient();
+		
+		// create a cutoff date.
+		// NB: any valid  Date() can be used for getRecentChanges,
+		// you don't have to use GregorianCalendar
+		Date cutoff = new GregorianCalendar (2008, Calendar.MARCH, 31).getTime();
+		
+		List<String> recentPathways = wp.getRecentChanges(cutoff);		
+		for (String pwy: recentPathways)
+		{
+			System.out.println (pwy);
+		}
 		
 		// get the pathwaylist; all the known pathways are
 		// stored in a list

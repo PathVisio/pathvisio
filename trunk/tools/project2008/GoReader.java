@@ -10,17 +10,21 @@ public class GoReader {
 		List<GoTerm> terms = new ArrayList<GoTerm>();
 		List<GoTerm> roots = new ArrayList<GoTerm>();
 		List<GoTerm> children = new ArrayList<GoTerm>();
-		List<String> id = new ArrayList<String>();
 		terms=readGoDatabase(args[0]);
 		roots=getRoots(terms);
-		id.add("GO:0006854");
+		String id="GO:0006854";
 		children=getChildren(terms,id);
-		for (GoTerm child : children){
-			System.out.println(child.getId());
-			System.out.println(child.getName());
-			System.out.println(child.getNamespace());
-			System.out.println(child.getParents());
-			System.out.println();
+		if(children.isEmpty()){
+			System.out.println("No children");
+		}
+		else{
+			for (GoTerm child : children){
+				System.out.println(child.getId());
+				System.out.println(child.getName());
+				System.out.println(child.getNamespace());
+				System.out.println(child.getParents());
+				System.out.println();
+			}
 		}
 	}
 	
@@ -67,16 +71,13 @@ public class GoReader {
 		return roots;
 	}
 	
-	public static List<GoTerm> getChildren(List<GoTerm> terms, List<String> id){
+	public static List<GoTerm> getChildren(List<GoTerm> terms, String id){
 		List<GoTerm> children = new ArrayList<GoTerm>();
 		for (GoTerm term : terms){
 			if(term.getParents().contains(id)){
-				children.add(term);
+				children.add(term);			
 			}
  		}
-		if(children.isEmpty()){
-			System.out.println("No children");
-		}
 		return children;
 	}
 }

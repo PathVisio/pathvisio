@@ -1,13 +1,14 @@
 import java.util.List;
+import java.util.Set;
 
 public class GoTerm {
 
 	private String id;
 	private String name;
 	private String namespace;
-	private List<String> isa;
+	private Set<String> isa;
 	
-	public GoTerm(String id, String name, String namespace, List<String> isa){
+	public GoTerm(String id, String name, String namespace, Set<String> isa){
 		this.id = id;
 		this.name = name;
 		this.namespace = namespace;
@@ -26,7 +27,7 @@ public class GoTerm {
 		return namespace;	
 	}
 	
-	public List<String> getParents(){
+	public Set<String> getParents(){
 		return isa;
 	}	
 

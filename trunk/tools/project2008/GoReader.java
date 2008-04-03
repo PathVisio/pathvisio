@@ -14,17 +14,12 @@ public class GoReader {
 		roots=getRoots(terms);
 		String id="GO:0006854";
 		children=getChildren(terms,id);
-		if(children.isEmpty()){
-			System.out.println("No children");
-		}
-		else{
-			for (GoTerm child : children){
-				System.out.println(child.getId());
-				System.out.println(child.getName());
-				System.out.println(child.getNamespace());
-				System.out.println(child.getParents());
-				System.out.println();
-			}
+		for (GoTerm root : roots){
+			System.out.println(root.getId());
+			System.out.println(root.getName());
+			System.out.println(root.getNamespace());
+			System.out.println(root.getParents());
+			System.out.println();
 		}
 	}
 	
@@ -42,15 +37,21 @@ public class GoReader {
 					String name = br.readLine().substring(6);
 					String namespace = br.readLine().substring(11);
 					List<String> isa = new ArrayList<String>();
+					boolean obsolete = false;
 					// continue reading lines until the end of the term is reached
 					do {
 						line=br.readLine();
 						if(line.startsWith("is_a:")){
 							isa.add(line.substring(6,16));							
 						}
+						if (line.startsWith("is_obsolete:")){
+							obsolete = true;
+						}
 					}
 					while(! line.equals(""));
-					terms.add(new GoTerm(id,name,namespace,isa));
+					if (!obsolete){
+						terms.add(new GoTerm(id,name,namespace,isa));
+					}
 				}
 		    }		
 		    fr.close();

@@ -68,7 +68,7 @@ public class TestFrames {
 		JPanel canvasTree = new JPanel();
 		
 		// create a tree
-		DefaultMutableTreeNode top = makeTree();
+		DefaultMutableTreeNode top = TreeReader();
 		JTree tree = new JTree(top);
 		
 		// create a scroll pane
@@ -104,10 +104,8 @@ public class TestFrames {
 		}
 		
 		
-		public static DefaultMutableTreeNode makeTree(){
+		public static DefaultMutableTreeNode TreeReader(){
 			DefaultMutableTreeNode top = new DefaultMutableTreeNode("GOTerm Distribution");
-			DefaultMutableTreeNode category = null;
-		    DefaultMutableTreeNode book = null;
 
 			// read all GoTerms
 			List<GoTerm> terms = new ArrayList<GoTerm>();
@@ -117,38 +115,51 @@ public class TestFrames {
 			List<GoTerm> roots = new ArrayList<GoTerm>();
 			roots=GoReader.getRoots(terms);
 			
-			top = makeTree2(roots, terms, top, "r");
+			top = makeTree(roots, terms, top, "r");
 
 			return top;
 		}
 		
-		public static DefaultMutableTreeNode makeTree2(List<GoTerm> parents, List<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
-			
+		public static DefaultMutableTreeNode makeTree(List<GoTerm> parents, List<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
+			// loop trough all given GoTerms
 			for(GoTerm parent : parents){
-				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName());
-				top.add(par);
 				
+				// create a new parent branch
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName());
+				
+				// add the new parent to the top structure
+				top.add(par);
+		
+
+				// make a list of all children
 				List<GoTerm> children = new ArrayList<GoTerm>();
 				children = GoReader.getChildren(allTerms, parent.getId());
 				
+				// if a children list is not empty, set the children as new parents, and put them in
+				// this method again
 				if(!children.isEmpty()){
+					
+					// give some output to show where you are
 					System.out.println("mk Tree "+level);
-					if (level.length() < 2){
+					
+					// set the maximum level of children
+					if (level.length() < 4){
+						
+						// create a new tree and add it; when an error occures, catch it
+						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par, level+"*");
 						try{
-							DefaultMutableTreeNode childrenNodes = makeTree2(children, allTerms, top, level+"*");
 							par.add(childrenNodes);
-						}
+							}
 						catch(IllegalArgumentException e) {
-							System.out.println("kind is voorouder");
+							System.out.println("kind is voorouder"); // deze error komt steeds als je een stapje naar beneden gaat.
+							}
 						}
-					}
-					
 					
 					}
-				
+	
 				}
 			
-			return top;
+			return top;	
 			
 		}
 }

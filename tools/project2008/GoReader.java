@@ -10,9 +10,11 @@ public class GoReader {
 		List<GoTerm> terms = new ArrayList<GoTerm>();
 		List<GoTerm> roots = new ArrayList<GoTerm>();
 		List<GoTerm> children = new ArrayList<GoTerm>();
+		List<String> id = new ArrayList<String>();
 		terms=readGoDatabase(args[0]);
 		roots=getRoots(terms);
-		children=getChildren(terms,"GO:0052182");
+		id.add("GO:0006854");
+		children=getChildren(terms,id);
 		for (GoTerm child : children){
 			System.out.println(child.getId());
 			System.out.println(child.getName());
@@ -65,13 +67,16 @@ public class GoReader {
 		return roots;
 	}
 	
-	public static List<GoTerm> getChildren(List<GoTerm> terms, String id){
+	public static List<GoTerm> getChildren(List<GoTerm> terms, List<String> id){
 		List<GoTerm> children = new ArrayList<GoTerm>();
 		for (GoTerm term : terms){
 			if(term.getParents().contains(id)){
 				children.add(term);
 			}
- 		}		
+ 		}
+		if(children.isEmpty()){
+			System.out.println("No children");
+		}
 		return children;
 	}
 }

@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.Set;
 
 public class GoTerm {
@@ -7,12 +6,18 @@ public class GoTerm {
 	private String name;
 	private String namespace;
 	private Set<String> isa;
+	private Set<String> children;
 	
-	public GoTerm(String id, String name, String namespace, Set<String> isa){
+	public GoTerm(String id, String name, String namespace, Set<String> isa, Set<String> children){
 		this.id = id;
 		this.name = name;
 		this.namespace = namespace;
 		this.isa = isa;
+		this.children = children;
+	}
+	
+	public void setChildren(Set<String> children){
+		this.children=children;
 	}
 	
 	public String getId(){
@@ -29,6 +34,10 @@ public class GoTerm {
 	
 	public Set<String> getParents(){
 		return isa;
-	}	
+	}
+	
+	public Set<String> getChildren(){
+		return children;
+	}
 
 }

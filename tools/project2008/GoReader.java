@@ -9,16 +9,17 @@ public class GoReader {
 	public static void main(String[] args) {
 		List<GoTerm> terms = new ArrayList<GoTerm>();
 		List<GoTerm> roots = new ArrayList<GoTerm>();
+		List<GoTerm> children = new ArrayList<GoTerm>();
 		terms=readGoDatabase(args[0]);
 		roots=getRoots(terms);
-		getChildren(terms,"GO:0052182");
-		//for (GoTerm root : roots){
-		//	System.out.println(root.getId());
-		//	System.out.println(root.getName());
-		//	System.out.println(root.getNamespace());
-		//	System.out.println(root.getParents());
-		//	System.out.println();
-		//}
+		children=getChildren(terms,"GO:0052182");
+		for (GoTerm child : children){
+			System.out.println(child.getId());
+			System.out.println(child.getName());
+			System.out.println(child.getNamespace());
+			System.out.println(child.getParents());
+			System.out.println();
+		}
 	}
 	
 	public static List<GoTerm> readGoDatabase(String path){
@@ -61,21 +62,16 @@ public class GoReader {
 				roots.add(term);
 			}				
 		}		
-	return roots;
+		return roots;
 	}
 	
 	public static List<GoTerm> getChildren(List<GoTerm> terms, String id){
 		List<GoTerm> children = new ArrayList<GoTerm>();
 		for (GoTerm term : terms){
-			if(term.getParents().equals(id)){
-				System.out.println("Child found!");
+			if(term.getParents().contains(id)){
+				children.add(term);
 			}
- 		}
-		
-		
-	return children;
+ 		}		
+		return children;
 	}
-	
-	
-
 }

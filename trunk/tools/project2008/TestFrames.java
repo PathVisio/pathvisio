@@ -3,6 +3,8 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 
 public class TestFrames {
@@ -64,7 +67,9 @@ public class TestFrames {
 		// create a new panel
 		JPanel canvasTree = new JPanel();
 		
-		JTree tree = new JTree();
+		// create a tree
+		DefaultMutableTreeNode top = makeTree();
+		JTree tree = new JTree(top);
 		
 		// create a scroll pane
         JScrollPane scrollPane = new JScrollPane(tree);
@@ -96,5 +101,39 @@ public class TestFrames {
 			
 			// return the button
 			return button;
+		}
+		
+		
+		public static DefaultMutableTreeNode makeTree(){
+			DefaultMutableTreeNode top = new DefaultMutableTreeNode("GOTerm Distribution");
+			DefaultMutableTreeNode category = null;
+		    DefaultMutableTreeNode book = null;
+
+			// read all GoTerms
+			List<GoTerm> terms = new ArrayList<GoTerm>();
+			terms = GoReader.readGoDatabase("C:\\gene_ontology.obo");
+			
+			// get the Roots of the GoTerms
+			List<GoTerm> roots = new ArrayList<GoTerm>();
+			roots=GoReader.getRoots(terms);
+			
+			for(GoTerm root : roots){
+				category = new DefaultMutableTreeNode(root.getName());
+			    top.add(category);
+			    
+			    List<GoTerm> children = new ArrayList<GoTerm>();
+			    children = GoReader.getChildren(terms, root.getId());
+			    
+			    for(GoTerm child : children){
+			    	 book = new DefaultMutableTreeNode(child.getName());
+					 category.add(book);
+			    }
+			  
+			    
+			   
+			}
+			
+
+		    return top;
 		}
 }

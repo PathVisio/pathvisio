@@ -58,30 +58,5 @@ public class FileUtils {
 	    return files;
 	}
 	
-	static public List<File> getFileListWithoutDir(File path, String extension){
-		// create a new List of Files
-		List<File> files = new ArrayList<File>();
-		// get all the files and directories contained in the given path
-	    File[] content = path.listFiles();
-	    // use a for loop to walk through content
-	    for(File file : content) {
-	    	// if the file is a directory use recursion to get the contents of the sub-path
-	    	// the files in this sub-path are added to the files list.
-	    	if ( file.isDirectory() ) {
-	    		List<File> subpath = getFileListWithoutDir(file, extension);
-		        files.addAll(subpath);
-		      }
-		    // if the file is not a directory, check the extension. When this is the
-	    	// desired extension, add the file to the list.
-	    	else {
-		    	  if( file.getName().endsWith(extension) ) {
-		    	 files.add(file);
-		    	 }
-		    }
-		}
-	    
-	    // return the list with files
-	    return files;
-	}
-	
+		
 }

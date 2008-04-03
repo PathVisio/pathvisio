@@ -38,8 +38,10 @@ public class GeneCounter {
 	 * @param args
 	 * @throws ConverterException 
 	 * @throws DataException 
+	 * @throws ConverterException 
+	 * @throws DataException 
 	 */
-	public static void main(String[] args) throws ConverterException, DataException {
+	public static void main(String[] args) throws DataException, ConverterException{
 		
 		String dbDir = null;
 		File pwDir = null;
@@ -52,6 +54,14 @@ public class GeneCounter {
 			System.out.println("String[] args not given!");
 			System.exit(0);
 		}
+		Double[][] overlap=getOverlap(dbDir,pwDir);
+		
+		
+}
+	
+	public static Double[][] getOverlap(String dbDir,File pwDir) throws DataException, ConverterException{
+		
+		
 
 		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
 		int numberOfGenesEN = 17738;
@@ -71,7 +81,7 @@ public class GeneCounter {
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
 		//for (int i=0;i<filenames.size();i++){
-		for (int i=0;i<2;i++){
+		for (int i=0;i<5;i++){
 		
 			//
 			File fileName=filenames.get(i);
@@ -94,20 +104,21 @@ public class GeneCounter {
 		usedgenes=usedgenes/numberOfGenesEN*100;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
 		
-		final double[][] overlap=getPercentage(refPWarray);
+		Double[][] overlap=getPercentage(refPWarray);
 		
-		
+		/*
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI(overlap);
             }
         });
-
+		*/
 		
 		
-}
-	
-	
+		
+		
+		return overlap;
+	}
 
 	
 	//In this method a set is created that contains all the references in a Pathway.
@@ -146,15 +157,15 @@ public class GeneCounter {
 	
 	}
 	
-	public static double[][] getPercentage(List<Set> refPWarray){
+	public static Double[][] getPercentage(List<Set> refPWarray){
 		
 		int numberOfPathways=refPWarray.size();
-		double[][] overlap=new double[numberOfPathways][];
+		Double[][] overlap=new Double[numberOfPathways][];
 		int[][] a=getOverlapMatrix(refPWarray);
 		int[] numberOfGenes=getSizeVector(refPWarray);
 		
 		for(int j=0;j<numberOfPathways;j++){
-			overlap[j]=new double[numberOfPathways];
+			overlap[j]=new Double[numberOfPathways];
 			for(int k=0;k<numberOfPathways;k++){
 				overlap[j][k]=(double)a[j][k]/(double)numberOfGenes[j]*100.0;
 				
@@ -211,7 +222,7 @@ public class GeneCounter {
 		
 		return numberOfGenes;
 	}
-	
+	/*
 	private static void createAndShowGUI(double[][] overlap) {
         //Create and set up the window.
         JFrame frame = new JFrame("Pathway overlap matrix");
@@ -229,7 +240,7 @@ public class GeneCounter {
         frame.setVisible(true);
     }
 
-	
+	*/
 	
 	
 	

@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -12,22 +14,17 @@ public class GoReader {
 		Set<GoTerm> terms = new HashSet<GoTerm>();
 		// new list with roots 
 		Set<GoTerm> roots = new HashSet<GoTerm>();
-		// new list with children
-		Set<GoTerm> children = new HashSet<GoTerm>();
 		// start reading the GoDatabase
 		// make sure args[0] refers to the database file
 		terms=readGoDatabase(args[0]);
 		// get the roots of the database
 		roots=getRoots(terms);
-		// as example get the children for this id
-		String id="GO:0006854";
-		children=getChildren(terms,id);
-		// print all the terms
-		for (GoTerm term : terms){
+		for (GoTerm term : roots){
 			System.out.println(term.getId());
 			System.out.println(term.getName());
 			System.out.println(term.getNamespace());
 			System.out.println(term.getParents());
+			System.out.println(term.getChildren());
 			System.out.println();
 		}
 	}
@@ -36,7 +33,8 @@ public class GoReader {
 		// each line is read as a string
 		String line; 
 		// the list with GoTerms
-		Set<GoTerm> terms = new HashSet<GoTerm>();			
+		Set<GoTerm> terms = new HashSet<GoTerm>();
+		Set<String> children = new HashSet<String>();
 		// start reading the file (buffered)
 		try 
 		{
@@ -62,34 +60,63 @@ public class GoReader {
 					do 
 					{
 						line=br.readLine();
-						if(line == null)
-						{
-							break;
-						}
 						// if the line starts with an is_a, add this to the list
 						if(line.startsWith("is_a:")){
 							isa.add(line.substring(6,16));							
 						}
-						// if the line starts with is_obsolete, obsolete = true
-						if (line.startsWith("is_obsolete:"))
-						{
-							obsolete = true;
+						else{
+							// if the line starts with is_obsolete, obsolete = true
+							if (line.startsWith("is_obsolete:"))
+							{
+								obsolete = true;
+							}
 						}
 					}
-					while(! line.equals(""));
+					while(! line.equals("") && line != null);
 					// only add the term if it isn't obsolete
 					if (!obsolete)
 					{
-						terms.add(new GoTerm(id,name,namespace,isa));
+						terms.add(new GoTerm(id,name,namespace,isa,children));
 					}
-				}
+				}				
 		    }		
-			fr.close();
+			fr.close();			
 		}		
 		catch(Exception e) 
 		{
 			System.out.println("Exception: " + e);
 			e.printStackTrace();
+		}
+		terms=findChildren(terms);
+		return terms;
+	}
+		
+	public static Set<GoTerm> findChildren(Set<GoTerm> terms)
+	{
+		Set<String> parents = new HashSet<String>();
+		Map<String,Set<String>> map = new HashMap<String,Set<String>>();
+		for (GoTerm term : terms)
+		{	
+			Set<String> knownChildren = new HashSet<String>();
+			parents=term.getParents();
+			for(String parent : parents)
+			{
+				if(map.get(parent)!= null)
+				{
+					knownChildren=map.get(parent);
+					knownChildren.add(term.getId());
+					map.put(parent,knownChildren);
+				}
+				else
+					knownChildren.add(term.getId());
+					map.put(parent,knownChildren);
+			}
+		}		
+		for (GoTerm term : terms){
+			if(map.get(term.getId()) != null)
+			{
+				term.setChildren(map.get(term.getId()));
+			}
 		}
 		// return the GoTerms
 		return terms;
@@ -112,21 +139,6 @@ public class GoReader {
 		// return the root list
 		return roots;
 	}
-	
-	public static Set<GoTerm> getChildren(Set<GoTerm> terms, String id)
-	{
-		// create a list of children, as a term can have more than 1 child
-		Set<GoTerm> children = new HashSet<GoTerm>();
-		// walk through the terms to find the children
-		for (GoTerm term : terms)
-		{
-			// if a term contains this id as parent, it must be a child
-			if(term.getParents().contains(id))
-			{
-				children.add(term);			
-			}
- 		}
-		// return the list of children
-		return children;
-	}
 }
+	
+

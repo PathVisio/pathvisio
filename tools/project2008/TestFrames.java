@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.AbstractButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 
 
 public class TestFrames {
@@ -26,7 +28,6 @@ public class TestFrames {
 		// set the size of the frame
 		frame.setSize(350,570);
 		
-		
 		// create a new panel
 		JPanel canvasButtons = new JPanel();
 		
@@ -43,6 +44,15 @@ public class TestFrames {
 					}
 				);
 		
+		// add the functionality to the calculate button
+		calcButton.addActionListener(
+				new ActionListener(){
+					public void actionPerformed(ActionEvent ae){
+						System.out.println("Calculate Button pressed");
+						}
+					}
+				);
+		
 		// add the buttons to the canvas
 		canvasButtons.add(calcButton);
 		canvasButtons.add(closeButton);	
@@ -51,10 +61,27 @@ public class TestFrames {
 		frame.add(canvasButtons, BorderLayout.SOUTH);
 
 		
+		// create a new panel
+		JPanel canvasTree = new JPanel();
+		
+		JTree tree = new JTree();
+		
+		// create a scroll pane
+        JScrollPane scrollPane = new JScrollPane(tree);
+        Dimension scrollPaneSize = new Dimension(315,485);
+        scrollPane.setPreferredSize(scrollPaneSize);
+		canvasTree.add(scrollPane);
+		
+		frame.add(canvasTree, BorderLayout.NORTH);
+		
+		
 		// Show the frame
 		frame.setVisible(true);
 	}
-
+	
+	/**
+	 * create a new JButton of a preferred size, and with the text centered.
+	 */
 		public static JButton makeButton(String name){
 			// create a new button
 			JButton button = new JButton(name);

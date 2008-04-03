@@ -1,3 +1,9 @@
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.AbstractButton;
@@ -20,33 +26,48 @@ public class TestFrames {
 		// set the size of the frame
 		frame.setSize(350,570);
 		
+		
 		// create a new panel
-		JPanel canvas = new JPanel();
+		JPanel canvasButtons = new JPanel();
 		
-		// create a new button
-		JButton calcButton = new JButton("Calculate");
+		// create two new buttons, using the makeButton method
+		JButton calcButton = makeButton("Calculate");
+		JButton closeButton = makeButton("Close");
 		
-		// set the size of the button
-		calcButton.setBounds(10,30,104,150);
+		// add the functionality to the close button
+		closeButton.addActionListener(
+				new ActionListener(){
+					public void actionPerformed(ActionEvent ae){
+						System.exit(0);
+						}
+					}
+				);
 		
-		// center the text (horizontally and vertically) in the button
-		calcButton.setVerticalTextPosition(AbstractButton.CENTER);
-		calcButton.setHorizontalTextPosition(AbstractButton.CENTER);
-		
-	       
-        JLabel label = new JLabel("Label");
-        canvas.add(label);
-		
-		
-		// add the button to the canvas
-		canvas.add(calcButton);
+		// add the buttons to the canvas
+		canvasButtons.add(calcButton);
+		canvasButtons.add(closeButton);	
 		
 		// add the canvas to the frame
-		frame.add(canvas);
+		frame.add(canvasButtons, BorderLayout.SOUTH);
 
 		
 		// Show the frame
 		frame.setVisible(true);
 	}
 
+		public static JButton makeButton(String name){
+			// create a new button
+			JButton button = new JButton(name);
+			
+			// set the size of the button
+			Dimension sizeButton = new Dimension(130,30);
+			button.setPreferredSize(sizeButton);
+			
+			// center the text (horizontally and vertically) in the button
+			button.setVerticalTextPosition(AbstractButton.CENTER);
+			button.setHorizontalTextPosition(AbstractButton.CENTER);
+			
+			// return the button
+			return button;
+		}
 }

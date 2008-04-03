@@ -117,23 +117,38 @@ public class TestFrames {
 			List<GoTerm> roots = new ArrayList<GoTerm>();
 			roots=GoReader.getRoots(terms);
 			
-			for(GoTerm root : roots){
-				category = new DefaultMutableTreeNode(root.getName());
-			    top.add(category);
-			    
-			    List<GoTerm> children = new ArrayList<GoTerm>();
-			    children = GoReader.getChildren(terms, root.getId());
-			    
-			    for(GoTerm child : children){
-			    	 book = new DefaultMutableTreeNode(child.getName());
-					 category.add(book);
-			    }
-			  
-			    
-			   
-			}
-			
+			top = makeTree2(roots, terms, top, "r");
 
-		    return top;
+			return top;
+		}
+		
+		public static DefaultMutableTreeNode makeTree2(List<GoTerm> parents, List<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
+			
+			for(GoTerm parent : parents){
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName());
+				top.add(par);
+				
+				List<GoTerm> children = new ArrayList<GoTerm>();
+				children = GoReader.getChildren(allTerms, parent.getId());
+				
+				if(!children.isEmpty()){
+					System.out.println("mk Tree "+level);
+					if (level.length() < 2){
+						try{
+							DefaultMutableTreeNode childrenNodes = makeTree2(children, allTerms, top, level+"*");
+							par.add(childrenNodes);
+						}
+						catch(IllegalArgumentException e) {
+							System.out.println("kind is voorouder");
+						}
+					}
+					
+					
+					}
+				
+				}
+			
+			return top;
+			
 		}
 }

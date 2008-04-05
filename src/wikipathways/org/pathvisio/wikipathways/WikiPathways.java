@@ -124,7 +124,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	 * Get the pathway for this wiki instance
 	 */
 	public Pathway getPathway() {
-		return pathway;
+		return getCurrentPathway();
 	}
 	
 	/**
@@ -227,15 +227,15 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	}
 	public void initVPathway() {
 		Engine e = Engine.getCurrent();
-		if(pathway != null) {
+		if(getCurrentPathway() != null) {
 			if(vPathway == null) {
 				Logger.log.trace("Create VPathway");
-				e.createVPathway(pathway);
+				e.createVPathway(getCurrentPathway());
 				vPathway = e.getActiveVPathway();
 			} else {
 				VPathway active = e.getActiveVPathway();
-				if(active == null || active.getPathwayModel() != pathway) {
-					e.createVPathway(pathway);
+				if(active == null || active.getPathwayModel() != getCurrentPathway()) {
+					e.createVPathway(getCurrentPathway());
 				}
 				vPathway = active;
 			}
@@ -250,8 +250,8 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	 * last saved wiki version
 	 */
 	public boolean hasChanged() {
-		if(pathway != null) {
-			return remoteChanged || pathway.hasChanged();
+		if(getCurrentPathway() != null) {
+			return remoteChanged || getCurrentPathway().hasChanged();
 		} else {
 			return false;
 		}
@@ -361,11 +361,11 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	}
 	
 	public boolean saveUI(String description) {
-		if(!remoteChanged && !pathway.hasChanged()) {
+		if(!remoteChanged && !getCurrentPathway().hasChanged()) {
 			uiHandler.showInfo("Save pathway", "You didn't make any changes");
 			return false;
 		}
-		if(pathway != null) {
+		if(getCurrentPathway() != null) {
 			if(isNew() && firstSave) { //Automatically fill in description on new pathway
 				description = "New pathway";
 			}
@@ -419,12 +419,25 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 		return false;
 	}
-		
+	
+	/**
+	 * Get the current pathway. Always use this method
+	 * to get the most recent pathway, since vPathway
+	 * might replace it after an undo event!
+	 * @return	The current pathway
+	 */
+	private Pathway getCurrentPathway() {
+		if(vPathway != null) {
+			pathway = vPathway.getPathwayModel();
+		}
+		return pathway;
+	}
+	
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
-		if(remoteChanged || pathway.hasChanged()) {
+		if(remoteChanged || getCurrentPathway().hasChanged()) {
 			File gpmlFile = getLocalFile();
 			//Save current pathway to local file
-			Engine.getCurrent().savePathway(pathway, gpmlFile);
+			Engine.getCurrent().savePathway(getCurrentPathway(), gpmlFile);
 			setRemoteChanged(true); //In case we get an error, save changes next time
 			saveToWiki(description, gpmlFile);
 			firstSave = false;

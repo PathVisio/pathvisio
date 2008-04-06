@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -108,11 +110,11 @@ public class TestFrames {
 			DefaultMutableTreeNode top = new DefaultMutableTreeNode("GOTerm Distribution");
 
 			// read all GoTerms
-			List<GoTerm> terms = new ArrayList<GoTerm>();
+			Set<GoTerm> terms = new HashSet<GoTerm>();
 			terms = GoReader.readGoDatabase("C:\\gene_ontology.obo");
 			
 			// get the Roots of the GoTerms
-			List<GoTerm> roots = new ArrayList<GoTerm>();
+			Set<GoTerm> roots= new HashSet<GoTerm>();
 			roots=GoReader.getRoots(terms);
 			
 			top = makeTree(roots, terms, top, "r");
@@ -120,7 +122,7 @@ public class TestFrames {
 			return top;
 		}
 		
-		public static DefaultMutableTreeNode makeTree(List<GoTerm> parents, List<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
+		public static DefaultMutableTreeNode makeTree(Set<GoTerm> parents, Set<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
 			// loop trough all given GoTerms
 			for(GoTerm parent : parents){
 				
@@ -132,18 +134,21 @@ public class TestFrames {
 		
 
 				// make a list of all children
-				List<GoTerm> children = new ArrayList<GoTerm>();
-				children = GoReader.getChildren(allTerms, parent.getId());
+				Set<GoTerm> children = new HashSet<GoTerm>();
+				children = parent.getChildren();
+				
+				
+			
 				
 				// if a children list is not empty, set the children as new parents, and put them in
 				// this method again
 				if(!children.isEmpty()){
 					
 					// give some output to show where you are
-					System.out.println("mk Tree "+level);
+					//System.out.println("mk Tree "+level);
 					
 					// set the maximum level of children
-					if (level.length() < 4){
+					//if (level.length() < 4){
 						
 						// create a new tree and add it; when an error occures, catch it
 						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par, level+"*");
@@ -153,7 +158,7 @@ public class TestFrames {
 						catch(IllegalArgumentException e) {
 							System.out.println("kind is voorouder"); // deze error komt steeds als je een stapje naar beneden gaat.
 							}
-						}
+						//}
 					
 					}
 	

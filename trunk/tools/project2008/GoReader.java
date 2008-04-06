@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -18,7 +17,8 @@ public class GoReader {
 		// make sure args[0] refers to the database file
 		terms=readGoDatabase(args[0]);
 		// get the roots of the database
-		roots=getRoots(terms);
+		
+		//roots=getRoots(terms);
 		for (GoTerm term : roots){
 			System.out.println(term.getId());
 			System.out.println(term.getName());
@@ -34,7 +34,8 @@ public class GoReader {
 		String line; 
 		// the list with GoTerms
 		Set<GoTerm> terms = new HashSet<GoTerm>();
-		Set<String> children = new HashSet<String>();
+		Map<GoTerm, Set<String>> goTerm_Parents = new HashMap<GoTerm,Set<String>>();
+		Map<String, GoTerm> id_goTerm = new HashMap<String,GoTerm>();
 		// start reading the file (buffered)
 		try 
 		{
@@ -76,7 +77,10 @@ public class GoReader {
 					// only add the term if it isn't obsolete
 					if (!obsolete)
 					{
-						terms.add(new GoTerm(id,name,namespace,isa,children));
+						GoTerm new_GoTerm = new GoTerm(id,name,namespace);
+						terms.add(new_GoTerm);
+						goTerm_Parents.put(new_GoTerm, isa);
+						id_goTerm.put(id, new_GoTerm);
 					}
 				}				
 		    }		
@@ -87,38 +91,32 @@ public class GoReader {
 			System.out.println("Exception: " + e);
 			e.printStackTrace();
 		}
-		terms=findChildren(terms);
-		return terms;
-	}
 		
-	public static Set<GoTerm> findChildren(Set<GoTerm> terms)
-	{
-		Set<String> parents = new HashSet<String>();
-		Map<String,Set<String>> map = new HashMap<String,Set<String>>();
-		for (GoTerm term : terms)
-		{	
-			Set<String> knownChildren = new HashSet<String>();
-			parents=term.getParents();
-			for(String parent : parents)
-			{
-				if(map.get(parent)!= null)
-				{
-					knownChildren=map.get(parent);
-					knownChildren.add(term.getId());
-					map.put(parent,knownChildren);
+		for (GoTerm thisTerm : terms){
+			Set<String> parents = goTerm_Parents.get(thisTerm);
+			
+			if (!parents.isEmpty()){
+				for(String parent : parents){
+				
+					GoTerm ouder = id_goTerm.get(parent);
+				
+					thisTerm.addParent(ouder);
+					ouder.addChild(thisTerm);
+				
 				}
-				else
-					knownChildren.add(term.getId());
-					map.put(parent,knownChildren);
-			}
-		}		
-		for (GoTerm term : terms){
-			if(map.get(term.getId()) != null)
-			{
-				term.setChildren(map.get(term.getId()));
 			}
 		}
-		// return the GoTerms
+		
+		
+		System.out.println("alles ingelezen");
+		//for (GoTerm thisTerm : terms){
+		//	System.out.println(thisTerm.getName());
+		//	Set<GoTerm> kids = thisTerm.getChildren();
+		//	for (GoTerm deze : kids){
+		//		System.out.println("|-"+deze.getName());
+		//	}
+		//}
+		//terms=findChildren(terms);
 		return terms;
 	}
 	

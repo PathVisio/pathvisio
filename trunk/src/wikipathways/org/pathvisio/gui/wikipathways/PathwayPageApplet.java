@@ -192,7 +192,7 @@ public class PathwayPageApplet extends JApplet {
 		toolbar.setFloatable(false);
 		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, true, getDefaultDescription()));
 		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, false, getDefaultDescription()));
-		toolbar.setPreferredSize(new Dimension(10,20))
+		toolbar.setPreferredSize(new Dimension(10,20));
 		getContentPane().add(toolbar, BorderLayout.WEST);
 	}
 

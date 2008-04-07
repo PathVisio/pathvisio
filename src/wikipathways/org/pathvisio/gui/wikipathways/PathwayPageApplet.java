@@ -21,7 +21,6 @@ import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Dimension;
 import java.net.URL;
 import java.security.AccessControlException;
 import java.util.Enumeration;
@@ -192,7 +191,6 @@ public class PathwayPageApplet extends JApplet {
 		toolbar.setFloatable(false);
 		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, true, getDefaultDescription()));
 		toolbar.add(new Actions.ExitAction(wiki.getUserInterfaceHandler(), wiki, false, getDefaultDescription()));
-		toolbar.setPreferredSize(new Dimension(10,20));
 		getContentPane().add(toolbar, BorderLayout.WEST);
 	}
 

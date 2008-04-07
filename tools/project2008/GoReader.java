@@ -34,7 +34,9 @@ public class GoReader {
 		String line; 
 		// the list with GoTerms
 		Set<GoTerm> terms = new HashSet<GoTerm>();
+		// a map with a goterm and the parents (isa's) of this term stored as strings
 		Map<GoTerm, Set<String>> goTerm_Parents = new HashMap<GoTerm,Set<String>>();
+		// a map with a string (containing the goTerm's id) and the goterm
 		Map<String, GoTerm> id_goTerm = new HashMap<String,GoTerm>();
 		// start reading the file (buffered)
 		try 
@@ -77,9 +79,13 @@ public class GoReader {
 					// only add the term if it isn't obsolete
 					if (!obsolete)
 					{
+						// if the term isn't obsolete, create the GoTerm
 						GoTerm new_GoTerm = new GoTerm(id,name,namespace);
+						// and add this term to the 'terms' set
 						terms.add(new_GoTerm);
+						// and at this term and it's list of parents to the first map
 						goTerm_Parents.put(new_GoTerm, isa);
+						// and add this term's id and the term itself to the second map
 						id_goTerm.put(id, new_GoTerm);
 					}
 				}				
@@ -92,31 +98,32 @@ public class GoReader {
 			e.printStackTrace();
 		}
 		
+		// now loop through all GoTerms
 		for (GoTerm thisTerm : terms){
+			// get the parents (strings) of this goTerm
 			Set<String> parents = goTerm_Parents.get(thisTerm);
 			
 			if (!parents.isEmpty()){
+				// loop through all these parent strings
 				for(String parent : parents){
 				
+					// get the goTerm beloning to the parent string (the parent string
+					// contains the id of the parent, the second map contains the id's
+					// with the goterms belonging to this id)
 					GoTerm ouder = id_goTerm.get(parent);
 				
+					// add the found parent GoTerm as a parent for the read GoTerm
 					thisTerm.addParent(ouder);
+					// the read GoTerm is a child of it's parent; so add a child to
+					// the parent GoTerm
 					ouder.addChild(thisTerm);
 				
 				}
 			}
 		}
 		
-		
-		System.out.println("alles ingelezen");
-		//for (GoTerm thisTerm : terms){
-		//	System.out.println(thisTerm.getName());
-		//	Set<GoTerm> kids = thisTerm.getChildren();
-		//	for (GoTerm deze : kids){
-		//		System.out.println("|-"+deze.getName());
-		//	}
-		//}
-		//terms=findChildren(terms);
+		// show a message that everything is read; and return the terms
+		System.out.println("DB read");
 		return terms;
 	}
 	

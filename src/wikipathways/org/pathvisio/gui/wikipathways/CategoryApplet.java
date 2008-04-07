@@ -24,7 +24,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,9 +63,7 @@ public class CategoryApplet extends PathwayPageApplet {
 		Collections.sort(catList);
 		
 		final JList categoryList = new JList(catList.toArray());
-		categoryList.setBorder(BorderFactory.createTitledBorder("Categories2"));
-		categoryList.setFixedCellHeight(10);
-//		categoryList.setPreferredSize(new Dimension(50, 50));
+		categoryList.setBorder(BorderFactory.createTitledBorder("Categories"));
 		final CheckListManager checkListManager = new CheckListManager(categoryList); 
 	
 		int i = 0;

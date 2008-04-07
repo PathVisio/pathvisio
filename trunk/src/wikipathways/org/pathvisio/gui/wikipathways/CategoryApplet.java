@@ -64,8 +64,9 @@ public class CategoryApplet extends PathwayPageApplet {
 		Collections.sort(catList);
 		
 		final JList categoryList = new JList(catList.toArray());
-		categoryList.setBorder(BorderFactory.createTitledBorder("Categories"));
-		categoryList.setPreferredSize(new Dimension(50, 50));
+		categoryList.setBorder(BorderFactory.createTitledBorder("Categories2"));
+		categoryList.setFixedCellHeight(10);
+//		categoryList.setPreferredSize(new Dimension(50, 50));
 		final CheckListManager checkListManager = new CheckListManager(categoryList); 
 	
 		int i = 0;

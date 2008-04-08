@@ -187,7 +187,7 @@ public class GeneCounter {
 		for(int j=0;j<numberOfPathways;j++){
 			a[j]=new int[numberOfPathways];
 			
-			//k=j+1; maar ter controle nemen we k=j. Als het goed is komt er dan 100% uit.
+			
 			for(int k=0;k<j+1;k++){
 				
 				System.out.println("("+j+","+k+")");

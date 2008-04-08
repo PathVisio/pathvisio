@@ -32,7 +32,7 @@ public class genesGOid {
 		String s; 
 		List<String[]> arrayGOgenes = new ArrayList<String[]>();
 		try {
-			 FileReader fr = new FileReader(args[2]);
+			 FileReader fr = new FileReader("D:\\My Documents\\TUe\\BiGCAT\\mart_export.txt");
 		      BufferedReader br = new BufferedReader(fr);
 		     while((s = br.readLine()) != null){
 		    	 arrayGOgenes.add(s.split("\t"));
@@ -73,8 +73,8 @@ public class genesGOid {
 	//Example GO-Id
 	String goId="GO:0008020";
 	/*In this method all Gene-Id's for the given GO-ID are returned in a List*/ 
-	List<String> ensIdsforGOId = ensIdsforGOId(goId,geneByGO);
-	
+	Set<String> ensIdsforGOId = ensIdsforGOId(goId,geneByGO);
+	System.out.println(ensIdsforGOId);
 	}
 	
 	
@@ -147,8 +147,8 @@ public class genesGOid {
 	  }
 	
 	/**In this method all Gene-Id's for the given GO-ID are returned in a List*/ 
-	public static List ensIdsforGOId(String goId, Map<String, List<String>> geneByGO){
-		List<String> list = new ArrayList<String>();
+	public static Set<String> ensIdsforGOId(String goId, Map<String, List<String>> geneByGO){
+		Set<String> list = new HashSet<String>();
 		list.addAll(geneByGO.get(goId));
 		return list;
 	}

@@ -98,15 +98,7 @@ public class showMenuGUI extends JPanel {
 		PugButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						try {
-							GeneCounter.getUsedGenes(dbDir,pwDir);
-						} catch (DataException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (ConverterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						//ShowPercentageGUI.createAndShowPercentageGUI();
 						}
 					}
 				);

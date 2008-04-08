@@ -54,7 +54,10 @@ public class GeneCounter {
 			System.out.println("String[] args not given!");
 			System.exit(0);
 		}
+		
 		Double[][] overlap=getOverlap(dbDir,pwDir);
+
+		
 		
 		
 }

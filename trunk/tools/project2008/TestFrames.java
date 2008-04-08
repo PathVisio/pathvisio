@@ -25,7 +25,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class TestFrames {
 	
-	private static Map<String,List<String>> geneByGO = new HashMap<String,List<String>>();
+	private static Map<String, Set<String>> geneByGO = new HashMap<String,Set<String>>();
 	/**
 	 * @param args
 	 */
@@ -136,7 +136,7 @@ public class TestFrames {
 				      System.out.println("Exception: " + e);
 				}
 			    /**In this method the map "goByGene" is created. In this map, the gene-Id's are the keys and the GO-Id's are the values.*/	
-				Map<String,List<String>> goByGene=genesGOid.goByGene(arrayGOgenes);		
+				Map<String,Set<String>> goByGene=genesGOid.goByGene(arrayGOgenes);		
 				geneByGO=genesGOid.geneByGO(goByGene);
 				String goId="GO:0008020";
 				System.out.println(geneByGO.get("GO:0008020"));

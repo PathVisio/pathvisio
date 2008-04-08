@@ -33,7 +33,7 @@ public class genesGOid {
 		List<String[]> arrayGOgenes = new ArrayList<String[]>();
 		try {
 			 FileReader fr = new FileReader("D:\\My Documents\\TUe\\BiGCAT\\mart_export.txt");
-		      BufferedReader br = new BufferedReader(fr);
+		     BufferedReader br = new BufferedReader(fr);
 		     while((s = br.readLine()) != null){
 		    	 arrayGOgenes.add(s.split("\t"));
 		      }
@@ -44,11 +44,11 @@ public class genesGOid {
 			}
 	
     /**In this method the map "goByGene" is created. In this map, the gene-Id's are the keys and the GO-Id's are the values.*/	
-	Map<String,List<String>> goByGene=goByGene(arrayGOgenes);
+	Map<String,Set<String>> goByGene=goByGene(arrayGOgenes);
 	//The map "goByGene" can be printed to the screen
 	for (String key : goByGene.keySet()){
 		System.out.println (key);
-		List<String> values = goByGene.get(key);
+		Set<String> values = goByGene.get(key);
 		
 		for (String value : values)	{
 			System.out.println ("  " + value);
@@ -58,14 +58,14 @@ public class genesGOid {
 	//Example gene-Id
 	String geneId="ENSRNOG00000005016";
 	/**In this method all GO-Id's for the given gene-ID are returned in a List*/ 
-	List<String> gOIdforEnsId = goIdsforEnsId(geneId,goByGene);
+	Set<String> gOIdforEnsId = goIdsforEnsId(geneId,goByGene);
 	
     /**In this method the map "geneByGO" is created. In this map, the GO-Id's are the keys and the gene-Id's are the values.*/	
-	Map<String,List<String>> geneByGO=geneByGO(goByGene);
+	Map<String,Set<String>> geneByGO=geneByGO(goByGene);
 	//The map "goByGene" can also be printed to the screen
 	for (String key : geneByGO.keySet()){
 		//System.out.println (key);
-		List<String> values = geneByGO.get(key);
+		Set<String> values = geneByGO.get(key);
 		for (String value : values)	{
 		//	System.out.println ("  " + value);
 		}
@@ -79,7 +79,7 @@ public class genesGOid {
 	
 	
     /** In this method the map "goByGene" is created. In this map, the gene-Id's are the keys and the GO-Id's are the values.*/	
-	public static Map<String,List<String>> goByGene(List<String[]> arrayGOgenes){
+	public static Map<String,Set<String>> goByGene(List<String[]> arrayGOgenes){
 		/** In the array "arrayGogenes" each gene-Id is compared to the gene-Id above the current gene. 
 		 * If the gene-Id does not equal the gene-Id from the previous gene,
 		 * The GO-Id that matches this gene-ID is put in a list. The for loop goes on and as long as
@@ -87,16 +87,16 @@ public class genesGOid {
 		 * When the next current gene is no longer equal to the previous gene, the GO-Id list is added
 		 * to the map. The key is than the previous gene and the value is the GO-Id list.   
 		 */
-		Map<String,List<String>> goByGenemap = new HashMap<String,List<String>>();
-		List<String> gOIds = new ArrayList<String>();
-		for (int i = 1;i<(arrayGOgenes.size());i++){
+		Map<String,Set<String>> goByGenemap = new HashMap<String,Set<String>>();
+		Set<String> gOIds = new HashSet<String>();
+		for (int i = 1;i<arrayGOgenes.size();i++){
 			if (arrayGOgenes.get(i).length > 2){
 				String currentGene = arrayGOgenes.get(i)[0];
 				String currentGOId = arrayGOgenes.get(i)[2];
 				String previousGene = arrayGOgenes.get(i-1)[0];
 				if (!currentGene.equals(previousGene)){
 					goByGenemap.put(previousGene,gOIds);
-					gOIds = new ArrayList<String>();
+					gOIds = new HashSet<String>();
 					gOIds.add(currentGOId);
 				}
 				else {gOIds.add(currentGOId);
@@ -108,14 +108,14 @@ public class genesGOid {
     
 	
 	/**In this method all GO-Id's for the given gene-ID are returned in a List*/ 
-	public static List goIdsforEnsId(String geneId, Map<String, List<String>> goByGene){
-		List<String> goIdsforEnsIdlist = new ArrayList<String>();
+	public static Set goIdsforEnsId(String geneId, Map<String, Set<String>> goByGene){
+		Set<String> goIdsforEnsIdlist = new HashSet<String>();
 		goIdsforEnsIdlist.addAll(goByGene.get(geneId));
 		return goIdsforEnsIdlist;
 		}
 	
     /**In this method the map "geneByGO" is created. In this map, the GO-Id's are the keys and the gene-Id's are the values.*/	
-	  public static Map<String,List<String>> geneByGO(Map<String, List<String>> goByGene){
+	  public static Map<String,Set<String>> geneByGO(Map<String, Set<String>> goByGene){
 		  /** Because there already is a map "goByGenes", this map can be used to create the map 
 		   * "genesByGO". In the first for-loop, for each gene-ID a list with all GO-Id's for that 
 		   * gene-ID is asked. In the second for-loop, each GO-Id is called a key and each gene-ID 
@@ -126,19 +126,19 @@ public class genesGOid {
 		   * If this GO-Id is already a key in the new map, the value (gene-ID) that matches with 
 		   * this key (GO-Id) is added to the ohter values that are added to the map.
 		   */
-		  Map<String,List<String>> geneByGo = new HashMap<String,List<String>>();
+		  Map<String,Set<String>> geneByGo = new HashMap<String,Set<String>>();
 		  for (String gene : goByGene.keySet()){
-			  List<String> goList = goIdsforEnsId(gene,goByGene);
+			  Set<String> goList = goIdsforEnsId(gene,goByGene);
 			  for (String go : goList){
 				  String key = go;
 				  String value = gene;
 				  if (!geneByGo.containsKey(key)){
-					  List<String> valueList = new ArrayList();
+					  Set<String> valueList = new HashSet();
 					  valueList.add(value);
 					  geneByGo.put(key,valueList);
 				  }
 				  else{
-					  List<String> valueList = geneByGo.get(key);
+					  Set<String> valueList = geneByGo.get(key);
 					  valueList.add(value);
 				  }
 			  }
@@ -147,7 +147,7 @@ public class genesGOid {
 	  }
 	
 	/**In this method all Gene-Id's for the given GO-ID are returned in a List*/ 
-	public static Set<String> ensIdsforGOId(String goId, Map<String, List<String>> geneByGO){
+	public static Set<String> ensIdsforGOId(String goId, Map<String, Set<String>> geneByGO){
 		Set<String> list = new HashSet<String>();
 		list.addAll(geneByGO.get(goId));
 		return list;

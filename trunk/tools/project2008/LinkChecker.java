@@ -67,20 +67,35 @@ public class LinkChecker {
 			System.exit(0);
 		}
 
-		if (online){
-			// download all pathways to the pathway folder
-			WPDownloadAll.download(args[1]);
-		}
-		
 		// get a list of files of databases and pathways
 		String pwExtension = ".gpml";
 		String dbExtension = ".pgdb";
 		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
 		List<File> dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
-		long localdate = dateLastModified(pwFilenames);
-		Date d = new Date(localdate); 
-		DateFormat df = DateFormat.getDateTimeInstance();
-		System.out.println("Date last modified: "+df.format(d)); 
+		
+		
+		
+		if (online){
+			// if online, first get the date of the last changed pathway file.
+			// then get the recently changed pathways, using this date.
+			
+			long localdate = dateLastModified(pwFilenames);
+			Date d = new Date(localdate); 
+			DateFormat df = DateFormat.getDateTimeInstance();
+			System.out.println("Date last modified: "+df.format(d)); 
+			System.out.println("---[Get Recently Changed Files]---");
+			WPDownloadAll.downloadNew(args[1], d);
+			
+			System.out.println("---[Get All Other Files]---");
+			// download all pathways to the pathway folder
+			WPDownloadAll.downloadAll(args[1]);
+			System.out.println("---[Ready]---");
+			System.out.println("---[Start Checking Links]---");
+		}
+		
+		// get a new list of files of pathways
+		dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
+
 				
 		// Load all databases in List<SimpleGdb> databases,
 		// and load all filenames of the loaded databases

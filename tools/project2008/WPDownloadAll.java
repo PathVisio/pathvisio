@@ -18,6 +18,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -37,14 +38,13 @@ public class WPDownloadAll
 	 * Good Luck!
 	 */
 	public static void main(String[] args)  throws XmlRpcException, IOException{
-		download(args[0]);
+		downloadAll(args[0]);
 	}
 	
-	
-	public static void download(String path) throws XmlRpcException, IOException
+	public static void downloadNew(String path, Date d) throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
-		
+		// and date: the date of the most recent changed 
 		
 		
 		
@@ -53,10 +53,32 @@ public class WPDownloadAll
 		
 		// get the pathwaylist; all the known pathways are
 		// stored in a list
+		List<String> pathwayNames = wp.getRecentChanges(d);
+		
+		downloadFiles(pathwayNames,path,wp);
+
+	}
+	
+	
+	
+	public static void downloadAll(String path) throws XmlRpcException, IOException
+	{
+		// given path: path to store the pathway cache
+		
+				// make a new WikiPathwaysClient
+		WikiPathwaysClient wp = new WikiPathwaysClient();
+		
+		// get the pathwaylist; all the known pathways are
+		// stored in a list
 		List<String> pathwayNames = wp.getPathwayList();
 		
+		downloadFiles(pathwayNames,path,wp);
 
 
+	}
+	
+	public static void downloadFiles(List<String> pathwayNames, String path, WikiPathwaysClient wp) throws XmlRpcException, IOException {
+		// download all the files
 		
 		// give the extension of a pathway file
 		String pwExtension = ".gpml";
@@ -92,6 +114,9 @@ public class WPDownloadAll
 			System.out.println("Downloaded file "+(i+1)+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
 		}
 	}
+	
+	
+	
 	public static List<String> removeDuplicates(String pwExtension, String path, List<String> pathwayNames){
 		// get a list of files from the cache directory. All the files
 		// that are already in the cache, are removed from the pathwayNames

@@ -80,8 +80,8 @@ public class GeneCounter {
 		List<Set> refPWarray = new ArrayList<Set>();
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
-		//for (int i=0;i<filenames.size();i++){
-		for (int i=0;i<5;i++){
+		for (int i=0;i<filenames.size();i++){
+		//for (int i=0;i<5;i++){
 		
 			//
 			File fileName=filenames.get(i);
@@ -222,25 +222,7 @@ public class GeneCounter {
 		
 		return numberOfGenes;
 	}
-	/*
-	private static void createAndShowGUI(double[][] overlap) {
-        //Create and set up the window.
-        JFrame frame = new JFrame("Pathway overlap matrix");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Add the ubiquitous "Hello World" label.
-        JLabel label = new JLabel("Hello World");
-        frame.getContentPane().add(label);
-        
-        //JTable table = new JTable();
-        //frame.getContentPane().add(table);
-
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-	*/
 	
 	
 	

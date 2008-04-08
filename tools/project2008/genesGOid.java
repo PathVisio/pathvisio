@@ -29,32 +29,11 @@ public class genesGOid {
 
 	public static void main(String[] args){
 		//Load the file
-		String s; 
-		List<String[]> arrayGOgenes = new ArrayList<String[]>();
-		try {
-			 FileReader fr = new FileReader("D:\\My Documents\\TUe\\BiGCAT\\mart_export.txt");
-		     BufferedReader br = new BufferedReader(fr);
-		     while((s = br.readLine()) != null){
-		    	 arrayGOgenes.add(s.split("\t"));
-		      }
-		      fr.close();
-		    }
-		    catch(Exception e) {
-		      System.out.println("Exception: " + e);
-			}
 	
+	List<String[]> arrayGOgenes = readDatabase(args[0]);
+
     /**In this method the map "goByGene" is created. In this map, the gene-Id's are the keys and the GO-Id's are the values.*/	
 	Map<String,Set<String>> goByGene=goByGene(arrayGOgenes);
-	//The map "goByGene" can be printed to the screen
-	for (String key : goByGene.keySet()){
-		System.out.println (key);
-		Set<String> values = goByGene.get(key);
-		
-		for (String value : values)	{
-			System.out.println ("  " + value);
-		}
-	}
-	
 	//Example gene-Id
 	String geneId="ENSRNOG00000005016";
 	/**In this method all GO-Id's for the given gene-ID are returned in a List*/ 
@@ -77,7 +56,22 @@ public class genesGOid {
 	System.out.println(ensIdsforGOId);
 	}
 	
-	
+	public static List<String[]> readDatabase(String path){
+		String s; 
+		List<String[]> arrayGOgenes = new ArrayList<String[]>();
+		try {
+			 FileReader fr = new FileReader(path);
+		     BufferedReader br = new BufferedReader(fr);
+		     while((s = br.readLine()) != null){
+		    	 arrayGOgenes.add(s.split("\t"));
+		      }
+		      fr.close();
+		    }
+		    catch(Exception e) {
+		      System.out.println("Exception: " + e);
+			}
+		return arrayGOgenes;
+	}
     /** In this method the map "goByGene" is created. In this map, the gene-Id's are the keys and the GO-Id's are the values.*/	
 	public static Map<String,Set<String>> goByGene(List<String[]> arrayGOgenes){
 		/** In the array "arrayGogenes" each gene-Id is compared to the gene-Id above the current gene. 
@@ -90,9 +84,9 @@ public class genesGOid {
 		Map<String,Set<String>> goByGenemap = new HashMap<String,Set<String>>();
 		Set<String> gOIds = new HashSet<String>();
 		for (int i = 1;i<arrayGOgenes.size();i++){
-			if (arrayGOgenes.get(i).length > 2){
+			if (arrayGOgenes.get(i).length > 1){
 				String currentGene = arrayGOgenes.get(i)[0];
-				String currentGOId = arrayGOgenes.get(i)[2];
+				String currentGOId = arrayGOgenes.get(i)[1];
 				String previousGene = arrayGOgenes.get(i-1)[0];
 				if (!currentGene.equals(previousGene)){
 					goByGenemap.put(previousGene,gOIds);

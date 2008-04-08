@@ -102,9 +102,11 @@ public class genesGOid {
     
 	
 	/**In this method all GO-Id's for the given gene-ID are returned in a List*/ 
-	public static Set goIdsforEnsId(String geneId, Map<String, Set<String>> goByGene){
+	public static Set <String> goIdsforEnsId(String geneId, Map<String, Set<String>> goByGene){
 		Set<String> goIdsforEnsIdlist = new HashSet<String>();
+		if(goByGene.get(geneId) != null){
 		goIdsforEnsIdlist.addAll(goByGene.get(geneId));
+		}
 		return goIdsforEnsIdlist;
 		}
 	
@@ -143,7 +145,9 @@ public class genesGOid {
 	/**In this method all Gene-Id's for the given GO-ID are returned in a List*/ 
 	public static Set<String> ensIdsforGOId(String goId, Map<String, Set<String>> geneByGO){
 		Set<String> list = new HashSet<String>();
+		if(geneByGO.get(goId) != null){
 		list.addAll(geneByGO.get(goId));
+		}
 		return list;
 	}
 }

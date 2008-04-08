@@ -49,26 +49,33 @@ public class GeneCounter {
 		try {
 			dbDir = new String(args[0]);
 			pwDir = new File(args[1]);
+			
 		}
 		catch(ArrayIndexOutOfBoundsException e) {
 			System.out.println("String[] args not given!");
 			System.exit(0);
 		}
 		
-		Double[][] overlap=getOverlap(dbDir,pwDir);
+		List<Set> refPWarray=getSets(dbDir,pwDir);
+		
+		
+		
+		int numberOfGenesEN=getNumberOFGenesEN();
+		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
+		double percentageUsedgenes=usedgenes/numberOfGenesEN*100;
+		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
+		
+		refPWarray.remove(refPWarray.size()-1);
+		Double[][] overlap=getPercentage(refPWarray);
+		
+		
 
 		
 		
 		
 }
 	
-	public static Double[][] getOverlap(String dbDir,File pwDir) throws DataException, ConverterException{
-		
-		
-
-		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
-		int numberOfGenesEN = 17738;
-		
+	public static List<Set> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
 		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
 		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 		
@@ -84,7 +91,7 @@ public class GeneCounter {
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
 		for (int i=0;i<filenames.size();i++){
-		//for (int i=0;i<5;i++){
+		
 		
 			//
 			File fileName=filenames.get(i);
@@ -99,25 +106,39 @@ public class GeneCounter {
 			//In the set 'totalS', all different sets are added. So one big set is formed with all Xrefs.
 			totalS.addAll(setOfRefPW);
 		}
-		// End for-loop
 		
+		refPWarray.add(totalS);
+		
+		return refPWarray;
+		
+	}
 	
-		//The percentage of used genes that are used at http://www.wikipathways.org are calculated and given as output. 
-		double usedgenes=totalS.size();
-		usedgenes=usedgenes/numberOfGenesEN*100;
+	
+	
+	public static int getNumberOFGenesEN(){
+		int numberOfGenesEN = 17738;
+		return numberOfGenesEN;
+	}
+	
+public static double getUsedGenes(String dbDir,File pwDir) throws DataException, ConverterException{
+		
+		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
+		int numberOfGenesEN = 17738;
+		
+		List<Set> refPWarray=getSets(dbDir,pwDir);
+		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
+		double percentageUsedgenes=usedgenes/numberOfGenesEN*100;
+		//usedgenes=usedgenes/numberOfGenesEN*100;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
+		return percentageUsedgenes;
+	}
+	
+	
+	public static Double[][] getOverlap(String dbDir,File pwDir) throws DataException, ConverterException{
+			
+		List<Set> refPWarray=getSets(dbDir,pwDir);
 		
 		Double[][] overlap=getPercentage(refPWarray);
-		
-		/*
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI(overlap);
-            }
-        });
-		*/
-		
-		
 		
 		
 		return overlap;

@@ -3,9 +3,13 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -18,8 +22,10 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 
-public class TestFrames {
 
+public class TestFrames {
+	
+	private static Map<String,List<String>> geneByGO = new HashMap<String,List<String>>();
 	/**
 	 * @param args
 	 */
@@ -111,23 +117,49 @@ public class TestFrames {
 
 			// read all GoTerms
 			Set<GoTerm> terms = new HashSet<GoTerm>();
-			terms = GoReader.readGoDatabase("C:\\gene_ontology.obo");
+			terms = GoReader.readGoDatabase("D:\\My Documents\\TUe\\BiGCAT\\gene_ontology.obo");
 			
 			// get the Roots of the GoTerms
 			Set<GoTerm> roots= new HashSet<GoTerm>();
 			roots=GoReader.getRoots(terms);
-			
-			top = makeTree(roots, terms, top, "r");
+			String s; 
+			List<String[]> arrayGOgenes = new ArrayList<String[]>();
+			try {
+				 FileReader fr = new FileReader("D:\\My Documents\\TUe\\BiGCAT\\mart_export.txt");
+			     BufferedReader br = new BufferedReader(fr);
+			     while((s = br.readLine()) != null){
+			    	 arrayGOgenes.add(s.split("\t"));
+				      }
+				      fr.close();
+			    }
+				    catch(Exception e) {
+				      System.out.println("Exception: " + e);
+				}
+			    /**In this method the map "goByGene" is created. In this map, the gene-Id's are the keys and the GO-Id's are the values.*/	
+				Map<String,List<String>> goByGene=genesGOid.goByGene(arrayGOgenes);		
+				geneByGO=genesGOid.geneByGO(goByGene);
+				String goId="GO:0008020";
+				System.out.println(geneByGO.get("GO:0008020"));
+				top = makeTree(roots, terms, top);
 
 			return top;
 		}
 		
-		public static DefaultMutableTreeNode makeTree(Set<GoTerm> parents, Set<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
+		
+		
+		public static DefaultMutableTreeNode makeTree(Set<GoTerm> parents, Set<GoTerm> allTerms, DefaultMutableTreeNode top){
 			// loop trough all given GoTerms
+		
+			/*In this method all Gene-Id's for the given GO-ID are returned in a List*/ 
+			
+			
 			for(GoTerm parent : parents){
 				
-				// create a new parent branch
+				
+				//System.out.println(geneByGO.get("GO:0008020"));
+				
 				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName());
+
 				
 				// add the new parent to the top structure
 				top.add(par);
@@ -151,7 +183,7 @@ public class TestFrames {
 					//if (level.length() < 4){
 						
 						// create a new tree and add it; when an error occures, catch it
-						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par, level+"*");
+						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par);
 						try{
 							par.add(childrenNodes);
 							}

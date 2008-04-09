@@ -16,7 +16,7 @@ public class GoTerm {
 		this.namespace = namespace;
 	}
 	
-	public void addGen(String gen){
+	public void addGene(String gen){
 		this.genes.add(gen);
 	}
 	

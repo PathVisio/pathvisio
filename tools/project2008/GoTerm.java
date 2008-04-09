@@ -24,6 +24,10 @@ public class GoTerm {
 		return genes;
 	}
 	
+	public int getM(){
+		return genes.size();
+	}
+	
 	public void addChild(GoTerm child){
 		this.children.add(child);
 	}

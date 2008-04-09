@@ -8,11 +8,20 @@ public class GoTerm {
 	private String namespace;
 	private Set<GoTerm> parents = new HashSet<GoTerm>();
 	private Set<GoTerm> children = new HashSet<GoTerm>();
+	private Set<String> genes = new HashSet<String>();
 	
 	public GoTerm(String id, String name, String namespace){
 		this.id = id;
 		this.name = name;
 		this.namespace = namespace;
+	}
+	
+	public void addGen(String gen){
+		this.genes.add(gen);
+	}
+	
+	public Set<String> getGenes(){
+		return genes;
 	}
 	
 	public void addChild(GoTerm child){
@@ -43,4 +52,8 @@ public class GoTerm {
 		return children;
 	}
 
+	public boolean hasParents(){
+		return !parents.isEmpty();
+	}
+	
 }

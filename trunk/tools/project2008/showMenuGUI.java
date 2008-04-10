@@ -38,20 +38,21 @@ public class showMenuGUI extends JPanel {
 		* The second one is the directory that contains the pathway cache.
 		* The third one is the filename (note the html extension) of where the results are stored.
 		*/ 
-		final String[] arguments=args;		
-		final String dbDir;
-		final File pwDir;
-		final String outfile;
+	
+		String[]arg=new String[5];
 			
 		/** 
 		 * Check if the String[] args is given, and make Files containing the directories to
 		 * the pathways and databases 
 		 */
 		try {
-			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
-			pwDir = new File(args[1]+"\\Rattus_norvegicus");
-			outfile=args[2];
-			  
+			arg[0] = new String(args[0]);
+			arg[1] = new String(args[1]);
+			arg[2] = new String(args[2]);
+			arg[3] = new String(args[3]);
+			arg[4] = new String(args[4]);
+			final String[]arguments=arg;
+						  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createAndShowMenuGUI(arguments);

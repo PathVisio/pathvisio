@@ -10,23 +10,23 @@ public class GoReader {
 	
 	public static void main(String[] args){
 		// new list with GoTerms
-		Set<GoTerm> terms = new HashSet<GoTerm>();
+		//Set<GoTerm> terms = new HashSet<GoTerm>();
 		// new list with roots 
-		Set<GoTerm> roots = new HashSet<GoTerm>();
+		//Set<GoTerm> roots = new HashSet<GoTerm>();
 		// start reading the GoDatabase
 		// make sure args[0] refers to the database file
-		terms=readGoDatabase(args[0]);
+		//terms=readGoDatabase(args[0]);
 		// get the roots of the database
 		
 		//roots=getRoots(terms);
-		for (GoTerm term : roots){
-			System.out.println(term.getId());
-			System.out.println(term.getName());
-			System.out.println(term.getNamespace());
-			System.out.println(term.getParents());
-			System.out.println(term.getChildren());
-			System.out.println();
-		}
+		//for (GoTerm term : roots){
+		//	System.out.println(term.getId());
+		//	System.out.println(term.getName());
+		//	System.out.println(term.getNamespace());
+		//	System.out.println(term.getParents());
+		//	System.out.println(term.getChildren());
+		//	System.out.println();
+		//}
 	}
 	
 	public static Set<GoTerm> readGoDatabase(String path){
@@ -135,7 +135,7 @@ public class GoReader {
 		for (GoTerm term : terms)
 		{
 			// if a term has no parents, it's a root
-			if(term.getParents().isEmpty())
+			if(!term.hasParents())
 			{
 				// add the term as root
 				roots.add(term);

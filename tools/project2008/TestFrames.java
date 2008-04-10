@@ -1,11 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +127,7 @@ public class TestFrames {
 			for(GoTerm parent : parents){
 				
 				// create a new parent branch
-				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " m:"+parent.getM());
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " m:"+parent.getNumberOfGenes());
 				
 				// add the new parent to the top structure
 				top.add(par);
@@ -186,11 +182,8 @@ public class TestFrames {
 					}
 				}
 				catch (NullPointerException e){
-					System.out.println("leeg");
+					System.out.println("set is leeg");
 				}
-				System.out.println(genes);
-
-
 			}
 						 
 			return terms;

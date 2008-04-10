@@ -183,9 +183,9 @@ public class GoTermDistributionGUI {
 			terms = addGenes(terms,martexport);
 			
 			// read all the pathways, extract the genId and show in the console that it happened
-			// to read all these genid's from pathways, the method getSetGenIdsInPways from the getN
-			// class is used.
-			genidInPway = getN.getSetGenIdsInPways(pgdb,pathwayroot);
+			// to read all these genid's from pathways, the method getSetGenIdsInPways from the 
+			// GenidPway class is used.
+			genidInPway = GenidPway.getSetGenIdsInPways(pgdb,pathwayroot);
 			System.out.println("Pathways read");
 			
 			// now the genes and goterms are read; make the tree

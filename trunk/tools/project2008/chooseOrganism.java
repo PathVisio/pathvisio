@@ -52,9 +52,7 @@ public class chooseOrganism {
 					 * 1 = ShowPercentageGUI
 					 * 2 = GoTermDistribution
 					 */
-					
-					
-					
+
 					getOrganism(0,arguments);
 					
 				}
@@ -75,10 +73,8 @@ public class chooseOrganism {
 		
 		//JPanel canvasLabel=new JPanel();
 		JPanel canvasButtons=canvasButtons(function,arguments);
+		JPanel menuCloseButtons=menuCloseButtons(arguments);
 		
-		//JLabel label = new JLabel("Make a choice");
-		//canvasLabel.add(label);
-
 		// create a new frame
 		JFrame fr = new JFrame("Make a choice");
     
@@ -89,8 +85,8 @@ public class chooseOrganism {
 		fr.setSize(400,300);
 		
 		// add the canvas to the frame
-		//fr.add(canvasLabel);
-		fr.add(canvasButtons);
+		fr.add(canvasButtons,BorderLayout.CENTER);
+		fr.add(menuCloseButtons,BorderLayout.SOUTH);
 
 		// Show the frame
 		fr.setVisible(true);
@@ -115,7 +111,7 @@ public class chooseOrganism {
 		CeButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						geenidee(0,function,arguments);
+						goToFunction(0,function,arguments);
 						
 						}
 					}
@@ -125,7 +121,7 @@ public class chooseOrganism {
 		DrButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						geenidee(1,function,arguments);
+						goToFunction(1,function,arguments);
 						
 						}
 					}
@@ -135,7 +131,7 @@ public class chooseOrganism {
 		HsButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						geenidee(2,function,arguments);
+						goToFunction(2,function,arguments);
 						
 						}
 					}
@@ -145,7 +141,7 @@ public class chooseOrganism {
 		MmButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						geenidee(3,function,arguments);
+						goToFunction(3,function,arguments);
 						
 						}
 					}
@@ -155,7 +151,7 @@ public class chooseOrganism {
 		RnButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						geenidee(4,function,arguments);
+						goToFunction(4,function,arguments);
 						
 						}
 					}
@@ -165,7 +161,7 @@ public class chooseOrganism {
 		ScButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						geenidee(5,function,arguments);
+						goToFunction(5,function,arguments);
 						
 						}
 					}
@@ -182,8 +178,42 @@ public class chooseOrganism {
 		return canvasButtons;
 	}
 	
+	public static JPanel menuCloseButtons(final String[] arguments){
+	  	  // create a new panel
+	  	   JPanel canvasButtons = new JPanel();
+	  		
+	  	  // create two new buttons, using the makeButton method
+	  		JButton menuButton = GoTermDistributionGUI.makeButton("menu");
+	  		JButton closeButton = GoTermDistributionGUI.makeButton("Close");
+	  		
+	  		// add the functionality to the close button
+	  		closeButton.addActionListener(
+	  				new ActionListener(){
+	  					public void actionPerformed(ActionEvent ae){
+	  						System.exit(0);
+	  						}
+	  					}
+	  				);
+	  		
+	  		// add the functionality to the calculate button
+	  		menuButton.addActionListener(
+	  				new ActionListener(){
+	  					public void actionPerformed(ActionEvent ae){
+	  						showMenuGUI.createAndShowMenuGUI(arguments);
+	  						System.out.println("Go to Menu");
+	  						}
+	  					}
+	  				);
+	  		
+	  		// add the buttons to the canvas
+	  		canvasButtons.add(menuButton);
+	  		canvasButtons.add(closeButton);	
+	  		
+	  	  return canvasButtons;
+	    }
 	
-	public static void geenidee(int kindOfAnnimal,int function,String[]arguments){
+	
+	public static void goToFunction(int organism,int function,String[]arguments){
 		
 		/**
 		 * kindOfAnnimal:
@@ -203,18 +233,21 @@ public class chooseOrganism {
 		annimalNames[4]=new String[]{"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
 		annimalNames[5]=new String[]{"Sc_41_1d.pgdb","\\Saccharomyces_cerevisiae"};
 		
-		String[]annimal=annimalNames[kindOfAnnimal];
+		String[]kindOfOrganism=annimalNames[organism];
 		
 		
 		if(function==0){
-			//showOverlapGUI.createAndShowOverlapGUI(arguments,annimal);
-			System.out.println("showOverlapGUI.createAndShowOverlapGUI("+annimal[0]+","+annimal[1]+")");	
+			//showOverlapGUI.createAndShowOverlapGUI(arguments,kindOfOrganism);
+			System.out.println("showOverlapGUI.createAndShowOverlapGUI("+kindOfOrganism[0]+","+kindOfOrganism[1]+")");	
 		}
 		if(function==1){
-			System.out.println("function = 1");
+			//ShowPercentageGUI.createAndShowPercentageGUI(arguments,kindOfOrganism);
+			System.out.println("ShowPercentageGUI.createAndShowPercentageGUI("+kindOfOrganism[0]+","+kindOfOrganism[1]+")");	
 		}
 		if(function==2){
-			System.out.println("function = 2");
+			//GoTermDistributionGUI.goTermDistribution(arguments,kindOfOrganism);
+			System.out.println("GoTermDistributionGUI.goTermDistribution("+kindOfOrganism[0]+","+kindOfOrganism[1]+")");	
+
 		}
 
 		

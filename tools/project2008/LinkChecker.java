@@ -36,9 +36,10 @@ import org.pathvisio.model.Xref;
 
 
 /**
- * In the link checker
- * 
- *
+ * In the link checker for each pathway is is checked if the links in that pathway exist in the 
+ * database. An output file is created that shows a table. On the right column of that table the 
+ * filenames are shown and on the left column of the table the percentage is shown of the links
+ * that exist in the database.
  */
 
 public class LinkChecker {

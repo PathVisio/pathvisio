@@ -61,11 +61,6 @@ public class showMenuGUI extends JPanel {
 		
 		// create a new frame
 		JFrame frame = new JFrame("Main Menu");
-
-		
-		JLabel label = new JLabel("Main Menu");
-		
-        frame.getContentPane().add(label);
         
 		// When click on exit, exit the frame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,12 +69,16 @@ public class showMenuGUI extends JPanel {
 		frame.setSize(400,300);
 		
 		// create a new panel
-		//JPanel canvasTop=new JPanel();
+		JPanel canvasTop=new JPanel();
 		JPanel canvasButtons=canvasButtons(dbDir,pwDir);
 		JPanel canvasCloseButton=canvasCloseButton();
 		
+		JLabel label = new JLabel("Main Menu");
+		canvasTop.add(label);
+		
+		
 		// add the canvas to the frame
-		//frame.add(canvasTop, BorderLayout.NORTH);
+		frame.add(canvasTop, BorderLayout.NORTH);
 		frame.add(canvasButtons, BorderLayout.CENTER);
 		frame.add(canvasCloseButton, BorderLayout.SOUTH);
 		

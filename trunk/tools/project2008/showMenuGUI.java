@@ -175,7 +175,7 @@ public class showMenuGUI extends JPanel {
 		JPanel canvasCloseButton = new JPanel();
 		
 		// create two new buttons, using the makeButton method
-		JButton closeButton = TestFrames.makeButton("Close");
+		JButton closeButton = GoTermDistributionGUI.makeButton("Close");
 
 		// add the functionality to the close button
 		closeButton.addActionListener(

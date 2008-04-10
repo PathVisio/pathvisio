@@ -60,6 +60,18 @@ public class GoTermDistributionGUI {
 		run(args);
 	}
 	
+	public static void goTermDitribution(String[]args) throws DataException, ConverterException{
+		
+		String[]arguments=new String[4];
+		arguments[0]=args[4];
+		arguments[1]=args[0]+"Rn_39_34i.pgdb";
+		arguments[2]=args[2]+"\\Rattus_norvegicus";
+		arguments[3]=args[5];
+		
+		run(arguments);
+		
+		
+	}
 	
 	public static void run(String[] args) throws DataException, ConverterException{
 		// create a new frame

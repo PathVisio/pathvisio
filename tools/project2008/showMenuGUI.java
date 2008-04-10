@@ -126,7 +126,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Pathway overlap Matrix");
-						showOverlapGUI.createAndShowOverlapGUI(arguments);
+						chooseOrganism.getOrganism(0, arguments);
 						}
 					}
 				);
@@ -165,7 +165,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Percentage of used genes at WikiPathways");
-						ShowPercentageGUI.createAndShowPercentageGUI(arguments);
+						chooseOrganism.getOrganism(1, arguments);
 						}
 					}
 				);
@@ -175,18 +175,9 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to The Go Term Distribution function");
-						try {
-							GoTermDistributionGUI.goTermDistribution(arguments);
-						} catch (DataException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (ConverterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						}
+						chooseOrganism.getOrganism(2, arguments);
 					}
-				);
+				});
 		
 		
 		

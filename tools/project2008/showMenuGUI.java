@@ -92,11 +92,6 @@ public class showMenuGUI extends JPanel {
 	
 	public static JPanel canvasButtons(final String[] arguments){
 		
-		final String dbDirRn = new String(arguments[0]+"Rn_39_34i.pgdb");
-		final File pwDirRn = new File(arguments[1]+"\\Rattus_norvegicus");
-		
-		
-		
 		// create a new panel
 		JPanel canvasButtons = new JPanel();
 		
@@ -111,7 +106,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Pathway overlap Matrix");
-						showOverlapGUI.createAndShowOverlapGUI(dbDirRn,pwDirRn,arguments);
+						showOverlapGUI.createAndShowOverlapGUI(arguments);
 						}
 					}
 				);
@@ -150,7 +145,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Percentage of used genes at WikiPathways");
-						ShowPercentageGUI.createAndShowPercentageGUI(dbDirRn,pwDirRn,arguments);
+						ShowPercentageGUI.createAndShowPercentageGUI(arguments);
 						}
 					}
 				);

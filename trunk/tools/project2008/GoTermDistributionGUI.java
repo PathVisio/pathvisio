@@ -60,12 +60,12 @@ public class GoTermDistributionGUI {
 		run(args);
 	}
 	
-	public static void goTermDistribution(String[]args) throws DataException, ConverterException{
+	public static void goTermDistribution(String[]args,String[]organism) throws DataException, ConverterException{
 		
 		String[]arguments=new String[4];
 		arguments[0]=args[3];
-		arguments[1]=args[0]+"Rn_39_34i.pgdb";
-		arguments[2]=args[1]+"\\Rattus_norvegicus";
+		arguments[1]=args[0]+organism[0];
+		arguments[2]=args[1]+organism[1];
 		arguments[3]=args[4];
 		
 		run(arguments);

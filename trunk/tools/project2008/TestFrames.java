@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
@@ -21,6 +23,7 @@ import org.pathvisio.model.ConverterException;
 public class TestFrames {
 	
 	private static Set<String> genidInPway = new HashSet<String>();
+	private static Map<String, GoTerm> treeString_GoTerm = new HashMap<String, GoTerm>();
 
 	/**
 	 * Program requires 4 args:
@@ -42,6 +45,15 @@ public class TestFrames {
 		// create a new panel
 		JPanel canvasButtons = new JPanel();
 		
+		// create a tree
+		DefaultMutableTreeNode top = TreeReader(args[0],args[1],args[2],args[3]);
+		final JTree tree = new JTree(top);
+		tree.setEditable(true);
+		tree.getSelectionModel().setSelectionMode
+		        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.setShowsRootHandles(true);
+		
+		
 		// create two new buttons, using the makeButton method
 		JButton calcButton = makeButton("Calculate");
 		JButton closeButton = makeButton("Close");
@@ -59,7 +71,17 @@ public class TestFrames {
 		calcButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						System.out.println("Calculate Button pressed");
+					
+						String selectedString = tree.getSelectionPath().getLastPathComponent().toString();
+						
+						GoTerm goterm = treeString_GoTerm.get(selectedString);
+						
+						String m = goterm.getNumberOfGenes()+"";
+						String n = goterm.getOverlapGenes(genidInPway)+"";
+						String treeString = goterm.getName() + " " + "("+n+"/"+m+")";
+						
+						System.out.println(treeString);
+						
 						}
 					}
 				);
@@ -75,9 +97,8 @@ public class TestFrames {
 		// create a new panel
 		JPanel canvasTree = new JPanel();
 		
-		// create a tree
-		DefaultMutableTreeNode top = TreeReader(args[0],args[1],args[2],args[3]);
-		JTree tree = new JTree(top);
+
+
 		
 		// create a scroll pane
         JScrollPane scrollPane = new JScrollPane(tree);
@@ -137,9 +158,13 @@ public class TestFrames {
 			for(GoTerm parent : parents){
 				
 				// create a new parent branch
-				int m = parent.getNumberOfGenes();
-				int n = parent.getOverlapGenes(genidInPway);
-				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " " + "("+n+"/"+m+")");
+				String m = parent.getNumberOfGenes()+"";
+				//String n = parent.getOverlapGenes(genidInPway)+"";
+				String n = "n";
+				String treeString = parent.getName() + " " + "("+n+"/"+m+")";
+				
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(treeString);
+				treeString_GoTerm.put(treeString, parent);
 				
 				// add the new parent to the top structure
 				top.add(par);

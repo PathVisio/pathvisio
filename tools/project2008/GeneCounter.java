@@ -61,14 +61,15 @@ public class GeneCounter {
 		
 		
 		int numberOfGenesEN=getNumberOFGenesEN();
+		System.out.println(refPWarray.get(refPWarray.size()-1).size());
 		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
-		double percentageUsedgenes=usedgenes/numberOfGenesEN*100;
-		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
+		double percentageUsedgenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
+		
 		
 		refPWarray.remove(refPWarray.size()-1);
 		Double[][] overlap=getPercentage(refPWarray);
 		
-		
+		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");
 
 		
 		
@@ -123,13 +124,13 @@ public class GeneCounter {
 public static double getUsedGenes(String dbDir,File pwDir) throws DataException, ConverterException{
 		
 		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
-		int numberOfGenesEN = 17738;
+		int numberOfGenesEN = getNumberOFGenesEN();
 		
 		List<Set> refPWarray=getSets(dbDir,pwDir);
 		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
-		double percentageUsedgenes=usedgenes/numberOfGenesEN*100;
+		double percentageUsedgenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
 		//usedgenes=usedgenes/numberOfGenesEN*100;
-		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+usedgenes+"%");
+		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");
 		return percentageUsedgenes;
 	}
 	

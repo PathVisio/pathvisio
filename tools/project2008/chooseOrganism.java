@@ -235,17 +235,21 @@ public class chooseOrganism {
 		
 		
 		if(function==0){
-			//showOverlapGUI.createAndShowOverlapGUI(arguments,kindOfOrganism);
-			System.out.println("showOverlapGUI.createAndShowOverlapGUI("+kindOfOrganism[0]+","+kindOfOrganism[1]+")");	
+			showOverlapGUI.createAndShowOverlapGUI(arguments,kindOfOrganism);
 		}
 		if(function==1){
-			//ShowPercentageGUI.createAndShowPercentageGUI(arguments,kindOfOrganism);
-			System.out.println("ShowPercentageGUI.createAndShowPercentageGUI("+kindOfOrganism[0]+","+kindOfOrganism[1]+")");	
+			ShowPercentageGUI.createAndShowPercentageGUI(arguments,kindOfOrganism);
 		}
 		if(function==2){
-			//GoTermDistributionGUI.goTermDistribution(arguments,kindOfOrganism);
-			System.out.println("GoTermDistributionGUI.goTermDistribution("+kindOfOrganism[0]+","+kindOfOrganism[1]+")");	
-
+			try {
+				GoTermDistributionGUI.goTermDistribution(arguments,kindOfOrganism);
+			} catch (DataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ConverterException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		

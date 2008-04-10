@@ -42,10 +42,18 @@ public class GeneCounter {
 	 * @throws DataException 
 	 */
 	public static void main(String[] args) throws DataException, ConverterException{
-		/** 
-		 * Check if the String[] args is given, and make Files containing the directories to
-		 * the pathways and databases. 
-		 */ 
+		/**
+		* in the String[] args, 2 arguments are given:
+		* in example:
+		* "C:\\databases\\"
+		* "C:\pathways"
+		* 
+		* The first one is the directory that contains the databases.
+		* The second one is the directory that contains the pathway cache.
+		*
+		* Check if the String[] args is given, and make Files containing the directories to
+		* the pathways and databases. 
+		*/ 
 		
 
 		String dbDir = null;

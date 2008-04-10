@@ -46,13 +46,14 @@ public class GeneCounter {
 		 * Check if the String[] args is given, and make Files containing the directories to
 		 * the pathways and databases. 
 		 */ 
+		
 
 		String dbDir = null;
 		File pwDir = null;
 		
 		try {
-			dbDir = new String(args[0]);
-			pwDir = new File(args[1]);
+			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
+			pwDir = new File(args[1]+"\\Rattus_norvegicus");
 			
 		}
 		catch(ArrayIndexOutOfBoundsException e) {

@@ -28,16 +28,19 @@ public class showOverlapGUI{
 		* The second one is the directory that contains the pathway cache.
 		*/ 
 	  
+	  final String[]arguments=args;
 	  final String dbDir;
 	  final File pwDir;
+	  final String outfile;
 		
 	  try {
 		  dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 		  pwDir = new File(args[1]+"\\Rattus_norvegicus");
+		  outfile=args[2];
 		  
 		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowOverlapGUI(dbDir,pwDir);
+					createAndShowOverlapGUI(dbDir,pwDir,arguments);
 				}
 			});
 
@@ -53,9 +56,9 @@ public class showOverlapGUI{
       
   }
   
-  public static void createAndShowOverlapGUI(String dbDir,File pwDir){
+  public static void createAndShowOverlapGUI(String dbDir,File pwDir,String[] arguments){
 	// create a new panel
-	   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir);
+	   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir,arguments);
 	 		
 		// create a new panel
 		JPanel canvasTable = new JPanel();
@@ -142,7 +145,7 @@ public class showOverlapGUI{
       return scrollPane;
   }
   
-  public static JPanel getCanvasButtons(final String dbDir,final File pwDir){
+  public static JPanel getCanvasButtons(final String dbDir,final File pwDir,final String[] arguments){
 	  // create a new panel
 	   JPanel canvasButtons = new JPanel();
 		
@@ -164,7 +167,7 @@ public class showOverlapGUI{
 		refreshButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						createAndShowOverlapGUI(dbDir,pwDir);
+						createAndShowOverlapGUI(dbDir,pwDir,arguments);
 						System.out.println("Refresh Button pressed");
 						}
 					}
@@ -173,7 +176,7 @@ public class showOverlapGUI{
 		menuButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						showMenuGUI.createAndShowMenuGUI(dbDir,pwDir);
+						showMenuGUI.createAndShowMenuGUI(dbDir,pwDir,arguments);
 						System.out.println("Go to Menu");
 						}
 					}

@@ -28,19 +28,14 @@ import org.pathvisio.model.Xref;
 import java.util.*;
 
 /**
- * In the Gene counter....
+ * In the Gene counter the percentage of genes that are known in the Ensembl database that 
+ * also exist in the pathways at wikipathways.org is returned.
+ * Also a matrix is returned that contains the overlap between all possible pairs off two 
+ * pathways.
  */
 
 public class GeneCounter {
 
-
-	/**
-	 * @param args
-	 * @throws ConverterException 
-	 * @throws DataException 
-	 * @throws ConverterException 
-	 * @throws DataException 
-	 */
 	public static void main(String[] args) throws DataException, ConverterException{
 		/**
 		* in the String[] args, 2 arguments are given:
@@ -55,10 +50,8 @@ public class GeneCounter {
 		* the pathways and databases. 
 		*/ 
 		
-
 		String dbDir = null;
 		File pwDir = null;
-		
 		try {
 			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 			pwDir = new File(args[1]+"\\Rattus_norvegicus");
@@ -68,7 +61,6 @@ public class GeneCounter {
 			System.out.println("String[] args not given!");
 			System.exit(0);
 		}
-		
 		/**
 		 * The method 'getSets' returns a list...... 
 		 */
@@ -85,12 +77,9 @@ public class GeneCounter {
 		refPWarray.remove(refPWarray.size()-1);
 		Double[][] overlap=getPercentage(refPWarray);
 		
-		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");
-
-		
-		
-		
+		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");	
 }
+	
 	/**
 	 * In the method 'getSets' a List is created that contains a set with all the Xref's.
 	 * The properties you have to enter are:
@@ -105,7 +94,6 @@ public class GeneCounter {
 	 * that contains all different Xref's. With this array the overlap can easily be 
 	 * determined.
 	 */ 
-
 	public static List<Set> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
 		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 		Set<Xref> totalS=new HashSet<Xref>();
@@ -121,7 +109,6 @@ public class GeneCounter {
 		return refPWarray;
 	}
 	
-		
 	/**
 	 * In this method the total amount of genes that is known so far can be set. 
 	 * This number is returned.
@@ -132,138 +119,123 @@ public class GeneCounter {
 	}
 
 	/**
-	 * 
-	 * 
+	 * In the method getUsedGenes the percentage is returned of the total genes known in the 
+	 * Ensembl database that are used in wikipathways.
+	 * In the set 'refPWarray' all the Xref's are stored that are used in the pathways. So the 
+	 * size of this set represents the number of genes used in the pathways.
+	 * Now the percentage can be calculated.
 	 */
-public static double getUsedGenes(String dbDir,File pwDir) throws DataException, ConverterException{
-		
-		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).
+	public static double getUsedGenes(String dbDir,File pwDir) throws DataException, ConverterException{
+		// Total amount of known genes in the Ensembl Database.
 		int numberOfGenesEN = getNumberOFGenesEN();
-		
 		List<Set> refPWarray=getSets(dbDir,pwDir);
 		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
 		double percentageUsedgenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
-		//usedgenes=usedgenes/numberOfGenesEN*100;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");
 		return percentageUsedgenes;
 	}
 	
-	
+	/**
+	 * In the method 'getOverlap' the overlap of genes between all pathways is calculated.
+	 * A two dimensional array is returned with the overlap between the pathways.   
+	 */
 	public static Double[][] getOverlap(String dbDir,File pwDir) throws DataException, ConverterException{
-			
 		List<Set> refPWarray=getSets(dbDir,pwDir);
-		
 		Double[][] overlap=getPercentage(refPWarray);
-		
-		
 		return overlap;
 	}
 
-	
-	//In this method a set is created that contains all the references in a Pathway.
+	/**
+	 * In this method a set is created that contains all the references in a Pathway.
+	 * First, for a pathway, p, the information is loaded.
+	 * Then a list is formed that contains the elements stored in the pathway.
+	 * In the for-loop each element of the pathway that represents a Xref is stored in a set.
+	 * Only is the objectType is DATANODE, the element is a Xref.
+	 * Than each Xref is translated to a reference as stored in the Enseml databank.
+	 * At last all references are added to a set. So a set remains with all Xref't that exist 
+	 * in the pathways. This set is returned.
+	 */
 	public static Set<Xref> getRefPW(File filename,SimpleGdb db) throws ConverterException{
-		
-		//A new set is created where the Xrefs can be stored. 
 		Set<Xref> s=new HashSet<Xref>();
-		//A new pathway is created.
 		Pathway p = new Pathway();
-		//For this pathway the information is loaded. 
 		p.readFromXml(filename, true);
-				
-		//A list is formed that contains the elements stored in the pathway.
 		List<PathwayElement> pelts = p.getDataObjects();
-		
-		//In this for-loop each element of the pathway that represents a Xref is stored in a set. 
 		for (PathwayElement v:pelts){
-			
 			int type;
-			//For each element in the patyway, the object type is returned.
 			type=v.getObjectType();
-			
-			//Only if the object is a DATANODE, the reference must be stored in the list. 
 			if (type ==1){
 				Xref reference;
 				reference=v.getXref();
-				//Each reference is translated to a reference in the same databank, here: ENSEMBLE
-				List<Xref> cRef=db.getCrossRefs(reference,DataSource.ENSEMBL);
-				//All references are added to a set.				
+				List<Xref> cRef=db.getCrossRefs(reference,DataSource.ENSEMBL);		
 				s.addAll(cRef);
 			}
-		}
-		
-		//'s' contains all the references as in the databank ENSEMBLE for one pathway. 
+		} 
 		return s;
-	
 	}
 	
+	/**
+	 * In the method 'getPercentage' the overlap between all the pathways is calculated in 
+	 * percentages. For each possible pair of two pathways, it is calculated what percentage 
+	 * of genes that exist in the first pathway also exists in the second pathway. A matrix 
+	 * is returned with these percentages. 
+	 */
 	public static Double[][] getPercentage(List<Set> refPWarray){
-		
 		int numberOfPathways=refPWarray.size();
 		Double[][] overlap=new Double[numberOfPathways][];
 		int[][] a=getOverlapMatrix(refPWarray);
 		int[] numberOfGenes=getSizeVector(refPWarray);
-		
 		for(int j=0;j<numberOfPathways;j++){
 			overlap[j]=new Double[numberOfPathways];
 			for(int k=0;k<numberOfPathways;k++){
 				overlap[j][k]=(double)a[j][k]/(double)numberOfGenes[j]*100.0;
-				
 			}
-			
-			
 		}
-		
 		return overlap;
-		
 	}
 	
+	/**
+	 * In the method 'getOverlapMatrix' the overlap between all the pathways is calculated in
+	 * numbers. These numbers are calculated into percentages in another method.
+	 * In two for-loops for all pathways it is checked how many genes in that pathway also exist
+	 * in another pathway. These numbers are returned.
+	 */
 	public static int[][] getOverlapMatrix(List<Set> refPWarray){
 		
 		int numberOfPathways=refPWarray.size();
 		int[][] a=new int[numberOfPathways][];
 		boolean m;
-		
 		for(int j=0;j<numberOfPathways;j++){
 			a[j]=new int[numberOfPathways];
-			
-			
 			for(int k=0;k<j+1;k++){
-				
-				System.out.println("("+j+","+k+")");
-												
+				//System.out.println("("+j+","+k+")");					
 				Set<Xref> refSet=refPWarray.get(j);
 				int overeenkomsten=0;
 				for(Xref l:refSet){
 					m=refPWarray.get(k).contains(l);
-					
 					if(m==true){
 						overeenkomsten++;
 					}
-					
 				}
 				System.out.println(overeenkomsten);
 				a[j][k]=overeenkomsten;
 				a[k][j]=overeenkomsten;
 			}
 		}
-			
 		return a;
 	}
 	
+	/**
+	 * In the method 'getSizeVector' the number of genes are returned that are stored in the 
+	 * List<Set> refPWarray.
+	 */
 	public static int[] getSizeVector(List<Set> refPWarray){
-		
 		int numberOfPathways=refPWarray.size();
 		int[] numberOfGenes=new int[numberOfPathways];
-		
 		for(int j=0;j<numberOfPathways;j++){
 			numberOfGenes[j]=refPWarray.get(j).size();
 		}
-		
 		return numberOfGenes;
 	}
-
-	
-	
 	
 }
 

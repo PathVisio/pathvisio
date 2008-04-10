@@ -121,57 +121,42 @@ public class TestFrames {
 			
 			terms = addGenes(terms);
 			genidInPway = getN.getSetGenIdsInPways("C:\\databases\\Rn_39_34i.pgdb", "C:\\WPClient\\Rattus_norvegicus");
+			System.out.println("Pathways read");
 			
-			top = makeTree(roots, terms, top, "r");
+			top = makeTree(roots, terms, top);
 
 			return top;
 		}
 		
-		public static DefaultMutableTreeNode makeTree(Set<GoTerm> parents, Set<GoTerm> allTerms, DefaultMutableTreeNode top, String level){
+		public static DefaultMutableTreeNode makeTree(Set<GoTerm> parents, Set<GoTerm> allTerms, DefaultMutableTreeNode top){
 			// loop trough all given GoTerms
 			for(GoTerm parent : parents){
 				
 				// create a new parent branch
-				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " " +
-						"<m:"+parent.getNumberOfGenes()+", n:"+parent.getOverlapGenes(genidInPway)+">");
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " " + "<m:"+parent.getNumberOfGenes()+", n:"+parent.getOverlapGenes(genidInPway)+">");
 				
 				// add the new parent to the top structure
 				top.add(par);
 		
-
-				// make a list of all children
-				Set<GoTerm> children = new HashSet<GoTerm>();
-				children = parent.getChildren();
-				
-				
-			
-				
 				// if a children list is not empty, set the children as new parents, and put them in
 				// this method again
-				if(!children.isEmpty()){
+				if(parent.hasChildren()){
+				
+					// make a list of all children
+					Set<GoTerm> children = new HashSet<GoTerm>();
+					children = parent.getChildren();
 					
-					// give some output to show where you are
-					//System.out.println("mk Tree "+level);
-					
-					// set the maximum level of children
-					//if (level.length() < 4){
-						
-						// create a new tree and add it; when an error occures, catch it
-						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par, level+"*");
-						try{
-							par.add(childrenNodes);
-							}
-						catch(IllegalArgumentException e) {
-							System.out.println("kind is voorouder"); // deze error komt steeds als je een stapje naar beneden gaat.
-							}
-						//}
-					
+					// create a new tree and add it; when an error occures, catch it
+					DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par);
+					try{
+						par.add(childrenNodes);
 					}
-	
+					catch(IllegalArgumentException e) {
+						//System.out.println("kind is voorouder"); // deze error komt steeds als je een stapje naar beneden gaat.
+					}
 				}
-			
+			}
 			return top;	
-			
 		}
 		
 		public static Set<GoTerm> addGenes(Set<GoTerm> terms){
@@ -188,7 +173,7 @@ public class TestFrames {
 					}
 				}
 				catch (NullPointerException e){
-					System.out.println("set is leeg");
+					//System.out.println("set is leeg");
 				}
 			}
 						 

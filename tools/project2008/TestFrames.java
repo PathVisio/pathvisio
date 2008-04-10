@@ -137,7 +137,9 @@ public class TestFrames {
 			for(GoTerm parent : parents){
 				
 				// create a new parent branch
-				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " " + "<m:"+parent.getNumberOfGenes()+", n:"+parent.getOverlapGenes(genidInPway)+">");
+				int m = parent.getNumberOfGenes();
+				int n = parent.getOverlapGenes(genidInPway);
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " " + "("+n+"/"+m+")");
 				
 				// add the new parent to the top structure
 				top.add(par);

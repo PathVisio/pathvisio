@@ -15,30 +15,23 @@ import org.pathvisio.model.Xref;
 
 public class getN{
 	
-	public static void main(String[] args) throws DataException, ConverterException{
-	
-	
+	public static void main(String[] args) throws DataException, ConverterException{	
 	}
 	
 	public static Set<String> getSetGenIdsInPways(String dbDir, String pwDirString) throws DataException, ConverterException{
-		File pwDir = null;
-
-
-			pwDir = new File(pwDirString);
-		
-		
-		Set<Xref> xrefs = getEnsembleZooi(dbDir,pwDir);
+		// open pathway directory
+		File pwDir = new File(pwDirString);
+		// get all the xrefs from the pathways
+		Set<Xref> xrefs = getXrefs(dbDir,pwDir);
 		Set<String> setWithGenIdsInPathways = new HashSet<String>();
 		for(Xref xref: xrefs){
 			setWithGenIdsInPathways.add(xref.getId());
-		}
-		
+		}		
 		return setWithGenIdsInPathways;
 	}
 	
-	public static Set<Xref> getEnsembleZooi(String dbDir,File pwDir) throws DataException, ConverterException{
+	public static Set<Xref> getXrefs(String dbDir,File pwDir) throws DataException, ConverterException{
 
-		
 		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded.
 		String pwExtension = ".gpml";
 		List<File> filenames = FileUtils.getFileListing(pwDir, pwExtension);
@@ -48,24 +41,17 @@ public class getN{
 		
 		// A SimpleGdb Database is used to be able to load the Database downloaded from internet. 
 		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
-
 		
 		//refPWarray is a list that contains all genes of all pathways. With this list, the overlap between different pathway can easily be determined. 
 		List< Set<Xref> > refPWarray = new ArrayList< Set<Xref> >();
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
 		for (int i=0;i<filenames.size();i++){
-		
-			//
-			File fileName=filenames.get(i);
-			//System.out.println(fileName);
 			
 			//The ouput of the method 'getRefPW' is named 'setOfRefPW'
-			Set<Xref> setOfRefPW=getRefPW(fileName,db);
-			
+			Set<Xref> setOfRefPW=getRefPW(filenames.get(i),db);			
 			//The output of 'setOfRefPW' is added to 'refPWarray'
-			refPWarray.add(setOfRefPW);
-						
+			refPWarray.add(setOfRefPW);						
 			//In the set 'totalS', all different sets are added. So one big set is formed with all Xrefs.
 			totalS.addAll(setOfRefPW);
 		}
@@ -93,15 +79,10 @@ public class getN{
 		//In this for-loop each element of the pathway that represents a Xref is stored in a set. 
 		for (PathwayElement v:pelts){
 			
-			int type;
-			//For each element in the patyway, the object type is returned.
-			type=v.getObjectType();
-			
 			//Only if the object is a DATANODE, the reference must be stored in the list. 
-			if (type ==1){
+			if (v.getObjectType() ==1){
 				Xref reference;
-				reference=v.getXref();
-				
+				reference=v.getXref();				
 				//Each reference is translated to a reference in the same databank, here: ENSEMBLE
 				List<Xref> cRef=db.getCrossRefs(reference,DataSource.ENSEMBL);
 				//All references are added to a set.				
@@ -109,7 +90,7 @@ public class getN{
 			}
 		}
 		
-		//'s' contains all the references as in the databank ENSEMBLE for one pathway. 
+		//'s' contains all the references as in the database ENSEMBLE for one pathway. 
 		return s;
 	
 	}

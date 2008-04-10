@@ -13,14 +13,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.pathvisio.data.DataException;
+import org.pathvisio.model.ConverterException;
+
 
 
 public class TestFrames {
+	
+	private static Set<String> genidInPway = new HashSet<String>();
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws DataException, ConverterException{
 		// create a new frame
 		JFrame frame = new JFrame("GOTerm Distribution");
 
@@ -103,7 +108,7 @@ public class TestFrames {
 		}
 		
 		
-		public static DefaultMutableTreeNode TreeReader(){
+		public static DefaultMutableTreeNode TreeReader() throws DataException, ConverterException{
 			DefaultMutableTreeNode top = new DefaultMutableTreeNode("GOTerm Distribution");
 
 			// read all GoTerms
@@ -115,7 +120,7 @@ public class TestFrames {
 			roots=GoReader.getRoots(terms);
 			
 			terms = addGenes(terms);
-			
+			genidInPway = getN.getSetGenIdsInPways("C:\\databases\\Rn_39_34i.pgdb", "C:\\WPClient\\Rattus_norvegicus");
 			
 			top = makeTree(roots, terms, top, "r");
 
@@ -127,7 +132,8 @@ public class TestFrames {
 			for(GoTerm parent : parents){
 				
 				// create a new parent branch
-				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " m:"+parent.getNumberOfGenes());
+				DefaultMutableTreeNode par = new DefaultMutableTreeNode(parent.getName() + " " +
+						"<m:"+parent.getNumberOfGenes()+", n:"+parent.getOverlapGenes(genidInPway)+">");
 				
 				// add the new parent to the top structure
 				top.add(par);

@@ -108,7 +108,7 @@ public class ShowPercentageGUI {
   		menuButton.addActionListener(
   				new ActionListener(){
   					public void actionPerformed(ActionEvent ae){
-  						showMenuGUI.createAndShowMenuGUI(dbDir,pwDir,arguments);
+  						showMenuGUI.createAndShowMenuGUI(arguments);
   						System.out.println("Go to Menu");
   						}
   					}

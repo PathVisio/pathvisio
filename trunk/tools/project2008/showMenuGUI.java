@@ -37,14 +37,16 @@ public class showMenuGUI extends JPanel {
 		final String[] arguments=args;		
 		final String dbDir;
 		final File pwDir;
+		final String outfile;
 			
 		try {
 			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 			pwDir = new File(args[1]+"\\Rattus_norvegicus");
+			outfile=args[2];
 			  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowMenuGUI(dbDir,pwDir);
+					createAndShowMenuGUI(arguments);
 				}
 			});
 
@@ -57,7 +59,7 @@ public class showMenuGUI extends JPanel {
 		
 	}
 	
-	public static void createAndShowMenuGUI(final String dbDir,final File pwDir){
+	public static void createAndShowMenuGUI(String[] arguments){
 		
 		// create a new frame
 		JFrame frame = new JFrame("Main Menu");
@@ -70,7 +72,7 @@ public class showMenuGUI extends JPanel {
 		
 		// create a new panel
 		JPanel canvasTop=new JPanel();
-		JPanel canvasButtons=canvasButtons(dbDir,pwDir);
+		JPanel canvasButtons=canvasButtons(arguments);
 		JPanel canvasCloseButton=canvasCloseButton();
 		
 		JLabel label = new JLabel("Main Menu");
@@ -88,7 +90,12 @@ public class showMenuGUI extends JPanel {
 	}
 	
 	
-	public static JPanel canvasButtons(final String dbDir,final File pwDir){
+	public static JPanel canvasButtons(final String[] arguments){
+		
+		final String dbDirRn = new String(arguments[0]+"Rn_39_34i.pgdb");
+		final File pwDirRn = new File(arguments[1]+"\\Rattus_norvegicus");
+		
+		
 		
 		// create a new panel
 		JPanel canvasButtons = new JPanel();
@@ -104,7 +111,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Pathway overlap Matrix");
-						showOverlapGUI.createAndShowOverlapGUI(dbDir,pwDir);
+						showOverlapGUI.createAndShowOverlapGUI(dbDirRn,pwDirRn,arguments);
 						}
 					}
 				);
@@ -114,9 +121,9 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Link Checker");
-						String[] arguments={"C:\\databases\\",
+						/*String[] arguments={"C:\\databases\\",
 											"C:\\pathways",
-											"C:\\result.html"};
+											"C:\\result.html"};*/
 											
 						try {
 							LinkChecker.main(arguments);
@@ -142,7 +149,8 @@ public class showMenuGUI extends JPanel {
 		PugButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						ShowPercentageGUI.createAndShowPercentageGUI(dbDir,pwDir);
+						System.out.println("Go to Percentage of used genes at WikiPathways");
+						ShowPercentageGUI.createAndShowPercentageGUI(dbDirRn,pwDirRn,arguments);
 						}
 					}
 				);

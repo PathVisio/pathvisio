@@ -27,17 +27,20 @@ public class ShowPercentageGUI {
 		* The first one is the directory that contains the databases.
 		* The second one is the directory that contains the pathway cache.
 		*/ 
-
+		
+		final String[] arguments=args;
 		final String dbDir;
 		final File pwDir;
+		final String outfile;
 			
 		try {
 			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 			pwDir = new File(args[1]+"\\Rattus_norvegicus");
+			outfile=args[2];
 			  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowPercentageGUI(dbDir,pwDir);
+					createAndShowPercentageGUI(dbDir,pwDir,arguments);
 				}
 			});
 			
@@ -51,14 +54,14 @@ public class ShowPercentageGUI {
             
     }
 	
-    public static void createAndShowPercentageGUI(String dbDir,File pwDir) {
+    public static void createAndShowPercentageGUI(String dbDir,File pwDir,final String[] arguments) {
         
         
         try {
 			double percentageUsedgenes=GeneCounter.getUsedGenes(dbDir,pwDir);
 			
 			// create a new panel
-			   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir);
+			   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir,arguments);
 			//Create and set up the window.
 	        JFrame frame = new JFrame("Percentage of Used Genes");
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,7 +87,7 @@ public class ShowPercentageGUI {
         
     }
     
-    public static JPanel getCanvasButtons(final String dbDir,final File pwDir){
+    public static JPanel getCanvasButtons(final String dbDir,final File pwDir,final String[] arguments){
   	  // create a new panel
   	   JPanel canvasButtons = new JPanel();
   		
@@ -105,7 +108,7 @@ public class ShowPercentageGUI {
   		menuButton.addActionListener(
   				new ActionListener(){
   					public void actionPerformed(ActionEvent ae){
-  						showMenuGUI.createAndShowMenuGUI(dbDir,pwDir);
+  						showMenuGUI.createAndShowMenuGUI(dbDir,pwDir,arguments);
   						System.out.println("Go to Menu");
   						}
   					}

@@ -28,16 +28,14 @@ public class ShowPercentageGUI {
 		* The second one is the directory that contains the pathway cache.
 		*/ 
 		
-		final String[] arguments=args;
+		final String[] arguments={args[0],args[1],"C:\\result.html"};
 		final String dbDir;
 		final File pwDir;
-		final String outfile;
-			
+					
 		try {
 			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 			pwDir = new File(args[1]+"\\Rattus_norvegicus");
-			outfile=args[2];
-			  
+						  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createAndShowPercentageGUI(arguments);

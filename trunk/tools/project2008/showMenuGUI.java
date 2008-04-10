@@ -26,13 +26,17 @@ public class showMenuGUI extends JPanel {
 	public static void main(String[] args) {
 		
 		/**
-		* in the String[] args, 2 arguments are given:
+		* in the String[] args, 5 arguments are given:
 		* in example:
 		* "C:\\databases\\"
 		* "C:\pathways"
+		* "C:\\result.html"
+		* "C:\\gene_ontology.obo"
+		* "C:\\mart_export1.txt"
 		* 
 		* The first one is the directory that contains the databases.
 		* The second one is the directory that contains the pathway cache.
+		* The third one is the filename (note the html extension) of where the results are stored.
 		*/ 
 		final String[] arguments=args;		
 		final String dbDir;
@@ -154,7 +158,16 @@ public class showMenuGUI extends JPanel {
 		GtdButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						System.out.println("The Go Term Distribution function is not available");
+						System.out.println("Go to The Go Term Distribution function");
+						try {
+							GoTermDistributionGUI.goTermDistribution(arguments);
+						} catch (DataException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ConverterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						}
 					}
 				);

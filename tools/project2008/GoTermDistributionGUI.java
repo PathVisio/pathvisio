@@ -60,7 +60,7 @@ public class GoTermDistributionGUI {
 		run(args);
 	}
 	
-	public static void goTermDitribution(String[]args) throws DataException, ConverterException{
+	public static void goTermDistribution(String[]args) throws DataException, ConverterException{
 		
 		String[]arguments=new String[4];
 		arguments[0]=args[4];

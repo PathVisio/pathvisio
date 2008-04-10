@@ -57,6 +57,11 @@ public class GoTermDistributionGUI {
 	 * Table from GOid to Ensembl (e.g. C:\\mart_export1.txt")	 * 
 	 */
 	public static void main(String[] args) throws DataException, ConverterException{
+		run(args);
+	}
+	
+	
+	public static void run(String[] args) throws DataException, ConverterException{
 		// create a new frame
 		JFrame frame = new JFrame("GOTerm Distribution");
 

@@ -34,7 +34,7 @@ public class showMenuGUI extends JPanel {
 		* The first one is the directory that contains the databases.
 		* The second one is the directory that contains the pathway cache.
 		*/ 
-				
+		final String[] arguments=args;		
 		final String dbDir;
 		final File pwDir;
 			
@@ -117,6 +117,7 @@ public class showMenuGUI extends JPanel {
 						String[] arguments={"C:\\databases\\",
 											"C:\\pathways",
 											"C:\\result.html"};
+											
 						try {
 							LinkChecker.main(arguments);
 						} catch (ConverterException e) {

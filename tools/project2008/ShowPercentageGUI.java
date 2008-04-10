@@ -17,26 +17,36 @@ public class ShowPercentageGUI {
      */
 	
 	public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-		final String dbDir;
-		  final File pwDir;
-			
-		  try {
-			  dbDir = new String(args[0]);
-			  pwDir = new File(args[1]);
-			  
-			  javax.swing.SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						createAndShowPercentageGUI(dbDir,pwDir);
-					}
-				});
+		
+		/**
+		* in the String[] args, 2 arguments are given:
+		* in example:
+		* "C:\\databases\\"
+		* "C:\pathways"
+		* 
+		* The first one is the directory that contains the databases.
+		* The second one is the directory that contains the pathway cache.
+		*/ 
 
-		  }
-		  catch(ArrayIndexOutOfBoundsException e) {
-			  System.out.println("String[] args not given!");
-			  System.exit(0);
-		  }
+		final String dbDir;
+		final File pwDir;
+			
+		try {
+			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
+			pwDir = new File(args[1]+"\\Rattus_norvegicus");
+			  
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					createAndShowPercentageGUI(dbDir,pwDir);
+				}
+			});
+			
+		}
+		
+		catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("String[] args not given!");
+			System.exit(0);
+		}
         
             
     }

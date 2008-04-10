@@ -207,7 +207,6 @@ public class GeneCounter {
 		for(int j=0;j<numberOfPathways;j++){
 			a[j]=new int[numberOfPathways];
 			for(int k=0;k<j+1;k++){
-				//System.out.println("("+j+","+k+")");					
 				Set<Xref> refSet=refPWarray.get(j);
 				int overeenkomsten=0;
 				for(Xref l:refSet){
@@ -216,7 +215,6 @@ public class GeneCounter {
 						overeenkomsten++;
 					}
 				}
-				System.out.println(overeenkomsten);
 				a[j][k]=overeenkomsten;
 				a[k][j]=overeenkomsten;
 			}

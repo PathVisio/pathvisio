@@ -19,38 +19,46 @@ public class ShowPercentageGUI {
 	public static void main(String[] args) {
 		
 		/**
-		* in the String[] args, 2 arguments are given:
+		* in the String[] args, 5 arguments are given:
 		* in example:
 		* "C:\\databases\\"
 		* "C:\pathways"
+		* "C:\\result.html"
+		* "C:\\gene_ontology.obo"
+		* "C:\\mart_export1.txt"
 		* 
 		* The first one is the directory that contains the databases.
 		* The second one is the directory that contains the pathway cache.
+		* The third one is the filename (note the html extension) of where the results are stored.
 		*/ 
-		
-		final String[] arguments={args[0],args[1]};
+	
 		final String[]organism={"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
-		final String dbDir1;
-		final File pwDir1;
-					
+		String[]arg=new String[5];
+			
+		/** 
+		 * Check if the String[] args is given, and make Files containing the directories to
+		 * the pathways and databases 
+		 */
 		try {
-			dbDir1 = new String(args[0]+"Rn_39_34i.pgdb");
-			pwDir1 = new File(args[1]+"\\Rattus_norvegicus");
+			arg[0] = new String(args[0]);
+			arg[1] = new String(args[1]);
+			arg[2] = new String(args[2]);
+			arg[3] = new String(args[3]);
+			arg[4] = new String(args[4]);
+			final String[]arguments=arg;
 						  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createAndShowPercentageGUI(arguments,organism);
 				}
 			});
-			
+
 		}
-		
 		catch(ArrayIndexOutOfBoundsException e) {
 			System.out.println("String[] args not given!");
 			System.exit(0);
 		}
-        
-            
+
     }
 	
     public static void createAndShowPercentageGUI(final String[] arguments,String[]organism) {

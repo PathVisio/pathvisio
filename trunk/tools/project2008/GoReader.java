@@ -6,49 +6,42 @@ import java.util.Set;
 import java.util.HashSet;
 
 
+/**
+ * The class GoReader contains two methods or reading the data of the GO terms. These classes 
+ * are not executed in this class, but the can be executed out of other classes.
+ */
 public class GoReader {
-	
-	public static void main(String[] args){
-		// new list with GoTerms
-		//Set<GoTerm> terms = new HashSet<GoTerm>();
-		// new list with roots 
-		//Set<GoTerm> roots = new HashSet<GoTerm>();
-		// start reading the GoDatabase
-		// make sure args[0] refers to the database file
-		//terms=readGoDatabase(args[0]);
-		// get the roots of the database
 		
-		//roots=getRoots(terms);
-		//for (GoTerm term : roots){
-		//	System.out.println(term.getId());
-		//	System.out.println(term.getName());
-		//	System.out.println(term.getNamespace());
-		//	System.out.println(term.getParents());
-		//	System.out.println(term.getChildren());
-		//	System.out.println();
-		//}
+	public static void main(String[] args){
 	}
 	
+	/**
+	 * The method 'readGoDatabase' returns all the GoTerms that are stored in de file.
+	 * Also, the method saves two maps:
+	 * One with the children as a key and the parents as a value.
+	 * And one with the parents as a key and the children as a value. 
+	 */
 	public static Set<GoTerm> readGoDatabase(String path){
-		// each line is read as a string
+		/**
+		 * Each line is readed as a string.
+		 * A map with a GoTerm and the parents (isa's) of this term stored as strings.
+		 * A map with a string (containing the goTerm's id) and the goterm.
+		 */
 		String line; 
-		// the list with GoTerms
 		Set<GoTerm> terms = new HashSet<GoTerm>();
-		// a map with a goterm and the parents (isa's) of this term stored as strings
 		Map<GoTerm, Set<String>> goTerm_Parents = new HashMap<GoTerm,Set<String>>();
-		// a map with a string (containing the goTerm's id) and the goterm
 		Map<String, GoTerm> id_goTerm = new HashMap<String,GoTerm>();
-		// start reading the file (buffered)
-		try 
-		{
+		
+		/**
+		 * Start reading the file (buffered).
+		 */
+		try {
 			FileReader fr = new FileReader(path);
 			BufferedReader br = new BufferedReader(fr);
-			// read line-by-line until the end is reached
-			while((line=br.readLine()) != null)
-			{
-				// if the line starts with a term, process it
-				if(line.startsWith("[Term]"))
-				{
+			// Read line-by-line until the end is reached
+			while((line=br.readLine()) != null){
+				// If the line starts with a term, process it
+				if(line.startsWith("[Term]")){
 					// extract the GO:ID
 					String id = br.readLine().substring(4);
 					// extract the name
@@ -60,8 +53,7 @@ public class GoReader {
 					// track if the entry is marked as obsolete
 					boolean obsolete = false;
 					// continue reading lines until the end of the term or file
-					do 
-					{
+					do {
 						line=br.readLine();
 						// if the line starts with an is_a, add this to the list
 						if(line.startsWith("is_a:")){
@@ -77,8 +69,7 @@ public class GoReader {
 					}
 					while(! line.equals("") && line != null);
 					// only add the term if it isn't obsolete
-					if (!obsolete)
-					{
+					if (!obsolete){
 						// if the term isn't obsolete, create the GoTerm
 						GoTerm new_GoTerm = new GoTerm(id,name,namespace);
 						// and add this term to the 'terms' set
@@ -98,26 +89,32 @@ public class GoReader {
 			e.printStackTrace();
 		}
 		
+		/**
+		 * In a for-loop, first for all GoTerms the parents are returned.
+		 * If these parents exist, the second for-loop walks through all these parents. The GoTerm
+		 * of this parent is added (as a value) to a map with current GoTerm (as a key).
+		 * Also, in a map the The GoTerm of this parent is added (as a key) to a map with current 
+		 * GoTerm (as a value).
+		 * So two maps are created: 
+		 * One with the children as a key and the parents as a value.
+		 * And one with the parents as a key and the children as a value.   
+		 */
 		// now loop through all GoTerms
 		for (GoTerm thisTerm : terms){
 			// get the parents (strings) of this goTerm
 			Set<String> parents = goTerm_Parents.get(thisTerm);
-			
 			if (!parents.isEmpty()){
 				// loop through all these parent strings
 				for(String parent : parents){
-				
 					// get the goTerm beloning to the parent string (the parent string
 					// contains the id of the parent, the second map contains the id's
 					// with the goterms belonging to this id)
 					GoTerm ouder = id_goTerm.get(parent);
-				
 					// add the found parent GoTerm as a parent for the read GoTerm
 					thisTerm.addParent(ouder);
 					// the read GoTerm is a child of it's parent; so add a child to
 					// the parent GoTerm
 					ouder.addChild(thisTerm);
-				
 				}
 			}
 		}
@@ -127,16 +124,18 @@ public class GoReader {
 		return terms;
 	}
 	
+	/**
+	 * In the method 'getRoots' for a set of GoTerms the roots are returned in a set.
+	 */
+	
 	public static Set<GoTerm> getRoots(Set<GoTerm> terms)
 	{
 		// create a list for the roots
 		Set<GoTerm> roots = new HashSet<GoTerm>();
 		// walk through the terms to find the roots
-		for (GoTerm term : terms)
-		{
+		for (GoTerm term : terms){
 			// if a term has no parents, it's a root
-			if(!term.hasParents())
-			{
+			if(!term.hasParents()){
 				// add the term as root
 				roots.add(term);
 			}				

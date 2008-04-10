@@ -85,9 +85,9 @@ public class showMenuGUI extends JPanel {
 		
 		// create two new buttons, using the makeButton method
 		JButton PomButton = makeBigButton("Pathway overlap Matrix");
-		JButton GtdButton = makeBigButton("Go Term Distribution");
+		JButton LCButton = makeBigButton("Link Checker");
 		JButton PugButton = makeBigButton("Percentage used genes");
-		JButton closeButton = makeBigButton("Test Frames");
+		JButton GtdButton = makeBigButton("Go Term Distribution");
 				
 		// add the functionality to the Pathway overlap Matrix button
 		PomButton.addActionListener(
@@ -99,12 +99,11 @@ public class showMenuGUI extends JPanel {
 					}
 				);
 		
-		// add the functionality to the Go Term Distribution button
-		GtdButton.addActionListener(
+		// add the functionality to the Link Checker button
+		LCButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						System.out.println("Go to Go Term Distribution");
-						System.out.println("not available");
+						System.out.println("Go to Link Checker");
 						String[] arguments={"C:\\databases\\",
 											"C:\\pathways",
 											"C:\\result.html"};
@@ -137,11 +136,11 @@ public class showMenuGUI extends JPanel {
 					}
 				);
 		
-		// add the functionality to the Test Frames button
-		closeButton.addActionListener(
+		// add the functionality to the Go Term Distribution button
+		GtdButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						System.out.println("The Test Frames function is not available");
+						System.out.println("The Go Term Distribution function is not available");
 						}
 					}
 				);
@@ -149,10 +148,10 @@ public class showMenuGUI extends JPanel {
 		
 		
 		// add the buttons to the canvas
+		canvasButtons.add(LCButton);
 		canvasButtons.add(PomButton);
-		canvasButtons.add(GtdButton);
 		canvasButtons.add(PugButton);
-		canvasButtons.add(closeButton);
+		canvasButtons.add(GtdButton);
 		
 		return canvasButtons;
 	}

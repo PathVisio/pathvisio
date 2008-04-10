@@ -28,17 +28,18 @@ public class ShowPercentageGUI {
 		* The second one is the directory that contains the pathway cache.
 		*/ 
 		
-		final String[] arguments={args[0],args[1],"C:\\result.html"};
-		final String dbDir;
-		final File pwDir;
+		final String[] arguments={args[0],args[1]};
+		final String[]organism={"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
+		final String dbDir1;
+		final File pwDir1;
 					
 		try {
-			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
-			pwDir = new File(args[1]+"\\Rattus_norvegicus");
+			dbDir1 = new String(args[0]+"Rn_39_34i.pgdb");
+			pwDir1 = new File(args[1]+"\\Rattus_norvegicus");
 						  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowPercentageGUI(arguments);
+					createAndShowPercentageGUI(arguments,organism);
 				}
 			});
 			
@@ -52,13 +53,13 @@ public class ShowPercentageGUI {
             
     }
 	
-    public static void createAndShowPercentageGUI(final String[] arguments) {
+    public static void createAndShowPercentageGUI(final String[] arguments,String[]organism) {
     	
-    	final String dbDirRn = new String(arguments[0]+"Rn_39_34i.pgdb");
-  	  	final File pwDirRn = new File(arguments[1]+"\\Rattus_norvegicus");
+    	final String dbDir = new String(arguments[0]+organism[0]);
+  	  	final File pwDir = new File(arguments[1]+organism[1]);
         
         try {
-			double percentageUsedgenes=GeneCounter.getUsedGenes(dbDirRn,pwDirRn);
+			double percentageUsedgenes=GeneCounter.getUsedGenes(dbDir,pwDir);
 			
 			// create a new panel
 			   JPanel canvasButtons=getCanvasButtons(arguments);

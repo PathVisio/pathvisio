@@ -21,18 +21,18 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 
 import java.util.*;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTable;
+/**
+ * In the Gene counter....
+ */
 
 public class GeneCounter {
+
 
 	/**
 	 * @param args
@@ -42,7 +42,11 @@ public class GeneCounter {
 	 * @throws DataException 
 	 */
 	public static void main(String[] args) throws DataException, ConverterException{
-		
+		/** 
+		 * Check if the String[] args is given, and make Files containing the directories to
+		 * the pathways and databases. 
+		 */ 
+
 		String dbDir = null;
 		File pwDir = null;
 		
@@ -56,6 +60,9 @@ public class GeneCounter {
 			System.exit(0);
 		}
 		
+		/**
+		 * The method 'getSets' returns a list...... 
+		 */
 		List<Set> refPWarray=getSets(dbDir,pwDir);
 		
 		
@@ -75,52 +82,50 @@ public class GeneCounter {
 		
 		
 }
-	
-	public static List<Set> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
-		// Here the method "getFileListing" is executed. In this method all files that are stored in the  list of files is created, so that each file can easily be loaded. 
-		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
-		
-		// Make a set to store the genes used in WikiPathways.
-		Set<Xref> totalS=new HashSet<Xref>();
-		
-		// A SimpleGdb Database is used to be able to load the Database downloaded from internet. 
-		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
+	/**
+	 * In the method 'getSets' a List is created that contains a set with all the Xref's.
+	 * The properties you have to enter are:
+	 * 'dbDir' (the direction that contains the databases) and 
+	 * 'pwDir' (the direction to the file that contains the pathways).
+	 * 
+	 * First the method "getFileListing" is executed. In this method all files that are 
+	 * stored in the list of files is created, so that each file can easily be loaded.
+	 * In the for-loop the information from all different pathways is loaded. 
+	 * In the set 'totalS', all different sets are added. So one big set is formed with
+	 * all Xref's. This set is then added to an array, so that an array can be returned 
+	 * that contains all different Xref's. With this array the overlap can easily be 
+	 * determined.
+	 */ 
 
-		
-		//refPWarray is a list that contains all genes of all pathways. With this list, the overlap between different pathway can easily be determined. 
+	public static List<Set> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
+		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
+		Set<Xref> totalS=new HashSet<Xref>();
+		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
 		List<Set> refPWarray = new ArrayList<Set>();
-		
-		// In the following for-loop the information from all different pathways must be loaded. 
 		for (int i=0;i<filenames.size();i++){
-		
-		
-			//
 			File fileName=filenames.get(i);
-			//System.out.println(fileName);
-			
-			//The ouput of the method 'getRefPW' is named 'setOfRefPW'
 			Set<Xref> setOfRefPW=getRefPW(fileName,db);
-			
-			//The output of 'setOfRefPW' is added to 'refPWarray'
 			refPWarray.add(setOfRefPW);
-						
-			//In the set 'totalS', all different sets are added. So one big set is formed with all Xrefs.
 			totalS.addAll(setOfRefPW);
 		}
-		
 		refPWarray.add(totalS);
-		
 		return refPWarray;
-		
 	}
 	
-	
-	
+		
+	/**
+	 * In this method the total amount of genes that is known so far can be set. 
+	 * This number is returned.
+	 */
 	public static int getNumberOFGenesEN(){
 		int numberOfGenesEN = 17738;
 		return numberOfGenesEN;
 	}
-	
+
+	/**
+	 * 
+	 * 
+	 */
 public static double getUsedGenes(String dbDir,File pwDir) throws DataException, ConverterException{
 		
 		// Total amount of known genes in the Ensembl Database (http://www.ensembl.org).

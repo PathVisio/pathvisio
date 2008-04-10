@@ -29,7 +29,7 @@ public class showOverlapGUI{
 		*/ 
 	  
 	  final String[]arguments={args[0],args[1],"C:\\result.html"};
-	  final String[]kindOfAnnimal={"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
+	  final String[]organism={"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
 	  String dbDir1=null;
 	  File pwDir1=null;
 	  		
@@ -39,7 +39,7 @@ public class showOverlapGUI{
 		  		  
 		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowOverlapGUI(arguments,kindOfAnnimal);
+					createAndShowOverlapGUI(arguments,organism);
 				}
 			});
 
@@ -55,17 +55,22 @@ public class showOverlapGUI{
       
   }
   
-  public static void createAndShowOverlapGUI(String[] arguments,String[]kindOfAnnimal){
-	// create a new panel
-	   JPanel canvasButtons=getCanvasButtons(arguments);
+  public static void createAndShowOverlapGUI(String[] arguments,String[]organism){
+	  
+	  
+	  
+	  
+	  // create a new panel
+	  JPanel canvasButtons=getCanvasButtons(arguments);
 	 		
 		// create a new panel
 		JPanel canvasTable = new JPanel();
-		JScrollPane scrollPane =getTable(arguments,kindOfAnnimal);
+		JScrollPane scrollPane =getTable(arguments,organism);
        canvasTable.add(scrollPane);
 		
 		
-		
+       System.out.println("tot zo ver");
+ 	  System.exit(0);
 		
      
      
@@ -81,11 +86,11 @@ public class showOverlapGUI{
  
   }
   
-  public static JScrollPane getTable(String[] arguments,String[]kindOfAnnimal){
+  public static JScrollPane getTable(String[] arguments,String[]organism){
 	  
 	  
-	  final String dbDir = new String(arguments[0]+kindOfAnnimal[0]);
-	  final File pwDir = new File(arguments[1]+kindOfAnnimal[1]);
+	  final String dbDir = new String(arguments[0]+organism[0]);
+	  final File pwDir = new File(arguments[1]+organism[1]);
 	  
 	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 	  String[] columnNames=new String[filenames.size()];

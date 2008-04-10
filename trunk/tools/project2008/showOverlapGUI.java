@@ -151,8 +151,8 @@ public class showOverlapGUI{
 	   JPanel canvasButtons = new JPanel();
 		
 	  // create two new buttons, using the makeButton method
-		JButton menuButton = TestFrames.makeButton("menu");
-		JButton closeButton = TestFrames.makeButton("Close");
+		JButton menuButton = GoTermDistributionGUI.makeButton("menu");
+		JButton closeButton = GoTermDistributionGUI.makeButton("Close");
 		
 		// add the functionality to the close button
 		closeButton.addActionListener(

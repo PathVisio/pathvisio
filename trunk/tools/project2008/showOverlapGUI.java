@@ -29,9 +29,9 @@ public class showOverlapGUI{
 		*/ 
 	  
 	  final String[]arguments=args;
-	  final String dbDir;
-	  final File pwDir;
-	  final String outfile;
+	  String dbDir=null;
+	  File pwDir=null;
+	  String outfile=null;
 		
 	  try {
 		  dbDir = new String(args[0]+"Rn_39_34i.pgdb");
@@ -40,7 +40,7 @@ public class showOverlapGUI{
 		  
 		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowOverlapGUI(dbDir,pwDir,arguments);
+					createAndShowOverlapGUI(arguments);
 				}
 			});
 
@@ -51,18 +51,18 @@ public class showOverlapGUI{
 	  }
 
 	   
-	  //createAndShowOverlapGUI(dbDir,pwDir);
+	  
 	 
       
   }
   
-  public static void createAndShowOverlapGUI(String dbDir,File pwDir,String[] arguments){
+  public static void createAndShowOverlapGUI(String[] arguments){
 	// create a new panel
-	   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir,arguments);
+	   JPanel canvasButtons=getCanvasButtons(arguments);
 	 		
 		// create a new panel
 		JPanel canvasTable = new JPanel();
-		JScrollPane scrollPane =getTable(dbDir,pwDir);
+		JScrollPane scrollPane =getTable(arguments);
        canvasTable.add(scrollPane);
 		
 		
@@ -82,9 +82,12 @@ public class showOverlapGUI{
  
   }
   
-  public static JScrollPane getTable(String dbDir,File pwDir){
+  public static JScrollPane getTable(String[] arguments){
 	  
-	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
+	  final String dbDirRn = new String(arguments[0]+"Rn_39_34i.pgdb");
+	  final File pwDirRn = new File(arguments[1]+"\\Rattus_norvegicus");
+	  
+	  List<File> filenames = FileUtils.getFileListing(pwDirRn, ".gpml");
 	  String[] columnNames=new String[filenames.size()];
       for(int i=0;i<filenames.size();i++){
     	  columnNames[i]=filenames.get(i).getName();
@@ -92,7 +95,7 @@ public class showOverlapGUI{
       
       Double[][] data;
 	try {
-		data = GeneCounter.getOverlap(dbDir,pwDir);
+		data = GeneCounter.getOverlap(dbDirRn,pwDirRn);
 		
 	} catch (DataException e) {
 		// TODO Auto-generated catch block
@@ -145,12 +148,11 @@ public class showOverlapGUI{
       return scrollPane;
   }
   
-  public static JPanel getCanvasButtons(final String dbDir,final File pwDir,final String[] arguments){
+  public static JPanel getCanvasButtons(final String[] arguments){
 	  // create a new panel
 	   JPanel canvasButtons = new JPanel();
 		
 	  // create two new buttons, using the makeButton method
-		JButton refreshButton = TestFrames.makeButton("Refresh");
 		JButton menuButton = TestFrames.makeButton("menu");
 		JButton closeButton = TestFrames.makeButton("Close");
 		
@@ -164,15 +166,6 @@ public class showOverlapGUI{
 				);
 		
 		// add the functionality to the calculate button
-		refreshButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						createAndShowOverlapGUI(dbDir,pwDir,arguments);
-						System.out.println("Refresh Button pressed");
-						}
-					}
-				);
-		// add the functionality to the calculate button
 		menuButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
@@ -183,7 +176,6 @@ public class showOverlapGUI{
 				);
 		
 		// add the buttons to the canvas
-		canvasButtons.add(refreshButton);
 		canvasButtons.add(menuButton);
 		canvasButtons.add(closeButton);	
 		

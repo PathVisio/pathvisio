@@ -58,7 +58,7 @@ public class LinkChecker {
 		/**
 		 * If connected to the internet, the boolean online has to be set to true. 
 		 */
-		boolean online = false; // set to true if connected to the internet
+		boolean online = true; // set to true if connected to the internet
 		
 		/** 
 		 * Check if the String[] args is given, and make Files containing the directories to

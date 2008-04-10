@@ -3,23 +3,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
-
 import java.io.File;
 import java.util.List;
-import java.util.Vector;
-
 import RowHeaderTable.JScrollPaneAdjuster;
 import RowHeaderTable.JTableRowHeaderResizer;
-import RowHeaderTable.RowHeaderList;
-import RowHeaderTable.RowHeaderResizer;
-import RowHeaderTable.RowHeaderTable;
 import RowHeaderTable.RowHeaderRenderer;
 
 

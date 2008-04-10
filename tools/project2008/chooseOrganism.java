@@ -55,7 +55,7 @@ public class chooseOrganism {
 					
 					
 					
-					runFrame(0,arguments);
+					getOrganism(0,arguments);
 					
 				}
 			});
@@ -71,16 +71,14 @@ public class chooseOrganism {
 		
 	}
 	
-	public static void runFrame(int function,String[]arguments){
+	public static void getOrganism(int function,String[]arguments){
 		
 		//JPanel canvasLabel=new JPanel();
 		JPanel canvasButtons=canvasButtons(function,arguments);
 		
 		//JLabel label = new JLabel("Make a choice");
 		//canvasLabel.add(label);
-		
-		
-		
+
 		// create a new frame
 		JFrame fr = new JFrame("Make a choice");
     
@@ -90,18 +88,10 @@ public class chooseOrganism {
 		// set the size of the frame
 		fr.setSize(400,300);
 		
+		// add the canvas to the frame
 		//fr.add(canvasLabel);
 		fr.add(canvasButtons);
-	
 
-	
-		
-		
-	
-	
-		// add the canvas to the frame
-	
-	
 		// Show the frame
 		fr.setVisible(true);
 	}
@@ -180,10 +170,7 @@ public class chooseOrganism {
 						}
 					}
 				);
-		
-		
 
-		
 		// add the buttons to the canvas
 		canvasButtons.add(CeButton);
 		canvasButtons.add(DrButton);
@@ -221,8 +208,13 @@ public class chooseOrganism {
 		
 		if(function==0){
 			//showOverlapGUI.createAndShowOverlapGUI(arguments,annimal);
-			System.out.println("showOverlapGUI.createAndShowOverlapGUI("+annimal[0]+","+annimal[1]+")");
-			
+			System.out.println("showOverlapGUI.createAndShowOverlapGUI("+annimal[0]+","+annimal[1]+")");	
+		}
+		if(function==1){
+			System.out.println("function = 1");
+		}
+		if(function==2){
+			System.out.println("function = 2");
 		}
 
 		

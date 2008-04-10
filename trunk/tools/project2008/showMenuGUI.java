@@ -11,25 +11,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.apache.xmlrpc.XmlRpcException;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class showMenuGUI extends JPanel {
 	
@@ -97,7 +87,7 @@ public class showMenuGUI extends JPanel {
 		JButton PomButton = makeBigButton("Pathway overlap Matrix");
 		JButton GtdButton = makeBigButton("Go Term Distribution");
 		JButton PugButton = makeBigButton("Percentage used genes");
-		JButton closeButton = makeBigButton("Close");
+		JButton closeButton = makeBigButton("Test Frames");
 				
 		// add the functionality to the Pathway overlap Matrix button
 		PomButton.addActionListener(
@@ -147,11 +137,11 @@ public class showMenuGUI extends JPanel {
 					}
 				);
 		
-		// add the functionality to the close button
+		// add the functionality to the Test Frames button
 		closeButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						System.exit(0);
+						System.out.println("The Test Frames function is not available");
 						}
 					}
 				);

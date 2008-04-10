@@ -31,8 +31,8 @@ public class GoTerm {
 	public int getOverlapGenes(Set<String> otherSet){
 		int number = 0;
 		
-		for (String otherGene: otherSet){
-			if (this.genes.contains(otherGene)){
+		for (String Gene: this.genes){
+			if (otherSet.contains(Gene)){
 				number = number + 1;
 			}
 		}
@@ -70,6 +70,10 @@ public class GoTerm {
 
 	public boolean hasParents(){
 		return !parents.isEmpty();
+	}
+	
+	public boolean hasChildren(){
+		return !children.isEmpty();
 	}
 	
 }

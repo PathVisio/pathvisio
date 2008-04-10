@@ -29,16 +29,17 @@ public class showOverlapGUI{
 		*/ 
 	  
 	  final String[]arguments={args[0],args[1],"C:\\result.html"};
-	  String dbDir=null;
-	  File pwDir=null;
+	  final String[]kindOfAnnimal={"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
+	  String dbDir1=null;
+	  File pwDir1=null;
 	  		
 	  try {
-		  dbDir = new String(args[0]+"Rn_39_34i.pgdb");
-		  pwDir = new File(args[1]+"\\Rattus_norvegicus");
+		  dbDir1 = new String(args[0]+"Rn_39_34i.pgdb");
+		  pwDir1 = new File(args[1]+"\\Rattus_norvegicus");
 		  		  
 		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowOverlapGUI(arguments);
+					createAndShowOverlapGUI(arguments,kindOfAnnimal);
 				}
 			});
 
@@ -54,13 +55,13 @@ public class showOverlapGUI{
       
   }
   
-  public static void createAndShowOverlapGUI(String[] arguments){
+  public static void createAndShowOverlapGUI(String[] arguments,String[]kindOfAnnimal){
 	// create a new panel
 	   JPanel canvasButtons=getCanvasButtons(arguments);
 	 		
 		// create a new panel
 		JPanel canvasTable = new JPanel();
-		JScrollPane scrollPane =getTable(arguments);
+		JScrollPane scrollPane =getTable(arguments,kindOfAnnimal);
        canvasTable.add(scrollPane);
 		
 		
@@ -80,12 +81,13 @@ public class showOverlapGUI{
  
   }
   
-  public static JScrollPane getTable(String[] arguments){
+  public static JScrollPane getTable(String[] arguments,String[]kindOfAnnimal){
 	  
-	  final String dbDirRn = new String(arguments[0]+"Rn_39_34i.pgdb");
-	  final File pwDirRn = new File(arguments[1]+"\\Rattus_norvegicus");
 	  
-	  List<File> filenames = FileUtils.getFileListing(pwDirRn, ".gpml");
+	  final String dbDir = new String(arguments[0]+kindOfAnnimal[0]);
+	  final File pwDir = new File(arguments[1]+kindOfAnnimal[1]);
+	  
+	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 	  String[] columnNames=new String[filenames.size()];
       for(int i=0;i<filenames.size();i++){
     	  columnNames[i]=filenames.get(i).getName();
@@ -93,7 +95,7 @@ public class showOverlapGUI{
       
       Double[][] data;
 	try {
-		data = GeneCounter.getOverlap(dbDirRn,pwDirRn);
+		data = GeneCounter.getOverlap(dbDir,pwDir);
 		
 	} catch (DataException e) {
 		// TODO Auto-generated catch block

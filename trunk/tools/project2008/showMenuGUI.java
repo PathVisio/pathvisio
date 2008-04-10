@@ -43,6 +43,10 @@ public class showMenuGUI extends JPanel {
 		final File pwDir;
 		final String outfile;
 			
+		/** 
+		 * Check if the String[] args is given, and make Files containing the directories to
+		 * the pathways and databases 
+		 */
 		try {
 			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 			pwDir = new File(args[1]+"\\Rattus_norvegicus");
@@ -63,6 +67,12 @@ public class showMenuGUI extends JPanel {
 		
 	}
 	
+	/**
+	 * In the method 'createAndShowMenuGUI' the MenuGUI is created and shown. 
+	 * The buttons on the menu are created using the methogs 'canvasButtond' and 
+	 * 'canvasCloseButton'
+	 * @param arguments
+	 */
 	public static void createAndShowMenuGUI(String[] arguments){
 		
 		// create a new frame
@@ -93,7 +103,13 @@ public class showMenuGUI extends JPanel {
 		frame.setVisible(true);
 	}
 	
-	
+	/**
+	 * In the method 'canvasButtons' the buttons are created for the Main Menu.
+	 * First, the buttons are created, without functionality.
+	 * Then, for each button the functionality is added.
+	 * At last, the buttons are added to the canvas.These buttons are returned when the method 
+	 * is executed. 
+	 */
 	public static JPanel canvasButtons(final String[] arguments){
 		
 		// create a new panel
@@ -183,6 +199,9 @@ public class showMenuGUI extends JPanel {
 		return canvasButtons;
 	}
 	
+	/**
+	 * In the method 'canvasCloseButton' the Close button for the Main menu is created.
+	 */
 	public static JPanel canvasCloseButton(){
 		// create a new panel
 		JPanel canvasCloseButton = new JPanel();
@@ -208,7 +227,8 @@ public class showMenuGUI extends JPanel {
 	}
 
 	/**
-	 * create a new JButton of a preferred size, and with the text centered.
+	 * In the method 'makeBigButton' a new JButton of a preferred size and with the text 
+	 * centered is created.
 	 */
 		public static JButton makeBigButton(String name){
 			// create a new button

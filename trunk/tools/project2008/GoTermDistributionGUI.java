@@ -137,9 +137,13 @@ public class GoTermDistributionGUI {
 		frame.setVisible(true);
 	}
 	
-	/**
-	 * create a new JButton of a preferred size, and the text centered.
-	 */
+	
+	
+	
+	
+		/**
+		 * create a new JButton of a preferred size, and the text centered.
+		 */
 		public static JButton makeButton(String name){
 			// create a new button
 			JButton button = new JButton(name);
@@ -155,6 +159,10 @@ public class GoTermDistributionGUI {
 			// return the button
 			return button;
 		}
+		
+		
+		
+		
 		
 		/**
 		 * read goterms and genids, and create the tree
@@ -174,61 +182,98 @@ public class GoTermDistributionGUI {
 			// add the genes to the terms, using the addGenes method
 			terms = addGenes(terms,martexport);
 			
-			// read all the pathways, extract the genId and
+			// read all the pathways, extract the genId and show in the console that it happened
+			// to read all these genid's from pathways, the method getSetGenIdsInPways from the getN
+			// class is used.
 			genidInPway = getN.getSetGenIdsInPways(pgdb,pathwayroot);
 			System.out.println("Pathways read");
 			
+			// now the genes and goterms are read; make the tree
 			top = makeTree(roots, terms, top);
 
+			// return this tree
 			return top;
 		}
 		
+		
+		
+		
+		
+		/**
+		 * create the tree using the goterms and genes (recursive)
+		 */
 		public static DefaultMutableTreeNode makeTree(Set<GoTerm> parents, Set<GoTerm> allTerms, DefaultMutableTreeNode top){
 			// loop trough all given GoTerms
 			for(GoTerm parent : parents){
 				
-				// create a new parent branch
+				// *****[create a new parent branch]*****
+				
+				// get the number of genes in this term
 				String m = parent.getNumberOfGenes()+"";
+				
+				// get the number of genes the term overlaps with all the pathway genes
 				String n = parent.getOverlapGenes(genidInPway)+"";
-				//String n = "n";
+				//String n = "n"; // uncomment to only show "n" instead of the number.
+				
+				// create the string that has to be printed when the branch is showed
 				String treeString = parent.getName() + " " + "("+n+"/"+m+")";
 				
+				// create a branch with the string
 				DefaultMutableTreeNode par = new DefaultMutableTreeNode(treeString);
+				
+				// add this string and its corresponding GoTerm to the map
 				treeString_GoTerm.put(treeString, parent);
 				
 				// add the new parent to the top structure
 				top.add(par);
 		
-				// if a children list is not empty, set the children as new parents, and put them in
-				// this method again
+				// if a parent has children, set the children as new parents, and put them in
+				// this method again (so this method is recursive
 				if(parent.hasChildren()){
 				
 					// make a list of all children
 					Set<GoTerm> children = new HashSet<GoTerm>();
 					children = parent.getChildren();
 					
-					// create a new tree and add it; when an error occures, catch it
-					if (par.getLevel() < 4){
+					// the method is restricted to 10 levels; this is done because
+					// a Heap Space error occures when you create all levels.
+					// this has to be fixed!
+					if (par.getLevel() < 11){
+						
+						// create a new tree
 						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par);
-					
+
+						// try to add the new tree to the branch
 						try{
 							par.add(childrenNodes);
 						}
 						catch(IllegalArgumentException e) {
-							//System.out.println("kind is voorouder"); // deze error komt steeds als je een stapje naar beneden gaat.
+							// this error occures every thime we go to a lower level.
+							System.out.println("child is ancestor"); 
 						}	
 					}
 				}
 			}
+			// return the tree
 			return top;	
 		}
 		
+		
+		
+		
+		
+		/**
+		 * add the genes to the set of terms
+		 */
 		public static Set<GoTerm> addGenes(Set<GoTerm> terms, String martexport){
 			// create a new map; the key is the GoTerm's id, the set of strings are the gene strings
+			// various methods of the genesGOid class are used to do so.
 			Map<String,Set<String>> geneByGO=genesGOid.geneByGO(genesGOid.goByGene(genesGOid.readDatabase(martexport)));
 			
+			// loop through all GoTerms
 			for (GoTerm term: terms){
 
+				// load the genes beloning to the goTerm and add them to this goterm, using a loop
 				Set<String> genes = new HashSet<String>();
 				try{
 					genes = geneByGO.get(term.getId());
@@ -237,10 +282,10 @@ public class GoTermDistributionGUI {
 					}
 				}
 				catch (NullPointerException e){
-					//System.out.println("set is leeg");
+					System.out.println("set is null"); // no idea why this error occures
 				}
 			}
-						 
+			// return the goterms with the added genes			 
 			return terms;
 		}
 }

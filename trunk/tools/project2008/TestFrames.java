@@ -23,7 +23,11 @@ public class TestFrames {
 	private static Set<String> genidInPway = new HashSet<String>();
 
 	/**
-	 * @param args
+	 * Program requires 4 args:
+	 * Gene ontology database (e.g. "C:\\gene_ontology.obo")
+	 * Pathway database (e.g. "C:\\databases\\Rn_39_34i.pgdb")
+	 * Pathways (e.g. "C:\\WPClient\\Rattus_norvegicus")
+	 * Table from GOid to Ensembl (e.g. C:\\mart_export1.txt")	 * 
 	 */
 	public static void main(String[] args) throws DataException, ConverterException{
 		// create a new frame
@@ -72,7 +76,7 @@ public class TestFrames {
 		JPanel canvasTree = new JPanel();
 		
 		// create a tree
-		DefaultMutableTreeNode top = TreeReader();
+		DefaultMutableTreeNode top = TreeReader(args[0],args[1],args[2],args[3]);
 		JTree tree = new JTree(top);
 		
 		// create a scroll pane
@@ -108,19 +112,19 @@ public class TestFrames {
 		}
 		
 		
-		public static DefaultMutableTreeNode TreeReader() throws DataException, ConverterException{
+		public static DefaultMutableTreeNode TreeReader(String obo, String pgdb, String pathwayroot, String martexport) throws DataException, ConverterException{
 			DefaultMutableTreeNode top = new DefaultMutableTreeNode("GOTerm Distribution");
 
 			// read all GoTerms
 			Set<GoTerm> terms = new HashSet<GoTerm>();
-			terms = GoReader.readGoDatabase("C:\\gene_ontology.obo");
+			terms = GoReader.readGoDatabase(obo);
 			
 			// get the Roots of the GoTerms
 			Set<GoTerm> roots= new HashSet<GoTerm>();
 			roots=GoReader.getRoots(terms);
 			
-			terms = addGenes(terms);
-			genidInPway = getN.getSetGenIdsInPways("C:\\databases\\Rn_39_34i.pgdb", "C:\\WPClient\\Rattus_norvegicus");
+			terms = addGenes(terms,martexport);
+			genidInPway = getN.getSetGenIdsInPways(pgdb,pathwayroot);
 			System.out.println("Pathways read");
 			
 			top = makeTree(roots, terms, top);
@@ -159,9 +163,9 @@ public class TestFrames {
 			return top;	
 		}
 		
-		public static Set<GoTerm> addGenes(Set<GoTerm> terms){
+		public static Set<GoTerm> addGenes(Set<GoTerm> terms, String martexport){
 			// create a new map; the key is the GoTerm's id, the set of strings are the gene strings
-			Map<String,Set<String>> geneByGO=genesGOid.geneByGO(genesGOid.goByGene(genesGOid.readDatabase("C:\\mart_export1.txt")));
+			Map<String,Set<String>> geneByGO=genesGOid.geneByGO(genesGOid.goByGene(genesGOid.readDatabase(martexport)));
 			
 			for (GoTerm term: terms){
 

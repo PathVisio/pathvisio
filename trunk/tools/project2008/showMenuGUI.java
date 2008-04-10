@@ -95,10 +95,10 @@ public class showMenuGUI extends JPanel {
 		JPanel canvasButtons = new JPanel();
 		
 		// create two new buttons, using the makeButton method
-		JButton PomButton = TestFrames.makeButton("Pathway overlap Matrix");
-		JButton GtdButton = TestFrames.makeButton("Go Term Distribution");
-		JButton PugButton = TestFrames.makeButton("Percentage of used genes");
-		JButton closeButton = TestFrames.makeButton("Close");
+		JButton PomButton = makeBigButton("Pathway overlap Matrix");
+		JButton GtdButton = makeBigButton("Go Term Distribution");
+		JButton PugButton = makeBigButton("Percentage used genes");
+		JButton closeButton = makeBigButton("Close");
 				
 		// add the functionality to the Pathway overlap Matrix button
 		PomButton.addActionListener(
@@ -116,9 +116,9 @@ public class showMenuGUI extends JPanel {
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Go Term Distribution");
 						System.out.println("not available");
-						/*String[] arguments={"D:\\My Documents\\Tue\\BIGCAT\\",
-										"D:\\My Documents\\Tue\\BIGCAT\\Rat",
-										"D:\\My Documents\\Tue\\BIGCAT\\result.html"};
+						String[] arguments={"C:\\databases\\",
+											"C:\\pathways",
+											"C:\\result.html"};
 						try {
 							LinkChecker.main(arguments);
 						} catch (ConverterException e) {
@@ -133,7 +133,7 @@ public class showMenuGUI extends JPanel {
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}*/
+						}
 
 						}
 					}
@@ -143,7 +143,7 @@ public class showMenuGUI extends JPanel {
 		PugButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						//ShowPercentageGUI.createAndShowPercentageGUI();
+						ShowPercentageGUI.createAndShowPercentageGUI(dbDir,pwDir);
 						}
 					}
 				);
@@ -192,6 +192,24 @@ public class showMenuGUI extends JPanel {
 		return canvasCloseButton;
 	}
 
+	/**
+	 * create a new JButton of a preferred size, and with the text centered.
+	 */
+		public static JButton makeBigButton(String name){
+			// create a new button
+			JButton button = new JButton(name);
+			
+			// set the size of the button
+			Dimension sizeButton = new Dimension(180,30);
+			button.setPreferredSize(sizeButton);
+			
+			// center the text (horizontally and vertically) in the button
+			button.setVerticalTextPosition(AbstractButton.CENTER);
+			button.setHorizontalTextPosition(AbstractButton.CENTER);
+			
+			// return the button
+			return button;
+		}
 }
 
 

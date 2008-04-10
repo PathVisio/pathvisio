@@ -40,7 +40,7 @@ public class ShowPercentageGUI {
 			  
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowPercentageGUI(dbDir,pwDir,arguments);
+					createAndShowPercentageGUI(arguments);
 				}
 			});
 			
@@ -54,14 +54,16 @@ public class ShowPercentageGUI {
             
     }
 	
-    public static void createAndShowPercentageGUI(String dbDir,File pwDir,final String[] arguments) {
-        
+    public static void createAndShowPercentageGUI(final String[] arguments) {
+    	
+    	final String dbDirRn = new String(arguments[0]+"Rn_39_34i.pgdb");
+  	  	final File pwDirRn = new File(arguments[1]+"\\Rattus_norvegicus");
         
         try {
-			double percentageUsedgenes=GeneCounter.getUsedGenes(dbDir,pwDir);
+			double percentageUsedgenes=GeneCounter.getUsedGenes(dbDirRn,pwDirRn);
 			
 			// create a new panel
-			   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir,arguments);
+			   JPanel canvasButtons=getCanvasButtons(arguments);
 			//Create and set up the window.
 	        JFrame frame = new JFrame("Percentage of Used Genes");
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,7 +89,7 @@ public class ShowPercentageGUI {
         
     }
     
-    public static JPanel getCanvasButtons(final String dbDir,final File pwDir,final String[] arguments){
+    public static JPanel getCanvasButtons(final String[] arguments){
   	  // create a new panel
   	   JPanel canvasButtons = new JPanel();
   		

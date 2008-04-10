@@ -105,7 +105,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Pathway overlap Matrix");
-						showOverlapNewGUI.createAndShowOverlapGUI(dbDir,pwDir);
+						showOverlapGUI.createAndShowOverlapGUI(dbDir,pwDir);
 						}
 					}
 				);

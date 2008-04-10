@@ -21,12 +21,24 @@ public class GoTerm {
 	}
 	
 	public Set<String> getGenes(){
-		return genes;
+		return this.genes;
 	}
 	
-	public int getM(){
-		return genes.size();
+	public int getNumberOfGenes(){
+		return this.genes.size();
 	}
+	
+	public int getOverlapGenes(Set<String> otherSet){
+		int number = 0;
+		
+		for (String otherGene: otherSet){
+			if (this.genes.contains(otherGene)){
+				number = number + 1;
+			}
+		}
+		return number;
+	}
+	
 	
 	public void addChild(GoTerm child){
 		this.children.add(child);

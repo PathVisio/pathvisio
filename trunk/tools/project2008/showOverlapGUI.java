@@ -27,12 +27,22 @@ public class showOverlapGUI{
 
   public static void main(String[] args) throws DataException, ConverterException{
 	  
+	  /**
+		* in the String[] args, 2 arguments are given:
+		* in example:
+		* "C:\\databases\\"
+		* "C:\pathways"
+		* 
+		* The first one is the directory that contains the databases.
+		* The second one is the directory that contains the pathway cache.
+		*/ 
+	  
 	  final String dbDir;
 	  final File pwDir;
 		
 	  try {
-		  dbDir = new String(args[0]);
-		  pwDir = new File(args[1]);
+		  dbDir = new String(args[0]+"Rn_39_34i.pgdb");
+		  pwDir = new File(args[1]+"\\Rattus_norvegicus");
 		  
 		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -45,7 +55,7 @@ public class showOverlapGUI{
 		  System.out.println("String[] args not given!");
 		  System.exit(0);
 	  }
-	  
+
 	   
 	  //createAndShowOverlapGUI(dbDir,pwDir);
 	 

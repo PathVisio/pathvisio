@@ -25,24 +25,34 @@ public class showMenuGUI extends JPanel {
 	
 	public static void main(String[] args) {
 		
+		/**
+		* in the String[] args, 2 arguments are given:
+		* in example:
+		* "C:\\databases\\"
+		* "C:\pathways"
+		* 
+		* The first one is the directory that contains the databases.
+		* The second one is the directory that contains the pathway cache.
+		*/ 
+				
 		final String dbDir;
-		  final File pwDir;
+		final File pwDir;
 			
-		  try {
-			  dbDir = new String(args[0]);
-			  pwDir = new File(args[1]);
+		try {
+			dbDir = new String(args[0]+"Rn_39_34i.pgdb");
+			pwDir = new File(args[1]+"\\Rattus_norvegicus");
 			  
-			  javax.swing.SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						createAndShowMenuGUI(dbDir,pwDir);
-					}
-				});
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					createAndShowMenuGUI(dbDir,pwDir);
+				}
+			});
 
-		  }
-		  catch(ArrayIndexOutOfBoundsException e) {
-			  System.out.println("String[] args not given!");
-			  System.exit(0);
-		  }
+		}
+		catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("String[] args not given!");
+			System.exit(0);
+		}
 		
 		
 	}

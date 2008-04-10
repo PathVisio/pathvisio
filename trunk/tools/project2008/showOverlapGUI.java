@@ -28,16 +28,14 @@ public class showOverlapGUI{
 		* The second one is the directory that contains the pathway cache.
 		*/ 
 	  
-	  final String[]arguments=args;
+	  final String[]arguments={args[0],args[1],"C:\\result.html"};
 	  String dbDir=null;
 	  File pwDir=null;
-	  String outfile=null;
-		
+	  		
 	  try {
 		  dbDir = new String(args[0]+"Rn_39_34i.pgdb");
 		  pwDir = new File(args[1]+"\\Rattus_norvegicus");
-		  outfile=args[2];
-		  
+		  		  
 		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					createAndShowOverlapGUI(arguments);

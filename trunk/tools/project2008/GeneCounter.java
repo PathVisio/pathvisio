@@ -49,7 +49,6 @@ public class GeneCounter {
 		* Check if the String[] args is given, and make Files containing the directories to
 		* the pathways and databases. 
 		*/ 
-		
 		String dbDir = null;
 		File pwDir = null;
 		try {
@@ -61,24 +60,25 @@ public class GeneCounter {
 			System.out.println("String[] args not given!");
 			System.exit(0);
 		}
-		/**
-		 * The method 'getSets' returns a list...... 
-		 */
+	
 		List<Set> refPWarray=getSets(dbDir,pwDir);
 		
-		
-		
+		/**
+		 * Here the percentage is calculated of genes that are known in the Ensembl database 
+		 * and also exist in the pathways at wikipathways.org.
+		 */
 		int numberOfGenesEN=getNumberOFGenesEN();
-		System.out.println(refPWarray.get(refPWarray.size()-1).size());
 		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
 		double percentageUsedgenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
-		
-		
+		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");	
+	
+		/**
+		 * Here the matrix is calculated with the overlap between the pathways.
+		 */
 		refPWarray.remove(refPWarray.size()-1);
 		Double[][] overlap=getPercentage(refPWarray);
+	}	
 		
-		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");	
-}
 	
 	/**
 	 * In the method 'getSets' a List is created that contains a set with all the Xref's.

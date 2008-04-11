@@ -230,6 +230,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	}
 	public void initVPathway() {
 		Engine e = Engine.getCurrent();
+		vPathway = e.getActiveVPathway();
 		if(getCurrentPathway() != null) {
 			if(vPathway == null) {
 				Logger.log.trace("Create VPathway");

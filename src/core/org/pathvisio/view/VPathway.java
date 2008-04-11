@@ -43,6 +43,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
@@ -215,6 +216,9 @@ public class VPathway implements PathwayListener
 	 */
 	public void replacePathway(Pathway originalState)
 	{
+		if(data.hasChanged() != originalState.hasChanged()) {
+			data.fireStatusFlagEvent(new StatusFlagEvent(originalState.hasChanged()));
+		}
 		clearSelection();
 		drawingObjects = new ArrayList<VPathwayElement>();
 		List<SelectionListener> selectionListeners = selection.getListeners();

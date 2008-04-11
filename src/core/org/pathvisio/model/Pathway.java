@@ -55,7 +55,7 @@ public class Pathway implements PathwayListener
 	   pathway is known to be the same as the one on disk. This
 	   happens when you just opened it, or when you just saved it.
 	*/
-	private void clearChangedFlag()
+	public void clearChangedFlag()
 	{
 		if (changed)
 		{

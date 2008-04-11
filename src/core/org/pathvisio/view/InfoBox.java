@@ -50,10 +50,6 @@ public class InfoBox extends Graphics {
 		canvas.setMappInfo(this);	
 	}
 	
-	public int getNaturalOrder() {
-		return VPathway.DRAW_ORDER_MAPPINFO;
-	}
-	
 	//public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }
 	
 	int getVFontSize()

@@ -47,18 +47,6 @@ public class Shape extends GraphicsShape
 		super(canvas, o);
 		setHandleLocation();
 	}
-		
-	public int getNaturalOrder()
-	{
-		if (gdata.getShapeType() == ShapeType.BRACE)
-		{		
-			return VPathway.DRAW_ORDER_BRACE;
-		}
-		else
-		{
-			return VPathway.DRAW_ORDER_SHAPE;
-		}
-	}
 
 	public void doDraw(Graphics2D g)
 	{					

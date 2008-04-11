@@ -118,6 +118,8 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		JMenu orderMenu = new JMenu("Order");
 		orderMenu.add(vActions.orderBringToFront);
 		orderMenu.add(vActions.orderSendToBack);
+		orderMenu.add(vActions.orderUp);
+		orderMenu.add(vActions.orderDown);
 		menu.add(orderMenu);
 		
 		JMenu litMenu = new JMenu("Literature");

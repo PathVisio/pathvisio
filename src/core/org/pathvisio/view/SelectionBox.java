@@ -82,11 +82,6 @@ public class SelectionBox extends VPathwayElement
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}
 
-	public int getDrawingOrder()
-	{
-		return VPathway.DRAW_ORDER_SELECTIONBOX;
-	}
-
 	public ArrayList<VPathwayElement> getSelection()
 	{
 		return selection;

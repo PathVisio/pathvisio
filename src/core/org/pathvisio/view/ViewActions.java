@@ -17,6 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,6 @@ import javax.swing.KeyStroke;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.model.OrderType;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -83,9 +83,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final KeyMoveAction keyMove;
 	public final UndoAction undo;
 	public final AddAnchorAction addAnchor;
-	public final OrderAction orderSendToBack;
-	public final OrderAction orderBringToFront;
-
+	public final OrderBottomAction orderSendToBack;
+	public final OrderTopAction orderBringToFront;
+	public final OrderUpAction orderUp;
+	public final OrderDownAction orderDown;
+	
 	Engine engine;
 
 	ViewActions(VPathway vp) {
@@ -105,8 +107,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		keyMove = new KeyMoveAction(null);
 		undo = new UndoAction();
 		addAnchor = new AddAnchorAction();
-		orderSendToBack = new OrderAction(OrderType.BOTTOM);
-		orderBringToFront = new OrderAction(OrderType.TOP);
+		orderSendToBack = new OrderBottomAction();
+		orderBringToFront = new OrderTopAction();
+		orderUp = new OrderUpAction();
+		orderDown = new OrderDownAction();
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -457,36 +461,96 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Action to change the order of the selected object
-	 * @author thomas
 	 */
-	public static class OrderAction extends AbstractAction {
-		OrderType type;
+	public static class OrderTopAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+		public OrderTopAction() 
+		{
+			putValue(NAME, "Bring to front");
+			putValue(SHORT_DESCRIPTION, "Bring the element in front of all other elements of the same type");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+		}
 		
-		/**
-		 * Create an action that changes the order of the selected
-		 * objects
-		 * @param type The order type that specifies in what manner
-		 * the order has to be changed 
-		 */
-		public OrderAction(OrderType type) {
-			this.type = type;
-			putValue(NAME, type.getName());
-			putValue(SHORT_DESCRIPTION, type.getDescription());
-			putValue(ACCELERATOR_KEY, type.getAcceleratorKey());
+		public void actionPerformed(ActionEvent e) 
+		{
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) {
+				vp.moveGraphicsTop(vp.getSelectedGraphics());
+				vp.redraw();
+			}
+		}
+	}
+
+	/**
+	 * Action to change the order of the selected object
+	 */
+	public static class OrderBottomAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+		public OrderBottomAction() 
+		{
+			putValue(NAME, "Send to back");
+			putValue(SHORT_DESCRIPTION, "Send the element behind all other elements of the same type");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+		}
+		
+		public void actionPerformed(ActionEvent e) 
+		{
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) 
+			{
+				vp.moveGraphicsBottom(vp.getSelectedGraphics());
+				vp.redraw();
+			}
+		}
+	}
+
+	/**
+	 * Action to change the order of the selected object
+	 */
+	public static class OrderUpAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+		public OrderUpAction() 
+		{
+			putValue(NAME, "Move up");
+			putValue(SHORT_DESCRIPTION, "Move up");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.CTRL_DOWN_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = Engine.getCurrent().getActiveVPathway();
 			if(vp != null) {
-				List<Graphics> selection = vp.getSelectedGraphics();
-				for(Graphics g : selection) {
-					g.getPathwayElement().setZOrder(type);
-				}
+				vp.moveGraphicsUp(vp.getSelectedGraphics());
 				vp.redraw();
 			}
 		}
 	}
+
+	/**
+	 * Action to change the order of the selected object
+	 */
+	public static class OrderDownAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+		public OrderDownAction() 
+		{
+			putValue(NAME, "Move down");
+			putValue(SHORT_DESCRIPTION, "Move down");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.CTRL_DOWN_MASK));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			if(vp != null) {
+				vp.moveGraphicsDown(vp.getSelectedGraphics());
+				vp.redraw();
+			}
+		}
+	}
+
 }

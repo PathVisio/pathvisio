@@ -239,15 +239,37 @@ public class Pathway implements PathwayListener
 		o.setParent(this);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
-
-	public int getMaxZOrder() {
-		int zmax = 0;
-		for(PathwayElement e : dataObjects) {
+	
+	/**
+	 * get the highest z-order of all objects
+	 */
+	public int getMaxZOrder() 
+	{
+		if (dataObjects.size() == 0) return 0;
+		
+		int zmax = dataObjects.get(0).getZOrder();
+		for(PathwayElement e : dataObjects) 
+		{
 			if(e.getZOrder() > zmax) zmax = e.getZOrder();
 		}
 		return zmax;
 	}
-	
+
+	/**
+	 * get the lowest z-order of all objects
+	 */
+	public int getMinZOrder() 
+	{
+		if (dataObjects.size() == 0) return 0;
+
+		int zmin = dataObjects.get(0).getZOrder();
+		for(PathwayElement e : dataObjects) 
+		{
+			if(e.getZOrder() < zmin) zmin = e.getZOrder();
+		}
+		return zmin;
+	}
+
 	public void gmmlObjectModified (PathwayEvent e)
 	{
 		markChanged();

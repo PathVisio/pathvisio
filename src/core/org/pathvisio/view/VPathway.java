@@ -1187,34 +1187,6 @@ public class VPathway implements PathwayListener
 				VPathwayEvent.ELEMENT_ADDED));
 	}
 
-	public static final int DRAW_ORDER_HANDLE = 0x0000;
-
-	public static final int DRAW_ORDER_SELECTIONBOX = 0x1000;
-
-	public static final int DRAW_ORDER_GROUP = 0x2000;
-
-	public static final int DRAW_ORDER_SELECTED = 0x3000;
-
-	public static final int DRAW_ORDER_GENEPRODUCT = 0x4000;
-
-	public static final int DRAW_ORDER_LABEL = 0x5000;
-
-	public static final int DRAW_ORDER_ARC = 0x6000;
-
-	public static final int DRAW_ORDER_BRACE = 0x7000;
-	
-	public static final int DRAW_ORDER_SHAPE = 0x8000;
-	
-	public static final int DRAW_ORDER_ANCHOR = 0x9000;
-
-	public static final int DRAW_ORDER_LINE = 0xA000;
-
-	public static final int DRAW_ORDER_LINESHAPE = 0xB000;
-
-	public static final int DRAW_ORDER_MAPPINFO = 0xC000;
-
-	public static final int DRAW_ORDER_DEFAULT = 0xD000;
-
 	public void mouseEnter(MouseEvent e)
 	{
 	}
@@ -1501,6 +1473,8 @@ public class VPathway implements PathwayListener
 		registerKeyboardAction(viewActions.addAnchor);
 		registerKeyboardAction(viewActions.orderBringToFront);
 		registerKeyboardAction(viewActions.orderSendToBack);
+		registerKeyboardAction(viewActions.orderUp);
+		registerKeyboardAction(viewActions.orderDown);
 		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
 				KEY_MOVERIGHT));
 		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(
@@ -1808,6 +1782,152 @@ public class VPathway implements PathwayListener
 		}
 	}
 
+	/**
+	 * Move a set of graphics to the top in the z-order stack
+	 */
+	public void moveGraphicsTop (List<Graphics> gs)
+	{
+		Collections.sort (gs, new ZComparator());
+		int base = getPathwayModel().getMaxZOrder() + 1;
+		for (Graphics g : gs)
+		{
+			g.gdata.setZOrder(base++);
+		}
+	}
+	
+	/**
+	 * Move a set of graphics to the bottom in the z-order stack
+	 */
+	public void moveGraphicsBottom (List<Graphics> gs)
+	{
+		Collections.sort (gs, new ZComparator());
+		int base = getPathwayModel().getMinZOrder() - gs.size() - 1;
+		for (Graphics g : gs)
+		{
+			g.gdata.setZOrder(base++);
+		}
+	}
+	
+	/**
+	 * Looks for overlapping graphics with a higher z-order
+	 * and moves g on top of that.
+	 */
+	public void moveGraphicsUp (List<Graphics> gs)
+	{
+		//TODO: Doesn't really work very well with multiple selections
+		for (Graphics g : gs)
+		{
+			// make sure there is enough space between g and the next
+			autoRenumberZOrder();
+			
+			int order = g.gdata.getZOrder();
+			Graphics nextGraphics = null;
+			int nextZ = order;
+			for (Graphics i : getOverlappingGraphics(g))
+			{
+				int iorder = i.gdata.getZOrder();
+				if (nextGraphics == null && iorder > nextZ)
+				{
+					nextZ = iorder;
+					nextGraphics = i;
+				}
+				else if (nextGraphics != null && iorder < nextZ && iorder > order)
+				{
+					nextZ = iorder;
+					nextGraphics = i;
+				}
+			}
+			g.gdata.setZOrder (nextZ + 1);
+		}
+	}
+
+	/** 
+	 * makes sure there is always a minimum spacing of two between 
+	 * two consecutive elements, so that we can freely move items in between
+	 */
+	private void autoRenumberZOrder()
+	{
+		List<Graphics> elts = new ArrayList<Graphics>(); 
+		for (VPathwayElement vp : drawingObjects)
+		{
+			if (vp instanceof Graphics)
+			{
+				elts.add ((Graphics)vp);
+			}
+		}
+		if (elts.size() < 2) return; // nothing to renumber
+		Collections.sort (elts, new ZComparator());
+		
+		final int SPACING = 2;
+		
+		int waterLevel = elts.get(0).gdata.getZOrder();
+		for (int i = 1; i < elts.size(); ++i)
+		{
+			Graphics curr = elts.get (i);
+			if (curr.gdata.getZOrder() - waterLevel < SPACING)
+			{
+				curr.gdata.setZOrder(waterLevel + SPACING);
+			}
+			waterLevel = curr.gdata.getZOrder();
+		}
+	}
+
+		/**
+	 * Looks for overlapping graphics with a lower z-order
+	 * and moves g on under that.
+	 */
+	public void moveGraphicsDown (List<Graphics> gs)
+	{
+		//TODO: Doesn't really work very well with multiple selections
+		for (Graphics g : gs)
+		{
+			// make sure there is enough space between g and the previous
+			autoRenumberZOrder();
+	
+			int order = g.gdata.getZOrder();
+			Graphics nextGraphics = null;
+			int nextZ = order;
+			for (Graphics i : getOverlappingGraphics(g))
+			{
+				int iorder = i.gdata.getZOrder();
+				if (nextGraphics == null && iorder < nextZ)
+				{
+					nextZ = iorder;
+					nextGraphics = i;
+				}
+				else if (nextGraphics != null && iorder > nextZ && iorder < order)
+				{
+					nextZ = iorder;
+					nextGraphics = i;
+				}
+			}
+			g.gdata.setZOrder (nextZ - 1);
+		}
+	}
+	/**
+	 * return a list of Graphics that overlap g.
+	 * Note that the intersection of bounding rectangles is used,
+	 * so the returned list is only an approximation for rounded shapes. 
+	 */
+	public List<Graphics> getOverlappingGraphics(Graphics g)
+	{
+		List<Graphics> result = new ArrayList<Graphics>();
+		Rectangle2D r1 = g.getVBounds();
+
+		for (VPathwayElement ve : drawingObjects)
+		{
+			if (ve instanceof Graphics && ve != g)
+			{
+				Graphics i = (Graphics)ve;
+				if (r1.intersects(ve.getVBounds()))
+				{
+					result.add (i);
+				}
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Stacks selected objects based on user-selected stack type
 	 * 
@@ -2402,6 +2522,14 @@ public class VPathway implements PathwayListener
 		}
 	}
 
+	public class ZComparator implements Comparator<Graphics>
+	{
+		public int compare(Graphics g1, Graphics g2)
+		{
+			return g1.gdata.getZOrder() - g2.gdata.getZOrder();
+		}
+	}
+	
 	UndoManager undoManager = new UndoManager();
 
 	/**

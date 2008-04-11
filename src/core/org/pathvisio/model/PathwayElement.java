@@ -357,6 +357,38 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20 * 15;
 
+	private static final int Z_ORDER_GENEPRODUCT = 0x8000;
+	private static final int Z_ORDER_LABEL = 0x7000;
+	private static final int Z_ORDER_SHAPE = 0x4000;
+	private static final int Z_ORDER_LINE = 0x3000;
+	private static final int Z_ORDER_DEFAULT = 0x0000;
+
+	/**
+	 * default z order for newly created objects
+	 */
+	private static int getDefaultZOrder(int value)
+	{
+		switch (value)
+		{
+		case ObjectType.SHAPE:
+			return Z_ORDER_SHAPE;
+		case ObjectType.DATANODE:
+			return Z_ORDER_GENEPRODUCT;
+		case ObjectType.LABEL:
+			return Z_ORDER_LABEL;
+		case ObjectType.LINE:
+			return Z_ORDER_LINE;
+		case ObjectType.LEGEND:
+		case ObjectType.INFOBOX:
+		case ObjectType.MAPPINFO:
+		case ObjectType.BIOPAX:
+		case ObjectType.GROUP:
+			return Z_ORDER_DEFAULT;
+		default: 
+			throw new IllegalArgumentException("Invalid object type " + value);
+		}
+	}
+
 	/**
 	 * The required parameter objectType ensures only objects with a valid type
 	 * can be created.
@@ -381,41 +413,20 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setTransparent (true);
 		}
 		objectType = ot;
+		zOrder = getDefaultZOrder (ot);
 	}
-
-	public static final int Z_ORDER_TOP = -1;
-	public static final int Z_ORDER_BOTTOM = -2;
-	public static final int Z_ORDER_UP = -3;
-	public static final int Z_ORDER_DOWN = -4;
 		
 	int zOrder;
 	
-	public int getZOrder() {
+	public int getZOrder() 
+	{
 		return zOrder;
 	}
 	
-	public void setZOrder(OrderType order) {
-		switch(order) {
-		case TOP:
-			setZOrder(parent.getMaxZOrder() + 1);
-			break;
-		case BOTTOM:
-			increaseAllZOrder();
-			setZOrder(0);
-			break;
-		}
-	}
-
 	public void setZOrder(int z) {
 		if(z != zOrder) {
 			zOrder = z;
 			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
-		}
-	}
-	
-	private void increaseAllZOrder() {
-		for(PathwayElement e : parent.getDataObjects()) {
-			e.zOrder++;
 		}
 	}
 	
@@ -615,6 +626,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			result.add(PropertyType.CENTERY);
 			break;
 		}
+		if (fAdvanced)
+		{
+			result.add (PropertyType.ZORDER);
+		}
 		return result;
 	}
 
@@ -806,6 +821,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case BIOPAXREF:
 			setBiopaxRefs((List<String>) value);
 			break;
+		case ZORDER:
+			setZOrder((Integer)value);
+			break;
 		}
 	}
 
@@ -966,6 +984,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		case BIOPAXREF:
 			result = getBiopaxRefs();
+			break;
+		case ZORDER:
+			result = getZOrder();
 			break;
 		}
 

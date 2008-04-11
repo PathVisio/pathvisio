@@ -680,31 +680,19 @@ public class VPathway implements PathwayListener
 			{
 			case 37:
 				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(-increment, 0);
-				}
+				selection.vMoveBy(-increment, 0);
 				break;
 			case 39:
 				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(increment, 0);
-				}
+				selection.vMoveBy(increment, 0);
 				break;
 			case 38:
 				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(0, -increment);
-				}
+				selection.vMoveBy(0, -increment);
 				break;
 			case 40:
 				undoManager.newAction("Move object");
-				for (Graphics g : selectedGraphics)
-				{
-					g.vMoveBy(0, increment);
-				}
+				selection.vMoveBy(0, increment);
 			}
 		}
 		redrawDirtyRect();

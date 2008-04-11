@@ -209,8 +209,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected void addToolBarActions(JToolBar tb) {
 		tb.setLayout(new WrapLayout(1, 1));
 		
-		addToToolbar(actions.saveAction);
-		addToToolbar(actions.saveAsAction);
 		addToToolbar(actions.importAction);
 		addToToolbar(actions.exportAction);
 		tb.addSeparator();

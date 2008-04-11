@@ -56,7 +56,8 @@ public class GuiInit {
 		Engine.getCurrent().addPathwayImporter(new GpmlFormat());
 	}
 	
-	private static void initExporters() {
+	private static void initExporters() 
+	{
 		Engine.getCurrent().addPathwayExporter(new MappFormat());
 		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
 	}

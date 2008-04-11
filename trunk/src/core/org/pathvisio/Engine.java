@@ -172,6 +172,11 @@ public class Engine
 		if(dot >= 0) {
 			ext = fileName.substring(dot + 1, fileName.length());
 		}
+		if (ext.toLowerCase().equals("mapp") &&
+				!System.getProperty("os.name").contains("Windows"))
+		{
+			throw new ConverterException ("MAPP format is only available on Windows operating systems");
+		}
 		PathwayExporter exporter = getPathwayExporter(ext);
 
 		if(exporter == null) throw new ConverterException( "No exporter for '" + ext +  "' files" );

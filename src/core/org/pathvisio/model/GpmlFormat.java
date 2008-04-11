@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1155,6 +1156,36 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			FileWriter writer = new FileWriter(file);
 			//Send XML code to the filewriter
 			xmlcode.output(doc, writer);
+		}
+		catch (IOException ie)
+		{
+			throw new ConverterException(ie);
+		}
+	}
+	
+	/**
+	 * Writes the JDOM document to the outputstream specified
+	 * @param out	the outputstream to which the JDOM document should be writed
+	 * @param validate if true, validate the dom structure before writing. If there is a validation error, 
+	 * 		or the xsd is not in the classpath, an exception will be thrown. 
+	 * @throws ConverterException 
+	 */
+	static public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException {
+		Document doc = createJdom(pwy);
+		
+		//Validate the JDOM document
+		if (validate) validateDocument(doc);
+		//			Get the XML code
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("ISO-8859-1");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+
+		try
+		{
+			//Send XML code to the outputstream
+			xmlcode.output(doc, out);
 		}
 		catch (IOException ie)
 		{

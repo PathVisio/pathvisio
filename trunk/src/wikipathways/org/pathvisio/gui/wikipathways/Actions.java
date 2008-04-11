@@ -74,7 +74,7 @@ public class Actions {
 			putValue(Action.SHORT_DESCRIPTION, descr);
 		}
 		public void actionPerformed(ActionEvent e) {
-			wiki.exit(description);
+			wiki.exit(doSave, description);
 		}
 	}
 

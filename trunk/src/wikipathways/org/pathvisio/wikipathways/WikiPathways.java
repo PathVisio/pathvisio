@@ -16,10 +16,12 @@
 //
 package org.pathvisio.wikipathways;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -60,6 +62,7 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -432,46 +435,40 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 		return pathway;
 	}
-	
-	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {		
+		
+	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {
 		if(remoteChanged || getCurrentPathway().hasChanged()) {
-			File gpmlFile = getLocalFile();
-			//Save current pathway to local file
-			Engine.getCurrent().savePathway(getCurrentPathway(), gpmlFile);
-			setRemoteChanged(true); //In case we get an error, save changes next time
-			saveToWiki(description, gpmlFile);
+			XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+			config.setServerURL(new URL(getRpcURL()));
+		
+			XmlRpcClient client = new XmlRpcClient();
+			XmlRpcCookieTransportFactory ctf = new XmlRpcCookieTransportFactory(client);
+		
+			XmlRpcCookieHttpTransport ct = (XmlRpcCookieHttpTransport)ctf.getTransport();
+			for(String key : cookie.keySet()) {
+				Logger.log.trace("Setting cookie: " + key + "=" + cookie.get(key));
+				ct.addCookie(key, cookie.get(key));
+			}
+			
+			client.setTransportFactory(ctf);
+			client.setConfig(config);
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			GpmlFormat.writeToXml(getCurrentPathway(), out, true);
+			byte[] data = out.toByteArray();
+			
+			Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data, getRevision() };
+					
+			Object response = client.execute("WikiPathways.updatePathway", params);
+			
+			//Update the revision in case we want to save again
+			parameters.setValue(Parameter.REVISION, (String)response);
 			firstSave = false;
 			setRemoteChanged(false); //Save successful, don't save next time
 		} else {
 			Logger.log.trace("No changes made, ignoring save");
 			throw new ConverterException("You didn't make any changes");
 		}
-	}
-	
-	protected void saveToWiki(String description, File gpmlFile) throws XmlRpcException, IOException {	
-		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setServerURL(new URL(getRpcURL()));
-	
-		XmlRpcClient client = new XmlRpcClient();
-		XmlRpcCookieTransportFactory ctf = new XmlRpcCookieTransportFactory(client);
-	
-		XmlRpcCookieHttpTransport ct = (XmlRpcCookieHttpTransport)ctf.getTransport();
-		for(String key : cookie.keySet()) {
-			Logger.log.trace("Setting cookie: " + key + "=" + cookie.get(key));
-			ct.addCookie(key, cookie.get(key));
-		}
-		
-		client.setTransportFactory(ctf);
-		client.setConfig(config);
-		
-		RandomAccessFile raf = new RandomAccessFile(gpmlFile, "r");
-		byte[] data = new byte[(int)raf.length()];
-		raf.readFully(data);
-		Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data, getRevision() };
-				
-		Object response = client.execute("WikiPathways.updatePathway", params);
-		//Update the revision in case we want to save again
-		parameters.setValue(Parameter.REVISION, (String)response);
 	}
 
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {

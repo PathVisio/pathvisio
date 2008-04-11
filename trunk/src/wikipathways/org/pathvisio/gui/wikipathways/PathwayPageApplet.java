@@ -21,18 +21,24 @@ import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.security.AccessControlException;
 import java.util.Enumeration;
 
 import javax.swing.JApplet;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.wikipathways.Actions.WikiAction;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
@@ -55,20 +61,18 @@ public class PathwayPageApplet extends JApplet {
 			}
 		});
 		
-		//Check if other applets are present that already have an instance
-		//of WikiPathways
 		try {
 			Logger.log.trace(this + ": INIT CALLED....");
-
-			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
-			wiki = new WikiPathways(uiHandler);
-			
-			parseArguments();
 
 			//Only set new engine if this is the first applet
 			Engine engine = new Engine();
 			Engine.setCurrent(engine);
 			SwingEngine.setCurrent(new SwingEngine(engine));
+			
+			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
+			wiki = new WikiPathways(uiHandler);
+			
+			parseArguments();
 
 			//Init with progress monitor
 			final RunnableWithProgress<Void> r = new RunnableWithProgress<Void>() {
@@ -176,6 +180,58 @@ public class PathwayPageApplet extends JApplet {
 		//May be implemented by subclasses
 	}
 
+	private JFrame fullScreenFrame;
+	
+	protected boolean isFullScreen() {
+		return fullScreenFrame != null;		
+	}
+	
+	/**
+	 * Makes the applet go to fullscreen mode. 
+	 * Creates a new frame and transfers the mainPanel from
+	 * the applet to the frame.
+	 * @see #toEmbedded(boolean)
+	 */
+	protected void toFullScreen() {
+		final MainPanel mainPanel = wiki.getMainPanel();
+		fullScreenFrame = new JFrame();
+		fullScreenFrame.setTitle("WikiPathways editor - " + wiki.getPwName());
+		getContentPane().repaint();
+		
+		fullScreenFrame.getContentPane().add(mainPanel);
+
+		fullScreenFrame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				wiki.exit(null);
+			}
+		});
+
+		fullScreenFrame.setVisible(true);
+		fullScreenFrame.setSize(800, 600);
+		fullScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		fullScreenFrame.validate();
+	}
+
+
+	/**
+	 * Closes the fullscreen mode and returns the applet
+	 * to embedded mode
+	 * @see PathwayPageApplet#toFullScreen()
+	 */
+	protected void toEmbedded() {
+		MainPanel mainPanel = wiki.getMainPanel();
+
+		fullScreenFrame.getContentPane().remove(mainPanel);
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+		fullScreenFrame.setVisible(false);
+		fullScreenFrame.dispose();
+		fullScreenFrame = null;
+
+		validate();
+		repaint();
+	}
+	
 	/**
 	 * Get the default description that will be used
 	 * when the changes are saved to the server

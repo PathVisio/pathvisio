@@ -74,40 +74,7 @@ public class Actions {
 			putValue(Action.SHORT_DESCRIPTION, descr);
 		}
 		public void actionPerformed(ActionEvent e) {
-			boolean saved = true;
-			boolean forceSave = doSave;
-			try {
-				if(!doSave && wiki.hasChanged()) {
-					//Let user confirm close without save
-					int answer = uiHandler.askCancellableQuestion(
-							"Save changes?", "Your pathway may have changed. Do you want to save?");
-					if(answer == UserInterfaceHandler.Q_CANCEL) {
-						return;
-					} else {
-						forceSave = answer == UserInterfaceHandler.Q_TRUE;
-					}
-				}
-				if(forceSave) {
-					saved = wiki.saveUI(description);
-				} else {
-					wiki.setMayExit(true);
-				}
-			} catch(Exception ex) {
-				Logger.log.error("Unable to save pathway", ex);
-				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			if(saved) {				
-				uiHandler.showExitMessage("Please wait...the page will be reloaded");
-				try {
-					if(wiki.isNew()) {
-						uiHandler.showDocument(new URL(wiki.getPwURL()), "_top");
-					} else {
-						uiHandler.showDocument(new URL("javascript:window.location.reload();"), "_top");
-					}
-				} catch (MalformedURLException ex) {
-					Logger.log.error("Unable to refresh pathway page", ex);
-				}
-			}
+			wiki.exit(description);
 		}
 	}
 
@@ -150,10 +117,9 @@ public class Actions {
 			final String tooltip_full = "Switch to fullscreen mode";
 			final String tooltip_restore = "Switch to embedded mode";
 
-			JFrame frame;
-			JApplet applet;
+			PathwayPageApplet applet;
 
-			public FullScreenAction(UserInterfaceHandler uiHandler, WikiPathways wiki, JApplet applet) {
+			public FullScreenAction(UserInterfaceHandler uiHandler, WikiPathways wiki, PathwayPageApplet applet) {
 				super(uiHandler, wiki, "Fullscreen", null);
 				this.applet = applet;
 				putValue(WikiAction.SMALL_ICON, imgFull);
@@ -161,41 +127,25 @@ public class Actions {
 			}
 
 			public void actionPerformed(ActionEvent e) {
-				if(frame == null) {
-					toFrame();
+				if(applet.isFullScreen()) {
+					toApplet();
 				} else {
-					toApplet(true);
+					toFrame();
 				}
 			}
 
 			/**
-			 * Creates a new frame and transfers the mainPanel from
-			 * the applet to the frame
+			 * Make the applet go to fullscreen mode
 			 */
 			private void toFrame() {
-				final MainPanel mainPanel = wiki.getMainPanel();
-				frame = new JFrame();
-				frame.setTitle("WikiPathways editor - " + wiki.getPwName());
-				applet.getContentPane().repaint();
+				applet.toFullScreen();
 				
-				frame.getContentPane().add(mainPanel);
-
 				putValue(WikiAction.SMALL_ICON, imgRestore);
 				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
 
-				frame.addWindowListener(new WindowAdapter() {
-					public void windowClosing(WindowEvent e) {
-						Logger.log.trace("Window closing, switch to applet");
-						toApplet(false);
-					}
-				});
-
-				frame.setVisible(true);
-				frame.setSize(800, 600);
-				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				frame.validate();
 				resetDividerLocation();
 			}
+			
 			private void resetDividerLocation() {
 				int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 				wiki.getMainPanel().getSplitPane().setDividerLocation((100 - spPercent) / 100.0);
@@ -205,24 +155,12 @@ public class Actions {
 			 * Disposes the frame and transfers the mainPanel to the
 			 * applet
 			 */
-			private void toApplet(boolean disposeFrame) {
-				MainPanel mainPanel = wiki.getMainPanel();
-
-				frame.getContentPane().remove(mainPanel);
-				applet.getContentPane().add(mainPanel, BorderLayout.CENTER);
-
-				if(disposeFrame) {
-					frame.setVisible(false);
-					frame.dispose();
-				}
-				frame = null;
-
+			private void toApplet() {
+				applet.toEmbedded();
+				
 				putValue(WikiAction.SMALL_ICON, imgFull);
 				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
 
-				applet.validate();
-				applet.repaint();
-				
 				resetDividerLocation();
 			}
 		}

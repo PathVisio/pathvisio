@@ -37,10 +37,6 @@ public class VPoint extends VPathwayElement {
 		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}
 	
-	public int getDrawingOrder() {
-		return VPathway.DRAW_ORDER_LINE;
-	}
-	
 	protected void addMPoint(MPoint p) {
 		mPoints.add(p);
 	}

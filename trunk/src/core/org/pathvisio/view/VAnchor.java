@@ -48,10 +48,6 @@ public class VAnchor extends VPathwayElement {
 		handle = new Handle(Handle.DIRECTION_FREE, this, getDrawing());
 		updatePosition();
 	}
-
-	public int getDrawingOrder() {
-		return VPathway.DRAW_ORDER_ANCHOR;
-	}
 	
 	public double getVx() {
 		return vFromM(mx);

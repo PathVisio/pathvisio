@@ -45,10 +45,6 @@ public class GeneProduct extends GraphicsShape
 		super(canvas, o);		
 		setHandleLocation();
 	}
-		
-	public int getNaturalOrder() {
-		return VPathway.DRAW_ORDER_GENEPRODUCT;
-	}
 	
 	/**
 	 * @deprecated get this info from PathwayElement directly

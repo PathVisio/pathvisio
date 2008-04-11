@@ -102,7 +102,8 @@ public enum PropertyType
 	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING),
 	GROUPID ("GroupId", "GroupId", PropertyClass.STRING),
 	GROUPREF ("GroupRef", "GroupRef", PropertyClass.STRING),
-	BIOPAXREF( "BiopaxRef", "BiopaxRef", PropertyClass.BIOPAXREF);
+	BIOPAXREF( "BiopaxRef", "BiopaxRef", PropertyClass.BIOPAXREF),
+	ZORDER ( "Z order", "ZOrder", PropertyClass.INTEGER);
 
 	private String tag, desc;
 	private PropertyClass type;

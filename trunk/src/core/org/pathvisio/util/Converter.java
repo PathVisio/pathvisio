@@ -109,9 +109,7 @@ public class Converter {
 			outputFile = new File(args[1]);
 			if(inputFile == null || !inputFile.canRead()) {
 				Logger.log.error("Unable to read inputfile: " + inputFile);
-			}
-			if(outputFile == null || !outputFile.canWrite()) {
-				Logger.log.error("Unable to write outputfile: " + outputFile);
+				error = true;
 			}
 		}		
 		

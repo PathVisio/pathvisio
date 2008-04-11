@@ -210,13 +210,6 @@ public class Group extends Graphics
 	}
 
 	@Override
-	public int getNaturalOrder()
-	{
-
-		return VPathway.DRAW_ORDER_GROUP;
-	}
-
-	@Override
 	protected void doDraw(Graphics2D g2d)
 	{
 		// TODO make unique selection box for groups

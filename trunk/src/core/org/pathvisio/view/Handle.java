@@ -78,11 +78,7 @@ public class Handle extends VPathwayElement
 	public VPathwayElement getParent() {
 		return parent;
 	}
-	
-	public int getDrawingOrder() {
-		return VPathway.DRAW_ORDER_HANDLE;
-	}
-	
+		
 	/**
 	 * Get the direction this handle is allowed to move in
 	 * @return one of DIRECTION_*

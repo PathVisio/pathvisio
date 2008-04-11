@@ -74,14 +74,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 	public PathwayElement getPathwayElement() {
 		return gdata;
 	}
-	
-	public final int getDrawingOrder() {
-		int zorder = gdata.getZOrder();
-		return getNaturalOrder() + (zorder <<= 32); 
-	}
-	
-	protected abstract int getNaturalOrder();
-	
+		
 	boolean listen = true;
 	public void gmmlObjectModified(PathwayEvent e) {	
 		if(listen) markDirty(); // mark everything dirty

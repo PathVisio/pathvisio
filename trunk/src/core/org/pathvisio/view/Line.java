@@ -95,11 +95,6 @@ public class Line extends Graphics
 		}
 	}
 	
-	public int getNaturalOrder() 
-	{
-		return VPathway.DRAW_ORDER_LINE;
-	}
-	
 	protected void swapPoint(VPoint pOld, VPoint pNew) 
 	{
 		int i = points.indexOf(pOld);

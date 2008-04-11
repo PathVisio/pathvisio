@@ -248,18 +248,20 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * Gets the rectangle used to scale the object
 	 */
 	protected Rectangle2D getVScaleRectangle() { return new Rectangle2D.Double(); }
-
-	public int getDrawingOrder() {
-		return VPathway.DRAW_ORDER_DEFAULT;
-	}
 	
 	/**
-	 * Orders GmmlDrawingObjects by their drawingOrder.
+	 * Orders VPathwayElements
+	 * 
+	 * non-Graphics objects always sort above graphics objects
+	 * selected Graphics objects sort above non-selected graphics objects
+	 * finally, non-selected graphics objects are sorted by their z-order.
+	 * The z-order is determined by the type of object by default,
+	 * but can be overridden by the user.
+	 * 
 	 * The comparison is consistent with "equals", i.e. it doesn't return 0 if
 	 * the objects are different, even if their drawing order is the same.
 	 * 
-	 * @param d
-	 * @see #getDrawingOrder()
+	 * @param d VPathwayElement that this is compared to. 
 	 */
 	public int compareTo(VPathwayElement d)
 	{
@@ -267,48 +269,36 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		if (d == this)
 			return 0;
 		
-		int a, b, an, bn, az, bz;
-		a = getDrawingOrder();
-		b = d.getDrawingOrder();
-		//Natural order in first bits
-		an = a & 0xFF00;
-		bn = b & 0xFF00;
-		//z-order in last bits
-		az = a & 0x00FF;
-		bz = b & 0x00FF;
-		
-		if(isSelected() && d.isSelected()) {
-			; //objects are both selected, keep original sort order
-		}
-		else if(isSelected() || isHighlighted())
+		int a, b;
+
+		if (this instanceof Graphics && d instanceof Graphics)
 		{
-			an = VPathway.DRAW_ORDER_SELECTED;
+			// if only one of two is selected (XOR):
+			
+			a = ((Graphics)this).gdata.getZOrder();
+			b = ((Graphics)d).gdata.getZOrder();
+
+			// if sorting order is equal, use hash code
+			if (b == a)
+			{
+				return hashCode() - d.hashCode();
+			}
+			else
+				return a - b;
 		}
-		else if(d.isSelected() || d.isHighlighted())
-		{
-			bn = VPathway.DRAW_ORDER_SELECTED;
-		}
-		
-//		System.out.println(this + ": " + a + ", " + an + ", " + az);
-//		System.out.println(d + ": " + b + ", " + bn + ", " + bz);
-		
-		// note, if the drawing order is equal, that doesn't mean the objects are equal
-		// the construct with hashcodes give objects a defined sort order, even if their
-		// drawing orders are equal.
-		// The z-ordering takes care of the order of objects of the same type
-		// note that the when the z-order is higher, the object is drawn later and should be
-		// sorted below. Therefore the bz and az are switched.
-		if (an == bn)
-		{
-			an = bz;
-			bn = az;		
-		}
-		// there is still a remote possibility that although the objects are not the same,
-		// the hashcode is the same. Even still, we shouldn't return 0.
-		if (an != bn) 
-			return bn - an; 
 		else
-			return -1;
+		{
+			if (this instanceof Graphics)
+			{
+				return -1;
+			}
+			else if (d instanceof Graphics)
+			{
+				return 1;
+			}
+			// objects are both Graphics. ordering fixed
+			return hashCode() - d.hashCode();
+		}
 	}
 	
 	/** 

@@ -465,11 +465,12 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	 * If an error occurs, the user will be notified by a message and the applet
 	 * will not exit.
 	 * @param description The description to pass along to {@link #saveUI(String)}, may be null
+	 * @param alwaysSave Always save when there are changes, don't ask user
 	 */
-	public void exit(String description) {
-		boolean doSave = false;
+	public void exit(boolean alwaysSave, String description) {
+		boolean doSave = alwaysSave;
 		try {
-			if(hasChanged()) {
+			if(!doSave && hasChanged()) {
 				//Let user confirm close without save
 				int answer = uiHandler.askCancellableQuestion(
 						"Save changes?", "Your pathway may have changed. Do you want to save?");

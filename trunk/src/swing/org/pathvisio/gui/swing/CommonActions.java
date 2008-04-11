@@ -331,8 +331,8 @@ public class CommonActions implements ApplicationEventListener {
 			super();
 			putValue(NAME, "Import");
 			putValue(SMALL_ICON, new ImageIcon(IMG_IMPORT));
-			putValue(Action.SHORT_DESCRIPTION, "Import pathway");
-			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats");
+			putValue(Action.SHORT_DESCRIPTION, "Import pathway from a file on your computer");
+			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats on your computer");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
 		}
 		
@@ -352,8 +352,8 @@ public class CommonActions implements ApplicationEventListener {
 			super();
 			putValue(NAME, "Export");
 			putValue(SMALL_ICON, new ImageIcon(IMG_EXPORT));
-			putValue(SHORT_DESCRIPTION, "Export pathway");
-			putValue(LONG_DESCRIPTION, "Export the pathway to various file formats");
+			putValue(SHORT_DESCRIPTION, "Export pathway to a file on your computer");
+			putValue(LONG_DESCRIPTION, "Export the pathway to various file formats on your computer");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
 		}
 		

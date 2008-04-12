@@ -25,16 +25,21 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.Action;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.filechooser.FileFilter;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
@@ -47,24 +52,27 @@ import org.apache.xmlrpc.client.XmlRpcTransport;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
-import org.pathvisio.ApplicationEvent;
+import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
-import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions;
+import org.pathvisio.gui.swing.ImporterExporterFileFilter;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.preferences.GlobalPreference;
@@ -80,7 +88,7 @@ import org.xml.sax.SAXException;
  * @author thomas
  *
  */
-public class WikiPathways implements ApplicationEventListener, StatusFlagListener, VPathwayListener {		
+public class WikiPathways implements StatusFlagListener, VPathwayListener {		
 	public static final String COMMENT_DESCRIPTION = "WikiPathways-description";
 	public static final String COMMENT_CATEGORY = "WikiPathways-category";
 
@@ -93,6 +101,8 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 
 	Pathway pathway;
 	VPathway vPathway;
+	
+	SwingEngine swingEngine;
 
 	/**
 	 * Keep track of changes with respect to the remote version of the pathway
@@ -136,6 +146,23 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		return vPathway;
 	}
 
+	/**
+	 * Get the instance of SwingEngine used to hold the pathway
+	 * wrapper and main panel. May return null if the editor
+	 * has no pathway view (e.g. description editor)
+	 */
+	public SwingEngine getSwingEngine() {
+		return swingEngine;
+	}
+	
+	/**
+	 * Set the instance of SwingEngine used to hold the pathway
+	 * wrapper and main panel.
+	 */
+	public void setSwingEngine(SwingEngine se) {
+		swingEngine = se;
+	}
+	
 	public void setUiHandler(UserInterfaceHandler uih) {
 		uiHandler = uih;
 	}
@@ -181,8 +208,6 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 
 		initVPathway();
 
-		Engine.getCurrent().addApplicationEventListener(this);
-		
 		if(isReadOnly()) {
 			uiHandler.showInfo("Read-only", 
 					"You are not logged in to " + Globals.SERVER_NAME +
@@ -237,7 +262,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 				e.createVPathway(getCurrentPathway());
 			}
 			//Set the view
-			setVPathway(e.getActiveVPathway());
+			setPathwayView(e.getActiveVPathway());
 		}
 		if(vPathway != null) {
 			vPathway.setEditMode(!isReadOnly());
@@ -439,7 +464,7 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 		}
 	}
 	
-	private void setVPathway(VPathway vp) {
+	public void setPathwayView(VPathway vp) {
 		if(vPathway != vp) {
 			vPathway = vp;
 			setPathway(vp.getPathwayModel());
@@ -628,11 +653,11 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 	}
 
 	public MainPanel prepareMainPanel() {
-		CommonActions actions = SwingEngine.getCurrent().getActions();
+		CommonActions actions = swingEngine.getActions();
 		Set<Action> hide = new HashSet<Action>();
 
 		//Disable some actions
-		if(!isNew()) hide.add(actions.importAction);
+		hide.add(actions.importAction); //We have our own import action
 
 		//Action saveAction = new Actions.ExitAction(uiHandler, this, true, null);
 		Action exitAction = new Actions.ExitAction(uiHandler, this, false, null);
@@ -654,17 +679,6 @@ public class WikiPathways implements ApplicationEventListener, StatusFlagListene
 
 		SwingEngine.getCurrent().setApplicationPanel(mainPanel);
 		return mainPanel;
-	}
-
-	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.VPATHWAY_OPENED) {
-			//Replace the current pathway with the opened pathway to handle import
-			//NOTE: This will fail when multiple applets are open (they will both
-			//use the imported pathway). This will be fixed when we removed the static
-			//Engine classes
-			setVPathway((VPathway)e.getSource());
-			setRemoteChanged(true);
-		}
 	}
 
 	public void statusFlagChanged(StatusFlagEvent e) {

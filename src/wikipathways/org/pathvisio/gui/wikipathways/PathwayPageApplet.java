@@ -18,6 +18,7 @@ package org.pathvisio.gui.wikipathways;
 
 
 import java.applet.Applet;
+import java.applet.AppletContext;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -67,10 +68,12 @@ public class PathwayPageApplet extends JApplet {
 			//Only set new engine if this is the first applet
 			Engine engine = new Engine();
 			Engine.setCurrent(engine);
-			SwingEngine.setCurrent(new SwingEngine(engine));
+			SwingEngine swingEngine = new SwingEngine(engine);
+			SwingEngine.setCurrent(swingEngine);
 			
 			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
 			wiki = new WikiPathways(uiHandler);
+			wiki.setSwingEngine(swingEngine);
 			
 			parseArguments();
 

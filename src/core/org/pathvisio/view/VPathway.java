@@ -254,6 +254,7 @@ public class VPathway implements PathwayListener
 		// PathwayEvent.MODIFIED_GENERAL));
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
 		data.addListener(this);
+		undoManager.setPathway(data);
 		Logger.log.trace("Done creating view structure");
 	}
 

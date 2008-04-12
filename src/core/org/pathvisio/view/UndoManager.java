@@ -27,6 +27,12 @@ public class UndoManager
 	
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
+	private Pathway pathway;
+	
+	public void setPathway (Pathway pathway) {
+		this.pathway = pathway;
+	}
+	
 	static final int MAX_UNDO_SIZE = 25;
 	/**
 	   Insert a new action into the Undo Queue based on an UndoAction
@@ -58,9 +64,8 @@ public class UndoManager
 	 */
 	public void newAction (String desc)
 	{
-		Pathway pwy = Engine.getCurrent().getActivePathway();
-		if(pwy != null) {
-			UndoAction x = new UndoAction (desc, (Pathway)pwy.clone());
+		if(pathway != null) {
+			UndoAction x = new UndoAction (desc, (Pathway)pathway.clone());
 			newAction (x);
 		}
 	}
@@ -125,7 +130,7 @@ public class UndoManager
 			System.out.println ();
 		}
 		System.out.println ("Current pathway");
-		System.out.print (Engine.getCurrent().getActivePathway().summary());
+		System.out.print (pathway.summary());
 		System.out.println();
 	}
 }

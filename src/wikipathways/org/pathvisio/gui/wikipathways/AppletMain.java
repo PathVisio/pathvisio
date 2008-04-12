@@ -17,6 +17,8 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 
 import javax.swing.Action;
@@ -26,7 +28,6 @@ import javax.swing.SwingUtilities;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 
@@ -49,19 +50,28 @@ public class AppletMain extends PathwayPageApplet {
 			}
 		});
 		
-		Engine.getCurrent().setWrapper(SwingEngine.getCurrent().createWrapper());
+		Engine.getCurrent().setWrapper(wiki.getSwingEngine().createWrapper());
 		Logger.log.trace("calling:doInitWiki");
 		super.doInitWiki(pk, base);
 	}
 	
 	public void createGui() {
-		mainPanel = wiki.getMainPanel();		
+		mainPanel = wiki.getMainPanel();
+	
 		//Add a save to wiki button
 		Action saveAction = new Actions.SaveToServerAction(uiHandler, wiki, null);
 		JButton saveButton = new JButton(saveAction);
 		saveButton.setText("");
 		mainPanel.getToolBar().add(saveButton, 2);
 		
+		//Add custom import button
+		if(wiki.isNew() && !wiki.isReadOnly()) {
+			Action importAction = new Actions.ImportAction(uiHandler, wiki);
+			JButton importButton = new JButton(importAction);
+			importButton.setText("");
+			mainPanel.getToolBar().add(importButton, 0);
+		}
+
 		//Create a maximize button
 		JButton btn = new JButton(new Actions.FullScreenAction(uiHandler, wiki, this));
 		btn.setText("");

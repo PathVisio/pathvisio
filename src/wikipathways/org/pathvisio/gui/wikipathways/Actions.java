@@ -16,30 +16,23 @@
 
 package org.pathvisio.gui.wikipathways;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JApplet;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
@@ -55,6 +48,24 @@ public class Actions {
 			super(name, icon);
 			uiHandler = uih;
 			wiki = w;
+		}
+	}
+
+	public static class ImportAction extends WikiAction {
+		private static final long serialVersionUID = 1L;
+
+		public ImportAction(UserInterfaceHandler h, WikiPathways w) {
+			super(h, w, "Import", new ImageIcon(Engine.getCurrent().getResourceURL("icons/import.gif")));
+			putValue(Action.SHORT_DESCRIPTION, "Import pathway from a file on your computer");
+			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats on your computer");;
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(wiki.getSwingEngine().importPathway()) {
+				VPathway vp = Engine.getCurrent().getActiveVPathway();
+				wiki.setPathwayView(vp);
+			}
 		}
 	}
 

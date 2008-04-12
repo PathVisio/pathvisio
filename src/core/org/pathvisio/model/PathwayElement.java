@@ -357,10 +357,17 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20 * 15;
 
+	// groups always have to be on top because
+	// then the mouse hits the group before the individual elements
+	// when clicking.
+	private static final int Z_ORDER_GROUP = 0x9000;
+	// default order of geneproduct, label, shape and line determined
+	// by GenMAPP legacy
 	private static final int Z_ORDER_GENEPRODUCT = 0x8000;
 	private static final int Z_ORDER_LABEL = 0x7000;
 	private static final int Z_ORDER_SHAPE = 0x4000;
 	private static final int Z_ORDER_LINE = 0x3000;
+	// default order of uninteresting elements.
 	private static final int Z_ORDER_DEFAULT = 0x0000;
 
 	/**
@@ -382,8 +389,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ObjectType.INFOBOX:
 		case ObjectType.MAPPINFO:
 		case ObjectType.BIOPAX:
-		case ObjectType.GROUP:
 			return Z_ORDER_DEFAULT;
+		case ObjectType.GROUP:
+			return Z_ORDER_GROUP;
 		default: 
 			throw new IllegalArgumentException("Invalid object type " + value);
 		}

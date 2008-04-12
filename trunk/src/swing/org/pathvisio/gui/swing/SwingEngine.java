@@ -248,7 +248,7 @@ public class SwingEngine {
 			if(!f.toString().toUpperCase().endsWith(ff.getDefaultExtension().toUpperCase())) {
 				f = new File(f.toString() + "." + ff.getDefaultExtension());
 			}
-			return SwingEngine.getCurrent().exportPathway(f);
+			return exportPathway(f);
 
 		}
 		return false;
@@ -312,7 +312,7 @@ public class SwingEngine {
 			if(!f.toString().toUpperCase().endsWith(ff.getDefaultExtension().toUpperCase())) {
 				f = new File(f.toString() + "." + ff.getDefaultExtension());
 			}
-			return SwingEngine.getCurrent().importPathway(f);
+			return importPathway(f);
 
 		}
 		return false;

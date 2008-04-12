@@ -463,9 +463,17 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 						parent.removeGraphRef(p.getGraphRef(), p);
 					}
 				}
+				if(getGroupRef() != null)
+				{
+					v.removeRef(getGroupRef(), this);
+				}
 				if (graphId != null)
 				{
 					parent.removeId(graphId);
+				}
+				if (groupId != null)
+				{
+					parent.removeGroupId(groupId);
 				}
 				zOrder = parent.getMaxZOrder() + 1;
 			}
@@ -479,9 +487,17 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 						v.addGraphRef(p.getGraphRef(), p);
 					}
 				}
+				if(getGroupRef() != null)
+				{
+					v.addRef(getGroupRef(), this);
+				}
 				if (graphId != null)
 				{
 					parent.addId(graphId);
+				}
+				if (groupId != null)
+				{
+					parent.addGroupId(groupId, this);
 				}
 			}
 		}

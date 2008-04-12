@@ -38,7 +38,6 @@ public class BackpagePane extends JEditorPane implements BackpageListener {
 	}
 
 	public void textChanged(String oldText, String newText) {
-		System.err.println("BACKPAGE TEXT CHANGED");
 		setText(newText);
 	}
 }

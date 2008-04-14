@@ -1,68 +1,83 @@
+package org.pathvisio.plugins.project2008;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
-
 import java.io.File;
 import java.util.List;
-import java.util.Vector;
-
 import RowHeaderTable.JScrollPaneAdjuster;
 import RowHeaderTable.JTableRowHeaderResizer;
-import RowHeaderTable.RowHeaderList;
-import RowHeaderTable.RowHeaderResizer;
-import RowHeaderTable.RowHeaderTable;
 import RowHeaderTable.RowHeaderRenderer;
 
 
-public class showOverlapNewGUI{
+public class showOverlapGUI{
 
   public static void main(String[] args) throws DataException, ConverterException{
 	  
-	  final String dbDir;
-	  final File pwDir;
-		
-	  try {
-		  dbDir = new String(args[0]);
-		  pwDir = new File(args[1]);
-		  
-		  javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	  /**
+		* in the String[] args, 5 arguments are given:
+		* in example:
+		* "C:\\databases\\"
+		* "C:\pathways"
+		* "C:\\result.html"
+		* "C:\\gene_ontology.obo"
+		* "C:\\mart_export1.txt"
+		* 
+		* The first one is the directory that contains the databases.
+		* The second one is the directory that contains the pathway cache.
+		* The third one is the filename (note the html extension) of where the results are stored.
+		*/ 
+	
+	  	final String[]organism={"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
+		String[]arg=new String[5];
+			
+		/** 
+		 * Check if the String[] args is given, and make Files containing the directories to
+		 * the pathways and databases 
+		 */
+		try {
+			arg[0] = new String(args[0]);
+			arg[1] = new String(args[1]);
+			arg[2] = new String(args[2]);
+			arg[3] = new String(args[3]);
+			arg[4] = new String(args[4]);
+			final String[]arguments=arg;
+						  
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					createAndShowOverlapGUI(dbDir,pwDir);
+					createAndShowOverlapGUI(arguments,organism);
 				}
 			});
 
-	  }
-	  catch(ArrayIndexOutOfBoundsException e) {
-		  System.out.println("String[] args not given!");
-		  System.exit(0);
-	  }
-	  
-	   
-	  //createAndShowOverlapGUI(dbDir,pwDir);
-	 
-      
+		}
+		catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("String[] args not given!");
+			System.exit(0);
+		}
+
   }
   
-  public static void createAndShowOverlapGUI(String dbDir,File pwDir){
-	// create a new panel
-	   JPanel canvasButtons=getCanvasButtons(dbDir,pwDir);
+  public static void createAndShowOverlapGUI(String[] arguments,String[]organism){
+	  
+	  
+	  
+	  
+	  // create a new panel
+	  JPanel canvasButtons=getCanvasButtons(arguments);
 	 		
 		// create a new panel
 		JPanel canvasTable = new JPanel();
-		JScrollPane scrollPane =getTable(dbDir,pwDir);
+		JScrollPane scrollPane =getTable(arguments,organism);
        canvasTable.add(scrollPane);
 		
 		
-		
+       System.out.println("tot zo ver");
+ 	  System.exit(0);
 		
      
      
@@ -78,7 +93,11 @@ public class showOverlapNewGUI{
  
   }
   
-  public static JScrollPane getTable(String dbDir,File pwDir){
+  public static JScrollPane getTable(String[] arguments,String[]organism){
+	  
+	  
+	  final String dbDir = new String(arguments[0]+organism[0]);
+	  final File pwDir = new File(arguments[1]+organism[1]);
 	  
 	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 	  String[] columnNames=new String[filenames.size()];
@@ -141,14 +160,13 @@ public class showOverlapNewGUI{
       return scrollPane;
   }
   
-  public static JPanel getCanvasButtons(final String dbDir,final File pwDir){
+  public static JPanel getCanvasButtons(final String[] arguments){
 	  // create a new panel
 	   JPanel canvasButtons = new JPanel();
 		
 	  // create two new buttons, using the makeButton method
-		JButton refreshButton = TestFrames.makeButton("Refresh");
-		JButton menuButton = TestFrames.makeButton("menu");
-		JButton closeButton = TestFrames.makeButton("Close");
+		JButton menuButton = GoTermDistributionGUI.makeButton("menu");
+		JButton closeButton = GoTermDistributionGUI.makeButton("Close");
 		
 		// add the functionality to the close button
 		closeButton.addActionListener(
@@ -160,26 +178,16 @@ public class showOverlapNewGUI{
 				);
 		
 		// add the functionality to the calculate button
-		refreshButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						createAndShowOverlapGUI(dbDir,pwDir);
-						System.out.println("Refresh Button pressed");
-						}
-					}
-				);
-		// add the functionality to the calculate button
 		menuButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						showMenuGUI.createAndShowMenuGUI(dbDir,pwDir);
+						showMenuGUI.createAndShowMenuGUI(arguments);
 						System.out.println("Go to Menu");
 						}
 					}
 				);
 		
 		// add the buttons to the canvas
-		canvasButtons.add(refreshButton);
 		canvasButtons.add(menuButton);
 		canvasButtons.add(closeButton);	
 		

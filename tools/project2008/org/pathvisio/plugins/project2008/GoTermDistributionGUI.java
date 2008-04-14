@@ -1,3 +1,4 @@
+package org.pathvisio.plugins.project2008;
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics

@@ -1,3 +1,4 @@
+package org.pathvisio.plugins.project2008;
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;

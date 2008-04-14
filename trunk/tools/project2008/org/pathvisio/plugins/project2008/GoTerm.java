@@ -1,3 +1,4 @@
+package org.pathvisio.plugins.project2008;
 import java.util.HashSet;
 import java.util.Set;
 

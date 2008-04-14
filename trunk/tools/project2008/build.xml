@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<project name="GpmlDiff" default="compile" basedir=".">
+	
+	<property name="src.dir" value="."/>        
+
+    <property name="apidoc.dir" value="apidoc"/>
+	<property name="lib.dir" value="../../lib"/>
+	<property name="diffview.applet.dir" value="applet"/>
+	<property name="diffview.applet.dest" value="/home/martijn/www/wikipathways"/>
+	<property name="applet.class.path" value="lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar"/>
+
+	<path id="project.class.path">
+		<pathelement location="../../build/core"/>
+		<fileset dir="${lib.dir}">
+		        <include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="prepare">
+		<mkdir dir="${apidoc.dir}"/>	
+	</target>
+	
+	<target name="clean" description="Remove all generated files.">
+		<delete dir="${apidoc.dir}"/>
+	</target>
+
+	<target name="docs" depends="prepare" description="generate api-docs">
+		<tstamp /> <!-- set ${TODAY} -->
+		<javadoc destdir="${apidoc.dir}" 
+			doctitle="Projectgroep 2008"
+			footer="Generated ${TODAY}">
+			<classpath refid="project.class.path"/>
+			<package name="*"/>
+			<sourcepath>			
+				<pathelement location="${src.dir}"/>
+			</sourcepath>
+		</javadoc>		
+	</target>
+		
+</project>

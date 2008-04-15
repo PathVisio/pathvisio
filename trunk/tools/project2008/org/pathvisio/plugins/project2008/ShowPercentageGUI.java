@@ -10,15 +10,17 @@ import javax.swing.*;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 
+/**
+ * This class is used when in the MenuGUI the button 'percentage used genes' is chosen. When
+ * this button is chosen, a new menu (percentageGUI) is shown. In this menu the user can choose 
+ * for which organism the percentage must be calculated. When the organism is chosen, this class 
+ * calculates and shows the percentage of used genes.
+ * For thread safety, this method should be invoked from the event-dispatching thread.
+ */
 public class ShowPercentageGUI {
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
+	
 	
 	public static void main(String[] args) {
-		
 		/**
 		* in the String[] args, 5 arguments are given:
 		* in example:
@@ -62,7 +64,13 @@ public class ShowPercentageGUI {
 
     }
 	
-    public static void createAndShowPercentageGUI(final String[] arguments,String[]organism) {
+   /**
+    * In this method, a menu is created. In this menu the user can choose for which organism the 
+    * percentage must be calculated. The percentage is being calculated using the method 
+    * 'getUsedGenes' in the class 'GeneCounter'.
+    */
+    
+	public static void createAndShowPercentageGUI(final String[] arguments,String[]organism) {
     	
     	final String dbDir = new String(arguments[0]+organism[0]);
   	  	final File pwDir = new File(arguments[1]+organism[1]);
@@ -97,6 +105,10 @@ public class ShowPercentageGUI {
         
     }
     
+    /**
+     * In this method, the buttons are added to the menu. First the 'close' and 'menu' buttons 
+     * are added. 
+     */
     public static JPanel getCanvasButtons(final String[] arguments){
   	  // create a new panel
   	   JPanel canvasButtons = new JPanel();

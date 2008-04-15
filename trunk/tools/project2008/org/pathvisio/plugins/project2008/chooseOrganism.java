@@ -2,15 +2,11 @@ package org.pathvisio.plugins.project2008;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.xmlrpc.XmlRpcException;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 
@@ -214,26 +210,7 @@ public class chooseOrganism {
 	
 	public static void goToFunction(int organism,int function,String[]arguments){
 		
-		/**
-		 * kindOfAnnimal:
-		 * 0 = Caenorhabditis elegans
-		 * 1 = Drosophila melanogaster
-		 * 2 = Homo sapiens
-		 * 3 = Mus musculus
-		 * 4 = Rattus norvegicus
-		 * 5 = Saccharomyces cerevisiae
-		 */
-		
-		String[][] annimalNames=new String[6][];
-		annimalNames[0]=new String[]{"Ce_20070902.pgdb","\\Caenorhabditis_elegans"};
-		annimalNames[1]=new String[]{"Dr_20070817.pgdb","\\Drosophila_melanogaster"};
-		annimalNames[2]=new String[]{"Hs_41_36c.pgdb","\\Homo_sapiens"};
-		annimalNames[3]=new String[]{"Mm_38_35.pgdb","\\Mus_musculus"};
-		annimalNames[4]=new String[]{"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
-		annimalNames[5]=new String[]{"Sc_41_1d.pgdb","\\Saccharomyces_cerevisiae"};
-		
-		String[]kindOfOrganism=annimalNames[organism];
-		
+		String[] kindOfOrganism = getOrganismInfo (organism);
 		
 		if(function==0){
 			showOverlapGUI.createAndShowOverlapGUI(arguments,kindOfOrganism);
@@ -256,7 +233,24 @@ public class chooseOrganism {
 		
 		
 	}
+	//String[] kindOfOrganism = getOrganimsInfo (int organism)
 	
+	public static String[]getOrganismInfo (int organism){
+		
+		String[][] annimalNames=new String[6][];
+		annimalNames[0]=new String[]{"Ce_20070902.pgdb","\\Caenorhabditis_elegans"};
+		annimalNames[1]=new String[]{"Dr_20070817.pgdb","\\Drosophila_melanogaster"};
+		annimalNames[2]=new String[]{"Hs_41_36c.pgdb","\\Homo_sapiens"};
+		annimalNames[3]=new String[]{"Mm_38_35.pgdb","\\Mus_musculus"};
+		annimalNames[4]=new String[]{"Rn_39_34i.pgdb","\\Rattus_norvegicus"};
+		annimalNames[5]=new String[]{"Sc_41_1d.pgdb","\\Saccharomyces_cerevisiae"};
+		
+		String[]organismInfo=annimalNames[organism];
+		
+		return organismInfo;
+		
+	}
+
 	
 	
 	

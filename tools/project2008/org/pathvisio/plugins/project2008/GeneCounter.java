@@ -131,9 +131,10 @@ public class GeneCounter {
 		int numberOfGenesEN = getNumberOFGenesEN();
 		List<Set<Xref>> refPWarray=getSets(dbDir,pwDir);
 		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
-		double percentageUsedgenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
-		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");
-		return percentageUsedgenes;
+		double percentageUsedGenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
+		percentageUsedGenes=(long)Math.round(percentageUsedGenes*1000.0)/1000.0;
+		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedGenes+"%");
+		return percentageUsedGenes;
 	}
 	
 	/**
@@ -142,6 +143,7 @@ public class GeneCounter {
 	 */
 	public static Double[][] getOverlap(String dbDir,File pwDir) throws DataException, ConverterException{
 		List<Set<Xref>> refPWarray=getSets(dbDir,pwDir);
+		refPWarray.remove(refPWarray.size()-1);
 		Double[][] overlap=getPercentage(refPWarray);
 		return overlap;
 	}

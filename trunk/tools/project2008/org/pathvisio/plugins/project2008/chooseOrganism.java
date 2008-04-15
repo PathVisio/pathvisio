@@ -11,11 +11,14 @@ import javax.swing.JPanel;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 
-
+/**
+ * In this class the user can choose the organism what for the function has to be executed.
+ */
 public class chooseOrganism {
 	
-	
-	
+	/**
+	 * In this method the screen is created with 6 buttons, one for each organism. 
+	 */
 	static private class OrganismDialog
 	{
 		public JPanel canvasButtons(){
@@ -109,7 +112,6 @@ public class chooseOrganism {
 	}
 	
 	
-	
 	public static String[] getOrganism(){
 		
 		final JDialog dialog = new JDialog((JFrame)null, true);
@@ -134,14 +136,12 @@ public class chooseOrganism {
 		}
 		
 		return kindOfOrganism;
-
-	
 	}
 	
-	
-	
-	
-	
+
+	/**
+	 * In this method the 'menu' and 'close' buttons for the screen are created.
+	 */
 	public static JPanel menuCloseButtons(final JDialog dialog){
 	  	  // create a new panel
 	  	   JPanel canvasButtons = new JPanel();
@@ -177,14 +177,10 @@ public class chooseOrganism {
 	  	  return canvasButtons;
 	    }
 	
-	
-	
-
-		
-		
-	
-	
-	
+	/**
+	 * In this method, the information about the chosen organism is returned. This information 
+	 * is necessary for opening the right directory.
+	 */
 	public static String[]getOrganismInfo (int organism){
 		
 		String[][] annimalNames=new String[6][];

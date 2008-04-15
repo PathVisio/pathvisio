@@ -76,26 +76,20 @@ public class showOverlapGUI{
 	  
 	  String dbBaseDir = arguments[0];
 	  String pwBaseDir = arguments[1];
-	  	  
+     
+	  JFrame f = new JFrame("Row Header Test");
+     
+	  // When click on exit, exit the frame
+	  f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	 
 	  // create a new panel
-	  JPanel canvasButtons=getCanvasButtons(arguments);
+	  JPanel canvasButtons=getCanvasButtons(f);
 	 		
-		// create a new panel
-		JPanel canvasTable = new JPanel();
-		JScrollPane scrollPane =getTable(dbBaseDir,pwBaseDir,organism);
-       canvasTable.add(scrollPane);
+	  // create a new panel
+	  JPanel canvasTable = new JPanel();
+	  JScrollPane scrollPane =getTable(dbBaseDir,pwBaseDir,organism);
+      canvasTable.add(scrollPane);
 		
-		
-       System.out.println("tot zo ver");
- 	  System.exit(0);
-		
-     
-     
-     
-     JFrame f = new JFrame("Row Header Test");
-     
-     // When click on exit, exit the frame
-	 f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
      
      f.add(canvasButtons, BorderLayout.SOUTH);
      f.add(canvasTable, BorderLayout.NORTH);
@@ -180,35 +174,25 @@ public class showOverlapGUI{
    * In this method, the buttons are added to the menu. First the 'close' and 'menu' buttons are
    * added. 
    */
-  public static JPanel getCanvasButtons(final String[] arguments){
+  public static JPanel getCanvasButtons(final JFrame frame){
 	  // create a new panel
 	   JPanel canvasButtons = new JPanel();
 		
 	  // create two new buttons, using the makeButton method
-		JButton menuButton = GoTermDistributionGUI.makeButton("menu");
 		JButton closeButton = GoTermDistributionGUI.makeButton("Close");
 		
 		// add the functionality to the close button
 		closeButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						System.exit(0);
+						frame.dispose();
 						}
 					}
 				);
 		
-		// add the functionality to the calculate button
-		menuButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						showMenuGUI.createAndShowMenuGUI(arguments);
-						System.out.println("Go to Menu");
-						}
-					}
-				);
+
 		
 		// add the buttons to the canvas
-		canvasButtons.add(menuButton);
 		canvasButtons.add(closeButton);	
 		
 	  return canvasButtons;

@@ -26,16 +26,16 @@ import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Xref;
 
-// class to get the genid's (ensemble format) from all the pathways in a directory.
+/**
+ * This class is used to get the genid's (ensemble format) from all the pathways in a directory.
+ */ 
 public class GenidPway{
 	
-	public static void main(String[] args) throws DataException, ConverterException{	
-		// empty; main is never used
-	}
-	
-	// return a set of strings, containing all the genids (ensemble format) from all pathways in a directory
+	/**
+	 * Return a set of strings, containing all the genids (ensemble format) from all pathways 
+	 * in a directory
+	 */
 	public static Set<String> getGenidPways(String dbDir, String pwDirString) throws DataException, ConverterException{
-		
 		// open pathway directory
 		File pwDir = new File(pwDirString);
 		
@@ -45,7 +45,8 @@ public class GenidPway{
 		// create a new set of strings, where all the genid's are loaded
 		Set<String> setWithGenIdsInPathways = new HashSet<String>();
 		
-		// loop through all xrefs. For each xref, get the id (=genid in ensemble format!) and add it to the set of strings
+		// loop through all xrefs. For each xref, get the id (=genid in ensemble format!) and 
+		// add it to the set of strings
 		for(Xref xref: xrefs){
 			setWithGenIdsInPathways.add(xref.getId());
 		}		
@@ -54,9 +55,14 @@ public class GenidPway{
 		return setWithGenIdsInPathways;
 	}
 	
-	// load all the pathways, get the xrefs, change the genid's to ensemble format, and return the xrefs as a set
+	/**
+	 * In the method 'getXrefs' four different actions are executed:
+	 * - Load all the pathways, 
+	 * - Get the xrefs, 
+	 * - Change the genid's to ensemble format, 
+	 * - Return the xrefs as a set.
+	 */
 	public static Set<Xref> getXrefs(String dbDir,File pwDir) throws DataException, ConverterException{
-
 		// Here the method "getFileListing" from the class FileUtils is executed.
 		// In this method all files that are stored in a directory are stored in a
 		// list of strings. These then can be easily loaded
@@ -68,7 +74,6 @@ public class GenidPway{
 		
 		// A SimpleGdb Database is used to be able to load the database 
 		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
-		
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
 		for (File filename: filenames){
@@ -83,10 +88,5 @@ public class GenidPway{
 		
 		// return all genes
 		return allGenes;
-	}
-	
-	
-	
-	
-	
+	}	
 }

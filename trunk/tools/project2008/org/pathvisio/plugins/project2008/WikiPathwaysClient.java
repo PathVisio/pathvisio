@@ -34,7 +34,9 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.pathvisio.debug.Logger;
 
-
+/**
+ * In this class the pathways can be downloaded from the internet. 
+ */
 public class WikiPathwaysClient 
 {
 	private static final String RPCURL = "http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php";

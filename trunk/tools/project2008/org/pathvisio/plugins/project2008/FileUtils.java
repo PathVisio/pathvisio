@@ -23,11 +23,6 @@ import java.util.List;
 
 public class FileUtils {
 	
-	public static void main(String[] args) {
-		
-	
-	}
-
 	/** in this method, a list of files is constructed. The list contains all the files
 	*   with a given extension in a folder and all its subfolders. The property's you
 	*   have to enter are path; a File containing the path that has to be searched,

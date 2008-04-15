@@ -64,15 +64,15 @@ public class showOverlapGUI{
   
   public static void createAndShowOverlapGUI(String[] arguments,String[]organism){
 	  
-	  
-	  
-	  
+	  String dbBaseDir = arguments[0];
+	  String pwBaseDir = arguments[1];
+	  	  
 	  // create a new panel
 	  JPanel canvasButtons=getCanvasButtons(arguments);
 	 		
 		// create a new panel
 		JPanel canvasTable = new JPanel();
-		JScrollPane scrollPane =getTable(arguments,organism);
+		JScrollPane scrollPane =getTable(dbBaseDir,pwBaseDir,organism);
        canvasTable.add(scrollPane);
 		
 		
@@ -93,11 +93,11 @@ public class showOverlapGUI{
  
   }
   
-  public static JScrollPane getTable(String[] arguments,String[]organism){
-	  
-	  
-	  final String dbDir = new String(arguments[0]+organism[0]);
-	  final File pwDir = new File(arguments[1]+organism[1]);
+  
+  public static JScrollPane getTable(String dbBaseDir,String pwBaseDir,String[]organism){
+  	  
+	  final String dbDir = new String(dbBaseDir+organism[0]);
+	  final File pwDir = new File(pwBaseDir+organism[1]);
 	  
 	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 	  String[] columnNames=new String[filenames.size()];

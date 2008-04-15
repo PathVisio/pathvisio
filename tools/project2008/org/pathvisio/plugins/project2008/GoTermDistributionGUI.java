@@ -79,7 +79,7 @@ public class GoTermDistributionGUI {
 		JFrame frame = new JFrame("GOTerm Distribution");
 
 		// When click on exit, exit the frame
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
 		// set the size of the frame
 		frame.setSize(350,570);

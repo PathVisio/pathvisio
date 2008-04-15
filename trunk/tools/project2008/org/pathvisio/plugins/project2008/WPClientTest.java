@@ -24,7 +24,9 @@ import java.util.List;
 
 import org.apache.xmlrpc.XmlRpcException;
 
-
+/**
+ * In this class the class 'WikiPathwaysClient' can be tested. 
+ */
 public class WPClientTest 
 {
 	public static void main(String[] args) throws XmlRpcException, IOException

@@ -36,7 +36,7 @@ public class GoTerm {
 	 * Constructor. Create a new GoTerm, giving the id of the term,
 	 * the name and the namespace.
 	 * 
-	 * i.e. GoTerm newTerm = new GoTerm(id,name,namespace);
+	 * e.g. GoTerm newTerm = new GoTerm(id,name,namespace);
 	 * ---> GoTerm newTerm = new GoTerm("GO:0048745","smooth muscle development","biological_process");
 	 */
 	public GoTerm(String id, String name, String namespace){
@@ -47,7 +47,7 @@ public class GoTerm {
 	
 	/**
 	 * add a (Ensemble) gene to the GoTerm.
-	 * i.e. newTerm.addGene(gen);
+	 * e.g. newTerm.addGene(gen);
 	 * ---> newTerm.addGene("ENSRNOG00000028412");
 	 */
 	public void addGene(String gen){

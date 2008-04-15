@@ -22,6 +22,14 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * When running this class, it is possible to choose which function will be executed. A little
+ * screen is shown with four buttons:
+ * -Link checker,
+ * -Pathway overlap Matrix,
+ * -Percentage used genes,
+ * -Go term distribution. 
+ */
 public class showMenuGUI extends JPanel {
 	
 	public static void main(String[] args) {

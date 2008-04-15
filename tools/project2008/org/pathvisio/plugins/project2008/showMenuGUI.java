@@ -184,6 +184,15 @@ public class showMenuGUI extends JPanel {
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to The Go Term Distribution function");
 						String[] organism=chooseOrganism.getOrganism();
+						try {
+							GoTermDistributionGUI.goTermDistribution(arguments,organism);
+						} catch (DataException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ConverterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 					}
 				});

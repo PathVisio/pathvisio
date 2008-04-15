@@ -108,7 +108,7 @@ public class showOverlapGUI{
   	  
 	  final String dbDir = new String(dbBaseDir+organism[0]);
 	  final File pwDir = new File(pwBaseDir+organism[1]);
-	  
+
 	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 	  String[] columnNames=new String[filenames.size()];
       for(int i=0;i<filenames.size();i++){

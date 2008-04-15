@@ -81,7 +81,7 @@ public class GoTermDistributionGUI {
 	
 	public static void run(String[] args) throws DataException, ConverterException{
 		// create a new frame
-		JFrame frame = new JFrame("GOTerm Distribution");
+		final JFrame frame = new JFrame("GOTerm Distribution");
 
 		// When click on exit, exit the frame
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -112,7 +112,7 @@ public class GoTermDistributionGUI {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						// close the program when the button is clicked
-						System.exit(0);
+						frame.dispose();
 						}
 					}
 				);

@@ -110,7 +110,7 @@ public class chooseOrganism {
 	
 	
 	
-	public static void getOrganism(){
+	public static String[] getOrganism(){
 		
 		final JDialog dialog = new JDialog((JFrame)null, true);
 		
@@ -127,11 +127,13 @@ public class chooseOrganism {
 		
 		dialog.setVisible(true);
 		
+		String[] kindOfOrganism=null;
+		
 		if(dlg.org>=0){
-			String[] kindOfOrganism = getOrganismInfo (dlg.org);
-			System.out.println ("organisme = "+kindOfOrganism);
+			kindOfOrganism = getOrganismInfo (dlg.org);
 		}
 		
+		return kindOfOrganism;
 
 	
 	}
@@ -145,8 +147,8 @@ public class chooseOrganism {
 	  	   JPanel canvasButtons = new JPanel();
 	  		
 	  	  // create two new buttons, using the makeButton method
-	  		JButton menuButton = GoTermDistributionGUI.makeButton("Back to menu");
-	  		final JButton closeButton = GoTermDistributionGUI.makeButton("Close");
+	  		JButton menuButton = GoTermDistributionGUI.makeButton("Run");
+	  		final JButton closeButton = GoTermDistributionGUI.makeButton("Exit");
 	  		
 	  		// add the functionality to the close button
 	  		closeButton.addActionListener(
@@ -163,7 +165,7 @@ public class chooseOrganism {
 	  				new ActionListener(){
 	  					public void actionPerformed(ActionEvent ae){
 	  						dialog.dispose();
-	  						System.out.println("Go to Menu");
+	  						
 	  						}
 	  					}
 	  				);

@@ -74,7 +74,7 @@ public class ShowPercentageGUI {
 			   JPanel canvasButtons=getCanvasButtons(arguments);
 			//Create and set up the window.
 	        JFrame frame = new JFrame("Percentage of Used Genes");
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			
 	      //Add the ubiquitous "Hello World" label.
 	        JLabel label = new JLabel("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");

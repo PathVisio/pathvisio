@@ -17,10 +17,8 @@ package org.pathvisio.plugins.project2008;
 //
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,11 +39,10 @@ public class genesGOid {
 	public static void main(String[] args)
 	{		
 		// create array to store output from filereader
-		List<String[]> arrayGOgenes = readDatabase(args[0]);
+		Map<String,Set<String>> goByGene = goByGene(args[0]);
 		
 		// In this method the map "goByGene" is created. In this map, the gene-Id's are the keys 
 		// and the GO-Id's are the values.
-		Map<String,Set<String>> goByGene=goByGene(arrayGOgenes);
 		
 		// In this method the map "geneByGO" is created. In this map, the GO-Id's are the keys 
 		// and the gene-Id's are the values.	
@@ -58,70 +55,48 @@ public class genesGOid {
 		System.out.println("Ensembl ID's for " + goId + " are: " + ensIdsforGOId);
 	}
 	
-	/**
-	 * In this method the database is read using a filereader. A List is returned with the 
-	 * content of the file. 
-	 */
-	public static List<String[]> readDatabase(String path){
+	public static Map<String,Set<String>> goByGene(String path)
+	{
 		// line string
 		String line; 
 		// the array to return
-		List<String[]> arrayGOgenes = new ArrayList<String[]>();
+		String[] currentRow;
 		// start FileReader
+		Map<String,Set<String>> goByGenemap = new HashMap<String,Set<String>>();
 		try {
 			 FileReader fr = new FileReader(path);
 		     BufferedReader br = new BufferedReader(fr);
-		     // continue readering lines until EOF is reached
+		     // continue reading lines until EOF is reached
 		     while((line = br.readLine()) != null){
 		    	 // TSV so split lines using \t
-		    	 arrayGOgenes.add(line.split("\t"));
-		      }
-		      fr.close();
-		    }
-		    catch(Exception e) {
-		      System.out.println("Exception: " + e);
-			}
-		return arrayGOgenes;
-	}
-	
-	
-	
-    /** In this method the map "goByGene" is created. In this map, the gene-Id's are the keys 
-     * and the GO-Id's are the values.*/	
-	public static Map<String,Set<String>> goByGene(List<String[]> arrayGOgenes)
-	{
-		/** In the array "arrayGogenes" each gene-Id is compared to the gene-Id above the 
-		 * current gene. If the gene-Id does not equal the gene-Id from the previous gene,
-		 * The GO-Id that matches this gene-ID is put in a list. The for loop goes on and as 
-		 * long as the current gene is equal to the previous gene, the GO-Id is added to the 
-		 * list. When the next current gene is no longer equal to the previous gene, the GO-Id 
-		 * list is added to the map. The key is than the previous gene and the value is the 
-		 * GO-Id list.   
-		 */
-		Map<String,Set<String>> goByGenemap = new HashMap<String,Set<String>>();
-		Set<String> gOIds = new HashSet<String>();
-		for (int i = 1;i<arrayGOgenes.size();i++)
-		{
-			if (arrayGOgenes.get(i).length > 1)
-			{
-				String currentGene = arrayGOgenes.get(i)[0];
-				String currentGOId = arrayGOgenes.get(i)[1];
-				String previousGene = arrayGOgenes.get(i-1)[0];
-				if (!currentGene.equals(previousGene))
-				{
-					goByGenemap.put(previousGene,gOIds);
-					gOIds = new HashSet<String>();
-					gOIds.add(currentGOId);
-				}
-				else {gOIds.add(currentGOId);
-				}
-			}
+		    	currentRow=line.split("\t");
+		    	if(currentRow.length > 1){			 		
+		    		if(goByGenemap.containsKey(currentRow[0])){
+		    			Set<String> gOIds;
+		    			gOIds=goByGenemap.get(currentRow[0]);
+		    			gOIds.add(currentRow[1]);
+		    			goByGenemap.put(currentRow[0],gOIds);
+		    		 }
+		    		else
+		    		{
+		    			Set<String> gOIds = new HashSet<String>();
+		    			gOIds.add(currentRow[1]);
+		    			goByGenemap.put(currentRow[0],gOIds);
+		    		}
+		    	}
+	     
+		    }		
+		    fr.close();
+		}		     
+		catch(Exception e) {
+			System.out.println("Exception: " + e);
 		}
 		return goByGenemap;
 	}
-    
 	
-	/**In this method all GO-Id's for the given gene-ID are returned in a List*/ 
+	
+	
+ 	/**In this method all GO-Id's for the given gene-ID are returned in a List*/ 
 	public static Set <String> goIdsforEnsId(String geneId, Map<String, Set<String>> goByGene)
 	{
 		Set<String> goIdsforEnsIdlist = new HashSet<String>();

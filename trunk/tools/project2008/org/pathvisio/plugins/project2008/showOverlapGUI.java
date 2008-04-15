@@ -14,6 +14,12 @@ import RowHeaderTable.JScrollPaneAdjuster;
 import RowHeaderTable.JTableRowHeaderResizer;
 import RowHeaderTable.RowHeaderRenderer;
 
+/**
+ * This class is used when in the MenuGUI the button 'pathway Overlap matrix' is chosen. When
+ * this button is chosen, a new menu (overlapGUI) is shown. In this menu the user can choose for 
+ * which organism the overlap must be calculated. When the organism is chosen, the class 
+ * calculates and shows the overlap table.
+ */
 
 public class showOverlapGUI{
 
@@ -62,6 +68,10 @@ public class showOverlapGUI{
 
   }
   
+  /**
+   * In this method, a menu is created. In this menu the user can choose for which organism the 
+   * overlap table has to be shown. 
+   */
   public static void createAndShowOverlapGUI(String[] arguments,String[]organism){
 	  
 	  String dbBaseDir = arguments[0];
@@ -96,7 +106,10 @@ public class showOverlapGUI{
  
   }
   
-  
+  /**
+   * In the method 'getTable' a table is made. In this table, for each gene pair the overlap is 
+   * shown.
+   */ 
   public static JScrollPane getTable(String dbBaseDir,String pwBaseDir,String[]organism){
   	  
 	  final String dbDir = new String(dbBaseDir+organism[0]);
@@ -162,7 +175,11 @@ public class showOverlapGUI{
 	  
       return scrollPane;
   }
-  
+ 
+  /**
+   * In this method, the buttons are added to the menu. First the 'close' and 'menu' buttons are
+   * added. 
+   */
   public static JPanel getCanvasButtons(final String[] arguments){
 	  // create a new panel
 	   JPanel canvasButtons = new JPanel();

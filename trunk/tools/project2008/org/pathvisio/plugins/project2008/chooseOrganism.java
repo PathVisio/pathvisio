@@ -74,7 +74,7 @@ public class chooseOrganism {
 		JFrame fr = new JFrame("Make a choice");
     
 		// When click on exit, exit the frame
-		fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		fr.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	
 		// set the size of the frame
 		fr.setSize(400,300);

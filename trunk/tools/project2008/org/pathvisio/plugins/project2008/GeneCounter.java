@@ -62,7 +62,7 @@ public class GeneCounter {
 			System.exit(0);
 		}
 	
-		List<Set> refPWarray=getSets(dbDir,pwDir);
+		List<Set<Xref>> refPWarray=getSets(dbDir,pwDir);
 		
 		/**
 		 * Here the percentage is calculated of genes that are known in the Ensembl database 
@@ -95,11 +95,11 @@ public class GeneCounter {
 	 * that contains all different Xref's. With this array the overlap can easily be 
 	 * determined.
 	 */ 
-	public static List<Set> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
+	public static List<Set<Xref>> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
 		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
 		Set<Xref> totalS=new HashSet<Xref>();
 		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
-		List<Set> refPWarray = new ArrayList<Set>();
+		List<Set<Xref>> refPWarray = new ArrayList<Set<Xref>>();
 		for (int i=0;i<filenames.size();i++){
 			File fileName=filenames.get(i);
 			Set<Xref> setOfRefPW=getRefPW(fileName,db);
@@ -129,7 +129,7 @@ public class GeneCounter {
 	public static double getUsedGenes(String dbDir,File pwDir) throws DataException, ConverterException{
 		// Total amount of known genes in the Ensembl Database.
 		int numberOfGenesEN = getNumberOFGenesEN();
-		List<Set> refPWarray=getSets(dbDir,pwDir);
+		List<Set<Xref>> refPWarray=getSets(dbDir,pwDir);
 		int usedgenes=refPWarray.get(refPWarray.size()-1).size();
 		double percentageUsedgenes=(double)usedgenes/(double)numberOfGenesEN*100.0;
 		System.out.println("Percentage of used genes at http://www.wikipathways.org = "+percentageUsedgenes+"%");
@@ -141,7 +141,7 @@ public class GeneCounter {
 	 * A two dimensional array is returned with the overlap between the pathways.   
 	 */
 	public static Double[][] getOverlap(String dbDir,File pwDir) throws DataException, ConverterException{
-		List<Set> refPWarray=getSets(dbDir,pwDir);
+		List<Set<Xref>> refPWarray=getSets(dbDir,pwDir);
 		Double[][] overlap=getPercentage(refPWarray);
 		return overlap;
 	}
@@ -180,7 +180,7 @@ public class GeneCounter {
 	 * of genes that exist in the first pathway also exists in the second pathway. A matrix 
 	 * is returned with these percentages. 
 	 */
-	public static Double[][] getPercentage(List<Set> refPWarray){
+	public static Double[][] getPercentage(List<Set<Xref>> refPWarray){
 		int numberOfPathways=refPWarray.size();
 		Double[][] overlap=new Double[numberOfPathways][];
 		int[][] a=getOverlapMatrix(refPWarray);
@@ -200,7 +200,7 @@ public class GeneCounter {
 	 * In two for-loops for all pathways it is checked how many genes in that pathway also exist
 	 * in another pathway. These numbers are returned.
 	 */
-	public static int[][] getOverlapMatrix(List<Set> refPWarray){
+	public static int[][] getOverlapMatrix(List<Set<Xref>> refPWarray){
 		
 		int numberOfPathways=refPWarray.size();
 		int[][] a=new int[numberOfPathways][];
@@ -225,9 +225,9 @@ public class GeneCounter {
 	
 	/**
 	 * In the method 'getSizeVector' the number of genes are returned that are stored in the 
-	 * List<Set> refPWarray.
+	 * List<Set<Xref>> refPWarray.
 	 */
-	public static int[] getSizeVector(List<Set> refPWarray){
+	public static int[] getSizeVector(List<Set<Xref>> refPWarray){
 		int numberOfPathways=refPWarray.size();
 		int[] numberOfGenes=new int[numberOfPathways];
 		for(int j=0;j<numberOfPathways;j++){

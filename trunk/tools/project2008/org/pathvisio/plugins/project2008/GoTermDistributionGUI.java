@@ -158,14 +158,15 @@ public class GoTermDistributionGUI {
 						GoTerm goterm = id_Term.get(gotermId);
 						
 						// get the number of genes in this term
-						String m = goterm.getNumberOfGenes()+"";
+						String m = getM(goterm)+"";
 						
 						// get the number of genes the term overlaps with all the pathway genes
-						String n = goterm.getOverlapGenes(genidInPway)+"";
+						String n = getN(goterm,genidInPway)+"";
 						
 						// create a string with the goterm name, and the n and m values 
 						// (see above) and print it to the console
 						String calcString = goterm.getName() + " " + "("+n+"/"+m+")";
+						tree.setName("hoi");
 						System.out.println(calcString);
 						}
 					}
@@ -348,6 +349,31 @@ public class GoTermDistributionGUI {
 			// return the goterms with the added genes			 
 			return terms;
 		}
+
+
+		public static int getM(GoTerm term){
+			int n = term.getNumberOfGenes();
+			
+			for (GoTerm kind:term.getChildren()){
+			int nkind = getM(kind);
+			n = n + nkind;
+			}
+			
+			return n;
+		}
+		
+		public static int getN(GoTerm term, Set<String> genidInPway){
+			int n = term.getOverlapGenes(genidInPway);
+			
+			for (GoTerm kind:term.getChildren()){
+			int nkind = getN(kind, genidInPway);
+			n = n + nkind;
+			}
+			
+			return n;
+		}
+
+		
 }
 
 		

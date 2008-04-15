@@ -84,6 +84,9 @@ public class showOverlapGUI{
      
      JFrame f = new JFrame("Row Header Test");
      
+     // When click on exit, exit the frame
+	 f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+     
      f.add(canvasButtons, BorderLayout.SOUTH);
      f.add(canvasTable, BorderLayout.NORTH);
      

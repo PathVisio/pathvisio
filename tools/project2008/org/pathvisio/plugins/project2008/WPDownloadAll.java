@@ -23,15 +23,15 @@ import java.util.Date;
 
 import org.apache.xmlrpc.XmlRpcException;
 
-
+/**
+ * In this class all the pathways from a server are downloaded, using WikiPathWaysClient.
+ * It is also possible to download the pathways that are recently changed. 
+ */
 public class WPDownloadAll
 {
 	/**
-	 * download all the pathways from a server, using WikiPathWaysClient
-	 * 
-	 * 
-	 * in the String[] args, 1 argument is given:
-	 * in example:
+	 * In the String[] args, 1 argument is given:
+	 * In example:
 	 * "C:\\WPClient"
 	 * 
 	 * This is the directory of the cache
@@ -42,12 +42,13 @@ public class WPDownloadAll
 		downloadAll(args[0]);
 	}
 	
+	/**
+	 * In this method it is possible to download only the pathways that are recently changed. 
+	 */
 	public static void downloadNew(String path, Date d) throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
 		// and date: the date of the most recent changed 
-		
-		
 		
 		// make a new WikiPathwaysClient
 		WikiPathwaysClient wp = new WikiPathwaysClient();
@@ -57,16 +58,17 @@ public class WPDownloadAll
 		List<String> pathwayNames = wp.getRecentChanges(d);
 		
 		downloadFiles(pathwayNames,path,wp);
-
 	}
 	
-	
-	
+	/**
+	 * In this method a list is created with pathwayNames that have to be downloaded. These 
+	 * pathways are then being downloaded in the method 'downloadFiles'
+	 */
 	public static void downloadAll(String path) throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
 		
-				// make a new WikiPathwaysClient
+		// make a new WikiPathwaysClient
 		WikiPathwaysClient wp = new WikiPathwaysClient();
 		
 		// get the pathwaylist; all the known pathways are
@@ -74,24 +76,22 @@ public class WPDownloadAll
 		List<String> pathwayNames = wp.getPathwayList();
 		
 		downloadFiles(pathwayNames,path,wp);
-
-
 	}
 	
+	/**
+	 * In this method the files are downloaded. 
+	 */
 	public static void downloadFiles(List<String> pathwayNames, String path, WikiPathwaysClient wp) throws XmlRpcException, IOException {
-		// download all the files
 		
 		// give the extension of a pathway file
 		String pwExtension = ".gpml";
 		
 		// remove all duplicates
 		pathwayNames = removeDuplicates(pwExtension, path, pathwayNames);
-		
-		
+				
 		// a for loop that downloads all individual pathways
 		for (int i = 0; i < pathwayNames.size(); ++i)
 		{
-
 			// get the species and pathwayname
 			String pathwayName= pathwayNames.get(i);
 			String[] temporary = pathwayName.split(":");
@@ -116,13 +116,12 @@ public class WPDownloadAll
 		}
 	}
 	
-	
-	
+	/**
+	 * In this method, a list is obtained of files from the cache directory. All the files that 
+	 * are already in the cache, are removed from the pathwayNames list, so they won't be 
+	 * downloaded again.
+	 */
 	public static List<String> removeDuplicates(String pwExtension, String path, List<String> pathwayNames){
-		// get a list of files from the cache directory. All the files
-		// that are already in the cache, are removed from the pathwayNames
-		// list, so they won't be downloaded again.
-
 		// get a list of all files inside the cache path
 		File pwDir = new File(path + "\\");
 		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);

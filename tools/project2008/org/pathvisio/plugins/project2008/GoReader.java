@@ -8,8 +8,7 @@ import java.util.HashSet;
 
 
 /**
- * The class GoReader contains two methods or reading the data of the GO terms. These classes 
- * are not executed in this class, but the can be executed out of other classes.
+ * The class GoReader contains two methods to read the data of the GO terms. 
  */
 public class GoReader {
 		
@@ -17,10 +16,7 @@ public class GoReader {
 	}
 	
 	/**
-	 * The method 'readGoDatabase' returns all the GoTerms that are stored in de file.
-	 * Also, the method saves two maps:
-	 * One with the children as a key and the parents as a value.
-	 * And one with the parents as a key and the children as a value. 
+	 * The method 'readGoDatabase' returns all the GoTerms that are stored in a file (given in String path).
 	 */
 	public static Set<GoTerm> readGoDatabase(String path){
 		/**

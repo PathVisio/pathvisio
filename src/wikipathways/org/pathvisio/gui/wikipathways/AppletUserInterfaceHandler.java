@@ -27,9 +27,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class AppletUserInterfaceHandler extends SwingUserInterfaceHandler {
-	JApplet applet;
+	PathwayPageApplet applet;
 	
-	public AppletUserInterfaceHandler(JApplet applet) {
+	public AppletUserInterfaceHandler(PathwayPageApplet applet) {
 		super(JOptionPane.getFrameForComponent(applet));
 		this.applet = applet;
 	}
@@ -41,6 +41,9 @@ public class AppletUserInterfaceHandler extends SwingUserInterfaceHandler {
 	}
 	
 	public void showExitMessage(String msg) {
+		if(applet.isFullScreen()) {
+			applet.toEmbedded();
+		}
 		JLabel label = new JLabel(msg, JLabel.CENTER);
 		applet.getContentPane().removeAll();
 		applet.getContentPane().add(label, BorderLayout.CENTER);

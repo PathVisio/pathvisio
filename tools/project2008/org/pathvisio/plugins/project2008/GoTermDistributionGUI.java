@@ -45,7 +45,11 @@ public class GoTermDistributionGUI {
 	// will be loaded with the Strings that represent the tree values as a key, and the
 	// corresponding GoTerm.
 	private static Set<String> genidInPway = new HashSet<String>();
-	private static Map<String, GoTerm> treeString_GoTerm = new HashMap<String, GoTerm>();
+	private static Map<String, String> treeString_GoTerm = new HashMap<String, String>();
+	private static Set<GoTerm> all_Terms = new HashSet<GoTerm>();
+	private static boolean pwaysRead = false;
+	private static Map<String,GoTerm> id_Term= new HashMap<String,GoTerm>();
+	
 
 	/**
 	 * This program shows the distribution of GO Terms. It also shows how much
@@ -88,7 +92,11 @@ public class GoTermDistributionGUI {
 		JPanel canvasButtons = new JPanel();
 		
 		// create the tree, using the TreeReader method
-		DefaultMutableTreeNode top = TreeReader(args[0],args[1],args[2],args[3]);
+		final String pgdb = args[1];
+		final String pathwayroot = args[2];
+		final String martexport = args[3];
+		
+		DefaultMutableTreeNode top = TreeReader(args[0],pgdb,pathwayroot,martexport);
 		final JTree tree = new JTree(top);
 		
 		// set the selectionmodel (only one branch can be selected at one time)
@@ -110,13 +118,44 @@ public class GoTermDistributionGUI {
 		
 		// add the functionality to the calculate button
 		calcButton.addActionListener(
-				new ActionListener(){
+				new ActionListener() {
 					public void actionPerformed(ActionEvent ae){
+						
+						// read all the pathways, extract the genId and show in the console that it happened
+						// to read all these genid's from pathways, the method getSetGenIdsInPways from the 
+						// GenidPway class is used.
+						if (!pwaysRead){
+							try
+							{
+								genidInPway = GenidPway.getGenidPways(pgdb, pathwayroot);
+							}
+							catch(DataException e)
+							{
+								System.out.println("Error!");
+							}
+							catch(ConverterException e)
+							{
+								System.out.println("Error!");
+							}
+							
+							System.out.println("Pathways read");
+							
+							all_Terms = addGenes(all_Terms,martexport);
+							
+							pwaysRead = true;
+							
+							for (GoTerm term: all_Terms){
+								id_Term.put(term.getId(), term);
+							}
+							
+						}
+						
 						// get the string which represent the name of the branch selected
 						String selectedString = tree.getSelectionPath().getLastPathComponent().toString();
 						
 						// get the goterm belonging to the branch
-						GoTerm goterm = treeString_GoTerm.get(selectedString);
+						String gotermId = treeString_GoTerm.get(selectedString);
+						GoTerm goterm = id_Term.get(gotermId);
 						
 						// get the number of genes in this term
 						String m = goterm.getNumberOfGenes()+"";
@@ -198,22 +237,24 @@ public class GoTermDistributionGUI {
 			roots=GoReader.getRoots(terms);
 			
 			// add the genes to the terms, using the addGenes method
-			terms = addGenes(terms,martexport);
-			
-			// read all the pathways, extract the genId and show in the console that it happened
-			// to read all these genid's from pathways, the method getSetGenIdsInPways from the 
-			// GenidPway class is used.
-			genidInPway = GenidPway.getGenidPways(pgdb,pathwayroot);
-			System.out.println("Pathways read");
+			//terms = addGenes(terms,martexport);
 			
 			// now the genes and goterms are read; make the tree
 			top = makeTree(roots, terms, top);
-
+			
+			all_Terms = terms;
+			
 			// return this tree
 			return top;
 		}
 		
-		
+		public static void printMemUsage (String msg)
+		{
+			Runtime runtime = Runtime.getRuntime();
+			runtime.gc();
+			long mem = runtime.totalMemory() - runtime.freeMemory();
+			System.out.println((mem >> 20) + "Mb used: " + msg);
+		}
 		
 		
 		
@@ -227,11 +268,12 @@ public class GoTermDistributionGUI {
 				// *****[create a new parent branch]*****
 				
 				// get the number of genes in this term
-				String m = parent.getNumberOfGenes()+"";
+				String m = "m";
+				//String m = parent.getNumberOfGenes()+"";
 				
 				// get the number of genes the term overlaps with all the pathway genes
-				String n = parent.getOverlapGenes(genidInPway)+"";
-				//String n = "n"; // uncomment to only show "n" instead of the number.
+				//String n = parent.getOverlapGenes(genidInPway)+"";
+				String n = "n"; // uncomment to only show "n" instead of the number.
 				
 				// create the string that has to be printed when the branch is showed
 				String treeString = parent.getName() + " " + "("+n+"/"+m+")";
@@ -240,7 +282,7 @@ public class GoTermDistributionGUI {
 				DefaultMutableTreeNode par = new DefaultMutableTreeNode(treeString);
 				
 				// add this string and its corresponding GoTerm to the map
-				treeString_GoTerm.put(treeString, parent);
+				treeString_GoTerm.put(treeString, parent.getId());
 				
 				// add the new parent to the top structure
 				top.add(par);
@@ -256,7 +298,7 @@ public class GoTermDistributionGUI {
 					// the method is restricted to 10 levels; this is done because
 					// a Heap Space error occures when you create all levels.
 					// this has to be fixed!
-					if (par.getLevel() < 11){
+					//if (par.getLevel() < 11){
 						
 						// create a new tree
 						DefaultMutableTreeNode childrenNodes = makeTree(children, allTerms, par);
@@ -269,7 +311,7 @@ public class GoTermDistributionGUI {
 							// this error occures every thime we go to a lower level.
 							System.out.println("child is ancestor"); 
 						}	
-					}
+					//}
 				}
 			}
 			// return the tree

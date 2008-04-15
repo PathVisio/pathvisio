@@ -35,7 +35,10 @@ import javax.swing.tree.TreeSelectionModel;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 
-
+/**
+ * This program shows the distribution of GO Terms. It also shows how much
+ * genes it contains; and how much of these genes are found in the pathways.
+ */
 public class GoTermDistributionGUI {
 	
 	// make 2 private variables. The first one a set of strings "genidInPway",
@@ -52,9 +55,7 @@ public class GoTermDistributionGUI {
 	
 
 	/**
-	 * This program shows the distribution of GO Terms. It also shows how much
-	 * genes it contains; and how much of these genes are found in the pathways.
-	 * 
+	 *  
 	 * The program requires 4 args:
 	 * Gene ontology database (e.g. "C:\\gene_ontology.obo")
 	 * Pathway database (e.g. "C:\\databases\\Rn_39_34i.pgdb")

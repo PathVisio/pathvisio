@@ -159,14 +159,15 @@ public class GoTermDistributionGUI {
 						GoTerm goterm = id_Term.get(gotermId);
 						
 						// get the number of genes in this term
-						String m = getM(goterm)+"";
+						int m = getM(goterm);
 						
 						// get the number of genes the term overlaps with all the pathway genes
-						String n = getN(goterm,genidInPway)+"";
+						int n = getN(goterm,genidInPway);
 						
 						// create a string with the goterm name, and the n and m values 
 						// (see above) and print it to the console
-						String calcString = goterm.getName() + " " + "("+n+"/"+m+")";
+						double percentage = ((double)n/(double)m)*100;
+						String calcString = goterm.getName() + " " + "("+n+"/"+m+") ("+String.format("%3.1f", percentage)+"%)";
 						
 						
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();

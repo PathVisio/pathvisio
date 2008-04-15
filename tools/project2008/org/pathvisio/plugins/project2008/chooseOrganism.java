@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -13,179 +14,146 @@ import org.pathvisio.model.ConverterException;
 
 public class chooseOrganism {
 	
-	public static void main(String[] args) {
-		
-		/**
-		* in the String[] args, 5 arguments are given:
-		* in example:
-		* "C:\\databases\\"
-		* "C:\pathways"
-		* "C:\\result.html"
-		* "C:\\gene_ontology.obo"
-		* "C:\\mart_export1.txt"
-		* 
-		* The first one is the directory that contains the databases.
-		* The second one is the directory that contains the pathway cache.
-		* The third one is the filename (note the html extension) of where the results are stored.
-		*/ 
 	
-		String[]arg=new String[5];
+	
+	static private class OrganismDialog
+	{
+		public JPanel canvasButtons(){
 			
-		/** 
-		 * Check if the String[] args is given, and make Files containing the directories to
-		 * the pathways and databases 
-		 */
-		try {
-			arg[0] = new String(args[0]);
-			arg[1] = new String(args[1]);
-			arg[2] = new String(args[2]);
-			arg[3] = new String(args[3]);
-			arg[4] = new String(args[4]);
-			final String[]arguments=arg;
-						  
-			javax.swing.SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					/**
-					 * Function:
-					 * 0 = showOverlapGUI
-					 * 1 = ShowPercentageGUI
-					 * 2 = GoTermDistribution
-					 */
+			// create a new panel
+			JPanel canvasButtons = new JPanel();
+			
+			// create two new buttons, using the makeButton method
+			JButton CeButton = showMenuGUI.makeBigButton("Caenorhabditis elegans");
+			JButton DrButton = showMenuGUI.makeBigButton("Drosophila melanogaster");
+			JButton HsButton = showMenuGUI.makeBigButton("Homo sapiens");
+			JButton MmButton = showMenuGUI.makeBigButton("Mus musculus");
+			JButton RnButton = showMenuGUI.makeBigButton("Rattus norvegicus");
+			JButton ScButton = showMenuGUI.makeBigButton("Saccharomyces cerevisiae");
+			
+			// add the functionality to the Pathway overlap Matrix button
+			CeButton.addActionListener(
+					new ActionListener(){
+						public void actionPerformed(ActionEvent ae){
+							System.out.println("CE");
+							org=0;
+							
+							}
+						}
+					);
+			
+			// add the functionality to the Pathway overlap Matrix button
+			DrButton.addActionListener(
+					new ActionListener(){
+						public void actionPerformed(ActionEvent ae){
+							System.out.println("DR");
+							org=1;
+							}
+						}
+					);
+			
+			// add the functionality to the Pathway overlap Matrix button
+			HsButton.addActionListener(
+					new ActionListener(){
+						public void actionPerformed(ActionEvent ae){
+							System.out.println("HS");
+							org=2;
+							}
+						}
+					);
+			
+			// add the functionality to the Pathway overlap Matrix button
+			MmButton.addActionListener(
+					new ActionListener(){
+						public void actionPerformed(ActionEvent ae){
+							System.out.println("MM");
+							org=3;
+							}
+						}
+					);
+			
+			// add the functionality to the Pathway overlap Matrix button
+			RnButton.addActionListener(
+					new ActionListener(){
+						public void actionPerformed(ActionEvent ae){
+							System.out.println("RN");
+							org=4;
+							
+							}
+						}
+					);
+			
+			// add the functionality to the Pathway overlap Matrix button
+			ScButton.addActionListener(
+					new ActionListener(){
+						public void actionPerformed(ActionEvent ae){
+							System.out.println("SC");
+							org=5;
+							
+							}
+						}
+					);
 
-					getOrganism(0,arguments);
-				}
-			});
-
+			// add the buttons to the canvas
+			canvasButtons.add(CeButton);
+			canvasButtons.add(DrButton);
+			canvasButtons.add(HsButton);
+			canvasButtons.add(MmButton);
+			canvasButtons.add(RnButton);
+			canvasButtons.add(ScButton);
+			
+			return canvasButtons;
 		}
-		catch(ArrayIndexOutOfBoundsException e) {
-			System.out.println("String[] args not given!");
-			System.exit(0);
+		
+		public int org =-1;
+	}
+	
+	
+	
+	public static void getOrganism(){
+		
+		final JDialog dialog = new JDialog((JFrame)null, true);
+		
+		dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		
+		OrganismDialog dlg = new OrganismDialog();
+		JPanel canvasButtons=dlg.canvasButtons();
+		JPanel menuCloseButtons=menuCloseButtons(dialog);
+		
+		dialog.add(canvasButtons, BorderLayout.CENTER);
+		dialog.add(menuCloseButtons, BorderLayout.SOUTH);
+		
+		dialog.setSize(400,300);
+		
+		dialog.setVisible(true);
+		
+		if(dlg.org>=0){
+			String[] kindOfOrganism = getOrganismInfo (dlg.org);
+			System.out.println ("organisme = "+kindOfOrganism);
 		}
+		
 
-	}
 	
-	public static void getOrganism(int function,String[]arguments){
-		
-		//JPanel canvasLabel=new JPanel();
-		JPanel canvasButtons=canvasButtons(function,arguments);
-		JPanel menuCloseButtons=menuCloseButtons(arguments);
-		
-		// create a new frame
-		JFrame fr = new JFrame("Make a choice");
-    
-		// When click on exit, exit the frame
-		fr.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-	
-		// set the size of the frame
-		fr.setSize(400,300);
-		
-		// add the canvas to the frame
-		fr.add(canvasButtons,BorderLayout.CENTER);
-		fr.add(menuCloseButtons,BorderLayout.SOUTH);
-
-		// Show the frame
-		fr.setVisible(true);
 	}
 	
 	
 	
-	public static JPanel canvasButtons(final int function,final String[]arguments){
-		
-		// create a new panel
-		JPanel canvasButtons = new JPanel();
-		
-		// create two new buttons, using the makeButton method
-		JButton CeButton = showMenuGUI.makeBigButton("Caenorhabditis elegans");
-		JButton DrButton = showMenuGUI.makeBigButton("Drosophila melanogaster");
-		JButton HsButton = showMenuGUI.makeBigButton("Homo sapiens");
-		JButton MmButton = showMenuGUI.makeBigButton("Mus musculus");
-		JButton RnButton = showMenuGUI.makeBigButton("Rattus norvegicus");
-		JButton ScButton = showMenuGUI.makeBigButton("Saccharomyces cerevisiae");
-		
-		// add the functionality to the Pathway overlap Matrix button
-		CeButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						goToFunction(0,function,arguments);
-						
-						}
-					}
-				);
-		
-		// add the functionality to the Pathway overlap Matrix button
-		DrButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						goToFunction(1,function,arguments);
-						
-						}
-					}
-				);
-		
-		// add the functionality to the Pathway overlap Matrix button
-		HsButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						goToFunction(2,function,arguments);
-						
-						}
-					}
-				);
-		
-		// add the functionality to the Pathway overlap Matrix button
-		MmButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						goToFunction(3,function,arguments);
-						
-						}
-					}
-				);
-		
-		// add the functionality to the Pathway overlap Matrix button
-		RnButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						goToFunction(4,function,arguments);
-						
-						}
-					}
-				);
-		
-		// add the functionality to the Pathway overlap Matrix button
-		ScButton.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						goToFunction(5,function,arguments);
-						
-						}
-					}
-				);
-
-		// add the buttons to the canvas
-		canvasButtons.add(CeButton);
-		canvasButtons.add(DrButton);
-		canvasButtons.add(HsButton);
-		canvasButtons.add(MmButton);
-		canvasButtons.add(RnButton);
-		canvasButtons.add(ScButton);
-		
-		return canvasButtons;
-	}
 	
-	public static JPanel menuCloseButtons(final String[] arguments){
+	
+	public static JPanel menuCloseButtons(final JDialog dialog){
 	  	  // create a new panel
 	  	   JPanel canvasButtons = new JPanel();
 	  		
 	  	  // create two new buttons, using the makeButton method
-	  		JButton menuButton = GoTermDistributionGUI.makeButton("menu");
-	  		JButton closeButton = GoTermDistributionGUI.makeButton("Close");
+	  		JButton menuButton = GoTermDistributionGUI.makeButton("Back to menu");
+	  		final JButton closeButton = GoTermDistributionGUI.makeButton("Close");
 	  		
 	  		// add the functionality to the close button
 	  		closeButton.addActionListener(
 	  				new ActionListener(){
 	  					public void actionPerformed(ActionEvent ae){
 	  						System.exit(0);
+	  						
 	  						}
 	  					}
 	  				);
@@ -194,7 +162,7 @@ public class chooseOrganism {
 	  		menuButton.addActionListener(
 	  				new ActionListener(){
 	  					public void actionPerformed(ActionEvent ae){
-	  						showMenuGUI.createAndShowMenuGUI(arguments);
+	  						dialog.dispose();
 	  						System.out.println("Go to Menu");
 	  						}
 	  					}
@@ -208,32 +176,12 @@ public class chooseOrganism {
 	    }
 	
 	
-	public static void goToFunction(int organism,int function,String[]arguments){
-		
-		String[] kindOfOrganism = getOrganismInfo (organism);
-		
-		if(function==0){
-			showOverlapGUI.createAndShowOverlapGUI(arguments,kindOfOrganism);
-		}
-		if(function==1){
-			ShowPercentageGUI.createAndShowPercentageGUI(arguments,kindOfOrganism);
-		}
-		if(function==2){
-			try {
-				GoTermDistributionGUI.goTermDistribution(arguments,kindOfOrganism);
-			} catch (DataException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ConverterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	
 
 		
 		
-	}
-	//String[] kindOfOrganism = getOrganimsInfo (int organism)
+	
+	
 	
 	public static String[]getOrganismInfo (int organism){
 		

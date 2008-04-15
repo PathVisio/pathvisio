@@ -71,7 +71,7 @@ public class showMenuGUI extends JPanel {
 	
 	/**
 	 * In the method 'createAndShowMenuGUI' the MenuGUI is created and shown. 
-	 * The buttons on the menu are created using the methogs 'canvasButtond' and 
+	 * The buttons on the menu are created using the methods 'canvasButtond' and 
 	 * 'canvasCloseButton'
 	 * @param arguments
 	 */

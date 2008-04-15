@@ -21,12 +21,23 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * class which contains a method to get filenames Listings.
+ */
 public class FileUtils {
-	
-	/** in this method, a list of files is constructed. The list contains all the files
-	*   with a given extension in a folder and all its subfolders. The property's you
-	*   have to enter are path; a File containing the path that has to be searched,
-	*   and extension; a String containing the extension where has to be searched for.
+
+	/** In this method, a list of filenames is constructed. The list contains all the files
+	*   with a given extension in a folder and all its sub-folders (and sub-sub-folders, etc.
+	*   The method is recursive). The properties you have to enter are "path"; 
+	*   a File containing the path that has to be searched,
+	*   and "extension"; a String containing the extension where has to be searched for.
+	*   
+	*   e.g. 
+	*   File path = new File("C:\\Windows");
+	*   getFileListing(path, ".txt");
+	*   
+	*   returns something like
+	*   "C:\\Windows\\readme.txt","C:\\Windows\\hoi.txt", "C:\\Windows\\System\\readme.txt", etc.
 	*/
 	static public List<File> getFileListing(File path, String extension){
 		// create a new List of Files

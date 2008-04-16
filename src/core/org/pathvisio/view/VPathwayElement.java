@@ -269,10 +269,10 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		if (d == this)
 			return 0;
 		
-		int a, b;
-
+		// for two Graphics-type objects, sort depending on z-order
 		if (this instanceof Graphics && d instanceof Graphics)
 		{
+			int a, b;
 			// if only one of two is selected (XOR):
 			
 			a = ((Graphics)this).gdata.getZOrder();
@@ -286,18 +286,25 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 			else
 				return a - b;
 		}
+		/*
+		 * for mixed objects, sort depending on Object type
+		 * 
+		 * Handle on top
+		 * other non-Graphics in the middle (VPoint and others)
+		 * Graphics at the bottom
+		 */ 
 		else
 		{
-			if (this instanceof Graphics)
+			int alevel = (this instanceof Graphics ? 1 : 0) + 
+							(this instanceof Handle ? 2 : 0);
+			int blevel = (d instanceof Graphics ? 1 : 0) +
+							(d instanceof Handle ? 2 : 0);			
+			if (alevel == blevel)
 			{
-				return -1;
+				// objects are the same type. default ordering
+				return hashCode() - d.hashCode();
 			}
-			else if (d instanceof Graphics)
-			{
-				return 1;
-			}
-			// objects are both Graphics. ordering fixed
-			return hashCode() - d.hashCode();
+			else return (alevel - blevel);
 		}
 	}
 	

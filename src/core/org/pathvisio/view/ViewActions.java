@@ -471,7 +471,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public OrderTopAction() 
 		{
 			putValue(NAME, "Bring to front");
-			putValue(SHORT_DESCRIPTION, "Bring the element in front of all other elements of the same type");
+			putValue(SHORT_DESCRIPTION, "Bring the element in front of all other elements");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
 		}
 		
@@ -493,8 +493,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		private static final long serialVersionUID = 1L;
 		public OrderBottomAction() 
 		{
-			putValue(NAME, "Send to back");
-			putValue(SHORT_DESCRIPTION, "Send the element behind all other elements of the same type");
+			putValue(NAME, "Send to Back");
+			putValue(SHORT_DESCRIPTION, "Send the element behind all other elements");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
 		}
 		
@@ -517,9 +517,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		private static final long serialVersionUID = 1L;
 		public OrderUpAction() 
 		{
-			putValue(NAME, "Move up");
-			putValue(SHORT_DESCRIPTION, "Move up");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.CTRL_DOWN_MASK));
+			putValue(NAME, "Bring Forward");
+			putValue(SHORT_DESCRIPTION, "Bring Forward");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.CTRL_DOWN_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -539,9 +539,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		private static final long serialVersionUID = 1L;
 		public OrderDownAction() 
 		{
-			putValue(NAME, "Move down");
-			putValue(SHORT_DESCRIPTION, "Move down");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.CTRL_DOWN_MASK));
+			putValue(NAME, "Send Backward");
+			putValue(SHORT_DESCRIPTION, "Send Backward");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.CTRL_DOWN_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {

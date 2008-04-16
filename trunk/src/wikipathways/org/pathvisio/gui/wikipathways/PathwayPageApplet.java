@@ -205,10 +205,13 @@ public class PathwayPageApplet extends JApplet {
 
 		fullScreenFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				wiki.exit(false, null);
+				if(wiki.exit(false, null)) {
+					fullScreenFrame.dispose();
+				}
 			}
 		});
 
+		fullScreenFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		fullScreenFrame.setVisible(true);
 		fullScreenFrame.setSize(800, 600);
 		fullScreenFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

@@ -491,8 +491,9 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	 * will not exit.
 	 * @param description The description to pass along to {@link #saveUI(String)}, may be null
 	 * @param alwaysSave Always save when there are changes, don't ask user
+	 * @return returns true when the editor exits, false if exit is aborted
 	 */
-	public void exit(boolean alwaysSave, String description) {
+	public boolean exit(boolean alwaysSave, String description) {
 		boolean doSave = alwaysSave;
 		try {
 			if(!doSave && hasChanged()) {
@@ -500,7 +501,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 				int answer = uiHandler.askCancellableQuestion(
 						"Save changes?", "Your pathway may have changed. Do you want to save?");
 				if(answer == UserInterfaceHandler.Q_CANCEL) {
-					return;
+					return false;
 				} else {
 					doSave = answer == UserInterfaceHandler.Q_TRUE;
 				}
@@ -513,6 +514,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		} catch(Exception ex) {
 			Logger.log.error("Unable to save pathway", ex);
 			JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		if(mayExit()) {	
 			Logger.log.trace("MayExit: " + mayExit());
@@ -526,7 +528,9 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			} catch (MalformedURLException ex) {
 				Logger.log.error("Unable to refresh pathway page", ex);
 			}
+			return true;
 		}
+		return false;
 	}
 
 	protected void saveToWiki(String description) throws XmlRpcException, IOException, ConverterException {

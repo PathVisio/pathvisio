@@ -580,6 +580,8 @@ public class VPathway implements PathwayListener
 	public void mouseMove(MouseEvent ve)
 	{
 		boolean altPressed = ve.isKeyDown(MouseEvent.M_ALT);
+		boolean ctrlPressed = ve.isKeyDown(MouseEvent.M_CTRL);
+		
 		snapToAngle = ve.isKeyDown(MouseEvent.M_SHIFT);
 		
 		// If draggin, drag the pressed object
@@ -603,7 +605,7 @@ public class VPathway implements PathwayListener
 			vPreviousX = ve.getX();
 			vPreviousY = ve.getY();
 
-			if (pressedObject instanceof Handle && altPressed
+			if (pressedObject instanceof Handle && (altPressed || ctrlPressed)
 					&& newTemplate == null
 					&& ((Handle) pressedObject).parent instanceof VPoint)
 			{

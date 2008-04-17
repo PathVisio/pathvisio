@@ -151,7 +151,7 @@ public class Line extends Graphics
 		}
 	}
 	
-	private void drawHead(Graphics2D g, ArrowShape head, Color c)
+	protected void drawHead(Graphics2D g, ArrowShape head, Color c)
 	{
 		if(head != null)
 		{
@@ -398,8 +398,6 @@ public class Line extends Graphics
 	}
 	
 	protected void destroy() {
-		//don't call super.destroy(), this will destroy handles of VPoints
-		//which may be used by other lines
 		super.destroy();
 		
 		for(VPoint p : points) {

@@ -20,16 +20,15 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.pathvisio.gui.swing.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
+import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineType;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
@@ -86,7 +85,29 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		}
 		
 		if((e instanceof Line)) {
+			final Line line = (Line)e;
+			
 			menu.add(vActions.addAnchor);
+			JMenu typeMenu = new JMenu("Line type");
+			
+			ButtonGroup buttons = new ButtonGroup();
+			
+			ActionListener listener = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					line.getPathwayElement().setConnectorType(
+							ConnectorType.fromName(e.getActionCommand())
+					);			
+				}
+			};
+			for(ConnectorType t : ConnectorType.getValues()) {
+				JRadioButtonMenuItem mi = new JRadioButtonMenuItem(t.getName());
+				mi.setActionCommand(t.getName());
+				mi.setSelected(t.equals(line.getPathwayElement().getConnectorType()));
+				mi.addActionListener(listener);
+				typeMenu.add(mi);
+				buttons.add(mi);
+			}
+			menu.add(typeMenu);
 		}
 		
 		if((e instanceof VAnchor)) {

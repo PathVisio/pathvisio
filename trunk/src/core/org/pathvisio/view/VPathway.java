@@ -195,7 +195,7 @@ public class VPathway implements PathwayListener
 			result = new Shape(this, o);
 			break;
 		case ObjectType.LINE:
-			result = new Line(this, o);
+			result = new Connector(this, o);
 			break;
 		case ObjectType.MAPPINFO:
 			InfoBox mi = new InfoBox(this, o);

@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
@@ -49,6 +50,8 @@ public class Handle extends VPathwayElement
 	public static final int DIRECTION_ROT = 3;
 	public static final int DIRECTION_XY = 4;
 	public static final int DIRECTION_MINXY = 5;
+	public static final int DIRECTION_SEGMENT_HORIZONTAL = 6;
+	public static final int DIRECTION_SEGMENT_VERTICAL = 7;
 	
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
@@ -159,6 +162,11 @@ public class Handle extends VPathwayElement
 		
 		if(direction == DIRECTION_ROT) {
 			g.setColor(Color.GREEN);
+		} else if (
+				direction == DIRECTION_SEGMENT_HORIZONTAL || 
+				direction == DIRECTION_SEGMENT_VERTICAL)
+		{
+			g.setColor(new Color(0, 128, 255));
 		} else {
 			g.setColor(Color.YELLOW);
 		}
@@ -193,11 +201,11 @@ public class Handle extends VPathwayElement
 			Point v = new Point(0,0);
 			Rectangle2D b = parent.getVBounds();
 			Point base = new Point (b.getCenterX(), b.getCenterY());
-			if (direction == DIRECTION_X)
+			if (direction == DIRECTION_X || direction == DIRECTION_SEGMENT_VERTICAL)
 			{
 				v = new Point (1, 0);
 			}
-			else if	(direction == DIRECTION_Y)
+			else if	(direction == DIRECTION_Y || direction == DIRECTION_SEGMENT_HORIZONTAL)
 			{
 				v = new Point (0, 1);
 			}
@@ -236,6 +244,15 @@ public class Handle extends VPathwayElement
 		case DIRECTION_ROT:
 			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
+			break;
+		case DIRECTION_SEGMENT_HORIZONTAL:
+		case DIRECTION_SEGMENT_VERTICAL:
+			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
+					WIDTH + sw, HEIGHT + sw);
+			
+			s = AffineTransform.getRotateInstance(
+					Math.PI / 4, getVCenterX(), getVCenterY()
+			).createTransformedShape(s);
 			break;
 		default:
 			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 

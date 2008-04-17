@@ -452,9 +452,25 @@
 										default="ReceptorRound" type="xsd:string" />
 								</xsd:complexType>
 							</xsd:element>
+							<xsd:element name="Segment" minOccurs="0" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:attribute name="length"
+										type="xsd:float" use="required" />
+									<xsd:attribute name="direction" use="required">
+										<xsd:simpleType>
+											<xsd:restriction base="xsd:string">
+												<xsd:enumeration value="Horizontal"/>
+												<xsd:enumeration value="Vertical"/>
+											</xsd:restriction>
+										</xsd:simpleType>
+									</xsd:attribute>
+								</xsd:complexType>
+							</xsd:element>
 						</xsd:sequence>
 						<xsd:attribute name="Color"
 							type="gpml:ColorType" default="Black" />
+						<xsd:attribute name="ConnectorType"
+							type="xsd:string" use="optional" default="Straight"/>
 					</xsd:complexType>
 				</xsd:element>
 

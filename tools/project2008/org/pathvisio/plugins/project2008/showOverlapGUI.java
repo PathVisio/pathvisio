@@ -77,7 +77,7 @@ public class showOverlapGUI{
 	  String dbBaseDir = arguments[0];
 	  String pwBaseDir = arguments[1];
      
-	  JFrame f = new JFrame("Row Header Test");
+	  JFrame f = new JFrame("Pathway overlap table");
      
 	  // When click on exit, exit the frame
 	  f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

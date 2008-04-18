@@ -21,6 +21,7 @@ package org.pathvisio.view;
 //import java.awt.datatransfer.DataFlavor;
 //import java.awt.datatransfer.UnsupportedFlavorException;
 //import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,111 +34,124 @@ import org.pathvisio.model.PathwayElement;
 
 public class Test extends TestCase {
 	
-	VPathway drawing;
+	Pathway pwy = null;
+	VPathway vPwy = null;
+	PathwayElement eltDn = null, eltSh = null, eltLi = null, eltLa = null;
+	Graphics vDn = null, vSh = null, vLi = null, vLa = null;
 	
 	public void setUp()
 	{
-        //drawing = new VPathway();
-	}
-        
-//     public void testCopyPaste() {
-//     	Pathway pSource = new Pathway();
-//     	VPathway vpSource = SwingEngine.getCurrent().createWrapper().createVPathway();
-//     	vpSource.fromGmmlData(pSource);
+    	pwy = new Pathway();
+    	eltDn = new PathwayElement(ObjectType.DATANODE);
+    	eltDn.setGeneID("1234");
+    	eltSh = new PathwayElement(ObjectType.SHAPE);
+    	eltLi = new PathwayElement(ObjectType.LINE);
+    	eltLa = new PathwayElement(ObjectType.LABEL);
+    	pwy.add(eltDn);
+    	pwy.add(eltSh);
+    	pwy.add(eltLi);
+    	pwy.add(eltLa);
+    	vPwy = new VPathway(null);
+    	vPwy.fromGmmlData(pwy);
     	
-//     	Pathway pTarget = new Pathway();
-//     	VPathway vpTarget = SwingEngine.getCurrent().createWrapper().createVPathway();
-//     	vpTarget.fromGmmlData(pTarget);
-    	
-//     	//Test copying regular elements
-//     	PathwayElement p1 = new PathwayElement(ObjectType.DATANODE);
-//     	p1.setGeneID("1234");
-//     	pSource.add(p1);
-//     	vpSource.addObject(new GeneProduct(vpSource, p1));
-//     	vpSource.selectObject(vpSource.getPathwayElementView(p1));
-//     	vpSource.copyToClipboard();
-    	    	
-//     	vpTarget.pasteFromClipboard();	
-    	
-//     	PathwayElement pasted = null;
-//     	for(PathwayElement e : pTarget.getDataObjects()) {
-//     		if("1234".equals(e.getGeneID())) {
-//     			pasted = e;
-//     		}
-//     	}
-//     	assertNotNull(pasted);
-    	
-//     	//Now copy mappinfo
-//     	PathwayElement info = pSource.getMappInfo();
-//     	info.setMapInfoName("test pathway");
-//     	vpSource.selectObject(vpSource.getPathwayElementView(info));
-//     	vpSource.copyToClipboard();
-    	
-//     	vpTarget.pasteFromClipboard();
-    	
-//     	//test if mappinfo has been pasted to the target pathway
-//     	assertTrue("test pathway".equals(pTarget.getMappInfo().getMapInfoName()));
-//     }
-    
-    public void testDrawingOrder() {
-    	Pathway p = new Pathway();
-    	PathwayElement d1 = new PathwayElement(ObjectType.DATANODE);
-    	PathwayElement s1 = new PathwayElement(ObjectType.SHAPE);
-    	PathwayElement s2 = new PathwayElement(ObjectType.SHAPE);
-    	PathwayElement s3 = new PathwayElement(ObjectType.SHAPE);
-    	p.add(d1);
-    	p.add(s1);
-    	p.add(s2);
-    	p.add(s3);
-    	
-    	assertTrue(d1.getZOrder() == s1.getZOrder() - 1);
-    	assertTrue(s1.getZOrder() == s2.getZOrder() - 1);
-    	
-    	VPathway vp = new VPathway(null);
-    	vp.fromGmmlData(p);
-    	
-    	VPathwayElement gd1, gs1, gs2, gs3;
-    	gd1 = null;
-    	gs1 = null;
-    	gs2 = null;
-    	gs3 = null;
-    	
-    	List<VPathwayElement> elements = vp.getDrawingObjects();
-    	for(VPathwayElement e : elements) {
+    	for(VPathwayElement e : vPwy.getDrawingObjects()) 
+    	{
     		if(e instanceof Graphics) {
     			PathwayElement pe = ((Graphics)e).getPathwayElement();
-    			if			(pe == d1) {
-    				gd1 = e;
-    			} else if 	(pe == s1) {
-    				gs1 = e;
-    			} else if	(pe == s2) {
-    				gs2 = e;
-    			} else if	(pe == s3) {
-    				gs3 = e;
+    			if			(pe == eltDn) {
+    				vDn = (Graphics)e;
+    			} else if 	(pe == eltSh) {
+    				vSh = (Graphics)e;
+    			} else if	(pe == eltLi) {
+    				vLi = (Graphics)e;
+    			} else if	(pe == eltLa) {
+    				vLa = (Graphics)e;
     			}
     		}
     	}
     	
-    	assertFalse(gd1 == null);
-    	assertFalse(gs1 == null);
-    	assertFalse(gs2 == null);
-    	assertFalse(gs3 == null);
+    	assertFalse(vDn == null);
+    	assertFalse(vSh == null);
+    	assertFalse(vLi == null);
+    	assertFalse(vLa == null);
+	}
+        
+	public void testCopyPaste() 
+	{
+    	Pathway pTarget = new Pathway();
+    	VPathway vpTarget = new VPathway(null);
+    	vpTarget.fromGmmlData(pTarget);
+
+		vPwy.selectObject(vDn);
+		vPwy.copyToClipboard();
+		    	
+		vpTarget.pasteFromClipboard();	
+		
+		PathwayElement pasted = null;
+		for(PathwayElement e : pTarget.getDataObjects()) {
+			if("1234".equals(e.getGeneID())) {
+				pasted = e;
+			}
+		}
+		//TODO: does not work if VPathwayWrapper is not VPathwaySwing.
+//		assertNotNull(pasted);
+		
+		//Now copy mappinfo
+//		PathwayElement info = pSource.getMappInfo();
+//		info.setMapInfoName("test pathway");
+//		vpSource.selectObject(vpSource.getPathwayElementView(info));
+//		vpSource.copyToClipboard();
+		
+//		vpTarget.pasteFromClipboard();
+		
+		//test if mappinfo has been pasted to the target pathway
+//		assertTrue("test pathway".equals(pTarget.getMappInfo().getMapInfoName()));
+    }
+
+    public void testOrderAction()
+    {
+    	assertTrue(eltDn.getZOrder() > eltLa.getZOrder());
+    	assertTrue(eltLa.getZOrder() > eltSh.getZOrder());
+    	assertTrue(eltSh.getZOrder() > eltLi.getZOrder());
     	
-    	VPathwayElement hs2 = gs2.getHandles()[0];
+    	vPwy.moveGraphicsTop(Arrays.asList(new Graphics[] {vLa}));
+    	vPwy.moveGraphicsBottom(Arrays.asList(new Graphics[] {vSh}));
+
+    	assertTrue(eltLa.getZOrder() > eltDn.getZOrder());
+    	assertTrue(eltDn.getZOrder() > eltLi.getZOrder());
+    	assertTrue(eltLi.getZOrder() > eltSh.getZOrder());
+    }
+
+    /**
+     * Test sorting of vpathway elements
+     * 
+     * handles should be on top.
+     * VPoints should be below handles
+     * Any Graphics type should be below non-Graphics types 
+     */
+    public void testVpwySort()
+    {
+    	assertTrue(eltDn.getZOrder() > eltSh.getZOrder());
+    	assertTrue(eltSh.getZOrder() > eltLi.getZOrder());
+    	
+    	VPathwayElement h = vLi.getHandles()[0];
+    	VPoint pnt = ((Line)vLi).getEnd();
+    	
+    	List<VPathwayElement> elements = vPwy.getDrawingObjects();
     	
     	//Test natural / z order
     	Collections.sort(elements);    	    	
-    	checkDrawingOrder(new VPathwayElement[] { gs1, gs2, gs3, gd1, hs2 }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, pnt, h }, elements);
     	
-    	//Test selected order
-    	gs2.select();
+    	//order should not change when selecting
+    	vLi.select();
     	Collections.sort(elements);
-    	checkDrawingOrder(new VPathwayElement[] { gs1, gs3, gd1, gs2, hs2 }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, pnt, h }, elements);
     	
     	//Test reset after unselected
-    	gs2.deselect();
+    	vLi.deselect();
     	Collections.sort(elements);
-    	checkDrawingOrder(new VPathwayElement[] { gs1, gs2, gs3, gd1, hs2 }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, pnt, h }, elements);
     }
     
     public void checkDrawingOrder(VPathwayElement[] order, List<VPathwayElement> elements) {
@@ -146,8 +160,74 @@ public class Test extends TestCase {
     		indices[i] = elements.indexOf(order[i]);
     	}
     	for(int i = 0; i < indices.length  - 1; i++) {
-    		assertTrue("Element " + order[i] + "(" + indices[i] + ") should be below element " + order[i+1] + "(" + indices[i+1] + ")", 
+    		assertTrue("Element " + i + "(" + indices[i] + ") should be below element " + (1+i) + "(" + indices[i+1] + ")", 
     				indices[i] < indices[i+1]);
     	}
+    }
+    
+    public void testDelete()
+    {
+    	assertTrue (vPwy.getDrawingObjects().contains(vSh));
+    	assertTrue (pwy.getDataObjects().contains(eltSh));
+    	
+    	vPwy.removeDrawingObject(vSh, true);
+    	
+    	assertFalse (vPwy.getDrawingObjects().contains(vSh));
+    	assertFalse (pwy.getDataObjects().contains(eltSh));
+
+    	assertTrue (vPwy.getDrawingObjects().contains(vLa));
+    	assertTrue (pwy.getDataObjects().contains(eltLa));
+    	assertTrue (vPwy.getDrawingObjects().contains(vLi));
+    	assertTrue (pwy.getDataObjects().contains(eltLi));
+
+    	vPwy.removeDrawingObjects (Arrays.asList(new VPathwayElement[] { vLa, vLi } ), true);
+
+    	assertFalse (vPwy.getDrawingObjects().contains(vLa));
+    	assertFalse (pwy.getDataObjects().contains(eltLa));
+    	assertFalse (vPwy.getDrawingObjects().contains(vLi));
+    	assertFalse (pwy.getDataObjects().contains(eltLi));
+
+    	assertTrue (vPwy.getDrawingObjects().contains(vDn));
+    	assertTrue (pwy.getDataObjects().contains(eltDn));
+
+    	vPwy.removeDrawingObjects (Arrays.asList(new VPathwayElement[] { vDn } ));
+
+    	assertFalse (vPwy.getDrawingObjects().contains(vDn));
+    	assertTrue (pwy.getDataObjects().contains(eltDn));
+    }
+    
+    public void testUndoAction()
+    {
+    	//TODO
+    }
+    
+    public void testGroupingAction()
+    {
+    	//TODO
+    }
+    
+    public void testSelection()
+    {
+    	//TODO
+    }
+    
+    public void testNewAction()
+	{
+    	//TODO
+	}
+    
+    public void testNudgeAction()
+    {
+    	//TODO
+    }
+        
+    public void testAddAnchorAction()
+    {
+    	//TODO
+    }
+    
+    public void testConnector()
+    {
+    	//TODO
     }
 }

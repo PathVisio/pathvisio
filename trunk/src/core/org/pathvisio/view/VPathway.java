@@ -1164,7 +1164,7 @@ public class VPathway implements PathwayListener
 	/**
 	 * Add a new object to the drawing {@see VPathway#setNewGraphics(int)}
 	 * 
-	 * @param p
+	 * @param pwy
 	 *            The point where the user clicked on the drawing to add a new
 	 *            graphics
 	 */
@@ -1509,7 +1509,7 @@ public class VPathway implements PathwayListener
 	 * @param toRemove
 	 *            The List containing the objects to be removed
 	 */
-	public void removeDrawingObjects(ArrayList<VPathwayElement> toRemove)
+	public void removeDrawingObjects(List<VPathwayElement> toRemove)
 	{
 		removeDrawingObjects(toRemove, false);
 	}
@@ -1522,7 +1522,7 @@ public class VPathway implements PathwayListener
 	 * @param removeFromModel
 	 *            Whether to remove the model representation or not
 	 */
-	public void removeDrawingObjects(ArrayList<VPathwayElement> toRemove,
+	public void removeDrawingObjects(List<VPathwayElement> toRemove,
 			boolean removeFromModel)
 	{
 		for (VPathwayElement o : toRemove)

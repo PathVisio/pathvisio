@@ -520,7 +520,6 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			<batchtest>
 				<fileset dir="src/test">
 					<include name="**/Test.java"/>
-					<exclude name="**/view/Test.java"/>
 				</fileset>
 			</batchtest>
 		</junit>
@@ -578,7 +577,6 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<batchtest>
 		  <fileset dir="${ogretest.dir}/src">
 			<include name="**/Test.java"/>
-			<exclude name="**/view/Test.java"/>
 		  </fileset>
 		</batchtest>
 	  </junit>

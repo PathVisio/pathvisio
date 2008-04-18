@@ -295,10 +295,10 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		 */ 
 		else
 		{
-			int alevel = (this instanceof Graphics ? 1 : 0) +
+			int alevel = (!(this instanceof Graphics) ? 1 : 0) +
 						 	(this instanceof SelectionBox ? 2 : 0) +
 							(this instanceof Handle ? 4 : 0);
-			int blevel = (d instanceof Graphics ? 1 : 0) +
+			int blevel = (!(d instanceof Graphics) ? 1 : 0) +
 							(d instanceof SelectionBox ? 2 : 0) +
 							(d instanceof Handle ? 4 : 0);			
 			if (alevel == blevel)

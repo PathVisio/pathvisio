@@ -214,7 +214,7 @@ public class LinkChecker {
 		int countTrue = 0;       // counter for the true outcome (a xref is found)
         int countTotal = 0;      // counter for the total of xrefs
 		String percentage;       // string for the outcome
-		double percentagedouble; // double for the actual percentage
+		int percentageint; // int for the actual percentage
 		// Check each Xref from the xrefList if it is found in the database.
 		for (Xref xref:xrefList){
 			if (database.xrefExists(xref) == true){
@@ -224,8 +224,8 @@ public class LinkChecker {
 		}		
 		// Calculate the percentage of found references.
 		if (countTotal != 0){
-			percentagedouble = 100*countTrue/countTotal;
-			percentage = (percentagedouble+"% (of total: "+countTotal+" in ");
+			percentageint = Math.round(100*countTrue/countTotal);
+			percentage = (percentageint+"% (of total: "+countTotal+" in ");
 		}
 		else{
 			percentage = ("<font color=\"red\"><b>total: 0</b></font> (divide by zero) in ");

@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.view.ConnectorRestrictions.SegmentPreference;
+import org.pathvisio.view.LinAlg.Point;
 
 /**
  * ConnectorShape implementation for the elbow connector
@@ -321,5 +322,59 @@ TLW		2	3	2	1
 		int x = leftToRight ? restrictions.getStartSide() : restrictions.getEndSide();
 		int y = leftToRight ? restrictions.getEndSide() : restrictions.getStartSide();
 		return getNrWaypoints(x, y, z) + 2;
+	}
+
+	public Point2D fromLineCoordinate(ConnectorRestrictions restrictions,
+			double l) {
+		//Calculate the total segment length
+		Segment[] segments = getSegments(restrictions);
+		double length = 0;
+		for(Segment s : segments) {
+			length += Math.abs(s.getVLength());
+		}
+		
+		//Find the right segment
+		double end = 0;
+		Segment segment = null;
+		int i = 0;
+		for(Segment s : segments) {
+			double slength = Math.abs(s.getVLength());
+			end += slength;
+			double ls = (end - slength) / length;
+			double le = end / length;
+			if(l >= ls && l <= le) {
+				segment = s;
+				break;
+			}
+			i++;
+		}
+		if(segment == null) segment = segments[segments.length - 1];
+		
+		//Find the location on the segment
+		double slength = Math.abs(segment.getVLength());
+		double leftover = (l - (end - slength) / length) * length;
+		double relative = leftover / slength;
+		Point2D position = null;
+		if(segment.getAxis() == Segment.AXIS_X) {
+			position = new Point2D.Double(
+				segment.getVStart().getX() + segment.getVLength() * relative,
+				segment.getVStart().getY()
+			);
+		} else {
+			position = new Point2D.Double(
+				segment.getVStart().getX(),
+				segment.getVStart().getY() + segment.getVLength() * relative
+			);
+		}
+		return position;
+	}
+
+	public double toLineCoordinate(ConnectorRestrictions restrictions,
+			Point2D v) {
+		return LinAlg.toLineCoordinates(
+				new Point(restrictions.getStartPoint()),
+				new Point(restrictions.getEndPoint()),
+				new Point(v)
+		);
 	}
 }

@@ -81,4 +81,16 @@ public interface ConnectorShape {
 				return Segment.AXIS_Y;
 		}
 	}
+
+	/**
+	 * Translates a 1-dimensional line coordinate to a 2-dimensional
+	 * view coordinate.
+	 */
+	public Point2D fromLineCoordinate(ConnectorRestrictions restrictions, double l);
+	
+	/**
+	 * Translates a 2-dimensional view coordinate to a 1-dimensional
+	 * line coordinate.
+	 */
+	public double toLineCoordinate(ConnectorRestrictions restrictions, Point2D v);
 }

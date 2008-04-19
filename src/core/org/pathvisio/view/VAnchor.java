@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
@@ -88,18 +89,13 @@ public class VAnchor extends VPathwayElement {
 		double prevX = mx;
 		double prevY = my;
 		
-		double position = mAnchor.getPosition();
-		double vsx = line.getVStartX();
-		double vsy = line.getVStartY();
-		double vex = line.getVEndX();
-		double vey = line.getVEndY();
-
-		int dirx = vsx > vex ? -1 : 1;
-		int diry = vsy > vey ? -1 : 1;
-
-		mx = mFromV(vsx + dirx * Math.abs(vsx - vex) * position);
-		my = mFromV(vsy + diry * Math.abs(vsy - vey) * position);
-		handle.setMLocation(mx, my);
+		double lc = mAnchor.getPosition();
+			
+		Point2D position = line.vFromL(lc);
+		handle.setVLocation(position.getX(), position.getY());
+		
+		mx = mFromV(position.getX());
+		my = mFromV(position.getY());
 		
 		//Move graphRefs
 		if(!Double.isNaN(prevX) && !Double.isNaN(prevY)) {
@@ -113,16 +109,7 @@ public class VAnchor extends VPathwayElement {
 	
 	protected void adjustToHandle(Handle h, double vx, double vy) {
 		if(h == handle) {
-			//Project handle position on line and calculate relative position
-			Point start = new Point(line.getVStartX(), line.getVStartY());
-			Point end = new Point(line.getVEndX(), line.getVEndY());
-			Point direction = start.subtract(end);
-			Point projection = LinAlg.project(start, new Point(vx, vy), direction);
-			double lineLength = LinAlg.distance(start, end);
-			double anchorLength = LinAlg.distance(start, projection);
-			double position = anchorLength / lineLength;
-			if(position > 1) position = 1;
-			if(position < 0) position = 0;
+			double position = line.lFromV(new Point2D.Double(vx, vy));
 			mAnchor.setPosition(position);
 		}
 	}

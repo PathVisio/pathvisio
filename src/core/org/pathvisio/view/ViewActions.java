@@ -435,8 +435,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			putValue(SHORT_DESCRIPTION, "Undo last action");
 			putValue(SMALL_ICON, new ImageIcon(IMG_UNDO));
 
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_Z, java.awt.event.KeyEvent.CTRL_DOWN_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Z"));
 			Engine.getCurrent().addApplicationEventListener(this);
 			setEnabled(false);
 		}

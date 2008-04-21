@@ -327,15 +327,25 @@ public class Line extends Graphics implements ConnectorRestrictions
 		}
 	}
 
-	public Shape mayCross(Point2D point) {
-		VPathwayElement elm = canvas.getObjectAt(point);
+	/**
+	 * Be careful to prevent infinite recursion when
+	 * Line.getVOutline triggers recalculation of a connector.
+	 * 
+	 * For now, only check crossing of geneproducts and shapes.
+	 */
+	public Shape mayCross(Point2D point) 
+	{
 		Shape shape = null;
-		if(elm != null && elm != this) {
-			if(elm instanceof Handle) {
-				elm = ((Handle)elm).getParent();
-			}
-			shape = elm.getVOutline();
+		for (VPathwayElement o : canvas.getDrawingObjects())
+		{
+			if (o instanceof GeneProduct ||
+					o instanceof Shape)
+				if (o.vContains(point))
+				{
+					shape = o.getVOutline();
+				}
 		}
+
 		return shape;
 	}
 

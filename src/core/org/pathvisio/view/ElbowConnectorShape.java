@@ -3,7 +3,6 @@ package org.pathvisio.view;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-
 import org.pathvisio.debug.Logger;
 import org.pathvisio.view.ConnectorRestrictions.SegmentPreference;
 import org.pathvisio.view.LinAlg.Point;
@@ -67,6 +66,14 @@ public class ElbowConnectorShape implements ConnectorShape {
 		return segments;
 	}
 	
+/* use this code in place of the method below
+ * to enable automatic re-routing of elbow connectors
+	public Segment[] getSegments(ConnectorRestrictions restrictions) 
+	{
+		AStar astar = new AStar(restrictions);
+		return astar.getSegmentsAStar();
+	}
+*/
 	public Segment[] getSegments(ConnectorRestrictions restrictions) {
 		//Ok, we want to get the exact segments that form the connector
 		//while trying to honor the preferred segments

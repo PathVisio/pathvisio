@@ -32,16 +32,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pathvisio.model.ConnectorRestrictions;
+import org.pathvisio.model.ConnectorShape;
+import org.pathvisio.model.ConnectorShapeRegistry;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
+import org.pathvisio.model.MLine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.ConnectorShape.Segment;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayElement.MSegment;
-import org.pathvisio.view.ConnectorShape.Segment;
  
 /**
  * This class represents a line on the pathway.
@@ -50,15 +54,12 @@ import org.pathvisio.view.ConnectorShape.Segment;
  * @see ConnectorShape
  * @see ConnectorShapeRegistry
  */
-public class Line extends Graphics implements ConnectorRestrictions
+public class Line extends Graphics
 {	
 	private static final long serialVersionUID = 1L;
 	
 	private List<VPoint> points;
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
-	
-	Graphics startGraphics; //graphics to which the start connects, may be null
-	Graphics endGraphics; //graphics to which the end connects, may be null
 	
 	ArrayList<Handle> segmentHandles = new ArrayList<Handle>();
 
@@ -78,106 +79,14 @@ public class Line extends Graphics implements ConnectorRestrictions
 			vp.setHandleLocation();
 		}
 		setAnchors();
-		findConnectingGraphics();
+		getConnectorShape().recalculateShape(getMLine());
 		updateSegmentHandles();
 	}
 	
-	/**
-	 * Find the pathway elements that Sthis connector 
-	 * connects to by using the GraphId, GraphRef attributes
-	 */
-	private void findConnectingGraphics() {
-		String startRef = gdata.getStartGraphRef();
-		String endRef = gdata.getEndGraphRef();
-		if(startRef != null) {
-			PathwayElement ms = gdata.getParent().getElementById(startRef);
-			setStartGraphics(canvas.getPathwayElementView(ms));
-		}
-		if(endRef != null) {
-			PathwayElement me = gdata.getParent().getElementById(endRef);
-			setEndGraphics(canvas.getPathwayElementView(me));
-		}
+	private MLine getMLine() {
+		return (MLine)gdata;
 	}
-
-	/**
-	 * Set the pathway element that connects to the start
-	 * of this connector
-	 * @param g
-	 */
-	private void setStartGraphics(Graphics g) {
-		startGraphics = g;
-	}
-
-	/**
-	 * Set the pathway element that connects to the end
-	 * of this connector
-	 * @param g
-	 */
-	private void setEndGraphics(Graphics g) {
-		endGraphics = g;
-	}
-
-	public SegmentPreference[] getSegmentPreferences() {
-		SegmentPreference[] restrictions = null;
-		MSegment[] mSegments = gdata.getMSegments();
-		if(mSegments != null) {
-			restrictions = new SegmentPreference[mSegments.length];
-			for(int i = 0; i < mSegments.length; i++) {
-				restrictions[i] = new SegmentPreference(
-						mSegments[i].getDirection(), vFromM(mSegments[i].getMLength())
-				);
-			}
-		}
-		return restrictions;
-	}
-
-	/**
-	 * Get the side of the given pathway element to which
-	 * the x and y coordinates connect
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @param g The graphics to find the side of
-	 * @return One of the SIDE_* constants
-	 */
-	private static int getSide(double x, double y, Graphics g) {
-		int direction = 0;
-
-		if(g != null) {
-			double relX = x - g.getVCenterX();
-			double relY = y - g.getVCenterY();
-			if(Math.abs(relX) > Math.abs(relY)) {
-				if(relX > 0) {
-					direction = SIDE_EAST;
-				} else {
-					direction = SIDE_WEST;
-				}
-			} else {
-				if(relY > 0) {
-					direction = SIDE_SOUTH;
-				} else {
-					direction = SIDE_NORTH;
-				}
-			}
-		}
-		return direction;
-	}
-
-	public int getStartSide() {
-		if(startGraphics != null) {
-			return getSide(getVStartX(), getVStartY(), startGraphics);
-		} else {
-			return SIDE_EAST;
-		}
-	}
-
-	public int getEndSide() {
-		if(endGraphics != null) {
-			return getSide(getVEndX(), getVEndY(), endGraphics);
-		} else {
-			return SIDE_WEST;
-		}
-	}
-
+	
 	private String getConnectorType() {
 		ConnectorType type = gdata.getConnectorType();
 		if(type == null) {
@@ -192,7 +101,7 @@ public class Line extends Graphics implements ConnectorRestrictions
 	 */
 	private void updateSegmentHandles() {
 		ConnectorShape cs = ConnectorShapeRegistry.getShape(getConnectorType());
-		Segment[] segments = cs.getSegments(this);
+		Segment[] segments = cs.getSegments();
 		//Destroy and recreate the handles if the number
 		//doesn't match the segments number (minus 2, because we don't
 		//have handles for the start and end segment
@@ -213,8 +122,8 @@ public class Line extends Graphics implements ConnectorRestrictions
 		//Put the handles in the right place
 		for(int i = 1; i < segments.length - 1; i++) {
 			Handle h = segmentHandles.get(i - 1);
-			Point2D center = segments[i].getVCenter();
-			h.setVLocation(center.getX(), center.getY());
+			Point2D center = segments[i].getMCenter();
+			h.setVLocation(vFromM(center.getX()), vFromM(center.getY()));
 		}
 	}
 
@@ -222,47 +131,41 @@ public class Line extends Graphics implements ConnectorRestrictions
 	 * Updates the segment preferences to the new handle position
 	 */
 	protected void adjustToHandle(Handle h, double vx, double vy) {
-		int index = segmentHandles.indexOf(h) + 1;
+		int hIndex = segmentHandles.indexOf(h);
+		int sIndex = hIndex + 1;
 		ConnectorShape shape = ConnectorShapeRegistry.getShape(getConnectorType());
-		Segment[] segments = shape.getSegments(this);
-		
-		if(index > -1) {
-			MSegment[] mSegments = gdata.getMSegments();
-			if(mSegments == null || segments.length != mSegments.length) {
-				//Build MSegments from Segments
-				mSegments = new MSegment[segments.length];
+		Segment[] segments = shape.getSegments();
+		if(hIndex > -1) {
+			List<MPoint> points = gdata.getMPoints();
+			if(points.size() != (segments.length + 1)) {
+				//Recreate points from segments
+				points = new ArrayList<MPoint>();
 				for(int i = 0; i < segments.length; i++) {
-					mSegments[i] = gdata.new MSegment(
-							segments[i].getAxis(), 
-							mFromV(segments[i].getVLength())
-					);
+					Point2D start = segments[i].getMStart();
+					MPoint p = gdata.new MPoint(start.getX(), start.getY());
+					points.add(p);
 				}
+				Point2D end = segments[segments.length - 1].getMEnd();
+				points.add(gdata.new MPoint(end.getX(), end.getY()));
 				gdata.dontFireEvents(1);
-				gdata.setMSegments(mSegments);
+				gdata.setMPoints(points);
 			}
 			
-			MSegment currSeg = mSegments[index];
-			MSegment prevSeg = mSegments[index - 1];
-			MSegment nextSeg = mSegments[index + 1];
+			Segment seg = segments[sIndex];
+			MPoint p1 = points.get(sIndex);
+			MPoint p2 = points.get(sIndex + 1);
 			
 			//Segment moving vertically
 			gdata.dontFireEvents(1);
-			if(currSeg.getDirection() == MSegment.HORIZONTAL) {
-				double dl = vy - h.getVCenterY();
-				prevSeg.setMLength(mFromV(vFromM(prevSeg.getMLength()) + dl));
-				nextSeg.setMLength(mFromV(vFromM(nextSeg.getMLength()) - dl));
+			if(seg.getAxis() == Segment.AXIS_X) {
+				double my = mFromV(vy - h.getVCenterY());
+				p1.moveBy(0, my);
+				p2.moveBy(0, my);
 			} else {
-				double dl = vx - h.getVCenterX();
-				prevSeg.setMLength(mFromV(vFromM(prevSeg.getMLength()) + dl));
-				nextSeg.setMLength(mFromV(vFromM(nextSeg.getMLength()) - dl));
+				double mx = mFromV(vx - h.getVCenterX());
+				p1.moveBy(mx, 0);
+				p2.moveBy(mx, 0);
 			}
-			
-			//Reset the segment preferences in the model if they are invalid
-			if(!shape.isUsePreferredSegments(this)) {
-				gdata.setMSegments(null);
-			}
-		} else {
-			gdata.setMSegments(null);
 		}
 	}
 
@@ -281,6 +184,17 @@ public class Line extends Graphics implements ConnectorRestrictions
 		return ConnectorShapeRegistry.getShape(getConnectorType());
 	}
 
+	/**
+	 * Get the connector shape translated to view coordinates
+	 */
+	private Shape getVConnector() {
+		Shape s = getConnectorShape().getShape();
+		AffineTransform t = new AffineTransform();
+		double scale = vFromM(1);
+		t.setToScale(scale, scale);
+		return t.createTransformedShape(s);
+	}
+	
 	public void doDraw(Graphics2D g) {
 		Color c;
 		
@@ -307,7 +221,7 @@ public class Line extends Graphics implements ConnectorRestrictions
 				  10, new float[] {4, 4}, 0));
 		}			
 
-		Shape l = getConnectorShape().getShape(this);
+		Shape l = getVConnector();
 
 		ArrowShape[] heads = getVHeads();
 		ArrowShape hs = heads[0];
@@ -366,22 +280,23 @@ public class Line extends Graphics implements ConnectorRestrictions
 	 * @return An array with two arrowheads, for the start and end respectively
 	 */
 	protected ArrowShape[] getVHeads() {
-		Segment[] segments = getConnectorShape().getSegments(this);
+		Segment[] segments = getConnectorShape().getSegments();
 		
 		ArrowShape he = getVHead(
-				segments[segments.length - 1].getVStart(), 
-				segments[segments.length - 1].getVEnd(),
+				segments[segments.length - 1].getMStart(), 
+				segments[segments.length - 1].getMEnd(),
 				gdata.getEndLineType()
 		);
 		ArrowShape hs = getVHead(
-				segments[0].getVEnd(),
-				segments[0].getVStart(),
+				segments[0].getMEnd(),
+				segments[0].getMStart(),
 				gdata.getStartLineType()
 		);
 		return new ArrowShape[] { hs, he };
 	}
+	
 	protected Shape getVShape(boolean rotate) {
-		Shape l = getConnectorShape().getShape(this);
+		Shape l = getVConnector();
 
 		ArrowShape[] heads = getVHeads();
 		ArrowShape hs = heads[0];
@@ -601,7 +516,7 @@ public class Line extends Graphics implements ConnectorRestrictions
 			setAnchors();
 		}
 		updateAnchorPositions();
-		findConnectingGraphics();
+		getConnectorShape().recalculateShape(getMLine());
 		updateSegmentHandles();
 	}
 	
@@ -661,7 +576,7 @@ public class Line extends Graphics implements ConnectorRestrictions
 	 * @param l The line coordinate
 	 */
 	public Point2D vFromL(double l) {
-		return getConnectorShape().fromLineCoordinate(this, l);
+		return getConnectorShape().fromLineCoordinate(l);
 	}
 	
 	/**
@@ -669,7 +584,7 @@ public class Line extends Graphics implements ConnectorRestrictions
 	 * a line coordinate (1-dimensional)
 	 */
 	public double lFromV(Point2D v) {
-		return getConnectorShape().toLineCoordinate(this, v);
+		return getConnectorShape().toLineCoordinate(v);
 	}
 	
 	/**
@@ -677,14 +592,14 @@ public class Line extends Graphics implements ConnectorRestrictions
 	 * lies
 	 */
 	public Segment getSegment(double lc) {
-		Segment[] segments = getConnectorShape().getSegments(this);
+		Segment[] segments = getConnectorShape().getSegments();
 		double length = 0;
 		for(Segment s : segments) {
-			length += s.getVLength();
+			length += s.getMLength();
 		}
 		double end = 0;
 		for(Segment s : segments) {
-			end += s.getVLength();
+			end += s.getMLength();
 			if(lc <= end) {
 				return s;
 			}

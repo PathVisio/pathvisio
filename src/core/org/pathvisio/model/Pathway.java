@@ -16,6 +16,7 @@
 //
 package org.pathvisio.model;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -115,6 +117,24 @@ public class Pathway implements PathwayListener
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Find the objects at a particular location on the pathway.
+	 * If the point falls within the bounds of the object, it will be
+	 * included in the returned set.
+	 */
+	public Set<PathwayElement> getObjectsAt(Point2D p)
+	{
+		Set<PathwayElement> result = new HashSet<PathwayElement>();
+		for (PathwayElement o : getDataObjects())
+		{
+			if (o.getMBounds().contains(p))
+			{
+				result.add(o);
+			}
+		}
+		return result;
 	}
 	
 	/**

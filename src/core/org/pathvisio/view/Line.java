@@ -547,44 +547,32 @@ public class Line extends Graphics implements ConnectorRestrictions
 	
 	public double getVCenterX()
 	{
-		double start = gdata.getMStart().getX();
-		double end = gdata.getMEnd().getX();
-		return vFromM(start + (end - start) / 2);
+		return vFromM(gdata.getMCenterX());
 	}
 	
 	public double getVCenterY()
 	{
-		double start = gdata.getMStart().getY();
-		double end = gdata.getMEnd().getY();
-		return vFromM(start + (end - start) / 2);
+		return vFromM(gdata.getMCenterY());
 	}
 	
 	public double getVLeft()
 	{
-		double start = gdata.getMStart().getX();
-		double end = gdata.getMEnd().getX();
-		return vFromM(Math.min(start, end));
+		return vFromM(gdata.getMLeft());
 	}
 	
 	public double getVWidth()
 	{
-		double start = gdata.getMStart().getX();
-		double end = gdata.getMEnd().getX();
-		return vFromM(Math.abs(start-end));
+		return vFromM(gdata.getMWidth());
 	}
 	
 	public double getVHeight()
 	{
-		double start = gdata.getMStart().getY();
-		double end = gdata.getMEnd().getY();
-		return vFromM(Math.abs(start-end));
+		return vFromM(gdata.getMHeight());
 	}	
 	
 	public double getVTop()
 	{
-		double start = gdata.getMStart().getY();
-		double end = gdata.getMEnd().getY();
-		return vFromM(Math.min(start, end));
+		return vFromM(gdata.getMTop());
 	}
 	
 	protected void vMoveBy(double vdx, double vdy)

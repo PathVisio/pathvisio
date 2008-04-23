@@ -616,7 +616,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	
 	private static PathwayElement mapLineType(String [] mappObject) throws ConverterException
 	{		
-    	PathwayElement o = new PathwayElement(ObjectType.LINE);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.LINE);
     	
 		String type = mappObject[colType];
     	if(type.startsWith("Dotted"))
@@ -697,7 +697,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
     private static PathwayElement mapBraceType(String[] mappObject) throws ConverterException
     {
-    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
     	o.setShapeType (ShapeType.BRACE);
     	mapShape(o, mappObject);
     	o.setColor(fromMappColor(mappObject[colColor]));
@@ -719,7 +719,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     
     private static PathwayElement mapGeneProductType(String[] mappObject) throws ConverterException
 	{
-    	PathwayElement o = new PathwayElement(ObjectType.DATANODE);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
     	
     	String syscode = mappObject[colSystemCode];
     	if (syscode == null) syscode = "";
@@ -764,7 +764,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
 	private static PathwayElement mapLegendType (String[] mappObject)
 	{
-    	PathwayElement o = new PathwayElement(ObjectType.LEGEND);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.LEGEND);
  
     	mapCenter (o, mappObject);
     	        
@@ -785,7 +785,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     
     private static PathwayElement mapLabelType(String[] mappObject) 
     {
-    	PathwayElement o = new PathwayElement(ObjectType.LABEL);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.LABEL);
 
     	mapShape(o, mappObject);
 		o.setColor(fromMappColor(mappObject[colColor]));	
@@ -847,7 +847,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     
 	private static PathwayElement mapShapeType(String[] mappObject)
     {
-    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
     	ShapeType shapeType = ShapeType.fromMappName(mappObject[colType]);
     	o.setShapeType(shapeType);        
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
@@ -901,7 +901,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     
     private static PathwayElement mapFixedShapeType(String[] mappObject)
     {
-    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[colType]));
         mapCenter (o, mappObject);
         
@@ -951,7 +951,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         
     private static PathwayElement mapComplexShapeType(String[] mappObject) throws ConverterException 
 	{       		
-    	PathwayElement o = new PathwayElement(ObjectType.SHAPE);
+    	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
     	
     	if (mappObject[colType].equals("Poly"))
         {

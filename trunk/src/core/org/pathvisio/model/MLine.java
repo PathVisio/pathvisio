@@ -1,11 +1,17 @@
 package org.pathvisio.model;
 
+import java.awt.Shape;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Line specific implementation of methods that calculate derived
  * coordinates that are not stored in GPML directly
  * @author thomas
  */
-public class MLine extends PathwayElement {
+public class MLine extends PathwayElement implements ConnectorRestrictions {
 	public MLine() {
 		super(ObjectType.LINE);
 	}
@@ -101,5 +107,100 @@ public class MLine extends PathwayElement {
 	
 	private int getDirectionY() {
 		return (int)Math.signum(getMEndY() - getMStartY());
+	}
+
+	public Point2D getEndPoint() {
+		return getMEnd().toPoint2D();
+	}
+	
+	public Point2D getStartPoint() {
+		return getMStart().toPoint2D();
+	}
+	
+	public List<Point2D> getPoints() {
+		List<Point2D> pts = new ArrayList<Point2D>();
+		for(MPoint p : getMPoints()) {
+			pts.add(p.toPoint2D());
+		}
+		return pts;
+	}
+	
+	private PathwayElement getStartElement() {
+		Pathway parent = getParent();
+		if(parent != null) {
+			return parent.getElementById(getStartGraphRef());
+		}
+		return null;
+	}
+	
+	private PathwayElement getEndElement() {
+		Pathway parent = getParent();
+		if(parent != null) {
+			return parent.getElementById(getEndGraphRef());
+		}
+		return null;
+	}
+	
+	public int getStartSide() {
+		PathwayElement e = getStartElement();
+		if(e != null) {
+			return getSide(getMStartX(), getMStartY(), e);
+		} else {
+			return SIDE_EAST;
+		}
+	}
+
+	public int getEndSide() {
+		PathwayElement e = getEndElement();
+		if(e != null) {
+			return getSide(getMEndX(), getMEndY(), e);
+		} else {
+			return SIDE_WEST;
+		}
+	}
+	
+	/**
+	 * Get the side of the given pathway element to which
+	 * the x and y coordinates connect
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param e The element to find the side of
+	 * @return One of the SIDE_* constants
+	 */
+	private static int getSide(double x, double y, PathwayElement e) {
+		int direction = 0;
+
+		if(e != null) {
+			double relX = x - e.getMCenterX();
+			double relY = y - e.getMCenterY();
+			if(Math.abs(relX) > Math.abs(relY)) {
+				if(relX > 0) {
+					direction = SIDE_EAST;
+				} else {
+					direction = SIDE_WEST;
+				}
+			} else {
+				if(relY > 0) {
+					direction = SIDE_SOUTH;
+				} else {
+					direction = SIDE_NORTH;
+				}
+			}
+		}
+		return direction;
+	}
+
+	public Shape mayCross(Point2D point) {
+		Pathway parent = getParent();
+		Rectangle2D rect = null;
+		if(parent != null) {
+			for(PathwayElement e : parent.getObjectsAt(point)) {
+				if(e.getObjectType() != ObjectType.LINE && e != null) {
+					if(rect == null) rect = e.getMBounds();
+					else rect.add(e.getMBounds());
+				}
+			}
+		}
+		return rect;
 	}
 }

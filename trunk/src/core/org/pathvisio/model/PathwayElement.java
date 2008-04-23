@@ -19,6 +19,7 @@ package org.pathvisio.model;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -205,7 +206,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		private String graphRef;
 
-		MPoint(double x, double y)
+		public MPoint(double x, double y)
 		{
 			super(new double[] { x, y });
 		}
@@ -303,6 +304,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			if (graphRef != null)
 				p.graphRef = new String(graphRef);
 			return p;
+		}
+
+		public Point2D toPoint2D() {
+			return new Point2D.Double(getX(), getY());
 		}
 	}
 	
@@ -418,6 +423,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			break;
 		case ObjectType.LINE:
 			e = new MLine();
+			break;
 		default:
 			e = new PathwayElement(ot);
 			break;
@@ -1143,6 +1149,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	private List<MPoint> mPoints = Arrays.asList(defaultPoints);
 
+	public void setMPoints(List<MPoint> points) {
+		if(points != null) {
+			if(points.size() < 2) {
+				throw new IllegalArgumentException("Points array should at least have two elements");
+			}
+			mPoints = points;
+			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+	
 	public MPoint getMStart()
 	{
 		return mPoints.get(0);

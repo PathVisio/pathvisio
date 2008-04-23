@@ -3,6 +3,8 @@ package org.pathvisio.model;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 
+import org.pathvisio.model.ConnectorShape.WayPoint;
+
 /**
  * Methods to provide restrictions for the connector path
  * @author thomas
@@ -48,4 +50,11 @@ public interface ConnectorRestrictions {
 	 * @return
 	 */
 	Point2D getEndPoint();
+	
+	/**
+	 * Get the preferred waypoints, to which the connector must draw
+	 * it's path. The waypoints returned by this method are preferences
+	 * and the connector shape may decide not to use them if they are invalid.
+	 */
+	WayPoint[] getWayPointPreferences();
 }

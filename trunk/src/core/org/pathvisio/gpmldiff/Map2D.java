@@ -16,9 +16,9 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Map2D <S, T, U>
 {

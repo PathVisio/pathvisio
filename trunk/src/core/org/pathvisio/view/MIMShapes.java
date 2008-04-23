@@ -15,10 +15,11 @@
 //
 package org.pathvisio.view;
 
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Ellipse2D;
-import org.pathvisio.model.ShapeType;
+import java.awt.geom.GeneralPath;
+
 import org.pathvisio.model.LineType;
+import org.pathvisio.model.ShapeType;
 
 public class MIMShapes
 {

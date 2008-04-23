@@ -32,9 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.pathvisio.model.ConnectorRestrictions;
 import org.pathvisio.model.ConnectorShape;
-import org.pathvisio.model.ConnectorShapeRegistry;
+import org.pathvisio.model.ConnectorShapeFactory;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -42,17 +41,17 @@ import org.pathvisio.model.MLine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.ConnectorShape.Segment;
+import org.pathvisio.model.ConnectorShape.WayPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.PathwayElement.MSegment;
  
 /**
  * This class represents a line on the pathway.
  * The actual implementation of the path is done by implementations
  * of the {@link ConnectorShape} interface.
  * @see ConnectorShape
- * @see ConnectorShapeRegistry
+ * @see ConnectorShapeFactory
  */
 public class Line extends Graphics
 {	
@@ -63,6 +62,8 @@ public class Line extends Graphics
 	
 	ArrayList<Handle> segmentHandles = new ArrayList<Handle>();
 
+	ConnectorShape shape;
+	
 	/**
 	 * Constructor for this class
 	 * @param canvas - the VPathway this line will be part of
@@ -72,15 +73,18 @@ public class Line extends Graphics
 		super(canvas, o);
 		
 		points = new ArrayList<VPoint>();
-		for(MPoint mp : o.getMPoints()) {
-			VPoint vp = canvas.getPoint(mp);
-			points.add(vp);
-			vp.addLine(this);
-			vp.setHandleLocation();
-		}
+		addPoint(o.getMStart());
+		addPoint(o.getMEnd());
 		setAnchors();
 		getConnectorShape().recalculateShape(getMLine());
 		updateSegmentHandles();
+	}
+	
+	private void addPoint(MPoint mp) {
+		VPoint vp = canvas.getPoint(mp);
+		points.add(vp);
+		vp.addLine(this);
+		vp.setHandleLocation();
 	}
 	
 	private MLine getMLine() {
@@ -100,30 +104,27 @@ public class Line extends Graphics
 	 * connector segments
 	 */
 	private void updateSegmentHandles() {
-		ConnectorShape cs = ConnectorShapeRegistry.getShape(getConnectorType());
-		Segment[] segments = cs.getSegments();
+		ConnectorShape cs = getConnectorShape();
+		WayPoint[] waypoints = cs.getWayPoints();
+		
 		//Destroy and recreate the handles if the number
-		//doesn't match the segments number (minus 2, because we don't
-		//have handles for the start and end segment
-		if(segments.length - 2 != segmentHandles.size()) {
+		//doesn't match the waypoints number
+		if(waypoints.length != segmentHandles.size()) {
 			//Destroy the old handles
 			for(Handle h : segmentHandles) h.destroy();
 			segmentHandles.clear();
 			
 			//Create the new handles
-			if(segments.length > 2) {
-				for(int i = 1; i < segments.length - 1; i++) {
-					int direction = segments[i].getAxis() == Segment.AXIS_X ? 
-							Handle.DIRECTION_SEGMENT_HORIZONTAL : Handle.DIRECTION_SEGMENT_VERTICAL;
-					segmentHandles.add(new Handle(direction, this, this.canvas));
-				}
+			for(int i = 0; i < waypoints.length; i++) {
+				Handle h = new Handle(Handle.DIRECTION_FREE, this, this.canvas);
+				h.setStyle(Handle.STYLE_SEGMENT);
+				segmentHandles.add(h);
 			}
 		}
 		//Put the handles in the right place
-		for(int i = 1; i < segments.length - 1; i++) {
-			Handle h = segmentHandles.get(i - 1);
-			Point2D center = segments[i].getMCenter();
-			h.setVLocation(vFromM(center.getX()), vFromM(center.getY()));
+		for(int i = 0; i < waypoints.length; i++) {
+			Handle h = segmentHandles.get(i);
+			h.setMLocation(waypoints[i].getX(), waypoints[i].getY());
 		}
 	}
 
@@ -131,41 +132,23 @@ public class Line extends Graphics
 	 * Updates the segment preferences to the new handle position
 	 */
 	protected void adjustToHandle(Handle h, double vx, double vy) {
-		int hIndex = segmentHandles.indexOf(h);
-		int sIndex = hIndex + 1;
-		ConnectorShape shape = ConnectorShapeRegistry.getShape(getConnectorType());
-		Segment[] segments = shape.getSegments();
-		if(hIndex > -1) {
+		WayPoint[] waypoints = getConnectorShape().getWayPoints();
+		int index = segmentHandles.indexOf(h);
+		if(index > -1) {
 			List<MPoint> points = gdata.getMPoints();
-			if(points.size() != (segments.length + 1)) {
+			if(points.size() - 2 != (waypoints.length)) {
 				//Recreate points from segments
 				points = new ArrayList<MPoint>();
-				for(int i = 0; i < segments.length; i++) {
-					Point2D start = segments[i].getMStart();
-					MPoint p = gdata.new MPoint(start.getX(), start.getY());
+				points.add(gdata.getMStart());
+				for(int i = 0; i < waypoints.length; i++) {
+					MPoint p = gdata.new MPoint(waypoints[i].getX(), waypoints[i].getY());
 					points.add(p);
 				}
-				Point2D end = segments[segments.length - 1].getMEnd();
-				points.add(gdata.new MPoint(end.getX(), end.getY()));
+				points.add(gdata.getMEnd());
 				gdata.dontFireEvents(1);
 				gdata.setMPoints(points);
 			}
-			
-			Segment seg = segments[sIndex];
-			MPoint p1 = points.get(sIndex);
-			MPoint p2 = points.get(sIndex + 1);
-			
-			//Segment moving vertically
-			gdata.dontFireEvents(1);
-			if(seg.getAxis() == Segment.AXIS_X) {
-				double my = mFromV(vy - h.getVCenterY());
-				p1.moveBy(0, my);
-				p2.moveBy(0, my);
-			} else {
-				double mx = mFromV(vx - h.getVCenterX());
-				p1.moveBy(mx, 0);
-				p2.moveBy(mx, 0);
-			}
+			points.get(index + 1).moveTo(mFromV(vx), mFromV(vy));
 		}
 	}
 
@@ -181,7 +164,16 @@ public class Line extends Graphics
 	}
 	
 	private ConnectorShape getConnectorShape() {
-		return ConnectorShapeRegistry.getShape(getConnectorType());
+		String type = gdata.getConnectorType().getName();
+		
+		//Recreate the ConnectorShape when it's null or when the type
+		//doesn't match the implementing class
+		if(shape == null || !shape.getClass().equals(ConnectorShapeFactory.getImplementingClass(type))) {
+			System.out.println("Creating connector " + type);
+			shape = ConnectorShapeFactory.createConnectorShape(gdata.getConnectorType().getName());
+			shape.recalculateShape(getMLine());
+		}
+		return shape;
 	}
 
 	/**
@@ -507,6 +499,17 @@ public class Line extends Graphics
 	}
 	
 	public void gmmlObjectModified(PathwayEvent e) {		
+		getConnectorShape().recalculateShape(getMLine());
+		
+		WayPoint[] wps = getConnectorShape().getWayPoints();
+		List<MPoint> mps = gdata.getMPoints();
+		if(wps.length == mps.size() - 2 && getConnectorShape().hasValidWaypoints(getMLine())) {
+			getMLine().adjustWayPointPreferences(wps);
+		} else {
+			getMLine().resetWayPointPreferences();
+		}
+
+		updateSegmentHandles();
 		markDirty();
 		for(VPoint p : points) {
 			p.markDirty();
@@ -516,8 +519,6 @@ public class Line extends Graphics
 			setAnchors();
 		}
 		updateAnchorPositions();
-		getConnectorShape().recalculateShape(getMLine());
-		updateSegmentHandles();
 	}
 	
 	protected void destroyHandles() { 

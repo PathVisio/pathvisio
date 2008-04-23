@@ -16,25 +16,31 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.awt.Dimension;
 import java.awt.AWTEvent;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-import java.awt.BasicStroke;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
-import java.awt.font.*;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.*;
+
+import javax.swing.JPanel;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 
 /**
  * Derived from:

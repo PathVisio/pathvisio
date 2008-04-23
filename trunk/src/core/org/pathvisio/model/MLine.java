@@ -6,6 +6,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.model.ConnectorShape.WayPoint;
+
 /**
  * Line specific implementation of methods that calculate derived
  * coordinates that are not stored in GPML directly
@@ -157,6 +159,34 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 		} else {
 			return SIDE_WEST;
 		}
+	}
+	
+	public void adjustWayPointPreferences(WayPoint[] waypoints) {
+		List<MPoint> mpoints = getMPoints();
+		for(int i = 0; i < waypoints.length; i++) {
+			WayPoint wp = waypoints[i];
+			MPoint mp = mpoints.get(i + 1);
+			if(mp.getX() != wp.getX() || mp.getY() != wp.getY()) {
+				dontFireEvents(1);
+				mp.moveTo(wp.getX(), wp.getY());
+			}
+		}
+	}
+	
+	public void resetWayPointPreferences() {
+		List<MPoint> mps = getMPoints();
+		while(mps.size() > 2) {
+			mps.remove(mps.size() - 2);
+		}
+	}
+	
+	public WayPoint[] getWayPointPreferences() {
+		List<MPoint> pts = getMPoints();
+		WayPoint[] wps = new WayPoint[pts.size() - 2];
+		for(int i = 0; i < wps.length; i++) {
+			wps[i] = new WayPoint(pts.get(i + 1).toPoint2D());
+		}
+		return wps;
 	}
 	
 	/**

@@ -50,11 +50,13 @@ public class Handle extends VPathwayElement
 	public static final int DIRECTION_ROT = 3;
 	public static final int DIRECTION_XY = 4;
 	public static final int DIRECTION_MINXY = 5;
-	public static final int DIRECTION_SEGMENT_HORIZONTAL = 6;
-	public static final int DIRECTION_SEGMENT_VERTICAL = 7;
 	
 	public static final int WIDTH 	= 8;
 	public static final int HEIGHT	= 8;
+	
+	public static final int STYLE_DEFAULT = 0;
+	public static final int STYLE_SEGMENT = 1;
+	public static final int STYLE_ROTATE = 2;
 	
 	VPathwayElement parent;
 	
@@ -64,6 +66,8 @@ public class Handle extends VPathwayElement
 	double rotation;
 	
 	boolean visible;
+	
+	int style = STYLE_DEFAULT;
 	
 	/**
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
@@ -76,8 +80,19 @@ public class Handle extends VPathwayElement
 		super(canvas);		
 		this.direction = direction;
 		this.parent = parent;
+		if(direction == DIRECTION_ROT) {
+			setStyle(STYLE_ROTATE);
+		}
 	}
 
+	/**
+	 * Set the appearance style of the handle.
+	 * @param style One of the STYLE_* constants
+	 */
+	public void setStyle(int style) {
+		this.style = style;
+	}
+	
 	public VPathwayElement getParent() {
 		return parent;
 	}
@@ -160,15 +175,16 @@ public class Handle extends VPathwayElement
 		
 		Shape fillShape = getFillShape();
 		
-		if(direction == DIRECTION_ROT) {
+		switch(style) {
+		case STYLE_ROTATE:
 			g.setColor(Color.GREEN);
-		} else if (
-				direction == DIRECTION_SEGMENT_HORIZONTAL || 
-				direction == DIRECTION_SEGMENT_VERTICAL)
-		{
+			break;
+		case STYLE_SEGMENT:
 			g.setColor(new Color(0, 128, 255));
-		} else {
+			break;
+		default:
 			g.setColor(Color.YELLOW);
+			break;
 		}
 		
 		g.fill(fillShape);
@@ -201,11 +217,11 @@ public class Handle extends VPathwayElement
 			Point v = new Point(0,0);
 			Rectangle2D b = parent.getVBounds();
 			Point base = new Point (b.getCenterX(), b.getCenterY());
-			if (direction == DIRECTION_X || direction == DIRECTION_SEGMENT_VERTICAL)
+			if (direction == DIRECTION_X)
 			{
 				v = new Point (1, 0);
 			}
-			else if	(direction == DIRECTION_Y || direction == DIRECTION_SEGMENT_HORIZONTAL)
+			else if	(direction == DIRECTION_Y)
 			{
 				v = new Point (0, 1);
 			}
@@ -240,13 +256,12 @@ public class Handle extends VPathwayElement
 	
 	private Shape getFillShape(int sw) {
 		Shape s = null;
-		switch(direction) {
-		case DIRECTION_ROT:
+		switch(style) {
+		case STYLE_ROTATE:
 			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
 			break;
-		case DIRECTION_SEGMENT_HORIZONTAL:
-		case DIRECTION_SEGMENT_VERTICAL:
+		case STYLE_SEGMENT:
 			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
 			

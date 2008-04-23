@@ -16,13 +16,13 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-import java.awt.Shape;
-import java.awt.Polygon;
+import java.awt.geom.Rectangle2D;
 
 class BasicShapes
 {

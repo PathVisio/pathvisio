@@ -16,8 +16,8 @@
 //
 package org.pathvisio.view;
 
-import org.pathvisio.model.Pathway;
 import org.pathvisio.Engine;
+import org.pathvisio.model.Pathway;
 
 public class UndoAction 
 {	

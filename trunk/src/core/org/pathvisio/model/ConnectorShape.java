@@ -2,6 +2,9 @@ package org.pathvisio.model;
 
 import java.awt.geom.Point2D;
 
+import org.pathvisio.view.LinAlg;
+import org.pathvisio.view.LinAlg.Point;
+
 
 /**
  * Implement this to provide a line shape for connectors
@@ -10,6 +13,15 @@ import java.awt.geom.Point2D;
  */
 public interface ConnectorShape {
 	
+	public static final int AXIS_X = 0;
+	public static final int AXIS_Y = 1;
+	
+	/**
+	 * Force the connector to redraw it's path. The cache for segments,
+	 * waypoints and shape.
+	 * @param restrictions The ConnectorRestrictions that provides the start, end and
+	 * preferred waypoints
+	 */
 	public void recalculateShape(ConnectorRestrictions restrictions);
 	
 	/**
@@ -22,6 +34,12 @@ public interface ConnectorShape {
 	 */
 	public Segment[] getSegments();
 	
+	
+	/**
+	 * Get the waypoints through which the connector passes
+	 */
+	public WayPoint[] getWayPoints();
+	
 	/**
 	 * Checks whether the waypoints as provided by the ConnectorRestrictions
 	 * are valid and will be used to draw the connector path
@@ -30,12 +48,24 @@ public interface ConnectorShape {
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions);
 	
 	/**
+	 * A waypoint, a point through which the connector passes. Each waypoint
+	 * will have a handle in the view, so the user can modify it's position.
+	 */
+	public class WayPoint extends Point2D.Double {		
+		public WayPoint(Point2D position) {
+			super(position.getX(), position.getY());
+		}
+		
+		public WayPoint(double x, double y) {
+			super(x, y);
+		}
+	}
+	
+	/**
 	 * A single segment of the connector path.
 	 * @author thomas
 	 */
 	public class Segment {
-		public static final int AXIS_X = 0;
-		public static final int AXIS_Y = 1;
 		private Point2D start, end;
 		
 		protected Segment(Point2D start, Point2D end) {
@@ -67,18 +97,11 @@ public interface ConnectorShape {
 		}
 		
 		public double getMLength() {
-			if(getAxis() == AXIS_X) {
-				return end.getX() - start.getX();
-			} else {
-				return end.getY() - start.getY();
-			}
+			return LinAlg.distance(new Point(start), new Point(end));
 		}
 		
-		public int getAxis() {
-			if(start.getX() != end.getX()) 
-				return Segment.AXIS_X;
-			else 
-				return Segment.AXIS_Y;
+		public String toString() {
+			return start + ", " + end;
 		}
 	}
 

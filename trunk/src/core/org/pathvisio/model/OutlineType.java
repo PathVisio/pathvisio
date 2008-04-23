@@ -16,7 +16,8 @@
 //
 package org.pathvisio.model;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum OutlineType
 {

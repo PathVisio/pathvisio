@@ -396,7 +396,7 @@
 					<xsd:complexType>
 						<xsd:sequence>
 							<xsd:element name="Point" minOccurs="2"
-								maxOccurs="2">
+								maxOccurs="unbounded">
 								<xsd:complexType>
 									<xsd:attribute name="x"
 										type="xsd:float" use="required" />
@@ -450,20 +450,6 @@
 										type="xsd:ID" use="optional" />
 									<xsd:attribute name="Shape"
 										default="ReceptorRound" type="xsd:string" />
-								</xsd:complexType>
-							</xsd:element>
-							<xsd:element name="Segment" minOccurs="0" maxOccurs="unbounded">
-								<xsd:complexType>
-									<xsd:attribute name="length"
-										type="xsd:float" use="required" />
-									<xsd:attribute name="direction" use="required">
-										<xsd:simpleType>
-											<xsd:restriction base="xsd:string">
-												<xsd:enumeration value="Horizontal"/>
-												<xsd:enumeration value="Vertical"/>
-											</xsd:restriction>
-										</xsd:simpleType>
-									</xsd:attribute>
 								</xsd:complexType>
 							</xsd:element>
 						</xsd:sequence>

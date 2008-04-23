@@ -17,7 +17,6 @@
 package org.pathvisio.model;
 
 import java.awt.Color;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -136,6 +135,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PathwayEvent.MODIFIED_GENERAL));
 		}
 
+		protected void moveTo(double[] coordinates)
+		{
+			this.coordinates = coordinates;
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+		
 		protected void moveTo(GenericPoint p)
 		{
 			coordinates = p.coordinates;
@@ -223,6 +229,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			super.moveBy(new double[] { dx, dy });
 		}
 
+		public void moveTo(double x, double y) 
+		{
+			super.moveTo(new double[] { x, y });
+		}
+		
 		public void setX(double nx)
 		{
 			if (nx != getX())
@@ -1114,6 +1125,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
+		connectorType = src.connectorType;
 		biopaxRefs = (List<String>)((ArrayList<String>)src.biopaxRefs).clone();
 		if(src.biopax != null) {
 			System.out.println("Copying " + biopax);
@@ -1131,7 +1143,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public PathwayElement copy()
 	{
-		PathwayElement result = new PathwayElement(objectType);
+		PathwayElement result = PathwayElement.createPathwayElement(objectType);
 		result.copyValuesFrom(this);
 		result.parent = null;
 		return result;
@@ -1290,54 +1302,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	
 	public ConnectorType getConnectorType() {
 		return connectorType;
-	}
-	
-	MSegment[] segments;
-	
-	public void setMSegments(MSegment[] segments) {
-		this.segments = segments;
-		fireObjectModifiedEvent(new PathwayEvent(this,
-				PathwayEvent.MODIFIED_GENERAL));
-	}
-	
-	public MSegment[] getMSegments() {
-		return segments;
-	}
-	
-	public class MSegment {
-		public static final int HORIZONTAL = 0;
-		public static final int VERTICAL = 1;
-		private int direction;
-		private double length;
-		
-		public MSegment(int direction, double length) {
-			this.direction = direction;
-			this.length = length;
-		}
-		
-		public int getDirection() {
-			return direction;
-		}
-		
-		public double getMLength() {
-			return length;
-		}
-		
-		public void setMLength(double length) {
-			this.length = length;
-			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
-					PathwayEvent.MODIFIED_GENERAL));
-		}
-		
-		public void setDirection(int direction) {
-			this.direction = direction;
-			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
-					PathwayEvent.MODIFIED_GENERAL));
-		}
-		
-		public String toString() {
-			return length + ";" + direction;
-		}
 	}
 	
 //TODO: end of new elements

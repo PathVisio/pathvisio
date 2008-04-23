@@ -17,15 +17,26 @@ public class ElbowConnectorShape extends AbstractConnector {
 	private final static double SEGMENT_OFFSET = 20 * 15;
 
 	public void recalculateShape(ConnectorRestrictions restrictions) {
-		setSegments(calculateSegments(restrictions));
+		WayPoint[] wps = calculateWayPoints(restrictions);
+		setSegments(calculateSegments(restrictions, wps));
+		setWayPoints(wayPointsToCenter(wps, getSegments()));
 		setShape(calculateShape(getSegments()));
 	}
-	
+
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions) {
-		return false;
+		//Only check if number of waypoints matches number of segments
+		return restrictions.getWayPointPreferences().length == getNrSegments(restrictions) - 2;
 	}
-	
-	public Shape calculateShape(Segment[] segments) {
+
+	protected WayPoint[] wayPointsToCenter(WayPoint[] waypoints, Segment[] segments) {
+		//Set all waypoints to the center of the segments
+		for(int i = 1; i < segments.length - 1; i++) {
+			waypoints[i - 1].setLocation(segments[i].getMCenter());
+		}
+		return waypoints;
+	}
+
+	protected Shape calculateShape(Segment[] segments) {
 		GeneralPath path = new GeneralPath();
 		int i = 0;
 		for(Segment s : segments) {
@@ -39,147 +50,135 @@ public class ElbowConnectorShape extends AbstractConnector {
 		}
 		return path;
 	}
-		
-	public Segment[] calculateSegments(ConnectorRestrictions restrictions) {
-		//Ok, we want to get the exact segments that form the connector
-		//while trying to honor the preferred segments
-		
+
+	protected WayPoint[] calculateWayPoints(ConnectorRestrictions restrictions) {
 		int nrSegments = getNrSegments(restrictions);
-		
-		//Otherwise, calculate new segments
-		Segment[] segments = new Segment[nrSegments];
-			
-		//Start with the first segment
-		int axis = getSegmentAxis(restrictions.getStartSide());
-		Segment first = new Segment(
-				restrictions.getStartPoint(),
-				movePoint(
-						restrictions.getStartPoint(), 
-						axis, 
-						SEGMENT_OFFSET * getSegmentDirection(restrictions.getStartSide())
-				)
-		);
-		
-		segments[0] = first;
-		
-		//And the default last segment
-		axis = getSegmentAxis(restrictions.getEndSide());
-		Segment last = new Segment(
-				movePoint(
-						restrictions.getEndPoint(), 
-						axis, 
-						SEGMENT_OFFSET * getSegmentDirection(restrictions.getEndSide())
-				), 
-				restrictions.getEndPoint()
-		);
-		
-		segments[segments.length - 1] = last;
-		
+		WayPoint[] waypoints = restrictions.getWayPointPreferences();
+
+		//Use the preferred waypoint if it's possible to draw
+		//a valid path through them
+		if(hasValidWaypoints(restrictions)) {
+			return waypoints;
+		}
+
+		//Else, calculate the default waypoints
+		waypoints = new WayPoint[nrSegments - 2];
+
+		int startSide = restrictions.getStartSide();
+		int startAxis = getSegmentAxis(startSide);
+		int startDirection = getSegmentDirection(startSide);
+
+		int endSide = restrictions.getEndSide();
+		int endAxis = getSegmentAxis(endSide);
+		int endDirection = getSegmentDirection(endSide);
+
+		Point2D start = restrictions.getStartPoint();
+		Point2D end = restrictions.getEndPoint();
+
 		if(nrSegments - 2 == 1) {
 			/*
 			 * [S]---
 			 * 		|
 			 * 		---[S]
 			 */
-			//Move from the end of the first segment
-			axis = getOppositeAxis(first.getAxis());
-			segments[1] = new Segment(
-					first.getMEnd(),
-					movePoint(
-							first.getMEnd(),
-							axis,
-							calculateSegmentLength(first.getMEnd(), last.getMStart(), axis)
-					)
-			);
-						
-			//Extend the last segment to connect with the end of the middle segment
-			last.setMStart((Point2D)segments[1].getMEnd().clone());
+			waypoints[0] = calculateWayPoint(start, end, startAxis, startDirection);
 		} else if(nrSegments - 2 == 2) {
-//			/*
-//			 * [S]---
-//			 * 		| [S]
-//			 * 		|  |
-//			 * 		|---
-//			 */
-			axis = getOppositeAxis(last.getAxis());
-			segments[2] = new Segment(
-					movePoint(
-							last.getMStart(),
-							axis,
-							- calculateSegmentLength(first.getMEnd(), last.getMStart(), axis)
-					),
-					last.getMStart()
-			);
-			axis = getOppositeAxis(first.getAxis());
-			segments[1] = new Segment(
-					first.getMEnd(),
-					movePoint(
-								first.getMEnd(), 
-								axis,
-								calculateSegmentLength(first.getMEnd(), segments[2].getMStart(), axis) 
-					)
-			);
+			/*
+			* [S]---
+			* 		| [S]
+			* 		|  |
+			* 		|---
+			*/
+			waypoints[0] = calculateWayPoint(start, new Point2D.Double(
+					end.getX() + SEGMENT_OFFSET * endDirection, end.getY() + SEGMENT_OFFSET * endDirection
+													), startAxis, startDirection);
+			
+			waypoints[1] = calculateWayPoint(end, waypoints[0], endAxis, endDirection);
 		} else if(nrSegments - 2 == 3) {
-//			/*  ----- 
-//			 *  |   |
-//			 * [S]  | [S]
-//			 *      |  |
-//			 *      |---
-//			 */
-			//Calculate middle segment
-			Point2D start = restrictions.getStartPoint();
-			Point2D end = restrictions.getEndPoint();
-			Point2D middle = new Point2D.Double(
+			/*  ----- 
+			 *  |   |
+			 * [S]  | [S]
+			 *      |  |
+			 *      |---
+			 */
+			//Start with middle waypoint
+			waypoints[1] = new WayPoint(new Point2D.Double(
 					start.getX() + (end.getX() - start.getX()) / 2,
 					start.getY() + (end.getY() - start.getY()) / 2
-			);
-			axis = first.getAxis();
-			double length = calculateSegmentLength(first.getMEnd(), last.getMStart(), axis);
-			segments[2] = new Segment(
-					movePoint(middle, axis, -length/2),
-					movePoint(middle, axis, length/2)
-			);
-			segments[1] = new Segment(first.getMEnd(), segments[2].getMStart());
-			segments[3] = new Segment(segments[2].getMEnd(), last.getMStart());
-		} else {
-			/* [S]----
-			 *       |
-			 *      [S]
-			 */
-			first.setMEnd(
-					movePoint(
-							first.getMEnd(),
-							first.getAxis(),
-							calculateSegmentLength(first.getMEnd(), last.getMStart(), first.getAxis())
-					)
-			);
-			last.setMStart((Point2D)first.getMEnd().clone());			
+			));
+			waypoints[0] = calculateWayPoint(start, waypoints[1], startAxis, startDirection);
+			waypoints[2] = calculateWayPoint(end, waypoints[1], endAxis, endDirection);
 		}
-		
+		return waypoints;
+	}
+	
+	protected WayPoint calculateWayPoint(Point2D start, Point2D end, int axis, int direction) {
+		double x,y = 0;
+		if(axis == AXIS_Y) {
+			x = start.getX() + (end.getX() - start.getX()) / 2;
+			y = start.getY() + SEGMENT_OFFSET * direction;
+		} else {
+			x = start.getX() + SEGMENT_OFFSET * direction;
+			y = start.getY() + (end.getY() - start.getY()) / 2;
+		}
+		return new WayPoint(x, y);
+	}
+	
+	protected Segment[] calculateSegments(ConnectorRestrictions restrictions, WayPoint[] waypoints) {
+		int nrSegments = getNrSegments(restrictions);
+		Segment[] segments = new Segment[nrSegments];
+
+		Point2D start = restrictions.getStartPoint();
+		Point2D end = restrictions.getEndPoint();
+		int startAxis = getSegmentAxis(restrictions.getStartSide());
+		if(nrSegments == 2) { //No waypoints
+			segments[0] = createStraightSegment(start, end, startAxis);
+			segments[1] = createStraightSegment(segments[0].getMEnd(), end, getOppositeAxis(startAxis));
+		} else {
+			segments[0] = createStraightSegment(
+					restrictions.getStartPoint(),
+					waypoints[0],
+					startAxis
+			);
+			int axis = getOppositeAxis(startAxis);
+			for(int i = 0; i < waypoints.length - 1; i++) {
+				segments[i + 1] = createStraightSegment(
+						segments[i].getMEnd(),
+						waypoints[i + 1],
+						axis					
+				);
+				axis = getOppositeAxis(axis);
+			}
+			segments[segments.length - 2] = createStraightSegment(
+					segments[segments.length -3].getMEnd(),
+					end,
+					axis
+			);
+			segments[segments.length - 1] = createStraightSegment(
+					segments[segments.length - 2].getMEnd(),
+					end,
+					getSegmentAxis(restrictions.getEndSide())
+			);
+		}
+		setWayPoints(waypoints);
 		return segments;
 	}
-	
-	private double calculateSegmentLength(Point2D from, Point2D to, int axis) {
-		double length;
-		if(axis == Segment.AXIS_X) {
-			length = to.getX() - from.getX();
+
+	protected Segment createStraightSegment(Point2D start, Point2D end, int axis) {
+		double ex = end.getX();
+		double ey = end.getY();
+		if(axis == AXIS_X) {
+			ey = start.getY();
 		} else {
-			length = to.getY() - from.getY();
+			ex = start.getX();
 		}
-		return length;
+		return new Segment(start, new Point2D.Double(ex, ey));
 	}
-	
+
 	private int getOppositeAxis(int axis) {
-		return axis == Segment.AXIS_X ? Segment.AXIS_Y : Segment.AXIS_X;
+		return axis == ConnectorShape.AXIS_X ? AXIS_Y : AXIS_X;
 	}
-	
-	private Point2D movePoint(Point2D point, int axis, double length) {
-		if(axis == Segment.AXIS_X) 
-			return new Point2D.Double(point.getX() + length, point.getY());
-		else 
-			return new Point2D.Double(point.getX(), point.getY() + length);
-	}
-	
+
 	private int getSegmentDirection(int side) {
 		switch(side) {
 		case ConnectorRestrictions.SIDE_EAST:
@@ -191,19 +190,19 @@ public class ElbowConnectorShape extends AbstractConnector {
 		}
 		return 0;
 	}
-	
+
 	private int getSegmentAxis(int side) {
 		switch(side) {
 		case ConnectorRestrictions.SIDE_EAST:
 		case ConnectorRestrictions.SIDE_WEST:
-			return Segment.AXIS_X;
+			return AXIS_X;
 		case ConnectorRestrictions.SIDE_NORTH:
 		case ConnectorRestrictions.SIDE_SOUTH:
-			return Segment.AXIS_Y;
+			return AXIS_Y;
 		}
 		return 0;
 	}
-	
+
 	/* The number of connector for each side and relative position
 		RN	RE	RS	RW
 BLN		1	2	1	0
@@ -224,32 +223,32 @@ TLW		2	3	2	1
 
 	private int getNrWaypoints(int x, int y, int z) {
 //		if(waypointNumbers == null) {
-			waypointNumbers = new int[][][] {
-					new int[][] { 	
-							new int[] { 1, 1 },
-							new int[] { 2, 2 },
-							new int[] { 1, 3 },
-							new int[] { 0, 2 }
-					},
-					new int[][] {
-							new int[] { 2, 0 },
-							new int[] { 1, 1 },
-							new int[] { 0, 2 },
-							new int[] { 1, 1 },
-					},
-					new int[][] {
-							new int[] { 3, 1 },
-							new int[] { 2, 2 },
-							new int[] { 1, 1 },
-							new int[] { 2, 0 },
-					},
-					new int[][] {
-							new int[] { 2, 2 },
-							new int[] { 3, 3 },
-							new int[] { 2, 2 },
-							new int[] { 1, 1 },
-					}
-			};
+		waypointNumbers = new int[][][] {
+				new int[][] { 	
+						new int[] { 1, 1 },
+						new int[] { 2, 2 },
+						new int[] { 1, 3 },
+						new int[] { 0, 2 }
+				},
+				new int[][] {
+						new int[] { 2, 0 },
+						new int[] { 1, 1 },
+						new int[] { 0, 2 },
+						new int[] { 1, 1 },
+				},
+				new int[][] {
+						new int[] { 3, 1 },
+						new int[] { 2, 2 },
+						new int[] { 1, 1 },
+						new int[] { 2, 0 },
+				},
+				new int[][] {
+						new int[] { 2, 2 },
+						new int[] { 3, 3 },
+						new int[] { 2, 2 },
+						new int[] { 1, 1 },
+				}
+		};
 //		}
 		return waypointNumbers[x][y][z];
 	}
@@ -264,7 +263,7 @@ TLW		2	3	2	1
 	int getDirectionX(Point2D start, Point2D end) {
 		return (int)Math.signum(end.getX() - start.getX());
 	}
-	
+
 	/**
 	 * Get the direction of the line on the y axis
 	 * @param start The start point of the line
@@ -272,11 +271,11 @@ TLW		2	3	2	1
 	 * @return 1 if the direction is positive (from top to bottom),
 	 * -1 if the direction is negative (from bottom to top)
 	 */
-	int getDirectionY(Point2D start, Point2D end) {
+	protected int getDirectionY(Point2D start, Point2D end) {
 		return (int)Math.signum(end.getY() - start.getY());
 	}
-	
-	int getNrSegments(ConnectorRestrictions restrictions) {
+
+	protected int getNrSegments(ConnectorRestrictions restrictions) {
 		Point2D start = restrictions.getStartPoint();
 		Point2D end = restrictions.getEndPoint();
 
@@ -285,7 +284,7 @@ TLW		2	3	2	1
 		Point2D left = leftToRight ? start : end;
 		Point2D right = leftToRight ? end : start;
 		boolean leftBottom = getDirectionY(left, right) < 0;
-		
+
 		int z = leftBottom ? 0 : 1;
 		int x = leftToRight ? restrictions.getStartSide() : restrictions.getEndSide();
 		int y = leftToRight ? restrictions.getEndSide() : restrictions.getStartSide();
@@ -299,7 +298,7 @@ TLW		2	3	2	1
 		for(Segment s : segments) {
 			length += Math.abs(s.getMLength());
 		}
-		
+
 		//Find the right segment
 		double end = 0;
 		Segment segment = null;
@@ -316,24 +315,26 @@ TLW		2	3	2	1
 			i++;
 		}
 		if(segment == null) segment = segments[segments.length - 1];
-		
+
 		//Find the location on the segment
 		double slength = Math.abs(segment.getMLength());
 		double leftover = (l - (end - slength) / length) * length;
 		double relative = leftover / slength;
-		Point2D position = null;
-		if(segment.getAxis() == Segment.AXIS_X) {
-			position = new Point2D.Double(
-				segment.getMStart().getX() + segment.getMLength() * relative,
-				segment.getMStart().getY()
-			);
-		} else {
-			position = new Point2D.Double(
-				segment.getMStart().getX(),
-				segment.getMStart().getY() + segment.getMLength() * relative
-			);
-		}
-		return position;
+		Point2D s = segment.getMStart();
+		Point2D e = segment.getMEnd();
+
+		double vsx = s.getX();
+		double vsy = s.getY();
+		double vex = e.getX();
+		double vey = e.getY();
+		
+		int dirx = vsx > vex ? -1 : 1;
+		int diry = vsy > vey ? -1 : 1;
+
+		return new Point2D.Double(
+			vsx + dirx * Math.abs(vsx - vex) * relative,
+			vsy + diry * Math.abs(vsy - vey) * relative
+		);
 	}
 
 	public double toLineCoordinate(Point2D v) {

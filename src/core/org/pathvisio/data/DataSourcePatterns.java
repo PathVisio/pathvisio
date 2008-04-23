@@ -16,8 +16,8 @@
 //
 package org.pathvisio.data;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.pathvisio.model.DataSource;

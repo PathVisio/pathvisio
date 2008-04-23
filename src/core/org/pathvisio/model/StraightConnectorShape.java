@@ -16,6 +16,7 @@ public class StraightConnectorShape extends AbstractConnector {
 				restrictions.getStartPoint(),
 				restrictions.getEndPoint()
 		));
+		setWayPoints(new WayPoint[0]);
 	}
 	
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions) {

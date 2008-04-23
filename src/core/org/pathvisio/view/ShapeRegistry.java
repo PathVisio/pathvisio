@@ -16,12 +16,13 @@
 //
 package org.pathvisio.view;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.awt.Shape;
-import java.awt.geom.GeneralPath;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.pathvisio.debug.Logger;
 
 /**

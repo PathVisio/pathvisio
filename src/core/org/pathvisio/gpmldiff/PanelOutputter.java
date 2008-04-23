@@ -18,14 +18,18 @@ package org.pathvisio.gpmldiff;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.VPathwayElement;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.debug.Logger;
-import java.util.*;
-import java.io.*;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 
 class PanelOutputter extends DiffOutputter
 {	

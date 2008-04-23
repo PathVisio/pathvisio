@@ -26,7 +26,6 @@ import java.awt.geom.Point2D;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.view.LinAlg.Point;
 
 /**
  * VAnchor is the view representation of {@link MAnchor}.

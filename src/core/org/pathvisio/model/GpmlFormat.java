@@ -53,7 +53,7 @@ import org.jdom.output.XMLOutputter;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
-import org.pathvisio.model.PathwayElement.MSegment;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.xml.sax.SAXException;
 
 /**
@@ -487,40 +487,46 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
-    	Element p1 = (Element)graphics.getChildren().get(0);
-    	Element p2 = (Element)graphics.getChildren().get(1);
+    	List<MPoint> mPoints = new ArrayList<MPoint>();
     	
-    	o.setMStartX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p1)));
-    	o.setMStartY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p1)));
+    	String startType = null;
+    	String endType = null;
     	
-    	String ref1 = getAttribute("Line.Graphics.Point", "GraphRef", p1);
-    	if (ref1 == null) ref1 = "";
-    	o.setStartGraphRef (ref1);
-
-    	o.setMEndX (Double.parseDouble(getAttribute("Line.Graphics.Point", "x", p2)));
-    	o.setMEndY (Double.parseDouble(getAttribute("Line.Graphics.Point", "y", p2))); 
+    	List<Element> pointElements = graphics.getChildren("Point", e.getNamespace());
+    	for(int i = 0; i < pointElements.size(); i++) {
+    		Element pe = pointElements.get(i);
+    		MPoint mp = o.new MPoint(
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)),
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe))
+    		);
+    		mPoints.add(mp);
+        	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
+        	if (ref == null) ref = "";
+        	mp.setGraphRef(ref);
+        	
+        	if(i == 0) {
+        		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);		
+        		endType = getAttribute("Line.Graphics.Point", "Head", pe);		
+        	} else if(i == pointElements.size() - 1) {
+        		/**
+     		   	read deprecated Head attribute for backwards compatibility.
+     		   	If an arrowhead attribute is present on the other point,
+     		   	it overrides this one.
+        		 */
+        		if (pe.getAttributeValue("ArrowHead") != null)
+        		{
+        			endType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
+        		}
+        	}
+    	}
     	
-    	String ref2 = getAttribute("Line.Graphics.Point", "GraphRef", p2);
-    	if (ref2 == null) ref2 = "";
-    	o.setEndGraphRef (ref2);
+    	o.setMPoints(mPoints);
 
     	String style = getAttribute("Line", "Style", e);
 
-		String type1 = getAttribute("Line.Graphics.Point", "ArrowHead", p1);		
-		/**
-		   read deprecated Head attribute for backwards compatibility.
-		   If an arrowhead attribute is present on the other point,
-		   it overrides this one.
-		 */
-		String type2 = getAttribute("Line.Graphics.Point", "Head", p1);		
-		if (p2.getAttributeValue("ArrowHead") != null)
-		{
-			type2 = getAttribute("Line.Graphics.Point", "ArrowHead", p2);
-		}
-		
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
-		o.setStartLineType (LineType.fromName(type1));
-    	o.setEndLineType (LineType.fromName(type2));
+		o.setStartLineType (LineType.fromName(startType));
+    	o.setEndLineType (LineType.fromName(endType));
     	
     	String connType = getAttribute("Line.Graphics", "ConnectorType", graphics);
     	o.setConnectorType(ConnectorType.fromName(connType));
@@ -536,18 +542,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     			anchor.setShape(LineType.fromName(shape));
     		}
     	}
-    	//Map segments
-    	List<Element> segElms = graphics.getChildren("Segment", e.getNamespace());
-    	ArrayList<MSegment> segments = new ArrayList<MSegment>();
-    	for(Element se : segElms) {
-    		double length = Double.parseDouble(getAttribute("Line.Graphics.Segment", "length", se));
-    		String dirString = getAttribute("Line.Graphics.Segment", "direction", se);
-    		int dir = dirString.equals("Horizontal") ? MSegment.HORIZONTAL : MSegment.VERTICAL;
-    		segments.add(o.new MSegment(dir, length));
-    	}
-    	if(segments.size() > 0) {
-    		o.setMSegments(segments.toArray(new MSegment[segments.size()]));
-    	}
 	}
 	
 	private static void updateLineData(PathwayElement o, Element e) throws ConverterException
@@ -556,23 +550,23 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
 			
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			Element p1 = new Element("Point", e.getNamespace());
-			jdomGraphics.addContent(p1);
-			setAttribute("Line.Graphics.Point", "x", p1, Double.toString(o.getMStartX()));
-			setAttribute("Line.Graphics.Point", "y", p1, Double.toString(o.getMStartY()));
-			setAttribute("Line.Graphics.Point", "ArrowHead", p1, o.getStartLineType().getName());
-			if (o.getStartGraphRef() != null && !o.getStartGraphRef().equals(""))
-			{
-				setAttribute("Line.Graphics.Point", "GraphRef", p1, o.getStartGraphRef());
-			}
-			Element p2 = new Element("Point", e.getNamespace());
-			jdomGraphics.addContent(p2);
-			setAttribute("Line.Graphics.Point", "x", p2, Double.toString(o.getMEndX()));
-			setAttribute("Line.Graphics.Point", "y", p2, Double.toString(o.getMEndY()));
-			setAttribute("Line.Graphics.Point", "ArrowHead", p2, o.getEndLineType().getName());
-			if (o.getEndGraphRef() != null && !o.getEndGraphRef().equals(""))
-			{
-				setAttribute("Line.Graphics.Point", "GraphRef", p2, o.getEndGraphRef());
+			List<MPoint> mPoints = o.getMPoints();
+			
+			for(int i = 0; i < mPoints.size(); i++) {
+				MPoint mp = mPoints.get(i);
+				Element pe = new Element("Point", e.getNamespace());
+				jdomGraphics.addContent(pe);
+				setAttribute("Line.Graphics.Point", "x", pe, Double.toString(mp.getX()));
+				setAttribute("Line.Graphics.Point", "y", pe, Double.toString(mp.getY()));
+				if (mp.getGraphRef() != null && !mp.getGraphRef().equals(""))
+				{
+					setAttribute("Line.Graphics.Point", "GraphRef", pe, mp.getGraphRef());
+				}
+				if(i == 0) {
+					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getStartLineType().getName());
+				} else if(i == mPoints.size() - 1) {
+					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getEndLineType().getName());
+				}
 			}
 			
 			for(MAnchor anchor : o.getMAnchors()) {
@@ -585,17 +579,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			
 			ConnectorType ctype = o.getConnectorType();
 			setAttribute("Line.Graphics", "ConnectorType", jdomGraphics, ctype.getName());
-			
-			MSegment[] segments = o.getMSegments();
-			if(segments != null) {
-				for(MSegment s : segments) {
-					Element se = new Element("Segment", e.getNamespace());
-					String direction = s.getDirection() == MSegment.HORIZONTAL ? "Horizontal" : "Vertical";
-					setAttribute("Line.Graphics.Segment", "direction", se, direction);
-					setAttribute("Line.Graphics.Segment", "length", se, Double.toString(s.getMLength()));
-					jdomGraphics.addContent(se);
-				}
-			}
 		}
 	}
 	

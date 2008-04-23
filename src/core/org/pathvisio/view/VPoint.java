@@ -20,10 +20,11 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.util.HashSet;
 import java.util.Set;
-import org.pathvisio.view.LinAlg.Point;
+
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.view.LinAlg.Point;
 
 public class VPoint extends VPathwayElement {
 	Handle handle;

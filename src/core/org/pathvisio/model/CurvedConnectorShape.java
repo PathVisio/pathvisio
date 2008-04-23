@@ -4,6 +4,12 @@ import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
+/**
+ * Implements a curved connector that draws curved lines between
+ * the segments.
+ * @author thomas
+ *
+ */
 public class CurvedConnectorShape extends ElbowConnectorShape {
 
 	public Shape calculateShape(Segment[] segments) {

@@ -18,7 +18,7 @@ package org.pathvisio.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.pathvisio.Engine;
+
 import org.pathvisio.model.Pathway;
 
 public class UndoManager 

@@ -34,11 +34,11 @@ public class Test extends TestCase implements PathwayListener
 	{
 		data = new Pathway();
 		data.addListener(this);
-		o = new PathwayElement(ObjectType.DATANODE);
+		o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		received = new ArrayList<PathwayEvent>();
 		o.addListener(this);
 		data.add (o);
-		l = new PathwayElement(ObjectType.LINE);		
+		l = PathwayElement.createPathwayElement(ObjectType.LINE);		
 		data.add(l);
 		received.clear();
 	}
@@ -92,7 +92,7 @@ public class Test extends TestCase implements PathwayListener
 		
 		try
 		{
-			new PathwayElement (-1);
+			PathwayElement.createPathwayElement (-1);
 			fail ("Shouldn't be able to set invalid object type");
 		}
 		catch (IllegalArgumentException e)
@@ -101,7 +101,7 @@ public class Test extends TestCase implements PathwayListener
 		
 		try
 		{
-			new PathwayElement (100);
+			PathwayElement.createPathwayElement (100);
 			fail ("Shouldn't be able to set invalid object type");
 		}
 		catch (IllegalArgumentException e)
@@ -140,7 +140,7 @@ public class Test extends TestCase implements PathwayListener
 		l.setStartGraphRef("2");
 		assertTrue ("reference removed", data.getReferringObjects("1").size() == 0);
 		
-		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
+		PathwayElement o2 = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add (o2);
 		
 		// create link in opposite order
@@ -164,7 +164,7 @@ public class Test extends TestCase implements PathwayListener
 		// test for uniqueness
 		o.setGraphId(s1);
 		
-		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);
+		PathwayElement o2 = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add (o2);
 		assertSame (o.getParent(), o2.getParent());
 		assertEquals ("Setting graphId on first element", o.getGraphId(), "123");
@@ -197,7 +197,7 @@ public class Test extends TestCase implements PathwayListener
 		assertEquals (x, o2.getGraphId());
 		
 		// test setting id first, then parent
-		PathwayElement o3 = new PathwayElement(ObjectType.DATANODE);
+		PathwayElement o3 = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		x = data.getUniqueId();
 		o3.setGraphId(x);
 		data.add (o3);
@@ -205,7 +205,7 @@ public class Test extends TestCase implements PathwayListener
 		
 		try
 		{			
-			PathwayElement o4 = new PathwayElement(ObjectType.DATANODE);
+			PathwayElement o4 = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 			// try setting the same id again
 			o4.setGraphId(x);
 			data.add (o4);
@@ -218,7 +218,7 @@ public class Test extends TestCase implements PathwayListener
 	{
 		o.setGraphId("1");
 
-		PathwayElement o2 = new PathwayElement(ObjectType.DATANODE);		
+		PathwayElement o2 = PathwayElement.createPathwayElement(ObjectType.DATANODE);		
 		// note: parent not set yet!		
 		o2.setGraphId ("3");
 		data.add(o2); // reference should now be created
@@ -292,7 +292,7 @@ public class Test extends TestCase implements PathwayListener
 		assertNotNull (mi);
 
 		// test that adding a new mappinfo object replaces the old one.
-		PathwayElement mi2 = new PathwayElement(ObjectType.MAPPINFO);
+		PathwayElement mi2 = PathwayElement.createPathwayElement(ObjectType.MAPPINFO);
 		data.add (mi2); 
 		assertSame ("MappInfo should be replaced", data.getMappInfo(), mi2); 
 		assertNotSame ("Old MappInfo should be gone", data.getMappInfo(), mi);
@@ -321,7 +321,7 @@ public class Test extends TestCase implements PathwayListener
 		assertNotNull (ib);
 		assertEquals (ib.getObjectType(), ObjectType.INFOBOX); 
 
-		PathwayElement ib2 = new PathwayElement(ObjectType.INFOBOX);
+		PathwayElement ib2 = PathwayElement.createPathwayElement(ObjectType.INFOBOX);
 		data.add (ib2);
 		assertSame ("Infobox should be replaced", data.getInfoBox(), ib2); 
 		assertNotSame ("Old Infobox should be gone", data.getInfoBox(), ib);
@@ -344,12 +344,12 @@ public class Test extends TestCase implements PathwayListener
 		o.setMCenterY(50.0);
 		o.setInitialSize();
 		o.setGraphId(data.getUniqueId());
-		PathwayElement o2 = new PathwayElement (ObjectType.LINE);
+		PathwayElement o2 = PathwayElement.createPathwayElement (ObjectType.LINE);
 		o2.setMStartX(10.0);
 		o2.setMStartY(10.0);
 		o2.setInitialSize();
 		data.add(o2);
-		PathwayElement o3 = new PathwayElement (ObjectType.LABEL);
+		PathwayElement o3 = PathwayElement.createPathwayElement (ObjectType.LABEL);
 		o3.setMCenterX(100.0);
 		o3.setMCenterY(50);
 		o3.setGraphId(data.getUniqueId());

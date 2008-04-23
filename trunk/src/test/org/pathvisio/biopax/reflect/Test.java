@@ -38,7 +38,7 @@ public class Test extends TestCase {
 	public void setUp()
 	{
 		data = new Pathway();
-		PathwayElement o = new PathwayElement(ObjectType.DATANODE);
+		PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add (o);
 		
 		elementManager = new BiopaxElementManager(data);
@@ -75,7 +75,7 @@ public class Test extends TestCase {
 		
 	public void testReadWrite() {
 		//Add to datanode
-		PathwayElement pwElm = new PathwayElement(ObjectType.DATANODE);
+		PathwayElement pwElm = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add(pwElm);
 		BiopaxReferenceManager dnRefManager = new BiopaxReferenceManager(elementManager, pwElm);
 		pwRefManager = new BiopaxReferenceManager(elementManager, data.getMappInfo());

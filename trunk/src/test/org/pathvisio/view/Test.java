@@ -42,11 +42,11 @@ public class Test extends TestCase {
 	public void setUp()
 	{
     	pwy = new Pathway();
-    	eltDn = new PathwayElement(ObjectType.DATANODE);
+    	eltDn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
     	eltDn.setGeneID("1234");
-    	eltSh = new PathwayElement(ObjectType.SHAPE);
-    	eltLi = new PathwayElement(ObjectType.LINE);
-    	eltLa = new PathwayElement(ObjectType.LABEL);
+    	eltSh = PathwayElement.createPathwayElement(ObjectType.SHAPE);
+    	eltLi = PathwayElement.createPathwayElement(ObjectType.LINE);
+    	eltLa = PathwayElement.createPathwayElement(ObjectType.LABEL);
     	pwy.add(eltDn);
     	pwy.add(eltSh);
     	pwy.add(eltLi);

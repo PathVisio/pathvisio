@@ -296,7 +296,7 @@ public class KeggFormat {
 	}
 
 	private PathwayElement createGroup(String name, PathwayElement[] elements) {
-		PathwayElement group = new PathwayElement(ObjectType.GROUP);
+		PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 		group.setTextLabel(name);
 		pathway.add(group);
 		String id = pathway.getUniqueId();
@@ -325,7 +325,7 @@ public class KeggFormat {
 	}
 
 	private PathwayElement createDataNode(Element graphics, DataNodeType type, String label, String id, DataSource source) {
-		PathwayElement dn = new PathwayElement(ObjectType.DATANODE);
+		PathwayElement dn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		dn.setDataSource(source);
 		if(id != null) dn.setGeneID(id);
 		dn.setDataNodeType(type);
@@ -466,7 +466,7 @@ public class KeggFormat {
 
 	private PathwayElement mapMap(Element map) {
 		String label = map.getAttributeValue("name"); 
-		PathwayElement link = new PathwayElement(ObjectType.LABEL);
+		PathwayElement link = PathwayElement.createPathwayElement(ObjectType.LABEL);
 		link.setOutline(OutlineType.ROUNDED_RECTANGLE);
 		link.addComment(link.new Comment(map.getAttributeValue("link"), COMMENT_SOURCE));
 		Element graphics = map.getChild(ELM_GRAPHICS);
@@ -542,7 +542,7 @@ public class KeggFormat {
 		anchor.setShape(LineType.create("mim-catalysis", null));
 		
 		//draw a line from the bottom of the datanodes to the anchor
-		PathwayElement aline = new PathwayElement(ObjectType.LINE);
+		PathwayElement aline = PathwayElement.createPathwayElement(ObjectType.LINE);
 		pathway.add(aline);
 		aline.setMStartX(mediator.getMCenterX());
 		aline.setMStartY(mediator.getMTop() + mediator.getMHeight());
@@ -561,7 +561,7 @@ public class KeggFormat {
 	{
 
 		// Create new pathway line
-		PathwayElement line = new PathwayElement(ObjectType.LINE);
+		PathwayElement line = PathwayElement.createPathwayElement(ObjectType.LINE);
 
 		line.setColor(Color.BLACK);
 

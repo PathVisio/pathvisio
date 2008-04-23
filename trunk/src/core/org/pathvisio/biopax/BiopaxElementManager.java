@@ -203,7 +203,7 @@ public class BiopaxElementManager {
 	private Document getDocument() {
 		PathwayElement biopax = pathway.getBiopax();
 		if(biopax == null) {
-			biopax = new PathwayElement(ObjectType.BIOPAX);
+			biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
 			pathway.add(biopax);
 		}
 		Document biopaxDoc = biopax.getBiopax();

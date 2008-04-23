@@ -17,6 +17,9 @@
 package org.pathvisio.model;
 
 import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,6 +29,8 @@ import java.util.Set;
 import org.jdom.Document;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.view.LinAlg;
+import org.pathvisio.view.LinAlg.Point;
 
 /**
  * PathwayElement is responsible for maintaining the data for all the individual
@@ -396,15 +401,31 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			throw new IllegalArgumentException("Invalid object type " + value);
 		}
 	}
-
+	
 	/**
+	 * Instantiate a pathway element.
 	 * The required parameter objectType ensures only objects with a valid type
 	 * can be created.
 	 * 
 	 * @param ot
 	 *            Type of object, one of the ObjectType.* fields
 	 */
-	public PathwayElement(int ot)
+	public static PathwayElement createPathwayElement(int ot) {
+		PathwayElement e = null;
+		switch(ot) {
+		case ObjectType.GROUP:
+			e = new MGroup();
+			break;
+		case ObjectType.LINE:
+			e = new MLine();
+		default:
+			e = new PathwayElement(ot);
+			break;
+		}
+		return e;
+	}
+	
+	protected PathwayElement(int ot)
 	{
 		if (ot < ObjectType.MIN_VALID || ot > ObjectType.MAX_VALID)
 		{
@@ -1672,7 +1693,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		return mHeight;
 	}
-
+	
 	public void setMHeight(double v)
 	{
 		if (mHeight != v)
@@ -1777,6 +1798,64 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	}
 
+	/**
+	 * Get the rectangular bounds of the object
+	 * after rotation is applied
+	 */
+	public Rectangle2D getRBounds() {
+		Rectangle2D bounds = getMBounds();
+		AffineTransform t = new AffineTransform();
+		t.rotate(getRotation(), getMCenterX(), getMCenterY());
+		bounds = t.createTransformedShape(bounds).getBounds2D();
+		return bounds;
+	}
+	
+	/**
+	 * Get the rectangular bounds of the object
+	 * without rotation taken into accound
+	 */
+	public Rectangle2D getMBounds() {
+		return new Rectangle2D.Double(getMLeft(), getMTop(), getMWidth(), getMHeight());
+	}
+	
+	/**
+	 * Translate the given point to internal coordinate system
+	 * (origin in center and axis direction rotated with this objects rotation
+	 * @param MPoint p
+	 */
+	private Point mToInternal(Point p)
+	{
+		Point pt = mRelativeToCenter(p);
+		Point pr = LinAlg.rotate(pt, getRotation());
+		return pr;
+	}
+	
+	/**
+	 * Get the coordinates of the given point relative
+	 * to this object's center
+	 * @param p
+	 */
+	private Point mRelativeToCenter(Point p)
+	{
+		return p.subtract(new Point(getMCenterX(), getMCenterY()));
+	}
+	
+	/**
+	 * Transla	/**
+	 * Translate the given coordinates to external coordinate system (of the
+	 * drawing canvas)
+	 * @param x
+	 * @param y
+	 */
+	private Point mToExternal(double x, double y)
+	{
+		Point p = new Point(x, y);
+		Point pr = LinAlg.rotate(p, -getRotation());
+		pr.x += getMCenterX();
+		pr.y += getMCenterY();
+		return pr;
+	}
+	
 	// for labels
 	protected boolean fBold = false;
 

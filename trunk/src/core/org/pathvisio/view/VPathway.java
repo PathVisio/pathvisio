@@ -1360,7 +1360,7 @@ public class VPathway implements PathwayListener
 		// If selection is not grouped, then group.
 		else
 		{
-			PathwayElement group = new PathwayElement(ObjectType.GROUP);
+			PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 			data.add(group);
 			group.setTextLabel("new group");
 			group.setGroupStyle(GroupStyle.NONE);

@@ -414,7 +414,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			return null;
 		}
 		
-		PathwayElement o = new PathwayElement(ot);
+		PathwayElement o = PathwayElement.createPathwayElement(ot);
 		if (p != null)
 		{
 			p.add (o);

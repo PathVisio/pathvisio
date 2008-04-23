@@ -77,7 +77,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			PathwayElement e = new PathwayElement(ObjectType.LINE);
+			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.LINE);
 			e.setMStartX(mx);
 			e.setMStartY(my);
 			e.setMEndX(mx);
@@ -106,7 +106,7 @@ public abstract class DefaultTemplates {
 	
 	public static class LabelTemplate extends SingleElementTemplate {
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			PathwayElement e = new PathwayElement(ObjectType.LABEL);
+			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.LABEL);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
 			e.setMWidth(Label.M_INITIAL_WIDTH);
@@ -135,7 +135,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			PathwayElement e = new PathwayElement(ObjectType.DATANODE);
+			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
 			e.setMWidth(1);
@@ -169,7 +169,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			PathwayElement e = new PathwayElement(ObjectType.SHAPE);
+			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.SHAPE);
 			e.setShapeType(type);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);

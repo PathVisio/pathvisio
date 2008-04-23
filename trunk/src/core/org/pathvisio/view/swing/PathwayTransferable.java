@@ -123,7 +123,7 @@ public class PathwayTransferable implements Transferable {
 		
 		//If no mappinfo, create a dummy one that we can recognize lateron
 		if(!infoFound) {
-			PathwayElement info = new PathwayElement(ObjectType.MAPPINFO);
+			PathwayElement info = PathwayElement.createPathwayElement(ObjectType.MAPPINFO);
 			info.setMapInfoDataSource(INFO_DATASOURCE);
 			pnew.add(info);
 		}

@@ -172,7 +172,7 @@ public class Pathway implements PathwayListener
 	
 	public void createBiopax()
 	{
-		biopax = new PathwayElement(ObjectType.BIOPAX);
+		biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
 		this.add(biopax);
 	}
 
@@ -551,9 +551,9 @@ public class Pathway implements PathwayListener
 	 */
 	public Pathway() 
 	{
-		mappInfo = new PathwayElement(ObjectType.MAPPINFO);
+		mappInfo = PathwayElement.createPathwayElement(ObjectType.MAPPINFO);
 		this.add (mappInfo);
-		infoBox = new PathwayElement(ObjectType.INFOBOX);
+		infoBox = PathwayElement.createPathwayElement(ObjectType.INFOBOX);
 		this.add (infoBox);
 	}
 	

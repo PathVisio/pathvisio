@@ -290,25 +290,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}
 		}
 
-		public Set<MPoint> getEqualPoints()
-		{
-			Set<MPoint> links = new HashSet<MPoint>();
-			//TK: disable this for now, until we implemented poly-lines
-//			for (PathwayElement o : parent.getDataObjects())
-//			{
-//				if (o != PathwayElement.this && o.objectType == ObjectType.LINE)
-//				{
-//					for (MPoint p : o.getMPoints())
-//					{
-//						if (x == p.x && y == p.y)
-//							links.add(p);
-//					}
-//				}
-//			}
-			links.add(this); // equal to itself
-			return links;
-		}
-
 		public Object clone() throws CloneNotSupportedException
 		{
 			MPoint p = (MPoint) super.clone();

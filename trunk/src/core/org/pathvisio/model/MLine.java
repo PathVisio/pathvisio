@@ -224,10 +224,14 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 		Pathway parent = getParent();
 		Rectangle2D rect = null;
 		if(parent != null) {
-			for(PathwayElement e : parent.getObjectsAt(point)) {
-				if(e.getObjectType() != ObjectType.LINE && e != null) {
-					if(rect == null) rect = e.getMBounds();
-					else rect.add(e.getMBounds());
+			for(PathwayElement e : parent.getDataObjects()) {
+				int ot = e.getObjectType();
+				if(ot == ObjectType.SHAPE || ot == ObjectType.DATANODE || ot == ObjectType.LABEL) {
+					Rectangle2D b = e.getMBounds();
+					if(b.contains(point)) {
+						if(rect == null) rect = b;
+						else rect.add(b);
+					}
 				}
 			}
 		}

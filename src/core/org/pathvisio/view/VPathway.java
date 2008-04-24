@@ -367,31 +367,16 @@ public class VPathway implements PathwayListener
 
 	protected VPoint getPoint(MPoint mPoint)
 	{
-		VPoint p = pointsMtoV.get(mPoint);
-		if (p == null)
-		{
-			p = newPoint(mPoint);
-		}
-		return p;
+		return pointsMtoV.get(mPoint);
 	}
 
-	private VPoint newPoint(MPoint mPoint)
+	public VPoint newPoint(MPoint mPoint, Line line)
 	{
-		VPoint p = null;
-		for (MPoint ep : mPoint.getEqualPoints())
-		{
-			p = pointsMtoV.get(ep);
-			if (p != null)
-			{
-				p.addMPoint(mPoint);
-				pointsMtoV.put(mPoint, p);
-				break;
-			}
+		VPoint p = pointsMtoV.get(mPoint);
+		if (p == null) {
+			p = new VPoint(this, mPoint, line);
+			pointsMtoV.put(mPoint, p);
 		}
-		if (p == null)
-			p = new VPoint(this);
-		p.addMPoint(mPoint);
-		pointsMtoV.put(mPoint, p);
 		return p;
 	}
 

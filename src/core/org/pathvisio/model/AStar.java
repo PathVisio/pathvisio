@@ -1,14 +1,14 @@
-package org.pathvisio.view;
+package org.pathvisio.model;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.view.ConnectorShape.Segment;
+import org.pathvisio.model.ConnectorShape.Segment;
 
 /**
  * Package private.

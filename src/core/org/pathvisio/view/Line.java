@@ -81,9 +81,8 @@ public class Line extends Graphics
 	}
 	
 	private void addPoint(MPoint mp) {
-		VPoint vp = canvas.getPoint(mp);
+		VPoint vp = canvas.newPoint(mp, this);
 		points.add(vp);
-		vp.addLine(this);
 		vp.setHandleLocation();
 	}
 	
@@ -482,6 +481,13 @@ public class Line extends Graphics
 		return vFromM(gdata.getMTop());
 	}
 	
+	protected void vMoveWayPointsBy(double vdx, double vdy) {
+		List<MPoint> mps = gdata.getMPoints();
+		for(int i = 1; i < mps.size() - 1; i++) {
+			mps.get(i).moveBy(mFromV(vdx), mFromV(vdy));
+		}
+	}
+	
 	protected void vMoveBy(double vdx, double vdy)
 	{
 		for(VPoint p : points) {
@@ -533,7 +539,7 @@ public class Line extends Graphics
 		super.destroy();
 		
 		for(VPoint p : points) {
-			p.removeLine(this);
+			p.destroy();
 		}
 		for(MPoint p : gdata.getMPoints()) {
 			canvas.pointsMtoV.remove(p);
@@ -577,7 +583,8 @@ public class Line extends Graphics
 	 * @param l The line coordinate
 	 */
 	public Point2D vFromL(double l) {
-		return getConnectorShape().fromLineCoordinate(l);
+		Point2D m = getConnectorShape().fromLineCoordinate(l);
+		return new Point2D.Double(vFromM(m.getX()), vFromM(m.getY()));
 	}
 	
 	/**
@@ -585,7 +592,8 @@ public class Line extends Graphics
 	 * a line coordinate (1-dimensional)
 	 */
 	public double lFromV(Point2D v) {
-		return getConnectorShape().toLineCoordinate(v);
+		Point2D m = new Point2D.Double(mFromV(v.getX()), mFromV(v.getY()));
+		return getConnectorShape().toLineCoordinate(m);
 	}
 	
 	/**

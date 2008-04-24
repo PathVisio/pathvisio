@@ -28,71 +28,32 @@ import org.pathvisio.view.LinAlg.Point;
 
 public class VPoint extends VPathwayElement {
 	Handle handle;
-	Set<Line> lines;
-	Set<MPoint> mPoints;
+	Line line;
+	MPoint mPoint;
 	
-	VPoint(VPathway canvas) {
+	VPoint(VPathway canvas, MPoint mPoint, Line line) {
 		super(canvas);
-		mPoints = new HashSet<MPoint>();
-		lines = new HashSet<Line>();
+		this.mPoint = mPoint;
+		this.line = line;
 		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}
-	
-	protected void addMPoint(MPoint p) {
-		mPoints.add(p);
-	}
-	
-	protected void removeMPoint(MPoint p) {
-		mPoints.remove(p);
-	}
-	
-	protected void addLine(Line l) {
-		lines.add(l);
-	}
-	
-	protected void removeLine(Line l) {
-		lines.remove(l);
-		//Remove this VPoint when it links to no lines no more
-		if(lines.size() == 0) {
-			destroy();
-		}
-	}
-	
-	protected Set<Line> getLines() { return lines; }
 	
 	protected void link(GraphIdContainer g) {		
 		String id = g.getGraphId();
 		if(id == null) id = g.setGeneratedGraphId();
-		for(MPoint p : mPoints) p.setGraphRef(id);
-	}
-	
-	protected void link(VPoint p) {
-		if(p == this) return; //Already linked
-		for(MPoint mp : p.mPoints) {
-			mPoints.add(mp);
-		}
-		for(Line l : p.lines) {
-			l.swapPoint(p, this);
-			addLine(l);
-		}
-		p.lines.clear();
-		p.destroy();
+		mPoint.setGraphRef(id);
 	}
 
 	protected double getVX() { return vFromM(getMPoint().getX()); }
 	protected double getVY() { return vFromM(getMPoint().getY()); }
 	
 	protected void setVLocation(double vx, double vy) {
-		for(MPoint p : mPoints) {
-			p.setX(mFromV(vx));
-			p.setY(mFromV(vy));
-		}
+		mPoint.setX(mFromV(vx));
+		mPoint.setY(mFromV(vy));
 	}
 	
 	protected void vMoveBy(double dx, double dy) {
-		for(MPoint p : mPoints) {
-			p.moveBy(mFromV(dx), mFromV(dy));
-		}
+		mPoint.moveBy(mFromV(dx), mFromV(dy));
 	}
 	
 	protected void setHandleLocation() {
@@ -100,9 +61,12 @@ public class VPoint extends VPathwayElement {
 		handle.setMLocation(mp.getX(), mp.getY());
 	}
 	
-	private MPoint getMPoint() {
-		for(MPoint p : mPoints) return p;
-		return null;
+	public MPoint getMPoint() {
+		return mPoint;
+	}
+	
+	public Line getLine() {
+		return line;
 	}
 	
 	protected void adjustToHandle(Handle h, double vnewx, double vnewy)
@@ -116,9 +80,8 @@ public class VPoint extends VPathwayElement {
 			// get global preference and convert to radians.
 			double lineSnapStep = GlobalPreference.getValueInt(
 				GlobalPreference.SNAP_TO_ANGLE_STEP) * Math.PI / 180;
-			Line first = lines.iterator().next();
-			VPoint p1 = first.getStart();
-			VPoint p2 = first.getEnd();
+			VPoint p1 = line.getStart();
+			VPoint p2 = line.getEnd();
 			double basex, basey;
 			// base is the static point the line rotates about.
 			// it is equal to the OTHER point, the one we're not moving.
@@ -142,11 +105,8 @@ public class VPoint extends VPathwayElement {
 			mcy = prj.y;
 		}
 		
-		for(MPoint p : mPoints)
-		{
-			p.setX(mcx);
-			p.setY(mcy);
-		}
+		mPoint.setX(mcx);
+		mPoint.setY(mcy);
 	}
 	
 	protected Handle getHandle() {

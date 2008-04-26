@@ -367,14 +367,16 @@ public class Line extends Graphics
 
 	/**
 	   Will return the arrowhead suitable for an arrow pointing from
-	   p1 to p2 (so the tip of the arrowhead will be at p2)
+	   p1 to p2 (so the tip of the arrowhead will be at p2).
+	   Note: p1, p2 should be in model coordinates! The returned ArrowShape
+	   will be in view coordinates.
 	 */
 	protected ArrowShape getVHead(Point2D p1, Point2D p2, LineType type)
 	{
-		double xs = p1.getX();
-		double ys = p1.getY();
-		double xe = p2.getX();
-		double ye = p2.getY();
+		double xs = vFromM(p1.getX());
+		double ys = vFromM(p1.getY());
+		double xe = vFromM(p2.getX());
+		double ye = vFromM(p2.getY());
 
 		ArrowShape h;
 		if (type == null)

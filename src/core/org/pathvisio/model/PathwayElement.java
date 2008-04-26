@@ -264,6 +264,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}
 		}
 
+		protected double getRawX() {
+			return getCoordinate(0);
+		}
+		
+		protected double getRawY() {
+			return getCoordinate(1);
+		}
+		
 		public double getRelX() {
 			return getCoordinate(2);
 		}

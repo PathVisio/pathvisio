@@ -17,6 +17,7 @@
 package org.pathvisio.model;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -154,6 +155,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		result.put("DataNode@Type", new AttributeInfo ("gpml:DataNodeType", "Unknown", "optional"));
 		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Line.Graphics.Point@relX", new AttributeInfo ("xsd:float", "0", "optional"));
+		result.put("Line.Graphics.Point@relY", new AttributeInfo ("xsd:float", "0", "optional"));
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Point@Head", new AttributeInfo ("xsd:string", "Line", "optional"));
@@ -561,6 +564,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				if (mp.getGraphRef() != null && !mp.getGraphRef().equals(""))
 				{
 					setAttribute("Line.Graphics.Point", "GraphRef", pe, mp.getGraphRef());
+					setAttribute("Line.Graphics.Point", "relX", pe, Double.toString(mp.getRelX()));
+					setAttribute("Line.Graphics.Point", "relY", pe, Double.toString(mp.getRelY()));
 				}
 				if(i == 0) {
 					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getStartLineType().getName());
@@ -1250,6 +1255,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				mapElement((Element)e, pwy);
 			}			
 			Logger.log.trace ("End copying map elements");
+			//Convert absolute point coordinates of linked points to
+			//relative coordinates
+			convertPointCoordinates(pwy);
 		}
 		catch(JDOMParseException pe) 
 		{
@@ -1275,6 +1283,36 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		}
 	}
 
+	private static void convertPointCoordinates(Pathway pathway) throws ConverterException
+	{
+		for(PathwayElement pe : pathway.getDataObjects()) {
+			if(pe.getObjectType() == ObjectType.LINE) {
+				String sr = pe.getStartGraphRef();
+				String er = pe.getEndGraphRef();
+				if(sr != null && !"".equals(sr)) {
+					GraphIdContainer idc = pathway.getGraphIdContainer(sr);
+					Point2D relative = idc.toRelativeCoordinate(
+							new Point2D.Double(
+								pe.getMStart().getRawX(),
+								pe.getMStart().getRawY()
+							)
+					);
+					pe.getMStart().setRelativePosition(relative.getX(), relative.getY());
+				}
+				if(er != null && !"".equals(er)) {
+					GraphIdContainer idc = pathway.getGraphIdContainer(er);
+					Point2D relative = idc.toRelativeCoordinate(
+							new Point2D.Double(
+								pe.getMEnd().getRawX(),
+								pe.getMEnd().getRawY()
+							)
+					);
+					pe.getMEnd().setRelativePosition(relative.getX(), relative.getY());
+				}
+			}
+		}
+	}
+	
 	/**
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate

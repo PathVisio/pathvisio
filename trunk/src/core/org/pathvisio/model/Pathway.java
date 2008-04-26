@@ -16,7 +16,6 @@
 //
 package org.pathvisio.model;
 
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
@@ -26,12 +25,14 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 /**
@@ -111,30 +112,14 @@ public class Pathway implements PathwayListener
 	 */
 	public PathwayElement getElementById(String graphId) {
 		//TODO: dataobject should be stored in a hashmap, with the graphId as key!
-		for(PathwayElement e : dataObjects) {
-			if(graphId.equals(e.getGraphId())) {
-				return e;
+		if(graphId != null) {
+			for(PathwayElement e : dataObjects) {
+				if(graphId.equals(e.getGraphId())) {
+					return e;
+				}
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Find the objects at a particular location on the pathway.
-	 * If the point falls within the bounds of the object, it will be
-	 * included in the returned set.
-	 */
-	public Set<PathwayElement> getObjectsAt(Point2D p)
-	{
-		Set<PathwayElement> result = new HashSet<PathwayElement>();
-		for (PathwayElement o : getDataObjects())
-		{
-			if (o.getMBounds().contains(p))
-			{
-				result.add(o);
-			}
-		}
-		return result;
 	}
 	
 	/**
@@ -337,7 +322,7 @@ public class Pathway implements PathwayListener
 		dataObjects.remove(o);
 		List<GraphRefContainer> references = getReferringObjects(o.getGraphId());
 		for(GraphRefContainer refc : references) {
-			refc.setGraphRef(null);
+			refc.unlink();
 		}
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.setParent(null);
@@ -384,11 +369,39 @@ public class Pathway implements PathwayListener
 	}
 	
 	/**
-	 * Stores references of line endpoints to other objects
+	 * Stores references of graph ids to other GraphRefContainers
 	 */
 	private HashMap<String, List<GraphRefContainer>> graphRefs = new HashMap<String, List<GraphRefContainer>>();
-	private Set<String> ids = new HashSet<String>();
+	private Map<String, GraphIdContainer> graphIds = new HashMap<String, GraphIdContainer>();
+
+	public Set<String> getGraphIds() {
+		return graphIds.keySet();
+	}
 	
+	public GraphIdContainer getGraphIdContainer(String id) {
+		return graphIds.get(id);
+	}
+	
+	/**
+	 * Returns all GraphRefContainers that refer to an object with a 
+	 * particular graphId.
+	 */
+	public List<GraphRefContainer> getReferringObjects (String id)
+	{
+		List<GraphRefContainer> refs = graphRefs.get(id);
+		if(refs != null) {
+			refs = new ArrayList<GraphRefContainer>(refs);
+		} else {
+			refs = new ArrayList<GraphRefContainer>();
+		}
+		return refs;
+	}
+	
+	/**
+	 * Register a link from a graph id to a graph ref
+	 * @param id The graph id
+	 * @param target The target GraphRefContainer
+	 */
 	public void addGraphRef (String id, GraphRefContainer target)
 	{
 		if (graphRefs.containsKey(id))
@@ -404,9 +417,71 @@ public class Pathway implements PathwayListener
 		}
 	}
 	
+	/**
+	 * Remove a reference to another Id. 
+	 * @param id
+	 * @param target
+	 */
+	public void removeGraphRef (String id, GraphRefContainer target)
+	{
+		if (!graphRefs.containsKey(id)) throw new IllegalArgumentException();
+		
+		graphRefs.get(id).remove(target);
+		if (graphRefs.get(id).size() == 0)
+			graphRefs.remove(id);
+	}
+	
+	/**
+	 * Registers an id that can subsequently be used for
+	 * referral. It is tested for uniqueness.
+	 * @param id
+	 */
+	public void addGraphId (String id, GraphIdContainer idc)
+	{
+		if (idc == null || id == null)
+		{
+			throw new IllegalArgumentException ("unique id can't be null");
+		}
+		if (graphIds.containsKey(id))
+		{
+			throw new IllegalArgumentException ("id '" + id + "' is not unique");
+		}
+		graphIds.put(id, idc);
+	}
+	
+	public void removeId (String id)
+	{
+		graphIds.remove(id);
+	}
+	
+	private Map<String, PathwayElement> groupIds = new HashMap<String, PathwayElement>();
 	private HashMap<String, Set<PathwayElement>> groupRefs = new HashMap<String, Set<PathwayElement>>();
 	
-	public void addRef (String ref, PathwayElement child)
+	public Set<String> getGroupIds() {
+		return groupIds.keySet();
+	}
+	
+	public void addGroupId(String id, PathwayElement group) {
+		if (id == null)
+		{
+			throw new IllegalArgumentException ("unique id can't be null");
+		}
+		if (graphIds.containsKey(id))
+		{
+			throw new IllegalArgumentException ("id '" + id + "' is not unique");
+		}
+		groupIds.put(id, group);
+	}
+	
+	public void removeGroupId(String id) {
+		groupIds.remove(id);
+	}
+	
+	public PathwayElement getGroupById(String id) {
+		return groupIds.get(id);
+	}
+	
+	public void addGroupRef (String ref, PathwayElement child)
 	{
 		if (groupRefs.containsKey(ref))
 		{
@@ -422,7 +497,7 @@ public class Pathway implements PathwayListener
 		}
 	}
 	
-	public void removeRef (String id, PathwayElement child)
+	public void removeGroupRef (String id, PathwayElement child)
 	{
 		if (!groupRefs.containsKey(id)) throw new IllegalArgumentException();
 		
@@ -442,66 +517,21 @@ public class Pathway implements PathwayListener
 		return result == null ? new HashSet<PathwayElement>() : result;
 	}
 	
-	/**
-	 * Remove a reference to another Id. 
-	 * @param id
-	 * @param target
-	 */
-	public void removeGraphRef (String id, GraphRefContainer target)
-	{
-		if (!graphRefs.containsKey(id)) throw new IllegalArgumentException();
-		
-		graphRefs.get(id).remove(target);
-		if (graphRefs.get(id).size() == 0)
-			graphRefs.remove(id);
+	public String getUniqueGraphId() {
+		return getUniqueId(graphIds.keySet());
 	}
 	
-	private HashMap<String, PathwayElement> groups = new HashMap<String, PathwayElement>();
-	
-	/**
-	 * Registers an id that can subsequently be used for
-	 * referrral. It is tested for uniqueness.
-	 * @param id
-	 */
-	public void addId (String id)
-	{
-		if (id == null)
-		{
-			throw new IllegalArgumentException ("unique id can't be null");
-		}
-		if (ids.contains(id))
-		{
-			throw new IllegalArgumentException ("id '" + id + "' is not unique");
-		}
-		ids.add (id);
-	
+	public String getUniqueGroupId() {
+		return getUniqueId(groupIds.keySet());
 	}
 	
-	public void removeId (String id)
-	{
-		ids.remove(id);
-	}
-
-	public void addGroupId(String id, PathwayElement group) {
-		addId(id);
-		groups.put(id, group);
-	}
-	
-	public void removeGroupId(String id) {
-		groups.remove(id);
-	}
-	
-	public PathwayElement getGroupById(String id) {
-		return groups.get(id);
-	}
-	
-	/*AP20070508*/	
 	/**
 	 * Generate random ids, based on strings of hex digits (0..9 or a..f)
 	 * Ids are unique across both graphIds and groupIds per pathway
+	 * @param ids The collection of already existing ids
 	 * @return an Id unique for this pathway
 	 */
-	public String getUniqueId ()
+	public String getUniqueId (Set<String> ids)
 	{
 		String result;
 		Random rn = new Random();
@@ -521,20 +551,6 @@ public class Pathway implements PathwayListener
 		while (ids.contains(result));
 		
 		return result;
-	}
-	
-	/**
-	 * Returns all lines that refer to an object with a particular graphId.
-	 */
-	public List<GraphRefContainer> getReferringObjects (String id)
-	{
-		List<GraphRefContainer> refs = graphRefs.get(id);
-		if(refs != null) {
-			refs = new ArrayList<GraphRefContainer>(refs);
-		} else {
-			refs = new ArrayList<GraphRefContainer>();
-		}
-		return refs;
 	}
 	
 	protected double[] calculateMBoardSize() {

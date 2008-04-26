@@ -532,12 +532,12 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 				case 4: /*Brace*/
 						o = mapBraceType(row);
 						mapNotesAndComments (o, row);
-						o.setGraphId(data.getUniqueId());
+						o.setGraphId(data.getUniqueGraphId());
 						break;							
 				case 5: /*Gene*/
 						o = mapGeneProductType(row);
 						mapNotesAndComments (o, row);
-						o.setGraphId(data.getUniqueId());
+						o.setGraphId(data.getUniqueGraphId());
 						break;																					
 				case 6: /*InfoBox*/
 						o = mapInfoBoxType (row, data);
@@ -545,7 +545,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 				case 7: /*Label*/
 						o = mapLabelType(row);
 						mapNotesAndComments (o, row);
-						o.setGraphId(data.getUniqueId());
+						o.setGraphId(data.getUniqueGraphId());
 						break;
 				case 8: /*Legend*/
 						o = mapLegendType(row);
@@ -555,7 +555,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 				case 18: /*Arc*/
 						o = mapShapeType(row);
 						mapNotesAndComments (o, row);
-						o.setGraphId(data.getUniqueId());
+						o.setGraphId(data.getUniqueGraphId());
 						break;							
 				case 17: /*CellA*/
 				case 19: /*Ribosome*/							
@@ -564,14 +564,14 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 				case 22: /*OrganC*/
 						o = mapFixedShapeType(row);
 						mapNotesAndComments (o, row);
-						o.setGraphId(data.getUniqueId());
+						o.setGraphId(data.getUniqueGraphId());
 						break;							
 				case 23: /*ProteinB*/
 				case 24: /*Poly*/
 				case 25: /*Vesicle*/
 						o = mapComplexShapeType(row);
 						mapNotesAndComments (o, row);
-						o.setGraphId(data.getUniqueId());
+						o.setGraphId(data.getUniqueGraphId());
 						break;
 				default: 
 						throw new ConverterException (

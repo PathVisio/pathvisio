@@ -163,16 +163,7 @@ public class Line extends Graphics
 	}
 	
 	private ConnectorShape getConnectorShape() {
-		String type = gdata.getConnectorType().getName();
-		
-		//Recreate the ConnectorShape when it's null or when the type
-		//doesn't match the implementing class
-		if(shape == null || !shape.getClass().equals(ConnectorShapeFactory.getImplementingClass(type))) {
-			System.out.println("Creating connector " + type);
-			shape = ConnectorShapeFactory.createConnectorShape(gdata.getConnectorType().getName());
-			shape.recalculateShape(getMLine());
-		}
-		return shape;
+		return getMLine().getConnectorShape();
 	}
 
 	/**

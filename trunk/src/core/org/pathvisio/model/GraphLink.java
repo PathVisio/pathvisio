@@ -16,6 +16,7 @@
 //
 package org.pathvisio.model;
 
+import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,18 @@ public abstract class GraphLink
 		 * needed for maintaining a consistent list of graphId's 
 		 */
 		Pathway getGmmlData();
+		
+		/**
+		 * Convert a point to shape coordinates (relative
+		 * to the bounds of the GraphIdContainer)
+		 */
+		Point2D toRelativeCoordinate(Point2D p);
+		
+		/**
+		 * Convert a point to pathway coordinates (relative
+		 * to the pathway)
+		 */
+		Point2D toAbsoluteCoordinate(Point2D p);
 	}
 	
 	/**
@@ -57,7 +70,8 @@ public abstract class GraphLink
 	public interface GraphRefContainer 
 	{
 		String getGraphRef();
-		void setGraphRef(String ref);
+		void linkTo(GraphIdContainer idc, double relX, double relY);
+		void unlink();
 		void moveBy(double dx, double dy);
 
 		/** 
@@ -92,7 +106,7 @@ public abstract class GraphLink
 				}
 				if (v != null)
 				{
-					data.addId(v);
+					data.addGraphId(v, c);
 				}
 			}
 		}

@@ -66,6 +66,7 @@ public class GeneProduct extends GraphicsShape
 
 	public void doDraw(Graphics2D g)
 	{
+		java.awt.Shape origClip = g.getClip();
 		RectangularShape area = new Rectangle2D.Double(
 			getVLeft(), getVTop(), getVWidth(), getVHeight());
 		boolean rounded = GlobalPreference.getValueBoolean(GlobalPreference.DATANODES_ROUNDED);
@@ -102,7 +103,9 @@ public class GeneProduct extends GraphicsShape
 			tl.draw(g, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2), 
 					(int)area.getY() + (int)(area.getHeight() / 2) + (int)(tb.getHeight() / 2));
 		}
+		g.setClip(origClip); //Reset clipping
 		drawHighlight(g);
+		super.doDraw((Graphics2D)g.create());
 	}
 	
 	public void drawHighlight(Graphics2D g)

@@ -37,13 +37,11 @@ public class VPoint extends VPathwayElement {
 		this.line = line;
 		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}
-	
-	protected void link(GraphIdContainer g) {		
-		String id = g.getGraphId();
-		if(id == null) id = g.setGeneratedGraphId();
-		mPoint.setGraphRef(id);
-	}
 
+	protected void unlink() {
+		mPoint.setGraphRef(null);
+	}
+	
 	protected double getVX() { return vFromM(getMPoint().getX()); }
 	protected double getVY() { return vFromM(getMPoint().getY()); }
 	

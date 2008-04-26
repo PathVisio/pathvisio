@@ -32,7 +32,7 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * @author thomas
  *
  */
-public class VAnchor extends VPathwayElement {
+public class VAnchor extends VPathwayElement implements LinkProvider {
 	private MAnchor mAnchor;
 	private Line line;
 	private Handle handle;
@@ -45,6 +45,8 @@ public class VAnchor extends VPathwayElement {
 		this.mAnchor = mAnchor;
 		this.line = parent;
 
+		linkAnchor = new LinkAnchor(canvas, mAnchor, 0, 0);
+		
 		handle = new Handle(Handle.DIRECTION_FREE, this, getDrawing());
 		updatePosition();
 	}
@@ -169,6 +171,9 @@ public class VAnchor extends VPathwayElement {
 			}
 		}
 		
+		if(showLinkAnchors) {
+			linkAnchor.draw(g);
+		}
 		if(isHighlighted()) {
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
@@ -179,5 +184,23 @@ public class VAnchor extends VPathwayElement {
 	
 	protected Shape getVOutline() {
 		return getShape();
+	}
+
+	LinkAnchor linkAnchor;
+	boolean showLinkAnchors = false;
+	
+	public LinkAnchor getLinkAnchorAt(Point2D p) {
+		if(linkAnchor.getMatchArea().contains(p)) {
+			return linkAnchor;
+		}
+		return null;
+	}
+
+	public void hideLinkAnchors() {
+		showLinkAnchors = false;
+	}
+
+	public void showLinkAnchors() {
+		showLinkAnchors = true;
 	}
 }

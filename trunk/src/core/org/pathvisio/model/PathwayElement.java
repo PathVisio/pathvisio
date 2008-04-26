@@ -17,12 +17,12 @@
 package org.pathvisio.model;
 
 import java.awt.Color;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -105,7 +105,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * @author thomas
 	 *
 	 */
-	private class GenericPoint implements Cloneable, GraphIdContainer
+	private abstract class GenericPoint implements Cloneable, GraphIdContainer
 	{
 		private double[] coordinates;
 
@@ -152,7 +152,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		protected double getCoordinate(int i) {
 			return coordinates[i];
 		}
-		
+
 		public String getGraphId()
 		{
 			return graphId;
@@ -160,7 +160,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		public String setGeneratedGraphId()
 		{
-			setGraphId(parent.getUniqueId());
+			setGraphId(parent.getUniqueGraphId());
 			return graphId;
 		}
 
@@ -214,7 +214,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		public MPoint(double x, double y)
 		{
-			super(new double[] { x, y });
+			super(new double[] { x, y, 0, 0 });
 		}
 
 		MPoint(MPoint p)
@@ -226,12 +226,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		public void moveBy(double dx, double dy)
 		{
-			super.moveBy(new double[] { dx, dy });
+			super.moveBy(new double[] { dx, dy, 0, 0 });
 		}
 
 		public void moveTo(double x, double y) 
 		{
-			super.moveTo(new double[] { x, y });
+			super.moveTo(new double[] { x, y, 0, 0 });
 		}
 		
 		public void setX(double nx)
@@ -248,14 +248,59 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		public double getX()
 		{
-			return getCoordinate(0);
+			if(isRelative()) {
+				return getAbsolute().getX();
+			} else {
+				return getCoordinate(0);
+			}
 		}
 
 		public double getY()
 		{
-			return getCoordinate(1);
+			if(isRelative()) {
+				return getAbsolute().getY();
+			} else {
+				return getCoordinate(1);
+			}
 		}
 
+		public double getRelX() {
+			return getCoordinate(2);
+		}
+		
+		public double getRelY() {
+			return getCoordinate(3);
+		}
+		
+		private Point2D getAbsolute() {
+			return getGraphIdContainer().toAbsoluteCoordinate(
+					new Point2D.Double(getRelX(), getRelY())
+			);
+		}
+
+		
+		public void setRelativePosition(double rx, double ry) {
+			moveTo(new double[] { getX(), getY(), rx, ry });
+		}
+		
+		/**
+		 * Checks if the position of this point should be stored
+		 * as relative or absolute coordinates
+		 * @return true if the coordinates are relative, false if not
+		 */
+		public boolean isRelative() {
+			Pathway p = getPathway();
+			if(p != null) {
+				GraphIdContainer gc = getPathway().getGraphIdContainer(graphRef);				
+				return gc != null;
+			}
+			return false;
+		}
+		
+		private GraphIdContainer getGraphIdContainer() {
+			return getPathway().getGraphIdContainer(graphRef);
+		}
+		
 		public String getGraphRef()
 		{
 			return graphRef;
@@ -301,6 +346,25 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		public Point2D toPoint2D() {
 			return new Point2D.Double(getX(), getY());
 		}
+
+		public void linkTo(GraphIdContainer idc, double relX, double relY) {
+			String id = idc.getGraphId();
+			if(id == null) id = idc.setGeneratedGraphId();
+			setGraphRef(idc.getGraphId());
+			setRelativePosition(relX, relY);
+		}
+		
+		public void unlink() {
+			setGraphRef(null);
+		}
+
+		public Point2D toAbsoluteCoordinate(Point2D p) {
+			return new Point2D.Double(p.getX() + getX(), p.getY() + getY());
+		}
+
+		public Point2D toRelativeCoordinate(Point2D p) {
+			return new Point2D.Double(p.getX() - getX(), p.getY() - getY());
+		}
 	}
 	
 	/**
@@ -344,6 +408,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		
 		public void moveBy(double delta) {
 			super.moveBy(new double[] { delta });
+		}
+
+		public Point2D toAbsoluteCoordinate(Point2D p) {
+			Point2D l = ((MLine)getParent()).getConnectorShape().fromLineCoordinate(getPosition());
+			return new Point2D.Double(p.getX() + l.getX(), p.getY() + l.getY());
+		}
+
+		public Point2D toRelativeCoordinate(Point2D p) {
+			Point2D l = ((MLine)getParent()).getConnectorShape().fromLineCoordinate(getPosition());
+			return new Point2D.Double(p.getX() - l.getX(), p.getY() - l.getY());
 		}
 	}
 	
@@ -492,7 +566,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				}
 				if(getGroupRef() != null)
 				{
-					v.removeRef(getGroupRef(), this);
+					v.removeGroupRef(getGroupRef(), this);
 				}
 				if (graphId != null)
 				{
@@ -516,11 +590,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				}
 				if(getGroupRef() != null)
 				{
-					v.addRef(getGroupRef(), this);
+					v.addGroupRef(getGroupRef(), this);
 				}
 				if (graphId != null)
 				{
-					parent.addId(graphId);
+					parent.addGraphId(graphId, this);
 				}
 				if (groupId != null)
 				{
@@ -2253,12 +2327,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			{
 				if (groupRef != null)
 				{
-					parent.removeRef(groupRef, this);
+					parent.removeGroupRef(groupRef, this);
 				}
 				// Check: move add before remove??
 				if (s != null)
 				{
-					parent.addRef(s, this);
+					parent.addGroupRef(s, this);
 				}
 			}
 			groupRef = s;
@@ -2276,7 +2350,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (groupId == null)
 		{
-			setGroupId(parent.getUniqueId());
+			setGroupId(parent.getUniqueGroupId());
 		}
 		return groupId;
 	}
@@ -2342,7 +2416,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public String setGeneratedGraphId()
 	{
-		setGraphId(parent.getUniqueId());
+		setGraphId(parent.getUniqueGraphId());
 		return graphId;
 	}
 
@@ -2515,5 +2589,55 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public int compareTo(PathwayElement o) {
 		return getZOrder() - o.getZOrder();
+	}
+
+	public Point2D toAbsoluteCoordinate(Point2D p) {
+		double x = p.getX();
+		double y = p.getY();
+		Rectangle2D bounds = getRBounds();
+		//Scale
+		x *= bounds.getWidth() / 2;
+		y *= bounds.getHeight() / 2;
+		//Translate
+		x += bounds.getCenterX();
+		y += bounds.getCenterY();
+		return new Point2D.Double(x, y);
+	}
+
+	public Point2D toRelativeCoordinate(Point2D p) {
+		double relX = p.getX();
+		double relY = p.getY();
+		Rectangle2D bounds = getRBounds();
+		//Translate
+		relX -= bounds.getCenterX();
+		relY -= bounds.getCenterY();
+		//Scale
+		relX /= bounds.getWidth() / 2;
+		relY /= bounds.getHeight() / 2;
+		return new Point2D.Double(relX, relY);
+	}
+	
+	private AffineTransform getToRelativeTransform() {
+		Rectangle2D bounds = getRBounds();
+		AffineTransform t = new AffineTransform();
+		t.translate(-bounds.getCenterX(), -bounds.getCenterY());
+		t.scale(bounds.getWidth() * 2, bounds.getHeight() * 2);
+		return t;
+	}
+	
+	private AffineTransform getToAbsoluteTransform() {
+		Rectangle2D bounds = getRBounds();
+		AffineTransform t = new AffineTransform();
+		t.translate(bounds.getCenterX(), bounds.getCenterY());
+		t.scale(bounds.getWidth() / 2, bounds.getHeight() / 2);
+		return t;
+	}
+	
+	public Shape toRelative(Shape s) {
+		return getToRelativeTransform().createTransformedShape(s);
+	}
+	
+	public Shape toAbsolute(Shape s) {
+		return getToAbsoluteTransform().createTransformedShape(s);
 	}
 }

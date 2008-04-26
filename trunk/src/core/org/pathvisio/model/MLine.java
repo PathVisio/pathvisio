@@ -14,8 +14,22 @@ import org.pathvisio.model.ConnectorShape.WayPoint;
  * @author thomas
  */
 public class MLine extends PathwayElement implements ConnectorRestrictions {
+	ConnectorShape shape;
+	
 	public MLine() {
 		super(ObjectType.LINE);
+	}
+	
+	public ConnectorShape getConnectorShape() {
+		String type = getConnectorType().getName();
+		
+		//Recreate the ConnectorShape when it's null or when the type
+		//doesn't match the implementing class
+		if(shape == null || !shape.getClass().equals(ConnectorShapeFactory.getImplementingClass(type))) {
+			shape = ConnectorShapeFactory.createConnectorShape(getConnectorType().getName());
+			shape.recalculateShape(this);
+		}
+		return shape;
 	}
 	
 	public double getMCenterX()

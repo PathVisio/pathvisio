@@ -112,7 +112,7 @@ public abstract class DefaultTemplates {
 			e.setMWidth(Label.M_INITIAL_WIDTH);
 			e.setMHeight(Label.M_INITIAL_HEIGHT);
 			e.setMFontSize(Label.M_INITIAL_FONTSIZE);
-			e.setGraphId(p.getUniqueId());
+			e.setGraphId(p.getUniqueGraphId());
 			e.setTextLabel("Label");
 			addElement(e, p);
 			
@@ -141,7 +141,7 @@ public abstract class DefaultTemplates {
 			e.setMWidth(1);
 			e.setMHeight(1);
 			e.setRotation(0);
-			e.setGraphId(p.getUniqueId());
+			e.setGraphId(p.getUniqueGraphId());
 			e.setDataNodeType(type);
 			
 			//Default colors for different types
@@ -176,7 +176,7 @@ public abstract class DefaultTemplates {
 			e.setMWidth(1);
 			e.setMHeight(1);
 			e.setRotation(0);
-			e.setGraphId(p.getUniqueId());
+			e.setGraphId(p.getUniqueGraphId());
 			addElement(e, p);
 			
 			//brace

@@ -101,18 +101,18 @@ public class Shape extends GraphicsShape
 			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
 			g.draw (shape);
 		}
+		super.doDraw((Graphics2D)g.create());
 	}	
 
 	protected java.awt.Shape getVOutline() {
-		java.awt.Shape s = getShape(true, FUZZY_STROKE_WIDTH); //fuzzy matching for outline
+		Area a = new Area(super.getVOutline());
+		a.add(new Area(getShape(true, FUZZY_STROKE_WIDTH))); //fuzzy matching for outline
 		if(!gdata.isTransparent()) {
 			//Also include the filled area when not transparent
 			java.awt.Shape fill = getShape(true, false);
-			Area a = new Area(s);
 			a.add(new Area(fill));
-			s = a;
 		}
-		return s;
+		return a;
 	}
 
 	protected java.awt.Shape getShape(boolean rotate, float sw) {

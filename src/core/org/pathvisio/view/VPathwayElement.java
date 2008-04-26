@@ -153,7 +153,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	}
 	
 	/**
-	 * Determines wheter a Graphics object contains
+	 * Determines whether a Graphics object contains
 	 * the point specified
 	 * @param point - the point to check
 	 * @return True if the object contains the point, false otherwise
@@ -162,8 +162,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	{
 		return getVOutline().contains(point);
 	}	
-
-
+	
 	public boolean isSelected()
 	{
 		return isSelected;

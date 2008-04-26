@@ -16,10 +16,15 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.pathvisio.model.PathwayElement;
@@ -34,7 +39,7 @@ import org.pathvisio.view.LinAlg.Point;
  * and provides implementation for containing 8 handles placed in a 
  * (rotated) rectangle around the shape and a rotation handle
  */
-public abstract class GraphicsShape extends Graphics {
+public abstract class GraphicsShape extends Graphics implements LinkProvider {
 
 	private static final double M_ROTATION_HANDLE_POSITION = 20.0 * 15;
 
@@ -290,7 +295,14 @@ public abstract class GraphicsShape extends Graphics {
 	protected Shape getVOutline()
 	{
 		//Include rotation and stroke
-		return getShape(true, true);
+		Area a = new Area(getShape(true, true));
+		//Include link anchors
+		if(showLinkAnchors) {
+			for(LinkAnchor la : getLinkAnchors()) {
+				a.add(new Area(la.getShape()));
+			}
+		}
+		return a;
 	}
 		
 	protected Shape getVShape(boolean rotate) {
@@ -341,4 +353,42 @@ public abstract class GraphicsShape extends Graphics {
 		setHandleLocation();
 	}
 	
+	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
+	
+	public List<LinkAnchor> getLinkAnchors() {
+		if(linkAnchors.size() == 0) {
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 0, -1));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 1, 0));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 0, 1));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, -1, 0));
+		}
+		return linkAnchors;
+	}
+	
+	boolean showLinkAnchors = false;
+	
+	public void showLinkAnchors() {
+		showLinkAnchors = true;
+	}
+	
+	public void hideLinkAnchors() {
+		showLinkAnchors = false;
+	}
+	
+	public LinkAnchor getLinkAnchorAt(Point2D p) {
+		for(LinkAnchor la : getLinkAnchors()) {
+			if(la.getMatchArea().contains(p)) {
+				return la;
+			}
+		}
+		return null;
+	}
+	
+	protected void doDraw(Graphics2D g2d) {
+		if(showLinkAnchors) {
+			for(LinkAnchor la : getLinkAnchors()) {
+				la.draw(g2d);
+			}
+		}
+	}
 }

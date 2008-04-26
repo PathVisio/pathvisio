@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
@@ -506,40 +508,36 @@ public class VPathway implements PathwayListener
 			dragUndoState = DRAG_UNDO_CHANGED;
 		}
 		resetHighlight();
-		List<VPathwayElement> objects = getObjectsAt(p2d);
-		Collections.sort(objects);
-		//Reverse to handle objects that are drawn last (on top) first
-		Collections.reverse(objects);
+		hideLinkAnchors();
+		
+		List<LinkProvider> objects = getLinkProvidersAt(p2d);
 		VPoint p = (VPoint) g.parent;
-		VPathwayElement x = null;
-		for (VPathwayElement o : objects)
+		GraphIdContainer idc = null;
+		for (LinkProvider lp : objects)
 		{
-			if (o instanceof VPoint && o != p)
-			{
-				x = o;
-				// TK: don't link points with each other
-				// this can be removed when we implemented poly lines
-				// p.link((VPoint)o);
-				break;
-			} else if (o instanceof Graphics && !(o instanceof Line))
-			{
-				x = o;
-				p.link(((Graphics) o).getPathwayElement());
-				break;
-			} else if (o instanceof VAnchor) {
-				VAnchor anchor = (VAnchor)o;
-				x = o;
-				p.link(anchor.getMAnchor());
-				if(isSnapToAnchors()) {
-					p.setVLocation(anchor.getVx(), anchor.getVy());
-				}
+			lp.showLinkAnchors();
+			LinkAnchor la = lp.getLinkAnchorAt(p2d);
+			if(la != null) {
+				//Set graphRef
+				la.link(p.getMPoint());
+				System.out.println("Linking!");
+				idc = la.getGraphIdContainer();
 				break;
 			}
 		}
-		if (x != null)
-			x.highlight();
+		if(idc == null) {
+			p.getMPoint().unlink();
+		}
 	}
 
+	private void hideLinkAnchors() {
+		for(VPathwayElement pe : getDrawingObjects()) {
+			if(pe instanceof LinkProvider) {
+				((LinkProvider)pe).hideLinkAnchors();
+			}
+		}
+	}
+	
 	private boolean snapToAngle;
 	
 	/**
@@ -590,7 +588,7 @@ public class VPathway implements PathwayListener
 			vPreviousX = ve.getX();
 			vPreviousY = ve.getY();
 
-			if (pressedObject instanceof Handle && (altPressed || ctrlPressed)
+			if (pressedObject instanceof Handle
 					&& newTemplate == null
 					&& ((Handle) pressedObject).parent instanceof VPoint)
 			{
@@ -752,6 +750,7 @@ public class VPathway implements PathwayListener
 				temporaryCopy = null;
 			}
 			resetHighlight();
+			hideLinkAnchors();
 			if (selection.isSelecting())
 			{ // If we were selecting, stop it
 				selection.stopSelecting();
@@ -1027,6 +1026,20 @@ public class VPathway implements PathwayListener
 		return result;
 	}
 
+	private List<LinkProvider> getLinkProvidersAt(Point2D p) {
+		List<LinkProvider> result = new ArrayList<LinkProvider>();
+		for (VPathwayElement o : drawingObjects)
+		{
+			if (o.getVBounds().contains(p))
+			{
+				// select this object, unless it is an invisible gmmlHandle
+				if (o instanceof LinkProvider)
+					result.add((LinkProvider)o);
+			}
+		}
+		return result;
+	}
+	
 	void doClickSelect(Point2D p2d, MouseEvent e)
 	{
 		if (!selectionEnabled)
@@ -2245,7 +2258,7 @@ public class VPathway implements PathwayListener
 		return selection.getSelection();
 	}
 
-	private void generatePasteId(String oldId, Map<String, String> idmap,
+	private void generatePasteId(String oldId, Set<String> idset, Map<String, String> idmap,
 			Set<String> newids)
 	{
 		if (oldId != null)
@@ -2258,7 +2271,7 @@ public class VPathway implements PathwayListener
 				 * equal to one of the unique ids that we generated since the
 				 * start of this method
 				 */
-				x = data.getUniqueId();
+				x = data.getUniqueId(idset);
 			} while (newids.contains(x));
 			newids.add(x); // make sure we don't generate this one
 			// again
@@ -2285,15 +2298,15 @@ public class VPathway implements PathwayListener
 		{
 			String id = o.getGraphId();
 			String groupId = o.getGroupId();
-			generatePasteId(id, idmap, newids);
-			generatePasteId(groupId, idmap, newids);
+			generatePasteId(id, data.getGraphIds(), idmap, newids);
+			generatePasteId(groupId, data.getGroupIds(), idmap, newids);
 			
 			//For a line, also process the point ids
 			if(o.getObjectType() == ObjectType.LINE) {
 				for(MPoint mp : o.getMPoints())
-					generatePasteId(mp.getGraphId(), idmap, newids);
+					generatePasteId(mp.getGraphId(), data.getGraphIds(), idmap, newids);
 				for(MAnchor ma : o.getMAnchors())
-					generatePasteId(ma.getGraphId(), idmap, newids);
+					generatePasteId(ma.getGraphId(), data.getGraphIds(), idmap, newids);
 			}
 		}
 		/*
@@ -2465,6 +2478,11 @@ public class VPathway implements PathwayListener
 		return m * zoomFactor;
 	}
 
+	public java.awt.Shape vFromM(java.awt.Shape s) {
+		AffineTransform t = new AffineTransform();
+		t.scale(zoomFactor, zoomFactor);
+		return t.createTransformedShape(s);
+	}
 	/**
 	 * Get width of entire Pathway view (taking into account zoom)
 	 */

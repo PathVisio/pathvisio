@@ -179,7 +179,7 @@ public class Test extends TestCase implements PathwayListener
 		}
 		
 		// test random id
-		String x = data.getUniqueId();
+		String x = data.getUniqueGraphId();
 		try
 		{			
 			// test that we can use it as unique id
@@ -192,13 +192,13 @@ public class Test extends TestCase implements PathwayListener
 		catch (IllegalArgumentException e) {}
 		
 		// test that a second random id is unique again
-		x = data.getUniqueId();
+		x = data.getUniqueGraphId();
 		o2.setGraphId(x);
 		assertEquals (x, o2.getGraphId());
 		
 		// test setting id first, then parent
 		PathwayElement o3 = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-		x = data.getUniqueId();
+		x = data.getUniqueGraphId();
 		o3.setGraphId(x);
 		data.add (o3);
 		assertEquals (o3.getGraphId(), x);
@@ -343,7 +343,7 @@ public class Test extends TestCase implements PathwayListener
 		o.setMCenterX(50.0);
 		o.setMCenterY(50.0);
 		o.setInitialSize();
-		o.setGraphId(data.getUniqueId());
+		o.setGraphId(data.getUniqueGraphId());
 		PathwayElement o2 = PathwayElement.createPathwayElement (ObjectType.LINE);
 		o2.setMStartX(10.0);
 		o2.setMStartY(10.0);
@@ -352,7 +352,7 @@ public class Test extends TestCase implements PathwayListener
 		PathwayElement o3 = PathwayElement.createPathwayElement (ObjectType.LABEL);
 		o3.setMCenterX(100.0);
 		o3.setMCenterY(50);
-		o3.setGraphId(data.getUniqueId());
+		o3.setGraphId(data.getUniqueGraphId());
 		data.add(o3);
 		PathwayElement mi;
 

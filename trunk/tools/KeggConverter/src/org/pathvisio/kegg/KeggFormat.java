@@ -299,7 +299,7 @@ public class KeggFormat {
 		PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 		group.setTextLabel(name);
 		pathway.add(group);
-		String id = pathway.getUniqueId();
+		String id = pathway.getUniqueGroupId();
 		group.setGroupId(id);
 		for(PathwayElement pe : elements) {
 			pe.setGroupRef(id);
@@ -609,7 +609,7 @@ public class KeggFormat {
 		//so set one explicitly...FIXME!
 		String id = pwElm.getGraphId();
 		if(id == null) {
-			pwElm.setGraphId(id = pwElm.getParent().getUniqueId());
+			pwElm.setGraphId(id = pwElm.getParent().getUniqueGraphId());
 		}
 		return id;
 	}

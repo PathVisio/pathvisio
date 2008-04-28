@@ -22,6 +22,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 
 import javax.swing.SwingUtilities;
 
@@ -54,10 +55,25 @@ public class TestComponent extends Component {
 		return getSize();
 	}
 	
+	public boolean contains(int x, int y) {
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Checking " + getParent().getComponentZOrder(this));
+		return new Ellipse2D.Double(0, 0, getSize().width, getSize().height).contains(x, y);
+	}
+	
 	protected void processMouseMotionEvent(MouseEvent e) {
 		System.out.println("Mouse Motion Event: " + e.getID() + " at " + e.getX() + ", " + e.getY());
 		System.out.println("\tsource: " + e.getSource());
 		if(e.getID() == MouseEvent.MOUSE_DRAGGED) {
+			//Test getComponentAt performance
+			
+			Component c = getParent().getComponentAt(e.getPoint());
+			System.out.println("Another component " + c + " at " + e.getPoint());
 			System.out.println("\tDRAGGED");
 			MouseEvent ne = SwingUtilities.convertMouseEvent(this, e, getParent());
 			ne.translatePoint(-downLocation.x, -downLocation.y);

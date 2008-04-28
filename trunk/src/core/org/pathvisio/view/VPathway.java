@@ -507,7 +507,6 @@ public class VPathway implements PathwayListener
 		{
 			dragUndoState = DRAG_UNDO_CHANGED;
 		}
-		resetHighlight();
 		hideLinkAnchors();
 		
 		List<LinkProvider> objects = getLinkProvidersAt(p2d);
@@ -520,7 +519,6 @@ public class VPathway implements PathwayListener
 			if(la != null) {
 				//Set graphRef
 				la.link(p.getMPoint());
-				System.out.println("Linking!");
 				idc = la.getGraphIdContainer();
 				break;
 			}
@@ -798,7 +796,7 @@ public class VPathway implements PathwayListener
 	{
 		draw(g2d, area, true);
 	}
-
+	
 	/**
 	 * Paints all components in the drawing. This method is called automatically
 	 * in the painting process
@@ -821,6 +819,7 @@ public class VPathway implements PathwayListener
 				Dimension size = parent.getViewportSize(); //Draw the visible area
 				area = new Rectangle(0, 0, size.width, size.height);
 			}
+			System.out.println("Created area " + area);
 		}
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -1030,11 +1029,10 @@ public class VPathway implements PathwayListener
 		List<LinkProvider> result = new ArrayList<LinkProvider>();
 		for (VPathwayElement o : drawingObjects)
 		{
-			if (o.getVBounds().contains(p))
+			if (o instanceof LinkProvider && o.getVBounds().contains(p))
 			{
 				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof LinkProvider)
-					result.add((LinkProvider)o);
+				result.add((LinkProvider)o);
 			}
 		}
 		return result;

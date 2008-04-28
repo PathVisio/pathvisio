@@ -368,11 +368,17 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 	boolean showLinkAnchors = false;
 	
 	public void showLinkAnchors() {
-		showLinkAnchors = true;
+		if(!showLinkAnchors) {
+			showLinkAnchors = true;
+			markDirty();
+		}
 	}
 	
 	public void hideLinkAnchors() {
-		showLinkAnchors = false;
+		if(showLinkAnchors) {
+			showLinkAnchors = false;
+			markDirty();
+		}
 	}
 	
 	public LinkAnchor getLinkAnchorAt(Point2D p) {

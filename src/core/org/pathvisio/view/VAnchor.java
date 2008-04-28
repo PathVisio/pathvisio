@@ -198,9 +198,11 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 
 	public void hideLinkAnchors() {
 		showLinkAnchors = false;
+		markDirty();
 	}
 
 	public void showLinkAnchors() {
 		showLinkAnchors = true;
+		markDirty();
 	}
 }

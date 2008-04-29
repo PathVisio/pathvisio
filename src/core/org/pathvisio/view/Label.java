@@ -245,7 +245,7 @@ public class Label extends GraphicsShape
 			Rectangle2D r = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
 			g.fill(r);
 		}
-
+		super.doDraw(g);
 	}
 		
 //	public void gmmlObjectModified(PathwayEvent e) {

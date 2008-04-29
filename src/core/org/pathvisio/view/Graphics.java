@@ -76,7 +76,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 	}
 		
 	boolean listen = true;
-	public void gmmlObjectModified(PathwayEvent e) {	
+	public void gmmlObjectModified(PathwayEvent e) {
 		if(listen) markDirty(); // mark everything dirty
 	}
 	
@@ -167,12 +167,12 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 	/**
 	 * Default implementation returns the rotated shape.
 	 * Subclasses may override (e.g. to include the stroke)
-	 * @see {@link VPathwayElement#getVOutline()}
+	 * @see {@link VPathwayElement#calculateVOutline()}
 	 */
-	protected Shape getVOutline() {
+	protected Shape calculateVOutline() {
 		return getVShape(true);
 	}
-	
+		
 	/**
 	 * Returns the fontstyle to create a java.awt.Font
 	 * @return the fontstyle, or Font.PLAIN if no font is available

@@ -118,8 +118,8 @@ public class VPoint extends VPathwayElement {
 	protected void doDraw(Graphics2D g2d) {
 	}
 
-	protected Shape getVOutline() {
-		return handle.getVOutline();
+	protected Shape calculateVOutline() {
+		return handle.calculateVOutline();
 	}
 
 	protected void destroy() {

@@ -98,9 +98,14 @@ public class MGroup extends PathwayElement {
 		}
 	}
 	
+	static final double BOUNDS_SPACING = 5 * 15; //Make the bounds slightly
+											  //larger than the summed bounds
+											  //of the containing elements
 	/**
 	 * Iterates over all group elements to find
-	 * the total rectangular bounds
+	 * the total rectangular bounds.
+	 * Note: doesn't include rotation of the nested elements.
+	 * If you want to include rotation, use {@link #getRBounds()} instead.
 	 */
 	public Rectangle2D getMBounds() {
 		Rectangle2D bounds = null;
@@ -109,7 +114,40 @@ public class MGroup extends PathwayElement {
 			if(bounds == null) bounds = e.getMBounds();
 			else bounds.add(e.getMBounds());
 		}
-		return bounds == null ? new Rectangle2D.Double() : bounds;
+		if(bounds != null) {
+			return new Rectangle2D.Double(
+				bounds.getX() - BOUNDS_SPACING,
+				bounds.getY() - BOUNDS_SPACING,
+				bounds.getWidth() + 2*BOUNDS_SPACING,
+				bounds.getHeight() + 2*BOUNDS_SPACING
+			);
+		} else {
+			return new Rectangle2D.Double();
+		}
+	}
+	
+	/**
+	 * Iterates over all group elements to find
+	 * the total rectangular bounds, taking into
+	 * account rotation of the nested elements
+	 */
+	public Rectangle2D getRBounds() {
+		Rectangle2D bounds = null;
+		for(PathwayElement e : getGroupElements()) {
+			if(e == this) continue; //To prevent recursion error
+			if(bounds == null) bounds = e.getRBounds();
+			else bounds.add(e.getRBounds());
+		}
+		if(bounds != null) {
+			return new Rectangle2D.Double(
+				bounds.getX() - BOUNDS_SPACING,
+				bounds.getY() - BOUNDS_SPACING,
+				bounds.getWidth() + 2 * BOUNDS_SPACING,
+				bounds.getHeight() + 2 * BOUNDS_SPACING
+			);
+		} else {
+			return new Rectangle2D.Double();
+		}
 	}
 	
 	/**

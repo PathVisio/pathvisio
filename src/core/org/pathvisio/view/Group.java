@@ -18,20 +18,21 @@ package org.pathvisio.view;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
 
-public class Group extends Graphics
+public class Group extends Graphics implements LinkProvider
 {
 
 	public Group(VPathway canvas, PathwayElement pe)
@@ -209,11 +210,13 @@ public class Group extends Graphics
 		for(VPoint p : toMove) p.vMoveBy(dx, dy);
 	}
 
-	@Override
 	protected void doDraw(Graphics2D g2d)
 	{
-		// TODO make unique selection box for groups
-
+		if(showLinkAnchors) {
+			for(LinkAnchor la : getLinkAnchors()) {
+				la.draw(g2d);
+			}
+		}
 	}
 
 	public void highlight(Color c) {
@@ -224,26 +227,69 @@ public class Group extends Graphics
 		}
 	}
 	
-	@Override
-	protected Shape getVOutline()
-	{
-		// TODO Return outline of the Group members, distinct from global
-		// selection box
-
-		Rectangle rect = new Rectangle();
-
-		return rect;
+	protected Shape calculateVOutline() {
+		//Include rotation and stroke
+		Area a = new Area(getVShape(true));
+		//Include link anchors
+		if(showLinkAnchors) {
+			for(LinkAnchor la : getLinkAnchors()) {
+				a.add(new Area(la.getShape()));
+			}
+		}
+		return a;
 	}
-
+	
 	protected Shape getVShape(boolean rotate)
 	{
-		// TODO Auto-generated method stub
-		return new Rectangle();
+		Rectangle2D mb = null;
+		if(rotate) {
+			mb = gdata.getRBounds();
+		} else {
+			mb = gdata.getMBounds();
+		}
+		return canvas.vFromM(mb);
 	}
 
 	protected void setVScaleRectangle(Rectangle2D r)
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
+	
+	public List<LinkAnchor> getLinkAnchors() {
+		if(linkAnchors.size() == 0) {
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 0, -1));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 1, 0));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 0, 1));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, -1, 0));
+		}
+		return linkAnchors;
+	}
+	
+	boolean showLinkAnchors = false;
+	
+	public void showLinkAnchors() {
+		if(!showLinkAnchors) {
+			showLinkAnchors = true;
+			markDirty();
+		}
+	}
+	
+	public void hideLinkAnchors() {
+		if(showLinkAnchors) {
+			showLinkAnchors = false;
+			markDirty();
+		}
+	}
+	
+	public LinkAnchor getLinkAnchorAt(Point2D p) {
+		for(LinkAnchor la : getLinkAnchors()) {
+			if(la.getMatchArea().contains(p)) {
+				return la;
+			}
+		}
+		return null;
 	}
 }

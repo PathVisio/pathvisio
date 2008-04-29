@@ -59,7 +59,7 @@ public class SelectionBox extends VPathwayElement
 
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<VPathwayElement> selection;
+	private Set<VPathwayElement> selection;
 
 	boolean isSelecting;
 
@@ -74,7 +74,7 @@ public class SelectionBox extends VPathwayElement
 	{
 		super(canvas);
 
-		selection = new ArrayList<VPathwayElement>();
+		selection = new HashSet<VPathwayElement>();
 
 		handleNE = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleSE = new Handle(Handle.DIRECTION_FREE, this, canvas);
@@ -82,12 +82,12 @@ public class SelectionBox extends VPathwayElement
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 	}
 
-	public ArrayList<VPathwayElement> getSelection()
+	public Set<VPathwayElement> getSelection()
 	{
 		return selection;
 	}
 
-	public Rectangle2D getVOutline()
+	public Rectangle2D calculateVOutline()
 	{
 		return new Rectangle2D.Double(vFromM(mLeft), vFromM(mTop),
 				vFromM(mWidth), vFromM(mHeight));
@@ -308,7 +308,7 @@ public class SelectionBox extends VPathwayElement
 		}
 		if (!hasMultipleSelection())
 		{ // Only one object in selection, hide selectionbox
-			VPathwayElement passTo = selection.get(0);
+			VPathwayElement passTo = selection.iterator().next();
 			passTo.select();
 			return;
 		}
@@ -360,6 +360,7 @@ public class SelectionBox extends VPathwayElement
 	{
 		for (Handle h : getHandles())
 			h.hide();
+		markDirty();
 		isVisible = false;
 		if (reset)
 			reset();
@@ -403,8 +404,6 @@ public class SelectionBox extends VPathwayElement
 			mdw = -mdx;
 		}
 
-		markDirty();
-
 		mWidth += mdw;
 		mHeight += mdh;
 		mLeft += mdx;
@@ -429,43 +428,45 @@ public class SelectionBox extends VPathwayElement
 
 		if (isSelecting)
 		{ // Selecting, so add containing objects to selection
-			Rectangle2D vr = getVBounds();
-			Rectangle2D.Double bounds = new Rectangle2D.Double(vr.getX(), vr
-					.getY(), vr.getWidth(), vr.getHeight());
+			Rectangle2D bounds = getVBounds();
 			for (VPathwayElement o : canvas.getDrawingObjects())
 			{
 				if ((o == this) || (o instanceof Handle))
 					continue;
-				if (o.vIntersects(bounds) && !(o instanceof Group))
-				{
-					addToSelection(o);
-
-				} else if (o.isSelected())
-					removeFromSelection(o);
-
-				// Special case when selecting groups
-				if (o.vIntersects(bounds) && (o instanceof Group))
-				{
-					// Need to remove members of group first, to avoid duplicate
-					// selection and resulting funky move behavior
-					for (VPathwayElement vpe : canvas.getDrawingObjects())
-					{
-						if (vpe instanceof Graphics && !(vpe instanceof Group))
+				if(!(o instanceof Group)) {
+					if(o.vIntersects(bounds)) {
+						addToSelection(o);
+					} else if (o.isSelected()) {
+						removeFromSelection(o);
+					}
+				} else {
+					// Special case when selecting groups
+					if(o.vIntersects(bounds)) {
+						// Need to remove members of group first, to avoid duplicate
+						// selection and resulting funky move behavior
+						for (VPathwayElement vpe : canvas.getDrawingObjects())
 						{
-							PathwayElement pe = ((Graphics) vpe)
-									.getPathwayElement();
-							String ref = pe.getGroupRef();
-							if (ref != null
-									&& ref.equals(((Group) o)
-											.getPathwayElement().getGroupId())
-									&& vpe.isSelected())
+							if (vpe instanceof Graphics && !(vpe instanceof Group))
 							{
-								removeFromSelection(vpe);
+								PathwayElement pe = ((Graphics) vpe)
+								.getPathwayElement();
+								String ref = pe.getGroupRef();
+								if (ref != null
+										&& ref.equals(((Group) o)
+												.getPathwayElement().getGroupId())
+												&& vpe.isSelected())
+								{
+									removeFromSelection(vpe);
+								}
 							}
 						}
+						addToSelection(o);
+						// fitToSelection();
+					} else {
+						if(o.isSelected()) {
+							removeFromSelection(o);
+						}
 					}
-					addToSelection(o);
-					// fitToSelection();
 				}
 			}
 		}
@@ -647,7 +648,7 @@ public class SelectionBox extends VPathwayElement
 
 		public int type;
 
-		public List<VPathwayElement> selection;
+		public Set<VPathwayElement> selection;
 
 		public SelectionEvent(SelectionBox source, int type,
 				VPathwayElement affectedObject)

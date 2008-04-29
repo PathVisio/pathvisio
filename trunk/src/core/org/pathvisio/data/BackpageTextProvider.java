@@ -17,6 +17,7 @@
 package org.pathvisio.data;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.pathvisio.ApplicationEvent;
@@ -93,8 +94,9 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
 			//Just take the first DataNode in the selection
-			for(int i = e.selection.size() - 1; i > -1; i--) {
-				VPathwayElement o = e.selection.get(i);
+			Iterator<VPathwayElement> it = e.selection.iterator();
+			while(it.hasNext()) {
+				VPathwayElement o = it.next();
 				if(o instanceof GeneProduct) {
 					setInput(((GeneProduct)o).getPathwayElement());
 					break; //Selects the last, TODO: use setGmmlDataObjects

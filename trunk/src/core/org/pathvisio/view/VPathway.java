@@ -470,6 +470,9 @@ public class VPathway implements PathwayListener
 		zoomFactor = pctZoomFactor / 100.0 / 15.0;
 		int width = getVWidth();
 		int height = getVHeight();
+		for(VPathwayElement vpe : drawingObjects) {
+			vpe.zoomChanged();
+		}
 		if (parent != null)
 		{
 			parent.setVSize(width, height);
@@ -560,9 +563,6 @@ public class VPathway implements PathwayListener
 	 */
 	public void mouseMove(MouseEvent ve)
 	{
-		boolean altPressed = ve.isKeyDown(MouseEvent.M_ALT);
-		boolean ctrlPressed = ve.isKeyDown(MouseEvent.M_CTRL);
-		
 		snapToAngle = ve.isKeyDown(MouseEvent.M_SHIFT);
 		
 		// If draggin, drag the pressed object
@@ -819,7 +819,6 @@ public class VPathway implements PathwayListener
 				Dimension size = parent.getViewportSize(); //Draw the visible area
 				area = new Rectangle(0, 0, size.width, size.height);
 			}
-			System.out.println("Created area " + area);
 		}
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -928,7 +927,7 @@ public class VPathway implements PathwayListener
 	{
 		for (VPathwayElement o : drawingObjects)
 			o.unhighlight();
-		redraw();
+		redrawDirtyRect();
 	}
 
 	/**
@@ -2252,7 +2251,7 @@ public class VPathway implements PathwayListener
 	 * Get all selected elements (includes non-Graphics, e.g. Handles)
 	 * @return
 	 */
-	public List<VPathwayElement> getSelectedPathwayElements() {
+	public Set<VPathwayElement> getSelectedPathwayElements() {
 		return selection.getSelection();
 	}
 
@@ -2476,10 +2475,11 @@ public class VPathway implements PathwayListener
 		return m * zoomFactor;
 	}
 
+	private AffineTransform vFromM = new AffineTransform();
+	
 	public java.awt.Shape vFromM(java.awt.Shape s) {
-		AffineTransform t = new AffineTransform();
-		t.scale(zoomFactor, zoomFactor);
-		return t.createTransformedShape(s);
+		vFromM.setToScale(zoomFactor, zoomFactor);
+		return vFromM.createTransformedShape(s);
 	}
 	/**
 	 * Get width of entire Pathway view (taking into account zoom)

@@ -304,7 +304,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 		}
 		return a;
 	}
-		
+
 	protected Shape getVShape(boolean rotate) {
 		return getShape(rotate, false); //Get the shape without border
 	}

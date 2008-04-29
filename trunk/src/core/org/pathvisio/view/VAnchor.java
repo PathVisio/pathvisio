@@ -182,7 +182,7 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		}
 	}
 	
-	protected Shape getVOutline() {
+	protected Shape calculateVOutline() {
 		return getShape();
 	}
 

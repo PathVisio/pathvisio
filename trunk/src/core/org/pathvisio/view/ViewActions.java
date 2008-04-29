@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -178,6 +179,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		resetGroupStates(vPathway);
 	}
 
+	Map<String, Boolean> groupState = new HashMap<String, Boolean>();
+	
 	/**
 	 * Resets the group state for the registered actions to the given VPathway's state
 	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in 
@@ -185,7 +188,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 * @param v The VPathway of which the state will be determined
 	 */
 	private void resetGroupStates(VPathway v) {
-		HashMap<String, Boolean> groupState = new HashMap<String, Boolean>();
 		groupState.put(GROUP_ENABLE_VPATHWAY_LOADED, true);
 		groupState.put(GROUP_ENABLE_EDITMODE, vPathway.isEditMode());
 		groupState.put(GROUP_ENABLE_WHEN_SELECTION, vPathway.getSelectedPathwayElements().size() > 0);

@@ -242,14 +242,10 @@ public class Handle extends VPathwayElement
 		markDirty();
 	}
 			
-	public Shape getVOutline() {
+	public Shape calculateVOutline() {
 		return getFillShape((int)Math.ceil(defaultStroke.getLineWidth())).getBounds();
 	}
-	
-	public Rectangle getVBounds() {
-		return getVOutline().getBounds();
-	}
-	
+		
 	private Shape getFillShape() {
 		return getFillShape(0);
 	}

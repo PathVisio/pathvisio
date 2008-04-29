@@ -43,7 +43,29 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	private Rectangle2D oldrect = null;
 	
 	private boolean isSelected;
-		
+	
+	/**
+	 * Will be called by VPathway whenever the zoom factor
+	 * is changed. Default implementation refreshes the cache
+	 * of VBounds and VOutline.
+	 */
+	void zoomChanged() { 
+		resetShapeCache();
+	}
+	
+	private Shape vOutlineCache;
+	private Rectangle2D vBoundsCache;
+	
+	/**
+	 * Resets cache for VOutline and VBounds so that
+	 * they will be recalculated on the next call to
+	 * getVOutline or getVBounds.
+	 */
+	protected void resetShapeCache() {
+		vOutlineCache = null;
+		vBoundsCache = null;
+	}
+	
 	public final void draw(Graphics2D g2d)
 	{
 		//Create a copy to ensure that the state of this Graphics2D will be intact
@@ -72,6 +94,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		{
 			canvas.addDirtyRect(oldrect);
 		}
+		resetShapeCache();
 		Rectangle2D newrect = getVBounds();
 		canvas.addDirtyRect(newrect);
 		oldrect = newrect;
@@ -218,24 +241,52 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	}
 	
 	/**
-	 * Gets the rectangular bounds of this object
+	 * Gets the cached rectangular bounds of this object
 	 * This method is equivalent to {@link #getVOutline()}.getBounds2D()
 	 * @return
 	 */
 	public Rectangle2D getVBounds()
 	{
+		if(vBoundsCache == null) {
+			vBoundsCache = calculateVBounds();
+		}
+		return vBoundsCache;
+	}
+	
+	/**
+	 * Calculates the rectangular bounds of this object
+	 * This method is equivalent to {@link #getVOutline()}.getBounds2D()
+	 * @return
+	 */
+	public Rectangle2D calculateVBounds()
+	{
 		return getVOutline().getBounds2D();
 	}
 	
 	/**
-	 * Get the outline of this element. The outline is used to check 
+	 * Get the cached outline of this element. The outline is used to check 
 	 * whether a point is contained in this element or not and includes the stroke
 	 * and takes into account rotation.
 	 * Because it includes the stroke, it is not a direct model to view mapping of
 	 * the model outline!
 	 * @return the outline of this element
 	 */
-	abstract protected Shape getVOutline();
+	protected Shape getVOutline() {
+		if(vOutlineCache == null) {
+			vOutlineCache = calculateVOutline();
+		}
+		return vOutlineCache;
+	}
+	
+	/**
+	 * Calculate the outline of this element. The outline is used to check 
+	 * whether a point is contained in this element or not and includes the stroke
+	 * and takes into account rotation.
+	 * Because it includes the stroke, it is not a direct model to view mapping of
+	 * the model outline!
+	 * @return the outline of this element
+	 */
+	abstract protected Shape calculateVOutline();
 	
 	/**
 	 * Scales the object to the given rectangle

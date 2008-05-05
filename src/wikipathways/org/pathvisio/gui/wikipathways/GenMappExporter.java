@@ -68,7 +68,8 @@ public class GenMappExporter {
 		pathway.readFromXml(reader, true);
 
 		//Convert to temp file
-		File mappFile = File.createTempFile(pwName, ".mapp");
+		String tmp = System.getProperty("java.io.tmpdir");
+		File mappFile = new File(tmp, pwName + ".mapp");
 		pathway.writeToMapp(mappFile);
 
 		return mappFile;

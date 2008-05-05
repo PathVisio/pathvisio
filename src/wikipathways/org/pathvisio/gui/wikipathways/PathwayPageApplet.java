@@ -89,8 +89,10 @@ public class PathwayPageApplet extends JApplet {
 							"Security exception");
 					} catch(Exception e) {
 						Logger.log.error("Error while starting applet", e);
+						String msg =  e.getClass() + 
+						"\n See error log (" + GlobalPreference.FILE_LOG.getValue() + ") for details";
 						JOptionPane.showMessageDialog(
-								PathwayPageApplet.this, e.getClass() + ": See error logg for details", "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
+								PathwayPageApplet.this, msg, "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 					};
 					doInit();
 					getProgressKeeper().finished();

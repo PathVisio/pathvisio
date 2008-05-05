@@ -10,8 +10,8 @@ import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
 public class LinkAnchor {
-	static final double MATCH_RADIUS = 5 * 15;
 	static final double DRAW_RADIUS = 5 * 15;
+	static final double MATCH_RADIUS = DRAW_RADIUS + 5 * 15;
 	
 	double relX, relY;
 	GraphIdContainer idContainer;

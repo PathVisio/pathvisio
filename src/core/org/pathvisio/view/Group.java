@@ -193,6 +193,15 @@ public class Group extends Graphics implements LinkProvider
 	}
 
 	@Override
+	public void deselect() {
+		for (Graphics g : getGroupGraphics())
+		{
+			g.deselect();
+		}
+		super.deselect();
+	}
+	
+	@Override
 	protected void vMoveBy(double dx, double dy)
 	{
 		for (Graphics g : getGroupGraphics())

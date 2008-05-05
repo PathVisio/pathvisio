@@ -431,42 +431,23 @@ public class SelectionBox extends VPathwayElement
 			Rectangle2D bounds = getVBounds();
 			for (VPathwayElement o : canvas.getDrawingObjects())
 			{
-				if ((o == this) || (o instanceof Handle))
+				if ((o == this) || (o instanceof Handle)) {
 					continue;
-				if(!(o instanceof Group)) {
-					if(o.vIntersects(bounds)) {
+				}
+				
+				String groupRef = null;
+				if(o instanceof Graphics) {
+					groupRef = ((Graphics)o).getPathwayElement().getGroupRef();
+				}
+				
+				if(o.vIntersects(bounds)) {
+					//Only add objects that are not part of a group
+					if(groupRef == null || "".equals(groupRef)) {
 						addToSelection(o);
-					} else if (o.isSelected()) {
-						removeFromSelection(o);
 					}
-				} else {
-					// Special case when selecting groups
-					if(o.vIntersects(bounds)) {
-						// Need to remove members of group first, to avoid duplicate
-						// selection and resulting funky move behavior
-						for (VPathwayElement vpe : canvas.getDrawingObjects())
-						{
-							if (vpe instanceof Graphics && !(vpe instanceof Group))
-							{
-								PathwayElement pe = ((Graphics) vpe)
-								.getPathwayElement();
-								String ref = pe.getGroupRef();
-								if (ref != null
-										&& ref.equals(((Group) o)
-												.getPathwayElement().getGroupId())
-												&& vpe.isSelected())
-								{
-									removeFromSelection(vpe);
-								}
-							}
-						}
-						addToSelection(o);
-						// fitToSelection();
-					} else {
-						if(o.isSelected()) {
-							removeFromSelection(o);
-						}
-					}
+				} else if (o.isSelected() && 
+						(groupRef == null || "".equals(groupRef))) {
+					removeFromSelection(o);
 				}
 			}
 		}

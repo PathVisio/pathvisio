@@ -30,6 +30,7 @@ import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineType;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.InfoBox;
@@ -147,8 +148,10 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		litMenu.add(new AddLiteratureAction(component, e));
 		litMenu.add(new EditLiteratureAction(component, e));
 		menu.add(litMenu);
-		menu.addSeparator();
-		menu.add(new PropertiesAction(component,e));
+		if(e instanceof Graphics) {
+			menu.addSeparator();
+			menu.add(new PropertiesAction(component,e));
+		}
 		return menu;
 	}
 	

@@ -172,7 +172,16 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 */
 	protected boolean vIntersects(Rectangle2D r)
 	{
-		return getVOutline().intersects(r);
+		// first use getVBounds as a rough approximation
+		if (getVBounds().intersects(r))
+		{
+			// Yes, the vbounds intersects, now try to be more precise
+			return getVOutline().intersects(r);
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	/**
@@ -183,7 +192,16 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 */
 	protected boolean vContains(Point2D point)
 	{
-		return getVOutline().contains(point);
+		// first use getVBounds as a rough approximation
+		if (getVBounds().contains(point))
+		{
+			// Yes, the vbounds contains, now try to be more precise
+			return getVOutline().contains(point);
+		}
+		else 
+		{
+			return false;
+		}
 	}	
 	
 	public boolean isSelected()

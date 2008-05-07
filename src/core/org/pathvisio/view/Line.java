@@ -309,6 +309,13 @@ public class Line extends Graphics
 		}
 	}
 	
+	protected void markDirty() {
+		super.markDirty();
+		for(VAnchor va : anchors.values()) {
+			va.markDirty();
+		}
+	}
+	
 	void removeVAnchor(VAnchor va) {
 		anchors.remove(va.getMAnchor());
 		gdata.removeMAnchor(va.getMAnchor());

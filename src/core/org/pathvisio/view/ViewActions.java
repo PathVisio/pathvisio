@@ -29,11 +29,9 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import org.aspectj.lang.reflect.UnlockSignature;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;

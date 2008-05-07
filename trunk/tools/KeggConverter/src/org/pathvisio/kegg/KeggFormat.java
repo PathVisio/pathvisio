@@ -509,9 +509,6 @@ public class KeggFormat {
 			pathway.add(line);
 			if(dataNodes != null && dataNodes.size() > 0) {
 				for(PathwayElement mediator : dataNodes) {
-					if(mediator.getObjectType() == ObjectType.GROUP) {
-						setGroupCoordinates(mediator);
-					}
 					addReactionMediator(line, mediator);
 				}
 			}
@@ -539,7 +536,6 @@ public class KeggFormat {
 
 		//create an anchor on the reaction line
 		MAnchor anchor = reactionLine.addMAnchor(position);
-		anchor.setShape(LineType.create("mim-catalysis", null));
 		
 		//draw a line from the bottom of the datanodes to the anchor
 		PathwayElement aline = PathwayElement.createPathwayElement(ObjectType.LINE);
@@ -574,13 +570,6 @@ public class KeggFormat {
 		line.setStartGraphRef(startId);
 		line.setEndLineType(LineType.ARROW);
 
-		if(start.getObjectType() == ObjectType.GROUP) {
-			setGroupCoordinates(start);
-		}
-		if(end.getObjectType() == ObjectType.GROUP) {
-			setGroupCoordinates(end);
-		}
-
 		Point psource = new Point(start.getMCenterX(), start.getMCenterY());
 		Point ptarget = new Point(end.getMCenterX(), end.getMCenterY());
 
@@ -612,28 +601,6 @@ public class KeggFormat {
 			pwElm.setGraphId(id = pwElm.getParent().getUniqueGraphId());
 		}
 		return id;
-	}
-
-	private void setGroupCoordinates(PathwayElement group) {
-		Set<PathwayElement> elms = pathway.getGroupElements(group.getGroupId());
-		Rectangle2D bounds = null;
-		for(PathwayElement e : elms) {
-			if(bounds == null) {
-				bounds = new Rectangle2D.Double(
-						e.getMLeft(), e.getMTop(), e.getMWidth(), e.getMHeight()
-				);
-			} else {
-				bounds.add(new Rectangle2D.Double(
-						e.getMLeft(), e.getMTop(), e.getMWidth(), e.getMHeight()
-				));
-			}
-		}
-		group.setMLeft(bounds.getX());
-		group.setMTop(bounds.getY());
-		group.setMWidth(bounds.getWidth());
-		group.setMHeight(bounds.getHeight());
-		group.setMCenterX(bounds.getCenterX());
-		group.setMCenterY(bounds.getCenterY());
 	}
 
 	private Point findBorder(PathwayElement pwElm, double angle) {

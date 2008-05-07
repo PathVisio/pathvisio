@@ -29,9 +29,13 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
+import org.aspectj.lang.reflect.UnlockSignature;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.model.MLine;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -88,6 +92,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderTopAction orderBringToFront;
 	public final OrderUpAction orderUp;
 	public final OrderDownAction orderDown;
+	public final ShowUnlikedConnectors showUnlinked;
 	
 	Engine engine;
 
@@ -112,6 +117,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		orderBringToFront = new OrderTopAction();
 		orderUp = new OrderUpAction();
 		orderDown = new OrderDownAction();
+		showUnlinked = new ShowUnlikedConnectors();
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -124,6 +130,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(keyMove, ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(addAnchor, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(showUnlinked, GROUP_ENABLE_VPATHWAY_LOADED);
 
 		resetGroupStates();
 	}
@@ -562,4 +569,40 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 
+	/**
+	 * Action that toggles highlight of points that are not linked
+	 * to an object
+	 */
+	public class ShowUnlikedConnectors extends AbstractAction {
+		boolean isShowing;
+		
+		public ShowUnlikedConnectors() {
+			putValue(NAME, "Highlight unlinked lines");
+			putValue(SHORT_DESCRIPTION, "Highlight all lines that are not linked");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl L"));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if(isShowing) {
+				vPathway.resetHighlight();
+				isShowing = false;
+			} else {
+				for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {
+					if(pe.getObjectType() == ObjectType.LINE) {
+						Line vl = (Line)vPathway.getPathwayElementView(pe);
+						String grs = pe.getStartGraphRef();
+						String gre = pe.getEndGraphRef();
+						if(grs == null || "".equals(grs)) {
+							vl.getStart().highlight();
+						}
+						if(gre == null || "".equals(gre)) {
+							vl.getEnd().highlight();
+						}
+					}
+				}
+				isShowing = true;
+			}
+			vPathway.redrawDirtyRect();
+		}
+	}
 }

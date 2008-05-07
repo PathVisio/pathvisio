@@ -18,6 +18,8 @@ package org.pathvisio.view;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Rectangle2D.Double;
+import java.awt.geom.Ellipse2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -116,6 +118,16 @@ public class VPoint extends VPathwayElement {
 	}
 	
 	protected void doDraw(Graphics2D g2d) {
+		if(isHighlighted()) {
+			int size = 20;
+			g2d.setColor(getHighlightColor());
+			g2d.fill(new Ellipse2D.Double(
+					vFromM(mPoint.getX()) - size / 2,
+					vFromM(mPoint.getY()) - size / 2, 
+					size, 
+					size)
+			);
+		}
 	}
 
 	protected Shape calculateVOutline() {

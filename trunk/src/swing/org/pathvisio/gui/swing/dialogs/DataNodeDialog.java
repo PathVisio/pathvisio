@@ -129,16 +129,20 @@ public class DataNodeDialog extends PathwayElementDialog {
 			Logger.log.error("Error while searching", e);
 		}
 
-		//Show results to user
-		if(results.size() > 0) {
-			DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
-			resultDialog.setVisible(true);
-			Xref selected = resultDialog.getSelected();
-			if(selected != null) {
-				applyAutoFill(selected);
+		//TODO: messy. Why not InterruptedException? Why not sw.isCancelled?
+		if (!progress.isCancelled())
+		{
+			//Show results to user
+			if(results.size() > 0) {
+				DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
+				resultDialog.setVisible(true);
+				Xref selected = resultDialog.getSelected();
+				if(selected != null) {
+					applyAutoFill(selected);
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "No results for '" + text + "'");
 			}
-		} else {
-			JOptionPane.showMessageDialog(this, "No results for '" + text + "'");
 		}
 	}
 
@@ -148,17 +152,19 @@ public class DataNodeDialog extends PathwayElementDialog {
 		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
 
 		//Search for ids
-		List<Xref> ids = gdb.getIdSuggestions(text, 1000);
+		List<Xref> ids = gdb.getIdSuggestions(text, 200);
+		int i = 0;
 		for(Xref x : ids) {
 			result.add(new XrefWithSymbol(x, gdb.getGeneSymbol(x)));
-		}
-		//Check cancel
-		if(progress != null && progress.isCancelled()) {
-			return result;
+			
+			//Check cancel
+			if(progress != null && progress.isCancelled()) {
+				return result;
+			}		
 		}
 
 		//Search for symbols
-		List<String> symbols = gdb.getSymbolSuggestions(text, 1000);
+		List<String> symbols = gdb.getSymbolSuggestions(text, 200);
 		for(String s : symbols) {
 			//Check cancel
 			if(progress != null && progress.isCancelled()) {
@@ -168,6 +174,11 @@ public class DataNodeDialog extends PathwayElementDialog {
 				XrefWithSymbol xs = new XrefWithSymbol(x, s);
 				if(!result.contains(xs)) result.add(xs);
 			}
+			
+			//Check cancel
+			if(progress != null && progress.isCancelled()) {
+				return result;
+			}		
 		}
 		progress.finished();
 		return result;

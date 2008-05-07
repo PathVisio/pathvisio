@@ -48,15 +48,15 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 		super(null, title, null, true);
 		this.xrefs = xrefs;
 		Collections.sort(xrefs, new Comparator<XrefWithSymbol>() {
-			public int compare(XrefWithSymbol o1, XrefWithSymbol o2) {
-				int result = 0;
-				if(o1.getSymbol() != null)
-					result = o1.getSymbol().compareTo(o2.getSymbol());
-				if(o1.getId() != null)
-					if(result == 0) o1.getId().compareTo(o2.getId());
-				if(o1.getDatabaseName() != null)
-					if(result == 0) result = o1.getDatabaseName().compareTo(o2.getDatabaseName());
-				return result;
+			public int compare(XrefWithSymbol o1, XrefWithSymbol o2) 
+			{
+				if(o1.getSymbol() != null && o2.getSymbol() != null)
+					return o1.getSymbol().compareTo(o2.getSymbol());
+				if(o1.getId() != null && o2.getId() != null)
+					return o1.getId().compareTo(o2.getId());
+				if(o1.getDatabaseName() != null && o2.getDatabaseName() != null)
+					return o1.getDatabaseName().compareTo(o2.getDatabaseName());
+				return 0;
 			}
 		});
 		((XRefTableModel)table.getModel()).refresh();

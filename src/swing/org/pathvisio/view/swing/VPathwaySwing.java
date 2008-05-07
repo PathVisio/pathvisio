@@ -188,6 +188,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 						int w = (int)child.vFromM(mSize[0]);
 						int h = (int)child.vFromM(mSize[1]);
 						setVSize(w, h);
+						VPathwaySwing.this.requestFocus();
 					}
 				});
 			}

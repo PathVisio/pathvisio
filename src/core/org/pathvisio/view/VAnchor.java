@@ -156,7 +156,7 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		}
 		
 		if(showLinkAnchors) {
-			linkAnchor.draw(g);
+			linkAnchor.draw((Graphics2D)g.create());
 		}
 		if(isHighlighted()) {
 			Color hc = getHighlightColor();

@@ -501,6 +501,9 @@ public class VPathway implements PathwayListener
 		pressedObject = o;
 	}
 
+
+	private LinkAnchor currentLinkAnchor;
+	
 	/**
 	 * @arg p2d point where mouse is at
 	 */
@@ -523,11 +526,19 @@ public class VPathway implements PathwayListener
 				//Set graphRef
 				la.link(p.getMPoint());
 				idc = la.getGraphIdContainer();
+				if(currentLinkAnchor != null) {
+					currentLinkAnchor.unhighlight();
+				}
+				la.highlight();
+				currentLinkAnchor = la;
 				break;
 			}
 		}
 		if(idc == null) {
 			p.getMPoint().unlink();
+			if(currentLinkAnchor != null) {
+				currentLinkAnchor.unhighlight();
+			}
 		}
 	}
 

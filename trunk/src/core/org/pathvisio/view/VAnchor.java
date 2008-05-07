@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -167,7 +168,13 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 	}
 	
 	protected Shape calculateVOutline() {
-		return getShape();
+		if(showLinkAnchors) {
+			Area a = new Area(getShape());
+			a.add(new Area(linkAnchor.getShape()));
+			return a;
+		} else {
+			return getShape();
+		}
 	}
 
 	LinkAnchor linkAnchor;

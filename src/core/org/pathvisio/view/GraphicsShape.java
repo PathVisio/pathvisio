@@ -292,7 +292,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
 	}
 	
-	protected Shape getVOutline()
+	protected Shape calculateVOutline()
 	{
 		//Include rotation and stroke
 		Area a = new Area(getShape(true, true));

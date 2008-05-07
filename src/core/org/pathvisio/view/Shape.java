@@ -104,8 +104,8 @@ public class Shape extends GraphicsShape
 		super.doDraw((Graphics2D)g.create());
 	}	
 
-	protected java.awt.Shape getVOutline() {
-		Area a = new Area(super.getVOutline());
+	protected java.awt.Shape calculateVOutline() {
+		Area a = new Area(super.calculateVOutline());
 		a.add(new Area(getShape(true, FUZZY_STROKE_WIDTH))); //fuzzy matching for outline
 		if(!gdata.isTransparent()) {
 			//Also include the filled area when not transparent

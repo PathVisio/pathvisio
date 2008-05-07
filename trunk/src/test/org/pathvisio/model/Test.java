@@ -243,6 +243,20 @@ public class Test extends TestCase implements PathwayListener
 			fail ("Loading wrong format, Exception expected");
 		} catch (Exception e) {}
 	}
+	
+	// bug 440: valid gpml file is rejected 
+	// because it doesn't contain Pathway.Graphics
+	public void testBug440() throws ConverterException
+	{
+		try
+		{
+			data.readFromXml(new File("testData/nographics-test.gpml"), false);
+		}
+		catch (ConverterException e)
+		{
+			fail ("No converter exception expected");
+		}
+	}
 
 	/**
 	 * test exporting of .mapp (genmapp format)

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Androgen Receptor Signaling Pathway" Data-Source="GenMAPP 2.0" Version="20041216" Author="cBio MSKCC, IOB, PandeyLab" Email="cellmap-info@cellmap.org" Copyright="Freely available under Creative Commons license" Last-Modified="02-JUN-06" Organism="Homo sapiens">
+  <DataNode TextLabel="STUB1" Type="GeneProduct" BackpageHead="STUB1" GraphId="b53">
+    <Graphics Color="Transparent" CenterX="7600.0" CenterY="3600.0" Width="764.1622" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="10273" />
+  </DataNode>
+  <InfoBox CenterX="75.0" CenterY="25.0" />
+  <Legend CenterX="0.0" CenterY="0.0" />
+</Pathway>

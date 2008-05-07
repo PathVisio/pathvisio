@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pathvisio.model.ConnectorShape.WayPoint;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 
 /**
  * Line specific implementation of methods that calculate derived
@@ -141,38 +142,54 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 		return pts;
 	}
 	
-	private PathwayElement getStartElement() {
+	private GraphIdContainer getStartElement() {
 		Pathway parent = getParent();
 		if(parent != null) {
-			return parent.getElementById(getStartGraphRef());
+			return parent.getGraphIdContainer(getStartGraphRef());
 		}
 		return null;
 	}
 	
-	private PathwayElement getEndElement() {
+	private GraphIdContainer getEndElement() {
 		Pathway parent = getParent();
 		if(parent != null) {
-			return parent.getElementById(getEndGraphRef());
+			return parent.getGraphIdContainer(getEndGraphRef());
 		}
 		return null;
 	}
 	
 	public int getStartSide() {
-		PathwayElement e = getStartElement();
+		int side = SIDE_WEST;
+		
+		GraphIdContainer e = getStartElement();
 		if(e != null) {
-			return getSide(getMStartX(), getMStartY(), e);
-		} else {
-			return SIDE_EAST;
+			if(e instanceof PathwayElement) {
+				PathwayElement pe = (PathwayElement)e;
+				side = getSide(getMStartX(), getMStartY(), pe.getMCenterX(), pe.getMCenterY());
+			} else if(e instanceof MAnchor) {
+				side = getOppositeSide(
+						getSide(getMStartX(), getMStartY(), getMEndX(), getMEndY())
+				);
+			}
 		}
+		return side;
 	}
 
 	public int getEndSide() {
-		PathwayElement e = getEndElement();
+		int side = SIDE_EAST;
+		
+		GraphIdContainer e = getEndElement();
 		if(e != null) {
-			return getSide(getMEndX(), getMEndY(), e);
-		} else {
-			return SIDE_WEST;
+			if(e instanceof PathwayElement) {
+				PathwayElement pe = (PathwayElement)e;
+				side = getSide(getMEndX(), getMEndY(), pe.getMCenterX(), pe.getMCenterY());
+			} else if(e instanceof MAnchor) {
+				side = getOppositeSide(
+						getSide(getMEndX(), getMEndY(), getMStartX(), getMStartY())
+				);
+			}
 		}
+		return side;
 	}
 	
 	public void adjustWayPointPreferences(WayPoint[] waypoints) {
@@ -211,29 +228,41 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 	 * @param e The element to find the side of
 	 * @return One of the SIDE_* constants
 	 */
-	private static int getSide(double x, double y, PathwayElement e) {
+	private static int getSide(double x, double y, double cx, double cy) {
 		int direction = 0;
 
-		if(e != null) {
-			double relX = x - e.getMCenterX();
-			double relY = y - e.getMCenterY();
-			if(Math.abs(relX) > Math.abs(relY)) {
-				if(relX > 0) {
-					direction = SIDE_EAST;
-				} else {
-					direction = SIDE_WEST;
-				}
+		double relX = x - cx;
+		double relY = y - cy;
+		if(Math.abs(relX) > Math.abs(relY)) {
+			if(relX > 0) {
+				direction = SIDE_EAST;
 			} else {
-				if(relY > 0) {
-					direction = SIDE_SOUTH;
-				} else {
-					direction = SIDE_NORTH;
-				}
+				direction = SIDE_WEST;
+			}
+		} else {
+			if(relY > 0) {
+				direction = SIDE_SOUTH;
+			} else {
+				direction = SIDE_NORTH;
 			}
 		}
 		return direction;
 	}
-
+	
+	private int getOppositeSide(int side) {
+		switch(side) {
+		case SIDE_EAST:
+			return SIDE_WEST;
+		case SIDE_WEST:
+			return SIDE_EAST;
+		case SIDE_NORTH:
+			return SIDE_SOUTH;
+		case SIDE_SOUTH:
+			return SIDE_NORTH;
+		}
+		return -1;
+	}
+	
 	public Shape mayCross(Point2D point) {
 		Pathway parent = getParent();
 		Rectangle2D rect = null;

@@ -393,7 +393,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 	protected void doDraw(Graphics2D g2d) {
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {
-				la.draw(g2d);
+				la.draw((Graphics2D)g2d.create());
 			}
 		}
 	}

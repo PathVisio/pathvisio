@@ -223,7 +223,7 @@ public class Group extends Graphics implements LinkProvider
 	{
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {
-				la.draw(g2d);
+				la.draw((Graphics2D)g2d.create());
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -12,6 +13,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 public class LinkAnchor {
 	static final double DRAW_RADIUS = 5 * 15;
 	static final double MATCH_RADIUS = DRAW_RADIUS + 5 * 15;
+	static final int HINT_STROKE_SIZE = 10;
 	
 	double relX, relY;
 	GraphIdContainer idContainer;
@@ -40,25 +42,40 @@ public class LinkAnchor {
 		return new Point2D.Double(relX, relY);
 	}
 	
-	public Shape getShape() {
+	private Shape getShape(boolean includeHighlight) {
 		Point2D abs = idContainer.toAbsoluteCoordinate(getPosition());
-		return canvas.vFromM(new Ellipse2D.Double(
+		Shape s = canvas.vFromM(new Ellipse2D.Double(
 				abs.getX() - DRAW_RADIUS, 
 				abs.getY() -DRAW_RADIUS, 
-				DRAW_RADIUS * 2, 
+				DRAW_RADIUS * 2,
 				DRAW_RADIUS * 2
 		));
+		if(drawHighlight && includeHighlight) {
+			return new BasicStroke(HINT_STROKE_SIZE).createStrokedShape(s);
+		} else {
+			return s;
+		}
+	}
+	
+	public Shape getShape() {
+		return getShape(true);
 	}
 	
 	public void draw(Graphics2D g2d) {
+		if(drawHighlight) {
+			g2d.setColor(new Color(0, 255, 0, 128));
+			g2d.fill(getShape());
+		}
+		
 		g2d.setColor(new Color(255, 0, 0, 128));
-		Shape shape = getShape();
+		
+		Shape shape = getShape(false);
 
 		g2d.fill(shape);
 		
 		g2d.setColor(Color.BLACK);
 		
-		g2d.draw(shape);		
+		g2d.draw(shape);
 	}
 
 	public GraphIdContainer getGraphIdContainer() {
@@ -67,5 +84,19 @@ public class LinkAnchor {
 	
 	public void link(GraphRefContainer ref) {
 		ref.linkTo(idContainer, relX, relY);
+	}
+	
+	private boolean drawHighlight;
+	
+	/**
+	 * Display a visual hint to show that this is the anchor that is
+	 * being linked to.
+	 */
+	public void highlight() {
+		drawHighlight = true;
+	}
+	
+	public void unhighlight() {
+		drawHighlight = false;
 	}
 }

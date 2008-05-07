@@ -196,4 +196,11 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		showLinkAnchors = true;
 		markDirty();
 	}
+	
+	/**
+	 * Returns the zorder of the parent line
+	 */
+	protected int getZOrder() {
+		return line.getPathwayElement().getZOrder();
+	}
 }

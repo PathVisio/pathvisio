@@ -277,7 +277,11 @@ public class Handle extends VPathwayElement
 		return 	"Handle with parent: " + parent.toString() +
 		" and direction " + direction; 
 	}
-			
+
+	protected int getZOrder() {
+		return VPathway.ZORDER_HANDLE;
+	}
+	
 } // end of class
 
 

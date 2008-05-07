@@ -142,4 +142,8 @@ public class VPoint extends VPathwayElement {
 
 		super.destroy();
 	}
+	
+	protected int getZOrder() {
+		return VPathway.ZORDER_POINT;
+	}
 }

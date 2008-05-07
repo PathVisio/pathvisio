@@ -199,4 +199,10 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 //		if(parent != null) parent.remove(gdata);
 	}
 	
+	/**
+	 * Returns the z-order from the model
+	 */
+	protected int getZOrder() {
+		return gdata.getZOrder();
+	}
 }

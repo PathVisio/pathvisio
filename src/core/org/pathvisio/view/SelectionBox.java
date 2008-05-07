@@ -647,4 +647,7 @@ public class SelectionBox extends VPathwayElement
 		}
 	}
 
+	protected int getZOrder() {
+		return VPathway.ZORDER_SELECTIONBOX;
+	}
 }

@@ -288,7 +288,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		if (!attributeInfo.containsKey(key))
 				throw new ConverterException("Trying to get invalid attribute " + key);
 		AttributeInfo aInfo = attributeInfo.get(key);
-		String result = el.getAttributeValue(name, aInfo.def);
+		String result = ((el == null) ? aInfo.def : el.getAttributeValue(name, aInfo.def));
 		return result;
 	}
 	

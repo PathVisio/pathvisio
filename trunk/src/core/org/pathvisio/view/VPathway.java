@@ -987,9 +987,7 @@ public class VPathway implements PathwayListener
 			{
 				// select this object, unless it is an invisible gmmlHandle
 				if (o instanceof Handle) {
-					if(((Handle)o).getParent() instanceof VAnchor) {
-						probj = o; //Also select invisible handle for anchors
-					} else if (((Handle) o).isVisible()) {
+					if (((Handle) o).isVisible()) {
 						probj = o; //For the rest, only visible handles
 					}
 				} else {

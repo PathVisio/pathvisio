@@ -2643,28 +2643,4 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		relY /= bounds.getHeight() / 2;
 		return new Point2D.Double(relX, relY);
 	}
-	
-	private AffineTransform getToRelativeTransform() {
-		Rectangle2D bounds = getRBounds();
-		AffineTransform t = new AffineTransform();
-		t.translate(-bounds.getCenterX(), -bounds.getCenterY());
-		t.scale(bounds.getWidth() * 2, bounds.getHeight() * 2);
-		return t;
-	}
-	
-	private AffineTransform getToAbsoluteTransform() {
-		Rectangle2D bounds = getRBounds();
-		AffineTransform t = new AffineTransform();
-		t.translate(bounds.getCenterX(), bounds.getCenterY());
-		t.scale(bounds.getWidth() / 2, bounds.getHeight() / 2);
-		return t;
-	}
-	
-	public Shape toRelative(Shape s) {
-		return getToRelativeTransform().createTransformedShape(s);
-	}
-	
-	public Shape toAbsolute(Shape s) {
-		return getToAbsoluteTransform().createTransformedShape(s);
-	}
 }

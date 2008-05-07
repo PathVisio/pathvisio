@@ -90,14 +90,6 @@ public class Line extends Graphics
 		return (MLine)gdata;
 	}
 	
-	private String getConnectorType() {
-		ConnectorType type = gdata.getConnectorType();
-		if(type == null) {
-			type = ConnectorType.STRAIGHT;
-		}
-		return type.getName();
-	}
-	
 	/**
 	 * Update the segment handles to be placed on the current
 	 * connector segments
@@ -403,14 +395,6 @@ public class Line extends Graphics
 		}
 		return h;
 	}
-		
-	/**
-	 * Constructs the line for the coordinates stored in this class
-	 */
-	public Line2D getVLine()
-	{
-		return new Line2D.Double(getVStartX(), getVStartY(), getVEndX(), getVEndY());
-	}
 	
 	/**
 	 * Sets the line start and end to the coordinates specified
@@ -420,7 +404,7 @@ public class Line extends Graphics
 	 * <DD>Double x2	- new endx
 	 * <DD>Double y2	- new endy
 	 */
-	public void setVLine(double vx1, double vy1, double vx2, double vy2)
+	private void setVLine(double vx1, double vy1, double vx2, double vy2)
 	{
 		getStart().setVLocation(vx1, vy1);
 		getEnd().setVLocation(vx2, vy2);

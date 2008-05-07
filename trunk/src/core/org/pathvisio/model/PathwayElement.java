@@ -1722,6 +1722,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setMWidth(double v)
 	{
+		if(mWidth < 0) {
+			throw new IllegalArgumentException("Tried to set dimension < 0: " + v);
+		}
 		if (mWidth != v)
 		{
 			mWidth = v;
@@ -1739,6 +1742,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	
 	public void setMHeight(double v)
 	{
+		if(mWidth < 0) {
+			throw new IllegalArgumentException("Tried to set dimension < 0: " + v);
+		}
 		if (mHeight != v)
 		{
 			mHeight = v;

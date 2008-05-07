@@ -28,8 +28,8 @@ import javax.swing.JRadioButtonMenuItem;
 import org.pathvisio.gui.swing.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
+import org.pathvisio.model.AnchorType;
 import org.pathvisio.model.ConnectorType;
-import org.pathvisio.model.LineType;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
@@ -119,16 +119,15 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			
 			ActionListener listener = new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.out.println(e.getActionCommand());
 					anchor.getMAnchor().setShape(
-							LineType.fromName(e.getActionCommand()));					
+							AnchorType.fromName(e.getActionCommand()));					
 				}
 			};
 			
-			for(LineType lt : LineType.getValues()) {
-				JRadioButtonMenuItem mi = new JRadioButtonMenuItem(lt.getName());
-				mi.setActionCommand(lt.getGpmlName());
-				mi.setSelected(lt.equals(anchor.getMAnchor().getShape()));
+			for(AnchorType at : AnchorType.getValues()) {
+				JRadioButtonMenuItem mi = new JRadioButtonMenuItem(at.getName());
+				mi.setActionCommand(at.getName());
+				mi.setSelected(at.equals(anchor.getMAnchor().getShape()));
 				mi.addActionListener(listener);
 				anchorMenu.add(mi);
 				buttons.add(mi);

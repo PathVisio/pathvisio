@@ -381,7 +381,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 *
 	 */
 	public class MAnchor extends GenericPoint {
-		LineType shape = LineType.LIGAND_ROUND;
+		AnchorType shape = AnchorType.NONE;
 		
 		public MAnchor(double position) {
 			super(new double[] { position });
@@ -392,7 +392,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			shape = a.shape;
 		}
 		
-		public void setShape(LineType type) {
+		public void setShape(AnchorType type) {
 			if(!this.shape.equals(type) && type != null) {
 				this.shape = type;
 				fireObjectModifiedEvent(new PathwayEvent(
@@ -400,7 +400,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}
 		}
 		
-		public LineType getShape() {
+		public AnchorType getShape() {
 			return shape;
 		}
 		

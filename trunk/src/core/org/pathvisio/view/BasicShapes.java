@@ -24,6 +24,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 
+import org.pathvisio.model.AnchorType;
+
 class BasicShapes
 {
 	static void registerShapes()
@@ -51,7 +53,10 @@ class BasicShapes
 		ShapeRegistry.registerArrow ("ReceptorRound", getRRound(), ArrowShape.WIRE);
 		ShapeRegistry.registerArrow ("Receptor", getReceptor(), ArrowShape.WIRE);
 		ShapeRegistry.registerArrow ("ReceptorSquare", getReceptorSquare(), ArrowShape.WIRE);
-		ShapeRegistry.registerArrow ("LigandSquare", getLigand(), ArrowShape.CLOSED);		
+		ShapeRegistry.registerArrow ("LigandSquare", getLigand(), ArrowShape.CLOSED);	
+		
+		ShapeRegistry.registerAnchor (AnchorType.NONE.getName(), getAnchorDefault());
+		ShapeRegistry.registerAnchor (AnchorType.CIRCLE.getName(), getAnchorCircle());
 	}
 
 	/**
@@ -68,6 +73,9 @@ class BasicShapes
 	private static final int RECEPWIDTH = LIGANDWIDTH + 30;
 	private static final int RECEPHEIGHT = LIGANDHEIGHT + 30;
 
+	private static final int ANCHOR_DEFAULT_SIZE = 50;
+	private static final int ANCHOR_CIRCLE_SIZE = 125;
+	
 	private static Shape getArrowHead()
 	{
 		int[] xpoints = new int[] { 0, -ARROWWIDTH, -ARROWWIDTH };
@@ -117,6 +125,20 @@ class BasicShapes
 		return new Rectangle2D.Double(
 			-LIGANDWIDTH, -LIGANDHEIGHT / 2,
 			LIGANDWIDTH, LIGANDHEIGHT
+			);
+	}
+	
+	private static Shape getAnchorDefault() {
+		return new Rectangle2D.Double(
+				-ANCHOR_DEFAULT_SIZE / 2, -ANCHOR_DEFAULT_SIZE / 2,
+				ANCHOR_DEFAULT_SIZE, ANCHOR_DEFAULT_SIZE
+			);
+	}
+	
+	private static Shape getAnchorCircle() {
+		return new Ellipse2D.Double(
+				-ANCHOR_CIRCLE_SIZE / 2, -ANCHOR_CIRCLE_SIZE / 2,
+				ANCHOR_CIRCLE_SIZE, ANCHOR_CIRCLE_SIZE
 			);
 	}
 

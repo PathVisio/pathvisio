@@ -542,7 +542,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     		mapGraphId(anchor, ae);
     		String shape = getAttribute("Line.Graphics.Anchor", "Shape", ae);
     		if(shape != null) {
-    			anchor.setShape(LineType.fromName(shape));
+    			anchor.setShape(AnchorType.fromName(shape));
     		}
     	}
 	}

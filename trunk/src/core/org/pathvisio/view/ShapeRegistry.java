@@ -36,10 +36,12 @@ public class ShapeRegistry
 {
 	private static Shape defaultShape = null;
 	private static ArrowShape defaultArrow = null;
-
+	private static AnchorShape defaultAnchor = null;
+	
 	private static Map <String, Shape> shapeMap = new HashMap <String, Shape>();
 	private static Map <String, ArrowShape> arrowMap = new HashMap <String, ArrowShape>();
-
+	private static Map <String, AnchorShape> anchorMap = new HashMap <String, AnchorShape>();
+	
 	static
 	{
 		GeneralPath temp = new GeneralPath();
@@ -82,6 +84,11 @@ public class ShapeRegistry
 	{
 		arrowMap.put (key, new ArrowShape (sh, fillType));
 	}
+	
+	static public void registerAnchor (String key, Shape sh)
+	{
+		anchorMap.put (key, new AnchorShape (sh));
+	}
 
 	/**
 	   Returns a named arrow head. The shape is normalized so that it
@@ -102,6 +109,18 @@ public class ShapeRegistry
 		// transform immediately after.
 	}
 
+	/**
+	 * Returns an anchor shape
+	 */
+	public static AnchorShape getAnchor(String name) {
+		AnchorShape sh = anchorMap.get (name);
+		if (sh == null)
+		{
+			sh = defaultAnchor;
+		}
+		return sh;
+	}
+	
 	/**
 	   Returns a named shape, scaled in such a way that it has a
 	   bounding rect equal to x, y, w, h.

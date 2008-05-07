@@ -115,8 +115,8 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		}
 	}
 
-	private ArrowShape getArrowShape() {
-		ArrowShape shape = ShapeRegistry.getArrow(
+	private AnchorShape getAnchorShape() {
+		AnchorShape shape = ShapeRegistry.getAnchor(
 				mAnchor.getShape().getName());
 
 		if(shape != null)
@@ -126,13 +126,13 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 			f.translate (getVx(), getVy());
 			f.scale (scaleFactor, scaleFactor);		   
 			Shape sh = f.createTransformedShape(shape.getShape());
-			shape = new ArrowShape (sh, shape.getFillType());
+			shape = new AnchorShape (sh);
 		}
 		return shape;
 	}
 	
 	private Shape getShape() {
-		ArrowShape shape = getArrowShape();
+		AnchorShape shape = getAnchorShape();
 		return shape != null ? shape.getShape() : handle.getVOutline();
 	}
 	
@@ -146,29 +146,13 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 			c = line.getPathwayElement().getColor(); 
 		}
 		
-		ArrowShape arrowShape = getArrowShape();
+		AnchorShape arrowShape = getAnchorShape();
 		if(arrowShape != null)
 		{
 			g.setStroke(new BasicStroke());
-			switch (arrowShape.getFillType())
-			{
-			case ArrowShape.OPEN:
-				g.setPaint (Color.WHITE);
-				g.fill (arrowShape.getShape());				
-				g.setColor (c);
-				g.draw (arrowShape.getShape());
-				break;
-			case ArrowShape.CLOSED:
 				g.setPaint (c);
-				g.fill (arrowShape.getShape());				
-				break;
-			case ArrowShape.WIRE:
-				g.setColor (c);
-				g.draw (arrowShape.getShape());
-				break;
-			default:
-				assert (false);
-			}
+				g.fill (arrowShape.getShape());		
+				g.draw(arrowShape.getShape());
 		}
 		
 		if(showLinkAnchors) {

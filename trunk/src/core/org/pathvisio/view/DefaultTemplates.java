@@ -278,9 +278,6 @@ public abstract class DefaultTemplates {
 			
 			lastLine.setEndLineType(LineType.ARROW);
 			MAnchor anchor = lastLine.addMAnchor(0.5);
-			if(isMiM) {
-				anchor.setShape(LineType.create("mim-catalysis", null));
-			}
 			String id = anchor.setGeneratedGraphId();
 			
 			//The center of the reaction line

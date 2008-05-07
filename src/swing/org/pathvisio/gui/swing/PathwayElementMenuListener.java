@@ -41,6 +41,7 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.VPoint;
 import org.pathvisio.view.ViewActions;
 import org.pathvisio.view.swing.VPathwaySwing;
 
@@ -59,6 +60,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	 */
 	private static JPopupMenu getMenuInstance(VPathwayElement e) {
 		if(e instanceof Handle) e = ((Handle)e).getParent();
+		if(e instanceof VPoint) e = ((VPoint)e).getLine();
 		
 		VPathway vp = e.getDrawing();
 		VPathwaySwing component = (VPathwaySwing)vp.getWrapper();

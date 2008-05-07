@@ -263,7 +263,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * This method is equivalent to {@link #getVOutline()}.getBounds2D()
 	 * @return
 	 */
-	public Rectangle2D getVBounds()
+	public final Rectangle2D getVBounds()
 	{
 		if(vBoundsCache == null) {
 			vBoundsCache = calculateVBounds();
@@ -289,7 +289,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * the model outline!
 	 * @return the outline of this element
 	 */
-	protected Shape getVOutline() {
+	protected final Shape getVOutline() {
 		if(vOutlineCache == null) {
 			vOutlineCache = calculateVOutline();
 		}

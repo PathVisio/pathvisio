@@ -253,7 +253,7 @@ public class Line extends Graphics
 		return new Point2D.Double(getVEndX(), getVEndY());
 	}
 
-	protected Shape getVOutline() {
+	protected Shape calculateVOutline() {
 		return new BasicStroke(5).createStrokedShape(getVShape(true));
 	}
 	

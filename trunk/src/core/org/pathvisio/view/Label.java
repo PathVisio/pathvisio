@@ -261,7 +261,7 @@ public class Label extends GraphicsShape
 	 * - size of the text
 	 * Because the text can sometimes be larger than the handles
 	 */
-	protected Shape getVOutline()
+	protected Shape calculateVOutline()
 	{
 		Rectangle2D bb = getBoxBounds(true);
 		Rectangle2D tb = getTextBounds(g2d);

@@ -318,6 +318,11 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	protected Rectangle2D getVScaleRectangle() { return new Rectangle2D.Double(); }
 	
 	/**
+	 * returns the z-order that defines in what order to draw the element.
+	 */
+	protected abstract int getZOrder();
+	
+	/**
 	 * Orders VPathwayElements
 	 * 
 	 * non-Graphics objects always sort above graphics objects
@@ -336,46 +341,20 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		// same object? easy...
 		if (d == this)
 			return 0;
-		
-		// for two Graphics-type objects, sort depending on z-order
-		if (this instanceof Graphics && d instanceof Graphics)
-		{
-			int a, b;
-			// if only one of two is selected (XOR):
-			
-			a = ((Graphics)this).gdata.getZOrder();
-			b = ((Graphics)d).gdata.getZOrder();
 
-			// if sorting order is equal, use hash code
-			if (b == a)
-			{
-				return hashCode() - d.hashCode();
-			}
-			else
-				return a - b;
-		}
-		/*
-		 * for mixed objects, sort depending on Object type
-		 * 
-		 * Handle on top
-		 * other non-Graphics in the middle (VPoint and others)
-		 * Graphics at the bottom
-		 */ 
-		else
+		int a, b;
+		// if only one of two is selected (XOR):
+
+		a = getZOrder();
+		b = d.getZOrder();
+
+		// if sorting order is equal, use hash code
+		if (b == a)
 		{
-			int alevel = (!(this instanceof Graphics) ? 1 : 0) +
-						 	(this instanceof SelectionBox ? 2 : 0) +
-							(this instanceof Handle ? 4 : 0);
-			int blevel = (!(d instanceof Graphics) ? 1 : 0) +
-							(d instanceof SelectionBox ? 2 : 0) +
-							(d instanceof Handle ? 4 : 0);			
-			if (alevel == blevel)
-			{
-				// objects are the same type. default ordering
-				return hashCode() - d.hashCode();
-			}
-			else return (alevel - blevel);
+			return hashCode() - d.hashCode();
 		}
+		else
+			return a - b;
 	}
 	
 	/** 

@@ -59,6 +59,10 @@ import org.pathvisio.view.ViewActions.KeyMoveAction;
  */
 public class VPathway implements PathwayListener
 {
+	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
+	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
+	static final int ZORDER_POINT = Integer.MAX_VALUE - 2;
+
 	private static final long serialVersionUID = 1L;
 
 	static final double M_PASTE_OFFSET = 10 * 15;
@@ -845,7 +849,6 @@ public class VPathway implements PathwayListener
 		g2d.clip(area);
 		g2d.setColor(java.awt.Color.BLACK);
 		Collections.sort(drawingObjects);
-
 		for (VPathwayElement o : drawingObjects)
 		{
 			if (o.vIntersects(area))

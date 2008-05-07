@@ -355,6 +355,19 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			return new Point2D.Double(getX(), getY());
 		}
 
+		/**
+		 * Link to an object. Current absolute coordinates
+		 * will be converted to relative coordinates based on the
+		 * object to link to.
+		 */
+		public void linkTo(GraphIdContainer idc) {
+			Point2D rel = idc.toRelativeCoordinate(toPoint2D());
+			linkTo(idc, rel.getX(), rel.getY());
+		}
+		
+		/**
+		 * Link to an object using the given relative coordinates
+		 */
 		public void linkTo(GraphIdContainer idc, double relX, double relY) {
 			String id = idc.getGraphId();
 			if(id == null) id = idc.setGeneratedGraphId();

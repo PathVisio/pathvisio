@@ -156,6 +156,11 @@ public abstract class DefaultTemplates {
 			return new PathwayElement[] { e };
 		}
 		
+		public VPathwayElement getDragElement(VPathway vp) {
+			GeneProduct g = (GeneProduct)super.getDragElement(vp);
+			return g.handleSE;
+		}
+		
 		public String getName() {
 			return type.toString();
 		}
@@ -225,13 +230,8 @@ public abstract class DefaultTemplates {
 			
 			Template lnt = new LineTemplate(lineStyle, startType, endType);
 			lastLine = lnt.addElements(p, mx, my)[0];
-			lastLine.setMStartX(OFFSET_LINE + lastStartNode.getMLeft() + 
-					lastStartNode.getMWidth());
-			lastLine.setMStartY(lastStartNode.getMCenterY());
-			lastLine.setMEndX(lastEndNode.getMLeft() - OFFSET_LINE);
-			lastLine.setMEndY(lastEndNode.getMCenterY());
-			lastLine.setStartGraphRef(lastStartNode.getGraphId());
-			lastLine.setEndGraphRef(lastEndNode.getGraphId());
+			lastLine.getMStart().linkTo(lastStartNode, 1, 0);
+			lastLine.getMEnd().linkTo(lastEndNode, -1, 0);
 			
 			return new PathwayElement[] { lastLine, lastStartNode, lastEndNode };
 		}
@@ -259,10 +259,6 @@ public abstract class DefaultTemplates {
 		PathwayElement lastCatLine;
 				
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			boolean isMiM = GlobalPreference.getValueBoolean(GlobalPreference.MIM_SUPPORT);
-			
-			MIMShapes.registerShapes(); //We need MIM shapes for the anchor
-			
 			super.addElements(p, mx, my);
 			Template dnt = new DataNodeTemplate(DataNodeType.GENEPRODUCT);
 			lastCatalyst = dnt.addElements(p, mx + lastStartNode.getMWidth(), my - OFFSET_CATALYST)[0];
@@ -278,23 +274,12 @@ public abstract class DefaultTemplates {
 			
 			lastLine.setEndLineType(LineType.ARROW);
 			MAnchor anchor = lastLine.addMAnchor(0.5);
-			String id = anchor.setGeneratedGraphId();
-			
-			//The center of the reaction line
-			double mLineX = lastStartNode.getMCenterX() + Math.abs(lastStartNode.getMCenterX() - 
-					lastEndNode.getMCenterX()) / 2;
-			double mLineY = lastStartNode.getMCenterY() + Math.abs(lastStartNode.getMCenterY() - 
-					lastEndNode.getMCenterY()) / 2;
 			
 			Template lnt = new LineTemplate(LineStyle.SOLID, LineType.LINE, LineType.LINE);
 			lastCatLine = lnt.addElements(p, mx, my)[0];
-			lastCatLine.setMStartX(mLineX);
-			lastCatLine.setMStartY(OFFSET_LINE + lastCatalyst.getMTop() + 
-					lastCatalyst.getMHeight());
-			lastCatLine.setMEndX(mLineX);
-			lastCatLine.setMEndY(mLineY);
-			lastCatLine.setStartGraphRef(lastCatalyst.setGeneratedGraphId());
-			lastCatLine.setEndGraphRef(id);
+			
+			lastCatLine.getMStart().linkTo(lastCatalyst, 0, 1);
+			lastCatLine.getMEnd().linkTo(anchor, 0, 0);
 			
 			return new PathwayElement[] { lastStartNode, lastEndNode, lastLine, lastCatalyst };
 		}

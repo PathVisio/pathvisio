@@ -33,7 +33,7 @@ import java.util.Set;
  *   for a given GOId. 
  */
 
-public class genesGOid {
+public class GenesGOid {
 
 	// args[0] should refer to 2D mart_export.txt
 	public static void main(String[] args)

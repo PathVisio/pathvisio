@@ -1,3 +1,19 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2007 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
 package org.pathvisio.plugins.project2008;
 
 
@@ -29,8 +45,10 @@ import java.io.IOException;
  * -Percentage used genes,
  * -Go term distribution. 
  */
-public class showMenuGUI extends JPanel {
+public class ShowMenuGUI extends JPanel {
 	
+	private static final long serialVersionUID = -173525431639377954L;
+
 	public static void main(String[] args) {
 		
 		/**
@@ -135,8 +153,8 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Pathway overlap Matrix");
-						String[] organism=chooseOrganism.getOrganism();
-						showOverlapGUI.createAndShowOverlapGUI(arguments,organism);
+						String[] organism=ChooseOrganism.getOrganism();
+						ShowOverlapGUI.createAndShowOverlapGUI(arguments,organism);
 						}
 					}
 				);
@@ -171,7 +189,7 @@ public class showMenuGUI extends JPanel {
 		PugButton.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
-						String[] organism=chooseOrganism.getOrganism();
+						String[] organism=ChooseOrganism.getOrganism();
 						ShowPercentageGUI.createAndShowPercentageGUI(arguments,organism);
 						}
 					}
@@ -182,7 +200,7 @@ public class showMenuGUI extends JPanel {
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to The Go Term Distribution function");
-						String[] organism=chooseOrganism.getOrganism();
+						String[] organism=ChooseOrganism.getOrganism();
 						try {
 							GoTermDistributionGUI.goTermDistribution(arguments,organism);
 						} catch (DataException e) {

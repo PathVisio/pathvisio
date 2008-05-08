@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -51,7 +50,7 @@ import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
-import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.RunnableWithProgress;
 
 
@@ -80,12 +79,12 @@ public class DataNodeDialog extends PathwayElementDialog {
 		pack();
 	}
 
-	private void applyAutoFill(Xref ref) {
-		Gdb gdb = GdbManager.getCurrentGdb();
-		String sym = gdb.getGeneSymbol(ref);
+	private void applyAutoFill(XrefWithSymbol ref) 
+	{
+		String sym = ref.getSymbol();
 		symText.setText(sym);
-		idText.setText(ref.getId());
-		dbCombo.setSelectedItem(ref.getDataSource());
+		idText.setText(ref.getXref().getId());
+		dbCombo.setSelectedItem(ref.getXref().getDataSource());
 	}
 
 	/**
@@ -104,8 +103,15 @@ public class DataNodeDialog extends PathwayElementDialog {
 		dialog.setLocationRelativeTo(this);
 
 		final RunnableWithProgress<List<XrefWithSymbol>> task = new RunnableWithProgress<List<XrefWithSymbol>>() {
-			public List<XrefWithSymbol> excecuteCode() {
-				return doSearch(text, progress);
+			public List<XrefWithSymbol> excecuteCode() 
+			{
+				final int QUERY_LIMIT = 200;
+				Gdb gdb = GdbManager.getCurrentGdb();
+
+				List<XrefWithSymbol> result = gdb.freeSearch(text, QUERY_LIMIT); 
+
+				progress.finished();
+				return result;
 			}
 		};
 
@@ -136,7 +142,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			if(results.size() > 0) {
 				DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
 				resultDialog.setVisible(true);
-				Xref selected = resultDialog.getSelected();
+				XrefWithSymbol selected = resultDialog.getSelected();
 				if(selected != null) {
 					applyAutoFill(selected);
 				}
@@ -144,44 +150,6 @@ public class DataNodeDialog extends PathwayElementDialog {
 				JOptionPane.showMessageDialog(this, "No results for '" + text + "'");
 			}
 		}
-	}
-
-	private List<XrefWithSymbol> doSearch(String text, ProgressKeeper progress) {
-		Gdb gdb = GdbManager.getCurrentGdb();
-
-		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
-
-		//Search for ids
-		List<Xref> ids = gdb.getIdSuggestions(text, 200);
-		int i = 0;
-		for(Xref x : ids) {
-			result.add(new XrefWithSymbol(x, gdb.getGeneSymbol(x)));
-			
-			//Check cancel
-			if(progress != null && progress.isCancelled()) {
-				return result;
-			}		
-		}
-
-		//Search for symbols
-		List<String> symbols = gdb.getSymbolSuggestions(text, 200);
-		for(String s : symbols) {
-			//Check cancel
-			if(progress != null && progress.isCancelled()) {
-				return result;
-			}
-			for(Xref x : gdb.getCrossRefsByAttribute("Symbol", s)) {
-				XrefWithSymbol xs = new XrefWithSymbol(x, s);
-				if(!result.contains(xs)) result.add(xs);
-			}
-			
-			//Check cancel
-			if(progress != null && progress.isCancelled()) {
-				return result;
-			}		
-		}
-		progress.finished();
-		return result;
 	}
 
 	protected void addCustomTabs(JTabbedPane parent) {
@@ -318,17 +286,5 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 		parent.add("Annotation", panel);
 		parent.setSelectedComponent(panel);
-	}
-
-	protected class XrefWithSymbol extends Xref {
-		String symbol;
-		public XrefWithSymbol(Xref xref, String symbol) {
-			super(xref.getId(), xref.getDataSource());
-			this.symbol = symbol;
-		}
-
-		public String getSymbol() {
-			return symbol;
-		}
 	}
 }

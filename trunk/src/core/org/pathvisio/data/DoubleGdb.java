@@ -22,6 +22,7 @@ import java.util.List;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.preferences.GlobalPreference;
 
 /**
@@ -372,5 +373,21 @@ public class DoubleGdb implements Gdb
 		}
 		// failure
 		return null;
+	}
+
+	public List<XrefWithSymbol> freeSearch(String text, int limit) 
+	{
+		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+		
+		for (SimpleGdb child : gdbs)
+		{
+			if (child != null && child.isConnected())
+			{
+				result.addAll (child.freeSearch(text, limit));
+			}
+			// don't need to continue if we already reached limit.
+			if (result.size() >= limit) break;
+		}
+		return result;
 	}
 }

@@ -26,7 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -37,9 +36,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
-import org.pathvisio.data.GdbManager;
-import org.pathvisio.gui.swing.dialogs.DataNodeDialog.XrefWithSymbol;
-import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 
 public class DatabaseSearchDialog extends OkCancelDialog {
 	List<XrefWithSymbol> xrefs = new ArrayList<XrefWithSymbol>();
@@ -47,26 +44,16 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 	public DatabaseSearchDialog(String title, List<XrefWithSymbol> xrefs) {
 		super(null, title, null, true);
 		this.xrefs = xrefs;
-		Collections.sort(xrefs, new Comparator<XrefWithSymbol>() {
-			public int compare(XrefWithSymbol o1, XrefWithSymbol o2) 
-			{
-				if(o1.getSymbol() != null && o2.getSymbol() != null)
-					return o1.getSymbol().compareTo(o2.getSymbol());
-				if(o1.getId() != null && o2.getId() != null)
-					return o1.getId().compareTo(o2.getId());
-				if(o1.getDatabaseName() != null && o2.getDatabaseName() != null)
-					return o1.getDatabaseName().compareTo(o2.getDatabaseName());
-				return 0;
-			}
-		});
+		Collections.sort(xrefs);
+		
 		((XRefTableModel)table.getModel()).refresh();
 		validate();
 	}
 
 	JTable table;
-	Xref selected;
+	XrefWithSymbol selected;
 	
-	public Xref getSelected() {
+	public XrefWithSymbol getSelected() {
 		return selected;
 	}
 	
@@ -136,14 +123,14 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 		}
 
 		public Object getValueAt(int row, int col) {
-			Xref xr = xrefs.get(row);
+			XrefWithSymbol xr = xrefs.get(row);
 			switch(col) {
 			case 0:
-				return GdbManager.getCurrentGdb().getGeneSymbol(xr);
+				return xr.getSymbol();
 			case 1:
-				return xr.getId();
+				return xr.getXref().getId();
 			case 2:
-				return xr.getDataSource();
+				return xr.getXref().getDataSource();
 			}
 			return null;
 		}

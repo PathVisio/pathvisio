@@ -32,6 +32,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.Utils;
 
 /**
@@ -551,6 +552,7 @@ public class SimpleGdb implements Gdb
 			s.setQueryTimeout(query_timeout);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
 
+			//TODO: use prepared statement
 			String query = String.format(
 					"SELECT attrvalue FROM attribute WHERE " +
 					"attrname = 'Symbol' AND %s LIKE '%s%%'",
@@ -582,7 +584,7 @@ public class SimpleGdb implements Gdb
 	public List<Xref> getIdSuggestions(String text, int limit) {
 		return getIdSuggestions(text, limit, false);
 	}
-
+	
 	/**
 	 * Get up to limit suggestions for a identifier autocompletion
 	 * @param text The text to base the suggestions on
@@ -601,6 +603,7 @@ public class SimpleGdb implements Gdb
 			StringBuilder sb = new StringBuilder();
 			Formatter formatter = new Formatter(sb);
 
+			//TODO: use prepared statement
 			formatter.format(
 					"SELECT id, code FROM %1$s WHERE " +
 					"%3$s LIKE '%2$s%%'",
@@ -624,6 +627,79 @@ public class SimpleGdb implements Gdb
 		return result;
 	}
 
+	/**
+	 * free text search for matching symbols or identifiers
+	 * @param text The text to base the suggestions on
+	 * @param limit The number of results to limit the search to
+	 */
+	public List<XrefWithSymbol> freeSearch (String text, int limit) 
+	{		
+		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+		try {
+			PreparedStatement ps1 = con.prepareStatement(
+					"SELECT dn.id, dn.code, attr.attrvalue " +
+					"FROM " +
+							table_DataNode + " AS dn " +
+					"	LEFT JOIN " +
+					"		attribute AS attr " +
+					"	ON               " +
+					"		dn.id = attr.id AND dn.code = attr.code " +
+					"WHERE " +
+					"		LOWER(dn.id) LIKE ?" +
+					"	AND " +
+					"			(attr.attrname IS NULL " +
+					"		OR " +
+					"			attr.attrname = 'Symbol') "
+					);
+			ps1.setQueryTimeout(query_timeout);
+			if(limit > NO_LIMIT) 
+			{
+				ps1.setMaxRows(limit);
+			}
+
+			ps1.setString(1, text.toLowerCase() + "%");
+			ResultSet r = ps1.executeQuery();
+			while(r.next()) {
+				String id = r.getString(1);
+				DataSource ds = DataSource.getBySystemCode(r.getString(2));
+				String sym = r.getString(3);
+				XrefWithSymbol ref = new XrefWithSymbol (new Xref(id, ds), sym);
+				result.add (ref);
+			}
+			
+			if (result.size() >= limit)
+			{
+				return result;
+			}
+			
+			PreparedStatement ps2 = con.prepareStatement(
+					"SELECT dn.id, dn.code, attr.attrvalue " +
+					"FROM " + table_DataNode + " AS dn " +
+					"	JOIN attribute AS attr " +
+					"	ON " +
+					"	dn.id = attr.id AND dn.code = attr.code " +
+					"WHERE " +
+					"		attr.attrname = 'Symbol'" +
+					" 	AND " +
+					"	LOWER(attr.attrvalue) LIKE ?"
+			);
+			ps2.setString(1, "%" + text.toLowerCase() + "%");
+			r = ps2.executeQuery();
+
+			while(r.next()) {
+				String id = r.getString(1);
+				DataSource ds = DataSource.getBySystemCode(r.getString(2));
+				String sym = r.getString(3);
+				XrefWithSymbol ref = new XrefWithSymbol (new Xref(id, ds), sym);
+				result.add (ref);
+			}
+			
+		} catch (SQLException e) {
+			Logger.log.error("Unable to run query", e);
+		}
+		return result;
+	}
+	
     PreparedStatement pstGene = null;
     PreparedStatement pstLink = null;
 

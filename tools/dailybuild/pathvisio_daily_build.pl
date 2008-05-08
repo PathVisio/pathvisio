@@ -258,7 +258,7 @@ eval
 		action => sub
 		{
 			# check if all java files have the Apache License attached
-			system (qq^find . -name "*.java" ! -name "Revision.java" | xargs -d '\n' grep -L "Apache License, Version 2.0" | xargs -d '\n' grep -l "package org.pathvisio" > $dir/license_check.txt^) == 0 or
+			system (qq^find . -name "*.java" ! -name "Revision.java" | xargs -d '\n' grep -l "package org.pathvisio" | xargs -d '\n' grep -L "Apache License, Version 2.0" > $dir/license_check.txt^) == 0 or
 				die ("find command failed with error code ", $? >> 8, "\n");
 			
 			# check that the number of lines in the output is equal to 0

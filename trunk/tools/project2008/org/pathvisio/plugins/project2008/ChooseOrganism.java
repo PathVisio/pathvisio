@@ -1,3 +1,19 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2007 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
 package org.pathvisio.plugins.project2008;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -8,13 +24,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.model.ConverterException;
-
 /**
  * In this class the user can choose the organism what for the function has to be executed.
  */
-public class chooseOrganism {
+public class ChooseOrganism {
 	
 	/**
 	 * In this method the screen is created with 6 buttons, one for each organism. 
@@ -27,12 +40,12 @@ public class chooseOrganism {
 			JPanel canvasButtons = new JPanel();
 			
 			// create two new buttons, using the makeButton method
-			JButton CeButton = showMenuGUI.makeBigButton("Caenorhabditis elegans");
-			JButton DrButton = showMenuGUI.makeBigButton("Drosophila melanogaster");
-			JButton HsButton = showMenuGUI.makeBigButton("Homo sapiens");
-			JButton MmButton = showMenuGUI.makeBigButton("Mus musculus");
-			JButton RnButton = showMenuGUI.makeBigButton("Rattus norvegicus");
-			JButton ScButton = showMenuGUI.makeBigButton("Saccharomyces cerevisiae");
+			JButton CeButton = ShowMenuGUI.makeBigButton("Caenorhabditis elegans");
+			JButton DrButton = ShowMenuGUI.makeBigButton("Drosophila melanogaster");
+			JButton HsButton = ShowMenuGUI.makeBigButton("Homo sapiens");
+			JButton MmButton = ShowMenuGUI.makeBigButton("Mus musculus");
+			JButton RnButton = ShowMenuGUI.makeBigButton("Rattus norvegicus");
+			JButton ScButton = ShowMenuGUI.makeBigButton("Saccharomyces cerevisiae");
 			
 			// add the functionality to the Pathway overlap Matrix button
 			CeButton.addActionListener(

@@ -16,6 +16,9 @@
 //
 package org.pathvisio.gui.swing.completer;
 
+import com.jroller.completer.CompleterFilter;
+import com.jroller.completer.CompleterTextField;
+
 /**
  * Text field with auto completion that can be used if the completion
  * options need to be fetched from a database while the user is typing.

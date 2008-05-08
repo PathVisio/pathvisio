@@ -339,7 +339,7 @@ public class GoTermDistributionGUI {
 		public static Set<GoTerm> addGenes(Set<GoTerm> terms, String martexport){
 			// create a new map; the key is the GoTerm's id, the set of strings are the gene strings
 			// various methods of the genesGOid class are used to do so.
-			Map<String,Set<String>> geneByGO=genesGOid.geneByGO(genesGOid.goByGene(martexport));
+			Map<String,Set<String>> geneByGO=GenesGOid.geneByGO(GenesGOid.goByGene(martexport));
 			
 			// loop through all GoTerms
 			for (GoTerm term: terms){

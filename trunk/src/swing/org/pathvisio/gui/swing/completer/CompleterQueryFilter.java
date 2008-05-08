@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 
+import com.jroller.completer.CompleterFilterWithWindow;
+
 /**
  * A completer filter that queries the completion options via
  * an {@link OptionProvider}.

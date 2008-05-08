@@ -159,6 +159,30 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void mouseDragged(MouseEvent e) {
+		Rectangle r = container.getViewport().getViewRect();
+		final int STEPSIZE = 10;
+		int newx = (int)r.getMinX();
+		int newy = (int)r.getMinY();
+		// scroll when dragging out of view
+		if (e.getX() > r.getMaxX())
+		{
+			newx += STEPSIZE;
+		}
+		if (e.getX() < r.getMinX())
+		{
+			newx = Math.max (newx - STEPSIZE, 0);
+		}
+		if (e.getY() > r.getMaxY())
+		{
+			newy += STEPSIZE;
+		}
+		if (e.getY() < r.getMinY())
+		{
+			newy = Math.max (newy - STEPSIZE, 0);
+		}
+		container.getViewport().setViewPosition(
+				new Point (newx, newy)
+				);
 		child.mouseMove(new SwingMouseEvent(e));
 	}
 

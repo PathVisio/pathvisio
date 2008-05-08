@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 
 /**
  * Interface for all classes that provide Gdb-like functionality,
@@ -143,4 +144,9 @@ public interface Gdb
 	 * Get up to limit suggestions for a identifier autocompletion
 	 */
 	public List<Xref> getIdSuggestions(String text, int limit);
+	
+	/**
+	 * free text search for matching symbols or identifiers
+	 */
+	public List<XrefWithSymbol> freeSearch (String text, int limit);
 }

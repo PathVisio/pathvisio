@@ -478,17 +478,21 @@ public class Line extends Graphics
 		//Redraw graphRefs
 		for(GraphRefContainer ref : gdata.getReferences()) {
 			if(ref instanceof MPoint) {
-				canvas.getPoint((MPoint)ref).getLine().recalculateConnector();
+				VPoint vp = canvas.getPoint((MPoint)ref);
+				if(vp != null) {
+					vp.getLine().recalculateConnector();
+				}
 			}
 		}
 	}
 	
 	public void recalculateConnector() {
 		getConnectorShape().recalculateShape(getMLine());
-		markDirty();
+		updateAnchorPositions();
 		for(VPoint vp : points) {
 			vp.setHandleLocation();
 		}
+		markDirty();
 	}
 	
 	public void gmmlObjectModified(PathwayEvent e) {		

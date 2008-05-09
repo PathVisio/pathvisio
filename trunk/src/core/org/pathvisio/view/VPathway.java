@@ -1327,8 +1327,9 @@ public class VPathway implements PathwayListener
 		// If selection is already grouped, then ungroup.
 		if (selectionGrouped)
 		{
+			clearSelection();
+
 			VPathwayElement topVPE = null;
-			
 			// Ungroup all elements asociated with topRef
 			for (VPathwayElement vpe : this.getDrawingObjects())
 			{
@@ -1341,6 +1342,7 @@ public class VPathway implements PathwayListener
 					if (topRef.equals(pe.getGroupRef()))
 					{
 						pe.setGroupRef(null);
+						this.selection.addToSelection(vpe);
 					}
 
 					// remove highest-level group itself
@@ -1373,26 +1375,10 @@ public class VPathway implements PathwayListener
 			group.setGroupStyle(GroupStyle.NONE);
 			String id = group.createGroupId();
 			
-			Double minLeft = Double.MAX_VALUE;
-			Double minTop = Double.MAX_VALUE;
-
 			for (Graphics g : selection)
 			{
 				PathwayElement pe = g.getPathwayElement();
 				String ref = pe.getGroupRef();
-				
-				// Collect group boundaries
-				Double left, top;
-				left = pe.getMLeft();
-				top = pe.getMTop();
-				if (left < minLeft)
-				{
-					minLeft = left;
-				}
-				if (top < minTop)
-				{
-					minTop = top;
-				}
 
 				// If not a member of a group, then set group ref
 				if (ref == null)
@@ -1403,8 +1389,11 @@ public class VPathway implements PathwayListener
 			
 			// Parent group should not reference self
 			group.setGroupRef(null);
-			group.setMLeft(minLeft);
-			group.setMTop(minTop);
+			Graphics vg = getPathwayElementView(group);
+			if(vg != null) {
+				clearSelection();
+				selectObject(vg);
+			}
 		}
 	}
 

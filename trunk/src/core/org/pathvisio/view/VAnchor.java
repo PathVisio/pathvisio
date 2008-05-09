@@ -99,7 +99,10 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		//Redraw graphRefs
 		for(GraphRefContainer ref : mAnchor.getReferences()) {
 			if(ref instanceof MPoint) {
-				canvas.getPoint((MPoint)ref).getLine().recalculateConnector();
+				VPoint vp = canvas.getPoint((MPoint)ref);
+				if(vp != null) {
+					vp.getLine().recalculateConnector();
+				}
 			}
 		}
 	}

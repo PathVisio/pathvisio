@@ -21,7 +21,10 @@ import java.awt.Shape;
 /**
    ArrowShapes are shapes with an "open" attribute.  If open is true,
    it should be filled with the background color and stroked with the
-   line shape.  If open is false, it should be filled and stroked with
+   line shape.  For filling, the shape returned by getFillShape() will be used,
+   for stroking, the shape returned by getShape() will be used. If fillShape is
+   not specified in the constructor, shape will be used.
+   If open is false, it should be filled and stroked with
    the line color.
 
 	   <pre>
@@ -38,15 +41,22 @@ public class ArrowShape
 	public static final int CLOSED = 1;
 	public static final int WIRE = 2;
 	
-	public ArrowShape (Shape shape, int fillType)
-	{
+	public ArrowShape (Shape shape, Shape fillShape, int fillType) {
 		this.shape = shape;
 		this.fillType = fillType;
+		this.fillShape = fillShape != null ? fillShape : shape;
+	}
+	
+	public ArrowShape (Shape shape, int fillType)
+	{
+		this(shape, shape, fillType);
 	}
 	
 	public int getFillType () { return fillType; }
 	public Shape getShape() { return shape; }
+	public Shape getFillShape() { return fillShape; }
 	
 	Shape shape;
 	int fillType;
+	Shape fillShape;
 }

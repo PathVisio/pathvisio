@@ -335,13 +335,13 @@ public class Line extends Graphics
 			{
 			case ArrowShape.OPEN:
 				g.setPaint (Color.WHITE);
-				g.fill (head.getShape());				
+				g.fill (head.getFillShape());				
 				g.setColor (c);
 				g.draw (head.getShape());
 				break;
 			case ArrowShape.CLOSED:
 				g.setPaint (c);
-				g.fill (head.getShape());				
+				g.fill (head.getFillShape());				
 				break;
 			case ArrowShape.WIRE:
 				g.setColor (c);
@@ -389,7 +389,8 @@ public class Line extends Graphics
 			f.translate (xe, ye);
 			f.scale (scaleFactor, scaleFactor);		   
 			Shape sh = f.createTransformedShape(h.getShape());
-			h = new ArrowShape (sh, h.getFillType());
+			Shape fsh = f.createTransformedShape(h.getFillShape());
+			h = new ArrowShape (sh, fsh, h.getFillType());
 		}
 		return h;
 	}

@@ -48,7 +48,7 @@ class BasicShapes
 			"Rectangle", new Rectangle (0, 0, 10, 10));
 
 		ShapeRegistry.registerArrow ("Arrow", getArrowHead(), ArrowShape.CLOSED);
-		ShapeRegistry.registerArrow ("TBar", getTBar(), ArrowShape.CLOSED);
+		ShapeRegistry.registerArrow ("TBar", getTBar(), getTBarFill(), ArrowShape.OPEN);
 		ShapeRegistry.registerArrow ("LigandRound", getLRound(), ArrowShape.CLOSED);
 		ShapeRegistry.registerArrow ("ReceptorRound", getRRound(), ArrowShape.WIRE);
 		ShapeRegistry.registerArrow ("Receptor", getReceptor(), ArrowShape.WIRE);
@@ -66,6 +66,7 @@ class BasicShapes
 	private static final int ARROWWIDTH = 140;
 	private static final int TBARHEIGHT = 225;
 	private static final int TBARWIDTH = 15;
+	private static final int TBAROFFSET = 100;
 	private static final int LRDIAM = 175;
 	private static final int RRDIAM = LRDIAM + 50;
 	private static final int LIGANDWIDTH = 125;
@@ -86,9 +87,17 @@ class BasicShapes
 	private static Shape getTBar()
 	{
 		return new Rectangle2D.Double(
-			-TBARWIDTH, -TBARHEIGHT / 2,
+			-TBAROFFSET, -TBARHEIGHT / 2,
 			TBARWIDTH, TBARHEIGHT
 			);
+	}
+	
+	private static Shape getTBarFill() 
+	{
+		return new Rectangle2D.Double(
+			-TBAROFFSET + TBARWIDTH, -TBARHEIGHT / 2,
+			TBAROFFSET * 2 - TBARWIDTH, TBARHEIGHT
+		);
 	}
 		
 	private static Shape getLRound()

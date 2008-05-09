@@ -80,6 +80,23 @@ public class ShapeRegistry
 		shapeMap.put (key, sh);
 	}
 
+	/**
+	 * Register an arrow shape
+	 * @param key The key used to identify the arrow shape
+	 * @param sh The shape used to draw the stroke
+	 * @param fillShape The shape used to draw the fill (in case fillType is open or closed
+	 * @param fillType The fill type, see {@link ArrowShape}
+	 */
+	static public void registerArrow (String key, Shape sh, Shape fillShape, int fillType) {
+		arrowMap.put(key, new ArrowShape (sh, fillShape, fillType));
+	}
+	
+	/**
+	 * Register an arrow shape
+	 * @param key The key used to identify the arrow shape
+	 * @param sh The shape used to draw the stroke and fill (in case fillType is open or closed)
+	 * @param fillType The fill type, see {@link ArrowShape}
+	 */
 	static public void registerArrow (String key, Shape sh, int fillType)
 	{
 		arrowMap.put (key, new ArrowShape (sh, fillType));

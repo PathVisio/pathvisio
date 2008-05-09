@@ -66,7 +66,7 @@ class BasicShapes
 	private static final int ARROWWIDTH = 140;
 	private static final int TBARHEIGHT = 225;
 	private static final int TBARWIDTH = 15;
-	private static final int TBAROFFSET = 100;
+	private static final int TBAROFFSET = 150;
 	private static final int LRDIAM = 175;
 	private static final int RRDIAM = LRDIAM + 50;
 	private static final int LIGANDWIDTH = 125;

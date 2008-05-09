@@ -180,8 +180,7 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 		GraphIdContainer e = getStartElement();
 		if(e != null) {
 			if(e instanceof PathwayElement) {
-				PathwayElement pe = (PathwayElement)e;
-				side = getSide(getMStartX(), getMStartY(), pe.getMCenterX(), pe.getMCenterY());
+				side = getSide(getMStart().getRelX(), getMStart().getRelY());
 			} else if(e instanceof MAnchor) {
 				side = getOppositeSide(
 						getSide(getMStartX(), getMStartY(), getMEndX(), getMEndY())
@@ -197,8 +196,7 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 		GraphIdContainer e = getEndElement();
 		if(e != null) {
 			if(e instanceof PathwayElement) {
-				PathwayElement pe = (PathwayElement)e;
-				side = getSide(getMEndX(), getMEndY(), pe.getMCenterX(), pe.getMCenterY());
+				side = getSide(getMEnd().getRelX(), getMEnd().getRelY());
 			} else if(e instanceof MAnchor) {
 				side = getOppositeSide(
 						getSide(getMEndX(), getMEndY(), getMStartX(), getMStartY())
@@ -245,10 +243,11 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 	 * @return One of the SIDE_* constants
 	 */
 	private static int getSide(double x, double y, double cx, double cy) {
+		return getSide(x - cx, y - cy);
+	}
+	
+	private static int getSide(double relX, double relY) {
 		int direction = 0;
-
-		double relX = x - cx;
-		double relY = y - cy;
 		if(Math.abs(relX) > Math.abs(relY)) {
 			if(relX > 0) {
 				direction = SIDE_EAST;

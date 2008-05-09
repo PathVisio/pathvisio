@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -83,14 +84,42 @@ public class LinkAnchor {
 			g2d.fill(getShape());
 		}
 		
-		g2d.setColor(new Color(255, 0, 0, 128));
-		
+		//Draw a bulls eye
 		Shape shape = getShape(false);
-
-		g2d.fill(shape);
+		Rectangle2D bounds = shape.getBounds2D();
+		double r = bounds.getWidth() / 2;
+		double cx = bounds.getCenterX();
+		double cy = bounds.getCenterY();
+				
+		Ellipse2D outer = new Ellipse2D.Double(
+				cx - r, 
+				cy -r, 
+				r * 2,
+				r * 2
+		);
+		Ellipse2D white = new Ellipse2D.Double(
+				cx - r * 2 / 3,
+				cy - r * 2 / 3,
+				4 * r / 3,
+				4 * r / 3
+		);
+		Ellipse2D inner = new Ellipse2D.Double(
+				cx - r / 3,
+				cy - r / 3,
+				2 * r / 3,
+				2 * r / 3
+		);
+		
+		Color fill = new Color(255, 0, 0, 255);
+		
+		g2d.setColor(fill);
+		g2d.fill(outer);
+		g2d.setColor(Color.WHITE);
+		g2d.fill(white);
+		g2d.setColor(fill);
+		g2d.fill(inner);
 		
 		g2d.setColor(Color.BLACK);
-		
 		g2d.draw(shape);
 	}
 

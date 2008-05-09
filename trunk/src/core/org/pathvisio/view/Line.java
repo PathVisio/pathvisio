@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import java.util.Set;
 
 import org.pathvisio.model.ConnectorShape;
 import org.pathvisio.model.ConnectorShapeFactory;
-import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;

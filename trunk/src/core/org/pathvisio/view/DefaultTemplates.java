@@ -28,7 +28,6 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MAnchor;
-import org.pathvisio.preferences.GlobalPreference;
 
 public abstract class DefaultTemplates {
 	final static Color COLOR_METABOLITE = Color.BLUE;

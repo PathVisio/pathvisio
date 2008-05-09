@@ -16,33 +16,47 @@
 
 package org.pathvisio.model;
 
-public class XrefWithSymbol implements Comparable<XrefWithSymbol> 
+public class XrefWithSymbol extends Xref implements Comparable<Xref> 
 {
 	private String symbol;
-	private Xref xref;
 	
-	public XrefWithSymbol(Xref xref, String symbol) 
+	public XrefWithSymbol(Xref xref, String symbol)
 	{
+		this (xref.id, xref.ds, symbol);
+	}
+	
+	/**
+	 * null values for all three params are allowed,
+	 * because many times you build an XrefWithSymbol on the go.
+	 */
+	public XrefWithSymbol(String id, DataSource ds, String symbol) 
+	{
+		super (id, ds);
 		this.symbol = symbol;
-		this.xref = xref;
 	}
 
 	public String getSymbol() 
 	{
 		return symbol;
 	}
-
-	public Xref getXref()
-	{
-		return xref;
-	}
 	
-	public int compareTo (XrefWithSymbol o2) 
+	public void setSymbol(String value) 
+	{ 
+		symbol = value; 
+	}
+
+	/**
+	 * Override to search by symbol first, then on the value of the xref
+	 */
+	@Override
+	public int compareTo (Xref o2) 
 	{
-		if(symbol != null && o2.symbol != null)
-			return symbol.compareTo(o2.getSymbol());
-		if(xref != null && o2.xref != null)
-			return xref.compareTo (o2.xref);
-		return hashCode() - o2.hashCode();
+		if (o2 instanceof XrefWithSymbol)
+		{
+			XrefWithSymbol p2 = (XrefWithSymbol)o2;
+			if(symbol != null && p2.symbol != null)
+				return symbol.compareTo(p2.symbol);
+		}
+		return super.compareTo(o2);
 	}	
 }

@@ -18,6 +18,7 @@ package org.pathvisio.util.tableviewer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class holds a collection of {@link Row}s sharing the same {@link Cell}s
@@ -87,7 +88,7 @@ public class TableData {
 			if(c != null) c.setNumeric(value);
 		}
 		
-		public void setCell(String name, ArrayList<String> value) {
+		public void setCell(String name, List<String> value) {
 			Cell c = cells.get(colByName(name));
 			if(c != null) c.setArray(value);
 		}
@@ -133,7 +134,7 @@ public class TableData {
 				
 		private String textValue;
 		private double numValue;
-		private ArrayList<String> arrayValue;
+		private List<String> arrayValue;
 		
 		private int type;
 		
@@ -160,7 +161,7 @@ public class TableData {
 		}
 		
 		public double getNumeric() { return numValue; }
-		public ArrayList<String> getArray() { return arrayValue; }
+		public List<String> getArray() { return arrayValue; }
 		
 		public void setText(String value) {
 			setType(TYPE_TEXT);
@@ -170,7 +171,7 @@ public class TableData {
 			setType(TYPE_NUM);
 			numValue = value; 
 		}
-		public void setArray(ArrayList<String> value) { 
+		public void setArray(List<String> value) { 
 			setType(TYPE_ARRAYLIST);
 			arrayValue = value; 
 		}

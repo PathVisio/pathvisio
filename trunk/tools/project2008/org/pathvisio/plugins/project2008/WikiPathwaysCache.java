@@ -1,4 +1,3 @@
-package org.pathvisio.plugins.project2008;
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
@@ -16,6 +15,8 @@ package org.pathvisio.plugins.project2008;
 // limitations under the License.
 //
 // import the things needed to run this java file.
+package org.pathvisio.plugins.project2008;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -27,67 +28,61 @@ import org.apache.xmlrpc.XmlRpcException;
  * In this class all the pathways from a server are downloaded, using WikiPathWaysClient.
  * It is also possible to download the pathways that are recently changed. 
  */
-public class WPDownloadAll
+public class WikiPathwaysCache
 {
-	/**
-	 * In the String[] args, 1 argument is given:
-	 * In example:
-	 * "C:\\WPClient"
-	 * 
-	 * This is the directory of the cache
-	 * 	
-	 * Good Luck!
-	 */
-	public static void main(String[] args)  throws XmlRpcException, IOException{
-		downloadAll(args[0]);
+	private File cacheDirectory;
+	private WikiPathwaysClient wpClient = new WikiPathwaysClient();
+	
+	public WikiPathwaysCache(File cacheDirectory) 
+	{
+		if (!(cacheDirectory.exists() && cacheDirectory.isDirectory()))
+		{
+			throw new IllegalArgumentException ("Illegal cache directory " + cacheDirectory);
+		}
+		this.cacheDirectory = cacheDirectory;
 	}
 	
 	/**
 	 * In this method it is possible to download only the pathways that are recently changed. 
 	 */
-	public static void downloadNew(String path, Date d) throws XmlRpcException, IOException
+	public void downloadNew (Date d) throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
 		// and date: the date of the most recent changed 
 		
-		// make a new WikiPathwaysClient
-		WikiPathwaysClient wp = new WikiPathwaysClient();
 		
 		// get the pathwaylist; all the known pathways are
 		// stored in a list
-		List<String> pathwayNames = wp.getRecentChanges(d);
+		List<String> pathwayNames = wpClient.getRecentChanges(d);
 		
-		downloadFiles(pathwayNames,path,wp);
+		downloadFiles (pathwayNames);
 	}
 	
 	/**
 	 * In this method a list is created with pathwayNames that have to be downloaded. These 
 	 * pathways are then being downloaded in the method 'downloadFiles'
 	 */
-	public static void downloadAll(String path) throws XmlRpcException, IOException
+	public void downloadAll() throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
-		
-		// make a new WikiPathwaysClient
-		WikiPathwaysClient wp = new WikiPathwaysClient();
-		
+				
 		// get the pathwaylist; all the known pathways are
 		// stored in a list
-		List<String> pathwayNames = wp.getPathwayList();
+		List<String> pathwayNames = wpClient.getPathwayList();
 		
-		downloadFiles(pathwayNames,path,wp);
+		downloadFiles (pathwayNames);
 	}
 	
 	/**
 	 * In this method the files are downloaded. 
 	 */
-	public static void downloadFiles(List<String> pathwayNames, String path, WikiPathwaysClient wp) throws XmlRpcException, IOException {
+	public void downloadFiles (List<String> pathwayNames) throws XmlRpcException, IOException {
 		
 		// give the extension of a pathway file
 		String pwExtension = ".gpml";
 		
 		// remove all duplicates
-		pathwayNames = removeDuplicates(pwExtension, path, pathwayNames);
+		pathwayNames = removeDuplicates(pwExtension, pathwayNames);
 				
 		// a for loop that downloads all individual pathways
 		for (int i = 0; i < pathwayNames.size(); ++i)
@@ -99,18 +94,19 @@ public class WPDownloadAll
 			String namePathway = temporary[1];
 			
 			// construct the download path
-			String pathToDownload = path + "\\" + species + "\\";
+			String pathToDownload = cacheDirectory + File.separator + species + File.separator;
 			
 			//	make a folder for a species when it doesn't exist
 			new File(pathToDownload).mkdir();
 			
 			// make a 2 letters species code
+			//TODO: ???
 			temporary = species.split("_");
 			String code = temporary[0].substring(0,1) + temporary[1].substring(0,1);
 			
 			
 			// download the pathway and give status in console
-			wp.downloadPathway(pathwayNames.get(i), 
+			wpClient.downloadPathway(pathwayNames.get(i), 
 				new File (pathToDownload + code + "_" + namePathway + pwExtension));
 			System.out.println("Downloaded file "+(i+1)+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
 		}
@@ -121,15 +117,17 @@ public class WPDownloadAll
 	 * are already in the cache, are removed from the pathwayNames list, so they won't be 
 	 * downloaded again.
 	 */
-	public static List<String> removeDuplicates(String pwExtension, String path, List<String> pathwayNames){
+	public List<String> removeDuplicates (String pwExtension, List<String> pathwayNames)
+	{
 		// get a list of all files inside the cache path
-		File pwDir = new File(path + "\\");
-		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
+		List<File> pwFilenames = FileUtils.getFileListing(cacheDirectory, pwExtension);
 		
 		// for each files, reconstruct the pathname file (Species:Pathwayname), and
 		// remove from the pathwaynames list
-		for (File file: pwFilenames){
-			String fullPath = file.getPath(); // i.e. C:\PWCache\Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml 
+		for (File file: pwFilenames)
+		{
+			String fullPath = file.getPath(); // i.e. C:\PWCache\Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml
+			String path = cacheDirectory.getPath();
 			String neededPartOfFilename = fullPath.substring(path.length() + 1); // i.e. Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml
 			String[] temporary = neededPartOfFilename.split("\\\\"); // split at the slash; so i.e. temporary[0]: Homo_sapiens; temporary[1]: Hs_ACE-Inhibitor_pathway_PharmGKB.gpml 
 			String species = temporary[0]; // i.e. species = Homo_sapiens

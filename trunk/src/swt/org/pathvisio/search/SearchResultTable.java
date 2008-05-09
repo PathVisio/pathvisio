@@ -16,7 +16,7 @@
 //
 package org.pathvisio.search;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -63,7 +63,7 @@ public class SearchResultTable extends PathwayTable implements ApplicationEventL
 			if(sr == null) return; //Nothing selected
 			
 			try {
-				ArrayList<String> idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
+				List<String> idsFound = sr.getCell(COLUMN_FOUND_IDS).getArray();
 				GeneProduct gp = null;
 				for(VPathwayElement o : drawing.getDrawingObjects()) {
 					if(o instanceof GeneProduct) {

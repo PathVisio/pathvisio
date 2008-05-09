@@ -9,7 +9,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
 
@@ -18,7 +17,9 @@ public class RowHeaderRenderer
     extends DefaultTableCellRenderer
     implements ListCellRenderer
 {
-    protected Border noFocusBorder, focusBorder;
+	private static final long serialVersionUID = -798251786415403952L;
+	
+	protected Border noFocusBorder, focusBorder;
 
 
     public RowHeaderRenderer()

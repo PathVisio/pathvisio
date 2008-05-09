@@ -72,6 +72,10 @@ public abstract class GraphLink
 		String getGraphRef();
 		void linkTo(GraphIdContainer idc, double relX, double relY);
 		void unlink();
+		/**
+		 * @deprecated GraphRefs now have relative coordinates and don't
+		 * need to be moved
+		 */
 		void moveBy(double dx, double dy);
 
 		/** 

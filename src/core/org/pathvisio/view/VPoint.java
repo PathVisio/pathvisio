@@ -125,7 +125,7 @@ public class VPoint extends VPathwayElement {
 			);
 		}
 	}
-
+	
 	protected Shape calculateVOutline() {
 		return handle.calculateVOutline();
 	}

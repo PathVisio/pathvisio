@@ -32,8 +32,10 @@ import org.pathvisio.Engine;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.PathwayParser.ParseException;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -60,7 +62,7 @@ public class SearchMethods
 		 * searches file for a match
 		 * returns a search result or null if the file doesn't match. 
 		 */
-		MatchResult testMatch (File f, PathwayParser parser);
+		MatchResult testMatch (File f);
 	}
 	
 	/**
@@ -75,24 +77,39 @@ public class SearchMethods
 		public ByXrefMatcher(Xref ref) throws SearchException
 		{
 			refs = GdbManager.getCurrentGdb().getCrossRefs(ref);
-			if(refs.size() == 0) throw new SearchException(MSG_NOT_IN_GDB);
+			if(refs == null || refs.size() == 0) throw new SearchException(MSG_NOT_IN_GDB);
 		}
 		
-		public MatchResult testMatch(File f, PathwayParser parser) 
+		public MatchResult testMatch(File f) 
 		{
-			ArrayList<PathwayParser.Gene> genes = parser.getGenes();
-			//Check if one of the given ids is in the pathway
-			for(PathwayParser.Gene gene : genes) 
-			{
-				if(refs.contains(gene)) 
+			//Get all genes in the pathway
+			try 
+			{ 
+				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+				PathwayParser parser = new PathwayParser(f, xmlReader);
+				List<XrefWithSymbol> genes = parser.getGenes();
+				//Check if one of the given ids is in the pathway
+				for (XrefWithSymbol gene : genes) 
 				{
-					//Gene found, add pathway to search result and break
-					List<String> idsFound = new ArrayList<String>();
-					idsFound.add(gene.getId());
-					return new MatchResult(f, idsFound, null);
+					if(refs.contains(gene)) 
+					{
+						//Gene found, add pathway to search result and break
+						List<String> idsFound = new ArrayList<String>();
+						idsFound.add(gene.getId());
+						return new MatchResult(f, idsFound, null);
+					}
 				}
-			}			
-		
+			}
+			catch (ParseException e) 
+			{ 
+				// ignore pathways that generate an exception.
+				// They simply won't show up in search results.
+			}
+			catch (SAXException e)
+			{
+				// ignore pathways that generate an exception.
+				// They simply won't show up in search results.
+			}
 			return null;
 		}
 	}
@@ -112,28 +129,44 @@ public class SearchMethods
 			pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		}
 		
-		public MatchResult testMatch(File f, PathwayParser parser) 
+		public MatchResult testMatch(File f) 
 		{
-			List<PathwayParser.Gene> genes = parser.getGenes();
-			//Find what symbols match
-			List<PathwayParser.Gene> matched = new ArrayList<PathwayParser.Gene>();
-			List<String> idsFound = new ArrayList<String>();
-			List<String> namesFound = new ArrayList<String>();
-			
-			for(PathwayParser.Gene gene : genes) 
-			{
-				Matcher m = pattern.matcher(gene.getSymbol());
-				if(m.find()) 
+			try 
+			{ 
+				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+				PathwayParser parser = new PathwayParser(f, xmlReader);
+				List<XrefWithSymbol> genes = parser.getGenes();
+				//Find what symbols match
+				List<XrefWithSymbol> matched = new ArrayList<XrefWithSymbol>();
+				List<String> idsFound = new ArrayList<String>();
+				List<String> namesFound = new ArrayList<String>();
+				
+				for(XrefWithSymbol gene : genes) 
 				{
-					matched.add(gene);
-					idsFound.add(gene.getId());
-					namesFound.add(gene.getSymbol());
+					Matcher m = pattern.matcher(gene.getSymbol());
+					if(m.find()) 
+					{
+						matched.add(gene);
+						idsFound.add(gene.getId());
+						namesFound.add(gene.getSymbol());
+					}
 				}
+				
+				if(matched.size() > 0) 
+				{
+					return new MatchResult (f, idsFound, namesFound);
+				}
+				
 			}
-			
-			if(matched.size() > 0) 
+			catch (ParseException e) 
+			{ 
+				// ignore pathways that generate an exception.
+				// They simply won't show up in search results.
+			}
+			catch (SAXException e)
 			{
-				return new MatchResult (f, idsFound, namesFound);
+				// ignore pathways that generate an exception.
+				// They simply won't show up in search results.
 			}
 			return null;
 		}
@@ -184,26 +217,11 @@ public class SearchMethods
 						pmon.close();
 						return matchCount;
 					}
-					//Get all genes in the pathway
-					PathwayParser parser = new PathwayParser(xmlReader);
-					try 
-					{ 
-						xmlReader.parse(f.getAbsolutePath()); 
-
-						MatchResult sr = search.testMatch (f, parser);
-						if (sr != null)
-						{
-							publish (sr);
-							matchCount++;
-						}
-					}
-					catch (IOException e) 
-					{ 
-						// ignore pathways that generate an exception
-					}
-					catch (SAXException e)
+					MatchResult sr = search.testMatch (f);
+					if (sr != null)
 					{
-						// ignore pathways that generate an exception
+						publish (sr);
+						matchCount++;
 					}
 					
 					i++;

@@ -83,8 +83,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 	{
 		String sym = ref.getSymbol();
 		symText.setText(sym);
-		idText.setText(ref.getXref().getId());
-		dbCombo.setSelectedItem(ref.getXref().getDataSource());
+		idText.setText(ref.getId());
+		dbCombo.setSelectedItem(ref.getDataSource());
 	}
 
 	/**

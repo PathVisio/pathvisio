@@ -1,4 +1,3 @@
-package org.pathvisio.plugins.project2008;
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
@@ -16,6 +15,8 @@ package org.pathvisio.plugins.project2008;
 // limitations under the License.
 //
 // import the things needed to run this java file.
+
+package org.pathvisio.plugins.project2008;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class FileUtils {
 		// get all the files and directories contained in the given path
 	    File[] content = path.listFiles();
 	    // use a for loop to walk through content
-	    for(File file : content) {
+	    if (content != null) for(File file : content) {
 	    	// if the file is a directory use recursion to get the contents of the sub-path
 	    	// the files in this sub-path are added to the files list.
 	    	if ( file.isDirectory() ) {

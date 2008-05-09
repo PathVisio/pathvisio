@@ -28,8 +28,6 @@ import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 
-import com.sun.org.apache.xerces.internal.util.URI.MalformedURIException;
-
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
  * Subclasses may override {@link #createAndShowGUI(MainPanel)} to perform custom

@@ -28,14 +28,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.apache.xmlrpc.XmlRpcException;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 /**
  * When running this class, it is possible to choose which function will be executed. A little
@@ -162,28 +160,13 @@ public class ShowMenuGUI extends JPanel {
 		// add the functionality to the Link Checker button
 		LCButton.addActionListener(
 				new ActionListener(){
-					public void actionPerformed(ActionEvent ae){
-						System.out.println("Go to Link Checker");
-						
-						try {
-							LinkChecker.main(arguments);
-						} catch (ConverterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (DataException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (XmlRpcException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-						}
+					public void actionPerformed(ActionEvent ae)
+					{
+						System.out.println("Go to Link Checker");	
+						LinkChecker.main(arguments);
 					}
-				);
+				}
+			);
 		
 		// add the functionality to the Go Term Distribution button
 		PugButton.addActionListener(

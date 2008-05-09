@@ -1,4 +1,3 @@
-package org.pathvisio.plugins.project2008;
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
@@ -16,6 +15,8 @@ package org.pathvisio.plugins.project2008;
 // limitations under the License.
 //
 // import the things needed to run this java file.
+package org.pathvisio.plugins.project2008;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,15 +26,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 import org.apache.xmlrpc.XmlRpcException;
-import org.pathvisio.data.DataDerby;
-import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.PathwayParser.ParseException;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 
 /**
@@ -43,53 +45,116 @@ import org.pathvisio.model.Xref;
  * that exist in the database.
  */
 
-public class LinkChecker {
-	/**
-	* in the String[] args, 3 arguments are given:
-	* in example:
-	* "C:\\databases\\"
-	* "C:\pathways"
-	* "C:\\result.html"
-	* 
-	* The first one is the directory that contains the databases.
-	* The second one is the directory that contains the pathway cache.
-	* The third one is the filename (note the html extension) of where the results are stored.
-	*/
-	public static void main(String[] args) throws ConverterException, DataException, XmlRpcException, IOException {
-		/**
-		 * If connected to the internet, the boolean online has to be set to true. 
-		 */
-		boolean online = true; // set to true if connected to the internet
-		
-		/** 
-		 * Check if the String[] args is given, and make Files containing the directories to
-		 * the pathways and databases 
-		 */ 
-		File dbDir = null;
-		File pwDir = null;
-		String outfile = null;
-		
-		try {
-			dbDir = new File(args[0]);
-			pwDir = new File(args[1] + "\\");
-			outfile=args[2];
-		}
-		catch(ArrayIndexOutOfBoundsException e) {
-			System.out.println("String[] args not given!");
-			System.exit(0);
-		}
+public class LinkChecker 
+{
+	
+	public static void printUsage(String error)
+	{
+		System.out.println ("LinkChecker\n" +
+				"	Checks references in pathways and prints a html table with the result\n"+
+				"\n"+
+				"Usage:\n"+
+				"	java LinkChecker online <dbDir> <cacheDir> <outFile>\n" +
+				"	java LinkChecker local <dbDir> <pwDir> <outFile>\n" +
+				"\n" + 
+				"Where dbDir is a directory containing gene databases,\n"+
+				"cachedir is a directory containing wikipahtways pathways,\n"+
+				"and pwDir is the root of a directory tree containing pathways in GPML format.\n"+
+				"\n" +
+				"Error: " + error);
+	}
 
+	/**
+	 * If connected to the internet, the boolean online has to be set to true. 
+	 */
+	boolean isOnline = true; // set to true if connected to the internet
+	
+	/** 
+	 * Check if the String[] args is given, and make Files containing the directories to
+	 * the pathways and databases 
+	 */ 
+	File dbDir = null;
+	File pwDir = null;
+	PrintWriter out;
+
+	/**
+	 * sets online, out, dbDir and pwDir.
+	 * Exits the program if there was an error.
+	 */
+	private void parseArgs (String[] args)
+	{
+		String errorMessage = null;
+
+		int i = 0;
+		if (args.length != 4)
+		{
+			errorMessage = "Expected 4 arguments";
+		}
+		if (errorMessage == null)
+		{
+			if (args[i].equals("local"))
+			{
+				isOnline = false;
+			}
+			else if (args[i].equals("online"))
+			{
+				isOnline = true;
+			}
+			else
+			{
+				errorMessage = "Expected 'local' or 'online'";
+			}
+			i++;
+		}
+		if (errorMessage == null)
+		{
+			dbDir = new File(args[i]);
+			if (!(dbDir.exists() && dbDir.isDirectory()))
+			{
+				errorMessage = "Could not find database directory " + dbDir;
+			}
+			i++;
+		}
+		if (errorMessage == null)
+		{
+			pwDir = new File(args[i]);
+			if (!(pwDir.exists() && pwDir.isDirectory()))
+			{
+				errorMessage = "Could not find pathway directory " + pwDir;
+			}
+			i++;
+		}
+		if (errorMessage == null)
+		{
+			// DO this for standard output:
+			// out = new PrintWriter (System.out);
+			try
+			{
+				out = new PrintWriter (new FileWriter (args[i]));
+			}
+			catch (IOException e)
+			{
+				errorMessage = "Couldn't open file for output: " + args[i];
+			}
+		}
+		if (errorMessage != null)
+		{
+			printUsage(errorMessage);
+			System.exit(1);
+		}
+	}
+	
+	private void run()
+	{
 		/**
 		 * Get a list of files of databases and pathways. Here the method 'getFileListing' is 
 		 * executed.
 		 */
 		String pwExtension = ".gpml";
-		String dbExtension = ".pgdb";
 		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
-		List<File> dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
 		
-		
-		if (online){
+		if (isOnline)
+		{
 			/**
 			 * If the boolean online is true, first the data is loaded from the last changed 
 			 * pathway. With the date of this last change, the data of the other recently 
@@ -99,79 +164,70 @@ public class LinkChecker {
 			Date d = new Date(localdate); 
 			DateFormat df = DateFormat.getDateTimeInstance();
 			System.out.println("Date last modified: "+df.format(d)); 
-			System.out.println("---[Get Recently Changed Files]---");
-			WPDownloadAll.downloadNew(args[1], d);
+			try
+			{
+				System.out.println("---[Get Recently Changed Files]---");
+				WikiPathwaysCache wp = new WikiPathwaysCache(pwDir);
+				wp.downloadNew(d);
 			
-			System.out.println("---[Get All Other Files]---");
-			// download all pathways to the pathway folder
-			WPDownloadAll.downloadAll(args[1]);
-			System.out.println("---[Ready]---");
-			System.out.println("---[Start Checking Links]---");
+				System.out.println("---[Get All Other Files]---");
+				// download all pathways to the pathway folder
+				wp.downloadAll();
+				System.out.println("---[Ready]---");
+				System.out.println("---[Start Checking Links]---");
+			}
+			catch (XmlRpcException e)
+			{
+				System.out.println("ERROR: Couldn't update cache");
+			}
+			catch (IOException e)
+			{
+				System.out.println("ERROR: Couldn't update cache");
+			}
 		}
 		
-		/**
-		 * Get a new list of files of pathways.
-		 */ 
-		dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
-				
-		/**
-		 * In the following for-loop, all databases are loaded in in List<SimpleGdb> databases 
-		 * and all filenames of the loaded databases are loaded in List<String> 
-		 * databaseFilenames.
-		 */
-		List<SimpleGdb> databases          = new ArrayList<SimpleGdb>();
-		List<String>    databasesFilenames = new ArrayList<String>();
-		for (File dbFilename: dbFilenames){
-			// load a database and add it to the list
-			SimpleGdb database = new SimpleGdb(dbFilename.getPath(), new DataDerby(), 0);
-			databases.add(database);
-			// extract a filename and add it to the list
-			databasesFilenames.add(dbFilename.getName());
-		}
-				
+		// initialize local Gdb manager
+		LocalGdbManager localGdbManager = new LocalGdbManager(dbDir);
+
 		/**
 		 * With the try/catch the output file is created.
 		 * Then in the for-loop all pathway files are loaded. And the percentage of found Xrefs
 		 * in de database is given. 
 		 */
-		PrintWriter out = null;
-		try {
-			out = new PrintWriter(new FileWriter(outfile));
-		}
-		catch(IOException e){
-			System.out.println("Can't open folder "+outfile);
-			System.exit(0);
-		}
 		String titleOfHTMLPage = "LinkChecker.java results";
 		out.print("<HTML><HEAD><TITLE>"+titleOfHTMLPage+"</TITLE></HEAD><BODY><center><h1>"+titleOfHTMLPage+"</h1><TABLE border=\"1\"><TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
+
+		XMLReader xmlReader = null;
 		
-		for (File filename:pwFilenames){
-			Pathway pway = new Pathway();
-				
-			 /** 
-			  * The pathway file can be validated. For this end, the boolean validate has to be set 
-			  * to true.
-			  */ 
-			boolean validate = false; //Set to true if you want to validate the pathway file.
-			try{
-				pway.readFromXml(filename, validate);
-			}
-			catch(ConverterException e){
-				System.out.println("empty file is found");
-			}
+		try
+		{
+			xmlReader = XMLReaderFactory.createXMLReader();
+		}
+		catch (SAXException e)
+		{
+			Logger.log.error ("Couldn't create XML reader");
+			return; // abort
+		}
+		
+		for (File filename:pwFilenames)
+		{
+//			Pathway pway = new Pathway();
+//				
+//			 /** 
+//			  * The pathway file can be validated. For this end, the boolean validate has to be set 
+//			  * to true.
+//			  */ 
+//			boolean validate = false; //Set to true if you want to validate the pathway file.
+//			try
+//			{
+//				pway.readFromXml(filename, validate);
+//			}
+//			catch(ConverterException e)
+//			{
+//				System.out.println("empty file is found");
+//			}
 			
-			/**
-			 * The right database for the pathway must be found. The filename of a database 
-			 * must have te same two starting letters as the filenames of the pathway.
-			 */
-			int i = 0;
-			int index = -1;
-			for (String databaseFilename: databasesFilenames){
-				if (databaseFilename.substring(0,2).equalsIgnoreCase(filename.getName().substring(0,2))){
-					index = i;
-				}
-				i++;
-			}		
+			SimpleGdb currentGdb = localGdbManager.getDatabaseForPathway(filename);
 
 			/**
 			 * First a list is made that contains the Xref's.
@@ -182,15 +238,29 @@ public class LinkChecker {
 			 * Is the database is not found, add a row to the table of the html file, containing
 			 * the name of the pathway and the text "Database not found".
 			 */
-			List<Xref> xrefList = makeXrefList(pway);
-			if (index != -1){
-				out.print("<TR><TD>"+filename.getName()+"</TD>");
-				String percentage = calculatePercentage(xrefList, databases.get(index));
-				out.println("<TD>"+percentage+databasesFilenames.get(index)+")</TD></TR>");
+//			List<Xref> xrefList = makeXrefList(pway);
+			List<Xref> xrefList = new ArrayList<Xref>();
+			try
+			{
+				PathwayParser pwy = new PathwayParser (filename, xmlReader);
+				xrefList.addAll (pwy.getGenes());
 			}
-			else{
-			out.print("<TR><TD>"+filename.getName()+"</TD>");
-			out.println("<TD> Database not found </TD></TR>");				
+			catch (ParseException e)
+			{
+				// ignore parse errors
+				Logger.log.error ("Couldn't parse " + filename);
+			}
+			
+			if (currentGdb != null)
+			{
+				out.print("<TR><TD>"+filename.getName()+"</TD>");
+				String percentage = calculatePercentage(xrefList, currentGdb);
+				out.println("<TD>"+percentage+")</TD></TR>");
+			}
+			else
+			{
+				out.print("<TR><TD>"+filename.getName()+"</TD>");
+				out.println("<TD> Database not found </TD></TR>");				
 			}
 		
 		}
@@ -200,7 +270,23 @@ public class LinkChecker {
 		 */
 		out.print("</TABLE></center></BODY></HTML>");
 		out.close();
-		System.out.println("Results are stored in " + outfile);
+	}
+	
+	/**
+	* in the String[] args, 3 arguments are given:
+	* in example:
+	* "C:\\databases\\"
+	* "C:\pathways"
+	* 
+	* The first one is the directory that contains the databases.
+	* The second one is the directory that contains the pathway cache.
+	*/
+	public static void main(String[] args)
+	{
+		LinkChecker linkChecker = new LinkChecker();
+		
+		linkChecker.parseArgs (args);
+		linkChecker.run();
 	}
 	
 	/** 
@@ -234,40 +320,24 @@ public class LinkChecker {
 		return percentage;
 	}
 	
-	/** 
-	 * In this method a list of Xrefs in made. The list contains all the Xrefs from a given 
-	 * pathway. The property you have to give is:
-	 * 'pway' (a Pathway where you want to extract all the Xrefs from).
-	 */ 
-	public static List<Xref> makeXrefList(Pathway pway){
-		List<PathwayElement> pelts = pway.getDataObjects();
-		List<Xref> xRefList = new ArrayList<Xref>();
-		for (PathwayElement element:pelts){
-			// Check if the objectType is a datanode, and add it to the list.
-			if (element.getObjectType() == ObjectType.DATANODE){
-				xRefList.add(element.getXref());
-			}
-		}
-		// Return the list.
-		return xRefList;
-	}
-	
 	/**
 	 * In this method the date is returned when the last change is made in a pathway. The
 	 * property that has to be given is:
 	 * 'pathways' (a list of pathways you want to have the most recent date from). 
 	 */
-	public static long dateLastModified(List<File> pathways){
+	public static long dateLastModified(List<File> pathways)
+	{
 		// Set initial value.
 		long lastModified = 0;
 		// Walk through all the pathways.
-		for (File pathway:pathways){
+		for (File pathway:pathways)
+		{
 			// If pathway is more recent, use this date.
 			if (lastModified < pathway.lastModified()){
 				lastModified = pathway.lastModified();
 			}
 		}
-	return lastModified;
+		return lastModified;
 	}
 	
 }

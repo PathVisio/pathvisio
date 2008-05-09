@@ -128,9 +128,9 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 			case 0:
 				return xr.getSymbol();
 			case 1:
-				return xr.getXref().getId();
+				return xr.getId();
 			case 2:
-				return xr.getXref().getDataSource();
+				return xr.getDataSource();
 			}
 			return null;
 		}

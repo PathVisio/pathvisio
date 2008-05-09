@@ -26,12 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.GraphLink.GraphRefContainer;
-import org.pathvisio.model.PathwayElement.MAnchor;
-import org.pathvisio.model.PathwayElement.MPoint;
-
 /**
  * This class implements a selectionbox
  * 

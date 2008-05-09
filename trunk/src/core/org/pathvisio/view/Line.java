@@ -26,10 +26,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.pathvisio.model.ConnectorShape;
 import org.pathvisio.model.ConnectorShapeFactory;
@@ -477,15 +475,20 @@ public class Line extends Graphics
 		for(VPoint p : points) {
 			p.vMoveBy(vdx, vdy);
 		}
-		//Move graphRefs
-		Set<VPoint> toMove = new HashSet<VPoint>();
+		//Redraw graphRefs
 		for(GraphRefContainer ref : gdata.getReferences()) {
 			if(ref instanceof MPoint) {
-				toMove.add(canvas.getPoint((MPoint)ref));
+				canvas.getPoint((MPoint)ref).getLine().recalculateConnector();
 			}
 		}
-		toMove.removeAll(points);
-		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
+	}
+	
+	public void recalculateConnector() {
+		getConnectorShape().recalculateShape(getMLine());
+		markDirty();
+		for(VPoint vp : points) {
+			vp.setHandleLocation();
+		}
 	}
 	
 	public void gmmlObjectModified(PathwayEvent e) {		

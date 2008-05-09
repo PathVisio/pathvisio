@@ -84,15 +84,12 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 	{
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
 		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
-		//Move graphRefs
-		//GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
-		Set<VPoint> toMove = new HashSet<VPoint>();
+		//Redraw graphRefs
 		for(GraphRefContainer ref : gdata.getReferences()) {
 			if(ref instanceof MPoint) {
-				toMove.add(canvas.getPoint((MPoint)ref));
+				canvas.getPoint((MPoint)ref).getLine().recalculateConnector();
 			}
 		}
-		for(VPoint p : toMove) p.vMoveBy(vdx, vdy);
 	}
 		
 	public Handle[] getHandles()

@@ -312,7 +312,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			return graphRef;
 		}
-
+		
 		/**
 		 * Set a reference to another object with a graphId. If a parent is set,
 		 * this will automatically deregister the previously held reference and

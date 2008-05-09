@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 
+import org.pathvisio.model.MLine;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
@@ -88,9 +89,6 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 	}
 	
 	void updatePosition() {
-		double prevX = mx;
-		double prevY = my;
-		
 		double lc = mAnchor.getPosition();
 			
 		Point2D position = line.vFromL(lc);
@@ -99,12 +97,10 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		mx = mFromV(position.getX());
 		my = mFromV(position.getY());
 		
-		//Move graphRefs
-		if(!Double.isNaN(prevX) && !Double.isNaN(prevY)) {
-			for(GraphRefContainer ref : mAnchor.getReferences()) {
-				if(ref instanceof MPoint) {
-					ref.moveBy(mx - prevX, my - prevY);
-				}
+		//Redraw graphRefs
+		for(GraphRefContainer ref : mAnchor.getReferences()) {
+			if(ref instanceof MPoint) {
+				canvas.getPoint((MPoint)ref).getLine().recalculateConnector();
 			}
 		}
 	}

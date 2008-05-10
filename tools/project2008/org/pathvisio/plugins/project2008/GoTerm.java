@@ -1,4 +1,3 @@
-package org.pathvisio.plugins.project2008;
 //PathVisio,
 //a tool for data visualization and analysis using Biological Pathways
 //Copyright 2006-2007 BiGCaT Bioinformatics
@@ -15,22 +14,24 @@ package org.pathvisio.plugins.project2008;
 //See the License for the specific language governing permissions and 
 //limitations under the License.
 //
-import java.util.HashSet;
-import java.util.Set;
+package org.pathvisio.plugins.project2008;
+
+import java.util.*;
 
 /**
  * Class to create the object "GoTerm";
  * a GoTerm is a Gene Ontology Term, which has compulsory name, id and namespace;
  * and optional parents, children and genes. 
  */
-public class GoTerm {
+public class GoTerm 
+{
 
 	private String id;
 	private String name;
 	private String namespace;
 	private Set<GoTerm> parents = new HashSet<GoTerm>();
-	private Set<GoTerm> children = new HashSet<GoTerm>();
-	private Set<String> genes = new HashSet<String>();
+	private List<GoTerm> children = new ArrayList<GoTerm>();
+//	private Set<String> genes = new HashSet<String>();
 	
 	/**
 	 * Constructor. Create a new GoTerm, giving the id of the term,
@@ -50,39 +51,39 @@ public class GoTerm {
 	 * e.g. newTerm.addGene(gen);
 	 * ---> newTerm.addGene("ENSRNOG00000028412");
 	 */
-	public void addGene(String gen){
-		this.genes.add(gen);
-	}
+//	public void addGene(String gen){
+//		this.genes.add(gen);
+//	}
 	
 	/**
 	 * return a set of strings containing all the (Ensemble) genes
 	 * added to the GoTerm
 	 */
-	public Set<String> getGenes(){
-		return this.genes;
-	}
+//	public Set<String> getGenes(){
+//		return this.genes;
+//	}
 	
 	/**
 	 * return the number of items the set of (Ensemble) genes contains
 	 */
-	public int getNumberOfGenes(){
-		return this.genes.size();
-	}
+//	public int getNumberOfGenes(){
+//		return this.genes.size();
+//	}
 	
 	/**
 	 * return the number of overlapping items this GoTerm's set of (Ensemble) genes
 	 * has comparing with a given set of genes (Set<String> otherSet)
 	 */
-	public int getOverlapGenes(Set<String> otherSet){
-		int number = 0;
-		
-		for (String Gene: this.genes){
-			if (otherSet.contains(Gene)){
-				number = number + 1;
-			}
-		}
-		return number;
-	}
+//	public int getOverlapGenes(Set<String> otherSet){
+//		int number = 0;
+//		
+//		for (String Gene: this.genes){
+//			if (otherSet.contains(Gene)){
+//				number = number + 1;
+//			}
+//		}
+//		return number;
+//	}
 	
 	/**
 	 * add a (GoTerm) child to the GoTerm
@@ -129,7 +130,7 @@ public class GoTerm {
 	/**
 	 * return a set of GoTerms containing all the children of the GoTerm
 	 */
-	public Set<GoTerm> getChildren(){
+	public List<GoTerm> getChildren(){
 		return children;
 	}
 
@@ -149,4 +150,10 @@ public class GoTerm {
 		return !children.isEmpty();
 	}
 	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 }
+

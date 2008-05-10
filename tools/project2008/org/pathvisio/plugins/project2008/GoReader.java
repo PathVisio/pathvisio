@@ -17,31 +17,29 @@
 package org.pathvisio.plugins.project2008;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-
+import java.util.*;
+import java.io.File;
 
 /**
  * The class GoReader contains two methods to read the data of the GO terms. 
  */
-public class GoReader {
-		
-	public static void main(String[] args){
+public class GoReader 
+{
+	private Set<GoTerm> terms;
+	public Set<GoTerm> getTerms()
+	{
+		return terms;
 	}
 	
-	/**
-	 * The method 'readGoDatabase' returns all the GoTerms that are stored in a file (given in String path).
-	 */
-	public static Set<GoTerm> readGoDatabase(String path){
+	public GoReader (File obo)
+	{		
 		/**
 		 * Each line is readed as a string.
 		 * A map with a GoTerm and the parents (isa's) of this term stored as strings.
 		 * A map with a string (containing the goTerm's id) and the goterm.
 		 */
 		String line; 
-		Set<GoTerm> terms = new HashSet<GoTerm>();
+		terms = new HashSet<GoTerm>();
 		Map<GoTerm, Set<String>> goTerm_Parents = new HashMap<GoTerm,Set<String>>();
 		Map<String, GoTerm> id_goTerm = new HashMap<String,GoTerm>();
 		
@@ -49,7 +47,7 @@ public class GoReader {
 		 * Start reading the file (buffered).
 		 */
 		try {
-			FileReader fr = new FileReader(path);
+			FileReader fr = new FileReader(obo);
 			BufferedReader br = new BufferedReader(fr);
 			// Read line-by-line until the end is reached
 			while((line=br.readLine()) != null){
@@ -134,19 +132,19 @@ public class GoReader {
 		
 		// show a message that everything is read; and return the terms
 		System.out.println("DB read");
-		return terms;
 	}
 	
 	/**
 	 * In the method 'getRoots' for a set of GoTerms the roots are returned in a set.
 	 */
 	
-	public static Set<GoTerm> getRoots(Set<GoTerm> terms)
+	public List<GoTerm> getRoots()
 	{
 		// create a list for the roots
-		Set<GoTerm> roots = new HashSet<GoTerm>();
+		List<GoTerm> roots = new ArrayList<GoTerm>();
 		// walk through the terms to find the roots
-		for (GoTerm term : terms){
+		for (GoTerm term : terms)
+		{
 			// if a term has no parents, it's a root
 			if(!term.hasParents()){
 				// add the term as root

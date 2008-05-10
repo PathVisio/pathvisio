@@ -20,11 +20,15 @@ import java.io.File;
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.PathwayParser.ParseException;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.util.*;
 
@@ -150,7 +154,9 @@ public class GeneCounter {
 	}
 
 	/**
-	 * In this method a set is created that contains all the references in a Pathway.
+	 * In this method a set is created that contains all the references in a Pathway,
+	 * normalized to Ensembl.
+	 * 
 	 * First, for a pathway, p, the information is loaded.
 	 * Then a list is formed that contains the elements stored in the pathway.
 	 * In the for-loop each element of the pathway that represents a Xref is stored in a set.
@@ -159,21 +165,29 @@ public class GeneCounter {
 	 * At last all references are added to a set. So a set remains with all Xref't that exist 
 	 * in the pathways. This set is returned.
 	 */
-	public static Set<Xref> getRefPW(File filename,SimpleGdb db) throws ConverterException{
-		Set<Xref> s=new HashSet<Xref>();
-		Pathway p = new Pathway();
-		p.readFromXml(filename, true);
-		List<PathwayElement> pelts = p.getDataObjects();
-		for (PathwayElement v:pelts){
-			int type;
-			type=v.getObjectType();
-			if (type ==1){
-				Xref reference;
-				reference=v.getXref();
-				List<Xref> cRef=db.getCrossRefs(reference,DataSource.ENSEMBL);		
+	public static Set<Xref> getRefPW(File filename,SimpleGdb db)
+	{
+		Set<Xref> s = new HashSet<Xref>();
+		
+		try
+		{
+			Logger.log.info ("Reading pathway " + filename);
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			PathwayParser p = new PathwayParser(filename, xmlReader);
+			for (Xref gene : p.getGenes())
+			{
+				List<Xref> cRef = db.getCrossRefs(gene,DataSource.ENSEMBL);		
 				s.addAll(cRef);
 			}
-		} 
+		}
+		catch (ParseException e)
+		{
+			Logger.log.error ("Ignoring Pathway");
+		}
+		catch (SAXException e)
+		{
+			Logger.log.error ("Couldn't create XML reader");
+		}
 		return s;
 	}
 	

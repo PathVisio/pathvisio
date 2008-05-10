@@ -36,26 +36,28 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 				(float)first.getMStart().getX(), 
 				(float)first.getMStart().getY()
 		);
+		Point2D prev = first.getMStart();
 		
 		for(int i = 1; i < segments.length - 1; i++) {
 			Segment s = segments[i];
 			Point2D center = s.getMCenter();
 			Point2D start = s.getMStart();
 			path.curveTo(
-					(float)start.getX(),
-					(float)start.getY(),
+					(float)prev.getX(),
+					(float)prev.getY(),
 					(float)start.getX(),
 					(float)start.getY(),
 					(float)center.getX(),
 					(float)center.getY()
 			);
+			prev = s.getMCenter();
 		}
 		
 		path.curveTo(
 				(float)last.getMStart().getX(),
 				(float)last.getMStart().getY(),
-				(float)last.getMStart().getX(),
-				(float)last.getMStart().getY(),
+				(float)last.getMEnd().getX(),
+				(float)last.getMEnd().getY(),
 				(float)last.getMEnd().getX(),
 				(float)last.getMEnd().getY()
 		);

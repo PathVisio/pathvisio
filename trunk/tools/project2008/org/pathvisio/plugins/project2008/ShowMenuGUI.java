@@ -163,7 +163,7 @@ public class ShowMenuGUI extends JPanel {
 					public void actionPerformed(ActionEvent ae)
 					{
 						System.out.println("Go to Link Checker");	
-						LinkChecker.main(arguments);
+//						LinkChecker.main(arguments);
 					}
 				}
 			);

@@ -1,4 +1,3 @@
-package org.pathvisio.plugins.project2008;
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
@@ -15,7 +14,10 @@ package org.pathvisio.plugins.project2008;
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package org.pathvisio.plugins.project2008;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +41,7 @@ public class GenesGOid {
 	public static void main(String[] args)
 	{		
 		// create array to store output from filereader
-		Map<String,Set<String>> goByGene = goByGene(args[0]);
+		Map<String,Set<String>> goByGene = goByGene(new File (args[0]));
 		
 		// In this method the map "goByGene" is created. In this map, the gene-Id's are the keys 
 		// and the GO-Id's are the values.
@@ -55,7 +57,7 @@ public class GenesGOid {
 		System.out.println("Ensembl ID's for " + goId + " are: " + ensIdsforGOId);
 	}
 	
-	public static Map<String,Set<String>> goByGene(String path)
+	public static Map<String,Set<String>> goByGene (File path)
 	{
 		// line string
 		String line; 

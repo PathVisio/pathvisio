@@ -39,9 +39,9 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
-import org.pathvisio.util.PathwayParser.Gene;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.rosuda.JRI.REXP;
@@ -169,16 +169,21 @@ public class RDataOut {
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		for(File f : pwFiles) {
 			RCommands.checkCancelled();
-
-			PathwayParser p = new PathwayParser(xmlReader);
-			try { xmlReader.parse(f.getAbsolutePath()); } catch(Exception e) { 
+			PathwayParser p;
+			try 
+			{ 
+				p = new PathwayParser(f, xmlReader);	
+			} 
+			catch(Exception e) 
+			{ 
 				Logger.log.error("Couldn't read " + f, e); 
 				continue; 
 			}
 			
 			Pathway pw = new Pathway(p.getName(), RCommands.fileToString(f), cachePathwaySet);
 
-			for(Gene g : p.getGenes()) {
+			for(XrefWithSymbol g : p.getGenes()) 
+			{
 				String id = g.getId();
 				String code = g.getDataSource().getSystemCode();
 				if(id.length() == 0 && code.length() == 0) continue; //Skip empty fields

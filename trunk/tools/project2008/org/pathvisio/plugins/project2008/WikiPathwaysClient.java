@@ -1,4 +1,3 @@
-package org.pathvisio.plugins.project2008;
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
@@ -15,6 +14,7 @@ package org.pathvisio.plugins.project2008;
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package org.pathvisio.plugins.project2008;
 
 import java.io.File;
 import java.io.FileOutputStream;

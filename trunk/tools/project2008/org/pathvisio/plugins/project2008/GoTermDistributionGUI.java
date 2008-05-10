@@ -13,8 +13,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and 
 // limitations under the License.
-
-// import the things needed to run this java file.
+//
 package org.pathvisio.plugins.project2008;
 
 import java.awt.BorderLayout;
@@ -48,9 +47,7 @@ public class GoTermDistributionGUI {
 	// corresponding GoTerm.
 	private Set<String> genidInPway = new HashSet<String>();
 	private GoReader goReader = null;
-//	private static Set<GoTerm> all_Terms = new HashSet<GoTerm>();
 	private boolean pwaysRead = false;
-//	private static Map<String,GoTerm> id_Term= new HashMap<String,GoTerm>();
 	private GoMap goMap = null;
 
 	private String martexport;
@@ -108,7 +105,9 @@ public class GoTermDistributionGUI {
 
 		goMap = new GoMap (new File (martexport));
 		
-		pwaysRead = true;							
+		goMap.calculateNM (goReader.getRoots(), genidInPway);
+		
+		pwaysRead = true;	
 	}
 
 	public void run () throws DataException, ConverterException
@@ -121,6 +120,7 @@ public class GoTermDistributionGUI {
 		
 		// set the size of the frame
 		frame.setSize(350,570);
+		frame.setLayout(new BorderLayout());
 		
 		// create a new panel
 		JPanel canvasButtons = new JPanel();		
@@ -148,7 +148,7 @@ public class GoTermDistributionGUI {
 				int m = goMap.getM(goterm);
 				
 				// get the number of genes the term overlaps with all the pathway genes
-				int n = goMap.getN(goterm, genidInPway);
+				int n = goMap.getN(goterm);
 				
 				// create a string with the goterm name, and the n and m values 
 				// (see above) and print it to the console
@@ -195,18 +195,11 @@ public class GoTermDistributionGUI {
 		// add the canvas to the frame
 		frame.add(canvasButtons, BorderLayout.SOUTH);
 		
-		// create a new panel
-		JPanel canvasTree = new JPanel();
-		
-		// create a scroll pane containing the tree, set the preferred size and add it to the canvas
+		// create a scroll pane containing the tree
         JScrollPane scrollPane = new JScrollPane(tree);
-        Dimension scrollPaneSize = new Dimension(315,485);
-        scrollPane.setPreferredSize(scrollPaneSize);
-		canvasTree.add(scrollPane);
 		
 		// add the canvas to the frame
-		frame.add(canvasTree, BorderLayout.NORTH);
-		
+		frame.add(scrollPane, BorderLayout.CENTER);
 		// Show the frame
 		frame.setVisible(true);
 	}
@@ -239,8 +232,7 @@ public class GoTermDistributionGUI {
 		long mem = runtime.totalMemory() - runtime.freeMemory();
 		System.out.println((mem >> 20) + "Mb used: " + msg);
 	}
-	
-		
+
 }
 
 		

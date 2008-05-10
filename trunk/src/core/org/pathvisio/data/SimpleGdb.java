@@ -122,21 +122,40 @@ public class SimpleGdb implements Gdb
 		return null;
 	}
 
-	public boolean xrefExists(Xref xref) {
-		try {
-			Statement s = con.createStatement();
-
+	PreparedStatement pstXrefExists = null;
+	
+	// lazy initialization of prepared statement
+	private PreparedStatement getPstXrefExists () throws SQLException
+	{		
+		if (pstXrefExists == null)
+		{
 			String query =
 				"SELECT id FROM " + table_DataNode + " WHERE " +
-				"id = '" + xref.getId() + "' " +
-				"AND code = '" + xref.getDataSource().getSystemCode() + "'";
-			ResultSet r = s.executeQuery(query);
+				"id = ? AND code = ?";
+			pstXrefExists = con.prepareStatement(query);
+		}
+		return pstXrefExists;
+	}
+	
+	/**
+	 * Simply checks if an xref occurs in the datanode table.
+	 */
+	public boolean xrefExists(Xref xref) 
+	{
+		try 
+		{
+			PreparedStatement pst = getPstXrefExists();
+			pst.setString(1, xref.getId());
+			pst.setString(2, xref.getDataSource().getSystemCode());
+			ResultSet r = pst.executeQuery();
 
 			while(r.next()) 
 			{
 				return true;
 			}
-		} catch (SQLException e) {
+		} 
+		catch (SQLException e) 
+		{
 			Logger.log.error("Unable to query suggestions", e);
 		}
 		return false;
@@ -248,6 +267,33 @@ public class SimpleGdb implements Gdb
 		}
 	}	
 
+	// lazy initialization
+	private PreparedStatement pstEnsId2RefsNoCode = null;
+	private PreparedStatement getPstEnsId2RefsNoCode () throws SQLException
+	{
+		if (pstEnsId2RefsNoCode == null)
+		{
+			pstEnsId2RefsNoCode = con.prepareStatement(
+					"SELECT idRight, codeRight FROM link " +
+					"WHERE idLeft = ?");
+		}
+		return pstEnsId2RefsNoCode;
+	}
+
+	// lazy initialization
+	private PreparedStatement pstEnsId2RefsWithCode = null;
+	private PreparedStatement getPstEnsId2RefsWithCode () throws SQLException
+	{
+		if (pstEnsId2RefsWithCode == null)
+		{
+			pstEnsId2RefsWithCode = con.prepareStatement(
+					"SELECT idRight, codeRight FROM link " +
+					"WHERE idLeft = ? AND codeRight = ?");
+		}
+		return pstEnsId2RefsWithCode;
+	}
+
+
 	/**
 	 * Get all cross references (ids from every system representing 
 	 * the same gene as the given id) for a given Ensembl id
@@ -266,25 +312,26 @@ public class SimpleGdb implements Gdb
 
 		ArrayList<Xref> crossIds = new ArrayList<Xref>();
 		try {
-//			if(pstEnsId2Refs == null) {
-//			pstEnsId2Refs = getCon().prepareStatement(
-//			"SELECT idRight, codeRight FROM link " +
-//			"WHERE idLeft = ?"
-//			);
-//			}
-//			pstEnsId2Refs.setString(1, ensId);
-//			ResultSet r1 = pstEnsId2Refs.executeQuery();
-			String codeLimit = "";
-			if(resultDs != null) {
-				codeLimit = " AND codeRight = '" + resultDs.getSystemCode() + "'";
+			PreparedStatement pst;
+			if (resultDs == null)
+			{
+				pst = getPstEnsId2RefsNoCode();
+				pst.setString(1, ensId);
 			}
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idRight, codeRight FROM link " +
-					"WHERE idLeft = '" + ensId + "'" + codeLimit);
-			while(r1.next()) {
+			else
+			{
+				pst = getPstEnsId2RefsWithCode();
+				pst.setString(1, ensId);
+				pst.setString(2, resultDs.getSystemCode());
+			}
+			ResultSet r1 = pst.executeQuery();
+			while(r1.next()) 
+			{
 				crossIds.add(new Xref(r1.getString(1), DataSource.getBySystemCode(r1.getString(2))));
 			}
-		} catch(Exception e) {
+		}
+		catch(Exception e) 
+		{
 			Logger.log.error("Unable to get cross references for ensembl gene " +
 					"'" + ensId + "'", e);
 		}
@@ -293,7 +340,20 @@ public class SimpleGdb implements Gdb
 		return crossIds;
 	}
 
-//	static PreparedStatement pstRef2EnsIds;
+	// lazy initialization
+	private PreparedStatement pstRef2EnsIds = null;
+	private PreparedStatement getPstRef2EnsIds () throws SQLException
+	{
+		if (pstRef2EnsIds == null)
+		{
+			pstRef2EnsIds = con.prepareStatement (
+					"SELECT idLeft FROM link " +
+					"WHERE idRight = ? AND codeRight = ?"
+				);
+		}
+		return pstRef2EnsIds;
+	}
+	
 	/**
 	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
 	 * @param ref	The gene id to get the Ensembl ids for
@@ -309,21 +369,14 @@ public class SimpleGdb implements Gdb
 		timer.start();
 
 		ArrayList<String> ensIds = new ArrayList<String>();
-		try {
-//			if(pstRef2EnsIds == null) {
-//			pstRef2EnsIds = getCon().prepareStatement(
-//			"SELECT idLeft FROM link " +
-//			"WHERE idRight = ? AND codeRight = ?"
-//			);
-//			}
-//			pstRef2EnsIds.setString(1, ref);
-//			pstRef2EnsIds.setString(2, code);
-//			ResultSet r1 = pstRef2EnsIds.executeQuery();
-			ResultSet r1 = con.createStatement().executeQuery(
-					"SELECT idLeft FROM link " +
-					"WHERE idRight = '" + xref.getId() + 
-					"' AND codeRight = '" + xref.getDataSource().getSystemCode() + "'");
-			while(r1.next()) {
+		try 
+		{
+			PreparedStatement pst = getPstRef2EnsIds();
+			pst.setString (1, xref.getId());
+			pst.setString (2, xref.getDataSource().getSystemCode());
+			ResultSet r1 = pst.executeQuery();
+			while(r1.next()) 
+			{
 				ensIds.add(r1.getString(1));
 			}
 		} catch(Exception e) {

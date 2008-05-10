@@ -45,7 +45,7 @@ import java.awt.event.ActionListener;
  */
 public class ShowMenuGUI extends JPanel {
 	
-	private static final long serialVersionUID = -173525431639377954L;
+	private static final long serialVersionUID = -1L;
 
 	public static void main(String[] args) {
 		

@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-// import the things needed to run this java file.
 package org.pathvisio.plugins.project2008;
 
 import java.io.File;

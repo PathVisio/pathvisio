@@ -14,8 +14,6 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-// import the things needed to run this java file.
-
 package org.pathvisio.plugins.project2008;
 
 import java.io.File;
@@ -25,6 +23,7 @@ import java.util.List;
 /**
  * class which contains a method to get filenames Listings.
  */
+//TODO: remove. Redundant.
 public class FileUtils {
 
 	/** In this method, a list of filenames is constructed. The list contains all the files

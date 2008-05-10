@@ -14,11 +14,11 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-// import the things needed to run this java file.
 package org.pathvisio.plugins.project2008;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.Date;
 
@@ -32,6 +32,7 @@ public class WikiPathwaysCache
 {
 	private File cacheDirectory;
 	private WikiPathwaysClient wpClient = new WikiPathwaysClient();
+	private List<File> files;
 	
 	public WikiPathwaysCache(File cacheDirectory) 
 	{
@@ -40,12 +41,54 @@ public class WikiPathwaysCache
 			throw new IllegalArgumentException ("Illegal cache directory " + cacheDirectory);
 		}
 		this.cacheDirectory = cacheDirectory;
+		files = FileUtils.getFileListing(cacheDirectory, ".gpml");
+	}
+	
+	public List<File> getFiles()
+	{
+		return files;
+	}
+
+	/**
+	 * Check for missing / outdated pathways
+	 * and download them.
+	 * Does nothing if there was no way to download.
+	 */
+	public void update()
+	{
+		long localdate = dateLastModified (files);
+		Date d = new Date(localdate); 
+		DateFormat df = DateFormat.getDateTimeInstance();
+		System.out.println("Date last modified: "+df.format(d)); 
+
+		try
+		{
+			System.out.println("---[Get Recently Changed Files]---");
+			
+			downloadNew(d);
+		
+			System.out.println("---[Get All Other Files]---");
+			// download all pathways to the pathway folder
+			downloadAll();
+			System.out.println("---[Ready]---");
+			// update list of files in cache.
+			files = FileUtils.getFileListing(cacheDirectory, ".gpml");
+			System.out.println("---[Start Checking Links]---");
+		}
+		catch (XmlRpcException e)
+		{
+			System.out.println("ERROR: Couldn't update cache");
+		}
+		catch (IOException e)
+		{
+			System.out.println("ERROR: Couldn't update cache");
+		}
 	}
 	
 	/**
 	 * In this method it is possible to download only the pathways that are recently changed. 
 	 */
-	public void downloadNew (Date d) throws XmlRpcException, IOException
+	private void downloadNew (Date d) throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
 		// and date: the date of the most recent changed 
@@ -62,7 +105,7 @@ public class WikiPathwaysCache
 	 * In this method a list is created with pathwayNames that have to be downloaded. These 
 	 * pathways are then being downloaded in the method 'downloadFiles'
 	 */
-	public void downloadAll() throws XmlRpcException, IOException
+	private void downloadAll() throws XmlRpcException, IOException
 	{
 		// given path: path to store the pathway cache
 				
@@ -76,7 +119,7 @@ public class WikiPathwaysCache
 	/**
 	 * In this method the files are downloaded. 
 	 */
-	public void downloadFiles (List<String> pathwayNames) throws XmlRpcException, IOException {
+	private void downloadFiles (List<String> pathwayNames) throws XmlRpcException, IOException {
 		
 		// give the extension of a pathway file
 		String pwExtension = ".gpml";
@@ -117,7 +160,7 @@ public class WikiPathwaysCache
 	 * are already in the cache, are removed from the pathwayNames list, so they won't be 
 	 * downloaded again.
 	 */
-	public List<String> removeDuplicates (String pwExtension, List<String> pathwayNames)
+	private List<String> removeDuplicates (String pwExtension, List<String> pathwayNames)
 	{
 		// get a list of all files inside the cache path
 		List<File> pwFilenames = FileUtils.getFileListing(cacheDirectory, pwExtension);
@@ -126,17 +169,34 @@ public class WikiPathwaysCache
 		// remove from the pathwaynames list
 		for (File file: pwFilenames)
 		{
-			String fullPath = file.getPath(); // i.e. C:\PWCache\Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml
-			String path = cacheDirectory.getPath();
-			String neededPartOfFilename = fullPath.substring(path.length() + 1); // i.e. Homo_sapiens\Hs_ACE-Inhibitor_pathway_PharmGKB.gpml
-			String[] temporary = neededPartOfFilename.split("\\\\"); // split at the slash; so i.e. temporary[0]: Homo_sapiens; temporary[1]: Hs_ACE-Inhibitor_pathway_PharmGKB.gpml 
-			String species = temporary[0]; // i.e. species = Homo_sapiens
-			String pathwayName = temporary[1].substring(3, temporary[1].length() - pwExtension.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
+			String filename = file.getName(); // gpml file 
+			String pathwayName = filename.substring(3, filename.length() - pwExtension.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
+			String species = file.getParentFile().getName(); // i.e. species = Homo_sapiens
 			String pwayname = species+":"+pathwayName; // construct the pathway name: i.e. Homo_sapiens:ACE-Inhibitor_pathway_PharmGKB
 			pathwayNames.remove(pwayname); // remove from pathwayNames
 		}
 		
 		return pathwayNames;
 		
+	}
+
+	/**
+	 * In this method the date is returned when the last change is made in a pathway. The
+	 * property that has to be given is:
+	 * 'pathways' (a list of pathways you want to have the most recent date from). 
+	 */
+	private static long dateLastModified(List<File> pathways)
+	{
+		// Set initial value.
+		long lastModified = 0;
+		// Walk through all the pathways.
+		for (File pathway:pathways)
+		{
+			// If pathway is more recent, use this date.
+			if (lastModified < pathway.lastModified()){
+				lastModified = pathway.lastModified();
+			}
+		}
+		return lastModified;
 	}
 }

@@ -14,20 +14,15 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-// import the things needed to run this java file.
 package org.pathvisio.plugins.project2008;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-
-import org.apache.xmlrpc.XmlRpcException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
@@ -151,7 +146,8 @@ public class LinkChecker
 		 * executed.
 		 */
 		String pwExtension = ".gpml";
-		List<File> pwFilenames = FileUtils.getFileListing(pwDir, pwExtension);
+		List<File> pwyFiles;
+		
 		
 		if (isOnline)
 		{
@@ -160,40 +156,18 @@ public class LinkChecker
 			 * pathway. With the date of this last change, the data of the other recently 
 			 * changed pathways can also be loaded.
 			 */		
-			long localdate = dateLastModified(pwFilenames);
-			Date d = new Date(localdate); 
-			DateFormat df = DateFormat.getDateTimeInstance();
-			System.out.println("Date last modified: "+df.format(d)); 
-			try
-			{
-				System.out.println("---[Get Recently Changed Files]---");
-				WikiPathwaysCache wp = new WikiPathwaysCache(pwDir);
-				wp.downloadNew(d);
-			
-				System.out.println("---[Get All Other Files]---");
-				// download all pathways to the pathway folder
-				wp.downloadAll();
-				System.out.println("---[Ready]---");
-				System.out.println("---[Start Checking Links]---");
-			}
-			catch (XmlRpcException e)
-			{
-				System.out.println("ERROR: Couldn't update cache");
-			}
-			catch (IOException e)
-			{
-				System.out.println("ERROR: Couldn't update cache");
-			}
+			WikiPathwaysCache wp = new WikiPathwaysCache(pwDir);
+			wp.update();
+			pwyFiles = wp.getFiles();
+		}
+		else
+		{
+			pwyFiles = FileUtils.getFileListing(pwDir, pwExtension);
 		}
 		
 		// initialize local Gdb manager
 		LocalGdbManager localGdbManager = new LocalGdbManager(dbDir);
 
-		/**
-		 * With the try/catch the output file is created.
-		 * Then in the for-loop all pathway files are loaded. And the percentage of found Xrefs
-		 * in de database is given. 
-		 */
 		String titleOfHTMLPage = "LinkChecker.java results";
 		out.print("<HTML><HEAD><TITLE>"+titleOfHTMLPage+"</TITLE></HEAD><BODY><center><h1>"+titleOfHTMLPage+"</h1><TABLE border=\"1\"><TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
 
@@ -209,24 +183,9 @@ public class LinkChecker
 			return; // abort
 		}
 		
-		for (File filename:pwFilenames)
-		{
-//			Pathway pway = new Pathway();
-//				
-//			 /** 
-//			  * The pathway file can be validated. For this end, the boolean validate has to be set 
-//			  * to true.
-//			  */ 
-//			boolean validate = false; //Set to true if you want to validate the pathway file.
-//			try
-//			{
-//				pway.readFromXml(filename, validate);
-//			}
-//			catch(ConverterException e)
-//			{
-//				System.out.println("empty file is found");
-//			}
-			
+		for (File filename : pwyFiles)
+		{			
+			Logger.log.info ("Checking " + filename);
 			SimpleGdb currentGdb = localGdbManager.getDatabaseForPathway(filename);
 
 			/**
@@ -238,7 +197,6 @@ public class LinkChecker
 			 * Is the database is not found, add a row to the table of the html file, containing
 			 * the name of the pathway and the text "Database not found".
 			 */
-//			List<Xref> xrefList = makeXrefList(pway);
 			List<Xref> xrefList = new ArrayList<Xref>();
 			try
 			{
@@ -251,15 +209,14 @@ public class LinkChecker
 				Logger.log.error ("Couldn't parse " + filename);
 			}
 			
+			out.print("<TR><TD>" + filename.getName() + "</TD>");
 			if (currentGdb != null)
 			{
-				out.print("<TR><TD>"+filename.getName()+"</TD>");
-				String percentage = calculatePercentage(xrefList, currentGdb);
-				out.println("<TD>"+percentage+")</TD></TR>");
+				String percentage = calculatePercentage (xrefList, currentGdb);
+				out.println("<TD>" + percentage + ")</TD></TR>");
 			}
 			else
 			{
-				out.print("<TR><TD>"+filename.getName()+"</TD>");
 				out.println("<TD> Database not found </TD></TR>");				
 			}
 		
@@ -270,6 +227,7 @@ public class LinkChecker
 		 */
 		out.print("</TABLE></center></BODY></HTML>");
 		out.close();
+		System.out.println ("Done writing html");
 	}
 	
 	/**
@@ -295,49 +253,34 @@ public class LinkChecker
 	 * 'xrefList' (a list of all the xrefs from a pathway) and 
 	 * 'database' (a SimpleGdb database that has to be checked if it contains the Xrefs).
 	 */
-	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database){
-		
+	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database)
+	{	
 		int countTrue = 0;       // counter for the true outcome (a xref is found)
         int countTotal = 0;      // counter for the total of xrefs
 		String percentage;       // string for the outcome
 		int percentageint; // int for the actual percentage
 		// Check each Xref from the xrefList if it is found in the database.
-		for (Xref xref:xrefList){
-			if (database.xrefExists(xref) == true){
+		for (Xref xref : xrefList)
+		{
+			if (database.xrefExists(xref) == true)
+			{
 				countTrue++;
 			}
 			countTotal++;
-		}		
-		// Calculate the percentage of found references.
-		if (countTotal != 0){
-			percentageint = Math.round(100*countTrue/countTotal);
-			percentage = (percentageint+"% (of total: "+countTotal+" in ");
 		}
-		else{
-			percentage = ("<font color=\"red\"><b>total: 0</b></font> (divide by zero) in ");
+		
+		// Calculate the percentage of found references.
+		if (countTotal != 0)
+		{
+			percentageint = Math.round(100*countTrue/countTotal);
+			percentage = (countTrue + " of " + countTotal + " (" + percentageint+ "%)");
+		}
+		else
+		{
+			percentage = ("<font color=\"red\"><b>total: 0</b></font>");
 		}
 		// Return the percentage.
 		return percentage;
-	}
-	
-	/**
-	 * In this method the date is returned when the last change is made in a pathway. The
-	 * property that has to be given is:
-	 * 'pathways' (a list of pathways you want to have the most recent date from). 
-	 */
-	public static long dateLastModified(List<File> pathways)
-	{
-		// Set initial value.
-		long lastModified = 0;
-		// Walk through all the pathways.
-		for (File pathway:pathways)
-		{
-			// If pathway is more recent, use this date.
-			if (lastModified < pathway.lastModified()){
-				lastModified = pathway.lastModified();
-			}
-		}
-		return lastModified;
 	}
 	
 }

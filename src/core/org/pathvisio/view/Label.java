@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.font.TextAttribute;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedString;
@@ -245,7 +246,7 @@ public class Label extends GraphicsShape
 			Rectangle2D r = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
 			g.fill(r);
 		}
-		super.doDraw(g);
+		super.doDraw(g2d);
 	}
 		
 //	public void gmmlObjectModified(PathwayEvent e) {
@@ -263,9 +264,12 @@ public class Label extends GraphicsShape
 	 */
 	protected Shape calculateVOutline()
 	{
+		Shape outline = super.calculateVOutline();
 		Rectangle2D bb = getBoxBounds(true);
 		Rectangle2D tb = getTextBounds(g2d);
 		tb.add(bb);
-		return tb;
+		Area a = new Area(outline);
+		a.add(new Area(tb));
+		return a;
 	}
 }

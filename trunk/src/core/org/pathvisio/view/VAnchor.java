@@ -19,9 +19,11 @@ package org.pathvisio.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -165,13 +167,27 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		}
 	}
 	
+	//Minimum outline diameter of 15px
+	static final double MIN_OUTLINE = 15;
+	
 	protected Shape calculateVOutline() {
+		Shape s = getShape();
+		Rectangle b = s.getBounds();
+		//Create a larger shape if the given shape
+		//is smaller than the minimum
+		if(b.getWidth() < MIN_OUTLINE ||
+			b.getHeight() < MIN_OUTLINE) {
+			s = new Ellipse2D.Double(
+					getVx() - MIN_OUTLINE / 2, getVy() - MIN_OUTLINE / 2, 
+					MIN_OUTLINE, MIN_OUTLINE
+			);
+		}
 		if(showLinkAnchors) {
-			Area a = new Area(getShape());
+			Area a = new Area(s);
 			a.add(new Area(linkAnchor.getShape()));
 			return a;
 		} else {
-			return getShape();
+			return s;
 		}
 	}
 
@@ -199,6 +215,6 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 	 * Returns the zorder of the parent line
 	 */
 	protected int getZOrder() {
-		return line.getPathwayElement().getZOrder();
+		return line.getPathwayElement().getZOrder() + 1;
 	}
 }

@@ -363,7 +363,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				for(Graphics g : selection) {
 					if(g instanceof Line) {
 						Line l = (Line)g;
-						l.gdata.addMAnchor(0.5);
+						l.gdata.addMAnchor(0.4);
 					}
 				}
 				vPathway.redrawDirtyRect();

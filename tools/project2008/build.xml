@@ -1,13 +1,10 @@
 <?xml version="1.0"?>
-<project name="GpmlDiff" default="compile" basedir=".">
+<project name="LinkChecker" default="compile" basedir=".">
 	
 	<property name="src.dir" value="."/>        
-
-    <property name="apidoc.dir" value="apidoc"/>
+	<property name="build.dir" value="build"/>
+    	<property name="apidoc.dir" value="apidoc"/>
 	<property name="lib.dir" value="../../lib"/>
-	<property name="diffview.applet.dir" value="applet"/>
-	<property name="diffview.applet.dest" value="/home/martijn/www/wikipathways"/>
-	<property name="applet.class.path" value="lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar"/>
 
 	<path id="project.class.path">
 		<pathelement location="../../build/core"/>
@@ -18,11 +15,20 @@
 
 	<target name="prepare">
 		<mkdir dir="${apidoc.dir}"/>	
+		<mkdir dir="${build.dir}"/>
 	</target>
 	
 	<target name="clean" description="Remove all generated files.">
 		<delete dir="${apidoc.dir}"/>
+		<delete dir="${build.dir}"/>
 	</target>
+
+	<path id="project.class.path">
+		<pathelement location="${build.dir}"/>
+		<fileset dir="${lib.dir}">
+		        <include name="**/*.jar"/>
+		</fileset>
+	</path>
 
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<tstamp /> <!-- set ${TODAY} -->
@@ -35,6 +41,18 @@
 				<pathelement location="${src.dir}"/>
 			</sourcepath>
 		</javadoc>		
+	</target>
+	
+	<target name="compile" depends="prepare">
+		<javac srcdir="../../src/"
+			    debug="true"
+			   includes="core/**"
+			   destdir="${build.dir}">
+			<classpath refid="project.class.path"/>
+		</javac>
+		<javac srcdir="${src.dir}" debug="true"	destdir="${build.dir}">
+			<classpath refid="project.class.path"/>
+		</javac>		
 	</target>
 		
 </project>

@@ -21,6 +21,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.pathvisio.data.SimpleGdb;
@@ -139,16 +141,140 @@ public class LinkChecker
 		}
 	}
 	
-	private void run()
+	private static class LinkCheckResult
 	{
+		File f = null;
+		String name;
+		String organism;
+		int countTotal = 0;
+		int countTrue = 0;
+		boolean parseOk = false;
+		boolean databaseOk = false;
+	}
+	
+	LocalGdbManager localGdbManager = null;
+	
+	private List<LinkCheckResult> readPathways(List<File> pwyFiles)
+	{
+		List<LinkCheckResult> results = new ArrayList<LinkCheckResult>();
+		XMLReader xmlReader = null;
+		
+		try
+		{
+			xmlReader = XMLReaderFactory.createXMLReader();
+		}
+		catch (SAXException e)
+		{
+			Logger.log.error ("Couldn't create XML reader");
+			return results; // abort
+		}
+
+		for (File filename : pwyFiles)
+		{
+			LinkCheckResult result = new LinkCheckResult();
+			result.f = filename;
+			
+			Logger.log.info ("Checking " + filename);
+			SimpleGdb currentGdb = localGdbManager.getDatabaseForPathway(filename);
+			/**
+			 * First a list is made that contains the Xref's.
+			 * In the if statement:
+			 * If the database is found, add a row to the table of the html file, containing the
+			 * name of the pathway and the percentage of found Xref's in the databse.
+			 * In the else statement:
+			 * Is the database is not found, add a row to the table of the html file, containing
+			 * the name of the pathway and the text "Database not found".
+			 */
+			List<Xref> xrefList = new ArrayList<Xref>();
+			try
+			{
+				PathwayParser pwy = new PathwayParser (filename, xmlReader);
+				xrefList.addAll (pwy.getGenes());
+				result.parseOk = true;
+				result.name = pwy.getName();
+				result.organism = filename.getName().substring (0, 2);
+				result.countTotal = xrefList.size();
+				if (currentGdb != null)
+				{
+					result.countTrue = countExistingXrefs (xrefList, currentGdb);
+					result.databaseOk = true;
+				}
+				else
+				{
+					result.databaseOk = false;
+				}
+			}
+			catch (ParseException e)
+			{
+				// ignore parse errors
+				Logger.log.error ("Couldn't parse " + filename);
+			}			
+			results.add (result);
+		}
+		return results;
+	}
+	
+	private void report(List<LinkCheckResult> results)
+	{
+		Collections.sort (results, new Comparator<LinkCheckResult>() 
+		{
+			public int compare(LinkCheckResult a, LinkCheckResult b) 
+			{
+				if (!(a.parseOk && b.parseOk)) return a.parseOk ? 1 : (b.parseOk ? -1 : 0);
+				
+				int result = a.organism.compareTo(b.organism);
+				if (result == 0)
+				{
+					int pctA = a.countTotal == 0 ? 0 : Math.round(100 * a.countTrue / a.countTotal);
+					int pctB = b.countTotal == 0 ? 0 : Math.round(100 * b.countTrue / b.countTotal);
+					
+					result = pctA - pctB;
+				}
+				return result;
+			}
+		});
+		
+		String titleOfHTMLPage = "LinkChecker.java results";
+		out.print("<HTML><HEAD><TITLE>"+titleOfHTMLPage+"</TITLE></HEAD><BODY><center><h1>"+titleOfHTMLPage+"</h1><TABLE border=\"1\"><TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
+
+		for (LinkCheckResult result : results)
+		{			
+			String percentage;
+			
+			if (result.countTotal != 0)
+			{
+				int percentageint = Math.round(100* result.countTrue / result.countTotal);
+				percentage = percentageint + "% (" + result.countTrue + " of " + result.countTotal + ")";
+			}
+			else
+			{
+				percentage = ("<font color=\"red\"><b>total: 0</b></font>");
+			}
+			
+			out.println (
+				tr	(
+						td (result.f.getName()) + "\n" +
+						td (result.databaseOk ? percentage : "Database not found")
+					)
+				);
+			
+		}
+
 		/**
-		 * Get a list of files of databases and pathways. Here the method 'getFileListing' is 
-		 * executed.
+		 * All pathway rows are added to the table. Now the HTML file has to be closed properly.
 		 */
+		out.print("</TABLE></center></BODY></HTML>");
+		out.close();
+		System.out.println ("Done writing html");		
+	}
+	
+	/**
+	 * Get a list of files of pathways. 
+	 */
+	private List<File> getPwyFiles()
+	{
 		String pwExtension = ".gpml";
 		List<File> pwyFiles;
-		
-		
 		if (isOnline)
 		{
 			/**
@@ -164,70 +290,16 @@ public class LinkChecker
 		{
 			pwyFiles = FileUtils.getFileListing(pwDir, pwExtension);
 		}
-		
+		return pwyFiles;
+	}
+	
+	private void run()
+	{		
+		List<File> pwyFiles = getPwyFiles();		
 		// initialize local Gdb manager
-		LocalGdbManager localGdbManager = new LocalGdbManager(dbDir);
-
-		String titleOfHTMLPage = "LinkChecker.java results";
-		out.print("<HTML><HEAD><TITLE>"+titleOfHTMLPage+"</TITLE></HEAD><BODY><center><h1>"+titleOfHTMLPage+"</h1><TABLE border=\"1\"><TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
-
-		XMLReader xmlReader = null;
-		
-		try
-		{
-			xmlReader = XMLReaderFactory.createXMLReader();
-		}
-		catch (SAXException e)
-		{
-			Logger.log.error ("Couldn't create XML reader");
-			return; // abort
-		}
-		
-		for (File filename : pwyFiles)
-		{			
-			Logger.log.info ("Checking " + filename);
-			SimpleGdb currentGdb = localGdbManager.getDatabaseForPathway(filename);
-
-			/**
-			 * First a list is made that contains the Xref's.
-			 * In the if statement:
-			 * If the database is found, add a row to the table of the html file, containing the
-			 * name of the pathway and the percentage of found Xref's in the databse.
-			 * In the else statement:
-			 * Is the database is not found, add a row to the table of the html file, containing
-			 * the name of the pathway and the text "Database not found".
-			 */
-			List<Xref> xrefList = new ArrayList<Xref>();
-			try
-			{
-				PathwayParser pwy = new PathwayParser (filename, xmlReader);
-				xrefList.addAll (pwy.getGenes());
-			}
-			catch (ParseException e)
-			{
-				// ignore parse errors
-				Logger.log.error ("Couldn't parse " + filename);
-			}
-			
-			out.print("<TR><TD>" + filename.getName() + "</TD>");
-			if (currentGdb != null)
-			{
-				String percentage = calculatePercentage (xrefList, currentGdb);
-				out.println("<TD>" + percentage + ")</TD></TR>");
-			}
-			else
-			{
-				out.println("<TD> Database not found </TD></TR>");				
-			}
-		
-		}
-		
-		/**
-		 * All pathway rows are added to the table. Now the HTML file has to be closed properly.
-		 */
-		out.print("</TABLE></center></BODY></HTML>");
-		out.close();
-		System.out.println ("Done writing html");
+		localGdbManager = new LocalGdbManager(dbDir);		
+		List<LinkCheckResult> results = readPathways(pwyFiles);		
+		report (results);
 	}
 	
 	/**
@@ -242,45 +314,34 @@ public class LinkChecker
 	public static void main(String[] args)
 	{
 		LinkChecker linkChecker = new LinkChecker();
-		
 		linkChecker.parseArgs (args);
 		linkChecker.run();
 	}
 	
-	/** 
-	 * In this method, the percentage of Xref's found in the database is calculated.
-	 * The properties you have to enter are:
-	 * 'xrefList' (a list of all the xrefs from a pathway) and 
-	 * 'database' (a SimpleGdb database that has to be checked if it contains the Xrefs).
-	 */
-	public static String calculatePercentage(List<Xref> xrefList, SimpleGdb database)
-	{	
-		int countTrue = 0;       // counter for the true outcome (a xref is found)
-        int countTotal = 0;      // counter for the total of xrefs
-		String percentage;       // string for the outcome
-		int percentageint; // int for the actual percentage
-		// Check each Xref from the xrefList if it is found in the database.
+	private int countExistingXrefs (List <Xref> xrefList, SimpleGdb database)
+	{
+		int countTrue = 0;
+		
 		for (Xref xref : xrefList)
 		{
 			if (database.xrefExists(xref) == true)
 			{
 				countTrue++;
 			}
-			countTotal++;
 		}
-		
-		// Calculate the percentage of found references.
-		if (countTotal != 0)
-		{
-			percentageint = Math.round(100*countTrue/countTotal);
-			percentage = (countTrue + " of " + countTotal + " (" + percentageint+ "%)");
-		}
-		else
-		{
-			percentage = ("<font color=\"red\"><b>total: 0</b></font>");
-		}
-		// Return the percentage.
-		return percentage;
+		return countTrue;
 	}
 	
+	/** wrap a td tag around msg */
+	private String td (String msg)
+	{
+		return "<td>" + msg + "</td>";
+	}
+	
+	/** wrap a tr tag around msg */
+	private String tr (String msg)
+	{
+		return "<tr>" + msg + "</tr>";
+	}
+		
 }

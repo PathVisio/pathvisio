@@ -586,7 +586,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				}
 				if(getGroupRef() != null)
 				{
-					v.removeGroupRef(getGroupRef(), this);
+					parent.removeGroupRef(getGroupRef(), this);
 				}
 				for (MAnchor a : anchors) {
 					if (a.getGraphId() != null)

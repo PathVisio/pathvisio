@@ -29,7 +29,7 @@ public enum Organism {
 	BosTaurus("Bos taurus", "Bt"),
 	CaenorhabditisElegans("Caenorhabditis elegans", "Ce"),
 	GallusGallus("Gallus gallus", "Gg"),
-	DanioRero("Danio rero", "Dr"),
+	DanioRero("Danio rerio", "Dr"),
 	DrosophilaMelanogaster("Drosophila melanogaster", "Dm"),
 	CanisFamiliaris("Canis familiaris", "Cf"),
 	XenopusTropicalis("Xenopus tropicalis", "Xt"),

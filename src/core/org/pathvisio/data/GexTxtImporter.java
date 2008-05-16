@@ -44,13 +44,18 @@ public class GexTxtImporter
 	 * @param info		{@link GexImportWizard.ImportInformation} object that contains the 
 	 * information needed to import the data
 	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
-	 * the user to cancel
+	 * the user to cancel. May be null for headless mode operation.
 	 */
 	public static void importFromTxt(ImportInformation info, ProgressKeeper p)
 	{
 		SimpleGex result = null;
-		int importWork = (int)(p.getTotalWork() * 0.8);
-		int finalizeWork = (int)(p.getTotalWork() * 0.2);
+		int importWork = 0;
+		int finalizeWork = 0;
+		if (p != null)
+		{
+			importWork = (int)(p.getTotalWork() * 0.8);
+			finalizeWork = (int)(p.getTotalWork() * 0.2);
+		}
 		
 //		Open a connection to the error file
 		String errorFile = info.getDbName() + ".ex.txt";
@@ -61,21 +66,23 @@ public class GexTxtImporter
 			ef.getParentFile().mkdirs();
 			error = new PrintStream(errorFile);
 		} catch(IOException ex) {
-			p.report("Error: could not open exception file: " + ex.getMessage());
+			if (p != null) p.report("Error: could not open exception file: " + ex.getMessage());
 			error = System.out;
 		}
 		
 		StopWatch timer = new StopWatch();
 		try 
 		{
-			p.report("\nCreating expression dataset");
+			if (p != null) p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
 			result = new SimpleGex(info.getDbName(), true, Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX));
 			
-			p.report("Importing data");
-			p.report("> Processing headers");
-			
+			if (p != null)
+			{
+				p.report("Importing data");
+				p.report("> Processing headers");
+			}
 			timer.start();
 			
 			BufferedReader in = new BufferedReader(new FileReader(info.getTxtFile()));
@@ -89,7 +96,7 @@ public class GexTxtImporter
 			ArrayList<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++)
 			{
-				if(p.isCancelled())
+				if(p != null && p.isCancelled())
 				{
 					//User pressed cancel  
 					result.close();
@@ -118,7 +125,7 @@ public class GexTxtImporter
 				}
 			}
 			
-			p.report("> Processing lines");
+			if (p != null) p.report("> Processing lines");
 			
 			//Check ids and add expression data
 			for(int i = 1; i < info.getFirstDataRow(); i++) in.readLine(); //Go to line where data starts
@@ -134,7 +141,7 @@ public class GexTxtImporter
 
 			while((line = in.readLine()) != null) 
 			{
-				if(p.isCancelled()) 
+				if(p != null && p.isCancelled()) 
 				{ 
 					result.close(); 
 					error.close(); 
@@ -149,7 +156,7 @@ public class GexTxtImporter
 							errors);
 					continue;
 				}
-				p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
+				if (p != null) p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
 				//Check id and add data
 				String id = data[info.getIdColumn()].trim();
 				
@@ -222,7 +229,7 @@ public class GexTxtImporter
 					}
 					if(success) added++;
 				}
-				p.worked(worked);
+				if (p != null) p.worked(worked);
 			}
 			
 			//Data is read and written to the database
@@ -231,27 +238,27 @@ public class GexTxtImporter
 			info.setMaximum(maximum);
 			info.setMinimum(minimum);
 			
-			p.report(added + " genes were added succesfully to the expression dataset");
+			if (p != null) p.report(added + " genes were added succesfully to the expression dataset");
 			if(errors > 0) {
-				p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
+				if (p != null) p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
 			} else {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
-			p.setTaskName("Closing database connection");
+			if (p != null) p.setTaskName("Closing database connection");
 
 			result.finalize();
 			result.close();
-			p.worked(finalizeWork);
+			if (p != null) p.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
 			GexManager.setCurrentGex(result.getDbName(), false);
-			p.finished();
+			if (p != null) p.finished();
 		} 
 		catch(Exception e) 
 		{ 
-			p.report("Import aborted due to error: " + e.getMessage());
+			if (p != null) p.report("Import aborted due to error: " + e.getMessage());
 			Logger.log.error("Expression data import error", e);
 			try
 			{

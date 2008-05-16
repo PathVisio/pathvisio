@@ -19,6 +19,7 @@ package org.pathvisio.data;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.util.FileUtils;
 
 /**
@@ -37,7 +38,13 @@ public class DataDerbyDirectory extends DataDerby
 		}
 		catch(SQLException e)
 		{
-			throw new DataException (e);
+			if (e.getSQLState().equals ("08006"))
+			{
+				// this exception is acutally expected, see
+			    // http://db.apache.org/derby/docs/10.3/getstart/rwwdactivity3.html
+				Logger.log.info ("Database shudown cleanly");
+			}
+			else throw new DataException (e);
 		}
 		return dbName;
 	}	

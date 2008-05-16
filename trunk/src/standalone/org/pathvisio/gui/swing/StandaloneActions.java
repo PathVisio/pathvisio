@@ -148,7 +148,7 @@ public class StandaloneActions
 		
 		public void actionPerformed (ActionEvent e)
 		{
-			GexWizard wizard = new GexWizard();
+			GexImportWizard wizard = new GexImportWizard();
 			int ret = wizard.showModalDialog();
 			
 			// ret == (0=Finish,1=Cancel,2=Error) 

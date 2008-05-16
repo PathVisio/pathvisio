@@ -383,7 +383,7 @@ public class GexImportWizard extends Wizard
 			startLabel.setText("Data starts at line: ");
 			startSpinner = new Spinner(composite, SWT.BORDER);
 			startSpinner.setMinimum(1);
-			startSpinner.setSelection(importInformation.firstDataRow);
+			startSpinner.setSelection(importInformation.getFirstDataRow());
 
 			//Widgets to give control over the delimiter
 			
@@ -522,7 +522,7 @@ public class GexImportWizard extends Wizard
 			}
 			
 			importInformation.headerRow = headerSpinner.getSelection();
-			importInformation.firstDataRow = startSpinner.getSelection();
+			importInformation.setFirstDataRow (startSpinner.getSelection());
 			importInformation.setNoHeader(headerButton.getSelection());
 			setColumnTableContent(columnTable);
 			setColumnControlsContent();
@@ -617,7 +617,7 @@ public class GexImportWizard extends Wizard
 			{
 				public void widgetSelected(SelectionEvent e) 
 				{
-					importInformation.idColumn = idCombo.getSelectionIndex();
+					importInformation.setIdColumn (idCombo.getSelectionIndex());
 				}
 			});
 			
@@ -636,8 +636,8 @@ public class GexImportWizard extends Wizard
 				public void widgetSelected(SelectionEvent e) 
 				{
 					if (codeRadio.getSelection()){
-						importInformation.codeColumn = 
-							codeCombo.getSelectionIndex();
+						importInformation.setCodeColumn (
+							codeCombo.getSelectionIndex());
 					}
 				}
 			});
@@ -694,9 +694,9 @@ public class GexImportWizard extends Wizard
 		columnList.setItems(colNames);
 		columnList.setSelection(importInformation.getStringCols());
 		idCombo.setItems(colNames);
-		idCombo.select(importInformation.idColumn);
+		idCombo.select(importInformation.getIdColumn());
 		codeCombo.setItems(colNames);
-		codeCombo.select(importInformation.codeColumn);
+		codeCombo.select(importInformation.getCodeColumn());
 	}
 
 	/**
@@ -747,7 +747,7 @@ public class GexImportWizard extends Wizard
 			int n = 50; // nr of lines to include in the preview
 			BufferedReader in = importInformation.getBufferedReader();
 			String line;
-			for (int i = 0; i < importInformation.firstDataRow - 1; i++)
+			for (int i = 0; i < importInformation.getFirstDataRow() - 1; i++)
 				in.readLine(); // Go to line where data starts
 			int j = 1;
 			

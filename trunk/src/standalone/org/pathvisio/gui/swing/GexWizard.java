@@ -33,7 +33,8 @@ import com.nexes.wizard.WizardPanelDescriptor;
 
 public class GexWizard extends Wizard 
 {
-	private ImportInformation importInformation;
+	private ImportInformation importInformation = new ImportInformation();
+	
     FilePage fpd = new FilePage();
     HeaderPage hpd = new HeaderPage();
     ColumnPage cpd = new ColumnPage();
@@ -48,9 +49,7 @@ public class GexWizard extends Wizard
         this.registerWizardPanel(ColumnPage.IDENTIFIER, cpd);
         this.registerWizardPanel(ImportPage.IDENTIFIER, ipd);
         
-        setCurrentPanel(FilePage.IDENTIFIER);
-        
-        importInformation = new ImportInformation();
+        setCurrentPanel(FilePage.IDENTIFIER);        
 	}
 		
 	private class FilePage extends WizardPanelDescriptor 
@@ -87,7 +86,7 @@ public class GexWizard extends Wizard
 			importInformation.setTxtFile(file);
 			String fileName = file.toString();
 			txtInput.setText(file.toString());
-	    	hpd.ptm.setTextFile(file);
+	    	hpd.ptm.refresh();
 			txtOutput.setText(fileName.replace(fileName.substring(
 					fileName.lastIndexOf(".")), ""));
 			importInformation.setDbName (txtOutput.getText());
@@ -229,7 +228,7 @@ public class GexWizard extends Wizard
 			settingsPanel.add (radioGroup2);
 
 			topPanel.add (settingsPanel, BorderLayout.NORTH);
-			ptm = new PreviewTableModel();
+			ptm = new PreviewTableModel(importInformation);
 			tblPreview = new JTable(ptm);
 			tblPreview.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			JScrollPane scrTable = new JScrollPane(tblPreview);
@@ -242,8 +241,8 @@ public class GexWizard extends Wizard
 			{
 				public void actionPerformed (ActionEvent ae)
 				{
-					ptm.setSeparator(",");
 					importInformation.setDelimiter(",");
+					ptm.refresh();
 				}
 				
 			});
@@ -251,8 +250,8 @@ public class GexWizard extends Wizard
 			{
 				public void actionPerformed (ActionEvent ae)
 				{
-					ptm.setSeparator("\t");
 					importInformation.setDelimiter("\t");
+					ptm.refresh();
 				}
 				
 			});

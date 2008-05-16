@@ -50,17 +50,47 @@ public class DataDerby extends DBConnector
 		default: return "";
 		}
 	}
-
 	
-	public static final String DB_NAME_IN_ZIP = "database";
-	String lastDbName;
+	private static final String DB_NAME_IN_ZIP = "database";
 	
+	// name of db, or what it will be when the db is finalized.
+	private String finalDbName;
+	
+	// while making a database, it is created in a temporary directory,
+	// that is equal to the final db name but without the extension.
+	private String tempDbName = null;
+	private boolean finalized;
+	
+	private String getDbUrl()
+	{
+		String url = "jdbc:derby:";
+		if (finalized)
+		{
+			url += "jar:(" + finalDbName + ")" + DB_NAME_IN_ZIP;
+		} 
+		else 
+		{
+			url += tempDbName;
+		}
+		return url;
+	}
+	
+	/**
+	 * dbName is the file that is connected to.
+	 * If dbName doesn't end with the right extension, the right extension will be added.
+	 */
 	public Connection createConnection(String dbName, int props) throws DataException 
 	{
 		boolean recreate = (props & PROP_RECREATE) != 0;
-		if(recreate) {
-			File dbFile = new File(dbName);
-			FileUtils.deleteRecursive(dbFile);
+
+		// make sure the final Db name ends with the right extension.
+		finalDbName = dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt();
+		finalized = !recreate;
+		
+		if(recreate) 
+		{
+			tempDbName = FileUtils.removeExtension(finalDbName);
+			FileUtils.deleteRecursive(new File (tempDbName));
 		}
 		
 		Properties sysprop = System.getProperties();
@@ -85,13 +115,8 @@ public class DataDerby extends DBConnector
 		StopWatch timer = new StopWatch();
 		timer.start();
 		
-		String url = "jdbc:derby:";
-		File dbFile = new File(dbName);
-		if(dbFile.isDirectory() || recreate) {
-			url += dbName;
-		} else {
-			url += "jar:(" + dbFile.toString() + ")" + DB_NAME_IN_ZIP;
-		}
+		String url = getDbUrl();
+
 		Connection con;
 		try
 		{
@@ -102,53 +127,76 @@ public class DataDerby extends DBConnector
 			throw new DataException (e);
 		}
 		
-		Logger.log.info("Connecting with derby to " + dbName + ":\t" + timer.stop());
-		
-		lastDbName = dbName;
+		Logger.log.info("Connecting with derby to " + url + ":\t" + timer.stop());		
 		return con;
 	}
 	
-	public Connection createNewDatabaseConnection(String dbName) throws DataException {
+	public Connection createNewDatabaseConnection(String dbName) throws DataException 
+	{
 		return createConnection(FileUtils.removeExtension(dbName), PROP_RECREATE);
 	}
 	
-	public String finalizeNewDatabase(String dbName) throws DataException {
+	public String finalizeNewDatabase(String dbName) throws DataException 
+	{
+		if (finalized) return finalDbName; // already finalized.
+		
 		//Transfer db to zip and clear old dbfiles
-		File dbDir = new File(FileUtils.removeExtension(dbName));
-		try {
-			DriverManager.getConnection("jdbc:derby:" + FileUtils.removeExtension(dbName) + ";shutdown=true");
-		} catch(Exception e) {
+		try 
+		{
+			DriverManager.getConnection(getDbUrl() + ";shutdown=true");
+		} 
+		catch(Exception e) 
+		{
 			Logger.log.error("Database closed", e);
 		}
-		File zipFile = new File(dbName.endsWith(getDbExt()) ? dbName : dbName + "." + getDbExt());
-		toZip(zipFile, dbDir);
+		toZip (new File (finalDbName), new File (tempDbName));
 		
-		FileUtils.deleteRecursive(dbDir);
+		FileUtils.deleteRecursive(new File (tempDbName));
 		
 		//Return new database file
-		return zipFile.toString();
+		return finalDbName;
 	}
 	
-	public void closeConnection(Connection con) throws DataException {
+	public void closeConnection(Connection con) throws DataException 
+	{
 		closeConnection(con, PROP_NONE);
 	}
 	
-	public void closeConnection(Connection con, int props) throws DataException {
+	public void closeConnection(Connection con, int props) throws DataException 
+	{
 		if(con != null) 
 		{
 			try
 			{
-				if(lastDbName != null) 
-					DriverManager.getConnection("jdbc:derby:" + lastDbName + ";shutdown=true");
-				con.close();
+				DriverManager.getConnection(getDbUrl() + ";shutdown=true");
 			}
-			catch (SQLException e)
+			catch (SQLException se)  
+			{	
+				/*
+				 In this case a thrown exception signals success. See:
+			      http://db.apache.org/derby/docs/10.3/getstart/rwwdactivity3.html
+			      if (e.getSQLState().equals("XJ015")) shutdownSuccess= true; //Derby engine
+				 */
+				if ( se.getSQLState().equals("08006") ) // single file
+				{		
+					Logger.log.info ("Database shudown cleanly");
+				}
+				else throw new DataException (se);
+			}
+			try
 			{
-				throw new DataException (e);
+				con.close();
+				con = null;
+			}
+			catch (SQLException se)
+			{
+				throw new DataException (se);
 			}
 		}
 	}
 	
+	//TODO: I wonder if this is possible for zipped databases...
+	// if not, this can be done together with finalizing.
 	public void compact(Connection con) throws DataException 
 	{
 		try
@@ -171,7 +219,11 @@ public class DataDerby extends DBConnector
 		}
 	}
 		
-	void toZip(File zipFile, File dbDir) {
+	/**
+	 * create a zip file from a directory.
+	 */
+	private void toZip(File zipFile, File dbDir) 
+	{
 		try {			
 			if(zipFile.exists()) zipFile.delete();
 			
@@ -187,7 +239,8 @@ public class DataDerby extends DBConnector
 		}
 	}
 	
-	void zipFiles(File zipFile, File dir) throws Exception {
+	void zipFiles(File zipFile, File dir) throws Exception 
+	{
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
 		out.setMethod(ZipOutputStream.STORED);
 		for(File f : dir.listFiles()) addFiles(f, DB_NAME_IN_ZIP + '/', out);
@@ -196,8 +249,11 @@ public class DataDerby extends DBConnector
 	}
 	
 	byte[] buf = new byte[1024];
-	void addFiles(File file, String dir, ZipOutputStream out) throws Exception {
-		if(file.isDirectory()) {
+	
+	void addFiles(File file, String dir, ZipOutputStream out) throws Exception 
+	{
+		if(file.isDirectory()) 
+		{
 			if(file.getName().equals("tmp")) return; //Skip 'tmp' directory
 			
 			String newDir = dir + file.getName() + '/';
@@ -206,7 +262,9 @@ public class DataDerby extends DBConnector
 			out.putNextEntry(add);
 			
 			for(File f : file.listFiles()) addFiles(f, newDir,out);
-		} else {
+		} 
+		else 
+		{
 			if(file.getName().endsWith(".lck")) return; //Skip '*.lck' files
 			ZipEntry add = new ZipEntry(dir + file.getName());
 			
@@ -216,29 +274,35 @@ public class DataDerby extends DBConnector
 				        
 			FileInputStream in = new FileInputStream(file);
 			int len;
-			while ((len = in.read(buf)) > 0) {
+			while ((len = in.read(buf)) > 0) 
+			{
 				out.write(buf, 0, len);
 			}
 			in.close();
 		}
 	}
 	
-	void setZipEntryAttributes(File f, ZipEntry z) throws IOException {
+	void setZipEntryAttributes(File f, ZipEntry z) throws IOException 
+	{
 		z.setTime(f.lastModified());
 		z.setMethod(ZipEntry.STORED);
 				
-		if(f.isDirectory()) {
+		if(f.isDirectory()) 
+		{
 			z.setCrc(0);
 			z.setSize(0);
 			z.setCompressedSize(0);
-		} else {			
+		} 
+		else 
+		{			
 			z.setSize(f.length());
 			z.setCompressedSize(f.length());
 			z.setCrc(computeCheckSum(f));
 		}
 	}
 	
-	long computeCheckSum(File f) throws IOException {
+	long computeCheckSum(File f) throws IOException 
+	{
 		CheckedInputStream cis = new CheckedInputStream(
 				new FileInputStream(f), new CRC32());
 		byte[] tempBuf = new byte[128];

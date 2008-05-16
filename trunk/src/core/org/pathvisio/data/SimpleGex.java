@@ -332,14 +332,14 @@ public class SimpleGex
 			con = dbConnector.createConnection(dbName, DBConnector.PROP_NONE);
 			setSamples();
 		}
-		try
-		{
-			con.setReadOnly( !create );
-		}
-		catch (SQLException e)
-		{
-			throw new DataException (e);
-		}
+//		try
+//		{
+//			con.setReadOnly( !create );
+//		}
+//		catch (SQLException e)
+//		{
+//			throw new DataException (e);
+//		}
 	}
 	
 	/**
@@ -392,9 +392,9 @@ public class SimpleGex
 		{
 			con.setReadOnly(false);
 			Statement sh = con.createStatement();
-			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
-			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.error("Error: unable to drop expression data tables: "+e.getMessage(), e); }
+			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.warn("Warning: unable to drop expression data tables: "+e.getMessage()); }
+			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.warn("Warning: unable to drop expression data tables: "+e.getMessage()); }
+			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.warn("Warning: unable to drop expression data tables: "+e.getMessage()); }
 			
 			sh.execute(
 					"CREATE TABLE					" +

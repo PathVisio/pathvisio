@@ -29,7 +29,7 @@ class TutorialFiles
     	System.out.println ("Timer started");
     	timer.start();
 		
-		final String tutorialPwy = "Hs_Apoptosis.gpml";
+		final String tutorialPwy = "example-data/Hs_Apoptosis.gpml";
 		Pathway pwy = new Pathway();
 		try
 		{

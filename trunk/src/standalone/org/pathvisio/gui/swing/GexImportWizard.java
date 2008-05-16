@@ -536,6 +536,7 @@ public class GexImportWizard extends Wizard
 			
         	pk = new SwingProgressKeeper((int)1E6);
 	    	progressSent = pk.getJProgressBar();
+	    	progressSent.setStringPainted (true);
 	        result.add (progressSent);
 	        
 	        progressText = new JLabel();
@@ -558,7 +559,7 @@ public class GexImportWizard extends Wizard
 	    public void aboutToDisplayPanel() 
 	    {
 	        setProgressValue(0);
-	        setProgressText("Connecting to Server...");
+	        setProgressText("");
 
 	        getWizard().setNextFinishButtonEnabled(false);
 	        getWizard().setBackButtonEnabled(false);

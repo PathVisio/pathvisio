@@ -61,7 +61,12 @@ public class ImportInformation {
 	/**
 	 * The database name in which the expression data is saved
 	 */
-	public String dbName;
+	private String dbName;
+	public void setDbName(String value)
+	{
+		dbName = value;
+	}
+	public String getDbName() { return dbName; }
 
 	private double maximum;
 	private double minimum;

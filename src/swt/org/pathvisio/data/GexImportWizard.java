@@ -320,7 +320,7 @@ public class GexImportWizard extends Wizard
 		 */
 		private void setDbName(String name) 
 		{
-			importInformation.dbName = name;
+			importInformation.setDbName (name);
 			setMessage("Expression dataset location: " + name + ".");
 			gexFileComplete = true;
 		}
@@ -934,7 +934,7 @@ public class GexImportWizard extends Wizard
 				}
 				if (nrErrors > 0) 
 				{
-					println("\nSee errorfile '" + importInformation.dbName + ".ex.txt" + "' for details");
+					println("\nSee errorfile '" + importInformation.getDbName() + ".ex.txt" + "' for details");
 				}
 			}
 		}			

@@ -31,6 +31,11 @@ public abstract class WizardPanelDescriptor {
         targetPanel = new JPanel();
     }
     
+    public void setErrorMessage(String message)
+    {
+    	//TODO
+    }
+    
     /**
      * Constructor which accepts both the Object-based identifier and a reference to
      * the Component class which makes up the panel.

@@ -16,12 +16,17 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
+import org.pathvisio.model.DataSource;
+import org.pathvisio.util.ProgressKeeper;
 
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
@@ -44,6 +49,8 @@ public class GexWizard extends Wizard
         this.registerWizardPanel(ImportPage.IDENTIFIER, ipd);
         
         setCurrentPanel(FilePage.IDENTIFIER);
+        
+        importInformation = new ImportInformation();
 	}
 		
 	private class FilePage extends WizardPanelDescriptor 
@@ -56,7 +63,38 @@ public class GexWizard extends Wizard
 	    private JButton btnGdb;
 	    private JButton btnInput;
 	    private JButton btnOutput;
+	    private boolean txtFileComplete = false;
 	    
+		/**
+		 * Stores the given {@link File} pointing to the file containing the expresssion
+		 * data in text form to the {@link ImportInformation} object
+		 * @param file
+		 */
+		private void setTxtFile(File file) 
+		{
+			if (!file.exists()) 
+			{
+				setErrorMessage("Specified file to import does not exist");
+				txtFileComplete = false;
+				return;
+			}
+			if (!file.canRead()) 
+			{
+				setErrorMessage("Can't access specified file containing expression data");
+				txtFileComplete = false;
+				return;
+			}
+			importInformation.setTxtFile(file);
+			String fileName = file.toString();
+			txtInput.setText(file.toString());
+	    	hpd.ptm.setTextFile(file);
+			txtOutput.setText(fileName.replace(fileName.substring(
+					fileName.lastIndexOf(".")), ""));
+			importInformation.setDbName (txtOutput.getText());
+			setErrorMessage(null);
+			txtFileComplete = true;
+		}
+
 	    public FilePage() 
 	    {
 	        super(IDENTIFIER);
@@ -113,8 +151,7 @@ public class GexWizard extends Wizard
 					if (result == JFileChooser.APPROVE_OPTION)
 					{
 						File f = jfc.getSelectedFile();
-						txtInput.setText(f.toString());
-				    	hpd.ptm.setTextFile(f);
+						setTxtFile (f);
 //				    	//TODO: also set ptm.setTextFile if you don't use browse button.
 					}
 				}
@@ -122,6 +159,12 @@ public class GexWizard extends Wizard
 			
 			return result;
 		}
+
+		public void aboutToHidePanel() 
+		{
+	        importInformation.setTxtFile(new File (txtInput.getText()));
+	        //TODO: output file
+	    }
 
 	}
 	
@@ -200,6 +243,7 @@ public class GexWizard extends Wizard
 				public void actionPerformed (ActionEvent ae)
 				{
 					ptm.setSeparator(",");
+					importInformation.setDelimiter(",");
 				}
 				
 			});
@@ -208,6 +252,7 @@ public class GexWizard extends Wizard
 				public void actionPerformed (ActionEvent ae)
 				{
 					ptm.setSeparator("\t");
+					importInformation.setDelimiter("\t");
 				}
 				
 			});
@@ -220,6 +265,12 @@ public class GexWizard extends Wizard
 	{
 	    public static final String IDENTIFIER = "COLUMN_PAGE";
 		
+	    private JComboBox cbColId;
+	    private JComboBox cbColSyscode;
+	    private JRadioButton radioSyscodeYes;
+	    private JRadioButton radioSyscodeNo;
+	    private JComboBox cbDataSource;
+	    
 	    public ColumnPage() 
 	    {
 	        super(IDENTIFIER);
@@ -239,6 +290,27 @@ public class GexWizard extends Wizard
 		protected JPanel createContents() 
 		{
 			JPanel result = new JPanel();
+			
+			radioSyscodeYes = new JRadioButton();
+			radioSyscodeNo = new JRadioButton();
+			cbColId = new JComboBox();
+			cbColSyscode = new JComboBox();
+			
+			cbDataSource = new JComboBox();
+			
+			for (DataSource ds : DataSource.getDataSources())
+			{
+				cbDataSource.addItem(ds.getFullName());
+			}
+			
+			result.add (cbDataSource);
+			result.add (new JLabel ("Select column with system code"));
+			result.add (radioSyscodeYes);
+			result.add (new JLabel ("Select system code for whole dataset"));
+			result.add (radioSyscodeNo);
+			result.add (cbColId);
+			result.add (cbColSyscode);
+				
 			result.add(new JLabel("Column page"), BorderLayout.CENTER);
 			return result;
 		}
@@ -263,12 +335,84 @@ public class GexWizard extends Wizard
 	        return ColumnPage.IDENTIFIER;
 	    }  
 	    
+	    private JProgressBar progressSent;
+	    private JLabel progressText;
+	    private SwingProgressKeeper pk;
+	    
 	    @Override
 		protected JPanel createContents()
 		{
-			JPanel result = new JPanel();
+	    	JPanel result = new JPanel();
+			
+        	pk = new SwingProgressKeeper((int)1E6);
+	    	progressSent = pk.getJProgressBar();
+	        result.add (progressSent);
+	        
+	        progressText = new JLabel();
+	        result.add (progressText);
+	        
 			result.add(new JLabel("Import page"), BorderLayout.CENTER);
 			return result;
 		}
+	    
+	    public void setProgressValue(int i)
+	    {
+	        progressSent.setValue(i);
+	    }
+
+	    public void setProgressText(String msg) 
+	    {
+	        progressText.setText(msg);
+	    }
+
+	    public void aboutToDisplayPanel() 
+	    {
+	        setProgressValue(0);
+	        setProgressText("Connecting to Server...");
+
+	        getWizard().setNextFinishButtonEnabled(false);
+	        getWizard().setBackButtonEnabled(false);
+	    }
+
+	    public void displayingPanel() 
+	    {
+        	
+            Thread t = new Thread() 
+            {
+	            public void run() 
+	            {
+//	                try 
+//	                {
+	                	GexTxtImporter.importFromTxt(importInformation, pk);
+	                	
+//	                    Thread.sleep(2000);
+//	                    setProgressValue(25);
+//	                    setProgressText("Server Connection Established");
+//	                    Thread.sleep(500);
+//	                    setProgressValue(50);
+//	                    setProgressText("Transmitting Data...");
+//	                    Thread.sleep(3000);
+//	                    setProgressValue(75);
+//	                    setProgressText("Receiving Acknowledgement...");
+//	                    Thread.sleep(1000);
+//	                    setProgressValue(100);
+//	                    setProgressText("Data Successfully Transmitted");
+//	
+	                    getWizard().setNextFinishButtonEnabled(true);
+	                    getWizard().setBackButtonEnabled(true);
+//	                } 
+//	                catch (InterruptedException e) 
+//	                {
+//	                    setProgressValue(0);
+//	                    setProgressText("An Error Has Occurred");
+//	                    
+//	                    getWizard().setBackButtonEnabled(true);
+//	                }
+	            }
+	        };
+	
+	        t.start();
+	    }
+
 	}
 }

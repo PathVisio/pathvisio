@@ -53,7 +53,7 @@ public class GexTxtImporter
 		int finalizeWork = (int)(p.getTotalWork() * 0.2);
 		
 //		Open a connection to the error file
-		String errorFile = info.dbName + ".ex.txt";
+		String errorFile = info.getDbName() + ".ex.txt";
 		int errors = 0;
 		PrintStream error = null;
 		try {
@@ -71,7 +71,7 @@ public class GexTxtImporter
 			p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
-			result = new SimpleGex(info.dbName, true, Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX));
+			result = new SimpleGex(info.getDbName(), true, Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX));
 			
 			p.report("Importing data");
 			p.report("> Processing headers");

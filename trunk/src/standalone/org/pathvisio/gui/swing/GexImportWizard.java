@@ -398,6 +398,7 @@ public class GexImportWizard extends Wizard
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
 			tblColumn.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			tblColumn.setDefaultRenderer(Object.class, ctm.getTableCellRenderer());
 			JScrollPane scrTable = new JScrollPane(tblColumn);
 
 			builder.addLabel ("Select primary identifier column:", cc.xy(1,1));

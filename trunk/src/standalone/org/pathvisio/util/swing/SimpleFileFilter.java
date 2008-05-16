@@ -29,18 +29,18 @@ public class SimpleFileFilter extends FileFilter
 	
 	/**
 	 * @param name example: "Data files"
-	 * @param glob example: "*.txt|*.cvs"
+	 * @param glob example: "*.txt|*.csv"
 	 */
 	public SimpleFileFilter (String name, String globs) 
 	{
 		extensions = new ArrayList<String>();
 		for (String glob : globs.split("\\|"))
 		{
-			System.out.println (glob);
 			if (!glob.startsWith("*.")) 
 				throw new IllegalArgumentException("expected list of globs like \"*.txt|*.csv\"");
 			// cut off "*"
-			extensions.add (glob.substring(1));
+			// store only lower case (make comparison case insensitive)
+			extensions.add (glob.substring(1).toLowerCase());
 		}
 		desc = name + " (" + globs + ")";
 	}

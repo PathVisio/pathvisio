@@ -45,7 +45,8 @@ public class StandaloneActions
 	public static final Action newAction = new NewAction();
 	public static final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
 	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
-
+	public static final Action importGexDataAction = new ImportGexDataAction();
+	
 	/**
 	 * Open the online help in a browser window.
 	 * In menu->help->help or F1
@@ -128,6 +129,29 @@ public class StandaloneActions
 			{
 				SwingEngine.getCurrent().newPathway();
 			}
+		}
+	}
+	
+	/**
+	 * Import gex data and create a new gex database from it
+	 */
+	public static class ImportGexDataAction extends AbstractAction
+	{
+		private static final long serialVersionUID = 1L;
+		
+		public ImportGexDataAction()
+		{
+			super();
+			putValue (NAME, "Import expression data");
+			putValue (SHORT_DESCRIPTION, "Import data from a tab delimited text file, for example experimental data from a high-throughput experiment");
+		}
+		
+		public void actionPerformed (ActionEvent e)
+		{
+			GexWizard wizard = new GexWizard();
+			int ret = wizard.showModalDialog();
+			
+			// ret == (0=Finish,1=Cancel,2=Error) 
 		}
 	}
 	

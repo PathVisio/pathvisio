@@ -20,14 +20,66 @@
 package org.pathvisio.gui.swing;
 
 
-import java.util.Arrays;
+import java.awt.Color;
+import java.awt.Component;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.data.ImportInformation;
 
 class ColumnTableModel extends AbstractTableModel
 {
+	static private class HighlightedCellRenderer extends DefaultTableCellRenderer
+	{
+		private static final long serialVersionUID = 1L;
+		ImportInformation info;
+		
+		public HighlightedCellRenderer(ImportInformation info) 
+	    {
+	    	super();
+	    	this.info = info;
+	        setOpaque(true); //MUST do this for background to show up.
+	    }
+	    
+	    @Override
+	    public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) 
+	    {
+	    	setBackground(getTypeColor(row, column));
+	    	return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		}
+
+	    @Override
+	    public void setValue (Object value)
+	    {
+			setText (value.toString());	    	
+	    }
+	    
+		private Color getTypeColor (int row, int col)
+		{
+			Color result = java.awt.Color.WHITE; // data
+			if (row == 0)
+			{
+				result = java.awt.Color.YELLOW;
+			}
+			else
+			{
+				if (info.getSyscodeColumn() && col ==  info.getCodeColumn())
+				{
+					result = java.awt.Color.RED;
+				}
+				if (col == info.getIdColumn())
+				{
+					result = java.awt.Color.GREEN;
+				}
+			}
+			return result;
+		}
+	}
+	
 	private static final long serialVersionUID = 1L;
 	
 	private ImportInformation info;
@@ -42,18 +94,9 @@ class ColumnTableModel extends AbstractTableModel
 		fireTableStructureChanged();
 	}
 	
-	private String getType(int row, int col)
+	public TableCellRenderer getTableCellRenderer()
 	{
-		String result = "N"; // data
-		if (info.getSyscodeColumn() && col ==  info.getCodeColumn())
-		{
-			result = "C";
-		}
-		if (col == info.getIdColumn())
-		{
-			result = "I";
-		}
-		return result;
+		return new HighlightedCellRenderer(info);
 	}
 	
 	public int getColumnCount() 
@@ -68,6 +111,13 @@ class ColumnTableModel extends AbstractTableModel
 
 	public Object getValueAt(int row, int col) 
 	{
-		return getType (row, col) + ":" + info.getSampleData(row, col);
+		return info.getSampleData(row, col);
+	}
+
+	public java.awt.Component getTableCellRendererComponent(
+			javax.swing.JTable arg0, Object arg1, boolean arg2, boolean arg3,
+			int arg4, int arg5) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

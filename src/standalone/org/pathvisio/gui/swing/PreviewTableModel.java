@@ -19,99 +19,38 @@
  */
 package org.pathvisio.gui.swing;
 
-import java.util.List;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 import javax.swing.table.AbstractTableModel;
-
-import org.pathvisio.debug.Logger;
+import org.pathvisio.data.ImportInformation;
 
 class PreviewTableModel extends AbstractTableModel
 {
 	private static final long serialVersionUID = 1L;
-
-	private File txtFile = null;
-	private String separator = "\t";
-
-	private final int N = 50;
-	String[] lines = null;
-	String[][] cells = null;
 	
-	int maxNumCols = 0;
-	int numRows = 0;
+	private ImportInformation info;
 	
-	private void readSample()
+	PreviewTableModel (ImportInformation info)
 	{
-		try 
-		{
-			BufferedReader in;
-			in = new BufferedReader(new FileReader(txtFile));
-			// changed readahead from 10000 to 500000
-			// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4616869
-			// TODO: this may still fail for long lines (more than 500000 bytes in 50 lines) 
-			in.mark(500000);
-
-			String line;
-			numRows = 0;
-			maxNumCols = 0;
-			lines = new String[N];
-			cells = new String[N][];
-			while ((line = in.readLine()) != null && numRows < N) 
-			{
-				lines[numRows] = line;
-				cells[numRows] = line.split(separator);
-				int numCols = cells[numRows].length;
-				if (numCols > maxNumCols)
-				{
-					maxNumCols = numCols;
-				}
-				numRows++;
-			}
-		} 
-		catch (IOException e) 
-		{ 		
-			//TODO: pop up error dialog
-			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
-		}
+		this.info = info;
 	}
 	
-	public void setTextFile (File f)
+	public void refresh()
 	{
-		txtFile = f;
-		readSample();
 		fireTableStructureChanged();
 	}
-	
-	public void setSeparator (String separator)
-	{
-		this.separator = separator;
-		readSample();
-		fireTableStructureChanged();
-	}
-	
+		
 	public int getColumnCount() 
 	{
-		return maxNumCols;
+		return info.getSampleMaxNumCols();
 	}
 
 	public int getRowCount() 
 	{
-		return numRows;
+		return info.getSampleNumRows();
 	}
 
 	public Object getValueAt(int row, int col) 
 	{
-		if (cells != null && cells[row] != null &&
-				cells[row].length > col)
-		{
-			return cells[row][col];
-		}
-		else
-		{
-			return "";
-		}
+		return info.getSampleData(row, col);
 	}
 }

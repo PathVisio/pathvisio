@@ -126,7 +126,7 @@ public class ImportInformation {
 	/**
 	 * Column number (first column is 0) of the column containing the gene identifier
 	 */
-	private int idColumn;
+	private int idColumn = 0;
 	public int getIdColumn()
 	{
 		return idColumn;
@@ -139,7 +139,8 @@ public class ImportInformation {
 	/**
 	 * Column number (first column is 0) of the column containing the systemcode
 	 */
-	private int codeColumn;
+	private int codeColumn = 1;
+	
 	public int getCodeColumn()
 	{
 		return codeColumn;
@@ -440,16 +441,13 @@ public class ImportInformation {
 	}
 	
 	/** derive datasource from sample data */
-	public void guessDataSource()
-	{
-		if (guessDataSource != null) setDataSource(guessDataSource);
-	}
-	
-	/** derive if there is a syscode column yes or no from the sample data */
-	public void guessSyscodeColumn()
+	public void guessSettings()
 	{
 		syscodeColumn = guessSyscodeColumn;
+		if (guessDataSource != null) setDataSource(guessDataSource);
+		//TODO: in case there is a system code column, guess which column it is too.
 	}
+	
 	
 	private boolean guessSyscodeColumn = true;
 	private DataSource guessDataSource = null;
@@ -481,7 +479,6 @@ public class ImportInformation {
 			}
 			int syscodecount = 0;
 
-			
 			String line;
 			sampleNumRows = 0;
 			sampleMaxNumCols = 0;

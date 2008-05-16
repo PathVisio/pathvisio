@@ -169,7 +169,7 @@ public class GexTxtImporter
 				//Find the Ensembl genes for current gene
 				List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(ref); 
 				
-				if(ensIds.size() == 0) //No Ensembl gene found
+				if(ensIds == null || ensIds.size() == 0) //No Ensembl gene found
 				{
 					errors = reportError(info, error, "Line " + n + ":\t" + ref + 
 							"\tNo Ensembl gene found for this identifier", errors);

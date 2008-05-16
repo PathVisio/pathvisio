@@ -1,13 +1,26 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2007 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
 package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -15,11 +28,9 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -32,12 +43,11 @@ import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.util.ProgressKeeper;
 
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
-public class GexWizard extends Wizard 
+public class GexImportWizard extends Wizard 
 {
 	private ImportInformation importInformation = new ImportInformation();
 	
@@ -46,7 +56,7 @@ public class GexWizard extends Wizard
     ColumnPage cpd = new ColumnPage();
     ImportPage ipd = new ImportPage();
     
-	GexWizard()
+	GexImportWizard()
 	{
 		getDialog().setTitle ("Expression data import wizard");
 		
@@ -77,30 +87,37 @@ public class GexWizard extends Wizard
 		 */
 		private void setTxtFile(File file) 
 		{
+			txtFileComplete = true;
 			if (!file.exists()) 
 			{
 				setErrorMessage("Specified file to import does not exist");
 				txtFileComplete = false;
-				return;
 			}
 			if (!file.canRead()) 
 			{
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
-				return;
 			}
-			importInformation.setTxtFile(file);
-			String fileName = file.toString();
-			txtInput.setText(file.toString());
-			txtOutput.setText(fileName.replace(fileName.substring(
-					fileName.lastIndexOf(".")), ""));
-			importInformation.setDbName (txtOutput.getText());
-			importInformation.guessDataSource();
-			importInformation.guessSyscodeColumn();
-			setErrorMessage(null);
-			txtFileComplete = true;
+		    getWizard().setNextFinishButtonEnabled(txtFileComplete);
+			if (txtFileComplete)
+			{
+				importInformation.setTxtFile(file);
+				String fileName = file.toString();
+				txtInput.setText(file.toString());
+				txtOutput.setText(fileName.replace(fileName.substring(
+						fileName.lastIndexOf(".")), ""));
+				importInformation.setDbName (txtOutput.getText());
+				importInformation.guessSettings();
+				setErrorMessage(null);
+				txtFileComplete = true;
+			}
 		}
 
+		public void aboutToDisplayPanel()
+		{
+	        getWizard().setNextFinishButtonEnabled(txtFileComplete);
+		}
+		
 	    public FilePage() 
 	    {
 	        super(IDENTIFIER);
@@ -255,6 +272,7 @@ public class GexWizard extends Wizard
 				
 			})
 			;
+						
 			rbSepComma.addActionListener(new ActionListener()
 			{
 				public void actionPerformed (ActionEvent ae)
@@ -331,7 +349,7 @@ public class GexWizard extends Wizard
 	    private JComboBox cbColSyscode;
 	    private JRadioButton rbSyscodeYes;
 	    private JRadioButton rbSyscodeNo;
-	    private JComboBox cbDataSource;
+	    private DataSourceCombo cbDataSource;
 	    
 	    public ColumnPage() 
 	    {
@@ -362,20 +380,17 @@ public class GexWizard extends Wizard
 			cbColId = new JComboBox();
 			cbColSyscode = new JComboBox();			
 
-			cbDataSource = new JComboBox();
-			for (DataSource ds : DataSource.getDataSources())
-			{
-				cbDataSource.addItem(ds.getFullName());
-			}
+			cbDataSource = new DataSourceCombo();
+			cbDataSource.initItems();
 			
 			JPanel groupPanel = new JPanel();
 			groupPanel.setLayout (new BoxLayout (groupPanel, BoxLayout.PAGE_AXIS));
 			Border etch = BorderFactory.createEtchedBorder();
 			groupPanel.setBorder (etch);
 			groupPanel.add (rbSyscodeYes);
-			groupPanel.add (cbDataSource);
-			groupPanel.add (rbSyscodeNo);
 			groupPanel.add (cbColSyscode);
+			groupPanel.add (rbSyscodeNo);
+			groupPanel.add (cbDataSource);
 			
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
@@ -410,7 +425,7 @@ public class GexWizard extends Wizard
 			cbDataSource.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
-					DataSource ds = DataSource.getByFullName((String)cbDataSource.getSelectedItem());
+					DataSource ds = cbDataSource.getSelectedDataSource();
 					importInformation.setDataSource(ds);
 			    	ctm.refresh();
 				}
@@ -450,7 +465,7 @@ public class GexWizard extends Wizard
 	    
 	    private void refreshComboBoxes()
 	    {
-			cbDataSource.setSelectedItem (importInformation.getDataSource().getFullName());
+	    	cbDataSource.setSelectedDataSource (importInformation.getDataSource());
 			cbColId.setSelectedIndex(importInformation.getIdColumn());
 			cbColSyscode.setSelectedIndex(importInformation.getCodeColumn());
 	    }
@@ -469,7 +484,6 @@ public class GexWizard extends Wizard
 			refreshComboBoxes();
 			
 	    	ctm.refresh();
-			
 	    }
 	    
 	    @Override

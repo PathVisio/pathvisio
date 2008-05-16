@@ -66,6 +66,8 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     private WizardController wizardController;
     private JDialog wizardDialog;
         
+    private JLabel errorMessage;
+    private JLabel pageTitle;
     private JPanel cardPanel;
     private CardLayout cardLayout;            
     private JButton backButton;
@@ -166,7 +168,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         
         wizardDialog.setModal(true);
         wizardDialog.pack();
-        wizardDialog.show();
+        wizardDialog.setVisible(true);
         
         return returnCode;
     }
@@ -330,6 +332,11 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         wizardDialog.dispose();
     }
     
+    public void setErrorMessage(String value)
+    {
+    	errorMessage.setText (value);
+    }
+    
     /**
      * This method initializes the components for the wizard dialog: it creates a JDialog
      * as a CardLayout panel surrounded by a small amount of space on each side, as well
@@ -348,6 +355,14 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         //  Next, Back, and Cancel. It is also responsible a JPanel above them that
         //  uses a CardLayout layout manager to display multiple panels in the 
         //  same spot.
+        
+        JPanel titlePanel = new JPanel();
+        errorMessage = new JLabel();
+        errorMessage.setForeground(java.awt.Color.RED);
+        pageTitle = new JLabel("Page Title");
+        titlePanel.add (pageTitle);
+        titlePanel.add (errorMessage);
+        
         
         JPanel buttonPanel = new JPanel();
         JSeparator separator = new JSeparator();
@@ -388,6 +403,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         
         buttonPanel.add(buttonBox, java.awt.BorderLayout.EAST);
         
+        wizardDialog.getContentPane().add(titlePanel, java.awt.BorderLayout.NORTH);
         wizardDialog.getContentPane().add(buttonPanel, java.awt.BorderLayout.SOUTH);
         wizardDialog.getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
 

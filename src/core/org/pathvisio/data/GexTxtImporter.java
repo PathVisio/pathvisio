@@ -99,8 +99,8 @@ public class GexTxtImporter
 
 				//skip the gene and systemcode column if there is one
 				if(
-					(info.getSyscodeColumn() && i != info.idColumn && i != info.codeColumn) ||
-					(!info.getSyscodeColumn() && i != info.idColumn)
+					(info.getSyscodeColumn() && i != info.getIdColumn() && i != info.getCodeColumn()) ||
+					(!info.getSyscodeColumn() && i != info.getIdColumn())
 					)
 				{ 
 					try {
@@ -121,9 +121,9 @@ public class GexTxtImporter
 			p.report("> Processing lines");
 			
 			//Check ids and add expression data
-			for(int i = 1; i < info.firstDataRow; i++) in.readLine(); //Go to line where data starts
+			for(int i = 1; i < info.getFirstDataRow(); i++) in.readLine(); //Go to line where data starts
 			String line = null;
-			int n = info.firstDataRow - 1;
+			int n = info.getFirstDataRow() - 1;
 			int added = 0;
 			int worked = importWork / nrLines;
 			
@@ -151,7 +151,7 @@ public class GexTxtImporter
 				}
 				p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
 				//Check id and add data
-				String id = data[info.idColumn].trim();
+				String id = data[info.getIdColumn()].trim();
 				
 				/*Set the system code to the one found in the dataset if there is a system code column,
 				 * otherwise set the system code to the one selected (either by the user or by regular 
@@ -159,7 +159,7 @@ public class GexTxtImporter
 				DataSource ds;
 				if (info.getSyscodeColumn()) 
 				{
-					ds = DataSource.getBySystemCode(data[info.codeColumn].trim());
+					ds = DataSource.getBySystemCode(data[info.getCodeColumn()].trim());
 				}
 				else 
 				{

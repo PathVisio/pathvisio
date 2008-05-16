@@ -6,21 +6,27 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
@@ -86,10 +92,11 @@ public class GexWizard extends Wizard
 			importInformation.setTxtFile(file);
 			String fileName = file.toString();
 			txtInput.setText(file.toString());
-	    	hpd.ptm.refresh();
 			txtOutput.setText(fileName.replace(fileName.substring(
 					fileName.lastIndexOf(".")), ""));
 			importInformation.setDbName (txtOutput.getText());
+			importInformation.guessDataSource();
+			importInformation.guessSyscodeColumn();
 			setErrorMessage(null);
 			txtFileComplete = true;
 		}
@@ -143,7 +150,7 @@ public class GexWizard extends Wizard
 				public void actionPerformed (ActionEvent ae)
 				{
 					//TODO: more sensible default dir
-					File defaultdir = new File ("/home/martijn/prg/pathvisio-trunk/example-data/");
+					File defaultdir = new File ("/home/martijn/prg/pathvisio-trunk/example-data/sample_data_1.txt");
 					JFileChooser jfc = new JFileChooser();
 					jfc.setSelectedFile(defaultdir);
 					int result = jfc.showDialog(null, "Select input file");
@@ -151,7 +158,6 @@ public class GexWizard extends Wizard
 					{
 						File f = jfc.getSelectedFile();
 						setTxtFile (f);
-//				    	//TODO: also set ptm.setTextFile if you don't use browse button.
 					}
 				}
 			});
@@ -161,8 +167,7 @@ public class GexWizard extends Wizard
 
 		public void aboutToHidePanel() 
 		{
-	        importInformation.setTxtFile(new File (txtInput.getText()));
-	        //TODO: output file
+	        setTxtFile(new File (txtInput.getText()));
 	    }
 
 	}
@@ -170,8 +175,13 @@ public class GexWizard extends Wizard
 	private class HeaderPage extends WizardPanelDescriptor 
 	{
 	    public static final String IDENTIFIER = "HEADER_PAGE";
-		PreviewTableModel ptm;
-		JTable tblPreview;
+		private PreviewTableModel ptm;
+		private JTable tblPreview;
+		private JRadioButton rbSepTab;
+		private JRadioButton rbSepComma;
+		private JRadioButton rbSepSemi;
+		private JRadioButton rbSepSpace;
+		private JRadioButton rbSepOther;
 		
 	    public HeaderPage() 
 	    {
@@ -198,34 +208,30 @@ public class GexWizard extends Wizard
 			topPanel.setLayout (new BorderLayout());
 			
 			JPanel settingsPanel = new JPanel();
-			ButtonGroup g1 = new ButtonGroup();
-			Box radioGroup1 = Box.createVerticalBox();
 			
-			JRadioButton r1 = new JRadioButton ("Header row");
-			JRadioButton r2 = new JRadioButton ("No header row");
-			JRadioButton r3 = new JRadioButton ();
-			g1.add (r1);
-			g1.add (r2);
-			g1.add (r3);
-			radioGroup1.add (r1);
-			radioGroup1.add (r2);
-			radioGroup1.add (r3);
-			radioGroup1.add (new JButton ("Advanced..."));
-			Box radioGroup2 = Box.createVerticalBox();
-			ButtonGroup g2 = new ButtonGroup();
-			JRadioButton r4 = new JRadioButton ("Tab separated values (TSV)");
-			JRadioButton r5 = new JRadioButton ("Comma separated values (CSV)");
-			JRadioButton r6 = new JRadioButton ();
-			radioGroup2.add (r4);
-			radioGroup2.add (r5);
-			radioGroup2.add (r6);
-			radioGroup2.add (new JButton ("Advanced..."));
-			g2.add (r4);
-			g2.add (r5);
-			g2.add (r6);
+			Box bxGroup = Box.createVerticalBox();
+			ButtonGroup bgSeparator = new ButtonGroup();
+			rbSepTab = new JRadioButton ("tab");
+			rbSepComma = new JRadioButton ("comma");
+			rbSepSemi = new JRadioButton ("semicolon");
+			rbSepSpace = new JRadioButton ("space");
+			rbSepOther = new JRadioButton ("other");
+			bxGroup.add (rbSepTab);
+			bxGroup.add (rbSepComma);
+			bxGroup.add (rbSepSemi);
+			bxGroup.add (rbSepSpace);
+			Box b1 = Box.createHorizontalBox();
+			b1.add (rbSepOther);
+			final JTextField txtOther = new JTextField(3);
+			b1.add (txtOther);
+			bxGroup.add (b1);
+			bgSeparator.add (rbSepTab);
+			bgSeparator.add (rbSepComma);
+			bgSeparator.add (rbSepSemi);
+			bgSeparator.add (rbSepSpace);
+			bgSeparator.add (rbSepOther);
 
-			settingsPanel.add (radioGroup1);
-			settingsPanel.add (radioGroup2);
+			settingsPanel.add (bxGroup);
 
 			topPanel.add (settingsPanel, BorderLayout.NORTH);
 			ptm = new PreviewTableModel(importInformation);
@@ -237,7 +243,19 @@ public class GexWizard extends Wizard
 			result.add (new JLabel("Header page"), BorderLayout.NORTH);
 			result.add (topPanel, BorderLayout.CENTER);
 			
-			r5.addActionListener(new ActionListener()
+			txtOther.addActionListener(new ActionListener () {
+
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					importInformation.setDelimiter (txtOther.getText());
+					ptm.refresh();
+					rbSepOther.setSelected (true);
+				}
+
+				
+			})
+			;
+			rbSepComma.addActionListener(new ActionListener()
 			{
 				public void actionPerformed (ActionEvent ae)
 				{
@@ -246,7 +264,7 @@ public class GexWizard extends Wizard
 				}
 				
 			});
-			r4.addActionListener(new ActionListener()
+			rbSepTab.addActionListener(new ActionListener()
 			{
 				public void actionPerformed (ActionEvent ae)
 				{
@@ -255,19 +273,64 @@ public class GexWizard extends Wizard
 				}
 				
 			});
+			rbSepSemi.addActionListener(new ActionListener()
+			{
+				public void actionPerformed (ActionEvent ae)
+				{
+					importInformation.setDelimiter(";");
+					ptm.refresh();
+				}
+			});
+			rbSepSpace.addActionListener(new ActionListener()
+			{
+				public void actionPerformed (ActionEvent ae)
+				{
+					importInformation.setDelimiter(" ");
+					ptm.refresh();
+				}
+				
+			});
 			return result;
 		}
-
+	    
+	    public void aboutToDisplayPanel()
+	    {
+	    	hpd.ptm.refresh();
+	    	String del = importInformation.getDelimiter();
+	    	if (del.equals ("\t"))
+	    	{
+	    		rbSepTab.setSelected(true);
+	    	}
+	    	else if (del.equals (","))
+			{
+	    		rbSepComma.setSelected(true);
+			}
+	    	else if (del.equals (";"))
+			{
+	    		rbSepSemi.setSelected(true);
+			}
+	    	else if (del.equals (" "))
+			{
+	    		rbSepSpace.setSelected(true);
+			}
+	    	else
+	    	{
+	    		rbSepOther.setSelected (true);
+	    	}
+	    }
 	}
 	
 	private class ColumnPage extends WizardPanelDescriptor 
 	{
 	    public static final String IDENTIFIER = "COLUMN_PAGE";
+
+	    private ColumnTableModel ctm;
+		private JTable tblColumn;
 		
 	    private JComboBox cbColId;
 	    private JComboBox cbColSyscode;
-	    private JRadioButton radioSyscodeYes;
-	    private JRadioButton radioSyscodeNo;
+	    private JRadioButton rbSyscodeYes;
+	    private JRadioButton rbSyscodeNo;
 	    private JComboBox cbDataSource;
 	    
 	    public ColumnPage() 
@@ -290,29 +353,138 @@ public class GexWizard extends Wizard
 		{
 			JPanel result = new JPanel();
 			
-			radioSyscodeYes = new JRadioButton();
-			radioSyscodeNo = new JRadioButton();
+			rbSyscodeYes = new JRadioButton("Select a column to specify system code");
+			rbSyscodeNo = new JRadioButton("Use the same system code for all rows");
+			ButtonGroup radioGroup = new ButtonGroup ();
+			radioGroup.add (rbSyscodeYes);
+			radioGroup.add (rbSyscodeNo);
+			
 			cbColId = new JComboBox();
-			cbColSyscode = new JComboBox();
-			
+			cbColSyscode = new JComboBox();			
+
 			cbDataSource = new JComboBox();
-			
 			for (DataSource ds : DataSource.getDataSources())
 			{
 				cbDataSource.addItem(ds.getFullName());
 			}
 			
-			result.add (cbDataSource);
-			result.add (new JLabel ("Select column with system code"));
-			result.add (radioSyscodeYes);
-			result.add (new JLabel ("Select system code for whole dataset"));
-			result.add (radioSyscodeNo);
-			result.add (cbColId);
-			result.add (cbColSyscode);
-				
-			result.add(new JLabel("Column page"), BorderLayout.CENTER);
+			JPanel groupPanel = new JPanel();
+			groupPanel.setLayout (new BoxLayout (groupPanel, BoxLayout.PAGE_AXIS));
+			Border etch = BorderFactory.createEtchedBorder();
+			groupPanel.setBorder (etch);
+			groupPanel.add (rbSyscodeYes);
+			groupPanel.add (cbDataSource);
+			groupPanel.add (rbSyscodeNo);
+			groupPanel.add (cbColSyscode);
+			
+			ctm = new ColumnTableModel(importInformation);
+			tblColumn = new JTable(ctm);
+			tblColumn.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			JScrollPane scrTable = new JScrollPane(tblColumn);
+			
+			Box topPanel = Box.createVerticalBox();
+			
+			Box b1 = Box.createHorizontalBox();
+			b1.add (new JLabel("Select primary identifier column:"));
+			b1.add (cbColId);
+
+			topPanel.add (new JLabel("Column page"));
+			topPanel.add (b1);
+			topPanel.add (groupPanel);
+			
+			result.add (topPanel, BorderLayout.NORTH);
+			result.add (scrTable, BorderLayout.CENTER);
+			
+			ActionListener rbAction = new ActionListener() {
+				public void actionPerformed (ActionEvent ae)
+				{
+					boolean result = (ae.getSource() == rbSyscodeYes);
+					importInformation.setSyscodeColumn(result);
+					refreshSyscodeColumn();
+			    	ctm.refresh();
+				}
+			};
+			rbSyscodeNo.addActionListener(rbAction);
+			rbSyscodeYes.addActionListener(rbAction);
+			
+			cbDataSource.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae)
+				{
+					DataSource ds = DataSource.getByFullName((String)cbDataSource.getSelectedItem());
+					importInformation.setDataSource(ds);
+			    	ctm.refresh();
+				}
+			});
+			cbColSyscode.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae)
+				{
+					importInformation.setCodeColumn(cbColSyscode.getSelectedIndex());
+			    	ctm.refresh();
+				}
+			});
+			cbColId.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae)
+				{
+					importInformation.setIdColumn(cbColId.getSelectedIndex());
+			    	ctm.refresh();
+				}
+			});
 			return result;
 		}
+
+	    private void refreshSyscodeColumn()
+	    {
+			if (importInformation.getSyscodeColumn())
+			{
+				rbSyscodeYes.setSelected (true);
+				cbColSyscode.setEnabled (true);
+				cbDataSource.setEnabled (false);
+			}
+			else
+			{
+				rbSyscodeNo.setSelected (true);
+				cbColSyscode.setEnabled (false);
+				cbDataSource.setEnabled (true);
+			}
+	    }
+	    
+	    private void refreshComboBoxes()
+	    {
+			cbDataSource.setSelectedItem (importInformation.getDataSource().getFullName());
+			cbColId.setSelectedIndex(importInformation.getIdColumn());
+			cbColSyscode.setSelectedIndex(importInformation.getCodeColumn());
+	    }
+	    
+	    public void aboutToDisplayPanel()
+	    {			
+	    	cbColId.removeAllItems();
+	    	cbColSyscode.removeAllItems();
+			for (String s : importInformation.getColNames())
+			{
+				cbColId.addItem(s);
+				cbColSyscode.addItem(s);
+			}
+			
+			refreshSyscodeColumn();
+			refreshComboBoxes();
+			
+	    	ctm.refresh();
+			
+	    }
+	    
+	    @Override
+	    public void aboutToHidePanel()
+	    {
+	    	importInformation.setSyscodeColumn(rbSyscodeYes.isSelected());
+	    	if (rbSyscodeYes.isSelected())
+	    	{
+	    	}
+	    	else
+	    	{
+		    	importInformation.setDataSource(
+		    			DataSource.getByFullName(("" + cbDataSource.getSelectedItem())));
+	    	}
+	    }
 	}
 	
 	private class ImportPage extends WizardPanelDescriptor 

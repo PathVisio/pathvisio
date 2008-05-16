@@ -34,3 +34,5 @@ This product includes the JDOM libraries, developed by the JDOM Project (http://
 JDOM is licensed under a modified version of the Apache license, 
 of which you can find a copy in licenses/jdom/LICENSE.TXT
 
+The jgoodies forms lib is licensed under the bsd license, 
+see licenses/JGOODIES-BSD-LICENSE.txt

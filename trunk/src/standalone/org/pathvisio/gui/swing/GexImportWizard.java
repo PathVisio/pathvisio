@@ -44,6 +44,9 @@ import org.pathvisio.data.ImportInformation;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
@@ -134,33 +137,35 @@ public class GexImportWizard extends Wizard
 	    }  
 
 		protected JPanel createContents()
-		{
-			JPanel result = new JPanel();
-			
-			result.setLayout (new BorderLayout());
-			
-			txtInput = new JTextField();
-		    txtOutput = new JTextField();
-		    txtGdb = new JTextField();
+		{			
+			txtInput = new JTextField(40);
+		    txtOutput = new JTextField(40);
+		    txtGdb = new JTextField(40);
 		    btnGdb = new JButton ("Browse");
 		    btnInput = new JButton ("Browse");
 		    btnOutput = new JButton ("Browse");
 		    
-			JPanel gridPanel = new JPanel();
-			gridPanel.setLayout (new GridLayout (3,3));
+		    FormLayout layout = new FormLayout (
+		    		"right:pref, 3dlu, pref, 3dlu, pref",
+		    		"p, 3dlu, p, 3dlu, p");
+		    
+		    PanelBuilder builder = new PanelBuilder(layout);
+		    builder.setDefaultDialogBorder();
+		    
+		    CellConstraints cc = new CellConstraints();
 			
-			gridPanel.add (new JLabel ("Input file"));
-			gridPanel.add (txtInput);
-			gridPanel.add (btnInput);
-			gridPanel.add (new JLabel ("Output file"));
-			gridPanel.add (txtOutput);
-			gridPanel.add (btnOutput);
-			gridPanel.add (new JLabel ("Gene database"));
-			gridPanel.add (txtGdb);
-			gridPanel.add (btnGdb);
-	
-			result.add (new JLabel("File locations"), BorderLayout.NORTH);
-			result.add (gridPanel, BorderLayout.CENTER);
+			builder.addLabel ("Input file", cc.xy (1,1));
+			builder.add (txtInput, cc.xy (3,1));
+			builder.add (btnInput, cc.xy (5,1));
+			builder.addLabel ("Output file", cc.xy (1,3));
+			builder.add (txtOutput, cc.xy (3,3));
+			builder.add (btnOutput, cc.xy (5,3));
+			builder.addLabel ("Gene database", cc.xy (1,5));
+			builder.add (txtGdb, cc.xy (3,5));
+			builder.add (btnGdb, cc.xy (5,5));
+			
+			//TODO: set page title
+			//result.add (new JLabel("File locations"), BorderLayout.NORTH);
 			
 			btnInput.addActionListener(new ActionListener()
 			{
@@ -179,7 +184,7 @@ public class GexImportWizard extends Wizard
 				}
 			});
 			
-			return result;
+			return builder.getPanel();
 		}
 
 		public void aboutToHidePanel() 
@@ -218,47 +223,45 @@ public class GexImportWizard extends Wizard
 	    @Override
 		protected Component createContents()
 		{
-			JPanel result = new JPanel();
-			result.setLayout (new BorderLayout());
+		    FormLayout layout = new FormLayout (
+		    		"pref, 3dlu, pref, 3dlu, pref, pref:grow",
+		    		"p, 3dlu, p, 3dlu, p, 15dlu, fill:[100dlu,min]:grow");
+		    
+		    PanelBuilder builder = new PanelBuilder(layout);
+		    builder.setDefaultDialogBorder();
+		    
+		    CellConstraints cc = new CellConstraints();
 			
-			JPanel topPanel = new JPanel();
-			topPanel.setLayout (new BorderLayout());
-			
-			JPanel settingsPanel = new JPanel();
-			
-			Box bxGroup = Box.createVerticalBox();
-			ButtonGroup bgSeparator = new ButtonGroup();
 			rbSepTab = new JRadioButton ("tab");
 			rbSepComma = new JRadioButton ("comma");
 			rbSepSemi = new JRadioButton ("semicolon");
 			rbSepSpace = new JRadioButton ("space");
 			rbSepOther = new JRadioButton ("other");
-			bxGroup.add (rbSepTab);
-			bxGroup.add (rbSepComma);
-			bxGroup.add (rbSepSemi);
-			bxGroup.add (rbSepSpace);
-			Box b1 = Box.createHorizontalBox();
-			b1.add (rbSepOther);
-			final JTextField txtOther = new JTextField(3);
-			b1.add (txtOther);
-			bxGroup.add (b1);
+			ButtonGroup bgSeparator = new ButtonGroup();
 			bgSeparator.add (rbSepTab);
 			bgSeparator.add (rbSepComma);
 			bgSeparator.add (rbSepSemi);
 			bgSeparator.add (rbSepSpace);
 			bgSeparator.add (rbSepOther);
+			
+			builder.add (rbSepTab, cc.xy(1,1));
+			builder.add (rbSepComma, cc.xy(1,3));
+			builder.add (rbSepSemi, cc.xy(1,5));
+			builder.add (rbSepSpace, cc.xy(3,1));
+			builder.add (rbSepOther, cc.xy(3,3));
+			
+			final JTextField txtOther = new JTextField(3);
+			builder.add (txtOther, cc.xy(5, 3));
 
-			settingsPanel.add (bxGroup);
-
-			topPanel.add (settingsPanel, BorderLayout.NORTH);
 			ptm = new PreviewTableModel(importInformation);
 			tblPreview = new JTable(ptm);
 			tblPreview.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			JScrollPane scrTable = new JScrollPane(tblPreview);
-			topPanel.add (scrTable, BorderLayout.CENTER);
 			
-			result.add (new JLabel("Header page"), BorderLayout.NORTH);
-			result.add (topPanel, BorderLayout.CENTER);
+			builder.add (scrTable, cc.xyw(1,7,6));
+			
+			//TODO set page header
+			//result.add (new JLabel("Header page"), BorderLayout.NORTH);
 			
 			txtOther.addActionListener(new ActionListener () {
 
@@ -308,7 +311,7 @@ public class GexImportWizard extends Wizard
 				}
 				
 			});
-			return result;
+			return builder.getPanel();
 		}
 	    
 	    public void aboutToDisplayPanel()

@@ -118,6 +118,11 @@ public class ImportInformation {
 		return firstDataRow;
 	}
 	
+	public void setFirstDataRow(int value)
+	{
+		firstDataRow = value;
+	}
+	
 	/**
 	 * linenumber (first line is 1) of the line containing the column headers
 	 */

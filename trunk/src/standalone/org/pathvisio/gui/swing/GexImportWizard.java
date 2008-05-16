@@ -43,6 +43,7 @@ import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
+import org.pathvisio.util.swing.SimpleFileFilter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -175,6 +176,7 @@ public class GexImportWizard extends Wizard
 					File defaultdir = new File ("/home/martijn/prg/pathvisio-trunk/example-data/sample_data_1.txt");
 					JFileChooser jfc = new JFileChooser();
 					jfc.setSelectedFile(defaultdir);
+					jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv"));
 					int result = jfc.showDialog(null, "Select input file");
 					if (result == JFileChooser.APPROVE_OPTION)
 					{
@@ -372,46 +374,45 @@ public class GexImportWizard extends Wizard
 	    @Override
 		protected JPanel createContents() 
 		{
-			JPanel result = new JPanel();
+		    FormLayout layout = new FormLayout (
+		    		"pref, 7dlu, pref:grow",
+		    		"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:[100dlu,min]:grow");
+		    
+		    PanelBuilder builder = new PanelBuilder(layout);
+		    builder.setDefaultDialogBorder();
+		    
+		    CellConstraints cc = new CellConstraints();
 			
 			rbSyscodeYes = new JRadioButton("Select a column to specify system code");
 			rbSyscodeNo = new JRadioButton("Use the same system code for all rows");
-			ButtonGroup radioGroup = new ButtonGroup ();
-			radioGroup.add (rbSyscodeYes);
-			radioGroup.add (rbSyscodeNo);
+			ButtonGroup bgSyscodeCol = new ButtonGroup ();
+			bgSyscodeCol.add (rbSyscodeYes);
+			bgSyscodeCol.add (rbSyscodeNo);
 			
 			cbColId = new JComboBox();
 			cbColSyscode = new JComboBox();			
 
 			cbDataSource = new DataSourceCombo();
 			cbDataSource.initItems();
-			
-			JPanel groupPanel = new JPanel();
-			groupPanel.setLayout (new BoxLayout (groupPanel, BoxLayout.PAGE_AXIS));
-			Border etch = BorderFactory.createEtchedBorder();
-			groupPanel.setBorder (etch);
-			groupPanel.add (rbSyscodeYes);
-			groupPanel.add (cbColSyscode);
-			groupPanel.add (rbSyscodeNo);
-			groupPanel.add (cbDataSource);
-			
+
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
 			tblColumn.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			JScrollPane scrTable = new JScrollPane(tblColumn);
-			
-			Box topPanel = Box.createVerticalBox();
-			
-			Box b1 = Box.createHorizontalBox();
-			b1.add (new JLabel("Select primary identifier column:"));
-			b1.add (cbColId);
 
-			topPanel.add (new JLabel("Column page"));
-			topPanel.add (b1);
-			topPanel.add (groupPanel);
+			builder.addLabel ("Select primary identifier column:", cc.xy(1,1));
+			builder.add (cbColId, cc.xy(3,1));
+
+			builder.add (rbSyscodeYes, cc.xyw(1,3,3));
+			builder.add (cbColSyscode, cc.xy(3,5));
+			builder.add (rbSyscodeNo, cc.xyw (1,7,3));
+			builder.add (cbDataSource, cc.xy (3,9));
 			
-			result.add (topPanel, BorderLayout.NORTH);
-			result.add (scrTable, BorderLayout.CENTER);
+			builder.add (scrTable, cc.xyw(1,11,3));
+			
+			//TODO: set page title
+			//topPanel.add (new JLabel("Column page"));
+			
 			
 			ActionListener rbAction = new ActionListener() {
 				public void actionPerformed (ActionEvent ae)
@@ -447,7 +448,7 @@ public class GexImportWizard extends Wizard
 			    	ctm.refresh();
 				}
 			});
-			return result;
+			return builder.getPanel();
 		}
 
 	    private void refreshSyscodeColumn()

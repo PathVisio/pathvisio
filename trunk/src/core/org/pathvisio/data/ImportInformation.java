@@ -28,11 +28,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 
@@ -117,20 +112,43 @@ public class ImportInformation {
 	/**
 	 * linenumber (first line is 1) of the line where the data begins
 	 */
-	int firstDataRow;
+	private int firstDataRow;
+	public int getFirstDataRow()
+	{
+		return firstDataRow;
+	}
+	
 	/**
 	 * linenumber (first line is 1) of the line containing the column headers
 	 */
 	int headerRow;
+	
 	/**
 	 * Column number (first column is 0) of the column containing the gene identifier
 	 */
-	int idColumn;
+	private int idColumn;
+	public int getIdColumn()
+	{
+		return idColumn;
+	}
+	public void setIdColumn(int value)
+	{
+		idColumn = value;
+	}
 
 	/**
 	 * Column number (first column is 0) of the column containing the systemcode
 	 */
-	int codeColumn;
+	private int codeColumn;
+	public int getCodeColumn()
+	{
+		return codeColumn;
+	}
+	public void setCodeColumn (int value)
+	{
+		codeColumn = value;
+	}
+	
  	
  	/** 
  	 * True if there is no header in the data	
@@ -215,6 +233,7 @@ public class ImportInformation {
 	 * @return	Column numbers (start with 0) of columns containing data that
 	 * should not be treated as numeric, or an empty String[]
 	 */
+	//TODO: change to set.
 	public int[] getStringCols() 
 	{
 		if (stringCols == null)
@@ -318,10 +337,12 @@ public class ImportInformation {
 	 * Returns the boolean value set by the user which indicates whether a column 
 	 * system code column is present or not.
 	 */
+	//TODO: rename, to avoid confusion with getCodeColumn
 	public boolean getSyscodeColumn() 
 	{
 		return syscodeColumn;
 	}
+
 	
 	/**
 	 * Sets the boolean value syscodeColumn to 'system code present' or 'system code 
@@ -421,7 +442,7 @@ public class ImportInformation {
 	/** derive datasource from sample data */
 	public void guessDataSource()
 	{
-		setDataSource(guessDataSource);
+		if (guessDataSource != null) setDataSource(guessDataSource);
 	}
 	
 	/** derive if there is a syscode column yes or no from the sample data */
@@ -477,7 +498,7 @@ public class ImportInformation {
 					sampleMaxNumCols = numCols;
 				}
 
-				for (int i = 0; i < cells.length; ++i)
+				for (int i = 0; i < cells[sampleNumRows].length; ++i)
 				{
 					Matcher	syscodematcher;
 					//Count all the times that an element matches a gene identifier.

@@ -25,7 +25,7 @@ import org.pathvisio.debug.Logger;
 /**
    Class containing main method
 */
-class GpmlDiff
+public class GpmlDiff
 {
 	static File oldFile = null;
 	static File newFile = null;
@@ -121,6 +121,21 @@ class GpmlDiff
             "      gpmldiff patch format\n"
 			);
 		System.exit(1);
+	}
+	
+	/**
+	 * Simple straightforward utility function to create a patch of two files.
+	 */
+	// TODO: move to better location
+	public static void makePatch (File oldPwy, File newPwy, File patch) throws IOException
+	{
+		PwyDoc oldDoc = PwyDoc.read(oldPwy);
+		PwyDoc newDoc = PwyDoc.read(newPwy);
+		DiffOutputter out = new DgpmlOutputter(patch);
+		SimilarityFunction simFun = new BetterSim();
+		SearchNode result = oldDoc.findCorrespondence (newDoc, simFun, new BasicCost());
+		oldDoc.writeResult (result, newDoc, out);
+		out.flush();
 	}
 	
 	/**

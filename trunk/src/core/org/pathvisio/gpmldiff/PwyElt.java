@@ -54,6 +54,10 @@ class PwyElt
 			result += ",y2=" + elt.getProperty(PropertyType.ENDY);		
 		if (props.contains(PropertyType.GRAPHID))
 			result += ",id=" + elt.getProperty(PropertyType.GRAPHID);
+		if (props.contains(PropertyType.STARTGRAPHREF))
+			result += ",startref=" + elt.getProperty(PropertyType.STARTGRAPHREF);
+		if (props.contains(PropertyType.ENDGRAPHREF))
+			result += ",endref=" + elt.getProperty(PropertyType.ENDGRAPHREF);
 		if (props.contains(PropertyType.MAPINFONAME))
 			result += ",name=" + elt.getProperty(PropertyType.MAPINFONAME);
 		if (props.contains(PropertyType.AUTHOR))

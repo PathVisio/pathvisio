@@ -38,7 +38,7 @@ public enum GlobalPreference implements Preference {
 	DB_METABDB_CURRENT("none"),
 	
 	SHOW_ADVANCED_ATTRIBUTES(Boolean.toString(false)),
-	MIM_SUPPORT(Boolean.toString(false)),
+	MIM_SUPPORT(Boolean.toString(true)),
 	SNAP_TO_ANGLE (Boolean.toString(false)),
 	SNAP_TO_ANGLE_STEP ("15"),
 	

@@ -320,6 +320,7 @@ public class SelectionBox extends VPathwayElement
 		mHeight = mFromV(vr.getHeight());
 		mLeft = mFromV(vr.getX());
 		mTop = mFromV(vr.getY());
+		markDirty();
 	}
 
 	/**

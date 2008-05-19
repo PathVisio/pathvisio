@@ -78,6 +78,39 @@ sub get_pathway_with_revision ($$)
 	return [$pathway, $revision];
 }
 
+=item $result = $wikipathways->get_pathway_to_file ($species, $name, $filename)
+
+Download a pathway from wikipathways.
+
+$species: a species latin name, e.g. "Homo sapiens"
+$name: the name of the pathway.
+$filename: location where the file will be saved.
+
+returns the revision of the downloaded pathway.
+
+=cut
+
+sub get_pathway_to_file ($$$)
+{
+	my $self = shift;
+	
+	my $species = shift;
+	my $name = shift;
+	my $filename = shift;
+	
+	my $result = $self->{server}->call("WikiPathways.getPathway", $name, $species);
+	
+	my $revision = $result->{revision};
+	my $gpml = decode_base64($result->{gpml});
+	
+
+	open OUTFILE, "> $filename" or die $!;
+	print OUTFILE $gpml;
+	close OUTFILE;
+	
+	return $revision;
+}
+
 =item $wikipathways->update_pathway ($pathway, $species, $name, $revision, $message)
 
 params:
@@ -88,6 +121,8 @@ $revision - the revision that this updated pathway is based on.
  the webservice will check that this is the latest version available,
  to prevent you from overwriting someone else's changes
 $message - a log message describing the changes to the pathway
+
+no return value
 
 =cut
 
@@ -111,6 +146,66 @@ sub update_pathway($$$$$)
 		{'user' => $self->{user}, 'token' => $self->{token}}
 	);
 
+}
+
+=item $wikipathways->update_pathway_from_file ($filename, $species, $name, $revision, $message)
+
+params:
+$filename - a file that contains a pathway
+$species - species latin name.
+$name - the name of the pathway
+$revision - the revision that this updated pathway is based on.
+ the webservice will check that this is the latest version available,
+ to prevent you from overwriting someone else's changes
+$message - a log message describing the changes to the pathway
+
+no return value
+
+=cut
+
+sub update_pathway_from_file ($$$$$)
+{
+	my $self = shift;
+	my $pathwayFile = shift;
+	my $species = shift;
+	my $name = shift;
+	my $revision = shift;
+	my $message = shift;
+	
+	my $result;
+
+	open INFILE, "< $pathwayFile" or die $!;
+	my @lines = <INFILE>;
+	close INFILE;
+	my $pathwayData = join "", @lines;
+	
+	$result = $self->{server}->call ("WikiPathways.updatePathway", 
+		$name, 
+		$species, 
+		$message, 
+		$self->{server}->base64(encode_base64($pathwayData)), 
+		$revision, 
+		{'user' => $self->{user}, 'token' => $self->{token}}
+	);
+
+}
+
+=item $list = $wikipathways->get_pathway_list ()
+
+no params
+returns an arrayref to a list of pathways in "Species:Name" format
+
+=cut
+
+sub get_pathway_list($)
+{
+	my $self = shift;
+	
+	my $result;
+	
+	$result = $self->{server}->call ("WikiPathways.getPathwayList");
+	
+	return $result;
 }
 
 1;

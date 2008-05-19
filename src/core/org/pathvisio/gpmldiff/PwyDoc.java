@@ -63,7 +63,7 @@ class PwyDoc
 
 	public void remove (PathwayElement value)
 	{
-		elts.remove (value);
+		if (!elts.remove (value)) { Logger.log.error ("value not in list, couldn't remove"); };
 	}
 	
 	/**
@@ -97,6 +97,14 @@ class PwyDoc
 		
 		result.src = f;
 		return result;
+	}
+	
+	public void write (File f) throws ConverterException
+	{
+		pwy.getDataObjects().clear();
+		pwy.getDataObjects().addAll(elts);
+		pwy.fixReferences();
+		pwy.writeToXml(f, true);
 	}
 	
 	// make default constructor private

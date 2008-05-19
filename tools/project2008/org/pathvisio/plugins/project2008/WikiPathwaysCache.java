@@ -22,7 +22,7 @@ import java.text.DateFormat;
 import java.util.List;
 import java.util.Date;
 
-import org.apache.xmlrpc.XmlRpcException;
+import org.pathvisio.plugins.project2008.WikiPathwaysClient.WikiPathwaysException;
 
 /**
  * In this class all the pathways from a server are downloaded, using WikiPathWaysClient.
@@ -75,11 +75,11 @@ public class WikiPathwaysCache
 			files = FileUtils.getFileListing(cacheDirectory, ".gpml");
 			System.out.println("---[Start Checking Links]---");
 		}
-		catch (XmlRpcException e)
+		catch (IOException e)
 		{
 			System.out.println("ERROR: Couldn't update cache");
 		}
-		catch (IOException e)
+		catch (WikiPathwaysException e)
 		{
 			System.out.println("ERROR: Couldn't update cache");
 		}
@@ -88,7 +88,7 @@ public class WikiPathwaysCache
 	/**
 	 * In this method it is possible to download only the pathways that are recently changed. 
 	 */
-	private void downloadNew (Date d) throws XmlRpcException, IOException
+	private void downloadNew (Date d) throws IOException, WikiPathwaysException
 	{
 		// given path: path to store the pathway cache
 		// and date: the date of the most recent changed 
@@ -105,7 +105,7 @@ public class WikiPathwaysCache
 	 * In this method a list is created with pathwayNames that have to be downloaded. These 
 	 * pathways are then being downloaded in the method 'downloadFiles'
 	 */
-	private void downloadAll() throws XmlRpcException, IOException
+	private void downloadAll() throws IOException, WikiPathwaysException
 	{
 		// given path: path to store the pathway cache
 				
@@ -119,7 +119,7 @@ public class WikiPathwaysCache
 	/**
 	 * In this method the files are downloaded. 
 	 */
-	private void downloadFiles (List<String> pathwayNames) throws XmlRpcException, IOException {
+	private void downloadFiles (List<String> pathwayNames) throws IOException, WikiPathwaysException {
 		
 		// give the extension of a pathway file
 		String pwExtension = ".gpml";

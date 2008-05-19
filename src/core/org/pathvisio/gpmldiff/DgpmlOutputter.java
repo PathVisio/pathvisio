@@ -62,8 +62,9 @@ class DgpmlOutputter extends DiffOutputter
 		xmlcode.setFormat(f);
 		
 		//Open a filewriter
-		PrintWriter writer = new PrintWriter(System.out);
+		PrintWriter writer = new PrintWriter(out);
 		xmlcode.output(doc, writer);
+		out.flush();
 	}
 
 	public void insert(PathwayElement newElt)

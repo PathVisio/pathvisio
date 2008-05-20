@@ -140,6 +140,6 @@ public class VPoint extends VPathwayElement {
 	}
 	
 	protected int getZOrder() {
-		return VPathway.ZORDER_POINT;
+		return line.getZOrder() + 1;
 	}
 }

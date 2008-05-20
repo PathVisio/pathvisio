@@ -61,8 +61,7 @@ public class VPathway implements PathwayListener
 {
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
 	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
-	static final int ZORDER_POINT = Integer.MAX_VALUE - 2;
-
+	
 	private static final long serialVersionUID = 1L;
 
 	static final double M_PASTE_OFFSET = 10 * 15;

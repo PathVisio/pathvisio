@@ -41,6 +41,7 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElement.MAnchor;
 
 public class PathwayTransferable implements Transferable {
 	public static final String INFO_DATASOURCE = "COPIED";
@@ -87,6 +88,11 @@ public class PathwayTransferable implements Transferable {
 			}
 			if(e.getObjectType() == ObjectType.MAPPINFO) {
 				infoFound = true;
+			}
+			if(e.getObjectType() == ObjectType.LINE) {
+				for(MAnchor ma : e.getMAnchors()) {
+					ids.add(ma.getGraphId());
+				}
 			}
 		}
 

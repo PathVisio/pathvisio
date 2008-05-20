@@ -25,6 +25,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,6 +296,10 @@ public class Line extends Graphics
 				anchors.get(ma).destroy();
 			}
 		}
+	}
+	
+	protected Collection<VAnchor> getVAnchors() {
+		return anchors.values();
 	}
 	
 	protected void markDirty() {

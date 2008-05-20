@@ -155,8 +155,8 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		result.put("DataNode@Type", new AttributeInfo ("gpml:DataNodeType", "Unknown", "optional"));
 		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Line.Graphics.Point@relX", new AttributeInfo ("xsd:float", "0", "optional"));
-		result.put("Line.Graphics.Point@relY", new AttributeInfo ("xsd:float", "0", "optional"));
+		result.put("Line.Graphics.Point@relX", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Line.Graphics.Point@relY", new AttributeInfo ("xsd:float", null, "optional"));
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Point@Head", new AttributeInfo ("xsd:string", "Line", "optional"));
@@ -263,10 +263,12 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 					isDefault = true;
 			} else if (aInfo.schemaType.equals("xsd:float")
 					|| aInfo.schemaType.equals("Dimension")) {
-				Double x = Double.parseDouble(aInfo.def);
-				Double y = Double.parseDouble(value);
-				if (Math.abs(x - y) < 1e-6)
-					isDefault = true;
+				if(aInfo.def != null && value != null) {
+					Double x = Double.parseDouble(aInfo.def);
+					Double y = Double.parseDouble(value);
+					if (Math.abs(x - y) < 1e-6)
+						isDefault = true;
+				}
 			}
 		}
 		if (!isDefault)
@@ -505,6 +507,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     		mPoints.add(mp);
         	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
         	if (ref != null) {
+        		mp.setGraphRef(ref);
         		String srx = pe.getAttributeValue("relX");
         		String sry = pe.getAttributeValue("relY");
         		if(srx != null && sry != null) {

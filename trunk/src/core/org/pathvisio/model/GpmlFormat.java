@@ -504,8 +504,13 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     		);
     		mPoints.add(mp);
         	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
-        	if (ref == null) ref = "";
-        	mp.setGraphRef(ref);
+        	if (ref != null) {
+        		String srx = pe.getAttributeValue("relX");
+        		String sry = pe.getAttributeValue("relY");
+        		if(srx != null && sry != null) {
+        			mp.setRelativePosition(Double.parseDouble(srx), Double.parseDouble(sry));
+        		}
+        	}
         	
         	if(i == 0) {
         		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);		
@@ -1289,7 +1294,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			if(pe.getObjectType() == ObjectType.LINE) {
 				String sr = pe.getStartGraphRef();
 				String er = pe.getEndGraphRef();
-				if(sr != null && !"".equals(sr)) {
+				if(sr != null && !"".equals(sr) && !pe.getMStart().relativeSet()) {
 					GraphIdContainer idc = pathway.getGraphIdContainer(sr);
 					Point2D relative = idc.toRelativeCoordinate(
 							new Point2D.Double(
@@ -1299,7 +1304,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 					);
 					pe.getMStart().setRelativePosition(relative.getX(), relative.getY());
 				}
-				if(er != null && !"".equals(er)) {
+				if(er != null && !"".equals(er) && !pe.getMEnd().relativeSet()) {
 					GraphIdContainer idc = pathway.getGraphIdContainer(er);
 					Point2D relative = idc.toRelativeCoordinate(
 							new Point2D.Double(

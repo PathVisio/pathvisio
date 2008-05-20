@@ -210,7 +210,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public class MPoint extends GenericPoint implements GraphRefContainer
 	{
 		private String graphRef;
-
+		private boolean relativeSet;
+		
 		public MPoint(double x, double y)
 		{
 			super(new double[] { x, y, 0, 0 });
@@ -288,6 +289,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		
 		public void setRelativePosition(double rx, double ry) {
 			moveTo(new double[] { getX(), getY(), rx, ry });
+			relativeSet = true;
 		}
 		
 		/**
@@ -302,6 +304,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				return gc != null;
 			}
 			return false;
+		}
+		
+		/**
+		 * Helper method for converting older GPML files without
+		 * relative coordinates.
+		 * @return true if {@link #setRelativePosition(double, double)} was called to
+		 * set the relative coordinates, false if not.
+		 */
+		protected boolean relativeSet() {
+			return relativeSet;
 		}
 		
 		private GraphIdContainer getGraphIdContainer() {

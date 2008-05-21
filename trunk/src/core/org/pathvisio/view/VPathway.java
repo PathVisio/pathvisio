@@ -39,6 +39,7 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
+import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -2344,13 +2345,15 @@ public class VPathway implements PathwayListener
 			}
 
 			lastAdded = null;
-			o.setMStartX(o.getMStartX() + shift * M_PASTE_OFFSET);
-			o.setMStartY(o.getMStartY() + shift * M_PASTE_OFFSET);
-			o.setMEndX(o.getMEndX() + shift * M_PASTE_OFFSET);
-			o.setMEndY(o.getMEndY() + shift * M_PASTE_OFFSET);
-			o.setMLeft(o.getMLeft() + shift * M_PASTE_OFFSET);
-			o.setMTop(o.getMTop() + shift * M_PASTE_OFFSET);
-			
+			if(o.getObjectType() == ObjectType.LINE) {
+				o.setMStartX(o.getMStartX() + shift * M_PASTE_OFFSET);
+				o.setMStartY(o.getMStartY() + shift * M_PASTE_OFFSET);
+				o.setMEndX(o.getMEndX() + shift * M_PASTE_OFFSET);
+				o.setMEndY(o.getMEndY() + shift * M_PASTE_OFFSET);
+			} else {
+				o.setMLeft(o.getMLeft() + shift * M_PASTE_OFFSET);
+				o.setMTop(o.getMTop() + shift * M_PASTE_OFFSET);
+			}
 			// make another copy to preserve clipboard contents for next
 			// paste
 			PathwayElement p = o.copy();
@@ -2411,6 +2414,14 @@ public class VPathway implements PathwayListener
 			data.add(p); // causes lastAdded to be set
 			lastAdded.select();
 			selection.addToSelection(lastAdded);
+		}
+		/*
+		 * Step 3: refresh connector shapes
+		 */
+		for(PathwayElement o : elements) {
+			if(o.getObjectType() == ObjectType.LINE) {
+				((MLine)o).getConnectorShape().recalculateShape(((MLine)o));
+			}
 		}
 	}
 

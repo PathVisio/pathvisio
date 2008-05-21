@@ -309,7 +309,10 @@ TLW		2	3	2	1
 
 	public Point2D fromLineCoordinate(double l) {
 		//Calculate the total segment length
-		Segment[] segments = getSegments();
+		return fromLineCoordinate(l, getSegments());
+	}
+
+	protected Point2D fromLineCoordinate(double l, Segment[] segments) {
 		double length = 0;
 		for(Segment s : segments) {
 			length += Math.abs(s.getMLength());
@@ -352,7 +355,7 @@ TLW		2	3	2	1
 			vsy + diry * Math.abs(vsy - vey) * relative
 		);
 	}
-
+	
 	public double toLineCoordinate(Point2D v) {
 		Segment[] segments = getSegments();
 		return LinAlg.toLineCoordinates(

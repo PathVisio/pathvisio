@@ -36,7 +36,7 @@ public class ElbowConnectorShape extends AbstractConnector {
 		WayPoint[] wps = calculateWayPoints(restrictions);
 		setSegments(calculateSegments(restrictions, wps));
 		setWayPoints(wayPointsToCenter(wps, getSegments()));
-		setShape(calculateShape(getSegments()));
+		setShape(calculateShape());
 	}
 
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions) {
@@ -52,6 +52,10 @@ public class ElbowConnectorShape extends AbstractConnector {
 		return waypoints;
 	}
 
+	protected Shape calculateShape() {
+		return calculateShape(getSegments());
+	}
+	
 	protected Shape calculateShape(Segment[] segments) {
 		GeneralPath path = new GeneralPath();
 		int i = 0;

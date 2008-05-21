@@ -27,8 +27,18 @@ import java.awt.geom.Point2D;
  *
  */
 public class CurvedConnectorShape extends ElbowConnectorShape {
+	Segment[] elbowSegments; //The original segments of the elbow connector
 	CurvedSegment[] curvedSegments; //The elbow segment with bezier points
-	Segment[] curve; //Calculated curve broken down into small segments
+	//Higher resolution approximation of the curve
+	//Used for calculating the anchor position
+	Segment[] curveHigh;
+	//Lower resolution approximation of the curve
+	//Used for calculating the arrow heads
+	Segment[] curveLow;
+	
+	protected Shape calculateShape() {
+		return calculateShape(elbowSegments);
+	}
 	
 	public Shape calculateShape(Segment[] segments) {
 		GeneralPath path = new GeneralPath();
@@ -58,13 +68,13 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 			);
 		}
 		
-		//Custom curve calculation (for testing)
-//		Segment[] curve = calculateCurve();
+//		//Custom curve calculation (for testing)
+//		Segment[] curve = calculateCurve(NRSTEP_LOW);
 //		path.moveTo(curve[0].getMStart().getX(), curve[0].getMStart().getY());
 //		for(int i = 0; i < curve.length; i++) {
-//			path.lineTo(curve[i].getME		CurvedSegment[] curvedSegments = calculateCurvedSegments(segments);
+//			path.lineTo(curve[i].getMEnd().getX(), curve[i].getMEnd().getY());
 //		}
-//		
+		
 		return path;
 	}
 	
@@ -75,13 +85,14 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 	 */
 	protected Segment[] calculateSegments(ConnectorRestrictions restrictions,
 			WayPoint[] waypoints) {
-		Segment[] segments = super.calculateSegments(restrictions, waypoints);
+		elbowSegments = super.calculateSegments(restrictions, waypoints);
 		
 		//Also calculate curved segments
-		curvedSegments = calculateCurvedSegments(segments);
-		curve = calculateCurve();
+		curvedSegments = calculateCurvedSegments(elbowSegments);
+		curveHigh = calculateCurve(NRSTEP_HIGH);
+		curveLow = calculateCurve(NRSTEP_LOW);
 		
-		return segments;
+		return curveHigh;
 	}
 	
 	/**
@@ -118,7 +129,8 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 		return curvedSegments;
 	}
 	
-	static final int NRSTEP = 10;
+	static final int NRSTEP_LOW = 3; //Number of steps for lowres curve
+	static final int NRSTEP_HIGH = 10; //Number of steps for highres curve
 	
 	/**
 	 * Calculates the bezier curve, using NRSTEP segments for each
@@ -126,15 +138,15 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 	 * @see calculateCurvedSegments
 	 * @return An array with the curve broken down into small segments
 	 */
-	protected Segment[] calculateCurve() {
-		curve = new Segment[NRSTEP * curvedSegments.length];
+	protected Segment[] calculateCurve(int nrStep) {
+		curveHigh = new Segment[nrStep * curvedSegments.length];
 		
 		for(int i = 0; i < curvedSegments.length; i++) {
 			CurvedSegment cs = curvedSegments[i];
 			Point2D prev = cs.getMStart();
 			
-			for(int j = 0; j < NRSTEP; j++) {
-				double t = j * 1.0/(NRSTEP-1);
+			for(int j = 0; j < nrStep; j++) {
+				double t = (j + 1) * 1.0/nrStep;
 				double xe = bezier(
 						cs.getMStart().getX(), 
 						cs.getC1().getX(), 
@@ -149,12 +161,12 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 						cs.getMEnd().getY(),
 						t
 				);
-				curve[i * NRSTEP + j] = 
+				curveHigh[i * nrStep + j] = 
 					new Segment(prev, new Point2D.Double(xe, ye));
 				prev = new Point2D.Double(xe, ye);
 			}
 		}
-		return curve;
+		return curveHigh;
 	}
 	
 	/**
@@ -199,6 +211,11 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 	}
 	
 	public Point2D fromLineCoordinate(double l) {
-		return super.fromLineCoordinate(l, curve);
+		return super.fromLineCoordinate(l, curveLow);
+	}
+	
+	protected WayPoint[] wayPointsToCenter(WayPoint[] waypoints,
+			Segment[] segments) {
+		return super.wayPointsToCenter(waypoints, elbowSegments);
 	}
 }

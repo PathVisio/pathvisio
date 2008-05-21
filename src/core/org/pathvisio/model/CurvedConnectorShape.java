@@ -46,8 +46,8 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 		CurvedSegment[] curvedSegments = calculateCurvedSegments(segments);
 		
 		path.moveTo(
-			curvedSegments[0].getMStart().getX(),
-			curvedSegments[0].getMStart().getY()
+			(float)curvedSegments[0].getMStart().getX(),
+			(float)curvedSegments[0].getMStart().getY()
 		);
 		
 		Segment first = segments[0];
@@ -59,12 +59,12 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 		for(int i = 0; i < curvedSegments.length; i++) {
 			CurvedSegment cs = curvedSegments[i];
 			path.curveTo(
-					cs.getC1().getX(),
-					cs.getC1().getY(),
-					cs.getC2().getX(),
-					cs.getC2().getY(),
-					cs.getMEnd().getX(),
-					cs.getMEnd().getY()
+					(float)cs.getC1().getX(),
+					(float)cs.getC1().getY(),
+					(float)cs.getC2().getX(),
+					(float)cs.getC2().getY(),
+					(float)cs.getMEnd().getX(),
+					(float)cs.getMEnd().getY()
 			);
 		}
 		

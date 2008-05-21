@@ -27,40 +27,178 @@ import java.awt.geom.Point2D;
  *
  */
 public class CurvedConnectorShape extends ElbowConnectorShape {
-
+	CurvedSegment[] curvedSegments; //The elbow segment with bezier points
+	Segment[] curve; //Calculated curve broken down into small segments
+	
 	public Shape calculateShape(Segment[] segments) {
 		GeneralPath path = new GeneralPath();
+		
+		CurvedSegment[] curvedSegments = calculateCurvedSegments(segments);
+		
+		path.moveTo(
+			curvedSegments[0].getMStart().getX(),
+			curvedSegments[0].getMStart().getY()
+		);
+		
 		Segment first = segments[0];
-		Segment last = segments[segments.length - 1];
 		path.moveTo(
 				(float)first.getMStart().getX(), 
 				(float)first.getMStart().getY()
 		);
+		
+		for(int i = 0; i < curvedSegments.length; i++) {
+			CurvedSegment cs = curvedSegments[i];
+			path.curveTo(
+					cs.getC1().getX(),
+					cs.getC1().getY(),
+					cs.getC2().getX(),
+					cs.getC2().getY(),
+					cs.getMEnd().getX(),
+					cs.getMEnd().getY()
+			);
+		}
+		
+		//Custom curve calculation (for testing)
+//		Segment[] curve = calculateCurve();
+//		path.moveTo(curve[0].getMStart().getX(), curve[0].getMStart().getY());
+//		for(int i = 0; i < curve.length; i++) {
+//			path.lineTo(curve[i].getME		CurvedSegment[] curvedSegments = calculateCurvedSegments(segments);
+//		}
+//		
+		return path;
+	}
+	
+	/**
+	 * Also calculates curvedSegments and curve
+	 * @see calculateCurvedSegments
+	 * @see calculateCurve
+	 */
+	protected Segment[] calculateSegments(ConnectorRestrictions restrictions,
+			WayPoint[] waypoints) {
+		Segment[] segments = super.calculateSegments(restrictions, waypoints);
+		
+		//Also calculate curved segments
+		curvedSegments = calculateCurvedSegments(segments);
+		curve = calculateCurve();
+		
+		return segments;
+	}
+	
+	/**
+	 * Based on the given elbow segments, calculate a new segment 
+	 * and control points for each bezier curve.
+	 */
+	protected CurvedSegment[] calculateCurvedSegments(Segment[] segments) {
+		CurvedSegment[] curvedSegments = new CurvedSegment[segments.length - 1];
+		
+		Segment first = segments[0];
+		Segment last = segments[segments.length - 1];
+
 		Point2D prev = first.getMStart();
 		
 		for(int i = 1; i < segments.length - 1; i++) {
 			Segment s = segments[i];
 			Point2D center = s.getMCenter();
 			Point2D start = s.getMStart();
-			path.curveTo(
-					(float)prev.getX(),
-					(float)prev.getY(),
-					(float)start.getX(),
-					(float)start.getY(),
-					(float)center.getX(),
-					(float)center.getY()
+			curvedSegments[i - 1] = new CurvedSegment(
+				prev,
+				center,
+				prev,
+				start
 			);
 			prev = s.getMCenter();
 		}
 		
-		path.curveTo(
-				(float)last.getMStart().getX(),
-				(float)last.getMStart().getY(),
-				(float)last.getMEnd().getX(),
-				(float)last.getMEnd().getY(),
-				(float)last.getMEnd().getX(),
-				(float)last.getMEnd().getY()
+		curvedSegments[curvedSegments.length - 1] = new CurvedSegment(
+			prev,
+			last.getMEnd(),
+			last.getMStart(),
+			last.getMEnd()
 		);
-		return path;
+		return curvedSegments;
+	}
+	
+	static final int NRSTEP = 10;
+	
+	/**
+	 * Calculates the bezier curve, using NRSTEP segments for each
+	 * curvedSegment.
+	 * @see calculateCurvedSegments
+	 * @return An array with the curve broken down into small segments
+	 */
+	protected Segment[] calculateCurve() {
+		curve = new Segment[NRSTEP * curvedSegments.length];
+		
+		for(int i = 0; i < curvedSegments.length; i++) {
+			CurvedSegment cs = curvedSegments[i];
+			Point2D prev = cs.getMStart();
+			
+			for(int j = 0; j < NRSTEP; j++) {
+				double t = j * 1.0/(NRSTEP-1);
+				double xe = bezier(
+						cs.getMStart().getX(), 
+						cs.getC1().getX(), 
+						cs.getC2().getX(), 
+						cs.getMEnd().getX(), 
+						t
+				);
+				double ye = bezier(
+						cs.getMStart().getY(),
+						cs.getC1().getY(),
+						cs.getC2().getY(),
+						cs.getMEnd().getY(),
+						t
+				);
+				curve[i * NRSTEP + j] = 
+					new Segment(prev, new Point2D.Double(xe, ye));
+				prev = new Point2D.Double(xe, ye);
+			}
+		}
+		return curve;
+	}
+	
+	/**
+	 * Function for the cubic bezier curve
+	 * @param p0 The start coordinate
+	 * @param p1 The first helper coordinate
+	 * @param p2 The second helper coordinate
+	 * @param p3 The end coordinate
+	 * @param t The relative position in the curve (0 <= t <= 1)
+	 * @return The coordinate on the curve for t
+	 */
+	private double bezier(double p0, double p1, double p2, double p3, double t) {
+		return 	(pow((1-t), 3))*p0 + 3*t*pow((1-t),2)*p1 + 
+				3*pow(t, 2)*(1-t)*p2 + pow(t, 3)*p3;
+	}
+	
+	private double pow(double a, double b) {
+		return Math.pow(a, b);
+	}
+	
+	/**
+	 * Segment for curved connector, also stores bezier control points
+	 * @author thomas
+	 */
+	private class CurvedSegment extends Segment {
+		private Point2D c1;
+		private Point2D c2;
+		
+		public CurvedSegment(Point2D start, Point2D end, Point2D c1, Point2D c2) {
+			super(start, end);
+			this.c1 = c1;
+			this.c2 = c2;
+		}
+		
+		public Point2D getC1() {
+			return c1;
+		}
+		
+		public Point2D getC2() {
+			return c2;
+		}
+	}
+	
+	public Point2D fromLineCoordinate(double l) {
+		return super.fromLineCoordinate(l, curve);
 	}
 }

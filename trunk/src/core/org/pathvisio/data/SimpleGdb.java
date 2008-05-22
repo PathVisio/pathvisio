@@ -234,10 +234,6 @@ public class SimpleGdb implements Gdb
 	}
 
 	/**
-	 * Directory containing HTML files needed to display the backpage information
-	 */
-	final static String BPDIR = "backpage";
-	/**
 	 * Header file, containing style information
 	 */
 	final static String HEADERFILE = "header.html";
@@ -256,7 +252,7 @@ public class SimpleGdb implements Gdb
 	private static void initializeHeader() {
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
-					Engine.getCurrent().getResourceURL(BPDIR + "/" + HEADERFILE).openStream()));
+					Engine.getCurrent().getResourceURL(HEADERFILE).openStream()));
 			String line;
 			backpagePanelHeader = "";
 			while((line = input.readLine()) != null) {

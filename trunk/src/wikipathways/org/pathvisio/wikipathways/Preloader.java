@@ -38,7 +38,7 @@ public class Preloader extends Applet {
 		};
 
 		String[] resources = new String[] {
-			"icons/export.gif", //Triggers resources.jar
+			"export.gif", //Triggers resources.jar
 		};
 		
 		new PreloaderThread(classes, resources).start();

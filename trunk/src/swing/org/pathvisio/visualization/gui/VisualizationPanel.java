@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -15,7 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.pathvisio.Engine;
+import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.visualization.VisualizationMethod;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -39,9 +40,8 @@ public class VisualizationPanel extends JPanel implements PropertyChangeListener
 		setLayout(layout);
 		
 		visCombo = new JComboBox();
-		
 		DropDownButton visButton = new DropDownButton(new ImageIcon(
-				Engine.getCurrent().getResourceURL("icons/edit.gif"))
+				Engine.getCurrent().getResourceURL("edit.gif"))
 		);
 		JMenuItem m_new = new JMenuItem(ACTION_NEW);
 		JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);
@@ -78,12 +78,24 @@ public class VisualizationPanel extends JPanel implements PropertyChangeListener
 	}
 	
 	private void refresh() {
+		methodPanel .removeAll();
 		if(vizMgr != null) {
+			Visualization v = vizMgr.getActiveVisualization();
+			
 			visCombo.setModel(new DefaultComboBoxModel(
 					vizMgr.getVisualizations().toArray()
 			));
+			
+			visCombo.setSelectedItem(v);
+			
+			if(v != null) {
+				for(VisualizationMethod m : v.getMethods()) {
+					methodPanel.add(new MethodPanel(m));
+				}
+			}
 		} else {
 			visCombo.setModel(new DefaultComboBoxModel());
 		}
+		revalidate();
 	}
 }

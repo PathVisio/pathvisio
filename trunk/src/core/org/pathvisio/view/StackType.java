@@ -17,12 +17,12 @@
 package org.pathvisio.view;
 
 public enum StackType {	
-	CENTERX("Center X", "Stack vertical center", "icons/stackverticalcenter.gif"),
-	CENTERY("Center Y", "Stack horizontal center", "icons/stackhorizontalcenter.gif"),
-	LEFT("Left", "Stack vertical left", "icons/stackverticalleft.gif"),
-	RIGHT("Right", "Stack veritcal right", "icons/stackverticalright.gif"),
-	TOP("Top", "Stack horizontal top", "icons/stackhorizontaltop.gif"),
-	BOTTOM("Bottom", "Stack horizontal bottom", "icons/stackhorizontalbottom.gif"),
+	CENTERX("Center X", "Stack vertical center", "stackverticalcenter.gif"),
+	CENTERY("Center Y", "Stack horizontal center", "stackhorizontalcenter.gif"),
+	LEFT("Left", "Stack vertical left", "stackverticalleft.gif"),
+	RIGHT("Right", "Stack veritcal right", "stackverticalright.gif"),
+	TOP("Top", "Stack horizontal top", "stackhorizontaltop.gif"),
+	BOTTOM("Bottom", "Stack horizontal bottom", "stackhorizontalbottom.gif"),
 	;
 	
 	String label;

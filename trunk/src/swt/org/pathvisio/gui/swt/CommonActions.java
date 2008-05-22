@@ -49,7 +49,7 @@ public class CommonActions
 			setText ("&Undo@Ctrl+Z");
 			setToolTipText ("Undo last action");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getCurrent().getResourceURL("icons/undo.gif")));
+					Engine.getCurrent().getResourceURL("undo.gif")));
 			setEnabled(false);
 			Engine.getCurrent().addApplicationEventListener(this);
 		}
@@ -87,7 +87,7 @@ public class CommonActions
 			setText ("&New pathway@Ctrl+N");
 			setToolTipText ("Create new pathway");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getCurrent().getResourceURL("icons/new.gif")));
+					Engine.getCurrent().getResourceURL("new.gif")));
 		}
 		public void run ()
 		{			
@@ -109,7 +109,7 @@ public class CommonActions
 			window = w;
 			setText ("&Open pathway@Ctrl+O");
 			setToolTipText ("Open pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("icons/open.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("open.gif")));
 		}
 		public void run () 
 		{
@@ -367,7 +367,7 @@ public class CommonActions
 			window = w;
 			setText ("&Save pathway@Ctrl+S");
 			setToolTipText ("Save pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("icons/save.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("save.gif")));
 		}
 		
 		public void run ()
@@ -404,7 +404,7 @@ public class CommonActions
 		public SwitchEditModeAction (MainWindowBase w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("icons/edit.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("edit.gif")));
 			setToolTipText(ttUnChecked);
 			window = w;
 			

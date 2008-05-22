@@ -46,8 +46,15 @@ public class Visualization
 	 */
 	public Visualization(String name) {
 		this.name = name;
+		loadMethods(VisualizationMethodRegistry.getCurrent());
 	}
 		
+	void loadMethods(VisualizationMethodRegistry mr) {
+		for(String name : mr.getRegisteredMethods()) {
+			methods.add(mr.createVisualizationMethod(name, this));
+		}
+	}
+	
 	/**
 	 * Get the name of this {@link Visualization}
 	 * @return the name
@@ -163,5 +170,9 @@ public class Visualization
 	public boolean equals(Object o) {
 		if(o instanceof Visualization) return ((Visualization)o).getName().equals(name);
 		return false;
+	}
+	
+	public String toString() {
+		return name;
 	}
 }

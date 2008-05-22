@@ -2,6 +2,7 @@ package org.pathvisio.visualization;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Creates a VisualizationMethod instance by name.
@@ -33,6 +34,9 @@ public class VisualizationMethodRegistry {
 		methodProviders.remove(name);
 	}
 	
+	public Set<String> getRegisteredMethods() {
+		return methodProviders.keySet();
+	}
 	/**
 	 * Creates an instance of a VisualizationMethod subclass that is registered
 	 * by the given name. Returns null if there is no subclass registered for the

@@ -61,7 +61,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public URL getIconLocation() {
-			return  Engine.getCurrent().getResourceURL("icons/new" + getName().toLowerCase() + ".gif");
+			return  Engine.getCurrent().getResourceURL("new" + getName().toLowerCase() + ".gif");
 		}
 	}
 	public static class LineTemplate extends SingleElementTemplate {
@@ -248,7 +248,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public URL getIconLocation() {
-			return  Engine.getCurrent().getResourceURL("icons/new" + getName().toLowerCase() + ".gif");
+			return  Engine.getCurrent().getResourceURL("new" + getName().toLowerCase() + ".gif");
 		}
 	}
 	

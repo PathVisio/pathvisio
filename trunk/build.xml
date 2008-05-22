@@ -511,9 +511,9 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	<target name="test" depends="compile-core">
 		<javac srcdir="src/test" debug="true" 
 					includes="**"
+					excludes="**/visualization/**"
 					destdir="${build.core.dir}"
 					source="1.5">
-					<exclude name="**/visualization/**"/>
 					<classpath refid="project.core.class.path"/>
 		</javac>
 		<junit printsummary="on" haltonfailure="true" fork="true">
@@ -522,6 +522,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			<batchtest>
 				<fileset dir="src/test">
 					<include name="**/Test.java"/>
+					<exclude name="**/data/Test.java"/>
 				</fileset>
 			</batchtest>
 		</junit>

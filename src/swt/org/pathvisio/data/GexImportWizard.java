@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
@@ -916,7 +917,7 @@ public class GexImportWizard extends Wizard
 				//this has to be done after re-connecting to the pgex.
 				createDefaultColorSet(importInformation.getMinimum(), importInformation.getMaximum());
 				importPage.setTitle("Import finished");
-				importPage.setDescription("Press finish to return to " + Globals.APPLICATION_VERSION_NAME);
+				importPage.setDescription("Press finish to return to " + Engine.getApplicationName());
 				progressText.setText("Data has been imported. \n\n");
 				
 				// Show a list of errors

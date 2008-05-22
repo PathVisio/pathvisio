@@ -291,7 +291,7 @@ public class CommonActions
 		{
 			window = w;
 			setText ("&About");
-			setToolTipText ("About " + Globals.APPLICATION_VERSION_NAME);
+			setToolTipText ("About " + Engine.getApplicationName());
 		}
 		public void run () {
 			AboutDlg gmmlAboutBox = new AboutDlg(window.getShell(), SWT.NONE);
@@ -309,7 +309,7 @@ public class CommonActions
 		{
 			window = w;
 			setText ("&Help@F1");
-			setToolTipText ("Opens " + Globals.APPLICATION_VERSION_NAME + " help in your web browser");
+			setToolTipText ("Opens " + Engine.getApplicationName()+ " help in your web browser");
 		}
 		public void run ()
 		{

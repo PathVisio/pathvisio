@@ -24,6 +24,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.view.MIMShapes;
 
 /**
  * Static utility class for user interface initialization. The {@link #init()} method
@@ -38,6 +39,7 @@ public class GuiInit {
 	public static void init() {
 		initImporters();
 		initExporters();
+		MIMShapes.registerShapes();
 		try {
 			GlobalPreference.FILE_LOG.setDefault(
 					new File(Engine.getCurrent().getApplicationDir(), ".PathVisioLog").toString()

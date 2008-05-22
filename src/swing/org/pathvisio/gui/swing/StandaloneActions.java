@@ -46,6 +46,7 @@ public class StandaloneActions
 	public static final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
 	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
 	public static final Action importGexDataAction = new ImportGexDataAction();
+	public static final Action aboutAction = new AboutAction();
 	
 	/**
 	 * Open the online help in a browser window.
@@ -180,7 +181,23 @@ public class StandaloneActions
 		{
 			try 
 			{
-				DBConnectorSwing dbcon = SwingEngine.getCurrent().getSwingDbConnector(DBConnector.TYPE_GDB);
+				/**
+				 * Get the preferred database connector to connect to Gex or Gdb databases, 
+				 * and try to cast it to swingDbConnector.
+				 * throws an exception if that fails
+				 */
+				DBConnectorSwing dbcon;
+				DBConnector dbc = Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
+				if(dbc instanceof DBConnectorSwing) 
+				{
+					dbcon = (DBConnectorSwing)dbc;
+				} 
+				else 
+				{
+					//TODO: better handling of error
+					throw new IllegalArgumentException("Not a Swing database connector");
+				}
+
 				String dbName = dbcon.openChooseDbDialog(null);
 				
 				if(dbName == null) return;
@@ -199,5 +216,26 @@ public class StandaloneActions
 		}
 	}
 	
+	/**
+	 * Open the about dialog,
+	 * showing a list of authors and the current program version
+	 */
+	public static class AboutAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public AboutAction() 
+		{
+			super();
+			putValue(NAME, "About");
+			putValue(SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+			putValue(LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			AboutDlg.createAndShowGUI();
+		}
+	}
 
 }

@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 
@@ -52,13 +53,13 @@ public class AboutDlg extends Dialog
 		Shell parent = getParent();
 		final Shell shell = new Shell (parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 
-		shell.setText ("About " + Globals.APPLICATION_VERSION_NAME);		
+		shell.setText ("About " + Engine.getApplicationName());		
 		GridLayout ly = new GridLayout();
 		ly.numColumns = 2;
 		shell.setLayout (ly);
 		
 		Label lbl = new Label (shell, SWT.NULL);
-		lbl.setText (Globals.APPLICATION_VERSION_NAME + "\nRevision: " + Revision.REVISION);
+		lbl.setText (Engine.getApplicationName() + "\nRevision: " + Revision.REVISION);
 		GridData gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
 		gd.horizontalSpan = 2;		
 		lbl.setLayoutData (gd);

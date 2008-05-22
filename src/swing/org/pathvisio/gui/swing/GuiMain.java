@@ -17,8 +17,11 @@
 package org.pathvisio.gui.swing;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -27,6 +30,7 @@ import javax.swing.UIManager;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.Preference;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -79,8 +83,38 @@ public class GuiMain {
 		this.args = args;
 	}
 	
-	public static void main(String[] args) {
+	/**
+	 * Load preferences from file
+	 */
+	private void loadPreferences()
+	{
+		Properties stored = new Properties();
+		File propfile = new File(System.getProperty("user.home") + File.separator + 
+				".PathVisio" + File.separator + ".PathVisio");
+		
+		try
+		{
+			stored.load(new FileInputStream(propfile));
+	
+			for (Preference p : GlobalPreference.values())
+			{
+				if (stored.contains(p.name()))
+				{
+					p.setValue(stored.getProperty(p.name()));
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			Logger.log.error ("Couldn't read properties ", e);
+		}
+		
+	}
+	
+	public static void main(String[] args) 
+	{
 		final GuiMain gui = new GuiMain();
+		gui.loadPreferences();
 		gui.args = args;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

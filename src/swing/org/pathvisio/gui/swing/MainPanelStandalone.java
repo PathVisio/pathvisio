@@ -47,7 +47,7 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(actions.copyAction, editMenu);
 		addToMenu(actions.pasteAction, editMenu);
 		editMenu.addSeparator();
-		addToMenu(actions.preferencesAction, editMenu);
+		addToMenu(StandaloneActions.preferencesAction, editMenu);
 		
 		JMenu selectionMenu = new JMenu("Selection");
 		JMenu alignMenu = new JMenu("Align");

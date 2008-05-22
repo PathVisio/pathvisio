@@ -6,19 +6,21 @@ RUN_MODE=DIRECT
 MAIN_CLASS=org.pathvisio.gui.swing.GuiMain
 # BASE_URL contains the webstart url (without pathvisio_v1.jnlp or pathvisio_v2.jnlp)
 BASE_URL=
-# Set USE_EXPERIMENTAL to 1 if you want to run with Data visualizatoin and R mode
-USE_EXPERIMENTAL=1
+# USE_SWING = 1 for swing version, 0 for swt version
+USE_SWING=1
 
 while getopts ":gerdsj" options; do
 	case $options in
 		g )
-			USE_EXPERIMENTAL=1
+			USE_SWING=1
 			RUN_MODE=DIRECT
 			MAIN_CLASS=org.pathvisio.gui.swing.GuiMain
 			BASE_URL=
 			;;
 		s )
-			USE_EXPERIMENTAL=0
+			USE_SWING=0
+			RUN_MODE=DIRECT
+			MAIN_CLASS=org.pathvisio.gui.swt.GuiMain
 			;;
 		r )
 			RUN_MODE=WEBSTART
@@ -40,7 +42,6 @@ while getopts ":gerdsj" options; do
 			echo "  -g : swing version instead of swt"
 			echo "  -r : Use webstart, latest stable release"
 			echo "  -d : Use webstart, daily build"
-			echo "  -e : swt version with experimental features (Data visualization, statistics)"
 			echo "  -s : Turn off experimental features (default)"
 			echo "  -j : Use jar"
 			echo "  -? : show this help message"
@@ -59,21 +60,17 @@ MYCLASSPATH1=$PATHVISIO_CP:build/swt:build/gui:build/core
 MYCLASSPATH2=$PATHVISIO_CP:build/swing:build/gui:build/core
 
 if [ $RUN_MODE = "DIRECT" ]; then
-	if [ $USE_EXPERIMENTAL = "0" ]; then
-		java -classpath $MYCLASSPATH1 $MAIN_CLASS
-	elif [ $USE_EXPERIMENTAL = "1" ]; then
-		java -classpath $MYCLASSPATH3 $MAIN_CLASS
+	if [ $USE_SWING = "0" ]; then
+		java -classpath $MYCLASSPATH1 $MAIN_CLASS "$@"
+	elif [ $USE_SWING = "1" ]; then
+		java -classpath $MYCLASSPATH2 $MAIN_CLASS "$@"
 	fi	
 elif [ $RUN_MODE = "WEBSTART" ]; then
-	if [ $USE_EXPERIMENTAL = "0" ]; then
-		javaws "$BASE_URL/pathvisio_v1.jnlp"
-	elif [ $USE_EXPERIMENTAL = "1" ]; then
-		javaws "$BASE_URL/pathvisio_v2.jnlp" -ur
-	fi
+	javaws "$BASE_URL/pathvisio_v1.jnlp"
 elif [ $RUN_MODE = "JAR" ]; then
-	if [ $USE_EXPERIMENTAL = "0" ]; then
+	if [ $USE_SWING = "0" ]; then
 		java -jar pathvisio_v1.jar
-	elif [ $USE_EXPERIMENTAL = "1" ]; then
+	elif [ $USE_SWING = "1" ]; then
 		java -jar pathvisio_v2.jar
 	fi	
 fi

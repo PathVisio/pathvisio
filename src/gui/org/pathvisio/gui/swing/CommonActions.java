@@ -66,10 +66,10 @@ import org.pathvisio.view.ViewActions.UndoAction;
  * @see {@link ViewActions}
  */
 public class CommonActions implements ApplicationEventListener {
-	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("icons/save.gif");
-	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("icons/saveas.gif");
-	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("icons/import.gif");
-	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("icons/export.gif");
+	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("save.gif");
+	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("saveas.gif");
+	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("import.gif");
+	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("export.gif");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {

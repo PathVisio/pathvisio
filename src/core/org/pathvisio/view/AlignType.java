@@ -17,14 +17,14 @@
 package org.pathvisio.view;
 
 public enum AlignType {
-	CENTERX("Center X", "Align horizontal centers", "icons/aligncenterx.gif"),
-	CENTERY("Center Y", "Align vertical centers", "icons/aligncentery.gif"),
-	LEFT("Left", "Align left edges", "icons/alignleft.gif"),
-	RIGHT("Right", "Align right edges", "icons/alignright.gif"),
-	TOP("Top", "Align top edges", "icons/aligntop.gif"),
-	BOTTOM("Bottom", "Align bottom edges", "icons/alignbottom.gif"),
-	WIDTH("Width", "Set common width", "icons/sizewidth.gif"),
-	HEIGHT("Height", "Set common height", "icons/sizeheight.gif"),
+	CENTERX("Center X", "Align horizontal centers", "aligncenterx.gif"),
+	CENTERY("Center Y", "Align vertical centers", "aligncentery.gif"),
+	LEFT("Left", "Align left edges", "alignleft.gif"),
+	RIGHT("Right", "Align right edges", "alignright.gif"),
+	TOP("Top", "Align top edges", "aligntop.gif"),
+	BOTTOM("Bottom", "Align bottom edges", "alignbottom.gif"),
+	WIDTH("Width", "Set common width", "sizewidth.gif"),
+	HEIGHT("Height", "Set common height", "sizeheight.gif"),
 	;
 	
 	String label;

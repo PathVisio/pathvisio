@@ -273,23 +273,23 @@ public class GuiMain {
 		imageRegistry.put("data.protein",
 				new Image(display, img));
 		imageRegistry.put("sidepanel.minimize",
-				ImageDescriptor.createFromURL(cl.getResource("icons/minimize.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("minimize.gif")));
 		imageRegistry.put("sidepanel.hide",
-				ImageDescriptor.createFromURL(cl.getResource("icons/close.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("close.gif")));
 		imageRegistry.put("shell.icon", 
 				ImageDescriptor.createFromURL(cl.getResource("images/bigcateye.gif")));
 		imageRegistry.put("about.logo",
 				ImageDescriptor.createFromURL(cl.getResource("images/logo.jpg")));
 						imageRegistry.put("checkbox.unchecked",
-				ImageDescriptor.createFromURL(cl.getResource("icons/unchecked.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("unchecked.gif")));
 		imageRegistry.put("checkbox.unavailable",
-				ImageDescriptor.createFromURL(cl.getResource("icons/unchecked_unavailable.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("unchecked_unavailable.gif")));
 		imageRegistry.put("checkbox.checked",
-				ImageDescriptor.createFromURL(cl.getResource("icons/checked.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("checked.gif")));
 		imageRegistry.put("tree.collapsed",
-				ImageDescriptor.createFromURL(cl.getResource("icons/tree_collapsed.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("tree_collapsed.gif")));
 		imageRegistry.put("tree.expanded",
-				ImageDescriptor.createFromURL(cl.getResource("icons/tree_expanded.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("tree_expanded.gif")));
 		SwtEngine.getCurrent().setImageRegistry(imageRegistry);
 	}
 	

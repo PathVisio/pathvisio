@@ -55,11 +55,11 @@ public class NewElementAction extends Action
 		switch(menu) {
 		case MENULINE:
 			tooltip = "Draw new line or arrow";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newlinemenu.gif");
+			imageURL = Engine.getCurrent().getResourceURL("newlinemenu.gif");
 			break;
 		case MENULINESHAPE:
 			tooltip = "Draw new ligand or receptor";
-			imageURL = Engine.getCurrent().getResourceURL("icons/newlineshapemenu.gif");
+			imageURL = Engine.getCurrent().getResourceURL("newlineshapemenu.gif");
 		}
 		setChecked(false);
 		setToolTipText(tooltip);

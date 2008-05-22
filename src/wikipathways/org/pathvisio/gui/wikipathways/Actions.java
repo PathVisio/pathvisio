@@ -55,7 +55,7 @@ public class Actions {
 		private static final long serialVersionUID = 1L;
 
 		public ImportAction(UserInterfaceHandler h, WikiPathways w) {
-			super(h, w, "Import", new ImageIcon(Engine.getCurrent().getResourceURL("icons/import.gif")));
+			super(h, w, "Import", new ImageIcon(Engine.getCurrent().getResourceURL("import.gif")));
 			putValue(Action.SHORT_DESCRIPTION, "Import pathway from a file on your computer");
 			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats on your computer");;
 		}
@@ -78,7 +78,7 @@ public class Actions {
 		String description;
 
 		public ExitAction(UserInterfaceHandler h, WikiPathways w, boolean save, String description) {
-			super(h, w, "Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("icons/apply.gif") : Engine.getCurrent().getResourceURL("icons/cancel.gif")));
+			super(h, w, "Finish", new ImageIcon(save ? Engine.getCurrent().getResourceURL("apply.gif") : Engine.getCurrent().getResourceURL("cancel.gif")));
 			this.description = description;
 			doSave = save;
 			String descr = doSave ? "Save pathway and close editor" : "Close the editor";
@@ -93,7 +93,7 @@ public class Actions {
 		String description;
 
 		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w, String description) {
-			super(h, w, "Save to ", new ImageIcon(Engine.getCurrent().getResourceURL("icons/savetoweb.gif")));
+			super(h, w, "Save to ", new ImageIcon(Engine.getCurrent().getResourceURL("savetoweb.gif")));
 			this.description = description;
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway to " + Globals.SERVER_NAME);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
@@ -122,9 +122,9 @@ public class Actions {
 		 */
 		public static class FullScreenAction extends WikiAction {
 			final ImageIcon imgFull = new ImageIcon(
-					Engine.getCurrent().getResourceURL("icons/fullscreen.gif"));
+					Engine.getCurrent().getResourceURL("fullscreen.gif"));
 			final ImageIcon imgRestore = new ImageIcon(
-					Engine.getCurrent().getResourceURL("icons/restorescreen.gif"));
+					Engine.getCurrent().getResourceURL("restorescreen.gif"));
 			final String tooltip_full = "Switch to fullscreen mode";
 			final String tooltip_restore = "Switch to embedded mode";
 

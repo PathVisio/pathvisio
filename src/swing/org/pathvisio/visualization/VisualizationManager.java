@@ -189,7 +189,7 @@ public class VisualizationManager implements GexManagerListener {
 	/**
 	   List of listeners
 	 */
-	private  Set<VisualizationListener> listeners;
+	private  Set<VisualizationListener> listeners = new HashSet<VisualizationListener>();
 
 	/**
 	 * Add a {@link VisualizationListener}, that will be notified if an
@@ -197,15 +197,11 @@ public class VisualizationManager implements GexManagerListener {
 	 */
 	public  void addListener(VisualizationListener l)
 	{
-		if(listeners == null)
-			listeners = new HashSet<VisualizationListener>();
 		listeners.add(l);
 	}
 
 	public  void removeListener (VisualizationListener l)
 	{
-		if (listeners == null)
-			return;
 		listeners.remove (l);
 	}
 

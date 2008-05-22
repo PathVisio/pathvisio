@@ -253,11 +253,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			if(aa.length == 1) {
 				addToToolbar(aa[0]);
 			} else { //This is the line/receptor sub-menu
-				String icon = "icons/newlinemenu.gif";
+				String icon = "newlinemenu.gif";
 				String tooltip = "Select a line to draw"; 
 				
 				if(submenu.equals("receptors")) { //Next one is receptors
-					icon = "icons/newlineshapemenu.gif";
+					icon = "newlineshapemenu.gif";
 					tooltip = "Select a receptor/ligand to draw";
 				} else {
 					submenu = "receptors";

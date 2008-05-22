@@ -39,8 +39,8 @@ import edu.stanford.ejalbert.BrowserLauncher;
 
 public class StandaloneActions 
 {
-	public static URL IMG_OPEN = Engine.getCurrent().getResourceURL("icons/open.gif");
-	public static URL IMG_NEW = Engine.getCurrent().getResourceURL("icons/new.gif");
+	public static URL IMG_OPEN = Engine.getCurrent().getResourceURL("open.gif");
+	public static URL IMG_NEW = Engine.getCurrent().getResourceURL("new.gif");
 
 	public static final Action openAction = new OpenAction();
 	public static final Action helpAction = new HelpAction();

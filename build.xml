@@ -8,6 +8,7 @@
 	<property name="build.swing.dir" value="build/swing"/>
 	<property name="build.swt.dir" value="build/swt"/>
 	<property name="build.wikipathways.dir" value="build/wikipathways"/>
+	<property name="build.visplugins.dir" value="build/visplugins"/>
 	
     <property name="apidoc.dir" value="apidoc"/>
 	<property name="webstart.dir" value="webstart"/>
@@ -118,6 +119,7 @@
 		<mkdir dir="${build.swing.dir}"/>
 		<mkdir dir="${build.swt.dir}"/>
 		<mkdir dir="${build.wikipathways.dir}"/>
+		<mkdir dir="${build.visplugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		<mkdir dir="${wikipathways.www.dir}"/>
 		<mkdir dir="${wikipathways.bin.dir}"/>
@@ -153,6 +155,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<delete dir="${build.swt.dir}"/>
 		<delete dir="${build.swing.dir}"/>
 		<delete dir="${build.wikipathways.dir}"/>
+		<delete dir="${build.visplugins.dir}"/>
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
@@ -227,13 +230,21 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</javac>
 	</target>
 	
-	<target name="all" depends="compile-swt,compile-swing,compile-wikipathways" description="Compile all versions of this project" />
+	<target name="compile-visplugins" depends="compile-swing" description="Compile visualization plugin sources">
+		<javac srcdir="plugins/visualization"
+			   includes="**"
+			   destdir="${build.visplugins.dir}"
+			   debug="true"
+			   source="1.5">
+			<classpath refid="project.swing.class.path"/>
+		</javac>
+	</target>
+
+	<target name="all" depends="compile-swt,compile-swing,compile-wikipathways, compile-visplugins" description="Compile all versions of this project" />
 
 	<target name="resources-jar" depends="prepare" description="Generates jar with resources">
 		<jar jarfile="lib/resources.jar">
-			<fileset dir="." includes="backpage/*"/>
-			<fileset dir="." includes="icons/*"/>
-			<fileset dir="." includes="images/*"/>
+			<fileset dir="resources" includes="**"/>
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
 			<fileset dir="." includes="biopax-level2.owl"/>
@@ -276,6 +287,12 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			<fileset dir="${build.v1.dir}" includes="**/*.class"/>	
 		</jar>
     </target>
+
+	<target name="visplugins-jar" depends="compile-visplugins" description="Generates jar with visualization plugins">
+		<jar jarfile="visplugins.jar">
+			<fileset dir="." includes="plugins/visualizatoin/**"/>
+		</jar>
+	</target>
 
 	<target name="diffapplet" depends="compile-wikipathways" description="Generate DiffViewer applet jar file">
 		<jar jarfile="diffview.jar">

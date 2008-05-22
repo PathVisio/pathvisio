@@ -47,6 +47,7 @@ public class StandaloneActions
 	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
 	public static final Action importGexDataAction = new ImportGexDataAction();
 	public static final Action aboutAction = new AboutAction();
+	public static final Action preferencesAction = new PreferencesAction();
 	
 	/**
 	 * Open the online help in a browser window.
@@ -235,6 +236,28 @@ public class StandaloneActions
 		public void actionPerformed(ActionEvent e) 
 		{
 			AboutDlg.createAndShowGUI();
+		}
+	}
+
+	/**
+	 * Show preferences dialog.
+	 * Invoked in menu->edit->preferences
+	 */
+	public static class PreferencesAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		public PreferencesAction() 
+		{
+			super();
+			putValue(NAME, "Preferences");
+			putValue(SHORT_DESCRIPTION, "Edit preferences");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			PreferencesDlg dlg = new PreferencesDlg();
+			dlg.createAndShowGUI();
 		}
 	}
 

@@ -104,7 +104,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		addToMenu(actions.copyAction, editMenu);
 		addToMenu(actions.pasteAction, editMenu);
 		editMenu.addSeparator();
-		addToMenu(actions.preferencesAction, editMenu);
 		
 		JMenu selectionMenu = new JMenu("Selection");
 		JMenu alignMenu = new JMenu("Align");

@@ -28,7 +28,6 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
@@ -105,8 +104,6 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action undoAction = new UndoAction();
 	public final Action exitAction = new ExitAction();
 
-	public final Action preferencesAction = new PreferencesAction();
-	
 	public final Action[] zoomActions = new Action[] {
 			new ZoomToFitAction(),
 			new ZoomAction(10),
@@ -546,27 +543,6 @@ public class CommonActions implements ApplicationEventListener {
 			{
 				System.exit(0);
 			}
-		}
-	}
-
-	/**
-	 * Show preferences dialog.
-	 * Invoked in menu->edit->preferences
-	 */
-	public static class PreferencesAction extends AbstractAction 
-	{
-		private static final long serialVersionUID = 1L;
-
-		public PreferencesAction() 
-		{
-			super();
-			putValue(NAME, "Preferences");
-			putValue(SHORT_DESCRIPTION, "Edit preferences");
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			PreferencesDlg.createAndShowGUI();
 		}
 	}
 

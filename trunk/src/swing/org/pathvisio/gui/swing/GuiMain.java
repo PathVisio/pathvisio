@@ -22,13 +22,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 
@@ -108,11 +110,17 @@ public class GuiMain {
 		{
 			Logger.log.error ("Couldn't read properties ", e);
 		}
-		
 	}
 	
-	public static void main(String[] args) 
-	{
+	static void printHelp() {
+		System.out.println(
+				"Command line parameters:\n" +
+				"-o: A GPML file to open\n" +
+				"-p: A plugin file/directory to load\n"
+		);
+	}
+	
+	public static void main(String[] args) {
 		final GuiMain gui = new GuiMain();
 		gui.loadPreferences();
 		gui.args = args;
@@ -122,32 +130,43 @@ public class GuiMain {
 				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.createAndShowGUI(mps);
 				
-				//Parse command line
-				//Only single argument accepted: pathway file / url
-				//Silently ignore more arguments
-				if(gui.args.length >= 1) {
-					String pws = gui.args[0];
-					URL url = null;
-					try {
-						File f = new File(pws);
-						//Assume the argument is a file
-						if(f.exists()) {
-							url = f.toURL();
-						//If it doesn't exist, assume it's an url
-						} else {
-							url = new URL(pws);
+				List<File> pluginFiles = new ArrayList<File>();
+				URL pathwayUrl = null;
+				
+				//Parse command line parameters
+				String[] args = gui.args;
+				for(int i = 0; i < args.length - 1; i++) {
+					if("-p".equals(args[i])) {
+						pluginFiles.add(new File(args[i + 1]));
+						i++;
+					} else if("-o".equals(args[i])) {
+						String pws = args[i + 1];
+						try {
+							File f = new File(pws);
+							//Assume the argument is a file
+							if(f.exists()) {
+								pathwayUrl = f.toURI().toURL();
+							//If it doesn't exist, assume it's an url
+							} else {
+								pathwayUrl = new URL(pws);
+							}
+						} catch(MalformedURLException e) {
+							printHelp();
+							System.exit(-1);
 						}
-					} catch(MalformedURLException e) {
-						JOptionPane.showMessageDialog(
-								null, 
-								"Unable to open pathway " + pws, 
-								"Error",
-								JOptionPane.ERROR_MESSAGE
-						);
+						i++;
 					}
-					if(url != null) {
-						SwingEngine.getCurrent().openPathway(url);
-					}
+				}
+
+				//Create a plugin manager that loads the plugins
+				if(pluginFiles.size() > 0) {
+					PluginManager pluginManager = new PluginManager(
+							pluginFiles.toArray(new File[0])
+					);
+				}
+				
+				if(pathwayUrl != null) {
+					SwingEngine.getCurrent().openPathway(pathwayUrl);
 				}
 			}
 		});

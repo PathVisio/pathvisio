@@ -32,6 +32,8 @@ import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.visualization.gui.VisualizationDialog;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
@@ -48,7 +50,7 @@ public class StandaloneActions
 	public static final Action importGexDataAction = new ImportGexDataAction();
 	public static final Action aboutAction = new AboutAction();
 	public static final Action preferencesAction = new PreferencesAction();
-	
+
 	/**
 	 * Open the online help in a browser window.
 	 * In menu->help->help or F1
@@ -253,7 +255,7 @@ public class StandaloneActions
 			putValue(NAME, "Preferences");
 			putValue(SHORT_DESCRIPTION, "Edit preferences");
 		}
-
+		
 		public void actionPerformed(ActionEvent e) 
 		{
 			PreferencesDlg dlg = new PreferencesDlg();
@@ -261,4 +263,20 @@ public class StandaloneActions
 		}
 	}
 
+	public static class VisualizationAction extends AbstractAction {
+		MainPanel mainPanel;
+		
+		public VisualizationAction(MainPanel mainPanel) {
+			putValue(NAME, "Visualization options");
+			this.mainPanel = mainPanel;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			new VisualizationDialog(
+					VisualizationManager.getCurrent(),
+					null,
+					mainPanel
+			).setVisible(true);
+		}
+	}
 }

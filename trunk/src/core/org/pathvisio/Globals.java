@@ -16,14 +16,14 @@
 //
 package org.pathvisio;
 
+/**
+ * Global Project-wide Constants
+ */
 public class Globals 
 {
 	public static final String APPLICATION_NAME = "PathVisio";
-	public static final String APPLICATION_VERSION_NAME = "PathVisio (swing version)";
 	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
 	// for inclusion in certain error messages.
 	public static final String DEVELOPER_EMAIL = "martijn.vaniersel@bigcat.unimaas.nl"; 
-	public static final boolean fUseExperimentalFeatures = false;
 	public static final String SERVER_NAME = "WikiPathways.org";
-	public static final boolean IS_APPLET = false;
 }

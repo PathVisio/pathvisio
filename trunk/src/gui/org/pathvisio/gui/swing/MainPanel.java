@@ -123,7 +123,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
 		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(actions.aboutAction);
 		
 		mb.add(fileMenu);
 		mb.add(editMenu);

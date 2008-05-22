@@ -98,7 +98,6 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action saveAsAction = new SaveAsAction();
 	public final Action importAction = new ImportAction();
 	public final Action exportAction = new ExportAction();
-	public final Action aboutAction = new AboutAction();
 	
 	public final Action copyAction = new CopyAction();
 	public final Action pasteAction = new PasteAction();
@@ -522,28 +521,6 @@ public class CommonActions implements ApplicationEventListener {
 		
 		protected String getSelectedPanel() {
 			return PathwayElementDialog.TAB_COMMENTS;
-		}
-	}
-
-	/**
-	 * Open the about dialog,
-	 * showing a list of authors and the current program version
-	 */
-	public static class AboutAction extends AbstractAction 
-	{
-		private static final long serialVersionUID = 1L;
-
-		public AboutAction() 
-		{
-			super();
-			putValue(NAME, "About");
-			putValue(SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
-			putValue(LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			AboutDlg.createAndShowGUI();
 		}
 	}
 

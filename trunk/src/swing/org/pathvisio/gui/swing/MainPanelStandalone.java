@@ -72,7 +72,7 @@ public class MainPanelStandalone extends MainPanel
 		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
 		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(actions.aboutAction);
+		helpMenu.add(StandaloneActions.aboutAction);
 		helpMenu.add(StandaloneActions.helpAction);
 		
 		mb.add(fileMenu);

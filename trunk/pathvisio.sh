@@ -3,21 +3,19 @@
 # RUN_MODE can be "DIRECT" or "WEBSTART"
 RUN_MODE=DIRECT
 # MAIN_CLASS contains the main class to run when RUN_MODE is DIRECT
-MAIN_CLASS=org.pathvisio.gui.swt.GuiMain
+MAIN_CLASS=org.pathvisio.gui.swing.GuiMain
 # BASE_URL contains the webstart url (without pathvisio_v1.jnlp or pathvisio_v2.jnlp)
 BASE_URL=
 # Set USE_EXPERIMENTAL to 1 if you want to run with Data visualizatoin and R mode
-USE_EXPERIMENTAL=0
+USE_EXPERIMENTAL=1
 
 while getopts ":gerdsj" options; do
 	case $options in
 		g )
+			USE_EXPERIMENTAL=1
 			RUN_MODE=DIRECT
 			MAIN_CLASS=org.pathvisio.gui.swing.GuiMain
 			BASE_URL=
-			;;
-		e )
-			USE_EXPERIMENTAL=1
 			;;
 		s )
 			USE_EXPERIMENTAL=0
@@ -39,10 +37,10 @@ while getopts ":gerdsj" options; do
 			;;
 		\? )
 			echo "Usage: `basename $0` [-g|-r|-d|-j] [-e|-s] [-?]"
-			echo "  -g : Use swing instead of swt"
+			echo "  -g : swing version instead of swt"
 			echo "  -r : Use webstart, latest stable release"
 			echo "  -d : Use webstart, daily build"
-			echo "  -e : Turn on experimental features (Data visualization, statistics)"
+			echo "  -e : swt version with experimental features (Data visualization, statistics)"
 			echo "  -s : Turn off experimental features (default)"
 			echo "  -j : Use jar"
 			echo "  -? : show this help message"
@@ -57,14 +55,14 @@ source classpath.sh;
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib/atlas:/usr/lib/firefox
 export MOZILLA_FIVE_HOME=/usr/lib/firefox
 
-MYCLASSPATH1=$PATHVISIO_CP:build/v1:build/core
-MYCLASSPATH2=$PATHVISIO_CP:build/v2:build/core
+MYCLASSPATH1=$PATHVISIO_CP:build/swt:build/gui:build/core
+MYCLASSPATH2=$PATHVISIO_CP:build/swing:build/gui:build/core
 
 if [ $RUN_MODE = "DIRECT" ]; then
 	if [ $USE_EXPERIMENTAL = "0" ]; then
 		java -classpath $MYCLASSPATH1 $MAIN_CLASS
 	elif [ $USE_EXPERIMENTAL = "1" ]; then
-		java -classpath $MYCLASSPATH2 $MAIN_CLASS -ur
+		java -classpath $MYCLASSPATH3 $MAIN_CLASS
 	fi	
 elif [ $RUN_MODE = "WEBSTART" ]; then
 	if [ $USE_EXPERIMENTAL = "0" ]; then

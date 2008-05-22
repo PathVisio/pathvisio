@@ -31,8 +31,6 @@ import javax.swing.filechooser.FileFilter;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
@@ -463,24 +461,6 @@ public class SwingEngine {
 		}
 		// yes or no
 		return true;
-	}
-
-	/**
-	 * Get the preferred database connector to connect to Gex or Gdb databases, 
-	 * and try to cast it to swingDbConnector.
-	 * throws an exception if that fails
-	 */
-	public DBConnectorSwing getSwingDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException 
-	{
-		DBConnector dbc = Engine.getCurrent().getDbConnector(type);
-		if(dbc instanceof DBConnectorSwing) 
-		{
-			return (DBConnectorSwing)dbc;
-		} 
-		else 
-		{
-			throw new IllegalArgumentException("Not a Swing database connector");
-		}
 	}
 
 }

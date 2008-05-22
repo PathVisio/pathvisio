@@ -47,7 +47,7 @@ public class AboutDlg
 	{
 		final JFrame aboutDlg = new JFrame();
 		
-		JLabel versionLabel = new JLabel (Globals.APPLICATION_VERSION_NAME);
+		JLabel versionLabel = new JLabel (Engine.getApplicationName());
 		JLabel revisionLabel = new JLabel (Revision.REVISION);
 		JTextArea label = new JTextArea();
 		label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +

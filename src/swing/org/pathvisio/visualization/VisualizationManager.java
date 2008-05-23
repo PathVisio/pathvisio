@@ -32,16 +32,24 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
+import org.pathvisio.view.VPathwayEvent;
+import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**
  * Maintains the visualizations
  */
-public class VisualizationManager implements GexManagerListener {
+public class VisualizationManager implements GexManagerListener, VPathwayListener, ApplicationEventListener {
 	private static VisualizationManager current;
 	
 	public static VisualizationManager getCurrent() {
@@ -66,6 +74,11 @@ public class VisualizationManager implements GexManagerListener {
 		this.colorSetMgr = colorSetMgr;
 		this.methodRegistry = methodRegistry;
 		GexManager.addListener(this);
+		Engine.getCurrent().addApplicationEventListener(this);
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		if(vp != null) {
+			vp.addVPathwayListener(this);
+		}
 	}
 	
 	/**
@@ -93,7 +106,7 @@ public class VisualizationManager implements GexManagerListener {
 	/**
 	   Set which visualization will be active, by index
 	 */
-	public void setCurrent(int index) {
+	public void setActiveVisualization(int index) {
 		active = index;
 		fireVisualizationEvent(
 				new VisualizationEvent(
@@ -104,9 +117,9 @@ public class VisualizationManager implements GexManagerListener {
 	/**
 	   Set which visualization will be active, by Object	   
 	 */
-	public void setCurrent(Visualization v) {
+	public void setActiveVisualization(Visualization v) {
 		int index = getVisualizations().indexOf(v);
-		if(index > -1) setCurrent(index);
+		if(index > -1) setActiveVisualization(index);
 	}
 
 	/**
@@ -131,6 +144,7 @@ public class VisualizationManager implements GexManagerListener {
 	 */
 	public  void addVisualization(Visualization v) {
 		visualizations.add(v);
+		v.setVisualizationMgr(this);
 		fireVisualizationEvent(
 				new VisualizationEvent(
 					VisualizationManager.class,
@@ -213,6 +227,21 @@ public class VisualizationManager implements GexManagerListener {
 		for(VisualizationListener l : listeners) {
 			l.visualizationEvent(e);
 		}
+	}
+	
+	/**
+	 * Refreshes the vpathway and fires visualization events after
+	 * a visualization has been modified. 
+	 * @param v The visualization that has been modified.
+	 */
+	protected void visualizationModified(Visualization v) {
+		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		if(vp != null) {
+			vp.redraw();
+		}
+		fireVisualizationEvent(new VisualizationEvent(
+			this, VisualizationEvent.VISUALIZATION_MODIFIED	
+		));
 	}
 
 	public void gexManagerEvent(GexManagerEvent e) 
@@ -315,6 +344,24 @@ public class VisualizationManager implements GexManagerListener {
 			
 		}		
 		return doc;
+	}
+
+	
+	public void vPathwayEvent(VPathwayEvent e) {
+		if(e.getType() == VPathwayEvent.ELEMENT_DRAWN) {
+			Visualization v = getActiveVisualization();
+			VPathwayElement elm = e.getAffectedElement();
+			if(v != null && elm instanceof Graphics) {
+				v.visualizeDrawing((Graphics)elm, e.getGraphics2D());
+			}
+		}
+	}
+
+	public void applicationEvent(ApplicationEvent e) {
+		if (e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+			VPathway vp = (VPathway)e.getSource();
+			vp.addVPathwayListener(this);
+		}
 	}
 	
 }

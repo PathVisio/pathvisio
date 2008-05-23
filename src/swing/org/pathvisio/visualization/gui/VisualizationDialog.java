@@ -19,7 +19,7 @@ public class VisualizationDialog extends OkCancelDialog {
 			visMgr.addVisualization(new Visualization("untitled"));
 		}
 		if(visMgr.getActiveVisualization() == null) {
-			visMgr.setCurrent(0);
+			visMgr.setActiveVisualization(0);
 		}
 		visPanel.setVisualizationManager(visMgr);
 		pack();

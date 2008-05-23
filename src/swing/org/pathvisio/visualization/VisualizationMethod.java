@@ -19,6 +19,8 @@ package org.pathvisio.visualization;
 import java.awt.Component;
 import java.awt.Graphics2D;
 
+import javax.swing.JPanel;
+
 import org.jdom.Element;
 import org.pathvisio.view.Graphics;
 
@@ -52,6 +54,14 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * @return The {@link Visualization} this plugin belongs to
 	 */
 	protected final Visualization getVisualization() { return visualization; }
+	
+	/**
+	 * Call this method whenever a setting is modified. It will
+	 * notify the parent visualization of the modification.
+	 */
+	protected final void modified() {
+		visualization.modified();
+	}
 	
 	/**
 	 * Gets the name of this visualization plugin class
@@ -130,6 +140,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	public final void setActive(boolean active) { 
 		if(isActive != active) {
 			isActive = active;
+			modified();
 		}	
 	}
 	/**
@@ -160,6 +171,8 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * @return true if this plugin is configurable, false otherwise
 	 */
 	public final boolean isConfigurable() { return CONFIGURABLE; }
+	
+	public JPanel getConfigurationPanel() { return new JPanel(); }
 	
 	/**
 	 * Returns whether this visualization plugin uses the area provided by

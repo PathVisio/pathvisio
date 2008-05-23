@@ -71,6 +71,7 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		Container contentPane = getContentPane();
 		contentPane.add(dialogPane, BorderLayout.CENTER);
 		contentPane.add(buttonPane, BorderLayout.PAGE_END);
+		
 		pack();
 		setLocationRelativeTo(null); //Center on screen
 		

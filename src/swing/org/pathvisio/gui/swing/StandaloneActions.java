@@ -18,19 +18,24 @@ package org.pathvisio.gui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.gui.VisualizationDialog;
@@ -48,6 +53,7 @@ public class StandaloneActions
 	public static final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
 	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
 	public static final Action importGexDataAction = new ImportGexDataAction();
+	public static final Action selectGexAction = new SelectGexAction();
 	public static final Action aboutAction = new AboutAction();
 	public static final Action preferencesAction = new PreferencesAction();
 
@@ -156,6 +162,54 @@ public class StandaloneActions
 			int ret = wizard.showModalDialog();
 			
 			// ret == (0=Finish,1=Cancel,2=Error) 
+		}
+	}
+	
+	/**
+	 * Let the user open an expression dataset
+	 * @author thomas
+	 */
+	public static class SelectGexAction extends AbstractAction {
+		public SelectGexAction() {
+			putValue(NAME, "Select expression dataset");
+			putValue(SHORT_DESCRIPTION, "Select expression dataset");
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			try 
+			{
+				/**
+				 * Get the preferred database connector to connect to Gex databases, 
+				 * and try to cast it to swingDbConnector.
+				 * throws an exception if that fails
+				 */
+				DBConnectorSwing dbcon;
+				DBConnector dbc = Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
+				if(dbc instanceof DBConnectorSwing) 
+				{
+					dbcon = (DBConnectorSwing)dbc;
+				} 
+				else 
+				{
+					//TODO: better handling of error
+					throw new IllegalArgumentException("Not a Swing database connector");
+				}
+
+				String dbName = dbcon.openChooseDbDialog(null);
+				
+				if(dbName == null) return;
+				
+				GexManager.setCurrentGex(dbName, false);
+			} 
+			catch(Exception ex) 
+			{
+				String msg = "Failed to open expression dataset; " + ex.getMessage();
+				JOptionPane.showMessageDialog(null, 
+						"Error: " + msg + "\n\n" + "See the error log for details.",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+				Logger.log.error(msg, ex);
+			}
 		}
 	}
 	

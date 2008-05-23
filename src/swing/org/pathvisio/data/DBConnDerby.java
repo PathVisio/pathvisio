@@ -20,6 +20,9 @@ import java.awt.Component;
 
 import javax.swing.JFileChooser;
 
+import org.pathvisio.Engine;
+import org.pathvisio.preferences.GlobalPreference;
+
 /**
  * user interface functions for single-file Derby databases.
  * swing version.
@@ -36,7 +39,7 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 	{
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-		
+		jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_GDB));
 		//TODO: select right file filter for gex / gdb
 		int status = jfc.showDialog (parent, "Open database");
 		if(status == JFileChooser.APPROVE_OPTION) 

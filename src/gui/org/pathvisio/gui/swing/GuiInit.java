@@ -17,6 +17,7 @@
 package org.pathvisio.gui.swing;
 
 import org.pathvisio.Engine;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.view.MIMShapes;
@@ -36,6 +37,7 @@ public class GuiInit {
 		initImporters();
 		initExporters();
 		MIMShapes.registerShapes();
+		GdbManager.init(); // read default gene databases
 	}
 	
 	private static void initImporters() {

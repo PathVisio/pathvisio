@@ -39,11 +39,6 @@ public class VisualizationEvent extends EventObject
 	/** event for when a different visualization is selected */
 	public static final int VISUALIZATION_SELECTED = 6;
 
-	// TODO: make a separate event type for plugins
-	public static final int PLUGIN_MODIFIED = 7;
-	public static final int PLUGIN_ADDED = 8;
-	public static final int PLUGIN_SIDEPANEL_ACTIVATED = 9;
-
 	private int type;
 	
 	/** get the type of this event, must be one of the VisualizationEvent.XX constants */

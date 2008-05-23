@@ -40,6 +40,13 @@ public class Visualization
 	List<VisualizationMethod> methods = new ArrayList<VisualizationMethod>();
 		
 	/**
+	 * The visualization manager that will be used to fire
+	 * events.
+	 * May be null!
+	 */
+	VisualizationManager visMgr;
+	
+	/**
 	 * Constructor for this class. Creates an instance of {@link Visualization} with the
 	 * given name
 	 * @param name The name of this {@link Visualization}
@@ -49,6 +56,10 @@ public class Visualization
 		loadMethods(VisualizationMethodRegistry.getCurrent());
 	}
 		
+	public void setVisualizationMgr(VisualizationManager visMgr) {
+		this.visMgr = visMgr;
+	}
+	
 	void loadMethods(VisualizationMethodRegistry mr) {
 		for(String name : mr.getRegisteredMethods()) {
 			methods.add(mr.createVisualizationMethod(name, this));
@@ -67,7 +78,7 @@ public class Visualization
 	 */
 	public void setName(String name) { 
 		this.name = name;
-		fireVisualizationEvent(VisualizationEvent.VISUALIZATION_MODIFIED);
+		modified();
 	}
 	
 	public List<VisualizationMethod> getMethods() {
@@ -75,13 +86,14 @@ public class Visualization
 	}
 	
 	/**
-	 * Fire an {@link VisualizationEvent} for this visualization and the given type
-	 * @param type The type of the {@link VisualizationEvent} to fire
+	 * Call this method when the visualization or one of the visualization
+	 * methods have been modified. It will notify the manager, which will
+	 * refresh the vpathway and send out the necessary events.
 	 */
-	private final void fireVisualizationEvent(int type) {
-		//FIXME
-//		VisualizationManager.fireVisualizationEvent(
-//				new VisualizationEvent(this, type));
+	protected final void modified() {
+		if(visMgr != null) {
+			visMgr.visualizationModified(this);
+		}
 	}
 	
 	/**
@@ -92,7 +104,9 @@ public class Visualization
 	 */
 	public void visualizeDrawing(Graphics g, Graphics2D g2d) {
 		for(VisualizationMethod m : getMethods()) {
-			m.visualizeOnDrawing(g, g2d);
+			if(m.isActive()) {
+				m.visualizeOnDrawing(g, g2d);
+			}
 		}
 	}
 	
@@ -114,10 +128,13 @@ public class Visualization
 		for(VisualizationMethod vm : getMethods()) {
 			nrRes += (vm.isActive() && vm.isUseProvidedArea()) ? 1 : 0;
 		}
-		
 		Area area = g.createVisualizationRegion();
 		//Distribute space over plugins
 		Rectangle bounds = area.getBounds();
+
+		if(nrRes == 0) {
+			return area;
+		}
 		
 		//Adjust width so we can divide into equal rectangles
 		bounds.width += bounds.width % nrRes;
@@ -142,7 +159,9 @@ public class Visualization
 		Element vis = new Element(XML_ELEMENT);
 		vis.setAttribute(XML_ATTR_NAME, getName());
 		for(VisualizationMethod m : getMethods()) {
-			vis.addContent(m.toXML());
+			if(m.isActive()) {
+				vis.addContent(m.toXML());
+			}
 		}
 		return vis;
 	}

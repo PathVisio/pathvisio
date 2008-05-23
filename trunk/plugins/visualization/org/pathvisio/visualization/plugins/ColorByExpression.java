@@ -11,16 +11,15 @@ public class ColorByExpression extends VisualizationMethod {
 	
 	public ColorByExpression(Visualization v) {
 		super(v);
+		setIsConfigurable(false); //TODO: make configurable
 	}
 
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Color DataNodes by their expression value";
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Expression as color";
 	}
 
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {

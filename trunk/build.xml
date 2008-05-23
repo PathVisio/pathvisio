@@ -290,7 +290,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 
 	<target name="visplugins-jar" depends="compile-visplugins" description="Generates jar with visualization plugins">
 		<jar jarfile="visplugins.jar">
-			<fileset dir="." includes="plugins/visualizatoin/**"/>
+			<fileset dir="${build.visplugins.dir}" includes="**/*.class"/>
 		</jar>
 	</target>
 

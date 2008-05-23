@@ -1,8 +1,8 @@
 package org.pathvisio.visualization.gui;
 
-import java.awt.Color;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -18,84 +18,126 @@ import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethod;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
-public class VisualizationPanel extends JPanel implements PropertyChangeListener {
+public class VisualizationPanel extends JPanel implements ActionListener {
 	static final String ACTION_NEW = "New";
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_RENAME = "Rename";
+	static final String ACTION_COMBO = "Combo";
 	
-	VisualizationManager vizMgr;
+	VisualizationManager visMgr;
 	
 	JComboBox visCombo;
-	JPanel methodPanel;
+	JPanel methods;
 	
 	public VisualizationPanel() {
 		FormLayout layout = new FormLayout(
 				"pref, 4dlu, 100dlu:grow, 4dlu, left:pref",
-				"pref, 4dlu, 250dlu:grow"
+				"pref, 4dlu, fill:max(250dlu;pref):grow"
 		);
 		setLayout(layout);
 		
 		visCombo = new JComboBox();
+		visCombo.setActionCommand(ACTION_COMBO);
+		visCombo.addActionListener(this);
 		DropDownButton visButton = new DropDownButton(new ImageIcon(
 				Engine.getCurrent().getResourceURL("edit.gif"))
 		);
 		JMenuItem m_new = new JMenuItem(ACTION_NEW);
 		JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);
 		JMenuItem m_rename = new JMenuItem(ACTION_RENAME);
-		m_new.addPropertyChangeListener(ACTION_NEW, this);
-		m_remove.addPropertyChangeListener(ACTION_REMOVE, this);
-		m_rename.addPropertyChangeListener(ACTION_RENAME, this);
+		m_new.setActionCommand(ACTION_NEW);
+		m_remove.setActionCommand(ACTION_REMOVE);
+		m_rename.setActionCommand(ACTION_RENAME);
+		m_new.addActionListener(this);
+		m_remove.addActionListener(this);
+		m_rename.addActionListener(this);
 		visButton.addComponent(m_new);
 		visButton.addComponent(m_remove);
 		visButton.addComponent(m_rename);
 		
-		methodPanel = new JPanel();
-		methodPanel.setBackground(Color.WHITE);
-		
+		methods = new JPanel();
 		CellConstraints cc = new CellConstraints();
 		add(new JLabel("Visualization"), cc.xy(1, 1));
 		add(visCombo, cc.xy(3, 1));
 		add(visButton, cc.xy(5, 1));
-		add(new JScrollPane(methodPanel), cc.xyw(1, 3, 5));
+		add(new JScrollPane(methods), cc.xyw(1, 3, 5));
 	}
 
-	public void propertyChange(PropertyChangeEvent evt) {
-		String action = evt.getPropertyName();
-		if(ACTION_NEW.equals(action) || 
-				ACTION_RENAME.equals(action) || 
-				ACTION_REMOVE.equals(action)) {
-			JOptionPane.showMessageDialog(null, action + " not implemented yet");
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand();
+		if(ACTION_NEW.equals(action)) {
+			String name = visMgr.getNewName();
+			name = JOptionPane.showInputDialog("Name: ", name);
+			if(name == null || "".equals(name)) {
+				name = visMgr.getNewName();
+			}
+			Visualization v = new Visualization(name);
+			visMgr.addVisualization(v);
+			visMgr.setActiveVisualization(v);
+			refresh();
+			
+		} else if (ACTION_REMOVE.equals(action)) {
+			Visualization v = visMgr.getActiveVisualization();
+			if(v != null) {
+				visMgr.removeVisualization(v);
+			}
+			List<Visualization> vl = visMgr.getVisualizations();
+			if(vl.size() > 0) {
+				visMgr.setActiveVisualization(vl.get(vl.size() - 1));
+			}
+			refresh();
+		} else if (ACTION_RENAME.equals(action)) {
+			Visualization v = visMgr.getActiveVisualization();
+			if(v != null) {
+				String name = v.getName();
+				name = JOptionPane.showInputDialog("Name: ", name);
+				if(name != null && !"".equals(name)) {
+					v.setName(name);
+				}
+			}
+			refresh();
+		} else if (ACTION_COMBO.equals(action)) {
+			visMgr.setActiveVisualization((Visualization)visCombo.getSelectedItem());
+			refresh();
 		}
 	}
 	
 	public void setVisualizationManager(VisualizationManager mgr) {
-		this.vizMgr = mgr;
+		this.visMgr = mgr;
 		refresh();
 	}
 	
 	private void refresh() {
-		methodPanel .removeAll();
-		if(vizMgr != null) {
-			Visualization v = vizMgr.getActiveVisualization();
+		methods.removeAll();
+		if(visMgr != null) {
+			Visualization v = visMgr.getActiveVisualization();
 			
 			visCombo.setModel(new DefaultComboBoxModel(
-					vizMgr.getVisualizations().toArray()
+					visMgr.getVisualizations().toArray()
 			));
 			
 			visCombo.setSelectedItem(v);
 			
+			//Refresh methods panel
 			if(v != null) {
+				FormLayout layout = new FormLayout("pref");
+				DefaultFormBuilder builder = 
+					new DefaultFormBuilder(layout, methods);
 				for(VisualizationMethod m : v.getMethods()) {
-					methodPanel.add(new MethodPanel(m));
+					MethodPanel mp = new MethodPanel(m);
+					builder.append(mp);
+					builder.nextLine();
 				}
 			}
 		} else {
 			visCombo.setModel(new DefaultComboBoxModel());
 		}
 		revalidate();
+		repaint();
 	}
 }

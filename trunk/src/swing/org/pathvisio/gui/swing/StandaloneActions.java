@@ -37,6 +37,7 @@ import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.gui.VisualizationDialog;
 
@@ -259,7 +260,16 @@ public class StandaloneActions
 				
 				if(dbName == null) return;
 				
-				GdbManager.setGeneDb(dbName);
+				if (dbType.equals("Gene"))
+				{
+					GdbManager.setGeneDb(dbName);
+					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_GDB_CURRENT, dbName);
+				}
+				else
+				{
+					GdbManager.setMetaboliteDb(dbName);
+					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
+				}
 			} 
 			catch(Exception ex) 
 			{

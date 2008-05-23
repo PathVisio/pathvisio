@@ -169,7 +169,7 @@ public class GdbManager
 		}
 		// then do the Metabolite database
 		gdbName = prefs.get(GlobalPreference.DB_METABDB_CURRENT);
-		if(!gdbName.equals("") && !prefs.isDefault(GlobalPreference.DB_METABDB_CURRENT))
+		if(!gdbName.equals(""))
 		{
 			try 
 			{

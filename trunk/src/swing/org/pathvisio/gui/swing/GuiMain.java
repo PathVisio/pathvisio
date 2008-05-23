@@ -41,8 +41,8 @@ import org.pathvisio.preferences.PreferenceManager;
  * @author thomas
  *
  */
-public class GuiMain {
-	private String[] args;
+public class GuiMain 
+{
 	private JFrame frame;
 	protected MainPanelStandalone mainPanel;
 	
@@ -51,6 +51,71 @@ public class GuiMain {
 		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest (logDest);		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+	}
+
+	// plugin files specified at command line
+	private List<File> pluginFiles = new ArrayList<File>();
+	
+	// pathway specified at command line
+	private URL pathwayUrl = null;
+	private File pgexFile = null;
+
+	public void parseArgs(String [] args)
+	{
+		
+		for(int i = 0; i < args.length - 1; i++) 
+		{
+			if("-p".equals(args[i])) 
+			{
+				pluginFiles.add(new File(args[i + 1]));
+				i++;
+			}
+			else if ("-d".equals(args[i]))
+			{
+				pgexFile = new File(args[i + 1]);
+				i++;
+			}
+			else if ("-o".equals(args[i])) 
+			{
+				String pws = args[i + 1];
+				try {
+					File f = new File(pws);
+					//Assume the argument is a file
+					if(f.exists()) {
+						pathwayUrl = f.toURI().toURL();
+					//If it doesn't exist, assume it's an url
+					} else {
+						pathwayUrl = new URL(pws);
+					}
+				} catch(MalformedURLException e) {
+					printHelp();
+					System.exit(-1);
+				}
+				i++;
+			}
+		}
+	}
+	
+	/**
+	 * Act upon the command line arguments
+	 */
+	public void processOptions()
+	{
+		//Create a plugin manager that loads the plugins
+		if(pluginFiles.size() > 0) {
+			PluginManager pluginManager = new PluginManager(
+					pluginFiles.toArray(new File[0])
+			);
+		}
+		
+		if(pathwayUrl != null) {
+			SwingEngine.getCurrent().openPathway(pathwayUrl);
+		}
+	
+		if (pgexFile != null)
+		{
+			//TODO ask swingengine to open pgex directly
+		}
 	}
 	
 	/**
@@ -103,69 +168,33 @@ public class GuiMain {
 	
 	public MainPanel getMainPanel() { return mainPanel; }
 	
-	public String[] getArgs() { return args; }
-	
-	public void setArgs(String[] args) {
-		this.args = args;
-	}
 	
 	static void printHelp() {
 		System.out.println(
 				"Command line parameters:\n" +
 				"-o: A GPML file to open\n" +
-				"-p: A plugin file/directory to load\n"
+				"-p: A plugin file/directory to load\n" +
+				"-d: A pgex data file to load\n"
 		);
 	}
 	
+	
 	public static void main(String[] args) {
 		final GuiMain gui = new GuiMain();
-		gui.args = args;
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		gui.parseArgs (args);
+		
+		javax.swing.SwingUtilities.invokeLater(new Runnable() 
+		{
+		
+			
 			public void run() {
 				Engine.init();
 				
 				MainPanelStandalone mps = new MainPanelStandalone();
 				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.createAndShowGUI(mps);
-				
-				List<File> pluginFiles = new ArrayList<File>();
-				URL pathwayUrl = null;
-				
-				//Parse command line parameters
-				String[] args = gui.args;
-				for(int i = 0; i < args.length - 1; i++) {
-					if("-p".equals(args[i])) {
-						pluginFiles.add(new File(args[i + 1]));
-						i++;
-					} else if("-o".equals(args[i])) {
-						String pws = args[i + 1];
-						try {
-							File f = new File(pws);
-							//Assume the argument is a file
-							if(f.exists()) {
-								pathwayUrl = f.toURI().toURL();
-							//If it doesn't exist, assume it's an url
-							} else {
-								pathwayUrl = new URL(pws);
-							}
-						} catch(MalformedURLException e) {
-							printHelp();
-							System.exit(-1);
-						}
-						i++;
-					}
-				}
+				gui.processOptions();
 
-				//Create a plugin manager that loads the plugins
-				if(pluginFiles.size() > 0) {
-					PluginManager pluginManager = new PluginManager(
-							pluginFiles.toArray(new File[0])
-					);
-				}
-				
-				if(pathwayUrl != null) {
-					SwingEngine.getCurrent().openPathway(pathwayUrl);
-				}
 			}
 		});
 	}

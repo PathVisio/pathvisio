@@ -29,6 +29,9 @@ import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
@@ -58,7 +61,7 @@ public class GuiMain
 	
 	// pathway specified at command line
 	private URL pathwayUrl = null;
-	private File pgexFile = null;
+	private String pgexFile = null;
 
 	public void parseArgs(String [] args)
 	{
@@ -72,7 +75,12 @@ public class GuiMain
 			}
 			else if ("-d".equals(args[i]))
 			{
-				pgexFile = new File(args[i + 1]);
+				pgexFile = args[i + 1];
+				if (!new File(pgexFile).exists())
+				{
+					printHelp();
+					System.exit(-1);
+				}
 				i++;
 			}
 			else if ("-o".equals(args[i])) 
@@ -114,7 +122,16 @@ public class GuiMain
 	
 		if (pgexFile != null)
 		{
-			//TODO ask swingengine to open pgex directly
+			try
+			{
+				GexManager.setCurrentGex(pgexFile, false);
+				SwingEngine.getCurrent().loadGexCache();
+				Logger.log.info ("Loaded pgex " + pgexFile);
+			}
+			catch (DataException e)
+			{
+				Logger.log.error ("Couldn't open pgex " + pgexFile, e);
+			}
 		}
 	}
 	

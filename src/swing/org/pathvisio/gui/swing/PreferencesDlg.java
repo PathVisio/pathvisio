@@ -16,28 +16,26 @@
 //
 package org.pathvisio.gui.swing;
 
+import javax.swing.JPanel;
 
-import javax.swing.*;
-
-import org.eclipse.jface.preference.DirectoryFieldEditor;
-import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
+import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.swing.SwingPreferences.SwingPreference;
 
 /**
  * Global dialog for setting the user preferences.
  */
 public class PreferencesDlg extends AbstractPreferenceDlg
 {
-	public void initPanels()
+	PreferencesDlg ()
 	{
-		
-//		GlobalPreference.SNAP_TO_ANGLE.name(),
-//		
+		super (Engine.getCurrent().getPreferences());
+	}
+	
+	public void initPanels()
+	{		
 		PreferencePanelBuilder builder;
 		
-		builder = new PreferencePanelBuilder();
+		builder = createBuilder();
 
 		builder.addIntegerField (
 				GlobalPreference.GUI_SIDEPANEL_SIZE,
@@ -65,7 +63,7 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 		
 		JPanel displayPanel = builder.getPanel();
 		
-		builder = new PreferencePanelBuilder();
+		builder = createBuilder();
 		
 		builder.addColorField(
 				GlobalPreference.COLOR_NO_CRIT_MET, 
@@ -89,7 +87,7 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 
 		JPanel colorPanel = builder.getPanel();
 		
-		builder = new PreferencePanelBuilder();
+		builder = createBuilder();
 
 		builder.addFileField(
 				GlobalPreference.FILE_LOG, 
@@ -97,20 +95,20 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 		
 		JPanel filePanel = builder.getPanel();;
 
-		builder = new PreferencePanelBuilder();
+		builder = createBuilder();
 
-		builder.addFileField (SwingPreference.SWING_DIR_PWFILES,
+		builder.addFileField (GlobalPreference.DIR_PWFILES,
 				"Gpml pathways:", true);
 					
-		builder.addFileField (SwingPreference.SWING_DIR_GDB,
+		builder.addFileField (GlobalPreference.DIR_GDB,
 				"Gene databases:", true);
 		
-		builder.addFileField (SwingPreference.SWING_DIR_EXPR,
+		builder.addFileField (GlobalPreference.DIR_EXPR,
 				"Expression datasets:", true);		
 		
 		JPanel dirPanel = builder.getPanel();;
 
-		builder = new PreferencePanelBuilder();
+		builder = createBuilder();
 
 		builder.addStringField (GlobalPreference.DB_ENGINE_GDB,
 				"Database connector class for gene database:");

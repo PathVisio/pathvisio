@@ -34,13 +34,14 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
 import org.pathvisio.preferences.Preference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Global dialog for setting the user preferences.
  */
 abstract public class AbstractPreferenceDlg 
 {
-	private static DefaultMutableTreeNode createNodes()
+	private DefaultMutableTreeNode createNodes()
 	{
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Preferences");
 		
@@ -57,7 +58,7 @@ abstract public class AbstractPreferenceDlg
 		return top;
 	}
 	
-	private static Map <String, JPanel> panels = new HashMap <String, JPanel>();
+	private Map <String, JPanel> panels = new HashMap <String, JPanel>();
 	
 	public void addPanel (String title, JPanel panel)
 	{
@@ -66,13 +67,21 @@ abstract public class AbstractPreferenceDlg
 	
 	abstract protected void initPanels();
 	
+	protected PreferencePanelBuilder createBuilder ()
+	{
+		return new PreferencePanelBuilder (prefs);
+	}
+	
 	protected static class PreferencePanelBuilder
 	{
 		private JPanel result = new JPanel();
 		
-		PreferencePanelBuilder()
+		PreferenceManager prefs;
+		
+		PreferencePanelBuilder(PreferenceManager prefs)
 		{
 			result.setLayout(new FlowLayout());
+			this.prefs = prefs;
 		}
 		
 		JPanel getPanel()
@@ -80,7 +89,7 @@ abstract public class AbstractPreferenceDlg
 			return result;
 		}
 
-		private static class BooleanFieldEditor implements ActionListener
+		private class BooleanFieldEditor implements ActionListener
 		{
 			private Preference p;
 			private JCheckBox cb;
@@ -89,12 +98,12 @@ abstract public class AbstractPreferenceDlg
 			{
 				this.p = p;
 				this.cb = cb;
-				cb.setSelected (p.getValue().equals ("" + true));
+				cb.setSelected (prefs.getBoolean (p));
 			}
 
 			public void actionPerformed(ActionEvent ae) 
 			{
-				p.setValue("" + cb.isSelected());
+				prefs.setBoolean(p, cb.isSelected());
 			}
 		}
 
@@ -106,7 +115,7 @@ abstract public class AbstractPreferenceDlg
 			result.add (cb);
 		}
 		
-		private static class ColorFieldEditor implements ActionListener
+		private class ColorFieldEditor implements ActionListener
 		{
 			private Preference p;
 			private JButton btn;
@@ -115,15 +124,16 @@ abstract public class AbstractPreferenceDlg
 			{
 				this.p = p;
 				this.btn = btn;
+				btn.setBackground(prefs.getColor (p));
 			}
 
 			public void actionPerformed (ActionEvent ae) 
 			{
-				Color newColor = JColorChooser.showDialog(null, "Choose a color", Color.RED);
+				Color newColor = JColorChooser.showDialog(null, "Choose a color", prefs.getColor(p));
 				if (newColor != null)
 				{
 					btn.setBackground(newColor);
-					p.setValue("" + newColor);
+					prefs.setColor(p, newColor);
 				}
 			}
 		}
@@ -137,7 +147,7 @@ abstract public class AbstractPreferenceDlg
 			result.add (btnColor);
 		}
 		
-		private static class IntegerFieldEditor implements ActionListener, DocumentListener
+		private class IntegerFieldEditor implements ActionListener, DocumentListener
 		{
 			private Preference p;
 			private JTextField txt;
@@ -146,14 +156,14 @@ abstract public class AbstractPreferenceDlg
 			{
 				this.txt = txt;
 				this.p = p;
-				txt.setText(p.getValue());
+				txt.setText(prefs.get(p));
 			}
 
 			private void update()
 			{
 				try
 				{
-					p.setValue ("" + Integer.parseInt (txt.getText()));
+					prefs.set (p, "" + Integer.parseInt (txt.getText()));
 				}
 				catch (NumberFormatException e)
 				{
@@ -193,7 +203,7 @@ abstract public class AbstractPreferenceDlg
 			result.add (txt);
 		}
 
-		private static class StringFieldEditor implements ActionListener
+		private class StringFieldEditor implements ActionListener
 		{
 			private Preference p;
 			private JTextField txt;
@@ -202,12 +212,12 @@ abstract public class AbstractPreferenceDlg
 			{
 				this.txt = txt;
 				this.p = p;
-				txt.setText (p.getValue());
+				txt.setText (prefs.get(p));
 			}
 
 			public void actionPerformed(ActionEvent e) 
 			{
-				p.setValue (txt.getText());
+				prefs.set (p, txt.getText());
 			}
 		}
 		
@@ -220,7 +230,7 @@ abstract public class AbstractPreferenceDlg
 			result.add (txt);
 		}
 		
-		private static class FileFieldEditor implements ActionListener
+		private class FileFieldEditor implements ActionListener, DocumentListener
 		{
 			private Preference p;
 			private JTextField txt;
@@ -229,7 +239,7 @@ abstract public class AbstractPreferenceDlg
 			{
 				this.p = p;
 				this.txt = txt;
-				txt.setText (p.getValue());
+				txt.setText (prefs.get(p));
 			}
 
 			public void actionPerformed(ActionEvent ae) 
@@ -239,8 +249,28 @@ abstract public class AbstractPreferenceDlg
 				{
 					File result = jfc.getSelectedFile();
 					txt.setText("" + result);
-					p.setValue ("" + result);
+					prefs.setFile (p, result);
 				}
+			}
+
+			private void update()
+			{
+				prefs.set (p, txt.getText());
+			}
+			
+			public void changedUpdate(DocumentEvent de) 
+			{
+				update();
+			}
+
+			public void insertUpdate(DocumentEvent de) 
+			{
+				update();
+			}
+
+			public void removeUpdate(DocumentEvent de)
+			{
+				update();
 			}
 		}
 		
@@ -252,13 +282,19 @@ abstract public class AbstractPreferenceDlg
 			JButton btnBrowse = new JButton("Browse");
 			FileFieldEditor editor = new FileFieldEditor (p, txt); 
 			btnBrowse.addActionListener(editor);
+			txt.getDocument().addDocumentListener(editor);
 			result.add (txt);
 			result.add (btnBrowse);
 		}
 		
-		
 	}
 	
+	PreferenceManager prefs;
+	
+	public AbstractPreferenceDlg (PreferenceManager prefs)
+	{
+		this.prefs = prefs;
+	}
 	
 	/**
 	 * call this to open the dialog

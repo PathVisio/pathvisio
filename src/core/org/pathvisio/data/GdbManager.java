@@ -20,6 +20,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * GdbManager is responsible for maintaining a single
@@ -134,7 +135,7 @@ public class GdbManager
 	}
 	
 	/**
-	 * Initiates this class. Checks the properties file for a previously
+	 * Initiates this class. Checks the preferences for a previously
 	 * used Gene Database and tries to open a connection if found.
 	 * If that doesn't work, reverts attempts to use the default value for
 	 * that property.
@@ -143,9 +144,10 @@ public class GdbManager
 	 */
 	public static void init()
 	{
+		PreferenceManager prefs = Engine.getCurrent().getPreferences();
 		// first do the Gene database
-		String gdbName = GlobalPreference.DB_GDB_CURRENT.getValue();
-		if(!gdbName.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_GDB_CURRENT))
+		String gdbName = prefs.get (GlobalPreference.DB_GDB_CURRENT);
+		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_GDB_CURRENT))
 		{
 			try 
 			{
@@ -166,8 +168,8 @@ public class GdbManager
 			}
 		}
 		// then do the Metabolite database
-		gdbName = GlobalPreference.DB_METABDB_CURRENT.getValue();
-		if(!gdbName.equals("") && !GlobalPreference.isDefault(GlobalPreference.DB_METABDB_CURRENT))
+		gdbName = prefs.get(GlobalPreference.DB_METABDB_CURRENT);
+		if(!gdbName.equals("") && !prefs.isDefault(GlobalPreference.DB_METABDB_CURRENT))
 		{
 			try 
 			{

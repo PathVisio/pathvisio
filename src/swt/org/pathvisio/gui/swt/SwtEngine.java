@@ -45,7 +45,7 @@ import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swt.VPathwaySwtAwt;
@@ -74,7 +74,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		String result = null;
 		if (pathwayDir == null)
 		{
-			result = SwtPreference.SWT_DIR_PWFILES.getValue();
+			result = Engine.getCurrent().getPreferences().get (GlobalPreference.DIR_PWFILES);
 		}
 	    else
 		{

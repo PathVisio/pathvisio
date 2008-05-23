@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.RoundRectangle2D;
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
 
@@ -69,7 +70,7 @@ public class GeneProduct extends GraphicsShape
 		java.awt.Shape origClip = g.getClip();
 		RectangularShape area = new Rectangle2D.Double(
 			getVLeft(), getVTop(), getVWidth(), getVHeight());
-		boolean rounded = GlobalPreference.getValueBoolean(GlobalPreference.DATANODES_ROUNDED);
+		boolean rounded = Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.DATANODES_ROUNDED);
 		if(rounded) {
 			double r = Math.max(area.getWidth(), area.getHeight()) * 0.2;
 			area = new RoundRectangle2D.Double(area.getX(), area.getY(), 

@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URL;
 
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GuiInit;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.PropertyType;
@@ -31,13 +32,14 @@ import org.pathvisio.view.MIMShapes;
  * @author thomas
  */
 public class WikiPathwaysInit {
-	static void init() throws Exception {
-		GlobalPreference.FILE_LOG.setValue(
-				new File(Engine.getCurrent().getApplicationDir(), ".wikipathwaysLog").toString()
-		);
+	static void init() throws Exception 
+	{
+		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.WP_FILE_LOG);
+		Logger.log.setDest (logDest);		
+		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		GuiInit.init();
 		
-		GlobalPreference.MIM_SUPPORT.setValue(Boolean.toString(true));
+		Engine.getCurrent().getPreferences().setBoolean (GlobalPreference.MIM_SUPPORT, true);
 		MIMShapes.registerShapes();
 		
 		PropertyType.CENTERX.setHidden(true);

@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Sash;
+import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
 
 /**
@@ -135,7 +136,7 @@ public class SidePanel extends Composite {
 	}
 	
 	public void show() {
-		int sidePanelSize = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int sidePanelSize = Engine.getCurrent().getPreferences().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		if(sidePanelSize == 0) sidePanelSize = 10; //Force show if initial size = 0
 		parentSash.setWeights(calculateWeights(sidePanelSize));
 	}

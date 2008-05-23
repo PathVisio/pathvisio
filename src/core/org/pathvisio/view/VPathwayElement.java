@@ -23,6 +23,7 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
 
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
@@ -37,7 +38,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		canvas.addObject(this);
 	}
 	
-	public static Color selectColor = GlobalPreference.getValueColor(GlobalPreference.COLOR_SELECTED);
+	public static Color selectColor = Engine.getCurrent().getPreferences().getColor(GlobalPreference.COLOR_SELECTED);
 	public static final float HIGHLIGHT_STROKE_WIDTH = 5.0f;
 
 	private Rectangle2D oldrect = null;
@@ -153,7 +154,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 */
 	public void highlight()
 	{
-		highlight (GlobalPreference.getValueColor(GlobalPreference.COLOR_HIGHLIGHTED));
+		highlight (Engine.getCurrent().getPreferences().getColor(GlobalPreference.COLOR_HIGHLIGHTED));
 	}
 	
 	/**

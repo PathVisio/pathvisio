@@ -80,7 +80,7 @@ public class Converter {
 		engine.addPathwayExporter(new EUGeneExporter());
     	
 		//Enable MiM support (for export to graphics formats)
-		GlobalPreference.MIM_SUPPORT.setValue(Boolean.toString(true));
+		engine.getPreferences().setBoolean(GlobalPreference.MIM_SUPPORT, true);
 		MIMShapes.registerShapes();
 		
         File inputFile = null;

@@ -25,6 +25,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.GlobalPreference;
@@ -51,9 +52,9 @@ public class ColorSet
 	 */
 	public static final int ID_COLOR_NO_DATA_FOUND = 3;
 	
-	Color color_no_criteria_met = GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_CRIT_MET);
-	Color color_no_gene_found = GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_GENE_FOUND);
-	Color color_no_data_found = GlobalPreference.getValueColor(GlobalPreference.COLOR_NO_DATA_FOUND);
+	Color color_no_criteria_met = Engine.getCurrent().getPreferences().getColor (GlobalPreference.COLOR_NO_CRIT_MET);
+	Color color_no_gene_found = Engine.getCurrent().getPreferences().getColor (GlobalPreference.COLOR_NO_GENE_FOUND);
+	Color color_no_data_found = Engine.getCurrent().getPreferences().getColor (GlobalPreference.COLOR_NO_DATA_FOUND);
 		
 	/**
 	 * A user can give each colorset a name

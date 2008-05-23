@@ -18,7 +18,6 @@ package org.pathvisio;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceCollection;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
@@ -52,7 +51,14 @@ public class Engine
 	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
-		
+	
+	// use Engine.init() to create an Engine
+	private Engine()
+	{
+		preferences = new PreferenceManager();
+		preferences.load();
+	}
+	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
@@ -64,9 +70,22 @@ public class Engine
 	 * Get the current instance of Engine
 	 * @return
 	 */
-	public static Engine getCurrent() {
-		if(currentEngine == null) currentEngine = new Engine();
+	public static Engine getCurrent() 
+	{
+		if(currentEngine == null) 
+		{
+			throw new IllegalArgumentException ("Current Engine was not initialized!");
+		}
 		return currentEngine;
+	}
+	
+	public static void init()
+	{
+		if (currentEngine != null)
+		{
+			throw new IllegalArgumentException ("Engine initialized twice");
+		}
+		currentEngine = new Engine();
 	}
 	
 	/**
@@ -142,27 +161,13 @@ public class Engine
 		}
 	}
 	
-	PreferenceCollection preferences;
+	PreferenceManager preferences = null;
 	
-	public void savePreferences() {
-		if(preferences != null) {
-			try {
-				preferences.save();
-			} catch(IOException e) {
-				Logger.log.error("Unable to save preferences", e);
-			}
-		}
-	}
-	
-	public void setPreferenceCollection(PreferenceCollection pc)
+	public PreferenceManager getPreferences()
 	{
-		preferences = pc;
-	}
-	
-	public PreferenceCollection getPreferenceCollection() {
 		return preferences;
 	}
-
+	
 	public void exportPathway(File file) throws ConverterException {
 		Logger.log.trace("Exporting pathway to " + file);
 		String fileName = file.toString();
@@ -393,10 +398,10 @@ public class Engine
 		String className = null;
 		switch(type) {
 		case DBConnector.TYPE_GDB:
-			className = GlobalPreference.DB_ENGINE_GDB.getValue();
+			className = getPreferences().get(GlobalPreference.DB_ENGINE_GDB);
 			break;
 		case DBConnector.TYPE_GEX:
-			className = GlobalPreference.DB_ENGINE_GEX.getValue();
+			className = getPreferences().get(GlobalPreference.DB_ENGINE_GEX);
 			break;
 		}
 		if(className == null) return null;

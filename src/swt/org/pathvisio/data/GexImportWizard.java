@@ -57,7 +57,7 @@ import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorGradient;
@@ -208,7 +208,7 @@ public class GexImportWizard extends Wizard
 							"Gene Database",
 							"All files" 
 					});
-					fileDialog.setFilterPath(SwtPreference.SWT_DIR_GDB.getValue());
+					fileDialog.setFilterPath(Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_GDB));
 					String file = fileDialog.open();
 					if (file != null)
 					{
@@ -239,7 +239,7 @@ public class GexImportWizard extends Wizard
 							new String[] { "*.txt",	"*.*" });
 					fileDialog.setFilterNames(
 							new String[] { "Text file",	"All files" });
-					fileDialog.setFilterPath(SwtPreference.SWT_DIR_EXPR.getValue());
+					fileDialog.setFilterPath(Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_EXPR));
 					file = fileDialog.open();
 					if (file != null) 
 					{

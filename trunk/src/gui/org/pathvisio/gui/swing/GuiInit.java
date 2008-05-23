@@ -16,14 +16,9 @@
 //
 package org.pathvisio.gui.swing;
 
-import java.io.File;
-import java.io.PrintStream;
-
 import org.pathvisio.Engine;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.MappFormat;
-import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.view.MIMShapes;
 
 /**
@@ -36,21 +31,11 @@ public class GuiInit {
 	 * Performs initiation needed by the user interface. This method register the importers/exporters
 	 * and sets the log. This method is called from {@link GuiMain#createAndShowGUI(MainPanel)}
 	 */
-	public static void init() {
+	public static void init() 
+	{
 		initImporters();
 		initExporters();
 		MIMShapes.registerShapes();
-		try {
-			GlobalPreference.FILE_LOG.setDefault(
-					new File(Engine.getCurrent().getApplicationDir(), ".PathVisioLog").toString()
-			);
-			Logger.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
-		} catch(Exception e) {
-			System.err.println("Unable to set log stream to " + GlobalPreference.FILE_LOG.getValue());
-			e.printStackTrace();
-		}
-		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		
 	}
 	
 	private static void initImporters() {

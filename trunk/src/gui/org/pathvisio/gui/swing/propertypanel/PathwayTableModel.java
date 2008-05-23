@@ -102,7 +102,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 		
 	protected void updatePropertyCounts(PathwayElement e, boolean remove) {
-		boolean advanced = GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
+		boolean advanced = Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
 		for(PropertyType p : e.getAttributes(advanced)) {
 			if(p.isHidden()) continue;
 			

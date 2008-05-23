@@ -66,9 +66,8 @@ public class PathwayPageApplet extends JApplet {
 			Logger.log.trace(this + ": INIT CALLED....");
 
 			//Only set new engine if this is the first applet
-			Engine engine = new Engine();
-			Engine.setCurrent(engine);
-			SwingEngine swingEngine = new SwingEngine(engine);
+			Engine.init();
+			SwingEngine swingEngine = new SwingEngine(Engine.getCurrent());
 			SwingEngine.setCurrent(swingEngine);
 			
 			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
@@ -90,7 +89,7 @@ public class PathwayPageApplet extends JApplet {
 					} catch(Exception e) {
 						Logger.log.error("Error while starting applet", e);
 						String msg =  e.getClass() + 
-						"\n See error log (" + GlobalPreference.FILE_LOG.getValue() + ") for details";
+						"\n See error log (" + Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG) + ") for details";
 						JOptionPane.showMessageDialog(
 								PathwayPageApplet.this, msg, "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 					};

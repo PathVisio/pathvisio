@@ -408,7 +408,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 						} catch (Exception e) {
 							Logger.log.error("Unable to save pathway", e);
 							String msg =  e.getClass() + 
-							"\n See error log (" + GlobalPreference.FILE_LOG.getValue() + ") for details";
+							"\n See error log (" + Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG) + ") for details";
 							if(e.getMessage().startsWith("Revision out of date")) {
 								msg = 
 									"Revision out of date.\n" +

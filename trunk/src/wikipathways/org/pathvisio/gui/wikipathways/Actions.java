@@ -158,7 +158,7 @@ public class Actions {
 			}
 			
 			private void resetDividerLocation() {
-				int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+				int spPercent = Engine.getCurrent().getPreferences().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 				wiki.getMainPanel().getSplitPane().setDividerLocation((100 - spPercent) / 100.0);
 			}
 

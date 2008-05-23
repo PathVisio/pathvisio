@@ -27,6 +27,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.preferences.swt.PreferenceDlg;
 import org.pathvisio.preferences.swt.SwtPreferences;
@@ -205,8 +206,9 @@ public class CommonActions
 		public void run () {
 			PreferenceManager pg = new PreferenceDlg();
 			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
-			pd.setPreferenceStore((SwtPreferences)Engine.getCurrent().getPreferenceCollection());
+			pd.setPreferenceStore(new SwtPreferences(Engine.getCurrent().getPreferences()));
 			pd.open();
+			Engine.getCurrent().getPreferences().store();
 		}
 	}
 

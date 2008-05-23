@@ -25,9 +25,10 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
-import org.pathvisio.preferences.swing.SwingPreferences.SwingPreference;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.swing.SearchMethods;
 
 /**
@@ -109,7 +110,7 @@ public class SearchPane extends JPanel
 		Box box3 = Box.createHorizontalBox();
 		box3.add (new JLabel("Directory to search:"));
 		txtDir = new JTextField();
-		txtDir.setText (SwingPreference.SWING_DIR_PWFILES.getValue());
+		txtDir.setText (Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_PWFILES));
 		box3.add (txtDir);
 		btnBrowse = new JButton("Browse");
 		btnBrowse.addActionListener(new ActionListener()

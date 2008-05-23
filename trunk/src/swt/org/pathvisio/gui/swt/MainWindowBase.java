@@ -398,7 +398,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		
 		addPanelTabs();
 		
-		int sidePanelSize = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int sidePanelSize = Engine.getCurrent().getPreferences().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		

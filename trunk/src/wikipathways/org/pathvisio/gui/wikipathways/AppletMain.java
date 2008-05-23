@@ -80,7 +80,7 @@ public class AppletMain extends PathwayPageApplet {
 		
 		setVisible(true);
 		validate(); //We need to validate before calling setDividerLocation
-		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int spPercent = Engine.getCurrent().getPreferences().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		mainPanel.getSplitPane().setDividerLocation( (100 - spPercent) / 100.0 );
 	}
 	

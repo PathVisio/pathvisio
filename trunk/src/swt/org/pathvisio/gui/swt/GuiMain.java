@@ -17,10 +17,8 @@
 package org.pathvisio.gui.swt;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;
@@ -46,9 +44,6 @@ import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.Preference;
-import org.pathvisio.preferences.swt.SwtPreferences;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
@@ -79,6 +74,7 @@ public class GuiMain {
 				
 		//Setup the application window
 		MainWindow window = null;
+		Engine.init();
 		if(debugHandles)	window = SwtEngine.getCurrent().getSleakWindow();
 		else				window = SwtEngine.getCurrent().getWindow();
 				
@@ -155,11 +151,9 @@ public class GuiMain {
 	 */
 	public static void initiate()
 	{
-		//initiate logger
-		try { 
-			GlobalPreference.FILE_LOG.setDefault(new File(SwtEngine.getCurrent().getApplicationDir(), ".PathVisioLog").toString());
-			Logger.log.setStream(new PrintStream(GlobalPreference.FILE_LOG.getValue())); 
-		} catch(Exception e) {}
+		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
+		Logger.log.setDest(logDest);
+		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 
 		Logger.log.info ("Revision: " + Revision.REVISION);
@@ -172,11 +166,9 @@ public class GuiMain {
 		Logger.log.info ("Username: " + System.getProperty ("user.name"));
 		
 		Logger.log.trace ("Log initialized");
-		//load the preferences
-		loadPreferences();
 
 		// preferences loaded, now we can register mim shapes
-		if (GlobalPreference.getValueBoolean (GlobalPreference.MIM_SUPPORT))
+		if (Engine.getCurrent().getPreferences().getBoolean (GlobalPreference.MIM_SUPPORT))
 		{
 			MIMShapes.registerShapes();
 		}
@@ -191,7 +183,7 @@ public class GuiMain {
 		Logger.log.trace ("Plugins loaded");
 		
 		//create data directories if they don't exist yet
-		createDataDirectories();
+//		createDataDirectories();
 		
 		//register listeners for static classes
 		registerListeners();
@@ -203,21 +195,21 @@ public class GuiMain {
 		//since the window has to be opened first (need an active Display)
 	}
 	
-	/**
-	 * Creates data directories stored in preferences (if not exist)
-	 */
-	static void createDataDirectories() {
-		Preference[] dirPrefs = new Preference[] {
-				SwtPreference.SWT_DIR_EXPR,
-				SwtPreference.SWT_DIR_GDB,
-				SwtPreference.SWT_DIR_PWFILES,
-				SwtPreference.SWT_DIR_RDATA,
-		};
-		for(Preference p : dirPrefs) {
-			File dir = new File(p.getValue());
-			if(!dir.exists()) dir.mkdir();
-		}
-	}
+//	/**
+//	 * Creates data directories stored in preferences (if not exist)
+//	 */
+//	static void createDataDirectories() {
+//		Preference[] dirPrefs = new Preference[] {
+//				SwtPreference.SWT_DIR_EXPR,
+//				SwtPreference.SWT_DIR_GDB,
+//				SwtPreference.SWT_DIR_PWFILES,
+//				SwtPreference.SWT_DIR_RDATA,
+//		};
+//		for(Preference p : dirPrefs) {
+//			File dir = new File(p.getValue());
+//			if(!dir.exists()) dir.mkdir();
+//		}
+//	}
 	
 			
 	static void registerListeners() {
@@ -248,10 +240,6 @@ public class GuiMain {
 		}
 		
 		VisualizationManager.loadGeneric();
-	}
-	
-	static void loadPreferences() {
-		Engine.getCurrent().setPreferenceCollection(new SwtPreferences());
 	}
 	
 	/**

@@ -37,6 +37,7 @@ import java.util.Set;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
@@ -76,8 +77,9 @@ public class VPathway implements PathwayListener
 	/**
 	 * Retuns true if snap to anchors is enabled
 	 */
-	public boolean isSnapToAnchors() {
-		return GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANCHOR);
+	public boolean isSnapToAnchors() 
+	{
+		return Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SNAP_TO_ANCHOR);
 	}
 
 	/**

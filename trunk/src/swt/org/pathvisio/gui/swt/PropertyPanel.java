@@ -181,7 +181,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		{
 			// get attributes. Only get advanced attributes if the preferences say so.
 			for (PropertyType attr : o.getAttributes(
-					 GlobalPreference.getValueBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)))
+					 Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)))
 			{
 				if (master.containsKey(attr))
 				{

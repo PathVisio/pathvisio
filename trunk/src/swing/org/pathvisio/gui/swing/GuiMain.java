@@ -16,23 +16,23 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.Preference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -46,16 +46,26 @@ public class GuiMain {
 	private JFrame frame;
 	protected MainPanelStandalone mainPanel;
 	
+	private void initLog()
+	{
+		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
+		Logger.log.setDest (logDest);		
+		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+	}
+	
 	/**
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
 	 */
-	protected void createAndShowGUI(MainPanelStandalone mainPanel) {
+	protected void createAndShowGUI(MainPanelStandalone mainPanel) 
+	{
+		initLog();
 		GuiInit.init();
 		
 		//Create and set up the window.
 		frame = new JFrame(Globals.APPLICATION_NAME);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// dispose on close, otherwise windowClosed event is not called.
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
@@ -67,12 +77,26 @@ public class GuiMain {
 			Logger.log.error("Unable to load native look and feel", ex);
 		}
 		frame.pack();
+		frame.addWindowListener(new WindowAdapter() 
+		{
+			public void windowClosed(WindowEvent arg0) 
+			{
+				GuiMain.this.shutdown();
+			}
+		});
+		
 		//Display the window.
 		frame.setVisible(true);
 
-		int spPercent = GlobalPreference.getValueInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int spPercent = Engine.getCurrent().getPreferences().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
+	}
+
+	private void shutdown() 
+	{
+		PreferenceManager prefs = Engine.getCurrent().getPreferences();
+		prefs.store();
 	}
 
 	public JFrame getFrame() { return frame; }
@@ -85,33 +109,6 @@ public class GuiMain {
 		this.args = args;
 	}
 	
-	/**
-	 * Load preferences from file
-	 */
-	private void loadPreferences()
-	{
-		Properties stored = new Properties();
-		File propfile = new File(System.getProperty("user.home") + File.separator + 
-				".PathVisio" + File.separator + ".PathVisio");
-		
-		try
-		{
-			stored.load(new FileInputStream(propfile));
-	
-			for (Preference p : GlobalPreference.values())
-			{
-				if (stored.contains(p.name()))
-				{
-					p.setValue(stored.getProperty(p.name()));
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			Logger.log.error ("Couldn't read properties ", e);
-		}
-	}
-	
 	static void printHelp() {
 		System.out.println(
 				"Command line parameters:\n" +
@@ -122,10 +119,11 @@ public class GuiMain {
 	
 	public static void main(String[] args) {
 		final GuiMain gui = new GuiMain();
-		gui.loadPreferences();
 		gui.args = args;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				Engine.init();
+				
 				MainPanelStandalone mps = new MainPanelStandalone();
 				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.createAndShowGUI(mps);

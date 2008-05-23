@@ -19,6 +19,7 @@ package org.pathvisio.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
@@ -71,7 +72,7 @@ public class DoubleGdb implements Gdb
 		gdbs [METABOLITE_DB] = gdb;
 		if (gdb != null)
 		{
-			GlobalPreference.DB_METABDB_CURRENT.setValue(gdb.getDbName());
+			Engine.getCurrent().getPreferences().set(GlobalPreference.DB_METABDB_CURRENT, gdb.getDbName());
 		}
 	}
 
@@ -94,7 +95,7 @@ public class DoubleGdb implements Gdb
 		gdbs [GENE_DB] = gdb;		
 		if (gdb != null)
 		{
-			GlobalPreference.DB_GDB_CURRENT.setValue(gdb.getDbName());
+			Engine.getCurrent().getPreferences().set(GlobalPreference.DB_GDB_CURRENT, gdb.getDbName());
 		}
 	}
 

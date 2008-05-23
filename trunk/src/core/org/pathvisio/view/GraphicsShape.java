@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -169,11 +170,11 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));
 			
 			double rotation = Math.atan2(cur.y, cur.x);
-			if (GlobalPreference.getValueBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
+			if (Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
 					canvas.isSnapToAngle())
 			{
 				//Snap the rotation angle
-				double snapStep = GlobalPreference.getValueInt(
+				double snapStep = Engine.getCurrent().getPreferences().getInt(
 						GlobalPreference.SNAP_TO_ANGLE_STEP) * Math.PI / 180;
 				rotation = Math.round (rotation / snapStep) * snapStep;
 			}

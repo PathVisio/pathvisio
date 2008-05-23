@@ -20,7 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pathvisio.preferences.swt.SwtPreferences.SwtPreference;
+import org.pathvisio.Engine;
+import org.pathvisio.preferences.GlobalPreference;
 
 /**
  * Helper functions for classes implementing DbConnectorSwt interface
@@ -43,10 +44,10 @@ class DBConnectorUtils
 		String filterPath = null;
 		switch(db.getDbType()) {
 		case DBConnector.TYPE_GDB: 
-			filterPath = SwtPreference.SWT_DIR_GDB.getValue();
+			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_GDB);
 			break;
 		case DBConnector.TYPE_GEX:
-			filterPath = SwtPreference.SWT_DIR_EXPR.getValue();
+			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) fileDialog.setFilterPath(filterPath);
@@ -69,10 +70,10 @@ class DBConnectorUtils
 		String filterPath = null;
 		switch(db.getDbType()) {
 		case DBConnector.TYPE_GDB: 
-			filterPath = SwtPreference.SWT_DIR_GDB.getValue();
+			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_GDB);
 			break;
 		case DBConnector.TYPE_GEX:
-			filterPath = SwtPreference.SWT_DIR_EXPR.getValue();
+			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) dirDialog.setFilterPath(filterPath);

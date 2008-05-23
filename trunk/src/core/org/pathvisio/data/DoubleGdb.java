@@ -172,6 +172,13 @@ public class DoubleGdb implements Gdb
 		String bpInfo = getBpInfo(ref);		
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
+		//Get the expression data information if available
+		SimpleGex gex = GexManager.getCurrentGex();
+		if(gex != null) {
+			text += "<H1>Expression data</H1>";
+			text += gex.getDataString(ref);
+		}
+		
 		// get crossReferences from all registerd gdb's
 		for (SimpleGdb child : gdbs)
 		{

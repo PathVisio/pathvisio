@@ -184,6 +184,10 @@ public class SimpleGdb implements Gdb
 		} catch(Exception e) { return null;	} //Gene not found
 	}
 
+	/**
+	 * Note that this method is not actually used!!! 
+	 * See {@link DoubleGdb#getBackpageHTML(Xref, String)} 
+	 */
 	public String getBackpageHTML(Xref ref, String bpHead) {
 		String text = backpagePanelHeader == null ? "" : backpagePanelHeader;
 		if( ref == null || ref.getId() == null || ref.getDataSource() == null) return text;

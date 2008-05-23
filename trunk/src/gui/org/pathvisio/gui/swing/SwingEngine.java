@@ -29,8 +29,13 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.GdbManager;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
@@ -43,7 +48,7 @@ import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-public class SwingEngine {	
+public class SwingEngine implements ApplicationEventListener {	
 	private MainPanel mainPanel;
 	
 	private static SwingEngine current;
@@ -52,6 +57,7 @@ public class SwingEngine {
 	
 	public SwingEngine(Engine engine) {
 		actions = new CommonActions(engine);
+		engine.addApplicationEventListener(this);
 	}
 	
 	public static SwingEngine getCurrent() {
@@ -88,6 +94,36 @@ public class SwingEngine {
 	
 	public boolean hasApplicationPanel() {
 		return mainPanel != null;
+	}
+	
+	/**
+	 * Load the Gex cache for the current pathway. Only starts loading
+	 * when an expression dataset is available and a pathway is open.
+	 */
+	public void loadGexCache() {
+		final SimpleGex gex = GexManager.getCurrentGex();
+		final Pathway p = Engine.getCurrent().getActivePathway();
+		if(p != null && gex != null && GdbManager.isConnected()) {
+			final SwingProgressKeeper pk = new SwingProgressKeeper(
+					(int)1E5
+			);
+			final ProgressDialog d = new ProgressDialog(
+					JOptionPane.getFrameForComponent(getApplicationPanel()), 
+					"", pk, false, true
+			);
+					
+			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+				protected Void doInBackground() {
+					pk.setTaskName("Loading expression data");
+						gex.cacheData(p.getDataNodeXrefs(), pk);
+						pk.finished();
+					return null;
+				}
+			};
+			
+			sw.execute();
+			d.setVisible(true);
+		}
 	}
 	
 	public static String MSG_UNABLE_IMPORT = "Unable to import GPML file.";
@@ -463,4 +499,10 @@ public class SwingEngine {
 		return true;
 	}
 
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) {
+			loadGexCache();
+		}
+	}
+	
 }

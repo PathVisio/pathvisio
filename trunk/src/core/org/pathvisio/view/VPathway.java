@@ -845,6 +845,9 @@ public class VPathway implements PathwayListener
 	 */
 	public void draw(Graphics2D g2d, Rectangle area, boolean erase)
 	{
+		//save original, non-clipped, to pass on to VPathwayEvent
+		Graphics2D g2d_full = (Graphics2D)g2d.create();
+		
 		if (area == null)
 		{
 			area = g2d.getClipBounds();
@@ -876,7 +879,7 @@ public class VPathway implements PathwayListener
 				{
 					o.draw((Graphics2D) g2d.create());
 					fireVPathwayEvent(new VPathwayEvent(this, o,
-							(Graphics2D) g2d.create(),
+							(Graphics2D) g2d_full.create(),
 							VPathwayEvent.ELEMENT_DRAWN));
 				}
 			}

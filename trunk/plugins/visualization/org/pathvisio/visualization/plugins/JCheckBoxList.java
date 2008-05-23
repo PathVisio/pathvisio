@@ -20,7 +20,7 @@ public class JCheckBoxList extends JList
                 if (index != -1)
                 {
                     JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
-                    checkbox.setSelected(!checkbox.isSelected());
+                    checkbox.doClick();
                     repaint();
                 }
             }
@@ -36,7 +36,7 @@ public class JCheckBoxList extends JList
                     if (index != -1)
                     {
                         JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
-                        checkbox.setSelected(!checkbox.isSelected());
+                        checkbox.doClick();
                         repaint();
                     }
                 }

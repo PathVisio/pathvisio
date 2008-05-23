@@ -201,6 +201,7 @@ public class StandaloneActions
 				if(dbName == null) return;
 				
 				GexManager.setCurrentGex(dbName, false);
+				SwingEngine.getCurrent().loadGexCache();
 			} 
 			catch(Exception ex) 
 			{
@@ -270,6 +271,8 @@ public class StandaloneActions
 					GdbManager.setMetaboliteDb(dbName);
 					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
 				}
+				GdbManager.setGeneDb(dbName);
+				SwingEngine.getCurrent().loadGexCache();
 			} 
 			catch(Exception ex) 
 			{

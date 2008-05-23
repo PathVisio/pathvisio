@@ -19,7 +19,6 @@ package org.pathvisio.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -27,6 +26,7 @@ import java.io.File;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -35,6 +35,9 @@ import javax.swing.tree.*;
 
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Global dialog for setting the user preferences.
@@ -74,19 +77,20 @@ abstract public class AbstractPreferenceDlg
 	
 	protected static class PreferencePanelBuilder
 	{
-		private JPanel result = new JPanel();
-		
 		PreferenceManager prefs;
+		private DefaultFormBuilder builder;
+		FormLayout layout;
 		
 		PreferencePanelBuilder(PreferenceManager prefs)
 		{
-			result.setLayout(new FlowLayout());
+			layout = new FormLayout("left:pref, 6dlu, 50dlu:grow, 4dlu, default"); 
+			builder = new DefaultFormBuilder(layout);
 			this.prefs = prefs;
 		}
 		
 		JPanel getPanel()
 		{
-			return result;
+			return builder.getPanel();
 		}
 
 		private class BooleanFieldEditor implements ActionListener
@@ -112,19 +116,24 @@ abstract public class AbstractPreferenceDlg
 			JCheckBox cb = new JCheckBox (desc);
 			BooleanFieldEditor editor = new BooleanFieldEditor (p, cb);
 			cb.addActionListener(editor);
-			result.add (cb);
+			builder.append (cb);
+			builder.nextLine();
 		}
 		
 		private class ColorFieldEditor implements ActionListener
 		{
 			private Preference p;
-			private JButton btn;
+			private JLabel colorLabel;
 			
-			ColorFieldEditor (Preference p, JButton btn)
+			ColorFieldEditor (Preference p, JLabel colorLabel)
 			{
 				this.p = p;
-				this.btn = btn;
-				btn.setBackground(prefs.getColor (p));
+				this.colorLabel = colorLabel;
+				colorLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+				colorLabel.setOpaque(true);
+				
+				colorLabel.setForeground(prefs.getColor (p));
+				colorLabel.setBackground(prefs.getColor (p));
 			}
 
 			public void actionPerformed (ActionEvent ae) 
@@ -132,7 +141,7 @@ abstract public class AbstractPreferenceDlg
 				Color newColor = JColorChooser.showDialog(null, "Choose a color", prefs.getColor(p));
 				if (newColor != null)
 				{
-					btn.setBackground(newColor);
+					colorLabel.setBackground(newColor);
 					prefs.setColor(p, newColor);
 				}
 			}
@@ -140,11 +149,14 @@ abstract public class AbstractPreferenceDlg
 		
 		void addColorField (Preference p, String desc)
 		{
-			result.add (new JLabel (desc));
-			JButton btnColor = new JButton();
-			ColorFieldEditor editor = new ColorFieldEditor (p, btnColor);
+			JButton btnColor = new JButton("Change...");
+			JLabel colorLabel = new JLabel("--");
+			ColorFieldEditor editor = new ColorFieldEditor (p, colorLabel);
 			btnColor.addActionListener(editor);
-			result.add (btnColor);
+			builder.append (new JLabel (desc));
+			builder.append (colorLabel);
+			builder.append (btnColor);
+			builder.nextLine();
 		}
 		
 		private class IntegerFieldEditor implements ActionListener, DocumentListener
@@ -195,12 +207,13 @@ abstract public class AbstractPreferenceDlg
 		void addIntegerField (Preference p, String desc, int min, int max)
 		{
 			//TODO: handle min / max
-			result.add (new JLabel (desc));
 			JTextField txt = new JTextField(8);
 			IntegerFieldEditor editor = new IntegerFieldEditor (p, txt); 
 			txt.addActionListener(editor);
 			txt.getDocument().addDocumentListener(editor);
-			result.add (txt);
+			builder.append (new JLabel (desc));
+			builder.append (txt);
+			builder.nextLine();
 		}
 
 		private class StringFieldEditor implements ActionListener
@@ -223,11 +236,12 @@ abstract public class AbstractPreferenceDlg
 		
 		void addStringField (Preference p, String desc)
 		{
-			result.add (new JLabel (desc));
 			JTextField txt = new JTextField(40);
 			StringFieldEditor editor = new StringFieldEditor (p, txt); 
 			txt.addActionListener(editor);
-			result.add (txt);
+			builder.append (new JLabel (desc));
+			builder.append (txt);
+			builder.nextLine();
 		}
 		
 		private class FileFieldEditor implements ActionListener, DocumentListener
@@ -277,14 +291,15 @@ abstract public class AbstractPreferenceDlg
 		void addFileField (Preference p, String desc, boolean isDir)
 		{
 			//TODO: do somethign with isDir
-			result.add (new JLabel (desc));
 			JTextField txt = new JTextField(40);
 			JButton btnBrowse = new JButton("Browse");
 			FileFieldEditor editor = new FileFieldEditor (p, txt); 
 			btnBrowse.addActionListener(editor);
 			txt.getDocument().addDocumentListener(editor);
-			result.add (txt);
-			result.add (btnBrowse);
+			builder.append (new JLabel (desc));
+			builder.append (txt);
+			builder.append (btnBrowse);
+			builder.nextLine();
 		}
 		
 	}
@@ -356,7 +371,7 @@ abstract public class AbstractPreferenceDlg
 		pnlButtons.add (OkBtn);
 		pnlButtons.add (btnCancel);
 		
-		frame.add (pnlSettings, BorderLayout.CENTER);
+		frame.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);
 		frame.add (trCategories, BorderLayout.WEST);
 		frame.add (pnlButtons, BorderLayout.SOUTH);
 		

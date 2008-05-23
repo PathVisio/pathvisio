@@ -18,7 +18,8 @@ package org.pathvisio.data;
 
 import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
@@ -137,7 +138,7 @@ public class GexManager
 		public void gexManagerEvent(GexManagerEvent e);
 	}
 	
-	static List<GexManagerListener> listeners;
+	static Set<GexManagerListener> listeners = new HashSet<GexManagerListener>();
 	
 	/**
 	 * Add a {@link GexManagerListener}, that will be notified if an
@@ -146,7 +147,6 @@ public class GexManager
 	 */
 	public static void addListener(GexManagerListener l) 
 	{
-		if(listeners == null) listeners = new ArrayList<GexManagerListener>();
 		listeners.add(l);
 	}
 	

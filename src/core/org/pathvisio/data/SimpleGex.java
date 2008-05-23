@@ -244,7 +244,7 @@ public class SimpleGex
 	 * @param refs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	protected void cacheData(List<Xref> refs, ProgressKeeper p)
+	public void cacheData(List<Xref> refs, ProgressKeeper p)
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();

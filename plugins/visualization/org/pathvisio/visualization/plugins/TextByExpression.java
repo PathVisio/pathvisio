@@ -1,11 +1,12 @@
 package org.pathvisio.visualization.plugins;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdom.Element;
 import org.pathvisio.Engine;
@@ -37,9 +37,10 @@ import org.pathvisio.visualization.VisualizationMethod;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class TextByExpression extends VisualizationMethod implements ListSelectionListener {
+public class TextByExpression extends VisualizationMethod implements ActionListener {
 	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
 	static final int SPACING = 3;
+	static final String ACTION_SAMPLE = "sample";
 	
 	final static String SEP = ", ";	
 	int roundTo = 2;
@@ -51,6 +52,7 @@ public class TextByExpression extends VisualizationMethod implements ListSelecti
 	public TextByExpression(Visualization v) {
 		super(v);
 		setIsConfigurable(true);
+		setUseProvidedArea(false);
 	}
 	
 	public String getDescription() {
@@ -76,24 +78,20 @@ public class TextByExpression extends VisualizationMethod implements ListSelecti
 			if(cache == null || !cache.hasData(idc)|| useSamples.size() == 0) {
 				return;
 			}
-									
+
 			int startx = (int)(g.getVLeft() + g.getVWidth() + SPACING);
 			int starty = (int)(g.getVTop() + g.getVHeight() / 2);
-			
 			Font f = getFont(true);
 			g2d.setFont(f);
-			
+			int th = g2d.getFontMetrics().getHeight();
 			int w = 0, i = 0;
 			for(Sample s : useSamples) {
 				String str = getDataString(s, idc, cache, SEP + "\n") + 
-				(++i == useSamples.size() ? "" : SEP);
-				
+					(++i == useSamples.size() ? "" : SEP);
 				TextLayout tl = new TextLayout(str, f, g2d.getFontRenderContext());
 				Rectangle2D tb = tl.getBounds();
-				Dimension size = new Dimension((int)tb.getHeight(), (int)tb.getWidth());
-
-				g2d.drawString(str, startx + w, starty - size.height / 2);
-				w += size.width;
+				g2d.drawString(str, startx + w, starty + th / 2);
+				w += tb.getWidth() + SPACING;
 			}
 		}
 	}
@@ -190,7 +188,7 @@ public class TextByExpression extends VisualizationMethod implements ListSelecti
 		Font f = font == null ? DEFAULT_FONT : font;
 		if(adjustZoom) {
 			int size = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
-			f = new Font(f.getName(), size, f.getStyle());
+			f = new Font(f.getName(), f.getStyle(), size);
 		}
 		return f;
 	}
@@ -198,6 +196,13 @@ public class TextByExpression extends VisualizationMethod implements ListSelecti
 	void addUseSample(Sample s) {
 		if(s != null) {
 			useSamples.add(s);
+			modified();
+		}
+	}
+	
+	void removeUseSample(Sample s) {
+		if(s != null) {
+			useSamples.remove(s);
 			modified();
 		}
 	}
@@ -216,7 +221,7 @@ public class TextByExpression extends VisualizationMethod implements ListSelecti
 		modified();
 	}
 	
-	SampleList sampleList;
+	SampleCheckList sampleList;
 	
 	public JPanel getConfigurationPanel() {
 		JPanel panel = new JPanel();
@@ -228,27 +233,32 @@ public class TextByExpression extends VisualizationMethod implements ListSelecti
 		
 		SimpleGex gex = GexManager.getCurrentGex();
 		if(gex != null) {			
-			sampleList = new SampleList(
-					gex.getSamples().values()
+			sampleList = new SampleCheckList(
+					gex.getSamples().values(), useSamples
 			);
 		} else {
-			sampleList = new SampleList(new ArrayList<Sample>());
+			sampleList = new SampleCheckList(
+					new ArrayList<Sample>(), new ArrayList<Sample>()
+			);
 		}
 		
-		sampleList.addListSelectionListener(this);
+		sampleList.setActionCommand(ACTION_SAMPLE);
+		sampleList.addActionListener(this);
 		CellConstraints cc = new CellConstraints();
 		panel.add(new JLabel("Select samples:"), cc.xy(1, 1));
-		panel.add(sampleList, cc.xy(1, 2));
+		panel.add(sampleList, cc.xy(1, 3));
 		return panel;
 	}
 	
-	public void valueChanged(ListSelectionEvent e) {
-		Sample s = sampleList.getSelectedSample();
-		if(s != null) {
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand();
+		System.out.println("ACTION");
+		if(ACTION_SAMPLE.equals(action)) {
+			Sample s = sampleList.getSelectedSample();
 			if(sampleList.isSelected(s)) {
-				useSamples.add(s);
+				addUseSample(s);
 			} else {
-				useSamples.remove(s);
+				removeUseSample(s);
 			}
 		}
 	}

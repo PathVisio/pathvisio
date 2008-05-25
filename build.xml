@@ -251,22 +251,24 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</jar>
 	</target>
 	
-	<target name="jar" depends="compile-swing" description="Generates executable jar file">
-		<jar jarfile="pathvisio_v2.jar">
+	<target name="jar" depends="compile-swing, compile-swt" description="Generates executable jar file">
+		<jar jarfile="pathvisio_swt.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.gui.swt.GuiMain"/>
 				<attribute name="Class-Path" value="${jar.class.path}"/>
 			</manifest>
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>			
-			<fileset dir="${build.v2.dir}" includes="**/*.class"/>			
+			<fileset dir="${build.gui.dir}" includes="**/*.class"/>	
+			<fileset dir="${build.swt.dir}" includes="**/*.class"/>			
 		</jar>
-		<jar jarfile="pathvisio_v1.jar">
+		<jar jarfile="pathvisio.jar">
 			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.gui.swt.GuiMain"/>
+				<attribute name="Main-Class" value="org.pathvisio.gui.swing.GuiMain"/>
 				<attribute name="Class-Path" value="${jar.class.path}"/>
 			</manifest>
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>			
-			<fileset dir="${build.v1.dir}" includes="**/*.class"/>			
+			<fileset dir="${build.gui.dir}" includes="**/*.class"/>	
+			<fileset dir="${build.swing.dir}" includes="**/*.class"/>	
 		</jar>
 		<jar jarfile="pathvisio_core.jar">
 			<manifest>
@@ -276,15 +278,12 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>
 			<fileset dir="." includes="GPML.xsd"/>
 		</jar>
-		<jar jarfile="lib/plugins.jar">
-			<fileset dir="${build.plugins.dir}" includes="**/*.class"/>			
-		</jar>
 		<jar jarfile="gpmldiff.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.gpmldiff.GpmlDiff"/>
 				<attribute name="Class-Path" value="lib/jdom.jar"/>
 			</manifest>
-			<fileset dir="${build.v1.dir}" includes="**/*.class"/>	
+			<fileset dir="${build.gui.dir}" includes="**/*.class"/>	
 		</jar>
     </target>
 

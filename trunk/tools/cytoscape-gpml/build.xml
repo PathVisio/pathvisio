@@ -69,4 +69,9 @@
 		<copy file="${plugin.name}.jar" todir="${cytoscape.plugin.dir}"/>
 	</target>
 	
+	<target name="webstart"  depends="jar" description="Sign and copy the jars to the Cytoscape webstart directory">
+		<signjar jar="${plugin.name}.jar" lazy="true" 
+					alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+		<copy file="${plugin.name}.jar" todir="${cytoscape.webstart.dir}"/>
+	</target>
 </project>

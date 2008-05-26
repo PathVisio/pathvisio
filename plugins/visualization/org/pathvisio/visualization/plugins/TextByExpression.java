@@ -17,7 +17,7 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.JScrollPane;
 
 import org.jdom.Element;
 import org.pathvisio.Engine;
@@ -246,7 +246,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 		sampleList.addActionListener(this);
 		CellConstraints cc = new CellConstraints();
 		panel.add(new JLabel("Select samples:"), cc.xy(1, 1));
-		panel.add(sampleList, cc.xy(1, 3));
+		panel.add(new JScrollPane(sampleList), cc.xy(1, 3));
 		return panel;
 	}
 	

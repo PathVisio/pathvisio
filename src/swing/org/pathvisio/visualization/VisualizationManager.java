@@ -277,10 +277,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	public  OutputStream getXmlOutput() {
 		try {
 			File f = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+			Logger.log.trace("Visualization settings will be saved to: " + f);
 			OutputStream out = new FileOutputStream(f);
 			return out;
 		} catch(Exception e) {
-			e.printStackTrace();
+			Logger.log.error("Unable to create visualization settings file", e);
 			return null;
 		}
 	}
@@ -290,13 +291,19 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		
 		OutputStream out = getXmlOutput();
 		
+		Logger.log.trace("Saving visualizations and color sets to xml: " + out);
 		Document xmlDoc = new Document();
 		Element root = new Element(ROOT_XML_ELEMENT);
 		xmlDoc.setRootElement(root);
 		
 		root.addContent(colorSetMgr.getXML());
 		
+		for(Visualization v : getVisualizations()) {
+			root.addContent(v.toXML());
+		}
+		
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		
 		try {
 			xmlOut.output(xmlDoc, out);
 			out.close();

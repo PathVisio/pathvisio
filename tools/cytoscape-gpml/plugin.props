@@ -1,0 +1,31 @@
+#plugin.props
+
+# This props file should be filled out and included in the plugin jar file.  This props file will be used
+# to put information into the Plugin Manager about the plugin
+
+# -- The following properties are REQUIRED -- #
+
+# The plugin name that will be displayed to users, white space within name is not allowed
+pluginName=GPML-Plugin
+
+# Description used to give users information about the plugin such as what it does.
+# Html tags are encouraged for formatting purposes.
+pluginDescription=The GPML plugin for Cytoscape is a converter between Cytoscape networks and the GPML (GenMAPP Pathway Markup Language) pathway format.<p>This plugin makes it possible open and save GPML pathways from Cytoscape. You can also copy/paste bits of pathways or networks between PathVisio, WikiPathways and Cytoscape.<br>See http://www.pathvisio.org/Cytoscape_plugin for more information and http://www.wikipathways.org for a collection of GPML pathways.
+
+# Plugin version number, this must be two numbers separated by a decimlal.  Ex. 0.2, 14.03
+pluginVersion=0.2
+
+# Compatible Cytoscape version. If there are more than one version, seperate by ",".
+cytoscapeVersion=2.5, 2.6
+
+# Category, use one of the categories listed on the http://cytoscape.org/plugins2.php site
+pluginCategory=Network and Attribute I/O
+
+# -- The following properties are OPTIONAL -- #
+
+# URL to a website that gives more information about your plugin, Ex. http://my-lab-site.org
+projectURL=http://www.pathvisio.org/Cytoscape_plugin
+
+# List of authors.  Note each author and institution pair are separated by a : (colon)
+# each additional author institution pair must be separated from other pairs bye a ; (semicolon)
+pluginAuthorsInstitutions=Thomas Kelder:Maastricht University

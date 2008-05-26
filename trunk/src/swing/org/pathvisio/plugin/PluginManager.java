@@ -86,7 +86,7 @@ public class PluginManager {
 			String entryname = entry.getName();
 			if(entryname.endsWith(".class")) {
 				try {
-					String cn = removeClassExt(entryname.replace('/', '.').replace('$', '.'));
+					String cn = removeClassExt(entryname.replace('/', '.'));
 					Class<?> c = Class.forName(cn);
 					if(isPlugin(c)) {
 						Class<Plugin> pluginClass = (Class<Plugin>)c;

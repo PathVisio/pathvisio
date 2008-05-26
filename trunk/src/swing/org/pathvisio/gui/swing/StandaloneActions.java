@@ -36,6 +36,8 @@ import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
+import org.pathvisio.data.GexManager.GexManagerEvent;
+import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.visualization.VisualizationManager;
@@ -330,12 +332,14 @@ public class StandaloneActions
 		}
 	}
 
-	public static class VisualizationAction extends AbstractAction {
+	public static class VisualizationAction extends AbstractAction implements GexManagerListener {
 		MainPanel mainPanel;
 		
 		public VisualizationAction(MainPanel mainPanel) {
 			putValue(NAME, "Visualization options");
 			this.mainPanel = mainPanel;
+			setEnabled(GexManager.isConnected());
+			GexManager.addListener(this);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -344,6 +348,11 @@ public class StandaloneActions
 					null,
 					mainPanel
 			).setVisible(true);
+		}
+
+		public void gexManagerEvent(GexManagerEvent e) {
+			Logger.log.trace("Visualization options action, gexmanager event, connected: " + GexManager.isConnected());
+			setEnabled(GexManager.isConnected());
 		}
 	}
 }

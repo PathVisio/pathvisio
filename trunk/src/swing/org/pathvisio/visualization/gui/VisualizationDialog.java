@@ -10,9 +10,12 @@ import org.pathvisio.visualization.VisualizationManager;
 public class VisualizationDialog extends OkCancelDialog {
 	
 	VisualizationPanel visPanel;
+	VisualizationManager visMgr;
 	
 	public VisualizationDialog(VisualizationManager visMgr, Frame frame, Component locationComp) {
 		super(frame, "Visualization options", locationComp, true, false);
+		
+		this.visMgr = visMgr;
 		
 		//If there is no visualization yet, create one
 		if(visMgr.getVisualizations().size() == 0) {
@@ -28,5 +31,10 @@ public class VisualizationDialog extends OkCancelDialog {
 	protected Component createDialogPane() {
 		visPanel = new VisualizationPanel();
 		return visPanel;
+	}
+	
+	protected void okPressed() {
+		visMgr.saveXML(); //Save the settings
+		super.okPressed();
 	}
 }

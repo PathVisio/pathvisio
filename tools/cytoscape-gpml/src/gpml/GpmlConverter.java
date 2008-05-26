@@ -167,6 +167,7 @@ public class GpmlConverter {
 								type
 						);
 						edges.add(e);
+						gpmlHandler.addEdge(e, pe);
 					//A line with anchors, split into multiple edges
 					} else {
 						String sId = nodeMap.get(
@@ -182,18 +183,20 @@ public class GpmlConverter {
 						
 						CyEdge es = Cytoscape.getCyEdge(
 								sId,
-								pe.getGraphId(),
+								pe.getGraphId() + "_start",
 								gpmlHandler.getNode(pe.getGraphId()).getParentIdentifier(),
 								"start-anchor"
 						);
 						edges.add(es);
+						gpmlHandler.addEdge(es, pe);
 						CyEdge ee = Cytoscape.getCyEdge(
 								gpmlHandler.getNode(pe.getGraphId()).getParentIdentifier(),
-								pe.getGraphId(),
+								pe.getGraphId() + "end",
 								eId,
 								"anchor-end"
 						);
 						edges.add(ee);
+						gpmlHandler.addEdge(ee, pe);
 					}
 				}
 			}

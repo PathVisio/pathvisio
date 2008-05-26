@@ -1,0 +1,184 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2007 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
+package org.pathvisio.plugins.directderby;
+
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+
+import org.pathvisio.data.DBConnDerby;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DataException;
+
+public class DirectDerby 
+{
+	private DBConnector con = new DBConnDerby();
+	private Connection sqlcon = null;
+
+	private boolean quit = false;
+	
+	DirectDerby (String database) throws DataException
+	{
+//		Engine.init();
+		sqlcon = con.createConnection(database, 0); 
+	}
+	
+	private boolean isCompleteSql (String cmd)
+	{
+		return (cmd.trim().endsWith(";"));
+	}
+	
+	private String repeat(char c, int n)
+	{
+		StringBuffer mystringbuf = new StringBuffer();
+		 
+		for ( int i=0; i< n; i++ )
+		      mystringbuf.append ( c );
+		 
+		return mystringbuf.toString();
+	}
+	
+	private void printResultSet (ResultSet r) throws SQLException
+	{
+		final int LIMIT = 100;
+		int [] maxW;
+		List <String[]> data = new ArrayList<String[]>();
+		
+		// dry run to find max column lengths
+		
+		int colnum = r.getMetaData().getColumnCount();
+		maxW = new int[colnum];
+		
+		for (int i = 0; i < colnum; ++i)
+		{
+			maxW[i] = r.getMetaData().getColumnName(i+1).length();
+		}
+		
+		int row = 0;
+		while (r.next() && row < LIMIT)
+		{
+			String[] rowdata = new String[colnum];
+			for (int i = 0; i < colnum; ++i) 
+			{
+				rowdata [i] = r.getString(i+1);
+				int len = rowdata[i].length();
+				if (len > maxW[i]) maxW[i] = len;
+			}
+			row++;
+			data.add(rowdata);
+		}
+		
+		
+		System.out.print ("+----+");
+		for (int i = 0; i < colnum; ++i) System.out.print (repeat ('-', maxW[i]) + "+");
+		System.out.println();
+		
+		System.out.print ("|    |");
+		for (int i = 0; i < colnum; ++i) System.out.printf ("%" + maxW[i] + "s|", r.getMetaData().getColumnName(i + 1));
+		System.out.println();
+		
+		System.out.print ("+----+");
+		for (int i = 0; i < colnum; ++i) System.out.print (repeat ('-', maxW[i]) + "+");
+		System.out.println();
+		
+		row = 0;
+		for (String[] rowdata : data)
+		{
+			System.out.printf("|%4d|", new Object[] { row });
+			for (int i = 0; i < colnum; ++i) System.out.printf ("%" + maxW[i] + "s|", rowdata[i]);
+			row++;
+			System.out.println();
+		}
+
+		System.out.print ("+----+");
+		for (int i = 0; i < colnum; ++i) System.out.print (repeat ('-', maxW[i]) + "+");
+		System.out.println();
+
+	}
+	
+	
+	private void run()
+	{
+		BufferedReader in = new BufferedReader (new InputStreamReader (System.in));
+		String cmd = "";
+		while (!quit)
+		{
+			try
+			{
+				System.out.println ("Type an SQL statement or 'quit'");
+				String line = in.readLine();
+				if (line.trim().equalsIgnoreCase("quit"))
+				{
+					quit = true;
+				}
+				else
+				{
+					cmd += line;
+					if (isCompleteSql (cmd))
+					{
+						try
+						{
+							cmd = cmd.substring(0, cmd.indexOf(';'));
+							System.out.println ("Executing '" + cmd + "'");
+							ResultSet r = sqlcon.createStatement().executeQuery(cmd);
+							printResultSet (r);
+						}
+						catch (SQLException e)
+						{
+							e.printStackTrace();
+						}
+						cmd = "";
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				quit = true;
+			}
+		}
+	}
+	
+	public static void printUsage()
+	{
+		System.out.print (
+				"PvQuery\n" +
+				"  command line shell for running sql queries on pgex / pgdb databases\n" +
+				"\n" +
+				"Usage:\n" +
+				"  PvQuery [database.pgdb|database.pgex]\n");
+	}
+	
+	public static void main (String [] args) throws DataException
+	{
+		if (args.length != 1)
+		{
+			printUsage();
+			System.out.println ("Error: Expected one argument\n");
+		}
+		else if (!new File(args[0]).exists())
+		{
+			printUsage();
+			System.out.println ("Error: file '" + args[0] + "' doesn't exist\n");
+		}
+		else
+		{
+			DirectDerby pvq = new DirectDerby(args[0]);
+			pvq.run();
+		}
+	}
+}

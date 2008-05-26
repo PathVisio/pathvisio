@@ -18,7 +18,11 @@ package org.pathvisio.gui.swing;
 
 import org.pathvisio.Engine;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.model.BatikImageExporter;
+import org.pathvisio.model.DataNodeListExporter;
+import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.view.MIMShapes;
 
@@ -49,5 +53,11 @@ public class GuiInit {
 	{
 		Engine.getCurrent().addPathwayExporter(new MappFormat());
 		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));	
+		Engine.getCurrent().addPathwayExporter(new DataNodeListExporter());
+		Engine.getCurrent().addPathwayExporter(new EUGeneExporter());
 	}
 }

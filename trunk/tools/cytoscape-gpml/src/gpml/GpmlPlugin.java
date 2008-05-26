@@ -26,6 +26,8 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.view.MIMShapes;
+import org.pathvisio.view.ShapeRegistry;
 import org.pathvisio.view.swing.PathwayTransferable;
 
 import phoebe.PhoebeCanvasDropEvent;
@@ -49,6 +51,8 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 				
     public GpmlPlugin() {
     	Logger.log.setLogLevel(true, true, true, true, true, true);
+    	MIMShapes.registerShapes();
+    	
     	gpmlHandler = new GpmlHandler();
     	
         Cytoscape.getImportHandler().addFilter(new GpmlFilter());

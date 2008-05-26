@@ -4,6 +4,7 @@ import giny.model.Edge;
 
 import java.awt.Color;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.PathwayElement;
 
@@ -58,8 +59,12 @@ public class GpmlEdgeAppearanceCalculator extends EdgeAppearanceCalculator {
 	private ArrowShape getArrowShape(LineType lt) {
 		ArrowShape as = ArrowShape.NONE;
 		
-		if(lt == LineType.ARROW) {
+		if(lt == null) {
+			return as;
+		} else if(lt == LineType.ARROW) {
 			as = ArrowShape.ARROW;
+		} else if(lt.toString().startsWith("mim")) {
+			as = ArrowShape.ARROW; //All mim shapes to arrow for now
 		} else if (lt == LineType.LIGAND_ROUND) {
 			as = ArrowShape.CIRCLE;
 		} else if (lt == LineType.LIGAND_SQUARE) {

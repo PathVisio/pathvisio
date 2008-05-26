@@ -188,7 +188,9 @@ public class GpmlConverter {
 								"start-anchor"
 						);
 						edges.add(es);
-						gpmlHandler.addEdge(es, pe);
+						PathwayElement pe_start = pe.copy();
+						pe_start.setEndLineType(null);
+						gpmlHandler.addEdge(es, pe_start);
 						CyEdge ee = Cytoscape.getCyEdge(
 								gpmlHandler.getNode(pe.getGraphId()).getParentIdentifier(),
 								pe.getGraphId() + "end",
@@ -196,7 +198,9 @@ public class GpmlConverter {
 								"anchor-end"
 						);
 						edges.add(ee);
-						gpmlHandler.addEdge(ee, pe);
+						PathwayElement pe_end = pe.copy();
+						pe_start.setStartLineType(null);
+						gpmlHandler.addEdge(ee, pe_end);
 					}
 				}
 			}

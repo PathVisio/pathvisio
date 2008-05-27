@@ -67,6 +67,7 @@ public class Converter {
      */ 
     public static void main(String[] args) 
     {
+    	Engine.init();
     	Engine engine = Engine.getCurrent();
     	engine.addPathwayImporter(new GpmlFormat());
     	engine.addPathwayImporter(new MappFormat());

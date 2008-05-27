@@ -92,7 +92,7 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 		curveHigh = calculateCurve(NRSTEP_HIGH);
 		curveLow = calculateCurve(NRSTEP_LOW);
 		
-		return curveHigh;
+		return curveLow;
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 	}
 	
 	static final int NRSTEP_LOW = 3; //Number of steps for lowres curve
-	static final int NRSTEP_HIGH = 10; //Number of steps for highres curve
+	static final int NRSTEP_HIGH = 20; //Number of steps for highres curve
 	
 	/**
 	 * Calculates the bezier curve, using NRSTEP segments for each
@@ -211,7 +211,7 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 	}
 	
 	public Point2D fromLineCoordinate(double l) {
-		return super.fromLineCoordinate(l, curveLow);
+		return super.fromLineCoordinate(l, curveHigh);
 	}
 	
 	protected WayPoint[] wayPointsToCenter(WayPoint[] waypoints,

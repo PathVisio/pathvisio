@@ -18,7 +18,6 @@
 	<property name="wikipathways.bin.dir" value="${wikipathways.www.dir}/wpi/bin"/>
 	<property name="wikipathways.webstart.dir" value="${wikipathways.bin.dir}"/>
 	<property name="wikipathways.applet.dir" value="${wikipathways.www.dir}/wpi/applet"/>
-	<property name="wikipathways.dest" value="/var/www/wikipathways"/>
 	<property name="wikipathways.bin.dest" value="${wikipathways.dest}/wpi/bin"/>
 	<property name="wikipathways.webstart.dest" value="${wikipathways.bin.dest}"/>
 	<property name="wikipathways.applet.dest" value="${wikipathways.dest}/wpi/applet"/>
@@ -305,7 +304,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</copy>
 	</target>
 
-	<target name="jar-wikipathways" depends="compile-wikipathways" description="Generate wikipathways jar file">
+	<target name="jar-wikipathways" depends="compile-core, compile-gui, compile-wikipathways" description="Generate wikipathways jar file">
 		<!-- Include packages					Exceptions
 			src/gui
 			src/core
@@ -403,11 +402,13 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			<arg line="autoftp.pl"/>
 		</exec>
 	</target>
-	
-	<target name="wikipathways-dest" depends="jar, wikipathways-applet-dest" description="Build PathVisio for WikiPathways">
-	</target>
-	
-	<target name="wikipathways-applet-dest" depends="jar-wikipathways" description="Build the applet for WikiPathways">
+
+	<target name="wikipathways-dest" depends="jar-wikipathways" description="Build the applet for WikiPathways">
+		<fail message="You must specify a destination path for WikiPathways to run this task:    ant -Dwikipathways.dest=/path/to/wikipathways [ant target]">
+			<condition>
+				<not> <isset property="wikipathways.dest"/> </not>
+			</condition>
+		</fail>
 		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy file="preloader.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy toDir="${wikipathways.applet.dir}/lib">

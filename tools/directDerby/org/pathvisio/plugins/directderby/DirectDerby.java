@@ -24,6 +24,11 @@ import org.pathvisio.data.DBConnDerby;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DataException;
 
+/**
+ * Run this to open a simple command shell where
+ * you can type SQL queries that are run against
+ * a pgdb or pgex file.
+ */
 public class DirectDerby 
 {
 	private DBConnector con = new DBConnDerby();
@@ -33,15 +38,20 @@ public class DirectDerby
 	
 	DirectDerby (String database) throws DataException
 	{
-//		Engine.init();
 		sqlcon = con.createConnection(database, 0); 
 	}
 	
+	/**
+	 * Check if the typed command is a complete SQL statement ending with ;
+	 */
 	private boolean isCompleteSql (String cmd)
 	{
 		return (cmd.trim().endsWith(";"));
 	}
 	
+	/**
+	 * Utility, repeat char c n times to form a string.
+	 */
 	private String repeat(char c, int n)
 	{
 		StringBuffer mystringbuf = new StringBuffer();
@@ -52,6 +62,10 @@ public class DirectDerby
 		return mystringbuf.toString();
 	}
 	
+	/**
+	 * Print the resultset as an ascii table.
+	 * Prints at maximum 100 rows.
+	 */
 	private void printResultSet (ResultSet r) throws SQLException
 	{
 		final int LIMIT = 100;
@@ -110,7 +124,9 @@ public class DirectDerby
 
 	}
 	
-	
+	/**
+	 * Main loop, here commands are read from the keyboard and parsed.
+	 */
 	private void run()
 	{
 		BufferedReader in = new BufferedReader (new InputStreamReader (System.in));
@@ -156,11 +172,11 @@ public class DirectDerby
 	public static void printUsage()
 	{
 		System.out.print (
-				"PvQuery\n" +
+				"DirectDerby\n" +
 				"  command line shell for running sql queries on pgex / pgdb databases\n" +
 				"\n" +
 				"Usage:\n" +
-				"  PvQuery [database.pgdb|database.pgex]\n");
+				"  DirectDerby [database.pgdb|database.pgex]\n");
 	}
 	
 	public static void main (String [] args) throws DataException

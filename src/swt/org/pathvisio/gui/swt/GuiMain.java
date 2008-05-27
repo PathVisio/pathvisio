@@ -252,11 +252,11 @@ public class GuiMain {
 		ImageRegistry imageRegistry = new ImageRegistry(display);
 		
 		// Labels for color by expressiondata (mRNA and Protein)
-		ImageData img = new ImageData(cl.getResourceAsStream("images/mRNA.bmp"));
+		ImageData img = new ImageData(cl.getResourceAsStream("mRNA.bmp"));
 		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR));
 		imageRegistry.put("data.mRNA",
 				new Image(display, img));
-		img = new ImageData(cl.getResourceAsStream("images/protein.bmp"));
+		img = new ImageData(cl.getResourceAsStream("protein.bmp"));
 		img.transparentPixel = img.palette.getPixel(SwtUtils.color2rgb(Engine.TRANSPARENT_COLOR));
 		imageRegistry.put("data.protein",
 				new Image(display, img));
@@ -265,9 +265,9 @@ public class GuiMain {
 		imageRegistry.put("sidepanel.hide",
 				ImageDescriptor.createFromURL(cl.getResource("close.gif")));
 		imageRegistry.put("shell.icon", 
-				ImageDescriptor.createFromURL(cl.getResource("images/bigcateye.gif")));
+				ImageDescriptor.createFromURL(cl.getResource("bigcateye.gif")));
 		imageRegistry.put("about.logo",
-				ImageDescriptor.createFromURL(cl.getResource("images/logo.jpg")));
+				ImageDescriptor.createFromURL(cl.getResource("logo.jpg")));
 						imageRegistry.put("checkbox.unchecked",
 				ImageDescriptor.createFromURL(cl.getResource("unchecked.gif")));
 		imageRegistry.put("checkbox.unavailable",

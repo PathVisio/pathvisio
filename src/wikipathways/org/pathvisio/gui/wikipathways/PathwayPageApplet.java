@@ -89,7 +89,7 @@ public class PathwayPageApplet extends JApplet {
 					} catch(Exception e) {
 						Logger.log.error("Error while starting applet", e);
 						String msg =  e.getClass() + 
-						"\n See error log (" + Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG) + ") for details";
+						"\n See error log (" + Engine.getCurrent().getPreferences().get(GlobalPreference.WP_FILE_LOG) + ") for details";
 						JOptionPane.showMessageDialog(
 								PathwayPageApplet.this, msg, "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 					};

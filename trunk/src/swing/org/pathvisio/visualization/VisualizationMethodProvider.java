@@ -1,5 +1,5 @@
 package org.pathvisio.visualization;
 
 public interface VisualizationMethodProvider {
-	public VisualizationMethod create(Visualization v);
+	public VisualizationMethod create(Visualization v, String registeredName);
 }

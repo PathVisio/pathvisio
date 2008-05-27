@@ -9,8 +9,8 @@ import org.pathvisio.visualization.VisualizationMethod;
 
 public class ColorByExpression extends VisualizationMethod {
 	
-	public ColorByExpression(Visualization v) {
-		super(v);
+	public ColorByExpression(Visualization v, String registeredName) {
+		super(v, registeredName);
 		setIsConfigurable(false); //TODO: make configurable
 	}
 

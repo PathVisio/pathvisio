@@ -31,22 +31,26 @@ import org.pathvisio.view.Graphics;
  */
 public abstract class VisualizationMethod implements Comparable <VisualizationMethod> 
 {
-	public static String XML_ELEMENT = "plugin";
-	public static String XML_ATTR_CLASS = "class";
+	public static String XML_ELEMENT = "method";
+	public static String XML_ATTR_NAME = "name";
 	
 	private boolean CONFIGURABLE; //Configurable (if true, override createConfigComposite)
 	private boolean USE_PROVIDED_AREA; //Does this plugin use reserved region in GmmlGraphicsObject
 	
 	private boolean isActive;
-		
+	
+	private String registeredName; //The name under which this method is registered
+	
 	private Visualization visualization;
 	
 	/**
 	 * Constructor for this class. Create an instance of this {@link VisualizationMethod}
 	 * @param v The {@link Visualization} the instance is part of
+	 * @param registeredName The name under which this method is registered
 	 */
-	public VisualizationMethod(Visualization v) {
+	public VisualizationMethod(Visualization v, String registeredName) {
 		visualization = v;
+		this.registeredName = registeredName;
 	}
 	
 	/**
@@ -108,7 +112,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 */
 	public Element toXML() {
 		Element elm = new Element(XML_ELEMENT);
-		elm.setAttribute(XML_ATTR_CLASS, getClass().getCanonicalName());
+		elm.setAttribute(XML_ATTR_NAME, registeredName);
 		return elm;
 	}
 	

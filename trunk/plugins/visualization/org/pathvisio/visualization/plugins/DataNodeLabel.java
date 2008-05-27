@@ -48,8 +48,8 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	Font font;
 	Color fontColor;
 	
-	public DataNodeLabel(Visualization v) {
-		super(v);
+	public DataNodeLabel(Visualization v, String registeredName) {
+		super(v, registeredName);
 	    setIsConfigurable(true);
 		setUseProvidedArea(true);
 	}

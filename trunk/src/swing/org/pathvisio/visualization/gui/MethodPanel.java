@@ -39,11 +39,22 @@ public class MethodPanel extends JPanel implements ActionListener {
 		top.add(nameLabel, cc.xy(3, 1));
 		top.add(new JLabel(method.getDescription()), cc.xy(5, 1));
 		
+		setLayout(new FormLayout(
+			"pref",
+			"pref, 4dlu, pref"
+		));
+		
+		add(top, cc.xy(1, 1));
+		
+		JPanel bottom = new JPanel();
+		bottom.setLayout(new FormLayout(
+			"15dlu, fill:pref:grow",
+			"pref"
+		));
 		configPanel = method.getConfigurationPanel();
 		configPanel.setBorder(BorderFactory.createEtchedBorder());
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(top);
-		add(configPanel);
+		bottom.add(configPanel, cc.xy(2, 1));
+		add(bottom, cc.xy(1, 3));
 		
 		//Initial values
 		configPanel.setVisible(method.isActive());

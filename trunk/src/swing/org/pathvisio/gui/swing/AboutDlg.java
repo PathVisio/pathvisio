@@ -38,7 +38,7 @@ import org.pathvisio.Revision;
  */
 public class AboutDlg 
 {
-	private static URL IMG_ABOUT_LOGO = Engine.getCurrent().getResourceURL("images/logo.jpg");	
+	private static URL IMG_ABOUT_LOGO = Engine.getCurrent().getResourceURL("logo.jpg");	
 	
 	/**
 	 * call this to open the dialog

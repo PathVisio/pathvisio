@@ -151,7 +151,6 @@ public class GuiMain
 		
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
-		frame.setSize(800, 600);
 		try {
 		    UIManager.setLookAndFeel(
 		        UIManager.getSystemLookAndFeelClassName());
@@ -159,6 +158,7 @@ public class GuiMain
 			Logger.log.error("Unable to load native look and feel", ex);
 		}
 		frame.pack();
+		frame.setSize(800, 600);
 		frame.addWindowListener(new WindowAdapter() 
 		{
 			public void windowClosed(WindowEvent arg0) 

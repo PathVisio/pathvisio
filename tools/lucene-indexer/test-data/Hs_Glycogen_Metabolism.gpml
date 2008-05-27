@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Glycogen Metabolism" Data-Source="GenMAPP 2.0" Version="20041203" Author="Kam Dahlquist" Email="genmapp@gladstone.ucsf.edu" Copyright="2002, Gladstone Institutes" Last-Modified="2/28/02" Organism="Homo sapiens">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Comment Source="WikiPathways-category">Metabolic Process</Comment>
+  <Graphics BoardWidth="16142.5" BoardHeight="13524.5" WindowWidth="16188.0" WindowHeight="13731.0" />
+  <DataNode TextLabel="GSK3B" Type="GeneProduct" BackpageHead="GSK3B | glycogen synthase kinase 3 beta" GraphId="ea5" GroupRef="bb15b">
+    <Graphics Color="000000" CenterX="14150.0" CenterY="5985.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2932" />
+  </DataNode>
+  <DataNode TextLabel="GBE1" Type="GeneProduct" BackpageHead="GBE1 | glucan (14-alpha-) branching enzyme 1 ..." GraphId="f01">
+    <Graphics Color="000000" CenterX="11565.0" CenterY="7165.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2632" />
+  </DataNode>
+  <DataNode TextLabel="GYS1" Type="GeneProduct" BackpageHead="GYS1 | glycogen synthase 1 (muscle)" GraphId="bdb" GroupRef="cc4d3">
+    <Graphics Color="000000" CenterX="11565.0" CenterY="5685.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2997" />
+  </DataNode>
+  <DataNode TextLabel="GYS2" Type="GeneProduct" BackpageHead="GYS2 | glycogen synthase 2 (liver)" GraphId="a3c" GroupRef="cc4d3">
+    <Graphics Color="000000" CenterX="11565.0" CenterY="5985.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2998" />
+  </DataNode>
+  <DataNode TextLabel="AGL" Type="GeneProduct" BackpageHead="AGL | amylo-1 6-glucosidase 4-alpha-glucanotr..." GraphId="df1">
+    <Graphics Color="000000" CenterX="1065.0" CenterY="7170.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="178" />
+  </DataNode>
+  <DataNode TextLabel="PYGM" Type="GeneProduct" BackpageHead="PYGM | phosphorylase glycogen; muscle (McArdle..." GraphId="a03" GroupRef="f11a0">
+    <Graphics Color="000000" CenterX="3955.0" CenterY="5790.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5837" />
+  </DataNode>
+  <DataNode TextLabel="PYGB" Type="GeneProduct" BackpageHead="PYGB | phosphorylase glycogen; brain" GraphId="b4d" GroupRef="f11a0">
+    <Graphics Color="000000" CenterX="3955.0" CenterY="6090.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5834" />
+  </DataNode>
+  <DataNode TextLabel="PYGL" Type="GeneProduct" BackpageHead="PYGL | phosphorylase glycogen; liver (Hers dis..." GraphId="fd9" GroupRef="f11a0">
+    <Graphics Color="000000" CenterX="3955.0" CenterY="5490.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5836" />
+  </DataNode>
+  <DataNode TextLabel="PGM1" Type="GeneProduct" BackpageHead="PGM1 | phosphoglucomutase 1" GraphId="f0d">
+    <Graphics Color="000000" CenterX="3970.0" CenterY="7230.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5236" />
+  </DataNode>
+  <DataNode TextLabel="UGP2" Type="GeneProduct" BackpageHead="UGP2 | UDP-glucose pyrophosphorylase 2" GraphId="b6f" GroupRef="ed3d3">
+    <Graphics Color="000000" CenterX="10615.0" CenterY="3885.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="7360" />
+  </DataNode>
+  <DataNode TextLabel="UGP2" Type="GeneProduct" BackpageHead="UGP2 | UDP-glucose pyrophosphorylase 2" GraphId="ced" GroupRef="ed3d3">
+    <Graphics Color="000000" CenterX="10615.0" CenterY="4185.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="7360" />
+  </DataNode>
+  <DataNode TextLabel="GYG" Type="GeneProduct" BackpageHead="GYG | glycogenin" GraphId="c04" GroupRef="e77a5">
+    <Graphics Color="000000" CenterX="12400.0" CenterY="4700.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2992" />
+  </DataNode>
+  <DataNode TextLabel="GYG2" Type="GeneProduct" BackpageHead="GYG2 | glycogenin 2" GraphId="d29" GroupRef="e77a5">
+    <Graphics Color="000000" CenterX="12400.0" CenterY="5000.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="8908" />
+  </DataNode>
+  <DataNode TextLabel="PHKA1" Type="GeneProduct" BackpageHead="PHKA1 | phosphorylase kinase alpha 1 (muscle)" GraphId="b13" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="2210.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5255" />
+  </DataNode>
+  <DataNode TextLabel="PHKA2" Type="GeneProduct" BackpageHead="PHKA2 | phosphorylase kinase alpha 2 (liver)" GraphId="e17" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="2510.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5256" />
+  </DataNode>
+  <DataNode TextLabel="PHKB" Type="GeneProduct" BackpageHead="PHKB | phosphorylase kinase beta" GraphId="a31" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="2810.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5257" />
+  </DataNode>
+  <DataNode TextLabel="PHKG1" Type="GeneProduct" BackpageHead="PHKG1 | phosphorylase kinase gamma 1 (muscle)" GraphId="eb4" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="3110.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5260" />
+  </DataNode>
+  <DataNode TextLabel="PHKG2" Type="GeneProduct" BackpageHead="PHKG2 | phosphorylase kinase gamma 2 (testis)" GraphId="a9b" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="3410.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5261" />
+  </DataNode>
+  <DataNode TextLabel="CALM2" Type="GeneProduct" BackpageHead="CALM2 | calmodulin 2 (phosphorylase kinase del..." GraphId="df8" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="4010.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="805" />
+  </DataNode>
+  <DataNode TextLabel="GSK3A" Type="GeneProduct" BackpageHead="GSK3A | glycogen synthase kinase 3 alpha" GraphId="bf3" GroupRef="bb15b">
+    <Graphics Color="000000" CenterX="14150.0" CenterY="5685.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2931" />
+  </DataNode>
+  <DataNode TextLabel="PPP2CB" Type="GeneProduct" BackpageHead="PPP2CB | protein phosphatase 2 (formerly 2A) c..." GraphId="a2e" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="8170.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5516" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R5B" Type="GeneProduct" BackpageHead="PPP2R5B | protein phosphatase 2 regulatory sub..." GraphId="a4f" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="10570.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5526" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R5D" Type="GeneProduct" BackpageHead="PPP2R5D | protein phosphatase 2 regulatory sub..." GraphId="d4b" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="11170.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5528" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R5A" Type="GeneProduct" BackpageHead="PPP2R5A | protein phosphatase 2 regulatory sub..." GraphId="df7" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="10270.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5525" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R5E" Type="GeneProduct" BackpageHead="PPP2R5E | protein phosphatase 2 regulatory sub..." GraphId="c42" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="11470.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5529" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R5C" Type="GeneProduct" BackpageHead="PPP2R5C | protein phosphatase 2 regulatory sub..." GraphId="ac1" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="10870.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5527" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R1A" Type="GeneProduct" BackpageHead="PPP2R1A | protein phosphatase 2 (formerly 2A) ..." GraphId="c15" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="8470.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5518" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R2A" Type="GeneProduct" BackpageHead="PPP2R2A | protein phosphatase 2 (formerly 2A) ..." GraphId="e1e" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="9070.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5520" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R2B" Type="GeneProduct" BackpageHead="PPP2R2B | protein phosphatase 2 (formerly 2A) ..." GraphId="d5a" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="9370.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5521" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R2C" Type="GeneProduct" BackpageHead="PPP2R2C | protein phosphatase 2 (formerly 2A) ..." GraphId="b42" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="9670.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5522" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R3A" Type="GeneProduct" BackpageHead="PPP2R3A | protein phosphatase 2 (formerly 2A) ..." GraphId="bf6" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="9970.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5523" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R3B" Type="GeneProduct" BackpageHead="PPP2R3B | protein phosphatase 2 (formerly 2A) ..." GraphId="df9" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="11770.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="28227" />
+  </DataNode>
+  <DataNode TextLabel="PPP2CA" Type="GeneProduct" BackpageHead="PPP2CA | protein phosphatase 2 (formerly 2A) c..." GraphId="c65" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="7870.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5515" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R4" Type="GeneProduct" BackpageHead="PPP2R4 | protein phosphatase 2A regulatory sub..." GraphId="f57" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="12070.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5524" />
+  </DataNode>
+  <DataNode TextLabel="CALM1" Type="GeneProduct" BackpageHead="CALM1 | calmodulin 1 (phosphorylase kinase del..." GraphId="af6" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="3710.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="801" />
+  </DataNode>
+  <DataNode TextLabel="CALM3" Type="GeneProduct" BackpageHead="CALM3 | calmodulin 3 (phosphorylase kinase del..." GraphId="c2a" GroupRef="ddfca">
+    <Graphics Color="000000" CenterX="7555.0" CenterY="4310.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="808" />
+  </DataNode>
+  <DataNode TextLabel="PPP2R1B" Type="GeneProduct" BackpageHead="PPP2R1B | protein phosphatase 2 (formerly 2A) ..." GraphId="edd" GroupRef="af47d">
+    <Graphics Color="000000" CenterX="7615.0" CenterY="8770.0" Width="1000.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5519" />
+  </DataNode>
+  <DataNode TextLabel="Glycogen" Type="Unknown" GraphId="aa2">
+    <Graphics Color="0000ff" CenterX="4000.0" CenterY="5050.0" Width="1175.0" Height="285.0" />
+    <Xref Database="CAS" ID="9005-79-2" />
+  </DataNode>
+  <DataNode TextLabel="Glucose" Type="Unknown" GraphId="dcc">
+    <Graphics Color="0000ff" CenterX="1065.0" CenterY="7915.0" Width="1025.0" Height="285.0" />
+    <Xref Database="CAS" ID="50-99-7" />
+  </DataNode>
+  <DataNode TextLabel="Glucose-6-phosphate" Type="Unknown" GraphId="f2c">
+    <Graphics Color="0000ff" CenterX="3955.0" CenterY="7915.0" Width="2540.0" Height="285.0" />
+    <Xref Database="CAS" ID="59-56-3" />
+  </DataNode>
+  <DataNode TextLabel="Glucose-1-phosphate" Type="Unknown" GraphId="b9f">
+    <Graphics Color="0000ff" CenterX="10615.0" CenterY="3335.0" Width="2540.0" Height="285.0" />
+    <Xref Database="CAS" ID="59-56-3" />
+  </DataNode>
+  <DataNode TextLabel="Glycogen (n+1)" Type="Unknown" GraphId="e3e">
+    <Graphics Color="0000ff" CenterX="11550.0" CenterY="6650.0" Width="1805.0" Height="285.0" />
+    <Xref Database="CAS" ID="9005-79-2" />
+  </DataNode>
+  <DataNode TextLabel="Glycogen" Type="Unknown" GraphId="da6">
+    <Graphics Color="0000ff" CenterX="11550.0" CenterY="7800.0" Width="1175.0" Height="285.0" />
+    <Xref Database="CAS" ID="9005-79-2" />
+  </DataNode>
+  <DataNode TextLabel="cAMP" Type="Metabolite" GraphId="afdba">
+    <Graphics Color="0000ff" CenterX="7545.0" CenterY="795.0" Width="840.0" Height="300.0" />
+    <Xref Database="HMDB" ID="HMDB00058" />
+  </DataNode>
+  <DataNode TextLabel="UDP-glucose" Type="Metabolite" GraphId="d1c90">
+    <Graphics Color="0000ff" CenterX="10620.0" CenterY="4845.0" Width="1200.0" Height="300.0" />
+    <Xref Database="HMDB" ID="HMDB00286" />
+  </DataNode>
+  <DataNode TextLabel="Glycogen (n+1)" Type="Unknown" GraphId="b8494">
+    <Graphics Color="0000ff" CenterX="1050.0" CenterY="6650.0" Width="1805.0" Height="285.0" />
+    <Xref Database="CAS" ID="9005-79-2" />
+  </DataNode>
+  <DataNode TextLabel="Glucose 1-phosphate" Type="Metabolite" GraphId="d5dd2">
+    <Graphics Color="0000ff" CenterX="3952.5" CenterY="6720.0" Width="1845.0" Height="300.0" />
+    <Xref Database="HMDB" ID="HMDB01586" />
+  </DataNode>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="4000.0" y="5192.5" GraphRef="aa2" relX="0.0" relY="1.0" />
+      <Point x="3952.5" y="6570.0" GraphRef="d5dd2" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.4" Shape="None" GraphId="c16c9" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="1050.0" y="6792.5" GraphRef="b8494" relX="0.0" relY="1.0" />
+      <Point x="1065.0" y="7772.5" GraphRef="dcc" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.4" Shape="None" GraphId="eae25" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Elbow" Color="000000">
+      <Point x="1050.0" y="6507.5" GraphRef="b8494" relX="0.0" relY="-1.0" />
+      <Point x="3412.5" y="5050.0" GraphRef="aa2" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="3952.5" y="6870.0" GraphRef="d5dd2" relX="0.0" relY="1.0" />
+      <Point x="3955.0" y="7772.5" GraphRef="f2c" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.4" Shape="None" GraphId="aacbf" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="3955.0" y="8057.5" GraphRef="f2c" relX="0.0" relY="1.0" />
+      <Point x="3970.0" y="9007.5" GraphRef="fd0" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="1065.0" y="8057.5" GraphRef="dcc" relX="0.0" relY="1.0" />
+      <Point x="3337.5" y="9150.0" GraphRef="fd0" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="10615.0" y="3477.5" GraphRef="b9f" relX="0.0" relY="1.0" />
+      <Point x="10620.0" y="4695.0" GraphRef="d1c90" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.4" Shape="None" GraphId="ecec7" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="11550.0" y="5400.0" />
+      <Point x="11550.0" y="6507.5" GraphRef="e3e" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.54" Shape="None" GraphId="b3764" />
+      <Anchor position="0.03" Shape="None" GraphId="a14cb" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="11550.0" y="6792.5" GraphRef="e3e" relX="0.0" relY="1.0" />
+      <Point x="11550.0" y="7657.5" GraphRef="da6" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.4" Shape="None" GraphId="e0566" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="13625.0" y="5835.0" GraphRef="af3bf" relX="-1.0" relY="0.0" />
+      <Point x="12090.0" y="5835.0" GraphRef="e2798" relX="1.0" relY="0.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7292.5" y="4535.0" GraphRef="f88ec" relX="-0.5" relY="1.0" />
+      <Point x="4480.0" y="5790.0" GraphRef="a9287" relX="1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7817.5" y="4535.0" GraphRef="f88ec" relX="0.5" relY="1.0" />
+      <Point x="11040.0" y="5835.0" GraphRef="e2798" relX="-1.0" relY="0.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7327.5" y="7645.0" GraphRef="f80c3" relX="-0.5" relY="-1.0" />
+      <Point x="4480.0" y="6052.5" GraphRef="a9287" relX="1.0" relY="0.5" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7902.5" y="7645.0" GraphRef="f80c3" relX="0.5" relY="-1.0" />
+      <Point x="11040.0" y="6022.5" GraphRef="e2798" relX="-1.0" relY="0.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7545.0" y="945.0" GraphRef="afdba" relX="0.0" relY="1.0" />
+      <Point x="7555.0" y="1985.0" GraphRef="f88ec" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="10615.0" y="3660.0" GraphRef="dea4e" relX="0.0" relY="-1.0" />
+      <Point x="10617.0" y="3964.5" GraphRef="ecec7" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="11565.0" y="5460.0" GraphRef="e2798" relX="0.0" relY="-1.0" />
+      <Point x="11550.0" y="5998.05" GraphRef="b3764" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Curved" Color="000000">
+      <Point x="11220.0" y="4845.0" GraphRef="d1c90" relX="1.0" relY="0.0" />
+      <Point x="11550.0" y="5433.225" GraphRef="a14cb" relX="0.0" relY="0.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Curved" Color="000000">
+      <Point x="11875.0" y="4850.0" GraphRef="dfe4e" relX="-1.0" relY="0.0" />
+      <Point x="11550.0" y="5433.225" GraphRef="a14cb" relX="0.0" relY="0.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="11565.0" y="7015.0" GraphRef="f01" relX="0.0" relY="-1.0" />
+      <Point x="11550.0" y="7138.5" GraphRef="e0566" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="3955.0" y="5265.0" GraphRef="a9287" relX="0.0" relY="-1.0" />
+      <Point x="3981.0" y="5743.5" GraphRef="c16c9" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="3970.0" y="7080.0" GraphRef="f0d" relX="0.0" relY="-1.0" />
+      <Point x="3953.5" y="7231.0" GraphRef="aacbf" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="1065.0" y="7020.0" GraphRef="df1" relX="0.0" relY="-1.0" />
+      <Point x="1056.0" y="7184.5" GraphRef="eae25" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Glycolysis" GraphId="fd0">
+    <Graphics FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="3970.0" CenterY="9150.0" Width="1265.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Degradation" GraphId="f20">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="3950.0" CenterY="4300.0" Width="1670.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="Synthesis" GraphId="ee7">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="11500.0" CenterY="2650.0" Width="1385.0" Height="315.0" />
+  </Label>
+  <Label TextLabel="Ser/Thr Protein Phosphatase 2A" GraphId="f30">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7600.0" CenterY="7550.0" Width="3740.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Phosphorylase Kinase" GraphId="a8f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7635.0" CenterY="1770.0" Width="2675.0" Height="285.0" />
+  </Label>
+  <Group GroupId="ddfca" GraphId="f88ec" Style="None" TextLabel="new group" />
+  <Group GroupId="ed3d3" GraphId="dea4e" Style="None" TextLabel="new group" />
+  <Group GroupId="e77a5" GraphId="dfe4e" Style="None" TextLabel="new group" />
+  <Group GroupId="cc4d3" GraphId="e2798" Style="None" TextLabel="new group" />
+  <Group GroupId="bb15b" GraphId="af3bf" Style="None" TextLabel="new group" />
+  <Group GroupId="f11a0" GraphId="a9287" Style="None" TextLabel="new group" />
+  <Group GroupId="af47d" GraphId="f80c3" Style="None" TextLabel="new group" />
+  <InfoBox CenterX="275.0" CenterY="225.0" />
+  <Legend CenterX="3464.5" CenterY="9415.0" />
+</Pathway>

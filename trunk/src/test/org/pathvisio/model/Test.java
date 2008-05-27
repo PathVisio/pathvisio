@@ -16,6 +16,8 @@
 //
 package org.pathvisio.model;
 
+import org.pathvisio.Engine;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class Test extends TestCase implements PathwayListener
 	
 	public void setUp()
 	{
+		Engine.init();
 		data = new Pathway();
 		data.addListener(this);
 		o = PathwayElement.createPathwayElement(ObjectType.DATANODE);

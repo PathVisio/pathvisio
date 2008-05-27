@@ -204,23 +204,6 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	</target>
 
 	<target name="compile-wikipathways" depends="compile-gui" description="Compile wikipathways version">
-		<!-- Include packages					Exceptions
-			src/swing
-				org.pathvisio.gui.swing.* 		(!MainPanel)
-				com.mammothsoftware.frwk.ddb
-			src/core
-				org.pathvisio
-				org.pathvisio.data 				(only DataSources)
-				org.pathvisio.data.debug
-				org.pathvisio.model
-				org.pathvisio.preferences
-				org.pathvisio.util
-				org.pathvisio.view
-				org.pathvisio.view.swing
-			src/wikipathways
-				org.pathvisio.gui.wikipathways
-				org.pathvisio.wikipathways
-		-->
 		<!-- compile applet -->
 		<javac srcdir="src/wikipathways"
 			includes="**"
@@ -323,24 +306,25 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 	</target>
 
 	<target name="jar-wikipathways" depends="compile-wikipathways" description="Generate wikipathways jar file">
+		<!-- Include packages					Exceptions
+			src/gui
+			src/core
+				org.pathvisio.model				BatikImageExporter, SvgFormat
+			src/wikipathways
+		-->
 		<jar jarfile="wikipathways.jar" index="true">
 			<fileset dir="${build.wikipathways.dir}" includes="**/*.class">
 				<exclude name="org/pathvisio/wikipathways/Preloader.class"/>
 			</fileset>
-            <!--<manifest>
-            	 <attribute name="Class-Path" value="${wikipathways.class.path}"/>
-            </manifest>-->
+			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
+			<fileset dir="${build.core.dir}" includes="**/*.class"/>
 		</jar>
 		<jar jarfile="preloader.jar" index="true">
 			<fileset dir="${build.wikipathways.dir}" includes="org/pathvisio/wikipathways/Preloader.class"/>
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
 		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar" index="true">
-			<fileset dir="." includes="backpage/*"/>
-			<fileset dir="." includes="icons/*"/>
-			<!--<fileset dir="." includes="images/*"/>-->
-			<fileset dir="." includes="GPML.xsd"/>
-			<fileset dir="." includes="MAPPTmpl.gtp"/>
+			<fileset dir="resources" excludes="logo*, *.bmp, *.ai"/>
 			<!--<fileset dir="." includes="biopax-level2.owl"/>-->
 		</jar>
 	</target>

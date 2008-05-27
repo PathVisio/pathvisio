@@ -139,7 +139,7 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 	 * @return An array with the curve broken down into small segments
 	 */
 	protected Segment[] calculateCurve(int nrStep) {
-		curveHigh = new Segment[nrStep * curvedSegments.length];
+		Segment[] curve = new Segment[nrStep * curvedSegments.length];
 		
 		for(int i = 0; i < curvedSegments.length; i++) {
 			CurvedSegment cs = curvedSegments[i];
@@ -161,12 +161,12 @@ public class CurvedConnectorShape extends ElbowConnectorShape {
 						cs.getMEnd().getY(),
 						t
 				);
-				curveHigh[i * nrStep + j] = 
+				curve[i * nrStep + j] = 
 					new Segment(prev, new Point2D.Double(xe, ye));
 				prev = new Point2D.Double(xe, ye);
 			}
 		}
-		return curveHigh;
+		return curve;
 	}
 	
 	/**

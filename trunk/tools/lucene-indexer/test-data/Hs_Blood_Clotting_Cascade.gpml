@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Blood Clotting Cascade" Data-Source="GenMAPP 2.0" Version="20041216" Author="Andrew Kwa" Maintainer="Nathan Salomonis" Email="nsalomonis@gladstone.ucsf.edu" Copyright="2000, Gladstone Institutes" Last-Modified="3/7/02" Organism="Homo sapiens">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Comment Source="WikiPathways-category">Physiological Process</Comment>
+  <Graphics BoardWidth="14770.25" BoardHeight="9765.25" WindowWidth="14790.0" WindowHeight="10762.0" />
+  <DataNode TextLabel="F12" Type="GeneProduct" BackpageHead="F12 | coagulation factor XII (Hageman factor)" GraphId="a29">
+    <Graphics Color="000000" CenterX="935.0" CenterY="1085.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2161" />
+  </DataNode>
+  <DataNode TextLabel="F11" Type="GeneProduct" BackpageHead="F11 | coagulation factor XI (plasma thromboplas..." GraphId="e03">
+    <Graphics Color="000000" CenterX="1550.0" CenterY="1850.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2160" />
+  </DataNode>
+  <DataNode TextLabel="F9" Type="GeneProduct" BackpageHead="F9 | coagulation factor IX (plasma thromboplast..." GraphId="c3c">
+    <Graphics Color="000000" CenterX="2700.0" CenterY="2600.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2158" />
+  </DataNode>
+  <DataNode TextLabel="F10" Type="GeneProduct" BackpageHead="F10 | coagulation factor X" GraphId="b58" GroupRef="fd46e">
+    <Graphics Color="000000" CenterX="4775.0" CenterY="3200.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2159" />
+  </DataNode>
+  <DataNode TextLabel="F10" Type="GeneProduct" BackpageHead="F10 | coagulation factor X" GraphId="a0e" GroupRef="fd46e">
+    <Graphics Color="000000" CenterX="4775.0" CenterY="3500.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2159" />
+  </DataNode>
+  <DataNode TextLabel="VWF" Type="GeneProduct" BackpageHead="VWF | von Willebrand factor" GraphId="cce">
+    <Graphics Color="000000" CenterX="10005.0" CenterY="1200.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="7450" />
+  </DataNode>
+  <DataNode TextLabel="F5" Type="GeneProduct" BackpageHead="F5 | coagulation factor V (proaccelerin labile..." GraphId="d41">
+    <Graphics Color="000000" CenterX="10300.0" CenterY="2200.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2153" />
+  </DataNode>
+  <DataNode TextLabel="F7" Type="GeneProduct" BackpageHead="F7 | coagulation factor VII (serum prothrombin ..." GraphId="fc6">
+    <Graphics Color="000000" CenterX="2300.0" CenterY="4700.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2155" />
+  </DataNode>
+  <DataNode TextLabel="F2" Type="GeneProduct" BackpageHead="F2 | coagulation factor II (thrombin)" GraphId="a1d">
+    <Graphics Color="000000" CenterX="7300.0" CenterY="4800.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2147" />
+  </DataNode>
+  <DataNode TextLabel="F13B" Type="GeneProduct" BackpageHead="F13B | coagulation factor XIII B polypeptide" GraphId="d78">
+    <Graphics Color="000000" CenterX="12750.0" CenterY="4500.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2165" />
+  </DataNode>
+  <DataNode TextLabel="SERPINF2" Type="GeneProduct" BackpageHead="SERPINF2 | serine (or cysteine) proteinase inhi..." GraphId="edf">
+    <Graphics Color="000000" CenterX="9905.0" CenterY="7050.0" Width="1100.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5345" />
+  </DataNode>
+  <DataNode TextLabel="PLAU" Type="GeneProduct" BackpageHead="PLAU | plasminogen activator urokinase" GraphId="c85">
+    <Graphics Color="000000" CenterX="7215.0" CenterY="7050.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5328" />
+  </DataNode>
+  <DataNode TextLabel="PLAT" Type="GeneProduct" BackpageHead="PLAT | plasminogen activator tissue" GraphId="ef4">
+    <Graphics Color="000000" CenterX="4485.0" CenterY="8130.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5327" />
+  </DataNode>
+  <DataNode TextLabel="SERPINB2" Type="GeneProduct" BackpageHead="SERPINB2 | serine (or cysteine) proteinase inhi..." GraphId="f20" GroupRef="d6cba">
+    <Graphics Color="000000" CenterX="4485.0" CenterY="7195.0" Width="1100.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5055" />
+  </DataNode>
+  <DataNode TextLabel="SERPINE1" Type="GeneProduct" BackpageHead="SERPINE1 | serine (or cysteine) proteinase inhi..." GraphId="f7b" GroupRef="d6cba">
+    <Graphics Color="000000" CenterX="4485.0" CenterY="6895.0" Width="1100.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5054" />
+  </DataNode>
+  <DataNode TextLabel="PLG" Type="GeneProduct" BackpageHead="PLG | plasminogen" GraphId="b6a">
+    <Graphics Color="000000" CenterX="7215.0" CenterY="8130.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="5340" />
+  </DataNode>
+  <DataNode TextLabel="FGB" Type="GeneProduct" BackpageHead="FGB | fibrinogen beta chain" GraphId="c8e" GroupRef="cc726">
+    <Graphics Color="000000" CenterX="7830.0" CenterY="6030.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2244" />
+  </DataNode>
+  <DataNode TextLabel="FGA" Type="GeneProduct" BackpageHead="FGA | fibrinogen alpha chain" GraphId="fcc" GroupRef="cc726">
+    <Graphics Color="000000" CenterX="7830.0" CenterY="5730.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2243" />
+  </DataNode>
+  <DataNode TextLabel="FGG" Type="GeneProduct" BackpageHead="FGG | fibrinogen gamma chain" GraphId="aa3" GroupRef="cc726">
+    <Graphics Color="000000" CenterX="7830.0" CenterY="6330.0" Width="900.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2266" />
+  </DataNode>
+  <DataNode TextLabel="F8" Type="GeneProduct" BackpageHead="F8 | coagulation factor VIII procoagulant comp..." GraphId="fc4" GroupRef="f4f2f">
+    <Graphics Color="000000" CenterX="7750.0" CenterY="1050.0" Width="1100.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="2157" />
+  </DataNode>
+  <DataNode TextLabel="F8A1" Type="GeneProduct" BackpageHead="F8A1 | coagulation factor VIII-associated (intr..." GraphId="c42" GroupRef="f4f2f">
+    <Graphics Color="000000" CenterX="7750.0" CenterY="1350.0" Width="1100.0" Height="300.0" />
+    <Xref Database="Entrez Gene" ID="8263" />
+  </DataNode>
+  <DataNode TextLabel="Prothrombinase Complex" Type="GeneProduct" GraphId="f4e">
+    <Graphics Color="000000" CenterX="8420.0" CenterY="4125.0" Width="2600.0" Height="300.0" />
+    <Xref Database="SwissProt" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Fibrin" Type="Unknown" GraphId="a53">
+    <Graphics Color="0000ff" CenterX="11700.0" CenterY="7665.0" Width="740.0" Height="285.0" />
+    <Xref Database="CAS" ID="9001-31-4" />
+  </DataNode>
+  <DataNode TextLabel="Metabolite" Type="Metabolite" GraphId="e5f17">
+    <Graphics Color="0000ff" CenterX="9510.0" CenterY="8715.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7750.0" y="4800.0" GraphRef="a1d" relX="1.0" relY="0.0" />
+      <Point x="8885.0" y="4800.0" GraphRef="aef" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.5859030837004405" Shape="None" GraphId="a8fbc" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="9555.0" y="1200.0" GraphRef="cce" relX="-1.0" relY="0.0" />
+      <Point x="8592.01953125" y="1199.9999694824219" GraphRef="fd90f" relX="1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="8420.0" y="4275.0" GraphRef="f4e" relX="0.0" relY="1.0" />
+      <Point x="8415.0" y="4800.0" GraphRef="a8fbc" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="4005.0" y="1992.5" GraphRef="b3e" relX="0.0" relY="1.0" />
+      <Point x="4005.0" y="2600.0" GraphRef="c8106" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="10892.5" y="6127.5" GraphRef="fa8" relX="0.0" relY="1.0" />
+      <Point x="11263.75" y="6657.5" GraphRef="a3f" relX="-0.5" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="10300.0" y="2350.0" GraphRef="d41" relX="0.0" relY="1.0" />
+      <Point x="9250.0" y="3207.5" GraphRef="fbe" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="11700.0" y="6942.5" GraphRef="a3f" relX="0.0" relY="1.0" />
+      <Point x="11700.0" y="7450.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="1385.0" y="1085.0" GraphRef="a29" relX="1.0" relY="0.0" />
+      <Point x="2137.5" y="1085.0" GraphRef="cd4" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="9905.0" y="7200.0" GraphRef="edf" relX="0.0" relY="1.0" />
+      <Point x="9900.0" y="7987.5" GraphRef="b0d" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="1860.0" y="3915.0" GraphRef="e0f" relX="1.0" relY="0.0" />
+      <Point x="2775.0" y="3915.0" GraphRef="c14" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7215.0" y="7200.0" GraphRef="c85" relX="0.0" relY="1.0" />
+      <Point x="7215.0" y="7980.0" GraphRef="b6a" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7858.509765625" y="1675.3231201171875" GraphRef="fd90f" relX="0.0" relY="1.0" />
+      <Point x="7291.25" y="2457.5" GraphRef="d8b" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="9480.0" y="4942.5" GraphRef="aef" relX="0.0" relY="1.0" />
+      <Point x="9480.702855446427" y="5982.968254225138" GraphRef="fc0e6" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="6255.0" y="2940.0" />
+      <Point x="6255.0" y="3350.0" GraphRef="f84a5" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.07317073170731707" Shape="None" GraphId="cd29d" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="11700.0" y="7815.0" GraphRef="a53" relX="0.0" relY="1.0526315789473684" />
+      <Point x="11705.0" y="8592.5" GraphRef="e5b" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.4" Shape="None" GraphId="d23c5" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="5300.0" y="3350.0" GraphRef="e677e" relX="1.0" relY="0.0" />
+      <Point x="7012.5" y="3350.0" GraphRef="bfc" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.5576642335766423" Shape="None" GraphId="f84a5" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="2000.0" y="1850.0" GraphRef="e03" relX="1.0" relY="0.0" />
+      <Point x="3305.0" y="1850.0" GraphRef="b3e" relX="-1.1336032388663968" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.6053639846743295" Shape="None" GraphId="a2cea" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="12750.0" y="6142.5" GraphRef="dcd" relX="0.0" relY="1.0" />
+      <Point x="12136.25" y="6657.5" GraphRef="a3f" relX="0.5" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="4485.0" y="7420.0" GraphRef="d27b6" relX="0.0" relY="1.0" />
+      <Point x="4485.0" y="7980.0" GraphRef="ef4" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="4873.75" y="4557.5" GraphRef="c25" relX="0.5" relY="-1.0" />
+      <Point x="6255.0" y="3350.0" GraphRef="f84a5" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="8583.2529296875" y="5980.0" GraphRef="fa7f8" relX="1.0" relY="0.0" />
+      <Point x="10095.0" y="5985.0" GraphRef="fa8" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.5936508450275423" Shape="None" GraphId="fc0e6" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="2785.0" y="1227.5" GraphRef="cd4" relX="0.0" relY="1.0" />
+      <Point x="2790.0" y="1850.0" GraphRef="a2cea" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="4935.0" y="8130.0" GraphRef="ef4" relX="1.0" relY="0.0" />
+      <Point x="6765.0" y="8130.0" GraphRef="b6a" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="3150.0" y="2600.0" GraphRef="c3c" relX="1.0" relY="0.0" />
+      <Point x="4732.5" y="2600.0" GraphRef="ca8" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.5402843601895735" Shape="None" GraphId="c8106" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="2750.0" y="4700.0" GraphRef="fc6" relX="1.0" relY="0.0" />
+      <Point x="3902.5" y="4700.0" GraphRef="c25" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+      <Anchor position="0.6073752711496746" Shape="None" GraphId="f0080" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="7665.0" y="8130.0" GraphRef="b6a" relX="1.0" relY="0.0" />
+      <Point x="9402.5" y="8130.0" GraphRef="b0d" relX="-1.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="12750.0" y="4650.0" GraphRef="d78" relX="0.0" relY="1.0" />
+      <Point x="12750.0" y="5857.5" GraphRef="dcd" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="10397.5" y="8130.0" GraphRef="b0d" relX="1.0" relY="0.0" />
+      <Point x="11702.0" y="8126.0" GraphRef="d23c5" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="3445.0" y="4057.5" GraphRef="c14" relX="0.0" relY="1.0" />
+      <Point x="3450.0" y="4700.0" GraphRef="f0080" relX="0.0" relY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Curved" Color="000000">
+      <Point x="5790.0" y="2600.0" GraphRef="ca8" relX="1.0" relY="0.0" />
+      <Point x="6255.0" y="2785.0" />
+      <Point x="6255.0" y="2970.0" GraphRef="cd29d" relX="0.0" relY="0.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Curved" Color="000000">
+      <Point x="6255.0" y="2970.0" GraphRef="cd29d" relX="0.0" relY="0.0" />
+      <Point x="6255.0" y="2785.0" />
+      <Point x="6705.0" y="2600.0" GraphRef="d8b" relX="-1.0" relY="0.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Straight" Color="000000">
+      <Point x="8430.0" y="3600.0" />
+      <Point x="8420.0" y="3975.0" GraphRef="f4e" relX="0.0" relY="-1.0" ArrowHead="Arrow" />
+      <Anchor position="0.03890566708118668" Shape="None" GraphId="e42ac" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Curved" Color="000000">
+      <Point x="8429.610943329188" y="3614.589625155445" GraphRef="e42ac" relX="0.0" relY="0.0" />
+      <Point x="8662.5" y="3350.0" GraphRef="fbe" relX="-1.0" relY="0.0" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ConnectorType="Curved" Color="000000">
+      <Point x="8187.5" y="3350.0" GraphRef="bfc" relX="1.0" relY="0.0" />
+      <Point x="8429.610943329188" y="3614.589625155445" GraphRef="e42ac" relX="0.0" relY="0.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Factor XIIa" GraphId="cd4">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2785.0" CenterY="1085.0" Width="1295.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor XIa" GraphId="b3e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4005.0" CenterY="1850.0" Width="1235.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor VIIIa" GraphId="d8b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7291.25" CenterY="2600.0" Width="1172.5" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor IXa" GraphId="ca8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5261.25" CenterY="2600.0" Width="1057.5" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor Xa" GraphId="bfc">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7600.0" CenterY="3350.0" Width="1175.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor Va" GraphId="fbe">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9250.0" CenterY="3350.0" Width="1175.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Thrombin" GraphId="aef">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9480.0" CenterY="4800.0" Width="1190.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Fibrin Monomer" GraphId="fa8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="10892.5" CenterY="5985.0" Width="1595.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor XIIIa" GraphId="dcd">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12750.0" CenterY="6000.0" Width="1355.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Fibrin Polymer" GraphId="a3f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11700.0" CenterY="6800.0" Width="1745.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Factor VIIa" GraphId="c25">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4550.0" CenterY="4700.0" Width="1295.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Intrinsic Pathway" Outline="Rectangle" GraphId="ae4">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1250.0" CenterY="531.25" Width="2045.0" Height="347.5" />
+  </Label>
+  <Label TextLabel="Extrinsic Pathway" Outline="Rectangle" GraphId="d06">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1300.0" CenterY="3476.25" Width="2135.0" Height="337.5" />
+  </Label>
+  <Label TextLabel="Tissue Factor" GraphId="c14">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3445.0" CenterY="3915.0" Width="1340.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Plasmin" GraphId="b0d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9900.0" CenterY="8130.0" Width="995.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Fibrin Split Products" GraphId="e5b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11705.0" CenterY="8735.0" Width="2420.0" Height="285.0" />
+  </Label>
+  <Label TextLabel=" " GraphId="ebe">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4750.0" CenterY="7550.0" Width="215.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="+" GraphId="d76">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7400.0" CenterY="7700.0" Width="215.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Thrombolysis" Outline="Rectangle" GraphId="c4d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3600.0" CenterY="6326.25" Width="1655.0" Height="337.5" />
+  </Label>
+  <Label TextLabel=" " GraphId="e69">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="10100.0" CenterY="7600.0" Width="215.0" Height="285.0" />
+  </Label>
+  <Label TextLabel="Tissue Injury" GraphId="e0f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1210.0" CenterY="3915.0" Width="1300.0" Height="285.0" />
+  </Label>
+  <Shape Type="Brace" GraphId="c1b" GroupRef="f4f2f">
+    <Graphics FillColor="000000" Color="000000" CenterX="8450.0" CenterY="1200.0" Width="800.0" Height="130.0" Rotation="1.5758467889039693" />
+  </Shape>
+  <Shape Type="Brace" GraphId="fa1" GroupRef="cc726">
+    <Graphics FillColor="000000" Color="000000" CenterX="8440.0" CenterY="5980.0" Width="1100.0" Height="130.0" Rotation="1.5648792360888693" />
+  </Shape>
+  <Group GroupId="fd46e" GraphId="e677e" Style="None" TextLabel="new group" />
+  <Group GroupId="cc726" GraphId="fa7f8" Style="None" TextLabel="new group" />
+  <Group GroupId="d6cba" GraphId="d27b6" Style="None" TextLabel="new group" />
+  <Group GroupId="f4f2f" GraphId="fd90f" Style="None" TextLabel="new group" />
+  <InfoBox CenterX="31.0" CenterY="8260.0" />
+  <Legend CenterX="26.5" CenterY="6318.0" />
+</Pathway>

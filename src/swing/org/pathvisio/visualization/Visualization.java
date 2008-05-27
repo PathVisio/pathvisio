@@ -20,8 +20,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Area;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -37,7 +38,7 @@ public class Visualization
 	public static final String XML_ATTR_NAME = "name";
 	
 	String name;
-	List<VisualizationMethod> methods = new ArrayList<VisualizationMethod>();
+	Map<String, VisualizationMethod> methods = new HashMap<String, VisualizationMethod>();
 		
 	/**
 	 * The visualization manager that will be used to fire
@@ -62,7 +63,7 @@ public class Visualization
 	
 	void loadMethods(VisualizationMethodRegistry mr) {
 		for(String name : mr.getRegisteredMethods()) {
-			methods.add(mr.createVisualizationMethod(name, this));
+			methods.put(name, mr.createVisualizationMethod(name, this));
 		}
 	}
 	
@@ -81,8 +82,8 @@ public class Visualization
 		modified();
 	}
 	
-	public List<VisualizationMethod> getMethods() {
-		return methods;
+	public Collection<VisualizationMethod> getMethods() {
+		return methods.values();
 	}
 	
 	/**
@@ -177,8 +178,11 @@ public class Visualization
 		Visualization v = new Visualization(name);
 		for(Object o : xml.getChildren(VisualizationMethod.XML_ELEMENT)) {
 			try {
-				VisualizationMethod m = methodFactory.createVisualizationMethod(name, v);
+				String methodName = ((Element)o).getAttributeValue(VisualizationMethod.XML_ATTR_NAME);
+				VisualizationMethod m = methodFactory.createVisualizationMethod(methodName, v);
 				m.loadXML((Element)o);
+				m.setActive(true);
+				v.methods.put(methodName, m);
 			} catch(Throwable e) {
 				Logger.log.error("Unable to load plugin", e);
 			}

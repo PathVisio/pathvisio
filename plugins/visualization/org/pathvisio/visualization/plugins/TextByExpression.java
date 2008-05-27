@@ -49,8 +49,8 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 	Font font;
 	Set<Sample> useSamples = new LinkedHashSet<Sample>();
 	
-	public TextByExpression(Visualization v) {
-		super(v);
+	public TextByExpression(Visualization v, String registeredName) {
+		super(v, registeredName);
 		setIsConfigurable(true);
 		setUseProvidedArea(false);
 	}

@@ -19,24 +19,24 @@ public class VisualizationPlugin implements Plugin {
 		reg.registerMethod(
 				ColorByExpression.class.toString(), 
 				new VisualizationMethodProvider() {
-					public VisualizationMethod create(Visualization v) {
-						return new ColorByExpression(v);
+					public VisualizationMethod create(Visualization v, String registeredName) {
+						return new ColorByExpression(v, registeredName);
 					}
 			}
 		);
 		reg.registerMethod(
 				TextByExpression.class.toString(), 
 				new VisualizationMethodProvider() {
-					public VisualizationMethod create(Visualization v) {
-						return new TextByExpression(v);
+					public VisualizationMethod create(Visualization v, String registeredName) {
+						return new TextByExpression(v, registeredName);
 					}
 			}
 		);
 		reg.registerMethod(
 				DataNodeLabel.class.toString(), 
 				new VisualizationMethodProvider() {
-					public VisualizationMethod create(Visualization v) {
-						return new DataNodeLabel(v);
+					public VisualizationMethod create(Visualization v, String registeredName) {
+						return new DataNodeLabel(v, registeredName);
 					}
 			}
 		);

@@ -79,6 +79,9 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		if(vp != null) {
 			vp.addVPathwayListener(this);
 		}
+		if(GexManager.isConnected()) {
+			loadXML();
+		}
 	}
 	
 	/**
@@ -264,12 +267,13 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	public  InputStream getXmlInput()
 	{
 		File xmlFile = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+		Logger.log.trace("Getting visualizations xml: " + xmlFile);
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
 			InputStream in = new FileInputStream(xmlFile);
 			return in;
 		} catch(Exception e) {
-			e.printStackTrace();
+			Logger.log.error("Unable to find visualization settings file!");
 			return null;
 		}
 	}
@@ -298,9 +302,12 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		
 		root.addContent(colorSetMgr.getXML());
 		
+		Element vis = new Element(XML_ELEMENT);
+		
 		for(Visualization v : getVisualizations()) {
-			root.addContent(v.toXML());
+			vis.addContent(v.toXML());
 		}
+		root.addContent(vis);
 		
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
 		
@@ -321,17 +328,21 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		
 		for(Object o : xml.getChildren(Visualization.XML_ELEMENT)) {
 			Visualization vis = Visualization.fromXML((Element) o, methodRegistry);
-			if(!visualizations.contains(vis)) addVisualization(vis);				
+			if(!visualizations.contains(vis)) {
+				addVisualization(vis);				
+			}
 		}
 	}
 	
 	public  void loadXML() {
+		Logger.log.trace("Loading xml for visualization settings");
 		Document doc = getXML();
 		Element root = doc.getRootElement();
 		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
 		loadXML(vis);
 		Element cs = root.getChild(ColorSetManager.XML_ELEMENT);
 		colorSetMgr.fromXML(cs);
+		Logger.log.trace("Finished loading xml for visualization settings");
 	}
 	
 	public  Document getXML() {

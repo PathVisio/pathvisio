@@ -323,6 +323,7 @@ public class SimpleGex
 	 */
 	public SimpleGex(String dbName, boolean create, DBConnector connector) throws DataException
 	{
+		this.dbName = dbName;
 		dbConnector = connector;
 		dbConnector.setDbType(DBConnector.TYPE_GEX);
 		if(create)

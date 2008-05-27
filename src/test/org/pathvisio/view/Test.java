@@ -27,6 +27,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -41,6 +42,7 @@ public class Test extends TestCase {
 	
 	public void setUp()
 	{
+		Engine.init();
     	pwy = new Pathway();
     	eltDn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
     	eltDn.setGeneID("1234");
@@ -141,17 +143,17 @@ public class Test extends TestCase {
     	
     	//Test natural / z order
     	Collections.sort(elements);    	    	
-    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, pnt, h }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, pnt, vSh, vLa, vDn, h }, elements);
     	
     	//order should not change when selecting
     	vLi.select();
     	Collections.sort(elements);
-    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, pnt, h }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, pnt, vSh, vLa, vDn, h }, elements);
     	
     	//Test reset after unselected
     	vLi.deselect();
     	Collections.sort(elements);
-    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, pnt, h }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, pnt, vSh, vLa, vDn, h }, elements);
     }
     
     public void checkDrawingOrder(VPathwayElement[] order, List<VPathwayElement> elements) {

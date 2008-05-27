@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp codebase="http://blog.bigcat.unimaas.nl/~gmmlvisio" href="pathvisio_v2.jnlp">
 	<information>
-		 <title>PathVisio 2.0</title>
+		 <title>PathVisio 2.0 preview</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
@@ -13,17 +13,12 @@
 	</information>
 	<resources>
 		 <j2se version="1.5+"/>
-		 <jar href="pathvisio_v2.jar"/>
+		 <jar href="pathvisio.jar"/>
 		 <jar href="lib/resources.jar"/>
 		 <jar href="lib/plugins.jar"/>
-		 <jar href="lib/R-resources.jar"/>
-         <jar href="lib/JRI.jar"/>
 		 <jar href="lib/derby.jar"/>
 		 <jar href="lib/jdom.jar"/>
 		 <jar href="lib/BrowserLauncher.jar"/>
-		 <jar href="lib/org.eclipse.core.commands.jar"/>
-		 <jar href="lib/org.eclipse.equinox.common.jar"/>
-		 <jar href="lib/org.eclipse.jface.jar"/>
 		 <jar href="lib/batik/batik-awt-util.jar"/>
 		 <jar href="lib/batik/batik-bridge.jar"/>
 		 <jar href="lib/batik/batik-css.jar"/>
@@ -43,17 +38,7 @@
 		 <jar href="lib/batik/xml-apis-ext.jar"/>
 	     <jar href="lib/batik/batik-anim.jar"/>
 	</resources>
-	<resources os="Windows">
-		<jar href="lib/swt-win32-lib/swt.jar"/>
-	</resources>
-	<resources os="Linux">
-		<jar href="lib/swt-linux-lib/swt.jar"/>
-	</resources>
-	<resources os="Mac OS X">
-		<jar href="lib/swt-mac-lib/swt.jar"/>
-	</resources>
-	<application-desc main-class="org.pathvisio.gui.swt.GuiMain">
-		<argument>-ur</argument>
+	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
 	</application-desc>
 	<security>
 		 <all-permissions/>

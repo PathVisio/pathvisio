@@ -83,7 +83,7 @@ public class Engine
 	{
 		if (currentEngine != null)
 		{
-			throw new IllegalArgumentException ("Engine initialized twice");
+			Logger.log.warn ("Tried to initialize Engine for the second time");
 		}
 		currentEngine = new Engine();
 	}

@@ -1317,6 +1317,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 					);
 					pe.getMEnd().setRelativePosition(relative.getX(), relative.getY());
 				}
+				((MLine)pe).getConnectorShape().recalculateShape(((MLine)pe));
 			}
 		}
 	}

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.data;
+package org.pathvisio.gui;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +23,7 @@ import java.util.Set;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;

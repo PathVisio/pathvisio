@@ -19,8 +19,8 @@ package org.pathvisio.gui.swt;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.pathvisio.data.BackpageListener;
-import org.pathvisio.data.BackpageTextProvider;
+import org.pathvisio.gui.BackpageListener;
+import org.pathvisio.gui.BackpageTextProvider;
 
 /**
  * Backpage browser - side panel that shows the backpage information when a GeneProduct is double-clicked

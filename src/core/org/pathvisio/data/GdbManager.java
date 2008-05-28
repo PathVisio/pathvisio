@@ -33,9 +33,9 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public class GdbManager 
 {
-	static private DoubleGdb currentGdb = new DoubleGdb();
+	private DoubleGdb currentGdb = new DoubleGdb();
 	
-	static public Gdb getCurrentGdb ()
+	public Gdb getCurrentGdb ()
 	{
 		return currentGdb;
 	}
@@ -44,7 +44,7 @@ public class GdbManager
 	 * Returns true if there is currently a non-null
 	 * gdb and it isConnected()
 	 */
-	static public boolean isConnected()
+	public boolean isConnected()
 	{
 		return 
 			currentGdb != null &&
@@ -60,7 +60,7 @@ public class GdbManager
 	 * 
 	 * use null to disconnect the current db
 	 */
-	public static void setMetaboliteDb(String dbName) throws DataException
+	public void setMetaboliteDb(String dbName) throws DataException
 	{
 		if (dbName == null)
 		{
@@ -88,7 +88,7 @@ public class GdbManager
 	 * 
 	 * use null to disconnect the current db.
 	 */
-	public static void setGeneDb(String dbName) throws DataException
+	public void setGeneDb(String dbName) throws DataException
 	{
 		if (dbName == null)
 		{
@@ -110,7 +110,7 @@ public class GdbManager
 	 * Connect to a database using the 
 	 * DBConnector set in the global preferences.
 	 */
-	private static SimpleGdb connect(String gdbName) throws DataException
+	private SimpleGdb connect(String gdbName) throws DataException
 	{
 		DBConnector con;
 		try
@@ -142,7 +142,7 @@ public class GdbManager
 	 * 
 	 * Idem for the metabolite database.
 	 */
-	public static void init()
+	public void init()
 	{
 		PreferenceManager prefs = Engine.getCurrent().getPreferences();
 		// first do the Gene database

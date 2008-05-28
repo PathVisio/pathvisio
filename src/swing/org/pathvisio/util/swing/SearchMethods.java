@@ -30,6 +30,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
@@ -75,7 +76,7 @@ public class SearchMethods
 
 		public ByXrefMatcher(Xref ref) throws SearchException
 		{
-			refs = GdbManager.getCurrentGdb().getCrossRefs(ref);
+			refs = SwingEngine.getCurrent().getGdbManager().getCurrentGdb().getCrossRefs(ref);
 			if(refs == null || refs.size() == 0) throw new SearchException(MSG_NOT_IN_GDB);
 		}
 		

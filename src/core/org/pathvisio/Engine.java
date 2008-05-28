@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.pathvisio.data.BackpageTextProvider;
 import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -69,6 +70,7 @@ public class Engine
 	/**
 	 * Get the current instance of Engine
 	 * @return
+	 * @deprecated
 	 */
 	public static Engine getCurrent() 
 	{
@@ -379,9 +381,10 @@ public class Engine
 	 * @return the backpage text provider
 	 * @see BackpageTextProvider
 	 */
-	public BackpageTextProvider getBackpageTextProvider() {
+	//TODO move away from Engine
+	public BackpageTextProvider getBackpageTextProvider(GdbManager gdbManager) {
 		if(backpageTextProvider == null) {
-			backpageTextProvider = new BackpageTextProvider(this);
+			backpageTextProvider = new BackpageTextProvider(this, gdbManager);
 		}
 		return backpageTextProvider;
 	}

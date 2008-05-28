@@ -35,7 +35,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.data.DataException;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
@@ -75,6 +74,8 @@ public class GuiMain {
 		//Setup the application window
 		MainWindow window = null;
 		Engine.init();
+		initLogs();
+		SwtEngine.init(Engine.getCurrent());
 		Engine.getCurrent().setApplicationName("PathVisio 1.0.2");
 		if(debugHandles)	window = SwtEngine.getCurrent().getSleakWindow();
 		else				window = SwtEngine.getCurrent().getWindow();
@@ -91,7 +92,7 @@ public class GuiMain {
 		GexManager.close();
 		try
 		{
-			GdbManager.getCurrentGdb().close();
+			SwtEngine.getCurrent().getGdbManager().getCurrentGdb().close();
 		}
 		catch (DataException e)
 		{
@@ -147,10 +148,7 @@ public class GuiMain {
 		}
 	}
 	
-	/**
-	 * Initiates some objects used by the program
-	 */
-	public static void initiate()
+	public static void initLogs()
 	{
 		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest(logDest);
@@ -167,6 +165,13 @@ public class GuiMain {
 		Logger.log.info ("Username: " + System.getProperty ("user.name"));
 		
 		Logger.log.trace ("Log initialized");
+	}
+	
+	/**
+	 * Initiates some objects used by the program
+	 */
+	public static void initiate()
+	{
 
 		// preferences loaded, now we can register mim shapes
 		if (Engine.getCurrent().getPreferences().getBoolean (GlobalPreference.MIM_SUPPORT))
@@ -174,11 +179,6 @@ public class GuiMain {
 			MIMShapes.registerShapes();
 		}
 
-		Logger.log.trace ("Preferences loaded");
-		
-		//initiate Gene database (to load previously used gdb)
-		GdbManager.init();
-		
 		//load visualizations and plugins
 		loadVisualizations();
 		Logger.log.trace ("Plugins loaded");
@@ -224,7 +224,7 @@ public class GuiMain {
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
-		Engine.getCurrent().addPathwayExporter(new DataNodeListExporter());
+		Engine.getCurrent().addPathwayExporter(new DataNodeListExporter(SwtEngine.getCurrent().getGdbManager()));
 		Engine.getCurrent().addPathwayExporter(new EUGeneExporter());
 	}
 	

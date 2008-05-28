@@ -215,9 +215,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		);
 		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
 
-		GdbManager.setGeneDb(getPwSpecies());
-
-		GdbManager.setMetaboliteDb("metabolites");
+		SwingEngine.getCurrent().getGdbManager().setGeneDb(getPwSpecies());
+		SwingEngine.getCurrent().getGdbManager().setMetaboliteDb("metabolites");
 
 
 		isInit = false;

@@ -82,9 +82,11 @@ public class GexImportWizard extends Wizard
 	// datasources and systemcodes 
 	private String[] sysCode;
 	private boolean importFinished;
+	private GdbManager gdbManager;
 	
-	public GexImportWizard() 
+	public GexImportWizard(GdbManager gdbManager) 
 	{
+		this.gdbManager = gdbManager;
 		importInformation = new ImportInformation();
 				
 		setWindowTitle("Create an expression dataset");
@@ -109,7 +111,7 @@ public class GexImportWizard extends Wizard
 				// Start import process
 				getContainer().run(true, true,
 					new GexSwt.ImportProgressKeeper(
-						(ImportPage) getPage("ImportPage"), importInformation));
+						(ImportPage) getPage("ImportPage"), importInformation, gdbManager.getCurrentGdb()));
 			} 
 			catch (Exception e) 
 			{
@@ -191,7 +193,7 @@ public class GexImportWizard extends Wizard
 			gdbLabel.setLayoutData(labelGrid);
 
 			final Text gdbText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-			gdbText.setText(GdbManager.getCurrentGdb().getDbName());
+			gdbText.setText(gdbManager.getCurrentGdb().getDbName());
 			gdbText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			Button gdbButton = new Button(composite, SWT.PUSH);
 			gdbButton.setText("Browse");
@@ -218,7 +220,7 @@ public class GexImportWizard extends Wizard
 					try
 					{
 						//Connect to the new database
-						GdbManager.setGeneDb(file);
+						gdbManager.setGeneDb(file);
 					}
 					catch(DataException ex)
 					{
@@ -898,7 +900,7 @@ public class GexImportWizard extends Wizard
 						file.replace(
 								file.substring (file.lastIndexOf(".")), "") + 
 						"'\n" +	"\nUsed gene database: '" + 
-						GdbManager.getCurrentGdb().getDbName() + "'\n\n");
+						gdbManager.getCurrentGdb().getDbName() + "'\n\n");
 					if(importInformation.getSyscodeColumn()) 
 					{ // System code can be read from data
 						println("System code will be read from data");

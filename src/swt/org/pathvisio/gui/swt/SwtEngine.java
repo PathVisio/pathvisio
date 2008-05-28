@@ -39,6 +39,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
@@ -83,6 +84,12 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		System.out.println ("Using dir " + result);
 		return result;
 	}
+	
+	private GdbManager gdbManager;
+	public GdbManager getGdbManager()
+	{
+		return gdbManager;
+	}
 
 	/**
 	   Override the pathway dir preference for the duration of this run.
@@ -99,20 +106,26 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 
 	boolean USE_R;
 		
-	private static SwtEngine current;
+	@Deprecated
+	private static SwtEngine current = null;
+
+	@Deprecated
 	public static SwtEngine getCurrent() {
-		if(current == null) current = new SwtEngine();
+		if(current == null) throw new IllegalArgumentException ("Tried to use SwtEngine before init");
 		return current;
 	}
 	
-
-	public static void setCurrent(SwtEngine engine) {
-		current = engine;
-	}
-
-	public SwtEngine()
+	public static void init(Engine engine)
 	{
-		Engine.getCurrent().addApplicationEventListener(this);
+		current = new SwtEngine(engine);
+	}
+	
+
+	public SwtEngine(Engine engine)
+	{
+		engine.addApplicationEventListener(this);
+		gdbManager = new GdbManager();
+		gdbManager.init();
 	}
 
 	public void applicationEvent (ApplicationEvent e)

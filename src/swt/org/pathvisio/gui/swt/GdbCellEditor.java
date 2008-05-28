@@ -160,7 +160,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 		List<Map<PropertyType, String>> data = new ArrayList<Map<PropertyType, String>>();
 		List<String> sugg = new ArrayList<String>();
 
-		Gdb gdb = GdbManager.getCurrentGdb();
+		Gdb gdb = SwtEngine.getCurrent().getGdbManager().getCurrentGdb();
 		switch(type) {
 		case TYPE_IDENTIFIER:
 			List<Xref> refs = gdb.getIdSuggestions (text, limit);
@@ -238,7 +238,7 @@ public class GdbCellEditor extends SuggestCellEditor implements SuggestionProvid
 			
 			//Guess symbol
 			if(id != null && code != null) {
-				String symbol = GdbManager.getCurrentGdb().getGeneSymbol(ref);
+				String symbol = SwtEngine.getCurrent().getGdbManager().getCurrentGdb().getGeneSymbol(ref);
 				if(symbol != null) {
 					setProperty(PropertyType.TEXTLABEL, symbol);
 				}

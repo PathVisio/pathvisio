@@ -46,7 +46,7 @@ public class GexTxtImporter
 	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
 	 * the user to cancel. May be null for headless mode operation.
 	 */
-	public static void importFromTxt(ImportInformation info, ProgressKeeper p)
+	public static void importFromTxt(ImportInformation info, ProgressKeeper p, Gdb currentGdb)
 	{
 		SimpleGex result = null;
 		int importWork = 0;
@@ -174,7 +174,7 @@ public class GexTxtImporter
 				}
 				Xref ref = new Xref (id, ds);
 				//Find the Ensembl genes for current gene
-				List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(ref); 
+				List<String> ensIds = currentGdb.ref2EnsIds(ref); 
 				
 				if(ensIds == null || ensIds.size() == 0) //No Ensembl gene found
 				{

@@ -43,6 +43,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
@@ -106,7 +107,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public List<XrefWithSymbol> excecuteCode() 
 			{
 				final int QUERY_LIMIT = 200;
-				Gdb gdb = GdbManager.getCurrentGdb();
+				Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
 
 				List<XrefWithSymbol> result = gdb.freeSearch(text, QUERY_LIMIT); 
 
@@ -214,7 +215,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public Object[] provideOptions(String text) {
 				if(text == null) return new Object[0];
 
-				Gdb gdb = GdbManager.getCurrentGdb();
+				Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
 				List<String> symbols = gdb.getSymbolSuggestions(text, 100);
 				return symbols.toArray();
 			}
@@ -224,7 +225,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public Object[] provideOptions(String text) {
 				if(text == null) return new Object[0];
 
-				Gdb gdb = GdbManager.getCurrentGdb();
+				Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
 				List<Xref> refs = gdb.getIdSuggestions(text, 100);
 				//Only take identifiers
 				String[] ids = new String[refs.size()];

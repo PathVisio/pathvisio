@@ -17,8 +17,6 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.net.URL;
 
 import javax.swing.Action;

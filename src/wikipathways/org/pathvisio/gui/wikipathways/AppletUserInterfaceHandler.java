@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.net.URL;
 
-import javax.swing.JApplet;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;

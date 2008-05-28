@@ -3,12 +3,11 @@ package com.nexes.test;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 
-import com.nexes.wizard.*;
+public class TestPanel3 extends JPanel 
+{
+	private static final long serialVersionUID = 1L;
 
-public class TestPanel3 extends JPanel {
- 
     private JLabel anotherBlankSpace;
     private JLabel blankSpace;
     private ButtonGroup connectorGroup;

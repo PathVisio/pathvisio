@@ -42,14 +42,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.pathvisio.Engine;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
 
-public class CategoryApplet extends PathwayPageApplet {
+public class CategoryApplet extends PathwayPageApplet 
+{
+	private static final long serialVersionUID = 1L;
 	Map<String, Category> categories;
 	PathwayElement mappInfo;
 	
@@ -203,7 +204,8 @@ public class CategoryApplet extends PathwayPageApplet {
 	
 	// @author Santhosh Kumar T - santhosh@in.fiorano.com
 	public class CheckListCellRenderer extends JPanel implements ListCellRenderer{ 
-	    private ListCellRenderer delegate; 
+		private static final long serialVersionUID = 1L;
+		private ListCellRenderer delegate; 
 	    private ListSelectionModel selectionModel; 
 	    private JCheckBox checkBox = new JCheckBox(); 
 	 

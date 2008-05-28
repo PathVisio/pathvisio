@@ -16,9 +16,6 @@
 
 package org.pathvisio.gui.wikipathways;
 
-
-import java.applet.Applet;
-import java.applet.AppletContext;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,7 +23,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.security.AccessControlException;
-import java.util.Enumeration;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -38,7 +34,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.gui.wikipathways.Actions.WikiAction;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
@@ -49,6 +44,7 @@ import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class PathwayPageApplet extends JApplet {
+	private static final long serialVersionUID = 1L;
 	UserInterfaceHandler uiHandler;
 	WikiPathways wiki;
 
@@ -67,12 +63,11 @@ public class PathwayPageApplet extends JApplet {
 
 			//Only set new engine if this is the first applet
 			Engine.init();
-			SwingEngine swingEngine = new SwingEngine(Engine.getCurrent());
-			SwingEngine.setCurrent(swingEngine);
+			SwingEngine.init ();
 			
 			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
 			wiki = new WikiPathways(uiHandler);
-			wiki.setSwingEngine(swingEngine);
+			wiki.setSwingEngine(SwingEngine.getCurrent());
 			
 			parseArguments();
 

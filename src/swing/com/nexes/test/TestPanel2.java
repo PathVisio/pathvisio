@@ -5,12 +5,12 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import com.nexes.wizard.*;
-
 
 public class TestPanel2 extends JPanel {
  
-    private javax.swing.JLabel anotherBlankSpace;
+    private static final long serialVersionUID = 1L;
+	
+	private javax.swing.JLabel anotherBlankSpace;
     private javax.swing.JLabel blankSpace;
     private javax.swing.ButtonGroup connectorGroup;
     private javax.swing.JRadioButton ethernetRJRadioButton;

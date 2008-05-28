@@ -28,7 +28,6 @@ import javax.swing.KeyStroke;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.preferences.GlobalPreference;
@@ -42,6 +41,7 @@ import org.pathvisio.wikipathways.WikiPathways;
  */
 public class Actions {
 	public static abstract class WikiAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
 		UserInterfaceHandler uiHandler;
 		WikiPathways wiki;
 		public WikiAction(UserInterfaceHandler uih, WikiPathways w, String name, ImageIcon icon) {
@@ -74,6 +74,8 @@ public class Actions {
 	 * @author thomas
 	 */
 	public static class ExitAction extends WikiAction {
+		private static final long serialVersionUID = 1L;
+
 		boolean doSave;
 		String description;
 
@@ -90,6 +92,7 @@ public class Actions {
 	}
 
 	public static class SaveToServerAction extends WikiAction implements StatusFlagListener {
+		private static final long serialVersionUID = 1L;
 		String description;
 
 		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w, String description) {

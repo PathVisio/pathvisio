@@ -31,7 +31,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GexManager;
-import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
@@ -44,7 +43,7 @@ import org.pathvisio.preferences.PreferenceManager;
  * @author thomas
  *
  */
-public class GuiMain 
+public class GuiMain
 {
 	private JFrame frame;
 	protected MainPanelStandalone mainPanel;
@@ -202,17 +201,19 @@ public class GuiMain
 		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() 
 		{
-		
 			
 			public void run() {
 				Engine.init();
-				
+				Engine.getCurrent().setApplicationName("PathVisio (experimental)");
+				SwingEngine.init();
 				MainPanelStandalone mps = new MainPanelStandalone();
-				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.createAndShowGUI(mps);
+				SwingEngine.getCurrent().setFrame(gui.frame);
+				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.processOptions();
 
 			}
 		});
 	}
+
 }

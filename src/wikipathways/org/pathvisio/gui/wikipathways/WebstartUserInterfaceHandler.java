@@ -23,8 +23,6 @@ import javax.jnlp.BasicService;
 import javax.jnlp.ServiceManager;
 import javax.jnlp.UnavailableServiceException;
 
-import org.pathvisio.debug.Logger;
-
 public class WebstartUserInterfaceHandler extends SwingUserInterfaceHandler {
 	BasicService basicService;
 	

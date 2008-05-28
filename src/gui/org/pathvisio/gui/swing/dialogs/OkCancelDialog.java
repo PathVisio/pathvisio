@@ -18,7 +18,6 @@ package org.pathvisio.gui.swing.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -28,8 +27,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -44,10 +43,21 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 	
 	private String exitCode = CANCEL;
 	JButton setButton;
+	JPanel contentPanel;
 	
+	/**
+	 * Create a dialog with ok/cancel buttons. A custom content component can
+	 * be set using {@link #setDialogComponent(Component)}.
+	 * @param frame The frame to base the dialogs location on
+	 * @param title The title of the dialog
+	 * @param locationComp The component to base the dialogs location on
+	 * @param modal Whether the dialog should be modal
+	 * @param cancellable Whether to add a cancel button
+	 */
 	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal, boolean cancellable) {
-		super((frame == null && locationComp != null) ? JOptionPane.getFrameForComponent(locationComp) : frame, 
-				title, modal);
+		super(frame, title, modal);
+		contentPanel = new JPanel(new BorderLayout());
+		
 		JButton cancelButton = new JButton(CANCEL);
 		cancelButton.addActionListener(this);
 
@@ -56,8 +66,6 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		setButton.addActionListener(this);
 		getRootPane().setDefaultButton(setButton);
 
-		Component dialogPane = createDialogPane();
-		
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -68,12 +76,10 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		}
 		buttonPane.add(setButton);
 
-		Container contentPane = getContentPane();
-		contentPane.add(dialogPane, BorderLayout.CENTER);
-		contentPane.add(buttonPane, BorderLayout.PAGE_END);
-		
+		contentPanel.add(buttonPane, BorderLayout.PAGE_END);
+		add(contentPanel);
 		pack();
-		setLocationRelativeTo(null); //Center on screen
+		setLocationRelativeTo(locationComp);
 		
 		//Make buttons respond to pressing 'Enter'
 		UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
@@ -83,8 +89,16 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 		this(frame, title, locationComp, modal, true);
 	}
 
-	protected abstract Component createDialogPane();
-	
+	/**
+	 * Set the component that contains the dialog contents. Subclasses must
+	 * call this method to set custom dialog contents.
+	 * @param dialogComponent
+	 */
+	protected final void setDialogComponent(Component dialogComponent) {
+		contentPanel.add(dialogComponent, BorderLayout.CENTER);
+		invalidate();
+	}
+
 	public String getExitCode() {
 		return exitCode;
 	}

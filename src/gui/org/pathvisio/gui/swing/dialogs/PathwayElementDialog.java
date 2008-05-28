@@ -79,6 +79,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	protected PathwayElementDialog(PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
 		super(frame, title, locationComp, true);
 		this.readonly = readonly;
+		setDialogComponent(createDialogPane());
 		panels = new HashMap<String, PathwayElementPanel>();
 		createTabs();
 		setInput(e);

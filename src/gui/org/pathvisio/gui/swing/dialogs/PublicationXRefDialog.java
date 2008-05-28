@@ -71,6 +71,8 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	public PublicationXRefDialog(PublicationXRef xref, Frame frame, Component locationComp, boolean cancellable) {
 		super(frame, "Literature reference properties", locationComp, true, cancellable);
 		input = xref;
+		
+		setDialogComponent(createDialogPane());
 		refresh();
 		
 		setSize(400, 300);

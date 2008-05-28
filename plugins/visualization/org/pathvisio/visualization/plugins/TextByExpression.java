@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -247,16 +246,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 		);
 		panel.setLayout(layout);
 		
-		SimpleGex gex = GexManager.getCurrentGex();
-		if(gex != null) {			
-			sampleList = new SampleCheckList(
-					gex.getSamples().values(), useSamples
-			);
-		} else {
-			sampleList = new SampleCheckList(
-					new ArrayList<Sample>(), new ArrayList<Sample>()
-			);
-		}
+		sampleList = new SampleCheckList(useSamples);
 		
 		sampleList.setActionCommand(ACTION_SAMPLE);
 		sampleList.addActionListener(this);

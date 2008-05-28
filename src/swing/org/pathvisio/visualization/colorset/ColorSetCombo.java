@@ -1,5 +1,6 @@
 package org.pathvisio.visualization.colorset;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +36,8 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Logger.log.trace("Action: " + getSelectedItem());
 		if(getSelectedItem() == NEW) {
-			new ColorSetDlg(new ColorSet(csMgr.getNewName()), null, null);
+			ColorSet cs = new ColorSet(csMgr.getNewName());
+			new ColorSetDlg(cs, null, this).setVisible(true);
 		}
 	}
 	
@@ -45,6 +47,7 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 			JLabel l = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected,
 					cellHasFocus);
 			l.setText(((ColorSet)value).getName());
+			l.setBackground(Color.WHITE);
 			return l;
 		}
 	}

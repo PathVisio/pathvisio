@@ -82,6 +82,10 @@ public class Visualization
 		modified();
 	}
 	
+	public VisualizationManager getManager() {
+		return visMgr;
+	}
+	
 	public Collection<VisualizationMethod> getMethods() {
 		return methods.values();
 	}

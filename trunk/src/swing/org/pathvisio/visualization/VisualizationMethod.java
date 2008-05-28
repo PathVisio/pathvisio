@@ -57,7 +57,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * Get the {@link Visualization} this instance belongs to
 	 * @return The {@link Visualization} this plugin belongs to
 	 */
-	protected final Visualization getVisualization() { return visualization; }
+	public final Visualization getVisualization() { return visualization; }
 	
 	/**
 	 * Call this method whenever a setting is modified. It will

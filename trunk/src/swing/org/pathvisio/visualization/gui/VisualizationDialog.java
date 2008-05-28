@@ -35,6 +35,8 @@ public class VisualizationDialog extends OkCancelDialog
 		
 		this.visMgr = visMgr;
 		
+		setDialogComponent(createDialogPane());
+
 		//If there is no visualization yet, create one
 		if(visMgr.getVisualizations().size() == 0) {
 			visMgr.addVisualization(new Visualization("untitled"));
@@ -43,6 +45,7 @@ public class VisualizationDialog extends OkCancelDialog
 			visMgr.setActiveVisualization(0);
 		}
 		visPanel.setVisualizationManager(visMgr);
+		
 		pack();
 	}
 

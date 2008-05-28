@@ -66,7 +66,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	 */
 	public static final String XML_ELEMENT = "visualizations";
 	
-	ColorSetManager colorSetMgr;
+	private ColorSetManager colorSetMgr;
 	VisualizationMethodRegistry methodRegistry;
 	
 	public VisualizationManager(VisualizationMethodRegistry methodRegistry, 
@@ -82,6 +82,10 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		if(GexManager.getCurrent().isConnected()) {
 			loadXML();
 		}
+	}
+	
+	public ColorSetManager getColorSetManager() {
+		return colorSetMgr;
 	}
 	
 	/**

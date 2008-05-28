@@ -25,14 +25,35 @@ import java.util.Map;
 
 import javax.swing.JCheckBox;
 
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
+import org.pathvisio.data.SimpleGex;
 
 public class SampleCheckList extends JCheckBoxList {
 	List<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
 	Map<JCheckBox, Sample> checkbox2sample = new HashMap<JCheckBox, Sample>();
 	Map<Sample, JCheckBox> sample2checkbox = new HashMap<Sample, JCheckBox>();
 	
-	public SampleCheckList(Collection<Sample> samples, Collection<Sample> selected) {
+	public SampleCheckList(Collection<? extends Sample> selected) {
+		SimpleGex gex = GexManager.getCurrentGex();
+		if(gex != null) {			
+			setSamples(
+					gex.getSamples().values(), selected
+			);
+		} else {
+			setSamples(
+					new ArrayList<Sample>(), new ArrayList<Sample>()
+			);
+		}
+	}
+	
+	public SampleCheckList(Collection<? extends Sample> samples, 
+			Collection<? extends Sample> selected) {
+		setSamples(samples, selected);
+	}
+	
+	private void setSamples(Collection<? extends Sample> samples, 
+			Collection<? extends Sample> selected) {
 		for(Sample s : samples) {
 			JCheckBox ch = new JCheckBox();
 			ch.setText(s.getName());

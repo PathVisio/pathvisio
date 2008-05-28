@@ -18,9 +18,16 @@ package org.pathvisio.visualization.gui;
 
 import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-import org.pathvisio.visualization.colorset.*;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.visualization.colorset.ColorRule;
+import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorSetObject;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
 /**
@@ -41,7 +48,8 @@ public class ColorSetPanel extends JPanel
 		
 		JPanel colorObjectsPanel = new JPanel();
 		add (new JScrollPane(colorObjectsPanel), BorderLayout.CENTER);
-		
+		System.err.println("" + colorSet);
+		System.err.println("" + colorSet.getObjects());
 		for (ColorSetObject cso : colorSet.getObjects())
 		{
 			colorObjectsPanel.add (createColorSetObjectPanel(cso));

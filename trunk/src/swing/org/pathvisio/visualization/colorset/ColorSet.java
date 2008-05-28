@@ -59,7 +59,7 @@ public class ColorSet
 	String name;
 	ColorSetManager colorSetMgr;
 	
-	public List<ColorSetObject> colorSetObjects;
+	public List<ColorSetObject> colorSetObjects = new ArrayList<ColorSetObject>();
 		
 	
 	/**
@@ -74,7 +74,6 @@ public class ColorSet
 	{
 		this.name = name;
 		this.colorSetMgr = colorSetMgr;
-		colorSetObjects = new ArrayList<ColorSetObject>();
 	}
 		
 	public String getName() { return name; }

@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.preferences.GlobalPreference;
 
 /**
  * Manage the centralized SimpleGex
@@ -35,15 +36,23 @@ import org.pathvisio.debug.Logger;
  */
 public class GexManager 
 {
-	private static SimpleGex currentGex = null; 
-	public static SimpleGex getCurrentGex() { return currentGex; }
+	private static GexManager gexManager = new GexManager();
+	
+	@Deprecated
+	public static GexManager getCurrent()
+	{
+		return gexManager;
+	}
+
+	private SimpleGex currentGex = null; 
+	public SimpleGex getCurrentGex() { return currentGex; }
 	
 	/**
 	 * Returns true if the current gex is initialized
 	 * (non-null), and if it is connected.
 	 * If it returns true it is safe to work with getCurrentGex()
 	 */
-	public static boolean isConnected()
+	public boolean isConnected()
 	{
 		return
 			currentGex != null &&
@@ -58,7 +67,7 @@ public class GexManager
 	 * 
 	 * @param gex a premade Gex instance
 	 */
-	public static void setCurrentGex (SimpleGex gex)
+	public void setCurrentGex (SimpleGex gex)
 	{
 		close(); // close old gex.
 		currentGex = gex;
@@ -72,7 +81,7 @@ public class GexManager
 	 * @param dbName name of the database (usually file or directory name)
 	 * @param create true if you want to create / overwrite a database
 	 */
-	public static void setCurrentGex (String dbName, boolean create) throws DataException
+	public void setCurrentGex (String dbName, boolean create) throws DataException
 	{
 		DBConnector connector;
 		try
@@ -94,20 +103,36 @@ public class GexManager
 		SimpleGex gex = new SimpleGex (dbName, create, connector);
 		setCurrentGex (gex);
 	}
-	
-	private static DBConnector getDBConnector() throws 
+
+	@Deprecated
+	public DBConnector getDBConnector() throws 
 		ClassNotFoundException, 
 		InstantiationException, 
 		IllegalAccessException 
 	{
-		return Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
+		DBConnector connector = null;
+		
+		String className = null;
+		className = Engine.getCurrent().getPreferences().get(GlobalPreference.DB_ENGINE_GEX);
+		
+		if(className == null) return null;
+			
+		Class<?> dbc = Class.forName(className);
+		Object o = dbc.newInstance();
+		if(o instanceof DBConnector) 
+		{
+			connector = (DBConnector)dbc.newInstance();
+			connector.setDbType(DBConnector.TYPE_GEX);
+		}
+		
+		return connector;
 	}
 
 	/**
 	 * Close the current Gex, if it wasn't already closed.
 	 * Sends a GexManagerEvent around.
 	 */
-	public static void close()
+	public void close()
 	{
 		if (currentGex == null) return; // was already closed.
 		fireExpressionDataEvent(new GexManagerEvent(currentGex, GexManagerEvent.CONNECTION_CLOSED));	
@@ -127,7 +152,7 @@ public class GexManager
 	 * to this class
 	 * @param e
 	 */
-	private static void fireExpressionDataEvent(GexManagerEvent e) 
+	private void fireExpressionDataEvent(GexManagerEvent e) 
 	{
 		for(GexManagerListener l : listeners) l.gexManagerEvent(e);
 	}
@@ -137,14 +162,14 @@ public class GexManager
 		public void gexManagerEvent(GexManagerEvent e);
 	}
 	
-	static Set<GexManagerListener> listeners = new HashSet<GexManagerListener>();
+	Set<GexManagerListener> listeners = new HashSet<GexManagerListener>();
 	
 	/**
 	 * Add a {@link GexManagerListener}, that will be notified if an
 	 * event related to expression data occurs
 	 * @param l The {@link GexManagerListener} to add
 	 */
-	public static void addListener(GexManagerListener l) 
+	public void addListener(GexManagerListener l) 
 	{
 		listeners.add(l);
 	}

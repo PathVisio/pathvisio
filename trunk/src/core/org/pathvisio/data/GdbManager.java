@@ -112,25 +112,8 @@ public class GdbManager
 	 */
 	private SimpleGdb connect(String gdbName) throws DataException
 	{
-		DBConnector con;
-		try
-		{
-			con = Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
-		}
-		catch (ClassNotFoundException e)
-		{
-			throw new DataException (e);
-		}
-		catch (IllegalAccessException e)
-		{
-			throw new DataException (e);
-		}
-		catch (InstantiationException e)
-		{
-			throw new DataException (e);
-		}
-		
-		SimpleGdb gdb = new SimpleGdb(gdbName, con, DBConnector.PROP_NONE);
+		if (dbConnector == null) throw new NullPointerException();
+		SimpleGdb gdb = new SimpleGdb(gdbName, dbConnector, DBConnector.PROP_NONE);
 		return gdb;
 	}
 	
@@ -142,8 +125,25 @@ public class GdbManager
 	 * 
 	 * Idem for the metabolite database.
 	 */
-	public void init()
+	public void initPreferred()
 	{
+		try
+		{
+			dbConnector = getDBConnector();
+		}
+		catch (ClassNotFoundException e)
+		{
+			Logger.log.error ("Could not initialize gene databases", e);
+		}
+		catch (IllegalAccessException e)
+		{
+			Logger.log.error ("Could not initialize gene databases", e);
+		}
+		catch (InstantiationException e)
+		{
+			Logger.log.error ("Could not initialize gene databases", e);
+		}		
+		
 		PreferenceManager prefs = Engine.getCurrent().getPreferences();
 		// first do the Gene database
 		String gdbName = prefs.get (GlobalPreference.DB_GDB_CURRENT);
@@ -156,20 +156,11 @@ public class GdbManager
 			catch(DataException e) 
 			{
 				Logger.log.error("Setting previous Gdb failed.", e);
-				try 
-				{
-					gdbName = GlobalPreference.DB_GDB_CURRENT.getDefault();
-					setGeneDb(gdbName);
-				} 
-				catch(DataException f) 
-				{
-					Logger.log.error("Setting default Gdb failed.", f);
-				}
 			}
 		}
 		// then do the Metabolite database
 		gdbName = prefs.get(GlobalPreference.DB_METABDB_CURRENT);
-		if(!gdbName.equals(""))
+		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_METABDB_CURRENT))
 		{
 			try 
 			{
@@ -178,16 +169,39 @@ public class GdbManager
 			catch(Exception e) 
 			{
 				Logger.log.error("Setting previous Metabolite db failed.", e);
-				try 
-				{
-					gdbName = GlobalPreference.DB_GDB_CURRENT.getDefault();
-					setMetaboliteDb(gdbName);
-				} 
-				catch(Exception f) 
-				{
-					Logger.log.error("Setting default Metabolite db failed.", f);
-				}
 			}
 		}
+	}
+
+	
+	private DBConnector dbConnector = null;
+	
+	public void setDBConnector(DBConnector value)
+	{
+		dbConnector = value;
+	}
+	
+	@Deprecated
+	public DBConnector getDBConnector() throws 
+		ClassNotFoundException, 
+		InstantiationException, 
+		IllegalAccessException 
+	{
+		if (dbConnector == null)
+		{
+			String className = null;
+			className = Engine.getCurrent().getPreferences().get(GlobalPreference.DB_ENGINE_GEX);
+			
+			if(className == null) return null;
+				
+			Class<?> dbc = Class.forName(className);
+			Object o = dbc.newInstance();
+			if(o instanceof DBConnector) 
+			{
+				dbConnector = (DBConnector)dbc.newInstance();
+				dbConnector.setDbType(DBConnector.TYPE_GDB);
+			}
+		}
+		return dbConnector;
 	}
 }

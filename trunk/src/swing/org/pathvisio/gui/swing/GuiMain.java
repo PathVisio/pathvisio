@@ -29,6 +29,7 @@ import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
@@ -55,7 +56,7 @@ public class GuiMain
 {
 	protected MainPanelStandalone mainPanel;
 	
-	private void initLog()
+	private static void initLog()
 	{
 		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest (logDest);		
@@ -115,6 +116,8 @@ public class GuiMain
 	 */
 	public void processOptions()
 	{
+		SwingEngine swingEngine = SwingEngine.getCurrent();
+		
 		//Create a plugin manager that loads the plugins
 		if(pluginFiles.size() > 0) {
 			PluginManager pluginManager = new PluginManager(
@@ -123,15 +126,16 @@ public class GuiMain
 		}
 		
 		if(pathwayUrl != null) {
-			SwingEngine.getCurrent().openPathway(pathwayUrl);
+			swingEngine.openPathway(pathwayUrl);
 		}
 	
 		if (pgexFile != null)
 		{
 			try
 			{
-				GexManager.setCurrentGex(pgexFile, false);
-				SwingEngine.getCurrent().loadGexCache();
+				
+				GexManager.getCurrent().setCurrentGex(pgexFile, false);
+				swingEngine.loadGexCache();
 				Logger.log.info ("Loaded pgex " + pgexFile);
 			}
 			catch (DataException e)
@@ -147,11 +151,6 @@ public class GuiMain
 	 */
 	protected JFrame createAndShowGUI(MainPanelStandalone mainPanel) 
 	{
-		initLog();
-		initImporters();
-		initExporters();
-		MIMShapes.registerShapes();
-		
 		//Create and set up the window.
 		JFrame frame = new JFrame(Globals.APPLICATION_NAME);
 		// dispose on close, otherwise windowClosed event is not called.
@@ -213,34 +212,41 @@ public class GuiMain
 			
 			public void run() {
 				Engine.init();
-				Engine.getCurrent().setApplicationName("PathVisio (experimental)");
-				SwingEngine.init();
+				initLog();
+				Engine engine = Engine.getCurrent();
+				engine.setApplicationName("PathVisio (experimental)");
+				SwingEngine.init(engine);
+				SwingEngine swingEngine = SwingEngine.getCurrent();
+				swingEngine.getGdbManager().initPreferred();
 				MainPanelStandalone mps = new MainPanelStandalone();
 				JFrame frame = gui.createAndShowGUI(mps);
-				SwingEngine.getCurrent().setFrame(frame);
-				SwingEngine.getCurrent().setApplicationPanel(mps);
+				initImporters(engine);
+				initExporters(engine, swingEngine.getGdbManager());
+				MIMShapes.registerShapes();
+				swingEngine.setFrame(frame);
+				swingEngine.setApplicationPanel(mps);
 				gui.processOptions();
 
 			}
 		});
 	}
 	
-	private static void initImporters() 
+	private static void initImporters(Engine engine) 
 	{
-		Engine.getCurrent().addPathwayImporter(new MappFormat());
-		Engine.getCurrent().addPathwayImporter(new GpmlFormat());
+		engine.addPathwayImporter(new MappFormat());
+		engine.addPathwayImporter(new GpmlFormat());
 	}
 	
-	private static void initExporters() 
+	private static void initExporters(Engine engine, GdbManager gdbManager) 
 	{
-		Engine.getCurrent().addPathwayExporter(new MappFormat());
-		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
-		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
-		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
-		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
-		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));	
-		Engine.getCurrent().addPathwayExporter(new DataNodeListExporter(SwingEngine.getCurrent().getGdbManager()));
-		Engine.getCurrent().addPathwayExporter(new EUGeneExporter());
+		engine.addPathwayExporter(new MappFormat());
+		engine.addPathwayExporter(new GpmlFormat());
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
+		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));	
+		engine.addPathwayExporter(new DataNodeListExporter(gdbManager));
+		engine.addPathwayExporter(new EUGeneExporter());
 	}
 	
 }

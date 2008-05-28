@@ -40,6 +40,7 @@ import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.Sleak;
 import org.pathvisio.model.ConverterException;
@@ -125,7 +126,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	{
 		engine.addApplicationEventListener(this);
 		gdbManager = new GdbManager();
-		gdbManager.init();
+		gdbManager.initPreferred();
 	}
 
 	public void applicationEvent (ApplicationEvent e)
@@ -654,7 +655,15 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	}
 			
 	public DBConnectorSwt getSwtDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		DBConnector dbc = Engine.getCurrent().getDbConnector(type);
+		DBConnector dbc;
+		if (type == DBConnector.TYPE_GDB)
+		{
+			dbc = SwtEngine.getCurrent().getGdbManager().getDBConnector();
+		}
+		else
+		{
+			dbc = GexManager.getCurrent().getDBConnector();
+		}
 		if(dbc instanceof DBConnectorSwt) {
 			return (DBConnectorSwt)dbc;
 		} else {

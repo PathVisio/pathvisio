@@ -89,7 +89,7 @@ public class GuiMain {
 		window.open();
 		Logger.log.trace ("Window closed");
 		
-		GexManager.close();
+		GexManager.getCurrent().close();
 		try
 		{
 			SwtEngine.getCurrent().getGdbManager().getCurrentGdb().close();

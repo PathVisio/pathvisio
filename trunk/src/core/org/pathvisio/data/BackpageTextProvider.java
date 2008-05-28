@@ -52,7 +52,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 		
-		threads = new ThreadGroup("backpage-queries");		
+		threads = new ThreadGroup("backpage-queries");
+		this.gdbManager = gdbManager;
 	}
 
 	public void setInput(final PathwayElement e) {

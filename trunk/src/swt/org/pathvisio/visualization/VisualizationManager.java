@@ -78,7 +78,7 @@ public class VisualizationManager implements ApplicationEventListener, GexManage
 	static {
 		VisualizationManager vm = new VisualizationManager();
 		Engine.getCurrent().addApplicationEventListener(vm);
-		GexManager.addListener(vm);
+		GexManager.getCurrent().addListener(vm);
 	}
 	
 	/**
@@ -482,7 +482,7 @@ public class VisualizationManager implements ApplicationEventListener, GexManage
 
 	public static InputStream getXmlInput()
 	{
-		File xmlFile = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+		File xmlFile = new File(GexManager.getCurrent().getCurrentGex().getDbName() + ".xml");
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
 			InputStream in = new FileInputStream(xmlFile);
@@ -495,7 +495,7 @@ public class VisualizationManager implements ApplicationEventListener, GexManage
 	
 	public static OutputStream getXmlOutput() {
 		try {
-			File f = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+			File f = new File(GexManager.getCurrent().getCurrentGex().getDbName() + ".xml");
 			OutputStream out = new FileOutputStream(f);
 			return out;
 		} catch(Exception e) {
@@ -505,7 +505,7 @@ public class VisualizationManager implements ApplicationEventListener, GexManage
 	}
 	
 	public static void saveXML() {
-		if(!GexManager.isConnected()) return;
+		if(!GexManager.getCurrent().isConnected()) return;
 		
 		OutputStream out = getXmlOutput();
 		

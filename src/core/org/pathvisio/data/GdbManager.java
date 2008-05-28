@@ -16,7 +16,9 @@
 //
 package org.pathvisio.data;
 
-import org.pathvisio.ApplicationEvent;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
@@ -72,13 +74,35 @@ public class GdbManager
 			currentGdb.setMetaboliteDb(gdb);
 		}
 		
-		ApplicationEvent e =
-			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
-		Engine.getCurrent().fireApplicationEvent (e);
+		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED);
+		fireGdbEvent (e);
 		Logger.log.trace("Current Gene Database: " + dbName);
 	
 	}
+	
 
+	public interface GdbEventListener 
+	{
+		public void gdbEvent(GdbEvent e);
+	}
+
+	public void addGdbEventListener(GdbEventListener l) 
+	{
+		if (l == null) throw new NullPointerException();
+		gdbEventListeners.add(l);
+	}
+	
+	public void removeGdbEventListener(GdbEventListener l) {
+		gdbEventListeners.remove(l);
+	}
+	
+	private void fireGdbEvent (GdbEvent e)
+	{
+		for(GdbEventListener l : gdbEventListeners) l.gdbEvent(e);
+	}
+		
+	private List<GdbEventListener> gdbEventListeners  = new ArrayList<GdbEventListener>();
+	
 	/**
 	 * Set the global gene database
 	 * with the given file- or
@@ -99,9 +123,8 @@ public class GdbManager
 			SimpleGdb gdb = connect (dbName);
 			currentGdb.setGeneDb(gdb);
 		}
-		ApplicationEvent e =
-			new ApplicationEvent (Engine.getCurrent(), ApplicationEvent.GDB_CONNECTED);
-		Engine.getCurrent().fireApplicationEvent (e);
+		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED);
+		fireGdbEvent (e);
 		Logger.log.trace("Current Gene Database: " + dbName);
 	}
 	

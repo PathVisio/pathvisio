@@ -16,6 +16,24 @@
 //
 package org.pathvisio.data;
 
-public interface BackpageListener {
-	public void textChanged(String oldText, String newText);
+import java.util.EventObject;
+
+public class GdbEvent  extends EventObject
+{
+	/**
+	   Called from GdbManager, when a GDB is loaded, either
+	   when it was selected from the data -> select gdb menu
+	   or during data import.
+	 */
+	public static final int GDB_CONNECTED = 7;
+
+	private int type;
+	
+	public GdbEvent(Object source, int type) 
+	{
+		super(source);
+		this.type = type;
+	}
+
+	public int getType() { return type; }
 }

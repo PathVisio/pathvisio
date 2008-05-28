@@ -23,15 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.pathvisio.data.BackpageTextProvider;
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
-import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
@@ -373,22 +369,7 @@ public class Engine
 	public HashMap<String, PathwayImporter> getPathwayImporters() {
 		return importers;
 	}
-	
-	private BackpageTextProvider backpageTextProvider;
-	
-	/**
-	 * Get the backpage text provider for this Engine.
-	 * @return the backpage text provider
-	 * @see BackpageTextProvider
-	 */
-	//TODO move away from Engine
-	public BackpageTextProvider getBackpageTextProvider(GdbManager gdbManager) {
-		if(backpageTextProvider == null) {
-			backpageTextProvider = new BackpageTextProvider(this, gdbManager);
-		}
-		return backpageTextProvider;
-	}	
-	
+		
 	private List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
 	
 	/**
@@ -411,7 +392,7 @@ public class Engine
 	 * to this class
 	 * @param e
 	 */
-	public void fireApplicationEvent(ApplicationEvent e) {
+	private void fireApplicationEvent(ApplicationEvent e) {
 		for(ApplicationEventListener l : applicationEventListeners) l.applicationEvent(e);
 	}
 	
@@ -431,6 +412,17 @@ public class Engine
 	public void setApplicationName (String value)
 	{
 		appName = value;
+	}
+	
+	/**
+	 * Fire a close event
+	 * TODO: move APPLICATION_CLOSE to other place
+	 */
+	@Deprecated
+	public void close()
+	{
+		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
+		fireApplicationEvent(e);
 	}
 	
 	//TODO:

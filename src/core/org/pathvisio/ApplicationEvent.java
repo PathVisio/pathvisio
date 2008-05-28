@@ -36,22 +36,6 @@ public class ApplicationEvent extends EventObject {
 	public static final int VPATHWAY_OPENED = 5;
 	public static final int VPATHWAY_NEW = 6;
 
-	/**
-	   Called from Connect.gdb, when a GDB is selected, either
-	   when it was selected from the data -> select gdb menu
-	   or during data import.
-	 */
-	public static final int GDB_CONNECTED = 7;
-	
-	private Object source;
-	/**
-	   Source, Object that fired the event
-	 */
-	public Object getSource()
-	{
-		return source;
-	}
-
 	
 	private int type;
 	/**
@@ -64,7 +48,6 @@ public class ApplicationEvent extends EventObject {
 	
 	public ApplicationEvent(Object source, int type) {
 		super(source);
-		this.source = source;
 		this.type = type;
 	}
 }

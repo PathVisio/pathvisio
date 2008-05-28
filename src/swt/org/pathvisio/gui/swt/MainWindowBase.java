@@ -39,12 +39,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.BackpageTextProvider;
+import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
+import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexSwt;
+import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
@@ -75,7 +77,7 @@ import org.pathvisio.visualization.LegendPanel;
  */
 //TODO: we mix coolbar and toolbar in this class. Evaluate and select one of the two for our needs.
 public abstract class MainWindowBase extends ApplicationWindow implements 
-	ApplicationEventListener, GexManagerListener, VPathwayListener, UndoManagerListener
+	ApplicationEventListener, GexManagerListener, GdbEventListener, VPathwayListener, UndoManagerListener
 															   
 {
 	private static final long serialVersionUID = 1L;
@@ -392,7 +394,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
 		
 		//rightPanel controls
-		BackpageTextProvider bpt = Engine.getCurrent().getBackpageTextProvider(SwtEngine.getCurrent().getGdbManager());
+		BackpageTextProvider bpt = new BackpageTextProvider(Engine.getCurrent(), SwtEngine.getCurrent().getGdbManager());
 		bpBrowser = new BackpagePanel(rightPanel.getTabFolder(), SWT.NONE, bpt);
 		propertyTable = new PropertyPanel(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
@@ -441,8 +443,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	}
 		
 	public boolean close() {
-		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
-		Engine.getCurrent().fireApplicationEvent(e);
+		Engine.getCurrent().close(); // fire application close event
 		return super.close();
 	}
 	
@@ -480,10 +481,15 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			Engine.getCurrent().getActiveVPathway().addVPathwayListener(this);
 			Engine.getCurrent().getActiveVPathway().getUndoManager().addListener(this);
 			break;
-		case ApplicationEvent.GDB_CONNECTED:
+		}
+	}
+	
+	public void gdbEvent (GdbEvent e)
+	{
+		if (e.getType() == GdbEvent.GDB_CONNECTED)
+		{
 			updateStatusBar();
 			cacheExpressionData();
-			break;
 		}
 	}
 

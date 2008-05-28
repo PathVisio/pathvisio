@@ -49,6 +49,7 @@ public class MainWindow extends MainWindowBase
 		addCoolBar(SWT.FLAT | SWT.LEFT);
 		
 		Engine.getCurrent().addApplicationEventListener(this);
+		SwtEngine.getCurrent().getGdbManager().addGdbEventListener(this);
 		GexManager.getCurrent().addListener(this);
 	}
 	

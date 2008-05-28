@@ -17,8 +17,7 @@
 package org.pathvisio.data;
 
 import junit.framework.TestCase;
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 
@@ -26,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class Test extends TestCase implements ApplicationEventListener
+public class Test extends TestCase implements GdbEventListener
 {	
 	//TODO
 	static final String gdbHuman = 
@@ -38,9 +37,9 @@ public class Test extends TestCase implements ApplicationEventListener
 
 	boolean eventReceived = false;
 
-	public void applicationEvent (ApplicationEvent e)
+	public void gdbEvent (GdbEvent e)
 	{
-		if (e.getType() == ApplicationEvent.GDB_CONNECTED)
+		if (e.getType() == GdbEvent.GDB_CONNECTED)
 		{
 			eventReceived = true;
 		}

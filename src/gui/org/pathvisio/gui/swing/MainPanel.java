@@ -49,6 +49,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
@@ -170,7 +171,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
-		backpagePane = new BackpagePane(SwingEngine.getCurrent().getGdbManager());
+		backpagePane = new BackpagePane(new BackpageTextProvider (Engine.getCurrent(), SwingEngine.getCurrent().getGdbManager()));
 		
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );

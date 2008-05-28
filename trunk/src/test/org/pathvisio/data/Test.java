@@ -67,8 +67,8 @@ public class Test extends TestCase implements ApplicationEventListener
 		info.setTxtFile(f);
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setDbName(dbFileName);
-		GdbManager.setGeneDb(gdbHuman);
-		GexTxtImporter.importFromTxt(info, null);
+		SimpleGdb gdb = new SimpleGdb(gdbHuman, new DBConnDerby(), 0);
+		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// no errors if all genes could be looked up.
 		assertEquals (info.getErrorList().size(), 0);
@@ -78,8 +78,8 @@ public class Test extends TestCase implements ApplicationEventListener
 		dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info2.setDbName(dbFileName);
 		
-		GdbManager.setGeneDb(null); // disable gene database
-		GexTxtImporter.importFromTxt(info, null);
+		gdb = new SimpleGdb(gdbRat, new DBConnDerby(), 0);
+		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// 91 errors expected if no genes can be looked up.
 		assertEquals (info.getErrorList().size(), 91);
@@ -96,8 +96,8 @@ public class Test extends TestCase implements ApplicationEventListener
 		info.setDbName(dbFileName);
 		info.setSyscodeColumn(false);
 		info.setDataSource(DataSource.AFFY);
-		GdbManager.setGeneDb(gdbRat);
-		GexTxtImporter.importFromTxt(info, null);
+		SimpleGdb gdb = new SimpleGdb (gdbRat, new DataDerby(), 0);
+		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// just 10 errors if all goes well
 		assertEquals (info.getErrorList().size(), 10);		

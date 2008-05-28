@@ -261,15 +261,15 @@ public class StandaloneActions
 				
 				if (dbType.equals("Gene"))
 				{
-					GdbManager.setGeneDb(dbName);
+					SwingEngine.getCurrent().getGdbManager().setGeneDb(dbName);
 					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_GDB_CURRENT, dbName);
 				}
 				else
 				{
-					GdbManager.setMetaboliteDb(dbName);
+					SwingEngine.getCurrent().getGdbManager().setMetaboliteDb(dbName);
 					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
 				}
-				GdbManager.setGeneDb(dbName);
+				SwingEngine.getCurrent().getGdbManager().setGeneDb(dbName);
 				SwingEngine.getCurrent().loadGexCache();
 			} 
 			catch(Exception ex) 

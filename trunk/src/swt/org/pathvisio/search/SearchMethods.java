@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.search.PathwaySearchComposite.SearchRunnableWithProgress;
@@ -65,7 +66,7 @@ public abstract class SearchMethods {
 
 		srt.setTableData(srs);
 		//Get all cross references
-		List<Xref> refs = GdbManager.getCurrentGdb().getCrossRefs(ref);
+		List<Xref> refs = SwtEngine.getCurrent().getGdbManager().getCurrentGdb().getCrossRefs(ref);
 		if(refs.size() == 0) throw new NoGdbException();
 		
 		SearchRunnableWithProgress.monitorWorked((int)(TOTAL_WORK * 0.2));

@@ -176,7 +176,7 @@ public class DoubleGdb implements Gdb
 		SimpleGex gex = GexManager.getCurrentGex();
 		if(gex != null) {
 			text += "<H1>Expression data</H1>";
-			text += gex.getDataString(ref);
+			text += gex.getDataString(ref, this);
 		}
 		
 		// get crossReferences from all registerd gdb's

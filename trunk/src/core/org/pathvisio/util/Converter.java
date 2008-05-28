@@ -28,7 +28,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataNodeListExporter;
 import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
@@ -77,7 +76,6 @@ public class Converter {
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
-		engine.addPathwayExporter(new DataNodeListExporter());
 		engine.addPathwayExporter(new EUGeneExporter());
     	
 		//Enable MiM support (for export to graphics formats)

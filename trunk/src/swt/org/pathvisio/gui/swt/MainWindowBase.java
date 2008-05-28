@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.BackpageTextProvider;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwt;
 import org.pathvisio.data.GdbManager;
@@ -130,7 +131,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 				
 				if(dbName == null) return;
 				
-				GdbManager.setGeneDb(dbName);
+				SwtEngine.getCurrent().getGdbManager().setGeneDb(dbName);
 			} catch(Exception e) {
 				String msg = "Failed to open Gene Database; " + e.getMessage();
 				MessageDialog.openError (window.getShell(), "Error", 
@@ -184,15 +185,16 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		if(Engine.getCurrent().hasVPathway())
 		{
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
+			GdbManager gdbm = SwtEngine.getCurrent().getGdbManager();
 			//Check for necessary connections
-			if(GexManager.isConnected() && GdbManager.isConnected())
+			if(GexManager.isConnected() && gdbm.isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {
 					dialog.run(
 							true, true, 
 							new GexSwt.CacheProgressKeeper(
-									drawing.getPathwayModel().getDataNodeXrefs()
+									drawing.getPathwayModel().getDataNodeXrefs(), gdbm.getCurrentGdb()
 								)
 					);
 					drawing.redraw();
@@ -390,7 +392,8 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
 		
 		//rightPanel controls
-		bpBrowser = new BackpagePanel(rightPanel.getTabFolder(), SWT.NONE);
+		BackpageTextProvider bpt = Engine.getCurrent().getBackpageTextProvider(SwtEngine.getCurrent().getGdbManager());
+		bpBrowser = new BackpagePanel(rightPanel.getTabFolder(), SWT.NONE, bpt);
 		propertyTable = new PropertyPanel(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		pwSearchComposite = new PathwaySearchComposite(rightPanel.getTabFolder(), SWT.NONE, this);
@@ -512,7 +515,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	private void updateStatusBar()
 	{
 		setStatus("Using Gene Database: '" +
-				  GdbManager.getCurrentGdb().getDbName() + "'");
+				  SwtEngine.getCurrent().getGdbManager().getCurrentGdb().getDbName() + "'");
 	}
 	
 	public void vPathwayEvent(VPathwayEvent e) {

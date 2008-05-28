@@ -45,7 +45,9 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	volatile ThreadGroup threads;
 	volatile Thread lastThread;
 	
-	public BackpageTextProvider(Engine engine) {
+	private GdbManager gdbManager;
+	
+	public BackpageTextProvider(Engine engine, GdbManager gdbManager) {
 		engine.addApplicationEventListener(this);
 		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
@@ -62,7 +64,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			input = null;
-			setText(GdbManager.getCurrentGdb().getBackpageHTML(null, null));
+			setText(gdbManager.getCurrentGdb().getBackpageHTML(null, null));
 		} else {
 			input = e;
 			input.addListener(this);
@@ -151,7 +153,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		{
 			if(e == null) return;
 			Xref ref = new Xref (e.getGeneID(), e.getDataSource());
-			String txt = GdbManager.getCurrentGdb().getBackpageHTML(
+			String txt = gdbManager.getCurrentGdb().getBackpageHTML(
 					ref, 
 					e.getBackpageHead());
 			if(input == e) setText(txt);

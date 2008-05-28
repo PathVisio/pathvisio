@@ -204,14 +204,6 @@ public class SimpleGdb implements Gdb
 		return text + "</body></html>";
 	}
 
-	/**
-	 * @deprecated use {@link Engine#getBackpageTextProvider()} instead!
-	 * @return
-	 */
-	public static BackpageTextProvider getBackpageTextProvider() {
-		return Engine.getCurrent().getBackpageTextProvider();
-	}
-
 	String getCrossRefText(Xref ref) 
 	{
 		List<Xref> crfs = getCrossRefs(ref);

@@ -208,14 +208,14 @@ public class SimpleGex
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	public String getDataString(Xref idc)
+	public String getDataString(Xref idc, Gdb gdb)
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
 		
 		String colNames = "<TR><TH>Sample name";
 		if(		con == null //Need a connection to the expression data
-				|| !GdbManager.isConnected() //and to the gene database
+				|| !gdb.isConnected() //and to the gene database
 		) return noDataFound;
 		
 		List<Data> pwData = cachedData.getData(idc);
@@ -244,7 +244,7 @@ public class SimpleGex
 	 * @param refs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(List<Xref> refs, ProgressKeeper p)
+	public void cacheData(List<Xref> refs, ProgressKeeper p, Gdb gdb)
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();
@@ -257,7 +257,7 @@ public class SimpleGex
 			
 			if(cachedData.hasData(pwIdc)) continue;
 			
-			List<String> ensIds = GdbManager.getCurrentGdb().ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
+			List<String> ensIds = gdb.ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			

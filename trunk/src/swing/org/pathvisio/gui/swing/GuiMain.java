@@ -30,11 +30,19 @@ import javax.swing.UIManager;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.BatikImageExporter;
+import org.pathvisio.model.DataNodeListExporter;
+import org.pathvisio.model.EUGeneExporter;
+import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.ImageExporter;
+import org.pathvisio.model.MappFormat;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.view.MIMShapes;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -45,7 +53,6 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public class GuiMain
 {
-	private JFrame frame;
 	protected MainPanelStandalone mainPanel;
 	
 	private void initLog()
@@ -138,13 +145,15 @@ public class GuiMain
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
 	 */
-	protected void createAndShowGUI(MainPanelStandalone mainPanel) 
+	protected JFrame createAndShowGUI(MainPanelStandalone mainPanel) 
 	{
 		initLog();
-		GuiInit.init();
+		initImporters();
+		initExporters();
+		MIMShapes.registerShapes();
 		
 		//Create and set up the window.
-		frame = new JFrame(Globals.APPLICATION_NAME);
+		JFrame frame = new JFrame(Globals.APPLICATION_NAME);
 		// dispose on close, otherwise windowClosed event is not called.
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
@@ -172,6 +181,8 @@ public class GuiMain
 		int spPercent = Engine.getCurrent().getPreferences().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
+		
+		return frame;
 	}
 
 	private void shutdown() 
@@ -179,8 +190,6 @@ public class GuiMain
 		PreferenceManager prefs = Engine.getCurrent().getPreferences();
 		prefs.store();
 	}
-
-	public JFrame getFrame() { return frame; }
 	
 	public MainPanel getMainPanel() { return mainPanel; }
 	
@@ -207,13 +216,31 @@ public class GuiMain
 				Engine.getCurrent().setApplicationName("PathVisio (experimental)");
 				SwingEngine.init();
 				MainPanelStandalone mps = new MainPanelStandalone();
-				gui.createAndShowGUI(mps);
-				SwingEngine.getCurrent().setFrame(gui.frame);
+				JFrame frame = gui.createAndShowGUI(mps);
+				SwingEngine.getCurrent().setFrame(frame);
 				SwingEngine.getCurrent().setApplicationPanel(mps);
 				gui.processOptions();
 
 			}
 		});
 	}
-
+	
+	private static void initImporters() 
+	{
+		Engine.getCurrent().addPathwayImporter(new MappFormat());
+		Engine.getCurrent().addPathwayImporter(new GpmlFormat());
+	}
+	
+	private static void initExporters() 
+	{
+		Engine.getCurrent().addPathwayExporter(new MappFormat());
+		Engine.getCurrent().addPathwayExporter(new GpmlFormat());
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
+		Engine.getCurrent().addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));	
+		Engine.getCurrent().addPathwayExporter(new DataNodeListExporter(SwingEngine.getCurrent().getGdbManager()));
+		Engine.getCurrent().addPathwayExporter(new EUGeneExporter());
+	}
+	
 }

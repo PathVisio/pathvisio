@@ -58,9 +58,21 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	private CommonActions actions;
 	private JFrame frame; // may be null (for applet...)
 	
-	public SwingEngine(Engine engine) {
+	private Engine engine;
+	private GdbManager gdbManager = null;
+	
+	public SwingEngine(Engine engine) 
+	{
+		this.engine = engine;
+		gdbManager = new GdbManager();
+		gdbManager.init();
 		actions = new CommonActions(engine);
 		engine.addApplicationEventListener(this);
+	}
+	
+	public GdbManager getGdbManager()
+	{
+		return gdbManager;
 	}
 	
 	// frame may be null...
@@ -73,6 +85,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		current = new SwingEngine(Engine.getCurrent());	
 	}
 	
+	@Deprecated
 	public static SwingEngine getCurrent() 
 	{
 		if(current == null) 
@@ -115,8 +128,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	 */
 	public void loadGexCache() {
 		final SimpleGex gex = GexManager.getCurrentGex();
-		final Pathway p = Engine.getCurrent().getActivePathway();
-		if(p != null && gex != null && GdbManager.isConnected()) {
+		final Pathway p = engine.getActivePathway();
+		if(p != null && gex != null && gdbManager.isConnected()) {
 			final SwingProgressKeeper pk = new SwingProgressKeeper(
 					(int)1E5
 			);
@@ -128,7 +141,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() {
 					pk.setTaskName("Loading expression data");
-						gex.cacheData(p.getDataNodeXrefs(), pk);
+						gex.cacheData(p.getDataNodeXrefs(), pk, gdbManager.getCurrentGdb());
 						pk.finished();
 					return null;
 				}
@@ -189,8 +202,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			protected Boolean doInBackground() throws Exception {
 				pk.setTaskName("Opening pathway");
 				try {
-					Engine.getCurrent().setWrapper (createWrapper());
-					Engine.getCurrent().openPathway(url);
+					engine.setWrapper (createWrapper());
+					engine.openPathway(url);
 					return true;
 				} catch(ConverterException e) {
 					handleConverterException(e.getMessage(), null, e);
@@ -214,8 +227,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			protected Boolean doInBackground() throws Exception {
 				pk.setTaskName("Opening pathway");
 				try {
-					Engine.getCurrent().setWrapper (createWrapper());
-					Engine.getCurrent().openPathway(f);
+					engine.setWrapper (createWrapper());
+					engine.openPathway(f);
 					return true;
 				} catch(ConverterException e) {
 					handleConverterException(e.getMessage(), null, e);
@@ -238,11 +251,10 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			protected Boolean doInBackground() throws Exception {
 				pk.setTaskName("Importing pathway");
 				try {
-					Engine eng = Engine.getCurrent();
-					boolean editMode = eng.hasVPathway() ? eng.getActiveVPathway().isEditMode() : true;
-					eng.setWrapper (createWrapper());
-					eng.importPathway(f);
-					eng.getActiveVPathway().setEditMode(editMode);
+					boolean editMode = engine.hasVPathway() ? engine.getActiveVPathway().isEditMode() : true;
+					engine.setWrapper (createWrapper());
+					engine.importPathway(f);
+					engine.getActiveVPathway().setEditMode(editMode);
 					return true;
 				} catch(ConverterException e) {
 					handleConverterException(e.getMessage(), null, e);
@@ -258,8 +270,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	}
 	
 	public void newPathway() {
-		Engine.getCurrent().setWrapper (createWrapper());
-		Engine.getCurrent().newPathway();
+		engine.setWrapper (createWrapper());
+		engine.newPathway();
 	}
 
 	public boolean exportPathway() {
@@ -276,7 +288,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 					}
 				}
 		);
-		exporters.addAll(Engine.getCurrent().getPathwayExporters().values());
+		exporters.addAll(engine.getPathwayExporters().values());
 		
 		FileFilter selectedFilter = null;
 		for(PathwayExporter exp : exporters) {
@@ -311,7 +323,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				protected Boolean doInBackground() throws Exception {
 					try {
 						pk.setTaskName("Exporting pathway");
-						Engine.getCurrent().exportPathway(f);
+						engine.exportPathway(f);
 						return true;
 					} catch(ConverterException e) {
 						handleConverterException(e.getMessage(), null, e);
@@ -341,7 +353,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 					}
 				}
 		);
-		importers.addAll(Engine.getCurrent().getPathwayImporters().values());
+		importers.addAll(engine.getPathwayImporters().values());
 		FileFilter selectedFilter = null;
 		for(PathwayImporter imp : importers) {
 			FileFilter ff = new ImporterExporterFileFilter(imp);
@@ -445,7 +457,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			}
 			try {
 				if(mayOverwrite(toFile)) {
-					Engine.getCurrent().savePathway(toFile);
+					engine.savePathway(toFile);
 					return true;
 				}
 			} catch(ConverterException e) {
@@ -457,7 +469,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	public boolean savePathway()
 	{
-		Pathway pathway = Engine.getCurrent().getActivePathway();
+		Pathway pathway = engine.getActivePathway();
 		
 		boolean result = true;	
 		
@@ -466,7 +478,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		if (pathway.getSourceFile() != null && pathway.getSourceFile().canWrite())
 		{
 			try {
-				Engine.getCurrent().savePathway(pathway.getSourceFile());
+				engine.savePathway(pathway.getSourceFile());
 			} catch (ConverterException e) {
 				handleConverterException(e.getMessage(), null, e);
 			}
@@ -490,7 +502,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	 */
 	public boolean canDiscardPathway()
 	{
-		Pathway pathway = Engine.getCurrent().getActivePathway();
+		Pathway pathway = engine.getActivePathway();
         // checking not necessary if there is no pathway or if pathway is not changed.
 		
 		if (pathway == null || !pathway.hasChanged()) return true;
@@ -518,12 +530,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		{
 			loadGexCache();
 			updateTitle();
-			Engine.getCurrent().getActivePathway().addStatusFlagListener(SwingEngine.this);
+			engine.getActivePathway().addStatusFlagListener(SwingEngine.this);
 		}
 		else if (e.getType() == ApplicationEvent.PATHWAY_NEW)
 		{
 			updateTitle();
-			Engine.getCurrent().getActivePathway().addStatusFlagListener(SwingEngine.this);
+			engine.getActivePathway().addStatusFlagListener(SwingEngine.this);
 		}
 	}
 
@@ -531,19 +543,19 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		if (frame != null)
 		{
-			if (Engine.getCurrent().getActivePathway() == null)
+			if (engine.getActivePathway() == null)
 			{
-				frame.setTitle(Engine.getCurrent().getApplicationName());
+				frame.setTitle(engine.getApplicationName());
 			}
 			else
 			{
-				boolean changeStatus = Engine.getCurrent().getActivePathway().hasChanged();
+				boolean changeStatus = engine.getActivePathway().hasChanged();
 				// get filename, or (New Pathway) if current pathway hasn't been opened yet
-				String fname = (Engine.getCurrent().getActivePathway().getSourceFile() == null) ? "(New Pathway)" :
-					Engine.getCurrent().getActivePathway().getSourceFile().getName();
+				String fname = (engine.getActivePathway().getSourceFile() == null) ? "(New Pathway)" :
+					engine.getActivePathway().getSourceFile().getName();
 				frame.setTitle(
 					(changeStatus ? "*" : "") + fname + " - " +
-					Engine.getCurrent().getApplicationName()
+					engine.getApplicationName()
 					);
 			}
 		}
@@ -557,5 +569,13 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public void setFrame(JFrame frame)
 	{
 		this.frame = frame;
+	}
+	
+	/**
+	 * The root panel of this application
+	 */
+	public Component getRootPanel()
+	{
+		return frame;
 	}
 }

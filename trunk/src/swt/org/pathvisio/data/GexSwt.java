@@ -60,34 +60,38 @@ public class GexSwt
 	
 	public static class CacheProgressKeeper extends SwtProgressKeeper implements IRunnableWithProgress {
 		List<Xref> refs;
+		Gdb gdb;
 		
-		public CacheProgressKeeper(List<Xref> refs) 
+		public CacheProgressKeeper(List<Xref> refs, Gdb gdb) 
 		{
 			super(refs.size());
 			this.refs = refs;
+			this.gdb = gdb;
 		}
 		
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Loading data", getTotalWork());
-			GexManager.getCurrentGex().cacheData(refs, this);
+			GexManager.getCurrentGex().cacheData(refs, this, gdb);
 		}
 	}
 	
 	public static class ImportProgressKeeper extends SwtProgressKeeper {
 		ImportPage page;
 		ImportInformation info;
+		Gdb gdb;
 		
-		public ImportProgressKeeper(ImportPage page, ImportInformation info) {
+		public ImportProgressKeeper(ImportPage page, ImportInformation info, Gdb gdb) {
 			super((int)1E6);
 			this.page = page;
 			this.info = info;
+			this.gdb = gdb;
 		}
 
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Importing data", getTotalWork());
-			GexTxtImporter.importFromTxt(info, this);
+			GexTxtImporter.importFromTxt(info, this, gdb);
 		}
 	}	
 }

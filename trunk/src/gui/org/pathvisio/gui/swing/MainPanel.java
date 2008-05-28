@@ -170,7 +170,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
-		backpagePane = new BackpagePane();
+		backpagePane = new BackpagePane(SwingEngine.getCurrent().getGdbManager());
 		
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );

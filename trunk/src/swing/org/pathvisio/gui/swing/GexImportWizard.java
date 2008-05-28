@@ -569,7 +569,7 @@ public class GexImportWizard extends Wizard
 	            {
 //	                try 
 //	                {
-	                	GexTxtImporter.importFromTxt(importInformation, pk);
+	                	GexTxtImporter.importFromTxt(importInformation, pk, SwingEngine.getCurrent().getGdbManager().getCurrentGdb());
 	                	
 //	                    Thread.sleep(2000);
 //	                    setProgressValue(25);

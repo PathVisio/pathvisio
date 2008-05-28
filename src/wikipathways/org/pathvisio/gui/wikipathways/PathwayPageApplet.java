@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
@@ -39,8 +40,8 @@ import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
-import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.Parameter;
+import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class PathwayPageApplet extends JApplet {
@@ -49,6 +50,13 @@ public class PathwayPageApplet extends JApplet {
 	WikiPathways wiki;
 
 	public final void init() {
+		try {
+		    UIManager.setLookAndFeel(
+		        UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ex) {
+			Logger.log.error("Unable to load native look and feel", ex);
+		}
+		
 		//Add a mouse listener that requests focus on clicking
 		//To fix bug 299
 		addMouseListener(new MouseAdapter() {

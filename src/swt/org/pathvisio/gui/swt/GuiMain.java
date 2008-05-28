@@ -75,6 +75,7 @@ public class GuiMain {
 		//Setup the application window
 		MainWindow window = null;
 		Engine.init();
+		Engine.getCurrent().setApplicationName("PathVisio 1.0.2");
 		if(debugHandles)	window = SwtEngine.getCurrent().getSleakWindow();
 		else				window = SwtEngine.getCurrent().getWindow();
 				

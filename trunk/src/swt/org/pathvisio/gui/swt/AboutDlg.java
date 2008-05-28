@@ -53,13 +53,13 @@ public class AboutDlg extends Dialog
 		Shell parent = getParent();
 		final Shell shell = new Shell (parent, SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 
-		shell.setText ("About " + Engine.getApplicationName());		
+		shell.setText ("About " + Engine.getCurrent().getApplicationName());		
 		GridLayout ly = new GridLayout();
 		ly.numColumns = 2;
 		shell.setLayout (ly);
 		
 		Label lbl = new Label (shell, SWT.NULL);
-		lbl.setText (Engine.getApplicationName() + "\nRevision: " + Revision.REVISION);
+		lbl.setText (Engine.getCurrent().getApplicationName() + "\nRevision: " + Revision.REVISION);
 		GridData gd = new GridData (GridData.HORIZONTAL_ALIGN_CENTER);
 		gd.horizontalSpan = 2;		
 		lbl.setLayoutData (gd);

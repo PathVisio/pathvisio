@@ -27,7 +27,6 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.preferences.swt.PreferenceDlg;
 import org.pathvisio.preferences.swt.SwtPreferences;
@@ -293,7 +292,7 @@ public class CommonActions
 		{
 			window = w;
 			setText ("&About");
-			setToolTipText ("About " + Engine.getApplicationName());
+			setToolTipText ("About " + Engine.getCurrent().getApplicationName());
 		}
 		public void run () {
 			AboutDlg gmmlAboutBox = new AboutDlg(window.getShell(), SWT.NONE);
@@ -311,7 +310,7 @@ public class CommonActions
 		{
 			window = w;
 			setText ("&Help@F1");
-			setToolTipText ("Opens " + Engine.getApplicationName()+ " help in your web browser");
+			setToolTipText ("Opens " + Engine.getCurrent().getApplicationName()+ " help in your web browser");
 		}
 		public void run ()
 		{

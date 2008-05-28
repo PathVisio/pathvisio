@@ -917,7 +917,7 @@ public class GexImportWizard extends Wizard
 				//this has to be done after re-connecting to the pgex.
 				createDefaultColorSet(importInformation.getMinimum(), importInformation.getMaximum());
 				importPage.setTitle("Import finished");
-				importPage.setDescription("Press finish to return to " + Engine.getApplicationName());
+				importPage.setDescription("Press finish to return to " + Engine.getCurrent().getApplicationName());
 				progressText.setText("Data has been imported. \n\n");
 				
 				// Show a list of errors

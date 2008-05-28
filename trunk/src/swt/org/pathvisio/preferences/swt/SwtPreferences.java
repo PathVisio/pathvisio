@@ -16,19 +16,12 @@
 //
 package org.pathvisio.preferences.swt;
 
-import java.io.File;
-import java.io.IOException;
-
 import java.util.*;
 
-import javax.naming.OperationNotSupportedException;
 
-import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.pathvisio.Engine;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;

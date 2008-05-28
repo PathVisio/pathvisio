@@ -151,7 +151,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	{
 		if (Engine.getCurrent().getActivePathway() == null)
 		{
-			window.getShell().setText(Engine.getApplicationName());
+			window.getShell().setText(Engine.getCurrent().getApplicationName());
 		}
 		else
 		{
@@ -161,7 +161,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 				Engine.getCurrent().getActivePathway().getSourceFile().getName();
 			window.getShell().setText(
 				(changeStatus ? "*" : "") + fname + " - " +
-				Engine.getApplicationName()
+				Engine.getCurrent().getApplicationName()
 				);
 		}
 	}

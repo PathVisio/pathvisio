@@ -40,7 +40,7 @@ public class NewElementAction extends Action
 	public static final int MENULINE = 1;
 	public static final int MENULINESHAPE = 2;
 	
-	MainWindow window;
+	MainWindowBase window;
 		
 	Template template;
 

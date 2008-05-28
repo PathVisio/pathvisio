@@ -571,10 +571,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		this.frame = frame;
 	}
 	
-	/**
-	 * The root panel of this application
-	 */
-	public Component getRootPanel()
+	public JFrame getFrame()
 	{
 		return frame;
 	}

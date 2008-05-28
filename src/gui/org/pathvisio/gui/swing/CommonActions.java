@@ -541,8 +541,7 @@ public class CommonActions implements ApplicationEventListener {
 		{
 			if (SwingEngine.getCurrent().canDiscardPathway())
 			{
-				//TODO: dispose window, don't use system.exit because Shutdown method won't get called.
-				System.exit(0);
+				SwingEngine.getCurrent().getFrame().dispose();
 			}
 		}
 	}

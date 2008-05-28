@@ -18,8 +18,13 @@ package org.pathvisio.data;
 
 import java.util.EventObject;
 
+/**
+ * Event produced by the GdbManager. This event is generated when a new Gdb is loaded
+ */
 public class GdbEvent  extends EventObject
 {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	   Called from GdbManager, when a GDB is loaded, either
 	   when it was selected from the data -> select gdb menu

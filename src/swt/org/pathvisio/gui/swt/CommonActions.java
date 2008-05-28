@@ -221,7 +221,7 @@ public class CommonActions
 		
 		/**
 		 * Constructor for this class
-		 * @param w {@link MainWindow} window this action belongs to
+		 * @param w {@link MainWindowBase} window this action belongs to
 		 * @param newPctZoomFactor the zoom factor as percentage of original
 		 */
 		public ZoomAction (MainWindowBase w, int newPctZoomFactor)
@@ -256,7 +256,7 @@ public class CommonActions
 		
 		/**
 		 * Constructor for this class
-		 * @param w {@link MainWindow} window this action belongs to
+		 * @param w {@link MainWindowBase} window this action belongs to
 		 * @param newPctZoomFactor the zoom factor as percentage of original
 		 */
 		public ZoomToFitAction (MainWindowBase w)

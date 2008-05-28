@@ -72,7 +72,7 @@ public class GuiMain {
 		}
 				
 		//Setup the application window
-		MainWindow window = null;
+		MainWindowBase window = null;
 		Engine.init();
 		initLogs();
 		SwtEngine.init(Engine.getCurrent());

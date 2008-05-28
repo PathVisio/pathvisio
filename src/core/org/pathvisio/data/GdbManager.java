@@ -81,11 +81,17 @@ public class GdbManager
 	}
 	
 
+	/**
+	 * Implement this interface if you want to listen to Gdb Events.
+	 */
 	public interface GdbEventListener 
 	{
 		public void gdbEvent(GdbEvent e);
 	}
 
+	/**
+	 * Use this method if you want to respond to the connection of Gdb databases 
+	 */
 	public void addGdbEventListener(GdbEventListener l) 
 	{
 		if (l == null) throw new NullPointerException();

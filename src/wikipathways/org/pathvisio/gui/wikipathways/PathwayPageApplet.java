@@ -74,7 +74,7 @@ public class PathwayPageApplet extends JApplet {
 			SwingEngine.init (Engine.getCurrent());
 			
 			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
-			wiki = new WikiPathways(uiHandler);
+			wiki = new WikiPathways(uiHandler, Engine.getCurrent());
 			wiki.setSwingEngine(SwingEngine.getCurrent());
 			
 			parseArguments();

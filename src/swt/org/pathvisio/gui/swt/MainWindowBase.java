@@ -187,7 +187,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 			VPathway drawing = Engine.getCurrent().getActiveVPathway();
 			GdbManager gdbm = SwtEngine.getCurrent().getGdbManager();
 			//Check for necessary connections
-			if(GexManager.isConnected() && gdbm.isConnected())
+			if(GexManager.getCurrent().isConnected() && gdbm.isConnected())
 			{
 				ProgressKeeperDialog dialog = new ProgressKeeperDialog(getShell());
 				try {
@@ -459,7 +459,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	public LegendPanel getLegend() { return legend; }
 	
 	public void showLegend(boolean show) {	
-		if(show && GexManager.isConnected()) 
+		if(show && GexManager.getCurrent().isConnected()) 
 		{
 			if(rightPanel.isVisible("Legend")) return; //Legend already visible, only refresh
 			rightPanel.unhideTab("Legend", 0);
@@ -473,7 +473,7 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		switch(e.getType())
 		{
 		case ApplicationEvent.PATHWAY_OPENED:
-			if(GexManager.isConnected()) cacheExpressionData();
+			if(GexManager.getCurrent().isConnected()) cacheExpressionData();
 			break;
 		case ApplicationEvent.VPATHWAY_NEW:
 		case ApplicationEvent.VPATHWAY_OPENED:

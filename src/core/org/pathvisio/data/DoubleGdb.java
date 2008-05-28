@@ -173,7 +173,7 @@ public class DoubleGdb implements Gdb
 		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
 		//Get the expression data information if available
-		SimpleGex gex = GexManager.getCurrentGex();
+		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 		if(gex != null) {
 			text += "<H1>Expression data</H1>";
 			text += gex.getDataString(ref, this);

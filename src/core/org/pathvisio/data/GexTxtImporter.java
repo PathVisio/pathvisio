@@ -25,7 +25,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
@@ -76,7 +75,7 @@ public class GexTxtImporter
 			if (p != null) p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
-			result = new SimpleGex(info.getDbName(), true, Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX));
+			result = new SimpleGex(info.getDbName(), true, GexManager.getCurrent().getDBConnector());
 			
 			if (p != null)
 			{
@@ -253,7 +252,7 @@ public class GexTxtImporter
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
-			GexManager.setCurrentGex(result.getDbName(), false);
+			GexManager.getCurrent().setCurrentGex(result.getDbName(), false);
 			if (p != null) p.finished();
 		} 
 		catch(Exception e) 

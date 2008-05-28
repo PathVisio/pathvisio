@@ -73,13 +73,13 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			ColorSetManager colorSetMgr) {
 		this.colorSetMgr = colorSetMgr;
 		this.methodRegistry = methodRegistry;
-		GexManager.addListener(this);
+		GexManager.getCurrent().addListener(this);
 		Engine.getCurrent().addApplicationEventListener(this);
 		VPathway vp = Engine.getCurrent().getActiveVPathway();
 		if(vp != null) {
 			vp.addVPathwayListener(this);
 		}
-		if(GexManager.isConnected()) {
+		if(GexManager.getCurrent().isConnected()) {
 			loadXML();
 		}
 	}
@@ -266,7 +266,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 	public  InputStream getXmlInput()
 	{
-		File xmlFile = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+		File xmlFile = new File(GexManager.getCurrent().getCurrentGex().getDbName() + ".xml");
 		Logger.log.trace("Getting visualizations xml: " + xmlFile);
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
@@ -280,7 +280,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	
 	public  OutputStream getXmlOutput() {
 		try {
-			File f = new File(GexManager.getCurrentGex().getDbName() + ".xml");
+			File f = new File(GexManager.getCurrent().getCurrentGex().getDbName() + ".xml");
 			Logger.log.trace("Visualization settings will be saved to: " + f);
 			OutputStream out = new FileOutputStream(f);
 			return out;
@@ -291,7 +291,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	}
 	
 	public  void saveXML() {
-		if(!GexManager.isConnected()) return;
+		if(!GexManager.getCurrent().isConnected()) return;
 		
 		OutputStream out = getXmlOutput();
 		

@@ -387,47 +387,7 @@ public class Engine
 			backpageTextProvider = new BackpageTextProvider(this, gdbManager);
 		}
 		return backpageTextProvider;
-	}
-	
-	private HashMap<Integer, DBConnector> connectors = new HashMap<Integer, DBConnector>();
-	
-	public DBConnector getDbConnector(int type) throws ClassNotFoundException, InstantiationException, IllegalAccessException 
-	{
-		//Try to get the DBConnector from the hashmap first
-		DBConnector connector = connectors.get(type);
-		if(connector != null) return connector;
-		
-		//Else load it from the preferences
-		String className = null;
-		switch(type) {
-		case DBConnector.TYPE_GDB:
-			className = getPreferences().get(GlobalPreference.DB_ENGINE_GDB);
-			break;
-		case DBConnector.TYPE_GEX:
-			className = getPreferences().get(GlobalPreference.DB_ENGINE_GEX);
-			break;
-		}
-		if(className == null) return null;
-		
-		Class<?> dbc = Class.forName(className);
-		Object o = dbc.newInstance();
-		if(o instanceof DBConnector) {
-			connector = (DBConnector)dbc.newInstance();
-			connector.setDbType(type);
-		}
-		
-		return connector;
-	}
-	
-	/**
-	 * Set the DBConnector for the given database type. 
-	 * Overrides seting in GlobalPreference.DB_ENGINE_*
-	 * @param connector
-	 * @param type
-	 */
-	public void setDBConnector(DBConnector connector, int type) {
-		connectors.put(type, connector);
-	}
+	}	
 	
 	private List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
 	

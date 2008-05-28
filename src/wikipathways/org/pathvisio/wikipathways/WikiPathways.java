@@ -213,10 +213,10 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		DBConnector connector = new DBConnectorDerbyServer(
 				parameters.getValue(Parameter.GDB_SERVER), 1527
 		);
-		Engine.getCurrent().setDBConnector(connector, DBConnector.TYPE_GDB);
-
-		SwingEngine.getCurrent().getGdbManager().setGeneDb(getPwSpecies());
-		SwingEngine.getCurrent().getGdbManager().setMetaboliteDb("metabolites");
+		GdbManager gdbManager = SwingEngine.getCurrent().getGdbManager();
+		gdbManager.setDBConnector(connector);
+		gdbManager.setGeneDb(getPwSpecies());
+		gdbManager.setMetaboliteDb("metabolites");
 
 
 		isInit = false;

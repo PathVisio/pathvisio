@@ -72,7 +72,7 @@ public class GexSwt
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Loading data", getTotalWork());
-			GexManager.getCurrentGex().cacheData(refs, this, gdb);
+			GexManager.getCurrent().getCurrentGex().cacheData(refs, this, gdb);
 		}
 	}
 	

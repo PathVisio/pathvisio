@@ -183,7 +183,7 @@ public class StandaloneActions
 				 * throws an exception if that fails
 				 */
 				DBConnectorSwing dbcon;
-				DBConnector dbc = Engine.getCurrent().getDbConnector(DBConnector.TYPE_GEX);
+				DBConnector dbc = GexManager.getCurrent().getDBConnector();
 				if(dbc instanceof DBConnectorSwing) 
 				{
 					dbcon = (DBConnectorSwing)dbc;
@@ -193,12 +193,11 @@ public class StandaloneActions
 					//TODO: better handling of error
 					throw new IllegalArgumentException("Not a Swing database connector");
 				}
-
 				String dbName = dbcon.openChooseDbDialog(null);
 				
 				if(dbName == null) return;
 				
-				GexManager.setCurrentGex(dbName, false);
+				GexManager.getCurrent().setCurrentGex(dbName, false);
 				SwingEngine.getCurrent().loadGexCache();
 			} 
 			catch(Exception ex) 
@@ -244,7 +243,7 @@ public class StandaloneActions
 				 * throws an exception if that fails
 				 */
 				DBConnectorSwing dbcon;
-				DBConnector dbc = Engine.getCurrent().getDbConnector(DBConnector.TYPE_GDB);
+				DBConnector dbc = SwingEngine.getCurrent().getGdbManager().getDBConnector();
 				if(dbc instanceof DBConnectorSwing) 
 				{
 					dbcon = (DBConnectorSwing)dbc;
@@ -334,8 +333,8 @@ public class StandaloneActions
 		public VisualizationAction(MainPanel mainPanel) {
 			putValue(NAME, "Visualization options");
 			this.mainPanel = mainPanel;
-			setEnabled(GexManager.isConnected());
-			GexManager.addListener(this);
+			setEnabled(GexManager.getCurrent().isConnected());
+			GexManager.getCurrent().addListener(this);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -346,9 +345,11 @@ public class StandaloneActions
 			).setVisible(true);
 		}
 
-		public void gexManagerEvent(GexManagerEvent e) {
-			Logger.log.trace("Visualization options action, gexmanager event, connected: " + GexManager.isConnected());
-			setEnabled(GexManager.isConnected());
+		public void gexManagerEvent(GexManagerEvent e) 
+		{
+			boolean isConnected = GexManager.getCurrent().isConnected();
+			Logger.log.trace("Visualization options action, gexmanager event, connected: " + isConnected);
+			setEnabled(isConnected);
 		}
 	}
 }

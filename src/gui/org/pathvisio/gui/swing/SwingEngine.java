@@ -61,11 +61,10 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	private Engine engine;
 	private GdbManager gdbManager = null;
 	
-	public SwingEngine(Engine engine) 
+	private SwingEngine(Engine engine) 
 	{
 		this.engine = engine;
 		gdbManager = new GdbManager();
-		gdbManager.init();
 		actions = new CommonActions(engine);
 		engine.addApplicationEventListener(this);
 	}
@@ -75,14 +74,15 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return gdbManager;
 	}
 	
+	
 	// frame may be null...
-	public static void init()
+	public static void init(Engine engine)
 	{
 		if (current != null)
 		{
 			Logger.log.warn ("SwingEngine initialized twice");
 		}
-		current = new SwingEngine(Engine.getCurrent());	
+		current = new SwingEngine(engine);	
 	}
 	
 	@Deprecated
@@ -127,7 +127,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	 * when an expression dataset is available and a pathway is open.
 	 */
 	public void loadGexCache() {
-		final SimpleGex gex = GexManager.getCurrentGex();
+		final SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 		final Pathway p = engine.getActivePathway();
 		if(p != null && gex != null && gdbManager.isConnected()) {
 			final SwingProgressKeeper pk = new SwingProgressKeeper(

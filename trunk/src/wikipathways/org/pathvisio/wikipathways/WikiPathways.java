@@ -93,6 +93,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	VPathway vPathway;
 	
 	SwingEngine swingEngine;
+	Engine engine;
 
 	/**
 	 * Keep track of changes with respect to the remote version of the pathway
@@ -109,7 +110,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 
 	MainPanel mainPanel;
 
-	public WikiPathways(UserInterfaceHandler uiHandler) {
+	public WikiPathways(UserInterfaceHandler uiHandler, Engine engine) 
+	{
 		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
 	}
@@ -162,8 +164,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 
 		progress.setTaskName("Starting editor");
 
-		WikiPathwaysInit.init();
-		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), Engine.getCurrent());
+		WikiPathwaysInit.init(engine.getPreferences());
+		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), engine);
 
 		Logger.log.trace("Code revision: " + Revision.REVISION);
 
@@ -181,9 +183,9 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 
 		if(isNew()) { //Create new pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: new pathway");
-			Engine.getCurrent().newPathway();
+			engine.newPathway();
 			//Set the initial information
-			setPathway(Engine.getCurrent().getActivePathway());
+			setPathway(engine.getActivePathway());
 			setRemoteChanged(true);
 			PathwayElement info = getCurrentPathway().getMappInfo();
 			info.setMapInfoName(getPwName());
@@ -191,8 +193,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			info.setOrganism(getPwSpecies());
 		} else { //Download and open the pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: open pathway");
-			Engine.getCurrent().openPathway(new URL(getPwURL()));
-			setPathway(Engine.getCurrent().getActivePathway());
+			engine.openPathway(new URL(getPwURL()));
+			setPathway(engine.getActivePathway());
 			getCurrentPathway().setSourceFile(null); //To trigger save as
 		}
 
@@ -241,17 +243,17 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			fireStatusFlagEvent(new StatusFlagEvent(changed));
 		}
 	}
-	public void initVPathway() {
-		Engine e = Engine.getCurrent();
-		VPathway active = e.getActiveVPathway();
+	public void initVPathway() 
+	{
+		VPathway active = engine.getActiveVPathway();
 		//Check if we have a model and a view
 		if(getCurrentPathway() != null && active != null) {
 			//Check if the view corresponds to the model
 			if(active.getPathwayModel() != getCurrentPathway()) {
-				e.createVPathway(getCurrentPathway());
+				engine.createVPathway(getCurrentPathway());
 			}
 			//Set the view
-			setPathwayView(e.getActiveVPathway());
+			setPathwayView(engine.getActiveVPathway());
 		}
 		if(vPathway != null) {
 			vPathway.setEditMode(!isReadOnly());

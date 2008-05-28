@@ -291,7 +291,7 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 
-		public AboutAction() 
+		public AboutAction()
 		{
 			super();
 			putValue(NAME, "About");

@@ -33,6 +33,11 @@ import org.pathvisio.util.FileUtils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
+/**
+ * This class manages loading, importing and exporting a Pathway and VPathway together.
+ * 
+ * TODO: there are some unrelated Global functions in here, but the intention is to move them away in the future. 
+ */
 public class Engine 
 {	
 	private VPathway vPathway; // may be null
@@ -77,13 +82,18 @@ public class Engine
 		return currentEngine;
 	}
 	
-	public static void init()
+	//TODO: use constructor instead of init()
+	public static Engine init()
 	{
 		if (currentEngine != null)
 		{
 			Logger.log.warn ("Tried to initialize Engine for the second time");
 		}
-		currentEngine = new Engine();
+		else
+		{
+			currentEngine = new Engine();
+		}
+		return currentEngine;
 	}
 	
 	/**
@@ -418,7 +428,6 @@ public class Engine
 	 * Fire a close event
 	 * TODO: move APPLICATION_CLOSE to other place
 	 */
-	@Deprecated
 	public void close()
 	{
 		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);

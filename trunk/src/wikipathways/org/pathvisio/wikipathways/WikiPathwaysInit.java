@@ -23,20 +23,21 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
 
 /**
  * Static utility class that contains a collection of global methods for {@link WikiPathways}.
  * @author thomas
  */
-public class WikiPathwaysInit {
-	static void init() throws Exception 
+public class WikiPathwaysInit 
+{
+	static void init(PreferenceManager preferences) throws Exception 
 	{
-		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.WP_FILE_LOG);
+		String logDest = preferences.get(GlobalPreference.WP_FILE_LOG);
 		Logger.log.setDest (logDest);		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		
-		Engine.getCurrent().getPreferences().setBoolean (GlobalPreference.MIM_SUPPORT, true);
 		MIMShapes.registerShapes();
 		
 		PropertyType.CENTERX.setHidden(true);

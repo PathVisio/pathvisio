@@ -101,7 +101,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	}
 	private String pathwayDir = null;
 	
-	private MainWindow window;
+	private MainWindowBase window;
 	
 	private ImageRegistry imageRegistry;
 
@@ -145,13 +145,13 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	/**
 	 * Get the {@link ApplicationWindow}, the UI of the program
 	 */
-	public MainWindow getWindow() {
-		if(window == null) window = new MainWindow();
+	public MainWindowBase getWindow() {
+		if(window == null) window = new MainWindowBase();
 		return window;
 	}
 	
 
-	public void setWindow(MainWindow w) {
+	public void setWindow(MainWindowBase w) {
 		window = w;
 	}
 	
@@ -189,12 +189,12 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	}
 	
 	/**
-	 * Initiates an instance of {@link MainWindow} that is monitored by Sleak.java,
+	 * Initiates an instance of {@link MainWindowBase} that is monitored by Sleak.java,
 	 * to monitor what handles (to OS device context) are in use. For debug purposes only 
 	 * (to check for undisposed widgets)
-	 * @return The {@link MainWindow} monitored by Sleak.java
+	 * @return The {@link MainWindowBase} monitored by Sleak.java
 	 */
-	public MainWindow getSleakWindow() {
+	public MainWindowBase getSleakWindow() {
 		//<DEBUG to find undisposed system resources>
 		DeviceData data = new DeviceData();
 		data.tracking = true;
@@ -203,7 +203,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		sleak.open();
 		
 		Shell shell = new Shell(display);
-		window = new MainWindow(shell);
+		window = new MainWindowBase(shell);
 		return window;
 		//</DEBUG>
 	}

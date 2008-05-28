@@ -19,9 +19,11 @@ package org.pathvisio.gui.swt;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,6 +52,8 @@ import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swt.CommonActions;
+import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
@@ -76,7 +80,7 @@ import org.pathvisio.visualization.LegendPanel;
  * a constructor, and override createCoolBarManager and createMenuManager.
  */
 //TODO: we mix coolbar and toolbar in this class. Evaluate and select one of the two for our needs.
-public abstract class MainWindowBase extends ApplicationWindow implements 
+public class MainWindowBase extends ApplicationWindow implements 
 	ApplicationEventListener, GexManagerListener, GdbEventListener, VPathwayListener, UndoManagerListener
 															   
 {
@@ -347,8 +351,6 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		getShell().layout();
 	}
 	
-	public abstract boolean editOnOpen();
-	
 	//	KH 20070514 begin
 	/**
 	 * set up the alignActions coolbar
@@ -417,8 +419,6 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 		getCoolBarManager().setLockLayout(true);
 		return parent;
 	}
-	
-	protected abstract void addPanelTabs();
 	
 //	KH end
 	/**
@@ -571,9 +571,99 @@ public abstract class MainWindowBase extends ApplicationWindow implements
 	{
 		undoAction.setText ("&Undo: " + e.getMessage() + "@Ctrl+Z");
 	}
+		
+	public MainWindowBase()
+	{
+		this(null);
+	}
 	
+	/**
+	 *Constructor for the MainWindow class
+	 *Initializes new MainWindow and sets properties for frame
+	 */
 	public MainWindowBase(Shell shell)
 	{
 		super(shell);
+		
+		addMenuBar();
+		addStatusLine();
+		addCoolBar(SWT.FLAT | SWT.LEFT);
+		
+		Engine.getCurrent().addApplicationEventListener(this);
+		SwtEngine.getCurrent().getGdbManager().addGdbEventListener(this);
+		GexManager.getCurrent().addListener(this);
 	}
+	
+	/**
+	 *Builds and ads a menu to the frame
+	 */
+	protected MenuManager createMenuManager()
+	{
+		menuManager = new MenuManager();
+		MenuManager fileMenu = new MenuManager ("&File");
+		fileMenu.add(newAction);
+		fileMenu.add(openAction);
+		fileMenu.add(saveAction);
+		fileMenu.add(saveAsAction);
+		fileMenu.add(new Separator());
+		fileMenu.add(importAction);
+		fileMenu.add(exportAction);
+		fileMenu.add(new Separator());
+		fileMenu.add(exitAction);
+		MenuManager editMenu = new MenuManager ("&Edit");
+		editMenu.add(undoAction);
+		editMenu.add(new Separator());
+		editMenu.add(copyAction);
+		editMenu.add(pasteAction);
+		editMenu.add(new Separator());
+		editMenu.add(switchEditModeAction);
+		editMenu.add(preferencesAction);
+		MenuManager viewMenu = new MenuManager ("&View");
+		viewMenu.add(showRightPanelAction);
+		MenuManager zoomMenu = new MenuManager("&Zoom");
+		zoomMenu.add(new CommonActions.ZoomAction(this, 50));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 75));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 100));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 125));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 150));
+		zoomMenu.add(new CommonActions.ZoomAction(this, 200));
+		zoomMenu.add(new CommonActions.ZoomToFitAction(this));
+		viewMenu.add(zoomMenu);
+		MenuManager dataMenu = new MenuManager ("&Data");
+		dataMenu.add(selectGdbAction);
+		
+		MenuManager helpMenu = new MenuManager ("&Help");
+		helpMenu.add(aboutAction);
+		helpMenu.add(helpAction);
+		menuManager.add(fileMenu);
+		menuManager.add(editMenu);
+		menuManager.add(viewMenu);
+		menuManager.add(dataMenu);
+		menuManager.add(helpMenu);
+		return menuManager;
+	}
+	
+	protected CoolBarManager createCoolBarManager(int style)
+	{
+		createCommonActionsCI();
+		createEditActionsCI();
+		createAlignActionsCI();
+		createViewActionsCI();
+		
+		CoolBarManager coolBarManager = new CoolBarManager(style);		
+		coolBarManager.add(commonActionsCI);
+		coolBarManager.add(viewActionsCI);
+		return coolBarManager;
+	}
+		
+	protected void addPanelTabs() {
+		rightPanel.addTab(bpBrowser, "Backpage");
+		rightPanel.addTab(propertyTable, "Properties");
+		rightPanel.addTab(pwSearchComposite, "Pathway Search");
+		rightPanel.addTab(legend, "Legend");
+	}
+
+	public boolean editOnOpen() {
+		return true; //Force edit mode on open pathways
+	}	
 }

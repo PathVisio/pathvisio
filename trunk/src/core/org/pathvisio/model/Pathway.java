@@ -657,11 +657,19 @@ public class Pathway implements PathwayListener
 		new BatikImageExporter(ImageExporter.TYPE_SVG).doExport(file, this);
 	}
 
+	/**
+	 * Implement this interface if you want to be notified when the "changed" status changes.
+	 * This happens e.g. when the user makes a change to an unchanged pathway,
+	 * or when a changed pathway is saved. 
+	 */
 	public interface StatusFlagListener extends EventListener
 	{	
 		public void statusFlagChanged (StatusFlagEvent e);	
 	}
 
+	/**
+	 * Event for a change in the "changed" status of this Pathway
+	 */
 	public static class StatusFlagEvent
 	{
 		private boolean newStatus;
@@ -673,16 +681,23 @@ public class Pathway implements PathwayListener
 
 	private List<StatusFlagListener> statusFlagListeners = new ArrayList<StatusFlagListener>();
 
+	/**
+	 * Register a status flag listener
+	 */
 	public void addStatusFlagListener (StatusFlagListener v)
 	{
 		if (!statusFlagListeners.contains(v)) statusFlagListeners.add(v);
 	}
 
+	/**
+	 * Remove a status flag listener
+	 */
 	public void removeStatusFlagListener (StatusFlagListener v)
 	{
 		statusFlagListeners.remove(v);
 	}
 	
+	//TODO: make private
 	public void fireStatusFlagEvent(StatusFlagEvent e) 
 	{
 		for (StatusFlagListener g : statusFlagListeners)

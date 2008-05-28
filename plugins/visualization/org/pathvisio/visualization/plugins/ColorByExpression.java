@@ -176,7 +176,7 @@ public class ColorByExpression extends VisualizationMethod {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
-			CachedData cache = GexManager.getCurrentGex().getCachedData();
+			CachedData cache = GexManager.getCurrent().getCurrentGex().getCachedData();
 			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) continue; //No ColorSet for this sample
@@ -261,7 +261,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * @param gc Graphical context on which drawing operations can be performed
 	 */
 	void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
-		CachedData cache = GexManager.getCurrentGex().getCachedData();
+		CachedData cache = GexManager.getCurrent().getCurrentGex().getCachedData();
 		ColorSet cs = s.getColorSet();
 		
 		if(s.hasImage()) {
@@ -438,7 +438,7 @@ public class ColorByExpression extends VisualizationMethod {
 		private final void loadXML(Element xml) throws Exception {
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
 			int csi = Integer.parseInt(xml.getAttributeValue(XML_ATTR_COLORSET));
-			Sample s = GexManager.getCurrentGex().getSamples().get(id);
+			Sample s = GexManager.getCurrent().getCurrentGex().getSamples().get(id);
 			setId(id);
 			setName(s.getName());
 			setDataType(s.getDataType());

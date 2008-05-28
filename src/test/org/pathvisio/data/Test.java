@@ -67,7 +67,7 @@ public class Test extends TestCase implements ApplicationEventListener
 		info.setTxtFile(f);
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setDbName(dbFileName);
-		SimpleGdb gdb = new SimpleGdb(gdbHuman, new DBConnDerby(), 0);
+		SimpleGdb gdb = new SimpleGdb(gdbHuman, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// no errors if all genes could be looked up.
@@ -78,7 +78,7 @@ public class Test extends TestCase implements ApplicationEventListener
 		dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info2.setDbName(dbFileName);
 		
-		gdb = new SimpleGdb(gdbRat, new DBConnDerby(), 0);
+		gdb = new SimpleGdb(gdbRat, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// 91 errors expected if no genes can be looked up.

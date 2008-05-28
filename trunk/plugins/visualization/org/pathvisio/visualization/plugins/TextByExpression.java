@@ -81,7 +81,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			SimpleGex gex = GexManager.getCurrentGex();
+			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 			if(gex == null) return;
 			
 			CachedData  cache = gex.getCachedData();
@@ -114,7 +114,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 	public Component visualizeOnToolTip(Graphics g) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = GexManager.getCurrentGex().getCachedData();
+			CachedData  cache = GexManager.getCurrent().getCurrentGex().getCachedData();
 			
 			Xref idc = new Xref(
 					gp.getPathwayElement().getGeneID(), 
@@ -247,7 +247,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 		panel.setLayout(layout);
 		
 		sampleList = new SampleCheckList(useSamples);
-		
+
 		sampleList.setActionCommand(ACTION_SAMPLE);
 		sampleList.addActionListener(this);
 		CellConstraints cc = new CellConstraints();
@@ -291,7 +291,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 		for(Object o : xml.getChildren(XML_ELM_ID)) {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
-				useSamples.add(GexManager.getCurrentGex().getSample(id));
+				useSamples.add(GexManager.getCurrent().getCurrentGex().getSample(id));
 			} catch(Exception e) { Logger.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));

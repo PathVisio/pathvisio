@@ -16,7 +16,6 @@
 //
 package org.pathvisio.data;
 
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;

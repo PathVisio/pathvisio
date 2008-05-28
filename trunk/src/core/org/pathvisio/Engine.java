@@ -456,13 +456,18 @@ public class Engine
 		public void applicationEvent(ApplicationEvent e);
 	}
 
+	String appName = "Application name undefined";
 	/**
 	 * Return full application name, including version No.
 	 */
-	public static String getApplicationName()
+	public String getApplicationName()
 	{
-		//TODO
-		return "Application name Undefined"; 
+		return appName; 
+	}
+	
+	public void setApplicationName (String value)
+	{
+		appName = value;
 	}
 	
 	//TODO:

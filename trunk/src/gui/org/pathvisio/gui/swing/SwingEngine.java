@@ -25,6 +25,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
@@ -44,29 +45,41 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
+import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
-public class SwingEngine implements ApplicationEventListener {	
+public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener {	
 	private MainPanel mainPanel;
 	
-	private static SwingEngine current;
+	private static SwingEngine current = null;
 	
 	private CommonActions actions;
+	private JFrame frame; // may be null (for applet...)
 	
 	public SwingEngine(Engine engine) {
 		actions = new CommonActions(engine);
 		engine.addApplicationEventListener(this);
 	}
 	
-	public static SwingEngine getCurrent() {
-		if(current == null) current = new SwingEngine(Engine.getCurrent());
-		return current;
+	// frame may be null...
+	public static void init()
+	{
+		if (current != null)
+		{
+			Logger.log.warn ("SwingEngine initialized twice");
+		}
+		current = new SwingEngine(Engine.getCurrent());	
 	}
 	
-	public static void setCurrent(SwingEngine engine) {
-		current = engine;
+	public static SwingEngine getCurrent() 
+	{
+		if(current == null) 
+		{
+			throw new IllegalArgumentException ("SwingEngine was not initialized");
+		}
+		return current;
 	}
 	
 	public CommonActions getActions() {
@@ -396,7 +409,7 @@ public class SwingEngine implements ApplicationEventListener {
 	public boolean mayOverwrite(File f) {
 		boolean allow = true;
 		if(f.exists()) {
-			int status = JOptionPane.showConfirmDialog(null, "File " + f.getName() + " already exists, overwrite?", 
+			int status = JOptionPane.showConfirmDialog(frame, "File " + f.getName() + " already exists, overwrite?", 
 					"File already exists", JOptionPane.YES_NO_OPTION);
 			allow = status == JOptionPane.YES_OPTION;
 		}
@@ -423,7 +436,7 @@ public class SwingEngine implements ApplicationEventListener {
 			}
 			
 		});
-		int status = jfc.showDialog(null, "Save");
+		int status = jfc.showDialog(frame, "Save");
 		if(status == JFileChooser.APPROVE_OPTION) {
 			File toFile = jfc.getSelectedFile();
 			String fn = toFile.toString();
@@ -482,7 +495,7 @@ public class SwingEngine implements ApplicationEventListener {
 		
 		if (pathway == null || !pathway.hasChanged()) return true;
 		int result = JOptionPane.showConfirmDialog
-			(null, "Save changes?", 
+			(frame, "Save changes?", 
 					"Your pathway has changed. Do you want to save?",
 					JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
@@ -499,10 +512,50 @@ public class SwingEngine implements ApplicationEventListener {
 		return true;
 	}
 
-	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) {
+	public void applicationEvent(ApplicationEvent e) 
+	{
+		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+		{
 			loadGexCache();
+			updateTitle();
+			Engine.getCurrent().getActivePathway().addStatusFlagListener(SwingEngine.this);
+		}
+		else if (e.getType() == ApplicationEvent.PATHWAY_NEW)
+		{
+			updateTitle();
+			Engine.getCurrent().getActivePathway().addStatusFlagListener(SwingEngine.this);
 		}
 	}
-	
+
+	public void updateTitle()
+	{
+		if (frame != null)
+		{
+			if (Engine.getCurrent().getActivePathway() == null)
+			{
+				frame.setTitle(Engine.getCurrent().getApplicationName());
+			}
+			else
+			{
+				boolean changeStatus = Engine.getCurrent().getActivePathway().hasChanged();
+				// get filename, or (New Pathway) if current pathway hasn't been opened yet
+				String fname = (Engine.getCurrent().getActivePathway().getSourceFile() == null) ? "(New Pathway)" :
+					Engine.getCurrent().getActivePathway().getSourceFile().getName();
+				frame.setTitle(
+					(changeStatus ? "*" : "") + fname + " - " +
+					Engine.getCurrent().getApplicationName()
+					);
+			}
+		}
+	}
+
+	public void statusFlagChanged(StatusFlagEvent e) 
+	{
+		updateTitle();
+	}
+
+	public void setFrame(JFrame frame)
+	{
+		this.frame = frame;
+	}
 }

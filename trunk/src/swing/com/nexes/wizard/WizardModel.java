@@ -1,12 +1,9 @@
 package com.nexes.wizard;
 
 import java.beans.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
 
 /**
  * The model for the Wizard component, which tracks the text, icons, and enabled state
@@ -63,11 +60,11 @@ public class WizardModel {
     
     private WizardPanelDescriptor currentPanel;
     
-    private HashMap panelHashmap;
+    private Map<Object, WizardPanelDescriptor> panelHashmap;
     
-    private HashMap buttonTextHashmap;
-    private HashMap buttonIconHashmap;
-    private HashMap buttonEnabledHashmap;
+    private Map<Object, Object> buttonTextHashmap;
+    private Map<Object, Icon> buttonIconHashmap;
+    private Map<Object, Boolean> buttonEnabledHashmap;
     
     private PropertyChangeSupport propertyChangeSupport;
     
@@ -77,11 +74,11 @@ public class WizardModel {
      */    
     public WizardModel() {
         
-        panelHashmap = new HashMap();
+        panelHashmap = new HashMap<Object, WizardPanelDescriptor>();
         
-        buttonTextHashmap = new HashMap();
-        buttonIconHashmap = new HashMap();
-        buttonEnabledHashmap = new HashMap();
+        buttonTextHashmap = new HashMap<Object, Object>();
+        buttonIconHashmap = new HashMap<Object, Icon>();
+        buttonEnabledHashmap = new HashMap<Object, Boolean>();
         
         propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -178,7 +175,7 @@ public class WizardModel {
     } 
     
     Icon getBackButtonIcon() {
-        return (Icon)buttonIconHashmap.get(BACK_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(BACK_BUTTON_ICON_PROPERTY);
     }
     
     void setBackButtonIcon(Icon newIcon) {
@@ -218,7 +215,7 @@ public class WizardModel {
         
     
     Boolean getBackButtonEnabled() {
-        return (Boolean)buttonEnabledHashmap.get(BACK_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(BACK_BUTTON_ENABLED_PROPERTY);
     }
     
     void setBackButtonEnabled(Boolean newValue) {
@@ -231,7 +228,7 @@ public class WizardModel {
     }
 
     Boolean getNextFinishButtonEnabled() {
-        return (Boolean)buttonEnabledHashmap.get(NEXT_FINISH_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(NEXT_FINISH_BUTTON_ENABLED_PROPERTY);
     }
     
     void setNextFinishButtonEnabled(Boolean newValue) {
@@ -244,7 +241,7 @@ public class WizardModel {
     }
     
     Boolean getCancelButtonEnabled() {
-        return (Boolean)buttonEnabledHashmap.get(CANCEL_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(CANCEL_BUTTON_ENABLED_PROPERTY);
     }
     
     void setCancelButtonEnabled(Boolean newValue) {

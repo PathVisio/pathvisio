@@ -18,7 +18,8 @@ public class RowHeaderResizer
     extends MouseInputAdapter
     implements Serializable, ContainerListener
 {
-    private JScrollPane pane;
+	private static final long serialVersionUID = 1L;
+	private JScrollPane pane;
     private JViewport   viewport;
     private Component  rowHeader;
     private Component  corner;

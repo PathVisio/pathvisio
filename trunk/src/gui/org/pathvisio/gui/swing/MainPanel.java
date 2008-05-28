@@ -48,6 +48,7 @@ import javax.swing.table.TableCellRenderer;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
@@ -66,7 +67,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	private JSplitPane splitPane;
 
-	private JToolBar toolBar;
+	protected JToolBar toolBar;
 
 	private JScrollPane pathwayScrollPane;
 
@@ -204,7 +205,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		this(null);
 	}
 	
-	protected void addToolBarActions(JToolBar tb) {
+	protected void addToolBarActions(JToolBar tb) 
+	{
 		tb.setLayout(new WrapLayout(1, 1));
 		
 		addToToolbar(actions.importAction);

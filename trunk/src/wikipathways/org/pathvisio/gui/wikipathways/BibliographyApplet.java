@@ -19,11 +19,13 @@ package org.pathvisio.gui.wikipathways;
 import java.awt.BorderLayout;
 import java.awt.Container;
 
-import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.panels.LitReferencePanel;
 import org.pathvisio.model.Pathway;
 
-public class BibliographyApplet extends PathwayPageApplet {
+public class BibliographyApplet extends PathwayPageApplet 
+{
+	private static final long serialVersionUID = 1L;
+
 	protected void createGui() {
 		Container content = getContentPane();
 		

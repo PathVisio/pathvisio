@@ -16,11 +16,23 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
+
+import org.pathvisio.Engine;
+import org.pathvisio.gui.swing.CommonActions.ZoomAction;
+
+import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 public class MainPanelStandalone extends MainPanel 
 {
@@ -98,4 +110,79 @@ public class MainPanelStandalone extends MainPanel
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 	}
 
+	protected void addToolBarActions(JToolBar tb) 
+	{
+		tb.setLayout(new WrapLayout(1, 1));
+		
+		addToToolbar(StandaloneActions.newAction);
+		addToToolbar(actions.saveAction);
+		tb.addSeparator();
+		addToToolbar(actions.copyAction);
+		addToToolbar(actions.pasteAction);
+		
+		tb.addSeparator();
+
+		addToToolbar(actions.undoAction);
+		
+		tb.addSeparator();
+
+		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
+		JComboBox combo = new JComboBox(actions.zoomActions);
+		combo.setMaximumSize(combo.getPreferredSize());
+		combo.setEditable(true);
+		combo.setSelectedIndex(5); // 100%
+		combo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox combo = (JComboBox) e.getSource();
+				Object s = combo.getSelectedItem();
+				if (s instanceof Action) {
+					((Action) s).actionPerformed(e);
+				} else if (s instanceof String) {
+					String zs = (String) s;
+					try {
+						double zf = Double.parseDouble(zs);
+						ZoomAction za = new ZoomAction(zf);
+						za.setEnabled(true);
+						za.actionPerformed(e);
+					} catch (Exception ex) {
+						// Ignore bad input
+					}
+				}
+			}
+		});
+		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
+
+		tb.addSeparator();
+
+		String submenu = "line";
+		
+		for(Action[] aa : actions.newElementActions) {
+			if(aa.length == 1) {
+				addToToolbar(aa[0]);
+			} else { //This is the line/receptor sub-menu
+				String icon = "newlinemenu.gif";
+				String tooltip = "Select a line to draw"; 
+				
+				if(submenu.equals("receptors")) { //Next one is receptors
+					icon = "newlineshapemenu.gif";
+					tooltip = "Select a receptor/ligand to draw";
+				} else {
+					submenu = "receptors";
+				}
+				DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
+						.getResourceURL(icon)));
+				lineButton.setToolTipText(tooltip);
+				for(Action a : aa) {
+					lineButton.addComponent(new JMenuItem(a));
+				}
+				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+			}
+		}
+				
+		tb.addSeparator();
+		
+		addToToolbar(actions.alignActions);
+		addToToolbar(actions.stackActions);
+	}
+	
 }

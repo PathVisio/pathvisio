@@ -17,6 +17,7 @@ import java.io.IOException;
 public class JScrollPaneAdjuster
     implements PropertyChangeListener, Serializable
 {
+	private static final long serialVersionUID = 1L;
     private JScrollPane pane;
 
     private transient Adjuster x, y;

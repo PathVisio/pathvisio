@@ -19,6 +19,7 @@ package org.pathvisio.wikipathways;
 import java.applet.Applet;
 
 public class Preloader extends Applet {
+	private static final long serialVersionUID = 1L;
 	public void init() {
 		/* Don't preload jars for now (we don't want the certificate
 		 * dialog to popup!

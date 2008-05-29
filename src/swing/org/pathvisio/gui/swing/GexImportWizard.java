@@ -26,15 +26,16 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
@@ -45,8 +46,11 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.util.ProgressKeeper.ProgressEvent;
+import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -544,7 +548,7 @@ public class GexImportWizard extends Wizard
 	    }
 	}
 	
-	private class ImportPage extends WizardPanelDescriptor 
+	private class ImportPage extends WizardPanelDescriptor implements ProgressListener
 	{
 	    public static final String IDENTIFIER = "IMPORT_PAGE";
 		
@@ -564,24 +568,29 @@ public class GexImportWizard extends Wizard
 	    }  
 	    
 	    private JProgressBar progressSent;
-	    private JLabel progressText;
+	    private JTextArea progressText;
 	    private SwingProgressKeeper pk;
 	    
-	    @Override
 		protected JPanel createContents()
 		{
-	    	JPanel result = new JPanel();
-			
+	    	FormLayout layout = new FormLayout(
+	    			"fill:[100dlu,min]:grow",
+	    			"pref, fill:pref:grow"
+	    	);
+	    	
+	    	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+	    	builder.setDefaultDialogBorder();
+	    	
         	pk = new SwingProgressKeeper((int)1E6);
+        	pk.addListener(this);
 	    	progressSent = pk.getJProgressBar();
-	    	progressSent.setStringPainted (true);
-	        result.add (progressSent);
+	        builder.append(progressSent);
+	        builder.nextLine();
 	        
-	        progressText = new JLabel();
-	        result.add (progressText);
-	        
-			result.add(new JLabel("Import page"), BorderLayout.CENTER);
-			return result;
+	        progressText = new JTextArea();
+	       
+			builder.append(new JScrollPane(progressText));
+			return builder.getPanel();
 		}
 	    
 	    public void setProgressValue(int i)
@@ -605,43 +614,40 @@ public class GexImportWizard extends Wizard
 
 	    public void displayingPanel() 
 	    {
-        	
-            Thread t = new Thread() 
-            {
-	            public void run() 
-	            {
-//	                try 
-//	                {
-	                	GexTxtImporter.importFromTxt(importInformation, pk, SwingEngine.getCurrent().getGdbManager().getCurrentGdb());
-	                	
-//	                    Thread.sleep(2000);
-//	                    setProgressValue(25);
-//	                    setProgressText("Server Connection Established");
-//	                    Thread.sleep(500);
-//	                    setProgressValue(50);
-//	                    setProgressText("Transmitting Data...");
-//	                    Thread.sleep(3000);
-//	                    setProgressValue(75);
-//	                    setProgressText("Receiving Acknowledgement...");
-//	                    Thread.sleep(1000);
-//	                    setProgressValue(100);
-//	                    setProgressText("Data Successfully Transmitted");
-//	
-	                    getWizard().setNextFinishButtonEnabled(true);
-	                    getWizard().setBackButtonEnabled(true);
-//	                } 
-//	                catch (InterruptedException e) 
-//	                {
-//	                    setProgressValue(0);
-//	                    setProgressText("An Error Has Occurred");
-//	                    
-//	                    getWizard().setBackButtonEnabled(true);
-//	                }
-	            }
-	        };
-	
-	        t.start();
+			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+				protected Void doInBackground() throws Exception {
+					pk.setTaskName("Importing pathway");
+					try 
+					{
+						GexTxtImporter.importFromTxt(
+								importInformation, 
+								pk, 
+								SwingEngine.getCurrent().getGdbManager().getCurrentGdb()
+						);
+
+						getWizard().setNextFinishButtonEnabled(true);
+						getWizard().setBackButtonEnabled(true);
+					} 
+					catch (Exception e) 
+					{
+						setProgressValue(0);
+						setProgressText("An Error Has Occurred");
+
+						getWizard().setBackButtonEnabled(true);
+					} finally {
+						pk.finished();
+					}
+					return null;
+				}
+			};
+			sw.execute();
 	    }
+
+		public void progressEvent(ProgressEvent e) {
+			if(e.getType() == ProgressEvent.REPORT) {
+				progressText.append(e.getProgressKeeper().getReport() + "\n");
+			}
+		}
 
 	}
 }

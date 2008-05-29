@@ -17,40 +17,35 @@
 package ensembl2visio;
 
 import junit.framework.TestCase;
-import java.sql.SQLException;
+
+import org.pathvisio.Engine;
+import org.pathvisio.data.DBConnDerby;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.model.DataSource;
+import org.pathvisio.model.Xref;
 
 public class Test extends TestCase
 {
-	public void creationTest (GdbMaker gdbMaker) throws SQLException, ClassNotFoundException
+	public void creationTest (SimpleGdb gdbMaker) throws DataException, ClassNotFoundException
 	{
-		gdbMaker.connect (true);
-		gdbMaker.createTables();
+		Engine.init();
+		gdbMaker.createGdbTables();
 		gdbMaker.preInsert();
 		int error = 0;
-		error += gdbMaker.addGene("ENS001", "1234", "L", "<b>test</b>");
-		error += gdbMaker.addLink("ENS001", "1234", "L");
+		Xref right = new Xref ("1234", DataSource.ENTREZ_GENE);
+		error += gdbMaker.addGene(right, "<b>test</b>");
+		error += gdbMaker.addLink(new Xref ("ENS001", DataSource.ENSEMBL), right);
 		int geneCount = gdbMaker.getGeneCount();
-		gdbMaker.close();
-		gdbMaker.postInsert ();
+		gdbMaker.finalize ();
 		assertEquals (error, 0);
 		assertEquals (geneCount, 1);		
 	}
 	
-	public void testDerby() throws SQLException, ClassNotFoundException
+	public void testDerby() throws DataException, ClassNotFoundException
 	{
-		GdbMaker gdbMaker = new DerbyGdbMaker ("test.pgdb");
-		creationTest (gdbMaker);
-	}
-
-	public void testH2() throws SQLException, ClassNotFoundException
-	{
-		GdbMaker gdbMaker = new H2GdbMaker ("test.pgdb");
-		creationTest (gdbMaker);
-	}
-
-	public void testHsqldb() throws SQLException, ClassNotFoundException
-	{
-		GdbMaker gdbMaker = new HsqldbGdbMaker ("test.pgdb");
+		SimpleGdb gdbMaker = new SimpleGdb ("test", new DBConnDerby(), DBConnector.PROP_RECREATE);
 		creationTest (gdbMaker);
 	}
 }

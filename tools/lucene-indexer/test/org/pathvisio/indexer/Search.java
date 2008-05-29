@@ -41,13 +41,18 @@ public class Search extends TestCase {
 	
 	public void testCreateIndex() {
 		try {
-			//Connect to any GDB in the preferences
 			Engine.init();
-			PreferenceManager prefs = Engine.getCurrent().getPreferences();
+			
+			//Connect to any GDB in the preferences
+			PreferenceManager prefs = new PreferenceManager();
 			prefs.load();
-			GdbManager.init();
-			CreateIndex.index(pathwayDir, indexDir);
+			
+			GdbManager gdbMgr = new GdbManager();
+			gdbMgr.initPreferred();
+			
+			new CreateIndex(gdbMgr).index(pathwayDir, indexDir);
 		} catch(Exception e) {
+			e.printStackTrace();
 			fail("Exception during indexing: " + e.getMessage());
 		}
 	}

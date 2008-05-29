@@ -33,8 +33,8 @@ import javax.swing.event.ListDataListener;
 
 import org.pathvisio.data.Sample;
 import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetCombo;
 import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.gui.ColorSetCombo;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -46,6 +46,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author thomas
  */
 public class ColorByExpressionPanel extends JPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	static final String ACTION_ADVANCED = "Advanced";
 	static final String ACTION_BASIC = "Basic";
 	
@@ -59,8 +60,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		this.method = method;
 		
 		setLayout(new FormLayout(
-				"pref, 8dlu, pref, fill:pref:grow",
-				"pref, 4dlu, fill:pref:grow"
+				"4dlu, pref, 4dlu, pref, fill:pref:grow, 4dlu",
+				"4dlu, pref, 4dlu, fill:pref:grow, 4dlu"
 		));
 		
 		ButtonGroup buttons = new ButtonGroup();
@@ -74,8 +75,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		buttons.add(b_advanced);
 		
 		CellConstraints cc = new CellConstraints();
-		add(b_basic, cc.xy(1, 1));
-		add(b_advanced, cc.xy(3, 1));
+		add(b_basic, cc.xy(2, 2));
+		add(b_advanced, cc.xy(4, 2));
 		
 		settings = new JPanel();
 		settings.setBorder(BorderFactory.createEtchedBorder());
@@ -87,7 +88,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		settings.add(basic, ACTION_BASIC);
 		settings.add(advanced, ACTION_ADVANCED);
 		
-		add(settings, cc.xyw(1, 3, 4));
+		add(settings, cc.xyw(2, 4, 4));
 		
 		if(method.isAdvanced()) {
 			b_advanced.doClick();
@@ -104,13 +105,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 	}
 	
 	class Basic extends JPanel implements ItemListener, ActionListener, ListDataListener {
+		private static final long serialVersionUID = 1L;
 		static final String ACTION_SAMPLE = "sample";
 		private SortSampleCheckList sampleList;
 		
 		public Basic() {
 			setLayout(new FormLayout(
-					"fill:pref:grow, 2dlu, pref, 4dlu, pref, 2dlu, pref",
-					"pref:grow"
+					"4dlu, fill:pref:grow, 4dlu, pref, 4dlu, pref:grow, 4dlu",
+					"4dlu, pref:grow, 4dlu"
 			));
 			
 			sampleList = new SortSampleCheckList(
@@ -124,9 +126,9 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			ColorSetCombo csc = new ColorSetCombo(csm);
 			csc.setSelectedItem(method.getSingleColorSet());
 			CellConstraints cc = new CellConstraints();
-			add(sampleList, cc.xy(1, 1));
-			add(new JLabel("Color set:"), cc.xy(5, 1, "c, t"));
-			add(csc, cc.xy(7, 1, "c, t"));
+			add(sampleList, cc.xy(2, 2));
+			add(new JLabel("Color set:"), cc.xy(4, 2, "right, top"));
+			add(csc, cc.xy(6, 2, "right, top"));
 		}
 
 		public void itemStateChanged(ItemEvent e) {
@@ -165,6 +167,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 	}
 	
 	class Advanced extends JPanel {
+		private static final long serialVersionUID = 1L;
 		public Advanced() {
 			add(new JLabel("Not implemented"));
 		}

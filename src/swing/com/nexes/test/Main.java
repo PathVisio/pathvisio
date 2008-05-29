@@ -20,7 +20,7 @@ public class Main {
         
         wizard.setCurrentPanel(TestPanel1Descriptor.IDENTIFIER);
         
-        int ret = wizard.showModalDialog();
+        int ret = wizard.showModalDialog(null);
         
         System.out.println("Dialog return code is (0=Finish,1=Cancel,2=Error): " + ret);
         System.out.println("Second panel selection is: " + 

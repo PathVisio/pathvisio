@@ -158,7 +158,7 @@ public class StandaloneActions
 		public void actionPerformed (ActionEvent e)
 		{
 			GexImportWizard wizard = new GexImportWizard();
-			int ret = wizard.showModalDialog();
+			int ret = wizard.showModalDialog(SwingEngine.getCurrent().getFrame());
 			
 			// ret == (0=Finish,1=Cancel,2=Error) 
 		}
@@ -340,7 +340,7 @@ public class StandaloneActions
 		public void actionPerformed(ActionEvent e) {
 			new VisualizationDialog(
 					VisualizationManager.getCurrent(),
-					null,
+					SwingEngine.getCurrent().getFrame(),
 					mainPanel
 			).setVisible(true);
 		}

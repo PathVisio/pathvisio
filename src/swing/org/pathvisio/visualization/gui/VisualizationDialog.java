@@ -47,6 +47,8 @@ public class VisualizationDialog extends OkCancelDialog
 		visPanel.setVisualizationManager(visMgr);
 		
 		pack();
+		// we have to do this again after pack():
+		setLocationRelativeTo(locationComp);
 	}
 
 	protected Component createDialogPane() {

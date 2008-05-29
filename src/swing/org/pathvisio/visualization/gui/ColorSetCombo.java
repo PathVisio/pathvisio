@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.visualization.colorset;
+package org.pathvisio.visualization.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -27,9 +27,13 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.visualization.gui.ColorSetDlg;
+import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorSetManager;
 
 public class ColorSetCombo extends JComboBox implements ActionListener {
 	public Object NEW = new Object();
@@ -63,20 +67,54 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 		}
 	}
 	
-	class ColorSetRenderer extends DefaultListCellRenderer {
+	class ColorSetRenderer extends JLabel implements ListCellRenderer 
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		ColorSetRenderer()
+		{
+            setOpaque(true);
+            setHorizontalAlignment(CENTER);
+            setVerticalAlignment(CENTER);
+		}
+		
 		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			JLabel l = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected,
-					cellHasFocus);
+				int index, boolean isSelected, boolean cellHasFocus) 
+		{
+			
+			if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+
 			if(value == NEW) {
-				l.setText("New...");
+				setText("New...");
 			} else if(value == null) {
-				l.setText("");
+				setText("<null>");
 			} else {
-				l.setText(((ColorSet)value).getName());
+				setText(((ColorSet)value).getName());
 			}
-			l.setBackground(Color.WHITE);
-			return l;
+
+	        Border border = null;
+	        if (cellHasFocus) {
+	            if (isSelected) {
+	                border = UIManager.getBorder("List.focusSelectedCellHighlightBorder");
+	            }
+	            if (border == null) {
+	                border = UIManager.getBorder("List.focusCellHighlightBorder");
+	            }
+	        } else {
+	            border = UIManager.getBorder("List.noFocusBorder");
+	        }
+	        setBorder(border);
+		
+			return this;
 		}
 	}
 }

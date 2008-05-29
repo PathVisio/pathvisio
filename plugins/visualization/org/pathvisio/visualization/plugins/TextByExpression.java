@@ -228,8 +228,8 @@ public class TextByExpression extends VisualizationMethod
 	public JPanel getConfigurationPanel() {
 		JPanel panel = new JPanel();
 		FormLayout layout = new FormLayout(
-			"fill:25dlu:grow",
-			"pref, 4dlu, fill:100dlu:grow, pref"
+			"4dlu, fill:pref:grow, 4dlu",
+			"4dlu, pref, 4dlu, fill:pref:grow, 4dlu"
 		);
 		panel.setLayout(layout);
 		
@@ -239,8 +239,8 @@ public class TextByExpression extends VisualizationMethod
 		sampleList.getList().getModel().addListDataListener(this);
 		sampleList.getList().addActionListener(this);
 		CellConstraints cc = new CellConstraints();
-		panel.add(new JLabel("Select samples:"), cc.xy(1, 1));
-		panel.add(sampleList, cc.xy(1, 3));
+		panel.add(new JLabel("Select samples:"), cc.xy(2, 2));
+		panel.add(sampleList, cc.xy(2, 4));
 		return panel;
 	}
 	

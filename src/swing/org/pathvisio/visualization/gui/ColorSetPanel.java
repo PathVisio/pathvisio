@@ -18,6 +18,10 @@ package org.pathvisio.visualization.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -32,7 +36,6 @@ import javax.swing.JScrollPane;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorGradientCombo;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetObject;
@@ -87,8 +90,16 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		gradientCheck.addActionListener(this);
 		
 		gradientCombo = ColorGradientCombo.createGradientCombo();
-		gradientCombo.setActionCommand(ACTION_COMBO);
-		gradientCombo.addActionListener(this);
+		gradientCombo.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				Logger.log.info ("action performed");
+				
+			} 
+		});
+		
+//		gradientCombo.setActionCommand(ACTION_COMBO);
+//		gradientCombo.addActionListener(this);
 
 		gradientPanel.add(gradientCheck, cc.xy(1,1));
 		gradientPanel.add(gradientCombo, cc.xy(3, 1));
@@ -150,7 +161,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
-		Logger.log.trace(action);
+		Logger.log.info(action);
 		if(ACTION_ADD_RULE.equals(action)) {
 			ColorSetObject cso = new ColorRule(colorSet);
 			colorSet.addObject(cso);

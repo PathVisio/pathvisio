@@ -52,7 +52,7 @@ public abstract class GdbMaker
 	final static int ENS_CODE = 3;
 	final static int SGD_CODE = 15;
 
-	static final int COMPAT_VERSION = 1;
+	static final int COMPAT_VERSION = 2;
     
     protected Connection con;
       
@@ -67,15 +67,16 @@ public abstract class GdbMaker
     }
 
         
-    PreparedStatement pstGene;
+    PreparedStatement pstDataNode;
     PreparedStatement pstLink;
+    PreparedStatement pstAttr;
 
     int addGene(String ens, String id, String code, String bpText) {
 		try {
-			pstGene.setString(1, id);
-			pstGene.setString(2, code);
-			pstGene.setString(3, bpText);
-			pstGene.executeUpdate();
+			pstDataNode.setString(1, id);
+			pstDataNode.setString(2, code);
+			pstDataNode.setString(3, bpText);
+			pstDataNode.executeUpdate();
 		} catch (Exception e) { 
 			logError.error(ens + "\t" + id + "\t" + code, e);
 			return 1;
@@ -92,6 +93,21 @@ public abstract class GdbMaker
 			pstLink.executeUpdate();
 		} catch (Exception e) {
 			logError.error(ens + "\t" + id + "\t" + code, e);
+			return 1;
+		}
+		return 0;
+    }
+    
+    int addAttribute(String attr, String val, String id, String code)
+    {
+    	try {
+    		pstAttr.setString(1, attr);
+			pstAttr.setString(2, val);
+			pstAttr.setString(3, id);
+			pstAttr.setString(4, code);
+			pstAttr.executeUpdate();
+		} catch (Exception e) {
+			logError.error(attr + "\t" + val + "\t" + id + "\t" + code, e);
 			return 1;
 		}
 		return 0;
@@ -170,12 +186,13 @@ public abstract class GdbMaker
 		info("Info:  Creating tables");
 		Statement sh = con.createStatement();
 		try { sh.execute("DROP TABLE link"); } catch (Exception e) {}
-		try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
+		try { sh.execute("DROP TABLE datanode"); } catch (Exception e) {}
 		try { sh.execute("DROP TABLE info"); } catch (Exception e) {}
+		try { sh.execute("DROP TABLE attribute"); } catch (Exception e) {}
 		sh.execute(
 				"CREATE TABLE					" +
 				"		info							" +
-				"(	  version INTEGER PRIMARY KEY		" +
+				"(	  schemaversion INTEGER PRIMARY KEY		" +
 				")");
 		sh.execute( //Add compatibility version of Gdb
 				"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
@@ -191,15 +208,26 @@ public abstract class GdbMaker
 				"		idRight, codeRight) 			" +
 		" )										");
 		
-		try { sh.execute("DROP TABLE gene"); } catch (Exception e) {}
+		try { sh.execute("DROP TABLE datanode"); } catch (Exception e) {}
 		sh.execute(
 				"CREATE TABLE							" +
-				"		gene							" +
+				"		datanode							" +
 				" (   id VARCHAR(50),					" +
 				"     code VARCHAR(50),					" +
 				"     backpageText VARCHAR(800),				" +
 				"     PRIMARY KEY (id, code)			" +
 		" )										");
+		
+		try { sh.execute("DROP TABLE attribute"); } catch (Exception e) {}
+		sh.execute(
+				"CREATE TABLE							" +
+				"		attribute 						" +
+				" (   id VARCHAR(50),					" +
+				"     code VARCHAR(50),					" +
+				"     attrname VARCHAR(50),				" +
+				"	  attrvalue VARCHAR(100),			" +
+				"     PRIMARY KEY (id, code)			" +
+				" )										");
 	}
 
 	/**
@@ -223,7 +251,19 @@ public abstract class GdbMaker
 		);
 		sh.execute(
 				"CREATE INDEX i_code" +
-				" ON gene(code)"
+				" ON datanode(code)"
+		);
+		sh.execute(
+				"CREATE INDEX i_acode" +
+				" ON attribute(code)"
+		);
+		sh.execute(
+				"CREATE INDEX i_aid" +
+				" ON attribute(id)"
+		);
+		sh.execute(
+				"CREATE INDEX i_attrname" +
+				" ON attribute(attrname)"
 		);
 	}
 	
@@ -235,8 +275,8 @@ public abstract class GdbMaker
 	void preInsert() throws SQLException
 	{
 		con.setAutoCommit(false);
-		pstGene = con.prepareStatement(
-			"INSERT INTO gene " +
+		pstDataNode = con.prepareStatement(
+			"INSERT INTO datanode " +
 			"	(id, code," +
 			"	 backpageText)" +
 			"VALUES (?, ?, ?)"
@@ -246,7 +286,12 @@ public abstract class GdbMaker
 			"	(idLeft, codeLeft," +
 			"	 idRight, codeRight)" +
 			"VALUES (?, ?, ?, ?)"
-    		);		
+    		);
+		pstAttr = con.prepareStatement(
+			"INSERT INTO attribute " +
+			"	(attrname, attrvalue, id, code)" +
+			"VALUES (?, ?, ?, ?)"
+			);
 	}
 
 	/**
@@ -262,7 +307,7 @@ public abstract class GdbMaker
 	 */
 	int getGeneCount() throws SQLException
 	{
-		ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM gene");
+		ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM datanode");
 		r.next();
 		int result = r.getInt (1);
 		r.close();

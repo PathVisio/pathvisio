@@ -89,6 +89,7 @@ public class DirectDerby
 			for (int i = 0; i < colnum; ++i) 
 			{
 				rowdata [i] = r.getString(i+1);
+				if (rowdata[i] == null) rowdata[i] = "<null>";
 				int len = rowdata[i].length();
 				if (len > maxW[i]) maxW[i] = len;
 			}

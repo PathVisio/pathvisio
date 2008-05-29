@@ -154,6 +154,7 @@ public class Hmdb2Gdb
 		
 		error += gdbMaker.addGene(c.idHmdb, c.idHmdb, DataSource.HMDB.getSystemCode(), bpText);
 		error += gdbMaker.addLink(c.idHmdb, c.idHmdb, DataSource.HMDB.getSystemCode());
+		error += gdbMaker.addAttribute("Symbol", c.symbol, c.idHmdb, DataSource.HMDB.getSystemCode());
 
 		if (c.idKegg != null)
 		{

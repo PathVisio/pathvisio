@@ -97,6 +97,7 @@ public abstract class DBConnector
 	 * (e.g. set read-only, archive files). The database name needs to returned, this
 	 * may change when finalizing the database modifies the storage type (e.g. from directory
 	 * to single file).
+	 * The database connection needs to be closed before running this method.
 	 * @param dbName The name of the database to finalize	
 	 * @throws Exception
 	 * @return The name of the finalized database

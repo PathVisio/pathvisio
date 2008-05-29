@@ -48,7 +48,7 @@ public class MethodPanel extends JPanel implements ActionListener {
 
 		checkBox = new JCheckBox();
 		checkBox.addActionListener(this);
-		JLabel nameLabel = new JLabel(method.getName());
+		JLabel nameLabel = new JLabel(method.getName() + ":");
 		nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 		CellConstraints cc = new CellConstraints();
 		top.add(checkBox, cc.xy(1,1));
@@ -56,7 +56,7 @@ public class MethodPanel extends JPanel implements ActionListener {
 		top.add(new JLabel(method.getDescription()), cc.xy(5, 1));
 		
 		setLayout(new FormLayout(
-			"pref",
+			"fill:pref:grow",
 			"pref, 4dlu, pref"
 		));
 		

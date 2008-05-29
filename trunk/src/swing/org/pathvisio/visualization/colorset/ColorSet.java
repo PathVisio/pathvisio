@@ -216,7 +216,9 @@ public class ColorSet
 	}
 	
 	void fireModifiedEvent() {
-		colorSetMgr.fireColorSetEvent(
-				new ColorSetEvent (this, ColorSetEvent.COLORSET_MODIFIED));
+		if(colorSetMgr != null) {
+			colorSetMgr.fireColorSetEvent(
+					new ColorSetEvent (this, ColorSetEvent.COLORSET_MODIFIED));
+		}
 	}
 }

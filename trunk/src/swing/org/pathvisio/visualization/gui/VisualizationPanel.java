@@ -143,7 +143,7 @@ public class VisualizationPanel extends JPanel implements ActionListener
 			
 			//Refresh methods panel
 			if(v != null) {
-				FormLayout layout = new FormLayout("pref");
+				FormLayout layout = new FormLayout("fill:pref:grow");
 				DefaultFormBuilder builder = 
 					new DefaultFormBuilder(layout, methods);
 				for(VisualizationMethod m : v.getMethods()) {

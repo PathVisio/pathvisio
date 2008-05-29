@@ -79,7 +79,7 @@ public class DerbyGdbMaker extends GdbMaker
 		("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
 		//Gene table
 		cs.setString(1, "APP");
-		cs.setString(2, "GENE");
+		cs.setString(2, "DATANODE");
 		cs.setShort(3, (short) 1);
 		cs.execute();
 		
@@ -88,7 +88,12 @@ public class DerbyGdbMaker extends GdbMaker
 		cs.setString(2, "LINK");
 		cs.setShort(3, (short) 1);
 		cs.execute();
-		
+
+		cs.setString(1, "APP");
+		cs.setString(2, "ATTRIBUTE");
+		cs.setShort(3, (short) 1);
+		cs.execute();
+
 		con.commit(); //Just to be sure...
 	}
 	
@@ -102,10 +107,10 @@ public class DerbyGdbMaker extends GdbMaker
 				"CREATE INDEX i_codeleft ON link(codeleft)"
 		);
 		sh.execute(
-				"CREATE INDEX i_gene ON gene(id)"
+				"CREATE INDEX i_dnid ON datanode(id)"
 		);
 		sh.execute(
-				"CREATE INDEX i_code ON gene(code)"
+				"CREATE INDEX i_dncode ON datanode(code)"
 		);
 	}
 	

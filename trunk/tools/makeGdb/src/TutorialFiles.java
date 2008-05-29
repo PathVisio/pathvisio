@@ -15,10 +15,13 @@
 // limitations under the License.
 //
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.*;
 import org.pathvisio.data.*;
 import java.util.*;
 import java.io.*;
+
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 
 class TutorialFiles
@@ -48,13 +51,15 @@ class TutorialFiles
 		assert (!refs.contains (new Xref ("1111", DataSource.ENTREZ_GENE)));
 		assert (refs.size() == 94);
 
+		Logger.log.info ("Going to add " + refs.size() + " xrefs");
 		// now look up all cross references in the human Gdb.
 
 		Gdb sourceGdb;
+		Engine.init();
 		try
 		{
 			//String dbName = "C:\\Documents and Settings\\martijn\\PathVisio-Data\\gene databases\\Hs_41_36c.pgdb";
-			String dbName = "/home/martijn/PathVisio-Data/gene databases/Hs_41_36c.pgdb";
+			String dbName = "/home/martijn/PathVisio-Data/gene databases/Hs_Derby_20080102.pgdb";
 			sourceGdb = new SimpleGdb (dbName,	new DataDerby(), DBConnector.PROP_NONE);
 		}
 		catch (Exception e)
@@ -67,21 +72,41 @@ class TutorialFiles
 		{
 			DataDerby connector = new DataDerby();
 			int error = 0;
-			SimpleGdb targetGdb = new SimpleGdb("tutorial", connector, DBConnector.PROP_RECREATE);
+			String dest = Engine.getCurrent().getDataDir() + File.separator + 
+				"gene databases" + File.separator + "tutorial";
+			SimpleGdb targetGdb = new SimpleGdb(dest, connector, DBConnector.PROP_RECREATE);
 			targetGdb.createGdbTables();
 			targetGdb.preInsert();
-			for (Xref i : refs)
+			for (Xref i : refs.subList(0, 50))
 			{
-				List<Xref> newRefs = sourceGdb.getCrossRefs(i, DataSource.ENSEMBL);
-				
-				for (Xref j : newRefs)
+				for (String ensId : sourceGdb.ref2EnsIds(i))
 				{
-					String bpText = sourceGdb.getBpInfo(j);
-					error += targetGdb.addGene(j, bpText);
-					error += targetGdb.addLink(i.getId(), j);
-					System.out.println(i + "\t" + j);
+					Xref ensRef = new Xref (ensId, DataSource.ENSEMBL);
+					String bpText = sourceGdb.getBpInfo(ensRef);
+					error += targetGdb.addGene(ensRef, bpText);
+					
+					
+					
+					List<Xref> newRefs = sourceGdb.ensId2Refs(ensId, null);
+										
+					for (Xref j : newRefs)
+					{
+						if (j.getDataSource() == DataSource.UNIGENE ||
+								j.getDataSource() == DataSource.AFFY ||
+								j.getDataSource() == DataSource.ENTREZ_GENE)
+						{
+//							bpText = sourceGdb.getBpInfo(j);
+							error += targetGdb.addGene(j, null);
+							error += targetGdb.addLink(ensRef, j);
+							System.out.println(i + "\t" + j);
+						}
+					}
+							
 				}
-			}
+						
+				
+				
+		}
     		targetGdb.commit();
     		targetGdb.createGdbIndices();
     		targetGdb.compact();

@@ -141,14 +141,6 @@ public class DataDerby extends DBConnector
 		if (finalized) return finalDbName; // already finalized.
 		
 		//Transfer db to zip and clear old dbfiles
-		try 
-		{
-			DriverManager.getConnection(getDbUrl() + ";shutdown=true");
-		} 
-		catch(Exception e) 
-		{
-			Logger.log.error("Database closed", e);
-		}
 		toZip (new File (finalDbName), new File (tempDbName));
 		
 		FileUtils.deleteRecursive(new File (tempDbName));
@@ -201,16 +193,41 @@ public class DataDerby extends DBConnector
 	{
 		try
 		{
+			con.commit();
 			con.setAutoCommit(true);
 	
-			CallableStatement cs = con.prepareCall
-			("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
-			//Expression table
-			cs.setString(1, "APP");
-			cs.setString(2, "EXPRESSION");
-			cs.setShort(3, (short) 1);
-			cs.execute();
-			
+			if (getDbType() == DBConnector.TYPE_GDB)
+			{
+				CallableStatement cs = con.prepareCall
+				("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
+				//Gene table
+				cs.setString(1, "APP");
+				cs.setString(2, "DATANODE");
+				cs.setShort(3, (short) 1);
+				cs.execute();
+				
+				//Link table
+				cs.setString(1, "APP");
+				cs.setString(2, "LINK");
+				cs.setShort(3, (short) 1);
+				cs.execute();
+
+				cs.setString(1, "APP");
+				cs.setString(2, "ATTRIBUTE");
+				cs.setShort(3, (short) 1);
+				cs.execute();
+
+			}
+			else if (getDbType() == DBConnector.TYPE_GEX)
+			{
+				CallableStatement cs = con.prepareCall
+				("CALL SYSCS_UTIL.SYSCS_COMPRESS_TABLE(?, ?, ?)");
+				//Expression table
+				cs.setString(1, "APP");
+				cs.setString(2, "EXPRESSION");
+				cs.setShort(3, (short) 1);
+				cs.execute();
+			}
 			con.commit(); //Just to be sure...
 		}
 		catch (SQLException e)

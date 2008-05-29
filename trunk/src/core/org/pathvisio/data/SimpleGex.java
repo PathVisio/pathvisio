@@ -478,6 +478,7 @@ public class SimpleGex
 		dbConnector.compact(con);
 		createGexIndices();
 		//TODO: why newDb?
+		dbConnector.closeConnection(con);
 		String newDb = dbConnector.finalizeNewDatabase(dbName);
 		setDbName(newDb);
 	}

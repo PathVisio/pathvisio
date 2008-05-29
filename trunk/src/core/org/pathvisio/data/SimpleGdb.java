@@ -514,19 +514,19 @@ public class SimpleGdb implements Gdb
 	public void createGdbTables() 
 	{
 		Logger.log.info("Info:  Creating tables");
-
 		try 
 		{
 			Statement sh = con.createStatement();
 			sh.execute("DROP TABLE info");
 			sh.execute("DROP TABLE link");
-			sh.execute("DROP TABLE gene");
+			sh.execute("DROP TABLE datanode");
+			sh.execute("DROP TABLE attribute");
 		} 
 		catch(Exception e) 
 		{
 			Logger.log.error("Unable to drop gdb tables (ignoring): " + e.getMessage());
 		}
-		
+
 		try
 		{
 			Statement sh = con.createStatement();
@@ -553,13 +553,23 @@ public class SimpleGdb implements Gdb
 			Logger.log.info("Link table created");
 			sh.execute(
 					"CREATE TABLE					" +
-					"		gene							" +
+					"		datanode						" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
 					"     backpageText VARCHAR(800),		" +
 					"     PRIMARY KEY (id, code)    		" +
 					" )										");
-			Logger.log.info("Gene table created");
+			Logger.log.info("DataNode table created");
+			sh.execute(
+					"CREATE TABLE							" +
+					"		attribute 						" +
+					" (   id VARCHAR(50),					" +
+					"     code VARCHAR(50),					" +
+					"     attrname VARCHAR(50),				" +
+					"	  attrvalue VARCHAR(100),			" +
+					"     PRIMARY KEY (id, code)			" +
+					" )										");
+			Logger.log.info("Attribute table created");
 		} 
 		catch (Exception e)
 		{
@@ -747,6 +757,7 @@ public class SimpleGdb implements Gdb
 	
     PreparedStatement pstGene = null;
     PreparedStatement pstLink = null;
+    PreparedStatement pstAttr = null;
 
 	/**
 	 * Add a gene to the gene database
@@ -769,23 +780,38 @@ public class SimpleGdb implements Gdb
 		return 0;
     }
     
+    int addAttribute(String attr, String val, String id, String code)
+    {
+    	try {
+    		pstAttr.setString(1, attr);
+			pstAttr.setString(2, val);
+			pstAttr.setString(3, id);
+			pstAttr.setString(4, code);
+			pstAttr.executeUpdate();
+		} catch (Exception e) {
+			Logger.log.error(attr + "\t" + val + "\t" + id + "\t" + code, e);
+			return 1;
+		}
+		return 0;
+    }
+
     /**
      * Add a link to the gene database
      */
-    public int addLink(String link, Xref ref) 
+    public int addLink(Xref left, Xref right) 
     {
     	if (pstLink == null) throw new NullPointerException();
     	try 
     	{
-			pstLink.setString(1, link);
-			pstLink.setString(2, DataSource.ENSEMBL.getSystemCode());
-			pstLink.setString(3, ref.getId());
-			pstLink.setString(4, ref.getDataSource().getSystemCode());
+			pstLink.setString(1, left.getId());
+			pstLink.setString(2, left.getDataSource().getSystemCode());
+			pstLink.setString(3, right.getId());
+			pstLink.setString(4, right.getDataSource().getSystemCode());
 			pstLink.executeUpdate();
 		} 
 		catch (Exception e)
 		{
-			Logger.log.error(link + "\t" + ref, e);
+			Logger.log.error(left + "\t" + right , e);
 			return 1;
 		}
 		return 0;
@@ -833,7 +859,7 @@ public class SimpleGdb implements Gdb
 		{
 			con.setAutoCommit(false);
 			pstGene = con.prepareStatement(
-				"INSERT INTO gene " +
+				"INSERT INTO datanode " +
 				"	(id, code," +
 				"	 backpageText)" +
 				"VALUES (?, ?, ?)"
@@ -844,6 +870,11 @@ public class SimpleGdb implements Gdb
 				"	 idRight, codeRight)" +
 				"VALUES (?, ?, ?, ?)"
 	 		);
+			pstAttr = con.prepareStatement(
+					"INSERT INTO attribute " +
+					"	(attrname, attrvalue, id, code)" +
+					"VALUES (?, ?, ?, ?)"
+					);
 		}
 		catch (SQLException e)
 		{

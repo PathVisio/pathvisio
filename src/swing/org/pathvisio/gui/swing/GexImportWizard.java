@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -34,10 +35,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import org.pathvisio.Engine;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwing;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -67,10 +74,13 @@ public class GexImportWizard extends Wizard
         setCurrentPanel(FilePage.IDENTIFIER);        
 	}
 		
-	private class FilePage extends WizardPanelDescriptor 
+	private class FilePage extends WizardPanelDescriptor implements ActionListener
 	{
 	    public static final String IDENTIFIER = "FILE_PAGE";
-
+	    static final String ACTION_INPUT = "input";
+	    static final String ACTION_OUTPUT = "output";
+	    static final String ACTION_GDB = "gdb";
+	    
 	    private JTextField txtInput;
 	    private JTextField txtOutput;
 	    private JTextField txtGdb;
@@ -163,24 +173,16 @@ public class GexImportWizard extends Wizard
 			//TODO: set page title
 			//result.add (new JLabel("File locations"), BorderLayout.NORTH);
 			
-			btnInput.addActionListener(new ActionListener()
-			{
-				public void actionPerformed (ActionEvent ae)
-				{
-					//TODO: more sensible default dir
-					File defaultdir = new File ("/home/martijn/prg/pathvisio-trunk/example-data/sample_data_1.txt");
-					JFileChooser jfc = new JFileChooser();
-					jfc.setSelectedFile(defaultdir);
-					jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv"));
-					int result = jfc.showDialog(null, "Select input file");
-					if (result == JFileChooser.APPROVE_OPTION)
-					{
-						File f = jfc.getSelectedFile();
-						setTxtFile (f);
-					}
-				}
-			});
+			btnInput.addActionListener(this);
+			btnInput.setActionCommand(ACTION_INPUT);
+			btnOutput.addActionListener(this);
+			btnOutput.setActionCommand(ACTION_OUTPUT);
+			btnGdb.addActionListener(this);
+			btnGdb.setActionCommand(ACTION_GDB);
 			
+			txtGdb.setText(
+					Engine.getCurrent().getPreferences().get(GlobalPreference.DB_GDB_CURRENT)
+			);
 			return builder.getPanel();
 		}
 
@@ -188,6 +190,47 @@ public class GexImportWizard extends Wizard
 		{
 	        setTxtFile(new File (txtInput.getText()));
 	    }
+
+		public void actionPerformed(ActionEvent e) {
+			String action = e.getActionCommand();
+			
+			if(ACTION_GDB.equals(action)) {
+				StandaloneActions.selectGeneDbAction.actionPerformed(
+						new ActionEvent(this, 1, "")
+				);
+				txtGdb.setText(
+						Engine.getCurrent().getPreferences().get(GlobalPreference.DB_GDB_CURRENT)
+				);
+			} else if(ACTION_INPUT.equals(action)) {
+				//TODO: more sensible default dir
+				File defaultdir = new File ("/home/martijn/prg/pathvisio-trunk/example-data/sample_data_1.txt");
+				JFileChooser jfc = new JFileChooser();
+				jfc.setSelectedFile(defaultdir);
+				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv", true));
+				int result = jfc.showDialog(null, "Select data file");
+				if (result == JFileChooser.APPROVE_OPTION)
+				{
+					File f = jfc.getSelectedFile();
+					setTxtFile (f);
+				}
+			} else if(ACTION_OUTPUT.equals(action)) {
+				try {
+					DBConnector dbConn = GexManager.getCurrent().getDBConnector();
+						String output = ((DBConnectorSwing)dbConn).openNewDbDialog(
+								getPanelComponent(), importInformation.getDbName()	
+						);
+						if(output != null) {
+							txtOutput.setText(output);
+						}
+				} catch(Exception ex) {
+					JOptionPane.showMessageDialog(
+							getPanelComponent(), "The database connector is not supported"
+							
+					);
+					Logger.log.error("No gex database connector", ex);
+				}
+			}
+		}
 
 	}
 	

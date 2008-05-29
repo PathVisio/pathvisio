@@ -471,14 +471,21 @@ public class SimpleGex
 
 	/**
 	 * Run this after insterting all sample / expression data 
-	 * once, to defragment the db and create indices
+	 * once, to defragment the db and create indices.
+	 * This method closes the current database connection in order
+	 * for the {@link DBConnector} to clean up.
 	 */
 	public void finalize() throws DataException
 	{
 		dbConnector.compact(con);
 		createGexIndices();
-		//TODO: why newDb?
 		dbConnector.closeConnection(con);
+		//TODO: why newDb?
+		//TK: See the javadoc of DbConnector.finalizeNewDatabase.
+		//The dbConnector may change the database file after cleaning up,
+		//for example, the derby connector first creates the database as directory
+		//and then adds the database to a zip file and removes the directory.
+		//The database name needs to be changed to the zip file in this case.
 		String newDb = dbConnector.finalizeNewDatabase(dbName);
 		setDbName(newDb);
 	}

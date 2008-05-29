@@ -246,7 +246,6 @@ public class GexTxtImporter
 			if (p != null) p.setTaskName("Closing database connection");
 
 			result.finalize();
-			result.close();
 			if (p != null) p.worked(finalizeWork);
 			
 			error.println("Time to create expression dataset: " + timer.stop());

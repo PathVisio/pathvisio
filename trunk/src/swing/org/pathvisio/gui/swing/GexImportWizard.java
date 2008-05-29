@@ -16,13 +16,13 @@
 //
 package org.pathvisio.gui.swing;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -519,13 +519,9 @@ public class GexImportWizard extends Wizard
 	    
 	    public void aboutToDisplayPanel()
 	    {			
-	    	cbColId.removeAllItems();
-	    	cbColSyscode.removeAllItems();
-			for (String s : importInformation.getColNames())
-			{
-				cbColId.addItem(s);
-				cbColSyscode.addItem(s);
-			}
+	    	String[] cn = importInformation.getColNames();
+	    	cbColId.setModel(new DefaultComboBoxModel(cn));
+	    	cbColSyscode.setModel(new DefaultComboBoxModel(cn));
 			
 			refreshSyscodeColumn();
 			refreshComboBoxes();

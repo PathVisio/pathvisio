@@ -55,7 +55,6 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetManager;
 
 public class ColorByExpression extends VisualizationMethod {
 	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
@@ -67,8 +66,8 @@ public class ColorByExpression extends VisualizationMethod {
 
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {
-				Engine.getCurrent().getResourceURL("images/protein_hi.bmp"),
-				Engine.getCurrent().getResourceURL("images/mRNA_hi.bmp") }));
+				Engine.getCurrent().getResourceURL("protein_hi.bmp"),
+				Engine.getCurrent().getResourceURL("mRNA_hi.bmp") }));
 	}
 	
 	public ColorByExpression(Visualization v, String registeredName) {

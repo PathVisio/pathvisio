@@ -95,6 +95,10 @@ public class ColorSetManager {
 		else return null;
 	}
 
+	public int indexOf(ColorSet cs) {
+		return colorSets.indexOf(cs);
+	}
+	
 	/**
 	 * Removes this {@link ColorSet}
 	 * @param i index of ColorSet to remove

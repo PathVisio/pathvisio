@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -33,27 +32,34 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.gui.ColorSetDlg;
 
 public class ColorSetCombo extends JComboBox implements ActionListener {
-	ColorSet NEW = new ColorSet("new...");
+	public Object NEW = new Object();
 	
 	ColorSetManager csMgr;
 	
-	public ColorSetCombo(ColorSetManager csMgr, List<ColorSet> colorSets) {
+	public ColorSetCombo(ColorSetManager csMgr) {
 		super();
 		this.csMgr = csMgr;
-		ArrayList<ColorSet> csClone = new ArrayList<ColorSet>();
-		csClone.addAll(colorSets);
-		csClone.add(NEW);
-		csClone.add(NEW);
-		setModel(new DefaultComboBoxModel(csClone.toArray()));
+		refresh();
 		setRenderer(new ColorSetRenderer());
 		addActionListener(this);
+	}
+	
+	private void refresh() {
+		ArrayList<Object> csClone = new ArrayList<Object>();
+		csClone.addAll(csMgr.getColorSets());
+		csClone.add(NEW);
+		setModel(new DefaultComboBoxModel(csClone.toArray()));
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		Logger.log.trace("Action: " + getSelectedItem());
 		if(getSelectedItem() == NEW) {
-			ColorSet cs = new ColorSet(csMgr.getNewName());
-			new ColorSetDlg(cs, null, this).setVisible(true);
+			ColorSet cs = new ColorSet(csMgr.getNewName(), csMgr);
+			ColorSetDlg dlg = new ColorSetDlg(cs, null, this);
+			dlg.setVisible(true);
+			csMgr.addColorSet(cs);
+			refresh();
+			setSelectedItem(cs);
 		}
 	}
 	
@@ -62,7 +68,13 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 				int index, boolean isSelected, boolean cellHasFocus) {
 			JLabel l = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected,
 					cellHasFocus);
-			l.setText(((ColorSet)value).getName());
+			if(value == NEW) {
+				l.setText("New...");
+			} else if(value == null) {
+				l.setText("");
+			} else {
+				l.setText(((ColorSet)value).getName());
+			}
 			l.setBackground(Color.WHITE);
 			return l;
 		}

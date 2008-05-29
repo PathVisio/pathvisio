@@ -81,6 +81,43 @@ public class ColorByExpression extends VisualizationMethod {
 		return null;
 	}
 	
+	/**
+	 * Check whether advanced settings are used
+	 */
+	public boolean isAdvanced() {
+		//Advanced when different colorsets or an image is specified
+		//TODO: check for image
+		return getSingleColorSet() != null;
+	}
+	
+	/**
+	 * Set a single colorset for all samples.
+	 */
+	public void setSingleColorSet(ColorSet cs) {
+		for(ConfiguredSample s : useSamples) {
+			s.setColorSet(cs);
+		}
+	}
+	
+	/**
+	 * Get the single colorset that is used for all
+	 * samples. Returns null when different colorsets are
+	 * used.
+	 */
+	public ColorSet getSingleColorSet() {
+		ColorSet cs = null;
+		for(ConfiguredSample s : useSamples) {
+			if(cs == null) {
+				cs = s.getColorSet();
+			} else {
+				if(cs != s.getColorSet()) {
+					break;
+				}
+			}
+		}
+		return cs;
+	}
+	
 	public String getDescription() {
 		return "Color DataNodes by their expression value";
 	}
@@ -378,7 +415,7 @@ public class ColorByExpression extends VisualizationMethod {
 		public static final int AMBIGIOUS_AVG = 0;
 		public static final int AMBIGIOUS_BARS = 1;
 
-		int colorSetIndex = 0;
+		ColorSet colorSet = null;
 		int ambigious = AMBIGIOUS_BARS;
 		
 		BufferedImage cacheImage;
@@ -430,7 +467,9 @@ public class ColorByExpression extends VisualizationMethod {
 		private final Element toXML() {
 			Element xml = new Element(XML_ELEMENT);
 			xml.setAttribute(XML_ATTR_ID, Integer.toString(getId()));
-			xml.setAttribute(XML_ATTR_COLORSET, Integer.toString(colorSetIndex));
+			xml.setAttribute(XML_ATTR_COLORSET, Integer.toString(
+					getVisualization().getManager().getColorSetManager().indexOf(colorSet)
+			));
 			saveAttributes(xml);
 			return xml;
 		}
@@ -442,7 +481,7 @@ public class ColorByExpression extends VisualizationMethod {
 			setId(id);
 			setName(s.getName());
 			setDataType(s.getDataType());
-			setColorSetIndex(csi);
+			setColorSet(getVisualization().getManager().getColorSetManager().getColorSet(csi));
 			loadAttributes(xml);
 		}
 		
@@ -466,10 +505,9 @@ public class ColorByExpression extends VisualizationMethod {
 		
 		/**
 		 * Set the color-set to use for visualization of this sample
-		 * @param index
 		 */
-		protected void setColorSetIndex(int index) { 
-			colorSetIndex = index;
+		protected void setColorSet(ColorSet cs) { 
+			colorSet = cs;
 			modified();
 		}
 		
@@ -478,8 +516,7 @@ public class ColorByExpression extends VisualizationMethod {
 		 * @return the color-set
 		 */
 		protected ColorSet getColorSet() {
-			ColorSetManager csm = getVisualization().getManager().getColorSetManager();
-			return csm.getColorSet(colorSetIndex); 
+			return colorSet;
 		}
 		
 		/**
@@ -490,14 +527,7 @@ public class ColorByExpression extends VisualizationMethod {
 		protected String getColorSetName() {
 			ColorSet cs = getColorSet();
 			return cs == null ? "no colorsets available" : cs.getName();
-		}
-		
-		/**
-		 * Get the index of the color-set that is selected for visualization
-		 * @return The index of the color-set
-		 */
-		protected int getColorSetIndex() { return colorSetIndex; }
-		
+		}	
 
 		boolean aspectRatio = true;
 		

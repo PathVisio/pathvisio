@@ -19,6 +19,8 @@ package org.pathvisio.visualization.plugins;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -27,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
+import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetCombo;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
@@ -61,14 +64,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		b_basic.setActionCommand(ACTION_BASIC);
 		b_basic.addActionListener(this);
 		buttons.add(b_basic);
-		JRadioButton a_advanced = new JRadioButton(ACTION_ADVANCED);
-		a_advanced.setActionCommand(ACTION_ADVANCED);
-		a_advanced.addActionListener(this);
-		buttons.add(a_advanced);
+		JRadioButton b_advanced = new JRadioButton(ACTION_ADVANCED);
+		b_advanced.setActionCommand(ACTION_ADVANCED);
+		b_advanced.addActionListener(this);
+		buttons.add(b_advanced);
 		
 		CellConstraints cc = new CellConstraints();
 		add(b_basic, cc.xy(1, 1));
-		add(a_advanced, cc.xy(3, 1));
+		add(b_advanced, cc.xy(3, 1));
 		
 		settings = new JPanel();
 		settings.setBorder(BorderFactory.createEtchedBorder());
@@ -82,7 +85,11 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		
 		add(settings, cc.xyw(1, 3, 4));
 		
-		b_basic.doClick();
+		if(method.isAdvanced()) {
+			b_advanced.doClick();
+		} else {
+			b_basic.doClick();
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -92,7 +99,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	class Basic extends JPanel {
+	class Basic extends JPanel implements ItemListener {
 		public Basic() {
 			setLayout(new FormLayout(
 					"fill:pref:grow, 2dlu, pref, 4dlu, pref, 2dlu, pref",
@@ -105,12 +112,18 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			
 			ColorSetManager csm = method.getVisualization()
 											.getManager().getColorSetManager();
-			ColorSetCombo csc = new ColorSetCombo(csm, csm.getColorSets());
-			
+			ColorSetCombo csc = new ColorSetCombo(csm);
+			csc.setSelectedItem(method.getSingleColorSet());
 			CellConstraints cc = new CellConstraints();
 			add(new JScrollPane(sampleList), cc.xy(1, 1));
 			add(new JLabel("Color set:"), cc.xy(5, 1, "c, t"));
 			add(csc, cc.xy(7, 1, "c, t"));
+		}
+
+		public void itemStateChanged(ItemEvent e) {
+			if(e.getItem() instanceof ColorSet) {
+				method.setSingleColorSet((ColorSet)e.getItem());
+			}
 		}
 	}
 	

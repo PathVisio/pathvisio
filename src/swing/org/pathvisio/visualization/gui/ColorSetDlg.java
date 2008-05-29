@@ -38,5 +38,6 @@ public class ColorSetDlg extends OkCancelDialog
 		super (frame, "Edit Color Set", locationComp, true, true);
 		this.cs = cs;
 		setDialogComponent(new ColorSetPanel(cs));
+		setSize(200, 300);
 	}
 }

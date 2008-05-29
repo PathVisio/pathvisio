@@ -17,28 +17,39 @@
 package org.pathvisio.visualization.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetObject;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 /**
  * Panel for editing a color set, a combination of
  * rules and gradients
  */
-public class ColorSetPanel extends JPanel 
+public class ColorSetPanel extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
-
+	static final String ACTION_GRADIENT = "Add Gradient";
+	static final String ACTION_RULE = "Add Rule";
+	
 	private ColorSet colorSet;
+	private JPanel colorObjectsPanel;
 	
 	ColorSetPanel (ColorSet cs)
 	{
@@ -46,22 +57,51 @@ public class ColorSetPanel extends JPanel
 		
 		colorSet = cs;
 		
-		JPanel colorObjectsPanel = new JPanel();
+		colorObjectsPanel = new JPanel();
 		add (new JScrollPane(colorObjectsPanel), BorderLayout.CENTER);
-		System.err.println("" + colorSet);
-		System.err.println("" + colorSet.getObjects());
-		for (ColorSetObject cso : colorSet.getObjects())
-		{
-			colorObjectsPanel.add (createColorSetObjectPanel(cso));
-		}
+		
+		JButton btnGradient = new JButton(ACTION_GRADIENT);
+		btnGradient.setActionCommand(ACTION_GRADIENT);
+		btnGradient.addActionListener(this);
+		JButton btnRule = new JButton(ACTION_RULE);
+		btnRule.setActionCommand(ACTION_RULE);
+		btnRule.addActionListener(this);
 		
 		JPanel btnPanel = new JPanel();
-		btnPanel.add (new JButton ("Add Gradient"));
-		btnPanel.add (new JButton ("Add Rule"));
+		btnPanel.add (btnGradient);
+		btnPanel.add (btnRule);
 		
 		add (btnPanel, BorderLayout.SOUTH);
+		refresh();
 	}
 
+	private void refresh() {
+		colorObjectsPanel.removeAll();
+		FormLayout layout = new FormLayout("fill:pref:grow");
+		DefaultFormBuilder builder = 
+			new DefaultFormBuilder(layout, colorObjectsPanel);
+		for (ColorSetObject cso : colorSet.getObjects()) {
+			Logger.log.trace("Adding panel for " + cso);
+			builder.append(createColorSetObjectPanel(cso));
+			builder.nextLine();
+		}
+		revalidate();
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand();
+		ColorSetObject cso = null;
+		if(ACTION_GRADIENT.equals(action)) {
+			cso = new ColorGradient(colorSet);
+		} else {
+			cso = new ColorRule(colorSet);
+		}
+		if(cso != null) {
+			colorSet.addObject(cso);
+			refresh();
+		}
+	}
+	
 	private ColorSetObjectPanel createColorSetObjectPanel (ColorSetObject cso)
 	{
 		if (cso instanceof ColorRule)

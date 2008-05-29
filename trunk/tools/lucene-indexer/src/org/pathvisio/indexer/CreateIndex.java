@@ -76,6 +76,16 @@ public class CreateIndex {
 	 */
 	public static final String FIELD_FILE = "file";
 	
+	private GdbManager gdbManager;
+	
+	public CreateIndex() {
+		gdbManager = new GdbManager();
+	}
+	
+	public CreateIndex(GdbManager gdbManager) {
+		this.gdbManager = gdbManager;
+	}
+	
 	public static void main(String[] args) {
 		Logger.log.setStream(System.err);
 		
@@ -83,7 +93,7 @@ public class CreateIndex {
 			printHelp();
 		}
 		
-		index(new File(args[1]), new File(args[0]));
+		new CreateIndex().index(new File(args[1]), new File(args[0]));
 	}
 	
 	static void printHelp() {
@@ -96,7 +106,7 @@ public class CreateIndex {
 		);
 	}
 
-	static void index(File pathwayDir, File indexDir) {
+	void index(File pathwayDir, File indexDir) {
 		//Build an index of all GPML files in the given directory		
 		Logger.log.trace("Start indexing " + pathwayDir + " to " + indexDir);
 		
@@ -111,7 +121,7 @@ public class CreateIndex {
 	}
 	
 	
-	static void index(IndexWriter writer, File dir) throws CorruptIndexException, ConverterException, IOException {
+	void index(IndexWriter writer, File dir) throws CorruptIndexException, ConverterException, IOException {
 	    File[] files = dir.listFiles();
 
 	    for (int i=0; i < files.length; i++) {
@@ -124,7 +134,7 @@ public class CreateIndex {
 	    }
 	}
 	
-	static void indexFile(IndexWriter writer, File file) throws ConverterException, CorruptIndexException, IOException {
+	void indexFile(IndexWriter writer, File file) throws ConverterException, CorruptIndexException, IOException {
 		Pathway pathway = new Pathway();
 		GpmlFormat.readFromXml(pathway, file, true);
 		
@@ -156,14 +166,14 @@ public class CreateIndex {
 		writer.addDocument(doc);
 	}
 	
-	static void indexDataNode(PathwayElement pe, Document doc) {
+	void indexDataNode(PathwayElement pe, Document doc) {
 		Xref xref = pe.getXref();
 
 		addCrossRef(xref, doc, FIELD_ID, FIELD_ID_CODE);
 
 		//Add cross references if connected
-		if(GdbManager.isConnected()) {
-			Gdb gdb = GdbManager.getCurrentGdb();
+		if(gdbManager.isConnected()) {
+			Gdb gdb = gdbManager.getCurrentGdb();
 			List<Xref> crossRefs = gdb.getCrossRefs(xref);
 			for(Xref c : crossRefs) {
 				addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
@@ -171,7 +181,7 @@ public class CreateIndex {
 		}
 	}
 
-	static void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
+	void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
 		if(xref != null) {
 			String id = xref.getId();
 			String code = "";

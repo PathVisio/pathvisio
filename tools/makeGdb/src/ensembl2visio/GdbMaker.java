@@ -16,16 +16,9 @@
 //
 package ensembl2visio;
 
-import java.io.File;
-import java.io.PrintStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import org.pathvisio.debug.Logger;
 
@@ -35,120 +28,19 @@ import org.pathvisio.debug.Logger;
  */
 public abstract class GdbMaker
 {   	
-	final static String[] sysCodes = new String[] {
-			"S", "X", "Em", "En", "L", "F", "T",
-			"H", "I", "M", "Om", "Pd", "Pf",
-			"Q", "R", "D", "U", "W",
-			"Z"//, "A"
-	};
-	
-	final static String[] sysNames = new String[] {
-		"UniProt/TrEMBL", "Affymetrix Probe Set ID", "EMBL", "Ensembl", "Entrez Gene", 
-		"FlyBase", "Gene Ontology", "HUGO", "InterPro", "MGI", 
-		"OMIM", "PDB", "Pfam", "RefSeq", "RGD", "SGD", 
-		"UniGene", "WormBase", "ZFIN"//, "Agilent Probe ID"
-	};
-	
-	final static int ENS_CODE = 3;
-	final static int SGD_CODE = 15;
 
-	static final int COMPAT_VERSION = 2;
-    
+
     protected Connection con;
       
     String dbName;
-    
-    Logger logInfo;
-    Logger logError;
-    
+
     public GdbMaker(String dbName) {
     	this.dbName = dbName;
-    	setLoggers();
+
     }
 
-        
-    PreparedStatement pstDataNode;
-    PreparedStatement pstLink;
-    PreparedStatement pstAttr;
 
-    int addGene(String ens, String id, String code, String bpText) {
-		try {
-			pstDataNode.setString(1, id);
-			pstDataNode.setString(2, code);
-			pstDataNode.setString(3, bpText);
-			pstDataNode.executeUpdate();
-		} catch (Exception e) { 
-			logError.error(ens + "\t" + id + "\t" + code, e);
-			return 1;
-		}
-		return 0;
-    }
-    
-    int addLink(String ens, String id, String code) {
-    	try {
-			pstLink.setString(1, ens);
-			pstLink.setString(2, sysCodes[ENS_CODE]);
-			pstLink.setString(3, id);
-			pstLink.setString(4, code);
-			pstLink.executeUpdate();
-		} catch (Exception e) {
-			logError.error(ens + "\t" + id + "\t" + code, e);
-			return 1;
-		}
-		return 0;
-    }
-    
-    int addAttribute(String attr, String val, String id, String code)
-    {
-    	try {
-    		pstAttr.setString(1, attr);
-			pstAttr.setString(2, val);
-			pstAttr.setString(3, id);
-			pstAttr.setString(4, code);
-			pstAttr.executeUpdate();
-		} catch (Exception e) {
-			logError.error(attr + "\t" + val + "\t" + id + "\t" + code, e);
-			return 1;
-		}
-		return 0;
-    }
-        
-    void setLoggers() {
-    	logInfo = new Logger();
-    	logError = new Logger();
-    	logError.setLogLevel(false, true, true, true, true, true);
-    	
-    	Calendar cl = Calendar.getInstance();
-    	DateFormat df = new SimpleDateFormat("yyMMdd.HHmmss");
-    	String now = df.format(cl.getTime());
-	    try {
-	    	File error = new File(getDbName() + "_" + now + ".error");
-	    	File info = new File(getDbName() + "_" + now + ".info");
-	    	error.getParentFile().mkdirs();
-	    	
-	    	logError.setStream(new PrintStream(error));
-	    	logInfo.setStream(new PrintStream(info));
-	    } catch(Exception e) {
-	    	System.out.println("Unable to open output streams, using System.out");
-	    	e.printStackTrace();
-	    	logError.setStream(System.out);
-	    	logInfo.setStream(System.out);
-	    }
-    }
-        
-    protected final void info(String msg) {
-    	logInfo.info(msg);
-    	System.out.println(msg);
-    }
-    
-    protected final void error(String msg) {
-    	logError.error(msg);
-    }
-    
-    protected final void error(String msg, Exception e) {
-    	logError.error(msg, e);
-    }
-    
+      
 	/**
 	   connect to a gene database
 	   if create == true, any pre-existing database will be overwritten.
@@ -160,10 +52,9 @@ public abstract class GdbMaker
     	try {
     		if(con != null) con.close();
     	} catch(Exception e) {
-    		error("Error when closing connection", e);
+    		Logger.log.error("Error when closing connection", e);
     	}
-    	logInfo.getStream().close();
-    	logError.getStream().close();
+
     }
     
     String getDbName() {
@@ -182,53 +73,6 @@ public abstract class GdbMaker
 	public void postInsert() {}
 	
 
-	public void createTables() throws SQLException {
-		info("Info:  Creating tables");
-		Statement sh = con.createStatement();
-		try { sh.execute("DROP TABLE link"); } catch (Exception e) {}
-		try { sh.execute("DROP TABLE datanode"); } catch (Exception e) {}
-		try { sh.execute("DROP TABLE info"); } catch (Exception e) {}
-		try { sh.execute("DROP TABLE attribute"); } catch (Exception e) {}
-		sh.execute(
-				"CREATE TABLE					" +
-				"		info							" +
-				"(	  schemaversion INTEGER PRIMARY KEY		" +
-				")");
-		sh.execute( //Add compatibility version of Gdb
-				"INSERT INTO info VALUES ( " + COMPAT_VERSION + ")");
-		sh.execute(
-				"CREATE TABLE					" +
-				"		link							" +
-				" (   idLeft VARCHAR(50) NOT NULL,		" +
-				"     codeLeft VARCHAR(50) NOT NULL,	" +
-				"     idRight VARCHAR(50) NOT NULL,		" +
-				"     codeRight VARCHAR(50) NOT NULL,	" +
-				"     bridge VARCHAR(50),				" +
-				"     PRIMARY KEY (idLeft, codeLeft,    " +
-				"		idRight, codeRight) 			" +
-		" )										");
-		
-		try { sh.execute("DROP TABLE datanode"); } catch (Exception e) {}
-		sh.execute(
-				"CREATE TABLE							" +
-				"		datanode							" +
-				" (   id VARCHAR(50),					" +
-				"     code VARCHAR(50),					" +
-				"     backpageText VARCHAR(800),				" +
-				"     PRIMARY KEY (id, code)			" +
-		" )										");
-		
-		try { sh.execute("DROP TABLE attribute"); } catch (Exception e) {}
-		sh.execute(
-				"CREATE TABLE							" +
-				"		attribute 						" +
-				" (   id VARCHAR(50),					" +
-				"     code VARCHAR(50),					" +
-				"     attrname VARCHAR(50),				" +
-				"	  attrvalue VARCHAR(100),			" +
-				"     PRIMARY KEY (id, code)			" +
-				" )										");
-	}
 
 	/**
 	   Create indices on the database
@@ -268,31 +112,7 @@ public abstract class GdbMaker
 	}
 	
 
-	
-	/**
-	   prepare for inserting genes and/or links
-	 */
-	void preInsert() throws SQLException
-	{
-		con.setAutoCommit(false);
-		pstDataNode = con.prepareStatement(
-			"INSERT INTO datanode " +
-			"	(id, code," +
-			"	 backpageText)" +
-			"VALUES (?, ?, ?)"
-    		);
-		pstLink = con.prepareStatement(
-			"INSERT INTO link " +
-			"	(idLeft, codeLeft," +
-			"	 idRight, codeRight)" +
-			"VALUES (?, ?, ?, ?)"
-    		);
-		pstAttr = con.prepareStatement(
-			"INSERT INTO attribute " +
-			"	(attrname, attrvalue, id, code)" +
-			"VALUES (?, ?, ?, ?)"
-			);
-	}
+
 
 	/**
 	   commit inserted data
@@ -302,15 +122,4 @@ public abstract class GdbMaker
 		con.commit();
 	}
 
-	/**
-	   returns number of rows in gene table
-	 */
-	int getGeneCount() throws SQLException
-	{
-		ResultSet r = con.createStatement().executeQuery("SELECT COUNT(*) FROM datanode");
-		r.next();
-		int result = r.getInt (1);
-		r.close();
-		return result;
-	}
 }

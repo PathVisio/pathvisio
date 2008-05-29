@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.pathvisio.debug.Logger;
+
 
 public class HsqldbGdbMaker extends GdbMaker {
 
@@ -57,7 +59,7 @@ public class HsqldbGdbMaker extends GdbMaker {
 				sh.execute("SHUTDOWN COMPACT");
 			}
 		} catch(Exception e) {
-			error("Unable to shutdown and compact", e);
+
 		}
 		super.close();
 	}
@@ -80,7 +82,7 @@ public class HsqldbGdbMaker extends GdbMaker {
 			prop.setProperty("hsqldb.files_readonly", Boolean.toString(readonly));
 			prop.store(new FileOutputStream(propFile), "HSQL Database Engine");
 		} catch (Exception e) {
-			error("Unable to set readonly to " + readonly, e);
+			Logger.log.error("Unable to set readonly to " + readonly, e);
 		}
     }
 

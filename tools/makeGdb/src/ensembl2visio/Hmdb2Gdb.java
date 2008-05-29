@@ -19,9 +19,16 @@ package ensembl2visio;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
+
+import org.pathvisio.Engine;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DataDerby;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
+import org.pathvisio.model.Xref;
 
 /**
  * Provides a main for importing hmdb data (prepated with the parse_hmdb.pl script)
@@ -39,34 +46,34 @@ public class Hmdb2Gdb
 	 * - database directory (=dbname)
 	 * - metabolite table .txt file
 	 * 
-	 * (For example "/home/martijn/db/hmdb/20071123_metabocards_all.txt")
+	 * (For example "/home/martijn/uni/wrk/metabolomics/20080507_hmdb_extracted_links.txt")
 	 * assumes database type is derby (unzipped)
 	 */
 	public static void main(String[] args)
 	{
+		Logger.log.setStream (System.out);
 		String dbname = args[0];
 		String file = args[1];
 		
-		DerbyGdbMaker gdbMaker = new DerbyGdbMaker(dbname);
-	    Hmdb2Gdb h2g = new Hmdb2Gdb();
-
+		Hmdb2Gdb h2g = new Hmdb2Gdb();
+		Engine.init();
+		
     	try 
     	{
+			SimpleGdb simpleGdb = new SimpleGdb(dbname, new DataDerby(), DBConnector.PROP_RECREATE);
  
-    		h2g.init (dbname, gdbMaker);
+    		h2g.init (dbname, simpleGdb);
     		h2g.run(file);
     		h2g.done();
     	}
-		catch (SQLException e) 
+		catch (DataException e) 
 		{
-			e.printStackTrace();
-			System.err.println(e.getNextException().getMessage());
+			Logger.log.error ("DataException ", e);
 		}	
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			Logger.log.error ("Exception ", e);
 		}   	
-		gdbMaker.toZip();
 	}
 		
 	static class Compound
@@ -80,10 +87,10 @@ public class Hmdb2Gdb
 		String idCas = null;
 	}
 	
-	GdbMaker gdbMaker;
+	SimpleGdb simpleGdb;
 	String dbName;
 	
-	void run (String file) throws IOException, SQLException
+	void run (String file) throws IOException, DataException
 	{
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		in.readLine(); // skip header row 
@@ -93,53 +100,49 @@ public class Hmdb2Gdb
 			progress++;
 			addCompound (c);
 			if(progress % PROGRESS_INTERVAL == 0) {
-				gdbMaker.info("Processed " + progress + " lines");
-				gdbMaker.commit();
+				Logger.log.info("Processed " + progress + " lines");
+				simpleGdb.commit();
 			}
 			
-			gdbMaker.info (c.symbol + " added");
+			Logger.log.info (c.symbol + " added");
 		}
 	}
 	
 
 	StopWatch timer;
 	
-	void init(String dbname, GdbMaker gdbMaker) throws SQLException, ClassNotFoundException
+	void init(String dbname, SimpleGdb simpleGdb) throws DataException, ClassNotFoundException
 	{
 		timer = new StopWatch();    	
     	
-		this.gdbMaker = gdbMaker;
+		this.simpleGdb = simpleGdb;
 		this.dbName = dbname;
 		
-    	gdbMaker.info("Timer started");
+    	Logger.log.info("Timer started");
     	timer.start();
-		gdbMaker.connect (true);
+//		simpleGdb.connect (true);
 
-		gdbMaker.createTables();
-		gdbMaker.preInsert();	
+		simpleGdb.createGdbTables();
+		simpleGdb.preInsert();	
     }
 	
-	void done() throws SQLException
+	void done() throws DataException
 	{
-		gdbMaker.commit();
+		simpleGdb.commit();
 
-    	gdbMaker.info("Timer stopped: " + timer.stop());
+    	Logger.log.info("Timer stopped: " + timer.stop());
     	
-		gdbMaker.info("total ids in gene table: " + gdbMaker.getGeneCount());
-		gdbMaker.info("total errors (duplicates): " + error);
+    	Logger.log.info("total ids in gene table: " + simpleGdb.getGeneCount());
+    	Logger.log.info("total errors (duplicates): " + error);
 		
-		gdbMaker.info("END processing text file");
+    	Logger.log.info("END processing text file");
 		
-		gdbMaker.info("Compacting database");
-		gdbMaker.createIndices();
-		gdbMaker.compact();
+    	Logger.log.info("Compacting database");
 		
-		gdbMaker.info("Closing connections");
+		Logger.log.info("Closing connections");
 		
-    	gdbMaker.close();
 
-		gdbMaker.postInsert();
-    
+    	simpleGdb.finalize();
 	}
 	
 	int error = 0;
@@ -152,32 +155,37 @@ public class Hmdb2Gdb
 		"<TR><TH>Bruto Formula:<TH>" + c.formula + 
 		"</TABLE>";
 		
-		error += gdbMaker.addGene(c.idHmdb, c.idHmdb, DataSource.HMDB.getSystemCode(), bpText);
-		error += gdbMaker.addLink(c.idHmdb, c.idHmdb, DataSource.HMDB.getSystemCode());
-		error += gdbMaker.addAttribute("Symbol", c.symbol, c.idHmdb, DataSource.HMDB.getSystemCode());
+		Xref ref = new Xref (c.idHmdb, DataSource.HMDB);
+		error += simpleGdb.addGene(ref, bpText);
+		error += simpleGdb.addLink(ref, ref);
+		error += simpleGdb.addAttribute(ref, "Symbol", c.symbol);
 
 		if (c.idKegg != null)
 		{
-			error += gdbMaker.addGene(c.idHmdb, c.idKegg, DataSource.KEGG_COMPOUND.getSystemCode(), bpText);
-			error += gdbMaker.addLink(c.idHmdb, c.idKegg, DataSource.KEGG_COMPOUND.getSystemCode());
+			Xref right = new Xref (c.idKegg, DataSource.KEGG_COMPOUND);
+			error += simpleGdb.addGene(right, bpText);
+			error += simpleGdb.addLink(ref, right);
 		}
 		
 		if (c.idChebi != null)
 		{
-			error += gdbMaker.addGene(c.idHmdb, c.idChebi, DataSource.CHEBI.getSystemCode(), bpText);
-			error += gdbMaker.addLink(c.idHmdb, c.idChebi, DataSource.CHEBI.getSystemCode());
+			Xref right = new Xref (c.idChebi, DataSource.CHEBI);
+			error += simpleGdb.addGene(right, bpText);
+			error += simpleGdb.addLink(ref, right);
 		}
 		
 		if (c.idPubchem != null)
 		{	
-			error += gdbMaker.addGene(c.idHmdb, c.idPubchem, DataSource.PUBCHEM.getSystemCode(), bpText);
-			error += gdbMaker.addLink(c.idHmdb, c.idPubchem, DataSource.PUBCHEM.getSystemCode());
+			Xref right = new Xref (c.idPubchem, DataSource.PUBCHEM);
+			error += simpleGdb.addGene(right, bpText);
+			error += simpleGdb.addLink(ref, right);
 		}
 		
 		if (c.idCas != null)
 		{
-			error += gdbMaker.addGene(c.idHmdb, c.idCas, DataSource.CAS.getSystemCode(), bpText);
-			error += gdbMaker.addLink(c.idHmdb, c.idCas, DataSource.CAS.getSystemCode());
+			Xref right = new Xref (c.idCas, DataSource.CAS);
+			error += simpleGdb.addGene(right, bpText);
+			error += simpleGdb.addLink(ref, right);
 		}		
 	}
 	

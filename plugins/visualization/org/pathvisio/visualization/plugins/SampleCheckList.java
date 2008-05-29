@@ -18,11 +18,12 @@ package org.pathvisio.visualization.plugins;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 
 import org.pathvisio.data.GexManager;
@@ -30,15 +31,19 @@ import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
 
 public class SampleCheckList extends JCheckBoxList {
-	List<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
+	DefaultListModel model = new DefaultListModel();
 	Map<JCheckBox, Sample> checkbox2sample = new HashMap<JCheckBox, Sample>();
 	Map<Sample, JCheckBox> sample2checkbox = new HashMap<Sample, JCheckBox>();
 	
-	public SampleCheckList(Collection<? extends Sample> selected) {
+	public SampleCheckList(List<? extends Sample> selection) {
 		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
-		if(gex != null) {			
+		if(gex != null) {
+			List<Sample> samples = new ArrayList<Sample>();
+			samples.addAll(gex.getSamples().values());
+			Collections.sort(samples);
+			
 			setSamples(
-					gex.getSamples().values(), selected
+					samples, selection
 			);
 		} else {
 			setSamples(
@@ -47,32 +52,42 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 	}
 	
-	public SampleCheckList(Collection<? extends Sample> samples, 
-			Collection<? extends Sample> selected) {
+	public SampleCheckList(List<? extends Sample> samples, 
+			List<? extends Sample> selected) {
 		setSamples(samples, selected);
 	}
 	
-	private void setSamples(Collection<? extends Sample> samples, 
-			Collection<? extends Sample> selected) {
-		for(Sample s : samples) {
-			JCheckBox ch = new JCheckBox();
-			ch.setText(s.getName());
-			checkboxes.add(ch);
-			checkbox2sample.put(ch, s);
-			sample2checkbox.put(s, ch);
-			
-			if(selected.contains(s)) {
-				ch.setSelected(true);
+	private void setSamples(List<? extends Sample> samples, 
+			List<? extends Sample> selected) {
+		model = new DefaultListModel();
+		
+		//First add the selected samples in order
+		for(Sample s : selected) {
+			addSample(s).setSelected(true);
+		}
+		//Add the remaining samples
+		for(Sample s : samples) {			
+			if(!selected.contains(s)) {
+				addSample(s);
 			}
 		}
-		setListData(checkboxes.toArray());
+		setModel(model);
+	}
+	
+	private JCheckBox addSample(Sample s) {
+		JCheckBox ch = new JCheckBox();
+		ch.setText(s.getName());
+		model.addElement(ch);
+		checkbox2sample.put(ch, s);
+		sample2checkbox.put(s, ch);
+		return ch;
 	}
 	
 	/**
 	 * Adds an action listener to each checkbox in the list
 	 */
 	public void addActionListener(ActionListener l) {
-		for(JCheckBox ch : checkboxes) {
+		for(JCheckBox ch : checkbox2sample.keySet()) {
 			ch.addActionListener(l);
 		}
 	}
@@ -81,7 +96,7 @@ public class SampleCheckList extends JCheckBoxList {
 	 * Sets the action command for each checkbox in the list
 	 */
 	public void setActionCommand(String c) {
-		for(JCheckBox ch : checkboxes) {
+		for(JCheckBox ch : checkbox2sample.keySet()) {
 			ch.setActionCommand(c);
 		}
 	}
@@ -98,5 +113,76 @@ public class SampleCheckList extends JCheckBoxList {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) return ch.isSelected();
 		else return false;
+	}
+	
+	/**
+	 * Get all samples in the list in the order they are displayed
+	 */
+	public List<Sample> getSamplesInOrder() {
+		Object[] sa = model.toArray();
+		ArrayList<Sample> order = new ArrayList<Sample>();
+		for(Object o : sa) {
+			order.add(checkbox2sample.get((JCheckBox)o));
+		}
+		return order;
+	}
+	
+	/**
+	 * Get the selected samples in the list in the order they are
+	 * displayed
+	 */
+	public List<Sample> getSelectedSamplesInOrder() {
+		Object[] sa = model.toArray();
+		ArrayList<Sample> order = new ArrayList<Sample>();
+		for(Object o : sa) {
+			JCheckBox ch = (JCheckBox)o;
+			if(ch.isSelected()) {
+				order.add(checkbox2sample.get(ch));
+			}
+		}
+		return order;
+	}
+	
+	
+	public void moveUp(Sample s) {
+		JCheckBox ch = sample2checkbox.get(s);
+		if(ch != null) {
+			int i = model.indexOf(ch);
+			if(i > 0) {
+				model.removeElementAt(i);
+				model.add(i - 1, ch);
+				setSelectedValue(ch, true);
+			}
+		}
+	}
+	
+	public void moveDown(Sample s) {
+		JCheckBox ch = sample2checkbox.get(s);
+		if(ch != null) {
+			int i = model.indexOf(ch);
+			if(i < model.size() - 1) {
+				model.removeElementAt(i);
+				model.add(i + 1, ch);
+				setSelectedValue(ch, true);
+			}
+		}
+	}
+	
+	public void moveToBottom(Sample s) {
+		JCheckBox ch = sample2checkbox.get(s);
+		if(ch != null) {
+			model.removeElement(ch);
+			model.add(model.size() - 1, ch);
+			setSelectedValue(ch, true);
+		}
+	}
+	
+	public void moveToTop(Sample s) {
+		JCheckBox ch = sample2checkbox.get(s);
+		if(ch != null) {
+			model.removeElement(ch);
+			model.add(0, ch);
+			setSelectedValue(ch, true);
+		}
 	}
 }

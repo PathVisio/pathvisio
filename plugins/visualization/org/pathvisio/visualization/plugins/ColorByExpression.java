@@ -74,6 +74,7 @@ public class ColorByExpression extends VisualizationMethod {
 	public ColorByExpression(Visualization v, String registeredName) {
 		super(v, registeredName);
 		setIsConfigurable(true);
+		setUseProvidedArea(true);
 	}
 	
 	public Component visualizeOnToolTip(Graphics g) {
@@ -320,6 +321,10 @@ public class ColorByExpression extends VisualizationMethod {
 				drawColoredRectangle(area, rgb, g2d);
 			}
 		}
+	}
+	
+	void setUseSamples(List<ConfiguredSample> samples) {
+		useSamples = samples;
 	}
 	
 	/**

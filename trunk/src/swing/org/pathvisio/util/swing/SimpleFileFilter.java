@@ -26,6 +26,7 @@ public class SimpleFileFilter extends FileFilter
 {
 	private String desc;
 	private List<String> extensions;
+	private boolean showDirectories;
 	
 	/**
 	 * @param name example: "Data files"
@@ -45,9 +46,17 @@ public class SimpleFileFilter extends FileFilter
 		desc = name + " (" + globs + ")";
 	}
 
+	public SimpleFileFilter(String name, String globs, boolean showDirectories) {
+		this(name, globs);
+		this.showDirectories = showDirectories;
+	}
+	
 	@Override
 	public boolean accept(File file) 
 	{
+		if(showDirectories && file.isDirectory()) {
+			return true;
+		}
 		String fileName = file.toString().toLowerCase();
 		
 		for (String extension : extensions)

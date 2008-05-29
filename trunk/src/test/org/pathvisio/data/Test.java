@@ -16,14 +16,16 @@
 //
 package org.pathvisio.data;
 
-import junit.framework.TestCase;
-import org.pathvisio.data.GdbManager.GdbEventListener;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Xref;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+
+import junit.framework.TestCase;
+
+import org.pathvisio.Engine;
+import org.pathvisio.data.GdbManager.GdbEventListener;
+import org.pathvisio.model.DataSource;
+import org.pathvisio.model.Xref;
 
 public class Test extends TestCase implements GdbEventListener
 {	
@@ -60,6 +62,7 @@ public class Test extends TestCase implements GdbEventListener
 	
 	public void testImportSample1() throws IOException, DataException
 	{
+		Engine.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_1.txt");
 		assertTrue (f.exists());
@@ -87,6 +90,7 @@ public class Test extends TestCase implements GdbEventListener
 
 	public void testImportSample2() throws IOException, DataException
 	{
+		Engine.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_affymetrix.txt");
 		assertTrue (f.exists());

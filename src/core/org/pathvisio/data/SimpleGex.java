@@ -84,7 +84,7 @@ public class SimpleGex
 	 * Set the database name of the expression data currently loaded
 	 * (Connection is not reset)
 	 */
-	public void setDbName(String name) { dbName = name; }
+	private void setDbName(String name) { dbName = name; }
 						    
 	private HashMap<Integer, Sample> samples;
 	/**

@@ -780,16 +780,16 @@ public class SimpleGdb implements Gdb
 		return 0;
     }
     
-    int addAttribute(String attr, String val, String id, String code)
+    public int addAttribute(Xref ref, String attr, String val)
     {
     	try {
     		pstAttr.setString(1, attr);
 			pstAttr.setString(2, val);
-			pstAttr.setString(3, id);
-			pstAttr.setString(4, code);
+			pstAttr.setString(3, ref.getId());
+			pstAttr.setString(4, ref.getDataSource().getSystemCode());
 			pstAttr.executeUpdate();
 		} catch (Exception e) {
-			Logger.log.error(attr + "\t" + val + "\t" + id + "\t" + code, e);
+			Logger.log.error(attr + "\t" + val + "\t" + ref, e);
 			return 1;
 		}
 		return 0;
@@ -920,6 +920,15 @@ public class SimpleGdb implements Gdb
 	public void compact() throws DataException
 	{
 		dbConnector.compact(con);
+	}
+	
+	public void finalize() throws DataException
+	{
+		dbConnector.compact(con);
+		createGdbIndices();
+		dbConnector.closeConnection(con);
+		String newDb = dbConnector.finalizeNewDatabase(dbName);
+		dbName = newDb;
 	}
 
 }

@@ -21,17 +21,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
+import org.pathvisio.data.Sample;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetCombo;
 import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -99,23 +103,28 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	class Basic extends JPanel implements ItemListener {
+	class Basic extends JPanel implements ItemListener, ActionListener, ListDataListener {
+		static final String ACTION_SAMPLE = "sample";
+		private SortSampleCheckList sampleList;
+		
 		public Basic() {
 			setLayout(new FormLayout(
 					"fill:pref:grow, 2dlu, pref, 4dlu, pref, 2dlu, pref",
 					"pref:grow"
 			));
 			
-			SampleCheckList sampleList = new SampleCheckList(
+			sampleList = new SortSampleCheckList(
 					method.getSelectedSamples()
 			);
+			sampleList.getList().addActionListener(this);
+			sampleList.getList().getModel().addListDataListener(this);
 			
 			ColorSetManager csm = method.getVisualization()
 											.getManager().getColorSetManager();
 			ColorSetCombo csc = new ColorSetCombo(csm);
 			csc.setSelectedItem(method.getSingleColorSet());
 			CellConstraints cc = new CellConstraints();
-			add(new JScrollPane(sampleList), cc.xy(1, 1));
+			add(sampleList, cc.xy(1, 1));
 			add(new JLabel("Color set:"), cc.xy(5, 1, "c, t"));
 			add(csc, cc.xy(7, 1, "c, t"));
 		}
@@ -124,6 +133,34 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			if(e.getItem() instanceof ColorSet) {
 				method.setSingleColorSet((ColorSet)e.getItem());
 			}
+		}
+
+		private void refreshSamples() {
+			ArrayList<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
+			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
+				ConfiguredSample cs = method.new ConfiguredSample(s);
+				cs.setColorSet(method.getSingleColorSet());
+				csamples.add(cs);
+			}
+			method.setUseSamples(csamples);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if(ACTION_SAMPLE.equals(e.getActionCommand())) {
+				refreshSamples();
+			}
+		}
+
+		public void contentsChanged(ListDataEvent e) {
+			refreshSamples();
+		}
+
+		public void intervalAdded(ListDataEvent e) {
+			refreshSamples();
+		}
+
+		public void intervalRemoved(ListDataEvent e) {
+			refreshSamples();			
 		}
 	}
 	

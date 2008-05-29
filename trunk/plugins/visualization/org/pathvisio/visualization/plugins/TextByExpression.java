@@ -25,14 +25,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.jdom.Element;
 import org.pathvisio.Engine;
@@ -52,7 +52,8 @@ import org.pathvisio.visualization.VisualizationMethod;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class TextByExpression extends VisualizationMethod implements ActionListener {
+public class TextByExpression extends VisualizationMethod 
+								implements ActionListener, ListDataListener {
 	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
 	static final int SPACING = 3;
 	static final String ACTION_SAMPLE = "sample";
@@ -62,7 +63,7 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 	boolean mean = false;
 			
 	Font font;
-	Set<Sample> useSamples = new LinkedHashSet<Sample>();
+	List<Sample> useSamples = new ArrayList<Sample>();
 	
 	public TextByExpression(Visualization v, String registeredName) {
 		super(v, registeredName);
@@ -208,20 +209,6 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 		return f;
 	}
 	
-	void addUseSample(Sample s) {
-		if(s != null) {
-			useSamples.add(s);
-			modified();
-		}
-	}
-	
-	void removeUseSample(Sample s) {
-		if(s != null) {
-			useSamples.remove(s);
-			modified();
-		}
-	}
-	
 	public int getRoundTo() { return roundTo; }
 	
 	public void setRoundTo(int dec) {
@@ -236,37 +223,49 @@ public class TextByExpression extends VisualizationMethod implements ActionListe
 		modified();
 	}
 	
-	SampleCheckList sampleList;
+	SortSampleCheckList sampleList;
 	
 	public JPanel getConfigurationPanel() {
 		JPanel panel = new JPanel();
 		FormLayout layout = new FormLayout(
-			"fill:50dlu:grow, 4dlu, pref",
+			"fill:25dlu:grow",
 			"pref, 4dlu, fill:100dlu:grow, pref"
 		);
 		panel.setLayout(layout);
 		
-		sampleList = new SampleCheckList(useSamples);
+		sampleList = new SortSampleCheckList(useSamples);
 
-		sampleList.setActionCommand(ACTION_SAMPLE);
-		sampleList.addActionListener(this);
+		sampleList.getList().setActionCommand(ACTION_SAMPLE);
+		sampleList.getList().getModel().addListDataListener(this);
+		sampleList.getList().addActionListener(this);
 		CellConstraints cc = new CellConstraints();
 		panel.add(new JLabel("Select samples:"), cc.xy(1, 1));
-		panel.add(new JScrollPane(sampleList), cc.xy(1, 3));
+		panel.add(sampleList, cc.xy(1, 3));
 		return panel;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
-		System.out.println("ACTION");
 		if(ACTION_SAMPLE.equals(action)) {
-			Sample s = sampleList.getSelectedSample();
-			if(sampleList.isSelected(s)) {
-				addUseSample(s);
-			} else {
-				removeUseSample(s);
-			}
+			refreshUseSamples();
 		}
+	}
+	
+	private void refreshUseSamples() {
+		useSamples = sampleList.getList().getSelectedSamplesInOrder();
+		modified();
+	}
+	
+	public void contentsChanged(ListDataEvent e) {
+		refreshUseSamples();
+	}
+
+	public void intervalAdded(ListDataEvent e) {
+		refreshUseSamples();
+	}
+
+	public void intervalRemoved(ListDataEvent e) {
+		refreshUseSamples();
 	}
 	
 	static final String XML_ATTR_FONTDATA = "font";

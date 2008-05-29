@@ -17,9 +17,16 @@
 package org.pathvisio.visualization.colorset;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -43,6 +50,20 @@ public class ColorGradient extends ColorSetObject {
 	{
 		super(parent, "gradient");
 		getColorValuePairs();
+	}
+	
+	public static List<ColorGradient> createDefaultGradients() {
+		List<ColorGradient> gradients = new ArrayList<ColorGradient>();
+		ColorGradient g = new ColorGradient(null);
+		g.addColorValuePair(g.new ColorValuePair(Color.GREEN, -1));
+		g.addColorValuePair(g.new ColorValuePair(Color.YELLOW, 0));
+		g.addColorValuePair(g.new ColorValuePair(Color.RED, 1));
+		gradients.add(g);
+		g = new ColorGradient(null);
+		g.addColorValuePair(g.new ColorValuePair(Color.BLUE, -1));
+		g.addColorValuePair(g.new ColorValuePair(Color.YELLOW, 1));
+		gradients.add(g);
+		return gradients;
 	}
 	
 	/**
@@ -90,11 +111,20 @@ public class ColorGradient extends ColorSetObject {
 		colorValuePairs.remove(cvp);
 		fireModifiedEvent();
 	}
-			
+	
+	public void paintPreview(Graphics2D g, Rectangle bounds) {
+		double[] mm = getMinMax();
+		for(int i = 0; i < bounds.width; i++) {
+			Color c = getColor(mm[0] + (double)i * (mm[1] - mm[0])/ bounds.width);
+			g.setColor(c);
+			g.fillRect(bounds.x + i, bounds.y, 1, bounds.height);
+		}
+	}
+	
 	/**
 	 * get the color of the gradient for this value
 	 * @param value
-	 * @return	{@link RGB} containing the color information for the corresponding value
+	 * @return	Color containing the color information for the corresponding value
 	 * or null if the value does not have a valid color for this gradient
 	 */
 	public Color getColor(double value)
@@ -146,6 +176,13 @@ public class ColorGradient extends ColorSetObject {
 		double value = (Double)data.get(idSample);
 		return getColor(value);
 	}
+	
+	public boolean equals(Object obj) {
+		if(obj instanceof ColorGradient) {
+			return ((ColorGradient)obj).toXML().equals(toXML());
+		}
+		return false;
+ 	}
 	
 	String getXmlElementName() {
 		return XML_ELEMENT_NAME;

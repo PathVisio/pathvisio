@@ -17,6 +17,7 @@
 package org.pathvisio.visualization.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
 
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
@@ -38,6 +39,7 @@ public class ColorSetDlg extends OkCancelDialog
 		super (frame, "Edit Color Set", locationComp, true, true);
 		this.cs = cs;
 		setDialogComponent(new ColorSetPanel(cs));
-		setSize(200, 300);
+		setMinimumSize(new Dimension(200, 300));
+		pack();
 	}
 }

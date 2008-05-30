@@ -59,7 +59,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	static final String ACTION_COMBO = "combo";
 	
 	private ColorSet colorSet;
-	private JComboBox gradientCombo;
+	private ColorGradientCombo gradientCombo;
 	private JCheckBox gradientCheck;
 	private JPanel rulesPanel;
 	private JPanel valuesPanel;
@@ -89,17 +89,10 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		gradientCheck.setActionCommand(ACTION_GRADIENT);
 		gradientCheck.addActionListener(this);
 		
-		gradientCombo = ColorGradientCombo.createGradientCombo();
-		gradientCombo.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				Logger.log.info ("action performed");
-				
-			} 
-		});
+		gradientCombo = new ColorGradientCombo();
 		
-//		gradientCombo.setActionCommand(ACTION_COMBO);
-//		gradientCombo.addActionListener(this);
+		gradientCombo.setActionCommand(ACTION_COMBO);
+		gradientCombo.addActionListener(this);
 
 		gradientPanel.add(gradientCheck, cc.xy(1,1));
 		gradientPanel.add(gradientCombo, cc.xy(3, 1));
@@ -141,9 +134,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		} else {
 			gradientCheck.setSelected(false);
 		}
-		gradientCombo.setModel(
-				new DefaultComboBoxModel(gradients.toArray())
-		);
+		gradientCombo.setGradients(gradients);
 		gradientCombo.setSelectedItem(gradient);
 		
 		//Generate rules panel
@@ -176,7 +167,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 				gradientCombo.setSelectedIndex(-1);
 			}
 		} else if(ACTION_COMBO.equals(action)) {
-			gradient = (ColorGradient)gradientCombo.getSelectedItem();
+			gradient = gradientCombo.getSelectedGradient();
 			Logger.log.trace("" + gradient);
 			gradientCheck.setSelected(gradient != null);
 		}

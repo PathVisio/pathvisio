@@ -22,8 +22,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -35,28 +35,47 @@ import javax.swing.border.Border;
 
 import org.pathvisio.visualization.colorset.ColorGradient;
 
-public class ColorGradientCombo  
+/**
+ * A JComboBox that renders gradients.
+ * When using this class, do not add or remove items directly,
+ * but use {@link #setGradients(List)}!
+ * @author thomas
+ *
+ */
+public class ColorGradientCombo extends JComboBox
 {
-	
-	public static JComboBox createGradientCombo() 
-	{
-		JComboBox combo = new JComboBox();
-		combo.setRenderer(new ColorGradientRenderer());
-		combo.setEditable(false);
-		combo.addActionListener(new ActionListener()
-		{
-
-			public void actionPerformed(ActionEvent e) 
-			{
-				new Throwable().printStackTrace();
-				System.out.println ("!!!");
-				
-			}
-		});
-		return combo;
+	public ColorGradientCombo() {
+		super();
+		setRenderer(new ColorGradientRenderer());
 	}
 	
-	static class ColorGradientRenderer extends JLabel implements ListCellRenderer 
+	HashMap<String, ColorGradient> id2gradient = new HashMap<String, ColorGradient>();
+	
+	public void setGradients(List<ColorGradient> gradients) {
+		/*
+		 * Dirty hack to make the combo work. It doesn't seem to fire/process
+		 * selection events when we fill the combo with instances of ColorGradient
+		 * directly. So we fill it with strings and lookup the ColorGradient
+		 * object.
+		 */
+		id2gradient.clear();
+		removeAllItems();
+		for(ColorGradient g : gradients) {
+			String id = g.hashCode() + "";
+			id2gradient.put(id, g);
+			addItem(id);
+		}
+	}
+	
+	public ColorGradient getGradient(String id) {
+		return id2gradient.get(id);
+	}
+	
+	public ColorGradient getSelectedGradient() {
+		return id2gradient.get(getSelectedItem());
+	}
+	
+	class ColorGradientRenderer extends JLabel implements ListCellRenderer 
 	{
 		private static final long serialVersionUID = 1L;
 		ColorGradient current;
@@ -75,13 +94,13 @@ public class ColorGradientCombo
 				int index, boolean isSelected, boolean cellHasFocus) 
 		{
 			setBorder(isSelected ? b_selected : b_unselected);
-			current = (ColorGradient)value;
+			String id = (String)value;
+			current = id2gradient.get(id);
 			return this;
 		}
 		
-		public void paint(Graphics g) 
-		{
-			super.paint(g);
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
 			if(current != null) 
 			{
 				int b = getBorder() == b_selected ? 3 : 1;

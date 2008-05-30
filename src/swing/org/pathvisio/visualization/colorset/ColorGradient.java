@@ -17,16 +17,12 @@
 package org.pathvisio.visualization.colorset;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -186,6 +182,15 @@ public class ColorGradient extends ColorSetObject {
 	
 	String getXmlElementName() {
 		return XML_ELEMENT_NAME;
+	}
+	
+	public String toString() {
+		StringBuilder strb = new StringBuilder();
+		for(ColorValuePair cvp : colorValuePairs) {
+			strb.append(cvp.getColor().toString().replace("java.awt.Color", ""));
+			strb.append(" (" + cvp.getValue() + ") - ");
+		}
+		return strb.substring(0, strb.length() - 2);
 	}
 	
 	public Element toXML() {

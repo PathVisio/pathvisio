@@ -38,6 +38,7 @@
 		 <jar href="lib/batik/xml-apis.jar"/>
 		 <jar href="lib/batik/xml-apis-ext.jar"/>
 	     <jar href="lib/batik/batik-anim.jar"/>
+	     <jar href="lib/forms-1.2.0.jar"/>
 	</resources>
 	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
 	</application-desc>

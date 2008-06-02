@@ -16,8 +16,6 @@
 
 package org.pathvisio.data;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,13 +25,11 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
-import org.pathvisio.util.Utils;
 
 /**
  * SimpleGdb is the main implementation of the Gdb interface,
@@ -64,12 +60,6 @@ public class SimpleGdb implements Gdb
 {		
 	private static final int GDB_COMPAT_VERSION = 2; //Preferred schema version
 
-	static 
-	{
-		// load header resource, a html template for creating back-pages.
-		initializeHeader();
-	}
-
 	// the name of this table is "datanode" starting from
 	// schema v2. 
 	// it is "gene" for older tables.
@@ -79,7 +69,7 @@ public class SimpleGdb implements Gdb
 	 * The {@link Connection} to the Gene Database
 	 */
 	// SQL connection
-	private Connection con;
+	private Connection con = null;
 	// dbConnector, helper class for dealing with RDBMS specifcs.
 	private DBConnector dbConnector;
 
@@ -183,81 +173,6 @@ public class SimpleGdb implements Gdb
 			return result;
 		} catch(Exception e) { return null;	} //Gene not found
 	}
-
-	/**
-	 * Note that this method is not actually used!!! 
-	 * See {@link DoubleGdb#getBackpageHTML(Xref, String)} 
-	 */
-	public String getBackpageHTML(Xref ref, String bpHead) {
-		String text = backpagePanelHeader == null ? "" : backpagePanelHeader;
-		if( ref == null || ref.getId() == null || ref.getDataSource() == null) return text;
-
-		if (bpHead == null) bpHead = "";
-		text += "<H1>Gene information</H1><P>";
-		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-
-		String  bpInfo = getBpInfo (ref);
-		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
-
-		text += getCrossRefText(ref);		
-
-		return text + "</body></html>";
-	}
-
-	String getCrossRefText(Xref ref) 
-	{
-		List<Xref> crfs = getCrossRefs(ref);
-		if(crfs.size() == 0) return "";
-		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
-		for(Xref cr : crfs) {
-			String idtxt = cr.getId();
-			String url = cr.getUrl();
-			if(url != null) {
-				int os = Utils.getOS();
-				if(os == Utils.OS_WINDOWS) {
-					//In windows: open in new browser window
-					idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
-				} else {
-					//This doesn't work under ubuntu, so no new windoe there
-					idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
-				}
-
-			}
-			String dbName = cr.getDataSource().getFullName();
-			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
-		}
-		return crt.toString();
-	}
-
-	/**
-	 * Header file, containing style information
-	 */
-	final static String HEADERFILE = "header.html";
-
-	private static String backpagePanelHeader;
-
-	static String getBackpagePanelHeader()
-	{
-		return backpagePanelHeader;
-	}
-
-	/**
-	 * Reads the header of the HTML content displayed in the browser. This header is displayed in the
-	 * file specified in the {@link HEADERFILE} field
-	 */
-	private static void initializeHeader() {
-		try {
-			BufferedReader input = new BufferedReader(new InputStreamReader(
-					Engine.getCurrent().getResourceURL(HEADERFILE).openStream()));
-			String line;
-			backpagePanelHeader = "";
-			while((line = input.readLine()) != null) {
-				backpagePanelHeader += line.trim();
-			}
-		} catch (Exception e) {
-			Logger.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
-		}
-	}	
 
 	// lazy initialization
 	private PreparedStatement pstEnsId2RefsNoCode = null;

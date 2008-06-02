@@ -201,43 +201,7 @@ public class SimpleGex
 		return cachedData;
 	}
 
-	/**
-	 * Gets all available expression data for the given gene id and returns a string
-	 * containing this data in a HTML table
-	 * @param idc	the {@link Xref} containing the id and code of the geneproduct to look for
-	 * @return		String containing the expression data in HTML format or a string displaying a
-	 * 'no expression data found' message in HTML format
-	 */
-	public String getDataString(Xref idc, Gdb gdb)
-	{
-		String noDataFound = "<P><I>No expression data found";
-		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
-		
-		String colNames = "<TR><TH>Sample name";
-		if(		con == null //Need a connection to the expression data
-				|| !gdb.isConnected() //and to the gene database
-		) return noDataFound;
-		
-		List<Data> pwData = cachedData.getData(idc);
-		
-		if(pwData == null) return noDataFound;
-		
-		for(Data d : pwData){
-			colNames += "<TH>" + d.getXref().getId();
-		}
-		
-		String dataString = "";
-		for(Sample s : getSamples().values())
-		{
-			dataString += "<TR><TH>" + s.name;
-			for(Data d : pwData)
-			{
-				dataString += "<TH>" + d.getSampleData(s.idSample);
-			}
-		}
-		
-		return exprInfo + colNames + dataString + "</TABLE>";
-	}
+
 	
 	/**
 	 * Loads expression data for all the given gene ids into memory

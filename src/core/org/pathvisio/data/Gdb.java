@@ -62,8 +62,6 @@ public interface Gdb
 	 * @return String with the backpage info, null if the gene was not found
 	 */
 	public String getBpInfo(Xref ref);
-
-	public String getBackpageHTML(Xref ref, String bpHead);
 	
 	/**
 	 * Get all cross references (ids from every system representing 

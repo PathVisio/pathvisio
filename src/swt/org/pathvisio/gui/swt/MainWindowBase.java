@@ -396,7 +396,7 @@ public class MainWindowBase extends ApplicationWindow implements
 		rightPanel = new TabbedSidePanel(sashForm, SWT.NULL);
 		
 		//rightPanel controls
-		BackpageTextProvider bpt = new BackpageTextProvider(Engine.getCurrent(), SwtEngine.getCurrent().getGdbManager());
+		BackpageTextProvider bpt = new BackpageTextProvider(Engine.getCurrent(), SwtEngine.getCurrent().getGdbManager(), GexManager.getCurrent());
 		bpBrowser = new BackpagePanel(rightPanel.getTabFolder(), SWT.NONE, bpt);
 		propertyTable = new PropertyPanel(
 				rightPanel.getTabFolder(), SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);

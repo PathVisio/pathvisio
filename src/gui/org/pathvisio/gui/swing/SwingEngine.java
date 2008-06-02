@@ -24,8 +24,11 @@ import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
@@ -574,5 +577,19 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public JFrame getFrame()
 	{
 		return frame;
+	}
+	
+	public void registerMenuAction (String submenu, Action a)	
+	{
+		JMenuBar menuBar = mainPanel.getMenuBar();
+		for (int i = 0; i < menuBar.getMenuCount(); ++i)
+		{
+			JMenu menuAt = menuBar.getMenu(i);
+			if (menuAt.getText().equals (submenu))
+			{
+				menuAt.add(a);
+				break;
+			}
+		}
 	}
 }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.Xref;
 import org.pathvisio.util.Utils;
 
 /**
@@ -30,13 +31,15 @@ public class MatchResult implements RowWithProperties<SearchTableModel.Column>
 	private File file;
 	private List<String> idsFound;
 	private List<String> namesFound;
+	private List<Xref> matches;
 	
-	MatchResult (File f, List<String> idsFound, List<String> namesFound)
+	MatchResult (File f, List<String> idsFound, List<String> namesFound, List<Xref> matches)
 	{
 		if (f == null) throw new NullPointerException();
 		file = f;
 		this.idsFound = idsFound;
 		this.namesFound = namesFound;
+		this.matches = matches;
 	}
 	
 	public String getProperty (SearchTableModel.Column prop)
@@ -59,14 +62,16 @@ public class MatchResult implements RowWithProperties<SearchTableModel.Column>
 	// name of pwy found
 	String getName() { return file.getName(); }
 	
+	// file of pwy found
+	public File getFile() { return file; }
+	
 	// dir of pwy found
 	String getDirectory() { return file.getParentFile().getName(); }
 	
-	// absolute path to pathway found
-	String getPath() { return file.getAbsolutePath(); }
-	
 	// id's found
 	List<String> getIdsFound() { return idsFound; }
+	
+	public List<Xref> getMatches() { return matches; }
 	
 	// names found (when searching by symbol
 	List<String> getNamesFound() { return namesFound; }

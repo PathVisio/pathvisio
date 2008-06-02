@@ -58,6 +58,7 @@ public class AboutDlg
 		JLabel versionLabel = new JLabel (Engine.getCurrent().getApplicationName());
 		JLabel revisionLabel = new JLabel (Revision.REVISION);
 		JTextArea label = new JTextArea();
+		label.setEditable(false);
 		label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
 			"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nBiGCaT");
 		JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));

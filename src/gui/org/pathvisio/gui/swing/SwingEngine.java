@@ -217,7 +217,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return processTask(pk, d, sw);
 	}
 
-	private boolean openPathway(final File f) 
+	public boolean openPathway(final File f) 
 	{		
 		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 

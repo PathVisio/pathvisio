@@ -396,5 +396,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		return menuBar;
 	}
 
+	public JTabbedPane getSideBarTabbedPane()
+	{
+		return sidebarTabbedPane;
+	}
 
 }

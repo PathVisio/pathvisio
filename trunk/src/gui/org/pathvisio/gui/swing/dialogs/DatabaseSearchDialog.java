@@ -17,6 +17,7 @@
 package org.pathvisio.gui.swing.dialogs;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -47,7 +48,10 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 		this.xrefs = xrefs;
 		Collections.sort(xrefs);
 		
+		setDialogComponent(createDialogPane());
+		
 		((XRefTableModel)table.getModel()).refresh();
+		pack();
 		validate();
 	}
 

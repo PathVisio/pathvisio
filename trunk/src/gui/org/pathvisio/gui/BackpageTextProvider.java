@@ -224,7 +224,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	
 		// find first gene database that has non-null bpInfo.
 		String bpInfo = gdb.getBpInfo(ref);		
-		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
+		text += bpInfo == null ? "<I>No " + type + " information found</I>" : bpInfo;
 
 		//Get the expression data information if available
 		if(gex != null) {
@@ -232,7 +232,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			text += getDataString(ref, gdb, gex);
 		}
 		
-		getCrossRefText (gdb, ref);
+		text += getCrossRefText (gdb, ref);
 
 		return text + "</body></html>";
 	}

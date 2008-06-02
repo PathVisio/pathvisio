@@ -331,7 +331,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		if(xml == null) return;
 		
 		for(Object o : xml.getChildren(Visualization.XML_ELEMENT)) {
-			Visualization vis = Visualization.fromXML((Element) o, methodRegistry);
+			Visualization vis = Visualization.fromXML((Element) o, methodRegistry, this);
 			if(!visualizations.contains(vis)) {
 				addVisualization(vis);				
 			}
@@ -342,10 +342,12 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		Logger.log.trace("Loading xml for visualization settings");
 		Document doc = getXML();
 		Element root = doc.getRootElement();
-		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
-		loadXML(vis);
+		//Load the colorsets first
 		Element cs = root.getChild(ColorSetManager.XML_ELEMENT);
 		colorSetMgr.fromXML(cs);
+		//Load the visualizations
+		Element vis = root.getChild(VisualizationManager.XML_ELEMENT);
+		loadXML(vis);
 		Logger.log.trace("Finished loading xml for visualization settings");
 	}
 	

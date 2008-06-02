@@ -15,10 +15,12 @@
 // limitations under the License.
 //
 package org.pathvisio.visualization.colorset;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.HashMap;
 
 import org.jdom.Element;
-import java.awt.Color;
 
 /**
  * This class represent any object that can be present in a colorset
@@ -73,7 +75,7 @@ public abstract class ColorSetObject {
 	 * get the color defined by the colorset object for the given data
 	 * @param data {@link HashMap}<Integer, Object> containing data (String or double) for every sampleId 
 	 * @param sample id of the sample that is visualized using this color
-	 * @return {@link RGB} with the color returned by the colorset object after evaluating the input data,
+	 * @return {@link Color} with the color returned by the colorset object after evaluating the input data,
 	 * null if the input data doesn't result in a valid color
 	 * @throws Exception 
 	 */
@@ -87,6 +89,8 @@ public abstract class ColorSetObject {
 		return parent;
 	}
 
+	public abstract void paintPreview(Graphics2D g, Rectangle bounds);
+	
 	/**
 	 * let ColorSetManager fire an event to indicate this ColorSet has
 	 * changed. 

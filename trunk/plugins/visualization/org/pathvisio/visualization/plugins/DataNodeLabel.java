@@ -59,7 +59,7 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	String display = DISPLAY_LABEL;
 	
 	boolean adaptFontSize;
-	int align;
+	int align = ALIGN_CENTER;
 	
 	Font font;
 	Color fontColor;
@@ -67,7 +67,7 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	public DataNodeLabel(Visualization v, String registeredName) {
 		super(v, registeredName);
 	    setIsConfigurable(true);
-		setUseProvidedArea(true);
+		setUseProvidedArea(false); //Overlay by default
 	}
 
 	public String getDescription() {
@@ -168,7 +168,6 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 				g2d.fill(area);
 			}
 			g2d.setColor(Color.BLACK);
-			g2d.draw(area);
 			
 			g2d.clip(region);
 					

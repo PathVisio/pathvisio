@@ -176,10 +176,11 @@ public class Visualization
 	 * @param xml The XML element that contains the information to re-build the visualization
 	 * @return The visualization that is re-build based on the information in the XML element
 	 */
-	public static Visualization fromXML(Element xml, VisualizationMethodRegistry methodFactory) {
+	public static Visualization fromXML(Element xml, VisualizationMethodRegistry methodFactory, VisualizationManager visMgr) {
 		String name = xml.getAttributeValue(XML_ATTR_NAME);
 		
 		Visualization v = new Visualization(name);
+		v.setVisualizationMgr(visMgr);
 		for(Object o : xml.getChildren(VisualizationMethod.XML_ELEMENT)) {
 			try {
 				String methodName = ((Element)o).getAttributeValue(VisualizationMethod.XML_ATTR_NAME);

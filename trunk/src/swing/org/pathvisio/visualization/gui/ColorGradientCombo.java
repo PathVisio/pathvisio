@@ -22,10 +22,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -37,8 +39,8 @@ import org.pathvisio.visualization.colorset.ColorGradient;
 
 /**
  * A JComboBox that renders gradients.
- * When using this class, do not add or remove items directly,
- * but use {@link #setGradients(List)}!
+ * When using this class, do not select, add or remove items directly,
+ * but use {@link #setSelectedGradient(ColorGradient)}, {@link #setGradients(List)}!
  * @author thomas
  *
  */
@@ -60,11 +62,23 @@ public class ColorGradientCombo extends JComboBox
 		 */
 		id2gradient.clear();
 		removeAllItems();
+		
+		List<String> ids = new ArrayList<String>();
+		
 		for(ColorGradient g : gradients) {
-			String id = g.hashCode() + "";
+			String id = getId(g);
 			id2gradient.put(id, g);
-			addItem(id);
+			ids.add(id);
 		}
+		setModel(new DefaultComboBoxModel(ids.toArray()));
+	}
+	
+	private String getId(ColorGradient g) {
+		return g == null ? null : g.hashCode() + "";
+	}
+	
+	public void setSelectedGradient(ColorGradient g) {
+		setSelectedItem(getId(g));
 	}
 	
 	public ColorGradient getGradient(String id) {

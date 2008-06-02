@@ -17,6 +17,8 @@
 package org.pathvisio.visualization.colorset;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.HashMap;
 
 import org.jdom.Element;
@@ -58,6 +60,13 @@ public class ColorRule extends ColorSetObject
 	Color getColor(HashMap<Integer, Object> data, int idSample) throws Exception {
 		if(criterion.evaluate(data, idSample)) return color;
 		return null;
+	}
+	
+	public void paintPreview(Graphics2D g, Rectangle bounds) {
+		Color c = getColor();
+		if(c == null) c = Color.BLACK;
+		g.setColor(c);
+		g.fill(bounds);
 	}
 	
 	public String getXmlElementName() {

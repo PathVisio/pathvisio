@@ -220,6 +220,13 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			   source="1.5">
 			<classpath refid="project.swing.class.path"/>
 		</javac>
+		<javac srcdir="plugins/zscore"
+			   includes="**"
+			   destdir="${build.visplugins.dir}"
+			   debug="true"
+			   source="1.5">
+			<classpath refid="project.swing.class.path"/>
+		</javac>
 	</target>
 
 	<target name="all" depends="compile-swt,compile-swing,compile-wikipathways, compile-visplugins" description="Compile all versions of this project" />

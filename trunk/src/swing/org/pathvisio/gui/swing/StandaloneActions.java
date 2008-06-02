@@ -355,17 +355,10 @@ public class StandaloneActions
 		}
 	}
 
-	/**
-	 * Let the user pick a gene or metabolite database.
-	 * Invoked in menu->data->select gene database
-	 */
 	public static class SearchAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
 
-		/** 
-		 * type should be "Gene" or "Metabolite"
-		 */
 		public SearchAction() 
 		{
 			super();

@@ -16,19 +16,29 @@
 //
 package org.pathvisio.gui;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.data.GexManager;
+import org.pathvisio.data.Sample;
+import org.pathvisio.data.SimpleGex;
+import org.pathvisio.data.CachedData.Data;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.Utils;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -40,24 +50,32 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
  * listeners when needed (e.g. a datanode is selected). 
  * @author thomas
  */
-public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener {
+public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener 
+{
 	PathwayElement input;
 	final static int maxThreads = 1;
 	volatile ThreadGroup threads;
 	volatile Thread lastThread;
 	
 	private GdbManager gdbManager;
+	private GexManager gexManager;
+	private Engine engine;
 	
-	public BackpageTextProvider(Engine engine, GdbManager gdbManager) {
+	public BackpageTextProvider(Engine engine, GdbManager gdbManager, GexManager gexManager) 
+	{
+		this.engine = engine;
+		initializeHeader();
 		engine.addApplicationEventListener(this);
 		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 		
 		threads = new ThreadGroup("backpage-queries");
 		this.gdbManager = gdbManager;
+		this.gexManager = gexManager;
 	}
 
-	public void setInput(final PathwayElement e) {
+	public void setInput(final PathwayElement e) 
+	{
 		//System.err.println("===== SetInput Called ==== " + e);
 		if(e == input) return; //Don't set same input twice
 		
@@ -66,7 +84,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			input = null;
-			setText(gdbManager.getCurrentGdb().getBackpageHTML(null, null));
+			SimpleGex gex = gexManager.getCurrentGex();
+			setText(getBackpageHTML(gdbManager.getCurrentGdb(), gex, null));
 		} else {
 			input = e;
 			input.addListener(this);
@@ -154,10 +173,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		void performTask() 
 		{
 			if(e == null) return;
-			Xref ref = new Xref (e.getGeneID(), e.getDataSource());
-			String txt = gdbManager.getCurrentGdb().getBackpageHTML(
-					ref, 
-					e.getBackpageHead());
+			SimpleGex gex = gexManager.getCurrentGex();
+			String txt = getBackpageHTML(gdbManager.getCurrentGdb(), gex, e);
 			if(input == e) setText(txt);
 		}
 	}
@@ -180,4 +197,137 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	public void removeListener(BackpageListener l) {
 		listeners.remove(l);
 	}
+	
+	/**
+	 * returs backpage html containing the gene information
+	 * from the first child that has it,
+	 * and the crossref table composed of all child results.
+	 */
+	private String getBackpageHTML(Gdb gdb, SimpleGex gex, PathwayElement e) 
+	{
+		String bpHead = (e == null ? "" : e.getBackpageHead());
+		Xref ref = (e == null ? null : e.getXref());
+		// type will be displayed in the header, make either "Metabolite" or "Gene";
+		String type = (e == null ? "" : e.getDataNodeType()); 
+		if (!type.equals("Metabolite"))
+		{
+			type = "Gene";
+		}
+		String text = getBackpagePanelHeader();
+		if (text == null) text = "";
+		
+		if( ref == null || ref.getId() == null || ref.getDataSource() == null) return text;
+		
+		if (bpHead == null) bpHead = "";
+		text += "<H1>" + type + " information</H1><P>";
+		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
+	
+		// find first gene database that has non-null bpInfo.
+		String bpInfo = gdb.getBpInfo(ref);		
+		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
+
+		//Get the expression data information if available
+		if(gex != null) {
+			text += "<H1>Expression data</H1>";
+			text += getDataString(ref, gdb, gex);
+		}
+		
+		getCrossRefText (gdb, ref);
+
+		return text + "</body></html>";
+	}
+
+	/**
+	 * Header file, containing style information
+	 */
+	final private static String HEADERFILE = "header.html";
+
+	private String backpagePanelHeader;
+
+	private String getBackpagePanelHeader()
+	{
+		return backpagePanelHeader;
+	}
+
+	/**
+	 * Reads the header of the HTML content displayed in the browser. This header is displayed in the
+	 * file specified in the {@link HEADERFILE} field
+	 */
+	private void initializeHeader() 
+	{
+		try {
+			BufferedReader input = new BufferedReader(new InputStreamReader(
+					engine.getResourceURL(HEADERFILE).openStream()));
+			String line;
+			backpagePanelHeader = "";
+			while((line = input.readLine()) != null) {
+				backpagePanelHeader += line.trim();
+			}
+		} catch (Exception e) {
+			Logger.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
+		}
+	}	
+
+	/**
+	 * Gets all available expression data for the given gene id and returns a string
+	 * containing this data in a HTML table
+	 * @param idc	the {@link Xref} containing the id and code of the geneproduct to look for
+	 * @return		String containing the expression data in HTML format or a string displaying a
+	 * 'no expression data found' message in HTML format
+	 */
+	private String getDataString(Xref idc, Gdb gdb, SimpleGex gex)
+	{
+		String noDataFound = "<P><I>No expression data found";
+		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
+		
+		String colNames = "<TR><TH>Sample name";
+		if(!gex.isConnected() || !gdb.isConnected() //and to the gene database
+		) return noDataFound;
+		
+		List<Data> pwData = gex.getCachedData(idc);
+		
+		if(pwData == null) return noDataFound;
+		
+		for(Data d : pwData){
+			colNames += "<TH>" + d.getXref().getId();
+		}
+		
+		String dataString = "";
+		for(Sample s : gex.getSamples().values())
+		{
+			dataString += "<TR><TH>" + s.getName();
+			for(Data d : pwData)
+			{
+				dataString += "<TH>" + d.getSampleData(s.getId());
+			}
+		}
+		
+		return exprInfo + colNames + dataString + "</TABLE>";
+	}
+	
+	private String getCrossRefText(Gdb gdb, Xref ref) 
+	{
+		List<Xref> crfs = gdb.getCrossRefs(ref);
+		if(crfs.size() == 0) return "";
+		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
+		for(Xref cr : crfs) {
+			String idtxt = cr.getId();
+			String url = cr.getUrl();
+			if(url != null) {
+				int os = Utils.getOS();
+				if(os == Utils.OS_WINDOWS) {
+					//In windows: open in new browser window
+					idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
+				} else {
+					//This doesn't work under ubuntu, so no new windoe there
+					idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
+				}
+
+			}
+			String dbName = cr.getDataSource().getFullName();
+			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
+		}
+		return crt.toString();
+	}
+	
 }

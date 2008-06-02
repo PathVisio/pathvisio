@@ -152,44 +152,7 @@ public class DoubleGdb implements Gdb
 		return result;
 	}
 
-	/**
-	 * returs backpage html containing the gene information
-	 * from the first child that has it,
-	 * and the crossref table composed of all child results.
-	 */
-	public String getBackpageHTML(Xref ref, String bpHead) 
-	{
-		String text = SimpleGdb.getBackpagePanelHeader();
-		if (text == null) text = "";
-		
-		if( ref == null || ref.getId() == null || ref.getDataSource() == null) return text;
-		
-		if (bpHead == null) bpHead = "";
-		text += "<H1>Gene information</H1><P>";
-		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-	
-		// find first gene database that has non-null bpInfo.
-		String bpInfo = getBpInfo(ref);		
-		text += bpInfo == null ? "<I>No gene information found</I>" : bpInfo;
 
-		//Get the expression data information if available
-		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
-		if(gex != null) {
-			text += "<H1>Expression data</H1>";
-			text += gex.getDataString(ref, this);
-		}
-		
-		// get crossReferences from all registerd gdb's
-		for (SimpleGdb child : gdbs)
-		{
-			if (child != null && child.isConnected())
-			{
-				text += child.getCrossRefText(ref);
-			}
-		}
-
-		return text + "</body></html>";
-	}
 
 	/**
 	 * Return the aggregate of the child results.

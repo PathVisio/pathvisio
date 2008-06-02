@@ -63,6 +63,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	private JCheckBox gradientCheck;
 	private JPanel rulesPanel;
 	private JPanel valuesPanel;
+	private JPanel gradientPanel;
 	
 	private ColorGradient gradient;
 	
@@ -75,7 +76,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 				"pref, 4dlu, pref, 2dlu, fill:pref:grow, 2dlu, pref"
 		));
 		
-		JPanel gradientPanel = new JPanel();
+		gradientPanel = new JPanel();
 		
 		CellConstraints cc = new CellConstraints();
 		add(gradientPanel, cc.xy(1, 1));
@@ -120,22 +121,25 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		List<ColorGradient> gradients = ColorGradient.createDefaultGradients();
 		
 		//Set gradients
-		gradient = null;
-		for(ColorSetObject cso : colorSet.getObjects()) {
-			if(cso instanceof ColorGradient) {
-				gradient = (ColorGradient)cso;
-			}
-		}
+		gradient = colorSet.getGradient();
 		if(gradient != null) {
 			gradientCheck.setSelected(true);
-			if(!gradients.contains(gradient)) {
-				gradients.add(0, gradient);
+			ColorGradient preset = null;
+			for(ColorGradient cg : gradients) {
+				if(cg.equalsPreset(gradient)) {
+					preset = cg;
+				}
 			}
+			gradients.remove(preset);
+			gradients.add(gradient);
 		} else {
 			gradientCheck.setSelected(false);
 		}
 		gradientCombo.setGradients(gradients);
-		gradientCombo.setSelectedItem(gradient);
+		gradientCombo.setSelectedGradient(gradient);
+		
+		//Refresh gradient values
+		refreshValuesPanel();
 		
 		//Generate rules panel
 		rulesPanel.removeAll();
@@ -143,9 +147,22 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		DefaultFormBuilder builder = 
 			new DefaultFormBuilder(layout, rulesPanel);
 		for (ColorSetObject cso : colorSet.getObjects()) {
-			Logger.log.trace("Adding panel for " + cso);
-			builder.append(createColorSetObjectPanel(cso));
-			builder.nextLine();
+			if(!(cso instanceof ColorGradient)) {
+				Logger.log.trace("Adding panel for " + cso);
+				builder.append(createColorSetObjectPanel(cso));
+				builder.nextLine();
+			}
+		}
+		revalidate();
+	}
+	
+	private void refreshValuesPanel() {
+		if(valuesPanel != null) {
+			gradientPanel.remove(valuesPanel);
+		}
+		if(gradient != null) {
+			valuesPanel = new ColorGradientPanel(gradient);
+			gradientPanel.add(valuesPanel, new CellConstraints().xy(3, 2));
 		}
 		revalidate();
 	}
@@ -168,8 +185,13 @@ public class ColorSetPanel extends JPanel implements ActionListener
 			}
 		} else if(ACTION_COMBO.equals(action)) {
 			gradient = gradientCombo.getSelectedGradient();
-			Logger.log.trace("" + gradient);
-			gradientCheck.setSelected(gradient != null);
+			colorSet.setGradient(gradient);
+			if(gradient != null) {
+				gradientCheck.setSelected(true);
+			} else {
+				gradientCheck.setSelected(false);
+			}
+			refreshValuesPanel();
 		}
 
 	}

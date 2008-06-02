@@ -19,6 +19,8 @@ package org.pathvisio.visualization.colorset;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ import org.pathvisio.util.ColorConverter;
 public class ColorGradient extends ColorSetObject {
 	public static final String XML_ELEMENT_NAME = "ColorGradient";
 
-	private ArrayList<ColorValuePair> colorValuePairs = new ArrayList<ColorValuePair>();
+	private ArrayList<ColorValuePair> colorValuePairs;
 	
 	/**
 	 * Constructor for this class
@@ -45,7 +47,7 @@ public class ColorGradient extends ColorSetObject {
 	public ColorGradient(ColorSet parent)
 	{
 		super(parent, "gradient");
-		getColorValuePairs();
+		colorValuePairs = new ArrayList<ColorValuePair>();
 	}
 	
 	public static List<ColorGradient> createDefaultGradients() {
@@ -60,19 +62,6 @@ public class ColorGradient extends ColorSetObject {
 		g.addColorValuePair(g.new ColorValuePair(Color.YELLOW, 1));
 		gradients.add(g);
 		return gradients;
-	}
-	
-	/**
-	 * Adds a few default ColorValuePairs to this color gradient:
-	 * -1, red
-	 * 0, yellow
-	 * 1, green
-	 */
-	public void generateDefault()
-	{
-		colorValuePairs.add(new ColorValuePair(new Color(0,255,0), -1));
-		colorValuePairs.add(new ColorValuePair(new Color(255,255,0), 0));
-		colorValuePairs.add(new ColorValuePair(new Color(255,0,0), 1));		
 	}
 		
 	public ColorGradient(ColorSet parent, Element xml) 
@@ -109,11 +98,33 @@ public class ColorGradient extends ColorSetObject {
 	}
 	
 	public void paintPreview(Graphics2D g, Rectangle bounds) {
+		paintPreview(g, bounds, false);
+	}
+	
+	public void paintPreview(Graphics2D g, Rectangle bounds, boolean text) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		double[] mm = getMinMax();
 		for(int i = 0; i < bounds.width; i++) {
 			Color c = getColor(mm[0] + (double)i * (mm[1] - mm[0])/ bounds.width);
 			g.setColor(c);
 			g.fillRect(bounds.x + i, bounds.y, 1, bounds.height);
+		}
+		
+		if(text) {
+			g.setColor(Color.BLACK);
+			int margin = 30; //Border spacing
+			int x = bounds.x + margin / 2;
+			int w = bounds.width - margin;
+			for(int i = 0; i < colorValuePairs.size(); i++) {
+				String value = "" + colorValuePairs.get(i).getValue();
+				Rectangle2D fb = g.getFontMetrics().getStringBounds(value, g);
+				g.drawString(
+						value, 
+						x - (int)(fb.getWidth() / 2), 
+						bounds.y + bounds.height / 2 + (int)(fb.getHeight() / 2)
+				);
+				x += w / (colorValuePairs.size() - 1);
+			}
 		}
 	}
 	
@@ -173,24 +184,24 @@ public class ColorGradient extends ColorSetObject {
 		return getColor(value);
 	}
 	
-	public boolean equals(Object obj) {
-		if(obj instanceof ColorGradient) {
-			return ((ColorGradient)obj).toXML().equals(toXML());
+	/**
+	 * Compares two color gradients by the order of the colors.
+	 * @return True if they have the same colors in the same order.
+	 */
+	public boolean equalsPreset(ColorGradient g) {
+		if(g.colorValuePairs.size() == colorValuePairs.size()) {
+			for(int i = 0; i < colorValuePairs.size(); i++) {
+				if(!g.colorValuePairs.get(i).color.equals(colorValuePairs.get(i).color)) {
+					return false;
+				}
+			}
+			return true;
 		}
 		return false;
- 	}
-	
+	}
+
 	String getXmlElementName() {
 		return XML_ELEMENT_NAME;
-	}
-	
-	public String toString() {
-		StringBuilder strb = new StringBuilder();
-		for(ColorValuePair cvp : colorValuePairs) {
-			strb.append(cvp.getColor().toString().replace("java.awt.Color", ""));
-			strb.append(" (" + cvp.getValue() + ") - ");
-		}
-		return strb.substring(0, strb.length() - 2);
 	}
 	
 	public Element toXML() {

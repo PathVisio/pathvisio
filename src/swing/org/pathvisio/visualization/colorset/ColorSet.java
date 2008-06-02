@@ -17,11 +17,14 @@
 package org.pathvisio.visualization.colorset;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
@@ -70,7 +73,14 @@ public class ColorSet
 		this(name, null);
 	}
 	
-	public ColorSet(String name, ColorSetManager colorSetMgr)
+	/**
+	 * Create a color set with a unique name and the given colorset manager
+	 */
+	public ColorSet(ColorSetManager colorSetMgr) {
+		this(colorSetMgr.getNewName(), colorSetMgr);
+	}
+	
+	private ColorSet(String name, ColorSetManager colorSetMgr)
 	{
 		this.name = name;
 		this.colorSetMgr = colorSetMgr;
@@ -121,6 +131,7 @@ public class ColorSet
 	 */
 	public void addObject(ColorSetObject o)
 	{
+		if(o == null) throw new IllegalArgumentException("tying to add null");
 		colorSetObjects.add(o);
 		fireModifiedEvent();
 	}
@@ -173,6 +184,67 @@ public class ColorSet
 		return rgb;
 	}
 	
+	public void paintPreview(Graphics2D g, Rectangle bounds) {
+		double g_space = colorSetObjects.size() > 1 ? 0.8 : 1; //80% to gradient
+		
+		ColorGradient gradient = getGradient();
+		if(gradient != null) {
+			Rectangle g_bounds = new Rectangle(
+					bounds.x, bounds.y, (int)(bounds.width * g_space), bounds.height
+			);
+			gradient.paintPreview((Graphics2D)g.create(), g_bounds, true);
+			bounds = new Rectangle(
+					bounds.x + g_bounds.width, bounds.y, bounds.width - g_bounds.width, bounds.height
+			);
+		}
+		int x = bounds.x;
+		int nr = gradient == null ? colorSetObjects.size() : colorSetObjects.size() - 1;
+		if(nr > 0) {
+			int w = bounds.width / nr;
+			for(ColorSetObject cso : colorSetObjects) {
+				if(cso != gradient) {
+					cso.paintPreview((Graphics2D)g.create(), new Rectangle(x, bounds.y, w, bounds.height));
+					x = x + w;
+				}
+			}
+		} else {
+			g.setColor(new Color(255, 255, 255, 128));
+			g.fill(bounds);
+		}
+	}
+	
+	/**
+	 * Get the gradient of this colorset. If the colorset contains
+	 * multiple gradients, the first is returned.
+	 */
+	public ColorGradient getGradient() {
+		for(ColorSetObject cso : colorSetObjects) {
+			if(cso instanceof ColorGradient) {
+				return (ColorGradient)cso;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Set the gradient for this colorset. All existing gradients will
+	 * be replaced. If the argument is null, all gradients will be removed.
+	 */
+	public void setGradient(ColorGradient gradient) {
+		List<ColorGradient> rm = new ArrayList<ColorGradient>();
+		for(ColorSetObject cso : colorSetObjects) {
+			if(cso instanceof ColorGradient) {
+				rm.add((ColorGradient)cso);
+			}
+		}
+		Logger.log.trace("remove: " + rm);
+		for(ColorGradient g : rm) colorSetObjects.remove(g);
+		if(gradient != null) {
+			addObject(gradient);
+		}
+		Logger.log.trace("" + colorSetObjects);
+	}
+	
 	final static String XML_ELEMENT = "ColorSet";
 	final static String XML_ATTR_NAME = "name";
 	final static String XML_ELM_COLOR_NCM = "no-criteria-met";
@@ -195,6 +267,7 @@ public class ColorSet
 	public static ColorSet fromXML(Element e, ColorSetManager colorSetMgr) {
 		ColorSet cs = new ColorSet(e.getAttributeValue(XML_ATTR_NAME), colorSetMgr);
 		for(Object o : e.getChildren()) {
+			Logger.log.trace("\tAdding " + o);
 			try {
 				Element elm = (Element) o;
 				String name = elm.getName();

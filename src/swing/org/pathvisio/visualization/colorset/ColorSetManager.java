@@ -19,29 +19,31 @@ package org.pathvisio.visualization.colorset;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
 public class ColorSetManager {
 	public final static String XML_ELEMENT = "color-sets";
 
-	private List<ColorSet> colorSets = new ArrayList<ColorSet>();
+	private Map<String, ColorSet> colorSets = new HashMap<String, ColorSet>();
 
 	/**
 	 * Gets the {@link ColorSet}s used for the currently loaded Expression data
 	 */
-	public List<ColorSet> getColorSets() { return colorSets; }
+	public Collection<ColorSet> getColorSets() { return colorSets.values(); }
 
 	public boolean nameExists(String name) {
-		for(ColorSet cs : colorSets) 
-			if(cs.getName().equalsIgnoreCase(name)) return true;
-		return false;
+		return colorSets.containsKey(name);
 	}
 
 	public String getNewName() {
@@ -54,13 +56,12 @@ public class ColorSetManager {
 
 	public void newColorSet(String name) {
 		if(name == null) name = getNewName();
-		addColorSet(new ColorSet(name, this));
-		
+		addColorSet(new ColorSet(this));
 	}
 	
 	public void addColorSet(ColorSet cs)
 	{
-		colorSets.add(cs);
+		colorSets.put(cs.getName(), cs);
 		fireColorSetEvent (
 			new ColorSetEvent (
 				ColorSetManager.class,
@@ -72,9 +73,9 @@ public class ColorSetManager {
 	 * @param cs Colorset to remove
 	 */
 	public void removeColorSet(ColorSet cs) {
-		if(colorSets.contains(cs))
+		if(colorSets.containsKey(cs.getName()))
 		{
-			colorSets.remove(cs);
+			colorSets.remove(cs.getName());
 			fireColorSetEvent(
 				new ColorSetEvent(ColorSetManager.class, ColorSetEvent.COLORSET_REMOVED));
 		}
@@ -89,43 +90,14 @@ public class ColorSetManager {
 				new ColorSetEvent (ColorSetManager.class, ColorSetEvent.COLORSET_REMOVED));
 	}
 	
-	public ColorSet getColorSet(int index) {
-		if(index >= 0 && index < colorSets.size())
-			return colorSets.get(index);
-		else return null;
-	}
-
-	public int indexOf(ColorSet cs) {
-		return colorSets.indexOf(cs);
-	}
-	
-	/**
-	 * Removes this {@link ColorSet}
-	 * @param i index of ColorSet to remove
-	 */
-	public void removeColorSet(int i) {
-		if(i > -1 && i < colorSets.size()) {
-			removeColorSet(colorSets.get(i));
-		}
-	}
-
-	/**
-	 * Gets the names of all {@link ColorSet}s used 
-	 */
-	public String[] getColorSetNames()
-	{
-		String[] colorSetNames = new String[colorSets.size()];
-		for(int i = 0; i < colorSetNames.length; i++)
-		{
-			colorSetNames[i] = ((ColorSet)colorSets.get(i)).getName();
-		}
-		return colorSetNames;
+	public ColorSet getColorSet(String name) {
+		return colorSets.get(name);
 	}
 
 	public Element getXML() {
 		Element cse = new Element(XML_ELEMENT);
 				
-		for(ColorSet cs : colorSets) cse.addContent(cs.toXML());
+		for(ColorSet cs : colorSets.values()) cse.addContent(cs.toXML());
 		
 		return cse;
 	}
@@ -136,6 +108,7 @@ public class ColorSetManager {
 		if(xml == null) return;
 
 		for(Object o : xml.getChildren(ColorSet.XML_ELEMENT)) {
+			Logger.log.trace("Adding " + o);
 			addColorSet(ColorSet.fromXML((Element) o, this));				
 		}
 	}

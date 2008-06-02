@@ -35,7 +35,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -87,7 +86,7 @@ public class ColorByExpression extends VisualizationMethod {
 	public boolean isAdvanced() {
 		//Advanced when different colorsets or an image is specified
 		//TODO: check for image
-		return getSingleColorSet() != null;
+		return getSingleColorSet() == null;
 	}
 	
 	/**
@@ -111,7 +110,7 @@ public class ColorByExpression extends VisualizationMethod {
 				cs = s.getColorSet();
 			} else {
 				if(cs != s.getColorSet()) {
-					break;
+					return null;
 				}
 			}
 		}
@@ -130,8 +129,13 @@ public class ColorByExpression extends VisualizationMethod {
 		return new ColorByExpressionPanel(this);
 	}
 	
-	public List<ConfiguredSample> getSelectedSamples() {
-		return useSamples;
+	public List<Sample> getSelectedSamples() {
+		List<Sample> samples = new ArrayList<Sample>();
+		
+		for(ConfiguredSample cs : useSamples) {
+			samples.add(cs.getSample());
+		}
+		return samples;
 	}
 	
 	List<URL> getImageURLs() { 
@@ -166,15 +170,6 @@ public class ColorByExpression extends VisualizationMethod {
 		g2d.fill(area);
 	}
 
-	/**
-	 * This method determines the area in the gene-box to use for visualization and calls
-	 * {@link #drawArea(GmmlGeneProduct, Rectangle, PaintEvent, GC)} to draw the samples.
-	 * If you want to visualize the data in the gene-box, implement 
-	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Xref, Rectangle, PaintEvent, GC)}
-	 * and
-	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}.
-	 * @see VisualizationPlugin#visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
-	 */
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(!(g instanceof GeneProduct)) return;
 		if(useSamples.size() == 0) return; //Nothing to draw
@@ -186,22 +181,12 @@ public class ColorByExpression extends VisualizationMethod {
 		
 		drawArea(gp, area, g2d);
 		
-		Color c = gp.getPathwayElement().getColor();
-		g2d.setColor(c);
-		g2d.draw(area);
-		
+//		Color c = gp.getPathwayElement().getColor();
+//		g2d.setColor(c);
+//		g2d.fill(area);
+	
 	}
 	
-	/**
-	 * Divides the given area in a rectangle for each sample and calls
-	 * {@link #drawSample(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Xref, Rectangle, PaintEvent, GC)}
-	 * (when data is available) or
-	 * {@link #drawNoDataFound(visualization.plugins.PluginWithColoredSamples.ConfiguredSample, Rectangle, PaintEvent, GC)}
-	 * (when no data is available).
-	 * @param gp The gene-product to visualize the data for
-	 * @param area The area in which to draw
-	 * @param g2d The graphics context on which to draw
-	 */
 	void drawArea(GeneProduct gp, Rectangle area, Graphics2D g2d) {
 		int nr = useSamples.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
@@ -216,7 +201,10 @@ public class ColorByExpression extends VisualizationMethod {
 			CachedData cache = GexManager.getCurrent().getCurrentGex().getCachedData();
 			if(cache == null) continue;
 			
-			if(s.getColorSet() == null) continue; //No ColorSet for this sample
+			if(s.getColorSet() == null) {
+				Logger.log.trace("No colorset for sample " + s);
+				continue; //No ColorSet for this sample
+			}
 			if(cache.hasData(idc)) 
 				drawSample(s, idc, r, g2d);
 			else 
@@ -224,15 +212,6 @@ public class ColorByExpression extends VisualizationMethod {
 		}
 	}
 	
-	/**
-	 * Implement this method to perform the drawing operation for a single sample in case no data is found
-	 * for a gene-product
-	 * @see #visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
-	 * @param s The sample that will be visualized
-	 * @param area The area to draw in
-	 * @param e	{@link PaintEvent} containing information about the paint
-	 * @param gc Graphical context on which drawing operations can be performed
-	 */
 	void drawNoDataFound(ConfiguredSample s, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		drawColoredRectangle(area, cs.getColor(ColorSet.ID_COLOR_NO_DATA_FOUND), g2d);
@@ -285,18 +264,7 @@ public class ColorByExpression extends VisualizationMethod {
 		drawLine = draw;
 		modified();
 	}
-	
-	/**
-	 * Implement this method to perform the drawing operation for a single sample when data is
-	 * present for the gene-product to visualize.
-	 * @see #visualizeOnDrawing(GmmlGraphics, PaintEvent, GC)
-	 * @see CachedData#getData(Xref)
-	 * @param s The sample that will be visualized
-	 * @param idc The id and code of the gene-product
-	 * @param area The area to draw in
-	 * @param e	{@link PaintEvent} containing information about the paint
-	 * @param gc Graphical context on which drawing operations can be performed
-	 */
+
 	void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
 		CachedData cache = GexManager.getCurrent().getCurrentGex().getCachedData();
 		ColorSet cs = s.getColorSet();
@@ -388,6 +356,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 */
 	void saveAttributes(Element xml) {
 		for(URL url : getImageURLs()) {
+			if(defaultURLs().contains(url)) continue; //Skip default urls
 			Element elm = new Element(XML_ELM_URL);
 			elm.setText(url.toString());
 			xml.addContent(elm);
@@ -403,7 +372,7 @@ public class ColorByExpression extends VisualizationMethod {
 			try {
 				useSamples.add(new ConfiguredSample((Element)o));
 			} catch(Exception e) {
-				Logger.log.error("Unable to save plugin settings", e);
+				Logger.log.error("Unable to load plugin settings", e);
 			}
 		}	
 	}
@@ -415,7 +384,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * @author Thomas
 	 *
 	 */
-	class ConfiguredSample extends Sample {		
+	class ConfiguredSample {		
 		public static final int AMBIGIOUS_AVG = 0;
 		public static final int AMBIGIOUS_BARS = 1;
 
@@ -427,15 +396,21 @@ public class ColorByExpression extends VisualizationMethod {
 		Color replaceColor = DEFAULT_TRANSPARENT;
 		int tolerance; //range 0 - 255;
 
-		public ConfiguredSample(int idSample, String name, int dataType) {
-			super(idSample, name, dataType);
-		}
-		
+		Sample sample;
+
 		int getAmbigiousType() { return ambigious; }
 		
 		void setAmbigiousType(int type) { 
 			ambigious = type;
 			modified();
+		}
+		
+		public Sample getSample() {
+			return sample;
+		}
+		
+		public int getId() {
+			return sample.getId();
 		}
 		
 		final static String XML_ATTR_ASPECT = "maintain-aspect-ratio";
@@ -446,19 +421,24 @@ public class ColorByExpression extends VisualizationMethod {
 				
 		protected void saveAttributes(Element xml) {
 			xml.setAttribute(XML_ATTR_AMBIGIOUS, Integer.toString(ambigious));xml.setAttribute(XML_ATTR_ASPECT, Boolean.toString(getMaintainAspect()));
-			xml.setAttribute(XML_ATTR_TOLERANCE, Integer.toString(getTolerance()));
-			xml.setAttribute(XML_ATTR_IMAGE, getURL().toString());
-			xml.addContent(ColorConverter.createColorElement(XML_ATTR_REPLACE, getReplaceColor()));
+			if(imageURL != null) {
+				xml.setAttribute(XML_ATTR_ASPECT, "" + getMaintainAspect());
+				xml.setAttribute(XML_ATTR_TOLERANCE, Integer.toString(getTolerance()));
+				xml.setAttribute(XML_ATTR_IMAGE, imageURL.toString());
+				xml.addContent(ColorConverter.createColorElement(XML_ATTR_REPLACE, getReplaceColor()));
+			}
 		}
 		
 		protected void loadAttributes(Element xml) {
 			int amb = Integer.parseInt(xml.getAttributeValue(XML_ATTR_AMBIGIOUS));
 			setAmbigiousType(amb);
 			try {
-				setMaintainAspect(Boolean.parseBoolean(xml.getAttributeValue(XML_ATTR_ASPECT)));
-				setTolerance(Integer.parseInt(xml.getAttributeValue(XML_ATTR_TOLERANCE)));
-				setURL(new URL(xml.getAttributeValue(XML_ATTR_IMAGE)));
-				setReplaceColor(ColorConverter.parseColorElement(xml.getChild(XML_ATTR_REPLACE)));
+				if(xml.getAttributeValue(XML_ATTR_IMAGE) != null) {
+					setMaintainAspect(Boolean.parseBoolean(xml.getAttributeValue(XML_ATTR_ASPECT)));
+					setTolerance(Integer.parseInt(xml.getAttributeValue(XML_ATTR_TOLERANCE)));
+					setURL(new URL(xml.getAttributeValue(XML_ATTR_IMAGE)));
+					setReplaceColor(ColorConverter.parseColorElement(xml.getChild(XML_ATTR_REPLACE)));
+				}
 			} catch(Exception e) {
 				Logger.log.error("Unable to load plugin", e);
 			}
@@ -470,22 +450,17 @@ public class ColorByExpression extends VisualizationMethod {
 		
 		private final Element toXML() {
 			Element xml = new Element(XML_ELEMENT);
-			xml.setAttribute(XML_ATTR_ID, Integer.toString(getId()));
-			xml.setAttribute(XML_ATTR_COLORSET, Integer.toString(
-					getVisualization().getManager().getColorSetManager().indexOf(colorSet)
-			));
+			xml.setAttribute(XML_ATTR_ID, Integer.toString(sample.getId()));
+			xml.setAttribute(XML_ATTR_COLORSET, colorSet.getName());
 			saveAttributes(xml);
 			return xml;
 		}
 		
 		private final void loadXML(Element xml) throws Exception {
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
-			int csi = Integer.parseInt(xml.getAttributeValue(XML_ATTR_COLORSET));
-			Sample s = GexManager.getCurrent().getCurrentGex().getSamples().get(id);
-			setId(id);
-			setName(s.getName());
-			setDataType(s.getDataType());
-			setColorSet(getVisualization().getManager().getColorSetManager().getColorSet(csi));
+			String csn = xml.getAttributeValue(XML_ATTR_COLORSET);
+			sample = GexManager.getCurrent().getCurrentGex().getSamples().get(id);
+			setColorSet(getVisualization().getManager().getColorSetManager().getColorSet(csn));
 			loadAttributes(xml);
 		}
 		
@@ -494,7 +469,7 @@ public class ColorByExpression extends VisualizationMethod {
 		 * @param s The sample to base the configured sample on
 		 */
 		public ConfiguredSample(Sample s) {
-			super(s.getId(), s.getName(), s.getDataType());
+			sample = s;
 		}
 		
 		/**
@@ -503,7 +478,6 @@ public class ColorByExpression extends VisualizationMethod {
 		 * @throws Exception
 		 */
 		public ConfiguredSample(Element xml) throws Exception {
-			super(0, "", 0);
 			loadXML(xml);
 		}
 		
@@ -542,11 +516,11 @@ public class ColorByExpression extends VisualizationMethod {
 		}
 		
 		public URL getURL() { 
-			return imageURL == null ? imageURL = imageURLs.get(0) : imageURL; 
+			return imageURL; 
 		}
 		
 		public boolean hasImage() {
-			return imageURL == null;
+			return imageURL != null;
 		}
 		
 		public void setReplaceColor(Color rgb) { 

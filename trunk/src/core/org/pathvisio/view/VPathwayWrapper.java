@@ -41,4 +41,7 @@ public abstract interface VPathwayWrapper
 	public void registerKeyboardAction(KeyStroke k, Action a);
 	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements);
 	public void pasteFromClipboard();
+	
+	/** make sure r is visible */
+	public void scrollTo(Rectangle r);
 }

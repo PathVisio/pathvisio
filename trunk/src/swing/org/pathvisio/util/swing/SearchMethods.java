@@ -70,7 +70,7 @@ public class SearchMethods
 	 * if the pathway contains a specific xref,
 	 * or crossrefs of that xref.
 	 */
-	private static class ByXrefMatcher implements PathwayMatcher
+	public static class ByXrefMatcher implements PathwayMatcher
 	{
 		private List<Xref> refs;
 
@@ -95,8 +95,10 @@ public class SearchMethods
 					{
 						//Gene found, add pathway to search result and break
 						List<String> idsFound = new ArrayList<String>();
+						List<Xref> matched = new ArrayList<Xref>();
 						idsFound.add(gene.getId());
-						return new MatchResult(f, idsFound, null);
+						matched.add(gene);
+						return new MatchResult(f, idsFound, null, matched);
 					}
 				}
 			}
@@ -119,7 +121,7 @@ public class SearchMethods
 	 * pathway only if any of the symbols of the datanodes
 	 * matches a given regular expression.
 	 */
-	private static class ByPatternMatcher implements PathwayMatcher
+	public static class ByPatternMatcher implements PathwayMatcher
 	{
 		private Pattern pattern;
 		
@@ -137,7 +139,7 @@ public class SearchMethods
 				PathwayParser parser = new PathwayParser(f, xmlReader);
 				List<XrefWithSymbol> genes = parser.getGenes();
 				//Find what symbols match
-				List<XrefWithSymbol> matched = new ArrayList<XrefWithSymbol>();
+				List<Xref> matched = new ArrayList<Xref>();
 				List<String> idsFound = new ArrayList<String>();
 				List<String> namesFound = new ArrayList<String>();
 				
@@ -154,7 +156,7 @@ public class SearchMethods
 				
 				if(matched.size() > 0) 
 				{
-					return new MatchResult (f, idsFound, namesFound);
+					return new MatchResult (f, idsFound, namesFound, matched);
 				}
 				
 			}
@@ -177,7 +179,7 @@ public class SearchMethods
 	 * full of pathways. Keep a progress monitor and check if it is cancelled by
 	 * the user
 	 */
-	private static void searchHelper (final PathwayMatcher search, final File folder,
+	public static void searchHelper (final PathwayMatcher search, final File folder,
 			final SearchTableModel srs, Component parent)
 	{
 		final int TOTALWORK = 1000;
@@ -242,53 +244,7 @@ public class SearchMethods
 		};
 		worker.execute();
 	}
-			
-	/**
-	 * Search for pathways containing the given gene and display result in given result table
-	 * @param id	Gene identifier to search for
-	 * @param code	System code of the gene identifier
-	 * @param folder	Directory to search (includes sub-directories)
-	 * @param srt	to display the results in
-	 * @param pmon containing the monitor responsible for
-	 * displaying the progress
-	 */
-	public static void pathwaysContainingGeneID (Xref ref, File folder, 
-			JTable srt, Component parent) 
-			throws SearchException
-	{
-		SearchTableModel srs = new SearchTableModel ();
-		srt.setModel(srs);
-		srs.setColumns (new SearchTableModel.Column[] {
-				SearchTableModel.Column.PATHWAY_NAME, 
-				SearchTableModel.Column.DIRECTORY
-				});
-		searchHelper (new ByXrefMatcher (ref), folder, srs, parent);
-	}
-
-	/**
-	 * Search for pathways containing a symbol that matches the given regex
-	 * and display result in given result table
-	 * @param id	Gene identifier to search for
-	 * @param code	System code of the gene identifier
-	 * @param folder	Directory to search (includes sub-directories)
-	 * @param srt	to display the results in
-	 * @param pmon containing the monitor responsible for
-	 * displaying the progress
-	 */
-	public static void pathwaysContainingGeneSymbol (
-			String regex, File folder, 
-			JTable srt, Component parent) 
-	{
-		SearchTableModel srs = new SearchTableModel ();
-		srt.setModel(srs);
-		srs.setColumns (new SearchTableModel.Column[] {
-				SearchTableModel.Column.PATHWAY_NAME, 
-				SearchTableModel.Column.DIRECTORY,
-				SearchTableModel.Column.NAMES
-				});
-		searchHelper (new ByPatternMatcher (regex), folder, srs, parent);
-	}
-	
+				
 	/**
 	 * Base class for exceptions during search
 	 */

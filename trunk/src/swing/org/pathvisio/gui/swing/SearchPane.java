@@ -18,18 +18,44 @@ package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.swing.MatchResult;
 import org.pathvisio.util.swing.SearchMethods;
+import org.pathvisio.util.swing.SearchTableModel;
+import org.pathvisio.util.swing.SearchMethods.ByPatternMatcher;
+import org.pathvisio.util.swing.SearchMethods.ByXrefMatcher;
+import org.pathvisio.util.swing.SearchMethods.SearchException;
+import org.pathvisio.view.GeneProduct;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A side panel which displays search results.
@@ -46,20 +72,36 @@ public class SearchPane extends JPanel
 	private JCheckBox chkHighlight;
 	private JTable tblResult;
 	final private JComboBox cbSearchBy;
-
+	private SearchTableModel srs;
+	
 	public SearchPane()
 	{		
 		Box symbolOpt = Box.createVerticalBox();
 		Box box2 = Box.createHorizontalBox();
-		box2.add (new JLabel("Gene Symbol:"));
+		box2.add (new JLabel("Symbol:"));
 		txtSymbol = new JTextField();
 		box2.add (txtSymbol);
+		txtSymbol.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent ae) 
+			{
+				doSearch();
+			}
+		});
 		symbolOpt.add (box2);
 		
 		Box idOpt = Box.createVerticalBox();
 		Box box4 = Box.createHorizontalBox();
-		box4.add (new JLabel("Gene Id:"));
+		box4.add (new JLabel("Id:"));
 		txtId = new JTextField();
+		txtId.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent ae) 
+			{
+				doSearch();
+			}
+		});
+		
 		box4.add (txtId);
 		Box box5 = Box.createHorizontalBox();
 		box5.add (new JLabel ("System Code:"));
@@ -79,14 +121,20 @@ public class SearchPane extends JPanel
 		opts.add (idOpt, "ID");
 		
 		JPanel searchOptBox = new JPanel();
-		searchOptBox.setLayout (new BoxLayout(searchOptBox, BoxLayout.PAGE_AXIS));
+		FormLayout layout = new FormLayout(
+				"4dlu, right:pref, 4dlu, fill:pref:grow, 4dlu, pref, 4dlu",
+				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
+		CellConstraints cc = new CellConstraints();
+		
+		searchOptBox.setLayout (layout);
 		Border etch = BorderFactory.createEtchedBorder();
 		searchOptBox.setBorder (BorderFactory.createTitledBorder (etch, "Search options"));
-		Box box1 = Box.createHorizontalBox();
-		box1.add (new JLabel ("Search by"));
+		
+		searchOptBox.add (new JLabel ("Search by"), cc.xy (2,2));
+		
 		cbSearchBy = new JComboBox();
-		cbSearchBy.addItem ("Gene Symbol");
-		cbSearchBy.addItem ("Gene ID");
+		cbSearchBy.addItem ("Symbol");
+		cbSearchBy.addItem ("ID");
 		cbSearchBy.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent ae) 
@@ -104,14 +152,13 @@ public class SearchPane extends JPanel
 			}
 		}
 		);
-		box1.add (cbSearchBy);
-		searchOptBox.add (box1);
-		searchOptBox.add (opts);
-		Box box3 = Box.createHorizontalBox();
-		box3.add (new JLabel("Directory to search:"));
+		searchOptBox.add (cbSearchBy, cc.xyw (4,2,3));
+		searchOptBox.add (opts, cc.xyw(2,4,5));
+		
+		searchOptBox.add (new JLabel("Directory to search:"), cc.xy (2,6));
 		txtDir = new JTextField();
 		txtDir.setText (Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_PWFILES));
-		box3.add (txtDir);
+		searchOptBox.add (txtDir, cc.xyw(2,8,3));
 		btnBrowse = new JButton("Browse");
 		btnBrowse.addActionListener(new ActionListener()
 		{
@@ -120,10 +167,9 @@ public class SearchPane extends JPanel
 				doBrowse();
 			}
 		});
-		box3.add (btnBrowse);
-		searchOptBox.add (box3);
+		searchOptBox.add (btnBrowse, cc.xy(6,8));
 		btnSearch = new JButton("Search");
-		searchOptBox.add (btnSearch);
+		searchOptBox.add (btnSearch, cc.xyw(2,10,5, "center, top"));
 		btnSearch.addActionListener(new ActionListener()
 		{
 			public void actionPerformed (ActionEvent ae)
@@ -136,7 +182,17 @@ public class SearchPane extends JPanel
 		resultPanel.setBorder (BorderFactory.createTitledBorder(etch, "Results"));
 		resultPanel.setLayout (new BorderLayout());
 		chkHighlight = new JCheckBox();
+		chkHighlight.setSelected(true);
 		tblResult = new JTable();
+		tblResult.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);		
+		tblResult.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent me) 
+			{
+				showSelectedPwy();
+			}
+
+		});
 		tblResult.getTableHeader().setVisible(true);
 		Box box6 = Box.createHorizontalBox();
 		box6.add (chkHighlight);
@@ -149,6 +205,73 @@ public class SearchPane extends JPanel
 		add (resultPanel, BorderLayout.CENTER);		
 	}
 	
+	private void showSelectedPwy()
+	{
+		int row = tblResult.getSelectedRow();
+		final MatchResult mr = srs.getRow(row);
+		
+		//TODO: here I want to use SwingEngine.openPathway, but I need to 
+		// be able to wait until the process is finished!
+		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(SwingEngine.getCurrent().getApplicationPanel()), 
+				"", pk, false, true);
+				
+		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
+			protected Boolean doInBackground() throws Exception {
+				pk.setTaskName("Opening pathway");
+				try {
+					Engine.getCurrent().setWrapper (SwingEngine.getCurrent().createWrapper());
+					Engine.getCurrent().openPathway(mr.getFile());
+					
+					
+					Rectangle2D interestingRect = null;
+					
+					if (chkHighlight.isSelected())
+					{
+						VPathway vpy = Engine.getCurrent().getActiveVPathway();
+						for (VPathwayElement velt : vpy.getDrawingObjects())
+						{
+							if (velt instanceof GeneProduct)
+							{
+								GeneProduct gp = (GeneProduct)velt;
+								for (Xref id : mr.getMatches())
+								{
+									if (id.equals(gp.getPathwayElement().getXref()))
+									{
+										gp.highlight();
+										Logger.log.info ("Highlighted " + gp.getPathwayElement().getXref());
+										if (interestingRect == null)
+										{
+											interestingRect = gp.getVBounds();
+										}
+										else
+										{
+											interestingRect.add(gp.getVBounds());
+										}
+										break;
+									}
+								}
+							}
+						}
+						vpy.getWrapper().scrollTo (interestingRect.getBounds());
+					}
+
+					return true;
+				} catch(ConverterException e) {
+					SwingEngine.getCurrent().handleConverterException(e.getMessage(), null, e);
+					return false;
+				} finally {
+					pk.finished();
+				}
+			}
+		};
+		
+		SwingEngine.getCurrent().processTask(pk, d, sw);
+
+		
+	}
+	
 	/**
 	 * Invoked when you hit the search button
 	 */
@@ -159,7 +282,7 @@ public class SearchPane extends JPanel
 		{
 			if (i == 0)
 			{
-				SearchMethods.pathwaysContainingGeneSymbol (
+				pathwaysContainingGeneSymbol (
 						txtSymbol.getText(), 
 						new File (txtDir.getText()), 
 						tblResult, 
@@ -168,7 +291,7 @@ public class SearchPane extends JPanel
 			}
 			else
 			{
-				SearchMethods.pathwaysContainingGeneID(
+				pathwaysContainingGeneID(
 						new Xref (txtId.getName(), DataSource.getByFullName("" + cbSyscode.getSelectedItem())), 
 						new File (txtDir.getText()), 
 						tblResult, 
@@ -184,7 +307,53 @@ public class SearchPane extends JPanel
 					JOptionPane.WARNING_MESSAGE);
 		}
 	}
-	
+
+	/**
+	 * Search for pathways containing the given gene and display result in given result table
+	 * @param id	Gene identifier to search for
+	 * @param code	System code of the gene identifier
+	 * @param folder	Directory to search (includes sub-directories)
+	 * @param srt	to display the results in
+	 * @param pmon containing the monitor responsible for
+	 * displaying the progress
+	 */
+	public void pathwaysContainingGeneID (Xref ref, File folder, 
+			JTable srt, Component parent) 
+			throws SearchException
+	{
+		srs = new SearchTableModel ();
+		srt.setModel(srs);
+		srs.setColumns (new SearchTableModel.Column[] {
+				SearchTableModel.Column.PATHWAY_NAME, 
+				SearchTableModel.Column.DIRECTORY
+				});
+		SearchMethods.searchHelper (new ByXrefMatcher (ref), folder, srs, parent);
+	}
+
+	/**
+	 * Search for pathways containing a symbol that matches the given regex
+	 * and display result in given result table
+	 * @param id	Gene identifier to search for
+	 * @param code	System code of the gene identifier
+	 * @param folder	Directory to search (includes sub-directories)
+	 * @param srt	to display the results in
+	 * @param pmon containing the monitor responsible for
+	 * displaying the progress
+	 */
+	public void pathwaysContainingGeneSymbol (
+			String regex, File folder, 
+			JTable srt, Component parent) 
+	{
+		srs = new SearchTableModel ();
+		srt.setModel(srs);
+		srs.setColumns (new SearchTableModel.Column[] {
+				SearchTableModel.Column.PATHWAY_NAME, 
+				SearchTableModel.Column.DIRECTORY,
+				SearchTableModel.Column.NAMES
+				});
+		SearchMethods.searchHelper (new ByPatternMatcher (regex), folder, srs, parent);
+	}
+
 	/**
 	 * Invoked when you hit the browse button
 	 */

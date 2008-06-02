@@ -74,4 +74,9 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 	
 	}
 
+	public void scrollTo(Rectangle r) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

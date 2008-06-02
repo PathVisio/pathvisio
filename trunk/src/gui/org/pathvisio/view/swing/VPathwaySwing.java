@@ -44,6 +44,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -278,6 +279,12 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 				if(c != null) add(c);
 			}
 		}
+	}
+
+	public void scrollTo(Rectangle r) 
+	{
+		if (container instanceof JScrollPane)
+			((JScrollPane)container).getViewport().scrollRectToVisible(r);
 	}
 
 }

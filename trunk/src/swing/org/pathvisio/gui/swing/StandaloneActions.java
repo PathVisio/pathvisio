@@ -24,6 +24,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.Engine;
@@ -55,6 +56,7 @@ public class StandaloneActions
 	public static final Action selectGexAction = new SelectGexAction();
 	public static final Action aboutAction = new AboutAction();
 	public static final Action preferencesAction = new PreferencesAction();
+	public static final Action searchAction = new SearchAction();
 
 	/**
 	 * Open the online help in a browser window.
@@ -352,4 +354,36 @@ public class StandaloneActions
 			setEnabled(isConnected);
 		}
 	}
+
+	/**
+	 * Let the user pick a gene or metabolite database.
+	 * Invoked in menu->data->select gene database
+	 */
+	public static class SearchAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+
+		/** 
+		 * type should be "Gene" or "Metabolite"
+		 */
+		public SearchAction() 
+		{
+			super();
+			putValue(NAME, "Search pathway set");
+			putValue(SHORT_DESCRIPTION, "Search pathways for a symbol or identifier");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			//TODO: right now only shows search pane in side panel
+			// really should pop up search dialog.
+			JTabbedPane pane = SwingEngine.getCurrent().getApplicationPanel().getSideBarTabbedPane();
+			int index = pane.indexOfTab("Search");
+			if (index > 0)
+			{
+				pane.setSelectedIndex (index);
+			}
+		}
+	}
+
 }

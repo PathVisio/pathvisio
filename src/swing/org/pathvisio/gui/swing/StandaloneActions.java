@@ -31,7 +31,6 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;

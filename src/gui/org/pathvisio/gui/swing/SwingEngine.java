@@ -49,6 +49,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
@@ -392,6 +393,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		jfc.setAcceptAllFileFilterUsed(false);
 		jfc.setDialogTitle("Import pathway");
 		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+		jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PATHWAY));
 
 		jfc.addChoosableFileFilter(new FileFilter() {
 			public boolean accept(File f) {
@@ -411,7 +413,9 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		//TODO: use constants for extensions
 		int status = jfc.showDialog(getApplicationPanel(), "Open pathway");
 		if(status == JFileChooser.APPROVE_OPTION) {	
-			File f = jfc.getSelectedFile();			
+			File f = jfc.getSelectedFile();
+			Engine.getCurrent().getPreferences().setFile(GlobalPreference.DIR_LAST_USED_PATHWAY,
+				jfc.getCurrentDirectory());
 			if(!(f.toString().toUpperCase().endsWith("GPML") || f.toString().toUpperCase().endsWith("XML"))) 
 			{
 				f = new File(f.toString() + ".gpml");
@@ -437,6 +441,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		jfc.setAcceptAllFileFilterUsed(true);
 		jfc.setDialogTitle("Save pathway");
 		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+		jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PATHWAY));
 		jfc.addChoosableFileFilter(new FileFilter() {
 			public boolean accept(File f) {
 				if(f.isDirectory()) return true;
@@ -454,6 +459,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		int status = jfc.showDialog(frame, "Save");
 		if(status == JFileChooser.APPROVE_OPTION) {
 			File toFile = jfc.getSelectedFile();
+			Engine.getCurrent().getPreferences().setFile(GlobalPreference.DIR_LAST_USED_PATHWAY,
+					jfc.getCurrentDirectory());
 			String fn = toFile.toString();
 			if(!fn.toLowerCase().endsWith(Engine.PATHWAY_FILE_EXTENSION)) {
 				toFile = new File(fn + "." + Engine.PATHWAY_FILE_EXTENSION);

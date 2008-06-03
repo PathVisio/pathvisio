@@ -206,8 +206,8 @@ public class GexImportWizard extends Wizard
 						Engine.getCurrent().getPreferences().get(GlobalPreference.DB_GDB_CURRENT)
 				);
 			} else if(ACTION_INPUT.equals(action)) {
-				//TODO: more sensible default dir
-				File defaultdir = new File ("/home/martijn/prg/pathvisio-trunk/example-data/sample_data_1.txt");
+				
+				File defaultdir = Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
 				jfc.setSelectedFile(defaultdir);
 				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv", true));
@@ -215,6 +215,8 @@ public class GexImportWizard extends Wizard
 				if (result == JFileChooser.APPROVE_OPTION)
 				{
 					File f = jfc.getSelectedFile();
+					defaultdir = jfc.getCurrentDirectory();
+					Engine.getCurrent().getPreferences().setFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT, defaultdir);
 					setTxtFile (f);
 				}
 			} else if(ACTION_OUTPUT.equals(action)) {

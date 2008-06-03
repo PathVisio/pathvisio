@@ -48,10 +48,31 @@ public enum GlobalPreference implements Preference {
 
 	GUI_SIDEPANEL_SIZE("30"),
 	
+	// pathway base dir 
 	DIR_PWFILES(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
+	// gdb base dir
 	DIR_GDB(new File(Engine.getCurrent().getDataDir().toString(), "gene databases").toString()),
-	DIR_EXPR(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString())
+	// expr base dir
+	DIR_EXPR(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString()),
 	
+	// pathway last used dir
+	DIR_LAST_USED_PATHWAY(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
+	// gdb last used dir
+	DIR_LAST_USED_PGDB(new File(Engine.getCurrent().getDataDir().toString(), "gene databases").toString()),
+	// expr last used dir
+	DIR_LAST_USED_PGEX(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString()),
+	
+	DIR_LAST_USED_EXPRESSION_IMPORT(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString()),
+	
+	MOST_RECENT_1 ((File)null),
+	MOST_RECENT_2 ((File)null),
+	MOST_RECENT_3 ((File)null),
+	MOST_RECENT_4 ((File)null),
+
+	WIN_X ("50"),
+	WIN_Y ("50"),
+	WIN_W ("800"),
+	WIN_H ("600"),
 	;
 	
 	GlobalPreference(String defaultValue) {

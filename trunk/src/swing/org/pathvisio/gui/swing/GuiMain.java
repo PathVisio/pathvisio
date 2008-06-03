@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -165,9 +167,26 @@ public class GuiMain
 			Logger.log.error("Unable to load native look and feel", ex);
 		}
 		frame.pack();
-		frame.setSize(800, 600);
+		PreferenceManager preferences = Engine.getCurrent().getPreferences();
+		frame.setSize(preferences.getInt(GlobalPreference.WIN_W), preferences.getInt(GlobalPreference.WIN_H));
+		frame.setLocation(preferences.getInt(GlobalPreference.WIN_X), preferences.getInt(GlobalPreference.WIN_Y));
+		
 		frame.addWindowListener(new WindowAdapter() 
 		{
+			@Override
+			public void windowClosing(WindowEvent we)
+			{
+				PreferenceManager prefs = Engine.getCurrent().getPreferences();
+				JFrame frame = SwingEngine.getCurrent().getFrame();
+				Dimension size = frame.getSize();
+				Point p = frame.getLocationOnScreen();
+				prefs.setInt(GlobalPreference.WIN_W, size.width);
+				prefs.setInt(GlobalPreference.WIN_H, size.height);
+				prefs.setInt(GlobalPreference.WIN_X, p.x);
+				prefs.setInt(GlobalPreference.WIN_Y, p.y);				
+			}
+			
+			@Override
 			public void windowClosed(WindowEvent arg0) 
 			{
 				GuiMain.this.shutdown();

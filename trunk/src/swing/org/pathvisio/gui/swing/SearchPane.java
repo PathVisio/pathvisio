@@ -361,7 +361,7 @@ public class SearchPane extends JPanel
 	{
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		
+		fc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_PWFILES));
 		int result = fc.showDialog(getTopLevelAncestor(), "Select");
 		if (result == JFileChooser.APPROVE_OPTION)
 		{

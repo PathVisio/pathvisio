@@ -39,11 +39,28 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 	{
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-		jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_GDB));
+		
+		if (getDbType() == TYPE_GDB)
+		{
+			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+		}
+		else
+		{
+			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+		}
 		//TODO: select right file filter for gex / gdb
+		
 		int status = jfc.showDialog (parent, "Open database");
 		if(status == JFileChooser.APPROVE_OPTION) 
 		{
+			if (getDbType() == TYPE_GDB)
+			{
+				Engine.getCurrent().getPreferences().setFile (GlobalPreference.DIR_LAST_USED_PGDB, jfc.getCurrentDirectory());
+			}
+			else
+			{
+				Engine.getCurrent().getPreferences().setFile (GlobalPreference.DIR_LAST_USED_PGEX, jfc.getCurrentDirectory());
+			}
 			return jfc.getSelectedFile().toString();
 		}
 		return null;
@@ -54,10 +71,27 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
 		
+		if (getDbType() == TYPE_GDB)
+		{
+			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+		}
+		else
+		{
+			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+		}
+
 		//TODO: select right file filter for gex / gdb
 		int status = jfc.showDialog (parent, "Choose filename for database");
 		if(status == JFileChooser.APPROVE_OPTION) 
 		{
+			if (getDbType() == TYPE_GDB)
+			{
+				jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+			}
+			else
+			{
+				jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+			}
 			return jfc.getSelectedFile().toString();
 		}
 		return null;

@@ -18,17 +18,11 @@ package org.pathvisio.visualization.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,7 +33,6 @@ import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetObject;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
@@ -205,22 +198,9 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		return null;
 	}
 	
-	private static class ColorSetObjectPanel extends JPanel
+	public static class ColorSetObjectPanel extends JPanel
 	{
 		private static final long serialVersionUID = 1L;
-		
-	}
-	private static class ColorRulePanel extends ColorSetObjectPanel
-	{
-		private static final long serialVersionUID = 1L;
-		private ColorRule cr;
-		
-		ColorRulePanel (ColorRule cr)
-		{
-			this.cr = cr;
-			add (new JLabel ("Expression: " + cr.getCriterion().getExpression()));
-			add (new JLabel ("Color Rule Panel not implemented"));
-		}
 		
 	}
 }

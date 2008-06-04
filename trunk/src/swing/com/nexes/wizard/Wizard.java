@@ -9,6 +9,8 @@ import java.net.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import org.pathvisio.debug.Logger;
+
 /**
  * This class implements a basic wizard dialog, where the programmer can
  * insert one or more Components to act as panels. These panels can be navigated
@@ -452,9 +454,10 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
             CANCEL_ICON = new ImageIcon((URL)getImage((String)(resources.getObject("cancelButtonIcon"))));
             FINISH_ICON = new ImageIcon((URL)getImage((String)(resources.getObject("finishButtonIcon"))));
         
-        } catch (MissingResourceException mre) {
-            System.out.println(mre);
-            System.exit(1);
+        } 
+        catch (MissingResourceException mre) 
+        {
+        	Logger.log.error ("Could not find resource", mre); 
         }
     }
 

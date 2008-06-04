@@ -135,6 +135,8 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	
 	JPanel createAppearancePanel() {
 		final JLabel preview = new JLabel(getFont().getFamily());
+		preview.setOpaque(true);
+		preview.setBackground(Color.WHITE);
 		preview.setFont(getFont());
 		
 		final JButton font = new JButton("...");
@@ -159,7 +161,7 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 			}
 		});
 		
-		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref, 4dlu, pref, 4dlu, pref:grow", ""));
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref, 4dlu, fill:pref:grow, 4dlu, pref", ""));
 		builder.setDefaultDialogBorder();
 		builder.append("Font: ", preview, font);
 		builder.nextLine();

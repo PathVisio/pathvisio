@@ -57,7 +57,6 @@ import org.pathvisio.visualization.colorset.ColorSet;
 
 public class ColorByExpression extends VisualizationMethod {
 	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
-	static final String[] useSampleColumns = { "sample", "color set" };
 	static final Color LINE_COLOR_DEFAULT = Color.BLACK;
 	
 	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
@@ -115,6 +114,19 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 		}
 		return cs;
+	}
+	
+	/**
+	 * Get the configured sample for the given sample. Returns
+	 * null when no configured sample is found.
+	 */
+	protected ConfiguredSample getConfiguredSample(Sample s) {
+		for(ConfiguredSample cs : useSamples) {
+			if(cs.getSample() != null && cs.getSample() == s) {
+				return cs;
+			}
+		}
+		return null;
 	}
 	
 	public String getDescription() {

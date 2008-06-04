@@ -16,34 +16,34 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.Sample;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.gui.ColorSetChooser;
 import org.pathvisio.visualization.gui.ColorSetCombo;
-import org.pathvisio.visualization.gui.ColorSetDlg;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * Configuration panel for the ColorByExpression visualization
@@ -54,6 +54,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	static final String ACTION_ADVANCED = "Advanced";
 	static final String ACTION_BASIC = "Basic";
+	static final String ACTION_SAMPLE = "sample";
+	static final String ACTION_COMBO = "colorset";
 	
 	ColorByExpression method;
 	Basic basic;
@@ -105,17 +107,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
 		if(ACTION_ADVANCED.equals(action) || ACTION_BASIC.equals(action)) {
+			basic.refresh();
+			advanced.refresh();
 			cardLayout.show(settings, action);
 		}
 	}
 	
-	class Basic extends JPanel implements ItemListener, ActionListener, ListDataListener {
+	class Basic extends JPanel implements ActionListener, ListDataListener {
 		private static final long serialVersionUID = 1L;
-		static final String ACTION_SAMPLE = "sample";
-		static final String ACTION_NEW = "New";
-		static final String ACTION_REMOVE = "Remove";
-		static final String ACTION_MODIFY = "Modify";
-		static final String ACTION_COMBO = "colorset";
 		
 		private SortSampleCheckList sampleList;
 		
@@ -123,7 +122,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		
 		public Basic() {
 			setLayout(new FormLayout(
-					"4dlu, pref, 2dlu, fill:pref:grow, 4dlu, pref",
+					"4dlu, pref, 2dlu, fill:pref:grow, 4dlu",
 					"4dlu, pref:grow, 4dlu, pref, 4dlu"
 			));
 			
@@ -135,41 +134,29 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			sampleList.getList().getModel().addListDataListener(this);
 			ColorSetManager csm = method.getVisualization()
 											.getManager().getColorSetManager();
-			colorSetCombo = new ColorSetCombo(csm);
-			colorSetCombo.setSelectedItem(method.getSingleColorSet());
+			ColorSetChooser csChooser = new ColorSetChooser(csm);
+			colorSetCombo = csChooser.getColorSetCombo();
 			colorSetCombo.setActionCommand(ACTION_COMBO);
 			colorSetCombo.addActionListener(this);
+			
 			CellConstraints cc = new CellConstraints();
-			
-			DropDownButton csButton = new DropDownButton(new ImageIcon(
-					Engine.getCurrent().getResourceURL("edit.gif"))
-			);
-			JMenuItem m_new = new JMenuItem(ACTION_NEW);
-			JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);
-			JMenuItem m_rename = new JMenuItem(ACTION_MODIFY);
-			m_new.setActionCommand(ACTION_NEW);
-			m_remove.setActionCommand(ACTION_REMOVE);
-			m_rename.setActionCommand(ACTION_MODIFY);
-			m_new.addActionListener(this);
-			m_remove.addActionListener(this);
-			m_rename.addActionListener(this);
-			csButton.addComponent(m_new);
-			csButton.addComponent(m_remove);
-			csButton.addComponent(m_rename);
-			
-			
 			add(sampleList, cc.xyw(2, 2, 3));
 			add(new JLabel("Color set:"), cc.xy(2, 4));
-			add(colorSetCombo, cc.xy(4, 4));
-			add(csButton, cc.xy(6, 4));
+			add(csChooser, cc.xy(4, 4));
+			
+			refresh();
 		}
 
-		public void itemStateChanged(ItemEvent e) {
-			if(e.getItem() instanceof ColorSet) {
-				method.setSingleColorSet((ColorSet)e.getItem());
+		void refresh() {
+			ColorSet cs = method.getSingleColorSet();
+			if(cs == null) {
+				colorSetCombo.setSelectedIndex(0);
+			} else {
+				colorSetCombo.setSelectedItem(cs);
 			}
+			sampleList.getList().setSelectedSamples(method.getSelectedSamples());
 		}
-
+		
 		private void refreshSamples() {
 			ArrayList<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
 			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
@@ -183,33 +170,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
-			ColorSetManager csMgr = method.getVisualization().
-										getManager().getColorSetManager();
 			if(ACTION_SAMPLE.equals(action)) {
 				refreshSamples();
-			} else if(ACTION_NEW.equals(action)) {
-
-				ColorSet cs = new ColorSet(csMgr);
-				ColorSetDlg dlg = new ColorSetDlg(cs, null, this);
-				dlg.setVisible(true);
-				csMgr.addColorSet(cs);
-				colorSetCombo.refresh();
-				colorSetCombo.setSelectedItem(cs);
-			} else if(ACTION_REMOVE.equals(action)) {
-				ColorSet cs = colorSetCombo.getSelectedColorSet();
-				if(cs != null) {
-					csMgr.removeColorSet(cs);
-					colorSetCombo.setSelectedIndex(0);
-				}
-				colorSetCombo.refresh();
-			} else if(ACTION_MODIFY.equals(action)) {
-				ColorSet cs = colorSetCombo.getSelectedColorSet();
-				if(cs != null) {
-					ColorSetDlg dlg = new ColorSetDlg(cs, null, this);
-					dlg.setVisible(true);
-				}
-				colorSetCombo.refresh();
-				colorSetCombo.setSelectedItem(cs);
 			} else if(ACTION_COMBO.equals(action)) {
 				method.setSingleColorSet(colorSetCombo.getSelectedColorSet());
 			}
@@ -228,10 +190,154 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	class Advanced extends JPanel {
+	class Advanced extends JPanel implements ActionListener, ListDataListener, ListSelectionListener {
 		private static final long serialVersionUID = 1L;
+		SortSampleCheckList sampleList;
+		ColorSetCombo colorSetCombo;
+		SamplePanel samplePanel;
+		
 		public Advanced() {
-			add(new JLabel("Not implemented"));
+			setLayout(new FormLayout(
+					"4dlu, fill:pref:grow(0.5), 4dlu, fill:pref:grow(0.5), 4dlu",
+					"4dlu, fill:pref:grow, 4dlu"
+			));
+			
+			sampleList = new SortSampleCheckList(
+					method.getSelectedSamples()
+			);
+			sampleList.getList().addActionListener(this);
+			sampleList.getList().setActionCommand(ACTION_SAMPLE);
+			sampleList.getList().getModel().addListDataListener(this);
+			sampleList.getList().addListSelectionListener(this);
+			samplePanel = new SamplePanel(null);
+			
+			refresh();
+			CellConstraints cc = new CellConstraints();
+			add(sampleList, cc.xy(2, 2));
+			add(samplePanel, cc.xy(4, 2));
+		}
+
+		void refresh() {
+			sampleList.getList().setSelectedSamples(method.getSelectedSamples());
+			samplePanel.setInput(method.getConfiguredSample(
+					sampleList.getList().getSelectedSample()
+			));
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			String action = e.getActionCommand();
+			if(ACTION_SAMPLE.equals(action)) {
+				refreshSamples();
+			} else if(ACTION_COMBO.equals(action)) {
+				Sample s = sampleList.getList().getSelectedSample();
+				ColorSet colorSet = colorSetCombo.getSelectedColorSet();
+				if(s != null && colorSet != null) {
+					ConfiguredSample cs = method.getConfiguredSample(s);
+					if(cs != null) {
+						cs.setColorSet(colorSet);
+					}
+				}
+			}
+		}
+
+		private void refreshSamples() {
+			ArrayList<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
+			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
+				ConfiguredSample cs = method.getConfiguredSample(s);
+				if(cs == null) {
+					cs = method.new ConfiguredSample(s);
+				}
+				csamples.add(cs);
+				if(sampleList.getList().getSelectedSample() == s) {
+					samplePanel.setInput(cs);
+				}
+			}
+			method.setUseSamples(csamples);
+		}
+		
+		public void contentsChanged(ListDataEvent e) {
+			refreshSamples();
+		}
+
+		public void intervalAdded(ListDataEvent e) {
+			refreshSamples();			
+		}
+
+		public void intervalRemoved(ListDataEvent e) {
+			refreshSamples();			
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			samplePanel.setInput(
+					method.getConfiguredSample(
+							sampleList.getList().getSelectedSample()
+					)
+			);
+		}
+	}
+	
+	class SamplePanel extends JPanel implements ActionListener {
+		static final String ACTION_IMG = "Use image";
+		ConfiguredSample cs;
+		ColorSetCombo colorSetCombo;
+		JCheckBox imageCheck;
+		
+		public SamplePanel(ConfiguredSample cs) {
+			setInput(cs);
+		}
+		
+		void setInput(ConfiguredSample cs) {
+			this.cs = cs;
+			removeAll();
+			if(cs == null) {
+				setBorder(BorderFactory.createTitledBorder(
+					BorderFactory.createEtchedBorder(),
+					"Sample settings"
+				));
+				setLayout(new BorderLayout());
+				add(new JLabel("Select a sample to configure"), BorderLayout.CENTER);
+			} else {
+				setBorder(BorderFactory.createTitledBorder(
+						BorderFactory.createEtchedBorder(),
+						"Sample settings for " + cs.getSample().getName()
+				));
+				setContents();
+			}
+			revalidate();
+		}
+		
+		void setContents() {
+			DefaultFormBuilder builder = new DefaultFormBuilder(
+					new FormLayout("pref, 4dlu, fill:pref:grow"),
+					this
+			);
+			
+			ColorSetManager csm = method.getVisualization()
+			.getManager().getColorSetManager();
+			ColorSetChooser csChooser = new ColorSetChooser(csm);
+			colorSetCombo = csChooser.getColorSetCombo();
+			colorSetCombo.setActionCommand(ACTION_COMBO);
+			colorSetCombo.addActionListener(this);
+			colorSetCombo.setSelectedItem(cs.getColorSet());
+			
+			imageCheck = new JCheckBox(ACTION_IMG);
+			imageCheck.setActionCommand(ACTION_IMG);
+			imageCheck.addActionListener(this);
+			
+			builder.setDefaultDialogBorder();
+			builder.append("Color set:", csChooser);
+			builder.nextLine();
+			builder.append(imageCheck, 3);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			String action = e.getActionCommand();
+			if(ACTION_COMBO.equals(action)) {
+				cs.setColorSet(colorSetCombo.getSelectedColorSet());
+			} else if(ACTION_IMG.equals(action)) {
+				JOptionPane.showMessageDialog(this, "Not implemented!");
+				imageCheck.setEnabled(false);
+			}
 		}
 	}
 }

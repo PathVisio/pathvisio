@@ -387,7 +387,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</tar>
 	</target>
 	
-	<target name="prepare-webstart" depends="jar,resources-jar" description="prepares webstart">
+	<target name="prepare-webstart" depends="jar,resources-jar,visplugins-jar" description="prepares webstart">
 		<mkdir dir="${webstart.dir}/www"/>
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>

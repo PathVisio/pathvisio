@@ -22,21 +22,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-
-import org.pathvisio.debug.Logger;
  
 public class JCheckBoxList extends JList
 {
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
- 
+    private Icon checkIcon;
     /**
      * Create a list containing a checkbox for each item. Equivalent to
      * <code>JCheckBoxList(true)</code>
@@ -54,6 +52,8 @@ public class JCheckBoxList extends JList
     {
         setCellRenderer(new CheckBoxCellRenderer());
  
+        checkIcon = UIManager.getIcon("CheckBox.icon");
+        
         addMouseListener(new MouseAdapter()
         {
             public void mousePressed(MouseEvent e)
@@ -63,8 +63,7 @@ public class JCheckBoxList extends JList
                 {
                 	JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
                 	Point p = e.getPoint();
-                	//TODO: Use real checkbox size
-                	if(checkOnSelect || p.x <= 20) {
+                	if(checkOnSelect || p.x <= checkIcon.getIconWidth()) {
                 		checkbox.doClick();
                 		repaint();
                 	}

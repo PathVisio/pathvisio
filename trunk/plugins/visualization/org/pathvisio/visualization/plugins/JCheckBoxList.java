@@ -15,16 +15,42 @@
 // limitations under the License.
 //
 package org.pathvisio.visualization.plugins;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+
+import org.pathvisio.debug.Logger;
  
 public class JCheckBoxList extends JList
 {
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
  
-    public JCheckBoxList()
+    /**
+     * Create a list containing a checkbox for each item. Equivalent to
+     * <code>JCheckBoxList(true)</code>
+     */
+    public JCheckBoxList() {
+    	this(true);
+    }
+    /**
+     * Create a list containing a checkbox for each item
+     * @param checkOnSelect If true, the checkbox is checked/unchecked when the 
+     * user clicks on any point within a row. If false, the checkbox is only
+     * checked/unchecked when the user clicks excactly on the checkbox.
+     */
+    public JCheckBoxList(final boolean checkOnSelect)
     {
         setCellRenderer(new CheckBoxCellRenderer());
  
@@ -35,9 +61,13 @@ public class JCheckBoxList extends JList
                 int index = locationToIndex(e.getPoint());
                 if (index != -1)
                 {
-                    JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
-                    checkbox.doClick();
-                    repaint();
+                	JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
+                	Point p = e.getPoint();
+                	//TODO: Use real checkbox size
+                	if(checkOnSelect || p.x <= 20) {
+                		checkbox.doClick();
+                		repaint();
+                	}
                 }
             }
         });

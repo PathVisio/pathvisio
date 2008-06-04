@@ -18,6 +18,7 @@ package org.pathvisio.visualization.plugins;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ public class SampleCheckList extends JCheckBoxList {
 	Map<Sample, JCheckBox> sample2checkbox = new HashMap<Sample, JCheckBox>();
 	
 	public SampleCheckList(List<? extends Sample> selection) {
+		super(false);
 		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 		if(gex != null) {
 			List<Sample> samples = new ArrayList<Sample>();
@@ -54,6 +56,7 @@ public class SampleCheckList extends JCheckBoxList {
 	
 	public SampleCheckList(List<? extends Sample> samples, 
 			List<? extends Sample> selected) {
+		super(false);
 		setSamples(samples, selected);
 	}
 	
@@ -107,6 +110,18 @@ public class SampleCheckList extends JCheckBoxList {
 	
 	public Sample getSelectedSample() {
 		return checkbox2sample.get(getSelectedValue());
+	}
+	
+	public void setSelectedSamples(Collection<Sample> select) {
+		for(JCheckBox ch : sample2checkbox.values()) {
+			ch.setSelected(false);
+		}
+		for(Sample s : select) {
+			JCheckBox ch = sample2checkbox.get(s);
+			if(ch != null) {
+				ch.setSelected(true);
+			}
+		}
 	}
 	
 	public boolean isSelected(Sample s) {

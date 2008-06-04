@@ -53,13 +53,27 @@ public class ColorGradient extends ColorSetObject {
 	public static List<ColorGradient> createDefaultGradients() {
 		List<ColorGradient> gradients = new ArrayList<ColorGradient>();
 		ColorGradient g = new ColorGradient(null);
+		g.addColorValuePair(g.new ColorValuePair(Color.BLUE, -1));
+		g.addColorValuePair(g.new ColorValuePair(Color.YELLOW, 1));
+		gradients.add(g);
+		g = new ColorGradient(null);
 		g.addColorValuePair(g.new ColorValuePair(Color.GREEN, -1));
 		g.addColorValuePair(g.new ColorValuePair(Color.YELLOW, 0));
 		g.addColorValuePair(g.new ColorValuePair(Color.RED, 1));
 		gradients.add(g);
 		g = new ColorGradient(null);
+		g.addColorValuePair(g.new ColorValuePair(Color.GREEN, -1));
+		g.addColorValuePair(g.new ColorValuePair(Color.WHITE, 0));
+		g.addColorValuePair(g.new ColorValuePair(Color.RED, 1));
+		gradients.add(g);
+		g = new ColorGradient(null);
 		g.addColorValuePair(g.new ColorValuePair(Color.BLUE, -1));
-		g.addColorValuePair(g.new ColorValuePair(Color.YELLOW, 1));
+		g.addColorValuePair(g.new ColorValuePair(Color.RED, 1));
+		gradients.add(g);
+		g = new ColorGradient(null);
+		g.addColorValuePair(g.new ColorValuePair(Color.BLUE, -1));
+		g.addColorValuePair(g.new ColorValuePair(Color.WHITE, 0));
+		g.addColorValuePair(g.new ColorValuePair(Color.RED, 1));
 		gradients.add(g);
 		return gradients;
 	}

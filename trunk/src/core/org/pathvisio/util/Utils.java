@@ -16,6 +16,7 @@
 //
 package org.pathvisio.util;
 
+import java.awt.Font;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -189,5 +190,18 @@ public class Utils {
 		}catch(Exception ex){
 		}
 		return in;
+	}
+	
+	/**
+	 * Encodes a font to a string that can be converted back
+	 * into a font object using Font.decode(String)
+	 */
+	public static String encodeFont(Font f) {
+		String style = "PLAIN";
+		if(f.isBold() && f.isItalic()) style = "BOLDITALIC";
+		else if (f.isBold()) style = "BOLD";
+		else if (f.isItalic()) style = "ITALIC";
+		String fs = f.getName() + "-" + style + "-" + f.getSize();
+		return fs;
 	}
 }

@@ -52,6 +52,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
@@ -341,7 +342,7 @@ public class TextByExpression extends VisualizationMethod
 	static final String XML_ELM_ID = "sample-id";
 	public Element toXML() {
 		Element elm = super.toXML();
-		elm.setAttribute(XML_ATTR_FONTDATA, getFont().toString());
+		elm.setAttribute(XML_ATTR_FONTDATA, Utils.encodeFont(getFont()));
 		elm.setAttribute(XML_ATTR_ROUND, Integer.toString(getRoundTo()));
 		elm.setAttribute(XML_ATTR_AVG, Boolean.toString(mean));
 		for(Sample s : useSamples) {

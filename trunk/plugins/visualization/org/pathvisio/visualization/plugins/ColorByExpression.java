@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -84,7 +85,11 @@ public class ColorByExpression extends VisualizationMethod {
 	 */
 	public boolean isAdvanced() {
 		//Advanced when different colorsets or an image is specified
-		//TODO: check for image
+		for(ConfiguredSample cs : useSamples) {
+			if(cs.getURL() != null) {
+				return true;
+			}
+		}
 		return getSingleColorSet() == null;
 	}
 	
@@ -141,6 +146,10 @@ public class ColorByExpression extends VisualizationMethod {
 		return new ColorByExpressionPanel(this);
 	}
 	
+	public List<ConfiguredSample> getConfiguredSamples() {
+		return useSamples;
+	}
+	
 	public List<Sample> getSelectedSamples() {
 		List<Sample> samples = new ArrayList<Sample>();
 		
@@ -156,11 +165,11 @@ public class ColorByExpression extends VisualizationMethod {
 	}
 	
 	void addImageURL(URL url) {
-		if(!imageURLs.contains(url))imageURLs.add(url);
+		if(!getImageURLs().contains(url)) getImageURLs().add(url);
 	}
 	
 	void removeImageURL(URL url) {
-		if(url.getProtocol().equals("file")) imageURLs.remove(url);
+		if(url.getProtocol().equals("file")) getImageURLs().remove(url);
 	}
 	
 	void drawImage(ConfiguredSample is, Color rgb, Rectangle area, Graphics2D g2d) {
@@ -484,6 +493,10 @@ public class ColorByExpression extends VisualizationMethod {
 			sample = s;
 		}
 		
+		protected ColorByExpression getMethod() {
+			return ColorByExpression.this;
+		}
+		
 		/**
 		 * Create a configured sample from the information in the given XML element
 		 * @param xml The XML element containing information to create the configured sample from
@@ -523,8 +536,12 @@ public class ColorByExpression extends VisualizationMethod {
 		
 		public void setURL(URL url) { 
 			imageURL = url;
-			cacheImage = null;
+			invalidateImageCache();
 			modified();
+		}
+		
+		public void setDefaultURL() {
+			setURL(defaultURLs().get(0));
 		}
 		
 		public URL getURL() { 
@@ -537,18 +554,23 @@ public class ColorByExpression extends VisualizationMethod {
 		
 		public void setReplaceColor(Color rgb) { 
 			if(rgb != null) replaceColor = rgb;
+			invalidateImageCache();
 			modified();
 		}
 		public Color getReplaceColor() { return replaceColor; }
 		public void setMaintainAspect(boolean maintain) { 
 			aspectRatio = maintain;
+			invalidateImageCache();
 			modified();
 		}
 		public boolean getMaintainAspect() { return aspectRatio;}
+		
 		public void setTolerance(int tol) { 
+			tolerance = tol;
+			invalidateImageCache();
 			modified();
-			tolerance = tol; 
 		}
+		
 		public int getTolerance() { return tolerance; }
 		
 		public BufferedImage getImage() {
@@ -564,26 +586,40 @@ public class ColorByExpression extends VisualizationMethod {
 			return cacheImage.getSubimage(0, 0, cacheImage.getWidth(), cacheImage.getHeight());
 		}
 		
+		private void invalidateImageCache() {
+			scaledImages.clear();
+			coloredImages.clear();
+			cacheImage = null;
+		}
+		
+		private Map<Dimension, Image> scaledImages = new HashMap<Dimension, Image>();
+		private Map<Color, Image> coloredImages = new HashMap<Color, Image>();
+		
 		public Image getImage(Dimension size) {
 			return getImage(size, null);
 		}
 		
 		public Image getImage(Color replaceWith) {
-			Image img = getImage();
-			if(img == null) return null;
-			if(replaceWith != null) img = doReplaceColor(img, replaceColor, replaceWith, tolerance);
+			Image img = coloredImages.get(replaceWith);
+			if(img == null) {
+				img = getImage();
+				if(img == null) return null;
+				if(replaceWith != null) img = doReplaceColor(img, replaceColor, replaceWith, tolerance);
+				coloredImages.put(replaceWith, img);
+			}
 			return img;
 		}
 		
 		public Image getImage(Dimension size, Color replaceWith) {
-			Image img = getImage();
-			if(img == null) return null;
-			
-			img = getImage(replaceWith);
-			
-			size = getScaleSize(size);
-			
-			img = img.getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+			Image img = scaledImages.get(size);
+			if(img == null) {
+				img = getImage(replaceWith);
+				if(img == null) return null;
+				
+				size = getScaleSize(size);
+				img = img.getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+				scaledImages.put(size, img);
+			}
 			return img;
 		}
 		

@@ -83,9 +83,6 @@ public class MethodPanel extends JPanel implements ActionListener {
 			method.setActive(checkBox.isSelected());
 			if(method.isConfigurable()) {
 				configPanel.setVisible(checkBox.isSelected());
-				Logger.log.trace(checkBox.isSelected() + "");
-				Logger.log.trace(method.isActive() + "");
-				Logger.log.trace("" + configPanel.getSize());
 				revalidate();
 			}
 		}

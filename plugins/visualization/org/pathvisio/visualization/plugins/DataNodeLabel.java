@@ -29,6 +29,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,12 +37,14 @@ import javax.swing.JRadioButton;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -121,8 +124,38 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 		if(DISPLAY_ID.equals(action) || DISPLAY_LABEL.equals(action)) {
 			setDisplayAttribute(action);
 		} else if(ACTION_APPEARANCE.equals(action)) {
-			JOptionPane.showMessageDialog(null, "Not implemented yet!");
+			OkCancelDialog optionsDlg = new OkCancelDialog(
+					null, ACTION_APPEARANCE, (Component)e.getSource(), true, false
+			);
+			optionsDlg.setDialogComponent(createAppearancePanel());
+			optionsDlg.pack();
+			optionsDlg.setVisible(true);
+		} else if(ACTION_FONT.equals(action)) {
+			JOptionPane.showMessageDialog((Component)e.getSource(), "Not implemented!");
 		}
+	}
+	
+	static final String ACTION_FONT = "Font...";
+	JPanel createAppearancePanel() {
+		JButton font = new JButton(ACTION_FONT);
+		font.setActionCommand(ACTION_FONT);
+		font.addActionListener(this);
+		
+		final JComboBox align = new JComboBox(
+				new String[] { "Center", "Left", "Right" }
+		);
+		align.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setAlignment(align.getSelectedIndex());
+			}
+		});
+		
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref, 4dlu, fill:pref:grow", ""));
+		builder.setDefaultDialogBorder();
+		builder.append(font, 3);
+		builder.nextLine();
+		builder.append("Alignment:", align);
+		return builder.getPanel();
 	}
 	
 	void setDisplayAttribute(String display) {
@@ -179,18 +212,17 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 			
 			g2d.setColor(getFontColor());
 			
-			Rectangle2D textSize = g2d.getFontMetrics().getStringBounds(label, g2d);
+			TextLayout tl = new TextLayout(label, g2d.getFont(), g2d.getFontRenderContext());
+			Rectangle2D tb = tl.getBounds();
 			
 			switch(align) {
 			case ALIGN_LEFT: 
-				area.x += area.width - textSize.getWidth();
+				area.x -= area.width / 2 - tb.getWidth() / 2 - 1;
 				break;
 			case ALIGN_RIGHT:
-				area.x += (int)(area.width / 2) - (int)(textSize.getWidth()/ 2);
+				area.x += area.width / 2 - tb.getWidth() / 2 - 1;
 			}
 		
-			TextLayout tl = new TextLayout(label, g2d.getFont(), g2d.getFontRenderContext());
-			Rectangle2D tb = tl.getBounds();
 			tl.draw(g2d, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2), 
 					(int)area.getY() + (int)(area.getHeight() / 2) + (int)(tb.getHeight() / 2));
 		}

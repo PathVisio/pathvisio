@@ -70,6 +70,13 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 		}
 	}
 	
+	public void setSelectedIndex(int anIndex) {
+		if(getItemAt(anIndex) == NEW) {
+			anIndex = anIndex - 1;
+		}
+		super.setSelectedIndex(anIndex);
+	}
+	
 	public ColorSet getSelectedColorSet() {
 		Object o = getSelectedItem();
 		if(o instanceof ColorSet) {

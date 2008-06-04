@@ -27,7 +27,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -37,7 +36,7 @@ import javax.swing.UIManager;
  * 
  * The central panel can have arbitrarily complex contents 
  */
-public abstract class OkCancelDialog extends JDialog implements ActionListener {
+public class OkCancelDialog extends JDialog implements ActionListener {
 	public static final String OK = "Ok";
 	public static final String CANCEL = "Cancel";
 	
@@ -94,7 +93,7 @@ public abstract class OkCancelDialog extends JDialog implements ActionListener {
 	 * call this method to set custom dialog contents.
 	 * @param dialogComponent
 	 */
-	protected final void setDialogComponent(Component dialogComponent) {
+	public final void setDialogComponent(Component dialogComponent) {
 		contentPanel.add(dialogComponent, BorderLayout.CENTER);
 		invalidate();
 	}

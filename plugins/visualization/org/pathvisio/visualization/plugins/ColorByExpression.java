@@ -85,6 +85,9 @@ public class ColorByExpression extends VisualizationMethod {
 	 */
 	public boolean isAdvanced() {
 		//Advanced when different colorsets or an image is specified
+		if(useSamples.size() == 0) {
+			return false;
+		}
 		for(ConfiguredSample cs : useSamples) {
 			if(cs.getURL() != null) {
 				return true;

@@ -38,6 +38,7 @@ import org.jdom.Element;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
@@ -305,13 +306,7 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 		elm.setAttribute(XML_ATTR_DISPLAY, display);
 		elm.setAttribute(XML_ATTR_ADAPT_FONT, Boolean.toString(adaptFontSize));
 		
-		Font f = getFont();
-		String style = "PLAIN";
-		if(f.isBold() && f.isItalic()) style = "BOLDITALIC";
-		else if (f.isBold()) style = "BOLD";
-		else if (f.isItalic()) style = "ITALIC";
-		String fs = f.getName() + "-" + style + "-" + f.getSize(); 
-		elm.setAttribute(XML_ATTR_FONTDATA, fs);
+		elm.setAttribute(XML_ATTR_FONTDATA, Utils.encodeFont(getFont()));
 		
 		elm.addContent(ColorConverter.createColorElement(XML_ELM_FONTCOLOR, getFontColor()));
 		elm.setAttribute(XML_ATTR_OVERLAY, Boolean.toString(getOverlay()));

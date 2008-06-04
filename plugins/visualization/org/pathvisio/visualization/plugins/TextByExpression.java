@@ -29,8 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
@@ -42,13 +48,16 @@ import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -57,6 +66,7 @@ public class TextByExpression extends VisualizationMethod
 	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
 	static final int SPACING = 3;
 	static final String ACTION_SAMPLE = "sample";
+	static final String ACTION_APPEARANCE = "Appearance...";
 	
 	final static String SEP = ", ";	
 	int roundTo = 2;
@@ -228,8 +238,8 @@ public class TextByExpression extends VisualizationMethod
 	public JPanel getConfigurationPanel() {
 		JPanel panel = new JPanel();
 		FormLayout layout = new FormLayout(
-			"4dlu, fill:pref:grow, 4dlu",
-			"4dlu, pref, 4dlu, fill:pref:grow, 4dlu"
+			"4dlu, pref, fill:pref:grow, 4dlu",
+			"4dlu, pref, 4dlu, fill:pref:grow, 4dlu, pref, 4dlu"
 		);
 		panel.setLayout(layout);
 		
@@ -238,9 +248,15 @@ public class TextByExpression extends VisualizationMethod
 		sampleList.getList().setActionCommand(ACTION_SAMPLE);
 		sampleList.getList().getModel().addListDataListener(this);
 		sampleList.getList().addActionListener(this);
+		
+		JButton appearance = new JButton(ACTION_APPEARANCE);
+		appearance.setActionCommand(ACTION_APPEARANCE);
+		appearance.addActionListener(this);
+		
 		CellConstraints cc = new CellConstraints();
-		panel.add(new JLabel("Select samples:"), cc.xy(2, 2));
-		panel.add(sampleList, cc.xy(2, 4));
+		panel.add(new JLabel("Select samples:"), cc.xyw(2, 2, 2));
+		panel.add(sampleList, cc.xyw(2, 4, 2));
+		panel.add(appearance, cc.xy(2, 6));
 		return panel;
 	}
 	
@@ -248,7 +264,55 @@ public class TextByExpression extends VisualizationMethod
 		String action = e.getActionCommand();
 		if(ACTION_SAMPLE.equals(action)) {
 			refreshUseSamples();
+		} else if(ACTION_APPEARANCE.equals(action)) {
+			OkCancelDialog optionsDlg = new OkCancelDialog(
+					null, ACTION_APPEARANCE, (Component)e.getSource(), true, false
+			);
+			optionsDlg.setDialogComponent(createAppearancePanel());
+			optionsDlg.pack();
+			optionsDlg.setVisible(true);
 		}
+	}
+	
+	JPanel createAppearancePanel() {
+		final JLabel preview = new JLabel(getFont().getFamily());
+		preview.setFont(getFont());
+		
+		final JButton font = new JButton("...");
+		font.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Font f = FontChooser.showDialog(null, (Component)e.getSource(), getFont());
+				if(f != null) {
+					setFont(f);
+					preview.setText(f.getFamily());
+					preview.setFont(f);
+				}	
+			}
+		});
+		
+		final JCheckBox average = new JCheckBox("Display average of selected samples");
+		average.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setCalcMean(average.isSelected());
+			}
+		});
+
+		SpinnerNumberModel model = new SpinnerNumberModel(getRoundTo(), 0, 10, 1);
+		final JSpinner precision = new JSpinner(model);
+		precision.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				setRoundTo((Integer)precision.getValue());
+			}
+		});
+				
+		DefaultFormBuilder builder = new DefaultFormBuilder(
+				new FormLayout("pref, 4dlu, pref, 4dlu, pref", "")
+		);
+		builder.setDefaultDialogBorder();
+		builder.append("Font: ", preview, font);
+		builder.nextLine();
+		builder.append("Display precision:", precision, 3);
+		return builder.getPanel();
 	}
 	
 	private void refreshUseSamples() {

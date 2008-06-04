@@ -31,7 +31,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -39,6 +38,7 @@ import org.jdom.Element;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
@@ -130,31 +130,40 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 			optionsDlg.setDialogComponent(createAppearancePanel());
 			optionsDlg.pack();
 			optionsDlg.setVisible(true);
-		} else if(ACTION_FONT.equals(action)) {
-			JOptionPane.showMessageDialog((Component)e.getSource(), "Not implemented!");
 		}
 	}
 	
-	static final String ACTION_FONT = "Font...";
 	JPanel createAppearancePanel() {
-		JButton font = new JButton(ACTION_FONT);
-		font.setActionCommand(ACTION_FONT);
-		font.addActionListener(this);
+		final JLabel preview = new JLabel(getFont().getFamily());
+		preview.setFont(getFont());
 		
+		final JButton font = new JButton("...");
+		font.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Font f = FontChooser.showDialog(null, (Component)e.getSource(), getFont());
+				if(f != null) {
+					setFont(f);
+					preview.setText(f.getFamily());
+					preview.setFont(f);
+				}	
+			}
+		});
 		final JComboBox align = new JComboBox(
 				new String[] { "Center", "Left", "Right" }
 		);
+		align.setSelectedIndex(getAlignment());
+		
 		align.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setAlignment(align.getSelectedIndex());
 			}
 		});
 		
-		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref, 4dlu, fill:pref:grow", ""));
+		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref, 4dlu, pref, 4dlu, pref:grow", ""));
 		builder.setDefaultDialogBorder();
-		builder.append(font, 3);
+		builder.append("Font: ", preview, font);
 		builder.nextLine();
-		builder.append("Alignment:", align);
+		builder.append("Alignment:", align, 3);
 		return builder.getPanel();
 	}
 	

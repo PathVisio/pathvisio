@@ -25,6 +25,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.VisualizationMethod;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -82,6 +83,9 @@ public class MethodPanel extends JPanel implements ActionListener {
 			method.setActive(checkBox.isSelected());
 			if(method.isConfigurable()) {
 				configPanel.setVisible(checkBox.isSelected());
+				Logger.log.trace(checkBox.isSelected() + "");
+				Logger.log.trace(method.isActive() + "");
+				Logger.log.trace("" + configPanel.getSize());
 				revalidate();
 			}
 		}

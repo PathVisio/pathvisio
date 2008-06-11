@@ -817,8 +817,14 @@ public class KeggFormat {
 		switch(organism) {
 		case HomoSapiens:
 			return "hsa";
+		case RattusNorvegicus:
+			return "rno";
+		case MusMusculus:
+			return "mmu";
+		case SaccharomycesCerevisiae:
+			return "sce";
 		default:
-			throw new ConverterException("Organism " + organism + " not supported by KEGG");
+			throw new ConverterException("No KEGG code for organism " + organism);
 		}
 	}
 

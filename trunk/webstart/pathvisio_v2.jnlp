@@ -42,7 +42,8 @@
 	     <jar href="lib/forms-1.2.0.jar"/>
 	</resources>
 	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
-		<argument>-p visplugins.jar</argument>
+		<argument>-p</argument>
+		<argument>visplugins.jar</argument>
 	</application-desc>
 	<security>
 		 <all-permissions/>

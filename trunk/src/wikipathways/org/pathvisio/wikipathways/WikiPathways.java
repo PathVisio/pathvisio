@@ -114,6 +114,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	{
 		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
+		this.engine = engine;
 	}
 
 	/**

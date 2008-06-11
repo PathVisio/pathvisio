@@ -26,6 +26,8 @@ import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 
 public class Converter {
+	static boolean overwrite = true;
+	
 	public static void main(String[] args) {
 		Engine.init();
 		Logger.log.setStream(System.err);
@@ -50,14 +52,20 @@ public class Converter {
 			System.exit(-2);
 		}
 		
+		if(args.length == 3) {
+			overwrite = Boolean.parseBoolean(args[2].trim());
+		}
+		
 		File file = new File(args[1]);
 		recursiveConversion(file, organism);
 	}
 	
 	private static void printHelp() {
-		Logger.log.error("Invalid arguments! This script requires the following arguments:\n " +
+		Logger.log.error("Invalid arguments! Usage:\n " +
+				"java -jar kegg_converter.jar organism kgml_dir [overwrite]\n" +
 				"-> organism: The full species name, e.g. 'Homo sapiens'\n" +
-				"-> kgml file or directory: either a kgml file or a directory which will be converted recursively"
+				"-> kgml_dir: either a kgml file or a directory which will be converted recursively\n" +
+				"-> overwrite: if true, existing gpml files will be overwritten (true by default)"
 		);
 	}
 	
@@ -67,14 +75,27 @@ public class Converter {
 				recursiveConversion(f, organism);
 			}
 		} else {
-			doConversion(dir, organism);
+			if(dir.getName().endsWith(".xml") ||
+					dir.getName().endsWith(".kgml")) {
+				doConversion(dir, organism);
+			}
 		}
 	}
 	
 	private static void doConversion(File file, Organism organism) {
+		//Check for overwrite
+		Logger.log.trace("Processing " + file);
+		File gpmlFile = new File(file.getAbsolutePath() + ".gpml");
+		
+		if(!overwrite && gpmlFile.exists()) {
+			Logger.log.trace("Skipping " + file + " since overwrite if false and " + 
+					gpmlFile + "already exists"
+			);
+			return;
+		}
 		try {
 			Pathway pathway = KeggFormat.readFromKegg(file, organism);
-			GpmlFormat.writeToXml(pathway, new File(file.getAbsolutePath() + ".gpml"), true);	
+			GpmlFormat.writeToXml(pathway, gpmlFile, true);	
 			BatikImageExporter imageExporter = new BatikImageExporter(BatikImageExporter.TYPE_PNG);
 			imageExporter.doExport(new File(file.getAbsolutePath() + ".png"), pathway);
 		} catch(Exception e) {

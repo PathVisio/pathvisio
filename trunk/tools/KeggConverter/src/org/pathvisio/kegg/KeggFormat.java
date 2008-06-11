@@ -101,7 +101,10 @@ public class KeggFormat {
 		Element rootelement = keggDoc.getRootElement();
 
 		PathwayElement mappInfo = pathway.getMappInfo();
-		mappInfo.setMapInfoName(rootelement.getAttributeValue("title"));
+		String title = rootelement.getAttributeValue("title");
+		if(title != null) {
+			mappInfo.setMapInfoName(title);
+		}
 		mappInfo.setMapInfoDataSource("Kegg: " + rootelement.getAttributeValue("link"));
 
 		List<Element> keggElements = rootelement.getChildren();

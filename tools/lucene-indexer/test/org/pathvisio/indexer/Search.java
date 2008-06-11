@@ -59,19 +59,19 @@ public class Search extends TestCase {
 	
 	public void testOrganismSearch() {
 		Query query = new TermQuery(
-				new Term(CreateIndex.FIELD_ORGANISM, "Homo sapiens")
+				new Term(PathwayIndexer.FIELD_ORGANISM, "Homo sapiens")
 		);
 		Hits hits = query(query);
 		assertTrue("nr of hits should be > 0, is: " + hits.length(), hits.length() > 0);
 	}
 	
 	public void testDataNodeSearch() throws CorruptIndexException, IOException {
-		Query query = new TermQuery(new Term(CreateIndex.FIELD_ID, "8643"));
+		Query query = new TermQuery(new Term(PathwayIndexer.FIELD_ID, "8643"));
 		Hits hits = query(query);
 		boolean found = false;
 		for (int i = 0; i < hits.length(); i++) {
 			Document doc = hits.doc(i);
-			String name = doc.get(CreateIndex.FIELD_NAME);
+			String name = doc.get(PathwayIndexer.FIELD_NAME);
 			if("Hedgehog Signaling Pathway".equals(name)) {
 				found = true;
 			}
@@ -80,12 +80,12 @@ public class Search extends TestCase {
 	}
 	
 	public void testCrossRefSearch() throws CorruptIndexException, IOException {
-		Query q1 = new TermQuery(new Term(CreateIndex.FIELD_XID, "32786_at"));
-		Query q2 = new TermQuery(new Term(CreateIndex.FIELD_XID, "GO:0003700"));
+		Query q1 = new TermQuery(new Term(PathwayIndexer.FIELD_XID, "32786_at"));
+		Query q2 = new TermQuery(new Term(PathwayIndexer.FIELD_XID, "GO:0003700"));
 		Hits hits = query(q1);
-		assertTrue(searchHits(hits, CreateIndex.FIELD_NAME, "Oxidative Stress"));
+		assertTrue(searchHits(hits, PathwayIndexer.FIELD_NAME, "Oxidative Stress"));
 		hits = query(q2);
-		assertTrue(searchHits(hits, CreateIndex.FIELD_NAME, "Oxidative Stress"));
+		assertTrue(searchHits(hits, PathwayIndexer.FIELD_NAME, "Oxidative Stress"));
 	}
 	
 	boolean searchHits(Hits hits, String field, String result) throws CorruptIndexException, IOException {
@@ -118,7 +118,7 @@ public class Search extends TestCase {
 	public Hits query(String q) {
 		try {
 			QueryParser parser = new QueryParser(
-					CreateIndex.FIELD_NAME, 
+					PathwayIndexer.FIELD_NAME, 
 					new StandardAnalyzer()
 			);
 			Query query = parser.parse(q);

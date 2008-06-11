@@ -17,8 +17,9 @@
 package org.pathvisio.kegg;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -40,30 +41,27 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
+import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ConnectorShape.Segment;
+import org.pathvisio.model.ConnectorShape.WayPoint;
 import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLFilter;
-import org.xml.sax.XMLReader;
 
 public class KeggFormat {
 	boolean useWebservice = true;
@@ -195,6 +193,30 @@ public class KeggFormat {
 
 		//Read the kgml file
 		SAXBuilder builder = new SAXBuilder(false);
+		
+		//Set custom entity resolver to use local DTD
+		//instead of fetching the DTD from the Kegg server
+		//every time
+		builder.setEntityResolver(new EntityResolver() {
+			public InputSource resolveEntity(String publicId, String systemId) {
+				//See if we can find the DTD entry
+				int slash = systemId.lastIndexOf('/');
+				if(slash > -1) {
+					String dtd = systemId.substring(slash + 1);
+					Logger.log.trace("Found DTD filename: " + dtd);
+					File dtdFile = new File(dtd);
+					if(dtdFile.exists()) {
+						try {
+							Logger.log.trace("Using local DTD: " + dtdFile);
+							return new InputSource(new FileReader(dtdFile));
+						} catch (FileNotFoundException e) {
+							Logger.log.trace("Couldn't read DTD file");
+						}
+					}
+				}
+				return null;
+			}
+		});
 		Document doc;
 		try {
 			doc = builder.build(file);
@@ -334,7 +356,8 @@ public class KeggFormat {
 				genes = reaction2element.get(reaction);
 				if(genes == null) {
 					reaction2element.put(reaction, genes = new ArrayList<PathwayElement>());
-				}			
+				}
+				break; //Take the first reaction only
 			}
 		}
 		return genes;
@@ -521,13 +544,70 @@ public class KeggFormat {
 		}
 		//Add a reaction anchor + line to the datanodes
 		if(substrate != null && product != null){
-			PathwayElement line = createPathwayLine(substrate, product);								
+			MLine line = createPathwayLine(substrate, product);								
 			pathway.add(line);
 			if(dataNodes != null && dataNodes.size() > 0) {
+				PathwayElement m = dataNodes.get(0);
+
+				Point sp = findBorders(substrate, m)[0];
+				Point ep = findBorders(m, product)[1];
+				line.getMStart().setRelativePosition(sp.x, sp.y);
+				line.getMEnd().setRelativePosition(ep.x, ep.y);
+				
+				//Set the waypoints
+				line.setConnectorType(ConnectorType.ELBOW);
+				line.getConnectorShape().recalculateShape(line);
+				
+				WayPoint[] wps = line.getConnectorShape().getWayPoints();
+				Segment[] sgs = line.getConnectorShape().getSegments();
+
+				//Find the main axis of the substrate/product line
+				int maxis = 0;
+				double angle = LinAlg.angle(
+					new Point(substrate.getMStart().toPoint2D()),
+					new Point(product.getMStart().toPoint2D())
+				);
+				if(angle < -Math.PI/4 && angle > -3*Math.PI/4) {
+					maxis = 1;
+				}
+				if(angle > Math.PI/4 && angle < 3*Math.PI/4) {
+					maxis = 1;
+				}
+				
+				//Find the first segment that equals the main axis,
+				//its waypoint will be moved to the mediator
+				WayPoint wpm = null;
+				for(int i = 1; i < sgs.length - 1; i++) {
+					int axis = 0;
+					if(sgs[i].getMStart().getX() == sgs[i].getMEnd().getX()) {
+						axis = 1;
+					}
+					if(maxis == axis) {
+						wpm = wps[i - 1];
+						break;
+					}
+				}
+
+				List<MPoint> mpoints = new ArrayList<MPoint>();
+				mpoints.add(line.getMStart());
+				for(WayPoint wp : wps) {
+					if(wpm != null && wp == wpm) {
+						mpoints.add(line.new MPoint(
+								m.getMCenterX(),
+								m.getMTop() + m.getMHeight() + 5 * 15
+						));
+					} else {
+						mpoints.add(line.new MPoint(wp.getX(), wp.getY()));
+					}
+				}
+				mpoints.add(line.getMEnd());
+				line.setMPoints(mpoints);
+				
 				for(PathwayElement mediator : dataNodes) {
 					addReactionMediator(line, mediator);
 				}
 			}
+			
 		} else {
 			Logger.log.error("No DataNodes to connect to for reaction " + name + " in " + reaction.getName());
 		}
@@ -537,18 +617,8 @@ public class KeggFormat {
 		//calculate anchor position
 		Point lstart = new Point(reactionLine.getMStartX(), reactionLine.getMStartY());
 		Point lend = new Point(reactionLine.getMEndX(), reactionLine.getMEndY());
-		
-		Point apoint = LinAlg.project(
-			lstart,
-			new Point(mediator.getMCenterX(), mediator.getMCenterY()),
-			lend.subtract(lstart)
-		);
-		
-		double lineLength = LinAlg.distance(lstart, lend);
-		double anchorLength = LinAlg.distance(lstart, apoint);
-		double position = anchorLength / lineLength;
-		if(position > 1) position = 1;
-		if(position < 0) position = 0;
+		Point m = new Point(mediator.getMCenterX(), mediator.getMCenterY());
+		double position = LinAlg.toLineCoordinates(lstart, lend, m);
 
 		//create an anchor on the reaction line
 		MAnchor anchor = reactionLine.addMAnchor(position);
@@ -556,59 +626,65 @@ public class KeggFormat {
 		//draw a line from the bottom of the datanodes to the anchor
 		PathwayElement aline = PathwayElement.createPathwayElement(ObjectType.LINE);
 		pathway.add(aline);
-		aline.setMStartX(mediator.getMCenterX());
-		aline.setMStartY(mediator.getMTop() + mediator.getMHeight());
-		aline.setMEndX(apoint.x);
-		aline.setMEndY(apoint.y);
 		aline.setStartGraphRef(getGraphId(mediator));
 		anchor.setGeneratedGraphId();
 		aline.setEndGraphRef(anchor.getGraphId());
+		aline.getMStart().setRelativePosition(0, -1);
+		aline.getMEnd().setRelativePosition(0, 0);
 	}
 	
-	private Point projectOnLine(Point start, Point end, Point toProject) {
-		return LinAlg.project(start, toProject, end.subtract(start));
-	}
-	
-	private PathwayElement createPathwayLine(PathwayElement start, PathwayElement end)
+	private MLine createPathwayLine(PathwayElement start, PathwayElement end)
 	{
 
 		// Create new pathway line
-		PathwayElement line = PathwayElement.createPathwayElement(ObjectType.LINE);
+		MLine line = (MLine)PathwayElement.createPathwayElement(ObjectType.LINE);
 
 		line.setColor(Color.BLACK);
-
-		// Setting start coordinates
-		line.setMStartX(start.getMCenterX());
-		line.setMStartY(start.getMCenterY());
 
 		String startId = getGraphId(start);
 		
 		line.setStartGraphRef(startId);
 		line.setEndLineType(LineType.ARROW);
-
-		Point psource = new Point(start.getMCenterX(), start.getMCenterY());
-		Point ptarget = new Point(end.getMCenterX(), end.getMCenterY());
-
-		double angle = LinAlg.angle(ptarget.subtract(psource), new Point(1, 0));
-		double astart = angle;
-		double aend = angle;
-		if(angle < 0) 	aend += Math.PI;
-		else 			aend -= Math.PI;
-		Point pstart = findBorder(start, astart);
-		Point pend = findBorder(end, aend);
-		line.setMStartX(pstart.x);
-		line.setMStartY(pstart.y);
-		line.setMEndX(pend.x);
-		line.setMEndY(pend.y);
+		
+		if(start.getMCenterX() == end.getMCenterX() || 
+				start.getMCenterY() == end.getMCenterY()) {
+			line.setConnectorType(ConnectorType.STRAIGHT);
+		} else {
+			line.setConnectorType(ConnectorType.ELBOW);
+		}
 
 		//TK: Quick hack, GraphId is not automatically generated,
 		//so set one explicitly...FIXME!
 		String endId = getGraphId(end);
 		line.setEndGraphRef(endId);
+
+		Point[] pts = findBorders(start, end);
+		line.getMStart().setRelativePosition(pts[0].x, pts[0].y);
+		line.getMEnd().setRelativePosition(pts[1].x, pts[1].y);
 		
 		return line;
 	}
 
+	private Point[] findBorders(PathwayElement start, PathwayElement end) {
+		Point psource = new Point(start.getMCenterX(), start.getMCenterY());
+		Point ptarget = new Point(end.getMCenterX(), end.getMCenterY());
+		
+		double angle = LinAlg.angle(ptarget.subtract(psource), new Point(1, 0));
+		double astart = angle;
+		double aend = angle;
+		if(angle < 0) 	aend += Math.PI;
+		else 			aend -= Math.PI;
+		if(angle == 0) {
+			if(psource.x > ptarget.x) {
+				aend += Math.PI;
+				astart += Math.PI;
+			}
+		}
+		Point pstart = findBorder(start, astart);
+		Point pend = findBorder(end, aend);
+		return new Point[] { pstart, pend };
+	}
+	
 	private String getGraphId(PathwayElement pwElm) {
 		//TK: Quick hack, GraphId is not automatically generated,
 		//so set one explicitly...FIXME!
@@ -619,8 +695,28 @@ public class KeggFormat {
 		return id;
 	}
 
+//	private int getDirection(Point2D start, Point2D end) {
+//		
+//	}
+//	
+//	static final int AXIS_X = 0;
+//	static final int AXIS_Y = 1;
+//	
+//	private int getAxis(Point2D start, Point2D end) {
+//		double angle = LinAlg.angle(start, end);
+//		if(angle <= Math.PI / 4) {
+//			
+//		}
+//		if(angle )
+//			LinAlg.direction(p1, p2)
+//	}
+	
+	/**
+	 * Find the border to connect to. Returns a point containing
+	 * the relative coordinates.
+	 */
 	private Point findBorder(PathwayElement pwElm, double angle) {
-		Point bp = new Point(pwElm.getMLeft(), pwElm.getMTop());
+		Point bp = new Point(-1, -1);
 
 		double diagAngle = Math.atan(pwElm.getMHeight() / pwElm.getMWidth());
 		double angleA = Math.abs(angle);
@@ -634,15 +730,15 @@ public class KeggFormat {
 		 */
 
 		if(angleA >= diagAngle && angleA <= diagAngle + Math.PI/2) {
-			bp.x = pwElm.getMCenterX();
+			bp.x = 0; //center
 			if(angle < 0) {
-				bp.y += pwElm.getMHeight();
+				bp.y += 2;
 			}
 		}
 		if(angleA < diagAngle || angleA > diagAngle + Math.PI/2) {
-			bp.y = pwElm.getMCenterY();
+			bp.y = 0;
 			if(angle < Math.PI / 2 && angle > -Math.PI / 2) {
-				bp.x += pwElm.getMWidth();
+				bp.x += 2;
 			}
 		}
 

@@ -18,6 +18,7 @@ package org.pathvisio.kegg;
 
 import java.io.File;
 
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.GpmlFormat;
@@ -26,6 +27,7 @@ import org.pathvisio.model.Pathway;
 
 public class Converter {
 	public static void main(String[] args) {
+		Engine.init();
 		Logger.log.setStream(System.err);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 		if(args.length < 1) {

@@ -30,29 +30,50 @@ public class Converter {
 		Engine.init();
 		Logger.log.setStream(System.err);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
-		if(args.length < 1) {
-			Logger.log.error("Invalid arguments! This script requires a single " +
-					"argument, which can be either a kgml file or a directory"
-			);
+		if(args.length < 2) {
+			printHelp();
 			System.exit(-1);
 		}
-		File file = new File(args[0]);
-		recursiveConversion(file);
+		Organism organism = Organism.fromLatinName(args[0]);
+		if(organism == null) {
+			//try by short name
+			organism = Organism.fromShortName(args[0]);
+		}
+		if(organism == null) {
+			//finally, try by code
+			organism = Organism.fromCode(args[0]);
+		}
+		if(organism == null) {
+			//give up and print help
+			Logger.log.error("Couldn't find organism for: " + args[0]);
+			printHelp();
+			System.exit(-2);
+		}
+		
+		File file = new File(args[1]);
+		recursiveConversion(file, organism);
 	}
 	
-	private static void recursiveConversion(File dir) {
+	private static void printHelp() {
+		Logger.log.error("Invalid arguments! This script requires the following arguments:\n " +
+				"-> organism: The full species name, e.g. 'Homo sapiens'\n" +
+				"-> kgml file or directory: either a kgml file or a directory which will be converted recursively"
+		);
+	}
+	
+	private static void recursiveConversion(File dir, Organism organism) {
 		if(dir.isDirectory()) {
 			for(File f : dir.listFiles()) {
-				recursiveConversion(f);
+				recursiveConversion(f, organism);
 			}
 		} else {
-			doConversion(dir);
+			doConversion(dir, organism);
 		}
 	}
 	
-	private static void doConversion(File file) {
+	private static void doConversion(File file, Organism organism) {
 		try {
-			Pathway pathway = KeggFormat.readFromKegg(file, Organism.HomoSapiens);
+			Pathway pathway = KeggFormat.readFromKegg(file, organism);
 			GpmlFormat.writeToXml(pathway, new File(file.getAbsolutePath() + ".gpml"), true);	
 			BatikImageExporter imageExporter = new BatikImageExporter(BatikImageExporter.TYPE_PNG);
 			imageExporter.doExport(new File(file.getAbsolutePath() + ".png"), pathway);

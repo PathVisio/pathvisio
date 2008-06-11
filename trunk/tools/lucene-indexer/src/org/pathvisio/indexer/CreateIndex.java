@@ -18,64 +18,16 @@ package org.pathvisio.indexer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 
 public class CreateIndex {
-	/**
-	 * An identifier of a DataNode xref that is on the pathway
-	 */
-	public static final String FIELD_ID = "id";
-	/**
-	 * An identifier/code combination
-	 * of a DataNode xref that is on the pathway.
-	 * The combination is of the form:
-	 * "identifier:code", where code is the system code
-	 * obtained by {@link DataSource#getSystemCode()}.
-	 */
-	public static final String FIELD_ID_CODE = "id.database";
-	/**
-	 * An identifier that was found by looking up all cross references
-	 * for a DataNode xref on the pathway.
-	 */
-	public static final String FIELD_XID = "x.id";
-	/**
-	 * An identifier/code combination
-	 * of a DataNode xref that was found by looking up all cross references
-	 * for a DataNode xref on the pathway.
-	 * The combination is of the form:
-	 * "identifier:code", where code is the system code
-	 * obtained by {@link org.pathvisio.model.DataSource#getSystemCode()}.
-	 */
-	public static final String FIELD_XID_CODE = "x.id.database";
-	/**
-	 * The name of a pathway
-	 */
-	public static final String FIELD_NAME = "name";
-	/**
-	 * The organism of a pathway
-	 */
-	public static final String FIELD_ORGANISM = "organism";
-	/**
-	 * The file for a pathway
-	 */
-	public static final String FIELD_FILE = "file";
-	
 	private GdbManager gdbManager;
 	
 	public CreateIndex() {
@@ -135,75 +87,10 @@ public class CreateIndex {
 	}
 	
 	void indexFile(IndexWriter writer, File file) throws ConverterException, CorruptIndexException, IOException {
-		Pathway pathway = new Pathway();
-		GpmlFormat.readFromXml(pathway, file, true);
-		
-		Document doc = new Document();
-		doc.add(new Field(FIELD_FILE, file.getAbsolutePath(), Field.Store.YES, Field.Index.NO));
-		
-		PathwayElement info = pathway.getMappInfo();
-		doc.add(
-				new Field(
-						FIELD_NAME, 
-						info.getMapInfoName() == null ? "" : info.getMapInfoName(), 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
-				)
-		);
-		doc.add(
-				new Field(
-						FIELD_ORGANISM,
-						info.getOrganism() == null ? "" : info.getOrganism(), 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
-				)
-		);
-		for(PathwayElement pe : pathway.getDataObjects()) {
-			if(pe.getObjectType() == ObjectType.DATANODE) {
-				indexDataNode(pe, doc);
-			}
-		}
-		writer.addDocument(doc);
-	}
-	
-	void indexDataNode(PathwayElement pe, Document doc) {
-		Xref xref = pe.getXref();
-
-		addCrossRef(xref, doc, FIELD_ID, FIELD_ID_CODE);
-
-		//Add cross references if connected
-		if(gdbManager.isConnected()) {
-			Gdb gdb = gdbManager.getCurrentGdb();
-			List<Xref> crossRefs = gdb.getCrossRefs(xref);
-			for(Xref c : crossRefs) {
-				addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
-			}
-		}
-	}
-
-	void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
-		if(xref != null) {
-			String id = xref.getId();
-			String code = "";
-			if(xref.getDataSource() != null) {
-				code = xref.getDataSource().getSystemCode();
-			}
-			doc.add(
-				new Field(
-						field_id,
-						id, 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
-				)
-			);
-			doc.add(
-				new Field(
-						field_id_code,
-						id + ":" + code, 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
-				)
-			);
-		}
+		Pathway p = new Pathway();
+		p.readFromXml(file, true);
+		PathwayIndexer pwIndexer = new PathwayIndexer(file.getAbsolutePath(), p, writer);
+		pwIndexer.setGdbManager(gdbManager);
+		pwIndexer.indexPathway();
 	}
 }

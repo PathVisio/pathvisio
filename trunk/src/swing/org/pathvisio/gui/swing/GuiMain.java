@@ -110,6 +110,10 @@ public class GuiMain
 				}
 				i++;
 			}
+			else
+			{
+				Logger.log.warn("Unable to parse argument: " + args[i]);
+			}
 		}
 	}
 	

@@ -171,7 +171,7 @@ public class DataDerby extends DBConnector
 				 */
 				if ( se.getSQLState().equals("08006") ) // single file
 				{		
-					Logger.log.info ("Database shudown cleanly");
+					Logger.log.info ("Database " + getDbUrl() + " shutdown cleanly");
 				}
 				else throw new DataException (se);
 			}

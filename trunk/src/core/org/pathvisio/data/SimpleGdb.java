@@ -364,14 +364,27 @@ public class SimpleGdb implements Gdb
 	/**
 	 * Opens a connection to the Gene Database located in the given file
 	 * @param dbName The file containing the Gene Database. 
-	 * @param connector An instance of DBConnector, to determine the type of database (e.g. DataDerby)
+	 * @param connector An instance of DBConnector, to determine the type of database (e.g. DataDerby).
+	 * A new instance of this class is created automatically.
 	 */
-	public SimpleGdb(String dbName, DBConnector connector, int props) throws DataException
+	public SimpleGdb(String dbName, DBConnector newDbConnector, int props) throws DataException
 	{
 		if(dbName == null) throw new NullPointerException();
 
 		this.dbName = dbName;
-		this.dbConnector = connector;
+		try
+		{
+			// create a fresh db connector of the correct type.
+			this.dbConnector = newDbConnector.getClass().newInstance();
+		}
+		catch (InstantiationException e)
+		{
+			throw new DataException (e);
+		} 
+		catch (IllegalAccessException e) 
+		{
+			throw new DataException (e);
+		}
 
 		Logger.log.trace("Opening connection to Gene Database " + dbName);
 

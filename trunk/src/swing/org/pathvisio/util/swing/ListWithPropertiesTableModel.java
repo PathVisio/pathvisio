@@ -54,7 +54,7 @@ public class ListWithPropertiesTableModel<U extends PropertyColumn, T extends Ro
 {
 	private static final long serialVersionUID = 1L;
 	
-	private List<T> rows = new ArrayList<T>();
+	protected List<T> rows = new ArrayList<T>();
 	private U[] columns = null;
 		
 	public void addRow (T ps)

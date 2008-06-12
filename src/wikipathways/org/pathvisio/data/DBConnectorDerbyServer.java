@@ -41,6 +41,8 @@ public class DBConnectorDerbyServer extends DBConnector {
 	
 	/**
 	 * Initialize global settings that will be shared by all instances of DBConnectorDerbyServer
+	 * @param host	The host on which the database resides
+	 * @param port	The port to create the connection on
 	 */
 	static public void init (String _host, int _port)
 	{
@@ -50,9 +52,8 @@ public class DBConnectorDerbyServer extends DBConnector {
 	}
 	
 	/**
-	 * Create a new database connector for the given hostname and port
-	 * @param host	The host on which the database resides
-	 * @param port	The port to create the connection on
+	 * Create a new database connector for the hostname and port set at initialization time.
+	 * Will raise an exception if you forgot to call init() before.
 	 */
 	public DBConnectorDerbyServer() 
 	{

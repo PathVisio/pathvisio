@@ -44,6 +44,8 @@
 	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
 		<argument>-p</argument>
 		<argument>org.pathvisio.visualization.plugins.VisualizationPlugin</argument>
+		<argument>-p</argument>
+		<argument>org.pathvisio.plugins.statistics.StatisticsPlugin</argument>
 	</application-desc>
 	<security>
 		 <all-permissions/>

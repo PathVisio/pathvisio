@@ -34,6 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
@@ -98,8 +100,10 @@ public class GexImportWizard extends Wizard
 		 * data in text form to the {@link ImportInformation} object
 		 * @param file
 		 */
-		private void setTxtFile(File file) 
+		private void updateTxtFile() 
 		{
+			String fileName = txtInput.getText();
+			File file = new File (fileName);
 			txtFileComplete = true;
 			if (!file.exists()) 
 			{
@@ -112,15 +116,14 @@ public class GexImportWizard extends Wizard
 				txtFileComplete = false;
 			}
 		    getWizard().setNextFinishButtonEnabled(txtFileComplete);
-			if (txtFileComplete)
+
+		    // make outFile equal to fileName without extension, if any
+		    int pos = fileName.lastIndexOf(".");
+			String outFile = ((pos >= 0) ? fileName.substring(0, pos) : fileName);
+		    txtOutput.setText(outFile);
+			
+		    if (txtFileComplete)
 			{
-				importInformation.setTxtFile(file);
-				String fileName = file.toString();
-				txtInput.setText(file.toString());
-				txtOutput.setText(fileName.replace(fileName.substring(
-						fileName.lastIndexOf(".")), ""));
-				importInformation.setDbName (txtOutput.getText());
-				importInformation.guessSettings();
 				setErrorMessage(null);
 				txtFileComplete = true;
 			}
@@ -184,6 +187,24 @@ public class GexImportWizard extends Wizard
 			btnGdb.addActionListener(this);
 			btnGdb.setActionCommand(ACTION_GDB);
 			
+			txtInput.getDocument().addDocumentListener(new DocumentListener()
+			{
+				public void changedUpdate(DocumentEvent arg0) 
+				{
+					updateTxtFile();
+				}
+
+				public void insertUpdate(DocumentEvent arg0) 
+				{
+					updateTxtFile();
+				}
+
+				public void removeUpdate(DocumentEvent arg0) 
+				{
+					updateTxtFile();					
+				}
+				
+			});
 			txtGdb.setText(
 					Engine.getCurrent().getPreferences().get(GlobalPreference.DB_GDB_CURRENT)
 			);
@@ -192,7 +213,9 @@ public class GexImportWizard extends Wizard
 
 		public void aboutToHidePanel() 
 		{
-	        setTxtFile(new File (txtInput.getText()));
+			importInformation.setTxtFile(new File (txtInput.getText()));
+			importInformation.guessSettings();
+			importInformation.setDbName (txtOutput.getText());
 	    }
 
 		public void actionPerformed(ActionEvent e) {
@@ -217,7 +240,8 @@ public class GexImportWizard extends Wizard
 					File f = jfc.getSelectedFile();
 					defaultdir = jfc.getCurrentDirectory();
 					Engine.getCurrent().getPreferences().setFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT, defaultdir);
-					setTxtFile (f);
+					txtInput.setText("" + f);
+					updateTxtFile ();
 				}
 			} else if(ACTION_OUTPUT.equals(action)) {
 				try {

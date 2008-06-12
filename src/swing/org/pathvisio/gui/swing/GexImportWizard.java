@@ -209,7 +209,7 @@ public class GexImportWizard extends Wizard
 				
 				File defaultdir = Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
-				jfc.setSelectedFile(defaultdir);
+				jfc.setCurrentDirectory(defaultdir);
 				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv", true));
 				int result = jfc.showDialog(null, "Select data file");
 				if (result == JFileChooser.APPROVE_OPTION)
@@ -314,6 +314,7 @@ public class GexImportWizard extends Wizard
 				public void actionPerformed(ActionEvent arg0) 
 				{
 					importInformation.setDelimiter (txtOther.getText());
+					importInformation.guessSettings();
 					ptm.refresh();
 					rbSepOther.setSelected (true);
 				}

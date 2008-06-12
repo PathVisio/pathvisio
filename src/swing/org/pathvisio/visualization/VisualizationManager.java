@@ -69,7 +69,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	private ColorSetManager colorSetMgr;
 	VisualizationMethodRegistry methodRegistry;
 	
-	public VisualizationManager(VisualizationMethodRegistry methodRegistry, 
+	private VisualizationManager(VisualizationMethodRegistry methodRegistry, 
 			ColorSetManager colorSetMgr) {
 		this.colorSetMgr = colorSetMgr;
 		this.methodRegistry = methodRegistry;

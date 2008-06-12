@@ -269,7 +269,6 @@ public class StandaloneActions
 					SwingEngine.getCurrent().getGdbManager().setMetaboliteDb(dbName);
 					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
 				}
-				SwingEngine.getCurrent().getGdbManager().setGeneDb(dbName);
 				SwingEngine.getCurrent().loadGexCache();
 			} 
 			catch(Exception ex) 

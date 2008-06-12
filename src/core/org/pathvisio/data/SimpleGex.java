@@ -290,12 +290,25 @@ public class SimpleGex
 	/**
 	 * Connects to the Expression database with
 	 * option to remove the old database
+	 * Will use the passed connector type (of which a new instance is created)
 	 * @param 	create true if the old database has to be removed, false for just connecting
 	 */
 	public SimpleGex(String dbName, boolean create, DBConnector connector) throws DataException
 	{
 		this.dbName = dbName;
-		dbConnector = connector;
+		try
+		{
+			dbConnector = connector.getClass().newInstance();
+		}
+		catch (InstantiationException e)
+		{
+			throw new DataException (e);
+		} 
+		catch (IllegalAccessException e) 
+		{
+			throw new DataException (e);
+		}
+		
 		dbConnector.setDbType(DBConnector.TYPE_GEX);
 		if(create)
 		{

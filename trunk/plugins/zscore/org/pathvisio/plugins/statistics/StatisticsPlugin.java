@@ -22,7 +22,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -30,15 +32,19 @@ import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
+import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.PathwayParser.ParseException;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.PropertyColumn;
@@ -196,6 +202,7 @@ public class StatisticsPlugin implements Plugin
 				public void actionPerformed(ActionEvent ae) 
 				{
 					JFileChooser jfc = new JFileChooser();
+					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					if (jfc.showDialog(null, "Choose") == JFileChooser.APPROVE_OPTION)
 					{
 						txtDir.setText("" + jfc.getSelectedFile());
@@ -231,7 +238,7 @@ public class StatisticsPlugin implements Plugin
 	/**
 	 * asynchronous statistics calculation function
 	 */
-	private static void doCalculate(final File pwDir, Criterion crit, JTable resultTable, JFrame parentFrame)
+	private static void doCalculate(final File pwDir, final Criterion crit, JTable resultTable, JFrame parentFrame)
 	{
 		final int TOTALWORK = 1000;
 
@@ -248,6 +255,7 @@ public class StatisticsPlugin implements Plugin
 			@Override
 			protected Boolean doInBackground()
 			{
+				pmon.setProgress (0);
 				List<File> files = FileUtils.getFiles(pwDir, "gpml", true);
 				
 				XMLReader xmlReader = null;
@@ -263,22 +271,82 @@ public class StatisticsPlugin implements Plugin
 				}
 		
 				int i = 0;
+
+				SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+
 				for (File file : files)
 				{
 					try
 					{
 						PathwayParser pwyParser = new PathwayParser(file, xmlReader);
-						List<Xref> genes = new ArrayList<Xref>();			
-						genes.addAll (pwyParser.getGenes());
 						
-						StatisticsResult sr = new StatisticsResult (pwyParser.getName(), genes.size(), 1);
+						// Step 1: map the genes in the pathway to a common system.
+						// This common system can be Ensembl, but it doesn't have to be.
+						// as long as the same single common system is used for all pathways
+						// Make the list unique. This is our "n".
+						
+						Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
+						
+						Logger.log.info ("Calculating statistics for " + pwyParser.getName());
+						
+						List <Xref> genes = new ArrayList<Xref>();
+						genes.addAll (pwyParser.getGenes());
+						Set <Xref> ensGenes = new HashSet <Xref>();
+						
+						for (Xref ref : genes)
+						{
+							for (String ensId : gdb.ref2EnsIds(ref))
+							{
+								ensGenes.add (new Xref (ensId, DataSource.ENSEMBL));
+							}
+						}
+						
+						gex.cacheData(ensGenes, new ProgressKeeper(1000), gdb);
+						int n = ensGenes.size();
+						
+						// Step 2: find the corresponding rows in the Gex. There could be more than one row per Ensembl gene, this is ok.
+						
+						
+						double r = 0;
+						
+						for (Xref ensGene : ensGenes)
+						{
+							Logger.log.info ("Mapping: " + ensGene);
+							
+							// Step 3: Apply the criterion to each row. Get a yes/no value for each
+							List<Data> datas  = gex.getCachedData().getData(ensGene);
+							
+							int total = datas.size();
+							int countTrue = 0;
+							
+							for (Data data : datas)
+							{
+								Logger.log.info ("Data found: " + data.getXref() + ", for sample 1: " + data.getSampleData(1));
+								try
+								{	
+									boolean result = crit.evaluate(data.getSampleData());
+									if (result) countTrue++;
+								}
+								catch (Exception e)
+								{
+									Logger.log.error ("Unknown error during statistics", e);
+								}
+							}
+							
+							// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
+							
+							r += (double)countTrue / (double)total;
+							Logger.log.info (countTrue + " out of " + total);
+						}
+						
+						StatisticsResult sr = new StatisticsResult (pwyParser.getName(), n, (int)r);
 						publish (sr);
 					}
 					catch (ParseException pe)
 					{
 						Logger.log.warn ("Could not parse " + file + ", ignoring");
 					}
-					pmon.setProgress((int)(TOTALWORK * i++ / files.size()));				
+					pmon.setProgress((int)(0.2 + (0.8 * TOTALWORK * i++ / files.size())));				
 				}
 				pmon.close();
 				return true;

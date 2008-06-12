@@ -70,7 +70,7 @@ public class PluginManager {
 			try {
 				loadFromJar(new JarFile(file));
 			} catch (IOException e) {
-				Logger.log.error("\tUnable to load jar file", e);
+				Logger.log.error("\tUnable to load jar file '" + file + "'", e);
 			}
 		} else {
 			Logger.log.trace("\tNot a jar file!");

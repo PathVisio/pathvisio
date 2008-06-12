@@ -39,6 +39,6 @@ public class DataSourceCombo extends JComboBox
 	
 	public void setSelectedDataSource(DataSource value)
 	{
-		setSelectedItem (value.getFullName());
+		setSelectedItem (value == null ? null : value.getFullName());
 	}
 }

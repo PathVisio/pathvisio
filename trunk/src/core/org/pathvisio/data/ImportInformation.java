@@ -163,13 +163,13 @@ public class ImportInformation {
 	/**
 	 * Boolean which can be set to false if there is no column for the system code is available
 	 * in the dataset. */
-	boolean syscodeColumn = true;
+	private boolean hasSyscodeColumn = true;
 	
 	/**
 	 * String containing the system code that has been set by the user in gexImportWizard 
 	 * (if no system code column is available).
 	 */
-	String syscode = "";
+	DataSource ds = null;
 	
 	/**
 	 * Delimiter used to seperate columns in the text file containing expression data
@@ -345,7 +345,7 @@ public class ImportInformation {
 	//TODO: rename, to avoid confusion with getCodeColumn
 	public boolean getSyscodeColumn() 
 	{
-		return syscodeColumn;
+		return hasSyscodeColumn;
 	}
 
 	
@@ -355,25 +355,7 @@ public class ImportInformation {
 	 */
 	public void setSyscodeColumn(boolean target) 
 	{
-		syscodeColumn = target;
-	}
-	
-	/**
-	 * Returns the system code (String) selected from DataSources.systemCodes.
-	 * @deprecated use getDataSource instead.
-	 */
-	public String getSyscode()
-	{
-		return syscode;
-	}
-	
-	/**
-	 * Sets the system code (String) to a value from DataSources.systemCodes.
-	 * @deprecated use setDataSource instead
-	 */
-	public void setSyscode(String target) 
-	{
-		syscode = target;
+		hasSyscodeColumn = target;
 	}
 	
 	/**
@@ -382,7 +364,7 @@ public class ImportInformation {
 	 */
 	public void setDataSource(DataSource value)
 	{
-		syscode = value.getSystemCode();
+		ds = value;
 	}
 	
 	/**
@@ -391,7 +373,7 @@ public class ImportInformation {
 	 */
 	public DataSource getDataSource()
 	{
-		return DataSource.getBySystemCode (syscode);
+		return ds;
 	}
 	
 	/**Returns the string that is used as the delimiter for reading the input data.
@@ -447,14 +429,62 @@ public class ImportInformation {
 	/** derive datasource from sample data */
 	public void guessSettings()
 	{
-		syscodeColumn = guessSyscodeColumn;
+		hasSyscodeColumn = guessHasSyscodeColumn;
 		if (guessDataSource != null) setDataSource(guessDataSource);
-		//TODO: in case there is a system code column, guess which column it is too.
+		if (guessHasSyscodeColumn && guessSyscodeColumn >= 0)
+		{
+			setCodeColumn(guessSyscodeColumn);
+		}
+		if (guessIdColumn >= 0) setIdColumn(guessIdColumn);
+		Logger.log.info ("Guessing sysCode: " + guessHasSyscodeColumn + " " + guessSyscodeColumn + 
+				" id: " + guessIdColumn + " " + guessDataSource + " digitIsDot? " + guessDigitIsDot); 
 	}
 	
 	
-	private boolean guessSyscodeColumn = true;
+	private boolean guessHasSyscodeColumn = true;
+	private int guessSyscodeColumn = -1;
+	private int guessIdColumn = -1;
+	private boolean guessDigitIsDot;
 	private DataSource guessDataSource = null;
+	
+	/**
+	 * Helper class to keep track of how often patterns occur, and in which column
+	 */
+	private static class PatternCounter
+	{
+		private final Pattern p;
+		private Map <Integer, Integer> counts = new HashMap <Integer, Integer>();
+		private int total = 0;
+		
+		PatternCounter (Pattern p)
+		{
+			this.p = p;
+		}
+		
+		void countCell (String cell, int column)
+		{
+			Matcher m = p.matcher(cell);					
+			
+			// check if it matches
+			if (m.matches())
+			{
+				//increase total and per-column counts
+				int prev = counts.containsKey(column) ? counts.get(column) : 0;
+				counts.put (column, ++prev);
+				total++;
+			}
+		}
+		
+		int getTotal()
+		{
+			return total;
+		}
+		
+		int getColumnCount(int col)
+		{
+			return (counts.containsKey(col) ? counts.get (col) : 0);
+		}
+	}
 	
 	/* read a sample from the selected text file to guess some parameters
 	 * and preview the table
@@ -471,17 +501,17 @@ public class ImportInformation {
 			Map<DataSource, Pattern> patterns = DataSourcePatterns.getPatterns();
 			
 			//Make regular expressions pattern for the system code. 
-			Pattern syscodepattern;
-			syscodepattern = Pattern.compile("[A-Z][a-z]?");
+			final PatternCounter syscodeCounter = new PatternCounter (Pattern.compile("[A-Z][a-z]?"));			
+			final PatternCounter dotCounter = new PatternCounter (Pattern.compile("-?[0-9]*\\.[0-9]+"));
+			final PatternCounter commaCounter = new PatternCounter (Pattern.compile("-?[0-9]*,[0-9]+"));
 			
 			//Make count variables.
-			Map<DataSource, Integer> counts = new HashMap<DataSource, Integer>();
+			Map<DataSource, PatternCounter> counters = new HashMap<DataSource, PatternCounter>();
 
 			for (DataSource ds : patterns.keySet())
 			{
-				counts.put (ds, 0);
+				counters.put (ds, new PatternCounter (patterns.get(ds)));
 			}
-			int syscodecount = 0;
 
 			String line;
 			sampleNumRows = 0;
@@ -499,26 +529,16 @@ public class ImportInformation {
 					sampleMaxNumCols = numCols;
 				}
 
-				for (int i = 0; i < cells[sampleNumRows].length; ++i)
+				for (int col = 0; col < cells[sampleNumRows].length; ++col)
 				{
-					Matcher	syscodematcher;
 					//Count all the times that an element matches a gene identifier.
-					syscodematcher = syscodepattern.matcher(cells[sampleNumRows][i]);
-					if (syscodematcher.matches()) 
-					{
-						syscodecount++;
-					}
-					
+					syscodeCounter.countCell (cells[sampleNumRows][col], col);
+					commaCounter.countCell (cells[sampleNumRows][col], col);
+					dotCounter.countCell (cells[sampleNumRows][col], col);
+										
 					for (DataSource ds : patterns.keySet())
 					{
-						//Setup the matcher
-						Matcher m = patterns.get(ds).matcher(cells[sampleNumRows][i]);					
-					
-						if (m.matches())
-						{
-							//Check if it matches, and count how many times it does.
-							counts.put(ds, counts.get(ds) + 1);	
-						}
+						counters.get(ds).countCell (cells[sampleNumRows][col], col);
 					}
 				}				
 				
@@ -527,42 +547,69 @@ public class ImportInformation {
 			
 			/*Calculate percentage of rows where a system code is found and
 			 * compare with a given percentage*/
-			double checkpercentage = 0.9;
-			double syscodepercentage = (double)syscodecount / (double)sampleNumRows;
+			final double CHECKPERCENTAGE = 0.9;
 			
-			/*Set the selection to the codeRadio button if a system code is found
-			 * in more than rows than the given percentage, otherwise set the 
-			 * selection to the syscodeRadio button*/
-			if (syscodepercentage >= checkpercentage) 
 			{
-				guessSyscodeColumn = true;
-			}
-			else 
-			{
-				guessSyscodeColumn = false;
+				double max = 0;
+				int maxCol = -1;
+				
+				for (int col = 0; col < sampleMaxNumCols; ++col)
+				{
+					double syscodepercentage = (double)syscodeCounter.getColumnCount(col) / (double)sampleNumRows;
+					
+					if (syscodepercentage > max)
+					{
+						max = syscodepercentage;
+						maxCol = col;
+					}
+				}
+				
+				/*Set the selection to the codeRadio button if a system code is found
+				 * in more than rows than the given percentage, otherwise set the 
+				 * selection to the syscodeRadio button*/
+				if (max >= CHECKPERCENTAGE)
+				{
+					guessHasSyscodeColumn = true;
+					guessSyscodeColumn = maxCol;
+				}
+				else 
+				{
+					guessHasSyscodeColumn = false;
+					guessSyscodeColumn = -1;
+				}
 			}
 			
-			//Calculate percentages from the counts (length isn't always 50)		
-			double percentage; 
+			double commaTotal = commaCounter.getTotal();
+			double dotTotal = dotCounter.getTotal();
+			
+			// if more than 90% of number-like patterns use a dot, then the digit symbol is a dot. 
+			guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > CHECKPERCENTAGE);
 			
 			//Look for maximum.
 			double max = 0;
 			DataSource maxds = null;
-			for (DataSource ds : patterns.keySet())
+			int maxCol = -1;
+			
+			for (int col = 0; col < sampleMaxNumCols; ++col)
 			{
-				//Determine the maximum of the percentages (most hits). 
-				//Sometimes, normal data can match a gene identifier, in which case percentages[i]>1. 
-				//Ignores these gene identifiers.
-				percentage = (double)counts.get(ds)/(double)sampleNumRows;
-				if (percentage > max && percentage <= 1)
+				for (DataSource ds : patterns.keySet())
 				{
-					max = percentage;
-					maxds = ds;
+					//Determine the maximum of the percentages (most hits). 
+					//Sometimes, normal data can match a gene identifier, in which case percentages[i]>1. 
+					//Ignores these gene identifiers.
+					double percentage = (double)counters.get(ds).getColumnCount(col)/(double)sampleNumRows;
+					if (percentage > max && percentage <= 1)
+					{
+						max = percentage;
+						maxds = ds;
+						maxCol = col;
+					}
 				}
 			}
 			
 			//Select the right entry in the drop down menu and change the system code in importInformation
 			guessDataSource = maxds;
+			guessIdColumn = maxCol;
 		} 
 		catch (IOException e) 
 		{ 		

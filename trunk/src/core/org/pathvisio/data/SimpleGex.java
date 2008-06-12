@@ -464,8 +464,6 @@ public class SimpleGex
 		dbConnector.compact(con);
 		createGexIndices();
 		dbConnector.closeConnection(con);
-		//TODO: why newDb?
-		//TK: See the javadoc of DbConnector.finalizeNewDatabase.
 		//The dbConnector may change the database file after cleaning up,
 		//for example, the derby connector first creates the database as directory
 		//and then adds the database to a zip file and removes the directory.

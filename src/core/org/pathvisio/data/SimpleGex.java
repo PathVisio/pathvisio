@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -208,7 +209,7 @@ public class SimpleGex
 	 * @param refs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(List<Xref> refs, ProgressKeeper p, Gdb gdb)
+	public void cacheData(Collection<Xref> refs, ProgressKeeper p, Gdb gdb)
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();

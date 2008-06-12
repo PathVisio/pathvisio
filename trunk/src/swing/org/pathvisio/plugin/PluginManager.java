@@ -42,22 +42,32 @@ public class PluginManager {
 	 * @param pluginLocations An array of File objects pointing to jar files 
 	 * or directories that will be searched recursively for jar files.
 	 */
-	public PluginManager(File[] pluginLocations) {
-		for(File f : pluginLocations) {
-			loadPlugins(f);
+	public PluginManager(String[] pluginLocations) {
+		for(String s : pluginLocations) {
+			loadPlugins(s);
 		}
 	}
 	
 	/**
 	 * Loads all plugins in the given directory
 	 */
-	void loadPlugins(File dir) {
-		if(dir.isDirectory()) {
-			for(File f : dir.listFiles()) {
-				loadPlugins(f);
+	void loadPlugins(String pluginLocation) {
+		//See if the plugin is a file
+		File dir = new File(pluginLocation);
+		if(dir.exists()) {
+			if(dir.isDirectory()) {
+				Logger.log.trace("Detected plugin argument as dir");
+				for(File f : dir.listFiles()) {
+					loadPlugins(f.getAbsolutePath());
+				}
+			} else {
+				Logger.log.trace("Detected plugin argument as jar");
+				loadPlugin(dir);
 			}
 		} else {
-			loadPlugin(dir);
+			//Otherwise, try to load the class directly
+			Logger.log.trace("Detected plugin argument as class");
+			loadAsClass(pluginLocation);
 		}
 	}
 	
@@ -85,20 +95,24 @@ public class PluginManager {
 			Logger.log.trace("Checking " + entry);
 			String entryname = entry.getName();
 			if(entryname.endsWith(".class")) {
-				try {
-					String cn = removeClassExt(entryname.replace('/', '.'));
-					Class<?> c = Class.forName(cn);
-					if(isPlugin(c)) {
-						Class<Plugin> pluginClass = (Class<Plugin>)c;
-						loadPlugin(pluginClass);
-					}
-				} catch(Throwable ex) {
-					Logger.log.error("\tUnable to load plugin", ex);
-				}
+				String cn = removeClassExt(entryname.replace('/', '.'));
+				loadAsClass(cn);
 			}
 		}
 	}
-		
+	
+	void loadAsClass(String className) {
+		try {
+			Class<?> c = Class.forName(className);
+			if(isPlugin(c)) {
+				Class<Plugin> pluginClass = (Class<Plugin>)c;
+				loadPlugin(pluginClass);
+			}
+		} catch(Throwable ex) {
+			Logger.log.error("\tUnable to load plugin", ex);
+		}
+	}
+	
 	static String removeClassExt(String fn) {
 		return fn.substring(0, fn.length() - 6);
 	}

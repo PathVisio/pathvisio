@@ -43,7 +43,7 @@
 	</resources>
 	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
 		<argument>-p</argument>
-		<argument>visplugins.jar</argument>
+		<argument>org.pathvisio.visualization.plugins.VisualizationPlugin</argument>
 	</application-desc>
 	<security>
 		 <all-permissions/>

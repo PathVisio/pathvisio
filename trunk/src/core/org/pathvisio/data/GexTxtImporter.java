@@ -278,9 +278,10 @@ public class GexTxtImporter
 		}
 	}
 
-	private static int reportError(ImportInformation info, PrintStream out, String message, int nrError) 
+	private static int reportError(ImportInformation info, PrintStream log, String message, int nrError) 
 	{
 		info.addError(message);
+		log.println(message);
 		nrError++;
 		return nrError;
 	}

@@ -148,7 +148,13 @@ public class SimpleGex
 		pstExpr.setString(2, ref.getDataSource().getSystemCode());
 		pstExpr.setString(3, link);
 		pstExpr.setString(4, idSample);
-		pstExpr.setString(5, value);
+		//TODO: this is a hack.
+		// Proper solution: ask user which columns contain data
+		// don't even try to import annotation and other stuff
+		// give an exception if a data value is longer than 50
+		String truncValue = value;
+		if (value.length() > 50) truncValue = value.substring(0, 50);		
+		pstExpr.setString(5, truncValue);
 		pstExpr.setInt(6, group);
 		pstExpr.execute();
 	}

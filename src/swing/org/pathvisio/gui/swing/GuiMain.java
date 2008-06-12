@@ -31,7 +31,6 @@ import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
-import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
@@ -66,7 +65,7 @@ public class GuiMain
 	}
 
 	// plugin files specified at command line
-	private List<File> pluginFiles = new ArrayList<File>();
+	private List<String> pluginLocations = new ArrayList<String>();
 	
 	// pathway specified at command line
 	private URL pathwayUrl = null;
@@ -79,7 +78,7 @@ public class GuiMain
 		{
 			if("-p".equals(args[i])) 
 			{
-				pluginFiles.add(new File(args[i + 1]));
+				pluginLocations.add(args[i + 1]);
 				i++;
 			}
 			else if ("-d".equals(args[i]))
@@ -125,9 +124,9 @@ public class GuiMain
 		SwingEngine swingEngine = SwingEngine.getCurrent();
 		
 		//Create a plugin manager that loads the plugins
-		if(pluginFiles.size() > 0) {
+		if(pluginLocations.size() > 0) {
 			PluginManager pluginManager = new PluginManager(
-					pluginFiles.toArray(new File[0])
+					pluginLocations.toArray(new String[0])
 			);
 		}
 		

@@ -192,17 +192,26 @@ public class GexTxtImporter
 							
 							//Determine maximum and minimum values.
 							
-							double dNumber = new Double(data[col]).doubleValue();
-							if(maximumNotSet || dNumber>maximum)
+							try
 							{
-								maximum=dNumber;
-								maximumNotSet=false;
+								double dNumber = new Double(data[col]).doubleValue();
+								if(maximumNotSet || dNumber>maximum)
+								{
+									maximum=dNumber;
+									maximumNotSet=false;
+								}
+								
+								if(minimumNotSet || dNumber<minimum)
+								{
+									minimum=dNumber;
+									minimumNotSet=false;
+								}
 							}
-							
-							if(minimumNotSet || dNumber<minimum)
+							catch (NumberFormatException e)
 							{
-								minimum=dNumber;
-								minimumNotSet=false;
+								// we've got a number in a non-number column.
+								// safe to ignore
+								Logger.log.warn ("Number format exception in non-string column " + e.getMessage());
 							}
 							
 							//End of determining maximum and minimum values. After the data has been read, 
@@ -221,7 +230,7 @@ public class GexTxtImporter
 							catch (Exception e) 
 							{
 								errors = reportError(info, error, "Line " + n + ":\t" + line + "\n" + 
-										"\tException: " + error, errors);
+										"\tException: " + e.getMessage(), errors);
 								success = false;
 							}
 						}
@@ -238,7 +247,8 @@ public class GexTxtImporter
 			info.setMinimum(minimum);
 			
 			if (p != null) p.report(added + " genes were added succesfully to the expression dataset");
-			if(errors > 0) {
+			if(errors > 0) 
+			{
 				if (p != null) p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");
 			} else {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
@@ -271,7 +281,6 @@ public class GexTxtImporter
 	private static int reportError(ImportInformation info, PrintStream out, String message, int nrError) 
 	{
 		info.addError(message);
-		out.println(message);
 		nrError++;
 		return nrError;
 	}

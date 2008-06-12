@@ -21,10 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -86,9 +83,16 @@ public class StatisticsPlugin implements Plugin
 
 		public void actionPerformed(ActionEvent e) 
 		{
-//			JOptionPane.showMessageDialog(SwingEngine.getCurrent().getFrame(), "Action not implemented");
-			StatisticsDlg dlg = new StatisticsDlg();
-			dlg.createAndShowDlg();
+			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+			if (gex == null)
+			{
+				JOptionPane.showMessageDialog(SwingEngine.getCurrent().getFrame(), "Select an expression dataset first");
+			}
+			else
+			{
+				StatisticsDlg dlg = new StatisticsDlg();
+				dlg.createAndShowDlg();
+			}
 		}
 	}
 
@@ -203,6 +207,7 @@ public class StatisticsPlugin implements Plugin
 				{
 					JFileChooser jfc = new JFileChooser();
 					jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					jfc.setCurrentDirectory(new File (txtDir.getText()));
 					if (jfc.showDialog(null, "Choose") == JFileChooser.APPROVE_OPTION)
 					{
 						txtDir.setText("" + jfc.getSelectedFile());
@@ -291,17 +296,21 @@ public class StatisticsPlugin implements Plugin
 						
 						List <Xref> genes = new ArrayList<Xref>();
 						genes.addAll (pwyParser.getGenes());
-						Set <Xref> ensGenes = new HashSet <Xref>();
+						Map <String, List<Data>> ensGenes = new HashMap <String, List<Data>> ();
 						
+						gex.cacheData(genes, new ProgressKeeper(1000), gdb);
+
 						for (Xref ref : genes)
 						{
+							List<Data> datas  = gex.getCachedData().getData(ref);
+							
 							for (String ensId : gdb.ref2EnsIds(ref))
 							{
-								ensGenes.add (new Xref (ensId, DataSource.ENSEMBL));
+								Logger.log.info ("Mapping: " + ensId);
+								ensGenes.put (ensId, datas);								
 							}
 						}
 						
-						gex.cacheData(ensGenes, new ProgressKeeper(1000), gdb);
 						int n = ensGenes.size();
 						
 						// Step 2: find the corresponding rows in the Gex. There could be more than one row per Ensembl gene, this is ok.
@@ -309,34 +318,34 @@ public class StatisticsPlugin implements Plugin
 						
 						double r = 0;
 						
-						for (Xref ensGene : ensGenes)
+						for (String ensGene : ensGenes.keySet())
 						{
-							Logger.log.info ("Mapping: " + ensGene);
+							List<Data> datas = ensGenes.get (ensGene);
 							
-							// Step 3: Apply the criterion to each row. Get a yes/no value for each
-							List<Data> datas  = gex.getCachedData().getData(ensGene);
-							
-							int total = datas.size();
-							int countTrue = 0;
-							
-							for (Data data : datas)
+							if (datas != null)
 							{
-								Logger.log.info ("Data found: " + data.getXref() + ", for sample 1: " + data.getSampleData(1));
-								try
-								{	
-									boolean result = crit.evaluate(data.getSampleData());
-									if (result) countTrue++;
-								}
-								catch (Exception e)
+								int total = datas.size();
+								int countTrue = 0;
+								
+								for (Data data : datas)
 								{
-									Logger.log.error ("Unknown error during statistics", e);
+									Logger.log.info ("Data found: " + data.getXref() + ", for sample 1: " + data.getSampleData(1));
+									try
+									{	
+										boolean result = crit.evaluate(data.getSampleData());
+										if (result) countTrue++;
+									}
+									catch (Exception e)
+									{
+										Logger.log.error ("Unknown error during statistics", e);
+									}
 								}
+							
+								// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
+								
+								r += (double)countTrue / (double)total;
+								Logger.log.info (countTrue + " out of " + total);
 							}
-							
-							// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
-							
-							r += (double)countTrue / (double)total;
-							Logger.log.info (countTrue + " out of " + total);
 						}
 						
 						StatisticsResult sr = new StatisticsResult (pwyParser.getName(), n, (int)r);
@@ -348,6 +357,7 @@ public class StatisticsPlugin implements Plugin
 					}
 					pmon.setProgress((int)(0.2 + (0.8 * TOTALWORK * i++ / files.size())));				
 				}
+				stm.saveData();
 				pmon.close();
 				return true;
 			}
@@ -363,6 +373,7 @@ public class StatisticsPlugin implements Plugin
 		};
 		
 		worker.execute();
+		
 	}
 	
 	/**
@@ -403,6 +414,14 @@ public class StatisticsPlugin implements Plugin
 	private static class StatisticsTableModel extends ListWithPropertiesTableModel<StatisticsPlugin.Column, StatisticsResult>
 	{
 		private static final long serialVersionUID = 1L;
+		
+		public void saveData()
+		{
+			for (StatisticsResult sr : rows)
+			{
+				System.out.println (sr.name + "\t" + sr.r + "\t" + sr.n);  
+			}
+		}
 	}
 
 	/**

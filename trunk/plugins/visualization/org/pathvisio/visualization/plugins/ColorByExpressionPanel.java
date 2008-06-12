@@ -184,12 +184,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			add(csChooser, cc.xy(4, 4));
 			
 			refresh();
+
 		}
 
 		void refresh() {
 			ColorSet cs = method.getSingleColorSet();
 			if(cs == null) {
-				colorSetCombo.setSelectedIndex(0);
+				// a way to represent the fact that there are multiple colorsets in action.
+				colorSetCombo.setSelectedIndex(-1);
 			} else {
 				colorSetCombo.setSelectedItem(cs);
 			}
@@ -211,7 +213,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			String action = e.getActionCommand();
 			if(ACTION_SAMPLE.equals(action)) {
 				refreshSamples();
-			} else if(ACTION_COMBO.equals(action)) {
+			} else if(ACTION_COMBO.equals(action)) 
+			{
 				method.setSingleColorSet(colorSetCombo.getSelectedColorSet());
 			}
 		}

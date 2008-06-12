@@ -34,17 +34,29 @@ import org.pathvisio.debug.StopWatch;
  *
  */
 public class DBConnectorDerbyServer extends DBConnector {
-	String host;
-	int port;
+	
+	static private String host;
+	static private int port;
+	static boolean inited = false;
+	
+	/**
+	 * Initialize global settings that will be shared by all instances of DBConnectorDerbyServer
+	 */
+	static public void init (String _host, int _port)
+	{
+		host = _host;
+		port = _port;
+		inited = true;
+	}
 	
 	/**
 	 * Create a new database connector for the given hostname and port
 	 * @param host	The host on which the database resides
 	 * @param port	The port to create the connection on
 	 */
-	public DBConnectorDerbyServer(String host, int port) {
-		this.host = host;
-		this.port = port;
+	public DBConnectorDerbyServer() 
+	{
+		if (!inited) throw new IllegalArgumentException("Not yet initialized!");
 	}
 	
 	public Connection createConnection(String dbName) throws DataException 

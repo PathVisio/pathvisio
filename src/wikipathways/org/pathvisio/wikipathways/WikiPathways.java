@@ -213,9 +213,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		progress.report("Connecting to database...");
 
 		//Connect to the gene database
-		DBConnector connector = new DBConnectorDerbyServer(
-				parameters.getValue(Parameter.GDB_SERVER), 1527
-		);
+		DBConnectorDerbyServer.init(parameters.getValue(Parameter.GDB_SERVER), 1527);
+		DBConnector connector = new DBConnectorDerbyServer();
 		GdbManager gdbManager = SwingEngine.getCurrent().getGdbManager();
 		gdbManager.setDBConnector(connector);
 		gdbManager.setGeneDb(getPwSpecies());

@@ -23,8 +23,8 @@ import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 
 public enum GlobalPreference implements Preference {
-	FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), ".PathVisioLog")),
-	WP_FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), ".wikipathwaysLog")),
+	FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), "PathVisio.log")),
+	WP_FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), "WikiPathways.log")),
 	
 	COLOR_NO_CRIT_MET(new Color(200, 200, 200)),
 	COLOR_NO_GENE_FOUND(Color.WHITE),

@@ -69,7 +69,6 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 		
-		threads = new ThreadGroup("backpage-queries");
 		this.gdbManager = gdbManager;
 		this.gexManager = gexManager;
 	}
@@ -101,6 +100,9 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		//First check if the number of running threads is not too high
 		//(may happen when many SelectionEvent follow very fast)
 //		System.err.println("\tNr of threads: " + threads.activeCount());
+		if(threads == null || threads.isDestroyed()) {
+			threads = new ThreadGroup("backpage-queries" + System.currentTimeMillis());
+		}
 		if(threads.activeCount() < maxThreads) {
 				QueryThread qt = new QueryThread(input);
 				qt.start();

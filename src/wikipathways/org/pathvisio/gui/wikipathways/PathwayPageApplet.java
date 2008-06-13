@@ -50,13 +50,15 @@ public class PathwayPageApplet extends JApplet {
 	WikiPathways wiki;
 
 	public final void init() {
-		try {
+		/* Do not force LAF, seems to give problems
+  		try {
 		    UIManager.setLookAndFeel(
 		        UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception ex) {
 			Logger.log.error("Unable to load native look and feel", ex);
 		}
-		
+		*/
+
 		//Add a mouse listener that requests focus on clicking
 		//To fix bug 299
 		addMouseListener(new MouseAdapter() {

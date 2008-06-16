@@ -65,7 +65,8 @@ class BasicShapes
 	private static final int ARROWHEIGHT = 65;
 	private static final int ARROWWIDTH = 140;
 	private static final int TBARHEIGHT = 225;
-	private static final int TBARWIDTH = 15;
+	private static final int TBARMASKHEIGHT = 15 * 3;
+	private static final int TBARWIDTH = 1;
 	private static final int TBAROFFSET = 150;
 	private static final int LRDIAM = 175;
 	private static final int RRDIAM = LRDIAM + 50;
@@ -95,8 +96,8 @@ class BasicShapes
 	private static Shape getTBarFill() 
 	{
 		return new Rectangle2D.Double(
-			-TBAROFFSET + TBARWIDTH, -TBARHEIGHT / 2,
-			TBAROFFSET * 2 - TBARWIDTH, TBARHEIGHT
+			-TBAROFFSET + TBARWIDTH, -TBARMASKHEIGHT / 2,
+			TBAROFFSET * 2 - TBARWIDTH, TBARMASKHEIGHT
 		);
 	}
 		

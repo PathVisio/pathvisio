@@ -397,6 +397,15 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		public Point2D toRelativeCoordinate(Point2D p) {
 			return new Point2D.Double(p.getX() - getX(), p.getY() - getY());
 		}
+		
+		/**
+		 * Find out if this point is linked to an object.
+		 * Returns true if a graphRef exists and is not an empty string
+		 */
+		public boolean isLinked() {
+			String ref = getGraphRef();
+			return ref != null && !"".equals(ref);
+		}
 	}
 	
 	/**

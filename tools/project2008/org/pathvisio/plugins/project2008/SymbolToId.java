@@ -20,7 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import org.pathvisio.model.*;
-import org.pathvisio.plugins.project2008.WikiPathwaysClient.WikiPathwaysException;
+import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 import org.pathvisio.data.SimpleGdb;
 
 /**

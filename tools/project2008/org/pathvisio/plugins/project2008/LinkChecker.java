@@ -30,6 +30,8 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
+import org.pathvisio.wikipathways.FileUtils;
+import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;

@@ -25,6 +25,7 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Xref;
+import org.pathvisio.wikipathways.FileUtils;
 
 /**
  * This class is used to get the genid's (ensemble format) from all the pathways in a directory.

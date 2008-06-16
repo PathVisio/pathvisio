@@ -27,6 +27,7 @@ import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
+import org.pathvisio.wikipathways.FileUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;

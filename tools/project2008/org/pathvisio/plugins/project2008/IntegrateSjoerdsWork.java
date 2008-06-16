@@ -22,7 +22,8 @@ import org.jdom.JDOMException;
 import org.pathvisio.gpmldiff.*;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
-import org.pathvisio.plugins.project2008.WikiPathwaysClient.WikiPathwaysException;
+import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 
 /**
  * One time script to take a set of pathways that were linked up,

@@ -24,6 +24,7 @@ import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.Organism;
+import org.pathvisio.wikipathways.FileUtils;
 
 /**
  * Given a directory containing pgdb files,

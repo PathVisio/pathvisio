@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.plugins.project2008;
+package org.pathvisio.wikipathways;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.pathvisio.plugins.project2008.WikiPathwaysClient.WikiPathwaysException;
+import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 
 /**
  * In this class the class 'WikiPathwaysClient' can be tested. 

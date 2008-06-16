@@ -24,6 +24,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.wikipathways.FileUtils;
+
 import java.io.File;
 import java.util.List;
 import RowHeaderTable.JScrollPaneAdjuster;

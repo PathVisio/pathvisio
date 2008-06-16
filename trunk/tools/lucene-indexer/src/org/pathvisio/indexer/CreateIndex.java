@@ -92,5 +92,7 @@ public class CreateIndex {
 		PathwayIndexer pwIndexer = new PathwayIndexer(file.getAbsolutePath(), p, writer);
 		pwIndexer.setGdbManager(gdbManager);
 		pwIndexer.indexPathway();
+		RelationshipIndexer rIndexer = new RelationshipIndexer(file.getAbsolutePath(), p, writer);
+		rIndexer.index();
 	}
 }

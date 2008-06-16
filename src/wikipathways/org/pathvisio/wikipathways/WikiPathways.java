@@ -165,7 +165,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 
 		progress.setTaskName("Starting editor");
 
-		WikiPathwaysInit.init(engine.getPreferences());
+		WikiPathwaysInit.init(engine, engine.getPreferences());
 		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), engine);
 
 		Logger.log.trace("Code revision: " + Revision.REVISION);

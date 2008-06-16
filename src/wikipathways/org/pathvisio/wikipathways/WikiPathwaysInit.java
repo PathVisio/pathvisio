@@ -20,10 +20,13 @@ import java.net.URL;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
+import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Utils;
 import org.pathvisio.view.MIMShapes;
 
 /**
@@ -32,7 +35,7 @@ import org.pathvisio.view.MIMShapes;
  */
 public class WikiPathwaysInit 
 {
-	static void init(PreferenceManager preferences) throws Exception 
+	static void init(Engine engine, PreferenceManager preferences) throws Exception 
 	{
 		String logDest = preferences.get(GlobalPreference.WP_FILE_LOG);
 		Logger.log.setDest (logDest);		
@@ -50,7 +53,13 @@ public class WikiPathwaysInit
 		PropertyType.ROTATION.setHidden(true);
 		PropertyType.STARTX.setHidden(true);
 		PropertyType.STARTY.setHidden(true);
-		PropertyType.WIDTH.setHidden(true);				
+		PropertyType.WIDTH.setHidden(true);
+		
+		engine.addPathwayExporter(new GpmlFormat());
+		engine.addPathwayImporter(new GpmlFormat());
+		if(Utils.getOS() == Utils.OS_WINDOWS) {
+			engine.addPathwayImporter(new MappFormat());
+		}
 	}
 	
 	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {

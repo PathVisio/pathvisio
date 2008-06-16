@@ -196,11 +196,20 @@ public class PathwayIndexer {
 			doc.add(
 				new Field(
 						field_id_code,
-						id + ":" + code, 
+						xref2string(xref), 
 						Field.Store.YES, 
 						Field.Index.UN_TOKENIZED
 				)
 			);
 		}
+	}
+	
+	public static String xref2string(Xref xref) {
+		String id = xref.getId();
+		String code = "";
+		if(xref.getDataSource() != null) {
+			code = xref.getDataSource().getSystemCode();
+		}
+		return id + ":" + code;
 	}
 }

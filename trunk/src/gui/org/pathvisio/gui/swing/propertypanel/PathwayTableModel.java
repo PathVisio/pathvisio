@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
@@ -49,7 +50,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	private static final long serialVersionUID = 1L;
 
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
-	
+	JTable table;
 	Collection<PathwayElement> input;
 	HashMap<PropertyType, TypedProperty> propertyValues;
 	List<TypedProperty> shownProperties;
@@ -64,7 +65,12 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		if(vp != null) vp.addSelectionListener(this);
 	}
 	
+	public void setTable(JTable table) {
+		this.table = table;
+	}
+	
 	private void reset() {
+		stopEditing();
 		for(PathwayElement e : input) {
 			//System.err.println("Removed " + e);
 			e.removeListener(this);
@@ -76,6 +82,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 	
 	private void removeInput(PathwayElement pwElm) {
+		stopEditing();
 		//System.err.println("Input removed");
 		input.remove(pwElm);
 		updatePropertyCounts(pwElm, true);
@@ -83,7 +90,14 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		refresh(true);
 	}
 	
+	private void stopEditing() {
+		if(table != null && table.getCellEditor() != null) {
+			table.getCellEditor().stopCellEditing();
+		}
+	}
+	
 	private void addInput(PathwayElement pwElm) {
+		stopEditing();
 		//System.err.println("Input added");
 		input.add(pwElm);
 		updatePropertyCounts(pwElm, false);

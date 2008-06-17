@@ -271,6 +271,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		private static final long serialVersionUID = 1L;
 		
 		HashMap<Object, Object> label2value;
+		HashMap<Object, Object> value2label;
 		boolean useIndex;
 		JComboBox combo;
 		
@@ -302,9 +303,13 @@ public class TypedProperty implements Comparable<TypedProperty> {
 				if(labels.length != values.length) {
 					throw new IllegalArgumentException("Number of labels doesn't equal number of values");
 				}
-				label2value = new HashMap<Object, Object>();
+				if(label2value == null) label2value = new HashMap<Object, Object>();
+				else label2value.clear();
+				if(value2label == null) value2label = new HashMap<Object, Object>();
+				else value2label.clear();
 				for(int i = 0; i < labels.length; i++) {
 					label2value.put(labels[i], values[i]);
+					value2label.put(values[i], labels[i]);
 				}
 			}
 		}
@@ -317,6 +322,19 @@ public class TypedProperty implements Comparable<TypedProperty> {
 				Object label = super.getCellEditorValue();
 				return label2value.get(label);
 			}
+		}
+		
+		public Component getTableCellEditorComponent(JTable table,
+				Object value, boolean isSelected, int row, int column) {
+			if(value2label != null) {
+				value = value2label.get(value);
+			}
+			if(useIndex) {
+				combo.setSelectedIndex((Integer)value);
+			} else {
+				combo.setSelectedItem(value);
+			}
+			return combo;
 		}
 	}
 	
@@ -426,9 +444,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ComboRenderer outlineTypeRenderer = new ComboRenderer(OutlineType.getTags(), OutlineType.values());
 	private static ComboRenderer datanodeTypeRenderer = new ComboRenderer(DataNodeType.getNames());
 	private static ColorEditor colorEditor = new ColorEditor();
-	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), true);
+	private static ComboEditor lineTypeEditor = new ComboEditor(LineType.getNames(), LineType.getValues());
 	private static ComboEditor lineStyleEditor = new ComboEditor(LineStyle.getNames(), true);
-	private static ComboEditor outlineTypeEditor = new ComboEditor(OutlineType.getTags(), true);
+	private static ComboEditor outlineTypeEditor = new ComboEditor(OutlineType.getTags(), OutlineType.values());
 	private static ComboEditor datasourceEditor = new ComboEditor(new String[] {}, new String[] {}); //data will be added on first use
 	private static DefaultCellEditor checkboxEditor = new DefaultCellEditor(new JCheckBox());
 	private static ComboEditor orientationEditor = new ComboEditor(OrientationType.getNames(), true);
@@ -508,7 +526,11 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			if(value2label != null) {
 				value = value2label.get(value);
 			}
-			setSelectedItem(value);
+			if(value instanceof Integer) {
+				setSelectedIndex((Integer)value);
+			} else {
+				setSelectedItem(value);
+			}
 			return this;
 		}
 	}

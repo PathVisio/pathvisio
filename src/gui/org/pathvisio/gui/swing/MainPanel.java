@@ -169,6 +169,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				return e == null ? super.getCellEditor(row, column) : e;
 			}
 		};
+		//TODO: make this prettier, it's not good for the tablemodel to have
+		//a reference to the table. Quick fix for preventing TableCellEditor
+		//to remain open upon selecting a new PathwayElement
+		model.setTable(propertyTable);
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		

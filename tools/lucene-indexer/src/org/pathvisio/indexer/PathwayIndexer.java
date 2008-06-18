@@ -23,10 +23,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
@@ -74,7 +75,7 @@ public class PathwayIndexer {
 	public static final String FIELD_ORGANISM = "organism";
 	/**
 	 * The source of a pathway (e.g. an url or file where the pathway
-	 * is stored)
+	 * is stored). This field should be unique for each pathway in the index.
 	 */
 	public static final String FIELD_SOURCE = "source";
 	
@@ -91,7 +92,7 @@ public class PathwayIndexer {
 	String source;
 	Pathway pathway;
 	IndexWriter writer;
-	GdbManager gdbManager;
+	GdbProvider gdbs;
 	
 	/**
 	 * Create a PathwayIndexer
@@ -105,15 +106,25 @@ public class PathwayIndexer {
 		this.writer = w;
 	}
 	
-	/**
-	 * Set the GdbManager to use for looking up cross-references
-	 * for datanode annotations. If the GdbManager is null, no cross
-	 * references will be included in the index
-	 */
-	public void setGdbManager(GdbManager mgr) {
-		this.gdbManager = gdbManager;
+	public void setGdbProvider(GdbProvider gdbs) {
+		this.gdbs = gdbs;
 	}
 	
+	/**
+	 * Removes the pathway from the index. The pathway is identified
+	 * by the {@link #FIELD_SOURCE} field.
+	 * @throws IOException 
+	 * @throws CorruptIndexException 
+	 */
+	public void removePathway() throws CorruptIndexException, IOException {
+		writer.deleteDocuments(new Term(FIELD_SOURCE, source));
+	}
+	
+	/**
+	 * Updates or adds the pathway to the index
+	 * @throws CorruptIndexException
+	 * @throws IOException
+	 */
 	public void indexPathway() throws CorruptIndexException, IOException {
 		Document doc = new Document();
 		doc.add(new Field(FIELD_SOURCE, source, Field.Store.YES, Field.Index.NO));
@@ -160,7 +171,7 @@ public class PathwayIndexer {
 				));
 			}
 		}
-		writer.addDocument(doc);
+		writer.updateDocument(new Term(FIELD_SOURCE, source), doc);
 	}
 	
 	void indexDataNode(PathwayElement pe, Document doc) {
@@ -169,11 +180,15 @@ public class PathwayIndexer {
 		addCrossRef(xref, doc, FIELD_ID, FIELD_ID_CODE);
 
 		//Add cross references if connected
-		if(gdbManager != null && gdbManager.isConnected()) {
-			Gdb gdb = gdbManager.getCurrentGdb();
-			List<Xref> crossRefs = gdb.getCrossRefs(xref);
-			for(Xref c : crossRefs) {
-				addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
+		Organism organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
+		if(gdbs != null) {
+			for(Gdb gdb : gdbs.getGdbs(organism)) {
+				if(gdb != null && gdb.isConnected()) {
+					List<Xref> crossRefs = gdb.getCrossRefs(xref);
+					for(Xref c : crossRefs) {
+						addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
+					}
+				}
 			}
 		}
 	}
@@ -181,10 +196,6 @@ public class PathwayIndexer {
 	void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
 		if(xref != null) {
 			String id = xref.getId();
-			String code = "";
-			if(xref.getDataSource() != null) {
-				code = xref.getDataSource().getSystemCode();
-			}
 			doc.add(
 				new Field(
 						field_id,

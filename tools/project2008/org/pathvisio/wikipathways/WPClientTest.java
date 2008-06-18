@@ -18,6 +18,7 @@ package org.pathvisio.wikipathways;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,7 +34,9 @@ public class WPClientTest
 	public static void main(String[] args) throws IOException, WikiPathwaysException
 	{
 		// make a new WikiPathwaysClient
-		WikiPathwaysClient wp = new WikiPathwaysClient();
+		WikiPathwaysClient wp = new WikiPathwaysClient(
+				new URL("http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php")
+		);
 		
 		// create a cutoff date.
 		// NB: any valid  Date() can be used for getRecentChanges,

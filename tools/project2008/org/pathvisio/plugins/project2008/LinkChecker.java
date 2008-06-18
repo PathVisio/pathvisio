@@ -28,9 +28,9 @@ import java.util.List;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
-import org.pathvisio.wikipathways.FileUtils;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -275,7 +275,7 @@ public class LinkChecker
 	 */
 	private List<File> getPwyFiles()
 	{
-		String pwExtension = ".gpml";
+		String pwExtension = "gpml";
 		List<File> pwyFiles;
 		if (isOnline)
 		{
@@ -290,7 +290,7 @@ public class LinkChecker
 		}
 		else
 		{
-			pwyFiles = FileUtils.getFileListing(pwDir, pwExtension);
+			pwyFiles = FileUtils.getFiles(pwDir, pwExtension, true);
 		}
 		return pwyFiles;
 	}

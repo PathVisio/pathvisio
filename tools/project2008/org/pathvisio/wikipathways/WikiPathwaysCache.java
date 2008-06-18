@@ -19,9 +19,14 @@ package org.pathvisio.wikipathways;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.pathvisio.debug.Logger;
+import org.pathvisio.util.FileUtils;
 import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 
 /**
@@ -30,18 +35,27 @@ import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
  */
 public class WikiPathwaysCache
 {
+	static final String PW_EXT = "gpml";
+	static final String PW_EXT_DOT = "." + PW_EXT;
+	
 	private File cacheDirectory;
-	private WikiPathwaysClient wpClient = new WikiPathwaysClient();
+	private WikiPathwaysClient wpClient;
 	private List<File> files;
 	
-	public WikiPathwaysCache(File cacheDirectory) 
+	public WikiPathwaysCache(File cacheDirectory) {
+		this(new WikiPathwaysClient(), cacheDirectory);
+	}
+	
+	public WikiPathwaysCache(WikiPathwaysClient wpClient, File cacheDirectory) 
 	{
+		this.wpClient = wpClient;
+		
 		if (!(cacheDirectory.exists() && cacheDirectory.isDirectory()))
 		{
 			throw new IllegalArgumentException ("Illegal cache directory " + cacheDirectory);
 		}
 		this.cacheDirectory = cacheDirectory;
-		files = FileUtils.getFileListing(cacheDirectory, ".gpml");
+		files = FileUtils.getFiles(cacheDirectory, PW_EXT, true);
 	}
 	
 	public List<File> getFiles()
@@ -53,133 +67,138 @@ public class WikiPathwaysCache
 	 * Check for missing / outdated pathways
 	 * and download them.
 	 * Does nothing if there was no way to download.
+	 * @return A list of files that were updated (either modified, added or deleted)
 	 */
-	public void update()
+	public List<File> update()
 	{
+		Set<File> changedFiles = new HashSet<File>();
+		
 		long localdate = dateLastModified (files);
 		Date d = new Date(localdate); 
 		DateFormat df = DateFormat.getDateTimeInstance();
-		System.out.println("Date last modified: "+df.format(d)); 
+		Logger.log.info("Date last modified: " + df.format(d)); 
 
 		try
 		{
-			System.out.println("---[Get Recently Changed Files]---");
+			Logger.log.info("---[Get Recently Changed pathways]---");
 			
-			downloadNew(d);
-		
-			System.out.println("---[Get All Other Files]---");
-			// download all pathways to the pathway folder
-			downloadAll();
-			System.out.println("---[Ready]---");
+			changedFiles.addAll(processRecentChanges(d));
+			
+			Logger.log.info("---[Updating new and removed pathways]---");
+			
+			List<String> pathwayNames = wpClient.getPathwayList();
+			changedFiles.addAll(purgeRemoved(pathwayNames));
+			changedFiles.addAll(downloadNew(pathwayNames));
+			
+			Logger.log.info("---[Ready]---");
+			Logger.log.info("Updated pathways: " + changedFiles);
+			
 			// update list of files in cache.
-			files = FileUtils.getFileListing(cacheDirectory, ".gpml");
-			System.out.println("---[Start Checking Links]---");
+			files = FileUtils.getFiles(cacheDirectory, "gpml", true);
 		}
 		catch (IOException e)
 		{
-			System.out.println("ERROR: Couldn't update cache");
+			Logger.log.error("Couldn't update cache", e);
 		}
 		catch (WikiPathwaysException e)
 		{
-			System.out.println("ERROR: Couldn't update cache");
+			Logger.log.error("Couldn't update cache", e);
 		}
+		
+		return new ArrayList<File>(changedFiles);
+	}
+	
+	private List<File> downloadNew(List<String> pathwayNames) throws IOException, WikiPathwaysException {
+		List<String> newFiles = new ArrayList<String>();
+		
+		for(String pwName : pathwayNames) {
+			File f = pathwayNameToFile(pwName);
+			if(!f.exists()) {
+				newFiles.add(pwName);
+			}
+		}
+		
+		return downloadFiles(newFiles);
 	}
 	
 	/**
 	 * In this method it is possible to download only the pathways that are recently changed. 
+	 * @return a list of files in the cache that has been updated
 	 */
-	private void downloadNew (Date d) throws IOException, WikiPathwaysException
+	private List<File> processRecentChanges (Date d) throws IOException, WikiPathwaysException
 	{
 		// given path: path to store the pathway cache
 		// and date: the date of the most recent changed 
-		
-		
 		// get the pathwaylist; all the known pathways are
 		// stored in a list
 		List<String> pathwayNames = wpClient.getRecentChanges(d);
-		
-		downloadFiles (pathwayNames);
+		return downloadFiles (pathwayNames);
 	}
-	
+		
 	/**
-	 * In this method a list is created with pathwayNames that have to be downloaded. These 
-	 * pathways are then being downloaded in the method 'downloadFiles'
+	 * In this method the files are downloaded.
+	 * @return The list of downloaded files
 	 */
-	private void downloadAll() throws IOException, WikiPathwaysException
-	{
-		// given path: path to store the pathway cache
-				
-		// get the pathwaylist; all the known pathways are
-		// stored in a list
-		List<String> pathwayNames = wpClient.getPathwayList();
+	private List<File> downloadFiles (List<String> pathwayNames) throws IOException, WikiPathwaysException {
+		List<File> files = new ArrayList<File>();
 		
-		downloadFiles (pathwayNames);
-	}
-	
-	/**
-	 * In this method the files are downloaded. 
-	 */
-	private void downloadFiles (List<String> pathwayNames) throws IOException, WikiPathwaysException {
-		
-		// give the extension of a pathway file
-		String pwExtension = ".gpml";
-		
-		// remove all duplicates
-		pathwayNames = removeDuplicates(pwExtension, pathwayNames);
-				
 		// a for loop that downloads all individual pathways
 		for (int i = 0; i < pathwayNames.size(); ++i)
 		{
-			// get the species and pathwayname
-			String pathwayName= pathwayNames.get(i);
-			String[] temporary = pathwayName.split(":");
-			String species = temporary[0];
-			String namePathway = temporary[1];
-			
-			// construct the download path
-			String pathToDownload = cacheDirectory + File.separator + species + File.separator;
-			
-			//	make a folder for a species when it doesn't exist
-			new File(pathToDownload).mkdir();
-			
-			// make a 2 letters species code
-			//TODO: ???
-			temporary = species.split("_");
-			String code = temporary[0].substring(0,1) + temporary[1].substring(0,1);
-			
-			
 			// download the pathway and give status in console
-			wpClient.downloadPathway(pathwayNames.get(i), 
-				new File (pathToDownload + code + "_" + namePathway + pwExtension));
-			System.out.println("Downloaded file "+(i+1)+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
+			File pwFile = pathwayNameToFile(pathwayNames.get(i));
+			wpClient.downloadPathway(pathwayNames.get(i), pwFile);
+			files.add(pwFile);
+			Logger.log.info("Downloaded file "+(i+1)+" of "+pathwayNames.size()+ ": " + pathwayNames.get(i));
 		}
+		return files;
 	}
 	
-	/**
-	 * In this method, a list is obtained of files from the cache directory. All the files that 
-	 * are already in the cache, are removed from the pathwayNames list, so they won't be 
-	 * downloaded again.
-	 */
-	private List<String> removeDuplicates (String pwExtension, List<String> pathwayNames)
-	{
-		// get a list of all files inside the cache path
-		List<File> pwFilenames = FileUtils.getFileListing(cacheDirectory, pwExtension);
+	private File pathwayNameToFile(String pathwayName) {
+		String[] temporary = pathwayName.split(":");
+		String species = temporary[0];
+		String namePathway = temporary[1];
 		
-		// for each files, reconstruct the pathname file (Species:Pathwayname), and
-		// remove from the pathwaynames list
-		for (File file: pwFilenames)
-		{
-			String filename = file.getName(); // gpml file 
-			String pathwayName = filename.substring(3, filename.length() - pwExtension.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
-			String species = file.getParentFile().getName(); // i.e. species = Homo_sapiens
-			String pwayname = species+":"+pathwayName; // construct the pathway name: i.e. Homo_sapiens:ACE-Inhibitor_pathway_PharmGKB
-			pathwayNames.remove(pwayname); // remove from pathwayNames
+		// construct the download path
+		String pathToDownload = cacheDirectory + File.separator + species + File.separator;
+		
+		//	make a folder for a species when it doesn't exist
+		new File(pathToDownload).mkdirs();
+		
+		// make a 2 letters species code
+		//TODO: ???
+		temporary = species.split("_");
+		String code = temporary[0].substring(0,1) + temporary[1].substring(0,1);
+		
+		
+		// download the pathway and give status in console
+		File pwFile = new File (pathToDownload + code + "_" + namePathway + PW_EXT_DOT);
+		return pwFile;
+	}
+	
+	private String fileToPathwayName(File f) {
+		String filename = f.getName(); // gpml file 
+		String pathwayName = filename.substring(3, filename.length() - PW_EXT_DOT.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
+		String species = f.getParentFile().getName(); // i.e. species = Homo_sapiens
+		String pwyName = species+":"+pathwayName; // construct the pathway name: i.e. Homo_sapiens:ACE-Inhibitor_pathway_PharmGKB
+		return pwyName;
+	}
+	
+	private List<File> purgeRemoved(List<String> pathwayNames) {
+		List<File> pwFilenames = FileUtils.getFiles(cacheDirectory, PW_EXT, true);
+		List<File> deleted = new ArrayList<File>();
+		
+		for (File file : pwFilenames) {
+			String name = fileToPathwayName(file);
+			if(!pathwayNames.contains(name)) {
+				deleted.add(file);
+				file.delete();
+			}
 		}
 		
-		return pathwayNames;
-		
+		return deleted;
 	}
-
+	
 	/**
 	 * In this method the date is returned when the last change is made in a pathway. The
 	 * property that has to be given is:

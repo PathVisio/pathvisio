@@ -20,12 +20,13 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Xref;
-import org.pathvisio.wikipathways.FileUtils;
+import org.pathvisio.util.FileUtils;
 
 /**
  * This class is used to get the genid's (ensemble format) from all the pathways in a directory.
@@ -67,8 +68,8 @@ public class GenidPway{
 		// Here the method "getFileListing" from the class FileUtils is executed.
 		// In this method all files that are stored in a directory are stored in a
 		// list of strings. These then can be easily loaded
-		String pwExtension = ".gpml";
-		List<File> filenames = FileUtils.getFileListing(pwDir, pwExtension);
+		String pwExtension = "gpml";
+		List<File> filenames = FileUtils.getFiles(pwDir, pwExtension, true);
 		
 		// Make a set to store the genes used in the pathways.
 		Set<Xref> allGenes=new HashSet<Xref>();

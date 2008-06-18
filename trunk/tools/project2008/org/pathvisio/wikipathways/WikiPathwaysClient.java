@@ -29,22 +29,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-import org.pathvisio.debug.Logger;
 
 /**
  * In this class the pathways can be downloaded from the internet. 
  */
 public class WikiPathwaysClient 
 {
-	//TODO: make option
-	//private static final String RPCURL = "http://www.wikipathways.org/wpi/wpi_rpc.php";
-	private static final String RPCURL = "http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php";
-	//private static final String RPCURL = "http://localhost/wikipathways/wpi/wpi_rpc.php";
+	private static URL DEFAULT_RPCURL;
+	static {
+		try {
+			DEFAULT_RPCURL = new URL("http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			//Shouldn't happen
+		}
+	}
 	
 	private XmlRpcClient client;
 	private String token = null;
@@ -53,28 +58,27 @@ public class WikiPathwaysClient
 	/**
 	 * A representation of WikiPathways that allows you to obtain a list 
 	 * of currently available pathways,
-	 * as well as the pathways themselves
+	 * as well as the pathways themselves.
+	 * Uses DEFAULT_RPCURL as url to WikiPathways.
 	 */
-	public WikiPathwaysClient() 
-	{
-		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		
-		try
-		{
-			config.setServerURL(new URL(RPCURL));
-
-			client = new XmlRpcClient();
-			client.setConfig (config);
-			
-		}
-		catch (MalformedURLException e)
-		{
-			// shouldn't occur
-			Logger.log.error ("Malformed url:", e);
-		}
-	
+	public WikiPathwaysClient() {
+		this(DEFAULT_RPCURL);
 	}
 	
+	/**
+	 * A representation of WikiPathways that allows you to obtain a list 
+	 * of currently available pathways,
+	 * as well as the pathways themselves
+	 */
+	public WikiPathwaysClient(URL rpcUrl) 
+	{
+		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+		config.setServerURL(rpcUrl);
+
+		client = new XmlRpcClient();
+		client.setConfig (config);
+	}
+
 	/**
 	 * make sure request are sent no faster than once per REQUEST_WAIT_MILLIS
 	 */
@@ -204,8 +208,10 @@ public class WikiPathwaysClient
 	 */
 	public List<String> getRecentChanges (Date cutoff) throws WikiPathwaysException
 	{		
-		// turn Date into expected timestamp format:
-		String timestamp = new SimpleDateFormat ("yyyyMMddHHmmss").format(cutoff);
+		// turn Date into expected timestamp format, in GMT:
+		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		String timestamp = sdf.format(cutoff);
 		Object[] params = new Object[] { timestamp };
 		
 		Object response = throttledRequest ("WikiPathways.getRecentChanges", params);

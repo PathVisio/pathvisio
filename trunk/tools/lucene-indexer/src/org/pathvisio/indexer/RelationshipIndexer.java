@@ -22,6 +22,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -84,7 +85,21 @@ public class RelationshipIndexer {
 		this.source = source;
 	}
 	
-	public void index() throws CorruptIndexException, IOException {
+	/**
+	 * Removes all relationships for this pathway from the index.
+	 * @throws IOException 
+	 * @throws CorruptIndexException 
+	 */
+	public void removeRelationships() throws CorruptIndexException, IOException {
+		writer.deleteDocuments(new Term(FIELD_PATHWAY, source));
+	}
+	
+	/**
+	 * Adds/updates all relationships in the pathway to the index
+	 * @throws CorruptIndexException
+	 * @throws IOException
+	 */
+	public void indexRelationships() throws CorruptIndexException, IOException {
 		//Find all connectors that do not connect to an anchor
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			if(isRelation(pe)) {

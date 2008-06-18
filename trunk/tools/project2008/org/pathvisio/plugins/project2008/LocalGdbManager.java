@@ -24,7 +24,7 @@ import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.Organism;
-import org.pathvisio.wikipathways.FileUtils;
+import org.pathvisio.util.FileUtils;
 
 /**
  * Given a directory containing pgdb files,
@@ -59,8 +59,7 @@ public class LocalGdbManager
 		/**
 		 * Get a new list of files of pathways.
 		 */ 
-		List<File> dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
-		dbFilenames = FileUtils.getFileListing(dbDir, dbExtension);
+		List<File> dbFilenames = FileUtils.getFiles(dbDir, dbExtension, true);
 				
 		/**
 		 * In the following for-loop, all databases are loaded in in List<SimpleGdb> databases 

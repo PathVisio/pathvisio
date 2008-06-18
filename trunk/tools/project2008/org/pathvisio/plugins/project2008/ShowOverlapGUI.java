@@ -20,14 +20,22 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
-import javax.swing.table.*;
-import org.pathvisio.data.DataException;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.wikipathways.FileUtils;
-
 import java.io.File;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.LookAndFeel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
+import org.pathvisio.data.DataException;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.util.FileUtils;
+
 import RowHeaderTable.JScrollPaneAdjuster;
 import RowHeaderTable.JTableRowHeaderResizer;
 import RowHeaderTable.RowHeaderRenderer;
@@ -127,7 +135,7 @@ public class ShowOverlapGUI{
 	  final String dbDir = new String(dbBaseDir+organism[0]);
 	  final File pwDir = new File(pwBaseDir+organism[1]);
 
-	  List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
+	  List<File> filenames = FileUtils.getFiles(pwDir, "gpml", true);
 	  String[] columnNames=new String[filenames.size()];
       for(int i=0;i<filenames.size();i++){
     	  columnNames[i]=filenames.get(i).getName();

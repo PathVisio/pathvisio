@@ -17,6 +17,10 @@
 package org.pathvisio.plugins.project2008;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
@@ -25,14 +29,12 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
-import org.pathvisio.wikipathways.FileUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import java.util.*;
 
 /**
  * In the Gene counter the percentage of genes that are known in the Ensembl database that 
@@ -103,7 +105,7 @@ public class GeneCounter {
 	 * determined.
 	 */ 
 	public static List<Set<Xref>> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
-		List<File> filenames = FileUtils.getFileListing(pwDir, ".gpml");
+		List<File> filenames = FileUtils.getFiles(pwDir, "gpml", true);
 		Set<Xref> totalS=new HashSet<Xref>();
 		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
 		List<Set<Xref>> refPWarray = new ArrayList<Set<Xref>>();

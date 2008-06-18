@@ -31,7 +31,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.pathvisio.Engine;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
 
@@ -47,10 +46,11 @@ public class Search extends TestCase {
 			PreferenceManager prefs = new PreferenceManager();
 			prefs.load();
 			
-			GdbManager gdbMgr = new GdbManager();
-			gdbMgr.initPreferred();
+			GdbProvider gdbs = new GdbProvider();
+			//TODO: use test database!
 			
-			new CreateIndex(gdbMgr).index(pathwayDir, indexDir);
+			GpmlIndexer indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
+			indexer.update();
 		} catch(Exception e) {
 			e.printStackTrace();
 			fail("Exception during indexing: " + e.getMessage());

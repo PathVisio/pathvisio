@@ -16,17 +16,25 @@
 //
 package org.pathvisio.visualization.gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.colorset.ColorGradient;
@@ -34,14 +42,13 @@ import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetObject;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Panel for editing a color set, a combination of
- * rules and gradients
+ * rules and/or a gradient
  */
 public class ColorSetPanel extends JPanel implements ActionListener
 {
@@ -54,11 +61,14 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	private ColorSet colorSet;
 	private ColorGradientCombo gradientCombo;
 	private JCheckBox gradientCheck;
-	private JPanel rulesPanel;
+	private ColorRulePanel rulesPanel;
+	private ColorRuleTableModel crtm;
 	private JPanel valuesPanel;
 	private JPanel gradientPanel;
 	
 	private ColorGradient gradient;
+	
+	private JTable rulesTable;
 	
 	ColorSetPanel (ColorSet cs)
 	{
@@ -66,7 +76,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 
 		setLayout (new FormLayout(
 				"pref:grow", 
-				"pref, 4dlu, pref, 2dlu, fill:pref:grow, 2dlu, pref"
+				"pref, 3dlu, pref, 3dlu, [pref,100dlu], 3dlu, pref, 3dlu, pref"
 		));
 		
 		gradientPanel = new JPanel();
@@ -75,7 +85,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		add(gradientPanel, cc.xy(1, 1));
 		
 		gradientPanel.setLayout(new FormLayout(
-			"pref, 2dlu, pref:grow",
+			"pref, 3dlu, pref:grow",
 			"pref, pref, pref"
 		));
 		
@@ -92,10 +102,18 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		gradientPanel.add(gradientCombo, cc.xy(3, 1));
 		
 		add(new JLabel("Rules:"), cc.xy(1, 3, "l, c"));
-		rulesPanel = new JPanel();
-		rulesPanel.setBorder(BorderFactory.createEtchedBorder());
-		add(new JScrollPane(rulesPanel), cc.xy(1, 5));
+		rulesPanel = new ColorRulePanel();
 		
+		rulesPanel.setBorder(BorderFactory.createEtchedBorder());
+		
+		crtm = new ColorRuleTableModel(colorSet);
+		rulesTable = new JTable(crtm);
+		rulesTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+
+		add(new JScrollPane(rulesTable), cc.xy(1, 5));
+
+		add(new JScrollPane(rulesPanel), cc.xy(1, 7));
+
 		JButton add = new JButton(ACTION_ADD_RULE);
 		add.setActionCommand(ACTION_ADD_RULE);
 		add.addActionListener(this);
@@ -104,11 +122,129 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		remove.addActionListener(this);
 		
 		JPanel btnPanel = ButtonBarFactory.buildAddRemoveBar(add, remove);
-		add(btnPanel, cc.xy(1, 7));
+		add(btnPanel, cc.xy(1, 9));
 		
 		refresh();
 	}
 
+	public class ColorRenderer extends JLabel implements TableCellRenderer 
+	{
+		private static final long serialVersionUID = 1L;
+
+		Border unselectedBorder = null;
+		Border selectedBorder = null;
+		boolean isBordered = true;
+		
+		public ColorRenderer(boolean isBordered) 
+		{
+			this.isBordered = isBordered;
+			setOpaque(true); //MUST do this for background to show up.
+		}
+		
+		public Component getTableCellRendererComponent(
+		     JTable table, Object color,
+		     boolean isSelected, boolean hasFocus,
+		     int row, int column) 
+		{
+			Color newColor = (Color)color;
+			setBackground(newColor);
+			if (isBordered) 
+			{
+				if (isSelected) 
+				{
+					if (selectedBorder == null) 
+					{
+						selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+			                       table.getSelectionBackground());
+					}
+					setBorder(selectedBorder);
+				} 
+				else 
+				{
+					if (unselectedBorder == null) 
+					{
+						unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+			                       table.getBackground());
+					}
+					setBorder(unselectedBorder);
+				}
+			}
+			
+			setToolTipText("RGB value: " + newColor.getRed() + ", "
+			              + newColor.getGreen() + ", "
+			              + newColor.getBlue());
+			return this;
+		}
+	}
+	
+
+	private static class ColorRuleTableModel extends AbstractTableModel
+	{
+		private static final long serialVersionUID = 1L;
+
+		private ColorSet cs;
+		private List<ColorRule> colorRules;
+		
+		ColorRuleTableModel (ColorSet cs)
+		{
+			this.cs = cs;
+			refresh();
+		}
+		
+		ColorRule getRule (int index)
+		{
+			return colorRules.get (index);
+		}
+		
+		/**
+		 * May be called whenever the number of colorRules has changed
+		 */
+		void refresh()
+		{
+			colorRules = new ArrayList<ColorRule>();
+			for (ColorSetObject o : cs.getObjects())
+			{
+				if (o instanceof ColorRule) colorRules.add ((ColorRule)o);
+			}
+			fireTableDataChanged();
+		}
+		
+		public int getColumnCount() { return 2; }
+
+		public int getRowCount() 
+		{ 
+			return colorRules.size();
+		}		
+
+		public Object getValueAt(int row, int col)
+		{
+			switch (col)
+			{
+			case 0:
+				return colorRules.get(row).getColor();
+			default:
+				return "" + colorRules.get(row).getCriterion().getExpression();
+			}
+		}
+		
+		public String getColumnName (int col)
+		{
+			final String colNames[] = {"Color", "Rule" };
+			return colNames[col];
+		}
+		
+		public Class<?> getColumnClass (int col)
+		{
+			switch (col)
+			{
+			case 0:
+				return Color.BLACK.getClass();
+			default:
+				return "".getClass();
+			}
+		}
+	}
+	
 	private void refresh() {
 		//Get default gradients
 		List<ColorGradient> gradients = ColorGradient.createDefaultGradients();
@@ -135,17 +271,16 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		refreshValuesPanel();
 		
 		//Generate rules panel
-		rulesPanel.removeAll();
-		FormLayout layout = new FormLayout("fill:pref:grow");
-		DefaultFormBuilder builder = 
-			new DefaultFormBuilder(layout, rulesPanel);
-		for (ColorSetObject cso : colorSet.getObjects()) {
-			if(!(cso instanceof ColorGradient)) {
-				Logger.log.trace("Adding panel for " + cso);
-				builder.append(createColorSetObjectPanel(cso));
-				builder.nextLine();
+		rulesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		{
+
+			public void valueChanged(ListSelectionEvent e) 
+			{
+				rulesPanel.setInput (crtm.getRule(rulesTable.getSelectedRow()));
 			}
 		}
+		);
+		
 		revalidate();
 	}
 	
@@ -163,20 +298,33 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
 		Logger.log.info(action);
-		if(ACTION_ADD_RULE.equals(action)) {
+		if(ACTION_ADD_RULE.equals(action)) 
+		{
 			ColorSetObject cso = new ColorRule(colorSet);
 			colorSet.addObject(cso);
+			crtm.refresh();
+			rulesTable.getSelectionModel().setLeadSelectionIndex(crtm.getRowCount() - 1);
 			refresh();
-		} else if(ACTION_REMOVE_RULE.equals(action)) {
-			//TODO: remove
-			JOptionPane.showMessageDialog(this, "Not implemented");
-		} else if(ACTION_GRADIENT.equals(action)) {
+		} 
+		else if(ACTION_REMOVE_RULE.equals(action)) 
+		{
+			int index = rulesTable.getSelectedRow();
+			ColorRule cr = crtm.getRule(index);
+			colorSet.removeObject(cr);
+			rulesTable.getSelectionModel().setLeadSelectionIndex(index - 1);
+			crtm.refresh();
+			refresh();
+		} 
+		else if(ACTION_GRADIENT.equals(action)) 
+		{
 			if(gradientCheck.isSelected()) {
 				gradientCombo.setSelectedIndex(0);
 			} else {
 				gradientCombo.setSelectedIndex(-1);
 			}
-		} else if(ACTION_COMBO.equals(action)) {
+		} 
+		else if(ACTION_COMBO.equals(action)) 
+		{
 			gradient = gradientCombo.getSelectedGradient();
 			colorSet.setGradient(gradient);
 			if(gradient != null) {
@@ -186,21 +334,5 @@ public class ColorSetPanel extends JPanel implements ActionListener
 			}
 			refreshValuesPanel();
 		}
-
-	}
-	
-	private ColorSetObjectPanel createColorSetObjectPanel (ColorSetObject cso)
-	{
-		if (cso instanceof ColorRule)
-		{
-			return new ColorRulePanel ((ColorRule)cso);
-		}
-		return null;
-	}
-	
-	public static class ColorSetObjectPanel extends JPanel
-	{
-		private static final long serialVersionUID = 1L;
-		
-	}
+	}		
 }

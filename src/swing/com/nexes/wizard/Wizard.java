@@ -137,6 +137,14 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     }
     
     /**
+     * Set the title of this page.
+     */
+    public void setPageTitle(String s)
+    {
+        pageTitle.setText(s);
+    }
+    
+    /**
      * Returns the current title of the generated dialog.
      * @return The String-based title of the generated dialog.
      */    
@@ -359,9 +367,14 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         //  same spot.
         
         JPanel titlePanel = new JPanel();
+        titlePanel.setBorder (new EmptyBorder (new Insets(3, 3, 3, 3)));
+        titlePanel.setLayout (new GridLayout(1,2));
+        titlePanel.setBackground(Color.WHITE);
         errorMessage = new JLabel();
         errorMessage.setForeground(java.awt.Color.RED);
         pageTitle = new JLabel("Page Title");
+        pageTitle.setFont(pageTitle.getFont().deriveFont(15.0f));
+        
         titlePanel.add (pageTitle);
         titlePanel.add (errorMessage);
         

@@ -86,6 +86,7 @@ public class GuiMain
 				pgexFile = args[i + 1];
 				if (!new File(pgexFile).exists())
 				{
+					System.out.println ("Data file '" + pgexFile + "' not found"); 
 					printHelp();
 					System.exit(-1);
 				}
@@ -103,7 +104,9 @@ public class GuiMain
 					} else {
 						pathwayUrl = new URL(pws);
 					}
-				} catch(MalformedURLException e) {
+				} catch(MalformedURLException e) 
+				{
+					System.out.println ("Pathway '" + args[i] + "' not a valid file or URL"); 
 					printHelp();
 					System.exit(-1);
 				}

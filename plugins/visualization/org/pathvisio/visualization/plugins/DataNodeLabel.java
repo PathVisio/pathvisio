@@ -334,4 +334,10 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 			Logger.log.error("Unable to load configuration for " + getName(), e);
 		}
 	}
+
+	@Override
+	public int defaultDrawingOrder() 
+	{
+		return 1;
+	}
 }

@@ -20,8 +20,12 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom.Element;
@@ -107,8 +111,23 @@ public class Visualization
 	 * @param g	The {@link Graphics} object the visualization applies to
 	 * @param g2d Graphical context on which drawing operations can be performed
 	 */
-	public void visualizeDrawing(Graphics g, Graphics2D g2d) {
-		for(VisualizationMethod m : getMethods()) {
+	public void visualizeDrawing(Graphics g, Graphics2D g2d) 
+	{
+		// get a list of visualization methods,
+		// sort on default drawing order.
+		List<VisualizationMethod> methods = new ArrayList<VisualizationMethod>();
+		methods.addAll (getMethods());
+		Collections.sort (methods, new Comparator<VisualizationMethod>()
+		{
+
+			public int compare(VisualizationMethod arg0,
+					VisualizationMethod arg1) {
+				return arg0.defaultDrawingOrder() - arg1.defaultDrawingOrder();
+			}
+
+		});
+		for(VisualizationMethod m : methods) 
+		{
 			if(m.isActive()) {
 				m.visualizeOnDrawing(g, g2d);
 			}

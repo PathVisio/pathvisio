@@ -670,4 +670,10 @@ public class ColorByExpression extends VisualizationMethod {
 			return null;
 		}
 	}
+
+	@Override
+	public int defaultDrawingOrder() 
+	{
+		return -1;
+	}
 }

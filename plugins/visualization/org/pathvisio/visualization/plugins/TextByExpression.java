@@ -365,4 +365,11 @@ public class TextByExpression extends VisualizationMethod
 		setFont(Font.decode(xml.getAttributeValue(XML_ATTR_FONTDATA)));
 		mean = Boolean.parseBoolean(xml.getAttributeValue(XML_ATTR_AVG));
 	}
+
+	@Override
+	public int defaultDrawingOrder() 
+	{
+		// a high drawing order, so that is comes on top of opaque methods.
+		return 3;
+	}
 }

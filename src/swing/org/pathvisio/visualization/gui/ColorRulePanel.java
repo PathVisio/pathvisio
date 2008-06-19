@@ -23,12 +23,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -36,22 +39,32 @@ import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.Criterion;
-import org.pathvisio.visualization.gui.ColorSetPanel.ColorSetObjectPanel;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A panel for editing a color rule
+ * 
+ * This panel has a text field for showing the expression,
+ * a label and a button for showing and selecting a color,
+ * Two lists to help with entering sample names and operators
  */
-public class ColorRulePanel extends ColorSetObjectPanel 
+public class ColorRulePanel extends JPanel 
 {
 	private static final long serialVersionUID = 1L;
 
-	private final ColorRule cr;
+	private JLabel colorLabel; 
+	private ColorRule cr = null;
 	private JTextField txtExpr;
 	private JLabel errorMsg;
-	
+	private JList lstOperators;
+	private JList lstSamples;
+	private JButton btnColor;
+
+	/**
+	 * Called whenever the txtExpr textfield changes
+	 */
 	private void setExpresion()
 	{
 		boolean ok = cr.getCriterion().setExpression(txtExpr.getText());
@@ -67,10 +80,49 @@ public class ColorRulePanel extends ColorSetObjectPanel
 		}
 	}
 	
-	ColorRulePanel (ColorRule cr)
+	/**
+	 * Set the colorRule that is currently being edited or created.
+	 * This may be set to null, in which case the panel is disabled.
+	 */
+	public void setInput (ColorRule cr)
 	{
 		this.cr = cr;
-		
+		refresh();
+	}
+	
+	/**
+	 * Get the colorRule that is currently being edited or created.
+	 */
+	public ColorRule getInput ()
+	{
+		return cr;
+	}
+	
+	/**
+	 * Update the panel components based on the contents of the input.
+	 * Called whenever a new input is set or the input is otherwise changed externally.
+	 */
+	private void refresh()
+	{
+		boolean active = (cr != null);
+		if (active)
+		{
+			colorLabel.setBackground(cr.getColor ());
+			txtExpr.setText (cr.getCriterion().getExpression());
+		}
+		else
+		{
+			colorLabel.setBackground(Color.BLACK);
+			txtExpr.setText ("");
+		}
+		txtExpr.setEnabled(active);
+		btnColor.setEnabled(active);
+		lstOperators.setEnabled(active);
+		lstSamples.setEnabled(active);
+	}
+	
+	ColorRulePanel ()
+	{
 		FormLayout layout = new FormLayout("4dlu, pref, 4dlu, pref, 4dlu", 
 		"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 
@@ -84,7 +136,6 @@ public class ColorRulePanel extends ColorSetObjectPanel
 			public void changedUpdate(DocumentEvent de) 
 			{
 				setExpresion();
-				
 			}
 
 			public void insertUpdate(DocumentEvent de) 
@@ -101,8 +152,7 @@ public class ColorRulePanel extends ColorSetObjectPanel
 		add (new JLabel ("Expression: "), cc.xy (2,2));
 		add (txtExpr, cc.xy (4, 2));
 		
-		
-		final JList lstOperators = new JList(Criterion.tokens);
+		lstOperators = new JList(Criterion.tokens);
 		add (new JScrollPane (lstOperators), cc.xy (2,4));
 		
 		lstOperators.addMouseListener(new MouseAdapter() 
@@ -121,7 +171,7 @@ public class ColorRulePanel extends ColorSetObjectPanel
 		
 		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 		final List<String> sampleNames = gex.getSampleNames();
-		final JList lstSamples = new JList(sampleNames.toArray());
+		lstSamples = new JList(sampleNames.toArray());
 
 		lstSamples.addMouseListener(new MouseAdapter() 
 		{
@@ -140,13 +190,14 @@ public class ColorRulePanel extends ColorSetObjectPanel
 		
 		errorMsg = new JLabel("Expression OK");
 		add (errorMsg, cc.xyw (2, 6, 3));
-		txtExpr.setText (cr.getCriterion().getExpression());
 		
-		final JLabel colorLabel = new JLabel(" ");
+		colorLabel = new JLabel(" ");
 		add (colorLabel, cc.xy (2,8));
-		colorLabel.setBackground(cr.getColor());
+		colorLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		colorLabel.setOpaque(true);
 		
-		JButton btnColor = new JButton ("Color...");
+		
+		btnColor = new JButton ("Color...");
 		btnColor.addActionListener(new ActionListener () 
 		{
 
@@ -155,10 +206,12 @@ public class ColorRulePanel extends ColorSetObjectPanel
 				Color newColor = 
 					JColorChooser.showDialog(getTopLevelAncestor(), "Pick color", ColorRulePanel.this.cr.getColor());
 				colorLabel.setBackground(newColor);
-				ColorRulePanel.this.cr.setColor(newColor);
+				if (ColorRulePanel.this.cr != null)
+					ColorRulePanel.this.cr.setColor(newColor);
 			}});
 		
-		
 		add (btnColor, cc.xy (4, 8));
+		
+		refresh();
 	}
 }

@@ -96,6 +96,15 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	
 	public abstract Component visualizeOnToolTip(Graphics g);
 	
+	/**
+	 * Return a default drawing order for this visualization method.
+	 * The user may override this default,
+	 * but a sensible default can be provided.
+	 * 
+	 * Opaque drawing methods should return a value of 0 or less
+	 * Transparant drawing methods (e.g. labels) should return a value of 1 or higher.
+	 */
+	public abstract int defaultDrawingOrder();
 	
 	/**
 	 * Save the configuration of the current instance of this class to an XML element.<br>

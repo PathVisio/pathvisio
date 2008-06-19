@@ -191,7 +191,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			ColorSet cs = method.getSingleColorSet();
 			if(cs == null) {
 				// a way to represent the fact that there are multiple colorsets in action.
-				colorSetCombo.setSelectedIndex(-1);
+				colorSetCombo.setSelectedItem(null);
 			} else {
 				colorSetCombo.setSelectedItem(cs);
 			}
@@ -215,7 +215,10 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 				refreshSamples();
 			} else if(ACTION_COMBO.equals(action)) 
 			{
-				method.setSingleColorSet(colorSetCombo.getSelectedColorSet());
+				if (colorSetCombo.getSelectedItem() != null)
+				{
+					method.setSingleColorSet(colorSetCombo.getSelectedColorSet());
+				}
 			}
 		}
 
@@ -364,7 +367,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			colorSetCombo = csChooser.getColorSetCombo();
 			colorSetCombo.setActionCommand(ACTION_COMBO);
 			colorSetCombo.addActionListener(this);
-			colorSetCombo.setSelectedItem(cs.getColorSet());
+			colorSetCombo.getModel().setSelectedItem(cs.getColorSet());
 			
 			imageCheck = new JCheckBox(ACTION_IMG);
 			imageCheck.setActionCommand(ACTION_IMG);

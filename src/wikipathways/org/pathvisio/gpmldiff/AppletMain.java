@@ -59,6 +59,7 @@ public class AppletMain extends JApplet
 	
 	public void init()
 	{
+		Engine.init();
 		panel = new GpmlDiffWindow(this);
 		setContentPane (panel);
 

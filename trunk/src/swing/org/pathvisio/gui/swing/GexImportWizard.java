@@ -132,6 +132,7 @@ public class GexImportWizard extends Wizard
 		public void aboutToDisplayPanel()
 		{
 	        getWizard().setNextFinishButtonEnabled(txtFileComplete);
+			getWizard().setPageTitle ("Choose file locations");
 		}
 		
 	    public FilePage() 
@@ -176,9 +177,6 @@ public class GexImportWizard extends Wizard
 			builder.addLabel ("Gene database", cc.xy (1,5));
 			builder.add (txtGdb, cc.xy (3,5));
 			builder.add (btnGdb, cc.xy (5,5));
-			
-			//TODO: set page title
-			//result.add (new JLabel("File locations"), BorderLayout.NORTH);
 			
 			btnInput.addActionListener(this);
 			btnInput.setActionCommand(ACTION_INPUT);
@@ -330,9 +328,6 @@ public class GexImportWizard extends Wizard
 			
 			builder.add (scrTable, cc.xyw(1,7,6));
 			
-			//TODO set page header
-			//result.add (new JLabel("Header page"), BorderLayout.NORTH);
-			
 			txtOther.addActionListener(new ActionListener () {
 
 				public void actionPerformed(ActionEvent arg0) 
@@ -387,6 +382,8 @@ public class GexImportWizard extends Wizard
 	    
 	    public void aboutToDisplayPanel()
 	    {
+			getWizard().setPageTitle ("Choose data delimiter");
+
 	    	hpd.ptm.refresh();
 	    	String del = importInformation.getDelimiter();
 	    	if (del.equals ("\t"))
@@ -480,17 +477,12 @@ public class GexImportWizard extends Wizard
 			
 			builder.add (scrTable, cc.xyw(1,11,3));
 			
-			//TODO: set page title
-			//topPanel.add (new JLabel("Column page"));
-			
-			
 			ActionListener rbAction = new ActionListener() {
 				public void actionPerformed (ActionEvent ae)
 				{
 					boolean result = (ae.getSource() == rbSyscodeYes);
 					importInformation.setSyscodeColumn(result);
-					refreshSyscodeColumn();
-			    	ctm.refresh();
+			    	columnPageRefresh();
 				}
 			};
 			rbSyscodeNo.addActionListener(rbAction);
@@ -501,33 +493,39 @@ public class GexImportWizard extends Wizard
 				{
 					DataSource ds = cbDataSource.getSelectedDataSource();
 					importInformation.setDataSource(ds);
-			    	ctm.refresh();
+					columnPageRefresh();
 				}
 			});
 			cbColSyscode.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
 					importInformation.setCodeColumn(cbColSyscode.getSelectedIndex());
-			    	ctm.refresh();
+					columnPageRefresh();
 				}
 			});
 			cbColId.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
 					importInformation.setIdColumn(cbColId.getSelectedIndex());
-			    	ctm.refresh();
+			    	columnPageRefresh();
 				}
 			});
 			return builder.getPanel();
 		}
-
-	    private void refreshSyscodeColumn()
+	    
+	    private void columnPageRefresh()
 	    {
+	    	String error = null;
 			if (importInformation.getSyscodeColumn())
 			{
 				rbSyscodeYes.setSelected (true);
 				cbColSyscode.setEnabled (true);
 				cbDataSource.setEnabled (false);
+
+				if (importInformation.getIdColumn() == importInformation.getCodeColumn())
+	    		{
+	    			error = "System code column and Id column can't be the same";
+	    		}
 			}
 			else
 			{
@@ -535,6 +533,11 @@ public class GexImportWizard extends Wizard
 				cbColSyscode.setEnabled (false);
 				cbDataSource.setEnabled (true);
 			}
+		    getWizard().setNextFinishButtonEnabled(error == null);
+		    getWizard().setErrorMessage(error == null ? "" : error);
+			getWizard().setPageTitle ("Choose column types");
+			
+	    	ctm.refresh();
 	    }
 	    
 	    private void refreshComboBoxes()
@@ -550,7 +553,7 @@ public class GexImportWizard extends Wizard
 	    	cbColId.setModel(new DefaultComboBoxModel(cn));
 	    	cbColSyscode.setModel(new DefaultComboBoxModel(cn));
 			
-			refreshSyscodeColumn();
+			columnPageRefresh();
 			refreshComboBoxes();
 			
 	    	ctm.refresh();
@@ -628,6 +631,7 @@ public class GexImportWizard extends Wizard
 
 	    public void aboutToDisplayPanel() 
 	    {
+			getWizard().setPageTitle ("Preform import");
 	        setProgressValue(0);
 	        setProgressText("");
 

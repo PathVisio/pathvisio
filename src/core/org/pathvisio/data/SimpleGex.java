@@ -124,6 +124,7 @@ public class SimpleGex
 		"VALUES	(?, ?, ?, ?, ?, ?)			");
 	}
 
+
 	/**
 	 * add a Sample to the db.
 	 * Must call preprare() before.
@@ -486,5 +487,69 @@ public class SimpleGex
 			throw new DataException (e);
 		}
 	}
+
 	
+	PreparedStatement pstRow = null;
+	
+	// lazy instantiation of pstRow
+	private PreparedStatement getPstRow() throws SQLException
+	{
+		if (pstRow == null)
+		{
+			pstRow = con.prepareStatement (
+					"SELECT id, code, ensId, idSample, data, groupId " +
+					"FROM expression " +
+					"WHERE groupId = ?");
+		}
+		return pstRow;
+	}
+	
+	public Data getRow(int rowId) throws DataException
+	{
+		try
+		{
+			Data result;
+			PreparedStatement ps = getPstRow();
+			ps.setInt(1, rowId);
+			ResultSet rs = ps.executeQuery();
+			
+			Xref ref = null;			
+			result = new Data (null, rowId);
+			
+			while (rs.next())
+			{
+				if (ref == null)
+				{
+					//TODO: this redundancy in ref is not normalized
+					ref = new Xref (rs.getString(1), DataSource.getBySystemCode(rs.getString(2)));
+					result.setXref(ref);
+				}
+				
+				int sample = rs.getInt(4);
+				String value = rs.getString (5);
+				result.setSampleData(sample, value);
+			}
+			
+			return result;
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
+	}
+	
+	public int getMaxRow() throws DataException
+	{
+		try
+		{
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("SELECT MAX(groupId) FROM expression");
+			rs.next();
+			return rs.getInt(1);
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}		
+	}
 }

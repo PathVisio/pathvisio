@@ -166,12 +166,6 @@ public class GuiMain
 		
 		frame.add(mainPanel);
 		frame.setJMenuBar(mainPanel.getMenuBar());
-		try {
-		    UIManager.setLookAndFeel(
-		        UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) {
-			Logger.log.error("Unable to load native look and feel", ex);
-		}
 		frame.pack();
 		PreferenceManager preferences = Engine.getCurrent().getPreferences();
 		frame.setSize(preferences.getInt(GlobalPreference.WIN_W), preferences.getInt(GlobalPreference.WIN_H));
@@ -240,6 +234,14 @@ public class GuiMain
 				initLog();
 				Engine engine = Engine.getCurrent();
 				engine.setApplicationName("PathVisio (experimental)");
+
+				try {
+				    UIManager.setLookAndFeel(
+				        UIManager.getSystemLookAndFeelClassName());
+				} catch (Exception ex) {
+					Logger.log.error("Unable to load native look and feel", ex);
+				}
+
 				SwingEngine.init(engine);
 				SwingEngine swingEngine = SwingEngine.getCurrent();
 				swingEngine.getGdbManager().initPreferred();

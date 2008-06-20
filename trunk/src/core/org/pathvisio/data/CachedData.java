@@ -176,6 +176,8 @@ public class CachedData {
 			sampleData = new HashMap<Integer, Object>();
 		}
 		
+		public void setXref(Xref value) { idc = value; }
+		
 		/**
 		 * Get the reporter this object contains data for
 		 * @return The IdCodePair that represents the reporter this object contains data for

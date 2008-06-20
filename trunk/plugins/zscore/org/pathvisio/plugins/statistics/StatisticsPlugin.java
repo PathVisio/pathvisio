@@ -16,6 +16,7 @@
 //
 package org.pathvisio.plugins.statistics;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +27,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableCellRenderer;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
@@ -35,13 +37,13 @@ import org.pathvisio.data.SimpleGex;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.Stats;
 import org.pathvisio.util.PathwayParser.ParseException;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.PropertyColumn;
@@ -217,6 +219,7 @@ public class StatisticsPlugin implements Plugin
 			frame.add (btnDir, cc.xy (4,12));
 			JButton btnCalc = new JButton ("Calculate");
 			frame.add (btnCalc, cc.xyw (2,14,3, "center, top"));
+			
 			final JTable tblResult = new JTable ();
 			frame.add (new JScrollPane (tblResult), cc.xyw (2,16,3));
 			
@@ -229,8 +232,19 @@ public class StatisticsPlugin implements Plugin
 					
 					//TODO: run in separate thread
 					doCalculate (pwDir, myCriterion, tblResult, frame);
+					
 				}
 			});
+			
+//			JButton btnSort = new JButton ("Sort");
+//			btnSort.addActionListener(new ActionListener()
+//			{
+//				public void actionPerformed(ActionEvent ae)
+//				{
+//					((StatisticsTableModel)tblResult.getModel()).sort();
+//				}				
+//			});
+//			frame.add (btnSort, cc.xy (4,14));
 	
 			txtExpr.requestFocus();
 			frame.pack();
@@ -243,7 +257,7 @@ public class StatisticsPlugin implements Plugin
 	/**
 	 * asynchronous statistics calculation function
 	 */
-	private static void doCalculate(final File pwDir, final Criterion crit, JTable resultTable, JFrame parentFrame)
+	private static void doCalculate(final File pwDir, final Criterion crit, final JTable resultTable, JFrame parentFrame)
 	{
 		final int TOTALWORK = 1000;
 
@@ -252,7 +266,7 @@ public class StatisticsPlugin implements Plugin
 				0, TOTALWORK);
 		
 		final StatisticsTableModel stm = new StatisticsTableModel();
-		stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.PCT, Column.PVAL});
+		stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.PCT, Column.ZSCORE});
 		resultTable.setModel (stm);
 
 		SwingWorker<Boolean, StatisticsResult> worker = new SwingWorker<Boolean, StatisticsResult>() 
@@ -261,6 +275,45 @@ public class StatisticsPlugin implements Plugin
 			protected Boolean doInBackground()
 			{
 				pmon.setProgress (0);
+				SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+				
+				// first we calculate N and R
+				
+				int N = 0;
+				int R = 0;
+				try
+				{
+					int maxRow = gex.getMaxRow();
+					for (int i = 0; i < maxRow; ++i)
+					{
+						if (pmon.isCanceled()) return false;
+						Data d = gex.getRow(i);
+						N++;
+						boolean result = crit.evaluate(d.getSampleData());
+						if (result)
+						{
+							R++;
+						}		
+						Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);  
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.log.error ("Problem during calculation of R/N ", e);
+					//TODO: better error handling
+				}
+
+				Logger.log.info ("N: " + N + ", R: " + R);
+				
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch (Exception e)
+				{
+				}
+				
+				// now we calculate n and r for each pwy				
 				List<File> files = FileUtils.getFiles(pwDir, "gpml", true);
 				
 				XMLReader xmlReader = null;
@@ -276,8 +329,6 @@ public class StatisticsPlugin implements Plugin
 				}
 		
 				int i = 0;
-
-				SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 
 				for (File file : files)
 				{
@@ -306,6 +357,7 @@ public class StatisticsPlugin implements Plugin
 							
 							for (String ensId : gdb.ref2EnsIds(ref))
 							{
+								if (pmon.isCanceled()) return false;
 								Logger.log.info ("Mapping: " + ensId);
 								ensGenes.put (ensId, datas);								
 							}
@@ -320,6 +372,7 @@ public class StatisticsPlugin implements Plugin
 						
 						for (String ensGene : ensGenes.keySet())
 						{
+							if (pmon.isCanceled()) return false;
 							List<Data> datas = ensGenes.get (ensGene);
 							
 							if (datas != null)
@@ -329,6 +382,7 @@ public class StatisticsPlugin implements Plugin
 								
 								for (Data data : datas)
 								{
+									if (pmon.isCanceled()) return false;
 									Logger.log.info ("Data found: " + data.getXref() + ", for sample 1: " + data.getSampleData(1));
 									try
 									{	
@@ -348,7 +402,9 @@ public class StatisticsPlugin implements Plugin
 							}
 						}
 						
-						StatisticsResult sr = new StatisticsResult (pwyParser.getName(), n, (int)r);
+						double z = Stats.zscore (n, r, N, R);						
+						
+						StatisticsResult sr = new StatisticsResult (pwyParser.getName(), n, (int)r, z);
 						publish (sr);
 					}
 					catch (ParseException pe)
@@ -368,6 +424,8 @@ public class StatisticsPlugin implements Plugin
 				for (StatisticsResult sr : srs)
 				{
 					stm.addRow (sr);
+					stm.sort();
+					stm.packRows(resultTable, 2);
 				}
 			}
 		};
@@ -385,12 +443,14 @@ public class StatisticsPlugin implements Plugin
 		private int r = 0;
 		private int n = 0;
 		private String name;
+		double z = 0;
 
-		StatisticsResult (String name, int n, int r)
+		StatisticsResult (String name, int n, int r, double z)
 		{
 			this.r = r;
 			this.n = n;
 			this.name = name;
+			this.z = z;
 		}
 
 		public String getProperty(Column prop) 
@@ -401,7 +461,7 @@ public class StatisticsPlugin implements Plugin
 			case R: return "" + r;
 			case PATHWAY_NAME: return name;
 			case PVAL: return "0.01"; //TODO
-			case ZSCORE: return "0"; // TODO
+			case ZSCORE: return String.format ("%3.2f", (float)z);
 			case PCT: return (n == 0 ? "Nan" : String.format("%3.2f%%", 100.0 * (float)r / (float)n));
 			default : throw new IllegalArgumentException("Unknown property");
 			}
@@ -422,6 +482,78 @@ public class StatisticsPlugin implements Plugin
 				System.out.println (sr.name + "\t" + sr.r + "\t" + sr.n);  
 			}
 		}
+		
+		/**
+		 * Sort results on z-score
+		 */
+		public void sort()
+		{
+			Collections.sort (rows, new Comparator<StatisticsResult>()
+			{
+
+				public int compare(StatisticsResult arg0, StatisticsResult arg1) 
+				{
+					if (arg0.z > arg1.z)
+					{
+						return -1;
+					}
+					else if (arg0.z < arg1.z)
+					{
+						return 1;
+					}
+					else
+					{
+						return 0;
+					}
+				}
+			});
+			fireTableDataChanged();
+		}
+		
+		/**
+	    // Returns the preferred height of a row.
+	    // The result is equal to the tallest cell in the row.
+	     */
+	    public int getPreferredRowHeight(JTable table, int rowIndex, int margin) {
+	        // Get the current default height for all rows
+	        int height = table.getRowHeight();
+	    
+	        // Determine highest cell in the row
+	        for (int c=0; c<table.getColumnCount(); c++) {
+	            TableCellRenderer renderer = table.getCellRenderer(rowIndex, c);
+	            Component comp = table.prepareRenderer(renderer, rowIndex, c);
+	            int h = comp.getPreferredSize().height + 2*margin;
+	            height = Math.max(height, h);
+	        }
+	        return height;
+	    }
+	    
+	    /**
+	     * The height of each row is set to the preferred height of the
+	     * tallest cell in that row.
+	     */
+	    public void packRows(JTable table, int margin) 
+	    {
+	        packRows(table, 0, table.getRowCount(), margin);
+	    }
+	    
+	    /**
+	    // For each row >= start and < end, the height of a
+	    // row is set to the preferred height of the tallest cell
+	    // in that row.
+	     */
+	    public void packRows(JTable table, int start, int end, int margin) {
+	        for (int r=0; r<table.getRowCount(); r++) {
+	            // Get the preferred height
+	            int h = getPreferredRowHeight(table, r, margin);
+	    
+	            // Now set the row height using the preferred height
+	            if (table.getRowHeight(r) != h) {
+	                table.setRowHeight(r, h);
+	            }
+	        }
+	    }
+
 	}
 
 	/**

@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.view.ArrowShape;
 
 /**
  * The class MappFormat is responsible for all interaction with 
@@ -589,6 +590,9 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	int lineStyle = o.getLineStyle();
 		LineType lineType = o.getEndLineType();
 		String style = lineType.getMappName();
+		if(style == null) {
+			style = LineType.LINE.getMappName();
+		}
 		if (lineStyle == LineStyle.DASHED && (lineType == LineType.ARROW || lineType == LineType.LINE))
 			style = "Dotted" + style;
 		
@@ -822,7 +826,11 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapLabelType (PathwayElement o, String[] mappObject)
     {    	
     	mappObject[colType] = "Label";
-    	mappObject[colLabel] = o.getTextLabel();
+    	String text = o.getTextLabel();
+    	if(text != null) {
+    		text = text.replace("\n", " ");
+    	}
+    	mappObject[colLabel] = text;
     	
     	unmapShape(o, mappObject);
 		mappObject[colColor] = toMappColor(o.getColor(), false);

@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.view.MIMShapes;
 
 public class GenMappExporter {
 	static final int WORK_MIN = 0;
@@ -39,6 +40,8 @@ public class GenMappExporter {
 	
 	public static void main(String[] args) {
 		try {
+			MIMShapes.registerShapes();
+			
 			if(args.length != 2) {
 				throw new IllegalArgumentException(
 						"Invalid number of arguments: " + args.length

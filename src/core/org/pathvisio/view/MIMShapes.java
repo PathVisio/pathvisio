@@ -39,11 +39,11 @@ public class MIMShapes
 		ShapeType.create ("mim-degradation", null);
 		ShapeType.create ("mim-interaction", null);
 		
-		LineType.create ("mim-necessary-stimulation", null);
-		LineType.create ("mim-binding", null);
-		LineType.create ("mim-conversion", null);
-		LineType.create ("mim-stimulation", null);
-		LineType.create ("mim-catalysis", null);
+		LineType.create ("mim-necessary-stimulation", "Arrow");
+		LineType.create ("mim-binding", "Arrow");
+		LineType.create ("mim-conversion", "Arrow");
+		LineType.create ("mim-stimulation", "Arrow");
+		LineType.create ("mim-catalysis", "Arrow");
 		LineType.create ("mim-cleavage", null);
 	}
 

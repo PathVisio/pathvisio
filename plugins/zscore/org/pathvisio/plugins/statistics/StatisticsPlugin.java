@@ -46,6 +46,7 @@ import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.Stats;
 import org.pathvisio.util.PathwayParser.ParseException;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
+import org.pathvisio.util.swing.MatchResult;
 import org.pathvisio.util.swing.PropertyColumn;
 import org.pathvisio.util.swing.RowWithProperties;
 import org.pathvisio.visualization.colorset.Criterion;
@@ -221,6 +222,20 @@ public class StatisticsPlugin implements Plugin
 			frame.add (btnCalc, cc.xyw (2,14,3, "center, top"));
 			
 			final JTable tblResult = new JTable ();
+			tblResult.addMouseListener(new MouseAdapter()
+			{
+				public void mouseClicked(MouseEvent me) 
+				{
+					int row = tblResult.getSelectedRow();
+					final StatisticsResult sr = ((StatisticsTableModel)(tblResult.getModel())).getRow(row);
+						
+						//TODO: here I want to use SwingEngine.openPathway, but I need to 
+						// be able to wait until the process is finished!
+					SwingEngine.getCurrent().openPathway(sr.getFile());
+				}
+
+			});
+
 			frame.add (new JScrollPane (tblResult), cc.xyw (2,16,3));
 			
 			btnCalc.addActionListener(new ActionListener (){
@@ -235,16 +250,6 @@ public class StatisticsPlugin implements Plugin
 					
 				}
 			});
-			
-//			JButton btnSort = new JButton ("Sort");
-//			btnSort.addActionListener(new ActionListener()
-//			{
-//				public void actionPerformed(ActionEvent ae)
-//				{
-//					((StatisticsTableModel)tblResult.getModel()).sort();
-//				}				
-//			});
-//			frame.add (btnSort, cc.xy (4,14));
 	
 			txtExpr.requestFocus();
 			frame.pack();
@@ -262,7 +267,7 @@ public class StatisticsPlugin implements Plugin
 		final int TOTALWORK = 1000;
 
 		final ProgressMonitor pmon = new ProgressMonitor(
-				SwingEngine.getCurrent().getFrame(), "Pathway search", "searching pathways...",
+				parentFrame, "Pathway search", "searching pathways...",
 				0, TOTALWORK);
 		
 		final StatisticsTableModel stm = new StatisticsTableModel();
@@ -275,6 +280,7 @@ public class StatisticsPlugin implements Plugin
 			protected Boolean doInBackground()
 			{
 				pmon.setProgress (0);
+				pmon.setNote("Analyzing data");
 				SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 				
 				// first we calculate N and R
@@ -294,7 +300,8 @@ public class StatisticsPlugin implements Plugin
 						{
 							R++;
 						}		
-						Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);  
+//						Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);
+						pmon.setProgress ((int)(0.2 * (double)i / (double)maxRow * (double)TOTALWORK));
 					}
 				}
 				catch (Exception e)
@@ -304,14 +311,6 @@ public class StatisticsPlugin implements Plugin
 				}
 
 				Logger.log.info ("N: " + N + ", R: " + R);
-				
-				try
-				{
-					Thread.sleep(2000);
-				}
-				catch (Exception e)
-				{
-				}
 				
 				// now we calculate n and r for each pwy				
 				List<File> files = FileUtils.getFiles(pwDir, "gpml", true);
@@ -329,6 +328,8 @@ public class StatisticsPlugin implements Plugin
 				}
 		
 				int i = 0;
+
+				pmon.setNote ("Analyzing pathways");
 
 				for (File file : files)
 				{
@@ -404,14 +405,15 @@ public class StatisticsPlugin implements Plugin
 						
 						double z = Stats.zscore (n, r, N, R);						
 						
-						StatisticsResult sr = new StatisticsResult (pwyParser.getName(), n, (int)r, z);
+						StatisticsResult sr = new StatisticsResult (file, pwyParser.getName(), n, (int)r, z);
 						publish (sr);
 					}
 					catch (ParseException pe)
 					{
 						Logger.log.warn ("Could not parse " + file + ", ignoring");
 					}
-					pmon.setProgress((int)(0.2 + (0.8 * TOTALWORK * i++ / files.size())));				
+					i++;
+					pmon.setProgress((int)((0.2 + (0.8 * (double)i / (double)files.size())) * (double)TOTALWORK));				
 				}
 				stm.saveData();
 				pmon.close();
@@ -443,10 +445,14 @@ public class StatisticsPlugin implements Plugin
 		private int r = 0;
 		private int n = 0;
 		private String name;
-		double z = 0;
+		private double z = 0;
+		private File f;
 
-		StatisticsResult (String name, int n, int r, double z)
+		File getFile() { return f; }
+		
+		StatisticsResult (File f, String name, int n, int r, double z)
 		{
+			this.f = f;
 			this.r = r;
 			this.n = n;
 			this.name = name;
@@ -462,7 +468,7 @@ public class StatisticsPlugin implements Plugin
 			case PATHWAY_NAME: return name;
 			case PVAL: return "0.01"; //TODO
 			case ZSCORE: return String.format ("%3.2f", (float)z);
-			case PCT: return (n == 0 ? "Nan" : String.format("%3.2f%%", 100.0 * (float)r / (float)n));
+			case PCT: return String.format("%3.2f%%", (n == 0 ? Float.NaN : 100.0 * (float)r / (float)n));
 			default : throw new IllegalArgumentException("Unknown property");
 			}
 		}
@@ -479,7 +485,7 @@ public class StatisticsPlugin implements Plugin
 		{
 			for (StatisticsResult sr : rows)
 			{
-				System.out.println (sr.name + "\t" + sr.r + "\t" + sr.n);  
+				System.out.println (sr.name + "\t" + sr.r + "\t" + sr.n + "\t" + sr.z);  
 			}
 		}
 		

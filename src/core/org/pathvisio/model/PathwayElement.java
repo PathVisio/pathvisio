@@ -1367,12 +1367,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public LineType getStartLineType()
 	{
-		return startLineType;
+		return startLineType == null ? LineType.LINE : startLineType;
 	}
 
 	public LineType getEndLineType()
 	{
-		return endLineType;
+		return endLineType == null ? LineType.LINE : endLineType;
 	}
 
 	public void setStartLineType(LineType value)

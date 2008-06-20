@@ -22,14 +22,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
 
-import javax.jnlp.BasicService;
-import javax.jnlp.ServiceManager;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
+import javax.swing.filechooser.FileFilter;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 
 public class GenMappExporter {
+	static final int WORK_MIN = 0;
+	static final int WORK_MAX= 100;
+	
 	public static void main(String[] args) {
 		try {
 			if(args.length != 2) {
@@ -39,10 +43,27 @@ public class GenMappExporter {
 			}
 			URL pwUrl = new URL(args[0]);
 			String pwName = args[1];
-			File mappFile = doExport(pwUrl, pwName);
 			
-			BasicService basicService = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
-			basicService.showDocument(new URL("file://" + mappFile.getAbsolutePath()));
+			ProgressMonitor progress = new ProgressMonitor(null, "Converting to GenMAPP", "", WORK_MIN, WORK_MAX);
+			progress.setMillisToPopup(0);
+
+			File mappFile = doExport(pwUrl, pwName, progress);
+			
+			JFileChooser fc = new JFileChooser();
+			fc.addChoosableFileFilter(new FileFilter() {
+				public boolean accept(File f) {
+					return f.isDirectory() || f.getName().endsWith(".mapp");
+				}
+				public String getDescription() {
+					return "GenMAPP file";
+				}
+			});
+			int status = fc.showDialog(null, "Save");
+			if(status == JFileChooser.APPROVE_OPTION) {
+				File destFile = fc.getSelectedFile();
+				mappFile.renameTo(destFile);
+			}
+			
 		} catch(Exception e) {
 			Logger.log.error("Error converting to GenMAPP format", e);
 			String message = "Unable to save GenMAPP file\n" + e.getClass() + ": " + e.getMessage(); 				
@@ -60,18 +81,31 @@ public class GenMappExporter {
 	/**
 	 * Export to GenMAPP
 	 */
-	static File doExport(URL pwUrl, String pwName) throws Exception {
+	static File doExport(URL pwUrl, String pwName, ProgressMonitor progress) throws Exception {
+		if(progress != null) {
+			if(progress.isCanceled()) System.exit(0);
+			progress.setNote("Loading pathway");
+			progress.setProgress((int)((WORK_MAX - WORK_MIN) * 0.1));
+		}
 		//Load the pathway
 		URLConnection con = pwUrl.openConnection();
 		InputStreamReader reader = new InputStreamReader(con.getInputStream());
 		Pathway pathway = new Pathway();
 		pathway.readFromXml(reader, true);
 
+		if(progress != null) {
+			if(progress.isCanceled()) System.exit(0);
+			progress.setNote("Loading pathway");
+			progress.setProgress((int)((WORK_MAX - WORK_MIN) * 0.5));
+		}
 		//Convert to temp file
 		String tmp = System.getProperty("java.io.tmpdir");
 		File mappFile = new File(tmp, pwName + ".mapp");
 		pathway.writeToMapp(mappFile);
 
+		if(progress != null) {
+			progress.setProgress(WORK_MAX);
+		}
 		return mappFile;
 	}
 }

@@ -17,9 +17,12 @@
 package org.pathvisio.gui.wikipathways;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 
 import javax.swing.JFileChooser;
@@ -48,7 +51,6 @@ public class GenMappExporter {
 			progress.setMillisToPopup(0);
 
 			File mappFile = doExport(pwUrl, pwName, progress);
-			
 			JFileChooser fc = new JFileChooser();
 			fc.addChoosableFileFilter(new FileFilter() {
 				public boolean accept(File f) {
@@ -61,9 +63,27 @@ public class GenMappExporter {
 			int status = fc.showDialog(null, "Save");
 			if(status == JFileChooser.APPROVE_OPTION) {
 				File destFile = fc.getSelectedFile();
-				mappFile.renameTo(destFile);
+				if(!destFile.getName().endsWith(".mapp")) {
+					destFile = new File(destFile.getAbsolutePath() + ".mapp");
+				}
+				status = JOptionPane.OK_OPTION;
+				if(destFile.exists()) {
+					status = JOptionPane.showConfirmDialog(
+							null, 
+							"File already exists, overwrite?", 
+							"Overwrite?",
+							JOptionPane.OK_CANCEL_OPTION
+					);
+				}
+				if(status == JOptionPane.OK_OPTION) {
+					Logger.log.info("Saving mapp to " + destFile);
+					FileChannel ic = new FileInputStream(mappFile).getChannel();
+					FileChannel oc = new FileOutputStream(destFile).getChannel();
+					ic.transferTo(0, ic.size(), oc);
+					ic.close();
+					oc.close(); 
+				}
 			}
-			
 		} catch(Exception e) {
 			Logger.log.error("Error converting to GenMAPP format", e);
 			String message = "Unable to save GenMAPP file\n" + e.getClass() + ": " + e.getMessage(); 				

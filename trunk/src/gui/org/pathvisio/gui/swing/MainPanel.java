@@ -49,16 +49,18 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GexManager;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
+import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.Handle;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 
@@ -363,9 +365,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		VPathway vp = (VPathway)e.getSource();
 		switch(e.getType()) {
 		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
-			if(e.getAffectedElement() instanceof Graphics && 
-					!(e.getAffectedElement() instanceof SelectionBox)) {
-				PathwayElement p = ((Graphics)e.getAffectedElement()).getPathwayElement();
+			VPathwayElement pwe = e.getAffectedElement();
+			if(pwe instanceof Handle) {
+				pwe = ((Handle)pwe).getParent();
+			}
+			if(pwe instanceof Graphics && 
+					!(pwe instanceof SelectionBox)) {
+				PathwayElement p = ((Graphics)pwe).getPathwayElement();
 				if(p != null) {
 					PathwayElementDialog.getInstance(p, !vp.isEditMode(), null, this).setVisible(true);
 				}

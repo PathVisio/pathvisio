@@ -45,6 +45,7 @@ import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.Handle;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.StackType;
 import org.pathvisio.view.Template;
@@ -445,6 +446,10 @@ public class CommonActions implements ApplicationEventListener {
 				if(s.getSelection().size() == 0) {
 					element = element.getDrawing().getMappInfo();
 				}
+			}
+			//If handle, select parent
+			if(element instanceof Handle) {
+				element = ((Handle)element).getParent();
 			}
 		}
 		

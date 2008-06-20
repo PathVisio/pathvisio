@@ -975,7 +975,6 @@ public class VPathway implements PathwayListener
 		Point2D p2d = new Point2D.Double(p.x, p.y);
 
 		pressedObject = getObjectAt(p2d);
-
 		// if we clicked on an object
 		if (pressedObject != null)
 		{
@@ -988,6 +987,11 @@ public class VPathway implements PathwayListener
 				if(parent instanceof VAnchor) {
 					doClickSelect(p2d, e);
 				}
+			} else if (pressedObject instanceof VPoint) {
+				Handle vph = ((VPoint)pressedObject).getHandle();
+				pressedObject = ((VPoint)pressedObject).getLine();
+				doClickSelect(p2d, e);
+				pressedObject = vph;
 			} else
 			{
 				doClickSelect(p2d, e);

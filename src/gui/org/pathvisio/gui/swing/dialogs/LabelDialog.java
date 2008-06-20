@@ -16,12 +16,15 @@
 //
 package org.pathvisio.gui.swing.dialogs;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,7 +33,12 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.util.swing.FontChooser;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Dialog to modify label specific properties
@@ -39,6 +47,7 @@ import org.pathvisio.model.PathwayElement;
  */
 public class LabelDialog extends PathwayElementDialog {
 	JTextArea text;
+	JLabel fontPreview;
 	
 	protected LabelDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(e, readonly, frame, "Label properties", locationComp);
@@ -48,9 +57,18 @@ public class LabelDialog extends PathwayElementDialog {
 	protected void refresh() {
 		super.refresh();
 		if(getInput() != null) {
-			text.setText(getInput().getTextLabel());
+			PathwayElement input = getInput();
+			text.setText(input.getTextLabel());
+			int style = input.isBold() ? Font.BOLD : Font.PLAIN;
+			style |= input.isItalic() ? Font.ITALIC : Font.PLAIN;
+			Font f = new Font(
+					input.getFontName(), style, (int)(input.getMFontSize() / Pathway.OLD_GMMLZOOM)
+			);
+			fontPreview.setFont(f);
+			fontPreview.setText(f.getName());
 		} else {
 			text.setText("");
+			fontPreview.setText("");
 		}
 	}
 	
@@ -59,23 +77,42 @@ public class LabelDialog extends PathwayElementDialog {
 		panel.setLayout(new GridBagLayout());
 
 		//Search panel elements
-		panel.setLayout(new GridBagLayout());
+		panel.setLayout(new FormLayout(
+			"4dlu, pref, 4dlu, pref, 4dlu, pref, pref:grow, 4dlu", 
+			"4dlu, pref, 4dlu, fill:pref:grow, 4dlu, pref, 4dlu"
+		));
 
 		JLabel label = new JLabel("Text label:");
 		text = new JTextArea();
 
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.insets = new Insets(5, 0, 5, 5);
-		constraints.gridx = GridBagConstraints.RELATIVE;
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.weightx = 0;
-		constraints.weighty = 0;
-		panel.add(label, constraints);
-
-		constraints.weightx = 1;
-		constraints.weighty = 1;
-		panel.add(new JScrollPane(text), constraints);
-
+		fontPreview = new JLabel(getFont().getFamily());
+		
+		final JButton font = new JButton("...");
+		font.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Font f = FontChooser.showDialog(null, (Component)e.getSource(), fontPreview.getFont());
+				if(f != null) {
+					if(input != null) {
+						input.setFontName(f.getFamily());
+						input.setBold(f.isBold());
+						input.setItalic(f.isItalic());
+						input.setMFontSize(
+							f.getSize() * Pathway.OLD_GMMLZOOM	
+						);
+						fontPreview.setText(f.getFamily());
+						fontPreview.setFont(f);
+					}
+				}	
+			}
+		});
+		
+		CellConstraints cc = new CellConstraints();
+		panel.add(label, cc.xy(2, 2));
+		panel.add(new JScrollPane(text), cc.xyw(2, 4, 6));
+		panel.add(new JLabel("Font:"), cc.xy(2, 6));
+		panel.add(fontPreview, cc.xy(4, 6));
+		panel.add(font, cc.xy(6, 6));
+		
 		text.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
 				saveText();

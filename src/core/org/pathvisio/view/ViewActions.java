@@ -572,8 +572,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 * to an object
 	 */
 	public class ShowUnlikedConnectors extends AbstractAction {
-		boolean isShowing;
-		
 		public ShowUnlikedConnectors() {
 			putValue(NAME, "Highlight unlinked lines");
 			putValue(SHORT_DESCRIPTION, "Highlight all lines that are not linked");
@@ -581,10 +579,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			if(isShowing) {
-				vPathway.resetHighlight();
-				isShowing = false;
-			} else {
+			vPathway.resetHighlight();
 				for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {
 					if(pe.getObjectType() == ObjectType.LINE) {
 						Line vl = (Line)vPathway.getPathwayElementView(pe);
@@ -598,8 +593,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						}
 					}
 				}
-				isShowing = true;
-			}
 			vPathway.redrawDirtyRect();
 		}
 	}

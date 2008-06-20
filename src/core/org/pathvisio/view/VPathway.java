@@ -1077,7 +1077,7 @@ public class VPathway implements PathwayListener
 			return;
 
 		// Shift pressed, add/remove from selection
-		boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT);
+		boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT) || e.isKeyDown(MouseEvent.M_CTRL);
 		if (modifierPressed)
 		{
 			if (pressedObject instanceof SelectionBox)

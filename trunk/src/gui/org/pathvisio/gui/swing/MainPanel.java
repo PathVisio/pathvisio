@@ -54,7 +54,6 @@ import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
-import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
@@ -138,7 +137,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	 * Constructor for this class. Creates the main panel of this application, containing
 	 * the main GUI elements (menubar, toolbar, sidepanel, drawing pane). Actions that should
 	 * not be added to the menubar and toolbar should be specified in the hideActions parameter
-	 * @param hideActions The {@link Actions} that should not be added to the toolbar and menubar
+	 * @param hideActions The {@link Action}s that should not be added to the toolbar and menubar
 	 */
 	public MainPanel(Set<Action> hideActions) {
 		this.hideActions = hideActions;

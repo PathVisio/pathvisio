@@ -32,6 +32,7 @@ import java.util.TimerTask;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.pathvisio.data.DBConnDerby;
 import org.pathvisio.data.DBConnector;
@@ -60,6 +61,7 @@ public class WikiPathwaysIndexer extends Timer{
 	private File cachePath;
 	private int updateInterval = 30000; //30s by default
 	private Logger log = Logger.log;
+	private boolean rebuild;
 	
 	volatile boolean interrupt;
 	
@@ -85,7 +87,7 @@ public class WikiPathwaysIndexer extends Timer{
 	}
 	
 	public WikiPathwaysIndexer(File indexConfig, File gdbConfig) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
-		log.setLogLevel(true, true, true, true, true, true);
+		log.setLogLevel(true, false, true, true, true, true);
 		parseIndexConfig(indexConfig);
 		parseGdbConfig(gdbConfig);
 		init();
@@ -106,7 +108,8 @@ public class WikiPathwaysIndexer extends Timer{
 	
 	private void createWriter() throws CorruptIndexException, LockObtainFailedException, IOException {
 		if(writer != null) writer.close();
-		writer = new IndexWriter(indexPath, new StandardAnalyzer());
+		writer = new IndexWriter(FSDirectory.getDirectory(indexPath), false, new StandardAnalyzer());
+		
 		indexer.setWriter(writer);
 	}
 	
@@ -124,20 +127,56 @@ public class WikiPathwaysIndexer extends Timer{
 	 * @throws IOException
 	 */
 	public void update() throws CorruptIndexException, ConverterException, IOException {
-		List<File> updated = wikiCache.update();
-		if(updated.size() > 0) {
+		update(wikiCache.update());
+
+	}
+	
+	void update(List<File> files) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
+		if(files.size() > 0) {
 			createWriter();
-			for(File f : updated) {
-				Logger.log.trace("Updating index for " + f);
+			int i = 1;
+			for(File f : files) {
+				log.info("Updating index for file " + i++ + " out of " + files.size() + "; " + f);
 				indexer.update(f);
 			}
 			closeWriter();
 		} else {
-			Logger.log.trace("Nothing to update!");
+			log.trace("Nothing to update!");
 		}
 	}
 	
+	/**
+	 * Rebuild the index. This method updates the index for all cached files.
+	 * @throws ConverterException 
+	 * @throws IOException 
+	 * @throws LockObtainFailedException 
+	 * @throws CorruptIndexException 
+	 */
+	public void rebuild() throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
+		log.info("Rebuilding index");
+		update(FileUtils.getFiles(cachePath, "gpml", true));
+	}
+	
 	void start() {
+		//Always close the index when java shuts down
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                Logger.log.info("Shutdown signal received, closing index");
+                try {
+                	closeWriter();
+                } catch(Exception e) {
+                	Logger.log.error("Unable to close index writer", e);
+                }
+            }
+        });
+		
+		if(rebuild) { //Start by rebuilding the complete index if needed
+			try {
+				rebuild();
+			} catch(Exception e) {
+				log.error("Unable to rebuild index", e);
+			}
+		}
 		schedule(
 				new TimerTask() {
 					public void run() {
@@ -164,6 +203,13 @@ public class WikiPathwaysIndexer extends Timer{
 					new File(args[0]),
 					new File(args[1])
 			);
+			//Parse options
+			for(int i = 2; i < args.length; i++) {
+				if(args[i].equals("--rebuild")) {
+					indexer.rebuild = true;
+				}
+			}
+		
 			indexer.start();
 		} catch(Exception e) {
 			Logger.log.error("Unable to start indexer", e);
@@ -171,9 +217,8 @@ public class WikiPathwaysIndexer extends Timer{
 		}
 	}
 	
-	
 	void parseGdbConfig(File f) {
-		Logger.log.info("Parsing gene database configuration: " + f);
+		log.info("Parsing gene database configuration: " + f);
 		gdbs = new GdbProvider();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(f));
@@ -193,7 +238,7 @@ public class WikiPathwaysIndexer extends Timer{
 						SimpleGdb gdb = new SimpleGdb(value, dbConn, DBConnector.PROP_NONE);
 						gdbs.addGlobalGdb(gdb);
 					} else {
-						Logger.log.warn("Unable to parse organism: " + key);
+						log.warn("Unable to parse organism: " + key);
 					}
 				} else {
 					configError("Invalid key/value pair in gene database configuration: " + line, null);
@@ -256,9 +301,11 @@ public class WikiPathwaysIndexer extends Timer{
 	
 	static void printUsage() {
 		System.out.println(
-			"org.pathvisio.indexer <index_config> <gdb_config>\n" +
+			"org.pathvisio.indexer <index_config> <gdb_config> [options]\n" +
 			"- index_config: the index configuration file, see index.config for an example\n" +
-			"- gdb_config: the gene database configuration file, see gdb.config for an example\n"
+			"- gdb_config: the gene database configuration file, see gdb.config for an example\n" +
+			"Valid options are:\n" +
+			"--rebuild:	Forces reindexing of all cached files\n"
 		);
 	}
 	

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project name="GPML Indexer" default="jar" basedir=".">
+	<property name="src.dir" value="src"/>
+	<property name="src.wikipathwayscache.dir" value="../project2008"/>
+	<property name="build.dir" value="build"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="pathvisio.dir" value="../../"/>
+	<property name="lucene.jar" value="lucene-core-2.2.0.jar"/>
+	<property name="jar.class.path" value="lib/pathvisio.jar lib/wikipathways.jar lib/resources.jar lib/jdom.jar lib/derby.jar lib/${lucene.jar} lib/apache/commons-codec-1.3.jar lib/apache/commons-httpclient-3.0.1.jar lib/apache/commons-logging-1.1.jar lib/apache/ws-commons-util-1.0.1.jar lib/apache/xmlrpc-client-3.0.jar lib/apache/xmlrpc-common-3.0.jar"/>
+	<property name="jar.name" value="wikipathways-indexer.jar"/>
+	
+	<path id="class.path">
+      <pathelement location="${build.dir}"/>
+		<fileset dir="lib">
+			<include name="*.jar"/>
+	  	</fileset>
+		<fileset dir="${pathvisio.dir}">
+			<include name="pathvisio.jar"/>
+			<include name="wikipathways.jar"/>
+			<include name="lib/jdom.jar"/>
+			<include name="lib/derby.jar"/>
+			<include name="lib/apache/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="prepare">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	
+	<target name="clean" description="Remove all generated files.">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+	</target>
+	
+	<target name="compile" depends="prepare" description="Compile sources">
+		<javac srcdir="${src.wikipathwayscache.dir}"
+					   includes="org/pathvisio/wikipathways/**"
+					   destdir="${build.dir}"
+					   debug="true"
+					   source="1.5">
+				  <classpath refid="class.path"/>
+		</javac>
+		<javac srcdir="${src.dir}"
+			   includes="**"
+			   destdir="${build.dir}"
+			   debug="true"
+			   source="1.5">
+		  <classpath refid="class.path"/>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Generates executable jar file">
+		<jar jarfile="${jar.name}">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.indexer.WikiPathwaysIndexer"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
+			</manifest>
+			<fileset dir="${build.dir}" includes="**/*.class"/>			
+		</jar>
+    </target>
+	
+	<target name="dist" depends="jar" description="Copies jar and external libraries to dist path">
+		<copy file="${jar.name}" toDir="${dist.dir}"/>
+		<copy file="${pathvisio.dir}/lib/jdom.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/derby.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/pathvisio.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/wikipathways.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${lib.dir}/${lucene.jar}" toDir="${dist.dir}/lib"/>
+		<copy file="gdb.config" toDir="${dist.dir}"/>
+		<copy file="indexer.config" toDir="${dist.dir}"/>
+		<copy toDir="${dist.dir}/lib/apache">
+			<fileset dir="${pathvisio.dir}/lib/apache">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+    </target>
+</project>

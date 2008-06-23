@@ -1237,7 +1237,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		connectorType = src.connectorType;
 		biopaxRefs = (List<String>)((ArrayList<String>)src.biopaxRefs).clone();
 		if(src.biopax != null) {
-			System.out.println("Copying " + biopax);
 			biopax = (Document)src.biopax.clone();			
 		}
 		fireObjectModifiedEvent(new PathwayEvent(this,

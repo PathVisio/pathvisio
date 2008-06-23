@@ -426,6 +426,12 @@ public class ImportInformation {
 		}
 	}
 	
+	boolean digitIsDot = true;
+	public boolean digitIsDot()
+	{
+		return digitIsDot;
+	}
+	
 	/** derive datasource from sample data */
 	public void guessSettings()
 	{
@@ -435,9 +441,10 @@ public class ImportInformation {
 		{
 			setCodeColumn(guessSyscodeColumn);
 		}
-		if (guessIdColumn >= 0) setIdColumn(guessIdColumn);
+		if (guessIdColumn >= 0) setIdColumn(guessIdColumn);		
+		digitIsDot = guessDigitIsDot;
 		Logger.log.info ("Guessing sysCode: " + guessHasSyscodeColumn + " " + guessSyscodeColumn + 
-				" id: " + guessIdColumn + " " + guessDataSource + " digitIsDot? " + guessDigitIsDot); 
+				" id: " + guessIdColumn + " " + guessDataSource + " digitIsDot? " + guessDigitIsDot);
 	}
 	
 	

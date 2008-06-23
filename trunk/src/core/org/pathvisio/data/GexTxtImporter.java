@@ -22,6 +22,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.Types;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,6 +141,15 @@ public class GexTxtImporter
 			double maximum = 1; // Dummy value
 			double minimum = 1; // Dummy value
 
+			DecimalFormat nf = new DecimalFormat();
+			DecimalFormatSymbols dfs = nf.getDecimalFormatSymbols();
+			DecimalFormat df = new DecimalFormat();
+			if (info.digitIsDot())
+			{
+				dfs.setGroupingSeparator('.');
+				dfs.setDecimalSeparator(',');
+			}
+
 			while((line = in.readLine()) != null) 
 			{
 				if(p != null && p.isCancelled()) 
@@ -185,16 +197,19 @@ public class GexTxtImporter
 					{
 						for(int col : dataCols)
 						{
-							if(!info.isStringCol(col) 
-									&& (data[col] == null || data[col].equals(""))) {
-								data[col] = "NaN";
-							}
+							String value = data[col];
 							
+							if(!info.isStringCol(col) 
+									&& (value == null || value.equals(""))) {
+								value = "NaN";
+							}
+
 							//Determine maximum and minimum values.
 							
 							try
 							{
-								double dNumber = new Double(data[col]).doubleValue();
+								value = "" + nf.parse(value);
+								double dNumber = new Double(value).doubleValue();
 								if(maximumNotSet || dNumber>maximum)
 								{
 									maximum=dNumber;
@@ -224,7 +239,7 @@ public class GexTxtImporter
 										ref, 
 										ensId,
 										Integer.toString(dataCols.indexOf(col)),
-										data[col],
+										value,
 										added);
 							} 
 							catch (Exception e) 

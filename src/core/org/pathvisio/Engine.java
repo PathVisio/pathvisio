@@ -97,6 +97,13 @@ public class Engine
 	}
 	
 	/**
+	 * Sets currentEngine to null.
+	 */
+	public static void destroy() {
+		currentEngine = null;
+	}
+	
+	/**
 	 * Set the current Engine
 	 * Any previous Engine will be lost
 	 * @param e

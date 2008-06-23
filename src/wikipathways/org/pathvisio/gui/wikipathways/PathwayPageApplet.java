@@ -144,6 +144,8 @@ public class PathwayPageApplet extends JApplet {
 	public void destroy() {
 		Logger.log.trace("Applet.destroy called, stopping save reminder");
 		if(wiki != null) SaveReminder.stopSaveReminder(wiki);
+		Engine.destroy();
+		SwingEngine.destroy();
 	}
 	
 	private void onError(String msg, String title) {

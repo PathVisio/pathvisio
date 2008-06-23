@@ -89,6 +89,13 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		current = new SwingEngine(engine);	
 	}
 	
+	/**
+	 * Sets current to null.
+	 */
+	public static void destroy() {
+		current = null;
+	}
+	
 	@Deprecated
 	public static SwingEngine getCurrent() 
 	{

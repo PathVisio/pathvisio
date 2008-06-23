@@ -95,7 +95,7 @@ public class DataNodeListExporter implements PathwayExporter {
 	public void doExport(File file, Pathway pathway) throws ConverterException {
 		if(!DB_ORIGINAL.equals(getResultCode())) {
 			//Check gene database connection
-			if(!gdbManager.isConnected()) {
+			if(gdbManager == null || !gdbManager.isConnected()) {
 				throw new ConverterException("No gene database loaded");
 			}
 		}
@@ -156,9 +156,15 @@ public class DataNodeListExporter implements PathwayExporter {
 	
 	private GdbManager gdbManager = null;
 	
+	/**
+	 * Create an exporter that uses the given GdbManager
+	 * to lookup cross references for each datanode
+	 */
 	public DataNodeListExporter (GdbManager gdbManager)
 	{
 		this.gdbManager = gdbManager;
 	}
-
+	
+	public DataNodeListExporter() {
+	}
 }

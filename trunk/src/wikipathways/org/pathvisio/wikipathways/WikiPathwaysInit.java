@@ -66,6 +66,9 @@ public class WikiPathwaysInit
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PDF));
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PNG));
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_SVG));
+		if(Utils.getOS() == Utils.OS_WINDOWS) {
+			engine.addPathwayExporter(new MappFormat());
+		}
 //		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_TIFF)); disabled, see bug #166
 	}
 }

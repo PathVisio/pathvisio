@@ -816,6 +816,10 @@ public class VPathway implements PathwayListener
 		VPathwayElement o = getObjectAt(e.getLocation());
 		if (o != null)
 		{
+			Logger.log.trace("Fire double click event to " + listeners.size());
+			for(VPathwayListener l : listeners) {
+				Logger.log.trace("\t " + l.hashCode() + ", " + l);
+			}
 			fireVPathwayEvent(new VPathwayEvent(this, o,
 					VPathwayEvent.ELEMENT_DOUBLE_CLICKED));
 		}
@@ -2444,8 +2448,6 @@ public class VPathway implements PathwayListener
 
 	private List<VPathwayListener> listeners = new ArrayList<VPathwayListener>();
 
-	private List<VPathwayListener> removeListeners = new ArrayList<VPathwayListener>();
-
 	public void addVPathwayListener(VPathwayListener l)
 	{
 		if (!listeners.contains(l))
@@ -2454,7 +2456,7 @@ public class VPathway implements PathwayListener
 
 	public void removeVPathwayListener(VPathwayListener l)
 	{
-		removeListeners.add(l);
+		Logger.log.trace(listeners.remove(l) + ": " + l);
 	}
 
 	/**
@@ -2480,17 +2482,8 @@ public class VPathway implements PathwayListener
 		selection.removeListener(l);
 	}
 
-	private void cleanupListeners()
-	{
-		// Do not remove immediately, to prevent ConcurrentModificationException
-		// when the listener removes itself
-		listeners.removeAll(removeListeners);
-		removeListeners.clear();
-	}
-
 	protected void fireVPathwayEvent(VPathwayEvent e)
 	{
-		cleanupListeners();
 		for (VPathwayListener l : listeners)
 		{
 			l.vPathwayEvent(e);

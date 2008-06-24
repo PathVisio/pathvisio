@@ -208,8 +208,8 @@ public class GexTxtImporter
 							
 							try
 							{
-								value = "" + nf.parse(value);
-								double dNumber = new Double(value).doubleValue();
+								double dNumber = nf.parse(value).doubleValue(); 
+								value = "" + dNumber; 
 								if(maximumNotSet || dNumber>maximum)
 								{
 									maximum=dNumber;

@@ -154,26 +154,36 @@ public class DataDerby extends DBConnector
 		closeConnection(con, PROP_NONE);
 	}
 	
+	/**
+	 * Close the connection to this database
+	 * Passing PROP_FINALIZE for props will cause a full shutdown, which is necessary
+	 * after creating a fresh database.
+	 */
 	public void closeConnection(Connection con, int props) throws DataException 
 	{
 		if(con != null) 
 		{
-			try
+			if (props == PROP_FINALIZE)
 			{
-				DriverManager.getConnection(getDbUrl() + ";shutdown=true");
-			}
-			catch (SQLException se)  
-			{	
-				/*
-				 In this case a thrown exception signals success. See:
-			      http://db.apache.org/derby/docs/10.3/getstart/rwwdactivity3.html
-			      if (e.getSQLState().equals("XJ015")) shutdownSuccess= true; //Derby engine
-				 */
-				if ( se.getSQLState().equals("08006") ) // single file
-				{		
-					Logger.log.info ("Database " + getDbUrl() + " shutdown cleanly");
+				//shutdown only necessary after modifying database!!!
+				//Otherwise causes problems when loading same database twice.
+				try
+				{
+					DriverManager.getConnection(getDbUrl() + ";shutdown=true");
 				}
-				else throw new DataException (se);
+				catch (SQLException se)  
+				{	
+					/*
+					 In this case a thrown exception signals success. See:
+				      http://db.apache.org/derby/docs/10.3/getstart/rwwdactivity3.html
+				      if (e.getSQLState().equals("XJ015")) shutdownSuccess= true; //Derby engine
+					 */
+					if ( se.getSQLState().equals("08006") ) // single file
+					{		
+						Logger.log.info ("Database " + getDbUrl() + " shutdown cleanly");
+					}
+					else throw new DataException (se);
+				}
 			}
 			try
 			{

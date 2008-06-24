@@ -854,7 +854,7 @@ public class SimpleGdb implements Gdb
 	{
 		dbConnector.compact(con);
 		createGdbIndices();
-		dbConnector.closeConnection(con);
+		dbConnector.closeConnection(con, DBConnector.PROP_FINALIZE);
 		String newDb = dbConnector.finalizeNewDatabase(dbName);
 		dbName = newDb;
 	}

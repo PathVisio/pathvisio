@@ -82,8 +82,7 @@ public class ProgressKeeper {
 		return progress;
 	}
 	
-	public void report(String message) 
-	{
+	public void report(String message) {
 		report = message;
 		fireProgressEvent(ProgressEvent.REPORT);
 	}

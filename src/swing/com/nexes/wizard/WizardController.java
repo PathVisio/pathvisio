@@ -40,12 +40,8 @@ public class WizardController implements ActionListener {
     
     
     
-    private void cancelButtonPressed() 
-    {    
-        WizardModel model = wizard.getModel();
-        WizardPanelDescriptor descriptor = model.getCurrentPanelDescriptor();
+    private void cancelButtonPressed() {
         
-        descriptor.aboutToCancel ();
         wizard.close(Wizard.CANCEL_RETURN_CODE);
     }
 

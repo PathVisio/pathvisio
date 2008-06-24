@@ -272,8 +272,8 @@ public class SimpleGdb implements Gdb
 	 */
 	public List<String> ref2EnsIds(Xref xref)
 	{	
-//		StopWatch timer = new StopWatch();
-//		timer.start();
+		StopWatch timer = new StopWatch();
+		timer.start();
 
 		ArrayList<String> ensIds = new ArrayList<String>();
 		try 
@@ -292,8 +292,8 @@ public class SimpleGdb implements Gdb
 					xref.getDataSource().getSystemCode() + "'", e);
 		}
 
-//		timer.stopToLog("> ref2EnsIds (" + xref.getId() + "," + 
-//				xref.getDataSource().getSystemCode() + ")");
+		timer.stopToLog("> ref2EnsIds (" + xref.getId() + "," + 
+				xref.getDataSource().getSystemCode() + ")");
 		return ensIds;
 	}
 

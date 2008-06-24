@@ -464,7 +464,7 @@ public class SimpleGex
 	{
 		dbConnector.compact(con);
 		createGexIndices();
-		dbConnector.closeConnection(con);
+		dbConnector.closeConnection(con, DBConnector.PROP_FINALIZE);
 		//The dbConnector may change the database file after cleaning up,
 		//for example, the derby connector first creates the database as directory
 		//and then adds the database to a zip file and removes the directory.

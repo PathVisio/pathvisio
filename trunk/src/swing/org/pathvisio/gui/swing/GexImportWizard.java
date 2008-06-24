@@ -597,6 +597,13 @@ public class GexImportWizard extends Wizard
 	    private JTextArea progressText;
 	    private SwingProgressKeeper pk;
 	    
+	    @Override
+	    public void aboutToCancel()
+	    {
+	    	// let the progress keeper know that the user pressed cancel.
+	    	pk.cancel();
+	    }
+	    
 		protected JPanel createContents()
 		{
 	    	FormLayout layout = new FormLayout(

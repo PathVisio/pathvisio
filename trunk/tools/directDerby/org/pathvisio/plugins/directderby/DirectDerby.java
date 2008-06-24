@@ -38,14 +38,6 @@ public class DirectDerby
 	
 	DirectDerby (String database) throws DataException
 	{
-		if (database.endsWith(".pgex"))
-		{
-			con.setDbType(DBConnector.TYPE_GEX);
-		}
-		else
-		{
-			con.setDbType(DBConnector.TYPE_GDB);
-		}
 		sqlcon = con.createConnection(database, 0); 
 	}
 	

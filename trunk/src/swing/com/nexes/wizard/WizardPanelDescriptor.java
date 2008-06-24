@@ -141,35 +141,28 @@ public abstract class WizardPanelDescriptor {
 
     }
  
+    //  Override this method in the subclass if you wish to do something
+    //  while the panel is displaying.
     
     /**
      * Override this method to perform functionality when the panel itself is displayed.
-    //  Override this method in the subclass if you wish to do something
-    //  while the panel is displaying.
      */    
     public void displayingPanel() {
 
     }
  
+    //  Override this method in the subclass if you wish it to be called
+    //  just before the panel is switched to another or finished.
     
     /**
      * Override this method to perform functionality just before the panel is to be
      * hidden.
-    //  Override this method in the subclass if you wish it to be called
-    //  just before the panel is switched to another or finished.
      */    
     public void aboutToHidePanel() {
 
     }    
     
-    /**
-     * Called when the user presses cancel
-     * Override to perform cancel cleanup
-     * The wizard will be closed after this method finishes.
-     */
-    public void aboutToCancel()
-    {
-    }
+    
     
     static class FinishIdentifier {
         public static final String ID = "FINISH";

@@ -271,7 +271,7 @@ public class StatisticsPlugin implements Plugin
 				0, TOTALWORK);
 		
 		final StatisticsTableModel stm = new StatisticsTableModel();
-		stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
+		stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.PCT, Column.ZSCORE});
 		resultTable.setModel (stm);
 
 		SwingWorker<Boolean, StatisticsResult> worker = new SwingWorker<Boolean, StatisticsResult>() 
@@ -364,32 +364,31 @@ public class StatisticsPlugin implements Plugin
 							}
 						}
 						
-						int cPwyTotal = ensGenes.size();
-						int cPwyMeasured = 0;
+						int n = ensGenes.size();
 						
-						// Step 2: find the corresponding rows in the Gex. There could be more than one row per gene, this is ok.
+						// Step 2: find the corresponding rows in the Gex. There could be more than one row per Ensembl gene, this is ok.
 						
-						double cPwyPositive = 0;
+						
+						double r = 0;
 						
 						for (String ensGene : ensGenes.keySet())
 						{
 							if (pmon.isCanceled()) return false;
-							List<Data> rows = ensGenes.get (ensGene);
+							List<Data> datas = ensGenes.get (ensGene);
 							
-							if (rows != null)
+							if (datas != null)
 							{
-								int cGeneTotal = rows.size();
-								if (cGeneTotal > 0) { cPwyMeasured++; }
-								int cGenePositive = 0;
+								int total = datas.size();
+								int countTrue = 0;
 								
-								for (Data row : rows)
+								for (Data data : datas)
 								{
 									if (pmon.isCanceled()) return false;
-									Logger.log.info ("Data found: " + row.getXref() + ", for sample 1: " + row.getSampleData(1));
+									Logger.log.info ("Data found: " + data.getXref() + ", for sample 1: " + data.getSampleData(1));
 									try
 									{	
-										boolean result = crit.evaluate(row.getSampleData());
-										if (result) cGenePositive++;
+										boolean result = crit.evaluate(data.getSampleData());
+										if (result) countTrue++;
 									}
 									catch (Exception e)
 									{
@@ -399,18 +398,14 @@ public class StatisticsPlugin implements Plugin
 							
 								// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
 								
-								//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
-								cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
-								
-								//The line below is the original MAPPFinder behaviour: 
-								//  count as fully positive if at least one probe is positive
-								//if (cGenePositive > 0) cPwyPositive += 1;
+								r += (double)countTrue / (double)total;
+								Logger.log.info (countTrue + " out of " + total);
 							}
 						}
 						
-						double z = Stats.zscore (cPwyMeasured, cPwyPositive, N, R);						
+						double z = Stats.zscore (n, r, N, R);						
 						
-						StatisticsResult sr = new StatisticsResult (file, pwyParser.getName(), cPwyMeasured, (int)Math.round (cPwyPositive), cPwyTotal, z);
+						StatisticsResult sr = new StatisticsResult (file, pwyParser.getName(), n, (int)r, z);
 						publish (sr);
 					}
 					catch (ParseException pe)
@@ -449,19 +444,17 @@ public class StatisticsPlugin implements Plugin
 	{
 		private int r = 0;
 		private int n = 0;
-		private int total = 0;
 		private String name;
 		private double z = 0;
 		private File f;
 
 		File getFile() { return f; }
 		
-		StatisticsResult (File f, String name, int n, int r, int total, double z)
+		StatisticsResult (File f, String name, int n, int r, double z)
 		{
 			this.f = f;
 			this.r = r;
 			this.n = n;
-			this.total = total;
 			this.name = name;
 			this.z = z;
 		}
@@ -472,7 +465,6 @@ public class StatisticsPlugin implements Plugin
 			{
 			case N: return "" + n;
 			case R: return "" + r;
-			case TOTAL: return "" + total;
 			case PATHWAY_NAME: return name;
 			case PVAL: return "0.01"; //TODO
 			case ZSCORE: return String.format ("%3.2f", (float)z);
@@ -575,9 +567,8 @@ public class StatisticsPlugin implements Plugin
 	 */
 	private static enum Column implements PropertyColumn
 	{
-		N("measured (n)"),
-		R("positive (r)"),
-		TOTAL("total"),
+		N("n"),
+		R("r"),
 		PATHWAY_NAME("Pathway"),
 		PCT("%"),
 		PVAL("pval"),

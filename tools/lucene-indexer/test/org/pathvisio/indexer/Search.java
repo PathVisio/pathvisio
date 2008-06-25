@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
@@ -40,6 +40,10 @@ public class Search extends TestCase {
 	
 	public void testCreateIndex() {
 		try {
+			//Start with fresh index
+			for(File f : indexDir.listFiles()) {
+				f.delete();
+			}
 			Engine.init();
 			
 			//Connect to any GDB in the preferences
@@ -51,10 +55,16 @@ public class Search extends TestCase {
 			
 			GpmlIndexer indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
 			indexer.update();
+			indexer.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 			fail("Exception during indexing: " + e.getMessage());
 		}
+	}
+	
+	public void testTitleSearch() {
+		Hits hits = query("name:oxidative");
+		assertTrue("nr of hits should be 1, is: " + hits.length(), hits.length() == 1);
 	}
 	
 	public void testOrganismSearch() {
@@ -88,17 +98,48 @@ public class Search extends TestCase {
 		assertTrue(searchHits(hits, PathwayIndexer.FIELD_NAME, "Oxidative Stress"));
 	}
 	
+	public void testSimpleRelation() throws CorruptIndexException, IOException {
+		String q1 = RelationshipIndexer.FIELD_LEFT + ":A"; //Right should be D
+		Hits hits = query(q1);
+		assertTrue(hits.length() == 1);
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "D"));
+		
+		String q2 = RelationshipIndexer.FIELD_RIGHT + ":A"; //Left should be B, C and E
+		hits = query(q2);
+		assertTrue(hits.length() == 3);
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "B"));
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "C"));
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "E"));
+	}
+	
+	public void testMetabolicReaction() throws CorruptIndexException, IOException {
+		//Substrate1 should yield product1 and product2
+		String q1 = RelationshipIndexer.FIELD_LEFT + ":substrate1";
+		Hits hits = query(q1);
+		assertTrue(hits.length() == 1); //Only one relation, but with two 'right' fields
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "product1"));
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "product2"));
+		
+		String q2 = RelationshipIndexer.FIELD_MEDIATOR + ":inhibitor";
+		hits = query(q2);
+		assertTrue(hits.length() == 1); //Only one relation, but with two 'mediator' fields
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_MEDIATOR, "inhibitor"));
+		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_MEDIATOR, "catalyst"));
+	}
+	
 	boolean searchHits(Hits hits, String field, String result) throws CorruptIndexException, IOException {
 		boolean found = false;
 		Logger.log.info("Searching hits for: " + result + " in " + field);
 		Logger.log.info("\tNr hits: " + hits.length());
 		for (int i = 0; i < hits.length(); i++) {
 			Document doc = hits.doc(i);
-			String value = doc.get(field);
-			Logger.log.trace("\tfound: " + value);
-			if(result.equals(value)) {
-				found = true;
+			for(String value: doc.getValues(field)) {
+				Logger.log.info("\tfound: " + value);
+				if(result.equals(value)) {
+					found = true;
+				}
 			}
+			
 		}
 		return found;
 	}
@@ -115,11 +156,12 @@ public class Search extends TestCase {
 		return null;
 	}
 	
-	public Hits query(String q) {
+	public Hits query(String q)  {
 		try {
+			Logger.log.info("Query: '" + q + "'");
 			QueryParser parser = new QueryParser(
-					PathwayIndexer.FIELD_NAME, 
-					new StandardAnalyzer()
+					PathwayIndexer.FIELD_SOURCE,
+					new KeywordAnalyzer()
 			);
 			Query query = parser.parse(q);
 			return query(query);

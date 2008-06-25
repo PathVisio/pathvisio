@@ -82,6 +82,15 @@ public class GpmlIndexer {
 	}
 
 	/**
+	 * Close the index writer
+	 * @throws CorruptIndexException
+	 * @throws IOException
+	 */
+	public void close() throws CorruptIndexException, IOException {
+		writer.close();
+	}
+	
+	/**
 	 * Updates the index for the given GPML file
 	 */
 	public void update(File gpmlFile) throws ConverterException,

@@ -136,7 +136,7 @@ public class PathwayIndexer {
 						FIELD_NAME, 
 						info.getMapInfoName() == null ? "" : info.getMapInfoName(), 
 						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
+						Field.Index.TOKENIZED
 				)
 		);
 		doc.add(

@@ -99,20 +99,23 @@ public class GpmlIndexer {
 		String source = gpmlFile.getAbsolutePath();
 		PathwayIndexer pwi = new PathwayIndexer(source, p, writer);
 		RelationshipIndexer rli = new RelationshipIndexer(source, p, writer);
+		DataNodeIndexer dni = new DataNodeIndexer(source, p, writer);
 		if (gpmlFile.exists()) {
 			Logger.log.trace("Updaging index for: " + gpmlFile);
 			// Add if exists on file system
 			gpmlFiles.add(gpmlFile);
 			// Update index
 			p.readFromXml(gpmlFile, true);
-			pwi.setGdbProvider(gdbs);
 			pwi.indexPathway();
+			dni.setGdbProvider(gdbs);
+			dni.indexDataNodes();
 			rli.indexRelationships();
 		} else {
 			Logger.log.trace("Removing from index: " + gpmlFile);
 			// Remove from index if doesn't exist
 			gpmlFiles.remove(gpmlFile);
 			pwi.removePathway();
+			dni.removeDataNodes();
 			rli.removeRelationships();
 		}
 	}

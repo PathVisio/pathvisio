@@ -638,7 +638,7 @@ public class GexImportWizard extends Wizard
 
 	    public void aboutToDisplayPanel() 
 	    {
-			getWizard().setPageTitle ("Preform import");
+			getWizard().setPageTitle ("Perform import");
 	        setProgressValue(0);
 	        setProgressText("");
 

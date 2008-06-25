@@ -18,7 +18,7 @@
     <Xref Database="" ID="" />
   </DataNode>
   <DataNode TextLabel="inhibitor" Type="GeneProduct" GraphId="f187e">
-    <Graphics Color="000000" CenterX="5580.0" CenterY="4590.0" Width="1200.0" Height="300.0" />
+    <Graphics Color="000000" CenterX="5550.0" CenterY="4635.0" Width="1200.0" Height="300.0" />
     <Xref Database="" ID="" />
   </DataNode>
   <DataNode TextLabel="catalyst" Type="GeneProduct" GraphId="fc0f3">
@@ -92,7 +92,7 @@
   </Line>
   <Line>
     <Graphics ConnectorType="Straight" Color="000000">
-      <Point x="5550.0" y="4860.0" />
+      <Point x="5550.0" y="4785.0" GraphRef="f187e" relX="0.0" relY="1.0" />
       <Point x="5550.0" y="6285.0" GraphRef="ab127" relX="0.0" relY="0.0" ArrowHead="TBar" />
     </Graphics>
   </Line>

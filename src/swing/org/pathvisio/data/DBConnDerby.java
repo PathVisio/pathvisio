@@ -48,7 +48,6 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
 			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GEX, "*." + DB_FILE_EXT_GEX, true));
 		}
-		//TODO: select right file filter for gex / gdb
 		
 		int status = jfc.showDialog (parent, "Open database");
 		if(status == JFileChooser.APPROVE_OPTION) 
@@ -81,7 +80,6 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GEX, "*." + DB_FILE_EXT_GEX, true));
 		}
 
-		//TODO: select right file filter for gex / gdb
 		int status = jfc.showDialog (parent, "Choose filename for database");
 		if(status == JFileChooser.APPROVE_OPTION) 
 		{

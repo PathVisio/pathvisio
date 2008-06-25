@@ -22,6 +22,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A utility class that simplifies creating a file filter for a JFileChooser dialog. 
+ * 
+ * Usage example:
+ * <pre>
+ *	JFileChooser jfc = new JFileChooser();
+ *	jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+ *	jfc.addChoosableFileFilter(new SimpleFileFilter("Text files", "*.txt", true));
+ *	if(jfc.showDialog (parent, "Open database") == JFileChooser.APPROVE_OPTION) {
+ *		... 
+ * </pre>
+ */
 public class SimpleFileFilter extends FileFilter
 {
 	private String desc;

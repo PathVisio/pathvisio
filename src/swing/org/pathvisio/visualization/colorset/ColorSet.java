@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;

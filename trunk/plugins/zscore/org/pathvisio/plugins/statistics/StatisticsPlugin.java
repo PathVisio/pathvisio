@@ -366,29 +366,29 @@ public class StatisticsPlugin implements Plugin
 						
 						int cPwyTotal = ensGenes.size();
 						int cPwyMeasured = 0;
-						// Step 2: find the corresponding rows in the Gex. There could be more than one row per Ensembl gene, this is ok.
 						
+						// Step 2: find the corresponding rows in the Gex. There could be more than one row per gene, this is ok.
 						
 						double cPwyPositive = 0;
 						
 						for (String ensGene : ensGenes.keySet())
 						{
 							if (pmon.isCanceled()) return false;
-							List<Data> datas = ensGenes.get (ensGene);
+							List<Data> rows = ensGenes.get (ensGene);
 							
-							if (datas != null)
+							if (rows != null)
 							{
-								int cGeneTotal = datas.size();
+								int cGeneTotal = rows.size();
 								if (cGeneTotal > 0) { cPwyMeasured++; }
 								int cGenePositive = 0;
 								
-								for (Data data : datas)
+								for (Data row : rows)
 								{
 									if (pmon.isCanceled()) return false;
-									Logger.log.info ("Data found: " + data.getXref() + ", for sample 1: " + data.getSampleData(1));
+									Logger.log.info ("Data found: " + row.getXref() + ", for sample 1: " + row.getSampleData(1));
 									try
 									{	
-										boolean result = crit.evaluate(data.getSampleData());
+										boolean result = crit.evaluate(row.getSampleData());
 										if (result) cGenePositive++;
 									}
 									catch (Exception e)
@@ -399,8 +399,12 @@ public class StatisticsPlugin implements Plugin
 							
 								// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
 								
-//								cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
-								if (cGenePositive > 0) cPwyPositive += 1;
+								//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
+								cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
+								
+								//The line below is the original MAPPFinder behaviour: 
+								//  count as fully positive if at least one probe is positive
+								//if (cGenePositive > 0) cPwyPositive += 1;
 							}
 						}
 						

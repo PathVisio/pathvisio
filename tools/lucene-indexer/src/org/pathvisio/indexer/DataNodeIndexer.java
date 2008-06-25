@@ -1,3 +1,19 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2007 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
 package org.pathvisio.indexer;
 
 import java.io.IOException;
@@ -77,16 +93,15 @@ public class DataNodeIndexer {
 	}
 	
 	public void indexDataNodes() throws CorruptIndexException, IOException {
-		Document doc = new Document();
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			if(pe.getObjectType() == ObjectType.DATANODE) {
-				indexDataNode(pe, doc);
+				indexDataNode(pe);
 			}
 		}
-		writer.addDocument(doc);
 	}
 	
-	void indexDataNode(PathwayElement pe, Document doc) {
+	void indexDataNode(PathwayElement pe) throws CorruptIndexException, IOException {
+		Document doc = new Document();
 		doc.add(new Field(FIELD_SOURCE, source, Store.YES, Index.NO));
 		doc.add(new Field(FIELD_GRAPHID, pe.getGraphId(), Store.YES, Index.NO));
 		
@@ -106,6 +121,7 @@ public class DataNodeIndexer {
 				}
 			}
 		}
+		writer.addDocument(doc);
 	}
 
 	/**

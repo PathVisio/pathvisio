@@ -154,6 +154,11 @@ public class WikiPathwaysIndexer extends Timer{
 	 */
 	public void rebuild() throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
 		log.info("Rebuilding index");
+		//Remove old index
+		for(File f : indexPath.listFiles()) {
+			f.delete();
+		}
+		
 		update(FileUtils.getFiles(cachePath, "gpml", true));
 	}
 	

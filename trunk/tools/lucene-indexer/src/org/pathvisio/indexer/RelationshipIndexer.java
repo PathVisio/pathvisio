@@ -237,6 +237,7 @@ public class RelationshipIndexer {
 	 * Field for the source pathway
 	 */
 	public static final String FIELD_SOURCE = PathwayIndexer.FIELD_SOURCE;
+
 	/**
 	 * Field that contains all elements participating on the
 	 * left (start) side of this interaction

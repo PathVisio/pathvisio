@@ -102,8 +102,12 @@ public class WikiPathwaysIndexer extends Timer{
 		Set<File> fileSet = new HashSet<File>();
 		fileSet.addAll(files);
 		
-		writer = new IndexWriter(indexPath, new StandardAnalyzer());
-		indexer = new GpmlIndexer(writer, fileSet, gdbs);
+		indexer = new GpmlIndexer(null, fileSet, gdbs);
+		indexer.setSourceProvider(new SourceProvider() {
+			public String getSource(File gpmlFile) {
+				return wikiCache.cacheFileToUrl(gpmlFile);
+			}
+		});
 	}
 	
 	private void createWriter() throws CorruptIndexException, LockObtainFailedException, IOException {
@@ -154,11 +158,13 @@ public class WikiPathwaysIndexer extends Timer{
 	 */
 	public void rebuild() throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
 		log.info("Rebuilding index");
-		//Remove old index
-		for(File f : indexPath.listFiles()) {
-			f.delete();
+		if(rebuild) {
+			//Remove old index
+			for(File f : indexPath.listFiles()) {
+				f.delete();
+			}
 		}
-		
+
 		update(FileUtils.getFiles(cachePath, "gpml", true));
 	}
 	

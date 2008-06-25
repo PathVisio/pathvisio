@@ -51,6 +51,7 @@ public class WikiPathwaysClient
 		}
 	}
 	
+	private URL rpcUrl = DEFAULT_RPCURL;
 	private XmlRpcClient client;
 	private String token = null;
 	private String username = null;
@@ -72,6 +73,8 @@ public class WikiPathwaysClient
 	 */
 	public WikiPathwaysClient(URL rpcUrl) 
 	{
+		this.rpcUrl = rpcUrl;
+		
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(rpcUrl);
 
@@ -79,6 +82,10 @@ public class WikiPathwaysClient
 		client.setConfig (config);
 	}
 
+	public URL getRpUrl() {
+		return rpcUrl;
+	}
+	
 	/**
 	 * make sure request are sent no faster than once per REQUEST_WAIT_MILLIS
 	 */

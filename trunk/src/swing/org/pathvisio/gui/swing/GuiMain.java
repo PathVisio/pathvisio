@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.WindowAdapter;
@@ -26,14 +27,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.SimpleGex;
+import org.pathvisio.data.GdbManager.GdbEventListener;
+import org.pathvisio.data.GexManager.GexManagerEvent;
+import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.DataNodeListExporter;
@@ -153,6 +162,29 @@ public class GuiMain
 		}
 	}
 	
+	private String shortenString(String s) {
+		return shortenString(s, 20);
+	}
+	
+	private String shortenString(String s, int maxLength) {
+		if(s.length() > maxLength) {
+			String prefix = "...";
+			s = s.substring(s.length() - maxLength - prefix.length());
+			s = prefix + s;
+		}
+		return s;
+	}
+	
+	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) {
+		PreferenceManager prf = Engine.getCurrent().getPreferences();
+		String gdb = prf.get(GlobalPreference.DB_GDB_CURRENT);
+		String mdb = prf.get(GlobalPreference.DB_METABDB_CURRENT);
+		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");
+		mdbLabel.setText(mdb != null ? (" | Metabolite database: " + shortenString(mdb)) : "");
+		gdbLabel.setToolTipText(gdb != null ? gdb : "");
+		mdbLabel.setToolTipText(mdb != null ? mdb : "");
+	}
+	
 	/**
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
@@ -164,7 +196,44 @@ public class GuiMain
 		// dispose on close, otherwise windowClosed event is not called.
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		frame.add(mainPanel);
+		frame.add(mainPanel, BorderLayout.CENTER);
+		
+		JPanel statusBar = new JPanel();
+		statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
+		frame.add(statusBar, BorderLayout.SOUTH);
+		
+		final JLabel gdbLabel = new JLabel();
+		final JLabel mdbLabel = new JLabel();
+		final JLabel gexLabel = new JLabel();
+		statusBar.add(gdbLabel);
+		statusBar.add(mdbLabel);
+		statusBar.add(gexLabel);
+		setGdbStatus(gdbLabel, mdbLabel);
+		
+		SwingEngine.getCurrent().getGdbManager().addGdbEventListener(new GdbEventListener() {
+			public void gdbEvent(GdbEvent e) {
+				if(e.getType() == GdbEvent.GDB_CONNECTED) {
+					setGdbStatus(gdbLabel, mdbLabel);
+				}
+			}
+		});
+		
+		GexManager.getCurrent().addListener(new GexManagerListener() {
+				public void gexManagerEvent(GexManagerEvent e) {
+					if(e.getType() == GexManagerEvent.CONNECTION_OPENED ||
+							e.getType() == GexManagerEvent.CONNECTION_CLOSED) {
+						SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+						if(gex != null && gex.isConnected()) {
+							gexLabel.setText(" | Dataset: " + shortenString(gex.getDbName()));
+							gexLabel.setToolTipText(gex.getDbName());
+						} else {
+							gexLabel.setText("");
+							gexLabel.setToolTipText("");
+						}
+					}
+				}
+		});
+		
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.pack();
 		PreferenceManager preferences = Engine.getCurrent().getPreferences();

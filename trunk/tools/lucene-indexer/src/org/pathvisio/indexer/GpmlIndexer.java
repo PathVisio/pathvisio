@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.LockObtainFailedException;
@@ -39,7 +39,10 @@ public class GpmlIndexer {
 	IndexWriter writer;
 	Set<File> gpmlFiles = new HashSet<File>();
 	GdbProvider gdbs;
-
+	SourceProvider sourceProvider = new SourceProvider() {
+		public String getSource(File gpmlFile) { return gpmlFile.getAbsolutePath(); }
+	};
+	
 	/**
 	 * Create an index for GPML file.
 	 * 
@@ -54,7 +57,7 @@ public class GpmlIndexer {
 	 */
 	public GpmlIndexer(File indexPath, File gpmlPath, GdbProvider gdbs) throws CorruptIndexException, LockObtainFailedException, ConverterException, IOException {
 		this(
-			new IndexWriter(indexPath, new StandardAnalyzer()), 
+			new IndexWriter(indexPath, new SimpleAnalyzer()), 
 			new HashSet<File>(FileUtils.getFiles(gpmlPath, "gpml", true)), 
 			gdbs
 		);
@@ -71,6 +74,10 @@ public class GpmlIndexer {
 		this.writer = writer;
 	}
 
+	public void setSourceProvider(SourceProvider spv) {
+		sourceProvider = spv;
+	}
+	
 	/**
 	 * Updates the index for all listed files
 	 */
@@ -96,7 +103,7 @@ public class GpmlIndexer {
 	public void update(File gpmlFile) throws ConverterException,
 			CorruptIndexException, IOException {
 		Pathway p = new Pathway();
-		String source = gpmlFile.getAbsolutePath();
+		String source = sourceProvider.getSource(gpmlFile);
 		PathwayIndexer pwi = new PathwayIndexer(source, p, writer);
 		RelationshipIndexer rli = new RelationshipIndexer(source, p, writer);
 		DataNodeIndexer dni = new DataNodeIndexer(source, p, writer);

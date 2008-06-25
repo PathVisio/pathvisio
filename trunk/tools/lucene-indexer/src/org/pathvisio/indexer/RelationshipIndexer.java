@@ -44,7 +44,7 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * - LEFT: an element that acts on the left side of an interaction
  * - RIGHT: an element that acts on the right side of an interaction
  * - MEDIATOR: an element that acts as mediator of an interaction
- * - PATHWAY: the pathway in which the interaction occurs
+ * - SOURCE: the pathway containing the relation
  * 
  * The following example illustrates how the fields will be assigned.
  * 
@@ -56,7 +56,9 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * A ---o-----o---o--> B
  *     /      T
  *    /       |
- *   D        C
+ *   D        C(C1, C2)
+ * 
+ * Where C is a group that contains C1 and C2.
  * 
  * The line A-B will serve as base for the relation, A will be
  * added to the LEFT field, B to the RIGHT field.
@@ -70,11 +72,16 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * field
  * - Else, the element will be added to the MEDIATOR field.
  * 
+ * Additionally, if the element to be added is a group, all nested elements will
+ * be added recursively.
+ * 
  * So in the example, the following fields will be created:
  * A: LEFT
  * D: LEFT
  * F: MEDIATOR
  * C: MEDIATOR
+ * C1:MEDIATOR
+ * C2:MEDIATOR
  * E: RIGHT
  * B: RIGHT
  * 
@@ -141,9 +148,9 @@ public class RelationshipIndexer {
 		//TODO: use stable pathway id + graphid!
 		String text = pe.getTextLabel();
 		if(text != null) {
-		doc.add(new Field(
-				field, text, Field.Store.YES, Field.Index.UN_TOKENIZED
-		));
+			doc.add(new Field(
+					field, text, Field.Store.YES, Field.Index.TOKENIZED
+			));
 		} else {
 			Logger.log.error(
 					"Unable to add " + pe + " to relationship index: no text label"
@@ -217,15 +224,27 @@ public class RelationshipIndexer {
 		}
 		
 		void addLeft(PathwayElement pwe) {
-			if(pwe != null) lefts.add(pwe);
+			addElement(pwe, lefts);
 		}
 		
 		void addRight(PathwayElement pwe) {
-			if(pwe != null) rights.add(pwe);
+			addElement(pwe, rights);
 		}
 		
 		void addMediator(PathwayElement pwe) {
-			if(pwe != null) mediators.add(pwe);
+			addElement(pwe, mediators);
+		}
+		
+		void addElement(PathwayElement pwe, Set<PathwayElement> set) {
+			if(pwe != null) {
+				//If it's a group, add all subelements
+				if(pwe.getObjectType() == ObjectType.GROUP) {
+					for(PathwayElement ge : pwe.getParent().getGroupElements(pwe.getGroupId())) {
+						addElement(ge, set);
+					}
+				}
+				set.add(pwe);
+			}
 		}
 		
 		Set<PathwayElement> getLefts() { return lefts; }

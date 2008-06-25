@@ -18,6 +18,7 @@ package org.pathvisio.wikipathways;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -182,6 +183,23 @@ public class WikiPathwaysCache
 		String species = f.getParentFile().getName(); // i.e. species = Homo_sapiens
 		String pwyName = species+":"+pathwayName; // construct the pathway name: i.e. Homo_sapiens:ACE-Inhibitor_pathway_PharmGKB
 		return pwyName;
+	}
+	
+	/**
+	 * Converts the path of a cached file to the url
+	 * on the wiki it is downloaded from.
+	 * Note that this method assumes that the rpc file is
+	 * wpi/wpi_rpc.php. E.g., if the rpc url is:
+	 * <code>http://myhost.org/path/wpi/wpi_rpc.php</code>, the
+	 * pathway url will be <code>http://myhost.org/path/index.php/Pathway:Species:Title</code>
+	 */
+	public String cacheFileToUrl(File f) {
+		URL rpcUrl = wpClient.getRpUrl();
+		String name = fileToPathwayName(f);
+		String path = rpcUrl.getPath();
+		path = path.substring(0, path.lastIndexOf("/wpi/wpi_rpc.php"));
+		String base = "http://" + rpcUrl.getHost() + path;
+		return base + "/index.php/Pathway:" + name;
 	}
 	
 	private List<File> purgeRemoved(List<String> pathwayNames) {

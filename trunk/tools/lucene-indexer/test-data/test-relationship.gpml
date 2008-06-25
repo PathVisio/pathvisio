@@ -151,7 +151,7 @@
   <Label TextLabel="Groups" GraphId="b0ff8">
     <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="3630.0" CenterY="9030.0" Width="1440.0" Height="300.0" />
   </Label>
-  <Group GroupId="cc902" GraphId="ff156" Style="None" TextLabel="C2" />
+  <Group GroupId="cc902" GraphId="ff156" Style="None" TextLabel="C1" />
   <Group GroupId="da58f" GraphId="a3650" Style="None" TextLabel="C2" />
   <InfoBox CenterX="0.0" CenterY="0.0" />
 </Pathway>

@@ -18,12 +18,10 @@ package org.pathvisio.indexer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.lucene.analysis.KeywordAnalyzer;
+import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
@@ -70,10 +68,7 @@ public class Search extends TestCase {
 	}
 	
 	public void testOrganismSearch() {
-		Query query = new TermQuery(
-				new Term(PathwayIndexer.FIELD_ORGANISM, "Homo sapiens")
-		);
-		Hits hits = query(query);
+		Hits hits = query("organism:\"Homo sapiens\"");
 		assertTrue("nr of hits should be > 0, is: " + hits.length(), hits.length() > 0);
 	}
 	
@@ -117,15 +112,20 @@ public class Search extends TestCase {
 	public void testSimpleRelation() throws CorruptIndexException, IOException {
 		String q1 = RelationshipIndexer.FIELD_LEFT + ":A"; //Right should be D
 		Hits hits = query(q1);
-		assertTrue(hits.length() == 1);
+		assertTrue(hits.length() > 0);
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "D"));
 		
 		String q2 = RelationshipIndexer.FIELD_RIGHT + ":A"; //Left should be B, C and E
 		hits = query(q2);
-		assertTrue(hits.length() == 3);
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "B"));
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "C"));
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "E"));
+	}
+	
+	public void testCaseInsensitive() throws CorruptIndexException, IOException {
+		String q1 = RelationshipIndexer.FIELD_LEFT + ":a"; //Stored as A
+		Hits hits = query(q1);
+		assertTrue(hits.length() > 0);
 	}
 	
 	public void testMetabolicReaction() throws CorruptIndexException, IOException {
@@ -177,9 +177,10 @@ public class Search extends TestCase {
 			Logger.log.info("Query: '" + q + "'");
 			QueryParser parser = new QueryParser(
 					PathwayIndexer.FIELD_SOURCE,
-					new KeywordAnalyzer()
+					new SimpleAnalyzer()
 			);
 			Query query = parser.parse(q);
+			Logger.log.info("Parsed query: '" + query + "'");
 			return query(query);
 		} catch(Exception e) {
 			fail(e.getMessage());

@@ -17,21 +17,14 @@
 package org.pathvisio.indexer;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.wikipathways.WikiPathways;
 
 /**
@@ -68,6 +61,11 @@ public class PathwayIndexer {
 	 * A graphId of an element on the pathway
 	 */
 	public static final String FIELD_GRAPHID = "graphid";
+	
+	/**
+	 * The TextLabel attribute of an element on the pathway
+	 */
+	public static final String FIELD_TEXTLABEL = "textlabel";
 	
 	String source;
 	Pathway pathway;
@@ -118,7 +116,7 @@ public class PathwayIndexer {
 						FIELD_ORGANISM,
 						info.getOrganism() == null ? "" : info.getOrganism(), 
 						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
+						Field.Index.TOKENIZED
 				)
 		);
 		//Process graph ids
@@ -133,6 +131,21 @@ public class PathwayIndexer {
 			);
 		}
 		
+		//Process text labels
+		for(PathwayElement pe : pathway.getDataObjects()) {
+			String txt = pe.getTextLabel();
+			if(txt != null && !"".equals(txt)) {
+				doc.add(
+						new Field(
+								FIELD_TEXTLABEL,
+								txt,
+								Field.Store.YES,
+								Field.Index.TOKENIZED
+						)
+					);
+			}
+		}
+		
 		//Process comments
 		for(PathwayElement.Comment c : info.getComments()) {
 			if(WikiPathways.COMMENT_CATEGORY.equals(c)) {
@@ -140,7 +153,7 @@ public class PathwayIndexer {
 						FIELD_CATEGORY,
 						c.getComment(),
 						Field.Store.YES,
-						Field.Index.UN_TOKENIZED
+						Field.Index.TOKENIZED
 				));
 			}
 			if(WikiPathways.COMMENT_DESCRIPTION.equals(c)) {

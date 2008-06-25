@@ -17,6 +17,7 @@
 package org.pathvisio.util;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.XrefWithSymbol;
+import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -63,7 +65,7 @@ public class PathwayParser extends DefaultHandler
 		
 		try
 		{
-			xmlReader.parse(f.getAbsolutePath());
+			xmlReader.parse(new InputSource (new FileReader(f)));
 		}
 		catch (IOException e) 
 		{ 

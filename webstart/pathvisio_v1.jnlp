@@ -15,7 +15,6 @@
 		 <j2se version="1.5+"/>
 		 <jar href="pathvisio.jar"/>
 		 <jar href="lib/resources.jar"/>
-		 <jar href="lib/plugins.jar"/>
 		 <jar href="lib/derby.jar"/>
 		 <jar href="lib/jdom.jar"/>
 		 <jar href="lib/swing-worker-1.1.jar"/>

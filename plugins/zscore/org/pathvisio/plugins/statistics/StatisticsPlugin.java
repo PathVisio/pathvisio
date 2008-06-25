@@ -415,7 +415,7 @@ public class StatisticsPlugin implements Plugin
 					}
 					catch (ParseException pe)
 					{
-						Logger.log.warn ("Could not parse " + file + ", ignoring");
+						Logger.log.warn ("Could not parse " + file + ", ignoring", pe);
 					}
 					i++;
 					pmon.setProgress((int)((0.2 + (0.8 * (double)i / (double)files.size())) * (double)TOTALWORK));				

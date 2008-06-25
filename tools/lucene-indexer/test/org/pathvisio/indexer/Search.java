@@ -18,6 +18,8 @@ package org.pathvisio.indexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -76,26 +78,40 @@ public class Search extends TestCase {
 	}
 	
 	public void testDataNodeSearch() throws CorruptIndexException, IOException {
-		Query query = new TermQuery(new Term(PathwayIndexer.FIELD_ID, "8643"));
+		Query query = new TermQuery(new Term(DataNodeIndexer.FIELD_ID, "8643"));
 		Hits hits = query(query);
+		assertTrue("nr of hits should be > 0, is: " + hits.length(), hits.length() > 0);
 		boolean found = false;
 		for (int i = 0; i < hits.length(); i++) {
 			Document doc = hits.doc(i);
-			String name = doc.get(PathwayIndexer.FIELD_NAME);
-			if("Hedgehog Signaling Pathway".equals(name)) {
+			String source = doc.get(DataNodeIndexer.FIELD_SOURCE);
+			if(source.endsWith("Hs_Hedgehog_Netpath_10.gpml")) {
 				found = true;
+				break;
 			}
 		}
 		assertTrue(found);
 	}
 	
 	public void testCrossRefSearch() throws CorruptIndexException, IOException {
-		Query q1 = new TermQuery(new Term(PathwayIndexer.FIELD_XID, "32786_at"));
-		Query q2 = new TermQuery(new Term(PathwayIndexer.FIELD_XID, "GO:0003700"));
+		Query q1 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, "32786_at"));
+		Query q2 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, "GO:0003700"));
 		Hits hits = query(q1);
-		assertTrue(searchHits(hits, PathwayIndexer.FIELD_NAME, "Oxidative Stress"));
+		assertTrue(searchHits(hits, PathwayIndexer.FIELD_SOURCE, "Oxidative Stress"));
 		hits = query(q2);
-		assertTrue(searchHits(hits, PathwayIndexer.FIELD_NAME, "Oxidative Stress"));
+		assertTrue(searchHits(hits, PathwayIndexer.FIELD_SOURCE, "Oxidative Stress"));
+	}
+	
+	boolean xrefInPathway(Hits hits, String pwName) throws CorruptIndexException, IOException {
+		for(int i = 0; i < hits.length(); i++) {
+			Document doc = hits.doc(i);
+			String source = doc.get(DataNodeIndexer.FIELD_SOURCE);
+			Hits pwh = query(new TermQuery(new Term(PathwayIndexer.FIELD_SOURCE, source)));
+			if(searchHits(pwh, PathwayIndexer.FIELD_NAME, pwName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void testSimpleRelation() throws CorruptIndexException, IOException {

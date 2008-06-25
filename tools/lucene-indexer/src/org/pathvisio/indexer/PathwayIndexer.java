@@ -25,13 +25,13 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.wikipathways.WikiPathways;
 
 /**
@@ -40,32 +40,6 @@ import org.pathvisio.wikipathways.WikiPathways;
  *
  */
 public class PathwayIndexer {
-	/**
-	 * An identifier of a DataNode xref that is on the pathway
-	 */
-	public static final String FIELD_ID = "id";
-	/**
-	 * An identifier/code combination
-	 * of a DataNode xref that is on the pathway.
-	 * The combination is of the form:
-	 * "identifier:code", where code is the system code
-	 * obtained by {@link DataSource#getSystemCode()}.
-	 */
-	public static final String FIELD_ID_CODE = "id.database";
-	/**
-	 * An identifier that was found by looking up all cross references
-	 * for a DataNode xref on the pathway.
-	 */
-	public static final String FIELD_XID = "x.id";
-	/**
-	 * An identifier/code combination
-	 * of a DataNode xref that was found by looking up all cross references
-	 * for a DataNode xref on the pathway.
-	 * The combination is of the form:
-	 * "identifier:code", where code is the system code
-	 * obtained by {@link org.pathvisio.model.DataSource#getSystemCode()}.
-	 */
-	public static final String FIELD_XID_CODE = "x.id.database";
 	/**
 	 * The name of a pathway
 	 */
@@ -90,10 +64,14 @@ public class PathwayIndexer {
 	 */
 	public static final String FIELD_DESCRIPTION = "description";
 	
+	/**
+	 * A graphId of an element on the pathway
+	 */
+	public static final String FIELD_GRAPHID = "graphid";
+	
 	String source;
 	Pathway pathway;
 	IndexWriter writer;
-	GdbProvider gdbs;
 	
 	/**
 	 * Create a PathwayIndexer
@@ -105,10 +83,6 @@ public class PathwayIndexer {
 		this.source = source;
 		this.pathway = p;
 		this.writer = w;
-	}
-	
-	public void setGdbProvider(GdbProvider gdbs) {
-		this.gdbs = gdbs;
 	}
 	
 	/**
@@ -147,12 +121,18 @@ public class PathwayIndexer {
 						Field.Index.UN_TOKENIZED
 				)
 		);
-		//Process DataNodes
-		for(PathwayElement pe : pathway.getDataObjects()) {
-			if(pe.getObjectType() == ObjectType.DATANODE) {
-				indexDataNode(pe, doc);
-			}
+		//Process graph ids
+		for(String id : pathway.getGraphIds()) {
+			doc.add(
+				new Field(
+						FIELD_GRAPHID,
+						id,
+						Field.Store.YES,
+						Field.Index.UN_TOKENIZED
+				)
+			);
 		}
+		
 		//Process comments
 		for(PathwayElement.Comment c : info.getComments()) {
 			if(WikiPathways.COMMENT_CATEGORY.equals(c)) {
@@ -173,55 +153,5 @@ public class PathwayIndexer {
 			}
 		}
 		writer.updateDocument(new Term(FIELD_SOURCE, source), doc);
-	}
-	
-	void indexDataNode(PathwayElement pe, Document doc) {
-		Xref xref = pe.getXref();
-
-		addCrossRef(xref, doc, FIELD_ID, FIELD_ID_CODE);
-
-		//Add cross references if connected
-		Organism organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
-		if(gdbs != null) {
-			for(Gdb gdb : gdbs.getGdbs(organism)) {
-				if(gdb != null && gdb.isConnected()) {
-					List<Xref> crossRefs = gdb.getCrossRefs(xref);
-					for(Xref c : crossRefs) {
-						addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
-					}
-				}
-			}
-		}
-	}
-
-	void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
-		if(xref != null) {
-			String id = xref.getId();
-			doc.add(
-				new Field(
-						field_id,
-						id, 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
-				)
-			);
-			doc.add(
-				new Field(
-						field_id_code,
-						xref2string(xref), 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
-				)
-			);
-		}
-	}
-	
-	public static String xref2string(Xref xref) {
-		String id = xref.getId();
-		String code = "";
-		if(xref.getDataSource() != null) {
-			code = xref.getDataSource().getSystemCode();
-		}
-		return id + ":" + code;
 	}
 }

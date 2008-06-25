@@ -233,9 +233,23 @@ public class RelationshipIndexer {
 		Set<PathwayElement> getMediators() { return mediators; }
 	}
 	
-	
+	/**
+	 * Field for the source pathway
+	 */
 	public static final String FIELD_SOURCE = PathwayIndexer.FIELD_SOURCE;
+	/**
+	 * Field that contains all elements participating on the
+	 * left (start) side of this interaction
+	 */
 	public static final String FIELD_LEFT = "left";
+	/**
+	 * Field that contains all elements participating on the
+	 * right (end) side of this interaction
+	 */
 	public static final String FIELD_RIGHT = "right";
+	/**
+	 * Field that contains all elements participating as
+	 * mediator of this interaction
+	 */
 	public static final String FIELD_MEDIATOR = "mediator";
 }

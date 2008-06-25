@@ -22,6 +22,7 @@ import javax.swing.JFileChooser;
 
 import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.util.swing.SimpleFileFilter;
 
 /**
  * user interface functions for single-file Derby databases.
@@ -30,23 +31,22 @@ import org.pathvisio.preferences.GlobalPreference;
  */
 public class DBConnDerby extends DataDerby implements DBConnectorSwing
 {
-	static final String[] DB_EXTS_GEX = new String[] { "*." + DB_FILE_EXT_GEX, "*.*"};
-	static final String[] DB_EXTS_GDB = new String[] { "*." + DB_FILE_EXT_GDB, "*.*"};
-	static final String[] DB_EXT_NAMES_GEX = new String[] { "Expression dataset", "All files" };
-	static final String[] DB_EXT_NAMES_GDB = new String[] { "Gene database", "All files" };
+	static final String DB_EXT_NAME_GEX = "Expression datasets";
+	static final String DB_EXT_NAME_GDB = "Synonym databases";
 	
 	public String openChooseDbDialog(Component parent) 
 	{
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-		
 		if (getDbType() == TYPE_GDB)
 		{
 			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GDB, "*." + DB_FILE_EXT_GDB, true));
 		}
 		else
 		{
 			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GEX, "*." + DB_FILE_EXT_GEX, true));
 		}
 		//TODO: select right file filter for gex / gdb
 		
@@ -74,10 +74,11 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		if (getDbType() == TYPE_GDB)
 		{
 			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
-		}
+			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GDB, "*." + DB_FILE_EXT_GDB, true));		}
 		else
 		{
 			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GEX, "*." + DB_FILE_EXT_GEX, true));
 		}
 
 		//TODO: select right file filter for gex / gdb

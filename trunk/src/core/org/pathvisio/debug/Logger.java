@@ -129,6 +129,13 @@ public class Logger
 	}
 
 	public void warn  (String msg) { if (warnEnabled) s.println ("Warn:  " + msg); }
+
+	public void warn  (String msg, Throwable e) 
+	{ 
+		if (warnEnabled) {	s.println ("Warn:  " + msg + "\n\t" + e.getMessage()); 	}
+		if (debugEnabled) {	e.printStackTrace(s); }
+	}
+
 	public void error (String msg) { if (errorEnabled) s.println ("Error: " + msg); }
 	public void error (String msg, Throwable e) 
 	{

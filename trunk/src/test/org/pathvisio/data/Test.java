@@ -32,10 +32,10 @@ public class Test extends TestCase implements GdbEventListener
 	//TODO
 	static final String gdbHuman = 
 		System.getProperty ("user.home") + File.separator + 
-		"PathVisio-Data/gene databases/Hs_41_36c.pgdb";
+		"PathVisio-Data/gene databases/Hs_Derby_20080102.pgdb";
 	static final String gdbRat = 
 		System.getProperty ("user.home") + File.separator + 
-		"PathVisio-Data/gene databases/Rn_39_34i.pgdb";
+		"PathVisio-Data/gene databases/Rn_Derby_20080102.pgdb";
 
 	boolean eventReceived = false;
 
@@ -60,7 +60,7 @@ public class Test extends TestCase implements GdbEventListener
 		// test reception of event...
 	}
 	
-	public void testImportSample1() throws IOException, DataException
+	public void testImportSimple() throws IOException, DataException
 	{
 		Engine.init();
 		ImportInformation info = new ImportInformation();
@@ -88,22 +88,85 @@ public class Test extends TestCase implements GdbEventListener
 		
 	}
 
-	public void testImportSample2() throws IOException, DataException
+	public void testImportAffy() throws IOException, DataException
 	{
 		Engine.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_affymetrix.txt");
 		assertTrue (f.exists());
 		info.setTxtFile(f);
+		info.guessSettings();
+		
+		assertEquals (info.getDataSource(), DataSource.AFFY);
+		assertFalse (info.getSyscodeColumn());
+		assertTrue (info.digitIsDot());
+		assertEquals (info.getIdColumn(), 0);
+		
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setDbName(dbFileName);
-		info.setSyscodeColumn(false);
-		info.setDataSource(DataSource.AFFY);
+		
 		SimpleGdb gdb = new SimpleGdb (gdbRat, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
-		// just 10 errors if all goes well
-		assertEquals (info.getErrorList().size(), 10);		
+		// just 6 errors if all goes well
+		assertEquals (info.getErrorList().size(), 6);		
+	}
+
+	/**
+	 * Column headers have lenghts of over 50.
+	 * Make sure this doesn't lead to problems when setting sample names
+	 */
+	public void testImportLongHeaders() throws IOException, DataException
+	{
+		Engine.init();
+		ImportInformation info = new ImportInformation();
+		File f = new File ("example-data/sample_data_long_headers.txt");
+		assertTrue (f.exists());
+		info.setTxtFile(f);
+		info.guessSettings();
+		
+		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
+		assertFalse (info.getSyscodeColumn());
+		assertTrue (info.digitIsDot());
+		assertEquals (info.getIdColumn(), 0);
+		
+		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
+		info.setDbName(dbFileName);
+		
+		SimpleGdb gdb = new SimpleGdb (gdbHuman, new DataDerby(), 0);
+		GexTxtImporter.importFromTxt(info, null, gdb);
+		
+		// 0 errors if all goes well
+		assertEquals (info.getErrorList().size(), 0);		
+	}
+
+	/**
+	 * Test dataset contains two columns with textual data
+	 * make sure this doesn't give problems during import
+	 */
+	public void testImportWithText() throws IOException, DataException
+	{
+		Engine.init();
+		ImportInformation info = new ImportInformation();
+		File f = new File ("example-data/sample_data_with_text.txt");
+		assertTrue (f.exists());
+		info.setTxtFile(f);
+		info.guessSettings();
+		
+		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
+		assertTrue (info.getSyscodeColumn());
+		assertEquals (info.getCodeColumn(), 1);
+		assertTrue (info.digitIsDot());
+		assertEquals (info.getIdColumn(), 0);
+		
+		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex4";
+		info.setDbName(dbFileName);
+		
+		SimpleGdb gdb = new SimpleGdb (gdbHuman, new DataDerby(), 0);
+		GexTxtImporter.importFromTxt(info, null, gdb);
+		
+		// 0 errors if all goes well
+		assertEquals (info.getErrorList().size(), 0);		
 	}
 
 	public void gexHelper(DBConnector con, String filename) throws DataException, SQLException

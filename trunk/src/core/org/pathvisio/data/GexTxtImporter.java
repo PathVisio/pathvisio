@@ -25,6 +25,7 @@ import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,10 +113,15 @@ public class GexTxtImporter
 					(!info.getSyscodeColumn() && i != info.getIdColumn())
 					)
 				{ 
+					String header = headers[i];
+					if (header.length() >= 50)
+					{
+						header = header.substring(0, 49);
+					}
 					try {
 						result.addSample(
 							sampleId++, 
-							headers[i], 
+							header, 
 							info.isStringCol(i) ? Types.CHAR : Types.REAL);
 						dataCols.add(i);
 					}
@@ -222,7 +228,7 @@ public class GexTxtImporter
 									minimumNotSet=false;
 								}
 							}
-							catch (NumberFormatException e)
+							catch (ParseException e)
 							{
 								// we've got a number in a non-number column.
 								// safe to ignore

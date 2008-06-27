@@ -22,6 +22,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 import javax.swing.*;
@@ -49,6 +53,7 @@ import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.MatchResult;
 import org.pathvisio.util.swing.PropertyColumn;
 import org.pathvisio.util.swing.RowWithProperties;
+import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -59,6 +64,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class StatisticsPlugin implements Plugin 
 {
+	
 	/**
 	 * Plugin initialization method, registers statistics action in the Data menu
 	 */
@@ -107,6 +113,7 @@ public class StatisticsPlugin implements Plugin
 		Criterion myCriterion = new Criterion();
 		JTextField txtExpr;
 		JLabel lblError;
+		private JButton btnSave;
 		
 		private void updateCriterion()
 		{
@@ -217,9 +224,19 @@ public class StatisticsPlugin implements Plugin
 					}
 				}
 			});
+			
 			frame.add (btnDir, cc.xy (4,12));
+			
+			JPanel pnlButtons = new JPanel();
+			
 			JButton btnCalc = new JButton ("Calculate");
-			frame.add (btnCalc, cc.xyw (2,14,3, "center, top"));
+			pnlButtons.add (btnCalc);
+
+			btnSave = new JButton ("Save results");
+			pnlButtons.add (btnSave);
+			btnSave.setEnabled(false);
+
+			frame.add (pnlButtons, cc.xyw (2,14,3));
 			
 			final JTable tblResult = new JTable ();
 			tblResult.addMouseListener(new MouseAdapter()
@@ -245,10 +262,49 @@ public class StatisticsPlugin implements Plugin
 					File pwDir = new File (txtDir.getText());
 					String expr = txtExpr.getText();
 					
-					//TODO: run in separate thread
-					doCalculate (pwDir, myCriterion, tblResult, frame);
-					
+					doCalculate (pwDir, myCriterion, tblResult, frame);					
 				}
+			});
+			
+			btnSave.addActionListener(new ActionListener () 
+			{
+				
+				public void actionPerformed(ActionEvent ae)
+				{
+					JFileChooser jfc = new JFileChooser();
+					jfc.setDialogTitle("Save results");
+					jfc.setFileFilter(new SimpleFileFilter ("Tab delimited text", "*.txt", true));
+					jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+					
+					if (jfc.showDialog(frame, "Save") == JFileChooser.APPROVE_OPTION)
+					{
+						File f = jfc.getSelectedFile();
+						if (!f.toString().endsWith (".txt"))
+						{
+							f = new File (f + ".txt");
+						}
+						
+						try
+						{
+							PrintStream out = new PrintStream (new FileOutputStream(f));
+							
+							//TODO: it may have happened that the criterion was changed by the user,
+							// so it needs to be stored in a temp variable  
+							out.println ("Statistics results for " + new Date());
+							out.println ("Dataset: " + GexManager.getCurrent().getCurrentGex().getDbName());
+							out.println ("Criterion: " + myCriterion.getExpression());
+							out.println();
+							
+							((StatisticsTableModel)(tblResult.getModel())).printData(out);
+						}
+						catch (IOException e)
+						{
+							JOptionPane.showMessageDialog(frame, "Could not save results: " + e.getMessage());
+							Logger.log.error ("Could not save results", e);
+						}
+					}
+				}
+			
 			});
 	
 			txtExpr.requestFocus();
@@ -257,189 +313,196 @@ public class StatisticsPlugin implements Plugin
 			frame.setVisible(true);
 		}
 
-	}
-	
-	/**
-	 * asynchronous statistics calculation function
-	 */
-	private static void doCalculate(final File pwDir, final Criterion crit, final JTable resultTable, JFrame parentFrame)
-	{
-		final int TOTALWORK = 1000;
-
-		final ProgressMonitor pmon = new ProgressMonitor(
-				parentFrame, "Pathway search", "searching pathways...",
-				0, TOTALWORK);
-		
-		final StatisticsTableModel stm = new StatisticsTableModel();
-		stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
-		resultTable.setModel (stm);
-
-		SwingWorker<Boolean, StatisticsResult> worker = new SwingWorker<Boolean, StatisticsResult>() 
+		/**
+		 * asynchronous statistics calculation function
+		 */
+		//TODO: make this a SwingWorker class
+		private void doCalculate(final File pwDir, final Criterion crit, final JTable resultTable, JFrame parentFrame)
 		{
-			@Override
-			protected Boolean doInBackground()
+			final int TOTALWORK = 1000;
+
+			final ProgressMonitor pmon = new ProgressMonitor(
+					parentFrame, "Pathway search", "searching pathways...",
+					0, TOTALWORK);
+			
+			btnSave.setEnabled (false);
+			final StatisticsTableModel stm = new StatisticsTableModel();
+			stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
+			resultTable.setModel (stm);
+
+			SwingWorker<Boolean, StatisticsResult> worker = new SwingWorker<Boolean, StatisticsResult>() 
 			{
-				pmon.setProgress (0);
-				pmon.setNote("Analyzing data");
-				SimpleGex gex = GexManager.getCurrent().getCurrentGex();
-				
-				// first we calculate N and R
-				
-				int N = 0;
-				int R = 0;
-				try
+				@Override
+				protected Boolean doInBackground()
 				{
-					int maxRow = gex.getMaxRow();
-					for (int i = 0; i < maxRow; ++i)
-					{
-						if (pmon.isCanceled()) return false;
-						Data d = gex.getRow(i);
-						N++;
-						boolean result = crit.evaluate(d.getSampleData());
-						if (result)
-						{
-							R++;
-						}		
-//						Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);
-						pmon.setProgress ((int)(0.2 * (double)i / (double)maxRow * (double)TOTALWORK));
-					}
-				}
-				catch (Exception e)
-				{
-					Logger.log.error ("Problem during calculation of R/N ", e);
-					//TODO: better error handling
-				}
-
-				Logger.log.info ("N: " + N + ", R: " + R);
-				
-				// now we calculate n and r for each pwy				
-				List<File> files = FileUtils.getFiles(pwDir, "gpml", true);
-				
-				XMLReader xmlReader = null;
-				
-				try
-				{
-					xmlReader = XMLReaderFactory.createXMLReader();
-				}
-				catch (SAXException e)
-				{
-					Logger.log.error("Problem while searching pathways", e);
-					return false;
-				}
-		
-				int i = 0;
-
-				pmon.setNote ("Analyzing pathways");
-
-				for (File file : files)
-				{
+					pmon.setProgress (0);
+					pmon.setNote("Analyzing data");
+					SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+					
+					// first we calculate N and R
+					
+					int N = 0;
+					int R = 0;
 					try
 					{
-						PathwayParser pwyParser = new PathwayParser(file, xmlReader);
-						
-						// Step 1: map the genes in the pathway to a common system.
-						// This common system can be Ensembl, but it doesn't have to be.
-						// as long as the same single common system is used for all pathways
-						// Make the list unique. This is our "n".
-						
-						Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
-						
-						Logger.log.info ("Calculating statistics for " + pwyParser.getName());
-						
-						List <Xref> genes = new ArrayList<Xref>();
-						genes.addAll (pwyParser.getGenes());
-						Map <String, List<Data>> ensGenes = new HashMap <String, List<Data>> ();
-						
-						gex.cacheData(genes, new ProgressKeeper(1000), gdb);
-
-						for (Xref ref : genes)
-						{
-							List<Data> datas  = gex.getCachedData().getData(ref);
-							
-							for (String ensId : gdb.ref2EnsIds(ref))
-							{
-								if (pmon.isCanceled()) return false;
-								Logger.log.info ("Mapping: " + ensId);
-								ensGenes.put (ensId, datas);								
-							}
-						}
-						
-						int cPwyTotal = ensGenes.size();
-						int cPwyMeasured = 0;
-						
-						// Step 2: find the corresponding rows in the Gex. There could be more than one row per gene, this is ok.
-						
-						double cPwyPositive = 0;
-						
-						for (String ensGene : ensGenes.keySet())
+						int maxRow = gex.getMaxRow();
+						for (int i = 0; i < maxRow; ++i)
 						{
 							if (pmon.isCanceled()) return false;
-							List<Data> rows = ensGenes.get (ensGene);
-							
-							if (rows != null)
+							Data d = gex.getRow(i);
+							N++;
+							boolean result = crit.evaluate(d.getSampleData());
+							if (result)
 							{
-								int cGeneTotal = rows.size();
-								if (cGeneTotal > 0) { cPwyMeasured++; }
-								int cGenePositive = 0;
+								R++;
+							}		
+//							Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);
+							pmon.setProgress ((int)(0.2 * (double)i / (double)maxRow * (double)TOTALWORK));
+						}
+					}
+					catch (Exception e)
+					{
+						Logger.log.error ("Problem during calculation of R/N ", e);
+						//TODO: better error handling
+					}
+
+					Logger.log.info ("N: " + N + ", R: " + R);
+					
+					// now we calculate n and r for each pwy				
+					List<File> files = FileUtils.getFiles(pwDir, "gpml", true);
+					
+					XMLReader xmlReader = null;
+					
+					try
+					{
+						xmlReader = XMLReaderFactory.createXMLReader();
+					}
+					catch (SAXException e)
+					{
+						Logger.log.error("Problem while searching pathways", e);
+						return false;
+					}
+			
+					int i = 0;
+
+					pmon.setNote ("Analyzing pathways");
+
+					for (File file : files)
+					{
+						try
+						{
+							PathwayParser pwyParser = new PathwayParser(file, xmlReader);
+							
+							// Step 1: map the genes in the pathway to a common system.
+							// This common system can be Ensembl, but it doesn't have to be.
+							// as long as the same single common system is used for all pathways
+							// Make the list unique. This is our "n".
+							
+							Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
+							
+							Logger.log.info ("Calculating statistics for " + pwyParser.getName());
+							
+							List <Xref> genes = new ArrayList<Xref>();
+							genes.addAll (pwyParser.getGenes());
+							Map <String, List<Data>> ensGenes = new HashMap <String, List<Data>> ();
+							
+							gex.cacheData(genes, new ProgressKeeper(1000), gdb);
+
+							for (Xref ref : genes)
+							{
+								List<Data> datas  = gex.getCachedData().getData(ref);
 								
-								for (Data row : rows)
+								for (String ensId : gdb.ref2EnsIds(ref))
 								{
 									if (pmon.isCanceled()) return false;
-									Logger.log.info ("Data found: " + row.getXref() + ", for sample 1: " + row.getSampleData(1));
-									try
-									{	
-										boolean result = crit.evaluate(row.getSampleData());
-										if (result) cGenePositive++;
-									}
-									catch (Exception e)
-									{
-										Logger.log.error ("Unknown error during statistics", e);
-									}
+									Logger.log.info ("Mapping: " + ensId);
+									ensGenes.put (ensId, datas);								
 								}
-							
-								// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
-								
-								//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
-								cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
-								
-								//The line below is the original MAPPFinder behaviour: 
-								//  count as fully positive if at least one probe is positive
-								//if (cGenePositive > 0) cPwyPositive += 1;
 							}
+							
+							int cPwyTotal = ensGenes.size();
+							int cPwyMeasured = 0;
+							
+							// Step 2: find the corresponding rows in the Gex. There could be more than one row per gene, this is ok.
+							
+							double cPwyPositive = 0;
+							
+							for (String ensGene : ensGenes.keySet())
+							{
+								if (pmon.isCanceled()) return false;
+								List<Data> rows = ensGenes.get (ensGene);
+								
+								if (rows != null)
+								{
+									int cGeneTotal = rows.size();
+									if (cGeneTotal > 0) { cPwyMeasured++; }
+									int cGenePositive = 0;
+									
+									for (Data row : rows)
+									{
+										if (pmon.isCanceled()) return false;
+										Logger.log.info ("Data found: " + row.getXref() + ", for sample 1: " + row.getSampleData(1));
+										try
+										{	
+											boolean result = crit.evaluate(row.getSampleData());
+											if (result) cGenePositive++;
+										}
+										catch (Exception e)
+										{
+											Logger.log.error ("Unknown error during statistics", e);
+										}
+									}
+								
+									// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
+									
+									//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
+									cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
+									
+									//The line below is the original MAPPFinder behaviour: 
+									//  count as fully positive if at least one probe is positive
+									//if (cGenePositive > 0) cPwyPositive += 1;
+								}
+							}
+							
+							double z = Stats.zscore (cPwyMeasured, cPwyPositive, N, R);						
+							
+							StatisticsResult sr = new StatisticsResult (file, pwyParser.getName(), cPwyMeasured, (int)Math.round (cPwyPositive), cPwyTotal, z);
+							publish (sr);
 						}
-						
-						double z = Stats.zscore (cPwyMeasured, cPwyPositive, N, R);						
-						
-						StatisticsResult sr = new StatisticsResult (file, pwyParser.getName(), cPwyMeasured, (int)Math.round (cPwyPositive), cPwyTotal, z);
-						publish (sr);
+						catch (ParseException pe)
+						{
+							Logger.log.warn ("Could not parse " + file + ", ignoring", pe);
+						}
+						i++;
+						pmon.setProgress((int)((0.2 + (0.8 * (double)i / (double)files.size())) * (double)TOTALWORK));				
 					}
-					catch (ParseException pe)
-					{
-						Logger.log.warn ("Could not parse " + file + ", ignoring", pe);
-					}
-					i++;
-					pmon.setProgress((int)((0.2 + (0.8 * (double)i / (double)files.size())) * (double)TOTALWORK));				
+					pmon.close();
+					return true;
 				}
-				stm.saveData();
-				pmon.close();
-				return true;
-			}
-			
-			@Override
-			protected void process (List<StatisticsResult> srs)
-			{
-				for (StatisticsResult sr : srs)
+				
+				@Override
+				protected void process (List<StatisticsResult> srs)
 				{
-					stm.addRow (sr);
-					stm.sort();
-					stm.packRows(resultTable, 2);
+					for (StatisticsResult sr : srs)
+					{
+						stm.addRow (sr);
+						stm.sort();
+						stm.packRows(resultTable, 2);
+					}
 				}
-			}
-		};
-		
-		worker.execute();
-		
+				
+				@Override
+				protected void done()
+				{
+					btnSave.setEnabled(true);
+				}
+			};
+			
+			worker.execute();
+			
+		}
 	}
+
 	
 	/**
 	 * Statistics calculation for a single pathway,
@@ -489,11 +552,42 @@ public class StatisticsPlugin implements Plugin
 	{
 		private static final long serialVersionUID = 1L;
 		
-		public void saveData()
+		public void printData(PrintStream out) throws IOException
 		{
+			// array of columns we are going to save
+			Column[] saveColumns = new Column[] {
+					Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE 
+			};
+
+			// print table header
+			{
+				boolean first = true;
+				for (Column col : saveColumns)
+				{
+					if (!first)
+					{
+						out.print ("\t");
+					}
+					first = false;
+					out.print (col.title);
+				}
+				out.println ();
+			}
+			
+			// print table rows	
 			for (StatisticsResult sr : rows)
 			{
-				System.out.println (sr.name + "\t" + sr.r + "\t" + sr.n + "\t" + sr.z);  
+				boolean first = true;
+				for (Column col : saveColumns)
+				{
+					if (!first)
+					{
+						out.print ("\t");
+					}
+					first = false;
+					out.print (sr.getProperty(col));
+				}
+				out.println();
 			}
 		}
 		
@@ -507,18 +601,7 @@ public class StatisticsPlugin implements Plugin
 
 				public int compare(StatisticsResult arg0, StatisticsResult arg1) 
 				{
-					if (arg0.z > arg1.z)
-					{
-						return -1;
-					}
-					else if (arg0.z < arg1.z)
-					{
-						return 1;
-					}
-					else
-					{
-						return 0;
-					}
+					return Double.compare(arg1.z, arg0.z);
 				}
 			});
 			fireTableDataChanged();

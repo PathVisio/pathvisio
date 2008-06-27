@@ -58,6 +58,7 @@ import org.pathvisio.util.ProgressKeeper;
 public class SimpleGex
 {
 	private static final int GEX_COMPAT_VERSION = 1; //Preferred schema version
+	private static final int SAMPLE_NAME_LEN = 50; // max length of sample names
 	
 	private Connection con;
 	private DBConnector dbConnector;
@@ -132,6 +133,8 @@ public class SimpleGex
 	public void addSample(int sampleId, String value, int type) throws SQLException
 	{
 		assert (pstSample != null);
+		if (value.length() >= SAMPLE_NAME_LEN) 
+			throw new IllegalArgumentException ("Sample name can't be longer than " + SAMPLE_NAME_LEN + " chars");
 		pstSample.setInt(1, sampleId);
 		pstSample.setString(2, value);
 		pstSample.setInt(3, type);
@@ -395,7 +398,7 @@ public class SimpleGex
 					"CREATE TABLE                    " +
 					"		samples							" +
 					" (   idSample INTEGER PRIMARY KEY,		" +
-					"     name VARCHAR(50),					" +
+					"     name VARCHAR(" + SAMPLE_NAME_LEN + "),					" +
 					"	  dataType INTEGER					" +
 			" )										");
 			

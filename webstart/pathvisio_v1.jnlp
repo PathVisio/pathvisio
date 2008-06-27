@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp codebase="http://blog.bigcat.unimaas.nl/~gmmlvisio" href="pathvisio_v1.jnlp">
 	<information>
-		 <title>PathVisio 1.1 alpha</title>
+		 <title>PathVisio 1.1 beta</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>

@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.Set;
 
 import javax.swing.Action;
@@ -27,12 +28,18 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 
 import com.mammothsoftware.frwk.ddb.DropDownButton;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 public class MainPanelStandalone extends MainPanel 
 {
@@ -109,6 +116,31 @@ public class MainPanelStandalone extends MainPanel
 		
 		SearchPane searchPane = new SearchPane();
 		sidebarTabbedPane.addTab ("Search", searchPane); 
+		
+		backpagePane.addHyperlinkListener(
+				new HyperlinkListener() 
+				{
+					public void hyperlinkUpdate(HyperlinkEvent e) 
+					{
+						if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+						{
+							URL url = e.getURL();
+							try
+							{
+								BrowserLauncher b = new BrowserLauncher(null);
+								b.openURLinBrowser(url.toString());
+							}
+							catch (Exception ex)
+							{
+								Logger.log.error ("Couldn't open url '" + url + "'", ex);
+								JOptionPane.showMessageDialog(SwingEngine.getCurrent().getFrame(), 
+										"Error opening the Browser, see error log for details.");
+							}
+						}
+					}
+				}
+				);
+
 	}
 
 	protected void addToolBarActions(JToolBar tb) 

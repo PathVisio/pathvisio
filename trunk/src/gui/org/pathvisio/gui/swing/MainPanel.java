@@ -82,7 +82,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	private JTable propertyTable;
 
-	private BackpagePane backpagePane;
+	protected BackpagePane backpagePane;
 	
 	protected CommonActions actions;
 	

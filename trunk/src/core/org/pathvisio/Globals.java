@@ -22,7 +22,7 @@ package org.pathvisio;
 public class Globals 
 {
 	public static final String APPLICATION_NAME = "PathVisio";
-	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
+	public static final String HELP_URL = "http://www.pathvisio.org/Help_1.1";
 	// for inclusion in certain error messages.
 	public static final String DEVELOPER_EMAIL = "martijn.vaniersel@bigcat.unimaas.nl"; 
 	public static final String SERVER_NAME = "WikiPathways.org";

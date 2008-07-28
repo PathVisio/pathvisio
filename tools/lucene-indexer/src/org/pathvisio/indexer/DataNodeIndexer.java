@@ -53,7 +53,7 @@ public class DataNodeIndexer {
 	 */
 	public static final String FIELD_ID_CODE = "id.database";
 	/**
-	 * An identifier bb72a952dd7d0e0ae0ca76c3d3cfff26297944cbthat was found by looking up all cross references
+	 * An identifier that was found by looking up all cross references
 	 * for a DataNode xref on the pathway.
 	 */
 	public static final String FIELD_XID = "x.id";
@@ -70,7 +70,7 @@ public class DataNodeIndexer {
 	/**
 	 * @see PathwayIndexer#FIELD_GRAPHID
 	 */
-	public static final String FIELD_GRAPHID = PathwayIndexer.FIELD_GRAPHID;
+	public static final String FIELD_GRAPHID = "graphId";
 	
 	/**
 	 * @see PathwayIndexer#FIELD_SOURCE

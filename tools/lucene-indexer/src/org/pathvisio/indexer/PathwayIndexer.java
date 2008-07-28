@@ -58,11 +58,6 @@ public class PathwayIndexer {
 	public static final String FIELD_DESCRIPTION = "description";
 	
 	/**
-	 * A graphId of an element on the pathway
-	 */
-	public static final String FIELD_GRAPHID = "graphid";
-	
-	/**
 	 * The TextLabel attribute of an element on the pathway
 	 */
 	public static final String FIELD_TEXTLABEL = "textlabel";
@@ -119,17 +114,6 @@ public class PathwayIndexer {
 						Field.Index.TOKENIZED
 				)
 		);
-		//Process graph ids
-		for(String id : pathway.getGraphIds()) {
-			doc.add(
-				new Field(
-						FIELD_GRAPHID,
-						id,
-						Field.Store.YES,
-						Field.Index.UN_TOKENIZED
-				)
-			);
-		}
 		
 		//Process text labels
 		for(PathwayElement pe : pathway.getDataObjects()) {

@@ -25,7 +25,6 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
@@ -39,7 +38,7 @@ import org.pathvisio.model.Xref;
  * it's synonym database references
  * @author thomas
  */
-public class DataNodeIndexer {
+public class DataNodeIndexer extends IndexerBase {
 	/**
 	 * An identifier of a DataNode xref that is on the pathway
 	 */
@@ -67,32 +66,11 @@ public class DataNodeIndexer {
 	 */
 	public static final String FIELD_XID_CODE = "x.id.database";
 	
-	/**
-	 * @see PathwayIndexer#FIELD_GRAPHID
-	 */
-	public static final String FIELD_GRAPHID = "graphId";
-	
-	/**
-	 * @see PathwayIndexer#FIELD_SOURCE
-	 */
-	public static final String FIELD_SOURCE = PathwayIndexer.FIELD_SOURCE;
-	
-	GdbProvider gdbs;
-	String source;
-	Pathway pathway;
-	IndexWriter writer;
-	
 	public DataNodeIndexer(String source, Pathway pathway, IndexWriter writer) {
-		this.source = source;
-		this.pathway = pathway;
-		this.writer = writer;
+		super(source, pathway, writer);
 	}
 	
-	public void setGdbProvider(GdbProvider gdbs) {
-		this.gdbs = gdbs;
-	}
-	
-	public void indexDataNodes() throws CorruptIndexException, IOException {
+	public void indexPathway() throws CorruptIndexException, IOException {
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			if(pe.getObjectType() == ObjectType.DATANODE) {
 				indexDataNode(pe);
@@ -121,18 +99,9 @@ public class DataNodeIndexer {
 				}
 			}
 		}
-		writer.addDocument(doc);
+		addDocument(doc);
 	}
 
-	/**
-	 * Removes all DataNodes for this pathway from the index.
-	 * @throws IOException 
-	 * @throws CorruptIndexException 
-	 */
-	public void removeDataNodes() throws CorruptIndexException, IOException {
-		writer.deleteDocuments(new Term(FIELD_SOURCE, source));
-	}
-	
 	void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
 		if(xref != null) {
 			String id = xref.getId();

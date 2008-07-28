@@ -87,53 +87,29 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * 
  * @author thomas
  */
-public class RelationshipIndexer {
-	Pathway pathway;
-	IndexWriter writer;
-	String source;
-	
+public class RelationshipIndexer extends IndexerBase {
 	public RelationshipIndexer(String source, Pathway pathway, IndexWriter writer) {
-		this.pathway = pathway;
-		this.writer = writer;
-		this.source = source;
+		super(source, pathway, writer);
 	}
 	
-	/**
-	 * Removes all relationships for this pathway from the index.
-	 * @throws IOException 
-	 * @throws CorruptIndexException 
-	 */
-	public void removeRelationships() throws CorruptIndexException, IOException {
-		writer.deleteDocuments(new Term(FIELD_SOURCE, source));
-	}
-	
-	/**
-	 * Adds/updates all relationships in the pathway to the index
-	 * @throws CorruptIndexException
-	 * @throws IOException
-	 */
-	public void indexRelationships() throws CorruptIndexException, IOException {
+	public void indexPathway() throws CorruptIndexException, IOException {
 		//Find all connectors that do not connect to an anchor
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			if(isRelation(pe)) {
 				indexRelationship(pe);
 			}
-		}
-		
+		}		
 	}
 	
 	void indexRelationship(PathwayElement relation) throws CorruptIndexException, IOException {
 		Document doc = new Document();
-		doc.add(new Field(
-				FIELD_SOURCE, source, Field.Store.YES, Field.Index.UN_TOKENIZED
-		));
 		
 		Relation r = new Relation(relation);
 		addElements(FIELD_LEFT, r.getLefts(), doc);
 		addElements(FIELD_RIGHT, r.getRights(), doc);
 		addElements(FIELD_MEDIATOR, r.getMediators(), doc);
 		
-		writer.addDocument(doc);
+		addDocument(doc);
 	}
 	
 	void addElements(String field, Collection<PathwayElement> elms, Document doc) {
@@ -252,11 +228,6 @@ public class RelationshipIndexer {
 		Set<PathwayElement> getMediators() { return mediators; }
 	}
 	
-	/**
-	 * Field for the source pathway
-	 */
-	public static final String FIELD_SOURCE = PathwayIndexer.FIELD_SOURCE;
-
 	/**
 	 * Field that contains all elements participating on the
 	 * left (start) side of this interaction

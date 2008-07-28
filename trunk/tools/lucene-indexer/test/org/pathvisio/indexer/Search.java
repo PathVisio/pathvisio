@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.derby.impl.sql.compile.RenameNode;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -60,6 +61,53 @@ public class Search extends TestCase {
 			e.printStackTrace();
 			fail("Exception during indexing: " + e.getMessage());
 		}
+	}
+	
+	public void testRemovePathway() {
+		File firstFile = null;
+		File renamedFile = null;
+		int nrHits = -1;
+		
+		for(File f : pathwayDir.listFiles()) {
+			if(f.getName().endsWith(".gpml")) {
+				firstFile = new File(f.getAbsolutePath());
+				renamedFile = new File(f.getAbsolutePath() + ".tmp");
+				assertTrue(f.renameTo(renamedFile));
+				break;
+			}
+		}
+		
+		Logger.log.info("Removing " + firstFile.getAbsolutePath() + " from index");
+		
+		try {
+			//Update the index
+			GdbProvider gdbs = new GdbProvider();
+			GpmlIndexer indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
+			indexer.update(firstFile);
+			indexer.close();
+			
+			//Try to find the pathway by it's source attribute
+			Hits hits = query(
+					new TermQuery(
+							new Term(IndexerBase.FIELD_SOURCE, firstFile.getAbsolutePath())
+					)
+			);
+			nrHits = hits.length();
+			
+			Logger.log.info("FirstFile: " + firstFile);
+			Logger.log.info("RenamedFile: " + renamedFile);
+			renamedFile.renameTo(firstFile);
+			
+			//Update the index
+			indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
+			indexer.update(firstFile);
+			indexer.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		
+		assertEquals(0, nrHits);
 	}
 	
 	public void testTitleSearch() {

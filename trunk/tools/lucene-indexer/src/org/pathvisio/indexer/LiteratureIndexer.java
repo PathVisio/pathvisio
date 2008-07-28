@@ -35,16 +35,11 @@ import org.pathvisio.model.PathwayElement;
  * Indexes literature references for a pathway
  * @author thomas
  */
-public class LiteratureIndexer {
+public class LiteratureIndexer extends IndexerBase {
 	/**
 	 * @see PathwayIndexer#FIELD_GRAPHID
 	 */
 	public static final String FIELD_GRAPHID = "graphId";
-	
-	/**
-	 * @see PathwayIndexer#FIELD_SOURCE
-	 */
-	public static final String FIELD_SOURCE = PathwayIndexer.FIELD_SOURCE;
 	
 	/**
 	 * The pubmed id
@@ -61,25 +56,19 @@ public class LiteratureIndexer {
 	 */
 	public static final String FIELD_AUTHOR = "literature.author";
 	
-	String source;
-	Pathway pathway;
-	IndexWriter writer;
 	BiopaxElementManager bpMgr;
 	
 	public LiteratureIndexer(String source, Pathway pathway, IndexWriter writer) {
-		this.source = source;
-		this.pathway = pathway;
-		this.writer = writer;
+		super(source, pathway, writer);
 	}
-
 	
-	public void indexLiterature() throws CorruptIndexException, IOException {
+	public void indexPathway() throws CorruptIndexException, IOException {
 		bpMgr = new BiopaxElementManager(pathway);
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			indexLiterature(pe);
-		}
+		}		
 	}
-	
+
 	void indexLiterature(PathwayElement pe) throws CorruptIndexException, IOException {
 		BiopaxReferenceManager refMgr = new BiopaxReferenceManager(bpMgr, pe);
 		for(PublicationXRef ref : refMgr.getPublicationXRefs()) {
@@ -97,16 +86,7 @@ public class LiteratureIndexer {
 			for(String author : ref.getAuthors()) {
 				doc.add(new Field(FIELD_AUTHOR, author, Store.YES, Index.TOKENIZED));
 			}
-			writer.addDocument(doc);
+			addDocument(doc);
 		}
-	}
-
-	/**
-	 * Removes all literature for this pathway from the index.
-	 * @throws IOException 
-	 * @throws CorruptIndexException 
-	 */
-	public void removeLiterature() throws CorruptIndexException, IOException {
-		writer.deleteDocuments(new Term(FIELD_SOURCE, source));
 	}
 }

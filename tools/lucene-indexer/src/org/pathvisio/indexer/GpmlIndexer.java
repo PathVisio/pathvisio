@@ -18,6 +18,7 @@ package org.pathvisio.indexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,6 +37,8 @@ import org.pathvisio.util.FileUtils;
  * @author thomas
  */
 public class GpmlIndexer {
+	Set<Class<? extends IndexerBase>> indexers = new HashSet<Class<? extends IndexerBase>>();
+	
 	IndexWriter writer;
 	Set<File> gpmlFiles = new HashSet<File>();
 	GdbProvider gdbs;
@@ -68,8 +71,34 @@ public class GpmlIndexer {
 		this.gpmlFiles.addAll(gpmlFiles);
 		this.gdbs = gdbs;
 		this.writer = indexWriter;
+		registerDefaultIndexers();
 	}
 
+	void registerDefaultIndexers() {
+		indexers.add(PathwayIndexer.class);
+		indexers.add(DataNodeIndexer.class);
+		indexers.add(RelationshipIndexer.class);
+		indexers.add(LiteratureIndexer.class);
+	}
+	
+	Set<IndexerBase> createIndexers(String source, Pathway pathway, IndexWriter writer) {
+		Set<IndexerBase> instances = new HashSet<IndexerBase>();
+		
+		for(Class<? extends IndexerBase> ic : indexers) {
+			try {
+				Constructor<? extends IndexerBase> c = ic.getConstructor(
+						String.class, Pathway.class, IndexWriter.class
+				);
+				IndexerBase i = c.newInstance(source, pathway, writer);
+				i.setGdbProvider(gdbs);
+				instances.add(i);
+			} catch (Exception e) {
+				Logger.log.error("Unable to create indexer " + ic, e);
+			}
+		}
+		return instances;
+	}
+	
 	public void setWriter(IndexWriter writer) {
 		this.writer = writer;
 	}
@@ -94,6 +123,7 @@ public class GpmlIndexer {
 	 * @throws IOException
 	 */
 	public void close() throws CorruptIndexException, IOException {
+		writer.optimize();
 		writer.close();
 	}
 	
@@ -104,29 +134,25 @@ public class GpmlIndexer {
 			CorruptIndexException, IOException {
 		Pathway p = new Pathway();
 		String source = sourceProvider.getSource(gpmlFile);
-		PathwayIndexer pwi = new PathwayIndexer(source, p, writer);
-		RelationshipIndexer rli = new RelationshipIndexer(source, p, writer);
-		DataNodeIndexer dni = new DataNodeIndexer(source, p, writer);
-		LiteratureIndexer li = new LiteratureIndexer(source, p, writer);
 		if (gpmlFile.exists()) {
 			Logger.log.trace("Updaging index for: " + gpmlFile);
+			p.readFromXml(gpmlFile, true);
+			Set<IndexerBase> indexers = createIndexers(source, p, writer);
 			// Add if exists on file system
 			gpmlFiles.add(gpmlFile);
 			// Update index
-			p.readFromXml(gpmlFile, true);
-			pwi.indexPathway();
-			dni.setGdbProvider(gdbs);
-			dni.indexDataNodes();
-			rli.indexRelationships();
-			li.indexLiterature();
+			for(IndexerBase i : indexers) {
+				i.removePathway();
+				i.indexPathway();
+			}
 		} else {
 			Logger.log.trace("Removing from index: " + gpmlFile);
 			// Remove from index if doesn't exist
 			gpmlFiles.remove(gpmlFile);
-			pwi.removePathway();
-			dni.removeDataNodes();
-			rli.removeRelationships();
-			li.removeLiterature();
+			Set<IndexerBase> indexers = createIndexers(source, p, writer);
+			for(IndexerBase i : indexers) {
+				i.removePathway();
+			}
 		}
 	}
 }

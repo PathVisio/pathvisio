@@ -22,17 +22,16 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.wikipathways.WikiPathways;
 
 /**
- * Class that indexes a pathway object
+ * Class that indexes several metadata for a pathway.
  * @author thomas
  *
  */
-public class PathwayIndexer {
+public class PathwayIndexer extends IndexerBase {
 	/**
 	 * The name of a pathway
 	 */
@@ -41,17 +40,12 @@ public class PathwayIndexer {
 	 * The organism of a pathway
 	 */
 	public static final String FIELD_ORGANISM = "organism";
-	/**
-	 * The source of a pathway (e.g. an url or file where the pathway
-	 * is stored). This field should be unique for each pathway in the index.
-	 */
-	public static final String FIELD_SOURCE = "source";
 	
 	/**
 	 * The WikiPathways category a pathway belongs to
 	 */
 	public static final String FIELD_CATEGORY = "category";
-	
+
 	/**
 	 * The WikiPathways description of a pathway
 	 */
@@ -62,10 +56,6 @@ public class PathwayIndexer {
 	 */
 	public static final String FIELD_TEXTLABEL = "textlabel";
 	
-	String source;
-	Pathway pathway;
-	IndexWriter writer;
-	
 	/**
 	 * Create a PathwayIndexer
 	 * @param source The source of the pathway (e.g. a file or url)
@@ -73,30 +63,11 @@ public class PathwayIndexer {
 	 * @param w The IndexWriter to write the index to
 	 */
 	public PathwayIndexer(String source, Pathway p, IndexWriter w) {
-		this.source = source;
-		this.pathway = p;
-		this.writer = w;
+		super(source, p, w);
 	}
 	
-	/**
-	 * Removes the pathway from the index. The pathway is identified
-	 * by the {@link #FIELD_SOURCE} field.
-	 * @throws IOException 
-	 * @throws CorruptIndexException 
-	 */
-	public void removePathway() throws CorruptIndexException, IOException {
-		writer.deleteDocuments(new Term(FIELD_SOURCE, source));
-	}
-	
-	/**
-	 * Updates or adds the pathway to the index
-	 * @throws CorruptIndexException
-	 * @throws IOException
-	 */
 	public void indexPathway() throws CorruptIndexException, IOException {
 		Document doc = new Document();
-		doc.add(new Field(FIELD_SOURCE, source, Field.Store.YES, Field.Index.NO));
-		
 		PathwayElement info = pathway.getMappInfo();
 		doc.add(
 				new Field(
@@ -148,7 +119,7 @@ public class PathwayIndexer {
 						Field.Index.TOKENIZED
 				));
 			}
-		}
-		writer.updateDocument(new Term(FIELD_SOURCE, source), doc);
+		}	
+		addDocument(doc);
 	}
 }

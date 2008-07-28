@@ -111,14 +111,20 @@ public class WikiPathwaysIndexer extends Timer{
 	}
 	
 	private void createWriter() throws CorruptIndexException, LockObtainFailedException, IOException {
-		if(writer != null) writer.close();
+		if(writer != null) {
+			writer.optimize();
+			writer.close();
+		}
 		writer = new IndexWriter(FSDirectory.getDirectory(indexPath), false, new StandardAnalyzer());
 		
 		indexer.setWriter(writer);
 	}
 	
 	private void closeWriter() throws CorruptIndexException, IOException {
-		if(writer != null) writer.close();
+		if(writer != null) {
+			writer.optimize();
+			writer.close();
+		}
 		writer = null;
 	}
 

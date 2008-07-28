@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2007" Name="Literature test" Version="20080724">
+  <BiopaxRef>b0b</BiopaxRef>
+  <Graphics BoardWidth="7392.0" BoardHeight="3036.0" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <DataNode TextLabel="GeneProduct" Type="GeneProduct" GraphId="cf503">
+    <BiopaxRef>ce0</BiopaxRef>
+    <Graphics Color="000000" CenterX="6120.0" CenterY="2610.0" Width="1200.0" Height="300.0" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Biopax>
+    <bp:PublicationXRef xmlns:bp="http://www.biopax.org/release/biopax-level2.owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:id="b0b">
+      <bp:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1234</bp:ID>
+      <bp:DB rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PubMed</bp:DB>
+      <bp:TITLE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Change in the kinetics of sulphacetamide tissue distribution in Walker tumor-bearing rats.</bp:TITLE>
+      <bp:SOURCE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drug Metab Dispos</bp:SOURCE>
+      <bp:YEAR rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1975</bp:YEAR>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nadeau D</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marchand C</bp:AUTHORS>
+    </bp:PublicationXRef>
+    <bp:PublicationXRef xmlns:bp="http://www.biopax.org/release/biopax-level2.owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:id="ce0">
+      <bp:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2345</bp:ID>
+      <bp:DB rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PubMed</bp:DB>
+      <bp:TITLE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Oxygen transport by haemoglobin. A comparison of whole blood, washed erythrocytes and haemoglobin solution.</bp:TITLE>
+      <bp:SOURCE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biomedicine</bp:SOURCE>
+      <bp:YEAR rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1975</bp:YEAR>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lecompte F</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sinet M</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Azoulay E</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Muffat-Joly M</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pocidalo JJ</bp:AUTHORS>
+    </bp:PublicationXRef>
+  </Biopax>
+</Pathway>
+

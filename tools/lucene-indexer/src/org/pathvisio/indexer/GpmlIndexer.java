@@ -107,6 +107,7 @@ public class GpmlIndexer {
 		PathwayIndexer pwi = new PathwayIndexer(source, p, writer);
 		RelationshipIndexer rli = new RelationshipIndexer(source, p, writer);
 		DataNodeIndexer dni = new DataNodeIndexer(source, p, writer);
+		LiteratureIndexer li = new LiteratureIndexer(source, p, writer);
 		if (gpmlFile.exists()) {
 			Logger.log.trace("Updaging index for: " + gpmlFile);
 			// Add if exists on file system
@@ -117,6 +118,7 @@ public class GpmlIndexer {
 			dni.setGdbProvider(gdbs);
 			dni.indexDataNodes();
 			rli.indexRelationships();
+			li.indexLiterature();
 		} else {
 			Logger.log.trace("Removing from index: " + gpmlFile);
 			// Remove from index if doesn't exist
@@ -124,6 +126,7 @@ public class GpmlIndexer {
 			pwi.removePathway();
 			dni.removeDataNodes();
 			rli.removeRelationships();
+			li.removeLiterature();
 		}
 	}
 }

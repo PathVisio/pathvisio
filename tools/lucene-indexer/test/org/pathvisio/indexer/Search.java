@@ -143,6 +143,15 @@ public class Search extends TestCase {
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_MEDIATOR, "catalyst"));
 	}
 	
+	public void testLiterature() {
+		Query q1 = new TermQuery(new Term(LiteratureIndexer.FIELD_ID, "1234"));
+		Hits hits = query(q1);
+		assertTrue(hits.length() >= 1);
+		String q2 = LiteratureIndexer.FIELD_AUTHOR + ":Marchand";
+		hits = query(q2);
+		assertTrue(hits.length() >= 1);
+	}
+	
 	boolean searchHits(Hits hits, String field, String result) throws CorruptIndexException, IOException {
 		boolean found = false;
 		Logger.log.info("Searching hits for: " + result + " in " + field);

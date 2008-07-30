@@ -148,6 +148,7 @@ public class MainPanelStandalone extends MainPanel
 		tb.setLayout(new WrapLayout(1, 1));
 		
 		addToToolbar(StandaloneActions.newAction);
+		addToToolbar(StandaloneActions.openAction);
 		addToToolbar(actions.saveAction);
 		tb.addSeparator();
 		addToToolbar(actions.copyAction);

@@ -159,16 +159,13 @@ public class DoubleGdb implements Gdb
 	 */
 	public List<Xref> getCrossRefs(Xref idc) 
 	{	
-		List<Xref> result = null;
+		List<Xref> result = new ArrayList<Xref>();
 		
 		for (SimpleGdb child : gdbs)
 		{
 			if (child != null && child.isConnected())
 			{
-				if (result == null)
-					result = child.getCrossRefs (idc);
-				else
-					result.addAll (child.getCrossRefs (idc));
+				result.addAll (child.getCrossRefs (idc));
 			}
 		}
 		return result;
@@ -179,16 +176,13 @@ public class DoubleGdb implements Gdb
 	 */
 	public List<Xref> getCrossRefs(Xref idc, DataSource resultDs) 
 	{
-		List<Xref> result = null;
+		List<Xref> result = new ArrayList<Xref>();
 		
 		for (SimpleGdb child : gdbs)
 		{
 			if (child != null && child.isConnected())
 			{
-				if (result == null)
-					result = child.getCrossRefs (idc, resultDs);
-				else
-					result.addAll (child.getCrossRefs (idc, resultDs));
+				result.addAll (child.getCrossRefs (idc, resultDs));
 			}
 		}
 		return result;

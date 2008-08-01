@@ -21,6 +21,7 @@ package org.pathvisio.view;
 //import java.awt.datatransfer.DataFlavor;
 //import java.awt.datatransfer.UnsupportedFlavorException;
 //import java.io.IOException;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.pathvisio.Engine;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -45,10 +47,28 @@ public class Test extends TestCase {
 		Engine.init();
     	pwy = new Pathway();
     	eltDn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+    	eltDn.setMCenterX(3000);
+    	eltDn.setMCenterY(3000);
     	eltDn.setGeneID("1234");
+    	eltDn.setTextLabel("Gene");
+    	eltDn.setMWidth(1000);
+    	eltDn.setMHeight(1000);
     	eltSh = PathwayElement.createPathwayElement(ObjectType.SHAPE);
+    	eltSh.setMCenterX(6000);
+    	eltSh.setMCenterY(3000);
+    	eltSh.setMWidth(300);
+    	eltSh.setMHeight(700);
     	eltLi = PathwayElement.createPathwayElement(ObjectType.LINE);
+    	eltLi.setMStartX(500);
+    	eltLi.setMStartY(1000);
+    	eltLi.setMEndX(2500);
+    	eltLi.setMEndY(4000);
     	eltLa = PathwayElement.createPathwayElement(ObjectType.LABEL);
+    	eltLa.setMCenterX(6000);
+    	eltLa.setMCenterY(6000);
+    	eltLa.setMWidth(300);
+    	eltLa.setMHeight(700);
+    	eltLa.setTextLabel("Test");
     	pwy.add(eltDn);
     	pwy.add(eltSh);
     	pwy.add(eltLi);
@@ -232,4 +252,5 @@ public class Test extends TestCase {
     {
     	//TODO
     }
+    
 }

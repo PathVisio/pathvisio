@@ -466,7 +466,7 @@ public class Pathway implements PathwayListener
 		{
 			throw new IllegalArgumentException ("unique id can't be null");
 		}
-		if (graphIds.containsKey(id))
+		if (groupIds.containsKey(id))
 		{
 			throw new IllegalArgumentException ("id '" + id + "' is not unique");
 		}

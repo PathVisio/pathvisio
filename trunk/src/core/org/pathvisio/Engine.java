@@ -305,7 +305,7 @@ public class Engine
 			if(hasVPathway()) zoom = getActiveVPathway().getPctZoom();
 			
 			vPathway = wrapper.createVPathway();
-			vPathway.fromGmmlData(p);
+			vPathway.fromModel(p);
 			
 			vPathway.setPctZoom(zoom);
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));

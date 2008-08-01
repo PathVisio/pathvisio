@@ -44,7 +44,7 @@ public class BatikImageExporter extends ImageExporter {
 	public void doExport(File file, Pathway pathway) throws ConverterException
 	{
 		VPathway vPathway = new VPathway(null);
-		vPathway.fromGmmlData(pathway);
+		vPathway.fromModel(pathway);
 
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);

@@ -125,7 +125,7 @@ public class VPathway implements PathwayListener
 
 	/**
 	 * {@link InfoBox} object that contains information about this pathway,
-	 * currently only used for information in {@link gmmlVision.PropertyPanel}
+	 * currently only used for information in PropertyPanel
 	 * (TODO: has to be implemented to behave the same as any Graphics object
 	 * when displayed on the drawing)
 	 */
@@ -134,7 +134,7 @@ public class VPathway implements PathwayListener
 	private Pathway data;
 
 	/**
-	 * @deprecated. use getPathwayModel() instead
+	 * @deprecated use getPathwayModel() instead
 	 */
 	public Pathway getGmmlData()
 	{
@@ -191,7 +191,7 @@ public class VPathway implements PathwayListener
 	/**
 	 * Map the contents of a single data object to this VPathway
 	 */
-	private Graphics fromGmmlDataObject(PathwayElement o)
+	private Graphics fromModelElement(PathwayElement o)
 	{
 		Graphics result = null;
 		switch (o.getObjectType())
@@ -238,21 +238,29 @@ public class VPathway implements PathwayListener
 		selectedGraphics = null;
 		data = null;
 		pointsMtoV = new HashMap<MPoint, VPoint>();
-		fromGmmlData(originalState);
+		fromModel(originalState);
 	}
 
-	
+
+	/**
+	 * @deprecated use fromModel instead
+	 */
+	public void fromGmmlData(Pathway _data)
+	{
+		fromModel (_data);
+	}
+
 	/**
 	 * Maps the contents of a pathway to this VPathway
 	 */
-	public void fromGmmlData(Pathway _data)
+	public void fromModel(Pathway _data)
 	{
 		Logger.log.trace("Create view structure");
 
 		data = _data;
 		for (PathwayElement o : data.getDataObjects())
 		{
-			fromGmmlDataObject(o);
+			fromModelElement(o);
 		}
 		double[] calcSize = data.getMappInfo().getMBoardSize();
 		int width = (int) vFromM(calcSize[0]);
@@ -1592,7 +1600,7 @@ public class VPathway implements PathwayListener
 			}
 			break;
 		case PathwayEvent.ADDED:
-			lastAdded = fromGmmlDataObject(e.getAffectedData());
+			lastAdded = fromModelElement(e.getAffectedData());
 			if (lastAdded != null) {
 				lastAdded.markDirty();
 			}

@@ -56,7 +56,7 @@ class SvgMain
 		int[] height = new int[2];
 		for (int i = 0; i < 2; ++i)
 		{
-			vpwy[i].fromGmmlData(pwy[i]);
+			vpwy[i].fromModel(pwy[i]);
 // 			vpwy[i].setPctZoom (50);
 			width[i] = vpwy[i].getVWidth();
 			height[i] = vpwy[i].getVHeight();

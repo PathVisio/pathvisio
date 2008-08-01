@@ -241,6 +241,7 @@ public class VPathway implements PathwayListener
 		fromGmmlData(originalState);
 	}
 
+	
 	/**
 	 * Maps the contents of a pathway to this VPathway
 	 */
@@ -900,9 +901,8 @@ public class VPathway implements PathwayListener
 
 	/**
 	 * deselect all elements on the drawing and resets the selectionbox.
-	 * Equivalent to {@link #clearSelection(0, 0)}
 	 */
-	private void clearSelection()
+	public void clearSelection()
 	{
 		clearSelection(0, 0);
 	}

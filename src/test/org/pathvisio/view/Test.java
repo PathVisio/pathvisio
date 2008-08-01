@@ -54,7 +54,7 @@ public class Test extends TestCase {
     	pwy.add(eltLi);
     	pwy.add(eltLa);
     	vPwy = new VPathway(null);
-    	vPwy.fromGmmlData(pwy);
+    	vPwy.fromModel(pwy);
     	
     	for(VPathwayElement e : vPwy.getDrawingObjects()) 
     	{
@@ -82,7 +82,7 @@ public class Test extends TestCase {
 	{
     	Pathway pTarget = new Pathway();
     	VPathway vpTarget = new VPathway(null);
-    	vpTarget.fromGmmlData(pTarget);
+    	vpTarget.fromModel(pTarget);
 
 		vPwy.selectObject(vDn);
 		vPwy.copyToClipboard();

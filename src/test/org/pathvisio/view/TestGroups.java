@@ -33,7 +33,7 @@ public class TestGroups extends TestCase
 		Engine.init();
 		vpwy = new VPathway(null);
 		pwy = new Pathway();
-		vpwy.fromGmmlData(pwy);
+		vpwy.fromModel(pwy);
 		
 		for (int i = 0; i < DATANODE_COUNT; ++i)
 		{	

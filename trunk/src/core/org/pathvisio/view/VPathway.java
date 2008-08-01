@@ -940,8 +940,13 @@ public class VPathway implements PathwayListener
 
 		pressedObject = getObjectAt(p2d);
 
+
 		if (pressedObject != null)
-			doClickSelect(p2d, e);
+		{
+			// Shift pressed, add/remove from selection
+			boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT) || e.isKeyDown(MouseEvent.M_CTRL);
+			doClickSelect(p2d, modifierPressed);
+		}
 		else
 			startSelecting(p2d);
 	}
@@ -953,7 +958,7 @@ public class VPathway implements PathwayListener
 	 * @param vp -
 	 *            the point to start with the selection
 	 */
-	private void startSelecting(Point2D vp)
+	void startSelecting(Point2D vp)
 	{
 		if (!selectionEnabled)
 			return;
@@ -990,23 +995,27 @@ public class VPathway implements PathwayListener
 		// if we clicked on an object
 		if (pressedObject != null)
 		{
+			// Shift pressed, add/remove from selection
+			boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT) || e.isKeyDown(MouseEvent.M_CTRL);
 			// if our object is an handle, select also it's parent.
 			if (pressedObject instanceof Handle)
 			{
 				VPathwayElement parent = ((Handle) pressedObject).parent;
 				parent.select();
 				//Special treatment for anchor
-				if(parent instanceof VAnchor) {
-					doClickSelect(p2d, e);
+				if(parent instanceof VAnchor) 
+				{
+
+					doClickSelect(p2d, modifierPressed);
 				}
 			} else if (pressedObject instanceof VPoint) {
 				Handle vph = ((VPoint)pressedObject).getHandle();
 				pressedObject = ((VPoint)pressedObject).getLine();
-				doClickSelect(p2d, e);
+				doClickSelect(p2d, modifierPressed);
 				pressedObject = vph;
 			} else
 			{
-				doClickSelect(p2d, e);
+				doClickSelect(p2d, modifierPressed);
 			}
 
 			// start dragging
@@ -1086,14 +1095,18 @@ public class VPathway implements PathwayListener
 		}
 		return result;
 	}
-	
-	void doClickSelect(Point2D p2d, MouseEvent e)
+
+	/**
+	 * if modifierPressed is true, the selected object will be added to
+	 * the selection, rather than creating a new selection with just one object.
+	 * 
+	 * modifierPressed should be true when either SHIFT or CTRL is pressed.
+	 */
+	void doClickSelect(Point2D p2d, boolean modifierPressed)
 	{
 		if (!selectionEnabled)
 			return;
 
-		// Shift pressed, add/remove from selection
-		boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT) || e.isKeyDown(MouseEvent.M_CTRL);
 		if (modifierPressed)
 		{
 			if (pressedObject instanceof SelectionBox)
@@ -1111,7 +1124,7 @@ public class VPathway implements PathwayListener
 			}
 			pressedObject = selection; // Set dragging to selectionbox
 		} else
-		// Shift not pressed
+		// Shift or Ctrl not pressed
 		{
 			// If pressedobject is not selectionbox:
 			// Clear current selection and select pressed object

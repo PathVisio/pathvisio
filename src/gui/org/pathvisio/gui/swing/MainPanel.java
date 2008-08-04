@@ -149,6 +149,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		actions = SwingEngine.getCurrent().getActions();
 		
 		toolBar = new JToolBar();
+		toolBar.setFloatable(false); // disable floatable toolbar, aka Abomination of interaction design.
 		addToolBarActions(toolBar);
 
 		add(toolBar, BorderLayout.PAGE_START);

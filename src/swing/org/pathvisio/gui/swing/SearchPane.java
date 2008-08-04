@@ -54,6 +54,7 @@ import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -75,24 +76,22 @@ public class SearchPane extends JPanel
 	private SearchTableModel srs;
 	
 	public SearchPane()
-	{		
-		Box symbolOpt = Box.createVerticalBox();
-		Box box2 = Box.createHorizontalBox();
-		box2.add (new JLabel("Symbol:"));
+	{	
 		txtSymbol = new JTextField();
-		box2.add (txtSymbol);
 		txtSymbol.addActionListener(new ActionListener(){
-
+			
 			public void actionPerformed(ActionEvent ae) 
 			{
 				doSearch();
 			}
 		});
-		symbolOpt.add (box2);
+
+		DefaultFormBuilder symbolOptBuilder = new DefaultFormBuilder(
+				new FormLayout("pref, 4dlu, fill:pref:grow")
+		);
+		symbolOptBuilder.append("Symbol:", txtSymbol);
+		JPanel symbolOpt = symbolOptBuilder.getPanel();
 		
-		Box idOpt = Box.createVerticalBox();
-		Box box4 = Box.createHorizontalBox();
-		box4.add (new JLabel("Id:"));
 		txtId = new JTextField();
 		txtId.addActionListener(new ActionListener(){
 
@@ -101,19 +100,19 @@ public class SearchPane extends JPanel
 				doSearch();
 			}
 		});
-		
-		box4.add (txtId);
-		Box box5 = Box.createHorizontalBox();
-		box5.add (new JLabel ("System Code:"));
 		cbSyscode = new JComboBox();
 		for (DataSource d : DataSource.getDataSources())
 		{
 			cbSyscode.addItem(d.getFullName());
 		}
-		box5.add (cbSyscode);
-		idOpt.add (box4);
-		idOpt.add (box5);
-
+		
+		DefaultFormBuilder idOptBuilder = new DefaultFormBuilder(
+			new FormLayout("pref, 4dlu, fill:pref:grow")
+		);
+		idOptBuilder.append("Id:", txtId);
+		idOptBuilder.append("System Code:", cbSyscode);
+		JPanel idOpt = idOptBuilder.getPanel();
+		
 		final JPanel opts = new JPanel();
 		final CardLayout optCards = new CardLayout();
 		opts.setLayout (optCards);
@@ -122,7 +121,7 @@ public class SearchPane extends JPanel
 		
 		JPanel searchOptBox = new JPanel();
 		FormLayout layout = new FormLayout(
-				"4dlu, right:pref, 4dlu, fill:pref:grow, 4dlu, pref, 4dlu",
+				"4dlu, pref, 4dlu, fill:pref:grow, 4dlu, pref, 4dlu",
 				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 		CellConstraints cc = new CellConstraints();
 		
@@ -130,7 +129,7 @@ public class SearchPane extends JPanel
 		Border etch = BorderFactory.createEtchedBorder();
 		searchOptBox.setBorder (BorderFactory.createTitledBorder (etch, "Search options"));
 		
-		searchOptBox.add (new JLabel ("Search by"), cc.xy (2,2));
+		searchOptBox.add (new JLabel ("Search by:"), cc.xy (2,2));
 		
 		cbSearchBy = new JComboBox();
 		cbSearchBy.addItem ("Symbol");

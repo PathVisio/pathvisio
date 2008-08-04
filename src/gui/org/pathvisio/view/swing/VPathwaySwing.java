@@ -208,7 +208,6 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						container.setViewportView(VPathwaySwing.this);
-						container.getViewport().setBackground(Color.GRAY);
 						double[] mSize = child.getPathwayModel().getMappInfo().getMBoardSize();
 						int w = (int)child.vFromM(mSize[0]);
 						int h = (int)child.vFromM(mSize[1]);

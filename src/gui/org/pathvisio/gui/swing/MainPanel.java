@@ -17,6 +17,7 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -156,6 +157,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// menuBar will be added by container (JFrame or JApplet)
 
 		pathwayScrollPane = new JScrollPane();
+		// set background color when no VPathway is loaded, override l&f because it is usually white.
+		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY); 
 
 		final PathwayTableModel model = new PathwayTableModel();
 		propertyTable = new JTable(model) {
@@ -189,7 +192,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		splitPane.setResizeWeight(1);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane, BorderLayout.CENTER);
-		
 		Action[] keyStrokeActions = new Action[] {
 				actions.copyAction,
 				actions.pasteAction,

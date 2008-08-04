@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JTable;
+import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
@@ -180,7 +179,7 @@ public class SearchMethods
 	 * the user
 	 */
 	public static void searchHelper (final PathwayMatcher search, final File folder,
-			final SearchTableModel srs, Component parent)
+			final SearchTableModel srs, final JLabel lblNumFound, Component parent)
 	{
 		final int TOTALWORK = 1000;
 
@@ -238,6 +237,20 @@ public class SearchMethods
 				for (MatchResult mr : matches)
 				{
 					srs.addRow(mr);
+				}
+			}
+			
+			@Override
+			protected void done()
+			{
+				try 
+				{
+					int matchCount = get();
+					lblNumFound.setText(matchCount + " " + (matchCount == 1 ? "result" : "results") + " found");
+				}
+				catch (Exception e)
+				{
+					Logger.log.warn("Exception when getting match count", e);
 				}
 			}
 

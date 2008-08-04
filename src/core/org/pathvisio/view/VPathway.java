@@ -715,7 +715,7 @@ public class VPathway implements PathwayListener
 	 */
 	public void moveByKey(KeyStroke ks, int increment)
 	{
-		List<Graphics> selectedGraphics = getSelectedGraphics();
+		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
 
 		if (selectedGraphics.size() > 0)
 		{
@@ -1732,7 +1732,7 @@ public class VPathway implements PathwayListener
 	 */
 	public void alignSelected(AlignType alignType)
 	{
-		List<Graphics> selectedGraphics = getSelectedGraphics();
+		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
 
 		if (selectedGraphics.size() > 0)
 		{
@@ -2004,7 +2004,7 @@ public class VPathway implements PathwayListener
 	 */
 	public void stackSelected(StackType stackType)
 	{
-		List<Graphics> selectedGraphics = getSelectedGraphics();
+		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
 
 		if (selectedGraphics.size() > 0)
 		{
@@ -2222,7 +2222,7 @@ public class VPathway implements PathwayListener
 	public void scaleSelected(AlignType alignType)
 	{
 
-		List<Graphics> selectedGraphics = getSelectedGraphics();
+		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
 		double maxW = 0;
 		double maxH = 0;
 
@@ -2311,6 +2311,25 @@ public class VPathway implements PathwayListener
 		{
 			if (g.isSelected() && g instanceof Graphics
 					&& !(g instanceof SelectionBox))
+			{
+				result.add((Graphics) g);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Get all elements of the class Graphics that are currently selected, excluding Groups
+	 * 
+	 * @return
+	 */
+	public List<Graphics> getSelectedNonGroupGraphics()
+	{
+		List<Graphics> result = new ArrayList<Graphics>();
+		for (VPathwayElement g : drawingObjects)
+		{
+			if (g.isSelected() && g instanceof Graphics
+					&& !(g instanceof SelectionBox) && !((g instanceof Group)))
 			{
 				result.add((Graphics) g);
 			}

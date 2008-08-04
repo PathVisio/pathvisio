@@ -68,7 +68,7 @@ public class GexImportWizard extends Wizard
     ColumnPage cpd = new ColumnPage();
     ImportPage ipd = new ImportPage();
     
-	GexImportWizard()
+	public GexImportWizard()
 	{
 		getDialog().setTitle ("Expression data import wizard");
 		

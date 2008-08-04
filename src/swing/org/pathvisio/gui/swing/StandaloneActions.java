@@ -31,13 +31,8 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.GexManager.GexManagerEvent;
-import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.gui.VisualizationDialog;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
@@ -51,8 +46,6 @@ public class StandaloneActions
 	public static final Action newAction = new NewAction();
 	public static final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
 	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
-	public static final Action importGexDataAction = new ImportGexDataAction();
-	public static final Action selectGexAction = new SelectGexAction();
 	public static final Action aboutAction = new AboutAction();
 	public static final Action preferencesAction = new PreferencesAction();
 	public static final Action searchAction = new SearchAction();
@@ -138,77 +131,6 @@ public class StandaloneActions
 			if (SwingEngine.getCurrent().canDiscardPathway())
 			{
 				SwingEngine.getCurrent().newPathway();
-			}
-		}
-	}
-	
-	/**
-	 * Import gex data and create a new gex database from it
-	 */
-	public static class ImportGexDataAction extends AbstractAction
-	{
-		private static final long serialVersionUID = 1L;
-		
-		public ImportGexDataAction()
-		{
-			super();
-			putValue (NAME, "Import expression data");
-			putValue (SHORT_DESCRIPTION, "Import data from a tab delimited text file, for example experimental data from a high-throughput experiment");
-		}
-		
-		public void actionPerformed (ActionEvent e)
-		{
-			GexImportWizard wizard = new GexImportWizard();
-			int ret = wizard.showModalDialog(SwingEngine.getCurrent().getFrame());
-			
-			// ret == (0=Finish,1=Cancel,2=Error) 
-		}
-	}
-	
-	/**
-	 * Let the user open an expression dataset
-	 * @author thomas
-	 */
-	public static class SelectGexAction extends AbstractAction {
-		public SelectGexAction() {
-			putValue(NAME, "Select expression dataset");
-			putValue(SHORT_DESCRIPTION, "Select expression dataset");
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			try 
-			{
-				/**
-				 * Get the preferred database connector to connect to Gex databases, 
-				 * and try to cast it to swingDbConnector.
-				 * throws an exception if that fails
-				 */
-				DBConnectorSwing dbcon;
-				DBConnector dbc = GexManager.getCurrent().getDBConnector();
-				if(dbc instanceof DBConnectorSwing) 
-				{
-					dbcon = (DBConnectorSwing)dbc;
-				} 
-				else 
-				{
-					//TODO: better handling of error
-					throw new IllegalArgumentException("Not a Swing database connector");
-				}
-				String dbName = dbcon.openChooseDbDialog(null);
-				
-				if(dbName == null) return;
-				
-				GexManager.getCurrent().setCurrentGex(dbName, false);
-				SwingEngine.getCurrent().loadGexCache();
-			} 
-			catch(Exception ex) 
-			{
-				String msg = "Failed to open expression dataset; " + ex.getMessage();
-				JOptionPane.showMessageDialog(null, 
-						"Error: " + msg + "\n\n" + "See the error log for details.",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
-				Logger.log.error(msg, ex);
 			}
 		}
 	}
@@ -324,32 +246,6 @@ public class StandaloneActions
 		{
 			PreferencesDlg dlg = new PreferencesDlg();
 			dlg.createAndShowGUI();
-		}
-	}
-
-	public static class VisualizationAction extends AbstractAction implements GexManagerListener {
-		MainPanel mainPanel;
-		
-		public VisualizationAction(MainPanel mainPanel) {
-			putValue(NAME, "Visualization options");
-			this.mainPanel = mainPanel;
-			setEnabled(GexManager.getCurrent().isConnected());
-			GexManager.getCurrent().addListener(this);
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			new VisualizationDialog(
-					VisualizationManager.getCurrent(),
-					SwingEngine.getCurrent().getFrame(),
-					mainPanel
-			).setVisible(true);
-		}
-
-		public void gexManagerEvent(GexManagerEvent e) 
-		{
-			boolean isConnected = GexManager.getCurrent().isConnected();
-			Logger.log.trace("Visualization options action, gexmanager event, connected: " + isConnected);
-			setEnabled(isConnected);
 		}
 	}
 

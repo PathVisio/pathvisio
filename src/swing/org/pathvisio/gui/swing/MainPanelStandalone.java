@@ -83,11 +83,7 @@ public class MainPanelStandalone extends MainPanel
 		JMenu dataMenu = new JMenu("Data");
 		addToMenu (StandaloneActions.selectGeneDbAction, dataMenu);
 		addToMenu (StandaloneActions.selectMetaboliteDbAction, dataMenu);
-		addToMenu (StandaloneActions.selectGexAction, dataMenu);
 		dataMenu.addSeparator();
-		addToMenu (StandaloneActions.importGexDataAction, dataMenu);
-		dataMenu.addSeparator();
-		addToMenu (new StandaloneActions.VisualizationAction(this), dataMenu);
 
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");

@@ -1339,8 +1339,8 @@ public class VPathway implements PathwayListener
 	 */
 	public void toggleGroup(List<Graphics> selection)
 	{
-		boolean selectionGrouped = true;
-		String topRef = null;
+		boolean groupSelection = false;
+		List<String> groupRefList = new ArrayList<String>();		
 
 		/** 
 		 * Check group status of current selection
@@ -1351,111 +1351,98 @@ public class VPathway implements PathwayListener
 			String ref = pe.getGroupRef();
 			String id = pe.getGroupId();
 			// If not a group
-			if (id == null && selectionGrouped)
+			if (id == null)
 			{
 				// and not a member of a group
 				if (ref == null)
 				{
 					// then selection needs to be grouped
-					selectionGrouped = false;
+					groupSelection = true;
 				}
 				// and is a member of a group
 				else
 				{
-					// Identify highest-level, non-null group reference
-					String checkRef = ref;
-					while (checkRef != null)
-					{
-						ref = checkRef;
-						PathwayElement refGroup = data.getGroupById(checkRef);
-						checkRef = refGroup.getGroupRef();
-					}
-					// Set first identified highest-level group ref
-					if (topRef == null)
-					{
-						topRef = ref;
-					}
-
-					// Check other identified refs against first identified
-					// If not equal
-					if (!ref.equals(topRef))
-					{
-						// then selection includes elements in distinct,
-						// non-nested groups; therefore, currently Ungrouped
-						selectionGrouped = false;
+					while (ref != null)
+					{ // Store unique list of all non-null group references
+						if (!groupRefList.contains(ref)){
+							groupRefList.add(ref);
+						}
+						PathwayElement refGroup = data.getGroupById(ref);
+						ref = refGroup.getGroupRef();
 					}
 				}
 			}
 		}
+		// If more than one group is present in selection, then selection needs to be grouped
+		if (groupRefList.size() > 1)
+		{
+			groupSelection = true;
+		}
+
 
 		/**
 		 * Group or ungroup based on current group status
 		 */
-		// If selection is already grouped, then ungroup.
-		if (selectionGrouped)
-		{
-			clearSelection();
-
-			VPathwayElement topVPE = null;
-			// Ungroup all elements asociated with topRef
-			for (VPathwayElement vpe : this.getDrawingObjects())
+		//In all cases, any old groups in selection should be disolved.
+		if (groupRefList.size() > 0){
+			// Remove group ref from each selected element
+			for (Graphics g : selection)
 			{
-				if (vpe instanceof Graphics)
+				PathwayElement pe = g.getPathwayElement();
+				pe.setGroupRef(null);
+			}
+			// Remove group object(s)
+			for (String groupRefToRemove : groupRefList) {
+				VPathwayElement vpeToRemove = null;
+				for (VPathwayElement vpe : getDrawingObjects())
 				{
-					PathwayElement pe = ((Graphics) vpe).getPathwayElement();
-
-					// remove all references to highest-level group
-					// from children datanodes and nested groups
-					if (topRef.equals(pe.getGroupRef()))
+					if (vpe instanceof Graphics)
 					{
-						pe.setGroupRef(null);
-						this.selection.addToSelection(vpe);
-					}
-
-					// remove highest-level group itself
-					if (vpe instanceof Group)
-					{
-						if (topRef.equals(pe.getGroupId()))
+						PathwayElement pe = ((Graphics) vpe).getPathwayElement();
+						if (vpe instanceof Group)
 						{
+							if (groupRefToRemove.equals(pe.getGroupId()))
+							{
 							// Cannot remove object within getDrawingObjects()
 							// loop, so just save vpe of highest-level group for
 							// deletion later (see below)
-							topVPE = vpe;
+							vpeToRemove = vpe;
+							}
 						}
 					}
 				}
+				removeDrawingObject(vpeToRemove, true);			
+				// clear id from hash map
+				data.removeGroupId(groupRefToRemove);
 			}
+		}
 			
-			// remove highest-level group
-			this.removeDrawingObject(topVPE, true);
-			
-			// clear id from hash map
-			data.removeGroupId(topRef);
-
+		// If selection was defined as a single group, then nothing more needs to happen
+		// except clearing the selection from view
+		if (!groupSelection)
+		{
+			clearSelection();
 		} 
-		// If selection is not grouped, then group.
+		// Otherwise, a new group will be formed, replacing any former groups. 
+		// No more nested or overlapping groups!
 		else
 		{
+			// Form new group with all selected elements
 			PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 			data.add(group);
-			group.setTextLabel("new group");
+			group.setTextLabel("Group selected. Hold shift and click to select an individual.");
 			group.setGroupStyle(GroupStyle.NONE);
 			String id = group.createGroupId();
 			
 			for (Graphics g : selection)
 			{
 				PathwayElement pe = g.getPathwayElement();
-				String ref = pe.getGroupRef();
-
-				// If not a member of a group, then set group ref
-				if (ref == null)
-				{
-					pe.setGroupRef(id);
-				} 
+				pe.setGroupRef(id);
 			}
-			
+	
 			// Parent group should not reference self
 			group.setGroupRef(null);
+			// Select new group in view
 			Graphics vg = getPathwayElementView(group);
 			if(vg != null) {
 				clearSelection();
@@ -1599,6 +1586,7 @@ public class VPathway implements PathwayListener
 	public void removeDrawingObject(VPathwayElement toRemove,
 			boolean removeFromModel)
 	{
+		if (toRemove != null){
 		toRemove.destroy(); // Object will remove itself from the drawing
 		if (removeFromModel)
 		{
@@ -1609,6 +1597,7 @@ public class VPathway implements PathwayListener
 		}
 		selection.removeFromSelection(toRemove); // Remove from selection
 		redrawDirtyRect();
+		}
 	}
 
 	Graphics lastAdded = null;

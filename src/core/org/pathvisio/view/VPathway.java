@@ -40,6 +40,7 @@ import javax.swing.KeyStroke;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
+import org.pathvisio.model.MGroup;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -1391,7 +1392,7 @@ public class VPathway implements PathwayListener
 				PathwayElement pe = g.getPathwayElement();
 				pe.setGroupRef(null);
 			}
-			// Remove group object(s)
+			// Remove group object(s) if all members are removed
 			for (String groupRefToRemove : groupRefList) {
 				VPathwayElement vpeToRemove = null;
 				for (VPathwayElement vpe : getDrawingObjects())
@@ -1401,19 +1402,21 @@ public class VPathway implements PathwayListener
 						PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 						if (vpe instanceof Group)
 						{
-							if (groupRefToRemove.equals(pe.getGroupId()))
+							MGroup mg = (MGroup) pe;
+							if (groupRefToRemove.equals(pe.getGroupId()) 
+									&& mg.getGroupElements().isEmpty())
 							{
 							// Cannot remove object within getDrawingObjects()
 							// loop, so just save vpe of highest-level group for
 							// deletion later (see below)
 							vpeToRemove = vpe;
+							// clear id from hash map
+							data.removeGroupId(groupRefToRemove);
 							}
 						}
 					}
 				}
 				removeDrawingObject(vpeToRemove, true);			
-				// clear id from hash map
-				data.removeGroupId(groupRefToRemove);
 			}
 		}
 			

@@ -620,8 +620,8 @@ public class Pathway implements PathwayListener
 	public void writeToXml(File file, boolean validate) throws ConverterException 
 	{
 		GpmlFormat.writeToXml (this, file, validate);
-		clearChangedFlag();
 		setSourceFile (file);
+		clearChangedFlag();
 
 	}
 
@@ -734,6 +734,13 @@ public class Pathway implements PathwayListener
 		for (PathwayElement pe : dataObjects)
 		{
 			result.add (pe.copy());
+		}
+		result.changed = changed;
+		if(sourceFile != null) {
+			result.sourceFile = new File(sourceFile.getAbsolutePath());
+		}
+		for(StatusFlagListener l : statusFlagListeners) {
+			result.addStatusFlagListener(l);
 		}
 		return result;
 	}

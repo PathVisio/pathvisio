@@ -192,9 +192,9 @@ public class GuiMain
 	protected JFrame createAndShowGUI(MainPanelStandalone mainPanel) 
 	{
 		//Create and set up the window.
-		JFrame frame = new JFrame(Globals.APPLICATION_NAME);
+		final JFrame frame = new JFrame(Globals.APPLICATION_NAME);
 		// dispose on close, otherwise windowClosed event is not called.
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		frame.add(mainPanel, BorderLayout.CENTER);
 		
@@ -252,13 +252,12 @@ public class GuiMain
 				prefs.setInt(GlobalPreference.WIN_W, size.width);
 				prefs.setInt(GlobalPreference.WIN_H, size.height);
 				prefs.setInt(GlobalPreference.WIN_X, p.x);
-				prefs.setInt(GlobalPreference.WIN_Y, p.y);				
-			}
-			
-			@Override
-			public void windowClosed(WindowEvent arg0) 
-			{
-				GuiMain.this.shutdown();
+				prefs.setInt(GlobalPreference.WIN_Y, p.y);
+				
+				if(SwingEngine.getCurrent().canDiscardPathway()) {
+					frame.dispose();
+					GuiMain.this.shutdown();
+				}
 			}
 		});
 		

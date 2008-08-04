@@ -94,8 +94,11 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public final Action saveAction = new SaveAction();
-	public final Action saveAsAction = new SaveAsAction();
+	public final Action saveAction = new SaveAction(true);
+	public final Action saveAsAction = new SaveAsAction(true);
+	public final Action standaloneSaveAction = new SaveAction(false);
+	public final Action standaloneSaveAsAction = new SaveAsAction(false);
+	
 	public final Action importAction = new ImportAction();
 	public final Action exportAction = new ExportAction();
 	
@@ -258,12 +261,12 @@ public class CommonActions implements ApplicationEventListener {
 	public static class SaveAsAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public SaveAsAction() {
+		public SaveAsAction(boolean wiki) {
 			super();
 			putValue(Action.NAME, "Save as");
 			putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVEAS));
-			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
-			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
+			putValue(Action.SHORT_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
+			putValue(Action.LONG_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -275,12 +278,12 @@ public class CommonActions implements ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
 		boolean forceDisabled;
 		
-		public SaveAction() {
+		public SaveAction(boolean wiki) {
 			super();
 			putValue(Action.NAME, "Save");
 			putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVE));
-			putValue(Action.SHORT_DESCRIPTION, "Save a local copy of the pathway");
-			putValue(Action.LONG_DESCRIPTION, "Save a local copy of the pathway");
+			putValue(Action.SHORT_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
+			putValue(Action.LONG_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 			Engine.getCurrent().addApplicationEventListener(this);
 			Pathway p = Engine.getCurrent().getActivePathway();
@@ -315,8 +318,11 @@ public class CommonActions implements ApplicationEventListener {
 		
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
-					e.getType() == ApplicationEvent.PATHWAY_OPENED) {
-				Engine.getCurrent().getActivePathway().addStatusFlagListener(this);
+					e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+			{
+				Pathway p = Engine.getCurrent().getActivePathway();
+				p.addStatusFlagListener(this);
+				handleStatus(p.hasChanged());
 			}
 		}
 	}

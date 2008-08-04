@@ -1,11 +1,12 @@
-package gpml.actions;
+package org.pathvisio.cytoscape.actions;
 
-import gpml.GpmlPlugin;
 
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 
 import javax.swing.KeyStroke;
+
+import org.pathvisio.cytoscape.GpmlPlugin;
 
 import cytoscape.util.CytoscapeAction;
 

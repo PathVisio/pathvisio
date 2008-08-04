@@ -1,4 +1,4 @@
-package gpml;
+package org.pathvisio.cytoscape;
 
 import java.util.HashMap;
 import java.util.HashSet;

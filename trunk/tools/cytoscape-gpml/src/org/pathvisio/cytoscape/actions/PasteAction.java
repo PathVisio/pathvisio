@@ -1,6 +1,5 @@
-package gpml.actions;
+package org.pathvisio.cytoscape.actions;
 
-import gpml.GpmlPlugin;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -10,6 +9,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.KeyStroke;
 
+import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.view.swing.PathwayTransferable;
 
 import cytoscape.util.CytoscapeAction;

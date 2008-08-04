@@ -1,4 +1,4 @@
-package gpml;
+package org.pathvisio.cytoscape;
 
 import giny.view.GraphView;
 import giny.view.NodeView;

@@ -301,7 +301,7 @@ public class GuiMain
 				Engine.init();
 				initLog();
 				Engine engine = Engine.getCurrent();
-				engine.setApplicationName("PathVisio (experimental)");
+				engine.setApplicationName("PathVisio 1.1");
 
 				try {
 				    UIManager.setLookAndFeel(

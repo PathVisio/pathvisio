@@ -228,9 +228,8 @@ public class VPathway implements PathwayListener
 	 */
 	public void replacePathway(Pathway originalState)
 	{
-		if(data.hasChanged() != originalState.hasChanged()) {
-			data.fireStatusFlagEvent(new StatusFlagEvent(originalState.hasChanged()));
-		}
+		boolean changed = data.hasChanged();
+		
 		clearSelection();
 		drawingObjects = new ArrayList<VPathwayElement>();
 		List<SelectionListener> selectionListeners = selection.getListeners();
@@ -243,6 +242,10 @@ public class VPathway implements PathwayListener
 		data = null;
 		pointsMtoV = new HashMap<MPoint, VPoint>();
 		fromModel(originalState);
+		
+		if(changed != originalState.hasChanged()) {
+			data.fireStatusFlagEvent(new StatusFlagEvent(originalState.hasChanged()));
+		}
 	}
 
 

@@ -2,7 +2,8 @@
 <project name="PathVisio" default="all" basedir=".">
 	
 	<property name="src.dir" value="src"/>
-        
+	<property name="pathvisio.version" value="1.1"/>
+	
 	<property name="build.core.dir" value="build/core"/>
 	<property name="build.gui.dir" value="build/gui"/>
 	<property name="build.swing.dir" value="build/swing"/>
@@ -514,6 +515,30 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 				<pathelement location="${src.dir}/swt"/>
 			</sourcepath>
 		</javadoc>		
+	</target>
+	
+	<target name="tarsrc" depends="svnversion" description="create source tarball">
+		<property name="tarfile" value="pathvisio-${pathvisio.version}-r${subversion_revision}.tar"/>
+		<property name="targzfile" value="${tarfile}.gz"/>
+		<tar tarfile="${tarfile}">
+			<tarfileset dir="." prefix="pathvisio-${pathvisio.version}">
+				<include name="src/**/*.java"/>
+				<include name="plugins/**"/>
+				<include name="lib/**"/>
+				<include name="resources/**"/>
+				<include name="GPML.xsd"/>
+				<include name="LICENSE-2.0.txt"/>
+				<include name="NOTICE.txt"/>
+				<include name="readme.txt"/>
+				<include name="example-data/**"/>
+				<include name="testData/**"/>
+				<include name="build.xml"/>
+				<include name="pathvisio.sh"/>
+				<include name="pathvisio.bat"/>
+			</tarfileset>
+		</tar>
+		<gzip src="${tarfile}" zipfile="${targzfile}"/>
+		<delete file="${tarfile}"/>
 	</target>
 
         <!--

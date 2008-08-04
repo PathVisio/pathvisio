@@ -256,7 +256,7 @@ public class StandaloneActions
 		public SearchAction() 
 		{
 			super();
-			putValue(NAME, "Search pathway set");
+			putValue(NAME, "Search pathways");
 			putValue(SHORT_DESCRIPTION, "Search pathways for a symbol or identifier");
 		}
 

@@ -94,10 +94,10 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public final Action saveAction = new SaveAction(true);
-	public final Action saveAsAction = new SaveAsAction(true);
-	public final Action standaloneSaveAction = new SaveAction(false);
-	public final Action standaloneSaveAsAction = new SaveAsAction(false);
+	public final Action saveAction = new SaveAction(true, false);
+	public final Action saveAsAction = new SaveAction(true, true);
+	public final Action standaloneSaveAction = new SaveAction(false, false);
+	public final Action standaloneSaveAsAction = new SaveAction(false, true);
 	
 	public final Action importAction = new ImportAction();
 	public final Action exportAction = new ExportAction();
@@ -258,33 +258,30 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public static class SaveAsAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
-
-		public SaveAsAction(boolean wiki) {
-			super();
-			putValue(Action.NAME, "Save as");
-			putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVEAS));
-			putValue(Action.SHORT_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
-			putValue(Action.LONG_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			SwingEngine.getCurrent().savePathwayAs();
-		}
-	}
-	
 	public static class SaveAction extends AbstractAction implements StatusFlagListener, ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
 		boolean forceDisabled;
+		boolean isSaveAs; // is either save... or save as...
 		
-		public SaveAction(boolean wiki) {
+		public SaveAction(boolean wiki, boolean isSaveAs) 
+		{
 			super();
-			putValue(Action.NAME, "Save");
-			putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVE));
-			putValue(Action.SHORT_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
-			putValue(Action.LONG_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+			this.isSaveAs = isSaveAs;
+			if (isSaveAs)
+			{
+				putValue(Action.NAME, "Save as");
+				putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVEAS));
+				putValue(Action.SHORT_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
+				putValue(Action.LONG_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
+			}
+			else
+			{
+				putValue(Action.NAME, "Save");
+				putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVE));
+				putValue(Action.SHORT_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
+				putValue(Action.LONG_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+			}
 			Engine.getCurrent().addApplicationEventListener(this);
 			Pathway p = Engine.getCurrent().getActivePathway();
 			if(p != null) {
@@ -296,8 +293,12 @@ public class CommonActions implements ApplicationEventListener {
 			}
 		}
 
-		public void actionPerformed(ActionEvent e) {
-			SwingEngine.getCurrent().savePathway();
+		public void actionPerformed(ActionEvent e) 
+		{
+			if (isSaveAs)
+				SwingEngine.getCurrent().savePathwayAs();
+			else
+				SwingEngine.getCurrent().savePathway();
 		}
 
 		private void handleStatus(boolean status) {

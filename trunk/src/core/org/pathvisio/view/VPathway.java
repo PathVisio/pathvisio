@@ -2482,7 +2482,9 @@ public class VPathway implements PathwayListener
 			
 			data.add(p); // causes lastAdded to be set
 			lastAdded.select();
-			selection.addToSelection(lastAdded);
+			if (!(lastAdded instanceof Group)){ // avoids "double selecting" grouped objects
+				selection.addToSelection(lastAdded);
+			}
 		}
 		/*
 		 * Step 3: refresh connector shapes

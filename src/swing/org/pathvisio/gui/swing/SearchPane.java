@@ -313,7 +313,7 @@ public class SearchPane extends JPanel
 			else
 			{
 				pathwaysContainingGeneID(
-						new Xref (txtId.getName(), DataSource.getByFullName("" + cbSyscode.getSelectedItem())), 
+						new Xref (txtId.getText(), DataSource.getByFullName("" + cbSyscode.getSelectedItem())), 
 						new File (txtDir.getText()), 
 						tblResult, 
 						getTopLevelAncestor());

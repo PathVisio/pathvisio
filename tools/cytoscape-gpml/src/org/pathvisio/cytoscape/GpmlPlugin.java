@@ -1,12 +1,8 @@
-package gpml;
+package org.pathvisio.cytoscape;
 
 import giny.view.EdgeView;
 import giny.view.GraphView;
 import giny.view.NodeView;
-import gpml.actions.CopyAction;
-import gpml.actions.ExportAction;
-import gpml.actions.PasteAction;
-import gpml.actions.ToggleAnnotationAction;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -22,12 +18,16 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.pathvisio.cytoscape.actions.CopyAction;
+import org.pathvisio.cytoscape.actions.ExportAction;
+import org.pathvisio.cytoscape.actions.PasteAction;
+import org.pathvisio.cytoscape.actions.ToggleAnnotationAction;
+import org.pathvisio.cytoscape.wikipathways.WikiPathwaysClient;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.MIMShapes;
-import org.pathvisio.view.ShapeRegistry;
 import org.pathvisio.view.swing.PathwayTransferable;
 
 import phoebe.PhoebeCanvasDropEvent;
@@ -38,6 +38,7 @@ import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.ImportHandler;
 import cytoscape.data.readers.GraphReader;
+import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.plugin.CytoscapePlugin;
 import cytoscape.util.CyFileFilter;
 import cytoscape.view.CyMenus;
@@ -48,102 +49,119 @@ import ding.view.InnerCanvas;
 
 public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListener, PropertyChangeListener {
 	GpmlHandler gpmlHandler;
-				
-    public GpmlPlugin() {
-    	Logger.log.setLogLevel(true, true, true, true, true, true);
-    	MIMShapes.registerShapes();
-    	
-    	gpmlHandler = new GpmlHandler();
-    	
-        Cytoscape.getImportHandler().addFilter(new GpmlFilter());
-        
+
+	public GpmlPlugin() {
+		Logger.log.setLogLevel(true, true, true, true, true, true);
+		MIMShapes.registerShapes();
+
+		gpmlHandler = new GpmlHandler();
+
+		Cytoscape.getImportHandler().addFilter(new GpmlFilter());
+
 		// Listen for Network View Creation
 		Cytoscape.getDesktop().getSwingPropertyChangeSupport()
-				.addPropertyChangeListener(
-						CytoscapeDesktop.NETWORK_VIEW_CREATED, this);
-		
+		.addPropertyChangeListener(
+				CytoscapeDesktop.NETWORK_VIEW_CREATED, this);
+
 		CytoscapeDesktop desktop = Cytoscape.getDesktop();
 		CyMenus menu = desktop.getCyMenus();
 		menu.addCytoscapeAction(new CopyAction(this));
 		menu.addCytoscapeAction(new PasteAction(this));
 		menu.addCytoscapeAction(new ToggleAnnotationAction(gpmlHandler));
 		menu.addCytoscapeAction(new ExportAction(this));
-    }
-       
-    class GpmlFilter extends CyFileFilter {
-    	public GpmlFilter() {
+
+		WebServiceClientManager.registerClient(new WikiPathwaysClient(this));
+	}
+
+	public GpmlHandler getGpmlHandler() {
+		return gpmlHandler;
+	}
+
+	class GpmlFilter extends CyFileFilter {
+		public GpmlFilter() {
 			super("gpml", "GPML file", ImportHandler.GRAPH_NATURE);
 		}
-    	
-    	public GraphReader getReader(String fileName) {
-    		return new GpmlReader(fileName, gpmlHandler);
-    	}
-    }
-    
-    static double mToV(double m) {
-    	return m * 1.0/15; //Should be stored in the model somewhere (pathvisio)
-    }
 
-    static double vToM(double v) {
-    	return v * 15.0;
-    }
+		public GraphReader getReader(String fileName) {
+			return new GpmlReader(fileName, gpmlHandler);
+		}
+	}
+
+	static double mToV(double m) {
+		return m * 1.0/15; //Should be stored in the model somewhere (pathvisio)
+	}
+
+	static double vToM(double v) {
+		return v * 15.0;
+	}
 	public void itemDropped(PhoebeCanvasDropEvent e) {
 		drop(e.getTransferable());
 	}
-	
-	public void drop(Transferable transfer) {
-			try {
-				Pathway p = PathwayTransferable.pathwayFromTransferable(transfer);
-				
-				if(p == null) return; //No pathway in transferable
-				
-				GpmlConverter converter = new GpmlConverter(gpmlHandler, p);
 
-				//Get the nodes/edges indexes
-				int[] nodes = converter.getNodeIndicesArray();
-				int[] edges = converter.getEdgeIndicesArray();
-				
-				//Get the current network, or create a new one, if none is available
-				CyNetwork network = Cytoscape.getCurrentNetwork();
-				if(network == Cytoscape.getNullNetwork()) {
-					String title = converter.getPathway().getMappInfo().getMapInfoName();
-					network = Cytoscape.createNetwork(title == null ? "new network" : title, false);
-				}
-				
-				//Add all nodes and edges to the network
-				for(int nd : nodes) {
-					network.addNode(nd);
-				}
-				for(int ed : edges) network.addEdge(ed);
-				
-				CyNetworkView view = Cytoscape.getNetworkView(network.getIdentifier());
-				if(view == Cytoscape.getNullNetworkView()) {
-					view = Cytoscape.createNetworkView(network);
-					Cytoscape.firePropertyChange(CytoscapeDesktop.NETWORK_VIEW_FOCUS,
-                            null, view.getIdentifier()); 
-				} else {
-					view = Cytoscape.getCurrentNetworkView();
-				}
-				converter.layout(view);
-				view.redrawGraph(true, false);
-			} catch(Exception ex) {
-				Logger.log.error("Unable to process pasted data", ex);
-				JOptionPane.showMessageDialog(Cytoscape.getDesktop(), 
-						"Error while importing GPML: " + ex.getMessage(),
-						"Error", 
-						JOptionPane.ERROR_MESSAGE);
+	public void load(Pathway p, boolean newNetwork) {
+		try {
+			GpmlConverter converter = new GpmlConverter(gpmlHandler, p);
+
+			//Get the nodes/edges indexes
+			int[] nodes = converter.getNodeIndicesArray();
+			int[] edges = converter.getEdgeIndicesArray();
+
+			//Get the current network, or create a new one, if none is available
+			CyNetwork network = Cytoscape.getCurrentNetwork();
+			if(newNetwork || network == Cytoscape.getNullNetwork()) {
+				String title = converter.getPathway().getMappInfo().getMapInfoName();
+				network = Cytoscape.createNetwork(title == null ? "new network" : title, false);
 			}
+
+			//Add all nodes and edges to the network
+			for(int nd : nodes) {
+				network.addNode(nd);
+			}
+			for(int ed : edges) network.addEdge(ed);
+
+			CyNetworkView view = Cytoscape.getNetworkView(network.getIdentifier());
+			if(view == Cytoscape.getNullNetworkView()) {
+				view = Cytoscape.createNetworkView(network);
+				Cytoscape.firePropertyChange(CytoscapeDesktop.NETWORK_VIEW_FOCUS,
+						null, view.getIdentifier()); 
+			} else {
+				view = Cytoscape.getCurrentNetworkView();
+			}
+			converter.layout(view);
+			view.redrawGraph(true, false);
+		} catch(Exception ex) {
+			Logger.log.error("Error while importing GPML", ex);
+			JOptionPane.showMessageDialog(Cytoscape.getDesktop(), 
+					"Error while importing GPML: " + ex.getMessage(),
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public void drop(Transferable transfer) {
+		try {
+			Pathway p = PathwayTransferable.pathwayFromTransferable(transfer);
+			if(p != null) {
+				load(p, false);
+			}
+		}catch(Exception ex) {
+			Logger.log.error("Unable to process pasted data", ex);
+			JOptionPane.showMessageDialog(Cytoscape.getDesktop(), 
+					"Error while importing GPML: " + ex.getMessage(),
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public void drag(Clipboard clipboard) {
 		CyNetwork network = Cytoscape.getCurrentNetwork();
 		CyNetworkView nview = Cytoscape.getCurrentNetworkView();
-		
+
 		Set<CyEdge> selEdges = network.getSelectedEdges();
 		Set<CyNode> selNodes = network.getSelectedNodes();
-		
+
 		List<PathwayElement> gpmlElements = new ArrayList<PathwayElement>();
-		
+
 		for(CyNode node : selNodes) {
 			GpmlNode gn = gpmlHandler.createNode(nview.getNodeView(node));
 			gpmlElements.add(gn.getPathwayElement(nview, gpmlHandler.getAttributeMapper()));
@@ -152,7 +170,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			GpmlEdge ge = gpmlHandler.createEdge(nview.getEdgeView(edge));
 			gpmlElements.add(ge.getPathwayElement(nview, gpmlHandler.getAttributeMapper()));
 		}
-		
+
 		//Shift all coordinates, so that the NW corner is at 0,0 (instead of the center)
 		Point2D vOrigin = getViewOrigin(nview);
 		int border = 20;
@@ -166,15 +184,15 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			pe.setMEndX(pe.getMEndX() - mOrigin.getX());
 			pe.setMEndY(pe.getMEndY() - mOrigin.getY());
 		}
-		
+
 		PathwayTransferable content = new PathwayTransferable(gpmlElements);
 		clipboard.setContents(content, new ClipboardOwner() {
 			public void lostOwnership(Clipboard clipboard, Transferable contents) {
-				
+
 			}
 		});
 	}
-	
+
 	public void writeToFile(GraphView view, File file) throws ConverterException {
 		Iterator<NodeView> itn = view.getNodeViewsIterator();
 		while(itn.hasNext()) {
@@ -187,16 +205,16 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		Pathway p = gpmlHandler.createPathway(view);
 		p.writeToXml(file, true);
 	}
-	
+
 	private Point2D getViewOrigin(GraphView view) {
 		Point2D origin = new Point2D.Double(0, 0);
 		Iterator<NodeView> it = view.getNodeViewsIterator();
 		while(it.hasNext()) {
 			NodeView nv = it.next();
-			
+
 			GpmlNode gn = gpmlHandler.createNode(nv);
 			if(gn.isAnnotation(view)) continue; //Don't include annotations, these
-												//are hidden nodes and return NaN as position
+			//are hidden nodes and return NaN as position
 			double x = nv.getXPosition();
 			double y = nv.getYPosition();
 			if(!Double.isNaN(x))
@@ -207,7 +225,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 				y = Math.min(y, origin.getY());
 			else
 				y = origin.getY();
-			
+
 			origin.setLocation(
 					x,
 					y
@@ -216,7 +234,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		Logger.log.trace("Origin: " + origin);
 		return origin;
 	}
-	
+
 	public void propertyChange(PropertyChangeEvent e) {
 		//Register droplistener to new canvas
 		if (e.getPropertyName().equals(CytoscapeDesktop.NETWORK_VIEW_CREATED)) {

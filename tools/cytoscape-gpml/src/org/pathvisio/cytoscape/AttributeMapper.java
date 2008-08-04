@@ -1,4 +1,4 @@
-package gpml;
+package org.pathvisio.cytoscape;
 
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;

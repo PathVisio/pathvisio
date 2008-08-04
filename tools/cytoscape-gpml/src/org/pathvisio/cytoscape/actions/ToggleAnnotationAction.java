@@ -1,13 +1,13 @@
-package gpml.actions;
+package org.pathvisio.cytoscape.actions;
 
 import giny.view.GraphView;
-import gpml.GpmlHandler;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 
+import org.pathvisio.cytoscape.GpmlHandler;
 import org.pathvisio.debug.Logger;
 
 import cytoscape.Cytoscape;

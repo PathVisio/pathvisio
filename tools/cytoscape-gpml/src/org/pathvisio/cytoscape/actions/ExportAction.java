@@ -1,6 +1,5 @@
-package gpml.actions;
+package org.pathvisio.cytoscape.actions;
 
-import gpml.GpmlPlugin;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -9,6 +8,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.model.ConverterException;
 
 import cytoscape.Cytoscape;

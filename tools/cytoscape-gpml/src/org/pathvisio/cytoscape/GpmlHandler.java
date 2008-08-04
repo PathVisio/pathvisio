@@ -1,4 +1,4 @@
-package gpml;
+package org.pathvisio.cytoscape;
 
 import giny.model.Edge;
 import giny.model.Node;

@@ -182,6 +182,20 @@ public class SearchPane extends JPanel
 		resultPanel.setLayout (new BorderLayout());
 		chkHighlight = new JCheckBox();
 		chkHighlight.setSelected(true);
+		chkHighlight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(chkHighlight.isSelected()) {
+					int row = tblResult.getSelectedRow();
+					if(row >= 0) {
+						MatchResult mr = srs.getRow(row);
+						highlightResults(mr);
+					}
+				} else {
+					removeHighlight();
+				}
+			}
+		});
+		
 		tblResult = new JTable();
 		tblResult.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);		
 		tblResult.addMouseListener(new MouseAdapter()
@@ -223,37 +237,8 @@ public class SearchPane extends JPanel
 					Engine.getCurrent().setWrapper (SwingEngine.getCurrent().createWrapper());
 					Engine.getCurrent().openPathway(mr.getFile());
 					
-					
-					Rectangle2D interestingRect = null;
-					
-					if (chkHighlight.isSelected())
-					{
-						VPathway vpy = Engine.getCurrent().getActiveVPathway();
-						for (VPathwayElement velt : vpy.getDrawingObjects())
-						{
-							if (velt instanceof GeneProduct)
-							{
-								GeneProduct gp = (GeneProduct)velt;
-								for (Xref id : mr.getMatches())
-								{
-									if (id.equals(gp.getPathwayElement().getXref()))
-									{
-										gp.highlight();
-										Logger.log.info ("Highlighted " + gp.getPathwayElement().getXref());
-										if (interestingRect == null)
-										{
-											interestingRect = gp.getVBounds();
-										}
-										else
-										{
-											interestingRect.add(gp.getVBounds());
-										}
-										break;
-									}
-								}
-							}
-						}
-						vpy.getWrapper().scrollTo (interestingRect.getBounds());
+					if(chkHighlight.isSelected()) {
+						highlightResults(mr);
 					}
 
 					return true;
@@ -267,8 +252,45 @@ public class SearchPane extends JPanel
 		};
 		
 		SwingEngine.getCurrent().processTask(pk, d, sw);
+	}
 
-		
+	private void highlightResults(MatchResult mr) {
+		Rectangle2D interestingRect = null;
+
+		VPathway vpy = Engine.getCurrent().getActiveVPathway();
+		for (VPathwayElement velt : vpy.getDrawingObjects())
+		{
+			if (velt instanceof GeneProduct)
+			{
+				GeneProduct gp = (GeneProduct)velt;
+				for (Xref id : mr.getMatches())
+				{
+					if (id.equals(gp.getPathwayElement().getXref()))
+					{
+						gp.highlight();
+						Logger.log.info ("Highlighted " + gp.getPathwayElement().getXref());
+						if (interestingRect == null)
+						{
+							interestingRect = gp.getVBounds();
+						}
+						else
+						{
+							interestingRect.add(gp.getVBounds());
+						}
+						break;
+					}
+				}
+			}
+		}
+		vpy.getWrapper().scrollTo (interestingRect.getBounds());
+		vpy.redrawDirtyRect();
+	}
+
+	private void removeHighlight() {
+		VPathway vpy = Engine.getCurrent().getActiveVPathway();
+		if(vpy != null) {
+			vpy.resetHighlight();
+		}
 	}
 	
 	/**

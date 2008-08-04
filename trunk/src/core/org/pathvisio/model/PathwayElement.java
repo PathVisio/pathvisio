@@ -787,6 +787,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				result.add(PropertyType.BIOPAXREF);
 			}
 			result.add(PropertyType.TEXTLABEL);
+			result.add(PropertyType.COMMENTS);
 			break;
 		case ObjectType.INFOBOX:
 			result.add(PropertyType.CENTERX);

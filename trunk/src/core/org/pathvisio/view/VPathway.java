@@ -74,6 +74,19 @@ public class VPathway implements PathwayListener
 
 	private Pathway temporaryCopy = null;
 	
+    private boolean selectIntoGroup = false;
+    
+    /**
+     * Toggles the state of the selectIntoGroup flag. 
+     * Used to select member nodes within a group upon alternate left clicks.
+     * @return
+     */
+    private void toggleSelectIntoGroup() {
+    	selectIntoGroup = !selectIntoGroup;
+    	//return(selectIntoGroup);
+    }
+
+	
 	/**
 	 * Retuns true if snap to anchors is enabled
 	 */
@@ -1034,7 +1047,7 @@ public class VPathway implements PathwayListener
 	/**
 	 * Find the object at a particular location on the drawing
 	 * 
-	 * if you want to get more than one
+	 * if you want to get more than one,
 	 * 
 	 * @see #getObjectsAt(Point2D)
 	 */
@@ -1044,6 +1057,10 @@ public class VPathway implements PathwayListener
 		VPathwayElement probj = null;
 		for (VPathwayElement o : drawingObjects)
 		{
+			if (selectIntoGroup && o instanceof Group)
+			{
+				continue;
+			}
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
@@ -1056,6 +1073,7 @@ public class VPathway implements PathwayListener
 				}
 			}
 		}
+		toggleSelectIntoGroup();
 		return probj;
 	}
 

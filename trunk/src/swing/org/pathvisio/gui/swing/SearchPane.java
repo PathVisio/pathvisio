@@ -72,6 +72,7 @@ public class SearchPane extends JPanel
 	private JTextField txtSymbol;
 	private JCheckBox chkHighlight;
 	private JTable tblResult;
+	private JLabel lblNumFound;
 	final private JComboBox cbSearchBy;
 	private SearchTableModel srs;
 	
@@ -212,6 +213,8 @@ public class SearchPane extends JPanel
 		box6.add (new JLabel ("Highlight found genes"));
 		resultPanel.add (box6, BorderLayout.NORTH);
 		resultPanel.add (new JScrollPane(tblResult), BorderLayout.CENTER);
+		lblNumFound = new JLabel();
+		resultPanel.add (lblNumFound, BorderLayout.SOUTH);
 		
 		setLayout (new BorderLayout());
 		add (searchOptBox, BorderLayout.NORTH);
@@ -298,6 +301,7 @@ public class SearchPane extends JPanel
 	 */
 	private void doSearch()
 	{
+		lblNumFound.setText("");
 		int i = cbSearchBy.getSelectedIndex();
 		try
 		{
@@ -348,7 +352,7 @@ public class SearchPane extends JPanel
 				SearchTableModel.Column.PATHWAY_NAME, 
 				SearchTableModel.Column.DIRECTORY
 				});
-		SearchMethods.searchHelper (new ByXrefMatcher (ref), folder, srs, parent);
+		SearchMethods.searchHelper (new ByXrefMatcher (ref), folder, srs, lblNumFound, parent);
 	}
 
 	/**
@@ -372,7 +376,7 @@ public class SearchPane extends JPanel
 				SearchTableModel.Column.DIRECTORY,
 				SearchTableModel.Column.NAMES
 				});
-		SearchMethods.searchHelper (new ByPatternMatcher (regex), folder, srs, parent);
+		SearchMethods.searchHelper (new ByPatternMatcher (regex), folder, srs, lblNumFound, parent);
 	}
 
 	/**

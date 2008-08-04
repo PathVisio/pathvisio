@@ -76,16 +76,6 @@ public class VPathway implements PathwayListener
 	
     private boolean selectIntoGroup = false;
     
-    /**
-     * Toggles the state of the selectIntoGroup flag. 
-     * Used to select member nodes within a group upon alternate left clicks.
-     * @return
-     */
-    private void toggleSelectIntoGroup() {
-    	selectIntoGroup = !selectIntoGroup;
-    	//return(selectIntoGroup);
-    }
-
 	
 	/**
 	 * Retuns true if snap to anchors is enabled
@@ -1058,7 +1048,7 @@ public class VPathway implements PathwayListener
 		for (VPathwayElement o : drawingObjects)
 		{
 			if (selectIntoGroup && o instanceof Group)
-			{
+			{	//skip Group objects and select child instead
 				continue;
 			}
 			if (o.vContains(p2d))
@@ -1073,7 +1063,7 @@ public class VPathway implements PathwayListener
 				}
 			}
 		}
-		toggleSelectIntoGroup();
+		selectIntoGroup = false;
 		return probj;
 	}
 
@@ -1117,6 +1107,8 @@ public class VPathway implements PathwayListener
 	/**
 	 * if modifierPressed is true, the selected object will be added to
 	 * the selection, rather than creating a new selection with just one object.
+	 * if modifierPressed is true when selecting a Group object, then a 
+	 * new selection is made of the children, allowing selection into groups.
 	 * 
 	 * modifierPressed should be true when either SHIFT or CTRL is pressed.
 	 */
@@ -1127,7 +1119,13 @@ public class VPathway implements PathwayListener
 
 		if (modifierPressed)
 		{
-			if (pressedObject instanceof SelectionBox)
+			// if Group, then redo selection, skipping Group object
+			if (pressedObject instanceof Group){
+				selectIntoGroup = true;
+				pressedObject = getObjectAt(p2d);
+				clearSelection();
+				selection.addToSelection(pressedObject);
+			} else if (pressedObject instanceof SelectionBox)
 			{
 				// Object inside selectionbox clicked, pass to selectionbox
 				selection.objectClicked(p2d);
@@ -1136,9 +1134,9 @@ public class VPathway implements PathwayListener
 				// remove
 				selection.removeFromSelection(pressedObject);
 			} else
-			{
-				selection.addToSelection(pressedObject); // Not in selection:
+			{ // Not in selection:
 				// add
+				selection.addToSelection(pressedObject); 
 			}
 			pressedObject = selection; // Set dragging to selectionbox
 		} else

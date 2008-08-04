@@ -60,8 +60,11 @@ public class WikiPathwaysIndexer extends Timer{
 	private File indexPath;
 	private File cachePath;
 	private int updateInterval = 30000; //30s by default
+	private int optimizeInterval = 10; //Optimize every 10th update
 	private Logger log = Logger.log;
 	private boolean rebuild;
+	
+	private int optimizeCounter = 0;
 	
 	volatile boolean interrupt;
 	
@@ -112,18 +115,31 @@ public class WikiPathwaysIndexer extends Timer{
 	
 	private void createWriter() throws CorruptIndexException, LockObtainFailedException, IOException {
 		if(writer != null) {
-			writer.optimize();
-			writer.close();
+			closeWriter();
 		}
 		writer = new IndexWriter(FSDirectory.getDirectory(indexPath), false, new StandardAnalyzer());
 		
 		indexer.setWriter(writer);
 	}
 	
+	private boolean shouldOptimize() {
+		return optimizeCounter >= optimizeInterval;
+	}
+	
 	private void closeWriter() throws CorruptIndexException, IOException {
 		if(writer != null) {
-			writer.optimize();
+			if(shouldOptimize()) {
+				log.info(optimizeCounter + " updates since last optimization, start optimizing index");
+				optimizeCounter = 0;
+				writer.optimize();
+			}
 			writer.close();
+			//Set read/write permissions for index files
+			for(File f : indexPath.listFiles()) {
+				String cmd = "chmod 777 " + f.getAbsolutePath();
+				Logger.log.info("Setting file permissions: " + cmd);
+				Runtime.getRuntime().exec(cmd);
+			}
 		}
 		writer = null;
 	}
@@ -138,7 +154,6 @@ public class WikiPathwaysIndexer extends Timer{
 	 */
 	public void update() throws CorruptIndexException, ConverterException, IOException {
 		update(wikiCache.update());
-
 	}
 	
 	void update(List<File> files) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
@@ -149,7 +164,9 @@ public class WikiPathwaysIndexer extends Timer{
 				log.info("Updating index for file " + i++ + " out of " + files.size() + "; " + f);
 				indexer.update(f);
 			}
+			optimizeCounter++;
 			closeWriter();
+			log.info("Done updating");
 		} else {
 			log.trace("Nothing to update!");
 		}
@@ -300,6 +317,12 @@ public class WikiPathwaysIndexer extends Timer{
 							configError("Unable to set error log: " + line, e);
 							log.setStream(System.err);
 						}
+					} else if (KEY_OPTIMIZEINTERVAL.equals(key)) {
+						try {
+							optimizeInterval = Integer.parseInt(value);
+						} catch(NumberFormatException e) {
+							configError(line, e);
+						}
 					}
 				} else {
 					configError("Invalid key/value pair in index configuration: " + line, null);
@@ -329,6 +352,7 @@ public class WikiPathwaysIndexer extends Timer{
 	static final String SEPERATOR = "=";
 	static final String KEY_RPCURL = "rpc_url";
 	static final String KEY_UPDATEINTERVAL = "update_interval";
+	static final String KEY_OPTIMIZEINTERVAL = "optimize_interval";
 	static final String KEY_INDEXPATH = "index_path";
 	static final String KEY_CACHEPATH = "cache_path";
 	static final String KEY_ERRORLOG = "error_log";

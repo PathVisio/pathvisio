@@ -53,8 +53,8 @@ public class MainPanelStandalone extends MainPanel
 		
 		addToMenu(StandaloneActions.newAction, fileMenu);
 		addToMenu(StandaloneActions.openAction, fileMenu);
-		addToMenu(actions.saveAction, fileMenu);
-		addToMenu(actions.saveAsAction, fileMenu);
+		addToMenu(actions.standaloneSaveAction, fileMenu);
+		addToMenu(actions.standaloneSaveAsAction, fileMenu);
 		fileMenu.addSeparator();
 		addToMenu(actions.importAction, fileMenu);
 		addToMenu(actions.exportAction, fileMenu);
@@ -145,7 +145,7 @@ public class MainPanelStandalone extends MainPanel
 		
 		addToToolbar(StandaloneActions.newAction);
 		addToToolbar(StandaloneActions.openAction);
-		addToToolbar(actions.saveAction);
+		addToToolbar(actions.standaloneSaveAction);
 		tb.addSeparator();
 		addToToolbar(actions.copyAction);
 		addToToolbar(actions.pasteAction);

@@ -45,6 +45,8 @@
 		<argument>org.pathvisio.visualization.plugins.VisualizationPlugin</argument>
 		<argument>-p</argument>
 		<argument>org.pathvisio.plugins.statistics.StatisticsPlugin</argument>
+		<argument>-p</argument>
+		<argument>org.pathvisio.plugins.gex.GexPlugin</argument>
 	</application-desc>
 	<security>
 		 <all-permissions/>

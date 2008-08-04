@@ -149,7 +149,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		  </echo>
 	</target>
 	
-	<target name="clean" description="Remove all generated files.">
+	<target name="clean" description="Remove all intermediate files.">
 		<delete dir="${build.core.dir}"/>
 		<delete dir="${build.gui.dir}"/>
 		<delete dir="${build.swt.dir}"/>
@@ -160,6 +160,19 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
 		<delete dir="${wikipathways.www.dir}"/>
+	</target>
+
+	<target name="dist-clean" depends="clean" description="Cleaner than clean: remove all generated files">
+		<delete file="classpath.sh"/>
+		<delete file="classpath.bat"/>
+		<delete file="lib/resources.jar"/>
+		<delete file="src/core/org/pathvisio/Revision.java"/>
+		<delete file="visplugins.jar"/>
+		<delete file="diffview.jar"/>
+		<delete file="pathvisio_swt.jar"/>
+		<delete file="pathvisio_core.jar"/>
+		<delete file="pathvisio.jar"/>
+		<delete file="pathvisio*.tar.gz"/>
 	</target>
 	
 	<target name="compile-core" depends="prepare,resources-jar" description="Compile core sources">
@@ -275,18 +288,10 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</jar>
 		<jar jarfile="pathvisio_core.jar">
 			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.util.Converter"/>
 				<attribute name="Class-Path" value="${jar.class.path}"/>
 			</manifest>
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>
 			<fileset dir="." includes="GPML.xsd"/>
-		</jar>
-		<jar jarfile="gpmldiff.jar">
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.gpmldiff.GpmlDiff"/>
-				<attribute name="Class-Path" value="lib/jdom.jar"/>
-			</manifest>
-			<fileset dir="${build.gui.dir}" includes="**/*.class"/>	
 		</jar>
     </target>
 

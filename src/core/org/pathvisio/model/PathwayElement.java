@@ -28,6 +28,7 @@ import java.util.Set;
 import org.jdom.Document;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.view.Graphics;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
 
@@ -2455,7 +2456,20 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 
 	}
-
+	
+	/**
+	 * Identifies the parent group of a child element via groupId and calls isChanged()
+	 * 
+	 */
+	public void notifyParentGroup()
+	{
+		String ref = this.getGroupRef();
+		if (ref != null)
+		{ //identify group object and notify model change to trigger view update
+			((MGroup) this.getParent().getGroupById(ref)).isChanged();
+		}	
+	}
+	
 	public String getGraphId()
 	{
 		return graphId;

@@ -502,6 +502,10 @@ public class Pathway implements PathwayListener
 		if (!groupRefs.containsKey(id)) throw new IllegalArgumentException();
 		
 		groupRefs.get(id).remove(child);
+		
+		// redraw group outline
+		((MGroup) getGroupById(id)).isChanged();
+		
 		if (groupRefs.get(id).size() == 0)
 			groupRefs.remove(id);
 	}

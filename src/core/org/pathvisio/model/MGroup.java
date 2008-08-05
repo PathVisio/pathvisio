@@ -179,4 +179,13 @@ public class MGroup extends PathwayElement {
 		}
 		return result;
 	}
+	
+	/**
+	 * Fires changed event to trigger view update
+	 */
+	public void isChanged() 
+	{
+		fireObjectModifiedEvent(new PathwayEvent(this,
+				PathwayEvent.MODIFIED_GENERAL));
+	}
 }

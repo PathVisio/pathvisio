@@ -288,6 +288,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		</jar>
 		<jar jarfile="pathvisio_core.jar">
 			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.util.Converter"/>
 				<attribute name="Class-Path" value="${jar.class.path}"/>
 			</manifest>
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>

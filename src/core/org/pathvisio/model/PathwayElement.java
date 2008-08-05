@@ -475,10 +475,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20 * 15;
 
-	// groups always have to be on top because
-	// then the mouse hits the group before the individual elements
-	// when clicking.
-	private static final int Z_ORDER_GROUP = 0x9000;
+	// groups should be behind other graphics 
+	// to allow background colors
+	private static final int Z_ORDER_GROUP = 0x1000;
 	// default order of geneproduct, label, shape and line determined
 	// by GenMAPP legacy
 	private static final int Z_ORDER_GENEPRODUCT = 0x8000;

@@ -24,6 +24,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.Engine;
+import org.pathvisio.model.MGroup;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
 
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
@@ -356,7 +358,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		}
 		else
 			return a - b;
-	}
+	}	
 	
 	/** 
 	 * helper method to convert view coordinates to model coordinates 

@@ -640,6 +640,11 @@ public class VPathway implements PathwayListener
 				linkPointToObject(new Point2D.Double(ve.getX(), ve.getY()),
 						(Handle) pressedObject);
 			}
+			
+			if (pressedObject instanceof Graphics)
+			{ //notify parents of any moving children!
+				((Graphics) pressedObject).getPathwayElement().notifyParentGroup();
+			}
 			redrawDirtyRect();
 		}
 		// // Reset hover timer

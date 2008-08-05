@@ -238,6 +238,12 @@ public class Handle extends VPathwayElement
 		}
 
 		parent.adjustToHandle(this, vnx, vny);
+		if (parent instanceof Graphics)  { // notify parents of any resized children!
+			((Graphics) parent).getPathwayElement().notifyParentGroup();
+		}
+		else if (parent instanceof VPoint){ // same, but for lines
+			((VPoint) parent).getLine().getPathwayElement().notifyParentGroup();
+		}
 		markDirty();
 	}
 			

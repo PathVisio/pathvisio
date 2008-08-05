@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -168,9 +169,9 @@ public class Group extends Graphics implements LinkProvider
 		}
 	}
 
-	@Override
-	protected boolean vIntersects(Rectangle2D r)
-	{ // always return false. Groups are not selected by drag selection.
+//	@Override
+//	protected boolean vIntersects(Rectangle2D r)
+//	{ // always return false. Groups are not selected by drag selection.
 //		ArrayList<String> refList = this.getRefList();
 //
 //		// return true if group object is referenced by selection
@@ -188,8 +189,8 @@ public class Group extends Graphics implements LinkProvider
 //				}
 //			}
 //		}
-		return false;
-	}
+//		return false;
+//	}
 
 	/**
 	 * Returns graphics for members of a group, including nested members
@@ -251,6 +252,9 @@ public class Group extends Graphics implements LinkProvider
 			}
 		}
 		for(VPoint p : toMove) p.vMoveBy(dx, dy);
+		
+		// update group outline
+		markDirty();
 	}
 
 	protected void doDraw(Graphics2D g2d)
@@ -260,6 +264,15 @@ public class Group extends Graphics implements LinkProvider
 				la.draw((Graphics2D)g2d.create());
 			}
 		}
+		// Draw group outline
+		int sw = 1;
+		g2d.setStroke(new BasicStroke(sw, BasicStroke.CAP_SQUARE,
+				BasicStroke.JOIN_MITER, 1, new float[] { 1, 4 }, 0));
+		Rectangle2D rect = getVBounds();
+		g2d.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect
+				.getWidth()
+				- sw, (int) rect.getHeight() - sw);
+
 	}
 
 	public void highlight(Color c) {

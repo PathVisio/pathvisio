@@ -430,7 +430,7 @@ public class SelectionBox extends VPathwayElement
 					continue;
 				}
 				
-				if(o.vIntersects(bounds)) {
+				if(o.vIntersects(bounds) && !(o instanceof Group)) {
 					addToSelection(o);
 					
 				} else if (o.isSelected()) {
@@ -510,6 +510,8 @@ public class SelectionBox extends VPathwayElement
 		for (VPathwayElement o : selection) {
 			if(o instanceof Graphics) {
 				o.vMoveBy(vdx, vdy);
+				// notify parents of any moving children!
+				((Graphics) o).getPathwayElement().notifyParentGroup();
 			}
 		}
 //		// Move selected object and their references

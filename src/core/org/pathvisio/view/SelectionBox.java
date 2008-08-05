@@ -430,18 +430,10 @@ public class SelectionBox extends VPathwayElement
 					continue;
 				}
 				
-				String groupRef = null;
-				if(o instanceof Graphics) {
-					groupRef = ((Graphics)o).getPathwayElement().getGroupRef();
-				}
-				
 				if(o.vIntersects(bounds)) {
-					//Only add objects that are not part of a group
-					if(groupRef == null || "".equals(groupRef)) {
-						addToSelection(o);
-					}
-				} else if (o.isSelected() && 
-						(groupRef == null || "".equals(groupRef))) {
+					addToSelection(o);
+					
+				} else if (o.isSelected()) {
 					removeFromSelection(o);
 				}
 			}

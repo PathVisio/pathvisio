@@ -101,9 +101,45 @@ public class Group extends Graphics implements LinkProvider
 		return refList;
 	}
 
+//	/**
+//	 * Determines whether any member of the highest-level group object related
+//	 * to the current group object contains the point specified
+//	 * 
+//	 * @param point -
+//	 *            the point to check
+//	 * @return True if the object contains the point, false otherwise
+//	 */
+//	protected boolean vContains(Point2D point)
+//	{
+//		ArrayList<String> refList = this.getRefList();
+//
+//		// return true if group object is referenced by selection
+//		for (VPathwayElement vpe : canvas.getDrawingObjects())
+//		{
+//			if (vpe instanceof Graphics && !(vpe instanceof Group)
+//					&& vpe.vContains(point))
+//			{
+//				PathwayElement pe = ((Graphics) vpe).getPathwayElement();
+//				String ref = pe.getGroupRef();
+//				// System.out.println("pe: " + pe + " ref: " + ref + " refList:
+//				// "
+//				// + refList.toString());
+//				if (ref != null && refList.contains(ref))
+//				{
+//					// System.out.println(ref + " contains point");
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
+
 	/**
-	 * Determines whether any member of the highest-level group object related
-	 * to the current group object contains the point specified
+	 * Determines whether the area defined by the grouped elements
+	 * contains the point specified. The elements themselves are 
+	 * excluded to support individual selection within a group. The
+	 * ultimate effect is then selection of group by clicking the area
+	 * and not the members of the group.
 	 * 
 	 * @param point -
 	 *            the point to check
@@ -111,49 +147,47 @@ public class Group extends Graphics implements LinkProvider
 	 */
 	protected boolean vContains(Point2D point)
 	{
-		ArrayList<String> refList = this.getRefList();
-
-		// return true if group object is referenced by selection
+		// return false if point falls on any individual element
 		for (VPathwayElement vpe : canvas.getDrawingObjects())
 		{
 			if (vpe instanceof Graphics && !(vpe instanceof Group)
 					&& vpe.vContains(point))
 			{
-				PathwayElement pe = ((Graphics) vpe).getPathwayElement();
-				String ref = pe.getGroupRef();
-				// System.out.println("pe: " + pe + " ref: " + ref + " refList:
-				// "
-				// + refList.toString());
-				if (ref != null && refList.contains(ref))
-				{
-					// System.out.println(ref + " contains point");
-					return true;
-				}
+				return false;
+			
 			}
 		}
-		return false;
+		// return true if point within bounds of grouped objects
+		if (this.getVShape(true).contains(point))
+		{
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
 	}
 
 	@Override
 	protected boolean vIntersects(Rectangle2D r)
-	{
-		ArrayList<String> refList = this.getRefList();
-
-		// return true if group object is referenced by selection
-		for (VPathwayElement vpe : canvas.getDrawingObjects())
-		{
-			if (vpe instanceof Graphics && !(vpe instanceof Group)
-					&& vpe.vIntersects(r))
-			{
-				PathwayElement pe = ((Graphics) vpe).getPathwayElement();
-				String ref = pe.getGroupRef();
-				if (ref != null && refList.contains(ref))
-				{
-					// System.out.println(ref + " intersects point");
-					return true;
-				}
-			}
-		}
+	{ // always return false. Groups are not selected by drag selection.
+//		ArrayList<String> refList = this.getRefList();
+//
+//		// return true if group object is referenced by selection
+//		for (VPathwayElement vpe : canvas.getDrawingObjects())
+//		{
+//			if (vpe instanceof Graphics && !(vpe instanceof Group)
+//					&& vpe.vIntersects(r))
+//			{
+//				PathwayElement pe = ((Graphics) vpe).getPathwayElement();
+//				String ref = pe.getGroupRef();
+//				if (ref != null && refList.contains(ref))
+//				{
+//					// System.out.println(ref + " intersects point");
+//					return true;
+//				}
+//			}
+//		}
 		return false;
 	}
 

@@ -75,9 +75,6 @@ public class VPathway implements PathwayListener
 
 	private Pathway temporaryCopy = null;
 	
-    private boolean selectIntoGroup = false;
-    
-	
 	/**
 	 * Retuns true if snap to anchors is enabled
 	 */
@@ -1051,10 +1048,6 @@ public class VPathway implements PathwayListener
 		VPathwayElement probj = null;
 		for (VPathwayElement o : drawingObjects)
 		{
-			if (selectIntoGroup && o instanceof Group)
-			{	//skip Group objects and select child instead
-				continue;
-			}
 			if (o.vContains(p2d))
 			{
 				// select this object, unless it is an invisible gmmlHandle
@@ -1067,7 +1060,6 @@ public class VPathway implements PathwayListener
 				}
 			}
 		}
-		selectIntoGroup = false;
 		return probj;
 	}
 
@@ -1123,15 +1115,9 @@ public class VPathway implements PathwayListener
 
 		if (modifierPressed)
 		{
-			// if Group, then redo selection, skipping Group object
-			if (pressedObject instanceof Group){
-				selectIntoGroup = true;
-				pressedObject = getObjectAt(p2d);
-				clearSelection();
-				selection.addToSelection(pressedObject);
-			} else if (pressedObject instanceof SelectionBox)
-			{
-				// Object inside selectionbox clicked, pass to selectionbox
+			if (pressedObject instanceof SelectionBox)
+			{ // Object inside selectionbox clicked:
+				// pass to selectionbox
 				selection.objectClicked(p2d);
 			} else if (pressedObject.isSelected())
 			{ // Already in selection:

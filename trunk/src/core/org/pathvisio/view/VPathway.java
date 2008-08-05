@@ -1405,9 +1405,8 @@ public class VPathway implements PathwayListener
 						PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 						if (vpe instanceof Group)
 						{
-							MGroup mg = (MGroup) pe;
 							if (groupRefToRemove.equals(pe.getGroupId()) 
-									&& mg.getGroupElements().isEmpty())
+									&& this.getPathwayModel().getGroupElements(pe.getGroupId()).isEmpty())
 							{
 							// Cannot remove object within getDrawingObjects()
 							// loop, so just save vpe of highest-level group for

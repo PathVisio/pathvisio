@@ -15,8 +15,10 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ShapeType;
@@ -34,7 +36,8 @@ public class MIMShapes
 		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.OPEN);
 		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.OPEN);		
 		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.WIRE);
-
+		ShapeRegistry.registerArrow ("mim-inhibition", getMIMInhibition(), getMIMInhibitionFill(), ArrowShape.OPEN);
+		
 		ShapeType.create ("mim-phosphorylated", null);
 		ShapeType.create ("mim-degradation", null);
 		ShapeType.create ("mim-interaction", null);
@@ -44,6 +47,7 @@ public class MIMShapes
 		LineType.create ("mim-conversion", "Arrow");
 		LineType.create ("mim-stimulation", "Arrow");
 		LineType.create ("mim-catalysis", "Arrow");
+		LineType.create ("mim-inhibition", "Arrow");
 		LineType.create ("mim-cleavage", null);
 	}
 
@@ -174,4 +178,27 @@ public class MIMShapes
 		return path;
 	}
 
+	// copied from BasicShapes
+	private static final int TBARHEIGHT = 225;
+	private static final int TBARMASKHEIGHT = 15 * 3;
+	private static final int TBARWIDTH = 1;
+	private static final int TBAROFFSET = 150;
+	
+	// copied from BasicShapes.getTBar()
+	private static Shape getMIMInhibition()
+	{
+		return new Rectangle2D.Double(
+			-TBAROFFSET, -TBARHEIGHT / 2,
+			TBARWIDTH, TBARHEIGHT
+			);
+	}
+
+	// copied from BasicShapes.getTBarFill
+	private static Shape getMIMInhibitionFill() 
+	{
+		return new Rectangle2D.Double(
+			-TBAROFFSET + TBARWIDTH, -TBARMASKHEIGHT / 2,
+			TBAROFFSET * 2 - TBARWIDTH, TBARMASKHEIGHT
+		);
+	}	
 }

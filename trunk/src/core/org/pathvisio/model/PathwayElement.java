@@ -2465,7 +2465,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		String ref = this.getGroupRef();
 		if (ref != null)
 		{ //identify group object and notify model change to trigger view update
+			if (((MGroup) this.getParent().getGroupById(ref)) != null){
 			((MGroup) this.getParent().getGroupById(ref)).isChanged();
+			}
 		}	
 	}
 	

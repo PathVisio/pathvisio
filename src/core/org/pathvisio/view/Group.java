@@ -259,11 +259,6 @@ public class Group extends Graphics implements LinkProvider
 
 	protected void doDraw(Graphics2D g2d)
 	{
-		if(showLinkAnchors) {
-			for(LinkAnchor la : getLinkAnchors()) {
-				la.draw((Graphics2D)g2d.create());
-			}
-		}
 		// Draw group outline
 		int sw = 1;
 		g2d.setColor(Color.GRAY);
@@ -278,6 +273,11 @@ public class Group extends Graphics implements LinkProvider
 				.getWidth()
 				- 2*sw, (int) rect.getHeight() - 2*sw);
 
+		if(showLinkAnchors) {
+			for(LinkAnchor la : getLinkAnchors()) {
+				la.draw((Graphics2D)g2d.create());
+			}
+		}
 	}
 
 	public void highlight(Color c) {

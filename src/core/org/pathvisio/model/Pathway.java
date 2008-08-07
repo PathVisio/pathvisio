@@ -503,11 +503,17 @@ public class Pathway implements PathwayListener
 		
 		groupRefs.get(id).remove(child);
 		
-		// redraw group outline
-		((MGroup) getGroupById(id)).isChanged();
 		
 		if (groupRefs.get(id).size() == 0)
+		{
 			groupRefs.remove(id);
+		} else {
+			// redraw group outline
+			if (((MGroup) getGroupById(id)) !=null ){
+			((MGroup) getGroupById(id)).isChanged();
+			}
+
+		}
 	}
 	
 	/**

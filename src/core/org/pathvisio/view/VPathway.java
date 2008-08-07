@@ -1740,6 +1740,8 @@ public class VPathway implements PathwayListener
 							.vMoveBy(
 									vBoundsFirst.getCenterX()
 											- vBounds.getCenterX(), 0);
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case CENTERY:
@@ -1756,6 +1758,8 @@ public class VPathway implements PathwayListener
 
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsFirst.getCenterY() - vBounds.getCenterY());
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case LEFT:
@@ -1772,6 +1776,8 @@ public class VPathway implements PathwayListener
 
 					selectedGraphics.get(i).vMoveBy(
 							vBoundsFirst.getX() - vBounds.getX(), 0);
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case RIGHT:
@@ -1788,6 +1794,8 @@ public class VPathway implements PathwayListener
 
 					selectedGraphics.get(i).vMoveBy(
 							vBoundsFirst.getMaxX() - vBounds.getMaxX(), 0);
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case TOP:
@@ -1804,6 +1812,8 @@ public class VPathway implements PathwayListener
 
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsFirst.getY() - vBounds.getY());
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case BOTTOM:
@@ -1821,6 +1831,8 @@ public class VPathway implements PathwayListener
 
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsFirst.getMaxY() - vBounds.getMaxY());
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case WIDTH:
@@ -2014,6 +2026,9 @@ public class VPathway implements PathwayListener
 					eCurr
 							.vMoveBy(0, vBoundsPrev.getMaxY()
 									- vBoundsCurr.getY());
+					
+					// notify parents of any moving children!
+					eCurr.getPathwayElement().notifyParentGroup();
 
 					/*
 					 * selectedGraphics.get(i).getGmmlData().setMCenterX(
@@ -2048,6 +2063,10 @@ public class VPathway implements PathwayListener
 									0,
 									vBoundsPrev.getCenterY()
 											- vBoundsCurr.getCenterY());
+					
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
+
 
 					/*
 					 * selectedGraphics.get(i).getGmmlData().setMCenterY(
@@ -2080,6 +2099,9 @@ public class VPathway implements PathwayListener
 							.vMoveBy(0, vBoundsPrev.getMaxY()
 									- vBoundsCurr.getY());
 
+					// notify parents of any moving children!
+					eCurr.getPathwayElement().notifyParentGroup();
+
 					// selectedGraphics.get(i).getGmmlData().setMLeft(
 					// selectedGraphics.get(i - 1).getGmmlData()
 					// .getMLeft());
@@ -2110,6 +2132,9 @@ public class VPathway implements PathwayListener
 					eCurr
 							.vMoveBy(0, vBoundsPrev.getMaxY()
 									- vBoundsCurr.getY());
+					
+					// notify parents of any moving children!
+					eCurr.getPathwayElement().notifyParentGroup();
 
 					// selectedGraphics.get(i).getGmmlData().setMLeft(
 					// selectedGraphics.get(i - 1).getGmmlData()
@@ -2146,6 +2171,9 @@ public class VPathway implements PathwayListener
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsPrev.getY() - vBoundsCurr.getY());
 
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
+
 					// selectedGraphics.get(i).getGmmlData()
 					// .setMTop(
 					// selectedGraphics.get(i - 1).getGmmlData()
@@ -2177,6 +2205,9 @@ public class VPathway implements PathwayListener
 
 					selectedGraphics.get(i).vMoveBy(0,
 							vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
+
+					// notify parents of any moving children!
+					selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
 
 					// selectedGraphics.get(i).getGmmlData().setMTop(
 					// selectedGraphics.get(i - 1).getGmmlData().getMTop()
@@ -2244,6 +2275,8 @@ public class VPathway implements PathwayListener
 						g.setVScaleRectangle(r);
 						g.vMoveBy((oldWidth - maxW) / 2, 0);
 					}
+					// notify parents of any moving children!
+					g.getPathwayElement().notifyParentGroup();
 				}
 				break;
 			case HEIGHT:
@@ -2275,6 +2308,8 @@ public class VPathway implements PathwayListener
 						g.setVScaleRectangle(r);
 						g.vMoveBy(0, (oldHeight - maxH) / 2);
 					}
+					// notify parents of any moving children!
+					g.getPathwayElement().notifyParentGroup();
 				}
 				break;
 			}

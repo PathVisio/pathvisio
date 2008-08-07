@@ -257,22 +257,25 @@ public class Group extends Graphics implements LinkProvider
 		markDirty();
 	}
 
+	private static final int TRANSLUCENCY_LEVEL = (int) (255 * .10);
 	protected void doDraw(Graphics2D g2d)
 	{
 		// Draw group outline
 		int sw = 1;
+		Rectangle2D rect = getVBounds();
+		//fill
+		g2d.setColor(new Color(180, 180, 100, TRANSLUCENCY_LEVEL));
+		g2d.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect
+				.getWidth()
+				, (int) rect.getHeight() );
+		//border
 		g2d.setColor(Color.GRAY);
 		g2d.setStroke(new BasicStroke(sw, BasicStroke.CAP_SQUARE,
 				BasicStroke.JOIN_MITER, 1, new float[] { 4, 2 }, 0));
-		Rectangle2D rect = getVBounds();
-		g2d.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect
+		g2d.drawRect((int) rect.getX() , (int) rect.getY() , (int) rect
 				.getWidth()
 				- sw, (int) rect.getHeight() - sw);
-		g2d.setColor(new Color(255, 255, 245));
-		g2d.fillRect((int) rect.getX()+sw, (int) rect.getY()+sw, (int) rect
-				.getWidth()
-				- 2*sw, (int) rect.getHeight() - 2*sw);
-
+		//anchors
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {
 				la.draw((Graphics2D)g2d.create());

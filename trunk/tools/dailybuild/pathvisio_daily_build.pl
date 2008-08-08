@@ -174,7 +174,7 @@ eval
 				$i++;
 				eval 
 				{
-					system ("scp -r $dir/apidoc/* martijn.vaniersel\@ftp2:/home/martijn.vaniersel/public_html/pathvisio/daily/javadoc 2>> $dir/docs.txt") == 0 or 
+					system ("scp -r $dir/apidoc/* pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc 2>> $dir/docs.txt") == 0 or 
 						die ("Could not copy javadocs, with error code " , $? >> 8, "\n");		
 				};
 				unless ($@) { last; } # break if success
@@ -200,7 +200,7 @@ eval
 			
 			# substitute webstart codebase url
 			
-			system ("sed -i 's#codebase=\"http://blog.bigcat.unimaas.nl/~gmmlvisio\"#codebase=\"http://ftp2.bigcat.unimaas.nl/~martijn.vaniersel/pathvisio/daily/webstart\"#' $dir/webstart/www/*.jnlp") == 0 or
+			system ("sed -i 's#codebase=\"http://www.pathvisio.org/webstart\"#codebase=\"http://www.pathvisio.org/webstart/daily\"#' $dir/webstart/www/*.jnlp") == 0 or
 				die ("Couldn't substitute codebase url, with error code ", $? >> 8, "\n");
 				
 			# copy files to website
@@ -213,7 +213,7 @@ eval
 				$i++;
 				eval 
 				{
-					system ("scp -r $dir/webstart/www/* martijn.vaniersel\@ftp2:/home/martijn.vaniersel/public_html/pathvisio/daily/webstart") == 0 or 				
+					system ("scp -r $dir/webstart/www/* pathvisio\@www.pathvisio.org:/home/pathvisio/webstart/daily") == 0 or 				
 						die ("Could not copy webstart, with error code " , $? >> 8, "\n");		
 				};
 				unless ($@) { last; } # break if success

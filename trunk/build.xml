@@ -408,12 +408,9 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>
 		<!-- Copy files needed for webstart !-->
-		<copy file="pathvisio_swt.jar" toDir="${webstart.dir}/www"/>
 		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="visplugins.jar" toDir="${webstart.dir}/www"/>
 		<signjar jar="pathvisio.jar" lazy="true" 
-			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
-		<signjar jar="pathvisio_swt.jar" lazy="true" 
 			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
 		<copy toDir="${webstart.dir}/www/lib">
 			<fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -422,8 +419,8 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
 			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
 		</signjar>
-		<copy file="${webstart.dir}/pathvisio_v1.jnlp" toDir="${webstart.dir}/www"/>
-		<copy file="${webstart.dir}/pathvisio_v2.jnlp" toDir="${webstart.dir}/www"/>
+		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
+		<copy file="${webstart.dir}/pathvisio_with_plugins.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 	
 	<target name="webstart" depends="prepare-webstart" description="Upload webstart files">

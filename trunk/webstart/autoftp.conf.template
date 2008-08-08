@@ -1,13 +1,13 @@
 
 
-remotehost=blog.bigcat.unimaas.nl
-login=gmmlvisio
+remotehost=www.pathvisio.org
+login=pathvisio
 pass=*******
 
 #note: must have trailing slash
 local_basedir=./www/
 
 #note: must have trailing slash
-remote_basedir=/home/gmmlvisio/public_html/
+remote_basedir=/webstart/
 
 timestampfile=autoftp_timestamp.txt

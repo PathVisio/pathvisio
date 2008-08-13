@@ -169,9 +169,28 @@ public class Group extends Graphics implements LinkProvider
 		}
 	}
 
+	/**
+	 * Determines whether a Group object intersects 
+	 * the rectangle specified
+	 * @param r - the rectangle to check
+	 * @return True if the group intersects the rectangle, false otherwise
+	 */
+	protected boolean vIntersects(Rectangle2D r)
+	{
+		if (getVBounds().intersects(r))
+		{
+			// Yes, the vbounds intersects, now try to be more precise
+			return getVOutline().intersects(r);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 //	@Override
 //	protected boolean vIntersects(Rectangle2D r)
-//	{ // always return false. Groups are not selected by drag selection.
+//	{ 
 //		ArrayList<String> refList = this.getRefList();
 //
 //		// return true if group object is referenced by selection

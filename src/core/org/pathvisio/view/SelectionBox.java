@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.pathvisio.model.PathwayElement;
+
 /**
  * This class implements a selectionbox
  * 
@@ -430,7 +432,15 @@ public class SelectionBox extends VPathwayElement
 					continue;
 				}
 				
-				if(o.vIntersects(bounds) && !(o instanceof Group)) {
+				if(o.vIntersects(bounds) ) { //&& !(o instanceof Group)
+					//exclude objects in a group to avoid double selection
+					if(o instanceof Graphics){
+						PathwayElement pe = ((Graphics) o).getPathwayElement();
+						String ref = pe.getGroupRef();
+						if (ref != null) {
+							continue;
+						}			
+					}
 					addToSelection(o);
 					
 				} else if (o.isSelected()) {

@@ -470,8 +470,10 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		private static final long serialVersionUID = 1L;
 
 		protected void setValue(Object value) {
-			double d = (Double)value;
-			super.setValue(d);
+			if (value != null){ //hack needed to remove NPE following group refactoring
+				double d = (Double)value;
+				super.setValue(d);
+			}
 		}
 	};
 	

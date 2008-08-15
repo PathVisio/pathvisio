@@ -423,6 +423,10 @@ public class SelectionBox extends VPathwayElement
 		markDirty();
 		setHandleLocation();
 
+		//Keep track of objects that were selected via a group
+		//Don't unselect them if they're out of the selection bounds
+		Set<Graphics> groupObjects = new HashSet<Graphics>();
+		
 		if (isSelecting)
 		{ // Selecting, so add containing objects to selection
 			Rectangle2D bounds = getVBounds();
@@ -439,11 +443,14 @@ public class SelectionBox extends VPathwayElement
 						String ref = pe.getGroupRef();
 						if (ref != null) {
 							continue;
-						}			
+						}
+						if(o instanceof Group) {
+							groupObjects.addAll(((Group) o).getGroupGraphics());
+						}
 					}
 					addToSelection(o);
 					
-				} else if (o.isSelected()) {
+				} else if (o.isSelected() && !groupObjects.contains(o)) {
 					removeFromSelection(o);
 				}
 			}

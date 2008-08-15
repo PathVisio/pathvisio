@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 
@@ -29,6 +30,7 @@ import cytoscape.data.CyAttributes;
 
 public class DefaultAttributeMapper implements AttributeMapper {
 	public static final String CY_COMMENT_SOURCE = "cytoscape-attribute: ";
+	private Map<PropertyType, String> defaultValues;
 	private Map<PropertyType, String> prop2attr;
 	private Map<String, PropertyType> attr2prop;
 	
@@ -37,6 +39,8 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	public DefaultAttributeMapper() {
 		prop2attr = new HashMap<PropertyType, String>();
 		attr2prop = new HashMap<String, PropertyType>();
+		defaultValues = new HashMap<PropertyType, String>();
+		
 		setInitialMappings();
 	}
 	
@@ -46,6 +50,10 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	public void setMapping(String attr, PropertyType prop) {
 		setAttributeToPropertyMapping(attr, prop);
 		setPropertyToAttributeMapping(prop, attr);
+	}
+	
+	public void setDefaultValue(PropertyType prop, String value) {
+		defaultValues.put(prop, value);
 	}
 	
 	/**
@@ -79,6 +87,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	
 	protected void setInitialMappings() {
 		setMapping("canonicalName", PropertyType.TEXTLABEL);
+		setDefaultValue(PropertyType.DATASOURCE, "UniProt");
 	}
 	
 	protected boolean isProtected(PropertyType prop) {
@@ -86,6 +95,12 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	}
 	
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr) {
+		//Process defaults
+		for(PropertyType prop : defaultValues.keySet()) {
+			elm.setProperty(prop, defaultValues.get(prop));
+		}
+		
+		//Process mappings
 		for(String aname : attr.getAttributeNames()) {
 			PropertyType prop = getProperty(aname);
 			
@@ -125,8 +140,11 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			case STRING:
 			case DB_ID:
 			case DB_SYMBOL:
+			case DATASOURCE:
 				value = attr.getStringAttribute(id, aname);
+				break;
 			default:
+				Logger.log.trace("Unsupported type: attribute " + aname + " to property " + prop);
 				//Don't transfer the attribute, if it's not a supported type
 			}
 			if(value != null) {

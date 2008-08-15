@@ -24,6 +24,8 @@ import org.pathvisio.model.PathwayElement;
 import cytoscape.data.CyAttributes;
 
 public abstract class GpmlNetworkElement<T> {
+	public static final String ATTR_TYPE = "gpml-type";
+	
 	T parent; //A CyNode or CyEdge
 	
 	protected PathwayElement pwElmOrig; 	//Original patwhay element
@@ -93,6 +95,7 @@ public abstract class GpmlNetworkElement<T> {
 	public void updateFromGpml(AttributeMapper attributeMapper) {
 		Logger.log.trace("Resetting " + this + " to GPML");
 		attributeMapper.propertiesToAttributes(getParentIdentifier(), pwElmOrig, getCyAttributes());
+		getCyAttributes().setAttribute(getParentIdentifier(), ATTR_TYPE, pwElmOrig.getObjectType());
 		pwElmCy = pwElmOrig.copy();
 	}
 	

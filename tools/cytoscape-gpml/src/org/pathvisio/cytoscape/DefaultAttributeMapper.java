@@ -16,6 +16,7 @@
 //
 package org.pathvisio.cytoscape;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -45,11 +46,20 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	}
 	
 	public String getMapping(PropertyType prop) {
-		return prop2attr.get(prop);
+		//First check if a mapping is explicitely set
+		String name = prop2attr.get(prop);
+		if(name == null && prop != null) { //If not, use the property tag name
+			name = prop.tag();
+		}
+		return name;
 	}
 	
 	public PropertyType getMapping(String attr) {
-		return attr2prop.get(attr);
+		PropertyType prop = attr2prop.get(attr);
+		if(prop == null) { //If not, find out if it's a GPML attribute
+			prop = PropertyType.getByTag(attr);
+		}
+		return prop;
 	}
 	
 	public void setMapping(String attr, PropertyType prop) {
@@ -164,6 +174,9 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			case DOUBLE:
 				value = attr.getDoubleAttribute(id, aname);
 				break;
+			case COLOR:
+				value = Color.decode("" + attr.getIntegerAttribute(id, aname));
+				break;
 			case STRING:
 			case DB_ID:
 			case DB_SYMBOL:
@@ -182,21 +195,11 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	}
 
 	private PropertyType getProperty(String attributeName) {
-		//First check if a mapping is explicitely set
-		PropertyType prop = attr2prop.get(attributeName);
-		if(prop == null) { //If not, find out if it's a GPML attribute
-			prop = PropertyType.getByTag(attributeName);
-		}
-		return prop;
+		return getMapping(attributeName);
 	}
 	
 	private String getAttributeName(PropertyType property) {
-		//First check if a mapping is explicitely set
-		String name = prop2attr.get(property);
-		if(name == null) { //If not, use the property tag name
-			name = property.tag();
-		}
-		return name;
+		return getMapping(property);
 	}
 	
 	public void propertiesToAttributes(String id, PathwayElement elm,
@@ -214,6 +217,9 @@ public class DefaultAttributeMapper implements AttributeMapper {
 					break;
 				case DOUBLE:
 					attr.setAttribute(id, aname, (Double)value);
+					break;
+				case COLOR:
+					attr.setAttribute(id, aname, ((Color)value).getRGB());
 					break;
 				case STRING:
 				case DB_ID:

@@ -18,6 +18,8 @@ package org.pathvisio.cytoscape;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,8 +33,6 @@ import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 import org.pathvisio.model.PropertyType;
 
 import cytoscape.data.CyAttributes;
-import edu.emory.mathcs.backport.java.util.Arrays;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Panel to configure attribute to GPML property mappings

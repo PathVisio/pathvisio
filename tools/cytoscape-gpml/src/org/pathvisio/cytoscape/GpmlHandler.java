@@ -22,10 +22,12 @@ import giny.view.EdgeView;
 import giny.view.GraphView;
 import giny.view.NodeView;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -34,7 +36,13 @@ import cytoscape.CyEdge;
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
+import cytoscape.visual.Arrow;
 import cytoscape.visual.CalculatorCatalog;
+import cytoscape.visual.EdgeAppearanceCalculator;
+import cytoscape.visual.GlobalAppearanceCalculator;
+import cytoscape.visual.LineType;
+import cytoscape.visual.NodeAppearanceCalculator;
+import cytoscape.visual.ShapeNodeRealizer;
 import cytoscape.visual.VisualMappingManager;
 import cytoscape.visual.VisualStyle;
 
@@ -207,17 +215,15 @@ public class GpmlHandler {
     public void applyGpmlVisualStyle() {
     	VisualMappingManager vmm = Cytoscape.getVisualMappingManager();
     	CalculatorCatalog catalog = vmm.getCalculatorCatalog();
-    	VisualStyle gpmlStyle = catalog.getVisualStyle("GPML");
+    	VisualStyle gpmlStyle = catalog.getVisualStyle(GpmlVisualStyle.NAME);
     	if(gpmlStyle == null) { //Create the GPML visual style
     		Logger.log.trace("VisualStyle: creating GPML style");
-    		try {
-				gpmlStyle = (VisualStyle)vmm.getVisualStyle().clone();
-			} catch (CloneNotSupportedException e) {
-				gpmlStyle = new VisualStyle("GPML");
-			}
-    		gpmlStyle.setName("GPML");
-    		gpmlStyle.setNodeAppearanceCalculator(new GpmlNodeAppearanceCalculator(this));
-    		gpmlStyle.setEdgeAppearanceCalculator(new GpmlEdgeAppearanceCalculator(this));
+//    		gpmlStyle = new VisualStyle(vmm.getVisualStyle());
+//    		gpmlStyle.setName("GPML");
+//    		gpmlStyle.setNodeAppearanceCalculator(new GpmlNodeAppearanceCalculator(this));
+//    		gpmlStyle.setEdgeAppearanceCalculator(new GpmlEdgeAppearanceCalculator(this));
+
+    		gpmlStyle = new GpmlVisualStyle(this, vmm.getVisualStyle());
     		catalog.addVisualStyle(gpmlStyle);
     	} else {
     		Logger.log.trace("VisualStyle: reusing GPML style");

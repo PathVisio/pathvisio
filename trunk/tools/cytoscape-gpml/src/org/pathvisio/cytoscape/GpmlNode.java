@@ -69,8 +69,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 		//Set graphid to rootgraph index
 		String id = Integer.toHexString(getParent().getRootGraphIndex());
 		pwElmOrig.setGraphId(id);
-		getParent().setIdentifier(id);
-		resetToGpml(attributeMapper);
+		setPwElmCy(pwElmOrig.copy());
 	}
 	
 	/**
@@ -124,8 +123,8 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 		}
 	}
 	
-	public void resetToGpml(AttributeMapper attributeMapper, GraphView view) {
-		super.resetToGpml(attributeMapper, view);
+	public void updateFromGpml(AttributeMapper attributeMapper, GraphView view) {
+		super.updateFromGpml(attributeMapper, view);
 		resetPosition(view);
 	}
 	

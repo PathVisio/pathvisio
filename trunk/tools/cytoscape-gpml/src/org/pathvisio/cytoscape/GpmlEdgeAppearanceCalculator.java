@@ -20,7 +20,6 @@ import giny.model.Edge;
 
 import java.awt.Color;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.PathwayElement;
 

@@ -237,7 +237,7 @@ public class GpmlHandler {
     			Logger.log.trace("Layout: skipping " + gn + ", not a GPML node");
     			continue; //Not a GPML node
     		}
-    		gn.resetToGpml(getAttributeMapper(), view);
+    		gn.updateFromGpml(getAttributeMapper(), view);
     	}
 		view.updateView();	
     }

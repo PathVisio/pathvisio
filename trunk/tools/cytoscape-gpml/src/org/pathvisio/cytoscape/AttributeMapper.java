@@ -26,8 +26,45 @@ public interface AttributeMapper {
 	/**
 	 * Set a default value that will be used when no mapping is available
 	 */
-	public void setDefaultValue(PropertyType prop, String value);
+	public void setDefaultValue(PropertyType prop, Object value);
+	
+	public Object getDefaultValue(PropertyType prop);
+	
+	/**
+	 * Sets a two-way mapping, should be equivalent to:<br>
+	 * <code>
+	 * setAttributeToPropertyMapping(attr, prop);
+	 * setPropertyToAttributeMapping(prop, attr);
+	 * </code>
+	 */
 	public void setMapping(String attr, PropertyType prop);
+	/**
+	 * Set a one-way mapping, from attribute to property
+	 */
+	public void setAttributeToPropertyMapping(String attr, PropertyType prop);
+	/**
+	 * Set a one-way mapping, from property to attribute
+	 */
+	public void setPropertyToAttributeMapping(PropertyType prop, String attr);
+	public PropertyType getMapping(String attr);
+	public String getMapping(PropertyType prop);
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr);
 	public void propertiesToAttributes(String id, PathwayElement elm, CyAttributes attr);
+	
+	/**
+	 * Check whether a property is protected. If a property is protected, no attributes should
+	 * be mapped to and from this property.
+	 */
+	public boolean isProtected(PropertyType prop);
+	/**
+	 * Protect a property. If a property is protected, no attributes should
+	 * be mapped to and from this property.
+	 */
+	public void protect(PropertyType prop);
+	
+	/**
+	 * Unprotect a property. If a property is unprotected, the attributemapper
+	 * will map attribute value from and to this property
+	 */
+	public void unprotect(PropertyType prop);
 }

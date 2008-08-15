@@ -39,7 +39,7 @@ public abstract class GpmlNetworkElement<T> {
 		this.parent = parent;
 		this.pwElmOrig = pwElm;
 		pwElmCy = pwElmOrig.copy();
-		if(attributeMapper != null) resetToGpml(attributeMapper);
+//		if(attributeMapper != null) resetToGpml(attributeMapper);
 	}
 		
 	/**
@@ -70,6 +70,10 @@ public abstract class GpmlNetworkElement<T> {
 		return pwElmCy;
 	}
 	
+	protected void setPwElmCy(PathwayElement pwElmCy) {
+		this.pwElmCy = pwElmCy;
+	}
+	
 	public T getParent() {
 		return parent;
 	}
@@ -86,14 +90,14 @@ public abstract class GpmlNetworkElement<T> {
 		}
 	}
 	
-	public void resetToGpml(AttributeMapper attributeMapper) {
+	public void updateFromGpml(AttributeMapper attributeMapper) {
 		Logger.log.trace("Resetting " + this + " to GPML");
 		attributeMapper.propertiesToAttributes(getParentIdentifier(), pwElmOrig, getCyAttributes());
 		pwElmCy = pwElmOrig.copy();
 	}
 	
-	public void resetToGpml(AttributeMapper attributeMapper, GraphView view) {
-		resetToGpml(attributeMapper);
+	public void updateFromGpml(AttributeMapper attributeMapper, GraphView view) {
+		updateFromGpml(attributeMapper);
 	}
 	
 //	/**

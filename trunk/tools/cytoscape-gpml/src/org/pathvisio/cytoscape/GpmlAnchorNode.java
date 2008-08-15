@@ -23,6 +23,7 @@ import java.awt.geom.Point2D;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.MLine;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 
@@ -35,6 +36,8 @@ import cytoscape.CyNode;
  *
  */
 public class GpmlAnchorNode extends GpmlNode {
+	public static final int TYPE_ANCHOR = ObjectType.MAX_VALID + 1;
+	
 	/**
 	 * Constructor for this class. Creates a new GpmlNode, based on the given
 	 * node and line
@@ -58,6 +61,12 @@ public class GpmlAnchorNode extends GpmlNode {
 		Logger.log.trace("Setting position of anchor node to: " + p);
 		nv.setXPosition(GpmlPlugin.mToV(p.getX()), false);
 		nv.setYPosition(GpmlPlugin.mToV(p.getY()), false);
+	}
+	
+	public void updateFromGpml(AttributeMapper attributeMapper) {
+		super.updateFromGpml(attributeMapper);
+		getCyAttributes().setAttribute(getParentIdentifier(), ATTR_TYPE, TYPE_ANCHOR);
+		getCyAttributes().setAttribute(getParentIdentifier(), "canonicalName", "");
 	}
 	
 	public void addAnnotation(GraphView view) {

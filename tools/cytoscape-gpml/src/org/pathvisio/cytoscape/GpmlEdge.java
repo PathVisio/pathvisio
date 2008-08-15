@@ -49,7 +49,7 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		super(parent, pwElm);
 		this.source = source;
 		this.target = target;
-		resetToGpml(attributeMapper);
+		updateFromGpml(attributeMapper);
 	}
 		
 	/**
@@ -70,7 +70,6 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		pwElmOrig.setMEndX(ptarget.getMCenterX());
 		pwElmOrig.setMEndY(ptarget.getMCenterY());
 		
-		resetToGpml(attributeMapper);	
 		//TODO: map line style and arrowheads
 	}
 

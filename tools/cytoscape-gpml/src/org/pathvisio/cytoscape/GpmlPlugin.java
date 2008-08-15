@@ -32,8 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
+import org.pathvisio.cytoscape.actions.AttributeMapperAction;
 import org.pathvisio.cytoscape.actions.CopyAction;
 import org.pathvisio.cytoscape.actions.ExportAction;
 import org.pathvisio.cytoscape.actions.PasteAction;
@@ -83,9 +85,14 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		CyMenus menu = desktop.getCyMenus();
 		menu.addCytoscapeAction(new CopyAction(this));
 		menu.addCytoscapeAction(new PasteAction(this));
-		menu.addCytoscapeAction(new ToggleAnnotationAction(gpmlHandler));
 		menu.addCytoscapeAction(new ExportAction(this));
-
+		
+		JMenu pluginMenu = menu.getOperationsMenu();
+		JMenu gpmlMenu = new JMenu("Gpml plugin");
+		gpmlMenu.add(new ToggleAnnotationAction(gpmlHandler));
+		gpmlMenu.add(new AttributeMapperAction(this));
+		pluginMenu.add(gpmlMenu);
+		
 		WebServiceClientManager.registerClient(new WikiPathwaysClient(this));
 	}
 

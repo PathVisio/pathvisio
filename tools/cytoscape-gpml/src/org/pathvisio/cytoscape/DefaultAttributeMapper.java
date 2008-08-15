@@ -30,7 +30,7 @@ import cytoscape.data.CyAttributes;
 
 public class DefaultAttributeMapper implements AttributeMapper {
 	public static final String CY_COMMENT_SOURCE = "cytoscape-attribute: ";
-	private Map<PropertyType, String> defaultValues;
+	private Map<PropertyType, Object> defaultValues;
 	private Map<PropertyType, String> prop2attr;
 	private Map<String, PropertyType> attr2prop;
 	
@@ -39,21 +39,30 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	public DefaultAttributeMapper() {
 		prop2attr = new HashMap<PropertyType, String>();
 		attr2prop = new HashMap<String, PropertyType>();
-		defaultValues = new HashMap<PropertyType, String>();
+		defaultValues = new HashMap<PropertyType, Object>();
 		
 		setInitialMappings();
 	}
 	
-	/**
-	 * Sets a two way mapping
-	 */
+	public String getMapping(PropertyType prop) {
+		return prop2attr.get(prop);
+	}
+	
+	public PropertyType getMapping(String attr) {
+		return attr2prop.get(attr);
+	}
+	
 	public void setMapping(String attr, PropertyType prop) {
 		setAttributeToPropertyMapping(attr, prop);
 		setPropertyToAttributeMapping(prop, attr);
 	}
 	
-	public void setDefaultValue(PropertyType prop, String value) {
+	public void setDefaultValue(PropertyType prop, Object value) {
 		defaultValues.put(prop, value);
+	}
+	
+	public Object getDefaultValue(PropertyType prop) {
+		return defaultValues.get(prop);
 	}
 	
 	/**
@@ -81,17 +90,29 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			protectedProps.add(PropertyType.CENTERY);
 			protectedProps.add(PropertyType.STARTX);
 			protectedProps.add(PropertyType.STARTY);
+			protectedProps.add(PropertyType.ENDX);
+			protectedProps.add(PropertyType.ENDY);
+			protectedProps.add(PropertyType.COMMENTS);
 		}
 		return protectedProps;
 	}
 	
 	protected void setInitialMappings() {
 		setMapping("canonicalName", PropertyType.TEXTLABEL);
-		setDefaultValue(PropertyType.DATASOURCE, "UniProt");
+		setMapping("id", PropertyType.GENEID);
+		setDefaultValue(PropertyType.DATASOURCE, DataSource.UNIPROT);
 	}
 	
-	protected boolean isProtected(PropertyType prop) {
+	public boolean isProtected(PropertyType prop) {
 		return getProtectedProps().contains(prop);
+	}
+	
+	public void protect(PropertyType prop) {
+		getProtectedProps().add(prop);
+	}
+	
+	public void unprotect(PropertyType prop) {
+		getProtectedProps().remove(prop);
 	}
 	
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr) {
@@ -104,8 +125,11 @@ public class DefaultAttributeMapper implements AttributeMapper {
 		for(String aname : attr.getAttributeNames()) {
 			PropertyType prop = getProperty(aname);
 			
+			Logger.log.trace("Mapping attribute " + aname);
+			
 			//No mapping for this attribute, store as comment
 			if(prop == null) {
+				Logger.log.trace("\tNo mapping found, adding as comment");
 				String value = null;
 				try { //We don't know what type of attribute
 					  //Throws an IllegalArgumentException if it's a Map
@@ -115,13 +139,16 @@ public class DefaultAttributeMapper implements AttributeMapper {
 					Logger.log.error("Unable to transfer attribute " + aname, e);
 				}
 				if(value != null && !(value.length() == 0)) {
-					elm.addComment(elm.new Comment(attr.getStringAttribute(id, aname), CY_COMMENT_SOURCE + aname));					
+					elm.addComment(attr.getStringAttribute(id, aname), CY_COMMENT_SOURCE + aname);
 				}
 				continue;
+			} else {
+				Logger.log.trace("\tFound mapping to " + prop);
 			}
 			
 			//Protected property, don't set from attributes
 			if(isProtected(prop)) {
+				Logger.log.trace("\tProperty is protected, skipping");
 				continue;
 			}
 			
@@ -141,12 +168,13 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			case DB_ID:
 			case DB_SYMBOL:
 			case DATASOURCE:
-				value = attr.getStringAttribute(id, aname);
+				value = attr.getAttribute(id, aname);
 				break;
 			default:
-				Logger.log.trace("Unsupported type: attribute " + aname + " to property " + prop);
+				Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
 				//Don't transfer the attribute, if it's not a supported type
 			}
+			Logger.log.trace("Setting property " + prop + " to " + value);
 			if(value != null) {
 				elm.setProperty(prop, value);
 			}

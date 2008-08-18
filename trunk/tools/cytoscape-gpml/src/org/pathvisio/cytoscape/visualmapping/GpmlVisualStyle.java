@@ -16,6 +16,8 @@
 //
 package org.pathvisio.cytoscape.visualmapping;
 
+import java.util.HashMap;
+
 import org.pathvisio.cytoscape.AttributeMapper;
 import org.pathvisio.cytoscape.GpmlAnchorNode;
 import org.pathvisio.cytoscape.GpmlHandler;
@@ -132,23 +134,48 @@ public class GpmlVisualStyle extends VisualStyle {
 		);
 	}
 	
+	private static HashMap<String, ArrowShape> attribute2arrow;
+	private static HashMap<ArrowShape, String> arrow2attribute;
+	
+	public static HashMap<String, ArrowShape> getAttributeToArrow() {
+		if(attribute2arrow == null) {
+			attribute2arrow = new HashMap<String, ArrowShape>();
+			attribute2arrow.put(LineType.LINE.getName(), ArrowShape.NONE);
+			attribute2arrow.put(LineType.ARROW.getName(), ArrowShape.ARROW);
+			attribute2arrow.put(LineType.LIGAND_ROUND.getName(), ArrowShape.CIRCLE);
+			attribute2arrow.put(LineType.LIGAND_SQUARE.getName(), ArrowShape.DELTA);
+			attribute2arrow.put(LineType.RECEPTOR.getName(), ArrowShape.DELTA);
+			attribute2arrow.put(LineType.RECEPTOR_ROUND.getName(), ArrowShape.DELTA);
+			attribute2arrow.put(LineType.RECEPTOR_SQUARE.getName(), ArrowShape.DELTA);
+			attribute2arrow.put(LineType.TBAR.getName(), ArrowShape.T);
+			
+			attribute2arrow.put("mim-necessary-stimulation", ArrowShape.ARROW);
+			attribute2arrow.put("mim-binding", ArrowShape.ARROW);
+			attribute2arrow.put("mim-conversion", ArrowShape.ARROW);
+			attribute2arrow.put("mim-stimulation", ArrowShape.ARROW);
+			attribute2arrow.put("mim-catalysis", ArrowShape.ARROW);
+			attribute2arrow.put("mim-inhibition", ArrowShape.ARROW);
+			attribute2arrow.put("mim-cleavage", ArrowShape.ARROW);
+		}
+		return attribute2arrow;
+	}
+	
+	public static HashMap<ArrowShape, String> getArrowToAttribute() {
+		if(arrow2attribute == null) {
+			arrow2attribute = new HashMap<ArrowShape, String>();
+			HashMap<String, ArrowShape> attribute2arrow = getAttributeToArrow();
+			for(String attribute : attribute2arrow.keySet()) {
+				arrow2attribute.put(attribute2arrow.get(attribute), attribute);
+			}
+		}
+		return arrow2attribute;
+	}
+	
 	void setArrowMappings(DiscreteMapping mapping) {
-		mapping.putMapValue(LineType.LINE.getName(), ArrowShape.NONE);
-		mapping.putMapValue(LineType.ARROW.getName(), ArrowShape.ARROW);
-		mapping.putMapValue(LineType.LIGAND_ROUND.getName(), ArrowShape.CIRCLE);
-		mapping.putMapValue(LineType.LIGAND_SQUARE.getName(), ArrowShape.DELTA);
-		mapping.putMapValue(LineType.RECEPTOR.getName(), ArrowShape.DELTA);
-		mapping.putMapValue(LineType.RECEPTOR_ROUND.getName(), ArrowShape.DELTA);
-		mapping.putMapValue(LineType.RECEPTOR_SQUARE.getName(), ArrowShape.DELTA);
-		mapping.putMapValue(LineType.TBAR.getName(), ArrowShape.T);
-		
-		mapping.putMapValue("mim-necessary-stimulation", ArrowShape.ARROW);
-		mapping.putMapValue("mim-binding", ArrowShape.ARROW);
-		mapping.putMapValue("mim-conversion", ArrowShape.ARROW);
-		mapping.putMapValue("mim-stimulation", ArrowShape.ARROW);
-		mapping.putMapValue("mim-catalysis", ArrowShape.ARROW);
-		mapping.putMapValue("mim-inhibition", ArrowShape.ARROW);
-		mapping.putMapValue("mim-cleavage", ArrowShape.ARROW);
+		HashMap<String, ArrowShape> attribute2arrow = getAttributeToArrow();
+		for(String attribute : attribute2arrow.keySet()) {
+			mapping.putMapValue(attribute, attribute2arrow.get(attribute));
+		}
 	}
 	
 	void setTypeMapping() {

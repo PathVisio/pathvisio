@@ -268,11 +268,7 @@ public class GpmlConverter {
 				}
 				
 				//The interaction name
-				GroupStyle groupStyle = pwElm.getGroupStyle();
-				String interaction = groupStyle.name();
-				if(groupStyle == GroupStyle.NONE) {
-					interaction = "group";
-				}
+				String interaction = GpmlHandler.GROUP_EDGE_TYPE;
 				
 				PathwayElement[] groupElements = pathway.getGroupElements(
 						pwElm.getGroupId()

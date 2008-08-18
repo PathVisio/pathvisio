@@ -16,6 +16,7 @@
 //
 package org.pathvisio.cytoscape;
 
+import giny.model.Node;
 import giny.view.EdgeView;
 import giny.view.GraphView;
 import giny.view.NodeView;
@@ -24,28 +25,39 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
+import org.pathvisio.biopax.BiopaxElementManager;
+import org.pathvisio.biopax.BiopaxReferenceManager;
+import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.cytoscape.actions.AttributeMapperAction;
 import org.pathvisio.cytoscape.actions.CopyAction;
 import org.pathvisio.cytoscape.actions.ExportAction;
 import org.pathvisio.cytoscape.actions.PasteAction;
 import org.pathvisio.cytoscape.actions.ToggleAnnotationAction;
+import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
 import org.pathvisio.cytoscape.wikipathways.WikiPathwaysClient;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.LineType;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
@@ -60,14 +72,23 @@ import cytoscape.CyEdge;
 import cytoscape.CyNetwork;
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
+import cytoscape.data.CyAttributes;
 import cytoscape.data.ImportHandler;
+import cytoscape.data.attr.MultiHashMap;
+import cytoscape.data.attr.MultiHashMapDefinition;
 import cytoscape.data.readers.GraphReader;
 import cytoscape.data.webservice.WebServiceClientManager;
+import cytoscape.groups.CyGroup;
+import cytoscape.groups.CyGroupManager;
 import cytoscape.plugin.CytoscapePlugin;
 import cytoscape.util.CyFileFilter;
 import cytoscape.view.CyMenus;
 import cytoscape.view.CyNetworkView;
 import cytoscape.view.CytoscapeDesktop;
+import cytoscape.visual.ArrowShape;
+import cytoscape.visual.EdgeAppearance;
+import cytoscape.visual.VisualPropertyType;
+import cytoscape.visual.VisualStyle;
 import ding.view.DGraphView;
 import ding.view.InnerCanvas;
 
@@ -75,7 +96,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 	GpmlHandler gpmlHandler;
 
 	public GpmlPlugin() {
-		Logger.log.setLogLevel(true, true, true, true, true, true);
+		Logger.log.setLogLevel(true, false, true, true, true, true);
 		MIMShapes.registerShapes();
 
 		gpmlHandler = new GpmlHandler();
@@ -92,13 +113,13 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		menu.addCytoscapeAction(new CopyAction(this));
 		menu.addCytoscapeAction(new PasteAction(this));
 		menu.addCytoscapeAction(new ExportAction(this));
-		
+
 		JMenu pluginMenu = menu.getOperationsMenu();
 		JMenu gpmlMenu = new JMenu("Gpml plugin");
 		gpmlMenu.add(new ToggleAnnotationAction(gpmlHandler));
 		gpmlMenu.add(new AttributeMapperAction(this));
 		pluginMenu.add(gpmlMenu);
-		
+
 		WebServiceClientManager.registerClient(new WikiPathwaysClient(this));
 	}
 
@@ -158,7 +179,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			}
 			converter.layout(view);
 			view.redrawGraph(true, false);
-			
+
 			return network;
 		} catch(Exception ex) {
 			Logger.log.error("Error while importing GPML", ex);
@@ -185,6 +206,87 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		}
 	}
 
+	/**
+	 * Copied from XGMMLWriter.java, use to get complex attributes
+	 */
+	private Map getComplexAttributeStructure(MultiHashMap mmap, String id, String attributeName,
+			Object[] keys, int keysIndex, int numKeyDimensions) {
+		// are we done?
+		if (keysIndex == numKeyDimensions)
+			return null;
+
+		// the hashmap to return
+		Map keyHashMap = new HashMap();
+
+		// create a new object array to store keys for this interation
+		// copy all existing keys into it
+		Object[] newKeys = new Object[keysIndex + 1];
+
+		for (int lc = 0; lc < keysIndex; lc++) {
+			newKeys[lc] = keys[lc];
+		}
+
+		// get the key span
+		Iterator keyspan = mmap.getAttributeKeyspan(id, attributeName, keys);
+
+		while (keyspan.hasNext()) {
+			Object newKey = keyspan.next();
+			newKeys[keysIndex] = newKey;
+
+			Map nextLevelMap = getComplexAttributeStructure(mmap, id, attributeName, newKeys,
+					keysIndex + 1, numKeyDimensions);
+			Object objectToStore = (nextLevelMap == null)
+			? mmap.getAttributeValue(id, attributeName, newKeys) : nextLevelMap;
+			keyHashMap.put(newKey, objectToStore);
+		}
+		return keyHashMap;
+	}
+
+	private void addLitSearchRef(BiopaxElementManager biopaxElmMgr, PathwayElement line, Map litMap) {
+		BiopaxReferenceManager biopaxRefMgr = new BiopaxReferenceManager(biopaxElmMgr, line);
+		
+		for(Object key : litMap.keySet()) {
+			String link = key.toString();
+			//Parse pubmed id from
+			//http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=18700251
+			Pattern p = Pattern.compile("db=pubmed&dopt=Abstract&list_uids=(\\d+)");
+			Matcher m = p.matcher(link);
+			String pmid = null;
+			if(m.find()) {
+				pmid = m.group(1);
+			}
+									
+			HashMap valueMap = (HashMap)litMap.get(key);
+			HashMap litInfo = (HashMap)valueMap.get(1);
+			String journal = litInfo.get(0).toString();
+			String year = litInfo.get(4).toString();
+			
+			PublicationXRef xref = new PublicationXRef();
+			if(pmid != null) xref.setPubmedId(pmid);
+			xref.setSource(journal);
+			xref.setYear(year);
+			
+			biopaxElmMgr.addElement(xref);
+			biopaxRefMgr.addElementReference(xref);
+		}
+	}
+	
+	private void mapEdgeArrows(CyNetwork network, CyEdge edge, PathwayElement pwElm) {
+		//Map vizmapper arrows (will be overridden by attribute mapper)
+		VisualStyle vs = Cytoscape.getVisualMappingManager().getVisualStyle();
+		EdgeAppearance app = vs.getEdgeAppearanceCalculator().calculateEdgeAppearance(edge, network);
+		ArrowShape arrow = (ArrowShape)app.get(VisualPropertyType.EDGE_TGTARROW_SHAPE);
+		LineType type = LineType.fromName(GpmlVisualStyle.getArrowToAttribute().get(arrow));
+		if(type != null) {
+			pwElm.setEndLineType(type);
+		}
+		arrow = (ArrowShape)app.get(VisualPropertyType.EDGE_SRCARROW_SHAPE);
+		type = LineType.fromName(GpmlVisualStyle.getArrowToAttribute().get(arrow));
+		if(type != null) {
+			pwElm.setStartLineType(type);
+		}
+	}
+	
 	public void drag(Clipboard clipboard) {
 		CyNetwork network = Cytoscape.getCurrentNetwork();
 		CyNetworkView nview = Cytoscape.getCurrentNetworkView();
@@ -193,25 +295,127 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		Set<CyNode> selNodes = network.getSelectedNodes();
 
 		List<PathwayElement> gpmlElements = new ArrayList<PathwayElement>();
+		Map<CyNode, PathwayElement> node2element = new HashMap<CyNode, PathwayElement>();
 
+		//Keep reference to a pathway and biopax element for adding
+		//biopax references
+		Pathway pathway = new Pathway();
+		BiopaxElementManager biopaxElmMgr = new BiopaxElementManager(pathway);
+		
+		//Process nodes
 		for(CyNode node : selNodes) {
 			GpmlNode gn = gpmlHandler.createNode(nview.getNodeView(node));
-			gpmlElements.add(gn.getPathwayElement(nview, gpmlHandler.getAttributeMapper()).copy());
+			PathwayElement pwe = gn.getPathwayElement(nview, gpmlHandler.getAttributeMapper()).copy();
+			gpmlElements.add(pwe);
+			node2element.put(node, pwe);
 		}
-		
+
+		//Process edges
 		for(CyEdge edge : selEdges) {
 			//Don't copy edges that connect anchor nodes
 			if(gpmlHandler.isAnchorEdge(edge)) {
 				continue;
 			}
+
+			//Don't copy edges that connect to groups
+			if(gpmlHandler.isGroupEdge(edge)) {
+				continue;
+			}
 			
+			//Don't copy edges that don't connect to selected nodes
+			Node source = edge.getSource();
+			Node target = edge.getTarget();
+			if(!selNodes.contains(source) || !selNodes.contains(target)) {
+				continue;
+			}
+
 			GpmlEdge ge = gpmlHandler.createEdge(nview.getEdgeView(edge));
-			gpmlElements.add(ge.getPathwayElement(nview, gpmlHandler.getAttributeMapper()).copy());
+			PathwayElement line = ge.getPathwayElement(nview, gpmlHandler.getAttributeMapper()).copy();
+			gpmlElements.add(line);
+
+			//Check for litsearch references
+			String attributeName = "TextSourceInfo";
+			CyAttributes attr = Cytoscape.getEdgeAttributes();
+			byte attrType = attr.getType(attributeName);
+			
+			//Check if the attribute has the correct type
+			if(attrType == CyAttributes.TYPE_COMPLEX) {
+				MultiHashMap mh = attr.getMultiHashMap();
+				MultiHashMapDefinition mhd = attr.getMultiHashMapDefinition();
+				Map litMap = getComplexAttributeStructure(
+						mh, edge.getIdentifier(), attributeName, 
+						null, 0, mhd.getAttributeKeyspaceDimensionTypes(attributeName).length
+				);
+				if(litMap != null) {
+					System.err.println("Adding litsearch references");
+					addLitSearchRef(biopaxElmMgr, line, litMap);
+				}
+			}
+			
+			//Check for visual style arrows
+			//Only apply visual style if no linestyle is defined by attribute mapping
+			if(line.getStartLineType() != LineType.LINE && line.getEndLineType() != LineType.LINE) {
+				mapEdgeArrows(network, edge, line);
+			}
+		}
+
+		//Process BubbleRouter groups
+		Set<CyNode> groupedNodes = new HashSet<CyNode>();
+		Set<String> groupIds = new HashSet<String>();
+
+		//Sort on group size. Add element to smallest group if it's in multiple
+		//groups (GPML doesn't support an object to be added to multiple groups)
+		List<CyGroup> groups = new ArrayList<CyGroup>(CyGroupManager.getGroupList());
+		Collections.sort(groups, new Comparator<CyGroup>() {
+			public int compare(CyGroup o1, CyGroup o2) {
+				return o1.getNodes().size() - o2.getNodes().size();
+			}
+		});
+
+		for(CyGroup g : groups) {
+			//Only include BubbleRouter groups
+			if(!"bubbleRouter".equals(g.getViewer())) continue;
+			
+			PathwayElement gpmlGroup = null;
+			Set<PathwayElement> groupElements = new HashSet<PathwayElement>();
+
+			for(CyNode n : selNodes) {
+				if(g.contains(n) && !groupedNodes.contains(n)) {
+					if(gpmlGroup == null) {
+						gpmlGroup = PathwayElement.createPathwayElement(ObjectType.GROUP);
+						gpmlGroup.setGroupId(pathway.getUniqueId(groupIds));
+						gpmlGroup.setTextLabel(g.getGroupName());
+					}
+					PathwayElement pwe = node2element.get(n);
+					pwe.setGroupRef(gpmlGroup.getGroupId());
+					groupElements.add(pwe);
+					groupedNodes.add(n);
+				}
+			}
+			if(gpmlGroup != null && groupElements.size() > 0) {
+				gpmlElements.add(gpmlGroup);
+
+				Rectangle2D bounds = null;
+				for(PathwayElement e : groupElements) {
+					if(bounds == null) bounds = e.getMBounds();
+					else bounds.add(e.getMBounds());
+				}
+
+				PathwayElement label = PathwayElement.createPathwayElement(ObjectType.LABEL);
+				label.setTextLabel(g.getGroupName());
+				label.setMWidth(bounds.getWidth());
+				label.setMCenterX(bounds.getCenterX());
+				label.setMTop(bounds.getY() - vToM(8));
+				label.setMHeight(vToM(10));
+				label.setGroupRef(gpmlGroup.getGroupId());
+				gpmlElements.add(label);
+			}
 		}
 
 		//Shift all coordinates, so that the NW corner is at 0,0 (instead of the center)
-		Point2D vOrigin = getViewOrigin(nview);
-		int border = 20;
+		Point2D vOrigin = getViewOrigin(nview, selNodes);
+
+		int border = 50;
 		vOrigin.setLocation(vOrigin.getX() - border, vOrigin.getY() - border);
 		Point2D mOrigin = new Point2D.Double(vToM(vOrigin.getX()), vToM(vOrigin.getY()));
 		for(PathwayElement pe : gpmlElements) {
@@ -223,6 +427,10 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			pe.setMEndY(pe.getMEndY() - mOrigin.getY());
 		}
 
+		if(pathway.getBiopax() != null) {
+			gpmlElements.add(pathway.getBiopax());
+		}
+		
 		//Ensure unique ids
 		HashMap<String, List<MPoint>> graphRefs = new HashMap<String, List<MPoint>>();
 		for(PathwayElement pe : gpmlElements) {
@@ -236,7 +444,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 				}
 			}
 		}
-		
+
 		Map<String, Integer> idCounts = new HashMap<String, Integer>();
 		for(PathwayElement pe : gpmlElements) {
 			int count = idCounts.containsKey(pe.getGraphId()) ? idCounts.get(pe.getGraphId()) : 0;
@@ -252,7 +460,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 				fixGraphIds(ma, idCounts, graphRefs);
 			}
 		}
-		
+
 		PathwayTransferable content = new PathwayTransferable(gpmlElements);
 		clipboard.setContents(content, new ClipboardOwner() {
 			public void lostOwnership(Clipboard clipboard, Transferable contents) {
@@ -263,7 +471,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 
 	private void fixGraphIds(GraphIdContainer idc, Map<String, Integer> graphIds, HashMap<String, List<MPoint>> graphRefs) {
 		Pathway dummyPathway = new Pathway(); //TODO: make getUniqueId static
-		
+
 		String gid = idc.getGraphId();
 		int count = graphIds.containsKey(gid) ? graphIds.get(gid) : 0;
 		if(count > 1) {
@@ -276,7 +484,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			}
 		}
 	}
-	
+
 	public void writeToFile(GraphView view, File file) throws ConverterException {
 		Iterator<NodeView> itn = view.getNodeViewsIterator();
 		while(itn.hasNext()) {
@@ -290,11 +498,13 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		p.writeToXml(file, true);
 	}
 
-	private Point2D getViewOrigin(GraphView view) {
-		Point2D origin = new Point2D.Double(0, 0);
-		Iterator<NodeView> it = view.getNodeViewsIterator();
-		while(it.hasNext()) {
-			NodeView nv = it.next();
+	private Point2D getViewOrigin(GraphView view, Set<CyNode> nodes) {
+		Point2D origin = new Point2D.Double(Double.MAX_VALUE, Double.MAX_VALUE);
+
+		for(CyNode n : nodes) {
+			NodeView nv = view.getNodeView(n);
+
+			if(nv == null) continue;
 
 			GpmlNode gn = gpmlHandler.createNode(nv);
 			if(gn.isAnnotation(view)) continue; //Don't include annotations, these
@@ -315,6 +525,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 					y
 			);
 		}
+
 		Logger.log.trace("Origin: " + origin);
 		return origin;
 	}

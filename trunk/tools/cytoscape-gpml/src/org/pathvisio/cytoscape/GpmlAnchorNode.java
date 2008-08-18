@@ -20,11 +20,13 @@ import giny.view.GraphView;
 import giny.view.NodeView;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 
 import cytoscape.CyNode;
@@ -50,6 +52,22 @@ public class GpmlAnchorNode extends GpmlNode {
 		return (MLine)getPathwayElement();
 	}
 	
+	MAnchor anchor;
+	
+	protected void cleanupAnchors() {
+		PathwayElement pe = getPathwayElement();
+		List<MAnchor> anchors = pe.getMAnchors();
+		while(anchors.size() > 1) {
+			anchors.remove(anchors.size() - 1);
+		}
+		anchor = anchors.get(0);
+		setPwElmOrig(pe);
+	}
+	
+	public GraphIdContainer getGraphIdContainer() {
+		return anchor;
+	}
+
 	protected void resetPosition(GraphView view) {
 		NodeView nv = view.getNodeView(parent);
 		if(nv == null) {

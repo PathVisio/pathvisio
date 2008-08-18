@@ -103,13 +103,13 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			protectedProps.add(PropertyType.ENDX);
 			protectedProps.add(PropertyType.ENDY);
 			protectedProps.add(PropertyType.COMMENTS);
+			protectedProps.add(PropertyType.GRAPHID);
 		}
 		return protectedProps;
 	}
 	
 	protected void setInitialMappings() {
 		setMapping("canonicalName", PropertyType.TEXTLABEL);
-		setMapping("id", PropertyType.GENEID);
 		setDefaultValue(PropertyType.DATASOURCE, DataSource.UNIPROT);
 	}
 	
@@ -163,33 +163,37 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			}
 			
 			//Found a property, try to set it
-			Object value = null;
-			switch(prop.type()) {
-			case BOOLEAN:
-				value = attr.getBooleanAttribute(id, aname);
-				break;
-			case INTEGER:
-				value = attr.getIntegerAttribute(id, aname);
-				break;
-			case DOUBLE:
-				value = attr.getDoubleAttribute(id, aname);
-				break;
-			case COLOR:
-				value = Color.decode("" + attr.getIntegerAttribute(id, aname));
-				break;
-			case STRING:
-			case DB_ID:
-			case DB_SYMBOL:
-			case DATASOURCE:
-				value = attr.getAttribute(id, aname);
-				break;
-			default:
-				Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
+			try {
+				Object value = null;
+				switch(prop.type()) {
+				case BOOLEAN:
+					value = attr.getBooleanAttribute(id, aname);
+					break;
+				case INTEGER:
+					value = attr.getIntegerAttribute(id, aname);
+					break;
+				case DOUBLE:
+					value = attr.getDoubleAttribute(id, aname);
+					break;
+				case COLOR:
+					value = Color.decode("" + attr.getIntegerAttribute(id, aname));
+					break;
+				case STRING:
+				case DB_ID:
+				case DB_SYMBOL:
+				case DATASOURCE:
+					value = attr.getAttribute(id, aname);
+					break;
+				default:
+					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
 				//Don't transfer the attribute, if it's not a supported type
-			}
-			Logger.log.trace("Setting property " + prop + " to " + value);
-			if(value != null) {
-				elm.setProperty(prop, value);
+				}
+				Logger.log.trace("Setting property " + prop + " to " + value);
+				if(value != null) {
+					elm.setProperty(prop, value);
+				}
+			} catch(Exception e) {
+				Logger.log.error("Unable to parse value for " + prop, e);
 			}
 		}
 	}

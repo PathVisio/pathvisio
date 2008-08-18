@@ -76,6 +76,11 @@ public abstract class GpmlNetworkElement<T> {
 		this.pwElmCy = pwElmCy;
 	}
 	
+	protected void setPwElmOrig(PathwayElement pwElmOrig) {
+		this.pwElmOrig = pwElmOrig;
+		setPwElmCy(pwElmOrig.copy());
+	}
+	
 	public T getParent() {
 		return parent;
 	}

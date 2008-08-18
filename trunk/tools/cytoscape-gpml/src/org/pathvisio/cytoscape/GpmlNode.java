@@ -24,6 +24,7 @@ import java.util.HashMap;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
@@ -152,6 +153,10 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 
 	public String getParentIdentifier() {
 		return getParent().getIdentifier();
+	}
+	
+	public GraphIdContainer getGraphIdContainer() {
+		return getPathwayElement();
 	}
 
 	public void updateFromCytoscape(GraphView view, AttributeMapper attributeMapper) {

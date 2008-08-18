@@ -22,7 +22,6 @@ import giny.view.EdgeView;
 import giny.view.GraphView;
 import giny.view.NodeView;
 
-import java.awt.Color;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,13 +35,7 @@ import cytoscape.CyEdge;
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
-import cytoscape.visual.Arrow;
 import cytoscape.visual.CalculatorCatalog;
-import cytoscape.visual.EdgeAppearanceCalculator;
-import cytoscape.visual.GlobalAppearanceCalculator;
-import cytoscape.visual.LineType;
-import cytoscape.visual.NodeAppearanceCalculator;
-import cytoscape.visual.ShapeNodeRealizer;
 import cytoscape.visual.VisualMappingManager;
 import cytoscape.visual.VisualStyle;
 
@@ -87,6 +80,13 @@ public class GpmlHandler {
 		return getNode(node.getIdentifier());
 	}
 	
+	protected static final String ANCHOR_EDGE_TYPE = "anchor-connection";
+	
+	public boolean isAnchorEdge(Edge edge) {
+		return ANCHOR_EDGE_TYPE.equals(
+				eAttributes.getAttribute(edge.getIdentifier(), "interaction").toString()
+		);
+	}
 	/**
 	 * Creates and adds a GpmlNode for the given NodeView, if it
 	 * doesn't exist yet

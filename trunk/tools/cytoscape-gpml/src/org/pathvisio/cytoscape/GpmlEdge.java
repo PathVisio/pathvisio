@@ -62,14 +62,15 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		PathwayElement psource = source.getPathwayElement();
 		PathwayElement ptarget = target.getPathwayElement();
 
-		pwElmOrig.setStartGraphRef(psource.getGraphId());
-		pwElmOrig.setEndGraphRef(ptarget.getGraphId());
+		pwElmOrig.setStartGraphRef(source.getGraphIdContainer().getGraphId());
+		pwElmOrig.setEndGraphRef(target.getGraphIdContainer().getGraphId());
 	
 		pwElmOrig.setMStartX(psource.getMCenterX());
 		pwElmOrig.setMStartY(psource.getMCenterY());
 		pwElmOrig.setMEndX(ptarget.getMCenterX());
 		pwElmOrig.setMEndY(ptarget.getMCenterY());
 		
+		setPwElmCy(pwElmOrig.copy());
 		//TODO: map line style and arrowheads
 	}
 
@@ -87,8 +88,8 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		PathwayElement psource = source.getPathwayElement(view, attributeMapper);
 		PathwayElement ptarget = target.getPathwayElement(view, attributeMapper);
 
-		getPwElmCy().setStartGraphRef(psource.getGraphId());
-		getPwElmCy().setEndGraphRef(ptarget.getGraphId());
+		getPwElmCy().setStartGraphRef(source.getGraphIdContainer().getGraphId());
+		getPwElmCy().setEndGraphRef(target.getGraphIdContainer().getGraphId());
 				
 		fixCoordinates(getPwElmCy(), psource, ptarget);
 	}

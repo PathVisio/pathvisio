@@ -36,6 +36,8 @@ import org.pathvisio.wikipathways.webservice.WSSearchResult;
 import org.pathvisio.wikipathways.webservice.WikiPathwaysLocator;
 import org.pathvisio.wikipathways.webservice.WikiPathwaysPortType;
 
+import cytoscape.CyNetwork;
+import cytoscape.Cytoscape;
 import cytoscape.CytoscapeInit;
 import cytoscape.data.webservice.CyWebServiceEvent;
 import cytoscape.data.webservice.CyWebServiceEventListener;
@@ -56,6 +58,8 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 	private static final String CLIENT_ID = "wikipathways";
 	protected static final String WEBSERVICE_URL = "wikipathways.webservice.uri";
 
+	public static final String ATTR_PATHWAY_URL = "wikipathways.url";
+	
 	private WikiPathwaysPortType stub;
 	private GpmlPlugin gpmlPlugin;
 	
@@ -175,9 +179,15 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 			try {
 				WSPathway r = getStub().getPathway(query.pwName, query.pwSpecies, query.revision);
 				String gpml = r.getGpml();
+				Logger.log.trace(gpml);
 				Pathway pathway = new Pathway();
 				pathway.readFromXml(new StringReader(gpml), true);
-				gpmlPlugin.load(pathway, true);
+				CyNetwork network = gpmlPlugin.load(pathway, true);
+				if(network != null) {
+					Cytoscape.getNetworkAttributes().setAttribute(
+							network.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl()
+					);
+				}
 			} catch (Exception e) {
 				Logger.log.error("Error while opening pathway", e);
 				JOptionPane.showMessageDialog(

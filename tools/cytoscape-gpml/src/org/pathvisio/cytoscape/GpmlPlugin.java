@@ -28,8 +28,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JMenu;
@@ -45,6 +48,9 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.view.swing.PathwayTransferable;
 
@@ -121,7 +127,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		drop(e.getTransferable());
 	}
 
-	public void load(Pathway p, boolean newNetwork) {
+	public CyNetwork load(Pathway p, boolean newNetwork) {
 		try {
 			GpmlConverter converter = new GpmlConverter(gpmlHandler, p);
 
@@ -152,6 +158,8 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			}
 			converter.layout(view);
 			view.redrawGraph(true, false);
+			
+			return network;
 		} catch(Exception ex) {
 			Logger.log.error("Error while importing GPML", ex);
 			JOptionPane.showMessageDialog(Cytoscape.getDesktop(), 
@@ -159,6 +167,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 					"Error", 
 					JOptionPane.ERROR_MESSAGE);
 		}
+		return null;
 	}
 
 	public void drop(Transferable transfer) {
@@ -187,11 +196,17 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 
 		for(CyNode node : selNodes) {
 			GpmlNode gn = gpmlHandler.createNode(nview.getNodeView(node));
-			gpmlElements.add(gn.getPathwayElement(nview, gpmlHandler.getAttributeMapper()));
+			gpmlElements.add(gn.getPathwayElement(nview, gpmlHandler.getAttributeMapper()).copy());
 		}
+		
 		for(CyEdge edge : selEdges) {
+			//Don't copy edges that connect anchor nodes
+			if(gpmlHandler.isAnchorEdge(edge)) {
+				continue;
+			}
+			
 			GpmlEdge ge = gpmlHandler.createEdge(nview.getEdgeView(edge));
-			gpmlElements.add(ge.getPathwayElement(nview, gpmlHandler.getAttributeMapper()));
+			gpmlElements.add(ge.getPathwayElement(nview, gpmlHandler.getAttributeMapper()).copy());
 		}
 
 		//Shift all coordinates, so that the NW corner is at 0,0 (instead of the center)
@@ -208,6 +223,36 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			pe.setMEndY(pe.getMEndY() - mOrigin.getY());
 		}
 
+		//Ensure unique ids
+		HashMap<String, List<MPoint>> graphRefs = new HashMap<String, List<MPoint>>();
+		for(PathwayElement pe : gpmlElements) {
+			for(MPoint p : pe.getMPoints()) {
+				if(p.getGraphRef() != null) {
+					List<MPoint> l = graphRefs.get(p.getGraphRef());
+					if(l == null) {
+						graphRefs.put(p.getGraphRef(), l = new ArrayList<MPoint>());
+					}
+					l.add(p);
+				}
+			}
+		}
+		
+		Map<String, Integer> idCounts = new HashMap<String, Integer>();
+		for(PathwayElement pe : gpmlElements) {
+			int count = idCounts.containsKey(pe.getGraphId()) ? idCounts.get(pe.getGraphId()) : 0;
+			idCounts.put(pe.getGraphId(), ++count);
+			for(MAnchor ma : pe.getMAnchors()) {
+				count = idCounts.containsKey(pe.getGraphId()) ? idCounts.get(pe.getGraphId()) : 0;
+				idCounts.put(ma.getGraphId(), ++count);
+			}
+		}
+		for(PathwayElement pe : gpmlElements) {
+			fixGraphIds(pe, idCounts, graphRefs);
+			for(MAnchor ma : pe.getMAnchors()) {
+				fixGraphIds(ma, idCounts, graphRefs);
+			}
+		}
+		
 		PathwayTransferable content = new PathwayTransferable(gpmlElements);
 		clipboard.setContents(content, new ClipboardOwner() {
 			public void lostOwnership(Clipboard clipboard, Transferable contents) {
@@ -216,6 +261,22 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		});
 	}
 
+	private void fixGraphIds(GraphIdContainer idc, Map<String, Integer> graphIds, HashMap<String, List<MPoint>> graphRefs) {
+		Pathway dummyPathway = new Pathway(); //TODO: make getUniqueId static
+		
+		String gid = idc.getGraphId();
+		int count = graphIds.containsKey(gid) ? graphIds.get(gid) : 0;
+		if(count > 1) {
+			String newId = dummyPathway.getUniqueId(graphIds.keySet());
+			idc.setGraphId(newId);
+			graphIds.put(gid, --count);
+			List<MPoint> mpoints = graphRefs.get(gid);
+			if(mpoints != null) {
+				for(MPoint mp : mpoints) mp.setGraphRef(newId);
+			}
+		}
+	}
+	
 	public void writeToFile(GraphView view, File file) throws ConverterException {
 		Iterator<NodeView> itn = view.getNodeViewsIterator();
 		while(itn.hasNext()) {

@@ -201,7 +201,7 @@ public class GpmlConverter {
 								sId,
 								pe.getGraphId() + "_start",
 								gpmlHandler.getNode(pe.getGraphId()).getParentIdentifier(),
-								"start-anchor"
+								GpmlHandler.ANCHOR_EDGE_TYPE
 						);
 						edges.add(es);
 						PathwayElement pe_start = pe.copy();
@@ -211,7 +211,7 @@ public class GpmlConverter {
 								gpmlHandler.getNode(pe.getGraphId()).getParentIdentifier(),
 								pe.getGraphId() + "end",
 								eId,
-								"anchor-end"
+								GpmlHandler.ANCHOR_EDGE_TYPE
 						);
 						edges.add(ee);
 						PathwayElement pe_end = pe.copy();
@@ -219,6 +219,12 @@ public class GpmlConverter {
 						gpmlHandler.addEdge(ee, pe_end);
 					}
 				}
+			}
+		}
+		//Fix anchor links
+		for(GpmlNode gn : gpmlHandler.getNodes()) {
+			if(gn instanceof GpmlAnchorNode) {
+				((GpmlAnchorNode)gn).cleanupAnchors();
 			}
 		}
 	}

@@ -81,12 +81,20 @@ public class GpmlHandler {
 	}
 	
 	protected static final String ANCHOR_EDGE_TYPE = "anchor-connection";
+	protected static final String GROUP_EDGE_TYPE = "group-connection";
 	
 	public boolean isAnchorEdge(Edge edge) {
 		return ANCHOR_EDGE_TYPE.equals(
 				eAttributes.getAttribute(edge.getIdentifier(), "interaction").toString()
 		);
 	}
+	
+	public boolean isGroupEdge(Edge edge) {
+		return GROUP_EDGE_TYPE.equals(
+				eAttributes.getAttribute(edge.getIdentifier(), "interaction").toString()
+		);
+	}
+	
 	/**
 	 * Creates and adds a GpmlNode for the given NodeView, if it
 	 * doesn't exist yet

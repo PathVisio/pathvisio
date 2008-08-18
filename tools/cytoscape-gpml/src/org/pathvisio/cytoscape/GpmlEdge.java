@@ -94,50 +94,65 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		fixCoordinates(getPwElmCy(), psource, ptarget);
 	}
 	
+	/**
+	 * Find the border to connect to. Returns a point containing
+	 * the relative coordinates.
+	 */
 	private Point findBorder(PathwayElement pwElm, double angle) {
-		Point bp = new Point(pwElm.getMLeft(), pwElm.getMTop());
-		
+		Point bp = new Point(-1, -1);
+
 		double diagAngle = Math.atan(pwElm.getMHeight() / pwElm.getMWidth());
 		double angleA = Math.abs(angle);
-		   /*    da < |a| < da + pi/2
+		/*    da < |a| < da + pi/2
 		       \   /
 		        \ /
 |a| > da + pi/2	 \  |a| < da 
 		        / \
 		       /   \
 		         da < |a| < da + pi/2
-		*/
-		
-		if(angleA > diagAngle && angleA <= diagAngle + Math.PI/2) {
-			bp.x = pwElm.getMCenterX();
+		 */
+
+		if(angleA >= diagAngle && angleA <= diagAngle + Math.PI/2) {
+			bp.x = 0; //center
 			if(angle < 0) {
-				bp.y += pwElm.getMHeight();
+				bp.y += 2;
 			}
 		}
-		if(angleA <= diagAngle || angleA > diagAngle + Math.PI/2) {
-			bp.y = pwElm.getMCenterY();
+		if(angleA < diagAngle || angleA > diagAngle + Math.PI/2) {
+			bp.y = 0;
 			if(angle < Math.PI / 2 && angle > -Math.PI / 2) {
-				bp.x += pwElm.getMWidth();
+				bp.x += 2;
 			}
 		}
-		
+
 		return bp;
 	}
 	
-	private void fixCoordinates(PathwayElement toSet, PathwayElement source, PathwayElement target) {
-		Point psource = new Point(source.getMCenterX(), source.getMCenterY());
-		Point ptarget = new Point(target.getMCenterX(), target.getMCenterY());
+	private Point[] findBorders(PathwayElement start, PathwayElement end) {
+		Point psource = new Point(start.getMCenterX(), start.getMCenterY());
+		Point ptarget = new Point(end.getMCenterX(), end.getMCenterY());
 		
 		double angle = LinAlg.angle(ptarget.subtract(psource), new Point(1, 0));
 		double astart = angle;
 		double aend = angle;
 		if(angle < 0) 	aend += Math.PI;
 		else 			aend -= Math.PI;
-		Point start = findBorder(source, astart);
-		Point end = findBorder(target, aend);
-		toSet.setMStartX(start.x);
-		toSet.setMStartY(start.y);
-		toSet.setMEndX(end.x);
-		toSet.setMEndY(end.y);
+		if(angle == 0) {
+			if(psource.x > ptarget.x) {
+				aend += Math.PI;
+				astart += Math.PI;
+			}
+		}
+		Point pstart = findBorder(start, astart);
+		Point pend = findBorder(end, aend);
+		return new Point[] { pstart, pend };
+	}
+	
+	private void fixCoordinates(PathwayElement toSet, PathwayElement source, PathwayElement target) {
+		Point[] borders = findBorders(source, target);
+		Point sp = borders[0];
+		Point ep = borders[1];
+		toSet.getMStart().setRelativePosition(sp.x, sp.y);
+		toSet.getMEnd().setRelativePosition(ep.x, ep.y);
 	}
 }

@@ -135,30 +135,30 @@ public class DefaultAttributeMapper implements AttributeMapper {
 		for(String aname : attr.getAttributeNames()) {
 			PropertyType prop = getProperty(aname);
 			
-			Logger.log.trace("Mapping attribute " + aname);
+//			Logger.log.trace("Mapping attribute " + aname);
 			
 			//No mapping for this attribute, store as comment
-			if(prop == null) {
-				Logger.log.trace("\tNo mapping found, adding as comment");
-				String value = null;
-				try { //We don't know what type of attribute
-					  //Throws an IllegalArgumentException if it's a Map
-					  //TODO: Find out if there is a generic method that returns an object
-					value = attr.getStringAttribute(id, aname);					
-				} catch(Exception e) {
-					Logger.log.error("Unable to transfer attribute " + aname, e);
-				}
-				if(value != null && !(value.length() == 0)) {
-					elm.addComment(attr.getStringAttribute(id, aname), CY_COMMENT_SOURCE + aname);
-				}
-				continue;
-			} else {
-				Logger.log.trace("\tFound mapping to " + prop);
-			}
+//			if(prop == null) {
+////				Logger.log.trace("\tNo mapping found, adding as comment");
+//				String value = null;
+//				try { //We don't know what type of attribute
+//					  //Throws an IllegalArgumentException if it's a Map
+//					  //TODO: Find out if there is a generic method that returns an object
+//					value = attr.getStringAttribute(id, aname);					
+//				} catch(Exception e) {
+////					Logger.log.error("Unable to transfer attribute " + aname, e);
+//				}
+//				if(value != null && !(value.length() == 0)) {
+//					elm.addComment(attr.getStringAttribute(id, aname), CY_COMMENT_SOURCE + aname);
+//				}
+//				continue;
+//			} else {
+////				Logger.log.trace("\tFound mapping to " + prop);
+//			}
 			
 			//Protected property, don't set from attributes
 			if(isProtected(prop)) {
-				Logger.log.trace("\tProperty is protected, skipping");
+//				Logger.log.trace("\tProperty is protected, skipping");
 				continue;
 			}
 			
@@ -185,7 +185,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 					value = attr.getAttribute(id, aname);
 					break;
 				default:
-					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
+//					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
 				//Don't transfer the attribute, if it's not a supported type
 				}
 				Logger.log.trace("Setting property " + prop + " to " + value);
@@ -193,7 +193,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 					elm.setProperty(prop, value);
 				}
 			} catch(Exception e) {
-				Logger.log.error("Unable to parse value for " + prop, e);
+//				Logger.log.error("Unable to parse value for " + prop, e);
 			}
 		}
 	}

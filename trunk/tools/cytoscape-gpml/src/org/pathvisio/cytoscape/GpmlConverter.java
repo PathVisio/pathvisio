@@ -22,11 +22,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -79,18 +79,46 @@ public class GpmlConverter {
 		return pathway;
 	}
 	
-	private void findNodes() {
-		for(PathwayElement o : pathway.getDataObjects()) {
-			int type = o.getObjectType();
-			if(type == ObjectType.LEGEND || type == ObjectType.INFOBOX || type == ObjectType.MAPPINFO) {
-				continue;
+	Map<GraphIdContainer, String> nodeIds = new HashMap<GraphIdContainer, String>();
+	
+	private String generateNodeId(GraphIdContainer o, String preferred) {
+		String id = preferred;
+		if(id != null) {
+			CyNode node = Cytoscape.getCyNode(id, false);
+			if(node != null) {
+				id = null; //Node already exists, use graphId instead!
 			}
-			String id = o.getGraphId();
+		}
+		if(id == null || "".equals(id)) {
+			id = o.getGraphId();
 			//Get an id if it's not already there
 			if(id == null) {
 				id = pathway.getUniqueGraphId();
 				o.setGraphId(id);
 			}
+		}
+		Logger.log.trace("Adding id " + id);
+		nodeIds.put(o, id);
+		return id;
+	}
+	
+	private String getNodeId(GraphIdContainer o) {
+		return nodeIds.get(o);
+	}
+	
+	private void findNodes() {
+		for(PathwayElement o : pathway.getDataObjects()) {
+			int type = o.getObjectType();
+			if(
+					type == ObjectType.BIOPAX ||
+					type == ObjectType.LEGEND || 
+					type == ObjectType.INFOBOX || 
+					type == ObjectType.MAPPINFO
+				) {
+				continue;
+			}
+			String id = generateNodeId(o, o.getTextLabel());
+
 			CyNode n = null;
 			switch(type) {
 			case ObjectType.GROUP:
@@ -149,10 +177,11 @@ public class GpmlConverter {
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			if(pe.getObjectType() == ObjectType.LINE) {
 				if(pe.getMAnchors().size() > 0 && isEdge(pe)) {
-					CyNode n = Cytoscape.getCyNode(pe.getGraphId(), true);
+					CyNode n = Cytoscape.getCyNode(generateNodeId(pe, pe.getGraphId()), true);
 					gpmlHandler.addAnchorNode(n, pe);
 					for(MAnchor a : pe.getMAnchors()) {
 						nodeMap.put(a, n);
+						nodeIds.put(a, n.getIdentifier());
 					}
 				}
 			}
@@ -164,12 +193,8 @@ public class GpmlConverter {
 				if(isEdge(pe)) {
 					//A line without anchors, convert to single edge
 					if(pe.getMAnchors().size() == 0) {
-						String source = nodeMap.get(
-								pathway.getGraphIdContainer(pe.getMStart().getGraphRef())
-						).getIdentifier();
-						String target = nodeMap.get(
-								pathway.getGraphIdContainer(pe.getMEnd().getGraphRef())
-						).getIdentifier();
+						String source = getNodeId(pathway.getGraphIdContainer(pe.getMStart().getGraphRef()));
+						String target = getNodeId(pathway.getGraphIdContainer(pe.getMEnd().getGraphRef()));
 						
 						Logger.log.trace("Line without anchors ( " + pe.getGraphId() + " ) to edge: " + 
 								source + ", " + target
@@ -252,6 +277,7 @@ public class GpmlConverter {
 		}
 		CyNode gn = cyGroup.getGroupNode();
 		gn.setIdentifier(group.getGraphId());
+		nodeIds.put(group, gn.getIdentifier());
 		return gn;
 	}
 	
@@ -260,7 +286,7 @@ public class GpmlConverter {
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
 			if(pwElm.getObjectType() == ObjectType.GROUP) {
 				
-				GpmlNode gpmlNode = gpmlHandler.getNode(pwElm.getGraphId());
+				GpmlNode gpmlNode = gpmlHandler.getNode(getNodeId(pwElm));
 				CyGroup cyGroup = CyGroupManager.getCyGroup(gpmlNode.getParent());
 				if(cyGroup == null) {
 					Logger.log.warn("Couldn't create group: CyGroupManager returned null");
@@ -277,7 +303,7 @@ public class GpmlConverter {
 				//Create the cytoscape parts of the group
 				for(int i = 0; i < groupElements.length; i++) {
 					PathwayElement pe_i = groupElements[i];
-					GpmlNetworkElement<?> ne_i = gpmlHandler.getNetworkElement(pe_i.getGraphId());
+					GpmlNetworkElement<?> ne_i = gpmlHandler.getNetworkElement(getNodeId(pe_i));
 					//Only add links to nodes, not to annotations
 					if(ne_i instanceof GpmlNode) {
 						cyGroup.addNode(((GpmlNode)ne_i).getParent());

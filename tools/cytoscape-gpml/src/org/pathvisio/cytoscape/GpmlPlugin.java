@@ -113,10 +113,10 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		menu.addCytoscapeAction(new CopyAction(this));
 		menu.addCytoscapeAction(new PasteAction(this));
 		menu.addCytoscapeAction(new ExportAction(this));
+		menu.addCytoscapeAction(new ToggleAnnotationAction(gpmlHandler));
 
 		JMenu pluginMenu = menu.getOperationsMenu();
 		JMenu gpmlMenu = new JMenu("Gpml plugin");
-		gpmlMenu.add(new ToggleAnnotationAction(gpmlHandler));
 		gpmlMenu.add(new AttributeMapperAction(this));
 		pluginMenu.add(gpmlMenu);
 

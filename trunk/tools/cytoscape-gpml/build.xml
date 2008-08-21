@@ -37,6 +37,13 @@
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${pathvisio.class.dir}" />
 		<mkdir dir="${class.dir}" />
+		
+		<!-- check if cytoscape.dir is properly specified !-->
+		<fail message="Can't find ${cytoscape.dir}/cytoscape.jar, please specify the path to cytoscape with -Dcytoscape.dir=....">
+			<condition>
+				<not><available file="${cytoscape.dir}/cytoscape.jar"/></not>
+			</condition>
+		</fail>
 	</target>
 
 	<target name="clean" description="Remove all generated files.">

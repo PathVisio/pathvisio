@@ -26,16 +26,6 @@ public abstract class ImageExporter implements PathwayExporter {
 	private String type;
 	private String[] extensions;
 	
-	protected boolean dataVisible = true; // true by default
-	
-	/**
-	 * Use this method to disable / enable export of the current data visualization
-	 */
-	public void setDataVisible (boolean value)
-	{
-		dataVisible = value;
-	}
-	
 	public ImageExporter(String type) {
 		this.type = type;
 	}

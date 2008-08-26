@@ -32,6 +32,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.visualization.VisualizationManager;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -45,6 +46,12 @@ public class BatikImageExporter extends ImageExporter {
 	{
 		VPathway vPathway = new VPathway(null);
 		vPathway.fromModel(pathway);
+		
+		// if data visualization is enabled, link this VPathway up to the visualization manager.
+		if (dataVisible)
+		{
+			vPathway.addVPathwayListener(VisualizationManager.getCurrent());
+		}
 
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);

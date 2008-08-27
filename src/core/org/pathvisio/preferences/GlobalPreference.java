@@ -80,7 +80,10 @@ public enum GlobalPreference implements Preference
 	WIN_W ("800"),
 	WIN_H ("600"),
 
-	USE_SYSTEM_LOOK_AND_FEEL(Boolean.toString(true)),
+	// don't use system look and feel by default on linux.
+	USE_SYSTEM_LOOK_AND_FEEL(	
+			Boolean.toString(!System.getProperty("os.name").equals ("Linux"))
+		),
 	;
 	
 	GlobalPreference(String defaultValue) {

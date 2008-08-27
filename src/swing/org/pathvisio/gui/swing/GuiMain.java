@@ -303,11 +303,14 @@ public class GuiMain
 				Engine engine = Engine.getCurrent();
 				engine.setApplicationName("PathVisio 1.1");
 
-				try {
-				    UIManager.setLookAndFeel(
-				        UIManager.getSystemLookAndFeelClassName());
-				} catch (Exception ex) {
-					Logger.log.error("Unable to load native look and feel", ex);
+				if (engine.getPreferences().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
+				{
+					try {
+					    UIManager.setLookAndFeel(
+					        UIManager.getSystemLookAndFeelClassName());
+					} catch (Exception ex) {
+						Logger.log.error("Unable to load native look and feel", ex);
+					}
 				}
 
 				SwingEngine.init(engine);

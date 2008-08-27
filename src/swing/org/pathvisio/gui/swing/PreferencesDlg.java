@@ -60,7 +60,11 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 		builder.addBooleanField (
 				GlobalPreference.SHOW_ADVANCED_ATTRIBUTES,									   
 				"Show advanced attributes (e.g. references)");
-		
+
+		builder.addBooleanField (
+				GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL,									   
+				"Use Java System look-and-feel at program start");
+
 		JPanel displayPanel = builder.getPanel();
 		
 		builder = createBuilder();

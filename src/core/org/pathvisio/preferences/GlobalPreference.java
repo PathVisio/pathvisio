@@ -22,7 +22,8 @@ import java.io.File;
 import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 
-public enum GlobalPreference implements Preference {
+public enum GlobalPreference implements Preference 
+{
 	FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), "PathVisio.log")),
 	WP_FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), "WikiPathways.log")),
 	
@@ -47,7 +48,7 @@ public enum GlobalPreference implements Preference {
 	SNAP_TO_ANCHOR(Boolean.toString(true)),
 
 	GUI_SIDEPANEL_SIZE("30"),
-	
+
 	// pathway base dir 
 	DIR_PWFILES(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
 	// gdb base dir
@@ -78,6 +79,8 @@ public enum GlobalPreference implements Preference {
 	WIN_Y ("50"),
 	WIN_W ("800"),
 	WIN_H ("600"),
+
+	USE_SYSTEM_LOOK_AND_FEEL(Boolean.toString(true)),
 	;
 	
 	GlobalPreference(String defaultValue) {

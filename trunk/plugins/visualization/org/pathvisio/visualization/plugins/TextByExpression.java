@@ -107,6 +107,9 @@ public class TextByExpression extends VisualizationMethod
 				return;
 			}
 
+			g2d = (Graphics2D)g2d.create();
+			g2d.setClip(null);
+			
 			int startx = (int)(g.getVLeft() + g.getVWidth() + SPACING);
 			int starty = (int)(g.getVTop() + g.getVHeight() / 2);
 			Font f = getFont(true);

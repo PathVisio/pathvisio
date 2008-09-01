@@ -41,11 +41,7 @@ public class BatikImageExporter extends ImageExporter {
 		super(type);
 	}
 
-	public void doExport(File file, Pathway pathway) throws ConverterException
-	{
-		VPathway vPathway = new VPathway(null);
-		vPathway.fromModel(pathway);
-		
+	public void doExport(File file, VPathway vPathway) throws ConverterException {
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
 		
@@ -101,5 +97,13 @@ public class BatikImageExporter extends ImageExporter {
 		} catch(Exception e) {
 			throw new ConverterException(e);
 		}
+	}
+	
+	public void doExport(File file, Pathway pathway) throws ConverterException
+	{
+		VPathway vPathway = new VPathway(null);
+		vPathway.fromModel(pathway);
+		
+		doExport(file, vPathway);
 	}
 }

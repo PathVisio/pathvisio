@@ -161,6 +161,7 @@ public class GexTxtImporter
 				dfs.setDecimalSeparator(',');
 			}
 			Logger.log.info("decimal separator: " + dfs.getDecimalSeparator());
+			Logger.log.info(nf.toPattern());
 			
 			while((line = in.readLine()) != null) 
 			{
@@ -233,6 +234,8 @@ public class GexTxtImporter
 									minimum=dNumber;
 									minimumNotSet=false;
 								}
+								
+								Logger.log.trace ("value '" + value + "' + dNumber '" + dNumber);
 							}
 							catch (ParseException e)
 							{

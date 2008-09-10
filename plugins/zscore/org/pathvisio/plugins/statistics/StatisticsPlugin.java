@@ -134,16 +134,16 @@ public class StatisticsPlugin implements Plugin
 		private void createAndShowDlg()
 		{
 			
-			final JFrame frame = new JFrame ("Pathway statistics");
+			final JDialog dlg = new JDialog (SwingEngine.getCurrent().getFrame(), "Pathway statistics", false);
 			
 			FormLayout layout = new FormLayout (
 					"4dlu, pref:grow, 4dlu, pref, 4dlu", 
 					"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow");
-			frame.setLayout(layout);
+			dlg.setLayout(layout);
 			
 			CellConstraints cc = new CellConstraints();
 			
-			frame.add (new JLabel ("Expression: "), cc.xy(2,2));
+			dlg.add (new JLabel ("Expression: "), cc.xy(2,2));
 			txtExpr = new JTextField(40);
 			txtExpr.getDocument().addDocumentListener(new DocumentListener() 
 			{
@@ -164,11 +164,11 @@ public class StatisticsPlugin implements Plugin
 				}
 			});
 			
-			frame.add (txtExpr, cc.xyw(2,4,3));
+			dlg.add (txtExpr, cc.xyw(2,4,3));
 			
 	
 			final JList lstOperators = new JList(Criterion.tokens);
-			frame.add (new JScrollPane (lstOperators), cc.xy (2,6));
+			dlg.add (new JScrollPane (lstOperators), cc.xy (2,6));
 			
 			lstOperators.addMouseListener(new MouseAdapter() 
 			{
@@ -202,13 +202,13 @@ public class StatisticsPlugin implements Plugin
 				}
 			} );
 	
-			frame.add (new JScrollPane (lstSamples), cc.xy (4,6));
+			dlg.add (new JScrollPane (lstSamples), cc.xy (4,6));
 			lblError = new JLabel("OK");
-			frame.add (lblError, cc.xyw (2,8,3));
-			frame.add (new JLabel ("Pathway Directory: "), cc.xy (2,10));
+			dlg.add (lblError, cc.xyw (2,8,3));
+			dlg.add (new JLabel ("Pathway Directory: "), cc.xy (2,10));
 			final JTextField txtDir = new JTextField(40);
 			txtDir.setText(Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_PWFILES));
-			frame.add (txtDir, cc.xy(2,12));
+			dlg.add (txtDir, cc.xy(2,12));
 			JButton btnDir = new JButton("Browse");
 			btnDir.addActionListener(new ActionListener ()
 			{
@@ -225,7 +225,7 @@ public class StatisticsPlugin implements Plugin
 				}
 			});
 			
-			frame.add (btnDir, cc.xy (4,12));
+			dlg.add (btnDir, cc.xy (4,12));
 			
 			JPanel pnlButtons = new JPanel();
 			
@@ -236,7 +236,7 @@ public class StatisticsPlugin implements Plugin
 			pnlButtons.add (btnSave);
 			btnSave.setEnabled(false);
 
-			frame.add (pnlButtons, cc.xyw (2,14,3));
+			dlg.add (pnlButtons, cc.xyw (2,14,3));
 			
 			final JTable tblResult = new JTable ();
 			tblResult.addMouseListener(new MouseAdapter()
@@ -253,7 +253,7 @@ public class StatisticsPlugin implements Plugin
 
 			});
 
-			frame.add (new JScrollPane (tblResult), cc.xyw (2,16,3));
+			dlg.add (new JScrollPane (tblResult), cc.xyw (2,16,3));
 			
 			btnCalc.addActionListener(new ActionListener (){
 	
@@ -262,7 +262,7 @@ public class StatisticsPlugin implements Plugin
 					File pwDir = new File (txtDir.getText());
 					String expr = txtExpr.getText();
 					
-					doCalculate (pwDir, myCriterion, tblResult, frame);					
+					doCalculate (pwDir, myCriterion, tblResult, dlg);					
 				}
 			});
 			
@@ -276,7 +276,7 @@ public class StatisticsPlugin implements Plugin
 					jfc.setFileFilter(new SimpleFileFilter ("Tab delimited text", "*.txt", true));
 					jfc.setDialogType(JFileChooser.SAVE_DIALOG);
 					
-					if (jfc.showDialog(frame, "Save") == JFileChooser.APPROVE_OPTION)
+					if (jfc.showDialog(dlg, "Save") == JFileChooser.APPROVE_OPTION)
 					{
 						File f = jfc.getSelectedFile();
 						if (!f.toString().endsWith (".txt"))
@@ -299,7 +299,7 @@ public class StatisticsPlugin implements Plugin
 						}
 						catch (IOException e)
 						{
-							JOptionPane.showMessageDialog(frame, "Could not save results: " + e.getMessage());
+							JOptionPane.showMessageDialog(dlg, "Could not save results: " + e.getMessage());
 							Logger.log.error ("Could not save results", e);
 						}
 					}
@@ -308,16 +308,16 @@ public class StatisticsPlugin implements Plugin
 			});
 	
 			txtExpr.requestFocus();
-			frame.pack();
-			frame.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
-			frame.setVisible(true);
+			dlg.pack();
+			dlg.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
+			dlg.setVisible(true);
 		}
 
 		/**
 		 * asynchronous statistics calculation function
 		 */
 		//TODO: make this a SwingWorker class
-		private void doCalculate(final File pwDir, final Criterion crit, final JTable resultTable, JFrame parentFrame)
+		private void doCalculate(final File pwDir, final Criterion crit, final JTable resultTable, JDialog parentFrame)
 		{
 			final int TOTALWORK = 1000;
 

@@ -129,7 +129,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		requestFocus();
+		//requestFocus(); //TODO: test if this is needed in applet.
 		child.mouseEnter(new SwingMouseEvent(e));
 	}
 

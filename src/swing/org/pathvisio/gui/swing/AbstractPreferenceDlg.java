@@ -316,8 +316,8 @@ abstract public class AbstractPreferenceDlg
 	 */
 	public void createAndShowGUI()
 	{
-		final JFrame frame = new JFrame();
-		frame.setLayout (new BorderLayout());
+		final JDialog dlg = new JDialog(SwingEngine.getCurrent().getFrame(), "Preferences", true);
+		dlg.setLayout (new BorderLayout());
 		
 		initPanels();
 		
@@ -333,8 +333,8 @@ abstract public class AbstractPreferenceDlg
 		OkBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae)
 			{
-				frame.setVisible (false);
-				frame.dispose();
+				dlg.setVisible (false);
+				dlg.dispose();
 			}
 		}
 		);
@@ -345,8 +345,8 @@ abstract public class AbstractPreferenceDlg
 		{
 			public void actionPerformed(ActionEvent ae)
 			{
-				frame.setVisible(false);
-				frame.dispose();
+				dlg.setVisible(false);
+				dlg.dispose();
 			}
 		}
 		);
@@ -371,12 +371,12 @@ abstract public class AbstractPreferenceDlg
 		pnlButtons.add (OkBtn);
 		pnlButtons.add (btnCancel);
 		
-		frame.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);
-		frame.add (trCategories, BorderLayout.WEST);
-		frame.add (pnlButtons, BorderLayout.SOUTH);
+		dlg.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);
+		dlg.add (trCategories, BorderLayout.WEST);
+		dlg.add (pnlButtons, BorderLayout.SOUTH);
 		
-		frame.setSize (500,380);
-		frame.setTitle ("preferences");
-		frame.setVisible (true);
+		dlg.pack();
+		dlg.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
+		dlg.setVisible (true);
 	}
 }

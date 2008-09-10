@@ -186,7 +186,7 @@ public class ColorRulePanel extends JPanel
 				txtExpr.requestFocus();
 			}
 		} );
-		add (lstSamples, cc.xy (4,4));
+		add (new JScrollPane (lstSamples), cc.xy (4,4));
 		
 		errorMsg = new JLabel("Expression OK");
 		add (errorMsg, cc.xyw (2, 6, 3));

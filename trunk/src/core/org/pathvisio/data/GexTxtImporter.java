@@ -149,13 +149,19 @@ public class GexTxtImporter
 
 			DecimalFormat nf = new DecimalFormat();
 			DecimalFormatSymbols dfs = nf.getDecimalFormatSymbols();
-			DecimalFormat df = new DecimalFormat();
+
 			if (info.digitIsDot())
+			{
+				dfs.setGroupingSeparator(',');
+				dfs.setDecimalSeparator('.');
+			}
+			else
 			{
 				dfs.setGroupingSeparator('.');
 				dfs.setDecimalSeparator(',');
 			}
-
+			Logger.log.info("decimal separator: " + dfs.getDecimalSeparator());
+			
 			while((line = in.readLine()) != null) 
 			{
 				if(p != null && p.isCancelled()) 

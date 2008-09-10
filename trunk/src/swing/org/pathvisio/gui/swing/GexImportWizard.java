@@ -17,6 +17,7 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -25,7 +26,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -231,7 +234,7 @@ public class GexImportWizard extends Wizard
 				File defaultdir = Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
 				jfc.setCurrentDirectory(defaultdir);
-				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv", true));
+				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv|*.tab", true));
 				int result = jfc.showDialog(null, "Select data file");
 				if (result == JFileChooser.APPROVE_OPTION)
 				{
@@ -272,6 +275,7 @@ public class GexImportWizard extends Wizard
 		private JRadioButton rbSepSemi;
 		private JRadioButton rbSepSpace;
 		private JRadioButton rbSepOther;
+		private JButton btnAdvanced;
 		
 	    public HeaderPage() 
 	    {
@@ -317,9 +321,12 @@ public class GexImportWizard extends Wizard
 			builder.add (rbSepSemi, cc.xy(1,5));
 			builder.add (rbSepSpace, cc.xy(3,1));
 			builder.add (rbSepOther, cc.xy(3,3));
-			
+						
 			final JTextField txtOther = new JTextField(3);
 			builder.add (txtOther, cc.xy(5, 3));
+
+			btnAdvanced = new JButton("More Options");
+			builder.add (btnAdvanced, cc.xy (5, 5));
 
 			ptm = new PreviewTableModel(importInformation);
 			tblPreview = new JTable(ptm);
@@ -376,6 +383,58 @@ public class GexImportWizard extends Wizard
 					ptm.refresh();
 				}
 				
+			});
+			
+			btnAdvanced.addActionListener(new ActionListener()
+			{
+				public void createAndShowDlg()
+				{
+					final JDialog dlg = new JDialog (getWizard().getDialog(), "More options", true);
+					dlg.setLayout(new FlowLayout());
+
+					final JRadioButton rbDecimalDot;
+					final JRadioButton rbDecimalComma;
+					
+					ButtonGroup bgDecimal = new ButtonGroup();
+					rbDecimalDot = new JRadioButton ("Use dot as decimal separator");
+					rbDecimalComma = new JRadioButton ("Use comma as decimal separator");
+
+					bgDecimal.add(rbDecimalComma);
+					bgDecimal.add(rbDecimalDot);
+
+					dlg.add(rbDecimalComma);
+					dlg.add(rbDecimalDot);
+					
+					rbDecimalDot.setSelected(importInformation.digitIsDot());
+					rbDecimalComma.setSelected(!importInformation.digitIsDot());
+					
+					JButton btnOk = new JButton ("OK");
+					
+					dlg.add (btnOk);
+					btnOk.addActionListener(new ActionListener()
+					{
+
+						public void actionPerformed(ActionEvent ae) 
+						{
+							importInformation.setDigitIsDot (rbDecimalDot.isSelected());
+							dlg.dispose();
+						}
+					});
+					dlg.setLocationRelativeTo(getWizard().getDialog());
+					dlg.pack();
+					dlg.setVisible(true);
+				}
+				
+				public void actionPerformed(ActionEvent e) 
+				{
+					javax.swing.SwingUtilities.invokeLater(new Runnable() 
+					{
+						
+						public void run() {
+							createAndShowDlg();
+						}
+					});
+				}
 			});
 			return builder.getPanel();
 		}

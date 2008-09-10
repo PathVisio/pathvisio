@@ -426,10 +426,15 @@ public class ImportInformation {
 		}
 	}
 	
-	boolean digitIsDot = true;
+	private boolean digitIsDot = true;
 	public boolean digitIsDot()
 	{
 		return digitIsDot;
+	}
+	
+	public void setDigitIsDot (boolean value)
+	{
+		digitIsDot = value;
 	}
 	
 	/** derive datasource from sample data */
@@ -591,6 +596,7 @@ public class ImportInformation {
 			
 			// if more than 90% of number-like patterns use a dot, then the digit symbol is a dot. 
 			guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > CHECKPERCENTAGE);
+			Logger.log.info ("readsample - I read " + dotTotal + " dots and " + commaTotal + " comma's. I'm guessing " + (guessDigitIsDot ? "dot" : "comma"));
 			
 			//Look for maximum.
 			double max = 0;

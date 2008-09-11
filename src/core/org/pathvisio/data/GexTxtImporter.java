@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -147,21 +148,16 @@ public class GexTxtImporter
 			double maximum = 1; // Dummy value
 			double minimum = 1; // Dummy value
 
-			DecimalFormat nf = new DecimalFormat();
-			DecimalFormatSymbols dfs = nf.getDecimalFormatSymbols();
-
+			NumberFormat nf;
+			
 			if (info.digitIsDot())
 			{
-				dfs.setGroupingSeparator(',');
-				dfs.setDecimalSeparator('.');
+				nf = NumberFormat.getInstance(Locale.US);
 			}
 			else
 			{
-				dfs.setGroupingSeparator('.');
-				dfs.setDecimalSeparator(',');
+				nf = NumberFormat.getInstance(Locale.FRANCE);
 			}
-			Logger.log.info("decimal separator: " + dfs.getDecimalSeparator());
-			Logger.log.info(nf.toPattern());
 			
 			while((line = in.readLine()) != null) 
 			{
@@ -233,9 +229,7 @@ public class GexTxtImporter
 								{
 									minimum=dNumber;
 									minimumNotSet=false;
-								}
-								
-								Logger.log.trace ("value '" + value + "' + dNumber '" + dNumber);
+								}								
 							}
 							catch (ParseException e)
 							{

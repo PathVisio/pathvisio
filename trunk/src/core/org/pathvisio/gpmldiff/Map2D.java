@@ -47,6 +47,7 @@ public class Map2D <S, T, U>
 	/**
 	   Note: doubles in the collection are discarded!
 	 */
+	@SuppressWarnings("unchecked")
 	Map2D (Collection<S> _rows, Collection<T> _cols)
 	{
 		rows = new HashMap <S, Integer>();

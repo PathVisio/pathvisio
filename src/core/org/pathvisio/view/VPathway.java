@@ -22,6 +22,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -36,6 +38,7 @@ import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
@@ -646,63 +649,47 @@ public class VPathway implements PathwayListener
 			}
 			redrawDirtyRect();
 		}
-		// // Reset hover timer
-		// if (hoverTimer == null) {
-		// hoverTimer = new HoverTimer();
-		// hoverTimer.start();
-		// }
-		// hoverTimer.reset(ve);
+		
+		hoverManager.reset(ve);
 	}
 
-	// Disable for 1.0 release (no tooltips needed)
-	// TODO: stop this thread on closing VPathway
-	// TODO: convert pathway elements to Component and get
-	// tooltips for free!
-	// HoverTimer hoverTimer;
-	//
-	// class HoverTimer extends Thread
-	// {
-	// volatile long timer = 0;
-	//
-	// MouseEvent ve;
-	//
-	// volatile boolean interrupted;
-	// volatile boolean hovered;
-	//		
-	// public synchronized void reset(MouseEvent ve) {
-	// this.ve = ve;
-	// timer = System.currentTimeMillis();
-	// hovered = false;
-	// }
-	//
-	// public void run()
-	// {
-	// timer = System.currentTimeMillis();
-	// while (!isInterrupted())
-	// {
-	// try
-	// {
-	// Thread.sleep(5);
-	// } catch (InterruptedException e)
-	// {
-	// return;
-	// }
-	// if(System.currentTimeMillis() - timer > 750) {
-	// doHover();
-	// }
-	// }
-	// };
-	//
-	// void doHover()
-	// {
-	// if(!hovered) {
-	// fireVPathwayEvent(new VPathwayEvent(VPathway.this, getObjectsAt(ve
-	// .getLocation()), ve, VPathwayEvent.ELEMENT_HOVER));
-	// hovered = true;
-	// }
-	// }
-	// }
+	HoverManager hoverManager = new HoverManager();
+	
+	class HoverManager implements ActionListener {
+		static final int delay = 1000; //tooltip delay in ms
+		boolean tooltipDisplayed = false;
+		
+		MouseEvent lastEvent = null;
+		
+		Timer timer;
 
+		public HoverManager() {
+			timer = new Timer(delay, this);
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if(!tooltipDisplayed) {
+				 fireVPathwayEvent(
+						new VPathwayEvent(
+							VPathway.this, 
+							getObjectsAt(lastEvent.getLocation()), lastEvent,
+							VPathwayEvent.ELEMENT_HOVER)
+				);
+				 tooltipDisplayed = true;
+			}
+		}
+		
+		void reset(MouseEvent e) {
+			lastEvent = e;
+			tooltipDisplayed = false;
+			timer.restart();
+		}
+		
+		void stop() {
+			timer.stop();
+		}
+	}
+	
 	/**
 	 * Handles movement of objects with the arrow keys
 	 * 
@@ -1260,10 +1247,12 @@ public class VPathway implements PathwayListener
 
 	public void mouseEnter(MouseEvent e)
 	{
+		hoverManager.reset(e);
 	}
 
 	public void mouseExit(MouseEvent e)
 	{
+		hoverManager.stop();
 	}
 
 	/**

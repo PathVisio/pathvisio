@@ -82,7 +82,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		
 		//Only show group/ungroup when multiple objects or a group are selected
 		if((e instanceof Group)) {
-			GroupStyle s = ((Group)e).getGmmlData().getGroupStyle();
+			GroupStyle s = ((Group)e).getPathwayElement().getGroupStyle();
 			if(s == GroupStyle.GROUP) {
 				menu.add(vActions.toggleGroup);
 			} else {

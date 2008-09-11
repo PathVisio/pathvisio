@@ -423,7 +423,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			if(!isEnabled()) return; //Don't perform action if not enabled
 			Group g = vPathway.toggleGroup(vPathway.getSelectedGraphics());
 			if(g != null) {
-				g.getGmmlData().setGroupStyle(groupStyle);
+				g.getPathwayElement().setGroupStyle(groupStyle);
 			}
 		}
 

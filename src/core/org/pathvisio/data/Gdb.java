@@ -54,6 +54,7 @@ public interface Gdb
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
 	 */
+	@Deprecated // this method is currently unused
 	public String getGeneSymbol(Xref ref);
 
 	/**
@@ -62,31 +63,6 @@ public interface Gdb
 	 * @return String with the backpage info, null if the gene was not found
 	 */
 	public String getBpInfo(Xref ref);
-	
-	/**
-	 * Get all cross references (ids from every system representing 
-	 * the same gene as the given id) for a given Ensembl id
-	 * @param ensId		The Ensembl id to get the cross references for
-	 * @param resultCode If specified (not null), limit the results by only taking
-	 * references with database code
-	 * @return			List containing all cross references found for this Ensembl id
-	 * (empty if nothing found)
-	 * 
-	 * @deprecated Use getCrossRefs instead
-	 */	
-	public List<Xref> ensId2Refs(String ensId, DataSource resultDs); 
-
-	/**
-	 * Get all Ensembl ids representing the same gene as the given gene id (from any system)
-	 * @param ref	The gene id to get the Ensembl ids for
-	 * @param code	systemcode of the gene identifier
-	 * @return		ArrayList containing all Ensembl ids found for this gene id
-	 * (empty if nothing found)
-	 * 
-	 * @deprecated use getCrossRefs instead
-	 */
-	public List<String> ref2EnsIds(Xref xref);
-
 
 	/**
 	 * Checks whether the given reference exists in the database

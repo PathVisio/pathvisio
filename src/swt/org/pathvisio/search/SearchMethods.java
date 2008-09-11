@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;

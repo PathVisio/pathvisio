@@ -25,7 +25,6 @@ import java.sql.Types;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.pathvisio.debug.Logger;

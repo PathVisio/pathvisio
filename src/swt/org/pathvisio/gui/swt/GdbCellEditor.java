@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.swt.PropertyPanel.AutoFillData;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;

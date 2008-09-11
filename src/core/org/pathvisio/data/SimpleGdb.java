@@ -209,10 +209,8 @@ public class SimpleGdb implements Gdb
 	 * references with database code
 	 * @return			List containing all cross references found for this Ensembl id
 	 * (empty if nothing found)
-	 * 
-	 * @deprecated Use getCrossRefs instead
 	 */	
-	public List<Xref> ensId2Refs(String ensId, DataSource resultDs) 
+	private List<Xref> ensId2Refs(String ensId, DataSource resultDs) 
 	{
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -267,10 +265,8 @@ public class SimpleGdb implements Gdb
 	 * @param code	systemcode of the gene identifier
 	 * @return		ArrayList containing all Ensembl ids found for this gene id
 	 * (empty if nothing found)
-	 * 
-	 * @deprecated use getCrossRefs instead
 	 */
-	public List<String> ref2EnsIds(Xref xref)
+	private List<String> ref2EnsIds(Xref xref)
 	{	
 //		StopWatch timer = new StopWatch();
 //		timer.start();

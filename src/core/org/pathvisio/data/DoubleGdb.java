@@ -133,29 +133,6 @@ public class DoubleGdb implements Gdb
 	
 	/**
 	 * Return the aggregate of the child results.
-	 * @deprecated
-	 */
-	public List<Xref> ensId2Refs(String ensId, DataSource resultDs) 
-	{
-		List<Xref> result = null;
-		
-		for (SimpleGdb child : gdbs)
-		{
-			if (child != null && child.isConnected())
-			{
-				if (result == null)
-					result = child.ensId2Refs (ensId, resultDs);
-				else
-					result.addAll (child.ensId2Refs (ensId, resultDs));
-			}
-		}
-		return result;
-	}
-
-
-
-	/**
-	 * Return the aggregate of the child results.
 	 */
 	public List<Xref> getCrossRefs(Xref idc) 
 	{	
@@ -258,27 +235,6 @@ public class DoubleGdb implements Gdb
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * returns the aggregate of all child results.
-	 * @deprecated
-	 */
-	public List<String> ref2EnsIds(Xref xref) 
-	{
-		List<String> result = null;
-		
-		for (SimpleGdb child : gdbs)
-		{
-			if (child != null && child.isConnected())
-			{
-				if (result == null)
-					result = child.ref2EnsIds (xref);
-				else
-					result.addAll (child.ref2EnsIds (xref));
-			}
-		}
-		return result;
 	}
 
 	/**

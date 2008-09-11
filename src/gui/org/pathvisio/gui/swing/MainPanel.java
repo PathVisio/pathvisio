@@ -153,7 +153,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		toolBar = new JToolBar();
 		toolBar.setFloatable(false); // disable floatable toolbar, aka Abomination of interaction design.
-		addToolBarActions(swingEngine.getEngine(), toolBar);
+		addToolBarActions(swingEngine, toolBar);
 
 		add(toolBar, BorderLayout.PAGE_START);
 		// menuBar will be added by container (JFrame or JApplet)
@@ -218,7 +218,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		this(swingEngine, null);
 	}
 	
-	protected void addToolBarActions(final Engine engine, JToolBar tb) 
+	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb) 
 	{
 		tb.setLayout(new WrapLayout(1, 1));
 		
@@ -249,7 +249,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(engine, zf);
+						ZoomAction za = new ZoomAction(swingEngine.getEngine(), zf);
 						za.setEnabled(true);
 						za.actionPerformed(e);
 					} catch (Exception ex) {

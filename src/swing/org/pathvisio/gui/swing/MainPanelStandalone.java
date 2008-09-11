@@ -47,7 +47,7 @@ public class MainPanelStandalone extends MainPanel
 
 	protected JMenuBar menuBar;
 	
-	final private StandaloneActions standaloneActions;
+	private StandaloneActions standaloneActions = null;
 	
 	@Override
 	protected void addMenuActions(JMenuBar mb) {
@@ -104,8 +104,7 @@ public class MainPanelStandalone extends MainPanel
 	
 	public MainPanelStandalone(Engine engine, final SwingEngine swingEngine)
 	{
-		super(null);
-		standaloneActions = new StandaloneActions(swingEngine);		
+		super(swingEngine, null);
 		
 		SearchPane searchPane = new SearchPane(engine, swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane); 
@@ -136,10 +135,13 @@ public class MainPanelStandalone extends MainPanel
 
 	}
 
-	protected void addToolBarActions(final Engine engine, JToolBar tb) 
+	@Override
+	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb) 
 	{
 		tb.setLayout(new WrapLayout(1, 1));
-		
+
+		standaloneActions = new StandaloneActions(swingEngine);		
+
 		addToToolbar(standaloneActions.newAction);
 		addToToolbar(standaloneActions.openAction);
 		addToToolbar(actions.standaloneSaveAction);
@@ -168,7 +170,7 @@ public class MainPanelStandalone extends MainPanel
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(engine, zf);
+						ZoomAction za = new ZoomAction(swingEngine.getEngine(), zf);
 						za.setEnabled(true);
 						za.actionPerformed(e);
 					} catch (Exception ex) {

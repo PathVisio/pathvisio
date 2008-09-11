@@ -200,6 +200,31 @@ public class SimpleGdb implements Gdb
 		return pstEnsId2RefsWithCode;
 	}
 
+	private PreparedStatement pstCrossRefs = null;
+	private PreparedStatement getPstCrossRefs () throws SQLException
+	{
+		if (pstCrossRefs == null)
+		{
+			pstCrossRefs = con.prepareStatement(
+					"SELECT dest.idRight, dest.codeRight FROM link AS src JOIN link AS dest " +
+					"ON src.idLeft = dest.idLeft and src.codeLeft = dest.codeLeft " +
+					"WHERE src.idRight = ? AND src.codeRight = ?");
+		}
+		return pstCrossRefs;
+	}
+
+	private PreparedStatement pstCrossRefsWithCode = null;
+	private PreparedStatement getPstCrossRefsWithCode () throws SQLException
+	{
+		if (pstCrossRefsWithCode == null)
+		{
+			pstCrossRefsWithCode = con.prepareStatement(
+					"SELECT dest.idRight, dest.codeRight FROM link AS src JOIN link AS dest " +
+					"ON src.idLeft = dest.idLeft and src.codeLeft = dest.codeLeft " +
+					"WHERE src.idRight = ? AND src.codeRight = ? AND dest.codeRight = ?");
+		}
+		return pstCrossRefsWithCode;
+	}
 
 	/**
 	 * Get all cross references (ids from every system representing 

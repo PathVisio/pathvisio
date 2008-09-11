@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.Action;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolTip;
@@ -252,13 +254,14 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 			if(tip.getComponentCount() == 0) return;
 			
 			final JWindow w = new JWindow();
-
+			w.setLayout(new BorderLayout());
+			
 			w.addMouseListener(new MouseAdapter() {
 				public void mouseExited(MouseEvent e) {
 					w.dispose();
 				}
 			});
-			w.add(tip);
+			w.add(tip, BorderLayout.CENTER);
 			w.pack();
 			Point p = e.getMouseEvent().getLocation();
 			SwingUtilities.convertPointToScreen(p, this);
@@ -271,6 +274,8 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		private static final long serialVersionUID = 1L;
 
 		public PathwayToolTip(List<VPathwayElement> elements) {
+			setPreferredSize(new Dimension(200, 100));
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			for(ToolTipProvider p : toolTipProviders) {
 				Component c = p.createToolTipComponent(this, elements);
 				if(c != null) add(c);

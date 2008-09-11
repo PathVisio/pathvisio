@@ -1344,8 +1344,11 @@ public class VPathway implements PathwayListener
 	 * is set to reference the new group.
 	 * 
 	 * @param selection
+	 * @return If a group is created, or if the items were added to a new group,
+	 * this group is returned. If a group is removed, this method will return
+	 * <code>null</code>.
 	 */
-	public void toggleGroup(List<Graphics> selection)
+	public Group toggleGroup(List<Graphics> selection)
 	{
 		boolean groupSelection = false;
 		List<String> groupRefList = new ArrayList<String>();		
@@ -1457,7 +1460,9 @@ public class VPathway implements PathwayListener
 				clearSelection();
 				selectObject(vg);
 			}
+			return (Group)vg;
 		}
+		return null;
 	}
 
 	public void keyPressed(KeyEvent e)
@@ -1529,6 +1534,7 @@ public class VPathway implements PathwayListener
 		parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
 				viewActions.selectDataNodes);
 		registerKeyboardAction(viewActions.toggleGroup);
+		registerKeyboardAction(viewActions.toggleComplex);
 		registerKeyboardAction(viewActions.selectAll);
 		registerKeyboardAction(viewActions.delete);
 		registerKeyboardAction(viewActions.undo);

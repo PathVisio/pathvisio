@@ -155,15 +155,6 @@
 		</xsd:union>
 	</xsd:simpleType>
 
-	<xsd:simpleType name="GroupStyleType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Stack"/>
-			<xsd:enumeration value="Box"/>
-			<xsd:enumeration value="Complex"/>
-			<xsd:enumeration value="None" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
 	<xsd:simpleType name="ObjectType">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Node"/>
@@ -665,8 +656,7 @@
 			<xsd:attribute name="GroupId" type="xsd:string" use="required" />
 			<xsd:attribute name="GroupRef" type="xsd:string"
 				use="optional" />
-			<xsd:attribute name="Style" type="gpml:GroupStyleType"
-				default="None" />
+			<xsd:attribute name="Style" type="xsd:string" default="None" />
 			<xsd:attribute name="TextLabel" type="xsd:string"
 				use="optional" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />

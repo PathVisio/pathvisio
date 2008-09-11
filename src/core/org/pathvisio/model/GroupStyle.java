@@ -16,60 +16,95 @@
 //
 package org.pathvisio.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-public enum GroupStyle {
-	STACK("Stack"),
-	COMPLEX("Complex"),
-	BOX("Box"),
-	NONE("None");
-//	NAMEDSELECTION("NamedSelection"),
-//	METANODE("Metanode");
+public class GroupStyle implements Comparable<GroupStyle> {
+	private static final Map<String, GroupStyle> nameMappings = new HashMap<String, GroupStyle>();
+	private static final Set<GroupStyle> values = new TreeSet<GroupStyle>();
+
+	public static final GroupStyle NONE = new GroupStyle ("None");
 	
+	/**
+	 * Style used to group objects for drawing convenience.
+	 */
+	public static final GroupStyle GROUP = new GroupStyle ("Group");
 	
-	private static final Map<String, GroupStyle> gpmlMappings = initGpmlMappings();	
-	private String gpmlName;
+	/**
+	 * Style used to represent a group of objects that belong to a complex.
+	 */
+	public static final GroupStyle COMPLEX = new GroupStyle ("Complex");
 	
-	static Map<String, GroupStyle> initGpmlMappings()
+	private String name;
+
+	private GroupStyle (String name)
 	{
-		Map<String, GroupStyle> result = new HashMap<String, GroupStyle>();
+		if (name == null) { throw new NullPointerException(); }
 		
-		for (GroupStyle s : GroupStyle.values())
-		{
-			result.put(s.gpmlName, s);
-		}
-		return result;
+		this.name  = name;
+		values.add(this);
+		nameMappings.put (name, this);
 	}
 
-	public static GroupStyle fromGpmlName (String value)
+	/**
+	   Create an object and add it to the list.
+
+	   For extending the enum.
+	 */
+	public static GroupStyle create (String name)
 	{
-		return gpmlMappings.get(value);
-	}
-	
-	public static String toGpmlName (GroupStyle value)
-	{
-		return value.gpmlName;
+		return new GroupStyle(name);
 	}
 
-	
-	private GroupStyle (String gpmlName) {
-		this.gpmlName = gpmlName;
+	/**
+	   looks up the ConnectorType corresponding to that name.
+	 */
+	public static GroupStyle fromName (String value)
+	{
+		return nameMappings.get(value);
 	}
 	
-	String getGpmlName() { return gpmlName; }
-	public String toString() { return getGpmlName(); }
+	/**
+	   looks up the ConnectorType corresponding to its GPML name.
+	   @deprecated use {@link #fromName(String)} instead.
+	 */
+	public static GroupStyle fromGpmlName (String value) {
+		return nameMappings.get(value);
+	}
 	
-	static public String[] getNames()
+	/**
+	 * Get the gpml name of the given GroupStyle.
+	 * @deprecated use {@link #getName()} instead.
+	 */
+	public static String toGpmlName(GroupStyle style) {
+		return style.getName();
+	}
+	
+	/**
+	   Stable identifier for this ConnectorType.
+	 */
+	public String getName ()
 	{
-		List<String> result = new ArrayList<String>();		
-		for (GroupStyle s : GroupStyle.values())
-		{
-			result.add("" + s.gpmlName);
-		}
-		String [] resultArray = new String [result.size()];
-		return result.toArray(resultArray);
+		return name;
+	}
+
+	static public GroupStyle[] getValues()
+	{
+		return values.toArray(new GroupStyle[0]);
+	}
+
+	public static String[] getNames() {
+		return nameMappings.keySet().toArray(new String[nameMappings.size()]);
+	}
+	
+	public String toString()
+	{
+		return name;
+	}
+
+	public int compareTo(GroupStyle o) {
+		return toString().compareTo(o.toString());
 	}
 }

@@ -30,6 +30,7 @@ import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
 import org.pathvisio.model.AnchorType;
 import org.pathvisio.model.ConnectorType;
+import org.pathvisio.model.GroupStyle;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
@@ -80,11 +81,17 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		menu.addSeparator();
 		
 		//Only show group/ungroup when multiple objects or a group are selected
-		if((e instanceof Group) || vp.getSelectedGraphics().size() > 1) {
-			JMenu groupMenu = new JMenu("Group");
-			groupMenu.add(vActions.toggleGroup);
-			menu.add(groupMenu);
+		if((e instanceof Group)) {
+			GroupStyle s = ((Group)e).getGmmlData().getGroupStyle();
+			if(s == GroupStyle.GROUP) {
+				menu.add(vActions.toggleGroup);
+			} else {
+				menu.add(vActions.toggleComplex);
+			}
 			menu.addSeparator();
+		} else if(vp.getSelectedGraphics().size() > 1) {
+			menu.add(vActions.toggleGroup);
+			menu.add(vActions.toggleComplex);
 		}
 		
 		if((e instanceof Line)) {

@@ -18,6 +18,7 @@ import javax.swing.text.PlainDocument;
 
 public class CompleterTextField extends JTextField
 {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * default constructor shows the completer window when offering matches.
 	 * @param completeMatches

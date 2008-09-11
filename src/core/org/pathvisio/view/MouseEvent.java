@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.awt.Point;
 
 public abstract class MouseEvent extends InputEvent {
+	private static final long serialVersionUID = 1L;
 
 	//Buttons
 	public static final int BUTTON_NONE = -1;

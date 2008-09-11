@@ -61,7 +61,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 		view[pwyType].setEditMode(false);
 		view[pwyType].addVPathwayListener(this);
 		view[pwyType].setSelectionEnabled (false);
-		view[pwyType].fromGmmlData(doc[pwyType].getPathway());
+		view[pwyType].fromModel(doc[pwyType].getPathway());
 		view[pwyType].setPctZoom (zoomFactor);
 
 		outputter = null; // invalidate putative remaining outputter

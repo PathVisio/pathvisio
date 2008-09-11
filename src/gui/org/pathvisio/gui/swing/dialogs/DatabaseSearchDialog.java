@@ -109,6 +109,7 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 	}
 	
 	private class XRefTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 		public String getColumnName(int column) {
 			switch(column) {
 			case 0: return "Name";

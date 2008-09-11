@@ -38,6 +38,7 @@ import com.mammothsoftware.frwk.ddb.DropDownButton;
  *
  */
 public class ColorSetChooser extends JPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	static final String ACTION_NEW = "New";
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_MODIFY = "Modify";

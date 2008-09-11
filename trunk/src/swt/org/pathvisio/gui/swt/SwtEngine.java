@@ -48,6 +48,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swt.SwtUtils.SimpleRunnableWithProgress;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swt.VPathwaySwtAwt;
@@ -76,7 +77,7 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 		String result = null;
 		if (pathwayDir == null)
 		{
-			result = Engine.getCurrent().getPreferences().get (GlobalPreference.DIR_PWFILES);
+			result = PreferenceManager.getCurrent().get (GlobalPreference.DIR_PWFILES);
 		}
 	    else
 		{
@@ -675,14 +676,14 @@ public class SwtEngine implements Pathway.StatusFlagListener, Engine.Application
 	 * @deprecated use {@link Engine#getCurrent()#getApplicationDir()} instead
 	 */
 	public File getApplicationDir() {
-		return Engine.getCurrent().getApplicationDir();
+		return GlobalPreference.getApplicationDir();
 	}
 	
 	/**
 	 * @deprecated use {@link Engine#getCurrent()#getDataDir()} instead
 	 */
 	public File getDataDir() {
-		return Engine.getCurrent().getDataDir();
+		return GlobalPreference.getDataDir();
 	}
 			
 	public boolean isUseR() { return USE_R; }

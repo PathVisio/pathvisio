@@ -17,6 +17,7 @@
 
 import org.pathvisio.Engine;
 import org.pathvisio.model.*;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.data.*;
 import java.util.*;
 import java.io.*;
@@ -72,7 +73,7 @@ class TutorialFiles
 		{
 			DataDerby connector = new DataDerby();
 			int error = 0;
-			String dest = Engine.getCurrent().getDataDir() + File.separator + 
+			String dest = GlobalPreference.getDataDir() + File.separator + 
 				"gene databases" + File.separator + "tutorial";
 			SimpleGdb targetGdb = new SimpleGdb(dest, connector, DBConnector.PROP_RECREATE);
 			targetGdb.createGdbTables();

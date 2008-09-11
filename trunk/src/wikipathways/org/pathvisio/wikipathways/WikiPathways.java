@@ -66,6 +66,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.view.VPathway;
@@ -165,7 +166,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 
 		progress.setTaskName("Starting editor");
 
-		WikiPathwaysInit.init(engine, engine.getPreferences());
+		WikiPathwaysInit.init(engine, PreferenceManager.getCurrent());
 		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), engine);
 
 		Logger.log.trace("Code revision: " + Revision.REVISION);
@@ -409,7 +410,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 						} catch (Exception e) {
 							Logger.log.error("Unable to save pathway", e);
 							String msg =  e.getClass() + 
-							"\n See error log (" + Engine.getCurrent().getPreferences().get(GlobalPreference.WP_FILE_LOG) + ") for details";
+							"\n See error log (" + PreferenceManager.getCurrent().get(GlobalPreference.WP_FILE_LOG) + ") for details";
 							if(e.getMessage().startsWith("Revision out of date")) {
 								msg = 
 									"Revision out of date.\n" +
@@ -657,7 +658,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		//Action saveAction = new Actions.ExitAction(uiHandler, this, true, null);
 		Action exitAction = new Actions.ExitAction(uiHandler, this, false, null);
 
-		mainPanel = new MainPanel(hide);
+		mainPanel = new MainPanel(swingEngine, hide);
 
 		mainPanel.getToolBar().addSeparator();
 

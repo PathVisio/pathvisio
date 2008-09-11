@@ -23,35 +23,40 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.Engine;
 import org.pathvisio.Globals;
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Resources;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
 public class StandaloneActions 
 {
-	public static URL IMG_OPEN = Resources.getResourceURL("open.gif");
-	public static URL IMG_NEW = Resources.getResourceURL("new.gif");
+	private static URL IMG_OPEN = Resources.getResourceURL("open.gif");
+	private static URL IMG_NEW = Resources.getResourceURL("new.gif");
 
-	public static final Action openAction = new OpenAction();
-	public static final Action helpAction = new HelpAction();
-	public static final Action newAction = new NewAction();
-	public static final Action selectGeneDbAction = new SelectGeneDbAction("Gene");
-	public static final Action selectMetaboliteDbAction = new SelectGeneDbAction("Metabolite");
-	public static final Action aboutAction = new AboutAction();
-	public static final Action preferencesAction = new PreferencesAction();
-	public static final Action searchAction = new SearchAction();
+	public final Action openAction;
+	public final Action helpAction;
+	public final Action newAction;
+	public final Action selectGeneDbAction;
+	public final Action selectMetaboliteDbAction;
+	public final Action aboutAction;
+	public final Action preferencesAction;
+	public final Action searchAction;
 
+	StandaloneActions (SwingEngine swingEngine)
+	{
+		aboutAction = new AboutAction(swingEngine);
+		openAction = new OpenAction(swingEngine);
+		helpAction = new HelpAction();
+		newAction = new NewAction(swingEngine);
+		selectGeneDbAction = new SelectGeneDbAction(swingEngine, "Gene");
+		selectMetaboliteDbAction = new SelectGeneDbAction(swingEngine, "Metabolite");
+		preferencesAction = new PreferencesAction(swingEngine);
+		searchAction = new SearchAction(swingEngine);
+	}
+	
 	/**
 	 * Open the online help in a browser window.
 	 * In menu->help->help or F1
@@ -93,9 +98,12 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 	
-		public OpenAction() 
+		SwingEngine swingEngine;
+		
+		public OpenAction(SwingEngine swingEngine) 
 		{
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "Open");
 			putValue(SMALL_ICON, new ImageIcon (StandaloneActions.IMG_OPEN));
 			putValue(SHORT_DESCRIPTION, "Open a pathway file");
@@ -104,9 +112,9 @@ public class StandaloneActions
 	
 		public void actionPerformed(ActionEvent e) 
 		{
-			if (SwingEngine.getCurrent().canDiscardPathway())
+			if (swingEngine.canDiscardPathway())
 			{
-				SwingEngine.getCurrent().openPathway();
+				swingEngine.openPathway();
 			}
 		}
 	}
@@ -119,9 +127,12 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 	
-		public NewAction() 
+		SwingEngine swingEngine;
+
+		public NewAction(SwingEngine swingEngine) 
 		{
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "New");
 			putValue(SMALL_ICON, new ImageIcon(IMG_NEW));
 			putValue(SHORT_DESCRIPTION, "Start a new, empty pathway");
@@ -130,9 +141,9 @@ public class StandaloneActions
 	
 		public void actionPerformed(ActionEvent e) 
 		{
-			if (SwingEngine.getCurrent().canDiscardPathway())
+			if (swingEngine.canDiscardPathway())
 			{
-				SwingEngine.getCurrent().newPathway();
+				swingEngine.newPathway();
 			}
 		}
 	}
@@ -145,13 +156,16 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 
+		SwingEngine swingEngine;
+
 		String dbType;
 		/** 
 		 * type should be "Gene" or "Metabolite"
 		 */
-		public SelectGeneDbAction(String type) 
+		public SelectGeneDbAction(SwingEngine swingEngine, String type) 
 		{
 			super();
+			this.swingEngine = swingEngine;
 			dbType = type;
 			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite"));
 			putValue(NAME, "Select " + dbType + " Database");
@@ -160,51 +174,9 @@ public class StandaloneActions
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			try 
-			{
-				/**
-				 * Get the preferred database connector to connect to Gex or Gdb databases, 
-				 * and try to cast it to swingDbConnector.
-				 * throws an exception if that fails
-				 */
-				DBConnectorSwing dbcon;
-				DBConnector dbc = SwingEngine.getCurrent().getGdbManager().getDBConnector();
-				if(dbc instanceof DBConnectorSwing) 
-				{
-					dbcon = (DBConnectorSwing)dbc;
-				} 
-				else 
-				{
-					//TODO: better handling of error
-					throw new IllegalArgumentException("Not a Swing database connector");
-				}
-
-				String dbName = dbcon.openChooseDbDialog(null);
-				
-				if(dbName == null) return;
-				
-				if (dbType.equals("Gene"))
-				{
-					SwingEngine.getCurrent().getGdbManager().setGeneDb(dbName);
-					PreferenceManager.getCurrent().set (GlobalPreference.DB_GDB_CURRENT, dbName);
-				}
-				else
-				{
-					SwingEngine.getCurrent().getGdbManager().setMetaboliteDb(dbName);
-					PreferenceManager.getCurrent().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
-				}
-				SwingEngine.getCurrent().loadGexCache();
-			} 
-			catch(Exception ex) 
-			{
-				String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
-				JOptionPane.showMessageDialog(null, 
-						"Error: " + msg + "\n\n" + "See the error log for details.",
-						"Error",
-						JOptionPane.ERROR_MESSAGE);
-				Logger.log.error(msg, ex);
-			}
+			swingEngine.selectGdb(dbType);
 		}
+		
 	}
 	
 	/**
@@ -215,9 +187,12 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 
-		public AboutAction()
+		SwingEngine swingEngine;
+		
+		public AboutAction(SwingEngine swingEngine)
 		{
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "About");
 			putValue(SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
 			putValue(LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
@@ -225,7 +200,7 @@ public class StandaloneActions
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			AboutDlg dlg = new AboutDlg (Engine.getCurrent());
+			AboutDlg dlg = new AboutDlg (swingEngine);
 			dlg.createAndShowGUI();
 		}
 	}
@@ -238,9 +213,12 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 
-		public PreferencesAction() 
+		SwingEngine swingEngine;
+
+		public PreferencesAction(SwingEngine swingEngine) 
 		{
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "Preferences");
 			putValue(SHORT_DESCRIPTION, "Edit preferences");
 		}
@@ -256,9 +234,12 @@ public class StandaloneActions
 	{
 		private static final long serialVersionUID = 1L;
 
-		public SearchAction() 
+		SwingEngine swingEngine;
+
+		public SearchAction(SwingEngine swingEngine) 
 		{
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "Search pathways");
 			putValue(SHORT_DESCRIPTION, "Search pathways for a symbol or identifier");
 		}
@@ -267,7 +248,7 @@ public class StandaloneActions
 		{
 			//TODO: right now only shows search pane in side panel
 			// really should pop up search dialog.
-			JTabbedPane pane = SwingEngine.getCurrent().getApplicationPanel().getSideBarTabbedPane();
+			JTabbedPane pane = swingEngine.getApplicationPanel().getSideBarTabbedPane();
 			int index = pane.indexOfTab("Search");
 			if (index > 0)
 			{

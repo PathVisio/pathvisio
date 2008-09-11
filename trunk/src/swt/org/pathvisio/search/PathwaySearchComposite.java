@@ -42,6 +42,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.MainWindowBase;
 import org.pathvisio.search.SearchMethods.SearchException;
@@ -264,7 +265,7 @@ public class PathwaySearchComposite extends Composite {
 	
 	private Text createDirText(Composite parent) {
 		Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		t.setText(Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_PWFILES));
+		t.setText(PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES));
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return t;
 	}

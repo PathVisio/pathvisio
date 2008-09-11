@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Sash;
 import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * This class can be extended to create a sidepanel with minimize button
@@ -136,7 +137,7 @@ public class SidePanel extends Composite {
 	}
 	
 	public void show() {
-		int sidePanelSize = Engine.getCurrent().getPreferences().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int sidePanelSize = PreferenceManager.getCurrent().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		if(sidePanelSize == 0) sidePanelSize = 10; //Force show if initial size = 0
 		parentSash.setWeights(calculateWeights(sidePanelSize));
 	}

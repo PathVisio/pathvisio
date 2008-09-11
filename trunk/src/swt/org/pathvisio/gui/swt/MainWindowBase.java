@@ -60,6 +60,7 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.search.PathwaySearchComposite;
 import org.pathvisio.util.swt.ProgressKeeperDialog;
 import org.pathvisio.view.AlignType;
@@ -405,7 +406,7 @@ public class MainWindowBase extends ApplicationWindow implements
 		
 		addPanelTabs();
 		
-		int sidePanelSize = Engine.getCurrent().getPreferences().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int sidePanelSize = PreferenceManager.getCurrent().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
 		sashForm.setWeights(new int[] {100 - sidePanelSize, sidePanelSize});
 		showRightPanelAction.setChecked(sidePanelSize > 0);
 		

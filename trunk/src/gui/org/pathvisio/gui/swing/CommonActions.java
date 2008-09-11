@@ -95,104 +95,31 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public final Action saveAction = new SaveAction(true, false);
-	public final Action saveAsAction = new SaveAction(true, true);
-	public final Action standaloneSaveAction = new SaveAction(false, false);
-	public final Action standaloneSaveAsAction = new SaveAction(false, true);
+	public final Action saveAction;
+	public final Action saveAsAction;
+	public final Action standaloneSaveAction;
+	public final Action standaloneSaveAsAction;
 	
-	public final Action importAction = new ImportAction();
-	public final Action exportAction = new ExportAction();
+	public final Action importAction;
+	public final Action exportAction;
 	
 	public final Action copyAction = new CopyAction();
 	public final Action pasteAction = new PasteAction();
 	
 	public final Action undoAction = new UndoAction();
-	public final Action exitAction = new ExitAction();
+	public final Action exitAction;
 
 	public final Action[] zoomActions;
 	
-	public final Action[] alignActions = new Action[] {
-			new AlignAction(AlignType.CENTERX),
-			new AlignAction(AlignType.CENTERY),
-//			new AlignAction(AlignType.LEFT),
-//			new AlignAction(AlignType.RIGHT),
-//			new AlignAction(AlignType.TOP),
-			new AlignAction(AlignType.WIDTH),
-			new AlignAction(AlignType.HEIGHT),
-	};
+	public final Action[] alignActions;
 	
-	public final Action[] stackActions = new Action[] {
-			new StackAction(StackType.CENTERX),
-			new StackAction(StackType.CENTERY),
-//			new StackAction(StackType.LEFT),
-//			new StackAction(StackType.RIGHT),
-//			new StackAction(StackType.TOP),
-//			new StackAction(StackType.BOTTOM)
-	};
+	public final Action[] stackActions;
 		
-	public final Action[][] newElementActions = new Action[][] {
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT)) 	
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.DataNodeTemplate(DataNodeType.METABOLITE)) 	
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.LabelTemplate())	
-			},
-			new Action[] { 	
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.LINE)
-					),
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.ARROW)
-					),
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.DASHED, LineType.LINE, LineType.LINE)
-					),
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.DASHED, LineType.LINE, LineType.ARROW)
-					),
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)) 
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)) 
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.ARC)) 
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)) 
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.TBAR
-					)) 
-			},
-			new Action[] {
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND)
-					),
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
-					),
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE)
-					),
-					new NewElementAction(new DefaultTemplates.LineTemplate(
-							LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)
-					),
-			},
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.InteractionTemplate()) },
-			new Action[] { 
-					new NewElementAction(new DefaultTemplates.ReactionTemplate()) },
-	};
+	public final Action[][] newElementActions;
 	
-	public CommonActions(Engine e) 
+	public CommonActions(SwingEngine se) 
 	{
+		Engine e = se.getEngine();
 		e.addApplicationEventListener(this);
 		zoomActions = new Action[] {
 				new ZoomToFitAction(e),
@@ -204,6 +131,95 @@ public class CommonActions implements ApplicationEventListener {
 				new ZoomAction(e, 150),
 				new ZoomAction(e, 200)
 		};
+		
+		 alignActions = new Action[] {
+					new AlignAction(e, AlignType.CENTERX),
+					new AlignAction(e, AlignType.CENTERY),
+//					new AlignAction(e, AlignType.LEFT),
+//					new AlignAction(e, AlignType.RIGHT),
+//					new AlignAction(e, AlignType.TOP),
+					new AlignAction(e, AlignType.WIDTH),
+					new AlignAction(e, AlignType.HEIGHT),
+			};
+		 
+		 stackActions = new Action[] {
+					new StackAction(e, StackType.CENTERX),
+					new StackAction(e, StackType.CENTERY),
+//					new StackAction(e, StackType.LEFT),
+//					new StackAction(e, StackType.RIGHT),
+//					new StackAction(e, StackType.TOP),
+//					new StackAction(e, StackType.BOTTOM)
+			};
+		 newElementActions = new Action[][] {
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT)) 	
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.METABOLITE)) 	
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.LabelTemplate())	
+					},
+					new Action[] { 	
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.LINE)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.DASHED, LineType.LINE, LineType.LINE)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.DASHED, LineType.LINE, LineType.ARROW)
+							),
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)) 
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)) 
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)) 
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)) 
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.TBAR
+							)) 
+					},
+					new Action[] {
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)
+							),
+					},
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.InteractionTemplate()) },
+					new Action[] { 
+							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
+			};
+
+		saveAction = new SaveAction(se, true, false);
+		saveAsAction = new SaveAction(se, true, true);
+		standaloneSaveAction = new SaveAction(se, false, false);
+		standaloneSaveAsAction = new SaveAction(se, false, true);
+		
+		exportAction = new ExportAction(se);
+		importAction = new ImportAction(se);
+		
+		exitAction = new ExitAction(se);
 	}
 
 	public static class ZoomToFitAction extends AbstractAction {
@@ -271,10 +287,13 @@ public class CommonActions implements ApplicationEventListener {
 		boolean forceDisabled;
 		boolean isSaveAs; // is either save... or save as...
 		
-		public SaveAction(boolean wiki, boolean isSaveAs) 
+		SwingEngine swingEngine;
+		
+		public SaveAction(SwingEngine swingEngine, boolean wiki, boolean isSaveAs) 
 		{
 			super();
 			this.isSaveAs = isSaveAs;
+			this.swingEngine = swingEngine;
 			if (isSaveAs)
 			{
 				putValue(Action.NAME, "Save as");
@@ -290,8 +309,8 @@ public class CommonActions implements ApplicationEventListener {
 				putValue(Action.LONG_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
 				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 			}
-			Engine.getCurrent().addApplicationEventListener(this);
-			Pathway p = Engine.getCurrent().getActivePathway();
+			swingEngine.getEngine().addApplicationEventListener(this);
+			Pathway p = swingEngine.getEngine().getActivePathway();
 			if(p != null) {
 				p.addStatusFlagListener(this);
 				handleStatus(p.hasChanged());
@@ -304,9 +323,9 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) 
 		{
 			if (isSaveAs)
-				SwingEngine.getCurrent().savePathwayAs();
+				swingEngine.savePathwayAs();
 			else
-				SwingEngine.getCurrent().savePathway();
+				swingEngine.savePathway();
 		}
 
 		private void handleStatus(boolean status) {
@@ -329,7 +348,7 @@ public class CommonActions implements ApplicationEventListener {
 			if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
 					e.getType() == ApplicationEvent.PATHWAY_OPENED) 
 			{
-				Pathway p = Engine.getCurrent().getActivePathway();
+				Pathway p = swingEngine.getEngine().getActivePathway();
 				p.addStatusFlagListener(this);
 				handleStatus(p.hasChanged());
 			}
@@ -339,8 +358,11 @@ public class CommonActions implements ApplicationEventListener {
 	public static class ImportAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public ImportAction() {
+		SwingEngine swingEngine;
+		
+		public ImportAction(SwingEngine se) {
 			super();
+			this.swingEngine = se;
 			putValue(NAME, "Import");
 			putValue(SMALL_ICON, new ImageIcon(IMG_IMPORT));
 			putValue(Action.SHORT_DESCRIPTION, "Import pathway from a file on your computer");
@@ -350,9 +372,9 @@ public class CommonActions implements ApplicationEventListener {
 		
 		public void actionPerformed(ActionEvent e) 
 		{
-			if (SwingEngine.getCurrent().canDiscardPathway())
+			if (swingEngine.canDiscardPathway())
 			{
-				SwingEngine.getCurrent().importPathway();
+				swingEngine.importPathway();
 			}
 		}
 	}
@@ -360,8 +382,11 @@ public class CommonActions implements ApplicationEventListener {
 	public static class ExportAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
-		public ExportAction() {
+		SwingEngine swingEngine;
+		
+		public ExportAction(SwingEngine swingEngine) {
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "Export");
 			putValue(SMALL_ICON, new ImageIcon(IMG_EXPORT));
 			putValue(SHORT_DESCRIPTION, "Export pathway to a file on your computer");
@@ -370,7 +395,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			SwingEngine.getCurrent().exportPathway();
+			swingEngine.exportPathway();
 		}
 		
 		public void setEnabled(boolean newValue) {
@@ -383,8 +408,11 @@ public class CommonActions implements ApplicationEventListener {
 
 		Template template;
 		
-		public NewElementAction(Template template) {
+		Engine engine;
+		public NewElementAction(Engine engine, Template template) 
+		{
 			this.template = template;
+			this.engine = engine;
 			putValue(Action.SHORT_DESCRIPTION, template.getDescription());
 			putValue(Action.LONG_DESCRIPTION, template.getDescription());
 			if(template.getIconLocation() != null) {
@@ -393,7 +421,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 			
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
 				vp.addVPathwayListener(this);
 				vp.setNewTemplate(template);
@@ -411,9 +439,11 @@ public class CommonActions implements ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
 
 		StackType type;
+		Engine engine;
 		
-		public StackAction(StackType t) {
+		public StackAction(Engine engine, StackType t) {
 			super();
+			this.engine = engine;
 			putValue(NAME, t.getLabel());
 			putValue(SMALL_ICON, new ImageIcon(Resources.getResourceURL(t.getIcon())));
 			putValue(SHORT_DESCRIPTION, t.getDescription());
@@ -421,7 +451,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) vp.stackSelected(type);
 		}
 	}
@@ -430,8 +460,10 @@ public class CommonActions implements ApplicationEventListener {
 		private static final long serialVersionUID = 1L;
 		AlignType type;
 
-		public AlignAction(AlignType t) {
+		Engine engine;
+		public AlignAction(Engine engine, AlignType t) {
 			super();
+			this.engine = engine;
 			putValue(NAME, t.getLabel());
 			putValue(SMALL_ICON, new ImageIcon(Resources.getResourceURL(t.getIcon())));
 			putValue(SHORT_DESCRIPTION, t.getDescription());
@@ -439,12 +471,13 @@ public class CommonActions implements ApplicationEventListener {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) vp.alignSelected(type);
 		}
 	}
 	
 	private static abstract class PathwayElementDialogAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
 		VPathwayElement element;
 		Component parent;
 		
@@ -549,9 +582,12 @@ public class CommonActions implements ApplicationEventListener {
 	{
 		private static final long serialVersionUID = 1L;
 
-		public ExitAction() 
+		SwingEngine swingEngine;
+		
+		public ExitAction(SwingEngine swingEngine) 
 		{
 			super();
+			this.swingEngine = swingEngine;
 			putValue(NAME, "Exit");
 			putValue(SHORT_DESCRIPTION, "Exit pathvisio");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
@@ -559,9 +595,9 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			if (SwingEngine.getCurrent().canDiscardPathway())
+			if (swingEngine.canDiscardPathway())
 			{
-				SwingEngine.getCurrent().getFrame().dispose();
+				swingEngine.getFrame().dispose();
 			}
 		}
 	}

@@ -68,12 +68,12 @@ public class GuiMain
 {
 	protected MainPanelStandalone mainPanel;
 	
-	private static void initLog()
+	private static void initLog(Engine engine)
 	{
 		String logDest = PreferenceManager.getCurrent().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest (logDest);		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		Logger.log.info("Application name: " + Engine.getCurrent().getApplicationName() + 
+		Logger.log.info("Application name: " + engine.getApplicationName() + 
 				" revision: " + Revision.REVISION);
 		Logger.log.info("os.name: " + System.getProperty("os.name") +
 					" os.version: " + System.getProperty("os.version") +
@@ -197,7 +197,7 @@ public class GuiMain
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
 	 */
-	protected JFrame createAndShowGUI(MainPanelStandalone mainPanel) 
+	protected JFrame createAndShowGUI(MainPanelStandalone mainPanel, final SwingEngine swingEngine) 
 	{
 		//Create and set up the window.
 		final JFrame frame = new JFrame(Globals.APPLICATION_NAME);
@@ -218,7 +218,7 @@ public class GuiMain
 		statusBar.add(gexLabel);
 		setGdbStatus(gdbLabel, mdbLabel);
 		
-		SwingEngine.getCurrent().getGdbManager().addGdbEventListener(new GdbEventListener() {
+		swingEngine.getGdbManager().addGdbEventListener(new GdbEventListener() {
 			public void gdbEvent(GdbEvent e) {
 				if(e.getType() == GdbEvent.GDB_CONNECTED) {
 					setGdbStatus(gdbLabel, mdbLabel);
@@ -254,7 +254,7 @@ public class GuiMain
 			public void windowClosing(WindowEvent we)
 			{
 				PreferenceManager prefs = PreferenceManager.getCurrent();
-				JFrame frame = SwingEngine.getCurrent().getFrame();
+				JFrame frame = swingEngine.getFrame();
 				Dimension size = frame.getSize();
 				Point p = frame.getLocationOnScreen();
 				prefs.setInt(GlobalPreference.WIN_W, size.width);
@@ -262,7 +262,7 @@ public class GuiMain
 				prefs.setInt(GlobalPreference.WIN_X, p.x);
 				prefs.setInt(GlobalPreference.WIN_Y, p.y);
 				
-				if(SwingEngine.getCurrent().canDiscardPathway()) {
+				if(swingEngine.canDiscardPathway()) {
 					frame.dispose();
 					GuiMain.this.shutdown();
 				}
@@ -306,9 +306,8 @@ public class GuiMain
 		{
 			
 			public void run() {
-				Engine.init();
-				initLog();
-				Engine engine = Engine.getCurrent();
+				Engine engine = Engine.init();
+				initLog(engine);
 				engine.setApplicationName("PathVisio 1.1");
 
 				if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
@@ -321,11 +320,10 @@ public class GuiMain
 					}
 				}
 
-				SwingEngine.init(engine);
-				SwingEngine swingEngine = SwingEngine.getCurrent();
+				SwingEngine swingEngine = SwingEngine.init(engine);
 				swingEngine.getGdbManager().initPreferred();
-				MainPanelStandalone mps = new MainPanelStandalone();
-				JFrame frame = gui.createAndShowGUI(mps);
+				MainPanelStandalone mps = new MainPanelStandalone(engine, swingEngine);
+				JFrame frame = gui.createAndShowGUI(mps, swingEngine);
 				initImporters(engine);
 				initExporters(engine, swingEngine.getGdbManager());
 				MIMShapes.registerShapes();

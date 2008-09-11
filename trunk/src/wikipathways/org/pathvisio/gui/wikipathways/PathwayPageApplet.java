@@ -29,13 +29,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
@@ -94,7 +94,7 @@ public class PathwayPageApplet extends JApplet {
 					} catch(Exception e) {
 						Logger.log.error("Error while starting applet", e);
 						String msg =  e.getClass() + 
-						"\n See error log (" + Engine.getCurrent().getPreferences().get(GlobalPreference.WP_FILE_LOG) + ") for details";
+						"\n See error log (" + PreferenceManager.getCurrent().get(GlobalPreference.WP_FILE_LOG) + ") for details";
 						JOptionPane.showMessageDialog(
 								PathwayPageApplet.this, msg, "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
 					};

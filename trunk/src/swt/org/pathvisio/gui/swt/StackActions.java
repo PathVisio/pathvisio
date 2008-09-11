@@ -20,6 +20,7 @@ package org.pathvisio.gui.swt;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.pathvisio.Engine;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.StackType;
 public class StackActions extends Action {
 	MainWindowBase window;
@@ -29,7 +30,7 @@ public class StackActions extends Action {
 		window = w;
 		type = t;
 		setToolTipText (type.getDescription());
-		setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL(type.getIcon())));
+		setImageDescriptor(ImageDescriptor.createFromURL(Resources.getResourceURL(type.getIcon())));
 	}
 	
 	public void run () {

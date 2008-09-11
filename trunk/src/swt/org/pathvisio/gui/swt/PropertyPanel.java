@@ -63,6 +63,7 @@ import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.Graphics;
@@ -181,7 +182,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		{
 			// get attributes. Only get advanced attributes if the preferences say so.
 			for (PropertyType attr : o.getAttributes(
-					 Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)))
+					 PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)))
 			{
 				if (master.containsKey(attr))
 				{

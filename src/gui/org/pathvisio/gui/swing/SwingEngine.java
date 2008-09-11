@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -158,8 +159,15 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() {
 					pk.setTaskName("Loading expression data");
+					try
+					{	
 						gex.cacheData(p.getDataNodeXrefs(), pk, gdbManager.getCurrentGdb());
-						pk.finished();
+					}
+					catch (SQLException e)
+					{
+						Logger.log.error ("Exception while caching expression data ", e);
+					}
+					pk.finished();
 					return null;
 				}
 			};

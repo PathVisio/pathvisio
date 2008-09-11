@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.*;
 
 import javax.swing.*;
@@ -404,7 +405,14 @@ public class StatisticsPlugin implements Plugin
 							genes.addAll (pwyParser.getGenes());
 							Map <String, List<Data>> ensGenes = new HashMap <String, List<Data>> ();
 							
-							gex.cacheData(genes, new ProgressKeeper(1000), gdb);
+							try
+							{
+								gex.cacheData(genes, new ProgressKeeper(1000), gdb);
+							}
+							catch (SQLException e)
+							{
+								Logger.log.error ("Exception while caching data", e);
+							}
 
 							for (Xref ref : genes)
 							{

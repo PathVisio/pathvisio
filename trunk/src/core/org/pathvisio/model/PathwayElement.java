@@ -785,6 +785,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				result.add(PropertyType.GROUPREF);
 				result.add(PropertyType.BIOPAXREF);
 			}
+			result.add(PropertyType.GROUPSTYLE);
 			result.add(PropertyType.TEXTLABEL);
 			result.add(PropertyType.COMMENTS);
 			break;
@@ -995,6 +996,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ZORDER:
 			setZOrder((Integer)value);
 			break;
+		case GROUPSTYLE:
+			if(value instanceof GroupStyle) {
+				setGroupStyle((GroupStyle)value);
+			} else {
+				setGroupStyle(GroupStyle.fromGpmlName((String)value));
+			}
 		}
 	}
 
@@ -1159,6 +1166,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ZORDER:
 			result = getZOrder();
 			break;
+		case GROUPSTYLE:
+			result = getGroupStyle().toString();
+			break;
 		}
 
 		return result;
@@ -1234,6 +1244,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
+		groupStyle = src.groupStyle;
 		connectorType = src.connectorType;
 		biopaxRefs = (List<String>)((ArrayList<String>)src.biopaxRefs).clone();
 		if(src.biopax != null) {

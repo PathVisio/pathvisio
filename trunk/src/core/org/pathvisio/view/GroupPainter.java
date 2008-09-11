@@ -14,33 +14,22 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+package org.pathvisio.view;
 
-package org.pathvisio.model;
+import java.awt.Graphics2D;
 
 /**
- * The properties in {@link PropertyType} define properties of different classes,
- * all the possible classes are defined here.
+ * Interface to implement group style specific
+ * appearances.
+ * @author thomas
  */
-public enum PropertyClass 
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER, 
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	OUTLINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
-	BIOPAXREF,
-	COMMENTS,
-	GROUPSTYLETYPE,
+public interface GroupPainter {
+	/**
+	 * Draw the appearance of the given group.
+	 * @param g The {@link Graphics2D} object to draw on
+	 * @param group The group to draw
+	 * @param flags Several flags that provide information about the
+	 * group state. These include the {@link Group}.FLAG_* constants.
+	 */
+	public void drawGroup(Graphics2D g, Group group, int flags);
 }

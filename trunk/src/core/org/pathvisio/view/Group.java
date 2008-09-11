@@ -33,13 +33,16 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MPoint;
 
-public class Group extends Graphics implements LinkProvider
+public class Group extends Graphics implements LinkProvider, VElementMouseListener
 {
-
+	public static int FLAG_SELECTED = 1 << 0;
+	public static int FLAG_MOUSEOVER = 1 << 1;
+	public static int FLAG_ANCHORSVISIBLE = 1 << 2;
+	
 	public Group(VPathway canvas, PathwayElement pe)
 	{
 		super(canvas, pe);
-		// TODO Auto-generated constructor stub
+		canvas.addVElementMouseListener(this);
 	}
 
 	/**
@@ -257,24 +260,19 @@ public class Group extends Graphics implements LinkProvider
 		markDirty();
 	}
 
-	private static final int TRANSLUCENCY_LEVEL = (int) (255 * .10);
+
 	protected void doDraw(Graphics2D g2d)
 	{
-		// Draw group outline
-		int sw = 1;
-		Rectangle2D rect = getVBounds();
-		//fill
-		g2d.setColor(new Color(180, 180, 100, TRANSLUCENCY_LEVEL));
-		g2d.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect
-				.getWidth()
-				, (int) rect.getHeight() );
-		//border
-		g2d.setColor(Color.GRAY);
-		g2d.setStroke(new BasicStroke(sw, BasicStroke.CAP_SQUARE,
-				BasicStroke.JOIN_MITER, 1, new float[] { 4, 2 }, 0));
-		g2d.drawRect((int) rect.getX() , (int) rect.getY() , (int) rect
-				.getWidth()
-				- sw, (int) rect.getHeight() - sw);
+		//Build the flags
+		int flags = 0;
+		if(isSelected()) flags += FLAG_SELECTED;
+		if(mouseover) flags += FLAG_MOUSEOVER;
+		if(showLinkAnchors) flags += FLAG_ANCHORSVISIBLE;
+				
+		//Draw the group style appearance
+		GroupPainter p = GroupPainterRegistry.getPainter(gdata.getGroupStyle().toString());
+		p.drawGroup(g2d, this, flags);
+		
 		//anchors
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {
@@ -283,6 +281,23 @@ public class Group extends Graphics implements LinkProvider
 		}
 	}
 
+	boolean mouseover = false;
+	
+	public void vElementMouseEvent(VElementMouseEvent e) {
+		if(e.getElement() == this) {
+			boolean old = mouseover;
+			if(e.getType() == VElementMouseEvent.TYPE_MOUSEENTER) {
+				mouseover = true;
+			} else if(e.getType() == VElementMouseEvent.TYPE_MOUSEEXIT) {
+				mouseover = false;
+			}
+			if(old != mouseover) {
+				markDirty();
+				canvas.redrawDirtyRect();
+			}
+		}
+	}
+	
 	public void highlight(Color c) {
 		super.highlight(c);
 		//Highlight the children

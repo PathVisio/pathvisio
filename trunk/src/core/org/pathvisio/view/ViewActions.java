@@ -32,6 +32,7 @@ import javax.swing.KeyStroke;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
@@ -81,6 +82,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final SelectClassAction selectDataNodes;
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
+	public final ComplexAction toggleComplex;
 	public final DeleteAction delete;
 	public final CopyAction copy;
 	public final PasteAction paste;
@@ -106,6 +108,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		selectDataNodes = new SelectClassAction("DataNode", GeneProduct.class);
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
+		toggleComplex = new ComplexAction();
 		delete = new DeleteAction();
 		copy = new CopyAction();
 		paste = new PasteAction();
@@ -122,6 +125,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(toggleGroup, GROUP_ENABLE_EDITMODE);
 		registerToGroup(toggleGroup, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(toggleComplex, GROUP_ENABLE_EDITMODE);
+		registerToGroup(toggleComplex, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(delete, GROUP_ENABLE_EDITMODE);
 		registerToGroup(delete, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(copy, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
@@ -372,20 +377,54 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 
-	private class GroupAction extends AbstractAction implements SelectionListener {
-		private static final long serialVersionUID = 1L;
-
+	private class ComplexAction extends GroupActionBase {
+		public ComplexAction() {
+			super(
+				"Create complex", "Break complex",
+				"Create a complex from selected elements",
+				"Break selected complex",
+				GroupStyle.COMPLEX, KeyStroke.getKeyStroke("ctrl P")
+			);
+		}
+	}
+	
+	private class GroupAction extends GroupActionBase {
 		public GroupAction() {
+			super(
+				"Group", "Ungroup",
+				"Group selected elements",
+				"Ungroup selected group",
+				GroupStyle.GROUP, KeyStroke.getKeyStroke("ctrl G")
+			);
+		}
+	}
+	private class GroupActionBase extends AbstractAction implements SelectionListener {
+		private static final long serialVersionUID = 1L;
+		private String groupLbl, ungroupLbl, groupTt, ungroupTt;
+		private GroupStyle groupStyle;
+		
+		public GroupActionBase(String groupLbl, String ungroupLbl, 
+				String groupTt, String ungroupTt,
+				GroupStyle style, KeyStroke keyStroke) {
 			super();
+			this.groupStyle = style;
+			this.groupLbl = groupLbl;
+			this.ungroupLbl = ungroupLbl;
+			this.groupTt = groupTt;
+			this.ungroupTt = ungroupTt;
 			vPathway.addSelectionListener(this);
-			putValue(NAME, "Group");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl G"));
+			putValue(NAME, groupLbl);
+			putValue(SHORT_DESCRIPTION, groupTt);
+			putValue(ACCELERATOR_KEY, keyStroke);
 			setLabel();
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			if(!isEnabled()) return; //Don't perform action if not enabled
-			vPathway.toggleGroup(vPathway.getSelectedGraphics());
+			Group g = vPathway.toggleGroup(vPathway.getSelectedGraphics());
+			if(g != null) {
+				g.getGmmlData().setGroupStyle(groupStyle);
+			}
 		}
 
 		public void selectionEvent(SelectionEvent e) {
@@ -407,9 +446,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			}
 			setEnabled(true);
 			if(unGrouped >= 2) {
-				putValue(Action.NAME, "Group");
+				putValue(Action.NAME, groupLbl);
+				putValue(SHORT_DESCRIPTION, groupTt);
 			} else {
-				putValue(Action.NAME, "Ungroup");
+				putValue(Action.NAME, ungroupLbl);
+				putValue(SHORT_DESCRIPTION, ungroupTt);
 			}
 		}		
 	}

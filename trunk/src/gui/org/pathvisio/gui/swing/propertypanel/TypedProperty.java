@@ -48,6 +48,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
+import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.Organism;
@@ -216,6 +217,8 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return outlineTypeEditor;
 		case GENETYPE:
 			return datanodeTypeEditor;
+		case GROUPSTYLETYPE:
+			return groupStyleEditor;
 		default:
 			return null;
 		}
@@ -456,6 +459,8 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
 	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getValues(), false);
+	private static ComboEditor groupStyleEditor = new ComboEditor(GroupStyle.getNames(), false);
+	
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
 		private static final long serialVersionUID = 1L;
 

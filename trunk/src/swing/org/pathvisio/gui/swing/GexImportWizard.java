@@ -17,7 +17,6 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,7 +25,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -272,7 +270,7 @@ public class GexImportWizard extends Wizard
 		private JRadioButton rbSepSemi;
 		private JRadioButton rbSepSpace;
 		private JRadioButton rbSepOther;
-		private JButton btnAdvanced;
+		//private JButton btnAdvanced;
 		
 	    public HeaderPage() 
 	    {

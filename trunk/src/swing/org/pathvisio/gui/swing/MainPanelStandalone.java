@@ -36,6 +36,7 @@ import javax.swing.event.HyperlinkListener;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
+import org.pathvisio.util.Resources;
 
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
@@ -170,7 +171,7 @@ public class MainPanelStandalone extends MainPanel
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(zf);
+						ZoomAction za = new ZoomAction(Engine.getCurrent(), zf);
 						za.setEnabled(true);
 						za.actionPerformed(e);
 					} catch (Exception ex) {
@@ -198,8 +199,8 @@ public class MainPanelStandalone extends MainPanel
 				} else {
 					submenu = "receptors";
 				}
-				DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
-						.getResourceURL(icon)));
+				DropDownButton lineButton = new DropDownButton(new ImageIcon(
+						Resources.getResourceURL(icon)));
 				lineButton.setToolTipText(tooltip);
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));

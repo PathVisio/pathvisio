@@ -33,13 +33,15 @@ import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Resources;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
 public class StandaloneActions 
 {
-	public static URL IMG_OPEN = Engine.getCurrent().getResourceURL("open.gif");
-	public static URL IMG_NEW = Engine.getCurrent().getResourceURL("new.gif");
+	public static URL IMG_OPEN = Resources.getResourceURL("open.gif");
+	public static URL IMG_NEW = Resources.getResourceURL("new.gif");
 
 	public static final Action openAction = new OpenAction();
 	public static final Action helpAction = new HelpAction();
@@ -184,12 +186,12 @@ public class StandaloneActions
 				if (dbType.equals("Gene"))
 				{
 					SwingEngine.getCurrent().getGdbManager().setGeneDb(dbName);
-					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_GDB_CURRENT, dbName);
+					PreferenceManager.getCurrent().set (GlobalPreference.DB_GDB_CURRENT, dbName);
 				}
 				else
 				{
 					SwingEngine.getCurrent().getGdbManager().setMetaboliteDb(dbName);
-					Engine.getCurrent().getPreferences().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
+					PreferenceManager.getCurrent().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
 				}
 				SwingEngine.getCurrent().loadGexCache();
 			} 
@@ -223,7 +225,8 @@ public class StandaloneActions
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			AboutDlg.createAndShowGUI();
+			AboutDlg dlg = new AboutDlg (Engine.getCurrent());
+			dlg.createAndShowGUI();
 		}
 	}
 

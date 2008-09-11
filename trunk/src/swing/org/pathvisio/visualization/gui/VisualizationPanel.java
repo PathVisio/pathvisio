@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.pathvisio.Engine;
+import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethod;
@@ -63,7 +63,7 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		visCombo.setActionCommand(ACTION_COMBO);
 		visCombo.addActionListener(this);
 		DropDownButton visButton = new DropDownButton(new ImageIcon(
-				Engine.getCurrent().getResourceURL("edit.gif"))
+				Resources.getResourceURL("edit.gif"))
 		);
 		JMenuItem m_new = new JMenuItem(ACTION_NEW);
 		JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);

@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -49,7 +48,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
@@ -57,9 +55,9 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.util.Resources;
 import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
@@ -83,7 +81,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 	static final String ACTION_SAMPLE = "sample";
 	static final String ACTION_COMBO = "colorset";
 	
-	static final ImageIcon COLOR_PICK_ICON = new ImageIcon(Engine.getCurrent().getResourceURL("colorpicker.gif"));
+	static final ImageIcon COLOR_PICK_ICON = new ImageIcon(Resources.getResourceURL("colorpicker.gif"));
 	static final Cursor COLOR_PICK_CURS = Toolkit.getDefaultToolkit().createCustomCursor(
 			COLOR_PICK_ICON.getImage(),
 			new Point(4, 19),

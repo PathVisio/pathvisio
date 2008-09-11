@@ -28,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -41,7 +40,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.Engine;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GexManager;
@@ -51,6 +49,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.swing.SimpleFileFilter;
@@ -207,7 +206,7 @@ public class GexImportWizard extends Wizard
 				
 			});
 			txtGdb.setText(
-					Engine.getCurrent().getPreferences().get(GlobalPreference.DB_GDB_CURRENT)
+					PreferenceManager.getCurrent().get(GlobalPreference.DB_GDB_CURRENT)
 			);
 			return builder.getPanel();
 		}
@@ -227,11 +226,11 @@ public class GexImportWizard extends Wizard
 						new ActionEvent(this, 1, "")
 				);
 				txtGdb.setText(
-						Engine.getCurrent().getPreferences().get(GlobalPreference.DB_GDB_CURRENT)
+						PreferenceManager.getCurrent().get(GlobalPreference.DB_GDB_CURRENT)
 				);
 			} else if(ACTION_INPUT.equals(action)) {
 				
-				File defaultdir = Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
+				File defaultdir = PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
 				jfc.setCurrentDirectory(defaultdir);
 				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv|*.tab", true));
@@ -240,7 +239,7 @@ public class GexImportWizard extends Wizard
 				{
 					File f = jfc.getSelectedFile();
 					defaultdir = jfc.getCurrentDirectory();
-					Engine.getCurrent().getPreferences().setFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT, defaultdir);
+					PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT, defaultdir);
 					txtInput.setText("" + f);
 					updateTxtFile ();
 				}

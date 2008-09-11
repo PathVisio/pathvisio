@@ -34,6 +34,7 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
 
 /**
@@ -81,7 +82,7 @@ public class Converter {
 		engine.addPathwayExporter(new DataNodeListExporter());
     	
 		//Enable MiM support (for export to graphics formats)
-		engine.getPreferences().setBoolean(GlobalPreference.MIM_SUPPORT, true);
+		PreferenceManager.getCurrent().setBoolean(GlobalPreference.MIM_SUPPORT, true);
 		MIMShapes.registerShapes();
 		
         File inputFile = null;

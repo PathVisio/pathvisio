@@ -50,6 +50,7 @@ import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
@@ -65,8 +66,8 @@ public class ColorByExpression extends VisualizationMethod {
 
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {
-				Engine.getCurrent().getResourceURL("protein_hi.bmp"),
-				Engine.getCurrent().getResourceURL("mRNA_hi.bmp") }));
+				Resources.getResourceURL("protein_hi.bmp"),
+				Resources.getResourceURL("mRNA_hi.bmp") }));
 	}
 	
 	public ColorByExpression(Visualization v, String registeredName) {

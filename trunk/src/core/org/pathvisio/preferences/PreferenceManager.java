@@ -158,4 +158,18 @@ public class PreferenceManager
 		String value = properties.getProperty(key);
 		return (value == null ? p.getDefault() == null : value.equals (p.getDefault()));
 	}	
+
+	
+	static PreferenceManager preferences = null;
+	
+	public static PreferenceManager getCurrent()
+	{
+		return preferences;
+	}
+	
+	public static void init()
+	{
+		preferences = new PreferenceManager();
+		preferences.load();
+	}
 }

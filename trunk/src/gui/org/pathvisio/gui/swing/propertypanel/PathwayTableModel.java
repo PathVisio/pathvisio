@@ -39,6 +39,7 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
@@ -116,7 +117,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 		
 	protected void updatePropertyCounts(PathwayElement e, boolean remove) {
-		boolean advanced = Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
+		boolean advanced = PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
 		for(PropertyType p : e.getAttributes(advanced)) {
 			if(p.isHidden()) continue;
 			

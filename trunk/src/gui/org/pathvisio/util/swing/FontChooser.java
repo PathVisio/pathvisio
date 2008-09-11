@@ -30,7 +30,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;

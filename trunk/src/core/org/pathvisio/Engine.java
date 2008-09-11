@@ -57,8 +57,7 @@ public class Engine
 	// use Engine.init() to create an Engine
 	private Engine()
 	{
-		preferences = new PreferenceManager();
-		preferences.load();
+		PreferenceManager.init();
 	}
 	
 	/**
@@ -144,17 +143,6 @@ public class Engine
 	}
 	
 	/**
-	 * Get the {@link URL} for the resource stored in a jar file in the classpath
-	 * @param name	the filename of the resource
-	 * @return the URL pointing to the resource
-	 */
-	public URL getResourceURL(String name) {
-		URL url = Engine.class.getClassLoader().getResource(name);
-		if(url == null) Logger.log.error("Couldn't load resource '" + name + "'");
-		return url;
-	}
-	
-	/**
 	 * Gets the currently open drawing
 	 */
 	public VPathway getActiveVPathway() {
@@ -175,14 +163,7 @@ public class Engine
 			return vPathway.getPathwayModel();
 		}
 	}
-	
-	PreferenceManager preferences = null;
-	
-	public PreferenceManager getPreferences()
-	{
-		return preferences;
-	}
-	
+		
 	public void exportPathway(File file) throws ConverterException {
 		Logger.log.trace("Exporting pathway to " + file);
 		String fileName = file.toString();

@@ -20,9 +20,9 @@ import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Manage the centralized SimpleGex
@@ -113,7 +113,7 @@ public class GexManager
 		DBConnector connector = null;
 		
 		String className = null;
-		className = Engine.getCurrent().getPreferences().get(GlobalPreference.DB_ENGINE_GEX);
+		className = PreferenceManager.getCurrent().get(GlobalPreference.DB_ENGINE_GEX);
 		
 		if(className == null) return null;
 			

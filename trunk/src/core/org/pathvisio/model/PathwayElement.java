@@ -28,7 +28,6 @@ import java.util.Set;
 import org.jdom.Document;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
-import org.pathvisio.view.Graphics;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
 

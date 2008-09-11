@@ -23,15 +23,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
@@ -41,8 +37,8 @@ import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
-import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.MatchResult;
 import org.pathvisio.util.swing.SearchMethods;
@@ -157,7 +153,7 @@ public class SearchPane extends JPanel
 		
 		searchOptBox.add (new JLabel("Directory to search:"), cc.xy (2,6));
 		txtDir = new JTextField();
-		txtDir.setText (Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_PWFILES));
+		txtDir.setText (PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES));
 		searchOptBox.add (txtDir, cc.xyw(2,8,3));
 		btnBrowse = new JButton("Browse");
 		btnBrowse.addActionListener(new ActionListener()
@@ -386,7 +382,7 @@ public class SearchPane extends JPanel
 	{
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		fc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_PWFILES));
+		fc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_PWFILES));
 		int result = fc.showDialog(getTopLevelAncestor(), "Select");
 		if (result == JFileChooser.APPROVE_OPTION)
 		{

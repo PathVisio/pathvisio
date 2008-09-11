@@ -21,7 +21,6 @@ package org.pathvisio.view;
 //import java.awt.datatransfer.DataFlavor;
 //import java.awt.datatransfer.UnsupportedFlavorException;
 //import java.io.IOException;
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.pathvisio.Engine;
-import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;

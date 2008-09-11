@@ -56,6 +56,7 @@ import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.SelectionBox;
@@ -246,7 +247,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(zf);
+						ZoomAction za = new ZoomAction(Engine.getCurrent(), zf);
 						za.setEnabled(true);
 						za.actionPerformed(e);
 					} catch (Exception ex) {
@@ -274,8 +275,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				} else {
 					submenu = "receptors";
 				}
-				DropDownButton lineButton = new DropDownButton(new ImageIcon(Engine.getCurrent()
-						.getResourceURL(icon)));
+				DropDownButton lineButton = new DropDownButton(
+						new ImageIcon(Resources.getResourceURL(icon)));
 				lineButton.setToolTipText(tooltip);
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));

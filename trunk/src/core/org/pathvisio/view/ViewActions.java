@@ -34,6 +34,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -51,9 +52,9 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
  * @author thomas
  */
 public class ViewActions implements VPathwayListener, SelectionListener {
-	private static URL IMG_COPY= Engine.getCurrent().getResourceURL("copy.gif");
-	private static URL IMG_PASTE = Engine.getCurrent().getResourceURL("paste.gif");
-	private static URL IMG_UNDO = Engine.getCurrent().getResourceURL("undo.gif");
+	private static URL IMG_COPY= Resources.getResourceURL("copy.gif");
+	private static URL IMG_PASTE = Resources.getResourceURL("paste.gif");
+	private static URL IMG_UNDO = Resources.getResourceURL("undo.gif");
 
 	/**
 	 * The group of actions that will be enabled when the VPathway is in edit mode and 

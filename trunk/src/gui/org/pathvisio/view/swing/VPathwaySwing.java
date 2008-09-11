@@ -18,6 +18,7 @@ package org.pathvisio.view.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -48,6 +49,9 @@ import javax.swing.TransferHandler;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.view.Handle;
+import org.pathvisio.view.VElementMouseEvent;
+import org.pathvisio.view.VElementMouseListener;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
@@ -55,7 +59,7 @@ import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
-		MouseMotionListener, MouseListener, KeyListener, VPathwayListener {
+		MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
 	private static final long serialVersionUID = 1L;
 
 	VPathway child;
@@ -79,6 +83,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	public void setChild(VPathway c) {
 		child = c;
 		child.addVPathwayListener(this);
+		child.addVElementMouseListener(this);
 	}
 
 	public VPathway getChild() {
@@ -287,6 +292,18 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	{
 		if (container instanceof JScrollPane)
 			((JScrollPane)container).getViewport().scrollRectToVisible(r);
+	}
+
+	public void vElementMouseEvent(VElementMouseEvent e) {
+		//Change mouse cursor based on underlying object
+		if(	e.getElement() instanceof Handle) {
+			if(e.getType() == VElementMouseEvent.TYPE_MOUSEENTER) {
+				Handle h = (Handle)e.getElement();
+				setCursor(Cursor.getPredefinedCursor(h.getCursorHint()));
+			} else if(e.getType() == VElementMouseEvent.TYPE_MOUSEEXIT) {
+				setCursor(Cursor.getDefaultCursor());
+			}
+		}
 	}
 
 }

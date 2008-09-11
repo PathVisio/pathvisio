@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
@@ -57,7 +59,7 @@ import org.pathvisio.util.ProgressKeeper;
 //TODO: add function to query # of samples
 public class SimpleGex
 {
-	private static final int GEX_COMPAT_VERSION = 1; //Preferred schema version
+	private static final int GEX_COMPAT_VERSION = 2; //Preferred schema version
 	private static final int SAMPLE_NAME_LEN = 50; // max length of sample names
 	
 	private Connection con;
@@ -120,9 +122,9 @@ public class SimpleGex
 		" VALUES (?, ?, ?)		  ");
 		pstExpr = con.prepareStatement(
 				"INSERT INTO expression			" +
-				"	(id, code, ensId,			" + 
+				"	(id, code,      			" + 
 				"	 idSample, data, groupId)	" +
-		"VALUES	(?, ?, ?, ?, ?, ?)			");
+		"VALUES	(?, ?, ?, ?, ?)			");
 	}
 
 
@@ -144,22 +146,21 @@ public class SimpleGex
 	/**
 	 * Add an expression row to the db. Must call prepare() before.
 	 */
-	public void addExpr(Xref ref, String link, String idSample, String value, int group)
+	public void addExpr(Xref ref, String idSample, String value, int group)
 		throws SQLException
 	{
 		assert (pstExpr != null);
 		pstExpr.setString(1, ref.getId());
 		pstExpr.setString(2, ref.getDataSource().getSystemCode());
-		pstExpr.setString(3, link);
-		pstExpr.setString(4, idSample);
+		pstExpr.setString(3, idSample);
 		//TODO: this is a hack.
 		// Proper solution: ask user which columns contain data
 		// don't even try to import annotation and other stuff
 		// give an exception if a data value is longer than 50
 		String truncValue = value;
 		if (value.length() > 50) truncValue = value.substring(0, 50);		
-		pstExpr.setString(5, truncValue);
-		pstExpr.setInt(6, group);
+		pstExpr.setString(4, truncValue);
+		pstExpr.setInt(5, group);
 		pstExpr.execute();
 	}
 	
@@ -216,27 +217,35 @@ public class SimpleGex
 	
 	/**
 	 * Loads expression data for all the given gene ids into memory
-	 * @param refs	Genes to cache the expression data for
+	 * @param srcRefs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(Collection<Xref> refs, ProgressKeeper p, Gdb gdb)
+	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, Gdb gdb) throws SQLException
 	{	
 		cachedData = new CachedData();
 		StopWatch timer = new StopWatch();
 		timer.start();
-			
-		for(Xref pwIdc : refs)
+
+		PreparedStatement pst = con.prepareStatement(
+				"SELECT id, code, data, idSample, groupId FROM expression " +
+				" WHERE id = ? AND code = ?");
+		
+		for(Xref srcRef : srcRefs)
 		{
-			String id = pwIdc.getId();			
-			String code = pwIdc.getDataSource().getSystemCode();
+			String id = srcRef.getId();			
+			String code = srcRef.getDataSource().getSystemCode();
 			
-			if(cachedData.hasData(pwIdc)) continue;
+			if(cachedData.hasData(srcRef)) continue;
 			
-			List<String> ensIds = gdb.ref2EnsIds(pwIdc); //Get all Ensembl genes for this id
+			// get all cross-refs for this id
+			Set<Xref> destRefs = new HashSet<Xref>();
+			destRefs.addAll (gdb.getCrossRefs(srcRef));
+			// make sure the original id itself is included
+			destRefs.add(srcRef);
 			
 			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 			
-			if(ensIds.size() > 0) //Only create a Data object if the id maps to an Ensembl gene
+			if(destRefs.size() > 0) //Only create a Data object if the id maps to an Ensembl gene
 			{				
 				StopWatch tt = new StopWatch();
 				StopWatch ts = new StopWatch();
@@ -244,38 +253,31 @@ public class SimpleGex
 				tt.start();
 				
 				groupData.clear();
-				
-				for(String ensId : ensIds)
+
+				for (Xref destRef : destRefs)
 				{	
-					try {
-						ts.start();
-						
-						ResultSet r = con.createStatement().executeQuery(
-								"SELECT id, code, data, idSample, groupId FROM expression " +
-								" WHERE ensId = '" + ensId + "'");
-						//r contains all genes and data mapping to the Ensembl id
-						while(r.next())
-						{
-							int group = r.getInt("groupId");
-							Xref ref = new Xref(
-									r.getString("id"), 
-									DataSource.getBySystemCode(r.getString("code"))
-									);
-							Data data = groupData.get(group);
-							if(data == null) {
-								groupData.put(group, data = new Data(ref, group));
-								cachedData.addData(pwIdc, data);
-							}
-							
-							int idSample = r.getInt("idSample");					
-							data.setSampleData(idSample, r.getString("data"));
+					ts.start();
+					
+					pst.setString(1, destRef.getId());
+					pst.setString(2, destRef.getDataSource().getSystemCode());
+					ResultSet r = pst.executeQuery();
+					
+					//r contains all data mapping to the destref
+					//there could be multiple data items
+					while(r.next())
+					{
+						int group = r.getInt("groupId");
+						Data data = groupData.get(group);
+						if(data == null) {
+							groupData.put(group, data = new Data(destRef, group));
+							cachedData.addData(srcRef, data);
 						}
 						
-						ts.stopToLog("Fetching data for ens id: " + ensId + "\t");
-					} catch (Exception e)
-					{
-						Logger.log.error("while caching expression data: " + e.getMessage(), e);
+						int idSample = r.getInt("idSample");					
+						data.setSampleData(idSample, r.getString("data"));
 					}
+					
+					ts.stopToLog("Fetching data for srcRef: " + srcRef + ", destRef " + destRef + "\t");
 				}
 				
 				tt.stopToLog(id + ", " + code + ": adding data to cache\t\t");
@@ -284,11 +286,11 @@ public class SimpleGex
 			{
 				return;
 			}
-			p.worked(p.getTotalWork() / refs.size()); //Update the progress
+			p.worked(p.getTotalWork() / srcRefs.size()); //Update the progress
 		}
 		p.finished();
 		timer.stopToLog("Caching expression data\t\t\t");
-		Logger.log.trace("> Nr of ids queried:\t" + refs.size());
+		Logger.log.trace("> Nr of ids queried:\t" + srcRefs.size());
 	}
 				
 	/**
@@ -407,7 +409,6 @@ public class SimpleGex
 					"		expression						" +
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
-					"	  ensId VARCHAR(50),				" +
 					"     idSample INTEGER,					" +
 					"     data VARCHAR(50),					" +
 					"	  groupId INTEGER 					" +
@@ -434,9 +435,6 @@ public class SimpleGex
 			sh.execute(
 					"CREATE INDEX i_expression_id " +
 			"ON expression(id)			 ");
-			sh.execute(
-					"CREATE INDEX i_expression_ensId " +
-			"ON expression(ensId)			 ");
 			sh.execute(
 					"CREATE INDEX i_expression_idSample " +
 			"ON expression(idSample)	 ");
@@ -500,7 +498,7 @@ public class SimpleGex
 		if (pstRow == null)
 		{
 			pstRow = con.prepareStatement (
-					"SELECT id, code, ensId, idSample, data, groupId " +
+					"SELECT id, code, idSample, data, groupId " +
 					"FROM expression " +
 					"WHERE groupId = ?");
 		}
@@ -528,8 +526,8 @@ public class SimpleGex
 					result.setXref(ref);
 				}
 				
-				int sample = rs.getInt(4);
-				String value = rs.getString (5);
+				int sample = rs.getInt(3);
+				String value = rs.getString (4);
 				result.setSampleData(sample, value);
 			}
 			

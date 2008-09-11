@@ -191,70 +191,69 @@ public class GexTxtImporter
 					ds = info.getDataSource();
 				}
 				Xref ref = new Xref (id, ds);
-				//Find the Ensembl genes for current gene
-				List<String> ensIds = currentGdb.ref2EnsIds(ref); 
 				
-				if(ensIds == null || ensIds.size() == 0) //No Ensembl gene found
+				//check if the ref exists
+				boolean refExists = currentGdb.xrefExists(ref);
+				
+				if(!refExists) //No Ensembl gene found
 				{
 					errors = reportError(info, error, "Line " + n + ":\t" + ref + 
-							"\tNo Ensembl gene found for this identifier", errors);
-				} else { //Gene maps to an Ensembl id, so add it
+							"\tCould not look up this identifier in the gene database", errors);
+				} 
+				// add gene anyway
+				{
 					boolean success = true;
-					for( String ensId : ensIds) //For every Ensembl id add the data
+					for(int col : dataCols)
 					{
-						for(int col : dataCols)
-						{
-							String value = data[col];
-							
-							if(!info.isStringCol(col) 
-									&& (value == null || value.equals(""))) {
-								value = "NaN";
-							}
+						String value = data[col];
+						
+						if(!info.isStringCol(col) 
+								&& (value == null || value.equals(""))) {
+							value = "NaN";
+						}
 
-							//Determine maximum and minimum values.
-							
-							try
+						//Determine maximum and minimum values.
+						
+						try
+						{
+							double dNumber = nf.parse(value).doubleValue(); 
+							value = "" + dNumber; 
+							if(maximumNotSet || dNumber>maximum)
 							{
-								double dNumber = nf.parse(value).doubleValue(); 
-								value = "" + dNumber; 
-								if(maximumNotSet || dNumber>maximum)
-								{
-									maximum=dNumber;
-									maximumNotSet=false;
-								}
-								
-								if(minimumNotSet || dNumber<minimum)
-								{
-									minimum=dNumber;
-									minimumNotSet=false;
-								}								
-							}
-							catch (ParseException e)
-							{
-								// we've got a number in a non-number column.
-								// safe to ignore
-								Logger.log.warn ("Number format exception in non-string column " + e.getMessage());
+								maximum=dNumber;
+								maximumNotSet=false;
 							}
 							
-							//End of determining maximum and minimum values. After the data has been read, 
-							//maximum and minimum will have their correct values.
-							
-							try 
+							if(minimumNotSet || dNumber<minimum)
 							{
-								//TODO: use autocommit (false) and commit only every 1000 queries or so. 
-								result.addExpr(
-										ref, 
-										ensId,
-										Integer.toString(dataCols.indexOf(col)),
-										value,
-										added);
-							} 
-							catch (Exception e) 
-							{
-								errors = reportError(info, error, "Line " + n + ":\t" + line + "\n" + 
-										"\tException: " + e.getMessage(), errors);
-								success = false;
-							}
+								minimum=dNumber;
+								minimumNotSet=false;
+							}								
+						}
+						catch (ParseException e)
+						{
+							// we've got a number in a non-number column.
+							// safe to ignore
+							Logger.log.warn ("Number format exception in non-string column " + e.getMessage());
+						}
+						
+						//End of determining maximum and minimum values. After the data has been read, 
+						//maximum and minimum will have their correct values.
+						
+						try 
+						{
+							//TODO: use autocommit (false) and commit only every 1000 queries or so. 
+							result.addExpr(
+									ref, 
+									Integer.toString(dataCols.indexOf(col)),
+									value,
+									added);
+						} 
+						catch (Exception e) 
+						{
+							errors = reportError(info, error, "Line " + n + ":\t" + line + "\n" + 
+									"\tException: " + e.getMessage(), errors);
+							success = false;
 						}
 					}
 					if(success) added++;

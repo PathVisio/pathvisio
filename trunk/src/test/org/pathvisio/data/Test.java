@@ -180,7 +180,7 @@ public class Test extends TestCase implements GdbEventListener
 		
 		sgex.prepare();
 		sgex.addSample(55, "mysample", 99);
-		sgex.addExpr(new Xref ("abc_at", DataSource.AFFY), "link", "55", "3.141", 77);
+		sgex.addExpr(new Xref ("abc_at", DataSource.AFFY), "55", "3.141", 77);
 		
 		// TODO: this is messy. call finalize on writeable db, not close...
 		sgex.finalize();

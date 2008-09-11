@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -35,6 +36,7 @@ import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
+import org.pathvisio.Revision;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
@@ -71,6 +73,12 @@ public class GuiMain
 		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest (logDest);		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
+		Logger.log.info("Application name: " + Engine.getCurrent().getApplicationName() + 
+				" revision: " + Revision.REVISION);
+		Logger.log.info("os.name: " + System.getProperty("os.name") +
+					" os.version: " + System.getProperty("os.version") +
+					" java.version: " + System.getProperty ("java.version"));
+		Logger.log.info ("Locale: " + Locale.getDefault().getDisplayName());
 	}
 
 	// plugin files specified at command line

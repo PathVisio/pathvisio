@@ -401,31 +401,19 @@ public class StatisticsPlugin implements Plugin
 							
 							Logger.log.info ("Calculating statistics for " + pwyParser.getName());
 							
-							List <Xref> genes = new ArrayList<Xref>();
-							genes.addAll (pwyParser.getGenes());
+							List <Xref> srcRefs = new ArrayList<Xref>();
+							srcRefs.addAll (pwyParser.getGenes());
 							Map <String, List<Data>> ensGenes = new HashMap <String, List<Data>> ();
 							
 							try
 							{
-								gex.cacheData(genes, new ProgressKeeper(1000), gdb);
+								gex.cacheData(srcRefs, new ProgressKeeper(1000), gdb);
 							}
 							catch (SQLException e)
 							{
 								Logger.log.error ("Exception while caching data", e);
 							}
 
-							for (Xref ref : genes)
-							{
-								List<Data> datas  = gex.getCachedData().getData(ref);
-								
-								for (String ensId : gdb.ref2EnsIds(ref))
-								{
-									if (pmon.isCanceled()) return false;
-									Logger.log.info ("Mapping: " + ensId);
-									ensGenes.put (ensId, datas);								
-								}
-							}
-							
 							int cPwyTotal = ensGenes.size();
 							int cPwyMeasured = 0;
 							
@@ -433,10 +421,11 @@ public class StatisticsPlugin implements Plugin
 							
 							double cPwyPositive = 0;
 							
-							for (String ensGene : ensGenes.keySet())
+							for (Xref srcRef : srcRefs)
 							{
 								if (pmon.isCanceled()) return false;
-								List<Data> rows = ensGenes.get (ensGene);
+								
+								List<Data> rows = gex.getCachedData().getData(srcRef);
 								
 								if (rows != null)
 								{

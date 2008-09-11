@@ -25,7 +25,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 import org.jdom.Element;
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.preferences.GlobalPreference;

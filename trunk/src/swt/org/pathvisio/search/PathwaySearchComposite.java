@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.pathvisio.Engine;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.GlobalPreference;

@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.DataSource;

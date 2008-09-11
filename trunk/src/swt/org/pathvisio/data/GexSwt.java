@@ -17,6 +17,7 @@
 package org.pathvisio.data;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.data.GexImportWizard.ImportPage;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.ProgressKeeper;
@@ -72,7 +74,14 @@ public class GexSwt
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Loading data", getTotalWork());
-			GexManager.getCurrent().getCurrentGex().cacheData(refs, this, gdb);
+			try
+			{
+				GexManager.getCurrent().getCurrentGex().cacheData(refs, this, gdb);
+			}
+			catch (SQLException e)
+			{
+				Logger.log.error ("Error while caching data", e);
+			}
 		}
 	}
 	

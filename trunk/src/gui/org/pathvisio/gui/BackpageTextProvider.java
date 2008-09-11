@@ -60,11 +60,9 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	
 	private GdbManager gdbManager;
 	private GexManager gexManager;
-	private Engine engine;
 	
 	public BackpageTextProvider(Engine engine, GdbManager gdbManager, GexManager gexManager) 
 	{
-		this.engine = engine;
 		initializeHeader();
 		engine.addApplicationEventListener(this);
 		VPathway vp = engine.getActiveVPathway();

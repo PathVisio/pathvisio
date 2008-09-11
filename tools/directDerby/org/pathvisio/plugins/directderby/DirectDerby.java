@@ -150,6 +150,18 @@ public class DirectDerby
 				{
 					quit = true;
 				}
+				else if (line.trim().equalsIgnoreCase("show tables;"))
+				{
+					try
+					{
+						ResultSet r = sqlcon.getMetaData().getTables(null, "APP", null, null);
+						printResultSet (r);
+					}
+					catch (SQLException e)
+					{
+						e.printStackTrace();
+					}
+				}
 				else
 				{
 					cmd += line;

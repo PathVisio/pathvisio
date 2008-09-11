@@ -70,7 +70,7 @@ public class GuiMain
 	
 	private static void initLog()
 	{
-		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
+		String logDest = PreferenceManager.getCurrent().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest (logDest);		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		Logger.log.info("Application name: " + Engine.getCurrent().getApplicationName() + 
@@ -184,7 +184,7 @@ public class GuiMain
 	}
 	
 	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) {
-		PreferenceManager prf = Engine.getCurrent().getPreferences();
+		PreferenceManager prf = PreferenceManager.getCurrent();
 		String gdb = prf.get(GlobalPreference.DB_GDB_CURRENT);
 		String mdb = prf.get(GlobalPreference.DB_METABDB_CURRENT);
 		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");
@@ -244,7 +244,7 @@ public class GuiMain
 		
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.pack();
-		PreferenceManager preferences = Engine.getCurrent().getPreferences();
+		PreferenceManager preferences = PreferenceManager.getCurrent();
 		frame.setSize(preferences.getInt(GlobalPreference.WIN_W), preferences.getInt(GlobalPreference.WIN_H));
 		frame.setLocation(preferences.getInt(GlobalPreference.WIN_X), preferences.getInt(GlobalPreference.WIN_Y));
 		
@@ -253,7 +253,7 @@ public class GuiMain
 			@Override
 			public void windowClosing(WindowEvent we)
 			{
-				PreferenceManager prefs = Engine.getCurrent().getPreferences();
+				PreferenceManager prefs = PreferenceManager.getCurrent();
 				JFrame frame = SwingEngine.getCurrent().getFrame();
 				Dimension size = frame.getSize();
 				Point p = frame.getLocationOnScreen();
@@ -272,7 +272,7 @@ public class GuiMain
 		//Display the window.
 		frame.setVisible(true);
 
-		int spPercent = Engine.getCurrent().getPreferences().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int spPercent = PreferenceManager.getCurrent().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
 		
@@ -281,7 +281,7 @@ public class GuiMain
 
 	private void shutdown() 
 	{
-		PreferenceManager prefs = Engine.getCurrent().getPreferences();
+		PreferenceManager prefs = PreferenceManager.getCurrent();
 		prefs.store();
 	}
 	
@@ -311,7 +311,7 @@ public class GuiMain
 				Engine engine = Engine.getCurrent();
 				engine.setApplicationName("PathVisio 1.1");
 
-				if (engine.getPreferences().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
+				if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
 				{
 					try {
 					    UIManager.setLookAndFeel(

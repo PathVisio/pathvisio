@@ -24,7 +24,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import org.pathvisio.Engine;
+import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
@@ -55,7 +55,7 @@ public class ColorSetChooser extends JPanel implements ActionListener {
 		colorSetCombo = new ColorSetCombo(csMgr);
 
 		DropDownButton csButton = new DropDownButton(new ImageIcon(
-				Engine.getCurrent().getResourceURL("edit.gif"))
+				Resources.getResourceURL("edit.gif"))
 		);
 		JMenuItem m_new = new JMenuItem(ACTION_NEW);
 		JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);

@@ -19,7 +19,6 @@ package org.pathvisio.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -173,7 +172,7 @@ public class GdbManager
 			Logger.log.error ("Could not initialize gene databases", e);
 		}		
 		
-		PreferenceManager prefs = Engine.getCurrent().getPreferences();
+		PreferenceManager prefs = PreferenceManager.getCurrent();
 		// first do the Gene database
 		String gdbName = prefs.get (GlobalPreference.DB_GDB_CURRENT);
 		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_GDB_CURRENT))
@@ -219,7 +218,7 @@ public class GdbManager
 		if (dbConnector == null)
 		{
 			String className = null;
-			className = Engine.getCurrent().getPreferences().get(GlobalPreference.DB_ENGINE_GEX);
+			className = PreferenceManager.getCurrent().get(GlobalPreference.DB_ENGINE_GEX);
 			
 			if(className == null) return null;
 				

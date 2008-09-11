@@ -25,7 +25,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.VisualizationMethod;
 
 import com.jgoodies.forms.layout.CellConstraints;

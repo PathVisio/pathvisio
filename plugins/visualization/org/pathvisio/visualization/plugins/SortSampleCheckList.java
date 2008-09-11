@@ -27,8 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.Sample;
+import org.pathvisio.util.Resources;
 
 import com.jgoodies.forms.builder.ButtonStackBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -46,10 +46,10 @@ public class SortSampleCheckList extends JPanel implements ActionListener {
 	static final String ACTION_DOWN = "Down";
 	static final String ACTION_BOTTOM = "Bottom";
 	
-	static final URL ICON_TOP = Engine.getCurrent().getResourceURL("top.gif");
-	static final URL ICON_UP = Engine.getCurrent().getResourceURL("up.gif");
-	static final URL ICON_DOWN = Engine.getCurrent().getResourceURL("down.gif");
-	static final URL ICON_BOTTOM = Engine.getCurrent().getResourceURL("bottom.gif");
+	static final URL ICON_TOP = Resources.getResourceURL("top.gif");
+	static final URL ICON_UP = Resources.getResourceURL("up.gif");
+	static final URL ICON_DOWN = Resources.getResourceURL("down.gif");
+	static final URL ICON_BOTTOM = Resources.getResourceURL("bottom.gif");
 	
 	SampleCheckList checkList;
 	

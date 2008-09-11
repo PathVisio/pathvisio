@@ -19,7 +19,6 @@ package org.pathvisio.view;
 import java.awt.Color;
 import java.net.URL;
 
-import org.pathvisio.Engine;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -28,6 +27,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.util.Resources;
 
 public abstract class DefaultTemplates {
 	final static Color COLOR_METABOLITE = Color.BLUE;
@@ -61,7 +61,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public URL getIconLocation() {
-			return  Engine.getCurrent().getResourceURL("new" + getName().toLowerCase() + ".gif");
+			return  Resources.getResourceURL("new" + getName().toLowerCase() + ".gif");
 		}
 	}
 	public static class LineTemplate extends SingleElementTemplate {
@@ -248,7 +248,7 @@ public abstract class DefaultTemplates {
 		}
 		
 		public URL getIconLocation() {
-			return  Engine.getCurrent().getResourceURL("new" + getName().toLowerCase() + ".gif");
+			return  Resources.getResourceURL("new" + getName().toLowerCase() + ".gif");
 		}
 	}
 	

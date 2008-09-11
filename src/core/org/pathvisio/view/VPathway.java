@@ -37,10 +37,8 @@ import java.util.Set;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GroupStyle;
-import org.pathvisio.model.MGroup;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -52,6 +50,7 @@ import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.ViewActions.KeyMoveAction;
 
@@ -80,7 +79,7 @@ public class VPathway implements PathwayListener
 	 */
 	public boolean isSnapToAnchors() 
 	{
-		return Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SNAP_TO_ANCHOR);
+		return PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANCHOR);
 	}
 
 	/**

@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,6 +31,7 @@ import javax.swing.UIManager;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
+import org.pathvisio.util.Resources;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -42,12 +42,14 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class AboutDlg 
 {
-	private static URL IMG_ABOUT_LOGO = Engine.getCurrent().getResourceURL("logo.jpg");	
-	
+	private static URL IMG_ABOUT_LOGO = Resources.getResourceURL("logo.jpg");	
+
+	private String appname;
+
 	/**
 	 * call this to open the dialog
 	 */
-	public static void createAndShowGUI()
+	public void createAndShowGUI()
 	{
 		final JFrame aboutDlg = new JFrame();
 		
@@ -55,7 +57,7 @@ public class AboutDlg
 				"4dlu, pref, 4dlu, pref, 4dlu",
 				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 		
-		JLabel versionLabel = new JLabel (Engine.getCurrent().getApplicationName());
+		JLabel versionLabel = new JLabel (appname);
 		JLabel revisionLabel = new JLabel (Revision.REVISION);
 		JTextArea label = new JTextArea();
 		label.setEditable(false);
@@ -91,5 +93,10 @@ public class AboutDlg
 		aboutDlg.pack();
 		aboutDlg.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
 		aboutDlg.setVisible(true);
+	}
+		
+	public AboutDlg(Engine engine) 
+	{
+		appname = engine.getApplicationName();
 	}
 }

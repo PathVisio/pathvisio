@@ -38,6 +38,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.Xref;
+import org.pathvisio.util.Resources;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
@@ -259,7 +260,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	{
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
-					engine.getResourceURL(HEADERFILE).openStream()));
+					Resources.getResourceURL(HEADERFILE).openStream()));
 			String line;
 			backpagePanelHeader = "";
 			while((line = input.readLine()) != null) {

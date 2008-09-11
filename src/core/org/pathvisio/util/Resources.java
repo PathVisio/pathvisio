@@ -14,31 +14,23 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui.swing;
+package org.pathvisio.util;
 
-import javax.swing.JEditorPane;
+import java.net.URL;
 
-import org.pathvisio.gui.BackpageListener;
-import org.pathvisio.gui.BackpageTextProvider;
+import org.pathvisio.debug.Logger;
 
-/**
- * The backpage panel for the Swing version of PathVisio. This pane shows annotation
- * information from the Gene Database when a datanode is clicked
- * @author thomas
- *
- */
-public class BackpagePane extends JEditorPane implements BackpageListener {	
-	private static final long serialVersionUID = 1L;
-
-	public BackpagePane(BackpageTextProvider bpt) 
+public class Resources 
+{
+	/**
+	 * Get the {@link URL} for the resource stored in a jar file in the classpath
+	 * @param name	the filename of the resource
+	 * @return the URL pointing to the resource
+	 */
+	public static URL getResourceURL(String name)
 	{
-		super();
-		setEditable(false);
-		setContentType("text/html");
-		bpt.addListener(this);
-	}
-
-	public void textChanged(String oldText, String newText) {
-		setText(newText);
+		URL url = Resources.class.getClassLoader().getResource(name);
+		if(url == null) Logger.log.error("Couldn't load resource '" + name + "'");
+		return url;
 	}
 }

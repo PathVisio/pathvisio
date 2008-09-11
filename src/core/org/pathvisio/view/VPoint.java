@@ -20,9 +20,9 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 
-import org.pathvisio.Engine;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.LinAlg.Point;
 
 public class VPoint extends VPathwayElement {
@@ -71,11 +71,11 @@ public class VPoint extends VPathwayElement {
 		double mcx = mFromV (vnewx);
 		double mcy = mFromV (vnewy);
 
-		if (Engine.getCurrent().getPreferences().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
+		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
 			canvas.isSnapToAngle())
 		{
 			// get global preference and convert to radians.
-			double lineSnapStep = Engine.getCurrent().getPreferences().getInt(
+			double lineSnapStep = PreferenceManager.getCurrent().getInt(
 				GlobalPreference.SNAP_TO_ANGLE_STEP) * Math.PI / 180;
 			VPoint p1 = line.getStart();
 			VPoint p2 = line.getEnd();

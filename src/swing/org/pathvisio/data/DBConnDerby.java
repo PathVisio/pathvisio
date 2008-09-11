@@ -20,8 +20,8 @@ import java.awt.Component;
 
 import javax.swing.JFileChooser;
 
-import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
 /**
@@ -40,12 +40,12 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
 		if (getDbType() == TYPE_GDB)
 		{
-			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+			jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
 			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GDB, "*." + DB_FILE_EXT_GDB, true));
 		}
 		else
 		{
-			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+			jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
 			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GEX, "*." + DB_FILE_EXT_GEX, true));
 		}
 		
@@ -54,11 +54,11 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		{
 			if (getDbType() == TYPE_GDB)
 			{
-				Engine.getCurrent().getPreferences().setFile (GlobalPreference.DIR_LAST_USED_PGDB, jfc.getCurrentDirectory());
+				PreferenceManager.getCurrent().setFile (GlobalPreference.DIR_LAST_USED_PGDB, jfc.getCurrentDirectory());
 			}
 			else
 			{
-				Engine.getCurrent().getPreferences().setFile (GlobalPreference.DIR_LAST_USED_PGEX, jfc.getCurrentDirectory());
+				PreferenceManager.getCurrent().setFile (GlobalPreference.DIR_LAST_USED_PGEX, jfc.getCurrentDirectory());
 			}
 			return jfc.getSelectedFile().toString();
 		}
@@ -72,11 +72,11 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		
 		if (getDbType() == TYPE_GDB)
 		{
-			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+			jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
 			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GDB, "*." + DB_FILE_EXT_GDB, true));		}
 		else
 		{
-			jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+			jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
 			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GEX, "*." + DB_FILE_EXT_GEX, true));
 		}
 
@@ -85,11 +85,11 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		{
 			if (getDbType() == TYPE_GDB)
 			{
-				jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
+				jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
 			}
 			else
 			{
-				jfc.setCurrentDirectory(Engine.getCurrent().getPreferences().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
+				jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGEX));
 			}
 			return jfc.getSelectedFile().toString();
 		}

@@ -18,8 +18,8 @@ package org.pathvisio.gui.swing;
 
 import javax.swing.JPanel;
 
-import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Global dialog for setting the user preferences.
@@ -28,7 +28,7 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 {
 	PreferencesDlg ()
 	{
-		super (Engine.getCurrent().getPreferences());
+		super (PreferenceManager.getCurrent());
 	}
 	
 	public void initPanels()

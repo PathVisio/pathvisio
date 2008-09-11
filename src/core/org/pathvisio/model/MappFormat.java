@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.view.ArrowShape;
 
 /**
  * The class MappFormat is responsible for all interaction with 

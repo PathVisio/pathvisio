@@ -41,7 +41,6 @@ import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;

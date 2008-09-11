@@ -42,6 +42,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.AlignType;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
@@ -67,10 +68,10 @@ import org.pathvisio.view.ViewActions.UndoAction;
  * @see {@link ViewActions}
  */
 public class CommonActions implements ApplicationEventListener {
-	private static URL IMG_SAVE = Engine.getCurrent().getResourceURL("save.gif");
-	private static URL IMG_SAVEAS = Engine.getCurrent().getResourceURL("saveas.gif");
-	private static URL IMG_IMPORT = Engine.getCurrent().getResourceURL("import.gif");
-	private static URL IMG_EXPORT = Engine.getCurrent().getResourceURL("export.gif");
+	private static URL IMG_SAVE = Resources.getResourceURL("save.gif");
+	private static URL IMG_SAVEAS = Resources.getResourceURL("saveas.gif");
+	private static URL IMG_IMPORT = Resources.getResourceURL("import.gif");
+	private static URL IMG_EXPORT = Resources.getResourceURL("export.gif");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
@@ -108,16 +109,7 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action undoAction = new UndoAction();
 	public final Action exitAction = new ExitAction();
 
-	public final Action[] zoomActions = new Action[] {
-			new ZoomToFitAction(),
-			new ZoomAction(10),
-			new ZoomAction(25),
-			new ZoomAction(50),
-			new ZoomAction(75),
-			new ZoomAction(100),
-			new ZoomAction(150),
-			new ZoomAction(200)
-	};
+	public final Action[] zoomActions;
 	
 	public final Action[] alignActions = new Action[] {
 			new AlignAction(AlignType.CENTERX),
@@ -199,25 +191,38 @@ public class CommonActions implements ApplicationEventListener {
 					new NewElementAction(new DefaultTemplates.ReactionTemplate()) },
 	};
 	
-	public CommonActions(Engine e) {
+	public CommonActions(Engine e) 
+	{
 		e.addApplicationEventListener(this);
+		zoomActions = new Action[] {
+				new ZoomToFitAction(e),
+				new ZoomAction(e, 10),
+				new ZoomAction(e, 25),
+				new ZoomAction(e, 50),
+				new ZoomAction(e, 75),
+				new ZoomAction(e, 100),
+				new ZoomAction(e, 150),
+				new ZoomAction(e, 200)
+		};
 	}
 
 	public static class ZoomToFitAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
 		Component parent;
+		Engine engine;
 		
-		public ZoomToFitAction() 
+		public ZoomToFitAction(Engine engine) 
 		{
 			super();
+			this.engine = engine;
 			putValue(Action.NAME, toString());
 			putValue(Action.SHORT_DESCRIPTION, "Make the pathway fit in the window");
 		}
 		
 		public void actionPerformed(ActionEvent e) 
 		{
-			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
+			VPathway vPathway = engine.getActiveVPathway();
 			if(vPathway != null) 
 			{
 				double zoomFactor = vPathway.getFitZoomFactor(); 
@@ -237,8 +242,11 @@ public class CommonActions implements ApplicationEventListener {
 		Component parent;
 		double zoomFactor;
 		
-		public ZoomAction(double zf) {
+		Engine engine;
+		
+		public ZoomAction(Engine e, double zf) {
 			super();
+			this.engine = e;
 			zoomFactor = zf;
 			String descr = "Set zoom to " + (int)zf + "%";
 			putValue(Action.NAME, toString());
@@ -246,7 +254,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vPathway = Engine.getCurrent().getActiveVPathway();
+			VPathway vPathway = engine.getActiveVPathway();
 			if(vPathway != null) {
 				vPathway.setPctZoom(zoomFactor);
 			}
@@ -407,7 +415,7 @@ public class CommonActions implements ApplicationEventListener {
 		public StackAction(StackType t) {
 			super();
 			putValue(NAME, t.getLabel());
-			putValue(SMALL_ICON, new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
+			putValue(SMALL_ICON, new ImageIcon(Resources.getResourceURL(t.getIcon())));
 			putValue(SHORT_DESCRIPTION, t.getDescription());
 			type = t;
 		}
@@ -425,7 +433,7 @@ public class CommonActions implements ApplicationEventListener {
 		public AlignAction(AlignType t) {
 			super();
 			putValue(NAME, t.getLabel());
-			putValue(SMALL_ICON, new ImageIcon(Engine.getCurrent().getResourceURL(t.getIcon())));
+			putValue(SMALL_ICON, new ImageIcon(Resources.getResourceURL(t.getIcon())));
 			putValue(SHORT_DESCRIPTION, t.getDescription());
 			type = t;
 		}

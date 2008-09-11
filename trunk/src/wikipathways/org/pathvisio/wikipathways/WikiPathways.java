@@ -93,8 +93,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	Pathway pathway;
 	VPathway vPathway;
 	
-	SwingEngine swingEngine;
-	Engine engine;
+	final SwingEngine swingEngine;
+	final Engine engine;
 
 	/**
 	 * Keep track of changes with respect to the remote version of the pathway
@@ -111,11 +111,12 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 
 	MainPanel mainPanel;
 
-	public WikiPathways(UserInterfaceHandler uiHandler, Engine engine) 
+	public WikiPathways(UserInterfaceHandler uiHandler, SwingEngine swingEngine) 
 	{
 		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
-		this.engine = engine;
+		this.swingEngine = swingEngine;
+		this.engine = swingEngine.getEngine();
 	}
 
 	/**
@@ -149,12 +150,9 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		return swingEngine;
 	}
 	
-	/**
-	 * Set the instance of SwingEngine used to hold the pathway
-	 * wrapper and main panel.
-	 */
-	public void setSwingEngine(SwingEngine se) {
-		swingEngine = se;
+	public Engine getEngine()
+	{
+		return engine;
 	}
 	
 	public void setUiHandler(UserInterfaceHandler uih) {

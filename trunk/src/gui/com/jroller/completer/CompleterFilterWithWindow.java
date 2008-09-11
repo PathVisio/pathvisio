@@ -204,6 +204,7 @@ public class CompleterFilterWithWindow extends CompleterFilter
 
 	class EscapeAction extends AbstractAction
 	{
+		private static final long serialVersionUID = 1L;
 		public void actionPerformed(ActionEvent e)
 		{
 			if (isFilterWindowVisible())

@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.util.Resources;

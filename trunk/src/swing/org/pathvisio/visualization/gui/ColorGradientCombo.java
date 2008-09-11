@@ -46,6 +46,8 @@ import org.pathvisio.visualization.colorset.ColorGradient;
  */
 public class ColorGradientCombo extends JComboBox
 {
+	private static final long serialVersionUID = 1L;
+
 	public ColorGradientCombo() {
 		super();
 		setRenderer(new ColorGradientRenderer());

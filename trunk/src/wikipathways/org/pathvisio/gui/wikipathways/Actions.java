@@ -25,7 +25,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
@@ -65,7 +64,7 @@ public class Actions {
 		public void actionPerformed(ActionEvent e) 
 		{
 			if(wiki.getSwingEngine().importPathway()) {
-				VPathway vp = Engine.getCurrent().getActiveVPathway();
+				VPathway vp = wiki.getEngine().getActiveVPathway();
 				wiki.setPathwayView(vp);
 			}
 		}
@@ -108,7 +107,7 @@ public class Actions {
 
 		public void actionPerformed(ActionEvent e) {
 			try {
-				boolean saved = wiki.saveUI(description);
+				wiki.saveUI(description);
 			} catch(Exception ex) {
 				Logger.log.error("Unable to save pathway", ex);
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -126,6 +125,7 @@ public class Actions {
 		 *
 		 */
 		public static class FullScreenAction extends WikiAction {
+			private static final long serialVersionUID = 1L;
 			final ImageIcon imgFull = new ImageIcon(
 					Resources.getResourceURL("fullscreen.gif"));
 			final ImageIcon imgRestore = new ImageIcon(

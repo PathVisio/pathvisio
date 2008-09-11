@@ -72,12 +72,11 @@ public class PathwayPageApplet extends JApplet {
 			Logger.log.trace(this + ": INIT CALLED....");
 
 			//Only set new engine if this is the first applet
-			Engine.init();
-			SwingEngine.init (Engine.getCurrent());
+			Engine engine = Engine.init();
+			SwingEngine swingEngine = SwingEngine.init (engine);
 			
 			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
-			wiki = new WikiPathways(uiHandler, Engine.getCurrent());
-			wiki.setSwingEngine(SwingEngine.getCurrent());
+			wiki = new WikiPathways(uiHandler, swingEngine);
 			
 			parseArguments();
 

@@ -24,6 +24,7 @@ import javax.swing.AbstractListModel;
  */
 public class FilterListModel extends AbstractListModel
 {
+  private static final long serialVersionUID = 1L;
   public FilterListModel(Object[] unfilteredList)
   {
     _fullList = unfilteredList;

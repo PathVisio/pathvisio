@@ -44,7 +44,7 @@ public class AboutDlg
 {
 	private static URL IMG_ABOUT_LOGO = Resources.getResourceURL("logo.jpg");	
 
-	private String appname;
+	private SwingEngine swingEngine;
 
 	/**
 	 * call this to open the dialog
@@ -57,7 +57,7 @@ public class AboutDlg
 				"4dlu, pref, 4dlu, pref, 4dlu",
 				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 		
-		JLabel versionLabel = new JLabel (appname);
+		JLabel versionLabel = new JLabel (swingEngine.getEngine().getApplicationName());
 		JLabel revisionLabel = new JLabel (Revision.REVISION);
 		JTextArea label = new JTextArea();
 		label.setEditable(false);
@@ -91,12 +91,14 @@ public class AboutDlg
 		aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);
 		aboutDlg.add (dialogBox);
 		aboutDlg.pack();
-		aboutDlg.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
+		aboutDlg.setLocationRelativeTo(swingEngine.getFrame());
 		aboutDlg.setVisible(true);
 	}
 		
-	public AboutDlg(Engine engine) 
+	public AboutDlg(SwingEngine swingEngine) 
 	{
-		appname = engine.getApplicationName();
+		this.swingEngine = swingEngine;
+		
+		
 	}
 }

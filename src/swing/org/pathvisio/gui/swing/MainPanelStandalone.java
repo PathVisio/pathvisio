@@ -19,7 +19,6 @@ package org.pathvisio.gui.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -48,12 +47,14 @@ public class MainPanelStandalone extends MainPanel
 
 	protected JMenuBar menuBar;
 	
+	final private StandaloneActions standaloneActions;
+	
 	@Override
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu fileMenu = new JMenu("File");
 		
-		addToMenu(StandaloneActions.newAction, fileMenu);
-		addToMenu(StandaloneActions.openAction, fileMenu);
+		addToMenu(standaloneActions.newAction, fileMenu);
+		addToMenu(standaloneActions.openAction, fileMenu);
 		addToMenu(actions.standaloneSaveAction, fileMenu);
 		addToMenu(actions.standaloneSaveAsAction, fileMenu);
 		fileMenu.addSeparator();
@@ -66,9 +67,9 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(actions.undoAction, editMenu);
 		addToMenu(actions.copyAction, editMenu);
 		addToMenu(actions.pasteAction, editMenu);
-		addToMenu(StandaloneActions.searchAction, editMenu);
+		addToMenu(standaloneActions.searchAction, editMenu);
 		editMenu.addSeparator();
-		addToMenu(StandaloneActions.preferencesAction, editMenu);
+		addToMenu(standaloneActions.preferencesAction, editMenu);
 		
 		JMenu selectionMenu = new JMenu("Selection");
 		JMenu alignMenu = new JMenu("Align");
@@ -82,8 +83,8 @@ public class MainPanelStandalone extends MainPanel
 		editMenu.add (selectionMenu);
 
 		JMenu dataMenu = new JMenu("Data");
-		addToMenu (StandaloneActions.selectGeneDbAction, dataMenu);
-		addToMenu (StandaloneActions.selectMetaboliteDbAction, dataMenu);
+		addToMenu (standaloneActions.selectGeneDbAction, dataMenu);
+		addToMenu (standaloneActions.selectMetaboliteDbAction, dataMenu);
 
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
@@ -91,8 +92,8 @@ public class MainPanelStandalone extends MainPanel
 		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
 		JMenu helpMenu = new JMenu("Help");
-		helpMenu.add(StandaloneActions.aboutAction);
-		helpMenu.add(StandaloneActions.helpAction);
+		helpMenu.add(standaloneActions.aboutAction);
+		helpMenu.add(standaloneActions.helpAction);
 		
 		mb.add(fileMenu);
 		mb.add(editMenu);
@@ -101,16 +102,12 @@ public class MainPanelStandalone extends MainPanel
 		mb.add(helpMenu);
 	}
 	
-	public MainPanelStandalone()
+	public MainPanelStandalone(Engine engine, final SwingEngine swingEngine)
 	{
-		this (null);
-	}
-
-	public MainPanelStandalone(Set<Action> hideActions)
-	{
-		super(hideActions);
+		super(null);
+		standaloneActions = new StandaloneActions(swingEngine);		
 		
-		SearchPane searchPane = new SearchPane();
+		SearchPane searchPane = new SearchPane(engine, swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 		
 		backpagePane.addHyperlinkListener(
@@ -129,7 +126,7 @@ public class MainPanelStandalone extends MainPanel
 							catch (Exception ex)
 							{
 								Logger.log.error ("Couldn't open url '" + url + "'", ex);
-								JOptionPane.showMessageDialog(SwingEngine.getCurrent().getFrame(), 
+								JOptionPane.showMessageDialog(swingEngine.getFrame(), 
 										"Error opening the Browser, see error log for details.");
 							}
 						}
@@ -139,12 +136,12 @@ public class MainPanelStandalone extends MainPanel
 
 	}
 
-	protected void addToolBarActions(JToolBar tb) 
+	protected void addToolBarActions(final Engine engine, JToolBar tb) 
 	{
 		tb.setLayout(new WrapLayout(1, 1));
 		
-		addToToolbar(StandaloneActions.newAction);
-		addToToolbar(StandaloneActions.openAction);
+		addToToolbar(standaloneActions.newAction);
+		addToToolbar(standaloneActions.openAction);
 		addToToolbar(actions.standaloneSaveAction);
 		tb.addSeparator();
 		addToToolbar(actions.copyAction);
@@ -171,7 +168,7 @@ public class MainPanelStandalone extends MainPanel
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(Engine.getCurrent(), zf);
+						ZoomAction za = new ZoomAction(engine, zf);
 						za.setEnabled(true);
 						za.actionPerformed(e);
 					} catch (Exception ex) {

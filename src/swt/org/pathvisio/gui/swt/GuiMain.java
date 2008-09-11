@@ -43,6 +43,7 @@ import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.plugins.PluginManager;
@@ -150,7 +151,7 @@ public class GuiMain {
 	
 	public static void initLogs()
 	{
-		String logDest = Engine.getCurrent().getPreferences().get(GlobalPreference.FILE_LOG);
+		String logDest = PreferenceManager.getCurrent().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest(logDest);
 		
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
@@ -174,7 +175,7 @@ public class GuiMain {
 	{
 
 		// preferences loaded, now we can register mim shapes
-		if (Engine.getCurrent().getPreferences().getBoolean (GlobalPreference.MIM_SUPPORT))
+		if (PreferenceManager.getCurrent().getBoolean (GlobalPreference.MIM_SUPPORT))
 		{
 			MIMShapes.registerShapes();
 		}

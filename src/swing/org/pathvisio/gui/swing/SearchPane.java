@@ -72,8 +72,14 @@ public class SearchPane extends JPanel
 	final private JComboBox cbSearchBy;
 	private SearchTableModel srs;
 	
-	public SearchPane()
-	{	
+	private Engine engine;
+	private SwingEngine swingEngine;
+	
+	public SearchPane(Engine engine, SwingEngine swingEngine)
+	{
+		this.engine = engine;
+		this.swingEngine = swingEngine;
+		
 		txtSymbol = new JTextField();
 		txtSymbol.addActionListener(new ActionListener(){
 			
@@ -226,15 +232,15 @@ public class SearchPane extends JPanel
 		// be able to wait until the process is finished!
 		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
 		
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(SwingEngine.getCurrent().getApplicationPanel()), 
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(swingEngine.getApplicationPanel()), 
 				"", pk, false, true);
 				
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 			protected Boolean doInBackground() throws Exception {
 				pk.setTaskName("Opening pathway");
 				try {
-					Engine.getCurrent().setWrapper (SwingEngine.getCurrent().createWrapper());
-					Engine.getCurrent().openPathway(mr.getFile());
+					engine.setWrapper (swingEngine.createWrapper());
+					engine.openPathway(mr.getFile());
 					
 					if(chkHighlight.isSelected()) {
 						highlightResults(mr);
@@ -242,7 +248,7 @@ public class SearchPane extends JPanel
 
 					return true;
 				} catch(ConverterException e) {
-					SwingEngine.getCurrent().handleConverterException(e.getMessage(), null, e);
+					swingEngine.handleConverterException(e.getMessage(), null, e);
 					return false;
 				} finally {
 					pk.finished();
@@ -250,13 +256,13 @@ public class SearchPane extends JPanel
 			}
 		};
 		
-		SwingEngine.getCurrent().processTask(pk, d, sw);
+		swingEngine.processTask(pk, d, sw);
 	}
 
 	private void highlightResults(MatchResult mr) {
 		Rectangle2D interestingRect = null;
 
-		VPathway vpy = Engine.getCurrent().getActiveVPathway();
+		VPathway vpy = engine.getActiveVPathway();
 		for (VPathwayElement velt : vpy.getDrawingObjects())
 		{
 			if (velt instanceof GeneProduct)
@@ -286,7 +292,7 @@ public class SearchPane extends JPanel
 	}
 
 	private void removeHighlight() {
-		VPathway vpy = Engine.getCurrent().getActiveVPathway();
+		VPathway vpy = engine.getActiveVPathway();
 		if(vpy != null) {
 			vpy.resetHighlight();
 		}

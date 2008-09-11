@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.pathvisio.Engine;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Template;
 
@@ -55,11 +56,11 @@ public class NewElementAction extends Action
 		switch(menu) {
 		case MENULINE:
 			tooltip = "Draw new line or arrow";
-			imageURL = Engine.getCurrent().getResourceURL("newlinemenu.gif");
+			imageURL = Resources.getResourceURL("newlinemenu.gif");
 			break;
 		case MENULINESHAPE:
 			tooltip = "Draw new ligand or receptor";
-			imageURL = Engine.getCurrent().getResourceURL("newlineshapemenu.gif");
+			imageURL = Resources.getResourceURL("newlineshapemenu.gif");
 		}
 		setChecked(false);
 		setToolTipText(tooltip);

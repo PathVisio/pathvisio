@@ -27,6 +27,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 
 public class AppletMain extends PathwayPageApplet {	
@@ -78,7 +79,7 @@ public class AppletMain extends PathwayPageApplet {
 		
 		setVisible(true);
 		validate(); //We need to validate before calling setDividerLocation
-		int spPercent = Engine.getCurrent().getPreferences().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		int spPercent = PreferenceManager.getCurrent().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 		mainPanel.getSplitPane().setDividerLocation( (100 - spPercent) / 100.0 );
 	}
 	

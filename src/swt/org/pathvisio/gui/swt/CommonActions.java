@@ -20,7 +20,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.pathvisio.ApplicationEvent;
@@ -28,8 +27,10 @@ import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.preferences.swt.PreferenceDlg;
 import org.pathvisio.preferences.swt.SwtPreferences;
+import org.pathvisio.util.Resources;
 import org.pathvisio.view.UndoManager;
 import org.pathvisio.view.UndoManagerEvent;
 import org.pathvisio.view.UndoManagerListener;
@@ -49,7 +50,7 @@ public class CommonActions
 			setText ("&Undo@Ctrl+Z");
 			setToolTipText ("Undo last action");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getCurrent().getResourceURL("undo.gif")));
+					Resources.getResourceURL("undo.gif")));
 			setEnabled(false);
 			Engine.getCurrent().addApplicationEventListener(this);
 		}
@@ -87,7 +88,7 @@ public class CommonActions
 			setText ("&New pathway@Ctrl+N");
 			setToolTipText ("Create new pathway");
 			setImageDescriptor(ImageDescriptor.createFromURL(
-					Engine.getCurrent().getResourceURL("new.gif")));
+					Resources.getResourceURL("new.gif")));
 		}
 		public void run ()
 		{			
@@ -109,7 +110,7 @@ public class CommonActions
 			window = w;
 			setText ("&Open pathway@Ctrl+O");
 			setToolTipText ("Open pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("open.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Resources.getResourceURL("open.gif")));
 		}
 		public void run () 
 		{
@@ -203,11 +204,11 @@ public class CommonActions
 			setToolTipText("Edit preferences");
 		}
 		public void run () {
-			PreferenceManager pg = new PreferenceDlg();
+			org.eclipse.jface.preference.PreferenceManager pg = new PreferenceDlg();
 			PreferenceDialog pd = new PreferenceDialog(window.getShell(), pg);
-			pd.setPreferenceStore(new SwtPreferences(Engine.getCurrent().getPreferences()));
+			pd.setPreferenceStore(new SwtPreferences(PreferenceManager.getCurrent()));
 			pd.open();
-			Engine.getCurrent().getPreferences().store();
+			PreferenceManager.getCurrent().store();
 		}
 	}
 
@@ -368,7 +369,7 @@ public class CommonActions
 			window = w;
 			setText ("&Save pathway@Ctrl+S");
 			setToolTipText ("Save pathway");
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("save.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Resources.getResourceURL("save.gif")));
 		}
 		
 		public void run ()
@@ -405,7 +406,7 @@ public class CommonActions
 		public SwitchEditModeAction (MainWindowBase w)
 		{
 			super("&Edit mode", IAction.AS_CHECK_BOX);
-			setImageDescriptor(ImageDescriptor.createFromURL(Engine.getCurrent().getResourceURL("edit.gif")));
+			setImageDescriptor(ImageDescriptor.createFromURL(Resources.getResourceURL("edit.gif")));
 			setToolTipText(ttUnChecked);
 			window = w;
 			

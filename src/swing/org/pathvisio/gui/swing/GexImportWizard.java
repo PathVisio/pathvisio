@@ -222,9 +222,7 @@ public class GexImportWizard extends Wizard
 			String action = e.getActionCommand();
 			
 			if(ACTION_GDB.equals(action)) {
-				StandaloneActions.selectGeneDbAction.actionPerformed(
-						new ActionEvent(this, 1, "")
-				);
+				SwingEngine.getCurrent().selectGdb("Gene");
 				txtGdb.setText(
 						PreferenceManager.getCurrent().get(GlobalPreference.DB_GDB_CURRENT)
 				);
@@ -742,4 +740,6 @@ public class GexImportWizard extends Wizard
 		}
 
 	}
+	
+	
 }

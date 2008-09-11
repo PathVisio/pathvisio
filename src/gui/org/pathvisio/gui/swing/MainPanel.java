@@ -141,18 +141,19 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	 * not be added to the menubar and toolbar should be specified in the hideActions parameter
 	 * @param hideActions The {@link Action}s that should not be added to the toolbar and menubar
 	 */
-	public MainPanel(Set<Action> hideActions) {
+	public MainPanel(SwingEngine swingEngine, Set<Action> hideActions) 
+	{
 		this.hideActions = hideActions;
 		
 		setLayout(new BorderLayout());
 		setTransferHandler(new PathwayImportHandler());
-		Engine.getCurrent().addApplicationEventListener(this);
+		swingEngine.getEngine().addApplicationEventListener(this);
 		
-		actions = SwingEngine.getCurrent().getActions();
+		actions = swingEngine.getActions();
 		
 		toolBar = new JToolBar();
 		toolBar.setFloatable(false); // disable floatable toolbar, aka Abomination of interaction design.
-		addToolBarActions(toolBar);
+		addToolBarActions(swingEngine.getEngine(), toolBar);
 
 		add(toolBar, BorderLayout.PAGE_START);
 		// menuBar will be added by container (JFrame or JApplet)
@@ -182,7 +183,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
-		backpagePane = new BackpagePane(new BackpageTextProvider (Engine.getCurrent(), SwingEngine.getCurrent().getGdbManager(), GexManager.getCurrent()));
+		backpagePane = new BackpagePane(new BackpageTextProvider (swingEngine.getEngine(), swingEngine.getGdbManager(), GexManager.getCurrent()));
 		
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
@@ -212,11 +213,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	 * Constructor for this class. Creates the main panel of this application, containing
 	 * the main GUI elements (menubar, toolbar, sidepanel, drawing pane).
 	 */
-	public MainPanel() {
-		this(null);
+	public MainPanel(SwingEngine swingEngine) 
+	{
+		this(swingEngine, null);
 	}
 	
-	protected void addToolBarActions(JToolBar tb) 
+	protected void addToolBarActions(final Engine engine, JToolBar tb) 
 	{
 		tb.setLayout(new WrapLayout(1, 1));
 		
@@ -247,7 +249,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 					String zs = (String) s;
 					try {
 						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(Engine.getCurrent(), zf);
+						ZoomAction za = new ZoomAction(engine, zf);
 						za.setEnabled(true);
 						za.actionPerformed(e);
 					} catch (Exception ex) {

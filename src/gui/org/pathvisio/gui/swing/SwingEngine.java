@@ -37,6 +37,8 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
@@ -66,11 +68,13 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	private Engine engine;
 	private GdbManager gdbManager = null;
 	
+	public Engine getEngine() { return engine; }
+	
 	private SwingEngine(Engine engine) 
 	{
 		this.engine = engine;
 		gdbManager = new GdbManager();
-		actions = new CommonActions(engine);
+		actions = new CommonActions(this);
 		engine.addApplicationEventListener(this);
 	}
 	
@@ -81,13 +85,14 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	
 	// frame may be null...
-	public static void init(Engine engine)
+	public static SwingEngine init(Engine engine)
 	{
 		if (current != null)
 		{
 			Logger.log.warn ("SwingEngine initialized twice");
 		}
-		current = new SwingEngine(engine);	
+		current = new SwingEngine(engine);
+		return current;
 	}
 	
 	/**
@@ -117,7 +122,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	public MainPanel getApplicationPanel(boolean forceNew) {
 		if(forceNew || !hasApplicationPanel()) {
-			mainPanel = new MainPanel();
+			mainPanel = new MainPanel(this);
 		}
 		return mainPanel;
 	}
@@ -612,6 +617,59 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				menuAt.add(a);
 				break;
 			}
+		}
+	}
+
+	/**
+	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
+	 * current database type.
+	 * dbType is "Metabolite" or "Gene" and is only used in messages to the user.
+	 */
+	public void selectGdb (String dbType)
+	{
+		try 
+		{
+			/**
+			 * Get the preferred database connector to connect to Gex or Gdb databases, 
+			 * and try to cast it to swingDbConnector.
+			 * throws an exception if that fails
+			 */
+			DBConnectorSwing dbcon;
+			DBConnector dbc = getGdbManager().getDBConnector();
+			if(dbc instanceof DBConnectorSwing) 
+			{
+				dbcon = (DBConnectorSwing)dbc;
+			} 
+			else 
+			{
+				//TODO: better handling of error
+				throw new IllegalArgumentException("Not a Swing database connector");
+			}
+	
+			String dbName = dbcon.openChooseDbDialog(null);
+			
+			if(dbName == null) return;
+			
+			if (dbType.equals("Gene"))
+			{
+				getGdbManager().setGeneDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_GDB_CURRENT, dbName);
+			}
+			else
+			{
+				getGdbManager().setMetaboliteDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
+			}
+			loadGexCache();
+		} 
+		catch(Exception ex) 
+		{
+			String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
+			JOptionPane.showMessageDialog(null, 
+					"Error: " + msg + "\n\n" + "See the error log for details.",
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+			Logger.log.error(msg, ex);
 		}
 	}
 }

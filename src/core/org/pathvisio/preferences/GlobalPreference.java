@@ -19,13 +19,12 @@ package org.pathvisio.preferences;
 import java.awt.Color;
 import java.io.File;
 
-import org.pathvisio.Engine;
 import org.pathvisio.util.ColorConverter;
 
 public enum GlobalPreference implements Preference 
 {
-	FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), "PathVisio.log")),
-	WP_FILE_LOG(new File (Engine.getCurrent().getApplicationDir(), "WikiPathways.log")),
+	FILE_LOG(new File (getApplicationDir(), "PathVisio.log")),
+	WP_FILE_LOG(new File (getApplicationDir(), "WikiPathways.log")),
 	
 	COLOR_NO_CRIT_MET(new Color(200, 200, 200)),
 	COLOR_NO_GENE_FOUND(Color.WHITE),
@@ -50,25 +49,25 @@ public enum GlobalPreference implements Preference
 	GUI_SIDEPANEL_SIZE("30"),
 
 	// pathway base dir 
-	DIR_PWFILES(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
+	DIR_PWFILES(new File(getDataDir().toString(), "pathways").toString()),
 	// gdb base dir
-	DIR_GDB(new File(Engine.getCurrent().getDataDir().toString(), "gene databases").toString()),
+	DIR_GDB(new File(getDataDir().toString(), "gene databases").toString()),
 	// expr base dir
-	DIR_EXPR(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString()),
+	DIR_EXPR(new File(getDataDir().toString(), "expression datasets").toString()),
 	
 	// pathway last used dir
-	DIR_LAST_USED_OPEN(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_OPEN(new File(getDataDir().toString(), "pathways").toString()),
 	// pathway last used dir
-	DIR_LAST_USED_SAVE(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_SAVE(new File(getDataDir().toString(), "pathways").toString()),
 	// gdb last used dir
-	DIR_LAST_USED_PGDB(new File(Engine.getCurrent().getDataDir().toString(), "gene databases").toString()),
+	DIR_LAST_USED_PGDB(new File(getDataDir().toString(), "gene databases").toString()),
 	// expr last used dir
-	DIR_LAST_USED_PGEX(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString()),
+	DIR_LAST_USED_PGEX(new File(getDataDir().toString(), "expression datasets").toString()),
 	
-	DIR_LAST_USED_EXPRESSION_IMPORT(new File(Engine.getCurrent().getDataDir().toString(), "expression datasets").toString()),
+	DIR_LAST_USED_EXPRESSION_IMPORT(new File(getDataDir().toString(), "expression datasets").toString()),
 	
-	DIR_LAST_USED_IMPORT(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
-	DIR_LAST_USED_EXPORT(new File(Engine.getCurrent().getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_IMPORT(new File(getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_EXPORT(new File(getDataDir().toString(), "pathways").toString()),
 	
 	MOST_RECENT_1 ((File)null),
 	MOST_RECENT_2 ((File)null),
@@ -110,4 +109,27 @@ public enum GlobalPreference implements Preference
 		defaultValue = defValue;
 	}
 		
+	
+	private static File DIR_APPLICATION = null;
+	private static File DIR_DATA = null;
+	
+	/**
+	 * Get the working directory of this application
+	 */
+	public static File getApplicationDir() {
+		if(DIR_APPLICATION == null) {
+			DIR_APPLICATION = new File(System.getProperty("user.home"), ".PathVisio");
+			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
+		}
+		return DIR_APPLICATION;
+	}
+		
+	public static File getDataDir() {
+		if(DIR_DATA == null) {
+			DIR_DATA = new File(System.getProperty("user.home"), "PathVisio-Data");
+			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
+		}
+		return DIR_DATA;
+	}
+
 }

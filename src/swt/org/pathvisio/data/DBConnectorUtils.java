@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.pathvisio.Engine;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Helper functions for classes implementing DbConnectorSwt interface
@@ -44,10 +45,10 @@ class DBConnectorUtils
 		String filterPath = null;
 		switch(db.getDbType()) {
 		case DBConnector.TYPE_GDB: 
-			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_GDB);
+			filterPath = PreferenceManager.getCurrent().get(GlobalPreference.DIR_GDB);
 			break;
 		case DBConnector.TYPE_GEX:
-			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_EXPR);
+			filterPath = PreferenceManager.getCurrent().get(GlobalPreference.DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) fileDialog.setFilterPath(filterPath);
@@ -70,10 +71,10 @@ class DBConnectorUtils
 		String filterPath = null;
 		switch(db.getDbType()) {
 		case DBConnector.TYPE_GDB: 
-			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_GDB);
+			filterPath = PreferenceManager.getCurrent().get(GlobalPreference.DIR_GDB);
 			break;
 		case DBConnector.TYPE_GEX:
-			filterPath = Engine.getCurrent().getPreferences().get(GlobalPreference.DIR_EXPR);
+			filterPath = PreferenceManager.getCurrent().get(GlobalPreference.DIR_EXPR);
 			break;
 		}
 		if(filterPath != null) dirDialog.setFilterPath(filterPath);

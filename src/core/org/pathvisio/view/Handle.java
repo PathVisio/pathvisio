@@ -17,6 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -68,6 +69,8 @@ public class Handle extends VPathwayElement
 	
 	int style = STYLE_DEFAULT;
 	
+	int cursor = Cursor.DEFAULT_CURSOR;
+	
 	/**
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
 	 * @param direction	Direction this handle can be moved in (one of DIRECTION_*)
@@ -90,6 +93,18 @@ public class Handle extends VPathwayElement
 	 */
 	public void setStyle(int style) {
 		this.style = style;
+	}
+	
+	/**
+	 * Set a hint for a cursor to use by the front-end.
+	 * @param cursor One of the Swing cursor types
+	 */
+	public void setCursorHint(int cursor) {
+		this.cursor = cursor;
+	}
+	
+	public int getCursorHint() {
+		return cursor;
 	}
 	
 	public VPathwayElement getParent() {

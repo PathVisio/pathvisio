@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -69,7 +70,18 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		
-		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);		
+		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);
+		
+		handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);
+		handleE.setCursorHint(Cursor.E_RESIZE_CURSOR);
+		handleS.setCursorHint(Cursor.S_RESIZE_CURSOR);
+		handleW.setCursorHint(Cursor.W_RESIZE_CURSOR);
+		handleNE.setCursorHint(Cursor.NE_RESIZE_CURSOR);
+		handleSE.setCursorHint(Cursor.SE_RESIZE_CURSOR);
+		handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
+		handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
+		
+		handleR.setCursorHint(Cursor.MOVE_CURSOR);
 	}
 	
 	protected void setVScaleRectangle(Rectangle2D r) {

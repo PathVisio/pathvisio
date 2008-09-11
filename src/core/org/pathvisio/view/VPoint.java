@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -35,6 +36,7 @@ public class VPoint extends VPathwayElement {
 		this.mPoint = mPoint;
 		this.line = line;
 		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handle.setCursorHint(Cursor.MOVE_CURSOR);
 	}
 
 	protected void unlink() {

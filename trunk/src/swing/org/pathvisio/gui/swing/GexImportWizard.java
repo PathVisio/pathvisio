@@ -322,8 +322,8 @@ public class GexImportWizard extends Wizard
 			final JTextField txtOther = new JTextField(3);
 			builder.add (txtOther, cc.xy(5, 3));
 
-			btnAdvanced = new JButton("More Options");
-			builder.add (btnAdvanced, cc.xy (5, 5));
+			//btnAdvanced = new JButton("More Options");
+			//builder.add (btnAdvanced, cc.xy (5, 5));
 
 			ptm = new PreviewTableModel(importInformation);
 			tblPreview = new JTable(ptm);
@@ -382,6 +382,7 @@ public class GexImportWizard extends Wizard
 				
 			});
 			
+			/*
 			btnAdvanced.addActionListener(new ActionListener()
 			{
 				public void createAndShowDlg()
@@ -433,6 +434,7 @@ public class GexImportWizard extends Wizard
 					});
 				}
 			});
+			*/
 			return builder.getPanel();
 		}
 	    

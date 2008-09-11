@@ -93,7 +93,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderTopAction orderBringToFront;
 	public final OrderUpAction orderUp;
 	public final OrderDownAction orderDown;
-	public final ShowUnlikedConnectors showUnlinked;
+	public final ShowUnlinkedConnectors showUnlinked;
 	
 	Engine engine;
 
@@ -119,7 +119,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		orderBringToFront = new OrderTopAction();
 		orderUp = new OrderUpAction();
 		orderDown = new OrderDownAction();
-		showUnlinked = new ShowUnlikedConnectors();
+		showUnlinked = new ShowUnlinkedConnectors();
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -613,8 +613,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 * Action that toggles highlight of points that are not linked
 	 * to an object
 	 */
-	public class ShowUnlikedConnectors extends AbstractAction {
-		public ShowUnlikedConnectors() {
+	public class ShowUnlinkedConnectors extends AbstractAction {
+		public ShowUnlinkedConnectors() {
 			putValue(NAME, "Highlight unlinked lines");
 			putValue(SHORT_DESCRIPTION, "Highlight all lines that are not linked");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl L"));

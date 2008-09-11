@@ -199,18 +199,7 @@ public class SearchMethods
 				
 				int i = 0;
 				int matchCount = 0;
-				XMLReader xmlReader = null;
-				
-				try
-				{
-					xmlReader = XMLReaderFactory.createXMLReader();
-				}
-				catch (SAXException e)
-				{
-					Logger.log.error("Problem while searching pathways", e);
-					return 0;
-				}
-				
+
 				for(File f : pathways) 
 				{
 					if(pmon.isCanceled()) 

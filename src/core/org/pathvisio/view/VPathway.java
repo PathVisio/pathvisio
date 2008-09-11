@@ -648,11 +648,36 @@ public class VPathway implements PathwayListener
 				((Graphics) pressedObject).getPathwayElement().notifyParentGroup();
 			}
 			redrawDirtyRect();
+		} else {
+			List<VPathwayElement> objects = getObjectsAt(new Point2D.Double(ve.getX(), ve.getY()));
+			Set<VPathwayElement> toRemove = new HashSet<VPathwayElement>();
+			//Process mouseexit events
+			for(VPathwayElement vpe : lastMouseOver) {
+				if(!objects.contains(vpe)) {
+					toRemove.add(vpe);
+					fireVElementMouseEvent(new VElementMouseEvent(
+							this, VElementMouseEvent.TYPE_MOUSEEXIT, vpe, ve
+					));
+				}
+			}
+			lastMouseOver.removeAll(toRemove);
+			
+			//Process mouseenter events
+			for(VPathwayElement vpe : objects) {
+				if(!lastMouseOver.contains(vpe)) {
+					lastMouseOver.add(vpe);
+					fireVElementMouseEvent(new VElementMouseEvent(
+							this, VElementMouseEvent.TYPE_MOUSEENTER, vpe, ve
+					));
+				}
+			}
 		}
 		
 		hoverManager.reset(ve);
 	}
 
+	Set<VPathwayElement> lastMouseOver = new HashSet<VPathwayElement>();
+	
 	HoverManager hoverManager = new HoverManager();
 	
 	class HoverManager implements ActionListener {
@@ -2525,6 +2550,26 @@ public class VPathway implements PathwayListener
 		Logger.log.trace(listeners.remove(l) + ": " + l);
 	}
 
+	private List<VElementMouseListener> elementListeners = new ArrayList<VElementMouseListener>();
+	
+	public void addVElementMouseListener(VElementMouseListener l) {
+		if(!elementListeners.contains(l)) {
+			elementListeners.add(l);
+		}
+	}
+	
+	public void removeVElementMouseListener(VElementMouseListener l) {
+		elementListeners.remove(l);
+	}
+	
+	protected void fireVElementMouseEvent(VElementMouseEvent e)
+	{
+		for (VElementMouseListener l : elementListeners)
+		{
+			l.vElementMouseEvent(e);
+		}
+	}
+	
 	/**
 	 * Adds a {@link SelectionListener} to the SelectionBox of this VPathway
 	 * 

@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.BadLocationException;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.Gdb;
@@ -53,6 +54,7 @@ import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.PropertyColumn;
 import org.pathvisio.util.swing.RowWithProperties;
 import org.pathvisio.util.swing.SimpleFileFilter;
+import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -113,7 +115,7 @@ public class StatisticsPlugin implements Plugin
 		JTextField txtExpr;
 		JLabel lblError;
 		private JButton btnSave;
-		
+
 		private void updateCriterion()
 		{
 			boolean ok = myCriterion.setExpression(txtExpr.getText());
@@ -176,8 +178,8 @@ public class StatisticsPlugin implements Plugin
 					int selectedIndex = lstOperators.getSelectedIndex();
 					if (selectedIndex >= 0)
 					{
-						String expr = txtExpr.getText();
-						txtExpr.setText (expr + " " + Criterion.tokens[selectedIndex]);
+						String toInsert = Criterion.tokens[selectedIndex];
+						TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 					}
 					txtExpr.requestFocus();
 				}
@@ -194,8 +196,8 @@ public class StatisticsPlugin implements Plugin
 					int selectedIndex = lstSamples.getSelectedIndex();
 					if (selectedIndex >= 0)
 					{
-						String expr = txtExpr.getText();
-						txtExpr.setText (expr + " [" + sampleNames.get(selectedIndex) + "]");
+						String toInsert = "[" + sampleNames.get(selectedIndex) + "]"; 
+						TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 					}
 					txtExpr.requestFocus();
 				}

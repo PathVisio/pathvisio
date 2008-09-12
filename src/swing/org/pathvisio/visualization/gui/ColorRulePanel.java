@@ -37,6 +37,7 @@ import javax.swing.event.DocumentListener;
 
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
+import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.Criterion;
 
@@ -162,8 +163,7 @@ public class ColorRulePanel extends JPanel
 				int selectedIndex = lstOperators.getSelectedIndex();
 				if (selectedIndex >= 0)
 				{
-					String expr = txtExpr.getText();
-					txtExpr.setText (expr + " " + Criterion.tokens[selectedIndex]);
+					TextFieldUtils.insertAtCursorWithSpace(txtExpr, Criterion.tokens[selectedIndex]);
 				}
 				txtExpr.requestFocus();
 			}
@@ -180,8 +180,7 @@ public class ColorRulePanel extends JPanel
 				int selectedIndex = lstSamples.getSelectedIndex();
 				if (selectedIndex >= 0)
 				{
-					String expr = txtExpr.getText();
-					txtExpr.setText (expr + " [" + sampleNames.get(selectedIndex) + "]");
+					TextFieldUtils.insertAtCursorWithSpace(txtExpr, "[" + sampleNames.get(selectedIndex) + "]");
 				}
 				txtExpr.requestFocus();
 			}

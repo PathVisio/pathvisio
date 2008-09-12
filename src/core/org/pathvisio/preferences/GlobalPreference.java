@@ -26,9 +26,9 @@ public enum GlobalPreference implements Preference
 	FILE_LOG(new File (getApplicationDir(), "PathVisio.log")),
 	WP_FILE_LOG(new File (getApplicationDir(), "WikiPathways.log")),
 	
-	COLOR_NO_CRIT_MET(new Color(200, 200, 200)),
-	COLOR_NO_GENE_FOUND(Color.WHITE),
-	COLOR_NO_DATA_FOUND(new Color(100, 100, 100)),
+	COLOR_NO_CRIT_MET(new Color(180, 220, 180)),
+	COLOR_NO_GENE_FOUND(new Color(180, 220, 220)),
+	COLOR_NO_DATA_FOUND(new Color(180, 180, 180)),
 	COLOR_SELECTED(Color.RED),
 	COLOR_HIGHLIGHTED(Color.GREEN),
 	

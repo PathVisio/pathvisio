@@ -24,6 +24,7 @@ import java.util.HashMap;
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 /**
  * A rule, or boolean expression, that determines how an
@@ -57,7 +58,7 @@ public class ColorRule extends ColorSetObject
 		super(parent, xml);
 	}
 	
-	Color getColor(HashMap<Integer, Object> data, int idSample) throws Exception {
+	Color getColor(HashMap<Integer, Object> data, int idSample) throws CriterionException {
 		if(criterion.evaluate(data, idSample)) return color;
 		return null;
 	}

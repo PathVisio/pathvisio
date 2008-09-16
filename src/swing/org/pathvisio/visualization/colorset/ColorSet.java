@@ -29,6 +29,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 /**
  * This class represents a colorset, a set of criteria that can be evaluated and 
@@ -176,7 +177,7 @@ public class ColorSet
 				if(gcRgb != null) {
 					return gcRgb;
 				}
-			} catch(Exception e) {
+			} catch(CriterionException e) {
 				Logger.log.error("ColorSetObject " + gc + " could not evaluate data: " + e.getMessage());
 			}
 		}

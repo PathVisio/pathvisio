@@ -21,6 +21,7 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 
 import org.jdom.Element;
+import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 /**
  * This class represent any object that can be present in a colorset
@@ -79,7 +80,7 @@ public abstract class ColorSetObject {
 	 * null if the input data doesn't result in a valid color
 	 * @throws Exception 
 	 */
-	abstract Color getColor(HashMap<Integer, Object> data, int idSample) throws Exception;
+	abstract Color getColor(HashMap<Integer, Object> data, int idSample) throws CriterionException;
 	
 	/**
 	 * Returns the parent colorset

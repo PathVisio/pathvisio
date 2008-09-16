@@ -148,7 +148,11 @@ public class DataSourcePatterns
 				DataSource.ZFIN, 
 				Pattern.compile("ZDB.+")
 		);
-
+		
+		patterns.put(
+				DataSource.AGILENT,
+				Pattern.compile("A_\\d+_.+")
+		);
 	}
 
 	/**

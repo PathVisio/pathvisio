@@ -32,9 +32,9 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.text.BadLocationException;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
@@ -56,6 +56,7 @@ import org.pathvisio.util.swing.RowWithProperties;
 import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.Criterion;
+import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -350,18 +351,26 @@ public class StatisticsPlugin implements Plugin
 						for (int i = 0; i < maxRow; ++i)
 						{
 							if (pmon.isCanceled()) return false;
-							Data d = gex.getRow(i);
-							N++;
-							boolean result = crit.evaluate(d.getSampleData());
-							if (result)
+							try
 							{
-								R++;
-							}		
-//							Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);
+								Data d = gex.getRow(i);
+								N++;
+								boolean result = crit.evaluate(d.getSampleData());
+								if (result)
+								{
+									R++;
+								}		
+	//							Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);
+							}
+							catch (CriterionException e)
+							{
+								Logger.log.error ("Problem during row handling ", e);
+							}
+							
 							pmon.setProgress ((int)(0.2 * (double)i / (double)maxRow * (double)TOTALWORK));
 						}
 					}
-					catch (Exception e)
+					catch (DataException e)
 					{
 						Logger.log.error ("Problem during calculation of R/N ", e);
 						//TODO: better error handling
@@ -405,7 +414,6 @@ public class StatisticsPlugin implements Plugin
 							
 							List <Xref> srcRefs = new ArrayList<Xref>();
 							srcRefs.addAll (pwyParser.getGenes());
-							Map <String, List<Data>> ensGenes = new HashMap <String, List<Data>> ();
 							
 							try
 							{
@@ -416,7 +424,7 @@ public class StatisticsPlugin implements Plugin
 								Logger.log.error ("Exception while caching data", e);
 							}
 
-							int cPwyTotal = ensGenes.size();
+							int cPwyTotal = srcRefs.size();
 							int cPwyMeasured = 0;
 							
 							// Step 2: find the corresponding rows in the Gex. There could be more than one row per gene, this is ok.
@@ -444,7 +452,7 @@ public class StatisticsPlugin implements Plugin
 											boolean result = crit.evaluate(row.getSampleData());
 											if (result) cGenePositive++;
 										}
-										catch (Exception e)
+										catch (CriterionException e)
 										{
 											Logger.log.error ("Unknown error during statistics", e);
 										}

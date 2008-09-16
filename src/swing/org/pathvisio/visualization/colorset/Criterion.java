@@ -22,14 +22,22 @@ import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 
-public class Criterion {
+public class Criterion 
+{
+	public static class CriterionException extends Throwable
+	{
+		CriterionException (String msg) { super (msg); }
+		
+		private static final long serialVersionUID = 1L;
+	}
+	
 	static final String displaySample = "|Displayed sample|";
 	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
 	private HashMap<String, Double> symTab;
 
 	private String expression;
 		
-	private Exception parseException;
+	private CriterionException parseException;
 	
 	public String getExpression() {  
 		return expression == null ? "" : expression; 
@@ -51,7 +59,7 @@ public class Criterion {
 			evaluate(expression);
 			parseException = null;
 			return true;
-		} catch(Exception e) { 
+		} catch(CriterionException e) { 
 			parseException = e;
 			return false;
 		}
@@ -64,7 +72,7 @@ public class Criterion {
 		return testExpression(expression);
 	}
 	
-	public Exception getParseException() { 
+	public CriterionException getParseException() { 
 		return parseException;
 	}
 
@@ -78,7 +86,7 @@ public class Criterion {
 		}
 	}
 	
-	public boolean evaluate(HashMap<Integer, Object> data, int displaySampleId) throws Exception {
+	public boolean evaluate(HashMap<Integer, Object> data, int displaySampleId) throws CriterionException {
 		setSampleData(data);
 		Object value = data.get(displaySampleId);
 		if(value instanceof Double) addSymbol(displaySample, (Double)value);
@@ -86,12 +94,12 @@ public class Criterion {
 		return evaluate(expression);
 	}
 	
-	public boolean evaluate(HashMap<Integer, Object> data) throws Exception {
+	public boolean evaluate(HashMap<Integer, Object> data) throws CriterionException {
 		setSampleData(data);
 		return evaluate(expression);
 	}
 	
-	public boolean evaluate(String[] symbols, double[] values) throws Exception {
+	public boolean evaluate(String[] symbols, double[] values) throws CriterionException {
 		clearSymbols();
 		for(int i = 0; i < symbols.length; i++) {
 			symTab.put(symbols[i], values[i]);
@@ -114,13 +122,13 @@ public class Criterion {
 	//Boolean expression parser by Martijn
 	String input;
 	int charNr;
-	boolean evaluate (String expr) throws Exception
+	boolean evaluate (String expr) throws CriterionException
 	{
 		Token e = parse(expr);
 		return e.evaluateAsBool();
 	}
 
-	Token parse(String expr) throws Exception {
+	Token parse(String expr) throws CriterionException {
 		charNr = 0;
 		input = expr;
 
@@ -129,7 +137,7 @@ public class Criterion {
 		if (t.type != Token.TOKEN_END)
 		{
 			nextToken = null;
-			throw new Exception("Multiple expressions found, second expression " +
+			throw new CriterionException("Multiple expressions found, second expression " +
 					"starts at position " + charNr);
 		}
 		return e;
@@ -163,14 +171,14 @@ public class Criterion {
 
 	Token nextToken = null;
 
-	Token getLookAhead() throws Exception
+	Token getLookAhead() throws CriterionException
 	{
 		nextToken = getToken();
 		return nextToken;
 	}
 
 	// note: token is taken away from input!
-	Token getToken() throws Exception
+	Token getToken() throws CriterionException
 	{      
 		Token token = null;
 		if (nextToken != null)
@@ -252,7 +260,7 @@ public class Criterion {
 			}
 			else
 			{
-				throw new Exception("Invalid character 'A' at position " + (charNr - 2) + 
+				throw new CriterionException("Invalid character 'A' at position " + (charNr - 2) + 
 				"\n- Expected start of 'AND'");
 			}
 			break;
@@ -264,7 +272,7 @@ public class Criterion {
 			}
 			else
 			{
-				throw new Exception("Invalid character 'O' at position " + (charNr - 1) + 
+				throw new CriterionException("Invalid character 'O' at position " + (charNr - 1) + 
 				"\n- Expected start of 'OR'");
 			}
 			break;
@@ -272,7 +280,7 @@ public class Criterion {
 			token = new Token (Token.TOKEN_END);
 			break;
 		default:
-			throw new Exception("Unexpected end of expression at position " + charNr);
+			throw new CriterionException("Unexpected end of expression at position " + charNr);
 		}
 		//~ System.out.print (token.type + ", ");
 		return token;
@@ -285,7 +293,7 @@ public class Criterion {
 			- identifier
 			- "(" expression ")"
 	 */
-	Token factor() throws Exception
+	Token factor() throws CriterionException
 	{
 		Token result;
 		Token t = getLookAhead();
@@ -307,13 +315,13 @@ public class Criterion {
 			if (t.type != Token.TOKEN_RPAREN)
 			{
 				nextToken = null;
-				throw new Exception("Number of opening and closing brackets does not match");
+				throw new CriterionException("Number of opening and closing brackets does not match");
 			}			
 		}
 		else
 		{
 			nextToken = null;
-			throw new Exception("Wrong token at position " + charNr);
+			throw new CriterionException("Wrong token at position " + charNr);
 		}
 		return result;
 	}
@@ -326,7 +334,7 @@ public class Criterion {
 			morefactors -> "<=|=|>=|>|<" factor morefactors
 						| empty
 	 */
-	Token subterm() throws Exception
+	Token subterm() throws CriterionException
 	{
 		Token result;
 		result = factor();
@@ -356,7 +364,7 @@ public class Criterion {
 			moresubterms -> "AND" subterm moresubterms
 						| empty
 	 */
-	Token term() throws Exception
+	Token term() throws CriterionException
 	{
 		Token result;
 		result = subterm();
@@ -384,7 +392,7 @@ public class Criterion {
 			moreterms -> "OR" term moreterms
 				| empty
 	 */
-	Token expression() throws Exception
+	Token expression() throws CriterionException
 	{
 		Token result;
 		result = term();
@@ -482,7 +490,7 @@ public class Criterion {
 			}
 		}
 
-		boolean evaluateAsBool() throws Exception
+		boolean evaluateAsBool() throws CriterionException
 		{
 			switch (type)
 			{
@@ -522,10 +530,10 @@ public class Criterion {
 				else
 					return false;
 			}
-			throw new Exception("Can't evaluate this expression as boolean");
+			throw new CriterionException("Can't evaluate this expression as boolean");
 		}
 
-		double evaluateAsDouble() throws Exception
+		double evaluateAsDouble() throws CriterionException
 		{
 			String error = "";
 			switch (type)
@@ -541,7 +549,7 @@ public class Criterion {
 			default:
 				error = "Can't evaluate this expression as numeric";
 			}
-			throw new Exception(error);
+			throw new CriterionException(error);
 		}
 
 		Token (int _type) { type = _type; numberValue = 0; symbolValue = ""; }

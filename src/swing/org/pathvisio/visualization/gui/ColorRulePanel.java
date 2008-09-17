@@ -68,7 +68,8 @@ public class ColorRulePanel extends JPanel
 	 */
 	private void setExpresion()
 	{
-		boolean ok = cr.getCriterion().setExpression(txtExpr.getText());
+		String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
+		boolean ok = cr.getCriterion().setExpression(txtExpr.getText(), sampleNames);
 		if (ok)
 		{
 			errorMsg.setText("Expression OK");

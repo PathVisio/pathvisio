@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 
 import org.jdom.Element;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
@@ -79,7 +80,8 @@ public class ColorRule extends ColorSetObject
 		try {
 			String expression = xml.getAttributeValue(XML_ATTR_EXPRESSION);
 			criterion = new Criterion();
-			criterion.setExpression(expression);
+			String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
+			criterion.setExpression(expression, sampleNames);
 			Element ce = xml.getChild(XML_ELM_COLOR);
 			if(ce != null) color = ColorConverter.parseColorElement(ce);
 		} catch(Exception e) {

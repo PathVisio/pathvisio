@@ -17,6 +17,7 @@
 package org.pathvisio.visualization.colorset;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
@@ -33,7 +34,7 @@ public class Criterion
 	
 	static final String displaySample = "|Displayed sample|";
 	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
-	private HashMap<String, Double> symTab;
+	private Map<String, Double> symTab = new HashMap<String, Double>();
 
 	private String expression;
 		
@@ -54,7 +55,7 @@ public class Criterion
 		return testExpression(expression, symbols);
 	}
 	
-	public boolean testExpression(String expression) {
+	boolean testExpression(String expression) {
 		try {
 			evaluate(expression);
 			parseException = null;
@@ -65,7 +66,7 @@ public class Criterion
 		}
 	}
 	
-	public boolean testExpression(String expression, String[] symbols) {
+	boolean testExpression(String expression, String[] symbols) {
 		for(String s : symbols) {
 			addSymbol(s, 1.0);
 		}

@@ -119,7 +119,8 @@ public class StatisticsPlugin implements Plugin
 
 		private void updateCriterion()
 		{
-			boolean ok = myCriterion.setExpression(txtExpr.getText());
+			String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
+			boolean ok = myCriterion.setExpression(txtExpr.getText(), sampleNames);
 			if (!ok)
 			{
 				lblError.setText(myCriterion.getParseException().getMessage());

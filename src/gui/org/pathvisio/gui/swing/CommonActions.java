@@ -528,8 +528,7 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			if(element instanceof Graphics) {
 				PathwayElement pwElm = ((Graphics)element).getPathwayElement();
-				BiopaxElementManager em = new BiopaxElementManager(pwElm.getParent());
-				BiopaxReferenceManager m = new BiopaxReferenceManager(em, pwElm);
+				BiopaxReferenceManager m = pwElm.getBiopaxReferenceManager();
 				PublicationXRef xref = new PublicationXRef();
 				
 				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, parent);

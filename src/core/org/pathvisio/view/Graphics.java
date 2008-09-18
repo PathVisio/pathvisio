@@ -63,6 +63,11 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		}
 	}
 	
+	protected void markDirty() {
+		super.markDirty();
+		citation.markDirty();
+	}
+	
 	protected Citation getCitation() {
 		return citation;
 	}

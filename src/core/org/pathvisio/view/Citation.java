@@ -2,30 +2,23 @@ package org.pathvisio.view;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
-import org.apache.batik.ext.awt.image.renderable.RedRable;
 import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.PathwayElement;
 
 /**
  * Draws a citation number on top of a pathway object.
  * @author thomas
  */
-public class Citation extends VPathwayElement implements BiopaxListener, VElementMouseListener, VPathwayListener {
+public class Citation extends VPathwayElement implements BiopaxListener, VElementMouseListener {
 	static final int MFONT_SIZE = 8 * 15;
 	static final String FONT_NAME = "Arial";
 	static final Color FONT_COLOR = new Color(0, 0, 128);
@@ -44,19 +37,11 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 		this.rPosition = rPosition;
 		getRefMgr().addBiopaxListener(this);
 		refresh();
-		canvas.addVPathwayListener(this);
 		canvas.addVElementMouseListener(this);
 	}
 
-	public void vPathwayEvent(VPathwayEvent e) {
-		if(e.getType() == VPathwayEvent.ELEMENT_CLICKED_DOWN &&
-				e.getAffectedElement() == this) {
-				PathwayElementDialog d = PathwayElementDialog.getInstance(
-						parent.getPathwayElement(), false
-				);
-				d.selectPathwayElementPanel(PathwayElementDialog.TAB_LITERATURE);
-				d.setVisible(true);
-		}
+	public Graphics getParent() {
+		return parent;
 	}
 	
 	public void vElementMouseEvent(VElementMouseEvent e) {
@@ -89,8 +74,8 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 		} else if(g != null) {
 			tb = g.getFontMetrics(getVFont()).getStringBounds(getXRefText(), g);
 			tb.setRect(
-					vp.getX() + tb.getX() - pd, 
-					vp.getY() + tb.getY() - pd, 
+					vp.getX() + tb.getX() - tb.getWidth() / 2 - pd, 
+					vp.getY() + tb.getY() - tb.getHeight() / 2 - pd, 
 					tb.getWidth() + 2*pd, 
 					tb.getHeight() + 2*pd
 			);
@@ -114,11 +99,31 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 
 	protected String getXRefText() {
 		String xrefStr = "";
-		for(PublicationXRef xref : getRefMgr().getPublicationXRefs()) {
-			xrefStr += getRefMgr().getBiopaxElementManager().getOrdinal(xref) + ", ";
+		int lastOrdinal = -2;
+		int sequence = 0;
+		List<PublicationXRef> xrefs = getRefMgr().getPublicationXRefs();
+		for(int i = 0; i < xrefs.size(); i++) {
+			int n = getRefMgr().getBiopaxElementManager().getOrdinal(xrefs.get(i));
+			if(n != lastOrdinal + 1) { //End sequence
+				if(sequence > 2) {
+					xrefStr = xrefStr.substring(0, xrefStr.length() - 2);
+					xrefStr += "-" + lastOrdinal + ", ";
+				} else if(sequence == 2){
+					xrefStr += lastOrdinal + ", ";
+				}
+				xrefStr += n + ", ";
+				sequence = 0;
+			}
+			lastOrdinal = n;
+			sequence++;
 		}
-		if(xrefStr.length() > 1) {
+		if(xrefStr.length() > 2) {
 			xrefStr = xrefStr.substring(0, xrefStr.length() - 2);
+		}
+		if(sequence > 2) {
+			xrefStr += "-" + lastOrdinal;
+		} else if(sequence == 2) {
+			xrefStr += ", " + lastOrdinal;
 		}
 		return xrefStr;
 	}
@@ -147,7 +152,7 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 
 		if(isHighlighted()) {
 			Color hc = getHighlightColor();
-			g.setColor(new Color(hc.getRed(), hc.getGreen(), hc.getBlue(), (int)(255 * 0.5)));
+			g.setColor(new Color(hc.getRed(), hc.getGreen(), hc.getBlue(), (int)(255 * 0.3)));
 			g.fill(bounds);
 		}
 
@@ -162,10 +167,12 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 	}
 
 	protected void refresh() {
+		resetShapeCache();
 		markDirty();
 	}
 
 	public void biopaxEvent(BiopaxEvent e) {
 		refresh();
+		canvas.redrawDirtyRect();
 	}
 }

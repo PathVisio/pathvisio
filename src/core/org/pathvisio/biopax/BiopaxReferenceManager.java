@@ -40,7 +40,7 @@ public class BiopaxReferenceManager {
 	 * for the pathway pathway element <code>e</code> belongs to
 	 * @param e The pathway element to handle the biopax references for
 	 */
-	public BiopaxReferenceManager(BiopaxElementManager mgr, PathwayElement e) {
+	public BiopaxReferenceManager(PathwayElement e) {
 		pwElement = e;
 	}
 	
@@ -134,5 +134,11 @@ public class BiopaxReferenceManager {
 	
 	public void removeBiopaxListener(BiopaxListener l) {
 		listeners.remove(l);
+	}
+	
+	public void copyBiopaxListeners(BiopaxReferenceManager refMgr) {
+		for(BiopaxListener l : refMgr.listeners) {
+			addBiopaxListener(l);
+		}
 	}
 }

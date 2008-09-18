@@ -70,7 +70,7 @@ public class LiteratureIndexer extends IndexerBase {
 	}
 
 	void indexLiterature(PathwayElement pe) throws CorruptIndexException, IOException {
-		BiopaxReferenceManager refMgr = new BiopaxReferenceManager(bpMgr, pe);
+		BiopaxReferenceManager refMgr = new BiopaxReferenceManager(pe);
 		for(PublicationXRef ref : refMgr.getPublicationXRefs()) {
 			Document doc = new Document();
 			doc.add(new Field(FIELD_SOURCE, source, Store.YES, Index.NO));

@@ -2539,9 +2539,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	
 	public BiopaxReferenceManager getBiopaxReferenceManager() {
 		if(bpRefMgr == null) {
-			bpRefMgr = new BiopaxReferenceManager(
-					parent.getBiopaxElementManager(), this
-			);
+			bpRefMgr = new BiopaxReferenceManager(this);
 		}
 		return bpRefMgr;
 	}
